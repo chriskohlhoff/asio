@@ -49,7 +49,7 @@ public:
   void lock()
   {
     if (!do_lock())
-      throw std::runtime_error("Unable to lock mutex");
+      throw std::bad_alloc();
   }
 
   // Unlock the mutex.
