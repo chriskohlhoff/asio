@@ -26,8 +26,17 @@
 
 namespace asio {
 
-/// The basic_timer class template provides asynchronous timer functionality.
-/// Most applications will use the asio::timer typedef.
+/// Provides waitable timer functionality.
+/**
+ * The basic_timer class template provides the ability to perform a blocking or
+ * asynchronous wait for a timer to expire..
+ *
+ * Most applications will use the asio::timer typedef.
+ *
+ * @par Thread Safety:
+ * @e Distinct @e objects: Safe.@n
+ * @e Shared @e objects: Unsafe.
+ */
 template <typename Service>
 class basic_timer
   : public timer_base,

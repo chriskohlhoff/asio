@@ -26,9 +26,17 @@
 
 namespace asio {
 
-/// The basic_socket_connector class template is used to connect a socket to a
-/// remote endpoint. Most applications will use the asio::socket_connector
-/// typedef.
+/// Provides the ability to make new connections.
+/**
+ * The basic_socket_connector class template is used to connect a socket to a
+ * remote endpoint.
+ *
+ * Most applications will use the asio::socket_connector typedef.
+ *
+ * @par Thread Safety:
+ * @e Distinct @e objects: Safe.@n
+ * @e Shared @e objects: Unsafe.
+ */
 template <typename Service>
 class basic_socket_connector
   : private boost::noncopyable

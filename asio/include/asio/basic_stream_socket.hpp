@@ -26,9 +26,17 @@
 
 namespace asio {
 
-/// The basic_stream_socket class template provides asynchronous and blocking
-/// stream-oriented socket functionality. Most applications will use the
-/// asio::stream_socket typedef.
+/// Provides stream-oriented socket functionality.
+/**
+ * The basic_stream_socket class template provides asynchronous and blocking
+ * stream-oriented socket functionality.
+ *
+ * Most applications will use the asio::stream_socket typedef.
+ *
+ * @par Thread Safety:
+ * @e Distinct @e objects: Safe.@n
+ * @e Shared @e objects: Unsafe.
+ */
 template <typename Service>
 class basic_stream_socket
   : private boost::noncopyable

@@ -21,16 +21,22 @@
 
 namespace asio {
 
-/// The thread class provides a very simple abstraction for starting threads.
+/// A simple abstraction for starting threads.
 /**
  * The asio::thread class implements the smallest possible subset of the
  * functionality of boost::thread. It is intended to be used only for starting
  * a thread and waiting for it to exit. If more extensive threading
  * capabilities are required, you are strongly advised to use something else.
  *
+ * @par Thread Safety:
+ * @e Distinct @e objects: Safe.@n
+ * @e Shared @e objects: Unsafe.
+ *
+ * @par Example:
  * A typical use of asio::thread would be to launch a thread to run a demuxer's
  * event processing loop:
  *
+ * @par
  * @code asio::demuxer d;
  * // ...
  * asio::thread t(boost::bind(&asio::demuxer::run, &d));

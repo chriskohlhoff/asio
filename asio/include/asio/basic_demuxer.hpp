@@ -30,10 +30,22 @@
 
 namespace asio {
 
-/// The basic_demuxer class template provides the core event demultiplexing
-/// functionality for users of the asynchronous I/O objects, such as
-/// asio::stream_socket, and also to developers of custom asynchronous
-/// services. Most applications will use the asio::demuxer typedef.
+/// Provides core event demultiplexing functionality.
+/**
+ * The basic_demuxer class template provides the core event demultiplexing
+ * functionality for users of the asynchronous I/O objects, including
+ * asio::stream_socket, asio::dgram_socket, asio::socket_acceptor,
+ * asio::socket_connector and asio::timer. The basic_demuxer class template
+ * also includes facilities intended for developers of custom asynchronous
+ * services.
+ *
+ * Most applications will use the asio::demuxer typedef.
+ *
+ * @par Thread Safety:
+ * @e Distinct @e objects: Safe.@n
+ * @e Shared @e objects: Safe, with the exception that calling reset()
+ * while there are unfinished run() calls results in undefined behaviour.
+ */
 template <typename Demuxer_Service>
 class basic_demuxer
   : private boost::noncopyable

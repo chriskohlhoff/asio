@@ -25,10 +25,18 @@
 
 namespace asio {
 
-/// The basic_locking_dispatcher class template provides the ability to post
-/// and dispatch handlers with the guarantee that none of those handlers will
-/// execute concurrently. Most applications will use the
-/// asio::locking_dispatcher typedef.
+/// Provides serialised handler execution.
+/**
+ * The basic_locking_dispatcher class template provides the ability to post
+ * and dispatch handlers with the guarantee that none of those handlers will
+ * execute concurrently.
+ *
+ * Most applications will use the asio::locking_dispatcher typedef.
+ *
+ * @par Thread Safety:
+ * @e Distinct @e objects: Safe.@n
+ * @e Shared @e objects: Safe.
+ */
 template <typename Service>
 class basic_locking_dispatcher
 {
