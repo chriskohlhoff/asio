@@ -15,7 +15,11 @@
 #if defined(_WIN32) // This provider is only supported on Win32
 
 #include "asio/detail/win_iocp_provider.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <boost/bind.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/service_unavailable.hpp"
 #include "asio/socket_address.hpp"
 #include "asio/socket_error.hpp"
