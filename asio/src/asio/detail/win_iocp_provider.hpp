@@ -19,6 +19,11 @@
 
 #if defined(_WIN32) // This provider is only supported on Win32
 
+#include "asio/detail/push_options.hpp"
+#include <list>
+#include "asio/detail/pop_options.hpp"
+
+#include "asio/detail/socket_types.hpp"
 #include "asio/completion_context_locker.hpp"
 #include "asio/demuxer_service.hpp"
 #include "asio/service_provider.hpp"
@@ -28,6 +33,8 @@
 
 namespace asio {
 namespace detail {
+
+class demuxer_task_thread;
 
 class win_iocp_provider
   : public service_provider,
@@ -74,7 +81,7 @@ public:
 
   // Create a dgram socket implementation.
   virtual void do_dgram_socket_create(dgram_socket_service::impl_type& impl,
-		  const socket_address& address);
+      const socket_address& address);
 
   // Destroy a dgram socket implementation.
   virtual void do_dgram_socket_destroy(dgram_socket_service::impl_type& impl);
@@ -138,6 +145,12 @@ private:
 
   // Thread pool to keep track of threads currently inside a run invocation.
   demuxer_thread_pool thread_pool_;
+
+  // The type for the list of tasks running in the demuxer.
+  typedef std::list<demuxer_task_thread*> demuxer_task_list;
+
+  // The list of tasks running in the demuxer.
+  demuxer_task_list tasks_;
 };
 
 } // namespace detail

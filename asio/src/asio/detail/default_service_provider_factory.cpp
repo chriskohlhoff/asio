@@ -27,14 +27,16 @@ create_service_provider(
     demuxer& owning_demuxer,
     const service_type_id& service_type)
 {
-#if 0 // defined(_WIN32)
-  // TODO - Add this back in when IO completion port provider is finished.
+#if defined(_WIN32)
   if (service_type == demuxer_service::id
       || service_type == dgram_socket_service::id
       || service_type == stream_socket_service::id)
     return new win_iocp_provider;
-#endif
 
+  if (service_type == socket_acceptor_service::id
+      || service_type == socket_connector_service::id)
+    return new select_provider(owning_demuxer);
+#else
   if (service_type == demuxer_service::id)
     return new shared_thread_demuxer_provider;
 
@@ -43,6 +45,7 @@ create_service_provider(
       || service_type == socket_connector_service::id
       || service_type == stream_socket_service::id)
     return new select_provider(owning_demuxer);
+#endif
 
   if (service_type == timer_queue_service::id)
     return new timer_queue_provider(owning_demuxer);

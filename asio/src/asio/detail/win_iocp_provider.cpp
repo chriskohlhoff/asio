@@ -23,6 +23,7 @@
 #include "asio/service_unavailable.hpp"
 #include "asio/socket_address.hpp"
 #include "asio/socket_error.hpp"
+#include "asio/detail/demuxer_task_thread.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 
@@ -34,16 +35,19 @@ win_iocp_provider()
   : iocp_(::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)),
     outstanding_operations_(0),
     interrupted_(0),
-    thread_pool_()
+    thread_pool_(),
+    tasks_()
 {
-  WSADATA wsa_data;
-  ::WSAStartup(MAKEWORD(2, 0), &wsa_data);
 }
 
 win_iocp_provider::
 ~win_iocp_provider()
 {
-  ::WSACleanup();
+  while (!tasks_.empty())
+  {
+    delete tasks_.front();
+    tasks_.pop_front();
+  }
 }
 
 service*
@@ -150,6 +154,8 @@ add_task(
     demuxer_task& task,
     void* arg)
 {
+  demuxer_task_thread* task_thread = new demuxer_task_thread(task, arg);
+  tasks_.push_back(task_thread);
 }
 
 void
@@ -260,6 +266,9 @@ do_dgram_socket_create(
         address.native_size()) == socket_error_retval)
     boost::throw_exception(socket_error(socket_ops::get_error()));
 
+  HANDLE sock_as_handle = reinterpret_cast<HANDLE>(sock.get());
+  ::CreateIoCompletionPort(sock_as_handle, iocp_.handle, 0, 0);
+
   impl = sock.release();
 }
 
@@ -289,11 +298,11 @@ namespace
     }
 
     static void do_upcall(const dgram_socket_service::sendto_handler& handler,
-        const socket_error& error, size_t bytes_transferred)
+        const socket_error& error, size_t bytes_sent)
     {
       try
       {
-        handler(error, bytes_transferred);
+        handler(error, bytes_sent);
       }
       catch (...)
       {
@@ -356,11 +365,11 @@ namespace
 
     static void do_upcall(
         const dgram_socket_service::recvfrom_handler& handler,
-        const socket_error& error, size_t bytes_transferred)
+        const socket_error& error, size_t bytes_recvd)
     {
       try
       {
-        handler(error, bytes_transferred);
+        handler(error, bytes_recvd);
       }
       catch (...)
       {
@@ -415,6 +424,9 @@ do_stream_socket_create(
     stream_socket_service::impl_type& impl,
     stream_socket_service::impl_type new_impl)
 {
+  HANDLE sock_as_handle = reinterpret_cast<HANDLE>(new_impl);
+  ::CreateIoCompletionPort(sock_as_handle, iocp_.handle, 0, 0);
+
   impl = new_impl;
 }
 
@@ -430,6 +442,33 @@ do_stream_socket_destroy(
   }
 }
 
+namespace
+{
+  struct send_operation : public operation
+  {
+    stream_socket_service::send_handler handler_;
+
+    virtual void do_completion(DWORD last_error, size_t bytes_transferred)
+    {
+      socket_error error(last_error);
+      do_upcall(handler_, error, bytes_transferred);
+      delete this;
+    }
+
+    static void do_upcall(const stream_socket_service::send_handler& handler,
+        const socket_error& error, size_t bytes_sent)
+    {
+      try
+      {
+        handler(error, bytes_sent);
+      }
+      catch (...)
+      {
+      }
+    }
+  };
+} // namespace
+
 void
 win_iocp_provider::
 do_stream_socket_async_send(
@@ -439,7 +478,95 @@ do_stream_socket_async_send(
     const send_handler& handler,
     completion_context& context)
 {
+  send_operation* send_op = new send_operation;
+  send_op->handler_ = handler;
+  send_op->context_ = &context;
+  send_op->context_acquired_ = false;
+
+  operation_started();
+
+  WSABUF buf;
+  buf.len = length;
+  buf.buf = static_cast<char*>(const_cast<void*>(data));
+  DWORD bytes_transferred = 0;
+
+  int result = ::WSASend(impl, &buf, 1, &bytes_transferred, 0, send_op, 0);
+  DWORD last_error = ::WSAGetLastError();
+
+  if (result != 0 && last_error != WSA_IO_PENDING)
+  {
+    delete send_op;
+    socket_error error(last_error);
+    operation_completed(
+        boost::bind(&send_operation::do_upcall, handler, error,
+          bytes_transferred), context, false);
+  }
 }
+
+namespace
+{
+  struct send_n_operation : public operation
+  {
+    win_iocp_provider* win_iocp_provider_;
+    stream_socket_service::impl_type impl_;
+    stream_socket_service::send_n_handler handler_;
+    const void* data_;
+    DWORD length_;
+    DWORD total_bytes_sent_;
+
+    virtual void do_completion(DWORD last_error, size_t bytes_transferred)
+    {
+      total_bytes_sent_ += bytes_transferred;
+      if (last_error || total_bytes_sent_ == length_)
+      {
+        socket_error error(last_error);
+        do_upcall(handler_, error, total_bytes_sent_, bytes_transferred);
+        delete this;
+      }
+      else
+      {
+        WSABUF buf;
+        buf.len = length_ - total_bytes_sent_;
+        buf.buf = static_cast<char*>(const_cast<void*>(data_));
+        buf.buf += total_bytes_sent_;
+        DWORD bytes_transferred = 0;
+
+        // Make a local copy of the provider pointer since our completion
+        // handler could be called again before we get an opportunity to call
+        // operation_started(), meaning that the object may already have been
+        // deleted.
+        win_iocp_provider* the_provider = win_iocp_provider_;
+
+        int result = ::WSASend(impl_, &buf, 1, &bytes_transferred, 0, this, 0);
+        DWORD last_error = ::WSAGetLastError();
+
+        if (result != 0 && last_error != WSA_IO_PENDING)
+        {
+          socket_error error(last_error);
+          do_upcall(handler_, error, total_bytes_sent_, bytes_transferred);
+          delete this;
+        }
+        else
+        {
+          the_provider->operation_started();
+        }
+      }
+    }
+
+    static void do_upcall(const stream_socket_service::send_n_handler& handler,
+        const socket_error& error, size_t total_bytes_sent,
+        size_t last_bytes_sent)
+    {
+      try
+      {
+        handler(error, total_bytes_sent, last_bytes_sent);
+      }
+      catch (...)
+      {
+      }
+    }
+  };
+} // namespace
 
 void
 win_iocp_provider::
@@ -450,7 +577,63 @@ do_stream_socket_async_send_n(
     const send_n_handler& handler,
     completion_context& context)
 {
+  send_n_operation* send_n_op = new send_n_operation;
+  send_n_op->impl_ = impl;
+  send_n_op->win_iocp_provider_ = this;
+  send_n_op->handler_ = handler;
+  send_n_op->data_ = data;
+  send_n_op->length_ = length;
+  send_n_op->total_bytes_sent_ = 0;
+  send_n_op->context_ = &context;
+  send_n_op->context_acquired_ = false;
+
+  operation_started();
+
+  WSABUF buf;
+  buf.len = length;
+  buf.buf = static_cast<char*>(const_cast<void*>(data));
+  DWORD bytes_transferred = 0;
+
+  int result = ::WSASend(impl, &buf, 1, &bytes_transferred, 0, send_n_op, 0);
+  DWORD last_error = ::WSAGetLastError();
+
+  if (result != 0 && last_error != WSA_IO_PENDING)
+  {
+    delete send_n_op;
+    socket_error error(last_error);
+    operation_completed(
+        boost::bind(&send_n_operation::do_upcall, handler, error,
+          bytes_transferred, bytes_transferred), context, false);
+  }
 }
+
+namespace
+{
+  struct recv_operation : public operation
+  {
+    stream_socket_service::recv_handler handler_;
+
+    virtual void do_completion(DWORD last_error, size_t bytes_transferred)
+    {
+      socket_error error(last_error);
+      do_upcall(handler_, error, bytes_transferred);
+      delete this;
+    }
+
+    static void do_upcall(
+        const stream_socket_service::recv_handler& handler,
+        const socket_error& error, size_t bytes_recvd)
+    {
+      try
+      {
+        handler(error, bytes_recvd);
+      }
+      catch (...)
+      {
+      }
+    }
+  };
+} // namespace
 
 void
 win_iocp_provider::
@@ -461,7 +644,102 @@ do_stream_socket_async_recv(
     const recv_handler& handler,
     completion_context& context)
 {
+  recv_operation* recv_op = new recv_operation;
+  recv_op->handler_ = handler;
+  recv_op->context_ = &context;
+  recv_op->context_acquired_ = false;
+
+  operation_started();
+
+  WSABUF buf;
+  buf.len = max_length;
+  buf.buf = static_cast<char*>(data);
+  DWORD bytes_transferred = 0;
+  DWORD flags = 0;
+
+  int result = ::WSARecv(impl, &buf, 1, &bytes_transferred, &flags, recv_op, 0);
+  DWORD last_error = ::WSAGetLastError();
+
+  if (result != 0 && last_error != WSA_IO_PENDING)
+  {
+    delete recv_op;
+    socket_error error(last_error);
+    operation_completed(
+        boost::bind(&recv_operation::do_upcall, handler, error,
+          bytes_transferred), context, false);
+  }
 }
+
+namespace
+{
+  struct recv_n_operation : public operation
+  {
+    win_iocp_provider* win_iocp_provider_;
+    stream_socket_service::impl_type impl_;
+    stream_socket_service::recv_n_handler handler_;
+    void* data_;
+    DWORD length_;
+    DWORD total_bytes_recvd_;
+
+    virtual void do_completion(DWORD last_error, size_t bytes_transferred)
+    {
+      socket_error error(last_error);
+      total_bytes_recvd_ += bytes_transferred;
+      do_upcall(handler_, error, total_bytes_recvd_, bytes_transferred);
+      delete this;
+
+      total_bytes_recvd_ += bytes_transferred;
+      if (last_error || total_bytes_recvd_ == length_)
+      {
+        socket_error error(last_error);
+        do_upcall(handler_, error, total_bytes_recvd_, bytes_transferred);
+        delete this;
+      }
+      else
+      {
+        WSABUF buf;
+        buf.len = length_ - total_bytes_recvd_;
+        buf.buf = static_cast<char*>(data_);
+        buf.buf += total_bytes_recvd_;
+        DWORD bytes_transferred = 0;
+
+        // Make a local copy of the provider pointer since our completion
+        // handler could be called again before we get an opportunity to call
+        // operation_started(), meaning that the object may already have been
+        // deleted.
+        win_iocp_provider* the_provider = win_iocp_provider_;
+
+        int result = ::WSARecv(impl_, &buf, 1, &bytes_transferred, 0, this, 0);
+        DWORD last_error = ::WSAGetLastError();
+
+        if (result != 0 && last_error != WSA_IO_PENDING)
+        {
+          socket_error error(last_error);
+          do_upcall(handler_, error, total_bytes_recvd_, bytes_transferred);
+          delete this;
+        }
+        else
+        {
+          the_provider->operation_started();
+        }
+      }
+    }
+
+    static void do_upcall(
+        const stream_socket_service::recv_n_handler& handler,
+        const socket_error& error, size_t total_bytes_recvd,
+        size_t last_bytes_recvd)
+    {
+      try
+      {
+        handler(error, total_bytes_recvd, last_bytes_recvd);
+      }
+      catch (...)
+      {
+      }
+    }
+  };
+} // namespace
 
 void
 win_iocp_provider::
@@ -472,6 +750,36 @@ do_stream_socket_async_recv_n(
     const recv_n_handler& handler,
     completion_context& context)
 {
+  recv_n_operation* recv_n_op = new recv_n_operation;
+  recv_n_op->win_iocp_provider_ = this;
+  recv_n_op->impl_ = impl;
+  recv_n_op->handler_ = handler;
+  recv_n_op->data_ = data;
+  recv_n_op->length_ = length;
+  recv_n_op->total_bytes_recvd_ = 0;
+  recv_n_op->context_ = &context;
+  recv_n_op->context_acquired_ = false;
+
+  operation_started();
+
+  WSABUF buf;
+  buf.len = length;
+  buf.buf = static_cast<char*>(data);
+  DWORD bytes_transferred = 0;
+  DWORD flags = 0;
+
+  int result =
+      ::WSARecv(impl, &buf, 1, &bytes_transferred, &flags, recv_n_op, 0);
+  DWORD last_error = ::WSAGetLastError();
+
+  if (result != 0 && last_error != WSA_IO_PENDING)
+  {
+    delete recv_n_op;
+    socket_error error(last_error);
+    operation_completed(
+        boost::bind(&recv_n_operation::do_upcall, handler, error,
+          bytes_transferred, bytes_transferred), context, false);
+  }
 }
 
 } // namespace detail

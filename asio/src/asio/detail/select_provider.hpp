@@ -46,7 +46,7 @@ public:
 
   // Create a dgram socket implementation.
   virtual void do_dgram_socket_create(dgram_socket_service::impl_type& impl,
-		  const socket_address& address);
+      const socket_address& address);
 
   // Destroy a dgram socket implementation.
   virtual void do_dgram_socket_destroy(dgram_socket_service::impl_type& impl);

@@ -20,6 +20,7 @@ ___lib_libasio_a_SOURCES = \
 	asio/socket_address.cpp \
 	asio/socket_error.cpp \
 	asio/detail/default_service_provider_factory.cpp \
+	asio/detail/demuxer_task_thread.cpp \
 	asio/detail/demuxer_thread_pool.cpp \
 	asio/detail/dgram_socket_service.cpp \
 	asio/detail/selector.cpp \
@@ -78,6 +79,7 @@ nobase_include_HEADERS = \
 
 noinst_HEADERS = \
 	asio/detail/default_service_provider_factory.hpp \
+	asio/detail/demuxer_task_thread.hpp \
 	asio/detail/demuxer_thread_pool.hpp \
 	asio/detail/selector.hpp \
 	asio/detail/select_interrupter.hpp \

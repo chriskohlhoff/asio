@@ -86,7 +86,7 @@ public:
 private:
   // Create a dgram socket implementation.
   virtual void do_dgram_socket_create(impl_type& impl,
-		  const socket_address& address) = 0;
+      const socket_address& address) = 0;
 
   // Destroy a dgram socket implementation.
   virtual void do_dgram_socket_destroy(impl_type& impl) = 0;
