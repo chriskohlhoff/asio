@@ -352,18 +352,18 @@ public:
   }
 
 private:
-  /// The ostream variable to set to the error.
+  /// The ostream where the error will be logged.
   Ostream& ostream_;
 };
 
-/// Set a variable to the error.
+/// Always log an error to a stream.
 template <typename Ostream>
 expression<log_error_t<Ostream> > log_error(Ostream& ostream)
 {
   return make_expression(log_error_t<Ostream>(ostream));
 }
 
-/// Class template to set a variable to the error if an expression is true.
+/// Class template to log an error to a stream if an expression is true.
 template <typename Ostream, typename Expr>
 class log_error_if_t
 {
@@ -388,14 +388,14 @@ public:
   }
 
 private:
-  /// The ostream variable to set to the error.
+  /// The ostream where the error will be logged.
   Ostream& ostream_;
 
-  /// The expression which, if true, will result in the variable being set.
+  /// The expression which, if true, will result in the error being logged.
   Expr expr_;
 };
 
-/// Set a variable to the error if an expression is true.
+/// Log an error to a stream if an expression is true.
 template <typename Ostream, typename Expr>
 expression<log_error_if_t<Ostream, Expr> >
 log_error_if(Ostream& ostream, Expr expr)
@@ -403,7 +403,7 @@ log_error_if(Ostream& ostream, Expr expr)
   return make_expression(log_error_if_t<Ostream, Expr>(ostream, expr));
 }
 
-/// The default error handler.
+/// The default error handler. Always throws the error as an exception.
 class default_error_handler
 {
 public:
