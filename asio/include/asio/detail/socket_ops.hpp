@@ -272,7 +272,7 @@ inline int inet_pton(int af, const char* src, void* dest)
     return -1;
   }
 
-  unsigned long addr = error_wrapper(::inet_addr(src));
+  u_long_type addr = error_wrapper(::inet_addr(src));
   if (addr != INADDR_NONE || strcmp(src, "255.255.255.255") == 0)
   {
     static_cast<in_addr*>(dest)->s_addr = addr;
@@ -365,6 +365,26 @@ inline hostent* gethostbyname_r(const char* name, struct hostent* result,
   *error = translate_netdb_error(*error);
   return ent_result;
 #endif
+}
+
+inline u_long_type network_to_host_long(u_long_type value)
+{
+  return ntohl(value);
+}
+
+inline u_long_type host_to_network_long(u_long_type value)
+{
+  return htonl(value);
+}
+
+inline u_short_type network_to_host_short(u_short_type value)
+{
+  return ntohs(value);
+}
+
+inline u_short_type host_to_network_short(u_short_type value)
+{
+  return htons(value);
 }
 
 } // namespace socket_ops

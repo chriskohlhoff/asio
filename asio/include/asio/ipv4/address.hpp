@@ -18,6 +18,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
+#include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
 
 namespace asio {
@@ -44,7 +45,7 @@ public:
   /// Construct an address from a unsigned long in host byte order.
   address(unsigned long addr)
   {
-    addr_.s_addr = htonl(addr);
+    addr_.s_addr = asio::detail::socket_ops::host_to_network_long(addr);
   }
 
   /// Construct an address using an IP address string in dotted decimal form.
@@ -70,7 +71,7 @@ public:
   /// Assign from an unsigned long.
   address& operator=(unsigned long addr)
   {
-    addr_.s_addr = htonl(addr);
+    addr_.s_addr = asio::detail::socket_ops::host_to_network_long(addr);
     return *this;
   }
 
@@ -85,7 +86,7 @@ public:
   /// Get the address as an unsigned long in host byte order
   unsigned long to_ulong() const
   {
-    return ntohl(addr_.s_addr);
+    return asio::detail::socket_ops::network_to_host_long(addr_.s_addr);
   }
 
   /// Get the address as a string in dotted decimal format.

@@ -97,7 +97,7 @@ public:
     char buf[8192] = ""; // Size recommended by Stevens, UNPv1.
     int error = 0;
     in_addr a;
-    a.s_addr = htonl(addr.to_ulong());
+    a.s_addr = asio::detail::socket_ops::host_to_network_long(addr.to_ulong());
     if (asio::detail::socket_ops::gethostbyaddr_r(
           reinterpret_cast<const char*>(&a), sizeof(in_addr), AF_INET, &ent,
           buf, sizeof(buf), &error) == 0)
@@ -142,7 +142,8 @@ private:
       using namespace std; // For memcpy.
       in_addr a;
       memcpy(&a, *addr, sizeof(in_addr));
-      tmp.addresses.push_back(address(ntohl(a.s_addr)));
+      tmp.addresses.push_back(
+          address(asio::detail::socket_ops::network_to_host_long(a.s_addr)));
     }
 
     // The data was successfully copied, so swap with the caller's host object.

@@ -16,6 +16,7 @@
 #include "asio/error.hpp"
 #include "asio/socket_option.hpp"
 #include "asio/ipv4/address.hpp"
+#include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
 
 namespace asio {
@@ -96,21 +97,22 @@ public:
   /// Construct an endpoint using a port number, specified in the host's byte
   /// order. The IP address will be the any address (i.e. INADDR_ANY). This
   /// constructor would typically be used for accepting new connections.
-  endpoint(short port_num)
+  endpoint(unsigned short port_num)
   {
     addr_.sin_family = AF_INET;
-    addr_.sin_port = htons(port_num);
+    addr_.sin_port = asio::detail::socket_ops::host_to_network_short(port_num);
     addr_.sin_addr.s_addr = INADDR_ANY;
   }
 
   /// Construct an endpoint using a port number and an IP address. This
   /// constructor may be used for accepting connections on a specific interface
   /// or for making a connection to a remote endpoint.
-  endpoint(short port_num, const asio::ipv4::address& addr)
+  endpoint(unsigned short port_num, const asio::ipv4::address& addr)
   {
     addr_.sin_family = AF_INET;
-    addr_.sin_port = htons(port_num);
-    addr_.sin_addr.s_addr = htonl(addr.to_ulong());
+    addr_.sin_port = asio::detail::socket_ops::host_to_network_short(port_num);
+    addr_.sin_addr.s_addr =
+      asio::detail::socket_ops::host_to_network_long(addr.to_ulong());
   }
 
   /// Copy constructor.
@@ -159,28 +161,30 @@ public:
 
   /// Get the port associated with the endpoint. The port number is always in
   /// the host's byte order.
-  short port() const
+  unsigned short port() const
   {
-    return ntohs(addr_.sin_port);
+    return asio::detail::socket_ops::network_to_host_short(addr_.sin_port);
   }
 
   /// Set the port associated with the endpoint. The port number is always in
   /// the host's byte order.
-  void port(short port_num)
+  void port(unsigned short port_num)
   {
-    addr_.sin_port = htons(port_num);
+    addr_.sin_port = asio::detail::socket_ops::host_to_network_short(port_num);
   }
 
   /// Get the IP address associated with the endpoint.
   asio::ipv4::address address() const
   {
-    return ntohl(addr_.sin_addr.s_addr);
+    return asio::detail::socket_ops::network_to_host_long(
+        addr_.sin_addr.s_addr);
   }
 
   /// Set the IP address associated with the endpoint.
   void address(const asio::ipv4::address& addr)
   {
-    addr_.sin_addr.s_addr = htonl(addr.to_ulong());
+    addr_.sin_addr.s_addr =
+      asio::detail::socket_ops::host_to_network_long(addr.to_ulong());
   }
 
 private:
