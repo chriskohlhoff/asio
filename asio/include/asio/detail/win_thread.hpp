@@ -18,6 +18,7 @@
 #include "asio/detail/socket_types.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <new>
 #include <process.h>
 #include "asio/detail/pop_options.hpp"
 
@@ -38,6 +39,8 @@ public:
     unsigned int thread_id = 0;
     thread_ = reinterpret_cast<HANDLE>(::_beginthreadex(0, 0,
           asio_detail_win_thread_function, arg, 0, &thread_id));
+    if (!thread_)
+      throw std::bad_alloc();
   }
 
   // Destructor.

@@ -16,6 +16,7 @@
 #if !defined(_WIN32)
 
 #include "asio/detail/push_options.hpp"
+#include <new>
 #include <boost/noncopyable.hpp>
 #include <pthread.h>
 #include "asio/detail/pop_options.hpp"
@@ -37,7 +38,8 @@ public:
     : joined_(false)
   {
     func_base* arg = new func<Function>(f);
-    ::pthread_create(&thread_, 0, asio_detail_posix_thread_function, arg);
+    if (::pthread_create(&thread_, 0, asio_detail_posix_thread_function, arg))
+      throw std::bad_alloc();
   }
 
   // Destructor.

@@ -16,7 +16,7 @@
 #if !defined(_WIN32)
 
 #include "asio/detail/push_options.hpp"
-#include <stdexcept>
+#include <new>
 #include <pthread.h>
 #include "asio/detail/pop_options.hpp"
 
@@ -30,7 +30,7 @@ public:
   posix_tss_bool()
   {
     if (::pthread_key_create(&tss_key_, 0) != 0)
-      throw std::runtime_error("Cannot create thread-local storage");
+      throw std::bad_alloc();
   }
 
   // Destructor.

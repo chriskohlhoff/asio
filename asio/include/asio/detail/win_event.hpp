@@ -15,6 +15,10 @@
 
 #if defined(_WIN32)
 
+#include "asio/detail/push_options.hpp"
+#include <new>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/detail/socket_types.hpp"
 
 namespace asio {
@@ -28,6 +32,8 @@ public:
   win_event()
     : event_(::CreateEvent(0, true, false, 0))
   {
+    if (!event_)
+      throw std::bad_alloc();
   }
 
   // Destructor.

@@ -16,7 +16,7 @@
 #if defined(_WIN32)
 
 #include "asio/detail/push_options.hpp"
-#include <stdexcept>
+#include <new>
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -36,7 +36,7 @@ public:
   win_mutex()
   {
     if (!do_init())
-      throw std::runtime_error("Unable to create mutex");
+      throw std::bad_alloc();
   }
 
   // Destructor.

@@ -16,7 +16,7 @@
 #if defined(_WIN32)
 
 #include "asio/detail/push_options.hpp"
-#include <stdexcept>
+#include <new>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/detail/socket_types.hpp"
@@ -32,7 +32,7 @@ public:
   {
     tss_key_ = ::TlsAlloc();
     if (tss_key_ == TLS_OUT_OF_INDEXES)
-      throw std::runtime_error("Cannot create thread-local storage");
+      throw std::bad_alloc();
   }
 
   // Destructor.
