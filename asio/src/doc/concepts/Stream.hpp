@@ -26,4 +26,10 @@ class Stream
     public Sync_Recv_Stream,
     public Sync_Send_Stream
 {
+public:
+  /// The type of the lowest layer in the stream.
+  typedef implementation_defined lowest_layer_type;
+
+  /// Get a reference to the lowest layer.
+  lowest_layer_type& lowest_layer();
 };
