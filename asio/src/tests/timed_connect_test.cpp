@@ -32,7 +32,7 @@ public:
   {
     if (error)
     {
-      std::cout << "Connect error: " << error.what() << "\n";
+      std::cout << "Connect error: " << error.message() << "\n";
     }
     else
     {

@@ -85,6 +85,17 @@ public:
   {
   }
 
+  // Destructor.
+  virtual ~socket_error() throw ()
+  {
+  }
+
+  // Get the string for the type of exception.
+  virtual const char* what() const throw ()
+  {
+    return "Socket error";
+  }
+
   /// Get the code associated with the error.
   int code() const
   {
@@ -92,7 +103,7 @@ public:
   }
 
   /// Get the message associated with the error.
-  virtual const char* what() const
+  std::string message() const
   {
     if (message_.length() == 0)
     {
@@ -116,7 +127,7 @@ public:
 #endif
     }
 
-    return message_.c_str();
+    return message_;
   }
 
   /// Operator returns non-null if there is a non-success error code.
