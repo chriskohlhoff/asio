@@ -74,7 +74,8 @@ To build, simply run `make' in the root directory of the asio source kit.
 
 5.1. Building with MSVC
 
-To build using the MSVC 6 command line compiler, perform the following steps:
+To build using the MSVC 6 or 7.1 command line compiler, perform the following
+steps:
 
   - If you are using a version of boost other than 1.30.2, or if the boost
     directory (i.e. the directory called boost-1.30.2) is not in the same
