@@ -141,18 +141,35 @@ public:
       void operator()()
       {
         do_upcall();
+
         detail::mutex::scoped_lock lock(impl_.mutex_);
+
         waiter_base* tmp = impl_.first_waiter_;
         impl_.first_waiter_ = impl_.first_waiter_->next_;
-        delete tmp;
         if (impl_.first_waiter_)
         {
           lock.unlock();
+
+          // Ensure the waiter is not deleted until after we have finished
+          // accessing the dispatcher, since the waiter might indirectly own
+          // the dispatcher and so destroying the waiter will cause the
+          // dispatcher to be destroyed.
+          delete tmp;
+
+          // There is more work to do, so post this handler again.
           demuxer_.post(*this);
         }
         else
         {
           impl_.last_waiter_ = 0;
+
+          lock.unlock();
+
+          // Ensure the waiter is not deleted until after we have finished
+          // accessing the dispatcher, since the waiter might indirectly own
+          // the dispatcher and so destroying the waiter will cause the
+          // dispatcher to be destroyed.
+          delete tmp;
         }
       }
 
