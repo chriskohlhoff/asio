@@ -71,14 +71,14 @@ public:
 
   /// Run the demuxer's event processing loop.
   /**
-   * The run function blocks until all work has finished and there are no more
-   * handlers to be dispatched, or until the demuxer has been interrupted.
+   * The run() function blocks until all work has finished and there are no
+   * more handlers to be dispatched, or until the demuxer has been interrupted.
    *
-   * Multiple threads may call the run function to set up a pool of threads
+   * Multiple threads may call the run() function to set up a pool of threads
    * from which the demuxer may execute handlers.
    *
-   * The run function may be safely called again once it has completed only
-   * after a call to reset.
+   * The run() function may be safely called again once it has completed only
+   * after a call to reset().
    */
   void run()
   {
@@ -88,27 +88,28 @@ public:
   /// Interrupt the demuxer's event processing loop.
   /**
    * This function does not block, but instead simply signals to the demuxer
-   * that all invocations of its run member function should return as soon as
+   * that all invocations of its run() member function should return as soon as
    * possible.
    *
-   * Note that if the run function is interrupted and is not called again later
-   * then its work may not have finished and handlers may not be delivered. In
-   * this case a demuxer implementation is not required to make any guarantee
-   * that any resources associated with unfinished work will be cleaned up.
+   * Note that if the run() function is interrupted and is not called again
+   * later then its work may not have finished and handlers may not be
+   * delivered. In this case a demuxer implementation is not required to make
+   * any guarantee that the resources associated with unfinished work will be
+   * cleaned up.
    */
   void interrupt()
   {
     service_.interrupt();
   }
 
-  /// Reset the demuxer in preparation for a subsequent run invocation.
+  /// Reset the demuxer in preparation for a subsequent run() invocation.
   /**
    * This function must be called prior to any second or later set of
-   * invocations of the run function. It allows the demuxer to reset any
+   * invocations of the run() function. It allows the demuxer to reset any
    * internal state, such as an interrupt flag.
    *
    * This function must not be called while there are any unfinished calls to
-   * the run function.
+   * the run() function.
    */
   void reset()
   {
@@ -118,10 +119,10 @@ public:
   /// Notify the demuxer that some work has started.
   /**
    * This function is used to inform the demuxer that some work has begun. This
-   * ensures that the run function will not exit while the work is under way.
+   * ensures that the run() function will not exit while the work is under way.
    *
    * A call to this function must be matched with a later corresponding
-   * call to work_finished.
+   * call to work_finished().
    */
   void work_started()
   {
@@ -131,11 +132,11 @@ public:
   /// Notify the demuxer that some work has finished.
   /**
    * This function is used to inform the demuxer that some work has finished.
-   * Once the count of unfinished work reaches zero, the demuxer's run function
-   * is permitted to exit.
+   * Once the count of unfinished work reaches zero, the demuxer's run()
+   * function is permitted to exit.
    *
-   * A call to this function must be matched with a later corresponding call to
-   * work_started.
+   * A call to this function must be matched with an earlier corresponding call
+   * to work_started().
    */
   void work_finished()
   {
@@ -147,8 +148,8 @@ public:
    * This function is used to ask the demuxer to execute the given handler.
    *
    * The demuxer guarantees that the handler will only be called in a thread in
-   * which the run member function is currently being invoked. The handler may
-   * be executed inside this function if the guarantee can be met.
+   * which the run() member function is currently being invoked. The handler
+   * may be executed inside this function if the guarantee can be met.
    *
    * @param handler The handler to be called. The demuxer will make
    * a copy of the handler object as required. The equivalent function
@@ -167,7 +168,7 @@ public:
    * function.
    *
    * The demuxer guarantees that the handler will only be called in a thread in
-   * which the run member function is currently being invoked.
+   * which the run() member function is currently being invoked.
    *
    * @param handler The handler to be called. The demuxer will make
    * a copy of the handler object as required. The equivalent function
@@ -184,7 +185,7 @@ public:
   /**
    * This function is used to create a new handler function object that, when
    * invoked, will automatically pass the wrapped handler to the demuxer's
-   * dispatch function.
+   * dispatch() function.
    *
    * @param handler The handler to be wrapped. The demuxer will make a copy
    * of the handler object as required. The equivalent function signature of
