@@ -5,8 +5,8 @@
 #include "asio.hpp"
 
 void handle_send(asio::stream_socket* socket, char* data,
-    const asio::socket_error& error, size_t last_bytes_sent,
-    size_t total_bytes_sent)
+    const asio::socket_error& /*error*/, size_t /*last_bytes_sent*/,
+    size_t /*total_bytes_sent*/)
 {
   using namespace std; // For free.
   free(data);
