@@ -44,8 +44,12 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 \li asio::demuxer
 \li asio::dgram_socket
 \li asio::ipv4::address
+\li asio::ipv4::host
+\li asio::ipv4::host_resolver
 \li asio::ipv4::tcp
+\li asio::ipv4::tcp::endpoint
 \li asio::ipv4::udp
+\li asio::ipv4::udp::endpoint
 \li asio::locking_dispatcher
 \li asio::socket_acceptor
 \li asio::socket_connector
@@ -67,6 +71,7 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 \li asio::buffered_recv_stream
 \li asio::buffered_send_stream
 \li asio::buffered_stream
+\li asio::ipv4::basic_host_resolver
 \li asio::service_factory
 
 </TD>
@@ -93,11 +98,11 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 
 <H2>Concepts</H2>
 
-\li Address
 \li Async_Object
 \li Async_Recv_Stream
 \li Async_Send_Stream
 \li Dispatcher
+\li Endpoint
 \li Protocol
 \li Stream
 \li Sync_Recv_Stream
