@@ -24,8 +24,16 @@ class error_placeholder_t {};
 
 namespace {
 
+#if defined(_MSC_VER) && (_MSC_VER < 1400)
+
+static error_placeholder_t the_error;
+
+#else
+
 /// This variable is used as a placeholder for the error value.
 error_placeholder_t the_error;
+
+#endif
 
 } // namespace
 

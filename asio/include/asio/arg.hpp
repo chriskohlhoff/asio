@@ -37,7 +37,7 @@ static inline boost::arg<2> last_bytes_recvd() { return boost::arg<2>(); }
 static inline boost::arg<3> total_bytes_sent() { return boost::arg<3>(); }
 static inline boost::arg<3> total_bytes_recvd() { return boost::arg<3>(); }
 
-#elif defined(_MSC_VER) && (_MSC_VER <= 1300)
+#elif defined(_MSC_VER) && (_MSC_VER < 1400)
 
 static boost::arg<1> error;
 static boost::arg<2> bytes_sent;
