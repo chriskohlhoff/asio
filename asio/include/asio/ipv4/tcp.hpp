@@ -27,16 +27,19 @@ namespace ipv4 {
 class tcp
 {
 public:
+  /// Obtain an identifier for the type of the protocol.
   int type() const
   {
     return SOCK_STREAM;
   }
 
+  /// Obtain an identifier for the protocol.
   int protocol() const
   {
     return IPPROTO_TCP;
   }
 
+  /// Obtain an identifier for the protocol family.
   int family() const
   {
     return PF_INET;

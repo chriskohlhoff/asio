@@ -418,7 +418,7 @@ public:
    * function signature of the handler must be:
    * @code void handler(
    *   const asio::socket_error& error, // Result of operation
-   *   size_t bytes_received            // Number of bytes received
+   *   size_t bytes_recvd               // Number of bytes received
    * ); @endcode
    *
    * @note The recv operation may not receive all of the requested number of

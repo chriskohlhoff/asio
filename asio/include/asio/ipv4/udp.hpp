@@ -26,16 +26,19 @@ namespace ipv4 {
 class udp
 {
 public:
+  /// Obtain an identifier for the type of the protocol.
   int type() const
   {
     return SOCK_DGRAM;
   }
 
+  /// Obtain an identifier for the protocol.
   int protocol() const
   {
     return IPPROTO_UDP;
   }
 
+  /// Obtain an identifier for the protocol family.
   int family() const
   {
     return PF_INET;

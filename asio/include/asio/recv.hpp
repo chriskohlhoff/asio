@@ -107,9 +107,9 @@ size_t recv(Stream& s, void* data, size_t max_length,
  * function signature of the handler must be:
  * @code template <typename Error>
  * void handler(
- *   const Error& error,   // Result of operation (the actual type is dependent
- *                         // on the underlying stream's recv operation)
- *   size_t bytes_received // Number of bytes received
+ *   const Error& error, // Result of operation (the actual type is dependent
+ *                       // on the underlying stream's recv operation)
+ *   size_t bytes_recvd  // Number of bytes received
  * ); @endcode
  *
  * @note The recv operation may not receive all of the requested number of

@@ -5,12 +5,24 @@
 
 /**
 \namespace asio::ipv4
-\brief The asio namespace defines all user-accessible classes and templates.
+\brief The asio namespace defines the classes associated with IP version 4.
 */
 
 /**
 \namespace asio::socket_option
 \brief The asio::socket_option namespace defines the supported socket options.
+*/
+
+/**
+\namespace asio::arg
+\brief The asio::arg namespace defines argument placeholders for use with
+\ref boost_bind.
+*/
+
+/**
+\page boost_bind boost::bind
+See the <a href="http://www.boost.org/libs/bind/bind.html">Boost: bind.hpp
+documentation</a> for more information on how to use <tt>boost::bind</tt>.
 */
 
 /**
@@ -23,8 +35,9 @@
 <H2>Namespaces</H2>
 
 \li ::asio
-\li ::asio::ipv4
-\li ::asio::socket_option
+\li asio::arg
+\li asio::ipv4
+\li asio::socket_option
 
 <H2>Core Classes</H2>
 
