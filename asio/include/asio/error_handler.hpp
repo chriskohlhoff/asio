@@ -404,6 +404,57 @@ log_error_if(Ostream& ostream, Expr expr)
   return make_expression(log_error_if_t<Ostream, Expr>(ostream, expr));
 }
 
+/// Class to always ignore an error.
+class ignore_error_t
+{
+public:
+  /// Evaluate the expression.
+  template <typename Error>
+  bool operator()(const Error& err)
+  {
+    return true;
+  }
+};
+
+/// Always ignore an error.
+inline
+expression<ignore_error_t> ignore_error()
+{
+  return make_expression(ignore_error_t());
+}
+
+/// Class template to ignore an error if an expression is true.
+template <typename Expr>
+class ignore_error_if_t
+{
+public:
+  /// Constructor.
+  ignore_error_if_t(Expr expr)
+    : expr_(expr)
+  {
+  }
+
+  /// Evaluate the expression.
+  template <typename Error>
+  bool operator()(const Error& err)
+  {
+    if (expr_(err))
+      return true;
+    return false;
+  }
+
+private:
+  /// The expression which, if true, will result in the error being ignored.
+  Expr expr_;
+};
+
+/// Ignore an error if an expression is true.
+template <typename Expr> inline
+expression<ignore_error_if_t<Expr> > ignore_error_if(Expr expr)
+{
+  return make_expression(ignore_error_if_t<Expr>(expr));
+}
+
 /// The default error handler. Always throws the error as an exception.
 class default_error_handler
 {
