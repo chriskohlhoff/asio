@@ -37,28 +37,28 @@ class expression
 {
 public:
   /// Constructor.
-	explicit expression(Expr expr)
+  explicit expression(Expr expr)
     : expr_(expr)
   {
   }
 
   /// Evaluate the expression.
   template <typename Error>
-	bool operator()(const Error& err)
+  bool operator()(const Error& err)
   {
     return expr_(err);
   }
 
 private:
   /// The contained expression.
-	Expr expr_;
+  Expr expr_;
 };
 
 /// Create an expression object using template type deduction.
 template <typename Expr>
 expression<Expr> make_expression(Expr expr)
 {
-	return expression<Expr>(expr);
+  return expression<Expr>(expr);
 }
 
 /// Class template to compare the error for equality with a given value.
@@ -67,35 +67,35 @@ class value_eq_error
 {
 public:
   /// Constructor.
-	explicit value_eq_error(Value value)
+  explicit value_eq_error(Value value)
     : value_(value)
   {
   }
 
   /// Evaluate the expression.
   template <typename Error>
-	bool operator()(const Error& err)
+  bool operator()(const Error& err)
   {
     return value_ == err;
   }
 
 private:
   /// The value to compare the error against.
-	Value value_;
+  Value value_;
 };
 
 /// Compare the error for equality with a given value.
 template <typename Value>
 expression<value_eq_error<Value> > operator==(Value value, error_t)
 {
-	return make_expression(value_eq_error<Value>(value));
+  return make_expression(value_eq_error<Value>(value));
 }
 
 /// Compare the error for equality with a given value.
 template <typename Value>
 expression<value_eq_error<Value> > operator==(error_t, Value value)
 {
-	return make_expression(value_eq_error<Value>(value));
+  return make_expression(value_eq_error<Value>(value));
 }
 
 /// Class template to compare the error for inequality with a given value.
@@ -104,35 +104,35 @@ class value_neq_error
 {
 public:
   /// Constructor.
-	explicit value_neq_error(Value value)
+  explicit value_neq_error(Value value)
     : value_(value)
   {
   }
 
   /// Evaluate the expression.
   template <typename Error>
-	bool operator()(const Error& err)
+  bool operator()(const Error& err)
   {
     return value_ != err;
   }
 
 private:
   /// The value to compare the error against.
-	Value value_;
+  Value value_;
 };
 
 /// Compare the error for inequality with a given value.
 template <typename Value>
 expression<value_neq_error<Value> > operator!=(Value value, error_t)
 {
-	return make_expression(value_neq_error<Value>(value));
+  return make_expression(value_neq_error<Value>(value));
 }
 
 /// Compare the error for inequality with a given value.
 template <typename Value>
 expression<value_neq_error<Value> > operator!=(error_t, Value value)
 {
-	return make_expression(value_neq_error<Value>(value));
+  return make_expression(value_neq_error<Value>(value));
 }
 
 /// Class template to perform logical or on two expressions.
@@ -141,7 +141,7 @@ class expr_or_expr
 {
 public:
   /// Constructor.
-	explicit expr_or_expr(Expr1 expr1, Expr2 expr2)
+  explicit expr_or_expr(Expr1 expr1, Expr2 expr2)
     : expr1_(expr1),
       expr2_(expr2)
   {
@@ -149,17 +149,17 @@ public:
 
   // Evaluate the expression.
   template <typename Error>
-	bool operator()(const Error& err)
+  bool operator()(const Error& err)
   {
     return expr1_(err) || expr2_(err);
   }
 
 private:
   /// The first expression to be included in the logical or.
-	Expr1 expr1_;
+  Expr1 expr1_;
 
   /// The second expression to be included in the logical or.
-	Expr2 expr2_;
+  Expr2 expr2_;
 };
 
 /// Perform a logical or on two expressions.
@@ -167,7 +167,7 @@ template <typename Expr1, typename Expr2>
 expression<expr_or_expr<expression<Expr1>, expression<Expr2> > >
 operator||(expression<Expr1> expr1, expression<Expr2> expr2)
 {
-	return make_expression(
+  return make_expression(
       expr_or_expr<expression<Expr1>, expression<Expr2> >(expr1, expr2));
 }
 
@@ -177,7 +177,7 @@ class expr_and_expr
 {
 public:
   /// Constructor.
-	explicit expr_and_expr(Expr1 expr1, Expr2 expr2)
+  explicit expr_and_expr(Expr1 expr1, Expr2 expr2)
     : expr1_(expr1),
       expr2_(expr2)
   {
@@ -185,17 +185,17 @@ public:
 
   // Evaluate the expression.
   template <typename Error>
-	bool operator()(const Error& err)
+  bool operator()(const Error& err)
   {
     return expr1_(err) && expr2_(err);
   }
 
 private:
   /// The first expression to be included in the logical and.
-	Expr1 expr1_;
+  Expr1 expr1_;
 
   /// The second expression to be included in the logical and.
-	Expr2 expr2_;
+  Expr2 expr2_;
 };
 
 /// Perform a logical and on two expressions.
@@ -203,7 +203,7 @@ template <typename Expr1, typename Expr2>
 expression<expr_and_expr<expression<Expr1>, expression<Expr2> > >
 operator&&(expression<Expr1> expr1, expression<Expr2> expr2)
 {
-	return make_expression(
+  return make_expression(
       expr_and_expr<expression<Expr1>, expression<Expr2> >(expr1, expr2));
 }
 
@@ -213,7 +213,7 @@ class throw_error
 public:
   /// Evaluate the expression.
   template <typename Error>
-	bool operator()(const Error& err)
+  bool operator()(const Error& err)
   {
     throw err;
   }
@@ -225,14 +225,14 @@ class throw_error_if_t
 {
 public:
   /// Constructor.
-	throw_error_if_t(Expr expr)
+  throw_error_if_t(Expr expr)
     : expr_(expr)
   {
   }
 
   /// Evaluate the expression.
   template <typename Error>
-	bool operator()(const Error& err)
+  bool operator()(const Error& err)
   {
     if (expr_(err))
       throw err;
@@ -241,14 +241,14 @@ public:
 
 private:
   /// The expression which, if true, will result in the error being thrown.
-	Expr expr_;
+  Expr expr_;
 };
 
 /// Throw an error if an expression is true.
 template <typename Expr>
 expression<throw_error_if_t<Expr> > throw_error_if(Expr expr)
 {
-	return make_expression(throw_error_if_t<Expr>(expr));
+  return make_expression(throw_error_if_t<Expr>(expr));
 }
 
 /// Class template to always set a variable to the error.
@@ -264,7 +264,7 @@ public:
 
   /// Evaluate the expression.
   template <typename Error>
-	bool operator()(const Error& err)
+  bool operator()(const Error& err)
   {
     target_ = err;
     return true;
@@ -279,7 +279,9 @@ private:
 template <typename Target>
 expression<set_error_t<Target> > set_error(Target& target)
 {
-	return make_expression(set_error_t<Target>(target));
+  if (target)
+    target = Target(); 
+  return make_expression(set_error_t<Target>(target));
 }
 
 /// Class template to set a variable to the error if an expression is true.
@@ -288,7 +290,7 @@ class set_error_if_t
 {
 public:
   /// Constructor.
-	set_error_if_t(Target& target, Expr expr)
+  set_error_if_t(Target& target, Expr expr)
     : target_(target),
       expr_(expr)
   {
@@ -296,7 +298,7 @@ public:
 
   /// Evaluate the expression.
   template <typename Error>
-	bool operator()(const Error& err)
+  bool operator()(const Error& err)
   {
     if (expr_(err))
     {
@@ -311,7 +313,7 @@ private:
   Target& target_;
 
   /// The expression which, if true, will result in the variable being set.
-	Expr expr_;
+  Expr expr_;
 };
 
 /// Set a variable to the error if an expression is true.
@@ -319,7 +321,9 @@ template <typename Target, typename Expr>
 expression<set_error_if_t<Target, Expr> >
 set_error_if(Target& target, Expr expr)
 {
-	return make_expression(set_error_if_t<Target, Expr>(target, expr));
+  if (target)
+    target = Target(); 
+  return make_expression(set_error_if_t<Target, Expr>(target, expr));
 }
 
 /// Class template to always log an error to a stream.
@@ -335,7 +339,7 @@ public:
 
   /// Evaluate the expression.
   template <typename Error>
-	bool operator()(const Error& err)
+  bool operator()(const Error& err)
   {
     ostream_ << err << "\n";
     return true;
@@ -350,7 +354,7 @@ private:
 template <typename Ostream>
 expression<log_error_t<Ostream> > log_error(Ostream& ostream)
 {
-	return make_expression(log_error_t<Ostream>(ostream));
+  return make_expression(log_error_t<Ostream>(ostream));
 }
 
 /// Class template to set a variable to the error if an expression is true.
@@ -359,7 +363,7 @@ class log_error_if_t
 {
 public:
   /// Constructor.
-	log_error_if_t(Ostream& ostream, Expr expr)
+  log_error_if_t(Ostream& ostream, Expr expr)
     : ostream_(ostream),
       expr_(expr)
   {
@@ -367,7 +371,7 @@ public:
 
   /// Evaluate the expression.
   template <typename Error>
-	bool operator()(const Error& err)
+  bool operator()(const Error& err)
   {
     if (expr_(err))
     {
@@ -382,7 +386,7 @@ private:
   Ostream& ostream_;
 
   /// The expression which, if true, will result in the variable being set.
-	Expr expr_;
+  Expr expr_;
 };
 
 /// Set a variable to the error if an expression is true.
@@ -390,7 +394,7 @@ template <typename Ostream, typename Expr>
 expression<log_error_if_t<Ostream, Expr> >
 log_error_if(Ostream& ostream, Expr expr)
 {
-	return make_expression(log_error_if_t<Ostream, Expr>(ostream, expr));
+  return make_expression(log_error_if_t<Ostream, Expr>(ostream, expr));
 }
 
 /// The default error handler.

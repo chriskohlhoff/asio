@@ -97,9 +97,9 @@ public:
    * @param listen_queue The maximum length of the queue of pending
    * connections. A value of 0 means use the default queue length.
    *
-   * @param error_handler The handler to be called when an error occurs or when
-   * the function completes successfully. Copies will be made of the handler as
-   * required. The equivalent function signature of the handler must be:
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
    * @code void error_handler(
    *   const asio::socket_error& error // Result of operation
    * ); @endcode
@@ -163,9 +163,9 @@ public:
    * @param listen_queue The maximum length of the queue of pending
    * connections. A value of 0 means use the default queue length.
    *
-   * @param error_handler The handler to be called when an error occurs or when
-   * the function completes successfully. Copies will be made of the handler as
-   * required. The equivalent function signature of the handler must be:
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
    * @code void error_handler(
    *   const asio::socket_error& error // Result of operation
    * ); @endcode
@@ -220,9 +220,9 @@ public:
    *
    * @param option The new option value to be set on the acceptor.
    *
-   * @param error_handler The handler to be called when an error occurs or when
-   * the function completes successfully. Copies will be made of the handler as
-   * required. The equivalent function signature of the handler must be:
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
    * @code void error_handler(
    *   const asio::socket_error& error // Result of operation
    * ); @endcode
@@ -255,9 +255,9 @@ public:
    *
    * @param option The option value to be obtained from the acceptor.
    *
-   * @param error_handler The handler to be called when an error occurs or when
-   * the function completes successfully. Copies will be made of the handler as
-   * required. The equivalent function signature of the handler must be:
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
    * @code void error_handler(
    *   const asio::socket_error& error // Result of operation
    * ); @endcode
@@ -295,9 +295,9 @@ public:
    * @param peer_socket The stream socket into which the new connection will be
    * accepted.
    *
-   * @param error_handler The handler to be called when an error occurs or when
-   * the function completes successfully. Copies will be made of the handler as
-   * required. The equivalent function signature of the handler must be:
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
    * @code void error_handler(
    *   const asio::socket_error& error // Result of operation
    * ); @endcode
@@ -394,9 +394,9 @@ public:
    * @param peer_address An address object which will receive the network
    * address of the remote peer.
    *
-   * @param error_handler The handler to be called when an error occurs or when
-   * the function completes successfully. Copies will be made of the handler as
-   * required. The equivalent function signature of the handler must be:
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
    * @code void error_handler(
    *   const asio::socket_error& error // Result of operation
    * ); @endcode

@@ -80,6 +80,14 @@ public:
     return next_layer_.send(data, length);
   }
 
+  /// Send the given data to the peer. Returns the number of bytes sent or 0 if
+  /// the stream was closed cleanly.
+  template <typename Error_Handler>
+  size_t send(const void* data, size_t length, Error_Handler error_handler)
+  {
+    return next_layer_.send(data, length, error_handler);
+  }
+
   /// Start an asynchronous send. The data being sent must be valid for the
   /// lifetime of the asynchronous operation.
   template <typename Handler>
@@ -102,6 +110,14 @@ public:
   size_t recv(void* data, size_t max_length)
   {
     return next_layer_.recv(data, max_length);
+  }
+
+  /// Receive some data from the peer. Returns the number of bytes received or
+  /// 0 if the stream was closed cleanly.
+  template <typename Error_Handler>
+  size_t recv(void* data, size_t max_length, Error_Handler error_handler)
+  {
+    return next_layer_.recv(data, max_length, error_handler);
   }
 
   /// Start an asynchronous receive. The buffer for the data being received

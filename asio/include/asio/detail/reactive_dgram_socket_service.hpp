@@ -82,8 +82,6 @@ public:
     }
 
     impl = sock.release();
-
-    error_handler(socket_error(socket_error::success));
   }
 
   // Destroy a dgram socket implementation.
@@ -103,12 +101,7 @@ public:
   {
     if (socket_ops::setsockopt(impl, option.level(), option.name(),
           option.data(), option.size()))
-    {
       error_handler(socket_error(socket_ops::get_error()));
-      return;
-    }
-
-    error_handler(socket_error(socket_error::success));
   }
 
   // Set a socket option.
@@ -118,12 +111,7 @@ public:
     socket_len_type size = option.size();
     if (socket_ops::getsockopt(impl, option.level(), option.name(),
           option.data(), &size))
-    {
       error_handler(socket_error(socket_ops::get_error()));
-      return;
-    }
-
-    error_handler(socket_error(socket_error::success));
   }
 
   // Send a datagram to the specified address. Returns the number of bytes
@@ -139,8 +127,6 @@ public:
       error_handler(socket_error(socket_ops::get_error()));
       return 0;
     }
-
-    error_handler(socket_error(socket_error::success));
     return bytes_sent;
   }
 
@@ -216,8 +202,6 @@ public:
     }
 
     sender_address.native_size(addr_len);
-
-    error_handler(socket_error(socket_error::success));
 
     return bytes_recvd;
   }

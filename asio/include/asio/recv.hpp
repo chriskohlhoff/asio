@@ -54,6 +54,41 @@ size_t recv(Stream& s, void* data, size_t max_length)
   return s.recv(data, max_length);
 }
 
+/// Read some data from a stream.
+/**
+ * This function is used to receive data on a stream. The function call will
+ * block until data has received successfully or an error occurs.
+ *
+ * @param s The stream on which the data is to be received.
+ *
+ * @param data The buffer into which the received data will be written.
+ *
+ * @param max_length The maximum size of the data to be received, in bytes.
+ *
+ * @param error_handler The handler to be called when an error occurs. Copies
+ * will be made of the handler as required. The equivalent function signature
+ * of the handler must be:
+ * @code template <typename Error>
+ * void error_handler(
+ *   const Error& error // Result of operation (the actual type is dependent on
+ *                      // the underlying stream's recv operation)
+ * ); @endcode
+ *
+ * @returns The number of bytes received, or 0 if end-of-file was reached or
+ * the connection was closed cleanly.
+ *
+ * @note The recv operation may not receive all of the requested number of
+ * bytes. Consider using the asio::recv_n() function if you need to ensure that
+ * the requested amount of data is received before the blocking operation
+ * completes.
+ */
+template <typename Stream, typename Error_Handler>
+size_t recv(Stream& s, void* data, size_t max_length,
+    Error_Handler error_handler)
+{
+  return s.recv(data, max_length, error_handler);
+}
+
 /// Start an asynchronous receive.
 /**
  * This function is used to asynchronously receive data on a stream. The
@@ -159,6 +194,56 @@ size_t recv_n(Stream& s, void* data, size_t length,
   {
     bytes_recvd = recv(s, static_cast<char*>(data) + total_recvd,
         length - total_recvd);
+    if (bytes_recvd == 0)
+    {
+      if (total_bytes_recvd)
+        *total_bytes_recvd = total_recvd;
+      return bytes_recvd;
+    }
+    total_recvd += bytes_recvd;
+  }
+  if (total_bytes_recvd)
+    *total_bytes_recvd = total_recvd;
+  return bytes_recvd;
+}
+
+/// Read the specified amount of data from the stream before returning.
+/**
+ * This function is used to receive an exact number of bytes of data on a
+ * stream. The function call will block until the specified number of bytes has
+ * been received successfully or an error occurs.
+ *
+ * @param s The stream on which the data is to be received.
+ *
+ * @param data The buffer into which the received data will be written.
+ *
+ * @param length The size of the data to be received, in bytes.
+ *
+ * @param total_bytes_recvd An optional output parameter that receives the
+ * total number of bytes actually received.
+ *
+ * @param error_handler The handler to be called when an error occurs. Copies
+ * will be made of the handler as required. The equivalent function signature
+ * of the handler must be:
+ * @code template <typename Error>
+ * void error_handler(
+ *   const Error& error // Result of operation (the actual type is dependent on
+ *                      // the underlying stream's recv operation)
+ * ); @endcode
+ *
+ * @returns The number of bytes received on the last recv, or 0 if end-of-file
+ * was reached or the connection was closed cleanly.
+ */
+template <typename Stream, typename Error_Handler>
+size_t recv_n(Stream& s, void* data, size_t length,
+    size_t* total_bytes_recvd, Error_Handler error_handler)
+{
+  int bytes_recvd = 0;
+  size_t total_recvd = 0;
+  while (total_recvd < length)
+  {
+    bytes_recvd = recv(s, static_cast<char*>(data) + total_recvd,
+        length - total_recvd, error_handler);
     if (bytes_recvd == 0)
     {
       if (total_bytes_recvd)
@@ -343,6 +428,75 @@ size_t recv_decode(Buffered_Stream& s, Decoder decoder,
   for (;;)
   {
     if (s.recv_buffer().empty() && s.fill() == 0)
+    {
+      if (total_bytes_recvd)
+        *total_bytes_recvd = total_recvd;
+      return 0;
+    }
+
+    std::pair<bool, const char*> result =
+      decoder(s.recv_buffer().begin(), s.recv_buffer().end());
+
+    size_t bytes_read = result.second - s.recv_buffer().begin();
+    s.recv_buffer().pop(bytes_read);
+    total_recvd += bytes_read;
+
+    if (result.first)
+    {
+      if (total_bytes_recvd)
+        *total_bytes_recvd = total_recvd;
+      return bytes_read;
+    }
+  }
+}
+
+/// Read some data from a stream and decode it.
+/**
+ * This function is used to receive data on a stream and decode it in a single
+ * operation. The function call will block until the decoder function object
+ * indicates that it has finished.
+ *
+ * @param s The stream on which the data is to be received.
+ *
+ * @param decoder The decoder function object to be called to decode the
+ * received data. The function object is assumed to be stateful. That is, it
+ * may not be given sufficient data in a single invocation to complete
+ * decoding, and is expected to maintain state so that it may resume decoding
+ * when the next piece of data is supplied. Copies will be made of the decoder
+ * function object as required, however with respect to maintaining state it
+ * can rely on the fact that only an up-to-date copy will be used. The
+ * equivalent function signature of the handler must be:
+ * @code std::pair<bool, const char*> decoder(
+ *   const char* begin, // Pointer to the beginning of data to be decoded.
+ *   const char* end    // Pointer to one-past-the-end of data to be decoded.
+ * ); @endcode
+ * The first element of the return value is true if the decoder has finished.
+ * The second element is a pointer to the beginning of the unused portion of
+ * the data.
+ *
+ * @param total_bytes_recvd An optional output parameter that receives the
+ * total number of bytes actually received.
+ *
+ * @param error_handler The handler to be called when an error occurs. Copies
+ * will be made of the handler as required. The equivalent function signature
+ * of the handler must be:
+ * @code template <typename Error>
+ * void error_handler(
+ *   const Error& error // Result of operation (the actual type is dependent on
+ *                      // the underlying stream's recv operation)
+ * ); @endcode
+ *
+ * @returns The number of bytes received on the last recv, or 0 if end-of-file
+ * was reached or the connection was closed cleanly.
+ */
+template <typename Buffered_Stream, typename Decoder, typename Error_Handler>
+size_t recv_decode(Buffered_Stream& s, Decoder decoder,
+    size_t* total_bytes_recvd, Error_Handler error_handler)
+{
+  size_t total_recvd = 0;
+  for (;;)
+  {
+    if (s.recv_buffer().empty() && s.fill(error_handler) == 0)
     {
       if (total_bytes_recvd)
         *total_bytes_recvd = total_recvd;
@@ -639,6 +793,43 @@ size_t recv_until(Buffered_Stream& s, std::string& data,
 {
   return recv_decode(s, detail::recv_until_decoder(data, delimiter),
       total_bytes_recvd);
+}
+
+/// Read data from the stream until a delimiter is reached.
+/**
+ * This function is used to receive data from the stream into a std::string
+ * object until a specified delimiter is reached. The function call will block
+ * until the delimiter is found or an error occurs.
+ *
+ * @param s The stream on which the data is to be received.
+ *
+ * @param data The std::string object into which the received data will be
+ * written.
+ *
+ * @param delimiter The pattern marking the end of the data to receive.
+ *
+ * @param total_bytes_recvd An optional output parameter that receives the
+ * total number of bytes actually received.
+ *
+ * @param error_handler The handler to be called when an error occurs. Copies
+ * will be made of the handler as required. The equivalent function signature
+ * of the handler must be:
+ * @code template <typename Error>
+ * void error_handler(
+ *   const Error& error // Result of operation (the actual type is dependent on
+ *                      // the underlying stream's recv operation)
+ * ); @endcode
+ *
+ * @returns The number of bytes received on the last recv, or 0 if end-of-file
+ * was reached or the connection was closed cleanly.
+ */
+template <typename Buffered_Stream, typename Error_Handler>
+size_t recv_until(Buffered_Stream& s, std::string& data,
+    const std::string& delimiter, size_t* total_bytes_recvd,
+    Error_Handler error_handler)
+{
+  return recv_decode(s, detail::recv_until_decoder(data, delimiter),
+      total_bytes_recvd, error_handler);
 }
 
 /// Start an asynchronous receive that will not complete until the specified

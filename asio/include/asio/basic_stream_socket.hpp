@@ -21,6 +21,7 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/error_handler.hpp"
 #include "asio/null_completion_context.hpp"
 #include "asio/service_factory.hpp"
 
@@ -139,7 +140,26 @@ public:
   template <typename Option>
   void set_option(const Option& option)
   {
-    service_.set_option(impl_, option);
+    service_.set_option(impl_, option, default_error_handler());
+  }
+
+  /// Set an option on the socket.
+  /**
+   * This function is used to set an option on the socket.
+   *
+   * @param option The new option value to be set on the socket.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Option, typename Error_Handler>
+  void set_option(const Option& option, Error_Handler error_handler)
+  {
+    service_.set_option(impl_, option, error_handler);
   }
 
   /// Get an option from the socket.
@@ -153,7 +173,26 @@ public:
   template <typename Option>
   void get_option(Option& option)
   {
-    service_.get_option(impl_, option);
+    service_.get_option(impl_, option, default_error_handler());
+  }
+
+  /// Get an option from the socket.
+  /**
+   * This function is used to get the current value of an option on the socket.
+   *
+   * @param option The option value to be obtained from the socket.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Option, typename Error_Handler>
+  void get_option(Option& option, Error_Handler error_handler)
+  {
+    service_.get_option(impl_, option, error_handler);
   }
 
   /// Send the given data to the peer.
@@ -177,7 +216,37 @@ public:
    */
   size_t send(const void* data, size_t length)
   {
-    return service_.send(impl_, data, length);
+    return service_.send(impl_, data, length, default_error_handler());
+  }
+
+  /// Send the given data to the peer.
+  /**
+   * This function is used to send data to the stream socket's peer. The
+   * function call will block until the data has been sent successfully or an
+   * error occurs.
+   *
+   * @param data The data to be sent to remote peer.
+   *
+   * @param length The size of the data to be sent, in bytes.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   *
+   * @returns The number of bytes sent or 0 if the connection was closed
+   * cleanly.
+   *
+   * @note The send operation may not transmit all of the data to the peer.
+   * Consider using the asio::send_n() function if you need to ensure that all
+   * data is sent before the blocking operation completes.
+   */
+  template <typename Error_Handler>
+  size_t send(const void* data, size_t length, Error_Handler error_handler)
+  {
+    return service_.send(impl_, data, length, error_handler);
   }
 
   /// Start an asynchronous send.
@@ -267,7 +336,38 @@ public:
    */
   size_t recv(void* data, size_t max_length)
   {
-    return service_.recv(impl_, data, max_length);
+    return service_.recv(impl_, data, max_length, default_error_handler());
+  }
+
+  /// Receive some data from the peer.
+  /**
+   * This function is used to receive data from the stream socket's peer. The
+   * function call will block until data has received successfully or an error
+   * occurs.
+   *
+   * @param data The buffer into which the received data will be written.
+   *
+   * @param max_length The maximum size of the data to be received, in bytes.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   *
+   * @returns The number of bytes received or 0 if the connection was closed
+   * cleanly.
+   *
+   * @note The recv operation may not receive all of the requested number of
+   * bytes. Consider using the asio::recv_n() function if you need to ensure
+   * that the requested amount of data is received before the blocking
+   * operation completes.
+   */
+  template <typename Error_Handler>
+  size_t recv(void* data, size_t max_length, Error_Handler error_handler)
+  {
+    return service_.recv(impl_, data, max_length, error_handler);
   }
 
   /// Start an asynchronous receive.

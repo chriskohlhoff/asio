@@ -78,33 +78,49 @@ public:
     }
   }
 
-  // Set a socket option. Throws a socket_error exception on failure.
-  template <typename Option>
-  void set_option(impl_type& impl, const Option& option)
+  // Set a socket option.
+  template <typename Option, typename Error_Handler>
+  void set_option(impl_type& impl, const Option& option,
+      Error_Handler error_handler)
   {
     if (socket_ops::setsockopt(impl, option.level(), option.name(),
           option.data(), option.size()))
-        throw socket_error(socket_ops::get_error());
+    {
+      error_handler(socket_error(socket_ops::get_error()));
+      return;
+    }
+
+    error_handler(socket_error(socket_error::success));
   }
 
-  // Set a socket option. Throws a socket_error exception on failure.
-  template <typename Option>
-  void get_option(impl_type& impl, Option& option)
+  // Set a socket option.
+  template <typename Option, typename Error_Handler>
+  void get_option(impl_type& impl, Option& option, Error_Handler error_handler)
   {
     socket_len_type size = option.size();
     if (socket_ops::getsockopt(impl, option.level(), option.name(),
           option.data(), &size))
-        throw socket_error(socket_ops::get_error());
+    {
+      error_handler(socket_error(socket_ops::get_error()));
+      return;
+    }
+
+    error_handler(socket_error(socket_error::success));
   }
 
   // Send the given data to the peer. Returns the number of bytes sent or
-  // 0 if the connection was closed cleanly. Throws a socket_error exception
-  // on failure.
-  size_t send(impl_type& impl, const void* data, size_t length)
+  // 0 if the connection was closed cleanly.
+  template <typename Error_Handler>
+  size_t send(impl_type& impl, const void* data, size_t length,
+      Error_Handler error_handler)
   {
     int bytes_sent = socket_ops::send(impl, data, length, 0);
     if (bytes_sent < 0)
-      throw socket_error(socket_ops::get_error());
+    {
+      error_handler(socket_error(socket_ops::get_error()));
+      return 0;
+    }
+    error_handler(socket_error(socket_error::success));
     return bytes_sent;
   }
 
@@ -178,13 +194,18 @@ public:
   }
 
   // Receive some data from the peer. Returns the number of bytes received or
-  // 0 if the connection was closed cleanly. Throws a socket_error exception
-  // on failure.
-  size_t recv(impl_type& impl, void* data, size_t max_length)
+  // 0 if the connection was closed cleanly.
+  template <typename Error_Handler>
+  size_t recv(impl_type& impl, void* data, size_t max_length,
+      Error_Handler error_handler)
   {
     int bytes_recvd = socket_ops::recv(impl, data, max_length, 0);
     if (bytes_recvd < 0)
-      throw socket_error(socket_ops::get_error());
+    {
+      error_handler(socket_error(socket_ops::get_error()));
+      return 0;
+    }
+    error_handler(socket_error(socket_error::success));
     return bytes_recvd;
   }
 

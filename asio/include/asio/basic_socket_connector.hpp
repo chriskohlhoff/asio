@@ -21,6 +21,7 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/error_handler.hpp"
 #include "asio/null_completion_context.hpp"
 #include "asio/service_factory.hpp"
 
@@ -131,7 +132,34 @@ public:
   template <typename Stream, typename Address>
   void connect(Stream& peer_socket, const Address& peer_address)
   {
-    service_.connect(impl_, peer_socket.lowest_layer(), peer_address);
+    service_.connect(impl_, peer_socket.lowest_layer(), peer_address,
+        default_error_handler());
+  }
+
+  /// Connect a stream socket to the peer at the specified address.
+  /**
+   * This function is used to connect a stream socket to the specified remote
+   * address. The function call will block until the connection is successfully
+   * made or an error occurs.
+   *
+   * @param peer_socket The stream socket to be connected.
+   *
+   * @param peer_address The remote address of the peer to which the socket
+   * will be connected.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Stream, typename Address, typename Error_Handler>
+  void connect(Stream& peer_socket, const Address& peer_address,
+      Error_Handler error_handler)
+  {
+    service_.connect(impl_, peer_socket.lowest_layer(), peer_address,
+        error_handler);
   }
 
   /// Start an asynchronous connect.

@@ -90,9 +90,9 @@ public:
    * @param address An address on the local machine to which the dgram socket
    * will be bound.
    *
-   * @param error_handler The handler to be called when an error occurs or when
-   * the function completes successfully. Copies will be made of the handler as
-   * required. The equivalent function signature of the handler must be:
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
    * @code void error_handler(
    *   const asio::socket_error& error // Result of operation
    * ); @endcode
@@ -150,9 +150,9 @@ public:
    * @param address An address on the local machine to which the dgram socket
    * will be bound.
    *
-   * @param error_handler The handler to be called when an error occurs or when
-   * the function completes successfully. Copies will be made of the handler as
-   * required. The equivalent function signature of the handler must be:
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
    * @code void error_handler(
    *   const asio::socket_error& error // Result of operation
    * ); @endcode
@@ -207,9 +207,9 @@ public:
    *
    * @param option The new option value to be set on the socket.
    *
-   * @param error_handler The handler to be called when an error occurs or when
-   * the function completes successfully. Copies will be made of the handler as
-   * required. The equivalent function signature of the handler must be:
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
    * @code void error_handler(
    *   const asio::socket_error& error // Result of operation
    * ); @endcode
@@ -240,9 +240,9 @@ public:
    *
    * @param option The option value to be obtained from the socket.
    *
-   * @param error_handler The handler to be called when an error occurs or when
-   * the function completes successfully. Copies will be made of the handler as
-   * required. The equivalent function signature of the handler must be:
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
    * @code void error_handler(
    *   const asio::socket_error& error // Result of operation
    * ); @endcode
@@ -288,9 +288,9 @@ public:
    *
    * @param destination The remote address to which the data will be sent.
    *
-   * @param error_handler The handler to be called when an error occurs or when
-   * the function completes successfully. Copies will be made of the handler as
-   * required. The equivalent function signature of the handler must be:
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
    * @code void error_handler(
    *   const asio::socket_error& error // Result of operation
    * ); @endcode
@@ -413,9 +413,9 @@ public:
    * @param sender_address An address object that receives the address of the
    * remote sender of the datagram.
    *
-   * @param error_handler The handler to be called when an error occurs or when
-   * the function completes successfully. Copies will be made of the handler as
-   * required. The equivalent function signature of the handler must be:
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
    * @code void error_handler(
    *   const asio::socket_error& error // Result of operation
    * ); @endcode

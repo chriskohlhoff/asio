@@ -119,23 +119,29 @@ public:
     }
   }
 
-  // Connect the given socket to the peer at the specified address. Throws a
-  // socket_error exception on error.
-  template <typename Stream_Socket_Service, typename Address>
+  // Connect the given socket to the peer at the specified address.
+  template <typename Stream_Socket_Service, typename Address,
+      typename Error_Handler>
   void connect(impl_type& impl,
       basic_stream_socket<Stream_Socket_Service>& peer,
-      const Address& peer_address)
+      const Address& peer_address, Error_Handler error_handler)
   {
     // We cannot connect a socket that is already open.
     if (peer.impl() != invalid_socket)
-      throw socket_error(socket_error::already_connected);
+    {
+      error_handler(socket_error(socket_error::already_connected));
+      return;
+    }
 
     // Create a new socket for the connection. This will not be put into the
     // stream_socket object until the connection has beenestablished.
     socket_holder sock(socket_ops::socket(peer_address.family(), SOCK_STREAM,
           IPPROTO_TCP));
     if (sock.get() == invalid_socket)
-      throw socket_error(socket_ops::get_error());
+    {
+      error_handler(socket_error(socket_ops::get_error()));
+      return;
+    }
 
     // Perform the connect operation itself.
     impl->add_socket(sock.get());
@@ -143,7 +149,10 @@ public:
         peer_address.native_size());
     impl->remove_socket(sock.get());
     if (result == socket_error_retval)
-      throw socket_error(socket_ops::get_error());
+    {
+      error_handler(socket_error(socket_ops::get_error()));
+      return;
+    }
 
     // Connection was successful. The stream_socket object will now take
     // ownership of the newly connected native socket handle.

@@ -90,6 +90,14 @@ public:
     return stream_impl_.send(data, length);
   }
 
+  /// Send the given data to the peer. Returns the number of bytes sent or 0 if
+  /// the stream was closed cleanly.
+  template <typename Error_Handler>
+  size_t send(const void* data, size_t length, Error_Handler error_handler)
+  {
+    return stream_impl_.send(data, length, error_handler);
+  }
+
   /// Start an asynchronous send. The data being sent must be valid for the
   /// lifetime of the asynchronous operation.
   template <typename Handler>
@@ -115,6 +123,15 @@ public:
     return stream_impl_.fill();
   }
 
+  /// Fill the buffer with some data. Returns the number of bytes placed in the
+  /// buffer as a result of the operation, or 0 if the underlying connection
+  /// was closed.
+  template <typename Error_Handler>
+  size_t fill(Error_Handler error_handler)
+  {
+    return stream_impl_.fill(error_handler);
+  }
+
   /// Start an asynchronous fill.
   template <typename Handler>
   void async_fill(Handler handler)
@@ -134,6 +151,14 @@ public:
   size_t recv(void* data, size_t max_length)
   {
     return stream_impl_.recv(data, max_length);
+  }
+
+  /// Receive some data from the peer. Returns the number of bytes received or
+  /// 0 if the stream was closed cleanly.
+  template <typename Error_Handler>
+  size_t recv(void* data, size_t max_length, Error_Handler error_handler)
+  {
+    return stream_impl_.recv(data, max_length, error_handler);
   }
 
   /// Start an asynchronous receive. The buffer for the data being received

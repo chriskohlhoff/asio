@@ -94,6 +94,14 @@ public:
     return next_layer_.send(data, length);
   }
 
+  /// Send the given data to the peer. Returns the number of bytes sent or 0 if
+  /// the stream was closed cleanly.
+  template <typename Error_Handler>
+  size_t send(const void* data, size_t length, Error_Handler error_handler)
+  {
+    return next_layer_.send(data, length, error_handler);
+  }
+
   /// Start an asynchronous send. The data being sent must be valid for the
   /// lifetime of the asynchronous operation.
   template <typename Handler>
@@ -121,6 +129,22 @@ public:
     buffer_.resize(buffer_.capacity());
     buffer_.resize(previous_size + next_layer_.recv(
           buffer_.begin() + previous_size, buffer_.size() - previous_size));
+    resize_guard.commit();
+    return buffer_.size() - previous_size;
+  }
+
+  /// Fill the buffer with some data. Returns the number of bytes placed in the
+  /// buffer as a result of the operation, or 0 if the underlying connection
+  /// was closed.
+  template <typename Error_Handler>
+  size_t fill(Error_Handler error_handler)
+  {
+    detail::buffer_resize_guard<Buffer> resize_guard(buffer_);
+    size_t previous_size = buffer_.size();
+    buffer_.resize(buffer_.capacity());
+    buffer_.resize(previous_size + next_layer_.recv(
+          buffer_.begin() + previous_size, buffer_.size() - previous_size,
+          error_handler));
     resize_guard.commit();
     return buffer_.size() - previous_size;
   }
@@ -176,6 +200,16 @@ public:
   size_t recv(void* data, size_t max_length)
   {
     if (buffer_.empty() && !fill())
+      return 0;
+    return copy(data, max_length);
+  }
+
+  /// Receive some data from the peer. Returns the number of bytes received or
+  /// 0 if the stream was closed cleanly.
+  template <typename Error_Handler>
+  size_t recv(void* data, size_t max_length, Error_Handler error_handler)
+  {
+    if (buffer_.empty() && !fill(error_handler))
       return 0;
     return copy(data, max_length);
   }
