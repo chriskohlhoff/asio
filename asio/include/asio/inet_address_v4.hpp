@@ -19,7 +19,7 @@
 
 #include "asio/detail/push_options.hpp"
 #include <string>
-#include <string.h>
+#include <cstring>
 #include <boost/integer.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -211,6 +211,8 @@ public:
   /// Set the host name.
   void host_name(const std::string& host)
   {
+    using namespace std; // For memcpy.
+
 #if defined(_WIN32)
     hostent* ent_result = gethostbyname(host.c_str());
     good_ = (ent_result != 0);
