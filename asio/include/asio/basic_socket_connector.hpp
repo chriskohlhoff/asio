@@ -84,6 +84,8 @@ public:
    *
    * Since the constructor opens the connector by default, you should only need
    * to call this function if there has been a prior call to close().
+   *
+   * @throws socket_error Thrown on failure.
    */
   void open()
   {
@@ -125,7 +127,7 @@ public:
    * @param peer_address The remote address of the peer to which the socket
    * will be connected.
    *
-   * @throws socket_error exception on failure.
+   * @throws socket_error Thrown on failure.
    */
   template <typename Stream, typename Address>
   void connect(Stream& peer_socket, const Address& peer_address)
@@ -147,8 +149,10 @@ public:
    *
    * @param handler The completion handler to be called when the connection
    * operation completes. Copies will be made of the handler as required. The
-   * equivalent function signature of the handler must be <tt>void
-   * handler(const socket_error& error)</tt>.
+   * equivalent function signature of the handler must be:
+   * @code void handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
    */
   template <typename Stream, typename Address, typename Handler>
   void async_connect(Stream& peer_socket, const Address& peer_address,
@@ -172,8 +176,10 @@ public:
    *
    * @param handler The completion handler to be called when the connection
    * operation completes. Copies will be made of the handler as required. The
-   * equivalent function signature of the handler must be <tt>void
-   * handler(const socket_error& error)</tt>.
+   * equivalent function signature of the handler must be:
+   * @code void handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
    *
    * @param context The completion context which controls the number of
    * concurrent invocations of handlers that may be made. Ownership of the

@@ -122,7 +122,7 @@ public:
    *
    * @param handler The completion handler to be called. The demuxer will make
    * a copy of the handler object as required. The equivalent function
-   * signature of the handler must be <tt>void handler()</tt>.
+   * signature of the handler must be: @code void handler(); @endcode
    */
   template <typename Handler>
   void operation_completed(Handler handler)
@@ -143,7 +143,7 @@ public:
    *
    * @param handler The completion handler to be called. The demuxer will make
    * a copy of the handler object as required. The equivalent function
-   * signature of the handler must be <tt>void handler()</tt>.
+   * signature of the handler must be: @code void handler(); @endcode
    *
    * @param context The completion context which controls the number of
    * concurrent invocations of handlers that may be made. Ownership of the
@@ -168,7 +168,7 @@ public:
    *
    * @param handler The completion handler to be called. The demuxer will make
    * a copy of the handler object as required. The equivalent function
-   * signature of the handler must be <tt>void handler()</tt>.
+   * signature of the handler must be: @code void handler(); @endcode
    *
    * @param context The completion context which controls the number of
    * concurrent invocations of handlers that may be made. Ownership of the
@@ -201,7 +201,7 @@ public:
    *
    * @param handler The completion handler to be called. The demuxer will make
    * a copy of the handler object as required. The equivalent function
-   * signature of the handler must be <tt>void handler()</tt>.
+   * signature of the handler must be: @code void handler(); @endcode
    */
   template <typename Handler>
   void operation_immediate(Handler handler)
@@ -222,7 +222,7 @@ public:
    *
    * @param handler The completion handler to be called. The demuxer will make
    * a copy of the handler object as required. The equivalent function
-   * signature of the handler must be <tt>void handler()</tt>.
+   * signature of the handler must be: @code void handler(); @endcode
    *
    * @param context The completion context which controls the number of
    * concurrent invocations of handlers that may be made. Ownership of the
@@ -247,7 +247,7 @@ public:
    *
    * @param handler The completion handler to be called. The demuxer will make
    * a copy of the handler object as required. The equivalent function
-   * signature of the handler must be <tt>void handler()</tt>.
+   * signature of the handler must be: @code void handler(); @endcode
    *
    * @param context The completion context which controls the number of
    * concurrent invocations of handlers that may be made. Ownership of the
