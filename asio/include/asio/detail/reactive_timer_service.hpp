@@ -118,7 +118,7 @@ public:
   void wait(impl_type& impl)
   {
     time now = time::now();
-    if (now < impl->expiry)
+    while (now < impl->expiry)
     {
       time timeout = impl->expiry;
       timeout -= now;
@@ -126,6 +126,7 @@ public:
       tv.tv_sec = timeout.sec();
       tv.tv_usec = timeout.usec();
       socket_ops::select(0, 0, 0, 0, &tv);
+      now = time::now();
     }
   }
 
