@@ -21,9 +21,9 @@
 
 #include "asio/detail/push_options.hpp"
 #include <boost/noncopyable.hpp>
-#include "asio/detail/socket_types.hpp"
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/detail/socket_types.hpp"
 #include "asio/detail/scoped_lock.hpp"
 
 namespace asio {

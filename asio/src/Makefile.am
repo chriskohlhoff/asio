@@ -28,6 +28,7 @@ nobase_include_HEADERS = \
   asio/detail/pipe_select_interrupter.hpp \
 	asio/detail/pop_options.hpp \
 	asio/detail/pthread_mutex.hpp \
+	asio/detail/pthread_thread.hpp \
 	asio/detail/push_options.hpp \
 	asio/detail/reactive_dgram_socket_service.hpp \
 	asio/detail/reactive_socket_acceptor_service.hpp \
@@ -44,11 +45,13 @@ nobase_include_HEADERS = \
 	asio/detail/socket_select_interrupter.hpp \
 	asio/detail/socket_types.hpp \
 	asio/detail/task_demuxer_service.hpp \
+	asio/detail/thread.hpp \
 	asio/detail/timer_queue_service.hpp \
 	asio/detail/tss_bool.hpp \
 	asio/detail/win_iocp_demuxer_service.hpp \
 	asio/detail/win_iocp_dgram_socket_service.hpp \
 	asio/detail/win_mutex.hpp \
+	asio/detail/win_thread.hpp \
 	asio/detail/winsock_init.hpp \
 	asio/dgram_socket.hpp \
 	asio/inet_address_v4.hpp \

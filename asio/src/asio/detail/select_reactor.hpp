@@ -19,11 +19,12 @@
 
 #include "asio/detail/push_options.hpp"
 #include <boost/noncopyable.hpp>
-#include <boost/thread.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/basic_demuxer.hpp"
+#include "asio/detail/mutex.hpp"
 #include "asio/detail/task_demuxer_service.hpp"
+#include "asio/detail/thread.hpp"
 #include "asio/detail/reactor_op_queue.hpp"
 #include "asio/detail/select_interrupter.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -43,7 +44,7 @@ public:
       read_op_queue_(),
       write_op_queue_(),
       stop_thread_(false),
-      thread_(new boost::thread(
+      thread_(new asio::detail::thread(
             boost::bind(&select_reactor::run_thread, this)))
   {
   }
@@ -64,7 +65,7 @@ public:
   {
     if (thread_)
     {
-      boost::mutex::scoped_lock lock(mutex_);
+      asio::detail::mutex::scoped_lock lock(mutex_);
       stop_thread_ = true;
       lock.unlock();
       interrupter_.interrupt();
@@ -78,7 +79,7 @@ public:
   template <typename Handler>
   void start_read_op(socket_type descriptor, Handler handler)
   {
-    boost::mutex::scoped_lock lock(mutex_);
+    asio::detail::mutex::scoped_lock lock(mutex_);
     if (read_op_queue_.enqueue_operation(descriptor, handler))
       interrupter_.interrupt();
   }
@@ -97,7 +98,7 @@ public:
   template <typename Handler>
   void start_write_op(socket_type descriptor, Handler handler)
   {
-    boost::mutex::scoped_lock lock(mutex_);
+    asio::detail::mutex::scoped_lock lock(mutex_);
     if (write_op_queue_.enqueue_operation(descriptor, handler))
       interrupter_.interrupt();
   }
@@ -115,7 +116,7 @@ public:
   // against it.
   void close_descriptor(socket_type descriptor)
   {
-    boost::mutex::scoped_lock lock(mutex_);
+    asio::detail::mutex::scoped_lock lock(mutex_);
     read_op_queue_.close_descriptor(descriptor);
     write_op_queue_.close_descriptor(descriptor);
   }
@@ -126,7 +127,7 @@ private:
   // Reset the select loop before a new run.
   void reset()
   {
-    boost::mutex::scoped_lock lock(mutex_);
+    asio::detail::mutex::scoped_lock lock(mutex_);
     stop_thread_ = false;
     interrupter_.reset();
   }
@@ -134,7 +135,7 @@ private:
   // Run the select loop.
   void run()
   {
-    boost::mutex::scoped_lock lock(mutex_);
+    asio::detail::mutex::scoped_lock lock(mutex_);
 
     bool stop = false;
     while (!stop)
@@ -170,7 +171,7 @@ private:
   // Run the select loop in the thread.
   void run_thread()
   {
-    boost::mutex::scoped_lock lock(mutex_);
+    asio::detail::mutex::scoped_lock lock(mutex_);
     while (!stop_thread_)
     {
       lock.unlock();
@@ -223,7 +224,7 @@ private:
   };
 
   // Mutex to protect access to internal data.
-  boost::mutex mutex_;
+  asio::detail::mutex mutex_;
 
   // The interrupter is used to break a blocking select call.
   select_interrupter interrupter_;
@@ -238,7 +239,7 @@ private:
   bool stop_thread_;
 
   // The thread that is running the reactor loop.
-  boost::thread* thread_;
+  asio::detail::thread* thread_;
 };
 
 } // namespace detail

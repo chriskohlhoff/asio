@@ -21,13 +21,13 @@
 #include <set>
 #include <boost/bind.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/thread.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/basic_stream_socket.hpp"
 #include "asio/completion_context.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_error.hpp"
+#include "asio/detail/mutex.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_holder.hpp"
 
@@ -47,27 +47,27 @@ public:
     // Add a socket to the set.
     void add_socket(socket_type s)
     {
-      boost::mutex::scoped_lock lock(mutex_);
+      asio::detail::mutex::scoped_lock lock(mutex_);
       sockets_.insert(s);
     }
 
     // Remove a socket from the set.
     void remove_socket(socket_type s)
     {
-      boost::mutex::scoped_lock lock(mutex_);
+      asio::detail::mutex::scoped_lock lock(mutex_);
       sockets_.erase(s);
     }
 
     // Get a copy of all sockets in the set.
     void get_sockets(socket_set& sockets) const
     {
-      boost::mutex::scoped_lock lock(mutex_);
+      asio::detail::mutex::scoped_lock lock(mutex_);
       sockets = sockets_;
     }
 
   private:
     // Mutex to protect access to the internal data.
-    mutable boost::mutex mutex_;
+    mutable asio::detail::mutex mutex_;
 
     // The sockets currently contained in the set.
     socket_set sockets_;
