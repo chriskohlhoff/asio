@@ -19,7 +19,6 @@
 
 #include "asio/detail/push_options.hpp"
 #include <stdexcept>
-#include <boost/noncopyable.hpp>
 #if defined(_WIN32)
 #include "asio/detail/socket_types.hpp"
 #else
