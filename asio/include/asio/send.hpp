@@ -232,7 +232,7 @@ namespace detail
       if (e || bytes_sent == 0 || total_sent_ == length_)
       {
         stream_.demuxer().dispatch(
-            detail::bind_handler(handler_, e, total_sent_, bytes_sent));
+            detail::bind_handler(handler_, e, bytes_sent, total_sent_));
       }
       else
       {
@@ -272,8 +272,8 @@ namespace detail
  *   const Error& error,      // Result of operation (the actual type is
  *                            // dependent on the underlying stream's send
  *                            // operation)
- *   size_t total_bytes_sent, // Total number of bytes successfully sent
- *   size_t last_bytes_sent   // Number of bytes sent on last send operation
+ *   size_t last_bytes_sent,  // Number of bytes sent on last send operation
+ *   size_t total_bytes_sent  // Total number of bytes successfully sent
  * ); @endcode
  */
 template <typename Stream, typename Handler>

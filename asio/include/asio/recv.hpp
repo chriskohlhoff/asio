@@ -239,7 +239,7 @@ namespace detail
       if (e || bytes_recvd == 0 || total_recvd_ == length_)
       {
         stream_.demuxer().dispatch(detail::bind_handler(handler_, e,
-              total_recvd_, bytes_recvd));
+              bytes_recvd, total_recvd_));
       }
       else
       {
@@ -279,9 +279,9 @@ namespace detail
  *   const Error& error,       // Result of operation (the actual type is
  *                             // dependent on the underlying stream's recv
  *                             // operation)
- *   size_t total_bytes_recvd, // Total number of bytes successfully received
- *   size_t last_bytes_recvd   // Number of bytes received on last recv
+ *   size_t last_bytes_recvd,  // Number of bytes received on last recv
  *                             // operation
+ *   size_t total_bytes_recvd  // Total number of bytes successfully received
  * ); @endcode
  */
 template <typename Stream, typename Handler>
@@ -444,7 +444,7 @@ namespace detail
       if (e || bytes_recvd == 0)
       {
         stream_.demuxer().dispatch(
-            detail::bind_handler(handler_, e, total_recvd_, bytes_recvd));
+            detail::bind_handler(handler_, e, bytes_recvd, total_recvd_));
       }
       else
       {
@@ -461,7 +461,7 @@ namespace detail
           if (result.first)
           {
             stream_.demuxer().dispatch(
-                detail::bind_handler(handler_, 0, total_recvd_, bytes_read));
+                detail::bind_handler(handler_, 0, bytes_read, total_recvd_));
             return;
           }
         }
@@ -512,9 +512,9 @@ namespace detail
  *   const Error& error,       // Result of operation (the actual type is
  *                             // dependent on the underlying stream's recv
  *                             // operation)
- *   size_t total_bytes_recvd, // Total number of bytes successfully received
- *   size_t last_bytes_recvd   // Number of bytes received on last recv
+ *   size_t last_bytes_recvd,  // Number of bytes received on last recv
  *                             // operation
+ *   size_t total_bytes_recvd  // Total number of bytes successfully received
  * ); @endcode
  */
 template <typename Buffered_Stream, typename Decoder, typename Handler>
@@ -675,9 +675,9 @@ size_t recv_until(Buffered_Stream& s, std::string& data,
  *   const Error& error,       // Result of operation (the actual type is
  *                             // dependent on the underlying stream's recv
  *                             // operation)
- *   size_t total_bytes_recvd, // Total number of bytes successfully received
- *   size_t last_bytes_recvd   // Number of bytes received on last recv
+ *   size_t last_bytes_recvd,  // Number of bytes received on last recv
  *                             // operation
+ *   size_t total_bytes_recvd  // Total number of bytes successfully received
  * ); @endcode
  */
 template <typename Buffered_Stream, typename Handler>

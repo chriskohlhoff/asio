@@ -27,7 +27,7 @@ public:
     if (!error && bytes_recvd > 0)
     {
       asio::async_send_n(socket_, data_, bytes_recvd,
-          boost::bind(&session::handle_send, this, _1, _2, _3));
+          boost::bind(&session::handle_send, this, _1, _2));
     }
     else
     {
@@ -35,8 +35,7 @@ public:
     }
   }
 
-  void handle_send(const asio::socket_error& error, size_t total_bytes_sent,
-      size_t last_bytes_sent)
+  void handle_send(const asio::socket_error& error, size_t last_bytes_sent)
   {
     if (!error && last_bytes_sent > 0)
     {

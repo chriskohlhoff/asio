@@ -121,8 +121,8 @@ public:
     }
 
     template <typename Error>
-    void operator()(const Error& e, size_t total_bytes_sent,
-        size_t last_bytes_sent)
+    void operator()(const Error& e, size_t last_bytes_sent,
+        size_t total_bytes_sent)
     {
       buffer_.pop(total_bytes_sent);
       handler_(e, last_bytes_sent);

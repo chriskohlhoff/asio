@@ -80,9 +80,8 @@ public:
   {
     room_.join(shared_from_this());
     asio::async_recv_n(socket_, recv_msg_.data(),
-        chat_message::header_length,
-        boost::bind(&chat_session::handle_recv_header, shared_from_this(),
-          _1, _2, _3));
+        chat_message::header_length, boost::bind(
+          &chat_session::handle_recv_header, shared_from_this(), _1, _2));
   }
 
   void deliver(const chat_message& msg)
@@ -93,18 +92,17 @@ public:
     {
       asio::async_send_n(socket_, send_msgs_.front().data(),
           send_msgs_.front().length(), boost::bind(
-            &chat_session::handle_send, shared_from_this(), _1, _2, _3));
+            &chat_session::handle_send, shared_from_this(), _1, _2));
     }
   }
 
-  void handle_recv_header(const asio::socket_error& error, size_t length,
-      size_t last_length)
+  void handle_recv_header(const asio::socket_error& error, size_t last_length)
   {
     if (!error && last_length > 0 && recv_msg_.decode_header())
     {
       asio::async_recv_n(socket_, recv_msg_.body(), recv_msg_.body_length(), 
           boost::bind(&chat_session::handle_recv_body, shared_from_this(), _1,
-            _2, _3));
+            _2));
     }
     else
     {
@@ -112,8 +110,7 @@ public:
     }
   }
 
-  void handle_recv_body(const asio::socket_error& error, size_t length,
-      size_t last_length)
+  void handle_recv_body(const asio::socket_error& error, size_t last_length)
   {
     if (!error && last_length > 0)
     {
@@ -121,7 +118,7 @@ public:
       asio::async_recv_n(socket_, recv_msg_.data(),
           chat_message::header_length,
           boost::bind(&chat_session::handle_recv_header, shared_from_this(),
-            _1, _2, _3));
+            _1, _2));
     }
     else
     {
@@ -129,8 +126,7 @@ public:
     }
   }
 
-  void handle_send(const asio::socket_error& error, size_t length,
-      size_t last_length)
+  void handle_send(const asio::socket_error& error, size_t last_length)
   {
     if (!error && last_length > 0)
     {
@@ -139,7 +135,7 @@ public:
       {
         asio::async_send_n(socket_, send_msgs_.front().data(),
             send_msgs_.front().length(), boost::bind(
-              &chat_session::handle_send, shared_from_this(), _1, _2, _3));
+              &chat_session::handle_send, shared_from_this(), _1, _2));
       }
     }
     else

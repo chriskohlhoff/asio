@@ -37,17 +37,16 @@ private:
     {
       asio::async_recv_n(socket_, recv_msg_.data(),
           chat_message::header_length, boost::bind(
-            &chat_client::handle_recv_header, this,_1, _2, _3));
+            &chat_client::handle_recv_header, this, _1, _2));
     }
   }
 
-  void handle_recv_header(const asio::socket_error& error, size_t length,
-      size_t last_length)
+  void handle_recv_header(const asio::socket_error& error, size_t last_length)
   {
     if (!error && last_length > 0 && recv_msg_.decode_header())
     {
       asio::async_recv_n(socket_, recv_msg_.body(), recv_msg_.body_length(), 
-          boost::bind(&chat_client::handle_recv_body, this, _1, _2, _3));
+          boost::bind(&chat_client::handle_recv_body, this, _1, _2));
     }
     else
     {
@@ -55,8 +54,7 @@ private:
     }
   }
 
-  void handle_recv_body(const asio::socket_error& error, size_t length,
-      size_t last_length)
+  void handle_recv_body(const asio::socket_error& error, size_t last_length)
   {
     if (!error && last_length > 0)
     {
@@ -64,7 +62,7 @@ private:
       std::cout << "\n";
       asio::async_recv_n(socket_, recv_msg_.data(),
           chat_message::header_length, boost::bind(
-            &chat_client::handle_recv_header, this, _1, _2, _3));
+            &chat_client::handle_recv_header, this, _1, _2));
     }
     else
     {
@@ -80,12 +78,11 @@ private:
     {
       asio::async_send_n(socket_, send_msgs_.front().data(),
           send_msgs_.front().length(), boost::bind(
-            &chat_client::handle_send, this, _1, _2, _3));
+            &chat_client::handle_send, this, _1, _2));
     }
   }
 
-  void handle_send(const asio::socket_error& error, size_t length,
-      size_t last_length)
+  void handle_send(const asio::socket_error& error, size_t last_length)
   {
     if (!error && last_length > 0)
     {
@@ -94,7 +91,7 @@ private:
       {
         asio::async_send_n(socket_, send_msgs_.front().data(),
             send_msgs_.front().length(), boost::bind(
-              &chat_client::handle_send, this, _1, _2, _3));
+              &chat_client::handle_send, this, _1, _2));
       }
     }
     else

@@ -60,6 +60,7 @@ public:
       socket_(d),
       block_size_(block_size),
       recv_data_(new char[block_size]),
+      recv_data_length_(0),
       send_data_(new char[block_size]),
       unsent_count_(0),
       bytes_sent_(0),
@@ -103,11 +104,12 @@ public:
     {
       bytes_recvd_ += length;
 
+      recv_data_length_ = length;
       ++unsent_count_;
       if (unsent_count_ == 1)
       {
         std::swap(recv_data_, send_data_);
-        async_send_n(socket_, send_data_, length, dispatcher_.wrap(
+        async_send_n(socket_, send_data_, recv_data_length_, dispatcher_.wrap(
               boost::bind(&session::handle_send, this, _1, _2, _3)));
         socket_.async_recv(recv_data_, block_size_, dispatcher_.wrap(
               boost::bind(&session::handle_recv, this, _1, _2)));
@@ -115,17 +117,18 @@ public:
     }
   }
 
-  void handle_send(const socket_error& error, size_t length, size_t last_length)
+  void handle_send(const socket_error& error, size_t last_length,
+      size_t total_length)
   {
     if (!error && last_length > 0)
     {
-      bytes_sent_ += length;
+      bytes_sent_ += total_length;
 
       --unsent_count_;
       if (unsent_count_ == 1)
       {
         std::swap(recv_data_, send_data_);
-        async_send_n(socket_, send_data_, length, dispatcher_.wrap(
+        async_send_n(socket_, send_data_, recv_data_length_, dispatcher_.wrap(
               boost::bind(&session::handle_send, this, _1, _2, _3)));
         socket_.async_recv(recv_data_, block_size_, dispatcher_.wrap(
               boost::bind(&session::handle_recv, this, _1, _2)));
@@ -138,6 +141,7 @@ private:
   stream_socket socket_;
   size_t block_size_;
   char* recv_data_;
+  size_t recv_data_length_;
   char* send_data_;
   int unsent_count_;
   size_t bytes_sent_;
