@@ -17,6 +17,10 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <boost/noncopyable.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/detail/thread.hpp"
 
 namespace asio {
