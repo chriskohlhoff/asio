@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
   }
   catch (asio::socket_error& e)
   {
-    std::cerr << e.what() << ": " << e.message() << std::endl;
+    std::cerr << e << std::endl;
   }
 
   return 0;

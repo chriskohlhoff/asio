@@ -29,7 +29,7 @@ int main()
   }
   catch (asio::socket_error& e)
   {
-    std::cerr << e.what() << ": " << e.message() << std::endl;
+    std::cerr << e << std::endl;
   }
 
   return 0;
