@@ -1,6 +1,6 @@
 //
-// recursive_mutex.hpp
-// ~~~~~~~~~~~~~~~~~~~
+// win_mutex.hpp
+// ~~~~~~~~~~~~~
 //
 // Copyright (c) 2003 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -12,19 +12,16 @@
 // no claim as to its suitability for any purpose.
 //
 
-#ifndef ASIO_DETAIL_RECURSIVE_MUTEX_HPP
-#define ASIO_DETAIL_RECURSIVE_MUTEX_HPP
+#ifndef ASIO_DETAIL_WIN_MUTEX_HPP
+#define ASIO_DETAIL_WIN_MUTEX_HPP
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <stdexcept>
-#include <boost/noncopyable.hpp>
 #if defined(_WIN32)
+
+#include "asio/detail/push_options.hpp"
+#include <boost/noncopyable.hpp>
 #include "asio/detail/socket_types.hpp"
-#else
-#include <pthread.h>
-#endif // defined(_WIN32)
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/detail/scoped_lock.hpp"
@@ -32,58 +29,45 @@
 namespace asio {
 namespace detail {
 
-class recursive_mutex
+class win_mutex
   : private boost::noncopyable
 {
 public:
-  typedef asio::detail::scoped_lock<recursive_mutex> scoped_lock;
+  typedef asio::detail::scoped_lock<win_mutex> scoped_lock;
 
   // Constructor.
-  recursive_mutex()
+  win_mutex()
   {
-#if defined(_WIN32)
     ::InitializeCriticalSection(&crit_section_);
-#else // defined(_WIN32)
-#endif // defined(_WIN32)
   }
 
   // Destructor.
-  ~recursive_mutex()
+  ~mutex()
   {
-#if defined(_WIN32)
     ::DeleteCriticalSection(&crit_section_);
-#else // defined(_WIN32)
-#endif // defined(_WIN32)
   }
 
-  // Lock the recursive_mutex.
+  // Lock the mutex.
   void lock()
   {
-#if defined(_WIN32)
     ::EnterCriticalSection(&crit_section_);
-#else // defined(_WIN32)
-#endif // defined(_WIN32)
   }
 
-  // Unlock the recursive_mutex.
+  // Unlock the mutex.
   void unlock()
   {
-#if defined(_WIN32)
     ::LeaveCriticalSection(&crit_section_);
-#else // defined(_WIN32)
-#endif // defined(_WIN32)
   }
 
 private:
-#if defined(_WIN32)
-  CRITICAL_SECTION crit_section_;
-#else // defined(_WIN32)
-#endif // defined(_WIN32)
+  ::CRITICAL_SECTION crit_section_;
 };
 
 } // namespace detail
 } // namespace asio
 
+#endif // defined(_WIN32)
+
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_RECURSIVE_MUTEX_HPP
+#endif // ASIO_DETAIL_WIN_MUTEX_HPP

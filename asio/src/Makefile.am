@@ -24,14 +24,17 @@ nobase_include_HEADERS = \
 	asio/completion_context_locker.hpp \
 	asio/counting_completion_context.hpp \
 	asio/demuxer.hpp \
+  asio/detail/mutex.hpp \
   asio/detail/pipe_select_interrupter.hpp \
 	asio/detail/pop_options.hpp \
+	asio/detail/pthread_mutex.hpp \
 	asio/detail/push_options.hpp \
 	asio/detail/reactive_dgram_socket_service.hpp \
 	asio/detail/reactive_socket_acceptor_service.hpp \
 	asio/detail/reactive_socket_connector_service.hpp \
 	asio/detail/reactive_stream_socket_service.hpp \
 	asio/detail/reactor_op_queue.hpp \
+	asio/detail/scoped_lock.hpp \
 	asio/detail/select_interrupter.hpp \
 	asio/detail/select_reactor.hpp \
 	asio/detail/service_registry.hpp \
@@ -45,6 +48,7 @@ nobase_include_HEADERS = \
 	asio/detail/tss_bool.hpp \
 	asio/detail/win_iocp_demuxer_service.hpp \
 	asio/detail/win_iocp_dgram_socket_service.hpp \
+	asio/detail/win_mutex.hpp \
 	asio/detail/winsock_init.hpp \
 	asio/dgram_socket.hpp \
 	asio/inet_address_v4.hpp \

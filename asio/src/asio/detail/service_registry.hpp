@@ -23,7 +23,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/service_factory.hpp"
-#include "asio/detail/recursive_mutex.hpp"
+#include "asio/detail/mutex.hpp"
 
 namespace asio {
 namespace detail {
@@ -57,23 +57,31 @@ public:
   template <typename Service>
   Service& get_service(service_factory<Service> factory)
   {
-    asio::detail::recursive_mutex::scoped_lock lock(mutex_);
+    asio::detail::mutex::scoped_lock lock(mutex_);
 
     // First see if there is an existing service object for the given type.
     service_holder_base* service = first_service_;
     while (service)
     {
       if (service->is_same_type(typeid(Service)))
-        return *static_cast<Service*>(service->get_service());
+      {
+        service_holder<Service>* typed_service =
+          static_cast<service_holder<Service>*>(service);
+        return typed_service->get_service(factory, owner_);
+      }
       service = service->next_;
     }
 
     // We need to create a new service object.
-    service_holder_base* new_service =
-      new service_holder<Service>(factory.create(owner_));
+    service_holder<Service>* new_service = new service_holder<Service>;
     new_service->next_ = first_service_;
     first_service_ = new_service;
-    return *static_cast<Service*>(new_service->get_service());
+
+    // Release the lock to allow calls back into get_service from the new
+    // service's constructor.
+    lock.unlock();
+
+    return new_service->get_service(factory, owner_);
   }
 
 private:
@@ -96,9 +104,6 @@ private:
     // Determine whether this service is the given type.
     virtual bool is_same_type(const std::type_info&) = 0;
 
-    // Get a pointer to the contained service.
-    virtual void* get_service() = 0;
-
     // A pointer to the next service holder in the list.
     service_holder_base* next_;
   };
@@ -109,9 +114,10 @@ private:
     : public service_holder_base
   {
   public:
-    // Constructor, takes ownership of the supplied service object.
-    service_holder(Service* s) throw ()
-      : service_(s)
+    // Constructor.
+    service_holder()
+      : mutex_(),
+        service_(0)
     {
     }
 
@@ -128,18 +134,24 @@ private:
     }
 
     // Get a pointer to the contained service.
-    virtual void* get_service()
+    Service& get_service(service_factory<Service> factory, Owner& owner)
     {
-      return service_;
+      asio::detail::mutex::scoped_lock lock(mutex_);
+      if (!service_)
+        service_ = factory.create(owner);
+      return *service_;
     }
 
   private:
+    // Mutex to protect access to the contained service object.
+    asio::detail::mutex mutex_;
+
     // The contained service object.
     Service* service_;
   };
 
   // Mutex to protect access to internal data.
-  asio::detail::recursive_mutex mutex_;
+  asio::detail::mutex mutex_;
 
   // The owner of this service registry and the services it contains.
   Owner& owner_;
