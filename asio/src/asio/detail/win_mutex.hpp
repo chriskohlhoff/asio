@@ -42,7 +42,7 @@ public:
   }
 
   // Destructor.
-  ~mutex()
+  ~win_mutex()
   {
     ::DeleteCriticalSection(&crit_section_);
   }
