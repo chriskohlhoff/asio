@@ -88,15 +88,6 @@ public:
       interrupter_.interrupt();
   }
 
-  // Start a read operation from inside an op_call invocation. The do_operation
-  // function of the handler object will be invoked when the given descriptor
-  // is ready to be read.
-  template <typename Handler>
-  void restart_read_op(socket_type descriptor, Handler handler)
-  {
-    read_op_queue_.enqueue_operation(descriptor, handler);
-  }
-
   // Start a new write operation. The do_operation function of the select_op
   // object will be invoked when the given descriptor is ready for writing.
   template <typename Handler>
@@ -105,15 +96,6 @@ public:
     asio::detail::mutex::scoped_lock lock(mutex_);
     if (write_op_queue_.enqueue_operation(descriptor, handler))
       interrupter_.interrupt();
-  }
-
-  // Start a write operation from inside an op_call invocation. The
-  // do_operation function of the handler object will be invoked when the
-  // given descriptor is ready for writing.
-  template <typename Handler>
-  void restart_write_op(socket_type descriptor, Handler handler)
-  {
-    write_op_queue_.enqueue_operation(descriptor, handler);
   }
 
   // Class template to adapt a close function as a timer handler.
