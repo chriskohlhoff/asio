@@ -60,7 +60,7 @@ public:
    * equivalent function signature must be: @code void f(); @endcode
    */
   template <typename Function>
-  thread(Function f)
+  explicit thread(Function f)
     : impl_(f)
   {
   }
