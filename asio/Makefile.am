@@ -3,13 +3,13 @@ AUTOMAKE_OPTIONS = foreign
 SUBDIRS = include src
 
 MAINTAINERCLEANFILES = \
-	aclocal.m4 \
-	asio-*.tar.gz \
-	configure \
-	config.guess \
-	config.sub \
-	depcomp \
-	install-sh \
-	missing \
-	mkinstalldirs \
-	Makefile.in
+	$(srcdir)/aclocal.m4 \
+	$(srcdir)/configure \
+	$(srcdir)/config.guess \
+	$(srcdir)/config.sub \
+	$(srcdir)/depcomp \
+	$(srcdir)/install-sh \
+	$(srcdir)/missing \
+	$(srcdir)/mkinstalldirs \
+	$(srcdir)/Makefile.in \
+	asio-*.tar.gz

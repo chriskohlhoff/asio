@@ -102,4 +102,4 @@ EXTRA_DIST = \
 	Makefile.msc
 
 MAINTAINERCLEANFILES = \
-	Makefile.in
+	$(srcdir)/Makefile.in

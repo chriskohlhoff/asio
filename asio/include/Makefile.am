@@ -90,4 +90,4 @@ nobase_include_HEADERS = \
 	asio/wrapped_handler.hpp
 
 MAINTAINERCLEANFILES = \
-	Makefile.in
+	$(srcdir)/Makefile.in
