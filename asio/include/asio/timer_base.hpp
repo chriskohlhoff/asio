@@ -24,16 +24,22 @@ namespace asio {
 class timer_base
 {
 public:
-  // The point from where relative times are measured.
+  /// The point from where relative times are measured.
   enum from_type
   {
+    /// The specified time is relative to the current time.
     from_now,
+
+    /// The specified time is relative to the timer's existing expiry value.
     from_existing,
+
+    /// The specified time is a "C" time, i.e. it is measured from midnight,
+    /// January 1, 1970.
     from_epoch
   };
 
 protected:
-  // Prevent deletion through this type.
+  /// Protected destructor to prevent deletion through this type.
   ~timer_base()
   {
   }
