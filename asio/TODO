@@ -53,3 +53,8 @@ outstanding asynchronous operations. If the object needs to die early it can
 request that it be unregistered in which case it would receive the notification
 immediately. Perhaps the interface is similar to an asynchronous "condition
 variable"?
+
+Add a rw_locking_dispatcher
+---------------------------
+Add a new dispatcher implementation, similar to locking_dispatcher except that
+it provides functionality like a readers-writers lock.
