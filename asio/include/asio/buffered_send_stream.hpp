@@ -86,7 +86,7 @@ public:
   }
 
   /// Flush all data from the buffer to the next layer. Returns the number of
-  /// bytes wrriten to the next layer on the last send operation, or 0 if the
+  /// bytes written to the next layer on the last send operation, or 0 if the
   /// underlying connection was closed. Throws an exception on failure.
   size_t flush()
   {
@@ -98,7 +98,7 @@ public:
   }
 
   /// Flush all data from the buffer to the next layer. Returns the number of
-  /// bytes wrriten to the next layer on the last send operation, or 0 if the
+  /// bytes written to the next layer on the last send operation, or 0 if the
   /// underlying connection was closed.
   template <typename Error_Handler>
   size_t flush(Error_Handler error_handler)
