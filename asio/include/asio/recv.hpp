@@ -336,7 +336,8 @@ void async_recv_n(Stream& s, void* data, size_t length, Handler handler,
  * on the underlying stream's recv operation.
  */
 template <typename Buffered_Stream, typename Decoder>
-size_t recv(Buffered_Stream& s, Decoder decoder, size_t* total_bytes_recvd = 0)
+size_t recv_decode(Buffered_Stream& s, Decoder decoder,
+    size_t* total_bytes_recvd = 0)
 {
   size_t total_recvd = 0;
   for (;;)
@@ -367,15 +368,15 @@ size_t recv(Buffered_Stream& s, Decoder decoder, size_t* total_bytes_recvd = 0)
 namespace detail
 {
 #if defined(_MSC_VER)
-  static void recv_decoder_optimiser_bug_workaround() {}
+  static void recv_decode_optimiser_bug_workaround() {}
 #endif // _MSC_VER
 
   template <typename Buffered_Stream, typename Decoder, typename Handler,
       typename Completion_Context>
-  class recv_decoder_handler
+  class recv_decode_handler
   {
   public:
-    recv_decoder_handler(Buffered_Stream& stream, Decoder decoder,
+    recv_decode_handler(Buffered_Stream& stream, Decoder decoder,
         Handler handler, Completion_Context& context)
       : stream_(stream),
         decoder_(decoder),
@@ -394,7 +395,7 @@ namespace detail
         // Unless we put this function call here, the MSVC6 optimiser totally
         // removes this function (incorrectly of course) and async_recv calls
         // may not work correctly.
-        recv_decoder_optimiser_bug_workaround();
+        recv_decode_optimiser_bug_workaround();
 #endif // _MSC_VER
 
         stream_.demuxer().operation_immediate(detail::bind_handler(handler_, e,
@@ -473,7 +474,7 @@ namespace detail
  * ); @endcode
  */
 template <typename Buffered_Stream, typename Decoder, typename Handler>
-void async_recv(Buffered_Stream& s, Decoder decoder, Handler handler)
+void async_recv_decode(Buffered_Stream& s, Decoder decoder, Handler handler)
 {
   while (!s.recv_buffer().empty())
   {
@@ -491,7 +492,7 @@ void async_recv(Buffered_Stream& s, Decoder decoder, Handler handler)
     }
   }
 
-  s.async_fill(detail::recv_decoder_handler<Buffered_Stream, Decoder, Handler,
+  s.async_fill(detail::recv_decode_handler<Buffered_Stream, Decoder, Handler,
       null_completion_context>(s, decoder, handler,
         null_completion_context::instance()));
 }
@@ -542,7 +543,7 @@ void async_recv(Buffered_Stream& s, Decoder decoder, Handler handler)
  */
 template <typename Buffered_Stream, typename Decoder, typename Handler,
     typename Completion_Context>
-void async_recv(Buffered_Stream& s, Decoder decoder, Handler handler,
+void async_recv_decode(Buffered_Stream& s, Decoder decoder, Handler handler,
     Completion_Context& context)
 {
   while (!s.recv_buffer().empty())
@@ -561,7 +562,7 @@ void async_recv(Buffered_Stream& s, Decoder decoder, Handler handler,
     }
   }
 
-  s.async_fill(detail::recv_decoder_handler<Buffered_Stream, Decoder, Handler,
+  s.async_fill(detail::recv_decode_handler<Buffered_Stream, Decoder, Handler,
       Completion_Context>(s, decoder, handler, context));
 }
 
@@ -636,7 +637,7 @@ template <typename Buffered_Stream>
 size_t recv_until(Buffered_Stream& s, std::string& data,
     const std::string& delimiter, size_t* total_bytes_recvd = 0)
 {
-  return recv(s, detail::recv_until_decoder(data, delimiter),
+  return recv_decode(s, detail::recv_until_decoder(data, delimiter),
       total_bytes_recvd);
 }
 
@@ -672,7 +673,7 @@ template <typename Buffered_Stream, typename Handler>
 void async_recv_until(Buffered_Stream& s, std::string& data,
     const std::string& delimiter, Handler handler)
 {
-  async_recv(s, detail::recv_until_decoder(data, delimiter), handler);
+  async_recv_decode(s, detail::recv_until_decoder(data, delimiter), handler);
 }
 
 /// Start an asynchronous receive that will not complete until the specified
@@ -713,7 +714,8 @@ template <typename Buffered_Stream, typename Handler,
 void async_recv_until(Buffered_Stream& s, std::string& data,
     const std::string& delimiter, Handler handler, Completion_Context& context)
 {
-  async_recv(s, detail::recv_until_decoder(data, delimiter), handler, context);
+  async_recv_decode(s, detail::recv_until_decoder(data, delimiter), handler,
+      context);
 }
 
 } // namespace asio
