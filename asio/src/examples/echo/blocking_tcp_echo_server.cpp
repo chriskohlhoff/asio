@@ -36,7 +36,7 @@ void server(asio::demuxer& d, short port)
   {
     stream_socket_ptr sock(new asio::stream_socket(d));
     a.accept(*sock);
-    asio::detail::thread t(boost::bind(session, sock));
+    asio::thread t(boost::bind(session, sock));
   }
 }
 
