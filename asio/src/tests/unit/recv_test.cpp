@@ -95,7 +95,7 @@ public:
   void async_recv(void* data, size_t length, Handler handler)
   {
     size_t bytes_recvd = recv(data, length);
-    asio::socket_error error;
+    asio::error error;
     demuxer_.post(asio::detail::bind_handler(handler, error, bytes_recvd));
   }
 
@@ -168,7 +168,7 @@ void test_recv_with_error_handler()
   UNIT_TEST_CHECK(s.check(recv_buf, 10));
 }
 
-void async_recv_handler(const asio::socket_error& e, size_t bytes_recvd,
+void async_recv_handler(const asio::error& e, size_t bytes_recvd,
     size_t expected_bytes_recvd, bool* called)
 {
   *called = true;
@@ -332,7 +332,7 @@ void test_recv_n_with_error_handler()
   UNIT_TEST_CHECK(s.check(recv_buf, sizeof(recv_data)));
 }
 
-void async_recv_n_handler(const asio::socket_error& e, size_t last_bytes_recvd,
+void async_recv_n_handler(const asio::error& e, size_t last_bytes_recvd,
     size_t total_bytes_recvd, size_t expected_last_bytes_recvd,
     size_t expected_total_bytes_recvd, bool* called)
 {
@@ -703,7 +703,7 @@ void test_recv_at_least_n_with_error_handler()
   UNIT_TEST_CHECK(s.check(recv_buf, sizeof(recv_data)));
 }
 
-void async_recv_at_least_n_handler(const asio::socket_error& e,
+void async_recv_at_least_n_handler(const asio::error& e,
     size_t last_bytes_recvd, size_t total_bytes_recvd,
     size_t expected_last_bytes_recvd, size_t expected_total_bytes_recvd,
     bool* called)

@@ -147,7 +147,7 @@ public:
    *
    * @param option The new option value to be set on the socket.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   template <typename Option>
   void set_option(const Option& option)
@@ -165,7 +165,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Option, typename Error_Handler>
@@ -180,7 +180,7 @@ public:
    *
    * @param option The option value to be obtained from the socket.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   template <typename Option>
   void get_option(Option& option)
@@ -198,7 +198,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Option, typename Error_Handler>
@@ -214,7 +214,7 @@ public:
    * @param endpoint An endpoint object that receives the local endpoint of the
    * socket.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   template <typename Endpoint>
   void get_local_endpoint(Endpoint& endpoint)
@@ -233,7 +233,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Endpoint, typename Error_Handler>
@@ -249,7 +249,7 @@ public:
    * @param endpoint An endpoint object that receives the remote endpoint of
    * the socket.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   template <typename Endpoint>
   void get_remote_endpoint(Endpoint& endpoint)
@@ -268,7 +268,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Endpoint, typename Error_Handler>
@@ -284,7 +284,7 @@ public:
    *
    * @param what Determines what types of operation will no longer be allowed.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   void shutdown(shutdown_type what)
   {
@@ -302,7 +302,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Error_Handler>
@@ -324,7 +324,7 @@ public:
    * @returns The number of bytes sent or 0 if the connection was closed
    * cleanly.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    *
    * @note The send operation may not transmit all of the data to the peer.
    * Consider using the asio::send_n() function if you need to ensure that all
@@ -349,7 +349,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    *
    * @returns The number of bytes sent or 0 if the connection was closed
@@ -380,8 +380,8 @@ public:
    * Copies will be made of the handler as required. The equivalent function
    * signature of the handler must be:
    * @code void handler(
-   *   const asio::socket_error& error, // Result of operation
-   *   size_t bytes_sent                // Number of bytes sent
+   *   const asio::error& error, // Result of operation
+   *   size_t bytes_sent         // Number of bytes sent
    * ); @endcode
    *
    * @note The send operation may not transmit all of the data to the peer.
@@ -407,7 +407,7 @@ public:
    * @returns The number of bytes received or 0 if the connection was closed
    * cleanly.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    *
    * @note The recv operation may not receive all of the requested number of
    * bytes. Consider using the asio::recv_n() function if you need to ensure
@@ -433,7 +433,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    *
    * @returns The number of bytes received or 0 if the connection was closed
@@ -465,8 +465,8 @@ public:
    * completes. Copies will be made of the handler as required. The equivalent
    * function signature of the handler must be:
    * @code void handler(
-   *   const asio::socket_error& error, // Result of operation
-   *   size_t bytes_recvd               // Number of bytes received
+   *   const asio::error& error, // Result of operation
+   *   size_t bytes_recvd        // Number of bytes received
    * ); @endcode
    *
    * @note The recv operation may not receive all of the requested number of

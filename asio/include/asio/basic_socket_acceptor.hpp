@@ -83,7 +83,7 @@ public:
    * @param listen_backlog The maximum length of the queue of pending
    * connections. A value of 0 means use the default queue length.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   template <typename Endpoint>
   basic_socket_acceptor(demuxer_type& d, const Endpoint& endpoint,
@@ -139,7 +139,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Protocol, typename Error_Handler>
@@ -156,7 +156,7 @@ public:
    * @param endpoint An endpoint on the local machine to which the socket
    * acceptor will be bound.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   template <typename Endpoint>
   void bind(const Endpoint& endpoint)
@@ -176,7 +176,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Endpoint, typename Error_Handler>
@@ -212,7 +212,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Error_Handler>
@@ -251,7 +251,7 @@ public:
    *
    * @param option The new option value to be set on the acceptor.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   template <typename Option>
   void set_option(const Option& option)
@@ -269,7 +269,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Option, typename Error_Handler>
@@ -285,7 +285,7 @@ public:
    *
    * @param option The option value to be obtained from the acceptor.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   template <typename Option>
   void get_option(Option& option)
@@ -304,7 +304,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Option, typename Error_Handler>
@@ -321,7 +321,7 @@ public:
    * @param endpoint An endpoint object that receives the local endpoint of the
    * acceptor.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   template <typename Endpoint>
   void get_local_endpoint(Endpoint& endpoint)
@@ -341,7 +341,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Endpoint, typename Error_Handler>
@@ -359,7 +359,7 @@ public:
    * @param peer_socket The stream socket into which the new connection will be
    * accepted.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   template <typename Stream>
   void accept(Stream& peer_socket)
@@ -381,7 +381,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Stream, typename Error_Handler>
@@ -403,7 +403,7 @@ public:
    * completes. Copies will be made of the handler as required. The equivalent
    * function signature of the handler must be:
    * @code void handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Stream, typename Handler>
@@ -425,7 +425,7 @@ public:
    * @param peer_endpoint An endpoint object which will receive the endpoint of
    * the remote peer.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   template <typename Stream, typename Endpoint>
   void accept_endpoint(Stream& peer_socket, Endpoint& peer_endpoint)
@@ -451,7 +451,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Stream, typename Endpoint, typename Error_Handler>
@@ -481,7 +481,7 @@ public:
    * completes. Copies will be made of the handler as required. The equivalent
    * function signature of the handler must be:
    * @code void handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Stream, typename Endpoint, typename Handler>

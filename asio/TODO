@@ -55,5 +55,6 @@ Add asynchronous functions to the asio::ipv4::basic_host_resolver template.
 
 Error message internationalisation
 ----------------------------------
-Determine what to do with the asio::socket_error messages that are not provided
-by the operating system, with respect to internationalisation.
+Determine what to do with the asio::error messages that are not provided by the
+operating system, with respect to internationalisation. This might be done by
+checking the locale of the output stream to which the error will be written.

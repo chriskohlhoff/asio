@@ -20,12 +20,12 @@
 namespace asio {
 
 /// This class is used to indicate a placeholder for the actual error value.
-class error_t {};
+class error_placeholder_t {};
 
 namespace {
 
 /// This variable is used as a placeholder for the error value.
-error_t error;
+error_placeholder_t the_error;
 
 } // namespace
 
@@ -86,14 +86,14 @@ private:
 
 /// Compare the error for equality with a given value.
 template <typename Value> inline
-expression<value_eq_error<Value> > operator==(Value value, error_t)
+expression<value_eq_error<Value> > operator==(Value value, error_placeholder_t)
 {
   return make_expression(value_eq_error<Value>(value));
 }
 
 /// Compare the error for equality with a given value.
 template <typename Value> inline
-expression<value_eq_error<Value> > operator==(error_t, Value value)
+expression<value_eq_error<Value> > operator==(error_placeholder_t, Value value)
 {
   return make_expression(value_eq_error<Value>(value));
 }
@@ -123,14 +123,16 @@ private:
 
 /// Compare the error for inequality with a given value.
 template <typename Value> inline
-expression<value_neq_error<Value> > operator!=(Value value, error_t)
+expression<value_neq_error<Value> > operator!=(Value value,
+    error_placeholder_t)
 {
   return make_expression(value_neq_error<Value>(value));
 }
 
 /// Compare the error for inequality with a given value.
 template <typename Value> inline
-expression<value_neq_error<Value> > operator!=(error_t, Value value)
+expression<value_neq_error<Value> > operator!=(error_placeholder_t,
+    Value value)
 {
   return make_expression(value_neq_error<Value>(value));
 }

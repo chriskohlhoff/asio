@@ -15,7 +15,7 @@ public:
           asio::arg::bytes_recvd));
   }
 
-  void handle_recvfrom(const asio::socket_error& error, size_t bytes_recvd)
+  void handle_recvfrom(const asio::error& error, size_t bytes_recvd)
   {
     if (!error && bytes_recvd > 0)
     {
@@ -31,7 +31,7 @@ public:
     }
   }
 
-  void handle_sendto(const asio::socket_error& error, size_t bytes_sent)
+  void handle_sendto(const asio::error& error, size_t bytes_sent)
   {
     socket_.async_recvfrom(data_, max_length, sender_endpoint_,
         boost::bind(&server::handle_recvfrom, this, asio::arg::error,
@@ -63,9 +63,9 @@ int main(int argc, char* argv[])
 
     d.run();
   }
-  catch (asio::socket_error& e)
+  catch (asio::error& e)
   {
-    std::cerr << "Socket error: " << e.message() << "\n";
+    std::cerr << e << "\n";
   }
   catch (std::exception& e)
   {

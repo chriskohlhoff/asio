@@ -20,11 +20,11 @@ public:
     timer_.async_wait(boost::bind(&dgram_socket::close, &socket_));
   }
 
-  void handle_recvfrom(const socket_error& error, size_t length)
+  void handle_recvfrom(const error& err, size_t length)
   {
-    if (error)
+    if (err)
     {
-      std::cout << "Receive error: " << error.message() << "\n";
+      std::cout << "Receive error: " << err << "\n";
     }
     else
     {

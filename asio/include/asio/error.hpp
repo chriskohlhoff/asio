@@ -1,6 +1,6 @@
 //
-// socket_error.hpp
-// ~~~~~~~~~~~~~~~~
+// error.hpp
+// ~~~~~~~~~
 //
 // Copyright (c) 2003, 2004 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -12,16 +12,14 @@
 // no claim as to its suitability for any purpose.
 //
 
-#ifndef ASIO_SOCKET_ERROR_HPP
-#define ASIO_SOCKET_ERROR_HPP
+#ifndef ASIO_ERROR_HPP
+#define ASIO_ERROR_HPP
 
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
 #include <cerrno>
 #include <exception>
-#include <string>
-#include <iostream>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/detail/socket_types.hpp"
@@ -36,8 +34,8 @@ namespace asio {
 # define ASIO_NETDB_ERROR(e) 16384 + e
 #endif
 
-/// The socket_error class is used to encapsulate socket error codes.
-class socket_error
+/// The error class is used to encapsulate system error codes.
+class error
   : public std::exception
 {
 public:
@@ -156,80 +154,32 @@ public:
   };
 
   /// Default constructor.
-  socket_error()
+  error()
     : code_(success)
   {
   }
 
   /// Construct with a specific error code.
-  socket_error(int code)
+  error(int code)
     : code_(code)
   {
   }
 
   // Destructor.
-  virtual ~socket_error() throw ()
+  virtual ~error() throw ()
   {
   }
 
   // Get the string for the type of exception.
   virtual const char* what() const throw ()
   {
-    return "Socket error";
+    return "asio error";
   }
 
   /// Get the code associated with the error.
   int code() const
   {
     return code_;
-  }
-
-  /// Get the message associated with the error.
-  std::string message() const
-  {
-#if defined(_WIN32)
-    if (code_ == ENOMEM || code_ == EPERM || code_ == EAGAIN)
-    {
-      return std::string(strerror(code_));
-    }
-    else
-    {
-      void* msg_buf = 0;
-      ::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER
-          | FORMAT_MESSAGE_FROM_SYSTEM
-          | FORMAT_MESSAGE_IGNORE_INSERTS, 0, code_,
-          MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&msg_buf, 0, 0);
-      std::string msg((LPCTSTR)msg_buf);
-      ::LocalFree(msg_buf);
-      if (msg.size() && msg[msg.size() - 1] == '\n')
-        msg.resize(msg.size() - 1);
-      if (msg.size() && msg[msg.size() - 1] == '\r')
-        msg.resize(msg.size() - 1);
-      return msg;
-    }
-#else // _WIN32
-    switch (code_)
-    {
-    case host_not_found:
-      return "Host not found (authoritative).";
-    case host_not_found_try_again:
-      return "Host not found (non-authoritative), try again later.";
-    case no_recovery:
-      return "A non-recoverable error occurred during database lookup.";
-    case no_host_data:
-      return "The name is valid, but it does not have associated data.";
-    default:
-      break;
-    }
-#if defined(__sun)
-    return std::string(strerror(code_));
-#else // __sun
-    if (code_ == operation_aborted)
-      return "Operation cancelled.";
-    char buf[256] = "";
-    return std::string(strerror_r(code_, buf, sizeof(buf)));
-#endif // __sun
-#endif // _WIN32
   }
 
   struct unspecified_bool_type_t;
@@ -251,22 +201,15 @@ public:
   }
 
   /// Equality operator to compare two error objects.
-  friend bool operator==(const socket_error& e1, const socket_error& e2)
+  friend bool operator==(const error& e1, const error& e2)
   {
     return e1.code_ == e2.code_;
   }
 
   /// Inequality operator to compare two error objects.
-  friend bool operator!=(const socket_error& e1, const socket_error& e2)
+  friend bool operator!=(const error& e1, const error& e2)
   {
     return e1.code_ != e2.code_;
-  }
-
-  /// Write an error message to an output stream.
-  friend std::ostream& operator<<(std::ostream& os, const socket_error& e)
-  {
-    os << e.what() << ": " << e.message();
-    return os;
   }
 
 private:
@@ -274,10 +217,82 @@ private:
   int code_;
 };
 
+/// Output the string associated with an error.
+/**
+ * Used to output a human-readable string that is associated with an error.
+ *
+ * @param os The output stream to which the string will be written.
+ *
+ * @param e The error to be written.
+ *
+ * @return The output stream.
+ *
+ * @relates asio::error
+ */
+template <typename Ostream>
+Ostream& operator<<(Ostream& os, const error& e)
+{
+#if defined(_WIN32)
+  if (e.code() == ENOMEM || e.code() == EPERM || e.code() == EAGAIN)
+  {
+    os << strerror(e.code());
+  }
+  else
+  {
+    LPTSTR msg = 0;
+    DWORD length = ::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER
+        | FORMAT_MESSAGE_FROM_SYSTEM
+        | FORMAT_MESSAGE_IGNORE_INSERTS, 0, e.code(),
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&msg, 0, 0);
+    if (length && msg[length - 1] == '\n')
+      msg[--length] = '\0';
+    if (length && msg[length - 1] == '\r')
+      msg[--length] = '\0';
+    if (length)
+      os << msg;
+    else
+      os << e.what() << ' ' << e.code();
+    ::LocalFree(msg);
+  }
+#else // _WIN32
+  switch (e.code())
+  {
+  case error::host_not_found:
+    os << "Host not found (authoritative).";
+    break;
+  case error::host_not_found_try_again:
+    os << "Host not found (non-authoritative), try again later.";
+    break;
+  case error::no_recovery:
+    os << "A non-recoverable error occurred during database lookup.";
+    break;
+  case error::no_host_data:
+    os << "The name is valid, but it does not have associated data.";
+    break;
+#if !defined(__sun)
+  case error::operation_aborted:
+    os << "Operation aborted.";
+    break;
+#endif // !__sun
+  default:
+#if defined(__sun)
+    os << strerror(e.code());
+#else // __sun
+    {
+      char buf[256] = "";
+      os << strerror_r(e.code(), buf, sizeof(buf));
+    }
+#endif // __sun
+    break;
+  }
+#endif // _WIN32
+  return os;
+}
+
 } // namespace asio
 
 #undef ASIO_SOCKET_ERROR
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_SOCKET_ERROR_HPP
+#endif // ASIO_ERROR_HPP

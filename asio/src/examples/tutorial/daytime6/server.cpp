@@ -3,7 +3,7 @@
 #include "boost/bind.hpp"
 #include "asio.hpp"
 
-void handle_sendto(char* send_buf, const asio::socket_error& /*error*/,
+void handle_sendto(char* send_buf, const asio::error& /*error*/,
     size_t /*bytes_sent*/)
 {
   using namespace std; // For free.
@@ -12,9 +12,9 @@ void handle_sendto(char* send_buf, const asio::socket_error& /*error*/,
 
 void handle_recvfrom(asio::dgram_socket* socket, char* recv_buf,
     size_t recv_length, asio::ipv4::udp::endpoint* remote_endpoint,
-    const asio::socket_error& error, size_t /*bytes_recvd*/)
+    const asio::error& error, size_t /*bytes_recvd*/)
 {
-  if (!error || error == asio::socket_error::message_size)
+  if (!error || error == asio::error::message_size)
   {
     using namespace std; // For time_t, time, ctime, strdup and strlen.
     time_t now = time(0);
@@ -49,7 +49,7 @@ int main()
 
     demuxer.run();
   }
-  catch (asio::socket_error& e)
+  catch (asio::error& e)
   {
     std::cerr << e << std::endl;
   }

@@ -96,7 +96,7 @@ public:
   void async_send(const void* data, size_t length, Handler handler)
   {
     size_t bytes_sent = send(data, length);
-    asio::socket_error error;
+    asio::error error;
     demuxer_.post(asio::detail::bind_handler(handler, error, bytes_sent));
   }
 
@@ -161,7 +161,7 @@ void test_send_with_error_handler()
   UNIT_TEST_CHECK(s.check(send_data, 10));
 }
 
-void async_send_handler(const asio::socket_error& e, size_t bytes_sent,
+void async_send_handler(const asio::error& e, size_t bytes_sent,
     size_t expected_bytes_sent, bool* called)
 {
   *called = true;
@@ -307,7 +307,7 @@ void test_send_n_with_error_handler()
   UNIT_TEST_CHECK(s.check(send_data, sizeof(send_data)));
 }
 
-void async_send_n_handler(const asio::socket_error& e, size_t last_bytes_sent,
+void async_send_n_handler(const asio::error& e, size_t last_bytes_sent,
     size_t total_bytes_sent, size_t expected_last_bytes_sent,
     size_t expected_total_bytes_sent, bool* called)
 {
@@ -640,7 +640,7 @@ void test_send_at_least_n_with_error_handler()
   UNIT_TEST_CHECK(s.check(send_data, sizeof(send_data)));
 }
 
-void async_send_at_least_n_handler(const asio::socket_error& e,
+void async_send_at_least_n_handler(const asio::error& e,
     size_t last_bytes_sent, size_t total_bytes_sent,
     size_t expected_last_bytes_sent, size_t expected_total_bytes_sent,
     bool* called)

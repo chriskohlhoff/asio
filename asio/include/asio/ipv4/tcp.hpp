@@ -17,6 +17,7 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/error.hpp"
 #include "asio/socket_option.hpp"
 #include "asio/ipv4/address.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -157,7 +158,7 @@ public:
   void native_size(native_size_type size)
   {
     if (size != sizeof(addr_))
-      throw socket_error(socket_error::invalid_argument);
+      throw asio::error(asio::error::invalid_argument);
   }
 
   /// Get the port associated with the endpoint. The port number is always in

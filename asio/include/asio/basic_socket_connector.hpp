@@ -114,7 +114,7 @@ public:
    * Since the constructor opens the connector by default, you should only need
    * to call this function if there has been a prior call to close().
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   void open()
   {
@@ -132,7 +132,7 @@ public:
    * @param protocol The protocol to be used for all new connections
    * established using the connector.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   template <typename Protocol>
   void open(const Protocol& protocol)
@@ -175,7 +175,7 @@ public:
    * @param peer_endpoint The remote endpoint to which the socket will be
    * connected.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   template <typename Stream, typename Endpoint>
   void connect(Stream& peer_socket, const Endpoint& peer_endpoint)
@@ -199,7 +199,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Stream, typename Endpoint, typename Error_Handler>
@@ -226,7 +226,7 @@ public:
    * completes. Copies will be made of the handler as required. The equivalent
    * function signature of the handler must be:
    * @code void handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Stream, typename Endpoint, typename Handler>

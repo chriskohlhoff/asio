@@ -56,7 +56,7 @@ public:
   template <typename Handler>
   void async_send(const void* data, size_t length, Handler handler)
   {
-    asio::socket_error error;
+    asio::error error;
     demuxer_.post(asio::detail::bind_handler(handler, error, 0));
   }
 
@@ -74,7 +74,7 @@ public:
   template <typename Handler>
   void async_recv(void* data, size_t length, Handler handler)
   {
-    asio::socket_error error;
+    asio::error error;
     demuxer_.post(asio::detail::bind_handler(handler, error, 0));
   }
 

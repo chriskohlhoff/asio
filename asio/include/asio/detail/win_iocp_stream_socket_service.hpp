@@ -20,8 +20,8 @@
 #if defined(_WIN32) // This service is only supported on Win32
 
 #include "asio/basic_demuxer.hpp"
+#include "asio/error.hpp"
 #include "asio/service_factory.hpp"
-#include "asio/socket_error.hpp"
 #include "asio/stream_socket_base.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/socket_ops.hpp"
@@ -88,7 +88,7 @@ public:
   {
     if (socket_ops::setsockopt(impl, option.level(), option.name(),
           option.data(), option.size()))
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
   }
 
   // Set a socket option.
@@ -98,7 +98,7 @@ public:
     socket_len_type size = option.size();
     if (socket_ops::getsockopt(impl, option.level(), option.name(),
           option.data(), &size))
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
   }
 
   // Get the local endpoint.
@@ -108,7 +108,7 @@ public:
   {
     socket_addr_len_type addr_len = endpoint.native_size();
     if (socket_ops::getsockname(impl, endpoint.native_data(), &addr_len))
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
     endpoint.native_size(addr_len);
   }
 
@@ -119,7 +119,7 @@ public:
   {
     socket_addr_len_type addr_len = endpoint.native_size();
     if (socket_ops::getpeername(impl, endpoint.native_data(), &addr_len))
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
     endpoint.native_size(addr_len);
   }
 
@@ -143,7 +143,7 @@ public:
       break;
     }
     if (socket_ops::shutdown(impl, shutdown_flag) != 0)
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
   }
 
   // Send the given data to the peer. Returns the number of bytes sent or
@@ -155,7 +155,7 @@ public:
     int bytes_sent = socket_ops::send(impl, data, length, 0);
     if (bytes_sent < 0)
     {
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
       return 0;
     }
     return bytes_sent;
@@ -178,7 +178,7 @@ public:
         DWORD last_error, size_t bytes_transferred)
     {
       send_operation<Handler>* h = static_cast<send_operation<Handler>*>(op);
-      socket_error error(last_error);
+      asio::error error(last_error);
       try
       {
         h->handler_(error, bytes_transferred);
@@ -214,7 +214,7 @@ public:
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
       delete send_op;
-      socket_error error(last_error);
+      asio::error error(last_error);
       demuxer_service_.post(bind_handler(handler, error, bytes_transferred));
       demuxer_service_.work_finished();
     }
@@ -229,7 +229,7 @@ public:
     int bytes_recvd = socket_ops::recv(impl, data, max_length, 0);
     if (bytes_recvd < 0)
     {
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
       return 0;
     }
     return bytes_recvd;
@@ -252,7 +252,7 @@ public:
         DWORD last_error, size_t bytes_transferred)
     {
       recv_operation<Handler>* h = static_cast<recv_operation<Handler>*>(op);
-      socket_error error(last_error);
+      asio::error error(last_error);
       try
       {
         h->handler_(error, bytes_transferred);
@@ -290,7 +290,7 @@ public:
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
       delete recv_op;
-      socket_error error(last_error);
+      asio::error error(last_error);
       demuxer_service_.post(bind_handler(handler, error, bytes_transferred));
       demuxer_service_.work_finished();
     }

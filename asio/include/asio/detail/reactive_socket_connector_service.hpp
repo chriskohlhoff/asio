@@ -23,8 +23,8 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/basic_stream_socket.hpp"
+#include "asio/error.hpp"
 #include "asio/service_factory.hpp"
-#include "asio/socket_error.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/socket_ops.hpp"
@@ -192,7 +192,7 @@ public:
     // We cannot connect a socket that is already open.
     if (peer.impl() != invalid_socket)
     {
-      error_handler(socket_error(socket_error::already_connected));
+      error_handler(asio::error(asio::error::already_connected));
       return;
     }
 
@@ -207,7 +207,7 @@ public:
     // We can only connect stream sockets.
     if (type != SOCK_STREAM)
     {
-      error_handler(socket_error(socket_error::invalid_argument));
+      error_handler(asio::error(asio::error::invalid_argument));
       return;
     }
 
@@ -216,7 +216,7 @@ public:
     socket_holder sock(socket_ops::socket(family, type, proto));
     if (sock.get() == invalid_socket)
     {
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
       return;
     }
 
@@ -227,7 +227,7 @@ public:
     impl->remove_socket(sock.get());
     if (result == socket_error_retval)
     {
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
       return;
     }
 
@@ -262,7 +262,7 @@ public:
       if (socket_ops::getsockopt(new_socket_, SOL_SOCKET, SO_ERROR,
             &connect_error, &connect_error_len) == socket_error_retval)
       {
-        socket_error error(socket_ops::get_error());
+        asio::error error(socket_ops::get_error());
         demuxer_.post(bind_handler(handler_, error));
         demuxer_.work_finished();
         return;
@@ -271,7 +271,7 @@ public:
       // If connection failed then post the handler with the error code.
       if (connect_error)
       {
-        socket_error error(connect_error);
+        asio::error error(connect_error);
         demuxer_.post(bind_handler(handler_, error));
         demuxer_.work_finished();
         return;
@@ -281,7 +281,7 @@ public:
       ioctl_arg_type non_blocking = 0;
       if (socket_ops::ioctl(new_socket_, FIONBIO, &non_blocking))
       {
-        socket_error error(socket_ops::get_error());
+        asio::error error(socket_ops::get_error());
         demuxer_.post(bind_handler(handler_, error));
         demuxer_.work_finished();
         return;
@@ -290,7 +290,7 @@ public:
       // Post the result of the successful connection operation.
       peer_.set_impl(new_socket_);
       new_socket_holder.release();
-      socket_error error(socket_error::success);
+      asio::error error(asio::error::success);
       demuxer_.post(bind_handler(handler_, error));
       demuxer_.work_finished();
     }
@@ -299,7 +299,7 @@ public:
     {
       // The socket is closed when the reactor_.close_descriptor is called,
       // so no need to close it here.
-      socket_error error(socket_error::operation_aborted);
+      asio::error error(asio::error::operation_aborted);
       demuxer_.post(bind_handler(handler_, error));
       demuxer_.work_finished();
     }
@@ -322,14 +322,14 @@ public:
   {
     if (impl == null())
     {
-      socket_error error(socket_error::bad_descriptor);
+      asio::error error(asio::error::bad_descriptor);
       demuxer_.post(bind_handler(handler, error));
       return;
     }
 
     if (peer.impl() != invalid_socket)
     {
-      socket_error error(socket_error::already_connected);
+      asio::error error(asio::error::already_connected);
       demuxer_.post(bind_handler(handler, error));
       return;
     }
@@ -345,7 +345,7 @@ public:
     // We can only connect stream sockets.
     if (type != SOCK_STREAM)
     {
-      socket_error error(socket_error::invalid_argument);
+      asio::error error(asio::error::invalid_argument);
       demuxer_.post(bind_handler(handler, error));
       return;
     }
@@ -355,7 +355,7 @@ public:
     socket_holder new_socket(socket_ops::socket(family, type, proto));
     if (new_socket.get() == invalid_socket)
     {
-      socket_error error(socket_ops::get_error());
+      asio::error error(socket_ops::get_error());
       demuxer_.post(bind_handler(handler, error));
       return;
     }
@@ -365,7 +365,7 @@ public:
     ioctl_arg_type non_blocking = 1;
     if (socket_ops::ioctl(new_socket.get(), FIONBIO, &non_blocking))
     {
-      socket_error error(socket_ops::get_error());
+      asio::error error(socket_ops::get_error());
       demuxer_.post(bind_handler(handler, error));
       return;
     }
@@ -377,11 +377,11 @@ public:
       // The connect operation has finished successfully so we need to post the
       // handler immediately.
       peer.set_impl(new_socket.release());
-      socket_error error(socket_error::success);
+      asio::error error(asio::error::success);
       demuxer_.post(bind_handler(handler, error));
     }
-    else if (socket_ops::get_error() == socket_error::in_progress
-        || socket_ops::get_error() == socket_error::would_block)
+    else if (socket_ops::get_error() == asio::error::in_progress
+        || socket_ops::get_error() == asio::error::would_block)
     {
       // The connection is happening in the background, and we need to wait
       // until the socket becomes writeable.
@@ -395,7 +395,7 @@ public:
     else
     {
       // The connect operation has failed, so post the handler immediately.
-      socket_error error(socket_ops::get_error());
+      asio::error error(socket_ops::get_error());
       demuxer_.post(bind_handler(handler, error));
     }
   }

@@ -20,11 +20,11 @@ public:
     timer_.async_wait(boost::bind(&socket_acceptor::close, &acceptor_));
   }
 
-  void handle_accept(const socket_error& error)
+  void handle_accept(const error& err)
   {
-    if (error)
+    if (err)
     {
-      std::cout << "Accept error: " << error.message() << "\n";
+      std::cout << "Accept error: " << err << "\n";
     }
     else
     {

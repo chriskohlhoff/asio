@@ -100,9 +100,9 @@ public:
     dispatcher_.post(boost::bind(&stream_socket::close, &socket_));
   }
 
-  void handle_recv(const socket_error& error, size_t length)
+  void handle_recv(const error& err, size_t length)
   {
-    if (!error && length > 0)
+    if (!err && length > 0)
     {
       bytes_recvd_ += length;
 
@@ -121,10 +121,9 @@ public:
     }
   }
 
-  void handle_send(const socket_error& error, size_t last_length,
-      size_t total_length)
+  void handle_send(const error& err, size_t last_length, size_t total_length)
   {
-    if (!error && last_length > 0)
+    if (!err && last_length > 0)
     {
       bytes_sent_ += total_length;
 
@@ -196,9 +195,9 @@ public:
         boost::mem_fn(&session::stop));
   }
 
-  void handle_connect(session* new_session, const socket_error& error)
+  void handle_connect(session* new_session, const error& err)
   {
-    if (!error)
+    if (!err)
     {
       sessions_.push_back(new_session);
       new_session->start();

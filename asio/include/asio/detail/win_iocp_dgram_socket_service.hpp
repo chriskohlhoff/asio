@@ -21,8 +21,8 @@
 
 #include "asio/basic_demuxer.hpp"
 #include "asio/dgram_socket_base.hpp"
+#include "asio/error.hpp"
 #include "asio/service_factory.hpp"
-#include "asio/socket_error.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
@@ -72,7 +72,7 @@ public:
   {
     if (protocol.type() != SOCK_DGRAM)
     {
-      error_handler(socket_error(socket_error::invalid_argument));
+      error_handler(asio::error(asio::error::invalid_argument));
       return;
     }
 
@@ -80,7 +80,7 @@ public:
           protocol.protocol()));
     if (sock.get() == invalid_socket)
     {
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
       return;
     }
 
@@ -96,7 +96,7 @@ public:
   {
     if (socket_ops::bind(impl, endpoint.native_data(),
           endpoint.native_size()) == socket_error_retval)
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
   }
 
   // Destroy a dgram socket implementation.
@@ -116,7 +116,7 @@ public:
   {
     if (socket_ops::setsockopt(impl, option.level(), option.name(),
           option.data(), option.size()))
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
   }
 
   // Set a socket option.
@@ -126,7 +126,7 @@ public:
     socket_len_type size = option.size();
     if (socket_ops::getsockopt(impl, option.level(), option.name(),
           option.data(), &size))
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
   }
 
   // Get the local endpoint.
@@ -137,7 +137,7 @@ public:
     socket_addr_len_type addr_len = endpoint.native_size();
     if (socket_ops::getsockname(impl, endpoint.native_data(), &addr_len))
     {
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
       return;
     }
 
@@ -164,7 +164,7 @@ public:
       break;
     }
     if (socket_ops::shutdown(impl, shutdown_flag) != 0)
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
   }
 
   // Send a datagram to the specified endpoint. Returns the number of bytes
@@ -177,7 +177,7 @@ public:
         destination.native_data(), destination.native_size());
     if (bytes_sent < 0)
     {
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
       return 0;
     }
 
@@ -202,7 +202,7 @@ public:
     {
       sendto_operation<Handler>* h =
         static_cast<sendto_operation<Handler>*>(op);
-      socket_error error(last_error);
+      asio::error error(last_error);
       try
       {
         h->handler_(error, bytes_transferred);
@@ -240,7 +240,7 @@ public:
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
       delete sendto_op;
-      socket_error error(last_error);
+      asio::error error(last_error);
       demuxer_service_.post(bind_handler(handler, error, bytes_transferred));
       demuxer_service_.work_finished();
     }
@@ -257,7 +257,7 @@ public:
         sender_endpoint.native_data(), &addr_len);
     if (bytes_recvd < 0)
     {
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
       return 0;
     }
 
@@ -293,7 +293,7 @@ public:
       recvfrom_operation<Endpoint, Handler>* h =
         static_cast<recvfrom_operation<Endpoint, Handler>*>(op);
       h->endpoint_.native_size(h->endpoint_size_);
-      socket_error error(last_error);
+      asio::error error(last_error);
       try
       {
         h->handler_(error, bytes_transferred);
@@ -336,7 +336,7 @@ public:
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
       delete recvfrom_op;
-      socket_error error(last_error);
+      asio::error error(last_error);
       demuxer_service_.post(bind_handler(handler, error, bytes_transferred));
       demuxer_service_.work_finished();
     }

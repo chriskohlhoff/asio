@@ -23,7 +23,7 @@ public:
           asio::arg::bytes_recvd));
   }
 
-  void handle_recv(const asio::socket_error& error, size_t bytes_recvd)
+  void handle_recv(const asio::error& error, size_t bytes_recvd)
   {
     if (!error && bytes_recvd > 0)
     {
@@ -37,7 +37,7 @@ public:
     }
   }
 
-  void handle_send(const asio::socket_error& error, size_t last_bytes_sent)
+  void handle_send(const asio::error& error, size_t last_bytes_sent)
   {
     if (!error && last_bytes_sent > 0)
     {
@@ -70,7 +70,7 @@ public:
           asio::arg::error));
   }
 
-  void handle_accept(session* new_session, const asio::socket_error& error)
+  void handle_accept(session* new_session, const asio::error& error)
   {
     if (!error)
     {
@@ -108,9 +108,9 @@ int main(int argc, char* argv[])
 
     d.run();
   }
-  catch (asio::socket_error& e)
+  catch (asio::error& e)
   {
-    std::cerr << "Socket error: " << e.message() << "\n";
+    std::cerr << e << "\n";
   }
   catch (std::exception& e)
   {

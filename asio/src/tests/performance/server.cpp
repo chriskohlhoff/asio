@@ -55,11 +55,11 @@ public:
             arg::bytes_recvd)));
   }
 
-  void handle_recv(const socket_error& error, size_t length)
+  void handle_recv(const error& err, size_t length)
   {
     --op_count_;
 
-    if (!error && length > 0)
+    if (!err && length > 0)
     {
       recv_data_length_ = length;
       ++unsent_count_;
@@ -80,11 +80,11 @@ public:
       demuxer_.post(boost::bind(&session::destroy, this));
   }
 
-  void handle_send(const socket_error& error, size_t last_length)
+  void handle_send(const error& err, size_t last_length)
   {
     --op_count_;
 
-    if (!error && last_length > 0)
+    if (!err && last_length > 0)
     {
       --unsent_count_;
       if (unsent_count_ == 1)
@@ -139,9 +139,9 @@ public:
         boost::bind(&server::handle_accept, this, new_session, arg::error));
   }
 
-  void handle_accept(session* new_session, const socket_error& error)
+  void handle_accept(session* new_session, const error& err)
   {
-    if (!error)
+    if (!err)
     {
       new_session->start();
       new_session = new session(demuxer_, block_size_);

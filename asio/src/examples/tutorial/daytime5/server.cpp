@@ -16,8 +16,7 @@ int main()
       char recv_buf[1];
       asio::ipv4::udp::endpoint remote_endpoint;
       socket.recvfrom(recv_buf, sizeof(recv_buf), remote_endpoint,
-          asio::throw_error_if(
-            asio::error != asio::socket_error::message_size));
+          asio::throw_error_if(asio::the_error != asio::error::message_size));
 
       using namespace std; // For time_t, time and ctime.
       time_t now = time(0);
@@ -27,7 +26,7 @@ int main()
           asio::ignore_error());
     }
   }
-  catch (asio::socket_error& e)
+  catch (asio::error& e)
   {
     std::cerr << e << std::endl;
   }

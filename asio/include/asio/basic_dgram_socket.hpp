@@ -83,7 +83,7 @@ public:
    * @param endpoint An endpoint on the local machine to which the dgram socket
    * will be bound.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   template <typename Endpoint>
   basic_dgram_socket(demuxer_type& d, const Endpoint& endpoint)
@@ -120,7 +120,7 @@ public:
    *
    * @param protocol An object specifying which protocol is to be used.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   template <typename Protocol>
   void open(const Protocol& protocol)
@@ -139,7 +139,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Protocol, typename Error_Handler>
@@ -156,7 +156,7 @@ public:
    * @param endpoint An endpoint on the local machine to which the dgram socket
    * will be bound.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   template <typename Endpoint>
   void bind(const Endpoint& endpoint)
@@ -176,7 +176,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Endpoint, typename Error_Handler>
@@ -215,7 +215,7 @@ public:
    *
    * @param option The new option value to be set on the socket.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   template <typename Option>
   void set_option(const Option& option)
@@ -233,7 +233,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Option, typename Error_Handler>
@@ -248,7 +248,7 @@ public:
    *
    * @param option The option value to be obtained from the socket.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   template <typename Option>
   void get_option(Option& option)
@@ -266,7 +266,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Option, typename Error_Handler>
@@ -282,7 +282,7 @@ public:
    * @param endpoint An endpoint object that receives the local endpoint of the
    * socket.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   template <typename Endpoint>
   void get_local_endpoint(Endpoint& endpoint)
@@ -301,7 +301,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Endpoint, typename Error_Handler>
@@ -317,7 +317,7 @@ public:
    *
    * @param what Determines what types of operation will no longer be allowed.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   void shutdown(shutdown_type what)
   {
@@ -335,7 +335,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Error_Handler>
@@ -358,7 +358,7 @@ public:
    *
    * @returns The number of bytes sent.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   template <typename Endpoint>
   size_t sendto(const void* data, size_t length, const Endpoint& destination)
@@ -383,7 +383,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    *
    * @returns The number of bytes sent.
@@ -413,8 +413,8 @@ public:
    * Copies will be made of the handler as required. The equivalent function
    * signature of the handler must be:
    * @code void handler(
-   *   const asio::socket_error& error, // Result of operation
-   *   size_t bytes_sent                // Number of bytes sent
+   *   const asio::error& error, // Result of operation
+   *   size_t bytes_sent         // Number of bytes sent
    * ); @endcode
    */
   template <typename Endpoint, typename Handler>
@@ -440,7 +440,7 @@ public:
    *
    * @returns The number of bytes received.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   template <typename Endpoint>
   size_t recvfrom(void* data, size_t max_length, Endpoint& sender_endpoint)
@@ -467,7 +467,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    *
    * @returns The number of bytes received.
@@ -501,8 +501,8 @@ public:
    * completes. Copies will be made of the handler as required. The equivalent
    * function signature of the handler must be:
    * @code void handler(
-   *   const asio::socket_error& error, // Result of operation
-   *   size_t bytes_recvd               // Number of bytes received
+   *   const asio::error& error, // Result of operation
+   *   size_t bytes_recvd        // Number of bytes received
    * ); @endcode
    */
   template <typename Endpoint, typename Handler>

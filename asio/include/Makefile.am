@@ -63,6 +63,7 @@ nobase_include_HEADERS = \
 	asio/detail/winsock_init.hpp \
 	asio/dgram_socket.hpp \
 	asio/dgram_socket_base.hpp \
+	asio/error.hpp \
 	asio/error_handler.hpp \
 	asio/fixed_buffer.hpp \
 	asio/ipv4/address.hpp \
@@ -80,7 +81,6 @@ nobase_include_HEADERS = \
 	asio/service_factory.hpp \
 	asio/socket_acceptor.hpp \
 	asio/socket_connector.hpp \
-	asio/socket_error.hpp \
 	asio/socket_option.hpp \
 	asio/stream_socket.hpp \
 	asio/stream_socket_base.hpp \

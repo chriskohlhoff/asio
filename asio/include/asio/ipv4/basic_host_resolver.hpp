@@ -82,7 +82,7 @@ public:
    *
    * @param h A host object that receives information about the local machine.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   void get_local_host(host& h)
   {
@@ -101,7 +101,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Error_Handler>
@@ -121,7 +121,7 @@ public:
    * specified address. After successful completion of this function, the host
    * object is guaranteed to contain at least one address.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   void get_host_by_address(const address& addr, host& h)
   {
@@ -143,7 +143,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Error_Handler>
@@ -163,7 +163,7 @@ public:
    * @param h A host object that receives information assocated with the
    * specified host name.
    *
-   * @throws socket_error Thrown on failure.
+   * @throws asio::error Thrown on failure.
    */
   void get_host_by_name(const std::string& name, host& h)
   {
@@ -184,7 +184,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Error_Handler>

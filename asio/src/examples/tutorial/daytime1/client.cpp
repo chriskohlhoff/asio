@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
     while (size_t len = socket.recv(buf, sizeof(buf)))
       std::cout.write(buf, len);
   }
-  catch (asio::socket_error& e)
+  catch (asio::error& e)
   {
     std::cerr << e << std::endl;
   }

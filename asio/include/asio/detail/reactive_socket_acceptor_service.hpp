@@ -18,8 +18,8 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/basic_stream_socket.hpp"
+#include "asio/error.hpp"
 #include "asio/service_factory.hpp"
-#include "asio/socket_error.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
@@ -66,7 +66,7 @@ public:
     socket_holder sock(socket_ops::socket(protocol.family(), protocol.type(),
           protocol.protocol()));
     if (sock.get() == invalid_socket)
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
     else
       impl = sock.release();
   }
@@ -78,7 +78,7 @@ public:
   {
     if (socket_ops::bind(impl, endpoint.native_data(),
           endpoint.native_size()) == socket_error_retval)
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
   }
 
   // Place the socket acceptor into the state where it will listen for new
@@ -90,7 +90,7 @@ public:
       backlog = SOMAXCONN;
 
     if (socket_ops::listen(impl, backlog) == socket_error_retval)
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
   }
 
   // Close a socket acceptor implementation.
@@ -110,7 +110,7 @@ public:
   {
     if (socket_ops::setsockopt(impl, option.level(), option.name(),
           option.data(), option.size()))
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
   }
 
   // Set a socket option.
@@ -120,7 +120,7 @@ public:
     socket_len_type size = option.size();
     if (socket_ops::getsockopt(impl, option.level(), option.name(),
           option.data(), &size))
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
   }
 
   // Get the local endpoint.
@@ -130,7 +130,7 @@ public:
   {
     socket_addr_len_type addr_len = endpoint.native_size();
     if (socket_ops::getsockname(impl, endpoint.native_data(), &addr_len))
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
     endpoint.native_size(addr_len);
   }
 
@@ -143,14 +143,14 @@ public:
     // We cannot accept a socket that is already open.
     if (peer.impl() != invalid_socket)
     {
-      error_handler(socket_error(socket_error::already_connected));
+      error_handler(asio::error(asio::error::already_connected));
       return;
     }
 
     socket_type new_socket = socket_ops::accept(impl, 0, 0);
-    if (int error = socket_ops::get_error())
+    if (int err = socket_ops::get_error())
     {
-      error_handler(socket_error(error));
+      error_handler(asio::error(err));
       return;
     }
 
@@ -167,16 +167,16 @@ public:
     // We cannot accept a socket that is already open.
     if (peer.impl() != invalid_socket)
     {
-      error_handler(socket_error(socket_error::already_connected));
+      error_handler(asio::error(asio::error::already_connected));
       return;
     }
 
     socket_addr_len_type addr_len = peer_endpoint.native_size();
     socket_type new_socket = socket_ops::accept(impl,
         peer_endpoint.native_data(), &addr_len);
-    if (int error = socket_ops::get_error())
+    if (int err = socket_ops::get_error())
     {
-      error_handler(socket_error(error));
+      error_handler(asio::error(err));
       return;
     }
 
@@ -201,8 +201,8 @@ public:
     void do_operation()
     {
       socket_type new_socket = socket_ops::accept(impl_, 0, 0);
-      socket_error error(new_socket == invalid_socket
-          ? socket_ops::get_error() : socket_error::success);
+      asio::error error(new_socket == invalid_socket
+          ? socket_ops::get_error() : asio::error::success);
       peer_.set_impl(new_socket);
       demuxer_.post(bind_handler(handler_, error));
       demuxer_.work_finished();
@@ -210,7 +210,7 @@ public:
 
     void do_cancel()
     {
-      socket_error error(socket_error::operation_aborted);
+      asio::error error(asio::error::operation_aborted);
       demuxer_.post(bind_handler(handler_, error));
       demuxer_.work_finished();
     }
@@ -230,12 +230,12 @@ public:
   {
     if (impl == null())
     {
-      socket_error error(socket_error::bad_descriptor);
+      asio::error error(asio::error::bad_descriptor);
       demuxer_.post(bind_handler(handler, error));
     }
     else if (peer.impl() != invalid_socket)
     {
-      socket_error error(socket_error::already_connected);
+      asio::error error(asio::error::already_connected);
       demuxer_.post(bind_handler(handler, error));
     }
     else
@@ -268,8 +268,8 @@ public:
       socket_addr_len_type addr_len = peer_endpoint_.native_size();
       socket_type new_socket = socket_ops::accept(impl_,
           peer_endpoint_.native_data(), &addr_len);
-      socket_error error(new_socket == invalid_socket
-          ? socket_ops::get_error() : socket_error::success);
+      asio::error error(new_socket == invalid_socket
+          ? socket_ops::get_error() : asio::error::success);
       peer_endpoint_.native_size(addr_len);
       peer_.set_impl(new_socket);
       demuxer_.post(bind_handler(handler_, error));
@@ -278,7 +278,7 @@ public:
 
     void do_cancel()
     {
-      socket_error error(socket_error::operation_aborted);
+      asio::error error(asio::error::operation_aborted);
       demuxer_.post(bind_handler(handler_, error));
       demuxer_.work_finished();
     }
@@ -301,12 +301,12 @@ public:
   {
     if (impl == null())
     {
-      socket_error error(socket_error::bad_descriptor);
+      asio::error error(asio::error::bad_descriptor);
       demuxer_.post(bind_handler(handler, error));
     }
     else if (peer.impl() != invalid_socket)
     {
-      socket_error error(socket_error::already_connected);
+      asio::error error(asio::error::already_connected);
       demuxer_.post(bind_handler(handler, error));
     }
     else

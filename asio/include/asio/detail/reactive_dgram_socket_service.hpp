@@ -18,8 +18,8 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/dgram_socket_base.hpp"
+#include "asio/error.hpp"
 #include "asio/service_factory.hpp"
-#include "asio/socket_error.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
@@ -65,14 +65,14 @@ public:
   {
     if (protocol.type() != SOCK_DGRAM)
     {
-      error_handler(socket_error(socket_error::invalid_argument));
+      error_handler(asio::error(asio::error::invalid_argument));
       return;
     }
 
     socket_holder sock(socket_ops::socket(protocol.family(), protocol.type(),
           protocol.protocol()));
     if (sock.get() == invalid_socket)
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
     else
       impl = sock.release();
   }
@@ -84,7 +84,7 @@ public:
   {
     if (socket_ops::bind(impl, endpoint.native_data(),
           endpoint.native_size()) == socket_error_retval)
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
   }
 
   // Destroy a dgram socket implementation.
@@ -104,7 +104,7 @@ public:
   {
     if (socket_ops::setsockopt(impl, option.level(), option.name(),
           option.data(), option.size()))
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
   }
 
   // Set a socket option.
@@ -114,7 +114,7 @@ public:
     socket_len_type size = option.size();
     if (socket_ops::getsockopt(impl, option.level(), option.name(),
           option.data(), &size))
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
   }
 
   // Get the local endpoint.
@@ -124,7 +124,7 @@ public:
   {
     socket_addr_len_type addr_len = endpoint.native_size();
     if (socket_ops::getsockname(impl, endpoint.native_data(), &addr_len))
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
     endpoint.native_size(addr_len);
   }
 
@@ -148,7 +148,7 @@ public:
       break;
     }
     if (socket_ops::shutdown(impl, shutdown_flag) != 0)
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
   }
 
   // Send a datagram to the specified endpoint. Returns the number of bytes
@@ -161,7 +161,7 @@ public:
         destination.native_data(), destination.native_size());
     if (bytes_sent < 0)
     {
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
       return 0;
     }
     return bytes_sent;
@@ -186,15 +186,15 @@ public:
     {
       int bytes = socket_ops::sendto(impl_, data_, length_, 0,
           destination_.native_data(), destination_.native_size());
-      socket_error error(bytes < 0
-          ? socket_ops::get_error() : socket_error::success);
+      asio::error error(bytes < 0
+          ? socket_ops::get_error() : asio::error::success);
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
       demuxer_.work_finished();
     }
 
     void do_cancel()
     {
-      socket_error error(socket_error::operation_aborted);
+      asio::error error(asio::error::operation_aborted);
       demuxer_.post(bind_handler(handler_, error, 0));
       demuxer_.work_finished();
     }
@@ -216,7 +216,7 @@ public:
   {
     if (impl == null())
     {
-      socket_error error(socket_error::bad_descriptor);
+      asio::error error(asio::error::bad_descriptor);
       demuxer_.post(bind_handler(handler, error, 0));
     }
     else
@@ -238,7 +238,7 @@ public:
         sender_endpoint.native_data(), &addr_len);
     if (bytes_recvd < 0)
     {
-      error_handler(socket_error(socket_ops::get_error()));
+      error_handler(asio::error(socket_ops::get_error()));
       return 0;
     }
 
@@ -267,8 +267,8 @@ public:
       socket_addr_len_type addr_len = sender_endpoint_.native_size();
       int bytes = socket_ops::recvfrom(impl_, data_, max_length_, 0,
           sender_endpoint_.native_data(), &addr_len);
-      socket_error error(bytes < 0
-          ? socket_ops::get_error() : socket_error::success);
+      asio::error error(bytes < 0
+          ? socket_ops::get_error() : asio::error::success);
       sender_endpoint_.native_size(addr_len);
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
       demuxer_.work_finished();
@@ -276,7 +276,7 @@ public:
 
     void do_cancel()
     {
-      socket_error error(socket_error::operation_aborted);
+      asio::error error(asio::error::operation_aborted);
       demuxer_.post(bind_handler(handler_, error, 0));
       demuxer_.work_finished();
     }
@@ -299,7 +299,7 @@ public:
   {
     if (impl == null())
     {
-      socket_error error(socket_error::bad_descriptor);
+      asio::error error(asio::error::bad_descriptor);
       demuxer_.post(bind_handler(handler, error, 0));
     }
     else

@@ -21,11 +21,11 @@ public:
     timer_.async_wait(boost::bind(&socket_connector::close, &connector_));
   }
 
-  void handle_connect(const socket_error& error)
+  void handle_connect(const error& err)
   {
-    if (error)
+    if (err)
     {
-      std::cout << "Connect error: " << error.message() << "\n";
+      std::cout << "Connect error: " << err << "\n";
     }
     else
     {

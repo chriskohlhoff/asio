@@ -38,9 +38,9 @@ int main(int argc, char* argv[])
     std::cout.write(reply, reply_length);
     std::cout << "\n";
   }
-  catch (asio::socket_error& e)
+  catch (asio::error& e)
   {
-    std::cerr << "Socket error: " << e.message() << "\n";
+    std::cerr << e << "\n";
   }
   catch (std::exception& e)
   {

@@ -19,14 +19,14 @@
 
 using namespace asio;
 
-void handle_accept(const socket_error& error)
+void handle_accept(const error& err)
 {
-  UNIT_TEST_CHECK(!error);
+  UNIT_TEST_CHECK(!err);
 }
 
-void handle_connect(const socket_error& error)
+void handle_connect(const error& err)
 {
-  UNIT_TEST_CHECK(!error);
+  UNIT_TEST_CHECK(!err);
 }
 
 void socket_acceptor_test()

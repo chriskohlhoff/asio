@@ -4,7 +4,7 @@
 #include "asio.hpp"
 
 void handle_send(asio::stream_socket* socket, char* send_buf,
-    const asio::socket_error& /*error*/, size_t /*last_bytes_sent*/,
+    const asio::error& /*error*/, size_t /*last_bytes_sent*/,
     size_t /*total_bytes_sent*/)
 {
   using namespace std; // For free.
@@ -13,7 +13,7 @@ void handle_send(asio::stream_socket* socket, char* send_buf,
 }
 
 void handle_accept(asio::socket_acceptor* acceptor,
-    asio::stream_socket* socket, const asio::socket_error& error)
+    asio::stream_socket* socket, const asio::error& error)
 {
   if (!error)
   {
@@ -52,7 +52,7 @@ int main()
 
     demuxer.run();
   }
-  catch (asio::socket_error& e)
+  catch (asio::error& e)
   {
     std::cerr << e << std::endl;
   }

@@ -25,6 +25,7 @@
 #endif
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/error.hpp"
 #include "asio/detail/socket_types.hpp"
 
 namespace asio {
@@ -226,7 +227,7 @@ inline const char* inet_ntop(int af, const void* src, char* dest,
 
   if (af != AF_INET)
   {
-    set_error(socket_error::address_family_not_supported);
+    set_error(asio::error::address_family_not_supported);
     return 0;
   }
 
@@ -241,14 +242,14 @@ inline const char* inet_ntop(int af, const void* src, char* dest,
 
   // Windows may not set an error code on failure.
   if (get_error() == 0)
-    set_error(socket_error::invalid_argument);
+    set_error(asio::error::invalid_argument);
 
   return 0;
 
 #else // defined(_WIN32)
   const char* result = error_wrapper(::inet_ntop(af, src, dest, length));
   if (result == 0 && get_error() == 0)
-    set_error(socket_error::invalid_argument);
+    set_error(asio::error::invalid_argument);
   return result;
 #endif // defined(_WIN32)
 }
@@ -261,7 +262,7 @@ inline int inet_pton(int af, const char* src, void* dest)
 
   if (af != AF_INET)
   {
-    set_error(socket_error::address_family_not_supported);
+    set_error(asio::error::address_family_not_supported);
     return -1;
   }
 
@@ -274,13 +275,13 @@ inline int inet_pton(int af, const char* src, void* dest)
 
   // Windows may not set an error code on failure.
   if (get_error() == 0)
-    set_error(socket_error::invalid_argument);
+    set_error(asio::error::invalid_argument);
 
   return 0;
 #else // defined(_WIN32)
   int result = error_wrapper(::inet_pton(af, src, dest));
   if (result <= 0 && get_error() == 0)
-    set_error(socket_error::invalid_argument);
+    set_error(asio::error::invalid_argument);
   return result;
 #endif // defined(_WIN32)
 }
@@ -296,15 +297,15 @@ inline int translate_netdb_error(int error)
   switch (error)
   {
   case 0:
-    return socket_error::success;
+    return asio::error::success;
   case HOST_NOT_FOUND:
-    return socket_error::host_not_found;
+    return asio::error::host_not_found;
   case TRY_AGAIN:
-    return socket_error::host_not_found_try_again;
+    return asio::error::host_not_found_try_again;
   case NO_RECOVERY:
-    return socket_error::no_recovery;
+    return asio::error::no_recovery;
   case NO_DATA:
-    return socket_error::no_host_data;
+    return asio::error::no_host_data;
   default:
     return get_error();
   }

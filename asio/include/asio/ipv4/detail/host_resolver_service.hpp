@@ -22,7 +22,7 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/socket_error.hpp"
+#include "asio/error.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/ipv4/host.hpp"
@@ -87,7 +87,7 @@ public:
   {
     char name[1024];
     if (asio::detail::socket_ops::gethostname(name, sizeof(name)) != 0)
-      error_handler(socket_error(asio::detail::socket_ops::get_error()));
+      error_handler(asio::error(asio::detail::socket_ops::get_error()));
     else
       get_host_by_name(impl, name, h, error_handler);
   }
@@ -105,9 +105,9 @@ public:
     if (asio::detail::socket_ops::gethostbyaddr_r(
           reinterpret_cast<const char*>(&a), sizeof(in_addr), AF_INET, &ent,
           buf, sizeof(buf), &error) == 0)
-      error_handler(socket_error(error));
+      error_handler(asio::error(error));
     else if (ent.h_length != sizeof(in_addr))
-      error_handler(socket_error(socket_error::host_not_found));
+      error_handler(asio::error(asio::error::host_not_found));
     else
       populate_host_object(h, ent);
   }
@@ -122,9 +122,9 @@ public:
     int error = 0;
     if (asio::detail::socket_ops::gethostbyname_r(name.c_str(), &ent, buf,
           sizeof(buf), &error) == 0)
-      error_handler(socket_error(error));
+      error_handler(asio::error(error));
     else if (ent.h_addrtype != AF_INET || ent.h_length != sizeof(in_addr))
-      error_handler(socket_error(socket_error::host_not_found));
+      error_handler(asio::error(asio::error::host_not_found));
     else
       populate_host_object(h, ent);
   }

@@ -31,7 +31,7 @@ public:
 
 private:
 
-  void handle_connect(const asio::socket_error& error)
+  void handle_connect(const asio::error& error)
   {
     if (!error)
     {
@@ -42,7 +42,7 @@ private:
     }
   }
 
-  void handle_recv_header(const asio::socket_error& error, size_t last_length)
+  void handle_recv_header(const asio::error& error, size_t last_length)
   {
     if (!error && last_length > 0 && recv_msg_.decode_header())
     {
@@ -56,7 +56,7 @@ private:
     }
   }
 
-  void handle_recv_body(const asio::socket_error& error, size_t last_length)
+  void handle_recv_body(const asio::error& error, size_t last_length)
   {
     if (!error && last_length > 0)
     {
@@ -86,7 +86,7 @@ private:
     }
   }
 
-  void handle_send(const asio::socket_error& error, size_t last_length)
+  void handle_send(const asio::error& error, size_t last_length)
   {
     if (!error && last_length > 0)
     {
@@ -154,9 +154,9 @@ int main(int argc, char* argv[])
     c.close();
     t.join();
   }
-  catch (asio::socket_error& e)
+  catch (asio::error& e)
   {
-    std::cerr << "Socket error: " << e.message() << "\n";
+    std::cerr << e << "\n";
   }
   catch (std::exception& e)
   {

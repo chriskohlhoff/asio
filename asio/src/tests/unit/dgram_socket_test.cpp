@@ -19,17 +19,17 @@
 
 using namespace asio;
 
-void handle_send(size_t expected_bytes_sent, const socket_error& error,
+void handle_send(size_t expected_bytes_sent, const error& err,
     size_t bytes_sent)
 {
-  UNIT_TEST_CHECK(!error);
+  UNIT_TEST_CHECK(!err);
   UNIT_TEST_CHECK(expected_bytes_sent == bytes_sent);
 }
 
-void handle_recv(size_t expected_bytes_recvd, const socket_error& error,
+void handle_recv(size_t expected_bytes_recvd, const error& err,
     size_t bytes_recvd)
 {
-  UNIT_TEST_CHECK(!error);
+  UNIT_TEST_CHECK(!err);
   UNIT_TEST_CHECK(expected_bytes_recvd == bytes_recvd);
 }
 

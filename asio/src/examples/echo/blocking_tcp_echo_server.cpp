@@ -19,9 +19,9 @@ void session(stream_socket_ptr sock)
       if (asio::send_n(*sock, data, length) <= 0)
         break;
   }
-  catch (asio::socket_error& e)
+  catch (asio::error& e)
   {
-    std::cerr << "Socket error in thread: " << e.message() << "\n";
+    std::cerr << "Error in thread: " << e << "\n";
   }
   catch (std::exception& e)
   {
@@ -55,9 +55,9 @@ int main(int argc, char* argv[])
     using namespace std; // For atoi.
     server(d, atoi(argv[1]));
   }
-  catch (asio::socket_error& e)
+  catch (asio::error& e)
   {
-    std::cerr << "Socket error: " << e.message() << "\n";
+    std::cerr << e << "\n";
   }
   catch (std::exception& e)
   {

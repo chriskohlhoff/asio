@@ -23,7 +23,7 @@ int main()
       asio::send_n(socket, msg.c_str(), msg.length(), 0, asio::ignore_error());
     }
   }
-  catch (asio::socket_error& e)
+  catch (asio::error& e)
   {
     std::cerr << e << std::endl;
   }

@@ -11,7 +11,7 @@ void handle_tcp_send(asio::stream_socket* socket, char* send_buf)
 }
 
 void handle_tcp_accept(asio::socket_acceptor* acceptor,
-    asio::stream_socket* socket, const asio::socket_error& error)
+    asio::stream_socket* socket, const asio::error& error)
 {
   if (!error)
   {
@@ -42,9 +42,9 @@ void handle_udp_sendto(char* send_buf)
 
 void handle_udp_recvfrom(asio::dgram_socket* socket, char* recv_buf,
     size_t recv_length, asio::ipv4::udp::endpoint* remote_endpoint,
-    const asio::socket_error& error)
+    const asio::error& error)
 {
-  if (!error || error == asio::socket_error::message_size)
+  if (!error || error == asio::error::message_size)
   {
     using namespace std; // For time_t, time, ctime, strdup and strlen.
     time_t now = time(0);
@@ -86,7 +86,7 @@ int main()
 
     demuxer.run();
   }
-  catch (asio::socket_error& e)
+  catch (asio::error& e)
   {
     std::cerr << e << std::endl;
   }
