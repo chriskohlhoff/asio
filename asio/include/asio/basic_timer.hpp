@@ -145,21 +145,25 @@ public:
     service_.set(impl_, from_when, seconds, microseconds);
   }
 
-  /// Expire the timer immediately.
+  /// Cancel any asynchronous operations that are waiting on the timer.
   /**
-   * This function causes the timer to expire immediately. If there is a
-   * pending asynchronous wait operation against the timer it will be forced to
-   * complete.
+   * This function forces the completion of any pending asynchronous wait
+   * operations against the timer. The handler for each cancelled operation
+   * will be invoked with the asio::error::operation_aborted error code.
+   *
+   * @return The number of asynchronous operations that were cancelled.
    */
-  void expire()
+  int cancel()
   {
-    service_.expire(impl_);
+    return service_.cancel(impl_);
   }
 
   /// Perform a blocking wait on the timer.
   /**
    * This function is used to wait for the timer to expire. This function
    * blocks and does not return until the timer has expired.
+   *
+   * @throws asio::error Thrown on failure.
    */
   void wait()
   {
@@ -170,11 +174,14 @@ public:
   /**
    * This function may be used to initiate an asynchronous wait against the
    * timer. It always returns immediately, but the specified handler will be
-   * notified when the timer expires.
+   * notified when the timer expires, or if the operation is cancelled.
    *
    * @param handler The handler to be called when the timer expires. Copies
    * will be made of the handler as required. The equivalent function signature
-   * of the handler must be: @code void handler(); @endcode
+   * of the handler must be:
+   * @code void handler(
+   *   const asio::error& error // Result of operation
+   * ); @endcode
    */
   template <typename Handler>
   void async_wait(Handler handler)

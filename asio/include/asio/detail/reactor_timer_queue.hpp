@@ -94,8 +94,9 @@ public:
 
   // Cancel the timer with the given token. The handler's do_cancel operation
   // will be invoked immediately.
-  void cancel_timer(void* timer_token)
+  int cancel_timer(void* timer_token)
   {
+    int num_cancelled = 0;
     typedef typename hash_map<void*, timer_base*>::iterator iterator;
     iterator it = timers_.find(timer_token);
     if (it != timers_.end())
@@ -107,8 +108,10 @@ public:
         remove_timer(t);
         t->do_cancel();
         t = next;
+        ++num_cancelled;
       }
     }
+    return num_cancelled;
   }
 
 private:

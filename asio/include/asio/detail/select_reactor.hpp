@@ -168,11 +168,12 @@ public:
       interrupter_.interrupt();
   }
 
-  // Cancel the timer associated with the given token.
-  void expire_timer(void* token)
+  // Cancel the timer associated with the given token. Returns the number of
+  // handlers that have been posted or dispatched.
+  int cancel_timer(void* token)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
-    timer_queue_.cancel_timer(token);
+    return timer_queue_.cancel_timer(token);
   }
 
 private:

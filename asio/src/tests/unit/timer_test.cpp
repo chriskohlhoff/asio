@@ -39,16 +39,16 @@ void decrement_to_zero(timer* t, int* count)
   }
 }
 
-void increment_if_not_expired(int* count, bool* expired)
+void increment_if_not_cancelled(int* count, const error& e)
 {
-  if (!*expired)
+  if (!e)
     ++(*count);
 }
 
-void expire_timer(timer* t, bool* expired)
+void cancel_timer(timer* t)
 {
-  *expired = true;
-  t->expire();
+  int num_cancelled = t->cancel();
+  UNIT_TEST_CHECK(num_cancelled == 1);
 }
 
 void timer_test()
@@ -134,12 +134,11 @@ void timer_test()
 
   count = 0;
   start = detail::time::now();
-  bool expired = false;
 
-  timer t5(d, timer::from_now, 60);
-  t5.async_wait(boost::bind(increment_if_not_expired, &count, &expired));
+  timer t5(d, timer::from_now, 10);
+  t5.async_wait(boost::bind(increment_if_not_cancelled, &count, arg::error));
   timer t6(d, timer::from_now, 1);
-  t6.async_wait(boost::bind(expire_timer, &t5, &expired));
+  t6.async_wait(boost::bind(cancel_timer, &t5));
 
   // No completions can be delivered until run() is called.
   UNIT_TEST_CHECK(count == 0);
@@ -147,14 +146,29 @@ void timer_test()
   d.reset();
   d.run();
 
-  // The timer should have been expired, so count should not have changed.
+  // The timer should have been cancelled, so count should not have changed.
   // The total run time should not have been much more than 1 second (and
-  // certainly far less than 60 seconds).
+  // certainly far less than 10 seconds).
   UNIT_TEST_CHECK(count == 0);
   end = detail::time::now();
   expected_end = start;
   expected_end += detail::time(2);
   UNIT_TEST_CHECK(end < expected_end);
+
+  // Wait on the timer again without cancelling it. This time the asynchronous
+  // wait should run to completion and increment the counter.
+  t5.async_wait(boost::bind(increment_if_not_cancelled, &count, arg::error));
+
+  d.reset();
+  d.run();
+
+  // The timer should not have been cancelled, so count should have changed.
+  // The total time since the timer was created should be more than 10 seconds.
+  UNIT_TEST_CHECK(count == 1);
+  end = detail::time::now();
+  expected_end = start;
+  expected_end += detail::time(10);
+  UNIT_TEST_CHECK(expected_end < end);
 }
 
 UNIT_TEST(timer_test)

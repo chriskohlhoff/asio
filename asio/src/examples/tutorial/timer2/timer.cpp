@@ -1,7 +1,7 @@
 #include <iostream>
 #include "asio.hpp"
 
-void print()
+void print(const asio::error& /*e*/)
 {
   std::cout << "Hello, world!\n";
 }

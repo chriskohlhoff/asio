@@ -2,7 +2,7 @@
 #include "boost/bind.hpp"
 #include "asio.hpp"
 
-void print(asio::timer* t, int* count)
+void print(const asio::error& /*e*/, asio::timer* t, int* count)
 {
   if (*count < 5)
   {
@@ -10,7 +10,7 @@ void print(asio::timer* t, int* count)
     ++(*count);
 
     t->set(asio::timer::from_existing, 1);
-    t->async_wait(boost::bind(print, t, count));
+    t->async_wait(boost::bind(print, asio::arg::error, t, count));
   }
 }
 
@@ -20,7 +20,7 @@ int main()
 
   int count = 0;
   asio::timer t(d, asio::timer::from_now, 1);
-  t.async_wait(boost::bind(print, &t, &count));
+  t.async_wait(boost::bind(print, asio::arg::error, &t, &count));
 
   d.run();
 

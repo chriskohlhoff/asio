@@ -21,8 +21,10 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/error.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/timer_base.hpp"
+#include "asio/detail/bind_handler.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/time.hpp"
@@ -78,7 +80,7 @@ public:
   {
     if (impl != null())
     {
-      reactor_.expire_timer(impl);
+      reactor_.cancel_timer(impl);
       delete impl;
       impl = null();
     }
@@ -106,11 +108,10 @@ public:
     }
   }
 
-  // Expire the timer immediately.
-  void expire(impl_type& impl)
+  // Cancel any asynchronous wait operations associated with the timer.
+  int cancel(impl_type& impl)
   {
-    impl->expiry = time::now();
-    reactor_.expire_timer(impl);
+    return reactor_.cancel_timer(impl);
   }
 
   // Perform a blocking wait on the timer.
@@ -142,13 +143,15 @@ public:
 
     void do_operation()
     {
-      demuxer_.post(handler_);
+      asio::error e(asio::error::success);
+      demuxer_.post(detail::bind_handler(handler_, e));
       demuxer_.work_finished();
     }
 
     void do_cancel()
     {
-      demuxer_.post(handler_);
+      asio::error e(asio::error::operation_aborted);
+      demuxer_.post(detail::bind_handler(handler_, e));
       demuxer_.work_finished();
     }
 

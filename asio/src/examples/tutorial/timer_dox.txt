@@ -158,12 +158,20 @@ from the whole-second mark due to any delays in processing the handler.
 <b>Step 4.</b> Then we start a new asynchronous wait on the timer. As you can
 see, the \ref boost_bind function is used to associate the extra parameters
 with your callback handler. The asio::timer::async_wait() function expects a
-handler function (or function object) with the signature <tt>void()</tt>.
-Binding the additional parameters converts your <tt>print</tt> function into a
-function object that matches the signature correctly.
+handler function (or function object) with the signature <tt>void(const
+asio::error&)</tt>. Binding the additional parameters converts your
+<tt>print</tt> function into a function object that matches the signature
+correctly.
 
 See the <a href="http://www.boost.org/libs/bind/bind.html">Boost: bind.hpp
 documentation</a> for more information on how to use \ref boost_bind.
+
+In this example, the asio::arg:error argument to \ref boost_bind is a named
+placeholder for the error object passed to the handler. When initiating the
+asynchronous operation, and if using \ref boost_bind, you must specify only
+the arguments that match the handler's parameter list. In tutorial Timer.4 you
+will see that this placeholder may be elided if the parameter is not needed by
+the callback handler.
 
 \until asio::demuxer
 
@@ -225,7 +233,12 @@ member functions as with free functions. Since all non-static class member
 functions have an implicit <tt>this</tt> parameter, we need to bind
 <tt>this</tt> to the function. As in tutorial Timer.3, \ref boost_bind
 converts our callback handler (now a member function) into a function object
-that matches the signature <tt>void()</tt>.
+that can be invoked as though it has the signature <tt>void(const
+asio::error&)</tt>.
+
+You will note that the asio::arg::error placeholder is not specified here, as
+the <tt>print</tt> member function does not accept an error object as a
+parameter.
 
 \until }
 
