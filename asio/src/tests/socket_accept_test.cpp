@@ -22,11 +22,8 @@ public:
   {
     if (!error)
     {
-      if (peer_address_.good())
-      {
-        std::cout << "Accepted connection from " << peer_address_.host_name()
-          << " (" << peer_address_.host_addr_str() << ")\n";
-      }
+      std::cout << "Accepted connection from " << peer_address_.host_name()
+        << " (" << peer_address_.host_addr_str() << ")\n";
 
       if (++accept_count_ < 10)
       {

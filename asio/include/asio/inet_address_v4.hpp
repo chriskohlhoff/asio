@@ -23,6 +23,7 @@
 #include <boost/integer.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/socket_error.hpp"
 #include "asio/detail/socket_types.hpp"
 
 namespace asio {
@@ -42,7 +43,6 @@ public:
 
   /// Default constructor.
   inet_address_v4()
-    : good_(true)
   {
     addr_.sin_family = AF_INET;
     addr_.sin_port = 0;
@@ -53,7 +53,6 @@ public:
   /// order. The IP address will be the any address (i.e. INADDR_ANY). This
   /// constructor would typically be used for accepting new connections.
   inet_address_v4(port_type port_num)
-    : good_(true)
   {
     addr_.sin_family = AF_INET;
     addr_.sin_port = htons(port_num);
@@ -64,7 +63,6 @@ public:
   /// constructor may be used for accepting connections on a specific interface
   /// or for making a connection to a remote address.
   inet_address_v4(port_type port_num, addr_type host_addr)
-    : good_(true)
   {
     addr_.sin_family = AF_INET;
     addr_.sin_port = htons(port_num);
@@ -76,7 +74,6 @@ public:
   /// connections on a specific interface or for making a connection to a
   /// remote address.
   inet_address_v4(port_type port_num, const std::string& host)
-    : good_(true)
   {
     addr_.sin_family = AF_INET;
     addr_.sin_port = htons(port_num);
@@ -85,8 +82,7 @@ public:
 
   /// Copy constructor.
   inet_address_v4(const inet_address_v4& other)
-    : addr_(other.addr_),
-      good_(other.good_) 
+    : addr_(other.addr_)
   {
   }
 
@@ -94,20 +90,7 @@ public:
   inet_address_v4& operator=(const inet_address_v4& other)
   {
     addr_ = other.addr_;
-    good_ = other.good_;
     return *this;
-  }
-
-  /// The address is good.
-  bool good() const
-  {
-    return good_ && native_address()->sa_family == AF_INET;
-  }
-
-  /// The address is bad.
-  bool bad() const
-  {
-    return !good();
   }
 
   /// The address family.
@@ -125,7 +108,8 @@ public:
   /// Get the underlying address in the native type.
   const native_address_type* native_address() const
   {
-    return reinterpret_cast<const inet_address_v4::native_address_type*>(&addr_);
+    return reinterpret_cast<const inet_address_v4::native_address_type*>(
+        &addr_);
   }
 
   /// Get the underlying size of the address in the native type.
@@ -137,7 +121,8 @@ public:
   /// Set the underlying size of the address in the native type.
   void native_size(native_size_type size)
   {
-    good_ = (size == sizeof(addr_));
+    if (size != sizeof(addr_))
+      throw socket_error(socket_error::invalid_argument);
   }
 
   /// Get the port associated with the address. The port number is always in
@@ -164,93 +149,57 @@ public:
   void host_addr(addr_type host)
   {
     addr_.sin_addr.s_addr = host;
-    good_ = true;
   }
 
   /// Get the host's address in dotted decimal format.
   std::string host_addr_str() const
   {
-#if defined(_WIN32)
-    return inet_ntoa(addr_.sin_addr);
-#else
-    char addr_str[INET_ADDRSTRLEN];
-    return inet_ntop(AF_INET, &addr_.sin_addr, addr_str, INET_ADDRSTRLEN);
-#endif
+    char addr_str[detail::max_addr_str_len];
+    const char* addr = detail::socket_ops::inet_ntop(AF_INET, &addr_.sin_addr,
+        addr_str, detail::max_addr_str_len);
+    if (addr == 0)
+      throw socket_error(detail::socket_ops::get_error());
+    return addr;
   }
 
   /// Set the host's address using dotted decimal format.
   void host_addr_str(const std::string& host)
   {
-#if defined(_WIN32)
-    addr_.sin_addr.s_addr = inet_addr(host.c_str());
-    good_ = (addr_.sin_addr.s_addr != INADDR_NONE || host == "255.255.255.255");
-#else
-    good_ = inet_pton(AF_INET, host.c_str(), &addr_.sin_addr);
-#endif
+    if (detail::socket_ops::inet_pton(AF_INET, host.c_str(),
+          &addr_.sin_addr) <= 0)
+      throw socket_error(detail::socket_ops::get_error());
   }
 
   /// Get the host name.
   std::string host_name() const
   {
-#if defined(_WIN32)
-    hostent* ent_result =
-      gethostbyaddr(reinterpret_cast<const char*>(&addr_.sin_addr),
-          sizeof(addr_.sin_addr), AF_INET);
-    return ent_result ? ent_result->h_name : "";
-#elif defined(__sun)
     hostent ent;
     char buf[1024] = "";
-    int error;
-    gethostbyaddr_r((const char*)&addr_.sin_addr, sizeof(addr_.sin_addr),
-        AF_INET, &ent, buf, sizeof(buf), &error);
+    int error = 0;
+    if (detail::socket_ops::gethostbyaddr_r(
+          reinterpret_cast<const char*>(&addr_.sin_addr),
+          sizeof(addr_.sin_addr), AF_INET, &ent, buf, sizeof(buf),
+          &error) == 0)
+      throw socket_error(error);
     return ent.h_name;
-#else
-    hostent ent;
-    hostent* ent_result;
-    char buf[1024] = "";
-    int error;
-    gethostbyaddr_r(&addr_.sin_addr, sizeof(addr_.sin_addr), AF_INET, &ent, buf,
-        sizeof(buf), &ent_result, &error);
-    return ent_result->h_name;
-#endif
   }
 
   /// Set the host name.
   void host_name(const std::string& host)
   {
     using namespace std; // For memcpy.
-
-#if defined(_WIN32)
-    hostent* ent_result = gethostbyname(host.c_str());
-    good_ = (ent_result != 0);
-    if (good_)
-      memcpy(&addr_.sin_addr, ent_result->h_addr, sizeof(addr_.sin_addr));
-#elif defined(__sun)
     hostent ent;
     char buf[1024] = "";
-    int error;
-    good_ = (gethostbyname_r(host.c_str(), &ent, buf, sizeof(buf),
-        &error) == 0);
-    if (good_)
-      memcpy(&addr_.sin_addr, ent.h_addr, sizeof(addr_.sin_addr));
-#else
-    hostent ent;
-    hostent* ent_result;
-    char buf[1024] = "";
-    int error;
-    good_ = (gethostbyname_r(host.c_str(), &ent, buf, sizeof(buf), &ent_result,
-          &error) == 0);
-    if (good_)
-      memcpy(&addr_.sin_addr, ent_result->h_addr, sizeof(addr_.sin_addr));
-#endif
+    int error = 0;
+    if (detail::socket_ops::gethostbyname_r(host.c_str(), &ent, buf,
+          sizeof(buf), &error) == 0)
+      throw socket_error(error);
+    memcpy(&addr_.sin_addr, ent.h_addr, sizeof(addr_.sin_addr));
   }
 
 private:
   // The underlying IPv4 socket address.
   detail::inet_addr_v4_type addr_;
-
-  // Whether the address is valid.
-  bool good_;
 };
 
 } // namespace asio

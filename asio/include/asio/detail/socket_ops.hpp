@@ -18,6 +18,7 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <cstring>
 #include <cerrno>
 #if !defined(_WIN32)
 #include <sys/ioctl.h>
@@ -266,6 +267,7 @@ select(
     fd_set* exceptfds,
     timeval* timeout)
 {
+  set_error(0);
 #if defined(_WIN32)
   if (!readfds && !writefds && !exceptfds && timeout)
   {
@@ -274,6 +276,125 @@ select(
   }
 #endif // defined(_WIN32)
   return error_wrapper(::select(nfds, readfds, writefds, exceptfds, timeout));
+}
+
+inline
+const char*
+inet_ntop(
+    int af,
+    const void* src,
+    char* dest,
+    size_t length)
+{
+  set_error(0);
+#if defined(_WIN32)
+  using namespace std; // For strncat.
+
+  if (af != AF_INET)
+  {
+    set_error(socket_error::address_family_not_supported);
+    return 0;
+  }
+
+  char* addr_str = error_wrapper(
+      ::inet_ntoa(*static_cast<const in_addr*>(src)));
+  if (addr_str)
+  {
+    *dest = '\0';
+    strncat(dest, addr_str, length);
+  }
+  return (addr_str ? dest : 0);
+#else // defined(_WIN32)
+  return error_wrapper(::inet_ntop(af, src, dest, length));
+#endif // defined(_WIN32)
+}
+
+inline
+int
+inet_pton(
+    int af,
+    const char* src,
+    void* dest)
+{
+  set_error(0);
+#if defined(_WIN32)
+  using namespace std; // For strcmp.
+
+  if (af != AF_INET)
+  {
+    set_error(socket_error::address_family_not_supported);
+    return -1;
+  }
+
+  unsigned long addr = error_wrapper(::inet_addr(src));
+  if (addr != INADDR_NONE || strcmp(src, "255.255.255.255") == 0)
+  {
+    static_cast<in_addr*>(dest)->s_addr = addr;
+    return 1;
+  }
+
+  return 0;
+#else // defined(_WIN32)
+  return inet_pton(af, src, dest);
+#endif // defined(_WIN32)
+}
+
+inline
+hostent*
+gethostbyaddr_r(
+    const char *addr,
+    int length,
+    int type,
+    hostent *result,
+    char* buffer,
+    int buflength,
+    int* error)
+{
+  set_error(0);
+#if defined(_WIN32)
+  hostent* ent_result = error_wrapper(::gethostbyaddr(addr, length, type));
+  *error = get_error();
+  if (!ent_result)
+    return 0;
+  *result = *ent_result;
+  return result;
+#elif defined(__sun)
+  return error_wrapper(::gethostbyaddr_r(addr, length, type, result, buffer,
+        buflength, error));
+#else
+  hostent* ent_result = 0;
+  error_wrapper(::gethostbyaddr_r(addr, length, type, result, buffer,
+        buflength, &ent_result, error));
+  return ent_result;
+#endif
+}
+
+inline
+hostent*
+gethostbyname_r(
+    const char *name,
+    struct hostent *result,
+    char* buffer,
+    int buflength,
+    int* error)
+{
+  set_error(0);
+#if defined(_WIN32)
+  hostent* ent_result = error_wrapper(::gethostbyname(name));
+  *error = get_error();
+  if (!ent_result)
+    return 0;
+  *result = *ent_result;
+  return result;
+#elif defined(__sun)
+  return error_wrapper(::gethostbyname_r(name, result, buffer, buflength,
+        error));
+#else
+  hostent* ent_result = 0;
+  error_wrapper(::gethostbyname_r(name, result, buffer, buflength, &ent_result,
+        error));
+  return ent_result;
+#endif
 }
 
 } // namespace socket_ops

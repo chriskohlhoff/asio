@@ -68,6 +68,12 @@ public:
     /// Bad address.
     fault = ASIO_SOCKET_ERROR(EFAULT),
 
+    /// Host not found (authoritative).
+    host_not_found = ASIO_SOCKET_ERROR(HOST_NOT_FOUND),
+
+    /// Host not found (non-authoritative).
+    host_not_found_try_again = ASIO_SOCKET_ERROR(TRY_AGAIN),
+
     /// No route to host.
     host_unreachable = ASIO_SOCKET_ERROR(EHOSTUNREACH),
 
@@ -98,6 +104,9 @@ public:
     /// No buffer space available.
     no_buffer_space = ASIO_SOCKET_ERROR(ENOBUFS),
 
+    /// The host is valid but does not have address data.
+    no_host_data = ASIO_SOCKET_ERROR(NO_DATA),
+
     /// Cannot allocate memory.
     no_memory = ENOMEM,
 
@@ -106,6 +115,9 @@ public:
 
     /// Protocol not available.
     no_protocol_option = ASIO_SOCKET_ERROR(ENOPROTOOPT),
+
+    /// A non-recoverable error occurred.
+    no_recovery = ASIO_SOCKET_ERROR(NO_RECOVERY),
 
     /// Transport endpoint is not connected.
     not_connected = ASIO_SOCKET_ERROR(ENOTCONN),

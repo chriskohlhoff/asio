@@ -42,6 +42,7 @@ namespace detail {
 typedef SOCKET socket_type;
 const SOCKET invalid_socket = INVALID_SOCKET;
 const int socket_error_retval = SOCKET_ERROR;
+const int max_addr_str_len = 256;
 typedef sockaddr socket_addr_type;
 typedef sockaddr_in inet_addr_v4_type;
 typedef int socket_addr_len_type;
@@ -51,6 +52,7 @@ typedef unsigned long ioctl_arg_type;
 typedef int socket_type;
 const int invalid_socket = -1;
 const int socket_error_retval = -1;
+const int max_addr_str_len = INET_ADDRSTRLEN;
 typedef sockaddr socket_addr_type;
 typedef sockaddr_in inet_addr_v4_type;
 typedef socklen_t socket_addr_len_type;
