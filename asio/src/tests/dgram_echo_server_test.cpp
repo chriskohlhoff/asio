@@ -22,15 +22,17 @@ public:
       socket_.async_sendto(data_, length, sender_address_,
           boost::bind(&dgram_handler::handle_sendto, this, _1, _2));
     }
-  }
-
-  void handle_sendto(const socket_error& error, size_t length)
-  {
-    if (!error)
+    else
     {
       socket_.async_recvfrom(data_, max_length, sender_address_,
           boost::bind(&dgram_handler::handle_recvfrom, this, _1, _2));
     }
+  }
+
+  void handle_sendto(const socket_error& error, size_t length)
+  {
+    socket_.async_recvfrom(data_, max_length, sender_address_,
+        boost::bind(&dgram_handler::handle_recvfrom, this, _1, _2));
   }
 
 private:
