@@ -30,6 +30,7 @@
 
 \li asio::demuxer
 \li asio::dgram_socket
+\li asio::locking_dispatcher
 \li asio::socket_acceptor
 \li asio::socket_connector
 \li asio::stream_socket
@@ -48,6 +49,7 @@
 
 \li asio::basic_demuxer
 \li asio::basic_dgram_socket
+\li asio::basic_locking_dispatcher
 \li asio::basic_socket_acceptor
 \li asio::basic_socket_connector
 \li asio::basic_stream_socket
