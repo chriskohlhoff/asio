@@ -36,6 +36,7 @@ TESTS = \
 	tests/unit/fixed_buffer_test
 
 noinst_HEADERS = \
+	tests/unit/unit_test.hpp \
 	examples/chat/chat_message.hpp
 
 AM_CXXFLAGS = -I../include
