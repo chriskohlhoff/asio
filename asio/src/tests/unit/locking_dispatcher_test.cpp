@@ -1,5 +1,5 @@
 //
-// locking_dispatcher_test.hpp
+// locking_dispatcher_test.cpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003, 2004 Christopher M. Kohlhoff (chris@kohlhoff.com)

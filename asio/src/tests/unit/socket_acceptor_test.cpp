@@ -1,5 +1,5 @@
 //
-// socket_acceptor_test.hpp
+// socket_acceptor_test.cpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003, 2004 Christopher M. Kohlhoff (chris@kohlhoff.com)

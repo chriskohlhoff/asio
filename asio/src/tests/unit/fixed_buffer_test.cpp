@@ -1,5 +1,5 @@
 //
-// fixed_buffer_test.hpp
+// fixed_buffer_test.cpp
 // ~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003, 2004 Christopher M. Kohlhoff (chris@kohlhoff.com)

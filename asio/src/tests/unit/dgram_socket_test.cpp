@@ -1,5 +1,5 @@
 //
-// dgram_socket_test.hpp
+// dgram_socket_test.cpp
 // ~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003, 2004 Christopher M. Kohlhoff (chris@kohlhoff.com)
