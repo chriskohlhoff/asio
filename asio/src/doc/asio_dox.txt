@@ -101,6 +101,7 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 \li Async_Recv_Stream
 \li Async_Send_Stream
 \li Dispatcher
+\li Stream
 \li Sync_Recv_Stream
 \li Sync_Send_Stream
 
