@@ -1,5 +1,6 @@
 #include "asio.hpp"
 #include <boost/bind.hpp>
+#include <boost/function.hpp>
 #include <iostream>
 
 using namespace asio;

@@ -1,18 +1,18 @@
-asio version 0.1.1 - Installation instructions
+asio version 0.1.2 - Installation instructions
 
 1.   Supported Platforms
 2.   Requirements
-2.1.   Building the boost thread library
-3.   Building on Linux
-4.   Building on Win32
-4.1.   Building with MSVC
-4.2.   Building with Borland C++
+3.   Before using asio
+4.   Building the tests on Linux
+5.   Building the tests on Win32
+5.1.   Building with MSVC
+5.2.   Building with Borland C++
 
 
 1. Supported Platforms
 ======================
 
-The asio library has been built and tested on the following compiler/platform
+The asio toolkit has been tested with the following compiler/platform
 combinations:
 
   - Redhat Linux 7.3 using gcc 2.95.3
@@ -24,60 +24,23 @@ combinations:
 2. Requirements
 ===============
 
-The asio library requires boost version 1.30.0, with the threading library
-built.
-
-2.1. Building the boost thread library
-
-This is intended as a quick guide to building the boost thread library for your
-compiler/platform combination. Please consult the boost documentation for a
-more detailed description.
-
-If you are using gcc on Linux:
-
-- Change directory to `boost_1_30_0/tools/build/jam_src'.
-
-- Run `./build.sh'.
-
-- Change directory to `boost_1_30_0/libs/thread/build'.
-
-- Run `../../../tools/build/jam_src/bin.linuxx86/bjam -sTOOLS=gcc'.
-
-- Add the `boost_1_30_0/libs/thread/build/bin-stage' directory to your
-  LD_LIBRARY_PATH environment variable before running any executables which
-  make use of the library.
-
-If you are using MSVC on Windows 2000:
-
-- Change directory to `boost_1_30_0\tools\build\jam_src'.
-
-- Run `build.bat'.
-
-- Change directory to `boost_1_30_0\libs\thread\build'.
-
-- Run `..\..\..\tools\build\jam_src\bin.ntx86\bjam -sTOOLS=msvc'.
-
-- Add the `boost_1_30_0\libs\thread\build\bin-stage' directory to your PATH
-  environment variable before running any executables which make use of the
-  library.
-
-If you are using Borland C++ on Windows 2000:
-
-- Change directory to `boost_1_30_0\tools\build\jam_src'.
-
-- Run `build.bat'.
-
-- Change directory to `boost_1_30_0\libs\thread\build'.
-
-- Run `..\..\..\tools\build\jam_src\bin.ntx86\bjam -sTOOLS=borland'.
-
-- Add the `boost_1_30_0\libs\thread\build\bin-stage' directory to your PATH
-  environment variable before running any executables which make use of the
-  library.
+The asio toolkit requires boost version 1.30.0. There is no need to build any
+of the boost libraries to use asio, as only the header files are required.
 
 
-3. Building on Linux
+3. Before using asio
 ====================
+
+The asio toolkit consists only of header files, and so there is no need to
+build any libraries before using asio in your own applications. You simply need
+to add the following directories to your compiler include path:
+
+  - asio's `include' directory
+  - the boost directory (i.e. the directory called boost_1_30_0)
+
+
+4. Building the tests on Linux
+==============================
 
 If the boost directory (i.e. the directory called boost_1_30_0) is in the same
 directory as the asio source kit, then you may configure asio by simply going:
@@ -95,14 +58,14 @@ an absolute path.
 To build, simply run `make' in the root directory of the asio source kit.
 
 
-4. Building on Win32
-====================
+5. Building the tests on Win32
+==============================
 
 To build with either of the supported Win32 compilers, the boost directory
 (i.e. the directory called boost_1_30_0) must be in the same directory as the
 one that contains the asio source kit.
 
-4.1. Building with MSVC
+5.1. Building with MSVC
 
 To build using the MSVC 6 command line compiler, perform the following steps:
 
@@ -110,7 +73,7 @@ To build using the MSVC 6 command line compiler, perform the following steps:
 
   - Execute the command `nmake -f Makefile.msc'.
 
-4.2. Building with Borland C++
+5.2. Building with Borland C++
 
 To build using the Borland C++ Builder 6 command line compiler, perform the
 following steps:

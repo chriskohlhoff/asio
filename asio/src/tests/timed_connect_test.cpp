@@ -9,18 +9,15 @@ class connect_handler
 public:
   connect_handler(demuxer& d)
     : demuxer_(d),
-      timer_queue_(d),
+      timer_(d),
       connector_(d),
       socket_(d)
   {
     connector_.async_connect(socket_, inet_address_v4(32123, "localhost"),
         boost::bind(&connect_handler::handle_connect, this, _1));
 
-    boost::xtime expiry_time;
-    boost::xtime_get(&expiry_time, boost::TIME_UTC);
-    expiry_time.sec += 5;
-    timer_queue_.schedule_timer(expiry_time,
-        boost::bind(&connect_handler::handle_timeout, this));
+    timer_.set(timer::from_now, 5);
+    timer_.async_wait(boost::bind(&connect_handler::handle_timeout, this));
   }
 
   void handle_timeout()
@@ -42,7 +39,7 @@ public:
 
 private:
   demuxer& demuxer_;
-  timer_queue timer_queue_;
+  timer timer_;
   socket_connector connector_;
   stream_socket socket_;
 };

@@ -257,6 +257,25 @@ ioctl(
 #endif // defined(_WIN32)
 }
 
+inline
+int
+select(
+    int nfds,
+    fd_set* readfds,
+    fd_set* writefds,
+    fd_set* exceptfds,
+    timeval* timeout)
+{
+#if defined(_WIN32)
+  if (!readfds && !writefds && !exceptfds && timeout)
+  {
+    ::Sleep(timeout->tv_sec * 1000 + timeout->tv_usec / 1000);
+    return 0;
+  }
+#endif // defined(_WIN32)
+  return error_wrapper(::select(nfds, readfds, writefds, exceptfds, timeout));
+}
+
 } // namespace socket_ops
 } // namespace detail
 } // namespace asio

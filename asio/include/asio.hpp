@@ -20,7 +20,7 @@
 #include "asio/basic_socket_acceptor.hpp"
 #include "asio/basic_socket_connector.hpp"
 #include "asio/basic_stream_socket.hpp"
-#include "asio/basic_timer_queue.hpp"
+#include "asio/basic_timer.hpp"
 #include "asio/buffered_recv_stream.hpp"
 #include "asio/buffered_send_stream.hpp"
 #include "asio/buffered_stream.hpp"
@@ -34,6 +34,7 @@
 #include "asio/socket_connector.hpp"
 #include "asio/socket_error.hpp"
 #include "asio/stream_socket.hpp"
-#include "asio/timer_queue.hpp"
+#include "asio/timer.hpp"
+#include "asio/timer_base.hpp"
 
 #endif // ASIO_HPP

@@ -1,6 +1,6 @@
 //
-// timer_queue.hpp
-// ~~~~~~~~~~~~~~~
+// time.hpp
+// ~~~~~~~~
 //
 // Copyright (c) 2003 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -12,22 +12,26 @@
 // no claim as to its suitability for any purpose.
 //
 
-#ifndef ASIO_TIMER_QUEUE_HPP
-#define ASIO_TIMER_QUEUE_HPP
+#ifndef ASIO_DETAIL_TIME_HPP
+#define ASIO_DETAIL_TIME_HPP
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/basic_timer_queue.hpp"
-#include "asio/demuxer.hpp"
-#include "asio/detail/timer_queue_service.hpp"
+#include "asio/detail/posix_time.hpp"
+#include "asio/detail/win_time.hpp"
 
 namespace asio {
+namespace detail {
 
-/// Typedef for the typical usage of timer_queue.
-typedef basic_timer_queue<detail::timer_queue_service<demuxer> > timer_queue;
+#if defined(_WIN32)
+typedef win_time time;
+#else
+typedef posix_time time;
+#endif
 
+} // namespace detail
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_TIMER_QUEUE_HPP
+#endif // ASIO_DETAIL_TIME_HPP

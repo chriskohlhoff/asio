@@ -9,18 +9,15 @@ class accept_handler
 public:
   accept_handler(demuxer& d)
     : demuxer_(d),
-      timer_queue_(d),
+      timer_(d),
       acceptor_(d, inet_address_v4(32123)),
       socket_(d)
   {
     acceptor_.async_accept(socket_,
         boost::bind(&accept_handler::handle_accept, this, _1));
 
-    boost::xtime expiry_time;
-    boost::xtime_get(&expiry_time, boost::TIME_UTC);
-    expiry_time.sec += 5;
-    timer_queue_.schedule_timer(expiry_time,
-        boost::bind(&accept_handler::handle_timeout, this));
+    timer_.set(timer::from_now, 5);
+    timer_.async_wait(boost::bind(&accept_handler::handle_timeout, this));
   }
 
   void handle_timeout()
@@ -42,7 +39,7 @@ public:
 
 private:
   demuxer& demuxer_;
-  timer_queue timer_queue_;
+  timer timer_;
   socket_acceptor acceptor_;
   stream_socket socket_;
 };

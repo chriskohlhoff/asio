@@ -6,17 +6,14 @@
 
 using namespace asio;
 
-void print(int id, int sleep_time, detail::mutex& io_mutex)
+void print(demuxer& d, int id, int sleep_time, detail::mutex& io_mutex)
 {
   detail::mutex::scoped_lock lock(io_mutex);
   std::cout << "Starting " << id << "\n";
   lock.unlock();
 
-#if defined(_WIN32)
-  Sleep(sleep_time * 1000);
-#else
-  sleep(sleep_time);
-#endif
+  timer t(d, timer::from_now, 5);
+  t.wait();
 
   lock.lock();
   std::cout << "Finished " << id << "\n";
@@ -47,18 +44,20 @@ void post_events(demuxer& d, counting_completion_context& c1,
     counting_completion_context& c2, detail::mutex& io_mutex)
 {
   // Give all threads an opportunity to start.
-#if defined(_WIN32)
-  Sleep(2000);
-#else
-  sleep(2);
-#endif
+  timer t(d, timer::from_now, 2);
+  t.wait();
 
   // Post a bunch of completions to run across the different threads.
-  d.operation_immediate(boost::bind(print, 1, 10, boost::ref(io_mutex)), c1);
-  d.operation_immediate(boost::bind(print, 2, 5, boost::ref(io_mutex)), c2);
-  d.operation_immediate(boost::bind(print, 3, 5, boost::ref(io_mutex)), c1);
-  d.operation_immediate(boost::bind(print, 4, 5, boost::ref(io_mutex)), c2);
-  d.operation_immediate(boost::bind(print, 5, 5, boost::ref(io_mutex)), c1);
+  d.operation_immediate(boost::bind(print, boost::ref(d), 1, 10,
+        boost::ref(io_mutex)), c1);
+  d.operation_immediate(boost::bind(print, boost::ref(d), 2, 5,
+        boost::ref(io_mutex)), c2);
+  d.operation_immediate(boost::bind(print, boost::ref(d), 3, 5,
+        boost::ref(io_mutex)), c1);
+  d.operation_immediate(boost::bind(print, boost::ref(d), 4, 5,
+        boost::ref(io_mutex)), c2);
+  d.operation_immediate(boost::bind(print, boost::ref(d), 5, 5,
+        boost::ref(io_mutex)), c1);
   d.operation_immediate(boost::bind(outer_print, boost::ref(d), 6,
         boost::ref(io_mutex)));
 }

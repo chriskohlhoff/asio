@@ -12,7 +12,7 @@ noinst_PROGRAMS = \
 	../bin/timed_accept_test \
 	../bin/timed_connect_test \
 	../bin/timed_dgram_recv_test \
-	../bin/timer_queue_test \
+	../bin/timer_test \
 	../bin/tpc_echo_server_test
 
 AM_CXXFLAGS = -I../include
@@ -36,16 +36,16 @@ ___bin_socket_accept_test_SOURCES = tests/socket_accept_test.cpp
 ___bin_socket_accept_test_LDADD = -lpthread
 
 ___bin_timed_accept_test_SOURCES = tests/timed_accept_test.cpp
-___bin_timed_accept_test_LDADD = -lboost_thread
+___bin_timed_accept_test_LDADD = -lpthread
 
 ___bin_timed_connect_test_SOURCES = tests/timed_connect_test.cpp
-___bin_timed_connect_test_LDADD = -lboost_thread
+___bin_timed_connect_test_LDADD = -lpthread
 
 ___bin_timed_dgram_recv_test_SOURCES = tests/timed_dgram_recv_test.cpp
-___bin_timed_dgram_recv_test_LDADD = -lboost_thread
+___bin_timed_dgram_recv_test_LDADD = -lpthread
 
-___bin_timer_queue_test_SOURCES = tests/timer_queue_test.cpp
-___bin_timer_queue_test_LDADD = -lboost_thread
+___bin_timer_test_SOURCES = tests/timer_test.cpp
+___bin_timer_test_LDADD = -lpthread
 
 ___bin_tpc_echo_server_test_SOURCES = tests/tpc_echo_server_test.cpp
 ___bin_tpc_echo_server_test_LDADD = -lpthread

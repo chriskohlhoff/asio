@@ -27,8 +27,10 @@
 #include "asio/detail/task_demuxer_service.hpp"
 #include "asio/detail/thread.hpp"
 #include "asio/detail/reactor_op_queue.hpp"
+#include "asio/detail/reactor_timer_queue.hpp"
 #include "asio/detail/select_interrupter.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/time.hpp"
 
 namespace asio {
 namespace detail {
@@ -86,7 +88,7 @@ public:
   }
 
   // Start a read operation from inside an op_call invocation. The do_operation
-  // function of the select_op object will be invoked when the given descriptor
+  // function of the handler object will be invoked when the given descriptor
   // is ready to be read.
   template <typename Handler>
   void restart_read_op(socket_type descriptor, Handler handler)
@@ -105,7 +107,7 @@ public:
   }
 
   // Start a write operation from inside an op_call invocation. The
-  // do_operation function of the select_op object will be invoked when the
+  // do_operation function of the handler object will be invoked when the
   // given descriptor is ready for writing.
   template <typename Handler>
   void restart_write_op(socket_type descriptor, Handler handler)
@@ -120,6 +122,29 @@ public:
     asio::detail::mutex::scoped_lock lock(mutex_);
     read_op_queue_.close_descriptor(descriptor);
     write_op_queue_.close_descriptor(descriptor);
+  }
+
+  // Schedule a timer to expire at the specified absolute time. The
+  // do_operation function of the handler object will be invoked when the timer
+  // expires. Returns a token that may be used for cancelling the timer, but it
+  // is not valid after the timer expires.
+  template <typename Handler>
+  void schedule_timer(long sec, long usec, Handler handler, void*& token)
+  {
+    asio::detail::mutex::scoped_lock lock(mutex_);
+    if (timer_queue_.enqueue_timer(time(sec, usec), handler, token))
+      interrupter_.interrupt();
+  }
+
+  // Cancel the timer associated with the given token.
+  void expire_timer(void*& token)
+  {
+    asio::detail::mutex::scoped_lock lock(mutex_);
+    if (token)
+    {
+      timer_queue_.cancel_timer(token);
+      token = 0;
+    }
   }
 
 private:
@@ -152,8 +177,10 @@ private:
 
       // Block on the select call without holding the lock so that new
       // operations can be started while the call is executing.
+      timeval tv_buf;
+      timeval* tv = get_timeout(tv_buf);
       lock.unlock();
-      int retval = ::select(max_fd + 1, read_fds, write_fds, 0, 0);
+      int retval = socket_ops::select(max_fd + 1, read_fds, write_fds, 0, tv);
       lock.lock();
 
       // Reset the interrupter.
@@ -166,6 +193,7 @@ private:
         read_op_queue_.dispatch_descriptors(read_fds);
         write_op_queue_.dispatch_descriptors(write_fds);
       }
+      timer_queue_.dispatch_timers(time::now());
     }
   }
 
@@ -191,6 +219,31 @@ private:
   void interrupt()
   {
     interrupter_.interrupt();
+  }
+
+  // Get the timeout value for the select call.
+  timeval* get_timeout(timeval& tv)
+  {
+    if (timer_queue_.empty())
+      return 0;
+
+    time now = time::now();
+    time earliest_timer;
+    timer_queue_.get_earliest_time(earliest_timer);
+    if (now < earliest_timer)
+    {
+      time timeout = earliest_timer;
+      timeout -= now;
+      tv.tv_sec = timeout.sec();
+      tv.tv_usec = timeout.usec();
+    }
+    else
+    {
+      tv.tv_sec = 0;
+      tv.tv_usec = 0;
+    }
+
+    return &tv;
   }
 
   // Adapts the FD_SET type to meet the Descriptor_Set concept's requirements.
@@ -241,6 +294,9 @@ private:
 
   // The queue of write operations.
   reactor_op_queue<socket_type> write_op_queue_;
+
+  // The queue of timers.
+  reactor_timer_queue<time> timer_queue_;
 
   // Does the reactor loop thread need to stop.
   bool stop_thread_;

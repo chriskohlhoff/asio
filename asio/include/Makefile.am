@@ -5,7 +5,7 @@ nobase_include_HEADERS = \
 	asio/basic_socket_acceptor.hpp \
 	asio/basic_socket_connector.hpp \
 	asio/basic_stream_socket.hpp \
-	asio/basic_timer_queue.hpp \
+	asio/basic_timer.hpp \
 	asio/buffered_recv_stream.hpp \
 	asio/buffered_send_stream.hpp \
 	asio/buffered_stream.hpp \
@@ -16,6 +16,7 @@ nobase_include_HEADERS = \
 	asio/detail/mutex.hpp \
 	asio/detail/pipe_select_interrupter.hpp \
 	asio/detail/pop_options.hpp \
+	asio/detail/posix_time.hpp \
 	asio/detail/pthread_event.hpp \
 	asio/detail/pthread_mutex.hpp \
 	asio/detail/pthread_thread.hpp \
@@ -25,7 +26,9 @@ nobase_include_HEADERS = \
 	asio/detail/reactive_socket_acceptor_service.hpp \
 	asio/detail/reactive_socket_connector_service.hpp \
 	asio/detail/reactive_stream_socket_service.hpp \
+	asio/detail/reactive_timer_service.hpp \
 	asio/detail/reactor_op_queue.hpp \
+	asio/detail/reactor_timer_queue.hpp \
 	asio/detail/scoped_lock.hpp \
 	asio/detail/select_interrupter.hpp \
 	asio/detail/select_reactor.hpp \
@@ -37,7 +40,7 @@ nobase_include_HEADERS = \
 	asio/detail/socket_types.hpp \
 	asio/detail/task_demuxer_service.hpp \
 	asio/detail/thread.hpp \
-	asio/detail/timer_queue_service.hpp \
+	asio/detail/time.hpp \
 	asio/detail/tss_bool.hpp \
 	asio/detail/win_iocp_demuxer_service.hpp \
 	asio/detail/win_iocp_dgram_socket_service.hpp \
@@ -45,6 +48,7 @@ nobase_include_HEADERS = \
 	asio/detail/win_event.hpp \
 	asio/detail/win_mutex.hpp \
 	asio/detail/win_thread.hpp \
+	asio/detail/win_time.hpp \
 	asio/detail/win_tss_bool.hpp \
 	asio/detail/winsock_init.hpp \
 	asio/dgram_socket.hpp \
@@ -55,7 +59,8 @@ nobase_include_HEADERS = \
 	asio/socket_connector.hpp \
 	asio/socket_error.hpp \
 	asio/stream_socket.hpp \
-	asio/timer_queue.hpp
+	asio/timer.hpp \
+	asio/timer_base.hpp
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

@@ -3,8 +3,8 @@ BOOSTDIR = ../../boost_1_30_0
 !endif
 
 CXXFLAGS = -q -O2 -v -vi -y -a8 -b -Ve- -Vx- -tWM -tWR -tWC -w-inl -w-par -I../include -I$(BOOSTDIR)
-LDFLAGS = -q -O2 -v -vi -y -a8 -b -Ve- -Vx- -tWM -tWR -tWC -L$(BOOSTDIR)/libs/thread/build/bin-stage
-LIBS = ws2_32.lib boost_thread.lib
+LDFLAGS = -q -O2 -v -vi -y -a8 -b -Ve- -Vx- -tWM -tWR -tWC
+LIBS = ws2_32.lib
 
 all: \
 	..\bin\dispatcher_test.exe \
@@ -16,7 +16,7 @@ all: \
 	..\bin\timed_accept_test.exe \
 	..\bin\timed_connect_test.exe \
 	..\bin\timed_dgram_recv_test.exe \
-	..\bin\timer_queue_test.exe \
+	..\bin\timer_test.exe \
 	..\bin\tpc_echo_server_test.exe
 
 clean:
