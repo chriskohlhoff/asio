@@ -21,15 +21,17 @@ public:
       socket_.async_sendto(data_, bytes_recvd, sender_address_,
           boost::bind(&server::handle_sendto, this, _1, _2));
     }
-  }
-
-  void handle_sendto(const asio::socket_error& error, size_t bytes_sent)
-  {
-    if (!error)
+    else
     {
       socket_.async_recvfrom(data_, max_length, sender_address_,
           boost::bind(&server::handle_recvfrom, this, _1, _2));
     }
+  }
+
+  void handle_sendto(const asio::socket_error& error, size_t bytes_sent)
+  {
+    socket_.async_recvfrom(data_, max_length, sender_address_,
+        boost::bind(&server::handle_recvfrom, this, _1, _2));
   }
 
 private:
