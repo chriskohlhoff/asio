@@ -195,6 +195,76 @@ public:
     service_.get_option(impl_, option, error_handler);
   }
 
+  /// Get the local address of the socket.
+  /**
+   * This function is used to obtain the locally bound address of the socket.
+   *
+   * @param address An address object that receives the local address of the
+   * socket.
+   *
+   * @throws socket_error Thrown on failure.
+   */
+  template <typename Address>
+  void get_local_address(Address& address)
+  {
+    service_.get_local_address(impl_, address, default_error_handler());
+  }
+
+  /// Get the local address of the socket.
+  /**
+   * This function is used to obtain the locally bound address of the socket.
+   *
+   * @param address An address object that receives the local address of the
+   * socket.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Address, typename Error_Handler>
+  void get_local_address(Address& address, Error_Handler error_handler)
+  {
+    service_.get_local_address(impl_, address, error_handler);
+  }
+
+  /// Get the remote address of the socket.
+  /**
+   * This function is used to obtain the remote address of the socket.
+   *
+   * @param address An address object that receives the remote address of the
+   * socket.
+   *
+   * @throws socket_error Thrown on failure.
+   */
+  template <typename Address>
+  void get_remote_address(Address& address)
+  {
+    service_.get_remote_address(impl_, address, default_error_handler());
+  }
+
+  /// Get the remote address of the socket.
+  /**
+   * This function is used to obtain the remote address of the socket.
+   *
+   * @param address An address object that receives the remote address of the
+   * socket.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Address, typename Error_Handler>
+  void get_remote_address(Address& address, Error_Handler error_handler)
+  {
+    service_.get_remote_address(impl_, address, error_handler);
+  }
+
   /// Send the given data to the peer.
   /**
    * This function is used to send data to the stream socket's peer. The

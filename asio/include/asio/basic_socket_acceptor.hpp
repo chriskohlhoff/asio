@@ -268,6 +268,41 @@ public:
     service_.get_option(impl_, option, error_handler);
   }
 
+  /// Get the local address of the acceptor.
+  /**
+   * This function is used to obtain the locally bound address of the acceptor.
+   *
+   * @param address An address object that receives the local address of the
+   * acceptor.
+   *
+   * @throws socket_error Thrown on failure.
+   */
+  template <typename Address>
+  void get_local_address(Address& address)
+  {
+    service_.get_local_address(impl_, address, default_error_handler());
+  }
+
+  /// Get the local address of the acceptor.
+  /**
+   * This function is used to obtain the locally bound address of the acceptor.
+   *
+   * @param address An address object that receives the local address of the
+   * acceptor.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Address, typename Error_Handler>
+  void get_local_address(Address& address, Error_Handler error_handler)
+  {
+    service_.get_local_address(impl_, address, error_handler);
+  }
+
   /// Accept a new connection.
   /**
    * This function is used to accept a new connection from a peer into the
