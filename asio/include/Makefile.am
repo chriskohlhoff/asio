@@ -15,6 +15,7 @@ nobase_include_HEADERS = \
 	asio/detail/bind_handler.hpp \
 	asio/detail/buffer_resize_guard.hpp \
 	asio/detail/event.hpp \
+	asio/detail/hash_map.hpp \
 	asio/detail/locking_dispatcher_service.hpp \
 	asio/detail/mutex.hpp \
 	asio/detail/pipe_select_interrupter.hpp \

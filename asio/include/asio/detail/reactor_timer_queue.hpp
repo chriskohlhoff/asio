@@ -23,6 +23,8 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/detail/hash_map.hpp"
+
 namespace asio {
 namespace detail {
 
@@ -33,7 +35,7 @@ class reactor_timer_queue
 public:
   // Constructor.
   reactor_timer_queue()
-    : timers_(0),
+    : timers_(),
       heap_()
   {
   }
@@ -42,24 +44,34 @@ public:
   // earliest in the queue, in which case the reactor's event demultiplexing
   // function call may need to be interrupted and restarted.
   template <typename Handler>
-  bool enqueue_timer(const Time& time, Handler handler, void*& token)
+  bool enqueue_timer(const Time& time, Handler handler, void* token)
   {
-    timer_base* new_timer = new timer<Handler>(time, handler);
-    if (timers_)
-      timers_->prev_ = new_timer;
-    new_timer->next_ = timers_;
-    timers_ = new_timer;
+    // Create a new timer object.
+    timer_base* new_timer = new timer<Handler>(time, handler, token);
+
+    // Insert the new timer into the hash.
+    typedef typename hash_map<void*, timer_base*>::iterator iterator;
+    typedef typename hash_map<void*, timer_base*>::value_type value_type;
+    std::pair<iterator, bool> result =
+      timers_.insert(value_type(token, new_timer));
+    if (!result.second)
+    {
+      result.first->second->prev_ = new_timer;
+      new_timer->next_ = result.first->second;
+      result.first->second = new_timer;
+    }
+
+    // Put the timer at the correct position in the heap.
     new_timer->heap_index_ = heap_.size();
     heap_.push_back(new_timer);
     up_heap(heap_.size() - 1);
-    token = new_timer;
     return (heap_[0] == new_timer);
   }
 
   // Whether there are no timers in the queue.
   bool empty() const
   {
-    return timers_ == 0;
+    return heap_.empty();
   }
 
   // Get the time for the timer that is earliest in the queue.
@@ -85,10 +97,20 @@ public:
   // will be invoked immediately.
   void cancel_timer(void* timer_token)
   {
-    timer_base* t = static_cast<timer_base*>(timer_token);
-    remove_timer(t);
-    t->do_cancel();
-    delete t;
+    typedef typename hash_map<void*, timer_base*>::iterator iterator;
+    iterator it = timers_.find(timer_token);
+    if (it != timers_.end())
+    {
+      timer_base* t = it->second;
+      while (t)
+      {
+        timer_base* next = t->next_;
+        remove_timer(t);
+        t->do_cancel();
+        delete t;
+        t = next;
+      }
+    }
   }
 
 private:
@@ -97,8 +119,9 @@ private:
   {
   public:
     // Constructor.
-    timer_base(const Time& time)
+    timer_base(const Time& time, void* token)
       : time_(time),
+        token_(token),
         next_(0),
         prev_(0),
         heap_index_(~0)
@@ -119,8 +142,11 @@ private:
   private:
     friend class reactor_timer_queue<Time, Comparator>;
 
-    // The time qhen the operation should fire.
+    // The time when the operation should fire.
     Time time_;
+
+    // The token associated with the timer.
+    void* token_;
 
     // The next timer known to the queue.
     timer_base* next_;
@@ -139,8 +165,8 @@ private:
   {
   public:
     // Constructor.
-    timer(const Time& time, Handler handler)
-      : timer_base(time),
+    timer(const Time& time, Handler handler, void* token)
+      : timer_base(time, token),
         handler_(handler)
     {
     }
@@ -203,6 +229,7 @@ private:
   // Remove a timer from the heap and list of timers.
   void remove_timer(timer_base* t)
   {
+    // Remove the timer from the heap.
     int heap_index = t->heap_index_;
     if (heap_.size() > 1)
     {
@@ -218,16 +245,25 @@ private:
     {
       heap_.clear();
     }
-    if (timers_ == t)
-      timers_ = t->next_;
-    if (t->prev_)
-      t->prev_->next_ = t->next_;
-    if (t->next_)
-      t->next_->prev_ = t->prev_;
+
+    // Remove the timer from the hash.
+    typedef typename hash_map<void*, timer_base*>::iterator iterator;
+    iterator it = timers_.find(t->token_);
+    if (it != timers_.end())
+    {
+      if (it->second == t)
+        it->second = t->next_;
+      if (t->prev_)
+        t->prev_->next_ = t->next_;
+      if (t->next_)
+        t->next_->prev_ = t->prev_;
+      if (it->second == 0)
+        timers_.erase(it);
+    }
   }
 
-  // The linked list of timers known to the queue.
-  timer_base* timers_;
+  // A hash of timer token to linked lists of timers.
+  hash_map<void*, timer_base*> timers_;
 
   // The heap of timers, with the earliest timer at the front.
   std::vector<timer_base*> heap_;

@@ -18,9 +18,10 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
-#include <map>
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
+
+#include "asio/detail/hash_map.hpp"
 
 namespace asio {
 namespace detail {
@@ -207,7 +208,7 @@ private:
   };
 
   // The type for a map of operations.
-  typedef std::map<Descriptor, op_base*> operation_map;
+  typedef hash_map<Descriptor, op_base*> operation_map;
 
   // The operations that are currently executing asynchronously.
   operation_map operations_;

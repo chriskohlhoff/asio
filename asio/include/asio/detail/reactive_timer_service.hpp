@@ -39,7 +39,6 @@ public:
     : private boost::noncopyable
   {
     time expiry;
-    void* token;
   };
 
   // The native type of the timer. This type is dependent on the underlying
@@ -72,7 +71,6 @@ public:
   void create(impl_type& impl)
   {
     impl = new timer_impl;
-    impl->token = 0;
   }
 
   // Destroy a stream socket implementation.
@@ -80,7 +78,7 @@ public:
   {
     if (impl != null())
     {
-      reactor_.expire_timer(impl->token);
+      reactor_.expire_timer(impl);
       delete impl;
       impl = null();
     }
@@ -106,16 +104,13 @@ public:
       impl->expiry = relative_time;
       break;
     }
-
-    if (now < impl->expiry)
-      reactor_.expire_timer(impl->token);
   }
 
   // Expire the timer immediately.
   void expire(impl_type& impl)
   {
     impl->expiry = time::now();
-    reactor_.expire_timer(impl->token);
+    reactor_.expire_timer(impl);
   }
 
   // Perform a blocking wait on the timer.
@@ -147,14 +142,12 @@ public:
 
     void do_operation()
     {
-      impl_->token = 0;
       demuxer_.post(handler_);
       demuxer_.work_finished();
     }
 
     void do_cancel()
     {
-      impl_->token = 0;
       demuxer_.post(handler_);
       demuxer_.work_finished();
     }
@@ -171,7 +164,7 @@ public:
   {
     demuxer_.work_started();
     reactor_.schedule_timer(impl->expiry.sec(), impl->expiry.usec(),
-        wait_handler<Handler>(impl, demuxer_, handler), impl->token);
+        wait_handler<Handler>(impl, demuxer_, handler), impl);
   }
 
 private:

@@ -161,7 +161,7 @@ public:
   // expires. Returns a token that may be used for cancelling the timer, but it
   // is not valid after the timer expires.
   template <typename Handler>
-  void schedule_timer(long sec, long usec, Handler handler, void*& token)
+  void schedule_timer(long sec, long usec, Handler handler, void* token)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
     if (timer_queue_.enqueue_timer(time(sec, usec), handler, token))
@@ -169,14 +169,10 @@ public:
   }
 
   // Cancel the timer associated with the given token.
-  void expire_timer(void*& token)
+  void expire_timer(void* token)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
-    if (token)
-    {
-      timer_queue_.cancel_timer(token);
-      token = 0;
-    }
+    timer_queue_.cancel_timer(token);
   }
 
 private:
