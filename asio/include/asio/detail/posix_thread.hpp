@@ -54,8 +54,11 @@ public:
   // Wait for the thread to exit.
   void join()
   {
-    ::pthread_join(thread_, 0);
-    joined_ = true;
+    if (!joined_)
+    {
+      ::pthread_join(thread_, 0);
+      joined_ = true;
+    }
   }
 
 private:
