@@ -16,6 +16,8 @@
 
 #if defined (_MSC_VER)
 # pragma warning (disable:4103)
+# pragma warning (push)
+# pragma warning (disable:4355)
 # pragma pack (push, 8)
 #elif defined (__BORLANDC__)
 # pragma option push -a8 -b -Ve- -Vx-

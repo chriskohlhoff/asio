@@ -15,6 +15,7 @@
 // No header guard
 
 #if defined (_MSC_VER)
+# pragma warning (pop)
 # pragma pack (pop)
 #elif defined (__BORLANDC__)
 # pragma option pop
