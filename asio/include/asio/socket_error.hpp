@@ -185,12 +185,17 @@ public:
     }
     else
     {
-      void* msg_buf;
-      ::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM
+      void* msg_buf = 0;
+      ::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER
+          | FORMAT_MESSAGE_FROM_SYSTEM
           | FORMAT_MESSAGE_IGNORE_INSERTS, 0, code_,
           MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&msg_buf, 0, 0);
       std::string msg((LPCTSTR)msg_buf);
       ::LocalFree(msg_buf);
+      if (msg.size() && msg[msg.size() - 1] == '\n')
+        msg.resize(msg.size() - 1);
+      if (msg.size() && msg[msg.size() - 1] == '\r')
+        msg.resize(msg.size() - 1);
       return msg;
     }
 #elif defined(__sun)
