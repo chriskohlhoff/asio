@@ -2,3 +2,6 @@
 .dirstamp
 *.exe
 *_test
+*.ilk
+*.pdb
+*.tds
