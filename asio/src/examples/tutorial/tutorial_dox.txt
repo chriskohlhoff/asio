@@ -43,8 +43,8 @@ seconds from now.
 \until asio::timer
 
 <b>Step 4.</b> In this simple example we perform a blocking wait on the timer.
-That is, the call to wait() will not return until the timer has expired, 5
-seconds after it was created.
+That is, the call to asio::timer::wait() will not return until the timer has
+expired, 5 seconds after it was created.
 
 \until wait
 
@@ -83,11 +83,10 @@ asynchronous wait finishes.
 
 \until asio::timer 
 
-<b>Step 2.</b> Next, instead of doing a blocking wait as in Part 1, we
-call the <tt>async_wait</tt> function to perform an asynchronous wait. When
+<b>Step 2.</b> Next, instead of doing a blocking wait as in Part 1, we call
+the asio::timer::async_wait() function to perform an asynchronous wait. When
 calling this function we pass the <tt>print</tt> callback handler that was
 defined above.
-
 
 \skipline async_wait
 
@@ -155,8 +154,8 @@ more "work" to do. By not starting a new asynchronous wait on the timer when
 
 <b>Step 3.</b> Next we move the expiry time for the timer along by one second
 from the previous expiry time. Using the asio::timer::from_existing flag
-instead of asio::timer::from_now ensures that the timer does drift away from
-the whole-second mark due to any delays in processing the handler.
+instead of asio::timer::from_now ensures that the timer does not drift away
+from the whole-second mark due to any delays in processing the handler.
 
 \until set
 
