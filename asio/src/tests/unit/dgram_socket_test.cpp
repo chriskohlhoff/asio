@@ -42,6 +42,7 @@ void dgram_socket_test()
   dgram_socket s1(d, inet_address_v4(0));
   inet_address_v4 target_addr;
   s1.get_local_address(target_addr);
+  target_addr.host_addr_str("127.0.0.1");
 
   dgram_socket s2(d, inet_address_v4(0));
   char send_msg[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
