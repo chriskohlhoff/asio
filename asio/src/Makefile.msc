@@ -71,7 +71,7 @@ clean:
 	-del /q /s *.pdb
 
 .obj.exe:
-	cl -Fe$@ $(LDFLAGS) $< $(LIBS)
+	cl -Fe$@ $(LDFLAGS) $< $(LIBS) -link -opt:ref
 
 .cpp.obj:
-	cl -Fo$@ -c $(CXXFLAGS) $< -link -opt:ref
+	cl -Fo$@ -c $(CXXFLAGS) $<
