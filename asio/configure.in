@@ -1,5 +1,5 @@
 AC_INIT(src/asio.hpp)
-AM_INIT_AUTOMAKE(asio, 0.1.1)
+AM_INIT_AUTOMAKE(asio, 0.1.2)
 
 AM_PROG_CC_C_O
 AC_PROG_CXX
