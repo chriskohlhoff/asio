@@ -90,11 +90,12 @@ public:
   void set(impl_type& impl, timer_base::from_type from_when, long sec,
       long usec)
   {
+    time now = time::now();
     time relative_time(sec, usec);
     switch (from_when)
     {
     case timer_base::from_now:
-      impl->expiry = time::now();
+      impl->expiry = now;
       impl->expiry += relative_time;
       break;
     case timer_base::from_existing:
@@ -105,6 +106,9 @@ public:
       impl->expiry = relative_time;
       break;
     }
+
+    if (now < impl->expiry)
+      reactor_.expire_timer(impl->token);
   }
 
   // Expire the timer immediately.
