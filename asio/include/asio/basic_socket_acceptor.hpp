@@ -69,54 +69,27 @@ public:
    * @param addr An address on the local machine on which the acceptor will
    * listen for new connections.
    *
-   * @param listen_queue The maximum length of the queue of pending
+   * @param listen_backlog The maximum length of the queue of pending
    * connections. A value of 0 means use the default queue length.
    *
    * @throws socket_error Thrown on failure.
    */
   template <typename Address>
-  basic_socket_acceptor(demuxer_type& d, const Address& addr,
-      int listen_queue = 0)
+  basic_socket_acceptor(demuxer_type& d, const Address& address,
+      int listen_backlog = 0)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_type::null())
   {
-    service_.create(impl_, addr, listen_queue, default_error_handler());
-  }
-
-  /// Construct an acceptor opened on the given address.
-  /**
-   * This constructor creates an acceptor and automatically opens it to listen
-   * for new connections on the specified address.
-   *
-   * @param d The demuxer object that the acceptor will use to deliver
-   * completions for any asynchronous operations performed on the acceptor.
-   *
-   * @param addr An address on the local machine on which the acceptor will
-   * listen for new connections.
-   *
-   * @param listen_queue The maximum length of the queue of pending
-   * connections. A value of 0 means use the default queue length.
-   *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
-   * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
-   * ); @endcode
-   */
-  template <typename Address, typename Error_Handler>
-  basic_socket_acceptor(demuxer_type& d, const Address& addr, int listen_queue,
-      Error_Handler error_handler)
-    : service_(d.get_service(service_factory<Service>())),
-      impl_(service_type::null())
-  {
-    service_.create(impl_, addr, listen_queue, error_handler);
+    typedef typename Address::default_stream_protocol default_protocol;
+    service_.open(impl_, default_protocol(), default_error_handler());
+    service_.bind(impl_, address, default_error_handler());
+    service_.listen(impl_, listen_backlog, default_error_handler());
   }
 
   /// Destructor.
   ~basic_socket_acceptor()
   {
-    service_.destroy(impl_);
+    service_.close(impl_);
   }
 
   /// Get the demuxer associated with the asynchronous object.
@@ -133,35 +106,62 @@ public:
     return service_.demuxer();
   }
 
-  /// Open the acceptor using the given address.
+  /// Open the acceptor using the specified protocol.
   /**
-   * This function opens the acceptor to listen for new connections on the
-   * specified address.
+   * This function opens the socket acceptor so that it will use the specified
+   * protocol.
    *
-   * @param addr An address on the local machine on which the acceptor will
-   * listen for new connections.
+   * @param protocol An object specifying which protocol is to be used.
+   */
+  template <typename Protocol>
+  void open(const Protocol& protocol)
+  {
+    service_.open(impl_, protocol, default_error_handler());
+  }
+
+  /// Open the acceptor using the specified protocol.
+  /**
+   * This function opens the socket acceptor so that it will use the specified
+   * protocol.
    *
-   * @param listen_queue The maximum length of the queue of pending
-   * connections. A value of 0 means use the default queue length.
+   * @param protocol An object specifying which protocol is to be used.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Protocol, typename Error_Handler>
+  void open(const Protocol& protocol, Error_Handler error_handler)
+  {
+    service_.open(impl_, protocol, error_handler);
+  }
+
+  /// Bind the acceptor to the given local address.
+  /**
+   * This function binds the socket acceptor to the specified address on the
+   * local machine.
+   *
+   * @param address An address on the local machine to which the socket
+   * acceptor will be bound.
    *
    * @throws socket_error Thrown on failure.
    */
   template <typename Address>
-  void open(const Address& addr, int listen_queue = 0)
+  void bind(const Address& address)
   {
-    service_.create(impl_, addr, listen_queue, default_error_handler());
+    service_.bind(impl_, address, default_error_handler());
   }
 
-  /// Open the acceptor using the given address.
+  /// Bind the acceptor to the given local address.
   /**
-   * This function opens the acceptor to listen for new connections on the
-   * specified address.
+   * This function binds the socket acceptor to the specified address on the
+   * local machine.
    *
-   * @param addr An address on the local machine on which the acceptor will
-   * listen for new connections.
-   *
-   * @param listen_queue The maximum length of the queue of pending
-   * connections. A value of 0 means use the default queue length.
+   * @param address An address on the local machine to which the socket
+   * acceptor will be bound.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature
@@ -171,9 +171,45 @@ public:
    * ); @endcode
    */
   template <typename Address, typename Error_Handler>
-  void open(const Address& addr, int listen_queue, Error_Handler error_handler)
+  void bind(const Address& address, Error_Handler error_handler)
   {
-    service_.create(impl_, addr, listen_queue, error_handler);
+    service_.bind(impl_, address, error_handler);
+  }
+
+  /// Place the acceptor into the state where it will listen for new
+  /// connections.
+  /**
+   * This function puts the socket acceptor into the state where it may accept
+   * new connections.
+   *
+   * @param backlog The maximum length of the queue of pending connections. A
+   * value of 0 means use the default queue length.
+   */
+  void listen(int backlog = 0)
+  {
+    service_.listen(impl_, backlog, default_error_handler());
+  }
+
+  /// Place the acceptor into the state where it will listen for new
+  /// connections.
+  /**
+   * This function puts the socket acceptor into the state where it may accept
+   * new connections.
+   *
+   * @param backlog The maximum length of the queue of pending connections. A
+   * value of 0 means use the default queue length.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Error_Handler>
+  void listen(int backlog, Error_Handler error_handler)
+  {
+    service_.listen(impl_, backlog, error_handler);
   }
 
   /// Close the acceptor.
@@ -186,7 +222,7 @@ public:
    */
   void close()
   {
-    service_.destroy(impl_);
+    service_.close(impl_);
   }
 
   /// Get the underlying implementation in the native type.

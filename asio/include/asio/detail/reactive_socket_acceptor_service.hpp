@@ -58,43 +58,43 @@ public:
     return demuxer_;
   }
 
-  // Create a new stream socket implementation.
-  template <typename Address, typename Error_Handler>
-  void create(impl_type& impl, const Address& address, int listen_queue,
+  // Open a new socket acceptor implementation.
+  template <typename Protocol, typename Error_Handler>
+  void open(impl_type& impl, const Protocol& protocol,
       Error_Handler error_handler)
   {
-    if (listen_queue == 0)
-      listen_queue = SOMAXCONN;
-
-    socket_holder sock(socket_ops::socket(address.family(), SOCK_STREAM, 0));
+    socket_holder sock(socket_ops::socket(protocol.family(), protocol.type(),
+          protocol.protocol()));
     if (sock.get() == invalid_socket)
-    {
       error_handler(socket_error(socket_ops::get_error()));
-      return;
-    }
-
-    int reuse = 1;
-    socket_ops::setsockopt(sock.get(), SOL_SOCKET, SO_REUSEADDR, &reuse,
-        sizeof(reuse));
-
-    if (socket_ops::bind(sock.get(), address.native_address(),
-          address.native_size()) == socket_error_retval)
-    {
-      error_handler(socket_error(socket_ops::get_error()));
-      return;
-    }
-
-    if (socket_ops::listen(sock.get(), listen_queue) == socket_error_retval)
-    {
-      error_handler(socket_error(socket_ops::get_error()));
-      return;
-    }
-
-    impl = sock.release();
+    else
+      impl = sock.release();
   }
 
-  // Destroy a stream socket implementation.
-  void destroy(impl_type& impl)
+  // Bind the socket acceptor to the specified local address.
+  template <typename Address, typename Error_Handler>
+  void bind(impl_type& impl, const Address& address,
+      Error_Handler error_handler)
+  {
+    if (socket_ops::bind(impl, address.native_address(),
+          address.native_size()) == socket_error_retval)
+      error_handler(socket_error(socket_ops::get_error()));
+  }
+
+  // Place the socket acceptor into the state where it will listen for new
+  // connections.
+  template <typename Error_Handler>
+  void listen(impl_type& impl, int backlog, Error_Handler error_handler)
+  {
+    if (backlog == 0)
+      backlog = SOMAXCONN;
+
+    if (socket_ops::listen(impl, backlog) == socket_error_retval)
+      error_handler(socket_error(socket_ops::get_error()));
+  }
+
+  // Close a socket acceptor implementation.
+  void close(impl_type& impl)
   {
     if (impl != null())
     {

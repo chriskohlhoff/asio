@@ -43,6 +43,48 @@ public:
   public:
     typedef std::set<socket_type> socket_set;
 
+    // Default constructor.
+    connector_impl()
+      : have_protocol_(false),
+        family_(0),
+        type_(0),
+        protocol_(0)
+    {
+    }
+
+    // Construct to use a specific protocol.
+    connector_impl(int family, int type, int protocol)
+      : have_protocol_(true),
+        family_(family),
+        type_(type),
+        protocol_(protocol)
+    {
+    }
+
+    // Whether a protocol was specified.
+    bool have_protocol() const
+    {
+      return have_protocol_;
+    }
+
+    // Get the protocol family to use for new sockets.
+    int family() const
+    {
+      return family_;
+    }
+
+    // Get the type to use for new sockets.
+    int type() const
+    {
+      return type_;
+    }
+
+    // Get the protocol to use for new sockets.
+    int protocol() const
+    {
+      return protocol_;
+    }
+
     // Add a socket to the set.
     void add_socket(socket_type s)
     {
@@ -70,6 +112,18 @@ public:
 
     // The sockets currently contained in the set.
     socket_set sockets_;
+
+    // Whether a protocol has been specified.
+    bool have_protocol_;
+
+    // The protocol family to use for new sockets.
+    int family_;
+
+    // The type (e.g. SOCK_STREAM or SOCK_DGRAM) to use for new sockets.
+    int type_;
+
+    // The protocol to use for new sockets.
+    int protocol_;
   };
 
   // The native type of the socket connector. This type is dependent on the
@@ -98,14 +152,23 @@ public:
     return demuxer_;
   }
 
-  // Create a new socket connector implementation.
-  void create(impl_type& impl)
+  // Open a new socket connector implementation without specifying a protocol.
+  void open(impl_type& impl)
   {
     impl = new connector_impl;
   }
 
-  // Destroy a stream socket implementation.
-  void destroy(impl_type& impl)
+  // Open a new socket connector implementation so that it will create sockets
+  // using the specified protocol.
+  template <typename Protocol>
+  void open(impl_type& impl, const Protocol& protocol)
+  {
+    impl = new connector_impl(protocol.family(), protocol.type(),
+        protocol.protocol());
+  }
+
+  // Close a socket connector implementation.
+  void close(impl_type& impl)
   {
     if (impl != null())
     {
@@ -133,10 +196,23 @@ public:
       return;
     }
 
+    // Get the flags used to create the new socket.
+    typedef typename Address::default_stream_protocol protocol;
+    int family = impl->have_protocol() ? impl->family() : protocol().family();
+    int type = impl->have_protocol() ? impl->type() : protocol().type();
+    int proto = impl->have_protocol()
+      ? impl->protocol() : protocol().protocol();
+
+    // We can only connect stream sockets.
+    if (type != SOCK_STREAM)
+    {
+      error_handler(socket_error(socket_error::invalid_argument));
+      return;
+    }
+
     // Create a new socket for the connection. This will not be put into the
     // stream_socket object until the connection has beenestablished.
-    socket_holder sock(socket_ops::socket(peer_address.family(), SOCK_STREAM,
-          0));
+    socket_holder sock(socket_ops::socket(family, type, proto));
     if (sock.get() == invalid_socket)
     {
       error_handler(socket_error(socket_ops::get_error()));
@@ -253,10 +329,24 @@ public:
       return;
     }
 
+    // Get the flags used to create the new socket.
+    typedef typename Address::default_stream_protocol protocol;
+    int family = impl->have_protocol() ? impl->family() : protocol().family();
+    int type = impl->have_protocol() ? impl->type() : protocol().type();
+    int proto = impl->have_protocol()
+      ? impl->protocol() : protocol().protocol();
+
+    // We can only connect stream sockets.
+    if (type != SOCK_STREAM)
+    {
+      socket_error error(socket_error::invalid_argument);
+      demuxer_.operation_immediate(bind_handler(handler, error));
+      return;
+    }
+
     // Create a new socket for the connection. This will not be put into the
     // stream_socket object until the connection has beenestablished.
-    socket_holder new_socket(socket_ops::socket(peer_address.family(),
-          SOCK_STREAM, 0));
+    socket_holder new_socket(socket_ops::socket(family, type, proto));
     if (new_socket.get() == invalid_socket)
     {
       socket_error error(socket_ops::get_error());

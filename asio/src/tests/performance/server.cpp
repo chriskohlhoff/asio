@@ -109,7 +109,7 @@ class server
 public:
   server(demuxer& d, short port, size_t block_size)
     : demuxer_(d),
-      acceptor_(d, inet_address_v4(port)),
+      acceptor_(d, ipv4::address(port)),
       block_size_(block_size)
   {
     session* new_session = new session(demuxer_, block_size_);

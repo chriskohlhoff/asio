@@ -39,17 +39,19 @@ void dgram_socket_test()
 
   demuxer d;
 
-  dgram_socket s1(d, inet_address_v4(0));
-  inet_address_v4 target_addr;
+  dgram_socket s1(d, ipv4::address(0));
+  ipv4::address target_addr;
   s1.get_local_address(target_addr);
   target_addr.host_addr_str("127.0.0.1");
 
-  dgram_socket s2(d, inet_address_v4(0));
+  dgram_socket s2(d);
+  s2.open(ipv4::udp());
+  s2.bind(ipv4::address(0));
   char send_msg[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
   s2.sendto(send_msg, sizeof(send_msg), target_addr);
 
   char recv_msg[sizeof(send_msg)];
-  inet_address_v4 sender_addr;
+  ipv4::address sender_addr;
   size_t bytes_recvd = s1.recvfrom(recv_msg, sizeof(recv_msg), sender_addr);
 
   UNIT_TEST_CHECK(bytes_recvd == sizeof(send_msg));

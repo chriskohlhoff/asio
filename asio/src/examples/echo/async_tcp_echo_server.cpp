@@ -60,7 +60,7 @@ class server
 public:
   server(asio::demuxer& d, short port)
     : demuxer_(d),
-      acceptor_(d, asio::inet_address_v4(port))
+      acceptor_(d, asio::ipv4::address(port))
   {
     session* new_session = new session(demuxer_);
     acceptor_.async_accept(new_session->socket(),

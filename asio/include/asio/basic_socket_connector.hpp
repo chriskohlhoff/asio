@@ -45,7 +45,7 @@ public:
 
   /// Constructor.
   /**
-   * This constructor automatically opens the connector.
+   * Constructs the connector and opens it automatically.
    *
    * @param d The demuxer object that the connector will use to deliver
    * completions for any asynchronous operations performed on the connector.
@@ -54,13 +54,32 @@ public:
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_type::null())
   {
-    service_.create(impl_);
+    service_.open(impl_);
+  }
+
+  /// Constructor.
+  /**
+   * This constructor automatically opens the connector so that it will
+   * establish connections using the specified protocol.
+   *
+   * @param d The demuxer object that the connector will use to deliver
+   * completions for any asynchronous operations performed on the connector.
+   *
+   * @param protocol The protocol to be used for all new connections
+   * established using the connector.
+   */
+  template <typename Protocol>
+  basic_socket_connector(demuxer_type& d, const Protocol& protocol)
+    : service_(d.get_service(service_factory<Service>())),
+      impl_(service_type::null())
+  {
+    service_.open(impl_, protocol);
   }
 
   /// Destructor.
   ~basic_socket_connector()
   {
-    service_.destroy(impl_);
+    service_.close(impl_);
   }
 
   /// Get the demuxer associated with the asynchronous object.
@@ -89,7 +108,26 @@ public:
    */
   void open()
   {
-    service_.create(impl_);
+    service_.open(impl_);
+  }
+
+  /// Open the connector to use a specified protocol.
+  /**
+   * This function is used to open the connector so that it may be used to
+   * perform socket connect operations.
+   *
+   * Since the constructor opens the connector by default, you should only need
+   * to call this function if there has been a prior call to close().
+   *
+   * @param protocol The protocol to be used for all new connections
+   * established using the connector.
+   *
+   * @throws socket_error Thrown on failure.
+   */
+  template <typename Protocol>
+  void open(const Protocol& protocol)
+  {
+    service_.open(impl_, protocol);
   }
 
   /// Close the connector.
@@ -102,7 +140,7 @@ public:
    */
   void close()
   {
-    service_.destroy(impl_);
+    service_.close(impl_);
   }
 
   /// Get the underlying implementation in the native type.

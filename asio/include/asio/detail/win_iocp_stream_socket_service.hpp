@@ -61,15 +61,15 @@ public:
     return demuxer_;
   }
 
-  // Create a new stream socket implementation.
-  void create(impl_type& impl, impl_type new_impl)
+  // Open a new stream socket implementation.
+  void open(impl_type& impl, impl_type new_impl)
   {
     demuxer_service_.register_socket(new_impl);
     impl = new_impl;
   }
 
-  // Destroy a stream socket implementation.
-  void destroy(impl_type& impl)
+  // Close a stream socket implementation.
+  void close(impl_type& impl)
   {
     if (impl != null())
     {

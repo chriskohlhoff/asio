@@ -1,6 +1,6 @@
 //
-// inet_address_v4.hpp
-// ~~~~~~~~~~~~~~~~~~~
+// address.hpp
+// ~~~~~~~~~~~
 //
 // Copyright (c) 2003, 2004 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -12,8 +12,8 @@
 // no claim as to its suitability for any purpose.
 //
 
-#ifndef ASIO_INET_ADDRESS_V4_HPP
-#define ASIO_INET_ADDRESS_V4_HPP
+#ifndef ASIO_IPV4_ADDRESS_HPP
+#define ASIO_IPV4_ADDRESS_HPP
 
 #include "asio/detail/push_options.hpp"
 
@@ -25,13 +25,22 @@
 
 #include "asio/socket_error.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/ipv4/tcp.hpp"
+#include "asio/ipv4/udp.hpp"
 
 namespace asio {
+namespace ipv4 {
 
-/// The inet_address_v4 class implements IP version 4 style addresses.
-class inet_address_v4
+/// The address class implements IP version 4 style addresses.
+class address
 {
 public:
+  /// The default stream-based protocol associated with the address type.
+  typedef tcp default_stream_protocol;
+
+  /// The default datagram-based protocol associated with the address type.
+  typedef udp default_dgram_protocol;
+
   /// The native types of the socket address. These types are dependent on the
   /// underlying implementation of the socket layer.
   typedef detail::socket_addr_type native_address_type;
@@ -42,7 +51,7 @@ public:
   typedef boost::uint_t<32>::least addr_type;
 
   /// Default constructor.
-  inet_address_v4()
+  address()
   {
     addr_.sin_family = AF_INET;
     addr_.sin_port = 0;
@@ -52,7 +61,7 @@ public:
   /// Construct an address using a port number, specified in the host's byte
   /// order. The IP address will be the any address (i.e. INADDR_ANY). This
   /// constructor would typically be used for accepting new connections.
-  inet_address_v4(port_type port_num)
+  address(port_type port_num)
   {
     addr_.sin_family = AF_INET;
     addr_.sin_port = htons(port_num);
@@ -62,7 +71,7 @@ public:
   /// Construct an address using a port number and an IP address. This
   /// constructor may be used for accepting connections on a specific interface
   /// or for making a connection to a remote address.
-  inet_address_v4(port_type port_num, addr_type host_addr)
+  address(port_type port_num, addr_type host_addr)
   {
     addr_.sin_family = AF_INET;
     addr_.sin_port = htons(port_num);
@@ -73,7 +82,7 @@ public:
   /// decimal form or a host name. This constructor may be used for accepting
   /// connections on a specific interface or for making a connection to a
   /// remote address.
-  inet_address_v4(port_type port_num, const std::string& host)
+  address(port_type port_num, const std::string& host)
   {
     addr_.sin_family = AF_INET;
     addr_.sin_port = htons(port_num);
@@ -81,13 +90,13 @@ public:
   }
 
   /// Copy constructor.
-  inet_address_v4(const inet_address_v4& other)
+  address(const address& other)
     : addr_(other.addr_)
   {
   }
 
-  /// Assign from another inet_address_v4.
-  inet_address_v4& operator=(const inet_address_v4& other)
+  /// Assign from another address.
+  address& operator=(const address& other)
   {
     addr_ = other.addr_;
     return *this;
@@ -102,13 +111,13 @@ public:
   /// Get the underlying address in the native type.
   native_address_type* native_address()
   {
-    return reinterpret_cast<inet_address_v4::native_address_type*>(&addr_);
+    return reinterpret_cast<address::native_address_type*>(&addr_);
   }
 
   /// Get the underlying address in the native type.
   const native_address_type* native_address() const
   {
-    return reinterpret_cast<const inet_address_v4::native_address_type*>(
+    return reinterpret_cast<const address::native_address_type*>(
         &addr_);
   }
 
@@ -202,8 +211,9 @@ private:
   detail::inet_addr_v4_type addr_;
 };
 
+} // namespace ipv4
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_INET_ADDRESS_V4_HPP
+#endif // ASIO_IPV4_ADDRESS_HPP

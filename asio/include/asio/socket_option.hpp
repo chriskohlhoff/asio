@@ -159,6 +159,9 @@ typedef integer<SOL_SOCKET, SO_SNDBUF> send_buffer_size;
 /// The send buffer size for a socket.
 typedef integer<SOL_SOCKET, SO_RCVBUF> recv_buffer_size;
 
+/// Allow the socket to be bound to an address that is already in use.
+typedef flag<SOL_SOCKET, SO_REUSEADDR> reuse_address;
+
 } // namespace socket_option
 } // namespace asio
 

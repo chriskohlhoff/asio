@@ -58,10 +58,13 @@ public:
   {
   }
 
-  /// Construct a basic_dgram_socket opened on the given address.
+  /// Construct a basic_dgram_socket, opening it and binding it to the given
+  /// local address.
   /**
    * This constructor creates a dgram socket and automatically opens it bound
-   * to the specified address on the local machine.
+   * to the specified address on the local machine. The protocol is determined
+   * automatically to be the default datagram protocol associated with the
+   * given address type.
    *
    * @param d The demuxer object that the dgram socket will use to deliver
    * completions for any asynchronous operations performed on the socket.
@@ -76,40 +79,15 @@ public:
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_type::null())
   {
-    service_.create(impl_, address, default_error_handler());
-  }
-
-  /// Construct a basic_dgram_socket opened on the given address.
-  /**
-   * This constructor creates a dgram socket and automatically opens it bound
-   * to the specified address on the local machine.
-   *
-   * @param d The demuxer object that the dgram socket will use to deliver
-   * completions for any asynchronous operations performed on the socket.
-   *
-   * @param address An address on the local machine to which the dgram socket
-   * will be bound.
-   *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
-   * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
-   * ); @endcode
-   */
-  template <typename Address, typename Error_Handler>
-  basic_dgram_socket(demuxer_type& d, const Address& address,
-      Error_Handler error_handler)
-    : service_(d.get_service(service_factory<Service>())),
-      impl_(service_type::null())
-  {
-    service_.create(impl_, address, error_handler);
+    typedef typename Address::default_dgram_protocol default_protocol;
+    service_.open(impl_, default_protocol(), default_error_handler());
+    service_.bind(impl_, address, default_error_handler());
   }
 
   /// Destructor.
   ~basic_dgram_socket()
   {
-    service_.destroy(impl_);
+    service_.close(impl_);
   }
 
   /// Get the demuxer associated with the asynchronous object.
@@ -126,10 +104,45 @@ public:
     return service_.demuxer();
   }
 
-  /// Open the socket on the given address.
+  /// Open the socket using the specified protocol.
   /**
-   * This function opens the dgram socket so that it is bound to the specified
-   * address on the local machine.
+   * This function opens the dgram socket so that it will use the specified
+   * protocol.
+   *
+   * @param protocol An object specifying which protocol is to be used.
+   *
+   * @throws socket_error Thrown on failure.
+   */
+  template <typename Protocol>
+  void open(const Protocol& protocol)
+  {
+    service_.open(impl_, protocol, default_error_handler());
+  }
+
+  /// Open the socket using the specified protocol.
+  /**
+   * This function opens the dgram socket so that it will use the specified
+   * protocol.
+   *
+   * @param protocol An object specifying which protocol is to be used.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Protocol, typename Error_Handler>
+  void open(const Protocol& protocol, Error_Handler error_handler)
+  {
+    service_.open(impl_, protocol, error_handler);
+  }
+
+  /// Bind the socket to the given local address.
+  /**
+   * This function binds the dgram socket to the specified address on the local
+   * machine.
    *
    * @param address An address on the local machine to which the dgram socket
    * will be bound.
@@ -137,15 +150,15 @@ public:
    * @throws socket_error Thrown on failure.
    */
   template <typename Address>
-  void open(const Address& address)
+  void bind(const Address& address)
   {
-    service_.create(impl_, address, default_error_handler());
+    service_.bind(impl_, address, default_error_handler());
   }
 
-  /// Open the socket on the given address.
+  /// Bind the socket to the given local address.
   /**
-   * This function opens the dgram socket so that it is bound to the specified
-   * address on the local machine.
+   * This function binds the dgram socket to the specified address on the local
+   * machine.
    *
    * @param address An address on the local machine to which the dgram socket
    * will be bound.
@@ -158,9 +171,9 @@ public:
    * ); @endcode
    */
   template <typename Address, typename Error_Handler>
-  void open(const Address& address, Error_Handler error_handler)
+  void bind(const Address& address, Error_Handler error_handler)
   {
-    service_.create(impl_, address, error_handler);
+    service_.bind(impl_, address, error_handler);
   }
 
   /// Close the socket.
@@ -173,7 +186,7 @@ public:
    */
   void close()
   {
-    service_.destroy(impl_);
+    service_.close(impl_);
   }
 
   /// Get the underlying implementation in the native type.

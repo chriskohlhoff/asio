@@ -164,7 +164,7 @@ class chat_server
 public:
   chat_server(asio::demuxer& d, short port)
     : demuxer_(d),
-      acceptor_(d, asio::inet_address_v4(port))
+      acceptor_(d, asio::ipv4::address(port))
   {
     chat_session_ptr new_session(new chat_session(demuxer_, room_));
     acceptor_.async_accept(new_session->socket(),

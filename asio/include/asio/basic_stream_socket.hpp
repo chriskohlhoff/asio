@@ -65,7 +65,7 @@ public:
   /// Destructor.
   ~basic_stream_socket()
   {
-    service_.destroy(impl_);
+    service_.close(impl_);
   }
 
   /// Get the demuxer associated with the asynchronous object.
@@ -89,7 +89,7 @@ public:
    */
   void close()
   {
-    service_.destroy(impl_);
+    service_.close(impl_);
   }
 
   /// Get a reference to the lowest layer.
@@ -126,7 +126,7 @@ public:
    */
   void set_impl(impl_type new_impl)
   {
-    service_.create(impl_, new_impl);
+    service_.open(impl_, new_impl);
   }
 
   /// Set an option on the socket.

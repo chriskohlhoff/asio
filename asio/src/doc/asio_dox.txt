@@ -4,6 +4,11 @@
 */
 
 /**
+\namespace asio::ipv4
+\brief The asio namespace defines all user-accessible classes and templates.
+*/
+
+/**
 \namespace asio::socket_option
 \brief The asio::socket_option namespace defines the supported socket options.
 */
@@ -18,6 +23,7 @@
 <H2>Namespaces</H2>
 
 \li ::asio
+\li ::asio::ipv4
 \li ::asio::socket_option
 
 <H2>Core Classes</H2>
@@ -32,7 +38,7 @@
 <H2>Support Classes</H2>
 
 \li asio::counting_completion_context
-\li asio::inet_address_v4
+\li asio::ipv4::address
 \li asio::null_completion_context
 \li asio::socket_error
 \li asio::timer_base

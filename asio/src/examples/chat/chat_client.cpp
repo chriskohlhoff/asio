@@ -15,7 +15,7 @@ public:
       connector_(d),
       socket_(d)
   {
-    connector_.async_connect(socket_, asio::inet_address_v4(port, host),
+    connector_.async_connect(socket_, asio::ipv4::address(port, host),
         boost::bind(&chat_client::handle_connect, this, _1));
   }
 

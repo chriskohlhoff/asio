@@ -214,7 +214,7 @@ private:
   counting_completion_context context_;
   timer stop_timer_;
   socket_connector connector_;
-  inet_address_v4 server_addr_;
+  ipv4::address server_addr_;
   size_t block_size_;
   size_t max_session_count_;
   std::list<session*> sessions_;

@@ -8,7 +8,7 @@ class server
 public:
   server(asio::demuxer& d, short port)
     : demuxer_(d),
-      socket_(d, asio::inet_address_v4(port))
+      socket_(d, asio::ipv4::address(port))
   {
     socket_.async_recvfrom(data_, max_length, sender_address_,
         boost::bind(&server::handle_recvfrom, this, _1, _2));
@@ -37,7 +37,7 @@ public:
 private:
   asio::demuxer& demuxer_;
   asio::dgram_socket socket_;
-  asio::inet_address_v4 sender_address_;
+  asio::ipv4::address sender_address_;
   enum { max_length = 1024 };
   char data_[max_length];
 };

@@ -17,18 +17,18 @@ int main(int argc, char* argv[])
 
     asio::demuxer d;
 
-    asio::dgram_socket s(d, asio::inet_address_v4(0));
+    asio::dgram_socket s(d, asio::ipv4::address(0));
 
     using namespace std; // For atoi and strlen.
     std::cout << "Enter message: ";
     char request[max_length];
     std::cin.getline(request, max_length);
     size_t request_length = strlen(request);
-    asio::inet_address_v4 receiver_address(atoi(argv[2]), argv[1]);
+    asio::ipv4::address receiver_address(atoi(argv[2]), argv[1]);
     s.sendto(request, request_length, receiver_address);
 
     char reply[max_length];
-    asio::inet_address_v4 sender_address;
+    asio::ipv4::address sender_address;
     size_t reply_length = s.recvfrom(reply, max_length, sender_address);
     std::cout << "Reply is: ";
     std::cout.write(reply, reply_length);

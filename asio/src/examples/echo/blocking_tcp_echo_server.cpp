@@ -31,7 +31,7 @@ void session(stream_socket_ptr sock)
 
 void server(asio::demuxer& d, short port)
 {
-  asio::socket_acceptor a(d, asio::inet_address_v4(port));
+  asio::socket_acceptor a(d, asio::ipv4::address(port));
   for (;;)
   {
     stream_socket_ptr sock(new asio::stream_socket(d));

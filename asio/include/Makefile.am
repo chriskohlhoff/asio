@@ -55,7 +55,9 @@ nobase_include_HEADERS = \
 	asio/dgram_socket.hpp \
 	asio/error_handler.hpp \
 	asio/fixed_buffer.hpp \
-	asio/inet_address_v4.hpp \
+	asio/ipv4/address.hpp \
+	asio/ipv4/tcp.hpp \
+	asio/ipv4/udp.hpp \
 	asio/null_completion_context.hpp \
 	asio/recv.hpp \
 	asio/send.hpp \

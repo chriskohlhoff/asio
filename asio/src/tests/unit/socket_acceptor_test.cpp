@@ -33,8 +33,8 @@ void socket_acceptor_test()
 {
   demuxer d;
 
-  socket_acceptor acceptor(d, inet_address_v4(0));
-  inet_address_v4 server_addr;
+  socket_acceptor acceptor(d, ipv4::address(0));
+  ipv4::address server_addr;
   acceptor.get_local_address(server_addr);
   server_addr.host_addr_str("127.0.0.1");
 
@@ -49,10 +49,10 @@ void socket_acceptor_test()
   server_side_socket.close();
 
   connector.connect(client_side_socket, server_addr);
-  inet_address_v4 client_addr;
+  ipv4::address client_addr;
   acceptor.accept_address(server_side_socket, client_addr);
 
-  inet_address_v4 client_side_local_addr;
+  ipv4::address client_side_local_addr;
   client_side_socket.get_local_address(client_side_local_addr);
   UNIT_TEST_CHECK(client_side_local_addr.port() == client_addr.port());
 

@@ -57,34 +57,37 @@ public:
     return demuxer_;
   }
 
-  // Create a new dgram socket implementation.
-  template <typename Address, typename Error_Handler>
-  void create(impl_type& impl, const Address& address,
+  // Open a new dgram socket implementation.
+  template <typename Protocol, typename Error_Handler>
+  void open(impl_type& impl, const Protocol& protocol,
       Error_Handler error_handler)
   {
-    socket_holder sock(socket_ops::socket(address.family(), SOCK_DGRAM, 0));
+    if (protocol.type() != SOCK_DGRAM)
+    {
+      error_handler(socket_error(socket_error::invalid_argument));
+      return;
+    }
+
+    socket_holder sock(socket_ops::socket(protocol.family(), protocol.type(),
+          protocol.protocol()));
     if (sock.get() == invalid_socket)
-    {
       error_handler(socket_error(socket_ops::get_error()));
-      return;
-    }
+    else
+      impl = sock.release();
+  }
 
-    int reuse = 1;
-    socket_ops::setsockopt(sock.get(), SOL_SOCKET, SO_REUSEADDR, &reuse,
-        sizeof(reuse));
-
-    if (socket_ops::bind(sock.get(), address.native_address(),
+  // Bind the dgram socket to the specified local address.
+  template <typename Address, typename Error_Handler>
+  void bind(impl_type& impl, const Address& address,
+      Error_Handler error_handler)
+  {
+    if (socket_ops::bind(impl, address.native_address(),
           address.native_size()) == socket_error_retval)
-    {
       error_handler(socket_error(socket_ops::get_error()));
-      return;
-    }
-
-    impl = sock.release();
   }
 
   // Destroy a dgram socket implementation.
-  void destroy(impl_type& impl)
+  void close(impl_type& impl)
   {
     if (impl != null())
     {
