@@ -17,13 +17,10 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/bind.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/completion_context.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_error.hpp"
+#include "asio/detail/bind_handler.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
 
@@ -99,14 +96,15 @@ public:
       int bytes = socket_ops::send(impl, data_, length_, 0);
       socket_error error(bytes < 0
           ? socket_ops::get_error() : socket_error::success);
-      demuxer_.operation_completed(
-          boost::bind(handler_, error, bytes), context_);
+      demuxer_.operation_completed(bind_handler(handler_, error, bytes),
+          context_);
     }
 
     void do_cancel()
     {
       socket_error error(socket_error::operation_aborted);
-      demuxer_.operation_completed(boost::bind(handler_, error, 0), *context_);
+      demuxer_.operation_completed(bind_handler(handler_, error, 0),
+          context_);
     }
 
   private:
@@ -189,7 +187,7 @@ public:
       {
         socket_error error(bytes < 0
             ? socket_ops::get_error() : socket_error::success);
-        demuxer_.operation_completed(boost::bind(handler_, error, total_bytes,
+        demuxer_.operation_completed(bind_handler(handler_, error, total_bytes,
               last_bytes), context_);
       }
       else
@@ -202,7 +200,7 @@ public:
     void do_cancel()
     {
       socket_error error(socket_error::operation_aborted);
-      demuxer_.operation_completed(boost::bind(handler_, error, already_sent_,
+      demuxer_.operation_completed(bind_handler(handler_, error, already_sent_,
             0), context_);
     }
 
@@ -260,14 +258,14 @@ public:
       int bytes = socket_ops::recv(impl_, data_, max_length_, 0);
       socket_error error(bytes < 0
           ? socket_ops::get_error() : socket_error::success);
-      demuxer_.operation_completed(boost::bind(handler_, error, bytes),
+      demuxer_.operation_completed(bind_handler(handler_, error, bytes),
           context_);
     }
 
     void do_cancel()
     {
       socket_error error(socket_error::operation_aborted);
-      demuxer_.operation_completed(boost::bind(handler_, error, 0), context_);
+      demuxer_.operation_completed(bind_handler(handler_, error, 0), context_);
     }
 
   private:
@@ -350,7 +348,7 @@ public:
       {
         socket_error error(bytes < 0
             ? socket_ops::get_error() : socket_error::success);
-        demuxer_.operation_completed(boost::bind(handler_, error, total_bytes,
+        demuxer_.operation_completed(bind_handler(handler_, error, total_bytes,
               last_bytes), context_);
       }
       else
@@ -363,8 +361,8 @@ public:
     void do_cancel()
     {
       socket_error error(socket_error::operation_aborted);
-      demuxer_.operation_completed(boost::bind(handler_, error, already_recvd_,
-            0), context_);
+      demuxer_.operation_completed(bind_handler(handler_, error,
+            already_recvd_, 0), context_);
     }
 
   private:

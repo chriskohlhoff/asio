@@ -134,7 +134,7 @@ private:
     }
 
     // Get a pointer to the contained service.
-    Service& get_service(service_factory<Service> factory, Owner& owner)
+    Service& get_service(service_factory<Service>& factory, Owner& owner)
     {
       asio::detail::mutex::scoped_lock lock(mutex_);
       if (!service_)

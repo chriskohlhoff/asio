@@ -17,14 +17,11 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/bind.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/basic_demuxer.hpp"
 #include "asio/completion_context.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_error.hpp"
+#include "asio/detail/bind_handler.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -162,7 +159,7 @@ public:
       delete sendto_op;
       socket_error error(last_error);
       demuxer_service_.operation_completed(
-          boost::bind(handler, error, bytes_transferred), context, false);
+          bind_handler(handler, error, bytes_transferred), context, false);
     }
   }
 
@@ -255,7 +252,7 @@ public:
       delete recvfrom_op;
       socket_error error(last_error);
       demuxer_service_.operation_completed(
-          boost::bind(handler, error, bytes_transferred), context, false);
+          bind_handler(handler, error, bytes_transferred), context, false);
     }
   }
 

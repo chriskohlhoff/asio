@@ -24,8 +24,9 @@ nobase_include_HEADERS = \
 	asio/completion_context_locker.hpp \
 	asio/counting_completion_context.hpp \
 	asio/demuxer.hpp \
-  asio/detail/mutex.hpp \
-  asio/detail/pipe_select_interrupter.hpp \
+	asio/detail/bind_handler.hpp \
+	asio/detail/mutex.hpp \
+	asio/detail/pipe_select_interrupter.hpp \
 	asio/detail/pop_options.hpp \
 	asio/detail/pthread_mutex.hpp \
 	asio/detail/pthread_thread.hpp \

@@ -22,6 +22,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/basic_demuxer.hpp"
+#include "asio/detail/bind_handler.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/task_demuxer_service.hpp"
 #include "asio/detail/thread.hpp"
@@ -45,7 +46,7 @@ public:
       write_op_queue_(),
       stop_thread_(false),
       thread_(new asio::detail::thread(
-            boost::bind(&select_reactor::run_thread, this)))
+            bind_handler(&select_reactor::call_run_thread, this)))
   {
   }
 
@@ -178,6 +179,12 @@ private:
       run();
       lock.lock();
     }
+  }
+
+  // Entry point for the select loop thread.
+  static void call_run_thread(select_reactor* reactor)
+  {
+    reactor->run_thread();
   }
 
   // Interrupt the select loop.

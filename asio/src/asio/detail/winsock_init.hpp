@@ -28,6 +28,13 @@ template <int Major = 2, int Minor = 0>
 class winsock_init
 {
 public:
+  // Constructor.
+  winsock_init()
+  {
+    WSADATA wsa_data;
+    ::WSAStartup(MAKEWORD(Major, Minor), &wsa_data);
+  }
+
   // Destructor.
   ~winsock_init()
   {
@@ -37,17 +44,10 @@ public:
   // Used to ensure that the winsock library is initialised.
   static void use()
   {
-    if (&instance_ == 0);
+    while (&instance_ == 0);
   }
 
 private:
-  // Constructor.
-  winsock_init()
-  {
-    WSADATA wsa_data;
-    ::WSAStartup(MAKEWORD(Major, Minor), &wsa_data);
-  }
-
   // Instance to force initialisation of winsock at global scope.
   static winsock_init<Major, Minor> instance_;
 };

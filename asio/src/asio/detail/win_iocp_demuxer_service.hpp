@@ -151,7 +151,7 @@ public:
       delete this;
     }
 
-    static void do_upcall(const Handler& handler)
+    static void do_upcall(Handler& handler)
     {
       try
       {

@@ -19,7 +19,6 @@
 
 #include "asio/detail/push_options.hpp"
 #include <map>
-#include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/thread/xtime.hpp>
@@ -27,6 +26,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/completion_context.hpp"
+#include "asio/detail/bind_handler.hpp"
 
 namespace asio {
 namespace detail {
@@ -49,8 +49,9 @@ public:
       id_to_timer_(),
       next_timer_id_(1)
   {
-    thread_.reset(new boost::thread(boost::bind(
-            &timer_queue_service<Demuxer>::expire_timers, this)));
+    thread_.reset(
+        new boost::thread(bind_handler(
+            &timer_queue_service<Demuxer>::call_expire_timers, this)));
   }
 
   // Destructor.
@@ -172,6 +173,12 @@ private:
         stop_condition_.wait(lock);
       }
     }
+  }
+
+  // Entry point for the timer expiry thread.
+  static void call_expire_timers(timer_queue_service<Demuxer>* service)
+  {
+    service->expire_timers();
   }
 
   // The demuxer that owns this provider.

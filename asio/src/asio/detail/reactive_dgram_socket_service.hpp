@@ -17,13 +17,10 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/bind.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/completion_context.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_error.hpp"
+#include "asio/detail/bind_handler.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -119,14 +116,14 @@ public:
           destination_.native_address(), destination_.native_size());
       socket_error error(bytes < 0
           ? socket_ops::get_error() : socket_error::success);
-      demuxer_.operation_completed(boost::bind(handler_, error, bytes),
+      demuxer_.operation_completed(bind_handler(handler_, error, bytes),
           context_);
     }
 
     void do_cancel()
     {
       socket_error error(socket_error::operation_aborted);
-      demuxer_.operation_completed(boost::bind(handler_, error, 0), context_);
+      demuxer_.operation_completed(bind_handler(handler_, error, 0), context_);
     }
 
   private:
@@ -191,14 +188,14 @@ public:
       socket_error error(bytes < 0
           ? socket_ops::get_error() : socket_error::success);
       sender_address_.native_size(addr_len);
-      demuxer_.operation_completed(boost::bind(handler_, error, bytes),
+      demuxer_.operation_completed(bind_handler(handler_, error, bytes),
           context_);
     }
 
     void do_cancel()
     {
       socket_error error(socket_error::operation_aborted);
-      demuxer_.operation_completed(boost::bind(handler_, error, 0), context_);
+      demuxer_.operation_completed(bind_handler(handler_, error, 0), context_);
     }
 
   private:

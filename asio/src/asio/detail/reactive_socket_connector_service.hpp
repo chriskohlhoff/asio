@@ -19,7 +19,6 @@
 
 #include "asio/detail/push_options.hpp"
 #include <set>
-#include <boost/bind.hpp>
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -27,6 +26,7 @@
 #include "asio/completion_context.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_error.hpp"
+#include "asio/detail/bind_handler.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_holder.hpp"
@@ -173,7 +173,7 @@ public:
             &connect_error, &connect_error_len) == socket_error_retval)
       {
         socket_error error(socket_ops::get_error());
-        demuxer_.operation_completed(boost::bind(handler_, error), context_);
+        demuxer_.operation_completed(bind_handler(handler_, error), context_);
         return;
       }
 
@@ -181,7 +181,7 @@ public:
       if (connect_error)
       {
         socket_error error(connect_error);
-        demuxer_.operation_completed(boost::bind(handler_, error), context_);
+        demuxer_.operation_completed(bind_handler(handler_, error), context_);
         return;
       }
 
@@ -190,7 +190,7 @@ public:
       if (socket_ops::ioctl(new_socket_, FIONBIO, &non_blocking))
       {
         socket_error error(socket_ops::get_error());
-        demuxer_.operation_completed(boost::bind(handler_, error), context_);
+        demuxer_.operation_completed(bind_handler(handler_, error), context_);
         return;
       }
 
@@ -198,7 +198,7 @@ public:
       peer_.set_impl(new_socket_);
       new_socket_holder.release();
       socket_error error(socket_error::success);
-      demuxer_.operation_completed(boost::bind(handler_, error), context_);
+      demuxer_.operation_completed(bind_handler(handler_, error), context_);
     }
 
     void do_cancel()
@@ -206,7 +206,7 @@ public:
       socket_holder new_socket_holder(new_socket_);
       impl_->remove_socket(new_socket_);
       socket_error error(socket_error::operation_aborted);
-      demuxer_.operation_completed(boost::bind(handler_, error), context_);
+      demuxer_.operation_completed(bind_handler(handler_, error), context_);
     }
 
   private:
@@ -230,7 +230,7 @@ public:
     if (peer.impl() != invalid_socket)
     {
       socket_error error(socket_error::already_connected);
-      demuxer_.operation_immediate(boost::bind(handler, error));
+      demuxer_.operation_immediate(bind_handler(handler, error));
       return;
     }
 
@@ -241,7 +241,7 @@ public:
     if (new_socket.get() == invalid_socket)
     {
       socket_error error(socket_ops::get_error());
-      demuxer_.operation_immediate(boost::bind(handler, error), context);
+      demuxer_.operation_immediate(bind_handler(handler, error), context);
       return;
     }
 
@@ -251,7 +251,7 @@ public:
     if (socket_ops::ioctl(new_socket.get(), FIONBIO, &non_blocking))
     {
       socket_error error(socket_ops::get_error());
-      demuxer_.operation_immediate(boost::bind(handler, error), context);
+      demuxer_.operation_immediate(bind_handler(handler, error), context);
       return;
     }
 
@@ -263,7 +263,7 @@ public:
       // completion immediately.
       peer.set_impl(new_socket.release());
       socket_error error(socket_error::success);
-      demuxer_.operation_immediate(boost::bind(handler, error), context);
+      demuxer_.operation_immediate(bind_handler(handler, error), context);
     }
     else if (socket_ops::get_error() == socket_error::in_progress
         || socket_ops::get_error() == socket_error::would_block)
@@ -281,7 +281,7 @@ public:
     {
       // The connect operation has failed, so post completion immediately.
       socket_error error(socket_ops::get_error());
-      demuxer_.operation_immediate(boost::bind(handler, error), context);
+      demuxer_.operation_immediate(bind_handler(handler, error), context);
     }
   }
 

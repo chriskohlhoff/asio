@@ -17,14 +17,11 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/bind.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/basic_stream_socket.hpp"
 #include "asio/completion_context.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_error.hpp"
+#include "asio/detail/bind_handler.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -150,13 +147,13 @@ public:
       socket_error error(new_socket == invalid_socket
           ? socket_ops::get_error() : socket_error::success);
       peer_.set_impl(new_socket);
-      demuxer_.operation_completed(boost::bind(handler_, error), context_);
+      demuxer_.operation_completed(bind_handler(handler_, error), context_);
     }
 
     void do_cancel()
     {
       socket_error error(socket_error::operation_aborted);
-      demuxer_.operation_completed(boost::bind(handler_, error), context_);
+      demuxer_.operation_completed(bind_handler(handler_, error), context_);
     }
 
   private:
@@ -177,7 +174,7 @@ public:
     if (peer.impl() != invalid_socket)
     {
       socket_error error(socket_error::already_connected);
-      demuxer_.operation_immediate(boost::bind(handler, error));
+      demuxer_.operation_immediate(bind_handler(handler, error));
     }
     else
     {
@@ -213,13 +210,13 @@ public:
           ? socket_ops::get_error() : socket_error::success);
       peer_address_.native_size(addr_len);
       peer_.set_impl(new_socket);
-      demuxer_.operation_completed(boost::bind(handler_, error), context_);
+      demuxer_.operation_completed(bind_handler(handler_, error), context_);
     }
 
     void do_cancel()
     {
       socket_error error(socket_error::operation_aborted);
-      demuxer_.operation_completed(boost::bind(handler_, error), context_);
+      demuxer_.operation_completed(bind_handler(handler_, error), context_);
     }
 
   private:
@@ -241,7 +238,7 @@ public:
     if (peer.impl() != invalid_socket)
     {
       socket_error error(socket_error::already_connected);
-      demuxer_.operation_immediate(boost::bind(handler, error));
+      demuxer_.operation_immediate(bind_handler(handler, error));
     }
     else
     {

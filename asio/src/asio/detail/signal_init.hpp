@@ -30,19 +30,19 @@ template <int Signal = SIGPIPE>
 class signal_init
 {
 public:
-  // Used to ensure that the signal stuff is initialised.
-  static void use()
-  {
-    if (&instance_ == 0);
-  }
-
-private:
   // Constructor.
   signal_init()
   {
     std::signal(Signal, SIG_IGN);
   }
 
+  // Used to ensure that the signal stuff is initialised.
+  static void use()
+  {
+    while (&instance_ == 0);
+  }
+
+private:
   // Instance to force initialisation of signal at global scope.
   static signal_init<Signal> instance_;
 };

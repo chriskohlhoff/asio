@@ -52,7 +52,7 @@ public:
   }
 
 private:
-  friend unsigned int asio_detail_win_thread_function(void* arg);
+  friend unsigned int __stdcall asio_detail_win_thread_function(void* arg);
 
   class func_base
   {

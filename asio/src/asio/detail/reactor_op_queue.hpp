@@ -38,7 +38,8 @@ public:
   {
     op_base* new_op = new op<Handler>(descriptor, handler);
 
-    std::pair<typename operation_map::iterator, bool> entry =
+    typedef typename operation_map::iterator iterator;
+    std::pair<iterator, bool> entry =
       operations_.insert(operation_map::value_type(descriptor, new_op));
     if (entry.second)
       return true;
@@ -144,7 +145,7 @@ private:
     }
 
   private:
-    friend class reactor_op_queue;
+    friend class reactor_op_queue<Descriptor>;
 
     // The descriptor associated with the operation.
     Descriptor descriptor_;
