@@ -39,6 +39,7 @@
 #include "asio/detail/reactor_op_queue.hpp"
 #include "asio/detail/reactor_timer_queue.hpp"
 #include "asio/detail/select_interrupter.hpp"
+#include "asio/detail/signal_blocker.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/time.hpp"
 
@@ -62,9 +63,12 @@ public:
       epoll_registrations_(),
       pending_cancellations_(),
       stop_thread_(false),
-      thread_(new asio::detail::thread(
-            bind_handler(&epoll_reactor::call_run_thread, this)))
+      thread_(0)
   {
+    asio::detail::signal_blocker sb;
+    thread_ = new asio::detail::thread(
+        bind_handler(&epoll_reactor::call_run_thread, this));
+
     // Add the interrupter's descriptor to epoll.
     epoll_event ev;
     ev.events = EPOLLIN | EPOLLERR;
@@ -337,6 +341,9 @@ private:
 
       lock.lock();
       wait_in_progress_ = false;
+
+      // Block signals while dispatching operations.
+      asio::detail::signal_blocker sb;
 
       // Dispatch the waiting events.
       for (int i = 0; i < num_events; ++i)

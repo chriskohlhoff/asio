@@ -28,6 +28,7 @@ nobase_include_HEADERS = \
 	asio/detail/pop_options.hpp \
 	asio/detail/posix_event.hpp \
 	asio/detail/posix_mutex.hpp \
+	asio/detail/posix_signal_blocker.hpp \
 	asio/detail/posix_thread.hpp \
 	asio/detail/posix_time.hpp \
 	asio/detail/posix_tss_bool.hpp \
@@ -43,6 +44,7 @@ nobase_include_HEADERS = \
 	asio/detail/select_interrupter.hpp \
 	asio/detail/select_reactor.hpp \
 	asio/detail/service_registry.hpp \
+	asio/detail/signal_blocker.hpp \
 	asio/detail/signal_init.hpp \
 	asio/detail/socket_holder.hpp \
 	asio/detail/socket_ops.hpp \
@@ -58,6 +60,7 @@ nobase_include_HEADERS = \
 	asio/detail/win_iocp_stream_socket_service.hpp \
 	asio/detail/win_event.hpp \
 	asio/detail/win_mutex.hpp \
+	asio/detail/win_signal_blocker.hpp \
 	asio/detail/win_thread.hpp \
 	asio/detail/win_time.hpp \
 	asio/detail/win_tss_bool.hpp \

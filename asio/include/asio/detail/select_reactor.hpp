@@ -26,6 +26,7 @@
 #include "asio/detail/reactor_op_queue.hpp"
 #include "asio/detail/reactor_timer_queue.hpp"
 #include "asio/detail/select_interrupter.hpp"
+#include "asio/detail/signal_blocker.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/time.hpp"
 
@@ -47,9 +48,11 @@ public:
       except_op_queue_(),
       pending_cancellations_(),
       stop_thread_(false),
-      thread_(new asio::detail::thread(
-            bind_handler(&select_reactor::call_run_thread, this)))
+      thread_(0)
   {
+    asio::detail::signal_blocker sb;
+    thread_ = new asio::detail::thread(
+        bind_handler(&select_reactor::call_run_thread, this));
   }
 
   // Constructor when running as a demuxer task.
@@ -261,8 +264,11 @@ private:
       lock.lock();
       select_in_progress_ = false;
 
+      // Block signals while dispatching operations.
+      asio::detail::signal_blocker sb;
+
       // Reset the interrupter.
-      if (read_fds.is_set(interrupter_.read_descriptor()))
+      if (retval > 0 && read_fds.is_set(interrupter_.read_descriptor()))
         stop = interrupter_.reset();
 
       // Dispatch all ready operations.
