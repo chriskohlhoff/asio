@@ -32,6 +32,31 @@ Return to \ref tutdaytime2
 /**
 \page tutdaytime3 Tutorial Daytime.3 - An asynchronous TCP daytime server
 
+\section tutdaytime3remunused Removing Unused Handler Parameters
+
+You may have noticed that the <tt>error</tt>, <tt>last_bytes_sent</tt> and
+<tt>total_bytes_sent</tt> parameters are not used in the body of the
+<tt>handle_send()</tt> function. If parameters are not needed, it is possible
+to remove them from the function:
+
+@code
+void handle_send(asio::stream_socket* socket, char* send_buf)
+{
+  using namespace std; // For free.
+  free(send_buf);
+  delete socket;
+} @endcode
+
+When initiating the asynchronous operation, and if using \ref boost_bind, you
+must specify only the arguments that match the handler's parameter list. In
+this program, all three of the argument placeholders (asio::arg::error,
+asio::arg::last_bytes_sent and asio::arg::total_bytes_sent) should therefore
+be removed:
+
+@code
+asio::async_send_n(*socket, send_buf, send_length,
+    boost::bind(handle_send, socket, send_buf)); @endcode
+
 See the \ref tutdaytime3src \n
 Return to the \ref tutindex \n
 Go back to \ref tutdaytime2 \n
@@ -79,6 +104,32 @@ Return to \ref tutdaytime5
 
 /**
 \page tutdaytime6 Tutorial Daytime.6 - An asynchronous UDP daytime server
+
+\section tutdaytime6remunused Removing Unused Handler Parameters
+
+In this tutorial program, the <tt>error</tt> and <tt>bytes_sent</tt>
+parameters are not used in the body of the <tt>handle_sendto()</tt> function.
+As those parameters are not needed, they can be removed them from the
+function:
+
+@code
+void handle_sendto(char* send_buf)
+{
+  using namespace std; // For free.
+  free(send_buf);
+} @endcode
+
+When initiating the asynchronous operation, and if using \ref boost_bind, you
+must specify only the arguments that match the handler's parameter list. In
+this tutorial program, both of the argument placeholders (asio::arg::error and
+asio::arg::bytes_sent) should therefore be removed:
+
+@code
+socket->async_sendto(send_buf, send_length, *remote_address,
+    boost::bind(handle_sendto, send_buf)); @endcode
+
+The <tt>handle_recvfrom()</tt> functions's <tt>bytes_recvd</tt> parameter can
+be similarly removed.
 
 See the \ref tutdaytime6src \n
 Return to the \ref tutindex \n
