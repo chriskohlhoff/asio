@@ -19,7 +19,7 @@
 
 #include "asio/detail/push_options.hpp"
 #include <cerrno>
-#include <stdexcept>
+#include <exception>
 #include <string>
 #include "asio/detail/pop_options.hpp"
 
@@ -35,7 +35,7 @@ namespace asio {
 
 /// The socket_error class is used to encapsulate socket error codes.
 class socket_error
-  : public std::runtime_error
+  : public std::exception
 {
 public:
   /// Error codes.
@@ -79,23 +79,67 @@ public:
   };
 
   /// Constructor.
-  socket_error(int code);
+  socket_error(int code)
+    : code_(code),
+      message_()
+  {
+  }
 
   /// Get the code associated with the error.
-  int code() const;
+  int code() const
+  {
+    return code_;
+  }
 
   /// Get the message associated with the error.
-  std::string message() const;
+  virtual const char* what() const
+  {
+    if (message_.length() == 0)
+    {
+#if defined(_WIN32)
+      if (code_ == ENOMEM || code_ == EPERM || code_ == EAGAIN)
+      {
+        message_ = strerror(code_);
+      }
+      else
+      {
+        void* msg_buf;
+        ::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM
+            | FORMAT_MESSAGE_IGNORE_INSERTS, 0, code_,
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&msg_buf, 0, 0);
+        message_ = (LPCTSTR)msg_buf;
+        ::LocalFree(msg_buf);
+      }
+#else
+      char buf[256] = "";
+      message_ = strerror_r(code_, buf, sizeof(buf));
+#endif
+    }
+
+    return message_.c_str();
+  }
 
   /// Operator returns non-null if there is a non-success error code.
-  operator void*() const;
+  operator void*() const
+  {
+    if (code_ == success)
+      return 0;
+    else
+      return const_cast<void*>(static_cast<const void*>(this));
+  }
 
   /// Operator to test if the error represents success.
-  bool operator!() const;
+  bool operator!() const
+  {
+    return code_ == success;
+  }
 
 private:
   // The code associated with the error.
   int code_;
+
+  // The message associated with the error.
+  mutable std::string message_;
 };
 
 } // namespace asio

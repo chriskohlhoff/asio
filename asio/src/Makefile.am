@@ -9,7 +9,6 @@ ___lib_libasio_a_SOURCES = \
 	asio/completion_context_locker.cpp \
 	asio/counting_completion_context.cpp \
 	asio/demuxer_task.cpp \
-	asio/socket_error.cpp \
 	asio/detail/demuxer_task_thread.cpp \
 	asio/detail/select_interrupter.cpp \
 	asio/detail/shared_thread_demuxer_service.cpp

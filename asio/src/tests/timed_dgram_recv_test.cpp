@@ -31,7 +31,7 @@ public:
   {
     if (error)
     {
-      std::cout << "Receive error: " << error.message() << "\n";
+      std::cout << "Receive error: " << error.what() << "\n";
     }
     else
     {

@@ -32,7 +32,7 @@ public:
   {
     if (error)
     {
-      std::cout << "Accept error: " << error.message() << "\n";
+      std::cout << "Accept error: " << error.what() << "\n";
     }
     else
     {
