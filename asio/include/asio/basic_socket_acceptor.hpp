@@ -66,7 +66,7 @@ public:
    * @param d The demuxer object that the acceptor will use to deliver
    * completions for any asynchronous operations performed on the acceptor.
    *
-   * @param addr An address on the local machine on which the acceptor will
+   * @param address An address on the local machine on which the acceptor will
    * listen for new connections.
    *
    * @param listen_backlog The maximum length of the queue of pending
