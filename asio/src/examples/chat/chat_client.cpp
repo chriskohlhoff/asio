@@ -134,7 +134,7 @@ int main(int argc, char* argv[])
     using namespace std; // For atoi, strlen and memcpy.
     asio::ipv4::host_resolver hr(d);
     asio::ipv4::host h;
-    hr.get_host_by_name(argv[1], h);
+    hr.get_host_by_name(h, argv[1]);
     asio::ipv4::tcp::endpoint ep(atoi(argv[2]), h.addresses[0]);
 
     chat_client c(d, ep);

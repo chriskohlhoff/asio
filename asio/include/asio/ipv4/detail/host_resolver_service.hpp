@@ -94,7 +94,7 @@ public:
 
   /// Get host information for a specified address.
   template <typename Error_Handler>
-  void get_host_by_address(impl_type& impl, const address& addr, host& h,
+  void get_host_by_address(impl_type& impl, host& h, const address& addr,
       Error_Handler error_handler)
   {
     hostent ent;
@@ -114,7 +114,7 @@ public:
 
   /// Get host information for a named host.
   template <typename Error_Handler>
-  void get_host_by_name(impl_type& impl, const std::string& name, host& h,
+  void get_host_by_name(impl_type& impl, host& h, const std::string& name,
       Error_Handler error_handler)
   {
     hostent ent;

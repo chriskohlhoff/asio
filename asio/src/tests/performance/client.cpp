@@ -251,7 +251,7 @@ int main(int argc, char* argv[])
 
     ipv4::host_resolver hr(d);
     ipv4::host h;
-    hr.get_host_by_name(host, h);
+    hr.get_host_by_name(h, host);
     ipv4::tcp::endpoint ep(port, h.addresses[0]);
 
     client c(d, ep, block_size, session_count, timeout);

@@ -123,9 +123,9 @@ public:
    *
    * @throws asio::error Thrown on failure.
    */
-  void get_host_by_address(const address& addr, host& h)
+  void get_host_by_address(host& h, const address& addr)
   {
-    service_.get_host_by_address(impl_, addr, h, default_error_handler());
+    service_.get_host_by_address(impl_, h, addr, default_error_handler());
   }
 
   /// Get host information for a specified address.
@@ -147,10 +147,10 @@ public:
    * ); @endcode
    */
   template <typename Error_Handler>
-  void get_host_by_address(const address& addr, host& h,
+  void get_host_by_address(host& h, const address& addr,
       Error_Handler error_handler)
   {
-    service_.get_host_by_address(impl_, addr, h, error_handler);
+    service_.get_host_by_address(impl_, h, addr, error_handler);
   }
 
   /// Get host information for a named host.
@@ -165,9 +165,9 @@ public:
    *
    * @throws asio::error Thrown on failure.
    */
-  void get_host_by_name(const std::string& name, host& h)
+  void get_host_by_name(host& h, const std::string& name)
   {
-    service_.get_host_by_name(impl_, name, h, default_error_handler());
+    service_.get_host_by_name(impl_, h, name, default_error_handler());
   }
 
   /// Get host information for a named host.
@@ -188,10 +188,10 @@ public:
    * ); @endcode
    */
   template <typename Error_Handler>
-  void get_host_by_name(const std::string& name, host& h,
+  void get_host_by_name(host& h, const std::string& name,
       Error_Handler error_handler)
   {
-    service_.get_host_by_name(impl_, name, h, error_handler);
+    service_.get_host_by_name(impl_, h, name, error_handler);
   }
 
 private:
