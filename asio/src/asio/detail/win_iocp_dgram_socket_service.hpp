@@ -1,5 +1,5 @@
 //
-// reactive_dgram_socket_service.hpp
+// win_iocp_dgram_socket_service.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003 Christopher M. Kohlhoff (chris@kohlhoff.com)
@@ -21,28 +21,32 @@
 #include <boost/bind.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/basic_demuxer.hpp"
 #include "asio/completion_context.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_error.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/win_iocp_demuxer_service.hpp"
 
 namespace asio {
 namespace detail {
 
-template <typename Demuxer, typename Reactor>
-class reactive_dgram_socket_service
+class win_iocp_dgram_socket_service
 {
 public:
   // The native type of the dgram socket. This type is dependent on the
   // underlying implementation of the socket layer.
   typedef socket_type impl_type;
 
-  // Constructor.
-  reactive_dgram_socket_service(Demuxer& d)
-    : demuxer_(d),
-      reactor_(d.get_service(service_factory<Reactor>()))
+  // Constructor. This dgram_socket service can only work if the demuxer is
+  // using the win_iocp_demuxer_service. By using this type as the parameter we
+  // will cause a compile error if this is not the case.
+  win_iocp_dgram_socket_service(
+      basic_demuxer<win_iocp_demuxer_service>& demuxer)
+    : demuxer_service_(demuxer.get_service(
+          service_factory<win_iocp_demuxer_service>()))
   {
   }
 
@@ -69,6 +73,8 @@ public:
           address.native_size()) == socket_error_retval)
       throw socket_error(socket_ops::get_error());
 
+    demuxer_service_.register_socket(sock.get());
+
     impl = sock.release();
   }
 
@@ -77,7 +83,6 @@ public:
   {
     if (impl != null())
     {
-      reactor_.close_descriptor(impl);
       socket_ops::close(impl);
       impl = null();
     }
@@ -96,47 +101,39 @@ public:
     return bytes_sent;
   }
 
-  template <typename Address, typename Handler>
-  class sendto_handler
+  template <typename Handler>
+  class sendto_operation
+    : public win_iocp_demuxer_service::operation
   {
   public:
-    sendto_handler(impl_type impl, Demuxer& demuxer, const void* data,
-        size_t length, const Address& address, Handler handler,
-        completion_context& context)
-      : impl_(impl),
-        demuxer_(demuxer),
-        data_(data),
-        length_(length),
-        destination_(address),
-        handler_(handler),
-        context_(context)
+    sendto_operation(completion_context& context, bool context_acquired,
+        Handler handler)
+      : win_iocp_demuxer_service::operation(context, context_acquired),
+        handler_(handler)
     {
     }
 
-    void do_operation()
+    virtual void do_completion(DWORD last_error, size_t bytes_transferred)
     {
-      int bytes = socket_ops::sendto(impl_, data_, length_, 0,
-          destination_.native_address(), destination_.native_size());
-      socket_error error(bytes < 0
-          ? socket_ops::get_error() : socket_error::success);
-      demuxer_.operation_completed(boost::bind(handler_, error, bytes),
-          context_);
+      socket_error error(last_error);
+      do_upcall(handler_, error, bytes_transferred);
+      delete this;
     }
 
-    void do_cancel()
+    static void do_upcall(Handler handler, const socket_error& error,
+        size_t bytes_sent)
     {
-      socket_error error(socket_error::operation_aborted);
-      demuxer_.operation_completed(boost::bind(handler_, error, 0), context_);
+      try
+      {
+        handler(error, bytes_sent);
+      }
+      catch (...)
+      {
+      }
     }
 
   private:
-    impl_type impl_;
-    Demuxer& demuxer_;
-    const void* data_;
-    size_t length_;
-    Address destination_;
     Handler handler_;
-    completion_context& context_;
   };
 
   // Start an asynchronous send. The data being sent must be valid for the
@@ -146,9 +143,27 @@ public:
       const Address& destination, Handler handler,
       completion_context& context)
   {
-    demuxer_.operation_started();
-    reactor_.start_write_op(impl, sendto_handler<Address, Handler>(impl,
-          demuxer_, data, length, destination, handler, context));
+    sendto_operation<Handler>* sendto_op =
+      new sendto_operation<Handler>(context, false, handler);
+
+    demuxer_service_.operation_started();
+
+    WSABUF buf;
+    buf.len = length;
+    buf.buf = static_cast<char*>(const_cast<void*>(data));
+    DWORD bytes_transferred = 0;
+
+    int result = ::WSASendTo(impl, &buf, 1, &bytes_transferred, 0,
+        destination.native_address(), destination.native_size(), sendto_op, 0);
+    DWORD last_error = ::WSAGetLastError();
+
+    if (result != 0 && last_error != WSA_IO_PENDING)
+    {
+      delete sendto_op;
+      socket_error error(last_error);
+      demuxer_service_.operation_completed(
+          boost::bind(handler, error, bytes_transferred), context, false);
+    }
   }
 
   // Receive a datagram with the address of the sender. Returns the number of
@@ -167,48 +182,48 @@ public:
   }
 
   template <typename Address, typename Handler>
-  class recvfrom_handler
+  class recvfrom_operation
+    : public win_iocp_demuxer_service::operation
   {
   public:
-    recvfrom_handler(impl_type impl, Demuxer& demuxer, void* data,
-        size_t max_length, Address& address, Handler handler,
-        completion_context& context)
-      : impl_(impl),
-        demuxer_(demuxer),
-        data_(data),
-        max_length_(max_length),
-        sender_address_(address),
-        handler_(handler),
-        context_(context)
+    recvfrom_operation(completion_context& context, bool context_acquired,
+        Address& address, Handler handler)
+      : win_iocp_demuxer_service::operation(context, context_acquired),
+        address_(address),
+        address_size_(address.native_size()),
+        handler_(handler)
     {
     }
 
-    void do_operation()
+    int& address_size()
     {
-      socket_addr_len_type addr_len = sender_address_.native_size();
-      int bytes = socket_ops::recvfrom(impl_, data_, max_length_, 0,
-          sender_address_.native_address(), &addr_len);
-      socket_error error(bytes < 0
-          ? socket_ops::get_error() : socket_error::success);
-      sender_address_.native_size(addr_len);
-      demuxer_.operation_completed(boost::bind(handler_, error, bytes),
-          context_);
+      return address_size_;
     }
 
-    void do_cancel()
+    virtual void do_completion(DWORD last_error, size_t bytes_transferred)
     {
-      socket_error error(socket_error::operation_aborted);
-      demuxer_.operation_completed(boost::bind(handler_, error, 0), context_);
+      address_.native_size(address_size_);
+      socket_error error(last_error);
+      do_upcall(handler_, error, bytes_transferred);
+      delete this;
+    }
+
+    static void do_upcall(const Handler& handler, const socket_error& error,
+        size_t bytes_recvd)
+    {
+      try
+      {
+        handler(error, bytes_recvd);
+      }
+      catch (...)
+      {
+      }
     }
 
   private:
-    impl_type impl_;
-    Demuxer& demuxer_;
-    void* data_;
-    size_t max_length_;
-    Address& sender_address_;
+    Address& address_;
+    int address_size_;
     Handler handler_;
-    completion_context& context_;
   };
 
   // Start an asynchronous receive. The buffer for the data being received and
@@ -218,17 +233,35 @@ public:
   void async_recvfrom(impl_type& impl, void* data, size_t max_length,
       Address& sender_address, Handler handler, completion_context& context)
   {
-    demuxer_.operation_started();
-    reactor_.start_read_op(impl, recvfrom_handler<Address, Handler>(impl,
-          demuxer_, data, max_length, sender_address, handler, context));
+    recvfrom_operation<Address, Handler>* recvfrom_op =
+      new recvfrom_operation<Address, Handler>(context, false, sender_address,
+          handler);
+
+    demuxer_service_.operation_started();
+
+    WSABUF buf;
+    buf.len = max_length;
+    buf.buf = static_cast<char*>(data);
+    DWORD bytes_transferred = 0;
+    DWORD flags = 0;
+
+    int result = ::WSARecvFrom(impl, &buf, 1, &bytes_transferred, &flags,
+        sender_address.native_address(), &recvfrom_op->address_size(),
+        recvfrom_op, 0);
+    DWORD last_error = ::WSAGetLastError();
+
+    if (result != 0 && last_error != WSA_IO_PENDING)
+    {
+      delete recvfrom_op;
+      socket_error error(last_error);
+      demuxer_service_.operation_completed(
+          boost::bind(handler, error, bytes_transferred), context, false);
+    }
   }
 
 private:
-  // The demuxer used for delivering completion notifications.
-  Demuxer& demuxer_;
-
-  // The selector that performs event demultiplexing for the provider.
-  Reactor& reactor_;
+  // The demuxer service used for running asynchronous operations.
+  win_iocp_demuxer_service& demuxer_service_;
 };
 
 } // namespace detail

@@ -19,12 +19,22 @@
 
 #include "asio/basic_dgram_socket.hpp"
 #include "asio/demuxer.hpp"
-#include "asio/detail/select_reactor.hpp"
-#include "asio/detail/reactive_dgram_socket_service.hpp"
+#if defined(_WIN32)
+# include "asio/detail/win_iocp_dgram_socket_service.hpp"
+#else
+# include "asio/detail/select_reactor.hpp"
+# include "asio/detail/reactive_dgram_socket_service.hpp"
+#endif
 
 namespace asio {
 
 /// Typedef for the typical usage of dgram_socket.
+#if defined(_WIN32)
+typedef basic_dgram_socket
+  <
+    detail::win_iocp_dgram_socket_service
+  > dgram_socket;
+#else
 typedef basic_dgram_socket
   <
     detail::reactive_dgram_socket_service
@@ -33,6 +43,7 @@ typedef basic_dgram_socket
         detail::select_reactor
       >
   > dgram_socket;
+#endif
 
 } // namespace asio
 

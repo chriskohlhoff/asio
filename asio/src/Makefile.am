@@ -43,7 +43,8 @@ nobase_include_HEADERS = \
 	asio/detail/task_demuxer_service.hpp \
 	asio/detail/timer_queue_service.hpp \
 	asio/detail/tss_bool.hpp \
-	asio/detail/win_iocp_provider.hpp \
+	asio/detail/win_iocp_demuxer_service.hpp \
+	asio/detail/win_iocp_dgram_socket_service.hpp \
 	asio/detail/winsock_init.hpp \
 	asio/dgram_socket.hpp \
 	asio/inet_address_v4.hpp \

@@ -19,12 +19,22 @@
 
 #include "asio/basic_demuxer.hpp"
 #include "asio/service_factory.hpp"
-#include "asio/detail/select_reactor.hpp"
-#include "asio/detail/task_demuxer_service.hpp"
+#if defined(_WIN32)
+# include "asio/detail/win_iocp_demuxer_service.hpp"
+#else
+# include "asio/detail/select_reactor.hpp"
+# include "asio/detail/task_demuxer_service.hpp"
+#endif
 
 namespace asio {
 
 /// Typedef for typical usage of demuxer.
+#if defined(_WIN32)
+typedef basic_demuxer
+  <
+    detail::win_iocp_demuxer_service
+  > demuxer;
+#else
 typedef basic_demuxer
   <
     detail::task_demuxer_service
@@ -32,6 +42,7 @@ typedef basic_demuxer
         detail::select_reactor
       >
   > demuxer;
+#endif
 
 } // namespace asio
 
