@@ -24,6 +24,7 @@
 #include "asio/completion_context.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/detail/service_registry.hpp"
+#include "asio/detail/signal_init.hpp"
 #include "asio/detail/winsock_init.hpp"
 
 namespace asio {
@@ -49,6 +50,8 @@ public:
   {
 #if defined(_WIN32)
     detail::winsock_init<>::use();
+#else
+    detail::signal_init<>::use();
 #endif // _WIN32
   }
 

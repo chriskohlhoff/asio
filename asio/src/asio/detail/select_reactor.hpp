@@ -18,7 +18,6 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
-#include <csignal>
 #include <boost/noncopyable.hpp>
 #include <boost/thread.hpp>
 #include "asio/detail/pop_options.hpp"
@@ -45,9 +44,6 @@ public:
       stop_(false),
       thread_(boost::bind(&select_reactor<Demuxer>::run, this))
   {
-#if !defined(_WIN32)
-    std::signal(SIGPIPE, SIG_IGN);
-#endif // !defined(_WIN32)
   }
 
   // Destructor.
