@@ -1,15 +1,14 @@
 #include <ctime>
 #include <iostream>
-#include <string>
 #include "boost/bind.hpp"
 #include "asio.hpp"
 
-void handle_send(asio::stream_socket* socket, char* data,
+void handle_send(asio::stream_socket* socket, char* send_buf,
     const asio::socket_error& /*error*/, size_t /*last_bytes_sent*/,
     size_t /*total_bytes_sent*/)
 {
   using namespace std; // For free.
-  free(data);
+  free(send_buf);
   delete socket;
 }
 
@@ -20,11 +19,11 @@ void handle_accept(asio::socket_acceptor* acceptor,
   {
     using namespace std; // For time_t, time, ctime, strdup and strlen.
     time_t now = time(0);
-    char* data = strdup(ctime(&now));
-    size_t length = strlen(data);
+    char* send_buf = strdup(ctime(&now));
+    size_t send_length = strlen(send_buf);
 
-    asio::async_send_n(*socket, data, length,
-        boost::bind(handle_send, socket, data, asio::arg::error,
+    asio::async_send_n(*socket, send_buf, send_length,
+        boost::bind(handle_send, socket, send_buf, asio::arg::error,
           asio::arg::last_bytes_sent, asio::arg::total_bytes_sent));
 
     socket = new asio::stream_socket(acceptor->demuxer());
