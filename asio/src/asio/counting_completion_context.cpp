@@ -15,10 +15,11 @@
 #include "asio/counting_completion_context.hpp"
 
 #include "asio/detail/push_options.hpp"
-#include <boost/thread.hpp>
 #include <cassert>
 #include <queue>
 #include "asio/detail/pop_options.hpp"
+
+#include "asio/detail/mutex.hpp"
 
 namespace asio {
 
@@ -29,7 +30,7 @@ public:
   impl(int max_concurrent_upcalls);
 
   // Mutex to protect access to internal data.
-  boost::mutex mutex_;
+  detail::mutex mutex_;
 
   // The maximum number of concurrent upcalls.
   int max_concurrent_upcalls_;
@@ -78,7 +79,7 @@ bool
 counting_completion_context::
 try_acquire()
 {
-  boost::mutex::scoped_lock lock(impl_->mutex_);
+  detail::mutex::scoped_lock lock(impl_->mutex_);
 
   assert(impl_->concurrent_upcalls_ <= impl_->max_concurrent_upcalls_);
   assert(impl_->concurrent_upcalls_ >= 0);
@@ -98,7 +99,7 @@ acquire(
     completion_context_locker& locker,
     void* arg)
 {
-  boost::mutex::scoped_lock lock(impl_->mutex_);
+  detail::mutex::scoped_lock lock(impl_->mutex_);
 
   assert(impl_->concurrent_upcalls_ <= impl_->max_concurrent_upcalls_);
   assert(impl_->concurrent_upcalls_ >= 0);
@@ -123,7 +124,7 @@ void
 counting_completion_context::
 release()
 {
-  boost::mutex::scoped_lock lock(impl_->mutex_);
+  detail::mutex::scoped_lock lock(impl_->mutex_);
 
   assert(impl_->concurrent_upcalls_ <= impl_->max_concurrent_upcalls_);
   assert(impl_->concurrent_upcalls_ > 0);

@@ -20,10 +20,10 @@
 #include "asio/detail/push_options.hpp"
 #include <typeinfo>
 #include <boost/noncopyable.hpp>
-#include <boost/thread.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/service_factory.hpp"
+#include "asio/detail/recursive_mutex.hpp"
 
 namespace asio {
 namespace detail {
@@ -57,7 +57,7 @@ public:
   template <typename Service>
   Service& get_service(service_factory<Service> factory)
   {
-    boost::recursive_mutex::scoped_lock lock(mutex_);
+    asio::detail::recursive_mutex::scoped_lock lock(mutex_);
 
     // First see if there is an existing service object for the given type.
     service_holder_base* service = first_service_;
@@ -139,7 +139,7 @@ private:
   };
 
   // Mutex to protect access to internal data.
-  boost::recursive_mutex mutex_;
+  asio::detail::recursive_mutex mutex_;
 
   // The owner of this service registry and the services it contains.
   Owner& owner_;
