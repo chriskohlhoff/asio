@@ -80,8 +80,7 @@ public:
 
   /// Constructor.
   socket_error(int code)
-    : code_(code),
-      message_()
+    : code_(code)
   {
   }
 
@@ -105,29 +104,25 @@ public:
   /// Get the message associated with the error.
   std::string message() const
   {
-    if (message_.length() == 0)
-    {
 #if defined(_WIN32)
-      if (code_ == ENOMEM || code_ == EPERM || code_ == EAGAIN)
-      {
-        message_ = strerror(code_);
-      }
-      else
-      {
-        void* msg_buf;
-        ::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM
-            | FORMAT_MESSAGE_IGNORE_INSERTS, 0, code_,
-            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&msg_buf, 0, 0);
-        message_ = (LPCTSTR)msg_buf;
-        ::LocalFree(msg_buf);
-      }
-#else
-      char buf[256] = "";
-      message_ = strerror_r(code_, buf, sizeof(buf));
-#endif
+    if (code_ == ENOMEM || code_ == EPERM || code_ == EAGAIN)
+    {
+      return std::string(strerror(code_));
     }
-
-    return message_;
+    else
+    {
+      void* msg_buf;
+      ::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM
+          | FORMAT_MESSAGE_IGNORE_INSERTS, 0, code_,
+          MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&msg_buf, 0, 0);
+      std::string msg((LPCTSTR)msg_buf);
+      ::LocalFree(msg_buf);
+      return msg;
+    }
+#else
+    char buf[256] = "";
+    return std::string(strerror_r(code_, buf, sizeof(buf)));
+#endif
   }
 
   /// Operator returns non-null if there is a non-success error code.
@@ -148,9 +143,6 @@ public:
 private:
   // The code associated with the error.
   int code_;
-
-  // The message associated with the error.
-  mutable std::string message_;
 };
 
 } // namespace asio
