@@ -22,6 +22,7 @@ EXTRA_DIST = \
 	asio_footer.htm \
 	asio.css \
 	asio_dox.txt \
+	release_checklist.htm \
 	../examples/tutorial/tutorial_dox.txt
 
 MAINTAINERCLEANFILES = \
