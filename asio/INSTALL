@@ -27,6 +27,54 @@ combinations:
 The asio library requires boost version 1.30.0, with the threading library
 built.
 
+2.1. Building the boost thread library
+
+This is intended as a quick guide to building the boost thread library for your
+compiler/platform combination. Please consult the boost documentation for a
+more detailed description.
+
+If you are using gcc on Linux:
+
+- Change directory to `boost_1_30_0/tools/build/jam_src'.
+
+- Run `./build.sh'.
+
+- Change directory to `boost_1_30_0/libs/thread/build'.
+
+- Run `../../../tools/build/jam_src/bin.linuxx86/bjam -sTOOLS=gcc'.
+
+- Add the `boost_1_30_0/libs/thread/build/bin-stage' directory to your
+  LD_LIBRARY_PATH environment variable before running any executables which
+  make use of the library.
+
+If you are using MSVC on Windows 2000:
+
+- Change directory to `boost_1_30_0\tools\build\jam_src'.
+
+- Run `build.bat'.
+
+- Change directory to `boost_1_30_0\libs\thread\build'.
+
+- Run `..\..\..\tools\build\jam_src\bin.ntx86\bjam -sTOOLS=msvc'.
+
+- Add the `boost_1_30_0\libs\thread\build\bin-stage' directory to your PATH
+  environment variable before running any executables which make use of the
+  library.
+
+If you are using Borland C++ on Windows 2000:
+
+- Change directory to `boost_1_30_0\tools\build\jam_src'.
+
+- Run `build.bat'.
+
+- Change directory to `boost_1_30_0\libs\thread\build'.
+
+- Run `..\..\..\tools\build\jam_src\bin.ntx86\bjam -sTOOLS=borland'.
+
+- Add the `boost_1_30_0\libs\thread\build\bin-stage' directory to your PATH
+  environment variable before running any executables which make use of the
+  library.
+
 
 3. Building on Linux
 ====================
