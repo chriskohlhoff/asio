@@ -45,7 +45,7 @@ public:
   // implementation of the timer service.
   typedef timer_impl* impl_type;
 
-  // Return a null socket connector implementation.
+  // Return a null timer implementation.
   static impl_type null()
   {
     return 0;
@@ -67,13 +67,13 @@ public:
     return demuxer_;
   }
 
-  // Create a new socket connector implementation.
+  // Create a new timer implementation.
   void create(impl_type& impl)
   {
     impl = new timer_impl;
   }
 
-  // Destroy a stream socket implementation.
+  // Destroy a timer implementation.
   void destroy(impl_type& impl)
   {
     if (impl != null())
