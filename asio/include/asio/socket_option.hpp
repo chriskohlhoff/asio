@@ -150,11 +150,32 @@ private:
   int value_;
 };
 
+/// Permit sending of broadcast messages.
+typedef flag<SOL_SOCKET, SO_BROADCAST> broadcast;
+
+/// Prevent routing, use local interfaces only.
+typedef flag<SOL_SOCKET, SO_DONTROUTE> dont_route;
+
+/// Send keep-alives.
+typedef flag<SOL_SOCKET, SO_KEEPALIVE> keep_alive;
+
 /// The receive buffer size for a socket.
 typedef integer<SOL_SOCKET, SO_SNDBUF> send_buffer_size;
 
+/// Send low watermark.
+typedef integer<SOL_SOCKET, SO_SNDLOWAT> send_low_watermark;
+
+/// Send timeout.
+typedef integer<SOL_SOCKET, SO_SNDTIMEO> send_timeout;
+
 /// The send buffer size for a socket.
 typedef integer<SOL_SOCKET, SO_RCVBUF> recv_buffer_size;
+
+/// Receive low watermark.
+typedef integer<SOL_SOCKET, SO_RCVLOWAT> recv_low_watermark;
+
+/// Receive timeout.
+typedef integer<SOL_SOCKET, SO_RCVTIMEO> recv_timeout;
 
 /// Allow the socket to be bound to an address that is already in use.
 typedef flag<SOL_SOCKET, SO_REUSEADDR> reuse_address;

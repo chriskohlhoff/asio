@@ -43,7 +43,7 @@ public:
   }
 
   /// Socket option for disabling the Nagle algorithm.
-  typedef socket_option::flag<IPPROTO_TCP, TCP_NODELAY> tcp_no_delay;
+  typedef socket_option::flag<IPPROTO_TCP, TCP_NODELAY> no_delay;
 };
 
 } // namespace ipv4
