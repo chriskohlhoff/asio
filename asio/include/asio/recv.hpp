@@ -335,8 +335,8 @@ void async_recv_n(Stream& s, void* data, size_t length, Handler handler,
  * @note Throws an exception on failure. The type of the exception depends
  * on the underlying stream's recv operation.
  */
-template <typename Stream, typename Decoder>
-size_t recv(Stream& s, Decoder decoder, size_t* total_bytes_recvd = 0)
+template <typename Buffered_Stream, typename Decoder>
+size_t recv(Buffered_Stream& s, Decoder decoder, size_t* total_bytes_recvd = 0)
 {
   size_t total_recvd = 0;
   for (;;)
@@ -370,13 +370,13 @@ namespace detail
   static void recv_decoder_optimiser_bug_workaround() {}
 #endif // _MSC_VER
 
-  template <typename Stream, typename Decoder, typename Handler,
+  template <typename Buffered_Stream, typename Decoder, typename Handler,
       typename Completion_Context>
   class recv_decoder_handler
   {
   public:
-    recv_decoder_handler(Stream& stream, Decoder decoder, Handler handler,
-        Completion_Context& context)
+    recv_decoder_handler(Buffered_Stream& stream, Decoder decoder,
+        Handler handler, Completion_Context& context)
       : stream_(stream),
         decoder_(decoder),
         total_recvd_(0),
@@ -425,7 +425,7 @@ namespace detail
     }
 
   private:
-    Stream& stream_;
+    Buffered_Stream& stream_;
     Decoder decoder_;
     size_t total_recvd_;
     Handler handler_;
@@ -472,8 +472,8 @@ namespace detail
  *                             // operation
  * ); @endcode
  */
-template <typename Stream, typename Decoder, typename Handler>
-void async_recv(Stream& s, Decoder decoder, Handler handler)
+template <typename Buffered_Stream, typename Decoder, typename Handler>
+void async_recv(Buffered_Stream& s, Decoder decoder, Handler handler)
 {
   while (!s.recv_buffer().empty())
   {
@@ -491,7 +491,7 @@ void async_recv(Stream& s, Decoder decoder, Handler handler)
     }
   }
 
-  s.async_fill(detail::recv_decoder_handler<Stream, Decoder, Handler,
+  s.async_fill(detail::recv_decoder_handler<Buffered_Stream, Decoder, Handler,
       null_completion_context>(s, decoder, handler,
         null_completion_context::instance()));
 }
@@ -540,9 +540,9 @@ void async_recv(Stream& s, Decoder decoder, Handler handler)
  * object is retained by the caller, which must guarantee that it is valid
  * until after the handler has been called.
  */
-template <typename Stream, typename Decoder, typename Handler,
+template <typename Buffered_Stream, typename Decoder, typename Handler,
     typename Completion_Context>
-void async_recv(Stream& s, Decoder decoder, Handler handler,
+void async_recv(Buffered_Stream& s, Decoder decoder, Handler handler,
     Completion_Context& context)
 {
   while (!s.recv_buffer().empty())
@@ -561,7 +561,7 @@ void async_recv(Stream& s, Decoder decoder, Handler handler,
     }
   }
 
-  s.async_fill(detail::recv_decoder_handler<Stream, Decoder, Handler,
+  s.async_fill(detail::recv_decoder_handler<Buffered_Stream, Decoder, Handler,
       Completion_Context>(s, decoder, handler, context));
 }
 
@@ -632,9 +632,9 @@ namespace detail
  * @note Throws an exception on failure. The type of the exception depends
  * on the underlying stream's recv operation.
  */
-template <typename Stream>
-size_t recv_until(Stream& s, std::string& data, const std::string& delimiter,
-    size_t* total_bytes_recvd = 0)
+template <typename Buffered_Stream>
+size_t recv_until(Buffered_Stream& s, std::string& data,
+    const std::string& delimiter, size_t* total_bytes_recvd = 0)
 {
   return recv(s, detail::recv_until_decoder(data, delimiter),
       total_bytes_recvd);
@@ -668,8 +668,8 @@ size_t recv_until(Stream& s, std::string& data, const std::string& delimiter,
  *                             // operation
  * ); @endcode
  */
-template <typename Stream, typename Handler>
-void async_recv_until(Stream& s, std::string& data,
+template <typename Buffered_Stream, typename Handler>
+void async_recv_until(Buffered_Stream& s, std::string& data,
     const std::string& delimiter, Handler handler)
 {
   async_recv(s, detail::recv_until_decoder(data, delimiter), handler);
@@ -708,8 +708,9 @@ void async_recv_until(Stream& s, std::string& data,
  * object is retained by the caller, which must guarantee that it is valid
  * until after the handler has been called.
  */
-template <typename Stream, typename Handler, typename Completion_Context>
-void async_recv_until(Stream& s, std::string& data,
+template <typename Buffered_Stream, typename Handler,
+    typename Completion_Context>
+void async_recv_until(Buffered_Stream& s, std::string& data,
     const std::string& delimiter, Handler handler, Completion_Context& context)
 {
   async_recv(s, detail::recv_until_decoder(data, delimiter), handler, context);
