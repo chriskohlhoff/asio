@@ -10,7 +10,6 @@ ___lib_libasio_a_SOURCES = \
 	asio/counting_completion_context.cpp \
 	asio/demuxer_task.cpp \
 	asio/detail/demuxer_task_thread.cpp \
-	asio/detail/select_interrupter.cpp \
 	asio/detail/shared_thread_demuxer_service.cpp
 
 nobase_include_HEADERS = \
@@ -30,6 +29,7 @@ nobase_include_HEADERS = \
 	asio/demuxer.hpp \
 	asio/demuxer_task.hpp \
 	asio/detail/demuxer_task_thread.hpp \
+  asio/detail/pipe_select_interrupter.hpp \
 	asio/detail/pop_options.hpp \
 	asio/detail/push_options.hpp \
 	asio/detail/reactive_dgram_socket_service.hpp \
@@ -37,12 +37,12 @@ nobase_include_HEADERS = \
 	asio/detail/reactive_socket_connector_service.hpp \
 	asio/detail/reactive_stream_socket_service.hpp \
 	asio/detail/reactor_op_queue.hpp \
-	asio/detail/select_interrupter.hpp \
 	asio/detail/select_reactor.hpp \
 	asio/detail/service_registry.hpp \
 	asio/detail/shared_thread_demuxer_service.hpp \
 	asio/detail/socket_holder.hpp \
 	asio/detail/socket_ops.hpp \
+	asio/detail/socket_select_interrupter.hpp \
 	asio/detail/socket_types.hpp \
 	asio/detail/timer_queue_service.hpp \
 	asio/detail/tss_bool.hpp \

@@ -24,8 +24,9 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/demuxer_task.hpp"
-#include "asio/detail/select_interrupter.hpp"
+#include "asio/detail/pipe_select_interrupter.hpp"
 #include "asio/detail/reactor_op_queue.hpp"
+#include "asio/detail/socket_select_interrupter.hpp"
 #include "asio/detail/socket_types.hpp"
 
 namespace asio {
@@ -209,7 +210,11 @@ private:
   Demuxer& demuxer_;
 
   // The interrupter is used to break a blocking select call.
-  select_interrupter interrupter_;
+#if 1//defined(_WIN32)
+  socket_select_interrupter interrupter_;
+#else
+  pipe_select_interrupter interrupter_;
+#endif
 
   // The queue of read operations.
   reactor_op_queue<socket_type> read_op_queue_;
