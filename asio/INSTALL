@@ -1,0 +1,72 @@
+asio version 0.1.1 - Installation instructions
+
+1.   Supported Platforms
+2.   Requirements
+2.1.   Building the boost thread library
+3.   Building on Linux
+4.   Building on Win32
+4.1.   Building with MSVC
+4.2.   Building with Borland C++
+
+
+1. Supported Platforms
+======================
+
+The asio library has been built and tested on the following compiler/platform
+combinations:
+
+  - Redhat Linux 7.3 using gcc 2.95.3
+  - Redhat Linux 7.3 using gcc 3.2.1
+  - Microsoft Windows 2000 using MSVC 6 sp5
+  - Microsoft Windows 2000 using Borland C++ Builder 6 patch 4 (bcc32 5.6.4)
+
+
+2. Requirements
+===============
+
+The asio library requires boost version 1.30.0, with the threading library
+built.
+
+
+3. Building on Linux
+====================
+
+If the boost directory (i.e. the directory called boost_1_30_0) is in the same
+directory as the asio source kit, then you may configure asio by simply going:
+
+  ./configure
+
+in the root directory of the asio source kit. If the boost directory is in some
+other location, then you need to specify this directory when running configure:
+
+  ./configure --with-boost=<BOOSTDIR>
+
+When specifying the boost directory in this way you should ensure that you use
+an absolute path.
+
+To build, simply run `make' in the root directory of the asio source kit.
+
+
+4. Building on Win32
+====================
+
+To build with either of the supported Win32 compilers, the boost directory
+(i.e. the directory called boost_1_30_0) must be in the same directory as the
+one that contains the asio source kit.
+
+4.1. Building with MSVC
+
+To build using the MSVC 6 command line compiler, perform the following steps:
+
+  - Change to the asio `src' directory.
+
+  - Execute the command `nmake -f Makefile.msc'.
+
+4.2. Building with Borland C++
+
+To build using the Borland C++ Builder 6 command line compiler, perform the
+following steps:
+
+  - Change to the asio `src' directory.
+
+  - Execute the command `make -f Makefile.bor'.
