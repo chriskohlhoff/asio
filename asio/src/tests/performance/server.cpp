@@ -24,7 +24,9 @@ class session
 {
 public:
   session(demuxer& d, size_t block_size)
-    : socket_(d),
+    : demuxer_(d),
+      dispatcher_(d),
+      socket_(d),
       block_size_(block_size),
       recv_data_(new char[block_size]),
       send_data_(new char[block_size]),
@@ -48,7 +50,7 @@ public:
   {
     ++op_count_;
     socket_.async_recv(recv_data_, block_size_,
-        boost::bind(&session::handle_recv, this, _1, _2));
+        dispatcher_.wrap(boost::bind(&session::handle_recv, this, _1, _2)));
   }
 
   void handle_recv(const socket_error& error, size_t length)
@@ -60,15 +62,15 @@ public:
       {
         op_count_ += 2;
         std::swap(recv_data_, send_data_);
-        async_send_n(socket_, send_data_, length,
-            boost::bind(&session::handle_send, this, _1, _2, _3));
-        socket_.async_recv(recv_data_, block_size_,
-            boost::bind(&session::handle_recv, this, _1, _2));
+        async_send_n(socket_, send_data_, length, dispatcher_.wrap(
+              boost::bind(&session::handle_send, this, _1, _2, _3)));
+        socket_.async_recv(recv_data_, block_size_, dispatcher_.wrap(
+              boost::bind(&session::handle_recv, this, _1, _2)));
       }
     }
     else if (--op_count_ == 0)
     {
-      delete this;
+      demuxer_.post(boost::bind(&session::destroy, this));
     }
   }
 
@@ -81,19 +83,26 @@ public:
       {
         op_count_ += 2;
         std::swap(recv_data_, send_data_);
-        async_send_n(socket_, send_data_, length,
-            boost::bind(&session::handle_send, this, _1, _2, _3));
-        socket_.async_recv(recv_data_, block_size_,
-            boost::bind(&session::handle_recv, this, _1, _2));
+        async_send_n(socket_, send_data_, length, dispatcher_.wrap(
+              boost::bind(&session::handle_send, this, _1, _2, _3)));
+        socket_.async_recv(recv_data_, block_size_, dispatcher_.wrap(
+              boost::bind(&session::handle_recv, this, _1, _2)));
       }
     }
     else if (--op_count_ == 0)
     {
-      delete this;
+      demuxer_.post(boost::bind(&session::destroy, this));
     }
   }
 
+  static void destroy(session* s)
+  {
+    delete s;
+  }
+
 private:
+  demuxer& demuxer_;
+  locking_dispatcher dispatcher_;
   stream_socket socket_;
   size_t block_size_;
   char* recv_data_;
@@ -162,22 +171,22 @@ int main(int argc, char* argv[])
     server s(d, port, block_size);
 
     // Threads not currently supported in this test.
-    /*std::list<detail::thread*> threads;
+    std::list<detail::thread*> threads;
     while (--thread_count > 0)
     {
       detail::thread* new_thread =
         new detail::thread(boost::bind(&demuxer::run, &d));
       threads.push_back(new_thread);
-    }*/
+    }
 
     d.run();
 
-    /*while (!threads.empty())
+    while (!threads.empty())
     {
       threads.front()->join();
       delete threads.front();
       threads.pop_front();
-    }*/
+    }
   }
   catch (std::exception& e)
   {
