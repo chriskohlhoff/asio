@@ -13,6 +13,13 @@ AC_ARG_WITH(boost,
 [
   CPPFLAGS="$CPPFLAGS -I${withval}"
   LDFLAGS="$LDFLAGS -L${withval}/libs/thread/build/bin-stage"
+],
+[
+  BOOSTDIR="`pwd`/../boost_1_30_0"
+  if test -d "${BOOSTDIR}"; then
+    CPPFLAGS="$CPPFLAGS -I${BOOSTDIR}"
+    LDFLAGS="$LDFLAGS -L${BOOSTDIR}/libs/thread/build/bin-stage"
+  fi
 ])
 
 AC_CHECK_HEADER([boost/thread.hpp],,
