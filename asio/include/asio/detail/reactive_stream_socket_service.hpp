@@ -148,7 +148,7 @@ public:
       int bytes = socket_ops::send(impl_, data_, length_, 0);
       socket_error error(bytes < 0
           ? socket_ops::get_error() : socket_error::success);
-      demuxer_.post(bind_handler(handler_, error, bytes));
+      demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
       demuxer_.work_finished();
     }
 
@@ -212,7 +212,7 @@ public:
       int bytes = socket_ops::recv(impl_, data_, max_length_, 0);
       socket_error error(bytes < 0
           ? socket_ops::get_error() : socket_error::success);
-      demuxer_.post(bind_handler(handler_, error, bytes));
+      demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
       demuxer_.work_finished();
     }
 

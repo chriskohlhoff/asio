@@ -164,7 +164,7 @@ public:
           destination_.native_address(), destination_.native_size());
       socket_error error(bytes < 0
           ? socket_ops::get_error() : socket_error::success);
-      demuxer_.post(bind_handler(handler_, error, bytes));
+      demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
       demuxer_.work_finished();
     }
 
@@ -238,7 +238,7 @@ public:
       socket_error error(bytes < 0
           ? socket_ops::get_error() : socket_error::success);
       sender_address_.native_size(addr_len);
-      demuxer_.post(bind_handler(handler_, error, bytes));
+      demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
       demuxer_.work_finished();
     }
 
