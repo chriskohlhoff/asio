@@ -54,8 +54,8 @@ public:
   /// Construct an address using an IP address string in dotted decimal form.
   address(const std::string& host)
   {
-    if (detail::socket_ops::inet_pton(AF_INET, host.c_str(), &addr_) <= 0)
-      throw socket_error(detail::socket_ops::get_error());
+    if (asio::detail::socket_ops::inet_pton(AF_INET, host.c_str(), &addr_) <= 0)
+      throw socket_error(asio::detail::socket_ops::get_error());
   }
 
   /// Copy constructor.
@@ -95,11 +95,11 @@ public:
   /// Get the address as a string in dotted decimal format.
   std::string to_string() const
   {
-    char addr_str[detail::max_addr_str_len];
-    const char* addr = detail::socket_ops::inet_ntop(AF_INET, &addr_, addr_str,
-        detail::max_addr_str_len);
+    char addr_str[asio::detail::max_addr_str_len];
+    const char* addr = asio::detail::socket_ops::inet_ntop(AF_INET, &addr_,
+        addr_str, asio::detail::max_addr_str_len);
     if (addr == 0)
-      throw socket_error(detail::socket_ops::get_error());
+      throw socket_error(asio::detail::socket_ops::get_error());
     return addr;
   }
 

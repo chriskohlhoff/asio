@@ -77,11 +77,11 @@ public:
 
   /// The native type of the endpoint structure. This type is dependent on the
   /// underlying implementation of the socket layer.
-  typedef detail::socket_addr_type native_data_type;
+  typedef asio::detail::socket_addr_type native_data_type;
 
   /// The native type for the size of the endpoint structure. This type is
   /// dependent on the underlying implementation of the socket layer.
-  typedef detail::socket_addr_len_type native_size_type;
+  typedef asio::detail::socket_addr_len_type native_size_type;
 
   /// Default constructor.
   endpoint()
@@ -183,7 +183,7 @@ public:
 
 private:
   // The underlying IPv4 socket address.
-  detail::inet_addr_v4_type addr_;
+  asio::detail::inet_addr_v4_type addr_;
 };
 
 } // namespace ipv4

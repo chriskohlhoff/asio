@@ -65,6 +65,10 @@ nobase_include_HEADERS = \
 	asio/error_handler.hpp \
 	asio/fixed_buffer.hpp \
 	asio/ipv4/address.hpp \
+	asio/ipv4/detail/host_resolver_service.hpp \
+	asio/ipv4/host.hpp \
+	asio/ipv4/host_resolver.hpp \
+	asio/ipv4/basic_host_resolver.hpp \
 	asio/ipv4/tcp.hpp \
 	asio/ipv4/udp.hpp \
 	asio/is_recv_buffered.hpp \
