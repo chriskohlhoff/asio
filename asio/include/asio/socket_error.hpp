@@ -254,6 +254,8 @@ private:
 
 } // namespace asio
 
+#undef ASIO_SOCKET_ERROR
+
 #include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_SOCKET_ERROR_HPP
