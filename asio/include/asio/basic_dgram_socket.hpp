@@ -257,7 +257,8 @@ public:
   /**
    * This function is used to obtain the locally bound address of the socket.
    *
-   * @param An address object that receives the local address of the socket.
+   * @param address An address object that receives the local address of the
+   * socket.
    *
    * @throws socket_error Thrown on failure.
    */
@@ -271,7 +272,8 @@ public:
   /**
    * This function is used to obtain the locally bound address of the socket.
    *
-   * @param An address object that receives the local address of the socket.
+   * @param address An address object that receives the local address of the
+   * socket.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature
