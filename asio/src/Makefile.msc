@@ -35,6 +35,7 @@ all: \
 	examples\tutorial\timer2\timer.exe \
 	examples\tutorial\timer3\timer.exe \
 	examples\tutorial\timer4\timer.exe \
+	examples\tutorial\timer5\timer.exe \
 	examples\tutorial\daytime1\client.exe \
 	examples\tutorial\daytime2\server.exe \
 	examples\tutorial\daytime3\server.exe \
@@ -71,6 +72,7 @@ examples\tutorial\timer1\timer.exe: examples\tutorial\timer1\timer.obj
 examples\tutorial\timer2\timer.exe: examples\tutorial\timer2\timer.obj
 examples\tutorial\timer3\timer.exe: examples\tutorial\timer3\timer.obj
 examples\tutorial\timer4\timer.exe: examples\tutorial\timer4\timer.obj
+examples\tutorial\timer5\timer.exe: examples\tutorial\timer5\timer.obj
 examples\tutorial\daytime1\client.exe: examples\tutorial\daytime1\client.obj
 examples\tutorial\daytime2\server.exe: examples\tutorial\daytime2\server.obj
 examples\tutorial\daytime3\server.exe: examples\tutorial\daytime3\server.obj

@@ -12,6 +12,7 @@ simple asynchronous timers.
 \li \ref tuttimer2
 \li \ref tuttimer3
 \li \ref tuttimer4
+\li \ref tuttimer5
 
 \section tutdaytime Introduction to Sockets
 

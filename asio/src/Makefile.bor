@@ -35,6 +35,7 @@ all: \
 	examples\tutorial\timer2\timer.exe \
 	examples\tutorial\timer3\timer.exe \
 	examples\tutorial\timer4\timer.exe \
+	examples\tutorial\timer5\timer.exe \
 	examples\tutorial\daytime1\client.exe \
 	examples\tutorial\daytime2\server.exe \
 	examples\tutorial\daytime3\server.exe \

@@ -249,6 +249,7 @@ normal.
 
 See the \ref tuttimer4src "full source listing" \n
 Return to the \ref tutindex "tutorial index" \n
+Next: \ref tuttimer5 \n
 Previous: \ref tuttimer3 \n
 
 */
@@ -259,3 +260,17 @@ Previous: \ref tuttimer3 \n
 Return to \ref tuttimer4
 */
 
+/**
+\page tuttimer5 Tutorial Timer.5 - Synchronising handlers in threaded programs
+
+See the \ref tuttimer5src "full source listing" \n
+Return to the \ref tutindex "tutorial index" \n
+Previous: \ref tuttimer4 \n
+
+*/
+
+/**
+\page tuttimer5src Source listing for Tutorial Timer.5
+\include timer5/timer.cpp
+Return to \ref tuttimer5
+*/

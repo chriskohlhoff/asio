@@ -1,0 +1,6 @@
+timer
+.deps
+.dirstamp
+*.pdb
+*.ilk
+*.tds
