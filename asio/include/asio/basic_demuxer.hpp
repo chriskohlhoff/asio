@@ -121,7 +121,8 @@ public:
    * which the run member function is being invoked. 
    *
    * @param handler The completion handler to be called. The demuxer will make
-   * a copy of the handler object as required.
+   * a copy of the handler object as required. The equivalent function
+   * signature of the handler must be <tt>void handler()</tt>.
    */
   template <typename Handler>
   void operation_completed(Handler handler)
@@ -141,7 +142,8 @@ public:
    * which the run member function is being invoked. 
    *
    * @param handler The completion handler to be called. The demuxer will make
-   * a copy of the handler object as required.
+   * a copy of the handler object as required. The equivalent function
+   * signature of the handler must be <tt>void handler()</tt>.
    *
    * @param context The completion context which controls the number of
    * concurrent invocations of handlers that may be made. Ownership of the
@@ -165,7 +167,8 @@ public:
    * which the run member function is being invoked. 
    *
    * @param handler The completion handler to be called. The demuxer will make
-   * a copy of the handler object as required.
+   * a copy of the handler object as required. The equivalent function
+   * signature of the handler must be <tt>void handler()</tt>.
    *
    * @param context The completion context which controls the number of
    * concurrent invocations of handlers that may be made. Ownership of the
@@ -197,7 +200,8 @@ public:
    * which the run member function is being invoked. 
    *
    * @param handler The completion handler to be called. The demuxer will make
-   * a copy of the handler object as required.
+   * a copy of the handler object as required. The equivalent function
+   * signature of the handler must be <tt>void handler()</tt>.
    */
   template <typename Handler>
   void operation_immediate(Handler handler)
@@ -217,7 +221,8 @@ public:
    * which the run member function is being invoked. 
    *
    * @param handler The completion handler to be called. The demuxer will make
-   * a copy of the handler object as required.
+   * a copy of the handler object as required. The equivalent function
+   * signature of the handler must be <tt>void handler()</tt>.
    *
    * @param context The completion context which controls the number of
    * concurrent invocations of handlers that may be made. Ownership of the
@@ -241,12 +246,13 @@ public:
    * which the run member function is being invoked. 
    *
    * @param handler The completion handler to be called. The demuxer will make
-   * a copy of the handler object as required.
+   * a copy of the handler object as required. The equivalent function
+   * signature of the handler must be <tt>void handler()</tt>.
    *
    * @param context The completion context which controls the number of
    * concurrent invocations of handlers that may be made. Ownership of the
-   * completion_context object is retained by the caller, which must guarantee
-   * that it is valid until after the handler has been called.
+   * object is retained by the caller, which must guarantee that it is valid
+   * until after the handler has been called.
    *
    * @param allow_nested_delivery If true, this allows the demuxer to run the
    * completion handler before operation_immediate returns, as an optimisation.

@@ -79,7 +79,7 @@ public:
   }
 
   /// Get the underlying implementation in the native type.
-  impl_type impl() const
+  impl_type impl()
   {
     return impl_;
   }
