@@ -9,8 +9,11 @@ nobase_include_HEADERS = \
 	asio/basic_stream_socket.hpp \
 	asio/basic_timer.hpp \
 	asio/buffered_recv_stream.hpp \
+	asio/buffered_recv_stream_fwd.hpp \
 	asio/buffered_send_stream.hpp \
+	asio/buffered_send_stream_fwd.hpp \
 	asio/buffered_stream.hpp \
+	asio/buffered_stream_fwd.hpp \
 	asio/default_error_handler.hpp \
 	asio/demuxer.hpp \
 	asio/detail/bind_handler.hpp \
@@ -63,6 +66,8 @@ nobase_include_HEADERS = \
 	asio/ipv4/address.hpp \
 	asio/ipv4/tcp.hpp \
 	asio/ipv4/udp.hpp \
+	asio/is_recv_buffered.hpp \
+	asio/is_send_buffered.hpp \
 	asio/locking_dispatcher.hpp \
 	asio/recv.hpp \
 	asio/send.hpp \

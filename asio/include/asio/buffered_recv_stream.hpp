@@ -23,7 +23,7 @@
 #include <boost/type_traits.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/fixed_buffer.hpp"
+#include "asio/buffered_recv_stream_fwd.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/buffer_resize_guard.hpp"
 
@@ -31,7 +31,7 @@ namespace asio {
 
 /// The buffered_recv_stream class template can be used to add buffering to the
 /// recv-related operations of a stream.
-template <typename Next_Layer, typename Buffer = fixed_buffer<8192> >
+template <typename Next_Layer, typename Buffer>
 class buffered_recv_stream
   : private boost::noncopyable
 {

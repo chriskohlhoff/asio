@@ -23,13 +23,13 @@
 
 #include "asio/buffered_recv_stream.hpp"
 #include "asio/buffered_send_stream.hpp"
-#include "asio/fixed_buffer.hpp"
+#include "asio/buffered_stream_fwd.hpp"
 
 namespace asio {
 
 /// The buffered_stream class template can be used to add buffering to both the
 /// send- and recv- related operations of a stream.
-template <typename Next_Layer, typename Buffer = fixed_buffer<8192> >
+template <typename Next_Layer, typename Buffer>
 class buffered_stream
   : private boost::noncopyable
 {

@@ -76,6 +76,11 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 \li asio::buffered_send_stream
 \li asio::buffered_stream
 
+<H2>Type Traits</H2>
+
+\li asio::is_recv_buffered
+\li asio::is_send_buffered
+
 </TD>
 </TR>
 </TABLE>

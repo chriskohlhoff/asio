@@ -34,6 +34,8 @@
 #include "asio/ipv4/address.hpp"
 #include "asio/ipv4/tcp.hpp"
 #include "asio/ipv4/udp.hpp"
+#include "asio/is_recv_buffered.hpp"
+#include "asio/is_send_buffered.hpp"
 #include "asio/locking_dispatcher.hpp"
 #include "asio/recv.hpp"
 #include "asio/send.hpp"
