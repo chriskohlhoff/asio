@@ -7,10 +7,7 @@ lib_LIBRARIES = ../lib/libasio.a
 ___lib_libasio_a_SOURCES = \
 	asio/completion_context.cpp \
 	asio/completion_context_locker.cpp \
-	asio/counting_completion_context.cpp \
-	asio/demuxer_task.cpp \
-	asio/detail/demuxer_task_thread.cpp \
-	asio/detail/shared_thread_demuxer_service.cpp
+	asio/counting_completion_context.cpp
 
 nobase_include_HEADERS = \
 	asio.hpp \
@@ -27,8 +24,6 @@ nobase_include_HEADERS = \
 	asio/completion_context_locker.hpp \
 	asio/counting_completion_context.hpp \
 	asio/demuxer.hpp \
-	asio/demuxer_task.hpp \
-	asio/detail/demuxer_task_thread.hpp \
   asio/detail/pipe_select_interrupter.hpp \
 	asio/detail/pop_options.hpp \
 	asio/detail/push_options.hpp \
@@ -40,12 +35,12 @@ nobase_include_HEADERS = \
 	asio/detail/select_interrupter.hpp \
 	asio/detail/select_reactor.hpp \
 	asio/detail/service_registry.hpp \
-	asio/detail/shared_thread_demuxer_service.hpp \
 	asio/detail/signal_init.hpp \
 	asio/detail/socket_holder.hpp \
 	asio/detail/socket_ops.hpp \
 	asio/detail/socket_select_interrupter.hpp \
 	asio/detail/socket_types.hpp \
+	asio/detail/task_demuxer_service.hpp \
 	asio/detail/timer_queue_service.hpp \
 	asio/detail/tss_bool.hpp \
 	asio/detail/win_iocp_provider.hpp \

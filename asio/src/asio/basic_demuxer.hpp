@@ -29,8 +29,6 @@
 
 namespace asio {
 
-class demuxer_task;
-
 /// The basic_demuxer class template provides the core event demultiplexing
 /// functionality for both users of the asynchronous I/O objects, such as
 /// stream_socket, and to developers of custom asynchronous services. Most
@@ -99,26 +97,6 @@ public:
   void reset()
   {
     service_.reset();
-  }
-
-  /// Add a task to the demuxer.
-  /**
-   * This function may be used to instruct the demuxer to execute a task until
-   * it has finished. A demuxer implementation may choose to execute a task in
-   * any thread, including a thread from which the run function is being
-   * invoked.
-   *
-   * @param task The task to be added to the demuxer. The caller retains
-   * ownership of the task object, and is responsible for ensuring that the
-   * task object is not destroyed until the task has finished execution and has
-   * been instructed to clean up.
-   *
-   * @param arg A caller-defined token to be passed to all demuxer_task virtual
-   * function invocations.
-   */
-  void add_task(demuxer_task& task, void* arg)
-  {
-    service_.add_task(task, arg);
   }
 
   /// Notify the demuxer that an operation has started.

@@ -30,7 +30,7 @@ typedef basic_socket_acceptor
     detail::reactive_socket_acceptor_service
       <
         demuxer,
-        detail::select_reactor<demuxer>
+        detail::select_reactor
       >
   > socket_acceptor;
 

@@ -22,6 +22,8 @@
 #include <boost/thread.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/basic_demuxer.hpp"
+#include "asio/detail/task_demuxer_service.hpp"
 #include "asio/detail/reactor_op_queue.hpp"
 #include "asio/detail/select_interrupter.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -29,30 +31,46 @@
 namespace asio {
 namespace detail {
 
-template <typename Demuxer>
 class select_reactor
   : private boost::noncopyable
 {
 public:
   // Constructor.
-  select_reactor(Demuxer& d)
+  template <typename Demuxer>
+  select_reactor(Demuxer&)
     : mutex_(),
       interrupter_(),
       read_op_queue_(),
       write_op_queue_(),
-      stop_(false),
-      thread_(boost::bind(&select_reactor<Demuxer>::run, this))
+      stop_thread_(false),
+      thread_(new boost::thread(
+            boost::bind(&select_reactor::run_thread, this)))
+  {
+  }
+
+  // Constructor when running as a demuxer task.
+  select_reactor(basic_demuxer<task_demuxer_service<select_reactor> >&)
+    : mutex_(),
+      interrupter_(),
+      read_op_queue_(),
+      write_op_queue_(),
+      stop_thread_(false),
+      thread_(0)
   {
   }
 
   // Destructor.
   ~select_reactor()
   {
-    boost::mutex::scoped_lock lock(mutex_);
-    stop_ = true;
-    lock.unlock();
-    interrupter_.interrupt();
-    thread_.join();
+    if (thread_)
+    {
+      boost::mutex::scoped_lock lock(mutex_);
+      stop_thread_ = true;
+      lock.unlock();
+      interrupter_.interrupt();
+      thread_->join();
+      delete thread_;
+    }
   }
 
   // Start a new read operation. The do_operation function of the select_op
@@ -103,12 +121,23 @@ public:
   }
 
 private:
+  friend class task_demuxer_service<select_reactor>;
+
+  // Reset the select loop before a new run.
+  void reset()
+  {
+    boost::mutex::scoped_lock lock(mutex_);
+    stop_thread_ = false;
+    interrupter_.reset();
+  }
+
   // Run the select loop.
   void run()
   {
     boost::mutex::scoped_lock lock(mutex_);
 
-    while (!stop_)
+    bool stop = false;
+    while (!stop)
     {
       // Set up the descriptor sets.
       fd_set_adaptor read_fds;
@@ -127,7 +156,7 @@ private:
 
       // Reset the interrupter.
       if (read_fds.is_set(interrupter_.read_descriptor()))
-        interrupter_.reset();
+        stop = interrupter_.reset();
 
       // Dispatch all ready operations.
       if (retval > 0)
@@ -136,6 +165,24 @@ private:
         write_op_queue_.dispatch_descriptors(write_fds);
       }
     }
+  }
+
+  // Run the select loop in the thread.
+  void run_thread()
+  {
+    boost::mutex::scoped_lock lock(mutex_);
+    while (!stop_thread_)
+    {
+      lock.unlock();
+      run();
+      lock.lock();
+    }
+  }
+
+  // Interrupt the select loop.
+  void interrupt()
+  {
+    interrupter_.interrupt();
   }
 
   // Adapts the FD_SET type to meet the Descriptor_Set concept's requirements.
@@ -187,11 +234,11 @@ private:
   // The queue of write operations.
   reactor_op_queue<socket_type> write_op_queue_;
 
-  // Does the reactor loop need to stop.
-  bool stop_;
+  // Does the reactor loop thread need to stop.
+  bool stop_thread_;
 
   // The thread that is running the reactor loop.
-  boost::thread thread_;
+  boost::thread* thread_;
 };
 
 } // namespace detail

@@ -19,12 +19,19 @@
 
 #include "asio/basic_demuxer.hpp"
 #include "asio/service_factory.hpp"
-#include "asio/detail/shared_thread_demuxer_service.hpp"
+#include "asio/detail/select_reactor.hpp"
+#include "asio/detail/task_demuxer_service.hpp"
 
 namespace asio {
 
 /// Typedef for typical usage of demuxer.
-typedef basic_demuxer<detail::shared_thread_demuxer_service> demuxer;
+typedef basic_demuxer
+  <
+    detail::task_demuxer_service
+      <
+        detail::select_reactor
+      >
+  > demuxer;
 
 } // namespace asio
 

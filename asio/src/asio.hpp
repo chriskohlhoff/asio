@@ -28,7 +28,6 @@
 #include "asio/completion_context_locker.hpp"
 #include "asio/counting_completion_context.hpp"
 #include "asio/demuxer.hpp"
-#include "asio/demuxer_task.hpp"
 #include "asio/dgram_socket.hpp"
 #include "asio/inet_address_v4.hpp"
 #include "asio/service_factory.hpp"

@@ -30,7 +30,7 @@ typedef basic_socket_connector
     detail::reactive_socket_connector_service
       <
         demuxer,
-        detail::select_reactor<demuxer>
+        detail::select_reactor
       >
   > socket_connector;
 

@@ -30,7 +30,7 @@ typedef basic_stream_socket
     detail::reactive_stream_socket_service
       <
         demuxer,
-        detail::select_reactor<demuxer>
+        detail::select_reactor
       >
   > stream_socket;
 

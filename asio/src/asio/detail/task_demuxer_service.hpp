@@ -1,0 +1,282 @@
+//
+// task_demuxer_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//
+// Copyright (c) 2003 Christopher M. Kohlhoff (chris@kohlhoff.com)
+//
+// Permission to use, copy, modify, distribute and sell this software and its
+// documentation for any purpose is hereby granted without fee, provided that
+// the above copyright notice appears in all copies and that both the copyright
+// notice and this permission notice appear in supporting documentation. This
+// software is provided "as is" without express or implied warranty, and with
+// no claim as to its suitability for any purpose.
+//
+
+#ifndef ASIO_DETAIL_TASK_DEMUXER_SERVICE_HPP
+#define ASIO_DETAIL_TASK_DEMUXER_SERVICE_HPP
+
+#include "asio/detail/push_options.hpp"
+
+#include "asio/detail/push_options.hpp"
+#include <queue>
+#include <boost/function.hpp>
+#include <boost/thread.hpp>
+#include "asio/detail/pop_options.hpp"
+
+#include "asio/basic_demuxer.hpp"
+#include "asio/service_factory.hpp"
+#include "asio/completion_context_locker.hpp"
+#include "asio/detail/tss_bool.hpp"
+
+namespace asio {
+namespace detail {
+
+template <typename Task>
+class task_demuxer_service
+  : public completion_context_locker
+{
+public:
+  // Constructor. Taking a reference to the demuxer type as the parameter
+  // forces the compiler to ensure that this class can only be used as the
+  // demuxer service. It cannot be instantiated in the demuxer in any other
+  // case.
+  task_demuxer_service(
+      basic_demuxer<task_demuxer_service<Task> >& demuxer)
+    : mutex_(),
+      task_(demuxer.get_service(service_factory<Task>())),
+      task_is_running_(false),
+      outstanding_operations_(0),
+      ready_completions_(),
+      interrupted_(false),
+      current_thread_in_pool_(),
+      idle_thread_count_(0),
+      idle_thread_condition_()
+  {
+  }
+
+  // Run the demuxer's event processing loop.
+  void run()
+  {
+    current_thread_in_pool_ = true;
+
+    boost::mutex::scoped_lock lock(mutex_);
+
+    while (!interrupted_ && outstanding_operations_ > 0)
+    {
+      if (!ready_completions_.empty())
+      {
+        completion_info& front_info = ready_completions_.front();
+        completion_info info;
+        info.handler.swap(front_info.handler);
+        info.context = front_info.context;
+        ready_completions_.pop();
+        lock.unlock();
+        do_completion_upcall(info.handler);
+        release(*info.context);
+        lock.lock();
+        assert(outstanding_operations_ > 0);
+        --outstanding_operations_;
+      }
+      else if (!task_is_running_)
+      {
+        task_is_running_ = true;
+        task_.reset();
+        lock.unlock();
+        task_.run();
+        lock.lock();
+        task_is_running_ = false;
+      }
+      else 
+      {
+        // Nothing to run right now, so just wait for work to do.
+        ++idle_thread_count_;
+        idle_thread_condition_.wait(lock);
+        --idle_thread_count_;
+      }
+    }
+
+    if (!interrupted_)
+    {
+      // No more work to do!
+      interrupt_all_threads();
+    }
+
+    current_thread_in_pool_ = false;
+  }
+
+  // Interrupt the demuxer's event processing loop.
+  void interrupt()
+  {
+    boost::mutex::scoped_lock lock(mutex_);
+    interrupt_all_threads();
+  }
+
+  // Reset the demuxer in preparation for a subsequent run invocation.
+  void reset()
+  {
+    boost::mutex::scoped_lock lock(mutex_);
+    interrupted_ = false;
+  }
+
+  // Notify the demuxer that an operation has started.
+  void operation_started()
+  {
+    boost::mutex::scoped_lock lock(mutex_);
+    ++outstanding_operations_;
+  }
+
+  /// The type of a handler to be called when a completion is delivered.
+  typedef boost::function0<void> completion_handler;
+
+  // Notify the demuxer that an operation has completed.
+  void operation_completed(const completion_handler& handler,
+      completion_context& context, bool allow_nested_delivery)
+  {
+    boost::mutex::scoped_lock lock(mutex_);
+
+    if (try_acquire(context))
+    {
+      if (allow_nested_delivery && current_thread_in_pool_)
+      {
+        lock.unlock();
+        do_completion_upcall(handler);
+        release(context);
+        lock.lock();
+        if (--outstanding_operations_ == 0)
+          interrupt_all_threads();
+      }
+      else
+      {
+        completion_info info;
+        info.handler = handler;
+        info.context = &context;
+        ready_completions_.push(info);
+        if (!interrupt_one_idle_thread())
+          interrupt_task();
+      }
+    }
+    else
+    {
+      completion_info* info = new completion_info;
+      info->handler = handler;
+      info->context = &context;
+      acquire(context, info);
+    }
+  }
+
+  // Notify the demuxer of an operation that started and finished immediately.
+  void operation_immediate(const completion_handler& handler,
+      completion_context& context, bool allow_nested_delivery)
+  {
+    operation_started();
+    operation_completed(handler, context, allow_nested_delivery);
+  }
+
+  // Callback function when a completion context has been acquired.
+  void completion_context_acquired(void* arg) throw ()
+  {
+    try
+    {
+      boost::mutex::scoped_lock lock(mutex_);
+
+      std::auto_ptr<completion_info> info(static_cast<completion_info*>(arg));
+      ready_completions_.push(*info);
+
+      if (!interrupt_one_idle_thread())
+        interrupt_task();
+    }
+    catch (...)
+    {
+    }
+  }
+
+private:
+  // Interrupt the task and all idle threads.
+  void interrupt_all_threads()
+  {
+    interrupted_ = true;
+    idle_thread_condition_.notify_all();
+    interrupt_task();
+  }
+
+  // Interrupt a single idle thread. Returns true if a thread was interrupted,
+  // false if no running thread could be found to interrupt.
+  bool interrupt_one_idle_thread()
+  {
+    if (idle_thread_count_ > 0)
+    {
+      idle_thread_condition_.notify_one();
+      return true;
+    }
+    return false;
+  }
+
+  // Interrupt the task. Returns true if the task was interrupted, false if
+  // the task was not running and so could not be interrupted.
+  bool interrupt_task()
+  {
+    if (task_is_running_)
+    {
+      task_.interrupt();
+      return true;
+    }
+    return false;
+  }
+
+  // Structure containing information about a completion to be delivered.
+  struct completion_info
+  {
+    completion_handler handler;
+    completion_context* context;
+  };
+
+  // Do the upcall for the given completion. This function simply prevents any
+  // exceptions from propagating out of the completion handler.
+  static void do_completion_upcall(const completion_handler& handler) throw ()
+  {
+    try
+    {
+      handler();
+    }
+    catch (...)
+    {
+    }
+  }
+
+  // Mutex to protect access to internal data.
+  boost::mutex mutex_;
+
+  // The task to be run by this demuxer service.
+  Task& task_;
+
+  // Whether the task is currently running.
+  bool task_is_running_;
+
+  // The number of operations that have not yet completed.
+  int outstanding_operations_;
+
+  // The type of a queue of completions.
+  typedef std::queue<completion_info> completion_queue;
+
+  // The completions that are ready to be delivered.
+  completion_queue ready_completions_;
+
+  // Flag to indicate that the dispatcher has been interrupted.
+  bool interrupted_;
+
+  // Thread-specific flag lag to keep track of which threads are in the pool.
+  tss_bool current_thread_in_pool_;
+
+  // The number of threads that are currently idle.
+  int idle_thread_count_;
+
+  // Condition variable used by idle threads to wait for interruption.
+  boost::condition idle_thread_condition_;
+};
+
+} // namespace detail
+} // namespace asio
+
+#include "asio/detail/pop_options.hpp"
+
+#endif // ASIO_DETAIL_TASK_DEMUXER_SERVICE_HPP

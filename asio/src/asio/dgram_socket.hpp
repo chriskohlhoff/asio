@@ -30,7 +30,7 @@ typedef basic_dgram_socket
     detail::reactive_dgram_socket_service
       <
         demuxer,
-        detail::select_reactor<demuxer>
+        detail::select_reactor
       >
   > dgram_socket;
 
