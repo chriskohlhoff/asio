@@ -85,7 +85,7 @@ public:
     if (asio::detail::socket_ops::gethostname(name, sizeof(name)) != 0)
       error_handler(asio::error(asio::detail::socket_ops::get_error()));
     else
-      get_host_by_name(impl, name, h, error_handler);
+      get_host_by_name(impl, h, name, error_handler);
   }
 
   /// Get host information for a specified address.
