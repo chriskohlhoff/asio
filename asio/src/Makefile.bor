@@ -19,6 +19,8 @@ all: \
 	tests\timed_dgram_recv_test.exe \
 	tests\timer_test.exe \
 	tests\tpc_echo_server_test.exe \
+	tests\performance\client.exe \
+	tests\performance\server.exe \
 	examples\chat\chat_client.exe \
 	examples\chat\chat_server.exe \
 	examples\echo\async_tcp_echo_server.exe \

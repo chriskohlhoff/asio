@@ -15,6 +15,8 @@ noinst_PROGRAMS = \
 	tests/timed_dgram_recv_test \
 	tests/timer_test \
 	tests/tpc_echo_server_test \
+	tests/performance/client \
+	tests/performance/server \
 	examples/chat/chat_client \
 	examples/chat/chat_server \
 	examples/echo/async_tcp_echo_server \
@@ -45,6 +47,8 @@ tests_timed_connect_test_SOURCES = tests/timed_connect_test.cpp
 tests_timed_dgram_recv_test_SOURCES = tests/timed_dgram_recv_test.cpp
 tests_timer_test_SOURCES = tests/timer_test.cpp
 tests_tpc_echo_server_test_SOURCES = tests/tpc_echo_server_test.cpp
+tests_performance_client_SOURCES = tests/performance/client.cpp
+tests_performance_server_SOURCES = tests/performance/server.cpp
 examples_chat_chat_client_SOURCES = examples/chat/chat_client.cpp
 examples_chat_chat_server_SOURCES = examples/chat/chat_server.cpp
 examples_echo_async_tcp_echo_server_SOURCES = examples/echo/async_tcp_echo_server.cpp

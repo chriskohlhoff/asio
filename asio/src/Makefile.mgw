@@ -18,7 +18,9 @@ TEST_EXES = \
 	tests/timed_connect_test.exe \
 	tests/timed_dgram_recv_test.exe \
 	tests/timer_test.exe \
-	tests/tpc_echo_server_test.exe
+	tests/tpc_echo_server_test.exe \
+	tests/performance/client.exe \
+	tests/performance/server.exe
 
 EXAMPLE_EXES = \
 	examples\chat\chat_client.exe \
