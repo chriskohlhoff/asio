@@ -180,7 +180,7 @@ public:
   }
 
   /// Push the same byte on to the buffer a certain number of times.
-  void push(const byte_type& c, size_t count)
+  void push(const byte_type& b, size_t count)
   {
     resize(size() + count);
     using namespace std; // For memset.
