@@ -68,7 +68,11 @@ public:
     {
       // Get the next operation from the queue.
       DWORD bytes_transferred = 0;
+#if (WINVER < 0x0500)
+      DWORD completion_key = 0;
+#else
       DWORD_PTR completion_key = 0;
+#endif
       LPOVERLAPPED overlapped = 0;
       ::SetLastError(0);
       ::GetQueuedCompletionStatus(iocp_.handle, &bytes_transferred,
