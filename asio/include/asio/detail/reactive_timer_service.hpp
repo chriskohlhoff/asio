@@ -23,11 +23,10 @@
 
 #include "asio/error.hpp"
 #include "asio/service_factory.hpp"
-#include "asio/timer_base.hpp"
+#include "asio/time.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
-#include "asio/detail/time.hpp"
 
 namespace asio {
 namespace detail {
@@ -40,7 +39,7 @@ public:
   struct timer_impl
     : private boost::noncopyable
   {
-    time expiry;
+    asio::time expiry;
   };
 
   // The native type of the timer. This type is dependent on the underlying
@@ -86,26 +85,16 @@ public:
     }
   }
 
-  // Set the timer.
-  void set(impl_type& impl, timer_base::from_type from_when, long sec,
-      long usec)
+  // Get the expiry time for the timer.
+  asio::time expiry(const impl_type& impl) const
   {
-    time now = time::now();
-    time relative_time(sec, usec);
-    switch (from_when)
-    {
-    case timer_base::from_now:
-      impl->expiry = now;
-      impl->expiry += relative_time;
-      break;
-    case timer_base::from_existing:
-      impl->expiry += relative_time;
-      break;
-    case timer_base::from_epoch:
-    default:
-      impl->expiry = relative_time;
-      break;
-    }
+    return impl->expiry;
+  }
+
+  // Set the expiry time for the timer.
+  void expiry(impl_type& impl, const asio::time& expiry_time)
+  {
+    impl->expiry = expiry_time;
   }
 
   // Cancel any asynchronous wait operations associated with the timer.
@@ -117,16 +106,16 @@ public:
   // Perform a blocking wait on the timer.
   void wait(impl_type& impl)
   {
-    time now = time::now();
+    asio::time now = asio::time::now();
     while (now < impl->expiry)
     {
-      time timeout = impl->expiry;
+      asio::time timeout = impl->expiry;
       timeout -= now;
       ::timeval tv;
       tv.tv_sec = timeout.sec();
       tv.tv_usec = timeout.usec();
       socket_ops::select(0, 0, 0, 0, &tv);
-      now = time::now();
+      now = asio::time::now();
     }
   }
 

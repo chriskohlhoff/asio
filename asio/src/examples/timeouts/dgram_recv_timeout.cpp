@@ -16,7 +16,7 @@ public:
         boost::bind(&dgram_handler::handle_recvfrom, this, asio::arg::error,
           asio::arg::bytes_recvd));
 
-    timer_.set(timer::from_now, 5);
+    timer_.expiry(asio::time::now() + 5);
     timer_.async_wait(boost::bind(&dgram_socket::close, &socket_));
   }
 

@@ -161,7 +161,7 @@ public:
       size_t block_size, size_t session_count, int timeout)
     : demuxer_(d),
       dispatcher_(d),
-      stop_timer_(d, timer::from_now, timeout),
+      stop_timer_(d, asio::time::now() + timeout),
       connector_(d),
       server_endpoint_(server_endpoint),
       block_size_(block_size),

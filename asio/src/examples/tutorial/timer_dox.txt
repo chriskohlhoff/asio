@@ -22,7 +22,7 @@ object of this type first thing in the main function.
 <b>Step 3.</b> Next we declare an object of type asio::timer. The core asio
 classes that provide I/O functionality (or as in this case timer
 functionality) always take a reference to a demuxer as their first constructor
-argument. The remaining arguments to the constructor set the timer to expire 5
+argument. The second argument to the constructor sets the timer to expire 5
 seconds from now.
 
 \until asio::timer
@@ -35,6 +35,9 @@ starts).
 A timer is always in one of two states: "expired" or "not expired". If the
 asio::timer::wait() function is called on an expired timer, it will return
 immediately.
+
+It is important to remember that a timer's expiry time is always expressed
+relative to the epoch (i.e. from midnight, 1 January 1970).
 
 \until wait
 
@@ -149,9 +152,9 @@ stop running.
 \until ++
 
 <b>Step 3.</b> Next we move the expiry time for the timer along by one second
-from the previous expiry time. Using the asio::timer::from_existing flag
-instead of asio::timer::from_now ensures that the timer does not drift away
-from the whole-second mark due to any delays in processing the handler.
+from the previous expiry time. By calculating the new expiry time relative to
+the old, we can ensure that the timer does not drift away from the
+whole-second mark due to any delays in processing the handler.
 
 \until set
 

@@ -17,7 +17,7 @@ public:
         ipv4::tcp::endpoint(32123, ipv4::address::loopback()),
         boost::bind(&connect_handler::handle_connect, this, asio::arg::error));
 
-    timer_.set(timer::from_now, 5);
+    timer_.expiry(asio::time::now() + 5);
     timer_.async_wait(boost::bind(&socket_connector::close, &connector_));
   }
 

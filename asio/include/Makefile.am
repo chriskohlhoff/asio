@@ -85,8 +85,8 @@ nobase_include_HEADERS = \
 	asio/stream_socket.hpp \
 	asio/stream_socket_base.hpp \
 	asio/thread.hpp \
+	asio/time.hpp \
 	asio/timer.hpp \
-	asio/timer_base.hpp \
 	asio/wrapped_handler.hpp
 
 MAINTAINERCLEANFILES = \

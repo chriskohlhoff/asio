@@ -56,8 +56,8 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 \li asio::socket_connector
 \li asio::stream_socket
 \li asio::thread
+\li asio::time
 \li asio::timer
-\li asio::timer_base
 
 <H2>Class Templates</H2>
 

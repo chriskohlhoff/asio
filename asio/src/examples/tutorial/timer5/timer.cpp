@@ -7,8 +7,8 @@ class printer
 public:
   printer(asio::demuxer& d)
     : dispatcher_(d),
-      timer1_(d, asio::timer::from_now, 1),
-      timer2_(d, asio::timer::from_now, 1),
+      timer1_(d, asio::time::now() + 1),
+      timer2_(d, asio::time::now() + 1),
       count_(0)
   {
     timer1_.async_wait(dispatcher_.wrap(boost::bind(&printer::print1, this)));
@@ -27,7 +27,7 @@ public:
       std::cout << "Timer 1: " << count_ << "\n";
       ++count_;
 
-      timer1_.set(asio::timer::from_existing, 1);
+      timer1_.expiry(timer1_.expiry() + 1);
       timer1_.async_wait(dispatcher_.wrap(boost::bind(&printer::print1, this)));
     }
   }
@@ -39,7 +39,7 @@ public:
       std::cout << "Timer 2: " << count_ << "\n";
       ++count_;
 
-      timer2_.set(asio::timer::from_existing, 1);
+      timer2_.expiry(timer2_.expiry() + 1),
       timer2_.async_wait(dispatcher_.wrap(boost::bind(&printer::print2, this)));
     }
   }

@@ -22,7 +22,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/service_factory.hpp"
-#include "asio/timer_base.hpp"
+#include "asio/time.hpp"
 
 namespace asio {
 
@@ -42,8 +42,7 @@ namespace asio {
  */
 template <typename Service>
 class basic_timer
-  : public timer_base,
-    private boost::noncopyable
+  : private boost::noncopyable
 {
 public:
   /// The type of the service that will be used to provide timer operations.
@@ -77,23 +76,15 @@ public:
    * @param d The demuxer object that the timer will use to dispatch handlers
    * for any asynchronous operations performed on the timer.
    *
-   * @param from_when The origin time against which the seconds and
-   * microseconds values are measured.
-   *
-   * @param seconds The number of seconds after the from_when origin that the
-   * time should expire.
-   *
-   * @param microseconds The number of microseconds which, in addition to the
-   * seconds value, is used to calculate the expiry time relative to the
-   * from_when origin value.
+   * @param expiry_time The expiry time to be used for the timer, expressed
+   * relative to the epoch.
    */
-  basic_timer(demuxer_type& d, from_type from_when, long seconds,
-      long microseconds = 0)
+  basic_timer(demuxer_type& d, const time& expiry_time)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_.null())
   {
     service_.create(impl_);
-    service_.set(impl_, from_when, seconds, microseconds);
+    service_.expiry(impl_, expiry_time);
   }
 
   /// Destructor.
@@ -126,23 +117,25 @@ public:
     return impl_;
   }
 
-  /// Set the timer.
+  /// Get the timer's expiry time.
+  /**
+   * This function may be used to obtain the timer's current expiry time.
+   */
+  time expiry() const
+  {
+    return service_.expiry(impl_);
+  }
+
+  /// Set the timer's expiry time.
   /**
    * This function sets the expiry time.
    *
-   * @param from_when The origin time against which the seconds and
-   * microseconds values are measured.
-   *
-   * @param seconds The number of seconds after the from_when origin that the
-   * time should expire.
-   *
-   * @param microseconds The number of microseconds which, in addition to the
-   * seconds value, is used to calculate the expiry time relative to the
-   * from_when origin value.
+   * @param expiry_time The expiry time to be used for the timer, expressed
+   * relative to the epoch.
    */
-  void set(from_type from_when, long seconds, long microseconds = 0)
+  void expiry(const time& expiry_time)
   {
-    service_.set(impl_, from_when, seconds, microseconds);
+    service_.expiry(impl_, expiry_time);
   }
 
   /// Cancel any asynchronous operations that are waiting on the timer.

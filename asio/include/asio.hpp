@@ -51,7 +51,7 @@
 #include "asio/stream_socket.hpp"
 #include "asio/stream_socket_base.hpp"
 #include "asio/thread.hpp"
+#include "asio/time.hpp"
 #include "asio/timer.hpp"
-#include "asio/timer_base.hpp"
 
 #endif // ASIO_HPP

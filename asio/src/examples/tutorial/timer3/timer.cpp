@@ -9,7 +9,7 @@ void print(const asio::error& /*e*/, asio::timer* t, int* count)
     std::cout << *count << "\n";
     ++(*count);
 
-    t->set(asio::timer::from_existing, 1);
+    t->expiry(t->expiry() + 1);
     t->async_wait(boost::bind(print, asio::arg::error, t, count));
   }
 }
@@ -19,7 +19,7 @@ int main()
   asio::demuxer d;
 
   int count = 0;
-  asio::timer t(d, asio::timer::from_now, 1);
+  asio::timer t(d, asio::time::now() + 1);
   t.async_wait(boost::bind(print, asio::arg::error, &t, &count));
 
   d.run();

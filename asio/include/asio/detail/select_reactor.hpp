@@ -142,7 +142,7 @@ public:
       // dummy timer to perform the socket close when the select has been
       // interrupted.
       void* token = 0;
-      interrupt = timer_queue_.enqueue_timer(time(0, 0),
+      interrupt = timer_queue_.enqueue_timer(detail::time(0, 0),
           close_handler<Close_Function>(descriptor, close_function), token)
         || interrupt;
     }
@@ -164,7 +164,7 @@ public:
   void schedule_timer(long sec, long usec, Handler handler, void* token)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
-    if (timer_queue_.enqueue_timer(time(sec, usec), handler, token))
+    if (timer_queue_.enqueue_timer(detail::time(sec, usec), handler, token))
       interrupter_.interrupt();
   }
 
@@ -231,7 +231,7 @@ private:
         read_op_queue_.dispatch_cancellations();
         write_op_queue_.dispatch_cancellations();
       }
-      timer_queue_.dispatch_timers(time::now());
+      timer_queue_.dispatch_timers(detail::time::now());
     }
   }
 
@@ -265,12 +265,12 @@ private:
     if (timer_queue_.empty())
       return 0;
 
-    time now = time::now();
-    time earliest_timer;
+    detail::time now = detail::time::now();
+    detail::time earliest_timer;
     timer_queue_.get_earliest_time(earliest_timer);
     if (now < earliest_timer)
     {
-      time timeout = earliest_timer;
+      detail::time timeout = earliest_timer;
       timeout -= now;
       tv.tv_sec = timeout.sec();
       tv.tv_usec = timeout.usec();
@@ -337,7 +337,7 @@ private:
   reactor_op_queue<socket_type> write_op_queue_;
 
   // The queue of timers.
-  reactor_timer_queue<time> timer_queue_;
+  reactor_timer_queue<detail::time> timer_queue_;
 
   // Does the reactor loop thread need to stop.
   bool stop_thread_;

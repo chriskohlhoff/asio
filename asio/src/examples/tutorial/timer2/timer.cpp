@@ -10,7 +10,7 @@ int main()
 {
   asio::demuxer d;
 
-  asio::timer t(d, asio::timer::from_now, 5);
+  asio::timer t(d, asio::time::now() + 5);
   t.async_wait(print);
 
   d.run();

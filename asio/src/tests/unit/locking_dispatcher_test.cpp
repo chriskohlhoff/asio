@@ -48,7 +48,7 @@ void increment_with_lock(locking_dispatcher* l, int* count)
 
 void sleep_increment(demuxer* d, int* count)
 {
-  timer t(*d, timer::from_now, 2);
+  timer t(*d, asio::time::now() + 2);
   t.wait();
 
   ++(*count);
@@ -57,7 +57,7 @@ void sleep_increment(demuxer* d, int* count)
 void start_sleep_increments(demuxer* d, locking_dispatcher* l, int* count)
 {
   // Give all threads a chance to start.
-  timer t(*d, timer::from_now, 2);
+  timer t(*d, asio::time::now() + 2);
   t.wait();
 
   // Start three increments.
@@ -101,13 +101,13 @@ void locking_dispatcher_test()
   thread thread2(boost::bind(&demuxer::run, &d));
 
   // Check all events run one after another even though there are two threads.
-  timer timer1(d, timer::from_now, 3);
+  timer timer1(d, asio::time::now() + 3);
   timer1.wait();
   UNIT_TEST_CHECK(count == 0);
-  timer1.set(timer::from_existing, 2);
+  timer1.expiry(timer1.expiry() + 2);
   timer1.wait();
   UNIT_TEST_CHECK(count == 1);
-  timer1.set(timer::from_existing, 2);
+  timer1.expiry(timer1.expiry() + 2);
   timer1.wait();
   UNIT_TEST_CHECK(count == 2);
 

@@ -6,7 +6,7 @@ class printer
 {
 public:
   printer(asio::demuxer& d)
-    : timer_(d, asio::timer::from_now, 1),
+    : timer_(d, asio::time::now() + 1),
       count_(0)
   {
     timer_.async_wait(boost::bind(&printer::print, this));
@@ -24,7 +24,7 @@ public:
       std::cout << count_ << "\n";
       ++count_;
 
-      timer_.set(asio::timer::from_existing, 1);
+      timer_.expiry(timer_.expiry() + 1);
       timer_.async_wait(boost::bind(&printer::print, this));
     }
   }
