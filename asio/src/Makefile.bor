@@ -32,7 +32,8 @@ all: \
 	examples\tutorial\timer3\timer.exe \
 	examples\tutorial\timer4\timer.exe \
 	examples\tutorial\daytime1\client.exe \
-	examples\tutorial\daytime2\server.exe
+	examples\tutorial\daytime2\server.exe \
+	examples\tutorial\daytime3\server.exe
 
 check: all
 	@tests\unit\demuxer_test.exe

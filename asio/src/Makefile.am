@@ -28,7 +28,8 @@ noinst_PROGRAMS = \
 	examples/tutorial/timer3/timer \
 	examples/tutorial/timer4/timer \
 	examples/tutorial/daytime1/client \
-	examples/tutorial/daytime2/server
+	examples/tutorial/daytime2/server \
+	examples/tutorial/daytime3/server
 
 TESTS = \
 	tests/unit/demuxer_test \
@@ -70,6 +71,7 @@ examples_tutorial_timer3_timer_SOURCES = examples/tutorial/timer3/timer.cpp
 examples_tutorial_timer4_timer_SOURCES = examples/tutorial/timer4/timer.cpp
 examples_tutorial_daytime1_client_SOURCES = examples/tutorial/daytime1/client.cpp
 examples_tutorial_daytime2_server_SOURCES = examples/tutorial/daytime2/server.cpp
+examples_tutorial_daytime3_server_SOURCES = examples/tutorial/daytime3/server.cpp
 
 EXTRA_DIST = \
 	Makefile.bor \
