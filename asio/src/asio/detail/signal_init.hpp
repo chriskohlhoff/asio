@@ -33,7 +33,7 @@ public:
   // Used to ensure that the signal stuff is initialised.
   static void use()
   {
-    &instance_;
+    if (&instance_ == 0);
   }
 
 private:
