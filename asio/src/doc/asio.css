@@ -50,7 +50,7 @@ DIV.footer { width: 100%;
 DIV.ah { background-color: black; font-weight: bold; color: #ffffff; margin-bottom: 3px; margin-top: 3px }
 TD.md { background-color: #e0e0e0; font-weight: bold; }
 TD.mdname1 { background-color: #e0e0e0; font-weight: bold; color: #602020; }
-TD.mdname { background-color: #e0e0e0; font-weight: bold; color: #602020; width: 600px; }
+TD.mdname { background-color: #e0e0e0; font-weight: bold; color: #602020; }
 DIV.groupHeader { margin-left: 16px; margin-top: 12px; margin-bottom: 6px; font-weight: bold }
 DIV.groupText { margin-left: 16px; font-style: italic; font-size: smaller }
 BODY {
