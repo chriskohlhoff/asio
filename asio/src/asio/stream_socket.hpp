@@ -31,7 +31,7 @@ class demuxer;
 class socket_acceptor;
 class socket_connector;
 class socket_error;
-class stream_socket_service;
+namespace detail { class stream_socket_service; }
 
 /// The stream_socket class provides asynchronous and blocking stream-oriented
 /// socket functionality.
@@ -61,6 +61,9 @@ public:
 
   /// Get the underlying handle in the native type.
   native_type native_handle() const;
+
+  /// Attach a new socket implementation.
+  void set_impl(native_type impl);
 
   /// Send the given data to the peer. Returns the number of bytes sent or
   /// 0 if the connection was closed cleanly. Throws a socket_error exception
@@ -139,7 +142,7 @@ private:
   void associate(native_type handle);
 
   /// The backend service implementation.
-  stream_socket_service& service_;
+  detail::stream_socket_service& service_;
 
   /// The underlying native handle.
   native_type handle_;

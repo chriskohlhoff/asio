@@ -23,9 +23,10 @@
 #include <boost/scoped_ptr.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/demuxer.hpp"
 #include "asio/completion_context.hpp"
 #include "asio/service_provider.hpp"
-#include "asio/timer_queue_service.hpp"
+#include "asio/detail/timer_queue_service.hpp"
 
 namespace asio {
 namespace detail {
@@ -41,6 +42,7 @@ public:
   // Destructor.
   virtual ~timer_queue_provider();
 
+private:
   // Return the service interface corresponding to the given type.
   virtual service* do_get_service(const service_type_id& service_type);
 
@@ -48,18 +50,16 @@ public:
   // interval until the timer is cancelled. A zero interval means that the
   // timer will fire once only. The id of the new timer is returned so that it
   // may be cancelled.
-  virtual int schedule_timer(timer_queue& queue,
+  virtual int do_schedule_timer(void* owner,
       const boost::xtime& start_time, const boost::xtime& interval,
       const timer_handler& handler, completion_context& context);
 
   // Cancel the timer with the given id.
-  virtual void cancel_timer(timer_queue& queue, int timer_id);
+  virtual void do_cancel_timer(void* owner, int timer_id);
 
-private:
   // Loop for expiring timers until it is time to shut down.
   void expire_timers();
 
-private:
   // The demuxer that owns this provider.
   demuxer& demuxer_;
 
@@ -90,7 +90,7 @@ private:
     boost::function0<void> handler;
     boost::xtime interval;
     completion_context* context;
-    timer_queue* owner;
+    void* owner;
     int id;
   };
 

@@ -21,10 +21,10 @@
 
 #include "asio/completion_context_locker.hpp"
 #include "asio/demuxer_service.hpp"
-#include "asio/dgram_socket_service.hpp"
 #include "asio/service_provider.hpp"
-#include "asio/stream_socket_service.hpp"
 #include "asio/detail/demuxer_thread_pool.hpp"
+#include "asio/detail/dgram_socket_service.hpp"
+#include "asio/detail/stream_socket_service.hpp"
 
 namespace asio {
 namespace detail {

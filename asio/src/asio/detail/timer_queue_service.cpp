@@ -1,6 +1,6 @@
 //
-// timer_queue.cpp
-// ~~~~~~~~~~~~~~~
+// timer_queue_service.cpp
+// ~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -12,28 +12,17 @@
 // no claim as to its suitability for any purpose.
 //
 
-#include "asio/timer_queue.hpp"
-#include "asio/timer_queue_service.hpp"
-#include "asio/demuxer.hpp"
+#include "asio/detail/timer_queue_service.hpp"
 
 namespace asio {
+namespace detail {
 
-timer_queue::
-timer_queue(
-    demuxer& d)
-  : service_(dynamic_cast<timer_queue_service&>(
-        d.get_service(timer_queue_service::id)))
-{
-}
-
-timer_queue::
-~timer_queue()
-{
-}
+const service_type_id timer_queue_service::id;
 
 int
-timer_queue::
+timer_queue_service::
 schedule_timer(
+    void* owner,
     const boost::xtime& start_time,
     const timer_handler& handler,
     completion_context& context)
@@ -41,28 +30,29 @@ schedule_timer(
   boost::xtime interval;
   interval.sec = 0;
   interval.nsec = 0;
-  return service_.schedule_timer(*this, start_time, interval, handler,
-      context);
+  do_schedule_timer(owner, start_time, interval, handler, context);
 }
 
 int
-timer_queue::
+timer_queue_service::
 schedule_timer(
+    void* owner,
     const boost::xtime& start_time,
     const boost::xtime& interval,
     const timer_handler& handler,
     completion_context& context)
 {
-  return service_.schedule_timer(*this, start_time, interval, handler,
-      context);
+  do_schedule_timer(owner, start_time, interval, handler, context);
 }
 
 void
-timer_queue::
+timer_queue_service::
 cancel_timer(
+    void* owner,
     int timer_id)
 {
-  service_.cancel_timer(*this, timer_id);
+  do_cancel_timer(owner, timer_id);
 }
 
+} // namespace detail
 } // namespace asio

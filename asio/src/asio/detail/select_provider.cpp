@@ -57,19 +57,15 @@ do_get_service(
 
 void
 select_provider::
-register_dgram_socket(
-    dgram_socket&)
+do_dgram_socket_destroy(
+    dgram_socket_service::impl_type& impl)
 {
-  // Registration is not required with the select_provider since each operation
-  // is handled individually.
-}
-
-void
-select_provider::
-deregister_dgram_socket(
-    dgram_socket& socket)
-{
-  selector_.close_descriptor(socket.native_handle());
+  if (impl != invalid_socket)
+  {
+    selector_.close_descriptor(impl);
+    socket_ops::close(impl);
+    impl = invalid_socket;
+  }
 }
 
 namespace 
@@ -80,7 +76,7 @@ namespace
     const void* data_;
     size_t length_;
     generic_address destination_;
-    dgram_socket::sendto_handler handler_;
+    dgram_socket_service::sendto_handler handler_;
     completion_context* context_;
 
     sendto_op(int d) : select_op(d) {}
@@ -104,7 +100,7 @@ namespace
       delete this;
     }
 
-    static void do_upcall(const dgram_socket::sendto_handler& handler,
+    static void do_upcall(const dgram_socket_service::sendto_handler& handler,
         const socket_error& error, size_t bytes_transferred)
     {
       handler(error, bytes_transferred);
@@ -114,15 +110,15 @@ namespace
 
 void
 select_provider::
-async_dgram_socket_sendto(
-    dgram_socket& socket,
+do_dgram_socket_async_sendto(
+    dgram_socket_service::impl_type& impl,
     const void* data,
     size_t length,
     const socket_address& destination,
     const sendto_handler& handler,
     completion_context& context)
 {
-  sendto_op* op = new sendto_op(socket.native_handle());
+  sendto_op* op = new sendto_op(impl);
   op->demuxer_ = &demuxer_;
   op->data_ = data;
   op->length_ = length;
@@ -143,7 +139,7 @@ namespace
     void* data_;
     size_t max_length_;
     socket_address* sender_address_;
-    dgram_socket::recvfrom_handler handler_;
+    dgram_socket_service::recvfrom_handler handler_;
     completion_context* context_;
 
     recvfrom_op(int d) : select_op(d) {}
@@ -169,7 +165,8 @@ namespace
       delete this;
     }
 
-    static void do_upcall(const dgram_socket::recvfrom_handler& handler,
+    static void do_upcall(
+        const dgram_socket_service::recvfrom_handler& handler,
         const socket_error& error, size_t bytes_transferred)
     {
       handler(error, bytes_transferred);
@@ -179,15 +176,15 @@ namespace
 
 void
 select_provider::
-async_dgram_socket_recvfrom(
-    dgram_socket& socket,
+do_dgram_socket_async_recvfrom(
+    dgram_socket_service::impl_type& impl,
     void* data,
     size_t max_length,
     socket_address& sender_address,
     const recvfrom_handler& handler,
     completion_context& context)
 {
-  recvfrom_op* op = new recvfrom_op(socket.native_handle());
+  recvfrom_op* op = new recvfrom_op(impl);
   op->demuxer_ = &demuxer_;
   op->data_ = data;
   op->max_length_ = max_length;
@@ -265,7 +262,7 @@ async_socket_accept(
     const accept_handler& handler,
     completion_context& context)
 {
-  if (peer_socket.native_handle() != detail::invalid_socket)
+  if (peer_socket.native_handle() != invalid_socket)
   {
     socket_error error(socket_error::already_connected);
     demuxer_.operation_immediate(
@@ -338,7 +335,7 @@ async_socket_accept(
     const accept_handler& handler,
     completion_context& context)
 {
-  if (peer_socket.native_handle() != detail::invalid_socket)
+  if (peer_socket.native_handle() != invalid_socket)
   {
     socket_error error(socket_error::already_connected);
     demuxer_.operation_immediate(
@@ -483,7 +480,7 @@ async_socket_connect(
     const connect_handler& handler,
     completion_context& context)
 {
-  if (peer_socket.native_handle() != detail::invalid_socket)
+  if (peer_socket.native_handle() != invalid_socket)
   {
     socket_error error(socket_error::already_connected);
     demuxer_.operation_immediate(

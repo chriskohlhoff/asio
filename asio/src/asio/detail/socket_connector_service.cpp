@@ -12,9 +12,10 @@
 // no claim as to its suitability for any purpose.
 //
 
-#include "asio/socket_connector_service.hpp"
+#include "asio/detail/socket_connector_service.hpp"
 
 namespace asio {
+namespace detail {
 
 const service_type_id socket_connector_service::id;
 
@@ -28,4 +29,5 @@ associate_connected_stream_socket(
   connector.associate(peer_socket, handle);
 }
 
+} // namespace detail
 } // namespace asio

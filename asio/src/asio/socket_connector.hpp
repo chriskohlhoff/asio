@@ -29,9 +29,9 @@
 namespace asio {
 
 class demuxer;
-class socket_connector_service;
 class socket_address;
 class socket_error;
+namespace detail { class socket_connector_service; }
 namespace detail { class socket_connector_impl; }
 
 /// The socket_connector class is used to connect a socket to a remote
@@ -94,7 +94,7 @@ public:
 private:
   /// The socket_connector_service is permitted to call the associate()
   /// function.
-  friend class socket_connector_service;
+  friend class detail::socket_connector_service;
 
   // Connect the given socket to the peer at the specified address. Throws a
   // socket_error exception on failure.
@@ -112,7 +112,7 @@ private:
       stream_socket::native_type handle);
 
   /// The backend service implementation.
-  socket_connector_service& service_;
+  detail::socket_connector_service& service_;
 
   /// The underlying implementation.
   detail::socket_connector_impl* impl_;

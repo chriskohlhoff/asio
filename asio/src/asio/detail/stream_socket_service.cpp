@@ -12,10 +12,12 @@
 // no claim as to its suitability for any purpose.
 //
 
-#include "asio/stream_socket_service.hpp"
+#include "asio/detail/stream_socket_service.hpp"
 
 namespace asio {
+namespace detail {
 
 const service_type_id stream_socket_service::id;
 
+} // namespace detail
 } // namespace asio

@@ -11,8 +11,6 @@ ___lib_libasio_a_SOURCES = \
 	asio/demuxer.cpp \
 	asio/demuxer_service.cpp \
 	asio/demuxer_task.cpp \
-	asio/dgram_socket.cpp \
-	asio/dgram_socket_service.cpp \
 	asio/generic_address.cpp \
 	asio/inet_address_v4.cpp \
 	asio/service.cpp \
@@ -20,17 +18,13 @@ ___lib_libasio_a_SOURCES = \
 	asio/service_provider_factory.cpp \
 	asio/service_unavailable.cpp \
 	asio/socket_acceptor.cpp \
-	asio/socket_acceptor_service.cpp \
 	asio/socket_address.cpp \
 	asio/socket_connector.cpp \
-	asio/socket_connector_service.cpp \
 	asio/socket_error.cpp \
 	asio/stream_socket.cpp \
-	asio/stream_socket_service.cpp \
-	asio/timer_queue.cpp \
-	asio/timer_queue_service.cpp \
 	asio/detail/default_service_provider_factory.cpp \
 	asio/detail/demuxer_thread_pool.cpp \
+	asio/detail/dgram_socket_service.cpp \
 	asio/detail/selector.cpp \
 	asio/detail/select_interrupter.cpp \
 	asio/detail/select_op.cpp \
@@ -38,12 +32,18 @@ ___lib_libasio_a_SOURCES = \
 	asio/detail/select_provider.cpp \
 	asio/detail/service_registry.cpp \
 	asio/detail/shared_thread_demuxer_provider.cpp \
+	asio/detail/socket_acceptor_service.cpp \
 	asio/detail/socket_connector_impl.cpp \
+	asio/detail/socket_connector_service.cpp \
+	asio/detail/stream_socket_service.cpp \
 	asio/detail/timer_queue_provider.cpp \
+	asio/detail/timer_queue_service.cpp \
 	asio/detail/win_iocp_provider.cpp
 
 nobase_include_HEADERS = \
 	asio.hpp \
+	asio/basic_dgram_socket.hpp \
+	asio/basic_timer_queue.hpp \
 	asio/buffered_recv_stream.hpp \
 	asio/buffered_send_stream.hpp \
 	asio/buffered_stream.hpp \
@@ -54,7 +54,6 @@ nobase_include_HEADERS = \
 	asio/demuxer_service.hpp \
 	asio/demuxer_task.hpp \
 	asio/dgram_socket.hpp \
-	asio/dgram_socket_service.hpp \
 	asio/generic_address.hpp \
 	asio/inet_address_v4.hpp \
 	asio/service.hpp \
@@ -63,18 +62,19 @@ nobase_include_HEADERS = \
 	asio/service_type_id.hpp \
 	asio/service_unavailable.hpp \
 	asio/socket_acceptor.hpp \
-	asio/socket_acceptor_service.hpp \
 	asio/socket_address.hpp \
 	asio/socket_connector.hpp \
-	asio/socket_connector_service.hpp \
 	asio/socket_error.hpp \
 	asio/stream_socket.hpp \
-	asio/stream_socket_service.hpp \
 	asio/timer_queue.hpp \
-	asio/timer_queue_service.hpp \
+	asio/detail/dgram_socket_service.hpp \
 	asio/detail/pop_options.hpp \
 	asio/detail/push_options.hpp \
-	asio/detail/socket_types.hpp
+	asio/detail/socket_acceptor_service.hpp \
+	asio/detail/socket_connector_service.hpp \
+	asio/detail/stream_socket_service.hpp \
+	asio/detail/socket_types.hpp \
+	asio/detail/timer_queue_service.hpp
 
 noinst_HEADERS = \
 	asio/detail/default_service_provider_factory.hpp \

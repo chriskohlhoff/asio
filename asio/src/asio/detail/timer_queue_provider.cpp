@@ -18,10 +18,6 @@
 #include <boost/bind.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/completion_context.hpp"
-#include "asio/demuxer.hpp"
-#include "asio/service_unavailable.hpp"
-
 namespace asio {
 namespace detail {
 
@@ -64,8 +60,8 @@ do_get_service(
 
 int
 timer_queue_provider::
-schedule_timer(
-    timer_queue& queue,
+do_schedule_timer(
+    void* owner,
     const boost::xtime& start_time,
     const boost::xtime& interval,
     const timer_handler& handler,
@@ -77,7 +73,7 @@ schedule_timer(
   new_event.handler = handler;
   new_event.interval = interval;
   new_event.context = &context;
-  new_event.owner = &queue;
+  new_event.owner = owner;
   new_event.id = next_timer_id_++;
   id_to_timer_.insert(std::make_pair(new_event.id,
         timer_queue_.insert(std::make_pair(start_time, new_event))));
@@ -98,14 +94,14 @@ namespace
 
 void
 timer_queue_provider::
-cancel_timer(
-    timer_queue& queue,
+do_cancel_timer(
+    void* owner,
     int timer_id)
 {
   boost::mutex::scoped_lock lock(mutex_);
 
   id_to_timer_map::iterator iter = id_to_timer_.find(timer_id);
-  if (iter != id_to_timer_.end() && iter->second->second.owner == &queue)
+  if (iter != id_to_timer_.end() && iter->second->second.owner == owner)
   {
     timer_queue_.erase(iter->second);
     id_to_timer_.erase(iter);

@@ -15,6 +15,8 @@
 #ifndef ASIO_HPP
 #define ASIO_HPP
 
+#include "asio/basic_dgram_socket.hpp"
+#include "asio/basic_timer_queue.hpp"
 #include "asio/buffered_recv_stream.hpp"
 #include "asio/buffered_send_stream.hpp"
 #include "asio/buffered_stream.hpp"
@@ -25,7 +27,6 @@
 #include "asio/demuxer_service.hpp"
 #include "asio/demuxer_task.hpp"
 #include "asio/dgram_socket.hpp"
-#include "asio/dgram_socket_service.hpp"
 #include "asio/generic_address.hpp"
 #include "asio/inet_address_v4.hpp"
 #include "asio/service.hpp"
@@ -34,12 +35,9 @@
 #include "asio/service_type_id.hpp"
 #include "asio/service_unavailable.hpp"
 #include "asio/socket_acceptor.hpp"
-#include "asio/socket_acceptor_service.hpp"
 #include "asio/socket_address.hpp"
 #include "asio/socket_connector.hpp"
-#include "asio/socket_connector_service.hpp"
 #include "asio/socket_error.hpp"
 #include "asio/timer_queue.hpp"
-#include "asio/timer_queue_service.hpp"
 
 #endif // ASIO_HPP

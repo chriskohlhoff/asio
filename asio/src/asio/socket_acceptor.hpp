@@ -29,9 +29,9 @@
 namespace asio {
 
 class demuxer;
-class socket_acceptor_service;
 class socket_address;
 class socket_error;
+namespace detail { class socket_acceptor_service; }
 
 /// The socket_acceptor class is used for accepting new socket connections.
 class socket_acceptor
@@ -119,7 +119,7 @@ public:
 private:
   /// The socket_acceptor_service class is permitted to call the associate()
   /// function.
-  friend class socket_acceptor_service;
+  friend class detail::socket_acceptor_service;
 
   // Accept a new connection. Throws a socket_error exception on failure.
   void accept_i(stream_socket& peer_socket);
@@ -144,7 +144,7 @@ private:
       stream_socket::native_type handle);
 
   /// The backend service implementation.
-  socket_acceptor_service& service_;
+  detail::socket_acceptor_service& service_;
 
   /// The underlying native handle.
   native_type handle_;

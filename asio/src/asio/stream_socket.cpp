@@ -21,16 +21,16 @@
 
 #include "asio/demuxer.hpp"
 #include "asio/socket_error.hpp"
-#include "asio/stream_socket_service.hpp"
 #include "asio/detail/socket_ops.hpp"
+#include "asio/detail/stream_socket_service.hpp"
 
 namespace asio {
 
 stream_socket::
 stream_socket(
     demuxer& d)
-  : service_(dynamic_cast<stream_socket_service&>(
-        d.get_service(stream_socket_service::id))),
+  : service_(dynamic_cast<detail::stream_socket_service&>(
+        d.get_service(detail::stream_socket_service::id))),
     handle_(detail::invalid_socket)
 {
 }

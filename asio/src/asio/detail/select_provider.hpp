@@ -17,12 +17,12 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/dgram_socket_service.hpp"
 #include "asio/service_provider.hpp"
-#include "asio/socket_acceptor_service.hpp"
-#include "asio/socket_connector_service.hpp"
-#include "asio/stream_socket_service.hpp"
+#include "asio/detail/dgram_socket_service.hpp"
 #include "asio/detail/selector.hpp"
+#include "asio/detail/socket_acceptor_service.hpp"
+#include "asio/detail/socket_connector_service.hpp"
+#include "asio/detail/stream_socket_service.hpp"
 
 namespace asio {
 namespace detail {
@@ -44,26 +44,20 @@ public:
   // Return the service interface corresponding to the given type.
   virtual service* do_get_service(const service_type_id& service_type);
 
-  // Register a new dgram socket with the service. This should be called only
-  // after the socket has been opened.
-  virtual void register_dgram_socket(dgram_socket& socket);
+  // Destroy a dgram socket implementation.
+  virtual void do_dgram_socket_destroy(dgram_socket_service::impl_type& impl);
 
-  // Remove a dgram socket registration from the service. This should be
-  // called immediately before the socket is closed.
-  virtual void deregister_dgram_socket(dgram_socket& socket);
+  // Start an asynchronous sendto.
+  virtual void do_dgram_socket_async_sendto(
+      dgram_socket_service::impl_type& impl, const void* data, size_t length,
+      const socket_address& destination, const sendto_handler& handler,
+      completion_context& context);
 
-  // Start an asynchronous send. The data being sent must be valid for the
-  // lifetime of the asynchronous operation.
-  virtual void async_dgram_socket_sendto(dgram_socket& socket,
-      const void* data, size_t length, const socket_address& destination,
-      const sendto_handler& handler, completion_context& context);
-
-  // Start an asynchronous receive. The buffer for the data being received and
-  // the sender_address obejct must both be valid for the lifetime of the
-  // asynchronous operation.
-  virtual void async_dgram_socket_recvfrom(dgram_socket& socket, void* data,
-      size_t max_length, socket_address& sender_address,
-      const recvfrom_handler& handler, completion_context& context);
+  // Start an asynchronous recvfrom.
+  virtual void do_dgram_socket_async_recvfrom(
+      dgram_socket_service::impl_type& impl, void* data, size_t max_length,
+      socket_address& sender_address, const recvfrom_handler& handler,
+      completion_context& context);
 
   // Register a new socket_acceptor with the service. This should be called
   // only after the socket acceptor has been opened.

@@ -20,9 +20,9 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/demuxer.hpp"
-#include "asio/socket_acceptor_service.hpp"
 #include "asio/socket_address.hpp"
 #include "asio/socket_error.hpp"
+#include "asio/detail/socket_acceptor_service.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 
@@ -31,8 +31,8 @@ namespace asio {
 socket_acceptor::
 socket_acceptor(
     demuxer& d)
-  : service_(dynamic_cast<socket_acceptor_service&>(
-        d.get_service(socket_acceptor_service::id))),
+  : service_(dynamic_cast<detail::socket_acceptor_service&>(
+        d.get_service(detail::socket_acceptor_service::id))),
     handle_(detail::invalid_socket)
 {
 }
@@ -42,8 +42,8 @@ socket_acceptor(
     demuxer& d,
     const socket_address& addr,
     int listen_queue)
-  : service_(dynamic_cast<socket_acceptor_service&>(
-        d.get_service(socket_acceptor_service::id))),
+  : service_(dynamic_cast<detail::socket_acceptor_service&>(
+        d.get_service(detail::socket_acceptor_service::id))),
     handle_(detail::invalid_socket)
 {
   open(addr, listen_queue);

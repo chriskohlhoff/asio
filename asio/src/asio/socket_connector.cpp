@@ -20,10 +20,10 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/demuxer.hpp"
-#include "asio/socket_connector_service.hpp"
 #include "asio/socket_address.hpp"
 #include "asio/socket_error.hpp"
 #include "asio/detail/socket_connector_impl.hpp"
+#include "asio/detail/socket_connector_service.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 
@@ -32,8 +32,8 @@ namespace asio {
 socket_connector::
 socket_connector(
     demuxer& d)
-  : service_(dynamic_cast<socket_connector_service&>(
-        d.get_service(socket_connector_service::id))),
+  : service_(dynamic_cast<detail::socket_connector_service&>(
+        d.get_service(detail::socket_connector_service::id))),
     impl_(new detail::socket_connector_impl)
 {
   service_.register_socket_connector(*this);
