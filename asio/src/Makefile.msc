@@ -30,7 +30,9 @@ all: \
 	examples\tutorial\timer1\timer.exe \
 	examples\tutorial\timer2\timer.exe \
 	examples\tutorial\timer3\timer.exe \
-	examples\tutorial\timer4\timer.exe
+	examples\tutorial\timer4\timer.exe \
+	examples\tutorial\daytime1\client.exe \
+	examples\tutorial\daytime2\server.exe
 
 tests\performance\client.exe: tests\performance\client.obj
 tests\performance\server.exe: tests\performance\server.obj
@@ -56,6 +58,8 @@ examples\tutorial\timer1\timer.exe: examples\tutorial\timer1\timer.obj
 examples\tutorial\timer2\timer.exe: examples\tutorial\timer2\timer.obj
 examples\tutorial\timer3\timer.exe: examples\tutorial\timer3\timer.obj
 examples\tutorial\timer4\timer.exe: examples\tutorial\timer4\timer.obj
+examples\tutorial\daytime1\client.exe: examples\tutorial\daytime1\client.obj
+examples\tutorial\daytime2\server.exe: examples\tutorial\daytime2\server.obj
 
 check: all
 	@tests\unit\demuxer_test.exe && \
