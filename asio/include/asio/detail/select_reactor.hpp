@@ -153,11 +153,12 @@ public:
     bool interrupt = read_op_queue_.close_descriptor(descriptor);
     interrupt = write_op_queue_.close_descriptor(descriptor) || interrupt;
 
-    if (select_in_progress_)
+    if (interrupt && select_in_progress_)
     {
-      // The close function cannot be called while the select call is running,
-      // so we schedule a dummy timer to perform the socket close when the
-      // select has been interrupted.
+      // The close function cannot be called on a descriptor while the select
+      // call is running with that descriptor in an fd_set, so we schedule a
+      // dummy timer to perform the socket close when the select has been
+      // interrupted.
       void* token = 0;
       interrupt = timer_queue_.enqueue_timer(time(0, 0),
           close_handler<Close_Function>(descriptor, close_function), token)
@@ -165,7 +166,7 @@ public:
     }
     else
     {
-      // Select is not currently running so we can close the socket now.
+      // Not currently using the descriptor in select so we can close it now.
       close_function(descriptor);
     }
 
