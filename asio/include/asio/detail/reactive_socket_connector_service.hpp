@@ -157,11 +157,6 @@ public:
     }
 
   private:
-    // Private destructor to prevent direct deletion.
-    ~connector_impl()
-    {
-    }
-
     // Mutex to protect access to the internal data.
     mutable asio::detail::mutex mutex_;
 
