@@ -109,9 +109,14 @@ class server
 public:
   server(demuxer& d, short port, size_t block_size)
     : demuxer_(d),
-      acceptor_(d, ipv4::address(port)),
+      acceptor_(d),
       block_size_(block_size)
   {
+    acceptor_.open(ipv4::tcp());
+    acceptor_.set_option(socket_option::reuse_address(1));
+    acceptor_.bind(ipv4::address(port));
+    acceptor_.listen();
+
     session* new_session = new session(demuxer_, block_size_);
     acceptor_.async_accept(new_session->socket(),
         boost::bind(&server::handle_accept, this, new_session, _1));
