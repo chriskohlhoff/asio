@@ -28,6 +28,9 @@ noinst_PROGRAMS = \
 	examples/tutorial/timer3/timer \
 	examples/tutorial/timer4/timer
 
+noinst_HEADERS = \
+	examples/chat/chat_message.hpp
+
 AM_CXXFLAGS = -I../include
 
 tests_dispatcher_test_SOURCES = tests/dispatcher_test.cpp
