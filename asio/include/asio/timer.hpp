@@ -25,6 +25,12 @@
 namespace asio {
 
 /// Typedef for the typical usage of timer.
+#if defined(GENERATING_DOCUMENTATION)
+typedef basic_timer
+  <
+    implementation_defined
+  > timer;
+#elif defined(_WIN32)
 typedef basic_timer
   <
     detail::reactive_timer_service
@@ -33,6 +39,7 @@ typedef basic_timer
         detail::select_reactor
       >
   > timer;
+#endif
 
 } // namespace asio
 

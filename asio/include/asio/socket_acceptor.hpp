@@ -25,6 +25,12 @@
 namespace asio {
 
 /// Typedef for the typical usage of socket_acceptor.
+#if defined(GENERATING_DOCUMENTATION)
+typedef basic_socket_acceptor
+  <
+    implementation_defined
+  > socket_acceptor;
+#else
 typedef basic_socket_acceptor
   <
     detail::reactive_socket_acceptor_service
@@ -33,6 +39,7 @@ typedef basic_socket_acceptor
         detail::select_reactor
       >
   > socket_acceptor;
+#endif
 
 } // namespace asio
 

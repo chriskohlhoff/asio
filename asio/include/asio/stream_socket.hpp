@@ -29,7 +29,12 @@
 namespace asio {
 
 /// Typedef for the typical usage of stream_socket.
-#if defined(_WIN32)
+#if defined(GENERATING_DOCUMENTATION)
+typedef basic_stream_socket
+  <
+    implementation_defined
+  > stream_socket;
+#elif defined(_WIN32)
 typedef basic_stream_socket
   <
     detail::win_iocp_stream_socket_service

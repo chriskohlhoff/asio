@@ -29,7 +29,12 @@
 namespace asio {
 
 /// Typedef for typical usage of demuxer.
-#if defined(_WIN32)
+#if defined(GENERATING_DOCUMENTATION)
+typedef basic_demuxer
+  <
+    implementation_defined
+  > demuxer;
+#elif defined(_WIN32)
 typedef basic_demuxer
   <
     detail::win_iocp_demuxer_service

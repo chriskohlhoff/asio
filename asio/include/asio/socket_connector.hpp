@@ -25,6 +25,12 @@
 namespace asio {
 
 /// Typedef for the typical usage of socket_connector.
+#if defined(GENERATING_DOCUMENTATION)
+typedef basic_socket_connector
+  <
+    implementation_defined
+  > socket_connector;
+#elif defined(_WIN32)
 typedef basic_socket_connector
   <
     detail::reactive_socket_connector_service
@@ -33,6 +39,7 @@ typedef basic_socket_connector
         detail::select_reactor
       >
   > socket_connector;
+#endif
 
 } // namespace asio
 

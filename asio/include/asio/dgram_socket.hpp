@@ -29,7 +29,12 @@
 namespace asio {
 
 /// Typedef for the typical usage of dgram_socket.
-#if defined(_WIN32)
+#if defined(GENERATING_DOCUMENTATION)
+typedef basic_dgram_socket
+  <
+    implementation_defined
+  > dgram_socket;
+#elif defined(_WIN32)
 typedef basic_dgram_socket
   <
     detail::win_iocp_dgram_socket_service
