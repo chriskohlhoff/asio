@@ -142,6 +142,10 @@ public:
    * cleanly.
    *
    * @throws socket_error Thrown on failure.
+   *
+   * @note The send operation may not transmit all of the data to the peer.
+   * Consider using the asio::send_n() function if you need to ensure that all
+   * data is sent before the blocking operation completes.
    */
   size_t send(const void* data, size_t length)
   {
@@ -166,6 +170,10 @@ public:
    *   const asio::socket_error& error, // Result of operation
    *   size_t bytes_sent                // Number of bytes sent
    * ); @endcode
+   *
+   * @note The send operation may not transmit all of the data to the peer.
+   * Consider using the asio::async_send_n() function if you need to ensure
+   * that all data is sent before the asynchronous operation completes.
    */
   template <typename Handler>
   void async_send(const void* data, size_t length, Handler handler)
@@ -197,6 +205,10 @@ public:
    * concurrent invocations of handlers that may be made. Ownership of the
    * object is retained by the caller, which must guarantee that it is valid
    * until after the handler has been called.
+   *
+   * @note The send operation may not transmit all of the data to the peer.
+   * Consider using the asio::async_send_n() function if you need to ensure
+   * that all data is sent before the asynchronous operation completes.
    */
   template <typename Handler, typename Completion_Context>
   void async_send(const void* data, size_t length, Handler handler,
@@ -219,6 +231,11 @@ public:
    * cleanly.
    *
    * @throws socket_error Thrown on failure.
+   *
+   * @note The recv operation may not receive all of the requested number of
+   * bytes. Consider using the asio::recv_n() function if you need to ensure
+   * that the requested amount of data is received before the blocking
+   * operation completes.
    */
   size_t recv(void* data, size_t max_length)
   {
@@ -243,6 +260,11 @@ public:
    *   const asio::socket_error& error, // Result of operation
    *   size_t bytes_received            // Number of bytes received
    * ); @endcode
+   *
+   * @note The recv operation may not receive all of the requested number of
+   * bytes. Consider using the asio::async_recv_n() function if you need to
+   * ensure that the requested amount of data is received before the
+   * asynchronous operation completes.
    */
   template <typename Handler>
   void async_recv(void* data, size_t max_length, Handler handler)
@@ -274,6 +296,11 @@ public:
    * concurrent invocations of handlers that may be made. Ownership of the
    * object is retained by the caller, which must guarantee that it is valid
    * until after the handler has been called.
+   *
+   * @note The recv operation may not receive all of the requested number of
+   * bytes. Consider using the asio::async_recv_n() function if you need to
+   * ensure that the requested amount of data is received before the
+   * asynchronous operation completes.
    */
   template <typename Handler, typename Completion_Context>
   void async_recv(void* data, size_t max_length, Handler handler,
