@@ -213,13 +213,16 @@ public:
 #endif
   }
 
+  struct unspecified_bool_type_t;
+  typedef unspecified_bool_type_t* unspecified_bool_type;
+
   /// Operator returns non-null if there is a non-success error code.
-  operator void*() const
+  operator unspecified_bool_type() const
   {
     if (code_ == success)
       return 0;
     else
-      return const_cast<void*>(static_cast<const void*>(this));
+      return reinterpret_cast<unspecified_bool_type>(1);
   }
 
   /// Operator to test if the error represents success.
