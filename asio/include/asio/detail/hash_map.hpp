@@ -18,6 +18,7 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <cassert>
 #include <list>
 #include <utility>
 #include <boost/noncopyable.hpp>
