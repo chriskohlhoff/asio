@@ -27,7 +27,7 @@
 namespace asio {
 
 /// The basic_timer class template provides asynchronous timer functionality.
-/// Most applications will use the timer typedef.
+/// Most applications will use the asio::timer typedef.
 template <typename Service>
 class basic_timer
   : public timer_base,

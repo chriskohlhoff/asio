@@ -27,7 +27,7 @@
 namespace asio {
 
 /// The basic_socket_acceptor class template is used for accepting new socket
-/// connections. Most applications would use the socket_acceptor typedef.
+/// connections. Most applications would use the asio::socket_acceptor typedef.
 template <typename Service>
 class basic_socket_acceptor
   : private boost::noncopyable

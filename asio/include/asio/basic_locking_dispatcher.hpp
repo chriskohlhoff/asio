@@ -27,8 +27,8 @@ namespace asio {
 
 /// The basic_locking_dispatcher class template provides the ability to post
 /// and dispatch handlers with the guarantee that none of those handlers will
-/// execute concurrently. Most applications will use the locking_dispatcher
-/// typedef.
+/// execute concurrently. Most applications will use the
+/// asio::locking_dispatcher typedef.
 template <typename Service>
 class basic_locking_dispatcher
 {
