@@ -55,6 +55,10 @@ public:
       ::ZeroMemory(static_cast<OVERLAPPED*>(this), sizeof(OVERLAPPED));
     }
 
+    virtual ~operation()
+    {
+    }
+
     // Run the completion. Returns true if the operation is complete.
     virtual bool do_completion(HANDLE iocp, DWORD last_error,
         size_t bytes_transferred) = 0;

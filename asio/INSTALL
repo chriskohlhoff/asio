@@ -7,6 +7,7 @@ asio version 0.1.2 - Installation instructions
 5.   Building the tests on Win32
 5.1.   Building with MSVC
 5.2.   Building with Borland C++
+5.3.   Building with MinGW
 
 
 1. Supported Platforms
@@ -19,6 +20,7 @@ combinations:
   - Redhat Linux 7.3 using gcc 3.2.1
   - Microsoft Windows 2000 using MSVC 6 sp5
   - Microsoft Windows 2000 using Borland C++ Builder 6 patch 4 (bcc32 5.6.4)
+  - Microsoft Windows 2000 using MinGW 3.1.0-1 (gcc 3.2.3)
 
 
 2. Requirements
@@ -81,3 +83,12 @@ following steps:
   - Change to the asio `src' directory.
 
   - Execute the command `make -f Makefile.bor'.
+
+5.3. Building with MinGW
+
+To build using the MinGW g++ compiler from the command line, perform the
+following steps:
+
+  - Change to the asio `src' directory.
+
+  - Execute the command `mingw32-make -f Makefile.mgw'.

@@ -58,7 +58,7 @@ private:
   {
   public:
     virtual ~func_base() {}
-    virtual run() = 0;
+    virtual void run() = 0;
   };
 
   template <typename Function>
@@ -71,7 +71,7 @@ private:
     {
     }
 
-    virtual run()
+    virtual void run()
     {
       f_();
     }

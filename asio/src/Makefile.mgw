@@ -1,0 +1,33 @@
+ifndef BOOSTDIR
+BOOSTDIR = ../../boost_1_30_0
+endif
+
+CXXFLAGS = -g -O3 -Wall -I../include -I$(BOOSTDIR)
+LDFLAGS = -g -O3
+LIBS = -lws2_32
+
+TEST_EXES = \
+	../bin/dispatcher_test.exe \
+	../bin/dgram_echo_client_test.exe \
+	../bin/dgram_echo_server_test.exe \
+	../bin/echo_client_test.exe \
+	../bin/echo_server_test.exe \
+	../bin/socket_accept_test.exe \
+	../bin/timed_accept_test.exe \
+	../bin/timed_connect_test.exe \
+	../bin/timed_dgram_recv_test.exe \
+	../bin/timer_test.exe \
+	../bin/tpc_echo_server_test.exe
+
+all: $(TEST_EXES)
+
+clean:
+	-del /q /s ..\bin\*.exe
+	-del /q /s tests\*.o
+
+$(TEST_EXES): ../bin/%.exe: tests/%.o
+	-if not exist ..\bin md ..\bin
+	g++ -o$@ $(LDFLAGS) $< $(LIBS)
+
+.cpp.o:
+	g++ -o$@ -c $(CXXFLAGS) $<

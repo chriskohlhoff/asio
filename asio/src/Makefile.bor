@@ -25,7 +25,7 @@ clean:
 	-del /q /s tests\*.obj
 
 {tests}.obj.exe:
-	-md ..\bin
+	-if not exist ..\bin md ..\bin
 	bcc32 -e$@ $(LDFLAGS) $< $(LIBS)
 
 .cpp.obj:

@@ -1,5 +1,3 @@
-!include Makefile.am
-
 !ifndef BOOSTDIR
 BOOSTDIR = ../../boost_1_30_0
 !endif
@@ -30,47 +28,47 @@ clean:
 	-del /q /s *.pdb
 
 ..\bin\dispatcher_test.exe: tests\dispatcher_test.obj
-	-md ..\bin
+	-if not exist ..\bin md ..\bin
 	cl -Fe$@ $(LDFLAGS) tests\dispatcher_test.obj $(LIBS)
 
 ..\bin\dgram_echo_client_test.exe: tests\dgram_echo_client_test.obj
-	-md ..\bin
+	-if not exist ..\bin md ..\bin
 	cl -Fe$@ $(LDFLAGS) tests\dgram_echo_client_test.obj $(LIBS)
 
 ..\bin\dgram_echo_server_test.exe: tests\dgram_echo_server_test.obj
-	-md ..\bin
+	-if not exist ..\bin md ..\bin
 	cl -Fe$@ $(LDFLAGS) tests\dgram_echo_server_test.obj $(LIBS)
 
 ..\bin\echo_client_test.exe: tests\echo_client_test.obj
-	-md ..\bin
+	-if not exist ..\bin md ..\bin
 	cl -Fe$@ $(LDFLAGS) tests\echo_client_test.obj $(LIBS)
 
 ..\bin\echo_server_test.exe: tests\echo_server_test.obj
-	-md ..\bin
+	-if not exist ..\bin md ..\bin
 	cl -Fe$@ $(LDFLAGS) tests\echo_server_test.obj $(LIBS)
 
 ..\bin\socket_accept_test.exe: tests\socket_accept_test.obj
-	-md ..\bin
+	-if not exist ..\bin md ..\bin
 	cl -Fe$@ $(LDFLAGS) tests\socket_accept_test.obj $(LIBS)
 
 ..\bin\timed_accept_test.exe: tests\timed_accept_test.obj
-	-md ..\bin
+	-if not exist ..\bin md ..\bin
 	cl -Fe$@ $(LDFLAGS) tests\timed_accept_test.obj $(LIBS)
 
 ..\bin\timed_connect_test.exe: tests\timed_connect_test.obj
-	-md ..\bin
+	-if not exist ..\bin md ..\bin
 	cl -Fe$@ $(LDFLAGS) tests\timed_connect_test.obj $(LIBS)
 
 ..\bin\timed_dgram_recv_test.exe: tests\timed_dgram_recv_test.obj
-	-md ..\bin
+	-if not exist ..\bin md ..\bin
 	cl -Fe$@ $(LDFLAGS) tests\timed_dgram_recv_test.obj $(LIBS)
 
 ..\bin\timer_test.exe: tests\timer_test.obj
-	-md ..\bin
+	-if not exist ..\bin md ..\bin
 	cl -Fe$@ $(LDFLAGS) tests\timer_test.obj $(LIBS)
 
 ..\bin\tpc_echo_server_test.exe: tests\tpc_echo_server_test.obj
-	-md ..\bin
+	-if not exist ..\bin md ..\bin
 	cl -Fe$@ $(LDFLAGS) tests\tpc_echo_server_test.obj $(LIBS)
 
 .cpp.obj:

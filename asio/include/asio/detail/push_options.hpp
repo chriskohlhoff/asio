@@ -23,4 +23,6 @@
 # pragma option push -a8 -b -Ve- -Vx-
 # pragma nopushoptwarn
 # pragma nopackwarning
+#elif defined (__MINGW32__)
+# pragma pack (push, 8)
 #endif

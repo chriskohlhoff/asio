@@ -21,4 +21,6 @@
 # pragma option pop
 # pragma nopushoptwarn
 # pragma nopackwarning
+#elif defined (__MINGW32__)
+# pragma pack (pop)
 #endif

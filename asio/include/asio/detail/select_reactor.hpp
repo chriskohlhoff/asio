@@ -251,14 +251,14 @@ private:
   {
   public:
     fd_set_adaptor()
-      : max_descriptor_(-1)
+      : max_descriptor_(invalid_socket)
     {
       FD_ZERO(&fd_set_);
     }
 
     void set(socket_type descriptor)
     {
-      if (descriptor > max_descriptor_)
+      if (max_descriptor_ == invalid_socket || descriptor > max_descriptor_)
         max_descriptor_ = descriptor;
       FD_SET(descriptor, &fd_set_);
     }
