@@ -1,6 +1,7 @@
 AC_INIT(include/asio.hpp)
 AM_INIT_AUTOMAKE(asio, 0.1.2)
 
+AC_CANONICAL_HOST
 AM_PROG_CC_C_O
 AC_PROG_CXX
 AC_LANG(C++)
@@ -12,13 +13,16 @@ AC_ARG_WITH(boost,
   AC_HELP_STRING([--with-boost=DIR],[location of boost distribution]),
 [
   CPPFLAGS="$CPPFLAGS -I${withval}"
-  LDFLAGS="$LDFLAGS -L${withval}/libs/thread/build/bin-stage"
 ],
 [
-  BOOSTDIR="`pwd`/../boost_1_30_0"
+  BOOSTDIR="`pwd`/../boost-1.30.2"
   if test -d "${BOOSTDIR}"; then
     CPPFLAGS="$CPPFLAGS -I${BOOSTDIR}"
-    LDFLAGS="$LDFLAGS -L${BOOSTDIR}/libs/thread/build/bin-stage"
+  else
+    BOOSTDIR="`pwd`/../boost_1_30_0"
+    if test -d "${BOOSTDIR}"; then
+      CPPFLAGS="$CPPFLAGS -I${BOOSTDIR}"
+    fi
   fi
 ])
 
@@ -28,6 +32,16 @@ AC_CHECK_HEADER([boost/noncopyable.hpp],,
   echo "distribution and rerun configure using the --with-boost=DIR option."
   exit 1
 ],[])
+
+case $host in
+  *-*-linux*)
+    CXXFLAGS="$CXXFLAGS -pthread"
+    LDFLAGS="$LDFLAGS -pthread"
+    ;;
+  *-*-mingw32*)
+    LIBS="$LIBS -lws2_32"
+    ;;
+esac
 
 if test "$GXX" = yes; then
   CXXFLAGS="$CXXFLAGS -ftemplate-depth-32"
