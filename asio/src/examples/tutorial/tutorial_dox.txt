@@ -68,7 +68,7 @@ Return to \ref tuttimer1
 /**
 \page tuttimer2 Tutorial Part 2 - Using a timer asynchronously
 
-This tutorial program illustrates how to use asio's asynchronous callback
+This tutorial program demonstrates how to use asio's asynchronous callback
 functionality by modifying the program from Part 1 to perform an asynchronous
 wait on the timer.
 
@@ -122,8 +122,72 @@ Return to \ref tuttimer2
 
 /**
 \page tuttimer3 Tutorial Part 3 - Binding arguments to a handler
-\include timer3/timer.cpp
 
+In this part of the tutorial we will modify the program from Part 2 so that
+the timer fires once a second. This will show how to pass additional
+parameters to a your handler function.
+
+\dontinclude timer3/timer.cpp
+
+\until include "asio.hpp"
+
+<b>Step 1.</b> To implement a repeating timer using asio you need to change
+the timer's expiry time in your callback function, and to then start a new
+asynchronous wait. Obviously this means that the callback function will need
+to be able to access the timer object. To this end we add two new parameters
+to the <tt>print</tt> function:
+
+\li A pointer to a timer object.
+
+\li A counter so that we can stop the program when the timer fires for the
+sixth time.
+
+\until {
+
+<b>Step 2.</b> As mentioned above, this tutorial program uses a counter to
+stop running when the timer fires for the sixth time. However you will observe
+that there is no explicit call to ask the demuxer to stop. Recall that in Part
+2 we learnt that the asio::demuxer::run() function completes when there is no
+more "work" to do. By not starting a new asynchronous wait on the timer when
+<tt>count</tt> reaches 5, the demuxer will run out of work and stop running.
+
+\until ++
+
+<b>Step 3.</b> Next we move the expiry time for the timer along by one second
+from the previous expiry time. Using the asio::timer::from_existing flag
+instead of asio::timer::from_now ensures that the timer does drift away from
+the whole-second mark due to any delays in processing the handler.
+
+\until set
+
+<b>Step 4.</b> Then we start a new asynchronous wait on the timer. As you can
+see, the <tt>boost::bind</tt> function is used to associate the extra
+parameters with your callback handler. The asio::timer::async_wait() function
+expects a handler function (or function object) with the signature
+<tt>void()</tt>. Binding the additional parameters converts your
+<tt>print</tt> function into a function object that matches the signature
+correctly.
+
+\until asio::demuxer
+
+<b>Step 5.</b> A new <tt>count</tt> variable is added so that we can stop the
+program when the timer fires for the sixth time.
+
+\until asio::timer
+
+<b>Step 6.</b> As in Step 4, when making the call to asio::timer::async_wait()
+from <tt>main</tt> we bind the additional parameters needed for the
+<tt>print</tt> function.
+
+\until run
+
+<b>Step 7.</b> Finally, just to prove that the <tt>count</tt> variable was
+being used in the <tt>print</tt> handler function, we will print out its new
+value.
+
+\until }
+
+See the \ref tuttimer3src \n
 Return to the \ref tutindex \n
 Go back to \ref tuttimer2 \n
 Go on to \ref tuttimer4
@@ -131,10 +195,69 @@ Go on to \ref tuttimer4
 */
 
 /**
-\page tuttimer4 Tutorial Part 4 - Using a member function as a handler
-\include timer4/timer.cpp
+\page tuttimer3src Source listing for Tutorial Part 3
+\include timer3/timer.cpp
+Return to \ref tuttimer3
+*/
 
+/**
+\page tuttimer4 Tutorial Part 4 - Using a member function as a handler
+
+In this part of the tutorial we will see how to use a class member function as
+a callback handler. The program should execute identically to the tutorial
+program from Part 3.
+
+\dontinclude timer4/timer.cpp
+
+\until include "asio.hpp"
+
+<b>Step 1.</b> Instead of defining a free function <tt>print</tt> as the
+callback handler, as we did in the earlier tutorial programs, we now define a
+class called <tt>printer</tt>.
+
+\until public
+
+<b>Step 2.</b> The constructor of this class will take a reference to the
+demuxer object and use it when initialising the <tt>timer_</tt> member. The
+counter used to shut down the program is now also a member of the class.
+
+\until {
+
+<b>Step 3.</b> The <tt>boost::bind</tt> function works just as well with class
+member functions as with free functions. Since all non-static class member
+functions have an implicit <tt>this</tt> parameter, we need to bind
+<tt>this</tt> to the function. As in Part 3, <tt>boost::bind</tt> converts our
+callback handler (now a member function) into a function object that matches
+the signature <tt>void()</tt>.
+
+\until }
+
+<b>Step 4.</b> In the class destructor we will print out the final value of
+the counter.
+
+\until }
+
+<b>Step 5.</b> The <tt>print</tt> member function is very similar to the
+<tt>print</tt> function from Part 3, except that it now operates on the class
+data members instead of having the timer and counter passed in as parameters.
+
+\until };
+
+<b>Step 6.</b> The <tt>main</tt> function is much simpler than before, as it
+now declares a local <tt>printer</tt> object before running the demuxer as
+normal.
+
+\until }
+
+See the \ref tuttimer4src \n
 Return to the \ref tutindex \n
 Go back to \ref tuttimer3 \n
 
 */
+
+/**
+\page tuttimer4src Source listing for Tutorial Part 4
+\include timer4/timer.cpp
+Return to \ref tuttimer4
+*/
+
