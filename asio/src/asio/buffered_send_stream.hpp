@@ -22,8 +22,6 @@
 #include <boost/type_traits.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/completion_context.hpp"
-
 namespace asio {
 
 /// The buffered_send_stream class template can be used to add buffering to the
@@ -76,14 +74,14 @@ public:
   template <typename Handler>
   void async_send(const void* data, size_t length, Handler handler)
   {
-    next_layer_.async_send(data, length, handler, completion_context::null());
+    next_layer_.async_send(data, length, handler);
   }
 
   /// Start an asynchronous send. The data being sent must be valid for the
   /// lifetime of the asynchronous operation.
-  template <typename Handler>
+  template <typename Handler, typename Completion_Context>
   void async_send(const void* data, size_t length, Handler handler,
-      completion_context& context)
+      Completion_Context& context)
   {
     next_layer_.async_send(data, length, handler, context);
   }
@@ -102,16 +100,15 @@ public:
   template <typename Handler>
   void async_send_n(const void* data, size_t length, Handler handler)
   {
-    next_layer_.async_send_n(data, length, handler,
-        completion_context::null());
+    next_layer_.async_send_n(data, length, handler);
   }
 
   /// Start an asynchronous send that will not return until all of the data has
   /// been sent or an error occurs. The data being sent must be valid for the
   /// lifetime of the asynchronous operation.
-  template <typename Handler>
+  template <typename Handler, typename Completion_Context>
   void async_send_n(const void* data, size_t length, Handler handler,
-      completion_context& context)
+      Completion_Context& context)
   {
     next_layer_.async_send_n(data, length, handler, context);
   }
@@ -128,15 +125,14 @@ public:
   template <typename Handler>
   void async_recv(void* data, size_t max_length, Handler handler)
   {
-    next_layer_.async_recv(data, max_length, handler,
-        completion_context::null());
+    next_layer_.async_recv(data, max_length, handler);
   }
 
   /// Start an asynchronous receive. The buffer for the data being received
   /// must be valid for the lifetime of the asynchronous operation.
-  template <typename Handler>
+  template <typename Handler, typename Completion_Context>
   void async_recv(void* data, size_t max_length, Handler handler,
-      completion_context& context)
+      Completion_Context& context)
   {
     next_layer_.async_recv(data, max_length, handler, context);
   }
@@ -156,17 +152,16 @@ public:
   template <typename Handler>
   void async_recv_n(void* data, size_t length, Handler handler)
   {
-    next_layer_.async_recv_n(data, length, handler,
-        completion_context::null());
+    next_layer_.async_recv_n(data, length, handler);
   }
 
   /// Start an asynchronous receive that will not return until the specified
   /// number of bytes has been received or an error occurs. The buffer for the
   /// data being received must be valid for the lifetime of the asynchronous
   /// operation.
-  template <typename Handler>
+  template <typename Handler, typename Completion_Context>
   void async_recv_n(void* data, size_t length, Handler handler,
-      completion_context& context)
+      Completion_Context& context)
   {
     next_layer_.async_recv_n(data, length, handler, context);
   }

@@ -21,7 +21,7 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/completion_context.hpp"
+#include "asio/null_completion_context.hpp"
 #include "asio/service_factory.hpp"
 
 namespace asio {
@@ -88,14 +88,15 @@ public:
       Handler handler)
   {
     service_.async_connect(impl_, peer_socket.lowest_layer(), peer_address,
-        handler, completion_context::null());
+        handler, null_completion_context::instance());
   }
 
   /// Start an asynchronous connect. The peer_socket object must be valid until
   /// the connect's completion handler is invoked.
-  template <typename Stream, typename Address, typename Handler>
+  template <typename Stream, typename Address, typename Handler,
+      typename Completion_Context>
   void async_connect(Stream& peer_socket, const Address& peer_address,
-      Handler handler, completion_context& context)
+      Handler handler, Completion_Context& context)
   {
     service_.async_connect(impl_, peer_socket.lowest_layer(), peer_address,
         handler, context);

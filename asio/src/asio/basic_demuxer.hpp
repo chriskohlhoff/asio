@@ -21,7 +21,7 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/completion_context.hpp"
+#include "asio/null_completion_context.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/detail/service_registry.hpp"
 #include "asio/detail/signal_init.hpp"
@@ -126,7 +126,8 @@ public:
   template <typename Handler>
   void operation_completed(Handler handler)
   {
-    service_.operation_completed(handler, completion_context::null(), false);
+    service_.operation_completed(handler, null_completion_context::instance(),
+        false);
   }
 
   /// Notify the demuxer that an operation has completed.
@@ -147,8 +148,8 @@ public:
    * completion_context object is retained by the caller, which must guarantee
    * that it is valid until after the handler has been called.
    */
-  template <typename Handler>
-  void operation_completed(Handler handler, completion_context& context)
+  template <typename Handler, typename Completion_Context>
+  void operation_completed(Handler handler, Completion_Context& context)
   {
     service_.operation_completed(handler, context, false);
   }
@@ -178,8 +179,8 @@ public:
    * thread executing the run function. If false, the function returns
    * immediately.
    */
-  template <typename Handler>
-  void operation_completed(Handler handler, completion_context& context,
+  template <typename Handler, typename Completion_Context>
+  void operation_completed(Handler handler, Completion_Context& context,
       bool allow_nested_delivery)
   {
     service_.operation_completed(handler, context, allow_nested_delivery);
@@ -201,7 +202,8 @@ public:
   template <typename Handler>
   void operation_immediate(Handler handler)
   {
-    service_.operation_immediate(handler, completion_context::null(), false);
+    service_.operation_immediate(handler, null_completion_context::instance(),
+        false);
   }
 
   /// Notify the demuxer of an operation that started and finished immediately.
@@ -222,8 +224,8 @@ public:
    * completion_context object is retained by the caller, which must guarantee
    * that it is valid until after the handler has been called.
    */
-  template <typename Handler>
-  void operation_immediate(Handler handler, completion_context& context)
+  template <typename Handler, typename Completion_Context>
+  void operation_immediate(Handler handler, Completion_Context& context)
   {
     service_.operation_immediate(handler, context, false);
   }
@@ -253,8 +255,8 @@ public:
    * thread executing the run function. If false, the function returns
    * immediately.
    */
-  template <typename Handler>
-  void operation_immediate(Handler handler, completion_context& context,
+  template <typename Handler, typename Completion_Context>
+  void operation_immediate(Handler handler, Completion_Context& context,
       bool allow_nested_delivery)
   {
     service_.operation_immediate(handler, context, allow_nested_delivery);

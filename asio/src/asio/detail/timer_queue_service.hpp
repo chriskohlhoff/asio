@@ -19,13 +19,11 @@
 
 #include "asio/detail/push_options.hpp"
 #include <map>
-#include <boost/function.hpp>
-#include <boost/scoped_ptr.hpp>
+#include <memory>
 #include <boost/thread/xtime.hpp>
 #include <boost/thread.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/completion_context.hpp"
 #include "asio/detail/bind_handler.hpp"
 
 namespace asio {
@@ -42,16 +40,14 @@ public:
   timer_queue_service(Demuxer& d)
     : demuxer_(d),
       mutex_(),
-      thread_(),
       is_stopping_(false),
       stop_condition_(),
       timer_queue_(),
       id_to_timer_(),
-      next_timer_id_(1)
+      next_timer_id_(1),
+      thread_(bind_handler(
+            &timer_queue_service<Demuxer>::call_expire_timers, this))
   {
-    thread_.reset(
-        new boost::thread(bind_handler(
-            &timer_queue_service<Demuxer>::call_expire_timers, this)));
   }
 
   // Destructor.
@@ -62,54 +58,44 @@ public:
     stop_condition_.notify_all();
     lock.unlock();
 
-    thread_->join();
+    thread_.join();
   }
 
   // Schedule a timer to fire once at the given start_time. The id of the new
   // timer is returned so that it may be cancelled.
+  template <typename Handler, typename Completion_Context>
   int schedule_timer(void* owner, const boost::xtime& start_time,
-      const timer_handler& handler, completion_context& context)
+      Handler handler, Completion_Context& context)
   {
-    boost::mutex::scoped_lock lock(mutex_);
-
-    timer_event new_event;
-    new_event.handler = handler;
-    new_event.interval.sec = 0;
-    new_event.interval.nsec = 0;
-    new_event.context = &context;
-    new_event.owner = owner;
-    new_event.id = next_timer_id_++;
-    id_to_timer_.insert(std::make_pair(new_event.id,
-          timer_queue_.insert(std::make_pair(start_time, new_event))));
-
-    demuxer_.operation_started();
-    stop_condition_.notify_one();
-
-    return new_event.id;
+    boost::xtime interval;
+    interval.sec = 0;
+    interval.nsec = 0;
+    return schedule_repeat_timer(owner, start_time, interval, handler,
+        context);
   }
 
   // Schedule a timer to fire first after at the start time, and then every
   // interval until the timer is cancelled. The id of the new timer is
   // returned so that it may be cancelled.
-  int schedule_timer(void* owner, const boost::xtime& start_time,
-      const boost::xtime& interval, const timer_handler& handler,
-      completion_context& context)
+  template <typename Handler, typename Completion_Context>
+  int schedule_repeat_timer(void* owner, const boost::xtime& start_time,
+      const boost::xtime& interval, Handler handler,
+      Completion_Context& context)
   {
     boost::mutex::scoped_lock lock(mutex_);
 
-    timer_event new_event;
-    new_event.handler = handler;
-    new_event.interval = interval;
-    new_event.context = &context;
-    new_event.owner = owner;
-    new_event.id = next_timer_id_++;
-    id_to_timer_.insert(std::make_pair(new_event.id,
-          timer_queue_.insert(std::make_pair(start_time, new_event))));
+    std::auto_ptr<timer_event_base> new_event(
+        new timer_event<Handler, Completion_Context>(interval, owner,
+          next_timer_id_++, handler, context));
+    id_to_timer_.insert(std::make_pair(new_event->id_,
+          timer_queue_.insert(std::make_pair(start_time, new_event.get()))));
+    int new_id = new_event->id_;
+    new_event.release();
 
     demuxer_.operation_started();
     stop_condition_.notify_one();
 
-    return new_event.id;
+    return new_id;
   }
 
   struct dummy_completion_handler
@@ -123,11 +109,11 @@ public:
     boost::mutex::scoped_lock lock(mutex_);
 
     typename id_to_timer_map::iterator iter = id_to_timer_.find(timer_id);
-    if (iter != id_to_timer_.end() && iter->second->second.owner == owner)
+    if (iter != id_to_timer_.end() && iter->second->second->owner_ == owner)
     {
+      delete iter->second->second;
       timer_queue_.erase(iter->second);
       id_to_timer_.erase(iter);
-      lock.unlock();
       demuxer_.operation_completed(dummy_completion_handler());
     }
   }
@@ -150,22 +136,26 @@ private:
             && boost::xtime_cmp(now, timer_queue_.begin()->first) >= 0)
         {
           boost::xtime old_start_time = timer_queue_.begin()->first;
-          timer_event event = timer_queue_.begin()->second;
+          timer_event_base* event = timer_queue_.begin()->second;
           timer_queue_.erase(timer_queue_.begin());
-          id_to_timer_.erase(event.id);
-          if (event.interval.sec || event.interval.nsec)
+          id_to_timer_.erase(event->id_);
+          if (event->interval_.sec || event->interval_.nsec)
           {
             boost::xtime new_start_time;
-            new_start_time.sec = old_start_time.sec + event.interval.sec;
-            new_start_time.nsec = old_start_time.nsec + event.interval.nsec;
+            new_start_time.sec = old_start_time.sec + event->interval_.sec;
+            new_start_time.nsec = old_start_time.nsec + event->interval_.nsec;
             new_start_time.sec += new_start_time.nsec / 1000000000;
             new_start_time.nsec = new_start_time.nsec % 1000000000;
-            id_to_timer_.insert(std::make_pair(event.id,
+            id_to_timer_.insert(std::make_pair(event->id_,
                   timer_queue_.insert(std::make_pair(new_start_time, event))));
             demuxer_.operation_started();
+            event->fire(demuxer_);
           }
-
-          demuxer_.operation_completed(event.handler, *event.context);
+          else
+          {
+            event->fire(demuxer_);
+            delete event;
+          }
         }
       }
       else
@@ -187,9 +177,6 @@ private:
   // Mutex to protect access to internal data.
   boost::mutex mutex_;
 
-  // Worker thread for waiting for timers to expire.
-  boost::scoped_ptr<boost::thread> thread_;
-
   // Flag to indicate that the worker thread should stop.
   bool is_stopping_;
 
@@ -205,18 +192,55 @@ private:
     }
   };
 
-  // Information about each timer event.
-  struct timer_event
+  // Base class for information about each timer event.
+  class timer_event_base
   {
-    boost::function0<void> handler;
-    boost::xtime interval;
-    completion_context* context;
-    void* owner;
-    int id;
+  public:
+    timer_event_base(const boost::xtime& interval, void* owner, int id)
+      : interval_(interval),
+        owner_(owner),
+        id_(id)
+    {
+    }
+
+    virtual ~timer_event_base()
+    {
+    }
+
+    virtual void fire(Demuxer& d) = 0;
+
+    boost::xtime interval_;
+    void* owner_;
+    int id_;
+  };
+
+  // Template for specific timer event types.
+  template <typename Handler, typename Completion_Context>
+  class timer_event
+    : public timer_event_base
+  {
+  public:
+    timer_event(const boost::xtime& interval, void* owner, int id,
+        Handler handler, Completion_Context& context)
+      : timer_event_base(interval, owner, id),
+        handler_(handler),
+        context_(context)
+    {
+    }
+
+    virtual void fire(Demuxer& d)
+    {
+      d.operation_completed(handler_, context_);
+    }
+
+  private:
+    Handler handler_;
+    Completion_Context& context_;
   };
 
   // Ordered collection of events.
-  typedef std::multimap<boost::xtime, timer_event, xtime_less> timer_queue_map;
+  typedef std::multimap<boost::xtime, timer_event_base*, xtime_less>
+    timer_queue_map;
   timer_queue_map timer_queue_;
 
   // Mapping from timer id to timer event.
@@ -225,6 +249,9 @@ private:
 
   // The next available timer id.
   int next_timer_id_;
+
+  // Worker thread for waiting for timers to expire.
+  boost::thread thread_;
 };
 
 } // namespace detail

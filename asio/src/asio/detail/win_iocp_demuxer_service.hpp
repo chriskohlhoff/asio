@@ -20,7 +20,6 @@
 #if defined(_WIN32) // This provider is only supported on Win32
 
 #include "asio/basic_demuxer.hpp"
-#include "asio/completion_context_locker.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/tss_bool.hpp"
 
@@ -28,7 +27,6 @@ namespace asio {
 namespace detail {
 
 class win_iocp_demuxer_service
-  : public completion_context_locker
 {
 public:
   // Constructor.
@@ -48,18 +46,44 @@ public:
   }
 
   // Structure used as the base type for all operations.
-  struct operation : public OVERLAPPED
+  struct operation
+    : public OVERLAPPED
   {
-    operation(completion_context& context, bool context_acquired)
-      : context_(context),
-        context_acquired_(context_acquired)
+    operation(bool context_acquired)
+      : context_acquired_(context_acquired)
     {
       ::ZeroMemory(static_cast<OVERLAPPED*>(this), sizeof(OVERLAPPED));
     }
 
-    virtual void do_completion(DWORD last_error, size_t bytes_transferred) = 0;
+    // Run the completion. Returns true if the operation is complete.
+    virtual bool do_completion(HANDLE iocp, DWORD last_error,
+        size_t bytes_transferred) = 0;
 
-    completion_context& context_;
+    // Ensure that the context has been acquired. Returns true if the context
+    // was acquired and the operation can proceed immediately, false otherwise.
+    template <typename Completion_Context>
+    bool acquire_context(HANDLE iocp, Completion_Context& context)
+    {
+      if (context_acquired_)
+        return true;
+
+      if (context.try_acquire())
+      {
+        context_acquired_ = true;
+        return true;
+      }
+
+      context.acquire(bind_handler(&operation::context_acquired, iocp, this));
+      return false;
+    }
+
+    static void context_acquired(HANDLE iocp, operation* op)
+    {
+      op->context_acquired_ = true;
+      ::PostQueuedCompletionStatus(iocp, 0, 0, op);
+    }
+
+  private:
     bool context_acquired_;
   };
 
@@ -86,19 +110,9 @@ public:
       {
         // Dispatch the operation.
         operation* op = static_cast<operation*>(overlapped);
-        if (!op->context_acquired_ && !try_acquire(op->context_))
-        {
-          acquire(op->context_, op);
-        }
-        else
-        {
-          op->context_acquired_ = true;
-          completion_context& context = op->context_;
-          op->do_completion(last_error, bytes_transferred);
-          release(context);
+        if (op->do_completion(iocp_.handle, last_error, bytes_transferred))
           if (::InterlockedDecrement(&outstanding_operations_) == 0)
             interrupt();
-        }
       }
       else
       {
@@ -135,20 +149,27 @@ public:
     ::InterlockedIncrement(&outstanding_operations_);
   }
 
-  template <typename Handler>
-  struct completion_operation : public operation
+  template <typename Handler, typename Completion_Context>
+  struct completion_operation
+    : public operation
   {
-    completion_operation(completion_context& context, bool context_acquired,
-        Handler handler)
-      : operation(context, context_acquired),
-        handler_(handler)
+    completion_operation(Handler handler, Completion_Context& context,
+        bool context_acquired)
+      : operation(context_acquired),
+        handler_(handler),
+        context_(context)
     {
     }
 
-    virtual void do_completion(DWORD, size_t)
+    virtual bool do_completion(HANDLE iocp, DWORD, size_t)
     {
+      if (!acquire_context(iocp, context_))
+        return false;
+
       do_upcall(handler_);
+      context_.release();
       delete this;
+      return true;
     }
 
     static void do_upcall(Handler& handler)
@@ -162,53 +183,48 @@ public:
       }
     }
 
+  private:
     Handler handler_;
+    Completion_Context& context_;
   };
 
   // Notify the demuxer that an operation has completed.
-  template <typename Handler>
-  void operation_completed(Handler handler, completion_context& context,
+  template <typename Handler, typename Completion_Context>
+  void operation_completed(Handler handler, Completion_Context& context,
       bool allow_nested_delivery)
   {
-    if (try_acquire(context))
+    if (context.try_acquire())
     {
       if (allow_nested_delivery && current_thread_in_pool_)
       {
-        completion_operation<Handler>::do_upcall(handler);
-        release(context);
+        completion_operation<Handler, Completion_Context>::do_upcall(handler);
+        context.release();
         if (::InterlockedDecrement(&outstanding_operations_) == 0)
           interrupt();
       }
       else
       {
-        completion_operation<Handler>* op =
-          new completion_operation<Handler>(context, true, handler);
+        operation* op = new completion_operation<Handler, Completion_Context>(
+            handler, context, true);
         ::PostQueuedCompletionStatus(iocp_.handle, 0, 0, op);
       }
     }
     else
     {
-      completion_operation<Handler>* op =
-        new completion_operation<Handler>(context, false, handler);
-      acquire(context, op);
+      operation* op = new completion_operation<Handler, Completion_Context>(
+          handler, context, false);
+      context.acquire(
+          bind_handler(&operation::context_acquired, iocp_.handle, op));
     }
   }
 
   // Notify the demuxer of an operation that started and finished immediately.
-  template <typename Handler>
-  void operation_immediate(Handler handler, completion_context& context,
+  template <typename Handler, typename Completion_Context>
+  void operation_immediate(Handler handler, Completion_Context& context,
       bool allow_nested_delivery)
   {
     operation_started();
     operation_completed(handler, context, allow_nested_delivery);
-  }
-
-  // Callback function when a completion context has been acquired.
-  void completion_context_acquired(void* arg) throw ()
-  {
-    operation* op = static_cast<operation*>(arg);
-    op->context_acquired_ = true;
-    ::PostQueuedCompletionStatus(iocp_.handle, 0, 0, op);
   }
 
 private:

@@ -21,7 +21,7 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/completion_context.hpp"
+#include "asio/null_completion_context.hpp"
 #include "asio/service_factory.hpp"
 
 namespace asio {
@@ -96,14 +96,15 @@ public:
   template <typename Handler>
   void async_send(const void* data, size_t length, Handler handler)
   {
-    service_.async_send(impl_, length, handler, completion_context::null());
+    service_.async_send(impl_, length, handler,
+        null_completion_context::instance());
   }
 
   /// Start an asynchronous send. The data being sent must be valid for the
   /// lifetime of the asynchronous operation.
-  template <typename Handler>
+  template <typename Handler, typename Completion_Context>
   void async_send(const void* data, size_t length, Handler handler,
-      completion_context& context)
+      Completion_Context& context)
   {
     service_.async_send(impl_, length, handler, context);
   }
@@ -123,15 +124,15 @@ public:
   void async_send_n(const void* data, size_t length, Handler handler)
   {
     service_.async_send_n(impl_, data, length, handler,
-        completion_context::null());
+        null_completion_context::instance());
   }
 
   /// Start an asynchronous send that will not return until all of the data has
   /// been sent or an error occurs. The data being sent must be valid for the
   /// lifetime of the asynchronous operation.
-  template <typename Handler>
+  template <typename Handler, typename Completion_Context>
   void async_send_n(const void* data, size_t length, Handler handler,
-      completion_context& context)
+      Completion_Context& context)
   {
     service_.async_send_n(impl_, data, length, handler, context);
   }
@@ -150,14 +151,14 @@ public:
   void async_recv(void* data, size_t max_length, Handler handler)
   {
     service_.async_recv(impl_, data, max_length, handler,
-        completion_context::null());
+        null_completion_context::instance());
   }
 
   /// Start an asynchronous receive. The buffer for the data being received must
   /// be valid for the lifetime of the asynchronous operation.
-  template <typename Handler>
+  template <typename Handler, typename Completion_Context>
   void async_recv(void* data, size_t max_length, Handler handler,
-      completion_context& context)
+      Completion_Context& context)
   {
     service_.async_recv(impl_, data, max_length, handler, context);
   }
@@ -178,16 +179,16 @@ public:
   void async_recv_n(void* data, size_t length, Handler handler)
   {
     service_.async_recv_n(impl_, data, length, handler,
-        completion_context::null());
+        null_completion_context::instance());
   }
 
   /// Start an asynchronous receive that will not return until the specified
   /// number of bytes has been received or an error occurs. The buffer for the
   /// data being received must be valid for the lifetime of the asynchronous
   /// operation.
-  template <typename Handler>
+  template <typename Handler, typename Completion_Context>
   void async_recv_n(void* data, size_t length, Handler handler,
-      completion_context& context)
+      Completion_Context& context)
   {
     service_.async_recv_n(impl_, data, length, handler, context);
   }

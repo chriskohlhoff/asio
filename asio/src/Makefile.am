@@ -2,13 +2,6 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 SUBDIRS = doc
 
-lib_LIBRARIES = ../lib/libasio.a
-
-___lib_libasio_a_SOURCES = \
-	asio/completion_context.cpp \
-	asio/completion_context_locker.cpp \
-	asio/counting_completion_context.cpp
-
 nobase_include_HEADERS = \
 	asio.hpp \
 	asio/basic_demuxer.hpp \
@@ -20,8 +13,6 @@ nobase_include_HEADERS = \
 	asio/buffered_recv_stream.hpp \
 	asio/buffered_send_stream.hpp \
 	asio/buffered_stream.hpp \
-	asio/completion_context.hpp \
-	asio/completion_context_locker.hpp \
 	asio/counting_completion_context.hpp \
 	asio/demuxer.hpp \
 	asio/detail/bind_handler.hpp \
@@ -61,6 +52,7 @@ nobase_include_HEADERS = \
 	asio/detail/winsock_init.hpp \
 	asio/dgram_socket.hpp \
 	asio/inet_address_v4.hpp \
+	asio/null_completion_context.hpp \
 	asio/service_factory.hpp \
 	asio/socket_acceptor.hpp \
 	asio/socket_connector.hpp \
@@ -82,37 +74,37 @@ noinst_PROGRAMS = \
 	../bin/tpc_echo_server_test
 
 ___bin_dispatcher_test_SOURCES = tests/dispatcher_test.cpp
-___bin_dispatcher_test_LDADD = ../lib/libasio.a -lboost_thread
+___bin_dispatcher_test_LDADD = -lpthread
 
 ___bin_dgram_echo_server_test_SOURCES = tests/dgram_echo_server_test.cpp
-___bin_dgram_echo_server_test_LDADD = ../lib/libasio.a -lboost_thread
+___bin_dgram_echo_server_test_LDADD = -lpthread
 
 ___bin_dgram_echo_client_test_SOURCES = tests/dgram_echo_client_test.cpp
-___bin_dgram_echo_client_test_LDADD = ../lib/libasio.a -lboost_thread
+___bin_dgram_echo_client_test_LDADD = -lpthread
 
 ___bin_echo_client_test_SOURCES = tests/echo_client_test.cpp
-___bin_echo_client_test_LDADD = ../lib/libasio.a -lboost_thread
+___bin_echo_client_test_LDADD = -lpthread
 
 ___bin_echo_server_test_SOURCES = tests/echo_server_test.cpp
-___bin_echo_server_test_LDADD = ../lib/libasio.a -lboost_thread
+___bin_echo_server_test_LDADD = -lpthread
 
 ___bin_socket_accept_test_SOURCES = tests/socket_accept_test.cpp
-___bin_socket_accept_test_LDADD = ../lib/libasio.a -lboost_thread
+___bin_socket_accept_test_LDADD = -lpthread
 
 ___bin_timed_accept_test_SOURCES = tests/timed_accept_test.cpp
-___bin_timed_accept_test_LDADD = ../lib/libasio.a -lboost_thread
+___bin_timed_accept_test_LDADD = -lboost_thread
 
 ___bin_timed_connect_test_SOURCES = tests/timed_connect_test.cpp
-___bin_timed_connect_test_LDADD = ../lib/libasio.a -lboost_thread
+___bin_timed_connect_test_LDADD = -lboost_thread
 
 ___bin_timed_dgram_recv_test_SOURCES = tests/timed_dgram_recv_test.cpp
-___bin_timed_dgram_recv_test_LDADD = ../lib/libasio.a -lboost_thread
+___bin_timed_dgram_recv_test_LDADD = -lboost_thread
 
 ___bin_timer_queue_test_SOURCES = tests/timer_queue_test.cpp
-___bin_timer_queue_test_LDADD = ../lib/libasio.a -lboost_thread
+___bin_timer_queue_test_LDADD = -lboost_thread
 
 ___bin_tpc_echo_server_test_SOURCES = tests/tpc_echo_server_test.cpp
-___bin_tpc_echo_server_test_LDADD = ../lib/libasio.a -lboost_thread
+___bin_tpc_echo_server_test_LDADD = -lpthread
 
 EXTRA_DIST = \
 	Makefile.bor \

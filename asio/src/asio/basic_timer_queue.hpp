@@ -22,7 +22,7 @@
 #include <boost/thread/xtime.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/completion_context.hpp"
+#include "asio/null_completion_context.hpp"
 #include "asio/service_factory.hpp"
 
 namespace asio {
@@ -50,14 +50,14 @@ public:
   int schedule_timer(const boost::xtime& start_time, Handler handler)
   {
     return service_.schedule_timer(this, start_time, handler,
-        completion_context::null());
+        null_completion_context::instance());
   }
 
   /// Schedule a timer to fire once at the given start_time. The id of the new
   /// timer is returned so that it may be cancelled.
-  template <typename Handler>
+  template <typename Handler, typename Completion_Context>
   int schedule_timer(const boost::xtime& start_time, Handler handler,
-      completion_context& context)
+      Completion_Context& context)
   {
     return service_.schedule_timer(this, start_time, handler, context);
   }
@@ -66,22 +66,22 @@ public:
   /// interval until the timer is cancelled. The id of the new timer is
   /// returned so that it may be cancelled.
   template <typename Handler>
-  int schedule_timer(const boost::xtime& start_time,
+  int schedule_repeat_timer(const boost::xtime& start_time,
       const boost::xtime& interval, Handler handler)
   {
-    return service_.schedule_timer(this, start_time, interval, handler,
-        completion_context::null());
+    return service_.schedule_repeat_timer(this, start_time, interval, handler,
+        null_completion_context::instance());
   }
 
   /// Schedule a timer to fire first after at the start time, and then every
   /// interval until the timer is cancelled. The id of the new timer is
   /// returned so that it may be cancelled.
-  template <typename Handler>
-  int schedule_timer(const boost::xtime& start_time,
+  template <typename Handler, typename Completion_Context>
+  int schedule_repeat_timer(const boost::xtime& start_time,
       const boost::xtime& interval, Handler handler,
-      completion_context& context)
+      Completion_Context& context)
   {
-    return service_.schedule_timer(this, start_time, interval, handler,
+    return service_.schedule_repeat_timer(this, start_time, interval, handler,
         context);
   }
 

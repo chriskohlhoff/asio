@@ -14,7 +14,7 @@ public:
       handler_(boost::bind(&accept_handler::handle_accept, this, _1)),
       accept_count_(0)
   {
-    acceptor_.async_accept(peer_, peer_address_, handler_);
+    acceptor_.async_accept_address(peer_, peer_address_, handler_);
   }
 
   void handle_accept(const socket_error& error)
@@ -30,7 +30,7 @@ public:
       if (++accept_count_ < 10)
       {
         peer_.close();
-        acceptor_.async_accept(peer_, peer_address_, handler_);
+        acceptor_.async_accept_address(peer_, peer_address_, handler_);
       }
     }
   }

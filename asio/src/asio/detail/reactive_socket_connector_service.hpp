@@ -23,7 +23,6 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/basic_stream_socket.hpp"
-#include "asio/completion_context.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_error.hpp"
 #include "asio/detail/bind_handler.hpp"
@@ -142,14 +141,15 @@ public:
     peer.set_impl(sock.release());
   }
 
-  template <typename Stream_Socket_Service, typename Address, typename Handler>
+  template <typename Stream_Socket_Service, typename Address, typename Handler,
+      typename Completion_Context>
   class connect_handler
   {
   public:
     connect_handler(impl_type impl, socket_type new_socket, Demuxer& demuxer,
         basic_stream_socket<Stream_Socket_Service>& peer,
         const Address& peer_address, Handler handler,
-        completion_context& context)
+        Completion_Context& context)
       : impl_(impl),
         new_socket_(new_socket),
         demuxer_(demuxer),
@@ -216,16 +216,17 @@ public:
     basic_stream_socket<Stream_Socket_Service>& peer_;
     Address peer_address_;
     Handler handler_;
-    completion_context& context_;
+    Completion_Context& context_;
   };
 
   // Start an asynchronous connect. The peer socket object must be valid until
   // the connect's completion handler is invoked.
-  template <typename Stream_Socket_Service, typename Address, typename Handler>
+  template <typename Stream_Socket_Service, typename Address, typename Handler,
+      typename Completion_Context>
   void async_connect(impl_type& impl,
       basic_stream_socket<Stream_Socket_Service>& peer,
       const Address& peer_address, Handler handler,
-      completion_context& context)
+      Completion_Context& context)
   {
     if (peer.impl() != invalid_socket)
     {
@@ -273,8 +274,9 @@ public:
       impl->add_socket(new_socket.get());
       demuxer_.operation_started();
       reactor_.start_write_op(new_socket.get(),
-          connect_handler<Stream_Socket_Service, Address, Handler>(impl,
-            new_socket.get(), demuxer_, peer, peer_address, handler, context));
+          connect_handler<Stream_Socket_Service, Address, Handler,
+              Completion_Context>(impl, new_socket.get(), demuxer_, peer,
+                peer_address, handler, context));
       new_socket.release();
     }
     else

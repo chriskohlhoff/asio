@@ -1,128 +1,34 @@
-!include Makefile.am
-
 !ifndef BOOSTDIR
 BOOSTDIR = ../../boost_1_30_0
 !endif
 
-BOR_CXXFLAGS = -q -O2 -v -vi -y -a8 -b -Ve- -Vx- -tWM -tWR -tWC -w-inl -w-par -I$(BOOSTDIR)
-BOR_LDFLAGS = -q -O2 -v -vi -y -a8 -b -Ve- -Vx- -tWM -tWR -tWC -L$(BOOSTDIR)/libs/thread/build/bin-stage
-
-BOR_lib_libasio_a = ../lib/asio.lib
-BOR_lib_LIBRARIES = $(BOR_lib_libasio_a)
-BOR_lib_libasio_a_OBJFILES = $(___lib_libasio_a_SOURCES:.cpp=.obj)
-BOR_bin_dispatcher_test = ../bin/dispatcher_test.exe
-BOR_bin_dispatcher_test_OBJFILES = $(___bin_dispatcher_test_SOURCES:.cpp=.obj)
-BOR_bin_dgram_echo_server_test = ../bin/dgram_echo_server_test.exe
-BOR_bin_dgram_echo_server_test_OBJFILES = $(___bin_dgram_echo_server_test_SOURCES:.cpp=.obj)
-BOR_bin_dgram_echo_client_test = ../bin/dgram_echo_client_test.exe
-BOR_bin_dgram_echo_client_test_OBJFILES = $(___bin_dgram_echo_client_test_SOURCES:.cpp=.obj)
-BOR_bin_echo_server_test = ../bin/echo_server_test.exe
-BOR_bin_echo_server_test_OBJFILES = $(___bin_echo_server_test_SOURCES:.cpp=.obj)
-BOR_bin_echo_client_test = ../bin/echo_client_test.exe
-BOR_bin_echo_client_test_OBJFILES = $(___bin_echo_client_test_SOURCES:.cpp=.obj)
-BOR_bin_socket_accept_test = ../bin/socket_accept_test.exe
-BOR_bin_socket_accept_test_OBJFILES = $(___bin_socket_accept_test_SOURCES:.cpp=.obj)
-BOR_bin_timed_accept_test = ../bin/timed_accept_test.exe
-BOR_bin_timed_accept_test_OBJFILES = $(___bin_timed_accept_test_SOURCES:.cpp=.obj)
-BOR_bin_timed_connect_test = ../bin/timed_connect_test.exe
-BOR_bin_timed_connect_test_OBJFILES = $(___bin_timed_connect_test_SOURCES:.cpp=.obj)
-BOR_bin_timed_dgram_recv_test = ../bin/timed_dgram_recv_test.exe
-BOR_bin_timed_dgram_recv_test_OBJFILES = $(___bin_timed_dgram_recv_test_SOURCES:.cpp=.obj)
-BOR_bin_timer_queue_test = ../bin/timer_queue_test.exe
-BOR_bin_timer_queue_test_OBJFILES = $(___bin_timer_queue_test_SOURCES:.cpp=.obj)
-BOR_bin_tpc_echo_server_test = ../bin/tpc_echo_server_test.exe
-BOR_bin_tpc_echo_server_test_OBJFILES = $(___bin_tpc_echo_server_test_SOURCES:.cpp=.obj)
+CXXFLAGS = -q -O2 -v -vi -y -a8 -b -Ve- -Vx- -tWM -tWR -tWC -w-inl -w-par -I$(BOOSTDIR)
+LDFLAGS = -q -O2 -v -vi -y -a8 -b -Ve- -Vx- -tWM -tWR -tWC -L$(BOOSTDIR)/libs/thread/build/bin-stage
+LIBS = ws2_32.lib boost_thread.lib
 
 all: \
-	$(BOR_lib_LIBRARIES) \
-	$(BOR_bin_dispatcher_test) \
-	$(BOR_bin_dgram_echo_client_test) \
-	$(BOR_bin_dgram_echo_server_test) \
-	$(BOR_bin_echo_client_test) \
-	$(BOR_bin_echo_server_test) \
-	$(BOR_bin_socket_accept_test) \
-	$(BOR_bin_timed_accept_test) \
-	$(BOR_bin_timed_connect_test) \
-	$(BOR_bin_timed_dgram_recv_test) \
-	$(BOR_bin_timer_queue_test) \
-	$(BOR_bin_tpc_echo_server_test)
-
-$(BOR_lib_libasio_a): $(BOR_lib_libasio_a_OBJFILES)
-	-mkdir ..\lib
-	-del /s /q $(BOR_lib_libasio_a:/=\)
-	tlib $(BOR_lib_libasio_a:/=\) /P128 /a $(BOR_lib_libasio_a_OBJFILES:/=\)
-
-$(BOR_bin_dispatcher_test): $(BOR_bin_dispatcher_test_OBJFILES) $(BOR_lib_libasio_a)
-	-mkdir ..\bin
-	bcc32 -e$@ $(BOR_LDFLAGS) $** $(BOR_lib_libasio_a) boost_thread.lib ws2_32.lib
-
-$(BOR_bin_dgram_echo_client_test): $(BOR_bin_dgram_echo_client_test_OBJFILES) $(BOR_lib_libasio_a)
-	-mkdir ..\bin
-	bcc32 -e$@ $(BOR_LDFLAGS) $** $(BOR_lib_libasio_a) boost_thread.lib ws2_32.lib
-
-$(BOR_bin_dgram_echo_server_test): $(BOR_bin_dgram_echo_server_test_OBJFILES) $(BOR_lib_libasio_a)
-	-mkdir ..\bin
-	bcc32 -e$@ $(BOR_LDFLAGS) $** $(BOR_lib_libasio_a) boost_thread.lib ws2_32.lib
-
-$(BOR_bin_echo_client_test): $(BOR_bin_echo_client_test_OBJFILES) $(BOR_lib_libasio_a)
-	-mkdir ..\bin
-	bcc32 -e$@ $(BOR_LDFLAGS) $** $(BOR_lib_libasio_a) boost_thread.lib ws2_32.lib
-
-$(BOR_bin_echo_server_test): $(BOR_bin_echo_server_test_OBJFILES) $(BOR_lib_libasio_a)
-	-mkdir ..\bin
-	bcc32 -e$@ $(BOR_LDFLAGS) $** $(BOR_lib_libasio_a) boost_thread.lib ws2_32.lib
-
-$(BOR_bin_socket_accept_test): $(BOR_bin_socket_accept_test_OBJFILES) $(BOR_lib_libasio_a)
-	-mkdir ..\bin
-	bcc32 -e$@ $(BOR_LDFLAGS) $** $(BOR_lib_libasio_a) boost_thread.lib ws2_32.lib
-
-$(BOR_bin_timed_accept_test): $(BOR_bin_timed_accept_test_OBJFILES) $(BOR_lib_libasio_a)
-	-mkdir ..\bin
-	bcc32 -e$@ $(BOR_LDFLAGS) $** $(BOR_lib_libasio_a) boost_thread.lib ws2_32.lib
-
-$(BOR_bin_timed_connect_test): $(BOR_bin_timed_connect_test_OBJFILES) $(BOR_lib_libasio_a)
-	-mkdir ..\bin
-	bcc32 -e$@ $(BOR_LDFLAGS) $** $(BOR_lib_libasio_a) boost_thread.lib ws2_32.lib
-
-$(BOR_bin_timed_dgram_recv_test): $(BOR_bin_timed_dgram_recv_test_OBJFILES) $(BOR_lib_libasio_a)
-	-mkdir ..\bin
-	bcc32 -e$@ $(BOR_LDFLAGS) $** $(BOR_lib_libasio_a) boost_thread.lib ws2_32.lib
-
-$(BOR_bin_timer_queue_test): $(BOR_bin_timer_queue_test_OBJFILES) $(BOR_lib_libasio_a)
-	-mkdir ..\bin
-	bcc32 -e$@ $(BOR_LDFLAGS) $** $(BOR_lib_libasio_a) boost_thread.lib ws2_32.lib
-
-$(BOR_bin_tpc_echo_server_test): $(BOR_bin_tpc_echo_server_test_OBJFILES) $(BOR_lib_libasio_a)
-	-mkdir ..\bin
-	bcc32 -e$@ $(BOR_LDFLAGS) $** $(BOR_lib_libasio_a) boost_thread.lib ws2_32.lib
+	..\bin\dispatcher_test.exe \
+	..\bin\dgram_echo_client_test.exe \
+	..\bin\dgram_echo_server_test.exe \
+	..\bin\echo_client_test.exe \
+	..\bin\echo_server_test.exe \
+	..\bin\socket_accept_test.exe \
+	..\bin\timed_accept_test.exe \
+	..\bin\timed_connect_test.exe \
+	..\bin\timed_dgram_recv_test.exe \
+	..\bin\timer_queue_test.exe \
+	..\bin\tpc_echo_server_test.exe
 
 clean:
-	-del /q /s $(BOR_lib_libasio_a:/=\)
-	-del /q /s $(BOR_lib_libasio_a_OBJFILES:/=\)
-	-del /q /s $(BOR_bin_dispatcher_test:/=\)
-	-del /q /s $(BOR_bin_dispatcher_test_OBJFILES:/=\)
-	-del /q /s $(BOR_bin_dgram_echo_client_test:/=\)
-	-del /q /s $(BOR_bin_dgram_echo_client_test_OBJFILES:/=\)
-	-del /q /s $(BOR_bin_dgram_echo_server_test:/=\)
-	-del /q /s $(BOR_bin_dgram_echo_server_test_OBJFILES:/=\)
-	-del /q /s $(BOR_bin_echo_server_test:/=\)
-	-del /q /s $(BOR_bin_echo_server_test_OBJFILES:/=\)
-	-del /q /s $(BOR_bin_echo_client_test:/=\)
-	-del /q /s $(BOR_bin_echo_client_test_OBJFILES:/=\)
-	-del /q /s $(BOR_bin_socket_accept_test:/=\)
-	-del /q /s $(BOR_bin_socket_accept_test_OBJFILES:/=\)
-	-del /q /s $(BOR_bin_timed_accept_test:/=\)
-	-del /q /s $(BOR_bin_timed_accept_test_OBJFILES:/=\)
-	-del /q /s $(BOR_bin_timed_connect_test:/=\)
-	-del /q /s $(BOR_bin_timed_connect_test_OBJFILES:/=\)
-	-del /q /s $(BOR_bin_timed_dgram_recv_test:/=\)
-	-del /q /s $(BOR_bin_timed_dgram_recv_test_OBJFILES:/=\)
-	-del /q /s $(BOR_bin_timer_queue_test:/=\)
-	-del /q /s $(BOR_bin_timer_queue_test_OBJFILES:/=\)
-	-del /q /s $(BOR_bin_tpc_echo_server_test:/=\)
-	-del /q /s $(BOR_bin_tpc_echo_server_test_OBJFILES:/=\)
+	-del /q /s ..\bin\*.exe
+	-del /q /s ..\bin\*.tds
+	-del /q /s tests\*.obj
+
+{tests}.obj.exe:
+	-md ..\bin
+	bcc32 -e$@ $(LDFLAGS) $< $(LIBS)
 
 .cpp.obj:
-	bcc32 -o$@ -c $(BOR_CXXFLAGS) $<
+	bcc32 -o$@ -c $(CXXFLAGS) $<
 
 .autodepend

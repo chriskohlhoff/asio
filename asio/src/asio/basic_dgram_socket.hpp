@@ -21,7 +21,7 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/completion_context.hpp"
+#include "asio/null_completion_context.hpp"
 #include "asio/service_factory.hpp"
 
 namespace asio {
@@ -98,15 +98,15 @@ public:
       const Address& destination, Handler handler)
   {
     service_.async_sendto(impl_, data, length, destination, handler,
-        completion_context::null());
+        null_completion_context::instance());
   }
 
   /// Start an asynchronous send. The data being sent must be valid for the
   /// lifetime of the asynchronous operation.
-  template <typename Address, typename Handler>
+  template <typename Address, typename Handler, typename Completion_Context>
   void async_sendto(const void* data, size_t length,
       const Address& destination, Handler handler,
-      completion_context& context)
+      Completion_Context& context)
   {
     service_.async_sendto(impl_, data, length, destination, handler, context);
   }
@@ -127,15 +127,15 @@ public:
       Handler handler)
   {
     service_.async_recvfrom(impl_, data, max_length, sender_address, handler,
-        completion_context::null());
+        null_completion_context::instance());
   }
 
   /// Start an asynchronous receive. The buffer for the data being received and
   /// the sender_address obejct must both be valid for the lifetime of the
   /// asynchronous operation.
-  template <typename Address, typename Handler>
+  template <typename Address, typename Handler, typename Completion_Context>
   void async_recvfrom(void* data, size_t max_length, Address& sender_address,
-      Handler handler, completion_context& context)
+      Handler handler, Completion_Context& context)
   {
     service_.async_recvfrom(impl_, data, max_length, sender_address, handler,
         context);

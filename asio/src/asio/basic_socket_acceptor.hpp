@@ -21,7 +21,7 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/completion_context.hpp"
+#include "asio/null_completion_context.hpp"
 #include "asio/service_factory.hpp"
 
 namespace asio {
@@ -120,14 +120,14 @@ public:
   void async_accept(Stream& peer_socket, Handler handler)
   {
     service_.async_accept(impl_, peer_socket.lowest_layer(), handler,
-        completion_context::null());
+        null_completion_context::instance());
   }
 
   /// Start an asynchronous accept. The peer_socket object must be valid until
   /// the accept's completion handler is invoked.
-  template <typename Stream, typename Handler>
+  template <typename Stream, typename Handler, typename Completion_Context>
   void async_accept(Stream& peer_socket, Handler handler,
-      completion_context& context)
+      Completion_Context& context)
   {
     service_.async_accept(impl_, peer_socket.lowest_layer(), handler, context);
   }
@@ -135,21 +135,22 @@ public:
   /// Start an asynchronous accept. The peer_socket and peer_address objects
   /// must be valid until the accept's completion handler is invoked.
   template <typename Stream, typename Address, typename Handler>
-  void async_accept(Stream& peer_socket, Address& peer_address,
+  void async_accept_address(Stream& peer_socket, Address& peer_address,
       Handler handler)
   {
-    service_.async_accept(impl_, peer_socket.lowest_layer(), peer_address,
-        handler, completion_context::null());
+    service_.async_accept_address(impl_, peer_socket.lowest_layer(),
+        peer_address, handler, null_completion_context::instance());
   }
 
   /// Start an asynchronous accept. The peer_socket and peer_address objects
   /// must be valid until the accept's completion handler is invoked.
-  template <typename Stream, typename Address, typename Handler>
-  void async_accept(Stream& peer_socket, Address& peer_address,
-      Handler handler, completion_context& context)
+  template <typename Stream, typename Address, typename Handler,
+      typename Completion_Context>
+  void async_accept_address(Stream& peer_socket, Address& peer_address,
+      Handler handler, Completion_Context& context)
   {
-    service_.async_accept(impl_, peer_socket.lowest_layer(), peer_address,
-        handler, context);
+    service_.async_accept_address(impl_, peer_socket.lowest_layer(),
+        peer_address, handler, context);
   }
 
 private:

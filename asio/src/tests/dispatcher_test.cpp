@@ -12,10 +12,11 @@ void print(int id, int sleep_time, detail::mutex& io_mutex)
   std::cout << "Starting " << id << "\n";
   lock.unlock();
 
-  timeval tv;
-  tv.tv_sec = sleep_time;
-  tv.tv_usec = 0;
-  ::select(0, 0, 0, 0, &tv);
+#if defined(_WIN32)
+  Sleep(sleep_time * 1000);
+#else
+  sleep(sleep_time);
+#endif
 
   lock.lock();
   std::cout << "Finished " << id << "\n";
@@ -35,21 +36,22 @@ void outer_print(demuxer& d, int id, detail::mutex& io_mutex)
   lock.unlock();
 
   d.operation_immediate(boost::bind(inner_print, id, boost::ref(io_mutex)),
-      completion_context::null(), true);
+      null_completion_context::instance(), true);
 
   lock.lock();
   std::cout << "Finished " << id << "\n";
   lock.unlock();
 }
 
-void post_events(demuxer& d, completion_context& c1, completion_context& c2,
-    detail::mutex& io_mutex)
+void post_events(demuxer& d, counting_completion_context& c1,
+    counting_completion_context& c2, detail::mutex& io_mutex)
 {
   // Give all threads an opportunity to start.
-  timeval tv;
-  tv.tv_sec = 2;
-  tv.tv_usec = 0;
-  ::select(0, 0, 0, 0, &tv);
+#if defined(_WIN32)
+  Sleep(2000);
+#else
+  sleep(2);
+#endif
 
   // Post a bunch of completions to run across the different threads.
   d.operation_immediate(boost::bind(print, 1, 10, boost::ref(io_mutex)), c1);

@@ -17,7 +17,6 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/completion_context.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_error.hpp"
 #include "asio/detail/bind_handler.hpp"
@@ -76,12 +75,12 @@ public:
     return bytes_sent;
   }
 
-  template <typename Handler>
+  template <typename Handler, typename Completion_Context>
   class send_handler
   {
   public:
     send_handler(impl_type impl, Demuxer& demuxer, const void* data,
-        size_t length, Handler handler, completion_context& context)
+        size_t length, Handler handler, Completion_Context& context)
       : impl_(impl),
         demuxer_(demuxer),
         data_(data),
@@ -113,18 +112,18 @@ public:
     const void* data_;
     size_t length_;
     Handler handler_;
-    completion_context& context_;
+    Completion_Context& context_;
   };
 
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
-  template <typename Handler>
+  template <typename Handler, typename Completion_Context>
   void async_send(impl_type& impl, const void* data, size_t length,
-      Handler handler, completion_context& context)
+      Handler handler, Completion_Context& context)
   {
     demuxer_.operation_started();
-    reactor_.start_write_op(impl, send_handler<Handler>(impl, demuxer_, data,
-          length, handler, context));
+    reactor_.start_write_op(impl, send_handler<Handler, Completion_Context>(
+          impl, demuxer_, data, length, handler, context));
   }
 
   // Send all of the given data to the peer before returning. Returns the
@@ -158,13 +157,13 @@ public:
     return bytes_sent;
   }
 
-  template <typename Handler>
+  template <typename Handler, typename Completion_Context>
   class send_n_handler
   {
   public:
     send_n_handler(impl_type impl, Demuxer& demuxer, Reactor& reactor,
         const void* data, size_t length, size_t already_sent, Handler handler,
-        completion_context& context)
+        Completion_Context& context)
       : impl_(impl),
         demuxer_(demuxer),
         reactor_(reactor),
@@ -212,19 +211,19 @@ public:
     size_t length_;
     size_t already_sent_;
     Handler handler_;
-    completion_context& context_;
+    Completion_Context& context_;
   };
 
   // Start an asynchronous send that will not return until all of the data has
   // been sent or an error occurs. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
-  template <typename Handler>
+  template <typename Handler, typename Completion_Context>
   void async_send_n(impl_type& impl, const void* data, size_t length,
-      Handler handler, completion_context& context)
+      Handler handler, Completion_Context& context)
   {
     demuxer_.operation_started();
-    reactor_.start_write_op(impl, send_n_handler<Handler>(impl, demuxer_,
-          reactor_, data, length, 0, handler, context));
+    reactor_.start_write_op(impl, send_n_handler<Handler, Completion_Context>(
+          impl, demuxer_, reactor_, data, length, 0, handler, context));
   }
 
   // Receive some data from the peer. Returns the number of bytes received or
@@ -238,12 +237,12 @@ public:
     return bytes_recvd;
   }
 
-  template <typename Handler>
+  template <typename Handler, typename Completion_Context>
   class recv_handler
   {
   public:
     recv_handler(impl_type impl, Demuxer& demuxer, void* data,
-        size_t max_length, Handler handler, completion_context& context)
+        size_t max_length, Handler handler, Completion_Context& context)
       : impl_(impl),
         demuxer_(demuxer),
         data_(data),
@@ -274,18 +273,18 @@ public:
     void* data_;
     size_t max_length_;
     Handler handler_;
-    completion_context& context_;
+    Completion_Context& context_;
   };
 
   // Start an asynchronous receive. The buffer for the data being received
   // must be valid for the lifetime of the asynchronous operation.
-  template <typename Handler>
+  template <typename Handler, typename Completion_Context>
   void async_recv(impl_type& impl, void* data, size_t max_length,
-      Handler handler, completion_context& context)
+      Handler handler, Completion_Context& context)
   {
     demuxer_.operation_started();
-    reactor_.start_read_op(impl, recv_handler<Handler>(impl, demuxer_, data,
-          max_length, handler, context));
+    reactor_.start_read_op(impl, recv_handler<Handler, Completion_Context>(
+          impl, demuxer_, data, max_length, handler, context));
   }
 
   // Receive the specified amount of data from the peer. Returns the number of
@@ -319,13 +318,13 @@ public:
     return bytes_recvd;
   }
 
-  template <typename Handler>
+  template <typename Handler, typename Completion_Context>
   class recv_n_handler
   {
   public:
     recv_n_handler(impl_type impl, Demuxer& demuxer, Reactor& reactor,
         void* data, size_t length, size_t already_recvd, Handler handler,
-        completion_context& context)
+        Completion_Context& context)
       : impl_(impl),
         demuxer_(demuxer),
         reactor_(reactor),
@@ -373,20 +372,20 @@ public:
     size_t length_;
     size_t already_recvd_;
     Handler handler_;
-    completion_context& context_;
+    Completion_Context& context_;
   };
 
   // Start an asynchronous receive that will not return until the specified
   // number of bytes has been received or an error occurs. The buffer for the
   // data being received must be valid for the lifetime of the asynchronous
   // operation.
-  template <typename Handler>
+  template <typename Handler, typename Completion_Context>
   void async_recv_n(impl_type& impl, void* data, size_t length,
-      Handler handler, completion_context& context)
+      Handler handler, Completion_Context& context)
   {
     demuxer_.operation_started();
-    reactor_.start_read_op(impl, recv_n_handler<Handler>(impl, demuxer_,
-          reactor_, data, length, 0, handler, context));
+    reactor_.start_read_op(impl, recv_n_handler<Handler, Completion_Context>(
+          impl, demuxer_, reactor_, data, length, 0, handler, context));
   }
 
 private:

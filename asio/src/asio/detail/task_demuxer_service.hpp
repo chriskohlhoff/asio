@@ -19,7 +19,7 @@
 
 #include "asio/basic_demuxer.hpp"
 #include "asio/service_factory.hpp"
-#include "asio/completion_context_locker.hpp"
+#include "asio/detail/bind_handler.hpp"
 #include "asio/detail/event.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/tss_bool.hpp"
@@ -29,7 +29,6 @@ namespace detail {
 
 template <typename Task>
 class task_demuxer_service
-  : public completion_context_locker
 {
 public:
   // Constructor. Taking a reference to the demuxer type as the parameter
@@ -71,7 +70,6 @@ public:
           ready_completions_end_ = 0;
         lock.unlock();
         comp->call();
-        release(comp->context_);
         delete comp;
         lock.lock();
         --outstanding_operations_;
@@ -147,26 +145,27 @@ public:
   }
 
   // Notify the demuxer that an operation has completed.
-  template <typename Handler>
-  void operation_completed(Handler handler, completion_context& context,
+  template <typename Handler, typename Completion_Context>
+  void operation_completed(Handler handler, Completion_Context& context,
       bool allow_nested_delivery)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
-    if (try_acquire(context))
+    if (context.try_acquire())
     {
       if (allow_nested_delivery && current_thread_in_pool_)
       {
         lock.unlock();
-        completion<Handler>::do_upcall(handler);
-        release(context);
+        completion<Handler, Completion_Context>::do_upcall(handler);
+        context.release();
         lock.lock();
         if (--outstanding_operations_ == 0)
           interrupt_all_threads();
       }
       else
       {
-        completion<Handler>* comp = new completion<Handler>(handler, context);
+        completion_base* comp =
+          new completion<Handler, Completion_Context>(handler, context);
         if (ready_completions_end_)
         {
           ready_completions_end_->next_ = comp;
@@ -182,14 +181,17 @@ public:
     }
     else
     {
-      completion<Handler>* comp = new completion<Handler>(handler, context);
-      acquire(context, comp);
+      completion_base* comp =
+        new completion<Handler, Completion_Context>(handler, context);
+      context.acquire(bind_handler(
+            task_demuxer_service<Task>::completion_context_acquired, this,
+            comp));
     }
   }
 
   // Notify the demuxer of an operation that started and finished immediately.
-  template <typename Handler>
-  void operation_immediate(Handler handler, completion_context& context,
+  template <typename Handler, typename Completion_Context>
+  void operation_immediate(Handler handler, Completion_Context& context,
       bool allow_nested_delivery)
   {
     operation_started();
@@ -197,23 +199,24 @@ public:
   }
 
   // Callback function when a completion context has been acquired.
-  void completion_context_acquired(void* arg) throw ()
+  static void completion_context_acquired(task_demuxer_service<Task>* service,
+      void* arg) throw ()
   {
     try
     {
-      asio::detail::mutex::scoped_lock lock(mutex_);
+      asio::detail::mutex::scoped_lock lock(service->mutex_);
       completion_base* comp = static_cast<completion_base*>(arg);
-      if (ready_completions_end_)
+      if (service->ready_completions_end_)
       {
-        ready_completions_end_->next_ = comp;
-        ready_completions_end_ = comp;
+        service->ready_completions_end_->next_ = comp;
+        service->ready_completions_end_ = comp;
       }
       else
       {
-        ready_completions_ = ready_completions_end_ = comp;
+        service->ready_completions_ = service->ready_completions_end_ = comp;
       }
-      if (!interrupt_one_idle_thread())
-        interrupt_task();
+      if (!service->interrupt_one_idle_thread())
+        service->interrupt_task();
     }
     catch (...)
     {
@@ -280,33 +283,32 @@ private:
     virtual void call() = 0;
 
   protected:
-    completion_base(completion_context& context)
-      : context_(context),
-        next_(0)
+    completion_base()
+      : next_(0)
     {
     }
 
   private:
     friend class task_demuxer_service<Task>;
-    completion_context& context_;
     completion_base* next_;
   };
 
   // Template for completions specific to a handler.
-  template <typename Handler>
+  template <typename Handler, typename Completion_Context>
   class completion
     : public completion_base
   {
   public:
-    completion(Handler handler, completion_context& context)
-      : completion_base(context),
-        handler_(handler)
+    completion(Handler handler, Completion_Context& context)
+      : handler_(handler),
+        context_(context)
     {
     }
 
     virtual void call()
     {
       do_upcall(handler_);
+      context_.release();
     }
 
     static void do_upcall(Handler& handler)
@@ -322,6 +324,7 @@ private:
 
   private:
     Handler handler_;
+    Completion_Context& context_;
   };
 
   // Mutex to protect access to internal data.

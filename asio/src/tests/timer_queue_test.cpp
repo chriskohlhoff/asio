@@ -23,7 +23,7 @@ int main()
     boost::xtime print_interval;
     print_interval.sec = 1;
     print_interval.nsec = 0;
-    int timer_id = tq.schedule_timer(print_time, print_interval,
+    int timer_id = tq.schedule_repeat_timer(print_time, print_interval,
         boost::bind(print, &counter));
 
     boost::xtime cancel_time;
