@@ -36,10 +36,10 @@ namespace detail
   template <typename Type> Type global<Type>::instance;
 }
 
-/// The completion_context class is the abstract base class for all completion
-/// context implementations. A completion context is used to determine when
-/// an upcall can be made to the completion handler of an asynchronous
-/// operation.
+/// The null_completion_context class is a concrete implementation of the
+/// Completion_Context concept. It does not place any limits on the number of
+/// concurrent upcalls to completion handlers that may be associated with the
+/// context.
 class null_completion_context
   : private boost::noncopyable
 {

@@ -72,6 +72,25 @@ public:
     }
   }
 
+  // Set a socket option. Throws a socket_error exception on failure.
+  template <typename Option>
+  void set_option(impl_type& impl, const Option& option)
+  {
+    if (socket_ops::setsockopt(impl, option.level(), option.name(),
+          option.data(), option.size()))
+        throw socket_error(socket_ops::get_error());
+  }
+
+  // Set a socket option. Throws a socket_error exception on failure.
+  template <typename Option>
+  void get_option(impl_type& impl, Option& option)
+  {
+    socket_len_type size = option.size();
+    if (socket_ops::getsockopt(impl, option.level(), option.name(),
+          option.data(), &size))
+        throw socket_error(socket_ops::get_error());
+  }
+
   // Send the given data to the peer. Returns the number of bytes sent or
   // 0 if the connection was closed cleanly. Throws a socket_error exception
   // on failure.

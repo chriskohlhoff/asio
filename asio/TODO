@@ -1,12 +1,17 @@
 asio to-do items
 ================
 
-Add functions for setting socket options
-----------------------------------------
-Add functions to the basic_stream_socket and basic_dgram_socket that allow the
-various socket options to be set. May want to consider not exposing the option
-for non-blocking I/O, and simply state that using the asynchronous operations
-is the portable way to go about it.
+Add more socket options
+-----------------------
+Add support for additional socket options beyond the sample few that exist now.
+May want to consider not exposing the option for non-blocking I/O, and simply
+state that using the asynchronous operations is the portable way to go about
+it.
+
+Add vectored send/recv functions
+--------------------------------
+Add the sendv and recvv functions to basic_stream_socket and presumably also to
+the buffered stream templates.
 
 Add encode_send/async_encode_send functions
 -------------------------------------------

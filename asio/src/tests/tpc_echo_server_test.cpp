@@ -12,8 +12,11 @@ void tpc_echo_session(stream_socket_ptr sock)
 {
   try
   {
-    enum { max_length = 512 };
+    enum { max_length = 8192 };
     char data[max_length];
+
+    sock->set_option(socket_option::recv_buffer_size(max_length));
+    sock->set_option(socket_option::send_buffer_size(max_length));
 
     int length;
     while ((length = recv(*sock, data, max_length)) > 0)

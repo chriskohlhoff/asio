@@ -4,6 +4,11 @@
 */
 
 /**
+\namespace asio::socket_option
+\brief The asio::socket_option namespace defines the supported socket options.
+*/
+
+/**
 \mainpage
 
 <TABLE BORDER="0" WIDTH="100%">
@@ -13,6 +18,7 @@
 <H2>Namespaces</H2>
 
 \li ::asio
+\li ::asio::socket_option
 
 <H2>Core Classes</H2>
 

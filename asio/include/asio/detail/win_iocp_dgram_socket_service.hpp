@@ -94,6 +94,25 @@ public:
     }
   }
 
+  // Set a socket option. Throws a socket_error exception on failure.
+  template <typename Option>
+  void set_option(impl_type& impl, const Option& option)
+  {
+    if (socket_ops::setsockopt(impl, option.level(), option.name(),
+          option.data(), option.size()))
+        throw socket_error(socket_ops::get_error());
+  }
+
+  // Set a socket option. Throws a socket_error exception on failure.
+  template <typename Option>
+  void get_option(impl_type& impl, Option& option)
+  {
+    socket_len_type size = option.size();
+    if (socket_ops::getsockopt(impl, option.level(), option.name(),
+          option.data(), &size))
+        throw socket_error(socket_ops::get_error());
+  }
+
   // Send a datagram to the specified address. Returns the number of bytes
   // sent. Throws a socket_error exception on failure.
   template <typename Address>

@@ -22,7 +22,7 @@
 namespace asio {
 
 /// The counting_completion_context class is a concrete implementation of the
-/// completion_context class that allows a limitation on the number of
+/// Completion_Context concept. It allows a limitation on the number of
 /// concurrent upcalls to completion handlers that may be associated with the
 /// context.
 class counting_completion_context

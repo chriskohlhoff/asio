@@ -62,6 +62,7 @@ nobase_include_HEADERS = \
 	asio/socket_acceptor.hpp \
 	asio/socket_connector.hpp \
 	asio/socket_error.hpp \
+	asio/socket_option.hpp \
 	asio/stream_socket.hpp \
 	asio/timer.hpp \
 	asio/timer_base.hpp

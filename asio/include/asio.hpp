@@ -36,6 +36,7 @@
 #include "asio/socket_acceptor.hpp"
 #include "asio/socket_connector.hpp"
 #include "asio/socket_error.hpp"
+#include "asio/socket_option.hpp"
 #include "asio/stream_socket.hpp"
 #include "asio/timer.hpp"
 #include "asio/timer_base.hpp"

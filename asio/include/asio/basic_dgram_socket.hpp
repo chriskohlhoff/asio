@@ -138,6 +138,34 @@ public:
     return impl_;
   }
 
+  /// Set an option on the socket.
+  /**
+   * This function is used to set an option on the socket.
+   *
+   * @param option The new option value to be set on the socket.
+   *
+   * @throws socket_error Thrown on failure.
+   */
+  template <typename Option>
+  void set_option(const Option& option)
+  {
+    service_.set_option(impl_, option);
+  }
+
+  /// Get an option from the socket.
+  /**
+   * This function is used to get the current value of an option on the socket.
+   *
+   * @param option The option value to be obtained from the socket.
+   *
+   * @throws socket_error Thrown on failure.
+   */
+  template <typename Option>
+  void get_option(Option& option)
+  {
+    service_.get_option(impl_, option);
+  }
+
   /// Send a datagram to the specified address.
   /**
    * This function is used to send a datagram to the specified remote address.
