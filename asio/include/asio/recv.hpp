@@ -21,7 +21,7 @@ namespace asio {
 /// Read some data from a stream.
 /**
  * This function is used to receive data on a stream. The function call will
- * block until data has received successfully or an error occurs.
+ * block until data has been received successfully or an error occurs.
  *
  * @param s The stream on which the data is to be received. The type must
  * support the Sync_Recv_Stream concept.
@@ -50,7 +50,7 @@ inline size_t recv(Sync_Recv_Stream& s, void* data, size_t max_length)
 /// Read some data from a stream.
 /**
  * This function is used to receive data on a stream. The function call will
- * block until data has received successfully or an error occurs.
+ * block until data has been received successfully or an error occurs.
  *
  * @param s The stream on which the data is to be received. The type must
  * support the Sync_Recv_Stream concept.

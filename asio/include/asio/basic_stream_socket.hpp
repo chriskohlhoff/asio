@@ -393,8 +393,8 @@ public:
   /// Receive some data from the peer.
   /**
    * This function is used to receive data from the stream socket's peer. The
-   * function call will block until data has received successfully or an error
-   * occurs.
+   * function call will block until data has been received successfully or an
+   * error occurs.
    *
    * @param data The buffer into which the received data will be written.
    *
@@ -418,8 +418,8 @@ public:
   /// Receive some data from the peer.
   /**
    * This function is used to receive data from the stream socket's peer. The
-   * function call will block until data has received successfully or an error
-   * occurs.
+   * function call will block until data has been received successfully or an
+   * error occurs.
    *
    * @param data The buffer into which the received data will be written.
    *
