@@ -116,7 +116,6 @@ public:
         op_base* next_op = op->second->next_;
         op->second->next_ = 0;
         op->second->do_operation();
-        delete op->second;
         if (next_op)
           op->second = next_op;
         else
@@ -133,21 +132,16 @@ public:
       op_base* next_op = cancelled_operations_->next_;
       cancelled_operations_->next_ = 0;
       cancelled_operations_->do_cancel();
-      delete cancelled_operations_;
       cancelled_operations_ = next_op;
     }
   }
 
 private:
-  // Base class for reactor operations.
+  // Base class for reactor operations. A function pointer is used instead of
+  // virtual functions to avoid the associated overhead.
   class op_base
   {
   public:
-    // Destructor.
-    virtual ~op_base()
-    {
-    }
-
     // Get the descriptor associated with the operation.
     Descriptor descriptor() const
     {
@@ -155,21 +149,38 @@ private:
     }
 
     // Perform the operation.
-    virtual void do_operation() = 0;
+    void do_operation()
+    {
+      func_(this, false);
+    }
 
     // Handle the case where the operation has been cancelled.
-    virtual void do_cancel() = 0;
+    void do_cancel()
+    {
+      func_(this, true);
+    }
 
   protected:
+    typedef void (*func_type)(op_base*, bool);
+
     // Construct an operation for the given descriptor.
-    op_base(Descriptor descriptor)
-      : descriptor_(descriptor),
+    op_base(func_type func, Descriptor descriptor)
+      : func_(func),
+        descriptor_(descriptor),
         next_(0)
+    {
+    }
+
+    // Prevent deletion through this type.
+    ~op_base()
     {
     }
 
   private:
     friend class reactor_op_queue<Descriptor>;
+
+    // The function to be called to dispatch the handler.
+    func_type func_;
 
     // The descriptor associated with the operation.
     Descriptor descriptor_;
@@ -186,21 +197,20 @@ private:
   public:
     // Constructor.
     op(Descriptor descriptor, Handler handler)
-      : op_base(descriptor),
+      : op_base(&op<Handler>::invoke_handler, descriptor),
         handler_(handler)
     {
     }
 
-    // Perform the operation.
-    virtual void do_operation()
+    // Invoke the handler.
+    static void invoke_handler(op_base* base, bool cancelled)
     {
-      handler_.do_operation();
-    }
-
-    // Handle the case where the operation has been cancelled.
-    virtual void do_cancel()
-    {
-      handler_.do_cancel();
+      op<Handler>* o = static_cast<op<Handler>*>(base);
+      if (cancelled)
+        o->handler_.do_cancel();
+      else
+        o->handler_.do_operation();
+      delete o;
     }
 
   private:

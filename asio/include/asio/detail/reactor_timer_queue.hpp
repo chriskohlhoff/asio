@@ -89,7 +89,6 @@ public:
       timer_base* t = heap_[0];
       remove_timer(t);
       t->do_operation();
-      delete t;
     }
   }
 
@@ -107,20 +106,36 @@ public:
         timer_base* next = t->next_;
         remove_timer(t);
         t->do_cancel();
-        delete t;
         t = next;
       }
     }
   }
 
 private:
-  // Base class for timer operations.
+  // Base class for timer operations. A function pointer is used instead of
+  // virtual functions to avoid the associated overhead.
   class timer_base
   {
   public:
+    // Perform the timer operation.
+    void do_operation()
+    {
+      func_(this, false);
+    }
+
+    // Handle the case where the timer has been cancelled.
+    void do_cancel()
+    {
+      func_(this, true);
+    }
+
+  protected:
+    typedef void (*func_type)(timer_base*, bool);
+
     // Constructor.
-    timer_base(const Time& time, void* token)
-      : time_(time),
+    timer_base(func_type func, const Time& time, void* token)
+      : func_(func),
+        time_(time),
         token_(token),
         next_(0),
         prev_(0),
@@ -128,19 +143,16 @@ private:
     {
     }
 
-    // Destructor.
-    virtual ~timer_base()
+    // Prevent deletion through this type.
+    ~timer_base()
     {
     }
 
-    // Perform the timer operation.
-    virtual void do_operation() = 0;
-
-    // Handle the case where the timer has been cancelled.
-    virtual void do_cancel() = 0;
-
   private:
     friend class reactor_timer_queue<Time, Comparator>;
+
+    // The function to be called to dispatch the handler.
+    func_type func_;
 
     // The time when the operation should fire.
     Time time_;
@@ -166,21 +178,20 @@ private:
   public:
     // Constructor.
     timer(const Time& time, Handler handler, void* token)
-      : timer_base(time, token),
+      : timer_base(&timer<Handler>::invoke_handler, time, token),
         handler_(handler)
     {
     }
 
-    // Perform the timer operation.
-    virtual void do_operation()
+    // Invoke the handler.
+    static void invoke_handler(timer_base* base, bool cancelled)
     {
-      handler_.do_operation();
-    }
-
-    // Handle the case where the timer has been cancelled.
-    virtual void do_cancel()
-    {
-      handler_.do_cancel();
+      timer<Handler>* t = static_cast<timer<Handler>*>(base);
+      if (cancelled)
+        t->handler_.do_cancel();
+      else
+        t->handler_.do_operation();
+      delete t;
     }
 
   private:
