@@ -1,20 +1,5 @@
 /**
-\page tutindex Tutorial Index
-
-The first four tutorial programs introduce the fundamental concepts required
-to use the asio toolkit. Before plunging into the complex world of network
-programming, these tutorial programs illustrate the basic skills using simple
-asynchronous timers.
-
-\li \ref tuttimer1
-\li \ref tuttimer2
-\li \ref tuttimer3
-\li \ref tuttimer4
-
-*/
-
-/**
-\page tuttimer1 Tutorial Part 1 - Using a timer synchronously
+\page tuttimer1 Tutorial Timer.1 - Using a timer synchronously
 
 This tutorial program introduces asio by showing how to perform a blocking
 wait on a timer.
@@ -65,17 +50,17 @@ Go on to \ref tuttimer2
 */
 
 /**
-\page tuttimer1src Source listing for Tutorial Part 1
+\page tuttimer1src Source listing for Tutorial Timer.1
 \include timer1/timer.cpp
 Return to \ref tuttimer1
 */
 
 /**
-\page tuttimer2 Tutorial Part 2 - Using a timer asynchronously
+\page tuttimer2 Tutorial Timer.2 - Using a timer asynchronously
 
 This tutorial program demonstrates how to use asio's asynchronous callback
-functionality by modifying the program from Part 1 to perform an asynchronous
-wait on the timer.
+functionality by modifying the program from tutorial Timer.1 to perform an
+asynchronous wait on the timer.
 
 \dontinclude timer2/timer.cpp
 
@@ -88,10 +73,10 @@ asynchronous wait finishes.
 
 \until asio::timer 
 
-<b>Step 2.</b> Next, instead of doing a blocking wait as in Part 1, we call
-the asio::timer::async_wait() function to perform an asynchronous wait. When
-calling this function we pass the <tt>print</tt> callback handler that was
-defined above.
+<b>Step 2.</b> Next, instead of doing a blocking wait as in tutorial Timer.1,
+we call the asio::timer::async_wait() function to perform an asynchronous
+wait. When calling this function we pass the <tt>print</tt> callback handler
+that was defined above.
 
 \skipline async_wait
 
@@ -124,17 +109,17 @@ Go on to \ref tuttimer3
 */
 
 /**
-\page tuttimer2src Source listing for Tutorial Part 2
+\page tuttimer2src Source listing for Tutorial Timer.2
 \include timer2/timer.cpp
 Return to \ref tuttimer2
 */
 
 /**
-\page tuttimer3 Tutorial Part 3 - Binding arguments to a handler
+\page tuttimer3 Tutorial Timer.3 - Binding arguments to a handler
 
-In this part of the tutorial we will modify the program from Part 2 so that
-the timer fires once a second. This will show how to pass additional
-parameters to your handler function.
+In this tutorial we will modify the program from tutorial Timer.2 so that the
+timer fires once a second. This will show how to pass additional parameters to
+your handler function.
 
 \dontinclude timer3/timer.cpp
 
@@ -155,10 +140,11 @@ sixth time.
 
 <b>Step 2.</b> As mentioned above, this tutorial program uses a counter to
 stop running when the timer fires for the sixth time. However you will observe
-that there is no explicit call to ask the demuxer to stop. Recall that in Part
-2 we learnt that the asio::demuxer::run() function completes when there is no
-more "work" to do. By not starting a new asynchronous wait on the timer when
-<tt>count</tt> reaches 5, the demuxer will run out of work and stop running.
+that there is no explicit call to ask the demuxer to stop. Recall that in
+tutorial Timer.2 we learnt that the asio::demuxer::run() function completes
+when there is no more "work" to do. By not starting a new asynchronous wait on
+the timer when <tt>count</tt> reaches 5, the demuxer will run out of work and
+stop running.
 
 \until ++
 
@@ -207,17 +193,17 @@ Go on to \ref tuttimer4
 */
 
 /**
-\page tuttimer3src Source listing for Tutorial Part 3
+\page tuttimer3src Source listing for Tutorial Timer.3
 \include timer3/timer.cpp
 Return to \ref tuttimer3
 */
 
 /**
-\page tuttimer4 Tutorial Part 4 - Using a member function as a handler
+\page tuttimer4 Tutorial Timer.4 - Using a member function as a handler
 
-In this part of the tutorial we will see how to use a class member function as
-a callback handler. The program should execute identically to the tutorial
-program from Part 3.
+In this tutorial we will see how to use a class member function as a callback
+handler. The program should execute identically to the tutorial program from
+tutorial Timer.3.
 
 \dontinclude timer4/timer.cpp
 
@@ -238,9 +224,9 @@ counter used to shut down the program is now also a member of the class.
 <b>Step 3.</b> The <tt>boost::bind</tt> function works just as well with class
 member functions as with free functions. Since all non-static class member
 functions have an implicit <tt>this</tt> parameter, we need to bind
-<tt>this</tt> to the function. As in Part 3, <tt>boost::bind</tt> converts our
-callback handler (now a member function) into a function object that matches
-the signature <tt>void()</tt>.
+<tt>this</tt> to the function. As in tutorial Timer.3, <tt>boost::bind</tt>
+converts our callback handler (now a member function) into a function object
+that matches the signature <tt>void()</tt>.
 
 \until }
 
@@ -250,8 +236,9 @@ the counter.
 \until }
 
 <b>Step 5.</b> The <tt>print</tt> member function is very similar to the
-<tt>print</tt> function from Part 3, except that it now operates on the class
-data members instead of having the timer and counter passed in as parameters.
+<tt>print</tt> function from tutorial Timer.3, except that it now operates on
+the class data members instead of having the timer and counter passed in as
+parameters.
 
 \until };
 
@@ -268,7 +255,7 @@ Go back to \ref tuttimer3 \n
 */
 
 /**
-\page tuttimer4src Source listing for Tutorial Part 4
+\page tuttimer4src Source listing for Tutorial Timer.4
 \include timer4/timer.cpp
 Return to \ref tuttimer4
 */

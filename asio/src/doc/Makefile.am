@@ -23,7 +23,8 @@ EXTRA_DIST = \
 	asio.css \
 	asio_dox.txt \
 	release_checklist.htm \
-	../examples/tutorial/tutorial_dox.txt
+	../examples/tutorial/index_dox.txt \
+	../examples/tutorial/timer_dox.txt
 
 MAINTAINERCLEANFILES = \
 	../../doc/html/*.html \
