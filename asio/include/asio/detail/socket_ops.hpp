@@ -240,7 +240,7 @@ inline const char* inet_ntop(int af, const void* src, char* dest,
   return 0;
 
 #else // defined(_WIN32)
-  const char* result = ::inet_ntop(af, src, dest, length);
+  const char* result = error_wrapper(::inet_ntop(af, src, dest, length));
   if (result == 0 && get_error() == 0)
     set_error(socket_error::invalid_argument);
   return result;
@@ -272,7 +272,7 @@ inline int inet_pton(int af, const char* src, void* dest)
 
   return 0;
 #else // defined(_WIN32)
-  int result = ::inet_pton(af, src, dest);
+  int result = error_wrapper(::inet_pton(af, src, dest));
   if (result <= 0 && get_error() == 0)
     set_error(socket_error::invalid_argument);
   return result;
