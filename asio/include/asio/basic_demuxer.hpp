@@ -45,6 +45,9 @@ namespace asio {
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Safe, with the exception that calling reset()
  * while there are unfinished run() calls results in undefined behaviour.
+ *
+ * @par Concepts:
+ * Dispatcher.
  */
 template <typename Demuxer_Service>
 class basic_demuxer

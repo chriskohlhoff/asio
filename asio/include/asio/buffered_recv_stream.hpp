@@ -29,9 +29,20 @@
 
 namespace asio {
 
-/// The buffered_recv_stream class template can be used to add buffering to the
-/// recv-related operations of a stream.
-template <typename Next_Layer, typename Buffer>
+/// Adds buffering to the receive-related operations of a stream.
+/**
+ * The buffered_recv_stream class template can be used to add buffering to the
+ * synchronous and asynchronous receive operations of a stream.
+ *
+ * @par Thread Safety:
+ * @e Distinct @e objects: Safe.@n
+ * @e Shared @e objects: Unsafe.
+ *
+ * @par Concepts:
+ * Async_Object, Async_Recv_Stream, Async_Send_Stream, Stream,
+ * Sync_Recv_Stream, Sync_Send_Stream.
+ */
+template <typename Stream, typename Buffer>
 class buffered_recv_stream
   : private boost::noncopyable
 {
@@ -45,7 +56,7 @@ public:
   }
 
   /// The type of the next layer.
-  typedef typename boost::remove_reference<Next_Layer>::type next_layer_type;
+  typedef typename boost::remove_reference<Stream>::type next_layer_type;
 
   /// Get a reference to the next layer.
   next_layer_type& next_layer()
@@ -143,7 +154,7 @@ public:
   class fill_handler
   {
   public:
-    fill_handler(buffered_recv_stream<Next_Layer, Buffer>& stream,
+    fill_handler(buffered_recv_stream<Stream, Buffer>& stream,
         size_t previous_size, Handler handler)
       : stream_(stream),
         previous_size_(previous_size),
@@ -160,7 +171,7 @@ public:
     }
 
   private:
-    buffered_recv_stream<Next_Layer, Buffer>& stream_;
+    buffered_recv_stream<Stream, Buffer>& stream_;
     size_t previous_size_;
     Handler handler_;
   };
@@ -199,7 +210,7 @@ public:
   class recv_handler
   {
   public:
-    recv_handler(buffered_recv_stream<Next_Layer, Buffer>& stream, void* data,
+    recv_handler(buffered_recv_stream<Stream, Buffer>& stream, void* data,
         size_t max_length, Handler handler)
       : stream_(stream),
         data_(data),
@@ -229,7 +240,7 @@ public:
     }
 
   private:
-    buffered_recv_stream<Next_Layer, Buffer>& stream_;
+    buffered_recv_stream<Stream, Buffer>& stream_;
     void* data_;
     size_t max_length_;
     Handler handler_;
@@ -267,7 +278,7 @@ private:
   }
 
   /// The next layer.
-  Next_Layer next_layer_;
+  Stream next_layer_;
 
   // The data in the buffer.
   Buffer buffer_;

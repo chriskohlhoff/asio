@@ -56,6 +56,20 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 \li asio::thread
 \li asio::timer_base
 
+<H2>Free Functions</H2>
+\li asio::recv
+\li asio::recv_n
+\li asio::recv_at_least_n
+\li asio::send
+\li asio::send_n
+\li asio::send_at_least_n
+\li asio::async_recv
+\li asio::async_recv_n
+\li asio::async_recv_at_least_n
+\li asio::async_send
+\li asio::async_send_n
+\li asio::async_send_at_least_n
+
 </TD>
 <TD VALIGN="TOP">
 
@@ -80,6 +94,15 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 
 \li asio::is_recv_buffered
 \li asio::is_send_buffered
+
+<H2>Concepts</H2>
+
+\li Async_Object
+\li Async_Recv_Stream
+\li Async_Send_Stream
+\li Dispatcher
+\li Sync_Recv_Stream
+\li Sync_Send_Stream
 
 </TD>
 </TR>

@@ -21,7 +21,7 @@
 
 namespace asio {
 
-template <typename Next_Layer, typename Buffer = fixed_buffer<8192> >
+template <typename Stream, typename Buffer = fixed_buffer<8192> >
 class buffered_recv_stream;
 
 } // namespace asio

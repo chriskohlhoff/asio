@@ -36,6 +36,10 @@ namespace asio {
  * @par Thread Safety:
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
+ *
+ * @par Concepts:
+ * Async_Object, Async_Recv_Stream, Async_Send_Stream, Stream,
+ * Sync_Recv_Stream, Sync_Send_Stream.
  */
 template <typename Service>
 class basic_stream_socket
@@ -422,7 +426,7 @@ public:
    * @param max_length The maximum size of the data to be received, in bytes.
    *
    * @param handler The handler to be called when the receive operation
-   * completes. Copies will be made of the handler as required. The equivalent\
+   * completes. Copies will be made of the handler as required. The equivalent
    * function signature of the handler must be:
    * @code void handler(
    *   const asio::socket_error& error, // Result of operation

@@ -24,11 +24,11 @@ namespace asio {
 
 namespace detail {
 
-template <typename Next_Layer, typename Buffer>
-char is_send_buffered_helper(buffered_stream<Next_Layer, Buffer>* s);
+template <typename Stream, typename Buffer>
+char is_send_buffered_helper(buffered_stream<Stream, Buffer>* s);
 
-template <typename Next_Layer, typename Buffer>
-char is_send_buffered_helper(buffered_send_stream<Next_Layer, Buffer>* s);
+template <typename Stream, typename Buffer>
+char is_send_buffered_helper(buffered_send_stream<Stream, Buffer>* s);
 
 struct is_send_buffered_big_type { char data[10]; };
 is_send_buffered_big_type is_send_buffered_helper(...);

@@ -36,6 +36,9 @@ namespace asio {
  * @par Thread Safety:
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
+ *
+ * @par Concepts:
+ * Async_Object.
  */
 template <typename Service>
 class basic_timer

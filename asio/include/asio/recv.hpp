@@ -27,7 +27,8 @@ namespace asio {
  * This function is used to receive data on a stream. The function call will
  * block until data has received successfully or an error occurs.
  *
- * @param s The stream on which the data is to be received.
+ * @param s The stream on which the data is to be received. The type must
+ * support the Sync_Recv_Stream concept.
  *
  * @param data The buffer into which the received data will be written.
  *
@@ -44,8 +45,8 @@ namespace asio {
  * the requested amount of data is received before the blocking operation
  * completes.
  */
-template <typename Stream>
-inline size_t recv(Stream& s, void* data, size_t max_length)
+template <typename Sync_Recv_Stream>
+inline size_t recv(Sync_Recv_Stream& s, void* data, size_t max_length)
 {
   return s.recv(data, max_length);
 }
@@ -55,7 +56,8 @@ inline size_t recv(Stream& s, void* data, size_t max_length)
  * This function is used to receive data on a stream. The function call will
  * block until data has received successfully or an error occurs.
  *
- * @param s The stream on which the data is to be received.
+ * @param s The stream on which the data is to be received. The type must
+ * support the Sync_Recv_Stream concept.
  *
  * @param data The buffer into which the received data will be written.
  *
@@ -78,8 +80,8 @@ inline size_t recv(Stream& s, void* data, size_t max_length)
  * the requested amount of data is received before the blocking operation
  * completes.
  */
-template <typename Stream, typename Error_Handler>
-inline size_t recv(Stream& s, void* data, size_t max_length,
+template <typename Sync_Recv_Stream, typename Error_Handler>
+inline size_t recv(Sync_Recv_Stream& s, void* data, size_t max_length,
     Error_Handler error_handler)
 {
   return s.recv(data, max_length, error_handler);
@@ -90,7 +92,8 @@ inline size_t recv(Stream& s, void* data, size_t max_length,
  * This function is used to asynchronously receive data on a stream. The
  * function call always returns immediately.
  *
- * @param s The stream on which the data is to be received.
+ * @param s The stream on which the data is to be received. The type must
+ * support the Async_Recv_Stream concept.
  *
  * @param data The buffer into which the received data will be written.
  * Ownership of the buffer is retained by the caller, which must guarantee
@@ -113,8 +116,8 @@ inline size_t recv(Stream& s, void* data, size_t max_length,
  * ensure that the requested amount of data is received before the asynchronous
  * operation completes.
  */
-template <typename Stream, typename Handler>
-inline void async_recv(Stream& s, void* data, size_t max_length,
+template <typename Async_Recv_Stream, typename Handler>
+inline void async_recv(Async_Recv_Stream& s, void* data, size_t max_length,
     Handler handler)
 {
   s.async_recv(data, max_length, handler);
@@ -126,7 +129,8 @@ inline void async_recv(Stream& s, void* data, size_t max_length,
  * stream. The function call will block until the specified number of bytes has
  * been received successfully or an error occurs.
  *
- * @param s The stream on which the data is to be received.
+ * @param s The stream on which the data is to be received. The type must
+ * support the Sync_Recv_Stream concept.
  *
  * @param data The buffer into which the received data will be written.
  *
@@ -141,8 +145,8 @@ inline void async_recv(Stream& s, void* data, size_t max_length,
  * @note Throws an exception on failure. The type of the exception depends
  * on the underlying stream's recv operation.
  */
-template <typename Stream>
-size_t recv_n(Stream& s, void* data, size_t length,
+template <typename Sync_Recv_Stream>
+size_t recv_n(Sync_Recv_Stream& s, void* data, size_t length,
     size_t* total_bytes_recvd = 0)
 {
   int bytes_recvd = 0;
@@ -170,7 +174,8 @@ size_t recv_n(Stream& s, void* data, size_t length,
  * stream. The function call will block until the specified number of bytes has
  * been received successfully or an error occurs.
  *
- * @param s The stream on which the data is to be received.
+ * @param s The stream on which the data is to be received. The type must
+ * support the Sync_Recv_Stream concept.
  *
  * @param data The buffer into which the received data will be written.
  *
@@ -191,8 +196,8 @@ size_t recv_n(Stream& s, void* data, size_t length,
  * @returns The number of bytes received on the last recv, or 0 if end-of-file
  * was reached or the connection was closed cleanly.
  */
-template <typename Stream, typename Error_Handler>
-size_t recv_n(Stream& s, void* data, size_t length,
+template <typename Sync_Recv_Stream, typename Error_Handler>
+size_t recv_n(Sync_Recv_Stream& s, void* data, size_t length,
     size_t* total_bytes_recvd, Error_Handler error_handler)
 {
   int bytes_recvd = 0;
@@ -216,11 +221,12 @@ size_t recv_n(Stream& s, void* data, size_t length,
 
 namespace detail
 {
-  template <typename Stream, typename Handler>
+  template <typename Async_Recv_Stream, typename Handler>
   class recv_n_handler
   {
   public:
-    recv_n_handler(Stream& stream, void* data, size_t length, Handler handler)
+    recv_n_handler(Async_Recv_Stream& stream, void* data, size_t length,
+        Handler handler)
       : stream_(stream),
         data_(data),
         length_(length),
@@ -246,7 +252,7 @@ namespace detail
     }
 
   private:
-    Stream& stream_;
+    Async_Recv_Stream& stream_;
     void* data_;
     size_t length_;
     size_t total_recvd_;
@@ -260,7 +266,8 @@ namespace detail
  * This function is used to asynchronously receive an exact number of bytes of
  * data on a stream. The function call always returns immediately.
  *
- * @param s The stream on which the data is to be received.
+ * @param s The stream on which the data is to be received. The type must
+ * support the Async_Recv_Stream concept.
  *
  * @param data The buffer into which the received data will be written.
  * Ownership of the buffer is retained by the caller, which must guarantee
@@ -281,11 +288,13 @@ namespace detail
  *   size_t total_bytes_recvd  // Total number of bytes successfully received
  * ); @endcode
  */
-template <typename Stream, typename Handler>
-inline void async_recv_n(Stream& s, void* data, size_t length, Handler handler)
+template <typename Async_Recv_Stream, typename Handler>
+inline void async_recv_n(Async_Recv_Stream& s, void* data, size_t length,
+    Handler handler)
 {
   async_recv(s, data, length,
-      detail::recv_n_handler<Stream, Handler>(s, data, length, handler));
+      detail::recv_n_handler<Async_Recv_Stream, Handler>(s, data, length,
+        handler));
 }
 
 /// Read at least the specified amount of data from the stream before
@@ -295,7 +304,8 @@ inline void async_recv_n(Stream& s, void* data, size_t length, Handler handler)
  * data on a stream. The function call will block until at least that number of
  * bytes has been received successfully or an error occurs.
  *
- * @param s The stream on which the data is to be received.
+ * @param s The stream on which the data is to be received. The type must
+ * support the Sync_Recv_Stream concept.
  *
  * @param data The buffer into which the received data will be written.
  *
@@ -312,8 +322,8 @@ inline void async_recv_n(Stream& s, void* data, size_t length, Handler handler)
  * @note Throws an exception on failure. The type of the exception depends
  * on the underlying stream's recv operation.
  */
-template <typename Stream>
-size_t recv_at_least_n(Stream& s, void* data, size_t min_length,
+template <typename Sync_Recv_Stream>
+size_t recv_at_least_n(Sync_Recv_Stream& s, void* data, size_t min_length,
     size_t max_length, size_t* total_bytes_recvd = 0)
 {
   int bytes_recvd = 0;
@@ -344,7 +354,8 @@ size_t recv_at_least_n(Stream& s, void* data, size_t min_length,
  * data on a stream. The function call will block until at least that number of
  * bytes has been received successfully or an error occurs.
  *
- * @param s The stream on which the data is to be received.
+ * @param s The stream on which the data is to be received. The type must
+ * support the Sync_Recv_Stream concept.
  *
  * @param data The buffer into which the received data will be written.
  *
@@ -367,8 +378,8 @@ size_t recv_at_least_n(Stream& s, void* data, size_t min_length,
  * @returns The number of bytes received on the last recv, or 0 if end-of-file
  * was reached or the connection was closed cleanly.
  */
-template <typename Stream, typename Error_Handler>
-size_t recv_at_least_n(Stream& s, void* data, size_t min_length,
+template <typename Sync_Recv_Stream, typename Error_Handler>
+size_t recv_at_least_n(Sync_Recv_Stream& s, void* data, size_t min_length,
     size_t max_length, size_t* total_bytes_recvd, Error_Handler error_handler)
 {
   int bytes_recvd = 0;
@@ -394,12 +405,12 @@ size_t recv_at_least_n(Stream& s, void* data, size_t min_length,
 
 namespace detail
 {
-  template <typename Stream, typename Handler>
+  template <typename Async_Recv_Stream, typename Handler>
   class recv_at_least_n_handler
   {
   public:
-    recv_at_least_n_handler(Stream& stream, void* data, size_t min_length,
-        size_t max_length, Handler handler)
+    recv_at_least_n_handler(Async_Recv_Stream& stream, void* data,
+        size_t min_length, size_t max_length, Handler handler)
       : stream_(stream),
         data_(data),
         min_length_(min_length),
@@ -426,7 +437,7 @@ namespace detail
     }
 
   private:
-    Stream& stream_;
+    Async_Recv_Stream& stream_;
     void* data_;
     size_t min_length_;
     size_t max_length_;
@@ -441,7 +452,8 @@ namespace detail
  * This function is used to asynchronously receive at least a specified number
  * of bytes of data on a stream. The function call always returns immediately.
  *
- * @param s The stream on which the data is to be received.
+ * @param s The stream on which the data is to be received. The type must
+ * support the Async_Recv_Stream concept.
  *
  * @param data The buffer into which the received data will be written.
  * Ownership of the buffer is retained by the caller, which must guarantee
@@ -464,15 +476,15 @@ namespace detail
  *   size_t total_bytes_recvd  // Total number of bytes successfully received
  * ); @endcode
  */
-template <typename Stream, typename Handler>
-inline void async_recv_at_least_n(Stream& s, void* data, size_t min_length,
-    size_t max_length, Handler handler)
+template <typename Async_Recv_Stream, typename Handler>
+inline void async_recv_at_least_n(Async_Recv_Stream& s, void* data,
+    size_t min_length, size_t max_length, Handler handler)
 {
   if (max_length < min_length)
     min_length = max_length;
   async_recv(s, data, max_length,
-      detail::recv_at_least_n_handler<Stream, Handler>(s, data, min_length,
-        max_length, handler));
+      detail::recv_at_least_n_handler<Async_Recv_Stream, Handler>(s, data,
+        min_length, max_length, handler));
 }
 
 } // namespace asio

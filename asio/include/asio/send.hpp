@@ -26,7 +26,8 @@ namespace asio {
  * This function is used to send data on a stream. The function call will block
  * until the data has been sent successfully or an error occurs.
  *
- * @param s The stream on which the data is to be sent.
+ * @param s The stream on which the data is to be sent. The type must support
+ * the Sync_Send_Stream concept.
  *
  * @param data The data to be sent on the stream.
  *
@@ -42,8 +43,8 @@ namespace asio {
  * Consider using the asio::send_n() function if you need to ensure that all
  * data is sent before the blocking operation completes.
  */
-template <typename Stream>
-inline size_t send(Stream& s, const void* data, size_t length)
+template <typename Sync_Send_Stream>
+inline size_t send(Sync_Send_Stream& s, const void* data, size_t length)
 {
   return s.send(data, length);
 }
@@ -53,7 +54,8 @@ inline size_t send(Stream& s, const void* data, size_t length)
  * This function is used to send data on a stream. The function call will block
  * until the data has been sent successfully or an error occurs.
  *
- * @param s The stream on which the data is to be sent.
+ * @param s The stream on which the data is to be sent. The type must support
+ * the Sync_Send_Stream concept.
  *
  * @param data The data to be sent on the stream.
  *
@@ -75,8 +77,8 @@ inline size_t send(Stream& s, const void* data, size_t length)
  * Consider using the asio::send_n() function if you need to ensure that all
  * data is sent before the blocking operation completes.
  */
-template <typename Stream, typename Error_Handler>
-inline size_t send(Stream& s, const void* data, size_t length,
+template <typename Sync_Send_Stream, typename Error_Handler>
+inline size_t send(Sync_Send_Stream& s, const void* data, size_t length,
     Error_Handler error_handler)
 {
   return s.send(data, length, error_handler);
@@ -87,7 +89,8 @@ inline size_t send(Stream& s, const void* data, size_t length,
  * This function is used to asynchronously send data on a stream. The function
  * call always returns immediately.
  *
- * @param s The stream on which the data is to be sent.
+ * @param s The stream on which the data is to be sent. The type must support
+ * the Async_Send_Stream concept.
  *
  * @param data The data to be sent on the stream. Ownership of the data is
  * retained by the caller, which must guarantee that it is valid until the
@@ -109,8 +112,8 @@ inline size_t send(Stream& s, const void* data, size_t length,
  * Consider using the asio::async_send_n() function if you need to ensure that
  * all data is sent before the asynchronous operation completes.
  */
-template <typename Stream, typename Handler>
-inline void async_send(Stream& s, const void* data, size_t length,
+template <typename Async_Send_Stream, typename Handler>
+inline void async_send(Async_Send_Stream& s, const void* data, size_t length,
     Handler handler)
 {
   s.async_send(data, length, handler);
@@ -122,7 +125,8 @@ inline void async_send(Stream& s, const void* data, size_t length,
  * The function call will block until the specified number of bytes has been
  * sent successfully or an error occurs.
  *
- * @param s The stream on which the data is to be sent.
+ * @param s The stream on which the data is to be sent. The type must support
+ * the Sync_Send_Stream concept.
  *
  * @param data The data to be sent on the stream.
  *
@@ -137,8 +141,8 @@ inline void async_send(Stream& s, const void* data, size_t length,
  * @note Throws an exception on failure. The type of the exception depends
  * on the underlying stream's send operation.
  */
-template <typename Stream>
-size_t send_n(Stream& s, const void* data, size_t length,
+template <typename Sync_Send_Stream>
+size_t send_n(Sync_Send_Stream& s, const void* data, size_t length,
     size_t* total_bytes_sent = 0)
 {
   int bytes_sent = 0;
@@ -166,7 +170,8 @@ size_t send_n(Stream& s, const void* data, size_t length,
  * The function call will block until the specified number of bytes has been
  * sent successfully or an error occurs.
  *
- * @param s The stream on which the data is to be sent.
+ * @param s The stream on which the data is to be sent. The type must support
+ * the Sync_Send_Stream concept.
  *
  * @param data The data to be sent on the stream.
  *
@@ -187,8 +192,8 @@ size_t send_n(Stream& s, const void* data, size_t length,
  * @returns The number of bytes sent on the last send, or 0 if end-of-file was
  * reached or the connection was closed cleanly.
  */
-template <typename Stream, typename Error_Handler>
-size_t send_n(Stream& s, const void* data, size_t length,
+template <typename Sync_Send_Stream, typename Error_Handler>
+size_t send_n(Sync_Send_Stream& s, const void* data, size_t length,
     size_t* total_bytes_sent, Error_Handler error_handler)
 {
   int bytes_sent = 0;
@@ -212,11 +217,11 @@ size_t send_n(Stream& s, const void* data, size_t length,
 
 namespace detail
 {
-  template <typename Stream, typename Handler>
+  template <typename Async_Send_Stream, typename Handler>
   class send_n_handler
   {
   public:
-    send_n_handler(Stream& stream, const void* data, size_t length,
+    send_n_handler(Async_Send_Stream& stream, const void* data, size_t length,
         Handler handler)
       : stream_(stream),
         data_(data),
@@ -244,7 +249,7 @@ namespace detail
     }
 
   private:
-    Stream& stream_;
+    Async_Send_Stream& stream_;
     const void* data_;
     size_t length_;
     size_t total_sent_;
@@ -258,7 +263,8 @@ namespace detail
  * This function is used to asynchronously send an exact number of bytes of
  * data on a stream. The function call always returns immediately.
  *
- * @param s The stream on which the data is to be sent.
+ * @param s The stream on which the data is to be sent. The type must support
+ * the Async_Send_Stream concept.
  *
  * @param data The data to be sent on the stream. Ownership of the data is
  * retained by the caller, which must guarantee that it is valid until the
@@ -278,12 +284,13 @@ namespace detail
  *   size_t total_bytes_sent  // Total number of bytes successfully sent
  * ); @endcode
  */
-template <typename Stream, typename Handler>
-inline void async_send_n(Stream& s, const void* data, size_t length,
+template <typename Async_Send_Stream, typename Handler>
+inline void async_send_n(Async_Send_Stream& s, const void* data, size_t length,
     Handler handler)
 {
   async_send(s, data, length,
-      detail::send_n_handler<Stream, Handler>(s, data, length, handler));
+      detail::send_n_handler<Async_Send_Stream, Handler>(s, data, length,
+        handler));
 }
 
 /// Write at least a specified number of bytes of data to the stream before
@@ -293,7 +300,8 @@ inline void async_send_n(Stream& s, const void* data, size_t length,
  * on a stream. The function call will block until at least that number of
  * bytes has been sent successfully or an error occurs.
  *
- * @param s The stream on which the data is to be sent.
+ * @param s The stream on which the data is to be sent. The type must support
+ * the Sync_Send_Stream concept.
  *
  * @param data The data to be sent on the stream.
  *
@@ -310,9 +318,9 @@ inline void async_send_n(Stream& s, const void* data, size_t length,
  * @note Throws an exception on failure. The type of the exception depends
  * on the underlying stream's send operation.
  */
-template <typename Stream>
-size_t send_at_least_n(Stream& s, const void* data, size_t min_length,
-    size_t max_length, size_t* total_bytes_sent = 0)
+template <typename Sync_Send_Stream>
+size_t send_at_least_n(Sync_Send_Stream& s, const void* data,
+    size_t min_length, size_t max_length, size_t* total_bytes_sent = 0)
 {
   int bytes_sent = 0;
   size_t total_sent = 0;
@@ -342,7 +350,8 @@ size_t send_at_least_n(Stream& s, const void* data, size_t min_length,
  * on a stream. The function call will block until at least that number of
  * bytes has been sent successfully or an error occurs.
  *
- * @param s The stream on which the data is to be sent.
+ * @param s The stream on which the data is to be sent. The type must support
+ * the Sync_Send_Stream concept.
  *
  * @param data The data to be sent on the stream.
  *
@@ -365,9 +374,10 @@ size_t send_at_least_n(Stream& s, const void* data, size_t min_length,
  * @returns The number of bytes sent on the last send, or 0 if end-of-file was
  * reached or the connection was closed cleanly.
  */
-template <typename Stream, typename Error_Handler>
-size_t send_at_least_n(Stream& s, const void* data, size_t min_length,
-    size_t max_length, size_t* total_bytes_sent, Error_Handler error_handler)
+template <typename Sync_Send_Stream, typename Error_Handler>
+size_t send_at_least_n(Sync_Send_Stream& s, const void* data,
+    size_t min_length, size_t max_length, size_t* total_bytes_sent,
+    Error_Handler error_handler)
 {
   int bytes_sent = 0;
   size_t total_sent = 0;
@@ -392,11 +402,11 @@ size_t send_at_least_n(Stream& s, const void* data, size_t min_length,
 
 namespace detail
 {
-  template <typename Stream, typename Handler>
+  template <typename Async_Send_Stream, typename Handler>
   class send_at_least_n_handler
   {
   public:
-    send_at_least_n_handler(Stream& stream, const void* data,
+    send_at_least_n_handler(Async_Send_Stream& stream, const void* data,
         size_t min_length, size_t max_length, Handler handler)
       : stream_(stream),
         data_(data),
@@ -425,7 +435,7 @@ namespace detail
     }
 
   private:
-    Stream& stream_;
+    Async_Send_Stream& stream_;
     const void* data_;
     size_t min_length_;
     size_t max_length_;
@@ -440,7 +450,8 @@ namespace detail
  * This function is used to asynchronously send at least a specified number of
  * bytes of data on a stream. The function call always returns immediately.
  *
- * @param s The stream on which the data is to be sent.
+ * @param s The stream on which the data is to be sent. The type must support
+ * the Async_Send_Stream concept.
  *
  * @param data The data to be sent on the stream. Ownership of the data is
  * retained by the caller, which must guarantee that it is valid until the
@@ -462,15 +473,15 @@ namespace detail
  *   size_t total_bytes_sent  // Total number of bytes successfully sent
  * ); @endcode
  */
-template <typename Stream, typename Handler>
-inline void async_send_at_least_n(Stream& s, const void* data,
+template <typename Async_Send_Stream, typename Handler>
+inline void async_send_at_least_n(Async_Send_Stream& s, const void* data,
     size_t min_length, size_t max_length, Handler handler)
 {
   if (max_length < min_length)
     min_length = max_length;
   async_send(s, data, max_length,
-      detail::send_at_least_n_handler<Stream, Handler>(s, data, min_length,
-        max_length, handler));
+      detail::send_at_least_n_handler<Async_Send_Stream, Handler>(s, data,
+        min_length, max_length, handler));
 }
 
 } // namespace asio

@@ -27,9 +27,20 @@
 
 namespace asio {
 
-/// The buffered_stream class template can be used to add buffering to both the
-/// send- and recv- related operations of a stream.
-template <typename Next_Layer, typename Buffer>
+/// Adds buffering to the send- and receive-related operations of a stream.
+/**
+ * The buffered_stream class template can be used to add buffering to the
+ * synchronous and asynchronous send and receive operations of a stream.
+ *
+ * @par Thread Safety:
+ * @e Distinct @e objects: Safe.@n
+ * @e Shared @e objects: Unsafe.
+ *
+ * @par Concepts:
+ * Async_Object, Async_Recv_Stream, Async_Send_Stream, Stream,
+ * Sync_Recv_Stream, Sync_Send_Stream.
+ */
+template <typename Stream, typename Buffer>
 class buffered_stream
   : private boost::noncopyable
 {
@@ -42,7 +53,7 @@ public:
   }
 
   /// The type of the next layer.
-  typedef typename boost::remove_reference<Next_Layer>::type next_layer_type;
+  typedef typename boost::remove_reference<Stream>::type next_layer_type;
 
   /// Get a reference to the next layer.
   next_layer_type& next_layer()
@@ -185,7 +196,7 @@ public:
 
 private:
   /// The buffered stream implementation.
-  buffered_recv_stream<buffered_send_stream<Next_Layer, Buffer>, Buffer>
+  buffered_recv_stream<buffered_send_stream<Stream, Buffer>, Buffer>
     stream_impl_;
 };
 

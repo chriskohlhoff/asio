@@ -1,6 +1,6 @@
 //
-// buffered_stream_fwd.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~
+// Stream.hpp
+// ~~~~~~~~~~
 //
 // Copyright (c) 2003, 2004 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -12,20 +12,18 @@
 // no claim as to its suitability for any purpose.
 //
 
-#ifndef ASIO_BUFFERED_STREAM_FWD_HPP
-#define ASIO_BUFFERED_STREAM_FWD_HPP
-
-#include "asio/detail/push_options.hpp"
-
-#include "asio/fixed_buffer.hpp"
-
-namespace asio {
-
-template <typename Stream, typename Buffer = fixed_buffer<8192> >
-class buffered_stream;
-
-} // namespace asio
-
-#include "asio/detail/pop_options.hpp"
-
-#endif // ASIO_BUFFERED_STREAM_FWD_HPP
+/// Stream concept.
+/**
+ * @par Implemented By:
+ * asio::basic_stream_socket @n
+ * asio::buffered_recv_stream @n
+ * asio::buffered_send_stream @n
+ * asio::buffered_stream
+ */
+class Stream
+  : public Async_Recv_Stream,
+    public Async_Send_Stream,
+    public Sync_Recv_Stream,
+    public Sync_Send_Stream
+{
+};

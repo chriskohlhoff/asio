@@ -36,6 +36,9 @@ namespace asio {
  * @par Thread Safety:
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Safe.
+ *
+ * @par Concepts:
+ * Async_Object, Dispatcher.
  */
 template <typename Service>
 class basic_locking_dispatcher
@@ -69,6 +72,19 @@ public:
   ~basic_locking_dispatcher()
   {
     service_.destroy(impl_);
+  }
+
+  /// Get the demuxer associated with the asynchronous object.
+  /**
+   * This function may be used to obtain the demuxer object that the locking
+   * dispatcher uses to dispatch handlers for asynchronous operations.
+   *
+   * @return A reference to the demuxer object that the dispatcher will use to
+   * dispatch handlers. Ownership is not transferred to the caller.
+   */
+  demuxer_type& demuxer()
+  {
+    return service_.demuxer();
   }
 
   /// Request the dispatcher to invoke the given handler.
