@@ -30,7 +30,7 @@ typedef basic_timer
   <
     implementation_defined
   > timer;
-#elif defined(_WIN32)
+#else
 typedef basic_timer
   <
     detail::reactive_timer_service

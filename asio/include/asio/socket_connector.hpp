@@ -30,7 +30,7 @@ typedef basic_socket_connector
   <
     implementation_defined
   > socket_connector;
-#elif defined(_WIN32)
+#else
 typedef basic_socket_connector
   <
     detail::reactive_socket_connector_service
