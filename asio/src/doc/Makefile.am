@@ -12,7 +12,7 @@ $(top_builddir)/doc/html/asio.css: $(srcdir)/asio.css
 	mkdir -p $(top_builddir)/doc/html
 	cp $(srcdir)/asio.css $(top_builddir)/doc/html/asio.css
 
-$(top_builddir)/doc/html/index.html: asio.dox
+$(top_builddir)/doc/html/index.html: asio.dox.in
 	doxygen asio.dox
 
 EXTRA_DIST = \
