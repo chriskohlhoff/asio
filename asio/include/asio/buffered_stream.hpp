@@ -23,12 +23,13 @@
 
 #include "asio/buffered_recv_stream.hpp"
 #include "asio/buffered_send_stream.hpp"
+#include "asio/fixed_buffer.hpp"
 
 namespace asio {
 
 /// The buffered_stream class template can be used to add buffering to both the
 /// send- and recv- related operations of a stream.
-template <typename Next_Layer>
+template <typename Next_Layer, typename Buffer = fixed_buffer<8192> >
 class buffered_stream
   : private boost::noncopyable
 {
@@ -65,6 +66,15 @@ public:
   demuxer_type& demuxer()
   {
     return stream_impl_.demuxer();
+  }
+
+  /// The buffer type for this buffering layer.
+  typedef Buffer buffer_type;
+
+  /// Get the recv buffer used by this buffering layer.
+  buffer_type& recv_buffer()
+  {
+    return stream_impl_.recv_buffer();
   }
 
   /// Close the stream.
@@ -123,7 +133,8 @@ public:
 
 private:
   /// The buffered stream implementation.
-  buffered_recv_stream<buffered_send_stream<Next_Layer> > stream_impl_;
+  buffered_recv_stream<buffered_send_stream<Next_Layer, Buffer>, Buffer>
+    stream_impl_;
 };
 
 } // namespace asio

@@ -23,14 +23,16 @@
 #include <boost/type_traits.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/fixed_buffer.hpp"
 #include "asio/null_completion_context.hpp"
 #include "asio/detail/bind_handler.hpp"
+#include "asio/detail/buffer_resize_guard.hpp"
 
 namespace asio {
 
 /// The buffered_recv_stream class template can be used to add buffering to the
 /// recv-related operations of a stream.
-template <typename Next_Layer, int Buffer_Size = 8192>
+template <typename Next_Layer, typename Buffer = fixed_buffer<8192> >
 class buffered_recv_stream
   : private boost::noncopyable
 {
@@ -39,8 +41,7 @@ public:
   template <typename Arg>
   explicit buffered_recv_stream(Arg& a)
     : next_layer_(a),
-      bytes_in_buffer_(0),
-      read_pos_(0)
+      buffer_()
   {
   }
 
@@ -69,6 +70,15 @@ public:
   demuxer_type& demuxer()
   {
     return next_layer_.demuxer();
+  }
+
+  /// The buffer type for this buffering layer.
+  typedef Buffer buffer_type;
+
+  /// Get the recv buffer used by this buffering layer.
+  buffer_type& recv_buffer()
+  {
+    return buffer_;
   }
 
   /// Close the stream.
@@ -101,72 +111,113 @@ public:
     next_layer_.async_send(data, length, handler, context);
   }
 
-  /// Receive some data from the peer. Returns the number of bytes received or
-  /// 0 if the stream was closed cleanly. Throws an exception on failure.
-  size_t recv(void* data, size_t max_length)
+  /// Fill the buffer with some data. Returns the number of bytes placed in the
+  /// buffer as a result of the operation, or 0 if the underlying connection
+  /// was closed. Throws an exception on failure.
+  size_t fill()
   {
-    if (read_pos_ == bytes_in_buffer_)
-    {
-      bytes_in_buffer_ = next_layer_.recv(buffer_, Buffer_Size);
-      read_pos_ = 0;
-      if (bytes_in_buffer_ == 0)
-        return 0;
-    }
-
-    return copy(data, max_length);
+    detail::buffer_resize_guard<Buffer> resize_guard(buffer_);
+    size_t previous_size = buffer_.size();
+    buffer_.resize(buffer_.capacity());
+    buffer_.resize(previous_size + next_layer_.recv(
+          buffer_.begin() + previous_size, buffer_.size() - previous_size));
+    resize_guard.commit();
+    return buffer_.size() - previous_size;
   }
 
-  template <typename Handler, typename Completion_Context>
-  class recv_handler
+  template <typename Handler>
+  class fill_handler
   {
   public:
-    recv_handler(demuxer_type& demuxer, char* buffer,
-        size_t& bytes_in_buffer, size_t& read_pos, void* data,
-        size_t max_length, Handler handler, Completion_Context& context)
-      : demuxer_(demuxer),
-        buffer_(buffer),
-        bytes_in_buffer_(bytes_in_buffer),
-        read_pos_(read_pos),
-        data_(data),
-        max_length_(max_length),
-        handler_(handler),
-        context_(context)
+    fill_handler(Buffer& buffer, size_t previous_size, Handler handler)
+      : buffer_(buffer),
+        previous_size_(previous_size),
+        handler_(handler)
     {
     }
 
     template <typename Error>
     void operator()(const Error& e, size_t bytes_recvd)
     {
-      bytes_in_buffer_ = bytes_recvd;
-      read_pos_ = 0;
-      if (bytes_in_buffer_ == 0)
+      buffer_.resize(previous_size_ + bytes_recvd);
+      handler_(e, bytes_recvd);
+    }
+
+  private:
+    Buffer& buffer_;
+    size_t previous_size_;
+    Handler handler_;
+  };
+
+  /// Start an asynchronous fill.
+  template <typename Handler>
+  void async_fill(Handler handler)
+  {
+    size_t previous_size = buffer_.size();
+    buffer_.resize(buffer_.capacity());
+    next_layer_.async_recv(buffer_.begin() + previous_size,
+        buffer_.size() - previous_size,
+        fill_handler<Handler>(buffer_, previous_size, handler));
+  }
+
+  /// Start an asynchronous fill.
+  template <typename Handler, typename Completion_Context>
+  void async_fill(Handler handler, Completion_Context& context)
+  {
+    size_t previous_size = buffer_.size();
+    buffer_.resize(buffer_.capacity());
+    next_layer_.async_recv(buffer_.begin() + previous_size,
+        buffer_.size() - previous_size,
+        fill_handler<Handler>(buffer_, previous_size, handler), context);
+  }
+
+  /// Receive some data from the peer. Returns the number of bytes received or
+  /// 0 if the stream was closed cleanly. Throws an exception on failure.
+  size_t recv(void* data, size_t max_length)
+  {
+    if (buffer_.empty() && !fill())
+      return 0;
+    return copy(data, max_length);
+  }
+
+  template <typename Handler>
+  class recv_handler
+  {
+  public:
+    recv_handler(Buffer& buffer, void* data, size_t max_length,
+        Handler handler)
+      : buffer_(buffer),
+        data_(data),
+        max_length_(max_length),
+        handler_(handler)
+    {
+    }
+
+    template <typename Error>
+    void operator()(const Error& e, size_t bytes_recvd)
+    {
+      if (buffer_.empty())
       {
-        demuxer_.operation_immediate(detail::bind_handler(handler_, e, 0),
-            context_);
+        size_t length = 0;
+        handler_(e, length);
       }
       else
       {
         using namespace std; // For memcpy.
-
-        size_t bytes_avail = bytes_in_buffer_ - read_pos_;
+        size_t bytes_avail = buffer_.size();
         size_t length = (max_length_ < bytes_avail)
           ? max_length_ : bytes_avail;
-        memcpy(data_, buffer_ + read_pos_, length);
-        read_pos_ += length;
-        demuxer_.operation_immediate(
-            detail::bind_handler(handler_, e, length), context_);
+        memcpy(data_, buffer_.begin(), length);
+        buffer_.pop(length);
+        handler_(e, length);
       }
     }
 
   private:
-    demuxer_type& demuxer_;
-    char* buffer_;
-    size_t& bytes_in_buffer_;
-    size_t& read_pos_;
+    Buffer& buffer_;
     void* data_;
     size_t max_length_;
     Handler handler_;
-    Completion_Context& context_;
   };
 
   /// Start an asynchronous receive. The buffer for the data being received
@@ -174,12 +225,9 @@ public:
   template <typename Handler>
   void async_recv(void* data, size_t max_length, Handler handler)
   {
-    if (read_pos_ == bytes_in_buffer_)
+    if (buffer_.empty())
     {
-      next_layer_.async_recv(buffer_, Buffer_Size,
-          recv_handler<Handler, null_completion_context>(demuxer(), buffer_,
-            bytes_in_buffer_, read_pos_, data, max_length, handler,
-            null_completion_context::instance()));
+      async_fill(recv_handler<Handler>(buffer_, data, max_length, handler));
     }
     else
     {
@@ -195,11 +243,10 @@ public:
   void async_recv(void* data, size_t max_length, Handler handler,
       Completion_Context& context)
   {
-    if (read_pos_ == bytes_in_buffer_)
+    if (buffer_.empty())
     {
-      next_layer_.async_recv(buffer_, Buffer_Size,
-          recv_handler<Handler, Completion_Context>(demuxer(), buffer_,
-            bytes_in_buffer_, read_pos_, data, max_length, handler, context));
+      async_fill(recv_handler<Handler>(buffer_, data, max_length, handler),
+          context);
     }
     else
     {
@@ -216,10 +263,10 @@ private:
   {
     using namespace std; // For memcpy.
 
-    size_t bytes_avail = bytes_in_buffer_ - read_pos_;
+    size_t bytes_avail = buffer_.size();
     size_t length = (max_length < bytes_avail) ? max_length : bytes_avail;
-    memcpy(data, buffer_ + read_pos_, length);
-    read_pos_ += length;
+    memcpy(data, buffer_.begin(), length);
+    buffer_.pop(length);
 
     return length;
   }
@@ -228,13 +275,7 @@ private:
   Next_Layer next_layer_;
 
   // The data in the buffer.
-  char buffer_[Buffer_Size];
-
-  /// The amount of data currently in the buffer.
-  size_t bytes_in_buffer_;
-
-  /// The current read position in the buffer.
-  size_t read_pos_;
+  Buffer buffer_;
 };
 
 } // namespace asio

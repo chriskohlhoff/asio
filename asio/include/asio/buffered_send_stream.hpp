@@ -22,11 +22,13 @@
 #include <boost/type_traits.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/fixed_buffer.hpp"
+
 namespace asio {
 
 /// The buffered_send_stream class template can be used to add buffering to the
 /// send-related operations of a stream.
-template <typename Next_Layer>
+template <typename Next_Layer, typename Buffer = fixed_buffer<8192> >
 class buffered_send_stream
   : private boost::noncopyable
 {
