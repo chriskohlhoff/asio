@@ -181,6 +181,8 @@ public:
       ::LocalFree(msg_buf);
       return msg;
     }
+#elif defined(__sun)
+    return std::string(strerror(code_));
 #else
     char buf[256] = "";
     return std::string(strerror_r(code_, buf, sizeof(buf)));

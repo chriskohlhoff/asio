@@ -197,6 +197,13 @@ public:
       gethostbyaddr(reinterpret_cast<const char*>(&addr_.sin_addr),
           sizeof(addr_.sin_addr), AF_INET);
     return ent_result ? ent_result->h_name : "";
+#elif defined(__sun)
+    hostent ent;
+    char buf[1024] = "";
+    int error;
+    gethostbyaddr_r((const char*)&addr_.sin_addr, sizeof(addr_.sin_addr),
+        AF_INET, &ent, buf, sizeof(buf), &error);
+    return ent.h_name;
 #else
     hostent ent;
     hostent* ent_result;
@@ -218,6 +225,14 @@ public:
     good_ = (ent_result != 0);
     if (good_)
       memcpy(&addr_.sin_addr, ent_result->h_addr, sizeof(addr_.sin_addr));
+#elif defined(__sun)
+    hostent ent;
+    char buf[1024] = "";
+    int error;
+    good_ = (gethostbyname_r(host.c_str(), &ent, buf, sizeof(buf),
+        &error) == 0);
+    if (good_)
+      memcpy(&addr_.sin_addr, ent.h_addr, sizeof(addr_.sin_addr));
 #else
     hostent ent;
     hostent* ent_result;

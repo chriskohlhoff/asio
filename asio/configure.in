@@ -38,6 +38,10 @@ case $host in
     CXXFLAGS="$CXXFLAGS -pthread"
     LDFLAGS="$LDFLAGS -pthread"
     ;;
+  *-*-solaris*)
+    CXXFLAGS="$CXXFLAGS -D_REENTRANT"
+    LIBS="$LIBS -lsocket -lnsl -lpthread"
+    ;;
   *-*-mingw32*)
     LIBS="$LIBS -lws2_32"
     ;;

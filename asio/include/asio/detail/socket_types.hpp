@@ -29,6 +29,9 @@
 # include <netinet/tcp.h>
 # include <arpa/inet.h>
 # include <netdb.h>
+# if defined(__sun)
+#  include <sys/filio.h>
+# endif
 #endif
 #include "asio/detail/pop_options.hpp"
 
