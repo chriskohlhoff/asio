@@ -51,31 +51,10 @@ private:
   std::vector<char> data_;
 };
 
-template <typename Stream>
-size_t send_chat_message(Stream& s, chat_message& msg)
-{
-  return asio::send_n(s, msg.data(), msg.length());
-}
-
 template <typename Stream, typename Handler>
 void async_send_chat_message(Stream& s, chat_message& msg, Handler handler)
 {
   asio::async_send_n(s, msg.data(), msg.length(), handler);
-}
-
-template <typename Stream>
-size_t recv_chat_message(Stream& s, chat_message& msg)
-{
-  msg.length(chat_message::header_length);
-  if (asio::recv_n(s, msg.data(), chat_message::header_length) == 0)
-    return 0;
-  std::istrstream is(msg.data(), chat_message::header_length);
-  size_t body_length = 0;
-  is >> body_length;
-  if (!is || body_length > chat_message::max_body_length)
-    return 0;
-  msg.length(chat_message::header_length + body_length);
-  return asio::recv_n(s, msg.body(), msg.body_length());
 }
 
 template <typename Stream, typename Handler>
