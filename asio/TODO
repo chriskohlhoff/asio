@@ -26,8 +26,8 @@ used to integrate a demuxer event processing loop into an existing event loop.
 SSL stream template
 -------------------
 Develop an ssl_stream<> decorator template that uses openssl to add encryption
-support while preserving the ability to asynchronous communication. Apparently
-the BIO* functions can be used to do this.
+support while preserving the ability to use asynchronous communication.
+Apparently the BIO* functions can be used to do this.
 
 Add a process control class
 ---------------------------
