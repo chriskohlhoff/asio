@@ -43,7 +43,7 @@ namespace asio {
  * data is sent before the blocking operation completes.
  */
 template <typename Stream>
-size_t send(Stream& s, const void* data, size_t length)
+inline size_t send(Stream& s, const void* data, size_t length)
 {
   return s.send(data, length);
 }
@@ -76,7 +76,7 @@ size_t send(Stream& s, const void* data, size_t length)
  * data is sent before the blocking operation completes.
  */
 template <typename Stream, typename Error_Handler>
-size_t send(Stream& s, const void* data, size_t length,
+inline size_t send(Stream& s, const void* data, size_t length,
     Error_Handler error_handler)
 {
   return s.send(data, length, error_handler);
@@ -110,7 +110,8 @@ size_t send(Stream& s, const void* data, size_t length,
  * all data is sent before the asynchronous operation completes.
  */
 template <typename Stream, typename Handler>
-void async_send(Stream& s, const void* data, size_t length, Handler handler)
+inline void async_send(Stream& s, const void* data, size_t length,
+    Handler handler)
 {
   s.async_send(data, length, handler);
 }
@@ -236,7 +237,8 @@ namespace detail
       }
       else
       {
-        async_send(stream_, static_cast<const char*>(data_) + total_sent_,
+        asio::async_send(stream_,
+            static_cast<const char*>(data_) + total_sent_,
             length_ - total_sent_, *this);
       }
     }
@@ -277,7 +279,8 @@ namespace detail
  * ); @endcode
  */
 template <typename Stream, typename Handler>
-void async_send_n(Stream& s, const void* data, size_t length, Handler handler)
+inline void async_send_n(Stream& s, const void* data, size_t length,
+    Handler handler)
 {
   async_send(s, data, length,
       detail::send_n_handler<Stream, Handler>(s, data, length, handler));
@@ -415,7 +418,8 @@ namespace detail
       }
       else
       {
-        async_send(stream_, static_cast<const char*>(data_) + total_sent_,
+        asio::async_send(stream_,
+            static_cast<const char*>(data_) + total_sent_,
             max_length_ - total_sent_, *this);
       }
     }
@@ -459,8 +463,8 @@ namespace detail
  * ); @endcode
  */
 template <typename Stream, typename Handler>
-void async_send_at_least_n(Stream& s, const void* data, size_t min_length,
-    size_t max_length, Handler handler)
+inline void async_send_at_least_n(Stream& s, const void* data,
+    size_t min_length, size_t max_length, Handler handler)
 {
   if (max_length < min_length)
     min_length = max_length;

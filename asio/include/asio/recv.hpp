@@ -49,7 +49,7 @@ namespace asio {
  * completes.
  */
 template <typename Stream>
-size_t recv(Stream& s, void* data, size_t max_length)
+inline size_t recv(Stream& s, void* data, size_t max_length)
 {
   return s.recv(data, max_length);
 }
@@ -83,7 +83,7 @@ size_t recv(Stream& s, void* data, size_t max_length)
  * completes.
  */
 template <typename Stream, typename Error_Handler>
-size_t recv(Stream& s, void* data, size_t max_length,
+inline size_t recv(Stream& s, void* data, size_t max_length,
     Error_Handler error_handler)
 {
   return s.recv(data, max_length, error_handler);
@@ -118,7 +118,8 @@ size_t recv(Stream& s, void* data, size_t max_length,
  * operation completes.
  */
 template <typename Stream, typename Handler>
-void async_recv(Stream& s, void* data, size_t max_length, Handler handler)
+inline void async_recv(Stream& s, void* data, size_t max_length,
+    Handler handler)
 {
   s.async_recv(data, max_length, handler);
 }
@@ -243,7 +244,7 @@ namespace detail
       }
       else
       {
-        async_recv(stream_, static_cast<char*>(data_) + total_recvd_,
+        asio::async_recv(stream_, static_cast<char*>(data_) + total_recvd_,
             length_ - total_recvd_, *this);
       }
     }
@@ -285,7 +286,7 @@ namespace detail
  * ); @endcode
  */
 template <typename Stream, typename Handler>
-void async_recv_n(Stream& s, void* data, size_t length, Handler handler)
+inline void async_recv_n(Stream& s, void* data, size_t length, Handler handler)
 {
   async_recv(s, data, length,
       detail::recv_n_handler<Stream, Handler>(s, data, length, handler));
@@ -423,7 +424,7 @@ namespace detail
       }
       else
       {
-        async_recv(stream_, static_cast<char*>(data_) + total_recvd_,
+        asio::async_recv(stream_, static_cast<char*>(data_) + total_recvd_,
             max_length_ - total_recvd_, *this);
       }
     }
@@ -468,7 +469,7 @@ namespace detail
  * ); @endcode
  */
 template <typename Stream, typename Handler>
-void async_recv_at_least_n(Stream& s, void* data, size_t min_length,
+inline void async_recv_at_least_n(Stream& s, void* data, size_t min_length,
     size_t max_length, Handler handler)
 {
   if (max_length < min_length)
@@ -717,7 +718,7 @@ void async_recv_decode(Buffered_Stream& s, Decoder decoder, Handler handler)
 
     if (result.first)
     {
-      s.demuxer().dispatch(
+      s.demuxer().post(
           detail::bind_handler(handler, 0, bytes_read, bytes_read));
       return;
     }
@@ -795,7 +796,7 @@ namespace detail
  * on the underlying stream's recv operation.
  */
 template <typename Buffered_Stream>
-size_t recv_until(Buffered_Stream& s, std::string& data,
+inline size_t recv_until(Buffered_Stream& s, std::string& data,
     const std::string& delimiter, size_t* total_bytes_recvd = 0)
 {
   return recv_decode(s, detail::recv_until_decoder(data, delimiter),
@@ -831,7 +832,7 @@ size_t recv_until(Buffered_Stream& s, std::string& data,
  * was reached or the connection was closed cleanly.
  */
 template <typename Buffered_Stream, typename Error_Handler>
-size_t recv_until(Buffered_Stream& s, std::string& data,
+inline size_t recv_until(Buffered_Stream& s, std::string& data,
     const std::string& delimiter, size_t* total_bytes_recvd,
     Error_Handler error_handler)
 {
@@ -868,7 +869,7 @@ size_t recv_until(Buffered_Stream& s, std::string& data,
  * ); @endcode
  */
 template <typename Buffered_Stream, typename Handler>
-void async_recv_until(Buffered_Stream& s, std::string& data,
+inline void async_recv_until(Buffered_Stream& s, std::string& data,
     const std::string& delimiter, Handler handler)
 {
   async_recv_decode(s, detail::recv_until_decoder(data, delimiter), handler);
