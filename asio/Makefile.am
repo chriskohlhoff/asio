@@ -13,3 +13,6 @@ MAINTAINERCLEANFILES = \
 	$(srcdir)/mkinstalldirs \
 	$(srcdir)/Makefile.in \
 	asio-*.tar.gz
+
+EXTRA_DIST = \
+	LICENSE_1_0.txt
