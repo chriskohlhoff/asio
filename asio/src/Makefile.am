@@ -7,6 +7,7 @@ noinst_PROGRAMS = \
 	tests/performance/client \
 	tests/performance/server \
 	tests/unit/demuxer_test \
+	tests/unit/dgram_socket_test \
 	tests/unit/error_handler_test \
 	tests/unit/fixed_buffer_test \
 	tests/unit/timer_test \
@@ -28,8 +29,10 @@ noinst_PROGRAMS = \
 
 TESTS = \
 	tests/unit/demuxer_test \
+	tests/unit/dgram_socket_test \
 	tests/unit/error_handler_test \
-	tests/unit/fixed_buffer_test
+	tests/unit/fixed_buffer_test \
+	tests/unit/timer_test
 
 noinst_HEADERS = \
 	tests/unit/unit_test.hpp \
@@ -41,6 +44,7 @@ tests_socket_accept_test_SOURCES = tests/socket_accept_test.cpp
 tests_performance_client_SOURCES = tests/performance/client.cpp
 tests_performance_server_SOURCES = tests/performance/server.cpp
 tests_unit_demuxer_test_SOURCES = tests/unit/demuxer_test.cpp
+tests_unit_dgram_socket_test_SOURCES = tests/unit/dgram_socket_test.cpp
 tests_unit_error_handler_test_SOURCES = tests/unit/error_handler_test.cpp
 tests_unit_fixed_buffer_test_SOURCES = tests/unit/fixed_buffer_test.cpp
 tests_unit_timer_test_SOURCES = tests/unit/timer_test.cpp
