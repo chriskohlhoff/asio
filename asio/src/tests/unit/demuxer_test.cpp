@@ -170,6 +170,21 @@ void demuxer_test()
 
   // The run() calls will not return until all work has finished.
   UNIT_TEST_CHECK(count == 3);
+
+  count = 10;
+  demuxer d2;
+  d.dispatch(d2.wrap(boost::bind(decrement_to_zero, &d2, &count)));
+  d.reset();
+  d.run();
+
+  // No decrement_to_zero handlers can be called until run() is called on the
+  // second demuxer object.
+  UNIT_TEST_CHECK(count == 10);
+
+  d2.run();
+
+  // The run() call will not return until all work has finished.
+  UNIT_TEST_CHECK(count == 0);
 }
 
 UNIT_TEST(demuxer_test)

@@ -162,6 +162,48 @@ public:
     service_.post(handler);
   }
 
+  template <typename Handler>
+  class wrapped_handler
+  {
+  public:
+    wrapped_handler(basic_demuxer<Demuxer_Service>& demuxer, Handler handler)
+      : demuxer_(demuxer),
+        handler_(handler)
+    {
+    }
+
+    void operator()()
+    {
+      demuxer_.dispatch(handler_);
+    }
+
+    void operator()() const
+    {
+      demuxer_.dispatch(handler_);
+    }
+
+  private:
+    basic_demuxer<Demuxer_Service>& demuxer_;
+    Handler handler_;
+  };
+
+  /// Create a new handler that automatically dispatches the wrapped handler
+  /// on the demuxer.
+  /**
+   * This function is used to create a new handler function object that, when
+   * invoked, will automatically pass the wrapped handler to the demuxer's
+   * dispatch function.
+   *
+   * @param handler The handler to be wrapped. The demuxer will make a copy
+   * of the handler object as required. The equivalent function signature of
+   * the handler must be: @code void handler(); @endcode
+   */
+  template <typename Handler>
+  wrapped_handler<Handler> wrap(Handler handler)
+  {
+    return wrapped_handler<Handler>(*this, handler);
+  }
+
   /// Obtain the service interface corresponding to the given type.
   /**
    * This function is used to locate a service interface that corresponds to
