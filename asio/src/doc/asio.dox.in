@@ -23,7 +23,7 @@ PROJECT_NAME           = asio
 # This could be handy for archiving the generated documentation or 
 # if some version control system is used.
 
-PROJECT_NUMBER         = 0.1.6
+PROJECT_NUMBER         = 0.1.7
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) 
 # base path where the generated documentation will be put. 
