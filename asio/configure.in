@@ -1,5 +1,6 @@
 AC_INIT(include/asio.hpp)
-AM_INIT_AUTOMAKE(asio, 0.1.12)
+AM_MAINTAINER_MODE
+AM_INIT_AUTOMAKE(asio, [0.1.12])
 
 AC_CANONICAL_HOST
 AM_PROG_CC_C_O
@@ -7,7 +8,7 @@ AC_PROG_CXX
 AC_LANG(C++)
 AC_PROG_RANLIB
 
-AC_DEFINE(_REENTRANT)
+AC_DEFINE(_REENTRANT, [1], [Define this])
 
 AC_ARG_WITH(boost,
   AC_HELP_STRING([--with-boost=DIR],[location of boost distribution]),
@@ -45,10 +46,10 @@ case $host in
     ;;
   *-*-solaris*)
     if test "$GXX" = yes; then
-      CXXFLAGS="$CXXFLAGS -D_REENTRANT"
+      CXXFLAGS="$CXXFLAGS"
     else
       # We'll assume Sun's CC.
-      CXXFLAGS="$CXXFLAGS -mt -D_REENTRANT"
+      CXXFLAGS="$CXXFLAGS -mt"
     fi
     LIBS="$LIBS -lsocket -lnsl -lpthread"
     ;;
