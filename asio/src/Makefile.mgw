@@ -23,7 +23,9 @@ EXAMPLE_EXES = \
 	examples\echo\async_tcp_echo_server.exe \
 	examples\echo\async_udp_echo_server.exe \
 	examples\echo\blocking_tcp_echo_client.exe \
+	examples\echo\blocking_tcp_echo_server.exe \
 	examples\echo\blocking_udp_echo_client.exe \
+	examples\echo\blocking_udp_echo_server.exe \
 	examples\tutorial\timer1\timer.exe \
 	examples\tutorial\timer2\timer.exe \
 	examples\tutorial\timer3\timer.exe \

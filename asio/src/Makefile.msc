@@ -21,7 +21,9 @@ all: \
 	examples\echo\async_tcp_echo_server.exe \
 	examples\echo\async_udp_echo_server.exe \
 	examples\echo\blocking_tcp_echo_client.exe \
+	examples\echo\blocking_tcp_echo_server.exe \
 	examples\echo\blocking_udp_echo_client.exe \
+	examples\echo\blocking_udp_echo_server.exe \
 	examples\tutorial\timer1\timer.exe \
 	examples\tutorial\timer2\timer.exe \
 	examples\tutorial\timer3\timer.exe \
@@ -41,7 +43,9 @@ tests\tpc_echo_server_test.exe: tests\tpc_echo_server_test.obj
 examples\echo\async_tcp_echo_server.exe: examples\echo\async_tcp_echo_server.obj
 examples\echo\async_udp_echo_server.exe: examples\echo\async_udp_echo_server.obj
 examples\echo\blocking_tcp_echo_client.exe: examples\echo\blocking_tcp_echo_client.obj
+examples\echo\blocking_tcp_echo_server.exe: examples\echo\blocking_tcp_echo_server.obj
 examples\echo\blocking_udp_echo_client.exe: examples\echo\blocking_udp_echo_client.obj
+examples\echo\blocking_udp_echo_server.exe: examples\echo\blocking_udp_echo_server.obj
 examples\tutorial\timer1\timer.exe: examples\tutorial\timer1\timer.obj
 examples\tutorial\timer2\timer.exe: examples\tutorial\timer2\timer.obj
 examples\tutorial\timer3\timer.exe: examples\tutorial\timer3\timer.obj
