@@ -19,13 +19,14 @@ combinations:
 
   - Redhat Linux 7.3 using gcc 2.95.3
   - Redhat Linux 7.3 using gcc 3.2.1
-  - Redhat Linux 7.3 using gcc 3.4.0
+  - Redhat Linux 7.3 using gcc 3.4.1
+  - SuSE Linux Enterprise Server 8.1 on AMD64 using gcc 3.2.2
   - Microsoft Windows 2000 using MSVC 6 sp5
   - Microsoft Windows 2000 using MSVC 7.1 (Visual Studio .NET 2003)
   - Microsoft Windows 2000 using Borland C++ Builder 6 patch 4 (bcc32 5.6.4)
   - Microsoft Windows 2000 using MinGW 3.1.0-1 (gcc 3.2.3)
   - Sun Solaris 8 using gcc 2.95.3
-  - Sun Solaris 9 using gcc 3.2.2
+  - Sun Solaris 9 using gcc 3.3.2
 
 
 2. Requirements
