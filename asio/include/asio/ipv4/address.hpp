@@ -169,12 +169,6 @@ public:
     return address(INADDR_BROADCAST);
   }
 
-  /// Obtain an address object that represents the no address.
-  static address none()
-  {
-    return address(INADDR_NONE);
-  }
-
 private:
   // The underlying IPv4 address.
   in_addr addr_;

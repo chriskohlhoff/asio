@@ -24,7 +24,7 @@ void error_handler_test()
 
   stream_socket s(d);
   socket_connector c(d);
-  ipv4::tcp::endpoint endpoint(321, ipv4::address::none());
+  ipv4::tcp::endpoint endpoint(321, ipv4::address::any());
 
   socket_error expected_err;
   c.connect(s, endpoint, set_error(expected_err));

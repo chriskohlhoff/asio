@@ -316,10 +316,10 @@ inline hostent* gethostbyaddr_r(const char* addr, int length, int type,
   *result = *ent_result;
   return result;
 #elif defined(__sun)
-  hostent* result = error_wrapper(::gethostbyaddr_r(addr, length, type, result,
+  hostent* retval = error_wrapper(::gethostbyaddr_r(addr, length, type, result,
         buffer, buflength, error));
   *error = translate_netdb_error(*error);
-  return result;
+  return retval;
 #else
   hostent* ent_result = 0;
   error_wrapper(::gethostbyaddr_r(addr, length, type, result, buffer,
@@ -341,10 +341,10 @@ inline hostent* gethostbyname_r(const char* name, struct hostent* result,
   *result = *ent_result;
   return result;
 #elif defined(__sun)
-  hostent* result = error_wrapper(::gethostbyname_r(name, result, buffer,
+  hostent* retval = error_wrapper(::gethostbyname_r(name, result, buffer,
         buflength, error));
   *error = translate_netdb_error(*error);
-  return ent_result;
+  return retval;
 #else
   hostent* ent_result = 0;
   error_wrapper(::gethostbyname_r(name, result, buffer, buflength, &ent_result,
