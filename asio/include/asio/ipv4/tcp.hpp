@@ -23,7 +23,17 @@
 namespace asio {
 namespace ipv4 {
 
-/// The tcp class contains the flags necessary to use TCP sockets.
+/// Encapsulates the flags needed for TCP.
+/**
+ * The asio::ipv4::tcp class contains the flags necessary to use TCP sockets.
+ *
+ * @par Thread Safety:
+ * @e Distinct @e objects: Safe.@n
+ * @e Shared @e objects: Safe.
+ *
+ * @par Concepts:
+ * Protocol.
+ */
 class tcp
 {
 public:

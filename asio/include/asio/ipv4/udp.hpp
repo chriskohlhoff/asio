@@ -22,7 +22,17 @@
 namespace asio {
 namespace ipv4 {
 
-/// The udp class contains the flags necessary to use UDP sockets.
+/// Encapsulates the flags needed for UDP.
+/**
+ * The asio::ipv4::udp class contains the flags necessary to use UDP sockets.
+ *
+ * @par Thread Safety:
+ * @e Distinct @e objects: Safe.@n
+ * @e Shared @e objects: Safe.
+ *
+ * @par Concepts:
+ * Protocol.
+ */
 class udp
 {
 public:

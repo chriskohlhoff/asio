@@ -97,10 +97,12 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 
 <H2>Concepts</H2>
 
+\li Address
 \li Async_Object
 \li Async_Recv_Stream
 \li Async_Send_Stream
 \li Dispatcher
+\li Protocol
 \li Stream
 \li Sync_Recv_Stream
 \li Sync_Send_Stream

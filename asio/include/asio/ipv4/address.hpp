@@ -31,7 +31,18 @@
 namespace asio {
 namespace ipv4 {
 
-/// The address class implements IP version 4 style addresses.
+/// Implements IP version 4 style addresses.
+/**
+ * The asio::ipv4::address class provides the ability to use and manipulate IP
+ * version 4 addresses.
+ *
+ * @par Thread Safety:
+ * @e Distinct @e objects: Safe.@n
+ * @e Shared @e objects: Unsafe.
+ *
+ * @par Concepts:
+ * Address.
+ */
 class address
 {
 public:
@@ -41,9 +52,12 @@ public:
   /// The default datagram-based protocol associated with the address type.
   typedef udp default_dgram_protocol;
 
-  /// The native types of the socket address. These types are dependent on the
+  /// The native type of the address structure. This type is dependent on the
   /// underlying implementation of the socket layer.
   typedef detail::socket_addr_type native_address_type;
+
+  /// The native type for the size of the address structure. This type is
+  /// dependent on the underlying implementation of the socket layer.
   typedef detail::socket_addr_len_type native_size_type;
 
   /// Underlying types for internet addresses.

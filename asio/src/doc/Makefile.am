@@ -23,10 +23,12 @@ EXTRA_DIST = \
 	asio.css \
 	asio_dox.txt \
 	release_checklist.htm \
+  concepts/Address.hpp \
   concepts/Async_Object.hpp \
   concepts/Async_Recv_Stream.hpp \
   concepts/Async_Send_Stream.hpp \
   concepts/Dispatcher.hpp \
+  concepts/Protocol.hpp \
   concepts/Stream.hpp \
   concepts/Sync_Recv_Stream.hpp \
   concepts/Sync_Send_Stream.hpp \
