@@ -80,8 +80,7 @@ public:
         if (handler_queue_ == 0)
           handler_queue_end_ = 0;
         lock.unlock();
-        h->call();
-        delete h;
+        h->call(); // call() deletes the handler object
         lock.lock();
         --outstanding_work_;
       }
@@ -248,25 +247,34 @@ private:
     return false;
   }
 
-  // The base class for all handler wrappers.
+  // The base class for all handler wrappers. A function pointer is used
+  // instead of virtual functions to avoid the associated overhead.
   class handler_base
   {
   public:
-    virtual ~handler_base()
+    typedef void (*func_type)(handler_base*);
+
+    handler_base(func_type func)
+      : next_(0),
+        func_(func)
     {
     }
 
-    virtual void call() = 0;
+    void call()
+    {
+      func_(this);
+    }
 
   protected:
-    handler_base()
-      : next_(0)
+    // Prevent deletion through this type.
+    ~handler_base()
     {
     }
 
   private:
     friend class task_demuxer_service<Task>;
     handler_base* next_;
+    func_type func_;
   };
 
   // Template wrapper for handlers.
@@ -276,13 +284,17 @@ private:
   {
   public:
     handler_wrapper(Handler handler)
-      : handler_(handler)
+      : handler_base(&handler_wrapper<Handler>::do_call),
+        handler_(handler)
     {
     }
 
-    virtual void call()
+    static void do_call(handler_base* base)
     {
-      do_upcall(handler_);
+      handler_wrapper<Handler>* h =
+        static_cast<handler_wrapper<Handler>*>(base);
+      h->do_upcall(h->handler_);
+      delete h;
     }
 
     static void do_upcall(Handler& handler)
