@@ -3,7 +3,6 @@ AUTOMAKE_OPTIONS = subdir-objects
 SUBDIRS = doc
 
 noinst_PROGRAMS = \
-	tests/dispatcher_test \
 	tests/dgram_echo_client_test \
 	tests/dgram_echo_server_test \
 	tests/echo_client_test \
@@ -16,6 +15,7 @@ noinst_PROGRAMS = \
 	tests/tpc_echo_server_test \
 	tests/performance/client \
 	tests/performance/server \
+	tests/unit/demuxer_test \
 	tests/unit/error_handler_test \
 	tests/unit/fixed_buffer_test \
 	examples/chat/chat_client \
@@ -32,6 +32,7 @@ noinst_PROGRAMS = \
 	examples/tutorial/timer4/timer
 
 TESTS = \
+	tests/unit/demuxer_test \
 	tests/unit/error_handler_test \
 	tests/unit/fixed_buffer_test
 
@@ -41,7 +42,6 @@ noinst_HEADERS = \
 
 AM_CXXFLAGS = -I../include
 
-tests_dispatcher_test_SOURCES = tests/dispatcher_test.cpp
 tests_dgram_echo_server_test_SOURCES = tests/dgram_echo_server_test.cpp
 tests_dgram_echo_client_test_SOURCES = tests/dgram_echo_client_test.cpp
 tests_echo_client_test_SOURCES = tests/echo_client_test.cpp
@@ -54,6 +54,7 @@ tests_timer_test_SOURCES = tests/timer_test.cpp
 tests_tpc_echo_server_test_SOURCES = tests/tpc_echo_server_test.cpp
 tests_performance_client_SOURCES = tests/performance/client.cpp
 tests_performance_server_SOURCES = tests/performance/server.cpp
+tests_unit_demuxer_test_SOURCES = tests/unit/demuxer_test.cpp
 tests_unit_error_handler_test_SOURCES = tests/unit/error_handler_test.cpp
 tests_unit_fixed_buffer_test_SOURCES = tests/unit/fixed_buffer_test.cpp
 examples_chat_chat_client_SOURCES = examples/chat/chat_client.cpp
