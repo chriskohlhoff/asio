@@ -17,6 +17,7 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/dgram_socket_base.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_error.hpp"
 #include "asio/detail/bind_handler.hpp"
@@ -125,6 +126,29 @@ public:
     if (socket_ops::getsockname(impl, endpoint.native_data(), &addr_len))
       error_handler(socket_error(socket_ops::get_error()));
     endpoint.native_size(addr_len);
+  }
+
+  /// Disable sends or receives on the socket.
+  template <typename Error_Handler>
+  void shutdown(impl_type& impl, dgram_socket_base::shutdown_type what,
+      Error_Handler error_handler)
+  {
+    int shutdown_flag;
+    switch (what)
+    {
+    case dgram_socket_base::shutdown_recv:
+      shutdown_flag = shutdown_recv;
+      break;
+    case dgram_socket_base::shutdown_send:
+      shutdown_flag = shutdown_send;
+      break;
+    case dgram_socket_base::shutdown_both:
+    default:
+      shutdown_flag = shutdown_both;
+      break;
+    }
+    if (socket_ops::shutdown(impl, shutdown_flag) != 0)
+      error_handler(socket_error(socket_ops::get_error()));
   }
 
   // Send a datagram to the specified endpoint. Returns the number of bytes

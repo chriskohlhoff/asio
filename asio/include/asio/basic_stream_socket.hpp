@@ -23,6 +23,7 @@
 
 #include "asio/default_error_handler.hpp"
 #include "asio/service_factory.hpp"
+#include "asio/stream_socket_base.hpp"
 
 namespace asio {
 
@@ -43,7 +44,8 @@ namespace asio {
  */
 template <typename Service>
 class basic_stream_socket
-  : private boost::noncopyable
+  : public stream_socket_base,
+    private boost::noncopyable
 {
 public:
   /// The type of the service that will be used to provide socket operations.
@@ -273,6 +275,40 @@ public:
   void get_remote_endpoint(Endpoint& endpoint, Error_Handler error_handler)
   {
     service_.get_remote_endpoint(impl_, endpoint, error_handler);
+  }
+
+  /// Disable sends or receives on the socket.
+  /**
+   * This function is used to disable send operations, receive operations, or
+   * both.
+   *
+   * @param what Determines what types of operation will no longer be allowed.
+   *
+   * @throws socket_error Thrown on failure.
+   */
+  void shutdown(shutdown_type what)
+  {
+    service_.shutdown(impl_, what, default_error_handler());
+  }
+
+  /// Disable sends or receives on the socket.
+  /**
+   * This function is used to disable send operations, receive operations, or
+   * both.
+   *
+   * @param what Determines what types of operation will no longer be allowed.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Error_Handler>
+  void shutdown(shutdown_type what, Error_Handler error_handler)
+  {
+    service_.shutdown(impl_, what, error_handler);
   }
 
   /// Send the given data to the peer.

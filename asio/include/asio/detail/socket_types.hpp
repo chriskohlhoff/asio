@@ -48,6 +48,9 @@ typedef sockaddr_in inet_addr_v4_type;
 typedef int socket_addr_len_type;
 typedef int socket_len_type;
 typedef unsigned long ioctl_arg_type;
+const int shutdown_recv = SD_RECEIVE;
+const int shutdown_send = SD_SEND;
+const int shutdown_both = SD_BOTH;
 #else
 typedef int socket_type;
 const int invalid_socket = -1;
@@ -58,6 +61,9 @@ typedef sockaddr_in inet_addr_v4_type;
 typedef socklen_t socket_addr_len_type;
 typedef socklen_t socket_len_type;
 typedef int ioctl_arg_type;
+const int shutdown_recv = SHUT_RD;
+const int shutdown_send = SHUT_WR;
+const int shutdown_both = SHUT_RDWR;
 #endif
 
 } // namespace detail

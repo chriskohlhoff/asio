@@ -71,14 +71,20 @@ inline int bind(socket_type s, const socket_addr_type* addr,
   return error_wrapper(::bind(s, addr, addrlen));
 }
 
-inline void close(socket_type s)
+inline int close(socket_type s)
 {
   set_error(0);
 #if defined(_WIN32)
-  error_wrapper(::closesocket(s));
+  return error_wrapper(::closesocket(s));
 #else // defined(_WIN32)
-  error_wrapper(::close(s));
+  return error_wrapper(::close(s));
 #endif // defined(_WIN32)
+}
+
+inline int shutdown(socket_type s, int what)
+{
+  set_error(0);
+  return error_wrapper(::shutdown(s, what));
 }
 
 inline int connect(socket_type s, const socket_addr_type* addr,

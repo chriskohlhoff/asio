@@ -22,6 +22,7 @@
 #include "asio/basic_demuxer.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_error.hpp"
+#include "asio/stream_socket_base.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -120,6 +121,29 @@ public:
     if (socket_ops::getpeername(impl, endpoint.native_data(), &addr_len))
       error_handler(socket_error(socket_ops::get_error()));
     endpoint.native_size(addr_len);
+  }
+
+  /// Disable sends or receives on the socket.
+  template <typename Error_Handler>
+  void shutdown(impl_type& impl, stream_socket_base::shutdown_type what,
+      Error_Handler error_handler)
+  {
+    int shutdown_flag;
+    switch (what)
+    {
+    case stream_socket_base::shutdown_recv:
+      shutdown_flag = shutdown_recv;
+      break;
+    case stream_socket_base::shutdown_send:
+      shutdown_flag = shutdown_send;
+      break;
+    case stream_socket_base::shutdown_both:
+    default:
+      shutdown_flag = shutdown_both;
+      break;
+    }
+    if (socket_ops::shutdown(impl, shutdown_flag) != 0)
+      error_handler(socket_error(socket_ops::get_error()));
   }
 
   // Send the given data to the peer. Returns the number of bytes sent or
