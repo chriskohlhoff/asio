@@ -68,7 +68,8 @@ directory when running configure:
 When specifying the boost directory in this way you should ensure that you use
 an absolute path.
 
-To build, simply run `make' in the root directory of the asio source kit.
+To build, simply run `make' in the root directory of the asio source kit. To
+test that asio is working correctly, run `make check' after a successful build.
 
 
 5. Building the tests on Win32
@@ -89,6 +90,9 @@ steps:
 
   - Execute the command `nmake -f Makefile.msc'.
 
+  - Execute the command `nmake -f Makefile.msc check' to run a suite of tests
+    to confirm that asio is working correctly.
+
 5.2. Building with Borland C++
 
 To build using the Borland C++ Builder 6 command line compiler, perform the
@@ -103,6 +107,9 @@ following steps:
   - Change to the asio `src' directory.
 
   - Execute the command `make -f Makefile.bor'.
+
+  - Execute the command `make -f Makefile.bor check' to run a suite of tests to
+    confirm that asio is working correctly.
 
 5.3. Building with MinGW
 
