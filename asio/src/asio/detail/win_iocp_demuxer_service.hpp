@@ -77,6 +77,17 @@ public:
       return false;
     }
 
+    // Ensure that the context has been released.
+    template <typename Completion_Context>
+    void release_context(Completion_Context& context)
+    {
+      if (context_acquired_)
+      {
+        context_acquired_ = false;
+        context.release();
+      }
+    }
+
     static void context_acquired(HANDLE iocp, operation* op)
     {
       op->context_acquired_ = true;

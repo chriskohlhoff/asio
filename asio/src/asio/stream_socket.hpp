@@ -19,12 +19,22 @@
 
 #include "asio/basic_stream_socket.hpp"
 #include "asio/demuxer.hpp"
-#include "asio/detail/select_reactor.hpp"
-#include "asio/detail/reactive_stream_socket_service.hpp"
+#if defined(_WIN32)
+# include "asio/detail/win_iocp_stream_socket_service.hpp"
+#else
+# include "asio/detail/select_reactor.hpp"
+# include "asio/detail/reactive_stream_socket_service.hpp"
+#endif
 
 namespace asio {
 
 /// Typedef for the typical usage of stream_socket.
+#if defined(_WIN32)
+typedef basic_stream_socket
+  <
+    detail::win_iocp_stream_socket_service
+  > stream_socket;
+#else
 typedef basic_stream_socket
   <
     detail::reactive_stream_socket_service
@@ -33,6 +43,7 @@ typedef basic_stream_socket
         detail::select_reactor
       >
   > stream_socket;
+#endif
 
 } // namespace asio
 
