@@ -15,11 +15,14 @@
 #ifndef ASIO_INET_ADDRESS_V4_HPP
 #define ASIO_INET_ADDRESS_V4_HPP
 
-#include <string>
-#include <boost/integer.hpp>
-#include "asio/socket_address.hpp"
+#include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <string>
+#include <boost/integer.hpp>
+#include "asio/detail/pop_options.hpp"
+
+#include "asio/socket_address.hpp"
 
 namespace asio {
 

@@ -15,13 +15,16 @@
 #ifndef ASIO_DETAIL_SOCKET_OPS_HPP
 #define ASIO_DETAIL_SOCKET_OPS_HPP
 
+#include "asio/detail/push_options.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <cerrno>
-#include "asio/detail/socket_types.hpp"
 #if !defined(_WIN32)
 #include <sys/ioctl.h>
 #endif
+#include "asio/detail/pop_options.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/socket_types.hpp"
 
 namespace asio {
 namespace detail {

@@ -13,7 +13,10 @@
 //
 
 #include "asio/generic_address.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <string.h>
+#include "asio/detail/pop_options.hpp"
 
 namespace asio {
 

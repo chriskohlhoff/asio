@@ -13,13 +13,17 @@
 //
 
 #include "asio/detail/select_interrupter.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <boost/throw_exception.hpp>
-#include "asio/socket_error.hpp"
-#include "asio/detail/socket_holder.hpp"
-#include "asio/detail/socket_ops.hpp"
 #if !defined(_WIN32)
 #include <fcntl.h>
 #endif // !defined(_WIN32)
+#include "asio/detail/pop_options.hpp"
+
+#include "asio/socket_error.hpp"
+#include "asio/detail/socket_holder.hpp"
+#include "asio/detail/socket_ops.hpp"
 
 namespace asio {
 namespace detail {

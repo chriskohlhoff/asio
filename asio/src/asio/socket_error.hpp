@@ -15,11 +15,15 @@
 #ifndef ASIO_SOCKET_ERROR_HPP
 #define ASIO_SOCKET_ERROR_HPP
 
-#include <cerrno>
-#include <stdexcept>
-#include "asio/detail/socket_types.hpp"
+#include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <cerrno>
+#include <stdexcept>
+#include <string>
+#include "asio/detail/pop_options.hpp"
+
+#include "asio/detail/socket_types.hpp"
 
 namespace asio {
 

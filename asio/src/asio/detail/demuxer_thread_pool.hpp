@@ -15,13 +15,15 @@
 #ifndef ASIO_DETAIL_DEMUXER_THREAD_POOL_HPP
 #define ASIO_DETAIL_DEMUXER_THREAD_POOL_HPP
 
+#include "asio/detail/push_options.hpp"
+
 #if defined(_WIN32)
 #include "asio/detail/socket_types.hpp"
 #else
-#include <pthread.h>
-#endif // defined(_WIN32)
-
 #include "asio/detail/push_options.hpp"
+#include <pthread.h>
+#include "asio/detail/pop_options.hpp"
+#endif // defined(_WIN32)
 
 namespace asio {
 namespace detail {

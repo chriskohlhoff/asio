@@ -13,8 +13,11 @@
 //
 
 #include "asio/detail/shared_thread_demuxer_provider.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <cassert>
 #include <memory>
+#include "asio/detail/pop_options.hpp"
 
 namespace asio {
 namespace detail {

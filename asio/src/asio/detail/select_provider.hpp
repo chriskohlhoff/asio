@@ -15,14 +15,14 @@
 #ifndef ASIO_DETAIL_SELECT_PROVIDER_HPP
 #define ASIO_DETAIL_SELECT_PROVIDER_HPP
 
+#include "asio/detail/push_options.hpp"
+
 #include "asio/dgram_socket_service.hpp"
 #include "asio/service_provider.hpp"
 #include "asio/socket_acceptor_service.hpp"
 #include "asio/socket_connector_service.hpp"
 #include "asio/stream_socket_service.hpp"
 #include "asio/detail/selector.hpp"
-
-#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {

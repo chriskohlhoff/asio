@@ -15,14 +15,17 @@
 #ifndef ASIO_DETAIL_TIMER_QUEUE_PROVIDER_HPP
 #define ASIO_DETAIL_TIMER_QUEUE_PROVIDER_HPP
 
+#include "asio/detail/push_options.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <map>
 #include <boost/thread.hpp>
 #include <boost/scoped_ptr.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/completion_context.hpp"
 #include "asio/service_provider.hpp"
 #include "asio/timer_queue_service.hpp"
-
-#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {

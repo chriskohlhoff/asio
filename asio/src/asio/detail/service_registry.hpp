@@ -15,15 +15,18 @@
 #ifndef ASIO_DETAIL_SERVICE_REGISTRY_HPP
 #define ASIO_DETAIL_SERVICE_REGISTRY_HPP
 
+#include "asio/detail/push_options.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <list>
 #include <map>
 #include <boost/noncopyable.hpp>
 #include <boost/thread.hpp>
 #include <boost/shared_ptr.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/service_provider.hpp"
 #include "asio/service_provider_factory.hpp"
-
-#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {

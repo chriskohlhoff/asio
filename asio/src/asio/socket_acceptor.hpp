@@ -15,13 +15,16 @@
 #ifndef ASIO_SOCKET_ACCEPTOR_HPP
 #define ASIO_SOCKET_ACCEPTOR_HPP
 
+#include "asio/detail/push_options.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <boost/function.hpp>
 #include <boost/noncopyable.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/completion_context.hpp"
 #include "asio/stream_socket.hpp"
 #include "asio/detail/socket_types.hpp"
-
-#include "asio/detail/push_options.hpp"
 
 namespace asio {
 

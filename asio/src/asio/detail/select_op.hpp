@@ -15,9 +15,9 @@
 #ifndef ASIO_DETAIL_SELECT_OP_HPP
 #define ASIO_DETAIL_SELECT_OP_HPP
 
-#include "asio/detail/socket_types.hpp"
-
 #include "asio/detail/push_options.hpp"
+
+#include "asio/detail/socket_types.hpp"
 
 namespace asio {
 namespace detail {

@@ -13,7 +13,10 @@
 //
 
 #include "asio/detail/demuxer_thread_pool.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <boost/thread.hpp>
+#include "asio/detail/pop_options.hpp"
 
 namespace asio {
 namespace detail {

@@ -15,11 +15,14 @@
 #ifndef ASIO_BUFFERED_SEND_STREAM_HPP
 #define ASIO_BUFFERED_SEND_STREAM_HPP
 
-#include <boost/noncopyable.hpp>
-#include <boost/type_traits.hpp>
-#include "asio/completion_context.hpp"
+#include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <boost/noncopyable.hpp>
+#include <boost/type_traits.hpp>
+#include "asio/detail/pop_options.hpp"
+
+#include "asio/completion_context.hpp"
 
 namespace asio {
 

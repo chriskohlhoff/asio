@@ -15,9 +15,9 @@
 #ifndef ASIO_GENERIC_ADDRESS_HPP
 #define ASIO_GENERIC_ADDRESS_HPP
 
-#include "asio/socket_address.hpp"
-
 #include "asio/detail/push_options.hpp"
+
+#include "asio/socket_address.hpp"
 
 namespace asio {
 

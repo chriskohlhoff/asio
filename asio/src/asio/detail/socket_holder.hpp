@@ -15,10 +15,13 @@
 #ifndef ASIO_DETAIL_SOCKET_HOLDER_HPP
 #define ASIO_DETAIL_SOCKET_HOLDER_HPP
 
-#include <boost/noncopyable.hpp>
-#include "asio/detail/socket_ops.hpp"
+#include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <boost/noncopyable.hpp>
+#include "asio/detail/pop_options.hpp"
+
+#include "asio/detail/socket_ops.hpp"
 
 namespace asio {
 namespace detail {

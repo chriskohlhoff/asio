@@ -13,8 +13,12 @@
 //
 
 #include "asio/detail/selector.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <csignal>
 #include <boost/bind.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/demuxer.hpp"
 #include "asio/detail/socket_types.hpp"
 

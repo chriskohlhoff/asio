@@ -15,9 +15,9 @@
 #ifndef ASIO_SERVICE_PROVIDER_HPP
 #define ASIO_SERVICE_PROVIDER_HPP
 
-#include "asio/service_type_id.hpp"
-
 #include "asio/detail/push_options.hpp"
+
+#include "asio/service_type_id.hpp"
 
 namespace asio {
 

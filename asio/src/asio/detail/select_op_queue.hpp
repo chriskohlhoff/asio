@@ -15,10 +15,13 @@
 #ifndef ASIO_DETAIL_SELECT_OP_QUEUE_HPP
 #define ASIO_DETAIL_SELECT_OP_QUEUE_HPP
 
-#include <map>
-#include "asio/detail/socket_types.hpp"
+#include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <map>
+#include "asio/detail/pop_options.hpp"
+
+#include "asio/detail/socket_types.hpp"
 
 namespace asio {
 namespace detail {

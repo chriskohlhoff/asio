@@ -15,12 +15,12 @@
 #ifndef ASIO_SOCKET_CONNECTOR_SERVICE_HPP
 #define ASIO_SOCKET_CONNECTOR_SERVICE_HPP
 
+#include "asio/detail/push_options.hpp"
+
 #include "asio/service.hpp"
 #include "asio/service_type_id.hpp"
 #include "asio/socket_connector.hpp"
 #include "asio/stream_socket.hpp"
-
-#include "asio/detail/push_options.hpp"
 
 namespace asio {
 

@@ -15,9 +15,9 @@
 #ifndef ASIO_COUNTING_COMPLETION_CONTEXT_HPP
 #define ASIO_COUNTING_COMPLETION_CONTEXT_HPP
 
-#include "asio/completion_context.hpp"
-
 #include "asio/detail/push_options.hpp"
+
+#include "asio/completion_context.hpp"
 
 namespace asio {
 

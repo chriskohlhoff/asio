@@ -15,13 +15,16 @@
 #ifndef ASIO_DETAIL_SELECTOR_HPP
 #define ASIO_DETAIL_SELECTOR_HPP
 
+#include "asio/detail/push_options.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <boost/noncopyable.hpp>
 #include <boost/thread.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/demuxer_task.hpp"
 #include "asio/detail/select_interrupter.hpp"
 #include "asio/detail/select_op_queue.hpp"
-
-#include "asio/detail/push_options.hpp"
 
 namespace asio { class demuxer; }
 

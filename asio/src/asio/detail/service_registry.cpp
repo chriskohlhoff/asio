@@ -13,7 +13,11 @@
 //
 
 #include "asio/detail/service_registry.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <boost/throw_exception.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/service_unavailable.hpp"
 
 namespace asio {

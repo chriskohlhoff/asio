@@ -4,8 +4,8 @@
 BOOSTDIR = ../../boost_1_30_0
 !endif
 
-BOR_CXXFLAGS = -q -O2 -v -vi -y -tWM -tWR -tWC -w-inl -w-par -I$(BOOSTDIR)
-BOR_LDFLAGS = -q -O2 -v -vi -y -tWM -tWR -tWC -L$(BOOSTDIR)/libs/thread/build/bin-stage
+BOR_CXXFLAGS = -q -O2 -v -vi -y -a8 -b -Ve- -Vx- -tWM -tWR -tWC -w-inl -w-par -I$(BOOSTDIR)
+BOR_LDFLAGS = -q -O2 -v -vi -y -a8 -b -Ve- -Vx- -tWM -tWR -tWC -L$(BOOSTDIR)/libs/thread/build/bin-stage
 
 BOR_lib_libasio_a = ../lib/asio.lib
 BOR_lib_LIBRARIES = $(BOR_lib_libasio_a)

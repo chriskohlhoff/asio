@@ -15,9 +15,11 @@
 #ifndef ASIO_COMPLETION_CONTEXT_HPP
 #define ASIO_COMPLETION_CONTEXT_HPP
 
-#include <boost/noncopyable.hpp>
+#include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <boost/noncopyable.hpp>
+#include "asio/detail/pop_options.hpp"
 
 namespace asio {
 

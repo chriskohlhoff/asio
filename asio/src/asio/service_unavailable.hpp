@@ -15,10 +15,13 @@
 #ifndef ASIO_SERVICE_UNAVAILABLE_HPP
 #define ASIO_SERVICE_UNAVAILABLE_HPP
 
-#include <stdexcept>
-#include "asio/service_type_id.hpp"
+#include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <stdexcept>
+#include "asio/detail/pop_options.hpp"
+
+#include "asio/service_type_id.hpp"
 
 namespace asio {
 

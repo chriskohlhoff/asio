@@ -13,7 +13,12 @@
 //
 
 #include "asio/socket_acceptor.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <boost/throw_exception.hpp>
+#include <cassert>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/demuxer.hpp"
 #include "asio/socket_acceptor_service.hpp"
 #include "asio/socket_address.hpp"

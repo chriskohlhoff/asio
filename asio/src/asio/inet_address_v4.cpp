@@ -13,10 +13,13 @@
 //
 
 #include "asio/inet_address_v4.hpp"
+
+#include "asio/detail/push_options.hpp"
 #if !defined(_WIN32)
 #include <netdb.h>
 #endif
 #include <string.h>
+#include "asio/detail/pop_options.hpp"
 
 namespace asio {
 

@@ -15,9 +15,11 @@
 #ifndef ASIO_DEMUXER_TASK_HPP
 #define ASIO_DEMUXER_TASK_HPP
 
-#include <boost/thread/xtime.hpp>
+#include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <boost/thread/xtime.hpp>
+#include "asio/detail/pop_options.hpp"
 
 namespace asio {
 

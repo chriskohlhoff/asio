@@ -15,12 +15,15 @@
 #ifndef ASIO_TIMER_QUEUE_HPP
 #define ASIO_TIMER_QUEUE_HPP
 
+#include "asio/detail/push_options.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <boost/function.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/thread/xtime.hpp>
-#include "asio/completion_context.hpp"
+#include "asio/detail/pop_options.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "asio/completion_context.hpp"
 
 namespace asio {
 

@@ -15,11 +15,11 @@
 #ifndef ASIO_DEMUXER_SERVICE_HPP
 #define ASIO_DEMUXER_SERVICE_HPP
 
+#include "asio/detail/push_options.hpp"
+
 #include "asio/demuxer.hpp"
 #include "asio/service.hpp"
 #include "asio/service_type_id.hpp"
-
-#include "asio/detail/push_options.hpp"
 
 namespace asio {
 

@@ -13,7 +13,10 @@
 //
 
 #include "asio/detail/socket_connector_impl.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <cassert>
+#include "asio/detail/pop_options.hpp"
 
 namespace asio {
 namespace detail {

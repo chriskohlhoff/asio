@@ -13,7 +13,6 @@
 //
 
 #include "asio/socket_error.hpp"
-#include <string>
 
 namespace asio {
 

@@ -15,11 +15,11 @@
 #ifndef ASIO_TIMER_QUEUE_SERVICE_HPP
 #define ASIO_TIMER_QUEUE_SERVICE_HPP
 
+#include "asio/detail/push_options.hpp"
+
 #include "asio/service.hpp"
 #include "asio/service_type_id.hpp"
 #include "asio/timer_queue.hpp"
-
-#include "asio/detail/push_options.hpp"
 
 namespace asio {
 

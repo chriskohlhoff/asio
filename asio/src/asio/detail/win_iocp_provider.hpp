@@ -15,6 +15,8 @@
 #ifndef ASIO_DETAIL_WIN_IOCP_PROVIDER_HPP
 #define ASIO_DETAIL_WIN_IOCP_PROVIDER_HPP
 
+#include "asio/detail/push_options.hpp"
+
 #if defined(_WIN32) // This provider is only supported on Win32
 
 #include "asio/completion_context_locker.hpp"
@@ -23,8 +25,6 @@
 #include "asio/service_provider.hpp"
 #include "asio/stream_socket_service.hpp"
 #include "asio/detail/demuxer_thread_pool.hpp"
-
-#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -151,8 +151,8 @@ private:
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
-
 #endif // defined(_WIN32)
+
+#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_WIN_IOCP_PROVIDER_HPP

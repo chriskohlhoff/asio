@@ -13,7 +13,11 @@
 //
 
 #include "asio/detail/timer_queue_provider.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <boost/bind.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/completion_context.hpp"
 #include "asio/demuxer.hpp"
 #include "asio/service_unavailable.hpp"

@@ -13,7 +13,11 @@
 //
 
 #include "asio/detail/select_op_queue.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <cassert>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/detail/select_op.hpp"
 
 namespace asio {

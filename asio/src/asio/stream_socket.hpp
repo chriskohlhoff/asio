@@ -15,12 +15,15 @@
 #ifndef ASIO_STREAM_SOCKET_HPP
 #define ASIO_STREAM_SOCKET_HPP
 
-#include <boost/function.hpp>
-#include <boost/noncopyable.hpp>
-#include "asio/completion_context.hpp"
-#include "asio/detail/socket_types.hpp"
+#include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <boost/function.hpp>
+#include <boost/noncopyable.hpp>
+#include "asio/detail/pop_options.hpp"
+
+#include "asio/completion_context.hpp"
+#include "asio/detail/socket_types.hpp"
 
 namespace asio {
 

@@ -15,11 +15,11 @@
 #ifndef ASIO_DGRAM_SOCKET_SERVICE_HPP
 #define ASIO_DGRAM_SOCKET_SERVICE_HPP
 
+#include "asio/detail/push_options.hpp"
+
 #include "asio/service.hpp"
 #include "asio/service_type_id.hpp"
 #include "asio/dgram_socket.hpp"
-
-#include "asio/detail/push_options.hpp"
 
 namespace asio {
 

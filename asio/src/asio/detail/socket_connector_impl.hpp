@@ -15,12 +15,15 @@
 #ifndef ASIO_DETAIL_SOCKET_CONNECTOR_IMPL_HPP
 #define ASIO_DETAIL_SOCKET_CONNECTOR_IMPL_HPP
 
+#include "asio/detail/push_options.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <set>
 #include <boost/noncopyable.hpp>
 #include <boost/thread.hpp>
-#include "asio/detail/socket_types.hpp"
+#include "asio/detail/pop_options.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/socket_types.hpp"
 
 namespace asio {
 namespace detail {

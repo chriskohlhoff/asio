@@ -13,8 +13,12 @@
 //
 
 #include "asio/stream_socket.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <boost/throw_exception.hpp>
 #include <cassert>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/demuxer.hpp"
 #include "asio/socket_error.hpp"
 #include "asio/stream_socket_service.hpp"

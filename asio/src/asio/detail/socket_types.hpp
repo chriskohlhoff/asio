@@ -15,6 +15,9 @@
 #ifndef ASIO_DETAIL_SOCKET_TYPES_HPP
 #define ASIO_DETAIL_SOCKET_TYPES_HPP
 
+#include "asio/detail/push_options.hpp"
+
+#include "asio/detail/push_options.hpp"
 #if defined(_WIN32)
 # define FD_SETSIZE 1024
 # include <winsock2.h>
@@ -26,8 +29,7 @@
 # include <netinet/tcp.h>
 # include <arpa/inet.h>
 #endif
-
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/pop_options.hpp"
 
 namespace asio {
 namespace detail {

@@ -13,9 +13,12 @@
 //
 
 #include "asio/counting_completion_context.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <boost/thread.hpp>
 #include <cassert>
 #include <queue>
+#include "asio/detail/pop_options.hpp"
 
 namespace asio {
 

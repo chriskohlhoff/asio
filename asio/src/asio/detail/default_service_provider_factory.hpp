@@ -15,9 +15,9 @@
 #ifndef ASIO_DETAIL_DEFAULT_SERVICE_PROVIDER_FACTORY_HPP
 #define ASIO_DETAIL_DEFAULT_SERVICE_PROVIDER_FACTORY_HPP
 
-#include "asio/service_provider_factory.hpp"
-
 #include "asio/detail/push_options.hpp"
+
+#include "asio/service_provider_factory.hpp"
 
 namespace asio {
 namespace detail {

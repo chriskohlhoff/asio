@@ -15,16 +15,19 @@
 #ifndef ASIO_DETAIL_SHARED_THREAD_DEMUXER_PROVIDER_HPP
 #define ASIO_DETAIL_SHARED_THREAD_DEMUXER_PROVIDER_HPP
 
+#include "asio/detail/push_options.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <list>
 #include <queue>
 #include <boost/thread.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/completion_context_locker.hpp"
 #include "asio/demuxer_service.hpp"
 #include "asio/demuxer_task.hpp"
 #include "asio/service_provider.hpp"
 #include "asio/detail/demuxer_thread_pool.hpp"
-
-#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {

@@ -21,7 +21,10 @@
 #include "asio/detail/socket_connector_impl.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
+
+#include "asio/detail/push_options.hpp"
 #include <boost/bind.hpp>
+#include "asio/detail/pop_options.hpp"
 
 namespace asio {
 namespace detail {
