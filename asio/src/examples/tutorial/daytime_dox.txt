@@ -133,7 +133,8 @@ be similarly removed.
 
 See the \ref tutdaytime6src \n
 Return to the \ref tutindex \n
-Go back to \ref tutdaytime5
+Go back to \ref tutdaytime5 \n
+Go on to \ref tutdaytime7
 
 */
 
@@ -141,4 +142,19 @@ Go back to \ref tutdaytime5
 \page tutdaytime6src Source listing for Tutorial Daytime.6
 \include daytime6/server.cpp
 Return to \ref tutdaytime6
+*/
+
+/**
+\page tutdaytime7 Tutorial Daytime.7 - A combined TCP/UDP asynchronous server
+
+See the \ref tutdaytime7src \n
+Return to the \ref tutindex \n
+Go back to \ref tutdaytime6
+
+*/
+
+/**
+\page tutdaytime7src Source listing for Tutorial Daytime.7
+\include daytime7/server.cpp
+Return to \ref tutdaytime7
 */

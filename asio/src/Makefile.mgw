@@ -40,7 +40,8 @@ EXAMPLE_EXES = \
 	examples/tutorial/daytime3/server.exe \
 	examples/tutorial/daytime4/client.exe \
 	examples/tutorial/daytime5/server.exe \
-	examples/tutorial/daytime6/server.exe
+	examples/tutorial/daytime6/server.exe \
+	examples/tutorial/daytime7/server.exe
 
 all: $(TEST_EXES) $(EXAMPLE_EXES)
 

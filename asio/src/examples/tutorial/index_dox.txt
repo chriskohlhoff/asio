@@ -32,4 +32,9 @@ The next three tutorials implement the daytime protocol using UDP.
 \li \ref tutdaytime5
 \li \ref tutdaytime6
 
+The last tutorial in this section demonstrates how asio allows the TCP and UDP
+servers to be easily combined into a single program.
+
+\li \ref tutdaytime7
+
 */

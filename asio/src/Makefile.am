@@ -34,7 +34,8 @@ noinst_PROGRAMS = \
 	examples/tutorial/daytime3/server \
 	examples/tutorial/daytime4/client \
 	examples/tutorial/daytime5/server \
-	examples/tutorial/daytime6/server
+	examples/tutorial/daytime6/server \
+	examples/tutorial/daytime7/server
 
 TESTS = \
 	tests/unit/demuxer_test \
@@ -85,6 +86,7 @@ examples_tutorial_daytime3_server_SOURCES = examples/tutorial/daytime3/server.cp
 examples_tutorial_daytime4_client_SOURCES = examples/tutorial/daytime4/client.cpp
 examples_tutorial_daytime5_server_SOURCES = examples/tutorial/daytime5/server.cpp
 examples_tutorial_daytime6_server_SOURCES = examples/tutorial/daytime6/server.cpp
+examples_tutorial_daytime7_server_SOURCES = examples/tutorial/daytime7/server.cpp
 
 EXTRA_DIST = \
 	Makefile.bor \
