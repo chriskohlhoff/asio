@@ -114,6 +114,17 @@ public:
       error_handler(socket_error(socket_ops::get_error()));
   }
 
+  // Get the local socket address.
+  template <typename Address, typename Error_Handler>
+  void get_local_address(impl_type& impl, Address& address,
+      Error_Handler error_handler)
+  {
+    socket_addr_len_type addr_len = address.native_size();
+    if (socket_ops::getsockname(impl, address.native_address(), &addr_len))
+      error_handler(socket_error(socket_ops::get_error()));
+    address.native_size(addr_len);
+  }
+
   // Send a datagram to the specified address. Returns the number of bytes
   // sent.
   template <typename Address, typename Error_Handler>

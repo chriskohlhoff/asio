@@ -173,6 +173,13 @@ inline int getsockopt(socket_type s, int level, int optname, void* optval,
 #endif // defined(_WIN32)
 }
 
+inline int getsockname(socket_type s, socket_addr_type* addr,
+    socket_addr_len_type* addrlen)
+{
+  set_error(0);
+  return error_wrapper(::getsockname(s, addr, addrlen));
+}
+
 inline int ioctl(socket_type s, long cmd, ioctl_arg_type* arg)
 {
   set_error(0);
