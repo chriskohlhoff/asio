@@ -156,6 +156,17 @@ public:
     values_.erase(it);
   }
 
+  // Remove all entries from the map.
+  void clear()
+  {
+    // Initialise all buckets to empty.
+    for (unsigned int i = 0; i < num_buckets; ++i)
+      buckets_[i].first = buckets_[i].last = values_.end();
+
+    // Clear the values.
+    values_.clear();
+  }
+
 private:
   // The list of all values in the hash map.
   std::list<value_type> values_;

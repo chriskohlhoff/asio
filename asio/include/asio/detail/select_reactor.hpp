@@ -23,6 +23,7 @@
 
 #include "asio/basic_demuxer.hpp"
 #include "asio/detail/bind_handler.hpp"
+#include "asio/detail/hash_map.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/task_demuxer_service.hpp"
 #include "asio/detail/thread.hpp"
@@ -47,6 +48,8 @@ public:
       interrupter_(),
       read_op_queue_(),
       write_op_queue_(),
+      except_op_queue_(),
+      pending_cancellations_(),
       stop_thread_(false),
       thread_(new asio::detail::thread(
             bind_handler(&select_reactor::call_run_thread, this)))
@@ -59,6 +62,8 @@ public:
       interrupter_(),
       read_op_queue_(),
       write_op_queue_(),
+      except_op_queue_(),
+      pending_cancellations_(),
       stop_thread_(false),
       thread_(0)
   {
@@ -98,6 +103,49 @@ public:
       interrupter_.interrupt();
   }
 
+  // Start a new exception operation. The do_operation function of the
+  // select_op object will be invoked when the given descriptor has exception
+  // information available.
+  template <typename Handler>
+  void start_except_op(socket_type descriptor, Handler handler)
+  {
+    asio::detail::mutex::scoped_lock lock(mutex_);
+    if (except_op_queue_.enqueue_operation(descriptor, handler))
+      interrupter_.interrupt();
+  }
+
+  // Start a new write and exception operations. The do_operation function of
+  // the select_op object will be invoked when the given descriptor is ready
+  // for writing or has exception information available.
+  template <typename Handler>
+  void start_write_and_except_ops(socket_type descriptor, Handler handler)
+  {
+    asio::detail::mutex::scoped_lock lock(mutex_);
+    bool interrupt = write_op_queue_.enqueue_operation(descriptor, handler);
+    interrupt = except_op_queue_.enqueue_operation(descriptor, handler)
+      || interrupt;
+    if (interrupt)
+      interrupter_.interrupt();
+  }
+
+  // Cancel all operations associated with the given descriptor. The
+  // do_cancel function of the handler objects will be invoked.
+  void cancel_ops(socket_type descriptor)
+  {
+    asio::detail::mutex::scoped_lock lock(mutex_);
+    cancel_ops_unlocked(descriptor);
+  }
+
+  // Enqueue cancellation of all operations associated with the given
+  // descriptor. The do_cancel function of the handler objects will be invoked.
+  // This function does not acquire the select_reactor's mutex, and so should
+  // only be used from within a reactor handler.
+  void enqueue_cancel_ops_unlocked(socket_type descriptor)
+  {
+    pending_cancellations_.insert(
+        pending_cancellations_map::value_type(descriptor, true));
+  }
+
   // Class template to adapt a close function as a timer handler.
   template <typename Close_Function>
   class close_handler
@@ -132,8 +180,9 @@ public:
     asio::detail::mutex::scoped_lock lock(mutex_);
 
     // We need to interrupt the select if any operations were cancelled.
-    bool interrupt = read_op_queue_.close_descriptor(descriptor);
-    interrupt = write_op_queue_.close_descriptor(descriptor) || interrupt;
+    bool interrupt = read_op_queue_.cancel_operations(descriptor);
+    interrupt = write_op_queue_.cancel_operations(descriptor) || interrupt;
+    interrupt = except_op_queue_.cancel_operations(descriptor) || interrupt;
 
     if (interrupt && select_in_progress_)
     {
@@ -196,6 +245,7 @@ private:
     // loop was not running.
     read_op_queue_.dispatch_cancellations();
     write_op_queue_.dispatch_cancellations();
+    except_op_queue_.dispatch_cancellations();
 
     bool stop = false;
     while (!stop)
@@ -206,8 +256,13 @@ private:
       read_op_queue_.get_descriptors(read_fds);
       fd_set_adaptor write_fds;
       write_op_queue_.get_descriptors(write_fds);
-      int max_fd = (read_fds.max_descriptor() > write_fds.max_descriptor()
-          ? read_fds.max_descriptor() : write_fds.max_descriptor());
+      fd_set_adaptor except_fds;
+      except_op_queue_.get_descriptors(except_fds);
+      int max_fd = read_fds.max_descriptor();
+      if (write_fds.max_descriptor() > max_fd)
+        max_fd = write_fds.max_descriptor();
+      if (except_fds.max_descriptor() > max_fd)
+        max_fd = except_fds.max_descriptor();
 
       // Block on the select call without holding the lock so that new
       // operations can be started while the call is executing.
@@ -215,7 +270,8 @@ private:
       timeval* tv = get_timeout(tv_buf);
       select_in_progress_ = true;
       lock.unlock();
-      int retval = socket_ops::select(max_fd + 1, read_fds, write_fds, 0, tv);
+      int retval = socket_ops::select(max_fd + 1, read_fds, write_fds,
+          except_fds, tv);
       lock.lock();
       select_in_progress_ = false;
 
@@ -228,10 +284,21 @@ private:
       {
         read_op_queue_.dispatch_descriptors(read_fds);
         write_op_queue_.dispatch_descriptors(write_fds);
+        except_op_queue_.dispatch_descriptors(except_fds);
         read_op_queue_.dispatch_cancellations();
         write_op_queue_.dispatch_cancellations();
+        except_op_queue_.dispatch_cancellations();
       }
       timer_queue_.dispatch_timers(detail::time::now());
+
+      // Issue any pending cancellations.
+      pending_cancellations_map::iterator i = pending_cancellations_.begin();
+      while (i != pending_cancellations_.end())
+      {
+        cancel_ops_unlocked(i->first);
+        ++i;
+      }
+      pending_cancellations_.clear();
     }
   }
 
@@ -282,6 +349,18 @@ private:
     }
 
     return &tv;
+  }
+
+  // Cancel all operations associated with the given descriptor. The do_cancel
+  // function of the handler objects will be invoked. This function does not
+  // acquire the select_reactor's mutex.
+  void cancel_ops_unlocked(socket_type descriptor)
+  {
+    bool interrupt = read_op_queue_.cancel_operations(descriptor);
+    interrupt = write_op_queue_.cancel_operations(descriptor) || interrupt;
+    interrupt = except_op_queue_.cancel_operations(descriptor) || interrupt;
+    if (interrupt)
+      interrupter_.interrupt();
   }
 
   // Adapts the FD_SET type to meet the Descriptor_Set concept's requirements.
@@ -336,8 +415,17 @@ private:
   // The queue of write operations.
   reactor_op_queue<socket_type> write_op_queue_;
 
+  // The queue of exception operations.
+  reactor_op_queue<socket_type> except_op_queue_;
+
   // The queue of timers.
   reactor_timer_queue<detail::time> timer_queue_;
+
+  // The type for a map of descriptors to be cancelled.
+  typedef hash_map<socket_type, bool> pending_cancellations_map;
+
+  // The map of descriptors that are pending cancellation.
+  pending_cancellations_map pending_cancellations_;
 
   // Does the reactor loop thread need to stop.
   bool stop_thread_;

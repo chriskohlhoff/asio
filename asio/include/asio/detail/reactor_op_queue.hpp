@@ -61,12 +61,12 @@ public:
     return false;
   }
 
-  // Close the given descriptor. Any operations pending for the descriptor will
-  // be notified that they have been cancelled next time dispatch_cancellations
-  // is called. Returns true if any operations were cancelled, in which case
-  // the reactor's event demultiplexing function may need to be interrupted and
-  // restarted.
-  bool close_descriptor(Descriptor descriptor)
+  // Cancel all operations associated with the descriptor. Any operations
+  // pending for the descriptor will be notified that they have been cancelled
+  // next time dispatch_cancellations is called. Returns true if any operations
+  // were cancelled, in which case the reactor's event demultiplexing function
+  // may need to be interrupted and restarted.
+  bool cancel_operations(Descriptor descriptor)
   {
     typename operation_map::iterator i = operations_.find(descriptor);
     if (i != operations_.end())

@@ -18,7 +18,7 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
-#include <set>
+#include <list>
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -37,15 +37,23 @@ template <typename Demuxer, typename Reactor>
 class reactive_socket_connector_service
 {
 public:
+  struct connection_info
+  {
+    socket_type sock;
+    int ref_count;
+  };
+
+  typedef std::list<connection_info> connection_info_list;
+  typedef typename connection_info_list::iterator connection_info_handle;
+
   class connector_impl
     : private boost::noncopyable
   {
   public:
-    typedef std::set<socket_type> socket_set;
-
     // Default constructor.
     connector_impl()
-      : have_protocol_(false),
+      : ref_count_(1),
+        have_protocol_(false),
         family_(0),
         type_(0),
         protocol_(0)
@@ -54,11 +62,30 @@ public:
 
     // Construct to use a specific protocol.
     connector_impl(int family, int type, int protocol)
-      : have_protocol_(true),
+      : ref_count_(1),
+        have_protocol_(true),
         family_(family),
         type_(type),
         protocol_(protocol)
     {
+    }
+
+    // Increment reference count.
+    void add_ref()
+    {
+      asio::detail::mutex::scoped_lock lock(mutex_);
+      ++ref_count_;
+    }
+
+    // Decrement reference count and delete object if required.
+    void remove_ref()
+    {
+      asio::detail::mutex::scoped_lock lock(mutex_);
+      if (--ref_count_ == 0)
+      {
+        lock.unlock();
+        delete this;
+      }
     }
 
     // Whether a protocol was specified.
@@ -85,33 +112,69 @@ public:
       return protocol_;
     }
 
-    // Add a socket to the set.
-    void add_socket(socket_type s)
+    // Create the connection information associated with a connection
+    // operation. Sets a reference count so that the connection_info object and
+    // the connection implementation itself are not deleted until all
+    // references are removed.
+    connection_info_handle create_connection_info(socket_type s)
     {
       asio::detail::mutex::scoped_lock lock(mutex_);
-      sockets_.insert(s);
+      connection_info new_info;
+      new_info.sock = s;
+      new_info.ref_count = 1;
+      connection_info_list_.push_front(new_info);
+      ++ref_count_;
+      return connection_info_list_.begin();
     }
 
-    // Remove a socket from the set.
-    void remove_socket(socket_type s)
+    // Add a reference to a connection info object.
+    void add_connection_info_ref(connection_info_handle info)
     {
       asio::detail::mutex::scoped_lock lock(mutex_);
-      sockets_.erase(s);
+      ++info->ref_count;
+      ++ref_count_;
     }
 
-    // Get a copy of all sockets in the set.
-    void get_sockets(socket_set& sockets) const
+    // Remove a reference to a connection info object. The object will be
+    // removed from the list if the count has reached zero. If the connector
+    // implementation reference count reaches zero then that object is deleted.
+    // Returns the new reference count of the connection info object.
+    int remove_connection_info_ref(connection_info_handle info)
     {
       asio::detail::mutex::scoped_lock lock(mutex_);
-      sockets = sockets_;
+      int connection_info_ref_count = --info->ref_count;
+      if (connection_info_ref_count == 0)
+        connection_info_list_.erase(info);
+      if (--ref_count_ == 0)
+      {
+        lock.unlock();
+        delete this;
+      }
+      return connection_info_ref_count;
+    }
+
+    // Get a copy of the connection info list.
+    void get_connection_info_list(connection_info_list& info_list) const
+    {
+      asio::detail::mutex::scoped_lock lock(mutex_);
+      info_list = connection_info_list_;
     }
 
   private:
+    // Private destructor to prevent direct deletion.
+    ~connector_impl()
+    {
+    }
+
     // Mutex to protect access to the internal data.
     mutable asio::detail::mutex mutex_;
 
-    // The sockets currently contained in the set.
-    socket_set sockets_;
+    // Reference count so that the object does not go away while there are
+    // outstanding connection attempts associated with it.
+    int ref_count_;
+
+    // The connection_info objects currently associated with the connector.
+    connection_info_list connection_info_list_;
 
     // Whether a protocol has been specified.
     bool have_protocol_;
@@ -172,12 +235,15 @@ public:
   {
     if (impl != null())
     {
-      typename connector_impl::socket_set sockets;
-      impl->get_sockets(sockets);
-      typename connector_impl::socket_set::iterator i = sockets.begin();
-      while (i != sockets.end())
-        reactor_.close_descriptor(*i++, socket_ops::close);
-      delete impl;
+      connection_info_list info_list;
+      impl->get_connection_info_list(info_list);
+      connection_info_handle i = info_list.begin();
+      while (i != info_list.end())
+      {
+        reactor_.close_descriptor(i->sock, socket_ops::close);
+        ++i;
+      }
+      impl->remove_ref();
       impl = null();
     }
   }
@@ -221,10 +287,8 @@ public:
     }
 
     // Perform the connect operation itself.
-    impl->add_socket(sock.get());
     int result = socket_ops::connect(sock.get(), peer_endpoint.native_data(),
         peer_endpoint.native_size());
-    impl->remove_socket(sock.get());
     if (result == socket_error_retval)
     {
       error_handler(asio::error(socket_ops::get_error()));
@@ -240,11 +304,13 @@ public:
   class connect_handler
   {
   public:
-    connect_handler(impl_type impl, socket_type new_socket, Demuxer& demuxer,
+    connect_handler(impl_type impl, connection_info_handle conn_info,
+        Demuxer& demuxer, Reactor& reactor,
         basic_stream_socket<Stream_Socket_Service>& peer, Handler handler)
       : impl_(impl),
-        new_socket_(new_socket),
+        conn_info_(conn_info),
         demuxer_(demuxer),
+        reactor_(reactor),
         peer_(peer),
         handler_(handler)
     {
@@ -252,19 +318,29 @@ public:
 
     void do_operation()
     {
-      // The connect operation can no longer be cancelled.
-      socket_holder new_socket_holder(new_socket_);
-      impl_->remove_socket(new_socket_);
+      // Check whether a handler has already been called for the connection.
+      // If it has, then we don't want to do anything in this handler.
+      int new_socket = conn_info_->sock;
+      if (impl_->remove_connection_info_ref(conn_info_) == 0)
+      {
+        demuxer_.work_finished();
+        return;
+      }
+
+      // Cancel the other reactor operation for the connection.
+      reactor_.enqueue_cancel_ops_unlocked(new_socket);
+
+      // Take ownership of the socket.
+      socket_holder new_socket_holder(new_socket);
 
       // Get the error code from the connect operation.
       int connect_error = 0;
       socket_len_type connect_error_len = sizeof(connect_error);
-      if (socket_ops::getsockopt(new_socket_, SOL_SOCKET, SO_ERROR,
+      if (socket_ops::getsockopt(new_socket, SOL_SOCKET, SO_ERROR,
             &connect_error, &connect_error_len) == socket_error_retval)
       {
         asio::error error(socket_ops::get_error());
         demuxer_.post(bind_handler(handler_, error));
-        demuxer_.work_finished();
         return;
       }
 
@@ -273,41 +349,50 @@ public:
       {
         asio::error error(connect_error);
         demuxer_.post(bind_handler(handler_, error));
-        demuxer_.work_finished();
         return;
       }
 
       // Make the socket blocking again (the default).
       ioctl_arg_type non_blocking = 0;
-      if (socket_ops::ioctl(new_socket_, FIONBIO, &non_blocking))
+      if (socket_ops::ioctl(new_socket, FIONBIO, &non_blocking))
       {
         asio::error error(socket_ops::get_error());
         demuxer_.post(bind_handler(handler_, error));
-        demuxer_.work_finished();
         return;
       }
 
       // Post the result of the successful connection operation.
-      peer_.set_impl(new_socket_);
+      peer_.set_impl(new_socket);
       new_socket_holder.release();
       asio::error error(asio::error::success);
       demuxer_.post(bind_handler(handler_, error));
-      demuxer_.work_finished();
     }
 
     void do_cancel()
     {
+      // Check whether a handler has already been called for the connection.
+      // If it has, then we don't want to do anything in this handler.
+      int new_socket = conn_info_->sock;
+      if (impl_->remove_connection_info_ref(conn_info_) == 0)
+      {
+        demuxer_.work_finished();
+        return;
+      }
+
+      // Cancel the other reactor operation for the connection.
+      reactor_.enqueue_cancel_ops_unlocked(new_socket);
+
       // The socket is closed when the reactor_.close_descriptor is called,
       // so no need to close it here.
       asio::error error(asio::error::operation_aborted);
       demuxer_.post(bind_handler(handler_, error));
-      demuxer_.work_finished();
     }
 
   private:
     impl_type impl_;
-    socket_type new_socket_;
+    connection_info_handle conn_info_;
     Demuxer& demuxer_;
+    Reactor& reactor_;
     basic_stream_socket<Stream_Socket_Service>& peer_;
     Handler handler_;
   };
@@ -385,11 +470,13 @@ public:
     {
       // The connection is happening in the background, and we need to wait
       // until the socket becomes writeable.
-      impl->add_socket(new_socket.get());
+      connection_info_handle conn_info
+        = impl->create_connection_info(new_socket.get());
+      impl->add_connection_info_ref(conn_info);
       demuxer_.work_started();
-      reactor_.start_write_op(new_socket.get(),
+      reactor_.start_write_and_except_ops(new_socket.get(),
           connect_handler<Stream_Socket_Service, Handler>(
-            impl, new_socket.get(), demuxer_, peer, handler));
+            impl, conn_info, demuxer_, reactor_, peer, handler));
       new_socket.release();
     }
     else
