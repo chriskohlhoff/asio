@@ -6,16 +6,6 @@ Add vectored send/recv functions
 Add the sendv and recvv functions to basic_stream_socket and presumably also to
 the buffered stream templates.
 
-Add encode_send/async_encode_send functions
--------------------------------------------
-Add new free functions encode_send/async_encode_send that mirror the
-functionality of recv_decode/async_recv_decode.
-
-Develop a safe version of recv_until
-------------------------------------
-The current implementation of recv_until (and async_recv_until) does not set
-an upper limit on the size of the received data. This is not particularly safe.
-
 Demuxer functions for event loop integration
 --------------------------------------------
 Add functions demuxer::work_pending() and demuxer::perform_work() that can be
