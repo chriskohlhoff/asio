@@ -130,7 +130,7 @@ private:
     // Determine whether this service is the given type.
     virtual bool is_same_type(const std::type_info& other_info)
     {
-      return other_info == typeid(Service);
+      return other_info == typeid(Service) ? true : false;
     }
 
     // Get a pointer to the contained service.

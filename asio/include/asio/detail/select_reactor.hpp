@@ -306,7 +306,7 @@ private:
 
     bool is_set(socket_type descriptor) const
     {
-      return FD_ISSET(descriptor, &fd_set_);
+      return FD_ISSET(descriptor, &fd_set_) != 0;
     }
 
     operator fd_set*()
