@@ -36,6 +36,7 @@ TESTS = \
 	tests/unit/dgram_socket_test \
 	tests/unit/error_handler_test \
 	tests/unit/fixed_buffer_test \
+	tests/unit/locking_dispatcher_test \
 	tests/unit/socket_acceptor_test \
 	tests/unit/timer_test
 
