@@ -105,7 +105,8 @@ inline int recv(socket_type s, void* buf, size_t len, int flags)
 {
   set_error(0);
 #if defined(_WIN32)
-  return error_wrapper(::recv(s, static_cast<char*>(buf), len, flags));
+  return error_wrapper(::recv(s, static_cast<char*>(buf),
+        static_cast<int>(len), flags));
 #else // defined(_WIN32)
   return error_wrapper(::recv(s, buf, len, flags));
 #endif // defined(_WIN32)
@@ -116,8 +117,8 @@ inline int recvfrom(socket_type s, void* buf, size_t len, int flags,
 {
   set_error(0);
 #if defined(_WIN32)
-  return error_wrapper(::recvfrom(s, static_cast<char*>(buf), len, flags, addr,
-        addrlen));
+  return error_wrapper(::recvfrom(s, static_cast<char*>(buf),
+        static_cast<int>(len), flags, addr, addrlen));
 #else // defined(_WIN32)
   return error_wrapper(::recvfrom(s, buf, len, flags, addr, addrlen));
 #endif // defined(_WIN32)
@@ -127,7 +128,8 @@ inline int send(socket_type s, const void* buf, size_t len, int flags)
 {
   set_error(0);
 #if defined(_WIN32)
-  return error_wrapper(::send(s, static_cast<const char*>(buf), len, flags));
+  return error_wrapper(::send(s, static_cast<const char*>(buf),
+        static_cast<int>(len), flags));
 #else // defined(_WIN32)
   return error_wrapper(::send(s, buf, len, flags));
 #endif // defined(_WIN32)
@@ -138,8 +140,8 @@ inline int sendto(socket_type s, const void* buf, size_t len, int flags,
 {
   set_error(0);
 #if defined(_WIN32)
-  return error_wrapper(::sendto(s, static_cast<const char*>(buf), len, flags,
-        addr, addrlen));
+  return error_wrapper(::sendto(s, static_cast<const char*>(buf),
+        static_cast<int>(len), flags, addr, addrlen));
 #else // defined(_WIN32)
   return error_wrapper(::sendto(s, buf, len, flags, addr, addrlen));
 #endif // defined(_WIN32)
@@ -157,26 +159,34 @@ inline socket_type socket(int af, int type, int protocol)
 }
 
 inline int setsockopt(socket_type s, int level, int optname,
-    const void* optval, socket_len_type optlen)
+    const void* optval, size_t optlen)
 {
   set_error(0);
 #if defined(_WIN32)
   return error_wrapper(::setsockopt(s, level, optname,
-        reinterpret_cast<const char*>(optval), optlen));
+        reinterpret_cast<const char*>(optval), static_cast<int>(optlen)));
 #else // defined(_WIN32)
-  return error_wrapper(::setsockopt(s, level, optname, optval, optlen));
+  return error_wrapper(::setsockopt(s, level, optname, optval,
+        static_cast<socklen_t>(optlen)));
 #endif // defined(_WIN32)
 }
 
 inline int getsockopt(socket_type s, int level, int optname, void* optval,
-    socket_len_type* optlen)
+    size_t* optlen)
 {
   set_error(0);
 #if defined(_WIN32)
-  return error_wrapper(::getsockopt(s, level, optname,
-        reinterpret_cast<char*>(optval), optlen));
+  int tmp_optlen = static_cast<int>(*optlen);
+  int result = error_wrapper(::getsockopt(s, level, optname,
+        reinterpret_cast<char*>(optval), &tmp_optlen));
+  *optlen = static_cast<size_t>(tmp_optlen);
+  return result;
 #else // defined(_WIN32)
-  return error_wrapper(::getsockopt(s, level, optname, optval, optlen));
+  socklen_t tmp_optlen = static_cast<socklen_t>(*optlen);
+  int result = error_wrapper(::getsockopt(s, level, optname,
+        optval, &tmp_optlen));
+  *optlen = static_cast<size_t>(tmp_optlen);
+  return result;
 #endif // defined(_WIN32)
 }
 

@@ -149,7 +149,7 @@ template <typename Sync_Recv_Stream>
 size_t recv_n(Sync_Recv_Stream& s, void* data, size_t length,
     size_t* total_bytes_recvd = 0)
 {
-  int bytes_recvd = 0;
+  size_t bytes_recvd = 0;
   size_t total_recvd = 0;
   while (total_recvd < length)
   {
@@ -200,7 +200,7 @@ template <typename Sync_Recv_Stream, typename Error_Handler>
 size_t recv_n(Sync_Recv_Stream& s, void* data, size_t length,
     size_t* total_bytes_recvd, Error_Handler error_handler)
 {
-  int bytes_recvd = 0;
+  size_t bytes_recvd = 0;
   size_t total_recvd = 0;
   while (total_recvd < length)
   {
@@ -326,7 +326,7 @@ template <typename Sync_Recv_Stream>
 size_t recv_at_least_n(Sync_Recv_Stream& s, void* data, size_t min_length,
     size_t max_length, size_t* total_bytes_recvd = 0)
 {
-  int bytes_recvd = 0;
+  size_t bytes_recvd = 0;
   size_t total_recvd = 0;
   if (max_length < min_length)
     min_length = max_length;
@@ -382,7 +382,7 @@ template <typename Sync_Recv_Stream, typename Error_Handler>
 size_t recv_at_least_n(Sync_Recv_Stream& s, void* data, size_t min_length,
     size_t max_length, size_t* total_bytes_recvd, Error_Handler error_handler)
 {
-  int bytes_recvd = 0;
+  size_t bytes_recvd = 0;
   size_t total_recvd = 0;
   if (max_length < min_length)
     min_length = max_length;

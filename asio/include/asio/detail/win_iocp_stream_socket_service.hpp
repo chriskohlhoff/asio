@@ -95,7 +95,7 @@ public:
   template <typename Option, typename Error_Handler>
   void get_option(impl_type& impl, Option& option, Error_Handler error_handler)
   {
-    socket_len_type size = option.size();
+    size_t size = option.size();
     if (socket_ops::getsockopt(impl, option.level(), option.name(),
           option.data(), &size))
       error_handler(asio::error(socket_ops::get_error()));
@@ -204,7 +204,7 @@ public:
     demuxer_service_.work_started();
 
     WSABUF buf;
-    buf.len = length;
+    buf.len = static_cast<u_long>(length);
     buf.buf = static_cast<char*>(const_cast<void*>(data));
     DWORD bytes_transferred = 0;
 
@@ -278,7 +278,7 @@ public:
     demuxer_service_.work_started();
 
     WSABUF buf;
-    buf.len = max_length;
+    buf.len = static_cast<u_long>(max_length);
     buf.buf = static_cast<char*>(data);
     DWORD bytes_transferred = 0;
     DWORD flags = 0;

@@ -145,7 +145,7 @@ template <typename Sync_Send_Stream>
 size_t send_n(Sync_Send_Stream& s, const void* data, size_t length,
     size_t* total_bytes_sent = 0)
 {
-  int bytes_sent = 0;
+  size_t bytes_sent = 0;
   size_t total_sent = 0;
   while (total_sent < length)
   {
@@ -196,7 +196,7 @@ template <typename Sync_Send_Stream, typename Error_Handler>
 size_t send_n(Sync_Send_Stream& s, const void* data, size_t length,
     size_t* total_bytes_sent, Error_Handler error_handler)
 {
-  int bytes_sent = 0;
+  size_t bytes_sent = 0;
   size_t total_sent = 0;
   while (total_sent < length)
   {
@@ -322,7 +322,7 @@ template <typename Sync_Send_Stream>
 size_t send_at_least_n(Sync_Send_Stream& s, const void* data,
     size_t min_length, size_t max_length, size_t* total_bytes_sent = 0)
 {
-  int bytes_sent = 0;
+  size_t bytes_sent = 0;
   size_t total_sent = 0;
   if (max_length < min_length)
     min_length = max_length;
@@ -379,7 +379,7 @@ size_t send_at_least_n(Sync_Send_Stream& s, const void* data,
     size_t min_length, size_t max_length, size_t* total_bytes_sent,
     Error_Handler error_handler)
 {
-  int bytes_sent = 0;
+  size_t bytes_sent = 0;
   size_t total_sent = 0;
   if (max_length < min_length)
     min_length = max_length;

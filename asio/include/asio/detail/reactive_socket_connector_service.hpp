@@ -320,7 +320,7 @@ public:
     {
       // Check whether a handler has already been called for the connection.
       // If it has, then we don't want to do anything in this handler.
-      int new_socket = conn_info_->sock;
+      socket_type new_socket = conn_info_->sock;
       if (impl_->remove_connection_info_ref(conn_info_) == 0)
       {
         demuxer_.work_finished();
@@ -335,7 +335,7 @@ public:
 
       // Get the error code from the connect operation.
       int connect_error = 0;
-      socket_len_type connect_error_len = sizeof(connect_error);
+      size_t connect_error_len = sizeof(connect_error);
       if (socket_ops::getsockopt(new_socket, SOL_SOCKET, SO_ERROR,
             &connect_error, &connect_error_len) == socket_error_retval)
       {
@@ -372,7 +372,7 @@ public:
     {
       // Check whether a handler has already been called for the connection.
       // If it has, then we don't want to do anything in this handler.
-      int new_socket = conn_info_->sock;
+      socket_type new_socket = conn_info_->sock;
       if (impl_->remove_connection_info_ref(conn_info_) == 0)
       {
         demuxer_.work_finished();

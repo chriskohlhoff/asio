@@ -2,7 +2,7 @@
 #include <iostream>
 #include "asio.hpp"
 
-const int max_length = 1024;
+enum { max_length = 1024 };
 
 void server(asio::demuxer& d, short port)
 {

@@ -258,7 +258,7 @@ private:
       write_op_queue_.get_descriptors(write_fds);
       fd_set_adaptor except_fds;
       except_op_queue_.get_descriptors(except_fds);
-      int max_fd = read_fds.max_descriptor();
+      socket_type max_fd = read_fds.max_descriptor();
       if (write_fds.max_descriptor() > max_fd)
         max_fd = write_fds.max_descriptor();
       if (except_fds.max_descriptor() > max_fd)
@@ -270,8 +270,8 @@ private:
       timeval* tv = get_timeout(tv_buf);
       select_in_progress_ = true;
       lock.unlock();
-      int retval = socket_ops::select(max_fd + 1, read_fds, write_fds,
-          except_fds, tv);
+      int retval = socket_ops::select(static_cast<int>(max_fd + 1),
+          read_fds, write_fds, except_fds, tv);
       lock.lock();
       select_in_progress_ = false;
 

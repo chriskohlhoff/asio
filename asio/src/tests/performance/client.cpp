@@ -68,7 +68,7 @@ public:
       stats_(s)
   {
     for (size_t i = 0; i < block_size_; ++i)
-      send_data_[i] = i % 128;
+      send_data_[i] = static_cast<char>(i % 128);
   }
 
   ~session()

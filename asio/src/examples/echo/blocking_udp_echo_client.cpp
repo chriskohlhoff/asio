@@ -3,7 +3,7 @@
 #include <iostream>
 #include "asio.hpp"
 
-const int max_length = 1024;
+enum { max_length = 1024 };
 
 int main(int argc, char* argv[])
 {
