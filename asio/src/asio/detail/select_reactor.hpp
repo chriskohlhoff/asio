@@ -120,8 +120,7 @@ private:
           ? read_fds.max_descriptor() : write_fds.max_descriptor());
 
       // Block on the select call without holding the lock so that new
-      // operations can be started while the call is executing. TODO pass the
-      // interval.
+      // operations can be started while the call is executing.
       lock.unlock();
       int retval = ::select(max_fd + 1, read_fds, write_fds, 0, 0);
       lock.lock();
