@@ -19,9 +19,23 @@
 
 using namespace asio;
 
+void handle_send(size_t expected_bytes_sent, const socket_error& error,
+    size_t bytes_sent)
+{
+  UNIT_TEST_CHECK(!error);
+  UNIT_TEST_CHECK(expected_bytes_sent == bytes_sent);
+}
+
+void handle_recv(size_t expected_bytes_recvd, const socket_error& error,
+    size_t bytes_recvd)
+{
+  UNIT_TEST_CHECK(!error);
+  UNIT_TEST_CHECK(expected_bytes_recvd == bytes_recvd);
+}
+
 void dgram_socket_test()
 {
-  using namespace std; // For memcmp.
+  using namespace std; // For memcmp and memset.
 
   demuxer d;
 
@@ -38,6 +52,18 @@ void dgram_socket_test()
   size_t bytes_recvd = s1.recvfrom(recv_msg, sizeof(recv_msg), sender_addr);
 
   UNIT_TEST_CHECK(bytes_recvd == sizeof(send_msg));
+  UNIT_TEST_CHECK(memcmp(send_msg, recv_msg, sizeof(send_msg)) == 0);
+
+  memset(recv_msg, 0, sizeof(recv_msg));
+
+  target_addr = sender_addr;
+  s1.async_sendto(send_msg, sizeof(send_msg), target_addr,
+      boost::bind(handle_send, sizeof(send_msg), _1, _2));
+  s2.async_recvfrom(recv_msg, sizeof(recv_msg), sender_addr,
+      boost::bind(handle_recv, sizeof(recv_msg), _1, _2));
+
+  d.run();
+
   UNIT_TEST_CHECK(memcmp(send_msg, recv_msg, sizeof(send_msg)) == 0);
 }
 
