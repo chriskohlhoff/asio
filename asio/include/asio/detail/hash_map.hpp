@@ -27,9 +27,9 @@ namespace asio {
 namespace detail {
 
 template <typename K>
-int hash(const K& k)
+unsigned int hash(const K& k)
 {
-  return (int)k;
+  return (unsigned int)k;
 }
 
 template <typename K, typename V>
@@ -50,7 +50,7 @@ public:
   hash_map()
   {
     // Initialise all buckets to empty.
-    for (int i = 0; i < num_buckets; ++i)
+    for (unsigned int i = 0; i < num_buckets; ++i)
       buckets_[i].first = buckets_[i].last = values_.end();
   }
 
@@ -81,7 +81,7 @@ public:
   // Find an entry in the map.
   iterator find(const K& k)
   {
-    int bucket = hash(k) % num_buckets;
+    unsigned int bucket = hash(k) % num_buckets;
     iterator it = buckets_[bucket].first;
     if (it == values_.end())
       return values_.end();
@@ -99,7 +99,7 @@ public:
   // Find an entry in the map.
   const_iterator find(const K& k) const
   {
-    int bucket = hash(k) % num_buckets;
+    unsigned int bucket = hash(k) % num_buckets;
     const_iterator it = buckets_[bucket].first;
     if (it == values_.end())
       return it;
@@ -117,7 +117,7 @@ public:
   // Insert a new entry into the map.
   std::pair<iterator, bool> insert(const value_type& v)
   {
-    int bucket = hash(v.first) % num_buckets;
+    unsigned int bucket = hash(v.first) % num_buckets;
     iterator it = buckets_[bucket].first;
     if (it == values_.end())
     {
@@ -142,7 +142,7 @@ public:
   {
     assert(it != values_.end());
 
-    int bucket = hash(it->first) % num_buckets;
+    unsigned int bucket = hash(it->first) % num_buckets;
     bool is_first = (it == buckets_[bucket].first);
     bool is_last = (it == buckets_[bucket].last);
     if (is_first && is_last)
