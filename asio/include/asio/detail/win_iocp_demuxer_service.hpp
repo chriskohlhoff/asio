@@ -17,11 +17,12 @@
 
 #include "asio/detail/push_options.hpp"
 
-#if defined(_WIN32) // This provider is only supported on Win32
+#if defined(_WIN32) // This service is only supported on Win32
 
 #include "asio/basic_demuxer.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/tss_bool.hpp"
+#include "asio/detail/win_iocp_operation.hpp"
 
 namespace asio {
 namespace detail {
@@ -55,24 +56,6 @@ public:
     ::CreateIoCompletionPort(sock_as_handle, iocp_.handle, 0, 0);
   }
 
-  // Structure used as the base type for all IOCP operations.
-  struct operation
-    : public OVERLAPPED
-  {
-    operation()
-    {
-      ::ZeroMemory(static_cast<OVERLAPPED*>(this), sizeof(OVERLAPPED));
-    }
-
-    virtual ~operation()
-    {
-    }
-
-    // Run the completion.
-    virtual void do_completion(win_iocp_demuxer_service& demuxer_service,
-        HANDLE iocp, DWORD last_error, size_t bytes_transferred) = 0;
-  };
-
   // Run the demuxer's event processing loop.
   void run()
   {
@@ -95,7 +78,7 @@ public:
       if (overlapped)
       {
         // Dispatch the operation.
-        operation* op = static_cast<operation*>(overlapped);
+        win_iocp_operation* op = static_cast<win_iocp_operation*>(overlapped);
         op->do_completion(*this, iocp_.handle, last_error, bytes_transferred);
       }
       else
@@ -140,34 +123,17 @@ public:
       interrupt();
   }
 
-  // Request the demuxer to invoke the given handler.
-  template <typename Handler>
-  void dispatch(Handler handler)
-  {
-    if (current_thread_in_pool_)
-      handler_operation<Handler>::do_upcall(handler);
-    else
-      post(handler);
-  }
-
   template <typename Handler>
   struct handler_operation
-    : public operation
+    : public win_iocp_operation
   {
     handler_operation(Handler handler)
-      : handler_(handler)
+      : win_iocp_operation(&handler_operation<Handler>::do_completion_impl),
+        handler_(handler)
     {
     }
 
-    virtual void do_completion(win_iocp_demuxer_service& demuxer_service,
-        HANDLE iocp, DWORD, size_t)
-    {
-      do_upcall(handler_);
-      demuxer_service.work_finished();
-      delete this;
-    }
-
-    static void do_upcall(Handler handler)
+    static void do_upcall(Handler& handler)
     {
       try
       {
@@ -179,14 +145,34 @@ public:
     }
 
   private:
+    static void do_completion_impl(win_iocp_operation* op,
+        win_iocp_demuxer_service& demuxer_service, HANDLE iocp, DWORD, size_t)
+    {
+      handler_operation<Handler>* h =
+        static_cast<handler_operation<Handler>*>(op);
+      do_upcall(h->handler_);
+      demuxer_service.work_finished();
+      delete h;
+    }
+
     Handler handler_;
   };
+
+  // Request the demuxer to invoke the given handler.
+  template <typename Handler>
+  void dispatch(Handler handler)
+  {
+    if (current_thread_in_pool_)
+      handler_operation<Handler>::do_upcall(handler);
+    else
+      post(handler);
+  }
 
   // Request the demuxer to invoke the given handler and return immediately.
   template <typename Handler>
   void post(Handler handler)
   {
-    operation* op = new handler_operation<Handler>(handler);
+    win_iocp_operation* op = new handler_operation<Handler>(handler);
     work_started();
     ::PostQueuedCompletionStatus(iocp_.handle, 0, 0, op);
   }

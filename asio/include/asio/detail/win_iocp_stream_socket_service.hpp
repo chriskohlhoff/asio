@@ -17,6 +17,8 @@
 
 #include "asio/detail/push_options.hpp"
 
+#if defined(_WIN32) // This service is only supported on Win32
+
 #include "asio/basic_demuxer.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_error.hpp"
@@ -137,36 +139,33 @@ public:
 
   template <typename Handler>
   class send_operation
-    : public win_iocp_demuxer_service::operation
+    : public win_iocp_operation
   {
   public:
     send_operation(Handler handler)
-      : handler_(handler)
+      : win_iocp_operation(&send_operation<Handler>::do_completion_impl),
+        handler_(handler)
     {
     }
 
-    virtual void do_completion(win_iocp_demuxer_service& demuxer_service,
-        HANDLE iocp, DWORD last_error, size_t bytes_transferred)
+  private:
+    static void do_completion_impl(win_iocp_operation* op,
+        win_iocp_demuxer_service& demuxer_service, HANDLE iocp,
+        DWORD last_error, size_t bytes_transferred)
     {
+      send_operation<Handler>* h = static_cast<send_operation<Handler>*>(op);
       socket_error error(last_error);
-      do_upcall(handler_, error, bytes_transferred);
-      demuxer_service.work_finished();
-      delete this;
-    }
-
-    static void do_upcall(Handler handler, const socket_error& error,
-        size_t bytes_sent)
-    {
       try
       {
-        handler(error, bytes_sent);
+        h->handler_(error, bytes_transferred);
       }
       catch (...)
       {
       }
+      demuxer_service.work_finished();
+      delete h;
     }
 
-  private:
     Handler handler_;
   };
 
@@ -214,36 +213,33 @@ public:
 
   template <typename Handler>
   class recv_operation
-    : public win_iocp_demuxer_service::operation
+    : public win_iocp_operation
   {
   public:
     recv_operation(Handler handler)
-      : handler_(handler)
+      : win_iocp_operation(&recv_operation<Handler>::do_completion_impl),
+        handler_(handler)
     {
     }
 
-    virtual void do_completion(win_iocp_demuxer_service& demuxer_service,
-        HANDLE iocp, DWORD last_error, size_t bytes_transferred)
+  private:
+    static void do_completion_impl(win_iocp_operation* op,
+        win_iocp_demuxer_service& demuxer_service, HANDLE iocp,
+        DWORD last_error, size_t bytes_transferred)
     {
+      recv_operation<Handler>* h = static_cast<recv_operation<Handler>*>(op);
       socket_error error(last_error);
-      do_upcall(handler_, error, bytes_transferred);
-      demuxer_service.work_finished();
-      delete this;
-    }
-
-    static void do_upcall(Handler handler, const socket_error& error,
-        size_t bytes_recvd)
-    {
       try
       {
-        handler(error, bytes_recvd);
+        h->handler_(error, bytes_transferred);
       }
       catch (...)
       {
       }
+      demuxer_service.work_finished();
+      delete h;
     }
 
-  private:
     Handler handler_;
   };
 
@@ -287,6 +283,8 @@ private:
 
 } // namespace detail
 } // namespace asio
+
+#endif // defined(_WIN32)
 
 #include "asio/detail/pop_options.hpp"
 

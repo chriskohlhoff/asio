@@ -53,6 +53,7 @@ nobase_include_HEADERS = \
 	asio/detail/tss_bool.hpp \
 	asio/detail/win_iocp_demuxer_service.hpp \
 	asio/detail/win_iocp_dgram_socket_service.hpp \
+	asio/detail/win_iocp_operation.hpp \
 	asio/detail/win_iocp_stream_socket_service.hpp \
 	asio/detail/win_event.hpp \
 	asio/detail/win_mutex.hpp \
