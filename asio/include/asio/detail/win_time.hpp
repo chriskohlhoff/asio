@@ -64,11 +64,13 @@ public:
   // Get the current time.
   static win_time now()
   {
-    SYSTEMTIME system_time;
-    ::GetSystemTime(&system_time);
     FILETIME file_time;
-    ::SystemTimeToFileTime(&system_time, &file_time);
+    ::GetSystemTimeAsFileTime(&file_time);
+#if defined(__GNUC__)
+    const LONGLONG FILETIME_to_ctime = 116444736000000000LL;
+#else
     const LONGLONG FILETIME_to_ctime = 116444736000000000;
+#endif
     LONGLONG file_time_64 = file_time.dwHighDateTime;
     file_time_64 <<= 32;
     file_time_64 += file_time.dwLowDateTime;
