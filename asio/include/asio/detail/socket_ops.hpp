@@ -230,10 +230,20 @@ inline const char* inet_ntop(int af, const void* src, char* dest,
   {
     *dest = '\0';
     strncat(dest, addr_str, length);
+    return dest;
   }
-  return (addr_str ? dest : 0);
+
+  // Windows may not set an error code on failure.
+  if (get_error() == 0)
+    set_error(socket_error::invalid_argument);
+
+  return 0;
+
 #else // defined(_WIN32)
-  return error_wrapper(::inet_ntop(af, src, dest, length));
+  const char* result = ::inet_ntop(af, src, dest, length);
+  if (result == 0 && get_error() == 0)
+    set_error(socket_error::invalid_argument);
+  return result;
 #endif // defined(_WIN32)
 }
 
@@ -256,9 +266,16 @@ inline int inet_pton(int af, const char* src, void* dest)
     return 1;
   }
 
+  // Windows may not set an error code on failure.
+  if (get_error() == 0)
+    set_error(socket_error::invalid_argument);
+
   return 0;
 #else // defined(_WIN32)
-  return error_wrapper(::inet_pton(af, src, dest));
+  int result = ::inet_pton(af, src, dest);
+  if (result <= 0 && get_error() == 0)
+    set_error(socket_error::invalid_argument);
+  return result;
 #endif // defined(_WIN32)
 }
 
