@@ -136,7 +136,7 @@ public:
     // Create a new socket for the connection. This will not be put into the
     // stream_socket object until the connection has beenestablished.
     socket_holder sock(socket_ops::socket(peer_address.family(), SOCK_STREAM,
-          IPPROTO_TCP));
+          0));
     if (sock.get() == invalid_socket)
     {
       error_handler(socket_error(socket_ops::get_error()));
@@ -256,7 +256,7 @@ public:
     // Create a new socket for the connection. This will not be put into the
     // stream_socket object until the connection has beenestablished.
     socket_holder new_socket(socket_ops::socket(peer_address.family(),
-          SOCK_STREAM, IPPROTO_TCP));
+          SOCK_STREAM, 0));
     if (new_socket.get() == invalid_socket)
     {
       socket_error error(socket_ops::get_error());

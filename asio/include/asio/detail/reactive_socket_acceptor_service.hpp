@@ -66,8 +66,7 @@ public:
     if (listen_queue == 0)
       listen_queue = SOMAXCONN;
 
-    socket_holder sock(socket_ops::socket(address.family(), SOCK_STREAM,
-          IPPROTO_TCP));
+    socket_holder sock(socket_ops::socket(address.family(), SOCK_STREAM, 0));
     if (sock.get() == invalid_socket)
     {
       error_handler(socket_error(socket_ops::get_error()));

@@ -62,8 +62,7 @@ public:
   void create(impl_type& impl, const Address& address,
       Error_Handler error_handler)
   {
-    socket_holder sock(socket_ops::socket(address.family(), SOCK_DGRAM,
-          IPPROTO_UDP));
+    socket_holder sock(socket_ops::socket(address.family(), SOCK_DGRAM, 0));
     if (sock.get() == invalid_socket)
     {
       error_handler(socket_error(socket_ops::get_error()));
