@@ -7,16 +7,11 @@ LDFLAGS = -q -O2 -v -vi -y -a8 -b -Ve- -Vx- -tWM -tWR -tWC
 LIBS = ws2_32.lib
 
 all: \
-	tests\dgram_echo_client_test.exe \
-	tests\dgram_echo_server_test.exe \
-	tests\echo_client_test.exe \
-	tests\echo_server_test.exe \
 	tests\socket_accept_test.exe \
 	tests\timed_accept_test.exe \
 	tests\timed_connect_test.exe \
 	tests\timed_dgram_recv_test.exe \
 	tests\timer_test.exe \
-	tests\tpc_echo_server_test.exe \
 	tests\performance\client.exe \
 	tests\performance\server.exe \
 	tests\unit\demuxer_test.exe \
