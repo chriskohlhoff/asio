@@ -17,6 +17,8 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/bind_handler.hpp"
+
 namespace asio {
 
 /// Read some data from a stream. Returns the number of bytes received or 0 if
@@ -93,12 +95,13 @@ namespace detail
       total_recvd_ += bytes_recvd;
       if (e || bytes_recvd == 0 || total_recvd_ == length_)
       {
-        handler_(e, total_recvd_, bytes_recvd);
+        stream_.demuxer().operation_immediate(detail::bind_handler(handler_, e,
+              total_recvd_, bytes_recvd), context_, true);
       }
       else
       {
         async_recv(stream_, static_cast<char*>(data_) + total_recvd_,
-            length_ - total_recvd_, *this, context_);
+            length_ - total_recvd_, *this);
       }
     }
 
@@ -132,7 +135,7 @@ void async_recv_n(Stream& s, void* data, size_t length, Handler handler,
 {
   async_recv(s, data, length,
       detail::recv_n_handler<Stream, Handler, Completion_Context>(s, data,
-        length, handler, context), context);
+        length, handler, context));
 }
 
 } // namespace asio

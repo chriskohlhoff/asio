@@ -40,18 +40,20 @@ public:
   /// The native implementation type of the socket acceptor.
   typedef typename service_type::impl_type impl_type;
 
+  /// The demuxer type for this asynchronous type.
+  typedef typename service_type::demuxer_type demuxer_type;
+
   /// Constructor an acceptor without opening it. The acceptor needs to be
   /// opened before it can accept new connections.
-  template <typename Demuxer>
-  explicit basic_socket_acceptor(Demuxer& d)
+  explicit basic_socket_acceptor(demuxer_type& d)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_type::null())
   {
   }
 
   /// Construct an acceptor opened on the given address.
-  template <typename Demuxer, typename Address>
-  basic_socket_acceptor(Demuxer& d, const Address& addr)
+  template <typename Address>
+  basic_socket_acceptor(demuxer_type& d, const Address& addr)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_type::null())
   {
@@ -60,8 +62,8 @@ public:
 
   /// Construct an acceptor opened on the given address and with the listen
   /// queue set to the given number of connections.
-  template <typename Demuxer, typename Address>
-  basic_socket_acceptor(Demuxer& d, const Address& addr, int listen_queue)
+  template <typename Address>
+  basic_socket_acceptor(demuxer_type& d, const Address& addr, int listen_queue)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_type::null())
   {
@@ -72,6 +74,12 @@ public:
   ~basic_socket_acceptor()
   {
     service_.destroy(impl_);
+  }
+
+  /// Get the demuxer associated with the asynchronous object.
+  demuxer_type& demuxer()
+  {
+    return service_.demuxer();
   }
 
   /// Open the acceptor using the given address.

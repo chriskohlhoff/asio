@@ -35,6 +35,12 @@ public:
   // underlying implementation of the socket layer.
   typedef socket_type impl_type;
 
+  // Return a null dgram socket implementation.
+  static impl_type null()
+  {
+    return invalid_socket;
+  }
+
   // Constructor.
   reactive_dgram_socket_service(Demuxer& d)
     : demuxer_(d),
@@ -42,10 +48,13 @@ public:
   {
   }
 
-  // Return a null dgram socket implementation.
-  static impl_type null()
+  // The demuxer type for this service.
+  typedef Demuxer demuxer_type;
+
+  // Get the demuxer associated with the service.
+  demuxer_type& demuxer()
   {
-    return invalid_socket;
+    return demuxer_;
   }
 
   // Create a new dgram socket implementation.

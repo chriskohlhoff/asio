@@ -31,13 +31,17 @@ template <typename Task>
 class task_demuxer_service
 {
 public:
+  // The demuxer type for this service.
+  typedef basic_demuxer<task_demuxer_service<Task> > demuxer_type;
+
   // Constructor. Taking a reference to the demuxer type as the parameter
   // forces the compiler to ensure that this class can only be used as the
   // demuxer service. It cannot be instantiated in the demuxer in any other
   // case.
   task_demuxer_service(
-      basic_demuxer<task_demuxer_service<Task> >& demuxer)
-    : mutex_(),
+      demuxer_type& demuxer)
+    : demuxer_(demuxer),
+      mutex_(),
       task_(demuxer.get_service(service_factory<Task>())),
       task_is_running_(false),
       outstanding_operations_(0),
@@ -49,6 +53,13 @@ public:
   {
   }
 
+  // Get the demuxer associated with the service.
+  demuxer_type& demuxer()
+  {
+    return demuxer_;
+  }
+
+  // Create a new dgram socket implementation.
   // Run the demuxer's event processing loop.
   void run()
   {
@@ -326,6 +337,9 @@ private:
     Handler handler_;
     Completion_Context& context_;
   };
+
+  // The demuxer that owns this service.
+  demuxer_type& demuxer_;
 
   // Mutex to protect access to internal data.
   asio::detail::mutex mutex_;

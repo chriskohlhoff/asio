@@ -28,27 +28,102 @@ namespace asio {
 
 /// The buffered_stream class template can be used to add buffering to both the
 /// send- and recv- related operations of a stream.
-template <typename Stream>
+template <typename Next_Layer>
 class buffered_stream
-    : private buffered_recv_stream<buffered_send_stream<Stream> >
+  : private boost::noncopyable
 {
 public:
-  typedef buffered_recv_stream<buffered_send_stream<Stream> > base_type;
-
-  using base_type::close;
-  using base_type::next_layer;
-  using base_type::lowest_layer;
-  using base_type::send;
-  using base_type::async_send;
-  using base_type::recv;
-  using base_type::async_recv;
-
   /// Construct, passing the specified argument to initialise the next layer.
   template <typename Arg>
   explicit buffered_stream(Arg& a)
-    : base_type(a)
+    : stream_impl_(a)
   {
   }
+
+  /// The type of the next layer.
+  typedef typename boost::remove_reference<Next_Layer>::type next_layer_type;
+
+  /// Get a reference to the next layer.
+  next_layer_type& next_layer()
+  {
+    return stream_impl_.next_layer().next_layer();
+  }
+
+  /// The type of the lowest layer.
+  typedef typename next_layer_type::lowest_layer_type lowest_layer_type;
+
+  /// Get a reference to the lowest layer.
+  lowest_layer_type& lowest_layer()
+  {
+    return stream_impl_.lowest_layer();
+  }
+
+  /// The demuxer type for this asynchronous type.
+  typedef typename next_layer_type::demuxer_type demuxer_type;
+
+  /// Get the demuxer associated with the asynchronous object.
+  demuxer_type& demuxer()
+  {
+    return stream_impl_.demuxer();
+  }
+
+  /// Close the stream.
+  void close()
+  {
+    stream_impl_.close();
+  }
+
+  /// Send the given data to the peer. Returns the number of bytes sent or 0 if
+  /// the stream was closed cleanly. Throws an exception on failure.
+  size_t send(const void* data, size_t length)
+  {
+    return stream_impl_.send(data, length);
+  }
+
+  /// Start an asynchronous send. The data being sent must be valid for the
+  /// lifetime of the asynchronous operation.
+  template <typename Handler>
+  void async_send(const void* data, size_t length, Handler handler)
+  {
+    stream_impl_.async_send(data, length, handler);
+  }
+
+  /// Start an asynchronous send. The data being sent must be valid for the
+  /// lifetime of the asynchronous operation.
+  template <typename Handler, typename Completion_Context>
+  void async_send(const void* data, size_t length, Handler handler,
+      Completion_Context& context)
+  {
+    stream_impl_.async_send(data, length, handler, context);
+  }
+
+  /// Receive some data from the peer. Returns the number of bytes received or
+  /// 0 if the stream was closed cleanly. Throws an exception on failure.
+  size_t recv(void* data, size_t max_length)
+  {
+    return stream_impl_.recv(data, max_length);
+  }
+
+  /// Start an asynchronous receive. The buffer for the data being received
+  /// must be valid for the lifetime of the asynchronous operation.
+  template <typename Handler>
+  void async_recv(void* data, size_t max_length, Handler handler)
+  {
+    stream_impl_.async_recv(data, max_length, handler);
+  }
+
+  /// Start an asynchronous receive. The buffer for the data being received
+  /// must be valid for the lifetime of the asynchronous operation.
+  template <typename Handler, typename Completion_Context>
+  void async_recv(void* data, size_t max_length, Handler handler,
+      Completion_Context& context)
+  {
+    stream_impl_.async_recv(data, max_length, handler, context);
+  }
+
+private:
+  /// The buffered stream implementation.
+  buffered_recv_stream<buffered_send_stream<Next_Layer> > stream_impl_;
 };
 
 } // namespace asio

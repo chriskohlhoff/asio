@@ -40,9 +40,11 @@ public:
   /// The native implementation type of the socket connector.
   typedef typename service_type::impl_type impl_type;
 
+  /// The demuxer type for this asynchronous type.
+  typedef typename service_type::demuxer_type demuxer_type;
+
   /// Constructor a connector. The connector is automatically opened.
-  template <typename Demuxer>
-  explicit basic_socket_connector(Demuxer& d)
+  explicit basic_socket_connector(demuxer_type& d)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_type::null())
   {
@@ -53,6 +55,12 @@ public:
   ~basic_socket_connector()
   {
     service_.destroy(impl_);
+  }
+
+  /// Get the demuxer associated with the asynchronous object.
+  demuxer_type& demuxer()
+  {
+    return service_.demuxer();
   }
 
   /// Open the connector.

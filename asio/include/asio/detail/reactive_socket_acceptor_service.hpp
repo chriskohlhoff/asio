@@ -49,6 +49,15 @@ public:
   {
   }
 
+  // The demuxer type for this service.
+  typedef Demuxer demuxer_type;
+
+  // Get the demuxer associated with the service.
+  demuxer_type& demuxer()
+  {
+    return demuxer_;
+  }
+
   // Create a new socket acceptor implementation.
   template <typename Address>
   void create(impl_type& impl, const Address& address)

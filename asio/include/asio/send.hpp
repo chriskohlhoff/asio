@@ -17,6 +17,8 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/bind_handler.hpp"
+
 namespace asio {
 
 /// Write some data to a stream. Returns the number of bytes sent or 0 if
@@ -93,12 +95,13 @@ namespace detail
       total_sent_ += bytes_sent;
       if (e || bytes_sent == 0 || total_sent_ == length_)
       {
-        handler_(e, total_sent_, bytes_sent);
+        stream_.demuxer().operation_immediate(detail::bind_handler(handler_, e,
+              total_sent_, bytes_sent), context_, true);
       }
       else
       {
         async_send(stream_, static_cast<const char*>(data_) + total_sent_,
-            length_ - total_sent_, *this, context_);
+            length_ - total_sent_, *this);
       }
     }
 
@@ -132,7 +135,7 @@ void async_send_n(Stream& s, const void* data, size_t length, Handler handler,
 {
   async_send(s, data, length,
       detail::send_n_handler<Stream, Handler, Completion_Context>(s, data,
-        length, handler, context), context);
+        length, handler, context));
 }
 
 } // namespace asio

@@ -40,18 +40,20 @@ public:
   /// The native implementation type of the dgram socket.
   typedef typename service_type::impl_type impl_type;
 
+  /// The demuxer type for this asynchronous type.
+  typedef typename service_type::demuxer_type demuxer_type;
+
   /// Construct a basic_dgram_socket without opening it. The socket needs to be
   /// opened before data can be sent or received on it.
-  template <typename Demuxer>
-  explicit basic_dgram_socket(Demuxer& d)
+  explicit basic_dgram_socket(demuxer_type& d)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_type::null())
   {
   }
 
   /// Construct a basic_dgram_socket opened on the given address.
-  template <typename Demuxer, typename Address>
-  basic_dgram_socket(Demuxer& d, const Address& address)
+  template <typename Address>
+  basic_dgram_socket(demuxer_type& d, const Address& address)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_type::null())
   {
@@ -62,6 +64,12 @@ public:
   ~basic_dgram_socket()
   {
     service_.destroy(impl_);
+  }
+
+  /// Get the demuxer associated with the asynchronous object.
+  demuxer_type& demuxer()
+  {
+    return service_.demuxer();
   }
 
   /// Open the socket on the given address.

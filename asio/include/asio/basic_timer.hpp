@@ -41,9 +41,11 @@ public:
   /// The native implementation type of the timer.
   typedef typename service_type::impl_type impl_type;
 
+  /// The demuxer type for this asynchronous type.
+  typedef typename service_type::demuxer_type demuxer_type;
+
   /// Constructor.
-  template <typename Demuxer>
-  explicit basic_timer(Demuxer& d)
+  explicit basic_timer(demuxer_type& d)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_.null())
   {
@@ -51,8 +53,7 @@ public:
   }
 
   /// Construct and set to a particular time.
-  template <typename Demuxer>
-  basic_timer(Demuxer& d, from_type from_when, long seconds,
+  basic_timer(demuxer_type& d, from_type from_when, long seconds,
       int microseconds = 0)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_.null())
@@ -65,6 +66,12 @@ public:
   ~basic_timer()
   {
     service_.destroy(impl_);
+  }
+
+  /// Get the demuxer associated with the asynchronous object.
+  demuxer_type& demuxer()
+  {
+    return service_.demuxer();
   }
 
   /// Set the timer.

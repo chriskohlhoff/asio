@@ -47,6 +47,15 @@ public:
   {
   }
 
+  // The demuxer type for this service.
+  typedef Demuxer demuxer_type;
+
+  // Get the demuxer associated with the service.
+  demuxer_type& demuxer()
+  {
+    return demuxer_;
+  }
+
   // Create a new stream socket implementation.
   void create(impl_type& impl, impl_type new_impl)
   {

@@ -36,20 +36,30 @@ public:
   // underlying implementation of the socket layer.
   typedef socket_type impl_type;
 
-  // Constructor. This dgram_socket service can only work if the demuxer is
-  // using the win_iocp_demuxer_service. By using this type as the parameter we
-  // will cause a compile error if this is not the case.
-  win_iocp_dgram_socket_service(
-      basic_demuxer<win_iocp_demuxer_service>& demuxer)
-    : demuxer_service_(demuxer.get_service(
-          service_factory<win_iocp_demuxer_service>()))
-  {
-  }
-
   // Return a null dgram socket implementation.
   static impl_type null()
   {
     return invalid_socket;
+  }
+
+  // The demuxer type for this service.
+  typedef basic_demuxer<win_iocp_demuxer_service> demuxer_type;
+
+  // Constructor. This dgram_socket service can only work if the demuxer is
+  // using the win_iocp_demuxer_service. By using this type as the parameter we
+  // will cause a compile error if this is not the case.
+  win_iocp_dgram_socket_service(
+      demuxer_type& demuxer)
+    : demuxer_(demuxer),
+      demuxer_service_(demuxer.get_service(
+          service_factory<win_iocp_demuxer_service>()))
+  {
+  }
+
+  // Get the demuxer associated with the service.
+  demuxer_type& demuxer()
+  {
+    return demuxer_;
   }
 
   // Create a new dgram socket implementation.
@@ -269,6 +279,9 @@ public:
   }
 
 private:
+  // The demuxer used for delivering completion notifications.
+  demuxer_type& demuxer_;
+
   // The demuxer service used for running asynchronous operations.
   win_iocp_demuxer_service& demuxer_service_;
 };

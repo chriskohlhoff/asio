@@ -18,6 +18,7 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <cstring>
 #include <boost/noncopyable.hpp>
 #include <boost/type_traits.hpp>
 #include "asio/detail/pop_options.hpp"
@@ -26,15 +27,17 @@ namespace asio {
 
 /// The buffered_recv_stream class template can be used to add buffering to the
 /// recv-related operations of a stream.
-template <typename Next_Layer>
+template <typename Next_Layer, int Buffer_Size = 8192>
 class buffered_recv_stream
   : private boost::noncopyable
 {
 public:
-  /// Construct, passing the specified argument to initialise the next layer.
+  /// Construct, passing the specified demuxer to initialise the next layer.
   template <typename Arg>
   explicit buffered_recv_stream(Arg& a)
-    : next_layer_(a)
+    : next_layer_(a),
+      bytes_in_buffer_(0),
+      read_pos_(0)
   {
   }
 
@@ -54,6 +57,15 @@ public:
   lowest_layer_type& lowest_layer()
   {
     return next_layer_.lowest_layer();
+  }
+
+  /// The demuxer type for this asynchronous type.
+  typedef typename next_layer_type::demuxer_type demuxer_type;
+
+  /// Get the demuxer associated with the asynchronous object.
+  demuxer_type& demuxer()
+  {
+    return next_layer_.demuxer();
   }
 
   /// Close the stream.
@@ -90,7 +102,21 @@ public:
   /// 0 if the stream was closed cleanly. Throws an exception on failure.
   size_t recv(void* data, size_t max_length)
   {
-    return next_layer_.recv(data, max_length);
+    using namespace std; // For memcpy.
+
+    if (read_pos_ == bytes_in_buffer_)
+    {
+      bytes_in_buffer_ = next_layer_.recv(buffer_, Buffer_Size);
+      read_pos_ = 0;
+      if (bytes_in_buffer_ == 0)
+        return 0;
+    }
+
+    size_t bytes_avail = bytes_in_buffer_ - read_pos_;
+    size_t length = (max_length < bytes_avail) ? max_length : bytes_avail;
+    memcpy(data, buffer_ + read_pos_, length);
+    read_pos_ += length;
+    return length;
   }
 
   /// Start an asynchronous receive. The buffer for the data being received
@@ -113,6 +139,15 @@ public:
 private:
   /// The next layer.
   Next_Layer next_layer_;
+
+  // The data in the buffer.
+  char buffer_[Buffer_Size];
+
+  /// The amount of data currently in the buffer.
+  size_t bytes_in_buffer_;
+
+  /// The current read position in the buffer.
+  size_t read_pos_;
 };
 
 } // namespace asio

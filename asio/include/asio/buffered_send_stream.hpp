@@ -56,6 +56,15 @@ public:
     return next_layer_.lowest_layer();
   }
 
+  /// The demuxer type for this asynchronous type.
+  typedef typename next_layer_type::demuxer_type demuxer_type;
+
+  /// Get the demuxer associated with the asynchronous object.
+  demuxer_type& demuxer()
+  {
+    return next_layer_.demuxer();
+  }
+
   /// Close the stream.
   void close()
   {

@@ -40,13 +40,15 @@ public:
   /// The native implementation type of the stream socket.
   typedef typename service_type::impl_type impl_type;
 
+  /// The demuxer type for this asynchronous type.
+  typedef typename service_type::demuxer_type demuxer_type;
+
   /// A basic_stream_socket is always the lowest layer.
   typedef basic_stream_socket<service_type> lowest_layer_type;
 
   /// Construct a basic_stream_socket without opening it. The socket needs to
   /// be connected or accepted before data can be sent or received on it.
-  template <typename Demuxer>
-  explicit basic_stream_socket(Demuxer& d)
+  explicit basic_stream_socket(demuxer_type& d)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_type::null())
   {
@@ -56,6 +58,12 @@ public:
   ~basic_stream_socket()
   {
     service_.destroy(impl_);
+  }
+
+  /// Get the demuxer associated with the asynchronous object.
+  demuxer_type& demuxer()
+  {
+    return service_.demuxer();
   }
 
   /// Close the socket.
