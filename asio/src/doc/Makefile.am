@@ -11,8 +11,8 @@ delete_doc:
 	doxygen asio.dox
 
 EXTRA_DIST = \
-	../../doc \
 	../../doc/html/index.html \
+	../../doc \
 	asio_header.htm \
 	asio_footer.htm
 
