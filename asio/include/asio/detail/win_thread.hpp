@@ -44,11 +44,16 @@ public:
           asio_detail_win_thread_function, arg, 0, &thread_id));
   }
 
+  // Destructor.
+  ~win_thread()
+  {
+    ::CloseHandle(thread_);
+  }
+
   // Wait for the thread to exit.
   void join()
   {
     ::WaitForSingleObject(thread_, INFINITE);
-    ::CloseHandle(thread_);
   }
 
 private:
