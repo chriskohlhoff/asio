@@ -43,6 +43,7 @@ public:
   template <typename Demuxer>
   select_reactor(Demuxer&)
     : mutex_(),
+      select_in_progress_(false),
       interrupter_(),
       read_op_queue_(),
       write_op_queue_(),
@@ -115,13 +116,61 @@ public:
     write_op_queue_.enqueue_operation(descriptor, handler);
   }
 
+  // Class template to adapt a close function as a timer handler.
+  template <typename Close_Function>
+  class close_handler
+  {
+  public:
+    close_handler(socket_type descriptor, Close_Function close_function)
+      : descriptor_(descriptor),
+        close_function_(close_function)
+    {
+    }
+
+    void do_operation()
+    {
+      close_function_(descriptor_);
+    }
+
+    void do_cancel()
+    {
+    }
+
+  private:
+    socket_type descriptor_;
+    Close_Function close_function_;
+  };
+
   // Close the given descriptor and cancel any operations that are running
-  // against it.
-  void close_descriptor(socket_type descriptor)
+  // against it. The given close function will be called to actually perform
+  // the closure of the resource.
+  template <typename Close_Function>
+  void close_descriptor(socket_type descriptor, Close_Function close_function)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
-    read_op_queue_.close_descriptor(descriptor);
-    write_op_queue_.close_descriptor(descriptor);
+
+    // We need to interrupt the select if any operations were cancelled.
+    bool interrupt = read_op_queue_.close_descriptor(descriptor);
+    interrupt = write_op_queue_.close_descriptor(descriptor) || interrupt;
+
+    if (select_in_progress_)
+    {
+      // The close function cannot be called while the select call is running,
+      // so we schedule a dummy timer to perform the socket close when the
+      // select has been interrupted.
+      void* token = 0;
+      interrupt = timer_queue_.enqueue_timer(time(0, 0),
+          close_handler<Close_Function>(descriptor, close_function), token)
+        || interrupt;
+    }
+    else
+    {
+      // Select is not currently running so we can close the socket now.
+      close_function(descriptor);
+    }
+
+    if (interrupt)
+      interrupter_.interrupt();
   }
 
   // Schedule a timer to expire at the specified absolute time. The
@@ -163,6 +212,11 @@ private:
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
+    // Dispatch any operation cancellations that were made while the select
+    // loop was not running.
+    read_op_queue_.dispatch_cancellations();
+    write_op_queue_.dispatch_cancellations();
+
     bool stop = false;
     while (!stop)
     {
@@ -179,9 +233,11 @@ private:
       // operations can be started while the call is executing.
       timeval tv_buf;
       timeval* tv = get_timeout(tv_buf);
+      select_in_progress_ = true;
       lock.unlock();
       int retval = socket_ops::select(max_fd + 1, read_fds, write_fds, 0, tv);
       lock.lock();
+      select_in_progress_ = false;
 
       // Reset the interrupter.
       if (read_fds.is_set(interrupter_.read_descriptor()))
@@ -192,6 +248,8 @@ private:
       {
         read_op_queue_.dispatch_descriptors(read_fds);
         write_op_queue_.dispatch_descriptors(write_fds);
+        read_op_queue_.dispatch_cancellations();
+        write_op_queue_.dispatch_cancellations();
       }
       timer_queue_.dispatch_timers(time::now());
     }
@@ -285,6 +343,9 @@ private:
 
   // Mutex to protect access to internal data.
   asio::detail::mutex mutex_;
+
+  // Whether the select loop is currently running or not.
+  bool select_in_progress_;
 
   // The interrupter is used to break a blocking select call.
   select_interrupter interrupter_;

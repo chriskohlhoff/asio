@@ -104,7 +104,7 @@ public:
       impl->get_sockets(sockets);
       typename connector_impl::socket_set::iterator i = sockets.begin();
       while (i != sockets.end())
-        reactor_.close_descriptor(*i++);
+        reactor_.close_descriptor(*i++, socket_ops::close);
       delete impl;
       impl = null();
     }
@@ -203,8 +203,8 @@ public:
 
     void do_cancel()
     {
-      socket_holder new_socket_holder(new_socket_);
-      impl_->remove_socket(new_socket_);
+      // The socket is closed when the reactor_.close_descriptor is called,
+      // so no need to close it here.
       socket_error error(socket_error::operation_aborted);
       demuxer_.operation_completed(bind_handler(handler_, error), context_);
     }

@@ -30,6 +30,13 @@ class reactor_op_queue
   : private boost::noncopyable
 {
 public:
+  // Constructor.
+  reactor_op_queue()
+    : operations_(),
+      cancelled_operations_(0)
+  {
+  }
+
   // Add a new operation to the queue. Returns true if this is the only
   // operation for the given descriptor, in which case the reactor's event
   // demultiplexing function call may need to be interrupted and restarted.
@@ -48,6 +55,28 @@ public:
     while (current_op->next_)
       current_op = current_op->next_;
     current_op->next_ = new_op;
+
+    return false;
+  }
+
+  // Close the given descriptor. Any operations pending for the descriptor will
+  // be notified that they have been cancelled next time dispatch_cancellations
+  // is called. Returns true if any operations were cancelled, in which case
+  // the reactor's event demultiplexing function may need to be interrupted and
+  // restarted.
+  bool close_descriptor(Descriptor descriptor)
+  {
+    typename operation_map::iterator i = operations_.find(descriptor);
+    if (i != operations_.end())
+    {
+      op_base* last_op = i->second;
+      while (last_op->next_)
+        last_op = last_op->next_;
+      last_op->next_ = cancelled_operations_;
+      cancelled_operations_ = i->second;
+      operations_.erase(i);
+      return true;
+    }
 
     return false;
   }
@@ -94,23 +123,16 @@ public:
     }
   }
 
-  // Close the given descriptor. Any operations pending for the descriptor will
-  // be notified that they are being cancelled.
-  void close_descriptor(Descriptor descriptor)
+  // Dispatch any pending cancels for operations.
+  void dispatch_cancellations()
   {
-    typename operation_map::iterator i = operations_.find(descriptor);
-    if (i != operations_.end())
+    while (cancelled_operations_)
     {
-      op_base* op = i->second;
-      while (op)
-      {
-        op_base* next_op = op->next_;
-        op->next_ = 0;
-        op->do_cancel();
-        delete op;
-        op = next_op;
-      }
-      operations_.erase(i);
+      op_base* next_op = cancelled_operations_->next_;
+      cancelled_operations_->next_ = 0;
+      cancelled_operations_->do_cancel();
+      delete cancelled_operations_;
+      cancelled_operations_ = next_op;
     }
   }
 
@@ -188,6 +210,9 @@ private:
 
   // The operations that are currently executing asynchronously.
   operation_map operations_;
+
+  // The list of operations that have been cancelled.
+  op_base* cancelled_operations_;
 };
 
 } // namespace detail

@@ -58,8 +58,7 @@ public:
   {
     if (impl != null())
     {
-      reactor_.close_descriptor(impl);
-      socket_ops::close(impl);
+      reactor_.close_descriptor(impl, socket_ops::close);
       impl = null();
     }
   }
