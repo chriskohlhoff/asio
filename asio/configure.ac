@@ -16,17 +16,22 @@ AC_ARG_WITH(boost,
   CPPFLAGS="$CPPFLAGS -I${withval}"
 ],
 [
-  BOOSTDIR="`pwd`/../boost_1_31_0"
+  BOOSTDIR="`pwd`/../boost_1_32_0"
   if test -d "${BOOSTDIR}"; then
     CPPFLAGS="$CPPFLAGS -I${BOOSTDIR}"
   else
-    BOOSTDIR="`pwd`/../boost-1.30.2"
+    BOOSTDIR="`pwd`/../boost_1_31_0"
     if test -d "${BOOSTDIR}"; then
       CPPFLAGS="$CPPFLAGS -I${BOOSTDIR}"
     else
-      BOOSTDIR="`pwd`/../boost_1_30_0"
+      BOOSTDIR="`pwd`/../boost-1.30.2"
       if test -d "${BOOSTDIR}"; then
         CPPFLAGS="$CPPFLAGS -I${BOOSTDIR}"
+      else
+        BOOSTDIR="`pwd`/../boost_1_30_0"
+        if test -d "${BOOSTDIR}"; then
+          CPPFLAGS="$CPPFLAGS -I${BOOSTDIR}"
+        fi
       fi
     fi
   fi

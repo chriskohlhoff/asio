@@ -1,5 +1,5 @@
 ifndef BOOSTDIR
-BOOSTDIR = ../../boost_1_31_0
+BOOSTDIR = ../../boost_1_32_0
 endif
 
 CXXFLAGS = -g -O3 -Wall -mthreads -I../include -I$(BOOSTDIR)
