@@ -21,7 +21,7 @@
 #include <cerrno>
 #include <exception>
 #include <string>
-#include <ostream>
+#include <iostream>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/detail/socket_types.hpp"
