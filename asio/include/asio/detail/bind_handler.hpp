@@ -128,6 +128,91 @@ binder3<Handler, Arg1, Arg2, Arg3> bind_handler(Handler handler, Arg1 arg1,
   return binder3<Handler, Arg1, Arg2, Arg3>(handler, arg1, arg2, arg3);
 }
 
+template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
+    typename Arg4>
+class binder4
+{
+public:
+  binder4(Handler handler, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4)
+    : handler_(handler),
+      arg1_(arg1),
+      arg2_(arg2),
+      arg3_(arg3),
+      arg4_(arg4)
+  {
+  }
+
+  void operator()()
+  {
+    handler_(arg1_, arg2_, arg3_, arg4_);
+  }
+
+  void operator()() const
+  {
+    handler_(arg1_, arg2_, arg3_, arg4_);
+  }
+
+private:
+  Handler handler_;
+  Arg1 arg1_;
+  Arg2 arg2_;
+  Arg3 arg3_;
+  Arg4 arg4_;
+};
+
+template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
+    typename Arg4>
+binder4<Handler, Arg1, Arg2, Arg3, Arg4> bind_handler(Handler handler,
+    Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4)
+{
+  return binder4<Handler, Arg1, Arg2, Arg3, Arg4>(handler, arg1, arg2, arg3,
+      arg4);
+}
+
+template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
+    typename Arg4, typename Arg5>
+class binder5
+{
+public:
+  binder5(Handler handler, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4,
+      Arg5 arg5)
+    : handler_(handler),
+      arg1_(arg1),
+      arg2_(arg2),
+      arg3_(arg3),
+      arg4_(arg4),
+      arg5_(arg5)
+  {
+  }
+
+  void operator()()
+  {
+    handler_(arg1_, arg2_, arg3_, arg4_, arg5_);
+  }
+
+  void operator()() const
+  {
+    handler_(arg1_, arg2_, arg3_, arg4_, arg5_);
+  }
+
+private:
+  Handler handler_;
+  Arg1 arg1_;
+  Arg2 arg2_;
+  Arg3 arg3_;
+  Arg4 arg4_;
+  Arg5 arg5_;
+};
+
+template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
+    typename Arg4, typename Arg5>
+binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5> bind_handler(Handler handler,
+    Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5)
+{
+  return binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>(handler, arg1, arg2,
+      arg3, arg4, arg5);
+}
+
 } // namespace detail
 } // namespace asio
 

@@ -22,6 +22,8 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/service_factory.hpp"
+#include "asio/wrapped_handler.hpp"
+#include "asio/detail/bind_handler.hpp"
 #include "asio/detail/service_registry.hpp"
 #include "asio/detail/signal_init.hpp"
 #include "asio/detail/winsock_init.hpp"
@@ -162,31 +164,6 @@ public:
     service_.post(handler);
   }
 
-  template <typename Handler>
-  class wrapped_handler
-  {
-  public:
-    wrapped_handler(basic_demuxer<Demuxer_Service>& demuxer, Handler handler)
-      : demuxer_(demuxer),
-        handler_(handler)
-    {
-    }
-
-    void operator()()
-    {
-      demuxer_.dispatch(handler_);
-    }
-
-    void operator()() const
-    {
-      demuxer_.dispatch(handler_);
-    }
-
-  private:
-    basic_demuxer<Demuxer_Service>& demuxer_;
-    Handler handler_;
-  };
-
   /// Create a new handler that automatically dispatches the wrapped handler
   /// on the demuxer.
   /**
@@ -199,9 +176,11 @@ public:
    * the handler must be: @code void handler(); @endcode
    */
   template <typename Handler>
-  wrapped_handler<Handler> wrap(Handler handler)
+  wrapped_handler<basic_demuxer<Demuxer_Service>, Handler> wrap(
+      Handler handler)
   {
-    return wrapped_handler<Handler>(*this, handler);
+    return wrapped_handler<basic_demuxer<Demuxer_Service>, Handler>(*this,
+        handler);
   }
 
   /// Obtain the service interface corresponding to the given type.

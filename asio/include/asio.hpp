@@ -17,6 +17,7 @@
 
 #include "asio/basic_demuxer.hpp"
 #include "asio/basic_dgram_socket.hpp"
+#include "asio/basic_locking_dispatcher.hpp"
 #include "asio/basic_socket_acceptor.hpp"
 #include "asio/basic_socket_connector.hpp"
 #include "asio/basic_stream_socket.hpp"
@@ -31,6 +32,7 @@
 #include "asio/ipv4/address.hpp"
 #include "asio/ipv4/tcp.hpp"
 #include "asio/ipv4/udp.hpp"
+#include "asio/locking_dispatcher.hpp"
 #include "asio/recv.hpp"
 #include "asio/send.hpp"
 #include "asio/service_factory.hpp"

@@ -2,6 +2,7 @@ nobase_include_HEADERS = \
 	asio.hpp \
 	asio/basic_demuxer.hpp \
 	asio/basic_dgram_socket.hpp \
+	asio/basic_locking_dispatcher.hpp \
 	asio/basic_socket_acceptor.hpp \
 	asio/basic_socket_connector.hpp \
 	asio/basic_stream_socket.hpp \
@@ -13,6 +14,7 @@ nobase_include_HEADERS = \
 	asio/detail/bind_handler.hpp \
 	asio/detail/buffer_resize_guard.hpp \
 	asio/detail/event.hpp \
+	asio/detail/locking_dispatcher_service.hpp \
 	asio/detail/mutex.hpp \
 	asio/detail/pipe_select_interrupter.hpp \
 	asio/detail/pop_options.hpp \
@@ -57,6 +59,7 @@ nobase_include_HEADERS = \
 	asio/ipv4/address.hpp \
 	asio/ipv4/tcp.hpp \
 	asio/ipv4/udp.hpp \
+	asio/locking_dispatcher.hpp \
 	asio/recv.hpp \
 	asio/send.hpp \
 	asio/service_factory.hpp \
@@ -66,7 +69,8 @@ nobase_include_HEADERS = \
 	asio/socket_option.hpp \
 	asio/stream_socket.hpp \
 	asio/timer.hpp \
-	asio/timer_base.hpp
+	asio/timer_base.hpp \
+	asio/wrapped_handler.hpp
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
