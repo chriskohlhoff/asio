@@ -49,6 +49,13 @@ public:
   }
 
   /// Construct an address using an IP address string in dotted decimal form.
+  address(const char* host)
+  {
+    if (asio::detail::socket_ops::inet_pton(AF_INET, host, &addr_) <= 0)
+      throw asio::error(asio::detail::socket_ops::get_error());
+  }
+
+  /// Construct an address using an IP address string in dotted decimal form.
   address(const std::string& host)
   {
     if (asio::detail::socket_ops::inet_pton(AF_INET, host.c_str(), &addr_) <= 0)
@@ -72,6 +79,14 @@ public:
   address& operator=(unsigned long addr)
   {
     addr_.s_addr = asio::detail::socket_ops::host_to_network_long(addr);
+    return *this;
+  }
+
+  /// Assign from an IP address string in dotted decimal form.
+  address& operator=(const char* addr)
+  {
+    address tmp(addr);
+    addr_ = tmp.addr_;
     return *this;
   }
 
@@ -151,19 +166,19 @@ public:
   /// Obtain an address object that represents any address.
   static address any()
   {
-    return address(INADDR_ANY);
+    return address(static_cast<unsigned long>(INADDR_ANY));
   }
 
   /// Obtain an address object that represents the loopback address.
   static address loopback()
   {
-    return address(INADDR_LOOPBACK);
+    return address(static_cast<unsigned long>(INADDR_LOOPBACK));
   }
 
   /// Obtain an address object that represents the broadcast address.
   static address broadcast()
   {
-    return address(INADDR_BROADCAST);
+    return address(static_cast<unsigned long>(INADDR_BROADCAST));
   }
 
 private:

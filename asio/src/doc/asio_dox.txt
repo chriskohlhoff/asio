@@ -20,6 +20,12 @@
 */
 
 /**
+\namespace asio::ipv4::multicast
+\brief The asio::ipv4::multicast namespace defines the socket options used for
+multicast.
+*/
+
+/**
 \page boost_bind boost::bind
 See the <a href="http://www.boost.org/libs/bind/bind.html">Boost: bind.hpp
 documentation</a> for more information on how to use <tt>boost::bind</tt>.
@@ -37,6 +43,7 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 \li ::asio
 \li asio::arg
 \li asio::ipv4
+\li asio::ipv4::multicast
 \li asio::socket_option
 
 <H2>Classes</H2>

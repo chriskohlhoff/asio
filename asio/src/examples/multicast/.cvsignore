@@ -1,0 +1,8 @@
+.deps
+.dirstamp
+receiver
+sender
+*.exe
+*.ilk
+*.pdb
+*.tds

@@ -25,6 +25,8 @@ noinst_PROGRAMS = \
 	examples/echo/blocking_tcp_echo_server \
 	examples/echo/blocking_udp_echo_client \
 	examples/echo/blocking_udp_echo_server \
+	examples/multicast/receiver \
+	examples/multicast/sender \
 	examples/timeouts/accept_timeout \
 	examples/timeouts/connect_timeout \
 	examples/timeouts/dgram_recv_timeout \
@@ -84,6 +86,8 @@ examples_echo_blocking_tcp_echo_client_SOURCES = examples/echo/blocking_tcp_echo
 examples_echo_blocking_tcp_echo_server_SOURCES = examples/echo/blocking_tcp_echo_server.cpp
 examples_echo_blocking_udp_echo_client_SOURCES = examples/echo/blocking_udp_echo_client.cpp
 examples_echo_blocking_udp_echo_server_SOURCES = examples/echo/blocking_udp_echo_server.cpp
+examples_multicast_receiver_SOURCES = examples/multicast/receiver.cpp
+examples_multicast_sender_SOURCES = examples/multicast/sender.cpp
 examples_timeouts_accept_timeout_SOURCES = examples/timeouts/accept_timeout.cpp
 examples_timeouts_connect_timeout_SOURCES = examples/timeouts/connect_timeout.cpp
 examples_timeouts_dgram_recv_timeout_SOURCES = examples/timeouts/dgram_recv_timeout.cpp

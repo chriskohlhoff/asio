@@ -33,6 +33,8 @@ all: \
 	examples\echo\blocking_tcp_echo_server.exe \
 	examples\echo\blocking_udp_echo_client.exe \
 	examples\echo\blocking_udp_echo_server.exe \
+	examples\multicast\receiver.exe \
+	examples\multicast\sender.exe \
 	examples\timeouts\accept_timeout.exe \
 	examples\timeouts\connect_timeout.exe \
 	examples\timeouts\dgram_recv_timeout.exe \
@@ -71,6 +73,8 @@ examples\echo\blocking_tcp_echo_client.exe: examples\echo\blocking_tcp_echo_clie
 examples\echo\blocking_tcp_echo_server.exe: examples\echo\blocking_tcp_echo_server.obj
 examples\echo\blocking_udp_echo_client.exe: examples\echo\blocking_udp_echo_client.obj
 examples\echo\blocking_udp_echo_server.exe: examples\echo\blocking_udp_echo_server.obj
+examples\multicast\receiver.exe: examples\multicast\receiver.obj
+examples\multicast\sender.exe: examples\multicast\sender.obj
 examples\timeouts\accept_timeout.exe: examples\timeouts\accept_timeout.obj
 examples\timeouts\connect_timeout.exe: examples\timeouts\connect_timeout.obj
 examples\timeouts\dgram_recv_timeout.exe: examples\timeouts\dgram_recv_timeout.obj

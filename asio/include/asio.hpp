@@ -33,6 +33,7 @@
 #include "asio/ipv4/basic_host_resolver.hpp"
 #include "asio/ipv4/host.hpp"
 #include "asio/ipv4/host_resolver.hpp"
+#include "asio/ipv4/multicast.hpp"
 #include "asio/ipv4/tcp.hpp"
 #include "asio/ipv4/udp.hpp"
 #include "asio/is_recv_buffered.hpp"

@@ -31,6 +31,8 @@ EXAMPLE_EXES = \
 	examples/echo/blocking_tcp_echo_server.exe \
 	examples/echo/blocking_udp_echo_client.exe \
 	examples/echo/blocking_udp_echo_server.exe \
+	examples/multicast/receiver.exe \
+	examples/multicast/sender.exe \
 	examples/timeouts/accept_timeout.exe \
 	examples/timeouts/connect_timeout.exe \
 	examples/timeouts/dgram_recv_timeout.exe \
