@@ -18,12 +18,21 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/basic_dgram_socket.hpp"
-#include "asio/detail/dgram_socket_service.hpp"
+#include "asio/demuxer.hpp"
+#include "asio/detail/select_reactor.hpp"
+#include "asio/detail/reactive_dgram_socket_service.hpp"
 
 namespace asio {
 
 /// Typedef for the typical usage of dgram_socket.
-typedef basic_dgram_socket<detail::dgram_socket_service> dgram_socket;
+typedef basic_dgram_socket
+  <
+    detail::reactive_dgram_socket_service
+      <
+        demuxer,
+        detail::select_reactor<demuxer>
+      >
+  > dgram_socket;
 
 } // namespace asio
 

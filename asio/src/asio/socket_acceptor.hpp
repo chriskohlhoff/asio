@@ -18,13 +18,21 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/basic_socket_acceptor.hpp"
-#include "asio/detail/socket_acceptor_service.hpp"
+#include "asio/demuxer.hpp"
+#include "asio/detail/select_reactor.hpp"
+#include "asio/detail/reactive_socket_acceptor_service.hpp"
 
 namespace asio {
 
 /// Typedef for the typical usage of socket_acceptor.
-typedef basic_socket_acceptor<detail::socket_acceptor_service>
-  socket_acceptor;
+typedef basic_socket_acceptor
+  <
+    detail::reactive_socket_acceptor_service
+      <
+        demuxer,
+        detail::select_reactor<demuxer>
+      >
+  > socket_acceptor;
 
 } // namespace asio
 

@@ -1,6 +1,6 @@
 //
-// select_op.hpp
-// ~~~~~~~~~~~~~
+// winsock_init.hpp
+// ~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -12,50 +12,54 @@
 // no claim as to its suitability for any purpose.
 //
 
-#ifndef ASIO_DETAIL_SELECT_OP_HPP
-#define ASIO_DETAIL_SELECT_OP_HPP
+#ifndef ASIO_DETAIL_WINSOCK_INIT_HPP
+#define ASIO_DETAIL_WINSOCK_INIT_HPP
 
 #include "asio/detail/push_options.hpp"
+
+#if defined(_WIN32)
 
 #include "asio/detail/socket_types.hpp"
 
 namespace asio {
 namespace detail {
 
-class select_op_queue;
-
-class select_op
+template <int Major = 2, int Minor = 0>
+class winsock_init
 {
 public:
   // Destructor.
-  virtual ~select_op();
+  ~winsock_init()
+  {
+    ::WSACleanup();
+  }
 
-  // Get the descriptor associated with the operation.
-  socket_type descriptor() const;
-
-  // Perform the operation.
-  virtual void do_operation() = 0;
-
-  // Handle the case where the operation has been cancelled.
-  virtual void do_cancel() = 0;
-
-protected:
-  // Construct an operation for the given descriptor.
-  select_op(socket_type d);
+  // Used to ensure that the winsock library is initialised.
+  static void use()
+  {
+    &instance_;
+  }
 
 private:
-  friend class select_op_queue;
+  // Constructor.
+  winsock_init()
+  {
+    WSADATA wsa_data;
+    ::WSAStartup(MAKEWORD(Major, Minor), &wsa_data);
+  }
 
-  // The descriptor associated with the operation.
-  socket_type descriptor_;
-
-  // The next operation for the same file descriptor.
-  select_op* next_;
+  // Instance to force initialisation of winsock at global scope.
+  static winsock_init<Major, Minor> instance_;
 };
+
+template <int Major, int Minor>
+winsock_init<Major, Minor> winsock_init<Major, Minor>::instance_;
 
 } // namespace detail
 } // namespace asio
 
+#endif // _WIN32
+
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_SELECT_OP_HPP
+#endif // ASIO_DETAIL_WINSOCK_INIT_HPP

@@ -22,7 +22,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/completion_context.hpp"
-#include "asio/demuxer.hpp"
+#include "asio/service_factory.hpp"
 
 namespace asio {
 
@@ -44,16 +44,18 @@ public:
 
   /// Construct a basic_dgram_socket without opening it. The socket needs to be
   /// opened before data can be sent or received on it.
-  explicit basic_dgram_socket(demuxer& d)
-    : service_(dynamic_cast<service_type&>(d.get_service(service_type::id))),
-      impl_(service_type::invalid_impl)
+  template <typename Demuxer>
+  explicit basic_dgram_socket(Demuxer& d)
+    : service_(d.get_service(service_factory<Service>())),
+      impl_(service_type::null())
   {
   }
 
   /// Construct a basic_dgram_socket opened on the given address.
-  basic_dgram_socket(demuxer& d, const socket_address& address)
-    : service_(dynamic_cast<service_type&>(d.get_service(service_type::id))),
-      impl_(service_type::invalid_impl)
+  template <typename Demuxer>
+  basic_dgram_socket(Demuxer& d, const socket_address& address)
+    : service_(d.get_service(service_factory<Service>())),
+      impl_(service_type::null())
   {
     service_.create(impl_, address);
   }

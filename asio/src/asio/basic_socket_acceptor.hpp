@@ -22,7 +22,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/completion_context.hpp"
-#include "asio/demuxer.hpp"
+#include "asio/service_factory.hpp"
 
 namespace asio {
 
@@ -44,26 +44,29 @@ public:
 
   /// Constructor an acceptor without opening it. The acceptor needs to be
   /// opened before it can accept new connections.
-  explicit basic_socket_acceptor(demuxer& d)
-    : service_(dynamic_cast<service_type&>(d.get_service(service_type::id))),
-      impl_(service_type::invalid_impl)
+  template <typename Demuxer>
+  explicit basic_socket_acceptor(Demuxer& d)
+    : service_(d.get_service(service_factory<Service>())),
+      impl_(service_type::null())
   {
   }
 
   /// Construct an acceptor opened on the given address.
-  basic_socket_acceptor(demuxer& d, const socket_address& addr)
-    : service_(dynamic_cast<service_type&>(d.get_service(service_type::id))),
-      impl_(service_type::invalid_impl)
+  template <typename Demuxer>
+  basic_socket_acceptor(Demuxer& d, const socket_address& addr)
+    : service_(d.get_service(service_factory<Service>())),
+      impl_(service_type::null())
   {
     service_.create(impl_, addr);
   }
 
   /// Construct an acceptor opened on the given address and with the listen
   /// queue set to the given number of connections.
-  basic_socket_acceptor(demuxer& d, const socket_address& addr,
+  template <typename Demuxer>
+  basic_socket_acceptor(Demuxer& d, const socket_address& addr,
       int listen_queue)
-    : service_(dynamic_cast<service_type&>(d.get_service(service_type::id))),
-      impl_(service_type::invalid_impl)
+    : service_(d.get_service(service_factory<Service>())),
+      impl_(service_type::null())
   {
     service_.create(impl_, addr, listen_queue);
   }

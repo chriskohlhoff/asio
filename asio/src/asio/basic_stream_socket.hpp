@@ -22,7 +22,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/completion_context.hpp"
-#include "asio/demuxer.hpp"
+#include "asio/service_factory.hpp"
 
 namespace asio {
 
@@ -45,9 +45,10 @@ public:
 
   /// Construct a basic_stream_socket without opening it. The socket needs to
   /// be connected or accepted before data can be sent or received on it.
-  explicit basic_stream_socket(demuxer& d)
-    : service_(dynamic_cast<service_type&>(d.get_service(service_type::id))),
-      impl_(service_type::invalid_impl)
+  template <typename Demuxer>
+  explicit basic_stream_socket(Demuxer& d)
+    : service_(d.get_service(service_factory<Service>())),
+      impl_(service_type::null())
   {
   }
 

@@ -1,0 +1,272 @@
+//
+// reactive_socket_acceptor_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+// Copyright (c) 2003 Christopher M. Kohlhoff (chris@kohlhoff.com)
+//
+// Permission to use, copy, modify, distribute and sell this software and its
+// documentation for any purpose is hereby granted without fee, provided that
+// the above copyright notice appears in all copies and that both the copyright
+// notice and this permission notice appear in supporting documentation. This
+// software is provided "as is" without express or implied warranty, and with
+// no claim as to its suitability for any purpose.
+//
+
+#ifndef ASIO_DETAIL_REACTIVE_SOCKET_ACCEPTOR_SERVICE_HPP
+#define ASIO_DETAIL_REACTIVE_SOCKET_ACCEPTOR_SERVICE_HPP
+
+#include "asio/detail/push_options.hpp"
+
+#include "asio/detail/push_options.hpp"
+#include <boost/bind.hpp>
+#include <boost/throw_exception.hpp>
+#include "asio/detail/pop_options.hpp"
+
+#include "asio/basic_stream_socket.hpp"
+#include "asio/completion_context.hpp"
+#include "asio/service_factory.hpp"
+#include "asio/socket_address.hpp"
+#include "asio/socket_error.hpp"
+#include "asio/detail/socket_holder.hpp"
+#include "asio/detail/socket_ops.hpp"
+#include "asio/detail/socket_types.hpp"
+
+namespace asio {
+namespace detail {
+
+template <typename Demuxer, typename Reactor>
+class reactive_socket_acceptor_service
+{
+public:
+  // The native type of the socket acceptor. This type is dependent on the
+  // underlying implementation of the socket layer.
+  typedef socket_type impl_type;
+
+  // Return a null socket acceptor implementation.
+  static impl_type null()
+  {
+    return invalid_socket;
+  }
+
+  // Constructor.
+  reactive_socket_acceptor_service(Demuxer& d)
+    : demuxer_(d),
+      reactor_(d.get_service(service_factory<Reactor>()))
+  {
+  }
+
+  // Create a new socket acceptor implementation.
+  void create(impl_type& impl, const socket_address& address)
+  {
+    create(impl, address, SOMAXCONN);
+  }
+
+  // Create a new stream socket implementation.
+  void create(impl_type& impl, const socket_address& address,
+      int listen_queue)
+  {
+    socket_holder sock(socket_ops::socket(address.family(), SOCK_STREAM,
+          IPPROTO_TCP));
+    if (sock.get() == invalid_socket)
+      boost::throw_exception(socket_error(socket_ops::get_error()));
+
+    int reuse = 1;
+    socket_ops::setsockopt(sock.get(), SOL_SOCKET, SO_REUSEADDR, &reuse,
+        sizeof(reuse));
+
+    if (socket_ops::bind(sock.get(), address.native_address(),
+          address.native_size()) == socket_error_retval)
+      boost::throw_exception(socket_error(socket_ops::get_error()));
+
+    if (socket_ops::listen(sock.get(), listen_queue) == socket_error_retval)
+      boost::throw_exception(socket_error(socket_ops::get_error()));
+
+    impl = sock.release();
+  }
+
+  // Destroy a stream socket implementation.
+  void destroy(impl_type& impl)
+  {
+    if (impl != null())
+    {
+      reactor_.close_descriptor(impl);
+      socket_ops::close(impl);
+      impl = null();
+    }
+  }
+
+  // Accept a new connection. Throws a socket_error exception on failure.
+  template <typename Stream_Socket_Service>
+  void accept(impl_type& impl,
+      basic_stream_socket<Stream_Socket_Service>& peer)
+  {
+    // We cannot accept a socket that is already open.
+    if (peer.impl() != invalid_socket)
+      boost::throw_exception(socket_error(socket_error::already_connected));
+
+    socket_type new_socket = socket_ops::accept(impl, 0, 0);
+    if (int error = socket_ops::get_error())
+      boost::throw_exception(socket_error(error));
+
+    peer.set_impl(new_socket);
+  }
+
+  // Accept a new connection. Throws a socket_error exception on failure.
+  template <typename Stream_Socket_Service>
+  void accept(impl_type& impl,
+      basic_stream_socket<Stream_Socket_Service>& peer,
+      socket_address& peer_address)
+  {
+    // We cannot accept a socket that is already open.
+    if (peer.impl() != invalid_socket)
+      boost::throw_exception(socket_error(socket_error::already_connected));
+
+    socket_addr_len_type addr_len = peer_address.native_size();
+    socket_type new_socket = socket_ops::accept(impl,
+        peer_address.native_address(), &addr_len);
+    if (int error = socket_ops::get_error())
+      boost::throw_exception(socket_error(error));
+    peer_address.native_size(addr_len);
+
+    peer.set_impl(new_socket);
+  }
+
+  template <typename Stream_Socket_Service, typename Handler>
+  class accept_handler
+  {
+  public:
+    accept_handler(impl_type impl, demuxer& demuxer,
+        basic_stream_socket<Stream_Socket_Service>& peer, Handler handler,
+        completion_context& context)
+      : impl_(impl),
+        demuxer_(demuxer),
+        peer_(peer),
+        handler_(handler),
+        context_(context)
+    {
+    }
+
+    void do_operation()
+    {
+      socket_type new_socket = socket_ops::accept(impl_, 0, 0);
+      socket_error error(new_socket == invalid_socket
+          ? socket_ops::get_error() : socket_error::success);
+      peer_.set_impl(new_socket);
+      demuxer_.operation_completed(boost::bind(handler_, error), context_);
+    }
+
+    void do_cancel()
+    {
+      socket_error error(socket_error::operation_aborted);
+      demuxer_.operation_completed(boost::bind(handler_, error), context_);
+    }
+
+  private:
+    impl_type impl_;
+    demuxer& demuxer_;
+    basic_stream_socket<Stream_Socket_Service>& peer_;
+    Handler handler_;
+    completion_context& context_;
+  };
+
+  // Start an asynchronous accept. The peer_socket object must be valid until
+  // the accept's completion handler is invoked.
+  template <typename Stream_Socket_Service, typename Handler>
+  void async_accept(impl_type& impl,
+      basic_stream_socket<Stream_Socket_Service>& peer,
+      Handler handler, completion_context& context)
+  {
+    if (peer.impl() != invalid_socket)
+    {
+      socket_error error(socket_error::already_connected);
+      demuxer_.operation_immediate(boost::bind(handler, error));
+    }
+    else
+    {
+      demuxer_.operation_started();
+      reactor_.start_read_op(impl,
+          accept_handler<Stream_Socket_Service, Handler>(impl, demuxer_, peer,
+            handler, context));
+    }
+  }
+
+  template <typename Stream_Socket_Service, typename Handler>
+  class accept_addr_handler
+  {
+  public:
+    accept_addr_handler(impl_type impl, demuxer& demuxer,
+        basic_stream_socket<Stream_Socket_Service>& peer,
+        socket_address& peer_address, Handler handler,
+        completion_context& context)
+      : impl_(impl),
+        demuxer_(demuxer),
+        peer_(peer),
+        peer_address_(peer_address),
+        handler_(handler),
+        context_(context)
+    {
+    }
+
+    void do_operation()
+    {
+      socket_addr_len_type addr_len = peer_address_.native_size();
+      socket_type new_socket = socket_ops::accept(impl_,
+          peer_address_.native_address(), &addr_len);
+      socket_error error(new_socket == invalid_socket
+          ? socket_ops::get_error() : socket_error::success);
+      peer_address_.native_size(addr_len);
+      peer_.set_impl(new_socket);
+      demuxer_.operation_completed(boost::bind(handler_, error), context_);
+    }
+
+    void do_cancel()
+    {
+      socket_error error(socket_error::operation_aborted);
+      demuxer_.operation_completed(boost::bind(handler_, error), context_);
+    }
+
+  private:
+    impl_type impl_;
+    demuxer& demuxer_;
+    basic_stream_socket<Stream_Socket_Service>& peer_;
+    socket_address& peer_address_;
+    Handler handler_;
+    completion_context& context_;
+  };
+
+  // Start an asynchronous accept. The peer_socket and peer_address objects
+  // must be valid until the accept's completion handler is invoked.
+  template <typename Stream_Socket_Service, typename Handler>
+  void async_accept(impl_type& impl,
+      basic_stream_socket<Stream_Socket_Service>& peer,
+      socket_address& peer_address, Handler handler,
+      completion_context& context)
+  {
+    if (peer.impl() != invalid_socket)
+    {
+      socket_error error(socket_error::already_connected);
+      demuxer_.operation_immediate(boost::bind(handler, error));
+    }
+    else
+    {
+      demuxer_.operation_started();
+      reactor_.start_read_op(impl,
+          accept_addr_handler<Stream_Socket_Service, Handler>(impl, demuxer_,
+            peer, peer_address, handler, context));
+    }
+  }
+
+private:
+  // The demuxer used for delivering completion notifications.
+  Demuxer& demuxer_;
+
+  // The selector that performs event demultiplexing for the provider.
+  Reactor& reactor_;
+};
+
+} // namespace detail
+} // namespace asio
+
+#include "asio/detail/pop_options.hpp"
+
+#endif // ASIO_DETAIL_REACTIVE_SOCKET_ACCEPTOR_SERVICE_HPP

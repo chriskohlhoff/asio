@@ -1,0 +1,197 @@
+//
+// reactor_op_queue.hpp
+// ~~~~~~~~~~~~~~~~~~~~
+//
+// Copyright (c) 2003 Christopher M. Kohlhoff (chris@kohlhoff.com)
+//
+// Permission to use, copy, modify, distribute and sell this software and its
+// documentation for any purpose is hereby granted without fee, provided that
+// the above copyright notice appears in all copies and that both the copyright
+// notice and this permission notice appear in supporting documentation. This
+// software is provided "as is" without express or implied warranty, and with
+// no claim as to its suitability for any purpose.
+//
+
+#ifndef ASIO_DETAIL_REACTOR_OP_QUEUE_HPP
+#define ASIO_DETAIL_REACTOR_OP_QUEUE_HPP
+
+#include "asio/detail/push_options.hpp"
+
+#include "asio/detail/push_options.hpp"
+#include <map>
+#include <boost/noncopyable.hpp>
+#include "asio/detail/pop_options.hpp"
+
+namespace asio {
+namespace detail {
+
+template <typename Descriptor>
+class reactor_op_queue
+  : private boost::noncopyable
+{
+public:
+  // Add a new operation to the queue. Returns true if this is the only
+  // operation for the given descriptor, in which case the reactor's event
+  // demultiplexing function call may need to be interrupted and restarted.
+  template <typename Handler>
+  bool enqueue_operation(Descriptor descriptor, Handler handler)
+  {
+    op_base* new_op = new op<Handler>(descriptor, handler);
+
+    std::pair<typename operation_map::iterator, bool> entry =
+      operations_.insert(operation_map::value_type(descriptor, new_op));
+    if (entry.second)
+      return true;
+
+    op_base* current_op = entry.first->second;
+    while (current_op->next_)
+      current_op = current_op->next_;
+    current_op->next_ = new_op;
+
+    return false;
+  }
+
+  // Whether there are no operations in the queue.
+  bool empty() const
+  {
+    return operations_.empty();
+  }
+
+  // Fill a descriptor set with the descriptors corresponding to each active
+  // operation.
+  template <typename Descriptor_Set>
+  void get_descriptors(Descriptor_Set& descriptors)
+  {
+    typename operation_map::iterator i = operations_.begin();
+    while (i != operations_.end())
+    {
+      descriptors.set(i->first);
+      ++i;
+    }
+  }
+
+  // Dispatch the operations corresponding to the ready file descriptors
+  // contained in the given descriptor set.
+  template <typename Descriptor_Set>
+  void dispatch_descriptors(const Descriptor_Set& descriptors)
+  {
+    typename operation_map::iterator i = operations_.begin();
+    while (i != operations_.end())
+    {
+      typename operation_map::iterator op = i++;
+      if (descriptors.is_set(op->first))
+      {
+        op_base* next_op = op->second->next_;
+        op->second->next_ = 0;
+        op->second->do_operation();
+        delete op->second;
+        if (next_op)
+          op->second = next_op;
+        else
+          operations_.erase(op);
+      }
+    }
+  }
+
+  // Close the given descriptor. Any operations pending for the descriptor will
+  // be notified that they are being cancelled.
+  void close_descriptor(Descriptor descriptor)
+  {
+    typename operation_map::iterator i = operations_.find(descriptor);
+    if (i != operations_.end())
+    {
+      op_base* op = i->second;
+      while (op)
+      {
+        op_base* next_op = op->next_;
+        op->next_ = 0;
+        op->do_cancel();
+        delete op;
+        op = next_op;
+      }
+      operations_.erase(i);
+    }
+  }
+
+private:
+  // Base class for reactor operations.
+  class op_base
+  {
+  public:
+    // Destructor.
+    virtual ~op_base()
+    {
+    }
+
+    // Get the descriptor associated with the operation.
+    Descriptor descriptor() const
+    {
+      return descriptor_;
+    }
+
+    // Perform the operation.
+    virtual void do_operation() = 0;
+
+    // Handle the case where the operation has been cancelled.
+    virtual void do_cancel() = 0;
+
+  protected:
+    // Construct an operation for the given descriptor.
+    op_base(Descriptor descriptor)
+      : descriptor_(descriptor),
+        next_(0)
+    {
+    }
+
+  private:
+    friend class reactor_op_queue;
+
+    // The descriptor associated with the operation.
+    Descriptor descriptor_;
+
+    // The next operation for the same file descriptor.
+    op_base* next_;
+  };
+
+  // Adaptor class template for using handlers in operations.
+  template <typename Handler>
+  class op
+    : public op_base
+  {
+  public:
+    // Constructor.
+    op(Descriptor descriptor, Handler handler)
+      : op_base(descriptor),
+        handler_(handler)
+    {
+    }
+
+    // Perform the operation.
+    virtual void do_operation()
+    {
+      handler_.do_operation();
+    }
+
+    // Handle the case where the operation has been cancelled.
+    virtual void do_cancel()
+    {
+      handler_.do_cancel();
+    }
+
+  private:
+    Handler handler_;
+  };
+
+  // The type for a map of operations.
+  typedef std::map<Descriptor, op_base*> operation_map;
+
+  // The operations that are currently executing asynchronously.
+  operation_map operations_;
+};
+
+} // namespace detail
+} // namespace asio
+
+#include "asio/detail/pop_options.hpp"
+
+#endif // ASIO_DETAIL_REACTOR_OP_QUEUE_HPP

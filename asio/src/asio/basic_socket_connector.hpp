@@ -22,7 +22,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/completion_context.hpp"
-#include "asio/demuxer.hpp"
+#include "asio/service_factory.hpp"
 
 namespace asio {
 
@@ -43,9 +43,10 @@ public:
   typedef typename service_type::impl_type impl_type;
 
   /// Constructor a connector. The connector is automatically opened.
-  explicit basic_socket_connector(demuxer& d)
-    : service_(dynamic_cast<service_type&>(d.get_service(service_type::id))),
-      impl_(service_type::invalid_impl)
+  template <typename Demuxer>
+  explicit basic_socket_connector(Demuxer& d)
+    : service_(d.get_service(service_factory<Service>())),
+      impl_(service_type::null())
   {
     service_.create(impl_);
   }

@@ -18,12 +18,21 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/basic_stream_socket.hpp"
-#include "asio/detail/stream_socket_service.hpp"
+#include "asio/demuxer.hpp"
+#include "asio/detail/select_reactor.hpp"
+#include "asio/detail/reactive_stream_socket_service.hpp"
 
 namespace asio {
 
 /// Typedef for the typical usage of stream_socket.
-typedef basic_stream_socket<asio::detail::stream_socket_service> stream_socket;
+typedef basic_stream_socket
+  <
+    detail::reactive_stream_socket_service
+      <
+        demuxer,
+        detail::select_reactor<demuxer>
+      >
+  > stream_socket;
 
 } // namespace asio
 

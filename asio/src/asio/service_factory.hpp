@@ -1,6 +1,6 @@
 //
-// service_unavailable.cpp
-// ~~~~~~~~~~~~~~~~~~~~~~~
+// service_factory.hpp
+// ~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -12,23 +12,28 @@
 // no claim as to its suitability for any purpose.
 //
 
-#include "asio/service_unavailable.hpp"
+#ifndef ASIO_SERVICE_FACTORY_HPP
+#define ASIO_SERVICE_FACTORY_HPP
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 
-service_unavailable::
-service_unavailable(
-    const service_type_id& type)
-  : std::runtime_error("Service unavailable"),
-    service_type_(type)
+/// This class may be specialised to provide custom service creation.
+template <typename Service>
+class service_factory
 {
-}
-
-const service_type_id&
-service_unavailable::
-service_type() const
-{
-  return service_type_;
-}
+public:
+  /// Create a service with the specified owner.
+  template <typename Owner>
+  Service* create(Owner& owner)
+  {
+    return new Service(owner);
+  }
+};
 
 } // namespace asio
+
+#include "asio/detail/pop_options.hpp"
+
+#endif // ASIO_SERVICE_FACTORY_HPP

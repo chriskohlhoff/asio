@@ -15,6 +15,7 @@
 #ifndef ASIO_HPP
 #define ASIO_HPP
 
+#include "asio/basic_demuxer.hpp"
 #include "asio/basic_dgram_socket.hpp"
 #include "asio/basic_socket_acceptor.hpp"
 #include "asio/basic_socket_connector.hpp"
@@ -27,16 +28,11 @@
 #include "asio/completion_context_locker.hpp"
 #include "asio/counting_completion_context.hpp"
 #include "asio/demuxer.hpp"
-#include "asio/demuxer_service.hpp"
 #include "asio/demuxer_task.hpp"
 #include "asio/dgram_socket.hpp"
 #include "asio/generic_address.hpp"
 #include "asio/inet_address_v4.hpp"
-#include "asio/service.hpp"
-#include "asio/service_provider_factory.hpp"
-#include "asio/service_provider.hpp"
-#include "asio/service_type_id.hpp"
-#include "asio/service_unavailable.hpp"
+#include "asio/service_factory.hpp"
 #include "asio/socket_acceptor.hpp"
 #include "asio/socket_address.hpp"
 #include "asio/socket_connector.hpp"

@@ -23,7 +23,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/completion_context.hpp"
-#include "asio/demuxer.hpp"
+#include "asio/service_factory.hpp"
 
 namespace asio {
 
@@ -38,8 +38,9 @@ public:
   typedef Service service_type;
 
   /// Constructor.
-  explicit basic_timer_queue(demuxer& d)
-    : service_(dynamic_cast<service_type&>(d.get_service(service_type::id)))
+  template <typename Demuxer>
+  explicit basic_timer_queue(Demuxer& d)
+    : service_(d.get_service(service_factory<Service>()))
   {
   }
 

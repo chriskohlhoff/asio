@@ -8,38 +8,18 @@ ___lib_libasio_a_SOURCES = \
 	asio/completion_context.cpp \
 	asio/completion_context_locker.cpp \
 	asio/counting_completion_context.cpp \
-	asio/demuxer.cpp \
-	asio/demuxer_service.cpp \
 	asio/demuxer_task.cpp \
 	asio/generic_address.cpp \
 	asio/inet_address_v4.cpp \
-	asio/service.cpp \
-	asio/service_provider.cpp \
-	asio/service_provider_factory.cpp \
-	asio/service_unavailable.cpp \
 	asio/socket_address.cpp \
 	asio/socket_error.cpp \
-	asio/detail/default_service_provider_factory.cpp \
 	asio/detail/demuxer_task_thread.cpp \
-	asio/detail/demuxer_thread_pool.cpp \
-	asio/detail/dgram_socket_service.cpp \
-	asio/detail/selector.cpp \
 	asio/detail/select_interrupter.cpp \
-	asio/detail/select_op.cpp \
-	asio/detail/select_op_queue.cpp \
-	asio/detail/select_provider.cpp \
-	asio/detail/service_registry.cpp \
-	asio/detail/shared_thread_demuxer_provider.cpp \
-	asio/detail/socket_acceptor_service.cpp \
-	asio/detail/socket_connector_impl.cpp \
-	asio/detail/socket_connector_service.cpp \
-	asio/detail/stream_socket_service.cpp \
-	asio/detail/timer_queue_provider.cpp \
-	asio/detail/timer_queue_service.cpp \
-	asio/detail/win_iocp_provider.cpp
+	asio/detail/shared_thread_demuxer_service.cpp
 
 nobase_include_HEADERS = \
 	asio.hpp \
+	asio/basic_demuxer.hpp \
 	asio/basic_dgram_socket.hpp \
 	asio/basic_socket_acceptor.hpp \
 	asio/basic_socket_connector.hpp \
@@ -52,47 +32,36 @@ nobase_include_HEADERS = \
 	asio/completion_context_locker.hpp \
 	asio/counting_completion_context.hpp \
 	asio/demuxer.hpp \
-	asio/demuxer_service.hpp \
 	asio/demuxer_task.hpp \
+	asio/detail/demuxer_task_thread.hpp \
+	asio/detail/pop_options.hpp \
+	asio/detail/push_options.hpp \
+	asio/detail/reactive_dgram_socket_service.hpp \
+	asio/detail/reactive_socket_acceptor_service.hpp \
+	asio/detail/reactive_socket_connector_service.hpp \
+	asio/detail/reactive_stream_socket_service.hpp \
+	asio/detail/reactor_op_queue.hpp \
+	asio/detail/select_interrupter.hpp \
+	asio/detail/select_reactor.hpp \
+	asio/detail/service_registry.hpp \
+	asio/detail/shared_thread_demuxer_service.hpp \
+	asio/detail/socket_holder.hpp \
+	asio/detail/socket_ops.hpp \
+	asio/detail/socket_types.hpp \
+	asio/detail/timer_queue_service.hpp \
+	asio/detail/tss_bool.hpp \
+	asio/detail/win_iocp_provider.hpp \
+	asio/detail/winsock_init.hpp \
 	asio/dgram_socket.hpp \
 	asio/generic_address.hpp \
 	asio/inet_address_v4.hpp \
-	asio/service.hpp \
-	asio/service_provider.hpp \
-	asio/service_provider_factory.hpp \
-	asio/service_type_id.hpp \
-	asio/service_unavailable.hpp \
+	asio/service_factory.hpp \
 	asio/socket_acceptor.hpp \
 	asio/socket_address.hpp \
 	asio/socket_connector.hpp \
 	asio/socket_error.hpp \
 	asio/stream_socket.hpp \
-	asio/timer_queue.hpp \
-	asio/detail/dgram_socket_service.hpp \
-	asio/detail/pop_options.hpp \
-	asio/detail/push_options.hpp \
-	asio/detail/socket_acceptor_service.hpp \
-	asio/detail/socket_connector_service.hpp \
-	asio/detail/stream_socket_service.hpp \
-	asio/detail/socket_types.hpp \
-	asio/detail/timer_queue_service.hpp
-
-noinst_HEADERS = \
-	asio/detail/default_service_provider_factory.hpp \
-	asio/detail/demuxer_task_thread.hpp \
-	asio/detail/demuxer_thread_pool.hpp \
-	asio/detail/selector.hpp \
-	asio/detail/select_interrupter.hpp \
-	asio/detail/select_op.hpp \
-	asio/detail/select_op_queue.hpp \
-	asio/detail/select_provider.hpp \
-	asio/detail/service_registry.hpp \
-	asio/detail/shared_thread_demuxer_provider.hpp \
-	asio/detail/socket_connector_impl.hpp \
-	asio/detail/socket_holder.hpp \
-	asio/detail/socket_ops.hpp \
-	asio/detail/timer_queue_provider.hpp \
-	asio/detail/win_iocp_provider.hpp
+	asio/timer_queue.hpp
 
 noinst_PROGRAMS = \
 	../bin/dispatcher_test \

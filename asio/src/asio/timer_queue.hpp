@@ -18,12 +18,13 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/basic_timer_queue.hpp"
+#include "asio/demuxer.hpp"
 #include "asio/detail/timer_queue_service.hpp"
 
 namespace asio {
 
 /// Typedef for the typical usage of timer_queue.
-typedef basic_timer_queue<detail::timer_queue_service> timer_queue;
+typedef basic_timer_queue<detail::timer_queue_service<demuxer> > timer_queue;
 
 } // namespace asio
 

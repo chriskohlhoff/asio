@@ -18,13 +18,21 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/basic_socket_connector.hpp"
-#include "asio/detail/socket_connector_service.hpp"
+#include "asio/demuxer.hpp"
+#include "asio/detail/select_reactor.hpp"
+#include "asio/detail/reactive_socket_connector_service.hpp"
 
 namespace asio {
 
 /// Typedef for the typical usage of socket_connector.
-typedef basic_socket_connector<detail::socket_connector_service>
-  socket_connector;
+typedef basic_socket_connector
+  <
+    detail::reactive_socket_connector_service
+      <
+        demuxer,
+        detail::select_reactor<demuxer>
+      >
+  > socket_connector;
 
 } // namespace asio
 

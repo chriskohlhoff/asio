@@ -1,6 +1,6 @@
 //
-// shared_thread_demuxer_provider.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// shared_thread_demuxer_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -12,66 +12,67 @@
 // no claim as to its suitability for any purpose.
 //
 
-#ifndef ASIO_DETAIL_SHARED_THREAD_DEMUXER_PROVIDER_HPP
-#define ASIO_DETAIL_SHARED_THREAD_DEMUXER_PROVIDER_HPP
+#ifndef ASIO_DETAIL_SHARED_THREAD_DEMUXER_SERVICE_HPP
+#define ASIO_DETAIL_SHARED_THREAD_DEMUXER_SERVICE_HPP
 
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
 #include <list>
 #include <queue>
+#include <boost/function.hpp>
 #include <boost/thread.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/basic_demuxer.hpp"
 #include "asio/completion_context_locker.hpp"
-#include "asio/demuxer_service.hpp"
 #include "asio/demuxer_task.hpp"
-#include "asio/service_provider.hpp"
-#include "asio/detail/demuxer_thread_pool.hpp"
+#include "asio/detail/tss_bool.hpp"
 
 namespace asio {
 namespace detail {
 
-class shared_thread_demuxer_provider
-  : public service_provider,
-    public demuxer_service,
-    public completion_context_locker
+class shared_thread_demuxer_service
+  : public completion_context_locker
 {
 public:
-  // Constructor.
-  shared_thread_demuxer_provider();
+  // Constructor. Taking a reference to the demuxer type as the parameter
+  // forces the compiler to ensure that this class can only be used as the
+  // demuxer service. It cannot be instantiated in the demuxer in any other
+  // case.
+  shared_thread_demuxer_service(basic_demuxer<shared_thread_demuxer_service>&);
 
   // Destructor.
-  virtual ~shared_thread_demuxer_provider();
-
-  // Return the service interface corresponding to the given type.
-  virtual service* do_get_service(const service_type_id& service_type);
+  ~shared_thread_demuxer_service();
 
   // Run the demuxer's event processing loop.
-  virtual void run();
+  void run();
 
   // Interrupt the demuxer's event processing loop.
-  virtual void interrupt();
+  void interrupt();
 
   // Reset the demuxer in preparation for a subsequent run invocation.
-  virtual void reset();
+  void reset();
 
   // Add a task to the demuxer.
-  virtual void add_task(demuxer_task& task, void* arg);
+  void add_task(demuxer_task& task, void* arg);
 
   // Notify the demuxer that an operation has started.
-  virtual void operation_started();
+  void operation_started();
+
+  /// The type of a handler to be called when a completion is delivered.
+  typedef boost::function0<void> completion_handler;
 
   // Notify the demuxer that an operation has completed.
-  virtual void operation_completed(const completion_handler& handler,
+  void operation_completed(const completion_handler& handler,
       completion_context& context, bool allow_nested_delivery);
 
   // Notify the demuxer of an operation that started and finished immediately.
-  virtual void operation_immediate(const completion_handler& handler,
+  void operation_immediate(const completion_handler& handler,
       completion_context& context, bool allow_nested_delivery);
 
   // Callback function when a completion context has been acquired.
-  virtual void completion_context_acquired(void* arg) throw ();
+  void completion_context_acquired(void* arg) throw ();
 
 private:
   // Interrupt all running tasks and idle threads.
@@ -127,8 +128,8 @@ private:
   // Flag to indicate that the dispatcher has been interrupted.
   bool interrupted_;
 
-  // Thread pool to keep track of threads currently inside a run invocation.
-  demuxer_thread_pool thread_pool_;
+  // Thread-specific flag lag to keep track of which threads are in the pool.
+  tss_bool current_thread_in_pool_;
 
   // The number of threads that are currently idle.
   int idle_thread_count_;
@@ -142,4 +143,4 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_SHARED_THREAD_DEMUXER_PROVIDER_HPP
+#endif // ASIO_DETAIL_SHARED_THREAD_DEMUXER_SERVICE_HPP

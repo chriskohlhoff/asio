@@ -18,58 +18,134 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
-#include <list>
-#include <map>
+#include <typeinfo>
 #include <boost/noncopyable.hpp>
 #include <boost/thread.hpp>
-#include <boost/shared_ptr.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/service_provider.hpp"
-#include "asio/service_provider_factory.hpp"
+#include "asio/service_factory.hpp"
 
 namespace asio {
 namespace detail {
 
+template <typename Owner>
 class service_registry
   : private boost::noncopyable
 {
 public:
   // Constructor.
-  service_registry(demuxer& d, service_provider_factory& s);
+  service_registry(Owner& o)
+    : owner_(o),
+      first_service_(0)
+  {
+  }
 
   // Destructor.
-  ~service_registry();
+  ~service_registry()
+  {
+    while (first_service_)
+    {
+      service_holder_base* next_service = first_service_->next_;
+      delete first_service_;
+      first_service_ = next_service;
+    }
+  }
 
-  // Ask a provider to return the service interface corresponding to the
-  // given type. Ownership of the service interface is not transferred to the
-  // caller. Throws service_unavailable if no provider is able to provide the
-  // requested service.
-  service& get_service(const service_type_id& service_type);
+  // Get the service object corresponding to the specified service type. Will
+  // create a new service object automatically if no such object already
+  // exists. Ownership of the service object is not transferred to the caller.
+  template <typename Service>
+  Service& get_service(service_factory<Service> factory)
+  {
+    boost::recursive_mutex::scoped_lock lock(mutex_);
+
+    // First see if there is an existing service object for the given type.
+    service_holder_base* service = first_service_;
+    while (service)
+    {
+      if (service->is_same_type(typeid(Service)))
+        return *static_cast<Service*>(service->get_service());
+      service = service->next_;
+    }
+
+    // We need to create a new service object.
+    service_holder_base* new_service =
+      new service_holder<Service>(factory.create(owner_));
+    new_service->next_ = first_service_;
+    first_service_ = new_service;
+    return *static_cast<Service*>(new_service->get_service());
+  }
 
 private:
-  typedef boost::shared_ptr<service_provider> service_provider_ptr;
+  // The base holder for a single service.
+  class service_holder_base
+    : private boost::noncopyable
+  {
+  public:
+    // Constructor.
+    service_holder_base()
+      : next_(0)
+    {
+    }
+
+    // Destructor.
+    virtual ~service_holder_base()
+    {
+    }
+
+    // Determine whether this service is the given type.
+    virtual bool is_same_type(const std::type_info&) = 0;
+
+    // Get a pointer to the contained service.
+    virtual void* get_service() = 0;
+
+    // A pointer to the next service holder in the list.
+    service_holder_base* next_;
+  };
+
+  // Template used as the concrete holder for the service types.
+  template <typename Service>
+  class service_holder
+    : public service_holder_base
+  {
+  public:
+    // Constructor, takes ownership of the supplied service object.
+    service_holder(Service* s) throw ()
+      : service_(s)
+    {
+    }
+
+    // Destructor.
+    ~service_holder()
+    {
+      delete service_;
+    }
+
+    // Determine whether this service is the given type.
+    virtual bool is_same_type(const std::type_info& other_info)
+    {
+      return other_info == typeid(Service);
+    }
+
+    // Get a pointer to the contained service.
+    virtual void* get_service()
+    {
+      return service_;
+    }
+
+  private:
+    // The contained service object.
+    Service* service_;
+  };
 
   // Mutex to protect access to internal data.
   boost::recursive_mutex mutex_;
 
-  // The demuxer that owns this service registry.
-  demuxer& demuxer_;
+  // The owner of this service registry and the services it contains.
+  Owner& owner_;
 
-  // Factory used to create new service providers.
-  service_provider_factory& service_provider_factory_;
-
-  // The type for a list of registered providers.
-  typedef std::list<service_provider_ptr> provider_list;
-
-  // The list of registered providers.
-  provider_list providers_;
-
-  // The type for a mapping from service type to service.
-  typedef std::map<service_type_id, service*> type_to_service_map;
-
-  // The mapping from service type to service.
-  type_to_service_map type_to_service_;
+  // The first service in the list of contained services.
+  service_holder_base* first_service_;
 };
 
 } // namespace detail

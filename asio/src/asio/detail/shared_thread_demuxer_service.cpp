@@ -1,6 +1,6 @@
 //
-// shared_thread_demuxer_provider.cpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// shared_thread_demuxer_service.cpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -12,7 +12,7 @@
 // no claim as to its suitability for any purpose.
 //
 
-#include "asio/detail/shared_thread_demuxer_provider.hpp"
+#include "asio/detail/shared_thread_demuxer_service.hpp"
 
 #include "asio/detail/push_options.hpp"
 #include <cassert>
@@ -22,40 +22,31 @@
 namespace asio {
 namespace detail {
 
-shared_thread_demuxer_provider::
-shared_thread_demuxer_provider()
+shared_thread_demuxer_service::
+shared_thread_demuxer_service(
+    basic_demuxer<shared_thread_demuxer_service>&)
   : mutex_(),
     waiting_tasks_(),
     running_tasks_(),
     outstanding_operations_(0),
     ready_completions_(),
     interrupted_(false),
-    thread_pool_(),
+    current_thread_in_pool_(),
     idle_thread_count_(0),
     idle_thread_condition_()
 {
 }
 
-shared_thread_demuxer_provider::
-~shared_thread_demuxer_provider()
+shared_thread_demuxer_service::
+~shared_thread_demuxer_service()
 {
-}
-
-service*
-shared_thread_demuxer_provider::
-do_get_service(
-    const service_type_id& service_type)
-{
-  if (service_type == demuxer_service::id)
-    return this;
-  return 0;
 }
 
 void
-shared_thread_demuxer_provider::
+shared_thread_demuxer_service::
 run()
 {
-  thread_pool_.add_current_thread();
+  current_thread_in_pool_ = true;
 
   boost::mutex::scoped_lock lock(mutex_);
 
@@ -118,11 +109,11 @@ run()
     interrupt_all_threads();
   }
 
-  thread_pool_.remove_current_thread();
+  current_thread_in_pool_ = false;
 }
 
 void
-shared_thread_demuxer_provider::
+shared_thread_demuxer_service::
 interrupt()
 {
   boost::mutex::scoped_lock lock(mutex_);
@@ -131,7 +122,7 @@ interrupt()
 }
 
 void
-shared_thread_demuxer_provider::
+shared_thread_demuxer_service::
 reset()
 {
   boost::mutex::scoped_lock lock(mutex_);
@@ -140,7 +131,7 @@ reset()
 }
 
 void
-shared_thread_demuxer_provider::
+shared_thread_demuxer_service::
 add_task(
     demuxer_task& task,
     void* arg)
@@ -154,7 +145,7 @@ add_task(
 }
 
 void
-shared_thread_demuxer_provider::
+shared_thread_demuxer_service::
 operation_started()
 {
   boost::mutex::scoped_lock lock(mutex_);
@@ -163,7 +154,7 @@ operation_started()
 }
 
 void
-shared_thread_demuxer_provider::
+shared_thread_demuxer_service::
 operation_completed(
     const completion_handler& handler,
     completion_context& context,
@@ -173,7 +164,7 @@ operation_completed(
 
   if (try_acquire(context))
   {
-    if (allow_nested_delivery && thread_pool_.current_thread_is_member())
+    if (allow_nested_delivery && current_thread_in_pool_)
     {
       lock.unlock();
       do_completion_upcall(handler);
@@ -202,7 +193,7 @@ operation_completed(
 }
 
 void
-shared_thread_demuxer_provider::
+shared_thread_demuxer_service::
 operation_immediate(
     const completion_handler& handler,
     completion_context& context,
@@ -213,7 +204,7 @@ operation_immediate(
 }
 
 void
-shared_thread_demuxer_provider::
+shared_thread_demuxer_service::
 completion_context_acquired(
     void* arg)
   throw ()
@@ -234,7 +225,7 @@ completion_context_acquired(
 }
 
 void
-shared_thread_demuxer_provider::
+shared_thread_demuxer_service::
 interrupt_all_threads()
 {
   interrupted_ = true;
@@ -251,7 +242,7 @@ interrupt_all_threads()
 }
 
 bool
-shared_thread_demuxer_provider::
+shared_thread_demuxer_service::
 interrupt_one_idle_thread()
 {
   if (idle_thread_count_ > 0)
@@ -264,7 +255,7 @@ interrupt_one_idle_thread()
 }
 
 bool
-shared_thread_demuxer_provider::
+shared_thread_demuxer_service::
 interrupt_one_task()
 {
   if (!running_tasks_.empty())
@@ -285,7 +276,7 @@ interrupt_one_task()
 }
 
 void
-shared_thread_demuxer_provider::
+shared_thread_demuxer_service::
 do_completion_upcall(
     const completion_handler& handler)
   throw ()
