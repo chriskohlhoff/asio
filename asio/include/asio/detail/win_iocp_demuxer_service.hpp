@@ -197,7 +197,7 @@ public:
       return true;
     }
 
-    static void do_upcall(Handler& handler)
+    static void do_upcall(Handler handler)
     {
       try
       {

@@ -74,6 +74,10 @@ size_t recv_n(Stream& s, void* data, size_t length,
 
 namespace detail
 {
+#if defined(_MSC_VER)
+  static void recv_n_optimiser_bug_workaround() {}
+#endif // _MSC_VER
+
   template <typename Stream, typename Handler, typename Completion_Context>
   class recv_n_handler
   {
@@ -95,6 +99,13 @@ namespace detail
       total_recvd_ += bytes_recvd;
       if (e || bytes_recvd == 0 || total_recvd_ == length_)
       {
+#if defined(_MSC_VER)
+        // Unless we put this function call here, the MSVC6 optimiser totally
+        // removes this function (incorrectly of course) and async_recv_n calls
+        // may not work correctly.
+        recv_n_optimiser_bug_workaround();
+#endif // _MSC_VER
+
         stream_.demuxer().operation_immediate(detail::bind_handler(handler_, e,
               total_recvd_, bytes_recvd), context_, true);
       }
