@@ -17,6 +17,7 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/socket_option.hpp"
 #include "asio/detail/socket_types.hpp"
 
 namespace asio {
@@ -40,6 +41,9 @@ public:
   {
     return PF_INET;
   }
+
+  /// Socket option for disabling the Nagle algorithm.
+  typedef socket_option::flag<IPPROTO_TCP, TCP_NODELAY> tcp_no_delay;
 };
 
 } // namespace ipv4

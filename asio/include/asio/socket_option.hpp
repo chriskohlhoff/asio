@@ -150,9 +150,6 @@ private:
   int value_;
 };
 
-/// Permit sending of broadcast datagrams.
-typedef flag<IPPROTO_TCP, TCP_NODELAY> tcp_no_delay;
-
 /// The receive buffer size for a socket.
 typedef integer<SOL_SOCKET, SO_SNDBUF> send_buffer_size;
 
