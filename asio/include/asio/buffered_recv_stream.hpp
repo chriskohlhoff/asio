@@ -230,7 +230,7 @@ public:
     template <typename Error>
     void operator()(const Error& e, size_t bytes_recvd)
     {
-      if (buffer_.empty())
+      if (e || buffer_.empty())
       {
         size_t length = 0;
         handler_(e, length);
