@@ -27,6 +27,7 @@
 #include "asio/counting_completion_context.hpp"
 #include "asio/demuxer.hpp"
 #include "asio/dgram_socket.hpp"
+#include "asio/error_handler.hpp"
 #include "asio/fixed_buffer.hpp"
 #include "asio/inet_address_v4.hpp"
 #include "asio/null_completion_context.hpp"

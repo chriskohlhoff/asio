@@ -21,6 +21,7 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/error_handler.hpp"
 #include "asio/null_completion_context.hpp"
 #include "asio/service_factory.hpp"
 
@@ -75,7 +76,34 @@ public:
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_type::null())
   {
-    service_.create(impl_, address);
+    service_.create(impl_, address, default_error_handler());
+  }
+
+  /// Construct a basic_dgram_socket opened on the given address.
+  /**
+   * This constructor creates a dgram socket and automatically opens it bound
+   * to the specified address on the local machine.
+   *
+   * @param d The demuxer object that the dgram socket will use to deliver
+   * completions for any asynchronous operations performed on the socket.
+   *
+   * @param address An address on the local machine to which the dgram socket
+   * will be bound.
+   *
+   * @param error_handler The handler to be called when an error occurs or when
+   * the function completes successfully. Copies will be made of the handler as
+   * required. The equivalent function signature of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Address, typename Error_Handler>
+  basic_dgram_socket(demuxer_type& d, const Address& address,
+      Error_Handler error_handler)
+    : service_(d.get_service(service_factory<Service>())),
+      impl_(service_type::null())
+  {
+    service_.create(impl_, address, error_handler);
   }
 
   /// Destructor.
@@ -111,7 +139,28 @@ public:
   template <typename Address>
   void open(const Address& address)
   {
-    service_.create(impl_, address);
+    service_.create(impl_, address, default_error_handler());
+  }
+
+  /// Open the socket on the given address.
+  /**
+   * This function opens the dgram socket so that it is bound to the specified
+   * address on the local machine.
+   *
+   * @param address An address on the local machine to which the dgram socket
+   * will be bound.
+   *
+   * @param error_handler The handler to be called when an error occurs or when
+   * the function completes successfully. Copies will be made of the handler as
+   * required. The equivalent function signature of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Address, typename Error_Handler>
+  void open(const Address& address, Error_Handler error_handler)
+  {
+    service_.create(impl_, address, error_handler);
   }
 
   /// Close the socket.
@@ -149,7 +198,26 @@ public:
   template <typename Option>
   void set_option(const Option& option)
   {
-    service_.set_option(impl_, option);
+    service_.set_option(impl_, option, default_error_handler());
+  }
+
+  /// Set an option on the socket.
+  /**
+   * This function is used to set an option on the socket.
+   *
+   * @param option The new option value to be set on the socket.
+   *
+   * @param error_handler The handler to be called when an error occurs or when
+   * the function completes successfully. Copies will be made of the handler as
+   * required. The equivalent function signature of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Option, typename Error_Handler>
+  void set_option(const Option& option, Error_Handler error_handler)
+  {
+    service_.set_option(impl_, option, error_handler);
   }
 
   /// Get an option from the socket.
@@ -163,7 +231,26 @@ public:
   template <typename Option>
   void get_option(Option& option)
   {
-    service_.get_option(impl_, option);
+    service_.get_option(impl_, option, default_error_handler());
+  }
+
+  /// Get an option from the socket.
+  /**
+   * This function is used to get the current value of an option on the socket.
+   *
+   * @param option The option value to be obtained from the socket.
+   *
+   * @param error_handler The handler to be called when an error occurs or when
+   * the function completes successfully. Copies will be made of the handler as
+   * required. The equivalent function signature of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Option, typename Error_Handler>
+  void get_option(Option& option, Error_Handler error_handler)
+  {
+    service_.get_option(impl_, option, error_handler);
   }
 
   /// Send a datagram to the specified address.
@@ -185,7 +272,36 @@ public:
   template <typename Address>
   size_t sendto(const void* data, size_t length, const Address& destination)
   {
-    return service_.sendto(impl_, data, length, destination);
+    return service_.sendto(impl_, data, length, destination,
+        default_error_handler());
+  }
+
+  /// Send a datagram to the specified address.
+  /**
+   * This function is used to send a datagram to the specified remote address.
+   * The function call will block until the data has been sent successfully or
+   * an error occurs.
+   *
+   * @param data The data to be sent to remote address.
+   *
+   * @param length The size of the data to be sent, in bytes.
+   *
+   * @param destination The remote address to which the data will be sent.
+   *
+   * @param error_handler The handler to be called when an error occurs or when
+   * the function completes successfully. Copies will be made of the handler as
+   * required. The equivalent function signature of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   *
+   * @returns The number of bytes sent.
+   */
+  template <typename Address, typename Error_Handler>
+  size_t sendto(const void* data, size_t length, const Address& destination,
+      Error_Handler error_handler)
+  {
+    return service_.sendto(impl_, data, length, destination, error_handler);
   }
 
   /// Start an asynchronous send.
@@ -279,7 +395,39 @@ public:
   template <typename Address>
   size_t recvfrom(void* data, size_t max_length, Address& sender_address)
   {
-    return service_.recvfrom(impl_, data, max_length, sender_address);
+    return service_.recvfrom(impl_, data, max_length, sender_address,
+        default_error_handler());
+  }
+  
+  /// Receive a datagram with the address of the sender.
+  /**
+   * This function is used to receive a datagram. The function call will block
+   * until data has been received successfully or an error occurs.
+   *
+   * @param data The data buffer into which the received datagram will be
+   * written.
+   *
+   * @param max_length The maximum length, in bytes, of data that can be held
+   * in the supplied buffer.
+   *
+   * @param sender_address An address object that receives the address of the
+   * remote sender of the datagram.
+   *
+   * @param error_handler The handler to be called when an error occurs or when
+   * the function completes successfully. Copies will be made of the handler as
+   * required. The equivalent function signature of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   *
+   * @returns The number of bytes received.
+   */
+  template <typename Address, typename Error_Handler>
+  size_t recvfrom(void* data, size_t max_length, Address& sender_address,
+      Error_Handler error_handler)
+  {
+    return service_.recvfrom(impl_, data, max_length, sender_address,
+        error_handler);
   }
   
   /// Start an asynchronous receive.

@@ -53,6 +53,7 @@ nobase_include_HEADERS = \
 	asio/detail/win_tss_bool.hpp \
 	asio/detail/winsock_init.hpp \
 	asio/dgram_socket.hpp \
+	asio/error_handler.hpp \
 	asio/fixed_buffer.hpp \
 	asio/inet_address_v4.hpp \
 	asio/null_completion_context.hpp \

@@ -58,13 +58,17 @@ public:
   }
 
   // Create a new dgram socket implementation.
-  template <typename Address>
-  void create(impl_type& impl, const Address& address)
+  template <typename Address, typename Error_Handler>
+  void create(impl_type& impl, const Address& address,
+      Error_Handler error_handler)
   {
     socket_holder sock(socket_ops::socket(address.family(), SOCK_DGRAM,
           IPPROTO_UDP));
     if (sock.get() == invalid_socket)
-      throw socket_error(socket_ops::get_error());
+    {
+      error_handler(socket_error(socket_ops::get_error()));
+      return;
+    }
 
     int reuse = 1;
     socket_ops::setsockopt(sock.get(), SOL_SOCKET, SO_REUSEADDR, &reuse,
@@ -72,9 +76,14 @@ public:
 
     if (socket_ops::bind(sock.get(), address.native_address(),
           address.native_size()) == socket_error_retval)
-      throw socket_error(socket_ops::get_error());
+    {
+      error_handler(socket_error(socket_ops::get_error()));
+      return;
+    }
 
     impl = sock.release();
+
+    error_handler(socket_error(socket_error::success));
   }
 
   // Destroy a dgram socket implementation.
@@ -87,35 +96,51 @@ public:
     }
   }
 
-  // Set a socket option. Throws a socket_error exception on failure.
-  template <typename Option>
-  void set_option(impl_type& impl, const Option& option)
+  // Set a socket option.
+  template <typename Option, typename Error_Handler>
+  void set_option(impl_type& impl, const Option& option,
+      Error_Handler error_handler)
   {
     if (socket_ops::setsockopt(impl, option.level(), option.name(),
           option.data(), option.size()))
-        throw socket_error(socket_ops::get_error());
+    {
+      error_handler(socket_error(socket_ops::get_error()));
+      return;
+    }
+
+    error_handler(socket_error(socket_error::success));
   }
 
-  // Set a socket option. Throws a socket_error exception on failure.
-  template <typename Option>
-  void get_option(impl_type& impl, Option& option)
+  // Set a socket option.
+  template <typename Option, typename Error_Handler>
+  void get_option(impl_type& impl, Option& option, Error_Handler error_handler)
   {
     socket_len_type size = option.size();
     if (socket_ops::getsockopt(impl, option.level(), option.name(),
           option.data(), &size))
-        throw socket_error(socket_ops::get_error());
+    {
+      error_handler(socket_error(socket_ops::get_error()));
+      return;
+    }
+
+    error_handler(socket_error(socket_error::success));
   }
 
   // Send a datagram to the specified address. Returns the number of bytes
-  // sent. Throws a socket_error exception on failure.
-  template <typename Address>
+  // sent.
+  template <typename Address, typename Error_Handler>
   size_t sendto(impl_type& impl, const void* data, size_t length,
-      const Address& destination)
+      const Address& destination, Error_Handler error_handler)
   {
     int bytes_sent = socket_ops::sendto(impl, data, length, 0,
         destination.native_address(), destination.native_size());
     if (bytes_sent < 0)
-      throw socket_error(socket_ops::get_error());
+    {
+      error_handler(socket_error(socket_ops::get_error()));
+      return 0;
+    }
+
+    error_handler(socket_error(socket_error::success));
     return bytes_sent;
   }
 
@@ -176,17 +201,24 @@ public:
   }
 
   // Receive a datagram with the address of the sender. Returns the number of
-  // bytes received. Throws a socket_error exception on failure.
-  template <typename Address>
+  // bytes received.
+  template <typename Address, typename Error_Handler>
   size_t recvfrom(impl_type& impl, void* data, size_t max_length,
-      Address& sender_address)
+      Address& sender_address, Error_Handler error_handler)
   {
     socket_addr_len_type addr_len = sender_address.native_size();
     int bytes_recvd = socket_ops::recvfrom(impl, data, max_length, 0,
         sender_address.native_address(), &addr_len);
     if (bytes_recvd < 0)
-      throw socket_error(socket_ops::get_error());
+    {
+      error_handler(socket_error(socket_ops::get_error()));
+      return 0;
+    }
+
     sender_address.native_size(addr_len);
+
+    error_handler(socket_error(socket_error::success));
+
     return bytes_recvd;
   }
 

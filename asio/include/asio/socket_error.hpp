@@ -21,6 +21,7 @@
 #include <cerrno>
 #include <exception>
 #include <string>
+#include <ostream>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/detail/socket_types.hpp"
@@ -39,7 +40,7 @@ class socket_error
 {
 public:
   /// Error codes.
-  enum
+  enum code_type
   {
     /// Permission denied.
     access_denied = ASIO_SOCKET_ERROR(EACCES),
@@ -152,7 +153,13 @@ public:
     would_block = ASIO_SOCKET_ERROR(EWOULDBLOCK)
   };
 
-  /// Constructor.
+  /// Default constructor.
+  socket_error()
+    : code_(success)
+  {
+  }
+
+  /// Construct with a specific error code.
   socket_error(int code)
     : code_(code)
   {
@@ -219,6 +226,25 @@ public:
   bool operator!() const
   {
     return code_ == success;
+  }
+
+  /// Equality operator to compare two error objects.
+  friend bool operator==(const socket_error& e1, const socket_error& e2)
+  {
+    return e1.code_ == e2.code_;
+  }
+
+  /// Inequality operator to compare two error objects.
+  friend bool operator!=(const socket_error& e1, const socket_error& e2)
+  {
+    return e1.code_ != e2.code_;
+  }
+
+  /// Write an error message to an output stream.
+  friend std::ostream& operator<<(std::ostream& os, const socket_error& e)
+  {
+    os << e.what() << ": " << e.message();
+    return os;
   }
 
 private:
