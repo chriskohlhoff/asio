@@ -19,13 +19,16 @@ int main(int argc, char* argv[])
 
     asio::dgram_socket s(d, asio::ipv4::udp::endpoint(0));
 
+    asio::ipv4::host_resolver hr(d);
+    asio::ipv4::host h;
+    hr.get_host_by_name(argv[1], h);
+    asio::ipv4::udp::endpoint receiver_endpoint(atoi(argv[2]), h.addresses[0]);
+
     using namespace std; // For atoi and strlen.
     std::cout << "Enter message: ";
     char request[max_length];
     std::cin.getline(request, max_length);
     size_t request_length = strlen(request);
-    asio::ipv4::udp::endpoint receiver_endpoint(atoi(argv[2]),
-        asio::ipv4::address(argv[1]));
     s.sendto(request, request_length, receiver_endpoint);
 
     char reply[max_length];

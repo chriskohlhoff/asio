@@ -279,8 +279,33 @@ inline int inet_pton(int af, const char* src, void* dest)
 #endif // defined(_WIN32)
 }
 
-inline hostent* gethostbyaddr_r(const char *addr, int length, int type,
-    hostent *result, char* buffer, int buflength, int* error)
+inline int gethostname(char* name, int namelen)
+{
+  set_error(0);
+  return error_wrapper(::gethostname(name, namelen));
+}
+
+inline int translate_netdb_error(int error)
+{
+  switch (error)
+  {
+  case 0:
+    return socket_error::success;
+  case HOST_NOT_FOUND:
+    return socket_error::host_not_found;
+  case TRY_AGAIN:
+    return socket_error::host_not_found_try_again;
+  case NO_RECOVERY:
+    return socket_error::no_recovery;
+  case NO_DATA:
+    return socket_error::no_host_data;
+  default:
+    return get_error();
+  }
+}
+
+inline hostent* gethostbyaddr_r(const char* addr, int length, int type,
+    hostent* result, char* buffer, int buflength, int* error)
 {
   set_error(0);
 #if defined(_WIN32)
@@ -291,17 +316,20 @@ inline hostent* gethostbyaddr_r(const char *addr, int length, int type,
   *result = *ent_result;
   return result;
 #elif defined(__sun)
-  return error_wrapper(::gethostbyaddr_r(addr, length, type, result, buffer,
-        buflength, error));
+  hostent* result = error_wrapper(::gethostbyaddr_r(addr, length, type, result,
+        buffer, buflength, error));
+  *error = translate_netdb_error(*error);
+  return result;
 #else
   hostent* ent_result = 0;
   error_wrapper(::gethostbyaddr_r(addr, length, type, result, buffer,
         buflength, &ent_result, error));
+  *error = translate_netdb_error(*error);
   return ent_result;
 #endif
 }
 
-inline hostent* gethostbyname_r(const char *name, struct hostent *result,
+inline hostent* gethostbyname_r(const char* name, struct hostent* result,
     char* buffer, int buflength, int* error)
 {
   set_error(0);
@@ -313,12 +341,15 @@ inline hostent* gethostbyname_r(const char *name, struct hostent *result,
   *result = *ent_result;
   return result;
 #elif defined(__sun)
-  return error_wrapper(::gethostbyname_r(name, result, buffer, buflength,
-        error));
+  hostent* result = error_wrapper(::gethostbyname_r(name, result, buffer,
+        buflength, error));
+  *error = translate_netdb_error(*error);
+  return ent_result;
 #else
   hostent* ent_result = 0;
   error_wrapper(::gethostbyname_r(name, result, buffer, buflength, &ent_result,
         error));
+  *error = translate_netdb_error(*error);
   return ent_result;
 #endif
 }

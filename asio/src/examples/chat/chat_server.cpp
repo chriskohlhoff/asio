@@ -161,9 +161,9 @@ typedef boost::shared_ptr<chat_session> chat_session_ptr;
 class chat_server
 {
 public:
-  chat_server(asio::demuxer& d, short port)
+  chat_server(asio::demuxer& d, const asio::ipv4::tcp::endpoint& endpoint)
     : demuxer_(d),
-      acceptor_(d, asio::ipv4::tcp::endpoint(port))
+      acceptor_(d, endpoint)
   {
     chat_session_ptr new_session(new chat_session(demuxer_, room_));
     acceptor_.async_accept(new_session->socket(),
@@ -210,7 +210,8 @@ int main(int argc, char* argv[])
     for (int i = 1; i < argc; ++i)
     {
       using namespace std; // For atoi.
-      chat_server_ptr server(new chat_server(d, atoi(argv[i])));
+      asio::ipv4::tcp::endpoint endpoint(atoi(argv[i]));
+      chat_server_ptr server(new chat_server(d, endpoint));
       servers.push_back(server);
     }
 

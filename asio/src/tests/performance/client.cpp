@@ -158,13 +158,13 @@ private:
 class client
 {
 public:
-  client(demuxer& d, const char* host, short port, size_t block_size,
-      size_t session_count, int timeout)
+  client(demuxer& d, const ipv4::tcp::endpoint& server_endpoint,
+      size_t block_size, size_t session_count, int timeout)
     : demuxer_(d),
       dispatcher_(d),
       stop_timer_(d, timer::from_now, timeout),
       connector_(d),
-      server_endpoint_(port, ipv4::address(host)),
+      server_endpoint_(server_endpoint),
       block_size_(block_size),
       max_session_count_(session_count),
       sessions_(),
@@ -250,7 +250,12 @@ int main(int argc, char* argv[])
 
     demuxer d;
 
-    client c(d, host, port, block_size, session_count, timeout);
+    ipv4::host_resolver hr(d);
+    ipv4::host h;
+    hr.get_host_by_name(host, h);
+    ipv4::tcp::endpoint ep(port, h.addresses[0]);
+
+    client c(d, ep, block_size, session_count, timeout);
 
     std::list<thread*> threads;
     while (--thread_count > 0)

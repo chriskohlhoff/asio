@@ -85,6 +85,11 @@ public:
   template <typename Error_Handler>
   void get_local_host(impl_type& impl, host& h, Error_Handler error_handler)
   {
+    char name[1024];
+    if (asio::detail::socket_ops::gethostname(name, sizeof(name)) != 0)
+      error_handler(socket_error(asio::detail::socket_ops::get_error()));
+    else
+      get_host_by_name(impl, name, h, error_handler);
   }
 
   /// Get host information for a specified address.
@@ -124,6 +129,7 @@ public:
       populate_host_object(h, ent);
   }
 
+private:
   // Populate a host object from a hostent structure.
   void populate_host_object(host& h, hostent& ent)
   {
@@ -149,7 +155,6 @@ public:
     h.addresses.swap(tmp.addresses);
   }
 
-private:
   // The demuxer used for dispatching handlers.
   Demuxer& demuxer_;
 };

@@ -30,8 +30,10 @@ namespace asio {
 
 #if defined(_WIN32)
 # define ASIO_SOCKET_ERROR(e) WSA ## e
+# define ASIO_NETDB_ERROR(e) WSA ## e
 #else
 # define ASIO_SOCKET_ERROR(e) e
+# define ASIO_NETDB_ERROR(e) 16384 + e
 #endif
 
 /// The socket_error class is used to encapsulate socket error codes.
@@ -70,10 +72,10 @@ public:
     fault = ASIO_SOCKET_ERROR(EFAULT),
 
     /// Host not found (authoritative).
-    host_not_found = ASIO_SOCKET_ERROR(HOST_NOT_FOUND),
+    host_not_found = ASIO_NETDB_ERROR(HOST_NOT_FOUND),
 
     /// Host not found (non-authoritative).
-    host_not_found_try_again = ASIO_SOCKET_ERROR(TRY_AGAIN),
+    host_not_found_try_again = ASIO_NETDB_ERROR(TRY_AGAIN),
 
     /// No route to host.
     host_unreachable = ASIO_SOCKET_ERROR(EHOSTUNREACH),
@@ -106,7 +108,7 @@ public:
     no_buffer_space = ASIO_SOCKET_ERROR(ENOBUFS),
 
     /// The host is valid but does not have address data.
-    no_host_data = ASIO_SOCKET_ERROR(NO_DATA),
+    no_host_data = ASIO_NETDB_ERROR(NO_DATA),
 
     /// Cannot allocate memory.
     no_memory = ENOMEM,
@@ -118,7 +120,7 @@ public:
     no_protocol_option = ASIO_SOCKET_ERROR(ENOPROTOOPT),
 
     /// A non-recoverable error occurred.
-    no_recovery = ASIO_SOCKET_ERROR(NO_RECOVERY),
+    no_recovery = ASIO_NETDB_ERROR(NO_RECOVERY),
 
     /// Transport endpoint is not connected.
     not_connected = ASIO_SOCKET_ERROR(ENOTCONN),
@@ -205,12 +207,29 @@ public:
         msg.resize(msg.size() - 1);
       return msg;
     }
-#elif defined(__sun)
+#else // _WIN32
+    switch (code_)
+    {
+    case host_not_found:
+      return "Host not found (authoritative).";
+    case host_not_found_try_again:
+      return "Host not found (non-authoritative), try again later.";
+    case no_recovery:
+      return "A non-recoverable error occurred during database lookup.";
+    case no_host_data:
+      return "The name is valid, but it does not have associated data.";
+    default:
+      break;
+    }
+#if defined(__sun)
     return std::string(strerror(code_));
-#else
+#else // __sun
+    if (code_ == operation_aborted)
+      return "Operation cancelled.";
     char buf[256] = "";
     return std::string(strerror_r(code_, buf, sizeof(buf)));
-#endif
+#endif // __sun
+#endif // _WIN32
   }
 
   struct unspecified_bool_type_t;

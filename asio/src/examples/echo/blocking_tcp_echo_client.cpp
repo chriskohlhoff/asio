@@ -17,11 +17,15 @@ int main(int argc, char* argv[])
 
     asio::demuxer d;
 
+    asio::ipv4::host_resolver hr(d);
+    asio::ipv4::host h;
+    hr.get_host_by_name(argv[1], h);
+    asio::ipv4::tcp::endpoint ep(atoi(argv[2]), h.addresses[0]);
+
     using namespace std; // For atoi and strlen.
     asio::stream_socket s(d);
     asio::socket_connector c(d);
-    c.connect(s,asio::ipv4::tcp::endpoint(atoi(argv[2]),
-          asio::ipv4::address(argv[1])));
+    c.connect(s, ep);
 
     std::cout << "Enter message: ";
     char request[max_length];

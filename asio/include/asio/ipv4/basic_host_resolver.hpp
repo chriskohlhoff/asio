@@ -93,7 +93,9 @@ public:
   /**
    * This function is used to obtain host information for the local machine.
    *
-   * @param h A host object that receives information about the local machine.
+   * @param h A host object that receives information assocated with the
+   * specified address. After successful completion of this function, the host
+   * object is guaranteed to contain at least one address.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature
@@ -116,7 +118,8 @@ public:
    * @param addr An address object that identifies a host.
    *
    * @param h A host object that receives information assocated with the
-   * specified address.
+   * specified address. After successful completion of this function, the host
+   * object is guaranteed to contain at least one address.
    *
    * @throws socket_error Thrown on failure.
    */
@@ -133,7 +136,8 @@ public:
    * @param addr An address object that identifies a host.
    *
    * @param h A host object that receives information assocated with the
-   * specified address.
+   * specified address. After successful completion of this function, the host
+   * object is guaranteed to contain at least one address.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature

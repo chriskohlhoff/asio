@@ -13,11 +13,15 @@ int main(int argc, char* argv[])
 
     asio::demuxer demuxer;
 
+    asio::ipv4::host_resolver host_resolver(demuxer);
+    asio::ipv4::host host;
+    host_resolver.get_host_by_name(argv[1], host);
+    asio::ipv4::tcp::endpoint remote_endpoint(13, host.addresses[0]);
+
     asio::stream_socket socket(demuxer);
 
     asio::socket_connector connector(demuxer);
-    connector.connect(socket,
-        asio::ipv4::tcp::endpoint(13, asio::ipv4::address(argv[1])));
+    connector.connect(socket, remote_endpoint);
 
     char buf[128];
     while (size_t len = socket.recv(buf, sizeof(buf)))

@@ -124,14 +124,14 @@ private:
 class server
 {
 public:
-  server(demuxer& d, short port, size_t block_size)
+  server(demuxer& d, const ipv4::tcp::endpoint& endpoint, size_t block_size)
     : demuxer_(d),
       acceptor_(d),
       block_size_(block_size)
   {
     acceptor_.open(ipv4::tcp());
     acceptor_.set_option(socket_option::reuse_address(1));
-    acceptor_.bind(ipv4::tcp::endpoint(port));
+    acceptor_.bind(endpoint);
     acceptor_.listen();
 
     session* new_session = new session(demuxer_, block_size_);
@@ -177,7 +177,7 @@ int main(int argc, char* argv[])
 
     demuxer d;
 
-    server s(d, port, block_size);
+    server s(d, ipv4::tcp::endpoint(port), block_size);
 
     // Threads not currently supported in this test.
     std::list<thread*> threads;

@@ -10,13 +10,12 @@ typedef std::deque<chat_message> chat_message_queue;
 class chat_client
 {
 public:
-  chat_client(asio::demuxer& d, short port, const char* host)
+  chat_client(asio::demuxer& d, const asio::ipv4::tcp::endpoint& endpoint)
     : demuxer_(d),
       connector_(d),
       socket_(d)
   {
-    connector_.async_connect(socket_,
-        asio::ipv4::tcp::endpoint(port, asio::ipv4::address(host)),
+    connector_.async_connect(socket_, endpoint,
         boost::bind(&chat_client::handle_connect, this, asio::arg::error));
   }
 
@@ -133,7 +132,12 @@ int main(int argc, char* argv[])
     asio::demuxer d;
 
     using namespace std; // For atoi, strlen and memcpy.
-    chat_client c(d, atoi(argv[2]), argv[1]);
+    asio::ipv4::host_resolver hr(d);
+    asio::ipv4::host h;
+    hr.get_host_by_name(argv[1], h);
+    asio::ipv4::tcp::endpoint ep(atoi(argv[2]), h.addresses[0]);
+
+    chat_client c(d, ep);
 
     asio::detail::thread t(boost::bind(&asio::demuxer::run, &d));
 
