@@ -88,13 +88,13 @@ public:
     impl = sock.release();
   }
 
-  // Bind the dgram socket to the specified local address.
-  template <typename Address, typename Error_Handler>
-  void bind(impl_type& impl, const Address& address,
+  // Bind the dgram socket to the specified local endpoint.
+  template <typename Endpoint, typename Error_Handler>
+  void bind(impl_type& impl, const Endpoint& endpoint,
       Error_Handler error_handler)
   {
-    if (socket_ops::bind(impl, address.native_address(),
-          address.native_size()) == socket_error_retval)
+    if (socket_ops::bind(impl, endpoint.native_data(),
+          endpoint.native_size()) == socket_error_retval)
       error_handler(socket_error(socket_ops::get_error()));
   }
 
@@ -128,29 +128,29 @@ public:
       error_handler(socket_error(socket_ops::get_error()));
   }
 
-  // Get the local socket address.
-  template <typename Address, typename Error_Handler>
-  void get_local_address(impl_type& impl, Address& address,
+  // Get the local endpoint.
+  template <typename Endpoint, typename Error_Handler>
+  void get_local_endpoint(impl_type& impl, Endpoint& endpoint,
       Error_Handler error_handler)
   {
-    socket_addr_len_type addr_len = address.native_size();
-    if (socket_ops::getsockname(impl, address.native_address(), &addr_len))
+    socket_addr_len_type addr_len = endpoint.native_size();
+    if (socket_ops::getsockname(impl, endpoint.native_data(), &addr_len))
     {
       error_handler(socket_error(socket_ops::get_error()));
       return;
     }
 
-    address.native_size(addr_len);
+    endpoint.native_size(addr_len);
   }
 
-  // Send a datagram to the specified address. Returns the number of bytes
+  // Send a datagram to the specified endpoint. Returns the number of bytes
   // sent.
-  template <typename Address, typename Error_Handler>
+  template <typename Endpoint, typename Error_Handler>
   size_t sendto(impl_type& impl, const void* data, size_t length,
-      const Address& destination, Error_Handler error_handler)
+      const Endpoint& destination, Error_Handler error_handler)
   {
     int bytes_sent = socket_ops::sendto(impl, data, length, 0,
-        destination.native_address(), destination.native_size());
+        destination.native_data(), destination.native_size());
     if (bytes_sent < 0)
     {
       error_handler(socket_error(socket_ops::get_error()));
@@ -195,9 +195,9 @@ public:
 
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
-  template <typename Address, typename Handler>
+  template <typename Endpoint, typename Handler>
   void async_sendto(impl_type& impl, const void* data, size_t length,
-      const Address& destination, Handler handler)
+      const Endpoint& destination, Handler handler)
   {
     sendto_operation<Handler>* sendto_op =
       new sendto_operation<Handler>(handler);
@@ -210,7 +210,7 @@ public:
     DWORD bytes_transferred = 0;
 
     int result = ::WSASendTo(impl, &buf, 1, &bytes_transferred, 0,
-        destination.native_address(), destination.native_size(), sendto_op, 0);
+        destination.native_data(), destination.native_size(), sendto_op, 0);
     DWORD last_error = ::WSAGetLastError();
 
     if (result != 0 && last_error != WSA_IO_PENDING)
@@ -222,43 +222,43 @@ public:
     }
   }
 
-  // Receive a datagram with the address of the sender. Returns the number of
+  // Receive a datagram with the endpoint of the sender. Returns the number of
   // bytes received.
-  template <typename Address, typename Error_Handler>
+  template <typename Endpoint, typename Error_Handler>
   size_t recvfrom(impl_type& impl, void* data, size_t max_length,
-      Address& sender_address, Error_Handler error_handler)
+      Endpoint& sender_endpoint, Error_Handler error_handler)
   {
-    socket_addr_len_type addr_len = sender_address.native_size();
+    socket_addr_len_type addr_len = sender_endpoint.native_size();
     int bytes_recvd = socket_ops::recvfrom(impl, data, max_length, 0,
-        sender_address.native_address(), &addr_len);
+        sender_endpoint.native_data(), &addr_len);
     if (bytes_recvd < 0)
     {
       error_handler(socket_error(socket_ops::get_error()));
       return 0;
     }
 
-    sender_address.native_size(addr_len);
+    sender_endpoint.native_size(addr_len);
 
     return bytes_recvd;
   }
 
-  template <typename Address, typename Handler>
+  template <typename Endpoint, typename Handler>
   class recvfrom_operation
     : public win_iocp_operation
   {
   public:
-    recvfrom_operation(Address& address, Handler handler)
+    recvfrom_operation(Endpoint& endpoint, Handler handler)
       : win_iocp_operation(
-          &recvfrom_operation<Address, Handler>::do_completion_impl),
-        address_(address),
-        address_size_(address.native_size()),
+          &recvfrom_operation<Endpoint, Handler>::do_completion_impl),
+        endpoint_(endpoint),
+        endpoint_size_(endpoint.native_size()),
         handler_(handler)
     {
     }
 
-    int& address_size()
+    int& endpoint_size()
     {
-      return address_size_;
+      return endpoint_size_;
     }
 
   private:
@@ -266,9 +266,9 @@ public:
         win_iocp_demuxer_service& demuxer_service, HANDLE iocp,
         DWORD last_error, size_t bytes_transferred)
     {
-      recvfrom_operation<Address, Handler>* h =
-        static_cast<recvfrom_operation<Address, Handler>*>(op);
-      h->address_.native_size(h->address_size_);
+      recvfrom_operation<Endpoint, Handler>* h =
+        static_cast<recvfrom_operation<Endpoint, Handler>*>(op);
+      h->endpoint_.native_size(h->endpoint_size_);
       socket_error error(last_error);
       try
       {
@@ -281,20 +281,20 @@ public:
       delete h;
     }
 
-    Address& address_;
-    int address_size_;
+    Endpoint& endpoint_;
+    int endpoint_size_;
     Handler handler_;
   };
 
   // Start an asynchronous receive. The buffer for the data being received and
-  // the sender_address obejct must both be valid for the lifetime of the
+  // the sender_endpoint object must both be valid for the lifetime of the
   // asynchronous operation.
-  template <typename Address, typename Handler>
+  template <typename Endpoint, typename Handler>
   void async_recvfrom(impl_type& impl, void* data, size_t max_length,
-      Address& sender_address, Handler handler)
+      Endpoint& sender_endpoint, Handler handler)
   {
-    recvfrom_operation<Address, Handler>* recvfrom_op =
-      new recvfrom_operation<Address, Handler>(sender_address, handler);
+    recvfrom_operation<Endpoint, Handler>* recvfrom_op =
+      new recvfrom_operation<Endpoint, Handler>(sender_endpoint, handler);
 
     demuxer_service_.work_started();
 
@@ -305,7 +305,7 @@ public:
     DWORD flags = 0;
 
     int result = ::WSARecvFrom(impl, &buf, 1, &bytes_transferred, &flags,
-        sender_address.native_address(), &recvfrom_op->address_size(),
+        sender_endpoint.native_data(), &recvfrom_op->endpoint_size(),
         recvfrom_op, 0);
     DWORD last_error = ::WSAGetLastError();
 

@@ -164,14 +164,14 @@ public:
       dispatcher_(d),
       stop_timer_(d, timer::from_now, timeout),
       connector_(d),
-      server_addr_(port, host),
+      server_endpoint_(port, ipv4::address(host)),
       block_size_(block_size),
       max_session_count_(session_count),
       sessions_(),
       stats_()
   {
     session* new_session = new session(demuxer_, block_size, stats_);
-    connector_.async_connect(new_session->socket(), server_addr_,
+    connector_.async_connect(new_session->socket(), server_endpoint_,
         dispatcher_.wrap(boost::bind(&client::handle_connect, this,
             new_session, arg::error)));
 
@@ -206,7 +206,7 @@ public:
       if (sessions_.size() < max_session_count_)
       {
         new_session = new session(demuxer_, block_size_, stats_);
-        connector_.async_connect(new_session->socket(), server_addr_,
+        connector_.async_connect(new_session->socket(), server_endpoint_,
             dispatcher_.wrap(boost::bind(&client::handle_connect, this,
                 new_session, arg::error)));
       }
@@ -222,7 +222,7 @@ private:
   locking_dispatcher dispatcher_;
   timer stop_timer_;
   socket_connector connector_;
-  ipv4::address server_addr_;
+  ipv4::tcp::endpoint server_endpoint_;
   size_t block_size_;
   size_t max_session_count_;
   std::list<session*> sessions_;

@@ -24,47 +24,42 @@ void error_handler_test()
 
   stream_socket s(d);
   socket_connector c(d);
+  ipv4::tcp::endpoint endpoint(321, ipv4::address::none());
 
   socket_error expected_err;
-  c.connect(s, ipv4::address(321, "0.0.0.0"), set_error(expected_err));
+  c.connect(s, endpoint, set_error(expected_err));
 
   std::ostringstream os;
-  c.connect(s, ipv4::address(321, "0.0.0.0"), log_error(os));
+  c.connect(s, endpoint, log_error(os));
   UNIT_TEST_CHECK(!os.str().empty());
 
   os.str("");
-  c.connect(s, ipv4::address(321, "0.0.0.0"),
-      error == expected_err || log_error(os));
+  c.connect(s, endpoint, error == expected_err || log_error(os));
   UNIT_TEST_CHECK(os.str().empty());
 
   os.str("");
-  c.connect(s, ipv4::address(321, "0.0.0.0"),
-      error == expected_err && log_error(os));
+  c.connect(s, endpoint, error == expected_err && log_error(os));
   UNIT_TEST_CHECK(!os.str().empty());
 
   os.str("");
-  c.connect(s, ipv4::address(321, "0.0.0.0"),
-      error != expected_err || log_error(os));
+  c.connect(s, endpoint, error != expected_err || log_error(os));
   UNIT_TEST_CHECK(!os.str().empty());
 
   os.str("");
-  c.connect(s, ipv4::address(321, "0.0.0.0"),
-      error != expected_err && log_error(os));
+  c.connect(s, endpoint, error != expected_err && log_error(os));
   UNIT_TEST_CHECK(os.str().empty());
 
   os.str("");
-  c.connect(s, ipv4::address(321, "0.0.0.0"),
-      log_error_if(os, error == expected_err));
+  c.connect(s, endpoint, log_error_if(os, error == expected_err));
   UNIT_TEST_CHECK(!os.str().empty());
 
   os.str("");
-  c.connect(s, ipv4::address(321, "0.0.0.0"),
-      log_error_if(os, error != expected_err));
+  c.connect(s, endpoint, log_error_if(os, error != expected_err));
   UNIT_TEST_CHECK(os.str().empty());
 
   try
   {
-    c.connect(s, ipv4::address(321, "0.0.0.0"), throw_error());
+    c.connect(s, endpoint, throw_error());
     UNIT_TEST_CHECK(0);
   }
   catch (socket_error&)
@@ -73,8 +68,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, ipv4::address(321, "0.0.0.0"),
-        error == expected_err || throw_error());
+    c.connect(s, endpoint, error == expected_err || throw_error());
   }
   catch (socket_error&)
   {
@@ -83,8 +77,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, ipv4::address(321, "0.0.0.0"),
-        error == expected_err && throw_error());
+    c.connect(s, endpoint, error == expected_err && throw_error());
     UNIT_TEST_CHECK(0);
   }
   catch (socket_error&)
@@ -93,8 +86,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, ipv4::address(321, "0.0.0.0"),
-        error != expected_err || throw_error());
+    c.connect(s, endpoint, error != expected_err || throw_error());
     UNIT_TEST_CHECK(0);
   }
   catch (socket_error&)
@@ -103,8 +95,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, ipv4::address(321, "0.0.0.0"),
-        error != expected_err && throw_error());
+    c.connect(s, endpoint, error != expected_err && throw_error());
   }
   catch (socket_error&)
   {
@@ -113,8 +104,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, ipv4::address(321, "0.0.0.0"),
-        throw_error_if(error == expected_err));
+    c.connect(s, endpoint, throw_error_if(error == expected_err));
     UNIT_TEST_CHECK(0);
   }
   catch (socket_error&)
@@ -123,8 +113,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, ipv4::address(321, "0.0.0.0"),
-        throw_error_if(error != expected_err));
+    c.connect(s, endpoint, throw_error_if(error != expected_err));
   }
   catch (socket_error&)
   {
@@ -132,36 +121,30 @@ void error_handler_test()
   }
 
   socket_error err;
-  c.connect(s, ipv4::address(321, "0.0.0.0"), set_error(err));
+  c.connect(s, endpoint, set_error(err));
   UNIT_TEST_CHECK(err == expected_err);
 
-  c.connect(s, ipv4::address(321, "0.0.0.0"),
-      error == expected_err || set_error(err));
+  c.connect(s, endpoint, error == expected_err || set_error(err));
   UNIT_TEST_CHECK(err != expected_err);
 
-  c.connect(s, ipv4::address(321, "0.0.0.0"),
-      error == expected_err && set_error(err));
+  c.connect(s, endpoint, error == expected_err && set_error(err));
   UNIT_TEST_CHECK(err == expected_err);
 
-  c.connect(s, ipv4::address(321, "0.0.0.0"),
-      error != expected_err || set_error(err));
+  c.connect(s, endpoint, error != expected_err || set_error(err));
   UNIT_TEST_CHECK(err == expected_err);
 
-  c.connect(s, ipv4::address(321, "0.0.0.0"),
-      error != expected_err && set_error(err));
+  c.connect(s, endpoint, error != expected_err && set_error(err));
   UNIT_TEST_CHECK(err != expected_err);
 
-  c.connect(s, ipv4::address(321, "0.0.0.0"),
-      set_error_if(err, error == expected_err));
+  c.connect(s, endpoint, set_error_if(err, error == expected_err));
   UNIT_TEST_CHECK(err == expected_err);
 
-  c.connect(s, ipv4::address(321, "0.0.0.0"),
-      set_error_if(err, error != expected_err));
+  c.connect(s, endpoint, set_error_if(err, error != expected_err));
   UNIT_TEST_CHECK(err != expected_err);
 
   try
   {
-    c.connect(s, ipv4::address(321, "0.0.0.0"), ignore_error());
+    c.connect(s, endpoint, ignore_error());
   }
   catch (socket_error&)
   {
@@ -170,8 +153,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, ipv4::address(321, "0.0.0.0"),
-        error == expected_err || ignore_error());
+    c.connect(s, endpoint, error == expected_err || ignore_error());
   }
   catch (socket_error&)
   {
@@ -180,8 +162,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, ipv4::address(321, "0.0.0.0"),
-        error == expected_err && ignore_error());
+    c.connect(s, endpoint, error == expected_err && ignore_error());
   }
   catch (socket_error&)
   {
@@ -190,8 +171,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, ipv4::address(321, "0.0.0.0"),
-        error != expected_err || ignore_error());
+    c.connect(s, endpoint, error != expected_err || ignore_error());
   }
   catch (socket_error&)
   {
@@ -200,8 +180,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, ipv4::address(321, "0.0.0.0"),
-        error != expected_err && ignore_error());
+    c.connect(s, endpoint, error != expected_err && ignore_error());
   }
   catch (socket_error&)
   {
@@ -210,7 +189,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, ipv4::address(321, "0.0.0.0"),
+    c.connect(s, endpoint,
         ignore_error_if(error == expected_err) || throw_error());
   }
   catch (socket_error&)
@@ -220,7 +199,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, ipv4::address(321, "0.0.0.0"),
+    c.connect(s, endpoint,
         ignore_error_if(error != expected_err) || throw_error());
     UNIT_TEST_CHECK(0);
   }

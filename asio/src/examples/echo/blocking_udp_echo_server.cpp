@@ -6,13 +6,13 @@ const int max_length = 1024;
 
 void server(asio::demuxer& d, short port)
 {
-  asio::dgram_socket sock(d, asio::ipv4::address(port));
+  asio::dgram_socket sock(d, asio::ipv4::udp::endpoint(port));
   for (;;)
   {
     char data[max_length];
-    asio::ipv4::address sender_address;
-    size_t length = sock.recvfrom(data, max_length, sender_address);
-    sock.sendto(data, length, sender_address);
+    asio::ipv4::udp::endpoint sender_endpoint;
+    size_t length = sock.recvfrom(data, max_length, sender_endpoint);
+    sock.sendto(data, length, sender_endpoint);
   }
 }
 

@@ -9,7 +9,7 @@ int main()
   {
     asio::demuxer demuxer;
 
-    asio::socket_acceptor acceptor(demuxer, asio::ipv4::address(13));
+    asio::socket_acceptor acceptor(demuxer, asio::ipv4::tcp::endpoint(13));
 
     for (;;)
     {

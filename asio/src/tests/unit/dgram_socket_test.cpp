@@ -39,30 +39,31 @@ void dgram_socket_test()
 
   demuxer d;
 
-  dgram_socket s1(d, ipv4::address(0));
-  ipv4::address target_addr;
-  s1.get_local_address(target_addr);
-  target_addr.host_addr_str("127.0.0.1");
+  dgram_socket s1(d, ipv4::udp::endpoint(0));
+  ipv4::udp::endpoint target_endpoint;
+  s1.get_local_endpoint(target_endpoint);
+  target_endpoint.address(ipv4::address::loopback());
 
   dgram_socket s2(d);
   s2.open(ipv4::udp());
-  s2.bind(ipv4::address(0));
+  s2.bind(ipv4::udp::endpoint(0));
   char send_msg[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-  s2.sendto(send_msg, sizeof(send_msg), target_addr);
+  s2.sendto(send_msg, sizeof(send_msg), target_endpoint);
 
   char recv_msg[sizeof(send_msg)];
-  ipv4::address sender_addr;
-  size_t bytes_recvd = s1.recvfrom(recv_msg, sizeof(recv_msg), sender_addr);
+  ipv4::udp::endpoint sender_endpoint;
+  size_t bytes_recvd = s1.recvfrom(recv_msg, sizeof(recv_msg),
+      sender_endpoint);
 
   UNIT_TEST_CHECK(bytes_recvd == sizeof(send_msg));
   UNIT_TEST_CHECK(memcmp(send_msg, recv_msg, sizeof(send_msg)) == 0);
 
   memset(recv_msg, 0, sizeof(recv_msg));
 
-  target_addr = sender_addr;
-  s1.async_sendto(send_msg, sizeof(send_msg), target_addr,
+  target_endpoint = sender_endpoint;
+  s1.async_sendto(send_msg, sizeof(send_msg), target_endpoint,
       boost::bind(handle_send, sizeof(send_msg), arg::error, arg::bytes_sent));
-  s2.async_recvfrom(recv_msg, sizeof(recv_msg), sender_addr,
+  s2.async_recvfrom(recv_msg, sizeof(recv_msg), sender_endpoint,
       boost::bind(handle_recv, sizeof(recv_msg), arg::error, arg::bytes_recvd));
 
   d.run();

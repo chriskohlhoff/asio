@@ -13,7 +13,8 @@ public:
       connector_(d),
       socket_(d)
   {
-    connector_.async_connect(socket_, ipv4::address(32123, "localhost"),
+    connector_.async_connect(socket_,
+        ipv4::tcp::endpoint(32123, ipv4::address::loopback()),
         boost::bind(&connect_handler::handle_connect, this, asio::arg::error));
 
     timer_.set(timer::from_now, 5);
@@ -44,7 +45,7 @@ int main()
   try
   {
     demuxer d;
-    socket_acceptor a(d, ipv4::address(32123), 1);
+    socket_acceptor a(d, ipv4::tcp::endpoint(32123), 1);
 
     // Make lots of connections so that at least some of them will block.
     connect_handler ch1(d);

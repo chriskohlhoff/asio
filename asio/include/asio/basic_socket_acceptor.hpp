@@ -69,31 +69,30 @@ public:
   {
   }
 
-  /// Construct an acceptor opened on the given address.
+  /// Construct an acceptor opened on the given endpoint.
   /**
    * This constructor creates an acceptor and automatically opens it to listen
-   * for new connections on the specified address.
+   * for new connections on the specified endpoint.
    *
    * @param d The demuxer object that the acceptor will use to dispatch
    * handlers for any asynchronous operations performed on the acceptor.
    *
-   * @param address An address on the local machine on which the acceptor will
-   * listen for new connections.
+   * @param endpoint An endpoint on the local machine on which the acceptor
+   * will listen for new connections.
    *
    * @param listen_backlog The maximum length of the queue of pending
    * connections. A value of 0 means use the default queue length.
    *
    * @throws socket_error Thrown on failure.
    */
-  template <typename Address>
-  basic_socket_acceptor(demuxer_type& d, const Address& address,
+  template <typename Endpoint>
+  basic_socket_acceptor(demuxer_type& d, const Endpoint& endpoint,
       int listen_backlog = 0)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_type::null())
   {
-    typedef typename Address::default_stream_protocol default_protocol;
-    service_.open(impl_, default_protocol(), default_error_handler());
-    service_.bind(impl_, address, default_error_handler());
+    service_.open(impl_, endpoint.protocol(), default_error_handler());
+    service_.bind(impl_, endpoint, default_error_handler());
     service_.listen(impl_, listen_backlog, default_error_handler());
   }
 
@@ -149,28 +148,28 @@ public:
     service_.open(impl_, protocol, error_handler);
   }
 
-  /// Bind the acceptor to the given local address.
+  /// Bind the acceptor to the given local endpoint.
   /**
-   * This function binds the socket acceptor to the specified address on the
+   * This function binds the socket acceptor to the specified endpoint on the
    * local machine.
    *
-   * @param address An address on the local machine to which the socket
+   * @param endpoint An endpoint on the local machine to which the socket
    * acceptor will be bound.
    *
    * @throws socket_error Thrown on failure.
    */
-  template <typename Address>
-  void bind(const Address& address)
+  template <typename Endpoint>
+  void bind(const Endpoint& endpoint)
   {
-    service_.bind(impl_, address, default_error_handler());
+    service_.bind(impl_, endpoint, default_error_handler());
   }
 
-  /// Bind the acceptor to the given local address.
+  /// Bind the acceptor to the given local endpoint.
   /**
-   * This function binds the socket acceptor to the specified address on the
+   * This function binds the socket acceptor to the specified endpoint on the
    * local machine.
    *
-   * @param address An address on the local machine to which the socket
+   * @param endpoint An endpoint on the local machine to which the socket
    * acceptor will be bound.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
@@ -180,10 +179,10 @@ public:
    *   const asio::socket_error& error // Result of operation
    * ); @endcode
    */
-  template <typename Address, typename Error_Handler>
-  void bind(const Address& address, Error_Handler error_handler)
+  template <typename Endpoint, typename Error_Handler>
+  void bind(const Endpoint& endpoint, Error_Handler error_handler)
   {
-    service_.bind(impl_, address, error_handler);
+    service_.bind(impl_, endpoint, error_handler);
   }
 
   /// Place the acceptor into the state where it will listen for new
@@ -314,26 +313,28 @@ public:
     service_.get_option(impl_, option, error_handler);
   }
 
-  /// Get the local address of the acceptor.
+  /// Get the local endpoint of the acceptor.
   /**
-   * This function is used to obtain the locally bound address of the acceptor.
+   * This function is used to obtain the locally bound endpoint of the
+   * acceptor.
    *
-   * @param address An address object that receives the local address of the
+   * @param endpoint An endpoint object that receives the local endpoint of the
    * acceptor.
    *
    * @throws socket_error Thrown on failure.
    */
-  template <typename Address>
-  void get_local_address(Address& address)
+  template <typename Endpoint>
+  void get_local_endpoint(Endpoint& endpoint)
   {
-    service_.get_local_address(impl_, address, default_error_handler());
+    service_.get_local_endpoint(impl_, endpoint, default_error_handler());
   }
 
-  /// Get the local address of the acceptor.
+  /// Get the local endpoint of the acceptor.
   /**
-   * This function is used to obtain the locally bound address of the acceptor.
+   * This function is used to obtain the locally bound endpoint of the
+   * acceptor.
    *
-   * @param address An address object that receives the local address of the
+   * @param endpoint An endpoint object that receives the local endpoint of the
    * acceptor.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
@@ -343,10 +344,10 @@ public:
    *   const asio::socket_error& error // Result of operation
    * ); @endcode
    */
-  template <typename Address, typename Error_Handler>
-  void get_local_address(Address& address, Error_Handler error_handler)
+  template <typename Endpoint, typename Error_Handler>
+  void get_local_endpoint(Endpoint& endpoint, Error_Handler error_handler)
   {
-    service_.get_local_address(impl_, address, error_handler);
+    service_.get_local_endpoint(impl_, endpoint, error_handler);
   }
 
   /// Accept a new connection.
@@ -411,40 +412,40 @@ public:
     service_.async_accept(impl_, peer_socket.lowest_layer(), handler);
   }
 
-  /// Accept a new connection and obtain the address of the peer
+  /// Accept a new connection and obtain the endpoint of the peer
   /**
    * This function is used to accept a new connection from a peer into the
-   * given stream socket, and additionally provide the address of the remote
+   * given stream socket, and additionally provide the endpoint of the remote
    * peer. The function call will block until a new connection has been
    * accepted successfully or an error occurs.
    *
    * @param peer_socket The stream socket into which the new connection will be
    * accepted.
    *
-   * @param peer_address An address object which will receive the network
-   * address of the remote peer.
+   * @param peer_endpoint An endpoint object which will receive the endpoint of
+   * the remote peer.
    *
    * @throws socket_error Thrown on failure.
    */
-  template <typename Stream, typename Address>
-  void accept_address(Stream& peer_socket, Address& peer_address)
+  template <typename Stream, typename Endpoint>
+  void accept_endpoint(Stream& peer_socket, Endpoint& peer_endpoint)
   {
-    service_.accept(impl_, peer_socket.lowest_layer(), peer_address,
+    service_.accept(impl_, peer_socket.lowest_layer(), peer_endpoint,
         default_error_handler());
   }
 
-  /// Accept a new connection and obtain the address of the peer
+  /// Accept a new connection and obtain the endpoint of the peer
   /**
    * This function is used to accept a new connection from a peer into the
-   * given stream socket, and additionally provide the address of the remote
+   * given stream socket, and additionally provide the endpoint of the remote
    * peer. The function call will block until a new connection has been
    * accepted successfully or an error occurs.
    *
    * @param peer_socket The stream socket into which the new connection will be
    * accepted.
    *
-   * @param peer_address An address object which will receive the network
-   * address of the remote peer.
+   * @param peer_endpoint An endpoint object which will receive the endpoint of
+   * the remote peer.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature
@@ -453,28 +454,28 @@ public:
    *   const asio::socket_error& error // Result of operation
    * ); @endcode
    */
-  template <typename Stream, typename Address, typename Error_Handler>
-  void accept_address(Stream& peer_socket, Address& peer_address,
+  template <typename Stream, typename Endpoint, typename Error_Handler>
+  void accept_endpoint(Stream& peer_socket, Endpoint& peer_endpoint,
       Error_Handler error_handler)
   {
-    service_.accept(impl_, peer_socket.lowest_layer(), peer_address,
+    service_.accept(impl_, peer_socket.lowest_layer(), peer_endpoint,
         error_handler);
   }
 
   /// Start an asynchronous accept.
   /**
    * This function is used to asynchronously accept a new connection into a
-   * stream socket, and additionally obtain the address of the remote peer. The
-   * function call always returns immediately.
+   * stream socket, and additionally obtain the endpoint of the remote peer.
+   * The function call always returns immediately.
    *
    * @param peer_socket The stream socket into which the new connection will be
    * accepted. Ownership of the peer_socket object is retained by the caller,
    * which must guarantee that it is valid until the handler is called.
    *
-   * @param peer_address An address object into which the address of the remote
-   * peer will be written. Ownership of the peer_address object is retained by
-   * the caller, which must guarantee that it is valid until the handler is
-   * called.
+   * @param peer_endpoint An endpoint object into which the endpoint of the
+   * remote peer will be written. Ownership of the peer_endpoint object is
+   * retained by the caller, which must guarantee that it is valid until the
+   * handler is called.
    *
    * @param handler The handler to be called when the accept operation
    * completes. Copies will be made of the handler as required. The equivalent
@@ -483,12 +484,12 @@ public:
    *   const asio::socket_error& error // Result of operation
    * ); @endcode
    */
-  template <typename Stream, typename Address, typename Handler>
-  void async_accept_address(Stream& peer_socket, Address& peer_address,
+  template <typename Stream, typename Endpoint, typename Handler>
+  void async_accept_endpoint(Stream& peer_socket, Endpoint& peer_endpoint,
       Handler handler)
   {
-    service_.async_accept_address(impl_, peer_socket.lowest_layer(),
-        peer_address, handler);
+    service_.async_accept_endpoint(impl_, peer_socket.lowest_layer(),
+        peer_endpoint, handler);
   }
 
 private:

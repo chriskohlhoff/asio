@@ -69,29 +69,27 @@ public:
   }
 
   /// Construct a basic_dgram_socket, opening it and binding it to the given
-  /// local address.
+  /// local endpoint.
   /**
    * This constructor creates a dgram socket and automatically opens it bound
-   * to the specified address on the local machine. The protocol is determined
-   * automatically to be the default datagram protocol associated with the
-   * given address type.
+   * to the specified endpoint on the local machine. The protocol used is the
+   * protocol associated with the given endpoint.
    *
    * @param d The demuxer object that the dgram socket will use to dispatch
    * handlers for any asynchronous operations performed on the socket.
    *
-   * @param address An address on the local machine to which the dgram socket
+   * @param endpoint An endpoint on the local machine to which the dgram socket
    * will be bound.
    *
    * @throws socket_error Thrown on failure.
    */
-  template <typename Address>
-  basic_dgram_socket(demuxer_type& d, const Address& address)
+  template <typename Endpoint>
+  basic_dgram_socket(demuxer_type& d, const Endpoint& endpoint)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_type::null())
   {
-    typedef typename Address::default_dgram_protocol default_protocol;
-    service_.open(impl_, default_protocol(), default_error_handler());
-    service_.bind(impl_, address, default_error_handler());
+    service_.open(impl_, endpoint.protocol(), default_error_handler());
+    service_.bind(impl_, endpoint, default_error_handler());
   }
 
   /// Destructor.
@@ -148,28 +146,28 @@ public:
     service_.open(impl_, protocol, error_handler);
   }
 
-  /// Bind the socket to the given local address.
+  /// Bind the socket to the given local endpoint.
   /**
-   * This function binds the dgram socket to the specified address on the local
-   * machine.
+   * This function binds the dgram socket to the specified endpoint on the
+   * local machine.
    *
-   * @param address An address on the local machine to which the dgram socket
+   * @param endpoint An endpoint on the local machine to which the dgram socket
    * will be bound.
    *
    * @throws socket_error Thrown on failure.
    */
-  template <typename Address>
-  void bind(const Address& address)
+  template <typename Endpoint>
+  void bind(const Endpoint& endpoint)
   {
-    service_.bind(impl_, address, default_error_handler());
+    service_.bind(impl_, endpoint, default_error_handler());
   }
 
-  /// Bind the socket to the given local address.
+  /// Bind the socket to the given local endpoint.
   /**
-   * This function binds the dgram socket to the specified address on the local
-   * machine.
+   * This function binds the dgram socket to the specified endpoint on the
+   * local machine.
    *
-   * @param address An address on the local machine to which the dgram socket
+   * @param endpoint An endpoint on the local machine to which the dgram socket
    * will be bound.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
@@ -179,10 +177,10 @@ public:
    *   const asio::socket_error& error // Result of operation
    * ); @endcode
    */
-  template <typename Address, typename Error_Handler>
-  void bind(const Address& address, Error_Handler error_handler)
+  template <typename Endpoint, typename Error_Handler>
+  void bind(const Endpoint& endpoint, Error_Handler error_handler)
   {
-    service_.bind(impl_, address, error_handler);
+    service_.bind(impl_, endpoint, error_handler);
   }
 
   /// Close the socket.
@@ -275,26 +273,26 @@ public:
     service_.get_option(impl_, option, error_handler);
   }
 
-  /// Get the local address of the socket.
+  /// Get the local endpoint of the socket.
   /**
-   * This function is used to obtain the locally bound address of the socket.
+   * This function is used to obtain the locally bound endpoint of the socket.
    *
-   * @param address An address object that receives the local address of the
+   * @param endpoint An endpoint object that receives the local endpoint of the
    * socket.
    *
    * @throws socket_error Thrown on failure.
    */
-  template <typename Address>
-  void get_local_address(Address& address)
+  template <typename Endpoint>
+  void get_local_endpoint(Endpoint& endpoint)
   {
-    service_.get_local_address(impl_, address, default_error_handler());
+    service_.get_local_endpoint(impl_, endpoint, default_error_handler());
   }
 
-  /// Get the local address of the socket.
+  /// Get the local endpoint of the socket.
   /**
-   * This function is used to obtain the locally bound address of the socket.
+   * This function is used to obtain the locally bound endpoint of the socket.
    *
-   * @param address An address object that receives the local address of the
+   * @param endpoint An endpoint object that receives the local endpoint of the
    * socket.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
@@ -304,46 +302,46 @@ public:
    *   const asio::socket_error& error // Result of operation
    * ); @endcode
    */
-  template <typename Address, typename Error_Handler>
-  void get_local_address(Address& address, Error_Handler error_handler)
+  template <typename Endpoint, typename Error_Handler>
+  void get_local_endpoint(Endpoint& endpoint, Error_Handler error_handler)
   {
-    service_.get_local_address(impl_, address, error_handler);
+    service_.get_local_endpoint(impl_, endpoint, error_handler);
   }
 
-  /// Send a datagram to the specified address.
+  /// Send a datagram to the specified endpoint.
   /**
-   * This function is used to send a datagram to the specified remote address.
+   * This function is used to send a datagram to the specified remote endpoint.
    * The function call will block until the data has been sent successfully or
    * an error occurs.
    *
-   * @param data The data to be sent to remote address.
+   * @param data The data to be sent to remote endpoint.
    *
    * @param length The size of the data to be sent, in bytes.
    *
-   * @param destination The remote address to which the data will be sent.
+   * @param destination The remote endpoint to which the data will be sent.
    *
    * @returns The number of bytes sent.
    *
    * @throws socket_error Thrown on failure.
    */
-  template <typename Address>
-  size_t sendto(const void* data, size_t length, const Address& destination)
+  template <typename Endpoint>
+  size_t sendto(const void* data, size_t length, const Endpoint& destination)
   {
     return service_.sendto(impl_, data, length, destination,
         default_error_handler());
   }
 
-  /// Send a datagram to the specified address.
+  /// Send a datagram to the specified endpoint.
   /**
-   * This function is used to send a datagram to the specified remote address.
+   * This function is used to send a datagram to the specified remote endpoint.
    * The function call will block until the data has been sent successfully or
    * an error occurs.
    *
-   * @param data The data to be sent to remote address.
+   * @param data The data to be sent to remote endpoint.
    *
    * @param length The size of the data to be sent, in bytes.
    *
-   * @param destination The remote address to which the data will be sent.
+   * @param destination The remote endpoint to which the data will be sent.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature
@@ -354,8 +352,8 @@ public:
    *
    * @returns The number of bytes sent.
    */
-  template <typename Address, typename Error_Handler>
-  size_t sendto(const void* data, size_t length, const Address& destination,
+  template <typename Endpoint, typename Error_Handler>
+  size_t sendto(const void* data, size_t length, const Endpoint& destination,
       Error_Handler error_handler)
   {
     return service_.sendto(impl_, data, length, destination, error_handler);
@@ -364,16 +362,16 @@ public:
   /// Start an asynchronous send.
   /**
    * This function is used to asynchronously send a datagram to the specified
-   * remote address. The function call always returns immediately.
+   * remote endpoint. The function call always returns immediately.
    *
-   * @param data The data to be sent to the remote address. Ownership of the
+   * @param data The data to be sent to the remote endpoint. Ownership of the
    * data is retained by the caller, which must guarantee that it is valid
    * until the handler is called.
    *
    * @param length The size of the data to be sent, in bytes.
    *
-   * @param destination The remote address to which the data will be sent.
-   * Copies will be made of the address as required.
+   * @param destination The remote endpoint to which the data will be sent.
+   * Copies will be made of the endpoint as required.
    *
    * @param handler The handler to be called when the send operation completes.
    * Copies will be made of the handler as required. The equivalent function
@@ -383,14 +381,14 @@ public:
    *   size_t bytes_sent                // Number of bytes sent
    * ); @endcode
    */
-  template <typename Address, typename Handler>
+  template <typename Endpoint, typename Handler>
   void async_sendto(const void* data, size_t length,
-      const Address& destination, Handler handler)
+      const Endpoint& destination, Handler handler)
   {
     service_.async_sendto(impl_, data, length, destination, handler);
   }
 
-  /// Receive a datagram with the address of the sender.
+  /// Receive a datagram with the endpoint of the sender.
   /**
    * This function is used to receive a datagram. The function call will block
    * until data has been received successfully or an error occurs.
@@ -401,21 +399,21 @@ public:
    * @param max_length The maximum length, in bytes, of data that can be held
    * in the supplied buffer.
    *
-   * @param sender_address An address object that receives the address of the
-   * remote sender of the datagram.
+   * @param sender_endpoint An endpoint object that receives the endpoint of
+   * the remote sender of the datagram.
    *
    * @returns The number of bytes received.
    *
    * @throws socket_error Thrown on failure.
    */
-  template <typename Address>
-  size_t recvfrom(void* data, size_t max_length, Address& sender_address)
+  template <typename Endpoint>
+  size_t recvfrom(void* data, size_t max_length, Endpoint& sender_endpoint)
   {
-    return service_.recvfrom(impl_, data, max_length, sender_address,
+    return service_.recvfrom(impl_, data, max_length, sender_endpoint,
         default_error_handler());
   }
   
-  /// Receive a datagram with the address of the sender.
+  /// Receive a datagram with the endpoint of the sender.
   /**
    * This function is used to receive a datagram. The function call will block
    * until data has been received successfully or an error occurs.
@@ -426,8 +424,8 @@ public:
    * @param max_length The maximum length, in bytes, of data that can be held
    * in the supplied buffer.
    *
-   * @param sender_address An address object that receives the address of the
-   * remote sender of the datagram.
+   * @param sender_endpoint An endpoint object that receives the endpoint of
+   * the remote sender of the datagram.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature
@@ -438,11 +436,11 @@ public:
    *
    * @returns The number of bytes received.
    */
-  template <typename Address, typename Error_Handler>
-  size_t recvfrom(void* data, size_t max_length, Address& sender_address,
+  template <typename Endpoint, typename Error_Handler>
+  size_t recvfrom(void* data, size_t max_length, Endpoint& sender_endpoint,
       Error_Handler error_handler)
   {
-    return service_.recvfrom(impl_, data, max_length, sender_address,
+    return service_.recvfrom(impl_, data, max_length, sender_endpoint,
         error_handler);
   }
   
@@ -458,9 +456,9 @@ public:
    * @param max_length The maximum length, in bytes, of data that can be held
    * in the supplied buffer.
    *
-   * @param sender_address An address object that receives the address of the
-   * remote sender of the datagram. Ownership of the sender_address object is
-   * retained by the caller, which must guarantee that it is valid until the
+   * @param sender_endpoint An endpoint object that receives the endpoint of
+   * the remote sender of the datagram. Ownership of the sender_endpoint object
+   * is retained by the caller, which must guarantee that it is valid until the
    * handler is called.
    *
    * @param handler The handler to be called when the receive operation
@@ -471,11 +469,11 @@ public:
    *   size_t bytes_recvd               // Number of bytes received
    * ); @endcode
    */
-  template <typename Address, typename Handler>
-  void async_recvfrom(void* data, size_t max_length, Address& sender_address,
+  template <typename Endpoint, typename Handler>
+  void async_recvfrom(void* data, size_t max_length, Endpoint& sender_endpoint,
       Handler handler)
   {
-    service_.async_recvfrom(impl_, data, max_length, sender_address, handler);
+    service_.async_recvfrom(impl_, data, max_length, sender_endpoint, handler);
   }
 
 private:

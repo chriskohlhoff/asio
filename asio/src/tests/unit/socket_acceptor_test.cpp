@@ -33,49 +33,49 @@ void socket_acceptor_test()
 {
   demuxer d;
 
-  socket_acceptor acceptor(d, ipv4::address(0));
-  ipv4::address server_addr;
-  acceptor.get_local_address(server_addr);
-  server_addr.host_addr_str("127.0.0.1");
+  socket_acceptor acceptor(d, ipv4::tcp::endpoint(0));
+  ipv4::tcp::endpoint server_endpoint;
+  acceptor.get_local_endpoint(server_endpoint);
+  server_endpoint.address(ipv4::address::loopback());
 
   socket_connector connector(d);
   stream_socket client_side_socket(d);
   stream_socket server_side_socket(d);
 
-  connector.connect(client_side_socket, server_addr);
+  connector.connect(client_side_socket, server_endpoint);
   acceptor.accept(server_side_socket);
 
   client_side_socket.close();
   server_side_socket.close();
 
-  connector.connect(client_side_socket, server_addr);
-  ipv4::address client_addr;
-  acceptor.accept_address(server_side_socket, client_addr);
+  connector.connect(client_side_socket, server_endpoint);
+  ipv4::tcp::endpoint client_endpoint;
+  acceptor.accept_endpoint(server_side_socket, client_endpoint);
 
-  ipv4::address client_side_local_addr;
-  client_side_socket.get_local_address(client_side_local_addr);
-  UNIT_TEST_CHECK(client_side_local_addr.port() == client_addr.port());
+  ipv4::tcp::endpoint client_side_local_endpoint;
+  client_side_socket.get_local_endpoint(client_side_local_endpoint);
+  UNIT_TEST_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
 
   client_side_socket.close();
   server_side_socket.close();
 
   acceptor.async_accept(server_side_socket, handle_accept);
-  connector.async_connect(client_side_socket, server_addr, handle_connect);
+  connector.async_connect(client_side_socket, server_endpoint, handle_connect);
 
   d.run();
 
   client_side_socket.close();
   server_side_socket.close();
 
-  acceptor.async_accept_address(server_side_socket, client_addr,
+  acceptor.async_accept_endpoint(server_side_socket, client_endpoint,
       handle_accept);
-  connector.async_connect(client_side_socket, server_addr, handle_connect);
+  connector.async_connect(client_side_socket, server_endpoint, handle_connect);
 
   d.reset();
   d.run();
 
-  client_side_socket.get_local_address(client_side_local_addr);
-  UNIT_TEST_CHECK(client_side_local_addr.port() == client_addr.port());
+  client_side_socket.get_local_endpoint(client_side_local_endpoint);
+  UNIT_TEST_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
 }
 
 UNIT_TEST(socket_acceptor_test)

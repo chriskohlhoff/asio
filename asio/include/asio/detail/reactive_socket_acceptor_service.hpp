@@ -71,13 +71,13 @@ public:
       impl = sock.release();
   }
 
-  // Bind the socket acceptor to the specified local address.
-  template <typename Address, typename Error_Handler>
-  void bind(impl_type& impl, const Address& address,
+  // Bind the socket acceptor to the specified local endpoint.
+  template <typename Endpoint, typename Error_Handler>
+  void bind(impl_type& impl, const Endpoint& endpoint,
       Error_Handler error_handler)
   {
-    if (socket_ops::bind(impl, address.native_address(),
-          address.native_size()) == socket_error_retval)
+    if (socket_ops::bind(impl, endpoint.native_data(),
+          endpoint.native_size()) == socket_error_retval)
       error_handler(socket_error(socket_ops::get_error()));
   }
 
@@ -123,15 +123,15 @@ public:
       error_handler(socket_error(socket_ops::get_error()));
   }
 
-  // Get the local socket address.
-  template <typename Address, typename Error_Handler>
-  void get_local_address(impl_type& impl, Address& address,
+  // Get the local endpoint.
+  template <typename Endpoint, typename Error_Handler>
+  void get_local_endpoint(impl_type& impl, Endpoint& endpoint,
       Error_Handler error_handler)
   {
-    socket_addr_len_type addr_len = address.native_size();
-    if (socket_ops::getsockname(impl, address.native_address(), &addr_len))
+    socket_addr_len_type addr_len = endpoint.native_size();
+    if (socket_ops::getsockname(impl, endpoint.native_data(), &addr_len))
       error_handler(socket_error(socket_ops::get_error()));
-    address.native_size(addr_len);
+    endpoint.native_size(addr_len);
   }
 
   // Accept a new connection.
@@ -158,11 +158,11 @@ public:
   }
 
   // Accept a new connection.
-  template <typename Stream_Socket_Service, typename Address,
+  template <typename Stream_Socket_Service, typename Endpoint,
       typename Error_Handler>
   void accept(impl_type& impl,
-      basic_stream_socket<Stream_Socket_Service>& peer, Address& peer_address,
-      Error_Handler error_handler)
+      basic_stream_socket<Stream_Socket_Service>& peer,
+      Endpoint& peer_endpoint, Error_Handler error_handler)
   {
     // We cannot accept a socket that is already open.
     if (peer.impl() != invalid_socket)
@@ -171,16 +171,16 @@ public:
       return;
     }
 
-    socket_addr_len_type addr_len = peer_address.native_size();
+    socket_addr_len_type addr_len = peer_endpoint.native_size();
     socket_type new_socket = socket_ops::accept(impl,
-        peer_address.native_address(), &addr_len);
+        peer_endpoint.native_data(), &addr_len);
     if (int error = socket_ops::get_error())
     {
       error_handler(socket_error(error));
       return;
     }
 
-    peer_address.native_size(addr_len);
+    peer_endpoint.native_size(addr_len);
 
     peer.set_impl(new_socket);
   }
@@ -247,29 +247,30 @@ public:
     }
   }
 
-  template <typename Stream_Socket_Service, typename Address, typename Handler>
-  class accept_addr_handler
+  template <typename Stream_Socket_Service, typename Endpoint,
+      typename Handler>
+  class accept_endp_handler
   {
   public:
-    accept_addr_handler(impl_type impl, Demuxer& demuxer,
+    accept_endp_handler(impl_type impl, Demuxer& demuxer,
         basic_stream_socket<Stream_Socket_Service>& peer,
-        Address& peer_address, Handler handler)
+        Endpoint& peer_endpoint, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
         peer_(peer),
-        peer_address_(peer_address),
+        peer_endpoint_(peer_endpoint),
         handler_(handler)
     {
     }
 
     void do_operation()
     {
-      socket_addr_len_type addr_len = peer_address_.native_size();
+      socket_addr_len_type addr_len = peer_endpoint_.native_size();
       socket_type new_socket = socket_ops::accept(impl_,
-          peer_address_.native_address(), &addr_len);
+          peer_endpoint_.native_data(), &addr_len);
       socket_error error(new_socket == invalid_socket
           ? socket_ops::get_error() : socket_error::success);
-      peer_address_.native_size(addr_len);
+      peer_endpoint_.native_size(addr_len);
       peer_.set_impl(new_socket);
       demuxer_.post(bind_handler(handler_, error));
       demuxer_.work_finished();
@@ -286,16 +287,17 @@ public:
     impl_type impl_;
     Demuxer& demuxer_;
     basic_stream_socket<Stream_Socket_Service>& peer_;
-    Address& peer_address_;
+    Endpoint& peer_endpoint_;
     Handler handler_;
   };
 
-  // Start an asynchronous accept. The peer_socket and peer_address objects
+  // Start an asynchronous accept. The peer_socket and peer_endpoint objects
   // must be valid until the accept's handler is invoked.
-  template <typename Stream_Socket_Service, typename Address, typename Handler>
-  void async_accept_address(impl_type& impl,
+  template <typename Stream_Socket_Service, typename Endpoint,
+      typename Handler>
+  void async_accept_endpoint(impl_type& impl,
       basic_stream_socket<Stream_Socket_Service>& peer,
-      Address& peer_address, Handler handler)
+      Endpoint& peer_endpoint, Handler handler)
   {
     if (impl == null())
     {
@@ -311,8 +313,8 @@ public:
     {
       demuxer_.work_started();
       reactor_.start_read_op(impl,
-          accept_addr_handler<Stream_Socket_Service, Address, Handler>(
-            impl, demuxer_, peer, peer_address, handler));
+          accept_endp_handler<Stream_Socket_Service, Endpoint, Handler>(
+            impl, demuxer_, peer, peer_endpoint, handler));
     }
   }
 

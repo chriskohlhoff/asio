@@ -131,7 +131,7 @@ public:
   {
     acceptor_.open(ipv4::tcp());
     acceptor_.set_option(socket_option::reuse_address(1));
-    acceptor_.bind(ipv4::address(port));
+    acceptor_.bind(ipv4::tcp::endpoint(port));
     acceptor_.listen();
 
     session* new_session = new session(demuxer_, block_size_);

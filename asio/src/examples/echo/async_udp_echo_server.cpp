@@ -8,9 +8,9 @@ class server
 public:
   server(asio::demuxer& d, short port)
     : demuxer_(d),
-      socket_(d, asio::ipv4::address(port))
+      socket_(d, asio::ipv4::udp::endpoint(port))
   {
-    socket_.async_recvfrom(data_, max_length, sender_address_,
+    socket_.async_recvfrom(data_, max_length, sender_endpoint_,
         boost::bind(&server::handle_recvfrom, this, asio::arg::error,
           asio::arg::bytes_recvd));
   }
@@ -19,13 +19,13 @@ public:
   {
     if (!error && bytes_recvd > 0)
     {
-      socket_.async_sendto(data_, bytes_recvd, sender_address_,
+      socket_.async_sendto(data_, bytes_recvd, sender_endpoint_,
           boost::bind(&server::handle_sendto, this, asio::arg::error,
             asio::arg::bytes_sent));
     }
     else
     {
-      socket_.async_recvfrom(data_, max_length, sender_address_,
+      socket_.async_recvfrom(data_, max_length, sender_endpoint_,
           boost::bind(&server::handle_recvfrom, this, asio::arg::error,
             asio::arg::bytes_recvd));
     }
@@ -33,7 +33,7 @@ public:
 
   void handle_sendto(const asio::socket_error& error, size_t bytes_sent)
   {
-    socket_.async_recvfrom(data_, max_length, sender_address_,
+    socket_.async_recvfrom(data_, max_length, sender_endpoint_,
         boost::bind(&server::handle_recvfrom, this, asio::arg::error,
           asio::arg::bytes_recvd));
   }
@@ -41,7 +41,7 @@ public:
 private:
   asio::demuxer& demuxer_;
   asio::dgram_socket socket_;
-  asio::ipv4::address sender_address_;
+  asio::ipv4::udp::endpoint sender_endpoint_;
   enum { max_length = 1024 };
   char data_[max_length];
 };

@@ -182,12 +182,12 @@ public:
     }
   }
 
-  // Connect the given socket to the peer at the specified address.
-  template <typename Stream_Socket_Service, typename Address,
+  // Connect the given socket to the peer at the specified endpoint.
+  template <typename Stream_Socket_Service, typename Endpoint,
       typename Error_Handler>
   void connect(impl_type& impl,
       basic_stream_socket<Stream_Socket_Service>& peer,
-      const Address& peer_address, Error_Handler error_handler)
+      const Endpoint& peer_endpoint, Error_Handler error_handler)
   {
     // We cannot connect a socket that is already open.
     if (peer.impl() != invalid_socket)
@@ -197,11 +197,12 @@ public:
     }
 
     // Get the flags used to create the new socket.
-    typedef typename Address::default_stream_protocol protocol;
-    int family = impl->have_protocol() ? impl->family() : protocol().family();
-    int type = impl->have_protocol() ? impl->type() : protocol().type();
+    int family = impl->have_protocol()
+      ? impl->family() : peer_endpoint.protocol().family();
+    int type = impl->have_protocol()
+      ? impl->type() : peer_endpoint.protocol().type();
     int proto = impl->have_protocol()
-      ? impl->protocol() : protocol().protocol();
+      ? impl->protocol() : peer_endpoint.protocol().protocol();
 
     // We can only connect stream sockets.
     if (type != SOCK_STREAM)
@@ -221,8 +222,8 @@ public:
 
     // Perform the connect operation itself.
     impl->add_socket(sock.get());
-    int result = socket_ops::connect(sock.get(), peer_address.native_address(),
-        peer_address.native_size());
+    int result = socket_ops::connect(sock.get(), peer_endpoint.native_data(),
+        peer_endpoint.native_size());
     impl->remove_socket(sock.get());
     if (result == socket_error_retval)
     {
@@ -313,10 +314,11 @@ public:
 
   // Start an asynchronous connect. The peer socket object must be valid until
   // the connect's handler is invoked.
-  template <typename Stream_Socket_Service, typename Address, typename Handler>
+  template <typename Stream_Socket_Service, typename Endpoint,
+      typename Handler>
   void async_connect(impl_type& impl,
       basic_stream_socket<Stream_Socket_Service>& peer,
-      const Address& peer_address, Handler handler)
+      const Endpoint& peer_endpoint, Handler handler)
   {
     if (impl == null())
     {
@@ -333,11 +335,12 @@ public:
     }
 
     // Get the flags used to create the new socket.
-    typedef typename Address::default_stream_protocol protocol;
-    int family = impl->have_protocol() ? impl->family() : protocol().family();
-    int type = impl->have_protocol() ? impl->type() : protocol().type();
+    int family = impl->have_protocol()
+      ? impl->family() : peer_endpoint.protocol().family();
+    int type = impl->have_protocol()
+      ? impl->type() : peer_endpoint.protocol().type();
     int proto = impl->have_protocol()
-      ? impl->protocol() : protocol().protocol();
+      ? impl->protocol() : peer_endpoint.protocol().protocol();
 
     // We can only connect stream sockets.
     if (type != SOCK_STREAM)
@@ -368,8 +371,8 @@ public:
     }
 
     // Start the connect operation.
-    if (socket_ops::connect(new_socket.get(), peer_address.native_address(),
-          peer_address.native_size()) == 0)
+    if (socket_ops::connect(new_socket.get(), peer_endpoint.native_data(),
+          peer_endpoint.native_size()) == 0)
     {
       // The connect operation has finished successfully so we need to post the
       // handler immediately.

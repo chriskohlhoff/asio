@@ -10,7 +10,7 @@ public:
   accept_handler(demuxer& d)
     : demuxer_(d),
       timer_(d),
-      acceptor_(d, ipv4::address(32123)),
+      acceptor_(d, ipv4::tcp::endpoint(32123)),
       socket_(d)
   {
     acceptor_.async_accept(socket_,

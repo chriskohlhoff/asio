@@ -16,7 +16,8 @@ int main(int argc, char* argv[])
     asio::stream_socket socket(demuxer);
 
     asio::socket_connector connector(demuxer);
-    connector.connect(socket, asio::ipv4::address(13, argv[1]));
+    connector.connect(socket,
+        asio::ipv4::tcp::endpoint(13, asio::ipv4::address(argv[1])));
 
     char buf[128];
     while (size_t len = socket.recv(buf, sizeof(buf)))

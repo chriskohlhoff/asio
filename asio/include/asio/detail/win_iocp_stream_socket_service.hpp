@@ -100,26 +100,26 @@ public:
       error_handler(socket_error(socket_ops::get_error()));
   }
 
-  // Get the local socket address.
-  template <typename Address, typename Error_Handler>
-  void get_local_address(impl_type& impl, Address& address,
+  // Get the local endpoint.
+  template <typename Endpoint, typename Error_Handler>
+  void get_local_endpoint(impl_type& impl, Endpoint& endpoint,
       Error_Handler error_handler)
   {
-    socket_addr_len_type addr_len = address.native_size();
-    if (socket_ops::getsockname(impl, address.native_address(), &addr_len))
+    socket_addr_len_type addr_len = endpoint.native_size();
+    if (socket_ops::getsockname(impl, endpoint.native_data(), &addr_len))
       error_handler(socket_error(socket_ops::get_error()));
-    address.native_size(addr_len);
+    endpoint.native_size(addr_len);
   }
 
-  // Get the remote socket address.
-  template <typename Address, typename Error_Handler>
-  void get_remote_address(impl_type& impl, Address& address,
+  // Get the remote endpoint.
+  template <typename Endpoint, typename Error_Handler>
+  void get_remote_endpoint(impl_type& impl, Endpoint& endpoint,
       Error_Handler error_handler)
   {
-    socket_addr_len_type addr_len = address.native_size();
-    if (socket_ops::getpeername(impl, address.native_address(), &addr_len))
+    socket_addr_len_type addr_len = endpoint.native_size();
+    if (socket_ops::getpeername(impl, endpoint.native_data(), &addr_len))
       error_handler(socket_error(socket_ops::get_error()));
-    address.native_size(addr_len);
+    endpoint.native_size(addr_len);
   }
 
   // Send the given data to the peer. Returns the number of bytes sent or

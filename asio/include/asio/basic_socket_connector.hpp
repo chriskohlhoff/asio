@@ -164,36 +164,36 @@ public:
     return impl_;
   }
 
-  /// Connect a stream socket to the peer at the specified address.
+  /// Connect a stream socket to the peer at the specified endpoint.
   /**
    * This function is used to connect a stream socket to the specified remote
-   * address. The function call will block until the connection is successfully
-   * made or an error occurs.
+   * endpoint. The function call will block until the connection is
+   * successfully made or an error occurs.
    *
    * @param peer_socket The stream socket to be connected.
    *
-   * @param peer_address The remote address of the peer to which the socket
-   * will be connected.
+   * @param peer_endpoint The remote endpoint to which the socket will be
+   * connected.
    *
    * @throws socket_error Thrown on failure.
    */
-  template <typename Stream, typename Address>
-  void connect(Stream& peer_socket, const Address& peer_address)
+  template <typename Stream, typename Endpoint>
+  void connect(Stream& peer_socket, const Endpoint& peer_endpoint)
   {
-    service_.connect(impl_, peer_socket.lowest_layer(), peer_address,
+    service_.connect(impl_, peer_socket.lowest_layer(), peer_endpoint,
         default_error_handler());
   }
 
-  /// Connect a stream socket to the peer at the specified address.
+  /// Connect a stream socket to the peer at the specified endpoint.
   /**
    * This function is used to connect a stream socket to the specified remote
-   * address. The function call will block until the connection is successfully
+   * endpoint. The function call will block until the connection is successfully
    * made or an error occurs.
    *
    * @param peer_socket The stream socket to be connected.
    *
-   * @param peer_address The remote address of the peer to which the socket
-   * will be connected.
+   * @param peer_endpoint The remote endpoint to which the socket will be
+   * connected.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature
@@ -202,25 +202,25 @@ public:
    *   const asio::socket_error& error // Result of operation
    * ); @endcode
    */
-  template <typename Stream, typename Address, typename Error_Handler>
-  void connect(Stream& peer_socket, const Address& peer_address,
+  template <typename Stream, typename Endpoint, typename Error_Handler>
+  void connect(Stream& peer_socket, const Endpoint& peer_endpoint,
       Error_Handler error_handler)
   {
-    service_.connect(impl_, peer_socket.lowest_layer(), peer_address,
+    service_.connect(impl_, peer_socket.lowest_layer(), peer_endpoint,
         error_handler);
   }
 
   /// Start an asynchronous connect.
   /**
    * This function is used to asynchronously connect a stream socket to the
-   * specified remote address. The function call always returns immediately.
+   * specified remote endpoint. The function call always returns immediately.
    *
    * @param peer_socket The stream socket to be connected. Ownership of the
    * peer_socket object is retained by the caller, which must guarantee that it
    * is valid until the handler is called.
    *
-   * @param peer_address The remote address of the peer to which the socket
-   * will be connected. Copies will be made of the address as required.
+   * @param peer_endpoint The remote endpoint to which the socket will be
+   * connected. Copies will be made of the endpoint object as required.
    *
    * @param handler The handler to be called when the connection operation
    * completes. Copies will be made of the handler as required. The equivalent
@@ -229,11 +229,11 @@ public:
    *   const asio::socket_error& error // Result of operation
    * ); @endcode
    */
-  template <typename Stream, typename Address, typename Handler>
-  void async_connect(Stream& peer_socket, const Address& peer_address,
+  template <typename Stream, typename Endpoint, typename Handler>
+  void async_connect(Stream& peer_socket, const Endpoint& peer_endpoint,
       Handler handler)
   {
-    service_.async_connect(impl_, peer_socket.lowest_layer(), peer_address,
+    service_.async_connect(impl_, peer_socket.lowest_layer(), peer_endpoint,
         handler);
   }
 

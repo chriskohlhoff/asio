@@ -76,13 +76,13 @@ public:
       impl = sock.release();
   }
 
-  // Bind the dgram socket to the specified local address.
-  template <typename Address, typename Error_Handler>
-  void bind(impl_type& impl, const Address& address,
+  // Bind the dgram socket to the specified local endpoint.
+  template <typename Endpoint, typename Error_Handler>
+  void bind(impl_type& impl, const Endpoint& endpoint,
       Error_Handler error_handler)
   {
-    if (socket_ops::bind(impl, address.native_address(),
-          address.native_size()) == socket_error_retval)
+    if (socket_ops::bind(impl, endpoint.native_data(),
+          endpoint.native_size()) == socket_error_retval)
       error_handler(socket_error(socket_ops::get_error()));
   }
 
@@ -116,25 +116,25 @@ public:
       error_handler(socket_error(socket_ops::get_error()));
   }
 
-  // Get the local socket address.
-  template <typename Address, typename Error_Handler>
-  void get_local_address(impl_type& impl, Address& address,
+  // Get the local endpoint.
+  template <typename Endpoint, typename Error_Handler>
+  void get_local_endpoint(impl_type& impl, Endpoint& endpoint,
       Error_Handler error_handler)
   {
-    socket_addr_len_type addr_len = address.native_size();
-    if (socket_ops::getsockname(impl, address.native_address(), &addr_len))
+    socket_addr_len_type addr_len = endpoint.native_size();
+    if (socket_ops::getsockname(impl, endpoint.native_data(), &addr_len))
       error_handler(socket_error(socket_ops::get_error()));
-    address.native_size(addr_len);
+    endpoint.native_size(addr_len);
   }
 
-  // Send a datagram to the specified address. Returns the number of bytes
+  // Send a datagram to the specified endpoint. Returns the number of bytes
   // sent.
-  template <typename Address, typename Error_Handler>
+  template <typename Endpoint, typename Error_Handler>
   size_t sendto(impl_type& impl, const void* data, size_t length,
-      const Address& destination, Error_Handler error_handler)
+      const Endpoint& destination, Error_Handler error_handler)
   {
     int bytes_sent = socket_ops::sendto(impl, data, length, 0,
-        destination.native_address(), destination.native_size());
+        destination.native_data(), destination.native_size());
     if (bytes_sent < 0)
     {
       error_handler(socket_error(socket_ops::get_error()));
@@ -143,17 +143,17 @@ public:
     return bytes_sent;
   }
 
-  template <typename Address, typename Handler>
+  template <typename Endpoint, typename Handler>
   class sendto_handler
   {
   public:
     sendto_handler(impl_type impl, Demuxer& demuxer, const void* data,
-        size_t length, const Address& address, Handler handler)
+        size_t length, const Endpoint& endpoint, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
         data_(data),
         length_(length),
-        destination_(address),
+        destination_(endpoint),
         handler_(handler)
     {
     }
@@ -161,7 +161,7 @@ public:
     void do_operation()
     {
       int bytes = socket_ops::sendto(impl_, data_, length_, 0,
-          destination_.native_address(), destination_.native_size());
+          destination_.native_data(), destination_.native_size());
       socket_error error(bytes < 0
           ? socket_ops::get_error() : socket_error::success);
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
@@ -180,15 +180,15 @@ public:
     Demuxer& demuxer_;
     const void* data_;
     size_t length_;
-    Address destination_;
+    Endpoint destination_;
     Handler handler_;
   };
 
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
-  template <typename Address, typename Handler>
+  template <typename Endpoint, typename Handler>
   void async_sendto(impl_type& impl, const void* data, size_t length,
-      const Address& destination, Handler handler)
+      const Endpoint& destination, Handler handler)
   {
     if (impl == null())
     {
@@ -198,54 +198,54 @@ public:
     else
     {
       demuxer_.work_started();
-      reactor_.start_write_op(impl, sendto_handler<Address, Handler>(
+      reactor_.start_write_op(impl, sendto_handler<Endpoint, Handler>(
             impl, demuxer_, data, length, destination, handler));
     }
   }
 
-  // Receive a datagram with the address of the sender. Returns the number of
+  // Receive a datagram with the endpoint of the sender. Returns the number of
   // bytes received.
-  template <typename Address, typename Error_Handler>
+  template <typename Endpoint, typename Error_Handler>
   size_t recvfrom(impl_type& impl, void* data, size_t max_length,
-      Address& sender_address, Error_Handler error_handler)
+      Endpoint& sender_endpoint, Error_Handler error_handler)
   {
-    socket_addr_len_type addr_len = sender_address.native_size();
+    socket_addr_len_type addr_len = sender_endpoint.native_size();
     int bytes_recvd = socket_ops::recvfrom(impl, data, max_length, 0,
-        sender_address.native_address(), &addr_len);
+        sender_endpoint.native_data(), &addr_len);
     if (bytes_recvd < 0)
     {
       error_handler(socket_error(socket_ops::get_error()));
       return 0;
     }
 
-    sender_address.native_size(addr_len);
+    sender_endpoint.native_size(addr_len);
 
     return bytes_recvd;
   }
 
-  template <typename Address, typename Handler>
+  template <typename Endpoint, typename Handler>
   class recvfrom_handler
   {
   public:
     recvfrom_handler(impl_type impl, Demuxer& demuxer, void* data,
-        size_t max_length, Address& address, Handler handler)
+        size_t max_length, Endpoint& endpoint, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
         data_(data),
         max_length_(max_length),
-        sender_address_(address),
+        sender_endpoint_(endpoint),
         handler_(handler)
     {
     }
 
     void do_operation()
     {
-      socket_addr_len_type addr_len = sender_address_.native_size();
+      socket_addr_len_type addr_len = sender_endpoint_.native_size();
       int bytes = socket_ops::recvfrom(impl_, data_, max_length_, 0,
-          sender_address_.native_address(), &addr_len);
+          sender_endpoint_.native_data(), &addr_len);
       socket_error error(bytes < 0
           ? socket_ops::get_error() : socket_error::success);
-      sender_address_.native_size(addr_len);
+      sender_endpoint_.native_size(addr_len);
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
       demuxer_.work_finished();
     }
@@ -262,16 +262,16 @@ public:
     Demuxer& demuxer_;
     void* data_;
     size_t max_length_;
-    Address& sender_address_;
+    Endpoint& sender_endpoint_;
     Handler handler_;
   };
 
   // Start an asynchronous receive. The buffer for the data being received and
-  // the sender_address obejct must both be valid for the lifetime of the
+  // the sender_endpoint object must both be valid for the lifetime of the
   // asynchronous operation.
-  template <typename Address, typename Handler>
+  template <typename Endpoint, typename Handler>
   void async_recvfrom(impl_type& impl, void* data, size_t max_length,
-      Address& sender_address, Handler handler)
+      Endpoint& sender_endpoint, Handler handler)
   {
     if (impl == null())
     {
@@ -281,8 +281,8 @@ public:
     else
     {
       demuxer_.work_started();
-      reactor_.start_read_op(impl, recvfrom_handler<Address, Handler>(
-            impl, demuxer_, data, max_length, sender_address, handler));
+      reactor_.start_read_op(impl, recvfrom_handler<Endpoint, Handler>(
+            impl, demuxer_, data, max_length, sender_endpoint, handler));
     }
   }
 

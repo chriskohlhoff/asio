@@ -10,9 +10,9 @@ public:
   dgram_handler(demuxer& d)
     : demuxer_(d),
       timer_(d),
-      socket_(d, ipv4::address(32124))
+      socket_(d, ipv4::udp::endpoint(32124))
   {
-    socket_.async_recvfrom(data_, max_length, sender_address_,
+    socket_.async_recvfrom(data_, max_length, sender_endpoint_,
         boost::bind(&dgram_handler::handle_recvfrom, this, asio::arg::error,
           asio::arg::bytes_recvd));
 
@@ -36,7 +36,7 @@ private:
   demuxer& demuxer_;
   timer timer_;
   dgram_socket socket_;
-  ipv4::address sender_address_;
+  ipv4::udp::endpoint sender_endpoint_;
   enum { max_length = 512 };
   char data_[max_length];
 };

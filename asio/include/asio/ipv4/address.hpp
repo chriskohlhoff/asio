@@ -19,14 +19,10 @@
 
 #include "asio/detail/push_options.hpp"
 #include <string>
-#include <cstring>
-#include <boost/integer.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/socket_error.hpp"
 #include "asio/detail/socket_types.hpp"
-#include "asio/ipv4/tcp.hpp"
-#include "asio/ipv4/udp.hpp"
 
 namespace asio {
 namespace ipv4 {
@@ -39,68 +35,27 @@ namespace ipv4 {
  * @par Thread Safety:
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
- *
- * @par Concepts:
- * Address.
  */
 class address
 {
 public:
-  /// The default stream-based protocol associated with the address type.
-  typedef tcp default_stream_protocol;
-
-  /// The default datagram-based protocol associated with the address type.
-  typedef udp default_dgram_protocol;
-
-  /// The native type of the address structure. This type is dependent on the
-  /// underlying implementation of the socket layer.
-  typedef detail::socket_addr_type native_address_type;
-
-  /// The native type for the size of the address structure. This type is
-  /// dependent on the underlying implementation of the socket layer.
-  typedef detail::socket_addr_len_type native_size_type;
-
-  /// Underlying types for internet addresses.
-  typedef boost::uint_t<16>::least port_type;
-  typedef boost::uint_t<32>::least addr_type;
-
   /// Default constructor.
   address()
   {
-    addr_.sin_family = AF_INET;
-    addr_.sin_port = 0;
-    addr_.sin_addr.s_addr = INADDR_ANY;
+    addr_.s_addr = 0;
   }
 
-  /// Construct an address using a port number, specified in the host's byte
-  /// order. The IP address will be the any address (i.e. INADDR_ANY). This
-  /// constructor would typically be used for accepting new connections.
-  address(port_type port_num)
+  /// Construct an address from a unsigned long in host byte order.
+  address(unsigned long addr)
   {
-    addr_.sin_family = AF_INET;
-    addr_.sin_port = htons(port_num);
-    addr_.sin_addr.s_addr = INADDR_ANY;
+    addr_.s_addr = htonl(addr);
   }
 
-  /// Construct an address using a port number and an IP address. This
-  /// constructor may be used for accepting connections on a specific interface
-  /// or for making a connection to a remote address.
-  address(port_type port_num, addr_type host_addr)
+  /// Construct an address using an IP address string in dotted decimal form.
+  address(const std::string& host)
   {
-    addr_.sin_family = AF_INET;
-    addr_.sin_port = htons(port_num);
-    addr_.sin_addr.s_addr = host_addr;
-  }
-
-  /// Construct an address using a port number and an IP address in dotted
-  /// decimal form or a host name. This constructor may be used for accepting
-  /// connections on a specific interface or for making a connection to a
-  /// remote address.
-  address(port_type port_num, const std::string& host)
-  {
-    addr_.sin_family = AF_INET;
-    addr_.sin_port = htons(port_num);
-    host_name(host);
+    if (detail::socket_ops::inet_pton(AF_INET, host.c_str(), &addr_) <= 0)
+      throw socket_error(detail::socket_ops::get_error());
   }
 
   /// Copy constructor.
@@ -116,113 +71,113 @@ public:
     return *this;
   }
 
-  /// The address family.
-  int family() const
+  /// Assign from an unsigned long.
+  address& operator=(unsigned long addr)
   {
-    return AF_INET;
+    addr_.s_addr = htonl(addr);
+    return *this;
   }
 
-  /// Get the underlying address in the native type.
-  native_address_type* native_address()
+  /// Assign from an IP address string in dotted decimal form.
+  address& operator=(const std::string& addr)
   {
-    return reinterpret_cast<address::native_address_type*>(&addr_);
+    address tmp(addr);
+    addr_ = tmp.addr_;
+    return *this;
   }
 
-  /// Get the underlying address in the native type.
-  const native_address_type* native_address() const
+  /// Get the address as an unsigned long in host byte order
+  unsigned long to_ulong() const
   {
-    return reinterpret_cast<const address::native_address_type*>(
-        &addr_);
+    return ntohl(addr_.s_addr);
   }
 
-  /// Get the underlying size of the address in the native type.
-  native_size_type native_size() const
-  {
-    return sizeof(addr_);
-  }
-
-  /// Set the underlying size of the address in the native type.
-  void native_size(native_size_type size)
-  {
-    if (size != sizeof(addr_))
-      throw socket_error(socket_error::invalid_argument);
-  }
-
-  /// Get the port associated with the address. The port number is always in
-  /// the host's byte order.
-  port_type port() const
-  {
-    return ntohs(addr_.sin_port);
-  }
-
-  /// Set the port associated with the address. The port number is always in
-  /// the host's byte order.
-  void port(port_type port_num)
-  {
-    addr_.sin_port = htons(port_num);
-  }
-
-  /// Get the host associated with the address in the numeric form.
-  addr_type host_addr() const
-  {
-    return addr_.sin_addr.s_addr;
-  }
-
-  /// Set the host associated with the address.
-  void host_addr(addr_type host)
-  {
-    addr_.sin_addr.s_addr = host;
-  }
-
-  /// Get the host's address in dotted decimal format.
-  std::string host_addr_str() const
+  /// Get the address as a string in dotted decimal format.
+  std::string to_string() const
   {
     char addr_str[detail::max_addr_str_len];
-    const char* addr = detail::socket_ops::inet_ntop(AF_INET, &addr_.sin_addr,
-        addr_str, detail::max_addr_str_len);
+    const char* addr = detail::socket_ops::inet_ntop(AF_INET, &addr_, addr_str,
+        detail::max_addr_str_len);
     if (addr == 0)
       throw socket_error(detail::socket_ops::get_error());
     return addr;
   }
 
-  /// Set the host's address using dotted decimal format.
-  void host_addr_str(const std::string& host)
+  /// Determine whether the address is a class A address.
+  bool is_class_A() const
   {
-    if (detail::socket_ops::inet_pton(AF_INET, host.c_str(),
-          &addr_.sin_addr) <= 0)
-      throw socket_error(detail::socket_ops::get_error());
+    return IN_CLASSA(to_ulong());
   }
 
-  /// Get the host name.
-  std::string host_name() const
+  /// Determine whether the address is a class B address.
+  bool is_class_B() const
   {
-    hostent ent;
-    char buf[8192] = ""; // Size recommended by Stevens, UNPv1.
-    int error = 0;
-    if (detail::socket_ops::gethostbyaddr_r(
-          reinterpret_cast<const char*>(&addr_.sin_addr),
-          sizeof(addr_.sin_addr), AF_INET, &ent, buf, sizeof(buf),
-          &error) == 0)
-      throw socket_error(error);
-    return ent.h_name;
+    return IN_CLASSB(to_ulong());
   }
 
-  /// Set the host name.
-  void host_name(const std::string& host)
+  /// Determine whether the address is a class C address.
+  bool is_class_C() const
   {
-    using namespace std; // For memcpy.
-    hostent ent;
-    char buf[8192] = ""; // Size recommended by Stevens, UNPv1.
-    int error = 0;
-    if (detail::socket_ops::gethostbyname_r(host.c_str(), &ent, buf,
-          sizeof(buf), &error) == 0)
-      throw socket_error(error);
-    memcpy(&addr_.sin_addr, ent.h_addr, sizeof(addr_.sin_addr));
+    return IN_CLASSC(to_ulong());
+  }
+
+  /// Determine whether the address is a class D address.
+  bool is_class_D() const
+  {
+    return IN_CLASSD(to_ulong());
+  }
+
+  /// Determine whether the address is a multicast address.
+  bool is_multicast() const
+  {
+    return IN_MULTICAST(to_ulong());
+  }
+
+  /// Compare two addresses for equality.
+  friend bool operator==(const address& a1, const address& a2)
+  {
+    return a1.addr_.s_addr == a2.addr_.s_addr;
+  }
+
+  /// Compare two addresses for inequality.
+  friend bool operator!=(const address& a1, const address& a2)
+  {
+    return a1.addr_.s_addr != a2.addr_.s_addr;
+  }
+
+  /// Compare addresses for ordering.
+  friend bool operator<(const address& a1, const address& a2)
+  {
+    return a1.addr_.s_addr < a2.addr_.s_addr;
+  }
+
+  /// Obtain an address object that represents any address.
+  static address any()
+  {
+    return address(INADDR_ANY);
+  }
+
+  /// Obtain an address object that represents the loopback address.
+  static address loopback()
+  {
+    return address(INADDR_LOOPBACK);
+  }
+
+  /// Obtain an address object that represents the broadcast address.
+  static address broadcast()
+  {
+    return address(INADDR_BROADCAST);
+  }
+
+  /// Obtain an address object that represents the no address.
+  static address none()
+  {
+    return address(INADDR_NONE);
   }
 
 private:
-  // The underlying IPv4 socket address.
-  detail::inet_addr_v4_type addr_;
+  // The underlying IPv4 address.
+  in_addr addr_;
 };
 
 } // namespace ipv4
