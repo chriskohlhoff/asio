@@ -112,14 +112,10 @@ public:
     service_.accept(impl_, peer_socket.lowest_layer(), peer_address);
   }
 
-  /// The type of a handler called when the asynchronous accept completes. The
-  /// only argument is the error code.
-  typedef typename service_type::accept_handler accept_handler;
-
   /// Start an asynchronous accept. The peer_socket object must be valid until
   /// the accept's completion handler is invoked.
-  template <typename Stream>
-  void async_accept(Stream& peer_socket, const accept_handler& handler)
+  template <typename Stream, typename Handler>
+  void async_accept(Stream& peer_socket, Handler handler)
   {
     service_.async_accept(impl_, peer_socket.lowest_layer(), handler,
         completion_context::null());
@@ -127,8 +123,8 @@ public:
 
   /// Start an asynchronous accept. The peer_socket object must be valid until
   /// the accept's completion handler is invoked.
-  template <typename Stream>
-  void async_accept(Stream& peer_socket, const accept_handler& handler,
+  template <typename Stream, typename Handler>
+  void async_accept(Stream& peer_socket, Handler handler,
       completion_context& context)
   {
     service_.async_accept(impl_, peer_socket.lowest_layer(), handler, context);
@@ -136,9 +132,9 @@ public:
 
   /// Start an asynchronous accept. The peer_socket and peer_address objects
   /// must be valid until the accept's completion handler is invoked.
-  template <typename Stream>
+  template <typename Stream, typename Handler>
   void async_accept(Stream& peer_socket, socket_address& peer_address,
-      const accept_handler& handler)
+      Handler handler)
   {
     service_.async_accept(impl_, peer_socket.lowest_layer(), peer_address,
         handler, completion_context::null());
@@ -146,9 +142,9 @@ public:
 
   /// Start an asynchronous accept. The peer_socket and peer_address objects
   /// must be valid until the accept's completion handler is invoked.
-  template <typename Stream>
+  template <typename Stream, typename Handler>
   void async_accept(Stream& peer_socket, socket_address& peer_address,
-      const accept_handler& handler, completion_context& context)
+      Handler handler, completion_context& context)
   {
     service_.async_accept(impl_, peer_socket.lowest_layer(), peer_address,
         handler, context);

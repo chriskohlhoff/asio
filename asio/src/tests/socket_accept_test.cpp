@@ -40,7 +40,7 @@ private:
   socket_acceptor acceptor_;
   stream_socket peer_;
   inet_address_v4 peer_address_;
-  socket_acceptor::accept_handler handler_;
+  boost::function1<void, const socket_error&> handler_;
   int accept_count_;
 };
 

@@ -82,15 +82,11 @@ public:
     service_.connect(impl_, peer_socket.lowest_layer(), peer_address);
   }
 
-  /// The type of a handler called when the asynchronous connect completes. The
-  /// only argument is the error code.
-  typedef typename service_type::connect_handler connect_handler;
-
   /// Start an asynchronous connect. The peer_socket object must be valid until
   /// the connect's completion handler is invoked.
-  template <typename Stream>
+  template <typename Stream, typename Handler>
   void async_connect(Stream& peer_socket,
-      const socket_address& peer_address, const connect_handler& handler)
+      const socket_address& peer_address, Handler handler)
   {
     service_.async_connect(impl_, peer_socket.lowest_layer(), peer_address,
         handler, completion_context::null());
@@ -98,9 +94,9 @@ public:
 
   /// Start an asynchronous connect. The peer_socket object must be valid until
   /// the connect's completion handler is invoked.
-  template <typename Stream>
+  template <typename Stream, typename Handler>
   void async_connect(Stream& peer_socket,
-      const socket_address& peer_address, const connect_handler& handler,
+      const socket_address& peer_address, Handler handler,
       completion_context& context)
   {
     service_.async_connect(impl_, peer_socket.lowest_layer(), peer_address,

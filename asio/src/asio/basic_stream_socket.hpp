@@ -90,15 +90,19 @@ public:
     return service_.send(impl_, data, length);
   }
 
-  /// The handler when a send operation is completed. The first argument is the
-  /// error code, the second is the number of bytes sent.
-  typedef typename service_type::send_handler send_handler;
+  /// Start an asynchronous send. The data being sent must be valid for the
+  /// lifetime of the asynchronous operation.
+  template <typename Handler>
+  void async_send(const void* data, size_t length, Handler handler)
+  {
+    service_.async_send(impl_, length, handler, completion_context::null());
+  }
 
   /// Start an asynchronous send. The data being sent must be valid for the
   /// lifetime of the asynchronous operation.
-  void async_send(const void* data, size_t length,
-      const send_handler& handler,
-      completion_context& context = completion_context::null())
+  template <typename Handler>
+  void async_send(const void* data, size_t length, Handler handler,
+      completion_context& context)
   {
     service_.async_send(impl_, length, handler, context);
   }
@@ -111,17 +115,22 @@ public:
     return service_.send_n(impl_, data, length, total_bytes_sent);
   }
 
-  /// The handler when a send_n operation is completed. The first argument is
-  /// the error code, the second is the total number of bytes sent, and the
-  /// third is the number of bytes sent in the last send operation.
-  typedef typename service_type::send_n_handler send_n_handler;
+  /// Start an asynchronous send that will not return until all of the data has
+  /// been sent or an error occurs. The data being sent must be valid for the
+  /// lifetime of the asynchronous operation.
+  template <typename Handler>
+  void async_send_n(const void* data, size_t length, Handler handler)
+  {
+    service_.async_send_n(impl_, data, length, handler,
+        completion_context::null());
+  }
 
   /// Start an asynchronous send that will not return until all of the data has
   /// been sent or an error occurs. The data being sent must be valid for the
   /// lifetime of the asynchronous operation.
-  void async_send_n(const void* data, size_t length,
-      const send_n_handler& handler,
-      completion_context& context = completion_context::null())
+  template <typename Handler>
+  void async_send_n(const void* data, size_t length, Handler handler,
+      completion_context& context)
   {
     service_.async_send_n(impl_, data, length, handler, context);
   }
@@ -134,15 +143,20 @@ public:
     return service_.recv(impl_, data, max_length);
   }
 
-  /// The handler when a recv operation is completed. The first argument is the
-  /// error code, the second is the number of bytes received.
-  typedef typename service_type::recv_handler recv_handler;
+  /// Start an asynchronous receive. The buffer for the data being received must
+  /// be valid for the lifetime of the asynchronous operation.
+  template <typename Handler>
+  void async_recv(void* data, size_t max_length, Handler handler)
+  {
+    service_.async_recv(impl_, data, max_length, handler,
+        completion_context::null());
+  }
 
   /// Start an asynchronous receive. The buffer for the data being received must
   /// be valid for the lifetime of the asynchronous operation.
-  void async_recv(void* data, size_t max_length,
-      const recv_handler& handler,
-      completion_context& context = completion_context::null())
+  template <typename Handler>
+  void async_recv(void* data, size_t max_length, Handler handler,
+      completion_context& context)
   {
     service_.async_recv(impl_, data, max_length, handler, context);
   }
@@ -155,17 +169,24 @@ public:
     return service_.recv_n(impl_, data, length, total_bytes_recvd);
   }
 
-  /// The handler when a recv_n operation is completed. The first argument is
-  /// the error code, the second is the number of bytes received, the third is
-  /// the number of bytes received in the last recv operation.
-  typedef typename service_type::recv_n_handler recv_n_handler;
+  /// Start an asynchronous receive that will not return until the specified
+  /// number of bytes has been received or an error occurs. The buffer for the
+  /// data being received must be valid for the lifetime of the asynchronous
+  /// operation.
+  template <typename Handler>
+  void async_recv_n(void* data, size_t length, Handler handler)
+  {
+    service_.async_recv_n(impl_, data, length, handler,
+        completion_context::null());
+  }
 
   /// Start an asynchronous receive that will not return until the specified
   /// number of bytes has been received or an error occurs. The buffer for the
   /// data being received must be valid for the lifetime of the asynchronous
   /// operation.
-  void async_recv_n(void* data, size_t length, const recv_n_handler& handler,
-      completion_context& context = completion_context::null())
+  template <typename Handler>
+  void async_recv_n(void* data, size_t length, Handler handler,
+      completion_context& context)
   {
     service_.async_recv_n(impl_, data, length, handler, context);
   }

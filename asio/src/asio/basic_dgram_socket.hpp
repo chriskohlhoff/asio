@@ -90,15 +90,22 @@ public:
     return service_.sendto(impl_, data, length, destination);
   }
 
-  /// The handler when a sendto operation is completed. The first argument is
-  /// the error code, the second is the number of bytes sent.
-  typedef typename service_type::sendto_handler sendto_handler;
+  /// Start an asynchronous send. The data being sent must be valid for the
+  /// lifetime of the asynchronous operation.
+  template <typename Handler>
+  void async_sendto(const void* data, size_t length,
+      const socket_address& destination, Handler handler)
+  {
+    service_.async_sendto(impl_, data, length, destination, handler,
+        completion_context::null());
+  }
 
   /// Start an asynchronous send. The data being sent must be valid for the
   /// lifetime of the asynchronous operation.
+  template <typename Handler>
   void async_sendto(const void* data, size_t length,
-      const socket_address& destination, const sendto_handler& handler,
-      completion_context& context = completion_context::null())
+      const socket_address& destination, Handler handler,
+      completion_context& context)
   {
     service_.async_sendto(impl_, data, length, destination, handler, context);
   }
@@ -111,16 +118,24 @@ public:
     return service_.recvfrom(impl_, data, max_length, sender_address);
   }
   
-  /// The handler when a recvfrom operation is completed. The first argument is
-  /// the error code, the second is the number of bytes received.
-  typedef typename service_type::recvfrom_handler recvfrom_handler;
+  /// Start an asynchronous receive. The buffer for the data being received and
+  /// the sender_address obejct must both be valid for the lifetime of the
+  /// asynchronous operation.
+  template <typename Handler>
+  void async_recvfrom(void* data, size_t max_length,
+      socket_address& sender_address, Handler handler)
+  {
+    service_.async_recvfrom(impl_, data, max_length, sender_address, handler,
+        completion_context::null());
+  }
 
   /// Start an asynchronous receive. The buffer for the data being received and
   /// the sender_address obejct must both be valid for the lifetime of the
   /// asynchronous operation.
+  template <typename Handler>
   void async_recvfrom(void* data, size_t max_length,
-      socket_address& sender_address, const recvfrom_handler& handler,
-      completion_context& context = completion_context::null())
+      socket_address& sender_address, Handler handler,
+      completion_context& context)
   {
     service_.async_recvfrom(impl_, data, max_length, sender_address, handler,
         context);
