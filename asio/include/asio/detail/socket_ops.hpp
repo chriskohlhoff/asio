@@ -2,7 +2,7 @@
 // socket_ops.hpp
 // ~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003 Christopher M. Kohlhoff (chris@kohlhoff.com)
+// Copyright (c) 2003, 2004 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
 // Permission to use, copy, modify, distribute and sell this software and its
 // documentation for any purpose is hereby granted without fee, provided that
