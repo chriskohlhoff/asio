@@ -9,9 +9,6 @@ ___lib_libasio_a_SOURCES = \
 	asio/completion_context_locker.cpp \
 	asio/counting_completion_context.cpp \
 	asio/demuxer_task.cpp \
-	asio/generic_address.cpp \
-	asio/inet_address_v4.cpp \
-	asio/socket_address.cpp \
 	asio/socket_error.cpp \
 	asio/detail/demuxer_task_thread.cpp \
 	asio/detail/select_interrupter.cpp \
@@ -53,11 +50,9 @@ nobase_include_HEADERS = \
 	asio/detail/win_iocp_provider.hpp \
 	asio/detail/winsock_init.hpp \
 	asio/dgram_socket.hpp \
-	asio/generic_address.hpp \
 	asio/inet_address_v4.hpp \
 	asio/service_factory.hpp \
 	asio/socket_acceptor.hpp \
-	asio/socket_address.hpp \
 	asio/socket_connector.hpp \
 	asio/socket_error.hpp \
 	asio/stream_socket.hpp \

@@ -27,9 +27,7 @@
 
 #include "asio/basic_stream_socket.hpp"
 #include "asio/completion_context.hpp"
-#include "asio/generic_address.hpp"
 #include "asio/service_factory.hpp"
-#include "asio/socket_address.hpp"
 #include "asio/socket_error.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_holder.hpp"
@@ -116,10 +114,10 @@ public:
 
   // Connect the given socket to the peer at the specified address. Throws a
   // socket_error exception on error.
-  template <typename Stream_Socket_Service>
+  template <typename Stream_Socket_Service, typename Address>
   void connect(impl_type& impl,
       basic_stream_socket<Stream_Socket_Service>& peer,
-      const socket_address& peer_address)
+      const Address& peer_address)
   {
     // We cannot connect a socket that is already open.
     if (peer.impl() != invalid_socket)
@@ -145,13 +143,13 @@ public:
     peer.set_impl(sock.release());
   }
 
-  template <typename Stream_Socket_Service, typename Handler>
+  template <typename Stream_Socket_Service, typename Address, typename Handler>
   class connect_handler
   {
   public:
-    connect_handler(impl_type impl, socket_type new_socket, demuxer& demuxer,
+    connect_handler(impl_type impl, socket_type new_socket, Demuxer& demuxer,
         basic_stream_socket<Stream_Socket_Service>& peer,
-        const socket_address& peer_address, Handler handler,
+        const Address& peer_address, Handler handler,
         completion_context& context)
       : impl_(impl),
         new_socket_(new_socket),
@@ -215,19 +213,19 @@ public:
   private:
     impl_type impl_;
     socket_type new_socket_;
-    demuxer& demuxer_;
+    Demuxer& demuxer_;
     basic_stream_socket<Stream_Socket_Service>& peer_;
-    generic_address peer_address_;
+    Address peer_address_;
     Handler handler_;
     completion_context& context_;
   };
 
   // Start an asynchronous connect. The peer socket object must be valid until
   // the connect's completion handler is invoked.
-  template <typename Stream_Socket_Service, typename Handler>
+  template <typename Stream_Socket_Service, typename Address, typename Handler>
   void async_connect(impl_type& impl,
       basic_stream_socket<Stream_Socket_Service>& peer,
-      const socket_address& peer_address, Handler handler,
+      const Address& peer_address, Handler handler,
       completion_context& context)
   {
     if (peer.impl() != invalid_socket)
@@ -276,7 +274,7 @@ public:
       impl->add_socket(new_socket.get());
       demuxer_.operation_started();
       reactor_.start_write_op(new_socket.get(),
-          connect_handler<Stream_Socket_Service, Handler>(impl,
+          connect_handler<Stream_Socket_Service, Address, Handler>(impl,
             new_socket.get(), demuxer_, peer, peer_address, handler, context));
       new_socket.release();
     }

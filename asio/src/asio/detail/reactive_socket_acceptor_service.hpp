@@ -25,7 +25,6 @@
 #include "asio/basic_stream_socket.hpp"
 #include "asio/completion_context.hpp"
 #include "asio/service_factory.hpp"
-#include "asio/socket_address.hpp"
 #include "asio/socket_error.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
@@ -56,14 +55,15 @@ public:
   }
 
   // Create a new socket acceptor implementation.
-  void create(impl_type& impl, const socket_address& address)
+  template <typename Address>
+  void create(impl_type& impl, const Address& address)
   {
     create(impl, address, SOMAXCONN);
   }
 
   // Create a new stream socket implementation.
-  void create(impl_type& impl, const socket_address& address,
-      int listen_queue)
+  template <typename Address>
+  void create(impl_type& impl, const Address& address, int listen_queue)
   {
     socket_holder sock(socket_ops::socket(address.family(), SOCK_STREAM,
           IPPROTO_TCP));
@@ -112,10 +112,9 @@ public:
   }
 
   // Accept a new connection. Throws a socket_error exception on failure.
-  template <typename Stream_Socket_Service>
+  template <typename Stream_Socket_Service, typename Address>
   void accept(impl_type& impl,
-      basic_stream_socket<Stream_Socket_Service>& peer,
-      socket_address& peer_address)
+      basic_stream_socket<Stream_Socket_Service>& peer, Address& peer_address)
   {
     // We cannot accept a socket that is already open.
     if (peer.impl() != invalid_socket)
@@ -135,7 +134,7 @@ public:
   class accept_handler
   {
   public:
-    accept_handler(impl_type impl, demuxer& demuxer,
+    accept_handler(impl_type impl, Demuxer& demuxer,
         basic_stream_socket<Stream_Socket_Service>& peer, Handler handler,
         completion_context& context)
       : impl_(impl),
@@ -163,7 +162,7 @@ public:
 
   private:
     impl_type impl_;
-    demuxer& demuxer_;
+    Demuxer& demuxer_;
     basic_stream_socket<Stream_Socket_Service>& peer_;
     Handler handler_;
     completion_context& context_;
@@ -190,14 +189,13 @@ public:
     }
   }
 
-  template <typename Stream_Socket_Service, typename Handler>
+  template <typename Stream_Socket_Service, typename Address, typename Handler>
   class accept_addr_handler
   {
   public:
-    accept_addr_handler(impl_type impl, demuxer& demuxer,
+    accept_addr_handler(impl_type impl, Demuxer& demuxer,
         basic_stream_socket<Stream_Socket_Service>& peer,
-        socket_address& peer_address, Handler handler,
-        completion_context& context)
+        Address& peer_address, Handler handler, completion_context& context)
       : impl_(impl),
         demuxer_(demuxer),
         peer_(peer),
@@ -227,20 +225,19 @@ public:
 
   private:
     impl_type impl_;
-    demuxer& demuxer_;
+    Demuxer& demuxer_;
     basic_stream_socket<Stream_Socket_Service>& peer_;
-    socket_address& peer_address_;
+    Address& peer_address_;
     Handler handler_;
     completion_context& context_;
   };
 
   // Start an asynchronous accept. The peer_socket and peer_address objects
   // must be valid until the accept's completion handler is invoked.
-  template <typename Stream_Socket_Service, typename Handler>
+  template <typename Stream_Socket_Service, typename Address, typename Handler>
   void async_accept(impl_type& impl,
       basic_stream_socket<Stream_Socket_Service>& peer,
-      socket_address& peer_address, Handler handler,
-      completion_context& context)
+      Address& peer_address, Handler handler, completion_context& context)
   {
     if (peer.impl() != invalid_socket)
     {
@@ -251,8 +248,8 @@ public:
     {
       demuxer_.operation_started();
       reactor_.start_read_op(impl,
-          accept_addr_handler<Stream_Socket_Service, Handler>(impl, demuxer_,
-            peer, peer_address, handler, context));
+          accept_addr_handler<Stream_Socket_Service, Address, Handler>(impl,
+            demuxer_, peer, peer_address, handler, context));
     }
   }
 

@@ -26,8 +26,6 @@
 
 namespace asio {
 
-class socket_address;
-
 /// The basic_dgram_socket class template provides asynchronous and blocking
 /// datagram-oriented socket functionality. Most applications will simply use
 /// the dgram_socket typedef.
@@ -52,8 +50,8 @@ public:
   }
 
   /// Construct a basic_dgram_socket opened on the given address.
-  template <typename Demuxer>
-  basic_dgram_socket(Demuxer& d, const socket_address& address)
+  template <typename Demuxer, typename Address>
+  basic_dgram_socket(Demuxer& d, const Address& address)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_type::null())
   {
@@ -67,7 +65,8 @@ public:
   }
 
   /// Open the socket on the given address.
-  void open(const socket_address& address)
+  template <typename Address>
+  void open(const Address& address)
   {
     service_.create(impl_, address);
   }
@@ -86,17 +85,17 @@ public:
 
   /// Send a datagram to the specified address. Returns the number of bytes
   /// sent. Throws a socket_error exception on failure.
-  size_t sendto(const void* data, size_t length,
-      const socket_address& destination)
+  template <typename Address>
+  size_t sendto(const void* data, size_t length, const Address& destination)
   {
     return service_.sendto(impl_, data, length, destination);
   }
 
   /// Start an asynchronous send. The data being sent must be valid for the
   /// lifetime of the asynchronous operation.
-  template <typename Handler>
+  template <typename Address, typename Handler>
   void async_sendto(const void* data, size_t length,
-      const socket_address& destination, Handler handler)
+      const Address& destination, Handler handler)
   {
     service_.async_sendto(impl_, data, length, destination, handler,
         completion_context::null());
@@ -104,9 +103,9 @@ public:
 
   /// Start an asynchronous send. The data being sent must be valid for the
   /// lifetime of the asynchronous operation.
-  template <typename Handler>
+  template <typename Address, typename Handler>
   void async_sendto(const void* data, size_t length,
-      const socket_address& destination, Handler handler,
+      const Address& destination, Handler handler,
       completion_context& context)
   {
     service_.async_sendto(impl_, data, length, destination, handler, context);
@@ -114,8 +113,8 @@ public:
 
   /// Receive a datagram with the address of the sender. Returns the number of
   /// bytes received. Throws a socket_error exception on failure.
-  size_t recvfrom(void* data, size_t max_length,
-      socket_address& sender_address)
+  template <typename Address>
+  size_t recvfrom(void* data, size_t max_length, Address& sender_address)
   {
     return service_.recvfrom(impl_, data, max_length, sender_address);
   }
@@ -123,9 +122,9 @@ public:
   /// Start an asynchronous receive. The buffer for the data being received and
   /// the sender_address obejct must both be valid for the lifetime of the
   /// asynchronous operation.
-  template <typename Handler>
-  void async_recvfrom(void* data, size_t max_length,
-      socket_address& sender_address, Handler handler)
+  template <typename Address, typename Handler>
+  void async_recvfrom(void* data, size_t max_length, Address& sender_address,
+      Handler handler)
   {
     service_.async_recvfrom(impl_, data, max_length, sender_address, handler,
         completion_context::null());
@@ -134,10 +133,9 @@ public:
   /// Start an asynchronous receive. The buffer for the data being received and
   /// the sender_address obejct must both be valid for the lifetime of the
   /// asynchronous operation.
-  template <typename Handler>
-  void async_recvfrom(void* data, size_t max_length,
-      socket_address& sender_address, Handler handler,
-      completion_context& context)
+  template <typename Address, typename Handler>
+  void async_recvfrom(void* data, size_t max_length, Address& sender_address,
+      Handler handler, completion_context& context)
   {
     service_.async_recvfrom(impl_, data, max_length, sender_address, handler,
         context);

@@ -26,8 +26,6 @@
 
 namespace asio {
 
-class socket_address;
-
 /// The basic_socket_acceptor class template is used for accepting new socket
 /// connections. Most applications would simply use the socket_acceptor
 /// typedef.
@@ -52,8 +50,8 @@ public:
   }
 
   /// Construct an acceptor opened on the given address.
-  template <typename Demuxer>
-  basic_socket_acceptor(Demuxer& d, const socket_address& addr)
+  template <typename Demuxer, typename Address>
+  basic_socket_acceptor(Demuxer& d, const Address& addr)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_type::null())
   {
@@ -62,9 +60,8 @@ public:
 
   /// Construct an acceptor opened on the given address and with the listen
   /// queue set to the given number of connections.
-  template <typename Demuxer>
-  basic_socket_acceptor(Demuxer& d, const socket_address& addr,
-      int listen_queue)
+  template <typename Demuxer, typename Address>
+  basic_socket_acceptor(Demuxer& d, const Address& addr, int listen_queue)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_type::null())
   {
@@ -78,13 +75,15 @@ public:
   }
 
   /// Open the acceptor using the given address.
-  void open(const socket_address& addr)
+  template <typename Address>
+  void open(const Address& addr)
   {
     service_.create(impl_, addr);
   }
 
   /// Open the acceptor using the given address and length of the listen queue.
-  void open(const socket_address& addr, int listen_queue)
+  template <typename Address>
+  void open(const Address& addr, int listen_queue)
   {
     service_.create(impl_, addr, listen_queue);
   }
@@ -109,8 +108,8 @@ public:
   }
 
   /// Accept a new connection. Throws a socket_error exception on failure.
-  template <typename Stream>
-  void accept(Stream& peer_socket, socket_address& peer_address)
+  template <typename Stream, typename Address>
+  void accept(Stream& peer_socket, Address& peer_address)
   {
     service_.accept(impl_, peer_socket.lowest_layer(), peer_address);
   }
@@ -135,8 +134,8 @@ public:
 
   /// Start an asynchronous accept. The peer_socket and peer_address objects
   /// must be valid until the accept's completion handler is invoked.
-  template <typename Stream, typename Handler>
-  void async_accept(Stream& peer_socket, socket_address& peer_address,
+  template <typename Stream, typename Address, typename Handler>
+  void async_accept(Stream& peer_socket, Address& peer_address,
       Handler handler)
   {
     service_.async_accept(impl_, peer_socket.lowest_layer(), peer_address,
@@ -145,8 +144,8 @@ public:
 
   /// Start an asynchronous accept. The peer_socket and peer_address objects
   /// must be valid until the accept's completion handler is invoked.
-  template <typename Stream, typename Handler>
-  void async_accept(Stream& peer_socket, socket_address& peer_address,
+  template <typename Stream, typename Address, typename Handler>
+  void async_accept(Stream& peer_socket, Address& peer_address,
       Handler handler, completion_context& context)
   {
     service_.async_accept(impl_, peer_socket.lowest_layer(), peer_address,

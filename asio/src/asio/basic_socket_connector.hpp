@@ -26,8 +26,6 @@
 
 namespace asio {
 
-class socket_address;
-
 /// The basic_socket_connector class template is used to connect a socket to a
 /// remote endpoint. Most applications will simply use the socket_connector
 /// typedef.
@@ -77,17 +75,17 @@ public:
 
   /// Connect the given socket to the peer at the specified address. Throws a
   /// socket_error exception on failure.
-  template <typename Stream>
-  void connect(Stream& peer_socket, const socket_address& peer_address)
+  template <typename Stream, typename Address>
+  void connect(Stream& peer_socket, const Address& peer_address)
   {
     service_.connect(impl_, peer_socket.lowest_layer(), peer_address);
   }
 
   /// Start an asynchronous connect. The peer_socket object must be valid until
   /// the connect's completion handler is invoked.
-  template <typename Stream, typename Handler>
-  void async_connect(Stream& peer_socket,
-      const socket_address& peer_address, Handler handler)
+  template <typename Stream, typename Address, typename Handler>
+  void async_connect(Stream& peer_socket, const Address& peer_address,
+      Handler handler)
   {
     service_.async_connect(impl_, peer_socket.lowest_layer(), peer_address,
         handler, completion_context::null());
@@ -95,10 +93,9 @@ public:
 
   /// Start an asynchronous connect. The peer_socket object must be valid until
   /// the connect's completion handler is invoked.
-  template <typename Stream, typename Handler>
-  void async_connect(Stream& peer_socket,
-      const socket_address& peer_address, Handler handler,
-      completion_context& context)
+  template <typename Stream, typename Address, typename Handler>
+  void async_connect(Stream& peer_socket, const Address& peer_address,
+      Handler handler, completion_context& context)
   {
     service_.async_connect(impl_, peer_socket.lowest_layer(), peer_address,
         handler, context);
