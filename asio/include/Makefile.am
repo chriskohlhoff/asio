@@ -11,6 +11,7 @@ nobase_include_HEADERS = \
 	asio/buffered_recv_stream.hpp \
 	asio/buffered_send_stream.hpp \
 	asio/buffered_stream.hpp \
+	asio/default_error_handler.hpp \
 	asio/demuxer.hpp \
 	asio/detail/bind_handler.hpp \
 	asio/detail/buffer_resize_guard.hpp \

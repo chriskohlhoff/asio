@@ -21,7 +21,7 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/error_handler.hpp"
+#include "asio/default_error_handler.hpp"
 #include "asio/service_factory.hpp"
 
 namespace asio {

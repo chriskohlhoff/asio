@@ -455,20 +455,6 @@ expression<ignore_error_if_t<Expr> > ignore_error_if(Expr expr)
   return make_expression(ignore_error_if_t<Expr>(expr));
 }
 
-/// The default error handler. Always throws the error as an exception.
-class default_error_handler
-{
-public:
-  /// Evaluate the expression.
-  template <typename Error>
-  bool operator()(const Error& err)
-  {
-    if (err)
-      throw err;
-    return false;
-  }
-};
-
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

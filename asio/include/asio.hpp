@@ -26,6 +26,7 @@
 #include "asio/buffered_recv_stream.hpp"
 #include "asio/buffered_send_stream.hpp"
 #include "asio/buffered_stream.hpp"
+#include "asio/default_error_handler.hpp"
 #include "asio/demuxer.hpp"
 #include "asio/dgram_socket.hpp"
 #include "asio/error_handler.hpp"
