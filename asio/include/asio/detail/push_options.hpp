@@ -28,7 +28,7 @@
 #  pragma optimize ("g", off)
 # endif
 #elif defined (__BORLANDC__)
-# pragma option push -a8 -b -Ve- -Vx-
+# pragma option push -a8 -b -Ve- -Vx- -w-inl
 # pragma nopushoptwarn
 # pragma nopackwarning
 #elif defined (__MINGW32__)
