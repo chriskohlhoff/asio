@@ -251,7 +251,7 @@ inline int inet_pton(int af, const char* src, void* dest)
 
   return 0;
 #else // defined(_WIN32)
-  return inet_pton(af, src, dest);
+  return error_wrapper(::inet_pton(af, src, dest));
 #endif // defined(_WIN32)
 }
 
