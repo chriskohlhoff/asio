@@ -9,48 +9,43 @@ H2 {
 }
 CAPTION { font-weight: bold }
 DIV.qindex { width: 100%;
-             background-color: #e0e0f0;
-             border: 2px solid #b0b0d0;
+             background-color: #e0e0e0;
+             border: 1px solid #a0a0a0;
              text-align: center;
              margin-bottom: 2px;
 }
 A.qindex { text-decoration: none; font-weight: bold; }
-A.qindex:hover { text-decoration: none; background-color: #d0d0f0 }
 A.qindexHL { text-decoration: none; font-weight: bold;
              background-color: #6666cc;
              color: #ffffff
            }
-A.qindexHL:hover { text-decoration: none; background-color: #6666cc }
 A.qindexRef { text-decoration: none; font-weight: bold; }
-A.qindexRef:hover { text-decoration: none; background-color: #ddddff }
 A.qindexRefHL { text-decoration: none; font-weight: bold;
              background-color: #6666cc;
              color: #ffffff
            }
-A.qindexRefHL:hover { text-decoration: none; background-color: #6666cc }
 A.el { text-decoration: none; font-weight: bold }
 A.elRef { font-weight: bold }
 A.code { text-decoration: none; font-weight: normal; color: #4444ee }
 A.codeRef { font-weight: normal; color: #4444ee }
-A:hover { text-decoration: none; background-color: #f2f2ff }
 DL.el { margin-left: -1cm }
 DIV.fragment {
 	width: 98%;
-	border: 1px solid #CCCCCC;
-	background-color: #e0e0e0;
+	border: 1px solid #E0E0E0;
+	background-color: #FAFAFA;
 	padding-left: 4px;
 	margin: 4px;
 }
 DIV.footer { width: 100%;
-             background-color: #e0e0f0;
-             border: 2px solid #b0b0d0;
+             background-color: #e0e0e0;
+             border: 1px solid #a0a0a0;
              text-align: right;
              margin-top: 10px;
 }
 DIV.ah { background-color: black; font-weight: bold; color: #ffffff; margin-bottom: 3px; margin-top: 3px }
-TD.md { background-color: #e0e0e0; font-weight: bold; }
-TD.mdname1 { background-color: #e0e0e0; font-weight: bold; color: #602020; }
-TD.mdname { background-color: #e0e0e0; font-weight: bold; color: #602020; }
+TD.md { background-color: #FAFAFA; font-weight: bold; }
+TD.mdname1 { background-color: #FAFAFA; font-weight: bold; color: #602020; }
+TD.mdname { background-color: #FAFAFA; font-weight: bold; color: #602020; }
 DIV.groupHeader { margin-left: 16px; margin-top: 12px; margin-bottom: 6px; font-weight: bold }
 DIV.groupText { margin-left: 16px; font-style: italic; font-size: smaller }
 BODY {
@@ -60,7 +55,7 @@ BODY {
 	margin-left: 20px;
 }
 TD.indexkey { 
-   background-color: #e0e0e0; 
+   background-color: #E0E0E0; 
    font-weight: bold; 
    padding-right  : 10px; 
    padding-top    : 2px; 
@@ -72,7 +67,7 @@ TD.indexkey {
    margin-bottom  : 2px  
 }
 TD.indexvalue { 
-   background-color: #e0e0e0; 
+   background-color: #E0E0E0; 
    font-style: italic; 
    padding-right  : 10px; 
    padding-top    : 2px; 
@@ -84,7 +79,7 @@ TD.indexvalue {
    margin-bottom  : 2px  
 }
 TR.memlist {
-   background-color: #f0f0f0; 
+   background-color: #FAFAFA; 
 }
 P.formulaDsp { text-align: center; }
 IMG.formulaDsp { }
@@ -97,12 +92,12 @@ SPAN.preprocessor  { color: #806020 }
 SPAN.stringliteral { color: #002080 }
 SPAN.charliteral   { color: #008080 }
 .mdTable {
-	border: 1px solid #868686;
-	background-color: #e0e0e0;
+	border: 1px solid #E0E0E0;
+	background-color: #FAFAFA;
 }
 .mdRow {
 	padding: 8px 20px;
-	background-color: #e0e0e0;
+	background-color: #FAFAFA;
 }
 .mdescLeft {
 	font-size: smaller;
