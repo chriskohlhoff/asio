@@ -17,12 +17,7 @@ public:
           asio::arg::bytes_recvd));
 
     timer_.set(timer::from_now, 5);
-    timer_.async_wait(boost::bind(&dgram_handler::handle_timeout, this));
-  }
-
-  void handle_timeout()
-  {
-    socket_.close();
+    timer_.async_wait(boost::bind(&dgram_socket::close, &socket_));
   }
 
   void handle_recvfrom(const socket_error& error, size_t length)

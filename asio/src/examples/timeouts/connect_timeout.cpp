@@ -17,12 +17,7 @@ public:
         boost::bind(&connect_handler::handle_connect, this, asio::arg::error));
 
     timer_.set(timer::from_now, 5);
-    timer_.async_wait(boost::bind(&connect_handler::handle_timeout, this));
-  }
-
-  void handle_timeout()
-  {
-    connector_.close();
+    timer_.async_wait(boost::bind(&socket_connector::close, &connector_));
   }
 
   void handle_connect(const socket_error& error)
