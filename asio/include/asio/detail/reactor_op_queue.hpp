@@ -46,8 +46,9 @@ public:
     op_base* new_op = new op<Handler>(descriptor, handler);
 
     typedef typename operation_map::iterator iterator;
+    typedef typename operation_map::value_type value_type;
     std::pair<iterator, bool> entry =
-      operations_.insert(operation_map::value_type(descriptor, new_op));
+      operations_.insert(value_type(descriptor, new_op));
     if (entry.second)
       return true;
 
