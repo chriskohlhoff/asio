@@ -21,11 +21,11 @@
 #include <boost/function.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/completion_context.hpp"
 #include "asio/service.hpp"
 #include "asio/service_type_id.hpp"
 #include "asio/detail/socket_types.hpp"
 
+namespace asio { class completion_context; }
 namespace asio { class socket_address; }
 namespace asio { class socket_error; }
 
@@ -39,29 +39,26 @@ public:
   // The service type id.
   static const service_type_id id;
 
-  /// The native type of the dgram socket. This type is dependent on the
-  /// underlying implementation of the socket layer.
+  // The native type of the dgram socket. This type is dependent on the
+  // underlying implementation of the socket layer.
   typedef socket_type impl_type;
 
-  // Initialise a dgram socket to a null implementation.
-  void nullify(impl_type& impl);
+  // The value to use for uninitialised implementations.
+  static const impl_type invalid_impl = invalid_socket;
 
   // Create a new dgram socket implementation.
   void create(impl_type& impl, const socket_address& address);
 
-  // Attach an existing dgram socket implementation to the service.
-  void attach(impl_type& impl, impl_type new_impl);
-
   // Destroy a dgram socket implementation.
   void destroy(impl_type& impl);
 
-  /// Send a datagram to the specified address. Returns the number of bytes
-  /// sent. Throws a socket_error exception on failure.
+  // Send a datagram to the specified address. Returns the number of bytes
+  // sent. Throws a socket_error exception on failure.
   size_t sendto(impl_type& impl, const void* data, size_t length,
       const socket_address& destination);
 
-  /// The handler when a sendto operation is completed. The first argument is
-  /// the error code, the second is the number of bytes sent.
+  // The handler when a sendto operation is completed. The first argument is
+  // the error code, the second is the number of bytes sent.
   typedef boost::function2<void, const socket_error&, size_t> sendto_handler;
 
   // Start an asynchronous send. The data being sent must be valid for the
@@ -70,13 +67,13 @@ public:
       const socket_address& destination, const sendto_handler& handler,
       completion_context& context);
 
-  /// Receive a datagram with the address of the sender. Returns the number of
-  /// bytes received. Throws a socket_error exception on failure.
+  // Receive a datagram with the address of the sender. Returns the number of
+  // bytes received. Throws a socket_error exception on failure.
   size_t recvfrom(impl_type& impl, void* data, size_t max_length,
       socket_address& sender_address);
   
-  /// The handler when a recvfrom operation is completed. The first argument is
-  /// the error code, the second is the number of bytes received.
+  // The handler when a recvfrom operation is completed. The first argument is
+  // the error code, the second is the number of bytes received.
   typedef boost::function2<void, const socket_error&, size_t> recvfrom_handler;
 
   // Start an asynchronous receive. The buffer for the data being received and

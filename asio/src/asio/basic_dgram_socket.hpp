@@ -27,7 +27,6 @@
 namespace asio {
 
 class socket_address;
-class socket_error;
 
 /// The basic_dgram_socket class template provides asynchronous and blocking
 /// datagram-oriented socket functionality. Most applications will simply use
@@ -37,20 +36,24 @@ class basic_dgram_socket
   : private boost::noncopyable
 {
 public:
-  /// The native implementation type of the dgram socket.
-  typedef typename Service::impl_type impl_type;
+  /// The type of the service that will be used to provide socket operations.
+  typedef Service service_type;
 
-  /// Construct a dgram_socket without opening it. The socket needs to be
+  /// The native implementation type of the dgram socket.
+  typedef typename service_type::impl_type impl_type;
+
+  /// Construct a basic_dgram_socket without opening it. The socket needs to be
   /// opened before data can be sent or received on it.
   explicit basic_dgram_socket(demuxer& d)
-    : service_(dynamic_cast<Service&>(d.get_service(Service::id)))
+    : service_(dynamic_cast<service_type&>(d.get_service(service_type::id))),
+      impl_(service_type::invalid_impl)
   {
-    service_.nullify(impl_);
   }
 
-  /// Construct a dgram_socket opened on the given address.
+  /// Construct a basic_dgram_socket opened on the given address.
   basic_dgram_socket(demuxer& d, const socket_address& address)
-    : service_(dynamic_cast<Service&>(d.get_service(Service::id)))
+    : service_(dynamic_cast<service_type&>(d.get_service(service_type::id))),
+      impl_(service_type::invalid_impl)
   {
     service_.create(impl_, address);
   }
@@ -79,13 +82,6 @@ public:
     return impl_;
   }
 
-  /// Attach an existing implementation to the dgram socket. The dgram_socket
-  /// object takes ownership of the implementation.
-  void attach_impl(impl_type impl)
-  {
-    service_.attach(impl_, impl);
-  }
-
   /// Send a datagram to the specified address. Returns the number of bytes
   /// sent. Throws a socket_error exception on failure.
   size_t sendto(const void* data, size_t length,
@@ -96,7 +92,7 @@ public:
 
   /// The handler when a sendto operation is completed. The first argument is
   /// the error code, the second is the number of bytes sent.
-  typedef typename Service::sendto_handler sendto_handler;
+  typedef typename service_type::sendto_handler sendto_handler;
 
   /// Start an asynchronous send. The data being sent must be valid for the
   /// lifetime of the asynchronous operation.
@@ -117,7 +113,7 @@ public:
   
   /// The handler when a recvfrom operation is completed. The first argument is
   /// the error code, the second is the number of bytes received.
-  typedef typename Service::recvfrom_handler recvfrom_handler;
+  typedef typename service_type::recvfrom_handler recvfrom_handler;
 
   /// Start an asynchronous receive. The buffer for the data being received and
   /// the sender_address obejct must both be valid for the lifetime of the
@@ -132,7 +128,7 @@ public:
 
 private:
   /// The backend service implementation.
-  Service& service_;
+  service_type& service_;
 
   /// The underlying native implementation.
   impl_type impl_;

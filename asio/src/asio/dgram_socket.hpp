@@ -17,7 +17,7 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/dgram_socket.hpp"
+#include "asio/basic_dgram_socket.hpp"
 #include "asio/detail/dgram_socket_service.hpp"
 
 namespace asio {

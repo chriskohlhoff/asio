@@ -16,6 +16,9 @@
 #define ASIO_HPP
 
 #include "asio/basic_dgram_socket.hpp"
+#include "asio/basic_socket_acceptor.hpp"
+#include "asio/basic_socket_connector.hpp"
+#include "asio/basic_stream_socket.hpp"
 #include "asio/basic_timer_queue.hpp"
 #include "asio/buffered_recv_stream.hpp"
 #include "asio/buffered_send_stream.hpp"
@@ -38,6 +41,7 @@
 #include "asio/socket_address.hpp"
 #include "asio/socket_connector.hpp"
 #include "asio/socket_error.hpp"
+#include "asio/stream_socket.hpp"
 #include "asio/timer_queue.hpp"
 
 #endif // ASIO_HPP

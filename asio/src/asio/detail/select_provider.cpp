@@ -60,11 +60,11 @@ select_provider::
 do_dgram_socket_destroy(
     dgram_socket_service::impl_type& impl)
 {
-  if (impl != invalid_socket)
+  if (impl != dgram_socket_service::invalid_impl)
   {
     selector_.close_descriptor(impl);
     socket_ops::close(impl);
-    impl = invalid_socket;
+    impl = dgram_socket_service::invalid_impl;
   }
 }
 
@@ -199,19 +199,15 @@ do_dgram_socket_async_recvfrom(
 
 void
 select_provider::
-register_socket_acceptor(
-    socket_acceptor&)
+do_socket_acceptor_destroy(
+    socket_acceptor_service::impl_type& impl)
 {
-  // Registration is not required with the select_provider since each operation
-  // is handled individually.
-}
-
-void
-select_provider::
-deregister_socket_acceptor(
-    socket_acceptor& socket)
-{
-  selector_.close_descriptor(socket.native_handle());
+  if (impl != socket_acceptor_service::invalid_impl)
+  {
+    selector_.close_descriptor(impl);
+    socket_ops::close(impl);
+    impl = socket_acceptor_service::invalid_impl;
+  }
 }
 
 namespace
@@ -219,9 +215,8 @@ namespace
   struct accept_op : public select_op
   {
     demuxer* demuxer_;
-    socket_acceptor* acceptor_;
-    stream_socket* peer_socket_;
-    socket_acceptor::accept_handler handler_;
+    socket_acceptor_service::peer_type* peer_socket_;
+    socket_acceptor_service::accept_handler handler_;
     completion_context* context_;
 
     accept_op(int d) : select_op(d) {}
@@ -231,8 +226,7 @@ namespace
       socket_type new_socket = socket_ops::accept(descriptor(), 0, 0);
       socket_error error(new_socket == invalid_socket
           ? socket_ops::get_error() : socket_error::success);
-      select_provider::do_associate_accepted_stream_socket(*acceptor_,
-              *peer_socket_, new_socket);
+      peer_socket_->set_impl(new_socket);
       demuxer_->operation_completed(boost::bind(&accept_op::do_upcall,
             handler_, error), *context_);
       delete this;
@@ -246,7 +240,8 @@ namespace
       delete this;
     }
 
-    static void do_upcall(const socket_acceptor::accept_handler& handler,
+    static void do_upcall(
+        const socket_acceptor_service::accept_handler& handler,
         const socket_error& error)
     {
       handler(error);
@@ -256,13 +251,13 @@ namespace
 
 void
 select_provider::
-async_socket_accept(
-    socket_acceptor& acceptor,
-    stream_socket& peer_socket,
+do_socket_acceptor_async_accept(
+    socket_acceptor_service::impl_type& impl,
+    socket_acceptor_service::peer_type& peer_socket,
     const accept_handler& handler,
     completion_context& context)
 {
-  if (peer_socket.native_handle() != invalid_socket)
+  if (peer_socket.impl() != invalid_socket)
   {
     socket_error error(socket_error::already_connected);
     demuxer_.operation_immediate(
@@ -270,9 +265,8 @@ async_socket_accept(
     return;
   }
 
-  accept_op* op = new accept_op(acceptor.native_handle());
+  accept_op* op = new accept_op(impl);
   op->demuxer_ = &demuxer_;
-  op->acceptor_ = &acceptor;
   op->peer_socket_ = &peer_socket;
   op->handler_ = handler;
   op->context_ = &context;
@@ -287,10 +281,9 @@ namespace
   struct accept_with_addr_op : public select_op
   {
     demuxer* demuxer_;
-    socket_acceptor* acceptor_;
-    stream_socket* peer_socket_;
+    socket_acceptor_service::peer_type* peer_socket_;
     socket_address* peer_address_;
-    socket_acceptor::accept_handler handler_;
+    socket_acceptor_service::accept_handler handler_;
     completion_context* context_;
 
     accept_with_addr_op(int d) : select_op(d) {}
@@ -303,8 +296,7 @@ namespace
       socket_error error(new_socket == invalid_socket
           ? socket_ops::get_error() : socket_error::success);
       peer_address_->native_size(addr_len);
-      select_provider::do_associate_accepted_stream_socket(*acceptor_,
-              *peer_socket_, new_socket);
+      peer_socket_->set_impl(new_socket);
       demuxer_->operation_completed(boost::bind(&accept_op::do_upcall,
             handler_, error), *context_);
       delete this;
@@ -318,7 +310,8 @@ namespace
       delete this;
     }
 
-    static void do_upcall(const socket_acceptor::accept_handler& handler,
+    static void do_upcall(
+        const socket_acceptor_service::accept_handler& handler,
         const socket_error& error)
     {
       handler(error);
@@ -328,14 +321,14 @@ namespace
 
 void
 select_provider::
-async_socket_accept(
-    socket_acceptor& acceptor,
-    stream_socket& peer_socket,
+do_socket_acceptor_async_accept(
+    socket_acceptor_service::impl_type& impl,
+    socket_acceptor_service::peer_type& peer_socket,
     socket_address& peer_address,
     const accept_handler& handler,
     completion_context& context)
 {
-  if (peer_socket.native_handle() != invalid_socket)
+  if (peer_socket.impl() != invalid_socket)
   {
     socket_error error(socket_error::already_connected);
     demuxer_.operation_immediate(
@@ -343,9 +336,8 @@ async_socket_accept(
     return;
   }
 
-  accept_with_addr_op* op = new accept_with_addr_op(acceptor.native_handle());
+  accept_with_addr_op* op = new accept_with_addr_op(impl);
   op->demuxer_ = &demuxer_;
-  op->acceptor_ = &acceptor;
   op->peer_socket_ = &peer_socket;
   op->peer_address_ = &peer_address;
   op->handler_ = handler;
@@ -358,33 +350,20 @@ async_socket_accept(
 
 void
 select_provider::
-do_associate_accepted_stream_socket(
-    socket_acceptor& acceptor,
-    stream_socket& peer_socket,
-    stream_socket::native_type handle)
+do_socket_connector_destroy(
+    socket_connector_service::impl_type& impl)
 {
-  associate_accepted_stream_socket(acceptor, peer_socket, handle);
-}
+  if (impl != socket_connector_service::invalid_impl)
+  {
+    socket_connector_impl::socket_set sockets;
+    impl->get_sockets(sockets);
+    socket_connector_impl::socket_set::iterator i = sockets.begin();
+    while (i != sockets.end())
+      selector_.close_descriptor(*i++);
 
-void
-select_provider::
-register_socket_connector(
-    socket_connector&)
-{
-  // Registration is not required with the select_provider since each operation
-  // is handled individually.
-}
-
-void
-select_provider::
-deregister_socket_connector(
-    socket_connector& connector)
-{
-  socket_connector_impl::socket_set sockets;
-  connector.native_handle()->get_sockets(sockets);
-  socket_connector_impl::socket_set::iterator i = sockets.begin();
-  while (i != sockets.end())
-    selector_.close_descriptor(*i++);
+    delete impl;
+    impl = socket_connector_service::invalid_impl;
+  }
 }
 
 namespace
@@ -392,10 +371,10 @@ namespace
   struct connect_op : public select_op
   {
     demuxer* demuxer_;
-    socket_connector* connector_;
-    stream_socket* peer_socket_;
+    socket_connector_service::impl_type connector_impl_;
+    socket_connector_service::peer_type* peer_socket_;
     generic_address peer_address_;
-    socket_connector::connect_handler handler_;
+    socket_connector_service::connect_handler handler_;
     completion_context* context_;
 
     connect_op(int d) : select_op(d) {}
@@ -403,7 +382,7 @@ namespace
     virtual void do_operation()
     {
       socket_holder new_socket(descriptor());
-      connector_->native_handle()->remove_socket(new_socket.get());
+      connector_impl_->remove_socket(new_socket.get());
 
       // Get the error code from the connect operation.
       int connect_error = 0;
@@ -412,8 +391,6 @@ namespace
             &connect_error, &connect_error_len) == socket_error_retval)
       {
         socket_error error(socket_ops::get_error());
-        select_provider::do_associate_connected_stream_socket(*connector_,
-                *peer_socket_, invalid_socket);
         demuxer_->operation_completed(boost::bind(&connect_op::do_upcall,
               handler_, error), *context_);
         delete this;
@@ -424,8 +401,6 @@ namespace
       if (connect_error)
       {
         socket_error error(connect_error);
-        select_provider::do_associate_connected_stream_socket(*connector_,
-                *peer_socket_, invalid_socket);
         demuxer_->operation_completed(boost::bind(&connect_op::do_upcall,
               handler_, error), *context_);
         delete this;
@@ -437,8 +412,6 @@ namespace
       if (socket_ops::ioctl(new_socket.get(), FIONBIO, &non_blocking))
       {
         socket_error error(socket_ops::get_error());
-        select_provider::do_associate_connected_stream_socket(*connector_,
-                *peer_socket_, invalid_socket);
         demuxer_->operation_completed(boost::bind(&connect_op::do_upcall,
               handler_, error), *context_);
         delete this;
@@ -446,8 +419,7 @@ namespace
       }
 
       // Post the result of the successful connection operation.
-      select_provider::do_associate_connected_stream_socket(*connector_,
-              *peer_socket_, new_socket.release());
+      peer_socket_->set_impl(new_socket.release());
       socket_error error(socket_error::success);
       demuxer_->operation_completed(boost::bind(&connect_op::do_upcall,
             handler_, error), *context_);
@@ -456,14 +428,15 @@ namespace
 
     virtual void do_cancel()
     {
-      connector_->native_handle()->remove_socket(descriptor());
+      connector_impl_->remove_socket(descriptor());
       socket_error error(socket_error::operation_aborted);
       demuxer_->operation_completed(boost::bind(&connect_op::do_upcall,
             handler_, error), *context_);
       delete this;
     }
 
-    static void do_upcall(const socket_connector::connect_handler& handler,
+    static void do_upcall(
+        const socket_connector_service::connect_handler& handler,
         const socket_error& error)
     {
       handler(error);
@@ -473,14 +446,13 @@ namespace
 
 void
 select_provider::
-async_socket_connect(
-    socket_connector& connector,
-    stream_socket& peer_socket,
-    const socket_address& peer_address,
-    const connect_handler& handler,
+do_socket_connector_async_connect(
+    socket_connector_service::impl_type& impl,
+    socket_connector_service::peer_type& peer_socket,
+    const socket_address& peer_address, const connect_handler& handler,
     completion_context& context)
 {
-  if (peer_socket.native_handle() != invalid_socket)
+  if (peer_socket.impl() != invalid_socket)
   {
     socket_error error(socket_error::already_connected);
     demuxer_.operation_immediate(
@@ -495,7 +467,6 @@ async_socket_connect(
   if (new_socket.get() == invalid_socket)
   {
     socket_error error(socket_ops::get_error());
-    associate_connected_stream_socket(connector, peer_socket, invalid_socket);
     demuxer_.operation_immediate(boost::bind(&connect_op::do_upcall, handler,
           error), context);
     return;
@@ -507,7 +478,6 @@ async_socket_connect(
   if (socket_ops::ioctl(new_socket.get(), FIONBIO, &non_blocking))
   {
     socket_error error(socket_ops::get_error());
-    associate_connected_stream_socket(connector, peer_socket, invalid_socket);
     demuxer_.operation_immediate(boost::bind(&connect_op::do_upcall, handler,
           error), context);
     return;
@@ -519,8 +489,7 @@ async_socket_connect(
   {
     // The connect operation has finished successfully so we need to post the
     // completion immediately.
-    associate_connected_stream_socket(connector, peer_socket,
-        new_socket.release());
+    peer_socket.set_impl(new_socket.release());
     socket_error error(socket_error::success);
     demuxer_.operation_immediate(boost::bind(&connect_op::do_upcall, handler,
           error), context);
@@ -533,13 +502,13 @@ async_socket_connect(
 
     connect_op* op = new connect_op(new_socket.get());
     op->demuxer_ = &demuxer_;
-    op->connector_ = &connector;
+    op->connector_impl_ = impl;
     op->peer_socket_ = &peer_socket;
     op->peer_address_ = peer_address;
     op->handler_ = handler;
     op->context_ = &context;
 
-    connector.native_handle()->add_socket(new_socket.get());
+    impl->add_socket(new_socket.get());
     new_socket.release();
 
     demuxer_.operation_started();
@@ -550,7 +519,6 @@ async_socket_connect(
   {
     // The connect operation has failed, so post completion immediately.
     socket_error error(socket_ops::get_error());
-    associate_connected_stream_socket(connector, peer_socket, invalid_socket);
     demuxer_.operation_immediate(boost::bind(&connect_op::do_upcall, handler,
           error), context);
   }
@@ -558,29 +526,24 @@ async_socket_connect(
 
 void
 select_provider::
-do_associate_connected_stream_socket(
-    socket_connector& connector,
-    stream_socket& peer_socket,
-    stream_socket::native_type handle)
+do_stream_socket_create(
+    stream_socket_service::impl_type& impl,
+    stream_socket_service::impl_type new_impl)
 {
-  associate_connected_stream_socket(connector, peer_socket, handle);
+  impl = new_impl;
 }
 
 void
 select_provider::
-register_stream_socket(
-    stream_socket&)
+do_stream_socket_destroy(
+    stream_socket_service::impl_type& impl)
 {
-  // Registration is not required with the select_provider since each operation
-  // is handled individually.
-}
-
-void
-select_provider::
-deregister_stream_socket(
-    stream_socket& socket)
-{
-  selector_.close_descriptor(socket.native_handle());
+  if (impl != stream_socket_service::invalid_impl)
+  {
+    selector_.close_descriptor(impl);
+    socket_ops::close(impl);
+    impl = stream_socket_service::invalid_impl;
+  }
 }
 
 namespace
@@ -590,7 +553,7 @@ namespace
     demuxer* demuxer_;
     const void* data_;
     size_t length_;
-    stream_socket::send_handler handler_;
+    stream_socket_service::send_handler handler_;
     completion_context* context_;
 
     send_op(int d) : select_op(d) {}
@@ -613,7 +576,7 @@ namespace
       delete this;
     }
 
-    static void do_upcall(const stream_socket::send_handler& handler,
+    static void do_upcall(const stream_socket_service::send_handler& handler,
         const socket_error& error, size_t bytes_transferred)
     {
       handler(error, bytes_transferred);
@@ -623,14 +586,14 @@ namespace
 
 void
 select_provider::
-async_stream_socket_send(
-    stream_socket& socket,
+do_stream_socket_async_send(
+    stream_socket_service::impl_type& impl,
     const void* data,
     size_t length,
     const send_handler& handler,
     completion_context& context)
 {
-  send_op* op = new send_op(socket.native_handle());
+  send_op* op = new send_op(impl);
   op->demuxer_ = &demuxer_;
   op->data_ = data;
   op->length_ = length;
@@ -651,7 +614,7 @@ namespace
     const void* data_;
     size_t length_;
     size_t already_sent_;
-    stream_socket::send_n_handler handler_;
+    stream_socket_service::send_n_handler handler_;
     completion_context* context_;
 
     send_n_op(int d) : select_op(d) {}
@@ -686,7 +649,7 @@ namespace
       delete this;
     }
 
-    static void do_upcall(const stream_socket::send_n_handler& handler,
+    static void do_upcall(const stream_socket_service::send_n_handler& handler,
         const socket_error& error, size_t total_bytes_transferred,
         size_t last_bytes_transferred)
     {
@@ -697,14 +660,14 @@ namespace
 
 void
 select_provider::
-async_stream_socket_send_n(
-    stream_socket& socket,
+do_stream_socket_async_send_n(
+    stream_socket_service::impl_type& impl,
     const void* data,
     size_t length,
     const send_n_handler& handler,
     completion_context& context)
 {
-  send_n_op* op = new send_n_op(socket.native_handle());
+  send_n_op* op = new send_n_op(impl);
   op->demuxer_ = &demuxer_;
   op->selector_ = &selector_;
   op->data_ = data;
@@ -725,7 +688,7 @@ namespace
     demuxer* demuxer_;
     void* data_;
     size_t max_length_;
-    stream_socket::recv_handler handler_;
+    stream_socket_service::recv_handler handler_;
     completion_context* context_;
 
     recv_op(int d) : select_op(d) {}
@@ -748,7 +711,7 @@ namespace
       delete this;
     }
 
-    static void do_upcall(const stream_socket::recv_handler& handler,
+    static void do_upcall(const stream_socket_service::recv_handler& handler,
         const socket_error& error, size_t bytes_transferred)
     {
       handler(error, bytes_transferred);
@@ -758,14 +721,14 @@ namespace
 
 void
 select_provider::
-async_stream_socket_recv(
-    stream_socket& socket,
+do_stream_socket_async_recv(
+    stream_socket_service::impl_type& impl,
     void* data,
     size_t max_length,
     const recv_handler& handler,
     completion_context& context)
 {
-  recv_op* op = new recv_op(socket.native_handle());
+  recv_op* op = new recv_op(impl);
   op->demuxer_ = &demuxer_;
   op->data_ = data;
   op->max_length_ = max_length;
@@ -786,7 +749,7 @@ namespace
     void* data_;
     size_t length_;
     size_t already_recvd_;
-    stream_socket::recv_n_handler handler_;
+    stream_socket_service::recv_n_handler handler_;
     completion_context* context_;
 
     recv_n_op(int d) : select_op(d) {}
@@ -821,7 +784,7 @@ namespace
       delete this;
     }
 
-    static void do_upcall(const stream_socket::recv_n_handler& handler,
+    static void do_upcall(const stream_socket_service::recv_n_handler& handler,
         const socket_error& error, size_t total_bytes_transferred,
         size_t last_bytes_transferred)
     {
@@ -832,14 +795,14 @@ namespace
 
 void
 select_provider::
-async_stream_socket_recv_n(
-    stream_socket& socket,
+do_stream_socket_async_recv_n(
+    stream_socket_service::impl_type& impl,
     void* data,
     size_t length,
     const recv_n_handler& handler,
     completion_context& context)
 {
-  recv_n_op* op = new recv_n_op(socket.native_handle());
+  recv_n_op* op = new recv_n_op(impl);
   op->demuxer_ = &demuxer_;
   op->selector_ = &selector_;
   op->data_ = data;

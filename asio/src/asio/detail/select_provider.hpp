@@ -59,82 +59,66 @@ public:
       socket_address& sender_address, const recvfrom_handler& handler,
       completion_context& context);
 
-  // Register a new socket_acceptor with the service. This should be called
-  // only after the socket acceptor has been opened.
-  virtual void register_socket_acceptor(socket_acceptor& acceptor);
-
-  // Remove a socket acceptor registration from the service. This should be
-  // called immediately before the socket acceptor is closed.
-  virtual void deregister_socket_acceptor(socket_acceptor& acceptor);
+  // Destroy a socket connector implementation.
+  virtual void do_socket_acceptor_destroy(
+      socket_acceptor_service::impl_type& impl);
 
   // Start an asynchronous accept on the given socket. The peer_socket object
   // must be valid until the accept's completion handler is invoked.
-  virtual void async_socket_accept(socket_acceptor& acceptor,
-      stream_socket& peer_socket, const accept_handler& handler,
-      completion_context& context);
+  virtual void do_socket_acceptor_async_accept(
+      socket_acceptor_service::impl_type& impl,
+      socket_acceptor_service::peer_type& peer_socket,
+      const accept_handler& handler, completion_context& context);
 
   // Start an asynchronous accept on the given socket. The peer_socket and
   // peer_address objects must be valid until the accept's completion handler
   // is invoked.
-  virtual void async_socket_accept(socket_acceptor& acceptor,
-      stream_socket& peer_socket, socket_address& peer_address,
-      const accept_handler& handler, completion_context& context);
-
-  // Register a new socket_connector with the service. This should be called
-  // only after the socket connector has been opened.
-  virtual void register_socket_connector(socket_connector& connector);
-
-  // Remove a socket connector registration from the service. This should be
-  // called immediately before the socket connector is closed.
-  virtual void deregister_socket_connector(socket_connector& connector);
-
-  // Start an asynchronous connect on the given socket. The peer_socket object
-  // be valid until the connect's completion handler is invoked.
-  virtual void async_socket_connect(socket_connector& connector,
-      stream_socket& peer_socket, const socket_address& peer_address,
-      const connect_handler& handler, completion_context& context);
-
-  // Register a new stream socket with the service. This should be called only
-  // after the socket has been opened, i.e. after an accept or just before a
-  // connect.
-  virtual void register_stream_socket(stream_socket& socket);
-
-  // Remove a stream socket registration from the service. This should be
-  // called immediately before the socket is closed.
-  virtual void deregister_stream_socket(stream_socket& socket);
-
-  // Start an asynchronous send. The data being sent must be valid for the
-  // lifetime of the asynchronous operation.
-  virtual void async_stream_socket_send(stream_socket& socket,
-      const void* data, size_t length, const send_handler& handler,
+  virtual void do_socket_acceptor_async_accept(
+      socket_acceptor_service::impl_type& impl,
+      socket_acceptor_service::peer_type& peer_socket,
+      socket_address& peer_address, const accept_handler& handler,
       completion_context& context);
+
+  // Destroy a socket connector implementation.
+  virtual void do_socket_connector_destroy(
+      socket_connector_service::impl_type& impl);
+
+  // Start an asynchronous connect.
+  virtual void do_socket_connector_async_connect(
+      socket_connector_service::impl_type& impl,
+      socket_connector_service::peer_type& peer_socket,
+      const socket_address& peer_address, const connect_handler& handler,
+      completion_context& context);
+
+  // Create a new socket connector implementation.
+  virtual void do_stream_socket_create(stream_socket_service::impl_type& impl,
+      stream_socket_service::impl_type new_impl);
+
+  // Destroy a socket connector implementation.
+  virtual void do_stream_socket_destroy(
+      stream_socket_service::impl_type& impl);
+
+  // Start an asynchronous send.
+  virtual void do_stream_socket_async_send(
+      stream_socket_service::impl_type& impl, const void* data, size_t length,
+      const send_handler& handler, completion_context& context);
 
   // Start an asynchronous send that will not return until all of the data has
-  // been sent or an error occurs. The data being sent must be valid for the
-  // lifetime of the asynchronous operation.
-  virtual void async_stream_socket_send_n(stream_socket& socket,
-      const void* data, size_t length, const send_n_handler& handler,
-      completion_context& context);
+  // been sent or an error occurs.
+  virtual void do_stream_socket_async_send_n(
+      stream_socket_service::impl_type& impl, const void* data, size_t length,
+      const send_n_handler& handler, completion_context& context);
 
-  // Start an asynchronous receive. The buffer for the data being received must
-  // be valid for the lifetime of the asynchronous operation.
-  virtual void async_stream_socket_recv(stream_socket& socket, void* data,
-      size_t max_length, const recv_handler& handler,
-      completion_context& context);
+  // Start an asynchronous receive.
+  virtual void do_stream_socket_async_recv(
+      stream_socket_service::impl_type& impl, void* data, size_t max_length,
+      const recv_handler& handler, completion_context& context);
 
   // Start an asynchronous receive that will not return until the specified
-  // number of bytes has been received or an error occurs. The buffer for the
-  // data being received must be valid for the lifetime of the asynchronous
-  // operation.
-  virtual void async_stream_socket_recv_n(stream_socket& socket, void* data,
-      size_t length, const recv_n_handler& handler,
-      completion_context& context);
-
-  // Provide access to these functions for the operation implementations.
-  static void do_associate_accepted_stream_socket(socket_acceptor& acceptor,
-      stream_socket& peer_socket, stream_socket::native_type handle);
-  static void do_associate_connected_stream_socket(socket_connector& connector,
-      stream_socket& peer_socket, stream_socket::native_type handle);
+  // number of bytes has been received or an error occurs.
+  virtual void do_stream_socket_async_recv_n(
+      stream_socket_service::impl_type& impl, void* data, size_t length,
+      const recv_n_handler& handler, completion_context& context);
 
 private:
   // The demuxer used for delivering completion notifications.

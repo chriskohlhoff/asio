@@ -35,14 +35,17 @@ class basic_timer_queue
   : private boost::noncopyable
 {
 public:
+  /// The type of the service that will be used to provide timer operations.
+  typedef Service service_type;
+
   /// Constructor.
   explicit basic_timer_queue(demuxer& d)
-    : service_(dynamic_cast<Service&>(d.get_service(Service::id)))
+    : service_(dynamic_cast<service_type&>(d.get_service(service_type::id)))
   {
   }
 
   /// The handler for when a timer expires.
-  typedef typename Service::timer_handler timer_handler;
+  typedef typename service_type::timer_handler timer_handler;
 
   /// Schedule a timer to fire once at the given start_time. The id of the new
   /// timer is returned so that it may be cancelled.
@@ -72,7 +75,7 @@ public:
 
 private:
   /// The backend service implementation.
-  Service& service_;
+  service_type& service_;
 };
 
 } // namespace asio

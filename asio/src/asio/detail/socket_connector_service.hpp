@@ -17,8 +17,18 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <boost/function.hpp>
+#include "asio/detail/pop_options.hpp"
+
+#include "asio/basic_stream_socket.hpp"
 #include "asio/service.hpp"
 #include "asio/service_type_id.hpp"
+#include "asio/detail/stream_socket_service.hpp"
+
+namespace asio { class completion_context; }
+namespace asio { class socket_address; }
+namespace asio { class socket_error; }
 
 namespace asio {
 namespace detail {
@@ -29,17 +39,18 @@ class socket_connector_service
   : public virtual service
 {
 public:
-  typedef socket_connector::connect_handler connect_handler;
-
   // The service type id.
   static const service_type_id id;
 
-  /// The native type of the socket connector. This type is dependent on the
-  /// underlying implementation of the socket layer.
+  // The native type of the socket connector. This type is dependent on the
+  // underlying implementation of the socket layer.
   typedef socket_connector_impl* impl_type;
 
-  // Initialise a socket connector to a null implementation.
-  void nullify(impl_type& impl);
+  // The type of the stream sockets that will be connected.
+  typedef basic_stream_socket<stream_socket_service> peer_type;
+
+  // The value to use for uninitialised implementations.
+  static const impl_type invalid_impl = 0;
 
   // Create a new socket connector implementation.
   void create(impl_type& impl);
@@ -48,36 +59,28 @@ public:
   void destroy(impl_type& impl);
 
   // Connect the given socket to the peer at the specified address. Throws a
-  // socket_error exception on failure.
-  void connect(socket_type& peer_socket, const socket_address& peer_address);
+  // socket_error exception on error.
+  void connect(impl_type& impl, peer_type& peer_socket,
+      const socket_address& peer_address);
+
+  // The type of a handler called when the asynchronous connect completes. The
+  // only argument is the error code.
+  typedef boost::function1<void, const socket_error&> connect_handler;
 
   // Start an asynchronous connect. The peer_socket object must be valid until
   // the connect's completion handler is invoked.
-  void async_connect(peer_socket& peer_socket,
+  void async_connect(impl_type& impl, peer_type& peer_socket,
       const socket_address& peer_address, const connect_handler& handler,
-      completion_context& context = completion_context::null());
-
-  // Register a new socket_connector with the service. This should be called
-  // only after the socket connector has been opened.
-  virtual void register_socket_connector(socket_connector& connector) = 0;
-
-  // Remove a socket connector registration from the service. This should be
-  // called immediately before the socket connector is closed.
-  virtual void deregister_socket_connector(socket_connector& connector) = 0;
-
-  // Start an asynchronous connect on the given socket. The peer_socket object
-  // be valid until the connect's completion handler is invoked.
-  virtual void async_socket_connect(socket_connector& connector,
-      stream_socket& peer_socket, const socket_address& peer_address,
-      const connect_handler& handler, completion_context& context) = 0;
-
-protected:
-  // Associate the given stream_socket with the underlying native handle that
-  // was obtained by the connector.
-  static void associate_connected_stream_socket(socket_connector& connector,
-      stream_socket& peer_socket, stream_socket::native_type handle);
+      completion_context& context);
 
 private:
+  // Destroy a socket connector implementation.
+  virtual void do_socket_connector_destroy(impl_type& impl) = 0;
+
+  // Start an asynchronous connect.
+  virtual void do_socket_connector_async_connect(impl_type& impl,
+      peer_type& peer_socket, const socket_address& peer_address,
+      const connect_handler& handler, completion_context& context) = 0;
 };
 
 } // namespace detail

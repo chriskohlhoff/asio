@@ -27,14 +27,7 @@ namespace asio {
 namespace detail {
 
 const service_type_id dgram_socket_service::id;
-
-void
-dgram_socket_service::
-nullify(
-    impl_type& impl)
-{
-  impl = invalid_socket;
-}
+const dgram_socket_service::impl_type dgram_socket_service::invalid_impl;
 
 void
 dgram_socket_service::
@@ -56,14 +49,6 @@ create(
     boost::throw_exception(socket_error(socket_ops::get_error()));
 
   impl = sock.release();
-}
-
-void
-attach(
-    impl_type& impl,
-    impl_type new_impl)
-{
-  impl = new_impl;
 }
 
 void

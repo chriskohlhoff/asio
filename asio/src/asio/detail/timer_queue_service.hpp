@@ -22,9 +22,10 @@
 #include <boost/thread/xtime.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/completion_context.hpp"
 #include "asio/service.hpp"
 #include "asio/service_type_id.hpp"
+
+namespace asio { class completion_context; }
 
 namespace asio {
 namespace detail {
@@ -36,23 +37,22 @@ public:
   // The service type id.
   static const service_type_id id;
 
-  /// The handler for when a timer expires.
+  // The handler for when a timer expires.
   typedef boost::function0<void> timer_handler;
 
-  /// Schedule a timer to fire once at the given start_time. The id of the new
-  /// timer is returned so that it may be cancelled.
+  // Schedule a timer to fire once at the given start_time. The id of the new
+  // timer is returned so that it may be cancelled.
   int schedule_timer(void* owner, const boost::xtime& start_time,
-      const timer_handler& handler,
-      completion_context& context = completion_context::null());
+      const timer_handler& handler, completion_context& context);
 
-  /// Schedule a timer to fire first after at the start time, and then every
-  /// interval until the timer is cancelled. The id of the new timer is
-  /// returned so that it may be cancelled.
+  // Schedule a timer to fire first after at the start time, and then every
+  // interval until the timer is cancelled. The id of the new timer is
+  // returned so that it may be cancelled.
   int schedule_timer(void* owner, const boost::xtime& start_time,
       const boost::xtime& interval, const timer_handler& handler,
-      completion_context& context = completion_context::null());
+      completion_context& context);
 
-  /// Cancel the timer with the given id.
+  // Cancel the timer with the given id.
   void cancel_timer(void* owner, int timer_id);
 
 private:
