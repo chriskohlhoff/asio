@@ -261,7 +261,84 @@ Return to \ref tuttimer4
 */
 
 /**
-\page tuttimer5 Tutorial Timer.5 - Synchronising handlers in threaded programs
+\page tuttimer5 Tutorial Timer.5 - Synchronising handlers in multithreaded programs
+
+This tutorial demonstrates the use of the asio::locking_dispatcher class to
+synchronise callback handlers in a multithreaded program.
+
+The previous four tutorials avoided the issue of handler synchronisation by
+calling the asio::demuxer::run() function from one thread only. As you already
+know, the asio library provides a guarantee that callback handlers will
+<b>only</b> be called from threads that are currently calling
+asio::demuxer::run(). Consequently, calling asio::demuxer::run() from only one
+thread ensures that callback handlers cannot run concurrently.
+
+The single threaded approach is usually the best place to start when
+developing applications using asio. The downside is the limitations it places
+on programs, particularly servers, including:
+
+<ul>
+<li>Poor responsiveness when handlers can take a long time to complete.</li>
+<li>An inability to scale on multiprocessor systems.</li>
+</ul>
+
+If you find yourself running into these limitations, an alternative approach
+is to have a pool of threads calling asio::demuxer::run(). However, as this
+allows handlers to execute concurrently, we need a method of synchronisation
+when handlers might be accessing a shared, thread-unsafe resource.
+
+\dontinclude timer5/timer.cpp
+
+\until include "asio.hpp"
+
+<b>Step 1.</b> We start by defining a class called <tt>printer</tt>, similar
+to the class in the previous tutorial. This class will extend the previous
+tutorial by running two timers in parallel.
+
+\until public
+
+<b>Step 2.</b> In addition to initialising a pair of asio::timer members, the
+constructor initialises the <tt>dispatcher_</tt> member, an object of type
+asio::locking_dispatcher.
+
+An asio::locking_dispatcher guarantees that, for those handlers that are
+dispatched through it, an executing handler will be allowed to complete before
+the next one is started. This is guaranteed irrespective of the number of
+threads that are calling asio::demuxer::run(). Of course, the handlers may
+still execute concurrently with other handlers that were <b>not</b> dispatched
+through an asio::locking_dispatcher, or were dispatched through a different
+asio::locking_dispatcher object.
+
+\until {
+
+<b>Step 3.</b> When initiating the asynchronous operations, each callback
+handler is "wrapped" using the asio::locking_dispatcher object. The
+asio::locking_dispatcher::wrap() function returns a new handler that
+automatically dispatches its contained handler through the
+asio::locking_dispatcher object. By wrapping the handlers using the same
+asio::locking_dispatcher, we are ensuring that they cannot execute
+concurrently.
+
+\until }
+\until }
+
+<b>Step 4.</b> In a multithreaded program, the handlers for asynchronous
+operations should be synchronised if they access shared resources. In this
+tutorial, the shared resources used by the handlers (<tt>print1</tt> and
+<tt>print2</tt>) are <tt>std::cout</tt> and the <tt>count_</tt> data member.
+
+\until };
+
+<b>Step 5.</b> The <tt>main</tt> function now causes asio::demuxer::run() to
+be called from two threads: the main thread and one additional thread. This is
+accomplished using an asio::thread object.
+
+Just as it would with a call from a single thread, concurrent calls to
+asio::demuxer::run() will continue to execute while there is "work" left to
+do. The background thread will not exit until all asynchronous operations have
+completed.
+
+\until }
 
 See the \ref tuttimer5src "full source listing" \n
 Return to the \ref tutindex "tutorial index" \n
