@@ -76,7 +76,7 @@ public:
     // Ensure that the context has been acquired. Returns true if the context
     // was acquired and the operation can proceed immediately, false otherwise.
     template <typename Completion_Context>
-    bool acquire_context(HANDLE iocp, Completion_Context& context)
+    bool acquire_context(HANDLE iocp, Completion_Context context)
     {
       if (context_acquired_)
         return true;
@@ -93,7 +93,7 @@ public:
 
     // Ensure that the context has been released.
     template <typename Completion_Context>
-    void release_context(Completion_Context& context)
+    void release_context(Completion_Context context)
     {
       if (context_acquired_)
       {
@@ -178,7 +178,7 @@ public:
   struct completion_operation
     : public operation
   {
-    completion_operation(Handler handler, Completion_Context& context,
+    completion_operation(Handler handler, Completion_Context context,
         bool context_acquired)
       : operation(context_acquired),
         handler_(handler),
@@ -210,12 +210,12 @@ public:
 
   private:
     Handler handler_;
-    Completion_Context& context_;
+    Completion_Context context_;
   };
 
   // Notify the demuxer that an operation has completed.
   template <typename Handler, typename Completion_Context>
-  void operation_completed(Handler handler, Completion_Context& context,
+  void operation_completed(Handler handler, Completion_Context context,
       bool allow_nested_delivery)
   {
     if (context.try_acquire())
@@ -245,7 +245,7 @@ public:
 
   // Notify the demuxer of an operation that started and finished immediately.
   template <typename Handler, typename Completion_Context>
-  void operation_immediate(Handler handler, Completion_Context& context,
+  void operation_immediate(Handler handler, Completion_Context context,
       bool allow_nested_delivery)
   {
     operation_started();

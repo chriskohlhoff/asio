@@ -129,7 +129,7 @@ public:
     : public win_iocp_demuxer_service::operation
   {
   public:
-    send_operation(Handler handler, Completion_Context& context)
+    send_operation(Handler handler, Completion_Context context)
       : win_iocp_demuxer_service::operation(false),
         handler_(handler),
         context_(context)
@@ -144,6 +144,7 @@ public:
 
       socket_error error(last_error);
       do_upcall(handler_, error, bytes_transferred);
+      release_context(context_);
       delete this;
       return true;
     }
@@ -162,14 +163,14 @@ public:
 
   private:
     Handler handler_;
-    Completion_Context& context_;
+    Completion_Context context_;
   };
 
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
   template <typename Handler, typename Completion_Context>
   void async_send(impl_type& impl, const void* data, size_t length,
-      Handler handler, Completion_Context& context)
+      Handler handler, Completion_Context context)
   {
     send_operation<Handler, Completion_Context>* send_op =
       new send_operation<Handler, Completion_Context>(handler, context);
@@ -214,7 +215,7 @@ public:
     : public win_iocp_demuxer_service::operation
   {
   public:
-    recv_operation(Handler handler, Completion_Context& context)
+    recv_operation(Handler handler, Completion_Context context)
       : win_iocp_demuxer_service::operation(false),
         handler_(handler),
         context_(context)
@@ -229,6 +230,7 @@ public:
 
       socket_error error(last_error);
       do_upcall(handler_, error, bytes_transferred);
+      release_context(context_);
       delete this;
       return true;
     }
@@ -247,14 +249,14 @@ public:
 
   private:
     Handler handler_;
-    Completion_Context& context_;
+    Completion_Context context_;
   };
 
   // Start an asynchronous receive. The buffer for the data being received
   // must be valid for the lifetime of the asynchronous operation.
   template <typename Handler, typename Completion_Context>
   void async_recv(impl_type& impl, void* data, size_t max_length,
-      Handler handler, Completion_Context& context)
+      Handler handler, Completion_Context context)
   {
     recv_operation<Handler, Completion_Context>* recv_op
       = new recv_operation<Handler, Completion_Context>(handler, context);

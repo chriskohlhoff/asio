@@ -156,7 +156,7 @@ public:
     : public win_iocp_demuxer_service::operation
   {
   public:
-    sendto_operation(Handler handler, Completion_Context& context)
+    sendto_operation(Handler handler, Completion_Context context)
       : win_iocp_demuxer_service::operation(false),
         handler_(handler),
         context_(context)
@@ -171,6 +171,7 @@ public:
 
       socket_error error(last_error);
       do_upcall(handler_, error, bytes_transferred);
+      release_context(context_);
       delete this;
       return true;
     }
@@ -189,15 +190,14 @@ public:
 
   private:
     Handler handler_;
-    Completion_Context& context_;
+    Completion_Context context_;
   };
 
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
   template <typename Address, typename Handler, typename Completion_Context>
   void async_sendto(impl_type& impl, const void* data, size_t length,
-      const Address& destination, Handler handler,
-      Completion_Context& context)
+      const Address& destination, Handler handler, Completion_Context context)
   {
     sendto_operation<Handler, Completion_Context>* sendto_op =
       new sendto_operation<Handler, Completion_Context>(handler, context);
@@ -250,7 +250,7 @@ public:
   {
   public:
     recvfrom_operation(Address& address, Handler handler,
-        Completion_Context& context)
+        Completion_Context context)
       : win_iocp_demuxer_service::operation(false),
         address_(address),
         address_size_(address.native_size()),
@@ -273,6 +273,7 @@ public:
       address_.native_size(address_size_);
       socket_error error(last_error);
       do_upcall(handler_, error, bytes_transferred);
+      release_context(context_);
       delete this;
       return true;
     }
@@ -293,7 +294,7 @@ public:
     Address& address_;
     int address_size_;
     Handler handler_;
-    Completion_Context& context_;
+    Completion_Context context_;
   };
 
   // Start an asynchronous receive. The buffer for the data being received and
@@ -301,7 +302,7 @@ public:
   // asynchronous operation.
   template <typename Address, typename Handler, typename Completion_Context>
   void async_recvfrom(impl_type& impl, void* data, size_t max_length,
-      Address& sender_address, Handler handler, Completion_Context& context)
+      Address& sender_address, Handler handler, Completion_Context context)
   {
     recvfrom_operation<Address, Handler, Completion_Context>* recvfrom_op =
       new recvfrom_operation<Address, Handler, Completion_Context>(
