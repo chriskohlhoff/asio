@@ -44,7 +44,12 @@ case $host in
     LDFLAGS="$LDFLAGS -pthread"
     ;;
   *-*-solaris*)
-    CXXFLAGS="$CXXFLAGS -D_REENTRANT"
+    if test "$GXX" = yes; then
+      CXXFLAGS="$CXXFLAGS -D_REENTRANT"
+    else
+      # We'll assume Sun's CC.
+      CXXFLAGS="$CXXFLAGS -mt -D_REENTRANT"
+    fi
     LIBS="$LIBS -lsocket -lnsl -lpthread"
     ;;
   *-*-mingw32*)
