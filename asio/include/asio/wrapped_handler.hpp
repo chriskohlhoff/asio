@@ -25,6 +25,8 @@ template <typename Dispatcher, typename Handler>
 class wrapped_handler
 {
 public:
+  typedef void result_type;
+
   wrapped_handler(Dispatcher& dispatcher, Handler handler)
     : dispatcher_(dispatcher),
       handler_(handler)
