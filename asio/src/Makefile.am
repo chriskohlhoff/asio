@@ -13,31 +13,29 @@ noinst_PROGRAMS = \
 	tests/timed_connect_test \
 	tests/timed_dgram_recv_test \
 	tests/timer_test \
-	tests/tpc_echo_server_test
+	tests/tpc_echo_server_test \
+	examples/tutorial/timer1/timer \
+	examples/tutorial/timer2/timer \
+	examples/tutorial/timer3/timer \
+	examples/tutorial/timer4/timer
 
 AM_CXXFLAGS = -I../include
 
 tests_dispatcher_test_SOURCES = tests/dispatcher_test.cpp
-
 tests_dgram_echo_server_test_SOURCES = tests/dgram_echo_server_test.cpp
-
 tests_dgram_echo_client_test_SOURCES = tests/dgram_echo_client_test.cpp
-
 tests_echo_client_test_SOURCES = tests/echo_client_test.cpp
-
 tests_echo_server_test_SOURCES = tests/echo_server_test.cpp
-
 tests_socket_accept_test_SOURCES = tests/socket_accept_test.cpp
-
 tests_timed_accept_test_SOURCES = tests/timed_accept_test.cpp
-
 tests_timed_connect_test_SOURCES = tests/timed_connect_test.cpp
-
 tests_timed_dgram_recv_test_SOURCES = tests/timed_dgram_recv_test.cpp
-
 tests_timer_test_SOURCES = tests/timer_test.cpp
-
 tests_tpc_echo_server_test_SOURCES = tests/tpc_echo_server_test.cpp
+examples_tutorial_timer1_timer_SOURCES = examples/tutorial/timer1/timer.cpp
+examples_tutorial_timer2_timer_SOURCES = examples/tutorial/timer2/timer.cpp
+examples_tutorial_timer3_timer_SOURCES = examples/tutorial/timer3/timer.cpp
+examples_tutorial_timer4_timer_SOURCES = examples/tutorial/timer4/timer.cpp
 
 EXTRA_DIST = \
 	Makefile.bor \

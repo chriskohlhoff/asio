@@ -17,7 +17,11 @@ all: \
 	tests\timed_connect_test.exe \
 	tests\timed_dgram_recv_test.exe \
 	tests\timer_test.exe \
-	tests\tpc_echo_server_test.exe
+	tests\tpc_echo_server_test.exe \
+	examples\tutorial\timer1\timer.exe \
+	examples\tutorial\timer2\timer.exe \
+	examples\tutorial\timer3\timer.exe \
+	examples\tutorial\timer4\timer.exe
 
 clean:
 	-del /q /s tests\*.exe
@@ -25,6 +29,11 @@ clean:
 	-del /q /s tests\*.ilk
 	-del /q /s tests\*.pdb
 	-del /q /s tests\*.obj
+	-del /q /s examples\*.exe
+	-del /q /s examples\*.exp
+	-del /q /s examples\*.ilk
+	-del /q /s examples\*.pdb
+	-del /q /s examples\*.obj
 	-del /q /s *.pdb
 
 .obj.exe:

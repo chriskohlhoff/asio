@@ -1,4 +1,57 @@
 /**
- * @namespace asio
- * @brief The asio namespace defines all user-accessible classes and templates.
- */
+\namespace asio
+\brief The asio namespace defines all user-accessible classes and templates.
+*/
+
+/**
+\mainpage
+
+<TABLE BORDER="0" WIDTH="100%">
+<TR>
+<TD VALIGN="TOP">
+
+<H2>Namespaces</H2>
+
+\li ::asio
+
+<H2>Core Classes</H2>
+
+\li asio::demuxer
+\li asio::dgram_socket
+\li asio::socket_acceptor
+\li asio::socket_connector
+\li asio::stream_socket
+\li asio::timer
+
+<H2>Support Classes</H2>
+
+\li asio::counting_completion_context
+\li asio::inet_address_v4
+\li asio::null_completion_context
+\li asio::socket_error
+\li asio::timer_base
+
+</TD>
+<TD VALIGN="TOP">
+
+<H2>Core Templates</H2>
+
+\li asio::basic_demuxer
+\li asio::basic_dgram_socket
+\li asio::basic_socket_acceptor
+\li asio::basic_socket_connector
+\li asio::basic_stream_socket
+\li asio::basic_timer
+\li asio::service_factory
+
+<H2>Stream Decorator Templates</H2>
+
+\li asio::buffered_recv_stream
+\li asio::buffered_send_stream
+\li asio::buffered_stream
+
+</TD>
+</TR>
+</TABLE>
+
+*/

@@ -52,7 +52,7 @@ public:
 
   /// Construct and set to a particular time.
   template <typename Demuxer>
-  explicit basic_timer(Demuxer& d, from_type from_when, long seconds,
+  basic_timer(Demuxer& d, from_type from_when, long seconds,
       int microseconds = 0)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_.null())
@@ -67,32 +67,32 @@ public:
     service_.destroy(impl_);
   }
 
-  // Set the timer.
+  /// Set the timer.
   void set(from_type from_when, long seconds, long microseconds = 0)
   {
     service_.set(impl_, from_when, seconds, microseconds);
   }
 
-  // Expire the timer immediately.
+  /// Expire the timer immediately.
   void expire()
   {
     service_.expire(impl_);
   }
 
-  // Perform a blocking wait on the timer.
+  /// Perform a blocking wait on the timer.
   void wait()
   {
     service_.wait(impl_);
   }
 
-  // Start an asynchronous wait on the timer.
+  /// Start an asynchronous wait on the timer.
   template <typename Handler>
   void async_wait(Handler handler)
   {
     service_.async_wait(impl_, handler, null_completion_context::instance());
   }
 
-  // Start an asynchronous wait on the timer.
+  /// Start an asynchronous wait on the timer.
   template <typename Handler, typename Completion_Context>
   void async_wait(Handler handler, Completion_Context& context)
   {

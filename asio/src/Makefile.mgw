@@ -19,13 +19,21 @@ TEST_EXES = \
 	tests/timer_test.exe \
 	tests/tpc_echo_server_test.exe
 
-all: $(TEST_EXES)
+EXAMPLE_EXES = \
+	examples\tutorial\timer1\timer.exe \
+	examples\tutorial\timer2\timer.exe \
+	examples\tutorial\timer3\timer.exe \
+	examples\tutorial\timer4\timer.exe
+
+all: $(TEST_EXES) $(EXAMPLE_EXES)
 
 clean:
 	-del /q /s tests\*.exe
 	-del /q /s tests\*.o
+	-del /q /s examples\*.exe
+	-del /q /s examples\*.o
 
-$(TEST_EXES): tests/%.exe: tests/%.o
+$(TEST_EXES) $(EXAMPLE_EXES): %.exe: %.o
 	g++ -o$@ $(LDFLAGS) $< $(LIBS)
 
 .cpp.o:

@@ -1,0 +1,140 @@
+/**
+\page tutindex Tutorial Index
+
+The first four tutorial programs introduce the fundamental concepts required
+to use the asio toolkit. Before plunging into the complex world of network
+programming, these tutorial programs illustrate the basic skills using simple
+asynchronous timers.
+
+\li \ref tuttimer1
+\li \ref tuttimer2
+\li \ref tuttimer3
+\li \ref tuttimer4
+
+*/
+
+/**
+\page tuttimer1 Tutorial Part 1 - Using a timer synchronously
+
+This tutorial program introduces asio by showing how to perform a blocking
+wait on a timer.
+
+\dontinclude timer1/timer.cpp
+
+<b>Step 1.</b> We start by including the necessary header files. All of the
+asio classes can be used by simply including the <tt>"asio.hpp"</tt> header
+file.
+
+\until include "asio.hpp"
+
+<b>Step 2.</b> All programs that use asio need to have at least one
+asio::demuxer object. This class provides access to the event demultiplexing
+functionality, but more on what that actually means later. We declare an
+object of this type first thing in the main function.
+
+\until asio::demuxer
+
+<b>Step 3.</b> Next we declare an object of type asio::timer. The core asio
+classes that provide I/O functionality (or as in this case timer
+functionality) always take a reference to a demuxer as their first constructor
+argument. The remaining arguments to the constructor set the timer to expire 5
+seconds from now.
+
+\until asio::timer
+
+<b>Step 4.</b> In this simple example we perform a blocking wait on the timer.
+That is, the call to wait() will not return until the timer has expired, 5
+seconds after it was created.
+
+\until wait
+
+<b>Step 5.</b> Finally we print the obligatory <tt>"Hello, world!"</tt>
+message to show when the timer has expired.
+
+\until }
+
+See the \ref tuttimer1src \n
+Return to the \ref tutindex \n
+Go on to \ref tuttimer2
+
+*/
+
+/**
+\page tuttimer1src Source listing for Tutorial Part 1
+\include timer1/timer.cpp
+Return to \ref tuttimer1
+*/
+
+/**
+\page tuttimer2 Tutorial Part 2 - Using a timer asynchronously
+
+This tutorial program illustrates how to use asio's asynchronous callback
+functionality by modifying the program from Part 1 to perform an asynchronous
+wait on the timer.
+
+\dontinclude timer2/timer.cpp
+
+\until include "asio.hpp"
+
+<b>Step 1.</b> Using asio's asynchronous functionality means having a callback
+function that will be called when an asynchronous operation completes. In this
+program we define a function called <tt>print</tt> to be called when the
+asynchronous wait finishes.
+
+\until asio::timer 
+
+<b>Step 2.</b> Next, instead of doing a blocking wait as in Part 1, we
+call the <tt>async_wait</tt> function to perform an asynchronous wait. When
+calling this function we pass the <tt>print</tt> callback handler that was
+defined above.
+
+
+\skipline async_wait
+
+<b>Step 3.</b> Finally, we must call the asio::demuxer::run() member function
+on the demuxer object.
+
+The asio library provides a guarantee that callback handlers will <b>only</b>
+be called from threads that are currently calling asio::demuxer::run().
+Therefore unless the asio::demuxer::run() function is called the callback for
+the asynchronous wait completion will never be invoked.
+
+The asio::demuxer::run() function will also continue to run while there is
+still "work" to do. In this example, the work is the asynchronous wait on the
+timer, so the call will not return until the timer has expired and the
+callback has completed.
+
+\skip run
+\until }
+
+See the \ref tuttimer2src \n
+Return to the \ref tutindex \n
+Go back to \ref tuttimer1 \n
+Go on to \ref tuttimer3
+
+*/
+
+/**
+\page tuttimer2src Source listing for Tutorial Part 2
+\include timer2/timer.cpp
+Return to \ref tuttimer2
+*/
+
+/**
+\page tuttimer3 Tutorial Part 3 - Binding arguments to a handler
+\include timer3/timer.cpp
+
+Return to the \ref tutindex \n
+Go back to \ref tuttimer2 \n
+Go on to \ref tuttimer4
+
+*/
+
+/**
+\page tuttimer4 Tutorial Part 4 - Using a member function as a handler
+\include timer4/timer.cpp
+
+Return to the \ref tutindex \n
+Go back to \ref tuttimer3 \n
+
+*/

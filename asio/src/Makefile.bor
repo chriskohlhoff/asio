@@ -17,12 +17,19 @@ all: \
 	tests\timed_connect_test.exe \
 	tests\timed_dgram_recv_test.exe \
 	tests\timer_test.exe \
-	tests\tpc_echo_server_test.exe
+	tests\tpc_echo_server_test.exe \
+	examples\tutorial\timer1\timer.exe \
+	examples\tutorial\timer2\timer.exe \
+	examples\tutorial\timer3\timer.exe \
+	examples\tutorial\timer4\timer.exe
 
 clean:
 	-del /q /s tests\*.exe
 	-del /q /s tests\*.tds
 	-del /q /s tests\*.obj
+	-del /q /s examples\*.exe
+	-del /q /s examples\*.tds
+	-del /q /s examples\*.obj
 
 .obj.exe:
 	bcc32 -e$@ $(LDFLAGS) $< $(LIBS)
