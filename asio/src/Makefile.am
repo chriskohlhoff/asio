@@ -3,13 +3,13 @@ AUTOMAKE_OPTIONS = subdir-objects
 SUBDIRS = doc
 
 noinst_PROGRAMS = \
-	tests/socket_accept_test \
 	tests/performance/client \
 	tests/performance/server \
 	tests/unit/demuxer_test \
 	tests/unit/dgram_socket_test \
 	tests/unit/error_handler_test \
 	tests/unit/fixed_buffer_test \
+	tests/unit/socket_acceptor_test \
 	tests/unit/timer_test \
 	examples/chat/chat_client \
 	examples/chat/chat_server \
@@ -32,6 +32,7 @@ TESTS = \
 	tests/unit/dgram_socket_test \
 	tests/unit/error_handler_test \
 	tests/unit/fixed_buffer_test \
+	tests/unit/socket_acceptor_test \
 	tests/unit/timer_test
 
 noinst_HEADERS = \
@@ -40,13 +41,13 @@ noinst_HEADERS = \
 
 AM_CXXFLAGS = -I../include
 
-tests_socket_accept_test_SOURCES = tests/socket_accept_test.cpp
 tests_performance_client_SOURCES = tests/performance/client.cpp
 tests_performance_server_SOURCES = tests/performance/server.cpp
 tests_unit_demuxer_test_SOURCES = tests/unit/demuxer_test.cpp
 tests_unit_dgram_socket_test_SOURCES = tests/unit/dgram_socket_test.cpp
 tests_unit_error_handler_test_SOURCES = tests/unit/error_handler_test.cpp
 tests_unit_fixed_buffer_test_SOURCES = tests/unit/fixed_buffer_test.cpp
+tests_unit_socket_acceptor_test_SOURCES = tests/unit/socket_acceptor_test.cpp
 tests_unit_timer_test_SOURCES = tests/unit/timer_test.cpp
 examples_chat_chat_client_SOURCES = examples/chat/chat_client.cpp
 examples_chat_chat_server_SOURCES = examples/chat/chat_server.cpp
