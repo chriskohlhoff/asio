@@ -58,21 +58,21 @@ public:
     return demuxer_;
   }
 
-  // Create a new socket acceptor implementation.
-  template <typename Address>
-  void create(impl_type& impl, const Address& address)
-  {
-    create(impl, address, SOMAXCONN);
-  }
-
   // Create a new stream socket implementation.
-  template <typename Address>
-  void create(impl_type& impl, const Address& address, int listen_queue)
+  template <typename Address, typename Error_Handler>
+  void create(impl_type& impl, const Address& address, int listen_queue,
+      Error_Handler error_handler)
   {
+    if (listen_queue == 0)
+      listen_queue = SOMAXCONN;
+
     socket_holder sock(socket_ops::socket(address.family(), SOCK_STREAM,
           IPPROTO_TCP));
     if (sock.get() == invalid_socket)
-      throw socket_error(socket_ops::get_error());
+    {
+      error_handler(socket_error(socket_ops::get_error()));
+      return;
+    }
 
     int reuse = 1;
     socket_ops::setsockopt(sock.get(), SOL_SOCKET, SO_REUSEADDR, &reuse,
@@ -80,12 +80,20 @@ public:
 
     if (socket_ops::bind(sock.get(), address.native_address(),
           address.native_size()) == socket_error_retval)
-      throw socket_error(socket_ops::get_error());
+    {
+      error_handler(socket_error(socket_ops::get_error()));
+      return;
+    }
 
     if (socket_ops::listen(sock.get(), listen_queue) == socket_error_retval)
-      throw socket_error(socket_ops::get_error());
+    {
+      error_handler(socket_error(socket_ops::get_error()));
+      return;
+    }
 
     impl = sock.release();
+
+    error_handler(socket_error(socket_error::success));
   }
 
   // Destroy a stream socket implementation.
@@ -98,58 +106,89 @@ public:
     }
   }
 
-  // Set a socket option. Throws a socket_error exception on failure.
-  template <typename Option>
-  void set_option(impl_type& impl, const Option& option)
+  // Set a socket option.
+  template <typename Option, typename Error_Handler>
+  void set_option(impl_type& impl, const Option& option,
+      Error_Handler error_handler)
   {
     if (socket_ops::setsockopt(impl, option.level(), option.name(),
           option.data(), option.size()))
-        throw socket_error(socket_ops::get_error());
+    {
+      error_handler(socket_error(socket_ops::get_error()));
+      return;
+    }
+
+    error_handler(socket_error(socket_error::success));
   }
 
-  // Set a socket option. Throws a socket_error exception on failure.
-  template <typename Option>
-  void get_option(impl_type& impl, Option& option)
+  // Set a socket option.
+  template <typename Option, typename Error_Handler>
+  void get_option(impl_type& impl, Option& option, Error_Handler error_handler)
   {
     socket_len_type size = option.size();
     if (socket_ops::getsockopt(impl, option.level(), option.name(),
           option.data(), &size))
-        throw socket_error(socket_ops::get_error());
+    {
+      error_handler(socket_error(socket_ops::get_error()));
+      return;
+    }
+
+    error_handler(socket_error(socket_error::success));
   }
 
-  // Accept a new connection. Throws a socket_error exception on failure.
-  template <typename Stream_Socket_Service>
+  // Accept a new connection.
+  template <typename Stream_Socket_Service, typename Error_Handler>
   void accept(impl_type& impl,
-      basic_stream_socket<Stream_Socket_Service>& peer)
+      basic_stream_socket<Stream_Socket_Service>& peer,
+      Error_Handler error_handler)
   {
     // We cannot accept a socket that is already open.
     if (peer.impl() != invalid_socket)
-      throw socket_error(socket_error::already_connected);
+    {
+      error_handler(socket_error(socket_error::already_connected));
+      return;
+    }
 
     socket_type new_socket = socket_ops::accept(impl, 0, 0);
     if (int error = socket_ops::get_error())
-      throw socket_error(error);
+    {
+      error_handler(socket_error(error));
+      return;
+    }
 
     peer.set_impl(new_socket);
+
+    error_handler(socket_error(socket_error::success));
   }
 
-  // Accept a new connection. Throws a socket_error exception on failure.
-  template <typename Stream_Socket_Service, typename Address>
+  // Accept a new connection.
+  template <typename Stream_Socket_Service, typename Address,
+      typename Error_Handler>
   void accept(impl_type& impl,
-      basic_stream_socket<Stream_Socket_Service>& peer, Address& peer_address)
+      basic_stream_socket<Stream_Socket_Service>& peer, Address& peer_address,
+      Error_Handler error_handler)
   {
     // We cannot accept a socket that is already open.
     if (peer.impl() != invalid_socket)
-      throw socket_error(socket_error::already_connected);
+    {
+      error_handler(socket_error(socket_error::already_connected));
+      return;
+    }
 
     socket_addr_len_type addr_len = peer_address.native_size();
     socket_type new_socket = socket_ops::accept(impl,
         peer_address.native_address(), &addr_len);
     if (int error = socket_ops::get_error())
-      throw socket_error(error);
+    {
+      error_handler(socket_error(error));
+      return;
+    }
+
     peer_address.native_size(addr_len);
 
     peer.set_impl(new_socket);
+
+    error_handler(socket_error(socket_error::success));
   }
 
   template <typename Stream_Socket_Service, typename Handler,

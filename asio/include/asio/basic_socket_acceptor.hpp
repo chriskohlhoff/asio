@@ -21,6 +21,7 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/error_handler.hpp"
 #include "asio/null_completion_context.hpp"
 #include "asio/service_factory.hpp"
 
@@ -68,22 +69,24 @@ public:
    * @param addr An address on the local machine on which the acceptor will
    * listen for new connections.
    *
+   * @param listen_queue The maximum length of the queue of pending
+   * connections. A value of 0 means use the default queue length.
+   *
    * @throws socket_error Thrown on failure.
    */
   template <typename Address>
-  basic_socket_acceptor(demuxer_type& d, const Address& addr)
+  basic_socket_acceptor(demuxer_type& d, const Address& addr,
+      int listen_queue = 0)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_type::null())
   {
-    service_.create(impl_, addr);
+    service_.create(impl_, addr, listen_queue, default_error_handler());
   }
 
-  /// Construct an acceptor opened on the given address, specifying the
-  /// maximum length of the queue of pending connetions.
+  /// Construct an acceptor opened on the given address.
   /**
    * This constructor creates an acceptor and automatically opens it to listen
-   * for new connections on the specified address. The maximum length of the
-   * queue of pending connections is also supplied.
+   * for new connections on the specified address.
    *
    * @param d The demuxer object that the acceptor will use to deliver
    * completions for any asynchronous operations performed on the acceptor.
@@ -92,16 +95,22 @@ public:
    * listen for new connections.
    *
    * @param listen_queue The maximum length of the queue of pending
-   * connections.
+   * connections. A value of 0 means use the default queue length.
    *
-   * @throws socket_error Thrown on failure.
+   * @param error_handler The handler to be called when an error occurs or when
+   * the function completes successfully. Copies will be made of the handler as
+   * required. The equivalent function signature of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
    */
-  template <typename Address>
-  basic_socket_acceptor(demuxer_type& d, const Address& addr, int listen_queue)
+  template <typename Address, typename Error_Handler>
+  basic_socket_acceptor(demuxer_type& d, const Address& addr, int listen_queue,
+      Error_Handler error_handler)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_type::null())
   {
-    service_.create(impl_, addr, listen_queue);
+    service_.create(impl_, addr, listen_queue, error_handler);
   }
 
   /// Destructor.
@@ -132,32 +141,39 @@ public:
    * @param addr An address on the local machine on which the acceptor will
    * listen for new connections.
    *
+   * @param listen_queue The maximum length of the queue of pending
+   * connections. A value of 0 means use the default queue length.
+   *
    * @throws socket_error Thrown on failure.
    */
   template <typename Address>
-  void open(const Address& addr)
+  void open(const Address& addr, int listen_queue = 0)
   {
-    service_.create(impl_, addr);
+    service_.create(impl_, addr, listen_queue, default_error_handler());
   }
 
-  /// Open the acceptor using the given address and length of the listen queue.
+  /// Open the acceptor using the given address.
   /**
    * This function opens the acceptor to listen for new connections on the
-   * specified address. The maximum length of the queue of pending connections
-   * is also supplied.
+   * specified address.
    *
    * @param addr An address on the local machine on which the acceptor will
    * listen for new connections.
    *
    * @param listen_queue The maximum length of the queue of pending
-   * connections.
+   * connections. A value of 0 means use the default queue length.
    *
-   * @throws socket_error Thrown on failure.
+   * @param error_handler The handler to be called when an error occurs or when
+   * the function completes successfully. Copies will be made of the handler as
+   * required. The equivalent function signature of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
    */
-  template <typename Address>
-  void open(const Address& addr, int listen_queue)
+  template <typename Address, typename Error_Handler>
+  void open(const Address& addr, int listen_queue, Error_Handler error_handler)
   {
-    service_.create(impl_, addr, listen_queue);
+    service_.create(impl_, addr, listen_queue, error_handler);
   }
 
   /// Close the acceptor.
@@ -186,30 +202,70 @@ public:
 
   /// Set an option on the acceptor.
   /**
-   * This function is used to set an option on the socket.
+   * This function is used to set an option on the acceptor.
    *
-   * @param option The new option value to be set on the socket.
+   * @param option The new option value to be set on the acceptor.
    *
    * @throws socket_error Thrown on failure.
    */
   template <typename Option>
   void set_option(const Option& option)
   {
-    service_.set_option(impl_, option);
+    service_.set_option(impl_, option, default_error_handler());
+  }
+
+  /// Set an option on the acceptor.
+  /**
+   * This function is used to set an option on the acceptor.
+   *
+   * @param option The new option value to be set on the acceptor.
+   *
+   * @param error_handler The handler to be called when an error occurs or when
+   * the function completes successfully. Copies will be made of the handler as
+   * required. The equivalent function signature of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Option, typename Error_Handler>
+  void set_option(const Option& option, Error_Handler error_handler)
+  {
+    service_.set_option(impl_, option, error_handler);
   }
 
   /// Get an option from the acceptor.
   /**
-   * This function is used to get the current value of an option on the socket.
+   * This function is used to get the current value of an option on the
+   * acceptor.
    *
-   * @param option The option value to be obtained from the socket.
+   * @param option The option value to be obtained from the acceptor.
    *
    * @throws socket_error Thrown on failure.
    */
   template <typename Option>
   void get_option(Option& option)
   {
-    service_.get_option(impl_, option);
+    service_.get_option(impl_, option, default_error_handler());
+  }
+
+  /// Get an option from the acceptor.
+  /**
+   * This function is used to get the current value of an option on the
+   * acceptor.
+   *
+   * @param option The option value to be obtained from the acceptor.
+   *
+   * @param error_handler The handler to be called when an error occurs or when
+   * the function completes successfully. Copies will be made of the handler as
+   * required. The equivalent function signature of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Option, typename Error_Handler>
+  void get_option(Option& option, Error_Handler error_handler)
+  {
+    service_.get_option(impl_, option, error_handler);
   }
 
   /// Accept a new connection.
@@ -226,7 +282,30 @@ public:
   template <typename Stream>
   void accept(Stream& peer_socket)
   {
-    service_.accept(impl_, peer_socket.lowest_layer());
+    service_.accept(impl_, peer_socket.lowest_layer(),
+        default_error_handler());
+  }
+
+  /// Accept a new connection.
+  /**
+   * This function is used to accept a new connection from a peer into the
+   * given stream socket. The function call will block until a new connection
+   * has been accepted successfully or an error occurs.
+   *
+   * @param peer_socket The stream socket into which the new connection will be
+   * accepted.
+   *
+   * @param error_handler The handler to be called when an error occurs or when
+   * the function completes successfully. Copies will be made of the handler as
+   * required. The equivalent function signature of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Stream, typename Error_Handler>
+  void accept(Stream& peer_socket, Error_Handler error_handler)
+  {
+    service_.accept(impl_, peer_socket.lowest_layer(), error_handler);
   }
 
   /// Start an asynchronous accept.
@@ -298,7 +377,36 @@ public:
   template <typename Stream, typename Address>
   void accept_address(Stream& peer_socket, Address& peer_address)
   {
-    service_.accept(impl_, peer_socket.lowest_layer(), peer_address);
+    service_.accept(impl_, peer_socket.lowest_layer(), peer_address,
+        default_error_handler());
+  }
+
+  /// Accept a new connection and obtain the address of the peer
+  /**
+   * This function is used to accept a new connection from a peer into the
+   * given stream socket, and additionally provide the address of the remote
+   * peer. The function call will block until a new connection has been
+   * accepted successfully or an error occurs.
+   *
+   * @param peer_socket The stream socket into which the new connection will be
+   * accepted.
+   *
+   * @param peer_address An address object which will receive the network
+   * address of the remote peer.
+   *
+   * @param error_handler The handler to be called when an error occurs or when
+   * the function completes successfully. Copies will be made of the handler as
+   * required. The equivalent function signature of the handler must be:
+   * @code void error_handler(
+   *   const asio::socket_error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Stream, typename Address, typename Error_Handler>
+  void accept_address(Stream& peer_socket, Address& peer_address,
+      Error_Handler error_handler)
+  {
+    service_.accept(impl_, peer_socket.lowest_layer(), peer_address,
+        error_handler);
   }
 
   /// Start an asynchronous accept.
