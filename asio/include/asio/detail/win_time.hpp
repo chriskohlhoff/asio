@@ -73,7 +73,8 @@ public:
     file_time_64 <<= 32;
     file_time_64 += file_time.dwLowDateTime;
     file_time_64 -= FILETIME_to_ctime;
-    return win_time(file_time_64 / 10000000, (file_time_64 / 10) % 1000000);
+    return win_time(static_cast<long>(file_time_64 / 10000000),
+        static_cast<long>((file_time_64 / 10) % 1000000));
   }
 
   // Addition operator.
