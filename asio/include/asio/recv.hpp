@@ -318,9 +318,9 @@ void async_recv_n(Stream& s, void* data, size_t length, Handler handler,
  * function object as required, however with respect to maintaining state it
  * can rely on the fact that only an up-to-date copy will be used. The
  * equivalent function signature of the handler must be:
- * @code std::pair<bool, char*> decoder(
- *   char* begin, // Pointer to the beginning of the data to be decoded.
- *   char* end    // Pointer to one-past-the-end of the data to be decoded.
+ * @code std::pair<bool, const char*> decoder(
+ *   const char* begin, // Pointer to the beginning of data to be decoded.
+ *   const char* end    // Pointer to one-past-the-end of data to be decoded.
  * ); @endcode
  * The first element of the return value is true if the decoder has finished.
  * The second element is a pointer to the beginning of the unused portion of
@@ -349,7 +349,7 @@ size_t recv_decode(Buffered_Stream& s, Decoder decoder,
       return 0;
     }
 
-    std::pair<bool, char*> result =
+    std::pair<bool, const char*> result =
       decoder(s.recv_buffer().begin(), s.recv_buffer().end());
 
     size_t bytes_read = result.second - s.recv_buffer().begin();
@@ -405,7 +405,7 @@ namespace detail
       {
         while (!stream_.recv_buffer().empty())
         {
-          std::pair<bool, char*> result =
+          std::pair<bool, const char*> result =
             decoder_(stream_.recv_buffer().begin(),
                 stream_.recv_buffer().end());
 
@@ -452,9 +452,9 @@ namespace detail
  * function object as required, however with respect to maintaining state it
  * can rely on the fact that only an up-to-date copy will be used. The
  * equivalent function signature of the handler must be:
- * @code std::pair<bool, char*> decoder(
- *   char* begin, // Pointer to the beginning of the data to be decoded.
- *   char* end    // Pointer to one-past-the-end of the data to be decoded.
+ * @code std::pair<bool, const char*> decoder(
+ *   const char* begin, // Pointer to the beginning of data to be decoded.
+ *   const char* end    // Pointer to one-past-the-end of data to be decoded.
  * ); @endcode
  * The first element of the return value is true if the decoder has finished.
  * The second element is a pointer to the beginning of the unused portion of
@@ -478,7 +478,7 @@ void async_recv_decode(Buffered_Stream& s, Decoder decoder, Handler handler)
 {
   while (!s.recv_buffer().empty())
   {
-    std::pair<bool, char*> result =
+    std::pair<bool, const char*> result =
       decoder(s.recv_buffer().begin(), s.recv_buffer().end());
 
     size_t bytes_read = result.second - s.recv_buffer().begin();
@@ -515,9 +515,9 @@ void async_recv_decode(Buffered_Stream& s, Decoder decoder, Handler handler)
  * function object as required, however with respect to maintaining state it
  * can rely on the fact that only an up-to-date copy will be used. The
  * equivalent function signature of the handler must be:
- * @code std::pair<bool, char*> decoder(
- *   char* begin, // Pointer to the beginning of the data to be decoded.
- *   char* end    // Pointer to one-past-the-end of the data to be decoded.
+ * @code std::pair<bool, const char*> decoder(
+ *   const char* begin, // Pointer to the beginning of data to be decoded.
+ *   const char* end    // Pointer to one-past-the-end of data to be decoded.
  * ); @endcode
  * The first element of the return value is true if the decoder has finished.
  * The second element is a pointer to the beginning of the unused portion of
@@ -548,7 +548,7 @@ void async_recv_decode(Buffered_Stream& s, Decoder decoder, Handler handler,
 {
   while (!s.recv_buffer().empty())
   {
-    std::pair<bool, char*> result =
+    std::pair<bool, const char*> result =
       decoder(s.recv_buffer().begin(), s.recv_buffer().end());
 
     size_t bytes_read = result.second - s.recv_buffer().begin();
@@ -580,9 +580,9 @@ namespace detail
       data_ = "";
     }
 
-    std::pair<bool, char*> operator()(char* begin, char* end)
+    std::pair<bool, const char*> operator()(const char* begin, const char* end)
     {
-      char* p = begin;
+      const char* p = begin;
       while (p < end)
       {
         char next_char = *p++;
