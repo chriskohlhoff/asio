@@ -235,18 +235,16 @@ public:
     peer.set_impl(sock.release());
   }
 
-  template <typename Stream_Socket_Service, typename Address, typename Handler>
+  template <typename Stream_Socket_Service, typename Handler>
   class connect_handler
   {
   public:
     connect_handler(impl_type impl, socket_type new_socket, Demuxer& demuxer,
-        basic_stream_socket<Stream_Socket_Service>& peer,
-        const Address& peer_address, Handler handler)
+        basic_stream_socket<Stream_Socket_Service>& peer, Handler handler)
       : impl_(impl),
         new_socket_(new_socket),
         demuxer_(demuxer),
         peer_(peer),
-        peer_address_(peer_address),
         handler_(handler)
     {
     }
@@ -310,7 +308,6 @@ public:
     socket_type new_socket_;
     Demuxer& demuxer_;
     basic_stream_socket<Stream_Socket_Service>& peer_;
-    Address peer_address_;
     Handler handler_;
   };
 
@@ -388,8 +385,8 @@ public:
       impl->add_socket(new_socket.get());
       demuxer_.work_started();
       reactor_.start_write_op(new_socket.get(),
-          connect_handler<Stream_Socket_Service, Address, Handler>(
-            impl, new_socket.get(), demuxer_, peer, peer_address, handler));
+          connect_handler<Stream_Socket_Service, Handler>(
+            impl, new_socket.get(), demuxer_, peer, handler));
       new_socket.release();
     }
     else
