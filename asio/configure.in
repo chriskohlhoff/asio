@@ -52,6 +52,10 @@ case $host in
     ;;
 esac
 
+if test "$GXX" = yes; then
+  CXXFLAGS="$CXXFLAGS -ftemplate-depth-32"
+fi
+
 AC_CHECK_PROG(DOXYGEN_FOUND,doxygen,yes)
 AM_CONDITIONAL(HAVE_DOXYGEN,test x$DOXYGEN_FOUND = xyes)
 AC_CHECK_PROG(HAVE_DOT,dot,YES,NO)
