@@ -19,7 +19,6 @@ public:
 
     // Join the multicast group.
     socket_.set_option(asio::ipv4::multicast::add_membership(multicast_addr));
-    socket_.set_option(asio::ipv4::multicast::drop_membership(multicast_addr));
 
     socket_.async_recvfrom(data_, max_length, sender_endpoint_,
         boost::bind(&receiver::handle_recvfrom, this, asio::arg::error,

@@ -16,9 +16,6 @@ public:
       timer_(d),
       message_count_(0)
   {
-    // Set the time-to-live for outgoing multicast packets.
-    socket_.set_option(asio::ipv4::multicast::time_to_live(2));
-
     std::ostringstream os;
     os << "Message " << message_count_++;
     message_ = os.str();
