@@ -7,26 +7,25 @@ LDFLAGS = -g -O3
 LIBS = -lws2_32
 
 TEST_EXES = \
-	../bin/dispatcher_test.exe \
-	../bin/dgram_echo_client_test.exe \
-	../bin/dgram_echo_server_test.exe \
-	../bin/echo_client_test.exe \
-	../bin/echo_server_test.exe \
-	../bin/socket_accept_test.exe \
-	../bin/timed_accept_test.exe \
-	../bin/timed_connect_test.exe \
-	../bin/timed_dgram_recv_test.exe \
-	../bin/timer_test.exe \
-	../bin/tpc_echo_server_test.exe
+	tests/dispatcher_test.exe \
+	tests/dgram_echo_client_test.exe \
+	tests/dgram_echo_server_test.exe \
+	tests/echo_client_test.exe \
+	tests/echo_server_test.exe \
+	tests/socket_accept_test.exe \
+	tests/timed_accept_test.exe \
+	tests/timed_connect_test.exe \
+	tests/timed_dgram_recv_test.exe \
+	tests/timer_test.exe \
+	tests/tpc_echo_server_test.exe
 
 all: $(TEST_EXES)
 
 clean:
-	-del /q /s ..\bin\*.exe
+	-del /q /s tests\*.exe
 	-del /q /s tests\*.o
 
-$(TEST_EXES): ../bin/%.exe: tests/%.o
-	-if not exist ..\bin md ..\bin
+$(TEST_EXES): tests/%.exe: tests/%.o
 	g++ -o$@ $(LDFLAGS) $< $(LIBS)
 
 .cpp.o:

@@ -7,69 +7,28 @@ LDFLAGS = -nologo -O2 -GX -GR -Zi -MD
 LIBS = ws2_32.lib
 
 all: \
-	..\bin\dispatcher_test.exe \
-	..\bin\dgram_echo_client_test.exe \
-	..\bin\dgram_echo_server_test.exe \
-	..\bin\echo_client_test.exe \
-	..\bin\echo_server_test.exe \
-	..\bin\socket_accept_test.exe \
-	..\bin\timed_accept_test.exe \
-	..\bin\timed_connect_test.exe \
-	..\bin\timed_dgram_recv_test.exe \
-	..\bin\timer_test.exe \
-	..\bin\tpc_echo_server_test.exe
+	tests\dispatcher_test.exe \
+	tests\dgram_echo_client_test.exe \
+	tests\dgram_echo_server_test.exe \
+	tests\echo_client_test.exe \
+	tests\echo_server_test.exe \
+	tests\socket_accept_test.exe \
+	tests\timed_accept_test.exe \
+	tests\timed_connect_test.exe \
+	tests\timed_dgram_recv_test.exe \
+	tests\timer_test.exe \
+	tests\tpc_echo_server_test.exe
 
 clean:
-	-del /q /s ..\bin\*.exe
-	-del /q /s ..\bin\*.exp
-	-del /q /s ..\bin\*.ilk
-	-del /q /s ..\bin\*.pdb
+	-del /q /s tests\*.exe
+	-del /q /s tests\*.exp
+	-del /q /s tests\*.ilk
+	-del /q /s tests\*.pdb
 	-del /q /s tests\*.obj
 	-del /q /s *.pdb
 
-..\bin\dispatcher_test.exe: tests\dispatcher_test.obj
-	-if not exist ..\bin md ..\bin
-	cl -Fe$@ $(LDFLAGS) tests\dispatcher_test.obj $(LIBS)
-
-..\bin\dgram_echo_client_test.exe: tests\dgram_echo_client_test.obj
-	-if not exist ..\bin md ..\bin
-	cl -Fe$@ $(LDFLAGS) tests\dgram_echo_client_test.obj $(LIBS)
-
-..\bin\dgram_echo_server_test.exe: tests\dgram_echo_server_test.obj
-	-if not exist ..\bin md ..\bin
-	cl -Fe$@ $(LDFLAGS) tests\dgram_echo_server_test.obj $(LIBS)
-
-..\bin\echo_client_test.exe: tests\echo_client_test.obj
-	-if not exist ..\bin md ..\bin
-	cl -Fe$@ $(LDFLAGS) tests\echo_client_test.obj $(LIBS)
-
-..\bin\echo_server_test.exe: tests\echo_server_test.obj
-	-if not exist ..\bin md ..\bin
-	cl -Fe$@ $(LDFLAGS) tests\echo_server_test.obj $(LIBS)
-
-..\bin\socket_accept_test.exe: tests\socket_accept_test.obj
-	-if not exist ..\bin md ..\bin
-	cl -Fe$@ $(LDFLAGS) tests\socket_accept_test.obj $(LIBS)
-
-..\bin\timed_accept_test.exe: tests\timed_accept_test.obj
-	-if not exist ..\bin md ..\bin
-	cl -Fe$@ $(LDFLAGS) tests\timed_accept_test.obj $(LIBS)
-
-..\bin\timed_connect_test.exe: tests\timed_connect_test.obj
-	-if not exist ..\bin md ..\bin
-	cl -Fe$@ $(LDFLAGS) tests\timed_connect_test.obj $(LIBS)
-
-..\bin\timed_dgram_recv_test.exe: tests\timed_dgram_recv_test.obj
-	-if not exist ..\bin md ..\bin
-	cl -Fe$@ $(LDFLAGS) tests\timed_dgram_recv_test.obj $(LIBS)
-
-..\bin\timer_test.exe: tests\timer_test.obj
-	-if not exist ..\bin md ..\bin
-	cl -Fe$@ $(LDFLAGS) tests\timer_test.obj $(LIBS)
-
-..\bin\tpc_echo_server_test.exe: tests\tpc_echo_server_test.obj
-	-if not exist ..\bin md ..\bin
-	cl -Fe$@ $(LDFLAGS) tests\tpc_echo_server_test.obj $(LIBS)
+.obj.exe:
+	cl -Fe$@ $(LDFLAGS) $< $(LIBS)
 
 .cpp.obj:
 	cl -Fo$@ -c $(CXXFLAGS) $<

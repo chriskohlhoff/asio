@@ -7,7 +7,6 @@ config.status
 configure
 depcomp
 install-sh
-bin
 doc
 lib
 *.gz

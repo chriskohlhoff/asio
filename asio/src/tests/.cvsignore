@@ -1,2 +1,4 @@
 .deps
 .dirstamp
+*.exe
+*_test
