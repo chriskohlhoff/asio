@@ -63,6 +63,10 @@ public:
   /// Wait for the thread to exit.
   /**
    * This function will block until the thread has exited.
+   *
+   * If this function is not called before the thread object is destroyed, the
+   * thread itself will continue to run until completion. You will, however,
+   * no longer have the ability to wait for it to exit.
    */
   void join()
   {
