@@ -43,9 +43,9 @@ message to show when the timer has expired.
 
 \until }
 
-See the \ref tuttimer1src \n
-Return to the \ref tutindex \n
-Go on to \ref tuttimer2
+See the \ref tuttimer1src "full source listing" \n
+Return to the \ref tutindex "tutorial index" \n
+Next: \ref tuttimer2
 
 */
 
@@ -101,10 +101,10 @@ consequently asio::demuxer::run() would have returned immediately.
 \skip run
 \until }
 
-See the \ref tuttimer2src \n
-Return to the \ref tutindex \n
-Go back to \ref tuttimer1 \n
-Go on to \ref tuttimer3
+See the \ref tuttimer2src "full source listing" \n
+Return to the \ref tutindex "tutorial index" \n
+Previous: \ref tuttimer1 \n
+Next: \ref tuttimer3
 
 */
 
@@ -184,10 +184,10 @@ value.
 
 \until }
 
-See the \ref tuttimer3src \n
-Return to the \ref tutindex \n
-Go back to \ref tuttimer2 \n
-Go on to \ref tuttimer4
+See the \ref tuttimer3src "full source listing" \n
+Return to the \ref tutindex "tutorial index" \n
+Previous: \ref tuttimer2 \n
+Next: \ref tuttimer4
 
 */
 
@@ -247,9 +247,9 @@ normal.
 
 \until }
 
-See the \ref tuttimer4src \n
-Return to the \ref tutindex \n
-Go back to \ref tuttimer3 \n
+See the \ref tuttimer4src "full source listing" \n
+Return to the \ref tutindex "tutorial index" \n
+Previous: \ref tuttimer3 \n
 
 */
 

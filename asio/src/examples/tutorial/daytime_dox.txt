@@ -1,9 +1,9 @@
 /**
 \page tutdaytime1 Tutorial Daytime.1 - A synchronous TCP daytime client
 
-See the \ref tutdaytime1src \n
-Return to the \ref tutindex \n
-Go on to \ref tutdaytime2
+See the \ref tutdaytime1src "full source listing" \n
+Return to the \ref tutindex "tutorial index" \n
+Next: \ref tutdaytime2
 
 */
 
@@ -16,10 +16,10 @@ Return to \ref tutdaytime1
 /**
 \page tutdaytime2 Tutorial Daytime.2 - A synchronous TCP daytime server
 
-See the \ref tutdaytime2src \n
-Return to the \ref tutindex \n
-Go back to \ref tutdaytime1 \n
-Go on to \ref tutdaytime3
+See the \ref tutdaytime2src "full source listing" \n
+Return to the \ref tutindex "tutorial index" \n
+Previous: \ref tutdaytime1 \n
+Next: \ref tutdaytime3
 
 */
 
@@ -57,10 +57,10 @@ be removed:
 asio::async_send_n(*socket, send_buf, send_length,
     boost::bind(handle_send, socket, send_buf)); @endcode
 
-See the \ref tutdaytime3src \n
-Return to the \ref tutindex \n
-Go back to \ref tutdaytime2 \n
-Go on to \ref tutdaytime4
+See the \ref tutdaytime3src "full source listing" \n
+Return to the \ref tutindex "tutorial index" \n
+Previous: \ref tutdaytime2 \n
+Next: \ref tutdaytime4
 
 */
 
@@ -73,10 +73,10 @@ Return to \ref tutdaytime3
 /**
 \page tutdaytime4 Tutorial Daytime.4 - A synchronous UDP daytime client
 
-See the \ref tutdaytime4src \n
-Return to the \ref tutindex \n
-Go back to \ref tutdaytime3 \n
-Go on to \ref tutdaytime5
+See the \ref tutdaytime4src "full source listing" \n
+Return to the \ref tutindex "tutorial index" \n
+Previous: \ref tutdaytime3 \n
+Next: \ref tutdaytime5
 
 */
 
@@ -89,10 +89,10 @@ Return to \ref tutdaytime4
 /**
 \page tutdaytime5 Tutorial Daytime.5 - A synchronous UDP daytime server
 
-See the \ref tutdaytime5src \n
-Return to the \ref tutindex \n
-Go back to \ref tutdaytime4 \n
-Go on to \ref tutdaytime6
+See the \ref tutdaytime5src "full source listing" \n
+Return to the \ref tutindex "tutorial index" \n
+Previous: \ref tutdaytime4 \n
+Next: \ref tutdaytime6
 
 */
 
@@ -131,10 +131,10 @@ socket->async_sendto(send_buf, send_length, *remote_address,
 The <tt>handle_recvfrom()</tt> functions's <tt>bytes_recvd</tt> parameter can
 be similarly removed.
 
-See the \ref tutdaytime6src \n
-Return to the \ref tutindex \n
-Go back to \ref tutdaytime5 \n
-Go on to \ref tutdaytime7
+See the \ref tutdaytime6src "full source listing" \n
+Return to the \ref tutindex "tutorial index" \n
+Previous: \ref tutdaytime5 \n
+Next: \ref tutdaytime7
 
 */
 
@@ -147,9 +147,9 @@ Return to \ref tutdaytime6
 /**
 \page tutdaytime7 Tutorial Daytime.7 - A combined TCP/UDP asynchronous server
 
-See the \ref tutdaytime7src \n
-Return to the \ref tutindex \n
-Go back to \ref tutdaytime6
+See the \ref tutdaytime7src "full source listing" \n
+Return to the \ref tutindex "tutorial index" \n
+Previous: \ref tutdaytime6
 
 */
 
