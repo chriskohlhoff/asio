@@ -107,6 +107,28 @@ public:
     stream_impl_.async_send(data, length, handler, context);
   }
 
+  /// Fill the buffer with some data. Returns the number of bytes placed in the
+  /// buffer as a result of the operation, or 0 if the underlying connection
+  /// was closed. Throws an exception on failure.
+  size_t fill()
+  {
+    return stream_impl_.fill();
+  }
+
+  /// Start an asynchronous fill.
+  template <typename Handler>
+  void async_fill(Handler handler)
+  {
+    stream_impl_.async_fill(handler);
+  }
+
+  /// Start an asynchronous fill.
+  template <typename Handler, typename Completion_Context>
+  void async_fill(Handler handler, Completion_Context& context)
+  {
+    stream_impl_.async_fill(handler, context);
+  }
+
   /// Receive some data from the peer. Returns the number of bytes received or
   /// 0 if the stream was closed cleanly. Throws an exception on failure.
   size_t recv(void* data, size_t max_length)
