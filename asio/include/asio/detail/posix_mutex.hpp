@@ -1,6 +1,6 @@
 //
-// pthread_mutex.hpp
-// ~~~~~~~~~~~~~~~~~
+// posix_mutex.hpp
+// ~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -12,8 +12,8 @@
 // no claim as to its suitability for any purpose.
 //
 
-#ifndef ASIO_DETAIL_PTHREAD_MUTEX_HPP
-#define ASIO_DETAIL_PTHREAD_MUTEX_HPP
+#ifndef ASIO_DETAIL_POSIX_MUTEX_HPP
+#define ASIO_DETAIL_POSIX_MUTEX_HPP
 
 #include "asio/detail/push_options.hpp"
 
@@ -29,20 +29,20 @@
 namespace asio {
 namespace detail {
 
-class pthread_mutex
+class posix_mutex
   : private boost::noncopyable
 {
 public:
-  typedef asio::detail::scoped_lock<pthread_mutex> scoped_lock;
+  typedef asio::detail::scoped_lock<posix_mutex> scoped_lock;
 
   // Constructor.
-  pthread_mutex()
+  posix_mutex()
   {
     ::pthread_mutex_init(&mutex_, 0);
   }
 
   // Destructor.
-  ~pthread_mutex()
+  ~posix_mutex()
   {
     ::pthread_mutex_destroy(&mutex_);
   }
@@ -70,4 +70,4 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_PTHREAD_MUTEX_HPP
+#endif // ASIO_DETAIL_POSIX_MUTEX_HPP

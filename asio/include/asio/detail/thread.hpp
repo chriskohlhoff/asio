@@ -17,7 +17,7 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/pthread_thread.hpp"
+#include "asio/detail/posix_thread.hpp"
 #include "asio/detail/win_thread.hpp"
 
 namespace asio {
@@ -26,7 +26,7 @@ namespace detail {
 #if defined(_WIN32)
 typedef win_thread thread;
 #else
-typedef pthread_thread thread;
+typedef posix_thread thread;
 #endif
 
 } // namespace detail

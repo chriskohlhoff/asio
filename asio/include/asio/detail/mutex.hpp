@@ -17,7 +17,7 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/pthread_mutex.hpp"
+#include "asio/detail/posix_mutex.hpp"
 #include "asio/detail/win_mutex.hpp"
 
 namespace asio {
@@ -26,7 +26,7 @@ namespace detail {
 #if defined(_WIN32)
 typedef win_mutex mutex;
 #else
-typedef pthread_mutex mutex;
+typedef posix_mutex mutex;
 #endif
 
 } // namespace detail

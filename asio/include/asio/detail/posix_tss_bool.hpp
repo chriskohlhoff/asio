@@ -1,6 +1,6 @@
 //
-// pthread_tss_bool.hpp
-// ~~~~~~~~~~~~~~~~~~~~
+// posix_tss_bool.hpp
+// ~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -12,8 +12,8 @@
 // no claim as to its suitability for any purpose.
 //
 
-#ifndef ASIO_DETAIL_PTHREAD_TSS_BOOL_HPP
-#define ASIO_DETAIL_PTHREAD_TSS_BOOL_HPP
+#ifndef ASIO_DETAIL_POSIX_TSS_BOOL_HPP
+#define ASIO_DETAIL_POSIX_TSS_BOOL_HPP
 
 #include "asio/detail/push_options.hpp"
 
@@ -27,18 +27,18 @@
 namespace asio {
 namespace detail {
 
-class pthread_tss_bool
+class posix_tss_bool
 {
 public:
   // Constructor.
-  pthread_tss_bool()
+  posix_tss_bool()
   {
     if (::pthread_key_create(&tss_key_, 0) != 0)
       throw std::runtime_error("Cannot create thread-local storage");
   }
 
   // Destructor.
-  ~pthread_tss_bool()
+  ~posix_tss_bool()
   {
     ::pthread_key_delete(tss_key_);
   }
@@ -74,4 +74,4 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_PTHREAD_TSS_BOOL_HPP
+#endif // ASIO_DETAIL_POSIX_TSS_BOOL_HPP

@@ -1,6 +1,6 @@
 //
-// pthread_thread.hpp
-// ~~~~~~~~~~~~~~~~~~
+// posix_thread.hpp
+// ~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -12,8 +12,8 @@
 // no claim as to its suitability for any purpose.
 //
 
-#ifndef ASIO_DETAIL_PTHREAD_THREAD_HPP
-#define ASIO_DETAIL_PTHREAD_THREAD_HPP
+#ifndef ASIO_DETAIL_POSIX_THREAD_HPP
+#define ASIO_DETAIL_POSIX_THREAD_HPP
 
 #include "asio/detail/push_options.hpp"
 
@@ -29,23 +29,23 @@
 namespace asio {
 namespace detail {
 
-extern "C" void* asio_detail_pthread_thread_function(void* arg);
+extern "C" void* asio_detail_posix_thread_function(void* arg);
 
-class pthread_thread
+class posix_thread
   : private boost::noncopyable
 {
 public:
   // Constructor.
   template <typename Function>
-  pthread_thread(Function f)
+  posix_thread(Function f)
     : joined_(false)
   {
     func_base* arg = new func<Function>(f);
-    ::pthread_create(&thread_, 0, asio_detail_pthread_thread_function, arg);
+    ::pthread_create(&thread_, 0, asio_detail_posix_thread_function, arg);
   }
 
   // Destructor.
-  ~pthread_thread()
+  ~posix_thread()
   {
     if (!joined_)
       ::pthread_detach(thread_);
@@ -59,7 +59,7 @@ public:
   }
 
 private:
-  friend void* asio_detail_pthread_thread_function(void* arg);
+  friend void* asio_detail_posix_thread_function(void* arg);
 
   class func_base
   {
@@ -91,10 +91,10 @@ private:
   bool joined_;
 };
 
-inline void* asio_detail_pthread_thread_function(void* arg)
+inline void* asio_detail_posix_thread_function(void* arg)
 {
-  pthread_thread::func_base* f =
-    static_cast<pthread_thread::func_base*>(arg);
+  posix_thread::func_base* f =
+    static_cast<posix_thread::func_base*>(arg);
   f->run();
   delete f;
   return 0;
@@ -107,4 +107,4 @@ inline void* asio_detail_pthread_thread_function(void* arg)
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_PTHREAD_THREAD_HPP
+#endif // ASIO_DETAIL_POSIX_THREAD_HPP

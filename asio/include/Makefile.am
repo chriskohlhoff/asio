@@ -16,11 +16,11 @@ nobase_include_HEADERS = \
 	asio/detail/mutex.hpp \
 	asio/detail/pipe_select_interrupter.hpp \
 	asio/detail/pop_options.hpp \
+	asio/detail/posix_event.hpp \
+	asio/detail/posix_mutex.hpp \
+	asio/detail/posix_thread.hpp \
 	asio/detail/posix_time.hpp \
-	asio/detail/pthread_event.hpp \
-	asio/detail/pthread_mutex.hpp \
-	asio/detail/pthread_thread.hpp \
-	asio/detail/pthread_tss_bool.hpp \
+	asio/detail/posix_tss_bool.hpp \
 	asio/detail/push_options.hpp \
 	asio/detail/reactive_dgram_socket_service.hpp \
 	asio/detail/reactive_socket_acceptor_service.hpp \

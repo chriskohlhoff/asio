@@ -17,7 +17,7 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/pthread_event.hpp"
+#include "asio/detail/posix_event.hpp"
 #include "asio/detail/win_event.hpp"
 
 namespace asio {
@@ -26,7 +26,7 @@ namespace detail {
 #if defined(_WIN32)
 typedef win_event event;
 #else
-typedef pthread_event event;
+typedef posix_event event;
 #endif
 
 } // namespace detail

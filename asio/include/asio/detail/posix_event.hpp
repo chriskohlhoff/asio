@@ -1,6 +1,6 @@
 //
-// pthread_event.hpp
-// ~~~~~~~~~~~~~~~~~
+// posix_event.hpp
+// ~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -12,8 +12,8 @@
 // no claim as to its suitability for any purpose.
 //
 
-#ifndef ASIO_DETAIL_PTHREAD_EVENT_HPP
-#define ASIO_DETAIL_PTHREAD_EVENT_HPP
+#ifndef ASIO_DETAIL_POSIX_EVENT_HPP
+#define ASIO_DETAIL_POSIX_EVENT_HPP
 
 #include "asio/detail/push_options.hpp"
 
@@ -27,12 +27,12 @@
 namespace asio {
 namespace detail {
 
-class pthread_event
+class posix_event
   : private boost::noncopyable
 {
 public:
   // Constructor.
-  pthread_event()
+  posix_event()
     : signalled_(false)
   {
     ::pthread_mutex_init(&mutex_, 0);
@@ -40,7 +40,7 @@ public:
   }
 
   // Destructor.
-  ~pthread_event()
+  ~posix_event()
   {
     ::pthread_cond_destroy(&cond_);
     ::pthread_mutex_destroy(&mutex_);
@@ -85,4 +85,4 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_PTHREAD_EVENT_HPP
+#endif // ASIO_DETAIL_POSIX_EVENT_HPP

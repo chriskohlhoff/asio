@@ -17,7 +17,7 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/pthread_tss_bool.hpp"
+#include "asio/detail/posix_tss_bool.hpp"
 #include "asio/detail/win_tss_bool.hpp"
 
 namespace asio {
@@ -26,7 +26,7 @@ namespace detail {
 #if defined(_WIN32)
 typedef win_tss_bool tss_bool;
 #else
-typedef pthread_tss_bool tss_bool;
+typedef posix_tss_bool tss_bool;
 #endif
 
 } // namespace detail
