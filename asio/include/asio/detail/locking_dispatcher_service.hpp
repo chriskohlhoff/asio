@@ -37,8 +37,8 @@ public:
   public:
     // Constructor.
     dispatcher_impl()
-      : first_waiter_(),
-        last_waiter_(),
+      : first_waiter_(0),
+        last_waiter_(0),
         mutex_()
     {
     }
