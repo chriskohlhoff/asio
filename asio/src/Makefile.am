@@ -51,7 +51,7 @@ noinst_HEADERS = \
 	tests/unit/unit_test.hpp \
 	examples/chat/chat_message.hpp
 
-AM_CXXFLAGS = -I../include
+AM_CXXFLAGS = -I$(srcdir)/../include
 
 tests_performance_client_SOURCES = tests/performance/client.cpp
 tests_performance_server_SOURCES = tests/performance/server.cpp

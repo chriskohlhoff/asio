@@ -10,7 +10,7 @@ delete_doc:
   
 ../../doc/html/asio.css: asio.css
 	mkdir -p ../../doc/html
-	cp asio.css ../../doc/html/asio.css
+	cp $(srcdir)/asio.css ../../doc/html/asio.css
 
 ../../doc/html/index.html: asio.dox.in
 	doxygen asio.dox
@@ -23,6 +23,7 @@ EXTRA_DIST = \
 	asio.css \
 	asio_dox.txt \
 	release_checklist.htm \
+	../examples/tutorial/daytime_dox.txt \
 	../examples/tutorial/index_dox.txt \
 	../examples/tutorial/timer_dox.txt
 

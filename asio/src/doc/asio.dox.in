@@ -143,7 +143,7 @@ FULL_PATH_NAMES        = YES
 # only done if one of the specified strings matches the left-hand part of 
 # the path. It is allowed to use relative paths in the argument list.
 
-STRIP_FROM_PATH        = ../../include/
+STRIP_FROM_PATH        = @srcdir@/../../include/
 
 # The INTERNAL_DOCS tag determines if documentation 
 # that is typed after a \internal command is included. If the tag is set 
@@ -357,7 +357,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = ../../include ../../include/asio ../../include/asio/ipv4 asio_dox.txt ../examples/tutorial/index_dox.txt ../examples/tutorial/timer_dox.txt ../examples/tutorial/daytime_dox.txt
+INPUT                  = @srcdir@/../../include @srcdir@/../../include/asio @srcdir@/../../include/asio/ipv4 @srcdir@/asio_dox.txt @srcdir@/../examples/tutorial/index_dox.txt @srcdir@/../examples/tutorial/timer_dox.txt @srcdir@/../examples/tutorial/daytime_dox.txt
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
@@ -395,7 +395,7 @@ EXCLUDE_PATTERNS       =
 # directories that contain example code fragments that are included (see 
 # the \include command).
 
-EXAMPLE_PATH           = ../examples
+EXAMPLE_PATH           = @srcdir@/../examples
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the 
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
@@ -518,20 +518,20 @@ HTML_FILE_EXTENSION    = .html
 # each generated HTML page. If it is left blank doxygen will generate a 
 # standard header.
 
-HTML_HEADER            = asio_header.htm
+HTML_HEADER            = @srcdir@/asio_header.htm
 
 # The HTML_FOOTER tag can be used to specify a personal HTML footer for 
 # each generated HTML page. If it is left blank doxygen will generate a 
 # standard footer.
 
-HTML_FOOTER            = asio_footer.htm
+HTML_FOOTER            = @srcdir@/asio_footer.htm
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading 
 # style sheet that is used by each HTML page. It can be used to 
 # fine-tune the look of the HTML output. If the tag is left blank doxygen 
 # will generate a default style sheet
 
-HTML_STYLESHEET        = asio.css
+HTML_STYLESHEET        = @srcdir@/asio.css
 
 # If the HTML_ALIGN_MEMBERS tag is set to YES, the members of classes, 
 # files or namespaces will be aligned in HTML using tables. If set to 
