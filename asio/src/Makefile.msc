@@ -1,5 +1,5 @@
 !ifndef BOOSTDIR
-BOOSTDIR = ../../boost-1.30.2
+BOOSTDIR = ../../boost_1_31_0
 !endif
 
 CXXFLAGS = -nologo -O2 -GX -GR -Zi -w -MD -I. -I../include -I$(BOOSTDIR)
