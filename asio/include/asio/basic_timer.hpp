@@ -41,9 +41,6 @@ public:
   /// The native implementation type of the timer.
   typedef typename service_type::impl_type impl_type;
 
-  /// The point from where relative times are measured.
-  typedef timer_base::from_type from_type;
-
   /// Constructor.
   template <typename Demuxer>
   explicit basic_timer(Demuxer& d)
