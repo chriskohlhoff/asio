@@ -258,6 +258,38 @@ public:
     }
   }
 
+  /// Peek at the incoming data on the stream socket. Returns the number of
+  /// bytes received or 0 if the connection was closed cleanly.
+  size_t peek(void* data, size_t max_length)
+  {
+    if (buffer_.empty() && !fill())
+      return 0;
+    return peek_copy(data, max_length);
+  }
+
+  /// Peek at the incoming data on the stream socket. Returns the number of
+  /// bytes received or 0 if the connection was closed cleanly.
+  template <typename Error_Handler>
+  size_t peek(void* data, size_t max_length, Error_Handler error_handler)
+  {
+    if (buffer_.empty() && !fill(error_handler))
+      return 0;
+    return peek_copy(data, max_length);
+  }
+
+  /// Determine the amount of data that may be received without blocking.
+  size_t in_avail()
+  {
+    return buffer_.size();
+  }
+
+  /// Determine the amount of data that may be received without blocking.
+  template <typename Error_Handler>
+  size_t in_avail(Error_Handler error_handler)
+  {
+    return buffer_.size();
+  }
+
 private:
   /// Copy data out of the internal buffer to the specified target buffer.
   /// Returns the number of bytes copied.
@@ -269,6 +301,20 @@ private:
     size_t length = (max_length < bytes_avail) ? max_length : bytes_avail;
     memcpy(data, buffer_.begin(), length);
     buffer_.pop(length);
+
+    return length;
+  }
+
+  /// Copy data from the internal buffer to the specified target buffer,
+  /// without removing the data from the internal buffer. Returns the number of
+  /// bytes copied.
+  size_t peek_copy(void* data, size_t max_length)
+  {
+    using namespace std; // For memcpy.
+
+    size_t bytes_avail = buffer_.size();
+    size_t length = (max_length < bytes_avail) ? max_length : bytes_avail;
+    memcpy(data, buffer_.begin(), length);
 
     return length;
   }

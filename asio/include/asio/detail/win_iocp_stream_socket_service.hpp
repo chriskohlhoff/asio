@@ -292,6 +292,34 @@ public:
     }
   }
 
+  /// Peek at the incoming data on the stream socket. Returns the number of
+  /// bytes received or 0 if the connection was closed cleanly.
+  template <typename Error_Handler>
+  size_t peek(impl_type& impl, void* data, size_t max_length,
+      Error_Handler error_handler)
+  {
+    int bytes_recvd = socket_ops::recv(impl, data, max_length, MSG_PEEK);
+    if (bytes_recvd < 0)
+    {
+      error_handler(asio::error(socket_ops::get_error()));
+      return 0;
+    }
+    return bytes_recvd;
+  }
+
+  /// Determine the amount of data that may be received without blocking.
+  template <typename Error_Handler>
+  size_t in_avail(impl_type& impl, Error_Handler error_handler)
+  {
+    ioctl_arg_type bytes_avail = 0;
+    if (socket_ops::ioctl(impl, FIONREAD, &bytes_avail))
+    {
+      error_handler(asio::error(socket_ops::get_error()));
+      return 0;
+    }
+    return static_cast<size_t>(bytes_avail);
+  }
+
 private:
   // The demuxer associated with the service.
   demuxer_type& demuxer_;

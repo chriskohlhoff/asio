@@ -476,6 +476,88 @@ public:
     service_.async_recv(impl_, data, max_length, handler);
   }
 
+  /// Peek at the incoming data on the stream socket.
+  /**
+   * This function is used to peek at the incoming data on the stream socket,
+   * without removing it from the input queue. The function call will block
+   * until data has been received successfully or an error occurs.
+   *
+   * @param data The buffer into which the received data will be written.
+   *
+   * @param max_length The maximum size of the data to be received, in bytes.
+   *
+   * @returns The number of bytes received or 0 if the connection was closed
+   * cleanly.
+   *
+   * @throws asio::error Thrown on failure.
+   */
+  size_t peek(void* data, size_t max_length)
+  {
+    return service_.peek(impl_, data, max_length, default_error_handler());
+  }
+
+  /// Peek at the incoming data on the stream socket.
+  /**
+   * This function is used to peek at the incoming data on the stream socket,
+   * without removing it from the input queue. The function call will block
+   * until data has been received successfully or an error occurs.
+   *
+   * @param data The buffer into which the received data will be written.
+   *
+   * @param max_length The maximum size of the data to be received, in bytes.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::error& error // Result of operation
+   * ); @endcode
+   *
+   * @returns The number of bytes received or 0 if the connection was closed
+   * cleanly.
+   */
+  template <typename Error_Handler>
+  size_t peek(void* data, size_t max_length, Error_Handler error_handler)
+  {
+    return service_.peek(impl_, data, max_length, error_handler);
+  }
+
+  /// Determine the amount of data that may be received without blocking.
+  /**
+   * This function is used to determine the amount of data, in bytes, that may
+   * be read from the stream socket without blocking.
+   *
+   * @returns The number of bytes of data that can be received without
+   * blocking.
+   *
+   * @throws asio::error Thrown on failure.
+   */
+  size_t in_avail()
+  {
+    return service_.in_avail(impl_, default_error_handler());
+  }
+
+  /// Determine the amount of data that may be received without blocking.
+  /**
+   * This function is used to determine the amount of data, in bytes, that may
+   * be read from the stream socket without blocking.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::error& error // Result of operation
+   * ); @endcode
+   *
+   * @returns The number of bytes of data that can be received without
+   * blocking.
+   */
+  template <typename Error_Handler>
+  size_t in_avail(Error_Handler error_handler)
+  {
+    return service_.in_avail(impl_, error_handler);
+  }
+
 private:
   /// The backend service implementation.
   service_type& service_;

@@ -250,6 +250,34 @@ public:
     next_layer_.async_recv(data, max_length, handler);
   }
 
+  /// Peek at the incoming data on the stream socket. Returns the number of
+  /// bytes received or 0 if the connection was closed cleanly.
+  size_t peek(void* data, size_t max_length)
+  {
+    return next_layer_.peek(data, max_length);
+  }
+
+  /// Peek at the incoming data on the stream socket. Returns the number of
+  /// bytes received or 0 if the connection was closed cleanly.
+  template <typename Error_Handler>
+  size_t peek(void* data, size_t max_length, Error_Handler error_handler)
+  {
+    return next_layer_.peek(data, max_length, error_handler);
+  }
+
+  /// Determine the amount of data that may be received without blocking.
+  size_t in_avail()
+  {
+    return next_layer_.in_avail();
+  }
+
+  /// Determine the amount of data that may be received without blocking.
+  template <typename Error_Handler>
+  size_t in_avail(Error_Handler error_handler)
+  {
+    return next_layer_.in_avail(error_handler);
+  }
+
 private:
   /// Copy data into the internal buffer from the specified source buffer.
   /// Returns the number of bytes copied.
