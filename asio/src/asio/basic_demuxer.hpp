@@ -52,11 +52,6 @@ public:
 #endif // _WIN32
   }
 
-  /// Destructor.
-  ~basic_demuxer()
-  {
-  }
-
   /// Run the demuxer's event processing loop.
   /**
    * The run function blocks until all operations have completed and there are
