@@ -110,7 +110,7 @@ public:
   /// lifetime of the asynchronous operation.
   template <typename Handler, typename Completion_Context>
   void async_send(const void* data, size_t length, Handler handler,
-      Completion_Context& context)
+      Completion_Context context)
   {
     stream_impl_.async_send(data, length, handler, context);
   }
@@ -141,7 +141,7 @@ public:
 
   /// Start an asynchronous fill.
   template <typename Handler, typename Completion_Context>
-  void async_fill(Handler handler, Completion_Context& context)
+  void async_fill(Handler handler, Completion_Context context)
   {
     stream_impl_.async_fill(handler, context);
   }
@@ -173,7 +173,7 @@ public:
   /// must be valid for the lifetime of the asynchronous operation.
   template <typename Handler, typename Completion_Context>
   void async_recv(void* data, size_t max_length, Handler handler,
-      Completion_Context& context)
+      Completion_Context context)
   {
     stream_impl_.async_recv(data, max_length, handler, context);
   }

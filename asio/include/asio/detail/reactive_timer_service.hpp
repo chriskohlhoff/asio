@@ -134,7 +134,7 @@ public:
   {
   public:
     wait_handler(impl_type& impl, Demuxer& demuxer, Handler handler,
-        Completion_Context& context)
+        Completion_Context context)
       : impl_(impl),
         demuxer_(demuxer),
         handler_(handler),
@@ -158,13 +158,12 @@ public:
     impl_type& impl_;
     Demuxer& demuxer_;
     Handler handler_;
-    Completion_Context& context_;
+    Completion_Context context_;
   };
 
   // Start an asynchronous wait on the timer.
   template <typename Handler, typename Completion_Context>
-  void async_wait(impl_type& impl, Handler handler,
-      Completion_Context& context)
+  void async_wait(impl_type& impl, Handler handler, Completion_Context context)
   {
     demuxer_.operation_started();
     reactor_.schedule_timer(impl->expiry.sec(), impl->expiry.usec(),

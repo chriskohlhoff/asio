@@ -127,8 +127,7 @@ public:
   template <typename Handler>
   void operation_completed(Handler handler)
   {
-    service_.operation_completed(handler, null_completion_context::instance(),
-        false);
+    service_.operation_completed(handler, null_completion_context(), false);
   }
 
   /// Notify the demuxer that an operation has completed.
@@ -146,12 +145,11 @@ public:
    * signature of the handler must be: @code void handler(); @endcode
    *
    * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Ownership of the
-   * completion_context object is retained by the caller, which must guarantee
-   * that it is valid until after the handler has been called.
+   * concurrent invocations of handlers that may be made. Copies will be made
+   * of the context object as required, however all copies are equivalent.
    */
   template <typename Handler, typename Completion_Context>
-  void operation_completed(Handler handler, Completion_Context& context)
+  void operation_completed(Handler handler, Completion_Context context)
   {
     service_.operation_completed(handler, context, false);
   }
@@ -171,9 +169,8 @@ public:
    * signature of the handler must be: @code void handler(); @endcode
    *
    * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Ownership of the
-   * completion_context object is retained by the caller, which must guarantee
-   * that it is valid until after the handler has been called.
+   * concurrent invocations of handlers that may be made. Copies will be made
+   * of the context object as required, however all copies are equivalent.
    *
    * @param allow_nested_delivery If true, this allows the demuxer to run the
    * completion handler before operation_completed returns, as an optimisation.
@@ -183,7 +180,7 @@ public:
    * immediately.
    */
   template <typename Handler, typename Completion_Context>
-  void operation_completed(Handler handler, Completion_Context& context,
+  void operation_completed(Handler handler, Completion_Context context,
       bool allow_nested_delivery)
   {
     service_.operation_completed(handler, context, allow_nested_delivery);
@@ -206,8 +203,7 @@ public:
   template <typename Handler>
   void operation_immediate(Handler handler)
   {
-    service_.operation_immediate(handler, null_completion_context::instance(),
-        false);
+    service_.operation_immediate(handler, null_completion_context(), false);
   }
 
   /// Notify the demuxer of an operation that started and finished immediately.
@@ -225,12 +221,11 @@ public:
    * signature of the handler must be: @code void handler(); @endcode
    *
    * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Ownership of the
-   * completion_context object is retained by the caller, which must guarantee
-   * that it is valid until after the handler has been called.
+   * concurrent invocations of handlers that may be made. Copies will be made
+   * of the context object as required, however all copies are equivalent.
    */
   template <typename Handler, typename Completion_Context>
-  void operation_immediate(Handler handler, Completion_Context& context)
+  void operation_immediate(Handler handler, Completion_Context context)
   {
     service_.operation_immediate(handler, context, false);
   }
@@ -250,9 +245,8 @@ public:
    * signature of the handler must be: @code void handler(); @endcode
    *
    * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Ownership of the
-   * object is retained by the caller, which must guarantee that it is valid
-   * until after the handler has been called.
+   * concurrent invocations of handlers that may be made. Copies will be made
+   * of the context object as required, however all copies are equivalent.
    *
    * @param allow_nested_delivery If true, this allows the demuxer to run the
    * completion handler before operation_immediate returns, as an optimisation.
@@ -262,7 +256,7 @@ public:
    * immediately.
    */
   template <typename Handler, typename Completion_Context>
-  void operation_immediate(Handler handler, Completion_Context& context,
+  void operation_immediate(Handler handler, Completion_Context context,
       bool allow_nested_delivery)
   {
     service_.operation_immediate(handler, context, allow_nested_delivery);

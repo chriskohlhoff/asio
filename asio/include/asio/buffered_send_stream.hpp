@@ -100,7 +100,7 @@ public:
   /// lifetime of the asynchronous operation.
   template <typename Handler, typename Completion_Context>
   void async_send(const void* data, size_t length, Handler handler,
-      Completion_Context& context)
+      Completion_Context context)
   {
     next_layer_.async_send(data, length, handler, context);
   }
@@ -132,7 +132,7 @@ public:
   /// must be valid for the lifetime of the asynchronous operation.
   template <typename Handler, typename Completion_Context>
   void async_recv(void* data, size_t max_length, Handler handler,
-      Completion_Context& context)
+      Completion_Context context)
   {
     next_layer_.async_recv(data, max_length, handler, context);
   }

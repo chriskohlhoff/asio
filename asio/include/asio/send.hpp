@@ -139,9 +139,8 @@ void async_send(Stream& s, const void* data, size_t length, Handler handler)
  * ); @endcode
  *
  * @param context The completion context which controls the number of
- * concurrent invocations of handlers that may be made. Ownership of the
- * object is retained by the caller, which must guarantee that it is valid
- * until after the handler has been called.
+ * concurrent invocations of handlers that may be made. Copies will be made of
+ * the context object as required, however all copies are equivalent.
  *
  * @note The send operation may not transmit all of the data to the peer.
  * Consider using the asio::async_send_n() function if you need to ensure that
@@ -149,7 +148,7 @@ void async_send(Stream& s, const void* data, size_t length, Handler handler)
  */
 template <typename Stream, typename Handler, typename Completion_Context>
 void async_send(Stream& s, const void* data, size_t length, Handler handler,
-    Completion_Context& context)
+    Completion_Context context)
 {
   s.async_send(data, length, handler, context);
 }
@@ -255,7 +254,7 @@ namespace detail
   {
   public:
     send_n_handler(Stream& stream, const void* data, size_t length,
-        Handler handler, Completion_Context& context)
+        Handler handler, Completion_Context context)
       : stream_(stream),
         data_(data),
         length_(length),
@@ -287,7 +286,7 @@ namespace detail
     size_t length_;
     size_t total_sent_;
     Handler handler_;
-    Completion_Context& context_;
+    Completion_Context context_;
   };
 } // namespace detail
 
@@ -322,7 +321,7 @@ void async_send_n(Stream& s, const void* data, size_t length, Handler handler)
 {
   async_send(s, data, length,
       detail::send_n_handler<Stream, Handler, null_completion_context>(s,
-        data, length, handler, null_completion_context::instance()));
+        data, length, handler, null_completion_context()));
 }
 
 /// Start an asynchronous send that will not complete until the specified
@@ -352,13 +351,12 @@ void async_send_n(Stream& s, const void* data, size_t length, Handler handler)
  * ); @endcode
  *
  * @param context The completion context which controls the number of
- * concurrent invocations of handlers that may be made. Ownership of the
- * object is retained by the caller, which must guarantee that it is valid
- * until after the handler has been called.
+ * concurrent invocations of handlers that may be made. Copies will be made of
+ * the context object as required, however all copies are equivalent.
  */
 template <typename Stream, typename Handler, typename Completion_Context>
 void async_send_n(Stream& s, const void* data, size_t length, Handler handler,
-    Completion_Context& context)
+    Completion_Context context)
 {
   async_send(s, data, length,
       detail::send_n_handler<Stream, Handler, Completion_Context>(s, data,

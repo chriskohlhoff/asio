@@ -276,7 +276,7 @@ public:
   void async_send(const void* data, size_t length, Handler handler)
   {
     service_.async_send(impl_, data, length, handler,
-        null_completion_context::instance());
+        null_completion_context());
   }
 
   /// Start an asynchronous send.
@@ -299,9 +299,8 @@ public:
    * ); @endcode
    *
    * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Ownership of the
-   * object is retained by the caller, which must guarantee that it is valid
-   * until after the handler has been called.
+   * concurrent invocations of handlers that may be made. Copies will be made
+   * of the context object as required, however all copies are equivalent.
    *
    * @note The send operation may not transmit all of the data to the peer.
    * Consider using the asio::async_send_n() function if you need to ensure
@@ -309,7 +308,7 @@ public:
    */
   template <typename Handler, typename Completion_Context>
   void async_send(const void* data, size_t length, Handler handler,
-      Completion_Context& context)
+      Completion_Context context)
   {
     service_.async_send(impl_, data, length, handler, context);
   }
@@ -398,7 +397,7 @@ public:
   void async_recv(void* data, size_t max_length, Handler handler)
   {
     service_.async_recv(impl_, data, max_length, handler,
-        null_completion_context::instance());
+        null_completion_context());
   }
 
   /// Start an asynchronous receive.
@@ -421,9 +420,8 @@ public:
    * ); @endcode
    *
    * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Ownership of the
-   * object is retained by the caller, which must guarantee that it is valid
-   * until after the handler has been called.
+   * concurrent invocations of handlers that may be made. Copies will be made
+   * of the context object as required, however all copies are equivalent.
    *
    * @note The recv operation may not receive all of the requested number of
    * bytes. Consider using the asio::async_recv_n() function if you need to
@@ -432,7 +430,7 @@ public:
    */
   template <typename Handler, typename Completion_Context>
   void async_recv(void* data, size_t max_length, Handler handler,
-      Completion_Context& context)
+      Completion_Context context)
   {
     service_.async_recv(impl_, data, max_length, handler, context);
   }

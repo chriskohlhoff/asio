@@ -169,7 +169,7 @@ public:
   template <typename Handler>
   void async_wait(Handler handler)
   {
-    service_.async_wait(impl_, handler, null_completion_context::instance());
+    service_.async_wait(impl_, handler, null_completion_context());
   }
 
   /// Start an asynchronous wait on the timer.
@@ -183,12 +183,11 @@ public:
    * signature of the handler must be: @code void handler(); @endcode
    *
    * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Ownership of the
-   * object is retained by the caller, which must guarantee that it is valid
-   * until after the handler has been called.
+   * concurrent invocations of handlers that may be made. Copies will be made
+   * of the context object as required, however all copies are equivalent.
    */
   template <typename Handler, typename Completion_Context>
-  void async_wait(Handler handler, Completion_Context& context)
+  void async_wait(Handler handler, Completion_Context context)
   {
     service_.async_wait(impl_, handler, context);
   }

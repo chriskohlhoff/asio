@@ -157,7 +157,7 @@ public:
 
   // Notify the demuxer that an operation has completed.
   template <typename Handler, typename Completion_Context>
-  void operation_completed(Handler handler, Completion_Context& context,
+  void operation_completed(Handler handler, Completion_Context context,
       bool allow_nested_delivery)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
@@ -202,7 +202,7 @@ public:
 
   // Notify the demuxer of an operation that started and finished immediately.
   template <typename Handler, typename Completion_Context>
-  void operation_immediate(Handler handler, Completion_Context& context,
+  void operation_immediate(Handler handler, Completion_Context context,
       bool allow_nested_delivery)
   {
     operation_started();
@@ -310,7 +310,7 @@ private:
     : public completion_base
   {
   public:
-    completion(Handler handler, Completion_Context& context)
+    completion(Handler handler, Completion_Context context)
       : handler_(handler),
         context_(context)
     {
@@ -335,7 +335,7 @@ private:
 
   private:
     Handler handler_;
-    Completion_Context& context_;
+    Completion_Context context_;
   };
 
   // The demuxer that owns this service.

@@ -186,7 +186,7 @@ public:
       Handler handler)
   {
     service_.async_connect(impl_, peer_socket.lowest_layer(), peer_address,
-        handler, null_completion_context::instance());
+        handler, null_completion_context());
   }
 
   /// Start an asynchronous connect.
@@ -209,14 +209,13 @@ public:
    * ); @endcode
    *
    * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Ownership of the
-   * object is retained by the caller, which must guarantee that it is valid
-   * until after the handler has been called.
+   * concurrent invocations of handlers that may be made. Copies will be made
+   * of the context object as required, however all copies are equivalent.
    */
   template <typename Stream, typename Address, typename Handler,
       typename Completion_Context>
   void async_connect(Stream& peer_socket, const Address& peer_address,
-      Handler handler, Completion_Context& context)
+      Handler handler, Completion_Context context)
   {
     service_.async_connect(impl_, peer_socket.lowest_layer(), peer_address,
         handler, context);

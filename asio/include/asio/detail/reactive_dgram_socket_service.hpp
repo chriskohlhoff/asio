@@ -136,7 +136,7 @@ public:
   public:
     sendto_handler(impl_type impl, Demuxer& demuxer, const void* data,
         size_t length, const Address& address, Handler handler,
-        Completion_Context& context)
+        Completion_Context context)
       : impl_(impl),
         demuxer_(demuxer),
         data_(data),
@@ -170,15 +170,14 @@ public:
     size_t length_;
     Address destination_;
     Handler handler_;
-    Completion_Context& context_;
+    Completion_Context context_;
   };
 
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
   template <typename Address, typename Handler, typename Completion_Context>
   void async_sendto(impl_type& impl, const void* data, size_t length,
-      const Address& destination, Handler handler,
-      Completion_Context& context)
+      const Address& destination, Handler handler, Completion_Context context)
   {
     demuxer_.operation_started();
     reactor_.start_write_op(impl,
@@ -212,7 +211,7 @@ public:
   public:
     recvfrom_handler(impl_type impl, Demuxer& demuxer, void* data,
         size_t max_length, Address& address, Handler handler,
-        Completion_Context& context)
+        Completion_Context context)
       : impl_(impl),
         demuxer_(demuxer),
         data_(data),
@@ -248,7 +247,7 @@ public:
     size_t max_length_;
     Address& sender_address_;
     Handler handler_;
-    Completion_Context& context_;
+    Completion_Context context_;
   };
 
   // Start an asynchronous receive. The buffer for the data being received and
@@ -256,7 +255,7 @@ public:
   // asynchronous operation.
   template <typename Address, typename Handler, typename Completion_Context>
   void async_recvfrom(impl_type& impl, void* data, size_t max_length,
-      Address& sender_address, Handler handler, Completion_Context& context)
+      Address& sender_address, Handler handler, Completion_Context context)
   {
     demuxer_.operation_started();
     reactor_.start_read_op(impl,

@@ -114,7 +114,7 @@ public:
   /// lifetime of the asynchronous operation.
   template <typename Handler, typename Completion_Context>
   void async_send(const void* data, size_t length, Handler handler,
-      Completion_Context& context)
+      Completion_Context context)
   {
     next_layer_.async_send(data, length, handler, context);
   }
@@ -186,7 +186,7 @@ public:
 
   /// Start an asynchronous fill.
   template <typename Handler, typename Completion_Context>
-  void async_fill(Handler handler, Completion_Context& context)
+  void async_fill(Handler handler, Completion_Context context)
   {
     size_t previous_size = buffer_.size();
     buffer_.resize(buffer_.capacity());
@@ -275,7 +275,7 @@ public:
   /// must be valid for the lifetime of the asynchronous operation.
   template <typename Handler, typename Completion_Context>
   void async_recv(void* data, size_t max_length, Handler handler,
-      Completion_Context& context)
+      Completion_Context context)
   {
     if (buffer_.empty())
     {

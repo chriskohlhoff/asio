@@ -33,7 +33,7 @@ void outer_print(demuxer& d, int id, detail::mutex& io_mutex)
   lock.unlock();
 
   d.operation_immediate(boost::bind(inner_print, id, boost::ref(io_mutex)),
-      null_completion_context::instance(), true);
+      null_completion_context(), true);
 
   lock.lock();
   std::cout << "Finished " << id << "\n";

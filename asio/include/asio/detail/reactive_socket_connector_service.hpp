@@ -167,7 +167,7 @@ public:
     connect_handler(impl_type impl, socket_type new_socket, Demuxer& demuxer,
         basic_stream_socket<Stream_Socket_Service>& peer,
         const Address& peer_address, Handler handler,
-        Completion_Context& context)
+        Completion_Context context)
       : impl_(impl),
         new_socket_(new_socket),
         demuxer_(demuxer),
@@ -234,7 +234,7 @@ public:
     basic_stream_socket<Stream_Socket_Service>& peer_;
     Address peer_address_;
     Handler handler_;
-    Completion_Context& context_;
+    Completion_Context context_;
   };
 
   // Start an asynchronous connect. The peer socket object must be valid until
@@ -244,7 +244,7 @@ public:
   void async_connect(impl_type& impl,
       basic_stream_socket<Stream_Socket_Service>& peer,
       const Address& peer_address, Handler handler,
-      Completion_Context& context)
+      Completion_Context context)
   {
     if (peer.impl() != invalid_socket)
     {

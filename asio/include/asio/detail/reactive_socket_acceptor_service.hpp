@@ -182,7 +182,7 @@ public:
   public:
     accept_handler(impl_type impl, Demuxer& demuxer,
         basic_stream_socket<Stream_Socket_Service>& peer, Handler handler,
-        Completion_Context& context)
+        Completion_Context context)
       : impl_(impl),
         demuxer_(demuxer),
         peer_(peer),
@@ -211,7 +211,7 @@ public:
     Demuxer& demuxer_;
     basic_stream_socket<Stream_Socket_Service>& peer_;
     Handler handler_;
-    Completion_Context& context_;
+    Completion_Context context_;
   };
 
   // Start an asynchronous accept. The peer_socket object must be valid until
@@ -219,8 +219,8 @@ public:
   template <typename Stream_Socket_Service, typename Handler,
       typename Completion_Context>
   void async_accept(impl_type& impl,
-      basic_stream_socket<Stream_Socket_Service>& peer,
-      Handler handler, Completion_Context& context)
+      basic_stream_socket<Stream_Socket_Service>& peer, Handler handler,
+      Completion_Context context)
   {
     if (peer.impl() != invalid_socket)
     {
@@ -243,7 +243,7 @@ public:
   public:
     accept_addr_handler(impl_type impl, Demuxer& demuxer,
         basic_stream_socket<Stream_Socket_Service>& peer,
-        Address& peer_address, Handler handler, Completion_Context& context)
+        Address& peer_address, Handler handler, Completion_Context context)
       : impl_(impl),
         demuxer_(demuxer),
         peer_(peer),
@@ -277,7 +277,7 @@ public:
     basic_stream_socket<Stream_Socket_Service>& peer_;
     Address& peer_address_;
     Handler handler_;
-    Completion_Context& context_;
+    Completion_Context context_;
   };
 
   // Start an asynchronous accept. The peer_socket and peer_address objects
@@ -286,7 +286,7 @@ public:
       typename Completion_Context>
   void async_accept_address(impl_type& impl,
       basic_stream_socket<Stream_Socket_Service>& peer,
-      Address& peer_address, Handler handler, Completion_Context& context)
+      Address& peer_address, Handler handler, Completion_Context context)
   {
     if (peer.impl() != invalid_socket)
     {

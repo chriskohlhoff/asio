@@ -17,48 +17,15 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/noncopyable.hpp>
-#include "asio/detail/pop_options.hpp"
-
 namespace asio {
-
-namespace detail
-{
-  // Helper template used to create a global instance of the
-  // null_completion_context without needing a .cpp file for it.
-  template <typename Type>
-  struct global
-  {
-    static Type instance;
-  };
-
-  template <typename Type> Type global<Type>::instance;
-}
 
 /// The null_completion_context class is a concrete implementation of the
 /// Completion_Context concept. It does not place any limits on the number of
 /// concurrent upcalls to completion handlers that may be associated with the
-/// context.
+/// context. All instances of this class are equivalent.
 class null_completion_context
-  : private boost::noncopyable
 {
 public:
-  /// Obtain the null completion context.
-  /**
-   * This function can be used to obtain a null completion context
-   * implementation. This null implementation provides no control over when
-   * completion handler upcalls are made.
-   *
-   * @return A reference to a null completion context object. The ownership of
-   * the object is not transferred to the caller, and the object is guaranteed
-   * to be valid for the lifetime of the program.
-   */
-  static null_completion_context& instance()
-  {
-    return detail::global<null_completion_context>::instance;
-  }
-
   /// Attempt to acquire the right to make an upcall.
   /**
    * This function is called to attempt to obtain the right to make an upcall

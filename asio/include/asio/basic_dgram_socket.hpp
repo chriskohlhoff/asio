@@ -331,7 +331,7 @@ public:
       const Address& destination, Handler handler)
   {
     service_.async_sendto(impl_, data, length, destination, handler,
-        null_completion_context::instance());
+        null_completion_context());
   }
 
   /// Start an asynchronous send.
@@ -362,14 +362,13 @@ public:
    * ); @endcode
    *
    * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Ownership of the
-   * object is retained by the caller, which must guarantee that it is valid
-   * until after the handler has been called.
+   * concurrent invocations of handlers that may be made. Copies will be made
+   * of the context object as required, however all copies are equivalent.
    */
   template <typename Address, typename Handler, typename Completion_Context>
   void async_sendto(const void* data, size_t length,
       const Address& destination, Handler handler,
-      Completion_Context& context)
+      Completion_Context context)
   {
     service_.async_sendto(impl_, data, length, destination, handler, context);
   }
@@ -460,7 +459,7 @@ public:
       Handler handler)
   {
     service_.async_recvfrom(impl_, data, max_length, sender_address, handler,
-        null_completion_context::instance());
+        null_completion_context());
   }
 
   /// Start an asynchronous receive.
@@ -489,13 +488,12 @@ public:
    * ); @endcode
    *
    * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Ownership of the
-   * object is retained by the caller, which must guarantee that it is valid
-   * until after the handler has been called.
+   * concurrent invocations of handlers that may be made. Copies will be made
+   * of the context object as required, however all copies are equivalent.
    */
   template <typename Address, typename Handler, typename Completion_Context>
   void async_recvfrom(void* data, size_t max_length, Address& sender_address,
-      Handler handler, Completion_Context& context)
+      Handler handler, Completion_Context context)
   {
     service_.async_recvfrom(impl_, data, max_length, sender_address, handler,
         context);
