@@ -55,7 +55,7 @@ private:
 };
 
 /// Create an expression object using template type deduction.
-template <typename Expr>
+template <typename Expr> inline
 expression<Expr> make_expression(Expr expr)
 {
   return expression<Expr>(expr);
@@ -85,14 +85,14 @@ private:
 };
 
 /// Compare the error for equality with a given value.
-template <typename Value>
+template <typename Value> inline
 expression<value_eq_error<Value> > operator==(Value value, error_t)
 {
   return make_expression(value_eq_error<Value>(value));
 }
 
 /// Compare the error for equality with a given value.
-template <typename Value>
+template <typename Value> inline
 expression<value_eq_error<Value> > operator==(error_t, Value value)
 {
   return make_expression(value_eq_error<Value>(value));
@@ -122,14 +122,14 @@ private:
 };
 
 /// Compare the error for inequality with a given value.
-template <typename Value>
+template <typename Value> inline
 expression<value_neq_error<Value> > operator!=(Value value, error_t)
 {
   return make_expression(value_neq_error<Value>(value));
 }
 
 /// Compare the error for inequality with a given value.
-template <typename Value>
+template <typename Value> inline
 expression<value_neq_error<Value> > operator!=(error_t, Value value)
 {
   return make_expression(value_neq_error<Value>(value));
@@ -163,7 +163,7 @@ private:
 };
 
 /// Perform a logical or on two expressions.
-template <typename Expr1, typename Expr2>
+template <typename Expr1, typename Expr2> inline
 expression<expr_or_expr<expression<Expr1>, expression<Expr2> > >
 operator||(expression<Expr1> expr1, expression<Expr2> expr2)
 {
@@ -199,7 +199,7 @@ private:
 };
 
 /// Perform a logical and on two expressions.
-template <typename Expr1, typename Expr2>
+template <typename Expr1, typename Expr2> inline
 expression<expr_and_expr<expression<Expr1>, expression<Expr2> > >
 operator&&(expression<Expr1> expr1, expression<Expr2> expr2)
 {
@@ -220,6 +220,7 @@ public:
 };
 
 /// Always throw an error.
+inline
 expression<throw_error_t> throw_error()
 {
   return make_expression(throw_error_t());
@@ -251,7 +252,7 @@ private:
 };
 
 /// Throw an error if an expression is true.
-template <typename Expr>
+template <typename Expr> inline
 expression<throw_error_if_t<Expr> > throw_error_if(Expr expr)
 {
   return make_expression(throw_error_if_t<Expr>(expr));
@@ -282,7 +283,7 @@ private:
 };
 
 /// Set a variable to the error.
-template <typename Target>
+template <typename Target> inline
 expression<set_error_t<Target> > set_error(Target& target)
 {
   if (target)
@@ -323,7 +324,7 @@ private:
 };
 
 /// Set a variable to the error if an expression is true.
-template <typename Target, typename Expr>
+template <typename Target, typename Expr> inline
 expression<set_error_if_t<Target, Expr> >
 set_error_if(Target& target, Expr expr)
 {
@@ -357,7 +358,7 @@ private:
 };
 
 /// Always log an error to a stream.
-template <typename Ostream>
+template <typename Ostream> inline
 expression<log_error_t<Ostream> > log_error(Ostream& ostream)
 {
   return make_expression(log_error_t<Ostream>(ostream));
@@ -396,7 +397,7 @@ private:
 };
 
 /// Log an error to a stream if an expression is true.
-template <typename Ostream, typename Expr>
+template <typename Ostream, typename Expr> inline
 expression<log_error_if_t<Ostream, Expr> >
 log_error_if(Ostream& ostream, Expr expr)
 {
