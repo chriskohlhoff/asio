@@ -63,9 +63,9 @@ To build, simply run `make' in the root directory of the asio source kit.
 5. Building the tests on Win32
 ==============================
 
-To build with either of the supported Win32 compilers, the boost directory
-(i.e. the directory called boost_1_30_0) must be in the same directory as the
-one that contains the asio source kit.
+To build with any of the supported Win32 compilers, the boost directory (i.e.
+the directory called boost_1_30_0) must be in the same directory as the one
+that contains the asio source kit.
 
 5.1. Building with MSVC
 
