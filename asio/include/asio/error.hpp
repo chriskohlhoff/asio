@@ -29,9 +29,11 @@ namespace asio {
 #if defined(_WIN32)
 # define ASIO_SOCKET_ERROR(e) WSA ## e
 # define ASIO_NETDB_ERROR(e) WSA ## e
+# define ASIO_WIN_OR_POSIX_ERROR(e_win, e_posix) e_win
 #else
 # define ASIO_SOCKET_ERROR(e) e
 # define ASIO_NETDB_ERROR(e) 16384 + e
+# define ASIO_WIN_OR_POSIX_ERROR(e_win, e_posix) e_posix
 #endif
 
 /// The error class is used to encapsulate system error codes.
@@ -109,10 +111,10 @@ public:
     no_host_data = ASIO_NETDB_ERROR(NO_DATA),
 
     /// Cannot allocate memory.
-    no_memory = ENOMEM,
+    no_memory = ASIO_WIN_OR_POSIX_ERROR(ERROR_OUTOFMEMORY, ENOMEM),
 
     /// Operation not permitted.
-    no_permission = EPERM,
+    no_permission = ASIO_WIN_OR_POSIX_ERROR(ERROR_ACCESS_DENIED, EPERM),
 
     /// Protocol not available.
     no_protocol_option = ASIO_SOCKET_ERROR(ENOPROTOOPT),
@@ -130,11 +132,8 @@ public:
     not_supported = ASIO_SOCKET_ERROR(EOPNOTSUPP),
 
     /// Operation cancelled.
-#if defined(_WIN32)
-    operation_aborted = ERROR_OPERATION_ABORTED,
-#else // defined(_WIN32)
-    operation_aborted = ECANCELED,
-#endif // defined(_WIN32)
+    operation_aborted =
+      ASIO_WIN_OR_POSIX_ERROR(ERROR_OPERATION_ABORTED, ECANCELED),
 
     /// Cannot send after transport endpoint shutdown.
     shut_down = ASIO_SOCKET_ERROR(ESHUTDOWN),
@@ -146,7 +145,7 @@ public:
     timed_out = ASIO_SOCKET_ERROR(ETIMEDOUT),
 
     /// Resource temporarily unavailable.
-    try_again = EAGAIN,
+    try_again = ASIO_WIN_OR_POSIX_ERROR(ERROR_RETRY, EAGAIN),
 
     /// The socket is marked non-blocking and the requested operation would
     /// block.
@@ -233,27 +232,20 @@ template <typename Ostream>
 Ostream& operator<<(Ostream& os, const error& e)
 {
 #if defined(_WIN32)
-  if (e.code() == ENOMEM || e.code() == EPERM || e.code() == EAGAIN)
-  {
-    os << strerror(e.code());
-  }
+  LPTSTR msg = 0;
+  DWORD length = ::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER
+      | FORMAT_MESSAGE_FROM_SYSTEM
+      | FORMAT_MESSAGE_IGNORE_INSERTS, 0, e.code(),
+      MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&msg, 0, 0);
+  if (length && msg[length - 1] == '\n')
+    msg[--length] = '\0';
+  if (length && msg[length - 1] == '\r')
+    msg[--length] = '\0';
+  if (length)
+    os << msg;
   else
-  {
-    LPTSTR msg = 0;
-    DWORD length = ::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER
-        | FORMAT_MESSAGE_FROM_SYSTEM
-        | FORMAT_MESSAGE_IGNORE_INSERTS, 0, e.code(),
-        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&msg, 0, 0);
-    if (length && msg[length - 1] == '\n')
-      msg[--length] = '\0';
-    if (length && msg[length - 1] == '\r')
-      msg[--length] = '\0';
-    if (length)
-      os << msg;
-    else
-      os << e.what() << ' ' << e.code();
-    ::LocalFree(msg);
-  }
+    os << e.what() << ' ' << e.code();
+  ::LocalFree(msg);
 #else // _WIN32
   switch (e.code())
   {
@@ -292,6 +284,8 @@ Ostream& operator<<(Ostream& os, const error& e)
 } // namespace asio
 
 #undef ASIO_SOCKET_ERROR
+#undef ASIO_NETDB_ERROR
+#undef ASIO_WIN_OR_POSIX_ERROR
 
 #include "asio/detail/pop_options.hpp"
 
