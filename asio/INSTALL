@@ -3,7 +3,7 @@ asio version 0.1.7 - Installation instructions
 1.   Supported Platforms
 2.   Requirements
 3.   Before using asio
-4.   Building the tests on Linux
+4.   Building the tests on Linux or UNIX
 5.   Building the tests on Win32
 5.1.   Building with MSVC
 5.2.   Building with Borland C++
@@ -47,8 +47,8 @@ to add the following directories to your compiler include path:
   - the boost directory (e.g. the one called boost-1.30.2 or boost_1_31_0)
 
 
-4. Building the tests on Linux
-==============================
+4. Building the tests on Linux or UNIX
+======================================
 
 If the boost directory (e.g. the directory called boost-1.30.2 or boost_1_31_0)
 is in the same directory as the asio source kit, then you may configure asio by
