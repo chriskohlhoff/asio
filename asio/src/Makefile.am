@@ -29,6 +29,7 @@ nobase_include_HEADERS = \
 	asio/detail/pop_options.hpp \
 	asio/detail/pthread_mutex.hpp \
 	asio/detail/pthread_thread.hpp \
+	asio/detail/pthread_tss_bool.hpp \
 	asio/detail/push_options.hpp \
 	asio/detail/reactive_dgram_socket_service.hpp \
 	asio/detail/reactive_socket_acceptor_service.hpp \
@@ -52,6 +53,7 @@ nobase_include_HEADERS = \
 	asio/detail/win_iocp_dgram_socket_service.hpp \
 	asio/detail/win_mutex.hpp \
 	asio/detail/win_thread.hpp \
+	asio/detail/win_tss_bool.hpp \
 	asio/detail/winsock_init.hpp \
 	asio/dgram_socket.hpp \
 	asio/inet_address_v4.hpp \
