@@ -24,7 +24,7 @@ public:
     for (int i = 0; i < max_length; ++i)
       data_[i] = i % 128;
 
-    socket_.async_send_n(data_, max_length,
+    async_send_n(socket_, data_, max_length,
         boost::bind(&echo_session::handle_send, this, _1, _2, _3));
   }
 
@@ -32,7 +32,7 @@ public:
   {
     if (!error && length > 0 && ++msg_count_ < 10000)
     {
-      socket_.async_send_n(data_, length,
+      async_send_n(socket_, data_, length,
           boost::bind(&echo_session::handle_send, this, _1, _2, _3));
     }
     else

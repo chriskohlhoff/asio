@@ -29,6 +29,8 @@
 #include "asio/dgram_socket.hpp"
 #include "asio/inet_address_v4.hpp"
 #include "asio/null_completion_context.hpp"
+#include "asio/recv.hpp"
+#include "asio/send.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_acceptor.hpp"
 #include "asio/socket_connector.hpp"

@@ -96,7 +96,7 @@ public:
   template <typename Handler>
   void async_send(const void* data, size_t length, Handler handler)
   {
-    service_.async_send(impl_, length, handler,
+    service_.async_send(impl_, data, length, handler,
         null_completion_context::instance());
   }
 
@@ -106,35 +106,7 @@ public:
   void async_send(const void* data, size_t length, Handler handler,
       Completion_Context& context)
   {
-    service_.async_send(impl_, length, handler, context);
-  }
-
-  /// Send all of the given data to the peer before returning. Returns the
-  /// number of bytes sent on the last send or 0 if the connection was closed
-  /// cleanly. Throws a socket_error exception on failure.
-  size_t send_n(const void* data, size_t length, size_t* total_bytes_sent = 0)
-  {
-    return service_.send_n(impl_, data, length, total_bytes_sent);
-  }
-
-  /// Start an asynchronous send that will not return until all of the data has
-  /// been sent or an error occurs. The data being sent must be valid for the
-  /// lifetime of the asynchronous operation.
-  template <typename Handler>
-  void async_send_n(const void* data, size_t length, Handler handler)
-  {
-    service_.async_send_n(impl_, data, length, handler,
-        null_completion_context::instance());
-  }
-
-  /// Start an asynchronous send that will not return until all of the data has
-  /// been sent or an error occurs. The data being sent must be valid for the
-  /// lifetime of the asynchronous operation.
-  template <typename Handler, typename Completion_Context>
-  void async_send_n(const void* data, size_t length, Handler handler,
-      Completion_Context& context)
-  {
-    service_.async_send_n(impl_, data, length, handler, context);
+    service_.async_send(impl_, data, length, handler, context);
   }
 
   /// Receive some data from the peer. Returns the number of bytes received or
@@ -161,36 +133,6 @@ public:
       Completion_Context& context)
   {
     service_.async_recv(impl_, data, max_length, handler, context);
-  }
-
-  /// Receive the specified amount of data from the peer. Returns the number of
-  /// bytes received on the last recv call or 0 if the connection
-  /// was closed cleanly. Throws a socket_error exception on failure.
-  size_t recv_n(void* data, size_t length, size_t* total_bytes_recvd = 0)
-  {
-    return service_.recv_n(impl_, data, length, total_bytes_recvd);
-  }
-
-  /// Start an asynchronous receive that will not return until the specified
-  /// number of bytes has been received or an error occurs. The buffer for the
-  /// data being received must be valid for the lifetime of the asynchronous
-  /// operation.
-  template <typename Handler>
-  void async_recv_n(void* data, size_t length, Handler handler)
-  {
-    service_.async_recv_n(impl_, data, length, handler,
-        null_completion_context::instance());
-  }
-
-  /// Start an asynchronous receive that will not return until the specified
-  /// number of bytes has been received or an error occurs. The buffer for the
-  /// data being received must be valid for the lifetime of the asynchronous
-  /// operation.
-  template <typename Handler, typename Completion_Context>
-  void async_recv_n(void* data, size_t length, Handler handler,
-      Completion_Context& context)
-  {
-    service_.async_recv_n(impl_, data, length, handler, context);
   }
 
 private:

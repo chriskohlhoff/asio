@@ -16,8 +16,8 @@ void tpc_echo_session(stream_socket_ptr sock)
     char data[max_length];
 
     int length;
-    while ((length = sock->recv(data, max_length)) > 0)
-      if (sock->send_n(data, length) <= 0)
+    while ((length = recv(*sock, data, max_length)) > 0)
+      if (send_n(*sock, data, length) <= 0)
         break;
   }
   catch (std::exception& e)

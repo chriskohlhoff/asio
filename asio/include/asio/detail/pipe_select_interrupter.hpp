@@ -57,7 +57,7 @@ public:
   void interrupt()
   {
     char byte = 0;
-    write(write_descriptor_, &byte, 1);
+    ::write(write_descriptor_, &byte, 1);
   }
 
   // Reset the select interrupt. Returns true if the call was interrupted.

@@ -36,6 +36,11 @@ public:
   {
   }
 
+  void operator()()
+  {
+    handler_(arg1_);
+  }
+
   void operator()() const
   {
     handler_(arg1_);
@@ -61,6 +66,11 @@ public:
       arg1_(arg1),
       arg2_(arg2)
   {
+  }
+
+  void operator()()
+  {
+    handler_(arg1_, arg2_);
   }
 
   void operator()() const
@@ -91,6 +101,11 @@ public:
       arg2_(arg2),
       arg3_(arg3)
   {
+  }
+
+  void operator()()
+  {
+    handler_(arg1_, arg2_, arg3_);
   }
 
   void operator()() const

@@ -27,7 +27,7 @@ public:
   {
     if (!error && length > 0)
     {
-      socket_.async_send_n(data_, length,
+      async_send_n(socket_, data_, length,
           boost::bind(&echo_session::handle_send, this, _1, _2, _3));
     }
     else

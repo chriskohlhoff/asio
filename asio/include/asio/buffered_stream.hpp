@@ -40,12 +40,8 @@ public:
   using base_type::lowest_layer;
   using base_type::send;
   using base_type::async_send;
-  using base_type::send_n;
-  using base_type::async_send_n;
   using base_type::recv;
   using base_type::async_recv;
-  using base_type::recv_n;
-  using base_type::async_recv_n;
 
   /// Construct, passing the specified argument to initialise the next layer.
   template <typename Arg>
