@@ -21,10 +21,14 @@
 
 #include "asio/detail/socket_types.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <process.h>
+#include "asio/detail/pop_options.hpp"
+
 namespace asio {
 namespace detail {
 
-extern "C" void* __stdcall asio_detail_win_thread_function(void* arg);
+extern "C" unsigned int __stdcall asio_detail_win_thread_function(void* arg);
 
 class win_thread
   : private boost::noncopyable
@@ -48,17 +52,17 @@ public:
   }
 
 private:
-  friend void* asio_detail_win_thread_function(void* arg);
+  friend unsigned int asio_detail_win_thread_function(void* arg);
 
   class func_base
   {
   public:
-    virtual ~function_base() {}
+    virtual ~func_base() {}
     virtual run() = 0;
   };
 
   template <typename Function>
-  class func<Function>
+  class func
     : public func_base
   {
   public:
@@ -73,12 +77,13 @@ private:
     }
 
   private:
+    Function f_;
   };
 
   ::HANDLE thread_;
 };
 
-inline void* __stdcall asio_detail_win_thread_function(void* arg)
+inline unsigned int __stdcall asio_detail_win_thread_function(void* arg)
 {
   win_thread::func_base* func =
     static_cast<win_thread::func_base*>(arg);
