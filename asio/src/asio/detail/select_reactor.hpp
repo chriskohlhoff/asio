@@ -22,9 +22,8 @@
 #include <boost/thread.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/detail/pipe_select_interrupter.hpp"
 #include "asio/detail/reactor_op_queue.hpp"
-#include "asio/detail/socket_select_interrupter.hpp"
+#include "asio/detail/select_interrupter.hpp"
 #include "asio/detail/socket_types.hpp"
 
 namespace asio {
@@ -181,11 +180,7 @@ private:
   boost::mutex mutex_;
 
   // The interrupter is used to break a blocking select call.
-#if defined(_WIN32)
-  socket_select_interrupter interrupter_;
-#else
-  pipe_select_interrupter interrupter_;
-#endif
+  select_interrupter interrupter_;
 
   // The queue of read operations.
   reactor_op_queue<socket_type> read_op_queue_;

@@ -37,9 +37,11 @@ nobase_include_HEADERS = \
 	asio/detail/reactive_socket_connector_service.hpp \
 	asio/detail/reactive_stream_socket_service.hpp \
 	asio/detail/reactor_op_queue.hpp \
+	asio/detail/select_interrupter.hpp \
 	asio/detail/select_reactor.hpp \
 	asio/detail/service_registry.hpp \
 	asio/detail/shared_thread_demuxer_service.hpp \
+	asio/detail/signal_init.hpp \
 	asio/detail/socket_holder.hpp \
 	asio/detail/socket_ops.hpp \
 	asio/detail/socket_select_interrupter.hpp \
