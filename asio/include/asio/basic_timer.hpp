@@ -54,7 +54,7 @@ public:
 
   /// Construct and set to a particular time.
   basic_timer(demuxer_type& d, from_type from_when, long seconds,
-      int microseconds = 0)
+      long microseconds = 0)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_.null())
   {
