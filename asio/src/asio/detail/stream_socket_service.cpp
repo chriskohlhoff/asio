@@ -26,7 +26,8 @@ namespace detail {
 
 const service_type_id stream_socket_service::id;
 
-const stream_socket_service::impl_type stream_socket_service::invalid_impl;
+const stream_socket_service::impl_type
+stream_socket_service::invalid_impl = invalid_socket;
 
 void
 stream_socket_service::

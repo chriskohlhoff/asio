@@ -44,6 +44,10 @@ public:
   // Return the service interface corresponding to the given type.
   virtual service* do_get_service(const service_type_id& service_type);
 
+  // Create a dgram socket implementation.
+  virtual void do_dgram_socket_create(dgram_socket_service::impl_type& impl,
+		  const socket_address& address);
+
   // Destroy a dgram socket implementation.
   virtual void do_dgram_socket_destroy(dgram_socket_service::impl_type& impl);
 

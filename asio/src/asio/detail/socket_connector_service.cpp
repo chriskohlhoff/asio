@@ -30,7 +30,7 @@ namespace detail {
 const service_type_id socket_connector_service::id;
 
 const socket_connector_service::impl_type
-socket_connector_service::invalid_impl;
+socket_connector_service::invalid_impl = 0;
 
 void
 socket_connector_service::

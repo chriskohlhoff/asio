@@ -72,62 +72,54 @@ public:
   // Callback function when a completion context has been acquired.
   virtual void completion_context_acquired(void* arg) throw ();
 
-  // Register a new dgram socket with the service. This should be called only
-  // after the socket has been opened.
-  virtual void register_dgram_socket(dgram_socket& socket);
+  // Create a dgram socket implementation.
+  virtual void do_dgram_socket_create(dgram_socket_service::impl_type& impl,
+		  const socket_address& address);
 
-  // Remove a dgram socket registration from the service. This should be
-  // called immediately before the socket is closed.
-  virtual void deregister_dgram_socket(dgram_socket& socket);
+  // Destroy a dgram socket implementation.
+  virtual void do_dgram_socket_destroy(dgram_socket_service::impl_type& impl);
 
-  // Start an asynchronous send. The data being sent must be valid for the
-  // lifetime of the asynchronous operation.
-  virtual void async_dgram_socket_sendto(dgram_socket& socket,
-      const void* data, size_t length, const socket_address& destination,
-      const sendto_handler& handler, completion_context& context);
-
-  // Start an asynchronous receive. The buffer for the data being received and
-  // the sender_address obejct must both be valid for the lifetime of the
-  // asynchronous operation.
-  virtual void async_dgram_socket_recvfrom(dgram_socket& socket, void* data,
-      size_t max_length, socket_address& sender_address,
-      const recvfrom_handler& handler, completion_context& context);
-
-  // Register a new stream socket with the service. This should be called only
-  // after the socket has been opened, i.e. after an accept or just before a
-  // connect.
-  virtual void register_stream_socket(stream_socket& socket);
-
-  // Remove a stream socket registration from the service. This should be
-  // called immediately before the socket is closed.
-  virtual void deregister_stream_socket(stream_socket& socket);
-
-  // Start an asynchronous send. The data being sent must be valid for the
-  // lifetime of the asynchronous operation.
-  virtual void async_stream_socket_send(stream_socket& socket,
-      const void* data, size_t length, const send_handler& handler,
+  // Start an asynchronous sendto.
+  virtual void do_dgram_socket_async_sendto(
+      dgram_socket_service::impl_type& impl, const void* data, size_t length,
+      const socket_address& destination, const sendto_handler& handler,
       completion_context& context);
+
+  // Start an asynchronous recvfrom.
+  virtual void do_dgram_socket_async_recvfrom(
+      dgram_socket_service::impl_type& impl, void* data, size_t max_length,
+      socket_address& sender_address, const recvfrom_handler& handler,
+      completion_context& context);
+
+  // Create a new socket connector implementation.
+  virtual void do_stream_socket_create(stream_socket_service::impl_type& impl,
+      stream_socket_service::impl_type new_impl);
+
+  // Destroy a socket connector implementation.
+  virtual void do_stream_socket_destroy(
+      stream_socket_service::impl_type& impl);
+
+  // Start an asynchronous send.
+  virtual void do_stream_socket_async_send(
+      stream_socket_service::impl_type& impl, const void* data, size_t length,
+      const send_handler& handler, completion_context& context);
 
   // Start an asynchronous send that will not return until all of the data has
-  // been sent or an error occurs. The data being sent must be valid for the
-  // lifetime of the asynchronous operation.
-  virtual void async_stream_socket_send_n(stream_socket& socket,
-      const void* data, size_t length, const send_n_handler& handler,
-      completion_context& context);
+  // been sent or an error occurs.
+  virtual void do_stream_socket_async_send_n(
+      stream_socket_service::impl_type& impl, const void* data, size_t length,
+      const send_n_handler& handler, completion_context& context);
 
-  // Start an asynchronous receive. The buffer for the data being received must
-  // be valid for the lifetime of the asynchronous operation.
-  virtual void async_stream_socket_recv(stream_socket& socket, void* data,
-      size_t max_length, const recv_handler& handler,
-      completion_context& context);
+  // Start an asynchronous receive.
+  virtual void do_stream_socket_async_recv(
+      stream_socket_service::impl_type& impl, void* data, size_t max_length,
+      const recv_handler& handler, completion_context& context);
 
   // Start an asynchronous receive that will not return until the specified
-  // number of bytes has been received or an error occurs. The buffer for the
-  // data being received must be valid for the lifetime of the asynchronous
-  // operation.
-  virtual void async_stream_socket_recv_n(stream_socket& socket, void* data,
-      size_t length, const recv_n_handler& handler,
-      completion_context& context);
+  // number of bytes has been received or an error occurs.
+  virtual void do_stream_socket_async_recv_n(
+      stream_socket_service::impl_type& impl, void* data, size_t length,
+      const recv_n_handler& handler, completion_context& context);
 
 private:
   // The IO completion port used for queueing operations.

@@ -50,7 +50,7 @@ public:
   typedef basic_stream_socket<stream_socket_service> peer_type;
 
   // The value to use for uninitialised implementations.
-  static const impl_type invalid_impl = 0;
+  static const impl_type invalid_impl;
 
   // Create a new socket connector implementation.
   void create(impl_type& impl);

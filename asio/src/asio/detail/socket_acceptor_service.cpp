@@ -28,7 +28,8 @@ namespace detail {
 
 const service_type_id socket_acceptor_service::id;
 
-const socket_acceptor_service::impl_type socket_acceptor_service::invalid_impl;
+const socket_acceptor_service::impl_type
+socket_acceptor_service::invalid_impl = invalid_socket;
 
 void
 socket_acceptor_service::

@@ -30,7 +30,7 @@ schedule_timer(
   boost::xtime interval;
   interval.sec = 0;
   interval.nsec = 0;
-  do_schedule_timer(owner, start_time, interval, handler, context);
+  return do_schedule_timer(owner, start_time, interval, handler, context);
 }
 
 int
@@ -42,7 +42,7 @@ schedule_timer(
     const timer_handler& handler,
     completion_context& context)
 {
-  do_schedule_timer(owner, start_time, interval, handler, context);
+  return do_schedule_timer(owner, start_time, interval, handler, context);
 }
 
 void

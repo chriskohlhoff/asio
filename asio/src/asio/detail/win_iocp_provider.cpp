@@ -23,6 +23,8 @@
 #include "asio/service_unavailable.hpp"
 #include "asio/socket_address.hpp"
 #include "asio/socket_error.hpp"
+#include "asio/detail/socket_holder.hpp"
+#include "asio/detail/socket_ops.hpp"
 
 namespace asio {
 namespace detail {
@@ -241,25 +243,43 @@ completion_context_acquired(
  
 void
 win_iocp_provider::
-register_dgram_socket(
-    dgram_socket& s)
+do_dgram_socket_create(
+    dgram_socket_service::impl_type& impl,
+    const socket_address& address)
 {
-  ::CreateIoCompletionPort(
-      reinterpret_cast<HANDLE>(s.native_handle()), iocp_.handle, 0, 0);
+  socket_holder sock(socket_ops::socket(address.family(), SOCK_DGRAM,
+        IPPROTO_UDP));
+  if (sock.get() == invalid_socket)
+    boost::throw_exception(socket_error(socket_ops::get_error()));
+
+  int reuse = 1;
+  socket_ops::setsockopt(sock.get(), SOL_SOCKET, SO_REUSEADDR, &reuse,
+      sizeof(reuse));
+
+  if (socket_ops::bind(sock.get(), address.native_address(),
+        address.native_size()) == socket_error_retval)
+    boost::throw_exception(socket_error(socket_ops::get_error()));
+
+  impl = sock.release();
 }
 
 void
 win_iocp_provider::
-deregister_dgram_socket(
-    dgram_socket&)
+do_dgram_socket_destroy(
+    dgram_socket_service::impl_type& impl)
 {
+  if (impl != dgram_socket_service::invalid_impl)
+  {
+    socket_ops::close(impl);
+    impl = dgram_socket_service::invalid_impl;
+  }
 }
 
 namespace
 {
   struct sendto_operation : public operation
   {
-    dgram_socket::sendto_handler handler_;
+    dgram_socket_service::sendto_handler handler_;
 
     virtual void do_completion(DWORD last_error, size_t bytes_transferred)
     {
@@ -268,7 +288,7 @@ namespace
       delete this;
     }
 
-    static void do_upcall(const dgram_socket::sendto_handler& handler,
+    static void do_upcall(const dgram_socket_service::sendto_handler& handler,
         const socket_error& error, size_t bytes_transferred)
     {
       try
@@ -284,8 +304,8 @@ namespace
 
 void
 win_iocp_provider::
-async_dgram_socket_sendto(
-    dgram_socket& socket,
+do_dgram_socket_async_sendto(
+    dgram_socket_service::impl_type& impl,
     const void* data,
     size_t length,
     const socket_address& destination,
@@ -304,9 +324,8 @@ async_dgram_socket_sendto(
   buf.buf = static_cast<char*>(const_cast<void*>(data));
   DWORD bytes_transferred = 0;
 
-  int result = ::WSASendTo(socket.native_handle(), &buf, 1,
-      &bytes_transferred, 0, destination.native_address(),
-      destination.native_size(), sendto_op, 0);
+  int result = ::WSASendTo(impl, &buf, 1, &bytes_transferred, 0,
+      destination.native_address(), destination.native_size(), sendto_op, 0);
   DWORD last_error = ::WSAGetLastError();
 
   if (result != 0 && last_error != WSA_IO_PENDING)
@@ -323,7 +342,7 @@ namespace
 {
   struct recvfrom_operation : public operation
   {
-    dgram_socket::recvfrom_handler handler_;
+    dgram_socket_service::recvfrom_handler handler_;
     socket_address* sender_address_;
     int sender_address_size_;
 
@@ -335,7 +354,8 @@ namespace
       delete this;
     }
 
-    static void do_upcall(const dgram_socket::recvfrom_handler& handler,
+    static void do_upcall(
+        const dgram_socket_service::recvfrom_handler& handler,
         const socket_error& error, size_t bytes_transferred)
     {
       try
@@ -351,8 +371,8 @@ namespace
 
 void
 win_iocp_provider::
-async_dgram_socket_recvfrom(
-    dgram_socket& socket,
+do_dgram_socket_async_recvfrom(
+    dgram_socket_service::impl_type& impl,
     void* data,
     size_t max_length,
     socket_address& sender_address,
@@ -374,9 +394,9 @@ async_dgram_socket_recvfrom(
   DWORD bytes_transferred = 0;
   DWORD flags = 0;
 
-  int result = ::WSARecvFrom(socket.native_handle(), &buf, 1,
-      &bytes_transferred, &flags, sender_address.native_address(),
-      &recvfrom_op->sender_address_size_, recvfrom_op, 0);
+  int result = ::WSARecvFrom(impl, &buf, 1, &bytes_transferred, &flags,
+      sender_address.native_address(), &recvfrom_op->sender_address_size_,
+      recvfrom_op, 0);
   DWORD last_error = ::WSAGetLastError();
 
   if (result != 0 && last_error != WSA_IO_PENDING)
@@ -391,22 +411,29 @@ async_dgram_socket_recvfrom(
 
 void
 win_iocp_provider::
-register_stream_socket(
-    stream_socket&)
+do_stream_socket_create(
+    stream_socket_service::impl_type& impl,
+    stream_socket_service::impl_type new_impl)
 {
+  impl = new_impl;
 }
 
 void
 win_iocp_provider::
-deregister_stream_socket(
-    stream_socket&)
+do_stream_socket_destroy(
+    stream_socket_service::impl_type& impl)
 {
+  if (impl != stream_socket_service::invalid_impl)
+  {
+    socket_ops::close(impl);
+    impl = stream_socket_service::invalid_impl;
+  }
 }
 
 void
 win_iocp_provider::
-async_stream_socket_send(
-    stream_socket& socket,
+do_stream_socket_async_send(
+    stream_socket_service::impl_type& impl,
     const void* data,
     size_t length,
     const send_handler& handler,
@@ -416,8 +443,8 @@ async_stream_socket_send(
 
 void
 win_iocp_provider::
-async_stream_socket_send_n(
-    stream_socket& socket,
+do_stream_socket_async_send_n(
+    stream_socket_service::impl_type& impl,
     const void* data,
     size_t length,
     const send_n_handler& handler,
@@ -427,8 +454,8 @@ async_stream_socket_send_n(
 
 void
 win_iocp_provider::
-async_stream_socket_recv(
-    stream_socket& socket,
+do_stream_socket_async_recv(
+    stream_socket_service::impl_type& impl,
     void* data,
     size_t max_length,
     const recv_handler& handler,
@@ -438,8 +465,8 @@ async_stream_socket_recv(
 
 void
 win_iocp_provider::
-async_stream_socket_recv_n(
-    stream_socket& socket,
+do_stream_socket_async_recv_n(
+    stream_socket_service::impl_type& impl,
     void* data,
     size_t length,
     const recv_n_handler& handler,

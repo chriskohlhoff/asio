@@ -43,7 +43,7 @@ public:
   typedef socket_type impl_type;
 
   // The value to use for uninitialised implementations.
-  static const impl_type invalid_impl = invalid_socket;
+  static const impl_type invalid_impl;
 
   // Create a new socket connector implementation.
   void create(impl_type& impl, impl_type new_impl);

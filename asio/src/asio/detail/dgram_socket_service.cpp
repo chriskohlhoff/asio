@@ -27,7 +27,9 @@ namespace asio {
 namespace detail {
 
 const service_type_id dgram_socket_service::id;
-const dgram_socket_service::impl_type dgram_socket_service::invalid_impl;
+
+const dgram_socket_service::impl_type
+dgram_socket_service::invalid_impl = invalid_socket;
 
 void
 dgram_socket_service::
@@ -35,20 +37,7 @@ create(
     impl_type& impl,
     const socket_address& address)
 {
-  socket_holder sock(socket_ops::socket(address.family(), SOCK_DGRAM,
-        IPPROTO_UDP));
-  if (sock.get() == invalid_socket)
-    boost::throw_exception(socket_error(socket_ops::get_error()));
-
-  int reuse = 1;
-  socket_ops::setsockopt(sock.get(), SOL_SOCKET, SO_REUSEADDR, &reuse,
-      sizeof(reuse));
-
-  if (socket_ops::bind(sock.get(), address.native_address(),
-        address.native_size()) == socket_error_retval)
-    boost::throw_exception(socket_error(socket_ops::get_error()));
-
-  impl = sock.release();
+  do_dgram_socket_create(impl, address);
 }
 
 void

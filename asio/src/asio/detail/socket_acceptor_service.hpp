@@ -46,7 +46,7 @@ public:
   typedef socket_type impl_type;
 
   // The value to use for uninitialised implementations.
-  static const impl_type invalid_impl = invalid_socket;
+  static const impl_type invalid_impl;
 
   // The type of the stream sockets that will be connected.
   typedef basic_stream_socket<stream_socket_service> peer_type;
