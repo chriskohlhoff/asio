@@ -20,6 +20,10 @@ TEST_EXES = \
 	tests/tpc_echo_server_test.exe
 
 EXAMPLE_EXES = \
+	examples\echo\async_tcp_echo_server.exe \
+	examples\echo\async_udp_echo_server.exe \
+	examples\echo\blocking_tcp_echo_client.exe \
+	examples\echo\blocking_udp_echo_client.exe \
 	examples\tutorial\timer1\timer.exe \
 	examples\tutorial\timer2\timer.exe \
 	examples\tutorial\timer3\timer.exe \
@@ -28,10 +32,10 @@ EXAMPLE_EXES = \
 all: $(TEST_EXES) $(EXAMPLE_EXES)
 
 clean:
-	-del /q /s tests\*.exe
-	-del /q /s tests\*.o
-	-del /q /s examples\*.exe
-	-del /q /s examples\*.o
+	-rm -f $(TEST_EXES)
+	-rm -f $(TEST_EXES:.exe=.o)
+	-rm -f $(EXAMPLE_EXES)
+	-rm -f $(EXAMPLE_EXES:.exe=.o)
 
 $(TEST_EXES) $(EXAMPLE_EXES): %.exe: %.o
 	g++ -o$@ $(LDFLAGS) $< $(LIBS)

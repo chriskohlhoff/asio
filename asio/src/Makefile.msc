@@ -18,6 +18,10 @@ all: \
 	tests\timed_dgram_recv_test.exe \
 	tests\timer_test.exe \
 	tests\tpc_echo_server_test.exe \
+	examples\echo\async_tcp_echo_server.exe \
+	examples\echo\async_udp_echo_server.exe \
+	examples\echo\blocking_tcp_echo_client.exe \
+	examples\echo\blocking_udp_echo_client.exe \
 	examples\tutorial\timer1\timer.exe \
 	examples\tutorial\timer2\timer.exe \
 	examples\tutorial\timer3\timer.exe \
@@ -34,6 +38,10 @@ tests\timed_connect_test.exe: tests\timed_connect_test.obj
 tests\timed_dgram_recv_test.exe: tests\timed_dgram_recv_test.obj
 tests\timer_test.exe: tests\timer_test.obj
 tests\tpc_echo_server_test.exe: tests\tpc_echo_server_test.obj
+examples\echo\async_tcp_echo_server.exe: examples\echo\async_tcp_echo_server.obj
+examples\echo\async_udp_echo_server.exe: examples\echo\async_udp_echo_server.obj
+examples\echo\blocking_tcp_echo_client.exe: examples\echo\blocking_tcp_echo_client.obj
+examples\echo\blocking_udp_echo_client.exe: examples\echo\blocking_udp_echo_client.obj
 examples\tutorial\timer1\timer.exe: examples\tutorial\timer1\timer.obj
 examples\tutorial\timer2\timer.exe: examples\tutorial\timer2\timer.obj
 examples\tutorial\timer3\timer.exe: examples\tutorial\timer3\timer.obj

@@ -14,6 +14,10 @@ noinst_PROGRAMS = \
 	tests/timed_dgram_recv_test \
 	tests/timer_test \
 	tests/tpc_echo_server_test \
+	examples/echo/async_tcp_echo_server \
+	examples/echo/async_udp_echo_server \
+	examples/echo/blocking_tcp_echo_client \
+	examples/echo/blocking_udp_echo_client \
 	examples/tutorial/timer1/timer \
 	examples/tutorial/timer2/timer \
 	examples/tutorial/timer3/timer \
@@ -32,6 +36,10 @@ tests_timed_connect_test_SOURCES = tests/timed_connect_test.cpp
 tests_timed_dgram_recv_test_SOURCES = tests/timed_dgram_recv_test.cpp
 tests_timer_test_SOURCES = tests/timer_test.cpp
 tests_tpc_echo_server_test_SOURCES = tests/tpc_echo_server_test.cpp
+examples_echo_async_tcp_echo_server_SOURCES = examples/echo/async_tcp_echo_server.cpp
+examples_echo_async_udp_echo_server_SOURCES = examples/echo/async_udp_echo_server.cpp
+examples_echo_blocking_tcp_echo_client_SOURCES = examples/echo/blocking_tcp_echo_client.cpp
+examples_echo_blocking_udp_echo_client_SOURCES = examples/echo/blocking_udp_echo_client.cpp
 examples_tutorial_timer1_timer_SOURCES = examples/tutorial/timer1/timer.cpp
 examples_tutorial_timer2_timer_SOURCES = examples/tutorial/timer2/timer.cpp
 examples_tutorial_timer3_timer_SOURCES = examples/tutorial/timer3/timer.cpp
