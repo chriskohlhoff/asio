@@ -205,10 +205,12 @@ private:
   void up_heap(size_t index)
   {
     Comparator comp;
-    while (index > 0 && comp(heap_[index]->time_, heap_[index / 2]->time_))
+    size_t parent = (index - 1) / 2;
+    while (index > 0 && comp(heap_[index]->time_, heap_[parent]->time_))
     {
-      swap_heap(index, index / 2);
-      index = index / 2;
+      swap_heap(index, parent);
+      index = parent;
+      parent = (index - 1) / 2;
     }
   }
 
@@ -219,8 +221,8 @@ private:
     size_t child = index * 2 + 1;
     while (child < heap_.size())
     {
-      size_t min_child =
-        (child + 1 == heap_.size() || heap_[child] < heap_[child + 1])
+      size_t min_child = (child + 1 == heap_.size()
+          || comp(heap_[child]->time_, heap_[child + 1]->time_))
         ? child : child + 1;
       if (comp(heap_[index]->time_, heap_[min_child]->time_))
         break;
@@ -244,16 +246,17 @@ private:
   void remove_timer(timer_base* t)
   {
     // Remove the timer from the heap.
-    int heap_index = t->heap_index_;
+    int index = t->heap_index_;
     if (heap_.size() > 1)
     {
-      swap_heap(heap_index, heap_.size() - 1);
+      swap_heap(index, heap_.size() - 1);
       heap_.pop_back();
       Comparator comp;
-      if (heap_index > 0 && comp(t->time_, heap_[heap_index / 2]->time_))
-        up_heap(heap_index);
+      size_t parent = (index - 1) / 2;
+      if (index > 0 && comp(t->time_, heap_[parent]->time_))
+        up_heap(index);
       else
-        down_heap(heap_index);
+        down_heap(index);
     }
     else
     {
