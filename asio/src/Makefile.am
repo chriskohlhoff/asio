@@ -8,7 +8,6 @@ noinst_PROGRAMS = \
 	tests/dgram_echo_server_test \
 	tests/echo_client_test \
 	tests/echo_server_test \
-	tests/error_handler_test \
 	tests/socket_accept_test \
 	tests/timed_accept_test \
 	tests/timed_connect_test \
@@ -17,6 +16,8 @@ noinst_PROGRAMS = \
 	tests/tpc_echo_server_test \
 	tests/performance/client \
 	tests/performance/server \
+	tests/unit/error_handler_test \
+	tests/unit/fixed_buffer_test \
 	examples/chat/chat_client \
 	examples/chat/chat_server \
 	examples/echo/async_tcp_echo_server \
@@ -30,6 +31,10 @@ noinst_PROGRAMS = \
 	examples/tutorial/timer3/timer \
 	examples/tutorial/timer4/timer
 
+TESTS = \
+	tests/unit/error_handler_test \
+	tests/unit/fixed_buffer_test
+
 noinst_HEADERS = \
 	examples/chat/chat_message.hpp
 
@@ -40,7 +45,6 @@ tests_dgram_echo_server_test_SOURCES = tests/dgram_echo_server_test.cpp
 tests_dgram_echo_client_test_SOURCES = tests/dgram_echo_client_test.cpp
 tests_echo_client_test_SOURCES = tests/echo_client_test.cpp
 tests_echo_server_test_SOURCES = tests/echo_server_test.cpp
-tests_error_handler_test_SOURCES = tests/error_handler_test.cpp
 tests_socket_accept_test_SOURCES = tests/socket_accept_test.cpp
 tests_timed_accept_test_SOURCES = tests/timed_accept_test.cpp
 tests_timed_connect_test_SOURCES = tests/timed_connect_test.cpp
@@ -49,6 +53,8 @@ tests_timer_test_SOURCES = tests/timer_test.cpp
 tests_tpc_echo_server_test_SOURCES = tests/tpc_echo_server_test.cpp
 tests_performance_client_SOURCES = tests/performance/client.cpp
 tests_performance_server_SOURCES = tests/performance/server.cpp
+tests_unit_error_handler_test_SOURCES = tests/unit/error_handler_test.cpp
+tests_unit_fixed_buffer_test_SOURCES = tests/unit/fixed_buffer_test.cpp
 examples_chat_chat_client_SOURCES = examples/chat/chat_client.cpp
 examples_chat_chat_server_SOURCES = examples/chat/chat_server.cpp
 examples_echo_async_tcp_echo_server_SOURCES = examples/echo/async_tcp_echo_server.cpp
