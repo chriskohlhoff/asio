@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = foreign
 
-SUBDIRS = src
+SUBDIRS = include src
 
 MAINTAINERCLEANFILES = \
 	aclocal.m4 \

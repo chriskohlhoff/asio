@@ -1,4 +1,4 @@
-AC_INIT(src/asio.hpp)
+AC_INIT(include/asio.hpp)
 AM_INIT_AUTOMAKE(asio, 0.1.2)
 
 AM_PROG_CC_C_O
@@ -22,7 +22,7 @@ AC_ARG_WITH(boost,
   fi
 ])
 
-AC_CHECK_HEADER([boost/thread.hpp],,
+AC_CHECK_HEADER([boost/noncopyable.hpp],,
 [
   echo "Can't find boost headers. Please check the location of the boost"
   echo "distribution and rerun configure using the --with-boost=DIR option."
@@ -38,4 +38,9 @@ AM_CONDITIONAL(HAVE_DOXYGEN,test x$DOXYGEN_FOUND = xyes)
 AC_CHECK_PROG(HAVE_DOT,dot,YES,NO)
 AC_SUBST(HAVE_DOT)
 
-AC_OUTPUT([Makefile src/Makefile src/doc/Makefile src/doc/asio.dox])
+AC_OUTPUT([
+  Makefile
+  include/Makefile
+  src/Makefile
+  src/doc/Makefile
+  src/doc/asio.dox])

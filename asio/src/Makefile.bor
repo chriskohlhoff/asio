@@ -2,7 +2,7 @@
 BOOSTDIR = ../../boost_1_30_0
 !endif
 
-CXXFLAGS = -q -O2 -v -vi -y -a8 -b -Ve- -Vx- -tWM -tWR -tWC -w-inl -w-par -I$(BOOSTDIR)
+CXXFLAGS = -q -O2 -v -vi -y -a8 -b -Ve- -Vx- -tWM -tWR -tWC -w-inl -w-par -I../include -I$(BOOSTDIR)
 LDFLAGS = -q -O2 -v -vi -y -a8 -b -Ve- -Vx- -tWM -tWR -tWC -L$(BOOSTDIR)/libs/thread/build/bin-stage
 LIBS = ws2_32.lib boost_thread.lib
 

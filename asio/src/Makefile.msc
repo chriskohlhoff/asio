@@ -4,7 +4,7 @@
 BOOSTDIR = ../../boost_1_30_0
 !endif
 
-CXXFLAGS = -nologo -O2 -GX -GR -Zi -w -MD -I. -I$(BOOSTDIR)
+CXXFLAGS = -nologo -O2 -GX -GR -Zi -w -MD -I. -I../include -I$(BOOSTDIR)
 LDFLAGS = -nologo -O2 -GX -GR -Zi -MD
 LIBS = $(BOOSTDIR)/libs/thread/build/bin-stage/boost_thread.lib ws2_32.lib
 
