@@ -247,20 +247,23 @@ private:
   {
     // Remove the timer from the heap.
     int index = t->heap_index_;
-    if (heap_.size() > 1)
+    if (index >= 0 && index < heap_.size())
     {
-      swap_heap(index, heap_.size() - 1);
-      heap_.pop_back();
-      Comparator comp;
-      size_t parent = (index - 1) / 2;
-      if (index > 0 && comp(t->time_, heap_[parent]->time_))
-        up_heap(index);
+      if (index == heap_.size() - 1)
+      {
+        heap_.pop_back();
+      }
       else
-        down_heap(index);
-    }
-    else
-    {
-      heap_.clear();
+      {
+        swap_heap(index, heap_.size() - 1);
+        heap_.pop_back();
+        Comparator comp;
+        size_t parent = (index - 1) / 2;
+        if (index > 0 && comp(t->time_, heap_[parent]->time_))
+          up_heap(index);
+        else
+          down_heap(index);
+      }
     }
 
     // Remove the timer from the hash.
