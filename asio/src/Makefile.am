@@ -4,9 +4,6 @@ SUBDIRS = doc
 
 noinst_PROGRAMS = \
 	tests/socket_accept_test \
-	tests/timed_accept_test \
-	tests/timed_connect_test \
-	tests/timed_dgram_recv_test \
 	tests/timer_test \
 	tests/performance/client \
 	tests/performance/server \
@@ -21,6 +18,9 @@ noinst_PROGRAMS = \
 	examples/echo/blocking_tcp_echo_server \
 	examples/echo/blocking_udp_echo_client \
 	examples/echo/blocking_udp_echo_server \
+	examples/timeouts/accept_timeout \
+	examples/timeouts/connect_timeout \
+	examples/timeouts/dgram_recv_timeout \
 	examples/tutorial/timer1/timer \
 	examples/tutorial/timer2/timer \
 	examples/tutorial/timer3/timer \
@@ -38,9 +38,6 @@ noinst_HEADERS = \
 AM_CXXFLAGS = -I../include
 
 tests_socket_accept_test_SOURCES = tests/socket_accept_test.cpp
-tests_timed_accept_test_SOURCES = tests/timed_accept_test.cpp
-tests_timed_connect_test_SOURCES = tests/timed_connect_test.cpp
-tests_timed_dgram_recv_test_SOURCES = tests/timed_dgram_recv_test.cpp
 tests_timer_test_SOURCES = tests/timer_test.cpp
 tests_performance_client_SOURCES = tests/performance/client.cpp
 tests_performance_server_SOURCES = tests/performance/server.cpp
@@ -55,6 +52,9 @@ examples_echo_blocking_tcp_echo_client_SOURCES = examples/echo/blocking_tcp_echo
 examples_echo_blocking_tcp_echo_server_SOURCES = examples/echo/blocking_tcp_echo_server.cpp
 examples_echo_blocking_udp_echo_client_SOURCES = examples/echo/blocking_udp_echo_client.cpp
 examples_echo_blocking_udp_echo_server_SOURCES = examples/echo/blocking_udp_echo_server.cpp
+examples_timeouts_accept_timeout_SOURCES = examples/timeouts/accept_timeout.cpp
+examples_timeouts_connect_timeout_SOURCES = examples/timeouts/connect_timeout.cpp
+examples_timeouts_dgram_recv_timeout_SOURCES = examples/timeouts/dgram_recv_timeout.cpp
 examples_tutorial_timer1_timer_SOURCES = examples/tutorial/timer1/timer.cpp
 examples_tutorial_timer2_timer_SOURCES = examples/tutorial/timer2/timer.cpp
 examples_tutorial_timer3_timer_SOURCES = examples/tutorial/timer3/timer.cpp

@@ -50,6 +50,8 @@ int main()
   {
     demuxer d;
     socket_acceptor a(d, inet_address_v4(32123), 1);
+
+    // Make lots of connections so that at least some of them will block.
     connect_handler ch1(d);
     connect_handler ch2(d);
     connect_handler ch3(d);
@@ -59,6 +61,7 @@ int main()
     connect_handler ch7(d);
     connect_handler ch8(d);
     connect_handler ch9(d);
+
     d.run();
   }
   catch (std::exception& e)

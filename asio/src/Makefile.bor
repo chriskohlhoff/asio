@@ -8,9 +8,6 @@ LIBS = ws2_32.lib
 
 all: \
 	tests\socket_accept_test.exe \
-	tests\timed_accept_test.exe \
-	tests\timed_connect_test.exe \
-	tests\timed_dgram_recv_test.exe \
 	tests\timer_test.exe \
 	tests\performance\client.exe \
 	tests\performance\server.exe \
@@ -25,6 +22,9 @@ all: \
 	examples\echo\blocking_tcp_echo_server.exe \
 	examples\echo\blocking_udp_echo_client.exe \
 	examples\echo\blocking_udp_echo_server.exe \
+	examples\timeouts\accept_timeout.exe \
+	examples\timeouts\connect_timeout.exe \
+	examples\timeouts\dgram_recv_timeout.exe \
 	examples\tutorial\timer1\timer.exe \
 	examples\tutorial\timer2\timer.exe \
 	examples\tutorial\timer3\timer.exe \

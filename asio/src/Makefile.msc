@@ -8,9 +8,6 @@ LIBS = ws2_32.lib
 
 all: \
 	tests\socket_accept_test.exe \
-	tests\timed_accept_test.exe \
-	tests\timed_connect_test.exe \
-	tests\timed_dgram_recv_test.exe \
 	tests\timer_test.exe \
 	tests\performance\client.exe \
 	tests\performance\server.exe \
@@ -25,15 +22,15 @@ all: \
 	examples\echo\blocking_tcp_echo_server.exe \
 	examples\echo\blocking_udp_echo_client.exe \
 	examples\echo\blocking_udp_echo_server.exe \
+	examples\timeouts\accept_timeout.exe \
+	examples\timeouts\connect_timeout.exe \
+	examples\timeouts\dgram_recv_timeout.exe \
 	examples\tutorial\timer1\timer.exe \
 	examples\tutorial\timer2\timer.exe \
 	examples\tutorial\timer3\timer.exe \
 	examples\tutorial\timer4\timer.exe
 
 tests\socket_accept_test.exe: tests\socket_accept_test.obj
-tests\timed_accept_test.exe: tests\timed_accept_test.obj
-tests\timed_connect_test.exe: tests\timed_connect_test.obj
-tests\timed_dgram_recv_test.exe: tests\timed_dgram_recv_test.obj
 tests\timer_test.exe: tests\timer_test.obj
 tests\performance\client.exe: tests\performance\client.obj
 tests\performance\server.exe: tests\performance\server.obj
@@ -48,6 +45,9 @@ examples\echo\blocking_tcp_echo_client.exe: examples\echo\blocking_tcp_echo_clie
 examples\echo\blocking_tcp_echo_server.exe: examples\echo\blocking_tcp_echo_server.obj
 examples\echo\blocking_udp_echo_client.exe: examples\echo\blocking_udp_echo_client.obj
 examples\echo\blocking_udp_echo_server.exe: examples\echo\blocking_udp_echo_server.obj
+examples\timeouts\accept_timeout.exe: examples\echo\accept_timeout.obj
+examples\timeouts\connect_timeout.exe: examples\echo\connect_timeout.obj
+examples\timeouts\dgram_recv_timeout.exe: examples\echo\dgram_recv_timeout.obj
 examples\tutorial\timer1\timer.exe: examples\tutorial\timer1\timer.obj
 examples\tutorial\timer2\timer.exe: examples\tutorial\timer2\timer.obj
 examples\tutorial\timer3\timer.exe: examples\tutorial\timer3\timer.obj
