@@ -36,7 +36,7 @@ public:
   win_iocp_demuxer_service(demuxer_type& demuxer)
     : demuxer_(demuxer),
       iocp_(::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)),
-      outstanding_operations_(0),
+      outstanding_work_(0),
       interrupted_(0),
       current_thread_in_pool_()
   {
@@ -55,12 +55,11 @@ public:
     ::CreateIoCompletionPort(sock_as_handle, iocp_.handle, 0, 0);
   }
 
-  // Structure used as the base type for all operations.
+  // Structure used as the base type for all IOCP operations.
   struct operation
     : public OVERLAPPED
   {
-    operation(bool context_acquired)
-      : context_acquired_(context_acquired)
+    operation()
     {
       ::ZeroMemory(static_cast<OVERLAPPED*>(this), sizeof(OVERLAPPED));
     }
@@ -69,53 +68,15 @@ public:
     {
     }
 
-    // Run the completion. Returns true if the operation is complete.
-    virtual bool do_completion(HANDLE iocp, DWORD last_error,
-        size_t bytes_transferred) = 0;
-
-    // Ensure that the context has been acquired. Returns true if the context
-    // was acquired and the operation can proceed immediately, false otherwise.
-    template <typename Completion_Context>
-    bool acquire_context(HANDLE iocp, Completion_Context context)
-    {
-      if (context_acquired_)
-        return true;
-
-      if (context.try_acquire())
-      {
-        context_acquired_ = true;
-        return true;
-      }
-
-      context.acquire(bind_handler(&operation::context_acquired, iocp, this));
-      return false;
-    }
-
-    // Ensure that the context has been released.
-    template <typename Completion_Context>
-    void release_context(Completion_Context context)
-    {
-      if (context_acquired_)
-      {
-        context_acquired_ = false;
-        context.release();
-      }
-    }
-
-    static void context_acquired(HANDLE iocp, operation* op)
-    {
-      op->context_acquired_ = true;
-      ::PostQueuedCompletionStatus(iocp, 0, 0, op);
-    }
-
-  private:
-    bool context_acquired_;
+    // Run the completion.
+    virtual void do_completion(win_iocp_demuxer_service& demuxer_service,
+        HANDLE iocp, DWORD last_error, size_t bytes_transferred) = 0;
   };
 
   // Run the demuxer's event processing loop.
   void run()
   {
-    if (::InterlockedExchangeAdd(&outstanding_operations_, 0) == 0)
+    if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
       return;
 
     current_thread_in_pool_ = true;
@@ -135,9 +96,7 @@ public:
       {
         // Dispatch the operation.
         operation* op = static_cast<operation*>(overlapped);
-        if (op->do_completion(iocp_.handle, last_error, bytes_transferred))
-          if (::InterlockedDecrement(&outstanding_operations_) == 0)
-            interrupt();
+        op->do_completion(*this, iocp_.handle, last_error, bytes_transferred);
       }
       else
       {
@@ -168,33 +127,44 @@ public:
     ::InterlockedExchange(&interrupted_, 0);
   }
 
-  // Notify the demuxer that an operation has started.
-  void operation_started()
+  // Notify the demuxer that some work has started.
+  void work_started()
   {
-    ::InterlockedIncrement(&outstanding_operations_);
+    ::InterlockedIncrement(&outstanding_work_);
   }
 
-  template <typename Handler, typename Completion_Context>
-  struct completion_operation
+  // Notify the demuxer that some work has finished.
+  void work_finished()
+  {
+    if (::InterlockedDecrement(&outstanding_work_) == 0)
+      interrupt();
+  }
+
+  // Request the demuxer to invoke the given handler.
+  template <typename Handler>
+  void dispatch(Handler handler)
+  {
+    if (current_thread_in_pool_)
+      handler_operation<Handler>::do_upcall(handler);
+    else
+      post(handler);
+  }
+
+  template <typename Handler>
+  struct handler_operation
     : public operation
   {
-    completion_operation(Handler handler, Completion_Context context,
-        bool context_acquired)
-      : operation(context_acquired),
-        handler_(handler),
-        context_(context)
+    handler_operation(Handler handler)
+      : handler_(handler)
     {
     }
 
-    virtual bool do_completion(HANDLE iocp, DWORD, size_t)
+    virtual void do_completion(win_iocp_demuxer_service& demuxer_service,
+        HANDLE iocp, DWORD, size_t)
     {
-      if (!acquire_context(iocp, context_))
-        return false;
-
       do_upcall(handler_);
-      context_.release();
+      demuxer_service.work_finished();
       delete this;
-      return true;
     }
 
     static void do_upcall(Handler handler)
@@ -210,46 +180,15 @@ public:
 
   private:
     Handler handler_;
-    Completion_Context context_;
   };
 
-  // Notify the demuxer that an operation has completed.
-  template <typename Handler, typename Completion_Context>
-  void operation_completed(Handler handler, Completion_Context context,
-      bool allow_nested_delivery)
+  // Request the demuxer to invoke the given handler and return immediately.
+  template <typename Handler>
+  void post(Handler handler)
   {
-    if (context.try_acquire())
-    {
-      if (allow_nested_delivery && current_thread_in_pool_)
-      {
-        completion_operation<Handler, Completion_Context>::do_upcall(handler);
-        context.release();
-        if (::InterlockedDecrement(&outstanding_operations_) == 0)
-          interrupt();
-      }
-      else
-      {
-        operation* op = new completion_operation<Handler, Completion_Context>(
-            handler, context, true);
-        ::PostQueuedCompletionStatus(iocp_.handle, 0, 0, op);
-      }
-    }
-    else
-    {
-      operation* op = new completion_operation<Handler, Completion_Context>(
-          handler, context, false);
-      context.acquire(
-          bind_handler(&operation::context_acquired, iocp_.handle, op));
-    }
-  }
-
-  // Notify the demuxer of an operation that started and finished immediately.
-  template <typename Handler, typename Completion_Context>
-  void operation_immediate(Handler handler, Completion_Context context,
-      bool allow_nested_delivery)
-  {
-    operation_started();
-    operation_completed(handler, context, allow_nested_delivery);
+    operation* op = new handler_operation<Handler>(handler);
+    work_started();
+    ::PostQueuedCompletionStatus(iocp_.handle, 0, 0, op);
   }
 
 private:
@@ -264,8 +203,8 @@ private:
     ~iocp_holder() { ::CloseHandle(handle); }
   } iocp_;
 
-  // The number of operations that have not yet completed.
-  long outstanding_operations_;
+  // The count of unfinished work.
+  long outstanding_work_;
 
   // Flag to indicate whether the event loop has been interrupted.
   long interrupted_;

@@ -158,29 +158,23 @@ public:
     return bytes_sent;
   }
 
-  template <typename Handler, typename Completion_Context>
+  template <typename Handler>
   class sendto_operation
     : public win_iocp_demuxer_service::operation
   {
   public:
-    sendto_operation(Handler handler, Completion_Context context)
-      : win_iocp_demuxer_service::operation(false),
-        handler_(handler),
-        context_(context)
+    sendto_operation(Handler handler)
+      : handler_(handler)
     {
     }
 
-    virtual bool do_completion(HANDLE iocp, DWORD last_error,
-        size_t bytes_transferred)
+    virtual void do_completion(win_iocp_demuxer_service& demuxer_service,
+        HANDLE iocp, DWORD last_error, size_t bytes_transferred)
     {
-      if (!acquire_context(iocp, context_))
-        return false;
-
       socket_error error(last_error);
       do_upcall(handler_, error, bytes_transferred);
-      release_context(context_);
+      demuxer_service.work_finished();
       delete this;
-      return true;
     }
 
     static void do_upcall(Handler handler, const socket_error& error,
@@ -197,19 +191,18 @@ public:
 
   private:
     Handler handler_;
-    Completion_Context context_;
   };
 
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
-  template <typename Address, typename Handler, typename Completion_Context>
+  template <typename Address, typename Handler>
   void async_sendto(impl_type& impl, const void* data, size_t length,
-      const Address& destination, Handler handler, Completion_Context context)
+      const Address& destination, Handler handler)
   {
-    sendto_operation<Handler, Completion_Context>* sendto_op =
-      new sendto_operation<Handler, Completion_Context>(handler, context);
+    sendto_operation<Handler>* sendto_op =
+      new sendto_operation<Handler>(handler);
 
-    demuxer_service_.operation_started();
+    demuxer_service_.work_started();
 
     WSABUF buf;
     buf.len = length;
@@ -224,8 +217,8 @@ public:
     {
       delete sendto_op;
       socket_error error(last_error);
-      demuxer_service_.operation_completed(
-          bind_handler(handler, error, bytes_transferred), context, false);
+      demuxer_service_.post(bind_handler(handler, error, bytes_transferred));
+      demuxer_service_.work_finished();
     }
   }
 
@@ -249,18 +242,15 @@ public:
     return bytes_recvd;
   }
 
-  template <typename Address, typename Handler, typename Completion_Context>
+  template <typename Address, typename Handler>
   class recvfrom_operation
     : public win_iocp_demuxer_service::operation
   {
   public:
-    recvfrom_operation(Address& address, Handler handler,
-        Completion_Context context)
-      : win_iocp_demuxer_service::operation(false),
-        address_(address),
+    recvfrom_operation(Address& address, Handler handler)
+      : address_(address),
         address_size_(address.native_size()),
-        handler_(handler),
-        context_(context)
+        handler_(handler)
     {
     }
 
@@ -269,18 +259,14 @@ public:
       return address_size_;
     }
 
-    virtual bool do_completion(HANDLE iocp, DWORD last_error,
-        size_t bytes_transferred)
+    virtual void do_completion(win_iocp_demuxer_service& demuxer_service,
+        HANDLE iocp, DWORD last_error, size_t bytes_transferred)
     {
-      if (!acquire_context(iocp, context_))
-        return false;
-
       address_.native_size(address_size_);
       socket_error error(last_error);
       do_upcall(handler_, error, bytes_transferred);
-      release_context(context_);
+      demuxer_service.work_finished();
       delete this;
-      return true;
     }
 
     static void do_upcall(const Handler& handler, const socket_error& error,
@@ -299,21 +285,19 @@ public:
     Address& address_;
     int address_size_;
     Handler handler_;
-    Completion_Context context_;
   };
 
   // Start an asynchronous receive. The buffer for the data being received and
   // the sender_address obejct must both be valid for the lifetime of the
   // asynchronous operation.
-  template <typename Address, typename Handler, typename Completion_Context>
+  template <typename Address, typename Handler>
   void async_recvfrom(impl_type& impl, void* data, size_t max_length,
-      Address& sender_address, Handler handler, Completion_Context context)
+      Address& sender_address, Handler handler)
   {
-    recvfrom_operation<Address, Handler, Completion_Context>* recvfrom_op =
-      new recvfrom_operation<Address, Handler, Completion_Context>(
-          sender_address, handler, context);
+    recvfrom_operation<Address, Handler>* recvfrom_op =
+      new recvfrom_operation<Address, Handler>(sender_address, handler);
 
-    demuxer_service_.operation_started();
+    demuxer_service_.work_started();
 
     WSABUF buf;
     buf.len = max_length;
@@ -330,16 +314,17 @@ public:
     {
       delete recvfrom_op;
       socket_error error(last_error);
-      demuxer_service_.operation_completed(
-          bind_handler(handler, error, bytes_transferred), context, false);
+      demuxer_service_.post(bind_handler(handler, error, bytes_transferred));
+      demuxer_service_.work_finished();
     }
   }
 
 private:
-  // The demuxer used for delivering completion notifications.
+  // The demuxer associated with the service.
   demuxer_type& demuxer_;
 
-  // The demuxer service used for running asynchronous operations.
+  // The demuxer service used for running asynchronous operations and
+  // dispatching handlers.
   win_iocp_demuxer_service& demuxer_service_;
 };
 

@@ -135,29 +135,23 @@ public:
     return bytes_sent;
   }
 
-  template <typename Handler, typename Completion_Context>
+  template <typename Handler>
   class send_operation
     : public win_iocp_demuxer_service::operation
   {
   public:
-    send_operation(Handler handler, Completion_Context context)
-      : win_iocp_demuxer_service::operation(false),
-        handler_(handler),
-        context_(context)
+    send_operation(Handler handler)
+      : handler_(handler)
     {
     }
 
-    virtual bool do_completion(HANDLE iocp, DWORD last_error,
-        size_t bytes_transferred)
+    virtual void do_completion(win_iocp_demuxer_service& demuxer_service,
+        HANDLE iocp, DWORD last_error, size_t bytes_transferred)
     {
-      if (!acquire_context(iocp, context_))
-        return false;
-
       socket_error error(last_error);
       do_upcall(handler_, error, bytes_transferred);
-      release_context(context_);
+      demuxer_service.work_finished();
       delete this;
-      return true;
     }
 
     static void do_upcall(Handler handler, const socket_error& error,
@@ -174,19 +168,17 @@ public:
 
   private:
     Handler handler_;
-    Completion_Context context_;
   };
 
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
-  template <typename Handler, typename Completion_Context>
+  template <typename Handler>
   void async_send(impl_type& impl, const void* data, size_t length,
-      Handler handler, Completion_Context context)
+      Handler handler)
   {
-    send_operation<Handler, Completion_Context>* send_op =
-      new send_operation<Handler, Completion_Context>(handler, context);
+    send_operation<Handler>* send_op = new send_operation<Handler>(handler);
 
-    demuxer_service_.operation_started();
+    demuxer_service_.work_started();
 
     WSABUF buf;
     buf.len = length;
@@ -200,8 +192,8 @@ public:
     {
       delete send_op;
       socket_error error(last_error);
-      demuxer_service_.operation_completed(
-          bind_handler(handler, error, bytes_transferred), context, false);
+      demuxer_service_.post(bind_handler(handler, error, bytes_transferred));
+      demuxer_service_.work_finished();
     }
   }
 
@@ -220,29 +212,23 @@ public:
     return bytes_recvd;
   }
 
-  template <typename Handler, typename Completion_Context>
+  template <typename Handler>
   class recv_operation
     : public win_iocp_demuxer_service::operation
   {
   public:
-    recv_operation(Handler handler, Completion_Context context)
-      : win_iocp_demuxer_service::operation(false),
-        handler_(handler),
-        context_(context)
+    recv_operation(Handler handler)
+      : handler_(handler)
     {
     }
 
-    virtual bool do_completion(HANDLE iocp, DWORD last_error,
-        size_t bytes_transferred)
+    virtual void do_completion(win_iocp_demuxer_service& demuxer_service,
+        HANDLE iocp, DWORD last_error, size_t bytes_transferred)
     {
-      if (!acquire_context(iocp, context_))
-        return false;
-
       socket_error error(last_error);
       do_upcall(handler_, error, bytes_transferred);
-      release_context(context_);
+      demuxer_service.work_finished();
       delete this;
-      return true;
     }
 
     static void do_upcall(Handler handler, const socket_error& error,
@@ -259,19 +245,17 @@ public:
 
   private:
     Handler handler_;
-    Completion_Context context_;
   };
 
   // Start an asynchronous receive. The buffer for the data being received
   // must be valid for the lifetime of the asynchronous operation.
-  template <typename Handler, typename Completion_Context>
+  template <typename Handler>
   void async_recv(impl_type& impl, void* data, size_t max_length,
-      Handler handler, Completion_Context context)
+      Handler handler)
   {
-    recv_operation<Handler, Completion_Context>* recv_op
-      = new recv_operation<Handler, Completion_Context>(handler, context);
+    recv_operation<Handler>* recv_op = new recv_operation<Handler>(handler);
 
-    demuxer_service_.operation_started();
+    demuxer_service_.work_started();
 
     WSABUF buf;
     buf.len = max_length;
@@ -287,16 +271,17 @@ public:
     {
       delete recv_op;
       socket_error error(last_error);
-      demuxer_service_.operation_completed(
-          bind_handler(handler, error, bytes_transferred), context, false);
+      demuxer_service_.post(bind_handler(handler, error, bytes_transferred));
+      demuxer_service_.work_finished();
     }
   }
 
 private:
-  // The demuxer used for delivering completion notifications.
+  // The demuxer associated with the service.
   demuxer_type& demuxer_;
 
-  // The demuxer service used for running asynchronous operations.
+  // The demuxer service used for running asynchronous operations and
+  // dispatching handlers.
   win_iocp_demuxer_service& demuxer_service_;
 };
 
