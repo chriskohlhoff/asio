@@ -208,7 +208,7 @@ operator&&(expression<Expr1> expr1, expression<Expr2> expr2)
 }
 
 /// Class to always throw an error.
-class throw_error
+class throw_error_t
 {
 public:
   /// Evaluate the expression.
@@ -218,6 +218,12 @@ public:
     throw err;
   }
 };
+
+/// Always throw an error.
+expression<throw_error_t> throw_error()
+{
+  return make_expression(throw_error_t());
+}
 
 /// Class template to throw an error if an expression is true.
 template <typename Expr>

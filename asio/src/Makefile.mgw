@@ -12,6 +12,7 @@ TEST_EXES = \
 	tests/dgram_echo_server_test.exe \
 	tests/echo_client_test.exe \
 	tests/echo_server_test.exe \
+	tests/error_handler_test.exe \
 	tests/socket_accept_test.exe \
 	tests/timed_accept_test.exe \
 	tests/timed_connect_test.exe \
