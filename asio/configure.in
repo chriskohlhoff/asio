@@ -1,5 +1,5 @@
 AC_INIT(include/asio.hpp)
-AM_INIT_AUTOMAKE(asio, 0.1.8)
+AM_INIT_AUTOMAKE(asio, 0.1.9)
 
 AC_CANONICAL_HOST
 AM_PROG_CC_C_O
