@@ -23,8 +23,9 @@ namespace detail {
 // Some compilers (notably MSVC6) run into mysterious compiler errors when
 // trying to use the boost::bind template in this library. The class and
 // function templates below provide only the functionality of bind to create
-// function objects with the signature void() as used in completion handlers.
-// This should make it simpler for the compiler to work correctly.
+// function objects with the signature void() as used in handlers passed to a
+// demuxer's dispatch or post functions. This should make it simpler for the
+// compiler to work correctly.
 
 template <typename Handler, typename Arg1>
 class binder1

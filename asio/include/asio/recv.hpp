@@ -102,9 +102,9 @@ size_t recv(Stream& s, void* data, size_t max_length,
  *
  * @param max_length The maximum size of the data to be received, in bytes.
  *
- * @param handler The completion handler to be called when the receive
- * operation completes. Copies will be made of the handler as required. The
- * equivalent function signature of the handler must be:
+ * @param handler The handler to be called when the receive operation
+ * completes. Copies will be made of the handler as required. The equivalent
+ * function signature of the handler must be:
  * @code template <typename Error>
  * void handler(
  *   const Error& error,   // Result of operation (the actual type is dependent
@@ -121,45 +121,6 @@ template <typename Stream, typename Handler>
 void async_recv(Stream& s, void* data, size_t max_length, Handler handler)
 {
   s.async_recv(data, max_length, handler);
-}
-
-/// Start an asynchronous receive.
-/**
- * This function is used to asynchronously receive data on a stream. The
- * function call always returns immediately.
- *
- * @param s The stream on which the data is to be received.
- *
- * @param data The buffer into which the received data will be written.
- * Ownership of the buffer is retained by the caller, which must guarantee
- * that it is valid until the handler is called.
- *
- * @param max_length The maximum size of the data to be received, in bytes.
- *
- * @param handler The completion handler to be called when the receive
- * operation completes. Copies will be made of the handler as required. The
- * equivalent function signature of the handler must be:
- * @code template <typename Error>
- * void handler(
- *   const Error& error,   // Result of operation (the actual type is dependent
- *                         // on the underlying stream's recv operation)
- *   size_t bytes_received // Number of bytes received
- * ); @endcode
- *
- * @param context The completion context which controls the number of
- * concurrent invocations of handlers that may be made. Copies will be made of
- * the context object as required, however all copies are equivalent.
- *
- * @note The recv operation may not receive all of the requested number of
- * bytes. Consider using the asio::async_recv_n() function if you need to
- * ensure that the requested amount of data is received before the asynchronous
- * operation completes.
- */
-template <typename Stream, typename Handler, typename Completion_Context>
-void async_recv(Stream& s, void* data, size_t max_length, Handler handler,
-    Completion_Context context)
-{
-  s.async_recv(data, max_length, handler, context);
 }
 
 /// Read the specified amount of data from the stream before returning.
@@ -258,18 +219,16 @@ size_t recv_n(Stream& s, void* data, size_t length,
 
 namespace detail
 {
-  template <typename Stream, typename Handler, typename Completion_Context>
+  template <typename Stream, typename Handler>
   class recv_n_handler
   {
   public:
-    recv_n_handler(Stream& stream, void* data, size_t length, Handler handler,
-        Completion_Context context)
+    recv_n_handler(Stream& stream, void* data, size_t length, Handler handler)
       : stream_(stream),
         data_(data),
         length_(length),
         total_recvd_(0),
-        handler_(handler),
-        context_(context)
+        handler_(handler)
     {
     }
 
@@ -279,8 +238,8 @@ namespace detail
       total_recvd_ += bytes_recvd;
       if (e || bytes_recvd == 0 || total_recvd_ == length_)
       {
-        stream_.demuxer().operation_immediate(detail::bind_handler(handler_, e,
-              total_recvd_, bytes_recvd), context_, true);
+        stream_.demuxer().dispatch(detail::bind_handler(handler_, e,
+              total_recvd_, bytes_recvd));
       }
       else
       {
@@ -295,7 +254,6 @@ namespace detail
     size_t length_;
     size_t total_recvd_;
     Handler handler_;
-    Completion_Context context_;
   };
 } // namespace detail
 
@@ -313,9 +271,9 @@ namespace detail
  *
  * @param length The size of the data to be received, in bytes.
  *
- * @param handler The completion handler to be called when the receive
- * operation completes. Copies will be made of the handler as required. The
- * equivalent function signature of the handler must be:
+ * @param handler The handler to be called when the receive operation
+ * completes. Copies will be made of the handler as required. The equivalent
+ * function signature of the handler must be:
  * @code template <typename Error>
  * void handler(
  *   const Error& error,       // Result of operation (the actual type is
@@ -330,48 +288,7 @@ template <typename Stream, typename Handler>
 void async_recv_n(Stream& s, void* data, size_t length, Handler handler)
 {
   async_recv(s, data, length,
-      detail::recv_n_handler<Stream, Handler, null_completion_context>(s, data,
-        length, handler, null_completion_context()));
-}
-
-/// Start an asynchronous receive that will not complete until the specified
-/// amount of data has been received.
-/**
- * This function is used to asynchronously receive an exact number of bytes of
- * data on a stream. The function call always returns immediately.
- *
- * @param s The stream on which the data is to be received.
- *
- * @param data The buffer into which the received data will be written.
- * Ownership of the buffer is retained by the caller, which must guarantee
- * that it is valid until the handler is called.
- *
- * @param length The size of the data to be received, in bytes.
- *
- * @param handler The completion handler to be called when the receive
- * operation completes. Copies will be made of the handler as required. The
- * equivalent function signature of the handler must be:
- * @code template <typename Error>
- * void handler(
- *   const Error& error,       // Result of operation (the actual type is
- *                             // dependent on the underlying stream's recv
- *                             // operation)
- *   size_t total_bytes_recvd, // Total number of bytes successfully received
- *   size_t last_bytes_recvd   // Number of bytes received on last recv
- *                             // operation
- * ); @endcode
- *
- * @param context The completion context which controls the number of
- * concurrent invocations of handlers that may be made. Copies will be made of
- * the context object as required, however all copies are equivalent.
- */
-template <typename Stream, typename Handler, typename Completion_Context>
-void async_recv_n(Stream& s, void* data, size_t length, Handler handler,
-    Completion_Context context)
-{
-  async_recv(s, data, length,
-      detail::recv_n_handler<Stream, Handler, Completion_Context>(s, data,
-        length, handler, context));
+      detail::recv_n_handler<Stream, Handler>(s, data, length, handler));
 }
 
 /// Read some data from a stream and decode it.
@@ -508,18 +425,16 @@ size_t recv_decode(Buffered_Stream& s, Decoder decoder,
 
 namespace detail
 {
-  template <typename Buffered_Stream, typename Decoder, typename Handler,
-      typename Completion_Context>
+  template <typename Buffered_Stream, typename Decoder, typename Handler>
   class recv_decode_handler
   {
   public:
     recv_decode_handler(Buffered_Stream& stream, Decoder decoder,
-        Handler handler, Completion_Context context)
+        Handler handler)
       : stream_(stream),
         decoder_(decoder),
         total_recvd_(0),
-        handler_(handler),
-        context_(context)
+        handler_(handler)
     {
     }
 
@@ -528,8 +443,8 @@ namespace detail
     {
       if (e || bytes_recvd == 0)
       {
-        stream_.demuxer().operation_immediate(detail::bind_handler(handler_, e,
-              total_recvd_, bytes_recvd), context_, true);
+        stream_.demuxer().dispatch(
+            detail::bind_handler(handler_, e, total_recvd_, bytes_recvd));
       }
       else
       {
@@ -545,8 +460,8 @@ namespace detail
 
           if (result.first)
           {
-            stream_.demuxer().operation_immediate(detail::bind_handler(
-                  handler_, 0, total_recvd_, bytes_read), context_, true);
+            stream_.demuxer().dispatch(
+                detail::bind_handler(handler_, 0, total_recvd_, bytes_read));
             return;
           }
         }
@@ -560,7 +475,6 @@ namespace detail
     Decoder decoder_;
     size_t total_recvd_;
     Handler handler_;
-    Completion_Context context_;
   };
 } // namespace detail
 
@@ -590,9 +504,9 @@ namespace detail
  * The second element is a pointer to the beginning of the unused portion of
  * the data.
  *
- * @param handler The completion handler to be called when the receive
- * operation completes. Copies will be made of the handler as required. The
- * equivalent function signature of the handler must be:
+ * @param handler The handler to be called when the receive operation
+ * completes. Copies will be made of the handler as required. The equivalent
+ * function signature of the handler must be:
  * @code template <typename Error>
  * void handler(
  *   const Error& error,       // Result of operation (the actual type is
@@ -616,83 +530,14 @@ void async_recv_decode(Buffered_Stream& s, Decoder decoder, Handler handler)
 
     if (result.first)
     {
-      s.demuxer().operation_immediate(detail::bind_handler(handler, 0,
-            bytes_read, bytes_read));
+      s.demuxer().dispatch(
+          detail::bind_handler(handler, 0, bytes_read, bytes_read));
       return;
     }
   }
 
-  s.async_fill(detail::recv_decode_handler<Buffered_Stream, Decoder, Handler,
-      null_completion_context>(s, decoder, handler,
-        null_completion_context()));
-}
-
-/// Start an asynchronous receive that will not complete until some data has
-/// been fully decoded.
-/**
- * This function is used to receive data on a stream and decode it in a single
- * asynchronous operation. The function call always returns immediately. The
- * asynchronous operation will complete only when the decoder indicates that it
- * has finished.
- *
- * @param s The stream on which the data is to be received.
- *
- * @param decoder The decoder function object to be called to decode the
- * received data. The function object is assumed to be stateful. That is, it
- * may not be given sufficient data in a single invocation to complete
- * decoding, and is expected to maintain state so that it may resume decoding
- * when the next piece of data is supplied. Copies will be made of the decoder
- * function object as required, however with respect to maintaining state it
- * can rely on the fact that only an up-to-date copy will be used. The
- * equivalent function signature of the handler must be:
- * @code std::pair<bool, const char*> decoder(
- *   const char* begin, // Pointer to the beginning of data to be decoded.
- *   const char* end    // Pointer to one-past-the-end of data to be decoded.
- * ); @endcode
- * The first element of the return value is true if the decoder has finished.
- * The second element is a pointer to the beginning of the unused portion of
- * the data.
- *
- * @param handler The completion handler to be called when the receive
- * operation completes. Copies will be made of the handler as required. The
- * equivalent function signature of the handler must be:
- * @code template <typename Error>
- * void handler(
- *   const Error& error,       // Result of operation (the actual type is
- *                             // dependent on the underlying stream's recv
- *                             // operation)
- *   size_t total_bytes_recvd, // Total number of bytes successfully received
- *   size_t last_bytes_recvd   // Number of bytes received on last recv
- *                             // operation
- * ); @endcode
- *
- * @param context The completion context which controls the number of
- * concurrent invocations of handlers that may be made. Copies will be made of
- * the context object as required, however all copies are equivalent.
- */
-template <typename Buffered_Stream, typename Decoder, typename Handler,
-    typename Completion_Context>
-void async_recv_decode(Buffered_Stream& s, Decoder decoder, Handler handler,
-    Completion_Context context)
-{
-  while (!s.recv_buffer().empty())
-  {
-    std::pair<bool, const char*> result =
-      decoder(s.recv_buffer().begin(), s.recv_buffer().end());
-
-    size_t bytes_read = result.second - s.recv_buffer().begin();
-    s.recv_buffer().pop(bytes_read);
-
-    if (result.first)
-    {
-      s.demuxer().operation_immediate(detail::bind_handler(handler, 0,
-            bytes_read, bytes_read));
-      return;
-    }
-  }
-
-  s.async_fill(detail::recv_decode_handler<Buffered_Stream, Decoder, Handler,
-      Completion_Context>(s, decoder, handler, context));
+  s.async_fill(detail::recv_decode_handler<Buffered_Stream, Decoder, Handler>(
+        s, decoder, handler));
 }
 
 namespace detail
@@ -822,9 +667,9 @@ size_t recv_until(Buffered_Stream& s, std::string& data,
  * @param delimiter The pattern marking the end of the data to receive. Copies
  * will be made of the string as required.
  *
- * @param handler The completion handler to be called when the receive
- * operation completes. Copies will be made of the handler as required. The
- * equivalent function signature of the handler must be:
+ * @param handler The handler to be called when the receive operation
+ * completes. Copies will be made of the handler as required. The equivalent
+ * function signature of the handler must be:
  * @code template <typename Error>
  * void handler(
  *   const Error& error,       // Result of operation (the actual type is
@@ -840,47 +685,6 @@ void async_recv_until(Buffered_Stream& s, std::string& data,
     const std::string& delimiter, Handler handler)
 {
   async_recv_decode(s, detail::recv_until_decoder(data, delimiter), handler);
-}
-
-/// Start an asynchronous receive that will not complete until the specified
-/// delimiter is encountered.
-/**
- * This function is used to asynchronously receive data from a stream until a
- * given delimiter is found. The function call always returns immediately.
- *
- * @param s The stream on which the data is to be received.
- *
- * @param data The std:::string object into which the received data will be
- * written. Ownership of the object is retained by the caller, which must
- * guarantee that it is valid until the handler is called.
- *
- * @param delimiter The pattern marking the end of the data to receive. Copies
- * will be made of the string as required.
- *
- * @param handler The completion handler to be called when the receive
- * operation completes. Copies will be made of the handler as required. The
- * equivalent function signature of the handler must be:
- * @code template <typename Error>
- * void handler(
- *   const Error& error,       // Result of operation (the actual type is
- *                             // dependent on the underlying stream's recv
- *                             // operation)
- *   size_t total_bytes_recvd, // Total number of bytes successfully received
- *   size_t last_bytes_recvd   // Number of bytes received on last recv
- *                             // operation
- * ); @endcode
- *
- * @param context The completion context which controls the number of
- * concurrent invocations of handlers that may be made. Copies will be made of
- * the context object as required, however all copies are equivalent.
- */
-template <typename Buffered_Stream, typename Handler,
-    typename Completion_Context>
-void async_recv_until(Buffered_Stream& s, std::string& data,
-    const std::string& delimiter, Handler handler, Completion_Context context)
-{
-  async_recv_decode(s, detail::recv_until_decoder(data, delimiter), handler,
-      context);
 }
 
 } // namespace asio

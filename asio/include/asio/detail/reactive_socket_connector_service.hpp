@@ -235,22 +235,19 @@ public:
     peer.set_impl(sock.release());
   }
 
-  template <typename Stream_Socket_Service, typename Address, typename Handler,
-      typename Completion_Context>
+  template <typename Stream_Socket_Service, typename Address, typename Handler>
   class connect_handler
   {
   public:
     connect_handler(impl_type impl, socket_type new_socket, Demuxer& demuxer,
         basic_stream_socket<Stream_Socket_Service>& peer,
-        const Address& peer_address, Handler handler,
-        Completion_Context context)
+        const Address& peer_address, Handler handler)
       : impl_(impl),
         new_socket_(new_socket),
         demuxer_(demuxer),
         peer_(peer),
         peer_address_(peer_address),
-        handler_(handler),
-        context_(context)
+        handler_(handler)
     {
     }
 
@@ -267,15 +264,17 @@ public:
             &connect_error, &connect_error_len) == socket_error_retval)
       {
         socket_error error(socket_ops::get_error());
-        demuxer_.operation_completed(bind_handler(handler_, error), context_);
+        demuxer_.post(bind_handler(handler_, error));
+        demuxer_.work_finished();
         return;
       }
 
-      // If connection failed then post a completion with the error code.
+      // If connection failed then post the handler with the error code.
       if (connect_error)
       {
         socket_error error(connect_error);
-        demuxer_.operation_completed(bind_handler(handler_, error), context_);
+        demuxer_.post(bind_handler(handler_, error));
+        demuxer_.work_finished();
         return;
       }
 
@@ -284,7 +283,8 @@ public:
       if (socket_ops::ioctl(new_socket_, FIONBIO, &non_blocking))
       {
         socket_error error(socket_ops::get_error());
-        demuxer_.operation_completed(bind_handler(handler_, error), context_);
+        demuxer_.post(bind_handler(handler_, error));
+        demuxer_.work_finished();
         return;
       }
 
@@ -292,7 +292,8 @@ public:
       peer_.set_impl(new_socket_);
       new_socket_holder.release();
       socket_error error(socket_error::success);
-      demuxer_.operation_completed(bind_handler(handler_, error), context_);
+      demuxer_.post(bind_handler(handler_, error));
+      demuxer_.work_finished();
     }
 
     void do_cancel()
@@ -300,7 +301,8 @@ public:
       // The socket is closed when the reactor_.close_descriptor is called,
       // so no need to close it here.
       socket_error error(socket_error::operation_aborted);
-      demuxer_.operation_completed(bind_handler(handler_, error), context_);
+      demuxer_.post(bind_handler(handler_, error));
+      demuxer_.work_finished();
     }
 
   private:
@@ -310,22 +312,19 @@ public:
     basic_stream_socket<Stream_Socket_Service>& peer_;
     Address peer_address_;
     Handler handler_;
-    Completion_Context context_;
   };
 
   // Start an asynchronous connect. The peer socket object must be valid until
-  // the connect's completion handler is invoked.
-  template <typename Stream_Socket_Service, typename Address, typename Handler,
-      typename Completion_Context>
+  // the connect's handler is invoked.
+  template <typename Stream_Socket_Service, typename Address, typename Handler>
   void async_connect(impl_type& impl,
       basic_stream_socket<Stream_Socket_Service>& peer,
-      const Address& peer_address, Handler handler,
-      Completion_Context context)
+      const Address& peer_address, Handler handler)
   {
     if (peer.impl() != invalid_socket)
     {
       socket_error error(socket_error::already_connected);
-      demuxer_.operation_immediate(bind_handler(handler, error));
+      demuxer_.post(bind_handler(handler, error));
       return;
     }
 
@@ -340,7 +339,7 @@ public:
     if (type != SOCK_STREAM)
     {
       socket_error error(socket_error::invalid_argument);
-      demuxer_.operation_immediate(bind_handler(handler, error));
+      demuxer_.post(bind_handler(handler, error));
       return;
     }
 
@@ -350,7 +349,7 @@ public:
     if (new_socket.get() == invalid_socket)
     {
       socket_error error(socket_ops::get_error());
-      demuxer_.operation_immediate(bind_handler(handler, error), context);
+      demuxer_.post(bind_handler(handler, error));
       return;
     }
 
@@ -360,7 +359,7 @@ public:
     if (socket_ops::ioctl(new_socket.get(), FIONBIO, &non_blocking))
     {
       socket_error error(socket_ops::get_error());
-      demuxer_.operation_immediate(bind_handler(handler, error), context);
+      demuxer_.post(bind_handler(handler, error));
       return;
     }
 
@@ -369,10 +368,10 @@ public:
           peer_address.native_size()) == 0)
     {
       // The connect operation has finished successfully so we need to post the
-      // completion immediately.
+      // handler immediately.
       peer.set_impl(new_socket.release());
       socket_error error(socket_error::success);
-      demuxer_.operation_immediate(bind_handler(handler, error), context);
+      demuxer_.post(bind_handler(handler, error));
     }
     else if (socket_ops::get_error() == socket_error::in_progress
         || socket_ops::get_error() == socket_error::would_block)
@@ -380,23 +379,22 @@ public:
       // The connection is happening in the background, and we need to wait
       // until the socket becomes writeable.
       impl->add_socket(new_socket.get());
-      demuxer_.operation_started();
+      demuxer_.work_started();
       reactor_.start_write_op(new_socket.get(),
-          connect_handler<Stream_Socket_Service, Address, Handler,
-              Completion_Context>(impl, new_socket.get(), demuxer_, peer,
-                peer_address, handler, context));
+          connect_handler<Stream_Socket_Service, Address, Handler>(
+            impl, new_socket.get(), demuxer_, peer, peer_address, handler));
       new_socket.release();
     }
     else
     {
-      // The connect operation has failed, so post completion immediately.
+      // The connect operation has failed, so post the handler immediately.
       socket_error error(socket_ops::get_error());
-      demuxer_.operation_immediate(bind_handler(handler, error), context);
+      demuxer_.post(bind_handler(handler, error));
     }
   }
 
 private:
-  // The demuxer used for delivering completion notifications.
+  // The demuxer used for dispatching handlers.
   Demuxer& demuxer_;
 
   // The selector that performs event demultiplexing for the provider.

@@ -143,20 +143,18 @@ public:
     return bytes_sent;
   }
 
-  template <typename Address, typename Handler, typename Completion_Context>
+  template <typename Address, typename Handler>
   class sendto_handler
   {
   public:
     sendto_handler(impl_type impl, Demuxer& demuxer, const void* data,
-        size_t length, const Address& address, Handler handler,
-        Completion_Context context)
+        size_t length, const Address& address, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
         data_(data),
         length_(length),
         destination_(address),
-        handler_(handler),
-        context_(context)
+        handler_(handler)
     {
     }
 
@@ -166,14 +164,15 @@ public:
           destination_.native_address(), destination_.native_size());
       socket_error error(bytes < 0
           ? socket_ops::get_error() : socket_error::success);
-      demuxer_.operation_completed(bind_handler(handler_, error, bytes),
-          context_);
+      demuxer_.post(bind_handler(handler_, error, bytes));
+      demuxer_.work_finished();
     }
 
     void do_cancel()
     {
       socket_error error(socket_error::operation_aborted);
-      demuxer_.operation_completed(bind_handler(handler_, error, 0), context_);
+      demuxer_.post(bind_handler(handler_, error, 0));
+      demuxer_.work_finished();
     }
 
   private:
@@ -183,19 +182,17 @@ public:
     size_t length_;
     Address destination_;
     Handler handler_;
-    Completion_Context context_;
   };
 
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
-  template <typename Address, typename Handler, typename Completion_Context>
+  template <typename Address, typename Handler>
   void async_sendto(impl_type& impl, const void* data, size_t length,
-      const Address& destination, Handler handler, Completion_Context context)
+      const Address& destination, Handler handler)
   {
-    demuxer_.operation_started();
-    reactor_.start_write_op(impl,
-        sendto_handler<Address, Handler, Completion_Context>(impl, demuxer_,
-          data, length, destination, handler, context));
+    demuxer_.work_started();
+    reactor_.start_write_op(impl, sendto_handler<Address, Handler>(
+          impl, demuxer_, data, length, destination, handler));
   }
 
   // Receive a datagram with the address of the sender. Returns the number of
@@ -218,20 +215,18 @@ public:
     return bytes_recvd;
   }
 
-  template <typename Address, typename Handler, typename Completion_Context>
+  template <typename Address, typename Handler>
   class recvfrom_handler
   {
   public:
     recvfrom_handler(impl_type impl, Demuxer& demuxer, void* data,
-        size_t max_length, Address& address, Handler handler,
-        Completion_Context context)
+        size_t max_length, Address& address, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
         data_(data),
         max_length_(max_length),
         sender_address_(address),
-        handler_(handler),
-        context_(context)
+        handler_(handler)
     {
     }
 
@@ -243,14 +238,15 @@ public:
       socket_error error(bytes < 0
           ? socket_ops::get_error() : socket_error::success);
       sender_address_.native_size(addr_len);
-      demuxer_.operation_completed(bind_handler(handler_, error, bytes),
-          context_);
+      demuxer_.post(bind_handler(handler_, error, bytes));
+      demuxer_.work_finished();
     }
 
     void do_cancel()
     {
       socket_error error(socket_error::operation_aborted);
-      demuxer_.operation_completed(bind_handler(handler_, error, 0), context_);
+      demuxer_.post(bind_handler(handler_, error, 0));
+      demuxer_.work_finished();
     }
 
   private:
@@ -260,24 +256,22 @@ public:
     size_t max_length_;
     Address& sender_address_;
     Handler handler_;
-    Completion_Context context_;
   };
 
   // Start an asynchronous receive. The buffer for the data being received and
   // the sender_address obejct must both be valid for the lifetime of the
   // asynchronous operation.
-  template <typename Address, typename Handler, typename Completion_Context>
+  template <typename Address, typename Handler>
   void async_recvfrom(impl_type& impl, void* data, size_t max_length,
-      Address& sender_address, Handler handler, Completion_Context context)
+      Address& sender_address, Handler handler)
   {
-    demuxer_.operation_started();
-    reactor_.start_read_op(impl,
-        recvfrom_handler<Address, Handler, Completion_Context>(impl, demuxer_,
-          data, max_length, sender_address, handler, context));
+    demuxer_.work_started();
+    reactor_.start_read_op(impl, recvfrom_handler<Address, Handler>(
+          impl, demuxer_, data, max_length, sender_address, handler));
   }
 
 private:
-  // The demuxer used for delivering completion notifications.
+  // The demuxer used for dispatching handlers.
   Demuxer& demuxer_;
 
   // The selector that performs event demultiplexing for the provider.

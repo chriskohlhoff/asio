@@ -24,8 +24,7 @@ class session
 {
 public:
   session(demuxer& d, size_t block_size)
-    : context_(1),
-      socket_(d),
+    : socket_(d),
       block_size_(block_size),
       recv_data_(new char[block_size]),
       send_data_(new char[block_size]),
@@ -49,7 +48,7 @@ public:
   {
     ++op_count_;
     socket_.async_recv(recv_data_, block_size_,
-        boost::bind(&session::handle_recv, this, _1, _2), context_);
+        boost::bind(&session::handle_recv, this, _1, _2));
   }
 
   void handle_recv(const socket_error& error, size_t length)
@@ -62,9 +61,9 @@ public:
         op_count_ += 2;
         std::swap(recv_data_, send_data_);
         async_send_n(socket_, send_data_, length,
-            boost::bind(&session::handle_send, this, _1, _2, _3), context_);
+            boost::bind(&session::handle_send, this, _1, _2, _3));
         socket_.async_recv(recv_data_, block_size_,
-            boost::bind(&session::handle_recv, this, _1, _2), context_);
+            boost::bind(&session::handle_recv, this, _1, _2));
       }
     }
     else if (--op_count_ == 0)
@@ -83,9 +82,9 @@ public:
         op_count_ += 2;
         std::swap(recv_data_, send_data_);
         async_send_n(socket_, send_data_, length,
-            boost::bind(&session::handle_send, this, _1, _2, _3), context_);
+            boost::bind(&session::handle_send, this, _1, _2, _3));
         socket_.async_recv(recv_data_, block_size_,
-            boost::bind(&session::handle_recv, this, _1, _2), context_);
+            boost::bind(&session::handle_recv, this, _1, _2));
       }
     }
     else if (--op_count_ == 0)
@@ -95,7 +94,6 @@ public:
   }
 
 private:
-  counting_completion_context context_;
   stream_socket socket_;
   size_t block_size_;
   char* recv_data_;
@@ -163,22 +161,23 @@ int main(int argc, char* argv[])
 
     server s(d, port, block_size);
 
-    std::list<detail::thread*> threads;
+    // Threads not currently supported in this test.
+    /*std::list<detail::thread*> threads;
     while (--thread_count > 0)
     {
       detail::thread* new_thread =
         new detail::thread(boost::bind(&demuxer::run, &d));
       threads.push_back(new_thread);
-    }
+    }*/
 
     d.run();
 
-    while (!threads.empty())
+    /*while (!threads.empty())
     {
       threads.front()->join();
       delete threads.front();
       threads.pop_front();
-    }
+    }*/
   }
   catch (std::exception& e)
   {

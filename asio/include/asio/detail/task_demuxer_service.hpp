@@ -44,9 +44,9 @@ public:
       mutex_(),
       task_(demuxer.get_service(service_factory<Task>())),
       task_is_running_(false),
-      outstanding_operations_(0),
-      ready_completions_(0),
-      ready_completions_end_(0),
+      outstanding_work_(0),
+      handler_queue_(0),
+      handler_queue_end_(0),
       interrupted_(false),
       current_thread_in_pool_(),
       first_idle_thread_(0)
@@ -71,19 +71,19 @@ public:
 
     asio::detail::mutex::scoped_lock lock(mutex_);
 
-    while (!interrupted_ && outstanding_operations_ > 0)
+    while (!interrupted_ && outstanding_work_ > 0)
     {
-      if (ready_completions_)
+      if (handler_queue_)
       {
-        completion_base* comp = ready_completions_;
-        ready_completions_ = comp->next_;
-        if (ready_completions_ == 0)
-          ready_completions_end_ = 0;
+        handler_base* h = handler_queue_;
+        handler_queue_ = h->next_;
+        if (handler_queue_ == 0)
+          handler_queue_end_ = 0;
         lock.unlock();
-        comp->call();
-        delete comp;
+        h->call();
+        delete h;
         lock.lock();
-        --outstanding_operations_;
+        --outstanding_work_;
       }
       else if (!task_is_running_)
       {
@@ -148,90 +148,55 @@ public:
     interrupted_ = false;
   }
 
-  // Notify the demuxer that an operation has started.
-  void operation_started()
+  // Notify the demuxer that some work has started.
+  void work_started()
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
-    ++outstanding_operations_;
+    ++outstanding_work_;
   }
 
-  // Notify the demuxer that an operation has completed.
-  template <typename Handler, typename Completion_Context>
-  void operation_completed(Handler handler, Completion_Context context,
-      bool allow_nested_delivery)
+  // Notify the demuxer that some work has finished.
+  void work_finished()
+  {
+    asio::detail::mutex::scoped_lock lock(mutex_);
+    if (--outstanding_work_ == 0)
+      interrupt_all_threads();
+  }
+
+  // Request the demuxer to invoke the given handler.
+  template <typename Handler>
+  void dispatch(Handler handler)
+  {
+    if (current_thread_in_pool_)
+      handler_wrapper<Handler>::do_upcall(handler);
+    else
+      post(handler);
+  }
+
+  // Request the demuxer to invoke the given handler and return immediately.
+  template <typename Handler>
+  void post(Handler handler)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
-    if (context.try_acquire())
+    // Add the handler to the end of the queue.
+    handler_base* h = new handler_wrapper<Handler>(handler);
+    if (handler_queue_end_)
     {
-      if (allow_nested_delivery && current_thread_in_pool_)
-      {
-        lock.unlock();
-        completion<Handler, Completion_Context>::do_upcall(handler);
-        context.release();
-        lock.lock();
-        if (--outstanding_operations_ == 0)
-          interrupt_all_threads();
-      }
-      else
-      {
-        completion_base* comp =
-          new completion<Handler, Completion_Context>(handler, context);
-        if (ready_completions_end_)
-        {
-          ready_completions_end_->next_ = comp;
-          ready_completions_end_ = comp;
-        }
-        else
-        {
-          ready_completions_ = ready_completions_end_ = comp;
-        }
-        if (!interrupt_one_idle_thread())
-          interrupt_task();
-      }
+      handler_queue_end_->next_ = h;
+      handler_queue_end_ = h;
     }
     else
     {
-      completion_base* comp =
-        new completion<Handler, Completion_Context>(handler, context);
-      context.acquire(bind_handler(
-            task_demuxer_service<Task>::completion_context_acquired, this,
-            comp));
+      handler_queue_ = handler_queue_end_ = h;
     }
-  }
 
-  // Notify the demuxer of an operation that started and finished immediately.
-  template <typename Handler, typename Completion_Context>
-  void operation_immediate(Handler handler, Completion_Context context,
-      bool allow_nested_delivery)
-  {
-    operation_started();
-    operation_completed(handler, context, allow_nested_delivery);
-  }
+    // An undelivered handler is treated as unfinished work.
+    ++outstanding_work_;
 
-  // Callback function when a completion context has been acquired.
-  static void completion_context_acquired(task_demuxer_service<Task>* service,
-      void* arg) throw ()
-  {
-    try
-    {
-      asio::detail::mutex::scoped_lock lock(service->mutex_);
-      completion_base* comp = static_cast<completion_base*>(arg);
-      if (service->ready_completions_end_)
-      {
-        service->ready_completions_end_->next_ = comp;
-        service->ready_completions_end_ = comp;
-      }
-      else
-      {
-        service->ready_completions_ = service->ready_completions_end_ = comp;
-      }
-      if (!service->interrupt_one_idle_thread())
-        service->interrupt_task();
-    }
-    catch (...)
-    {
-    }
+    // Wake up a thread to execute the handler.
+    if (!interrupt_one_idle_thread())
+      interrupt_task();
   }
 
 private:
@@ -283,43 +248,41 @@ private:
     return false;
   }
 
-  // The base class for all completions.
-  class completion_base
+  // The base class for all handler wrappers.
+  class handler_base
   {
   public:
-    virtual ~completion_base()
+    virtual ~handler_base()
     {
     }
 
     virtual void call() = 0;
 
   protected:
-    completion_base()
+    handler_base()
       : next_(0)
     {
     }
 
   private:
     friend class task_demuxer_service<Task>;
-    completion_base* next_;
+    handler_base* next_;
   };
 
-  // Template for completions specific to a handler.
-  template <typename Handler, typename Completion_Context>
-  class completion
-    : public completion_base
+  // Template wrapper for handlers.
+  template <typename Handler>
+  class handler_wrapper
+    : public handler_base
   {
   public:
-    completion(Handler handler, Completion_Context context)
-      : handler_(handler),
-        context_(context)
+    handler_wrapper(Handler handler)
+      : handler_(handler)
     {
     }
 
     virtual void call()
     {
       do_upcall(handler_);
-      context_.release();
     }
 
     static void do_upcall(Handler& handler)
@@ -335,7 +298,6 @@ private:
 
   private:
     Handler handler_;
-    Completion_Context context_;
   };
 
   // The demuxer that owns this service.
@@ -350,14 +312,14 @@ private:
   // Whether the task is currently running.
   bool task_is_running_;
 
-  // The number of operations that have not yet completed.
-  int outstanding_operations_;
+  // The count of unfinished work.
+  int outstanding_work_;
 
-  // The start of a linked list of completions that are ready to be delivered.
-  completion_base* ready_completions_;
+  // The start of a linked list of handlers that are ready to be delivered.
+  handler_base* handler_queue_;
 
-  // The end of a linked list of completions that are ready to be delivered.
-  completion_base* ready_completions_end_;
+  // The end of a linked list of handlers that are ready to be delivered.
+  handler_base* handler_queue_end_;
 
   // Flag to indicate that the dispatcher has been interrupted.
   bool interrupted_;

@@ -107,13 +107,6 @@ public:
     return stream_impl_.next_layer().async_flush(handler);
   }
 
-  /// Start an asynchronous flush.
-  template <typename Handler, typename Completion_Context>
-  void async_flush(Handler handler, Completion_Context context)
-  {
-    return stream_impl_.next_layer().async_flush(handler, context);
-  }
-
   /// Send the given data to the peer. Returns the number of bytes sent or 0 if
   /// the stream was closed cleanly. Throws an exception on failure.
   size_t send(const void* data, size_t length)
@@ -135,15 +128,6 @@ public:
   void async_send(const void* data, size_t length, Handler handler)
   {
     stream_impl_.async_send(data, length, handler);
-  }
-
-  /// Start an asynchronous send. The data being sent must be valid for the
-  /// lifetime of the asynchronous operation.
-  template <typename Handler, typename Completion_Context>
-  void async_send(const void* data, size_t length, Handler handler,
-      Completion_Context context)
-  {
-    stream_impl_.async_send(data, length, handler, context);
   }
 
   /// Fill the buffer with some data. Returns the number of bytes placed in the
@@ -170,13 +154,6 @@ public:
     stream_impl_.async_fill(handler);
   }
 
-  /// Start an asynchronous fill.
-  template <typename Handler, typename Completion_Context>
-  void async_fill(Handler handler, Completion_Context context)
-  {
-    stream_impl_.async_fill(handler, context);
-  }
-
   /// Receive some data from the peer. Returns the number of bytes received or
   /// 0 if the stream was closed cleanly. Throws an exception on failure.
   size_t recv(void* data, size_t max_length)
@@ -198,15 +175,6 @@ public:
   void async_recv(void* data, size_t max_length, Handler handler)
   {
     stream_impl_.async_recv(data, max_length, handler);
-  }
-
-  /// Start an asynchronous receive. The buffer for the data being received
-  /// must be valid for the lifetime of the asynchronous operation.
-  template <typename Handler, typename Completion_Context>
-  void async_recv(void* data, size_t max_length, Handler handler,
-      Completion_Context context)
-  {
-    stream_impl_.async_recv(data, max_length, handler, context);
   }
 
 private:

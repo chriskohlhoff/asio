@@ -141,14 +141,6 @@ public:
         flush_handler<Handler>(buffer_, handler));
   }
 
-  /// Start an asynchronous flush.
-  template <typename Handler, typename Completion_Context>
-  void async_flush(Handler handler, Completion_Context context)
-  {
-    async_send_n(next_layer_, buffer_.begin(), buffer_.size(),
-        flush_handler<Handler>(buffer_, handler), context);
-  }
-
   /// Send the given data to the peer. Returns the number of bytes sent or 0 if
   /// the stream was closed cleanly. Throws an exception on failure.
   size_t send(const void* data, size_t length)
@@ -224,25 +216,6 @@ public:
     }
   }
 
-  /// Start an asynchronous send. The data being sent must be valid for the
-  /// lifetime of the asynchronous operation.
-  template <typename Handler, typename Completion_Context>
-  void async_send(const void* data, size_t length, Handler handler,
-      Completion_Context context)
-  {
-    if (buffer_.size() == buffer_.capacity())
-    {
-      async_flush(send_handler<Handler>(buffer_, data, length, handler),
-          context);
-    }
-    else
-    {
-      size_t bytes_copied = copy(data, length);
-      next_layer_.demuxer().operation_immediate(
-          detail::bind_handler(handler, 0, bytes_copied), context);
-    }
-  }
-
   /// Receive some data from the peer. Returns the number of bytes received or
   /// 0 if the stream was closed cleanly. Throws an exception on failure.
   size_t recv(void* data, size_t max_length)
@@ -264,15 +237,6 @@ public:
   void async_recv(void* data, size_t max_length, Handler handler)
   {
     next_layer_.async_recv(data, max_length, handler);
-  }
-
-  /// Start an asynchronous receive. The buffer for the data being received
-  /// must be valid for the lifetime of the asynchronous operation.
-  template <typename Handler, typename Completion_Context>
-  void async_recv(void* data, size_t max_length, Handler handler,
-      Completion_Context context)
-  {
-    next_layer_.async_recv(data, max_length, handler, context);
   }
 
 private:

@@ -21,13 +21,12 @@ public:
 
   void send(const chat_message& msg)
   {
-    demuxer_.operation_immediate(
-        boost::bind(&chat_client::do_send, this, msg));
+    demuxer_.post(boost::bind(&chat_client::do_send, this, msg));
   }
 
   void close()
   {
-    demuxer_.operation_immediate(boost::bind(&chat_client::do_close, this));
+    demuxer_.post(boost::bind(&chat_client::do_close, this));
   }
 
 private:

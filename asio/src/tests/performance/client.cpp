@@ -57,7 +57,6 @@ class session
 public:
   session(demuxer& d, size_t block_size, stats& s)
     : demuxer_(d),
-      context_(1),
       socket_(d),
       block_size_(block_size),
       recv_data_(new char[block_size]),
@@ -88,15 +87,14 @@ public:
   {
     ++unsent_count_;
     async_send_n(socket_, send_data_, block_size_,
-        boost::bind(&session::handle_send, this, _1, _2, _3), context_);
+        boost::bind(&session::handle_send, this, _1, _2, _3));
     socket_.async_recv(recv_data_, block_size_,
-        boost::bind(&session::handle_recv, this, _1, _2), context_);
+        boost::bind(&session::handle_recv, this, _1, _2));
   }
 
   void stop()
   {
-    demuxer_.operation_immediate(boost::bind(&stream_socket::close, &socket_),
-        context_);
+    demuxer_.post(boost::bind(&stream_socket::close, &socket_));
   }
 
   void handle_recv(const socket_error& error, size_t length)
@@ -110,9 +108,9 @@ public:
       {
         std::swap(recv_data_, send_data_);
         async_send_n(socket_, send_data_, length,
-            boost::bind(&session::handle_send, this, _1, _2, _3), context_);
+            boost::bind(&session::handle_send, this, _1, _2, _3));
         socket_.async_recv(recv_data_, block_size_,
-            boost::bind(&session::handle_recv, this, _1, _2), context_);
+            boost::bind(&session::handle_recv, this, _1, _2));
       }
     }
   }
@@ -128,16 +126,15 @@ public:
       {
         std::swap(recv_data_, send_data_);
         async_send_n(socket_, send_data_, length,
-            boost::bind(&session::handle_send, this, _1, _2, _3), context_);
+            boost::bind(&session::handle_send, this, _1, _2, _3));
         socket_.async_recv(recv_data_, block_size_,
-            boost::bind(&session::handle_recv, this, _1, _2), context_);
+            boost::bind(&session::handle_recv, this, _1, _2));
       }
     }
   }
 
 private:
   demuxer& demuxer_;
-  counting_completion_context context_;
   stream_socket socket_;
   size_t block_size_;
   char* recv_data_;
@@ -154,7 +151,6 @@ public:
   client(demuxer& d, const char* host, short port, size_t block_size,
       size_t session_count, int timeout)
     : demuxer_(d),
-      context_(1),
       stop_timer_(d, timer::from_now, timeout),
       connector_(d),
       server_addr_(port, host),
@@ -165,10 +161,9 @@ public:
   {
     session* new_session = new session(demuxer_, block_size, stats_);
     connector_.async_connect(new_session->socket(), server_addr_,
-        boost::bind(&client::handle_connect, this, new_session, _1), context_);
+        boost::bind(&client::handle_connect, this, new_session, _1));
 
-    stop_timer_.async_wait(boost::bind(&client::handle_timeout, this),
-        context_);
+    stop_timer_.async_wait(boost::bind(&client::handle_timeout, this));
   }
 
   ~client()
@@ -199,8 +194,7 @@ public:
       {
         new_session = new session(demuxer_, block_size_, stats_);
         connector_.async_connect(new_session->socket(), server_addr_,
-            boost::bind(&client::handle_connect, this, new_session, _1),
-            context_);
+            boost::bind(&client::handle_connect, this, new_session, _1));
       }
     }
     else
@@ -211,7 +205,6 @@ public:
 
 private:
   demuxer& demuxer_;
-  counting_completion_context context_;
   timer stop_timer_;
   socket_connector connector_;
   ipv4::address server_addr_;
@@ -244,22 +237,23 @@ int main(int argc, char* argv[])
 
     client c(d, host, port, block_size, session_count, timeout);
 
-    std::list<detail::thread*> threads;
+    // Threads not currently supported in this test.
+    /*std::list<detail::thread*> threads;
     while (--thread_count > 0)
     {
       detail::thread* new_thread =
         new detail::thread(boost::bind(&demuxer::run, &d));
       threads.push_back(new_thread);
-    }
+    }*/
 
     d.run();
 
-    while (!threads.empty())
+    /*while (!threads.empty())
     {
       threads.front()->join();
       delete threads.front();
       threads.pop_front();
-    }
+    }*/
   }
   catch (std::exception& e)
   {

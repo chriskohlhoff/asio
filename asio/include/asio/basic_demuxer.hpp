@@ -21,7 +21,6 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/null_completion_context.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/detail/service_registry.hpp"
 #include "asio/detail/signal_init.hpp"
@@ -55,13 +54,14 @@ public:
 
   /// Run the demuxer's event processing loop.
   /**
-   * The run function blocks until all operations have completed and there are
-   * no more completions to be delivered, or until the demuxer has been
-   * interrupted. The run function may be safely called again once it has
-   * completed to execute any new operations or deliver new completions.
+   * The run function blocks until all work has finished and there are no more
+   * handlers to be dispatched, or until the demuxer has been interrupted.
    *
    * Multiple threads may call the run function to set up a pool of threads
-   * from which the demuxer may dispatch the completion notifications.
+   * from which the demuxer may execute handlers.
+   *
+   * The run function may be safely called again once it has completed only
+   * after a call to reset.
    */
   void run()
   {
@@ -75,10 +75,9 @@ public:
    * possible.
    *
    * Note that if the run function is interrupted and is not called again later
-   * then its operations may not have finished and completions not delivered.
-   * In this case a demuxer implementation is not required to make any
-   * guarantee that any resources associated with those operations would be
-   * cleaned up.
+   * then its work may not have finished and handlers may not be delivered. In
+   * this case a demuxer implementation is not required to make any guarantee
+   * that any resources associated with unfinished work will be cleaned up.
    */
   void interrupt()
   {
@@ -99,167 +98,68 @@ public:
     service_.reset();
   }
 
-  /// Notify the demuxer that an operation has started.
+  /// Notify the demuxer that some work has started.
   /**
-   * This function is used to inform the demuxer that a new operation has
-   * begun. A call to this function must be matched with a later corresponding
-   * call to operation_completed.
+   * This function is used to inform the demuxer that some work has begun. This
+   * ensures that the run function will not exit while the work is under way.
+   *
+   * A call to this function must be matched with a later corresponding
+   * call to work_finished.
    */
-  void operation_started()
+  void work_started()
   {
-    service_.operation_started();
+    service_.work_started();
   }
 
-  /// Notify the demuxer that an operation has completed.
+  /// Notify the demuxer that some work has finished.
   /**
-   * This function is used to inform the demuxer that an operation has
-   * completed and that it should invoke the given completion handler. A call
-   * to this function must be matched with an earlier corresponding call to
-   * operation_started.
+   * This function is used to inform the demuxer that some work has finished.
+   * Once the count of unfinished work reaches zero, the demuxer's run function
+   * is permitted to exit.
    *
-   * The completion handler is guaranteed to be called only from a thread in
-   * which the run member function is being invoked. 
+   * A call to this function must be matched with a later corresponding call to
+   * work_started.
+   */
+  void work_finished()
+  {
+    service_.work_finished();
+  }
+
+  /// Request the demuxer to invoke the given handler.
+  /**
+   * This function is used to ask the demuxer to execute the given handler.
    *
-   * @param handler The completion handler to be called. The demuxer will make
+   * The demuxer guarantees that the handler will only be called in a thread in
+   * which the run member function is currently being invoked. The handler may
+   * be executed inside this function if the guarantee can be met.
+   *
+   * @param handler The handler to be called. The demuxer will make
    * a copy of the handler object as required. The equivalent function
    * signature of the handler must be: @code void handler(); @endcode
    */
   template <typename Handler>
-  void operation_completed(Handler handler)
+  void dispatch(Handler handler)
   {
-    service_.operation_completed(handler, null_completion_context(), false);
+    service_.dispatch(handler);
   }
 
-  /// Notify the demuxer that an operation has completed.
+  /// Request the demuxer to invoke the given handler and return immediately.
   /**
-   * This function is used to inform the demuxer that an operation has
-   * completed and that it should invoke the given completion handler. A call
-   * to this function must be matched with an earlier corresponding call to
-   * operation_started.
+   * This function is used to ask the demuxer to execute the given handler, but
+   * without allowing the demuxer to call the handler from inside this
+   * function.
    *
-   * The completion handler is guaranteed to be called only from a thread in
-   * which the run member function is being invoked. 
+   * The demuxer guarantees that the handler will only be called in a thread in
+   * which the run member function is currently being invoked.
    *
-   * @param handler The completion handler to be called. The demuxer will make
-   * a copy of the handler object as required. The equivalent function
-   * signature of the handler must be: @code void handler(); @endcode
-   *
-   * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Copies will be made
-   * of the context object as required, however all copies are equivalent.
-   */
-  template <typename Handler, typename Completion_Context>
-  void operation_completed(Handler handler, Completion_Context context)
-  {
-    service_.operation_completed(handler, context, false);
-  }
-
-  /// Notify the demuxer that an operation has completed.
-  /**
-   * This function is used to inform the demuxer that an operation has
-   * completed and that it should invoke the given completion handler. A call
-   * to this function must be matched with an earlier corresponding call to
-   * operation_started.
-   *
-   * The completion handler is guaranteed to be called only from a thread in
-   * which the run member function is being invoked. 
-   *
-   * @param handler The completion handler to be called. The demuxer will make
-   * a copy of the handler object as required. The equivalent function
-   * signature of the handler must be: @code void handler(); @endcode
-   *
-   * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Copies will be made
-   * of the context object as required, however all copies are equivalent.
-   *
-   * @param allow_nested_delivery If true, this allows the demuxer to run the
-   * completion handler before operation_completed returns, as an optimisation.
-   * This is at the discretion of the demuxer implementation, but may only be
-   * done if it can meet the guarantee that the handler is invoked from a
-   * thread executing the run function. If false, the function returns
-   * immediately.
-   */
-  template <typename Handler, typename Completion_Context>
-  void operation_completed(Handler handler, Completion_Context context,
-      bool allow_nested_delivery)
-  {
-    service_.operation_completed(handler, context, allow_nested_delivery);
-  }
-
-  /// Notify the demuxer of an operation that started and finished immediately.
-  /**
-   * This function is used to inform the demuxer that an operation has both
-   * started and completed immediately, and that it should invoke the given
-   * completion handler. A call to this function must not have either of a
-   * corresponding operation_started or operation_completed.
-   *
-   * The completion handler is guaranteed to be called only from a thread in
-   * which the run member function is being invoked. 
-   *
-   * @param handler The completion handler to be called. The demuxer will make
+   * @param handler The handler to be called. The demuxer will make
    * a copy of the handler object as required. The equivalent function
    * signature of the handler must be: @code void handler(); @endcode
    */
   template <typename Handler>
-  void operation_immediate(Handler handler)
+  void post(Handler handler)
   {
-    service_.operation_immediate(handler, null_completion_context(), false);
-  }
-
-  /// Notify the demuxer of an operation that started and finished immediately.
-  /**
-   * This function is used to inform the demuxer that an operation has both
-   * started and completed immediately, and that it should invoke the given
-   * completion handler. A call to this function must not have either of a
-   * corresponding operation_started or operation_completed.
-   *
-   * The completion handler is guaranteed to be called only from a thread in
-   * which the run member function is being invoked. 
-   *
-   * @param handler The completion handler to be called. The demuxer will make
-   * a copy of the handler object as required. The equivalent function
-   * signature of the handler must be: @code void handler(); @endcode
-   *
-   * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Copies will be made
-   * of the context object as required, however all copies are equivalent.
-   */
-  template <typename Handler, typename Completion_Context>
-  void operation_immediate(Handler handler, Completion_Context context)
-  {
-    service_.operation_immediate(handler, context, false);
-  }
-
-  /// Notify the demuxer of an operation that started and finished immediately.
-  /**
-   * This function is used to inform the demuxer that an operation has both
-   * started and completed immediately, and that it should invoke the given
-   * completion handler. A call to this function must not have either of a
-   * corresponding operation_started or operation_completed.
-   *
-   * The completion handler is guaranteed to be called only from a thread in
-   * which the run member function is being invoked. 
-   *
-   * @param handler The completion handler to be called. The demuxer will make
-   * a copy of the handler object as required. The equivalent function
-   * signature of the handler must be: @code void handler(); @endcode
-   *
-   * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Copies will be made
-   * of the context object as required, however all copies are equivalent.
-   *
-   * @param allow_nested_delivery If true, this allows the demuxer to run the
-   * completion handler before operation_immediate returns, as an optimisation.
-   * This is at the discretion of the demuxer implementation, but may only be
-   * done if it can meet the guarantee that the handler is invoked from a
-   * thread executing the run function. If false, the function returns
-   * immediately.
-   */
-  template <typename Handler, typename Completion_Context>
-  void operation_immediate(Handler handler, Completion_Context context,
-      bool allow_nested_delivery)
-  {
-    service_.operation_immediate(handler, context, allow_nested_delivery);
+    service_.post(handler);
   }
 
   /// Obtain the service interface corresponding to the given type.

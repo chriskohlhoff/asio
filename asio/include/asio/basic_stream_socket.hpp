@@ -22,7 +22,6 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error_handler.hpp"
-#include "asio/null_completion_context.hpp"
 #include "asio/service_factory.hpp"
 
 namespace asio {
@@ -53,8 +52,8 @@ public:
    * peer. The socket needs to be connected or accepted before data can be sent
    * or received on it.
    *
-   * @param d The demuxer object that the stream socket will use to deliver
-   * completions for any asynchronous operations performed on the socket.
+   * @param d The demuxer object that the stream socket will use to dispatch
+   * handlers for any asynchronous operations performed on the socket.
    */
   explicit basic_stream_socket(demuxer_type& d)
     : service_(d.get_service(service_factory<Service>())),
@@ -71,11 +70,10 @@ public:
   /// Get the demuxer associated with the asynchronous object.
   /**
    * This function may be used to obtain the demuxer object that the stream
-   * socket uses to deliver completions for asynchronous operations.
+   * socket uses to dispatch handlers for asynchronous operations.
    *
    * @return A reference to the demuxer object that stream socket will use to
-   * deliver completion notifications. Ownership is not transferred to the
-   * caller.
+   * dispatch handlers. Ownership is not transferred to the caller.
    */
   demuxer_type& demuxer()
   {
@@ -330,9 +328,9 @@ public:
    *
    * @param length The size of the data to be sent, in bytes.
    *
-   * @param handler The completion handler to be called when the send operation
-   * completes. Copies will be made of the handler as required. The equivalent
-   * function signature of the handler must be:
+   * @param handler The handler to be called when the send operation completes.
+   * Copies will be made of the handler as required. The equivalent function
+   * signature of the handler must be:
    * @code void handler(
    *   const asio::socket_error& error, // Result of operation
    *   size_t bytes_sent                // Number of bytes sent
@@ -345,42 +343,7 @@ public:
   template <typename Handler>
   void async_send(const void* data, size_t length, Handler handler)
   {
-    service_.async_send(impl_, data, length, handler,
-        null_completion_context());
-  }
-
-  /// Start an asynchronous send.
-  /**
-   * This function is used to asynchronously send data to the stream socket's
-   * peer. The function call always returns immediately.
-   *
-   * @param data The data to be sent to the remote peer. Ownership of the data
-   * is retained by the caller, which must guarantee that it is valid until the
-   * handler is called.
-   *
-   * @param length The size of the data to be sent, in bytes.
-   *
-   * @param handler The completion handler to be called when the send operation
-   * completes. Copies will be made of the handler as required. The equivalent
-   * function signature of the handler must be:
-   * @code void handler(
-   *   const asio::socket_error& error, // Result of operation
-   *   size_t bytes_sent                // Number of bytes sent
-   * ); @endcode
-   *
-   * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Copies will be made
-   * of the context object as required, however all copies are equivalent.
-   *
-   * @note The send operation may not transmit all of the data to the peer.
-   * Consider using the asio::async_send_n() function if you need to ensure
-   * that all data is sent before the asynchronous operation completes.
-   */
-  template <typename Handler, typename Completion_Context>
-  void async_send(const void* data, size_t length, Handler handler,
-      Completion_Context context)
-  {
-    service_.async_send(impl_, data, length, handler, context);
+    service_.async_send(impl_, data, length, handler);
   }
 
   /// Receive some data from the peer.
@@ -450,9 +413,9 @@ public:
    *
    * @param max_length The maximum size of the data to be received, in bytes.
    *
-   * @param handler The completion handler to be called when the receive
-   * operation completes. Copies will be made of the handler as required. The
-   * equivalent function signature of the handler must be:
+   * @param handler The handler to be called when the receive operation
+   * completes. Copies will be made of the handler as required. The equivalent\
+   * function signature of the handler must be:
    * @code void handler(
    *   const asio::socket_error& error, // Result of operation
    *   size_t bytes_received            // Number of bytes received
@@ -466,43 +429,7 @@ public:
   template <typename Handler>
   void async_recv(void* data, size_t max_length, Handler handler)
   {
-    service_.async_recv(impl_, data, max_length, handler,
-        null_completion_context());
-  }
-
-  /// Start an asynchronous receive.
-  /**
-   * This function is used to asynchronously receive data from the stream
-   * socket's peer. The function call always returns immediately.
-   *
-   * @param data The buffer into which the received data will be written.
-   * Ownership of the buffer is retained by the caller, which must guarantee
-   * that it is valid until the handler is called.
-   *
-   * @param max_length The maximum size of the data to be received, in bytes.
-   *
-   * @param handler The completion handler to be called when the receive
-   * operation completes. Copies will be made of the handler as required. The
-   * equivalent function signature of the handler must be:
-   * @code void handler(
-   *   const asio::socket_error& error, // Result of operation
-   *   size_t bytes_received            // Number of bytes received
-   * ); @endcode
-   *
-   * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Copies will be made
-   * of the context object as required, however all copies are equivalent.
-   *
-   * @note The recv operation may not receive all of the requested number of
-   * bytes. Consider using the asio::async_recv_n() function if you need to
-   * ensure that the requested amount of data is received before the
-   * asynchronous operation completes.
-   */
-  template <typename Handler, typename Completion_Context>
-  void async_recv(void* data, size_t max_length, Handler handler,
-      Completion_Context context)
-  {
-    service_.async_recv(impl_, data, max_length, handler, context);
+    service_.async_recv(impl_, data, max_length, handler);
   }
 
 private:

@@ -130,50 +130,48 @@ public:
     }
   }
 
-  template <typename Handler, typename Completion_Context>
+  template <typename Handler>
   class wait_handler
   {
   public:
-    wait_handler(impl_type& impl, Demuxer& demuxer, Handler handler,
-        Completion_Context context)
+    wait_handler(impl_type& impl, Demuxer& demuxer, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
-        handler_(handler),
-        context_(context)
+        handler_(handler)
     {
     }
 
     void do_operation()
     {
       impl_->token = 0;
-      demuxer_.operation_completed(handler_, context_);
+      demuxer_.post(handler_);
+      demuxer_.work_finished();
     }
 
     void do_cancel()
     {
       impl_->token = 0;
-      demuxer_.operation_completed(handler_, context_);
+      demuxer_.post(handler_);
+      demuxer_.work_finished();
     }
 
   private:
     impl_type& impl_;
     Demuxer& demuxer_;
     Handler handler_;
-    Completion_Context context_;
   };
 
   // Start an asynchronous wait on the timer.
-  template <typename Handler, typename Completion_Context>
-  void async_wait(impl_type& impl, Handler handler, Completion_Context context)
+  template <typename Handler>
+  void async_wait(impl_type& impl, Handler handler)
   {
-    demuxer_.operation_started();
+    demuxer_.work_started();
     reactor_.schedule_timer(impl->expiry.sec(), impl->expiry.usec(),
-        wait_handler<Handler, Completion_Context>(impl, demuxer_, handler,
-          context), impl->token);
+        wait_handler<Handler>(impl, demuxer_, handler), impl->token);
   }
 
 private:
-  // The demuxer used for delivering completion notifications.
+  // The demuxer used for dispatching handlers.
   Demuxer& demuxer_;
 
   // The selector that performs event demultiplexing for the provider.

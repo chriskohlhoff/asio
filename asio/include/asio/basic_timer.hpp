@@ -21,7 +21,6 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/null_completion_context.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/timer_base.hpp"
 
@@ -49,7 +48,7 @@ public:
    * This constructor creates a timer without setting an expiry time. The set()
    * function must be called before the timer can be waited on.
    *
-   * @param d The demuxer object that the timer will use to deliver completions
+   * @param d The demuxer object that the timer will use to dispatch handlers
    * for any asynchronous operations performed on the timer.
    */
   explicit basic_timer(demuxer_type& d)
@@ -63,7 +62,7 @@ public:
   /**
    * This constructor creates a timer and sets the expiry time.
    *
-   * @param d The demuxer object that the timer will use to deliver completions
+   * @param d The demuxer object that the timer will use to dispatch handlers
    * for any asynchronous operations performed on the timer.
    *
    * @param from_when The origin time against which the seconds and
@@ -94,11 +93,10 @@ public:
   /// Get the demuxer associated with the asynchronous object.
   /**
    * This function may be used to obtain the demuxer object that the timer uses
-   * to deliver completions for asynchronous operations.
+   * to dispatch handlers for asynchronous operations.
    *
    * @return A reference to the demuxer object that the timer will use to
-   * deliver completion notifications. Ownership is not transferred to the
-   * caller.
+   * dispatch handlers. Ownership is not transferred to the caller.
    */
   demuxer_type& demuxer()
   {
@@ -162,34 +160,14 @@ public:
    * timer. It always returns immediately, but the specified handler will be
    * notified when the timer expires.
    *
-   * @param handler The completion handler to be called when the timer expires.
-   * Copies will be made of the handler as required. The equivalent function
-   * signature of the handler must be: @code void handler(); @endcode
+   * @param handler The handler to be called when the timer expires. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be: @code void handler(); @endcode
    */
   template <typename Handler>
   void async_wait(Handler handler)
   {
-    service_.async_wait(impl_, handler, null_completion_context());
-  }
-
-  /// Start an asynchronous wait on the timer.
-  /**
-   * This function may be used to initiate an asynchronous wait against the
-   * timer. It always returns immediately, but the specified handler will be
-   * notified when the timer expires.
-   *
-   * @param handler The completion handler to be called when the timer expires.
-   * Copies will be made of the handler as required. The equivalent function
-   * signature of the handler must be: @code void handler(); @endcode
-   *
-   * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Copies will be made
-   * of the context object as required, however all copies are equivalent.
-   */
-  template <typename Handler, typename Completion_Context>
-  void async_wait(Handler handler, Completion_Context context)
-  {
-    service_.async_wait(impl_, handler, context);
+    service_.async_wait(impl_, handler);
   }
 
 private:

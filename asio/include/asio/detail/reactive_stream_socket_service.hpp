@@ -129,18 +129,17 @@ public:
     return bytes_sent;
   }
 
-  template <typename Handler, typename Completion_Context>
+  template <typename Handler>
   class send_handler
   {
   public:
     send_handler(impl_type impl, Demuxer& demuxer, const void* data,
-        size_t length, Handler handler, Completion_Context context)
+        size_t length, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
         data_(data),
         length_(length),
-        handler_(handler),
-        context_(context)
+        handler_(handler)
     {
     }
 
@@ -149,15 +148,15 @@ public:
       int bytes = socket_ops::send(impl_, data_, length_, 0);
       socket_error error(bytes < 0
           ? socket_ops::get_error() : socket_error::success);
-      demuxer_.operation_completed(bind_handler(handler_, error, bytes),
-          context_);
+      demuxer_.post(bind_handler(handler_, error, bytes));
+      demuxer_.work_finished();
     }
 
     void do_cancel()
     {
       socket_error error(socket_error::operation_aborted);
-      demuxer_.operation_completed(bind_handler(handler_, error, 0),
-          context_);
+      demuxer_.post(bind_handler(handler_, error, 0));
+      demuxer_.work_finished();
     }
 
   private:
@@ -166,18 +165,17 @@ public:
     const void* data_;
     size_t length_;
     Handler handler_;
-    Completion_Context context_;
   };
 
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
-  template <typename Handler, typename Completion_Context>
+  template <typename Handler>
   void async_send(impl_type& impl, const void* data, size_t length,
-      Handler handler, Completion_Context context)
+      Handler handler)
   {
-    demuxer_.operation_started();
-    reactor_.start_write_op(impl, send_handler<Handler, Completion_Context>(
-          impl, demuxer_, data, length, handler, context));
+    demuxer_.work_started();
+    reactor_.start_write_op(impl,
+        send_handler<Handler>(impl, demuxer_, data, length, handler));
   }
 
   // Receive some data from the peer. Returns the number of bytes received or
@@ -195,18 +193,17 @@ public:
     return bytes_recvd;
   }
 
-  template <typename Handler, typename Completion_Context>
+  template <typename Handler>
   class recv_handler
   {
   public:
     recv_handler(impl_type impl, Demuxer& demuxer, void* data,
-        size_t max_length, Handler handler, Completion_Context context)
+        size_t max_length, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
         data_(data),
         max_length_(max_length),
-        handler_(handler),
-        context_(context)
+        handler_(handler)
     {
     }
 
@@ -215,14 +212,15 @@ public:
       int bytes = socket_ops::recv(impl_, data_, max_length_, 0);
       socket_error error(bytes < 0
           ? socket_ops::get_error() : socket_error::success);
-      demuxer_.operation_completed(bind_handler(handler_, error, bytes),
-          context_);
+      demuxer_.post(bind_handler(handler_, error, bytes));
+      demuxer_.work_finished();
     }
 
     void do_cancel()
     {
       socket_error error(socket_error::operation_aborted);
-      demuxer_.operation_completed(bind_handler(handler_, error, 0), context_);
+      demuxer_.post(bind_handler(handler_, error, 0));
+      demuxer_.work_finished();
     }
 
   private:
@@ -231,22 +229,21 @@ public:
     void* data_;
     size_t max_length_;
     Handler handler_;
-    Completion_Context context_;
   };
 
   // Start an asynchronous receive. The buffer for the data being received
   // must be valid for the lifetime of the asynchronous operation.
-  template <typename Handler, typename Completion_Context>
+  template <typename Handler>
   void async_recv(impl_type& impl, void* data, size_t max_length,
-      Handler handler, Completion_Context context)
+      Handler handler)
   {
-    demuxer_.operation_started();
-    reactor_.start_read_op(impl, recv_handler<Handler, Completion_Context>(
-          impl, demuxer_, data, max_length, handler, context));
+    demuxer_.work_started();
+    reactor_.start_read_op(impl,
+        recv_handler<Handler>( impl, demuxer_, data, max_length, handler));
   }
 
 private:
-  // The demuxer used for delivering completion notifications.
+  // The demuxer used for dispatching handlers.
   Demuxer& demuxer_;
 
   // The reactor that performs event demultiplexing for the provider.

@@ -22,7 +22,6 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error_handler.hpp"
-#include "asio/null_completion_context.hpp"
 #include "asio/service_factory.hpp"
 
 namespace asio {
@@ -47,8 +46,8 @@ public:
   /**
    * Constructs the connector and opens it automatically.
    *
-   * @param d The demuxer object that the connector will use to deliver
-   * completions for any asynchronous operations performed on the connector.
+   * @param d The demuxer object that the connector will use to dispatch
+   * handlers for any asynchronous operations performed on the connector.
    */
   explicit basic_socket_connector(demuxer_type& d)
     : service_(d.get_service(service_factory<Service>())),
@@ -62,8 +61,8 @@ public:
    * This constructor automatically opens the connector so that it will
    * establish connections using the specified protocol.
    *
-   * @param d The demuxer object that the connector will use to deliver
-   * completions for any asynchronous operations performed on the connector.
+   * @param d The demuxer object that the connector will use to dispatch
+   * handlers for any asynchronous operations performed on the connector.
    *
    * @param protocol The protocol to be used for all new connections
    * established using the connector.
@@ -85,11 +84,10 @@ public:
   /// Get the demuxer associated with the asynchronous object.
   /**
    * This function may be used to obtain the demuxer object that the connector
-   * uses to deliver completions for asynchronous operations.
+   * uses to dispatch handlers for asynchronous operations.
    *
    * @return A reference to the demuxer object that the connector will use to
-   * deliver completion notifications. Ownership is not transferred to the
-   * caller.
+   * dispatch handlers. Ownership is not transferred to the caller.
    */
   demuxer_type& demuxer()
   {
@@ -212,9 +210,9 @@ public:
    * @param peer_address The remote address of the peer to which the socket
    * will be connected. Copies will be made of the address as required.
    *
-   * @param handler The completion handler to be called when the connection
-   * operation completes. Copies will be made of the handler as required. The
-   * equivalent function signature of the handler must be:
+   * @param handler The handler to be called when the connection operation
+   * completes. Copies will be made of the handler as required. The equivalent
+   * function signature of the handler must be:
    * @code void handler(
    *   const asio::socket_error& error // Result of operation
    * ); @endcode
@@ -224,39 +222,7 @@ public:
       Handler handler)
   {
     service_.async_connect(impl_, peer_socket.lowest_layer(), peer_address,
-        handler, null_completion_context());
-  }
-
-  /// Start an asynchronous connect.
-  /**
-   * This function is used to asynchronously connect a stream socket to the
-   * specified remote address. The function call always returns immediately.
-   *
-   * @param peer_socket The stream socket to be connected. Ownership of the
-   * peer_socket object is retained by the caller, which must guarantee that it
-   * is valid until the handler is called.
-   *
-   * @param peer_address The remote address of the peer to which the socket
-   * will be connected. Copies will be made of the address as required.
-   *
-   * @param handler The completion handler to be called when the connection
-   * operation completes. Copies will be made of the handler as required. The
-   * equivalent function signature of the handler must be:
-   * @code void handler(
-   *   const asio::socket_error& error // Result of operation
-   * ); @endcode
-   *
-   * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Copies will be made
-   * of the context object as required, however all copies are equivalent.
-   */
-  template <typename Stream, typename Address, typename Handler,
-      typename Completion_Context>
-  void async_connect(Stream& peer_socket, const Address& peer_address,
-      Handler handler, Completion_Context context)
-  {
-    service_.async_connect(impl_, peer_socket.lowest_layer(), peer_address,
-        handler, context);
+        handler);
   }
 
 private:

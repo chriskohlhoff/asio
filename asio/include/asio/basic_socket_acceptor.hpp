@@ -22,7 +22,6 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error_handler.hpp"
-#include "asio/null_completion_context.hpp"
 #include "asio/service_factory.hpp"
 
 namespace asio {
@@ -49,8 +48,8 @@ public:
    * connections. The open() function must be called before the acceptor can
    * accept new socket connections.
    *
-   * @param d The demuxer object that the acceptor will use to deliver
-   * completions for any asynchronous operations performed on the acceptor.
+   * @param d The demuxer object that the acceptor will use to dispatch
+   * handlers for any asynchronous operations performed on the acceptor.
    */
   explicit basic_socket_acceptor(demuxer_type& d)
     : service_(d.get_service(service_factory<Service>())),
@@ -63,8 +62,8 @@ public:
    * This constructor creates an acceptor and automatically opens it to listen
    * for new connections on the specified address.
    *
-   * @param d The demuxer object that the acceptor will use to deliver
-   * completions for any asynchronous operations performed on the acceptor.
+   * @param d The demuxer object that the acceptor will use to dispatch
+   * handlers for any asynchronous operations performed on the acceptor.
    *
    * @param address An address on the local machine on which the acceptor will
    * listen for new connections.
@@ -95,11 +94,10 @@ public:
   /// Get the demuxer associated with the asynchronous object.
   /**
    * This function may be used to obtain the demuxer object that the acceptor
-   * uses to deliver completions for asynchronous operations.
+   * uses to dispatch handlers for asynchronous operations.
    *
    * @return A reference to the demuxer object that acceptor will use to
-   * deliver completion notifications. Ownership is not transferred to the
-   * caller.
+   * dispatch handlers. Ownership is not transferred to the caller.
    */
   demuxer_type& demuxer()
   {
@@ -388,9 +386,9 @@ public:
    * accepted. Ownership of the peer_socket object is retained by the caller,
    * which must guarantee that it is valid until the handler is called.
    *
-   * @param handler The completion handler to be called when the accept
-   * operation completes. Copies will be made of the handler as required. The
-   * equivalent function signature of the handler must be:
+   * @param handler The handler to be called when the accept operation
+   * completes. Copies will be made of the handler as required. The equivalent
+   * function signature of the handler must be:
    * @code void handler(
    *   const asio::socket_error& error // Result of operation
    * ); @endcode
@@ -398,35 +396,7 @@ public:
   template <typename Stream, typename Handler>
   void async_accept(Stream& peer_socket, Handler handler)
   {
-    service_.async_accept(impl_, peer_socket.lowest_layer(), handler,
-        null_completion_context());
-  }
-
-  /// Start an asynchronous accept.
-  /**
-   * This function is used to asynchronously accept a new connection into a
-   * stream socket. The function call always returns immediately.
-   *
-   * @param peer_socket The stream socket into which the new connection will be
-   * accepted. Ownership of the peer_socket object is retained by the caller,
-   * which must guarantee that it is valid until the handler is called.
-   *
-   * @param handler The completion handler to be called when the accept
-   * operation completes. Copies will be made of the handler as required. The
-   * equivalent function signature of the handler must be:
-   * @code void handler(
-   *   const asio::socket_error& error // Result of operation
-   * ); @endcode
-   *
-   * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Copies will be made
-   * of the context object as required, however all copies are equivalent.
-   */
-  template <typename Stream, typename Handler, typename Completion_Context>
-  void async_accept(Stream& peer_socket, Handler handler,
-      Completion_Context context)
-  {
-    service_.async_accept(impl_, peer_socket.lowest_layer(), handler, context);
+    service_.async_accept(impl_, peer_socket.lowest_layer(), handler);
   }
 
   /// Accept a new connection and obtain the address of the peer
@@ -494,9 +464,9 @@ public:
    * the caller, which must guarantee that it is valid until the handler is
    * called.
    *
-   * @param handler The completion handler to be called when the accept
-   * operation completes. Copies will be made of the handler as required. The
-   * equivalent function signature of the handler must be:
+   * @param handler The handler to be called when the accept operation
+   * completes. Copies will be made of the handler as required. The equivalent
+   * function signature of the handler must be:
    * @code void handler(
    *   const asio::socket_error& error // Result of operation
    * ); @endcode
@@ -506,42 +476,7 @@ public:
       Handler handler)
   {
     service_.async_accept_address(impl_, peer_socket.lowest_layer(),
-        peer_address, handler, null_completion_context());
-  }
-
-  /// Start an asynchronous accept.
-  /**
-   * This function is used to asynchronously accept a new connection into a
-   * stream socket, and additionally obtain the address of the remote peer. The
-   * function call always returns immediately.
-   *
-   * @param peer_socket The stream socket into which the new connection will be
-   * accepted. Ownership of the peer_socket object is retained by the caller,
-   * which must guarantee that it is valid until the handler is called.
-   *
-   * @param peer_address An address object into which the address of the remote
-   * peer will be written. Ownership of the peer_address object is retained by
-   * the caller, which must guarantee that it is valid until the handler is
-   * called.
-   *
-   * @param handler The completion handler to be called when the accept
-   * operation completes. Copies will be made of the handler as required. The
-   * equivalent function signature of the handler must be:
-   * @code void handler(
-   *   const asio::socket_error& error // Result of operation
-   * ); @endcode
-   *
-   * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Copies will be made
-   * of the context object as required, however all copies are equivalent.
-   */
-  template <typename Stream, typename Address, typename Handler,
-      typename Completion_Context>
-  void async_accept_address(Stream& peer_socket, Address& peer_address,
-      Handler handler, Completion_Context context)
-  {
-    service_.async_accept_address(impl_, peer_socket.lowest_layer(),
-        peer_address, handler, context);
+        peer_address, handler);
   }
 
 private:

@@ -22,7 +22,6 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error_handler.hpp"
-#include "asio/null_completion_context.hpp"
 #include "asio/service_factory.hpp"
 
 namespace asio {
@@ -49,8 +48,8 @@ public:
    * This constructor creates a dgram socket without opening it. The open()
    * function must be called before data can be sent or received on the socket.
    *
-   * @param d The demuxer object that the dgram socket will use to deliver
-   * completions for any asynchronous operations performed on the socket.
+   * @param d The demuxer object that the dgram socket will use to dispatch
+   * handlers for any asynchronous operations performed on the socket.
    */
   explicit basic_dgram_socket(demuxer_type& d)
     : service_(d.get_service(service_factory<Service>())),
@@ -66,8 +65,8 @@ public:
    * automatically to be the default datagram protocol associated with the
    * given address type.
    *
-   * @param d The demuxer object that the dgram socket will use to deliver
-   * completions for any asynchronous operations performed on the socket.
+   * @param d The demuxer object that the dgram socket will use to dispatch
+   * handlers for any asynchronous operations performed on the socket.
    *
    * @param address An address on the local machine to which the dgram socket
    * will be bound.
@@ -93,11 +92,10 @@ public:
   /// Get the demuxer associated with the asynchronous object.
   /**
    * This function may be used to obtain the demuxer object that the dgram
-   * socket uses to deliver completions for asynchronous operations.
+   * socket uses to dispatch handlers for asynchronous operations.
    *
    * @return A reference to the demuxer object that dgram socket will use to
-   * deliver completion notifications. Ownership is not transferred to the
-   * caller.
+   * dispatch handlers. Ownership is not transferred to the caller.
    */
   demuxer_type& demuxer()
   {
@@ -366,9 +364,9 @@ public:
    * @param destination The remote address to which the data will be sent.
    * Copies will be made of the address as required.
    *
-   * @param handler The completion handler to be called when the send operation
-   * completes. Copies will be made of the handler as required. The equivalent
-   * function signature of the handler must be:
+   * @param handler The handler to be called when the send operation completes.
+   * Copies will be made of the handler as required. The equivalent function
+   * signature of the handler must be:
    * @code void handler(
    *   const asio::socket_error& error, // Result of operation
    *   size_t bytes_sent                // Number of bytes sent
@@ -378,47 +376,7 @@ public:
   void async_sendto(const void* data, size_t length,
       const Address& destination, Handler handler)
   {
-    service_.async_sendto(impl_, data, length, destination, handler,
-        null_completion_context());
-  }
-
-  /// Start an asynchronous send.
-  /**
-   * This function is used to asynchronously send a datagram to the specified
-   * remote address. The function call always returns immediately.
-   *
-   * @param data The data to be sent to the remote address. Ownership of the
-   * data is retained by the caller, which must guarantee that it is valid
-   * until the handler is called.
-   *
-   * @param length The size of the data to be sent, in bytes.
-   *
-   * @param destination The remote address to which the data will be sent.
-   * Copies will be made of the address as required.
-   *
-   * @param handler The completion handler to be called when the send operation
-   * completes. Copies will be made of the handler as required. The equivalent
-   * function signature of the handler must be <tt>void handler(const
-   * socket_error& error, size_t bytes_sent)</tt>.
-   *
-   * @param handler The completion handler to be called when the send operation
-   * completes. Copies will be made of the handler as required. The equivalent
-   * function signature of the handler must be:
-   * @code void handler(
-   *   const asio::socket_error& error, // Result of operation
-   *   size_t bytes_sent                // Number of bytes sent
-   * ); @endcode
-   *
-   * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Copies will be made
-   * of the context object as required, however all copies are equivalent.
-   */
-  template <typename Address, typename Handler, typename Completion_Context>
-  void async_sendto(const void* data, size_t length,
-      const Address& destination, Handler handler,
-      Completion_Context context)
-  {
-    service_.async_sendto(impl_, data, length, destination, handler, context);
+    service_.async_sendto(impl_, data, length, destination, handler);
   }
 
   /// Receive a datagram with the address of the sender.
@@ -494,9 +452,9 @@ public:
    * retained by the caller, which must guarantee that it is valid until the
    * handler is called.
    *
-   * @param handler The completion handler to be called when the receive
-   * operation completes. Copies will be made of the handler as required. The
-   * equivalent function signature of the handler must be:
+   * @param handler The handler to be called when the receive operation
+   * completes. Copies will be made of the handler as required. The equivalent
+   * function signature of the handler must be:
    * @code void handler(
    *   const asio::socket_error& error, // Result of operation
    *   size_t bytes_received            // Number of bytes received
@@ -506,45 +464,7 @@ public:
   void async_recvfrom(void* data, size_t max_length, Address& sender_address,
       Handler handler)
   {
-    service_.async_recvfrom(impl_, data, max_length, sender_address, handler,
-        null_completion_context());
-  }
-
-  /// Start an asynchronous receive.
-  /**
-   * This function is used to asynchronously receive a datagram. The function
-   * call always returns immediately.
-   *
-   * @param data The data buffer into which the received datagram will be
-   * written. Ownership of the data buffer is retained by the caller, which
-   * must guarantee that it is valid until the handler is called.
-   *
-   * @param max_length The maximum length, in bytes, of data that can be held
-   * in the supplied buffer.
-   *
-   * @param sender_address An address object that receives the address of the
-   * remote sender of the datagram. Ownership of the sender_address object is
-   * retained by the caller, which must guarantee that it is valid until the
-   * handler is called.
-   *
-   * @param handler The completion handler to be called when the receive
-   * operation completes. Copies will be made of the handler as required. The
-   * equivalent function signature of the handler must be:
-   * @code void handler(
-   *   const asio::socket_error& error, // Result of operation
-   *   size_t bytes_received            // Number of bytes received
-   * ); @endcode
-   *
-   * @param context The completion context which controls the number of
-   * concurrent invocations of handlers that may be made. Copies will be made
-   * of the context object as required, however all copies are equivalent.
-   */
-  template <typename Address, typename Handler, typename Completion_Context>
-  void async_recvfrom(void* data, size_t max_length, Address& sender_address,
-      Handler handler, Completion_Context context)
-  {
-    service_.async_recvfrom(impl_, data, max_length, sender_address, handler,
-        context);
+    service_.async_recvfrom(impl_, data, max_length, sender_address, handler);
   }
 
 private:

@@ -185,19 +185,16 @@ public:
     peer.set_impl(new_socket);
   }
 
-  template <typename Stream_Socket_Service, typename Handler,
-      typename Completion_Context>
+  template <typename Stream_Socket_Service, typename Handler>
   class accept_handler
   {
   public:
     accept_handler(impl_type impl, Demuxer& demuxer,
-        basic_stream_socket<Stream_Socket_Service>& peer, Handler handler,
-        Completion_Context context)
+        basic_stream_socket<Stream_Socket_Service>& peer, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
         peer_(peer),
-        handler_(handler),
-        context_(context)
+        handler_(handler)
     {
     }
 
@@ -207,13 +204,15 @@ public:
       socket_error error(new_socket == invalid_socket
           ? socket_ops::get_error() : socket_error::success);
       peer_.set_impl(new_socket);
-      demuxer_.operation_completed(bind_handler(handler_, error), context_);
+      demuxer_.post(bind_handler(handler_, error));
+      demuxer_.work_finished();
     }
 
     void do_cancel()
     {
       socket_error error(socket_error::operation_aborted);
-      demuxer_.operation_completed(bind_handler(handler_, error), context_);
+      demuxer_.post(bind_handler(handler_, error));
+      demuxer_.work_finished();
     }
 
   private:
@@ -221,45 +220,40 @@ public:
     Demuxer& demuxer_;
     basic_stream_socket<Stream_Socket_Service>& peer_;
     Handler handler_;
-    Completion_Context context_;
   };
 
   // Start an asynchronous accept. The peer_socket object must be valid until
-  // the accept's completion handler is invoked.
-  template <typename Stream_Socket_Service, typename Handler,
-      typename Completion_Context>
+  // the accept's handler is invoked.
+  template <typename Stream_Socket_Service, typename Handler>
   void async_accept(impl_type& impl,
-      basic_stream_socket<Stream_Socket_Service>& peer, Handler handler,
-      Completion_Context context)
+      basic_stream_socket<Stream_Socket_Service>& peer, Handler handler)
   {
     if (peer.impl() != invalid_socket)
     {
       socket_error error(socket_error::already_connected);
-      demuxer_.operation_immediate(bind_handler(handler, error));
+      demuxer_.post(bind_handler(handler, error));
     }
     else
     {
-      demuxer_.operation_started();
+      demuxer_.work_started();
       reactor_.start_read_op(impl,
-          accept_handler<Stream_Socket_Service, Handler, Completion_Context>(
-            impl, demuxer_, peer, handler, context));
+          accept_handler<Stream_Socket_Service, Handler>(
+            impl, demuxer_, peer, handler));
     }
   }
 
-  template <typename Stream_Socket_Service, typename Address, typename Handler,
-      typename Completion_Context>
+  template <typename Stream_Socket_Service, typename Address, typename Handler>
   class accept_addr_handler
   {
   public:
     accept_addr_handler(impl_type impl, Demuxer& demuxer,
         basic_stream_socket<Stream_Socket_Service>& peer,
-        Address& peer_address, Handler handler, Completion_Context context)
+        Address& peer_address, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
         peer_(peer),
         peer_address_(peer_address),
-        handler_(handler),
-        context_(context)
+        handler_(handler)
     {
     }
 
@@ -272,13 +266,15 @@ public:
           ? socket_ops::get_error() : socket_error::success);
       peer_address_.native_size(addr_len);
       peer_.set_impl(new_socket);
-      demuxer_.operation_completed(bind_handler(handler_, error), context_);
+      demuxer_.post(bind_handler(handler_, error));
+      demuxer_.work_finished();
     }
 
     void do_cancel()
     {
       socket_error error(socket_error::operation_aborted);
-      demuxer_.operation_completed(bind_handler(handler_, error), context_);
+      demuxer_.post(bind_handler(handler_, error));
+      demuxer_.work_finished();
     }
 
   private:
@@ -287,34 +283,31 @@ public:
     basic_stream_socket<Stream_Socket_Service>& peer_;
     Address& peer_address_;
     Handler handler_;
-    Completion_Context context_;
   };
 
   // Start an asynchronous accept. The peer_socket and peer_address objects
-  // must be valid until the accept's completion handler is invoked.
-  template <typename Stream_Socket_Service, typename Address, typename Handler,
-      typename Completion_Context>
+  // must be valid until the accept's handler is invoked.
+  template <typename Stream_Socket_Service, typename Address, typename Handler>
   void async_accept_address(impl_type& impl,
       basic_stream_socket<Stream_Socket_Service>& peer,
-      Address& peer_address, Handler handler, Completion_Context context)
+      Address& peer_address, Handler handler)
   {
     if (peer.impl() != invalid_socket)
     {
       socket_error error(socket_error::already_connected);
-      demuxer_.operation_immediate(bind_handler(handler, error));
+      demuxer_.post(bind_handler(handler, error));
     }
     else
     {
-      demuxer_.operation_started();
+      demuxer_.work_started();
       reactor_.start_read_op(impl,
-          accept_addr_handler<Stream_Socket_Service, Address, Handler,
-              Completion_Context>(impl, demuxer_, peer, peer_address, handler,
-                context));
+          accept_addr_handler<Stream_Socket_Service, Address, Handler>(
+            impl, demuxer_, peer, peer_address, handler));
     }
   }
 
 private:
-  // The demuxer used for delivering completion notifications.
+  // The demuxer used for dispatching handlers.
   Demuxer& demuxer_;
 
   // The selector that performs event demultiplexing for the provider.

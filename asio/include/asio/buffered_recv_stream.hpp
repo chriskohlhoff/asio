@@ -24,7 +24,6 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/fixed_buffer.hpp"
-#include "asio/null_completion_context.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/buffer_resize_guard.hpp"
 
@@ -110,15 +109,6 @@ public:
     next_layer_.async_send(data, length, handler);
   }
 
-  /// Start an asynchronous send. The data being sent must be valid for the
-  /// lifetime of the asynchronous operation.
-  template <typename Handler, typename Completion_Context>
-  void async_send(const void* data, size_t length, Handler handler,
-      Completion_Context context)
-  {
-    next_layer_.async_send(data, length, handler, context);
-  }
-
   /// Fill the buffer with some data. Returns the number of bytes placed in the
   /// buffer as a result of the operation, or 0 if the underlying connection
   /// was closed. Throws an exception on failure.
@@ -182,17 +172,6 @@ public:
     next_layer_.async_recv(buffer_.begin() + previous_size,
         buffer_.size() - previous_size,
         fill_handler<Handler>(buffer_, previous_size, handler));
-  }
-
-  /// Start an asynchronous fill.
-  template <typename Handler, typename Completion_Context>
-  void async_fill(Handler handler, Completion_Context context)
-  {
-    size_t previous_size = buffer_.size();
-    buffer_.resize(buffer_.capacity());
-    next_layer_.async_recv(buffer_.begin() + previous_size,
-        buffer_.size() - previous_size,
-        fill_handler<Handler>(buffer_, previous_size, handler), context);
   }
 
   /// Receive some data from the peer. Returns the number of bytes received or
@@ -268,25 +247,6 @@ public:
       size_t length = copy(data, max_length);
       next_layer_.demuxer().operation_immediate(
           detail::bind_handler(handler, 0, length));
-    }
-  }
-
-  /// Start an asynchronous receive. The buffer for the data being received
-  /// must be valid for the lifetime of the asynchronous operation.
-  template <typename Handler, typename Completion_Context>
-  void async_recv(void* data, size_t max_length, Handler handler,
-      Completion_Context context)
-  {
-    if (buffer_.empty())
-    {
-      async_fill(recv_handler<Handler>(buffer_, data, max_length, handler),
-          context);
-    }
-    else
-    {
-      size_t length = copy(data, max_length);
-      next_layer_.demuxer().operation_immediate(
-          detail::bind_handler(handler, 0, length), context);
     }
   }
 

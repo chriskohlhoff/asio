@@ -37,9 +37,7 @@
 
 <H2>Support Classes</H2>
 
-\li asio::counting_completion_context
 \li asio::ipv4::address
-\li asio::null_completion_context
 \li asio::socket_error
 \li asio::timer_base
 
