@@ -1,0 +1,64 @@
+#include "asio.hpp"
+#include <boost/bind.hpp>
+#include <iostream>
+
+using namespace asio;
+
+class accept_handler
+{
+public:
+  accept_handler(demuxer& d)
+    : demuxer_(d),
+      timer_queue_(d),
+      acceptor_(d, inet_address_v4(32123)),
+      socket_(d)
+  {
+    acceptor_.async_accept(socket_,
+        boost::bind(&accept_handler::handle_accept, this, _1));
+
+    boost::xtime expiry_time;
+    boost::xtime_get(&expiry_time, boost::TIME_UTC);
+    expiry_time.sec += 5;
+    timer_queue_.schedule_timer(expiry_time,
+        boost::bind(&accept_handler::handle_timeout, this));
+  }
+
+  void handle_timeout()
+  {
+    acceptor_.close();
+  }
+
+  void handle_accept(const socket_error& error)
+  {
+    if (error)
+    {
+      std::cout << "Accept error: " << error.message() << "\n";
+    }
+    else
+    {
+      std::cout << "Successful accept\n";
+    }
+  }
+
+private:
+  demuxer& demuxer_;
+  timer_queue timer_queue_;
+  socket_acceptor acceptor_;
+  stream_socket socket_;
+};
+
+int main()
+{
+  try
+  {
+    demuxer d;
+    accept_handler ah(d);
+    d.run();
+  }
+  catch (std::exception& e)
+  {
+    std::cerr << "Exception: " << e.what() << "\n";
+  }
+
+  return 0;
+}
