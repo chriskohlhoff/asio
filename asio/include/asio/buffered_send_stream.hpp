@@ -73,8 +73,8 @@ public:
   /// The buffer type for this buffering layer.
   typedef Buffer buffer_type;
 
-  /// Get the recv buffer used by this buffering layer.
-  buffer_type& recv_buffer()
+  /// Get the send buffer used by this buffering layer.
+  buffer_type& send_buffer()
   {
     return buffer_;
   }
@@ -114,8 +114,9 @@ public:
   class flush_handler
   {
   public:
-    flush_handler(Buffer& buffer, Handler handler)
-      : buffer_(buffer),
+    flush_handler(buffered_send_stream<Next_Layer, Buffer>& stream,
+        Handler handler)
+      : stream_(stream),
         handler_(handler)
     {
     }
@@ -124,12 +125,13 @@ public:
     void operator()(const Error& e, size_t last_bytes_sent,
         size_t total_bytes_sent)
     {
-      buffer_.pop(total_bytes_sent);
-      handler_(e, last_bytes_sent);
+      stream_.send_buffer().pop(total_bytes_sent);
+      stream_.demuxer().dispatch(
+          detail::bind_handler(handler_, e, last_bytes_sent));
     }
 
   private:
-    Buffer& buffer_;
+    buffered_send_stream<Next_Layer, Buffer>& stream_;
     Handler handler_;
   };
 
@@ -164,9 +166,9 @@ public:
   class send_handler
   {
   public:
-    send_handler(Buffer& buffer, const void* data, size_t length,
-        Handler handler)
-      : buffer_(buffer),
+    send_handler(buffered_send_stream<Next_Layer, Buffer>& stream,
+        const void* data, size_t length, Handler handler)
+      : stream_(stream),
         data_(data),
         length_(length),
         handler_(handler)
@@ -178,22 +180,24 @@ public:
     {
       if (e || bytes_sent == 0)
       {
-        handler_(e, bytes_sent);
+        size_t length = 0;
+        stream_.demuxer().dispatch(detail::bind_handler(handler_, e, length));
       }
       else
       {
         using namespace std; // For memcpy.
-        size_t orig_size = buffer_.size();
-        size_t bytes_avail = buffer_.capacity() - orig_size;
+        size_t orig_size = stream_.send_buffer().size();
+        size_t bytes_avail = stream_.send_buffer().capacity() - orig_size;
         size_t bytes_copied = (length_ < bytes_avail) ? length_ : bytes_avail;
-        buffer_.resize(orig_size + bytes_copied);
-        memcpy(buffer_.begin() + orig_size, data_, bytes_copied);
-        handler_(e, bytes_copied);
+        stream_.send_buffer().resize(orig_size + bytes_copied);
+        memcpy(stream_.send_buffer().begin() + orig_size, data_, bytes_copied);
+        stream_.demuxer().dispatch(
+            detail::bind_handler(handler_, e, bytes_copied));
       }
     }
 
   private:
-    Buffer& buffer_;
+    buffered_send_stream<Next_Layer, Buffer>& stream_;
     const void* data_;
     size_t length_;
     Handler handler_;

@@ -77,6 +77,12 @@ public:
     return stream_impl_.recv_buffer();
   }
 
+  /// Get the send buffer used by this buffering layer.
+  buffer_type& send_buffer()
+  {
+    return stream_impl_.next_layer().send_buffer();
+  }
+
   /// Close the stream.
   void close()
   {

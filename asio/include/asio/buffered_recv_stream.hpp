@@ -143,8 +143,9 @@ public:
   class fill_handler
   {
   public:
-    fill_handler(Buffer& buffer, size_t previous_size, Handler handler)
-      : buffer_(buffer),
+    fill_handler(buffered_recv_stream<Next_Layer, Buffer>& stream,
+        size_t previous_size, Handler handler)
+      : stream_(stream),
         previous_size_(previous_size),
         handler_(handler)
     {
@@ -153,12 +154,13 @@ public:
     template <typename Error>
     void operator()(const Error& e, size_t bytes_recvd)
     {
-      buffer_.resize(previous_size_ + bytes_recvd);
-      handler_(e, bytes_recvd);
+      stream_.recv_buffer().resize(previous_size_ + bytes_recvd);
+      stream_.demuxer().dispatch(
+          detail::bind_handler(handler_, e, bytes_recvd));
     }
 
   private:
-    Buffer& buffer_;
+    buffered_recv_stream<Next_Layer, Buffer>& stream_;
     size_t previous_size_;
     Handler handler_;
   };
@@ -171,7 +173,7 @@ public:
     buffer_.resize(buffer_.capacity());
     next_layer_.async_recv(buffer_.begin() + previous_size,
         buffer_.size() - previous_size,
-        fill_handler<Handler>(buffer_, previous_size, handler));
+        fill_handler<Handler>(*this, previous_size, handler));
   }
 
   /// Receive some data from the peer. Returns the number of bytes received or
@@ -197,9 +199,9 @@ public:
   class recv_handler
   {
   public:
-    recv_handler(Buffer& buffer, void* data, size_t max_length,
-        Handler handler)
-      : buffer_(buffer),
+    recv_handler(buffered_recv_stream<Next_Layer, Buffer>& stream, void* data,
+        size_t max_length, Handler handler)
+      : stream_(stream),
         data_(data),
         max_length_(max_length),
         handler_(handler)
@@ -209,25 +211,25 @@ public:
     template <typename Error>
     void operator()(const Error& e, size_t bytes_recvd)
     {
-      if (e || buffer_.empty())
+      if (e || stream_.recv_buffer().empty())
       {
         size_t length = 0;
-        handler_(e, length);
+        stream_.demuxer().dispatch(detail::bind_handler(handler_, e, length));
       }
       else
       {
         using namespace std; // For memcpy.
-        size_t bytes_avail = buffer_.size();
+        size_t bytes_avail = stream_.recv_buffer().size();
         size_t length = (max_length_ < bytes_avail)
           ? max_length_ : bytes_avail;
-        memcpy(data_, buffer_.begin(), length);
-        buffer_.pop(length);
-        handler_(e, length);
+        memcpy(data_, stream_.recv_buffer().begin(), length);
+        stream_.recv_buffer().pop(length);
+        stream_.demuxer().dispatch(detail::bind_handler(handler_, e, length));
       }
     }
 
   private:
-    Buffer& buffer_;
+    buffered_recv_stream<Next_Layer, Buffer>& stream_;
     void* data_;
     size_t max_length_;
     Handler handler_;
