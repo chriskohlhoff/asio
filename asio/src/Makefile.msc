@@ -2,8 +2,8 @@
 BOOSTDIR = ../../boost_1_31_0
 !endif
 
-CXXFLAGS = -nologo -O2 -GX -GR -Zi -w -MD -I. -I../include -I$(BOOSTDIR)
-LDFLAGS = -nologo -O2 -GX -GR -Zi -MD
+CXXFLAGS = -nologo -O2 -GX -GR -MT -w -I. -I../include -I$(BOOSTDIR)
+LDFLAGS = -nologo -O2 -GX -GR -MT -w
 LIBS = ws2_32.lib
 
 all: \
