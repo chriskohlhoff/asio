@@ -174,7 +174,7 @@ public:
   std::string host_name() const
   {
     hostent ent;
-    char buf[1024] = "";
+    char buf[8192] = ""; // Size recommended by Stevens, UNPv1.
     int error = 0;
     if (detail::socket_ops::gethostbyaddr_r(
           reinterpret_cast<const char*>(&addr_.sin_addr),
@@ -189,7 +189,7 @@ public:
   {
     using namespace std; // For memcpy.
     hostent ent;
-    char buf[1024] = "";
+    char buf[8192] = ""; // Size recommended by Stevens, UNPv1.
     int error = 0;
     if (detail::socket_ops::gethostbyname_r(host.c_str(), &ent, buf,
           sizeof(buf), &error) == 0)
