@@ -25,9 +25,11 @@ nobase_include_HEADERS = \
 	asio/counting_completion_context.hpp \
 	asio/demuxer.hpp \
 	asio/detail/bind_handler.hpp \
+	asio/detail/event.hpp \
 	asio/detail/mutex.hpp \
 	asio/detail/pipe_select_interrupter.hpp \
 	asio/detail/pop_options.hpp \
+	asio/detail/pthread_event.hpp \
 	asio/detail/pthread_mutex.hpp \
 	asio/detail/pthread_thread.hpp \
 	asio/detail/pthread_tss_bool.hpp \
@@ -52,6 +54,7 @@ nobase_include_HEADERS = \
 	asio/detail/tss_bool.hpp \
 	asio/detail/win_iocp_demuxer_service.hpp \
 	asio/detail/win_iocp_dgram_socket_service.hpp \
+	asio/detail/win_event.hpp \
 	asio/detail/win_mutex.hpp \
 	asio/detail/win_thread.hpp \
 	asio/detail/win_tss_bool.hpp \

@@ -1,35 +1,36 @@
 #include "asio.hpp"
+#include "asio/detail/mutex.hpp"
+#include "asio/detail/thread.hpp"
 #include <iostream>
-#include <boost/thread.hpp>
 #include <boost/bind.hpp>
 
 using namespace asio;
 
-void print(int id, int sleep_time, boost::mutex& io_mutex)
+void print(int id, int sleep_time, detail::mutex& io_mutex)
 {
-  boost::mutex::scoped_lock lock(io_mutex);
+  detail::mutex::scoped_lock lock(io_mutex);
   std::cout << "Starting " << id << "\n";
   lock.unlock();
 
-  boost::xtime xt;
-  boost::xtime_get(&xt, boost::TIME_UTC);
-  xt.sec += sleep_time;
-  boost::thread::sleep(xt);
+  timeval tv;
+  tv.tv_sec = sleep_time;
+  tv.tv_usec = 0;
+  ::select(0, 0, 0, 0, &tv);
 
   lock.lock();
   std::cout << "Finished " << id << "\n";
   lock.unlock();
 }
 
-void inner_print(int id, boost::mutex& io_mutex)
+void inner_print(int id, detail::mutex& io_mutex)
 {
-  boost::mutex::scoped_lock lock(io_mutex);
+  detail::mutex::scoped_lock lock(io_mutex);
   std::cout << "Nested " << id << "\n";
 }
 
-void outer_print(demuxer& d, int id, boost::mutex& io_mutex)
+void outer_print(demuxer& d, int id, detail::mutex& io_mutex)
 {
-  boost::mutex::scoped_lock lock(io_mutex);
+  detail::mutex::scoped_lock lock(io_mutex);
   std::cout << "Starting " << id << "\n";
   lock.unlock();
 
@@ -41,34 +42,46 @@ void outer_print(demuxer& d, int id, boost::mutex& io_mutex)
   lock.unlock();
 }
 
+void post_events(demuxer& d, completion_context& c1, completion_context& c2,
+    detail::mutex& io_mutex)
+{
+  // Give all threads an opportunity to start.
+  timeval tv;
+  tv.tv_sec = 2;
+  tv.tv_usec = 0;
+  ::select(0, 0, 0, 0, &tv);
+
+  // Post a bunch of completions to run across the different threads.
+  d.operation_immediate(boost::bind(print, 1, 10, boost::ref(io_mutex)), c1);
+  d.operation_immediate(boost::bind(print, 2, 5, boost::ref(io_mutex)), c2);
+  d.operation_immediate(boost::bind(print, 3, 5, boost::ref(io_mutex)), c1);
+  d.operation_immediate(boost::bind(print, 4, 5, boost::ref(io_mutex)), c2);
+  d.operation_immediate(boost::bind(print, 5, 5, boost::ref(io_mutex)), c1);
+  d.operation_immediate(boost::bind(outer_print, boost::ref(d), 6,
+        boost::ref(io_mutex)));
+}
+
 void do_dispatch(demuxer& d)
 {
   counting_completion_context c1(2);
   counting_completion_context c2(1);
-  boost::mutex io_mutex;
+  detail::mutex io_mutex;
 
-  d.operation_immediate(boost::bind(print, 1, 10, boost::ref(io_mutex)), c1);
-
-  d.operation_immediate(boost::bind(print, 2, 5, boost::ref(io_mutex)), c2);
-
-  d.operation_immediate(boost::bind(print, 3, 5, boost::ref(io_mutex)), c1);
-
-  d.operation_immediate(boost::bind(print, 4, 5, boost::ref(io_mutex)), c2);
-
-  d.operation_immediate(boost::bind(print, 5, 5, boost::ref(io_mutex)), c1);
-
-  d.operation_immediate(boost::bind(outer_print, boost::ref(d), 6,
-        boost::ref(io_mutex)));
+  d.operation_immediate(boost::bind(post_events, boost::ref(d), boost::ref(c1),
+        boost::ref(c2), boost::ref(io_mutex)));
 
   // Create more threads than the tasks can use, since they are limited by
   // their completion_context counts.
-  boost::thread_group threads;
-  threads.create_thread(boost::bind(&demuxer::run, &d));
-  threads.create_thread(boost::bind(&demuxer::run, &d));
-  threads.create_thread(boost::bind(&demuxer::run, &d));
-  threads.create_thread(boost::bind(&demuxer::run, &d));
-  threads.create_thread(boost::bind(&demuxer::run, &d));
-  threads.join_all();
+  detail::thread t1(boost::bind(&demuxer::run, &d));
+  detail::thread t2(boost::bind(&demuxer::run, &d));
+  detail::thread t3(boost::bind(&demuxer::run, &d));
+  detail::thread t4(boost::bind(&demuxer::run, &d));
+  detail::thread t5(boost::bind(&demuxer::run, &d));
+  t1.join();
+  t2.join();
+  t3.join();
+  t4.join();
+  t5.join();
 }
 
 int main()

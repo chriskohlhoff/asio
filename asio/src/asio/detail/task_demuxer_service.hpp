@@ -17,13 +17,11 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/thread.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/basic_demuxer.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/completion_context_locker.hpp"
+#include "asio/detail/event.hpp"
+#include "asio/detail/mutex.hpp"
 #include "asio/detail/tss_bool.hpp"
 
 namespace asio {
@@ -48,8 +46,7 @@ public:
       ready_completions_end_(0),
       interrupted_(false),
       current_thread_in_pool_(),
-      idle_thread_count_(0),
-      idle_thread_condition_()
+      first_idle_thread_(0)
   {
   }
 
@@ -58,7 +55,11 @@ public:
   {
     current_thread_in_pool_ = true;
 
-    boost::mutex::scoped_lock lock(mutex_);
+    idle_thread_info this_idle_thread;
+    this_idle_thread.prev = &this_idle_thread;
+    this_idle_thread.next = &this_idle_thread;
+
+    asio::detail::mutex::scoped_lock lock(mutex_);
 
     while (!interrupted_ && outstanding_operations_ > 0)
     {
@@ -73,7 +74,6 @@ public:
         release(comp->context_);
         delete comp;
         lock.lock();
-        assert(outstanding_operations_ > 0);
         --outstanding_operations_;
       }
       else if (!task_is_running_)
@@ -88,9 +88,31 @@ public:
       else 
       {
         // Nothing to run right now, so just wait for work to do.
-        ++idle_thread_count_;
-        idle_thread_condition_.wait(lock);
-        --idle_thread_count_;
+        if (first_idle_thread_)
+        {
+          this_idle_thread.next = first_idle_thread_;
+          this_idle_thread.prev = first_idle_thread_->prev;
+          first_idle_thread_->prev->next = &this_idle_thread;
+          first_idle_thread_->prev = &this_idle_thread;
+        }
+        first_idle_thread_ = &this_idle_thread;
+        this_idle_thread.wakeup_event.clear();
+        lock.unlock();
+        this_idle_thread.wakeup_event.wait();
+        lock.lock();
+        if (this_idle_thread.next == &this_idle_thread)
+        {
+          first_idle_thread_ = 0;
+        }
+        else
+        {
+          if (first_idle_thread_ == &this_idle_thread)
+            first_idle_thread_ = this_idle_thread.next;
+          this_idle_thread.next->prev = this_idle_thread.prev;
+          this_idle_thread.prev->next = this_idle_thread.next;
+          this_idle_thread.next = &this_idle_thread;
+          this_idle_thread.prev = &this_idle_thread;
+        }
       }
     }
 
@@ -106,21 +128,21 @@ public:
   // Interrupt the demuxer's event processing loop.
   void interrupt()
   {
-    boost::mutex::scoped_lock lock(mutex_);
+    asio::detail::mutex::scoped_lock lock(mutex_);
     interrupt_all_threads();
   }
 
   // Reset the demuxer in preparation for a subsequent run invocation.
   void reset()
   {
-    boost::mutex::scoped_lock lock(mutex_);
+    asio::detail::mutex::scoped_lock lock(mutex_);
     interrupted_ = false;
   }
 
   // Notify the demuxer that an operation has started.
   void operation_started()
   {
-    boost::mutex::scoped_lock lock(mutex_);
+    asio::detail::mutex::scoped_lock lock(mutex_);
     ++outstanding_operations_;
   }
 
@@ -129,7 +151,7 @@ public:
   void operation_completed(Handler handler, completion_context& context,
       bool allow_nested_delivery)
   {
-    boost::mutex::scoped_lock lock(mutex_);
+    asio::detail::mutex::scoped_lock lock(mutex_);
 
     if (try_acquire(context))
     {
@@ -179,7 +201,7 @@ public:
   {
     try
     {
-      boost::mutex::scoped_lock lock(mutex_);
+      asio::detail::mutex::scoped_lock lock(mutex_);
       completion_base* comp = static_cast<completion_base*>(arg);
       if (ready_completions_end_)
       {
@@ -203,7 +225,7 @@ private:
   void interrupt_all_threads()
   {
     interrupted_ = true;
-    idle_thread_condition_.notify_all();
+    interrupt_all_idle_threads();
     interrupt_task();
   }
 
@@ -211,12 +233,28 @@ private:
   // false if no running thread could be found to interrupt.
   bool interrupt_one_idle_thread()
   {
-    if (idle_thread_count_ > 0)
+    if (first_idle_thread_)
     {
-      idle_thread_condition_.notify_one();
+      first_idle_thread_->wakeup_event.signal();
+      first_idle_thread_ = first_idle_thread_->next;
       return true;
     }
     return false;
+  }
+
+  // Interrupt all idle threads.
+  void interrupt_all_idle_threads()
+  {
+    if (first_idle_thread_)
+    {
+      first_idle_thread_->wakeup_event.signal();
+      idle_thread_info* current_idle_thread = first_idle_thread_->next;
+      while (current_idle_thread != first_idle_thread_)
+      {
+        current_idle_thread->wakeup_event.signal();
+        current_idle_thread = current_idle_thread->next;
+      }
+    }
   }
 
   // Interrupt the task. Returns true if the task was interrupted, false if
@@ -287,7 +325,7 @@ private:
   };
 
   // Mutex to protect access to internal data.
-  boost::mutex mutex_;
+  asio::detail::mutex mutex_;
 
   // The task to be run by this demuxer service.
   Task& task_;
@@ -310,11 +348,16 @@ private:
   // Thread-specific flag to keep track of which threads are in the pool.
   tss_bool current_thread_in_pool_;
 
-  // The number of threads that are currently idle.
-  int idle_thread_count_;
+  // Structure containing information about an idle thread.
+  struct idle_thread_info
+  {
+    event wakeup_event;
+    idle_thread_info* prev;
+    idle_thread_info* next;
+  };
 
-  // Condition variable used by idle threads to wait for interruption.
-  boost::condition idle_thread_condition_;
+  // The number of threads that are currently idle.
+  idle_thread_info* first_idle_thread_;
 };
 
 } // namespace detail

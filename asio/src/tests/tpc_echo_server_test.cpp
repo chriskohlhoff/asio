@@ -1,7 +1,7 @@
 #include "asio.hpp"
+#include "asio/detail/thread.hpp"
 #include <boost/bind.hpp>
 #include <boost/smart_ptr.hpp>
-#include <boost/thread.hpp>
 #include <iostream>
 
 using namespace asio;
@@ -33,7 +33,7 @@ void tpc_echo_server(demuxer& d)
   {
     stream_socket_ptr sock(new stream_socket(d));
     a.accept(*sock);
-    boost::thread t(boost::bind(tpc_echo_session, sock));
+    detail::thread t(boost::bind(tpc_echo_session, sock));
   }
 }
 
