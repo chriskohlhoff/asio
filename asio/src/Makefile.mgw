@@ -2,8 +2,8 @@ ifndef BOOSTDIR
 BOOSTDIR = ../../boost_1_31_0
 endif
 
-CXXFLAGS = -g -O3 -Wall -I../include -I$(BOOSTDIR)
-LDFLAGS = -g -O3
+CXXFLAGS = -g -O3 -Wall -mthreads -I../include -I$(BOOSTDIR)
+LDFLAGS = -g -O3 -mthreads
 LIBS = -lws2_32
 
 TEST_EXES = \

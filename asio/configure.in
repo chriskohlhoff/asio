@@ -53,6 +53,8 @@ case $host in
     LIBS="$LIBS -lsocket -lnsl -lpthread"
     ;;
   *-*-mingw32*)
+    CXXFLAGS="$CXXFLAGS -mthreads"
+    LDFLAGS="$LDFLAGS -mthreads"
     LIBS="$LIBS -lws2_32"
     ;;
 esac
