@@ -15,6 +15,7 @@
 
 #include "asio/basic_timer.hpp"
 #include "asio/demuxer.hpp"
+#include "asio/detail/epoll_reactor.hpp"
 #include "asio/detail/select_reactor.hpp"
 #include "asio/detail/reactive_timer_service.hpp"
 
@@ -25,6 +26,15 @@ namespace asio {
 typedef basic_timer
   <
     implementation_defined
+  > timer;
+#elif defined(ASIO_HAS_EPOLL_REACTOR)
+typedef basic_timer
+  <
+    detail::reactive_timer_service
+      <
+        demuxer,
+        detail::epoll_reactor
+      >
   > timer;
 #else
 typedef basic_timer

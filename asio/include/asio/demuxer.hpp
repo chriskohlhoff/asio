@@ -18,6 +18,7 @@
 #if defined(_WIN32)
 # include "asio/detail/win_iocp_demuxer_service.hpp"
 #else
+# include "asio/detail/epoll_reactor.hpp"
 # include "asio/detail/select_reactor.hpp"
 # include "asio/detail/task_demuxer_service.hpp"
 #endif
@@ -34,6 +35,14 @@ typedef basic_demuxer
 typedef basic_demuxer
   <
     detail::win_iocp_demuxer_service
+  > demuxer;
+#elif defined(ASIO_HAS_EPOLL_REACTOR)
+typedef basic_demuxer
+  <
+    detail::task_demuxer_service
+      <
+        detail::epoll_reactor
+      >
   > demuxer;
 #else
 typedef basic_demuxer

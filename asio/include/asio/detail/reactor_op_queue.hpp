@@ -85,6 +85,54 @@ public:
     return operations_.empty();
   }
 
+  // Determine whether there are any operations associated with the descriptor.
+  bool has_operation(Descriptor descriptor) const
+  {
+    return operations_.find(descriptor) != operations_.end();
+  }
+
+  // Dispatch the first operation corresponding to the descriptor. Returns true
+  // if there are more operations queued for the descriptor.
+  bool dispatch_operation(Descriptor descriptor)
+  {
+    typename operation_map::iterator i = operations_.find(descriptor);
+    if (i != operations_.end())
+    {
+      op_base* next_op = i->second->next_;
+      i->second->next_ = 0;
+      i->second->do_operation();
+      if (next_op)
+      {
+        i->second = next_op;
+        return true;
+      }
+      else
+      {
+        operations_.erase(i);
+        return false;
+      }
+    }
+    return false;
+  }
+
+  // Dispatch all operations corresponding to the descriptor.
+  void dispatch_all_operations(Descriptor descriptor)
+  {
+    typename operation_map::iterator i = operations_.find(descriptor);
+    if (i != operations_.end())
+    {
+      op_base* op = i->second;
+      operations_.erase(i);
+      while (op)
+      {
+        op_base* next_op = op->next_;
+        op->next_ = 0;
+        op->do_operation();
+        op = next_op;
+      }
+    }
+  }
+
   // Fill a descriptor set with the descriptors corresponding to each active
   // operation.
   template <typename Descriptor_Set>

@@ -18,6 +18,7 @@ nobase_include_HEADERS = \
 	asio/demuxer.hpp \
 	asio/detail/bind_handler.hpp \
 	asio/detail/buffer_resize_guard.hpp \
+	asio/detail/epoll_reactor.hpp \
 	asio/detail/event.hpp \
 	asio/detail/hash_map.hpp \
 	asio/detail/locking_dispatcher_impl.hpp \
