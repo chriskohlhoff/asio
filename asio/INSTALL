@@ -22,7 +22,8 @@ combinations:
   - Microsoft Windows 2000 using MSVC 6 sp5
   - Microsoft Windows 2000 using Borland C++ Builder 6 patch 4 (bcc32 5.6.4)
   - Microsoft Windows 2000 using MinGW 3.1.0-1 (gcc 3.2.3)
-  - Sun Solaris 2.8 using gcc 2.95.3
+  - Sun Solaris 8 using gcc 2.95.3
+  - Sun Solaris 9 using gcc 3.2.2
 
 
 2. Requirements
