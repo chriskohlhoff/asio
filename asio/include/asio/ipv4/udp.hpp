@@ -173,7 +173,7 @@ public:
   /// Get the IP address associated with the endpoint.
   asio::ipv4::address address() const
   {
-    return addr_.sin_addr.s_addr;
+    return ntohl(addr_.sin_addr.s_addr);
   }
 
   /// Set the IP address associated with the endpoint.

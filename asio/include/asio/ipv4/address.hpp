@@ -148,7 +148,7 @@ public:
   /// Compare addresses for ordering.
   friend bool operator<(const address& a1, const address& a2)
   {
-    return a1.addr_.s_addr < a2.addr_.s_addr;
+    return a1.to_ulong() < a2.to_ulong();
   }
 
   /// Obtain an address object that represents any address.
