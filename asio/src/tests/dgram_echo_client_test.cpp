@@ -10,10 +10,10 @@ class dgram_handler
 public:
   dgram_handler(demuxer& d)
     : demuxer_(d),
-      socket_(d, inet_address_v4(12347)),
+      socket_(d, inet_address_v4(32123)),
       count_(0)
   {
-    inet_address_v4 destination(12346, "localhost");
+    inet_address_v4 destination(32124, "localhost");
     char msg[] = "Hello, World!\n";
     memcpy(data_, msg, sizeof(msg));
     socket_.async_sendto(data_, sizeof(msg) - 1, destination,

@@ -71,7 +71,7 @@ public:
   {
     echo_session* new_session = new echo_session(demuxer_);
     connector_.async_connect(new_session->socket(),
-        inet_address_v4(12345, "localhost"),
+        inet_address_v4(32123, "localhost"),
         boost::bind(&echo_client::handle_connect, this, new_session, _1));
   }
 
@@ -83,7 +83,7 @@ public:
       {
         echo_session* new_session = new echo_session(demuxer_);
         connector_.async_connect(new_session->socket(),
-            inet_address_v4(12345, "localhost"),
+            inet_address_v4(32123, "localhost"),
             boost::bind(&echo_client::handle_connect, this, new_session, _1));
       }
 

@@ -10,7 +10,7 @@ public:
   dgram_handler(demuxer& d)
     : demuxer_(d),
       timer_queue_(d),
-      socket_(d, inet_address_v4(12346))
+      socket_(d, inet_address_v4(32124))
   {
     socket_.async_recvfrom(data_, max_length, sender_address_,
         boost::bind(&dgram_handler::handle_recvfrom, this, _1, _2));

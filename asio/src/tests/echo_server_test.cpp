@@ -60,7 +60,7 @@ class echo_server
 public:
   echo_server(demuxer& d)
     : demuxer_(d),
-      acceptor_(d, inet_address_v4(12345))
+      acceptor_(d, inet_address_v4(32123))
   {
     echo_session* new_session = new echo_session(demuxer_);
     acceptor_.async_accept(new_session->socket(),

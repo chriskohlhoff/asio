@@ -9,7 +9,7 @@ class accept_handler
 public:
   accept_handler(demuxer& d)
     : demuxer_(d),
-      acceptor_(d, inet_address_v4(12345)),
+      acceptor_(d, inet_address_v4(32123)),
       peer_(d),
       handler_(boost::bind(&accept_handler::handle_accept, this, _1)),
       accept_count_(0)

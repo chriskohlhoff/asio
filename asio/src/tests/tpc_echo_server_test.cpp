@@ -28,7 +28,7 @@ void tpc_echo_session(stream_socket_ptr sock)
 
 void tpc_echo_server(demuxer& d)
 {
-  socket_acceptor a(d, inet_address_v4(12345));
+  socket_acceptor a(d, inet_address_v4(32123));
   for (;;)
   {
     stream_socket_ptr sock(new stream_socket(d));
