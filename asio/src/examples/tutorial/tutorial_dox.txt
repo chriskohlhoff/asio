@@ -44,7 +44,12 @@ seconds from now.
 
 <b>Step 4.</b> In this simple example we perform a blocking wait on the timer.
 That is, the call to asio::timer::wait() will not return until the timer has
-expired, 5 seconds after it was created.
+expired, 5 seconds after it was created (i.e. <b>not</b> from when the wait
+starts).
+
+A timer is always in one of two states: "expired" or "not expired". If the
+asio::timer::wait() function is called on an expired timer, it will return
+immediately.
 
 \until wait
 
@@ -103,6 +108,11 @@ still "work" to do. In this example, the work is the asynchronous wait on the
 timer, so the call will not return until the timer has expired and the
 callback has completed.
 
+It is important to remember to give the demuxer some work to do before calling
+asio::demuxer::run(). For example, if we had omitted the above call to
+asio::timer::async_wait(), the demuxer would not have had any work to do, and
+consequently asio::demuxer::run() would have returned immediately.
+
 \skip run
 \until }
 
@@ -124,7 +134,7 @@ Return to \ref tuttimer2
 
 In this part of the tutorial we will modify the program from Part 2 so that
 the timer fires once a second. This will show how to pass additional
-parameters to a your handler function.
+parameters to your handler function.
 
 \dontinclude timer3/timer.cpp
 
