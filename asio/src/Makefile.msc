@@ -8,12 +8,12 @@ LIBS = ws2_32.lib
 
 all: \
 	tests\socket_accept_test.exe \
-	tests\timer_test.exe \
 	tests\performance\client.exe \
 	tests\performance\server.exe \
 	tests\unit\demuxer_test.exe \
 	tests\unit\error_handler_test.exe \
 	tests\unit\fixed_buffer_test.exe \
+	tests\unit\timer_test.exe \
 	examples\chat\chat_client.exe \
 	examples\chat\chat_server.exe \
 	examples\echo\async_tcp_echo_server.exe \
@@ -31,12 +31,12 @@ all: \
 	examples\tutorial\timer4\timer.exe
 
 tests\socket_accept_test.exe: tests\socket_accept_test.obj
-tests\timer_test.exe: tests\timer_test.obj
 tests\performance\client.exe: tests\performance\client.obj
 tests\performance\server.exe: tests\performance\server.obj
 tests\unit\demuxer_test.exe: tests\unit\demuxer_test.obj
 tests\unit\error_handler_test.exe: tests\unit\error_handler_test.obj
 tests\unit\fixed_buffer_test.exe: tests\unit\fixed_buffer_test.obj
+tests\unit\timer_test.exe: tests\unit\timer_test.obj
 examples\chat\chat_client.exe: examples\chat\chat_client.obj
 examples\chat\chat_server.exe: examples\chat\chat_server.obj
 examples\echo\async_tcp_echo_server.exe: examples\echo\async_tcp_echo_server.obj
