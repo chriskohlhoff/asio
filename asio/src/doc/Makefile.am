@@ -20,7 +20,9 @@ EXTRA_DIST = \
 	../../doc \
 	asio_header.htm \
 	asio_footer.htm \
-	asio.css
+	asio.css \
+	asio_dox.txt \
+	../examples/tutorial/tutorial_dox.txt
 
 MAINTAINERCLEANFILES = \
 	../../doc/html/*.html \
