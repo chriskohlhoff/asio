@@ -166,7 +166,7 @@ public:
   /// Close the socket.
   /**
    * This function is used to close the dgram socket. Any asynchronous sendto
-   * or recvfrom operations will be immediately cancelled.
+   * or recvfrom operations will be cancelled immediately.
    *
    * A subsequent call to open() is required before the socket can again be
    * used to again perform send and receive operations.

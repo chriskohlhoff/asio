@@ -85,7 +85,7 @@ public:
   /// Close the socket.
   /**
    * This function is used to close the stream socket. Any asynchronous send
-   * or recv operations will be immediately cancelled.
+   * or recv operations will be cancelled immediately.
    */
   void close()
   {

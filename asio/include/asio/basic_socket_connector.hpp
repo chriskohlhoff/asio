@@ -95,7 +95,7 @@ public:
   /// Close the connector.
   /**
    * This function is used to close the connector. Any asynchronous connect
-   * operations will be immediately cancelled.
+   * operations will be cancelled immediately.
    *
    * A subsequent call to open() is required before the connector can again be
    * used to again perform socket connect operations.

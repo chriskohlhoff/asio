@@ -179,7 +179,7 @@ public:
   /// Close the acceptor.
   /**
    * This function is used to close the acceptor. Any asynchronous accept
-   * operations will be immediately cancelled.
+   * operations will be cancelled immediately.
    *
    * A subsequent call to open() is required before the acceptor can again be
    * used to again perform socket accept operations.
