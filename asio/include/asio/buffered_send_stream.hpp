@@ -140,7 +140,7 @@ public:
   void async_flush(Handler handler)
   {
     async_send_n(next_layer_, buffer_.begin(), buffer_.size(),
-        flush_handler<Handler>(buffer_, handler));
+        flush_handler<Handler>(*this, handler));
   }
 
   /// Send the given data to the peer. Returns the number of bytes sent or 0 if
@@ -210,12 +210,12 @@ public:
   {
     if (buffer_.size() == buffer_.capacity())
     {
-      async_flush(send_handler<Handler>(buffer_, data, length, handler));
+      async_flush(send_handler<Handler>(*this, data, length, handler));
     }
     else
     {
       size_t bytes_copied = copy(data, length);
-      next_layer_.demuxer().operation_immediate(
+      next_layer_.demuxer().post(
           detail::bind_handler(handler, 0, bytes_copied));
     }
   }

@@ -242,13 +242,12 @@ public:
   {
     if (buffer_.empty())
     {
-      async_fill(recv_handler<Handler>(buffer_, data, max_length, handler));
+      async_fill(recv_handler<Handler>(*this, data, max_length, handler));
     }
     else
     {
       size_t length = copy(data, max_length);
-      next_layer_.demuxer().operation_immediate(
-          detail::bind_handler(handler, 0, length));
+      next_layer_.demuxer().post(detail::bind_handler(handler, 0, length));
     }
   }
 
