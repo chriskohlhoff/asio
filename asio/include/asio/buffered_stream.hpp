@@ -83,6 +83,37 @@ public:
     stream_impl_.close();
   }
 
+  /// Flush all data from the buffer to the next layer. Returns the number of
+  /// bytes wrriten to the next layer on the last send operation, or 0 if the
+  /// underlying connection was closed. Throws an exception on failure.
+  size_t flush()
+  {
+    return stream_impl_.next_layer().flush();
+  }
+
+  /// Flush all data from the buffer to the next layer. Returns the number of
+  /// bytes wrriten to the next layer on the last send operation, or 0 if the
+  /// underlying connection was closed.
+  template <typename Error_Handler>
+  size_t flush(Error_Handler error_handler)
+  {
+    return stream_impl_.next_layer().flush(error_handler);
+  }
+
+  /// Start an asynchronous flush.
+  template <typename Handler>
+  void async_flush(Handler handler)
+  {
+    return stream_impl_.next_layer().async_flush(handler);
+  }
+
+  /// Start an asynchronous flush.
+  template <typename Handler, typename Completion_Context>
+  void async_flush(Handler handler, Completion_Context context)
+  {
+    return stream_impl_.next_layer().async_flush(handler, context);
+  }
+
   /// Send the given data to the peer. Returns the number of bytes sent or 0 if
   /// the stream was closed cleanly. Throws an exception on failure.
   size_t send(const void* data, size_t length)
