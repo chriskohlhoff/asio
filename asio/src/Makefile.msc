@@ -74,4 +74,4 @@ clean:
 	cl -Fe$@ $(LDFLAGS) $< $(LIBS)
 
 .cpp.obj:
-	cl -Fo$@ -c $(CXXFLAGS) $<
+	cl -Fo$@ -c $(CXXFLAGS) $< -link -opt:ref
