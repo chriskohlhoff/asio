@@ -22,7 +22,6 @@
 #include <boost/bind.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/thread.hpp>
-#include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/basic_stream_socket.hpp"
@@ -121,14 +120,14 @@ public:
   {
     // We cannot connect a socket that is already open.
     if (peer.impl() != invalid_socket)
-      boost::throw_exception(socket_error(socket_error::already_connected));
+      throw socket_error(socket_error::already_connected);
 
     // Create a new socket for the connection. This will not be put into the
     // stream_socket object until the connection has beenestablished.
     socket_holder sock(socket_ops::socket(peer_address.family(), SOCK_STREAM,
           IPPROTO_TCP));
     if (sock.get() == invalid_socket)
-      boost::throw_exception(socket_error(socket_ops::get_error()));
+      throw socket_error(socket_ops::get_error());
 
     // Perform the connect operation itself.
     impl->add_socket(sock.get());
@@ -136,7 +135,7 @@ public:
         peer_address.native_size());
     impl->remove_socket(sock.get());
     if (result == socket_error_retval)
-      boost::throw_exception(socket_error(socket_ops::get_error()));
+      throw socket_error(socket_ops::get_error());
 
     // Connection was successful. The stream_socket object will now take
     // ownership of the newly connected native socket handle.

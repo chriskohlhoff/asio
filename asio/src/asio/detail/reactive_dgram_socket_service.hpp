@@ -19,7 +19,6 @@
 
 #include "asio/detail/push_options.hpp"
 #include <boost/bind.hpp>
-#include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/completion_context.hpp"
@@ -60,7 +59,7 @@ public:
     socket_holder sock(socket_ops::socket(address.family(), SOCK_DGRAM,
           IPPROTO_UDP));
     if (sock.get() == invalid_socket)
-      boost::throw_exception(socket_error(socket_ops::get_error()));
+      throw socket_error(socket_ops::get_error());
 
     int reuse = 1;
     socket_ops::setsockopt(sock.get(), SOL_SOCKET, SO_REUSEADDR, &reuse,
@@ -68,7 +67,7 @@ public:
 
     if (socket_ops::bind(sock.get(), address.native_address(),
           address.native_size()) == socket_error_retval)
-      boost::throw_exception(socket_error(socket_ops::get_error()));
+      throw socket_error(socket_ops::get_error());
 
     impl = sock.release();
   }
@@ -93,7 +92,7 @@ public:
     int bytes_sent = socket_ops::sendto(impl, data, length, 0,
         destination.native_address(), destination.native_size());
     if (bytes_sent < 0)
-      boost::throw_exception(socket_error(socket_ops::get_error()));
+      throw socket_error(socket_ops::get_error());
     return bytes_sent;
   }
 
@@ -162,7 +161,7 @@ public:
     int bytes_recvd = socket_ops::recvfrom(impl, data, max_length, 0,
         sender_address.native_address(), &addr_len);
     if (bytes_recvd < 0)
-      boost::throw_exception(socket_error(socket_ops::get_error()));
+      throw socket_error(socket_ops::get_error());
     sender_address.native_size(addr_len);
     return bytes_recvd;
   }

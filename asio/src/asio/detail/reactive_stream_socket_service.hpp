@@ -19,7 +19,6 @@
 
 #include "asio/detail/push_options.hpp"
 #include <boost/bind.hpp>
-#include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/completion_context.hpp"
@@ -76,7 +75,7 @@ public:
   {
     int bytes_sent = socket_ops::send(impl, data, length, 0);
     if (bytes_sent < 0)
-      boost::throw_exception(socket_error(socket_ops::get_error()));
+      throw socket_error(socket_ops::get_error());
     return bytes_sent;
   }
 
@@ -146,7 +145,7 @@ public:
           static_cast<const char*>(data) + total_sent, length - total_sent, 0);
       if (bytes_sent < 0)
       {
-        boost::throw_exception(socket_error(socket_ops::get_error()));
+        throw socket_error(socket_ops::get_error());
       }
       else if (bytes_sent == 0)
       {
@@ -237,7 +236,7 @@ public:
   {
     int bytes_recvd = socket_ops::recv(impl, data, max_length, 0);
     if (bytes_recvd < 0)
-      boost::throw_exception(socket_error(socket_ops::get_error()));
+      throw socket_error(socket_ops::get_error());
     return bytes_recvd;
   }
 
@@ -307,7 +306,7 @@ public:
           static_cast<char*>(data) + total_recvd, length - total_recvd, 0);
       if (bytes_recvd < 0)
       {
-        boost::throw_exception(socket_error(socket_ops::get_error()));
+        throw socket_error(socket_ops::get_error());
       }
       else if (bytes_recvd == 0)
       {

@@ -19,7 +19,6 @@
 
 #include "asio/detail/push_options.hpp"
 #include <boost/bind.hpp>
-#include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/basic_stream_socket.hpp"
@@ -68,7 +67,7 @@ public:
     socket_holder sock(socket_ops::socket(address.family(), SOCK_STREAM,
           IPPROTO_TCP));
     if (sock.get() == invalid_socket)
-      boost::throw_exception(socket_error(socket_ops::get_error()));
+      throw socket_error(socket_ops::get_error());
 
     int reuse = 1;
     socket_ops::setsockopt(sock.get(), SOL_SOCKET, SO_REUSEADDR, &reuse,
@@ -76,10 +75,10 @@ public:
 
     if (socket_ops::bind(sock.get(), address.native_address(),
           address.native_size()) == socket_error_retval)
-      boost::throw_exception(socket_error(socket_ops::get_error()));
+      throw socket_error(socket_ops::get_error());
 
     if (socket_ops::listen(sock.get(), listen_queue) == socket_error_retval)
-      boost::throw_exception(socket_error(socket_ops::get_error()));
+      throw socket_error(socket_ops::get_error());
 
     impl = sock.release();
   }
@@ -102,11 +101,11 @@ public:
   {
     // We cannot accept a socket that is already open.
     if (peer.impl() != invalid_socket)
-      boost::throw_exception(socket_error(socket_error::already_connected));
+      throw socket_error(socket_error::already_connected);
 
     socket_type new_socket = socket_ops::accept(impl, 0, 0);
     if (int error = socket_ops::get_error())
-      boost::throw_exception(socket_error(error));
+      throw socket_error(error);
 
     peer.set_impl(new_socket);
   }
@@ -118,13 +117,13 @@ public:
   {
     // We cannot accept a socket that is already open.
     if (peer.impl() != invalid_socket)
-      boost::throw_exception(socket_error(socket_error::already_connected));
+      throw socket_error(socket_error::already_connected);
 
     socket_addr_len_type addr_len = peer_address.native_size();
     socket_type new_socket = socket_ops::accept(impl,
         peer_address.native_address(), &addr_len);
     if (int error = socket_ops::get_error())
-      boost::throw_exception(socket_error(error));
+      throw socket_error(error);
     peer_address.native_size(addr_len);
 
     peer.set_impl(new_socket);
