@@ -177,6 +177,9 @@ expects a handler function (or function object) with the signature
 <tt>print</tt> function into a function object that matches the signature
 correctly.
 
+See the <a href="http://www.boost.org/libs/bind/bind.html">Boost: bind.hpp
+documentation</a> for more information on how to use <tt>boost::bind</tt>.
+
 \until asio::demuxer
 
 <b>Step 5.</b> A new <tt>count</tt> variable is added so that we can stop the
