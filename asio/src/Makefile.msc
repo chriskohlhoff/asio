@@ -2,7 +2,11 @@
 BOOSTDIR = ../../boost_1_32_0
 !endif
 
+!ifdef WARNINGS
 CXXFLAGS = -nologo -O2 -GX -GR -MT -W3 -I. -I../include -I$(BOOSTDIR)
+!else
+CXXFLAGS = -nologo -O2 -GX -GR -MT -I. -I../include -I$(BOOSTDIR)
+!endif
 LDFLAGS = -nologo -O2 -GX -GR -MT
 LIBS = ws2_32.lib
 
