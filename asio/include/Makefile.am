@@ -9,7 +9,6 @@ nobase_include_HEADERS = \
 	asio/buffered_recv_stream.hpp \
 	asio/buffered_send_stream.hpp \
 	asio/buffered_stream.hpp \
-	asio/counting_completion_context.hpp \
 	asio/demuxer.hpp \
 	asio/detail/bind_handler.hpp \
 	asio/detail/buffer_resize_guard.hpp \
@@ -58,7 +57,6 @@ nobase_include_HEADERS = \
 	asio/ipv4/address.hpp \
 	asio/ipv4/tcp.hpp \
 	asio/ipv4/udp.hpp \
-	asio/null_completion_context.hpp \
 	asio/recv.hpp \
 	asio/send.hpp \
 	asio/service_factory.hpp \
