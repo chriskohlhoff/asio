@@ -1,0 +1,57 @@
+asio to-do items
+================
+
+Add functions for setting socket options
+----------------------------------------
+Add functions to the basic_stream_socket and basic_dgram_socket that allow the
+various socket options to be set. May want to consider not exposing the option
+for non-blocking I/O, and simply state that using the asynchronous operations
+is the portable way to go about it.
+
+Add encode_send/async_encode_send functions
+-------------------------------------------
+Add new free functions encode_send/async_encode_send that mirror the
+functionality of recv_decode/async_recv_decode.
+
+Develop a safe version of recv_until
+------------------------------------
+The current implementation of recv_until (and async_recv_until) does not set
+an upper limit on the size of the received data. This is not particularly safe.
+
+Demuxer functions for event loop integration
+--------------------------------------------
+Add functions demuxer::work_pending() and demuxer::perform_work() that can be
+used to integrate a demuxer event processing loop into an existing event loop.
+
+SSL stream template
+-------------------
+Develop an ssl_stream<> decorator template that uses openssl to add encryption
+support while preserving the ability to asynchronous communication. Apparently
+the BIO* functions can be used to do this.
+
+Add a process control class
+---------------------------
+Add a class that allows you to do asynchronous operations waiting for process
+termination and reconfiguration (i.e. using signals on UNIX, a Ctrl-C handler
+or perhaps the service control manager on Windows).
+
+Add standard input/output support
+---------------------------------
+Add the ability to do asynchronous I/O on standard input and output, e.g. to
+wait for a user to type something. This would probably require the addition of
+a WFMO reactor on Windows.
+
+Add asynchronous file I/O support
+---------------------------------
+Add classes for doing file reads and writes asynchronously.
+
+Add an asynchronous object manager
+----------------------------------
+Add a class to make it easier to manage objects such as sessions and close them
+all down gracefully when a process needs to exit. When a session object starts
+it would register with the object manager for an asynchronous shutdown
+notification. If it receives this notification then it should cancel any other
+outstanding asynchronous operations. If the object needs to die early it can
+request that it be unregistered in which case it would receive the notification
+immediately. Perhaps the interface is similar to an asynchronous "condition
+variable"?
