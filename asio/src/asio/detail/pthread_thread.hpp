@@ -38,15 +38,24 @@ public:
   // Constructor.
   template <typename Function>
   pthread_thread(Function f)
+    : joined_(false)
   {
     func_base* arg = new func<Function>(f);
     ::pthread_create(&thread_, 0, asio_detail_pthread_thread_function, arg);
+  }
+
+  // Destructor.
+  ~pthread_thread()
+  {
+    if (!joined_)
+      ::pthread_detach(thread_);
   }
 
   // Wait for the thread to exit.
   void join()
   {
     ::pthread_join(thread_, 0);
+    joined_ = true;
   }
 
 private:
@@ -79,6 +88,7 @@ private:
   };
 
   ::pthread_t thread_;
+  bool joined_;
 };
 
 inline void* asio_detail_pthread_thread_function(void* arg)
