@@ -52,7 +52,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::socket_error& error // Result of operation
+   *   const implementation_defined& error // Result of operation
    * ); @endcode
    *
    * @returns The number of bytes received or 0 if the connection was closed
