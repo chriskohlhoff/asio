@@ -246,8 +246,8 @@ private:
   void remove_timer(timer_base* t)
   {
     // Remove the timer from the heap.
-    int index = t->heap_index_;
-    if (index >= 0 && index < heap_.size())
+    size_t index = t->heap_index_;
+    if (!heap_.empty() && index < heap_.size())
     {
       if (index == heap_.size() - 1)
       {
