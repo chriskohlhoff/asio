@@ -250,10 +250,6 @@ size_t send_n(Stream& s, const void* data, size_t length,
 
 namespace detail
 {
-#if defined(_MSC_VER)
-  static void send_n_optimiser_bug_workaround() {}
-#endif // _MSC_VER
-
   template <typename Stream, typename Handler, typename Completion_Context>
   class send_n_handler
   {
@@ -275,13 +271,6 @@ namespace detail
       total_sent_ += bytes_sent;
       if (e || bytes_sent == 0 || total_sent_ == length_)
       {
-#if defined(_MSC_VER)
-        // Unless we put this function call here, the MSVC6 optimiser totally
-        // removes this function (incorrectly of course) and async_send_n calls
-        // may not work correctly.
-        send_n_optimiser_bug_workaround();
-#endif // _MSC_VER
-
         stream_.demuxer().operation_immediate(detail::bind_handler(handler_, e,
               total_sent_, bytes_sent), context_, true);
       }
