@@ -97,8 +97,8 @@ void locking_dispatcher_test()
   count = 0;
   d.reset();
   d.post(boost::bind(start_sleep_increments, &d, &l, &count));
-  detail::thread thread1(boost::bind(&demuxer::run, &d));
-  detail::thread thread2(boost::bind(&demuxer::run, &d));
+  thread thread1(boost::bind(&demuxer::run, &d));
+  thread thread2(boost::bind(&demuxer::run, &d));
 
   // Check all events run one after another even though there are two threads.
   timer timer1(d, timer::from_now, 3);

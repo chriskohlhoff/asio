@@ -252,11 +252,10 @@ int main(int argc, char* argv[])
 
     client c(d, host, port, block_size, session_count, timeout);
 
-    std::list<detail::thread*> threads;
+    std::list<thread*> threads;
     while (--thread_count > 0)
     {
-      detail::thread* new_thread =
-        new detail::thread(boost::bind(&demuxer::run, &d));
+      thread* new_thread = new thread(boost::bind(&demuxer::run, &d));
       threads.push_back(new_thread);
     }
 

@@ -53,6 +53,7 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 
 \li asio::ipv4::address
 \li asio::socket_error
+\li asio::thread
 \li asio::timer_base
 
 </TD>

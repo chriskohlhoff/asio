@@ -180,11 +180,10 @@ int main(int argc, char* argv[])
     server s(d, port, block_size);
 
     // Threads not currently supported in this test.
-    std::list<detail::thread*> threads;
+    std::list<thread*> threads;
     while (--thread_count > 0)
     {
-      detail::thread* new_thread =
-        new detail::thread(boost::bind(&demuxer::run, &d));
+      thread* new_thread = new thread(boost::bind(&demuxer::run, &d));
       threads.push_back(new_thread);
     }
 

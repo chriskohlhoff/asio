@@ -163,8 +163,8 @@ void demuxer_test()
   count = 0;
   d.reset();
   d.post(boost::bind(start_sleep_increments, &d, &count));
-  detail::thread thread1(boost::bind(&demuxer::run, &d));
-  detail::thread thread2(boost::bind(&demuxer::run, &d));
+  thread thread1(boost::bind(&demuxer::run, &d));
+  thread thread2(boost::bind(&demuxer::run, &d));
   thread1.join();
   thread2.join();
 
