@@ -9,6 +9,8 @@ noinst_PROGRAMS = \
 	tests/unit/dgram_socket_test \
 	tests/unit/error_handler_test \
 	tests/unit/fixed_buffer_test \
+	tests/unit/is_recv_buffered_test \
+	tests/unit/is_send_buffered_test \
 	tests/unit/locking_dispatcher_test \
 	tests/unit/recv_test \
 	tests/unit/send_test \
@@ -42,6 +44,8 @@ TESTS = \
 	tests/unit/dgram_socket_test \
 	tests/unit/error_handler_test \
 	tests/unit/fixed_buffer_test \
+	tests/unit/is_recv_buffered_test \
+	tests/unit/is_send_buffered_test \
 	tests/unit/locking_dispatcher_test \
 	tests/unit/recv_test \
 	tests/unit/send_test \
@@ -59,6 +63,8 @@ tests_performance_server_SOURCES = tests/performance/server.cpp
 tests_unit_demuxer_test_SOURCES = tests/unit/demuxer_test.cpp
 tests_unit_dgram_socket_test_SOURCES = tests/unit/dgram_socket_test.cpp
 tests_unit_error_handler_test_SOURCES = tests/unit/error_handler_test.cpp
+tests_unit_is_recv_buffered_test_SOURCES = tests/unit/is_recv_buffered_test.cpp
+tests_unit_is_send_buffered_test_SOURCES = tests/unit/is_send_buffered_test.cpp
 tests_unit_fixed_buffer_test_SOURCES = tests/unit/fixed_buffer_test.cpp
 tests_unit_locking_dispatcher_test_SOURCES = tests/unit/locking_dispatcher_test.cpp
 tests_unit_recv_test_SOURCES = tests/unit/recv_test.cpp
