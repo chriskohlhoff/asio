@@ -27,8 +27,8 @@
 namespace asio {
 
 /// The basic_dgram_socket class template provides asynchronous and blocking
-/// datagram-oriented socket functionality. Most applications will simply use
-/// the dgram_socket typedef.
+/// datagram-oriented socket functionality. Most applications will use the
+/// dgram_socket typedef.
 template <typename Service>
 class basic_dgram_socket
   : private boost::noncopyable

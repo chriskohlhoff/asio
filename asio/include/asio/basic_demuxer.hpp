@@ -30,9 +30,9 @@
 namespace asio {
 
 /// The basic_demuxer class template provides the core event demultiplexing
-/// functionality for both users of the asynchronous I/O objects, such as
-/// stream_socket, and to developers of custom asynchronous services. Most
-/// applications will simply use the demuxer typedef.
+/// functionality for users of the asynchronous I/O objects, such as
+/// stream_socket, and also to developers of custom asynchronous services. Most
+/// applications will use the demuxer typedef.
 template <typename Demuxer_Service>
 class basic_demuxer
   : private boost::noncopyable

@@ -39,7 +39,7 @@ namespace detail
 /// The completion_context class is the abstract base class for all completion
 /// context implementations. A completion context is used to determine when
 /// an upcall can be made to the completion handler of an asynchronous
-/// operations.
+/// operation.
 class null_completion_context
   : private boost::noncopyable
 {
@@ -65,7 +65,7 @@ public:
    * to a completion handler. This function always returns a result
    * immediately.
    *
-   * If the right to make an upcall was successfully acquired, then the a later
+   * If the right to make an upcall was successfully acquired, then a later
    * call must be made to the release() function to relinquish that right.
    *
    * @return Returns true if the right to make an upcall was granted.
@@ -77,11 +77,8 @@ public:
 
   /// Acquire the right to make an upcall.
   /**
-
-   * This function is called to obtain
-   * the right to make an upcall to a completion handler. The
-   * handler will be
-   * called when the right is granted.
+   * This function is called to obtain the right to make an upcall to a
+   * completion handler. The handler will be called when the right is granted.
    *
    * @param handler The function object to be called when the right is granted.
    */
