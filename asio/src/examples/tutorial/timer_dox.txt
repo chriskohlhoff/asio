@@ -166,7 +166,7 @@ correctly.
 See the <a href="http://www.boost.org/libs/bind/bind.html">Boost: bind.hpp
 documentation</a> for more information on how to use \ref boost_bind.
 
-In this example, the asio::arg:error argument to \ref boost_bind is a named
+In this example, the asio::arg::error argument to \ref boost_bind is a named
 placeholder for the error object passed to the handler. When initiating the
 asynchronous operation, and if using \ref boost_bind, you must specify only
 the arguments that match the handler's parameter list. In tutorial Timer.4 you
