@@ -88,9 +88,11 @@ public:
   {
     ++unsent_count_;
     async_send_n(socket_, send_data_, block_size_, dispatcher_.wrap(
-          boost::bind(&session::handle_send, this, _1, _2, _3)));
+          boost::bind(&session::handle_send, this, arg::error,
+            arg::last_bytes_sent, arg::total_bytes_sent)));
     socket_.async_recv(recv_data_, block_size_, dispatcher_.wrap(
-          boost::bind(&session::handle_recv, this, _1, _2)));
+          boost::bind(&session::handle_recv, this, arg::error,
+            arg::bytes_recvd)));
   }
 
   void stop()
@@ -110,9 +112,11 @@ public:
       {
         std::swap(recv_data_, send_data_);
         async_send_n(socket_, send_data_, recv_data_length_, dispatcher_.wrap(
-              boost::bind(&session::handle_send, this, _1, _2, _3)));
+              boost::bind(&session::handle_send, this, arg::error,
+                arg::last_bytes_sent, arg::total_bytes_sent)));
         socket_.async_recv(recv_data_, block_size_, dispatcher_.wrap(
-              boost::bind(&session::handle_recv, this, _1, _2)));
+              boost::bind(&session::handle_recv, this, arg::error,
+                arg::bytes_recvd)));
       }
     }
   }
@@ -129,9 +133,11 @@ public:
       {
         std::swap(recv_data_, send_data_);
         async_send_n(socket_, send_data_, recv_data_length_, dispatcher_.wrap(
-              boost::bind(&session::handle_send, this, _1, _2, _3)));
+              boost::bind(&session::handle_send, this, arg::error,
+                arg::last_bytes_sent, arg::total_bytes_sent)));
         socket_.async_recv(recv_data_, block_size_, dispatcher_.wrap(
-              boost::bind(&session::handle_recv, this, _1, _2)));
+              boost::bind(&session::handle_recv, this, arg::error,
+                arg::bytes_recvd)));
       }
     }
   }
@@ -167,7 +173,7 @@ public:
     session* new_session = new session(demuxer_, block_size, stats_);
     connector_.async_connect(new_session->socket(), server_addr_,
         dispatcher_.wrap(boost::bind(&client::handle_connect, this,
-            new_session, _1)));
+            new_session, arg::error)));
 
     stop_timer_.async_wait(dispatcher_.wrap(
           boost::bind(&client::handle_timeout, this)));
@@ -202,7 +208,7 @@ public:
         new_session = new session(demuxer_, block_size_, stats_);
         connector_.async_connect(new_session->socket(), server_addr_,
             dispatcher_.wrap(boost::bind(&client::handle_connect, this,
-                new_session, _1)));
+                new_session, arg::error)));
       }
     }
     else

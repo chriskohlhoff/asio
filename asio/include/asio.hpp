@@ -15,6 +15,7 @@
 #ifndef ASIO_HPP
 #define ASIO_HPP
 
+#include "asio/arg.hpp"
 #include "asio/basic_demuxer.hpp"
 #include "asio/basic_dgram_socket.hpp"
 #include "asio/basic_locking_dispatcher.hpp"

@@ -14,7 +14,7 @@ public:
       socket_(d)
   {
     acceptor_.async_accept(socket_,
-        boost::bind(&accept_handler::handle_accept, this, _1));
+        boost::bind(&accept_handler::handle_accept, this, asio::arg::error));
 
     timer_.set(timer::from_now, 5);
     timer_.async_wait(boost::bind(&accept_handler::handle_timeout, this));

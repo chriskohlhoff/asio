@@ -11,7 +11,8 @@ public:
       socket_(d, asio::ipv4::address(port))
   {
     socket_.async_recvfrom(data_, max_length, sender_address_,
-        boost::bind(&server::handle_recvfrom, this, _1, _2));
+        boost::bind(&server::handle_recvfrom, this, asio::arg::error,
+          asio::arg::bytes_recvd));
   }
 
   void handle_recvfrom(const asio::socket_error& error, size_t bytes_recvd)
@@ -19,19 +20,22 @@ public:
     if (!error && bytes_recvd > 0)
     {
       socket_.async_sendto(data_, bytes_recvd, sender_address_,
-          boost::bind(&server::handle_sendto, this, _1, _2));
+          boost::bind(&server::handle_sendto, this, asio::arg::error,
+            asio::arg::bytes_sent));
     }
     else
     {
       socket_.async_recvfrom(data_, max_length, sender_address_,
-          boost::bind(&server::handle_recvfrom, this, _1, _2));
+          boost::bind(&server::handle_recvfrom, this, asio::arg::error,
+            asio::arg::bytes_recvd));
     }
   }
 
   void handle_sendto(const asio::socket_error& error, size_t bytes_sent)
   {
     socket_.async_recvfrom(data_, max_length, sender_address_,
-        boost::bind(&server::handle_recvfrom, this, _1, _2));
+        boost::bind(&server::handle_recvfrom, this, asio::arg::error,
+          asio::arg::bytes_recvd));
   }
 
 private:

@@ -14,7 +14,7 @@ public:
       socket_(d)
   {
     connector_.async_connect(socket_, ipv4::address(32123, "localhost"),
-        boost::bind(&connect_handler::handle_connect, this, _1));
+        boost::bind(&connect_handler::handle_connect, this, asio::arg::error));
 
     timer_.set(timer::from_now, 5);
     timer_.async_wait(boost::bind(&connect_handler::handle_timeout, this));

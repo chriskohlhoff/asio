@@ -16,7 +16,7 @@ public:
       socket_(d)
   {
     connector_.async_connect(socket_, asio::ipv4::address(port, host),
-        boost::bind(&chat_client::handle_connect, this, _1));
+        boost::bind(&chat_client::handle_connect, this, asio::arg::error));
   }
 
   void send(const chat_message& msg)
@@ -36,8 +36,9 @@ private:
     if (!error)
     {
       asio::async_recv_n(socket_, recv_msg_.data(),
-          chat_message::header_length, boost::bind(
-            &chat_client::handle_recv_header, this, _1, _2));
+          chat_message::header_length,
+          boost::bind(&chat_client::handle_recv_header, this, asio::arg::error,
+            asio::arg::last_bytes_recvd));
     }
   }
 
@@ -46,7 +47,8 @@ private:
     if (!error && last_length > 0 && recv_msg_.decode_header())
     {
       asio::async_recv_n(socket_, recv_msg_.body(), recv_msg_.body_length(), 
-          boost::bind(&chat_client::handle_recv_body, this, _1, _2));
+          boost::bind(&chat_client::handle_recv_body, this, asio::arg::error,
+            asio::arg::last_bytes_recvd));
     }
     else
     {
@@ -61,8 +63,9 @@ private:
       std::cout.write(recv_msg_.body(), recv_msg_.body_length());
       std::cout << "\n";
       asio::async_recv_n(socket_, recv_msg_.data(),
-          chat_message::header_length, boost::bind(
-            &chat_client::handle_recv_header, this, _1, _2));
+          chat_message::header_length,
+          boost::bind(&chat_client::handle_recv_header, this,
+            asio::arg::error, asio::arg::last_bytes_recvd));
     }
     else
     {
@@ -77,8 +80,9 @@ private:
     if (!send_in_progress)
     {
       asio::async_send_n(socket_, send_msgs_.front().data(),
-          send_msgs_.front().length(), boost::bind(
-            &chat_client::handle_send, this, _1, _2));
+          send_msgs_.front().length(),
+          boost::bind(&chat_client::handle_send, this, asio::arg::error,
+            asio::arg::last_bytes_sent));
     }
   }
 
@@ -90,8 +94,9 @@ private:
       if (!send_msgs_.empty())
       {
         asio::async_send_n(socket_, send_msgs_.front().data(),
-            send_msgs_.front().length(), boost::bind(
-              &chat_client::handle_send, this, _1, _2));
+            send_msgs_.front().length(),
+            boost::bind(&chat_client::handle_send, this, asio::arg::error,
+              asio::arg::last_bytes_sent));
       }
     }
     else

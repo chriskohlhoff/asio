@@ -81,7 +81,8 @@ public:
     room_.join(shared_from_this());
     asio::async_recv_n(socket_, recv_msg_.data(),
         chat_message::header_length, boost::bind(
-          &chat_session::handle_recv_header, shared_from_this(), _1, _2));
+          &chat_session::handle_recv_header, shared_from_this(),
+          asio::arg::error, asio::arg::last_bytes_recvd));
   }
 
   void deliver(const chat_message& msg)
@@ -91,8 +92,9 @@ public:
     if (!send_in_progress)
     {
       asio::async_send_n(socket_, send_msgs_.front().data(),
-          send_msgs_.front().length(), boost::bind(
-            &chat_session::handle_send, shared_from_this(), _1, _2));
+          send_msgs_.front().length(),
+          boost::bind(&chat_session::handle_send, shared_from_this(),
+            asio::arg::error, asio::arg::last_bytes_sent));
     }
   }
 
@@ -101,8 +103,8 @@ public:
     if (!error && last_length > 0 && recv_msg_.decode_header())
     {
       asio::async_recv_n(socket_, recv_msg_.body(), recv_msg_.body_length(), 
-          boost::bind(&chat_session::handle_recv_body, shared_from_this(), _1,
-            _2));
+          boost::bind(&chat_session::handle_recv_body, shared_from_this(),
+            asio::arg::error, asio::arg::last_bytes_recvd));
     }
     else
     {
@@ -118,7 +120,7 @@ public:
       asio::async_recv_n(socket_, recv_msg_.data(),
           chat_message::header_length,
           boost::bind(&chat_session::handle_recv_header, shared_from_this(),
-            _1, _2));
+            asio::arg::error, asio::arg::last_bytes_recvd));
     }
     else
     {
@@ -134,8 +136,9 @@ public:
       if (!send_msgs_.empty())
       {
         asio::async_send_n(socket_, send_msgs_.front().data(),
-            send_msgs_.front().length(), boost::bind(
-              &chat_session::handle_send, shared_from_this(), _1, _2));
+            send_msgs_.front().length(),
+            boost::bind(&chat_session::handle_send, shared_from_this(),
+              asio::arg::error, asio::arg::last_bytes_sent));
       }
     }
     else
@@ -164,7 +167,8 @@ public:
   {
     chat_session_ptr new_session(new chat_session(demuxer_, room_));
     acceptor_.async_accept(new_session->socket(),
-        boost::bind(&chat_server::handle_accept, this, new_session, _1));
+        boost::bind(&chat_server::handle_accept, this, new_session,
+          asio::arg::error));
   }
 
   void handle_accept(chat_session_ptr session, const asio::socket_error& error)
@@ -174,7 +178,8 @@ public:
       session->start();
       chat_session_ptr new_session(new chat_session(demuxer_, room_));
       acceptor_.async_accept(new_session->socket(),
-          boost::bind(&chat_server::handle_accept, this, new_session, _1));
+          boost::bind(&chat_server::handle_accept, this, new_session,
+            asio::arg::error));
     }
   }
 

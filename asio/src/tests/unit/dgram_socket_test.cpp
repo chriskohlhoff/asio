@@ -61,9 +61,9 @@ void dgram_socket_test()
 
   target_addr = sender_addr;
   s1.async_sendto(send_msg, sizeof(send_msg), target_addr,
-      boost::bind(handle_send, sizeof(send_msg), _1, _2));
+      boost::bind(handle_send, sizeof(send_msg), arg::error, arg::bytes_sent));
   s2.async_recvfrom(recv_msg, sizeof(recv_msg), sender_addr,
-      boost::bind(handle_recv, sizeof(recv_msg), _1, _2));
+      boost::bind(handle_recv, sizeof(recv_msg), arg::error, arg::bytes_recvd));
 
   d.run();
 

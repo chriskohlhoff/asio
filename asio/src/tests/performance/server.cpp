@@ -51,7 +51,8 @@ public:
   {
     ++op_count_;
     socket_.async_recv(recv_data_, block_size_,
-        dispatcher_.wrap(boost::bind(&session::handle_recv, this, _1, _2)));
+        dispatcher_.wrap(boost::bind(&session::handle_recv, this, arg::error,
+            arg::bytes_recvd)));
   }
 
   void handle_recv(const socket_error& error, size_t length)
@@ -67,9 +68,11 @@ public:
         op_count_ += 2;
         std::swap(recv_data_, send_data_);
         async_send_n(socket_, send_data_, recv_data_length_, dispatcher_.wrap(
-              boost::bind(&session::handle_send, this, _1, _2)));
+              boost::bind(&session::handle_send, this, arg::error,
+                arg::last_bytes_sent)));
         socket_.async_recv(recv_data_, block_size_, dispatcher_.wrap(
-              boost::bind(&session::handle_recv, this, _1, _2)));
+              boost::bind(&session::handle_recv, this, arg::error,
+                arg::bytes_recvd)));
       }
     }
 
@@ -89,9 +92,11 @@ public:
         op_count_ += 2;
         std::swap(recv_data_, send_data_);
         async_send_n(socket_, send_data_, recv_data_length_, dispatcher_.wrap(
-              boost::bind(&session::handle_send, this, _1, _2)));
+              boost::bind(&session::handle_send, this, arg::error,
+                arg::last_bytes_sent)));
         socket_.async_recv(recv_data_, block_size_, dispatcher_.wrap(
-              boost::bind(&session::handle_recv, this, _1, _2)));
+              boost::bind(&session::handle_recv, this, arg::error,
+                arg::bytes_recvd)));
       }
     }
 
@@ -131,7 +136,7 @@ public:
 
     session* new_session = new session(demuxer_, block_size_);
     acceptor_.async_accept(new_session->socket(),
-        boost::bind(&server::handle_accept, this, new_session, _1));
+        boost::bind(&server::handle_accept, this, new_session, arg::error));
   }
 
   void handle_accept(session* new_session, const socket_error& error)
@@ -141,7 +146,7 @@ public:
       new_session->start();
       new_session = new session(demuxer_, block_size_);
       acceptor_.async_accept(new_session->socket(),
-          boost::bind(&server::handle_accept, this, new_session, _1));
+          boost::bind(&server::handle_accept, this, new_session, arg::error));
     }
     else
     {

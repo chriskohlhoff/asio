@@ -13,7 +13,8 @@ public:
       socket_(d, ipv4::address(32124))
   {
     socket_.async_recvfrom(data_, max_length, sender_address_,
-        boost::bind(&dgram_handler::handle_recvfrom, this, _1, _2));
+        boost::bind(&dgram_handler::handle_recvfrom, this, asio::arg::error,
+          asio::arg::bytes_recvd));
 
     timer_.set(timer::from_now, 5);
     timer_.async_wait(boost::bind(&dgram_handler::handle_timeout, this));

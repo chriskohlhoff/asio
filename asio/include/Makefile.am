@@ -1,5 +1,6 @@
 nobase_include_HEADERS = \
 	asio.hpp \
+	asio/arg.hpp \
 	asio/basic_demuxer.hpp \
 	asio/basic_dgram_socket.hpp \
 	asio/basic_locking_dispatcher.hpp \

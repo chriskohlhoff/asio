@@ -19,7 +19,8 @@ public:
   void start()
   {
     socket_.async_recv(data_, max_length,
-        boost::bind(&session::handle_recv, this, _1, _2));
+        boost::bind(&session::handle_recv, this, asio::arg::error,
+          asio::arg::bytes_recvd));
   }
 
   void handle_recv(const asio::socket_error& error, size_t bytes_recvd)
@@ -27,7 +28,8 @@ public:
     if (!error && bytes_recvd > 0)
     {
       asio::async_send_n(socket_, data_, bytes_recvd,
-          boost::bind(&session::handle_send, this, _1, _2));
+          boost::bind(&session::handle_send, this, asio::arg::error,
+            asio::arg::last_bytes_sent));
     }
     else
     {
@@ -40,7 +42,8 @@ public:
     if (!error && last_bytes_sent > 0)
     {
       socket_.async_recv(data_, max_length,
-          boost::bind(&session::handle_recv, this, _1, _2));
+          boost::bind(&session::handle_recv, this, asio::arg::error,
+            asio::arg::bytes_recvd));
     }
     else
     {
@@ -63,7 +66,8 @@ public:
   {
     session* new_session = new session(demuxer_);
     acceptor_.async_accept(new_session->socket(),
-        boost::bind(&server::handle_accept, this, new_session, _1));
+        boost::bind(&server::handle_accept, this, new_session,
+          asio::arg::error));
   }
 
   void handle_accept(session* new_session, const asio::socket_error& error)
@@ -73,7 +77,8 @@ public:
       new_session->start();
       new_session = new session(demuxer_);
       acceptor_.async_accept(new_session->socket(),
-          boost::bind(&server::handle_accept, this, new_session, _1));
+          boost::bind(&server::handle_accept, this, new_session,
+            asio::arg::error));
     }
     else
     {
