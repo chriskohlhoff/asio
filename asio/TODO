@@ -48,3 +48,12 @@ Add a rw_locking_dispatcher
 ---------------------------
 Add a new dispatcher implementation, similar to locking_dispatcher except that
 it provides functionality like a readers-writers lock.
+
+Asynchronous host lookup
+------------------------
+Add asynchronous functions to the asio::ipv4::basic_host_resolver template.
+
+Error message internationalisation
+----------------------------------
+Determine what to do with the asio::socket_error messages that are not provided
+by the operating system, with respect to internationalisation.
