@@ -1,23 +1,23 @@
 if HAVE_DOXYGEN
 
-noinst_DATA = $(top_builddir)/doc/html/asio.css $(top_builddir)/doc/html/index.html
+noinst_DATA = ../../doc/html/asio.css ../../doc/html/index.html
 
-doc: delete_doc $(top_builddir)/doc/html/asio.css $(top_builddir)/doc/html/index.html
+doc: delete_doc ../../doc/html/asio.css ../../doc/html/index.html
 
 delete_doc:
-	-rm -f $(top_builddir)/doc/html/index.html
-	-rm -f $(top_builddir)/doc/html/asio.css
+	-rm -f ../../doc/html/index.html
+	-rm -f ../../doc/html/asio.css
   
-$(top_builddir)/doc/html/asio.css: $(srcdir)/asio.css
-	mkdir -p $(top_builddir)/doc/html
-	cp $(srcdir)/asio.css $(top_builddir)/doc/html/asio.css
+../../doc/html/asio.css: asio.css
+	mkdir -p ../../doc/html
+	cp $(srcdir)/asio.css ../../doc/html/asio.css
 
-$(top_builddir)/doc/html/index.html: asio.dox.in
+../../doc/html/index.html: asio.dox.in
 	doxygen asio.dox
 
 EXTRA_DIST = \
-	$(top_builddir)/doc/html/index.html \
-	$(top_builddir)/doc \
+	../../doc/html/index.html \
+	../../doc \
 	asio_header.htm \
 	asio_footer.htm \
 	asio.css \
@@ -37,13 +37,13 @@ EXTRA_DIST = \
 	../examples/tutorial/timer_dox.txt
 
 MAINTAINERCLEANFILES = \
-	$(top_builddir)/doc/html/*.html \
-	$(top_builddir)/doc/html/*.gif \
-	$(top_builddir)/doc/html/*.png \
-	$(top_builddir)/doc/html/*.css \
-	$(top_builddir)/doc/html/*.dot \
-	$(top_builddir)/doc/html/*.md5 \
-	$(top_builddir)/doc/html/*.map \
-	$(srcdir)/Makefile.in
+	../../doc/html/*.html \
+	../../doc/html/*.gif \
+	../../doc/html/*.png \
+	../../doc/html/*.css \
+	../../doc/html/*.dot \
+	../../doc/html/*.md5 \
+	../../doc/html/*.map \
+	Makefile.in
 
 endif
