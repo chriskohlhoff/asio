@@ -115,11 +115,11 @@ public:
    * This function is used to obtain host information assocated with a
    * specified address.
    *
-   * @param addr An address object that identifies a host.
-   *
    * @param h A host object that receives information assocated with the
    * specified address. After successful completion of this function, the host
    * object is guaranteed to contain at least one address.
+   *
+   * @param addr An address object that identifies a host.
    *
    * @throws asio::error Thrown on failure.
    */
@@ -133,11 +133,11 @@ public:
    * This function is used to obtain host information assocated with a
    * specified address.
    *
-   * @param addr An address object that identifies a host.
-   *
    * @param h A host object that receives information assocated with the
    * specified address. After successful completion of this function, the host
    * object is guaranteed to contain at least one address.
+   *
+   * @param addr An address object that identifies a host.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature
@@ -158,10 +158,10 @@ public:
    * This function is used to obtain host information assocated with a
    * specified host name.
    *
-   * @param name A name that identifies a host.
-   *
    * @param h A host object that receives information assocated with the
    * specified host name.
+   *
+   * @param name A name that identifies a host.
    *
    * @throws asio::error Thrown on failure.
    */
@@ -175,10 +175,10 @@ public:
    * This function is used to obtain host information assocated with a
    * specified host name.
    *
-   * @param name A name that identifies a host.
-   *
    * @param h A host object that receives information assocated with the
    * specified host name.
+   *
+   * @param name A name that identifies a host.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature
