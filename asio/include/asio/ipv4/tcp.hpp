@@ -23,7 +23,7 @@
 namespace asio {
 namespace ipv4 {
 
-/// The udp class contains the flags necessary to use UDP.
+/// The tcp class contains the flags necessary to use TCP sockets.
 class tcp
 {
 public:
