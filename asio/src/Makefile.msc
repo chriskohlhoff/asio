@@ -1,11 +1,8 @@
-!include Makefile.am
-
 !ifndef BOOSTDIR
 BOOSTDIR = ../../boost_1_30_0
 !endif
 
 CXXFLAGS = -nologo -O2 -GX -GR -Zi -w -MD -I. -I$(BOOSTDIR)
-LDFLAGS = -nologo -O2 -GX -GR -Zi -MD
 LIBS = $(BOOSTDIR)/libs/thread/build/bin-stage/boost_thread.lib ws2_32.lib
 
 all: \
@@ -27,9 +24,6 @@ clean:
 	-del /q /s ..\bin\*.exp
 	-del /q /s tests\*.obj
 
-{tests}.obj.exe:
+{tests}.cpp.exe:
 	-md ..\bin
-	cl -Fe$@ $(LDFLAGS) $< $(LIBS)
-
-.cpp.obj:
-	cl -Fo$@ -c $(CXXFLAGS) $<
+	cl -Fe$@ $(CXXFLAGS) $< $(LIBS)
