@@ -228,7 +228,12 @@ public:
   void async_accept(impl_type& impl,
       basic_stream_socket<Stream_Socket_Service>& peer, Handler handler)
   {
-    if (peer.impl() != invalid_socket)
+    if (impl == null())
+    {
+      socket_error error(socket_error::bad_descriptor);
+      demuxer_.post(bind_handler(handler, error));
+    }
+    else if (peer.impl() != invalid_socket)
     {
       socket_error error(socket_error::already_connected);
       demuxer_.post(bind_handler(handler, error));
@@ -292,7 +297,12 @@ public:
       basic_stream_socket<Stream_Socket_Service>& peer,
       Address& peer_address, Handler handler)
   {
-    if (peer.impl() != invalid_socket)
+    if (impl == null())
+    {
+      socket_error error(socket_error::bad_descriptor);
+      demuxer_.post(bind_handler(handler, error));
+    }
+    else if (peer.impl() != invalid_socket)
     {
       socket_error error(socket_error::already_connected);
       demuxer_.post(bind_handler(handler, error));

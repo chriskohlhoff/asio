@@ -190,9 +190,17 @@ public:
   void async_sendto(impl_type& impl, const void* data, size_t length,
       const Address& destination, Handler handler)
   {
-    demuxer_.work_started();
-    reactor_.start_write_op(impl, sendto_handler<Address, Handler>(
-          impl, demuxer_, data, length, destination, handler));
+    if (impl == null())
+    {
+      socket_error error(socket_error::bad_descriptor);
+      demuxer_.post(bind_handler(handler, error, 0));
+    }
+    else
+    {
+      demuxer_.work_started();
+      reactor_.start_write_op(impl, sendto_handler<Address, Handler>(
+            impl, demuxer_, data, length, destination, handler));
+    }
   }
 
   // Receive a datagram with the address of the sender. Returns the number of
@@ -265,9 +273,17 @@ public:
   void async_recvfrom(impl_type& impl, void* data, size_t max_length,
       Address& sender_address, Handler handler)
   {
-    demuxer_.work_started();
-    reactor_.start_read_op(impl, recvfrom_handler<Address, Handler>(
-          impl, demuxer_, data, max_length, sender_address, handler));
+    if (impl == null())
+    {
+      socket_error error(socket_error::bad_descriptor);
+      demuxer_.post(bind_handler(handler, error, 0));
+    }
+    else
+    {
+      demuxer_.work_started();
+      reactor_.start_read_op(impl, recvfrom_handler<Address, Handler>(
+            impl, demuxer_, data, max_length, sender_address, handler));
+    }
   }
 
 private:

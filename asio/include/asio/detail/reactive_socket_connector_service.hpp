@@ -321,6 +321,13 @@ public:
       basic_stream_socket<Stream_Socket_Service>& peer,
       const Address& peer_address, Handler handler)
   {
+    if (impl == null())
+    {
+      socket_error error(socket_error::bad_descriptor);
+      demuxer_.post(bind_handler(handler, error));
+      return;
+    }
+
     if (peer.impl() != invalid_socket)
     {
       socket_error error(socket_error::already_connected);
