@@ -7,7 +7,7 @@ doc: delete_doc ../../doc/html/asio.css ../../doc/html/index.html
 delete_doc:
 	-rm -f ../../doc/html/index.html
 	-rm -f ../../doc/html/asio.css
-  
+
 ../../doc/html/asio.css: asio.css
 	mkdir -p ../../doc/html
 	cp $(srcdir)/asio.css ../../doc/html/asio.css
@@ -23,15 +23,15 @@ EXTRA_DIST = \
 	asio.css \
 	asio_dox.txt \
 	release_checklist.htm \
-  concepts/Async_Object.hpp \
-  concepts/Async_Recv_Stream.hpp \
-  concepts/Async_Send_Stream.hpp \
-  concepts/Dispatcher.hpp \
-  concepts/Endpoint.hpp \
-  concepts/Protocol.hpp \
-  concepts/Stream.hpp \
-  concepts/Sync_Recv_Stream.hpp \
-  concepts/Sync_Send_Stream.hpp \
+	concepts/Async_Object.hpp \
+	concepts/Async_Recv_Stream.hpp \
+	concepts/Async_Send_Stream.hpp \
+	concepts/Dispatcher.hpp \
+	concepts/Endpoint.hpp \
+	concepts/Protocol.hpp \
+	concepts/Stream.hpp \
+	concepts/Sync_Recv_Stream.hpp \
+	concepts/Sync_Send_Stream.hpp \
 	../examples/tutorial/daytime_dox.txt \
 	../examples/tutorial/index_dox.txt \
 	../examples/tutorial/timer_dox.txt
