@@ -10,6 +10,8 @@ noinst_PROGRAMS = \
 	tests/unit/error_handler_test \
 	tests/unit/fixed_buffer_test \
 	tests/unit/locking_dispatcher_test \
+	tests/unit/recv_test \
+	tests/unit/send_test \
 	tests/unit/socket_acceptor_test \
 	tests/unit/timer_test \
 	examples/chat/chat_client \
@@ -40,6 +42,8 @@ TESTS = \
 	tests/unit/error_handler_test \
 	tests/unit/fixed_buffer_test \
 	tests/unit/locking_dispatcher_test \
+	tests/unit/recv_test \
+	tests/unit/send_test \
 	tests/unit/socket_acceptor_test \
 	tests/unit/timer_test
 
@@ -56,6 +60,8 @@ tests_unit_dgram_socket_test_SOURCES = tests/unit/dgram_socket_test.cpp
 tests_unit_error_handler_test_SOURCES = tests/unit/error_handler_test.cpp
 tests_unit_fixed_buffer_test_SOURCES = tests/unit/fixed_buffer_test.cpp
 tests_unit_locking_dispatcher_test_SOURCES = tests/unit/locking_dispatcher_test.cpp
+tests_unit_recv_test_SOURCES = tests/unit/recv_test.cpp
+tests_unit_send_test_SOURCES = tests/unit/send_test.cpp
 tests_unit_socket_acceptor_test_SOURCES = tests/unit/socket_acceptor_test.cpp
 tests_unit_timer_test_SOURCES = tests/unit/timer_test.cpp
 examples_chat_chat_client_SOURCES = examples/chat/chat_client.cpp

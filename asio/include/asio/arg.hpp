@@ -60,8 +60,8 @@ boost::arg<1> error;
 boost::arg<2> bytes_sent;
 
 /// An argument placeholder, for use with \ref boost_bind, that corresponds to
-/// the last_bytes_sent argument of a handler for the asio::async_send_n
-/// function.
+/// the last_bytes_sent argument of a handler for the asio::async_send_n or
+/// asio::async_send_at_least_n functions.
 boost::arg<2> last_bytes_sent;
 
 /// An argument placeholder, for use with \ref boost_bind, that corresponds to
@@ -70,18 +70,18 @@ boost::arg<2> last_bytes_sent;
 boost::arg<2> bytes_recvd;
 
 /// An argument placeholder, for use with \ref boost_bind, that corresponds to
-/// the last_bytes_recvd argument of a handler for the asio::async_recv_n
-/// function.
+/// the last_bytes_recvd argument of a handler for the asio::async_recv_n or
+/// asio::async_recv_at_least_n functions.
 boost::arg<2> last_bytes_recvd;
 
 /// An argument placeholder, for use with \ref boost_bind, that corresponds to
-/// the total_bytes_sent argument of a handler for the asio::async_send_n
-/// function.
+/// the total_bytes_sent argument of a handler for the asio::async_send_n or
+/// asio::async_send_at_least_n functions.
 boost::arg<3> total_bytes_sent;
 
 /// An argument placeholder, for use with \ref boost_bind, that corresponds to
-/// the total_bytes_recvd argument of a handler for the asio::async_recv_n
-/// function.
+/// the total_bytes_recvd argument of a handler for the asio::async_recv_n or
+/// asio::async_recv_at_least_n functions.
 boost::arg<3> total_bytes_recvd;
 
 #endif
