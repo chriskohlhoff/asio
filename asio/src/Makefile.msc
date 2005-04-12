@@ -38,6 +38,7 @@ all: \
 	examples\timeouts\accept_timeout.exe \
 	examples\timeouts\connect_timeout.exe \
 	examples\timeouts\dgram_recv_timeout.exe \
+	examples\timeouts\stream_recv_timeout.exe \
 	examples\tutorial\timer1\timer.exe \
 	examples\tutorial\timer2\timer.exe \
 	examples\tutorial\timer3\timer.exe \
@@ -78,6 +79,7 @@ examples\multicast\sender.exe: examples\multicast\sender.obj
 examples\timeouts\accept_timeout.exe: examples\timeouts\accept_timeout.obj
 examples\timeouts\connect_timeout.exe: examples\timeouts\connect_timeout.obj
 examples\timeouts\dgram_recv_timeout.exe: examples\timeouts\dgram_recv_timeout.obj
+examples\timeouts\stream_recv_timeout.exe: examples\timeouts\stream_recv_timeout.obj
 examples\tutorial\timer1\timer.exe: examples\tutorial\timer1\timer.obj
 examples\tutorial\timer2\timer.exe: examples\tutorial\timer2\timer.obj
 examples\tutorial\timer3\timer.exe: examples\tutorial\timer3\timer.obj

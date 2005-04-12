@@ -27,7 +27,7 @@ public:
     {
       std::cout << "Successful accept\n";
 
-      socket_.async_recv(buf, BUFSIZ,
+      socket_.async_recv(buf_, sizeof(buf_),
           boost::bind(&stream_handler::handle_recv, this, asio::arg::error));
       timer_.expiry(asio::time::now() + 5);
       timer_.async_wait(boost::bind(&stream_socket::close, &socket_));
@@ -51,7 +51,7 @@ private:
   timer timer_;
   socket_acceptor acceptor_;
   stream_socket socket_;
-  char buf[BUFSIZ];
+  char buf_[1024];
 };
 
 void connect_handler()
