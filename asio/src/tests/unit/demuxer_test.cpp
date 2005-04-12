@@ -52,7 +52,8 @@ void sleep_increment(demuxer* d, int* count)
   timer t(*d, asio::time::now() + 2);
   t.wait();
 
-  ++(*count);
+  if (++(*count) < 3)
+    d->post(boost::bind(sleep_increment, d, count));
 }
 
 void start_sleep_increments(demuxer* d, int* count)
@@ -61,9 +62,7 @@ void start_sleep_increments(demuxer* d, int* count)
   timer t(*d, asio::time::now() + 2);
   t.wait();
 
-  // Start three increments.
-  d->post(boost::bind(sleep_increment, d, count));
-  d->post(boost::bind(sleep_increment, d, count));
+  // Start the first of three increments.
   d->post(boost::bind(sleep_increment, d, count));
 }
 
@@ -157,8 +156,10 @@ void demuxer_test()
   UNIT_TEST_CHECK(count == 0);
 
   count = 0;
+  int count2 = 0;
   d.reset();
   d.post(boost::bind(start_sleep_increments, &d, &count));
+  d.post(boost::bind(start_sleep_increments, &d, &count2));
   thread thread1(boost::bind(&demuxer::run, &d));
   thread thread2(boost::bind(&demuxer::run, &d));
   thread1.join();
@@ -166,6 +167,7 @@ void demuxer_test()
 
   // The run() calls will not return until all work has finished.
   UNIT_TEST_CHECK(count == 3);
+  UNIT_TEST_CHECK(count2 == 3);
 
   count = 10;
   demuxer d2;
