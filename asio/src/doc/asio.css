@@ -1,85 +1,110 @@
 H1 {
-	text-align: center;
-	font-family: Arial, Helvetica, sans-serif;
-  font-style: none; 
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-style: none; 
 }
 H2 {
-	font-family: Geneva, Arial, Helvetica, sans-serif;
-  font-style: bold; 
+    font-family: Geneva, Arial, Helvetica, sans-serif;
+    font-style: bold; 
 }
 CAPTION { font-weight: bold }
 DIV.qindex { width: 100%;
-             background-color: #e0e0e0;
-             border: 1px solid #a0a0a0;
-             text-align: center;
-             margin-bottom: 2px;
+    background-color: #e0e0e0;
+    border: 1px solid #a0a0a0;
+    text-align: center;
+    margin-bottom: 2px;
+}
+DIV.nav {
+    width: 100%;
+    background-color: #eeeeff;
+    border: 1px solid #a0a0a0;
+    text-align: center;
+    line-height: 160%;
+    margin-bottom: 2px;
+}
+DIV.navtab {
+    background-color: #eeeeff;
+    border: 1px solid #a0a0a0;
+    text-align: center;
+    margin: 0px;
+    margin-right: 15px;
+    height: 100%;
+    font-family: Geneva, Arial, Helvetica, sans-serif;
+}
+TD.navtab {
+    font-size: 13px;
 }
 A.qindex { text-decoration: none; font-weight: bold; }
 A.qindexHL { text-decoration: none; font-weight: bold;
-             background-color: #6666cc;
-             color: #ffffff
-           }
+    background-color: #6666cc;
+    color: #ffffff
+    }
 A.qindexRef { text-decoration: none; font-weight: bold; }
 A.qindexRefHL { text-decoration: none; font-weight: bold;
-             background-color: #6666cc;
-             color: #ffffff
-           }
+    background-color: #6666cc;
+    color: #ffffff
+    }
 A.el { text-decoration: none; font-weight: bold }
 A.elRef { font-weight: bold }
 A.code { text-decoration: none; font-weight: normal; color: #4444ee }
 A.codeRef { font-weight: normal; color: #4444ee }
 DL.el { margin-left: -1cm }
 DIV.fragment {
-	width: 98%;
-	border: 1px solid #E0E0E0;
-	background-color: #FAFAFA;
-	padding-left: 4px;
-	margin: 4px;
+    width: 98%;
+    border: 1px solid #E0E0E0;
+    background-color: #FAFAFA;
+    padding-left: 4px;
+    margin: 4px;
 }
 DIV.footer { width: 100%;
-             background-color: #e0e0e0;
-             border: 1px solid #a0a0a0;
-             text-align: right;
-             margin-top: 10px;
+    background-color: #e0e0e0;
+    border: 1px solid #a0a0a0;
+    text-align: right;
+    margin-top: 2px;
 }
 DIV.ah { background-color: black; font-weight: bold; color: #ffffff; margin-bottom: 3px; margin-top: 3px }
 TD.md { background-color: #FAFAFA; font-weight: bold; }
+TD.mdPrefix {
+    background-color: #FAFAFA;
+    color: #606060;
+    font-size: 13px;
+}
 TD.mdname1 { background-color: #FAFAFA; font-weight: bold; color: #602020; }
 TD.mdname { background-color: #FAFAFA; font-weight: bold; color: #602020; }
 DIV.groupHeader { margin-left: 16px; margin-top: 12px; margin-bottom: 6px; font-weight: bold }
 DIV.groupText { margin-left: 16px; font-style: italic; font-size: smaller }
 BODY {
-	background: white;
-	color: black;
-	margin-right: 20px;
-	margin-left: 20px;
+    background: white;
+    color: black;
+    margin-right: 20px;
+    margin-left: 20px;
 }
 TD.indexkey { 
-   background-color: #E0E0E0; 
-   font-weight: bold; 
-   padding-right  : 10px; 
-   padding-top    : 2px; 
-   padding-left   : 10px; 
-   padding-bottom : 2px; 
-   margin-left    : 0px; 
-   margin-right   : 0px; 
-   margin-top     : 2px; 
-   margin-bottom  : 2px  
+    background-color: #E0E0E0; 
+    font-weight: bold; 
+    padding-right  : 10px; 
+    padding-top    : 2px; 
+    padding-left   : 10px; 
+    padding-bottom : 2px; 
+    margin-left    : 0px; 
+    margin-right   : 0px; 
+    margin-top     : 2px; 
+    margin-bottom  : 2px  
 }
 TD.indexvalue { 
-   background-color: #E0E0E0; 
-   font-style: italic; 
-   padding-right  : 10px; 
-   padding-top    : 2px; 
-   padding-left   : 10px; 
-   padding-bottom : 2px; 
-   margin-left    : 0px; 
-   margin-right   : 0px; 
-   margin-top     : 2px; 
-   margin-bottom  : 2px  
+    background-color: #E0E0E0; 
+    font-style: italic; 
+    padding-right  : 10px; 
+    padding-top    : 2px; 
+    padding-left   : 10px; 
+    padding-bottom : 2px; 
+    margin-left    : 0px; 
+    margin-right   : 0px; 
+    margin-top     : 2px; 
+    margin-bottom  : 2px  
 }
 TR.memlist {
-   background-color: #FAFAFA; 
+    background-color: #FAFAFA; 
 }
 P.formulaDsp { text-align: center; }
 IMG.formulaDsp { }
@@ -92,74 +117,132 @@ SPAN.preprocessor  { color: #806020 }
 SPAN.stringliteral { color: #002080 }
 SPAN.charliteral   { color: #008080 }
 .mdTable {
-	border: 1px solid #E0E0E0;
-	background-color: #FAFAFA;
+    border: 1px solid #E0E0E0;
+    background-color: #FAFAFA;
 }
 .mdRow {
-	padding: 8px 20px;
-	background-color: #FAFAFA;
+    padding: 8px 20px;
+    background-color: #FAFAFA;
 }
 .mdescLeft {
-	font-size: smaller;
-	font-family: Arial, Helvetica, sans-serif;
-	background-color: #FAFAFA;
-	padding-left: 8px;
-	border-top: 1px none #E0E0E0;
-	border-right: 1px none #E0E0E0;
-	border-bottom: 1px none #E0E0E0;
-	border-left: 1px none #E0E0E0;
-	margin: 0px;
+    font-size: smaller;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #FAFAFA;
+    padding-left: 8px;
+    border-top: 1px none #E0E0E0;
+    border-right: 1px none #E0E0E0;
+    border-bottom: 1px none #E0E0E0;
+    border-left: 1px none #E0E0E0;
+    margin: 0px;
 }
 .mdescRight {
-	font-size: smaller;
-	font-family: Arial, Helvetica, sans-serif;
-	font-style: italic;
-	background-color: #FAFAFA;
-	padding-left: 4px;
-	border-top: 1px none #E0E0E0;
-	border-right: 1px none #E0E0E0;
-	border-bottom: 1px none #E0E0E0;
-	border-left: 1px none #E0E0E0;
-	margin: 0px;
-	padding-bottom: 0px;
-	padding-right: 8px;
+    font-size: smaller;
+    font-family: Arial, Helvetica, sans-serif;
+    font-style: italic;
+    background-color: #FAFAFA;
+    padding-left: 4px;
+    border-top: 1px none #E0E0E0;
+    border-right: 1px none #E0E0E0;
+    border-bottom: 1px none #E0E0E0;
+    border-left: 1px none #E0E0E0;
+    margin: 0px;
+    padding-bottom: 0px;
+    padding-right: 8px;
 }
 .memItemLeft {
-	padding: 1px 0px 0px 8px;
-	margin: 4px;
-	border-top-width: 1px;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-left-width: 1px;
-	border-top-style: solid;
-	border-top-color: #E0E0E0;
-	border-right-color: #E0E0E0;
-	border-bottom-color: #E0E0E0;
-	border-left-color: #E0E0E0;
-	border-right-style: none;
-	border-bottom-style: none;
-	border-left-style: none;
-	background-color: #FAFAFA;
-	font-family: Geneva, Arial, Helvetica, sans-serif;
-	font-size: 12px;
-  width: 250px;
+    padding: 1px 0px 0px 8px;
+    margin: 4px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-style: solid;
+    border-top-color: #E0E0E0;
+    border-right-color: #E0E0E0;
+    border-bottom-color: #E0E0E0;
+    border-left-color: #E0E0E0;
+    border-right-style: none;
+    border-bottom-style: none;
+    border-left-style: none;
+    background-color: #FAFAFA;
+    font-family: Geneva, Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    width: 250px;
 }
 .memItemRight {
-	padding: 1px 0px 0px 8px;
-	margin: 4px;
-	border-top-width: 1px;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-left-width: 1px;
-	border-top-style: solid;
-	border-top-color: #E0E0E0;
-	border-right-color: #E0E0E0;
-	border-bottom-color: #E0E0E0;
-	border-left-color: #E0E0E0;
-	border-right-style: none;
-	border-bottom-style: none;
-	border-left-style: none;
-	background-color: #FAFAFA;
-	font-family: Geneva, Arial, Helvetica, sans-serif;
-	font-size: 13px;
+    padding: 1px 0px 0px 8px;
+    margin: 4px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-style: solid;
+    border-top-color: #E0E0E0;
+    border-right-color: #E0E0E0;
+    border-bottom-color: #E0E0E0;
+    border-left-color: #E0E0E0;
+    border-right-style: none;
+    border-bottom-style: none;
+    border-left-style: none;
+    background-color: #FAFAFA;
+    font-family: Geneva, Arial, Helvetica, sans-serif;
+    font-size: 13px;
+}
+.memTemplItemLeft {
+    padding: 1px 0px 0px 8px;
+    margin: 4px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-color: #E0E0E0;
+    border-right-color: #E0E0E0;
+    border-bottom-color: #E0E0E0;
+    border-left-color: #E0E0E0;
+    border-top-style: none;
+    border-right-style: none;
+    border-bottom-style: none;
+    border-left-style: none;
+    background-color: #FAFAFA;
+    font-family: Geneva, Arial, Helvetica, sans-serif;
+    font-size: 13px;
+}
+.memTemplItemRight {
+    padding: 1px 8px 0px 8px;
+    margin: 4px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-color: #E0E0E0;
+    border-right-color: #E0E0E0;
+    border-bottom-color: #E0E0E0;
+    border-left-color: #E0E0E0;
+    border-top-style: none;
+    border-right-style: none;
+    border-bottom-style: none;
+    border-left-style: none;
+    background-color: #FAFAFA;
+    font-family: Geneva, Arial, Helvetica, sans-serif;
+    font-size: 13px;
+}
+.memTemplParams {
+    padding: 1px 0px 0px 8px;
+    margin: 4px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-color: #E0E0E0;
+    border-right-color: #E0E0E0;
+    border-bottom-color: #E0E0E0;
+    border-left-color: #E0E0E0;
+    border-top-style: solid;
+    border-right-style: none;
+    border-bottom-style: none;
+    border-left-style: none;
+    color: #606060;
+    background-color: #FAFAFA;
+    font-family: Geneva, Arial, Helvetica, sans-serif;
+    font-size: 13px;
 }
