@@ -15,9 +15,18 @@
 
 #include "asio/detail/push_options.hpp"
 #if defined(_WIN32)
+# if defined(__BORLANDC__) && !defined(_WSPIAPI_H_)
+#  include <stdlib.h> // Needed for __errno
+#  define _WSPIAPI_H_
+#  define ASIO_WSPIAPI_H_DEFINED
+# endif // defined(__BORLANDC__) && !defined(_WSPIAPI_H_)
 # define FD_SETSIZE 1024
 # include <winsock2.h>
 # include <ws2tcpip.h>
+# if defined(ASIO_WSPIAPI_H_DEFINED)
+#  undef _WSPIAPI_H_
+#  undef ASIO_WSPIAPI_H_DEFINED
+# endif // defined(ASIO_WSPIAPI_H_DEFINED)
 #else
 # include <sys/types.h>
 # include <sys/select.h>
