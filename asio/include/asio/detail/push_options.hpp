@@ -23,10 +23,16 @@
 # if (_MSC_VER < 1300)
 #  pragma optimize ("g", off)
 # endif
+# if !defined(_MT)
+#  error Multithreaded RTL must be selected.
+# endif // !defined(_MT)
 #elif defined (__BORLANDC__)
 # pragma option push -a8 -b -Ve- -Vx- -w-inl
 # pragma nopushoptwarn
 # pragma nopackwarning
+# if !defined(__MT__)
+#  error Multithreaded RTL must be selected.
+# endif // !defined(__MT__)
 #elif defined (__MINGW32__)
 # pragma pack (push, 8)
 #endif

@@ -22,12 +22,6 @@
 #include <process.h>
 #include "asio/detail/pop_options.hpp"
 
-#if defined(__BORLANDC__)
-# if !defined(_MT)
-#  error Multithreaded RTL must be selected.
-# endif // !defined(_MT)
-#endif // defined(__BORLANDC__)
-
 namespace asio {
 namespace detail {
 
