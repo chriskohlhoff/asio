@@ -11,6 +11,10 @@
 #ifndef ASIO_DETAIL_REACTIVE_SOCKET_ACCEPTOR_SERVICE_HPP
 #define ASIO_DETAIL_REACTIVE_SOCKET_ACCEPTOR_SERVICE_HPP
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+# pragma once
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+
 #include "asio/detail/push_options.hpp"
 
 #include "asio/basic_stream_socket.hpp"

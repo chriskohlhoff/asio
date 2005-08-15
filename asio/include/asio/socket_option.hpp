@@ -11,6 +11,10 @@
 #ifndef ASIO_SOCKET_OPTION_HPP
 #define ASIO_SOCKET_OPTION_HPP
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+# pragma once
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/socket_types.hpp"

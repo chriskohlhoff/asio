@@ -11,6 +11,10 @@
 #ifndef ASIO_STREAM_SOCKET_BASE_HPP
 #define ASIO_STREAM_SOCKET_BASE_HPP
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+# pragma once
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+
 #include "asio/detail/push_options.hpp"
 
 namespace asio {

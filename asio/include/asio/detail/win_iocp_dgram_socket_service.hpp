@@ -11,6 +11,10 @@
 #ifndef ASIO_DETAIL_REACTIVE_DGRAM_SOCKET_SERVICE_HPP
 #define ASIO_DETAIL_REACTIVE_DGRAM_SOCKET_SERVICE_HPP
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+# pragma once
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+
 #include "asio/detail/push_options.hpp"
 
 #if defined(_WIN32) // This service is only supported on Win32

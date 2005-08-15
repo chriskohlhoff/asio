@@ -11,6 +11,10 @@
 #ifndef ASIO_DETAIL_SELECT_INTERRUPTER_HPP
 #define ASIO_DETAIL_SELECT_INTERRUPTER_HPP
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+# pragma once
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/pipe_select_interrupter.hpp"

@@ -11,6 +11,10 @@
 #ifndef ASIO_DETAIL_LOCKING_DISPATCHER_IMPL_HPP
 #define ASIO_DETAIL_LOCKING_DISPATCHER_IMPL_HPP
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+# pragma once
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"

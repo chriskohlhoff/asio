@@ -11,6 +11,10 @@
 #ifndef ASIO_DETAIL_EPOLL_REACTOR_HPP
 #define ASIO_DETAIL_EPOLL_REACTOR_HPP
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+# pragma once
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+
 #include "asio/detail/push_options.hpp"
 
 #if defined(__linux__) // This service is only supported on Linux.

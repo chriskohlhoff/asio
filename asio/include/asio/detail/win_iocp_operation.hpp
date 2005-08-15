@@ -11,6 +11,10 @@
 #ifndef ASIO_DETAIL_WIN_IOCP_OPERATION_HPP
 #define ASIO_DETAIL_WIN_IOCP_OPERATION_HPP
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+# pragma once
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+
 #include "asio/detail/push_options.hpp"
 
 #if defined(_WIN32) // This class is only supported on Win32

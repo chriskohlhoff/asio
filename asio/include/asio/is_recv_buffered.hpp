@@ -11,6 +11,10 @@
 #ifndef ASIO_IS_RECV_BUFFERED_HPP
 #define ASIO_IS_RECV_BUFFERED_HPP
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+# pragma once
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+
 #include "asio/detail/push_options.hpp"
 
 #include "asio/buffered_recv_stream_fwd.hpp"
