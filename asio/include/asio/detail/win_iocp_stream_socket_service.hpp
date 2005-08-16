@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_REACTIVE_STREAM_SOCKET_SERVICE_HPP
-#define ASIO_DETAIL_REACTIVE_STREAM_SOCKET_SERVICE_HPP
+#ifndef ASIO_DETAIL_WIN_IOCP_STREAM_SOCKET_SERVICE_HPP
+#define ASIO_DETAIL_WIN_IOCP_STREAM_SOCKET_SERVICE_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -340,4 +340,4 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_REACTIVE_STREAM_SOCKET_SERVICE_HPP
+#endif // ASIO_DETAIL_WIN_IOCP_STREAM_SOCKET_SERVICE_HPP
