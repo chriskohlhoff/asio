@@ -85,7 +85,8 @@ public:
 
   // Set a socket option.
   template <typename Option, typename Error_Handler>
-  void get_option(impl_type& impl, Option& option, Error_Handler error_handler)
+  void get_option(const impl_type& impl, Option& option,
+      Error_Handler error_handler) const
   {
     size_t size = option.size();
     if (socket_ops::getsockopt(impl, option.level(), option.name(),
@@ -95,8 +96,8 @@ public:
 
   // Get the local endpoint.
   template <typename Endpoint, typename Error_Handler>
-  void get_local_endpoint(impl_type& impl, Endpoint& endpoint,
-      Error_Handler error_handler)
+  void get_local_endpoint(const impl_type& impl, Endpoint& endpoint,
+      Error_Handler error_handler) const
   {
     socket_addr_len_type addr_len = endpoint.native_size();
     if (socket_ops::getsockname(impl, endpoint.native_data(), &addr_len))
@@ -106,8 +107,8 @@ public:
 
   // Get the remote endpoint.
   template <typename Endpoint, typename Error_Handler>
-  void get_remote_endpoint(impl_type& impl, Endpoint& endpoint,
-      Error_Handler error_handler)
+  void get_remote_endpoint(const impl_type& impl, Endpoint& endpoint,
+      Error_Handler error_handler) const
   {
     socket_addr_len_type addr_len = endpoint.native_size();
     if (socket_ops::getpeername(impl, endpoint.native_data(), &addr_len))

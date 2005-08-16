@@ -183,7 +183,7 @@ public:
    * @throws asio::error Thrown on failure.
    */
   template <typename Option>
-  void get_option(Option& option)
+  void get_option(Option& option) const
   {
     service_.get_option(impl_, option, default_error_handler());
   }
@@ -202,7 +202,7 @@ public:
    * ); @endcode
    */
   template <typename Option, typename Error_Handler>
-  void get_option(Option& option, Error_Handler error_handler)
+  void get_option(Option& option, Error_Handler error_handler) const
   {
     service_.get_option(impl_, option, error_handler);
   }
@@ -217,7 +217,7 @@ public:
    * @throws asio::error Thrown on failure.
    */
   template <typename Endpoint>
-  void get_local_endpoint(Endpoint& endpoint)
+  void get_local_endpoint(Endpoint& endpoint) const
   {
     service_.get_local_endpoint(impl_, endpoint, default_error_handler());
   }
@@ -237,7 +237,8 @@ public:
    * ); @endcode
    */
   template <typename Endpoint, typename Error_Handler>
-  void get_local_endpoint(Endpoint& endpoint, Error_Handler error_handler)
+  void get_local_endpoint(Endpoint& endpoint,
+      Error_Handler error_handler) const
   {
     service_.get_local_endpoint(impl_, endpoint, error_handler);
   }
@@ -252,7 +253,7 @@ public:
    * @throws asio::error Thrown on failure.
    */
   template <typename Endpoint>
-  void get_remote_endpoint(Endpoint& endpoint)
+  void get_remote_endpoint(Endpoint& endpoint) const
   {
     service_.get_remote_endpoint(impl_, endpoint, default_error_handler());
   }
@@ -272,7 +273,8 @@ public:
    * ); @endcode
    */
   template <typename Endpoint, typename Error_Handler>
-  void get_remote_endpoint(Endpoint& endpoint, Error_Handler error_handler)
+  void get_remote_endpoint(Endpoint& endpoint,
+      Error_Handler error_handler) const
   {
     service_.get_remote_endpoint(impl_, endpoint, error_handler);
   }
