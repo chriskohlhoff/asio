@@ -85,10 +85,10 @@ nobase_include_HEADERS = \
 	asio/send.hpp \
 	asio/service_factory.hpp \
 	asio/socket_acceptor.hpp \
+	asio/socket_base.hpp \
 	asio/socket_connector.hpp \
 	asio/socket_option.hpp \
 	asio/stream_socket.hpp \
-	asio/stream_socket_base.hpp \
 	asio/thread.hpp \
 	asio/time.hpp \
 	asio/timer.hpp \

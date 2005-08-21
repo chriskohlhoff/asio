@@ -23,7 +23,7 @@
 
 #include "asio/default_error_handler.hpp"
 #include "asio/service_factory.hpp"
-#include "asio/stream_socket_base.hpp"
+#include "asio/socket_base.hpp"
 
 namespace asio {
 
@@ -44,7 +44,7 @@ namespace asio {
  */
 template <typename Service>
 class basic_stream_socket
-  : public stream_socket_base,
+  : public socket_base,
     private boost::noncopyable
 {
 public:

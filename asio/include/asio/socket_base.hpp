@@ -1,6 +1,6 @@
 //
-// stream_socket_base.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~
+// socket_base.hpp
+// ~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2005 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_STREAM_SOCKET_BASE_HPP
-#define ASIO_STREAM_SOCKET_BASE_HPP
+#ifndef ASIO_SOCKET_BASE_HPP
+#define ASIO_SOCKET_BASE_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -19,10 +19,10 @@
 
 namespace asio {
 
-/// The stream_socket_base class is used as a base for the basic_stream_socket
-/// class template so that we have a common place to define the shutdown_type
-/// enum.
-class stream_socket_base
+/// The socket_base class is used as a base for the basic_stream_socket and
+/// basic_datagram_socket class templates so that we have a common place to
+/// define the shutdown_type and enum.
+class socket_base
 {
 public:
   /// Different ways a socket may be shutdown.
@@ -38,9 +38,22 @@ public:
     shutdown_both
   };
 
+  /// Flags that can be passed to send and receive operations.
+  enum message_flags
+  {
+    /// Peek at incoming data without removing it from the input queue.
+    message_peek = 1 << 0,
+
+    /// Process out-of-band data.
+    message_out_of_band = 1 << 1,
+
+    /// Specify that the data should not be subject to routing.
+    message_do_not_route = 1 << 2
+  };
+
 protected:
   /// Protected destructor to prevent deletion through this type.
-  ~stream_socket_base()
+  ~socket_base()
   {
   }
 };
@@ -49,4 +62,4 @@ protected:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_STREAM_SOCKET_BASE_HPP
+#endif // ASIO_SOCKET_BASE_HPP
