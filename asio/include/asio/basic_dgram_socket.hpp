@@ -22,8 +22,8 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/default_error_handler.hpp"
-#include "asio/dgram_socket_base.hpp"
 #include "asio/service_factory.hpp"
+#include "asio/socket_base.hpp"
 
 namespace asio {
 
@@ -43,7 +43,7 @@ namespace asio {
  */
 template <typename Service>
 class basic_dgram_socket
-  : public dgram_socket_base,
+  : public socket_base,
     private boost::noncopyable
 {
 public:

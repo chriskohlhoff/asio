@@ -17,9 +17,9 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/dgram_socket_base.hpp"
 #include "asio/error.hpp"
 #include "asio/service_factory.hpp"
+#include "asio/socket_base.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
@@ -131,19 +131,19 @@ public:
 
   /// Disable sends or receives on the socket.
   template <typename Error_Handler>
-  void shutdown(impl_type& impl, dgram_socket_base::shutdown_type what,
+  void shutdown(impl_type& impl, socket_base::shutdown_type what,
       Error_Handler error_handler)
   {
     int shutdown_flag;
     switch (what)
     {
-    case dgram_socket_base::shutdown_recv:
+    case socket_base::shutdown_recv:
       shutdown_flag = shutdown_recv;
       break;
-    case dgram_socket_base::shutdown_send:
+    case socket_base::shutdown_send:
       shutdown_flag = shutdown_send;
       break;
-    case dgram_socket_base::shutdown_both:
+    case socket_base::shutdown_both:
     default:
       shutdown_flag = shutdown_both;
       break;

@@ -29,7 +29,6 @@
 #include "asio/default_error_handler.hpp"
 #include "asio/demuxer.hpp"
 #include "asio/dgram_socket.hpp"
-#include "asio/dgram_socket_base.hpp"
 #include "asio/error.hpp"
 #include "asio/error_handler.hpp"
 #include "asio/fixed_buffer.hpp"
