@@ -49,7 +49,7 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 <H2>Classes</H2>
 
 \li asio::demuxer
-\li asio::dgram_socket
+\li asio::datagram_socket
 \li asio::error
 \li asio::ipv4::address
 \li asio::ipv4::host
@@ -69,7 +69,7 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 <H2>Class Templates</H2>
 
 \li asio::basic_demuxer
-\li asio::basic_dgram_socket
+\li asio::basic_datagram_socket
 \li asio::basic_locking_dispatcher
 \li asio::basic_socket_acceptor
 \li asio::basic_socket_connector

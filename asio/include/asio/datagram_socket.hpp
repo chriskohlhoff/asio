@@ -1,6 +1,6 @@
 //
-// dgram_socket.hpp
-// ~~~~~~~~~~~~~~~~
+// datagram_socket.hpp
+// ~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2005 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DGRAM_SOCKET_HPP
-#define ASIO_DGRAM_SOCKET_HPP
+#ifndef ASIO_DATAGRAM_SOCKET_HPP
+#define ASIO_DATAGRAM_SOCKET_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -17,51 +17,51 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/basic_dgram_socket.hpp"
+#include "asio/basic_datagram_socket.hpp"
 #include "asio/demuxer.hpp"
 #if defined(_WIN32)
-# include "asio/detail/win_iocp_dgram_socket_service.hpp"
+# include "asio/detail/win_iocp_datagram_socket_service.hpp"
 #else
 # include "asio/detail/epoll_reactor.hpp"
 # include "asio/detail/select_reactor.hpp"
-# include "asio/detail/reactive_dgram_socket_service.hpp"
+# include "asio/detail/reactive_datagram_socket_service.hpp"
 #endif
 
 namespace asio {
 
-/// Typedef for the typical usage of dgram_socket.
+/// Typedef for the typical usage of datagram_socket.
 #if defined(GENERATING_DOCUMENTATION)
-typedef basic_dgram_socket
+typedef basic_datagram_socket
   <
     implementation_defined
-  > dgram_socket;
+  > datagram_socket;
 #elif defined(_WIN32)
-typedef basic_dgram_socket
+typedef basic_datagram_socket
   <
-    detail::win_iocp_dgram_socket_service
-  > dgram_socket;
+    detail::win_iocp_datagram_socket_service
+  > datagram_socket;
 #elif (ASIO_HAS_EPOLL_REACTOR)
-typedef basic_dgram_socket
+typedef basic_datagram_socket
   <
-    detail::reactive_dgram_socket_service
+    detail::reactive_datagram_socket_service
       <
         demuxer,
         detail::epoll_reactor
       >
-  > dgram_socket;
+  > datagram_socket;
 #else
-typedef basic_dgram_socket
+typedef basic_datagram_socket
   <
-    detail::reactive_dgram_socket_service
+    detail::reactive_datagram_socket_service
       <
         demuxer,
         detail::select_reactor
       >
-  > dgram_socket;
+  > datagram_socket;
 #endif
 
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DGRAM_SOCKET_HPP
+#endif // ASIO_DATAGRAM_SOCKET_HPP

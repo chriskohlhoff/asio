@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
 
     asio::demuxer d;
 
-    asio::dgram_socket s(d, asio::ipv4::udp::endpoint(0));
+    asio::datagram_socket s(d, asio::ipv4::udp::endpoint(0));
 
     asio::ipv4::host_resolver hr(d);
     asio::ipv4::host h;

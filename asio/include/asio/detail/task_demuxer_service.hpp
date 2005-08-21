@@ -59,7 +59,6 @@ public:
     return demuxer_;
   }
 
-  // Create a new dgram socket implementation.
   // Run the demuxer's event processing loop.
   void run()
   {

@@ -9,7 +9,7 @@ int main()
   {
     asio::demuxer demuxer;
 
-    asio::dgram_socket socket(demuxer, asio::ipv4::udp::endpoint(13));
+    asio::datagram_socket socket(demuxer, asio::ipv4::udp::endpoint(13));
 
     for (;;)
     {

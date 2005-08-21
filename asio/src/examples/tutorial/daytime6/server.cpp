@@ -10,7 +10,7 @@ void handle_sendto(char* send_buf, const asio::error& /*error*/,
   free(send_buf);
 }
 
-void handle_recvfrom(asio::dgram_socket* socket, char* recv_buf,
+void handle_recvfrom(asio::datagram_socket* socket, char* recv_buf,
     size_t recv_length, asio::ipv4::udp::endpoint* remote_endpoint,
     const asio::error& error, size_t /*bytes_recvd*/)
 {
@@ -37,7 +37,7 @@ int main()
   {
     asio::demuxer demuxer;
 
-    asio::dgram_socket socket(demuxer, asio::ipv4::udp::endpoint(13));
+    asio::datagram_socket socket(demuxer, asio::ipv4::udp::endpoint(13));
 
     char recv_buf[1];
     size_t recv_length = sizeof(recv_buf);

@@ -6,7 +6,7 @@ enum { max_length = 1024 };
 
 void server(asio::demuxer& d, short port)
 {
-  asio::dgram_socket sock(d, asio::ipv4::udp::endpoint(port));
+  asio::datagram_socket sock(d, asio::ipv4::udp::endpoint(port));
   for (;;)
   {
     char data[max_length];

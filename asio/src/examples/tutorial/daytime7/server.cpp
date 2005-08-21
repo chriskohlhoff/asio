@@ -40,7 +40,7 @@ void handle_udp_sendto(char* send_buf)
   free(send_buf);
 }
 
-void handle_udp_recvfrom(asio::dgram_socket* socket, char* recv_buf,
+void handle_udp_recvfrom(asio::datagram_socket* socket, char* recv_buf,
     size_t recv_length, asio::ipv4::udp::endpoint* remote_endpoint,
     const asio::error& error)
 {
@@ -74,7 +74,7 @@ int main()
         boost::bind(handle_tcp_accept, &tcp_acceptor, tcp_socket,
           asio::arg::error));
 
-    asio::dgram_socket udp_socket(demuxer, asio::ipv4::udp::endpoint(13));
+    asio::datagram_socket udp_socket(demuxer, asio::ipv4::udp::endpoint(13));
 
     char recv_buf[1];
     size_t recv_length = sizeof(recv_buf);

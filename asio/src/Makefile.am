@@ -6,7 +6,7 @@ noinst_PROGRAMS = \
 	tests/performance/client \
 	tests/performance/server \
 	tests/unit/demuxer_test \
-	tests/unit/dgram_socket_test \
+	tests/unit/datagram_socket_test \
 	tests/unit/error_handler_test \
 	tests/unit/fixed_buffer_test \
 	tests/unit/ipv4_host_resolver_test \
@@ -29,7 +29,7 @@ noinst_PROGRAMS = \
 	examples/multicast/sender \
 	examples/timeouts/accept_timeout \
 	examples/timeouts/connect_timeout \
-	examples/timeouts/dgram_recv_timeout \
+	examples/timeouts/datagram_receive_timeout \
 	examples/timeouts/stream_recv_timeout \
 	examples/tutorial/timer1/timer \
 	examples/tutorial/timer2/timer \
@@ -46,7 +46,7 @@ noinst_PROGRAMS = \
 
 TESTS = \
 	tests/unit/demuxer_test \
-	tests/unit/dgram_socket_test \
+	tests/unit/datagram_socket_test \
 	tests/unit/error_handler_test \
 	tests/unit/fixed_buffer_test \
 	tests/unit/ipv4_host_resolver_test \
@@ -67,7 +67,7 @@ AM_CXXFLAGS = -I$(srcdir)/../include
 tests_performance_client_SOURCES = tests/performance/client.cpp
 tests_performance_server_SOURCES = tests/performance/server.cpp
 tests_unit_demuxer_test_SOURCES = tests/unit/demuxer_test.cpp
-tests_unit_dgram_socket_test_SOURCES = tests/unit/dgram_socket_test.cpp
+tests_unit_datagram_socket_test_SOURCES = tests/unit/datagram_socket_test.cpp
 tests_unit_error_handler_test_SOURCES = tests/unit/error_handler_test.cpp
 tests_unit_ipv4_host_resolver_test_SOURCES = tests/unit/ipv4_host_resolver_test.cpp
 tests_unit_is_recv_buffered_test_SOURCES = tests/unit/is_recv_buffered_test.cpp
@@ -90,7 +90,7 @@ examples_multicast_receiver_SOURCES = examples/multicast/receiver.cpp
 examples_multicast_sender_SOURCES = examples/multicast/sender.cpp
 examples_timeouts_accept_timeout_SOURCES = examples/timeouts/accept_timeout.cpp
 examples_timeouts_connect_timeout_SOURCES = examples/timeouts/connect_timeout.cpp
-examples_timeouts_dgram_recv_timeout_SOURCES = examples/timeouts/dgram_recv_timeout.cpp
+examples_timeouts_datagram_receive_timeout_SOURCES = examples/timeouts/datagram_receive_timeout.cpp
 examples_timeouts_stream_recv_timeout_SOURCES = examples/timeouts/stream_recv_timeout.cpp
 examples_tutorial_timer1_timer_SOURCES = examples/tutorial/timer1/timer.cpp
 examples_tutorial_timer2_timer_SOURCES = examples/tutorial/timer2/timer.cpp

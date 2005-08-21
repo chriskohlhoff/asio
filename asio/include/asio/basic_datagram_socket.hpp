@@ -1,6 +1,6 @@
 //
-// basic_dgram_socket.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~
+// basic_datagram_socket.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2005 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_BASIC_DGRAM_SOCKET_HPP
-#define ASIO_BASIC_DGRAM_SOCKET_HPP
+#ifndef ASIO_BASIC_DATAGRAM_SOCKET_HPP
+#define ASIO_BASIC_DATAGRAM_SOCKET_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -29,10 +29,10 @@ namespace asio {
 
 /// Provides datagram-oriented socket functionality.
 /**
- * The basic_dgram_socket class template provides asynchronous and blocking
+ * The basic_datagram_socket class template provides asynchronous and blocking
  * datagram-oriented socket functionality.
  *
- * Most applications will use the asio::dgram_socket typedef.
+ * Most applications will use the asio::datagram_socket typedef.
  *
  * @par Thread Safety:
  * @e Distinct @e objects: Safe.@n
@@ -42,7 +42,7 @@ namespace asio {
  * Async_Object.
  */
 template <typename Service>
-class basic_dgram_socket
+class basic_datagram_socket
   : public socket_base,
     private boost::noncopyable
 {
@@ -50,43 +50,43 @@ public:
   /// The type of the service that will be used to provide socket operations.
   typedef Service service_type;
 
-  /// The native implementation type of the dgram socket.
+  /// The native implementation type of the datagram socket.
   typedef typename service_type::impl_type impl_type;
 
   /// The demuxer type for this asynchronous type.
   typedef typename service_type::demuxer_type demuxer_type;
 
-  /// Construct a basic_dgram_socket without opening it.
+  /// Construct a basic_datagram_socket without opening it.
   /**
-   * This constructor creates a dgram socket without opening it. The open()
+   * This constructor creates a datagram socket without opening it. The open()
    * function must be called before data can be sent or received on the socket.
    *
-   * @param d The demuxer object that the dgram socket will use to dispatch
+   * @param d The demuxer object that the datagram socket will use to dispatch
    * handlers for any asynchronous operations performed on the socket.
    */
-  explicit basic_dgram_socket(demuxer_type& d)
+  explicit basic_datagram_socket(demuxer_type& d)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_type::null())
   {
   }
 
-  /// Construct a basic_dgram_socket, opening it and binding it to the given
+  /// Construct a basic_datagram_socket, opening it and binding it to the given
   /// local endpoint.
   /**
-   * This constructor creates a dgram socket and automatically opens it bound
+   * This constructor creates a datagram socket and automatically opens it bound
    * to the specified endpoint on the local machine. The protocol used is the
    * protocol associated with the given endpoint.
    *
-   * @param d The demuxer object that the dgram socket will use to dispatch
+   * @param d The demuxer object that the datagram socket will use to dispatch
    * handlers for any asynchronous operations performed on the socket.
    *
-   * @param endpoint An endpoint on the local machine to which the dgram socket
-   * will be bound.
+   * @param endpoint An endpoint on the local machine to which the datagram
+   * socket will be bound.
    *
    * @throws asio::error Thrown on failure.
    */
   template <typename Endpoint>
-  basic_dgram_socket(demuxer_type& d, const Endpoint& endpoint)
+  basic_datagram_socket(demuxer_type& d, const Endpoint& endpoint)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_type::null())
   {
@@ -95,17 +95,17 @@ public:
   }
 
   /// Destructor.
-  ~basic_dgram_socket()
+  ~basic_datagram_socket()
   {
     service_.close(impl_);
   }
 
   /// Get the demuxer associated with the asynchronous object.
   /**
-   * This function may be used to obtain the demuxer object that the dgram
+   * This function may be used to obtain the demuxer object that the datagram
    * socket uses to dispatch handlers for asynchronous operations.
    *
-   * @return A reference to the demuxer object that dgram socket will use to
+   * @return A reference to the demuxer object that datagram socket will use to
    * dispatch handlers. Ownership is not transferred to the caller.
    */
   demuxer_type& demuxer()
@@ -115,7 +115,7 @@ public:
 
   /// Open the socket using the specified protocol.
   /**
-   * This function opens the dgram socket so that it will use the specified
+   * This function opens the datagram socket so that it will use the specified
    * protocol.
    *
    * @param protocol An object specifying which protocol is to be used.
@@ -130,7 +130,7 @@ public:
 
   /// Open the socket using the specified protocol.
   /**
-   * This function opens the dgram socket so that it will use the specified
+   * This function opens the datagram socket so that it will use the specified
    * protocol.
    *
    * @param protocol An object specifying which protocol is to be used.
@@ -150,11 +150,11 @@ public:
 
   /// Bind the socket to the given local endpoint.
   /**
-   * This function binds the dgram socket to the specified endpoint on the
+   * This function binds the datagram socket to the specified endpoint on the
    * local machine.
    *
-   * @param endpoint An endpoint on the local machine to which the dgram socket
-   * will be bound.
+   * @param endpoint An endpoint on the local machine to which the datagram
+   * socket will be bound.
    *
    * @throws asio::error Thrown on failure.
    */
@@ -166,11 +166,11 @@ public:
 
   /// Bind the socket to the given local endpoint.
   /**
-   * This function binds the dgram socket to the specified endpoint on the
+   * This function binds the datagram socket to the specified endpoint on the
    * local machine.
    *
-   * @param endpoint An endpoint on the local machine to which the dgram socket
-   * will be bound.
+   * @param endpoint An endpoint on the local machine to which the datagram
+   * socket will be bound.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature
@@ -187,7 +187,7 @@ public:
 
   /// Close the socket.
   /**
-   * This function is used to close the dgram socket. Any asynchronous sendto
+   * This function is used to close the datagram socket. Any asynchronous sendto
    * or recvfrom operations will be cancelled immediately.
    *
    * A subsequent call to open() is required before the socket can again be
@@ -201,7 +201,7 @@ public:
   /// Get the underlying implementation in the native type.
   /**
    * This function may be used to obtain the underlying implementation of the
-   * dgram socket. This is intended to allow access to native socket
+   * datagram socket. This is intended to allow access to native socket
    * functionality that is not otherwise provided.
    */
   impl_type impl()
@@ -525,4 +525,4 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_BASIC_DGRAM_SOCKET_HPP
+#endif // ASIO_BASIC_DATAGRAM_SOCKET_HPP

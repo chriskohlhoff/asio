@@ -1,6 +1,6 @@
 //
-// dgram_socket_test.cpp
-// ~~~~~~~~~~~~~~~~~~~~~
+// datagram_socket_test.cpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2005 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -29,18 +29,18 @@ void handle_recv(size_t expected_bytes_recvd, const error& err,
   UNIT_TEST_CHECK(expected_bytes_recvd == bytes_recvd);
 }
 
-void dgram_socket_test()
+void datagram_socket_test()
 {
   using namespace std; // For memcmp and memset.
 
   demuxer d;
 
-  dgram_socket s1(d, ipv4::udp::endpoint(0));
+  datagram_socket s1(d, ipv4::udp::endpoint(0));
   ipv4::udp::endpoint target_endpoint;
   s1.get_local_endpoint(target_endpoint);
   target_endpoint.address(ipv4::address::loopback());
 
-  dgram_socket s2(d);
+  datagram_socket s2(d);
   s2.open(ipv4::udp());
   s2.bind(ipv4::udp::endpoint(0));
   char send_msg[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -67,4 +67,4 @@ void dgram_socket_test()
   UNIT_TEST_CHECK(memcmp(send_msg, recv_msg, sizeof(send_msg)) == 0);
 }
 
-UNIT_TEST(dgram_socket_test)
+UNIT_TEST(datagram_socket_test)

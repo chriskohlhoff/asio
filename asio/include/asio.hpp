@@ -17,7 +17,7 @@
 
 #include "asio/arg.hpp"
 #include "asio/basic_demuxer.hpp"
-#include "asio/basic_dgram_socket.hpp"
+#include "asio/basic_datagram_socket.hpp"
 #include "asio/basic_locking_dispatcher.hpp"
 #include "asio/basic_socket_acceptor.hpp"
 #include "asio/basic_socket_connector.hpp"
@@ -28,7 +28,7 @@
 #include "asio/buffered_stream.hpp"
 #include "asio/default_error_handler.hpp"
 #include "asio/demuxer.hpp"
-#include "asio/dgram_socket.hpp"
+#include "asio/datagram_socket.hpp"
 #include "asio/error.hpp"
 #include "asio/error_handler.hpp"
 #include "asio/fixed_buffer.hpp"

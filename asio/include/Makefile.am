@@ -2,7 +2,7 @@ nobase_include_HEADERS = \
 	asio.hpp \
 	asio/arg.hpp \
 	asio/basic_demuxer.hpp \
-	asio/basic_dgram_socket.hpp \
+	asio/basic_datagram_socket.hpp \
 	asio/basic_locking_dispatcher.hpp \
 	asio/basic_socket_acceptor.hpp \
 	asio/basic_socket_connector.hpp \
@@ -33,7 +33,7 @@ nobase_include_HEADERS = \
 	asio/detail/posix_time.hpp \
 	asio/detail/posix_tss_bool.hpp \
 	asio/detail/push_options.hpp \
-	asio/detail/reactive_dgram_socket_service.hpp \
+	asio/detail/reactive_datagram_socket_service.hpp \
 	asio/detail/reactive_socket_acceptor_service.hpp \
 	asio/detail/reactive_socket_connector_service.hpp \
 	asio/detail/reactive_stream_socket_service.hpp \
@@ -55,7 +55,7 @@ nobase_include_HEADERS = \
 	asio/detail/time.hpp \
 	asio/detail/tss_bool.hpp \
 	asio/detail/win_iocp_demuxer_service.hpp \
-	asio/detail/win_iocp_dgram_socket_service.hpp \
+	asio/detail/win_iocp_datagram_socket_service.hpp \
 	asio/detail/win_iocp_operation.hpp \
 	asio/detail/win_iocp_stream_socket_service.hpp \
 	asio/detail/win_event.hpp \
@@ -65,7 +65,7 @@ nobase_include_HEADERS = \
 	asio/detail/win_time.hpp \
 	asio/detail/win_tss_bool.hpp \
 	asio/detail/winsock_init.hpp \
-	asio/dgram_socket.hpp \
+	asio/datagram_socket.hpp \
 	asio/error.hpp \
 	asio/error_handler.hpp \
 	asio/fixed_buffer.hpp \

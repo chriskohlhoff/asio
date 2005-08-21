@@ -50,7 +50,7 @@ public:
   }
 
 private:
-  asio::dgram_socket socket_;
+  asio::datagram_socket socket_;
   asio::timer timer_;
   int message_count_;
   std::string message_;

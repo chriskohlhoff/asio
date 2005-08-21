@@ -1,6 +1,6 @@
 //
-// win_iocp_dgram_socket_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// win_iocp_datagram_socket_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2005 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_WIN_IOCP_DGRAM_SOCKET_SERVICE_HPP
-#define ASIO_DETAIL_WIN_IOCP_DGRAM_SOCKET_SERVICE_HPP
+#ifndef ASIO_DETAIL_WIN_IOCP_DATAGRAM_SOCKET_SERVICE_HPP
+#define ASIO_DETAIL_WIN_IOCP_DATAGRAM_SOCKET_SERVICE_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -32,14 +32,14 @@
 namespace asio {
 namespace detail {
 
-class win_iocp_dgram_socket_service
+class win_iocp_datagram_socket_service
 {
 public:
-  // The native type of the dgram socket. This type is dependent on the
+  // The native type of the datagram socket. This type is dependent on the
   // underlying implementation of the socket layer.
   typedef socket_type impl_type;
 
-  // Return a null dgram socket implementation.
+  // Return a null datagram socket implementation.
   static impl_type null()
   {
     return invalid_socket;
@@ -48,10 +48,10 @@ public:
   // The demuxer type for this service.
   typedef basic_demuxer<win_iocp_demuxer_service> demuxer_type;
 
-  // Constructor. This dgram_socket service can only work if the demuxer is
+  // Constructor. This datagram_socket service can only work if the demuxer is
   // using the win_iocp_demuxer_service. By using this type as the parameter we
   // will cause a compile error if this is not the case.
-  win_iocp_dgram_socket_service(
+  win_iocp_datagram_socket_service(
       demuxer_type& demuxer)
     : demuxer_(demuxer),
       demuxer_service_(demuxer.get_service(
@@ -65,7 +65,7 @@ public:
     return demuxer_;
   }
 
-  // Open a new dgram socket implementation.
+  // Open a new datagram socket implementation.
   template <typename Protocol, typename Error_Handler>
   void open(impl_type& impl, const Protocol& protocol,
       Error_Handler error_handler)
@@ -89,7 +89,7 @@ public:
     impl = sock.release();
   }
 
-  // Bind the dgram socket to the specified local endpoint.
+  // Bind the datagram socket to the specified local endpoint.
   template <typename Endpoint, typename Error_Handler>
   void bind(impl_type& impl, const Endpoint& endpoint,
       Error_Handler error_handler)
@@ -99,7 +99,7 @@ public:
       error_handler(asio::error(socket_ops::get_error()));
   }
 
-  // Destroy a dgram socket implementation.
+  // Destroy a datagram socket implementation.
   void close(impl_type& impl)
   {
     if (impl != null())
@@ -359,4 +359,4 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_WIN_IOCP_DGRAM_SOCKET_SERVICE_HPP
+#endif // ASIO_DETAIL_WIN_IOCP_DATAGRAM_SOCKET_SERVICE_HPP

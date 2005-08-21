@@ -39,7 +39,7 @@ public:
   }
 
 private:
-  asio::dgram_socket socket_;
+  asio::datagram_socket socket_;
   asio::ipv4::udp::endpoint sender_endpoint_;
   enum { max_length = 1024 };
   char data_[max_length];
