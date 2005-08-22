@@ -28,7 +28,7 @@ public:
   // Read.
   std::streamsize read(char* s, std::streamsize n)
   {
-    size_t bytes_read = socket_->recv(s, n);
+    size_t bytes_read = socket_->read(s, n);
     if (bytes_read == 0)
       return -1;
     return bytes_read;
@@ -37,7 +37,7 @@ public:
   // Write.
   std::streamsize write(const char* s, std::streamsize n)
   {
-    return socket_->send(s, n);
+    return socket_->write(s, n);
   }
 
 private:

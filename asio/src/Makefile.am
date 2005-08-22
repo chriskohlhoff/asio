@@ -30,7 +30,7 @@ noinst_PROGRAMS = \
 	examples/timeouts/accept_timeout \
 	examples/timeouts/connect_timeout \
 	examples/timeouts/datagram_receive_timeout \
-	examples/timeouts/stream_recv_timeout \
+	examples/timeouts/stream_receive_timeout \
 	examples/tutorial/timer1/timer \
 	examples/tutorial/timer2/timer \
 	examples/tutorial/timer3/timer \
@@ -91,7 +91,7 @@ examples_multicast_sender_SOURCES = examples/multicast/sender.cpp
 examples_timeouts_accept_timeout_SOURCES = examples/timeouts/accept_timeout.cpp
 examples_timeouts_connect_timeout_SOURCES = examples/timeouts/connect_timeout.cpp
 examples_timeouts_datagram_receive_timeout_SOURCES = examples/timeouts/datagram_receive_timeout.cpp
-examples_timeouts_stream_recv_timeout_SOURCES = examples/timeouts/stream_recv_timeout.cpp
+examples_timeouts_stream_receive_timeout_SOURCES = examples/timeouts/stream_receive_timeout.cpp
 examples_tutorial_timer1_timer_SOURCES = examples/tutorial/timer1/timer.cpp
 examples_tutorial_timer2_timer_SOURCES = examples/tutorial/timer2/timer.cpp
 examples_tutorial_timer3_timer_SOURCES = examples/tutorial/timer3/timer.cpp

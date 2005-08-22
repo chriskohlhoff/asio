@@ -36,7 +36,7 @@ EXAMPLE_EXES = \
 	examples/timeouts/accept_timeout.exe \
 	examples/timeouts/connect_timeout.exe \
 	examples/timeouts/datagram_receive_timeout.exe \
-	examples/timeouts/stream_recv_timeout.exe \
+	examples/timeouts/stream_receive_timeout.exe \
 	examples/tutorial/timer1/timer.exe \
 	examples/tutorial/timer2/timer.exe \
 	examples/tutorial/timer3/timer.exe \

@@ -293,10 +293,194 @@ public:
     service_.shutdown(impl_, what, default_error_handler());
   }
 
+  /// Send some data to the peer.
+  /**
+   * This function is used to send data on the stream socket. The function call
+   * will block until the data has been sent successfully or an error occurs.
+   *
+   * @param data The data to be sent on the socket.
+   *
+   * @param length The size of the data to be sent, in bytes.
+   *
+   * @param flags Flags specifying how the send call is to be made.
+   *
+   * @returns The number of bytes sent or 0 if the connection was closed
+   * cleanly.
+   *
+   * @throws asio::error Thrown on failure.
+   *
+   * @note The send operation may not transmit all of the data to the peer.
+   * Consider using the asio::write_n() function if you need to ensure that all
+   * data is written before the blocking operation completes.
+   */
+  size_t send(const void* data, size_t length, message_flags flags)
+  {
+    return service_.send(impl_, data, length, flags, default_error_handler());
+  }
+
+  /// Send some data to the peer.
+  /**
+   * This function is used to send data on the stream socket. The function call
+   * will block until the data has been sent successfully or an error occurs.
+   *
+   * @param data The data to be sent on the socket.
+   *
+   * @param length The size of the data to be sent, in bytes.
+   *
+   * @param flags Flags specifying how the send call is to be made.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::error& error // Result of operation
+   * ); @endcode
+   *
+   * @returns The number of bytes sent or 0 if the connection was closed
+   * cleanly.
+   *
+   * @note The send operation may not transmit all of the data to the peer.
+   * Consider using the asio::write_n() function if you need to ensure that all
+   * data is written before the blocking operation completes.
+   */
+  template <typename Error_Handler>
+  size_t send(const void* data, size_t length, message_flags flags,
+      Error_Handler error_handler)
+  {
+    return service_.send(impl_, data, length, flags, error_handler);
+  }
+
+  /// Start an asynchronous send.
+  /**
+   * This function is used to asynchronously send data on the stream socket.
+   * The function call always returns immediately.
+   *
+   * @param data The data to be sent on the socket. Ownership of the data is
+   * retained by the caller, which must guarantee that it is valid until the
+   * handler is called.
+   *
+   * @param length The size of the data to be sent, in bytes.
+   *
+   * @param flags Flags specifying how the send call is to be made.
+   *
+   * @param handler The handler to be called when the send operation completes.
+   * Copies will be made of the handler as required. The equivalent function
+   * signature of the handler must be:
+   * @code void handler(
+   *   const asio::error& error, // Result of operation
+   *   size_t bytes_transferred  // Number of bytes sent
+   * ); @endcode
+   *
+   * @note The send operation may not transmit all of the data to the peer.
+   * Consider using the asio::async_write_n() function if you need to ensure
+   * that all data is written before the asynchronous operation completes.
+   */
+  template <typename Handler>
+  void async_send(const void* data, size_t length, message_flags flags,
+      Handler handler)
+  {
+    service_.async_send(impl_, data, length, flags, handler);
+  }
+
+  /// Receive some data on the socket.
+  /**
+   * This function is used to receive data on the stream socket. The function
+   * call will block until data has been received successfully or an error
+   * occurs.
+   *
+   * @param data The buffer into which the data will be received.
+   *
+   * @param max_length The maximum size of the data to be received, in bytes.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
+   *
+   * @returns The number of bytes received or 0 if the connection was closed
+   * cleanly.
+   *
+   * @throws asio::error Thrown on failure.
+   *
+   * @note The receive operation may not receive all of the requested number of
+   * bytes. Consider using the asio::read_n() function if you need to ensure
+   * that the requested amount of data is read before the blocking operation
+   * completes.
+   */
+  size_t receive(void* data, size_t max_length, message_flags flags)
+  {
+    return service_.receive(impl_, data, max_length, flags,
+        default_error_handler());
+  }
+
+  /// Receive some data on the socket.
+  /**
+   * This function is used to receive data on the stream socket. The function
+   * call will block until data has been received successfully or an error
+   * occurs.
+   *
+   * @param data The buffer into which the data will be received.
+   *
+   * @param max_length The maximum size of the data to be received, in bytes.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::error& error // Result of operation
+   * ); @endcode
+   *
+   * @returns The number of bytes received or 0 if the connection was closed
+   * cleanly.
+   *
+   * @note The receive operation may not receive all of the requested number of
+   * bytes. Consider using the asio::read_n() function if you need to ensure
+   * that the requested amount of data is read before the blocking operation
+   * completes.
+   */
+  template <typename Error_Handler>
+  size_t receive(void* data, size_t max_length, message_flags flags,
+      Error_Handler error_handler)
+  {
+    return service_.receive(impl_, data, max_length, flags, error_handler);
+  }
+
+  /// Start an asynchronous receive.
+  /**
+   * This function is used to asynchronously receive data from the stream
+   * socket. The function call always returns immediately.
+   *
+   * @param data The buffer into which the data will be received. Ownership of
+   * the buffer is retained by the caller, which must guarantee that it is valid
+   * until the handler is called.
+   *
+   * @param max_length The maximum size of the data to be received, in bytes.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
+   *
+   * @param handler The handler to be called when the receive operation
+   * completes. Copies will be made of the handler as required. The equivalent
+   * function signature of the handler must be:
+   * @code void handler(
+   *   const asio::error& error, // Result of operation
+   *   size_t bytes_transferred  // Number of bytes received
+   * ); @endcode
+   *
+   * @note The receive operation may not receive all of the requested number of
+   * bytes. Consider using the asio::async_read_n() function if you need to
+   * ensure that the requested amount of data is received before the
+   * asynchronous operation completes.
+   */
+  template <typename Handler>
+  void async_receive(void* data, size_t max_length, message_flags flags,
+      Handler handler)
+  {
+    service_.async_receive(impl_, data, max_length, flags, handler);
+  }
+
   /// Write some data to the socket.
   /**
    * This function is used to write data to the stream socket. The function call
-   * will block until the data has been sent successfully or an error occurs.
+   * will block until the data has been written successfully or an error occurs.
    *
    * @param data The data to be written to the socket.
    *
@@ -320,7 +504,7 @@ public:
   /// Write some data to the socket.
   /**
    * This function is used to write data to the stream socket. The function call
-   * will block until the data has been sent successfully or an error occurs.
+   * will block until the data has been written successfully or an error occurs.
    *
    * @param data The data to be written to the socket.
    *
@@ -333,7 +517,7 @@ public:
    *   const asio::error& error // Result of operation
    * ); @endcode
    *
-   * @returns The number of bytes sent or 0 if the connection was closed
+   * @returns The number of bytes written or 0 if the connection was closed
    * cleanly.
    *
    * @note The write operation may not transmit all of the data to the peer.
@@ -378,8 +562,7 @@ public:
   /// Read some data from the socket.
   /**
    * This function is used to read data from the stream socket. The function
-   * call will block until data has been received successfully or an error
-   * occurs.
+   * call will block until data has been read successfully or an error occurs.
    *
    * @param data The buffer into which the data will be read.
    *
@@ -390,10 +573,9 @@ public:
    *
    * @throws asio::error Thrown on failure.
    *
-   * @note The read operation may not receive all of the requested number of
-   * bytes. Consider using the asio::read_n() function if you need to ensure
-   * that the requested amount of data is read before the blocking operation
-   * completes.
+   * @note The read operation may not read all of the requested number of bytes.
+   * Consider using the asio::read_n() function if you need to ensure that the
+   * requested amount of data is read before the blocking operation completes.
    */
   size_t read(void* data, size_t max_length)
   {
@@ -404,8 +586,7 @@ public:
   /// Read some data from the socket.
   /**
    * This function is used to read data from the stream socket. The function
-   * call will block until data has been received successfully or an error
-   * occurs.
+   * call will block until data has been read successfully or an error occurs.
    *
    * @param data The buffer into which the data will be read.
    *
@@ -421,10 +602,9 @@ public:
    * @returns The number of bytes read or 0 if the connection was closed
    * cleanly.
    *
-   * @note The read operation may not receive all of the requested number of
-   * bytes. Consider using the asio::read_n() function if you need to ensure
-   * that the requested amount of data is read before the blocking operation
-   * completes.
+   * @note The read operation may not read all of the requested number of bytes.
+   * Consider using the asio::read_n() function if you need to ensure that the
+   * requested amount of data is read before the blocking operation completes.
    */
   template <typename Error_Handler>
   size_t read(void* data, size_t max_length, Error_Handler error_handler)
@@ -449,12 +629,12 @@ public:
    * signature of the handler must be:
    * @code void handler(
    *   const asio::error& error, // Result of operation
-   *   size_t bytes_transferred  // Number of bytes received
+   *   size_t bytes_transferred  // Number of bytes read
    * ); @endcode
    *
    * @note The read operation may not read all of the requested number of bytes.
    * Consider using the asio::async_read_n() function if you need to ensure that
-   * the requested amount of data is received before the asynchronous operation
+   * the requested amount of data is read before the asynchronous operation
    * completes.
    */
   template <typename Handler>
