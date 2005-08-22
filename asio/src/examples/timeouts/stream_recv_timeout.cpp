@@ -14,7 +14,8 @@ public:
       socket_(d)
   {
     acceptor_.async_accept(socket_,
-        boost::bind(&stream_handler::handle_accept, this, asio::arg::error));
+        boost::bind(&stream_handler::handle_accept, this,
+          asio::placeholders::error));
   }
 
   void handle_accept(const error& err)
@@ -27,8 +28,9 @@ public:
     {
       std::cout << "Successful accept\n";
 
-      socket_.async_recv(buf_, sizeof(buf_),
-          boost::bind(&stream_handler::handle_recv, this, asio::arg::error));
+      socket_.async_read(buf_, sizeof(buf_),
+          boost::bind(&stream_handler::handle_recv, this,
+            asio::placeholders::error));
       timer_.expiry(asio::time::now() + 5);
       timer_.async_wait(boost::bind(&stream_socket::close, &socket_));
     }

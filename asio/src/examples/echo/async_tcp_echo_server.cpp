@@ -18,18 +18,18 @@ public:
 
   void start()
   {
-    socket_.async_recv(data_, max_length,
-        boost::bind(&session::handle_recv, this, asio::arg::error,
-          asio::arg::bytes_recvd));
+    socket_.async_read(data_, max_length,
+        boost::bind(&session::handle_read, this, asio::placeholders::error,
+          asio::placeholders::bytes_transferred));
   }
 
-  void handle_recv(const asio::error& error, size_t bytes_recvd)
+  void handle_read(const asio::error& error, size_t bytes_transferred)
   {
-    if (!error && bytes_recvd > 0)
+    if (!error && bytes_transferred > 0)
     {
-      asio::async_send_n(socket_, data_, bytes_recvd,
-          boost::bind(&session::handle_send, this, asio::arg::error,
-            asio::arg::last_bytes_sent));
+      asio::async_write_n(socket_, data_, bytes_transferred,
+          boost::bind(&session::handle_write, this, asio::placeholders::error,
+            asio::placeholders::bytes_transferred));
     }
     else
     {
@@ -37,13 +37,13 @@ public:
     }
   }
 
-  void handle_send(const asio::error& error, size_t last_bytes_sent)
+  void handle_write(const asio::error& error, size_t last_bytes_transferred)
   {
-    if (!error && last_bytes_sent > 0)
+    if (!error && last_bytes_transferred > 0)
     {
-      socket_.async_recv(data_, max_length,
-          boost::bind(&session::handle_recv, this, asio::arg::error,
-            asio::arg::bytes_recvd));
+      socket_.async_read(data_, max_length,
+          boost::bind(&session::handle_read, this, asio::placeholders::error,
+            asio::placeholders::bytes_transferred));
     }
     else
     {
@@ -67,7 +67,7 @@ public:
     session* new_session = new session(demuxer_);
     acceptor_.async_accept(new_session->socket(),
         boost::bind(&server::handle_accept, this, new_session,
-          asio::arg::error));
+          asio::placeholders::error));
   }
 
   void handle_accept(session* new_session, const asio::error& error)
@@ -78,7 +78,7 @@ public:
       new_session = new session(demuxer_);
       acceptor_.async_accept(new_session->socket(),
           boost::bind(&server::handle_accept, this, new_session,
-            asio::arg::error));
+            asio::placeholders::error));
     }
     else
     {

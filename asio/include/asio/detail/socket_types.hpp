@@ -59,9 +59,12 @@ typedef int socket_addr_len_type;
 typedef unsigned long ioctl_arg_type;
 typedef u_long u_long_type;
 typedef u_short u_short_type;
-const int shutdown_recv = SD_RECEIVE;
+const int shutdown_receive = SD_RECEIVE;
 const int shutdown_send = SD_SEND;
 const int shutdown_both = SD_BOTH;
+const int message_peek = MSG_PEEK;
+const int message_out_of_band = MSG_OOB;
+const int message_do_not_route = MSG_DONTROUTE;
 #else
 typedef int socket_type;
 const int invalid_socket = -1;
@@ -73,9 +76,12 @@ typedef socklen_t socket_addr_len_type;
 typedef int ioctl_arg_type;
 typedef uint32_t u_long_type;
 typedef uint16_t u_short_type;
-const int shutdown_recv = SHUT_RD;
+const int shutdown_receive = SHUT_RD;
 const int shutdown_send = SHUT_WR;
 const int shutdown_both = SHUT_RDWR;
+const int message_peek = MSG_PEEK;
+const int message_out_of_band = MSG_OOB;
+const int message_do_not_route = MSG_DONTROUTE;
 #endif
 
 } // namespace detail

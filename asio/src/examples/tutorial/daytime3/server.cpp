@@ -3,12 +3,12 @@
 #include "boost/bind.hpp"
 #include "asio.hpp"
 
-void handle_send(asio::stream_socket* socket, char* send_buf,
-    const asio::error& /*error*/, size_t /*last_bytes_sent*/,
-    size_t /*total_bytes_sent*/)
+void handle_write(asio::stream_socket* socket, char* write_buf,
+    const asio::error& /*error*/, size_t /*last_bytes_transferred*/,
+    size_t /*total_bytes_transferred*/)
 {
   using namespace std; // For free.
-  free(send_buf);
+  free(write_buf);
   delete socket;
 }
 
@@ -19,17 +19,20 @@ void handle_accept(asio::socket_acceptor* acceptor,
   {
     using namespace std; // For time_t, time, ctime, strdup and strlen.
     time_t now = time(0);
-    char* send_buf = strdup(ctime(&now));
-    size_t send_length = strlen(send_buf);
+    char* write_buf = strdup(ctime(&now));
+    size_t write_length = strlen(write_buf);
 
-    asio::async_send_n(*socket, send_buf, send_length,
-        boost::bind(handle_send, socket, send_buf, asio::arg::error,
-          asio::arg::last_bytes_sent, asio::arg::total_bytes_sent));
+    asio::async_write_n(*socket, write_buf, write_length,
+        boost::bind(handle_write, socket, write_buf,
+          asio::placeholders::error,
+          asio::placeholders::last_bytes_transferred,
+          asio::placeholders::total_bytes_transferred));
 
     socket = new asio::stream_socket(acceptor->demuxer());
 
     acceptor->async_accept(*socket,
-        boost::bind(handle_accept, acceptor, socket, asio::arg::error));
+        boost::bind(handle_accept, acceptor, socket,
+          asio::placeholders::error));
   }
   else
   {
@@ -48,7 +51,8 @@ int main()
     asio::stream_socket* socket = new asio::stream_socket(demuxer);
 
     acceptor.async_accept(*socket,
-        boost::bind(handle_accept, &acceptor, socket, asio::arg::error));
+        boost::bind(handle_accept, &acceptor, socket,
+          asio::placeholders::error));
 
     demuxer.run();
   }

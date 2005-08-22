@@ -1,6 +1,6 @@
 //
-// buffered_recv_stream_fwd.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// buffered_write_stream_fwd.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2005 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_BUFFERED_RECV_STREAM_FWD_HPP
-#define ASIO_BUFFERED_RECV_STREAM_FWD_HPP
+#ifndef ASIO_BUFFERED_WRITE_STREAM_FWD_HPP
+#define ASIO_BUFFERED_WRITE_STREAM_FWD_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -22,10 +22,10 @@
 namespace asio {
 
 template <typename Stream, typename Buffer = fixed_buffer<8192> >
-class buffered_recv_stream;
+class buffered_write_stream;
 
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_BUFFERED_RECV_STREAM_FWD_HPP
+#endif // ASIO_BUFFERED_WRITE_STREAM_FWD_HPP

@@ -58,9 +58,11 @@ void datagram_socket_test()
 
   target_endpoint = sender_endpoint;
   s1.async_sendto(send_msg, sizeof(send_msg), target_endpoint,
-      boost::bind(handle_send, sizeof(send_msg), arg::error, arg::bytes_sent));
+      boost::bind(handle_send, sizeof(send_msg),
+        placeholders::error, placeholders::bytes_transferred));
   s2.async_recvfrom(recv_msg, sizeof(recv_msg), sender_endpoint,
-      boost::bind(handle_recv, sizeof(recv_msg), arg::error, arg::bytes_recvd));
+      boost::bind(handle_recv, sizeof(recv_msg),
+        placeholders::error, placeholders::bytes_transferred));
 
   d.run();
 

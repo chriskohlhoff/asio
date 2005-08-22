@@ -10,7 +10,7 @@ void print(const asio::error& /*e*/, asio::timer* t, int* count)
     ++(*count);
 
     t->expiry(t->expiry() + 1);
-    t->async_wait(boost::bind(print, asio::arg::error, t, count));
+    t->async_wait(boost::bind(print, asio::placeholders::error, t, count));
   }
 }
 
@@ -20,7 +20,7 @@ int main()
 
   int count = 0;
   asio::timer t(d, asio::time::now() + 1);
-  t.async_wait(boost::bind(print, asio::arg::error, &t, &count));
+  t.async_wait(boost::bind(print, asio::placeholders::error, &t, &count));
 
   d.run();
 

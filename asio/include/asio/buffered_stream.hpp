@@ -21,24 +21,24 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/buffered_recv_stream.hpp"
-#include "asio/buffered_send_stream.hpp"
+#include "asio/buffered_read_stream.hpp"
+#include "asio/buffered_write_stream.hpp"
 #include "asio/buffered_stream_fwd.hpp"
 
 namespace asio {
 
-/// Adds buffering to the send- and receive-related operations of a stream.
+/// Adds buffering to the read- and write-related operations of a stream.
 /**
  * The buffered_stream class template can be used to add buffering to the
- * synchronous and asynchronous send and receive operations of a stream.
+ * synchronous and asynchronous read and write operations of a stream.
  *
  * @par Thread Safety:
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  *
  * @par Concepts:
- * Async_Object, Async_Recv_Stream, Async_Send_Stream, Stream,
- * Sync_Recv_Stream, Sync_Send_Stream.
+ * Async_Object, Async_Read_Stream, Async_Write_Stream, Stream,
+ * Sync_Read_Stream, Sync_Write_Stream.
  */
 template <typename Stream, typename Buffer>
 class buffered_stream
@@ -82,16 +82,16 @@ public:
   /// The buffer type for this buffering layer.
   typedef Buffer buffer_type;
 
-  /// Get the recv buffer used by this buffering layer.
-  buffer_type& recv_buffer()
+  /// Get the read buffer used by this buffering layer.
+  buffer_type& read_buffer()
   {
-    return stream_impl_.recv_buffer();
+    return stream_impl_.read_buffer();
   }
 
-  /// Get the send buffer used by this buffering layer.
-  buffer_type& send_buffer()
+  /// Get the write buffer used by this buffering layer.
+  buffer_type& write_buffer()
   {
-    return stream_impl_.next_layer().send_buffer();
+    return stream_impl_.next_layer().write_buffer();
   }
 
   /// Close the stream.
@@ -101,16 +101,16 @@ public:
   }
 
   /// Flush all data from the buffer to the next layer. Returns the number of
-  /// bytes written to the next layer on the last send operation, or 0 if the
-  /// underlying connection was closed. Throws an exception on failure.
+  /// bytes written to the next layer on the last write operation, or 0 if the
+  /// underlying stream was closed. Throws an exception on failure.
   size_t flush()
   {
     return stream_impl_.next_layer().flush();
   }
 
   /// Flush all data from the buffer to the next layer. Returns the number of
-  /// bytes written to the next layer on the last send operation, or 0 if the
-  /// underlying connection was closed.
+  /// bytes written to the next layer on the last write operation, or 0 if the
+  /// underlying stream was closed.
   template <typename Error_Handler>
   size_t flush(Error_Handler error_handler)
   {
@@ -124,40 +124,40 @@ public:
     return stream_impl_.next_layer().async_flush(handler);
   }
 
-  /// Send the given data to the peer. Returns the number of bytes sent or 0 if
-  /// the stream was closed cleanly. Throws an exception on failure.
-  size_t send(const void* data, size_t length)
+  /// Write the given data to the stream. Returns the number of bytes written or
+  /// 0 if the stream was closed cleanly. Throws an exception on failure.
+  size_t write(const void* data, size_t length)
   {
-    return stream_impl_.send(data, length);
+    return stream_impl_.write(data, length);
   }
 
-  /// Send the given data to the peer. Returns the number of bytes sent or 0 if
-  /// the stream was closed cleanly.
+  /// Write the given data to the stream. Returns the number of bytes written or
+  /// 0 if the stream was closed cleanly.
   template <typename Error_Handler>
-  size_t send(const void* data, size_t length, Error_Handler error_handler)
+  size_t write(const void* data, size_t length, Error_Handler error_handler)
   {
-    return stream_impl_.send(data, length, error_handler);
+    return stream_impl_.write(data, length, error_handler);
   }
 
-  /// Start an asynchronous send. The data being sent must be valid for the
+  /// Start an asynchronous write. The data being written must be valid for the
   /// lifetime of the asynchronous operation.
   template <typename Handler>
-  void async_send(const void* data, size_t length, Handler handler)
+  void async_write(const void* data, size_t length, Handler handler)
   {
-    stream_impl_.async_send(data, length, handler);
+    stream_impl_.async_write(data, length, handler);
   }
 
   /// Fill the buffer with some data. Returns the number of bytes placed in the
-  /// buffer as a result of the operation, or 0 if the underlying connection
-  /// was closed. Throws an exception on failure.
+  /// buffer as a result of the operation, or 0 if the underlying stream was
+  /// closed. Throws an exception on failure.
   size_t fill()
   {
     return stream_impl_.fill();
   }
 
   /// Fill the buffer with some data. Returns the number of bytes placed in the
-  /// buffer as a result of the operation, or 0 if the underlying connection
-  /// was closed.
+  /// buffer as a result of the operation, or 0 if the underlying stream was
+  /// closed.
   template <typename Error_Handler>
   size_t fill(Error_Handler error_handler)
   {
@@ -171,51 +171,51 @@ public:
     stream_impl_.async_fill(handler);
   }
 
-  /// Receive some data from the peer. Returns the number of bytes received or
-  /// 0 if the stream was closed cleanly. Throws an exception on failure.
-  size_t recv(void* data, size_t max_length)
+  /// Read some data from the stream. Returns the number of bytes read or 0 if
+  /// the stream was closed cleanly. Throws an exception on failure.
+  size_t read(void* data, size_t max_length)
   {
-    return stream_impl_.recv(data, max_length);
+    return stream_impl_.read(data, max_length);
   }
 
-  /// Receive some data from the peer. Returns the number of bytes received or
-  /// 0 if the stream was closed cleanly.
+  /// Read some data from the stream. Returns the number of bytes read or 0 if
+  /// the stream was closed cleanly.
   template <typename Error_Handler>
-  size_t recv(void* data, size_t max_length, Error_Handler error_handler)
+  size_t read(void* data, size_t max_length, Error_Handler error_handler)
   {
-    return stream_impl_.recv(data, max_length, error_handler);
+    return stream_impl_.read(data, max_length, error_handler);
   }
 
-  /// Start an asynchronous receive. The buffer for the data being received
+  /// Start an asynchronous read. The buffer into which the data will be read
   /// must be valid for the lifetime of the asynchronous operation.
   template <typename Handler>
-  void async_recv(void* data, size_t max_length, Handler handler)
+  void async_read(void* data, size_t max_length, Handler handler)
   {
-    stream_impl_.async_recv(data, max_length, handler);
+    stream_impl_.async_read(data, max_length, handler);
   }
 
-  /// Peek at the incoming data on the stream socket. Returns the number of
-  /// bytes received or 0 if the connection was closed cleanly.
+  /// Peek at the incoming data on the stream. Returns the number of bytes read
+  /// or 0 if the stream was closed cleanly.
   size_t peek(void* data, size_t max_length)
   {
     return stream_impl_.peek(data, max_length);
   }
 
-  /// Peek at the incoming data on the stream socket. Returns the number of
-  /// bytes received or 0 if the connection was closed cleanly.
+  /// Peek at the incoming data on the stream. Returns the number of bytes read
+  /// or 0 if the stream was closed cleanly.
   template <typename Error_Handler>
   size_t peek(void* data, size_t max_length, Error_Handler error_handler)
   {
     return stream_impl_.peek(data, max_length, error_handler);
   }
 
-  /// Determine the amount of data that may be received without blocking.
+  /// Determine the amount of data that may be read without blocking.
   size_t in_avail()
   {
     return stream_impl_.in_avail();
   }
 
-  /// Determine the amount of data that may be received without blocking.
+  /// Determine the amount of data that may be read without blocking.
   template <typename Error_Handler>
   size_t in_avail(Error_Handler error_handler)
   {
@@ -224,7 +224,7 @@ public:
 
 private:
   /// The buffered stream implementation.
-  buffered_recv_stream<buffered_send_stream<Stream, Buffer>, Buffer>
+  buffered_read_stream<buffered_write_stream<Stream, Buffer>, Buffer>
     stream_impl_;
 };
 

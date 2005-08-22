@@ -129,21 +129,7 @@ public:
   void shutdown(impl_type& impl, socket_base::shutdown_type what,
       Error_Handler error_handler)
   {
-    int shutdown_flag;
-    switch (what)
-    {
-    case socket_base::shutdown_recv:
-      shutdown_flag = shutdown_recv;
-      break;
-    case socket_base::shutdown_send:
-      shutdown_flag = shutdown_send;
-      break;
-    case socket_base::shutdown_both:
-    default:
-      shutdown_flag = shutdown_both;
-      break;
-    }
-    if (socket_ops::shutdown(impl, shutdown_flag) != 0)
+    if (socket_ops::shutdown(impl, what) != 0)
       error_handler(asio::error(socket_ops::get_error()));
   }
 
@@ -151,9 +137,9 @@ public:
   // 0 if the connection was closed cleanly.
   template <typename Error_Handler>
   size_t send(impl_type& impl, const void* data, size_t length,
-      Error_Handler error_handler)
+      socket_base::message_flags flags, Error_Handler error_handler)
   {
-    int bytes_sent = socket_ops::send(impl, data, length, 0);
+    int bytes_sent = socket_ops::send(impl, data, length, flags);
     if (bytes_sent < 0)
     {
       error_handler(asio::error(socket_ops::get_error()));
@@ -198,9 +184,9 @@ public:
   // lifetime of the asynchronous operation.
   template <typename Handler>
   void async_send(impl_type& impl, const void* data, size_t length,
-      Handler handler)
+      socket_base::message_flags flags, Handler handler)
   {
-    send_operation<Handler>* send_op = new send_operation<Handler>(handler);
+    send_operation<Handler>* op = new send_operation<Handler>(handler);
 
     demuxer_service_.work_started();
 
@@ -209,12 +195,12 @@ public:
     buf.buf = static_cast<char*>(const_cast<void*>(data));
     DWORD bytes_transferred = 0;
 
-    int result = ::WSASend(impl, &buf, 1, &bytes_transferred, 0, send_op, 0);
+    int result = ::WSASend(impl, &buf, 1, &bytes_transferred, flags, op, 0);
     DWORD last_error = ::WSAGetLastError();
 
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
-      delete send_op;
+      delete op;
       asio::error error(last_error);
       demuxer_service_.post(bind_handler(handler, error, bytes_transferred));
       demuxer_service_.work_finished();
@@ -224,10 +210,10 @@ public:
   // Receive some data from the peer. Returns the number of bytes received or
   // 0 if the connection was closed cleanly.
   template <typename Error_Handler>
-  size_t recv(impl_type& impl, void* data, size_t max_length,
-      Error_Handler error_handler)
+  size_t receive(impl_type& impl, void* data, size_t max_length,
+      socket_base::message_flags flags, Error_Handler error_handler)
   {
-    int bytes_recvd = socket_ops::recv(impl, data, max_length, 0);
+    int bytes_recvd = socket_ops::recv(impl, data, max_length, flags);
     if (bytes_recvd < 0)
     {
       error_handler(asio::error(socket_ops::get_error()));
@@ -237,12 +223,12 @@ public:
   }
 
   template <typename Handler>
-  class recv_operation
+  class receive_operation
     : public win_iocp_operation
   {
   public:
-    recv_operation(Handler handler)
-      : win_iocp_operation(&recv_operation<Handler>::do_completion_impl),
+    receive_operation(Handler handler)
+      : win_iocp_operation(&receive_operation<Handler>::do_completion_impl),
         handler_(handler)
     {
     }
@@ -252,7 +238,8 @@ public:
         win_iocp_demuxer_service& demuxer_service, HANDLE iocp,
         DWORD last_error, size_t bytes_transferred)
     {
-      recv_operation<Handler>* h = static_cast<recv_operation<Handler>*>(op);
+      receive_operation<Handler>* h
+        = static_cast<receive_operation<Handler>*>(op);
       asio::error error(last_error);
       try
       {
@@ -271,10 +258,10 @@ public:
   // Start an asynchronous receive. The buffer for the data being received
   // must be valid for the lifetime of the asynchronous operation.
   template <typename Handler>
-  void async_recv(impl_type& impl, void* data, size_t max_length,
-      Handler handler)
+  void async_receive(impl_type& impl, void* data, size_t max_length,
+      socket_base::message_flags flags, Handler handler)
   {
-    recv_operation<Handler>* recv_op = new recv_operation<Handler>(handler);
+    receive_operation<Handler>* op = new receive_operation<Handler>(handler);
 
     demuxer_service_.work_started();
 
@@ -282,34 +269,19 @@ public:
     buf.len = static_cast<u_long>(max_length);
     buf.buf = static_cast<char*>(data);
     DWORD bytes_transferred = 0;
-    DWORD flags = 0;
+    DWORD recv_flags = flags;
 
-    int result = ::WSARecv(impl, &buf, 1, &bytes_transferred, &flags, recv_op,
-        0);
+    int result = ::WSARecv(impl, &buf, 1,
+        &bytes_transferred, &recv_flags, op, 0);
     DWORD last_error = ::WSAGetLastError();
 
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
-      delete recv_op;
+      delete op;
       asio::error error(last_error);
       demuxer_service_.post(bind_handler(handler, error, bytes_transferred));
       demuxer_service_.work_finished();
     }
-  }
-
-  /// Peek at the incoming data on the stream socket. Returns the number of
-  /// bytes received or 0 if the connection was closed cleanly.
-  template <typename Error_Handler>
-  size_t peek(impl_type& impl, void* data, size_t max_length,
-      Error_Handler error_handler)
-  {
-    int bytes_recvd = socket_ops::recv(impl, data, max_length, MSG_PEEK);
-    if (bytes_recvd < 0)
-    {
-      error_handler(asio::error(socket_ops::get_error()));
-      return 0;
-    }
-    return bytes_recvd;
   }
 
   /// Determine the amount of data that may be received without blocking.

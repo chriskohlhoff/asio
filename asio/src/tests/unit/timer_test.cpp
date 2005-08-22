@@ -127,7 +127,7 @@ void timer_test()
 
   asio::timer t5(d, asio::time::now() + 10);
   t5.async_wait(boost::bind(increment_if_not_cancelled, &count,
-        asio::arg::error));
+        asio::placeholders::error));
   asio::timer t6(d, asio::time::now() + 1);
   t6.async_wait(boost::bind(cancel_timer, &t5));
 
@@ -148,7 +148,7 @@ void timer_test()
   // Wait on the timer again without cancelling it. This time the asynchronous
   // wait should run to completion and increment the counter.
   t5.async_wait(boost::bind(increment_if_not_cancelled, &count,
-        asio::arg::error));
+        asio::placeholders::error));
 
   d.reset();
   d.run();

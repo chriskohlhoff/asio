@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
     connector.connect(socket, remote_endpoint);
 
     char buf[128];
-    while (size_t len = socket.recv(buf, sizeof(buf)))
+    while (size_t len = socket.read(buf, sizeof(buf)))
       std::cout.write(buf, len);
   }
   catch (asio::error& e)

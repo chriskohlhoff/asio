@@ -1,6 +1,6 @@
 //
-// Async_Send_Stream.hpp
-// ~~~~~~~~~~~~~~~~~~~~~
+// Async_Write_Stream.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2005 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -8,37 +8,37 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-/// Asynchronous send stream concept.
+/// Asynchronous write stream concept.
 /**
  * @par Implemented By:
  * asio::basic_stream_socket @n
- * asio::buffered_recv_stream @n
- * asio::buffered_send_stream @n
+ * asio::buffered_read_stream @n
+ * asio::buffered_write_stream @n
  * asio::buffered_stream
  */
-class Async_Send_Stream
+class Async_Write_Stream
   : public Async_Object
 {
 public:
-  /// Start an asynchronous send.
+  /// Start an asynchronous write.
   /**
-   * This function is used to asynchronously send data on the stream. The
+   * This function is used to asynchronously write data on the stream. The
    * function call always returns immediately.
    *
-   * @param data The data to be sent on the stream. Ownership of the data is
+   * @param data The data to be written on the stream. Ownership of the data is
    * retained by the caller, which must guarantee that it is valid until the
    * handler is called.
    *
-   * @param length The size of the data to be sent, in bytes.
+   * @param length The size of the data to be written, in bytes.
    *
-   * @param handler The handler to be called when the send operation completes.
+   * @param handler The handler to be called when the write operation completes.
    * Copies will be made of the handler as required. The equivalent function
    * signature of the handler must be:
    * @code void handler(
    *   const implementation_defined& error, // Result of operation
-   *   size_t bytes_sent                    // Number of bytes sent
+   *   size_t bytes_transferred             // Number of bytes written
    * ); @endcode
    */
   template <typename Handler>
-  void async_send(const void* data, size_t length, Handler handler);
+  void async_write(const void* data, size_t length, Handler handler);
 };

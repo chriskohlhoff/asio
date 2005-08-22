@@ -1,6 +1,6 @@
 //
-// is_recv_buffered_test.cpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~
+// is_write_buffered_test.cpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2005 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -38,37 +38,37 @@ public:
     return *this;
   }
 
-  size_t send(const void* data, size_t length)
+  size_t write(const void* data, size_t length)
   {
     return 0;
   }
 
   template <typename Error_Handler>
-  size_t send(const void* data, size_t length, Error_Handler error_handler)
+  size_t write(const void* data, size_t length, Error_Handler error_handler)
   {
     return 0;
   }
 
   template <typename Handler>
-  void async_send(const void* data, size_t length, Handler handler)
+  void async_write(const void* data, size_t length, Handler handler)
   {
     asio::error error;
     demuxer_.post(asio::detail::bind_handler(handler, error, 0));
   }
 
-  size_t recv(void* data, size_t length)
+  size_t read(void* data, size_t length)
   {
     return 0;
   }
 
   template <typename Error_Handler>
-  size_t recv(void* data, size_t length, Error_Handler error_handler)
+  size_t read(void* data, size_t length, Error_Handler error_handler)
   {
     return 0;
   }
 
   template <typename Handler>
-  void async_recv(void* data, size_t length, Handler handler)
+  void async_read(void* data, size_t length, Handler handler)
   {
     asio::error error;
     demuxer_.post(asio::detail::bind_handler(handler, error, 0));
@@ -78,29 +78,29 @@ private:
   demuxer_type& demuxer_;
 };
 
-void is_recv_buffered_test()
+void is_write_buffered_test()
 {
-  UNIT_TEST_CHECK(!asio::is_recv_buffered<asio::stream_socket>::value);
+  UNIT_TEST_CHECK(!asio::is_write_buffered<asio::stream_socket>::value);
 
-  UNIT_TEST_CHECK(asio::is_recv_buffered<
-      asio::buffered_recv_stream<asio::stream_socket> >::value);
+  UNIT_TEST_CHECK(!asio::is_write_buffered<
+      asio::buffered_read_stream<asio::stream_socket> >::value);
 
-  UNIT_TEST_CHECK(!asio::is_recv_buffered<
-      asio::buffered_send_stream<asio::stream_socket> >::value);
+  UNIT_TEST_CHECK(asio::is_write_buffered<
+      asio::buffered_write_stream<asio::stream_socket> >::value);
 
-  UNIT_TEST_CHECK(asio::is_recv_buffered<
+  UNIT_TEST_CHECK(asio::is_write_buffered<
       asio::buffered_stream<asio::stream_socket> >::value);
 
-  UNIT_TEST_CHECK(!asio::is_recv_buffered<test_stream>::value);
+  UNIT_TEST_CHECK(!asio::is_write_buffered<test_stream>::value);
 
-  UNIT_TEST_CHECK(asio::is_recv_buffered<
-      asio::buffered_recv_stream<test_stream> >::value);
+  UNIT_TEST_CHECK(!asio::is_write_buffered<
+      asio::buffered_read_stream<test_stream> >::value);
 
-  UNIT_TEST_CHECK(!asio::is_recv_buffered<
-      asio::buffered_send_stream<test_stream> >::value);
+  UNIT_TEST_CHECK(asio::is_write_buffered<
+      asio::buffered_write_stream<test_stream> >::value);
 
-  UNIT_TEST_CHECK(asio::is_recv_buffered<
+  UNIT_TEST_CHECK(asio::is_write_buffered<
       asio::buffered_stream<test_stream> >::value);
 }
 
-UNIT_TEST(is_recv_buffered_test)
+UNIT_TEST(is_write_buffered_test)

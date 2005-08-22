@@ -15,8 +15,8 @@ void session(stream_socket_ptr sock)
     char data[max_length];
 
     size_t length;
-    while ((length = sock->recv(data, max_length)) > 0)
-      if (asio::send_n(*sock, data, length) == 0)
+    while ((length = sock->read(data, max_length)) > 0)
+      if (asio::write_n(*sock, data, length) == 0)
         break;
   }
   catch (asio::error& e)

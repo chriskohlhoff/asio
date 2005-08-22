@@ -12,15 +12,15 @@
 /**
  * @par Implemented By:
  * asio::basic_stream_socket @n
- * asio::buffered_recv_stream @n
- * asio::buffered_send_stream @n
+ * asio::buffered_read_stream @n
+ * asio::buffered_write_stream @n
  * asio::buffered_stream
  */
 class Stream
-  : public Async_Recv_Stream,
-    public Async_Send_Stream,
-    public Sync_Recv_Stream,
-    public Sync_Send_Stream
+  : public Async_Read_Stream,
+    public Async_Write_Stream,
+    public Sync_Read_Stream,
+    public Sync_Write_Stream
 {
 public:
   /// The type of the lowest layer in the stream.

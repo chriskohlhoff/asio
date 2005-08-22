@@ -75,8 +75,8 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 \li asio::basic_socket_connector
 \li asio::basic_stream_socket
 \li asio::basic_timer
-\li asio::buffered_recv_stream
-\li asio::buffered_send_stream
+\li asio::buffered_read_stream
+\li asio::buffered_write_stream
 \li asio::buffered_stream
 \li asio::ipv4::basic_host_resolver
 \li asio::service_factory
@@ -85,35 +85,35 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 <TD VALIGN="TOP">
 
 <H2>Free Functions</H2>
-\li asio::recv
-\li asio::recv_n
-\li asio::recv_at_least_n
-\li asio::send
-\li asio::send_n
-\li asio::send_at_least_n
-\li asio::async_recv
-\li asio::async_recv_n
-\li asio::async_recv_at_least_n
-\li asio::async_send
-\li asio::async_send_n
-\li asio::async_send_at_least_n
+\li asio::read
+\li asio::read_n
+\li asio::read_at_least_n
+\li asio::write
+\li asio::write_n
+\li asio::write_at_least_n
+\li asio::async_read
+\li asio::async_read_n
+\li asio::async_read_at_least_n
+\li asio::async_write
+\li asio::async_write_n
+\li asio::async_write_at_least_n
 
 <H2>Type Traits</H2>
 
-\li asio::is_recv_buffered
-\li asio::is_send_buffered
+\li asio::is_read_buffered
+\li asio::is_write_buffered
 
 <H2>Concepts</H2>
 
 \li Async_Object
-\li Async_Recv_Stream
-\li Async_Send_Stream
+\li Async_Read_Stream
+\li Async_Write_Stream
 \li Dispatcher
 \li Endpoint
 \li Protocol
 \li Stream
-\li Sync_Recv_Stream
-\li Sync_Send_Stream
+\li Sync_Read_Stream
+\li Sync_Write_Stream
 
 </TD>
 </TR>

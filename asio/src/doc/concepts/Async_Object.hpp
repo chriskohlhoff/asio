@@ -17,8 +17,8 @@
  * asio::basic_socket_connector @n
  * asio::basic_stream_socket @n
  * asio::basic_timer @n
- * asio::buffered_recv_stream @n
- * asio::buffered_send_stream @n
+ * asio::buffered_read_stream @n
+ * asio::buffered_write_stream @n
  * asio::buffered_stream
  */
 class Async_Object

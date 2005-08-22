@@ -10,11 +10,11 @@ noinst_PROGRAMS = \
 	tests/unit/error_handler_test \
 	tests/unit/fixed_buffer_test \
 	tests/unit/ipv4_host_resolver_test \
-	tests/unit/is_recv_buffered_test \
-	tests/unit/is_send_buffered_test \
+	tests/unit/is_read_buffered_test \
+	tests/unit/is_write_buffered_test \
 	tests/unit/locking_dispatcher_test \
-	tests/unit/recv_test \
-	tests/unit/send_test \
+	tests/unit/read_test \
+	tests/unit/write_test \
 	tests/unit/socket_acceptor_test \
 	tests/unit/timer_test \
 	examples/chat/chat_client \
@@ -50,11 +50,11 @@ TESTS = \
 	tests/unit/error_handler_test \
 	tests/unit/fixed_buffer_test \
 	tests/unit/ipv4_host_resolver_test \
-	tests/unit/is_recv_buffered_test \
-	tests/unit/is_send_buffered_test \
+	tests/unit/is_read_buffered_test \
+	tests/unit/is_write_buffered_test \
 	tests/unit/locking_dispatcher_test \
-	tests/unit/recv_test \
-	tests/unit/send_test \
+	tests/unit/read_test \
+	tests/unit/write_test \
 	tests/unit/socket_acceptor_test \
 	tests/unit/timer_test
 
@@ -70,12 +70,12 @@ tests_unit_demuxer_test_SOURCES = tests/unit/demuxer_test.cpp
 tests_unit_datagram_socket_test_SOURCES = tests/unit/datagram_socket_test.cpp
 tests_unit_error_handler_test_SOURCES = tests/unit/error_handler_test.cpp
 tests_unit_ipv4_host_resolver_test_SOURCES = tests/unit/ipv4_host_resolver_test.cpp
-tests_unit_is_recv_buffered_test_SOURCES = tests/unit/is_recv_buffered_test.cpp
-tests_unit_is_send_buffered_test_SOURCES = tests/unit/is_send_buffered_test.cpp
+tests_unit_is_read_buffered_test_SOURCES = tests/unit/is_read_buffered_test.cpp
+tests_unit_is_write_buffered_test_SOURCES = tests/unit/is_write_buffered_test.cpp
 tests_unit_fixed_buffer_test_SOURCES = tests/unit/fixed_buffer_test.cpp
 tests_unit_locking_dispatcher_test_SOURCES = tests/unit/locking_dispatcher_test.cpp
-tests_unit_recv_test_SOURCES = tests/unit/recv_test.cpp
-tests_unit_send_test_SOURCES = tests/unit/send_test.cpp
+tests_unit_read_test_SOURCES = tests/unit/read_test.cpp
+tests_unit_write_test_SOURCES = tests/unit/write_test.cpp
 tests_unit_socket_acceptor_test_SOURCES = tests/unit/socket_acceptor_test.cpp
 tests_unit_timer_test_SOURCES = tests/unit/timer_test.cpp
 examples_chat_chat_client_SOURCES = examples/chat/chat_client.cpp

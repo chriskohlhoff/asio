@@ -1,19 +1,19 @@
 nobase_include_HEADERS = \
 	asio.hpp \
-	asio/arg.hpp \
-	asio/basic_demuxer.hpp \
 	asio/basic_datagram_socket.hpp \
+	asio/basic_demuxer.hpp \
 	asio/basic_locking_dispatcher.hpp \
 	asio/basic_socket_acceptor.hpp \
 	asio/basic_socket_connector.hpp \
 	asio/basic_stream_socket.hpp \
 	asio/basic_timer.hpp \
-	asio/buffered_recv_stream.hpp \
-	asio/buffered_recv_stream_fwd.hpp \
-	asio/buffered_send_stream.hpp \
-	asio/buffered_send_stream_fwd.hpp \
-	asio/buffered_stream.hpp \
+	asio/buffered_read_stream_fwd.hpp \
+	asio/buffered_read_stream.hpp \
 	asio/buffered_stream_fwd.hpp \
+	asio/buffered_stream.hpp \
+	asio/buffered_write_stream_fwd.hpp \
+	asio/buffered_write_stream.hpp \
+	asio/datagram_socket.hpp \
 	asio/default_error_handler.hpp \
 	asio/demuxer.hpp \
 	asio/detail/bind_handler.hpp \
@@ -54,20 +54,19 @@ nobase_include_HEADERS = \
 	asio/detail/thread.hpp \
 	asio/detail/time.hpp \
 	asio/detail/tss_bool.hpp \
-	asio/detail/win_iocp_demuxer_service.hpp \
+	asio/detail/win_event.hpp \
 	asio/detail/win_iocp_datagram_socket_service.hpp \
+	asio/detail/win_iocp_demuxer_service.hpp \
 	asio/detail/win_iocp_operation.hpp \
 	asio/detail/win_iocp_stream_socket_service.hpp \
-	asio/detail/win_event.hpp \
 	asio/detail/win_mutex.hpp \
 	asio/detail/win_signal_blocker.hpp \
+	asio/detail/winsock_init.hpp \
 	asio/detail/win_thread.hpp \
 	asio/detail/win_time.hpp \
 	asio/detail/win_tss_bool.hpp \
-	asio/detail/winsock_init.hpp \
-	asio/datagram_socket.hpp \
-	asio/error.hpp \
 	asio/error_handler.hpp \
+	asio/error.hpp \
 	asio/fixed_buffer.hpp \
 	asio/ipv4/address.hpp \
 	asio/ipv4/basic_host_resolver.hpp \
@@ -77,11 +76,11 @@ nobase_include_HEADERS = \
 	asio/ipv4/multicast.hpp \
 	asio/ipv4/tcp.hpp \
 	asio/ipv4/udp.hpp \
-	asio/is_recv_buffered.hpp \
-	asio/is_send_buffered.hpp \
+	asio/is_read_buffered.hpp \
+	asio/is_write_buffered.hpp \
 	asio/locking_dispatcher.hpp \
-	asio/recv.hpp \
-	asio/send.hpp \
+	asio/placeholders.hpp \
+	asio/read.hpp \
 	asio/service_factory.hpp \
 	asio/socket_acceptor.hpp \
 	asio/socket_base.hpp \
@@ -91,7 +90,8 @@ nobase_include_HEADERS = \
 	asio/thread.hpp \
 	asio/time.hpp \
 	asio/timer.hpp \
-	asio/wrapped_handler.hpp
+	asio/wrapped_handler.hpp \
+	asio/write.hpp
 
 MAINTAINERCLEANFILES = \
 	$(srcdir)/Makefile.in

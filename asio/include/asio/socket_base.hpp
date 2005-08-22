@@ -17,6 +17,8 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/socket_types.hpp"
+
 namespace asio {
 
 /// The socket_base class is used as a base for the basic_stream_socket and
@@ -28,27 +30,39 @@ public:
   /// Different ways a socket may be shutdown.
   enum shutdown_type
   {
+#if defined(GENERATING_DOCUMENTATION)
     /// Shutdown the receive side of the socket.
-    shutdown_recv,
+    shutdown_receive = implementation_defined,
 
     /// Shutdown the send side of the socket.
-    shutdown_send,
+    shutdown_send = implementation_defined,
 
     /// Shutdown both send and receive on the socket.
-    shutdown_both
+    shutdown_both = implementation_defined
+#else
+    shutdown_receive = asio::detail::shutdown_receive,
+    shutdown_send = asio::detail::shutdown_send,
+    shutdown_both = asio::detail::shutdown_both
+#endif
   };
 
   /// Flags that can be passed to send and receive operations.
   enum message_flags
   {
+#if defined(GENERATING_DOCUMENTATION)
     /// Peek at incoming data without removing it from the input queue.
-    message_peek = 1 << 0,
+    message_peek = implementation_defined,
 
     /// Process out-of-band data.
-    message_out_of_band = 1 << 1,
+    message_out_of_band = implementation_defined,
 
     /// Specify that the data should not be subject to routing.
-    message_do_not_route = 1 << 2
+    message_do_not_route = implementation_defined
+#else
+    message_peek = asio::detail::message_peek,
+    message_out_of_band = asio::detail::message_out_of_band,
+    message_do_not_route = asio::detail::message_do_not_route
+#endif
   };
 
 protected:

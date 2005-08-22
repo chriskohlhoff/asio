@@ -169,9 +169,9 @@ correctly.
 See the <a href="http://www.boost.org/libs/bind/bind.html">Boost: bind.hpp
 documentation</a> for more information on how to use \ref boost_bind.
 
-In this example, the asio::arg::error argument to \ref boost_bind is a named
-placeholder for the error object passed to the handler. When initiating the
-asynchronous operation, and if using \ref boost_bind, you must specify only
+In this example, the asio::placeholders::error argument to \ref boost_bind is a
+named placeholder for the error object passed to the handler. When initiating
+the asynchronous operation, and if using \ref boost_bind, you must specify only
 the arguments that match the handler's parameter list. In tutorial Timer.4 you
 will see that this placeholder may be elided if the parameter is not needed by
 the callback handler.
@@ -239,9 +239,9 @@ converts our callback handler (now a member function) into a function object
 that can be invoked as though it has the signature <tt>void(const
 asio::error&)</tt>.
 
-You will note that the asio::arg::error placeholder is not specified here, as
-the <tt>print</tt> member function does not accept an error object as a
-parameter.
+You will note that the asio::placeholders::error placeholder is not specified
+here, as the <tt>print</tt> member function does not accept an error object as
+a parameter.
 
 \until }
 

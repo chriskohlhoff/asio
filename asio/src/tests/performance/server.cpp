@@ -24,9 +24,9 @@ public:
       dispatcher_(d),
       socket_(d),
       block_size_(block_size),
-      recv_data_(new char[block_size]),
-      recv_data_length_(0),
-      send_data_(new char[block_size]),
+      read_data_(new char[block_size]),
+      read_data_length_(0),
+      write_data_(new char[block_size]),
       unsent_count_(0),
       op_count_(0)
   {
@@ -34,8 +34,8 @@ public:
 
   ~session()
   {
-    delete[] recv_data_;
-    delete[] send_data_;
+    delete[] read_data_;
+    delete[] write_data_;
   }
 
   stream_socket& socket()
@@ -46,29 +46,32 @@ public:
   void start()
   {
     ++op_count_;
-    socket_.async_recv(recv_data_, block_size_,
-        dispatcher_.wrap(boost::bind(&session::handle_recv, this, arg::error,
-            arg::bytes_recvd)));
+    socket_.async_read(read_data_, block_size_,
+        dispatcher_.wrap(
+          boost::bind(&session::handle_read, this, placeholders::error,
+            placeholders::bytes_transferred)));
   }
 
-  void handle_recv(const error& err, size_t length)
+  void handle_read(const error& err, size_t length)
   {
     --op_count_;
 
     if (!err && length > 0)
     {
-      recv_data_length_ = length;
+      read_data_length_ = length;
       ++unsent_count_;
       if (unsent_count_ == 1)
       {
         op_count_ += 2;
-        std::swap(recv_data_, send_data_);
-        async_send_n(socket_, send_data_, recv_data_length_, dispatcher_.wrap(
-              boost::bind(&session::handle_send, this, arg::error,
-                arg::last_bytes_sent)));
-        socket_.async_recv(recv_data_, block_size_, dispatcher_.wrap(
-              boost::bind(&session::handle_recv, this, arg::error,
-                arg::bytes_recvd)));
+        std::swap(read_data_, write_data_);
+        async_write_n(socket_, write_data_, read_data_length_,
+            dispatcher_.wrap(
+              boost::bind(&session::handle_write, this, placeholders::error,
+                placeholders::last_bytes_transferred)));
+        socket_.async_read(read_data_, block_size_,
+            dispatcher_.wrap(
+              boost::bind(&session::handle_read, this, placeholders::error,
+                placeholders::bytes_transferred)));
       }
     }
 
@@ -76,7 +79,7 @@ public:
       demuxer_.post(boost::bind(&session::destroy, this));
   }
 
-  void handle_send(const error& err, size_t last_length)
+  void handle_write(const error& err, size_t last_length)
   {
     --op_count_;
 
@@ -86,13 +89,15 @@ public:
       if (unsent_count_ == 1)
       {
         op_count_ += 2;
-        std::swap(recv_data_, send_data_);
-        async_send_n(socket_, send_data_, recv_data_length_, dispatcher_.wrap(
-              boost::bind(&session::handle_send, this, arg::error,
-                arg::last_bytes_sent)));
-        socket_.async_recv(recv_data_, block_size_, dispatcher_.wrap(
-              boost::bind(&session::handle_recv, this, arg::error,
-                arg::bytes_recvd)));
+        std::swap(read_data_, write_data_);
+        async_write_n(socket_, write_data_, read_data_length_,
+            dispatcher_.wrap(
+              boost::bind(&session::handle_write, this, placeholders::error,
+                placeholders::last_bytes_transferred)));
+        socket_.async_read(read_data_, block_size_,
+            dispatcher_.wrap(
+              boost::bind(&session::handle_read, this, placeholders::error,
+                placeholders::bytes_transferred)));
       }
     }
 
@@ -110,9 +115,9 @@ private:
   locking_dispatcher dispatcher_;
   stream_socket socket_;
   size_t block_size_;
-  char* recv_data_;
-  size_t recv_data_length_;
-  char* send_data_;
+  char* read_data_;
+  size_t read_data_length_;
+  char* write_data_;
   int unsent_count_;
   int op_count_;
 };
@@ -132,7 +137,8 @@ public:
 
     session* new_session = new session(demuxer_, block_size_);
     acceptor_.async_accept(new_session->socket(),
-        boost::bind(&server::handle_accept, this, new_session, arg::error));
+        boost::bind(&server::handle_accept, this, new_session,
+          placeholders::error));
   }
 
   void handle_accept(session* new_session, const error& err)
@@ -142,7 +148,8 @@ public:
       new_session->start();
       new_session = new session(demuxer_, block_size_);
       acceptor_.async_accept(new_session->socket(),
-          boost::bind(&server::handle_accept, this, new_session, arg::error));
+          boost::bind(&server::handle_accept, this, new_session,
+            placeholders::error));
     }
     else
     {

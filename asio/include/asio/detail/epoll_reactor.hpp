@@ -173,6 +173,37 @@ public:
     }
   }
 
+  // Start a new exception operation. The do_operation function of the select_op
+  // object will be invoked when the given descriptor has exception information
+  // available.
+  template <typename Handler>
+  void start_except_op(socket_type descriptor, Handler handler)
+  {
+    asio::detail::mutex::scoped_lock lock(mutex_);
+
+    if (except_op_queue_.enqueue_operation(descriptor, handler))
+    {
+      epoll_event ev;
+      ev.events = EPOLLERR | EPOLLHUP;
+      if (read_op_queue_.has_operation(descriptor))
+        ev.events |= EPOLLIN;
+      if (write_op_queue_.has_operation(descriptor))
+        ev.events |= EPOLLOUT;
+      ev.data.fd = descriptor;
+
+      if (epoll_registrations_.find(descriptor) == epoll_registrations_.end())
+      {
+        epoll_registrations_.insert(
+            epoll_registration_map::value_type(descriptor, true));
+        epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
+      }
+      else
+      {
+        epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
+      }
+    }
+  }
+
   // Start a new write and exception operations. The do_operation function of
   // the select_op object will be invoked when the given descriptor is ready
   // for writing or has exception information available.

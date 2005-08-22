@@ -4,7 +4,7 @@
 #include "asio.hpp"
 
 void handle_sendto(char* send_buf, const asio::error& /*error*/,
-    size_t /*bytes_sent*/)
+    size_t /*bytes_transferred*/)
 {
   using namespace std; // For free.
   free(send_buf);
@@ -12,7 +12,7 @@ void handle_sendto(char* send_buf, const asio::error& /*error*/,
 
 void handle_recvfrom(asio::datagram_socket* socket, char* recv_buf,
     size_t recv_length, asio::ipv4::udp::endpoint* remote_endpoint,
-    const asio::error& error, size_t /*bytes_recvd*/)
+    const asio::error& error, size_t /*bytes_transferred*/)
 {
   if (!error || error == asio::error::message_size)
   {
@@ -22,12 +22,13 @@ void handle_recvfrom(asio::datagram_socket* socket, char* recv_buf,
     size_t send_length = strlen(send_buf);
 
     socket->async_sendto(send_buf, send_length, *remote_endpoint,
-        boost::bind(handle_sendto, send_buf, asio::arg::error,
-          asio::arg::bytes_sent));
+        boost::bind(handle_sendto, send_buf, asio::placeholders::error,
+          asio::placeholders::bytes_transferred));
 
     socket->async_recvfrom(recv_buf, recv_length, *remote_endpoint,
         boost::bind(handle_recvfrom, socket, recv_buf, recv_length,
-          remote_endpoint, asio::arg::error, asio::arg::bytes_recvd));
+          remote_endpoint, asio::placeholders::error,
+          asio::placeholders::bytes_transferred));
   }
 }
 
@@ -45,7 +46,8 @@ int main()
 
     socket.async_recvfrom(recv_buf, recv_length, remote_endpoint,
         boost::bind(handle_recvfrom, &socket, recv_buf, recv_length,
-          &remote_endpoint, asio::arg::error, asio::arg::bytes_recvd));
+          &remote_endpoint, asio::placeholders::error,
+          asio::placeholders::bytes_transferred));
 
     demuxer.run();
   }

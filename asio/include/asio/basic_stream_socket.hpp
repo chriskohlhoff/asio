@@ -39,8 +39,8 @@ namespace asio {
  * @e Shared @e objects: Unsafe.
  *
  * @par Concepts:
- * Async_Object, Async_Recv_Stream, Async_Send_Stream, Stream,
- * Sync_Recv_Stream, Sync_Send_Stream.
+ * Async_Object, Async_Read_Stream, Async_Write_Stream, Stream,
+ * Sync_Read_Stream, Sync_Write_Stream.
  */
 template <typename Service>
 class basic_stream_socket
@@ -96,8 +96,8 @@ public:
 
   /// Close the socket.
   /**
-   * This function is used to close the stream socket. Any asynchronous send
-   * or recv operations will be cancelled immediately.
+   * This function is used to close the stream socket. Any asynchronous read
+   * or write operations will be cancelled immediately.
    */
   void close()
   {
@@ -293,59 +293,38 @@ public:
     service_.shutdown(impl_, what, default_error_handler());
   }
 
-  /// Disable sends or receives on the socket.
+  /// Write some data to the socket.
   /**
-   * This function is used to disable send operations, receive operations, or
-   * both.
+   * This function is used to write data to the stream socket. The function call
+   * will block until the data has been sent successfully or an error occurs.
    *
-   * @param what Determines what types of operation will no longer be allowed.
+   * @param data The data to be written to the socket.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
-   * @code void error_handler(
-   *   const asio::error& error // Result of operation
-   * ); @endcode
-   */
-  template <typename Error_Handler>
-  void shutdown(shutdown_type what, Error_Handler error_handler)
-  {
-    service_.shutdown(impl_, what, error_handler);
-  }
-
-  /// Send the given data to the peer.
-  /**
-   * This function is used to send data to the stream socket's peer. The
-   * function call will block until the data has been sent successfully or an
-   * error occurs.
+   * @param length The size of the data to be written, in bytes.
    *
-   * @param data The data to be sent to remote peer.
-   *
-   * @param length The size of the data to be sent, in bytes.
-   *
-   * @returns The number of bytes sent or 0 if the connection was closed
+   * @returns The number of bytes written or 0 if the connection was closed
    * cleanly.
    *
    * @throws asio::error Thrown on failure.
    *
-   * @note The send operation may not transmit all of the data to the peer.
-   * Consider using the asio::send_n() function if you need to ensure that all
-   * data is sent before the blocking operation completes.
+   * @note The write operation may not transmit all of the data to the peer.
+   * Consider using the asio::write_n() function if you need to ensure that all
+   * data is written before the blocking operation completes.
    */
-  size_t send(const void* data, size_t length)
+  size_t write(const void* data, size_t length)
   {
-    return service_.send(impl_, data, length, default_error_handler());
+    return service_.send(impl_, data, length,
+        message_flags(0), default_error_handler());
   }
 
-  /// Send the given data to the peer.
+  /// Write some data to the socket.
   /**
-   * This function is used to send data to the stream socket's peer. The
-   * function call will block until the data has been sent successfully or an
-   * error occurs.
+   * This function is used to write data to the stream socket. The function call
+   * will block until the data has been sent successfully or an error occurs.
    *
-   * @param data The data to be sent to remote peer.
+   * @param data The data to be written to the socket.
    *
-   * @param length The size of the data to be sent, in bytes.
+   * @param length The size of the data to be written, in bytes.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature
@@ -357,79 +336,80 @@ public:
    * @returns The number of bytes sent or 0 if the connection was closed
    * cleanly.
    *
-   * @note The send operation may not transmit all of the data to the peer.
-   * Consider using the asio::send_n() function if you need to ensure that all
-   * data is sent before the blocking operation completes.
+   * @note The write operation may not transmit all of the data to the peer.
+   * Consider using the asio::write_n() function if you need to ensure that all
+   * data is written before the blocking operation completes.
    */
   template <typename Error_Handler>
-  size_t send(const void* data, size_t length, Error_Handler error_handler)
+  size_t write(const void* data, size_t length, Error_Handler error_handler)
   {
-    return service_.send(impl_, data, length, error_handler);
+    return service_.send(impl_, data, length, message_flags(0), error_handler);
   }
 
-  /// Start an asynchronous send.
+  /// Start an asynchronous write.
   /**
-   * This function is used to asynchronously send data to the stream socket's
-   * peer. The function call always returns immediately.
+   * This function is used to asynchronously write data to the stream socket.
+   * The function call always returns immediately.
    *
-   * @param data The data to be sent to the remote peer. Ownership of the data
-   * is retained by the caller, which must guarantee that it is valid until the
+   * @param data The data to be written to the socket. Ownership of the data is
+   * retained by the caller, which must guarantee that it is valid until the
    * handler is called.
    *
-   * @param length The size of the data to be sent, in bytes.
+   * @param length The size of the data to be written, in bytes.
    *
-   * @param handler The handler to be called when the send operation completes.
+   * @param handler The handler to be called when the write operation completes.
    * Copies will be made of the handler as required. The equivalent function
    * signature of the handler must be:
    * @code void handler(
    *   const asio::error& error, // Result of operation
-   *   size_t bytes_sent         // Number of bytes sent
+   *   size_t bytes_transferred  // Number of bytes written
    * ); @endcode
    *
-   * @note The send operation may not transmit all of the data to the peer.
-   * Consider using the asio::async_send_n() function if you need to ensure
-   * that all data is sent before the asynchronous operation completes.
+   * @note The write operation may not transmit all of the data to the peer.
+   * Consider using the asio::async_write_n() function if you need to ensure
+   * that all data is written before the asynchronous operation completes.
    */
   template <typename Handler>
-  void async_send(const void* data, size_t length, Handler handler)
+  void async_write(const void* data, size_t length, Handler handler)
   {
-    service_.async_send(impl_, data, length, handler);
+    service_.async_send(impl_, data, length, message_flags(0), handler);
   }
 
-  /// Receive some data from the peer.
+  /// Read some data from the socket.
   /**
-   * This function is used to receive data from the stream socket's peer. The
-   * function call will block until data has been received successfully or an
-   * error occurs.
+   * This function is used to read data from the stream socket. The function
+   * call will block until data has been received successfully or an error
+   * occurs.
    *
-   * @param data The buffer into which the received data will be written.
+   * @param data The buffer into which the data will be read.
    *
-   * @param max_length The maximum size of the data to be received, in bytes.
+   * @param max_length The maximum size of the data to be read, in bytes.
    *
-   * @returns The number of bytes received or 0 if the connection was closed
+   * @returns The number of bytes read or 0 if the connection was closed
    * cleanly.
    *
    * @throws asio::error Thrown on failure.
    *
-   * @note The recv operation may not receive all of the requested number of
-   * bytes. Consider using the asio::recv_n() function if you need to ensure
-   * that the requested amount of data is received before the blocking
-   * operation completes.
+   * @note The read operation may not receive all of the requested number of
+   * bytes. Consider using the asio::read_n() function if you need to ensure
+   * that the requested amount of data is read before the blocking operation
+   * completes.
    */
-  size_t recv(void* data, size_t max_length)
+  size_t read(void* data, size_t max_length)
   {
-    return service_.recv(impl_, data, max_length, default_error_handler());
+    return service_.receive(impl_, data,
+        max_length, message_flags(0), default_error_handler());
   }
 
-  /// Receive some data from the peer.
+  /// Read some data from the socket.
   /**
-   * This function is used to receive data from the stream socket's peer. The
-   * function call will block until data has been received successfully or an
-   * error occurs.
+   * This function is used to read data from the stream socket. The function
+   * call will block until data has been received successfully or an error
+   * occurs.
    *
-   * @param data The buffer into which the received data will be written.
+   * @param data The buffer into which the data will be read.
    *
-   * @param max_length The maximum size of the data to be received, in bytes.
+   * @param max_length The maximum size of the data to be read, in bytes.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature
@@ -438,79 +418,81 @@ public:
    *   const asio::error& error // Result of operation
    * ); @endcode
    *
-   * @returns The number of bytes received or 0 if the connection was closed
+   * @returns The number of bytes read or 0 if the connection was closed
    * cleanly.
    *
-   * @note The recv operation may not receive all of the requested number of
-   * bytes. Consider using the asio::recv_n() function if you need to ensure
-   * that the requested amount of data is received before the blocking
-   * operation completes.
+   * @note The read operation may not receive all of the requested number of
+   * bytes. Consider using the asio::read_n() function if you need to ensure
+   * that the requested amount of data is read before the blocking operation
+   * completes.
    */
   template <typename Error_Handler>
-  size_t recv(void* data, size_t max_length, Error_Handler error_handler)
+  size_t read(void* data, size_t max_length, Error_Handler error_handler)
   {
-    return service_.recv(impl_, data, max_length, error_handler);
+    return service_.receive(impl_, data,
+        max_length, message_flags(0), error_handler);
   }
 
-  /// Start an asynchronous receive.
+  /// Start an asynchronous read.
   /**
-   * This function is used to asynchronously receive data from the stream
-   * socket's peer. The function call always returns immediately.
+   * This function is used to asynchronously read data from the stream socket.
+   * The function call always returns immediately.
    *
-   * @param data The buffer into which the received data will be written.
-   * Ownership of the buffer is retained by the caller, which must guarantee
-   * that it is valid until the handler is called.
+   * @param data The buffer into which the data will be read. Ownership of the
+   * buffer is retained by the caller, which must guarantee that it is valid
+   * until the handler is called.
    *
-   * @param max_length The maximum size of the data to be received, in bytes.
+   * @param max_length The maximum size of the data to be read, in bytes.
    *
-   * @param handler The handler to be called when the receive operation
-   * completes. Copies will be made of the handler as required. The equivalent
-   * function signature of the handler must be:
+   * @param handler The handler to be called when the read operation completes.
+   * Copies will be made of the handler as required. The equivalent function
+   * signature of the handler must be:
    * @code void handler(
    *   const asio::error& error, // Result of operation
-   *   size_t bytes_recvd        // Number of bytes received
+   *   size_t bytes_transferred  // Number of bytes received
    * ); @endcode
    *
-   * @note The recv operation may not receive all of the requested number of
-   * bytes. Consider using the asio::async_recv_n() function if you need to
-   * ensure that the requested amount of data is received before the
-   * asynchronous operation completes.
+   * @note The read operation may not read all of the requested number of bytes.
+   * Consider using the asio::async_read_n() function if you need to ensure that
+   * the requested amount of data is received before the asynchronous operation
+   * completes.
    */
   template <typename Handler>
-  void async_recv(void* data, size_t max_length, Handler handler)
+  void async_read(void* data, size_t max_length, Handler handler)
   {
-    service_.async_recv(impl_, data, max_length, handler);
+    service_.async_receive(impl_, data, max_length, message_flags(0), handler);
   }
 
   /// Peek at the incoming data on the stream socket.
   /**
    * This function is used to peek at the incoming data on the stream socket,
    * without removing it from the input queue. The function call will block
-   * until data has been received successfully or an error occurs.
+   * until data has been read successfully or an error occurs.
    *
-   * @param data The buffer into which the received data will be written.
+   * @param data The buffer into which the data will be read.
    *
-   * @param max_length The maximum size of the data to be received, in bytes.
+   * @param max_length The maximum size of the data to be read, in bytes.
    *
-   * @returns The number of bytes received or 0 if the connection was closed
+   * @returns The number of bytes read or 0 if the connection was closed
    * cleanly.
    *
    * @throws asio::error Thrown on failure.
    */
   size_t peek(void* data, size_t max_length)
   {
-    return service_.peek(impl_, data, max_length, default_error_handler());
+    return service_.receive(impl_, data, max_length,
+        message_peek, default_error_handler());
   }
 
   /// Peek at the incoming data on the stream socket.
   /**
    * This function is used to peek at the incoming data on the stream socket,
    * without removing it from the input queue. The function call will block
-   * until data has been received successfully or an error occurs.
+   * until data has been read successfully or an error occurs.
    *
-   * @param data The buffer into which the received data will be written.
+   * @param data The buffer into which the data will be read.
    *
-   * @param max_length The maximum size of the data to be received, in bytes.
+   * @param max_length The maximum size of the data to be read, in bytes.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature
@@ -519,22 +501,22 @@ public:
    *   const asio::error& error // Result of operation
    * ); @endcode
    *
-   * @returns The number of bytes received or 0 if the connection was closed
+   * @returns The number of bytes read or 0 if the connection was closed
    * cleanly.
    */
   template <typename Error_Handler>
   size_t peek(void* data, size_t max_length, Error_Handler error_handler)
   {
-    return service_.peek(impl_, data, max_length, error_handler);
+    return service_.peek(impl_, data, max_length,
+        message_peek, error_handler);
   }
 
-  /// Determine the amount of data that may be received without blocking.
+  /// Determine the amount of data that may be read without blocking.
   /**
    * This function is used to determine the amount of data, in bytes, that may
    * be read from the stream socket without blocking.
    *
-   * @returns The number of bytes of data that can be received without
-   * blocking.
+   * @returns The number of bytes of data that can be read without blocking.
    *
    * @throws asio::error Thrown on failure.
    */
@@ -543,7 +525,7 @@ public:
     return service_.in_avail(impl_, default_error_handler());
   }
 
-  /// Determine the amount of data that may be received without blocking.
+  /// Determine the amount of data that may be read without blocking.
   /**
    * This function is used to determine the amount of data, in bytes, that may
    * be read from the stream socket without blocking.
@@ -555,8 +537,7 @@ public:
    *   const asio::error& error // Result of operation
    * ); @endcode
    *
-   * @returns The number of bytes of data that can be received without
-   * blocking.
+   * @returns The number of bytes of data that can be read without blocking.
    */
   template <typename Error_Handler>
   size_t in_avail(Error_Handler error_handler)

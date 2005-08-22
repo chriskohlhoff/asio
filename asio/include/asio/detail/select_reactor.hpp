@@ -107,6 +107,17 @@ public:
       interrupter_.interrupt();
   }
 
+  // Start a new exception operation. The do_operation function of the select_op
+  // object will be invoked when the given descriptor has exception information
+  // available.
+  template <typename Handler>
+  void start_except_op(socket_type descriptor, Handler handler)
+  {
+    asio::detail::mutex::scoped_lock lock(mutex_);
+    if (except_op_queue_.enqueue_operation(descriptor, handler))
+      interrupter_.interrupt();
+  }
+
   // Start a new write and exception operations. The do_operation function of
   // the select_op object will be invoked when the given descriptor is ready
   // for writing or has exception information available.

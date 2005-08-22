@@ -23,29 +23,29 @@ class stats
 public:
   stats()
     : mutex_(),
-      total_bytes_sent_(0),
-      total_bytes_recvd_(0)
+      total_bytes_written_(0),
+      total_bytes_read_(0)
   {
   }
 
-  void add(size_t bytes_sent, size_t bytes_recvd)
+  void add(size_t bytes_written, size_t bytes_read)
   {
     detail::mutex::scoped_lock lock(mutex_);
-    total_bytes_sent_ += bytes_sent;
-    total_bytes_recvd_ += bytes_recvd;
+    total_bytes_written_ += bytes_written;
+    total_bytes_read_ += bytes_read;
   }
 
   void print()
   {
     detail::mutex::scoped_lock lock(mutex_);
-    std::cout << total_bytes_sent_ << " total bytes sent\n";
-    std::cout << total_bytes_recvd_ << " total bytes received\n";
+    std::cout << total_bytes_written_ << " total bytes written\n";
+    std::cout << total_bytes_read_ << " total bytes read\n";
   }
 
 private:
   detail::mutex mutex_;
-  size_t total_bytes_sent_;
-  size_t total_bytes_recvd_;
+  size_t total_bytes_written_;
+  size_t total_bytes_read_;
 };
 
 class session
@@ -55,24 +55,24 @@ public:
     : dispatcher_(d),
       socket_(d),
       block_size_(block_size),
-      recv_data_(new char[block_size]),
-      recv_data_length_(0),
-      send_data_(new char[block_size]),
-      unsent_count_(0),
-      bytes_sent_(0),
-      bytes_recvd_(0),
+      read_data_(new char[block_size]),
+      read_data_length_(0),
+      write_data_(new char[block_size]),
+      unwritten_count_(0),
+      bytes_written_(0),
+      bytes_read_(0),
       stats_(s)
   {
     for (size_t i = 0; i < block_size_; ++i)
-      send_data_[i] = static_cast<char>(i % 128);
+      write_data_[i] = static_cast<char>(i % 128);
   }
 
   ~session()
   {
-    stats_.add(bytes_sent_, bytes_recvd_);
+    stats_.add(bytes_written_, bytes_read_);
 
-    delete[] recv_data_;
-    delete[] send_data_;
+    delete[] read_data_;
+    delete[] write_data_;
   }
 
   stream_socket& socket()
@@ -82,13 +82,16 @@ public:
 
   void start()
   {
-    ++unsent_count_;
-    async_send_n(socket_, send_data_, block_size_, dispatcher_.wrap(
-          boost::bind(&session::handle_send, this, arg::error,
-            arg::last_bytes_sent, arg::total_bytes_sent)));
-    socket_.async_recv(recv_data_, block_size_, dispatcher_.wrap(
-          boost::bind(&session::handle_recv, this, arg::error,
-            arg::bytes_recvd)));
+    ++unwritten_count_;
+    async_write_n(socket_, write_data_, block_size_,
+        dispatcher_.wrap(
+          boost::bind(&session::handle_write, this, placeholders::error,
+            placeholders::last_bytes_transferred,
+            placeholders::total_bytes_transferred)));
+    socket_.async_read(read_data_, block_size_,
+        dispatcher_.wrap(
+          boost::bind(&session::handle_read, this, placeholders::error,
+            placeholders::bytes_transferred)));
   }
 
   void stop()
@@ -96,43 +99,49 @@ public:
     dispatcher_.post(boost::bind(&stream_socket::close, &socket_));
   }
 
-  void handle_recv(const error& err, size_t length)
+  void handle_read(const error& err, size_t length)
   {
     if (!err && length > 0)
     {
-      bytes_recvd_ += length;
+      bytes_read_ += length;
 
-      recv_data_length_ = length;
-      ++unsent_count_;
-      if (unsent_count_ == 1)
+      read_data_length_ = length;
+      ++unwritten_count_;
+      if (unwritten_count_ == 1)
       {
-        std::swap(recv_data_, send_data_);
-        async_send_n(socket_, send_data_, recv_data_length_, dispatcher_.wrap(
-              boost::bind(&session::handle_send, this, arg::error,
-                arg::last_bytes_sent, arg::total_bytes_sent)));
-        socket_.async_recv(recv_data_, block_size_, dispatcher_.wrap(
-              boost::bind(&session::handle_recv, this, arg::error,
-                arg::bytes_recvd)));
+        std::swap(read_data_, write_data_);
+        async_write_n(socket_, write_data_, read_data_length_,
+            dispatcher_.wrap(
+              boost::bind(&session::handle_write, this, placeholders::error,
+                placeholders::last_bytes_transferred,
+                placeholders::total_bytes_transferred)));
+        socket_.async_read(read_data_, block_size_,
+            dispatcher_.wrap(
+              boost::bind(&session::handle_read, this, placeholders::error,
+                placeholders::bytes_transferred)));
       }
     }
   }
 
-  void handle_send(const error& err, size_t last_length, size_t total_length)
+  void handle_write(const error& err, size_t last_length, size_t total_length)
   {
     if (!err && last_length > 0)
     {
-      bytes_sent_ += total_length;
+      bytes_written_ += total_length;
 
-      --unsent_count_;
-      if (unsent_count_ == 1)
+      --unwritten_count_;
+      if (unwritten_count_ == 1)
       {
-        std::swap(recv_data_, send_data_);
-        async_send_n(socket_, send_data_, recv_data_length_, dispatcher_.wrap(
-              boost::bind(&session::handle_send, this, arg::error,
-                arg::last_bytes_sent, arg::total_bytes_sent)));
-        socket_.async_recv(recv_data_, block_size_, dispatcher_.wrap(
-              boost::bind(&session::handle_recv, this, arg::error,
-                arg::bytes_recvd)));
+        std::swap(read_data_, write_data_);
+        async_write_n(socket_, write_data_, read_data_length_,
+            dispatcher_.wrap(
+              boost::bind(&session::handle_write, this, placeholders::error,
+                placeholders::last_bytes_transferred,
+                placeholders::total_bytes_transferred)));
+        socket_.async_read(read_data_, block_size_,
+            dispatcher_.wrap(
+              boost::bind(&session::handle_read, this, placeholders::error,
+                placeholders::bytes_transferred)));
       }
     }
   }
@@ -141,12 +150,12 @@ private:
   locking_dispatcher dispatcher_;
   stream_socket socket_;
   size_t block_size_;
-  char* recv_data_;
-  size_t recv_data_length_;
-  char* send_data_;
-  int unsent_count_;
-  size_t bytes_sent_;
-  size_t bytes_recvd_;
+  char* read_data_;
+  size_t read_data_length_;
+  char* write_data_;
+  int unwritten_count_;
+  size_t bytes_written_;
+  size_t bytes_read_;
   stats& stats_;
 };
 
@@ -168,7 +177,7 @@ public:
     session* new_session = new session(demuxer_, block_size, stats_);
     connector_.async_connect(new_session->socket(), server_endpoint_,
         dispatcher_.wrap(boost::bind(&client::handle_connect, this,
-            new_session, arg::error)));
+            new_session, placeholders::error)));
 
     stop_timer_.async_wait(dispatcher_.wrap(
           boost::bind(&client::handle_timeout, this)));
@@ -203,7 +212,7 @@ public:
         new_session = new session(demuxer_, block_size_, stats_);
         connector_.async_connect(new_session->socket(), server_endpoint_,
             dispatcher_.wrap(boost::bind(&client::handle_connect, this,
-                new_session, arg::error)));
+                new_session, placeholders::error)));
       }
     }
     else

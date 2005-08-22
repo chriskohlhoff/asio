@@ -22,7 +22,7 @@ public:
 
     asio::ipv4::udp::endpoint target(multicast_port, multicast_addr);
     socket_.async_sendto(message_.data(), message_.length(), target,
-        boost::bind(&sender::handle_sendto, this, asio::arg::error));
+        boost::bind(&sender::handle_sendto, this, asio::placeholders::error));
   }
 
   void handle_sendto(const asio::error& error)
@@ -31,7 +31,8 @@ public:
     {
       timer_.expiry(asio::time::now() + 1);
       timer_.async_wait(
-          boost::bind(&sender::handle_timeout, this, asio::arg::error));
+          boost::bind(&sender::handle_timeout, this,
+            asio::placeholders::error));
     }
   }
 
@@ -45,7 +46,7 @@ public:
 
       asio::ipv4::udp::endpoint target(multicast_port, multicast_addr);
       socket_.async_sendto(message_.data(), message_.length(), target,
-          boost::bind(&sender::handle_sendto, this, asio::arg::error));
+          boost::bind(&sender::handle_sendto, this, asio::placeholders::error));
     }
   }
 

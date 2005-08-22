@@ -21,8 +21,8 @@ public:
     socket_.set_option(asio::ipv4::multicast::add_membership(multicast_addr));
 
     socket_.async_recvfrom(data_, max_length, sender_endpoint_,
-        boost::bind(&receiver::handle_recvfrom, this, asio::arg::error,
-          asio::arg::bytes_recvd));
+        boost::bind(&receiver::handle_recvfrom, this,
+          asio::placeholders::error, asio::placeholders::bytes_transferred));
   }
 
   void handle_recvfrom(const asio::error& error, size_t bytes_recvd)
@@ -33,8 +33,8 @@ public:
       std::cout << std::endl;
 
       socket_.async_recvfrom(data_, max_length, sender_endpoint_,
-          boost::bind(&receiver::handle_recvfrom, this, asio::arg::error,
-            asio::arg::bytes_recvd));
+          boost::bind(&receiver::handle_recvfrom, this,
+            asio::placeholders::error, asio::placeholders::bytes_transferred));
     }
   }
 

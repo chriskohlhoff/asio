@@ -150,21 +150,7 @@ public:
   void shutdown(impl_type& impl, socket_base::shutdown_type what,
       Error_Handler error_handler)
   {
-    int shutdown_flag;
-    switch (what)
-    {
-    case socket_base::shutdown_recv:
-      shutdown_flag = shutdown_recv;
-      break;
-    case socket_base::shutdown_send:
-      shutdown_flag = shutdown_send;
-      break;
-    case socket_base::shutdown_both:
-    default:
-      shutdown_flag = shutdown_both;
-      break;
-    }
-    if (socket_ops::shutdown(impl, shutdown_flag) != 0)
+    if (socket_ops::shutdown(impl, what) != 0)
       error_handler(asio::error(socket_ops::get_error()));
   }
 

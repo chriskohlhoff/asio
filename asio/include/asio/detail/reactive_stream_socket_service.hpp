@@ -121,21 +121,7 @@ public:
   void shutdown(impl_type& impl, socket_base::shutdown_type what,
       Error_Handler error_handler)
   {
-    int shutdown_flag;
-    switch (what)
-    {
-    case socket_base::shutdown_recv:
-      shutdown_flag = shutdown_recv;
-      break;
-    case socket_base::shutdown_send:
-      shutdown_flag = shutdown_send;
-      break;
-    case socket_base::shutdown_both:
-    default:
-      shutdown_flag = shutdown_both;
-      break;
-    }
-    if (socket_ops::shutdown(impl, shutdown_flag) != 0)
+    if (socket_ops::shutdown(impl, what) != 0)
       error_handler(asio::error(socket_ops::get_error()));
   }
 
@@ -143,9 +129,9 @@ public:
   // 0 if the connection was closed cleanly.
   template <typename Error_Handler>
   size_t send(impl_type& impl, const void* data, size_t length,
-      Error_Handler error_handler)
+      socket_base::message_flags flags, Error_Handler error_handler)
   {
-    int bytes_sent = socket_ops::send(impl, data, length, 0);
+    int bytes_sent = socket_ops::send(impl, data, length, flags);
     if (bytes_sent < 0)
     {
       error_handler(asio::error(socket_ops::get_error()));
@@ -159,18 +145,19 @@ public:
   {
   public:
     send_handler(impl_type impl, Demuxer& demuxer, const void* data,
-        size_t length, Handler handler)
+        size_t length, socket_base::message_flags flags, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
         data_(data),
         length_(length),
+        flags_(flags),
         handler_(handler)
     {
     }
 
     void do_operation()
     {
-      int bytes = socket_ops::send(impl_, data_, length_, 0);
+      int bytes = socket_ops::send(impl_, data_, length_, flags_);
       asio::error error(bytes < 0
           ? socket_ops::get_error() : asio::error::success);
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
@@ -189,6 +176,7 @@ public:
     Demuxer& demuxer_;
     const void* data_;
     size_t length_;
+    socket_base::message_flags flags_;
     Handler handler_;
   };
 
@@ -196,7 +184,7 @@ public:
   // lifetime of the asynchronous operation.
   template <typename Handler>
   void async_send(impl_type& impl, const void* data, size_t length,
-      Handler handler)
+      socket_base::message_flags flags, Handler handler)
   {
     if (impl == null())
     {
@@ -207,17 +195,17 @@ public:
     {
       demuxer_.work_started();
       reactor_.start_write_op(impl,
-          send_handler<Handler>(impl, demuxer_, data, length, handler));
+          send_handler<Handler>(impl, demuxer_, data, length, flags, handler));
     }
   }
 
   // Receive some data from the peer. Returns the number of bytes received or
   // 0 if the connection was closed cleanly.
   template <typename Error_Handler>
-  size_t recv(impl_type& impl, void* data, size_t max_length,
-      Error_Handler error_handler)
+  size_t receive(impl_type& impl, void* data, size_t max_length,
+      socket_base::message_flags flags, Error_Handler error_handler)
   {
-    int bytes_recvd = socket_ops::recv(impl, data, max_length, 0);
+    int bytes_recvd = socket_ops::recv(impl, data, max_length, flags);
     if (bytes_recvd < 0)
     {
       error_handler(asio::error(socket_ops::get_error()));
@@ -227,22 +215,23 @@ public:
   }
 
   template <typename Handler>
-  class recv_handler
+  class receive_handler
   {
   public:
-    recv_handler(impl_type impl, Demuxer& demuxer, void* data,
-        size_t max_length, Handler handler)
+    receive_handler(impl_type impl, Demuxer& demuxer, void* data,
+        size_t max_length, socket_base::message_flags flags, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
         data_(data),
         max_length_(max_length),
+        flags_(flags),
         handler_(handler)
     {
     }
 
     void do_operation()
     {
-      int bytes = socket_ops::recv(impl_, data_, max_length_, 0);
+      int bytes = socket_ops::recv(impl_, data_, max_length_, flags_);
       asio::error error(bytes < 0
           ? socket_ops::get_error() : asio::error::success);
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
@@ -261,14 +250,15 @@ public:
     Demuxer& demuxer_;
     void* data_;
     size_t max_length_;
+    socket_base::message_flags flags_;
     Handler handler_;
   };
 
   // Start an asynchronous receive. The buffer for the data being received
   // must be valid for the lifetime of the asynchronous operation.
   template <typename Handler>
-  void async_recv(impl_type& impl, void* data, size_t max_length,
-      Handler handler)
+  void async_receive(impl_type& impl, void* data, size_t max_length,
+      socket_base::message_flags flags, Handler handler)
   {
     if (impl == null())
     {
@@ -278,24 +268,19 @@ public:
     else
     {
       demuxer_.work_started();
-      reactor_.start_read_op(impl,
-          recv_handler<Handler>(impl, demuxer_, data, max_length, handler));
+      if (flags & socket_base::message_out_of_band)
+      {
+        reactor_.start_except_op(impl,
+            receive_handler<Handler>(impl, demuxer_,
+              data, max_length, flags, handler));
+      }
+      else
+      {
+        reactor_.start_read_op(impl,
+            receive_handler<Handler>(impl, demuxer_,
+              data, max_length, flags, handler));
+      }
     }
-  }
-
-  /// Peek at the incoming data on the stream socket. Returns the number of
-  /// bytes received or 0 if the connection was closed cleanly.
-  template <typename Error_Handler>
-  size_t peek(impl_type& impl, void* data, size_t max_length,
-      Error_Handler error_handler)
-  {
-    int bytes_recvd = socket_ops::recv(impl, data, max_length, MSG_PEEK);
-    if (bytes_recvd < 0)
-    {
-      error_handler(asio::error(socket_ops::get_error()));
-      return 0;
-    }
-    return bytes_recvd;
   }
 
   /// Determine the amount of data that may be received without blocking.
