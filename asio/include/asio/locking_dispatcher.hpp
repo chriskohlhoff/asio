@@ -18,23 +18,13 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/basic_locking_dispatcher.hpp"
-#include "asio/demuxer.hpp"
-#include "asio/detail/locking_dispatcher_service.hpp"
+#include "asio/locking_dispatcher_service.hpp"
 
 namespace asio {
 
 /// Typedef for the typical usage of locking_dispatcher.
-#if defined(GENERATING_DOCUMENTATION)
-typedef basic_locking_dispatcher
-  <
-    implementation_defined
-  > locking_dispatcher;
-#else
-typedef basic_locking_dispatcher
-  <
-    detail::locking_dispatcher_service<demuxer>
-  > locking_dispatcher;
-#endif
+typedef basic_locking_dispatcher<locking_dispatcher_service<> >
+  locking_dispatcher;
 
 } // namespace asio
 

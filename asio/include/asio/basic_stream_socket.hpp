@@ -71,7 +71,7 @@ public:
    */
   explicit basic_stream_socket(demuxer_type& d)
     : service_(d.get_service(service_factory<Service>())),
-      impl_(service_type::null())
+      impl_(service_.null())
   {
   }
 

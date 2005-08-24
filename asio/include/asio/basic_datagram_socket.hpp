@@ -66,7 +66,7 @@ public:
    */
   explicit basic_datagram_socket(demuxer_type& d)
     : service_(d.get_service(service_factory<Service>())),
-      impl_(service_type::null())
+      impl_(service_.null())
   {
   }
 
@@ -88,7 +88,7 @@ public:
   template <typename Endpoint>
   basic_datagram_socket(demuxer_type& d, const Endpoint& endpoint)
     : service_(d.get_service(service_factory<Service>())),
-      impl_(service_type::null())
+      impl_(service_.null())
   {
     service_.open(impl_, endpoint.protocol(), default_error_handler());
     service_.bind(impl_, endpoint, default_error_handler());

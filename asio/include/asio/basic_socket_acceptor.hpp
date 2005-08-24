@@ -65,7 +65,7 @@ public:
    */
   explicit basic_socket_acceptor(demuxer_type& d)
     : service_(d.get_service(service_factory<Service>())),
-      impl_(service_type::null())
+      impl_(service_.null())
   {
   }
 
@@ -89,7 +89,7 @@ public:
   basic_socket_acceptor(demuxer_type& d, const Endpoint& endpoint,
       int listen_backlog = 0)
     : service_(d.get_service(service_factory<Service>())),
-      impl_(service_type::null())
+      impl_(service_.null())
   {
     service_.open(impl_, endpoint.protocol(), default_error_handler());
     service_.bind(impl_, endpoint, default_error_handler());
@@ -430,7 +430,7 @@ public:
   template <typename Stream, typename Endpoint>
   void accept_endpoint(Stream& peer_socket, Endpoint& peer_endpoint)
   {
-    service_.accept(impl_, peer_socket.lowest_layer(), peer_endpoint,
+    service_.accept_endpoint(impl_, peer_socket.lowest_layer(), peer_endpoint,
         default_error_handler());
   }
 
@@ -458,7 +458,7 @@ public:
   void accept_endpoint(Stream& peer_socket, Endpoint& peer_endpoint,
       Error_Handler error_handler)
   {
-    service_.accept(impl_, peer_socket.lowest_layer(), peer_endpoint,
+    service_.accept_endpoint(impl_, peer_socket.lowest_layer(), peer_endpoint,
         error_handler);
   }
 

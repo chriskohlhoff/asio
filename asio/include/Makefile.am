@@ -14,8 +14,10 @@ nobase_include_HEADERS = \
 	asio/buffered_write_stream_fwd.hpp \
 	asio/buffered_write_stream.hpp \
 	asio/datagram_socket.hpp \
+	asio/datagram_socket_service.hpp \
 	asio/default_error_handler.hpp \
 	asio/demuxer.hpp \
+	asio/demuxer_service.hpp \
 	asio/detail/bind_handler.hpp \
 	asio/detail/buffer_resize_guard.hpp \
 	asio/detail/epoll_reactor.hpp \
@@ -73,23 +75,29 @@ nobase_include_HEADERS = \
 	asio/ipv4/detail/host_resolver_service.hpp \
 	asio/ipv4/host.hpp \
 	asio/ipv4/host_resolver.hpp \
+	asio/ipv4/host_resolver_service.hpp \
 	asio/ipv4/multicast.hpp \
 	asio/ipv4/tcp.hpp \
 	asio/ipv4/udp.hpp \
 	asio/is_read_buffered.hpp \
 	asio/is_write_buffered.hpp \
 	asio/locking_dispatcher.hpp \
+	asio/locking_dispatcher_service.hpp \
 	asio/placeholders.hpp \
 	asio/read.hpp \
 	asio/service_factory.hpp \
 	asio/socket_acceptor.hpp \
+	asio/socket_acceptor_service.hpp \
 	asio/socket_base.hpp \
 	asio/socket_connector.hpp \
+	asio/socket_connector_service.hpp \
 	asio/socket_option.hpp \
 	asio/stream_socket.hpp \
+	asio/stream_socket_service.hpp \
 	asio/thread.hpp \
 	asio/time.hpp \
 	asio/timer.hpp \
+	asio/timer_service.hpp \
 	asio/wrapped_handler.hpp \
 	asio/write.hpp
 

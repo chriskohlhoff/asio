@@ -103,6 +103,17 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 \li asio::is_read_buffered
 \li asio::is_write_buffered
 
+<H2>Services</H2>
+
+\li asio::datagram_socket_service
+\li asio::demuxer_service
+\li asio::locking_dispatcher_service
+\li asio::socket_acceptor_service
+\li asio::socket_connector_service
+\li asio::stream_socket_service
+\li asio::timer_service
+\li asio::ipv4::host_resolver_service
+
 <H2>Concepts</H2>
 
 \li Async_Object

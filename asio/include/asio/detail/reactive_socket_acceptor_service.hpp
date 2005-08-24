@@ -160,7 +160,7 @@ public:
   // Accept a new connection.
   template <typename Stream_Socket_Service, typename Endpoint,
       typename Error_Handler>
-  void accept(impl_type& impl,
+  void accept_endpoint(impl_type& impl,
       basic_stream_socket<Stream_Socket_Service>& peer,
       Endpoint& peer_endpoint, Error_Handler error_handler)
   {

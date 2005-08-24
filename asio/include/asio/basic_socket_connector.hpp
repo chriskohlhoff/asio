@@ -63,7 +63,7 @@ public:
    */
   explicit basic_socket_connector(demuxer_type& d)
     : service_(d.get_service(service_factory<Service>())),
-      impl_(service_type::null())
+      impl_(service_.null())
   {
     service_.open(impl_);
   }

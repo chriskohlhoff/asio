@@ -21,7 +21,6 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/basic_demuxer.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/hash_map.hpp"
 #include "asio/detail/mutex.hpp"
@@ -37,6 +36,7 @@
 namespace asio {
 namespace detail {
 
+template <bool Own_Thread>
 class select_reactor
   : private boost::noncopyable
 {
@@ -54,23 +54,12 @@ public:
       stop_thread_(false),
       thread_(0)
   {
-    asio::detail::signal_blocker sb;
-    thread_ = new asio::detail::thread(
-        bind_handler(&select_reactor::call_run_thread, this));
-  }
-
-  // Constructor when running as a demuxer task.
-  select_reactor(basic_demuxer<task_demuxer_service<select_reactor> >&)
-    : mutex_(),
-      select_in_progress_(false),
-      interrupter_(),
-      read_op_queue_(),
-      write_op_queue_(),
-      except_op_queue_(),
-      pending_cancellations_(),
-      stop_thread_(false),
-      thread_(0)
-  {
+    if (Own_Thread)
+    {
+      asio::detail::signal_blocker sb;
+      thread_ = new asio::detail::thread(
+          bind_handler(&select_reactor::call_run_thread, this));
+    }
   }
 
   // Destructor.
@@ -230,7 +219,7 @@ public:
   }
 
 private:
-  friend class task_demuxer_service<select_reactor>;
+  friend class task_demuxer_service<select_reactor<Own_Thread> >;
 
   // Reset the select loop before a new run.
   void reset()

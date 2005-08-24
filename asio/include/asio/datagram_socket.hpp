@@ -18,47 +18,12 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/basic_datagram_socket.hpp"
-#include "asio/demuxer.hpp"
-#if defined(_WIN32)
-# include "asio/detail/win_iocp_datagram_socket_service.hpp"
-#else
-# include "asio/detail/epoll_reactor.hpp"
-# include "asio/detail/select_reactor.hpp"
-# include "asio/detail/reactive_datagram_socket_service.hpp"
-#endif
+#include "asio/datagram_socket_service.hpp"
 
 namespace asio {
 
 /// Typedef for the typical usage of datagram_socket.
-#if defined(GENERATING_DOCUMENTATION)
-typedef basic_datagram_socket
-  <
-    implementation_defined
-  > datagram_socket;
-#elif defined(_WIN32)
-typedef basic_datagram_socket
-  <
-    detail::win_iocp_datagram_socket_service
-  > datagram_socket;
-#elif (ASIO_HAS_EPOLL_REACTOR)
-typedef basic_datagram_socket
-  <
-    detail::reactive_datagram_socket_service
-      <
-        demuxer,
-        detail::epoll_reactor
-      >
-  > datagram_socket;
-#else
-typedef basic_datagram_socket
-  <
-    detail::reactive_datagram_socket_service
-      <
-        demuxer,
-        detail::select_reactor
-      >
-  > datagram_socket;
-#endif
+typedef basic_datagram_socket<datagram_socket_service<> > datagram_socket;
 
 } // namespace asio
 

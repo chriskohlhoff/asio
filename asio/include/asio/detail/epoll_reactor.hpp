@@ -34,7 +34,6 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/basic_demuxer.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/hash_map.hpp"
 #include "asio/detail/mutex.hpp"
@@ -50,6 +49,7 @@
 namespace asio {
 namespace detail {
 
+template <bool Own_Thread>
 class epoll_reactor
   : private boost::noncopyable
 {
@@ -69,31 +69,14 @@ public:
       stop_thread_(false),
       thread_(0)
   {
-    asio::detail::signal_blocker sb;
-    thread_ = new asio::detail::thread(
-        bind_handler(&epoll_reactor::call_run_thread, this));
+    // Start the reactor's internal thread only if needed.
+    if (Own_Thread)
+    {
+      asio::detail::signal_blocker sb;
+      thread_ = new asio::detail::thread(
+          bind_handler(&epoll_reactor::call_run_thread, this));
+    }
 
-    // Add the interrupter's descriptor to epoll.
-    epoll_event ev;
-    ev.events = EPOLLIN | EPOLLERR;
-    ev.data.fd = interrupter_.read_descriptor();
-    epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, interrupter_.read_descriptor(), &ev);
-  }
-
-  // Constructor when running as a demuxer task.
-  epoll_reactor(basic_demuxer<task_demuxer_service<epoll_reactor> >&)
-    : mutex_(),
-      epoll_fd_(do_epoll_create()),
-      wait_in_progress_(false),
-      interrupter_(),
-      read_op_queue_(),
-      write_op_queue_(),
-      except_op_queue_(),
-      epoll_registrations_(),
-      pending_cancellations_(),
-      stop_thread_(false),
-      thread_(0)
-  {
     // Add the interrupter's descriptor to epoll.
     epoll_event ev;
     ev.events = EPOLLIN | EPOLLERR;
@@ -342,7 +325,7 @@ public:
   }
 
 private:
-  friend class task_demuxer_service<epoll_reactor>;
+  friend class task_demuxer_service<epoll_reactor<Own_Thread> >;
 
   // Reset the select loop before a new run.
   void reset()

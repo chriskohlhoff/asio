@@ -18,38 +18,12 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/basic_socket_connector.hpp"
-#include "asio/demuxer.hpp"
-#include "asio/detail/epoll_reactor.hpp"
-#include "asio/detail/select_reactor.hpp"
-#include "asio/detail/reactive_socket_connector_service.hpp"
+#include "asio/socket_connector_service.hpp"
 
 namespace asio {
 
 /// Typedef for the typical usage of socket_connector.
-#if defined(GENERATING_DOCUMENTATION)
-typedef basic_socket_connector
-  <
-    implementation_defined
-  > socket_connector;
-#elif (ASIO_HAS_EPOLL_REACTOR)
-typedef basic_socket_connector
-  <
-    detail::reactive_socket_connector_service
-      <
-        demuxer,
-        detail::epoll_reactor
-      >
-  > socket_connector;
-#else
-typedef basic_socket_connector
-  <
-    detail::reactive_socket_connector_service
-      <
-        demuxer,
-        detail::select_reactor
-      >
-  > socket_connector;
-#endif
+typedef basic_socket_connector<socket_connector_service<> > socket_connector;
 
 } // namespace asio
 

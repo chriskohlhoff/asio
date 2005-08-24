@@ -18,45 +18,12 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/basic_demuxer.hpp"
-#include "asio/service_factory.hpp"
-#if defined(_WIN32)
-# include "asio/detail/win_iocp_demuxer_service.hpp"
-#else
-# include "asio/detail/epoll_reactor.hpp"
-# include "asio/detail/select_reactor.hpp"
-# include "asio/detail/task_demuxer_service.hpp"
-#endif
+#include "asio/demuxer_service.hpp"
 
 namespace asio {
 
 /// Typedef for typical usage of demuxer.
-#if defined(GENERATING_DOCUMENTATION)
-typedef basic_demuxer
-  <
-    implementation_defined
-  > demuxer;
-#elif defined(_WIN32)
-typedef basic_demuxer
-  <
-    detail::win_iocp_demuxer_service
-  > demuxer;
-#elif defined(ASIO_HAS_EPOLL_REACTOR)
-typedef basic_demuxer
-  <
-    detail::task_demuxer_service
-      <
-        detail::epoll_reactor
-      >
-  > demuxer;
-#else
-typedef basic_demuxer
-  <
-    detail::task_demuxer_service
-      <
-        detail::select_reactor
-      >
-  > demuxer;
-#endif
+typedef basic_demuxer<demuxer_service<> > demuxer;
 
 } // namespace asio
 
