@@ -199,6 +199,10 @@ int main(int argc, char* argv[])
       threads.pop_front();
     }
   }
+  catch (asio::error& e)
+  {
+    std::cerr << "Exception: " << e << "\n";
+  }
   catch (std::exception& e)
   {
     std::cerr << "Exception: " << e.what() << "\n";
