@@ -28,6 +28,7 @@
 
 namespace asio {
 
+/// Default service implementation for a locking dispatcher.
 template <typename Allocator = std::allocator<void> >
 class locking_dispatcher_service
   : private boost::noncopyable

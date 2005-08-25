@@ -20,6 +20,7 @@
 #if defined(_WIN32) // This service is only supported on Win32
 
 #include "asio/basic_demuxer.hpp"
+#include "asio/demuxer_service.hpp"
 #include "asio/error.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_base.hpp"
@@ -31,6 +32,7 @@
 namespace asio {
 namespace detail {
 
+template <typename Allocator>
 class win_iocp_stream_socket_service
 {
 public:
@@ -45,7 +47,7 @@ public:
   }
 
   // The demuxer type for this service.
-  typedef basic_demuxer<win_iocp_demuxer_service> demuxer_type;
+  typedef basic_demuxer<demuxer_service<Allocator> > demuxer_type;
 
   // Constructor. This stream_socket service can only work if the demuxer is
   // using the win_iocp_demuxer_service. By using this type as the parameter we

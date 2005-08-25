@@ -19,7 +19,6 @@
 
 #if defined(_WIN32) // This service is only supported on Win32
 
-#include "asio/basic_demuxer.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/tss_bool.hpp"
 #include "asio/detail/win_iocp_operation.hpp"
@@ -30,23 +29,14 @@ namespace detail {
 class win_iocp_demuxer_service
 {
 public:
-  // The demuxer type for this service.
-  typedef basic_demuxer<win_iocp_demuxer_service> demuxer_type;
-
   // Constructor.
-  win_iocp_demuxer_service(demuxer_type& demuxer)
-    : demuxer_(demuxer),
-      iocp_(::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)),
+  template <typename Demuxer>
+  win_iocp_demuxer_service(Demuxer& demuxer)
+    : iocp_(::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)),
       outstanding_work_(0),
       interrupted_(0),
       current_thread_in_pool_()
   {
-  }
-
-  // Get the demuxer associated with the service.
-  demuxer_type& demuxer()
-  {
-    return demuxer_;
   }
 
   // Register a socket with the demuxer.
@@ -182,9 +172,6 @@ public:
   }
 
 private:
-  // The demuxer that owns this service.
-  demuxer_type& demuxer_;
-
   // The IO completion port used for queueing operations.
   struct iocp_holder
   {

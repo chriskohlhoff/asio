@@ -34,6 +34,7 @@
 namespace asio {
 namespace ipv4 {
 
+/// Default service implementation for a host resolver.
 template <typename Allocator = std::allocator<void> >
 class host_resolver_service
   : private boost::noncopyable

@@ -31,6 +31,7 @@
 
 namespace asio {
 
+/// Default service implementation for a socket acceptor.
 template <typename Allocator = std::allocator<void> >
 class socket_acceptor_service
   : private boost::noncopyable
@@ -150,8 +151,7 @@ public:
     service_impl_.accept_endpoint(impl, peer, peer_endpoint, error_handler);
   }
 
-  /// Start an asynchronous accept. The peer_socket object must be valid until
-  /// the accept's handler is invoked.
+  /// Start an asynchronous accept.
   template <typename Stream_Socket_Service, typename Handler>
   void async_accept(impl_type& impl,
       basic_stream_socket<Stream_Socket_Service>& peer, Handler handler)
@@ -159,8 +159,7 @@ public:
     service_impl_.async_accept(impl, peer, handler);
   }
 
-  /// Start an asynchronous accept. The peer_socket and peer_endpoint objects
-  /// must be valid until the accept's handler is invoked.
+  /// Start an asynchronous accept.
   template <typename Stream_Socket_Service, typename Endpoint,
       typename Handler>
   void async_accept_endpoint(impl_type& impl,

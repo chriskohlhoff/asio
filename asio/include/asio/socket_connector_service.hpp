@@ -31,6 +31,7 @@
 
 namespace asio {
 
+/// Default service implementation for a socket connector.
 template <typename Allocator = std::allocator<void> >
 class socket_connector_service
   : private boost::noncopyable
@@ -84,8 +85,7 @@ public:
     service_impl_.open(impl);
   }
 
-  /// Open a new socket connector implementation so that it will create sockets
-  /// using the specified protocol.
+  /// Open a new socket connector implementation using the specified protocol.
   template <typename Protocol>
   void open(impl_type& impl, const Protocol& protocol)
   {
@@ -108,8 +108,7 @@ public:
     service_impl_.connect(impl, peer, peer_endpoint, error_handler);
   }
 
-  /// Start an asynchronous connect. The peer socket object must be valid until
-  /// the connect's handler is invoked.
+  /// Start an asynchronous connect.
   template <typename Stream_Socket_Service, typename Endpoint,
       typename Handler>
   void async_connect(impl_type& impl,

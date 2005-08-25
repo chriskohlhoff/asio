@@ -33,12 +33,13 @@
 
 namespace asio {
 
+/// Default service implementation for a demuxer.
 template <typename Allocator = std::allocator<void> >
 class demuxer_service
   : private boost::noncopyable
 {
 public:
-  // The demuxer type for this service.
+  /// The demuxer type for this service.
   typedef basic_demuxer<demuxer_service<Allocator> > demuxer_type;
 
 private:
@@ -54,50 +55,50 @@ private:
 #endif
 
 public:
-  // Constructor.
+  /// Constructor.
   demuxer_service(demuxer_type& demuxer)
     : service_impl_(demuxer.get_service(service_factory<service_impl_type>()))
   {
   }
 
-  // Run the demuxer's event processing loop.
+  /// Run the demuxer's event processing loop.
   void run()
   {
     service_impl_.run();
   }
 
-  // Interrupt the demuxer's event processing loop.
+  /// Interrupt the demuxer's event processing loop.
   void interrupt()
   {
     service_impl_.interrupt();
   }
 
-  // Reset the demuxer in preparation for a subsequent run invocation.
+  /// Reset the demuxer in preparation for a subsequent run invocation.
   void reset()
   {
     service_impl_.reset();
   }
 
-  // Notify the demuxer that some work has started.
+  /// Notify the demuxer that some work has started.
   void work_started()
   {
     service_impl_.work_started();
   }
 
-  // Notify the demuxer that some work has finished.
+  /// Notify the demuxer that some work has finished.
   void work_finished()
   {
     service_impl_.work_finished();
   }
 
-  // Request the demuxer to invoke the given handler.
+  /// Request the demuxer to invoke the given handler.
   template <typename Handler>
   void dispatch(Handler handler)
   {
     service_impl_.dispatch(handler);
   }
 
-  // Request the demuxer to invoke the given handler and return immediately.
+  /// Request the demuxer to invoke the given handler and return immediately.
   template <typename Handler>
   void post(Handler handler)
   {

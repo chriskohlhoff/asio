@@ -30,6 +30,7 @@
 
 namespace asio {
 
+/// Default service implementation for a timer.
 template <typename Allocator = std::allocator<void> >
 class timer_service
   : private boost::noncopyable

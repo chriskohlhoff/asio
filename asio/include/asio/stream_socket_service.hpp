@@ -34,6 +34,7 @@
 
 namespace asio {
 
+/// Default service implementation for a stream socket.
 template <typename Allocator = std::allocator<void> >
 class stream_socket_service
   : private boost::noncopyable
@@ -45,7 +46,7 @@ public:
 private:
   // The type of the platform-specific implementation.
 #if defined(_WIN32)
-  typedef detail::win_iocp_stream_socket_service service_impl_type;
+  typedef detail::win_iocp_stream_socket_service<Allocator> service_impl_type;
 #elif defined(ASIO_HAS_EPOLL_REACTOR)
   typedef detail::reactive_stream_socket_service<
     demuxer_type, detail::epoll_reactor<false> > service_impl_type;
