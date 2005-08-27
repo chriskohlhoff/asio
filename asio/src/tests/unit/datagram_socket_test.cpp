@@ -44,11 +44,11 @@ void datagram_socket_test()
   s2.open(ipv4::udp());
   s2.bind(ipv4::udp::endpoint(0));
   char send_msg[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-  s2.sendto(send_msg, sizeof(send_msg), target_endpoint);
+  s2.send_to(send_msg, sizeof(send_msg), target_endpoint);
 
   char recv_msg[sizeof(send_msg)];
   ipv4::udp::endpoint sender_endpoint;
-  size_t bytes_recvd = s1.recvfrom(recv_msg, sizeof(recv_msg),
+  size_t bytes_recvd = s1.receive_from(recv_msg, sizeof(recv_msg),
       sender_endpoint);
 
   UNIT_TEST_CHECK(bytes_recvd == sizeof(send_msg));
@@ -57,10 +57,10 @@ void datagram_socket_test()
   memset(recv_msg, 0, sizeof(recv_msg));
 
   target_endpoint = sender_endpoint;
-  s1.async_sendto(send_msg, sizeof(send_msg), target_endpoint,
+  s1.async_send_to(send_msg, sizeof(send_msg), target_endpoint,
       boost::bind(handle_send, sizeof(send_msg),
         placeholders::error, placeholders::bytes_transferred));
-  s2.async_recvfrom(recv_msg, sizeof(recv_msg), sender_endpoint,
+  s2.async_receive_from(recv_msg, sizeof(recv_msg), sender_endpoint,
       boost::bind(handle_recv, sizeof(recv_msg),
         placeholders::error, placeholders::bytes_transferred));
 
