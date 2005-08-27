@@ -42,6 +42,9 @@ public:
   /// The demuxer type for this service.
   typedef basic_demuxer<demuxer_service<Allocator> > demuxer_type;
 
+  /// The allocator type for this service.
+  typedef Allocator allocator_type;
+
 private:
   // The type of the platform-specific implementation.
 #if defined(_WIN32)
@@ -59,6 +62,19 @@ public:
   demuxer_service(demuxer_type& demuxer)
     : service_impl_(demuxer.get_service(service_factory<service_impl_type>()))
   {
+  }
+
+  /// Constructor.
+  demuxer_service(demuxer_type& demuxer, const allocator_type& allocator)
+    : service_impl_(demuxer.get_service(service_factory<service_impl_type>())),
+      allocator_(allocator)
+  {
+  }
+
+  /// Return a copy of the allocator associated with the service.
+  Allocator get_allocator() const
+  {
+    return allocator_;
   }
 
   /// Run the demuxer's event processing loop.
@@ -108,6 +124,9 @@ public:
 private:
   // The service that provides the platform-specific implementation.
   service_impl_type& service_impl_;
+
+  // The allocator associated with the service.
+  allocator_type allocator_;
 };
 
 } // namespace asio
