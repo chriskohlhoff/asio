@@ -173,7 +173,7 @@ CASE_SENSE_NAMES       = YES
 # (but less readable) file names. This can be useful is your file systems 
 # doesn't support long names like on DOS, Mac, or CD-ROM.
 
-SHORT_NAMES            = NO
+SHORT_NAMES            = YES
 
 # If the HIDE_SCOPE_NAMES tag is set to NO (the default) then Doxygen 
 # will show members with their full class and namespace scopes in the 
