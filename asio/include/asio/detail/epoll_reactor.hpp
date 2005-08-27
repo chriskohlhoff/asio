@@ -78,7 +78,7 @@ public:
     }
 
     // Add the interrupter's descriptor to epoll.
-    epoll_event ev;
+    epoll_event ev = { 0 };
     ev.events = EPOLLIN | EPOLLERR;
     ev.data.fd = interrupter_.read_descriptor();
     epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, interrupter_.read_descriptor(), &ev);
@@ -109,7 +109,7 @@ public:
 
     if (read_op_queue_.enqueue_operation(descriptor, handler))
     {
-      epoll_event ev;
+      epoll_event ev = { 0 };
       ev.events = EPOLLIN | EPOLLERR | EPOLLHUP;
       if (write_op_queue_.has_operation(descriptor))
         ev.events |= EPOLLOUT;
@@ -137,7 +137,7 @@ public:
 
     if (write_op_queue_.enqueue_operation(descriptor, handler))
     {
-      epoll_event ev;
+      epoll_event ev = { 0 };
       ev.events = EPOLLOUT | EPOLLERR | EPOLLHUP;
       if (read_op_queue_.has_operation(descriptor))
         ev.events |= EPOLLIN;
@@ -166,7 +166,7 @@ public:
 
     if (except_op_queue_.enqueue_operation(descriptor, handler))
     {
-      epoll_event ev;
+      epoll_event ev = { 0 };
       ev.events = EPOLLERR | EPOLLHUP;
       if (read_op_queue_.has_operation(descriptor))
         ev.events |= EPOLLIN;
@@ -200,7 +200,7 @@ public:
       && need_mod;
     if (need_mod)
     {
-      epoll_event ev;
+      epoll_event ev = { 0 };
       ev.events = EPOLLOUT | EPOLLERR | EPOLLHUP;
       if (read_op_queue_.has_operation(descriptor))
         ev.events |= EPOLLIN;
@@ -274,7 +274,7 @@ public:
     epoll_registration_map::iterator it = epoll_registrations_.find(descriptor);
     if (it != epoll_registrations_.end())
     {
-      epoll_event ev;
+      epoll_event ev = { 0 };
       epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, descriptor, &ev);
       epoll_registrations_.erase(it);
     }
@@ -379,7 +379,7 @@ private:
             read_op_queue_.dispatch_all_operations(descriptor);
             write_op_queue_.dispatch_all_operations(descriptor);
 
-            epoll_event ev;
+            epoll_event ev = { 0 };
             ev.events = 0;
             ev.data.fd = descriptor;
             epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
@@ -399,7 +399,7 @@ private:
             else
               more_writes = write_op_queue_.has_operation(descriptor);
 
-            epoll_event ev;
+            epoll_event ev = { 0 };
             ev.events = EPOLLERR | EPOLLHUP;
             if (more_reads)
               ev.events |= EPOLLIN;
