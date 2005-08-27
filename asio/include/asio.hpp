@@ -38,6 +38,7 @@
 #include "asio/error_handler.hpp"
 #include "asio/error.hpp"
 #include "asio/fixed_buffer.hpp"
+#include "asio/io_control.hpp"
 #include "asio/ipv4/address.hpp"
 #include "asio/ipv4/basic_host_resolver.hpp"
 #include "asio/ipv4/host.hpp"

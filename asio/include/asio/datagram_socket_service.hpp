@@ -25,11 +25,11 @@
 #include "asio/basic_demuxer.hpp"
 #include "asio/demuxer_service.hpp"
 #if defined(_WIN32)
-# include "asio/detail/win_iocp_datagram_socket_service.hpp"
+# include "asio/detail/win_iocp_socket_service.hpp"
 #else
 # include "asio/detail/epoll_reactor.hpp"
 # include "asio/detail/select_reactor.hpp"
-# include "asio/detail/reactive_datagram_socket_service.hpp"
+# include "asio/detail/reactive_socket_service.hpp"
 #endif
 
 namespace asio {
@@ -46,12 +46,12 @@ public:
 private:
   // The type of the platform-specific implementation.
 #if defined(_WIN32)
-  typedef detail::win_iocp_datagram_socket_service<Allocator> service_impl_type;
+  typedef detail::win_iocp_socket_service<Allocator> service_impl_type;
 #elif defined(ASIO_HAS_EPOLL_REACTOR)
-  typedef detail::reactive_datagram_socket_service<
+  typedef detail::reactive_socket_service<
     demuxer_type, detail::epoll_reactor<false> > service_impl_type;
 #else
-  typedef detail::reactive_datagram_socket_service<
+  typedef detail::reactive_socket_service<
     demuxer_type, detail::select_reactor<false> > service_impl_type;
 #endif
 
@@ -86,9 +86,17 @@ public:
   void open(impl_type& impl, const Protocol& protocol,
       Error_Handler error_handler)
   {
-    service_impl_.open(impl, protocol, error_handler);
+    if (protocol.type() == SOCK_DGRAM)
+      service_impl_.open(impl, protocol, error_handler);
+    else
+      error_handler(asio::error(asio::error::invalid_argument));
   }
 
+  /// Assign a new datagram socket implementation.
+  void assign(impl_type& impl, impl_type new_impl)
+  {
+    service_impl_.assign(impl, new_impl);
+  }
 
   /// Close a stream socket implementation.
   void close(impl_type& impl)
@@ -118,6 +126,14 @@ public:
       Error_Handler error_handler) const
   {
     service_impl_.get_option(impl, option, error_handler);
+  }
+
+  /// Perform an IO control command on the socket.
+  template <typename IO_Control_Command, typename Error_Handler>
+  void io_control(impl_type& impl, IO_Control_Command& command,
+      Error_Handler error_handler)
+  {
+    service_impl_.io_control(impl, command, error_handler);
   }
 
   /// Get the local endpoint.
@@ -162,18 +178,19 @@ public:
 
   /// Send a datagram to the specified endpoint.
   template <typename Endpoint, typename Error_Handler>
-  size_t sendto(impl_type& impl, const void* data, size_t length,
+  size_t send_to(impl_type& impl, const void* data, size_t length,
       const Endpoint& destination, Error_Handler error_handler)
   {
-    return service_impl_.sendto(impl, data, length, destination, error_handler);
+    return service_impl_.send_to(impl, data, length, destination,
+        error_handler);
   }
 
   /// Start an asynchronous send.
   template <typename Endpoint, typename Handler>
-  void async_sendto(impl_type& impl, const void* data, size_t length,
+  void async_send_to(impl_type& impl, const void* data, size_t length,
       const Endpoint& destination, Handler handler)
   {
-    service_impl_.async_sendto(impl, data, length, destination, handler);
+    service_impl_.async_send_to(impl, data, length, destination, handler);
   }
 
   /// Receive some data from the peer.
@@ -194,19 +211,19 @@ public:
 
   /// Receive a datagram with the endpoint of the sender.
   template <typename Endpoint, typename Error_Handler>
-  size_t recvfrom(impl_type& impl, void* data, size_t max_length,
+  size_t receive_from(impl_type& impl, void* data, size_t max_length,
       Endpoint& sender_endpoint, Error_Handler error_handler)
   {
-    return service_impl_.recvfrom(impl, data, max_length, sender_endpoint,
+    return service_impl_.receive_from(impl, data, max_length, sender_endpoint,
         error_handler);
   }
 
   /// Start an asynchronous receive that will get the endpoint of the sender.
   template <typename Endpoint, typename Handler>
-  void async_recvfrom(impl_type& impl, void* data, size_t max_length,
+  void async_receive_from(impl_type& impl, void* data, size_t max_length,
       Endpoint& sender_endpoint, Handler handler)
   {
-    service_impl_.async_recvfrom(impl, data, max_length, sender_endpoint,
+    service_impl_.async_receive_from(impl, data, max_length, sender_endpoint,
         handler);
   }
 

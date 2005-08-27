@@ -25,11 +25,11 @@
 #include "asio/basic_demuxer.hpp"
 #include "asio/demuxer_service.hpp"
 #if defined(_WIN32)
-# include "asio/detail/win_iocp_stream_socket_service.hpp"
+# include "asio/detail/win_iocp_socket_service.hpp"
 #else
 # include "asio/detail/epoll_reactor.hpp"
 # include "asio/detail/select_reactor.hpp"
-# include "asio/detail/reactive_stream_socket_service.hpp"
+# include "asio/detail/reactive_socket_service.hpp"
 #endif
 
 namespace asio {
@@ -46,12 +46,12 @@ public:
 private:
   // The type of the platform-specific implementation.
 #if defined(_WIN32)
-  typedef detail::win_iocp_stream_socket_service<Allocator> service_impl_type;
+  typedef detail::win_iocp_socket_service<Allocator> service_impl_type;
 #elif defined(ASIO_HAS_EPOLL_REACTOR)
-  typedef detail::reactive_stream_socket_service<
+  typedef detail::reactive_socket_service<
     demuxer_type, detail::epoll_reactor<false> > service_impl_type;
 #else
-  typedef detail::reactive_stream_socket_service<
+  typedef detail::reactive_socket_service<
     demuxer_type, detail::select_reactor<false> > service_impl_type;
 #endif
 
@@ -81,16 +81,35 @@ public:
     return service_impl_.null();
   }
 
-  /// Open a new stream socket implementation.
-  void open(impl_type& impl, impl_type new_impl)
+  // Open a new stream socket implementation.
+  template <typename Protocol, typename Error_Handler>
+  void open(impl_type& impl, const Protocol& protocol,
+      Error_Handler error_handler)
   {
-    service_impl_.open(impl, new_impl);
+    if (protocol.type() == SOCK_STREAM)
+      service_impl_.open(impl, protocol, error_handler);
+    else
+      error_handler(asio::error(asio::error::invalid_argument));
+  }
+
+  /// Assign a new stream socket implementation.
+  void assign(impl_type& impl, impl_type new_impl)
+  {
+    service_impl_.assign(impl, new_impl);
   }
 
   /// Close a stream socket implementation.
   void close(impl_type& impl)
   {
     service_impl_.close(impl);
+  }
+
+  // Bind the stream socket to the specified local endpoint.
+  template <typename Endpoint, typename Error_Handler>
+  void bind(impl_type& impl, const Endpoint& endpoint,
+      Error_Handler error_handler)
+  {
+    service_impl_.bind(impl, endpoint, error_handler);
   }
 
   /// Set a socket option.
@@ -107,6 +126,14 @@ public:
       Error_Handler error_handler) const
   {
     service_impl_.get_option(impl, option, error_handler);
+  }
+
+  /// Perform an IO control command on the socket.
+  template <typename IO_Control_Command, typename Error_Handler>
+  void io_control(impl_type& impl, IO_Control_Command& command,
+      Error_Handler error_handler)
+  {
+    service_impl_.io_control(impl, command, error_handler);
   }
 
   /// Get the local endpoint.
@@ -163,13 +190,6 @@ public:
       socket_base::message_flags flags, Handler handler)
   {
     service_impl_.async_receive(impl, data, max_length, flags, handler);
-  }
-
-  /// Determine the amount of data that may be received without blocking.
-  template <typename Error_Handler>
-  size_t in_avail(impl_type& impl, Error_Handler error_handler)
-  {
-    return service_impl_.in_avail(impl, error_handler);
   }
 
 private:

@@ -82,7 +82,6 @@ public:
   }
 
 private:
-  /// The underlying value of the boolean option.
   int value_;
 };
 
@@ -146,7 +145,6 @@ public:
   }
 
 private:
-  /// The underlying value of the int option.
   int value_;
 };
 

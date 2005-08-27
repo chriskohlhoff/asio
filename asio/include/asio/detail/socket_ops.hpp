@@ -20,9 +20,6 @@
 #include "asio/detail/push_options.hpp"
 #include <cstring>
 #include <cerrno>
-#if !defined(_WIN32)
-#include <sys/ioctl.h>
-#endif
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"

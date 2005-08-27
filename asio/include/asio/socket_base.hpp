@@ -17,6 +17,7 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/io_control.hpp"
 #include "asio/socket_option.hpp"
 #include "asio/detail/socket_types.hpp"
 
@@ -106,6 +107,13 @@ public:
   /// already in use.
   typedef asio::socket_option::boolean<
     SOL_SOCKET, SO_REUSEADDR> reuse_address;
+
+  /// IO control command to set the blocking mode of the socket.
+  typedef asio::io_control::boolean<FIONBIO> non_blocking_io;
+
+  /// IO control command to get the amount of data that can be read without
+  /// blocking.
+  typedef asio::io_control::size<FIONREAD> bytes_readable;
 
 protected:
   /// Protected destructor to prevent deletion through this type.

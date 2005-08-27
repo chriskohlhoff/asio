@@ -32,6 +32,7 @@
 #  undef ASIO_WSPIAPI_H_DEFINED
 # endif // defined(ASIO_WSPIAPI_H_DEFINED)
 #else
+# include <sys/ioctl.h>
 # include <sys/types.h>
 # include <sys/select.h>
 # include <sys/socket.h>

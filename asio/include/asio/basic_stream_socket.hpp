@@ -94,6 +94,41 @@ public:
     return service_.demuxer();
   }
 
+  /// Open the socket using the specified protocol.
+  /**
+   * This function opens the stream socket so that it will use the specified
+   * protocol.
+   *
+   * @param protocol An object specifying which protocol is to be used.
+   *
+   * @throws asio::error Thrown on failure.
+   */
+  template <typename Protocol>
+  void open(const Protocol& protocol)
+  {
+    service_.open(impl_, protocol, default_error_handler());
+  }
+
+  /// Open the socket using the specified protocol.
+  /**
+   * This function opens the stream socket so that it will use the specified
+   * protocol.
+   *
+   * @param protocol An object specifying which protocol is to be used.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Protocol, typename Error_Handler>
+  void open(const Protocol& protocol, Error_Handler error_handler)
+  {
+    service_.open(impl_, protocol, error_handler);
+  }
+
   /// Close the socket.
   /**
    * This function is used to close the stream socket. Any asynchronous read
@@ -138,7 +173,7 @@ public:
    */
   void set_impl(impl_type new_impl)
   {
-    service_.open(impl_, new_impl);
+    service_.assign(impl_, new_impl);
   }
 
   /// Set an option on the socket.
@@ -205,6 +240,39 @@ public:
   void get_option(Socket_Option& option, Error_Handler error_handler) const
   {
     service_.get_option(impl_, option, error_handler);
+  }
+
+  /// Perform an IO control command on the socket.
+  /**
+   * This function is used to execute an IO control command on the socket.
+   *
+   * @param command The IO control command to be performed on the socket.
+   *
+   * @throws asio::error Thrown on failure.
+   */
+  template <typename IO_Control_Command>
+  void io_control(IO_Control_Command& command)
+  {
+    service_.io_control(impl_, command, default_error_handler());
+  }
+
+  /// Perform an IO control command on the socket.
+  /**
+   * This function is used to execute an IO control command on the socket.
+   *
+   * @param command The IO control command to be performed on the socket.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename IO_Control_Command, typename Error_Handler>
+  void io_control(IO_Control_Command& command, Error_Handler error_handler)
+  {
+    service_.io_control(impl_, command, error_handler);
   }
 
   /// Get the local endpoint of the socket.
@@ -687,7 +755,7 @@ public:
   template <typename Error_Handler>
   size_t peek(void* data, size_t max_length, Error_Handler error_handler)
   {
-    return service_.peek(impl_, data, max_length,
+    return service_.receive(impl_, data, max_length,
         message_peek, error_handler);
   }
 
@@ -702,7 +770,9 @@ public:
    */
   size_t in_avail()
   {
-    return service_.in_avail(impl_, default_error_handler());
+    bytes_readable command;
+    service_.io_control(impl_, command, default_error_handler());
+    return command.get();
   }
 
   /// Determine the amount of data that may be read without blocking.
@@ -722,7 +792,9 @@ public:
   template <typename Error_Handler>
   size_t in_avail(Error_Handler error_handler)
   {
-    return service_.in_avail(impl_, error_handler);
+    bytes_readable command;
+    service_.io_control(impl_, command, error_handler);
+    return command.get();
   }
 
 private:

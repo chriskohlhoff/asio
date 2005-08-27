@@ -37,11 +37,9 @@ nobase_include_HEADERS = \
 	asio/detail/posix_time.hpp \
 	asio/detail/posix_tss_bool.hpp \
 	asio/detail/push_options.hpp \
-	asio/detail/reactive_datagram_socket_service.hpp \
 	asio/detail/reactive_deadline_timer_service.hpp \
-	asio/detail/reactive_socket_acceptor_service.hpp \
 	asio/detail/reactive_socket_connector_service.hpp \
-	asio/detail/reactive_stream_socket_service.hpp \
+	asio/detail/reactive_socket_service.hpp \
 	asio/detail/reactor_op_queue.hpp \
 	asio/detail/reactor_timer_queue.hpp \
 	asio/detail/scoped_lock.hpp \
@@ -59,10 +57,9 @@ nobase_include_HEADERS = \
 	asio/detail/time.hpp \
 	asio/detail/tss_bool.hpp \
 	asio/detail/win_event.hpp \
-	asio/detail/win_iocp_datagram_socket_service.hpp \
 	asio/detail/win_iocp_demuxer_service.hpp \
 	asio/detail/win_iocp_operation.hpp \
-	asio/detail/win_iocp_stream_socket_service.hpp \
+	asio/detail/win_iocp_socket_service.hpp \
 	asio/detail/win_mutex.hpp \
 	asio/detail/win_signal_blocker.hpp \
 	asio/detail/winsock_init.hpp \
@@ -72,6 +69,7 @@ nobase_include_HEADERS = \
 	asio/error_handler.hpp \
 	asio/error.hpp \
 	asio/fixed_buffer.hpp \
+	asio/io_control.hpp \
 	asio/ipv4/address.hpp \
 	asio/ipv4/basic_host_resolver.hpp \
 	asio/ipv4/detail/host_resolver_service.hpp \

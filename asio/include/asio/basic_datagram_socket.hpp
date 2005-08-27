@@ -148,6 +148,42 @@ public:
     service_.open(impl_, protocol, error_handler);
   }
 
+  /// Close the socket.
+  /**
+   * This function is used to close the datagram socket. Any asynchronous send_to
+   * or receive_from operations will be cancelled immediately.
+   *
+   * A subsequent call to open() is required before the socket can again be
+   * used to again perform send and receive operations.
+   */
+  void close()
+  {
+    service_.close(impl_);
+  }
+
+  /// Get the underlying implementation in the native type.
+  /**
+   * This function may be used to obtain the underlying implementation of the
+   * datagram socket. This is intended to allow access to native socket
+   * functionality that is not otherwise provided.
+   */
+  impl_type impl()
+  {
+    return impl_;
+  }
+
+  /// Set the underlying implementation in the native type.
+  /**
+   * This function is used by the acceptor and connector implementations to set
+   * the underlying implementation associated with the datagram socket.
+   *
+   * @param new_impl The new underlying socket implementation.
+   */
+  void set_impl(impl_type new_impl)
+  {
+    service_.assign(impl_, new_impl);
+  }
+
   /// Bind the socket to the given local endpoint.
   /**
    * This function binds the datagram socket to the specified endpoint on the
@@ -183,30 +219,6 @@ public:
   void bind(const Endpoint& endpoint, Error_Handler error_handler)
   {
     service_.bind(impl_, endpoint, error_handler);
-  }
-
-  /// Close the socket.
-  /**
-   * This function is used to close the datagram socket. Any asynchronous sendto
-   * or recvfrom operations will be cancelled immediately.
-   *
-   * A subsequent call to open() is required before the socket can again be
-   * used to again perform send and receive operations.
-   */
-  void close()
-  {
-    service_.close(impl_);
-  }
-
-  /// Get the underlying implementation in the native type.
-  /**
-   * This function may be used to obtain the underlying implementation of the
-   * datagram socket. This is intended to allow access to native socket
-   * functionality that is not otherwise provided.
-   */
-  impl_type impl()
-  {
-    return impl_;
   }
 
   /// Set an option on the socket.
@@ -273,6 +285,39 @@ public:
   void get_option(Socket_Option& option, Error_Handler error_handler) const
   {
     service_.get_option(impl_, option, error_handler);
+  }
+
+  /// Perform an IO control command on the socket.
+  /**
+   * This function is used to execute an IO control command on the socket.
+   *
+   * @param command The IO control command to be performed on the socket.
+   *
+   * @throws asio::error Thrown on failure.
+   */
+  template <typename IO_Control_Command>
+  void io_control(IO_Control_Command& command)
+  {
+    service_.io_control(impl_, command, default_error_handler());
+  }
+
+  /// Perform an IO control command on the socket.
+  /**
+   * This function is used to execute an IO control command on the socket.
+   *
+   * @param command The IO control command to be performed on the socket.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename IO_Control_Command, typename Error_Handler>
+  void io_control(IO_Control_Command& command, Error_Handler error_handler)
+  {
+    service_.io_control(impl_, command, error_handler);
   }
 
   /// Get the local endpoint of the socket.
@@ -362,9 +407,9 @@ public:
    * @throws asio::error Thrown on failure.
    */
   template <typename Endpoint>
-  size_t sendto(const void* data, size_t length, const Endpoint& destination)
+  size_t send_to(const void* data, size_t length, const Endpoint& destination)
   {
-    return service_.sendto(impl_, data, length, destination,
+    return service_.send_to(impl_, data, length, destination,
         default_error_handler());
   }
 
@@ -390,10 +435,10 @@ public:
    * @returns The number of bytes sent.
    */
   template <typename Endpoint, typename Error_Handler>
-  size_t sendto(const void* data, size_t length, const Endpoint& destination,
+  size_t send_to(const void* data, size_t length, const Endpoint& destination,
       Error_Handler error_handler)
   {
-    return service_.sendto(impl_, data, length, destination, error_handler);
+    return service_.send_to(impl_, data, length, destination, error_handler);
   }
 
   /// Start an asynchronous send.
@@ -419,10 +464,10 @@ public:
    * ); @endcode
    */
   template <typename Endpoint, typename Handler>
-  void async_sendto(const void* data, size_t length,
+  void async_send_to(const void* data, size_t length,
       const Endpoint& destination, Handler handler)
   {
-    service_.async_sendto(impl_, data, length, destination, handler);
+    service_.async_send_to(impl_, data, length, destination, handler);
   }
 
   /// Receive a datagram with the endpoint of the sender.
@@ -444,9 +489,9 @@ public:
    * @throws asio::error Thrown on failure.
    */
   template <typename Endpoint>
-  size_t recvfrom(void* data, size_t max_length, Endpoint& sender_endpoint)
+  size_t receive_from(void* data, size_t max_length, Endpoint& sender_endpoint)
   {
-    return service_.recvfrom(impl_, data, max_length, sender_endpoint,
+    return service_.receive_from(impl_, data, max_length, sender_endpoint,
         default_error_handler());
   }
   
@@ -474,10 +519,10 @@ public:
    * @returns The number of bytes received.
    */
   template <typename Endpoint, typename Error_Handler>
-  size_t recvfrom(void* data, size_t max_length, Endpoint& sender_endpoint,
+  size_t receive_from(void* data, size_t max_length, Endpoint& sender_endpoint,
       Error_Handler error_handler)
   {
-    return service_.recvfrom(impl_, data, max_length, sender_endpoint,
+    return service_.receive_from(impl_, data, max_length, sender_endpoint,
         error_handler);
   }
   
@@ -507,10 +552,11 @@ public:
    * ); @endcode
    */
   template <typename Endpoint, typename Handler>
-  void async_recvfrom(void* data, size_t max_length, Endpoint& sender_endpoint,
-      Handler handler)
+  void async_receive_from(void* data, size_t max_length,
+      Endpoint& sender_endpoint, Handler handler)
   {
-    service_.async_recvfrom(impl_, data, max_length, sender_endpoint, handler);
+    service_.async_receive_from(impl_, data, max_length, sender_endpoint,
+        handler);
   }
 
 private:
