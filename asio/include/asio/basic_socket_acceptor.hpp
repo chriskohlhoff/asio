@@ -21,6 +21,8 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/basic_datagram_socket.hpp"
+#include "asio/basic_stream_socket.hpp"
 #include "asio/default_error_handler.hpp"
 #include "asio/service_factory.hpp"
 
@@ -353,29 +355,26 @@ public:
   /// Accept a new connection.
   /**
    * This function is used to accept a new connection from a peer into the
-   * given stream socket. The function call will block until a new connection
-   * has been accepted successfully or an error occurs.
+   * given socket. The function call will block until a new connection has been
+   * accepted successfully or an error occurs.
    *
-   * @param peer_socket The stream socket into which the new connection will be
-   * accepted.
+   * @param peer The socket into which the new connection will be accepted.
    *
    * @throws asio::error Thrown on failure.
    */
-  template <typename Stream>
-  void accept(Stream& peer_socket)
+  template <typename Socket>
+  void accept(Socket& peer)
   {
-    service_.accept(impl_, peer_socket.lowest_layer(),
-        default_error_handler());
+    service_.accept(impl_, to_socket(peer), default_error_handler());
   }
 
   /// Accept a new connection.
   /**
    * This function is used to accept a new connection from a peer into the
-   * given stream socket. The function call will block until a new connection
-   * has been accepted successfully or an error occurs.
+   * given socket. The function call will block until a new connection has been
+   * accepted successfully or an error occurs.
    *
-   * @param peer_socket The stream socket into which the new connection will be
-   * accepted.
+   * @param peer The socket into which the new connection will be accepted.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature
@@ -384,20 +383,20 @@ public:
    *   const asio::error& error // Result of operation
    * ); @endcode
    */
-  template <typename Stream, typename Error_Handler>
-  void accept(Stream& peer_socket, Error_Handler error_handler)
+  template <typename Socket, typename Error_Handler>
+  void accept(Socket& peer, Error_Handler error_handler)
   {
-    service_.accept(impl_, peer_socket.lowest_layer(), error_handler);
+    service_.accept(impl_, to_socket(peer), error_handler);
   }
 
   /// Start an asynchronous accept.
   /**
    * This function is used to asynchronously accept a new connection into a
-   * stream socket. The function call always returns immediately.
+   * socket. The function call always returns immediately.
    *
-   * @param peer_socket The stream socket into which the new connection will be
-   * accepted. Ownership of the peer_socket object is retained by the caller,
-   * which must guarantee that it is valid until the handler is called.
+   * @param peer The socket into which the new connection will be accepted.
+   * Ownership of the peer object is retained by the caller, which must
+   * guarantee that it is valid until the handler is called.
    *
    * @param handler The handler to be called when the accept operation
    * completes. Copies will be made of the handler as required. The equivalent
@@ -406,43 +405,41 @@ public:
    *   const asio::error& error // Result of operation
    * ); @endcode
    */
-  template <typename Stream, typename Handler>
-  void async_accept(Stream& peer_socket, Handler handler)
+  template <typename Socket, typename Handler>
+  void async_accept(Socket& peer, Handler handler)
   {
-    service_.async_accept(impl_, peer_socket.lowest_layer(), handler);
+    service_.async_accept(impl_, to_socket(peer), handler);
   }
 
   /// Accept a new connection and obtain the endpoint of the peer
   /**
    * This function is used to accept a new connection from a peer into the
-   * given stream socket, and additionally provide the endpoint of the remote
-   * peer. The function call will block until a new connection has been
-   * accepted successfully or an error occurs.
+   * given socket, and additionally provide the endpoint of the remote peer.
+   * The function call will block until a new connection has been accepted
+   * successfully or an error occurs.
    *
-   * @param peer_socket The stream socket into which the new connection will be
-   * accepted.
+   * @param peer The socket into which the new connection will be accepted.
    *
    * @param peer_endpoint An endpoint object which will receive the endpoint of
    * the remote peer.
    *
    * @throws asio::error Thrown on failure.
    */
-  template <typename Stream, typename Endpoint>
-  void accept_endpoint(Stream& peer_socket, Endpoint& peer_endpoint)
+  template <typename Socket, typename Endpoint>
+  void accept_endpoint(Socket& peer, Endpoint& peer_endpoint)
   {
-    service_.accept_endpoint(impl_, peer_socket.lowest_layer(), peer_endpoint,
+    service_.accept_endpoint(impl_, to_socket(peer), peer_endpoint,
         default_error_handler());
   }
 
   /// Accept a new connection and obtain the endpoint of the peer
   /**
    * This function is used to accept a new connection from a peer into the
-   * given stream socket, and additionally provide the endpoint of the remote
-   * peer. The function call will block until a new connection has been
-   * accepted successfully or an error occurs.
+   * given socket, and additionally provide the endpoint of the remote peer.
+   * The function call will block until a new connection has been accepted
+   * successfully or an error occurs.
    *
-   * @param peer_socket The stream socket into which the new connection will be
-   * accepted.
+   * @param peer The socket into which the new connection will be accepted.
    *
    * @param peer_endpoint An endpoint object which will receive the endpoint of
    * the remote peer.
@@ -454,23 +451,23 @@ public:
    *   const asio::error& error // Result of operation
    * ); @endcode
    */
-  template <typename Stream, typename Endpoint, typename Error_Handler>
-  void accept_endpoint(Stream& peer_socket, Endpoint& peer_endpoint,
+  template <typename Socket, typename Endpoint, typename Error_Handler>
+  void accept_endpoint(Socket& peer, Endpoint& peer_endpoint,
       Error_Handler error_handler)
   {
-    service_.accept_endpoint(impl_, peer_socket.lowest_layer(), peer_endpoint,
+    service_.accept_endpoint(impl_, to_socket(peer), peer_endpoint,
         error_handler);
   }
 
   /// Start an asynchronous accept.
   /**
    * This function is used to asynchronously accept a new connection into a
-   * stream socket, and additionally obtain the endpoint of the remote peer.
-   * The function call always returns immediately.
+   * socket, and additionally obtain the endpoint of the remote peer. The
+   * function call always returns immediately.
    *
-   * @param peer_socket The stream socket into which the new connection will be
-   * accepted. Ownership of the peer_socket object is retained by the caller,
-   * which must guarantee that it is valid until the handler is called.
+   * @param peer The socket into which the new connection will be accepted.
+   * Ownership of the peer object is retained by the caller, which must
+   * guarantee that it is valid until the handler is called.
    *
    * @param peer_endpoint An endpoint object into which the endpoint of the
    * remote peer will be written. Ownership of the peer_endpoint object is
@@ -484,12 +481,12 @@ public:
    *   const asio::error& error // Result of operation
    * ); @endcode
    */
-  template <typename Stream, typename Endpoint, typename Handler>
-  void async_accept_endpoint(Stream& peer_socket, Endpoint& peer_endpoint,
+  template <typename Socket, typename Endpoint, typename Handler>
+  void async_accept_endpoint(Socket& peer, Endpoint& peer_endpoint,
       Handler handler)
   {
-    service_.async_accept_endpoint(impl_, peer_socket.lowest_layer(),
-        peer_endpoint, handler);
+    service_.async_accept_endpoint(impl_, to_socket(peer), peer_endpoint,
+        handler);
   }
 
 private:
@@ -498,6 +495,29 @@ private:
 
   /// The underlying native implementation.
   impl_type impl_;
+
+  // Helper function to convert a layered stream into a socket.
+  template <typename Stream>
+  typename Stream::lowest_layer_type& to_socket(Stream& peer)
+  {
+    return to_socket(peer.lowest_layer());
+  }
+
+  // Specialisation of to_socket function for datagram sockets.
+  template <typename Datagram_Socket_Service>
+  basic_datagram_socket<Datagram_Socket_Service>& to_socket(
+      basic_datagram_socket<Datagram_Socket_Service>& peer)
+  {
+    return peer;
+  }
+
+  // Specialisation of to_socket function for stream sockets.
+  template <typename Stream_Socket_Service>
+  basic_stream_socket<Stream_Socket_Service>& to_socket(
+      basic_stream_socket<Stream_Socket_Service>& peer)
+  {
+    return peer;
+  }
 };
 
 } // namespace asio

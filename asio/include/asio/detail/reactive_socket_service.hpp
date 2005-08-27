@@ -477,10 +477,8 @@ public:
   }
 
   // Accept a new connection.
-  template <typename Stream_Socket_Service, typename Error_Handler>
-  void accept(impl_type& impl,
-      basic_stream_socket<Stream_Socket_Service>& peer,
-      Error_Handler error_handler)
+  template <typename Socket, typename Error_Handler>
+  void accept(impl_type& impl, Socket& peer, Error_Handler error_handler)
   {
     // We cannot accept a socket that is already open.
     if (peer.impl() != invalid_socket)
@@ -500,11 +498,9 @@ public:
   }
 
   // Accept a new connection.
-  template <typename Stream_Socket_Service, typename Endpoint,
-      typename Error_Handler>
-  void accept_endpoint(impl_type& impl,
-      basic_stream_socket<Stream_Socket_Service>& peer,
-      Endpoint& peer_endpoint, Error_Handler error_handler)
+  template <typename Socket, typename Endpoint, typename Error_Handler>
+  void accept_endpoint(impl_type& impl, Socket& peer, Endpoint& peer_endpoint,
+      Error_Handler error_handler)
   {
     // We cannot accept a socket that is already open.
     if (peer.impl() != invalid_socket)
@@ -527,12 +523,12 @@ public:
     peer.set_impl(new_socket);
   }
 
-  template <typename Stream_Socket_Service, typename Handler>
+  template <typename Socket, typename Handler>
   class accept_handler
   {
   public:
-    accept_handler(impl_type impl, Demuxer& demuxer,
-        basic_stream_socket<Stream_Socket_Service>& peer, Handler handler)
+    accept_handler(impl_type impl, Demuxer& demuxer, Socket& peer,
+        Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
         peer_(peer),
@@ -560,15 +556,14 @@ public:
   private:
     impl_type impl_;
     Demuxer& demuxer_;
-    basic_stream_socket<Stream_Socket_Service>& peer_;
+    Socket& peer_;
     Handler handler_;
   };
 
-  // Start an asynchronous accept. The peer_socket object must be valid until
-  // the accept's handler is invoked.
-  template <typename Stream_Socket_Service, typename Handler>
-  void async_accept(impl_type& impl,
-      basic_stream_socket<Stream_Socket_Service>& peer, Handler handler)
+  // Start an asynchronous accept. The peer object must be valid until the
+  // accept's handler is invoked.
+  template <typename Socket, typename Handler>
+  void async_accept(impl_type& impl, Socket& peer, Handler handler)
   {
     if (impl == null())
     {
@@ -584,18 +579,15 @@ public:
     {
       demuxer_.work_started();
       reactor_.start_read_op(impl,
-          accept_handler<Stream_Socket_Service, Handler>(
-            impl, demuxer_, peer, handler));
+          accept_handler<Socket, Handler>(impl, demuxer_, peer, handler));
     }
   }
 
-  template <typename Stream_Socket_Service, typename Endpoint,
-      typename Handler>
+  template <typename Socket, typename Endpoint, typename Handler>
   class accept_endp_handler
   {
   public:
-    accept_endp_handler(impl_type impl, Demuxer& demuxer,
-        basic_stream_socket<Stream_Socket_Service>& peer,
+    accept_endp_handler(impl_type impl, Demuxer& demuxer, Socket& peer,
         Endpoint& peer_endpoint, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
@@ -628,17 +620,15 @@ public:
   private:
     impl_type impl_;
     Demuxer& demuxer_;
-    basic_stream_socket<Stream_Socket_Service>& peer_;
+    Socket& peer_;
     Endpoint& peer_endpoint_;
     Handler handler_;
   };
 
-  // Start an asynchronous accept. The peer_socket and peer_endpoint objects
+  // Start an asynchronous accept. The peer and peer_endpoint objects
   // must be valid until the accept's handler is invoked.
-  template <typename Stream_Socket_Service, typename Endpoint,
-      typename Handler>
-  void async_accept_endpoint(impl_type& impl,
-      basic_stream_socket<Stream_Socket_Service>& peer,
+  template <typename Socket, typename Endpoint, typename Handler>
+  void async_accept_endpoint(impl_type& impl, Socket& peer,
       Endpoint& peer_endpoint, Handler handler)
   {
     if (impl == null())
@@ -655,11 +645,10 @@ public:
     {
       demuxer_.work_started();
       reactor_.start_read_op(impl,
-          accept_endp_handler<Stream_Socket_Service, Endpoint, Handler>(
+          accept_endp_handler<Socket, Endpoint, Handler>(
             impl, demuxer_, peer, peer_endpoint, handler));
     }
   }
-
 
 private:
   // The demuxer used for dispatching handlers.

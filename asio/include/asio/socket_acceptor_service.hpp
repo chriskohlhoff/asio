@@ -133,37 +133,30 @@ public:
   }
 
   /// Accept a new connection.
-  template <typename Stream_Socket_Service, typename Error_Handler>
-  void accept(impl_type& impl,
-      basic_stream_socket<Stream_Socket_Service>& peer,
-      Error_Handler error_handler)
+  template <typename Socket, typename Error_Handler>
+  void accept(impl_type& impl, Socket& peer, Error_Handler error_handler)
   {
     service_impl_.accept(impl, peer, error_handler);
   }
 
   /// Accept a new connection.
-  template <typename Stream_Socket_Service, typename Endpoint,
-      typename Error_Handler>
-  void accept_endpoint(impl_type& impl,
-      basic_stream_socket<Stream_Socket_Service>& peer,
-      Endpoint& peer_endpoint, Error_Handler error_handler)
+  template <typename Socket, typename Endpoint, typename Error_Handler>
+  void accept_endpoint(impl_type& impl, Socket& peer, Endpoint& peer_endpoint,
+      Error_Handler error_handler)
   {
     service_impl_.accept_endpoint(impl, peer, peer_endpoint, error_handler);
   }
 
   /// Start an asynchronous accept.
-  template <typename Stream_Socket_Service, typename Handler>
-  void async_accept(impl_type& impl,
-      basic_stream_socket<Stream_Socket_Service>& peer, Handler handler)
+  template <typename Socket, typename Handler>
+  void async_accept(impl_type& impl, Socket& peer, Handler handler)
   {
     service_impl_.async_accept(impl, peer, handler);
   }
 
   /// Start an asynchronous accept.
-  template <typename Stream_Socket_Service, typename Endpoint,
-      typename Handler>
-  void async_accept_endpoint(impl_type& impl,
-      basic_stream_socket<Stream_Socket_Service>& peer,
+  template <typename Socket, typename Endpoint, typename Handler>
+  void async_accept_endpoint(impl_type& impl, Socket& peer,
       Endpoint& peer_endpoint, Handler handler)
   {
     service_impl_.async_accept_endpoint(impl, peer, peer_endpoint, handler);
