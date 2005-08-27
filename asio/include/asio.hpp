@@ -16,12 +16,12 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/basic_datagram_socket.hpp"
+#include "asio/basic_deadline_timer.hpp"
 #include "asio/basic_demuxer.hpp"
 #include "asio/basic_locking_dispatcher.hpp"
 #include "asio/basic_socket_acceptor.hpp"
 #include "asio/basic_socket_connector.hpp"
 #include "asio/basic_stream_socket.hpp"
-#include "asio/basic_timer.hpp"
 #include "asio/buffered_read_stream_fwd.hpp"
 #include "asio/buffered_read_stream.hpp"
 #include "asio/buffered_stream_fwd.hpp"
@@ -31,6 +31,8 @@
 #include "asio/datagram_socket.hpp"
 #include "asio/datagram_socket_service.hpp"
 #include "asio/default_error_handler.hpp"
+#include "asio/deadline_timer_service.hpp"
+#include "asio/deadline_timer.hpp"
 #include "asio/demuxer.hpp"
 #include "asio/demuxer_service.hpp"
 #include "asio/error_handler.hpp"
@@ -60,9 +62,7 @@
 #include "asio/stream_socket.hpp"
 #include "asio/stream_socket_service.hpp"
 #include "asio/thread.hpp"
-#include "asio/time.hpp"
-#include "asio/timer.hpp"
-#include "asio/timer_service.hpp"
+#include "asio/time_traits.hpp"
 #include "asio/wrapped_handler.hpp"
 #include "asio/write.hpp"
 

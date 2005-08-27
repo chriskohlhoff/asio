@@ -33,9 +33,10 @@ combinations:
 2. Requirements
 ===============
 
-The asio toolkit requires any one of the boost versions 1.30.0, 1.30.2, 1.31.0
-or 1.32.0. There is no need to build any of the boost libraries to use asio, as
-only the header files are required.
+The asio toolkit requires Boost 1.33.0 or later. There is no need to build any
+of the Boost libraries to use asio, as only the header files are required.
+(Note: with MSVC you may need to add -DBOOST_DATE_TIME_NO_LIB to your project
+settings to disable autolinking of the Boost.Date_Time library.)
 
 
 3. Before using asio
@@ -46,20 +47,20 @@ build any libraries before using asio in your own applications. You simply need
 to add the following directories to your compiler include path:
 
   - asio's `include' directory
-  - the boost directory (e.g. the one called boost-1.30.2 or boost_1_32_0)
+  - the boost directory (e.g. the one called boost_1_33_0)
 
 
 4. Building the tests on Linux or UNIX
 ======================================
 
-If the boost directory (e.g. the directory called boost-1.30.2 or boost_1_32_0)
+If the boost directory (e.g. the directory called boost_1_33_0)
 is in the same directory as the asio source kit, then you may configure asio by
 simply going:
 
   ./configure
 
 in the root directory of the asio source kit. Note that configure will always
-use the most recent boost version it knows about (i.e. 1.32.0) in preference to
+use the most recent boost version it knows about (i.e. 1.33.0) in preference to
 earlier versions, if there is more than one version present.
 
 If the boost directory is in some other location, then you need to specify this
@@ -82,8 +83,8 @@ test that asio is working correctly, run `make check' after a successful build.
 To build using the MSVC 6 or 7.1 command line compiler, perform the following
 steps:
 
-  - If you are using a version of boost other than 1.32.0, or if the boost
-    directory (i.e. the directory called boost_1_32_0) is not in the same
+  - If you are using a version of boost other than 1.33.0, or if the boost
+    directory (i.e. the directory called boost_1_33_0) is not in the same
     directory as the asio source kit, then specify the location of boost by
     running a command similar to `set BOOSTDIR=path_to_boost'. Ensure that
     you specify an absolute path.
@@ -100,8 +101,8 @@ steps:
 To build using the Borland C++ Builder 6 command line compiler, perform the
 following steps:
 
-  - If you are using a version of boost other than 1.32.0, or if the boost
-    directory (i.e. the directory called boost_1_32_0) is not in the same
+  - If you are using a version of boost other than 1.33.0, or if the boost
+    directory (i.e. the directory called boost_1_33_0) is not in the same
     directory as the asio source kit, then specify the location of boost by
     running a command similar to `set BOOSTDIR=path_to_boost'. Ensure that
     you specify an absolute path.
@@ -118,8 +119,8 @@ following steps:
 To build using the MinGW g++ compiler from the command line, perform the
 following steps:
 
-  - If you are using a version of boost other than 1.32.0, or if the boost
-    directory (i.e. the directory called boost_1_32_0) is not in the same
+  - If you are using a version of boost other than 1.33.0, or if the boost
+    directory (i.e. the directory called boost_1_33_0) is not in the same
     directory as the asio source kit, then specify the location of boost by
     running a command similar to `set BOOSTDIR=path_to_boost'. Ensure that
     you specify an absolute path.
@@ -130,14 +131,13 @@ following steps:
 
 5.4. Building with MinGW and MSYS
 
-If the boost directory (e.g. the directory called boost-1.30.2 or boost_1_32_0)
-is in the same directory as the asio source kit, then you may configure asio by
-simply going:
+If the boost directory (e.g. the directory called boost_1_33_0) is in the same
+directory as the asio source kit, then you may configure asio by simply going:
 
   sh configure
 
 in the root directory of the asio source kit. Note that configure will always
-use the most recent boost version it knows about (i.e. 1.32.0) in preference to
+use the most recent boost version it knows about (i.e. 1.33.0) in preference to
 earlier versions, if there is more than one version present.
 
 If the boost directory is in some other location, then you need to specify this
@@ -146,6 +146,6 @@ directory when running configure:
   sh configure --with-boost=<BOOSTDIR>
 
 When specifying the boost directory in this way you should ensure that you use
-an absolute path in a UNIX-style format, e.g. `/c/mydir/boost_1_32_0'.
+an absolute path in a UNIX-style format, e.g. `/c/mydir/boost_1_33_0'.
 
 To build, simply run `make' in the root directory of the asio source kit.

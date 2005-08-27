@@ -1,8 +1,9 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <boost/bind.hpp>
 #include "asio.hpp"
+#include "boost/bind.hpp"
+#include "boost/date_time/posix_time/posix_time_types.hpp"
 
 const short multicast_port = 30001;
 const std::string multicast_addr = "225.0.0.1";
@@ -29,7 +30,7 @@ public:
   {
     if (!error && message_count_ < max_message_count)
     {
-      timer_.expiry(asio::time::now() + 1);
+      timer_.expires_from_now(boost::posix_time::seconds(1));
       timer_.async_wait(
           boost::bind(&sender::handle_timeout, this,
             asio::placeholders::error));
@@ -52,7 +53,7 @@ public:
 
 private:
   asio::datagram_socket socket_;
-  asio::timer timer_;
+  asio::deadline_timer timer_;
   int message_count_;
   std::string message_;
 };

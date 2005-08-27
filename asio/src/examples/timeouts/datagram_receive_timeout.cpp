@@ -1,5 +1,6 @@
 #include "asio.hpp"
 #include <boost/bind.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <iostream>
 
 using namespace asio;
@@ -16,7 +17,7 @@ public:
         boost::bind(&datagram_handler::handle_recvfrom, this,
           asio::placeholders::error, asio::placeholders::bytes_transferred));
 
-    timer_.expiry(asio::time::now() + 5);
+    timer_.expires_from_now(boost::posix_time::seconds(5));
     timer_.async_wait(boost::bind(&datagram_socket::close, &socket_));
   }
 
@@ -34,7 +35,7 @@ public:
 
 private:
   demuxer& demuxer_;
-  timer timer_;
+  deadline_timer timer_;
   datagram_socket socket_;
   ipv4::udp::endpoint sender_endpoint_;
   enum { max_length = 512 };
@@ -48,6 +49,10 @@ int main()
     demuxer d;
     datagram_handler dh(d);
     d.run();
+  }
+  catch (asio::error& e)
+  {
+    std::cerr << "Exception: " << e << "\n";
   }
   catch (std::exception& e)
   {

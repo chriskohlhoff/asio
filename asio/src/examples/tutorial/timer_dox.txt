@@ -6,11 +6,17 @@ wait on a timer.
 
 \dontinclude timer1/timer.cpp
 
-<b>Step 1.</b> We start by including the necessary header files. All of the
-asio classes can be used by simply including the <tt>"asio.hpp"</tt> header
-file.
+<b>Step 1.</b> We start by including the necessary header files.
 
-\until include "asio.hpp"
+All of the asio classes can be used by simply including the <tt>"asio.hpp"</tt>
+header file.
+
+\until #include "asio.hpp"
+
+Since this example users timers, we need to include the appropriate
+Boost.Date_Time header file for manipulating times.
+
+\until #include "boost/date_time/posix_time/posix_time.hpp"
 
 <b>Step 2.</b> All programs that use asio need to have at least one
 asio::demuxer object. This class provides access to the event demultiplexing
@@ -19,25 +25,22 @@ object of this type first thing in the main function.
 
 \until asio::demuxer
 
-<b>Step 3.</b> Next we declare an object of type asio::timer. The core asio
-classes that provide I/O functionality (or as in this case timer
+<b>Step 3.</b> Next we declare an object of type asio::deadline_timer. The core
+asio classes that provide I/O functionality (or as in this case timer
 functionality) always take a reference to a demuxer as their first constructor
 argument. The second argument to the constructor sets the timer to expire 5
 seconds from now.
 
-\until asio::timer
+\until asio::deadline_timer
 
 <b>Step 4.</b> In this simple example we perform a blocking wait on the timer.
-That is, the call to asio::timer::wait() will not return until the timer has
-expired, 5 seconds after it was created (i.e. <b>not</b> from when the wait
-starts).
+That is, the call to asio::deadline_timer::wait() will not return until the
+timer has expired, 5 seconds after it was created (i.e. <b>not</b> from when the
+wait starts).
 
-A timer is always in one of two states: "expired" or "not expired". If the
-asio::timer::wait() function is called on an expired timer, it will return
-immediately.
-
-It is important to remember that a timer's expiry time is always expressed
-relative to the epoch (i.e. from midnight, 1 January 1970).
+A deadline timer is always in one of two states: "expired" or "not expired". If
+the asio::deadline_timer::wait() function is called on an expired timer, it
+will return immediately.
 
 \until wait
 
@@ -67,19 +70,19 @@ asynchronous wait on the timer.
 
 \dontinclude timer2/timer.cpp
 
-\until include "asio.hpp"
+\until #include "boost/date_time/posix_time/posix_time.hpp"
 
 <b>Step 1.</b> Using asio's asynchronous functionality means having a callback
 function that will be called when an asynchronous operation completes. In this
 program we define a function called <tt>print</tt> to be called when the
 asynchronous wait finishes.
 
-\until asio::timer 
+\until asio::deadline_timer 
 
 <b>Step 2.</b> Next, instead of doing a blocking wait as in tutorial Timer.1,
-we call the asio::timer::async_wait() function to perform an asynchronous
-wait. When calling this function we pass the <tt>print</tt> callback handler
-that was defined above.
+we call the asio::deadline_timer::async_wait() function to perform an
+asynchronous wait. When calling this function we pass the <tt>print</tt>
+callback handler that was defined above.
 
 \skipline async_wait
 
@@ -98,8 +101,8 @@ callback has completed.
 
 It is important to remember to give the demuxer some work to do before calling
 asio::demuxer::run(). For example, if we had omitted the above call to
-asio::timer::async_wait(), the demuxer would not have had any work to do, and
-consequently asio::demuxer::run() would have returned immediately.
+asio::deadline_timer::async_wait(), the demuxer would not have had any work to
+do, and consequently asio::demuxer::run() would have returned immediately.
 
 \skip run
 \until }
@@ -126,7 +129,7 @@ your handler function.
 
 \dontinclude timer3/timer.cpp
 
-\until include "asio.hpp"
+\until #include "boost/date_time/posix_time/posix_time.hpp"
 
 <b>Step 1.</b> To implement a repeating timer using asio you need to change
 the timer's expiry time in your callback function, and to then start a new
@@ -156,14 +159,14 @@ from the previous expiry time. By calculating the new expiry time relative to
 the old, we can ensure that the timer does not drift away from the
 whole-second mark due to any delays in processing the handler.
 
-\until set
+\until expires_at
 
 <b>Step 4.</b> Then we start a new asynchronous wait on the timer. As you can
 see, the \ref boost_bind function is used to associate the extra parameters
-with your callback handler. The asio::timer::async_wait() function expects a
-handler function (or function object) with the signature <tt>void(const
-asio::error&)</tt>. Binding the additional parameters converts your
-<tt>print</tt> function into a function object that matches the signature
+with your callback handler. The asio::deadline_timer::async_wait() function
+expects a handler function (or function object) with the signature
+<tt>void(const asio::error&)</tt>. Binding the additional parameters converts
+your <tt>print</tt> function into a function object that matches the signature
 correctly.
 
 See the <a href="http://www.boost.org/libs/bind/bind.html">Boost: bind.hpp
@@ -181,11 +184,11 @@ the callback handler.
 <b>Step 5.</b> A new <tt>count</tt> variable is added so that we can stop the
 program when the timer fires for the sixth time.
 
-\until asio::timer
+\until asio::deadline_timer
 
-<b>Step 6.</b> As in Step 4, when making the call to asio::timer::async_wait()
-from <tt>main</tt> we bind the additional parameters needed for the
-<tt>print</tt> function.
+<b>Step 6.</b> As in Step 4, when making the call to
+asio::deadline_timer::async_wait() from <tt>main</tt> we bind the additional
+parameters needed for the <tt>print</tt> function.
 
 \until run
 
@@ -217,7 +220,7 @@ tutorial Timer.3.
 
 \dontinclude timer4/timer.cpp
 
-\until include "asio.hpp"
+\until #include "boost/date_time/posix_time/posix_time.hpp"
 
 <b>Step 1.</b> Instead of defining a free function <tt>print</tt> as the
 callback handler, as we did in the earlier tutorial programs, we now define a
@@ -305,7 +308,7 @@ when handlers might be accessing a shared, thread-unsafe resource.
 
 \dontinclude timer5/timer.cpp
 
-\until include "asio.hpp"
+\until #include "boost/date_time/posix_time/posix_time.hpp"
 
 <b>Step 1.</b> We start by defining a class called <tt>printer</tt>, similar
 to the class in the previous tutorial. This class will extend the previous
@@ -313,9 +316,9 @@ tutorial by running two timers in parallel.
 
 \until public
 
-<b>Step 2.</b> In addition to initialising a pair of asio::timer members, the
-constructor initialises the <tt>dispatcher_</tt> member, an object of type
-asio::locking_dispatcher.
+<b>Step 2.</b> In addition to initialising a pair of asio::deadline_timer
+members, the constructor initialises the <tt>dispatcher_</tt> member, an object
+of type asio::locking_dispatcher.
 
 An asio::locking_dispatcher guarantees that, for those handlers that are
 dispatched through it, an executing handler will be allowed to complete before

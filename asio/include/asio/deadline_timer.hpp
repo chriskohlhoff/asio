@@ -1,6 +1,6 @@
 //
-// timer.hpp
-// ~~~~~~~~~
+// deadline_timer.hpp
+// ~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2005 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_TIMER_HPP
-#define ASIO_TIMER_HPP
+#ifndef ASIO_DEADLINE_TIMER_HPP
+#define ASIO_DEADLINE_TIMER_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -17,16 +17,16 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/basic_timer.hpp"
-#include "asio/timer_service.hpp"
+#include "asio/basic_deadline_timer.hpp"
+#include "asio/deadline_timer_service.hpp"
 
 namespace asio {
 
 /// Typedef for the typical usage of timer.
-typedef basic_timer<timer_service<> > timer;
+typedef basic_deadline_timer<deadline_timer_service<> > deadline_timer;
 
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_TIMER_HPP
+#endif // ASIO_DEADLINE_TIMER_HPP

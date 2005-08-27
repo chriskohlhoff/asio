@@ -50,6 +50,7 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 
 \li asio::demuxer
 \li asio::datagram_socket
+\li asio::deadline_timer
 \li asio::error
 \li asio::ipv4::address
 \li asio::ipv4::host
@@ -63,18 +64,16 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 \li asio::socket_connector
 \li asio::stream_socket
 \li asio::thread
-\li asio::time
-\li asio::timer
 
 <H2>Class Templates</H2>
 
 \li asio::basic_demuxer
 \li asio::basic_datagram_socket
+\li asio::basic_deadline_timer
 \li asio::basic_locking_dispatcher
 \li asio::basic_socket_acceptor
 \li asio::basic_socket_connector
 \li asio::basic_stream_socket
-\li asio::basic_timer
 \li asio::buffered_read_stream
 \li asio::buffered_write_stream
 \li asio::buffered_stream
@@ -106,12 +105,12 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 <H2>Services</H2>
 
 \li asio::datagram_socket_service
+\li asio::deadline_timer_service
 \li asio::demuxer_service
 \li asio::locking_dispatcher_service
 \li asio::socket_acceptor_service
 \li asio::socket_connector_service
 \li asio::stream_socket_service
-\li asio::timer_service
 \li asio::ipv4::host_resolver_service
 
 <H2>Concepts</H2>

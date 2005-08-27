@@ -1,11 +1,12 @@
 #include <iostream>
 #include "asio.hpp"
+#include "boost/date_time/posix_time/posix_time.hpp"
 
 int main()
 {
   asio::demuxer d;
 
-  asio::timer t(d, asio::time::now() + 5);
+  asio::deadline_timer t(d, boost::posix_time::seconds(5));
   t.wait();
 
   std::cout << "Hello, world!\n";

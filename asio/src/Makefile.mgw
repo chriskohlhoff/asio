@@ -1,5 +1,5 @@
 ifndef BOOSTDIR
-BOOSTDIR = ../../boost_1_32_0
+BOOSTDIR = ../../boost_1_33_0
 endif
 
 CXXFLAGS = -g -O3 -Wall -mthreads -I../include -I$(BOOSTDIR)
@@ -9,6 +9,7 @@ LIBS = -lws2_32
 TEST_EXES = \
 	tests/performance/client.exe \
 	tests/performance/server.exe \
+	tests/unit/deadline_timer_test.exe \
 	tests/unit/demuxer_test.exe \
 	tests/unit/datagram_socket_test.exe \
 	tests/unit/error_handler_test.exe \
@@ -19,8 +20,7 @@ TEST_EXES = \
 	tests/unit/locking_dispatcher_test.exe \
 	tests/unit/read_test.exe \
 	tests/unit/write_test.exe \
-	tests/unit/socket_acceptor_test.exe \
-	tests/unit/timer_test.exe
+	tests/unit/socket_acceptor_test.exe
 
 EXAMPLE_EXES = \
 	examples/chat/chat_client.exe \

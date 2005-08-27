@@ -1,14 +1,16 @@
 !ifndef BOOSTDIR
-BOOSTDIR = ../../boost_1_32_0
+BOOSTDIR = ../../boost_1_33_0
 !endif
 
 CXXFLAGS = -q -O2 -v -vi -y -a8 -b -Ve- -Vx- -tWM -tWR -tWC -w-inl -w-par -I../include -I$(BOOSTDIR)
+DEFINES = -DBOOST_DATE_TIME_NO_LIB
 LDFLAGS = -q -O2 -v -vi -y -a8 -b -Ve- -Vx- -tWM -tWR -tWC
 LIBS = ws2_32.lib
 
 all: \
 	tests\performance\client.exe \
 	tests\performance\server.exe \
+	tests\unit\deadline_timer_test.exe \
 	tests\unit\demuxer_test.exe \
 	tests\unit\datagram_socket_test.exe \
 	tests\unit\error_handler_test.exe \
@@ -20,7 +22,6 @@ all: \
 	tests\unit\read_test.exe \
 	tests\unit\write_test.exe \
 	tests\unit\socket_acceptor_test.exe \
-	tests\unit\timer_test.exe \
 	examples\chat\chat_client.exe \
 	examples\chat\chat_server.exe \
 	examples\echo\async_tcp_echo_server.exe \
@@ -49,6 +50,7 @@ all: \
 	examples\tutorial\daytime7\server.exe
 
 check: all
+	@tests\unit\deadline_timer_test.exe
 	@tests\unit\demuxer_test.exe
 	@tests\unit\datagram_socket_test.exe
 	@tests\unit\error_handler_test.exe
@@ -60,7 +62,6 @@ check: all
 	@tests\unit\read_test.exe
 	@tests\unit\write_test.exe
 	@tests\unit\socket_acceptor_test.exe
-	@tests\unit\timer_test.exe
 
 clean:
 	-del /q /s tests\*.exe
@@ -74,6 +75,6 @@ clean:
 	bcc32 -e$@ $(LDFLAGS) $< $(LIBS)
 
 .cpp.obj:
-	bcc32 -o$@ -c $(CXXFLAGS) $<
+	bcc32 -o$@ -c $(CXXFLAGS) $(DEFINES) $<
 
 .autodepend

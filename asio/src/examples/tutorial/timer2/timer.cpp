@@ -1,5 +1,6 @@
 #include <iostream>
 #include "asio.hpp"
+#include "boost/date_time/posix_time/posix_time.hpp"
 
 void print(const asio::error& /*e*/)
 {
@@ -10,7 +11,7 @@ int main()
 {
   asio::demuxer d;
 
-  asio::timer t(d, asio::time::now() + 5);
+  asio::deadline_timer t(d, boost::posix_time::seconds(5));
   t.async_wait(print);
 
   d.run();

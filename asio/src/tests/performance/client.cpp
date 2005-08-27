@@ -166,7 +166,7 @@ public:
       size_t block_size, size_t session_count, int timeout)
     : demuxer_(d),
       dispatcher_(d),
-      stop_timer_(d, asio::time::now() + timeout),
+      stop_timer_(d, boost::posix_time::seconds(timeout)),
       connector_(d),
       server_endpoint_(server_endpoint),
       block_size_(block_size),
@@ -224,7 +224,7 @@ public:
 private:
   demuxer& demuxer_;
   locking_dispatcher dispatcher_;
-  timer stop_timer_;
+  deadline_timer stop_timer_;
   socket_connector connector_;
   ipv4::tcp::endpoint server_endpoint_;
   size_t block_size_;

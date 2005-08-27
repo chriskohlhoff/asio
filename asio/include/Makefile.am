@@ -1,12 +1,12 @@
 nobase_include_HEADERS = \
 	asio.hpp \
 	asio/basic_datagram_socket.hpp \
+	asio/basic_deadline_timer.hpp \
 	asio/basic_demuxer.hpp \
 	asio/basic_locking_dispatcher.hpp \
 	asio/basic_socket_acceptor.hpp \
 	asio/basic_socket_connector.hpp \
 	asio/basic_stream_socket.hpp \
-	asio/basic_timer.hpp \
 	asio/buffered_read_stream_fwd.hpp \
 	asio/buffered_read_stream.hpp \
 	asio/buffered_stream_fwd.hpp \
@@ -15,6 +15,8 @@ nobase_include_HEADERS = \
 	asio/buffered_write_stream.hpp \
 	asio/datagram_socket.hpp \
 	asio/datagram_socket_service.hpp \
+	asio/deadline_timer.hpp \
+	asio/deadline_timer_service.hpp \
 	asio/default_error_handler.hpp \
 	asio/demuxer.hpp \
 	asio/demuxer_service.hpp \
@@ -36,10 +38,10 @@ nobase_include_HEADERS = \
 	asio/detail/posix_tss_bool.hpp \
 	asio/detail/push_options.hpp \
 	asio/detail/reactive_datagram_socket_service.hpp \
+	asio/detail/reactive_deadline_timer_service.hpp \
 	asio/detail/reactive_socket_acceptor_service.hpp \
 	asio/detail/reactive_socket_connector_service.hpp \
 	asio/detail/reactive_stream_socket_service.hpp \
-	asio/detail/reactive_timer_service.hpp \
 	asio/detail/reactor_op_queue.hpp \
 	asio/detail/reactor_timer_queue.hpp \
 	asio/detail/scoped_lock.hpp \
@@ -95,9 +97,7 @@ nobase_include_HEADERS = \
 	asio/stream_socket.hpp \
 	asio/stream_socket_service.hpp \
 	asio/thread.hpp \
-	asio/time.hpp \
-	asio/timer.hpp \
-	asio/timer_service.hpp \
+	asio/time_traits.hpp \
 	asio/wrapped_handler.hpp \
 	asio/write.hpp
 

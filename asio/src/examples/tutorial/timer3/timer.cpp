@@ -1,15 +1,16 @@
 #include <iostream>
-#include "boost/bind.hpp"
 #include "asio.hpp"
+#include "boost/bind.hpp"
+#include "boost/date_time/posix_time/posix_time.hpp"
 
-void print(const asio::error& /*e*/, asio::timer* t, int* count)
+void print(const asio::error& /*e*/, asio::deadline_timer* t, int* count)
 {
   if (*count < 5)
   {
     std::cout << *count << "\n";
     ++(*count);
 
-    t->expiry(t->expiry() + 1);
+    t->expires_at(t->expires_at() + boost::posix_time::seconds(1));
     t->async_wait(boost::bind(print, asio::placeholders::error, t, count));
   }
 }
@@ -19,7 +20,7 @@ int main()
   asio::demuxer d;
 
   int count = 0;
-  asio::timer t(d, asio::time::now() + 1);
+  asio::deadline_timer t(d, boost::posix_time::seconds(1));
   t.async_wait(boost::bind(print, asio::placeholders::error, &t, &count));
 
   d.run();

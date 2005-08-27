@@ -5,6 +5,7 @@ SUBDIRS = doc
 noinst_PROGRAMS = \
 	tests/performance/client \
 	tests/performance/server \
+	tests/unit/deadline_timer_test \
 	tests/unit/demuxer_test \
 	tests/unit/datagram_socket_test \
 	tests/unit/error_handler_test \
@@ -16,7 +17,6 @@ noinst_PROGRAMS = \
 	tests/unit/read_test \
 	tests/unit/write_test \
 	tests/unit/socket_acceptor_test \
-	tests/unit/timer_test \
 	examples/chat/chat_client \
 	examples/chat/chat_server \
 	examples/echo/async_tcp_echo_server \
@@ -45,6 +45,7 @@ noinst_PROGRAMS = \
 	examples/tutorial/daytime7/server
 
 TESTS = \
+	tests/unit/deadline_timer_test \
 	tests/unit/demuxer_test \
 	tests/unit/datagram_socket_test \
 	tests/unit/error_handler_test \
@@ -55,8 +56,7 @@ TESTS = \
 	tests/unit/locking_dispatcher_test \
 	tests/unit/read_test \
 	tests/unit/write_test \
-	tests/unit/socket_acceptor_test \
-	tests/unit/timer_test
+	tests/unit/socket_acceptor_test
 
 noinst_HEADERS = \
 	tests/unit/unit_test.hpp \
@@ -66,6 +66,7 @@ AM_CXXFLAGS = -I$(srcdir)/../include
 
 tests_performance_client_SOURCES = tests/performance/client.cpp
 tests_performance_server_SOURCES = tests/performance/server.cpp
+tests_unit_deadline_timer_test_SOURCES = tests/unit/deadline_timer_test.cpp
 tests_unit_demuxer_test_SOURCES = tests/unit/demuxer_test.cpp
 tests_unit_datagram_socket_test_SOURCES = tests/unit/datagram_socket_test.cpp
 tests_unit_error_handler_test_SOURCES = tests/unit/error_handler_test.cpp
@@ -77,7 +78,6 @@ tests_unit_locking_dispatcher_test_SOURCES = tests/unit/locking_dispatcher_test.
 tests_unit_read_test_SOURCES = tests/unit/read_test.cpp
 tests_unit_write_test_SOURCES = tests/unit/write_test.cpp
 tests_unit_socket_acceptor_test_SOURCES = tests/unit/socket_acceptor_test.cpp
-tests_unit_timer_test_SOURCES = tests/unit/timer_test.cpp
 examples_chat_chat_client_SOURCES = examples/chat/chat_client.cpp
 examples_chat_chat_server_SOURCES = examples/chat/chat_server.cpp
 examples_echo_async_tcp_echo_server_SOURCES = examples/echo/async_tcp_echo_server.cpp

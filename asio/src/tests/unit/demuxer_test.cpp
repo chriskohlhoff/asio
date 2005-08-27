@@ -49,7 +49,7 @@ void nested_decrement_to_zero(demuxer* d, int* count)
 
 void sleep_increment(demuxer* d, int* count)
 {
-  timer t(*d, asio::time::now() + 2);
+  deadline_timer t(*d, boost::posix_time::seconds(2));
   t.wait();
 
   if (++(*count) < 3)
@@ -59,7 +59,7 @@ void sleep_increment(demuxer* d, int* count)
 void start_sleep_increments(demuxer* d, int* count)
 {
   // Give all threads a chance to start.
-  timer t(*d, asio::time::now() + 2);
+  deadline_timer t(*d, boost::posix_time::seconds(2));
   t.wait();
 
   // Start the first of three increments.

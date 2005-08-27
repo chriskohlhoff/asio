@@ -1,14 +1,15 @@
 #include <iostream>
-#include "boost/bind.hpp"
 #include "asio.hpp"
+#include "boost/bind.hpp"
+#include "boost/date_time/posix_time/posix_time.hpp"
 
 class printer
 {
 public:
   printer(asio::demuxer& d)
     : dispatcher_(d),
-      timer1_(d, asio::time::now() + 1),
-      timer2_(d, asio::time::now() + 1),
+      timer1_(d, boost::posix_time::seconds(1)),
+      timer2_(d, boost::posix_time::seconds(1)),
       count_(0)
   {
     timer1_.async_wait(dispatcher_.wrap(boost::bind(&printer::print1, this)));
@@ -27,7 +28,7 @@ public:
       std::cout << "Timer 1: " << count_ << "\n";
       ++count_;
 
-      timer1_.expiry(timer1_.expiry() + 1);
+      timer1_.expires_at(timer1_.expires_at() + boost::posix_time::seconds(1));
       timer1_.async_wait(dispatcher_.wrap(boost::bind(&printer::print1, this)));
     }
   }
@@ -39,15 +40,15 @@ public:
       std::cout << "Timer 2: " << count_ << "\n";
       ++count_;
 
-      timer2_.expiry(timer2_.expiry() + 1),
+      timer2_.expires_at(timer2_.expires_at() + boost::posix_time::seconds(1));
       timer2_.async_wait(dispatcher_.wrap(boost::bind(&printer::print2, this)));
     }
   }
 
 private:
   asio::locking_dispatcher dispatcher_;
-  asio::timer timer1_;
-  asio::timer timer2_;
+  asio::deadline_timer timer1_;
+  asio::deadline_timer timer2_;
   int count_;
 };
 

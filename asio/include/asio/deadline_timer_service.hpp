@@ -1,6 +1,6 @@
 //
-// timer_service.hpp
-// ~~~~~~~~~~~~~~~~~
+// deadline_timer_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2005 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_TIMER_SERVICE_HPP
-#define ASIO_TIMER_SERVICE_HPP
+#ifndef ASIO_DEADLINE_TIMER_SERVICE_HPP
+#define ASIO_DEADLINE_TIMER_SERVICE_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -19,37 +19,50 @@
 
 #include "asio/detail/push_options.hpp"
 #include <memory>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/basic_demuxer.hpp"
 #include "asio/demuxer_service.hpp"
+#include "asio/time_traits.hpp"
 #include "asio/detail/epoll_reactor.hpp"
 #include "asio/detail/select_reactor.hpp"
-#include "asio/detail/reactive_timer_service.hpp"
+#include "asio/detail/reactive_deadline_timer_service.hpp"
 
 namespace asio {
 
 /// Default service implementation for a timer.
-template <typename Allocator = std::allocator<void> >
-class timer_service
+template <typename Time_Type = boost::posix_time::ptime,
+    typename Time_Traits = asio::time_traits<Time_Type>,
+    typename Allocator = std::allocator<void> >
+class deadline_timer_service
   : private boost::noncopyable
 {
 public:
   /// The demuxer type.
   typedef basic_demuxer<demuxer_service<Allocator> > demuxer_type;
 
+  /// The time traits type.
+  typedef Time_Traits traits_type;
+
+  /// The time type.
+  typedef typename traits_type::time_type time_type;
+
+  /// The duration type.
+  typedef typename traits_type::duration_type duration_type;
+
 private:
   // The type of the platform-specific implementation.
 #if defined(_WIN32)
-  typedef detail::reactive_timer_service<
-    demuxer_type, detail::select_reactor<true> > service_impl_type;
+  typedef detail::reactive_deadline_timer_service<demuxer_type,
+    traits_type, detail::select_reactor<true> > service_impl_type;
 #elif defined(ASIO_HAS_EPOLL_REACTOR)
-  typedef detail::reactive_timer_service<
-    demuxer_type, detail::epoll_reactor<false> > service_impl_type;
+  typedef detail::reactive_deadline_timer_service<demuxer_type,
+    traits_type, detail::epoll_reactor<false> > service_impl_type;
 #else
-  typedef detail::reactive_timer_service<
-    demuxer_type, detail::select_reactor<false> > service_impl_type;
+  typedef detail::reactive_deadline_timer_service<demuxer_type,
+    traits_type, detail::select_reactor<false> > service_impl_type;
 #endif
 
 public:
@@ -61,7 +74,7 @@ public:
 #endif
 
   /// Construct a new timer service for the specified demuxer.
-  timer_service(demuxer_type& demuxer)
+  deadline_timer_service(demuxer_type& demuxer)
     : service_impl_(demuxer.get_service(service_factory<service_impl_type>()))
   {
   }
@@ -90,16 +103,28 @@ public:
     service_impl_.destroy(impl);
   }
 
-  /// Get the expiry time for the timer.
-  asio::time expiry(const impl_type& impl) const
+  /// Get the expiry time for the timer as an absolute time.
+  time_type expires_at(const impl_type& impl) const
   {
-    return service_impl_.expiry(impl);
+    return service_impl_.expires_at(impl);
   }
 
-  /// Set the expiry time for the timer.
-  void expiry(impl_type& impl, const asio::time& expiry_time)
+  /// Set the expiry time for the timer as an absolute time.
+  void expires_at(impl_type& impl, const time_type& expiry_time)
   {
-    service_impl_.expiry(impl, expiry_time);
+    service_impl_.expires_at(impl, expiry_time);
+  }
+
+  /// Get the expiry time for the timer relative to now.
+  duration_type expires_from_now(const impl_type& impl) const
+  {
+    return service_impl_.expires_from_now(impl);
+  }
+
+  /// Set the expiry time for the timer relative to now.
+  void expires_from_now(impl_type& impl, const duration_type& expiry_time)
+  {
+    service_impl_.expires_from_now(impl, expiry_time);
   }
 
   /// Cancel any asynchronous wait operations associated with the timer.
@@ -130,4 +155,4 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_TIMER_SERVICE_HPP
+#endif // ASIO_DEADLINE_TIMER_SERVICE_HPP

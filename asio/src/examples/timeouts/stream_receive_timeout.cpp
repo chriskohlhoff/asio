@@ -1,5 +1,6 @@
 #include "asio.hpp"
 #include <boost/bind.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <iostream>
 
 using namespace asio;
@@ -31,7 +32,7 @@ public:
       socket_.async_read(buf_, sizeof(buf_),
           boost::bind(&stream_handler::handle_recv, this,
             asio::placeholders::error));
-      timer_.expiry(asio::time::now() + 5);
+      timer_.expires_from_now(boost::posix_time::seconds(5));
       timer_.async_wait(boost::bind(&stream_socket::close, &socket_));
     }
   }
@@ -50,7 +51,7 @@ public:
 
 private:
   demuxer& demuxer_;
-  timer timer_;
+  deadline_timer timer_;
   socket_acceptor acceptor_;
   stream_socket socket_;
   char buf_[1024];
@@ -75,6 +76,10 @@ int main()
         boost::bind(connect_handler));
 
     d.run();
+  }
+  catch (asio::error& e)
+  {
+    std::cerr << "Exception: " << e << "\n";
   }
   catch (std::exception& e)
   {

@@ -1,6 +1,6 @@
 //
-// reactive_timer_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~
+// reactive_deadline_timer_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2005 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_REACTIVE_TIMER_SERVICE_HPP
-#define ASIO_DETAIL_REACTIVE_TIMER_SERVICE_HPP
+#ifndef ASIO_DETAIL_REACTIVE_DEADLINE_TIMER_SERVICE_HPP
+#define ASIO_DETAIL_REACTIVE_DEADLINE_TIMER_SERVICE_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -18,54 +18,61 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
 #include "asio/service_factory.hpp"
-#include "asio/time.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/time.hpp"
 
 namespace asio {
 namespace detail {
 
-template <typename Demuxer, typename Reactor>
-class reactive_timer_service
+template <typename Demuxer, typename Time_Traits, typename Reactor>
+class reactive_deadline_timer_service
 {
 public:
   // Implementation structure for a timer.
   struct timer_impl
     : private boost::noncopyable
   {
-    asio::time expiry;
+    asio::detail::time expiry;
   };
 
   // The native type of the timer. This type is dependent on the underlying
   // implementation of the timer service.
   typedef timer_impl* impl_type;
 
-  // Return a null timer implementation.
-  static impl_type null()
-  {
-    return 0;
-  }
+  // The demuxer type for this service.
+  typedef Demuxer demuxer_type;
+
+  // The time type.
+  typedef typename Time_Traits::time_type time_type;
+
+  // The duration type.
+  typedef typename Time_Traits::duration_type duration_type;
 
   // Constructor.
-  reactive_timer_service(Demuxer& d)
+  reactive_deadline_timer_service(demuxer_type& d)
     : demuxer_(d),
       reactor_(d.get_service(service_factory<Reactor>()))
   {
   }
 
-  // The demuxer type for this service.
-  typedef Demuxer demuxer_type;
-
   // Get the demuxer associated with the service.
   demuxer_type& demuxer()
   {
     return demuxer_;
+  }
+
+  // Return a null timer implementation.
+  static impl_type null()
+  {
+    return 0;
   }
 
   // Create a new timer implementation.
@@ -85,16 +92,38 @@ public:
     }
   }
 
-  // Get the expiry time for the timer.
-  asio::time expiry(const impl_type& impl) const
+  // Get the expiry time for the timer as an absolute time.
+  time_type expires_at(const impl_type& impl) const
   {
-    return impl->expiry;
+    boost::posix_time::ptime ctime_epoch(
+        boost::posix_time::ptime::date_type(1970, 1, 1));
+    boost::posix_time::time_duration ctime
+      = boost::posix_time::seconds(impl->expiry.sec())
+      + boost::posix_time::microseconds(impl->expiry.usec());
+    return Time_Traits::from_utc(ctime_epoch + ctime);
   }
 
-  // Set the expiry time for the timer.
-  void expiry(impl_type& impl, const asio::time& expiry_time)
+  // Set the expiry time for the timer as an absolute time.
+  void expires_at(impl_type& impl, const time_type& expiry_time)
   {
-    impl->expiry = expiry_time;
+    boost::posix_time::ptime utc_time = Time_Traits::to_utc(expiry_time);
+    boost::posix_time::ptime ctime_epoch(
+        boost::posix_time::ptime::date_type(1970, 1, 1));
+    boost::posix_time::time_duration ctime = utc_time - ctime_epoch;
+    impl->expiry.sec(ctime.total_seconds());
+    impl->expiry.usec(ctime.total_microseconds() % 1000000);
+  }
+
+  // Get the expiry time for the timer relative to now.
+  duration_type expires_from_now(const impl_type& impl) const
+  {
+    return Time_Traits::subtract(expires_at(impl), Time_Traits::now());
+  }
+
+  // Set the expiry time for the timer relative to now.
+  void expires_from_now(impl_type& impl, const duration_type& expiry_time)
+  {
+    expires_at(impl, Time_Traits::add(Time_Traits::now(), expiry_time));
   }
 
   // Cancel any asynchronous wait operations associated with the timer.
@@ -106,16 +135,16 @@ public:
   // Perform a blocking wait on the timer.
   void wait(impl_type& impl)
   {
-    asio::time now = asio::time::now();
+    asio::detail::time now = asio::detail::time::now();
     while (now < impl->expiry)
     {
-      asio::time timeout = impl->expiry;
+      asio::detail::time timeout = impl->expiry;
       timeout -= now;
       ::timeval tv;
       tv.tv_sec = timeout.sec();
       tv.tv_usec = timeout.usec();
       socket_ops::select(0, 0, 0, 0, &tv);
-      now = asio::time::now();
+      now = asio::detail::time::now();
     }
   }
 
@@ -172,4 +201,4 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_REACTIVE_TIMER_SERVICE_HPP
+#endif // ASIO_DETAIL_REACTIVE_DEADLINE_TIMER_SERVICE_HPP

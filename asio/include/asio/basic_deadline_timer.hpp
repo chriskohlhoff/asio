@@ -1,6 +1,6 @@
 //
-// basic_timer.hpp
-// ~~~~~~~~~~~~~~~
+// basic_deadline_timer.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2005 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_BASIC_TIMER_HPP
-#define ASIO_BASIC_TIMER_HPP
+#ifndef ASIO_BASIC_DEADLINE_TIMER_HPP
+#define ASIO_BASIC_DEADLINE_TIMER_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -22,16 +22,15 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/service_factory.hpp"
-#include "asio/time.hpp"
 
 namespace asio {
 
 /// Provides waitable timer functionality.
 /**
- * The basic_timer class template provides the ability to perform a blocking or
- * asynchronous wait for a timer to expire..
+ * The basic_deadline_timer class template provides the ability to perform a
+ * blocking or asynchronous wait for a timer to expire.
  *
- * Most applications will use the asio::timer typedef.
+ * Most applications will use the asio::deadline_timer typedef.
  *
  * @par Thread Safety:
  * @e Distinct @e objects: Safe.@n
@@ -41,7 +40,7 @@ namespace asio {
  * Async_Object.
  */
 template <typename Service>
-class basic_timer
+class basic_deadline_timer
   : private boost::noncopyable
 {
 public:
@@ -54,22 +53,29 @@ public:
   /// The demuxer type for this asynchronous type.
   typedef typename service_type::demuxer_type demuxer_type;
 
+  /// The time type.
+  typedef typename service_type::time_type time_type;
+
+  /// The duration type.
+  typedef typename service_type::duration_type duration_type;
+
   /// Constructor.
   /**
-   * This constructor creates a timer without setting an expiry time. The set()
-   * function must be called before the timer can be waited on.
+   * This constructor creates a timer without setting an expiry time. The
+   * expires_at() or expires_from_now() functions must be called to set an
+   * expiry time before the timer can be waited on.
    *
    * @param d The demuxer object that the timer will use to dispatch handlers
    * for any asynchronous operations performed on the timer.
    */
-  explicit basic_timer(demuxer_type& d)
+  explicit basic_deadline_timer(demuxer_type& d)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_.null())
   {
     service_.create(impl_);
   }
 
-  /// Constructor to set a particular expiry time.
+  /// Constructor to set a particular expiry time as an absolute time.
   /**
    * This constructor creates a timer and sets the expiry time.
    *
@@ -79,16 +85,34 @@ public:
    * @param expiry_time The expiry time to be used for the timer, expressed
    * relative to the epoch.
    */
-  basic_timer(demuxer_type& d, const time& expiry_time)
+  basic_deadline_timer(demuxer_type& d, const time_type& expiry_time)
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_.null())
   {
     service_.create(impl_);
-    service_.expiry(impl_, expiry_time);
+    service_.expires_at(impl_, expiry_time);
+  }
+
+  /// Constructor to set a particular expiry time relative to now.
+  /**
+   * This constructor creates a timer and sets the expiry time.
+   *
+   * @param d The demuxer object that the timer will use to dispatch handlers
+   * for any asynchronous operations performed on the timer.
+   *
+   * @param expiry_time The expiry time to be used for the timer, expressed
+   * relative to the epoch.
+   */
+  basic_deadline_timer(demuxer_type& d, const duration_type& expiry_time)
+    : service_(d.get_service(service_factory<Service>())),
+      impl_(service_.null())
+  {
+    service_.create(impl_);
+    service_.expires_from_now(impl_, expiry_time);
   }
 
   /// Destructor.
-  ~basic_timer()
+  ~basic_deadline_timer()
   {
     service_.destroy(impl_);
   }
@@ -117,25 +141,44 @@ public:
     return impl_;
   }
 
-  /// Get the timer's expiry time.
+  /// Get the timer's expiry time as an absolute time.
   /**
    * This function may be used to obtain the timer's current expiry time.
    */
-  time expiry() const
+  time_type expires_at() const
   {
-    return service_.expiry(impl_);
+    return service_.expires_at(impl_);
   }
 
-  /// Set the timer's expiry time.
+  /// Set the timer's expiry time as an absolute time.
   /**
    * This function sets the expiry time.
    *
-   * @param expiry_time The expiry time to be used for the timer, expressed
-   * relative to the epoch.
+   * @param expiry_time The expiry time to be used for the timer.
    */
-  void expiry(const time& expiry_time)
+  void expires_at(const time_type& expiry_time)
   {
-    service_.expiry(impl_, expiry_time);
+    service_.expires_at(impl_, expiry_time);
+  }
+
+  /// Get the timer's expiry time relative to now.
+  /**
+   * This function may be used to obtain the timer's current expiry time.
+   */
+  duration_type expires_from_now() const
+  {
+    return service_.expires_from_now(impl_);
+  }
+
+  /// Set the timer's expiry time relative to now.
+  /**
+   * This function sets the expiry time.
+   *
+   * @param expiry_time The expiry time to be used for the timer.
+   */
+  void expires_from_now(const duration_type& expiry_time)
+  {
+    service_.expires_from_now(impl_, expiry_time);
   }
 
   /// Cancel any asynchronous operations that are waiting on the timer.
@@ -194,4 +237,4 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_BASIC_TIMER_HPP
+#endif // ASIO_BASIC_DEADLINE_TIMER_HPP
