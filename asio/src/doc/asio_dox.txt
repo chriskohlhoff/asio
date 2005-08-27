@@ -4,6 +4,11 @@
 */
 
 /**
+\namespace asio::io_control
+\brief The asio::io_control namespace defines IO control helper templates.
+*/
+
+/**
 \namespace asio::ipv4
 \brief The asio namespace defines the classes associated with IP version 4.
 */
@@ -54,6 +59,7 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 <H2>Namespaces</H2>
 
 \li ::asio
+\li asio::io_control
 \li asio::ipv4
 \li asio::ipv4::multicast
 \li asio::ipv4::multicast::socket_option
@@ -136,6 +142,7 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 \li Async_Write_Stream
 \li Dispatcher
 \li Endpoint
+\li IO_Control_Command
 \li Protocol
 \li Socket_Option
 \li Stream

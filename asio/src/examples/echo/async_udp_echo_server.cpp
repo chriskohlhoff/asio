@@ -10,32 +10,32 @@ public:
     : demuxer_(d),
       socket_(d, asio::ipv4::udp::endpoint(port))
   {
-    socket_.async_recvfrom(data_, max_length, sender_endpoint_,
-        boost::bind(&server::handle_recvfrom, this, asio::placeholders::error,
-          asio::placeholders::bytes_transferred));
+    socket_.async_receive_from(data_, max_length, sender_endpoint_,
+        boost::bind(&server::handle_receive_from, this,
+          asio::placeholders::error, asio::placeholders::bytes_transferred));
   }
 
-  void handle_recvfrom(const asio::error& error, size_t bytes_recvd)
+  void handle_receive_from(const asio::error& error, size_t bytes_recvd)
   {
     if (!error && bytes_recvd > 0)
     {
-      socket_.async_sendto(data_, bytes_recvd, sender_endpoint_,
-          boost::bind(&server::handle_sendto, this, asio::placeholders::error,
-            asio::placeholders::bytes_transferred));
+      socket_.async_send_to(data_, bytes_recvd, sender_endpoint_,
+          boost::bind(&server::handle_send_to, this,
+            asio::placeholders::error, asio::placeholders::bytes_transferred));
     }
     else
     {
-      socket_.async_recvfrom(data_, max_length, sender_endpoint_,
-          boost::bind(&server::handle_recvfrom, this, asio::placeholders::error,
-            asio::placeholders::bytes_transferred));
+      socket_.async_receive_from(data_, max_length, sender_endpoint_,
+          boost::bind(&server::handle_receive_from, this,
+            asio::placeholders::error, asio::placeholders::bytes_transferred));
     }
   }
 
-  void handle_sendto(const asio::error& error, size_t bytes_sent)
+  void handle_send_to(const asio::error& error, size_t bytes_sent)
   {
-    socket_.async_recvfrom(data_, max_length, sender_endpoint_,
-        boost::bind(&server::handle_recvfrom, this, asio::placeholders::error,
-          asio::placeholders::bytes_transferred));
+    socket_.async_receive_from(data_, max_length, sender_endpoint_,
+        boost::bind(&server::handle_receive_from, this,
+          asio::placeholders::error, asio::placeholders::bytes_transferred));
   }
 
 private:

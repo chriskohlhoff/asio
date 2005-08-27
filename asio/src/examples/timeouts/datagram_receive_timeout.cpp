@@ -13,15 +13,15 @@ public:
       timer_(d),
       socket_(d, ipv4::udp::endpoint(32124))
   {
-    socket_.async_recvfrom(data_, max_length, sender_endpoint_,
-        boost::bind(&datagram_handler::handle_recvfrom, this,
+    socket_.async_receive_from(data_, max_length, sender_endpoint_,
+        boost::bind(&datagram_handler::handle_receive_from, this,
           asio::placeholders::error, asio::placeholders::bytes_transferred));
 
     timer_.expires_from_now(boost::posix_time::seconds(5));
     timer_.async_wait(boost::bind(&datagram_socket::close, &socket_));
   }
 
-  void handle_recvfrom(const error& err, size_t length)
+  void handle_receive_from(const error& err, size_t length)
   {
     if (err)
     {
