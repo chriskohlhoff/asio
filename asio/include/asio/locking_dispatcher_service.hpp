@@ -50,7 +50,7 @@ public:
 #endif
 
   /// Constructor.
-  locking_dispatcher_service(demuxer_type& demuxer)
+  explicit locking_dispatcher_service(demuxer_type& demuxer)
     : service_impl_(demuxer.get_service(service_factory<service_impl_type>()))
   {
   }

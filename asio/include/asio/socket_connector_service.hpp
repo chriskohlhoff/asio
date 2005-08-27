@@ -62,7 +62,7 @@ public:
 #endif
 
   /// Construct a new socket connector service for the specified demuxer.
-  socket_connector_service(demuxer_type& demuxer)
+  explicit socket_connector_service(demuxer_type& demuxer)
     : service_impl_(demuxer.get_service(service_factory<service_impl_type>()))
   {
   }

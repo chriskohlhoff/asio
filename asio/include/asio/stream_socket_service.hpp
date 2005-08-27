@@ -64,7 +64,7 @@ public:
 #endif
 
   /// Construct a new stream socket service for the specified demuxer.
-  stream_socket_service(demuxer_type& demuxer)
+  explicit stream_socket_service(demuxer_type& demuxer)
     : service_impl_(demuxer.get_service(service_factory<service_impl_type>()))
   {
   }

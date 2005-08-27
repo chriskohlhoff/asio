@@ -74,7 +74,7 @@ public:
 #endif
 
   /// Construct a new timer service for the specified demuxer.
-  deadline_timer_service(demuxer_type& demuxer)
+  explicit deadline_timer_service(demuxer_type& demuxer)
     : service_impl_(demuxer.get_service(service_factory<service_impl_type>()))
   {
   }
