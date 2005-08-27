@@ -23,6 +23,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/basic_demuxer.hpp"
+#include "asio/service_factory.hpp"
 #if defined(_WIN32)
 # include "asio/detail/win_iocp_demuxer_service.hpp"
 #else
@@ -59,7 +60,7 @@ private:
 
 public:
   /// Constructor.
-  demuxer_service(demuxer_type& demuxer)
+  explicit demuxer_service(demuxer_type& demuxer)
     : service_impl_(demuxer.get_service(service_factory<service_impl_type>()))
   {
   }
@@ -127,6 +128,34 @@ private:
 
   // The allocator associated with the service.
   allocator_type allocator_;
+};
+
+/// Specialisation of service_factory to allow an allocator to be specified.
+template <typename Allocator>
+class service_factory<demuxer_service<Allocator> >
+{
+public:
+  /// Default constructor.
+  service_factory()
+  {
+  }
+
+  /// Construct with a specified allocator.
+  explicit service_factory(const Allocator& allocator)
+    : allocator_(allocator)
+  {
+  }
+
+  /// Create a service with the specified owner.
+  template <typename Owner>
+  demuxer_service<Allocator>* create(Owner& owner)
+  {
+    return new demuxer_service<Allocator>(owner, allocator_);
+  }
+
+private:
+  // The allocator to be passed to the service.
+  Allocator allocator_;
 };
 
 } // namespace asio

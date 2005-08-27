@@ -69,6 +69,18 @@ public:
 #endif // _WIN32
   }
 
+  /// Construct using the supplied service_factory to get the demuxer service.
+  explicit basic_demuxer(const service_factory<Demuxer_Service>& factory)
+    : service_registry_(*this),
+      service_(get_service(factory))
+  {
+#if defined(_WIN32)
+    detail::winsock_init<>::use();
+#else
+    detail::signal_init<>::use();
+#endif // _WIN32
+  }
+
   /// Run the demuxer's event processing loop.
   /**
    * The run() function blocks until all work has finished and there are no

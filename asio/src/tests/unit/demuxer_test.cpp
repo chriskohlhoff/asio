@@ -183,6 +183,15 @@ void demuxer_test()
 
   // The run() call will not return until all work has finished.
   UNIT_TEST_CHECK(count == 0);
+
+  // Use a non-default allocator type.
+  typedef std::allocator<int> allocator_type;
+  typedef demuxer_service<allocator_type> demuxer_service_type;
+  typedef basic_demuxer<demuxer_service_type> demuxer_type;
+  allocator_type allocator;
+  service_factory<demuxer_service_type> factory(allocator);
+  demuxer_type d3(factory);
+  d3.run();
 }
 
 UNIT_TEST(demuxer_test)
