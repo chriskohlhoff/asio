@@ -61,7 +61,7 @@ public:
   }
 
   /// Socket option for disabling the Nagle algorithm.
-  typedef socket_option::flag<IPPROTO_TCP, TCP_NODELAY> no_delay;
+  typedef asio::socket_option::boolean<IPPROTO_TCP, TCP_NODELAY> no_delay;
 };
 
 /// Describes an endpoint for a TCP socket.

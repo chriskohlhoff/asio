@@ -131,7 +131,7 @@ public:
       block_size_(block_size)
   {
     acceptor_.open(ipv4::tcp());
-    acceptor_.set_option(socket_option::reuse_address(1));
+    acceptor_.set_option(stream_socket::reuse_address(1));
     acceptor_.bind(endpoint);
     acceptor_.listen();
 

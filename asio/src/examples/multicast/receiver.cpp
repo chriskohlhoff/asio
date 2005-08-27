@@ -14,7 +14,7 @@ public:
   {
     // Create the socket so that multiple may be bound to the same address.
     socket_.open(asio::ipv4::udp());
-    socket_.set_option(asio::socket_option::reuse_address(true));
+    socket_.set_option(asio::datagram_socket::reuse_address(true));
     socket_.bind(asio::ipv4::udp::endpoint(multicast_port));
 
     // Join the multicast group.

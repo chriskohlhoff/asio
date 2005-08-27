@@ -79,6 +79,7 @@ nobase_include_HEADERS = \
 	asio/ipv4/host_resolver.hpp \
 	asio/ipv4/host_resolver_service.hpp \
 	asio/ipv4/multicast.hpp \
+	asio/ipv4/socket_option.hpp \
 	asio/ipv4/tcp.hpp \
 	asio/ipv4/udp.hpp \
 	asio/is_read_buffered.hpp \

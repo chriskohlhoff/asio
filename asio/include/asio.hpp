@@ -44,6 +44,7 @@
 #include "asio/ipv4/host_resolver.hpp"
 #include "asio/ipv4/host_resolver_service.hpp"
 #include "asio/ipv4/multicast.hpp"
+#include "asio/ipv4/socket_option.hpp"
 #include "asio/ipv4/tcp.hpp"
 #include "asio/ipv4/udp.hpp"
 #include "asio/is_read_buffered.hpp"

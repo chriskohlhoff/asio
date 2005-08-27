@@ -217,8 +217,8 @@ public:
    *
    * @throws asio::error Thrown on failure.
    */
-  template <typename Option>
-  void set_option(const Option& option)
+  template <typename Socket_Option>
+  void set_option(const Socket_Option& option)
   {
     service_.set_option(impl_, option, default_error_handler());
   }
@@ -236,8 +236,8 @@ public:
    *   const asio::error& error // Result of operation
    * ); @endcode
    */
-  template <typename Option, typename Error_Handler>
-  void set_option(const Option& option, Error_Handler error_handler)
+  template <typename Socket_Option, typename Error_Handler>
+  void set_option(const Socket_Option& option, Error_Handler error_handler)
   {
     service_.set_option(impl_, option, error_handler);
   }
@@ -250,8 +250,8 @@ public:
    *
    * @throws asio::error Thrown on failure.
    */
-  template <typename Option>
-  void get_option(Option& option) const
+  template <typename Socket_Option>
+  void get_option(Socket_Option& option) const
   {
     service_.get_option(impl_, option, default_error_handler());
   }
@@ -269,8 +269,8 @@ public:
    *   const asio::error& error // Result of operation
    * ); @endcode
    */
-  template <typename Option, typename Error_Handler>
-  void get_option(Option& option, Error_Handler error_handler) const
+  template <typename Socket_Option, typename Error_Handler>
+  void get_option(Socket_Option& option, Error_Handler error_handler) const
   {
     service_.get_option(impl_, option, error_handler);
   }

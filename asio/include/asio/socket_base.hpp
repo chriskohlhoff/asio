@@ -17,6 +17,7 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/socket_option.hpp"
 #include "asio/detail/socket_types.hpp"
 
 namespace asio {
@@ -64,6 +65,47 @@ public:
     message_do_not_route = asio::detail::message_do_not_route
 #endif
   };
+
+  /// Socket option to permit sending of broadcast messages.
+  typedef asio::socket_option::boolean<
+    SOL_SOCKET, SO_BROADCAST> broadcast;
+
+  /// Socket option to prevent routing, use local interfaces only.
+  typedef asio::socket_option::boolean<
+    SOL_SOCKET, SO_DONTROUTE> do_not_route;
+
+  /// Socket option to send keep-alives.
+  typedef asio::socket_option::boolean<
+    SOL_SOCKET, SO_KEEPALIVE> keep_alive;
+
+  /// Socket option for the send buffer size of a socket.
+  typedef asio::socket_option::integer<
+    SOL_SOCKET, SO_SNDBUF> send_buffer_size;
+
+  /// Socket option for the send low watermark.
+  typedef asio::socket_option::integer<
+    SOL_SOCKET, SO_SNDLOWAT> send_low_watermark;
+
+  /// Socket option for the send timeout.
+  typedef asio::socket_option::integer<
+    SOL_SOCKET, SO_SNDTIMEO> send_timeout;
+
+  /// Socket option for the receive buffer size of a socket.
+  typedef asio::socket_option::integer<
+    SOL_SOCKET, SO_RCVBUF> receive_buffer_size;
+
+  /// Socket option for the receive low watermark.
+  typedef asio::socket_option::integer<
+    SOL_SOCKET, SO_RCVLOWAT> receive_low_watermark;
+
+  /// Socket option for the receive timeout.
+  typedef asio::socket_option::integer<
+    SOL_SOCKET, SO_RCVTIMEO> receive_timeout;
+
+  /// Socket option to allow the socket to be bound to an address that is
+  /// already in use.
+  typedef asio::socket_option::boolean<
+    SOL_SOCKET, SO_REUSEADDR> reuse_address;
 
 protected:
   /// Protected destructor to prevent deletion through this type.
