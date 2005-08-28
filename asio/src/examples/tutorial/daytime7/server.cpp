@@ -52,10 +52,10 @@ void handle_udp_receive_from(asio::datagram_socket* socket, char* recv_buf,
     char* send_buf = strdup(ctime(&now));
     size_t send_length = strlen(send_buf);
 
-    socket->async_send_to(send_buf, send_length, *remote_endpoint,
+    socket->async_send_to(send_buf, send_length, 0, *remote_endpoint,
         boost::bind(handle_udp_send_to, send_buf));
 
-    socket->async_receive_from(recv_buf, recv_length, *remote_endpoint,
+    socket->async_receive_from(recv_buf, recv_length, 0, *remote_endpoint,
         boost::bind(handle_udp_receive_from, socket, recv_buf, recv_length,
           remote_endpoint, asio::placeholders::error));
   }
@@ -81,7 +81,7 @@ int main()
     size_t recv_length = sizeof(recv_buf);
     asio::ipv4::udp::endpoint remote_endpoint;
 
-    udp_socket.async_receive_from(recv_buf, recv_length, remote_endpoint,
+    udp_socket.async_receive_from(recv_buf, recv_length, 0, remote_endpoint,
         boost::bind(handle_udp_receive_from, &udp_socket, recv_buf, recv_length,
           &remote_endpoint, asio::placeholders::error));
 

@@ -400,6 +400,8 @@ public:
    *
    * @param length The size of the data to be sent, in bytes.
    *
+   * @param flags Flags specifying how the send call is to be made.
+   *
    * @param destination The remote endpoint to which the data will be sent.
    *
    * @returns The number of bytes sent.
@@ -407,9 +409,10 @@ public:
    * @throws asio::error Thrown on failure.
    */
   template <typename Endpoint>
-  size_t send_to(const void* data, size_t length, const Endpoint& destination)
+  size_t send_to(const void* data, size_t length, message_flags flags,
+      const Endpoint& destination)
   {
-    return service_.send_to(impl_, data, length, destination,
+    return service_.send_to(impl_, data, length, flags, destination,
         default_error_handler());
   }
 
@@ -423,6 +426,8 @@ public:
    *
    * @param length The size of the data to be sent, in bytes.
    *
+   * @param flags Flags specifying how the send call is to be made.
+   *
    * @param destination The remote endpoint to which the data will be sent.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
@@ -435,10 +440,11 @@ public:
    * @returns The number of bytes sent.
    */
   template <typename Endpoint, typename Error_Handler>
-  size_t send_to(const void* data, size_t length, const Endpoint& destination,
-      Error_Handler error_handler)
+  size_t send_to(const void* data, size_t length, message_flags flags,
+      const Endpoint& destination, Error_Handler error_handler)
   {
-    return service_.send_to(impl_, data, length, destination, error_handler);
+    return service_.send_to(impl_, data, length, flags, destination,
+        error_handler);
   }
 
   /// Start an asynchronous send.
@@ -452,6 +458,8 @@ public:
    *
    * @param length The size of the data to be sent, in bytes.
    *
+   * @param flags Flags specifying how the send call is to be made.
+   *
    * @param destination The remote endpoint to which the data will be sent.
    * Copies will be made of the endpoint as required.
    *
@@ -464,10 +472,10 @@ public:
    * ); @endcode
    */
   template <typename Endpoint, typename Handler>
-  void async_send_to(const void* data, size_t length,
+  void async_send_to(const void* data, size_t length, message_flags flags,
       const Endpoint& destination, Handler handler)
   {
-    service_.async_send_to(impl_, data, length, destination, handler);
+    service_.async_send_to(impl_, data, length, flags, destination, handler);
   }
 
   /// Receive a datagram with the endpoint of the sender.
@@ -481,6 +489,8 @@ public:
    * @param max_length The maximum length, in bytes, of data that can be held
    * in the supplied buffer.
    *
+   * @param flags Flags specifying how the receive call is to be made.
+   *
    * @param sender_endpoint An endpoint object that receives the endpoint of
    * the remote sender of the datagram.
    *
@@ -489,10 +499,11 @@ public:
    * @throws asio::error Thrown on failure.
    */
   template <typename Endpoint>
-  size_t receive_from(void* data, size_t max_length, Endpoint& sender_endpoint)
+  size_t receive_from(void* data, size_t max_length, message_flags flags,
+      Endpoint& sender_endpoint)
   {
-    return service_.receive_from(impl_, data, max_length, sender_endpoint,
-        default_error_handler());
+    return service_.receive_from(impl_, data, max_length, flags,
+        sender_endpoint, default_error_handler());
   }
   
   /// Receive a datagram with the endpoint of the sender.
@@ -505,6 +516,8 @@ public:
    *
    * @param max_length The maximum length, in bytes, of data that can be held
    * in the supplied buffer.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
    *
    * @param sender_endpoint An endpoint object that receives the endpoint of
    * the remote sender of the datagram.
@@ -519,11 +532,11 @@ public:
    * @returns The number of bytes received.
    */
   template <typename Endpoint, typename Error_Handler>
-  size_t receive_from(void* data, size_t max_length, Endpoint& sender_endpoint,
-      Error_Handler error_handler)
+  size_t receive_from(void* data, size_t max_length, message_flags flags,
+      Endpoint& sender_endpoint, Error_Handler error_handler)
   {
-    return service_.receive_from(impl_, data, max_length, sender_endpoint,
-        error_handler);
+    return service_.receive_from(impl_, data, max_length, flags,
+        sender_endpoint, error_handler);
   }
   
   /// Start an asynchronous receive.
@@ -537,6 +550,8 @@ public:
    *
    * @param max_length The maximum length, in bytes, of data that can be held
    * in the supplied buffer.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
    *
    * @param sender_endpoint An endpoint object that receives the endpoint of
    * the remote sender of the datagram. Ownership of the sender_endpoint object
@@ -552,10 +567,10 @@ public:
    * ); @endcode
    */
   template <typename Endpoint, typename Handler>
-  void async_receive_from(void* data, size_t max_length,
+  void async_receive_from(void* data, size_t max_length, message_flags flags,
       Endpoint& sender_endpoint, Handler handler)
   {
-    service_.async_receive_from(impl_, data, max_length, sender_endpoint,
+    service_.async_receive_from(impl_, data, max_length, flags, sender_endpoint,
         handler);
   }
 

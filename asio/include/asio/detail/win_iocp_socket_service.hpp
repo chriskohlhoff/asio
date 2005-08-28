@@ -245,9 +245,10 @@ public:
   // sent.
   template <typename Endpoint, typename Error_Handler>
   size_t send_to(impl_type& impl, const void* data, size_t length,
-      const Endpoint& destination, Error_Handler error_handler)
+      socket_base::message_flags flags, const Endpoint& destination,
+      Error_Handler error_handler)
   {
-    int bytes_sent = socket_ops::sendto(impl, data, length, 0,
+    int bytes_sent = socket_ops::sendto(impl, data, length, flags,
         destination.native_data(), destination.native_size());
     if (bytes_sent < 0)
     {
@@ -295,7 +296,8 @@ public:
   // lifetime of the asynchronous operation.
   template <typename Endpoint, typename Handler>
   void async_send_to(impl_type& impl, const void* data, size_t length,
-      const Endpoint& destination, Handler handler)
+      socket_base::message_flags flags, const Endpoint& destination,
+      Handler handler)
   {
     send_to_operation<Handler>* send_to_op =
       new send_to_operation<Handler>(handler);
@@ -307,7 +309,7 @@ public:
     buf.buf = static_cast<char*>(const_cast<void*>(data));
     DWORD bytes_transferred = 0;
 
-    int result = ::WSASendTo(impl, &buf, 1, &bytes_transferred, 0,
+    int result = ::WSASendTo(impl, &buf, 1, &bytes_transferred, flags,
         destination.native_data(), destination.native_size(), send_to_op, 0);
     DWORD last_error = ::WSAGetLastError();
 
@@ -402,10 +404,11 @@ public:
   // bytes received.
   template <typename Endpoint, typename Error_Handler>
   size_t receive_from(impl_type& impl, void* data, size_t max_length,
-      Endpoint& sender_endpoint, Error_Handler error_handler)
+      socket_base::message_flags flags, Endpoint& sender_endpoint,
+      Error_Handler error_handler)
   {
     socket_addr_len_type addr_len = sender_endpoint.native_size();
-    int bytes_recvd = socket_ops::recvfrom(impl, data, max_length, 0,
+    int bytes_recvd = socket_ops::recvfrom(impl, data, max_length, flags,
         sender_endpoint.native_data(), &addr_len);
     if (bytes_recvd < 0)
     {
@@ -467,7 +470,8 @@ public:
   // asynchronous operation.
   template <typename Endpoint, typename Handler>
   void async_receive_from(impl_type& impl, void* data, size_t max_length,
-      Endpoint& sender_endpoint, Handler handler)
+      socket_base::message_flags flags, Endpoint& sender_endpoint,
+      Handler handler)
   {
     receive_from_operation<Endpoint, Handler>* receive_from_op =
       new receive_from_operation<Endpoint, Handler>(sender_endpoint, handler);
@@ -478,9 +482,9 @@ public:
     buf.len = static_cast<u_long>(max_length);
     buf.buf = static_cast<char*>(data);
     DWORD bytes_transferred = 0;
-    DWORD flags = 0;
+    DWORD recv_flags = flags;
 
-    int result = ::WSARecvFrom(impl, &buf, 1, &bytes_transferred, &flags,
+    int result = ::WSARecvFrom(impl, &buf, 1, &bytes_transferred, &recv_flags,
         sender_endpoint.native_data(), &receive_from_op->endpoint_size(),
         receive_from_op, 0);
     DWORD last_error = ::WSAGetLastError();

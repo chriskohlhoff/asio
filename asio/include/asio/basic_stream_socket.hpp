@@ -565,8 +565,7 @@ public:
    */
   size_t write(const void* data, size_t length)
   {
-    return service_.send(impl_, data, length,
-        message_flags(0), default_error_handler());
+    return service_.send(impl_, data, length, 0, default_error_handler());
   }
 
   /// Write some data to the socket.
@@ -595,7 +594,7 @@ public:
   template <typename Error_Handler>
   size_t write(const void* data, size_t length, Error_Handler error_handler)
   {
-    return service_.send(impl_, data, length, message_flags(0), error_handler);
+    return service_.send(impl_, data, length, 0, error_handler);
   }
 
   /// Start an asynchronous write.
@@ -624,7 +623,7 @@ public:
   template <typename Handler>
   void async_write(const void* data, size_t length, Handler handler)
   {
-    service_.async_send(impl_, data, length, message_flags(0), handler);
+    service_.async_send(impl_, data, length, 0, handler);
   }
 
   /// Read some data from the socket.
@@ -647,8 +646,8 @@ public:
    */
   size_t read(void* data, size_t max_length)
   {
-    return service_.receive(impl_, data,
-        max_length, message_flags(0), default_error_handler());
+    return service_.receive(impl_, data, max_length, 0,
+        default_error_handler());
   }
 
   /// Read some data from the socket.
@@ -677,8 +676,7 @@ public:
   template <typename Error_Handler>
   size_t read(void* data, size_t max_length, Error_Handler error_handler)
   {
-    return service_.receive(impl_, data,
-        max_length, message_flags(0), error_handler);
+    return service_.receive(impl_, data, max_length, 0, error_handler);
   }
 
   /// Start an asynchronous read.
@@ -708,7 +706,7 @@ public:
   template <typename Handler>
   void async_read(void* data, size_t max_length, Handler handler)
   {
-    service_.async_receive(impl_, data, max_length, message_flags(0), handler);
+    service_.async_receive(impl_, data, max_length, 0, handler);
   }
 
   /// Peek at the incoming data on the stream socket.

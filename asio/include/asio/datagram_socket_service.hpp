@@ -179,18 +179,21 @@ public:
   /// Send a datagram to the specified endpoint.
   template <typename Endpoint, typename Error_Handler>
   size_t send_to(impl_type& impl, const void* data, size_t length,
-      const Endpoint& destination, Error_Handler error_handler)
+      socket_base::message_flags flags, const Endpoint& destination,
+      Error_Handler error_handler)
   {
-    return service_impl_.send_to(impl, data, length, destination,
+    return service_impl_.send_to(impl, data, length, flags, destination,
         error_handler);
   }
 
   /// Start an asynchronous send.
   template <typename Endpoint, typename Handler>
   void async_send_to(impl_type& impl, const void* data, size_t length,
-      const Endpoint& destination, Handler handler)
+      socket_base::message_flags flags, const Endpoint& destination,
+      Handler handler)
   {
-    service_impl_.async_send_to(impl, data, length, destination, handler);
+    service_impl_.async_send_to(impl, data, length, flags, destination,
+        handler);
   }
 
   /// Receive some data from the peer.
@@ -212,19 +215,21 @@ public:
   /// Receive a datagram with the endpoint of the sender.
   template <typename Endpoint, typename Error_Handler>
   size_t receive_from(impl_type& impl, void* data, size_t max_length,
-      Endpoint& sender_endpoint, Error_Handler error_handler)
+      socket_base::message_flags flags, Endpoint& sender_endpoint,
+      Error_Handler error_handler)
   {
-    return service_impl_.receive_from(impl, data, max_length, sender_endpoint,
-        error_handler);
+    return service_impl_.receive_from(impl, data, max_length, flags,
+        sender_endpoint, error_handler);
   }
 
   /// Start an asynchronous receive that will get the endpoint of the sender.
   template <typename Endpoint, typename Handler>
   void async_receive_from(impl_type& impl, void* data, size_t max_length,
-      Endpoint& sender_endpoint, Handler handler)
+      socket_base::message_flags flags, Endpoint& sender_endpoint,
+      Handler handler)
   {
-    service_impl_.async_receive_from(impl, data, max_length, sender_endpoint,
-        handler);
+    service_impl_.async_receive_from(impl, data, max_length, flags,
+        sender_endpoint, handler);
   }
 
 private:

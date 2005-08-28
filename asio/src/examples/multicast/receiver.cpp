@@ -20,7 +20,7 @@ public:
     // Join the multicast group.
     socket_.set_option(asio::ipv4::multicast::add_membership(multicast_addr));
 
-    socket_.async_receive_from(data_, max_length, sender_endpoint_,
+    socket_.async_receive_from(data_, max_length, 0, sender_endpoint_,
         boost::bind(&receiver::handle_receive_from, this,
           asio::placeholders::error, asio::placeholders::bytes_transferred));
   }
@@ -32,7 +32,7 @@ public:
       std::cout.write(data_, bytes_recvd);
       std::cout << std::endl;
 
-      socket_.async_receive_from(data_, max_length, sender_endpoint_,
+      socket_.async_receive_from(data_, max_length, 0, sender_endpoint_,
           boost::bind(&receiver::handle_receive_from, this,
             asio::placeholders::error, asio::placeholders::bytes_transferred));
     }

@@ -48,24 +48,26 @@ public:
 #endif
   };
 
-  /// Flags that can be passed to send and receive operations.
-  enum message_flags
-  {
+  /// Bitmask type for flags that can be passed to send and receive operations.
+  typedef int message_flags;
+
 #if defined(GENERATING_DOCUMENTATION)
-    /// Peek at incoming data without removing it from the input queue.
-    message_peek = implementation_defined,
+  /// Peek at incoming data without removing it from the input queue.
+  static const int message_peek = implementation_defined,
 
-    /// Process out-of-band data.
-    message_out_of_band = implementation_defined,
+  /// Process out-of-band data.
+  static const int message_out_of_band = implementation_defined,
 
-    /// Specify that the data should not be subject to routing.
-    message_do_not_route = implementation_defined
+  /// Specify that the data should not be subject to routing.
+  static const int message_do_not_route = implementation_defined
+  };
 #else
+  enum {
     message_peek = asio::detail::message_peek,
     message_out_of_band = asio::detail::message_out_of_band,
     message_do_not_route = asio::detail::message_do_not_route
-#endif
   };
+#endif
 
   /// Socket option to permit sending of broadcast messages.
   typedef asio::socket_option::boolean<

@@ -22,7 +22,7 @@ public:
     message_ = os.str();
 
     asio::ipv4::udp::endpoint target(multicast_port, multicast_addr);
-    socket_.async_send_to(message_.data(), message_.length(), target,
+    socket_.async_send_to(message_.data(), message_.length(), 0, target,
         boost::bind(&sender::handle_send_to, this, asio::placeholders::error));
   }
 
@@ -46,7 +46,7 @@ public:
       message_ = os.str();
 
       asio::ipv4::udp::endpoint target(multicast_port, multicast_addr);
-      socket_.async_send_to(message_.data(), message_.length(), target,
+      socket_.async_send_to(message_.data(), message_.length(), 0, target,
           boost::bind(&sender::handle_send_to, this,
             asio::placeholders::error));
     }

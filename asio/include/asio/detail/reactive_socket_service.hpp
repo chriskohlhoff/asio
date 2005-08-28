@@ -237,9 +237,10 @@ public:
   // sent.
   template <typename Endpoint, typename Error_Handler>
   size_t send_to(impl_type& impl, const void* data, size_t length,
-      const Endpoint& destination, Error_Handler error_handler)
+      socket_base::message_flags flags, const Endpoint& destination,
+      Error_Handler error_handler)
   {
-    int bytes_sent = socket_ops::sendto(impl, data, length, 0,
+    int bytes_sent = socket_ops::sendto(impl, data, length, flags,
         destination.native_data(), destination.native_size());
     if (bytes_sent < 0)
     {
@@ -254,11 +255,13 @@ public:
   {
   public:
     send_to_handler(impl_type impl, Demuxer& demuxer, const void* data,
-        size_t length, const Endpoint& endpoint, Handler handler)
+        size_t length, socket_base::message_flags flags,
+        const Endpoint& endpoint, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
         data_(data),
         length_(length),
+        flags_(flags),
         destination_(endpoint),
         handler_(handler)
     {
@@ -266,7 +269,7 @@ public:
 
     void do_operation()
     {
-      int bytes = socket_ops::sendto(impl_, data_, length_, 0,
+      int bytes = socket_ops::sendto(impl_, data_, length_, flags_,
           destination_.native_data(), destination_.native_size());
       asio::error error(bytes < 0
           ? socket_ops::get_error() : asio::error::success);
@@ -286,6 +289,7 @@ public:
     Demuxer& demuxer_;
     const void* data_;
     size_t length_;
+    socket_base::message_flags flags_;
     Endpoint destination_;
     Handler handler_;
   };
@@ -294,7 +298,8 @@ public:
   // lifetime of the asynchronous operation.
   template <typename Endpoint, typename Handler>
   void async_send_to(impl_type& impl, const void* data, size_t length,
-      const Endpoint& destination, Handler handler)
+      socket_base::message_flags flags, const Endpoint& destination,
+      Handler handler)
   {
     if (impl == null())
     {
@@ -305,7 +310,7 @@ public:
     {
       demuxer_.work_started();
       reactor_.start_write_op(impl, send_to_handler<Endpoint, Handler>(
-            impl, demuxer_, data, length, destination, handler));
+            impl, demuxer_, data, length, flags, destination, handler));
     }
   }
 
@@ -397,10 +402,11 @@ public:
   // bytes received.
   template <typename Endpoint, typename Error_Handler>
   size_t receive_from(impl_type& impl, void* data, size_t max_length,
-      Endpoint& sender_endpoint, Error_Handler error_handler)
+      socket_base::message_flags flags, Endpoint& sender_endpoint,
+      Error_Handler error_handler)
   {
     socket_addr_len_type addr_len = sender_endpoint.native_size();
-    int bytes_recvd = socket_ops::recvfrom(impl, data, max_length, 0,
+    int bytes_recvd = socket_ops::recvfrom(impl, data, max_length, flags,
         sender_endpoint.native_data(), &addr_len);
     if (bytes_recvd < 0)
     {
@@ -418,11 +424,13 @@ public:
   {
   public:
     receive_from_handler(impl_type impl, Demuxer& demuxer, void* data,
-        size_t max_length, Endpoint& endpoint, Handler handler)
+        size_t max_length, socket_base::message_flags flags,
+        Endpoint& endpoint, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
         data_(data),
         max_length_(max_length),
+        flags_(flags),
         sender_endpoint_(endpoint),
         handler_(handler)
     {
@@ -431,7 +439,7 @@ public:
     void do_operation()
     {
       socket_addr_len_type addr_len = sender_endpoint_.native_size();
-      int bytes = socket_ops::recvfrom(impl_, data_, max_length_, 0,
+      int bytes = socket_ops::recvfrom(impl_, data_, max_length_, flags_,
           sender_endpoint_.native_data(), &addr_len);
       asio::error error(bytes < 0
           ? socket_ops::get_error() : asio::error::success);
@@ -452,6 +460,7 @@ public:
     Demuxer& demuxer_;
     void* data_;
     size_t max_length_;
+    socket_base::message_flags flags_;
     Endpoint& sender_endpoint_;
     Handler handler_;
   };
@@ -461,7 +470,8 @@ public:
   // asynchronous operation.
   template <typename Endpoint, typename Handler>
   void async_receive_from(impl_type& impl, void* data, size_t max_length,
-      Endpoint& sender_endpoint, Handler handler)
+      socket_base::message_flags flags, Endpoint& sender_endpoint,
+      Handler handler)
   {
     if (impl == null())
     {
@@ -472,7 +482,7 @@ public:
     {
       demuxer_.work_started();
       reactor_.start_read_op(impl, receive_from_handler<Endpoint, Handler>(
-            impl, demuxer_, data, max_length, sender_endpoint, handler));
+            impl, demuxer_, data, max_length, flags, sender_endpoint, handler));
     }
   }
 
