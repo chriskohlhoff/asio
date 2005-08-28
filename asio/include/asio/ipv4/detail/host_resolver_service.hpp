@@ -33,7 +33,21 @@ namespace detail {
 
 template <typename Demuxer>
 class host_resolver_service
+  : private boost::noncopyable
 {
+private:
+  // Helper class to perform exception-safe cleanup of hostent objects.
+  class auto_hostent
+    : private boost::noncopyable
+  {
+  public:
+    explicit auto_hostent(hostent* h) : h_(h) {}
+    ~auto_hostent() { if (h_) asio::detail::socket_ops::freehostent(h_); }
+    operator hostent*() { return h_; }
+  private:
+    hostent* h_;
+  };
+
 public:
   // Implementation structure for a host resolver.
   struct resolver_impl
@@ -102,9 +116,10 @@ public:
     int error = 0;
     in_addr a;
     a.s_addr = asio::detail::socket_ops::host_to_network_long(addr.to_ulong());
-    if (asio::detail::socket_ops::gethostbyaddr_r(
+    auto_hostent result(asio::detail::socket_ops::gethostbyaddr(
           reinterpret_cast<const char*>(&a), sizeof(in_addr), AF_INET, &ent,
-          buf, sizeof(buf), &error) == 0)
+          buf, sizeof(buf), &error));
+    if (result == 0)
       error_handler(asio::error(error));
     else if (ent.h_length != sizeof(in_addr))
       error_handler(asio::error(asio::error::host_not_found));
@@ -120,8 +135,9 @@ public:
     hostent ent;
     char buf[8192] = ""; // Size recommended by Stevens, UNPv1.
     int error = 0;
-    if (asio::detail::socket_ops::gethostbyname_r(name.c_str(), &ent, buf,
-          sizeof(buf), &error) == 0)
+    auto_hostent result(asio::detail::socket_ops::gethostbyname(name.c_str(),
+          &ent, buf, sizeof(buf), &error));
+    if (result == 0)
       error_handler(asio::error(error));
     else if (ent.h_addrtype != AF_INET || ent.h_length != sizeof(in_addr))
       error_handler(asio::error(asio::error::host_not_found));

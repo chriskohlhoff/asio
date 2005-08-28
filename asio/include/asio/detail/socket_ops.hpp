@@ -318,53 +318,72 @@ inline int translate_netdb_error(int error)
   }
 }
 
-inline hostent* gethostbyaddr_r(const char* addr, int length, int type,
+inline hostent* gethostbyaddr(const char* addr, int length, int type,
     hostent* result, char* buffer, int buflength, int* error)
 {
   set_error(0);
 #if defined(_WIN32)
-  hostent* ent_result = error_wrapper(::gethostbyaddr(addr, length, type));
+  hostent* retval = error_wrapper(::gethostbyaddr(addr, length, type));
   *error = get_error();
-  if (!ent_result)
+  if (!retval)
     return 0;
-  *result = *ent_result;
-  return result;
+  *result = *retval;
+  return retval;
 #elif defined(__sun)
   hostent* retval = error_wrapper(::gethostbyaddr_r(addr, length, type, result,
         buffer, buflength, error));
   *error = translate_netdb_error(*error);
   return retval;
+#elif defined(__MACH__)
+  hostent* retval = error_wrapper(::getipnodebyaddr(addr, length, type, error));
+  if (!retval)
+    return 0;
+  *result = *retval;
+  return retval;
 #else
-  hostent* ent_result = 0;
+  hostent* retval = 0;
   error_wrapper(::gethostbyaddr_r(addr, length, type, result, buffer,
-        buflength, &ent_result, error));
+        buflength, &retval, error));
   *error = translate_netdb_error(*error);
-  return ent_result;
+  return retval;
 #endif
 }
 
-inline hostent* gethostbyname_r(const char* name, struct hostent* result,
+inline hostent* gethostbyname(const char* name, struct hostent* result,
     char* buffer, int buflength, int* error)
 {
   set_error(0);
 #if defined(_WIN32)
-  hostent* ent_result = error_wrapper(::gethostbyname(name));
+  hostent* retval = error_wrapper(::gethostbyname(name));
   *error = get_error();
-  if (!ent_result)
+  if (!retval)
     return 0;
-  *result = *ent_result;
+  *result = *retval;
   return result;
 #elif defined(__sun)
   hostent* retval = error_wrapper(::gethostbyname_r(name, result, buffer,
         buflength, error));
   *error = translate_netdb_error(*error);
   return retval;
+#elif defined(__MACH__)
+  hostent* retval = error_wrapper(::getipnodebyname(name, AF_INET, 0, error));
+  if (!retval)
+    return 0;
+  *result = *retval;
+  return retval;
 #else
-  hostent* ent_result = 0;
-  error_wrapper(::gethostbyname_r(name, result, buffer, buflength, &ent_result,
+  hostent* retval = 0;
+  error_wrapper(::gethostbyname_r(name, result, buffer, buflength, &retval,
         error));
   *error = translate_netdb_error(*error);
-  return ent_result;
+  return retval;
+#endif
+}
+
+inline void freehostent(hostent* h)
+{
+#if defined(__MACH__)
+  ::freehostent(h);
 #endif
 }
 
