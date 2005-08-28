@@ -48,6 +48,10 @@ case $host in
     LDFLAGS="$LDFLAGS -mthreads"
     LIBS="$LIBS -lws2_32"
     ;;
+  *-apple-darwin*)
+    CXXFLAGS="$CXXFLAGS"
+    LDFLAGS="$LDFLAGS"
+    ;;
 esac
 
 if test "$GXX" = yes; then
