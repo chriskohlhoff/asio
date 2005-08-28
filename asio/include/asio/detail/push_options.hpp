@@ -13,6 +13,7 @@
 #if defined (_MSC_VER)
 # pragma warning (disable:4103)
 # pragma warning (push)
+# pragma warning (disable:4244)
 # pragma warning (disable:4355)
 # pragma pack (push, 8)
 // Note that if the /Og optimisation flag is enabled with MSVC6, the compiler
