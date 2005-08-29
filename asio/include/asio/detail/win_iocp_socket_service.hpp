@@ -25,6 +25,8 @@
 #include "asio/service_factory.hpp"
 #include "asio/socket_base.hpp"
 #include "asio/detail/bind_handler.hpp"
+#include "asio/detail/reactive_socket_service.hpp"
+#include "asio/detail/select_reactor.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -51,7 +53,9 @@ public:
       demuxer_type& demuxer)
     : demuxer_(demuxer),
       demuxer_service_(demuxer.get_service(
-          service_factory<win_iocp_demuxer_service>()))
+          service_factory<win_iocp_demuxer_service>())),
+      reactive_socket_service_(demuxer.get_service(
+          service_factory<reactive_socket_service_type>()))
   {
   }
 
@@ -95,11 +99,7 @@ public:
   // Destroy a socket implementation.
   void close(impl_type& impl)
   {
-    if (impl != null())
-    {
-      socket_ops::close(impl);
-      impl = null();
-    }
+    reactive_socket_service_.close(impl);
   }
 
   // Bind the socket to the specified local endpoint.
@@ -532,11 +532,7 @@ public:
   void async_connect(impl_type& impl, const Endpoint& peer_endpoint,
       Handler handler)
   {
-    typedef detail::reactive_socket_service<
-      demuxer_type, detail::select_reactor<true> > socket_service_type;
-    socket_service_type& service = demuxer_.get_service(
-        service_factory<socket_service_type>());
-    service.async_connect(impl, peer_endpoint, handler);
+    reactive_socket_service_.async_connect(impl, peer_endpoint, handler);
   }
 
 private:
@@ -546,6 +542,11 @@ private:
   // The demuxer service used for running asynchronous operations and
   // dispatching handlers.
   win_iocp_demuxer_service& demuxer_service_;
+
+  // The reactive socket service used for performing connect operations.
+  typedef asio::detail::reactive_socket_service<
+    demuxer_type, detail::select_reactor<true> > reactive_socket_service_type;
+  reactive_socket_service_type& reactive_socket_service_;
 };
 
 } // namespace detail
