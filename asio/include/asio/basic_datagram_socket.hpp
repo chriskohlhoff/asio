@@ -150,8 +150,8 @@ public:
 
   /// Close the socket.
   /**
-   * This function is used to close the datagram socket. Any asynchronous send_to
-   * or receive_from operations will be cancelled immediately.
+   * This function is used to close the datagram socket. Any asynchronous
+   * send_to or receive_from operations will be cancelled immediately.
    *
    * A subsequent call to open() is required before the socket can again be
    * used to again perform send and receive operations.
@@ -450,6 +450,94 @@ public:
     service_.shutdown(impl_, what, error_handler);
   }
 
+  /// Send some data on a connected socket.
+  /**
+   * This function is used to send data on the datagram socket. The function
+   * call will block until the data has been sent successfully or an error
+   * occurs.
+   *
+   * @param data The data to be sent on the socket.
+   *
+   * @param length The size of the data to be sent, in bytes.
+   *
+   * @param flags Flags specifying how the send call is to be made.
+   *
+   * @returns The number of bytes sent.
+   *
+   * @throws asio::error Thrown on failure.
+   *
+   * @note The send operation can only be used with a connected socket. Use
+   * the send_to function to send data on an unconnected datagram socket.
+   */
+  size_t send(const void* data, size_t length, message_flags flags)
+  {
+    return service_.send(impl_, data, length, flags, default_error_handler());
+  }
+
+  /// Send some data on a connected socket.
+  /**
+   * This function is used to send data on the datagram socket. The function
+   * call will block until the data has been sent successfully or an error
+   * occurs.
+   *
+   * @param data The data to be sent on the socket.
+   *
+   * @param length The size of the data to be sent, in bytes.
+   *
+   * @param flags Flags specifying how the send call is to be made.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::error& error // Result of operation
+   * ); @endcode
+   *
+   * @returns The number of bytes sent.
+   *
+   * @note The send operation can only be used with a connected socket. Use
+   * the send_to function to send data on an unconnected datagram socket.
+   */
+  template <typename Error_Handler>
+  size_t send(const void* data, size_t length, message_flags flags,
+      Error_Handler error_handler)
+  {
+    return service_.send(impl_, data, length, flags, error_handler);
+  }
+
+  /// Start an asynchronous send on a connected socket.
+  /**
+   * This function is used to send data on the datagram socket. The function
+   * call will block until the data has been sent successfully or an error
+   * occurs.
+   *
+   * @param data The data to be sent on the socket. Ownership of the data is
+   * retained by the caller, which must guarantee that it is valid until the
+   * handler is called.
+   *
+   * @param length The size of the data to be sent, in bytes.
+   *
+   * @param flags Flags specifying how the send call is to be made.
+   *
+   * @param handler The handler to be called when the send operation completes.
+   * Copies will be made of the handler as required. The equivalent function
+   * signature of the handler must be:
+   * @code void handler(
+   *   const asio::error& error, // Result of operation
+   *   size_t bytes_transferred  // Number of bytes sent
+   * ); @endcode
+   *
+   * @note The async_send operation can only be used with a connected socket.
+   * Use the async_send_to function to send data on an unconnected datagram
+   * socket.
+   */
+  template <typename Handler>
+  void async_send(const void* data, size_t length, message_flags flags,
+      Handler handler)
+  {
+    service_.async_send(impl_, data, length, flags, handler);
+  }
+
   /// Send a datagram to the specified endpoint.
   /**
    * This function is used to send a datagram to the specified remote endpoint.
@@ -536,6 +624,96 @@ public:
       const Endpoint& destination, Handler handler)
   {
     service_.async_send_to(impl_, data, length, flags, destination, handler);
+  }
+
+  /// Receive some data on a connected socket.
+  /**
+   * This function is used to receive data on the datagram socket. The function
+   * call will block until data has been received successfully or an error
+   * occurs.
+   *
+   * @param data The buffer into which the data will be received.
+   *
+   * @param max_length The maximum size of the data to be received, in bytes.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
+   *
+   * @returns The number of bytes received.
+   *
+   * @throws asio::error Thrown on failure.
+   *
+   * @note The receive operation can only be used with a connected socket. Use
+   * the receive_from function to receive data on an unconnected datagram
+   * socket.
+   */
+  size_t receive(void* data, size_t max_length, message_flags flags)
+  {
+    return service_.receive(impl_, data, max_length, flags,
+        default_error_handler());
+  }
+
+  /// Receive some data on a connected socket.
+  /**
+   * This function is used to receive data on the datagram socket. The function
+   * call will block until data has been received successfully or an error
+   * occurs.
+   *
+   * @param data The buffer into which the data will be received.
+   *
+   * @param max_length The maximum size of the data to be received, in bytes.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::error& error // Result of operation
+   * ); @endcode
+   *
+   * @returns The number of bytes received.
+   *
+   * @note The receive operation can only be used with a connected socket. Use
+   * the receive_from function to receive data on an unconnected datagram
+   * socket.
+   */
+  template <typename Error_Handler>
+  size_t receive(void* data, size_t max_length, message_flags flags,
+      Error_Handler error_handler)
+  {
+    return service_.receive(impl_, data, max_length, flags, error_handler);
+  }
+
+  /// Start an asynchronous receive on a connected socket.
+  /**
+   * This function is used to asynchronously receive data from the datagram
+   * socket. The function call always returns immediately.
+   *
+   * @param data The buffer into which the data will be received. Ownership of
+   * the buffer is retained by the caller, which must guarantee that it is valid
+   * until the handler is called.
+   *
+   * @param max_length The maximum size of the data to be received, in bytes.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
+   *
+   * @param handler The handler to be called when the receive operation
+   * completes. Copies will be made of the handler as required. The equivalent
+   * function signature of the handler must be:
+   * @code void handler(
+   *   const asio::error& error, // Result of operation
+   *   size_t bytes_transferred  // Number of bytes received
+   * ); @endcode
+   *
+   * @note The async_receive operation can only be used with a connected socket.
+   * Use the async_receive_from function to receive data on an unconnected
+   * datagram socket.
+   */
+  template <typename Handler>
+  void async_receive(void* data, size_t max_length, message_flags flags,
+      Handler handler)
+  {
+    service_.async_receive(impl_, data, max_length, flags, handler);
   }
 
   /// Receive a datagram with the endpoint of the sender.
