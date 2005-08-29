@@ -151,6 +151,12 @@ public:
           boost::bind(&server::handle_accept, this, new_session,
             placeholders::error));
     }
+    else if (err == error::connection_aborted)
+    {
+      acceptor_.async_accept(new_session->socket(),
+          boost::bind(&server::handle_accept, this, new_session,
+            placeholders::error));
+    }
     else
     {
       delete new_session;
