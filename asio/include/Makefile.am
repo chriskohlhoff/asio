@@ -5,7 +5,6 @@ nobase_include_HEADERS = \
 	asio/basic_demuxer.hpp \
 	asio/basic_locking_dispatcher.hpp \
 	asio/basic_socket_acceptor.hpp \
-	asio/basic_socket_connector.hpp \
 	asio/basic_stream_socket.hpp \
 	asio/buffered_read_stream_fwd.hpp \
 	asio/buffered_read_stream.hpp \
@@ -38,7 +37,6 @@ nobase_include_HEADERS = \
 	asio/detail/posix_tss_bool.hpp \
 	asio/detail/push_options.hpp \
 	asio/detail/reactive_deadline_timer_service.hpp \
-	asio/detail/reactive_socket_connector_service.hpp \
 	asio/detail/reactive_socket_service.hpp \
 	asio/detail/reactor_op_queue.hpp \
 	asio/detail/reactor_timer_queue.hpp \
@@ -90,8 +88,6 @@ nobase_include_HEADERS = \
 	asio/socket_acceptor.hpp \
 	asio/socket_acceptor_service.hpp \
 	asio/socket_base.hpp \
-	asio/socket_connector.hpp \
-	asio/socket_connector_service.hpp \
 	asio/socket_option.hpp \
 	asio/stream_socket.hpp \
 	asio/stream_socket_service.hpp \

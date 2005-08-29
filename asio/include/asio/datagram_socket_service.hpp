@@ -112,6 +112,22 @@ public:
     service_impl_.bind(impl, endpoint, error_handler);
   }
 
+  /// Connect the datagram socket to the specified endpoint.
+  template <typename Endpoint, typename Error_Handler>
+  void connect(impl_type& impl, const Endpoint& peer_endpoint,
+      Error_Handler error_handler)
+  {
+    service_impl_.connect(impl, peer_endpoint, error_handler);
+  }
+
+  /// Start an asynchronous connect.
+  template <typename Endpoint, typename Handler>
+  void async_connect(impl_type& impl, const Endpoint& peer_endpoint,
+      Handler handler)
+  {
+    service_impl_.async_connect(impl, peer_endpoint, handler);
+  }
+
   /// Set a socket option.
   template <typename Option, typename Error_Handler>
   void set_option(impl_type& impl, const Option& option,

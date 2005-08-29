@@ -11,16 +11,14 @@ public:
   connect_handler(demuxer& d)
     : demuxer_(d),
       timer_(d),
-      connector_(d),
       socket_(d)
   {
-    connector_.async_connect(socket_,
-        ipv4::tcp::endpoint(32123, ipv4::address::loopback()),
+    socket_.async_connect(ipv4::tcp::endpoint(32123, ipv4::address::loopback()),
         boost::bind(&connect_handler::handle_connect, this,
           asio::placeholders::error));
 
     timer_.expires_from_now(boost::posix_time::seconds(5));
-    timer_.async_wait(boost::bind(&socket_connector::close, &connector_));
+    timer_.async_wait(boost::bind(&stream_socket::close, &socket_));
   }
 
   void handle_connect(const error& err)
@@ -38,7 +36,6 @@ public:
 private:
   demuxer& demuxer_;
   deadline_timer timer_;
-  socket_connector connector_;
   stream_socket socket_;
 };
 

@@ -71,8 +71,7 @@ int main()
     stream_handler sh(d);
 
     stream_socket s(d);
-    socket_connector c(d);
-    c.async_connect(s, ipv4::tcp::endpoint(32123, ipv4::address::loopback()),
+    s.async_connect(ipv4::tcp::endpoint(32123, ipv4::address::loopback()),
         boost::bind(connect_handler));
 
     d.run();

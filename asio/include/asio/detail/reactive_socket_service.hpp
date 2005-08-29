@@ -17,6 +17,10 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <boost/shared_ptr.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/error.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_base.hpp"
@@ -657,6 +661,184 @@ public:
       reactor_.start_read_op(impl,
           accept_endp_handler<Socket, Endpoint, Handler>(
             impl, demuxer_, peer, peer_endpoint, handler));
+    }
+  }
+
+  // Connect the socket to the specified endpoint.
+  template <typename Endpoint, typename Error_Handler>
+  void connect(impl_type& impl, const Endpoint& peer_endpoint,
+      Error_Handler error_handler)
+  {
+    // Open the socket if it is not already open.
+    if (impl == invalid_socket)
+    {
+      // Get the flags used to create the new socket.
+      int family = peer_endpoint.protocol().family();
+      int type = peer_endpoint.protocol().type();
+      int proto = peer_endpoint.protocol().protocol();
+
+      // Create a new socket.
+      impl = socket_ops::socket(family, type, proto);
+      if (impl == invalid_socket)
+      {
+        error_handler(asio::error(socket_ops::get_error()));
+        return;
+      }
+    }
+
+    // Perform the connect operation.
+    int result = socket_ops::connect(impl, peer_endpoint.native_data(),
+        peer_endpoint.native_size());
+    if (result == socket_error_retval)
+      error_handler(asio::error(socket_ops::get_error()));
+  }
+
+  template <typename Handler>
+  class connect_handler
+  {
+  public:
+    connect_handler(impl_type& impl, boost::shared_ptr<bool> completed,
+        Demuxer& demuxer, Reactor& reactor, Handler handler)
+      : impl_(impl),
+        completed_(completed),
+        demuxer_(demuxer),
+        reactor_(reactor),
+        handler_(handler)
+    {
+    }
+
+    void do_operation()
+    {
+      // Check whether a handler has already been called for the connection.
+      // If it has, then we don't want to do anything in this handler.
+      if (*completed_)
+      {
+        demuxer_.work_finished();
+        return;
+      }
+
+      // Cancel the other reactor operation for the connection.
+      *completed_ = true;
+      reactor_.enqueue_cancel_ops_unlocked(impl_);
+
+      // Get the error code from the connect operation.
+      int connect_error = 0;
+      size_t connect_error_len = sizeof(connect_error);
+      if (socket_ops::getsockopt(impl_, SOL_SOCKET, SO_ERROR,
+            &connect_error, &connect_error_len) == socket_error_retval)
+      {
+        asio::error error(socket_ops::get_error());
+        demuxer_.post(bind_handler(handler_, error));
+        return;
+      }
+
+      // If connection failed then post the handler with the error code.
+      if (connect_error)
+      {
+        asio::error error(connect_error);
+        demuxer_.post(bind_handler(handler_, error));
+        return;
+      }
+
+      // Make the socket blocking again (the default).
+      ioctl_arg_type non_blocking = 0;
+      if (socket_ops::ioctl(impl_, FIONBIO, &non_blocking))
+      {
+        asio::error error(socket_ops::get_error());
+        demuxer_.post(bind_handler(handler_, error));
+        return;
+      }
+
+      // Post the result of the successful connection operation.
+      asio::error error(asio::error::success);
+      demuxer_.post(bind_handler(handler_, error));
+    }
+
+    void do_cancel()
+    {
+      // Check whether a handler has already been called for the connection.
+      // If it has, then we don't want to do anything in this handler.
+      if (*completed_)
+      {
+        demuxer_.work_finished();
+        return;
+      }
+
+      // Cancel the other reactor operation for the connection.
+      *completed_ = true;
+      reactor_.enqueue_cancel_ops_unlocked(impl_);
+
+      // The socket is closed when the reactor_.close_descriptor is called,
+      // so no need to close it here.
+      asio::error error(asio::error::operation_aborted);
+      demuxer_.post(bind_handler(handler_, error));
+    }
+
+  private:
+    impl_type& impl_;
+    boost::shared_ptr<bool> completed_;
+    Demuxer& demuxer_;
+    Reactor& reactor_;
+    Handler handler_;
+  };
+
+  // Start an asynchronous connect.
+  template <typename Endpoint, typename Handler>
+  void async_connect(impl_type& impl, const Endpoint& peer_endpoint,
+      Handler handler)
+  {
+    // Open the socket if it is not already open.
+    if (impl == invalid_socket)
+    {
+      // Get the flags used to create the new socket.
+      int family = peer_endpoint.protocol().family();
+      int type = peer_endpoint.protocol().type();
+      int proto = peer_endpoint.protocol().protocol();
+
+      // Create a new socket.
+      impl = socket_ops::socket(family, type, proto);
+      if (impl == invalid_socket)
+      {
+        asio::error error(socket_ops::get_error());
+        demuxer_.post(bind_handler(handler, error));
+        return;
+      }
+    }
+
+    // Mark the socket as non-blocking so that the connection will take place
+    // asynchronously.
+    ioctl_arg_type non_blocking = 1;
+    if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
+    {
+      asio::error error(socket_ops::get_error());
+      demuxer_.post(bind_handler(handler, error));
+      return;
+    }
+
+    // Start the connect operation.
+    if (socket_ops::connect(impl, peer_endpoint.native_data(),
+          peer_endpoint.native_size()) == 0)
+    {
+      // The connect operation has finished successfully so we need to post the
+      // handler immediately.
+      asio::error error(asio::error::success);
+      demuxer_.post(bind_handler(handler, error));
+    }
+    else if (socket_ops::get_error() == asio::error::in_progress
+        || socket_ops::get_error() == asio::error::would_block)
+    {
+      // The connection is happening in the background, and we need to wait
+      // until the socket becomes writeable.
+      boost::shared_ptr<bool> completed(new bool(false));
+      demuxer_.work_started();
+      reactor_.start_write_and_except_ops(impl, connect_handler<Handler>(
+            impl, completed, demuxer_, reactor_, handler));
+    }
+    else
+    {
+      // The connect operation has failed, so post the handler immediately.
+      asio::error error(socket_ops::get_error());
+      demuxer_.post(bind_handler(handler, error));
     }
   }
 

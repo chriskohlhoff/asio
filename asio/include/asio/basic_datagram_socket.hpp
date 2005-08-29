@@ -174,8 +174,8 @@ public:
 
   /// Set the underlying implementation in the native type.
   /**
-   * This function is used by the acceptor and connector implementations to set
-   * the underlying implementation associated with the datagram socket.
+   * This function is used by the acceptor implementation to set the underlying
+   * implementation associated with the datagram socket.
    *
    * @param new_impl The new underlying socket implementation.
    */
@@ -219,6 +219,66 @@ public:
   void bind(const Endpoint& endpoint, Error_Handler error_handler)
   {
     service_.bind(impl_, endpoint, error_handler);
+  }
+
+  /// Connect a datagram socket to the specified endpoint.
+  /**
+   * This function is used to connect a datagram socket to the specified remote
+   * endpoint. The function call will block until the connection is successfully
+   * made or an error occurs.
+   *
+   * @param peer_endpoint The remote endpoint to which the socket will be
+   * connected.
+   *
+   * @throws asio::error Thrown on failure.
+   */
+  template <typename Endpoint>
+  void connect(const Endpoint& peer_endpoint)
+  {
+    service_.connect(impl_, peer_endpoint, default_error_handler());
+  }
+
+  /// Connect a datagram socket to the specified endpoint.
+  /**
+   * This function is used to connect a datagram socket to the specified remote
+   * endpoint. The function call will block until the connection is successfully
+   * made or an error occurs.
+   *
+   * @param peer_endpoint The remote endpoint to which the socket will be
+   * connected.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Endpoint, typename Error_Handler>
+  void connect(const Endpoint& peer_endpoint, Error_Handler error_handler)
+  {
+    service_.connect(impl_, peer_endpoint, error_handler);
+  }
+
+  /// Start an asynchronous connect.
+  /**
+   * This function is used to asynchronously connect a datagram socket to the
+   * specified remote endpoint. The function call always returns immediately.
+   *
+   * @param peer_endpoint The remote endpoint to which the socket will be
+   * connected. Copies will be made of the endpoint object as required.
+   *
+   * @param handler The handler to be called when the connection operation
+   * completes. Copies will be made of the handler as required. The equivalent
+   * function signature of the handler must be:
+   * @code void handler(
+   *   const asio::error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Endpoint, typename Handler>
+  void async_connect(const Endpoint& peer_endpoint, Handler handler)
+  {
+    service_.async_connect(impl_, peer_endpoint, handler);
   }
 
   /// Set an option on the socket.

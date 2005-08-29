@@ -498,6 +498,47 @@ public:
     }
   }
 
+  // Connect the socket to the specified endpoint.
+  template <typename Endpoint, typename Error_Handler>
+  void connect(impl_type& impl, const Endpoint& peer_endpoint,
+      Error_Handler error_handler)
+  {
+    // Open the socket if it is not already open.
+    if (impl == invalid_socket)
+    {
+      // Get the flags used to create the new socket.
+      int family = peer_endpoint.protocol().family();
+      int type = peer_endpoint.protocol().type();
+      int proto = peer_endpoint.protocol().protocol();
+
+      // Create a new socket.
+      impl = socket_ops::socket(family, type, proto);
+      if (impl == invalid_socket)
+      {
+        error_handler(asio::error(socket_ops::get_error()));
+        return;
+      }
+    }
+
+    // Perform the connect operation.
+    int result = socket_ops::connect(impl, peer_endpoint.native_data(),
+        peer_endpoint.native_size());
+    if (result == socket_error_retval)
+      error_handler(asio::error(socket_ops::get_error()));
+  }
+
+  // Start an asynchronous connect.
+  template <typename Endpoint, typename Handler>
+  void async_connect(impl_type& impl, const Endpoint& peer_endpoint,
+      Handler handler)
+  {
+    typedef detail::reactive_socket_service<
+      demuxer_type, detail::select_reactor<true> > socket_service_type;
+    socket_service_type& service = demuxer_.get_service(
+        service_factory<socket_service_type>());
+    service.async_connect(impl, peer_endpoint, handler);
+  }
+
 private:
   // The demuxer associated with the service.
   demuxer_type& demuxer_;

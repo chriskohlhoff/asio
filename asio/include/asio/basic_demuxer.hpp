@@ -34,10 +34,9 @@ namespace asio {
 /**
  * The basic_demuxer class template provides the core event demultiplexing
  * functionality for users of the asynchronous I/O objects, including
- * asio::stream_socket, asio::datagram_socket, asio::socket_acceptor,
- * asio::socket_connector and asio::deadline_timer. The basic_demuxer class
- * template also includes facilities intended for developers of custom
- * asynchronous services.
+ * asio::stream_socket, asio::datagram_socket, asio::socket_acceptor and
+ * asio::deadline_timer. The basic_demuxer class template also includes
+ * facilities intended for developers of custom asynchronous services.
  *
  * Most applications will use the asio::demuxer typedef.
  *

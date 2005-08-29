@@ -21,8 +21,7 @@ public:
     asio::ipv4::host host;
     host_resolver.get_host_by_name(host, hostname);
     asio::ipv4::tcp::endpoint endpoint(port, host.addresses[0]);
-    asio::socket_connector connector(*demuxer_);
-    connector.connect(*socket_, endpoint);
+    socket_->connect(endpoint);
   }
 
   // Read.

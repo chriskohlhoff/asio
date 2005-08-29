@@ -12,10 +12,9 @@ class chat_client
 public:
   chat_client(asio::demuxer& d, const asio::ipv4::tcp::endpoint& endpoint)
     : demuxer_(d),
-      connector_(d),
       socket_(d)
   {
-    connector_.async_connect(socket_, endpoint,
+    socket_.async_connect(endpoint,
         boost::bind(&chat_client::handle_connect, this,
           asio::placeholders::error));
   }
@@ -113,13 +112,11 @@ private:
 
   void do_close()
   {
-    connector_.close();
     socket_.close();
   }
 
 private:
   asio::demuxer& demuxer_;
-  asio::socket_connector connector_;
   asio::stream_socket socket_;
   chat_message read_msg_;
   chat_message_queue write_msgs_;

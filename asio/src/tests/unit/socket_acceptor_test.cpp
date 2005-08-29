@@ -34,17 +34,16 @@ void socket_acceptor_test()
   acceptor.get_local_endpoint(server_endpoint);
   server_endpoint.address(ipv4::address::loopback());
 
-  socket_connector connector(d);
   stream_socket client_side_socket(d);
   stream_socket server_side_socket(d);
 
-  connector.connect(client_side_socket, server_endpoint);
+  client_side_socket.connect(server_endpoint);
   acceptor.accept(server_side_socket);
 
   client_side_socket.close();
   server_side_socket.close();
 
-  connector.connect(client_side_socket, server_endpoint);
+  client_side_socket.connect(server_endpoint);
   ipv4::tcp::endpoint client_endpoint;
   acceptor.accept_endpoint(server_side_socket, client_endpoint);
 
@@ -56,7 +55,7 @@ void socket_acceptor_test()
   server_side_socket.close();
 
   acceptor.async_accept(server_side_socket, handle_accept);
-  connector.async_connect(client_side_socket, server_endpoint, handle_connect);
+  client_side_socket.async_connect(server_endpoint, handle_connect);
 
   d.run();
 
@@ -65,7 +64,7 @@ void socket_acceptor_test()
 
   acceptor.async_accept_endpoint(server_side_socket, client_endpoint,
       handle_accept);
-  connector.async_connect(client_side_socket, server_endpoint, handle_connect);
+  client_side_socket.async_connect(server_endpoint, handle_connect);
 
   d.reset();
   d.run();

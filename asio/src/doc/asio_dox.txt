@@ -83,7 +83,6 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 \li asio::locking_dispatcher
 \li asio::socket_acceptor
 \li asio::socket_base
-\li asio::socket_connector
 \li asio::stream_socket
 \li asio::thread
 
@@ -94,7 +93,6 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 \li asio::basic_deadline_timer
 \li asio::basic_locking_dispatcher
 \li asio::basic_socket_acceptor
-\li asio::basic_socket_connector
 \li asio::basic_stream_socket
 \li asio::buffered_read_stream
 \li asio::buffered_write_stream
@@ -131,7 +129,6 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 \li asio::demuxer_service
 \li asio::locking_dispatcher_service
 \li asio::socket_acceptor_service
-\li asio::socket_connector_service
 \li asio::stream_socket_service
 \li asio::ipv4::host_resolver_service
 

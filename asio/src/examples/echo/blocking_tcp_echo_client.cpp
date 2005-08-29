@@ -24,8 +24,7 @@ int main(int argc, char* argv[])
 
     using namespace std; // For atoi and strlen.
     asio::stream_socket s(d);
-    asio::socket_connector c(d);
-    c.connect(s, ep);
+    s.connect(ep);
 
     std::cout << "Enter message: ";
     char request[max_length];

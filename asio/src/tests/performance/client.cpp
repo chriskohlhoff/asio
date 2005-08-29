@@ -75,12 +75,19 @@ public:
     delete[] write_data_;
   }
 
-  stream_socket& socket()
+  void start(const ipv4::tcp::endpoint& server_endpoint)
   {
-    return socket_;
+    socket_.async_connect(server_endpoint,
+        dispatcher_.wrap(boost::bind(&session::handle_connect, this,
+            placeholders::error)));
   }
 
-  void start()
+  void stop()
+  {
+    dispatcher_.post(boost::bind(&stream_socket::close, &socket_));
+  }
+
+  void handle_connect(const error& err)
   {
     ++unwritten_count_;
     async_write_n(socket_, write_data_, block_size_,
@@ -92,11 +99,6 @@ public:
         dispatcher_.wrap(
           boost::bind(&session::handle_read, this, placeholders::error,
             placeholders::bytes_transferred)));
-  }
-
-  void stop()
-  {
-    dispatcher_.post(boost::bind(&stream_socket::close, &socket_));
   }
 
   void handle_read(const error& err, size_t length)
@@ -165,22 +167,19 @@ public:
   client(demuxer& d, const ipv4::tcp::endpoint& server_endpoint,
       size_t block_size, size_t session_count, int timeout)
     : demuxer_(d),
-      dispatcher_(d),
-      stop_timer_(d, boost::posix_time::seconds(timeout)),
-      connector_(d),
-      server_endpoint_(server_endpoint),
-      block_size_(block_size),
-      max_session_count_(session_count),
+      stop_timer_(d),
       sessions_(),
       stats_()
   {
-    session* new_session = new session(demuxer_, block_size, stats_);
-    connector_.async_connect(new_session->socket(), server_endpoint_,
-        dispatcher_.wrap(boost::bind(&client::handle_connect, this,
-            new_session, placeholders::error)));
+    stop_timer_.expires_from_now(boost::posix_time::seconds(timeout));
+    stop_timer_.async_wait(boost::bind(&client::handle_timeout, this));
 
-    stop_timer_.async_wait(dispatcher_.wrap(
-          boost::bind(&client::handle_timeout, this)));
+    for (size_t i = 0; i < session_count; ++i)
+    {
+      session* new_session = new session(demuxer_, block_size, stats_);
+      new_session->start(server_endpoint);
+      sessions_.push_back(new_session);
+    }
   }
 
   ~client()
@@ -200,35 +199,9 @@ public:
         boost::mem_fn(&session::stop));
   }
 
-  void handle_connect(session* new_session, const error& err)
-  {
-    if (!err)
-    {
-      sessions_.push_back(new_session);
-      new_session->start();
-
-      if (sessions_.size() < max_session_count_)
-      {
-        new_session = new session(demuxer_, block_size_, stats_);
-        connector_.async_connect(new_session->socket(), server_endpoint_,
-            dispatcher_.wrap(boost::bind(&client::handle_connect, this,
-                new_session, placeholders::error)));
-      }
-    }
-    else
-    {
-      delete new_session;
-    }
-  }
-
 private:
   demuxer& demuxer_;
-  locking_dispatcher dispatcher_;
   deadline_timer stop_timer_;
-  socket_connector connector_;
-  ipv4::tcp::endpoint server_endpoint_;
-  size_t block_size_;
-  size_t max_session_count_;
   std::list<session*> sessions_;
   stats stats_;
 };

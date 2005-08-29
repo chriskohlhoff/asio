@@ -19,43 +19,42 @@ void error_handler_test()
   demuxer d;
 
   stream_socket s(d);
-  socket_connector c(d);
   ipv4::tcp::endpoint endpoint(321, ipv4::address::any());
 
   error expected_err;
-  c.connect(s, endpoint, set_error(expected_err));
+  s.connect(endpoint, set_error(expected_err));
 
   std::ostringstream os;
-  c.connect(s, endpoint, log_error(os));
+  s.connect(endpoint, log_error(os));
   UNIT_TEST_CHECK(!os.str().empty());
 
   os.str("");
-  c.connect(s, endpoint, the_error == expected_err || log_error(os));
+  s.connect(endpoint, the_error == expected_err || log_error(os));
   UNIT_TEST_CHECK(os.str().empty());
 
   os.str("");
-  c.connect(s, endpoint, the_error == expected_err && log_error(os));
+  s.connect(endpoint, the_error == expected_err && log_error(os));
   UNIT_TEST_CHECK(!os.str().empty());
 
   os.str("");
-  c.connect(s, endpoint, the_error != expected_err || log_error(os));
+  s.connect(endpoint, the_error != expected_err || log_error(os));
   UNIT_TEST_CHECK(!os.str().empty());
 
   os.str("");
-  c.connect(s, endpoint, the_error != expected_err && log_error(os));
+  s.connect(endpoint, the_error != expected_err && log_error(os));
   UNIT_TEST_CHECK(os.str().empty());
 
   os.str("");
-  c.connect(s, endpoint, log_error_if(os, the_error == expected_err));
+  s.connect(endpoint, log_error_if(os, the_error == expected_err));
   UNIT_TEST_CHECK(!os.str().empty());
 
   os.str("");
-  c.connect(s, endpoint, log_error_if(os, the_error != expected_err));
+  s.connect(endpoint, log_error_if(os, the_error != expected_err));
   UNIT_TEST_CHECK(os.str().empty());
 
   try
   {
-    c.connect(s, endpoint, throw_error());
+    s.connect(endpoint, throw_error());
     UNIT_TEST_CHECK(0);
   }
   catch (error&)
@@ -64,7 +63,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, endpoint, the_error == expected_err || throw_error());
+    s.connect(endpoint, the_error == expected_err || throw_error());
   }
   catch (error&)
   {
@@ -73,7 +72,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, endpoint, the_error == expected_err && throw_error());
+    s.connect(endpoint, the_error == expected_err && throw_error());
     UNIT_TEST_CHECK(0);
   }
   catch (error&)
@@ -82,7 +81,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, endpoint, the_error != expected_err || throw_error());
+    s.connect(endpoint, the_error != expected_err || throw_error());
     UNIT_TEST_CHECK(0);
   }
   catch (error&)
@@ -91,7 +90,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, endpoint, the_error != expected_err && throw_error());
+    s.connect(endpoint, the_error != expected_err && throw_error());
   }
   catch (error&)
   {
@@ -100,7 +99,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, endpoint, throw_error_if(the_error == expected_err));
+    s.connect(endpoint, throw_error_if(the_error == expected_err));
     UNIT_TEST_CHECK(0);
   }
   catch (error&)
@@ -109,7 +108,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, endpoint, throw_error_if(the_error != expected_err));
+    s.connect(endpoint, throw_error_if(the_error != expected_err));
   }
   catch (error&)
   {
@@ -117,30 +116,30 @@ void error_handler_test()
   }
 
   error err;
-  c.connect(s, endpoint, set_error(err));
+  s.connect(endpoint, set_error(err));
   UNIT_TEST_CHECK(err == expected_err);
 
-  c.connect(s, endpoint, the_error == expected_err || set_error(err));
+  s.connect(endpoint, the_error == expected_err || set_error(err));
   UNIT_TEST_CHECK(err != expected_err);
 
-  c.connect(s, endpoint, the_error == expected_err && set_error(err));
+  s.connect(endpoint, the_error == expected_err && set_error(err));
   UNIT_TEST_CHECK(err == expected_err);
 
-  c.connect(s, endpoint, the_error != expected_err || set_error(err));
+  s.connect(endpoint, the_error != expected_err || set_error(err));
   UNIT_TEST_CHECK(err == expected_err);
 
-  c.connect(s, endpoint, the_error != expected_err && set_error(err));
+  s.connect(endpoint, the_error != expected_err && set_error(err));
   UNIT_TEST_CHECK(err != expected_err);
 
-  c.connect(s, endpoint, set_error_if(err, the_error == expected_err));
+  s.connect(endpoint, set_error_if(err, the_error == expected_err));
   UNIT_TEST_CHECK(err == expected_err);
 
-  c.connect(s, endpoint, set_error_if(err, the_error != expected_err));
+  s.connect(endpoint, set_error_if(err, the_error != expected_err));
   UNIT_TEST_CHECK(err != expected_err);
 
   try
   {
-    c.connect(s, endpoint, ignore_error());
+    s.connect(endpoint, ignore_error());
   }
   catch (error&)
   {
@@ -149,7 +148,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, endpoint, the_error == expected_err || ignore_error());
+    s.connect(endpoint, the_error == expected_err || ignore_error());
   }
   catch (error&)
   {
@@ -158,7 +157,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, endpoint, the_error == expected_err && ignore_error());
+    s.connect(endpoint, the_error == expected_err && ignore_error());
   }
   catch (error&)
   {
@@ -167,7 +166,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, endpoint, the_error != expected_err || ignore_error());
+    s.connect(endpoint, the_error != expected_err || ignore_error());
   }
   catch (error&)
   {
@@ -176,7 +175,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, endpoint, the_error != expected_err && ignore_error());
+    s.connect(endpoint, the_error != expected_err && ignore_error());
   }
   catch (error&)
   {
@@ -185,7 +184,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, endpoint,
+    s.connect(endpoint,
         ignore_error_if(the_error == expected_err) || throw_error());
   }
   catch (error&)
@@ -195,7 +194,7 @@ void error_handler_test()
 
   try
   {
-    c.connect(s, endpoint,
+    s.connect(endpoint,
         ignore_error_if(the_error != expected_err) || throw_error());
     UNIT_TEST_CHECK(0);
   }
