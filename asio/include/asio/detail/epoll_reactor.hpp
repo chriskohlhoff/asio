@@ -237,36 +237,9 @@ public:
         pending_cancellations_map::value_type(descriptor, true));
   }
 
-  // Class template to adapt a close function as a timer handler.
-  template <typename Close_Function>
-  class close_handler
-  {
-  public:
-    close_handler(socket_type descriptor, Close_Function close_function)
-      : descriptor_(descriptor),
-        close_function_(close_function)
-    {
-    }
-
-    void do_operation()
-    {
-      close_function_(descriptor_);
-    }
-
-    void do_cancel()
-    {
-    }
-
-  private:
-    socket_type descriptor_;
-    Close_Function close_function_;
-  };
-
-  // Close the given descriptor and cancel any operations that are running
-  // against it. The given close function will be called to actually perform
-  // the closure of the resource.
-  template <typename Close_Function>
-  void close_descriptor(socket_type descriptor, Close_Function close_function)
+  // Cancel any operations that are running against the descriptor and remove
+  // its registration from the reactor.
+  void close_descriptor(socket_type descriptor);
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
@@ -280,28 +253,7 @@ public:
     }
 
     // Cancel any outstanding operations associated with the descriptor.
-    bool existing_ops = read_op_queue_.cancel_operations(descriptor);
-    existing_ops = write_op_queue_.cancel_operations(descriptor)
-      || existing_ops;
-    existing_ops = except_op_queue_.cancel_operations(descriptor)
-      || existing_ops;
-
-    if (existing_ops && wait_in_progress_)
-    {
-      // The close function is called using a dummy timer to ensure that the
-      // the descriptor cannot be reused and confused with the wrong events
-      // while the epoll_wait call is in progress.
-      void* token = 0;
-      bool interrupt = timer_queue_.enqueue_timer(detail::time(0, 0),
-          close_handler<Close_Function>(descriptor, close_function), token);
-      if (interrupt)
-        interrupter_.interrupt();
-    }
-    else
-    {
-      // Not currently using the descriptor in epoll_wait so close it now.
-      close_function(descriptor);
-    }
+    cancel_ops_unlocked(descriptor);
   }
 
   // Schedule a timer to expire at the specified absolute time. The

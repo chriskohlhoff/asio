@@ -139,63 +139,12 @@ public:
         pending_cancellations_map::value_type(descriptor, true));
   }
 
-  // Class template to adapt a close function as a timer handler.
-  template <typename Close_Function>
-  class close_handler
-  {
-  public:
-    close_handler(socket_type descriptor, Close_Function close_function)
-      : descriptor_(descriptor),
-        close_function_(close_function)
-    {
-    }
-
-    void do_operation()
-    {
-      close_function_(descriptor_);
-    }
-
-    void do_cancel()
-    {
-    }
-
-  private:
-    socket_type descriptor_;
-    Close_Function close_function_;
-  };
-
-  // Close the given descriptor and cancel any operations that are running
-  // against it. The given close function will be called to actually perform
-  // the closure of the resource.
-  template <typename Close_Function>
-  void close_descriptor(socket_type descriptor, Close_Function close_function)
+  // Cancel any operations that are running against the descriptor and remove
+  // its registration from the reactor.
+  void close_descriptor(socket_type descriptor)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
-
-    // We need to interrupt the select if any operations were cancelled.
-    bool interrupt = read_op_queue_.cancel_operations(descriptor);
-    interrupt = write_op_queue_.cancel_operations(descriptor) || interrupt;
-    interrupt = except_op_queue_.cancel_operations(descriptor) || interrupt;
-
-    if (interrupt && select_in_progress_)
-    {
-      // The close function cannot be called on a descriptor while the select
-      // call is running with that descriptor in an fd_set, so we schedule a
-      // dummy timer to perform the socket close when the select has been
-      // interrupted.
-      void* token = 0;
-      interrupt = timer_queue_.enqueue_timer(detail::time(0, 0),
-          close_handler<Close_Function>(descriptor, close_function), token)
-        || interrupt;
-    }
-    else
-    {
-      // Not currently using the descriptor in select so we can close it now.
-      close_function(descriptor);
-    }
-
-    if (interrupt)
-      interrupter_.interrupt();
+    cancel_ops_unlocked(descriptor);
   }
 
   // Schedule a timer to expire at the specified absolute time. The
