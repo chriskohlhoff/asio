@@ -22,6 +22,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/default_error_handler.hpp"
+#include "asio/null_error_handler.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_base.hpp"
 
