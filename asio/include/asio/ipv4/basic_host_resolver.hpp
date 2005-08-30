@@ -67,13 +67,29 @@ public:
     : service_(d.get_service(service_factory<Service>())),
       impl_(service_.null())
   {
-    service_.create(impl_);
+    service_.open(impl_);
   }
 
   /// Destructor.
   ~basic_host_resolver()
   {
-    service_.destroy(impl_);
+    service_.close(impl_);
+  }
+
+  /// Open the host resolver.
+  void open()
+  {
+    service_.open(impl_);
+  }
+
+  /// Close the host resolver.
+  /**
+   * This function is used to close the host resolver. Any asynchronous
+   * operations will be cancelled immediately.
+   */
+  void close()
+  {
+    service_.close(impl_);
   }
 
   /// Get host information for the local machine.
@@ -93,7 +109,7 @@ public:
   /**
    * This function is used to obtain host information for the local machine.
    *
-   * @param h A host object that receives information assocated with the
+   * @param h A host object that receives information associated with the
    * specified address. After successful completion of this function, the host
    * object is guaranteed to contain at least one address.
    *
@@ -112,10 +128,10 @@ public:
 
   /// Get host information for a specified address.
   /**
-   * This function is used to obtain host information assocated with a
+   * This function is used to obtain host information associated with a
    * specified address.
    *
-   * @param h A host object that receives information assocated with the
+   * @param h A host object that receives information associated with the
    * specified address. After successful completion of this function, the host
    * object is guaranteed to contain at least one address.
    *
@@ -130,10 +146,10 @@ public:
 
   /// Get host information for a specified address.
   /**
-   * This function is used to obtain host information assocated with a
+   * This function is used to obtain host information associated with a
    * specified address.
    *
-   * @param h A host object that receives information assocated with the
+   * @param h A host object that receives information associated with the
    * specified address. After successful completion of this function, the host
    * object is guaranteed to contain at least one address.
    *
@@ -153,12 +169,32 @@ public:
     service_.get_host_by_address(impl_, h, addr, error_handler);
   }
 
+  /// Asynchronously get host information for a specified address.
+  /**
+   * This function is used to asynchronously obtain host information associated
+   * with a specified address. The function call always returns immediately.
+   *
+   * @param h A host object that receives information associated with the
+   * specified address. After successful completion of the asynchronous
+   * operation, the host object is guaranteed to contain at least one address.
+   * Ownership of the host object is retained by the caller, which must
+   * guarantee that it is valid until the handler is called.
+   *
+   * @param addr An address object that identifies a host. Copies will be made
+   * of the address object as required.
+   */
+  template <typename Handler>
+  void async_get_host_by_address(host& h, const address& addr, Handler handler)
+  {
+    service_.async_get_host_by_address(impl_, h, addr, handler);
+  }
+
   /// Get host information for a named host.
   /**
-   * This function is used to obtain host information assocated with a
+   * This function is used to obtain host information associated with a
    * specified host name.
    *
-   * @param h A host object that receives information assocated with the
+   * @param h A host object that receives information associated with the
    * specified host name.
    *
    * @param name A name that identifies a host.
@@ -172,10 +208,10 @@ public:
 
   /// Get host information for a named host.
   /**
-   * This function is used to obtain host information assocated with a
+   * This function is used to obtain host information associated with a
    * specified host name.
    *
-   * @param h A host object that receives information assocated with the
+   * @param h A host object that receives information associated with the
    * specified host name.
    *
    * @param name A name that identifies a host.
@@ -192,6 +228,26 @@ public:
       Error_Handler error_handler)
   {
     service_.get_host_by_name(impl_, h, name, error_handler);
+  }
+
+  /// Asynchronously get host information for a named host.
+  /**
+   * This function is used to asynchronously obtain host information associated
+   * with a specified host name. The function call always returns immediately.
+   *
+   * @param h A host object that receives information associated with the
+   * specified address. After successful completion of the asynchronous
+   * operation, the host object is guaranteed to contain at least one address.
+   * Ownership of the host object is retained by the caller, which must
+   * guarantee that it is valid until the handler is called.
+   *
+   * @param name A name that identifies a host. Copies will be made of the name
+   * as required.
+   */
+  template <typename Handler>
+  void async_get_host_by_name(host& h, const std::string& name, Handler handler)
+  {
+    service_.async_get_host_by_name(impl_, h, name, handler);
   }
 
 private:

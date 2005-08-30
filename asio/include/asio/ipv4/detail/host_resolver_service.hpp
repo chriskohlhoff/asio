@@ -20,11 +20,16 @@
 #include "asio/detail/push_options.hpp"
 #include <cstring>
 #include <boost/noncopyable.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
+#include "asio/detail/bind_handler.hpp"
+#include "asio/detail/mutex.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/thread.hpp"
 #include "asio/ipv4/host.hpp"
 
 namespace asio {
@@ -56,18 +61,33 @@ public:
   };
 
   // The native type of the host resolver.
-  typedef resolver_impl* impl_type;
+  typedef boost::shared_ptr<resolver_impl> impl_type;
 
   // Return a null host resolver implementation.
   static impl_type null()
   {
-    return 0;
+    return impl_type();
   }
 
   // Constructor.
   host_resolver_service(Demuxer& d)
-    : demuxer_(d)
+    : mutex_(),
+      demuxer_(d),
+      work_demuxer_(),
+      work_thread_(0)
   {
+    work_demuxer_.work_started();
+  }
+
+  // Destructor.
+  ~host_resolver_service()
+  {
+    work_demuxer_.work_finished();
+    if (work_thread_)
+    {
+      work_thread_->join();
+      delete work_thread_;
+    }
   }
 
   // The demuxer type for this service.
@@ -79,23 +99,19 @@ public:
     return demuxer_;
   }
 
-  // Create a new host resolver implementation.
-  void create(impl_type& impl)
+  // Open a new host resolver implementation.
+  void open(impl_type& impl)
   {
-    impl = new resolver_impl;
+    impl = impl_type(new resolver_impl);
   }
 
-  // Destroy a host resolver implementation.
-  void destroy(impl_type& impl)
+  // Close a host resolver implementation.
+  void close(impl_type& impl)
   {
-    if (impl != null())
-    {
-      delete impl;
-      impl = null();
-    }
+    impl = null();
   }
 
-  /// Get host information for the local machine.
+  // Get host information for the local machine.
   template <typename Error_Handler>
   void get_local_host(impl_type& impl, host& h, Error_Handler error_handler)
   {
@@ -106,7 +122,7 @@ public:
       get_host_by_name(impl, h, name, error_handler);
   }
 
-  /// Get host information for a specified address.
+  // Get host information for a specified address.
   template <typename Error_Handler>
   void get_host_by_address(impl_type& impl, host& h, const address& addr,
       Error_Handler error_handler)
@@ -127,7 +143,72 @@ public:
       populate_host_object(h, ent);
   }
 
-  /// Get host information for a named host.
+  template <typename Handler>
+  class get_host_by_address_handler
+  {
+  public:
+    get_host_by_address_handler(impl_type impl, host& h, const address& addr,
+        Demuxer& demuxer, Handler handler)
+      : impl_(impl),
+        host_(h),
+        address_(addr),
+        demuxer_(demuxer),
+        handler_(handler)
+    {
+    }
+
+    void operator()()
+    {
+      // Check if the operation has been cancelled.
+      if (impl_.expired())
+      {
+        demuxer_.post(asio::detail::bind_handler(handler_,
+              asio::error(asio::error::operation_aborted)));
+        demuxer_.work_finished();
+        return;
+      }
+
+      // Perform the blocking host resolution operation.
+      hostent ent;
+      char buf[8192] = ""; // Size recommended by Stevens, UNPv1.
+      int error = 0;
+      in_addr a;
+      a.s_addr = asio::detail::socket_ops::host_to_network_long(
+          address_.to_ulong());
+      auto_hostent result(asio::detail::socket_ops::gethostbyaddr(
+            reinterpret_cast<const char*>(&a), sizeof(in_addr), AF_INET, &ent,
+            buf, sizeof(buf), &error));
+      asio::error e(asio::error::success);
+      if (result == 0)
+        e = asio::error(error);
+      else if (ent.h_length != sizeof(in_addr))
+        e = asio::error(asio::error::host_not_found);
+      else
+        populate_host_object(host_, ent);
+      demuxer_.post(asio::detail::bind_handler(handler_, e));
+      demuxer_.work_finished();
+    }
+
+  private:
+    boost::weak_ptr<resolver_impl> impl_;
+    host& host_;
+    address address_;
+    Demuxer& demuxer_;
+    Handler handler_;
+  };
+
+  // Asynchronously get host information for a specified address.
+  template <typename Handler>
+  void async_get_host_by_address(impl_type& impl, host& h, const address& addr,
+      Handler handler)
+  {
+    start_work_thread();
+    demuxer_.work_started();
+    work_demuxer_.post(get_host_by_address_handler<Handler>(
+          impl, h, addr, demuxer_, handler));
+  }
+
+  // Get host information for a named host.
   template <typename Error_Handler>
   void get_host_by_name(impl_type& impl, host& h, const std::string& name,
       Error_Handler error_handler)
@@ -145,9 +226,91 @@ public:
       populate_host_object(h, ent);
   }
 
+  template <typename Handler>
+  class get_host_by_name_handler
+  {
+  public:
+    get_host_by_name_handler(impl_type impl, host& h, const std::string& name,
+        Demuxer& demuxer, Handler handler)
+      : impl_(impl),
+        host_(h),
+        name_(name),
+        demuxer_(demuxer),
+        handler_(handler)
+    {
+    }
+
+    void operator()()
+    {
+      // Check if the operation has been cancelled.
+      if (impl_.expired())
+      {
+        demuxer_.post(asio::detail::bind_handler(handler_,
+              asio::error(asio::error::operation_aborted)));
+        demuxer_.work_finished();
+        return;
+      }
+
+      // Perform the blocking host resolution operation.
+      hostent ent;
+      char buf[8192] = ""; // Size recommended by Stevens, UNPv1.
+      int error = 0;
+      auto_hostent result(asio::detail::socket_ops::gethostbyname(
+            name_.c_str(), &ent, buf, sizeof(buf), &error));
+      asio::error e(asio::error::success);
+      if (result == 0)
+        e = asio::error(error);
+      else if (ent.h_addrtype != AF_INET || ent.h_length != sizeof(in_addr))
+        e = asio::error(asio::error::host_not_found);
+      else
+        populate_host_object(host_, ent);
+      demuxer_.post(asio::detail::bind_handler(handler_, e));
+      demuxer_.work_finished();
+    }
+
+  private:
+    boost::weak_ptr<resolver_impl> impl_;
+    host& host_;
+    std::string name_;
+    Demuxer& demuxer_;
+    Handler handler_;
+  };
+
+  // Asynchronously get host information for a named host.
+  template <typename Handler>
+  void async_get_host_by_name(impl_type& impl, host& h, const std::string& name,
+      Handler handler)
+  {
+    start_work_thread();
+    demuxer_.work_started();
+    work_demuxer_.post(get_host_by_name_handler<Handler>(
+          impl, h, name, demuxer_, handler));
+  }
+
 private:
+  // Helper class to run the work demuxer in a thread.
+  class work_demuxer_runner
+  {
+  public:
+    work_demuxer_runner(Demuxer& demuxer) : demuxer_(demuxer) {}
+    void operator()() { demuxer_.run(); }
+  private:
+    Demuxer& demuxer_;
+  };
+
+  // Start the work thread if it's not already running.
+  void start_work_thread()
+  {
+    asio::detail::mutex::scoped_lock lock(mutex_);
+    if (work_thread_ == 0)
+    {
+      work_thread_ = new asio::detail::thread(
+          work_demuxer_runner(work_demuxer_));
+    }
+  }
+
   // Populate a host object from a hostent structure.
-  void populate_host_object(host& h, hostent& ent)
+  static void populate_host_object(host& h, hostent& ent)
   {
     std::vector<std::string> aliases;
     for (char** alias = ent.h_aliases; *alias; ++alias)
@@ -168,8 +331,17 @@ private:
     h.swap(tmp);
   }
 
+  // Mutex to protect access to internal data.
+  asio::detail::mutex mutex_;
+
   // The demuxer used for dispatching handlers.
   Demuxer& demuxer_;
+
+  // Private demuxer used for performing asynchronous host resolution.
+  Demuxer work_demuxer_;
+
+  // Thread used for running the work demuxer's run loop.
+  asio::detail::thread* work_thread_;
 };
 
 } // namespace detail

@@ -73,16 +73,16 @@ public:
     return service_impl_.null();
   }
 
-  /// Create a new host resolver implementation.
-  void create(impl_type& impl)
+  /// Open a new host resolver implementation.
+  void open(impl_type& impl)
   {
-    service_impl_.create(impl);
+    service_impl_.open(impl);
   }
 
-  /// Destroy a host resolver implementation.
-  void destroy(impl_type& impl)
+  /// Close a host resolver implementation.
+  void close(impl_type& impl)
   {
-    service_impl_.destroy(impl);
+    service_impl_.close(impl);
   }
 
   /// Get host information for the local machine.
@@ -100,12 +100,28 @@ public:
     service_impl_.get_host_by_address(impl, h, addr, error_handler);
   }
 
+  // Asynchronously get host information for a specified address.
+  template <typename Handler>
+  void async_get_host_by_address(impl_type& impl, host& h, const address& addr,
+      Handler handler)
+  {
+    service_impl_.async_get_host_by_address(impl, h, addr, handler);
+  }
+
   /// Get host information for a named host.
   template <typename Error_Handler>
   void get_host_by_name(impl_type& impl, host& h, const std::string& name,
       Error_Handler error_handler)
   {
     service_impl_.get_host_by_name(impl, h, name, error_handler);
+  }
+
+  // Asynchronously get host information for a named host.
+  template <typename Handler>
+  void async_get_host_by_name(impl_type& impl, host& h, const std::string& name,
+      Handler handler)
+  {
+    service_impl_.async_get_host_by_name(impl, h, name, handler);
   }
 
 private:

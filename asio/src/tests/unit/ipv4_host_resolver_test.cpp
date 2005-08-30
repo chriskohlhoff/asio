@@ -27,6 +27,16 @@ void handle_connect(const error& err)
   UNIT_TEST_CHECK(!err);
 }
 
+void handle_get_host_by_address(const error& err)
+{
+  UNIT_TEST_CHECK(!err);
+}
+
+void handle_get_host_by_name(const error& err)
+{
+  UNIT_TEST_CHECK(!err);
+}
+
 bool test_if_hosts_equivalent(const ipv4::host& h1, const ipv4::host& h2)
 {
   // Note: names and aliases may differ between hosts depending on whether the
@@ -86,6 +96,21 @@ void ipv4_host_resolver_test()
 
   UNIT_TEST_CHECK(test_if_hosts_equivalent(h5, h6));
   UNIT_TEST_CHECK(test_if_hosts_equivalent(h1, h5));
+
+  ipv4::host h7;
+  resolver.async_get_host_by_address(h7, h1.address(0),
+      handle_get_host_by_address);
+  d.reset();
+  d.run();
+
+  UNIT_TEST_CHECK(test_if_hosts_equivalent(h1, h7));
+
+  ipv4::host h8;
+  resolver.async_get_host_by_name(h8, h1.name(), handle_get_host_by_name);
+  d.reset();
+  d.run();
+
+  UNIT_TEST_CHECK(test_if_hosts_equivalent(h1, h8));
 }
 
 UNIT_TEST(ipv4_host_resolver_test)
