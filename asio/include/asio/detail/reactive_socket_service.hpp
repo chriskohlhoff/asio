@@ -100,8 +100,8 @@ public:
   void bind(impl_type& impl, const Endpoint& endpoint,
       Error_Handler error_handler)
   {
-    if (socket_ops::bind(impl, endpoint.native_data(),
-          endpoint.native_size()) == socket_error_retval)
+    if (socket_ops::bind(impl, endpoint.data(),
+          endpoint.size()) == socket_error_retval)
       error_handler(asio::error(socket_ops::get_error()));
   }
 
@@ -152,10 +152,10 @@ public:
   void get_local_endpoint(const impl_type& impl, Endpoint& endpoint,
       Error_Handler error_handler) const
   {
-    socket_addr_len_type addr_len = endpoint.native_size();
-    if (socket_ops::getsockname(impl, endpoint.native_data(), &addr_len))
+    socket_addr_len_type addr_len = endpoint.size();
+    if (socket_ops::getsockname(impl, endpoint.data(), &addr_len))
       error_handler(asio::error(socket_ops::get_error()));
-    endpoint.native_size(addr_len);
+    endpoint.size(addr_len);
   }
 
   /// Disable sends or receives on the socket.
@@ -249,7 +249,7 @@ public:
       Error_Handler error_handler)
   {
     int bytes_sent = socket_ops::sendto(impl, data, length, flags,
-        destination.native_data(), destination.native_size());
+        destination.data(), destination.size());
     if (bytes_sent < 0)
     {
       error_handler(asio::error(socket_ops::get_error()));
@@ -278,7 +278,7 @@ public:
     void do_operation()
     {
       int bytes = socket_ops::sendto(impl_, data_, length_, flags_,
-          destination_.native_data(), destination_.native_size());
+          destination_.data(), destination_.size());
       asio::error error(bytes < 0
           ? socket_ops::get_error() : asio::error::success);
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
@@ -413,16 +413,16 @@ public:
       socket_base::message_flags flags, Endpoint& sender_endpoint,
       Error_Handler error_handler)
   {
-    socket_addr_len_type addr_len = sender_endpoint.native_size();
+    socket_addr_len_type addr_len = sender_endpoint.size();
     int bytes_recvd = socket_ops::recvfrom(impl, data, max_length, flags,
-        sender_endpoint.native_data(), &addr_len);
+        sender_endpoint.data(), &addr_len);
     if (bytes_recvd < 0)
     {
       error_handler(asio::error(socket_ops::get_error()));
       return 0;
     }
 
-    sender_endpoint.native_size(addr_len);
+    sender_endpoint.size(addr_len);
 
     return bytes_recvd;
   }
@@ -446,12 +446,12 @@ public:
 
     void do_operation()
     {
-      socket_addr_len_type addr_len = sender_endpoint_.native_size();
+      socket_addr_len_type addr_len = sender_endpoint_.size();
       int bytes = socket_ops::recvfrom(impl_, data_, max_length_, flags_,
-          sender_endpoint_.native_data(), &addr_len);
+          sender_endpoint_.data(), &addr_len);
       asio::error error(bytes < 0
           ? socket_ops::get_error() : asio::error::success);
-      sender_endpoint_.native_size(addr_len);
+      sender_endpoint_.size(addr_len);
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
       demuxer_.work_finished();
     }
@@ -527,16 +527,16 @@ public:
       return;
     }
 
-    socket_addr_len_type addr_len = peer_endpoint.native_size();
+    socket_addr_len_type addr_len = peer_endpoint.size();
     socket_type new_socket = socket_ops::accept(impl,
-        peer_endpoint.native_data(), &addr_len);
+        peer_endpoint.data(), &addr_len);
     if (int err = socket_ops::get_error())
     {
       error_handler(asio::error(err));
       return;
     }
 
-    peer_endpoint.native_size(addr_len);
+    peer_endpoint.size(addr_len);
 
     peer.set_impl(new_socket);
   }
@@ -617,12 +617,12 @@ public:
 
     void do_operation()
     {
-      socket_addr_len_type addr_len = peer_endpoint_.native_size();
+      socket_addr_len_type addr_len = peer_endpoint_.size();
       socket_type new_socket = socket_ops::accept(impl_,
-          peer_endpoint_.native_data(), &addr_len);
+          peer_endpoint_.data(), &addr_len);
       asio::error error(new_socket == invalid_socket
           ? socket_ops::get_error() : asio::error::success);
-      peer_endpoint_.native_size(addr_len);
+      peer_endpoint_.size(addr_len);
       peer_.set_impl(new_socket);
       demuxer_.post(bind_handler(handler_, error));
       demuxer_.work_finished();
@@ -691,8 +691,8 @@ public:
     }
 
     // Perform the connect operation.
-    int result = socket_ops::connect(impl, peer_endpoint.native_data(),
-        peer_endpoint.native_size());
+    int result = socket_ops::connect(impl, peer_endpoint.data(),
+        peer_endpoint.size());
     if (result == socket_error_retval)
       error_handler(asio::error(socket_ops::get_error()));
   }
@@ -820,8 +820,8 @@ public:
     }
 
     // Start the connect operation.
-    if (socket_ops::connect(impl, peer_endpoint.native_data(),
-          peer_endpoint.native_size()) == 0)
+    if (socket_ops::connect(impl, peer_endpoint.data(),
+          peer_endpoint.size()) == 0)
     {
       // The connect operation has finished successfully so we need to post the
       // handler immediately.

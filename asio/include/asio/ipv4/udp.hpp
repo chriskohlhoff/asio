@@ -77,13 +77,21 @@ public:
   /// The protocol type associated with the endpoint.
   typedef udp protocol_type;
 
-  /// The native type of the endpoint structure. This type is dependent on the
+  /// The type of the endpoint structure. This type is dependent on the
   /// underlying implementation of the socket layer.
-  typedef asio::detail::socket_addr_type native_data_type;
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined data_type;
+#else
+  typedef asio::detail::socket_addr_type data_type;
+#endif
 
-  /// The native type for the size of the endpoint structure. This type is
-  /// dependent on the underlying implementation of the socket layer.
-  typedef asio::detail::socket_addr_len_type native_size_type;
+  /// The type for the size of the endpoint structure. This type is dependent on
+  /// the underlying implementation of the socket layer.
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined size_type;
+#else
+  typedef asio::detail::socket_addr_len_type size_type;
+#endif
 
   /// Default constructor.
   endpoint()
@@ -134,25 +142,25 @@ public:
   }
 
   /// Get the underlying endpoint in the native type.
-  native_data_type* native_data()
+  data_type* data()
   {
-    return reinterpret_cast<native_data_type*>(&addr_);
+    return reinterpret_cast<data_type*>(&addr_);
   }
 
   /// Get the underlying endpoint in the native type.
-  const native_data_type* native_data() const
+  const data_type* data() const
   {
-    return reinterpret_cast<const native_data_type*>(&addr_);
+    return reinterpret_cast<const data_type*>(&addr_);
   }
 
   /// Get the underlying size of the endpoint in the native type.
-  native_size_type native_size() const
+  size_type size() const
   {
     return sizeof(addr_);
   }
 
   /// Set the underlying size of the endpoint in the native type.
-  void native_size(native_size_type size)
+  void size(size_type size)
   {
     if (size != sizeof(addr_))
       throw asio::error(asio::error::invalid_argument);

@@ -120,8 +120,8 @@ public:
   void bind(impl_type& impl, const Endpoint& endpoint,
       Error_Handler error_handler)
   {
-    if (socket_ops::bind(impl, endpoint.native_data(),
-          endpoint.native_size()) == socket_error_retval)
+    if (socket_ops::bind(impl, endpoint.data(),
+          endpoint.size()) == socket_error_retval)
       error_handler(asio::error(socket_ops::get_error()));
   }
 
@@ -161,14 +161,14 @@ public:
   void get_local_endpoint(const impl_type& impl, Endpoint& endpoint,
       Error_Handler error_handler) const
   {
-    socket_addr_len_type addr_len = endpoint.native_size();
-    if (socket_ops::getsockname(impl, endpoint.native_data(), &addr_len))
+    socket_addr_len_type addr_len = endpoint.size();
+    if (socket_ops::getsockname(impl, endpoint.data(), &addr_len))
     {
       error_handler(asio::error(socket_ops::get_error()));
       return;
     }
 
-    endpoint.native_size(addr_len);
+    endpoint.size(addr_len);
   }
 
   /// Disable sends or receives on the socket.
@@ -262,7 +262,7 @@ public:
       Error_Handler error_handler)
   {
     int bytes_sent = socket_ops::sendto(impl, data, length, flags,
-        destination.native_data(), destination.native_size());
+        destination.data(), destination.size());
     if (bytes_sent < 0)
     {
       error_handler(asio::error(socket_ops::get_error()));
@@ -323,7 +323,7 @@ public:
     DWORD bytes_transferred = 0;
 
     int result = ::WSASendTo(impl, &buf, 1, &bytes_transferred, flags,
-        destination.native_data(), destination.native_size(), send_to_op, 0);
+        destination.data(), destination.size(), send_to_op, 0);
     DWORD last_error = ::WSAGetLastError();
 
     if (result != 0 && last_error != WSA_IO_PENDING)
@@ -420,16 +420,16 @@ public:
       socket_base::message_flags flags, Endpoint& sender_endpoint,
       Error_Handler error_handler)
   {
-    socket_addr_len_type addr_len = sender_endpoint.native_size();
+    socket_addr_len_type addr_len = sender_endpoint.size();
     int bytes_recvd = socket_ops::recvfrom(impl, data, max_length, flags,
-        sender_endpoint.native_data(), &addr_len);
+        sender_endpoint.data(), &addr_len);
     if (bytes_recvd < 0)
     {
       error_handler(asio::error(socket_ops::get_error()));
       return 0;
     }
 
-    sender_endpoint.native_size(addr_len);
+    sender_endpoint.size(addr_len);
 
     return bytes_recvd;
   }
@@ -443,7 +443,7 @@ public:
       : win_iocp_operation(
           &receive_from_operation<Endpoint, Handler>::do_completion_impl),
         endpoint_(endpoint),
-        endpoint_size_(endpoint.native_size()),
+        endpoint_size_(endpoint.size()),
         handler_(handler)
     {
     }
@@ -460,7 +460,7 @@ public:
     {
       receive_from_operation<Endpoint, Handler>* h =
         static_cast<receive_from_operation<Endpoint, Handler>*>(op);
-      h->endpoint_.native_size(h->endpoint_size_);
+      h->endpoint_.size(h->endpoint_size_);
       asio::error error(last_error);
       try
       {
@@ -498,7 +498,7 @@ public:
     DWORD recv_flags = flags;
 
     int result = ::WSARecvFrom(impl, &buf, 1, &bytes_transferred, &recv_flags,
-        sender_endpoint.native_data(), &receive_from_op->endpoint_size(),
+        sender_endpoint.data(), &receive_from_op->endpoint_size(),
         receive_from_op, 0);
     DWORD last_error = ::WSAGetLastError();
 
@@ -535,8 +535,8 @@ public:
     }
 
     // Perform the connect operation.
-    int result = socket_ops::connect(impl, peer_endpoint.native_data(),
-        peer_endpoint.native_size());
+    int result = socket_ops::connect(impl, peer_endpoint.data(),
+        peer_endpoint.size());
     if (result == socket_error_retval)
       error_handler(asio::error(socket_ops::get_error()));
   }
@@ -665,8 +665,8 @@ public:
     }
 
     // Start the connect operation.
-    if (socket_ops::connect(impl, peer_endpoint.native_data(),
-          peer_endpoint.native_size()) == 0)
+    if (socket_ops::connect(impl, peer_endpoint.data(),
+          peer_endpoint.size()) == 0)
     {
       // The connect operation has finished successfully so we need to post the
       // handler immediately.
