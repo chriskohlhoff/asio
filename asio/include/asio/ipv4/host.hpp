@@ -55,7 +55,7 @@ public:
 
   /// Construct from component properties.
   template <typename Name_Iterator, typename Address_Iterator>
-  host(const std::string& name, const address& addr,
+  host(const std::string& name, const asio::ipv4::address& addr,
       Name_Iterator alternate_names_begin,
       Name_Iterator alternate_names_end,
       Address_Iterator other_addresses_begin,
