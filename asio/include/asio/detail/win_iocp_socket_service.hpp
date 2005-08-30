@@ -19,13 +19,16 @@
 
 #if defined(_WIN32) // This service is only supported on Win32
 
+#include "asio/detail/push_options.hpp"
+#include <boost/shared_ptr.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/basic_demuxer.hpp"
 #include "asio/demuxer_service.hpp"
 #include "asio/error.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_base.hpp"
 #include "asio/detail/bind_handler.hpp"
-#include "asio/detail/reactive_socket_service.hpp"
 #include "asio/detail/select_reactor.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
@@ -46,6 +49,9 @@ public:
   // The demuxer type for this service.
   typedef basic_demuxer<demuxer_service<Allocator> > demuxer_type;
 
+  // The type of the reactor used for connect operations.
+  typedef detail::select_reactor<true> reactor_type;
+
   // Constructor. This socket service can only work if the demuxer is
   // using the win_iocp_demuxer_service. By using this type as the parameter we
   // will cause a compile error if this is not the case.
@@ -54,8 +60,7 @@ public:
     : demuxer_(demuxer),
       demuxer_service_(demuxer.get_service(
           service_factory<win_iocp_demuxer_service>())),
-      reactive_socket_service_(demuxer.get_service(
-          service_factory<reactive_socket_service_type>()))
+      reactor_(demuxer.get_service(service_factory<reactor_type>()))
   {
   }
 
@@ -97,9 +102,17 @@ public:
   }
 
   // Destroy a socket implementation.
-  void close(impl_type& impl)
+  template <typename Error_Handler>
+  void close(impl_type& impl, Error_Handler error_handler)
   {
-    reactive_socket_service_.close(impl);
+    if (impl != null())
+    {
+      reactor_.close_descriptor(impl);
+      if (socket_ops::close(impl) == socket_error_retval)
+        error_handler(asio::error(socket_ops::get_error()));
+      else
+        impl = null();
+    }
   }
 
   // Bind the socket to the specified local endpoint.
@@ -518,6 +531,7 @@ public:
         error_handler(asio::error(socket_ops::get_error()));
         return;
       }
+      demuxer_service_.register_socket(impl);
     }
 
     // Perform the connect operation.
@@ -527,13 +541,156 @@ public:
       error_handler(asio::error(socket_ops::get_error()));
   }
 
+  template <typename Handler>
+  class connect_handler
+  {
+  public:
+    connect_handler(impl_type& impl, boost::shared_ptr<bool> completed,
+        demuxer_type& demuxer, reactor_type& reactor, Handler handler)
+      : impl_(impl),
+        completed_(completed),
+        demuxer_(demuxer),
+        reactor_(reactor),
+        handler_(handler)
+    {
+    }
+
+    void do_operation()
+    {
+      // Check whether a handler has already been called for the connection.
+      // If it has, then we don't want to do anything in this handler.
+      if (*completed_)
+      {
+        demuxer_.work_finished();
+        return;
+      }
+
+      // Cancel the other reactor operation for the connection.
+      *completed_ = true;
+      reactor_.enqueue_cancel_ops_unlocked(impl_);
+
+      // Get the error code from the connect operation.
+      int connect_error = 0;
+      size_t connect_error_len = sizeof(connect_error);
+      if (socket_ops::getsockopt(impl_, SOL_SOCKET, SO_ERROR,
+            &connect_error, &connect_error_len) == socket_error_retval)
+      {
+        asio::error error(socket_ops::get_error());
+        demuxer_.post(bind_handler(handler_, error));
+        return;
+      }
+
+      // If connection failed then post the handler with the error code.
+      if (connect_error)
+      {
+        asio::error error(connect_error);
+        demuxer_.post(bind_handler(handler_, error));
+        return;
+      }
+
+      // Make the socket blocking again (the default).
+      ioctl_arg_type non_blocking = 0;
+      if (socket_ops::ioctl(impl_, FIONBIO, &non_blocking))
+      {
+        asio::error error(socket_ops::get_error());
+        demuxer_.post(bind_handler(handler_, error));
+        return;
+      }
+
+      // Post the result of the successful connection operation.
+      asio::error error(asio::error::success);
+      demuxer_.post(bind_handler(handler_, error));
+    }
+
+    void do_cancel()
+    {
+      // Check whether a handler has already been called for the connection.
+      // If it has, then we don't want to do anything in this handler.
+      if (*completed_)
+      {
+        demuxer_.work_finished();
+        return;
+      }
+
+      // Cancel the other reactor operation for the connection.
+      *completed_ = true;
+      reactor_.enqueue_cancel_ops_unlocked(impl_);
+
+      // The socket is closed when the reactor_.close_descriptor is called,
+      // so no need to close it here.
+      asio::error error(asio::error::operation_aborted);
+      demuxer_.post(bind_handler(handler_, error));
+    }
+
+  private:
+    impl_type& impl_;
+    boost::shared_ptr<bool> completed_;
+    demuxer_type& demuxer_;
+    reactor_type& reactor_;
+    Handler handler_;
+  };
+
   // Start an asynchronous connect.
   template <typename Endpoint, typename Handler>
   void async_connect(impl_type& impl, const Endpoint& peer_endpoint,
       Handler handler)
   {
-    reactive_socket_service_.async_connect(impl, peer_endpoint, handler);
+    // Open the socket if it is not already open.
+    if (impl == invalid_socket)
+    {
+      // Get the flags used to create the new socket.
+      int family = peer_endpoint.protocol().family();
+      int type = peer_endpoint.protocol().type();
+      int proto = peer_endpoint.protocol().protocol();
+
+      // Create a new socket.
+      impl = socket_ops::socket(family, type, proto);
+      if (impl == invalid_socket)
+      {
+        asio::error error(socket_ops::get_error());
+        demuxer_.post(bind_handler(handler, error));
+        return;
+      }
+      demuxer_service_.register_socket(impl);
+    }
+
+    // Mark the socket as non-blocking so that the connection will take place
+    // asynchronously.
+    ioctl_arg_type non_blocking = 1;
+    if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
+    {
+      asio::error error(socket_ops::get_error());
+      demuxer_.post(bind_handler(handler, error));
+      return;
+    }
+
+    // Start the connect operation.
+    if (socket_ops::connect(impl, peer_endpoint.native_data(),
+          peer_endpoint.native_size()) == 0)
+    {
+      // The connect operation has finished successfully so we need to post the
+      // handler immediately.
+      asio::error error(asio::error::success);
+      demuxer_.post(bind_handler(handler, error));
+    }
+    else if (socket_ops::get_error() == asio::error::in_progress
+        || socket_ops::get_error() == asio::error::would_block)
+    {
+      // The connection is happening in the background, and we need to wait
+      // until the socket becomes writeable.
+      boost::shared_ptr<bool> completed(new bool(false));
+      demuxer_.work_started();
+      reactor_.start_write_and_except_ops(impl, connect_handler<Handler>(
+            impl, completed, demuxer_, reactor_, handler));
+    }
+    else
+    {
+      // The connect operation has failed, so post the handler immediately.
+      asio::error error(socket_ops::get_error());
+      demuxer_.post(bind_handler(handler, error));
+    }
   }
+
 
 private:
   // The demuxer associated with the service.
@@ -543,10 +700,8 @@ private:
   // dispatching handlers.
   win_iocp_demuxer_service& demuxer_service_;
 
-  // The reactive socket service used for performing connect operations.
-  typedef asio::detail::reactive_socket_service<
-    demuxer_type, detail::select_reactor<true> > reactive_socket_service_type;
-  reactive_socket_service_type& reactive_socket_service_;
+  // The reactor used for performing connect operations.
+  reactor_type& reactor_;
 };
 
 } // namespace detail
