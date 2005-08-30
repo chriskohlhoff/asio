@@ -110,6 +110,11 @@ public:
   typedef asio::socket_option::boolean<
     SOL_SOCKET, SO_REUSEADDR> reuse_address;
 
+  /// Socket option to specify whether the socket lingers on close if unsent
+  /// data is present.
+  typedef asio::socket_option::linger<
+    SOL_SOCKET, SO_LINGER> linger;
+
   /// IO control command to set the blocking mode of the socket.
   typedef asio::io_control::boolean<FIONBIO> non_blocking_io;
 

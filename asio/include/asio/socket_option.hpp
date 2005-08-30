@@ -148,6 +148,83 @@ private:
   int value_;
 };
 
+/// Helper template for implementing linger options.
+template <int Level, int Name>
+class linger
+{
+public:
+  /// Default constructor.
+  linger()
+  {
+    value_.l_onoff = 0;
+    value_.l_linger = 0;
+  }
+
+  /// Construct with specific option values.
+  linger(bool value, unsigned short timeout)
+  {
+    value_.l_onoff = value ? 1 : 0;
+    value_.l_linger = timeout;
+  }
+
+  /// Get the level of the socket option.
+  int level() const
+  {
+    return Level;
+  }
+
+  /// Get the name of the socket option.
+  int name() const
+  {
+    return Name;
+  }
+
+  /// Set the value for whether linger is enabled.
+  void enabled(bool value)
+  {
+    value_.l_onoff = value ? 1 : 0;
+  }
+
+  /// Get the value for whether linger is enabled.
+  bool enabled() const
+  {
+    return value_.l_onoff != 0;
+  }
+
+  /// Set the value for the linger timeout.
+  void timeout(unsigned short value)
+  {
+    value_.l_linger = value;
+  }
+
+  /// Get the value for the linger timeout.
+  unsigned short timeout() const
+  {
+    return value_.l_linger;
+  }
+
+  /// Get the address of the int data.
+  void* data()
+  {
+    return &value_;
+  }
+
+  /// Get the address of the int data.
+  const void* data() const
+  {
+    return &value_;
+  }
+
+  /// Get the size of the int data.
+  size_t size() const
+  {
+    return sizeof(value_);
+  }
+
+private:
+  ::linger value_;
+};
+
 } // namespace socket_option
 } // namespace asio
 
