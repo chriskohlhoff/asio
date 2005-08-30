@@ -34,17 +34,88 @@ namespace ipv4 {
  * @par Thread Safety:
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
+ *
+ * @par Concepts:
+ * CopyConstructible, Assignable.
  */
-struct host
+class host
 {
-  /// The name of the host.
-  std::string name;
+public:
+  /// Default constructor.
+  host()
+  {
+  }
 
-  /// Alternate names for the host.
-  std::vector<std::string> aliases;
+  /// Construct from component properties.
+  host(const std::string& name, const asio::ipv4::address& addr)
+    : name_(name)
+  {
+    addresses_.push_back(asio::ipv4::address::any());
+  }
 
-  /// All IP addresses of the host.
-  std::vector<address> addresses;
+  /// Construct from component properties.
+  template <typename Name_Iterator, typename Address_Iterator>
+  host(const std::string& name, const address& addr,
+      Name_Iterator alternate_names_begin,
+      Name_Iterator alternate_names_end,
+      Address_Iterator other_addresses_begin,
+      Address_Iterator other_addresses_end)
+    : name_(name)
+  {
+    addresses_.push_back(addr);
+    alternate_names_.insert(alternate_names_.end(),
+        alternate_names_begin, alternate_names_end);
+    addresses_.insert(addresses_.end(),
+        other_addresses_begin, other_addresses_end);
+  }
+
+  /// Get the name of the host.
+  std::string name() const
+  {
+    return name_;
+  }
+
+  /// Get the number of alternate names for the host.
+  size_t alternate_name_count() const
+  {
+    return alternate_names_.size();
+  }
+
+  /// Get the alternate name at the specified index.
+  std::string alternate_name(size_t index) const
+  {
+    return alternate_names_[index];
+  }
+
+  /// Get the number of addresses for the host.
+  size_t address_count() const
+  {
+    return addresses_.size();
+  }
+
+  /// Get the address at the specified index.
+  asio::ipv4::address address(size_t index) const
+  {
+    return addresses_[index];
+  }
+
+  /// Swap the host object's values with another host.
+  void swap(host& other)
+  {
+    name_.swap(other.name_);
+    alternate_names_.swap(other.alternate_names_);
+    addresses_.swap(other.addresses_);
+  }
+
+private:
+  // The name of the host.
+  std::string name_;
+
+  // Alternate names for the host.
+  std::vector<std::string> alternate_names_;
+
+  // All IP addresses of the host.
+  std::vector<asio::ipv4::address> addresses_;
 };
 
 } // namespace ipv4

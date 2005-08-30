@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
     asio::ipv4::host_resolver host_resolver(demuxer);
     asio::ipv4::host host;
     host_resolver.get_host_by_name(host, argv[1]);
-    asio::ipv4::tcp::endpoint remote_endpoint(13, host.addresses[0]);
+    asio::ipv4::tcp::endpoint remote_endpoint(13, host.address(0));
 
     asio::stream_socket socket(demuxer);
     socket.connect(remote_endpoint);

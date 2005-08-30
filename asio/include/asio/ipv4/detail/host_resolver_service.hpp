@@ -149,27 +149,23 @@ private:
   // Populate a host object from a hostent structure.
   void populate_host_object(host& h, hostent& ent)
   {
-    host tmp;
-
-    // Copy the host data to a temporary structure. These operations may throw
-    // an exception, in which case we don't want the caller's host object to
-    // be modified.
-    tmp.name = ent.h_name;
+    std::vector<std::string> aliases;
     for (char** alias = ent.h_aliases; *alias; ++alias)
-      tmp.aliases.push_back(*alias);
+      aliases.push_back(*alias);
+
+    std::vector<address> addresses;
     for (char** addr = ent.h_addr_list; *addr; ++addr)
     {
       using namespace std; // For memcpy.
       in_addr a;
       memcpy(&a, *addr, sizeof(in_addr));
-      tmp.addresses.push_back(
+      addresses.push_back(
           address(asio::detail::socket_ops::network_to_host_long(a.s_addr)));
     }
 
-    // The data was successfully copied, so swap with the caller's host object.
-    h.name.swap(tmp.name);
-    h.aliases.swap(tmp.aliases);
-    h.addresses.swap(tmp.addresses);
+    host tmp(ent.h_name, addresses.front(), aliases.begin(), aliases.end(),
+        addresses.begin() + 1, addresses.end());
+    h.swap(tmp);
   }
 
   // The demuxer used for dispatching handlers.

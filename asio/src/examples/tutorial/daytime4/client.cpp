@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
     asio::ipv4::host_resolver host_resolver(demuxer);
     asio::ipv4::host host;
     host_resolver.get_host_by_name(host, argv[1]);
-    asio::ipv4::udp::endpoint receiver_endpoint(13, host.addresses[0]);
+    asio::ipv4::udp::endpoint receiver_endpoint(13, host.address(0));
 
     char send_buf[1] = { 0 };
     socket.send_to(send_buf, sizeof(send_buf), 0, receiver_endpoint);
