@@ -82,13 +82,16 @@ public:
   }
 
   // Destroy a socket implementation.
-  void close(impl_type& impl)
+  template <typename Error_Handler>
+  void close(impl_type& impl, Error_Handler error_handler)
   {
     if (impl != null())
     {
       reactor_.close_descriptor(impl);
-      socket_ops::close(impl);
-      impl = null();
+      if (socket_ops::close(impl) == socket_error_retval)
+        error_handler(asio::error(socket_ops::get_error()));
+      else
+        impl = null();
     }
   }
 

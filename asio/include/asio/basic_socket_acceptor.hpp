@@ -24,6 +24,7 @@
 #include "asio/basic_datagram_socket.hpp"
 #include "asio/basic_stream_socket.hpp"
 #include "asio/default_error_handler.hpp"
+#include "asio/null_error_handler.hpp"
 #include "asio/service_factory.hpp"
 
 namespace asio {
@@ -101,7 +102,7 @@ public:
   /// Destructor.
   ~basic_socket_acceptor()
   {
-    service_.close(impl_);
+    service_.close(impl_, null_error_handler());
   }
 
   /// Get the demuxer associated with the asynchronous object.
@@ -230,10 +231,33 @@ public:
    *
    * A subsequent call to open() is required before the acceptor can again be
    * used to again perform socket accept operations.
+   *
+   * @throws asio::error Thrown on failure.
    */
   void close()
   {
-    service_.close(impl_);
+    service_.close(impl_, default_error_handler());
+  }
+
+  /// Close the acceptor.
+  /**
+   * This function is used to close the acceptor. Any asynchronous accept
+   * operations will be cancelled immediately.
+   *
+   * A subsequent call to open() is required before the acceptor can again be
+   * used to again perform socket accept operations.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Error_Handler>
+  void close(Error_Handler error_handler)
+  {
+    service_.close(impl_, error_handler);
   }
 
   /// Get the underlying implementation in the native type.

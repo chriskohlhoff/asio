@@ -51,6 +51,7 @@
 #include "asio/is_write_buffered.hpp"
 #include "asio/locking_dispatcher.hpp"
 #include "asio/locking_dispatcher_service.hpp"
+#include "asio/null_error_handler.hpp"
 #include "asio/placeholders.hpp"
 #include "asio/read.hpp"
 #include "asio/service_factory.hpp"

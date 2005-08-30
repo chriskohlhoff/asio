@@ -104,9 +104,10 @@ public:
   }
 
   /// Close a socket acceptor implementation.
-  void close(impl_type& impl)
+  template <typename Error_Handler>
+  void close(impl_type& impl, Error_Handler error_handler)
   {
-    service_impl_.close(impl);
+    service_impl_.close(impl, error_handler);
   }
 
   /// Set a socket option.

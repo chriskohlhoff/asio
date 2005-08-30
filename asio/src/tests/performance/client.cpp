@@ -84,9 +84,10 @@ public:
 
   void stop()
   {
-    dispatcher_.post(boost::bind(&stream_socket::close, &socket_));
+    dispatcher_.post(boost::bind(&session::close_socket, this));
   }
 
+private:
   void handle_connect(const error& err)
   {
     ++unwritten_count_;
@@ -146,6 +147,11 @@ public:
                 placeholders::bytes_transferred)));
       }
     }
+  }
+
+  void close_socket()
+  {
+    socket_.close();
   }
 
 private:

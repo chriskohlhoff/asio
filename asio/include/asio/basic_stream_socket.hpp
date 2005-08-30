@@ -22,6 +22,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/default_error_handler.hpp"
+#include "asio/null_error_handler.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_base.hpp"
 
@@ -78,7 +79,7 @@ public:
   /// Destructor.
   ~basic_stream_socket()
   {
-    service_.close(impl_);
+    service_.close(impl_, null_error_handler());
   }
 
   /// Get the demuxer associated with the asynchronous object.
@@ -131,12 +132,32 @@ public:
 
   /// Close the socket.
   /**
-   * This function is used to close the stream socket. Any asynchronous read
-   * or write operations will be cancelled immediately.
+   * This function is used to close the stream socket. Any asynchronous send
+   * or receive operations will be cancelled immediately.
+   *
+   * @throws asio::error Thrown on failure.
    */
   void close()
   {
-    service_.close(impl_);
+    service_.close(impl_, default_error_handler());
+  }
+
+  /// Close the socket.
+  /**
+   * This function is used to close the stream socket. Any asynchronous send
+   * or receive operations will be cancelled immediately.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The equivalent function signature
+   * of the handler must be:
+   * @code void error_handler(
+   *   const asio::error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Error_Handler>
+  void close(Error_Handler error_handler)
+  {
+    service_.close(impl_, error_handler);
   }
 
   /// Get a reference to the lowest layer.

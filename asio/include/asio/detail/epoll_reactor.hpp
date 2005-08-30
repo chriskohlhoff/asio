@@ -239,7 +239,7 @@ public:
 
   // Cancel any operations that are running against the descriptor and remove
   // its registration from the reactor.
-  void close_descriptor(socket_type descriptor);
+  void close_descriptor(socket_type descriptor)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
