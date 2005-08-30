@@ -287,28 +287,6 @@ public:
           impl, h, name, demuxer_, handler));
   }
 
-private:
-  // Helper class to run the work demuxer in a thread.
-  class work_demuxer_runner
-  {
-  public:
-    work_demuxer_runner(Demuxer& demuxer) : demuxer_(demuxer) {}
-    void operator()() { demuxer_.run(); }
-  private:
-    Demuxer& demuxer_;
-  };
-
-  // Start the work thread if it's not already running.
-  void start_work_thread()
-  {
-    asio::detail::mutex::scoped_lock lock(mutex_);
-    if (work_thread_ == 0)
-    {
-      work_thread_ = new asio::detail::thread(
-          work_demuxer_runner(work_demuxer_));
-    }
-  }
-
   // Populate a host object from a hostent structure.
   static void populate_host_object(host& h, hostent& ent)
   {
@@ -329,6 +307,28 @@ private:
     host tmp(ent.h_name, addresses.front(), aliases.begin(), aliases.end(),
         addresses.begin() + 1, addresses.end());
     h.swap(tmp);
+  }
+
+private:
+  // Helper class to run the work demuxer in a thread.
+  class work_demuxer_runner
+  {
+  public:
+    work_demuxer_runner(Demuxer& demuxer) : demuxer_(demuxer) {}
+    void operator()() { demuxer_.run(); }
+  private:
+    Demuxer& demuxer_;
+  };
+
+  // Start the work thread if it's not already running.
+  void start_work_thread()
+  {
+    asio::detail::mutex::scoped_lock lock(mutex_);
+    if (work_thread_ == 0)
+    {
+      work_thread_ = new asio::detail::thread(
+          work_demuxer_runner(work_demuxer_));
+    }
   }
 
   // Mutex to protect access to internal data.
