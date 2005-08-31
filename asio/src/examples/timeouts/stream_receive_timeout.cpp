@@ -33,7 +33,7 @@ public:
           boost::bind(&stream_handler::handle_recv, this,
             asio::placeholders::error));
       timer_.expires_from_now(boost::posix_time::seconds(5));
-      timer_.async_wait(boost::bind(&stream_socket::close, &socket_));
+      timer_.async_wait(boost::bind(&stream_handler::close, this));
     }
   }
 
@@ -47,6 +47,11 @@ public:
     {
       std::cout << "Successful receive\n";
     }
+  }
+
+  void close()
+  {
+    socket_.close();
   }
 
 private:

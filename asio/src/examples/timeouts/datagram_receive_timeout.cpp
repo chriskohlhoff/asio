@@ -18,7 +18,7 @@ public:
           asio::placeholders::error, asio::placeholders::bytes_transferred));
 
     timer_.expires_from_now(boost::posix_time::seconds(5));
-    timer_.async_wait(boost::bind(&datagram_socket::close, &socket_));
+    timer_.async_wait(boost::bind(&datagram_handler::close, this));
   }
 
   void handle_receive_from(const error& err, size_t length)
@@ -31,6 +31,11 @@ public:
     {
       std::cout << "Successful receive\n";
     }
+  }
+
+  void close()
+  {
+    socket_.close();
   }
 
 private:

@@ -19,7 +19,7 @@ public:
           asio::placeholders::error));
 
     timer_.expires_from_now(boost::posix_time::seconds(5));
-    timer_.async_wait(boost::bind(&socket_acceptor::close, &acceptor_));
+    timer_.async_wait(boost::bind(&accept_handler::close, this));
   }
 
   void handle_accept(const error& err)
@@ -32,6 +32,11 @@ public:
     {
       std::cout << "Successful accept\n";
     }
+  }
+
+  void close()
+  {
+    acceptor_.close();
   }
 
 private:

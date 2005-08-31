@@ -18,7 +18,7 @@ public:
           asio::placeholders::error));
 
     timer_.expires_from_now(boost::posix_time::seconds(5));
-    timer_.async_wait(boost::bind(&stream_socket::close, &socket_));
+    timer_.async_wait(boost::bind(&connect_handler::close, this));
   }
 
   void handle_connect(const error& err)
@@ -31,6 +31,11 @@ public:
     {
       std::cout << "Successful connection\n";
     }
+  }
+
+  void close()
+  {
+    socket_.close();
   }
 
 private:
