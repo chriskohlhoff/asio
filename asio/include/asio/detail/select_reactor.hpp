@@ -22,6 +22,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/detail/bind_handler.hpp"
+#include "asio/detail/fd_set_adapter.hpp"
 #include "asio/detail/hash_map.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/task_demuxer_service.hpp"
@@ -193,12 +194,12 @@ private:
     while (!stop)
     {
       // Set up the descriptor sets.
-      fd_set_adaptor read_fds;
+      fd_set_adapter read_fds;
       read_fds.set(interrupter_.read_descriptor());
       read_op_queue_.get_descriptors(read_fds);
-      fd_set_adaptor write_fds;
+      fd_set_adapter write_fds;
       write_op_queue_.get_descriptors(write_fds);
-      fd_set_adaptor except_fds;
+      fd_set_adapter except_fds;
       except_op_queue_.get_descriptors(except_fds);
       socket_type max_fd = read_fds.max_descriptor();
       if (write_fds.max_descriptor() > max_fd)
@@ -307,43 +308,6 @@ private:
     if (interrupt)
       interrupter_.interrupt();
   }
-
-  // Adapts the FD_SET type to meet the Descriptor_Set concept's requirements.
-  class fd_set_adaptor
-  {
-  public:
-    fd_set_adaptor()
-      : max_descriptor_(invalid_socket)
-    {
-      FD_ZERO(&fd_set_);
-    }
-
-    void set(socket_type descriptor)
-    {
-      if (max_descriptor_ == invalid_socket || descriptor > max_descriptor_)
-        max_descriptor_ = descriptor;
-      FD_SET(descriptor, &fd_set_);
-    }
-
-    bool is_set(socket_type descriptor) const
-    {
-      return FD_ISSET(descriptor, &fd_set_) != 0;
-    }
-
-    operator fd_set*()
-    {
-      return &fd_set_;
-    }
-
-    socket_type max_descriptor() const
-    {
-      return max_descriptor_;
-    }
-
-  private:
-    fd_set fd_set_;
-    socket_type max_descriptor_;
-  };
 
   // Mutex to protect access to internal data.
   asio::detail::mutex mutex_;

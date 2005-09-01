@@ -23,6 +23,7 @@ nobase_include_HEADERS = \
 	asio/detail/buffer_resize_guard.hpp \
 	asio/detail/epoll_reactor.hpp \
 	asio/detail/event.hpp \
+	asio/detail/fd_set_adapter.hpp \
 	asio/detail/hash_map.hpp \
 	asio/detail/locking_dispatcher_impl.hpp \
 	asio/detail/locking_dispatcher_service.hpp \
