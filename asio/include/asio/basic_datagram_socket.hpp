@@ -57,6 +57,9 @@ public:
   /// The demuxer type for this asynchronous type.
   typedef typename service_type::demuxer_type demuxer_type;
 
+  /// A basic_datagram_socket is always the lowest layer.
+  typedef basic_datagram_socket<service_type> lowest_layer_type;
+
   /// Construct a basic_datagram_socket without opening it.
   /**
    * This constructor creates a datagram socket without opening it. The open()
@@ -183,6 +186,20 @@ public:
   void close(Error_Handler error_handler)
   {
     service_.close(impl_, error_handler);
+  }
+
+  /// Get a reference to the lowest layer.
+  /**
+   * This function returns a reference to the lowest layer in a stack of
+   * layers. Since a basic_datagram_socket cannot contain any further layers,
+   * it simply returns a reference to itself.
+   *
+   * @return A reference to the lowest layer in the stack of layers. Ownership
+   * is not transferred to the caller.
+   */
+  lowest_layer_type& lowest_layer()
+  {
+    return *this;
   }
 
   /// Get the underlying implementation in the native type.

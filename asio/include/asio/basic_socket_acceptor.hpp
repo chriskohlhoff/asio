@@ -520,27 +520,11 @@ private:
   /// The underlying native implementation.
   impl_type impl_;
 
-  // Helper function to convert a layered stream into a socket.
-  template <typename Stream>
-  typename Stream::lowest_layer_type& to_socket(Stream& peer)
+  // Helper function to convert a stack of layers into a socket.
+  template <typename Socket>
+  typename Socket::lowest_layer_type& to_socket(Socket& peer)
   {
-    return to_socket(peer.lowest_layer());
-  }
-
-  // Specialisation of to_socket function for datagram sockets.
-  template <typename Datagram_Socket_Service>
-  basic_datagram_socket<Datagram_Socket_Service>& to_socket(
-      basic_datagram_socket<Datagram_Socket_Service>& peer)
-  {
-    return peer;
-  }
-
-  // Specialisation of to_socket function for stream sockets.
-  template <typename Stream_Socket_Service>
-  basic_stream_socket<Stream_Socket_Service>& to_socket(
-      basic_stream_socket<Stream_Socket_Service>& peer)
-  {
-    return peer;
+    return peer.lowest_layer();
   }
 };
 

@@ -130,6 +130,8 @@ private:
   allocator_type allocator_;
 };
 
+#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+
 /// Specialisation of service_factory to allow an allocator to be specified.
 template <typename Allocator>
 class service_factory<demuxer_service<Allocator> >
@@ -157,6 +159,8 @@ private:
   // The allocator to be passed to the service.
   Allocator allocator_;
 };
+
+#endif // !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
 
 } // namespace asio
 

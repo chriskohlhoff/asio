@@ -184,6 +184,7 @@ void demuxer_test()
   // The run() call will not return until all work has finished.
   UNIT_TEST_CHECK(count == 0);
 
+#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
   // Use a non-default allocator type.
   typedef std::allocator<int> allocator_type;
   typedef demuxer_service<allocator_type> demuxer_service_type;
@@ -192,6 +193,7 @@ void demuxer_test()
   service_factory<demuxer_service_type> factory(allocator);
   demuxer_type d3(factory);
   d3.run();
+#endif // !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
 }
 
 UNIT_TEST(demuxer_test)
