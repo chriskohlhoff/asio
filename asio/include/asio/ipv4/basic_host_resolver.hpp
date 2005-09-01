@@ -182,6 +182,13 @@ public:
    *
    * @param addr An address object that identifies a host. Copies will be made
    * of the address object as required.
+   *
+   * @param handler The handler to be called when the resolve operation
+   * completes. Copies will be made of the handler as required. The equivalent
+   * function signature of the handler must be:
+   * @code void handler(
+   *   const asio::error& error // Result of operation
+   * ); @endcode
    */
   template <typename Handler>
   void async_get_host_by_address(host& h, const address& addr, Handler handler)
@@ -243,6 +250,13 @@ public:
    *
    * @param name A name that identifies a host. Copies will be made of the name
    * as required.
+   *
+   * @param handler The handler to be called when the resolve operation
+   * completes. Copies will be made of the handler as required. The equivalent
+   * function signature of the handler must be:
+   * @code void handler(
+   *   const asio::error& error // Result of operation
+   * ); @endcode
    */
   template <typename Handler>
   void async_get_host_by_name(host& h, const std::string& name, Handler handler)
