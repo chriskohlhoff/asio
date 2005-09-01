@@ -60,7 +60,6 @@ public:
 
   /// Specify that the data should not be subject to routing.
   static const int message_do_not_route = implementation_defined
-  };
 #else
   enum {
     message_peek = asio::detail::message_peek,
