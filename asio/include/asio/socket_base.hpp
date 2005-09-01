@@ -53,13 +53,13 @@ public:
 
 #if defined(GENERATING_DOCUMENTATION)
   /// Peek at incoming data without removing it from the input queue.
-  static const int message_peek = implementation_defined,
+  static const int message_peek = implementation_defined;
 
   /// Process out-of-band data.
-  static const int message_out_of_band = implementation_defined,
+  static const int message_out_of_band = implementation_defined;
 
   /// Specify that the data should not be subject to routing.
-  static const int message_do_not_route = implementation_defined
+  static const int message_do_not_route = implementation_defined;
 #else
   enum {
     message_peek = asio::detail::message_peek,
