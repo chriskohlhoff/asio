@@ -14,6 +14,7 @@
  * asio::socket_base::broadcast @n
  * asio::socket_base::do_not_route @n
  * asio::socket_base::keep_alive @n
+ * asio::socket_base::linger @n
  * asio::socket_base::send_buffer_size @n
  * asio::socket_base::send_low_watermark @n
  * asio::socket_base::send_timeout @n

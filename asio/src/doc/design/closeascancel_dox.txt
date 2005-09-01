@@ -1,0 +1,15 @@
+/**
+\page designcloseascancel Close as Cancel
+
+In asio, asynchronous socket operations can be cancelled by closing the socket.
+There is no separate cancel operation for a socket, nor is there a way to
+cancel individual operations. This approach was selected as the best balance
+between utility, portability and efficiency.
+
+For example, although Win32 provides a CancelIo function which can be used to
+cancel outstanding operations, this only works if CancelIo is invoked from the
+thread that initiated the operation. This restriction was considered too
+onerous for a portable networking library. Closing the socket will cancel the
+operation from any thread.
+
+*/
