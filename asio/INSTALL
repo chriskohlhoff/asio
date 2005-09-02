@@ -1,4 +1,4 @@
-asio version 0.3.2 - Installation instructions
+asio version 0.3.3 - Installation instructions
 
 1.   Supported Platforms
 2.   Requirements
@@ -21,6 +21,7 @@ combinations:
   - Redhat Linux 7.3 using gcc 3.2.1
   - Redhat Linux 7.3 using gcc 3.4.1
   - Fedora Core release 3 running Linux 2.6 kernel using gcc 3.4.2
+  - Debian Sarge running Linux 2.6 kernel using gcc 3.3.5
   - SuSE Linux Enterprise Server 8.1 on AMD64 using gcc 3.2.2
   - Microsoft Windows 2000 using MSVC 6 sp5
   - Microsoft Windows 2000 using MSVC 7.1 (Visual Studio .NET 2003)
@@ -28,6 +29,7 @@ combinations:
   - Microsoft Windows 2000 using MinGW 3.1.0-1 (gcc 3.2.3)
   - Sun Solaris 8 using gcc 2.95.3
   - Sun Solaris 9 using gcc 3.3.2
+  - Mac OS X 10.4.2 using gcc 3.3
 
 
 2. Requirements
