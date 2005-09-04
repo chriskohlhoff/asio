@@ -51,6 +51,10 @@ void socket_acceptor_test()
   client_side_socket.get_local_endpoint(client_side_local_endpoint);
   UNIT_TEST_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
 
+  ipv4::tcp::endpoint server_side_remote_endpoint;
+  server_side_socket.get_remote_endpoint(server_side_remote_endpoint);
+  UNIT_TEST_CHECK(server_side_remote_endpoint.port() == client_endpoint.port());
+
   client_side_socket.close();
   server_side_socket.close();
 
@@ -71,6 +75,9 @@ void socket_acceptor_test()
 
   client_side_socket.get_local_endpoint(client_side_local_endpoint);
   UNIT_TEST_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
+
+  server_side_socket.get_remote_endpoint(server_side_remote_endpoint);
+  UNIT_TEST_CHECK(server_side_remote_endpoint.port() == client_endpoint.port());
 }
 
 UNIT_TEST(socket_acceptor_test)
