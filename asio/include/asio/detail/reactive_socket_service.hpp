@@ -154,7 +154,26 @@ public:
   {
     socket_addr_len_type addr_len = endpoint.size();
     if (socket_ops::getsockname(impl, endpoint.data(), &addr_len))
+    {
       error_handler(asio::error(socket_ops::get_error()));
+      return;
+    }
+
+    endpoint.size(addr_len);
+  }
+
+  // Get the remote endpoint.
+  template <typename Endpoint, typename Error_Handler>
+  void get_remote_endpoint(const impl_type& impl, Endpoint& endpoint,
+      Error_Handler error_handler) const
+  {
+    socket_addr_len_type addr_len = endpoint.size();
+    if (socket_ops::getpeername(impl, endpoint.data(), &addr_len))
+    {
+      error_handler(asio::error(socket_ops::get_error()));
+      return;
+    }
+
     endpoint.size(addr_len);
   }
 
