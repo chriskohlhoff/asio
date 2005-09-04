@@ -61,11 +61,6 @@ public:
     : service_registry_(*this),
       service_(get_service(service_factory<Demuxer_Service>()))
   {
-#if defined(_WIN32)
-    detail::winsock_init<>::use();
-#else
-    detail::signal_init<>::use();
-#endif // _WIN32
   }
 
   /// Construct using the supplied service_factory to get the demuxer service.
@@ -73,11 +68,6 @@ public:
     : service_registry_(*this),
       service_(get_service(factory))
   {
-#if defined(_WIN32)
-    detail::winsock_init<>::use();
-#else
-    detail::signal_init<>::use();
-#endif // _WIN32
   }
 
   /// Run the demuxer's event processing loop.
@@ -229,6 +219,12 @@ public:
   }
 
 private:
+#if defined(_WIN32)
+  detail::winsock_init<> init_;
+#else
+  detail::signal_init<> init_;
+#endif
+
   /// The service registry.
   detail::service_registry<basic_demuxer<Demuxer_Service> > service_registry_;
 

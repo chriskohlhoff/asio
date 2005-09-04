@@ -40,20 +40,7 @@ public:
   {
     ::WSACleanup();
   }
-
-  // Used to ensure that the winsock library is initialised.
-  static void use()
-  {
-    while (&instance_ == 0);
-  }
-
-private:
-  // Instance to force initialisation of winsock at global scope.
-  static winsock_init<Major, Minor> instance_;
 };
-
-template <int Major, int Minor>
-winsock_init<Major, Minor> winsock_init<Major, Minor>::instance_;
 
 } // namespace detail
 } // namespace asio
