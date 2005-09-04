@@ -191,7 +191,7 @@ private:
     except_op_queue_.dispatch_cancellations();
 
     bool stop = false;
-    while (!stop)
+    while (!stop && !stop_thread_)
     {
       // Set up the descriptor sets.
       fd_set_adapter read_fds;
