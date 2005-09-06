@@ -31,6 +31,9 @@
 #  undef _WSPIAPI_H_
 #  undef ASIO_WSPIAPI_H_DEFINED
 # endif // defined(ASIO_WSPIAPI_H_DEFINED)
+# if defined(_MSC_VER) || defined(__BORLANDC__)
+#  pragma comment(lib, "ws2_32.lib")
+# endif // defined(_MSC_VER) || defined(__BORLANDC__)
 #else
 # include <sys/ioctl.h>
 # include <sys/types.h>

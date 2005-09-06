@@ -9,7 +9,6 @@ CXXFLAGS = -nologo -O2 -GX -GR -MT -I. -I../include -I$(BOOSTDIR)
 !endif
 DEFINES = -DBOOST_DATE_TIME_NO_LIB
 LDFLAGS = -nologo -O2 -GX -GR -MT
-LIBS = ws2_32.lib
 
 all: \
 	tests\performance\client.exe \
@@ -122,7 +121,7 @@ clean:
 	-del /q /s *.pdb
 
 .obj.exe:
-	cl -Fe$@ $(LDFLAGS) $< $(LIBS) -link -opt:ref
+	cl -Fe$@ $(LDFLAGS) $< -link -opt:ref
 
 .cpp.obj:
 	cl -Fo$@ -c $(CXXFLAGS) $(DEFINES) $<
