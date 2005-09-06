@@ -11,6 +11,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <iterator>
 #include <boost/bind.hpp>
 #include "asio.hpp"
 #include "unit_test.hpp"
@@ -37,15 +38,34 @@ void handle_get_host_by_name(const error& err)
   UNIT_TEST_CHECK(!err);
 }
 
-bool test_if_hosts_equivalent(const ipv4::host& h1, const ipv4::host& h2)
+bool test_if_hosts_equal(const ipv4::host& h1, const ipv4::host& h2)
 {
-  // Note: names and aliases may differ between hosts depending on whether the
-  // name returned by the OS is fully qualified or not. Therefore we will test
-  // hosts for equivalence by checking the list of addresses only.
+  if (h1.name() != h2.name())
+    return false;
+
+  if (h1.alternate_name_count() != h2.alternate_name_count())
+    return false;
+
+  for (size_t i = 0; i < h1.alternate_name_count(); ++i)
+    if (h1.alternate_name(i) != h2.alternate_name(i))
+      return false;
 
   if (h1.address_count() != h2.address_count())
     return false;
 
+  for (size_t j = 0; j < h1.address_count(); ++j)
+    if (h1.address(j) != h2.address(j))
+      return false;
+
+  return true;
+}
+
+// This function is used to check whether any of the addresses in the first host
+// are found in the second host. This is needed because not all of the network
+// interfaces on a system may be known to a DNS server, and not all of the
+// addresses associated with a DNS record may belong to a single system.
+bool test_if_addresses_intersect(const ipv4::host& h1, const ipv4::host& h2)
+{
   std::vector<ipv4::address> addresses1;
   for (size_t i = 0; i < h1.address_count(); ++i)
     addresses1.push_back(h1.address(i));
@@ -56,11 +76,11 @@ bool test_if_hosts_equivalent(const ipv4::host& h1, const ipv4::host& h2)
     addresses2.push_back(h2.address(j));
   std::sort(addresses2.begin(), addresses2.end());
 
-  for (size_t k = 0; k < addresses1.size(); ++k)
-    if (addresses1[k] != addresses2[k])
-      return false;
+  std::vector<ipv4::address> intersection;
+  set_intersection(addresses1.begin(), addresses1.end(),
+      addresses2.begin(), addresses2.end(), std::back_inserter(intersection));
 
-  return true;
+  return !intersection.empty();
 }
 
 void ipv4_host_resolver_test()
@@ -75,7 +95,7 @@ void ipv4_host_resolver_test()
   ipv4::host h2;
   resolver.get_local_host(h2, throw_error_if(the_error != error::success));
 
-  UNIT_TEST_CHECK(test_if_hosts_equivalent(h1, h2));
+  UNIT_TEST_CHECK(test_if_hosts_equal(h1, h2));
 
   ipv4::host h3;
   resolver.get_host_by_address(h3, h1.address(0));
@@ -84,8 +104,8 @@ void ipv4_host_resolver_test()
   resolver.get_host_by_address(h4, h1.address(0),
       throw_error_if(the_error != error::success));
 
-  UNIT_TEST_CHECK(test_if_hosts_equivalent(h3, h4));
-  UNIT_TEST_CHECK(test_if_hosts_equivalent(h1, h3));
+  UNIT_TEST_CHECK(test_if_hosts_equal(h3, h4));
+  UNIT_TEST_CHECK(test_if_addresses_intersect(h1, h3));
 
   ipv4::host h5;
   resolver.get_host_by_name(h5, h1.name());
@@ -94,8 +114,8 @@ void ipv4_host_resolver_test()
   resolver.get_host_by_name(h6, h1.name(),
       throw_error_if(the_error != error::success));
 
-  UNIT_TEST_CHECK(test_if_hosts_equivalent(h5, h6));
-  UNIT_TEST_CHECK(test_if_hosts_equivalent(h1, h5));
+  UNIT_TEST_CHECK(test_if_hosts_equal(h5, h6));
+  UNIT_TEST_CHECK(test_if_addresses_intersect(h1, h5));
 
   ipv4::host h7;
   resolver.async_get_host_by_address(h7, h1.address(0),
@@ -103,14 +123,16 @@ void ipv4_host_resolver_test()
   d.reset();
   d.run();
 
-  UNIT_TEST_CHECK(test_if_hosts_equivalent(h1, h7));
+  UNIT_TEST_CHECK(test_if_hosts_equal(h3, h7));
+  UNIT_TEST_CHECK(test_if_addresses_intersect(h1, h7));
 
   ipv4::host h8;
   resolver.async_get_host_by_name(h8, h1.name(), handle_get_host_by_name);
   d.reset();
   d.run();
 
-  UNIT_TEST_CHECK(test_if_hosts_equivalent(h1, h8));
+  UNIT_TEST_CHECK(test_if_hosts_equal(h5, h8));
+  UNIT_TEST_CHECK(test_if_addresses_intersect(h1, h8));
 }
 
 UNIT_TEST(ipv4_host_resolver_test)
