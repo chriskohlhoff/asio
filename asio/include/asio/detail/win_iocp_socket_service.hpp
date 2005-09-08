@@ -125,6 +125,17 @@ public:
       error_handler(asio::error(socket_ops::get_error()));
   }
 
+  // Place the socket into the state where it will listen for new connections.
+  template <typename Error_Handler>
+  void listen(impl_type& impl, int backlog, Error_Handler error_handler)
+  {
+    if (backlog == 0)
+      backlog = SOMAXCONN;
+
+    if (socket_ops::listen(impl, backlog) == socket_error_retval)
+      error_handler(asio::error(socket_ops::get_error()));
+  }
+
   // Set a socket option.
   template <typename Option, typename Error_Handler>
   void set_option(impl_type& impl, const Option& option,
@@ -526,6 +537,180 @@ public:
     }
   }
 
+  // Accept a new connection.
+  template <typename Socket, typename Error_Handler>
+  void accept(impl_type& impl, Socket& peer, Error_Handler error_handler)
+  {
+    // We cannot accept a socket that is already open.
+    if (peer.impl() != invalid_socket)
+    {
+      error_handler(asio::error(asio::error::already_connected));
+      return;
+    }
+
+    socket_type new_socket = socket_ops::accept(impl, 0, 0);
+    if (int err = socket_ops::get_error())
+    {
+      error_handler(asio::error(err));
+      return;
+    }
+
+    peer.set_impl(new_socket);
+  }
+
+  // Accept a new connection.
+  template <typename Socket, typename Endpoint, typename Error_Handler>
+  void accept_endpoint(impl_type& impl, Socket& peer, Endpoint& peer_endpoint,
+      Error_Handler error_handler)
+  {
+    // We cannot accept a socket that is already open.
+    if (peer.impl() != invalid_socket)
+    {
+      error_handler(asio::error(asio::error::already_connected));
+      return;
+    }
+
+    socket_addr_len_type addr_len = peer_endpoint.size();
+    socket_type new_socket = socket_ops::accept(impl,
+        peer_endpoint.data(), &addr_len);
+    if (int err = socket_ops::get_error())
+    {
+      error_handler(asio::error(err));
+      return;
+    }
+
+    peer_endpoint.size(addr_len);
+
+    peer.set_impl(new_socket);
+  }
+
+  template <typename Socket, typename Handler>
+  class accept_handler
+  {
+  public:
+    accept_handler(impl_type impl, demuxer_type& demuxer, Socket& peer,
+        Handler handler)
+      : impl_(impl),
+        demuxer_(demuxer),
+        peer_(peer),
+        handler_(handler)
+    {
+    }
+
+    void do_operation()
+    {
+      socket_type new_socket = socket_ops::accept(impl_, 0, 0);
+      asio::error error(new_socket == invalid_socket
+          ? socket_ops::get_error() : asio::error::success);
+      peer_.set_impl(new_socket);
+      demuxer_.post(bind_handler(handler_, error));
+      demuxer_.work_finished();
+    }
+
+    void do_cancel()
+    {
+      asio::error error(asio::error::operation_aborted);
+      demuxer_.post(bind_handler(handler_, error));
+      demuxer_.work_finished();
+    }
+
+  private:
+    impl_type impl_;
+    demuxer_type& demuxer_;
+    Socket& peer_;
+    Handler handler_;
+  };
+
+  // Start an asynchronous accept. The peer object must be valid until the
+  // accept's handler is invoked.
+  template <typename Socket, typename Handler>
+  void async_accept(impl_type& impl, Socket& peer, Handler handler)
+  {
+    if (impl == null())
+    {
+      asio::error error(asio::error::bad_descriptor);
+      demuxer_.post(bind_handler(handler, error));
+    }
+    else if (peer.impl() != invalid_socket)
+    {
+      asio::error error(asio::error::already_connected);
+      demuxer_.post(bind_handler(handler, error));
+    }
+    else
+    {
+      demuxer_.work_started();
+      reactor_.start_read_op(impl,
+          accept_handler<Socket, Handler>(impl, demuxer_, peer, handler));
+    }
+  }
+
+  template <typename Socket, typename Endpoint, typename Handler>
+  class accept_endp_handler
+  {
+  public:
+    accept_endp_handler(impl_type impl, demuxer_type& demuxer, Socket& peer,
+        Endpoint& peer_endpoint, Handler handler)
+      : impl_(impl),
+        demuxer_(demuxer),
+        peer_(peer),
+        peer_endpoint_(peer_endpoint),
+        handler_(handler)
+    {
+    }
+
+    void do_operation()
+    {
+      socket_addr_len_type addr_len = peer_endpoint_.size();
+      socket_type new_socket = socket_ops::accept(impl_,
+          peer_endpoint_.data(), &addr_len);
+      asio::error error(new_socket == invalid_socket
+          ? socket_ops::get_error() : asio::error::success);
+      peer_endpoint_.size(addr_len);
+      peer_.set_impl(new_socket);
+      demuxer_.post(bind_handler(handler_, error));
+      demuxer_.work_finished();
+    }
+
+    void do_cancel()
+    {
+      asio::error error(asio::error::operation_aborted);
+      demuxer_.post(bind_handler(handler_, error));
+      demuxer_.work_finished();
+    }
+
+  private:
+    impl_type impl_;
+    demuxer_type& demuxer_;
+    Socket& peer_;
+    Endpoint& peer_endpoint_;
+    Handler handler_;
+  };
+
+  // Start an asynchronous accept. The peer and peer_endpoint objects
+  // must be valid until the accept's handler is invoked.
+  template <typename Socket, typename Endpoint, typename Handler>
+  void async_accept_endpoint(impl_type& impl, Socket& peer,
+      Endpoint& peer_endpoint, Handler handler)
+  {
+    if (impl == null())
+    {
+      asio::error error(asio::error::bad_descriptor);
+      demuxer_.post(bind_handler(handler, error));
+    }
+    else if (peer.impl() != invalid_socket)
+    {
+      asio::error error(asio::error::already_connected);
+      demuxer_.post(bind_handler(handler, error));
+    }
+    else
+    {
+      demuxer_.work_started();
+      reactor_.start_read_op(impl,
+          accept_endp_handler<Socket, Endpoint, Handler>(
+            impl, demuxer_, peer, peer_endpoint, handler));
+    }
+  }
+
   // Connect the socket to the specified endpoint.
   template <typename Endpoint, typename Error_Handler>
   void connect(impl_type& impl, const Endpoint& peer_endpoint,
@@ -715,7 +900,7 @@ private:
   // dispatching handlers.
   win_iocp_demuxer_service& demuxer_service_;
 
-  // The reactor used for performing connect operations.
+  // The reactor used for performing accept and connect operations.
   reactor_type& reactor_;
 };
 
