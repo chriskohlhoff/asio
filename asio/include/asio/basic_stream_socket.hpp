@@ -479,14 +479,13 @@ public:
     service_.shutdown(impl_, what, default_error_handler());
   }
 
-  /// Send some data to the peer.
+  /// Send some data on the socket.
   /**
-   * This function is used to send data on the stream socket. The function call
-   * will block until the data has been sent successfully or an error occurs.
+   * This function is used to send data on the stream socket. The function
+   * call will block until the data has been sent successfully or an error
+   * occurs.
    *
-   * @param data The data to be sent on the socket.
-   *
-   * @param length The size of the data to be sent, in bytes.
+   * @param buffers The data to be sent on the socket.
    *
    * @param flags Flags specifying how the send call is to be made.
    *
@@ -499,19 +498,19 @@ public:
    * Consider using the asio::write_n() function if you need to ensure that all
    * data is written before the blocking operation completes.
    */
-  size_t send(const void* data, size_t length, message_flags flags)
+  template <typename Const_Buffers>
+  size_t send(const Const_Buffers& buffers, message_flags flags)
   {
-    return service_.send(impl_, data, length, flags, default_error_handler());
+    return service_.send(impl_, buffers, flags, default_error_handler());
   }
 
-  /// Send some data to the peer.
+  /// Send some data on the socket.
   /**
-   * This function is used to send data on the stream socket. The function call
-   * will block until the data has been sent successfully or an error occurs.
+   * This function is used to send data on the stream socket. The function
+   * call will block until the data has been sent successfully or an error
+   * occurs.
    *
-   * @param data The data to be sent on the socket.
-   *
-   * @param length The size of the data to be sent, in bytes.
+   * @param buffers The data to be sent on the socket.
    *
    * @param flags Flags specifying how the send call is to be made.
    *
@@ -529,11 +528,11 @@ public:
    * Consider using the asio::write_n() function if you need to ensure that all
    * data is written before the blocking operation completes.
    */
-  template <typename Error_Handler>
-  size_t send(const void* data, size_t length, message_flags flags,
+  template <typename Const_Buffers, typename Error_Handler>
+  size_t send(const Const_Buffers& buffers, message_flags flags,
       Error_Handler error_handler)
   {
-    return service_.send(impl_, data, length, flags, error_handler);
+    return service_.send(impl_, buffers, flags, error_handler);
   }
 
   /// Start an asynchronous send.
@@ -541,11 +540,10 @@ public:
    * This function is used to asynchronously send data on the stream socket.
    * The function call always returns immediately.
    *
-   * @param data The data to be sent on the socket. Ownership of the data is
-   * retained by the caller, which must guarantee that it is valid until the
-   * handler is called.
-   *
-   * @param length The size of the data to be sent, in bytes.
+   * @param buffers The data to be sent on the socket. Although the buffers
+   * object may be copied as necessary, ownership of the underlying buffers is
+   * retained by the caller, which must guarantee that they remain valid until
+   * the handler is called.
    *
    * @param flags Flags specifying how the send call is to be made.
    *
@@ -561,11 +559,11 @@ public:
    * Consider using the asio::async_write_n() function if you need to ensure
    * that all data is written before the asynchronous operation completes.
    */
-  template <typename Handler>
-  void async_send(const void* data, size_t length, message_flags flags,
+  template <typename Const_Buffers, typename Handler>
+  void async_send(const Const_Buffers& buffers, message_flags flags,
       Handler handler)
   {
-    service_.async_send(impl_, data, length, flags, handler);
+    service_.async_send(impl_, buffers, flags, handler);
   }
 
   /// Receive some data on the socket.
@@ -574,9 +572,7 @@ public:
    * call will block until data has been received successfully or an error
    * occurs.
    *
-   * @param data The buffer into which the data will be received.
-   *
-   * @param max_length The maximum size of the data to be received, in bytes.
+   * @param buffers The buffers into which the data will be received.
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
@@ -590,21 +586,19 @@ public:
    * that the requested amount of data is read before the blocking operation
    * completes.
    */
-  size_t receive(void* data, size_t max_length, message_flags flags)
+  template <typename Mutable_Buffers>
+  size_t receive(const Mutable_Buffers& buffers, message_flags flags)
   {
-    return service_.receive(impl_, data, max_length, flags,
-        default_error_handler());
+    return service_.receive(impl_, buffers, flags, default_error_handler());
   }
 
-  /// Receive some data on the socket.
+  /// Receive some data on a connected socket.
   /**
-   * This function is used to receive data on the stream socket. The function
+   * This function is used to receive data on the datagram socket. The function
    * call will block until data has been received successfully or an error
    * occurs.
    *
-   * @param data The buffer into which the data will be received.
-   *
-   * @param max_length The maximum size of the data to be received, in bytes.
+   * @param buffers The buffers into which the data will be received.
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
@@ -615,19 +609,17 @@ public:
    *   const asio::error& error // Result of operation
    * ); @endcode
    *
-   * @returns The number of bytes received or 0 if the connection was closed
-   * cleanly.
+   * @returns The number of bytes received.
    *
-   * @note The receive operation may not receive all of the requested number of
-   * bytes. Consider using the asio::read_n() function if you need to ensure
-   * that the requested amount of data is read before the blocking operation
-   * completes.
+   * @note The receive operation can only be used with a connected socket. Use
+   * the receive_from function to receive data on an unconnected datagram
+   * socket.
    */
-  template <typename Error_Handler>
-  size_t receive(void* data, size_t max_length, message_flags flags,
+  template <typename Mutable_Buffers, typename Error_Handler>
+  size_t receive(const Mutable_Buffers& buffers, message_flags flags,
       Error_Handler error_handler)
   {
-    return service_.receive(impl_, data, max_length, flags, error_handler);
+    return service_.receive(impl_, buffers, flags, error_handler);
   }
 
   /// Start an asynchronous receive.
@@ -635,11 +627,10 @@ public:
    * This function is used to asynchronously receive data from the stream
    * socket. The function call always returns immediately.
    *
-   * @param data The buffer into which the data will be received. Ownership of
-   * the buffer is retained by the caller, which must guarantee that it is valid
-   * until the handler is called.
-   *
-   * @param max_length The maximum size of the data to be received, in bytes.
+   * @param data The buffers into which the data will be received. Although the
+   * buffers object may be copied as necessary, ownership of the underlying
+   * buffers is retained by the caller, which must guarantee that they remain
+   * valid until the handler is called.
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
@@ -656,11 +647,11 @@ public:
    * ensure that the requested amount of data is received before the
    * asynchronous operation completes.
    */
-  template <typename Handler>
-  void async_receive(void* data, size_t max_length, message_flags flags,
+  template <typename Mutable_Buffers, typename Handler>
+  void async_receive(const Mutable_Buffers& buffers, message_flags flags,
       Handler handler)
   {
-    service_.async_receive(impl_, data, max_length, flags, handler);
+    service_.async_receive(impl_, buffers, flags, handler);
   }
 
   /// Write some data to the socket.
@@ -668,9 +659,7 @@ public:
    * This function is used to write data to the stream socket. The function call
    * will block until the data has been written successfully or an error occurs.
    *
-   * @param data The data to be written to the socket.
-   *
-   * @param length The size of the data to be written, in bytes.
+   * @param buffers The data to be written to the socket.
    *
    * @returns The number of bytes written or 0 if the connection was closed
    * cleanly.
@@ -681,9 +670,10 @@ public:
    * Consider using the asio::write_n() function if you need to ensure that all
    * data is written before the blocking operation completes.
    */
-  size_t write(const void* data, size_t length)
+  template <typename Const_Buffers>
+  size_t write(const Const_Buffers& buffers)
   {
-    return service_.send(impl_, data, length, 0, default_error_handler());
+    return service_.send(impl_, buffers, 0, default_error_handler());
   }
 
   /// Write some data to the socket.
@@ -691,9 +681,7 @@ public:
    * This function is used to write data to the stream socket. The function call
    * will block until the data has been written successfully or an error occurs.
    *
-   * @param data The data to be written to the socket.
-   *
-   * @param length The size of the data to be written, in bytes.
+   * @param buffers The data to be written to the socket.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature
@@ -709,10 +697,10 @@ public:
    * Consider using the asio::write_n() function if you need to ensure that all
    * data is written before the blocking operation completes.
    */
-  template <typename Error_Handler>
-  size_t write(const void* data, size_t length, Error_Handler error_handler)
+  template <typename Const_Buffers, typename Error_Handler>
+  size_t write(const Const_Buffers& buffers, Error_Handler error_handler)
   {
-    return service_.send(impl_, data, length, 0, error_handler);
+    return service_.send(impl_, buffers, 0, error_handler);
   }
 
   /// Start an asynchronous write.
@@ -720,11 +708,10 @@ public:
    * This function is used to asynchronously write data to the stream socket.
    * The function call always returns immediately.
    *
-   * @param data The data to be written to the socket. Ownership of the data is
-   * retained by the caller, which must guarantee that it is valid until the
-   * handler is called.
-   *
-   * @param length The size of the data to be written, in bytes.
+   * @param buffers The data to be written to the socket. Although the buffers
+   * object may be copied as necessary, ownership of the underlying buffers is
+   * retained by the caller, which must guarantee that they remain valid until
+   * the handler is called.
    *
    * @param handler The handler to be called when the write operation completes.
    * Copies will be made of the handler as required. The equivalent function
@@ -738,10 +725,10 @@ public:
    * Consider using the asio::async_write_n() function if you need to ensure
    * that all data is written before the asynchronous operation completes.
    */
-  template <typename Handler>
-  void async_write(const void* data, size_t length, Handler handler)
+  template <typename Const_Buffers, typename Handler>
+  void async_write(const Const_Buffers& buffers, Handler handler)
   {
-    service_.async_send(impl_, data, length, 0, handler);
+    service_.async_send(impl_, buffers, 0, handler);
   }
 
   /// Read some data from the socket.
@@ -749,9 +736,7 @@ public:
    * This function is used to read data from the stream socket. The function
    * call will block until data has been read successfully or an error occurs.
    *
-   * @param data The buffer into which the data will be read.
-   *
-   * @param max_length The maximum size of the data to be read, in bytes.
+   * @param buffers The buffers into which the data will be read.
    *
    * @returns The number of bytes read or 0 if the connection was closed
    * cleanly.
@@ -762,10 +747,10 @@ public:
    * Consider using the asio::read_n() function if you need to ensure that the
    * requested amount of data is read before the blocking operation completes.
    */
-  size_t read(void* data, size_t max_length)
+  template <typename Mutable_Buffers>
+  size_t read(const Mutable_Buffers& buffers)
   {
-    return service_.receive(impl_, data, max_length, 0,
-        default_error_handler());
+    return service_.receive(impl_, buffers, 0, default_error_handler());
   }
 
   /// Read some data from the socket.
@@ -773,9 +758,7 @@ public:
    * This function is used to read data from the stream socket. The function
    * call will block until data has been read successfully or an error occurs.
    *
-   * @param data The buffer into which the data will be read.
-   *
-   * @param max_length The maximum size of the data to be read, in bytes.
+   * @param buffers The buffers into which the data will be read.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature
@@ -791,10 +774,10 @@ public:
    * Consider using the asio::read_n() function if you need to ensure that the
    * requested amount of data is read before the blocking operation completes.
    */
-  template <typename Error_Handler>
-  size_t read(void* data, size_t max_length, Error_Handler error_handler)
+  template <typename Mutable_Buffers, typename Error_Handler>
+  size_t read(const Mutable_Buffers& buffers, Error_Handler error_handler)
   {
-    return service_.receive(impl_, data, max_length, 0, error_handler);
+    return service_.receive(impl_, buffers, 0, error_handler);
   }
 
   /// Start an asynchronous read.
@@ -802,11 +785,10 @@ public:
    * This function is used to asynchronously read data from the stream socket.
    * The function call always returns immediately.
    *
-   * @param data The buffer into which the data will be read. Ownership of the
-   * buffer is retained by the caller, which must guarantee that it is valid
-   * until the handler is called.
-   *
-   * @param max_length The maximum size of the data to be read, in bytes.
+   * @param data The buffers into which the data will be read. Although the
+   * buffers object may be copied as necessary, ownership of the underlying
+   * buffers is retained by the caller, which must guarantee that they remain
+   * valid until the handler is called.
    *
    * @param handler The handler to be called when the read operation completes.
    * Copies will be made of the handler as required. The equivalent function
@@ -821,10 +803,10 @@ public:
    * the requested amount of data is read before the asynchronous operation
    * completes.
    */
-  template <typename Handler>
-  void async_read(void* data, size_t max_length, Handler handler)
+  template <typename Mutable_Buffers, typename Handler>
+  void async_read(const Mutable_Buffers& buffers, Handler handler)
   {
-    service_.async_receive(impl_, data, max_length, 0, handler);
+    service_.async_receive(impl_, buffers, 0, handler);
   }
 
   /// Peek at the incoming data on the stream socket.
@@ -833,19 +815,18 @@ public:
    * without removing it from the input queue. The function call will block
    * until data has been read successfully or an error occurs.
    *
-   * @param data The buffer into which the data will be read.
-   *
-   * @param max_length The maximum size of the data to be read, in bytes.
+   * @param buffers The buffers into which the data will be read.
    *
    * @returns The number of bytes read or 0 if the connection was closed
    * cleanly.
    *
    * @throws asio::error Thrown on failure.
    */
-  size_t peek(void* data, size_t max_length)
+  template <typename Mutable_Buffers>
+  size_t peek(const Mutable_Buffers& buffers)
   {
-    return service_.receive(impl_, data, max_length,
-        message_peek, default_error_handler());
+    return service_.receive(impl_, buffers, message_peek,
+        default_error_handler());
   }
 
   /// Peek at the incoming data on the stream socket.
@@ -854,9 +835,7 @@ public:
    * without removing it from the input queue. The function call will block
    * until data has been read successfully or an error occurs.
    *
-   * @param data The buffer into which the data will be read.
-   *
-   * @param max_length The maximum size of the data to be read, in bytes.
+   * @param buffers The buffers into which the data will be read.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature
@@ -868,11 +847,10 @@ public:
    * @returns The number of bytes read or 0 if the connection was closed
    * cleanly.
    */
-  template <typename Error_Handler>
-  size_t peek(void* data, size_t max_length, Error_Handler error_handler)
+  template <typename Mutable_Buffers, typename Error_Handler>
+  size_t peek(const Mutable_Buffers& buffers, Error_Handler error_handler)
   {
-    return service_.receive(impl_, data, max_length,
-        message_peek, error_handler);
+    return service_.receive(impl_, buffers, message_peek, error_handler);
   }
 
   /// Determine the amount of data that may be read without blocking.

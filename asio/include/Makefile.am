@@ -6,12 +6,15 @@ nobase_include_HEADERS = \
 	asio/basic_locking_dispatcher.hpp \
 	asio/basic_socket_acceptor.hpp \
 	asio/basic_stream_socket.hpp \
+	asio/buffer.hpp \
 	asio/buffered_read_stream_fwd.hpp \
 	asio/buffered_read_stream.hpp \
 	asio/buffered_stream_fwd.hpp \
 	asio/buffered_stream.hpp \
 	asio/buffered_write_stream_fwd.hpp \
 	asio/buffered_write_stream.hpp \
+	asio/buffers.hpp \
+	asio/consuming_buffers.hpp \
 	asio/datagram_socket.hpp \
 	asio/datagram_socket_service.hpp \
 	asio/deadline_timer.hpp \

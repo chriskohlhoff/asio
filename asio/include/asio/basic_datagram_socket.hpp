@@ -497,9 +497,7 @@ public:
    * call will block until the data has been sent successfully or an error
    * occurs.
    *
-   * @param data The data to be sent on the socket.
-   *
-   * @param length The size of the data to be sent, in bytes.
+   * @param buffers The data to be sent on the socket.
    *
    * @param flags Flags specifying how the send call is to be made.
    *
@@ -510,9 +508,10 @@ public:
    * @note The send operation can only be used with a connected socket. Use
    * the send_to function to send data on an unconnected datagram socket.
    */
-  size_t send(const void* data, size_t length, message_flags flags)
+  template <typename Const_Buffers>
+  size_t send(const Const_Buffers& buffers, message_flags flags)
   {
-    return service_.send(impl_, data, length, flags, default_error_handler());
+    return service_.send(impl_, buffers, flags, default_error_handler());
   }
 
   /// Send some data on a connected socket.
@@ -521,9 +520,7 @@ public:
    * call will block until the data has been sent successfully or an error
    * occurs.
    *
-   * @param data The data to be sent on the socket.
-   *
-   * @param length The size of the data to be sent, in bytes.
+   * @param buffers The data to be sent on the socket.
    *
    * @param flags Flags specifying how the send call is to be made.
    *
@@ -539,11 +536,11 @@ public:
    * @note The send operation can only be used with a connected socket. Use
    * the send_to function to send data on an unconnected datagram socket.
    */
-  template <typename Error_Handler>
-  size_t send(const void* data, size_t length, message_flags flags,
+  template <typename Const_Buffers, typename Error_Handler>
+  size_t send(const Const_Buffers& buffers, message_flags flags,
       Error_Handler error_handler)
   {
-    return service_.send(impl_, data, length, flags, error_handler);
+    return service_.send(impl_, buffers, flags, error_handler);
   }
 
   /// Start an asynchronous send on a connected socket.
@@ -552,11 +549,10 @@ public:
    * call will block until the data has been sent successfully or an error
    * occurs.
    *
-   * @param data The data to be sent on the socket. Ownership of the data is
-   * retained by the caller, which must guarantee that it is valid until the
-   * handler is called.
-   *
-   * @param length The size of the data to be sent, in bytes.
+   * @param buffers The data to be sent on the socket. Although the buffers
+   * object may be copied as necessary, ownership of the underlying buffers is
+   * retained by the caller, which must guarantee that they remain valid until
+   * the handler is called.
    *
    * @param flags Flags specifying how the send call is to be made.
    *
@@ -572,11 +568,11 @@ public:
    * Use the async_send_to function to send data on an unconnected datagram
    * socket.
    */
-  template <typename Handler>
-  void async_send(const void* data, size_t length, message_flags flags,
+  template <typename Const_Buffers, typename Handler>
+  void async_send(const Const_Buffers& buffers, message_flags flags,
       Handler handler)
   {
-    service_.async_send(impl_, data, length, flags, handler);
+    service_.async_send(impl_, buffers, flags, handler);
   }
 
   /// Send a datagram to the specified endpoint.
@@ -585,9 +581,7 @@ public:
    * The function call will block until the data has been sent successfully or
    * an error occurs.
    *
-   * @param data The data to be sent to remote endpoint.
-   *
-   * @param length The size of the data to be sent, in bytes.
+   * @param buffers The data to be sent to the remote endpoint.
    *
    * @param flags Flags specifying how the send call is to be made.
    *
@@ -597,11 +591,11 @@ public:
    *
    * @throws asio::error Thrown on failure.
    */
-  template <typename Endpoint>
-  size_t send_to(const void* data, size_t length, message_flags flags,
+  template <typename Const_Buffers, typename Endpoint>
+  size_t send_to(const Const_Buffers& buffers, message_flags flags,
       const Endpoint& destination)
   {
-    return service_.send_to(impl_, data, length, flags, destination,
+    return service_.send_to(impl_, buffers, flags, destination,
         default_error_handler());
   }
 
@@ -611,9 +605,7 @@ public:
    * The function call will block until the data has been sent successfully or
    * an error occurs.
    *
-   * @param data The data to be sent to remote endpoint.
-   *
-   * @param length The size of the data to be sent, in bytes.
+   * @param buffers The data to be sent to the remote endpoint.
    *
    * @param flags Flags specifying how the send call is to be made.
    *
@@ -628,12 +620,11 @@ public:
    *
    * @returns The number of bytes sent.
    */
-  template <typename Endpoint, typename Error_Handler>
-  size_t send_to(const void* data, size_t length, message_flags flags,
+  template <typename Const_Buffers, typename Endpoint, typename Error_Handler>
+  size_t send_to(const Const_Buffers& buffers, message_flags flags,
       const Endpoint& destination, Error_Handler error_handler)
   {
-    return service_.send_to(impl_, data, length, flags, destination,
-        error_handler);
+    return service_.send_to(impl_, buffers, flags, destination, error_handler);
   }
 
   /// Start an asynchronous send.
@@ -641,11 +632,10 @@ public:
    * This function is used to asynchronously send a datagram to the specified
    * remote endpoint. The function call always returns immediately.
    *
-   * @param data The data to be sent to the remote endpoint. Ownership of the
-   * data is retained by the caller, which must guarantee that it is valid
-   * until the handler is called.
-   *
-   * @param length The size of the data to be sent, in bytes.
+   * @param buffers The data to be sent to the remote endpoint. Although the
+   * buffers object may be copied as necessary, ownership of the underlying
+   * buffers is retained by the caller, which must guarantee that they remain
+   * valid until the handler is called.
    *
    * @param flags Flags specifying how the send call is to be made.
    *
@@ -657,14 +647,14 @@ public:
    * signature of the handler must be:
    * @code void handler(
    *   const asio::error& error, // Result of operation
-   *   size_t bytes_sent         // Number of bytes sent
+   *   size_t bytes_transferred  // Number of bytes sent
    * ); @endcode
    */
-  template <typename Endpoint, typename Handler>
-  void async_send_to(const void* data, size_t length, message_flags flags,
+  template <typename Const_Buffers, typename Endpoint, typename Handler>
+  void async_send_to(const Const_Buffers& buffers, message_flags flags,
       const Endpoint& destination, Handler handler)
   {
-    service_.async_send_to(impl_, data, length, flags, destination, handler);
+    service_.async_send_to(impl_, buffers, flags, destination, handler);
   }
 
   /// Receive some data on a connected socket.
@@ -673,9 +663,7 @@ public:
    * call will block until data has been received successfully or an error
    * occurs.
    *
-   * @param data The buffer into which the data will be received.
-   *
-   * @param max_length The maximum size of the data to be received, in bytes.
+   * @param buffers The buffers into which the data will be received.
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
@@ -687,10 +675,10 @@ public:
    * the receive_from function to receive data on an unconnected datagram
    * socket.
    */
-  size_t receive(void* data, size_t max_length, message_flags flags)
+  template <typename Mutable_Buffers>
+  size_t receive(const Mutable_Buffers& buffers, message_flags flags)
   {
-    return service_.receive(impl_, data, max_length, flags,
-        default_error_handler());
+    return service_.receive(impl_, buffers, flags, default_error_handler());
   }
 
   /// Receive some data on a connected socket.
@@ -699,9 +687,7 @@ public:
    * call will block until data has been received successfully or an error
    * occurs.
    *
-   * @param data The buffer into which the data will be received.
-   *
-   * @param max_length The maximum size of the data to be received, in bytes.
+   * @param buffers The buffers into which the data will be received.
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
@@ -718,11 +704,11 @@ public:
    * the receive_from function to receive data on an unconnected datagram
    * socket.
    */
-  template <typename Error_Handler>
-  size_t receive(void* data, size_t max_length, message_flags flags,
+  template <typename Mutable_Buffers, typename Error_Handler>
+  size_t receive(const Mutable_Buffers& buffers, message_flags flags,
       Error_Handler error_handler)
   {
-    return service_.receive(impl_, data, max_length, flags, error_handler);
+    return service_.receive(impl_, buffers, flags, error_handler);
   }
 
   /// Start an asynchronous receive on a connected socket.
@@ -730,11 +716,10 @@ public:
    * This function is used to asynchronously receive data from the datagram
    * socket. The function call always returns immediately.
    *
-   * @param data The buffer into which the data will be received. Ownership of
-   * the buffer is retained by the caller, which must guarantee that it is valid
-   * until the handler is called.
-   *
-   * @param max_length The maximum size of the data to be received, in bytes.
+   * @param data The buffers into which the data will be received. Although the
+   * buffers object may be copied as necessary, ownership of the underlying
+   * buffers is retained by the caller, which must guarantee that they remain
+   * valid until the handler is called.
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
@@ -750,11 +735,11 @@ public:
    * Use the async_receive_from function to receive data on an unconnected
    * datagram socket.
    */
-  template <typename Handler>
-  void async_receive(void* data, size_t max_length, message_flags flags,
+  template <typename Mutable_Buffers, typename Handler>
+  void async_receive(const Mutable_Buffers& buffers, message_flags flags,
       Handler handler)
   {
-    service_.async_receive(impl_, data, max_length, flags, handler);
+    service_.async_receive(impl_, buffers, flags, handler);
   }
 
   /// Receive a datagram with the endpoint of the sender.
@@ -762,11 +747,7 @@ public:
    * This function is used to receive a datagram. The function call will block
    * until data has been received successfully or an error occurs.
    *
-   * @param data The data buffer into which the received datagram will be
-   * written.
-   *
-   * @param max_length The maximum length, in bytes, of data that can be held
-   * in the supplied buffer.
+   * @param buffers The buffers into which the data will be received.
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
@@ -777,12 +758,12 @@ public:
    *
    * @throws asio::error Thrown on failure.
    */
-  template <typename Endpoint>
-  size_t receive_from(void* data, size_t max_length, message_flags flags,
+  template <typename Mutable_Buffers, typename Endpoint>
+  size_t receive_from(const Mutable_Buffers& buffers, message_flags flags,
       Endpoint& sender_endpoint)
   {
-    return service_.receive_from(impl_, data, max_length, flags,
-        sender_endpoint, default_error_handler());
+    return service_.receive_from(impl_, buffers, flags, sender_endpoint,
+        default_error_handler());
   }
   
   /// Receive a datagram with the endpoint of the sender.
@@ -790,11 +771,7 @@ public:
    * This function is used to receive a datagram. The function call will block
    * until data has been received successfully or an error occurs.
    *
-   * @param data The data buffer into which the received datagram will be
-   * written.
-   *
-   * @param max_length The maximum length, in bytes, of data that can be held
-   * in the supplied buffer.
+   * @param buffers The buffers into which the data will be received.
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
@@ -810,12 +787,12 @@ public:
    *
    * @returns The number of bytes received.
    */
-  template <typename Endpoint, typename Error_Handler>
-  size_t receive_from(void* data, size_t max_length, message_flags flags,
+  template <typename Mutable_Buffers, typename Endpoint, typename Error_Handler>
+  size_t receive_from(const Mutable_Buffers& buffers, message_flags flags,
       Endpoint& sender_endpoint, Error_Handler error_handler)
   {
-    return service_.receive_from(impl_, data, max_length, flags,
-        sender_endpoint, error_handler);
+    return service_.receive_from(impl_, buffers, flags, sender_endpoint,
+        error_handler);
   }
   
   /// Start an asynchronous receive.
@@ -823,12 +800,10 @@ public:
    * This function is used to asynchronously receive a datagram. The function
    * call always returns immediately.
    *
-   * @param data The data buffer into which the received datagram will be
-   * written. Ownership of the data buffer is retained by the caller, which
-   * must guarantee that it is valid until the handler is called.
-   *
-   * @param max_length The maximum length, in bytes, of data that can be held
-   * in the supplied buffer.
+   * @param data The buffers into which the data will be received. Although the
+   * buffers object may be copied as necessary, ownership of the underlying
+   * buffers is retained by the caller, which must guarantee that they remain
+   * valid until the handler is called.
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
@@ -845,11 +820,11 @@ public:
    *   size_t bytes_recvd        // Number of bytes received
    * ); @endcode
    */
-  template <typename Endpoint, typename Handler>
-  void async_receive_from(void* data, size_t max_length, message_flags flags,
+  template <typename Mutable_Buffers, typename Endpoint, typename Handler>
+  void async_receive_from(const Mutable_Buffers& buffers, message_flags flags,
       Endpoint& sender_endpoint, Handler handler)
   {
-    service_.async_receive_from(impl_, data, max_length, flags, sender_endpoint,
+    service_.async_receive_from(impl_, buffers, flags, sender_endpoint,
         handler);
   }
 

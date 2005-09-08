@@ -178,75 +178,74 @@ public:
   }
 
   /// Send the given data to the peer.
-  template <typename Error_Handler>
-  size_t send(impl_type& impl, const void* data, size_t length,
+  template <typename Const_Buffers, typename Error_Handler>
+  size_t send(impl_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, Error_Handler error_handler)
   {
-    return service_impl_.send(impl, data, length, flags, error_handler);
+    return service_impl_.send(impl, buffers, flags, error_handler);
   }
 
   /// Start an asynchronous send.
-  template <typename Handler>
-  void async_send(impl_type& impl, const void* data, size_t length,
+  template <typename Const_Buffers, typename Handler>
+  void async_send(impl_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, Handler handler)
   {
-    service_impl_.async_send(impl, data, length, flags, handler);
+    service_impl_.async_send(impl, buffers, flags, handler);
   }
 
   /// Send a datagram to the specified endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  size_t send_to(impl_type& impl, const void* data, size_t length,
+  template <typename Const_Buffers, typename Endpoint, typename Error_Handler>
+  size_t send_to(impl_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, const Endpoint& destination,
       Error_Handler error_handler)
   {
-    return service_impl_.send_to(impl, data, length, flags, destination,
+    return service_impl_.send_to(impl, buffers, flags, destination,
         error_handler);
   }
 
   /// Start an asynchronous send.
-  template <typename Endpoint, typename Handler>
-  void async_send_to(impl_type& impl, const void* data, size_t length,
+  template <typename Const_Buffers, typename Endpoint, typename Handler>
+  void async_send_to(impl_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, const Endpoint& destination,
       Handler handler)
   {
-    service_impl_.async_send_to(impl, data, length, flags, destination,
-        handler);
+    service_impl_.async_send_to(impl, buffers, flags, destination, handler);
   }
 
   /// Receive some data from the peer.
-  template <typename Error_Handler>
-  size_t receive(impl_type& impl, void* data, size_t max_length,
+  template <typename Mutable_Buffers, typename Error_Handler>
+  size_t receive(impl_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Error_Handler error_handler)
   {
-    return service_impl_.receive(impl, data, max_length, flags, error_handler);
+    return service_impl_.receive(impl, buffers, flags, error_handler);
   }
 
   /// Start an asynchronous receive.
-  template <typename Handler>
-  void async_receive(impl_type& impl, void* data, size_t max_length,
+  template <typename Mutable_Buffers, typename Handler>
+  void async_receive(impl_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Handler handler)
   {
-    service_impl_.async_receive(impl, data, max_length, flags, handler);
+    service_impl_.async_receive(impl, buffers, flags, handler);
   }
 
   /// Receive a datagram with the endpoint of the sender.
-  template <typename Endpoint, typename Error_Handler>
-  size_t receive_from(impl_type& impl, void* data, size_t max_length,
+  template <typename Mutable_Buffers, typename Endpoint, typename Error_Handler>
+  size_t receive_from(impl_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Endpoint& sender_endpoint,
       Error_Handler error_handler)
   {
-    return service_impl_.receive_from(impl, data, max_length, flags,
-        sender_endpoint, error_handler);
+    return service_impl_.receive_from(impl, buffers, flags, sender_endpoint,
+        error_handler);
   }
 
   /// Start an asynchronous receive that will get the endpoint of the sender.
-  template <typename Endpoint, typename Handler>
-  void async_receive_from(impl_type& impl, void* data, size_t max_length,
+  template <typename Mutable_Buffers, typename Endpoint, typename Handler>
+  void async_receive_from(impl_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Endpoint& sender_endpoint,
       Handler handler)
   {
-    service_impl_.async_receive_from(impl, data, max_length, flags,
-        sender_endpoint, handler);
+    service_impl_.async_receive_from(impl, buffers, flags, sender_endpoint,
+        handler);
   }
 
 private:

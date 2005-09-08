@@ -50,47 +50,80 @@ public:
     next_read_length_ = length;
   }
 
-  bool check(const void* data, size_t length)
+  template <typename Const_Buffers>
+  bool check(const Const_Buffers& buffers, size_t length)
   {
     if (length != position_)
       return false;
 
-    return memcmp(data_, data, length) == 0;
+    typename Const_Buffers::const_iterator iter = buffers.begin();
+    typename Const_Buffers::const_iterator end = buffers.end();
+    size_t checked_length = 0;
+    for (; iter != end && checked_length < length; ++iter)
+    {
+      size_t buffer_length = iter->size();
+      if (buffer_length > length - checked_length)
+        buffer_length = length - checked_length;
+      if (memcmp(data_ + checked_length, iter->data(), buffer_length) != 0)
+        return false;
+      checked_length += buffer_length;
+    }
+
+    return true;
   }
 
-  size_t read(void* data, size_t length)
+  template <typename Mutable_Buffers>
+  size_t read(const Mutable_Buffers& buffers)
   {
-    if (length > length_ - position_)
-      length = length_ - position_;
+    size_t total_length = 0;
 
-    if (length > next_read_length_)
-      length = next_read_length_;
+    typename Mutable_Buffers::const_iterator iter = buffers.begin();
+    typename Mutable_Buffers::const_iterator end = buffers.end();
+    for (; iter != end && total_length < next_read_length_; ++iter)
+    {
+      size_t length = iter->size();
+      if (length > length_ - position_)
+        length = length_ - position_;
 
-    memcpy(data, data_ + position_, length);
-    position_ += length;
+      if (length > next_read_length_ - total_length)
+        length = next_read_length_ - total_length;
 
-    return length;
+      memcpy(iter->data(), data_ + position_, length);
+      position_ += length;
+      total_length += length;
+    }
+
+    return total_length;
   }
 
-  template <typename Error_Handler>
-  size_t read(void* data, size_t length, Error_Handler error_handler)
+  template <typename Mutable_Buffers, typename Error_Handler>
+  size_t read(const Mutable_Buffers& buffers, Error_Handler error_handler)
   {
-    if (length > length_ - position_)
-      length = length_ - position_;
+    size_t total_length = 0;
 
-    if (length > next_read_length_)
-      length = next_read_length_;
+    typename Mutable_Buffers::const_iterator iter = buffers.begin();
+    typename Mutable_Buffers::const_iterator end = buffers.end();
+    for (; iter != end && total_length < next_read_length_; ++iter)
+    {
+      size_t length = iter->size();
+      if (length > length_ - position_)
+        length = length_ - position_;
 
-    memcpy(data, data_ + position_, length);
-    position_ += length;
+      if (length > next_read_length_ - total_length)
+        length = next_read_length_ - total_length;
 
-    return length;
+      memcpy(iter->data(), data_ + position_, length);
+      position_ += length;
+      total_length += length;
+    }
+
+    return total_length;
   }
 
-  template <typename Handler>
-  void async_read(void* data, size_t length, Handler handler)
+  template <typename Mutable_Buffers, typename Handler>
+  void async_read(const Mutable_Buffers& buffers, Handler handler)
   {
-    size_t bytes_transferred = read(data, length);
+    size_t bytes_transferred = read(buffers);
     asio::error error;
     demuxer_.post(
         asio::detail::bind_handler(handler, error, bytes_transferred));
@@ -113,26 +146,27 @@ void test_read()
   asio::demuxer d;
   test_stream s(d);
   char read_buf[1024];
+  asio::mutable_buffers<1> buffers = asio::buffers(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
-  size_t last_bytes_transferred = asio::read(s, read_buf, sizeof(read_buf));
+  size_t last_bytes_transferred = asio::read(s, buffers);
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read(s, read_buf, sizeof(read_buf));
+  last_bytes_transferred = asio::read(s, buffers);
   UNIT_TEST_CHECK(last_bytes_transferred == 1);
-  UNIT_TEST_CHECK(s.check(read_buf, 1));
+  UNIT_TEST_CHECK(s.check(buffers, 1));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read(s, read_buf, sizeof(read_buf));
+  last_bytes_transferred = asio::read(s, buffers);
   UNIT_TEST_CHECK(last_bytes_transferred == 10);
-  UNIT_TEST_CHECK(s.check(read_buf, 10));
+  UNIT_TEST_CHECK(s.check(buffers, 10));
 }
 
 void test_read_with_error_handler()
@@ -140,29 +174,27 @@ void test_read_with_error_handler()
   asio::demuxer d;
   test_stream s(d);
   char read_buf[1024];
+  asio::mutable_buffers<1> buffers = asio::buffers(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
-  size_t last_bytes_transferred = asio::read(s, read_buf, sizeof(read_buf),
-      asio::ignore_error());
+  size_t last_bytes_transferred = asio::read(s, buffers, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read(s, read_buf, sizeof(read_buf),
-      asio::ignore_error());
+  last_bytes_transferred = asio::read(s, buffers, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == 1);
-  UNIT_TEST_CHECK(s.check(read_buf, 1));
+  UNIT_TEST_CHECK(s.check(buffers, 1));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read(s, read_buf, sizeof(read_buf),
-      asio::ignore_error());
+  last_bytes_transferred = asio::read(s, buffers, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == 10);
-  UNIT_TEST_CHECK(s.check(read_buf, 10));
+  UNIT_TEST_CHECK(s.check(buffers, 10));
 }
 
 void async_read_handler(const asio::error& e, size_t bytes_transferred,
@@ -177,156 +209,154 @@ void test_async_read()
   asio::demuxer d;
   test_stream s(d);
   char read_buf[1024];
+  asio::mutable_buffers<1> buffers = asio::buffers(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
   bool called = false;
-  asio::async_read(s, read_buf, sizeof(read_buf),
+  asio::async_read(s, buffers,
       boost::bind(async_read_handler, asio::placeholders::error,
         asio::placeholders::bytes_transferred, sizeof(read_data), &called));
   d.reset();
   d.run();
   UNIT_TEST_CHECK(called);
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read(s, read_buf, sizeof(read_buf),
+  asio::async_read(s, buffers,
       boost::bind(async_read_handler, asio::placeholders::error,
         asio::placeholders::bytes_transferred, 1, &called));
   d.reset();
   d.run();
   UNIT_TEST_CHECK(called);
-  UNIT_TEST_CHECK(s.check(read_buf, 1));
+  UNIT_TEST_CHECK(s.check(buffers, 1));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read(s, read_buf, sizeof(read_buf),
+  asio::async_read(s, buffers,
       boost::bind(async_read_handler, asio::placeholders::error,
         asio::placeholders::bytes_transferred, 10, &called));
   d.reset();
   d.run();
   UNIT_TEST_CHECK(called);
-  UNIT_TEST_CHECK(s.check(read_buf, 10));
+  UNIT_TEST_CHECK(s.check(buffers, 10));
 }
 
 void test_read_n()
 {
   asio::demuxer d;
   test_stream s(d);
-  char read_buf[1024];
+  char read_buf[sizeof(read_data)];
+  asio::mutable_buffers<1> buffers = asio::buffers(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
-  size_t last_bytes_transferred = asio::read_n(s, read_buf, sizeof(read_data));
+  size_t last_bytes_transferred = asio::read_n(s, buffers);
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
   size_t total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_n(s, read_buf, sizeof(read_data),
-      &total_bytes_transferred);
+  last_bytes_transferred = asio::read_n(s, buffers, &total_bytes_transferred);
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data));
   UNIT_TEST_CHECK(total_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read_n(s, read_buf, sizeof(read_data));
+  last_bytes_transferred = asio::read_n(s, buffers);
   UNIT_TEST_CHECK(last_bytes_transferred == 1);
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
   total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_n(s, read_buf, sizeof(read_data),
-      &total_bytes_transferred);
+  last_bytes_transferred = asio::read_n(s, buffers, &total_bytes_transferred);
   UNIT_TEST_CHECK(last_bytes_transferred == 1);
   UNIT_TEST_CHECK(total_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read_n(s, read_buf, sizeof(read_data));
+  last_bytes_transferred = asio::read_n(s, buffers);
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data) % 10);
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
   total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_n(s, read_buf, sizeof(read_data),
-      &total_bytes_transferred);
+  last_bytes_transferred = asio::read_n(s, buffers, &total_bytes_transferred);
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data) % 10);
   UNIT_TEST_CHECK(total_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 }
 
 void test_read_n_with_error_handler()
 {
   asio::demuxer d;
   test_stream s(d);
-  char read_buf[1024];
+  char read_buf[sizeof(read_data)];
+  asio::mutable_buffers<1> buffers = asio::buffers(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
-  size_t last_bytes_transferred = asio::read_n(s, read_buf, sizeof(read_data),
-      0, asio::ignore_error());
+  size_t last_bytes_transferred = asio::read_n(s, buffers, 0,
+      asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
   size_t total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_n(s, read_buf, sizeof(read_data),
-      &total_bytes_transferred, asio::ignore_error());
+  last_bytes_transferred = asio::read_n(s, buffers, &total_bytes_transferred,
+      asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data));
   UNIT_TEST_CHECK(total_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read_n(s, read_buf, sizeof(read_data), 0,
-      asio::ignore_error());
+  last_bytes_transferred = asio::read_n(s, buffers, 0, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == 1);
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
   total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_n(s, read_buf, sizeof(read_data),
-      &total_bytes_transferred, asio::ignore_error());
+  last_bytes_transferred = asio::read_n(s, buffers, &total_bytes_transferred,
+      asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == 1);
   UNIT_TEST_CHECK(total_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read_n(s, read_buf, sizeof(read_data), 0,
-      asio::ignore_error());
+  last_bytes_transferred = asio::read_n(s, buffers, 0, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data) % 10);
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
   total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_n(s, read_buf, sizeof(read_data),
-      &total_bytes_transferred, asio::ignore_error());
+  last_bytes_transferred = asio::read_n(s, buffers, &total_bytes_transferred,
+      asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data) % 10);
   UNIT_TEST_CHECK(total_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 }
 
 void async_read_n_handler(const asio::error& e, size_t last_bytes_transferred,
@@ -342,12 +372,13 @@ void test_async_read_n()
 {
   asio::demuxer d;
   test_stream s(d);
-  char read_buf[1024];
+  char read_buf[sizeof(read_data)];
+  asio::mutable_buffers<1> buffers = asio::buffers(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
   bool called = false;
-  asio::async_read_n(s, read_buf, sizeof(read_data),
+  asio::async_read_n(s, buffers,
       boost::bind(async_read_n_handler, asio::placeholders::error,
         asio::placeholders::last_bytes_transferred,
         asio::placeholders::total_bytes_transferred,
@@ -355,13 +386,13 @@ void test_async_read_n()
   d.reset();
   d.run();
   UNIT_TEST_CHECK(called);
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_n(s, read_buf, sizeof(read_data),
+  asio::async_read_n(s, buffers,
       boost::bind(async_read_n_handler, asio::placeholders::error,
         asio::placeholders::last_bytes_transferred,
         asio::placeholders::total_bytes_transferred, 1,
@@ -369,13 +400,13 @@ void test_async_read_n()
   d.reset();
   d.run();
   UNIT_TEST_CHECK(called);
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_n(s, read_buf, sizeof(read_data),
+  asio::async_read_n(s, buffers,
       boost::bind(async_read_n_handler, asio::placeholders::error,
         asio::placeholders::last_bytes_transferred,
         asio::placeholders::total_bytes_transferred,
@@ -383,333 +414,326 @@ void test_async_read_n()
   d.reset();
   d.run();
   UNIT_TEST_CHECK(called);
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 }
 
 void test_read_at_least_n()
 {
   asio::demuxer d;
   test_stream s(d);
-  char read_buf[1024];
+  char read_buf[sizeof(read_data)];
+  asio::mutable_buffers<1> buffers = asio::buffers(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
-  size_t last_bytes_transferred = asio::read_at_least_n(s, read_buf, 1,
-      sizeof(read_data));
+  size_t last_bytes_transferred = asio::read_at_least_n(s, buffers, 1);
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
   size_t total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 1,
-      sizeof(read_data), &total_bytes_transferred);
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 1,
+      &total_bytes_transferred);
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data));
   UNIT_TEST_CHECK(total_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 10,
-      sizeof(read_data));
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 10);
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
   total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 10,
-      sizeof(read_data), &total_bytes_transferred);
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 10,
+      &total_bytes_transferred);
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data));
   UNIT_TEST_CHECK(total_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, sizeof(read_data),
-      sizeof(read_data));
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, sizeof(read_data));
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
   total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, sizeof(read_data),
-      sizeof(read_data), &total_bytes_transferred);
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, sizeof(read_data),
+      &total_bytes_transferred);
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data));
   UNIT_TEST_CHECK(total_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 1,
-      sizeof(read_data));
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 1);
   UNIT_TEST_CHECK(last_bytes_transferred == 1);
-  UNIT_TEST_CHECK(s.check(read_buf, 1));
+  UNIT_TEST_CHECK(s.check(buffers, 1));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
   total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 1,
-      sizeof(read_data), &total_bytes_transferred);
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 1,
+      &total_bytes_transferred);
   UNIT_TEST_CHECK(last_bytes_transferred == 1);
   UNIT_TEST_CHECK(total_bytes_transferred == 1);
-  UNIT_TEST_CHECK(s.check(read_buf, 1));
+  UNIT_TEST_CHECK(s.check(buffers, 1));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 10,
-      sizeof(read_data));
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 10);
   UNIT_TEST_CHECK(last_bytes_transferred == 1);
-  UNIT_TEST_CHECK(s.check(read_buf, 10));
+  UNIT_TEST_CHECK(s.check(buffers, 10));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
   total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 10,
-      sizeof(read_data), &total_bytes_transferred);
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 10,
+      &total_bytes_transferred);
   UNIT_TEST_CHECK(last_bytes_transferred == 1);
   UNIT_TEST_CHECK(total_bytes_transferred == 10);
-  UNIT_TEST_CHECK(s.check(read_buf, 10));
+  UNIT_TEST_CHECK(s.check(buffers, 10));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, sizeof(read_data),
-      sizeof(read_data));
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, sizeof(read_data));
   UNIT_TEST_CHECK(last_bytes_transferred == 1);
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
   total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, sizeof(read_data),
-      sizeof(read_data), &total_bytes_transferred);
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, sizeof(read_data),
+      &total_bytes_transferred);
   UNIT_TEST_CHECK(last_bytes_transferred == 1);
   UNIT_TEST_CHECK(total_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 1,
-      sizeof(read_data));
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 1);
   UNIT_TEST_CHECK(last_bytes_transferred == 10);
-  UNIT_TEST_CHECK(s.check(read_buf, 10));
+  UNIT_TEST_CHECK(s.check(buffers, 10));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
   total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 1,
-      sizeof(read_data), &total_bytes_transferred);
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 1,
+      &total_bytes_transferred);
   UNIT_TEST_CHECK(last_bytes_transferred == 10);
   UNIT_TEST_CHECK(total_bytes_transferred == 10);
-  UNIT_TEST_CHECK(s.check(read_buf, 10));
+  UNIT_TEST_CHECK(s.check(buffers, 10));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 10,
-      sizeof(read_data));
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 10);
   UNIT_TEST_CHECK(last_bytes_transferred == 10);
-  UNIT_TEST_CHECK(s.check(read_buf, 10));
+  UNIT_TEST_CHECK(s.check(buffers, 10));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
   total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 10,
-      sizeof(read_data), &total_bytes_transferred);
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 10,
+      &total_bytes_transferred);
   UNIT_TEST_CHECK(last_bytes_transferred == 10);
   UNIT_TEST_CHECK(total_bytes_transferred == 10);
-  UNIT_TEST_CHECK(s.check(read_buf, 10));
+  UNIT_TEST_CHECK(s.check(buffers, 10));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, sizeof(read_data),
-      sizeof(read_data));
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, sizeof(read_data));
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data) % 10);
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
   total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, sizeof(read_data),
-      sizeof(read_data), &total_bytes_transferred);
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, sizeof(read_data),
+      &total_bytes_transferred);
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data) % 10);
   UNIT_TEST_CHECK(total_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 }
 
 void test_read_at_least_n_with_error_handler()
 {
   asio::demuxer d;
   test_stream s(d);
-  char read_buf[1024];
+  char read_buf[sizeof(read_data)];
+  asio::mutable_buffers<1> buffers = asio::buffers(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
-  size_t last_bytes_transferred = asio::read_at_least_n(s, read_buf, 1,
-      sizeof(read_data), 0, asio::ignore_error());
+  size_t last_bytes_transferred = asio::read_at_least_n(s, buffers, 1,
+      0, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
   size_t total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 1,
-      sizeof(read_data), &total_bytes_transferred, asio::ignore_error());
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 1,
+      &total_bytes_transferred, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data));
   UNIT_TEST_CHECK(total_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 10,
-      sizeof(read_data), 0, asio::ignore_error());
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 10,
+      0, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
   total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 10,
-      sizeof(read_data), &total_bytes_transferred, asio::ignore_error());
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 10,
+      &total_bytes_transferred, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data));
   UNIT_TEST_CHECK(total_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, sizeof(read_data),
-      sizeof(read_data), 0, asio::ignore_error());
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, sizeof(read_data),
+      0, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
   total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, sizeof(read_data),
-      sizeof(read_data), &total_bytes_transferred);
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, sizeof(read_data),
+      &total_bytes_transferred, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data));
   UNIT_TEST_CHECK(total_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 1,
-      sizeof(read_data));
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 1,
+      0, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == 1);
-  UNIT_TEST_CHECK(s.check(read_buf, 1));
+  UNIT_TEST_CHECK(s.check(buffers, 1));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
   total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 1,
-      sizeof(read_data), &total_bytes_transferred);
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 1,
+      &total_bytes_transferred, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == 1);
   UNIT_TEST_CHECK(total_bytes_transferred == 1);
-  UNIT_TEST_CHECK(s.check(read_buf, 1));
+  UNIT_TEST_CHECK(s.check(buffers, 1));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 10,
-      sizeof(read_data));
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 10,
+      0, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == 1);
-  UNIT_TEST_CHECK(s.check(read_buf, 10));
+  UNIT_TEST_CHECK(s.check(buffers, 10));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
   total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 10,
-      sizeof(read_data), &total_bytes_transferred);
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 10,
+      &total_bytes_transferred, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == 1);
   UNIT_TEST_CHECK(total_bytes_transferred == 10);
-  UNIT_TEST_CHECK(s.check(read_buf, 10));
+  UNIT_TEST_CHECK(s.check(buffers, 10));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, sizeof(read_data),
-      sizeof(read_data));
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, sizeof(read_data),
+      0, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == 1);
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
   total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, sizeof(read_data),
-      sizeof(read_data), &total_bytes_transferred);
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, sizeof(read_data),
+      &total_bytes_transferred, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == 1);
   UNIT_TEST_CHECK(total_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 1,
-      sizeof(read_data));
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 1,
+      0, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == 10);
-  UNIT_TEST_CHECK(s.check(read_buf, 10));
+  UNIT_TEST_CHECK(s.check(buffers, 10));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
   total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 1,
-      sizeof(read_data), &total_bytes_transferred);
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 1,
+      &total_bytes_transferred, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == 10);
   UNIT_TEST_CHECK(total_bytes_transferred == 10);
-  UNIT_TEST_CHECK(s.check(read_buf, 10));
+  UNIT_TEST_CHECK(s.check(buffers, 10));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 10,
-      sizeof(read_data));
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 10,
+      0, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == 10);
-  UNIT_TEST_CHECK(s.check(read_buf, 10));
+  UNIT_TEST_CHECK(s.check(buffers, 10));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
   total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, 10,
-      sizeof(read_data), &total_bytes_transferred);
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, 10,
+      &total_bytes_transferred, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == 10);
   UNIT_TEST_CHECK(total_bytes_transferred == 10);
-  UNIT_TEST_CHECK(s.check(read_buf, 10));
+  UNIT_TEST_CHECK(s.check(buffers, 10));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, sizeof(read_data),
-      sizeof(read_data));
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, sizeof(read_data),
+      0, asio::ignore_error());
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data) % 10);
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
   total_bytes_transferred = 0;
-  last_bytes_transferred = asio::read_at_least_n(s, read_buf, sizeof(read_data),
-      sizeof(read_data), &total_bytes_transferred);
+  last_bytes_transferred = asio::read_at_least_n(s, buffers, sizeof(read_data),
+      &total_bytes_transferred);
   UNIT_TEST_CHECK(last_bytes_transferred == sizeof(read_data) % 10);
   UNIT_TEST_CHECK(total_bytes_transferred == sizeof(read_data));
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 }
 
 void async_read_at_least_n_handler(const asio::error& e,
@@ -726,12 +750,13 @@ void test_async_read_at_least_n()
 {
   asio::demuxer d;
   test_stream s(d);
-  char read_buf[1024];
+  char read_buf[sizeof(read_data)];
+  asio::mutable_buffers<1> buffers = asio::buffers(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
   bool called = false;
-  asio::async_read_at_least_n(s, read_buf, 1, sizeof(read_data),
+  asio::async_read_at_least_n(s, buffers, 1,
       boost::bind(async_read_at_least_n_handler, asio::placeholders::error,
         asio::placeholders::last_bytes_transferred,
         asio::placeholders::total_bytes_transferred,
@@ -739,12 +764,12 @@ void test_async_read_at_least_n()
   d.reset();
   d.run();
   UNIT_TEST_CHECK(called);
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_at_least_n(s, read_buf, 10, sizeof(read_data),
+  asio::async_read_at_least_n(s, buffers, 10,
       boost::bind(async_read_at_least_n_handler, asio::placeholders::error,
         asio::placeholders::last_bytes_transferred,
         asio::placeholders::total_bytes_transferred,
@@ -752,13 +777,12 @@ void test_async_read_at_least_n()
   d.reset();
   d.run();
   UNIT_TEST_CHECK(called);
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_at_least_n(s, read_buf, sizeof(read_data),
-      sizeof(read_data),
+  asio::async_read_at_least_n(s, buffers, sizeof(read_data),
       boost::bind(async_read_at_least_n_handler, asio::placeholders::error,
         asio::placeholders::last_bytes_transferred,
         asio::placeholders::total_bytes_transferred,
@@ -766,40 +790,39 @@ void test_async_read_at_least_n()
   d.reset();
   d.run();
   UNIT_TEST_CHECK(called);
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_at_least_n(s, read_buf, 1, sizeof(read_data),
+  asio::async_read_at_least_n(s, buffers, 1,
       boost::bind(async_read_at_least_n_handler, asio::placeholders::error,
         asio::placeholders::last_bytes_transferred,
         asio::placeholders::total_bytes_transferred, 1, 1, &called));
   d.reset();
   d.run();
   UNIT_TEST_CHECK(called);
-  UNIT_TEST_CHECK(s.check(read_buf, 1));
+  UNIT_TEST_CHECK(s.check(buffers, 1));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_at_least_n(s, read_buf, 10, sizeof(read_data),
+  asio::async_read_at_least_n(s, buffers, 10,
       boost::bind(async_read_at_least_n_handler, asio::placeholders::error,
         asio::placeholders::last_bytes_transferred,
         asio::placeholders::total_bytes_transferred, 1, 10, &called));
   d.reset();
   d.run();
   UNIT_TEST_CHECK(called);
-  UNIT_TEST_CHECK(s.check(read_buf, 10));
+  UNIT_TEST_CHECK(s.check(buffers, 10));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_at_least_n(s, read_buf, sizeof(read_data),
-      sizeof(read_data),
+  asio::async_read_at_least_n(s, buffers, sizeof(read_data),
       boost::bind(async_read_at_least_n_handler, asio::placeholders::error,
         asio::placeholders::last_bytes_transferred,
         asio::placeholders::total_bytes_transferred,
@@ -807,40 +830,39 @@ void test_async_read_at_least_n()
   d.reset();
   d.run();
   UNIT_TEST_CHECK(called);
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_at_least_n(s, read_buf, 1, sizeof(read_data),
+  asio::async_read_at_least_n(s, buffers, 1,
       boost::bind(async_read_at_least_n_handler, asio::placeholders::error,
         asio::placeholders::last_bytes_transferred,
         asio::placeholders::total_bytes_transferred, 10, 10, &called));
   d.reset();
   d.run();
   UNIT_TEST_CHECK(called);
-  UNIT_TEST_CHECK(s.check(read_buf, 10));
+  UNIT_TEST_CHECK(s.check(buffers, 10));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_at_least_n(s, read_buf, 10, sizeof(read_data),
+  asio::async_read_at_least_n(s, buffers, 10,
       boost::bind(async_read_at_least_n_handler, asio::placeholders::error,
         asio::placeholders::last_bytes_transferred,
         asio::placeholders::total_bytes_transferred, 10, 10, &called));
   d.reset();
   d.run();
   UNIT_TEST_CHECK(called);
-  UNIT_TEST_CHECK(s.check(read_buf, 10));
+  UNIT_TEST_CHECK(s.check(buffers, 10));
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_at_least_n(s, read_buf, sizeof(read_data),
-      sizeof(read_data),
+  asio::async_read_at_least_n(s, buffers, sizeof(read_data),
       boost::bind(async_read_at_least_n_handler, asio::placeholders::error,
         asio::placeholders::last_bytes_transferred,
         asio::placeholders::total_bytes_transferred,
@@ -848,7 +870,7 @@ void test_async_read_at_least_n()
   d.reset();
   d.run();
   UNIT_TEST_CHECK(called);
-  UNIT_TEST_CHECK(s.check(read_buf, sizeof(read_data)));
+  UNIT_TEST_CHECK(s.check(buffers, sizeof(read_data)));
 }
 
 void read_test()

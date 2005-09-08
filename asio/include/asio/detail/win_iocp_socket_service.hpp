@@ -52,6 +52,9 @@ public:
   // The type of the reactor used for connect operations.
   typedef detail::select_reactor<true> reactor_type;
 
+  // The maximum number of buffers to support in a single operation.
+  enum { max_buffers = 16 };
+
   // Constructor. This socket service can only work if the demuxer is
   // using the win_iocp_demuxer_service. By using this type as the parameter we
   // will cause a compile error if this is not the case.
@@ -208,17 +211,32 @@ public:
 
   // Send the given data to the peer. Returns the number of bytes sent or
   // 0 if the connection was closed cleanly.
-  template <typename Error_Handler>
-  size_t send(impl_type& impl, const void* data, size_t length,
+  template <typename Const_Buffers, typename Error_Handler>
+  size_t send(impl_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, Error_Handler error_handler)
   {
-    int bytes_sent = socket_ops::send(impl, data, length, flags);
-    if (bytes_sent < 0)
+    // Copy buffers into WSABUF array.
+    ::WSABUF bufs[max_buffers];
+    typename Const_Buffers::const_iterator iter = buffers.begin();
+    typename Const_Buffers::const_iterator end = buffers.end();
+    size_t i = 0;
+    for (; iter != end && i < max_buffers; ++iter, ++i)
     {
-      error_handler(asio::error(socket_ops::get_error()));
+      bufs[i].len = static_cast<u_long>(iter->size());
+      bufs[i].buf = static_cast<char*>(const_cast<void*>(iter->data()));
+    }
+
+    // Send the data.
+    DWORD bytes_transferred = 0;
+    int result = ::WSASend(impl, bufs, i, &bytes_transferred, flags, 0, 0);
+    if (result != 0)
+    {
+      DWORD last_error = ::WSAGetLastError();
+      error_handler(asio::error(last_error));
       return 0;
     }
-    return bytes_sent;
+
+    return bytes_transferred;
   }
 
   template <typename Handler>
@@ -255,22 +273,31 @@ public:
 
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
-  template <typename Handler>
-  void async_send(impl_type& impl, const void* data, size_t length,
+  template <typename Const_Buffers, typename Handler>
+  void async_send(impl_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, Handler handler)
   {
     send_operation<Handler>* op = new send_operation<Handler>(handler);
 
     demuxer_service_.work_started();
 
-    WSABUF buf;
-    buf.len = static_cast<u_long>(length);
-    buf.buf = static_cast<char*>(const_cast<void*>(data));
-    DWORD bytes_transferred = 0;
+    // Copy buffers into WSABUF array.
+    ::WSABUF bufs[max_buffers];
+    typename Const_Buffers::const_iterator iter = buffers.begin();
+    typename Const_Buffers::const_iterator end = buffers.end();
+    size_t i = 0;
+    for (; iter != end && i < max_buffers; ++iter, ++i)
+    {
+      bufs[i].len = static_cast<u_long>(iter->size());
+      bufs[i].buf = static_cast<char*>(const_cast<void*>(iter->data()));
+    }
 
-    int result = ::WSASend(impl, &buf, 1, &bytes_transferred, flags, op, 0);
+    // Send the data.
+    DWORD bytes_transferred = 0;
+    int result = ::WSASend(impl, bufs, i, &bytes_transferred, flags, op, 0);
     DWORD last_error = ::WSAGetLastError();
 
+    // Check if the operation completed immediately.
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
       delete op;
@@ -282,20 +309,34 @@ public:
 
   // Send a datagram to the specified endpoint. Returns the number of bytes
   // sent.
-  template <typename Endpoint, typename Error_Handler>
-  size_t send_to(impl_type& impl, const void* data, size_t length,
+  template <typename Const_Buffers, typename Endpoint, typename Error_Handler>
+  size_t send_to(impl_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, const Endpoint& destination,
       Error_Handler error_handler)
   {
-    int bytes_sent = socket_ops::sendto(impl, data, length, flags,
-        destination.data(), destination.size());
-    if (bytes_sent < 0)
+    // Copy buffers into WSABUF array.
+    ::WSABUF bufs[max_buffers];
+    typename Const_Buffers::const_iterator iter = buffers.begin();
+    typename Const_Buffers::const_iterator end = buffers.end();
+    size_t i = 0;
+    for (; iter != end && i < max_buffers; ++iter, ++i)
     {
-      error_handler(asio::error(socket_ops::get_error()));
+      bufs[i].len = static_cast<u_long>(iter->size());
+      bufs[i].buf = static_cast<char*>(const_cast<void*>(iter->data()));
+    }
+
+    // Send the data.
+    DWORD bytes_transferred = 0;
+    int result = ::WSASendTo(impl, bufs, i, &bytes_transferred, flags,
+        destination.data(), destination.size(), 0, 0);
+    if (result != 0)
+    {
+      DWORD last_error = ::WSAGetLastError();
+      error_handler(asio::error(last_error));
       return 0;
     }
 
-    return bytes_sent;
+    return bytes_transferred;
   }
 
   template <typename Handler>
@@ -333,28 +374,36 @@ public:
 
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
-  template <typename Endpoint, typename Handler>
-  void async_send_to(impl_type& impl, const void* data, size_t length,
+  template <typename Const_Buffers, typename Endpoint, typename Handler>
+  void async_send_to(impl_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, const Endpoint& destination,
       Handler handler)
   {
-    send_to_operation<Handler>* send_to_op =
-      new send_to_operation<Handler>(handler);
+    send_to_operation<Handler>* op = new send_to_operation<Handler>(handler);
 
     demuxer_service_.work_started();
 
-    WSABUF buf;
-    buf.len = static_cast<u_long>(length);
-    buf.buf = static_cast<char*>(const_cast<void*>(data));
-    DWORD bytes_transferred = 0;
+    // Copy buffers into WSABUF array.
+    ::WSABUF bufs[max_buffers];
+    typename Const_Buffers::const_iterator iter = buffers.begin();
+    typename Const_Buffers::const_iterator end = buffers.end();
+    size_t i = 0;
+    for (; iter != end && i < max_buffers; ++iter, ++i)
+    {
+      bufs[i].len = static_cast<u_long>(iter->size());
+      bufs[i].buf = static_cast<char*>(const_cast<void*>(iter->data()));
+    }
 
-    int result = ::WSASendTo(impl, &buf, 1, &bytes_transferred, flags,
-        destination.data(), destination.size(), send_to_op, 0);
+    // Send the data.
+    DWORD bytes_transferred = 0;
+    int result = ::WSASendTo(impl, bufs, i, &bytes_transferred, flags,
+        destination.data(), destination.size(), op, 0);
     DWORD last_error = ::WSAGetLastError();
 
+    // Check if the operation completed immediately.
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
-      delete send_to_op;
+      delete op;
       asio::error error(last_error);
       demuxer_service_.post(bind_handler(handler, error, bytes_transferred));
       demuxer_service_.work_finished();
@@ -363,17 +412,34 @@ public:
 
   // Receive some data from the peer. Returns the number of bytes received or
   // 0 if the connection was closed cleanly.
-  template <typename Error_Handler>
-  size_t receive(impl_type& impl, void* data, size_t max_length,
+  template <typename Mutable_Buffers, typename Error_Handler>
+  size_t receive(impl_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Error_Handler error_handler)
   {
-    int bytes_recvd = socket_ops::recv(impl, data, max_length, flags);
-    if (bytes_recvd < 0)
+    // Copy buffers into WSABUF array.
+    ::WSABUF bufs[max_buffers];
+    typename Mutable_Buffers::const_iterator iter = buffers.begin();
+    typename Mutable_Buffers::const_iterator end = buffers.end();
+    size_t i = 0;
+    for (; iter != end && i < max_buffers; ++iter, ++i)
     {
-      error_handler(asio::error(socket_ops::get_error()));
+      bufs[i].len = static_cast<u_long>(iter->size());
+      bufs[i].buf = static_cast<char*>(iter->data());
+    }
+
+    // Receive some data.
+    DWORD bytes_transferred = 0;
+    DWORD recv_flags = flags;
+    int result = ::WSARecv(impl, bufs, i,
+        &bytes_transferred, &recv_flags, 0, 0);
+    if (result != 0)
+    {
+      DWORD last_error = ::WSAGetLastError();
+      error_handler(asio::error(last_error));
       return 0;
     }
-    return bytes_recvd;
+
+    return bytes_transferred;
   }
 
   template <typename Handler>
@@ -411,24 +477,31 @@ public:
 
   // Start an asynchronous receive. The buffer for the data being received
   // must be valid for the lifetime of the asynchronous operation.
-  template <typename Handler>
-  void async_receive(impl_type& impl, void* data, size_t max_length,
+  template <typename Mutable_Buffers, typename Handler>
+  void async_receive(impl_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Handler handler)
   {
     receive_operation<Handler>* op = new receive_operation<Handler>(handler);
 
     demuxer_service_.work_started();
 
-    WSABUF buf;
-    buf.len = static_cast<u_long>(max_length);
-    buf.buf = static_cast<char*>(data);
+    // Copy buffers into WSABUF array.
+    ::WSABUF bufs[max_buffers];
+    typename Mutable_Buffers::const_iterator iter = buffers.begin();
+    typename Mutable_Buffers::const_iterator end = buffers.end();
+    size_t i = 0;
+    for (; iter != end && i < max_buffers; ++iter, ++i)
+    {
+      bufs[i].len = static_cast<u_long>(iter->size());
+      bufs[i].buf = static_cast<char*>(iter->data());
+    }
+
+    // Receive some data.
     DWORD bytes_transferred = 0;
     DWORD recv_flags = flags;
-
-    int result = ::WSARecv(impl, &buf, 1,
+    int result = ::WSARecv(impl, bufs, i,
         &bytes_transferred, &recv_flags, op, 0);
     DWORD last_error = ::WSAGetLastError();
-
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
       delete op;
@@ -438,26 +511,40 @@ public:
     }
   }
 
-
   // Receive a datagram with the endpoint of the sender. Returns the number of
   // bytes received.
-  template <typename Endpoint, typename Error_Handler>
-  size_t receive_from(impl_type& impl, void* data, size_t max_length,
+  template <typename Mutable_Buffers, typename Endpoint, typename Error_Handler>
+  size_t receive_from(impl_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Endpoint& sender_endpoint,
       Error_Handler error_handler)
   {
-    socket_addr_len_type addr_len = sender_endpoint.size();
-    int bytes_recvd = socket_ops::recvfrom(impl, data, max_length, flags,
-        sender_endpoint.data(), &addr_len);
-    if (bytes_recvd < 0)
+    // Copy buffers into WSABUF array.
+    ::WSABUF bufs[max_buffers];
+    typename Mutable_Buffers::const_iterator iter = buffers.begin();
+    typename Mutable_Buffers::const_iterator end = buffers.end();
+    size_t i = 0;
+    for (; iter != end && i < max_buffers; ++iter, ++i)
     {
-      error_handler(asio::error(socket_ops::get_error()));
+      bufs[i].len = static_cast<u_long>(iter->size());
+      bufs[i].buf = static_cast<char*>(iter->data());
+    }
+
+    // Receive some data.
+    DWORD bytes_transferred = 0;
+    DWORD recv_flags = flags;
+    int endpoint_size = sender_endpoint.size();
+    int result = ::WSARecvFrom(impl, bufs, i, &bytes_transferred, &recv_flags,
+        sender_endpoint.data(), &endpoint_size, 0, 0);
+    if (result != 0)
+    {
+      DWORD last_error = ::WSAGetLastError();
+      error_handler(asio::error(last_error));
       return 0;
     }
 
-    sender_endpoint.size(addr_len);
+    sender_endpoint.size(endpoint_size);
 
-    return bytes_recvd;
+    return bytes_transferred;
   }
 
   template <typename Endpoint, typename Handler>
@@ -507,8 +594,8 @@ public:
   // Start an asynchronous receive. The buffer for the data being received and
   // the sender_endpoint object must both be valid for the lifetime of the
   // asynchronous operation.
-  template <typename Endpoint, typename Handler>
-  void async_receive_from(impl_type& impl, void* data, size_t max_length,
+  template <typename Mutable_Buffers, typename Endpoint, typename Handler>
+  void async_receive_from(impl_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Endpoint& sender_endpoint,
       Handler handler)
   {
@@ -517,17 +604,24 @@ public:
 
     demuxer_service_.work_started();
 
-    WSABUF buf;
-    buf.len = static_cast<u_long>(max_length);
-    buf.buf = static_cast<char*>(data);
+    // Copy buffers into WSABUF array.
+    ::WSABUF bufs[max_buffers];
+    typename Mutable_Buffers::const_iterator iter = buffers.begin();
+    typename Mutable_Buffers::const_iterator end = buffers.end();
+    size_t i = 0;
+    for (; iter != end && i < max_buffers; ++iter, ++i)
+    {
+      bufs[i].len = static_cast<u_long>(iter->size());
+      bufs[i].buf = static_cast<char*>(iter->data());
+    }
+
+    // Receive some data.
     DWORD bytes_transferred = 0;
     DWORD recv_flags = flags;
-
-    int result = ::WSARecvFrom(impl, &buf, 1, &bytes_transferred, &recv_flags,
+    int result = ::WSARecvFrom(impl, bufs, i, &bytes_transferred, &recv_flags,
         sender_endpoint.data(), &receive_from_op->endpoint_size(),
         receive_from_op, 0);
     DWORD last_error = ::WSAGetLastError();
-
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
       delete receive_from_op;
