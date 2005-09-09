@@ -316,14 +316,16 @@ public:
 /// Create a const_buffers instance with one element.
 inline const_buffers<1> buffers(const const_buffer& b)
 {
-  const_buffers<1> tmp = { b };
+  const_buffers<1> tmp;
+  tmp[0] = b;
   return tmp;
 }
 
 /// Create a mutable_buffers instance with one element.
 inline mutable_buffers<1> buffers(const mutable_buffer& b)
 {
-  mutable_buffers<1> tmp = { b };
+  mutable_buffers<1> tmp;
+  tmp[0] = b;
   return tmp;
 }
 
