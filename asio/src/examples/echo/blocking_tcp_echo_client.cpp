@@ -30,10 +30,10 @@ int main(int argc, char* argv[])
     char request[max_length];
     std::cin.getline(request, max_length);
     size_t request_length = strlen(request);
-    asio::write_n(s, request, request_length);
+    asio::write_n(s, asio::buffers(request, request_length));
 
     char reply[max_length];
-    size_t reply_length = asio::read_n(s, reply, request_length);
+    size_t reply_length = asio::read_n(s, asio::buffers(reply, request_length));
     std::cout << "Reply is: ";
     std::cout.write(reply, reply_length);
     std::cout << "\n";

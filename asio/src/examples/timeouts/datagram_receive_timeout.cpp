@@ -13,7 +13,8 @@ public:
       timer_(d),
       socket_(d, ipv4::udp::endpoint(32124))
   {
-    socket_.async_receive_from(data_, max_length, 0, sender_endpoint_,
+    socket_.async_receive_from(
+        asio::buffers(data_, max_length), 0, sender_endpoint_,
         boost::bind(&datagram_handler::handle_receive_from, this,
           asio::placeholders::error, asio::placeholders::bytes_transferred));
 

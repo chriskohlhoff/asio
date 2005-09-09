@@ -18,7 +18,7 @@ public:
 
   void start()
   {
-    socket_.async_read(data_, max_length,
+    socket_.async_read(asio::buffers(data_, max_length),
         boost::bind(&session::handle_read, this, asio::placeholders::error,
           asio::placeholders::bytes_transferred));
   }
@@ -27,7 +27,7 @@ public:
   {
     if (!error && bytes_transferred > 0)
     {
-      asio::async_write_n(socket_, data_, bytes_transferred,
+      asio::async_write_n(socket_, asio::buffers(data_, bytes_transferred),
           boost::bind(&session::handle_write, this, asio::placeholders::error,
             asio::placeholders::bytes_transferred));
     }
@@ -41,7 +41,7 @@ public:
   {
     if (!error && last_bytes_transferred > 0)
     {
-      socket_.async_read(data_, max_length,
+      socket_.async_read(asio::buffers(data_, max_length),
           boost::bind(&session::handle_read, this, asio::placeholders::error,
             asio::placeholders::bytes_transferred));
     }

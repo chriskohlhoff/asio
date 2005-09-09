@@ -17,6 +17,7 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/consuming_buffers.hpp"
 #include "asio/detail/bind_handler.hpp"
 
 namespace asio {
@@ -29,9 +30,7 @@ namespace asio {
  * @param s The stream to which the data is to be written. The type must support
  * the Sync_Write_Stream concept.
  *
- * @param data The data to be written to the stream.
- *
- * @param length The size of the data to be written, in bytes.
+ * @param buffers The data to be written to the stream.
  *
  * @returns The number of bytes written, or 0 if the stream was closed cleanly.
  *
@@ -42,10 +41,10 @@ namespace asio {
  * Consider using the asio::write_n() function if you need to ensure that all
  * data is written before the blocking operation completes.
  */
-template <typename Sync_Write_Stream>
-inline size_t write(Sync_Write_Stream& s, const void* data, size_t length)
+template <typename Sync_Write_Stream, typename Const_Buffers>
+inline size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers)
 {
-  return s.write(data, length);
+  return s.write(buffers);
 }
 
 /// Write some data to a stream.
@@ -56,7 +55,7 @@ inline size_t write(Sync_Write_Stream& s, const void* data, size_t length)
  * @param s The stream to which the data is to be written. The type must support
  * the Sync_Write_Stream concept.
  *
- * @param data The data to be written to the stream.
+ * @param buffers The data to be written to the stream.
  *
  * @param length The size of the data to be written, in bytes.
  *
@@ -75,11 +74,12 @@ inline size_t write(Sync_Write_Stream& s, const void* data, size_t length)
  * Consider using the asio::write_n() function if you need to ensure that all
  * data is written before the blocking operation completes.
  */
-template <typename Sync_Write_Stream, typename Error_Handler>
-inline size_t write(Sync_Write_Stream& s, const void* data, size_t length,
+template <typename Sync_Write_Stream, typename Const_Buffers,
+    typename Error_Handler>
+inline size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
     Error_Handler error_handler)
 {
-  return s.write(data, length, error_handler);
+  return s.write(buffers, error_handler);
 }
 
 /// Start an asynchronous write.
@@ -90,11 +90,10 @@ inline size_t write(Sync_Write_Stream& s, const void* data, size_t length,
  * @param s The stream to which the data is to be written. The type must support
  * the Async_Write_Stream concept.
  *
- * @param data The data to be written to the stream. Ownership of the data is
- * retained by the caller, which must guarantee that it is valid until the
- * handler is called.
- *
- * @param length The size of the data to be written, in bytes.
+ * @param buffers The data to be sent on the stream. Although the buffers object
+ * may be copied as necessary, ownership of the underlying buffers is retained
+ * by the caller, which must guarantee that they remain valid until the handler
+ * is called.
  *
  * @param handler The handler to be called when the write operation completes.
  * Copies will be made of the handler as required. The equivalent function
@@ -111,11 +110,11 @@ inline size_t write(Sync_Write_Stream& s, const void* data, size_t length,
  * Consider using the asio::async_write_n() function if you need to ensure that
  * all data is written before the asynchronous operation completes.
  */
-template <typename Async_Write_Stream, typename Handler>
-inline void async_write(Async_Write_Stream& s, const void* data, size_t length,
+template <typename Async_Write_Stream, typename Const_Buffers, typename Handler>
+inline void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
     Handler handler)
 {
-  s.async_write(data, length, handler);
+  s.async_write(buffers, handler);
 }
 
 /// Write all of the given data to the stream before returning.
@@ -127,9 +126,7 @@ inline void async_write(Async_Write_Stream& s, const void* data, size_t length,
  * @param s The stream to which the data is to be written. The type must support
  * the Sync_Write_Stream concept.
  *
- * @param data The data to be written to the stream.
- *
- * @param length The size of the data to be written, in bytes.
+ * @param buffers The data to be written to the stream.
  *
  * @param total_bytes_transferred An optional output parameter that receives the
  * total number of bytes actually written.
@@ -140,23 +137,23 @@ inline void async_write(Async_Write_Stream& s, const void* data, size_t length,
  * @note Throws an exception on failure. The type of the exception depends
  * on the underlying stream's write operation.
  */
-template <typename Sync_Write_Stream>
-size_t write_n(Sync_Write_Stream& s, const void* data, size_t length,
+template <typename Sync_Write_Stream, typename Const_Buffers>
+size_t write_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
     size_t* total_bytes_transferred = 0)
 {
+  consuming_buffers<Const_Buffers> tmp(buffers);
   size_t bytes_transferred = 0;
   size_t total_transferred = 0;
-  while (total_transferred < length)
+  while (tmp.begin() != tmp.end())
   {
-    bytes_transferred = write(s,
-        static_cast<const char*>(data) + total_transferred,
-        length - total_transferred);
+    bytes_transferred = write(s, tmp);
     if (bytes_transferred == 0)
     {
       if (total_bytes_transferred)
         *total_bytes_transferred = total_transferred;
       return bytes_transferred;
     }
+    tmp.consume(bytes_transferred);
     total_transferred += bytes_transferred;
   }
   if (total_bytes_transferred)
@@ -173,9 +170,7 @@ size_t write_n(Sync_Write_Stream& s, const void* data, size_t length,
  * @param s The stream to which the data is to be written. The type must support
  * the Sync_Write_Stream concept.
  *
- * @param data The data to be written to the stream.
- *
- * @param length The size of the data to be written, in bytes.
+ * @param buffers The data to be written to the stream.
  *
  * @param total_bytes_transferred An optional output parameter that receives the
  * total number of bytes actually written.
@@ -192,23 +187,24 @@ size_t write_n(Sync_Write_Stream& s, const void* data, size_t length,
  * @returns The number of bytes written on the last write, or 0 if the stream
  * was closed cleanly.
  */
-template <typename Sync_Write_Stream, typename Error_Handler>
-size_t write_n(Sync_Write_Stream& s, const void* data, size_t length,
+template <typename Sync_Write_Stream, typename Const_Buffers,
+    typename Error_Handler>
+size_t write_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
     size_t* total_bytes_transferred, Error_Handler error_handler)
 {
+  consuming_buffers<Const_Buffers> tmp(buffers);
   size_t bytes_transferred = 0;
   size_t total_transferred = 0;
-  while (total_transferred < length)
+  while (tmp.begin() != tmp.end())
   {
-    bytes_transferred = write(s,
-        static_cast<const char*>(data) + total_transferred,
-        length - total_transferred, error_handler);
+    bytes_transferred = write(s, tmp, error_handler);
     if (bytes_transferred == 0)
     {
       if (total_bytes_transferred)
         *total_bytes_transferred = total_transferred;
       return bytes_transferred;
     }
+    tmp.consume(bytes_transferred);
     total_transferred += bytes_transferred;
   }
   if (total_bytes_transferred)
@@ -218,15 +214,15 @@ size_t write_n(Sync_Write_Stream& s, const void* data, size_t length,
 
 namespace detail
 {
-  template <typename Async_Write_Stream, typename Handler>
+  template <typename Async_Write_Stream, typename Const_Buffers,
+      typename Handler>
   class write_n_handler
   {
   public:
-    write_n_handler(Async_Write_Stream& stream, const void* data, size_t length,
+    write_n_handler(Async_Write_Stream& stream, const Const_Buffers& buffers,
         Handler handler)
       : stream_(stream),
-        data_(data),
-        length_(length),
+        buffers_(buffers),
         total_transferred_(0),
         handler_(handler)
     {
@@ -236,24 +232,21 @@ namespace detail
     void operator()(const Error& e, size_t bytes_transferred)
     {
       total_transferred_ += bytes_transferred;
-      if (e || bytes_transferred == 0 || total_transferred_ == length_)
+      buffers_.consume(bytes_transferred);
+      if (e || bytes_transferred == 0 || buffers_.begin() == buffers_.end())
       {
-        stream_.demuxer().dispatch(
-            detail::bind_handler(handler_, e,
+        stream_.demuxer().dispatch(detail::bind_handler(handler_, e,
               bytes_transferred, total_transferred_));
       }
       else
       {
-        asio::async_write(stream_,
-            static_cast<const char*>(data_) + total_transferred_,
-            length_ - total_transferred_, *this);
+        asio::async_write(stream_, buffers_, *this);
       }
     }
 
   private:
     Async_Write_Stream& stream_;
-    const void* data_;
-    size_t length_;
+    consuming_buffers<Const_Buffers> buffers_;
     size_t total_transferred_;
     Handler handler_;
   };
@@ -268,11 +261,10 @@ namespace detail
  * @param s The stream to which the data is to be written. The type must support
  * the Async_Write_Stream concept.
  *
- * @param data The data to be written to the stream. Ownership of the data is
- * retained by the caller, which must guarantee that it is valid until the
- * handler is called.
- *
- * @param length The size of the data to be written, in bytes.
+ * @param buffers The data to be sent on the stream. Although the buffers object
+ * may be copied as necessary, ownership of the underlying buffers is retained
+ * by the caller, which must guarantee that they remain valid until the handler
+ * is called.
  *
  * @param handler The handler to be called when the write operation completes.
  * Copies will be made of the handler as required. The equivalent function
@@ -288,13 +280,13 @@ namespace detail
  *                                  // written
  * ); @endcode
  */
-template <typename Async_Write_Stream, typename Handler>
-inline void async_write_n(Async_Write_Stream& s, const void* data,
-    size_t length, Handler handler)
+template <typename Async_Write_Stream, typename Const_Buffers, typename Handler>
+inline void async_write_n(Async_Write_Stream& s, const Const_Buffers& buffers,
+    Handler handler)
 {
-  async_write(s, data, length,
-      detail::write_n_handler<Async_Write_Stream, Handler>(s, data, length,
-        handler));
+  async_write(s, buffers,
+      detail::write_n_handler<Async_Write_Stream, Const_Buffers, Handler>(
+        s, buffers, handler));
 }
 
 /// Write at least a specified number of bytes of data to the stream before
@@ -307,11 +299,9 @@ inline void async_write_n(Async_Write_Stream& s, const void* data,
  * @param s The stream to which the data is to be written. The type must support
  * the Sync_Write_Stream concept.
  *
- * @param data The data to be written to the stream.
+ * @param buffers The data to be written to the stream.
  *
  * @param min_length The minimum size of data to be written, in bytes.
- *
- * @param max_length The maximum size of data to be written, in bytes.
  *
  * @param total_bytes_transferred An optional output parameter that receives the
  * total number of bytes actually written.
@@ -322,25 +312,23 @@ inline void async_write_n(Async_Write_Stream& s, const void* data,
  * @note Throws an exception on failure. The type of the exception depends
  * on the underlying stream's write operation.
  */
-template <typename Sync_Write_Stream>
-size_t write_at_least_n(Sync_Write_Stream& s, const void* data,
-    size_t min_length, size_t max_length, size_t* total_bytes_transferred = 0)
+template <typename Sync_Write_Stream, typename Const_Buffers>
+size_t write_at_least_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
+    size_t min_length, size_t* total_bytes_transferred = 0)
 {
+  consuming_buffers<Const_Buffers> tmp(buffers);
   size_t bytes_transferred = 0;
   size_t total_transferred = 0;
-  if (max_length < min_length)
-    min_length = max_length;
-  while (total_transferred < min_length)
+  while (tmp.begin() != tmp.end() && total_transferred < min_length)
   {
-    bytes_transferred = write(s,
-        static_cast<const char*>(data) + total_transferred,
-        max_length - total_transferred);
+    bytes_transferred = write(s, tmp);
     if (bytes_transferred == 0)
     {
       if (total_bytes_transferred)
         *total_bytes_transferred = total_transferred;
       return bytes_transferred;
     }
+    tmp.consume(bytes_transferred);
     total_transferred += bytes_transferred;
   }
   if (total_bytes_transferred)
@@ -358,11 +346,9 @@ size_t write_at_least_n(Sync_Write_Stream& s, const void* data,
  * @param s The stream to which the data is to be written. The type must support
  * the Sync_Write_Stream concept.
  *
- * @param data The data to be written to the stream.
+ * @param buffers The data to be written to the stream.
  *
  * @param min_length The minimum size of data to be written, in bytes.
- *
- * @param max_length The maximum size of data to be written, in bytes.
  *
  * @param total_bytes_transferred An optional output parameter that receives the
  * total number of bytes actually written.
@@ -379,26 +365,25 @@ size_t write_at_least_n(Sync_Write_Stream& s, const void* data,
  * @returns The number of bytes written on the last write, or 0 if the stream
  * was closed cleanly.
  */
-template <typename Sync_Write_Stream, typename Error_Handler>
-size_t write_at_least_n(Sync_Write_Stream& s, const void* data,
-    size_t min_length, size_t max_length, size_t* total_bytes_transferred,
+template <typename Sync_Write_Stream, typename Const_Buffers,
+    typename Error_Handler>
+size_t write_at_least_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
+    size_t min_length, size_t* total_bytes_transferred,
     Error_Handler error_handler)
 {
+  consuming_buffers<Const_Buffers> tmp(buffers);
   size_t bytes_transferred = 0;
   size_t total_transferred = 0;
-  if (max_length < min_length)
-    min_length = max_length;
-  while (total_transferred < min_length)
+  while (tmp.begin() != tmp.end() && total_transferred < min_length)
   {
-    bytes_transferred = write(s,
-        static_cast<const char*>(data) + total_transferred,
-        max_length - total_transferred, error_handler);
+    bytes_transferred = write(s, tmp, error_handler);
     if (bytes_transferred == 0)
     {
       if (total_bytes_transferred)
         *total_bytes_transferred = total_transferred;
       return bytes_transferred;
     }
+    tmp.consume(bytes_transferred);
     total_transferred += bytes_transferred;
   }
   if (total_bytes_transferred)
@@ -408,16 +393,16 @@ size_t write_at_least_n(Sync_Write_Stream& s, const void* data,
 
 namespace detail
 {
-  template <typename Async_Write_Stream, typename Handler>
+  template <typename Async_Write_Stream, typename Const_Buffers,
+      typename Handler>
   class write_at_least_n_handler
   {
   public:
-    write_at_least_n_handler(Async_Write_Stream& stream, const void* data,
-        size_t min_length, size_t max_length, Handler handler)
+    write_at_least_n_handler(Async_Write_Stream& stream,
+        const Const_Buffers& buffers, size_t min_length, Handler handler)
       : stream_(stream),
-        data_(data),
+        buffers_(buffers),
         min_length_(min_length),
-        max_length_(max_length),
         total_transferred_(0),
         handler_(handler)
     {
@@ -427,25 +412,23 @@ namespace detail
     void operator()(const Error& e, size_t bytes_transferred)
     {
       total_transferred_ += bytes_transferred;
-      if (e || bytes_transferred == 0 || total_transferred_ >= min_length_)
+      buffers_.consume(bytes_transferred);
+      if (e || bytes_transferred == 0 || buffers_.begin() == buffers_.end()
+          || total_transferred_ >= min_length_)
       {
-        stream_.demuxer().dispatch(
-            detail::bind_handler(handler_, e,
+        stream_.demuxer().dispatch(detail::bind_handler(handler_, e,
               bytes_transferred, total_transferred_));
       }
       else
       {
-        asio::async_write(stream_,
-            static_cast<const char*>(data_) + total_transferred_,
-            max_length_ - total_transferred_, *this);
+        asio::async_write(stream_, buffers_, *this);
       }
     }
 
   private:
     Async_Write_Stream& stream_;
-    const void* data_;
+    consuming_buffers<Const_Buffers> buffers_;
     size_t min_length_;
-    size_t max_length_;
     size_t total_transferred_;
     Handler handler_;
   };
@@ -460,13 +443,12 @@ namespace detail
  * @param s The stream to which the data is to be written. The type must support
  * the Async_Write_Stream concept.
  *
- * @param data The data to be written to the stream. Ownership of the data is
- * retained by the caller, which must guarantee that it is valid until the
- * handler is called.
+ * @param buffers The data to be sent on the stream. Although the buffers object
+ * may be copied as necessary, ownership of the underlying buffers is retained
+ * by the caller, which must guarantee that they remain valid until the handler
+ * is called.
  *
  * @param min_length The minimum size of data to be written, in bytes.
- *
- * @param max_length The maximum size of data to be written, in bytes.
  *
  * @param handler The handler to be called when the write operation completes.
  * Copies will be made of the handler as required. The equivalent function
@@ -482,15 +464,13 @@ namespace detail
  *                                  // written
  * ); @endcode
  */
-template <typename Async_Write_Stream, typename Handler>
-inline void async_write_at_least_n(Async_Write_Stream& s, const void* data,
-    size_t min_length, size_t max_length, Handler handler)
+template <typename Async_Write_Stream, typename Const_Buffers, typename Handler>
+inline void async_write_at_least_n(Async_Write_Stream& s,
+    const Const_Buffers& buffers, size_t min_length, Handler handler)
 {
-  if (max_length < min_length)
-    min_length = max_length;
-  async_write(s, data, max_length,
-      detail::write_at_least_n_handler<Async_Write_Stream, Handler>(s, data,
-        min_length, max_length, handler));
+  async_write(s, buffers,
+      detail::write_at_least_n_handler<Async_Write_Stream, Const_Buffers,
+          Handler>(s, buffers, min_length, handler));
 }
 
 } // namespace asio

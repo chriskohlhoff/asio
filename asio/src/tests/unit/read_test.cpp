@@ -97,27 +97,9 @@ public:
   }
 
   template <typename Mutable_Buffers, typename Error_Handler>
-  size_t read(const Mutable_Buffers& buffers, Error_Handler error_handler)
+  size_t read(const Mutable_Buffers& buffers, Error_Handler)
   {
-    size_t total_length = 0;
-
-    typename Mutable_Buffers::const_iterator iter = buffers.begin();
-    typename Mutable_Buffers::const_iterator end = buffers.end();
-    for (; iter != end && total_length < next_read_length_; ++iter)
-    {
-      size_t length = iter->size();
-      if (length > length_ - position_)
-        length = length_ - position_;
-
-      if (length > next_read_length_ - total_length)
-        length = next_read_length_ - total_length;
-
-      memcpy(iter->data(), data_ + position_, length);
-      position_ += length;
-      total_length += length;
-    }
-
-    return total_length;
+    return read(buffers);
   }
 
   template <typename Mutable_Buffers, typename Handler>

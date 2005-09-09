@@ -46,7 +46,7 @@ public:
   void start()
   {
     ++op_count_;
-    socket_.async_read(read_data_, block_size_,
+    socket_.async_read(buffers(read_data_, block_size_),
         dispatcher_.wrap(
           boost::bind(&session::handle_read, this, placeholders::error,
             placeholders::bytes_transferred)));
@@ -64,11 +64,11 @@ public:
       {
         op_count_ += 2;
         std::swap(read_data_, write_data_);
-        async_write_n(socket_, write_data_, read_data_length_,
+        async_write_n(socket_, buffers(write_data_, read_data_length_),
             dispatcher_.wrap(
               boost::bind(&session::handle_write, this, placeholders::error,
                 placeholders::last_bytes_transferred)));
-        socket_.async_read(read_data_, block_size_,
+        socket_.async_read(buffers(read_data_, block_size_),
             dispatcher_.wrap(
               boost::bind(&session::handle_read, this, placeholders::error,
                 placeholders::bytes_transferred)));
@@ -90,11 +90,11 @@ public:
       {
         op_count_ += 2;
         std::swap(read_data_, write_data_);
-        async_write_n(socket_, write_data_, read_data_length_,
+        async_write_n(socket_, buffers(write_data_, read_data_length_),
             dispatcher_.wrap(
               boost::bind(&session::handle_write, this, placeholders::error,
                 placeholders::last_bytes_transferred)));
-        socket_.async_read(read_data_, block_size_,
+        socket_.async_read(buffers(read_data_, block_size_),
             dispatcher_.wrap(
               boost::bind(&session::handle_read, this, placeholders::error,
                 placeholders::bytes_transferred)));

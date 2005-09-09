@@ -10,7 +10,8 @@ public:
     : demuxer_(d),
       socket_(d, asio::ipv4::udp::endpoint(port))
   {
-    socket_.async_receive_from(data_, max_length, 0, sender_endpoint_,
+    socket_.async_receive_from(asio::buffers(data_, max_length), 0,
+        sender_endpoint_,
         boost::bind(&server::handle_receive_from, this,
           asio::placeholders::error, asio::placeholders::bytes_transferred));
   }
@@ -19,13 +20,15 @@ public:
   {
     if (!error && bytes_recvd > 0)
     {
-      socket_.async_send_to(data_, bytes_recvd, 0, sender_endpoint_,
+      socket_.async_send_to(asio::buffers(data_, bytes_recvd), 0,
+          sender_endpoint_,
           boost::bind(&server::handle_send_to, this,
             asio::placeholders::error, asio::placeholders::bytes_transferred));
     }
     else
     {
-      socket_.async_receive_from(data_, max_length, 0, sender_endpoint_,
+      socket_.async_receive_from(asio::buffers(data_, max_length), 0,
+          sender_endpoint_,
           boost::bind(&server::handle_receive_from, this,
             asio::placeholders::error, asio::placeholders::bytes_transferred));
     }
@@ -33,7 +36,8 @@ public:
 
   void handle_send_to(const asio::error& error, size_t bytes_sent)
   {
-    socket_.async_receive_from(data_, max_length, 0, sender_endpoint_,
+    socket_.async_receive_from(asio::buffers(data_, max_length), 0,
+        sender_endpoint_,
         boost::bind(&server::handle_receive_from, this,
           asio::placeholders::error, asio::placeholders::bytes_transferred));
   }

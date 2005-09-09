@@ -35,8 +35,8 @@ private:
   {
     if (!error)
     {
-      asio::async_read_n(socket_, read_msg_.data(),
-          chat_message::header_length,
+      asio::async_read_n(socket_,
+          asio::buffers(read_msg_.data(), chat_message::header_length),
           boost::bind(&chat_client::handle_read_header, this,
             asio::placeholders::error,
             asio::placeholders::last_bytes_transferred));
@@ -47,7 +47,8 @@ private:
   {
     if (!error && last_length > 0 && read_msg_.decode_header())
     {
-      asio::async_read_n(socket_, read_msg_.body(), read_msg_.body_length(), 
+      asio::async_read_n(socket_,
+          asio::buffers(read_msg_.body(), read_msg_.body_length()),
           boost::bind(&chat_client::handle_read_body, this,
             asio::placeholders::error,
             asio::placeholders::last_bytes_transferred));
@@ -64,8 +65,8 @@ private:
     {
       std::cout.write(read_msg_.body(), read_msg_.body_length());
       std::cout << "\n";
-      asio::async_read_n(socket_, read_msg_.data(),
-          chat_message::header_length,
+      asio::async_read_n(socket_,
+          asio::buffers(read_msg_.data(), chat_message::header_length),
           boost::bind(&chat_client::handle_read_header, this,
             asio::placeholders::error,
             asio::placeholders::last_bytes_transferred));
@@ -82,8 +83,9 @@ private:
     write_msgs_.push_back(msg);
     if (!write_in_progress)
     {
-      asio::async_write_n(socket_, write_msgs_.front().data(),
-          write_msgs_.front().length(),
+      asio::async_write_n(socket_,
+          asio::buffers(write_msgs_.front().data(),
+            write_msgs_.front().length()),
           boost::bind(&chat_client::handle_write, this,
             asio::placeholders::error,
             asio::placeholders::last_bytes_transferred));
@@ -97,8 +99,9 @@ private:
       write_msgs_.pop_front();
       if (!write_msgs_.empty())
       {
-        asio::async_write_n(socket_, write_msgs_.front().data(),
-            write_msgs_.front().length(),
+        asio::async_write_n(socket_,
+            asio::buffers(write_msgs_.front().data(),
+              write_msgs_.front().length()),
             boost::bind(&chat_client::handle_write, this,
               asio::placeholders::error,
               asio::placeholders::last_bytes_transferred));

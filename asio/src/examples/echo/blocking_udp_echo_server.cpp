@@ -11,8 +11,9 @@ void server(asio::demuxer& d, short port)
   {
     char data[max_length];
     asio::ipv4::udp::endpoint sender_endpoint;
-    size_t length = sock.receive_from(data, max_length, 0, sender_endpoint);
-    sock.send_to(data, length, 0, sender_endpoint);
+    size_t length = sock.receive_from(
+        asio::buffers(data, max_length), 0, sender_endpoint);
+    sock.send_to(asio::buffers(data, length), 0, sender_endpoint);
   }
 }
 

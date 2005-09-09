@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
     socket.connect(remote_endpoint);
 
     char buf[128];
-    while (size_t len = socket.read(buf, sizeof(buf)))
+    while (size_t len = socket.read(asio::buffers(buf, sizeof(buf))))
       std::cout.write(buf, len);
   }
   catch (asio::error& e)

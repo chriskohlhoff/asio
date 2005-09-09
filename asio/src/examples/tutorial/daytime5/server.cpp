@@ -15,15 +15,16 @@ int main()
     {
       char recv_buf[1];
       asio::ipv4::udp::endpoint remote_endpoint;
-      socket.receive_from(recv_buf, sizeof(recv_buf), 0, remote_endpoint,
+      socket.receive_from(
+          asio::buffers(recv_buf, sizeof(recv_buf)), 0, remote_endpoint,
           asio::throw_error_if(asio::the_error != asio::error::message_size));
 
       using namespace std; // For time_t, time and ctime.
       time_t now = time(0);
       std::string msg = ctime(&now);
 
-      socket.send_to(msg.c_str(), msg.length(), 0, remote_endpoint,
-          asio::ignore_error());
+      socket.send_to(asio::buffers(msg.c_str(), msg.length()), 0,
+          remote_endpoint, asio::ignore_error());
     }
   }
   catch (asio::error& e)

@@ -35,7 +35,8 @@ int main(int argc, char* argv[])
 
     char reply[max_length];
     asio::ipv4::udp::endpoint sender_endpoint;
-    size_t reply_length = s.receive_from(reply, max_length, 0, sender_endpoint);
+    size_t reply_length = s.receive_from(
+        asio::buffers(reply, max_length), 0, sender_endpoint);
     std::cout << "Reply is: ";
     std::cout.write(reply, reply_length);
     std::cout << "\n";
