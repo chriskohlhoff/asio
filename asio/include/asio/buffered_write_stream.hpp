@@ -18,13 +18,17 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <cstddef>
 #include <cstring>
+#include <boost/config.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/type_traits.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/buffered_write_stream_fwd.hpp"
+#include "asio/buffers.hpp"
 #include "asio/write.hpp"
+#include "asio/detail/bind_handler.hpp"
 
 namespace asio {
 
@@ -99,11 +103,11 @@ public:
   /// Flush all data from the buffer to the next layer. Returns the number of
   /// bytes written to the next layer on the last write operation, or 0 if the
   /// underlying stream was closed. Throws an exception on failure.
-  size_t flush()
+  std::size_t flush()
   {
-    size_t total_bytes_written = 0;
-    size_t last_bytes_written = write_n(next_layer_, buffer_.begin(),
-        buffer_.size(), &total_bytes_written);
+    std::size_t total_bytes_written = 0;
+    std::size_t last_bytes_written = write_n(next_layer_,
+        buffers(buffer_.begin(), buffer_.size()), &total_bytes_written);
     buffer_.pop(total_bytes_written);
     return last_bytes_written;
   }
@@ -112,11 +116,12 @@ public:
   /// bytes written to the next layer on the last write operation, or 0 if the
   /// underlying stream was closed.
   template <typename Error_Handler>
-  size_t flush(Error_Handler error_handler)
+  std::size_t flush(Error_Handler error_handler)
   {
-    size_t total_bytes_written = 0;
-    size_t last_bytes_written = write_n(next_layer_, buffer_.begin(),
-        buffer_.size(), &total_bytes_written, error_handler);
+    std::size_t total_bytes_written = 0;
+    std::size_t last_bytes_written = write_n(next_layer_,
+        buffers(buffer_.begin(), buffer_.size()), &total_bytes_written,
+        error_handler);
     buffer_.pop(total_bytes_written);
     return last_bytes_written;
   }
@@ -133,8 +138,8 @@ public:
     }
 
     template <typename Error>
-    void operator()(const Error& e, size_t last_bytes_written,
-        size_t total_bytes_written)
+    void operator()(const Error& e, std::size_t last_bytes_written,
+        std::size_t total_bytes_written)
     {
       stream_.write_buffer().pop(total_bytes_written);
       stream_.demuxer().dispatch(
@@ -150,58 +155,71 @@ public:
   template <typename Handler>
   void async_flush(Handler handler)
   {
-    async_write_n(next_layer_, buffer_.begin(), buffer_.size(),
+    async_write_n(next_layer_, buffers(buffer_.begin(), buffer_.size()),
         flush_handler<Handler>(*this, handler));
   }
 
   /// Write the given data to the stream. Returns the number of bytes written or
   /// 0 if the stream was closed cleanly. Throws an exception on failure.
-  size_t write(const void* data, size_t length)
+  template <typename Const_Buffers>
+  std::size_t write(const Const_Buffers& buffers)
   {
     if (buffer_.size() == buffer_.capacity() && !flush())
       return 0;
-    return copy(data, length);
+    return copy(buffers);
   }
 
   /// Write the given data to the stream. Returns the number of bytes written or
   /// 0 if the stream was closed cleanly.
-  template <typename Error_Handler>
-  size_t write(const void* data, size_t length, Error_Handler error_handler)
+  template <typename Const_Buffers, typename Error_Handler>
+  std::size_t write(const Const_Buffers& buffers, Error_Handler error_handler)
   {
     if (buffer_.size() == buffer_.capacity() && !flush(error_handler))
       return 0;
-    return copy(data, length);
+    return copy(buffers);
   }
 
-  template <typename Handler>
+  template <typename Const_Buffers, typename Handler>
   class write_handler
   {
   public:
     write_handler(buffered_write_stream<Stream, Buffer>& stream,
-        const void* data, size_t length, Handler handler)
+        const Const_Buffers& buffers, Handler handler)
       : stream_(stream),
-        data_(data),
-        length_(length),
+        buffers_(buffers),
         handler_(handler)
     {
     }
 
     template <typename Error>
-    void operator()(const Error& e, size_t bytes_written)
+    void operator()(const Error& e, std::size_t bytes_written)
     {
       if (e || bytes_written == 0)
       {
-        size_t length = 0;
+        std::size_t length = 0;
         stream_.demuxer().dispatch(detail::bind_handler(handler_, e, length));
       }
       else
       {
         using namespace std; // For memcpy.
-        size_t orig_size = stream_.write_buffer().size();
-        size_t bytes_avail = stream_.write_buffer().capacity() - orig_size;
-        size_t bytes_copied = (length_ < bytes_avail) ? length_ : bytes_avail;
-        stream_.write_buffer().resize(orig_size + bytes_copied);
-        memcpy(stream_.write_buffer().begin() + orig_size, data_, bytes_copied);
+
+        std::size_t orig_size = stream_.write_buffer().size();
+        std::size_t space_avail = stream_.write_buffer().capacity() - orig_size;
+        std::size_t bytes_copied = 0;
+
+        typename Const_Buffers::const_iterator iter = buffers_.begin();
+        typename Const_Buffers::const_iterator end = buffers_.end();
+        for (; iter != end && space_avail > 0; ++iter)
+        {
+          std::size_t length = (iter->size() < space_avail)
+            ? iter->size() : space_avail;
+          stream_.write_buffer().resize(orig_size + bytes_copied + length);
+          memcpy(stream_.write_buffer().begin() + orig_size + bytes_copied,
+              iter->data(), length);
+          bytes_copied += length;
+          space_avail -= length;
+        }
+
         stream_.demuxer().dispatch(
             detail::bind_handler(handler_, e, bytes_copied));
       }
@@ -209,23 +227,23 @@ public:
 
   private:
     buffered_write_stream<Stream, Buffer>& stream_;
-    const void* data_;
-    size_t length_;
+    Const_Buffers buffers_;
     Handler handler_;
   };
 
   /// Start an asynchronous write. The data being written must be valid for the
   /// lifetime of the asynchronous operation.
-  template <typename Handler>
-  void async_write(const void* data, size_t length, Handler handler)
+  template <typename Const_Buffers, typename Handler>
+  void async_write(const Const_Buffers& buffers, Handler handler)
   {
     if (buffer_.size() == buffer_.capacity())
     {
-      async_flush(write_handler<Handler>(*this, data, length, handler));
+      async_flush(write_handler<Const_Buffers, Handler>(
+            *this, buffers, handler));
     }
     else
     {
-      size_t bytes_copied = copy(data, length);
+      std::size_t bytes_copied = copy(buffers);
       next_layer_.demuxer().post(
           detail::bind_handler(handler, 0, bytes_copied));
     }
@@ -233,51 +251,53 @@ public:
 
   /// Read some data from the stream. Returns the number of bytes read or 0 if
   /// the stream was closed cleanly. Throws an exception on failure.
-  size_t read(void* data, size_t max_length)
+  template <typename Mutable_Buffers>
+  std::size_t read(const Mutable_Buffers& buffers)
   {
-    return next_layer_.read(data, max_length);
+    return next_layer_.read(buffers);
   }
 
   /// Read some data from the stream. Returns the number of bytes read or 0 if
   /// the stream was closed cleanly.
-  template <typename Error_Handler>
-  size_t read(void* data, size_t max_length, Error_Handler error_handler)
+  template <typename Mutable_Buffers, typename Error_Handler>
+  std::size_t read(const Mutable_Buffers& buffers, Error_Handler error_handler)
   {
-    return next_layer_.read(data, max_length, error_handler);
+    return next_layer_.read(buffers, error_handler);
   }
 
   /// Start an asynchronous read. The buffer into which the data will be read
   /// must be valid for the lifetime of the asynchronous operation.
-  template <typename Handler>
-  void async_read(void* data, size_t max_length, Handler handler)
+  template <typename Mutable_Buffers, typename Handler>
+  void async_read(const Mutable_Buffers& buffers, Handler handler)
   {
-    next_layer_.async_read(data, max_length, handler);
+    next_layer_.async_read(buffers, handler);
   }
 
   /// Peek at the incoming data on the stream. Returns the number of bytes read
   /// or 0 if the stream was closed cleanly.
-  size_t peek(void* data, size_t max_length)
+  template <typename Mutable_Buffers>
+  std::size_t peek(const Mutable_Buffers& buffers)
   {
-    return next_layer_.peek(data, max_length);
+    return next_layer_.peek(buffers);
   }
 
   /// Peek at the incoming data on the stream. Returns the number of bytes read
   /// or 0 if the stream was closed cleanly.
-  template <typename Error_Handler>
-  size_t peek(void* data, size_t max_length, Error_Handler error_handler)
+  template <typename Mutable_Buffers, typename Error_Handler>
+  std::size_t peek(const Mutable_Buffers& buffers, Error_Handler error_handler)
   {
-    return next_layer_.peek(data, max_length, error_handler);
+    return next_layer_.peek(buffers, error_handler);
   }
 
   /// Determine the amount of data that may be read without blocking.
-  size_t in_avail()
+  std::size_t in_avail()
   {
     return next_layer_.in_avail();
   }
 
   /// Determine the amount of data that may be read without blocking.
   template <typename Error_Handler>
-  size_t in_avail(Error_Handler error_handler)
+  std::size_t in_avail(Error_Handler error_handler)
   {
     return next_layer_.in_avail(error_handler);
   }
@@ -285,17 +305,28 @@ public:
 private:
   /// Copy data into the internal buffer from the specified source buffer.
   /// Returns the number of bytes copied.
-  size_t copy(const void* data, size_t length)
+  template <typename Const_Buffers>
+  std::size_t copy(const Const_Buffers& buffers)
   {
     using namespace std; // For memcpy.
 
-    size_t orig_size = buffer_.size();
-    size_t bytes_avail = buffer_.capacity() - orig_size;
-    size_t bytes_copied = (length < bytes_avail) ? length : bytes_avail;
-    buffer_.resize(orig_size + bytes_copied);
-    memcpy(buffer_.begin() + orig_size, data, bytes_copied);
+    std::size_t orig_size = buffer_.size();
+    std::size_t space_avail = buffer_.capacity() - orig_size;
+    std::size_t bytes_copied = 0;
 
-    return length;
+    typename Const_Buffers::const_iterator iter = buffers.begin();
+    typename Const_Buffers::const_iterator end = buffers.end();
+    for (; iter != end && space_avail > 0; ++iter)
+    {
+      std::size_t length = (iter->size() < space_avail)
+        ? iter->size() : space_avail;
+      buffer_.resize(orig_size + bytes_copied + length);
+      memcpy(buffer_.begin() + orig_size + bytes_copied, iter->data(), length);
+      bytes_copied += length;
+      space_avail -= length;
+    }
+
+    return bytes_copied;
   }
 
   /// The next layer.

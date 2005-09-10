@@ -18,6 +18,8 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <cstddef>
+#include <boost/config.hpp>
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -103,7 +105,7 @@ public:
   /// Flush all data from the buffer to the next layer. Returns the number of
   /// bytes written to the next layer on the last write operation, or 0 if the
   /// underlying stream was closed. Throws an exception on failure.
-  size_t flush()
+  std::size_t flush()
   {
     return stream_impl_.next_layer().flush();
   }
@@ -112,7 +114,7 @@ public:
   /// bytes written to the next layer on the last write operation, or 0 if the
   /// underlying stream was closed.
   template <typename Error_Handler>
-  size_t flush(Error_Handler error_handler)
+  std::size_t flush(Error_Handler error_handler)
   {
     return stream_impl_.next_layer().flush(error_handler);
   }
@@ -126,31 +128,32 @@ public:
 
   /// Write the given data to the stream. Returns the number of bytes written or
   /// 0 if the stream was closed cleanly. Throws an exception on failure.
-  size_t write(const void* data, size_t length)
+  template <typename Const_Buffers>
+  std::size_t write(const Const_Buffers& buffers)
   {
-    return stream_impl_.write(data, length);
+    return stream_impl_.write(buffers);
   }
 
   /// Write the given data to the stream. Returns the number of bytes written or
   /// 0 if the stream was closed cleanly.
-  template <typename Error_Handler>
-  size_t write(const void* data, size_t length, Error_Handler error_handler)
+  template <typename Const_Buffers, typename Error_Handler>
+  std::size_t write(const Const_Buffers& buffers, Error_Handler error_handler)
   {
-    return stream_impl_.write(data, length, error_handler);
+    return stream_impl_.write(buffers, error_handler);
   }
 
   /// Start an asynchronous write. The data being written must be valid for the
   /// lifetime of the asynchronous operation.
-  template <typename Handler>
-  void async_write(const void* data, size_t length, Handler handler)
+  template <typename Const_Buffers, typename Handler>
+  void async_write(const Const_Buffers& buffers, Handler handler)
   {
-    stream_impl_.async_write(data, length, handler);
+    stream_impl_.async_write(buffers, handler);
   }
 
   /// Fill the buffer with some data. Returns the number of bytes placed in the
   /// buffer as a result of the operation, or 0 if the underlying stream was
   /// closed. Throws an exception on failure.
-  size_t fill()
+  std::size_t fill()
   {
     return stream_impl_.fill();
   }
@@ -159,7 +162,7 @@ public:
   /// buffer as a result of the operation, or 0 if the underlying stream was
   /// closed.
   template <typename Error_Handler>
-  size_t fill(Error_Handler error_handler)
+  std::size_t fill(Error_Handler error_handler)
   {
     return stream_impl_.fill(error_handler);
   }
@@ -173,51 +176,53 @@ public:
 
   /// Read some data from the stream. Returns the number of bytes read or 0 if
   /// the stream was closed cleanly. Throws an exception on failure.
-  size_t read(void* data, size_t max_length)
+  template <typename Mutable_Buffers>
+  std::size_t read(const Mutable_Buffers& buffers)
   {
-    return stream_impl_.read(data, max_length);
+    return stream_impl_.read(buffers);
   }
 
   /// Read some data from the stream. Returns the number of bytes read or 0 if
   /// the stream was closed cleanly.
-  template <typename Error_Handler>
-  size_t read(void* data, size_t max_length, Error_Handler error_handler)
+  template <typename Mutable_Buffers, typename Error_Handler>
+  std::size_t read(const Mutable_Buffers& buffers, Error_Handler error_handler)
   {
-    return stream_impl_.read(data, max_length, error_handler);
+    return stream_impl_.read(buffers, error_handler);
   }
 
   /// Start an asynchronous read. The buffer into which the data will be read
   /// must be valid for the lifetime of the asynchronous operation.
-  template <typename Handler>
-  void async_read(void* data, size_t max_length, Handler handler)
+  template <typename Mutable_Buffers, typename Handler>
+  void async_read(const Mutable_Buffers& buffers, Handler handler)
   {
-    stream_impl_.async_read(data, max_length, handler);
+    stream_impl_.async_read(buffers, handler);
   }
 
   /// Peek at the incoming data on the stream. Returns the number of bytes read
   /// or 0 if the stream was closed cleanly.
-  size_t peek(void* data, size_t max_length)
+  template <typename Mutable_Buffers>
+  std::size_t peek(const Mutable_Buffers& buffers)
   {
-    return stream_impl_.peek(data, max_length);
+    return stream_impl_.peek(buffers);
   }
 
   /// Peek at the incoming data on the stream. Returns the number of bytes read
   /// or 0 if the stream was closed cleanly.
-  template <typename Error_Handler>
-  size_t peek(void* data, size_t max_length, Error_Handler error_handler)
+  template <typename Mutable_Buffers, typename Error_Handler>
+  std::size_t peek(const Mutable_Buffers& buffers, Error_Handler error_handler)
   {
     return stream_impl_.peek(data, max_length, error_handler);
   }
 
   /// Determine the amount of data that may be read without blocking.
-  size_t in_avail()
+  std::size_t in_avail()
   {
     return stream_impl_.in_avail();
   }
 
   /// Determine the amount of data that may be read without blocking.
   template <typename Error_Handler>
-  size_t in_avail(Error_Handler error_handler)
+  std::size_t in_avail(Error_Handler error_handler)
   {
     return stream_impl_.in_avail(error_handler);
   }
