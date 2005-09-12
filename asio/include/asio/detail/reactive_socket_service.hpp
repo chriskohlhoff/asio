@@ -40,6 +40,9 @@ public:
   // underlying implementation of the socket layer.
   typedef socket_type impl_type;
 
+  // The maximum number of buffers to support in a single operation.
+  enum { max_buffers = 16 };
+
   // Constructor.
   reactive_socket_service(Demuxer& d)
     : demuxer_(d),
@@ -188,11 +191,23 @@ public:
 
   // Send the given data to the peer. Returns the number of bytes sent or
   // 0 if the connection was closed cleanly.
-  template <typename Error_Handler>
-  size_t send(impl_type& impl, const void* data, size_t length,
+  template <typename Const_Buffers, typename Error_Handler>
+  size_t send(impl_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, Error_Handler error_handler)
   {
-    int bytes_sent = socket_ops::send(impl, data, length, flags);
+    // Copy buffers into array.
+    socket_ops::bufs bufs[max_buffers];
+    typename Const_Buffers::const_iterator iter = buffers.begin();
+    typename Const_Buffers::const_iterator end = buffers.end();
+    size_t i = 0;
+    for (; iter != end && i < max_buffers; ++iter, ++i)
+    {
+      bufs[i].size = iter->size();
+      bufs[i].data = const_cast<void*>(iter->data());
+    }
+
+    // Send the data.
+    int bytes_sent = socket_ops::send(impl, bufs, i, flags);
     if (bytes_sent < 0)
     {
       error_handler(asio::error(socket_ops::get_error()));
@@ -201,16 +216,15 @@ public:
     return bytes_sent;
   }
 
-  template <typename Handler>
+  template <typename Const_Buffers, typename Handler>
   class send_handler
   {
   public:
-    send_handler(impl_type impl, Demuxer& demuxer, const void* data,
-        size_t length, socket_base::message_flags flags, Handler handler)
+    send_handler(impl_type impl, Demuxer& demuxer, const Const_Buffers& buffers,
+        socket_base::message_flags flags, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
-        data_(data),
-        length_(length),
+        buffers_(buffers),
         flags_(flags),
         handler_(handler)
     {
@@ -218,7 +232,19 @@ public:
 
     void do_operation()
     {
-      int bytes = socket_ops::send(impl_, data_, length_, flags_);
+      // Copy buffers into array.
+      socket_ops::bufs bufs[max_buffers];
+      typename Const_Buffers::const_iterator iter = buffers_.begin();
+      typename Const_Buffers::const_iterator end = buffers_.end();
+      size_t i = 0;
+      for (; iter != end && i < max_buffers; ++iter, ++i)
+      {
+        bufs[i].size = iter->size();
+        bufs[i].data = const_cast<void*>(iter->data());
+      }
+
+      // Send the data.
+      int bytes = socket_ops::send(impl_, bufs, i, flags_);
       asio::error error(bytes < 0
           ? socket_ops::get_error() : asio::error::success);
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
@@ -235,16 +261,16 @@ public:
   private:
     impl_type impl_;
     Demuxer& demuxer_;
-    const void* data_;
-    size_t length_;
+    Const_Buffers buffers_;
+    size_t buffer_count_;
     socket_base::message_flags flags_;
     Handler handler_;
   };
 
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
-  template <typename Handler>
-  void async_send(impl_type& impl, const void* data, size_t length,
+  template <typename Const_Buffers, typename Handler>
+  void async_send(impl_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, Handler handler)
   {
     if (impl == null())
@@ -255,19 +281,31 @@ public:
     else
     {
       demuxer_.work_started();
-      reactor_.start_write_op(impl,
-          send_handler<Handler>(impl, demuxer_, data, length, flags, handler));
+      reactor_.start_write_op(impl, send_handler<Const_Buffers, Handler>(
+            impl, demuxer_, buffers, flags, handler));
     }
   }
 
   // Send a datagram to the specified endpoint. Returns the number of bytes
   // sent.
-  template <typename Endpoint, typename Error_Handler>
-  size_t send_to(impl_type& impl, const void* data, size_t length,
+  template <typename Const_Buffers, typename Endpoint, typename Error_Handler>
+  size_t send_to(impl_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, const Endpoint& destination,
       Error_Handler error_handler)
   {
-    int bytes_sent = socket_ops::sendto(impl, data, length, flags,
+    // Copy buffers into array.
+    socket_ops::bufs bufs[max_buffers];
+    typename Const_Buffers::const_iterator iter = buffers.begin();
+    typename Const_Buffers::const_iterator end = buffers.end();
+    size_t i = 0;
+    for (; iter != end && i < max_buffers; ++iter, ++i)
+    {
+      bufs[i].size = iter->size();
+      bufs[i].data = const_cast<void*>(iter->data());
+    }
+
+    // Send the data.
+    int bytes_sent = socket_ops::sendto(impl, bufs, i, flags,
         destination.data(), destination.size());
     if (bytes_sent < 0)
     {
@@ -277,17 +315,16 @@ public:
     return bytes_sent;
   }
 
-  template <typename Endpoint, typename Handler>
+  template <typename Const_Buffers, typename Endpoint, typename Handler>
   class send_to_handler
   {
   public:
-    send_to_handler(impl_type impl, Demuxer& demuxer, const void* data,
-        size_t length, socket_base::message_flags flags,
+    send_to_handler(impl_type impl, Demuxer& demuxer,
+        const Const_Buffers& buffers, socket_base::message_flags flags,
         const Endpoint& endpoint, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
-        data_(data),
-        length_(length),
+        buffers_(buffers),
         flags_(flags),
         destination_(endpoint),
         handler_(handler)
@@ -296,7 +333,19 @@ public:
 
     void do_operation()
     {
-      int bytes = socket_ops::sendto(impl_, data_, length_, flags_,
+      // Copy buffers into array.
+      socket_ops::bufs bufs[max_buffers];
+      typename Const_Buffers::const_iterator iter = buffers_.begin();
+      typename Const_Buffers::const_iterator end = buffers_.end();
+      size_t i = 0;
+      for (; iter != end && i < max_buffers; ++iter, ++i)
+      {
+        bufs[i].size = iter->size();
+        bufs[i].data = const_cast<void*>(iter->data());
+      }
+
+      // Send the data.
+      int bytes = socket_ops::sendto(impl_, bufs, i, flags_,
           destination_.data(), destination_.size());
       asio::error error(bytes < 0
           ? socket_ops::get_error() : asio::error::success);
@@ -314,8 +363,7 @@ public:
   private:
     impl_type impl_;
     Demuxer& demuxer_;
-    const void* data_;
-    size_t length_;
+    Const_Buffers buffers_;
     socket_base::message_flags flags_;
     Endpoint destination_;
     Handler handler_;
@@ -323,8 +371,8 @@ public:
 
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
-  template <typename Endpoint, typename Handler>
-  void async_send_to(impl_type& impl, const void* data, size_t length,
+  template <typename Const_Buffers, typename Endpoint, typename Handler>
+  void async_send_to(impl_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, const Endpoint& destination,
       Handler handler)
   {
@@ -336,18 +384,31 @@ public:
     else
     {
       demuxer_.work_started();
-      reactor_.start_write_op(impl, send_to_handler<Endpoint, Handler>(
-            impl, demuxer_, data, length, flags, destination, handler));
+      reactor_.start_write_op(impl,
+          send_to_handler<Const_Buffers, Endpoint, Handler>(
+            impl, demuxer_, buffers, flags, destination, handler));
     }
   }
 
   // Receive some data from the peer. Returns the number of bytes received or
   // 0 if the connection was closed cleanly.
-  template <typename Error_Handler>
-  size_t receive(impl_type& impl, void* data, size_t max_length,
+  template <typename Mutable_Buffers, typename Error_Handler>
+  size_t receive(impl_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Error_Handler error_handler)
   {
-    int bytes_recvd = socket_ops::recv(impl, data, max_length, flags);
+    // Copy buffers into array.
+    socket_ops::bufs bufs[max_buffers];
+    typename Mutable_Buffers::const_iterator iter = buffers.begin();
+    typename Mutable_Buffers::const_iterator end = buffers.end();
+    size_t i = 0;
+    for (; iter != end && i < max_buffers; ++iter, ++i)
+    {
+      bufs[i].size = iter->size();
+      bufs[i].data = iter->data();
+    }
+
+    // Receive some data.
+    int bytes_recvd = socket_ops::recv(impl, bufs, i, flags);
     if (bytes_recvd < 0)
     {
       error_handler(asio::error(socket_ops::get_error()));
@@ -356,16 +417,16 @@ public:
     return bytes_recvd;
   }
 
-  template <typename Handler>
+  template <typename Mutable_Buffers, typename Handler>
   class receive_handler
   {
   public:
-    receive_handler(impl_type impl, Demuxer& demuxer, void* data,
-        size_t max_length, socket_base::message_flags flags, Handler handler)
+    receive_handler(impl_type impl, Demuxer& demuxer,
+        const Mutable_Buffers& buffers, socket_base::message_flags flags,
+        Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
-        data_(data),
-        max_length_(max_length),
+        buffers_(buffers),
         flags_(flags),
         handler_(handler)
     {
@@ -373,7 +434,19 @@ public:
 
     void do_operation()
     {
-      int bytes = socket_ops::recv(impl_, data_, max_length_, flags_);
+      // Copy buffers into array.
+      socket_ops::bufs bufs[max_buffers];
+      typename Mutable_Buffers::const_iterator iter = buffers_.begin();
+      typename Mutable_Buffers::const_iterator end = buffers_.end();
+      size_t i = 0;
+      for (; iter != end && i < max_buffers; ++iter, ++i)
+      {
+        bufs[i].size = iter->size();
+        bufs[i].data = iter->data();
+      }
+
+      // Receive some data.
+      int bytes = socket_ops::recv(impl_, bufs, i, flags_);
       asio::error error(bytes < 0
           ? socket_ops::get_error() : asio::error::success);
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
@@ -390,16 +463,15 @@ public:
   private:
     impl_type impl_;
     Demuxer& demuxer_;
-    void* data_;
-    size_t max_length_;
+    Mutable_Buffers buffers_;
     socket_base::message_flags flags_;
     Handler handler_;
   };
 
   // Start an asynchronous receive. The buffer for the data being received
   // must be valid for the lifetime of the asynchronous operation.
-  template <typename Handler>
-  void async_receive(impl_type& impl, void* data, size_t max_length,
+  template <typename Mutable_Buffers, typename Handler>
+  void async_receive(impl_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Handler handler)
   {
     if (impl == null())
@@ -413,27 +485,39 @@ public:
       if (flags & socket_base::message_out_of_band)
       {
         reactor_.start_except_op(impl,
-            receive_handler<Handler>(impl, demuxer_,
-              data, max_length, flags, handler));
+            receive_handler<Mutable_Buffers, Handler>(
+              impl, demuxer_, buffers, flags, handler));
       }
       else
       {
         reactor_.start_read_op(impl,
-            receive_handler<Handler>(impl, demuxer_,
-              data, max_length, flags, handler));
+            receive_handler<Mutable_Buffers, Handler>(
+              impl, demuxer_, buffers, flags, handler));
       }
     }
   }
 
   // Receive a datagram with the endpoint of the sender. Returns the number of
   // bytes received.
-  template <typename Endpoint, typename Error_Handler>
-  size_t receive_from(impl_type& impl, void* data, size_t max_length,
+  template <typename Mutable_Buffers, typename Endpoint, typename Error_Handler>
+  size_t receive_from(impl_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Endpoint& sender_endpoint,
       Error_Handler error_handler)
   {
+    // Copy buffers into array.
+    socket_ops::bufs bufs[max_buffers];
+    typename Mutable_Buffers::const_iterator iter = buffers.begin();
+    typename Mutable_Buffers::const_iterator end = buffers.end();
+    size_t i = 0;
+    for (; iter != end && i < max_buffers; ++iter, ++i)
+    {
+      bufs[i].size = iter->size();
+      bufs[i].data = iter->data();
+    }
+
+    // Receive some data.
     socket_addr_len_type addr_len = sender_endpoint.size();
-    int bytes_recvd = socket_ops::recvfrom(impl, data, max_length, flags,
+    int bytes_recvd = socket_ops::recvfrom(impl, bufs, i, flags,
         sender_endpoint.data(), &addr_len);
     if (bytes_recvd < 0)
     {
@@ -446,17 +530,16 @@ public:
     return bytes_recvd;
   }
 
-  template <typename Endpoint, typename Handler>
+  template <typename Mutable_Buffers, typename Endpoint, typename Handler>
   class receive_from_handler
   {
   public:
-    receive_from_handler(impl_type impl, Demuxer& demuxer, void* data,
-        size_t max_length, socket_base::message_flags flags,
+    receive_from_handler(impl_type impl, Demuxer& demuxer,
+        const Mutable_Buffers& buffers, socket_base::message_flags flags,
         Endpoint& endpoint, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
-        data_(data),
-        max_length_(max_length),
+        buffers_(buffers),
         flags_(flags),
         sender_endpoint_(endpoint),
         handler_(handler)
@@ -465,8 +548,20 @@ public:
 
     void do_operation()
     {
+      // Copy buffers into array.
+      socket_ops::bufs bufs[max_buffers];
+      typename Mutable_Buffers::const_iterator iter = buffers_.begin();
+      typename Mutable_Buffers::const_iterator end = buffers_.end();
+      size_t i = 0;
+      for (; iter != end && i < max_buffers; ++iter, ++i)
+      {
+        bufs[i].size = iter->size();
+        bufs[i].data = iter->data();
+      }
+
+      // Receive some data.
       socket_addr_len_type addr_len = sender_endpoint_.size();
-      int bytes = socket_ops::recvfrom(impl_, data_, max_length_, flags_,
+      int bytes = socket_ops::recvfrom(impl_, bufs, i, flags_,
           sender_endpoint_.data(), &addr_len);
       asio::error error(bytes < 0
           ? socket_ops::get_error() : asio::error::success);
@@ -485,8 +580,7 @@ public:
   private:
     impl_type impl_;
     Demuxer& demuxer_;
-    void* data_;
-    size_t max_length_;
+    Mutable_Buffers buffers_;
     socket_base::message_flags flags_;
     Endpoint& sender_endpoint_;
     Handler handler_;
@@ -495,8 +589,8 @@ public:
   // Start an asynchronous receive. The buffer for the data being received and
   // the sender_endpoint object must both be valid for the lifetime of the
   // asynchronous operation.
-  template <typename Endpoint, typename Handler>
-  void async_receive_from(impl_type& impl, void* data, size_t max_length,
+  template <typename Mutable_Buffers, typename Endpoint, typename Handler>
+  void async_receive_from(impl_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Endpoint& sender_endpoint,
       Handler handler)
   {
@@ -508,8 +602,9 @@ public:
     else
     {
       demuxer_.work_started();
-      reactor_.start_read_op(impl, receive_from_handler<Endpoint, Handler>(
-            impl, demuxer_, data, max_length, flags, sender_endpoint, handler));
+      reactor_.start_read_op(impl,
+          receive_from_handler<Mutable_Buffers, Endpoint, Handler>(
+            impl, demuxer_, buffers, flags, sender_endpoint, handler));
     }
   }
 

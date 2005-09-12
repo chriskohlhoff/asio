@@ -20,6 +20,7 @@
 #include "asio/detail/push_options.hpp"
 #include <cstring>
 #include <cerrno>
+#include <vector>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
@@ -98,49 +99,283 @@ inline int listen(socket_type s, int backlog)
   return error_wrapper(::listen(s, backlog));
 }
 
-inline int recv(socket_type s, void* buf, size_t len, int flags)
+struct bufs
+{
+  void* data;
+  size_t size;
+};
+
+enum { max_bufs = 16 };
+
+inline int recv(socket_type s, bufs* b, size_t count, int flags)
 {
   set_error(0);
 #if defined(_WIN32)
-  return error_wrapper(::recv(s, static_cast<char*>(buf),
-        static_cast<int>(len), flags));
+  // Copy buffers into WSABUF array.
+  WSABUF recv_bufs[max_bufs];
+  if (count > max_bufs)
+    count = max_bufs;
+  for (size_t i = 0; i < count; ++i)
+  {
+    recv_bufs[i].len = static_cast<u_long>(b[i].size);
+    recv_bufs[i].buf = static_cast<char*>(b[i].data);
+  }
+
+  // Receive some data.
+  DWORD bytes_transferred = 0;
+  DWORD recv_flags = flags;
+  int result = error_wrapper(::WSARecv(s, recv_bufs,
+        count, &bytes_transferred, &recv_flags, 0, 0));
+  if (result != 0)
+    return -1;
+  return bytes_transferred;
 #else // defined(_WIN32)
-  return error_wrapper(::recv(s, buf, len, flags));
+  if (count == 1)
+  {
+    // We only have to receive into a single buffer, so use normal recv call.
+    return error_wrapper(::recv(s, b[0].data, b[0].size, flags));
+  }
+  else if (flags == 0)
+  {
+    // No flags have been specified so we can perform this receive operation
+    // using a vectored-read function, i.e. readv.
+
+    // Copy buffers into iovec array.
+    iovec recv_bufs[max_bufs];
+    if (count > max_bufs)
+      count = max_bufs;
+    for (size_t i = 0; i < count; ++i)
+    {
+      recv_bufs[i].iov_len = b[i].size;
+      recv_bufs[i].iov_base = b[i].data;
+    }
+
+    // Receive some data.
+    return error_wrapper(::readv(s, recv_bufs, count));
+  }
+  else
+  {
+    // Socket flags have been supplied so receive into a temporary buffer and
+    // then copy the data to the caller-supplied buffers.
+
+    // Create a buffer of the appropriate size.
+    size_t buf_size = 0;
+    for (size_t i = 0; i < count; ++i)
+      buf_size += b[i].size;
+    std::vector<char> buffer(buf_size);
+
+    // Receive some data.
+    int result = error_wrapper(::recv(s, &buffer[0], buf_size, flags));
+    if (result <= 0)
+      return result;
+
+    // Copy to caller-supplied buffers.
+    using namespace std; // For memcpy.
+    size_t bytes_avail = result;
+    size_t bytes_copied = 0;
+    for (size_t i = 0; i < count && bytes_avail > 0; ++i)
+    {
+      size_t size = (b[i].size < bytes_avail) ? b[i].size : bytes_avail;
+      memcpy(b[i].data, &buffer[bytes_copied], size);
+      bytes_copied += size;
+      bytes_avail -= size;
+    }
+
+    return result;
+  }
 #endif // defined(_WIN32)
 }
 
-inline int recvfrom(socket_type s, void* buf, size_t len, int flags,
+inline int recvfrom(socket_type s, bufs* b, size_t count, int flags,
     socket_addr_type* addr, socket_addr_len_type* addrlen)
 {
   set_error(0);
 #if defined(_WIN32)
-  return error_wrapper(::recvfrom(s, static_cast<char*>(buf),
-        static_cast<int>(len), flags, addr, addrlen));
+  // Copy buffers into WSABUF array.
+  WSABUF recv_bufs[max_bufs];
+  if (count > max_bufs)
+    count = max_bufs;
+  for (size_t i = 0; i < count; ++i)
+  {
+    recv_bufs[i].len = static_cast<u_long>(b[i].size);
+    recv_bufs[i].buf = static_cast<char*>(b[i].data);
+  }
+
+  // Receive some data.
+  DWORD bytes_transferred = 0;
+  DWORD recv_flags = flags;
+  int result = error_wrapper(::WSARecvFrom(s, recv_bufs, count,
+        &bytes_transferred, &recv_flags, addr, addrlen, 0, 0));
+  if (result != 0)
+    return -1;
+  return bytes_transferred;
 #else // defined(_WIN32)
-  return error_wrapper(::recvfrom(s, buf, len, flags, addr, addrlen));
+  if (count == 1)
+  {
+    // We only have to receive into a single buffer, so use normal recvfrom
+    // call.
+    return error_wrapper(::recvfrom(s,
+          b[0].data, b[0].size, flags, addr, addrlen));
+  }
+  else
+  {
+    // We have to receive into multiple buffers, so receive into a temporary
+    // buffer and then copy the data to the caller-supplied buffers.
+
+    // Create a buffer of the appropriate size.
+    size_t buf_size = 0;
+    for (size_t i = 0; i < count; ++i)
+      buf_size += b[i].size;
+    std::vector<char> buffer(buf_size);
+
+    // Receive some data.
+    int result = error_wrapper(::recvfrom(s,
+          &buffer[0], buf_size, flags, addr, addrlen));
+    if (result <= 0)
+      return result;
+
+    // Copy to caller-supplied buffers.
+    using namespace std; // For memcpy.
+    size_t bytes_avail = result;
+    size_t bytes_copied = 0;
+    for (size_t i = 0; i < count && bytes_avail > 0; ++i)
+    {
+      size_t size = (b[i].size < bytes_avail) ? b[i].size : bytes_avail;
+      memcpy(b[i].data, &buffer[bytes_copied], size);
+      bytes_copied += size;
+      bytes_avail -= size;
+    }
+
+    return result;
+  }
 #endif // defined(_WIN32)
 }
 
-inline int send(socket_type s, const void* buf, size_t len, int flags)
+inline int send(socket_type s, const bufs* b, size_t count, int flags)
 {
   set_error(0);
 #if defined(_WIN32)
-  return error_wrapper(::send(s, static_cast<const char*>(buf),
-        static_cast<int>(len), flags));
+  // Copy buffers into WSABUF array.
+  WSABUF send_bufs[max_bufs];
+  if (count > max_bufs)
+    count = max_bufs;
+  for (size_t i = 0; i < count; ++i)
+  {
+    send_bufs[i].len = static_cast<u_long>(b[i].size);
+    send_bufs[i].buf = static_cast<char*>(b[i].data);
+  }
+
+  // Send the data.
+  DWORD bytes_transferred = 0;
+  DWORD send_flags = flags;
+  int result = error_wrapper(::WSASend(s, send_bufs,
+        count, &bytes_transferred, &send_flags, 0, 0));
+  if (result != 0)
+    return -1;
+  return bytes_transferred;
 #else // defined(_WIN32)
-  return error_wrapper(::send(s, buf, len, flags));
+  if (count == 1)
+  {
+    // We only have to send a single buffer, so use normal send call.
+    return error_wrapper(::send(s, b[0].data, b[0].size, flags));
+  }
+  else if (flags == 0)
+  {
+    // No flags have been specified so we can perform this send operation using
+    // a vectored-write function, i.e. writev.
+
+    // Copy buffers into iovec array.
+    iovec send_bufs[max_bufs];
+    if (count > max_bufs)
+      count = max_bufs;
+    for (size_t i = 0; i < count; ++i)
+    {
+      send_bufs[i].iov_len = b[i].size;
+      send_bufs[i].iov_base = b[i].data;
+    }
+
+    // Send the data.
+    return error_wrapper(::writev(s, send_bufs, count));
+  }
+  else
+  {
+    // Socket flags have been supplied so copy the caller-supplied buffers into
+    // a temporary buffer for sending.
+
+    // Create a buffer of the appropriate size.
+    size_t buf_size = 0;
+    for (size_t i = 0; i < count; ++i)
+      buf_size += b[i].size;
+    std::vector<char> buffer(buf_size);
+
+    // Copy data from caller-supplied buffers.
+    using namespace std; // For memcpy.
+    size_t bytes_copied = 0;
+    for (size_t i = 0; i < count; ++i)
+    {
+      memcpy(&buffer[bytes_copied], b[i].data, b[i].size);
+      bytes_copied += b[i].size;
+    }
+
+    // Receive some data.
+    return error_wrapper(::send(s, &buffer[0], buf_size, flags));
+  }
 #endif // defined(_WIN32)
 }
 
-inline int sendto(socket_type s, const void* buf, size_t len, int flags,
+inline int sendto(socket_type s, const bufs* b, size_t count, int flags,
     const socket_addr_type* addr, socket_addr_len_type addrlen)
 {
   set_error(0);
 #if defined(_WIN32)
-  return error_wrapper(::sendto(s, static_cast<const char*>(buf),
-        static_cast<int>(len), flags, addr, addrlen));
+  // Copy buffers into WSABUF array.
+  WSABUF send_bufs[max_bufs];
+  if (count > max_bufs)
+    count = max_bufs;
+  for (size_t i = 0; i < count; ++i)
+  {
+    send_bufs[i].len = static_cast<u_long>(b[i].size);
+    send_bufs[i].buf = static_cast<char*>(b[i].data);
+  }
+
+  // Send the data.
+  DWORD bytes_transferred = 0;
+  int result = ::WSASendTo(s, send_bufs, count,
+      &bytes_transferred, flags, addr, addrlen, 0, 0);
+  if (result != 0)
+    return -1;
+  return bytes_transferred;
 #else // defined(_WIN32)
-  return error_wrapper(::sendto(s, buf, len, flags, addr, addrlen));
+  if (count == 1)
+  {
+    // We only have to send a single buffer, so use normal sendto call.
+    return error_wrapper(::sendto(s,
+          b[0].data, b[0].size, flags, addr, addrlen));
+  }
+  else
+  {
+    // Socket flags have been supplied so copy the caller-supplied buffers into
+    // a temporary buffer for sending.
+
+    // Create a buffer of the appropriate size.
+    size_t buf_size = 0;
+    for (size_t i = 0; i < count; ++i)
+      buf_size += b[i].size;
+    std::vector<char> buffer(buf_size);
+
+    // Copy data from caller-supplied buffers.
+    using namespace std; // For memcpy.
+    size_t bytes_copied = 0;
+    for (size_t i = 0; i < count; ++i)
+    {
+      memcpy(&buffer[bytes_copied], b[i].data, b[i].size);
+      bytes_copied += b[i].size;
+    }
+
+    // Receive some data.
+    return error_wrapper(::sendto(s,
+          &buffer[0], buf_size, flags, addr, addrlen));
+  }
 #endif // defined(_WIN32)
 }
 
