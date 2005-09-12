@@ -215,7 +215,7 @@ public:
   size_t send(impl_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, Error_Handler error_handler)
   {
-    // Copy buffers into WSABUF array.
+    // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
     typename Const_Buffers::const_iterator iter = buffers.begin();
     typename Const_Buffers::const_iterator end = buffers.end();
@@ -281,7 +281,7 @@ public:
 
     demuxer_service_.work_started();
 
-    // Copy buffers into WSABUF array.
+    // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
     typename Const_Buffers::const_iterator iter = buffers.begin();
     typename Const_Buffers::const_iterator end = buffers.end();
@@ -314,7 +314,7 @@ public:
       socket_base::message_flags flags, const Endpoint& destination,
       Error_Handler error_handler)
   {
-    // Copy buffers into WSABUF array.
+    // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
     typename Const_Buffers::const_iterator iter = buffers.begin();
     typename Const_Buffers::const_iterator end = buffers.end();
@@ -383,7 +383,7 @@ public:
 
     demuxer_service_.work_started();
 
-    // Copy buffers into WSABUF array.
+    // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
     typename Const_Buffers::const_iterator iter = buffers.begin();
     typename Const_Buffers::const_iterator end = buffers.end();
@@ -416,7 +416,7 @@ public:
   size_t receive(impl_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Error_Handler error_handler)
   {
-    // Copy buffers into WSABUF array.
+    // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
     typename Mutable_Buffers::const_iterator iter = buffers.begin();
     typename Mutable_Buffers::const_iterator end = buffers.end();
@@ -485,7 +485,7 @@ public:
 
     demuxer_service_.work_started();
 
-    // Copy buffers into WSABUF array.
+    // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
     typename Mutable_Buffers::const_iterator iter = buffers.begin();
     typename Mutable_Buffers::const_iterator end = buffers.end();
@@ -518,7 +518,7 @@ public:
       socket_base::message_flags flags, Endpoint& sender_endpoint,
       Error_Handler error_handler)
   {
-    // Copy buffers into WSABUF array.
+    // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
     typename Mutable_Buffers::const_iterator iter = buffers.begin();
     typename Mutable_Buffers::const_iterator end = buffers.end();
@@ -604,7 +604,7 @@ public:
 
     demuxer_service_.work_started();
 
-    // Copy buffers into WSABUF array.
+    // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
     typename Mutable_Buffers::const_iterator iter = buffers.begin();
     typename Mutable_Buffers::const_iterator end = buffers.end();
