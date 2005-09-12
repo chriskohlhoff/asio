@@ -190,6 +190,25 @@ private:
   in_addr addr_;
 };
 
+/// Output an address as a string.
+/**
+ * Used to output a human-readable string for a specified address.
+ *
+ * @param os The output stream to which the string will be written.
+ *
+ * @param addr The address to be written.
+ *
+ * @return The output stream.
+ *
+ * @relates tcp::endpoint
+ */
+template <typename Ostream>
+Ostream& operator<<(Ostream& os, const address& addr)
+{
+  os << addr.to_string();
+  return os;
+}
+
 } // namespace ipv4
 } // namespace asio
 
