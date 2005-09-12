@@ -269,7 +269,7 @@ inline int send(socket_type s, const bufs* b, size_t count, int flags)
   DWORD bytes_transferred = 0;
   DWORD send_flags = flags;
   int result = error_wrapper(::WSASend(s, send_bufs,
-        count, &bytes_transferred, &send_flags, 0, 0));
+        count, &bytes_transferred, send_flags, 0, 0));
   if (result != 0)
     return -1;
   return bytes_transferred;
