@@ -20,14 +20,14 @@ public:
     asio::ipv4::host_resolver host_resolver(*demuxer_);
     asio::ipv4::host host;
     host_resolver.get_host_by_name(host, hostname);
-    asio::ipv4::tcp::endpoint endpoint(port, host.addresses[0]);
+    asio::ipv4::tcp::endpoint endpoint(port, host.address(0));
     socket_->connect(endpoint);
   }
 
   // Read.
   std::streamsize read(char* s, std::streamsize n)
   {
-    size_t bytes_read = socket_->read(s, n);
+    size_t bytes_read = socket_->read(asio::buffers(s, n));
     if (bytes_read == 0)
       return -1;
     return bytes_read;
@@ -36,7 +36,7 @@ public:
   // Write.
   std::streamsize write(const char* s, std::streamsize n)
   {
-    return socket_->write(s, n);
+    return socket_->write(asio::buffers(s, n));
   }
 
 private:
