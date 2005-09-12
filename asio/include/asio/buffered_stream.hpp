@@ -211,7 +211,7 @@ public:
   template <typename Mutable_Buffers, typename Error_Handler>
   std::size_t peek(const Mutable_Buffers& buffers, Error_Handler error_handler)
   {
-    return stream_impl_.peek(data, max_length, error_handler);
+    return stream_impl_.peek(buffers, error_handler);
   }
 
   /// Determine the amount of data that may be read without blocking.
