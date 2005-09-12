@@ -2,13 +2,29 @@
 BOOSTDIR = ../../boost_1_33_0
 !endif
 
+COMMON_CXXFLAGS = -nologo -GX -GR -MT -I. -I../include -I$(BOOSTDIR)
+COMMON_LDFLAGS = -nologo -GX -GR -MT
+
 !ifdef WARNINGS
-CXXFLAGS = -nologo -O2 -GX -GR -MT -W3 -I. -I../include -I$(BOOSTDIR)
-!else
-CXXFLAGS = -nologo -O2 -GX -GR -MT -I. -I../include -I$(BOOSTDIR)
+WARNINGS_CXXFLAGS = -W3
 !endif
-DEFINES = -DBOOST_DATE_TIME_NO_LIB
-LDFLAGS = -nologo -O2 -GX -GR -MT
+
+!ifdef DEBUG
+DEBUG_CXXFLAGS = -Zi
+DEBUG_LDFLAGS = -Zi
+!else
+DEBUG_CXXFLAGS = -O2
+DEBUG_LDFLAGS = -O2
+!endif
+
+!ifdef WIN9X
+DEFINES = -D_WIN32_WINDOWS=0x0400 -DBOOST_DATE_TIME_NO_LIB
+!else
+DEFINES = -D_WIN32_WINNT=0x0500 -DBOOST_DATE_TIME_NO_LIB
+!endif
+
+CXXFLAGS = $(COMMON_CXXFLAGS) $(WARNINGS_CXXFLAGS) $(DEBUG_CXXFLAGS)
+LDFLAGS = $(COMMON_LDFLAGS) $(DEBUG_LDFLAGS)
 
 all: \
 	tests\performance\client.exe \

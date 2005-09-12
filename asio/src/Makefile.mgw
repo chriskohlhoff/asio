@@ -5,6 +5,7 @@ endif
 CXXFLAGS = -g -O3 -Wall -mthreads -I../include -I$(BOOSTDIR)
 LDFLAGS = -g -O3 -mthreads
 LIBS = -lws2_32
+DEFINES = -D_WIN32_WINNT=0x0500
 
 TEST_EXES = \
 	tests/performance/client.exe \
@@ -52,6 +53,20 @@ EXAMPLE_EXES = \
 
 all: $(TEST_EXES) $(EXAMPLE_EXES)
 
+check: all
+	@tests/unit/deadline_timer_test.exe
+	@tests/unit/demuxer_test.exe
+	@tests/unit/datagram_socket_test.exe
+	@tests/unit/error_handler_test.exe
+	@tests/unit/fixed_buffer_test.exe
+	@tests/unit/ipv4_host_resolver_test.exe
+	@tests/unit/is_read_buffered_test.exe
+	@tests/unit/is_write_buffered_test.exe
+	@tests/unit/locking_dispatcher_test.exe
+	@tests/unit/read_test.exe
+	@tests/unit/write_test.exe
+	@tests/unit/socket_acceptor_test.exe
+
 clean:
 	-rm -f $(TEST_EXES)
 	-rm -f $(TEST_EXES:.exe=.o)
@@ -62,4 +77,4 @@ $(TEST_EXES) $(EXAMPLE_EXES): %.exe: %.o
 	g++ -o$@ $(LDFLAGS) $< $(LIBS)
 
 .cpp.o:
-	g++ -o$@ -c $(CXXFLAGS) $<
+	g++ -o$@ -c $(CXXFLAGS) $(DEFINES) $<

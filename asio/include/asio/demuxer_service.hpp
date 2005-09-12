@@ -24,13 +24,10 @@
 
 #include "asio/basic_demuxer.hpp"
 #include "asio/service_factory.hpp"
-#if defined(_WIN32)
-# include "asio/detail/win_iocp_demuxer_service.hpp"
-#else
-# include "asio/detail/epoll_reactor.hpp"
-# include "asio/detail/select_reactor.hpp"
-# include "asio/detail/task_demuxer_service.hpp"
-#endif
+#include "asio/detail/epoll_reactor.hpp"
+#include "asio/detail/select_reactor.hpp"
+#include "asio/detail/task_demuxer_service.hpp"
+#include "asio/detail/win_iocp_demuxer_service.hpp"
 
 namespace asio {
 
@@ -48,7 +45,7 @@ public:
 
 private:
   // The type of the platform-specific implementation.
-#if defined(_WIN32)
+#if defined(ASIO_HAS_IOCP_DEMUXER)
   typedef detail::win_iocp_demuxer_service service_impl_type;
 #elif defined(ASIO_HAS_EPOLL_REACTOR)
   typedef detail::task_demuxer_service<detail::epoll_reactor<false> >

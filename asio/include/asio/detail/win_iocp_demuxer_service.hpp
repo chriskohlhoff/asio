@@ -17,7 +17,11 @@
 
 #include "asio/detail/push_options.hpp"
 
-#if defined(_WIN32) // This service is only supported on Win32
+// This service is only supported on Win32 (NT4 and later).
+#if defined(_WIN32) && defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
+
+// Define this to indicate that IOCP is supported on the target platform.
+#define ASIO_HAS_IOCP_DEMUXER 1
 
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/tss_bool.hpp"
@@ -193,7 +197,7 @@ private:
 } // namespace detail
 } // namespace asio
 
-#endif // defined(_WIN32)
+#endif // defined(_WIN32) && defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
 
 #include "asio/detail/pop_options.hpp"
 

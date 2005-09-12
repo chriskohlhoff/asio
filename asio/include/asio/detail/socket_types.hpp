@@ -19,6 +19,16 @@
 
 #include "asio/detail/push_options.hpp"
 #if defined(_WIN32)
+# if !defined(_WIN32_WINNT) && !defined(_WIN32_WINDOWS)
+#  if defined(_MSC_VER) || defined(__BORLANDC__)
+#   pragma message("Please define _WIN32_WINNT or _WIN32_WINDOWS appropriately")
+#   pragma message("Assuming _WIN32_WINNT=0x0500 (i.e. Windows 2000 target)")
+#  else // defined(_MSC_VER) || defined(__BORLANDC__)
+#   warning Please define _WIN32_WINNT or _WIN32_WINDOWS appropriately
+#   warning Assuming _WIN32_WINNT=0x0500 (i.e. Windows 2000 target)
+#  endif // defined(_MSC_VER) || defined(__BORLANDC__)
+#  define _WIN32_WINNT 0x0500
+# endif // !defined(_WIN32_WINNT) && !defined(_WIN32_WINDOWS)
 # if defined(__BORLANDC__) && !defined(_WSPIAPI_H_)
 #  include <stdlib.h> // Needed for __errno
 #  define _WSPIAPI_H_

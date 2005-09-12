@@ -29,6 +29,7 @@
 #include "asio/detail/epoll_reactor.hpp"
 #include "asio/detail/select_reactor.hpp"
 #include "asio/detail/reactive_deadline_timer_service.hpp"
+#include "asio/detail/win_iocp_demuxer_service.hpp"
 
 namespace asio {
 
@@ -54,7 +55,7 @@ public:
 
 private:
   // The type of the platform-specific implementation.
-#if defined(_WIN32)
+#if defined(ASIO_HAS_IOCP_DEMUXER)
   typedef detail::reactive_deadline_timer_service<demuxer_type,
     traits_type, detail::select_reactor<true> > service_impl_type;
 #elif defined(ASIO_HAS_EPOLL_REACTOR)
