@@ -1,0 +1,7 @@
+.deps
+.dirstamp
+*.exe
+*_client
+*.ilk
+*.pdb
+*.tds
