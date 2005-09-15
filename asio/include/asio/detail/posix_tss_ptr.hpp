@@ -1,6 +1,6 @@
 //
-// posix_tss_bool.hpp
-// ~~~~~~~~~~~~~~~~~~
+// posix_tss_ptr.hpp
+// ~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2005 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_POSIX_TSS_BOOL_HPP
-#define ASIO_DETAIL_POSIX_TSS_BOOL_HPP
+#ifndef ASIO_DETAIL_POSIX_TSS_PTR_HPP
+#define ASIO_DETAIL_POSIX_TSS_PTR_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -22,49 +22,46 @@
 #include "asio/detail/push_options.hpp"
 #include <new>
 #include <pthread.h>
+#include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
 namespace asio {
 namespace detail {
 
-class posix_tss_bool
+template <typename T>
+class posix_tss_ptr
+  : private boost::noncopyable
 {
 public:
   // Constructor.
-  posix_tss_bool()
+  posix_tss_ptr()
   {
     if (::pthread_key_create(&tss_key_, 0) != 0)
       throw std::bad_alloc();
   }
 
   // Destructor.
-  ~posix_tss_bool()
+  ~posix_tss_ptr()
   {
     ::pthread_key_delete(tss_key_);
   }
 
-  // Test the value of the flag.
-  operator bool() const
+  // Get the value.
+  operator T*() const
   {
-    return ::pthread_getspecific(tss_key_) != 0;
+    return static_cast<T*>(::pthread_getspecific(tss_key_));
   }
 
-  // Test for the value of the flag being false.
-  bool operator!() const
+  // Set the value.
+  void operator=(T* value)
   {
-    return ::pthread_getspecific(tss_key_) == 0;
-  }
-
-  // Set the value of the flag.
-  void operator=(bool value)
-  {
-    ::pthread_setspecific(tss_key_, value ? this : 0);
+    ::pthread_setspecific(tss_key_, value);
   }
 
 private:
   // Thread-specific storage to allow unlocked access to determine whether a
   // thread is a member of the pool.
-  mutable pthread_key_t tss_key_;
+  pthread_key_t tss_key_;
 };
 
 } // namespace detail
@@ -74,4 +71,4 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_POSIX_TSS_BOOL_HPP
+#endif // ASIO_DETAIL_POSIX_TSS_PTR_HPP

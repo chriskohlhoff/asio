@@ -21,9 +21,9 @@
 #include "asio/demuxer_service.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/detail/bind_handler.hpp"
+#include "asio/detail/demuxer_run_call_stack.hpp"
 #include "asio/detail/event.hpp"
 #include "asio/detail/mutex.hpp"
-#include "asio/detail/tss_bool.hpp"
 
 namespace asio {
 namespace detail {
@@ -42,7 +42,6 @@ public:
       handler_queue_(0),
       handler_queue_end_(0),
       interrupted_(false),
-      current_thread_in_pool_(),
       first_idle_thread_(0)
   {
   }
@@ -50,7 +49,7 @@ public:
   // Run the demuxer's event processing loop.
   void run()
   {
-    current_thread_in_pool_ = true;
+    typename demuxer_run_call_stack<task_demuxer_service>::context ctx(this);
 
     idle_thread_info this_idle_thread;
     this_idle_thread.prev = &this_idle_thread;
@@ -116,8 +115,6 @@ public:
       // No more work to do!
       interrupt_all_threads();
     }
-
-    current_thread_in_pool_ = false;
   }
 
   // Interrupt the demuxer's event processing loop.
@@ -153,7 +150,7 @@ public:
   template <typename Handler>
   void dispatch(Handler handler)
   {
-    if (current_thread_in_pool_)
+    if (demuxer_run_call_stack<task_demuxer_service>::contains(this))
       handler_wrapper<Handler>::do_upcall(handler);
     else
       post(handler);
@@ -319,9 +316,6 @@ private:
 
   // Flag to indicate that the dispatcher has been interrupted.
   bool interrupted_;
-
-  // Thread-specific flag to keep track of which threads are in the pool.
-  tss_bool current_thread_in_pool_;
 
   // Structure containing information about an idle thread.
   struct idle_thread_info

@@ -24,6 +24,7 @@ nobase_include_HEADERS = \
 	asio/demuxer_service.hpp \
 	asio/detail/bind_handler.hpp \
 	asio/detail/buffer_resize_guard.hpp \
+	asio/detail/demuxer_run_call_stack.hpp \
 	asio/detail/epoll_reactor.hpp \
 	asio/detail/event.hpp \
 	asio/detail/fd_set_adapter.hpp \
@@ -38,7 +39,7 @@ nobase_include_HEADERS = \
 	asio/detail/posix_signal_blocker.hpp \
 	asio/detail/posix_thread.hpp \
 	asio/detail/posix_time.hpp \
-	asio/detail/posix_tss_bool.hpp \
+	asio/detail/posix_tss_ptr.hpp \
 	asio/detail/push_options.hpp \
 	asio/detail/reactive_deadline_timer_service.hpp \
 	asio/detail/reactive_socket_service.hpp \
@@ -57,7 +58,7 @@ nobase_include_HEADERS = \
 	asio/detail/task_demuxer_service.hpp \
 	asio/detail/thread.hpp \
 	asio/detail/time.hpp \
-	asio/detail/tss_bool.hpp \
+	asio/detail/tss_ptr.hpp \
 	asio/detail/win_event.hpp \
 	asio/detail/win_iocp_demuxer_service.hpp \
 	asio/detail/win_iocp_operation.hpp \
@@ -67,7 +68,7 @@ nobase_include_HEADERS = \
 	asio/detail/winsock_init.hpp \
 	asio/detail/win_thread.hpp \
 	asio/detail/win_time.hpp \
-	asio/detail/win_tss_bool.hpp \
+	asio/detail/win_tss_ptr.hpp \
 	asio/error_handler.hpp \
 	asio/error.hpp \
 	asio/fixed_buffer.hpp \

@@ -27,8 +27,8 @@
 #include <memory>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/detail/demuxer_run_call_stack.hpp"
 #include "asio/detail/socket_types.hpp"
-#include "asio/detail/tss_bool.hpp"
 #include "asio/detail/win_iocp_operation.hpp"
 
 namespace asio {
@@ -42,8 +42,7 @@ public:
   win_iocp_demuxer_service(Demuxer& demuxer)
     : iocp_(::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)),
       outstanding_work_(0),
-      interrupted_(0),
-      current_thread_in_pool_()
+      interrupted_(0)
   {
   }
 
@@ -60,7 +59,7 @@ public:
     if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
       return;
 
-    current_thread_in_pool_ = true;
+    demuxer_run_call_stack<win_iocp_demuxer_service>::context ctx(this);
 
     for (;;)
     {
@@ -95,8 +94,6 @@ public:
         }
       }
     }
-
-    current_thread_in_pool_ = false;
   }
 
   // Interrupt the demuxer's event processing loop.
@@ -174,7 +171,7 @@ public:
   template <typename Handler>
   void dispatch(Handler handler)
   {
-    if (current_thread_in_pool_)
+    if (demuxer_run_call_stack<win_iocp_demuxer_service>::contains(this))
       handler_operation<Handler>::do_upcall(handler);
     else
       post(handler);
@@ -202,9 +199,6 @@ private:
 
   // Flag to indicate whether the event loop has been interrupted.
   long interrupted_;
-
-  // Thread-specific flag to keep track of which threads are in the pool.
-  tss_bool current_thread_in_pool_;
 };
 
 } // namespace detail
