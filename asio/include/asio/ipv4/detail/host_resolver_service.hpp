@@ -74,15 +74,15 @@ public:
     : mutex_(),
       demuxer_(d),
       work_demuxer_(),
+      work_(new typename Demuxer::work(work_demuxer_)),
       work_thread_(0)
   {
-    work_demuxer_.work_started();
   }
 
   // Destructor.
   ~host_resolver_service()
   {
-    work_demuxer_.work_finished();
+    delete work_;
     if (work_thread_)
     {
       work_thread_->join();
@@ -153,6 +153,7 @@ public:
         host_(h),
         address_(addr),
         demuxer_(demuxer),
+        work_(demuxer),
         handler_(handler)
     {
     }
@@ -164,7 +165,6 @@ public:
       {
         demuxer_.post(asio::detail::bind_handler(handler_,
               asio::error(asio::error::operation_aborted)));
-        demuxer_.work_finished();
         return;
       }
 
@@ -186,7 +186,6 @@ public:
       else
         populate_host_object(host_, ent);
       demuxer_.post(asio::detail::bind_handler(handler_, e));
-      demuxer_.work_finished();
     }
 
   private:
@@ -194,6 +193,7 @@ public:
     host& host_;
     address address_;
     Demuxer& demuxer_;
+    typename Demuxer::work work_;
     Handler handler_;
   };
 
@@ -203,7 +203,6 @@ public:
       Handler handler)
   {
     start_work_thread();
-    demuxer_.work_started();
     work_demuxer_.post(get_host_by_address_handler<Handler>(
           impl, h, addr, demuxer_, handler));
   }
@@ -236,6 +235,7 @@ public:
         host_(h),
         name_(name),
         demuxer_(demuxer),
+        work_(demuxer),
         handler_(handler)
     {
     }
@@ -247,7 +247,6 @@ public:
       {
         demuxer_.post(asio::detail::bind_handler(handler_,
               asio::error(asio::error::operation_aborted)));
-        demuxer_.work_finished();
         return;
       }
 
@@ -265,7 +264,6 @@ public:
       else
         populate_host_object(host_, ent);
       demuxer_.post(asio::detail::bind_handler(handler_, e));
-      demuxer_.work_finished();
     }
 
   private:
@@ -273,6 +271,7 @@ public:
     host& host_;
     std::string name_;
     Demuxer& demuxer_;
+    typename Demuxer::work work_;
     Handler handler_;
   };
 
@@ -282,7 +281,6 @@ public:
       Handler handler)
   {
     start_work_thread();
-    demuxer_.work_started();
     work_demuxer_.post(get_host_by_name_handler<Handler>(
           impl, h, name, demuxer_, handler));
   }
@@ -339,6 +337,9 @@ private:
 
   // Private demuxer used for performing asynchronous host resolution.
   Demuxer work_demuxer_;
+
+  // Work for the private demuxer to perform.
+  typename Demuxer::work* work_;
 
   // Thread used for running the work demuxer's run loop.
   asio::detail::thread* work_thread_;

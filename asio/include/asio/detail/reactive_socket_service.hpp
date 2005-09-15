@@ -224,6 +224,7 @@ public:
         socket_base::message_flags flags, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
+        work_(demuxer),
         buffers_(buffers),
         flags_(flags),
         handler_(handler)
@@ -248,19 +249,18 @@ public:
       asio::error error(bytes < 0
           ? socket_ops::get_error() : asio::error::success);
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
-      demuxer_.work_finished();
     }
 
     void do_cancel()
     {
       asio::error error(asio::error::operation_aborted);
       demuxer_.post(bind_handler(handler_, error, 0));
-      demuxer_.work_finished();
     }
 
   private:
     impl_type impl_;
     Demuxer& demuxer_;
+    typename Demuxer::work work_;
     Const_Buffers buffers_;
     size_t buffer_count_;
     socket_base::message_flags flags_;
@@ -280,7 +280,6 @@ public:
     }
     else
     {
-      demuxer_.work_started();
       reactor_.start_write_op(impl, send_handler<Const_Buffers, Handler>(
             impl, demuxer_, buffers, flags, handler));
     }
@@ -324,6 +323,7 @@ public:
         const Endpoint& endpoint, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
+        work_(demuxer),
         buffers_(buffers),
         flags_(flags),
         destination_(endpoint),
@@ -350,19 +350,18 @@ public:
       asio::error error(bytes < 0
           ? socket_ops::get_error() : asio::error::success);
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
-      demuxer_.work_finished();
     }
 
     void do_cancel()
     {
       asio::error error(asio::error::operation_aborted);
       demuxer_.post(bind_handler(handler_, error, 0));
-      demuxer_.work_finished();
     }
 
   private:
     impl_type impl_;
     Demuxer& demuxer_;
+    typename Demuxer::work work_;
     Const_Buffers buffers_;
     socket_base::message_flags flags_;
     Endpoint destination_;
@@ -383,7 +382,6 @@ public:
     }
     else
     {
-      demuxer_.work_started();
       reactor_.start_write_op(impl,
           send_to_handler<Const_Buffers, Endpoint, Handler>(
             impl, demuxer_, buffers, flags, destination, handler));
@@ -426,6 +424,7 @@ public:
         Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
+        work_(demuxer),
         buffers_(buffers),
         flags_(flags),
         handler_(handler)
@@ -450,19 +449,18 @@ public:
       asio::error error(bytes < 0
           ? socket_ops::get_error() : asio::error::success);
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
-      demuxer_.work_finished();
     }
 
     void do_cancel()
     {
       asio::error error(asio::error::operation_aborted);
       demuxer_.post(bind_handler(handler_, error, 0));
-      demuxer_.work_finished();
     }
 
   private:
     impl_type impl_;
     Demuxer& demuxer_;
+    typename Demuxer::work work_;
     Mutable_Buffers buffers_;
     socket_base::message_flags flags_;
     Handler handler_;
@@ -481,7 +479,6 @@ public:
     }
     else
     {
-      demuxer_.work_started();
       if (flags & socket_base::message_out_of_band)
       {
         reactor_.start_except_op(impl,
@@ -539,6 +536,7 @@ public:
         Endpoint& endpoint, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
+        work_(demuxer),
         buffers_(buffers),
         flags_(flags),
         sender_endpoint_(endpoint),
@@ -567,19 +565,18 @@ public:
           ? socket_ops::get_error() : asio::error::success);
       sender_endpoint_.size(addr_len);
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
-      demuxer_.work_finished();
     }
 
     void do_cancel()
     {
       asio::error error(asio::error::operation_aborted);
       demuxer_.post(bind_handler(handler_, error, 0));
-      demuxer_.work_finished();
     }
 
   private:
     impl_type impl_;
     Demuxer& demuxer_;
+    typename Demuxer::work work_;
     Mutable_Buffers buffers_;
     socket_base::message_flags flags_;
     Endpoint& sender_endpoint_;
@@ -601,7 +598,6 @@ public:
     }
     else
     {
-      demuxer_.work_started();
       reactor_.start_read_op(impl,
           receive_from_handler<Mutable_Buffers, Endpoint, Handler>(
             impl, demuxer_, buffers, flags, sender_endpoint, handler));
@@ -663,6 +659,7 @@ public:
         Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
+        work_(demuxer),
         peer_(peer),
         handler_(handler)
     {
@@ -675,19 +672,18 @@ public:
           ? socket_ops::get_error() : asio::error::success);
       peer_.set_impl(new_socket);
       demuxer_.post(bind_handler(handler_, error));
-      demuxer_.work_finished();
     }
 
     void do_cancel()
     {
       asio::error error(asio::error::operation_aborted);
       demuxer_.post(bind_handler(handler_, error));
-      demuxer_.work_finished();
     }
 
   private:
     impl_type impl_;
     Demuxer& demuxer_;
+    typename Demuxer::work work_;
     Socket& peer_;
     Handler handler_;
   };
@@ -709,7 +705,6 @@ public:
     }
     else
     {
-      demuxer_.work_started();
       reactor_.start_read_op(impl,
           accept_handler<Socket, Handler>(impl, demuxer_, peer, handler));
     }
@@ -723,6 +718,7 @@ public:
         Endpoint& peer_endpoint, Handler handler)
       : impl_(impl),
         demuxer_(demuxer),
+        work_(demuxer),
         peer_(peer),
         peer_endpoint_(peer_endpoint),
         handler_(handler)
@@ -739,19 +735,18 @@ public:
       peer_endpoint_.size(addr_len);
       peer_.set_impl(new_socket);
       demuxer_.post(bind_handler(handler_, error));
-      demuxer_.work_finished();
     }
 
     void do_cancel()
     {
       asio::error error(asio::error::operation_aborted);
       demuxer_.post(bind_handler(handler_, error));
-      demuxer_.work_finished();
     }
 
   private:
     impl_type impl_;
     Demuxer& demuxer_;
+    typename Demuxer::work work_;
     Socket& peer_;
     Endpoint& peer_endpoint_;
     Handler handler_;
@@ -775,7 +770,6 @@ public:
     }
     else
     {
-      demuxer_.work_started();
       reactor_.start_read_op(impl,
           accept_endp_handler<Socket, Endpoint, Handler>(
             impl, demuxer_, peer, peer_endpoint, handler));
@@ -820,6 +814,7 @@ public:
       : impl_(impl),
         completed_(completed),
         demuxer_(demuxer),
+        work_(demuxer),
         reactor_(reactor),
         handler_(handler)
     {
@@ -830,10 +825,7 @@ public:
       // Check whether a handler has already been called for the connection.
       // If it has, then we don't want to do anything in this handler.
       if (*completed_)
-      {
-        demuxer_.work_finished();
         return;
-      }
 
       // Cancel the other reactor operation for the connection.
       *completed_ = true;
@@ -877,10 +869,7 @@ public:
       // Check whether a handler has already been called for the connection.
       // If it has, then we don't want to do anything in this handler.
       if (*completed_)
-      {
-        demuxer_.work_finished();
         return;
-      }
 
       // Cancel the other reactor operation for the connection.
       *completed_ = true;
@@ -896,6 +885,7 @@ public:
     impl_type& impl_;
     boost::shared_ptr<bool> completed_;
     Demuxer& demuxer_;
+    typename Demuxer::work work_;
     Reactor& reactor_;
     Handler handler_;
   };
@@ -948,7 +938,6 @@ public:
       // The connection is happening in the background, and we need to wait
       // until the socket becomes writeable.
       boost::shared_ptr<bool> completed(new bool(false));
-      demuxer_.work_started();
       reactor_.start_write_and_except_ops(impl, connect_handler<Handler>(
             impl, completed, demuxer_, reactor_, handler));
     }

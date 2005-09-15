@@ -32,8 +32,7 @@ class win_iocp_demuxer_service;
 struct win_iocp_operation
   : public OVERLAPPED
 {
-  typedef void (*func_type)(win_iocp_operation*, win_iocp_demuxer_service&,
-      HANDLE, DWORD, size_t);
+  typedef void (*func_type)(win_iocp_operation*, DWORD, size_t);
 
   win_iocp_operation(func_type func)
     : func_(func)
@@ -45,10 +44,9 @@ struct win_iocp_operation
     hEvent = 0;
   }
 
-  void do_completion(win_iocp_demuxer_service& demuxer_service, HANDLE iocp,
-      DWORD last_error, size_t bytes_transferred)
+  void do_completion(DWORD last_error, size_t bytes_transferred)
   {
-    func_(this, demuxer_service, iocp, last_error, bytes_transferred);
+    func_(this, last_error, bytes_transferred);
   }
 
 protected:

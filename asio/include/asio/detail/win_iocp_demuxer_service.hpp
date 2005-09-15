@@ -23,6 +23,10 @@
 // Define this to indicate that IOCP is supported on the target platform.
 #define ASIO_HAS_IOCP_DEMUXER 1
 
+#include "asio/detail/push_options.hpp"
+#include <memory>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/tss_bool.hpp"
 #include "asio/detail/win_iocp_operation.hpp"
@@ -77,7 +81,7 @@ public:
       {
         // Dispatch the operation.
         win_iocp_operation* op = static_cast<win_iocp_operation*>(overlapped);
-        op->do_completion(*this, iocp_.handle, last_error, bytes_transferred);
+        op->do_completion(last_error, bytes_transferred);
       }
       else
       {
@@ -125,10 +129,18 @@ public:
   struct handler_operation
     : public win_iocp_operation
   {
-    handler_operation(Handler handler)
+    handler_operation(win_iocp_demuxer_service& demuxer_service,
+        Handler handler)
       : win_iocp_operation(&handler_operation<Handler>::do_completion_impl),
+        demuxer_service_(demuxer_service),
         handler_(handler)
     {
+      demuxer_service_.work_started();
+    }
+
+    ~handler_operation()
+    {
+      demuxer_service_.work_finished();
     }
 
     static void do_upcall(Handler& handler)
@@ -143,16 +155,18 @@ public:
     }
 
   private:
-    static void do_completion_impl(win_iocp_operation* op,
-        win_iocp_demuxer_service& demuxer_service, HANDLE iocp, DWORD, size_t)
+    // Prevent copying and assignment.
+    handler_operation(const handler_operation&);
+    void operator=(const handler_operation&);
+    
+    static void do_completion_impl(win_iocp_operation* op, DWORD, size_t)
     {
-      handler_operation<Handler>* h =
-        static_cast<handler_operation<Handler>*>(op);
+      std::auto_ptr<handler_operation<Handler> > h(
+          static_cast<handler_operation<Handler>*>(op));
       do_upcall(h->handler_);
-      demuxer_service.work_finished();
-      delete h;
     }
 
+    win_iocp_demuxer_service& demuxer_service_;
     Handler handler_;
   };
 
@@ -170,8 +184,7 @@ public:
   template <typename Handler>
   void post(Handler handler)
   {
-    win_iocp_operation* op = new handler_operation<Handler>(handler);
-    work_started();
+    win_iocp_operation* op = new handler_operation<Handler>(*this, handler);
     ::PostQueuedCompletionStatus(iocp_.handle, 0, 0, op);
   }
 

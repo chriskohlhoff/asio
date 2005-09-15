@@ -99,7 +99,7 @@ void demuxer_test()
 
   count = 0;
   d.reset();
-  d.work_started();
+  demuxer::work* w = new demuxer::work(d);
   d.post(boost::bind(&demuxer::interrupt, &d));
   d.run();
 
@@ -108,7 +108,7 @@ void demuxer_test()
 
   d.reset();
   d.post(boost::bind(increment, &count));
-  d.work_finished();
+  delete w;
 
   // No handlers can be called until run() is called.
   UNIT_TEST_CHECK(count == 0);
