@@ -23,6 +23,7 @@
 #include "asio/detail/push_options.hpp"
 #include <memory>
 #include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/basic_demuxer.hpp"
@@ -44,9 +45,61 @@ template <typename Allocator>
 class win_iocp_socket_service
 {
 public:
-  // The native type of the socket. This type is dependent on the
-  // underlying implementation of the socket layer.
-  typedef socket_type impl_type;
+  // The native type of the socket. We use a custom class here rather than just
+  // SOCKET to workaround the broken Windows support for cancellation. MSDN says
+  // that when you call closesocket any outstanding WSARecv or WSASend
+  // operations will complete with the error ERROR_OPERATION_ABORTED. In
+  // practice they complete with ERROR_NETNAME_DELETED, which means you can't
+  // tell the difference between a local cancellation and the socket being
+  // hard-closed by the peer.
+  class impl_type
+  {
+  public:
+    // Default constructor.
+    impl_type()
+      : socket_(new socket_type(invalid_socket))
+    {
+    }
+
+    // Construct from socket type.
+    explicit impl_type(socket_type s)
+      : socket_(new socket_type(s))
+    {
+    }
+
+    // Copy constructor.
+    impl_type(const impl_type& other)
+      : socket_(other.socket_)
+    {
+    }
+
+    // Assignment operator.
+    impl_type& operator=(const impl_type& other)
+    {
+      socket_ = other.socket_;
+      return *this;
+    }
+
+    // Assign from socket type.
+    impl_type& operator=(socket_type s)
+    {
+      socket_ = boost::shared_ptr<const socket_type>(new socket_type(s));
+      return *this;
+    }
+
+    // Convert to socket type.
+    operator socket_type() const
+    {
+      return *socket_;
+    }
+
+    typedef boost::shared_ptr<const socket_type> shared_ptr_type;
+    typedef boost::weak_ptr<const socket_type> weak_ptr_type;
+
+  private:
+    friend class win_iocp_socket_service<Allocator>;
+    shared_ptr_type socket_;
+  };
 
   // The demuxer type for this service.
   typedef basic_demuxer<demuxer_service<Allocator> > demuxer_type;
@@ -78,7 +131,7 @@ public:
   // Return a null socket implementation.
   static impl_type null()
   {
-    return invalid_socket;
+    return impl_type();
   }
 
   // Open a new socket implementation.
@@ -234,6 +287,8 @@ public:
     if (result != 0)
     {
       DWORD last_error = ::WSAGetLastError();
+      if (last_error == ERROR_NETNAME_DELETED)
+        last_error = WSAECONNRESET;
       error_handler(asio::error(last_error));
       return 0;
     }
@@ -246,9 +301,11 @@ public:
     : public win_iocp_operation
   {
   public:
-    send_operation(demuxer_type& demuxer, Handler handler)
+    send_operation(demuxer_type& demuxer,
+        impl_type::weak_ptr_type socket_ptr, Handler handler)
       : win_iocp_operation(&send_operation<Handler>::do_completion_impl),
         work_(demuxer),
+        socket_ptr_(socket_ptr),
         handler_(handler)
     {
     }
@@ -259,6 +316,16 @@ public:
     {
       std::auto_ptr<send_operation<Handler> > h(
           static_cast<send_operation<Handler>*>(op));
+
+      // Map ERROR_NETNAME_DELETED to more useful error.
+      if (last_error == ERROR_NETNAME_DELETED)
+      {
+        if (h->socket_ptr_.expired())
+          last_error = ERROR_OPERATION_ABORTED;
+        else
+          last_error = WSAECONNRESET;
+      }
+
       asio::error error(last_error);
       try
       {
@@ -270,6 +337,7 @@ public:
     }
 
     typename demuxer_type::work work_;
+    impl_type::weak_ptr_type socket_ptr_;
     Handler handler_;
   };
 
@@ -280,7 +348,7 @@ public:
       socket_base::message_flags flags, Handler handler)
   {
     std::auto_ptr<send_operation<Handler> > op(
-        new send_operation<Handler>(demuxer_, handler));
+        new send_operation<Handler>(demuxer_, impl.socket_, handler));
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -439,6 +507,8 @@ public:
     if (result != 0)
     {
       DWORD last_error = ::WSAGetLastError();
+      if (last_error == ERROR_NETNAME_DELETED)
+        last_error = WSAECONNRESET;
       error_handler(asio::error(last_error));
       return 0;
     }
@@ -451,9 +521,11 @@ public:
     : public win_iocp_operation
   {
   public:
-    receive_operation(demuxer_type& demuxer, Handler handler)
+    receive_operation(demuxer_type& demuxer,
+        impl_type::weak_ptr_type socket_ptr, Handler handler)
       : win_iocp_operation(&receive_operation<Handler>::do_completion_impl),
         work_(demuxer),
+        socket_ptr_(socket_ptr),
         handler_(handler)
     {
     }
@@ -464,6 +536,16 @@ public:
     {
       std::auto_ptr<receive_operation<Handler> > h(
           static_cast<receive_operation<Handler>*>(op));
+
+      // Map ERROR_NETNAME_DELETED to more useful error.
+      if (last_error == ERROR_NETNAME_DELETED)
+      {
+        if (h->socket_ptr_.expired())
+          last_error = ERROR_OPERATION_ABORTED;
+        else
+          last_error = WSAECONNRESET;
+      }
+
       asio::error error(last_error);
       try
       {
@@ -475,6 +557,7 @@ public:
     }
 
     typename demuxer_type::work work_;
+    impl_type::weak_ptr_type socket_ptr_;
     Handler handler_;
   };
 
@@ -485,7 +568,7 @@ public:
       socket_base::message_flags flags, Handler handler)
   {
     std::auto_ptr<receive_operation<Handler> > op(
-        new receive_operation<Handler>(demuxer_, handler));
+        new receive_operation<Handler>(demuxer_, impl.socket_, handler));
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -645,7 +728,7 @@ public:
       return;
     }
 
-    socket_type new_socket = socket_ops::accept(impl, 0, 0);
+    impl_type new_socket(socket_ops::accept(impl, 0, 0));
     if (int err = socket_ops::get_error())
     {
       error_handler(asio::error(err));
@@ -668,8 +751,8 @@ public:
     }
 
     socket_addr_len_type addr_len = peer_endpoint.size();
-    socket_type new_socket = socket_ops::accept(impl,
-        peer_endpoint.data(), &addr_len);
+    impl_type new_socket(socket_ops::accept(impl,
+          peer_endpoint.data(), &addr_len));
     if (int err = socket_ops::get_error())
     {
       error_handler(asio::error(err));
@@ -697,7 +780,7 @@ public:
 
     void do_operation()
     {
-      socket_type new_socket = socket_ops::accept(impl_, 0, 0);
+      impl_type new_socket(socket_ops::accept(impl_, 0, 0));
       asio::error error(new_socket == invalid_socket
           ? socket_ops::get_error() : asio::error::success);
       peer_.set_impl(new_socket);
@@ -758,8 +841,8 @@ public:
     void do_operation()
     {
       socket_addr_len_type addr_len = peer_endpoint_.size();
-      socket_type new_socket = socket_ops::accept(impl_,
-          peer_endpoint_.data(), &addr_len);
+      impl_type new_socket(socket_ops::accept(impl_,
+            peer_endpoint_.data(), &addr_len));
       asio::error error(new_socket == invalid_socket
           ? socket_ops::get_error() : asio::error::success);
       peer_endpoint_.size(addr_len);
