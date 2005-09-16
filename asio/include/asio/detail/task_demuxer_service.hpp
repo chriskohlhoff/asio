@@ -17,6 +17,10 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <memory>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/basic_demuxer.hpp"
 #include "asio/demuxer_service.hpp"
 #include "asio/service_factory.hpp"
@@ -61,23 +65,67 @@ public:
     {
       if (handler_queue_)
       {
+        // Prepare to execute first handler from queue.
         handler_base* h = handler_queue_;
         handler_queue_ = h->next_;
         if (handler_queue_ == 0)
           handler_queue_end_ = 0;
         lock.unlock();
+
+        // Helper class to perform operations on block exit.
+        class cleanup
+        {
+        public:
+          cleanup(asio::detail::mutex::scoped_lock& lock, int& outstanding_work)
+            : lock_(lock),
+              outstanding_work_(outstanding_work)
+          {
+          }
+
+          ~cleanup()
+          {
+            lock_.lock();
+            --outstanding_work_;
+          }
+
+        private:
+          asio::detail::mutex::scoped_lock& lock_;
+          int& outstanding_work_;
+        } c(lock, outstanding_work_);
+
+        // Invoke the handler. May throw an exception.
         h->call(); // call() deletes the handler object
-        lock.lock();
-        --outstanding_work_;
       }
       else if (!task_is_running_)
       {
+        // Prepare to execute the task.
         task_is_running_ = true;
         task_.reset();
         lock.unlock();
+
+        // Helper class to perform operations on block exit.
+        class cleanup
+        {
+        public:
+          cleanup(asio::detail::mutex::scoped_lock& lock, bool& task_is_running)
+            : lock_(lock),
+              task_is_running_(task_is_running)
+          {
+          }
+
+          ~cleanup()
+          {
+            lock_.lock();
+            task_is_running_ = false;
+          }
+
+        private:
+          asio::detail::mutex::scoped_lock& lock_;
+          bool& task_is_running_;
+        } c(lock, task_is_running_);
+
+        // Run the task. May throw an exception.
         task_.run();
-        lock.lock();
-        task_is_running_ = false;
       }
       else 
       {
@@ -151,7 +199,7 @@ public:
   void dispatch(Handler handler)
   {
     if (demuxer_run_call_stack<task_demuxer_service>::contains(this))
-      handler_wrapper<Handler>::do_upcall(handler);
+      handler();
     else
       post(handler);
   }
@@ -275,21 +323,9 @@ private:
 
     static void do_call(handler_base* base)
     {
-      handler_wrapper<Handler>* h =
-        static_cast<handler_wrapper<Handler>*>(base);
-      h->do_upcall(h->handler_);
-      delete h;
-    }
-
-    static void do_upcall(Handler& handler)
-    {
-      try
-      {
-        handler();
-      }
-      catch (...)
-      {
-      }
+      std::auto_ptr<handler_wrapper<Handler> > h(
+          static_cast<handler_wrapper<Handler>*>(base));
+      h->handler_();
     }
 
   private:

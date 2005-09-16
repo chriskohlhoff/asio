@@ -137,48 +137,59 @@ private:
 
     void operator()()
     {
-      do_upcall();
-
-      asio::detail::mutex::scoped_lock lock(impl_.mutex_);
-
-      waiter_base* tmp = impl_.first_waiter_;
-      impl_.first_waiter_ = impl_.first_waiter_->next_;
-      if (impl_.first_waiter_)
+      // Helper class to automatically enqueue next waiter on block exit.
+      class cleanup
       {
-        lock.unlock();
+      public:
+        cleanup(Demuxer& demuxer, locking_dispatcher_impl<Demuxer>& impl,
+            waiter_handler& handler)
+          : demuxer_(demuxer),
+            impl_(impl),
+            handler_(handler)
+        {
+        }
 
-        // Ensure the waiter is not deleted until after we have finished
-        // accessing the dispatcher, since the waiter might indirectly own
-        // the dispatcher and so destroying the waiter will cause the
-        // dispatcher to be destroyed.
-        delete tmp;
+        ~cleanup()
+        {
+          asio::detail::mutex::scoped_lock lock(impl_.mutex_);
 
-        // There is more work to do, so post this handler again.
-        demuxer_.post(*this);
-      }
-      else
-      {
-        impl_.last_waiter_ = 0;
+          waiter_base* tmp = impl_.first_waiter_;
+          impl_.first_waiter_ = impl_.first_waiter_->next_;
+          if (impl_.first_waiter_)
+          {
+            lock.unlock();
 
-        lock.unlock();
+            // Ensure the waiter is not deleted until after we have finished
+            // accessing the dispatcher, since the waiter might indirectly own
+            // the dispatcher and so destroying the waiter will cause the
+            // dispatcher to be destroyed.
+            delete tmp;
 
-        // Ensure the waiter is not deleted until after we have finished
-        // accessing the dispatcher, since the waiter might indirectly own
-        // the dispatcher and so destroying the waiter will cause the
-        // dispatcher to be destroyed.
-        delete tmp;
-      }
-    }
+            // There is more work to do, so post this handler again.
+            demuxer_.post(handler_);
+          }
+          else
+          {
+            impl_.last_waiter_ = 0;
 
-    void do_upcall()
-    {
-      try
-      {
-        impl_.first_waiter_->call();
-      }
-      catch (...)
-      {
-      }
+            lock.unlock();
+
+            // Ensure the waiter is not deleted until after we have finished
+            // accessing the dispatcher, since the waiter might indirectly own
+            // the dispatcher and so destroying the waiter will cause the
+            // dispatcher to be destroyed.
+            delete tmp;
+          }
+        }
+
+      private:
+        Demuxer& demuxer_;
+        locking_dispatcher_impl<Demuxer>& impl_;
+        waiter_handler& handler_;
+      } c(demuxer_, impl_, *this);
+
+      // Call the handler.
+      impl_.first_waiter_->call();
     }
 
   private:
