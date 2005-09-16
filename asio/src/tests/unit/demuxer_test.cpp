@@ -66,6 +66,11 @@ void start_sleep_increments(demuxer* d, int* count)
   d->post(boost::bind(sleep_increment, d, count));
 }
 
+void throw_exception()
+{
+  throw 1;
+}
+
 void demuxer_test()
 {
   demuxer d;
@@ -183,6 +188,33 @@ void demuxer_test()
 
   // The run() call will not return until all work has finished.
   UNIT_TEST_CHECK(count == 0);
+
+  count = 0;
+  int exception_count = 0;
+  d.reset();
+  d.post(throw_exception);
+  d.post(boost::bind(start_sleep_increments, &d, &count));
+
+  // No handlers can be called until run() is called.
+  UNIT_TEST_CHECK(count == 0);
+  UNIT_TEST_CHECK(exception_count == 0);
+
+  for (;;)
+  {
+    try
+    {
+      d.run();
+      break;
+    }
+    catch (int)
+    {
+      ++exception_count;
+    }
+  }
+
+  // The run() calls will not return until all work has finished.
+  UNIT_TEST_CHECK(count == 3);
+  UNIT_TEST_CHECK(exception_count == 1);
 
 #if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
   // Use a non-default allocator type.

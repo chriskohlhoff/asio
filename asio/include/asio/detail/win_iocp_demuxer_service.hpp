@@ -140,17 +140,6 @@ public:
       demuxer_service_.work_finished();
     }
 
-    static void do_upcall(Handler& handler)
-    {
-      try
-      {
-        handler();
-      }
-      catch (...)
-      {
-      }
-    }
-
   private:
     // Prevent copying and assignment.
     handler_operation(const handler_operation&);
@@ -160,7 +149,7 @@ public:
     {
       std::auto_ptr<handler_operation<Handler> > h(
           static_cast<handler_operation<Handler>*>(op));
-      do_upcall(h->handler_);
+      h->handler_();
     }
 
     win_iocp_demuxer_service& demuxer_service_;
@@ -172,7 +161,7 @@ public:
   void dispatch(Handler handler)
   {
     if (demuxer_run_call_stack<win_iocp_demuxer_service>::contains(this))
-      handler_operation<Handler>::do_upcall(handler);
+      handler();
     else
       post(handler);
   }

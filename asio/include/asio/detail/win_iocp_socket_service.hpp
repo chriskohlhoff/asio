@@ -327,13 +327,7 @@ public:
       }
 
       asio::error error(last_error);
-      try
-      {
-        h->handler_(error, bytes_transferred);
-      }
-      catch (...)
-      {
-      }
+      h->handler_(error, bytes_transferred);
     }
 
     typename demuxer_type::work work_;
@@ -430,13 +424,7 @@ public:
       std::auto_ptr<send_to_operation<Handler> > h(
           static_cast<send_to_operation<Handler>*>(op));
       asio::error error(last_error);
-      try
-      {
-        h->handler_(error, bytes_transferred);
-      }
-      catch (...)
-      {
-      }
+      h->handler_(error, bytes_transferred);
     }
 
     typename demuxer_type::work work_;
@@ -547,13 +535,7 @@ public:
       }
 
       asio::error error(last_error);
-      try
-      {
-        h->handler_(error, bytes_transferred);
-      }
-      catch (...)
-      {
-      }
+      h->handler_(error, bytes_transferred);
     }
 
     typename demuxer_type::work work_;
@@ -663,13 +645,7 @@ public:
           static_cast<receive_from_operation<Endpoint, Handler>*>(op));
       h->endpoint_.size(h->endpoint_size_);
       asio::error error(last_error);
-      try
-      {
-        h->handler_(error, bytes_transferred);
-      }
-      catch (...)
-      {
-      }
+      h->handler_(error, bytes_transferred);
     }
 
     Endpoint& endpoint_;
