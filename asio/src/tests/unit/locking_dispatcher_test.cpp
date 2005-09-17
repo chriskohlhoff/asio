@@ -62,6 +62,11 @@ void start_sleep_increments(demuxer* d, locking_dispatcher* l, int* count)
   l->post(boost::bind(sleep_increment, d, count));
 }
 
+void throw_exception()
+{
+  throw 1;
+}
+
 void locking_dispatcher_test()
 {
   demuxer d;
@@ -112,6 +117,36 @@ void locking_dispatcher_test()
 
   // The run() calls will not return until all work has finished.
   UNIT_TEST_CHECK(count == 3);
+
+  count = 0;
+  int exception_count = 0;
+  d.reset();
+  l.post(throw_exception);
+  l.post(boost::bind(increment, &count));
+  l.post(boost::bind(increment, &count));
+  l.post(throw_exception);
+  l.post(boost::bind(increment, &count));
+
+  // No handlers can be called until run() is called.
+  UNIT_TEST_CHECK(count == 0);
+  UNIT_TEST_CHECK(exception_count == 0);
+
+  for (;;)
+  {
+    try
+    {
+      d.run();
+      break;
+    }
+    catch (int)
+    {
+      ++exception_count;
+    }
+  }
+
+  // The run() calls will not return until all work has finished.
+  UNIT_TEST_CHECK(count == 3);
+  UNIT_TEST_CHECK(exception_count == 2);
 }
 
 UNIT_TEST(locking_dispatcher_test)
