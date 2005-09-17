@@ -18,6 +18,8 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <cstddef>
+#include <boost/config.hpp>
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -499,7 +501,7 @@ public:
    * data is written before the blocking operation completes.
    */
   template <typename Const_Buffers>
-  size_t send(const Const_Buffers& buffers, message_flags flags)
+  std::size_t send(const Const_Buffers& buffers, message_flags flags)
   {
     return service_.send(impl_, buffers, flags, default_error_handler());
   }
@@ -529,7 +531,7 @@ public:
    * data is written before the blocking operation completes.
    */
   template <typename Const_Buffers, typename Error_Handler>
-  size_t send(const Const_Buffers& buffers, message_flags flags,
+  std::size_t send(const Const_Buffers& buffers, message_flags flags,
       Error_Handler error_handler)
   {
     return service_.send(impl_, buffers, flags, error_handler);
@@ -551,8 +553,8 @@ public:
    * Copies will be made of the handler as required. The equivalent function
    * signature of the handler must be:
    * @code void handler(
-   *   const asio::error& error, // Result of operation
-   *   size_t bytes_transferred  // Number of bytes sent
+   *   const asio::error& error,     // Result of operation
+   *   std::size_t bytes_transferred // Number of bytes sent
    * ); @endcode
    *
    * @note The send operation may not transmit all of the data to the peer.
@@ -587,7 +589,7 @@ public:
    * completes.
    */
   template <typename Mutable_Buffers>
-  size_t receive(const Mutable_Buffers& buffers, message_flags flags)
+  std::size_t receive(const Mutable_Buffers& buffers, message_flags flags)
   {
     return service_.receive(impl_, buffers, flags, default_error_handler());
   }
@@ -616,7 +618,7 @@ public:
    * socket.
    */
   template <typename Mutable_Buffers, typename Error_Handler>
-  size_t receive(const Mutable_Buffers& buffers, message_flags flags,
+  std::size_t receive(const Mutable_Buffers& buffers, message_flags flags,
       Error_Handler error_handler)
   {
     return service_.receive(impl_, buffers, flags, error_handler);
@@ -638,8 +640,8 @@ public:
    * completes. Copies will be made of the handler as required. The equivalent
    * function signature of the handler must be:
    * @code void handler(
-   *   const asio::error& error, // Result of operation
-   *   size_t bytes_transferred  // Number of bytes received
+   *   const asio::error& error,     // Result of operation
+   *   std::size_t bytes_transferred // Number of bytes received
    * ); @endcode
    *
    * @note The receive operation may not receive all of the requested number of
@@ -671,7 +673,7 @@ public:
    * data is written before the blocking operation completes.
    */
   template <typename Const_Buffers>
-  size_t write(const Const_Buffers& buffers)
+  std::size_t write(const Const_Buffers& buffers)
   {
     return service_.send(impl_, buffers, 0, default_error_handler());
   }
@@ -698,7 +700,7 @@ public:
    * data is written before the blocking operation completes.
    */
   template <typename Const_Buffers, typename Error_Handler>
-  size_t write(const Const_Buffers& buffers, Error_Handler error_handler)
+  std::size_t write(const Const_Buffers& buffers, Error_Handler error_handler)
   {
     return service_.send(impl_, buffers, 0, error_handler);
   }
@@ -717,8 +719,8 @@ public:
    * Copies will be made of the handler as required. The equivalent function
    * signature of the handler must be:
    * @code void handler(
-   *   const asio::error& error, // Result of operation
-   *   size_t bytes_transferred  // Number of bytes written
+   *   const asio::error& error,     // Result of operation
+   *   std::size_t bytes_transferred // Number of bytes written
    * ); @endcode
    *
    * @note The write operation may not transmit all of the data to the peer.
@@ -748,7 +750,7 @@ public:
    * requested amount of data is read before the blocking operation completes.
    */
   template <typename Mutable_Buffers>
-  size_t read(const Mutable_Buffers& buffers)
+  std::size_t read(const Mutable_Buffers& buffers)
   {
     return service_.receive(impl_, buffers, 0, default_error_handler());
   }
@@ -775,7 +777,7 @@ public:
    * requested amount of data is read before the blocking operation completes.
    */
   template <typename Mutable_Buffers, typename Error_Handler>
-  size_t read(const Mutable_Buffers& buffers, Error_Handler error_handler)
+  std::size_t read(const Mutable_Buffers& buffers, Error_Handler error_handler)
   {
     return service_.receive(impl_, buffers, 0, error_handler);
   }
@@ -794,8 +796,8 @@ public:
    * Copies will be made of the handler as required. The equivalent function
    * signature of the handler must be:
    * @code void handler(
-   *   const asio::error& error, // Result of operation
-   *   size_t bytes_transferred  // Number of bytes read
+   *   const asio::error& error,     // Result of operation
+   *   std::size_t bytes_transferred // Number of bytes read
    * ); @endcode
    *
    * @note The read operation may not read all of the requested number of bytes.
@@ -823,7 +825,7 @@ public:
    * @throws asio::error Thrown on failure.
    */
   template <typename Mutable_Buffers>
-  size_t peek(const Mutable_Buffers& buffers)
+  std::size_t peek(const Mutable_Buffers& buffers)
   {
     return service_.receive(impl_, buffers, message_peek,
         default_error_handler());
@@ -848,7 +850,7 @@ public:
    * cleanly.
    */
   template <typename Mutable_Buffers, typename Error_Handler>
-  size_t peek(const Mutable_Buffers& buffers, Error_Handler error_handler)
+  std::size_t peek(const Mutable_Buffers& buffers, Error_Handler error_handler)
   {
     return service_.receive(impl_, buffers, message_peek, error_handler);
   }
@@ -862,7 +864,7 @@ public:
    *
    * @throws asio::error Thrown on failure.
    */
-  size_t in_avail()
+  std::size_t in_avail()
   {
     bytes_readable command;
     service_.io_control(impl_, command, default_error_handler());
@@ -884,7 +886,7 @@ public:
    * @returns The number of bytes of data that can be read without blocking.
    */
   template <typename Error_Handler>
-  size_t in_avail(Error_Handler error_handler)
+  std::size_t in_avail(Error_Handler error_handler)
   {
     bytes_readable command;
     service_.io_control(impl_, command, error_handler);

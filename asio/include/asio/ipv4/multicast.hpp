@@ -17,6 +17,11 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <cstddef>
+#include <boost/config.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/socket_option.hpp"
 #include "asio/ipv4/socket_option.hpp"
 
@@ -90,7 +95,7 @@ public:
   }
 
   /// Get the size of the option data.
-  size_t size() const
+  std::size_t size() const
   {
     return sizeof(value_);
   }

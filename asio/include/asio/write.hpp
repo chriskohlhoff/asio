@@ -17,6 +17,11 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <cstddef>
+#include <boost/config.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/consuming_buffers.hpp"
 #include "asio/detail/bind_handler.hpp"
 
@@ -42,7 +47,7 @@ namespace asio {
  * data is written before the blocking operation completes.
  */
 template <typename Sync_Write_Stream, typename Const_Buffers>
-inline size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers)
+inline std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers)
 {
   return s.write(buffers);
 }
@@ -76,7 +81,7 @@ inline size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers)
  */
 template <typename Sync_Write_Stream, typename Const_Buffers,
     typename Error_Handler>
-inline size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
+inline std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
     Error_Handler error_handler)
 {
   return s.write(buffers, error_handler);
@@ -100,10 +105,10 @@ inline size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
  * signature of the handler must be:
  * @code template <typename Error>
  * void handler(
- *   const Error& error,      // Result of operation (the actual type is
- *                            // dependent on the underlying stream's write
- *                            // operation)
- *   size_t bytes_transferred // Number of bytes written
+ *   const Error& error,           // Result of operation (the actual type is
+ *                                 // dependent on the underlying stream's write
+ *                                 // operation)
+ *   std::size_t bytes_transferred // Number of bytes written
  * ); @endcode
  *
  * @note The write operation may not write all of the data to the stream.
@@ -138,12 +143,12 @@ inline void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
  * on the underlying stream's write operation.
  */
 template <typename Sync_Write_Stream, typename Const_Buffers>
-size_t write_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
-    size_t* total_bytes_transferred = 0)
+std::size_t write_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
+    std::size_t* total_bytes_transferred = 0)
 {
   consuming_buffers<Const_Buffers> tmp(buffers);
-  size_t bytes_transferred = 0;
-  size_t total_transferred = 0;
+  std::size_t bytes_transferred = 0;
+  std::size_t total_transferred = 0;
   while (tmp.begin() != tmp.end())
   {
     bytes_transferred = write(s, tmp);
@@ -189,12 +194,12 @@ size_t write_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
  */
 template <typename Sync_Write_Stream, typename Const_Buffers,
     typename Error_Handler>
-size_t write_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
-    size_t* total_bytes_transferred, Error_Handler error_handler)
+std::size_t write_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
+    std::size_t* total_bytes_transferred, Error_Handler error_handler)
 {
   consuming_buffers<Const_Buffers> tmp(buffers);
-  size_t bytes_transferred = 0;
-  size_t total_transferred = 0;
+  std::size_t bytes_transferred = 0;
+  std::size_t total_transferred = 0;
   while (tmp.begin() != tmp.end())
   {
     bytes_transferred = write(s, tmp, error_handler);
@@ -229,7 +234,7 @@ namespace detail
     }
 
     template <typename Error>
-    void operator()(const Error& e, size_t bytes_transferred)
+    void operator()(const Error& e, std::size_t bytes_transferred)
     {
       total_transferred_ += bytes_transferred;
       buffers_.consume(bytes_transferred);
@@ -247,7 +252,7 @@ namespace detail
   private:
     Async_Write_Stream& stream_;
     consuming_buffers<Const_Buffers> buffers_;
-    size_t total_transferred_;
+    std::size_t total_transferred_;
     Handler handler_;
   };
 } // namespace detail
@@ -271,13 +276,13 @@ namespace detail
  * signature of the handler must be:
  * @code template <typename Error>
  * void handler(
- *   const Error& error,            // Result of operation (the actual type is
- *                                  // dependent on the underlying stream's
- *                                  // write operation)
- *   size_t last_bytes_transferred, // Number of bytes written on last write
- *                                  // operation
- *   size_t total_bytes_transferred // Total number of bytes successfully
- *                                  // written
+ *   const Error& error,                 // Result of operation (the actual type
+ *                                       // is dependent on the underlying
+ *                                       // stream's write operation)
+ *   std::size_t last_bytes_transferred, // Number of bytes written on last
+ *                                       // write operation
+ *   std::size_t total_bytes_transferred // Total number of bytes successfully
+ *                                       // written
  * ); @endcode
  */
 template <typename Async_Write_Stream, typename Const_Buffers, typename Handler>
@@ -313,12 +318,12 @@ inline void async_write_n(Async_Write_Stream& s, const Const_Buffers& buffers,
  * on the underlying stream's write operation.
  */
 template <typename Sync_Write_Stream, typename Const_Buffers>
-size_t write_at_least_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
-    size_t min_length, size_t* total_bytes_transferred = 0)
+std::size_t write_at_least_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
+    std::size_t min_length, std::size_t* total_bytes_transferred = 0)
 {
   consuming_buffers<Const_Buffers> tmp(buffers);
-  size_t bytes_transferred = 0;
-  size_t total_transferred = 0;
+  std::size_t bytes_transferred = 0;
+  std::size_t total_transferred = 0;
   while (tmp.begin() != tmp.end() && total_transferred < min_length)
   {
     bytes_transferred = write(s, tmp);
@@ -367,13 +372,13 @@ size_t write_at_least_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
  */
 template <typename Sync_Write_Stream, typename Const_Buffers,
     typename Error_Handler>
-size_t write_at_least_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
-    size_t min_length, size_t* total_bytes_transferred,
+std::size_t write_at_least_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
+    std::size_t min_length, std::size_t* total_bytes_transferred,
     Error_Handler error_handler)
 {
   consuming_buffers<Const_Buffers> tmp(buffers);
-  size_t bytes_transferred = 0;
-  size_t total_transferred = 0;
+  std::size_t bytes_transferred = 0;
+  std::size_t total_transferred = 0;
   while (tmp.begin() != tmp.end() && total_transferred < min_length)
   {
     bytes_transferred = write(s, tmp, error_handler);
@@ -399,7 +404,7 @@ namespace detail
   {
   public:
     write_at_least_n_handler(Async_Write_Stream& stream,
-        const Const_Buffers& buffers, size_t min_length, Handler handler)
+        const Const_Buffers& buffers, std::size_t min_length, Handler handler)
       : stream_(stream),
         buffers_(buffers),
         min_length_(min_length),
@@ -409,7 +414,7 @@ namespace detail
     }
 
     template <typename Error>
-    void operator()(const Error& e, size_t bytes_transferred)
+    void operator()(const Error& e, std::size_t bytes_transferred)
     {
       total_transferred_ += bytes_transferred;
       buffers_.consume(bytes_transferred);
@@ -428,8 +433,8 @@ namespace detail
   private:
     Async_Write_Stream& stream_;
     consuming_buffers<Const_Buffers> buffers_;
-    size_t min_length_;
-    size_t total_transferred_;
+    std::size_t min_length_;
+    std::size_t total_transferred_;
     Handler handler_;
   };
 } // namespace detail
@@ -455,18 +460,18 @@ namespace detail
  * signature of the handler must be:
  * @code template <typename Error>
  * void handler(
- *   const Error& error,            // Result of operation (the actual type is
- *                                  // dependent on the underlying stream's
- *                                  // write operation)
- *   size_t last_bytes_transferred, // Number of bytes written on last write
- *                                  // operation
- *   size_t total_bytes_transferred // Total number of bytes successfully
- *                                  // written
+ *   const Error& error,                 // Result of operation (the actual type
+ *                                       // is dependent on the underlying
+ *                                       // stream's write operation)
+ *   std::size_t last_bytes_transferred, // Number of bytes written on last
+ *                                       // write operation
+ *   std::size_t total_bytes_transferred // Total number of bytes successfully
+ *                                       // written
  * ); @endcode
  */
 template <typename Async_Write_Stream, typename Const_Buffers, typename Handler>
 inline void async_write_at_least_n(Async_Write_Stream& s,
-    const Const_Buffers& buffers, size_t min_length, Handler handler)
+    const Const_Buffers& buffers, std::size_t min_length, Handler handler)
 {
   async_write(s, buffers,
       detail::write_at_least_n_handler<Async_Write_Stream, Const_Buffers,

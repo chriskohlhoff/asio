@@ -18,6 +18,8 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <cstddef>
+#include <boost/config.hpp>
 #include <string>
 #include <vector>
 #include "asio/detail/pop_options.hpp"
@@ -76,25 +78,25 @@ public:
   }
 
   /// Get the number of alternate names for the host.
-  size_t alternate_name_count() const
+  std::size_t alternate_name_count() const
   {
     return alternate_names_.size();
   }
 
   /// Get the alternate name at the specified index.
-  std::string alternate_name(size_t index) const
+  std::string alternate_name(std::size_t index) const
   {
     return alternate_names_[index];
   }
 
   /// Get the number of addresses for the host.
-  size_t address_count() const
+  std::size_t address_count() const
   {
     return addresses_.size();
   }
 
   /// Get the address at the specified index.
-  asio::ipv4::address address(size_t index) const
+  asio::ipv4::address address(std::size_t index) const
   {
     return addresses_[index];
   }

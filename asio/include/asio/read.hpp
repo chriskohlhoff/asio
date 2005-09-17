@@ -17,6 +17,11 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <cstddef>
+#include <boost/config.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/consuming_buffers.hpp"
 #include "asio/detail/bind_handler.hpp"
 
@@ -42,7 +47,7 @@ namespace asio {
  * requested amount of data is read before the blocking operation completes.
  */
 template <typename Sync_Read_Stream, typename Mutable_Buffers>
-inline size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers)
+inline std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers)
 {
   return s.read(buffers);
 }
@@ -74,7 +79,7 @@ inline size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers)
  */
 template <typename Sync_Read_Stream, typename Mutable_Buffers,
     typename Error_Handler>
-inline size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
+inline std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
     Error_Handler error_handler)
 {
   return s.read(buffers, error_handler);
@@ -98,10 +103,10 @@ inline size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  * signature of the handler must be:
  * @code template <typename Error>
  * void handler(
- *   const Error& error,      // Result of operation (the actual type is
- *                            // dependent on the underlying stream's read
- *                            // operation)
- *   size_t bytes_transferred // Number of bytes read
+ *   const Error& error,           // Result of operation (the actual type is
+ *                                 // dependent on the underlying stream's read
+ *                                 // operation)
+ *   std::size_t bytes_transferred // Number of bytes read
  * ); @endcode
  *
  * @note The read operation may not read all of the requested number of bytes.
@@ -138,12 +143,12 @@ inline void async_read(Async_Read_Stream& s, const Mutable_Buffers& buffers,
  * on the underlying stream's read operation.
  */
 template <typename Sync_Read_Stream, typename Mutable_Buffers>
-size_t read_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
-    size_t* total_bytes_transferred = 0)
+std::size_t read_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
+    std::size_t* total_bytes_transferred = 0)
 {
   consuming_buffers<Mutable_Buffers> tmp(buffers);
-  size_t bytes_transferred = 0;
-  size_t total_transferred = 0;
+  std::size_t bytes_transferred = 0;
+  std::size_t total_transferred = 0;
   while (tmp.begin() != tmp.end())
   {
     bytes_transferred = read(s, tmp);
@@ -189,12 +194,12 @@ size_t read_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  */
 template <typename Sync_Read_Stream, typename Mutable_Buffers,
     typename Error_Handler>
-size_t read_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
-    size_t* total_bytes_transferred, Error_Handler error_handler)
+std::size_t read_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
+    std::size_t* total_bytes_transferred, Error_Handler error_handler)
 {
   consuming_buffers<Mutable_Buffers> tmp(buffers);
-  size_t bytes_transferred = 0;
-  size_t total_transferred = 0;
+  std::size_t bytes_transferred = 0;
+  std::size_t total_transferred = 0;
   while (tmp.begin() != tmp.end())
   {
     bytes_transferred = read(s, tmp, error_handler);
@@ -229,7 +234,7 @@ namespace detail
     }
 
     template <typename Error>
-    void operator()(const Error& e, size_t bytes_transferred)
+    void operator()(const Error& e, std::size_t bytes_transferred)
     {
       total_transferred_ += bytes_transferred;
       buffers_.consume(bytes_transferred);
@@ -247,7 +252,7 @@ namespace detail
   private:
     Async_Read_Stream& stream_;
     consuming_buffers<Mutable_Buffers> buffers_;
-    size_t total_transferred_;
+    std::size_t total_transferred_;
     Handler handler_;
   };
 } // namespace detail
@@ -271,12 +276,13 @@ namespace detail
  * signature of the handler must be:
  * @code template <typename Error>
  * void handler(
- *   const Error& error,            // Result of operation (the actual type is
- *                                  // dependent on the underlying stream's read
- *                                  // operation)
- *   size_t last_bytes_transferred, // Number of bytes read on last read
- *                                  // operation
- *   size_t total_bytes_transferred // Total number of bytes successfully read
+ *   const Error& error,                 // Result of operation (the actual type
+ *                                       // is dependent on the underlying
+ *                                       // stream's read operation)
+ *   std::size_t last_bytes_transferred, // Number of bytes read on last read
+ *                                       // operation
+ *   std::size_t total_bytes_transferred // Total number of bytes successfully
+ *                                       // read
  * ); @endcode
  */
 template <typename Async_Read_Stream, typename Mutable_Buffers,
@@ -312,12 +318,12 @@ inline void async_read_n(Async_Read_Stream& s, const Mutable_Buffers& buffers,
  * on the underlying stream's read operation.
  */
 template <typename Sync_Read_Stream, typename Mutable_Buffers>
-size_t read_at_least_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
-    size_t min_length, size_t* total_bytes_transferred = 0)
+std::size_t read_at_least_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
+    std::size_t min_length, std::size_t* total_bytes_transferred = 0)
 {
   consuming_buffers<Mutable_Buffers> tmp(buffers);
-  size_t bytes_transferred = 0;
-  size_t total_transferred = 0;
+  std::size_t bytes_transferred = 0;
+  std::size_t total_transferred = 0;
   while (tmp.begin() != tmp.end() && total_transferred < min_length)
   {
     bytes_transferred = read(s, tmp);
@@ -365,13 +371,13 @@ size_t read_at_least_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  */
 template <typename Sync_Read_Stream, typename Mutable_Buffers,
     typename Error_Handler>
-size_t read_at_least_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
-    size_t min_length, size_t* total_bytes_transferred,
+std::size_t read_at_least_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
+    std::size_t min_length, std::size_t* total_bytes_transferred,
     Error_Handler error_handler)
 {
   consuming_buffers<Mutable_Buffers> tmp(buffers);
-  size_t bytes_transferred = 0;
-  size_t total_transferred = 0;
+  std::size_t bytes_transferred = 0;
+  std::size_t total_transferred = 0;
   while (tmp.begin() != tmp.end() && total_transferred < min_length)
   {
     bytes_transferred = read(s, tmp, error_handler);
@@ -397,7 +403,7 @@ namespace detail
   {
   public:
     read_at_least_n_handler(Async_Read_Stream& stream,
-        const Mutable_Buffers& buffers, size_t min_length, Handler handler)
+        const Mutable_Buffers& buffers, std::size_t min_length, Handler handler)
       : stream_(stream),
         buffers_(buffers),
         min_length_(min_length),
@@ -407,7 +413,7 @@ namespace detail
     }
 
     template <typename Error>
-    void operator()(const Error& e, size_t bytes_transferred)
+    void operator()(const Error& e, std::size_t bytes_transferred)
     {
       total_transferred_ += bytes_transferred;
       buffers_.consume(bytes_transferred);
@@ -426,8 +432,8 @@ namespace detail
   private:
     Async_Read_Stream& stream_;
     consuming_buffers<Mutable_Buffers> buffers_;
-    size_t min_length_;
-    size_t total_transferred_;
+    std::size_t min_length_;
+    std::size_t total_transferred_;
     Handler handler_;
   };
 } // namespace detail
@@ -453,18 +459,19 @@ namespace detail
  * signature of the handler must be:
  * @code template <typename Error>
  * void handler(
- *   const Error& error,            // Result of operation (the actual type is
- *                                  // dependent on the underlying stream's read
- *                                  // operation)
- *   size_t last_bytes_transferred, // Number of bytes read on last read
- *                                  // operation
- *   size_t total_bytes_transferred // Total number of bytes successfully read
+ *   const Error& error,                 // Result of operation (the actual type
+ *                                       // is dependent on the underlying
+ *                                       // stream's read operation)
+ *   std::size_t last_bytes_transferred, // Number of bytes read on last read
+ *                                       // operation
+ *   std::size_t total_bytes_transferred // Total number of bytes successfully
+ *                                       // read
  * ); @endcode
  */
 template <typename Async_Read_Stream, typename Mutable_Buffers,
     typename Handler>
 inline void async_read_at_least_n(Async_Read_Stream& s,
-    const Mutable_Buffers& buffers, size_t min_length, Handler handler)
+    const Mutable_Buffers& buffers, std::size_t min_length, Handler handler)
 {
   async_read(s, buffers,
       detail::read_at_least_n_handler<Async_Read_Stream, Mutable_Buffers,

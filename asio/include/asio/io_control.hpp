@@ -17,6 +17,11 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <cstddef>
+#include <boost/config.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/detail/socket_types.hpp"
 
 namespace asio {
@@ -85,7 +90,7 @@ public:
   }
 
   /// Construct with a specific command value.
-  size(size_t value)
+  size(std::size_t value)
     : value_(value)
   {
   }
@@ -97,15 +102,15 @@ public:
   }
 
   /// Set the value of the size.
-  void set(size_t value)
+  void set(std::size_t value)
   {
     value_ = static_cast<detail::ioctl_arg_type>(value);
   }
 
   /// Get the current value of the size.
-  size_t get() const
+  std::size_t get() const
   {
-    return static_cast<size_t>(value_);
+    return static_cast<std::size_t>(value_);
   }
 
   /// Get the address of the command data.

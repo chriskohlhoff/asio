@@ -19,7 +19,9 @@
 
 #include "asio/detail/push_options.hpp"
 #include <cassert>
+#include <cstddef>
 #include <cstring>
+#include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
 namespace asio {
@@ -39,7 +41,7 @@ public:
   typedef const byte_type* const_iterator;
 
   /// The type used for offsets into the buffer.
-  typedef size_t size_type;
+  typedef std::size_t size_type;
 
   /// Constructor.
   fixed_buffer()
@@ -180,7 +182,7 @@ public:
   }
 
   /// Push the same byte on to the buffer a certain number of times.
-  void push(const byte_type& b, size_t count)
+  void push(const byte_type& b, size_type count)
   {
     resize(size() + count);
     using namespace std; // For memset.

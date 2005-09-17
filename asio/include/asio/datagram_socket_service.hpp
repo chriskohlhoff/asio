@@ -18,7 +18,9 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <cstddef>
 #include <memory>
+#include <boost/config.hpp>
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -176,7 +178,7 @@ public:
 
   /// Send the given data to the peer.
   template <typename Const_Buffers, typename Error_Handler>
-  size_t send(impl_type& impl, const Const_Buffers& buffers,
+  std::size_t send(impl_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, Error_Handler error_handler)
   {
     return service_impl_.send(impl, buffers, flags, error_handler);
@@ -192,7 +194,7 @@ public:
 
   /// Send a datagram to the specified endpoint.
   template <typename Const_Buffers, typename Endpoint, typename Error_Handler>
-  size_t send_to(impl_type& impl, const Const_Buffers& buffers,
+  std::size_t send_to(impl_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, const Endpoint& destination,
       Error_Handler error_handler)
   {
@@ -211,7 +213,7 @@ public:
 
   /// Receive some data from the peer.
   template <typename Mutable_Buffers, typename Error_Handler>
-  size_t receive(impl_type& impl, const Mutable_Buffers& buffers,
+  std::size_t receive(impl_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Error_Handler error_handler)
   {
     return service_impl_.receive(impl, buffers, flags, error_handler);
@@ -227,7 +229,7 @@ public:
 
   /// Receive a datagram with the endpoint of the sender.
   template <typename Mutable_Buffers, typename Endpoint, typename Error_Handler>
-  size_t receive_from(impl_type& impl, const Mutable_Buffers& buffers,
+  std::size_t receive_from(impl_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Endpoint& sender_endpoint,
       Error_Handler error_handler)
   {

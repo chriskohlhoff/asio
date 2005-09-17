@@ -18,6 +18,8 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <cstddef>
+#include <boost/config.hpp>
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -509,7 +511,7 @@ public:
    * the send_to function to send data on an unconnected datagram socket.
    */
   template <typename Const_Buffers>
-  size_t send(const Const_Buffers& buffers, message_flags flags)
+  std::size_t send(const Const_Buffers& buffers, message_flags flags)
   {
     return service_.send(impl_, buffers, flags, default_error_handler());
   }
@@ -537,7 +539,7 @@ public:
    * the send_to function to send data on an unconnected datagram socket.
    */
   template <typename Const_Buffers, typename Error_Handler>
-  size_t send(const Const_Buffers& buffers, message_flags flags,
+  std::size_t send(const Const_Buffers& buffers, message_flags flags,
       Error_Handler error_handler)
   {
     return service_.send(impl_, buffers, flags, error_handler);
@@ -560,8 +562,8 @@ public:
    * Copies will be made of the handler as required. The equivalent function
    * signature of the handler must be:
    * @code void handler(
-   *   const asio::error& error, // Result of operation
-   *   size_t bytes_transferred  // Number of bytes sent
+   *   const asio::error& error,     // Result of operation
+   *   std::size_t bytes_transferred // Number of bytes sent
    * ); @endcode
    *
    * @note The async_send operation can only be used with a connected socket.
@@ -592,7 +594,7 @@ public:
    * @throws asio::error Thrown on failure.
    */
   template <typename Const_Buffers, typename Endpoint>
-  size_t send_to(const Const_Buffers& buffers, message_flags flags,
+  std::size_t send_to(const Const_Buffers& buffers, message_flags flags,
       const Endpoint& destination)
   {
     return service_.send_to(impl_, buffers, flags, destination,
@@ -621,7 +623,7 @@ public:
    * @returns The number of bytes sent.
    */
   template <typename Const_Buffers, typename Endpoint, typename Error_Handler>
-  size_t send_to(const Const_Buffers& buffers, message_flags flags,
+  std::size_t send_to(const Const_Buffers& buffers, message_flags flags,
       const Endpoint& destination, Error_Handler error_handler)
   {
     return service_.send_to(impl_, buffers, flags, destination, error_handler);
@@ -646,8 +648,8 @@ public:
    * Copies will be made of the handler as required. The equivalent function
    * signature of the handler must be:
    * @code void handler(
-   *   const asio::error& error, // Result of operation
-   *   size_t bytes_transferred  // Number of bytes sent
+   *   const asio::error& error,     // Result of operation
+   *   std::size_t bytes_transferred // Number of bytes sent
    * ); @endcode
    */
   template <typename Const_Buffers, typename Endpoint, typename Handler>
@@ -676,7 +678,7 @@ public:
    * socket.
    */
   template <typename Mutable_Buffers>
-  size_t receive(const Mutable_Buffers& buffers, message_flags flags)
+  std::size_t receive(const Mutable_Buffers& buffers, message_flags flags)
   {
     return service_.receive(impl_, buffers, flags, default_error_handler());
   }
@@ -705,7 +707,7 @@ public:
    * socket.
    */
   template <typename Mutable_Buffers, typename Error_Handler>
-  size_t receive(const Mutable_Buffers& buffers, message_flags flags,
+  std::size_t receive(const Mutable_Buffers& buffers, message_flags flags,
       Error_Handler error_handler)
   {
     return service_.receive(impl_, buffers, flags, error_handler);
@@ -727,8 +729,8 @@ public:
    * completes. Copies will be made of the handler as required. The equivalent
    * function signature of the handler must be:
    * @code void handler(
-   *   const asio::error& error, // Result of operation
-   *   size_t bytes_transferred  // Number of bytes received
+   *   const asio::error& error,     // Result of operation
+   *   std::size_t bytes_transferred // Number of bytes received
    * ); @endcode
    *
    * @note The async_receive operation can only be used with a connected socket.
@@ -759,7 +761,7 @@ public:
    * @throws asio::error Thrown on failure.
    */
   template <typename Mutable_Buffers, typename Endpoint>
-  size_t receive_from(const Mutable_Buffers& buffers, message_flags flags,
+  std::size_t receive_from(const Mutable_Buffers& buffers, message_flags flags,
       Endpoint& sender_endpoint)
   {
     return service_.receive_from(impl_, buffers, flags, sender_endpoint,
@@ -788,7 +790,7 @@ public:
    * @returns The number of bytes received.
    */
   template <typename Mutable_Buffers, typename Endpoint, typename Error_Handler>
-  size_t receive_from(const Mutable_Buffers& buffers, message_flags flags,
+  std::size_t receive_from(const Mutable_Buffers& buffers, message_flags flags,
       Endpoint& sender_endpoint, Error_Handler error_handler)
   {
     return service_.receive_from(impl_, buffers, flags, sender_endpoint,
@@ -816,8 +818,8 @@ public:
    * completes. Copies will be made of the handler as required. The equivalent
    * function signature of the handler must be:
    * @code void handler(
-   *   const asio::error& error, // Result of operation
-   *   size_t bytes_recvd        // Number of bytes received
+   *   const asio::error& error,     // Result of operation
+   *   std::size_t bytes_transferred // Number of bytes received
    * ); @endcode
    */
   template <typename Mutable_Buffers, typename Endpoint, typename Handler>

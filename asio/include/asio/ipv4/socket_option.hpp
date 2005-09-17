@@ -17,6 +17,11 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <cstddef>
+#include <boost/config.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/ipv4/address.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -83,7 +88,7 @@ public:
   }
 
   /// Get the size of the flag data.
-  size_t size() const
+  std::size_t size() const
   {
     return sizeof(value_);
   }

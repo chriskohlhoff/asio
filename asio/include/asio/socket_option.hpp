@@ -17,6 +17,11 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <cstddef>
+#include <boost/config.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/detail/socket_types.hpp"
 
 namespace asio {
@@ -76,7 +81,7 @@ public:
   }
 
   /// Get the size of the boolean data.
-  size_t size() const
+  std::size_t size() const
   {
     return sizeof(value_);
   }
@@ -139,7 +144,7 @@ public:
   }
 
   /// Get the size of the int data.
-  size_t size() const
+  std::size_t size() const
   {
     return sizeof(value_);
   }
@@ -216,7 +221,7 @@ public:
   }
 
   /// Get the size of the int data.
-  size_t size() const
+  std::size_t size() const
   {
     return sizeof(value_);
   }
