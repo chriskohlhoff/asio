@@ -45,6 +45,9 @@ template <typename Allocator>
 class win_iocp_socket_service
 {
 public:
+  typedef boost::shared_ptr<const socket_type> socket_shared_ptr_type;
+  typedef boost::weak_ptr<const socket_type> socket_weak_ptr_type;
+
   // The native type of the socket. We use a custom class here rather than just
   // SOCKET to workaround the broken Windows support for cancellation. MSDN says
   // that when you call closesocket any outstanding WSARecv or WSASend
@@ -83,7 +86,7 @@ public:
     // Assign from socket type.
     impl_type& operator=(socket_type s)
     {
-      socket_ = boost::shared_ptr<const socket_type>(new socket_type(s));
+      socket_ = socket_shared_ptr_type(new socket_type(s));
       return *this;
     }
 
@@ -93,12 +96,9 @@ public:
       return *socket_;
     }
 
-    typedef boost::shared_ptr<const socket_type> shared_ptr_type;
-    typedef boost::weak_ptr<const socket_type> weak_ptr_type;
-
   private:
     friend class win_iocp_socket_service<Allocator>;
-    shared_ptr_type socket_;
+    socket_shared_ptr_type socket_;
   };
 
   // The demuxer type for this service.
@@ -302,7 +302,7 @@ public:
   {
   public:
     send_operation(demuxer_type& demuxer,
-        impl_type::weak_ptr_type socket_ptr, Handler handler)
+        socket_weak_ptr_type socket_ptr, Handler handler)
       : win_iocp_operation(&send_operation<Handler>::do_completion_impl),
         work_(demuxer),
         socket_ptr_(socket_ptr),
@@ -331,7 +331,7 @@ public:
     }
 
     typename demuxer_type::work work_;
-    impl_type::weak_ptr_type socket_ptr_;
+    socket_weak_ptr_type socket_ptr_;
     Handler handler_;
   };
 
@@ -510,7 +510,7 @@ public:
   {
   public:
     receive_operation(demuxer_type& demuxer,
-        impl_type::weak_ptr_type socket_ptr, Handler handler)
+        socket_weak_ptr_type socket_ptr, Handler handler)
       : win_iocp_operation(&receive_operation<Handler>::do_completion_impl),
         work_(demuxer),
         socket_ptr_(socket_ptr),
@@ -539,7 +539,7 @@ public:
     }
 
     typename demuxer_type::work work_;
-    impl_type::weak_ptr_type socket_ptr_;
+    socket_weak_ptr_type socket_ptr_;
     Handler handler_;
   };
 
