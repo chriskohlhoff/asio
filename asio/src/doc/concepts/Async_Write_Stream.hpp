@@ -25,20 +25,19 @@ public:
    * This function is used to asynchronously write data on the stream. The
    * function call always returns immediately.
    *
-   * @param data The data to be written on the stream. Ownership of the data is
-   * retained by the caller, which must guarantee that it is valid until the
-   * handler is called.
-   *
-   * @param length The size of the data to be written, in bytes.
+   * @param buffers The data to be written to the socket. Although the buffers
+   * object may be copied as necessary, ownership of the underlying buffers is
+   * retained by the caller, which must guarantee that they remain valid until
+   * the handler is called.
    *
    * @param handler The handler to be called when the write operation completes.
    * Copies will be made of the handler as required. The equivalent function
    * signature of the handler must be:
    * @code void handler(
    *   const implementation_defined& error, // Result of operation
-   *   size_t bytes_transferred             // Number of bytes written
+   *   std::size_t bytes_transferred        // Number of bytes written
    * ); @endcode
    */
-  template <typename Handler>
-  void async_write(const void* data, size_t length, Handler handler);
+  template <typename Const_Buffers, typename Handler>
+  void async_write(const Const_Buffers& buffers, Handler handler);
 };

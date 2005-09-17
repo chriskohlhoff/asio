@@ -25,15 +25,14 @@ public:
    * block until some or all of the data has been written successfully, or until
    * an error occurs.
    *
-   * @param data The data to be written.
-   *
-   * @param length The size of the data to be written, in bytes.
+   * @param buffers The data to be written.
    *
    * @returns The number of bytes written or 0 if the stream was closed cleanly.
    *
    * @throws implementation_specified Thrown on failure.
    */
-  size_t write(const void* data, size_t length);
+  template <typename Const_Buffers>
+  std::size_t write(const Const_Buffers& buffers);
 
   /// Write the given data on the stream.
   /**
@@ -41,9 +40,7 @@ public:
    * block until some or all of the data has been written successfully, or until
    * an error occurs.
    *
-   * @param data The data to be written.
-   *
-   * @param length The size of the data to be written, in bytes.
+   * @param buffers The data to be written.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature
@@ -54,6 +51,6 @@ public:
    *
    * @returns The number of bytes written or 0 if the stream was closed cleanly.
    */
-  template <typename Error_Handler>
-  size_t write(const void* data, size_t length, Error_Handler error_handler);
+  template <typename Const_Buffers, typename Error_Handler>
+  std::size_t write(const Const_Buffers& buffers, Error_Handler error_handler);
 };

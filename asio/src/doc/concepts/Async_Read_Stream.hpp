@@ -25,20 +25,19 @@ public:
    * This function is used to asynchronously read data from the stream. The
    * function call always returns immediately.
    *
-   * @param data The buffer into which the data will be read. Ownership of the
-   * buffer is retained by the caller, which must guarantee that it is valid
-   * until the handler is called.
-   *
-   * @param max_length The maximum size of the data to be read, in bytes.
+   * @param buffers The buffers into which the data will be read. Although the
+   * buffers object may be copied as necessary, ownership of the underlying
+   * buffers is retained by the caller, which must guarantee that they remain
+   * valid until the handler is called.
    *
    * @param handler The handler to be called when the read operation completes.
    * Copies will be made of the handler as required. The equivalent function
    * signature of the handler must be:
    * @code void handler(
    *   const implementation_defined& error, // Result of operation
-   *   size_t bytes_transferred             // Number of bytes read
+   *   std::size_t bytes_transferred        // Number of bytes read
    * ); @endcode
    */
-  template <typename Handler>
-  void async_read(void* data, size_t max_length, Handler handler);
+  template <typename Mutable_Buffers, typename Handler>
+  void async_read(const Mutable_Buffers& buffers, Handler handler);
 };

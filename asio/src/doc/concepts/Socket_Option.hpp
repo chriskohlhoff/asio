@@ -45,5 +45,5 @@ public:
   const void* data() const;
 
   /// Get the size of the socket option data.
-  size_t size() const;
+  std::size_t size() const;
 };

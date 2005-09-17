@@ -629,8 +629,8 @@ public:
    * This function is used to asynchronously receive data from the stream
    * socket. The function call always returns immediately.
    *
-   * @param data The buffers into which the data will be received. Although the
-   * buffers object may be copied as necessary, ownership of the underlying
+   * @param buffers The buffers into which the data will be received. Although
+   * the buffers object may be copied as necessary, ownership of the underlying
    * buffers is retained by the caller, which must guarantee that they remain
    * valid until the handler is called.
    *
@@ -787,7 +787,7 @@ public:
    * This function is used to asynchronously read data from the stream socket.
    * The function call always returns immediately.
    *
-   * @param data The buffers into which the data will be read. Although the
+   * @param buffers The buffers into which the data will be read. Although the
    * buffers object may be copied as necessary, ownership of the underlying
    * buffers is retained by the caller, which must guarantee that they remain
    * valid until the handler is called.
