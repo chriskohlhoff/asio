@@ -18,6 +18,7 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/error.hpp"
+#include "asio/ipv4/address.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/socket_types.hpp"
 

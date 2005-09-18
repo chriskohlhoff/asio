@@ -1,6 +1,6 @@
 //
-// ipv4_host_resolver_test.cpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// host_resolver_test.cpp
+// ~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2005 Christopher M. Kohlhoff (chris@kohlhoff.com)
 //
@@ -17,7 +17,7 @@
 #include <iterator>
 #include <boost/bind.hpp>
 #include "asio.hpp"
-#include "unit_test.hpp"
+#include "../unit_test.hpp"
 
 using namespace asio;
 
