@@ -129,7 +129,7 @@ public:
   }
 
   /// Create a new const_buffers instance with one additional element.
-  const_buffers<N + 1> operator()(const const_buffer& b)
+  const_buffers<N + 1> operator()(const const_buffer& b) const
   {
     const_buffers<N + 1> tmp;
     for (std::size_t i = 0; i < N; ++i)
@@ -139,9 +139,62 @@ public:
   }
 
   /// Create a new const_buffers instance with one additional element.
-  const_buffers<N + 1> operator()(const void* data, std::size_t size)
+  const_buffers<N + 1> operator()(const const_buffer& b,
+      std::size_t max_size_in_bytes) const
   {
-    return operator()(buffer(data, size));
+    return operator()(buffer(b, max_size_in_bytes));
+  }
+
+  /// Create a new const_buffers instance with one additional element.
+  const_buffers<N + 1> operator()(const void* data,
+      std::size_t size_in_bytes) const
+  {
+    return operator()(buffer(data, size_in_bytes));
+  }
+
+  /// Create a new const_buffers instance with one additional element.
+  template <typename Pod_Type, std::size_t Num>
+  const_buffers<N + 1> operator()(const Pod_Type (&data)[Num]) const
+  {
+    return operator()(buffer(data));
+  }
+
+  /// Create a new const_buffers instance with one additional element.
+  template <typename Pod_Type, std::size_t Num>
+  const_buffers<N + 1> operator()(const Pod_Type (&data)[Num],
+      std::size_t max_size_in_bytes) const
+  {
+    return operator()(buffer(data, max_size_in_bytes));
+  }
+
+  /// Create a new const_buffers instance with one additional element.
+  template <typename Pod_Type, std::size_t Num>
+  const_buffers<N + 1> operator()(const boost::array<Pod_Type, Num>& data) const
+  {
+    return operator()(buffer(data));
+  }
+
+  /// Create a new const_buffers instance with one additional element.
+  template <typename Pod_Type, std::size_t Num>
+  const_buffers<N + 1> operator()(const boost::array<Pod_Type, Num>& data,
+      std::size_t max_size_in_bytes) const
+  {
+    return operator()(buffer(data, max_size_in_bytes));
+  }
+
+  /// Create a new const_buffers instance with one additional element.
+  template <typename Pod_Type>
+  const_buffers<N + 1> operator()(const std::vector<Pod_Type>& data) const
+  {
+    return operator()(buffer(data));
+  }
+
+  /// Create a new const_buffers instance with one additional element.
+  template <typename Pod_Type>
+  const_buffers<N + 1> operator()(const std::vector<Pod_Type>& data,
+      std::size_t max_size_in_bytes) const
+  {
+    return operator()(buffer(data, max_size_in_bytes));
   }
 
   /// Convert to a container.
@@ -263,7 +316,7 @@ public:
   }
 
   /// Create a new mutable_buffers instance with one additional element.
-  mutable_buffers<N + 1> operator()(const mutable_buffer& b)
+  mutable_buffers<N + 1> operator()(const mutable_buffer& b) const
   {
     mutable_buffers<N + 1> tmp;
     for (std::size_t i = 0; i < N; ++i)
@@ -272,8 +325,15 @@ public:
     return tmp;
   }
 
+  /// Create a new mutable_buffers instance with one additional element.
+  mutable_buffers<N + 1> operator()(const mutable_buffer& b,
+      std::size_t max_size_in_bytes) const
+  {
+    return operator()(buffer(b, max_size_in_bytes));
+  }
+
   /// Create a new const_buffers instance with one additional element.
-  const_buffers<N + 1> operator()(const const_buffer& b)
+  const_buffers<N + 1> operator()(const const_buffer& b) const
   {
     const_buffers<N + 1> tmp;
     for (std::size_t i = 0; i < N; ++i)
@@ -282,16 +342,144 @@ public:
     return tmp;
   }
 
-  /// Create a new mutable_buffers instance with one additional element.
-  mutable_buffers<N + 1> operator()(void* data, std::size_t size)
+  /// Create a new const_buffers instance with one additional element.
+  const_buffers<N + 1> operator()(const const_buffer& b,
+      std::size_t max_size_in_bytes) const
   {
-    return operator()(buffer(data, size));
+    return operator()(buffer(b, max_size_in_bytes));
+  }
+
+  /// Create a new mutable_buffers instance with one additional element.
+  mutable_buffers<N + 1> operator()(void* data, std::size_t size_in_bytes) const
+  {
+    return operator()(buffer(data, size_in_bytes));
   }
 
   /// Create a new const_buffers instance with one additional element.
-  const_buffers<N + 1> operator()(const void* data, std::size_t size)
+  const_buffers<N + 1> operator()(const void* data,
+      std::size_t size_in_bytes) const
   {
-    return operator()(buffer(data, size));
+    return operator()(buffer(data, size_in_bytes));
+  }
+
+  /// Create a new mutable_buffers instance with one additional element.
+  template <typename Pod_Type, std::size_t Num>
+  mutable_buffers<N + 1> operator()(Pod_Type (&data)[Num]) const
+  {
+    return operator()(buffer(data));
+  }
+
+  /// Create a new mutable_buffers instance with one additional element.
+  template <typename Pod_Type, std::size_t Num>
+  mutable_buffers<N + 1> operator()(Pod_Type (&data)[Num],
+      std::size_t max_size_in_bytes) const
+  {
+    return operator()(buffer(data, max_size_in_bytes));
+  }
+
+  /// Create a new const_buffers instance with one additional element.
+  template <typename Pod_Type, std::size_t Num>
+  const_buffers<N + 1> operator()(const Pod_Type (&data)[Num]) const
+  {
+    return operator()(buffer(data));
+  }
+
+  /// Create a new const_buffers instance with one additional element.
+  template <typename Pod_Type, std::size_t Num>
+  const_buffers<N + 1> operator()(const Pod_Type (&data)[Num],
+      std::size_t max_size_in_bytes) const
+  {
+    return operator()(buffer(data, max_size_in_bytes));
+  }
+
+  /// Create a new const_buffers instance with one additional element.
+  template <typename Pod_Type, std::size_t Num>
+  mutable_buffers<N + 1> operator()(boost::array<Pod_Type, Num>& data) const
+  {
+    return operator()(buffer(data));
+  }
+
+  /// Create a new const_buffers instance with one additional element.
+  template <typename Pod_Type, std::size_t Num>
+  mutable_buffers<N + 1> operator()(boost::array<Pod_Type, Num>& data,
+      std::size_t max_size_in_bytes) const
+  {
+    return operator()(buffer(data, max_size_in_bytes));
+  }
+
+  /// Create a new const_buffers instance with one additional element.
+  template <typename Pod_Type, std::size_t Num>
+  const_buffers<N + 1> operator()(const boost::array<Pod_Type, Num>& data) const
+  {
+    return operator()(buffer(data));
+  }
+
+  /// Create a new const_buffers instance with one additional element.
+  template <typename Pod_Type, std::size_t Num>
+  const_buffers<N + 1> operator()(const boost::array<Pod_Type, Num>& data,
+      std::size_t max_size_in_bytes) const
+  {
+    return operator()(buffer(data, max_size_in_bytes));
+  }
+
+  /// Create a new const_buffers instance with one additional element.
+  template <typename Pod_Type, std::size_t Num>
+  const_buffers<N + 1> operator()(boost::array<const Pod_Type, Num>& data) const
+  {
+    return operator()(buffer(data));
+  }
+
+  /// Create a new const_buffers instance with one additional element.
+  template <typename Pod_Type, std::size_t Num>
+  const_buffers<N + 1> operator()(boost::array<const Pod_Type, Num>& data,
+      std::size_t max_size_in_bytes) const
+  {
+    return operator()(buffer(data, max_size_in_bytes));
+  }
+
+  /// Create a new const_buffers instance with one additional element.
+  template <typename Pod_Type>
+  mutable_buffers<N + 1> operator()(std::vector<Pod_Type>& data) const
+  {
+    return operator()(buffer(data));
+  }
+
+  /// Create a new const_buffers instance with one additional element.
+  template <typename Pod_Type>
+  mutable_buffers<N + 1> operator()(std::vector<Pod_Type>& data,
+      std::size_t max_size_in_bytes) const
+  {
+    return operator()(buffer(data, max_size_in_bytes));
+  }
+
+  /// Create a new const_buffers instance with one additional element.
+  template <typename Pod_Type>
+  const_buffers<N + 1> operator()(const std::vector<Pod_Type>& data) const
+  {
+    return operator()(buffer(data));
+  }
+
+  /// Create a new const_buffers instance with one additional element.
+  template <typename Pod_Type>
+  const_buffers<N + 1> operator()(const std::vector<Pod_Type>& data,
+      std::size_t max_size_in_bytes) const
+  {
+    return operator()(buffer(data, max_size_in_bytes));
+  }
+
+  /// Create a new const_buffers instance with one additional element.
+  template <typename Pod_Type>
+  const_buffers<N + 1> operator()(std::vector<const Pod_Type>& data) const
+  {
+    return operator()(buffer(data));
+  }
+
+  /// Create a new const_buffers instance with one additional element.
+  template <typename Pod_Type>
+  const_buffers<N + 1> operator()(std::vector<const Pod_Type>& data,
+      std::size_t max_size_in_bytes) const
+  {
+    return operator()(buffer(data, max_size_in_bytes));
   }
 
   /// Convert to a const_buffers instance.
@@ -321,6 +509,13 @@ inline const_buffers<1> buffers(const const_buffer& b)
   return tmp;
 }
 
+/// Create a const_buffers instance with one element.
+inline const_buffers<1> buffers(const const_buffer& b,
+    std::size_t max_size_in_bytes)
+{
+  return buffers(buffer(b, max_size_in_bytes));
+}
+
 /// Create a mutable_buffers instance with one element.
 inline mutable_buffers<1> buffers(const mutable_buffer& b)
 {
@@ -329,16 +524,143 @@ inline mutable_buffers<1> buffers(const mutable_buffer& b)
   return tmp;
 }
 
-/// Create a const_buffers instance with one element.
-inline const_buffers<1> buffers(const void* data, std::size_t size)
+/// Create a mutable_buffers instance with one element.
+inline mutable_buffers<1> buffers(const mutable_buffer& b,
+    std::size_t max_size_in_bytes)
 {
-  return buffers(buffer(data, size));
+  return buffers(buffer(b, max_size_in_bytes));
+}
+
+/// Create a const_buffers instance with one element.
+inline const_buffers<1> buffers(const void* data, std::size_t size_in_bytes)
+{
+  return buffers(buffer(data, size_in_bytes));
 }
 
 /// Create a mutable_buffers instance with one element.
-inline mutable_buffers<1> buffers(void* data, std::size_t size)
+inline mutable_buffers<1> buffers(void* data, std::size_t size_in_bytes)
 {
-  return buffers(buffer(data, size));
+  return buffers(buffer(data, size_in_bytes));
+}
+
+/// Create a mutable_buffers instance with one element.
+template <typename Pod_Type, std::size_t N>
+inline mutable_buffers<1> buffers(Pod_Type (&data)[N])
+{
+  return buffers(buffer(data));
+}
+ 
+/// Create a mutable_buffers instance with one element.
+template <typename Pod_Type, std::size_t N>
+inline mutable_buffers<1> buffers(Pod_Type (&data)[N],
+    std::size_t max_size_in_bytes)
+{
+  return buffers(buffer(data, max_size_in_bytes));
+}
+ 
+/// Create a const_buffers instance with one element.
+template <typename Pod_Type, std::size_t N>
+inline const_buffers<1> buffers(const Pod_Type (&data)[N])
+{
+  return buffers(buffer(data));
+}
+
+/// Create a const_buffers instance with one element.
+template <typename Pod_Type, std::size_t N>
+inline const_buffers<1> buffers(const Pod_Type (&data)[N],
+    std::size_t max_size_in_bytes)
+{
+  return buffers(buffer(data, max_size_in_bytes));
+}
+
+/// Create a mutable_buffers instance with one element.
+template <typename Pod_Type, std::size_t N>
+inline mutable_buffers<1> buffers(boost::array<Pod_Type, N>& data)
+{
+  return buffers(buffer(data));
+}
+
+/// Create a mutable_buffers instance with one element.
+template <typename Pod_Type, std::size_t N>
+inline mutable_buffers<1> buffers(boost::array<Pod_Type, N>& data,
+    std::size_t max_size_in_bytes)
+{
+  return buffers(buffer(data, max_size_in_bytes));
+}
+
+/// Create a const_buffers instance with one element.
+template <typename Pod_Type, std::size_t N>
+inline const_buffers<1> buffers(const boost::array<Pod_Type, N>& data)
+{
+  return buffers(buffer(data));
+}
+
+/// Create a const_buffers instance with one element.
+template <typename Pod_Type, std::size_t N>
+inline const_buffers<1> buffers(const boost::array<Pod_Type, N>& data,
+    std::size_t max_size_in_bytes)
+{
+  return buffers(buffer(data, max_size_in_bytes));
+}
+
+/// Create a const_buffers instance with one element.
+template <typename Pod_Type, std::size_t N>
+inline const_buffers<1> buffers(boost::array<const Pod_Type, N>& data)
+{
+  return buffers(buffer(data));
+}
+
+/// Create a const_buffers instance with one element.
+template <typename Pod_Type, std::size_t N>
+inline const_buffers<1> buffers(boost::array<const Pod_Type, N>& data,
+    std::size_t max_size_in_bytes)
+{
+  return buffers(buffer(data, max_size_in_bytes));
+}
+
+/// Create a mutable_buffers instance with one element.
+template <typename Pod_Type>
+inline mutable_buffers<1> buffers(std::vector<Pod_Type>& data)
+{
+  return buffers(buffer(data));
+}
+
+/// Create a mutable_buffers instance with one element.
+template <typename Pod_Type>
+inline mutable_buffers<1> buffers(std::vector<Pod_Type>& data,
+    std::size_t max_size_in_bytes)
+{
+  return buffers(buffer(data, max_size_in_bytes));
+}
+
+/// Create a const_buffers instance with one element.
+template <typename Pod_Type>
+inline const_buffers<1> buffers(const std::vector<Pod_Type>& data)
+{
+  return buffers(buffer(data));
+}
+
+/// Create a const_buffers instance with one element.
+template <typename Pod_Type>
+inline const_buffers<1> buffers(const std::vector<Pod_Type>& data,
+    std::size_t max_size_in_bytes)
+{
+  return buffers(buffer(data, max_size_in_bytes));
+}
+
+/// Create a const_buffers instance with one element.
+template <typename Pod_Type>
+inline const_buffers<1> buffers(std::vector<const Pod_Type>& data)
+{
+  return buffers(buffer(data));
+}
+
+/// Create a const_buffers instance with one element.
+template <typename Pod_Type>
+inline const_buffers<1> buffers(std::vector<const Pod_Type>& data,
+    std::size_t max_size_in_bytes)
+{
+  return buffers(buffer(data, max_size_in_bytes));
 }
 
 } // namespace asio

@@ -105,7 +105,7 @@ public:
       }
       else
       {
-        *begin_ = begin_->sub_buffer(size);
+        *begin_ = *begin_ + size;
         size = 0;
       }
     }
