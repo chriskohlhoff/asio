@@ -11,49 +11,19 @@
 #ifndef UNIT_TEST_HPP
 #define UNIT_TEST_HPP
 
-#include <iostream>
+#if defined(__BORLANDC__)
 
-static int unit_test_exit_code = 0;
+// Prevent use of intrinsic for strcmp.
+#include <cstring>
+#undef strcmp
 
-inline int unit_test(const char* name, void (*func)(void))
-{
-  std::cout << "INFO: " << name << " started\n";
+// Suppress error about condition always being true.
+#pragma option -w-ccc
 
-  try
-  {
-    func();
-  }
-  catch (...)
-  {
-    std::cout << "FAIL: unhandled exception\n";
-    unit_test_exit_code = 1;
-  }
+#endif // defined(__BORLANDC__)
 
-  std::cout << "INFO: " << name << " ended with exit code ";
-  std::cout << unit_test_exit_code << "\n";
-
-  return unit_test_exit_code;
-}
-
-#define UNIT_TEST(name) int main() { return unit_test(#name, name); }
-
-inline void unit_test_info(const char* file, int line, const char* msg)
-{
-  std::cout << "INFO: " << file << "(" << line << "):" << msg << "\n";
-}
-
-#define UNIT_TEST_INFO(s) unit_test_info(__FILE__, __LINE__, s)
-
-inline void unit_test_check(bool condition, const char* file, int line,
-    const char* msg)
-{
-  if (!condition)
-  {
-    std::cout << "FAIL: " << file << "(" << line << "):" << msg << "\n";
-    unit_test_exit_code = 1;
-  }
-}
-
-#define UNIT_TEST_CHECK(c) unit_test_check((c), __FILE__, __LINE__, #c)
+#include <boost/test/unit_test.hpp>
+#include <boost/test/included/unit_test_framework.hpp>
+using boost::unit_test::test_suite;
 
 #endif // UNIT_TEST_HPP

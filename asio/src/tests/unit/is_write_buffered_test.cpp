@@ -8,6 +8,9 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+// Test that header file is self-contained.
+#include "asio/is_write_buffered.hpp"
+
 #include <boost/bind.hpp>
 #include <boost/noncopyable.hpp>
 #include "asio.hpp"
@@ -80,27 +83,32 @@ private:
 
 void is_write_buffered_test()
 {
-  UNIT_TEST_CHECK(!asio::is_write_buffered<asio::stream_socket>::value);
+  BOOST_CHECK(!asio::is_write_buffered<asio::stream_socket>::value);
 
-  UNIT_TEST_CHECK(!asio::is_write_buffered<
+  BOOST_CHECK(!asio::is_write_buffered<
       asio::buffered_read_stream<asio::stream_socket> >::value);
 
-  UNIT_TEST_CHECK(asio::is_write_buffered<
+  BOOST_CHECK(asio::is_write_buffered<
       asio::buffered_write_stream<asio::stream_socket> >::value);
 
-  UNIT_TEST_CHECK(asio::is_write_buffered<
+  BOOST_CHECK(asio::is_write_buffered<
       asio::buffered_stream<asio::stream_socket> >::value);
 
-  UNIT_TEST_CHECK(!asio::is_write_buffered<test_stream>::value);
+  BOOST_CHECK(!asio::is_write_buffered<test_stream>::value);
 
-  UNIT_TEST_CHECK(!asio::is_write_buffered<
+  BOOST_CHECK(!asio::is_write_buffered<
       asio::buffered_read_stream<test_stream> >::value);
 
-  UNIT_TEST_CHECK(asio::is_write_buffered<
+  BOOST_CHECK(asio::is_write_buffered<
       asio::buffered_write_stream<test_stream> >::value);
 
-  UNIT_TEST_CHECK(asio::is_write_buffered<
+  BOOST_CHECK(asio::is_write_buffered<
       asio::buffered_stream<test_stream> >::value);
 }
 
-UNIT_TEST(is_write_buffered_test)
+test_suite* init_unit_test_suite(int argc, char* argv[])
+{
+  test_suite* test = BOOST_TEST_SUITE("is_write_buffered");
+  test->add(BOOST_TEST_CASE(&is_write_buffered_test));
+  return test;
+}

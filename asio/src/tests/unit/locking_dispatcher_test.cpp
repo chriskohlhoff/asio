@@ -8,6 +8,9 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+// Test that header file is self-contained.
+#include "asio/locking_dispatcher.hpp"
+
 #include <sstream>
 #include <boost/bind.hpp>
 #include "asio.hpp"
@@ -28,7 +31,7 @@ void increment_without_lock(locking_dispatcher* l, int* count)
 
   // No other functions are currently executing through the locking dispatcher,
   // so the previous call to dispatch should have successfully nested.
-  UNIT_TEST_CHECK(*count == original_count + 1);
+  BOOST_CHECK(*count == original_count + 1);
 }
 
 void increment_with_lock(locking_dispatcher* l, int* count)
@@ -39,7 +42,7 @@ void increment_with_lock(locking_dispatcher* l, int* count)
 
   // The current function already holds the locking_dispatcher's lock, so the
   // previous call to dispatch should not have nested.
-  UNIT_TEST_CHECK(*count == original_count);
+  BOOST_CHECK(*count == original_count);
 }
 
 void sleep_increment(demuxer* d, int* count)
@@ -76,24 +79,24 @@ void locking_dispatcher_test()
   d.post(boost::bind(increment_without_lock, &l, &count));
 
   // No handlers can be called until run() is called.
-  UNIT_TEST_CHECK(count == 0);
+  BOOST_CHECK(count == 0);
 
   d.run();
 
   // The run() call will not return until all work has finished.
-  UNIT_TEST_CHECK(count == 1);
+  BOOST_CHECK(count == 1);
 
   count = 0;
   d.reset();
   l.post(boost::bind(increment_with_lock, &l, &count));
 
   // No handlers can be called until run() is called.
-  UNIT_TEST_CHECK(count == 0);
+  BOOST_CHECK(count == 0);
 
   d.run();
 
   // The run() call will not return until all work has finished.
-  UNIT_TEST_CHECK(count == 1);
+  BOOST_CHECK(count == 1);
 
   count = 0;
   d.reset();
@@ -104,19 +107,19 @@ void locking_dispatcher_test()
   // Check all events run one after another even though there are two threads.
   deadline_timer timer1(d, boost::posix_time::seconds(3));
   timer1.wait();
-  UNIT_TEST_CHECK(count == 0);
+  BOOST_CHECK(count == 0);
   timer1.expires_at(timer1.expires_at() + boost::posix_time::seconds(2));
   timer1.wait();
-  UNIT_TEST_CHECK(count == 1);
+  BOOST_CHECK(count == 1);
   timer1.expires_at(timer1.expires_at() + boost::posix_time::seconds(2));
   timer1.wait();
-  UNIT_TEST_CHECK(count == 2);
+  BOOST_CHECK(count == 2);
 
   thread1.join();
   thread2.join();
 
   // The run() calls will not return until all work has finished.
-  UNIT_TEST_CHECK(count == 3);
+  BOOST_CHECK(count == 3);
 
   count = 0;
   int exception_count = 0;
@@ -128,8 +131,8 @@ void locking_dispatcher_test()
   l.post(boost::bind(increment, &count));
 
   // No handlers can be called until run() is called.
-  UNIT_TEST_CHECK(count == 0);
-  UNIT_TEST_CHECK(exception_count == 0);
+  BOOST_CHECK(count == 0);
+  BOOST_CHECK(exception_count == 0);
 
   for (;;)
   {
@@ -145,8 +148,13 @@ void locking_dispatcher_test()
   }
 
   // The run() calls will not return until all work has finished.
-  UNIT_TEST_CHECK(count == 3);
-  UNIT_TEST_CHECK(exception_count == 2);
+  BOOST_CHECK(count == 3);
+  BOOST_CHECK(exception_count == 2);
 }
 
-UNIT_TEST(locking_dispatcher_test)
+test_suite* init_unit_test_suite(int argc, char* argv[])
+{
+  test_suite* test = BOOST_TEST_SUITE("locking_dispatcher");
+  test->add(BOOST_TEST_CASE(&locking_dispatcher_test));
+  return test;
+}

@@ -8,6 +8,9 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+// Test that header file is self-contained.
+#include "asio/socket_acceptor.hpp"
+
 #include <boost/bind.hpp>
 #include <cstring>
 #include "asio.hpp"
@@ -17,12 +20,12 @@ using namespace asio;
 
 void handle_accept(const error& err)
 {
-  UNIT_TEST_CHECK(!err);
+  BOOST_CHECK(!err);
 }
 
 void handle_connect(const error& err)
 {
-  UNIT_TEST_CHECK(!err);
+  BOOST_CHECK(!err);
 }
 
 void socket_acceptor_test()
@@ -49,11 +52,11 @@ void socket_acceptor_test()
 
   ipv4::tcp::endpoint client_side_local_endpoint;
   client_side_socket.get_local_endpoint(client_side_local_endpoint);
-  UNIT_TEST_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
+  BOOST_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
 
   ipv4::tcp::endpoint server_side_remote_endpoint;
   server_side_socket.get_remote_endpoint(server_side_remote_endpoint);
-  UNIT_TEST_CHECK(server_side_remote_endpoint.port() == client_endpoint.port());
+  BOOST_CHECK(server_side_remote_endpoint.port() == client_endpoint.port());
 
   client_side_socket.close();
   server_side_socket.close();
@@ -74,10 +77,15 @@ void socket_acceptor_test()
   d.run();
 
   client_side_socket.get_local_endpoint(client_side_local_endpoint);
-  UNIT_TEST_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
+  BOOST_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
 
   server_side_socket.get_remote_endpoint(server_side_remote_endpoint);
-  UNIT_TEST_CHECK(server_side_remote_endpoint.port() == client_endpoint.port());
+  BOOST_CHECK(server_side_remote_endpoint.port() == client_endpoint.port());
 }
 
-UNIT_TEST(socket_acceptor_test)
+test_suite* init_unit_test_suite(int argc, char* argv[])
+{
+  test_suite* test = BOOST_TEST_SUITE("socket_acceptor");
+  test->add(BOOST_TEST_CASE(&socket_acceptor_test));
+  return test;
+}

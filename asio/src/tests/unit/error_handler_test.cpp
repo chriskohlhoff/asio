@@ -8,6 +8,9 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+// Test that header file is self-contained.
+#include "asio/error_handler.hpp"
+
 #include <sstream>
 #include "asio.hpp"
 #include "unit_test.hpp"
@@ -26,36 +29,36 @@ void error_handler_test()
 
   std::ostringstream os;
   s.connect(endpoint, log_error(os));
-  UNIT_TEST_CHECK(!os.str().empty());
+  BOOST_CHECK(!os.str().empty());
 
   os.str("");
   s.connect(endpoint, the_error == expected_err || log_error(os));
-  UNIT_TEST_CHECK(os.str().empty());
+  BOOST_CHECK(os.str().empty());
 
   os.str("");
   s.connect(endpoint, the_error == expected_err && log_error(os));
-  UNIT_TEST_CHECK(!os.str().empty());
+  BOOST_CHECK(!os.str().empty());
 
   os.str("");
   s.connect(endpoint, the_error != expected_err || log_error(os));
-  UNIT_TEST_CHECK(!os.str().empty());
+  BOOST_CHECK(!os.str().empty());
 
   os.str("");
   s.connect(endpoint, the_error != expected_err && log_error(os));
-  UNIT_TEST_CHECK(os.str().empty());
+  BOOST_CHECK(os.str().empty());
 
   os.str("");
   s.connect(endpoint, log_error_if(os, the_error == expected_err));
-  UNIT_TEST_CHECK(!os.str().empty());
+  BOOST_CHECK(!os.str().empty());
 
   os.str("");
   s.connect(endpoint, log_error_if(os, the_error != expected_err));
-  UNIT_TEST_CHECK(os.str().empty());
+  BOOST_CHECK(os.str().empty());
 
   try
   {
     s.connect(endpoint, throw_error());
-    UNIT_TEST_CHECK(0);
+    BOOST_CHECK(0);
   }
   catch (error&)
   {
@@ -67,13 +70,13 @@ void error_handler_test()
   }
   catch (error&)
   {
-    UNIT_TEST_CHECK(0);
+    BOOST_CHECK(0);
   }
 
   try
   {
     s.connect(endpoint, the_error == expected_err && throw_error());
-    UNIT_TEST_CHECK(0);
+    BOOST_CHECK(0);
   }
   catch (error&)
   {
@@ -82,7 +85,7 @@ void error_handler_test()
   try
   {
     s.connect(endpoint, the_error != expected_err || throw_error());
-    UNIT_TEST_CHECK(0);
+    BOOST_CHECK(0);
   }
   catch (error&)
   {
@@ -94,13 +97,13 @@ void error_handler_test()
   }
   catch (error&)
   {
-    UNIT_TEST_CHECK(0);
+    BOOST_CHECK(0);
   }
 
   try
   {
     s.connect(endpoint, throw_error_if(the_error == expected_err));
-    UNIT_TEST_CHECK(0);
+    BOOST_CHECK(0);
   }
   catch (error&)
   {
@@ -112,30 +115,30 @@ void error_handler_test()
   }
   catch (error&)
   {
-    UNIT_TEST_CHECK(0);
+    BOOST_CHECK(0);
   }
 
   error err;
   s.connect(endpoint, set_error(err));
-  UNIT_TEST_CHECK(err == expected_err);
+  BOOST_CHECK(err == expected_err);
 
   s.connect(endpoint, the_error == expected_err || set_error(err));
-  UNIT_TEST_CHECK(err != expected_err);
+  BOOST_CHECK(err != expected_err);
 
   s.connect(endpoint, the_error == expected_err && set_error(err));
-  UNIT_TEST_CHECK(err == expected_err);
+  BOOST_CHECK(err == expected_err);
 
   s.connect(endpoint, the_error != expected_err || set_error(err));
-  UNIT_TEST_CHECK(err == expected_err);
+  BOOST_CHECK(err == expected_err);
 
   s.connect(endpoint, the_error != expected_err && set_error(err));
-  UNIT_TEST_CHECK(err != expected_err);
+  BOOST_CHECK(err != expected_err);
 
   s.connect(endpoint, set_error_if(err, the_error == expected_err));
-  UNIT_TEST_CHECK(err == expected_err);
+  BOOST_CHECK(err == expected_err);
 
   s.connect(endpoint, set_error_if(err, the_error != expected_err));
-  UNIT_TEST_CHECK(err != expected_err);
+  BOOST_CHECK(err != expected_err);
 
   try
   {
@@ -143,7 +146,7 @@ void error_handler_test()
   }
   catch (error&)
   {
-    UNIT_TEST_CHECK(0);
+    BOOST_CHECK(0);
   }
 
   try
@@ -152,7 +155,7 @@ void error_handler_test()
   }
   catch (error&)
   {
-    UNIT_TEST_CHECK(0);
+    BOOST_CHECK(0);
   }
 
   try
@@ -161,7 +164,7 @@ void error_handler_test()
   }
   catch (error&)
   {
-    UNIT_TEST_CHECK(0);
+    BOOST_CHECK(0);
   }
 
   try
@@ -170,7 +173,7 @@ void error_handler_test()
   }
   catch (error&)
   {
-    UNIT_TEST_CHECK(0);
+    BOOST_CHECK(0);
   }
 
   try
@@ -179,7 +182,7 @@ void error_handler_test()
   }
   catch (error&)
   {
-    UNIT_TEST_CHECK(0);
+    BOOST_CHECK(0);
   }
 
   try
@@ -189,18 +192,23 @@ void error_handler_test()
   }
   catch (error&)
   {
-    UNIT_TEST_CHECK(0);
+    BOOST_CHECK(0);
   }
 
   try
   {
     s.connect(endpoint,
         ignore_error_if(the_error != expected_err) || throw_error());
-    UNIT_TEST_CHECK(0);
+    BOOST_CHECK(0);
   }
   catch (error&)
   {
   }
 }
 
-UNIT_TEST(error_handler_test)
+test_suite* init_unit_test_suite(int argc, char* argv[])
+{
+  test_suite* test = BOOST_TEST_SUITE("error_handler");
+  test->add(BOOST_TEST_CASE(&error_handler_test));
+  return test;
+}
