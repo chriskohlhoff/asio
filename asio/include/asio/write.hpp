@@ -62,8 +62,6 @@ inline std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers)
  *
  * @param buffers The data to be written to the stream.
  *
- * @param length The size of the data to be written, in bytes.
- *
  * @param error_handler The handler to be called when an error occurs. Copies
  * will be made of the handler as required. The equivalent function signature
  * of the handler must be:

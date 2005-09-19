@@ -50,7 +50,7 @@ public:
    * @returns The number of bytes read or 0 if the stream was closed cleanly.
    */
   template <typename Mutable_Buffers, typename Error_Handler>
-  std::size_t read(const Mutable_Buffers& Buffers, Error_Handler error_handler);
+  std::size_t read(const Mutable_Buffers& buffers, Error_Handler error_handler);
 
   /// Peek at the incoming data on the stream.
   /**

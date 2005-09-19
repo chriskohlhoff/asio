@@ -93,7 +93,7 @@ inline std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  * @param s The stream from which the data is to be read. The type must support
  * the Async_Read_Stream concept.
  *
- * @param data The buffers into which the data will be read. Although the
+ * @param buffers The buffers into which the data will be read. Although the
  * buffers object may be copied as necessary, ownership of the underlying
  * buffers is retained by the caller, which must guarantee that they remain
  * valid until the handler is called.
@@ -266,7 +266,7 @@ namespace detail
  * @param s The stream from which the data is to be read. The type must support
  * the Async_Read_Stream concept.
  *
- * @param data The buffers into which the data will be read. Although the
+ * @param buffers The buffers into which the data will be read. Although the
  * buffers object may be copied as necessary, ownership of the underlying
  * buffers is retained by the caller, which must guarantee that they remain
  * valid until the handler is called.
@@ -447,7 +447,7 @@ namespace detail
  * @param s The stream from which the data is to be read. The type must support
  * the Async_Read_Stream concept.
  *
- * @param data The buffers into which the data will be read. Although the
+ * @param buffers The buffers into which the data will be read. Although the
  * buffers object may be copied as necessary, ownership of the underlying
  * buffers is retained by the caller, which must guarantee that they remain
  * valid until the handler is called.
