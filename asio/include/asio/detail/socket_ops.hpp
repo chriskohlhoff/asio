@@ -571,6 +571,7 @@ inline hostent* gethostbyaddr(const char* addr, int length, int type,
   return retval;
 #elif defined(__MACH__)
   hostent* retval = error_wrapper(::getipnodebyaddr(addr, length, type, error));
+  *error = translate_netdb_error(*error);
   if (!retval)
     return 0;
   *result = *retval;
@@ -602,6 +603,7 @@ inline hostent* gethostbyname(const char* name, struct hostent* result,
   return retval;
 #elif defined(__MACH__)
   hostent* retval = error_wrapper(::getipnodebyname(name, AF_INET, 0, error));
+  *error = translate_netdb_error(*error);
   if (!retval)
     return 0;
   *result = *retval;

@@ -275,7 +275,8 @@ Ostream& operator<<(Ostream& os, const error& e)
 #else // __sun
     {
       char buf[256] = "";
-      os << strerror_r(e.code(), buf, sizeof(buf));
+      strerror_r(e.code(), buf, sizeof(buf));
+      os << buf;
     }
 #endif // __sun
     break;

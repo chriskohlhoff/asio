@@ -19,6 +19,7 @@
 
 #include "asio/detail/push_options.hpp"
 #include <functional>
+#include <limits>
 #include <vector>
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
@@ -142,7 +143,7 @@ private:
         token_(token),
         next_(0),
         prev_(0),
-        heap_index_(~0)
+        heap_index_(std::numeric_limits<size_t>::max())
     {
     }
 
