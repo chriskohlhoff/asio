@@ -143,7 +143,8 @@ private:
         token_(token),
         next_(0),
         prev_(0),
-        heap_index_(std::numeric_limits<size_t>::max())
+        heap_index_(
+            std::numeric_limits<size_t>::max BOOST_PREVENT_MACRO_SUBSTITUTION())
     {
     }
 
