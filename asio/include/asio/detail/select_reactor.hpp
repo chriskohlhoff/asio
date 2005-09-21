@@ -80,39 +80,42 @@ public:
   // Start a new read operation. The do_operation function of the select_op
   // object will be invoked when the given descriptor is ready to be read.
   template <typename Handler>
-  void start_read_op(socket_type descriptor, Handler handler)
+  int start_read_op(socket_type descriptor, Handler handler)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
     if (read_op_queue_.enqueue_operation(descriptor, handler))
       interrupter_.interrupt();
+    return 0;
   }
 
   // Start a new write operation. The do_operation function of the select_op
   // object will be invoked when the given descriptor is ready for writing.
   template <typename Handler>
-  void start_write_op(socket_type descriptor, Handler handler)
+  int start_write_op(socket_type descriptor, Handler handler)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
     if (write_op_queue_.enqueue_operation(descriptor, handler))
       interrupter_.interrupt();
+    return 0;
   }
 
   // Start a new exception operation. The do_operation function of the select_op
   // object will be invoked when the given descriptor has exception information
   // available.
   template <typename Handler>
-  void start_except_op(socket_type descriptor, Handler handler)
+  int start_except_op(socket_type descriptor, Handler handler)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
     if (except_op_queue_.enqueue_operation(descriptor, handler))
       interrupter_.interrupt();
+    return 0;
   }
 
   // Start a new write and exception operations. The do_operation function of
   // the select_op object will be invoked when the given descriptor is ready
   // for writing or has exception information available.
   template <typename Handler>
-  void start_write_and_except_ops(socket_type descriptor, Handler handler)
+  int start_write_and_except_ops(socket_type descriptor, Handler handler)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
     bool interrupt = write_op_queue_.enqueue_operation(descriptor, handler);
@@ -120,6 +123,7 @@ public:
       || interrupt;
     if (interrupt)
       interrupter_.interrupt();
+    return 0;
   }
 
   // Cancel all operations associated with the given descriptor. The

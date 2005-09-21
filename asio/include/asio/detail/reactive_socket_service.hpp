@@ -280,8 +280,14 @@ public:
     }
     else
     {
-      reactor_.start_write_op(impl, send_handler<Const_Buffers, Handler>(
+      int result = reactor_.start_write_op(impl,
+          send_handler<Const_Buffers, Handler>(
             impl, demuxer_, buffers, flags, handler));
+      if (result != 0)
+      {
+        asio::error error(result);
+        demuxer_.post(bind_handler(handler, error, 0));
+      }
     }
   }
 
@@ -382,9 +388,14 @@ public:
     }
     else
     {
-      reactor_.start_write_op(impl,
+      int result = reactor_.start_write_op(impl,
           send_to_handler<Const_Buffers, Endpoint, Handler>(
             impl, demuxer_, buffers, flags, destination, handler));
+      if (result != 0)
+      {
+        asio::error error(result);
+        demuxer_.post(bind_handler(handler, error, 0));
+      }
     }
   }
 
@@ -479,17 +490,23 @@ public:
     }
     else
     {
+      int result;
       if (flags & socket_base::message_out_of_band)
       {
-        reactor_.start_except_op(impl,
+        result = reactor_.start_except_op(impl,
             receive_handler<Mutable_Buffers, Handler>(
               impl, demuxer_, buffers, flags, handler));
       }
       else
       {
-        reactor_.start_read_op(impl,
+        result = reactor_.start_read_op(impl,
             receive_handler<Mutable_Buffers, Handler>(
               impl, demuxer_, buffers, flags, handler));
+      }
+      if (result != 0)
+      {
+        asio::error error(result);
+        demuxer_.post(bind_handler(handler, error, 0));
       }
     }
   }
@@ -598,9 +615,14 @@ public:
     }
     else
     {
-      reactor_.start_read_op(impl,
+      int result = reactor_.start_read_op(impl,
           receive_from_handler<Mutable_Buffers, Endpoint, Handler>(
             impl, demuxer_, buffers, flags, sender_endpoint, handler));
+      if (result != 0)
+      {
+        asio::error error(result);
+        demuxer_.post(bind_handler(handler, error, 0));
+      }
     }
   }
 
@@ -705,8 +727,14 @@ public:
     }
     else
     {
-      reactor_.start_read_op(impl,
-          accept_handler<Socket, Handler>(impl, demuxer_, peer, handler));
+      int result = reactor_.start_read_op(impl,
+          accept_handler<Socket, Handler>(
+            impl, demuxer_, peer, handler));
+      if (result != 0)
+      {
+        asio::error error(result);
+        demuxer_.post(bind_handler(handler, error));
+      }
     }
   }
 
@@ -770,9 +798,14 @@ public:
     }
     else
     {
-      reactor_.start_read_op(impl,
+      int result = reactor_.start_read_op(impl,
           accept_endp_handler<Socket, Endpoint, Handler>(
             impl, demuxer_, peer, peer_endpoint, handler));
+      if (result != 0)
+      {
+        asio::error error(result);
+        demuxer_.post(bind_handler(handler, error));
+      }
     }
   }
 
@@ -938,8 +971,14 @@ public:
       // The connection is happening in the background, and we need to wait
       // until the socket becomes writeable.
       boost::shared_ptr<bool> completed(new bool(false));
-      reactor_.start_write_and_except_ops(impl, connect_handler<Handler>(
+      int result = reactor_.start_write_and_except_ops(
+          impl, connect_handler<Handler>(
             impl, completed, demuxer_, reactor_, handler));
+      if (result != 0)
+      {
+        asio::error error(result);
+        demuxer_.post(bind_handler(handler, error));
+      }
     }
     else
     {
