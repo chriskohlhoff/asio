@@ -231,8 +231,16 @@ public:
     {
     }
 
-    void do_operation()
+    void operator()(int result)
     {
+      // Check whether the operation was successful.
+      if (result != 0)
+      {
+        asio::error error(result);
+        demuxer_.post(bind_handler(handler_, error, 0));
+        return;
+      }
+
       // Copy buffers into array.
       socket_ops::bufs bufs[max_buffers];
       typename Const_Buffers::const_iterator iter = buffers_.begin();
@@ -249,12 +257,6 @@ public:
       asio::error error(bytes < 0
           ? socket_ops::get_error() : asio::error::success);
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
-    }
-
-    void do_cancel()
-    {
-      asio::error error(asio::error::operation_aborted);
-      demuxer_.post(bind_handler(handler_, error, 0));
     }
 
   private:
@@ -331,8 +333,16 @@ public:
     {
     }
 
-    void do_operation()
+    void operator()(int result)
     {
+      // Check whether the operation was successful.
+      if (result != 0)
+      {
+        asio::error error(result);
+        demuxer_.post(bind_handler(handler_, error, 0));
+        return;
+      }
+
       // Copy buffers into array.
       socket_ops::bufs bufs[max_buffers];
       typename Const_Buffers::const_iterator iter = buffers_.begin();
@@ -350,12 +360,6 @@ public:
       asio::error error(bytes < 0
           ? socket_ops::get_error() : asio::error::success);
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
-    }
-
-    void do_cancel()
-    {
-      asio::error error(asio::error::operation_aborted);
-      demuxer_.post(bind_handler(handler_, error, 0));
     }
 
   private:
@@ -431,8 +435,16 @@ public:
     {
     }
 
-    void do_operation()
+    void operator()(int result)
     {
+      // Check whether the operation was successful.
+      if (result != 0)
+      {
+        asio::error error(result);
+        demuxer_.post(bind_handler(handler_, error, 0));
+        return;
+      }
+
       // Copy buffers into array.
       socket_ops::bufs bufs[max_buffers];
       typename Mutable_Buffers::const_iterator iter = buffers_.begin();
@@ -449,12 +461,6 @@ public:
       asio::error error(bytes < 0
           ? socket_ops::get_error() : asio::error::success);
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
-    }
-
-    void do_cancel()
-    {
-      asio::error error(asio::error::operation_aborted);
-      demuxer_.post(bind_handler(handler_, error, 0));
     }
 
   private:
@@ -544,8 +550,16 @@ public:
     {
     }
 
-    void do_operation()
+    void operator()(int result)
     {
+      // Check whether the operation was successful.
+      if (result != 0)
+      {
+        asio::error error(result);
+        demuxer_.post(bind_handler(handler_, error, 0));
+        return;
+      }
+
       // Copy buffers into array.
       socket_ops::bufs bufs[max_buffers];
       typename Mutable_Buffers::const_iterator iter = buffers_.begin();
@@ -565,12 +579,6 @@ public:
           ? socket_ops::get_error() : asio::error::success);
       sender_endpoint_.size(addr_len);
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
-    }
-
-    void do_cancel()
-    {
-      asio::error error(asio::error::operation_aborted);
-      demuxer_.post(bind_handler(handler_, error, 0));
     }
 
   private:
@@ -665,18 +673,21 @@ public:
     {
     }
 
-    void do_operation()
+    void operator()(int result)
     {
+      // Check whether the operation was successful.
+      if (result != 0)
+      {
+        asio::error error(result);
+        demuxer_.post(bind_handler(handler_, error));
+        return;
+      }
+
+      // Accept the waiting connection.
       socket_type new_socket = socket_ops::accept(impl_, 0, 0);
       asio::error error(new_socket == invalid_socket
           ? socket_ops::get_error() : asio::error::success);
       peer_.set_impl(new_socket);
-      demuxer_.post(bind_handler(handler_, error));
-    }
-
-    void do_cancel()
-    {
-      asio::error error(asio::error::operation_aborted);
       demuxer_.post(bind_handler(handler_, error));
     }
 
@@ -725,8 +736,17 @@ public:
     {
     }
 
-    void do_operation()
+    void operator()(int result)
     {
+      // Check whether the operation was successful.
+      if (result != 0)
+      {
+        asio::error error(result);
+        demuxer_.post(bind_handler(handler_, error));
+        return;
+      }
+
+      // Accept the waiting connection.
       socket_addr_len_type addr_len = peer_endpoint_.size();
       socket_type new_socket = socket_ops::accept(impl_,
           peer_endpoint_.data(), &addr_len);
@@ -734,12 +754,6 @@ public:
           ? socket_ops::get_error() : asio::error::success);
       peer_endpoint_.size(addr_len);
       peer_.set_impl(new_socket);
-      demuxer_.post(bind_handler(handler_, error));
-    }
-
-    void do_cancel()
-    {
-      asio::error error(asio::error::operation_aborted);
       demuxer_.post(bind_handler(handler_, error));
     }
 
@@ -820,7 +834,7 @@ public:
     {
     }
 
-    void do_operation()
+    void operator()(int result)
     {
       // Check whether a handler has already been called for the connection.
       // If it has, then we don't want to do anything in this handler.
@@ -830,6 +844,14 @@ public:
       // Cancel the other reactor operation for the connection.
       *completed_ = true;
       reactor_.enqueue_cancel_ops_unlocked(impl_);
+
+      // Check whether the operation was successful.
+      if (result != 0)
+      {
+        asio::error error(result);
+        demuxer_.post(bind_handler(handler_, error));
+        return;
+      }
 
       // Get the error code from the connect operation.
       int connect_error = 0;
@@ -861,23 +883,6 @@ public:
 
       // Post the result of the successful connection operation.
       asio::error error(asio::error::success);
-      demuxer_.post(bind_handler(handler_, error));
-    }
-
-    void do_cancel()
-    {
-      // Check whether a handler has already been called for the connection.
-      // If it has, then we don't want to do anything in this handler.
-      if (*completed_)
-        return;
-
-      // Cancel the other reactor operation for the connection.
-      *completed_ = true;
-      reactor_.enqueue_cancel_ops_unlocked(impl_);
-
-      // The socket is closed when the reactor_.close_descriptor is called,
-      // so no need to close it here.
-      asio::error error(asio::error::operation_aborted);
       demuxer_.post(bind_handler(handler_, error));
     }
 

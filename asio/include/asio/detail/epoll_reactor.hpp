@@ -115,15 +115,22 @@ public:
         ev.events |= EPOLLOUT;
       ev.data.fd = descriptor;
 
+      int result;
       if (epoll_registrations_.find(descriptor) == epoll_registrations_.end())
       {
         epoll_registrations_.insert(
             epoll_registration_map::value_type(descriptor, true));
-        epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
+        result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
       }
       else
       {
-        epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
+        result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
+      }
+
+      if (result != 0)
+      {
+        int error = errno;
+        read_op_queue_.dispatch_all_operations(descriptor, error);
       }
     }
   }
@@ -143,15 +150,22 @@ public:
         ev.events |= EPOLLIN;
       ev.data.fd = descriptor;
 
+      int result;
       if (epoll_registrations_.find(descriptor) == epoll_registrations_.end())
       {
         epoll_registrations_.insert(
             epoll_registration_map::value_type(descriptor, true));
-        epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
+        result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
       }
       else
       {
-        epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
+        result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
+      }
+
+      if (result != 0)
+      {
+        int error = errno;
+        write_op_queue_.dispatch_all_operations(descriptor, error);
       }
     }
   }
@@ -174,15 +188,22 @@ public:
         ev.events |= EPOLLOUT;
       ev.data.fd = descriptor;
 
+      int result;
       if (epoll_registrations_.find(descriptor) == epoll_registrations_.end())
       {
         epoll_registrations_.insert(
             epoll_registration_map::value_type(descriptor, true));
-        epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
+        result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
       }
       else
       {
-        epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
+        result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
+      }
+
+      if (result != 0)
+      {
+        int error = errno;
+        except_op_queue_.dispatch_all_operations(descriptor, error);
       }
     }
   }
@@ -206,15 +227,23 @@ public:
         ev.events |= EPOLLIN;
       ev.data.fd = descriptor;
 
+      int result;
       if (epoll_registrations_.find(descriptor) == epoll_registrations_.end())
       {
         epoll_registrations_.insert(
             epoll_registration_map::value_type(descriptor, true));
-        epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
+        result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
       }
       else
       {
-        epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
+        result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
+      }
+
+      if (result != 0)
+      {
+        int error = errno;
+        write_op_queue_.dispatch_all_operations(descriptor, error);
+        except_op_queue_.dispatch_all_operations(descriptor, error);
       }
     }
   }
@@ -327,9 +356,9 @@ private:
         {
           if (events[i].events & (EPOLLERR | EPOLLHUP))
           {
-            except_op_queue_.dispatch_all_operations(descriptor);
-            read_op_queue_.dispatch_all_operations(descriptor);
-            write_op_queue_.dispatch_all_operations(descriptor);
+            except_op_queue_.dispatch_all_operations(descriptor, 0);
+            read_op_queue_.dispatch_all_operations(descriptor, 0);
+            write_op_queue_.dispatch_all_operations(descriptor, 0);
 
             epoll_event ev = { 0 };
             ev.events = 0;
@@ -342,12 +371,12 @@ private:
             bool more_writes = false;
 
             if (events[i].events & EPOLLIN)
-              more_reads = read_op_queue_.dispatch_operation(descriptor);
+              more_reads = read_op_queue_.dispatch_operation(descriptor, 0);
             else
               more_reads = read_op_queue_.has_operation(descriptor);
 
             if (events[i].events & EPOLLOUT)
-              more_writes = write_op_queue_.dispatch_operation(descriptor);
+              more_writes = write_op_queue_.dispatch_operation(descriptor, 0);
             else
               more_writes = write_op_queue_.has_operation(descriptor);
 

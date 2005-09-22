@@ -18,9 +18,11 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <memory>
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/error.hpp"
 #include "asio/detail/hash_map.hpp"
 
 namespace asio {
@@ -97,14 +99,14 @@ public:
 
   // Dispatch the first operation corresponding to the descriptor. Returns true
   // if there are more operations queued for the descriptor.
-  bool dispatch_operation(Descriptor descriptor)
+  bool dispatch_operation(Descriptor descriptor, int result)
   {
     typename operation_map::iterator i = operations_.find(descriptor);
     if (i != operations_.end())
     {
       op_base* next_op = i->second->next_;
       i->second->next_ = 0;
-      i->second->do_operation();
+      i->second->invoke(result);
       if (next_op)
       {
         i->second = next_op;
@@ -120,7 +122,7 @@ public:
   }
 
   // Dispatch all operations corresponding to the descriptor.
-  void dispatch_all_operations(Descriptor descriptor)
+  void dispatch_all_operations(Descriptor descriptor, int result)
   {
     typename operation_map::iterator i = operations_.find(descriptor);
     if (i != operations_.end())
@@ -131,7 +133,7 @@ public:
       {
         op_base* next_op = op->next_;
         op->next_ = 0;
-        op->do_operation();
+        op->invoke(result);
         op = next_op;
       }
     }
@@ -153,7 +155,7 @@ public:
   // Dispatch the operations corresponding to the ready file descriptors
   // contained in the given descriptor set.
   template <typename Descriptor_Set>
-  void dispatch_descriptors(const Descriptor_Set& descriptors)
+  void dispatch_descriptors(const Descriptor_Set& descriptors, int result)
   {
     typename operation_map::iterator i = operations_.begin();
     while (i != operations_.end())
@@ -163,7 +165,7 @@ public:
       {
         op_base* next_op = op->second->next_;
         op->second->next_ = 0;
-        op->second->do_operation();
+        op->second->invoke(result);
         if (next_op)
           op->second = next_op;
         else
@@ -179,7 +181,7 @@ public:
     {
       op_base* next_op = cancelled_operations_->next_;
       cancelled_operations_->next_ = 0;
-      cancelled_operations_->do_cancel();
+      cancelled_operations_->invoke(asio::error::operation_aborted);
       cancelled_operations_ = next_op;
     }
   }
@@ -197,19 +199,13 @@ private:
     }
 
     // Perform the operation.
-    void do_operation()
+    void invoke(int result)
     {
-      func_(this, false);
-    }
-
-    // Handle the case where the operation has been cancelled.
-    void do_cancel()
-    {
-      func_(this, true);
+      func_(this, result);
     }
 
   protected:
-    typedef void (*func_type)(op_base*, bool);
+    typedef void (*func_type)(op_base*, int);
 
     // Construct an operation for the given descriptor.
     op_base(func_type func, Descriptor descriptor)
@@ -251,14 +247,10 @@ private:
     }
 
     // Invoke the handler.
-    static void invoke_handler(op_base* base, bool cancelled)
+    static void invoke_handler(op_base* base, int result)
     {
-      op<Handler>* o = static_cast<op<Handler>*>(base);
-      if (cancelled)
-        o->handler_.do_cancel();
-      else
-        o->handler_.do_operation();
-      delete o;
+      std::auto_ptr<op<Handler> > o(static_cast<op<Handler>*>(base));
+      o->handler_(result);
     }
 
   private:

@@ -20,10 +20,13 @@
 #include "asio/detail/push_options.hpp"
 #include <functional>
 #include <limits>
+#include <memory>
 #include <vector>
+#include <boost/config.hpp>
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/error.hpp"
 #include "asio/detail/hash_map.hpp"
 
 namespace asio {
@@ -89,12 +92,12 @@ public:
     {
       timer_base* t = heap_[0];
       remove_timer(t);
-      t->do_operation();
+      t->invoke(0);
     }
   }
 
-  // Cancel the timer with the given token. The handler's do_cancel operation
-  // will be invoked immediately.
+  // Cancel the timer with the given token. The handler will be invoked
+  // immediately with the result operation_aborted.
   int cancel_timer(void* timer_token)
   {
     int num_cancelled = 0;
@@ -107,7 +110,7 @@ public:
       {
         timer_base* next = t->next_;
         remove_timer(t);
-        t->do_cancel();
+        t->invoke(asio::error::operation_aborted);
         t = next;
         ++num_cancelled;
       }
@@ -122,19 +125,13 @@ private:
   {
   public:
     // Perform the timer operation.
-    void do_operation()
+    void invoke(int result)
     {
-      func_(this, false);
-    }
-
-    // Handle the case where the timer has been cancelled.
-    void do_cancel()
-    {
-      func_(this, true);
+      func_(this, result);
     }
 
   protected:
-    typedef void (*func_type)(timer_base*, bool);
+    typedef void (*func_type)(timer_base*, int);
 
     // Constructor.
     timer_base(func_type func, const Time& time, void* token)
@@ -189,14 +186,10 @@ private:
     }
 
     // Invoke the handler.
-    static void invoke_handler(timer_base* base, bool cancelled)
+    static void invoke_handler(timer_base* base, int result)
     {
-      timer<Handler>* t = static_cast<timer<Handler>*>(base);
-      if (cancelled)
-        t->handler_.do_cancel();
-      else
-        t->handler_.do_operation();
-      delete t;
+      std::auto_ptr<timer<Handler> > t(static_cast<timer<Handler>*>(base));
+      t->handler_(result);
     }
 
   private:

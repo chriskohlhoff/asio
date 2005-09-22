@@ -160,15 +160,9 @@ public:
     {
     }
 
-    void do_operation()
+    void operator()(int result)
     {
-      asio::error e(asio::error::success);
-      demuxer_.post(detail::bind_handler(handler_, e));
-    }
-
-    void do_cancel()
-    {
-      asio::error e(asio::error::operation_aborted);
+      asio::error e(result);
       demuxer_.post(detail::bind_handler(handler_, e));
     }
 
