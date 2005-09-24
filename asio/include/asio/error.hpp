@@ -272,13 +272,18 @@ Ostream& operator<<(Ostream& os, const error& e)
   default:
 #if defined(__sun)
     os << strerror(e.code());
-#else // __sun
+#elif defined(__MACH__) && defined(__APPLE__)
     {
       char buf[256] = "";
       strerror_r(e.code(), buf, sizeof(buf));
       os << buf;
     }
-#endif // __sun
+#else
+    {
+      char buf[256] = "";
+      os << strerror_r(e.code(), buf, sizeof(buf));
+    }
+#endif
     break;
   }
 #endif // _WIN32
