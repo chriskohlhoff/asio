@@ -36,12 +36,12 @@ namespace asio {
  * Instances of this class template may be created using the asio::buffers
  * function:
  *
- * @code sock.write(buffers(buffer1, length1)(buffer2, length2)); @endcode
+ * @code sock.write(asio::buffers(buffer1, length1)(buffer2, length2)); @endcode
  *
  * or:
  *
  * @code asio::const_buffers<2> my_buffers =
- *   buffers(buffer1, length1)(buffer2, length2);
+ *   asio::buffers(buffer1, length1)(buffer2, length2);
  * sock.send(my_buffers); @endcode
  *
  * It may also be explicitly instantiated and initialised using array
@@ -57,7 +57,7 @@ namespace asio {
  * where the list of buffers may be manipulated:
  *
  * @code std::vector<asio::const_buffer> my_buffers =
- *   buffers(buffer1, length1)(buffer2, length2);
+ *   asio::buffers(buffer1, length1)(buffer2, length2);
  * // ...
  * sock.send(my_buffers); @endcode
  */
@@ -222,8 +222,8 @@ public:
  * or:
  *
  * @code asio::mutable_buffers<2> my_buffers =
- *   buffers(buffer1, length1)(buffer2, length2);
- * sock.send(my_buffers); @endcode
+ *   asio::buffers(buffer1, length1)(buffer2, length2);
+ * sock.receive(my_buffers); @endcode
  *
  * It may also be explicitly instantiated and initialised using array
  * initialisation syntax:
@@ -238,9 +238,9 @@ public:
  * containers, where the list of buffers may be manipulated:
  *
  * @code std::vector<asio::mutable_buffer> my_buffers =
- *   buffers(buffer1, length1)(buffer2, length2);
+ *   asio::buffers(buffer1, length1)(buffer2, length2);
  * // ...
- * sock.send(my_buffers); @endcode
+ * sock.receive(my_buffers); @endcode
  *
  * A mutable_buffers instance may be converted into a corresponding
  * const_buffers instance:
