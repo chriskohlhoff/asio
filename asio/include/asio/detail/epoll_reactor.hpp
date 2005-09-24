@@ -331,7 +331,7 @@ private:
     except_op_queue_.dispatch_cancellations();
 
     bool stop = false;
-    while (!stop)
+    while (!stop && !stop_thread_)
     {
       int timeout = get_timeout();
       wait_in_progress_ = true;
@@ -400,7 +400,14 @@ private:
             if (more_except)
               ev.events |= EPOLLPRI;
             ev.data.fd = descriptor;
-            epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
+            int result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
+            if (result != 0)
+            {
+              int error = errno;
+              read_op_queue_.dispatch_all_operations(descriptor, error);
+              write_op_queue_.dispatch_all_operations(descriptor, error);
+              except_op_queue_.dispatch_all_operations(descriptor, error);
+            }
           }
         }
       }
