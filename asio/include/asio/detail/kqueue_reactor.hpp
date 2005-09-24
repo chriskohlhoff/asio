@@ -156,9 +156,9 @@ public:
     }
   }
 
-  // Start a new write and exception operations. The do_operation function of
-  // the select_op object will be invoked when the given descriptor is ready
-  // for writing or has exception information available.
+  // Start new write and exception operations. The handler object will be
+  // invoked when the given descriptor is ready for writing or has exception
+  // information available, or an error has occurred.
   template <typename Handler>
   void start_write_and_except_ops(socket_type descriptor, Handler handler)
   {
@@ -174,7 +174,7 @@ public:
         write_op_queue_.dispatch_all_operations(descriptor, error);
       }
     }
-    
+
     if (except_op_queue_.enqueue_operation(descriptor, handler))
     {
       struct kevent event;
@@ -192,7 +192,8 @@ public:
   }
 
   // Cancel all operations associated with the given descriptor. The
-  // do_cancel function of the handler objects will be invoked.
+  // handlers associated with the descriptor will be invoked with the
+  // operation_aborted error.
   void cancel_ops(socket_type descriptor)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
@@ -200,9 +201,10 @@ public:
   }
 
   // Enqueue cancellation of all operations associated with the given
-  // descriptor. The do_cancel function of the handler objects will be invoked.
-  // This function does not acquire the epoll_reactor's mutex, and so should
-  // only be used from within a reactor handler.
+  // descriptor. The handlers associated with the descriptor will be invoked
+  // with the operation_aborted error. This function does not acquire the
+  // select_reactor's mutex, and so should only be used from within a reactor
+  // handler.
   void enqueue_cancel_ops_unlocked(socket_type descriptor)
   {
     pending_cancellations_.insert(
@@ -298,7 +300,7 @@ private:
           // Dispatch operations associated with the descriptor.
           bool more_reads = false;
           bool more_except = false;
-          if (events[i].flags & (EV_ERROR | EV_EOF))
+          if (events[i].flags & EV_ERROR)
           {
             int error = events[i].data;
             except_op_queue_.dispatch_all_operations(descriptor, error);
@@ -337,7 +339,7 @@ private:
         {
           // Dispatch operations associated with the descriptor.
           bool more_writes = false;
-          if (events[i].flags & (EV_ERROR | EV_EOF))
+          if (events[i].flags & EV_ERROR)
           {
             int error = events[i].data;
             write_op_queue_.dispatch_all_operations(descriptor, error);
