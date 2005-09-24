@@ -113,6 +113,8 @@ public:
       ev.events = EPOLLIN | EPOLLERR | EPOLLHUP;
       if (write_op_queue_.has_operation(descriptor))
         ev.events |= EPOLLOUT;
+      if (except_op_queue_.has_operation(descriptor))
+        ev.events |= EPOLLPRI;
       ev.data.fd = descriptor;
 
       int result;
@@ -148,6 +150,8 @@ public:
       ev.events = EPOLLOUT | EPOLLERR | EPOLLHUP;
       if (read_op_queue_.has_operation(descriptor))
         ev.events |= EPOLLIN;
+      if (except_op_queue_.has_operation(descriptor))
+        ev.events |= EPOLLPRI;
       ev.data.fd = descriptor;
 
       int result;
@@ -181,7 +185,7 @@ public:
     if (except_op_queue_.enqueue_operation(descriptor, handler))
     {
       epoll_event ev = { 0 };
-      ev.events = EPOLLERR | EPOLLHUP;
+      ev.events = EPOLLPRI | EPOLLERR | EPOLLHUP;
       if (read_op_queue_.has_operation(descriptor))
         ev.events |= EPOLLIN;
       if (write_op_queue_.has_operation(descriptor))
@@ -222,7 +226,7 @@ public:
     if (need_mod)
     {
       epoll_event ev = { 0 };
-      ev.events = EPOLLOUT | EPOLLERR | EPOLLHUP;
+      ev.events = EPOLLOUT | EPOLLPRI | EPOLLERR | EPOLLHUP;
       if (read_op_queue_.has_operation(descriptor))
         ev.events |= EPOLLIN;
       ev.data.fd = descriptor;
@@ -369,6 +373,14 @@ private:
           {
             bool more_reads = false;
             bool more_writes = false;
+            bool more_except = false;
+
+            // Exception operations must be processed first to ensure that any
+            // out-of-band data is read before normal data.
+            if (events[i].events & EPOLLPRI)
+              more_except = except_op_queue_.dispatch_operation(descriptor, 0);
+            else
+              more_except = except_op_queue_.has_operation(descriptor);
 
             if (events[i].events & EPOLLIN)
               more_reads = read_op_queue_.dispatch_operation(descriptor, 0);
@@ -386,6 +398,8 @@ private:
               ev.events |= EPOLLIN;
             if (more_writes)
               ev.events |= EPOLLOUT;
+            if (more_except)
+              ev.events |= EPOLLPRI;
             ev.data.fd = descriptor;
             epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
           }
