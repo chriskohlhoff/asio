@@ -29,6 +29,7 @@
 #include "asio/demuxer_service.hpp"
 #include "asio/time_traits.hpp"
 #include "asio/detail/epoll_reactor.hpp"
+#include "asio/detail/kqueue_reactor.hpp"
 #include "asio/detail/select_reactor.hpp"
 #include "asio/detail/reactive_deadline_timer_service.hpp"
 #include "asio/detail/win_iocp_demuxer_service.hpp"
@@ -63,6 +64,9 @@ private:
 #elif defined(ASIO_HAS_EPOLL_REACTOR)
   typedef detail::reactive_deadline_timer_service<demuxer_type,
     traits_type, detail::epoll_reactor<false> > service_impl_type;
+#elif defined(ASIO_HAS_KQUEUE_REACTOR)
+  typedef detail::reactive_deadline_timer_service<demuxer_type,
+    traits_type, detail::kqueue_reactor<false> > service_impl_type;
 #else
   typedef detail::reactive_deadline_timer_service<demuxer_type,
     traits_type, detail::select_reactor<false> > service_impl_type;

@@ -569,7 +569,7 @@ inline hostent* gethostbyaddr(const char* addr, int length, int type,
         buffer, buflength, error));
   *error = translate_netdb_error(*error);
   return retval;
-#elif defined(__MACH__)
+#elif defined(__MACH__) && defined(__APPLE__)
   hostent* retval = error_wrapper(::getipnodebyaddr(addr, length, type, error));
   *error = translate_netdb_error(*error);
   if (!retval)
@@ -601,7 +601,7 @@ inline hostent* gethostbyname(const char* name, struct hostent* result,
         buflength, error));
   *error = translate_netdb_error(*error);
   return retval;
-#elif defined(__MACH__)
+#elif defined(__MACH__) && defined(__APPLE__)
   hostent* retval = error_wrapper(::getipnodebyname(name, AF_INET, 0, error));
   *error = translate_netdb_error(*error);
   if (!retval)
@@ -619,7 +619,7 @@ inline hostent* gethostbyname(const char* name, struct hostent* result,
 
 inline void freehostent(hostent* h)
 {
-#if defined(__MACH__)
+#if defined(__MACH__) && defined(__APPLE__)
   ::freehostent(h);
 #endif
 }
