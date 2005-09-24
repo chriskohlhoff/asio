@@ -77,8 +77,8 @@ public:
     }
   }
 
-  // Start a new read operation. The do_operation function of the select_op
-  // object will be invoked when the given descriptor is ready to be read.
+  // Start a new read operation. The handler object will be invoked when the
+  // given descriptor is ready to be read, or an error has occurred.
   template <typename Handler>
   void start_read_op(socket_type descriptor, Handler handler)
   {
@@ -87,8 +87,8 @@ public:
       interrupter_.interrupt();
   }
 
-  // Start a new write operation. The do_operation function of the select_op
-  // object will be invoked when the given descriptor is ready for writing.
+  // Start a new write operation. The handler object will be invoked when the
+  // given descriptor is ready to be written, or an error has occurred.
   template <typename Handler>
   void start_write_op(socket_type descriptor, Handler handler)
   {
@@ -97,9 +97,8 @@ public:
       interrupter_.interrupt();
   }
 
-  // Start a new exception operation. The do_operation function of the select_op
-  // object will be invoked when the given descriptor has exception information
-  // available.
+  // Start a new exception operation. The handler object will be invoked when
+  // the given descriptor has exception information, or an error has occurred.
   template <typename Handler>
   void start_except_op(socket_type descriptor, Handler handler)
   {
@@ -108,9 +107,9 @@ public:
       interrupter_.interrupt();
   }
 
-  // Start a new write and exception operations. The do_operation function of
-  // the select_op object will be invoked when the given descriptor is ready
-  // for writing or has exception information available.
+  // Start new write and exception operations. The handler object will be
+  // invoked when the given descriptor is ready for writing or has exception
+  // information available, or an error has occurred.
   template <typename Handler>
   void start_write_and_except_ops(socket_type descriptor, Handler handler)
   {
@@ -123,7 +122,8 @@ public:
   }
 
   // Cancel all operations associated with the given descriptor. The
-  // do_cancel function of the handler objects will be invoked.
+  // handlers associated with the descriptor will be invoked with the
+  // operation_aborted error.
   void cancel_ops(socket_type descriptor)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
@@ -131,9 +131,10 @@ public:
   }
 
   // Enqueue cancellation of all operations associated with the given
-  // descriptor. The do_cancel function of the handler objects will be invoked.
-  // This function does not acquire the select_reactor's mutex, and so should
-  // only be used from within a reactor handler.
+  // descriptor. The handlers associated with the descriptor will be invoked
+  // with the operation_aborted error. This function does not acquire the
+  // select_reactor's mutex, and so should only be used from within a reactor
+  // handler.
   void enqueue_cancel_ops_unlocked(socket_type descriptor)
   {
     pending_cancellations_.insert(
@@ -148,10 +149,8 @@ public:
     cancel_ops_unlocked(descriptor);
   }
 
-  // Schedule a timer to expire at the specified absolute time. The
-  // do_operation function of the handler object will be invoked when the timer
-  // expires. Returns a token that may be used for cancelling the timer, but it
-  // is not valid after the timer expires.
+  // Schedule a timer to expire at the specified absolute time. The handler
+  // object will be invoked when the timer expires.
   template <typename Handler>
   void schedule_timer(long sec, long usec, Handler handler, void* token)
   {
@@ -228,12 +227,14 @@ private:
       // Dispatch all ready operations.
       if (retval > 0)
       {
+        // Exception operations must be processed first to ensure that any
+        // out-of-band data is read before normal data.
+        except_op_queue_.dispatch_descriptors(except_fds, 0);
         read_op_queue_.dispatch_descriptors(read_fds, 0);
         write_op_queue_.dispatch_descriptors(write_fds, 0);
-        except_op_queue_.dispatch_descriptors(except_fds, 0);
+        except_op_queue_.dispatch_cancellations();
         read_op_queue_.dispatch_cancellations();
         write_op_queue_.dispatch_cancellations();
-        except_op_queue_.dispatch_cancellations();
       }
       timer_queue_.dispatch_timers(detail::time::now());
 
