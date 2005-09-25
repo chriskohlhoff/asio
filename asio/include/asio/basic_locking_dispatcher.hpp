@@ -43,6 +43,7 @@ namespace asio {
  */
 template <typename Service>
 class basic_locking_dispatcher
+  : private boost::noncopyable
 {
 public:
   /// The type of the service that will be used to provide locking dispatcher
