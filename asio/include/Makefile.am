@@ -96,6 +96,18 @@ nobase_include_HEADERS = \
 	asio/socket_acceptor_service.hpp \
 	asio/socket_base.hpp \
 	asio/socket_option.hpp \
+  asio/ssl.hpp \
+  asio/ssl/basic_context.hpp \
+  asio/ssl/context.hpp \
+  asio/ssl/context_base.hpp \
+  asio/ssl/context_service.hpp \
+  asio/ssl/detail/openssl_context_service.hpp \
+  asio/ssl/detail/openssl_init.hpp \
+  asio/ssl/detail/openssl_operation.hpp \
+  asio/ssl/detail/openssl_stream_service.hpp \
+  asio/ssl/stream.hpp \
+  asio/ssl/stream_base.hpp \
+  asio/ssl/stream_service.hpp \
 	asio/stream_socket.hpp \
 	asio/stream_socket_service.hpp \
 	asio/thread.hpp \

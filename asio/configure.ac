@@ -29,6 +29,23 @@ AC_CHECK_HEADER([boost/noncopyable.hpp],,
   exit 1
 ],[])
 
+AC_ARG_WITH(openssl,
+  AC_HELP_STRING([--with-openssl=DIR],[location of openssl]),
+[
+  CPPFLAGS="$CPPFLAGS -I${withval}"
+],[])
+
+AC_CHECK_HEADER([openssl/ssl.h],,
+[
+  OPENSSL_FOUND=no
+],[])
+
+if test x$OPENSSL_FOUND != xno; then
+  LIBS="$LIBS -lssl -lcrypto"
+fi
+
+AM_CONDITIONAL(HAVE_OPENSSL,test x$OPENSSL_FOUND != xno)
+
 case $host in
   *-*-linux*)
     CXXFLAGS="$CXXFLAGS -pthread"

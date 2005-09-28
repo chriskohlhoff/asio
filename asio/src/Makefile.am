@@ -83,6 +83,21 @@ noinst_PROGRAMS = \
 	examples/tutorial/daytime6/server \
 	examples/tutorial/daytime7/server
 
+if HAVE_OPENSSL
+
+noinst_PROGRAMS += \
+	tests/unit/ssl/basic_context_test \
+	tests/unit/ssl/context_base_test \
+	tests/unit/ssl/context_service_test \
+	tests/unit/ssl/context_test \
+	tests/unit/ssl/stream_base_test \
+	tests/unit/ssl/stream_service_test \
+	tests/unit/ssl/stream_test \
+	examples/ssl/client \
+	examples/ssl/server
+
+endif
+
 TESTS = \
 	tests/unit/basic_datagram_socket_test \
 	tests/unit/basic_deadline_timer_test \
@@ -134,6 +149,19 @@ TESTS = \
 	tests/unit/time_traits_test \
 	tests/unit/wrapped_handler_test \
 	tests/unit/write_test
+
+if HAVE_OPENSSL
+
+TESTS += \
+	tests/unit/ssl/basic_context_test \
+	tests/unit/ssl/context_base_test \
+	tests/unit/ssl/context_service_test \
+	tests/unit/ssl/context_test \
+	tests/unit/ssl/stream_base_test \
+	tests/unit/ssl/stream_service_test \
+	tests/unit/ssl/stream_test
+
+endif
 
 noinst_HEADERS = \
 	tests/unit/unit_test.hpp \
@@ -222,10 +250,28 @@ examples_tutorial_daytime5_server_SOURCES = examples/tutorial/daytime5/server.cp
 examples_tutorial_daytime6_server_SOURCES = examples/tutorial/daytime6/server.cpp
 examples_tutorial_daytime7_server_SOURCES = examples/tutorial/daytime7/server.cpp
 
+if HAVE_OPENSSL
+
+tests_unit_ssl_basic_context_test_SOURCES = tests/unit/ssl/basic_context_test.cpp
+tests_unit_ssl_context_base_test_SOURCES = tests/unit/ssl/context_base_test.cpp
+tests_unit_ssl_context_service_test_SOURCES = tests/unit/ssl/context_service_test.cpp
+tests_unit_ssl_context_test_SOURCES = tests/unit/ssl/context_test.cpp
+tests_unit_ssl_stream_base_test_SOURCES = tests/unit/ssl/stream_base_test.cpp
+tests_unit_ssl_stream_service_test_SOURCES = tests/unit/ssl/stream_service_test.cpp
+tests_unit_ssl_stream_test_SOURCES = tests/unit/ssl/stream_test.cpp
+examples_ssl_client_SOURCES = examples/ssl/client.cpp
+examples_ssl_server_SOURCES = examples/ssl/server.cpp
+
+endif
+
 EXTRA_DIST = \
 	Makefile.bor \
 	Makefile.mgw \
-	Makefile.msc
+	Makefile.msc \
+	examples/ssl/README \
+	examples/ssl/ca.pem \
+	examples/ssl/server.pem \
+	examples/ssl/dh512.pem
 
 MAINTAINERCLEANFILES = \
 	$(srcdir)/Makefile.in

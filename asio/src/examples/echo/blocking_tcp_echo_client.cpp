@@ -17,12 +17,12 @@ int main(int argc, char* argv[])
 
     asio::demuxer d;
 
+    using namespace std; // For atoi and strlen.
     asio::ipv4::host_resolver hr(d);
     asio::ipv4::host h;
     hr.get_host_by_name(h, argv[1]);
     asio::ipv4::tcp::endpoint ep(atoi(argv[2]), h.address(0));
 
-    using namespace std; // For atoi and strlen.
     asio::stream_socket s(d);
     s.connect(ep);
 
