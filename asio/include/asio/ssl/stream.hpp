@@ -80,6 +80,8 @@ public:
    * object.
    *
    * @param arg The argument to be passed to initialise the underlying stream.
+   *
+   * @param context The SSL context to be used for the stream.
    */
   template <typename Arg, typename Context_Service>
   explicit stream(Arg& arg, basic_context<Context_Service>& context)
