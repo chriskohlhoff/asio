@@ -108,7 +108,7 @@ public:
     service_impl_.close(impl, error_handler);
   }
 
-  // Bind the stream socket to the specified local endpoint.
+  /// Bind the stream socket to the specified local endpoint.
   template <typename Endpoint, typename Error_Handler>
   void bind(impl_type& impl, const Endpoint& endpoint,
       Error_Handler error_handler)
@@ -164,7 +164,7 @@ public:
     service_impl_.get_local_endpoint(impl, endpoint, error_handler);
   }
 
-  // Get the remote endpoint.
+  /// Get the remote endpoint.
   template <typename Endpoint, typename Error_Handler>
   void get_remote_endpoint(const impl_type& impl, Endpoint& endpoint,
       Error_Handler error_handler) const
