@@ -491,8 +491,7 @@ public:
    *
    * @param flags Flags specifying how the send call is to be made.
    *
-   * @returns The number of bytes sent or 0 if the connection was closed
-   * cleanly.
+   * @returns The number of bytes sent.
    *
    * @throws asio::error Thrown on failure.
    *
@@ -523,8 +522,7 @@ public:
    *   const asio::error& error // Result of operation
    * ); @endcode
    *
-   * @returns The number of bytes sent or 0 if the connection was closed
-   * cleanly.
+   * @returns The number of bytes sent.
    *
    * @note The send operation may not transmit all of the data to the peer.
    * Consider using the asio::write_n() function if you need to ensure that all
@@ -543,9 +541,9 @@ public:
    * The function call always returns immediately.
    *
    * @param buffers The data to be sent on the socket. Although the buffers
-   * object may be copied as necessary, ownership of the underlying buffers is
-   * retained by the caller, which must guarantee that they remain valid until
-   * the handler is called.
+   * object may be copied as necessary, ownership of the underlying memory
+   * blocks is retained by the caller, which must guarantee that they remain
+   * valid until the handler is called.
    *
    * @param flags Flags specifying how the send call is to be made.
    *
@@ -631,8 +629,8 @@ public:
    *
    * @param buffers The buffers into which the data will be received. Although
    * the buffers object may be copied as necessary, ownership of the underlying
-   * buffers is retained by the caller, which must guarantee that they remain
-   * valid until the handler is called.
+   * memory blocks is retained by the caller, which must guarantee that they
+   * remain valid until the handler is called.
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
@@ -663,8 +661,7 @@ public:
    *
    * @param buffers The data to be written to the socket.
    *
-   * @returns The number of bytes written or 0 if the connection was closed
-   * cleanly.
+   * @returns The number of bytes written.
    *
    * @throws asio::error Thrown on failure.
    *
@@ -692,8 +689,7 @@ public:
    *   const asio::error& error // Result of operation
    * ); @endcode
    *
-   * @returns The number of bytes written or 0 if the connection was closed
-   * cleanly.
+   * @returns The number of bytes written.
    *
    * @note The write operation may not transmit all of the data to the peer.
    * Consider using the asio::write_n() function if you need to ensure that all
@@ -711,9 +707,9 @@ public:
    * The function call always returns immediately.
    *
    * @param buffers The data to be written to the socket. Although the buffers
-   * object may be copied as necessary, ownership of the underlying buffers is
-   * retained by the caller, which must guarantee that they remain valid until
-   * the handler is called.
+   * object may be copied as necessary, ownership of the underlying memory
+   * blocks is retained by the caller, which must guarantee that they remain
+   * valid until the handler is called.
    *
    * @param handler The handler to be called when the write operation completes.
    * Copies will be made of the handler as required. The equivalent function
@@ -789,8 +785,8 @@ public:
    *
    * @param buffers The buffers into which the data will be read. Although the
    * buffers object may be copied as necessary, ownership of the underlying
-   * buffers is retained by the caller, which must guarantee that they remain
-   * valid until the handler is called.
+   * memory blocks is retained by the caller, which must guarantee that they
+   * remain valid until the handler is called.
    *
    * @param handler The handler to be called when the read operation completes.
    * Copies will be made of the handler as required. The equivalent function

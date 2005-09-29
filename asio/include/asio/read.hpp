@@ -68,7 +68,7 @@ inline std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers)
  * @code template <typename Error>
  * void error_handler(
  *   const Error& error // Result of operation (the actual type is dependent on
- *                      // the underlying stream's read operation)
+ *                      // the underlying stream's read operation).
  * ); @endcode
  *
  * @returns The number of bytes read, or 0 if the stream was closed cleanly.
@@ -95,8 +95,8 @@ inline std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  *
  * @param buffers The buffers into which the data will be read. Although the
  * buffers object may be copied as necessary, ownership of the underlying
- * buffers is retained by the caller, which must guarantee that they remain
- * valid until the handler is called.
+ * memory blocks is retained by the caller, which must guarantee that they
+ * remain valid until the handler is called.
  *
  * @param handler The handler to be called when the read operation completes.
  * Copies will be made of the handler as required. The equivalent function
@@ -105,8 +105,10 @@ inline std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  * void handler(
  *   const Error& error,           // Result of operation (the actual type is
  *                                 // dependent on the underlying stream's read
- *                                 // operation)
- *   std::size_t bytes_transferred // Number of bytes read
+ *                                 // operation).
+ *
+ *   std::size_t bytes_transferred // Number of bytes read, or 0 if the stream
+ *                                 // was closed cleanly.
  * ); @endcode
  *
  * @note The read operation may not read all of the requested number of bytes.
@@ -122,22 +124,32 @@ inline void async_read(Async_Read_Stream& s, const Mutable_Buffers& buffers,
   s.async_read(buffers, handler);
 }
 
-/// Read the specified amount of data from the stream before returning.
+/// Attempt to read a certain amount of data from a stream before returning.
 /**
- * This function is used to read an exact number of bytes of data from a stream.
- * The function call will block until the specified number of bytes has been
- * read successfully or an error occurs.
+ * This function is used to read a certain number of bytes of data from a
+ * stream. The call will block until one of the following conditions is true:
  *
+ * @li The supplied buffers are full. That is, the total bytes transferred is
+ * equal to the sum of the buffer sizes.
+ *
+ * @li The stream was closed cleanly.
+ *
+ * @li An error occurred.
+ *
+ * This function is implemented in terms of one or more calls to asio::read().
+ * 
  * @param s The stream from which the data is to be read. The type must support
  * the Sync_Read_Stream concept.
  *
- * @param buffers The buffers into which the data will be read.
+ * @param buffers The buffers into which the data will be read. The sum of the
+ * buffer sizes indicates the number of bytes to read from the stream.
  *
  * @param total_bytes_transferred An optional output parameter that receives the
- * total number of bytes actually read.
+ * total number of bytes copied into the buffers. If the stream was closed, or
+ * an error occurred, this will be less than the sum of the buffer sizes.
  *
- * @returns The number of bytes read on the last read, or 0 if the stream was
- * closed cleanly.
+ * @returns The number of bytes transferred on the last read, or 0 if the
+ * stream was closed cleanly.
  *
  * @note Throws an exception on failure. The type of the exception depends
  * on the underlying stream's read operation.
@@ -166,19 +178,29 @@ std::size_t read_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
   return bytes_transferred;
 }
 
-/// Read the specified amount of data from the stream before returning.
+/// Attempt to read a certain amount of data from a stream before returning.
 /**
- * This function is used to read an exact number of bytes of data from a stream.
- * The function call will block until the specified number of bytes has been
- * read successfully or an error occurs.
+ * This function is used to read a certain number of bytes of data from a
+ * stream. The call will block until one of the following conditions is true:
  *
+ * @li The supplied buffers are full. That is, the total bytes transferred is
+ * equal to the sum of the buffer sizes.
+ *
+ * @li The stream was closed cleanly.
+ *
+ * @li An error occurred.
+ *
+ * This function is implemented in terms of one or more calls to asio::read().
+ * 
  * @param s The stream from which the data is to be read. The type must support
  * the Sync_Read_Stream concept.
  *
- * @param buffers The buffers into which the data will be read.
+ * @param buffers The buffers into which the data will be read. The sum of the
+ * buffer sizes indicates the number of bytes to read from the stream.
  *
  * @param total_bytes_transferred An optional output parameter that receives the
- * total number of bytes actually read.
+ * total number of bytes copied into the buffers. If the stream was closed, or
+ * an error occurred, this will be less than the sum of the buffer sizes.
  *
  * @param error_handler The handler to be called when an error occurs. Copies
  * will be made of the handler as required. The equivalent function signature
@@ -186,11 +208,11 @@ std::size_t read_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  * @code template <typename Error>
  * void error_handler(
  *   const Error& error // Result of operation (the actual type is dependent on
- *                      // the underlying stream's read operation)
+ *                      // the underlying stream's read operation).
  * ); @endcode
  *
- * @returns The number of bytes read on the last read, or 0 if the stream was
- * closed cleanly.
+ * @returns The number of bytes transferred on the last read, or 0 if the
+ * stream was closed cleanly.
  */
 template <typename Sync_Read_Stream, typename Mutable_Buffers,
     typename Error_Handler>
@@ -257,19 +279,32 @@ namespace detail
   };
 } // namespace detail
 
-/// Start an asynchronous read that will not complete until the specified amount
-/// of data has been read.
+/// Start an asynchronous attempt to read a certain amount of data from a
+/// stream.
 /**
- * This function is used to asynchronously read an exact number of bytes of data
- * from a stream. The function call always returns immediately.
+ * This function is used to asynchronously read a certain number of bytes of
+ * data from a stream. The function call always returns immediately. The
+ * asynchronous operation will continue until one of the following conditions is
+ * true:
  *
+ * @li The supplied buffers are full. That is, the total bytes transferred is
+ * equal to the sum of the buffer sizes.
+ *
+ * @li The stream was closed cleanly.
+ *
+ * @li An error occurred.
+ *
+ * This asynchronous operation is implemented in terms of one or more calls to
+ * asio::async_read().
+ * 
  * @param s The stream from which the data is to be read. The type must support
  * the Async_Read_Stream concept.
  *
- * @param buffers The buffers into which the data will be read. Although the
- * buffers object may be copied as necessary, ownership of the underlying
- * buffers is retained by the caller, which must guarantee that they remain
- * valid until the handler is called.
+ * @param buffers The buffers into which the data will be read. The sum of the
+ * buffer sizes indicates the number of bytes to read from the stream. Although
+ * the buffers object may be copied as necessary, ownership of the underlying
+ * memory blocks is retained by the caller, which must guarantee that they
+ * remain valid until the handler is called.
  *
  * @param handler The handler to be called when the read operation completes.
  * Copies will be made of the handler as required. The equivalent function
@@ -278,11 +313,17 @@ namespace detail
  * void handler(
  *   const Error& error,                 // Result of operation (the actual type
  *                                       // is dependent on the underlying
- *                                       // stream's read operation)
- *   std::size_t last_bytes_transferred, // Number of bytes read on last read
- *                                       // operation
- *   std::size_t total_bytes_transferred // Total number of bytes successfully
- *                                       // read
+ *                                       // stream's read operation).
+ *
+ *   std::size_t last_bytes_transferred, // Number of bytes transferred on last
+ *                                       // read, or 0 if the stream was closed
+ *                                       // cleanly.
+ *
+ *   std::size_t total_bytes_transferred // Total number of bytes copied into
+ *                                       // the buffers. If the stream was
+ *                                       // closed, or an error occurred, this
+ *                                       // will be less than the sum of the
+ *                                       // buffer sizes.
  * ); @endcode
  */
 template <typename Async_Read_Stream, typename Mutable_Buffers,
@@ -295,24 +336,38 @@ inline void async_read_n(Async_Read_Stream& s, const Mutable_Buffers& buffers,
         s, buffers, handler));
 }
 
-/// Read at least the specified amount of data from the stream before returning.
+/// Attempt to read at least a certain amount of data from a stream before
+/// returning.
 /**
- * This function is used to read at least a specified number of bytes of data
- * from a stream. The function call will block until at least that number of
- * bytes has been read successfully or an error occurs.
+ * This function is used to read at least a certain number of bytes of data from
+ * a stream. The call will block until one of the following conditions is true:
  *
+ * @li The total bytes transferred is greater than or equal to the specified
+ * minimum size.
+ *
+ * @li The supplied buffers are full. That is, the total bytes transferred is
+ * equal to the sum of the buffer sizes.
+ *
+ * @li The stream was closed cleanly.
+ *
+ * @li An error occurred.
+ *
+ * This function is implemented in terms of one or more calls to asio::read().
+ * 
  * @param s The stream from which the data is to be read. The type must support
  * the Sync_Read_Stream concept.
  *
- * @param buffers The buffers into which the data will be read.
+ * @param buffers The buffers into which the data will be read. The sum of the
+ * buffer sizes indicates the maximum number of bytes to read from the stream.
  *
  * @param min_length The minimum size of the data to be read, in bytes.
  *
  * @param total_bytes_transferred An optional output parameter that receives the
- * total number of bytes actually red.
+ * total number of bytes copied into the buffers. If the stream was closed, or
+ * an error occurred, this will be less than the minimum size.
  *
- * @returns The number of bytes read on the last read, or 0 if the stream was
- * closed cleanly.
+ * @returns The number of bytes transferred on the last read, or 0 if the
+ * stream was closed cleanly.
  *
  * @note Throws an exception on failure. The type of the exception depends
  * on the underlying stream's read operation.
@@ -341,21 +396,35 @@ std::size_t read_at_least_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
   return bytes_transferred;
 }
 
-/// Read at least the specified amount of data from the stream before returning.
+/// Attempt to read at least a certain amount of data from a stream before
+/// returning.
 /**
- * This function is used to read at least a specified number of bytes of data
- * from a stream. The function call will block until at least that number of
- * bytes has been read successfully or an error occurs.
+ * This function is used to read at least a certain number of bytes of data from
+ * a stream. The call will block until one of the following conditions is true:
  *
+ * @li The total bytes transferred is greater than or equal to the specified
+ * minimum size.
+ *
+ * @li The supplied buffers are full. That is, the total bytes transferred is
+ * equal to the sum of the buffer sizes.
+ *
+ * @li The stream was closed cleanly.
+ *
+ * @li An error occurred.
+ *
+ * This function is implemented in terms of one or more calls to asio::read().
+ * 
  * @param s The stream from which the data is to be read. The type must support
  * the Sync_Read_Stream concept.
  *
- * @param buffers The buffers into which the data will be read.
+ * @param buffers The buffers into which the data will be read. The sum of the
+ * buffer sizes indicates the maximum number of bytes to read from the stream.
  *
  * @param min_length The minimum size of the data to be read, in bytes.
  *
  * @param total_bytes_transferred An optional output parameter that receives the
- * total number of bytes actually red.
+ * total number of bytes copied into the buffers. If the stream was closed, or
+ * an error occurred, this will be less than the minimum size.
  *
  * @param error_handler The handler to be called when an error occurs. Copies
  * will be made of the handler as required. The equivalent function signature
@@ -363,11 +432,11 @@ std::size_t read_at_least_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  * @code template <typename Error>
  * void error_handler(
  *   const Error& error // Result of operation (the actual type is dependent on
- *                      // the underlying stream's read operation)
+ *                      // the underlying stream's read operation).
  * ); @endcode
  *
- * @returns The number of bytes read on the last read, or 0 if the stream was
- * closed cleanly.
+ * @returns The number of bytes transferred on the last read, or 0 if the
+ * stream was closed cleanly.
  */
 template <typename Sync_Read_Stream, typename Mutable_Buffers,
     typename Error_Handler>
@@ -438,19 +507,35 @@ namespace detail
   };
 } // namespace detail
 
-/// Start an asynchronous read that will not complete until at least the
-/// specified amount of data has been read.
+/// Start an asynchronous attempt to read at least a certain amount of data from
+/// a stream.
 /**
- * This function is used to asynchronously read at least a specified number
- * of bytes of data from a stream. The function call always returns immediately.
+ * This function is used to asynchronously read at least a certain number of
+ * bytes of data from a stream. The function call always returns immediately.
+ * The asynchronous operation will continue until one of the following
+ * conditions is true:
  *
+ * @li The total bytes transferred is greater than or equal to the specified
+ * minimum size.
+ *
+ * @li The supplied buffers are full. That is, the total bytes transferred is
+ * equal to the sum of the buffer sizes.
+ *
+ * @li The stream was closed cleanly.
+ *
+ * @li An error occurred.
+ *
+ * This asynchronous operation is implemented in terms of one or more calls to
+ * asio::async_read().
+ * 
  * @param s The stream from which the data is to be read. The type must support
  * the Async_Read_Stream concept.
  *
- * @param buffers The buffers into which the data will be read. Although the
- * buffers object may be copied as necessary, ownership of the underlying
- * buffers is retained by the caller, which must guarantee that they remain
- * valid until the handler is called.
+ * @param buffers The buffers into which the data will be read. The sum of the
+ * buffer sizes indicates the number of bytes to read from the stream. Although
+ * the buffers object may be copied as necessary, ownership of the underlying
+ * memory blocks is retained by the caller, which must guarantee that they
+ * remain valid until the handler is called.
  *
  * @param min_length The minimum size of the data to be read, in bytes.
  *
@@ -461,11 +546,16 @@ namespace detail
  * void handler(
  *   const Error& error,                 // Result of operation (the actual type
  *                                       // is dependent on the underlying
- *                                       // stream's read operation)
- *   std::size_t last_bytes_transferred, // Number of bytes read on last read
- *                                       // operation
- *   std::size_t total_bytes_transferred // Total number of bytes successfully
- *                                       // read
+ *                                       // stream's read operation).
+ *
+ *   std::size_t last_bytes_transferred, // Number of bytes transferred on last
+ *                                       // read, or 0 if the stream was closed
+ *                                       // cleanly.
+ *
+ *   std::size_t total_bytes_transferred // Total number of bytes copied into
+ *                                       // the buffers. If the stream was
+ *                                       // closed, or an error occurred, this
+ *                                       // will be less than the minimum size.
  * ); @endcode
  */
 template <typename Async_Read_Stream, typename Mutable_Buffers,
