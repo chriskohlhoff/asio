@@ -501,6 +501,11 @@ public:
   mutable_buffer buffers[N];
 };
 
+/**
+ * @defgroup buffers asio::buffers
+ */
+/*@{*/
+
 /// Create a const_buffers instance with one element.
 inline const_buffers<1> buffers(const const_buffer& b)
 {
@@ -662,6 +667,8 @@ inline const_buffers<1> buffers(std::vector<const Pod_Type>& data,
 {
   return buffers(buffer(data, max_size_in_bytes));
 }
+
+/*@}*/
 
 } // namespace asio
 

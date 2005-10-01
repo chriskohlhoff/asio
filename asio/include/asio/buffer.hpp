@@ -133,6 +133,11 @@ inline const_buffer operator+(const const_buffer& b, std::size_t start)
   return const_buffer(new_data, new_size);
 }
 
+/**
+ * @defgroup buffer asio::buffer
+ */
+/*@{*/
+
 /// Create a new modifiable buffer from an existing buffer.
 inline mutable_buffer buffer(const mutable_buffer& b)
 {
@@ -307,6 +312,8 @@ inline const_buffer buffer(std::vector<const Pod_Type>& data,
       data.size() * sizeof(Pod_Type) < max_size_in_bytes
       ? data.size() * sizeof(Pod_Type) : max_size_in_bytes);
 }
+
+/*@}*/
 
 } // namespace asio
 

@@ -27,6 +27,11 @@
 
 namespace asio {
 
+/**
+ * @defgroup read asio::read
+ */
+/*@{*/
+
 /// Read some data from a stream.
 /**
  * This function is used to read data from a stream. The function call will
@@ -43,7 +48,7 @@ namespace asio {
  * on the underlying stream's read operation.
  *
  * @note The read operation may not read all of the requested number of bytes.
- * Consider using the asio::read_n() function if you need to ensure that the
+ * Consider using the \ref read_n function if you need to ensure that the
  * requested amount of data is read before the blocking operation completes.
  */
 template <typename Sync_Read_Stream, typename Mutable_Buffers>
@@ -74,7 +79,7 @@ inline std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers)
  * @returns The number of bytes read, or 0 if the stream was closed cleanly.
  *
  * @note The read operation may not read all of the requested number of bytes.
- * Consider using the asio::read_n() function if you need to ensure that the
+ * Consider using the \ref read_n function if you need to ensure that the
  * requested amount of data is read before the blocking operation completes.
  */
 template <typename Sync_Read_Stream, typename Mutable_Buffers,
@@ -84,6 +89,12 @@ inline std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
 {
   return s.read(buffers, error_handler);
 }
+
+/*@}*/
+/**
+ * @defgroup async_read asio::async_read
+ */
+/*@{*/
 
 /// Start an asynchronous read.
 /**
@@ -112,8 +123,8 @@ inline std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  * ); @endcode
  *
  * @note The read operation may not read all of the requested number of bytes.
- * Consider using the asio::async_read_n() function if you need to ensure that
- * the requested amount of data is read before the asynchronous operation
+ * Consider using the \ref async_read_n function if you need to ensure that the
+ * requested amount of data is read before the asynchronous operation
  * completes.
  */
 template <typename Async_Read_Stream, typename Mutable_Buffers,
@@ -123,6 +134,12 @@ inline void async_read(Async_Read_Stream& s, const Mutable_Buffers& buffers,
 {
   s.async_read(buffers, handler);
 }
+
+/*@}*/
+/**
+ * @defgroup read_n asio::read_n
+ */
+/*@{*/
 
 /// Attempt to read a certain amount of data from a stream before returning.
 /**
@@ -136,7 +153,7 @@ inline void async_read(Async_Read_Stream& s, const Mutable_Buffers& buffers,
  *
  * @li An error occurred.
  *
- * This function is implemented in terms of one or more calls to asio::read().
+ * This function is implemented in terms of one or more calls to \ref read.
  * 
  * @param s The stream from which the data is to be read. The type must support
  * the Sync_Read_Stream concept.
@@ -190,7 +207,7 @@ std::size_t read_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  *
  * @li An error occurred.
  *
- * This function is implemented in terms of one or more calls to asio::read().
+ * This function is implemented in terms of one or more calls to \ref read.
  * 
  * @param s The stream from which the data is to be read. The type must support
  * the Sync_Read_Stream concept.
@@ -239,6 +256,8 @@ std::size_t read_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
   return bytes_transferred;
 }
 
+/*@}*/
+
 namespace detail
 {
   template <typename Async_Read_Stream, typename Mutable_Buffers,
@@ -279,6 +298,11 @@ namespace detail
   };
 } // namespace detail
 
+/**
+ * @defgroup async_read_n asio::async_read_n
+ */
+/*@{*/
+
 /// Start an asynchronous attempt to read a certain amount of data from a
 /// stream.
 /**
@@ -295,7 +319,7 @@ namespace detail
  * @li An error occurred.
  *
  * This asynchronous operation is implemented in terms of one or more calls to
- * asio::async_read().
+ * \ref async_read.
  * 
  * @param s The stream from which the data is to be read. The type must support
  * the Async_Read_Stream concept.
@@ -336,6 +360,12 @@ inline void async_read_n(Async_Read_Stream& s, const Mutable_Buffers& buffers,
         s, buffers, handler));
 }
 
+/*@}*/
+/**
+ * @defgroup read_at_least_n asio::read_at_least_n
+ */
+/*@{*/
+
 /// Attempt to read at least a certain amount of data from a stream before
 /// returning.
 /**
@@ -352,7 +382,7 @@ inline void async_read_n(Async_Read_Stream& s, const Mutable_Buffers& buffers,
  *
  * @li An error occurred.
  *
- * This function is implemented in terms of one or more calls to asio::read().
+ * This function is implemented in terms of one or more calls to \ref read.
  * 
  * @param s The stream from which the data is to be read. The type must support
  * the Sync_Read_Stream concept.
@@ -412,7 +442,7 @@ std::size_t read_at_least_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  *
  * @li An error occurred.
  *
- * This function is implemented in terms of one or more calls to asio::read().
+ * This function is implemented in terms of one or more calls to \ref read.
  * 
  * @param s The stream from which the data is to be read. The type must support
  * the Sync_Read_Stream concept.
@@ -464,6 +494,8 @@ std::size_t read_at_least_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
   return bytes_transferred;
 }
 
+/*@}*/
+
 namespace detail
 {
   template <typename Async_Read_Stream, typename Mutable_Buffers,
@@ -507,6 +539,11 @@ namespace detail
   };
 } // namespace detail
 
+/**
+ * @defgroup async_read_at_least_n asio::async_read_at_least_n
+ */
+/*@{*/
+
 /// Start an asynchronous attempt to read at least a certain amount of data from
 /// a stream.
 /**
@@ -526,7 +563,7 @@ namespace detail
  * @li An error occurred.
  *
  * This asynchronous operation is implemented in terms of one or more calls to
- * asio::async_read().
+ * \ref async_read.
  * 
  * @param s The stream from which the data is to be read. The type must support
  * the Async_Read_Stream concept.
@@ -567,6 +604,8 @@ inline void async_read_at_least_n(Async_Read_Stream& s,
       detail::read_at_least_n_handler<Async_Read_Stream, Mutable_Buffers,
           Handler>(s, buffers, min_length, handler));
 }
+
+/*@}*/
 
 } // namespace asio
 

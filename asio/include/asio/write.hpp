@@ -27,6 +27,11 @@
 
 namespace asio {
 
+/**
+ * @defgroup write asio::write
+ */
+/*@{*/
+
 /// Write some data to a stream.
 /**
  * This function is used to write data to a stream. The function call will block
@@ -37,14 +42,14 @@ namespace asio {
  *
  * @param buffers The data to be written to the stream.
  *
- * @returns The number of bytes written, or 0 if the stream was closed cleanly.
+ * @returns The number of bytes written.
  *
  * @note Throws an exception on failure. The type of the exception depends
  * on the underlying stream's write operation.
  *
  * @note The write operation may not write all of the data to the stream.
- * Consider using the asio::write_n() function if you need to ensure that all
- * data is written before the blocking operation completes.
+ * Consider using the @ref write_n function if you need to ensure that all data
+ * is written before the blocking operation completes.
  */
 template <typename Sync_Write_Stream, typename Const_Buffers>
 inline std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers)
@@ -68,14 +73,14 @@ inline std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers)
  * @code template <typename Error>
  * void error_handler(
  *   const Error& error // Result of operation (the actual type is dependent on
- *                      // the underlying stream's write operation)
+ *                      // the underlying stream's write operation).
  * ); @endcode
  *
- * @returns The number of bytes written, or 0 if the stream was closed cleanly.
+ * @returns The number of bytes written.
  *
  * @note The write operation may not write all of the data to the stream.
- * Consider using the asio::write_n() function if you need to ensure that all
- * data is written before the blocking operation completes.
+ * Consider using the @ref write_n function if you need to ensure that all data
+ * is written before the blocking operation completes.
  */
 template <typename Sync_Write_Stream, typename Const_Buffers,
     typename Error_Handler>
@@ -84,6 +89,12 @@ inline std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
 {
   return s.write(buffers, error_handler);
 }
+
+/*@}*/
+/**
+ * @defgroup async_write asio::async_write
+ */
+/*@{*/
 
 /// Start an asynchronous write.
 /**
@@ -94,9 +105,9 @@ inline std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
  * the Async_Write_Stream concept.
  *
  * @param buffers The data to be sent on the stream. Although the buffers object
- * may be copied as necessary, ownership of the underlying buffers is retained
- * by the caller, which must guarantee that they remain valid until the handler
- * is called.
+ * may be copied as necessary, ownership of the underlying memory blocks is
+ * retained by the caller, which must guarantee that they remain valid until the
+ * handler is called.
  *
  * @param handler The handler to be called when the write operation completes.
  * Copies will be made of the handler as required. The equivalent function
@@ -105,12 +116,13 @@ inline std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
  * void handler(
  *   const Error& error,           // Result of operation (the actual type is
  *                                 // dependent on the underlying stream's write
- *                                 // operation)
- *   std::size_t bytes_transferred // Number of bytes written
+ *                                 // operation).
+
+ *   std::size_t bytes_transferred // Number of bytes written.
  * ); @endcode
  *
  * @note The write operation may not write all of the data to the stream.
- * Consider using the asio::async_write_n() function if you need to ensure that
+ * Consider using the @ref async_write_n function if you need to ensure that
  * all data is written before the asynchronous operation completes.
  */
 template <typename Async_Write_Stream, typename Const_Buffers, typename Handler>
@@ -120,22 +132,34 @@ inline void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
   s.async_write(buffers, handler);
 }
 
-/// Write all of the given data to the stream before returning.
+/*@}*/
 /**
- * This function is used to write an exact number of bytes of data to a stream.
- * The function call will block until the specified number of bytes has been
- * written successfully or an error occurs.
+ * @defgroup write_n asio::write_n
+ */
+/*@{*/
+
+/// Write all of the supplied data to a stream before returning.
+/**
+ * This function is used to write a certain number of bytes of data to a stream.
+ * The call will block until one of the following conditions is true:
  *
+ * @li All of the data in the supplied buffers has been written. That is, the
+ * total bytes transferred is equal to the sum of the buffer sizes.
+ *
+ * @li An error occurred.
+ *
+ * This function is implemented in terms of one or more calls to @ref write.
+ * 
  * @param s The stream to which the data is to be written. The type must support
  * the Sync_Write_Stream concept.
  *
- * @param buffers The data to be written to the stream.
+ * @param buffers The buffers containing the data to be written.
  *
  * @param total_bytes_transferred An optional output parameter that receives the
- * total number of bytes actually written.
+ * total number of bytes written from the buffers. If an error occurred this
+ * will be less than the sum of the buffer sizes.
  *
- * @returns The number of bytes written on the last write, or 0 if the stream
- * was closed cleanly.
+ * @returns The number of bytes transferred on the last write.
  *
  * @note Throws an exception on failure. The type of the exception depends
  * on the underlying stream's write operation.
@@ -164,19 +188,26 @@ std::size_t write_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
   return bytes_transferred;
 }
 
-/// Write all of the given data to the stream before returning.
+/// Write all of the supplied data to a stream before returning.
 /**
- * This function is used to write an exact number of bytes of data to a stream.
- * The function call will block until the specified number of bytes has been
- * written successfully or an error occurs.
+ * This function is used to write a certain number of bytes of data to a stream.
+ * The call will block until one of the following conditions is true:
  *
+ * @li All of the data in the supplied buffers has been written. That is, the
+ * total bytes transferred is equal to the sum of the buffer sizes.
+ *
+ * @li An error occurred.
+ *
+ * This function is implemented in terms of one or more calls to @ref write.
+ * 
  * @param s The stream to which the data is to be written. The type must support
  * the Sync_Write_Stream concept.
  *
- * @param buffers The data to be written to the stream.
+ * @param buffers The buffers containing the data to be written.
  *
  * @param total_bytes_transferred An optional output parameter that receives the
- * total number of bytes actually written.
+ * total number of bytes written from the buffers. If an error occurred this
+ * will be less than the sum of the buffer sizes.
  *
  * @param error_handler The handler to be called when an error occurs. Copies
  * will be made of the handler as required. The equivalent function signature
@@ -184,11 +215,10 @@ std::size_t write_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
  * @code template <typename Error>
  * void error_handler(
  *   const Error& error // Result of operation (the actual type is dependent on
- *                      // the underlying stream's write operation)
+ *                      // the underlying stream's write operation).
  * ); @endcode
  *
- * @returns The number of bytes written on the last write, or 0 if the stream
- * was closed cleanly.
+ * @returns The number of bytes transferred on the last write.
  */
 template <typename Sync_Write_Stream, typename Const_Buffers,
     typename Error_Handler>
@@ -214,6 +244,8 @@ std::size_t write_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
     *total_bytes_transferred = total_transferred;
   return bytes_transferred;
 }
+
+/*@}*/
 
 namespace detail
 {
@@ -255,19 +287,33 @@ namespace detail
   };
 } // namespace detail
 
-/// Start an asynchronous write that will not complete until the specified
-/// amount of data has been written.
 /**
- * This function is used to asynchronously write an exact number of bytes of
- * data to a stream. The function call always returns immediately.
+ * @defgroup async_write_n asio::async_write_n
+ */
+/*@{*/
+
+/// Start an asynchronous write of all of the supplied data to a stream.
+/**
+ * This function is used to asynchronously write a certain number of bytes of
+ * data to a stream. The function call always returns immediately. The
+ * asynchronous operation will continue until one of the following conditions
+ * is true:
  *
+ * @li All of the data in the supplied buffers has been written. That is, the
+ * total bytes transferred is equal to the sum of the buffer sizes.
+ *
+ * @li An error occurred.
+ *
+ * This function is implemented in terms of one or more calls to @ref
+ * async_write.
+ * 
  * @param s The stream to which the data is to be written. The type must support
  * the Async_Write_Stream concept.
  *
- * @param buffers The data to be sent on the stream. Although the buffers object
- * may be copied as necessary, ownership of the underlying buffers is retained
- * by the caller, which must guarantee that they remain valid until the handler
- * is called.
+ * @param buffers The buffers containing the data to be written. Although the
+ * buffers object may be copied as necessary, ownership of the underlying
+ * memory blocks is retained by the caller, which must guarantee that they
+ * remain valid until the handler is called.
  *
  * @param handler The handler to be called when the write operation completes.
  * Copies will be made of the handler as required. The equivalent function
@@ -276,11 +322,15 @@ namespace detail
  * void handler(
  *   const Error& error,                 // Result of operation (the actual type
  *                                       // is dependent on the underlying
- *                                       // stream's write operation)
- *   std::size_t last_bytes_transferred, // Number of bytes written on last
- *                                       // write operation
+ *                                       // stream's write operation).
+ *
+ *   std::size_t last_bytes_transferred, // Number of bytes transferred on last
+ *                                       // write operation.
+ *
  *   std::size_t total_bytes_transferred // Total number of bytes successfully
- *                                       // written
+ *                                       // transferred. If an error occurred
+ *                                       // this will be less than the sum of
+ *                                       // the sum of the buffer sizes.
  * ); @endcode
  */
 template <typename Async_Write_Stream, typename Const_Buffers, typename Handler>
@@ -292,25 +342,39 @@ inline void async_write_n(Async_Write_Stream& s, const Const_Buffers& buffers,
         s, buffers, handler));
 }
 
-/// Write at least a specified number of bytes of data to the stream before
+/*@}*/
+/**
+ * @defgroup write_at_least_n asio::write_at_least_n
+ */
+/*@{*/
+
+/// Write at least a certain number of bytes of data to a stream before
 /// returning.
 /**
- * This function is used to write at least a specified number of bytes of data
- * to a stream. The function call will block until at least that number of
- * bytes has been written successfully or an error occurs.
+ * This function is used to write at least a certain number of bytes of data to
+ * a stream. The call will block until one of the following conditions is true:
  *
+ * @li The total bytes transferred is greater than or equal to the specified
+ * minimum size.
+ *
+ * @li All data in the supplied buffers has been written. That is, the total
+ * bytes transferred is equal to the sum of the buffer sizes.
+ *
+ * @li An error occurred.
+ *
+ * This function is implemented in terms of one or more calls to @ref write.
+ * 
  * @param s The stream to which the data is to be written. The type must support
  * the Sync_Write_Stream concept.
  *
- * @param buffers The data to be written to the stream.
+ * @param buffers The buffers containing the data to be written.
  *
  * @param min_length The minimum size of data to be written, in bytes.
  *
  * @param total_bytes_transferred An optional output parameter that receives the
  * total number of bytes actually written.
  *
- * @returns The number of bytes written on the last write, or 0 if the stream
- * was closed cleanly.
+ * @returns The number of bytes written on the last write.
  *
  * @note Throws an exception on failure. The type of the exception depends
  * on the underlying stream's write operation.
@@ -339,17 +403,26 @@ std::size_t write_at_least_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
   return bytes_transferred;
 }
 
-/// Write at least a specified number of bytes of data to the stream before
+/// Write at least a certain number of bytes of data to a stream before
 /// returning.
 /**
- * This function is used to write at least a specified number of bytes of data
- * to a stream. The function call will block until at least that number of
- * bytes has been written successfully or an error occurs.
+ * This function is used to write at least a certain number of bytes of data to
+ * a stream. The call will block until one of the following conditions is true:
  *
+ * @li The total bytes transferred is greater than or equal to the specified
+ * minimum size.
+ *
+ * @li All data in the supplied buffers has been written. That is, the total
+ * bytes transferred is equal to the sum of the buffer sizes.
+ *
+ * @li An error occurred.
+ *
+ * This function is implemented in terms of one or more calls to @ref write.
+ * 
  * @param s The stream to which the data is to be written. The type must support
  * the Sync_Write_Stream concept.
  *
- * @param buffers The data to be written to the stream.
+ * @param buffers The buffers containing the data to be written.
  *
  * @param min_length The minimum size of data to be written, in bytes.
  *
@@ -365,8 +438,7 @@ std::size_t write_at_least_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
  *                      // the underlying stream's write operation)
  * ); @endcode
  *
- * @returns The number of bytes written on the last write, or 0 if the stream
- * was closed cleanly.
+ * @returns The number of bytes written on the last write.
  */
 template <typename Sync_Write_Stream, typename Const_Buffers,
     typename Error_Handler>
@@ -393,6 +465,8 @@ std::size_t write_at_least_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
     *total_bytes_transferred = total_transferred;
   return bytes_transferred;
 }
+
+/*@}*/
 
 namespace detail
 {
@@ -437,21 +511,37 @@ namespace detail
   };
 } // namespace detail
 
-/// Start an asynchronous write that will not complete until at least the
-/// specified amount of data has been written.
 /**
- * This function is used to asynchronously write at least a specified number of
- * bytes of data to a stream. The function call always returns immediately.
+ * @defgroup async_write_at_least_n asio::async_write_at_least_n
+ */
+/*@{*/
+
+/// Start an asynchronous write of at least a certain number of bytes of data to
+/// a stream.
+/**
+ * This function is used to asynchronously write at least a certain number of
+ * bytes of data to a stream. The function call always returns immediately. The
+ * asynchronous operation will continue until one of the following conditions
+ * is true:
  *
+ * @li The total bytes transferred is greater than or equal to the specified
+ * minimum size.
+ *
+ * @li All of the data in the supplied buffers has been written. That is, the
+ * total bytes transferred is equal to the sum of the buffer sizes.
+ *
+ * @li An error occurred.
+ *
+ * This function is implemented in terms of one or more calls to @ref
+ * async_write.
+ * 
  * @param s The stream to which the data is to be written. The type must support
  * the Async_Write_Stream concept.
  *
- * @param buffers The data to be sent on the stream. Although the buffers object
- * may be copied as necessary, ownership of the underlying buffers is retained
- * by the caller, which must guarantee that they remain valid until the handler
- * is called.
- *
- * @param min_length The minimum size of data to be written, in bytes.
+ * @param buffers The buffers containing the data to be written. Although the
+ * buffers object may be copied as necessary, ownership of the underlying
+ * memory blocks is retained by the caller, which must guarantee that they
+ * remain valid until the handler is called.
  *
  * @param handler The handler to be called when the write operation completes.
  * Copies will be made of the handler as required. The equivalent function
@@ -460,11 +550,15 @@ namespace detail
  * void handler(
  *   const Error& error,                 // Result of operation (the actual type
  *                                       // is dependent on the underlying
- *                                       // stream's write operation)
- *   std::size_t last_bytes_transferred, // Number of bytes written on last
- *                                       // write operation
+ *                                       // stream's write operation).
+ *
+ *   std::size_t last_bytes_transferred, // Number of bytes transferred on last
+ *                                       // write operation.
+ *
  *   std::size_t total_bytes_transferred // Total number of bytes successfully
- *                                       // written
+ *                                       // transferred. If an error occurred
+ *                                       // this will be less than the minimum
+ *                                       // size.
  * ); @endcode
  */
 template <typename Async_Write_Stream, typename Const_Buffers, typename Handler>
@@ -475,6 +569,8 @@ inline void async_write_at_least_n(Async_Write_Stream& s,
       detail::write_at_least_n_handler<Async_Write_Stream, Const_Buffers,
           Handler>(s, buffers, min_length, handler));
 }
+
+/*@}*/
 
 } // namespace asio
 
