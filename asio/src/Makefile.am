@@ -234,6 +234,7 @@ examples_echo_blocking_udp_echo_server_SOURCES = examples/echo/blocking_udp_echo
 examples_http_server_http_server_SOURCES = \
 	examples/http/server/connection.cpp \
 	examples/http/server/connection_manager.cpp \
+	examples/http/server/mime_types.cpp \
 	examples/http/server/posix_main.cpp \
 	examples/http/server/reply.cpp \
 	examples/http/server/request_handler.cpp \
@@ -280,6 +281,7 @@ EXTRA_DIST = \
 	examples/http/server/connection.hpp \
 	examples/http/server/connection_manager.hpp \
 	examples/http/server/header.hpp \
+	examples/http/server/mime_types.hpp \
 	examples/http/server/reply.hpp \
 	examples/http/server/request.hpp \
 	examples/http/server/request_handler.hpp \

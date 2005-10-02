@@ -110,6 +110,7 @@ clean:
 examples\http\server\http_server.exe: \
 		examples\http\server\connection.obj \
 		examples\http\server\connection_manager.obj \
+		examples\http\server\mime_types.obj \
 		examples\http\server\reply.obj \
 		examples\http\server\request_handler.obj \
 		examples\http\server\request_parser.obj \

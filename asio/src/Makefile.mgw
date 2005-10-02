@@ -121,6 +121,7 @@ $(PERFORMANCE_TEST_EXES) $(UNIT_TEST_EXES) $(EXAMPLE_EXES): %.exe: %.o
 examples/http/server/http_server.exe: \
 		examples/http/server/connection.o \
 		examples/http/server/connection_manager.o \
+		examples/http/server/mime_types.o \
 		examples/http/server/reply.o \
 		examples/http/server/request_handler.o \
 		examples/http/server/request_parser.o \

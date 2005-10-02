@@ -179,6 +179,7 @@ check: $(UNIT_TEST_EXES)
 examples\http\server\http_server.exe: \
 		examples\http\server\connection.cpp \
 		examples\http\server\connection_manager.cpp \
+		examples\http\server\mime_types.cpp \
 		examples\http\server\reply.cpp \
 		examples\http\server\request_handler.cpp \
 		examples\http\server\request_parser.cpp \

@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include "boost/lexical_cast.hpp"
+#include "mime_types.hpp"
 #include "reply.hpp"
 #include "request.hpp"
 
@@ -84,29 +85,6 @@ void request_handler::handle_request(const request& req, reply& rep)
     extension = request_path.substr(last_dot_pos + 1);
   }
 
-  // Map the extension to a MIME type.
-  std::string mime_type;
-  if (extension == "htm" || extension == "html")
-  {
-    mime_type = "text/html";
-  }
-  else if (extension == "jpg")
-  {
-    mime_type = "image/jpeg";
-  }
-  else if (extension == "gif")
-  {
-    mime_type = "image/gif";
-  }
-  else if (extension == "png")
-  {
-    mime_type = "image/png";
-  }
-  else
-  {
-    mime_type = "text/plain";
-  }
-
   // Open the file to send back.
   std::string full_path = doc_root_ + "/" + request_path;
   std::ifstream is(full_path.c_str(), std::ios::in | std::ios::binary);
@@ -125,7 +103,7 @@ void request_handler::handle_request(const request& req, reply& rep)
   rep.headers[0].name = "Content-Length";
   rep.headers[0].value = boost::lexical_cast<std::string>(rep.content.size());
   rep.headers[1].name = "Content-Type";
-  rep.headers[1].value = mime_type;
+  rep.headers[1].value = mime_types::extension_to_type(extension);
 }
 
 } // namespace http
