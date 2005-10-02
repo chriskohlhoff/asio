@@ -91,6 +91,7 @@ EXAMPLE_EXES = \
 	examples\echo\blocking_tcp_echo_server.exe \
 	examples\echo\blocking_udp_echo_client.exe \
 	examples\echo\blocking_udp_echo_server.exe \
+	examples\http\server\http_server.exe \
 	examples\multicast\receiver.exe \
 	examples\multicast\sender.exe \
 	examples\timeouts\accept_timeout.exe \
@@ -174,6 +175,16 @@ check: $(UNIT_TEST_EXES)
 
 {examples\tutorial\daytime7}.cpp{examples\tutorial\daytime7}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+
+examples\http\server\http_server.exe: \
+		examples\http\server\connection.cpp \
+		examples\http\server\connection_manager.cpp \
+		examples\http\server\reply.cpp \
+		examples\http\server\request_handler.cpp \
+		examples\http\server\request_parser.cpp \
+		examples\http\server\server.cpp \
+		examples\http\server\win_main.cpp
+	cl -Fe$@ -Foexamples\http\server\ $(CXXFLAGS) $(DEFINES) $** -link -opt:ref
 
 clean:
 	-del /q /s tests\*.exe

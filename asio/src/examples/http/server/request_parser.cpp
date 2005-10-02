@@ -61,7 +61,6 @@ boost::tribool request_parser::consume(request& req, char input)
       req.method.push_back(input);
       return boost::indeterminate;
     }
-    break;
   case method:
     if (input == ' ')
     {
@@ -77,7 +76,6 @@ boost::tribool request_parser::consume(request& req, char input)
       req.method.push_back(input);
       return boost::indeterminate;
     }
-    break;
   case uri_start:
     if (is_ctl(input))
     {
@@ -104,7 +102,6 @@ boost::tribool request_parser::consume(request& req, char input)
       req.uri.push_back(input);
       return boost::indeterminate;
     }
-    break;
   case http_version_h:
     if (input == 'H')
     {
@@ -115,7 +112,6 @@ boost::tribool request_parser::consume(request& req, char input)
     {
       return false;
     }
-    break;
   case http_version_t_1:
     if (input == 'T')
     {
@@ -126,7 +122,6 @@ boost::tribool request_parser::consume(request& req, char input)
     {
       return false;
     }
-    break;
   case http_version_t_2:
     if (input == 'T')
     {
@@ -137,7 +132,6 @@ boost::tribool request_parser::consume(request& req, char input)
     {
       return false;
     }
-    break;
   case http_version_p:
     if (input == 'P')
     {
@@ -148,7 +142,6 @@ boost::tribool request_parser::consume(request& req, char input)
     {
       return false;
     }
-    break;
   case http_version_slash:
     if (input == '/')
     {
@@ -161,7 +154,6 @@ boost::tribool request_parser::consume(request& req, char input)
     {
       return false;
     }
-    break;
   case http_version_major_start:
     if (is_digit(input))
     {
@@ -173,7 +165,6 @@ boost::tribool request_parser::consume(request& req, char input)
     {
       return false;
     }
-    break;
   case http_version_major:
     if (input == '.')
     {
@@ -189,7 +180,6 @@ boost::tribool request_parser::consume(request& req, char input)
     {
       return false;
     }
-    break;
   case http_version_minor_start:
     if (is_digit(input))
     {
@@ -201,7 +191,6 @@ boost::tribool request_parser::consume(request& req, char input)
     {
       return false;
     }
-    break;
   case http_version_minor:
     if (input == '\r')
     {
@@ -217,7 +206,6 @@ boost::tribool request_parser::consume(request& req, char input)
     {
       return false;
     }
-    break;
   case expecting_newline_1:
     if (input == '\n')
     {
@@ -228,7 +216,6 @@ boost::tribool request_parser::consume(request& req, char input)
     {
       return false;
     }
-    break;
   case header_line_start:
     if (input == '\r')
     {
@@ -251,7 +238,6 @@ boost::tribool request_parser::consume(request& req, char input)
       state_ = header_name;
       return boost::indeterminate;
     }
-    break;
   case header_lws:
     if (input == '\r')
     {
@@ -272,7 +258,6 @@ boost::tribool request_parser::consume(request& req, char input)
       req.headers.back().value.push_back(input);
       return boost::indeterminate;
     }
-    break;
   case header_name:
     if (input == ':')
     {
@@ -288,7 +273,6 @@ boost::tribool request_parser::consume(request& req, char input)
       req.headers.back().name.push_back(input);
       return boost::indeterminate;
     }
-    break;
   case space_before_header_value:
     if (input == ' ')
     {
@@ -299,7 +283,6 @@ boost::tribool request_parser::consume(request& req, char input)
     {
       return false;
     }
-    break;
   case header_value:
     if (input == '\r')
     {
@@ -315,7 +298,6 @@ boost::tribool request_parser::consume(request& req, char input)
       req.headers.back().value.push_back(input);
       return boost::indeterminate;
     }
-    break;
   case expecting_newline_2:
     if (input == '\n')
     {
@@ -326,7 +308,6 @@ boost::tribool request_parser::consume(request& req, char input)
     {
       return false;
     }
-    break;
   case expecting_newline_3:
     return (input == '\n');
   default:

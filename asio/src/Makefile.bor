@@ -71,6 +71,7 @@ EXAMPLE_EXES = \
 	examples\echo\blocking_tcp_echo_server.exe \
 	examples\echo\blocking_udp_echo_client.exe \
 	examples\echo\blocking_udp_echo_server.exe \
+	examples\http\server\http_server.exe \
 	examples\multicast\receiver.exe \
 	examples\multicast\sender.exe \
 	examples\timeouts\accept_timeout.exe \
@@ -105,6 +106,16 @@ clean:
 	-del /q /s examples\*.exe
 	-del /q /s examples\*.tds
 	-del /q /s examples\*.obj
+
+examples\http\server\http_server.exe: \
+		examples\http\server\connection.obj \
+		examples\http\server\connection_manager.obj \
+		examples\http\server\reply.obj \
+		examples\http\server\request_handler.obj \
+		examples\http\server\request_parser.obj \
+		examples\http\server\server.obj \
+		examples\http\server\win_main.obj
+	bcc32 -e$@ $(LDFLAGS) $**
 
 .obj.exe:
 	bcc32 -e$@ $(LDFLAGS) $<

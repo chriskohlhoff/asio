@@ -91,10 +91,14 @@ EXAMPLE_EXES = \
 	examples/tutorial/daytime6/server.exe \
 	examples/tutorial/daytime7/server.exe
 
+HTTP_EXAMPLE_EXES = \
+	examples/http/server/http_server.exe
+
 all: \
 	$(PERFORMANCE_TEST_EXES) \
 	$(UNIT_TEST_EXES) \
-	$(EXAMPLE_EXES)
+	$(EXAMPLE_EXES) \
+	$(HTTP_EXAMPLE_EXES)
 
 check: $(UNIT_TEST_EXES) $(addprefix run.,$(UNIT_TEST_EXES))
 
@@ -113,6 +117,16 @@ clean:
 
 $(PERFORMANCE_TEST_EXES) $(UNIT_TEST_EXES) $(EXAMPLE_EXES): %.exe: %.o
 	g++ -o$@ $(LDFLAGS) $< $(LIBS)
+
+examples/http/server/http_server.exe: \
+		examples/http/server/connection.o \
+		examples/http/server/connection_manager.o \
+		examples/http/server/reply.o \
+		examples/http/server/request_handler.o \
+		examples/http/server/request_parser.o \
+		examples/http/server/server.o \
+		examples/http/server/win_main.o
+	g++ -o$@ $(LDFLAGS) $^ $(LIBS)
 
 .cpp.o:
 	g++ -o$@ -c $(CXXFLAGS) $(DEFINES) $<
