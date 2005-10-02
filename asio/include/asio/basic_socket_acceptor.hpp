@@ -26,6 +26,7 @@
 #include "asio/default_error_handler.hpp"
 #include "asio/null_error_handler.hpp"
 #include "asio/service_factory.hpp"
+#include "asio/socket_base.hpp"
 
 namespace asio {
 
@@ -45,7 +46,8 @@ namespace asio {
  */
 template <typename Service>
 class basic_socket_acceptor
-  : private boost::noncopyable
+  : public socket_base,
+    private boost::noncopyable
 {
 public:
   /// The type of the service that will be used to provide accept operations.

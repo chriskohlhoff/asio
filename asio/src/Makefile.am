@@ -63,6 +63,7 @@ noinst_PROGRAMS = \
 	examples/echo/blocking_tcp_echo_server \
 	examples/echo/blocking_udp_echo_client \
 	examples/echo/blocking_udp_echo_server \
+	examples/http/server/http_server \
 	examples/iostreams/daytime_client \
 	examples/multicast/receiver \
 	examples/multicast/sender \
@@ -230,6 +231,14 @@ examples_echo_blocking_tcp_echo_client_SOURCES = examples/echo/blocking_tcp_echo
 examples_echo_blocking_tcp_echo_server_SOURCES = examples/echo/blocking_tcp_echo_server.cpp
 examples_echo_blocking_udp_echo_client_SOURCES = examples/echo/blocking_udp_echo_client.cpp
 examples_echo_blocking_udp_echo_server_SOURCES = examples/echo/blocking_udp_echo_server.cpp
+examples_http_server_http_server_SOURCES = \
+	examples/http/server/connection.cpp \
+	examples/http/server/connection_manager.cpp \
+	examples/http/server/posix_main.cpp \
+	examples/http/server/reply.cpp \
+	examples/http/server/request_handler.cpp \
+	examples/http/server/request_parser.cpp \
+	examples/http/server/server.cpp
 examples_iostreams_daytime_client_SOURCES = examples/iostreams/daytime_client.cpp
 examples_multicast_receiver_SOURCES = examples/multicast/receiver.cpp
 examples_multicast_sender_SOURCES = examples/multicast/sender.cpp
@@ -268,6 +277,14 @@ EXTRA_DIST = \
 	Makefile.bor \
 	Makefile.mgw \
 	Makefile.msc \
+	examples/http/server/connection.hpp \
+	examples/http/server/connection_manager.hpp \
+	examples/http/server/header.hpp \
+	examples/http/server/reply.hpp \
+	examples/http/server/request.hpp \
+	examples/http/server/request_handler.hpp \
+	examples/http/server/request_parser.hpp \
+	examples/http/server/server.hpp \
 	examples/ssl/README \
 	examples/ssl/ca.pem \
 	examples/ssl/server.pem \
