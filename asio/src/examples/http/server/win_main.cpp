@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
       std::cerr << "Usage: http_server <port> <doc_root>\n";
       return 1;
     }
-    short port = boost::lexical_cast<short>(argv[1]);
+    unsigned short port = boost::lexical_cast<unsigned short>(argv[1]);
     std::string doc_root = argv[2];
 
     // Initialise server.
@@ -49,6 +49,10 @@ int main(int argc, char* argv[])
   catch (asio::error& e)
   {
     std::cerr << "asio error: " << e << "\n";
+  }
+  catch (std::exception& e)
+  {
+    std::cerr << "exception: " << e.what() << "\n";
   }
 
   return 0;
