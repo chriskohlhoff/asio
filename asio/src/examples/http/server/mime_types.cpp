@@ -8,8 +8,8 @@ namespace {
 
 struct mapping
 {
-  std::string extension;
-  std::string mime_type;
+  const char* extension;
+  const char* mime_type;
 } mappings[] =
 {
   { "gif", "image/gif" },
