@@ -287,6 +287,7 @@ EXTRA_DIST = \
 	examples/http/server/request_handler.hpp \
 	examples/http/server/request_parser.hpp \
 	examples/http/server/server.hpp \
+	examples/http/server/win_main.cpp \
 	examples/ssl/README \
 	examples/ssl/ca.pem \
 	examples/ssl/server.pem \
