@@ -1,5 +1,4 @@
 #include "mime_types.hpp"
-#include <utility>
 
 namespace http {
 namespace mime_types {
