@@ -32,34 +32,6 @@ namespace asio {
  * passed to operations expecting an implementation of the Const_Buffers
  * concept. It does not own the underlying data, and so is cheap to copy or
  * assign.
- *
- * Instances of this class template may be created using the asio::buffers
- * function:
- *
- * @code sock.write(asio::buffers(buffer1, length1)(buffer2, length2)); @endcode
- *
- * or:
- *
- * @code asio::const_buffers<2> my_buffers =
- *   asio::buffers(buffer1, length1)(buffer2, length2);
- * sock.send(my_buffers); @endcode
- *
- * It may also be explicitly instantiated and initialised using array
- * initialisation syntax:
- *
- * @code asio::const_buffers<2> my_buffers =
- * {
- *   asio::buffer(buffer1, length1),
- *   asio::buffer(buffer2, length2)
- * }; @endcode
- *
- * The const_buffers class template supports conversion to standard containers,
- * where the list of buffers may be manipulated:
- *
- * @code std::vector<asio::const_buffer> my_buffers =
- *   asio::buffers(buffer1, length1)(buffer2, length2);
- * // ...
- * sock.send(my_buffers); @endcode
  */
 template <std::size_t N>
 class const_buffers
@@ -213,40 +185,6 @@ public:
  * passed to operations expecting an implementation of the Mutable_Buffers
  * concept. It does not own the underlying data, and so is cheap to copy or
  * assign.
- *
- * Instances of this class template may be created using the asio::buffers
- * function:
- *
- * @code sock.read(buffers(buffer1, length1)(buffer2, length2)); @endcode
- *
- * or:
- *
- * @code asio::mutable_buffers<2> my_buffers =
- *   asio::buffers(buffer1, length1)(buffer2, length2);
- * sock.receive(my_buffers); @endcode
- *
- * It may also be explicitly instantiated and initialised using array
- * initialisation syntax:
- *
- * @code asio::mutable_buffers<2> my_buffers =
- * {
- *   asio::buffer(buffer1, length1),
- *   asio::buffer(buffer2, length2)
- * }; @endcode
- *
- * The mutable_buffers class template supports conversion to standard
- * containers, where the list of buffers may be manipulated:
- *
- * @code std::vector<asio::mutable_buffer> my_buffers =
- *   asio::buffers(buffer1, length1)(buffer2, length2);
- * // ...
- * sock.receive(my_buffers); @endcode
- *
- * A mutable_buffers instance may be converted into a corresponding
- * const_buffers instance:
- *
- * @code asio::mutable_buffers<2> my_buffers = ...;
- * asio::const_buffers<2> my_const_buffers = my_buffers; @endcode
  */
 template <std::size_t N>
 class mutable_buffers
@@ -503,6 +441,69 @@ public:
 
 /**
  * @defgroup buffers asio::buffers
+ *
+ * @brief The asio::buffers function is used to compose a list of one or more
+ * buffers.
+ *
+ * The simplest case involves reading or writing a single buffer of a specified
+ * size:
+ *
+ * @code sock.write(asio::buffers(data, size)); @endcode
+ *
+ * A list of buffers can be composed using a chain of calls, e.g. to write three
+ * buffers in a single operation:
+ *
+ * @code sock.write(asio::buffers(d1, s1)(d2, s2)(d3, s3)); @endcode
+ *
+ * The list of buffers may be assigned into a variable:
+ *
+ * @code asio::mutable_buffers<2> my_buffers = asio::buffers(d1, s1)(d2, s2);
+ * sock.read(my_buffers); @endcode
+ *
+ * or:
+ *
+ * @code asio::const_buffers<2> my_buffers = asio::buffers(d1, s1)(d2, s2);
+ * sock.write(my_buffers); @endcode
+ *
+ * @note A list of buffers uses the asio::const_buffers type if any of the
+ * individual buffers is constant, otherwise it uses the asio::mutable_buffers
+ * type. An instance of asio::mutable_buffers may be converted into a
+ * corresponding asio::const_buffers instance, but the opposite conversion is
+ * not allowed.
+ *
+ * A list of buffers may also be assigned into a standard container:
+ *
+ * @code std::vector<asio::const_buffer> my_buffers =
+ *   asio::buffers(d1, s1)(d2, s2)(d3, s3)(d4, s4);
+ * // ...
+ * sock.write(my_buffers); @endcode
+ *
+ * @note By using the \ref buffer function instead of asio::buffers, a list of
+ * buffers can explicitly instantiated and initialised using array
+ * initialisation syntax:
+ * @code asio::const_buffers<2> my_buffers =
+ * {
+ *   asio::buffer(d1, s1),
+ *   asio::buffer(d2, s2)
+ * }; @endcode
+ *
+ * An individual buffer may be created from a builtin array, std::vector or
+ * boost::array of POD elements. This helps prevent buffer overruns by
+ * automatically determining the size of the buffer:
+ *
+ * @code char d1[128];
+ * size_t bytes_transferred = sock.read(asio::buffers(d1));
+ *
+ * std::vector<char> d2(128);
+ * bytes_transferred = sock.read(asio::buffers(d2));
+ *
+ * boost::array<char, 128> d3;
+ * bytes_transferred = sock.read(asio::buffers(d3));
+ *
+ * int d4[128];
+ * std::vector<double> d5(128);
+ * boost::array<pod_struct_type, 128> d6;
+ * bytes_transferred = sock.read(asio::buffers(d4)(d5)(d6)); @endcode
  */
 /*@{*/
 

@@ -1,6 +1,59 @@
 /**
 \page tutdaytime1 Tutorial Daytime.1 - A synchronous TCP daytime client
 
+This tutorial program shows how to use asio to implement a client application
+with TCP.
+
+\dontinclude daytime1/client.cpp
+
+We start by including the necessary header files.
+
+\until #include "asio.hpp"
+
+The purpose of this application is to access a daytime service,
+so we need the user to specify the server.
+
+\until }
+
+All programs that use asio need to have at least one asio::demuxer object.
+
+\until asio::demuxer
+
+We need to turn the server name that was specified as a
+parameter to the application, into an IP address. To do this we use an
+asio::ipv4::host_resolver object.
+
+\until asio::ipv4::host_resolver
+
+Now we need an object of type asio::ipv4::host for the server.
+The asio::ipv4::host_resolver::get_host_by_name() function takes a
+hostname and populates the <tt>host</tt> object with the corresponding IP
+address.
+
+\until host_resolver.get_host_by_name
+
+The socket is to connect to the daytime service, TCP port 13, on
+the server. Create an object for this remote endpoint.
+
+\until asio::ipv4::tcp::endpoint
+
+Now create and connect the socket.
+
+\until socket.connect
+
+The connection is open. All we need to do now is read the
+response from the daytime service. When the server closes the connection, the
+asio::stream_socket::read() function will return 0, which is how we know to
+exit the loop. If an error occurs during reading then an asio::error exception
+is thrown.
+
+\until }
+
+Finally, handle any exceptions that may have been thrown.
+
+\until }
+\until }
+
 See the \ref tutdaytime1src "full source listing" \n
 Return to the \ref tutindex "tutorial index" \n
 Next: \ref tutdaytime2
@@ -15,6 +68,35 @@ Return to \ref tutdaytime1
 
 /**
 \page tutdaytime2 Tutorial Daytime.2 - A synchronous TCP daytime server
+
+This tutorial program shows how to use asio to implement a server application
+with TCP.
+
+\dontinclude daytime2/server.cpp
+
+\until asio::demuxer
+
+An asio::socket_acceptor object needs to be created to listen
+for new connections. It is initialised to listen on TCP port 13.
+
+\until asio::socket_acceptor
+
+This is an iterative server, which means that it will handle one
+connection at a time. Create a socket that will represent the connection to the
+client, and then wait for a connection.
+
+\until acceptor.accept
+
+A client is accessing our service. Determine the current time
+and transfer this information to the client. 
+
+\until }
+\until }
+
+Finally, handle any exceptions.
+
+\until }
+\until }
 
 See the \ref tutdaytime2src "full source listing" \n
 Return to the \ref tutindex "tutorial index" \n
@@ -32,30 +114,74 @@ Return to \ref tutdaytime2
 /**
 \page tutdaytime3 Tutorial Daytime.3 - An asynchronous TCP daytime server
 
-\section tutdaytime3remunused Removing Unused Handler Parameters
+\section tutdaytime3funcmain The main() function
 
-You may have noticed that the <tt>error</tt>, <tt>last_bytes_sent</tt> and
-<tt>total_bytes_sent</tt> parameters are not used in the body of the
-<tt>handle_send()</tt> function. If parameters are not needed, it is possible
-to remove them from the function:
+\dontinclude daytime3/server.cpp
+\skip int main()
+\until asio::socket_acceptor acceptor
 
-@code
-void handle_send(asio::stream_socket* socket, char* send_buf)
-{
-  using namespace std; // For free.
-  free(send_buf);
-  delete socket;
-} @endcode
+We need to set up the initial socket to hold an accepted client connection.
+
+\until asio::stream_socket*
+
+The function asio::socket_acceptor::async_accept() will cause the
+application to listen in the background for a new connection. When such a
+connection is received, the demuxer will invoke the <tt>handle_accept()</tt>
+function with an asio::error argument.
+
+\until asio::placeholders::error
+
+Now that we have created some work for it to do, we can run the demuxer.
+
+\until return 0;
+\until }
+
+\section tutdaytime3funchandle_accept The handle_accept() function
+
+The function <tt>handle_accept()</tt> will service the client request.
+
+\dontinclude daytime3/server.cpp
+\skip void handle_accept
+\until {
+
+The <tt>error</tt> parameter contains the result of the asynchronous operation.
+
+\until {
+
+Determine what we are going to send.
+
+\until size_t write_length
+
+We now call \ref async_write_n to serve the data to the client. Note that we
+are using \ref async_write_n, rather than \ref async_write, to ensure that the
+entire block of data is sent.
+
+\until asio::placeholders::total_bytes_transferred
 
 When initiating the asynchronous operation, and if using \ref boost_bind, you
 must specify only the arguments that match the handler's parameter list. In
-this program, all three of the argument placeholders (asio::placeholders::error,
-asio::placeholders::last_bytes_transferred and
-asio::placeholders::total_bytes_transferred) should therefore be removed:
+this program, all three of the argument placeholders
+(asio::placeholders::error, asio::placeholders::last_bytes_transferred and
+asio::placeholders::total_bytes_transferred) could potentially have been
+removed.
 
-@code
-asio::async_send_n(*socket, send_buf, send_length,
-    boost::bind(handle_send, socket, send_buf)); @endcode
+Any further actions for this client connection are now the responsibility of
+<tt>handle_write()</tt>.
+
+Create a new socket for the next client connection.
+
+\until }
+\until }
+\until }
+
+\section tutdaytime3funchandle_write The handle_write() function
+
+The function <tt>handle_write()</tt> is invoked after the service request has
+been completed.
+
+\dontinclude daytime3/server.cpp
+\skip void handle_write
+\until }
 
 See the \ref tutdaytime3src "full source listing" \n
 Return to the \ref tutindex "tutorial index" \n
@@ -73,6 +199,35 @@ Return to \ref tutdaytime3
 /**
 \page tutdaytime4 Tutorial Daytime.4 - A synchronous UDP daytime client
 
+This tutorial program shows how to use asio to implement a client application
+with UDP.
+
+\dontinclude daytime4/client.cpp
+
+The start of the application is essentially the same as for the TCP daytime
+client.
+
+\until host_resolver.get_host_by_name
+
+Create an object for the remote endpoint, UDP port 13 on the server.
+
+\until asio::ipv4::udp::endpoint
+
+Since UDP is datagram-oriented, we will not be using a stream socket. Create an
+asio::datagram_socket and initiate contact with the remote endpoint.
+
+\until asio::buffers(send_buf,
+
+Now we need to be ready to accept whatever the server sends back to us. The
+endpoint on our side that receives the server's response will be initialised by
+asio::datagram_socket::receive_from(). 
+
+\until }
+
+Finally, handle any exceptions that may have been thrown.
+
+\until }
+\until }
 See the \ref tutdaytime4src "full source listing" \n
 Return to the \ref tutindex "tutorial index" \n
 Previous: \ref tutdaytime3 \n
@@ -88,6 +243,36 @@ Return to \ref tutdaytime4
 
 /**
 \page tutdaytime5 Tutorial Daytime.5 - A synchronous UDP daytime server
+
+This tutorial program shows how to use asio to implement a server application
+with UDP.
+
+\dontinclude daytime5/server.cpp
+
+\until asio::demuxer
+
+Create an asio::datagram_socket object to receive requests on UDP port 13.
+
+\until asio::datagram_socket
+
+Wait for a client to initiate contact with us. The remote_endpoint object will
+be populated by asio::datagram_socket::receive_from().
+
+\until asio::throw_error_if
+
+Determine what we are going to send back to the client.
+
+\until std::string msg
+
+Send the response to the remote_endpoint.
+
+\until }
+\until }
+
+Finally, handle any exceptions.
+
+\until }
+\until }
 
 See the \ref tutdaytime5src "full source listing" \n
 Return to the \ref tutindex "tutorial index" \n
@@ -105,32 +290,73 @@ Return to \ref tutdaytime5
 /**
 \page tutdaytime6 Tutorial Daytime.6 - An asynchronous UDP daytime server
 
-\section tutdaytime6remunused Removing Unused Handler Parameters
+\section tutdaytime6funcmain The main() function
 
-In this tutorial program, the <tt>error</tt> and <tt>bytes_sent</tt>
-parameters are not used in the body of the <tt>handle_sendto()</tt> function.
-As those parameters are not needed, they can be removed them from the
-function:
+\dontinclude daytime6/server.cpp
+\skip int main()
+\until asio::ipv4::udp::endpoint
 
-@code
-void handle_sendto(char* send_buf)
-{
-  using namespace std; // For free.
-  free(send_buf);
-} @endcode
+Create an asio::datagram_socket object to receive requests on UDP port 13.
+
+\until asio::datagram_socket
+
+The function asio::datagram_socket::async_receive_from() will cause the
+application to listen in the background for a new request. When such a
+request is received, the demuxer will invoke the <tt>handle_receive_from()</tt>
+function with two arguments: asio::error, and bytes_transferred.
+
+\until asio::placeholders::bytes_transferred
+
+Now that we have created some work for it to do, we can run the demuxer.
+
+\until return 0;
+\until }
+
+\section tutdaytime6funchandle_receive_from The handle_receive_from() function
+
+The function <tt>handle_receive_from()</tt> will service the client request.
+
+\dontinclude daytime6/server.cpp
+\skip void handle_receive_from
+\until {
+
+The <tt>error</tt> parameter contains the result of the asynchronous operation.
+Since we only provided a 1-byte buffer to contain the client's request, the
+demuxer would return an error if the client sent anything larger. We can ignore
+such an error if it comes up.
+
+\until {
+
+Determine what we are going to send.
+
+\until size_t send_length
+
+We now call asio::datagram_socket::async_send_to() to serve the data to the
+client.
+
+\until asio::placeholders::bytes_transferred
 
 When initiating the asynchronous operation, and if using \ref boost_bind, you
 must specify only the arguments that match the handler's parameter list. In
-this tutorial program, both of the argument placeholders
-(asio::placeholders::error and asio::placeholders::bytes_transferred) should
-therefore be removed:
+this program, both of the argument placeholders (asio::placeholders::error and
+asio::placeholders::bytes_transferred) could potentially have been removed.
 
-@code
-socket->async_sendto(send_buf, send_length, *remote_address,
-    boost::bind(handle_sendto, send_buf)); @endcode
+Any further actions for this client request are now the responsibility of
+<tt>handle_send_to()</tt>.
 
-The <tt>handle_recvfrom()</tt> functions's <tt>bytes_transferred</tt> parameter
-can be similarly removed.
+Start listening for the next client request.
+
+\until }
+\until }
+
+\section tutdaytime6funchandle_send_to The handle_send_to() function
+
+The function <tt>handle_send_to()</tt> is invoked after the service request has
+been completed.
+
+\dontinclude daytime6/server.cpp
+\skip void handle_send_to
+\until }
 
 See the \ref tutdaytime6src "full source listing" \n
 Return to the \ref tutindex "tutorial index" \n
@@ -148,6 +374,59 @@ Return to \ref tutdaytime6
 /**
 \page tutdaytime7 Tutorial Daytime.7 - A combined TCP/UDP asynchronous server
 
+This tutorial program shows how to combine the two asynchronous servers that we
+have just written, into a single server application.
+
+\section tutdaytime7funcmain The main() function
+
+\dontinclude daytime7/server.cpp
+\skip int main()
+\until asio::demuxer
+
+We will begin by creating an asio::stream_socket object to hold an accepted TCP
+client connection.
+
+\until asio::placeholders::error
+
+Now we need an asio::datagram_socket object for UDP client requests.
+
+\until &remote_endpoint, asio::placeholders::error
+
+We have created two lots of work for the demuxer to do.
+
+\until return 0;
+\until }
+
+\section tutdaytime7funchandle_tcp The handle_tcp_accept() and handle_tcp_write() functions
+
+The following two functions are identical to the <tt>handle_accept()</tt> and
+<tt>handle_write()</tt> from the tutorial Daytime.3.
+
+\dontinclude daytime7/server.cpp
+\skip void handle_tcp_accept
+\until delete socket
+\until }
+\until }
+
+\dontinclude daytime7/server.cpp
+\skip void handle_tcp_write
+\until }
+
+\section tutdaytime7funchandle_udp The handle_udp_receive_from() and handle_udp_send_to() functions
+
+Similarly, these next two functions are identical to the
+<tt>handle_receive_from()</tt> and <tt>handle_send_to()</tt> functions from the
+tutorial Daytime.6.
+
+\dontinclude daytime7/server.cpp
+\skip void handle_udp_receive_from
+\until }
+\until }
+
+\dontinclude daytime7/server.cpp
+\skip void handle_udp_send_to
+\until }
+
 See the \ref tutdaytime7src "full source listing" \n
 Return to the \ref tutindex "tutorial index" \n
 Previous: \ref tutdaytime6
@@ -158,4 +437,48 @@ Previous: \ref tutdaytime6
 \page tutdaytime7src Source listing for Tutorial Daytime.7
 \include daytime7/server.cpp
 Return to \ref tutdaytime7
+*/
+
+/*
+Removed Bits
+
+from Daytime.3:
+\section tutdaytime3remunused Removing Unused Handler Parameters
+
+You may have noticed that the <tt>error</tt>, <tt>last_bytes_sent</tt> and
+<tt>total_bytes_sent</tt> parameters are not used in the body of the
+<tt>handle_write()</tt> function. If parameters are not needed, it is possible
+to remove them from the function:
+
+Since <tt>handle_write()</tt> does not use the parameters <tt>error</tt>,
+<tt>last_bytes_sent</tt> and <tt>total_bytes_sent</tt>, they have been removed
+from the function.
+
+from Daytime.6:
+\section tutdaytime6remunused Removing Unused Handler Parameters
+
+In this tutorial program, the <tt>error</tt> and <tt>bytes_sent</tt> parameters
+are not used in the body of the <tt>handle_send_to()</tt> function. As those
+parameters are not needed, they can be removed from the function:
+
+@code
+void handle_send_to(char* send_buf)
+{
+  using namespace std; // For free.
+  free(send_buf);
+} @endcode
+
+When initiating the asynchronous operation, and if using \ref boost_bind, you
+must specify only the arguments that match the handler's parameter list. In
+this tutorial program, both of the argument placeholders
+(asio::placeholders::error and asio::placeholders::bytes_transferred) should
+therefore be removed:
+
+@code
+socket->async_send_to(asio::buffers(send_buf, send_length), *remote_address,
+    boost::bind(handle_send_to, send_buf)); @endcode
+
+The <tt>handle_recvfrom()</tt> functions's <tt>bytes_transferred</tt> parameter
+can be similarly removed.
+
 */

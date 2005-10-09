@@ -40,7 +40,7 @@ namespace asio {
  * @param s The stream to which the data is to be written. The type must support
  * the Sync_Write_Stream concept.
  *
- * @param buffers The data to be written to the stream.
+ * @param buffers One or more data buffers to be written to the stream.
  *
  * @returns The number of bytes written.
  *
@@ -50,6 +50,13 @@ namespace asio {
  * @note The write operation may not write all of the data to the stream.
  * Consider using the @ref write_n function if you need to ensure that all data
  * is written before the blocking operation completes.
+ *
+ * @par Example:
+ * To write a single data buffer use the @ref buffers function as follows:
+ * @code asio::write(s, asio::buffers(data, size)); @endcode
+ * See the @ref buffers documentation for information on writing multiple
+ * buffers in one go, and how to use it with arrays, boost::array or
+ * std::vector.
  */
 template <typename Sync_Write_Stream, typename Const_Buffers>
 inline std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers)
@@ -65,7 +72,7 @@ inline std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers)
  * @param s The stream to which the data is to be written. The type must support
  * the Sync_Write_Stream concept.
  *
- * @param buffers The data to be written to the stream.
+ * @param buffers One or more data buffers to be written to the stream.
  *
  * @param error_handler The handler to be called when an error occurs. Copies
  * will be made of the handler as required. The equivalent function signature
@@ -104,10 +111,10 @@ inline std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
  * @param s The stream to which the data is to be written. The type must support
  * the Async_Write_Stream concept.
  *
- * @param buffers The data to be sent on the stream. Although the buffers object
- * may be copied as necessary, ownership of the underlying memory blocks is
- * retained by the caller, which must guarantee that they remain valid until the
- * handler is called.
+ * @param buffers One or more data buffers to be written to the stream.
+ * Although the buffers object may be copied as necessary, ownership of the
+ * underlying memory blocks is retained by the caller, which must guarantee
+ * that they remain valid until the handler is called.
  *
  * @param handler The handler to be called when the write operation completes.
  * Copies will be made of the handler as required. The equivalent function
@@ -124,6 +131,13 @@ inline std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
  * @note The write operation may not write all of the data to the stream.
  * Consider using the @ref async_write_n function if you need to ensure that
  * all data is written before the asynchronous operation completes.
+ *
+ * @par Example:
+ * To write a single data buffer use the @ref buffers function as follows:
+ * @code asio::async_write(s, asio::buffers(data, size), handler); @endcode
+ * See the @ref buffers documentation for information on writing multiple
+ * buffers in one go, and how to use it with arrays, boost::array or
+ * std::vector.
  */
 template <typename Async_Write_Stream, typename Const_Buffers, typename Handler>
 inline void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
@@ -153,7 +167,7 @@ inline void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
  * @param s The stream to which the data is to be written. The type must support
  * the Sync_Write_Stream concept.
  *
- * @param buffers The buffers containing the data to be written.
+ * @param buffers One or more buffers containing the data to be written.
  *
  * @param total_bytes_transferred An optional output parameter that receives the
  * total number of bytes written from the buffers. If an error occurred this
@@ -163,6 +177,13 @@ inline void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
  *
  * @note Throws an exception on failure. The type of the exception depends
  * on the underlying stream's write operation.
+ *
+ * @par Example:
+ * To write a single data buffer use the @ref buffers function as follows:
+ * @code asio::write_n(s, asio::buffers(data, size)); @endcode
+ * See the @ref buffers documentation for information on writing multiple
+ * buffers in one go, and how to use it with arrays, boost::array or
+ * std::vector.
  */
 template <typename Sync_Write_Stream, typename Const_Buffers>
 std::size_t write_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
@@ -203,7 +224,7 @@ std::size_t write_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
  * @param s The stream to which the data is to be written. The type must support
  * the Sync_Write_Stream concept.
  *
- * @param buffers The buffers containing the data to be written.
+ * @param buffers One or more buffers containing the data to be written.
  *
  * @param total_bytes_transferred An optional output parameter that receives the
  * total number of bytes written from the buffers. If an error occurred this
@@ -310,10 +331,10 @@ namespace detail
  * @param s The stream to which the data is to be written. The type must support
  * the Async_Write_Stream concept.
  *
- * @param buffers The buffers containing the data to be written. Although the
- * buffers object may be copied as necessary, ownership of the underlying
- * memory blocks is retained by the caller, which must guarantee that they
- * remain valid until the handler is called.
+ * @param buffers One or more buffers containing the data to be written.
+ * Although the buffers object may be copied as necessary, ownership of the
+ * underlying memory blocks is retained by the caller, which must guarantee
+ * that they remain valid until the handler is called.
  *
  * @param handler The handler to be called when the write operation completes.
  * Copies will be made of the handler as required. The equivalent function
@@ -332,6 +353,13 @@ namespace detail
  *                                       // this will be less than the sum of
  *                                       // the sum of the buffer sizes.
  * ); @endcode
+ *
+ * @par Example:
+ * To write a single data buffer use the @ref buffers function as follows:
+ * @code asio::async_write_n(s, asio::buffers(data, size), handler); @endcode
+ * See the @ref buffers documentation for information on writing multiple
+ * buffers in one go, and how to use it with arrays, boost::array or
+ * std::vector.
  */
 template <typename Async_Write_Stream, typename Const_Buffers, typename Handler>
 inline void async_write_n(Async_Write_Stream& s, const Const_Buffers& buffers,
@@ -367,7 +395,7 @@ inline void async_write_n(Async_Write_Stream& s, const Const_Buffers& buffers,
  * @param s The stream to which the data is to be written. The type must support
  * the Sync_Write_Stream concept.
  *
- * @param buffers The buffers containing the data to be written.
+ * @param buffers One or more buffers containing the data to be written.
  *
  * @param min_length The minimum size of data to be written, in bytes.
  *
@@ -378,6 +406,14 @@ inline void async_write_n(Async_Write_Stream& s, const Const_Buffers& buffers,
  *
  * @note Throws an exception on failure. The type of the exception depends
  * on the underlying stream's write operation.
+ *
+ * @par Example:
+ * To write a single data buffer use the @ref buffers function as follows:
+ * @code asio::write_at_least_n(s,
+ *     asio::buffers(data, size), min_length); @endcode
+ * See the @ref buffers documentation for information on writing multiple
+ * buffers in one go, and how to use it with arrays, boost::array or
+ * std::vector.
  */
 template <typename Sync_Write_Stream, typename Const_Buffers>
 std::size_t write_at_least_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
@@ -422,7 +458,7 @@ std::size_t write_at_least_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
  * @param s The stream to which the data is to be written. The type must support
  * the Sync_Write_Stream concept.
  *
- * @param buffers The buffers containing the data to be written.
+ * @param buffers One or more buffers containing the data to be written.
  *
  * @param min_length The minimum size of data to be written, in bytes.
  *
@@ -538,10 +574,12 @@ namespace detail
  * @param s The stream to which the data is to be written. The type must support
  * the Async_Write_Stream concept.
  *
- * @param buffers The buffers containing the data to be written. Although the
- * buffers object may be copied as necessary, ownership of the underlying
- * memory blocks is retained by the caller, which must guarantee that they
- * remain valid until the handler is called.
+ * @param buffers One or more buffers containing the data to be written.
+ * Although the buffers object may be copied as necessary, ownership of the
+ * underlying memory blocks is retained by the caller, which must guarantee
+ * that they remain valid until the handler is called.
+ *
+ * @param min_length The minimum size of data to be written, in bytes.
  *
  * @param handler The handler to be called when the write operation completes.
  * Copies will be made of the handler as required. The equivalent function
@@ -560,6 +598,14 @@ namespace detail
  *                                       // this will be less than the minimum
  *                                       // size.
  * ); @endcode
+ *
+ * @par Example:
+ * To write a single data buffer use the @ref buffers function as follows:
+ * @code asio::async_write_at_least_n(s,
+ *     asio::buffers(data, size), min_length, handler); @endcode
+ * See the @ref buffers documentation for information on writing multiple
+ * buffers in one go, and how to use it with arrays, boost::array or
+ * std::vector.
  */
 template <typename Async_Write_Stream, typename Const_Buffers, typename Handler>
 inline void async_write_at_least_n(Async_Write_Stream& s,

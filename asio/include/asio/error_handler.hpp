@@ -19,6 +19,11 @@
 
 namespace asio {
 
+/**
+ * @defgroup error_handler Expression Templates for Error Handling
+ */
+/*@{*/
+
 /// This class is used to indicate a placeholder for the actual error value.
 class error_placeholder_t {};
 
@@ -464,6 +469,8 @@ expression<ignore_error_if_t<Expr> > ignore_error_if(Expr expr)
 {
   return make_expression(ignore_error_if_t<Expr>(expr));
 }
+
+/*@}*/
 
 } // namespace asio
 

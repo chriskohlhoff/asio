@@ -487,7 +487,7 @@ public:
    * call will block until the data has been sent successfully or an error
    * occurs.
    *
-   * @param buffers The data to be sent on the socket.
+   * @param buffers One or more data buffers to be sent on the socket.
    *
    * @param flags Flags specifying how the send call is to be made.
    *
@@ -498,6 +498,13 @@ public:
    * @note The send operation may not transmit all of the data to the peer.
    * Consider using the asio::write_n() function if you need to ensure that all
    * data is written before the blocking operation completes.
+   *
+   * @par Example:
+   * To send a single data buffer use the @ref buffers function as follows:
+   * @code socket.send(asio::buffers(data, size), 0); @endcode
+   * See the @ref buffers documentation for information on sending multiple
+   * buffers in one go, and how to use it with arrays, boost::array or
+   * std::vector.
    */
   template <typename Const_Buffers>
   std::size_t send(const Const_Buffers& buffers, message_flags flags)
@@ -511,7 +518,7 @@ public:
    * call will block until the data has been sent successfully or an error
    * occurs.
    *
-   * @param buffers The data to be sent on the socket.
+   * @param buffers One or more data buffers to be sent on the socket.
    *
    * @param flags Flags specifying how the send call is to be made.
    *
@@ -540,10 +547,10 @@ public:
    * This function is used to asynchronously send data on the stream socket.
    * The function call always returns immediately.
    *
-   * @param buffers The data to be sent on the socket. Although the buffers
-   * object may be copied as necessary, ownership of the underlying memory
-   * blocks is retained by the caller, which must guarantee that they remain
-   * valid until the handler is called.
+   * @param buffers One or more data buffers to be sent on the socket. Although
+   * the buffers object may be copied as necessary, ownership of the underlying
+   * memory blocks is retained by the caller, which must guarantee that they
+   * remain valid until the handler is called.
    *
    * @param flags Flags specifying how the send call is to be made.
    *
@@ -558,6 +565,13 @@ public:
    * @note The send operation may not transmit all of the data to the peer.
    * Consider using the asio::async_write_n() function if you need to ensure
    * that all data is written before the asynchronous operation completes.
+   *
+   * @par Example:
+   * To send a single data buffer use the @ref buffers function as follows:
+   * @code socket.async_send(asio::buffers(data, size), 0, handler); @endcode
+   * See the @ref buffers documentation for information on sending multiple
+   * buffers in one go, and how to use it with arrays, boost::array or
+   * std::vector.
    */
   template <typename Const_Buffers, typename Handler>
   void async_send(const Const_Buffers& buffers, message_flags flags,
@@ -572,7 +586,7 @@ public:
    * call will block until data has been received successfully or an error
    * occurs.
    *
-   * @param buffers The buffers into which the data will be received.
+   * @param buffers One or more buffers into which the data will be received.
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
@@ -585,6 +599,14 @@ public:
    * bytes. Consider using the asio::read_n() function if you need to ensure
    * that the requested amount of data is read before the blocking operation
    * completes.
+   *
+   * @par Example:
+   * To receive into a single data buffer use the @ref buffers function as
+   * follows:
+   * @code socket.receive(asio::buffers(data, size), 0); @endcode
+   * See the @ref buffers documentation for information on receiving into
+   * multiple buffers in one go, and how to use it with arrays, boost::array or
+   * std::vector.
    */
   template <typename Mutable_Buffers>
   std::size_t receive(const Mutable_Buffers& buffers, message_flags flags)
@@ -598,7 +620,7 @@ public:
    * call will block until data has been received successfully or an error
    * occurs.
    *
-   * @param buffers The buffers into which the data will be received.
+   * @param buffers One or more buffers into which the data will be received.
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
@@ -627,10 +649,10 @@ public:
    * This function is used to asynchronously receive data from the stream
    * socket. The function call always returns immediately.
    *
-   * @param buffers The buffers into which the data will be received. Although
-   * the buffers object may be copied as necessary, ownership of the underlying
-   * memory blocks is retained by the caller, which must guarantee that they
-   * remain valid until the handler is called.
+   * @param buffers One or more buffers into which the data will be received.
+   * Although the buffers object may be copied as necessary, ownership of the
+   * underlying memory blocks is retained by the caller, which must guarantee
+   * that they remain valid until the handler is called.
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
@@ -646,6 +668,14 @@ public:
    * bytes. Consider using the asio::async_read_n() function if you need to
    * ensure that the requested amount of data is received before the
    * asynchronous operation completes.
+   *
+   * @par Example:
+   * To receive into a single data buffer use the @ref buffers function as
+   * follows:
+   * @code socket.async_receive(asio::buffers(data, size), 0, handler); @endcode
+   * See the @ref buffers documentation for information on receiving into
+   * multiple buffers in one go, and how to use it with arrays, boost::array or
+   * std::vector.
    */
   template <typename Mutable_Buffers, typename Handler>
   void async_receive(const Mutable_Buffers& buffers, message_flags flags,
@@ -659,7 +689,7 @@ public:
    * This function is used to write data to the stream socket. The function call
    * will block until the data has been written successfully or an error occurs.
    *
-   * @param buffers The data to be written to the socket.
+   * @param buffers One or more data buffers to be written to the socket.
    *
    * @returns The number of bytes written.
    *
@@ -668,6 +698,13 @@ public:
    * @note The write operation may not transmit all of the data to the peer.
    * Consider using the asio::write_n() function if you need to ensure that all
    * data is written before the blocking operation completes.
+   *
+   * @par Example:
+   * To write a single data buffer use the @ref buffers function as follows:
+   * @code socket.write(asio::buffers(data, size)); @endcode
+   * See the @ref buffers documentation for information on writing multiple
+   * buffers in one go, and how to use it with arrays, boost::array or
+   * std::vector.
    */
   template <typename Const_Buffers>
   std::size_t write(const Const_Buffers& buffers)
@@ -680,7 +717,7 @@ public:
    * This function is used to write data to the stream socket. The function call
    * will block until the data has been written successfully or an error occurs.
    *
-   * @param buffers The data to be written to the socket.
+   * @param buffers One or more data buffers to be written to the socket.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature
@@ -706,10 +743,10 @@ public:
    * This function is used to asynchronously write data to the stream socket.
    * The function call always returns immediately.
    *
-   * @param buffers The data to be written to the socket. Although the buffers
-   * object may be copied as necessary, ownership of the underlying memory
-   * blocks is retained by the caller, which must guarantee that they remain
-   * valid until the handler is called.
+   * @param buffers One or more data buffers to be written to the socket.
+   * Although the buffers object may be copied as necessary, ownership of the
+   * underlying memory blocks is retained by the caller, which must guarantee
+   * that they remain valid until the handler is called.
    *
    * @param handler The handler to be called when the write operation completes.
    * Copies will be made of the handler as required. The equivalent function
@@ -722,6 +759,13 @@ public:
    * @note The write operation may not transmit all of the data to the peer.
    * Consider using the asio::async_write_n() function if you need to ensure
    * that all data is written before the asynchronous operation completes.
+   *
+   * @par Example:
+   * To write a single data buffer use the @ref buffers function as follows:
+   * @code socket.async_write(asio::buffers(data, size), handler); @endcode
+   * See the @ref buffers documentation for information on writing multiple
+   * buffers in one go, and how to use it with arrays, boost::array or
+   * std::vector.
    */
   template <typename Const_Buffers, typename Handler>
   void async_write(const Const_Buffers& buffers, Handler handler)
@@ -734,7 +778,7 @@ public:
    * This function is used to read data from the stream socket. The function
    * call will block until data has been read successfully or an error occurs.
    *
-   * @param buffers The buffers into which the data will be read.
+   * @param buffers One or more buffers into which the data will be read.
    *
    * @returns The number of bytes read or 0 if the connection was closed
    * cleanly.
@@ -744,6 +788,13 @@ public:
    * @note The read operation may not read all of the requested number of bytes.
    * Consider using the asio::read_n() function if you need to ensure that the
    * requested amount of data is read before the blocking operation completes.
+   *
+   * @par Example:
+   * To read into a single data buffer use the @ref buffers function as follows:
+   * @code socket.read(asio::buffers(data, size)); @endcode
+   * See the @ref buffers documentation for information on reading into multiple
+   * buffers in one go, and how to use it with arrays, boost::array or
+   * std::vector.
    */
   template <typename Mutable_Buffers>
   std::size_t read(const Mutable_Buffers& buffers)
@@ -756,7 +807,7 @@ public:
    * This function is used to read data from the stream socket. The function
    * call will block until data has been read successfully or an error occurs.
    *
-   * @param buffers The buffers into which the data will be read.
+   * @param buffers One or more buffers into which the data will be read.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature
@@ -783,10 +834,10 @@ public:
    * This function is used to asynchronously read data from the stream socket.
    * The function call always returns immediately.
    *
-   * @param buffers The buffers into which the data will be read. Although the
-   * buffers object may be copied as necessary, ownership of the underlying
-   * memory blocks is retained by the caller, which must guarantee that they
-   * remain valid until the handler is called.
+   * @param buffers One or more buffers into which the data will be read.
+   * Although the buffers object may be copied as necessary, ownership of the
+   * underlying memory blocks is retained by the caller, which must guarantee
+   * that they remain valid until the handler is called.
    *
    * @param handler The handler to be called when the read operation completes.
    * Copies will be made of the handler as required. The equivalent function
@@ -800,6 +851,13 @@ public:
    * Consider using the asio::async_read_n() function if you need to ensure that
    * the requested amount of data is read before the asynchronous operation
    * completes.
+   *
+   * @par Example:
+   * To read into a single data buffer use the @ref buffers function as follows:
+   * @code socket.async_read(asio::buffers(data, size), handler); @endcode
+   * See the @ref buffers documentation for information on reading into multiple
+   * buffers in one go, and how to use it with arrays, boost::array or
+   * std::vector.
    */
   template <typename Mutable_Buffers, typename Handler>
   void async_read(const Mutable_Buffers& buffers, Handler handler)
@@ -813,12 +871,20 @@ public:
    * without removing it from the input queue. The function call will block
    * until data has been read successfully or an error occurs.
    *
-   * @param buffers The buffers into which the data will be read.
+   * @param buffers One or more buffers into which the data will be read.
    *
    * @returns The number of bytes read or 0 if the connection was closed
    * cleanly.
    *
    * @throws asio::error Thrown on failure.
+   *
+   * @par Example:
+   * To peek using a single data buffer use the @ref buffers function as
+   * follows:
+   * @code socket.peek(asio::buffers(data, size)); @endcode
+   * See the @ref buffers documentation for information on using multiple
+   * buffers in one go, and how to use it with arrays, boost::array or
+   * std::vector.
    */
   template <typename Mutable_Buffers>
   std::size_t peek(const Mutable_Buffers& buffers)
@@ -833,7 +899,7 @@ public:
    * without removing it from the input queue. The function call will block
    * until data has been read successfully or an error occurs.
    *
-   * @param buffers The buffers into which the data will be read.
+   * @param buffers One or more buffers into which the data will be read.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The equivalent function signature

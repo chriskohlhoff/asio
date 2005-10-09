@@ -31,7 +31,7 @@ namespace asio {
 template <typename Time>
 struct time_traits;
 
-/// Time traits specialised for posix_time;
+/// Time traits specialised for posix_time.
 template <>
 struct time_traits<boost::posix_time::ptime>
 {

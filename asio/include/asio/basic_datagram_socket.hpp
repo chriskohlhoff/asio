@@ -499,7 +499,7 @@ public:
    * call will block until the data has been sent successfully or an error
    * occurs.
    *
-   * @param buffers The data to be sent on the socket.
+   * @param buffers One ore more data buffers to be sent on the socket.
    *
    * @param flags Flags specifying how the send call is to be made.
    *
@@ -509,6 +509,13 @@ public:
    *
    * @note The send operation can only be used with a connected socket. Use
    * the send_to function to send data on an unconnected datagram socket.
+   *
+   * @par Example:
+   * To send a single data buffer use the @ref buffers function as follows:
+   * @code socket.send(asio::buffers(data, size), 0); @endcode
+   * See the @ref buffers documentation for information on sending multiple
+   * buffers in one go, and how to use it with arrays, boost::array or
+   * std::vector.
    */
   template <typename Const_Buffers>
   std::size_t send(const Const_Buffers& buffers, message_flags flags)
@@ -522,7 +529,7 @@ public:
    * call will block until the data has been sent successfully or an error
    * occurs.
    *
-   * @param buffers The data to be sent on the socket.
+   * @param buffers One or more data buffers to be sent on the socket.
    *
    * @param flags Flags specifying how the send call is to be made.
    *
@@ -551,10 +558,10 @@ public:
    * call will block until the data has been sent successfully or an error
    * occurs.
    *
-   * @param buffers The data to be sent on the socket. Although the buffers
-   * object may be copied as necessary, ownership of the underlying buffers is
-   * retained by the caller, which must guarantee that they remain valid until
-   * the handler is called.
+   * @param buffers One or more data buffers to be sent on the socket. Although
+   * the buffers object may be copied as necessary, ownership of the underlying
+   * memory blocks is retained by the caller, which must guarantee that they
+   * remain valid until the handler is called.
    *
    * @param flags Flags specifying how the send call is to be made.
    *
@@ -569,6 +576,13 @@ public:
    * @note The async_send operation can only be used with a connected socket.
    * Use the async_send_to function to send data on an unconnected datagram
    * socket.
+   *
+   * @par Example:
+   * To send a single data buffer use the @ref buffers function as follows:
+   * @code socket.async_send(asio::buffers(data, size), 0, handler); @endcode
+   * See the @ref buffers documentation for information on sending multiple
+   * buffers in one go, and how to use it with arrays, boost::array or
+   * std::vector.
    */
   template <typename Const_Buffers, typename Handler>
   void async_send(const Const_Buffers& buffers, message_flags flags,
@@ -583,7 +597,7 @@ public:
    * The function call will block until the data has been sent successfully or
    * an error occurs.
    *
-   * @param buffers The data to be sent to the remote endpoint.
+   * @param buffers One or more data buffers to be sent to the remote endpoint.
    *
    * @param flags Flags specifying how the send call is to be made.
    *
@@ -592,6 +606,13 @@ public:
    * @returns The number of bytes sent.
    *
    * @throws asio::error Thrown on failure.
+   *
+   * @par Example:
+   * To send a single data buffer use the @ref buffers function as follows:
+   * @code socket.send_to(asio::buffers(data, size), 0, destination); @endcode
+   * See the @ref buffers documentation for information on sending multiple
+   * buffers in one go, and how to use it with arrays, boost::array or
+   * std::vector.
    */
   template <typename Const_Buffers, typename Endpoint>
   std::size_t send_to(const Const_Buffers& buffers, message_flags flags,
@@ -607,7 +628,7 @@ public:
    * The function call will block until the data has been sent successfully or
    * an error occurs.
    *
-   * @param buffers The data to be sent to the remote endpoint.
+   * @param buffers One or more data buffers to be sent to the remote endpoint.
    *
    * @param flags Flags specifying how the send call is to be made.
    *
@@ -634,10 +655,10 @@ public:
    * This function is used to asynchronously send a datagram to the specified
    * remote endpoint. The function call always returns immediately.
    *
-   * @param buffers The data to be sent to the remote endpoint. Although the
-   * buffers object may be copied as necessary, ownership of the underlying
-   * buffers is retained by the caller, which must guarantee that they remain
-   * valid until the handler is called.
+   * @param buffers One or more data buffers to be sent to the remote endpoint.
+   * Although the buffers object may be copied as necessary, ownership of the
+   * underlying memory blocks is retained by the caller, which must guarantee
+   * that they remain valid until the handler is called.
    *
    * @param flags Flags specifying how the send call is to be made.
    *
@@ -651,6 +672,14 @@ public:
    *   const asio::error& error,     // Result of operation
    *   std::size_t bytes_transferred // Number of bytes sent
    * ); @endcode
+   *
+   * @par Example:
+   * To send a single data buffer use the @ref buffers function as follows:
+   * @code socket.async_send_to(
+   *     asio::buffers(data, size), 0, destination, handler); @endcode
+   * See the @ref buffers documentation for information on sending multiple
+   * buffers in one go, and how to use it with arrays, boost::array or
+   * std::vector.
    */
   template <typename Const_Buffers, typename Endpoint, typename Handler>
   void async_send_to(const Const_Buffers& buffers, message_flags flags,
@@ -665,7 +694,7 @@ public:
    * call will block until data has been received successfully or an error
    * occurs.
    *
-   * @param buffers The buffers into which the data will be received.
+   * @param buffers One or more buffers into which the data will be received.
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
@@ -676,6 +705,14 @@ public:
    * @note The receive operation can only be used with a connected socket. Use
    * the receive_from function to receive data on an unconnected datagram
    * socket.
+   *
+   * @par Example:
+   * To receive into a single data buffer use the @ref buffers function as
+   * follows:
+   * @code socket.receive(asio::buffers(data, size), 0); @endcode
+   * See the @ref buffers documentation for information on receiving into
+   * multiple buffers in one go, and how to use it with arrays, boost::array or
+   * std::vector.
    */
   template <typename Mutable_Buffers>
   std::size_t receive(const Mutable_Buffers& buffers, message_flags flags)
@@ -689,7 +726,7 @@ public:
    * call will block until data has been received successfully or an error
    * occurs.
    *
-   * @param buffers The buffers into which the data will be received.
+   * @param buffers One or more buffers into which the data will be received.
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
@@ -718,10 +755,10 @@ public:
    * This function is used to asynchronously receive data from the datagram
    * socket. The function call always returns immediately.
    *
-   * @param buffers The buffers into which the data will be received. Although
-   * the buffers object may be copied as necessary, ownership of the underlying
-   * buffers is retained by the caller, which must guarantee that they remain
-   * valid until the handler is called.
+   * @param buffers One or more buffers into which the data will be received.
+   * Although the buffers object may be copied as necessary, ownership of the
+   * underlying memory blocks is retained by the caller, which must guarantee
+   * that they remain valid until the handler is called.
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
@@ -736,6 +773,14 @@ public:
    * @note The async_receive operation can only be used with a connected socket.
    * Use the async_receive_from function to receive data on an unconnected
    * datagram socket.
+   *
+   * @par Example:
+   * To receive into a single data buffer use the @ref buffers function as
+   * follows:
+   * @code socket.async_receive(asio::buffers(data, size), 0, handler); @endcode
+   * See the @ref buffers documentation for information on receiving into
+   * multiple buffers in one go, and how to use it with arrays, boost::array or
+   * std::vector.
    */
   template <typename Mutable_Buffers, typename Handler>
   void async_receive(const Mutable_Buffers& buffers, message_flags flags,
@@ -749,7 +794,7 @@ public:
    * This function is used to receive a datagram. The function call will block
    * until data has been received successfully or an error occurs.
    *
-   * @param buffers The buffers into which the data will be received.
+   * @param buffers One or more buffers into which the data will be received.
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
@@ -759,6 +804,15 @@ public:
    * @returns The number of bytes received.
    *
    * @throws asio::error Thrown on failure.
+   *
+   * @par Example:
+   * To receive into a single data buffer use the @ref buffers function as
+   * follows:
+   * @code socket.receive_from(
+   *     asio::buffers(data, size), 0, sender_endpoint); @endcode
+   * See the @ref buffers documentation for information on receiving into
+   * multiple buffers in one go, and how to use it with arrays, boost::array or
+   * std::vector.
    */
   template <typename Mutable_Buffers, typename Endpoint>
   std::size_t receive_from(const Mutable_Buffers& buffers, message_flags flags,
@@ -773,7 +827,7 @@ public:
    * This function is used to receive a datagram. The function call will block
    * until data has been received successfully or an error occurs.
    *
-   * @param buffers The buffers into which the data will be received.
+   * @param buffers One or more buffers into which the data will be received.
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
@@ -802,10 +856,10 @@ public:
    * This function is used to asynchronously receive a datagram. The function
    * call always returns immediately.
    *
-   * @param buffers The buffers into which the data will be received. Although
-   * the buffers object may be copied as necessary, ownership of the underlying
-   * buffers is retained by the caller, which must guarantee that they remain
-   * valid until the handler is called.
+   * @param buffers One or more buffers into which the data will be received.
+   * Although the buffers object may be copied as necessary, ownership of the
+   * underlying memory blocks is retained by the caller, which must guarantee
+   * that they remain valid until the handler is called.
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
@@ -821,6 +875,15 @@ public:
    *   const asio::error& error,     // Result of operation
    *   std::size_t bytes_transferred // Number of bytes received
    * ); @endcode
+   *
+   * @par Example:
+   * To receive into a single data buffer use the @ref buffers function as
+   * follows:
+   * @code socket.async_receive_from(
+   *     asio::buffers(data, size), 0, sender_endpoint, handler); @endcode
+   * See the @ref buffers documentation for information on receiving into
+   * multiple buffers in one go, and how to use it with arrays, boost::array or
+   * std::vector.
    */
   template <typename Mutable_Buffers, typename Endpoint, typename Handler>
   void async_receive_from(const Mutable_Buffers& buffers, message_flags flags,

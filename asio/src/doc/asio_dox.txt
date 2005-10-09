@@ -156,19 +156,11 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 \li Async_Object
 \li Async_Read_Stream
 \li Async_Write_Stream
+\li Const_Buffers
 \li Dispatcher
 \li Endpoint
 \li IO_Control_Command
-\li Protocol
-
-<H2>Concepts</H2>
-
-\li Async_Object
-\li Async_Read_Stream
-\li Async_Write_Stream
-\li Dispatcher
-\li Endpoint
-\li IO_Control_Command
+\li Mutable_Buffers
 \li Protocol
 \li Socket_Option
 \li Stream

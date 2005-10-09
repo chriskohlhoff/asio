@@ -23,15 +23,19 @@ EXTRA_DIST = \
 	asio.css \
 	asio_dox.txt \
 	release_checklist.htm \
-	concepts/Async_Object.hpp \
-	concepts/Async_Read_Stream.hpp \
-	concepts/Async_Write_Stream.hpp \
-	concepts/Dispatcher.hpp \
-	concepts/Endpoint.hpp \
-	concepts/Protocol.hpp \
-	concepts/Stream.hpp \
-	concepts/Sync_Read_Stream.hpp \
-	concepts/Sync_Write_Stream.hpp \
+  concepts/Async_Object.hpp \
+  concepts/Async_Read_Stream.hpp \
+  concepts/Async_Write_Stream.hpp \
+  concepts/Const_Buffers.hpp \
+  concepts/Dispatcher.hpp \
+  concepts/Endpoint.hpp \
+  concepts/IO_Control_Command.hpp \
+  concepts/Mutable_Buffers.hpp \
+  concepts/Protocol.hpp \
+  concepts/Socket_Option.hpp \
+  concepts/Stream.hpp \
+  concepts/Sync_Read_Stream.hpp \
+  concepts/Sync_Write_Stream.hpp \
 	../examples/tutorial/daytime_dox.txt \
 	../examples/tutorial/index_dox.txt \
 	../examples/tutorial/timer_dox.txt

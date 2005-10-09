@@ -40,7 +40,7 @@ namespace asio {
  * @param s The stream from which the data is to be read. The type must support
  * the Sync_Read_Stream concept.
  *
- * @param buffers The buffers into which the data will be read.
+ * @param buffers One or more buffers into which the data will be read.
  *
  * @returns The number of bytes read, or 0 if the stream was closed cleanly.
  *
@@ -50,6 +50,13 @@ namespace asio {
  * @note The read operation may not read all of the requested number of bytes.
  * Consider using the \ref read_n function if you need to ensure that the
  * requested amount of data is read before the blocking operation completes.
+ *
+ * @par Example:
+ * To read into a single data buffer use the @ref buffers function as follows:
+ * @code asio::read(s, asio::buffers(data, size)); @endcode
+ * See the @ref buffers documentation for information on reading into multiple
+ * buffers in one go, and how to use it with arrays, boost::array or
+ * std::vector.
  */
 template <typename Sync_Read_Stream, typename Mutable_Buffers>
 inline std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers)
@@ -65,7 +72,7 @@ inline std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers)
  * @param s The stream from which the data is to be read. The type must support
  * the Sync_Read_Stream concept.
  *
- * @param buffers The buffers into which the data will be read.
+ * @param buffers One or more buffers into which the data will be read.
  *
  * @param error_handler The handler to be called when an error occurs. Copies
  * will be made of the handler as required. The equivalent function signature
@@ -104,10 +111,10 @@ inline std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  * @param s The stream from which the data is to be read. The type must support
  * the Async_Read_Stream concept.
  *
- * @param buffers The buffers into which the data will be read. Although the
- * buffers object may be copied as necessary, ownership of the underlying
- * memory blocks is retained by the caller, which must guarantee that they
- * remain valid until the handler is called.
+ * @param buffers One or more buffers into which the data will be read.
+ * Although the buffers object may be copied as necessary, ownership of the
+ * underlying memory blocks is retained by the caller, which must guarantee
+ * that they remain valid until the handler is called.
  *
  * @param handler The handler to be called when the read operation completes.
  * Copies will be made of the handler as required. The equivalent function
@@ -126,6 +133,13 @@ inline std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  * Consider using the \ref async_read_n function if you need to ensure that the
  * requested amount of data is read before the asynchronous operation
  * completes.
+ *
+ * @par Example:
+ * To read into a single data buffer use the @ref buffers function as follows:
+ * @code asio::async_read(s, asio::buffers(data, size), handler); @endcode
+ * See the @ref buffers documentation for information on reading into multiple
+ * buffers in one go, and how to use it with arrays, boost::array or
+ * std::vector.
  */
 template <typename Async_Read_Stream, typename Mutable_Buffers,
     typename Handler>
@@ -158,8 +172,8 @@ inline void async_read(Async_Read_Stream& s, const Mutable_Buffers& buffers,
  * @param s The stream from which the data is to be read. The type must support
  * the Sync_Read_Stream concept.
  *
- * @param buffers The buffers into which the data will be read. The sum of the
- * buffer sizes indicates the number of bytes to read from the stream.
+ * @param buffers One or more buffers into which the data will be read. The sum
+ * of the buffer sizes indicates the number of bytes to read from the stream.
  *
  * @param total_bytes_transferred An optional output parameter that receives the
  * total number of bytes copied into the buffers. If the stream was closed, or
@@ -170,6 +184,13 @@ inline void async_read(Async_Read_Stream& s, const Mutable_Buffers& buffers,
  *
  * @note Throws an exception on failure. The type of the exception depends
  * on the underlying stream's read operation.
+ *
+ * @par Example:
+ * To read into a single data buffer use the @ref buffers function as follows:
+ * @code asio::read_n(s, asio::buffers(data, size)); @endcode
+ * See the @ref buffers documentation for information on reading into multiple
+ * buffers in one go, and how to use it with arrays, boost::array or
+ * std::vector.
  */
 template <typename Sync_Read_Stream, typename Mutable_Buffers>
 std::size_t read_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
@@ -212,8 +233,8 @@ std::size_t read_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  * @param s The stream from which the data is to be read. The type must support
  * the Sync_Read_Stream concept.
  *
- * @param buffers The buffers into which the data will be read. The sum of the
- * buffer sizes indicates the number of bytes to read from the stream.
+ * @param buffers One or more buffers into which the data will be read. The sum
+ * of the buffer sizes indicates the number of bytes to read from the stream.
  *
  * @param total_bytes_transferred An optional output parameter that receives the
  * total number of bytes copied into the buffers. If the stream was closed, or
@@ -324,11 +345,11 @@ namespace detail
  * @param s The stream from which the data is to be read. The type must support
  * the Async_Read_Stream concept.
  *
- * @param buffers The buffers into which the data will be read. The sum of the
- * buffer sizes indicates the number of bytes to read from the stream. Although
- * the buffers object may be copied as necessary, ownership of the underlying
- * memory blocks is retained by the caller, which must guarantee that they
- * remain valid until the handler is called.
+ * @param buffers One or more buffers into which the data will be read. The sum
+ * of the buffer sizes indicates the number of bytes to read from the stream.
+ * Although the buffers object may be copied as necessary, ownership of the
+ * underlying memory blocks is retained by the caller, which must guarantee
+ * that they remain valid until the handler is called.
  *
  * @param handler The handler to be called when the read operation completes.
  * Copies will be made of the handler as required. The equivalent function
@@ -349,6 +370,13 @@ namespace detail
  *                                       // will be less than the sum of the
  *                                       // buffer sizes.
  * ); @endcode
+ *
+ * @par Example:
+ * To read into a single data buffer use the @ref buffers function as follows:
+ * @code asio::async_read_n(s, asio::buffers(data, size), handler); @endcode
+ * See the @ref buffers documentation for information on reading into multiple
+ * buffers in one go, and how to use it with arrays, boost::array or
+ * std::vector.
  */
 template <typename Async_Read_Stream, typename Mutable_Buffers,
     typename Handler>
@@ -387,8 +415,9 @@ inline void async_read_n(Async_Read_Stream& s, const Mutable_Buffers& buffers,
  * @param s The stream from which the data is to be read. The type must support
  * the Sync_Read_Stream concept.
  *
- * @param buffers The buffers into which the data will be read. The sum of the
- * buffer sizes indicates the maximum number of bytes to read from the stream.
+ * @param buffers One or more buffers into which the data will be read. The sum
+ * of the buffer sizes indicates the maximum number of bytes to read from the
+ * stream.
  *
  * @param min_length The minimum size of the data to be read, in bytes.
  *
@@ -401,6 +430,14 @@ inline void async_read_n(Async_Read_Stream& s, const Mutable_Buffers& buffers,
  *
  * @note Throws an exception on failure. The type of the exception depends
  * on the underlying stream's read operation.
+ *
+ * @par Example:
+ * To read into a single data buffer use the @ref buffers function as follows:
+ * @code asio::read_at_least_n(s, asio::buffers(data, size), min_length);
+ * @endcode
+ * See the @ref buffers documentation for information on reading into multiple
+ * buffers in one go, and how to use it with arrays, boost::array or
+ * std::vector.
  */
 template <typename Sync_Read_Stream, typename Mutable_Buffers>
 std::size_t read_at_least_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
@@ -447,8 +484,9 @@ std::size_t read_at_least_n(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  * @param s The stream from which the data is to be read. The type must support
  * the Sync_Read_Stream concept.
  *
- * @param buffers The buffers into which the data will be read. The sum of the
- * buffer sizes indicates the maximum number of bytes to read from the stream.
+ * @param buffers One or more buffers into which the data will be read. The sum
+ * of the buffer sizes indicates the maximum number of bytes to read from the
+ * stream.
  *
  * @param min_length The minimum size of the data to be read, in bytes.
  *
@@ -568,11 +606,11 @@ namespace detail
  * @param s The stream from which the data is to be read. The type must support
  * the Async_Read_Stream concept.
  *
- * @param buffers The buffers into which the data will be read. The sum of the
- * buffer sizes indicates the number of bytes to read from the stream. Although
- * the buffers object may be copied as necessary, ownership of the underlying
- * memory blocks is retained by the caller, which must guarantee that they
- * remain valid until the handler is called.
+ * @param buffers One or more buffers into which the data will be read. The sum
+ * of the buffer sizes indicates the number of bytes to read from the stream.
+ * Although the buffers object may be copied as necessary, ownership of the
+ * underlying memory blocks is retained by the caller, which must guarantee
+ * that they remain valid until the handler is called.
  *
  * @param min_length The minimum size of the data to be read, in bytes.
  *
@@ -594,6 +632,14 @@ namespace detail
  *                                       // closed, or an error occurred, this
  *                                       // will be less than the minimum size.
  * ); @endcode
+ *
+ * @par Example:
+ * To read into a single data buffer use the @ref buffers function as follows:
+ * @code asio::async_read_at_least_n(s,
+ *     asio::buffers(data, size), min_length, handler); @endcode
+ * See the @ref buffers documentation for information on reading into multiple
+ * buffers in one go, and how to use it with arrays, boost::array or
+ * std::vector.
  */
 template <typename Async_Read_Stream, typename Mutable_Buffers,
     typename Handler>
