@@ -1,5 +1,5 @@
 /**
-\page designindex asio Design
+\mainpage asio Design
 
 Some design notes:
 

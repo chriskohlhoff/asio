@@ -1,3 +1,7 @@
 Makefile
 Makefile.in
-asio.dox
+design.dox
+examples.dox
+reference.dox
+tutorial.dox
+asio.doxytags

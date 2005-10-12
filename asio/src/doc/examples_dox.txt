@@ -1,0 +1,27 @@
+/**
+\mainpage asio Examples
+
+\section httpserver HTTP Server
+
+This example illustrates the use of asio in a server implementation of HTTP 1.0:
+
+\li \ref http/server/connection.cpp "connection.cpp"
+\li \ref http/server/connection.hpp "connection.hpp"
+\li \ref http/server/connection_manager.cpp "connection_manager.cpp"
+\li \ref http/server/connection_manager.hpp "connection_manager.hpp"
+\li \ref http/server/header.hpp "header.hpp"
+\li \ref http/server/mime_types.cpp "mime_types.cpp"
+\li \ref http/server/mime_types.hpp "mime_types.hpp"
+\li \ref http/server/posix_main.cpp "posix_main.cpp"
+\li \ref http/server/reply.cpp "reply.cpp"
+\li \ref http/server/reply.hpp "reply.hpp"
+\li \ref http/server/request.hpp "request.hpp"
+\li \ref http/server/request_handler.cpp "request_handler.cpp"
+\li \ref http/server/request_handler.hpp "request_handler.hpp"
+\li \ref http/server/request_parser.cpp "request_parser.cpp"
+\li \ref http/server/request_parser.hpp "request_parser.hpp"
+\li \ref http/server/server.cpp "server.cpp"
+\li \ref http/server/server.hpp "server.hpp"
+\li \ref http/server/win_main.cpp "win_main.cpp"
+
+*/
