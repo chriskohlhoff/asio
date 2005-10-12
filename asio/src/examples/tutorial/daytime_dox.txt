@@ -1,5 +1,5 @@
 /**
-\page tutdaytime1 Tutorial Daytime.1 - A synchronous TCP daytime client
+\page tutdaytime1 Daytime.1 - A synchronous TCP daytime client
 
 This tutorial program shows how to use asio to implement a client application
 with TCP.
@@ -55,19 +55,19 @@ Finally, handle any exceptions that may have been thrown.
 \until }
 
 See the \ref tutdaytime1src "full source listing" \n
-Return to the \ref tutindex "tutorial index" \n
+Return to the \ref index "tutorial index" \n
 Next: \ref tutdaytime2
 
 */
 
 /**
-\page tutdaytime1src Source listing for Tutorial Daytime.1
+\page tutdaytime1src Source listing for Daytime.1
 \include daytime1/client.cpp
 Return to \ref tutdaytime1
 */
 
 /**
-\page tutdaytime2 Tutorial Daytime.2 - A synchronous TCP daytime server
+\page tutdaytime2 Daytime.2 - A synchronous TCP daytime server
 
 This tutorial program shows how to use asio to implement a server application
 with TCP.
@@ -99,20 +99,20 @@ Finally, handle any exceptions.
 \until }
 
 See the \ref tutdaytime2src "full source listing" \n
-Return to the \ref tutindex "tutorial index" \n
+Return to the \ref index "tutorial index" \n
 Previous: \ref tutdaytime1 \n
 Next: \ref tutdaytime3
 
 */
 
 /**
-\page tutdaytime2src Source listing for Tutorial Daytime.2
+\page tutdaytime2src Source listing for Daytime.2
 \include daytime2/server.cpp
 Return to \ref tutdaytime2
 */
 
 /**
-\page tutdaytime3 Tutorial Daytime.3 - An asynchronous TCP daytime server
+\page tutdaytime3 Daytime.3 - An asynchronous TCP daytime server
 
 \section tutdaytime3funcmain The main() function
 
@@ -184,20 +184,20 @@ been completed.
 \until }
 
 See the \ref tutdaytime3src "full source listing" \n
-Return to the \ref tutindex "tutorial index" \n
+Return to the \ref index "tutorial index" \n
 Previous: \ref tutdaytime2 \n
 Next: \ref tutdaytime4
 
 */
 
 /**
-\page tutdaytime3src Source listing for Tutorial Daytime.3
+\page tutdaytime3src Source listing for Daytime.3
 \include daytime3/server.cpp
 Return to \ref tutdaytime3
 */
 
 /**
-\page tutdaytime4 Tutorial Daytime.4 - A synchronous UDP daytime client
+\page tutdaytime4 Daytime.4 - A synchronous UDP daytime client
 
 This tutorial program shows how to use asio to implement a client application
 with UDP.
@@ -229,20 +229,20 @@ Finally, handle any exceptions that may have been thrown.
 \until }
 \until }
 See the \ref tutdaytime4src "full source listing" \n
-Return to the \ref tutindex "tutorial index" \n
+Return to the \ref index "tutorial index" \n
 Previous: \ref tutdaytime3 \n
 Next: \ref tutdaytime5
 
 */
 
 /**
-\page tutdaytime4src Source listing for Tutorial Daytime.4
+\page tutdaytime4src Source listing for Daytime.4
 \include daytime4/client.cpp
 Return to \ref tutdaytime4
 */
 
 /**
-\page tutdaytime5 Tutorial Daytime.5 - A synchronous UDP daytime server
+\page tutdaytime5 Daytime.5 - A synchronous UDP daytime server
 
 This tutorial program shows how to use asio to implement a server application
 with UDP.
@@ -275,20 +275,20 @@ Finally, handle any exceptions.
 \until }
 
 See the \ref tutdaytime5src "full source listing" \n
-Return to the \ref tutindex "tutorial index" \n
+Return to the \ref index "tutorial index" \n
 Previous: \ref tutdaytime4 \n
 Next: \ref tutdaytime6
 
 */
 
 /**
-\page tutdaytime5src Source listing for Tutorial Daytime.5
+\page tutdaytime5src Source listing for Daytime.5
 \include daytime5/server.cpp
 Return to \ref tutdaytime5
 */
 
 /**
-\page tutdaytime6 Tutorial Daytime.6 - An asynchronous UDP daytime server
+\page tutdaytime6 Daytime.6 - An asynchronous UDP daytime server
 
 \section tutdaytime6funcmain The main() function
 
@@ -359,20 +359,20 @@ been completed.
 \until }
 
 See the \ref tutdaytime6src "full source listing" \n
-Return to the \ref tutindex "tutorial index" \n
+Return to the \ref index "tutorial index" \n
 Previous: \ref tutdaytime5 \n
 Next: \ref tutdaytime7
 
 */
 
 /**
-\page tutdaytime6src Source listing for Tutorial Daytime.6
+\page tutdaytime6src Source listing for Daytime.6
 \include daytime6/server.cpp
 Return to \ref tutdaytime6
 */
 
 /**
-\page tutdaytime7 Tutorial Daytime.7 - A combined TCP/UDP asynchronous server
+\page tutdaytime7 Daytime.7 - A combined TCP/UDP asynchronous server
 
 This tutorial program shows how to combine the two asynchronous servers that we
 have just written, into a single server application.
@@ -428,13 +428,13 @@ tutorial Daytime.6.
 \until }
 
 See the \ref tutdaytime7src "full source listing" \n
-Return to the \ref tutindex "tutorial index" \n
+Return to the \ref index "tutorial index" \n
 Previous: \ref tutdaytime6
 
 */
 
 /**
-\page tutdaytime7src Source listing for Tutorial Daytime.7
+\page tutdaytime7src Source listing for Daytime.7
 \include daytime7/server.cpp
 Return to \ref tutdaytime7
 */

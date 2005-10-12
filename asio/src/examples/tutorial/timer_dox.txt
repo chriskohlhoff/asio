@@ -1,5 +1,5 @@
 /**
-\page tuttimer1 Tutorial Timer.1 - Using a timer synchronously
+\page tuttimer1 Timer.1 - Using a timer synchronously
 
 This tutorial program introduces asio by showing how to perform a blocking
 wait on a timer.
@@ -49,19 +49,19 @@ message to show when the timer has expired.
 \until }
 
 See the \ref tuttimer1src "full source listing" \n
-Return to the \ref tutindex "tutorial index" \n
+Return to the \ref index "tutorial index" \n
 Next: \ref tuttimer2
 
 */
 
 /**
-\page tuttimer1src Source listing for Tutorial Timer.1
+\page tuttimer1src Source listing for Timer.1
 \include timer1/timer.cpp
 Return to \ref tuttimer1
 */
 
 /**
-\page tuttimer2 Tutorial Timer.2 - Using a timer asynchronously
+\page tuttimer2 Timer.2 - Using a timer asynchronously
 
 This tutorial program demonstrates how to use asio's asynchronous callback
 functionality by modifying the program from tutorial Timer.1 to perform an
@@ -107,20 +107,20 @@ do, and consequently asio::demuxer::run() would have returned immediately.
 \until }
 
 See the \ref tuttimer2src "full source listing" \n
-Return to the \ref tutindex "tutorial index" \n
+Return to the \ref index "tutorial index" \n
 Previous: \ref tuttimer1 \n
 Next: \ref tuttimer3
 
 */
 
 /**
-\page tuttimer2src Source listing for Tutorial Timer.2
+\page tuttimer2src Source listing for Timer.2
 \include timer2/timer.cpp
 Return to \ref tuttimer2
 */
 
 /**
-\page tuttimer3 Tutorial Timer.3 - Binding arguments to a handler
+\page tuttimer3 Timer.3 - Binding arguments to a handler
 
 In this tutorial we will modify the program from tutorial Timer.2 so that the
 timer fires once a second. This will show how to pass additional parameters to
@@ -198,20 +198,20 @@ value.
 \until }
 
 See the \ref tuttimer3src "full source listing" \n
-Return to the \ref tutindex "tutorial index" \n
+Return to the \ref index "tutorial index" \n
 Previous: \ref tuttimer2 \n
 Next: \ref tuttimer4
 
 */
 
 /**
-\page tuttimer3src Source listing for Tutorial Timer.3
+\page tuttimer3src Source listing for Timer.3
 \include timer3/timer.cpp
 Return to \ref tuttimer3
 */
 
 /**
-\page tuttimer4 Tutorial Timer.4 - Using a member function as a handler
+\page tuttimer4 Timer.4 - Using a member function as a handler
 
 In this tutorial we will see how to use a class member function as a callback
 handler. The program should execute identically to the tutorial program from
@@ -266,20 +266,20 @@ normal.
 \until }
 
 See the \ref tuttimer4src "full source listing" \n
-Return to the \ref tutindex "tutorial index" \n
+Return to the \ref index "tutorial index" \n
 Previous: \ref tuttimer3 \n
 Next: \ref tuttimer5 \n
 
 */
 
 /**
-\page tuttimer4src Source listing for Tutorial Timer.4
+\page tuttimer4src Source listing for Timer.4
 \include timer4/timer.cpp
 Return to \ref tuttimer4
 */
 
 /**
-\page tuttimer5 Tutorial Timer.5 - Synchronising handlers in multithreaded programs
+\page tuttimer5 Timer.5 - Synchronising handlers in multithreaded programs
 
 This tutorial demonstrates the use of the asio::locking_dispatcher class to
 synchronise callback handlers in a multithreaded program.
@@ -359,13 +359,13 @@ completed.
 \until }
 
 See the \ref tuttimer5src "full source listing" \n
-Return to the \ref tutindex "tutorial index" \n
+Return to the \ref index "tutorial index" \n
 Previous: \ref tuttimer4 \n
 
 */
 
 /**
-\page tuttimer5src Source listing for Tutorial Timer.5
+\page tuttimer5src Source listing for Timer.5
 \include timer5/timer.cpp
 Return to \ref tuttimer5
 */

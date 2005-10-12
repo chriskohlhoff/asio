@@ -85,4 +85,7 @@ AC_OUTPUT([
   include/Makefile
   src/Makefile
   src/doc/Makefile
-  src/doc/asio.dox])
+  src/doc/design.dox
+  src/doc/examples.dox
+  src/doc/reference.dox
+  src/doc/tutorial.dox])
