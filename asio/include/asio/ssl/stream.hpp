@@ -260,7 +260,7 @@ public:
    *
    * @param buffers The data to be written to the stream.
    *
-   * @returns The number of bytes written or 0 if the stream was closed cleanly.
+   * @returns The number of bytes written.
    *
    * @throws asio::error Thrown on failure.
    *
@@ -288,7 +288,7 @@ public:
    *   const asio::error& error // Result of operation
    * ); @endcode
    *
-   * @returns The number of bytes written or 0 if the connection was closed
+   * @returns The number of bytes written.
    * cleanly.
    *
    * @note The write operation may not transmit all of the data to the peer.
