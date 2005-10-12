@@ -87,5 +87,6 @@ AC_OUTPUT([
   src/doc/Makefile
   src/doc/design.dox
   src/doc/examples.dox
+  src/doc/index.html
   src/doc/reference.dox
   src/doc/tutorial.dox])

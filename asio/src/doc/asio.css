@@ -15,6 +15,22 @@ H3 {
        font-size: 100%;
 }
 CAPTION { font-weight: bold }
+DIV.sidebar {
+	width: 210px;
+	background-color: #e8eef2;
+	border: 1px solid #84b0c7;
+	text-align: center;
+	margin: 2px;
+	padding: 2px;
+	line-height: 140%;
+}
+DIV.sidebar TABLE TR TD {
+  font-size: 80%;
+}
+DIV.sidebar UL {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
 DIV.qindex {
 	width: 100%;
 	background-color: #e8eef2;

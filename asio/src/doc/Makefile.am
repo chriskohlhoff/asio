@@ -1,6 +1,8 @@
 if HAVE_DOXYGEN
 
 noinst_DATA = \
+	../../doc/index.html \
+	../../doc/asio.css \
 	../../doc/reference/asio.css \
 	../../doc/reference/index.html \
 	../../doc/design/asio.css \
@@ -12,6 +14,8 @@ noinst_DATA = \
 
 doc: \
 	delete_doc \
+	../../doc/index.html \
+	../../doc/asio.css \
 	../../doc/reference/asio.css \
 	../../doc/reference/index.html \
 	../../doc/design/asio.css \
@@ -22,10 +26,15 @@ doc: \
 	../../doc/tutorial/index.html
 
 delete_doc:
-	-rm -rf ../../doc/reference
-	-rm -rf ../../doc/design
-	-rm -rf ../../doc/examples
-	-rm -rf ../../doc/tutorial
+	-rm -rf ../../doc
+
+../../doc/index.html: index.html.in
+	mkdir -p ../../doc
+	cp $(srcdir)/index.html ../../doc/index.html
+
+../../doc/asio.css: asio.css
+	mkdir -p ../../doc
+	cp $(srcdir)/asio.css ../../doc/asio.css
 
 ../../doc/reference/asio.css: asio.css
 	mkdir -p ../../doc/reference
@@ -99,6 +108,8 @@ EXTRA_DIST = \
 	../examples/tutorial/timer_dox.txt
 
 MAINTAINERCLEANFILES = \
+	../../doc/*.html \
+	../../doc/*.css \
 	../../doc/reference/*.html \
 	../../doc/reference/*.gif \
 	../../doc/reference/*.png \
