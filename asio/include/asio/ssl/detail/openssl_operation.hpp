@@ -20,13 +20,13 @@
 #include "asio/detail/push_options.hpp"
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
-#include <openssl/ssl.h>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/buffers.hpp"
 #include "asio/placeholders.hpp"
 #include "asio/read.hpp"
 #include "asio/write.hpp"
+#include "asio/ssl/detail/openssl_types.hpp"
 
 namespace asio {
 namespace ssl {

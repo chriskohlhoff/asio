@@ -24,7 +24,6 @@
 #include <boost/noncopyable.hpp>
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
-#include <openssl/ssl.h>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/basic_demuxer.hpp"
@@ -32,6 +31,7 @@
 #include "asio/ssl/basic_context.hpp"
 #include "asio/ssl/stream_base.hpp"
 #include "asio/ssl/detail/openssl_operation.hpp"
+#include "asio/ssl/detail/openssl_types.hpp"
 
 namespace asio {
 namespace ssl {

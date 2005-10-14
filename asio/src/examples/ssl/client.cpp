@@ -9,9 +9,9 @@ enum { max_length = 1024 };
 class client
 {
 public:
-  client(asio::demuxer& d, const asio::ipv4::tcp::endpoint& server_endpoint)
-    : context_(d, asio::ssl::context::sslv23),
-      socket_(d, context_)
+  client(asio::demuxer& d, asio::ssl::context& context,
+      const asio::ipv4::tcp::endpoint& server_endpoint)
+    : socket_(d, context)
   {
     socket_.lowest_layer().async_connect(server_endpoint,
         boost::bind(&client::handle_connect, this, asio::placeholders::error));
@@ -81,7 +81,6 @@ public:
   }
 
 private:
-  asio::ssl::context context_;
   asio::ssl::stream<asio::stream_socket> socket_;
   char request_[max_length];
   char reply_[max_length];
@@ -105,7 +104,10 @@ int main(int argc, char* argv[])
     hr.get_host_by_name(h, argv[1]);
     asio::ipv4::tcp::endpoint ep(atoi(argv[2]), h.address(0));
 
-    client c(d, ep);
+    asio::ssl::context ctx(d, asio::ssl::context::sslv23);
+    ctx.set_verify_mode(asio::ssl::context::verify_peer);
+    ctx.load_verify_file("ca.pem");
+    client c(d, ctx, ep);
 
     d.run();
   }

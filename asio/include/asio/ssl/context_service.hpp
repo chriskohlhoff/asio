@@ -20,6 +20,7 @@
 
 #include "asio/detail/push_options.hpp"
 #include <memory>
+#include <string>
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -71,15 +72,89 @@ public:
   }
 
   /// Create a new context implementation.
-  void create(impl_type& impl, context_base::method_type method)
+  void create(impl_type& impl, context_base::method m)
   {
-    service_impl_.create(impl, method);
+    service_impl_.create(impl, m);
   }
 
   /// Destroy a context implementation.
   void destroy(impl_type& impl)
   {
     service_impl_.destroy(impl);
+  }
+
+  /// Set options on the context.
+  template <typename Error_Handler>
+  void set_options(impl_type& impl, context_base::options o,
+      Error_Handler error_handler)
+  {
+    service_impl_.set_options(impl, o, error_handler);
+  }
+
+  /// Set peer verification mode.
+  template <typename Error_Handler>
+  void set_verify_mode(impl_type& impl, context_base::verify_mode v,
+      Error_Handler error_handler)
+  {
+    service_impl_.set_verify_mode(impl, v, error_handler);
+  }
+
+  /// Load a certification authority file for performing verification.
+  template <typename Error_Handler>
+  void load_verify_file(impl_type& impl, const std::string& filename,
+      Error_Handler error_handler)
+  {
+    service_impl_.load_verify_file(impl, filename, error_handler);
+  }
+
+  /// Add a directory containing certification authority files to be used for
+  /// performing verification.
+  template <typename Error_Handler>
+  void add_verify_path(impl_type& impl, const std::string& path,
+      Error_Handler error_handler)
+  {
+    service_impl_.add_verify_path(impl, path, error_handler);
+  }
+
+  /// Use a certificate from a file.
+  template <typename Error_Handler>
+  void use_certificate_file(impl_type& impl, const std::string& filename,
+      context_base::file_format format, Error_Handler error_handler)
+  {
+    service_impl_.use_certificate_file(impl, filename, format, error_handler);
+  }
+
+  /// Use a certificate chain from a file.
+  template <typename Error_Handler>
+  void use_certificate_chain_file(impl_type& impl, const std::string& filename,
+      Error_Handler error_handler)
+  {
+    service_impl_.use_certificate_chain_file(impl, filename, error_handler);
+  }
+
+  /// Use a private key from a file.
+  template <typename Error_Handler>
+  void use_private_key_file(impl_type& impl, const std::string& filename,
+      context_base::file_format format, Error_Handler error_handler)
+  {
+    service_impl_.use_private_key_file(impl, filename, format, error_handler);
+  }
+
+  /// Use an RSA private key from a file.
+  template <typename Error_Handler>
+  void use_rsa_private_key_file(impl_type& impl, const std::string& filename,
+      context_base::file_format format, Error_Handler error_handler)
+  {
+    service_impl_.use_rsa_private_key_file(impl, filename, format,
+        error_handler);
+  }
+
+  /// Use the specified file to obtain the temporary Diffie-Hellman parameters.
+  template <typename Error_Handler>
+  void use_tmp_dh_file(impl_type& impl, const std::string& filename,
+      Error_Handler error_handler)
+  {
+    service_impl_.use_tmp_dh_file(impl, filename, error_handler);
   }
 
 private:

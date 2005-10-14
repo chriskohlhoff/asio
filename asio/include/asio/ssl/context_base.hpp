@@ -17,6 +17,8 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/ssl/detail/openssl_types.hpp"
+
 namespace asio {
 namespace ssl {
 
@@ -26,7 +28,7 @@ class context_base
 {
 public:
   /// Different methods supported by a context.
-  enum method_type
+  enum method
   {
     /// Generic SSL version 2.
     sslv2,
@@ -64,6 +66,70 @@ public:
     /// SSL/TLS server.
     sslv23_server
   };
+
+  /// Bitmask type for SSL options.
+  typedef int options;
+
+#if defined(GENERATING_DOCUMENTATION)
+  /// Implement various bug workarounds.
+  static const int default_workarounds = implementation_defined;
+
+  /// Always create a new key when using tmp_dh parameters.
+  static const int single_dh_use = implementation_defined;
+
+  /// Disable SSL v2.
+  static const int no_sslv2 = implementation_defined;
+
+  /// Disable SSL v3.
+  static const int no_sslv3 = implementation_defined;
+
+  /// Disable TLS v1.
+  static const int no_tlsv1 = implementation_defined;
+#else
+  enum {
+    default_workarounds = SSL_OP_ALL,
+    single_dh_use = SSL_OP_SINGLE_DH_USE,
+    no_sslv2 = SSL_OP_NO_SSLv2,
+    no_sslv3 = SSL_OP_NO_SSLv3,
+    no_tlsv1 = SSL_OP_NO_TLSv1
+  };
+#endif
+
+  /// File format types.
+  enum file_format
+  {
+    /// ASN.1 file.
+    asn1,
+
+    /// PEM file.
+    pem
+  };
+
+  /// Bitmask type for peer verification.
+  typedef int verify_mode;
+
+#if defined(GENERATING_DOCUMENTATION)
+  /// No verification.
+  static const int verify_none = implementation_defined;
+
+  /// Verify the peer.
+  static const int verify_peer = implementation_defined;
+
+  /// Fail verification if the peer has no certificate. Ignored unless
+  /// verify_peer is set.
+  static const int verify_fail_if_no_peer_cert = implementation_defined;
+
+  /// Do not request client certificate on renegotiation. Ignored unless
+  /// verify_peer is set.
+  static const int verify_client_once = implementation_defined;
+#else
+  enum {
+    verify_none = SSL_VERIFY_NONE,
+    verify_peer = SSL_VERIFY_PEER,
+    verify_fail_if_no_peer_cert = SSL_VERIFY_FAIL_IF_NO_PEER_CERT,
+    verify_client_once = SSL_VERIFY_CLIENT_ONCE
+  };
+#endif
 
 protected:
   /// Protected destructor to prevent deletion through this type.

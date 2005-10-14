@@ -21,10 +21,10 @@
 #include "asio/detail/push_options.hpp"
 #include <vector>
 #include <boost/shared_ptr.hpp>
-#include <openssl/ssl.h>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/detail/mutex.hpp"
+#include "asio/ssl/detail/openssl_types.hpp"
 
 namespace asio {
 namespace ssl {

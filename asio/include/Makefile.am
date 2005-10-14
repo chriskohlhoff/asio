@@ -105,6 +105,7 @@ nobase_include_HEADERS = \
   asio/ssl/detail/openssl_init.hpp \
   asio/ssl/detail/openssl_operation.hpp \
   asio/ssl/detail/openssl_stream_service.hpp \
+  asio/ssl/detail/openssl_types.hpp \
   asio/ssl/stream.hpp \
   asio/ssl/stream_base.hpp \
   asio/ssl/stream_service.hpp \

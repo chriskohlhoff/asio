@@ -80,16 +80,11 @@ public:
       acceptor_(d, asio::ipv4::tcp::endpoint(port)),
       context_(d, asio::ssl::context::sslv23)
   {
-    ::SSL_CTX_use_certificate_chain_file(context_.impl(), "server.pem");
-    ::SSL_CTX_use_PrivateKey_file(context_.impl(), "server.pem",
-        SSL_FILETYPE_PEM);
-    ::SSL_CTX_set_options(context_.impl(),
-        SSL_OP_ALL | SSL_OP_NO_SSLv2 | SSL_OP_SINGLE_DH_USE);
-
-    BIO* bio = BIO_new_file("dh512.pem", "r");
-    DH* dh512 = PEM_read_bio_DHparams(bio, 0, 0, 0);
-    BIO_free(bio);
-    ::SSL_CTX_set_tmp_dh(context_.impl(), dh512);
+    context_.set_options(asio::ssl::context::default_workarounds
+        | asio::ssl::context::no_sslv2 | asio::ssl::context::single_dh_use);
+    context_.use_certificate_chain_file("server.pem");
+    context_.use_private_key_file("server.pem", asio::ssl::context::pem);
+    context_.use_tmp_dh_file("dh512.pem");
 
     session* new_session = new session(demuxer_, context_);
     acceptor_.async_accept(new_session->socket(),
