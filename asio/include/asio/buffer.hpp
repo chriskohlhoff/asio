@@ -76,6 +76,16 @@ inline mutable_buffer operator+(const mutable_buffer& b, std::size_t start)
   return mutable_buffer(new_data, new_size);
 }
 
+/// Create a new modifiable buffer that is offset from the start of another.
+inline mutable_buffer operator+(std::size_t start, const mutable_buffer& b)
+{
+  if (start > b.size())
+    return mutable_buffer();
+  char* new_data = static_cast<char*>(b.data()) + start;
+  std::size_t new_size = b.size() - start;
+  return mutable_buffer(new_data, new_size);
+}
+
 /// Holds a buffer that cannot be modified.
 /**
  * The const_buffer class provides a safe representation of a buffer that cannot
@@ -125,6 +135,16 @@ private:
 
 /// Create a new non-modifiable buffer that is offset from the start of another.
 inline const_buffer operator+(const const_buffer& b, std::size_t start)
+{
+  if (start > b.size())
+    return const_buffer();
+  const char* new_data = static_cast<const char*>(b.data()) + start;
+  std::size_t new_size = b.size() - start;
+  return const_buffer(new_data, new_size);
+}
+
+/// Create a new non-modifiable buffer that is offset from the start of another.
+inline const_buffer operator+(std::size_t start, const const_buffer& b)
 {
   if (start > b.size())
     return const_buffer();
