@@ -5,6 +5,10 @@
 
 This example illustrates the use of asio in a server implementation of HTTP 1.0:
 
+\li \ref http::server "HTTP server classes"
+
+Source files:
+
 \li \ref http/server/connection.cpp "connection.cpp"
 \li \ref http/server/connection.hpp "connection.hpp"
 \li \ref http/server/connection_manager.cpp "connection_manager.cpp"

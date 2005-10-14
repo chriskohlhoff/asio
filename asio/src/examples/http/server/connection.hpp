@@ -12,58 +12,61 @@
 #include "request_parser.hpp"
 
 namespace http {
+namespace server {
 
 class connection_manager;
 
+/// Represents a single connection from a client.
 class connection
   : public boost::enable_shared_from_this<connection>,
     private boost::noncopyable
 {
 public:
-  // Construct a connection with the given demuxer.
+  /// Construct a connection with the given demuxer.
   explicit connection(asio::demuxer& d, connection_manager& manager,
       request_handler& handler);
 
-  // Get the socket associated with the connection.
+  /// Get the socket associated with the connection.
   asio::stream_socket& socket();
 
-  // Start the first asynchronous operation for the connection.
+  /// Start the first asynchronous operation for the connection.
   void start();
 
-  // Stop all asynchronous operations associated with the connection.
+  /// Stop all asynchronous operations associated with the connection.
   void stop();
 
 private:
-  // Handle completion of a read operation.
+  /// Handle completion of a read operation.
   void handle_read(const asio::error& e, std::size_t bytes_transferred);
 
-  // Handle completion of a write operation.
+  /// Handle completion of a write operation.
   void handle_write(const asio::error& e);
 
-  // Socket for the connection.
+  /// Socket for the connection.
   asio::stream_socket socket_;
 
-  // The manager for this connection.
+  /// The manager for this connection.
   connection_manager& connection_manager_;
 
-  // The handler used to process the incoming request.
+  /// The handler used to process the incoming request.
   request_handler& request_handler_;
 
-  // Buffer for incoming data.
+  /// Buffer for incoming data.
   boost::array<char, 8192> buffer_;
 
-  // The incoming request.
+  /// The incoming request.
   request request_;
 
-  // The parser for the incoming request.
+  /// The parser for the incoming request.
   request_parser request_parser_;
 
-  // The reply to be sent back to the client.
+  /// The reply to be sent back to the client.
   reply reply_;
 };
 
 typedef boost::shared_ptr<connection> connection_ptr;
 
+} // namespace server
 } // namespace http
 
 #endif // HTTP_CONNECTION_HPP

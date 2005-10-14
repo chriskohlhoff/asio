@@ -46,6 +46,10 @@ developers with a consistent asynchronous I/O model using a modern C++ approach.
       add -DBOOST_DATE_TIME_NO_LIB to your project settings to disable
       autolinking of the Boost.Date_Time library.)
     </p>
+    <p>
+      To use asio's SSL support, <a href="http://www.openssl.org">OpenSSL</a> is
+      required. OpenSSL is not necessary to use the rest of asio.
+    </p>
 
     <h2>Supported Platforms</h2>
     <p>

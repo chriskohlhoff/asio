@@ -5,22 +5,24 @@
 #include "boost/tuple/tuple.hpp"
 
 namespace http {
+namespace server {
 
 class request;
 
+/// Parser for incoming requests.
 class request_parser
 {
 public:
-  // Construct ready to parse the request method.
+  /// Construct ready to parse the request method.
   request_parser();
 
-  // Reset to initial parser state.
+  /// Reset to initial parser state.
   void reset();
 
-  // Parse some data. The tribool return value is true when a complete request
-  // has been parsed, false if the data is invalid, indeterminate when more
-  // data is required. The InputIterator return value indicates how much of the
-  // input has been consumed.
+  /// Parse some data. The tribool return value is true when a complete request
+  /// has been parsed, false if the data is invalid, indeterminate when more
+  /// data is required. The InputIterator return value indicates how much of the
+  /// input has been consumed.
   template <typename InputIterator>
   boost::tuple<boost::tribool, InputIterator> parse(request& req,
       InputIterator begin, InputIterator end)
@@ -36,10 +38,22 @@ public:
   }
 
 private:
-  // Handle the next character of input.
+  /// Handle the next character of input.
   boost::tribool consume(request& req, char input);
 
-  // The current state of the parser.
+  /// Check if a byte is an HTTP character.
+  static bool is_char(int c);
+
+  /// Check if a byte is an HTTP control character.
+  static bool is_ctl(int c);
+
+  /// Check if a byte is defined as an HTTP tspecial character.
+  static bool is_tspecial(int c);
+
+  /// Check if a byte is a digit.
+  static bool is_digit(int c);
+
+  /// The current state of the parser.
   enum state
   {
     method_start,
@@ -66,6 +80,7 @@ private:
   } state_;
 };
 
+} // namespace server
 } // namespace http
 
 #endif // HTTP_REQUEST_PARSER_HPP

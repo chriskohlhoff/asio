@@ -4,6 +4,7 @@
 #include <string>
 
 namespace http {
+namespace server {
 
 struct header
 {
@@ -11,6 +12,7 @@ struct header
   std::string value;
 };
 
+} // namespace server
 } // namespace http
 
 #endif // HTTP_HEADER_HPP

@@ -1,9 +1,8 @@
 #include "mime_types.hpp"
 
 namespace http {
+namespace server {
 namespace mime_types {
-
-namespace {
 
 struct mapping
 {
@@ -32,12 +31,11 @@ std::string find_type(const mapping (&array)[N], const std::string& extension)
   return "text/plain";
 }
 
-} // namespace
-
 std::string extension_to_type(const std::string& extension)
 {
   return find_type(mappings, extension);
 }
 
 } // namespace mime_types
+} // namespace server
 } // namespace http

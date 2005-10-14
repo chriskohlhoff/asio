@@ -3,6 +3,7 @@
 #include "boost/bind.hpp"
 
 namespace http {
+namespace server {
 
 void connection_manager::start(connection_ptr c)
 {
@@ -23,4 +24,5 @@ void connection_manager::stop_all()
   connections_.clear();
 }
 
+} // namespace server
 } // namespace http

@@ -6,7 +6,9 @@
 #include "header.hpp"
 
 namespace http {
+namespace server {
 
+/// A request received from a client.
 struct request
 {
   std::string method;
@@ -16,6 +18,7 @@ struct request
   std::vector<header> headers;
 };
 
+} // namespace server
 } // namespace http
 
 #endif // HTTP_REQUEST_HPP

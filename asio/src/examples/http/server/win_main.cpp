@@ -37,10 +37,10 @@ int main(int argc, char* argv[])
     std::string doc_root = argv[2];
 
     // Initialise server.
-    http::server s(port, doc_root);
+    http::server::server s(port, doc_root);
 
     // Set console control handler to allow server to be stopped.
-    console_ctrl_function = boost::bind(&http::server::stop, &s);
+    console_ctrl_function = boost::bind(&http::server::server::stop, &s);
     SetConsoleCtrlHandler(console_ctrl_handler, TRUE);
 
     // Run the server until stopped.

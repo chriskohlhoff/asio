@@ -5,6 +5,7 @@
 #include "request_handler.hpp"
 
 namespace http {
+namespace server {
 
 connection::connection(asio::demuxer& d, connection_manager& manager,
     request_handler& handler)
@@ -75,4 +76,5 @@ void connection::handle_write(const asio::error& e)
   }
 }
 
+} // namespace server
 } // namespace http

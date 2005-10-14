@@ -69,6 +69,8 @@ delete_doc:
 	doxygen tutorial.dox
 
 EXTRA_DIST = \
+	../../doc/index.html \
+	../../doc/asio.css \
 	../../doc/reference/index.html \
 	../../doc/design/index.html \
 	../../doc/examples/index.html \

@@ -8,49 +8,12 @@
 #include "request.hpp"
 
 namespace http {
+namespace server {
 
 request_handler::request_handler(const std::string& doc_root)
   : doc_root_(doc_root)
 {
 }
-
-namespace {
-
-bool url_decode(const std::string& in, std::string& out)
-{
-  out.clear();
-  out.reserve(in.size());
-  for (std::size_t i = 0; i < in.size(); ++i)
-  {
-    if (in[i] == '%')
-    {
-      if (i + 3 < in.size())
-      {
-        int value;
-        std::istringstream is(in.substr(i + 1, 2));
-        if (is >> std::hex >> value)
-        {
-          out += static_cast<char>(value);
-        }
-        else
-        {
-          return false;
-        }
-      }
-      else
-      {
-        return false;
-      }
-    }
-    else
-    {
-      out += in[i];
-    }
-  }
-  return true;
-}
-
-} // namespace
 
 void request_handler::handle_request(const request& req, reply& rep)
 {
@@ -106,4 +69,39 @@ void request_handler::handle_request(const request& req, reply& rep)
   rep.headers[1].value = mime_types::extension_to_type(extension);
 }
 
+bool request_handler::url_decode(const std::string& in, std::string& out)
+{
+  out.clear();
+  out.reserve(in.size());
+  for (std::size_t i = 0; i < in.size(); ++i)
+  {
+    if (in[i] == '%')
+    {
+      if (i + 3 < in.size())
+      {
+        int value;
+        std::istringstream is(in.substr(i + 1, 2));
+        if (is >> std::hex >> value)
+        {
+          out += static_cast<char>(value);
+        }
+        else
+        {
+          return false;
+        }
+      }
+      else
+      {
+        return false;
+      }
+    }
+    else
+    {
+      out += in[i];
+    }
+  }
+  return true;
+}
+
+} // namespace server
 } // namespace http

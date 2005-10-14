@@ -27,8 +27,8 @@ int main(int argc, char* argv[])
     pthread_sigmask(SIG_BLOCK, &new_mask, &old_mask);
 
     // Run server in background thread.
-    http::server s(port, doc_root);
-    asio::thread t(boost::bind(&http::server::run, &s));
+    http::server::server s(port, doc_root);
+    asio::thread t(boost::bind(&http::server::server::run, &s));
 
     // Restore previous signals.
     pthread_sigmask(SIG_SETMASK, &old_mask, 0);
