@@ -89,6 +89,7 @@ nobase_include_HEADERS = \
 	asio/locking_dispatcher.hpp \
 	asio/locking_dispatcher_service.hpp \
 	asio/null_error_handler.hpp \
+	asio/pch.hpp \
 	asio/placeholders.hpp \
 	asio/read.hpp \
 	asio/service_factory.hpp \
