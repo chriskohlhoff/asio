@@ -7,7 +7,7 @@
 namespace http {
 namespace server {
 
-class request;
+struct request;
 
 /// Parser for incoming requests.
 class request_parser

@@ -7,8 +7,8 @@
 namespace http {
 namespace server {
 
-class reply;
-class request;
+struct reply;
+struct request;
 
 /// The common handler for all incoming requests.
 class request_handler
