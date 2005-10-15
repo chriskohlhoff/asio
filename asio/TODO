@@ -1,21 +1,10 @@
 asio to-do items
 ================
 
-Add vectored send/recv functions
---------------------------------
-Add the sendv and recvv functions to basic_stream_socket and presumably also to
-the buffered stream templates.
-
 Demuxer functions for event loop integration
 --------------------------------------------
 Add functions demuxer::work_pending() and demuxer::perform_work() that can be
 used to integrate a demuxer event processing loop into an existing event loop.
-
-SSL stream template
--------------------
-Develop an ssl_stream<> decorator template that uses openssl to add encryption
-support while preserving the ability to use asynchronous communication.
-Apparently the BIO* functions can be used to do this.
 
 Add a process control class
 ---------------------------
@@ -48,10 +37,6 @@ Add a rw_locking_dispatcher
 ---------------------------
 Add a new dispatcher implementation, similar to locking_dispatcher except that
 it provides functionality like a readers-writers lock.
-
-Asynchronous host lookup
-------------------------
-Add asynchronous functions to the asio::ipv4::basic_host_resolver template.
 
 Error message internationalisation
 ----------------------------------
