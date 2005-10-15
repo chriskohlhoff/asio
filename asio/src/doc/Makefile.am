@@ -2,6 +2,7 @@ if HAVE_DOXYGEN
 
 noinst_DATA = \
 	../../doc/index.html \
+	../../doc/building.html \
 	../../doc/asio.css \
 	../../doc/reference/asio.css \
 	../../doc/reference/index.html \
@@ -15,6 +16,7 @@ noinst_DATA = \
 doc: \
 	delete_doc \
 	../../doc/index.html \
+	../../doc/building.html \
 	../../doc/asio.css \
 	../../doc/reference/asio.css \
 	../../doc/reference/index.html \
@@ -31,6 +33,10 @@ delete_doc:
 ../../doc/index.html: index.html.in
 	mkdir -p ../../doc
 	cp $(srcdir)/index.html ../../doc/index.html
+
+../../doc/building.html: building.html.in
+	mkdir -p ../../doc
+	cp $(srcdir)/building.html ../../doc/building.html
 
 ../../doc/asio.css: asio.css
 	mkdir -p ../../doc
@@ -70,6 +76,7 @@ delete_doc:
 
 EXTRA_DIST = \
 	../../doc/index.html \
+	../../doc/building.html \
 	../../doc/asio.css \
 	../../doc/reference/index.html \
 	../../doc/design/index.html \

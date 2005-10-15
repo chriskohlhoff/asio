@@ -21,6 +21,7 @@ DIV.sidebar {
 	border: 1px solid #84b0c7;
 	text-align: center;
 	margin: 2px;
+  margin-bottom: 20px;
 	padding: 2px;
 	line-height: 140%;
 }

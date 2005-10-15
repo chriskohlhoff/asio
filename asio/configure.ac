@@ -88,5 +88,6 @@ AC_OUTPUT([
   src/doc/design.dox
   src/doc/examples.dox
   src/doc/index.html
+  src/doc/building.html
   src/doc/reference.dox
   src/doc/tutorial.dox])

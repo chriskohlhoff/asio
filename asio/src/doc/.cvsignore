@@ -3,6 +3,7 @@ Makefile.in
 design.dox
 examples.dox
 index.html
+building.html
 reference.dox
 tutorial.dox
 asio.doxytags

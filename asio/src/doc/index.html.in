@@ -23,21 +23,21 @@
       </table>
     </div>
     <h1>asio C++ library</h1>
-<p>
-<table border="0" cellpadding="3" cellspacing="3" width="100%">
-<tr>
-<td valign="top">
+    <table border="0" cellpadding="3" cellspacing="3" width="100%"><tr>
+    <td valign="top">
 
-<p>
-asio is a cross-platform C++ library for network programming that provides
-developers with a consistent asynchronous I/O model using a modern C++ approach.
-</p>
+    <p>
+      asio is a cross-platform C++ library for network programming that provides
+      developers with a consistent asynchronous I/O model using a modern C++
+      approach.
+    </p>
 
     <h2>License</h2>
     <p>
-      asio is released under the <a href="http://www.boost.org/LICENSE_1_0.txt">Boost
-      Software License</a>.
+      asio is released under the
+      <a href="http://www.boost.org/LICENSE_1_0.txt">Boost Software License</a>.
     </p>
+
     <h2>Dependencies</h2>
     <p>
       asio requires <a href="http://www.boost.org">Boost</a> version 1.33. There
@@ -51,15 +51,32 @@ developers with a consistent asynchronous I/O model using a modern C++ approach.
       required. OpenSSL is not necessary to use the rest of asio.
     </p>
 
+    <h2>Using asio</h2>
+    <p>
+      asio consists only of header files, and so there is no need to build any
+      libraries before using asio in your own applications. You simply need to
+      add the following directories to your compiler include path:
+    </p>
+    <ul>
+      <li>asio's <tt>include</tt> directory</li>
+      <li>the boost directory (e.g. the one called <tt>boost_1_33_0</tt>)</li>
+    </ul>
+
     <h2>Supported Platforms</h2>
     <p>
       asio supports the following platforms and compilers:
       <ul>
         <li>
-          Win32 using Visual C++ 7.1, Borland C++Builder 6 and MinGW.
+          Win32 using Visual C++ 7.1.
         </li>
         <li>
-          Linux using g++ 3.3 or later.
+          Win32 using Borland C++Builder 6 patch 4.
+        </li>
+        <li>
+          Win32 using MinGW.
+        </li>
+        <li>
+          Linux (2.4 or 2.6 kernels) using g++ 3.3 or later.
         </li>
         <li>
           Solaris using g++ 3.3 or later.
@@ -70,36 +87,33 @@ developers with a consistent asynchronous I/O model using a modern C++ approach.
       </ul>
     </p>
 
-</td>
+    </td>
 
-<td valign="top">
-  <div class="sidebar">
-    <table border="0" width="100%"><tr><td>
-    <h2>Getting Started</h2>
-    <ul>
-    <li><a href="tutorial/index.html">Tutorial</a>
-    <li><a href="examples/index.html">Annotated examples</a>
-    </ul>
-    </td></tr></table>
-  </div>
+    <td valign="top">
+      <div class="sidebar">
+        <table border="0" width="100%"><tr><td>
+        <h2>Getting Started</h2>
+        <ul>
+        <li><a href="tutorial/index.html">Tutorial</a>
+        <li><a href="examples/index.html">Annotated examples</a>
+        <li><a href="building.html">Building the tests and examples</a>
+        </ul>
+        </td></tr></table>
+      </div>
+      <div class="sidebar">
+        <table border="0" width="100%"><tr><td>
+        <h2>Related Links</h2>
+          <ul>
+            <li><a href="http://asio.sourceforge.net">asio homepage</a>
+            <li><a href="http://sourceforge.net/projects/asio/">asio project page</a>
+            <li><a href="http://sourceforge.net/project/showfiles.php?group_id=122478">Download latest releases</a>
+            <li><a href="http://www.boost.org">Boost homepage</a>
+          </ul>
+        </td></tr></table>
+      </div>
+    </td>
 
-  <p>
-
-  <div class="sidebar">
-    <table border="0" width="100%"><tr><td>
-    <h2>Related Links</h2>
-      <ul>
-        <li><a href="http://asio.sourceforge.net">asio homepage</a>
-        <li><a href="http://sourceforge.net/projects/asio/">asio project page</a>
-        <li><a href="http://sourceforge.net/project/showfiles.php?group_id=122478">Download latest releases</a>
-        <li><a href="http://www.boost.org">Boost homepage</a>
-      </ul>
-    </td></tr></table>
-  </div>
-</td>
-
-</tr>
-</table>
+    </tr></table>
     <div class="qindex">
       <table border="0" width="100%">
         <tr>
@@ -116,4 +130,5 @@ developers with a consistent asynchronous I/O model using a modern C++ approach.
         </tr>
       </table>
     </div>
-  </body></html>
+  </body>
+</html>
