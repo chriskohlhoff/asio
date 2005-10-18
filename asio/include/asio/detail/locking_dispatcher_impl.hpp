@@ -135,25 +135,30 @@ private:
     {
     }
 
+    // Helper class to automatically enqueue next waiter on block exit. This
+    // class cannot be function-local to operator() due to a linker bug in MSVC,
+    // where an inline-member of a function-local class is exported by each .obj
+    // file that includes the header.
+    class post_next_waiter_on_exit
+    {
+    public:
+      post_next_waiter_on_exit(waiter_handler& handler)
+        : handler_(handler)
+      {
+      }
+
+      ~post_next_waiter_on_exit()
+      {
+        handler_.post_next_waiter();
+      }
+
+    private:
+      waiter_handler& handler_;
+    };
+
     void operator()()
     {
-      // Helper class to automatically enqueue next waiter on block exit.
-      class cleanup
-      {
-      public:
-        cleanup(waiter_handler& handler)
-          : handler_(handler)
-        {
-        }
-
-        ~cleanup()
-        {
-          handler_.post_next_waiter();
-        }
-
-      private:
-        waiter_handler& handler_;
-      } c(*this);
+      post_next_waiter_on_exit p(*this);
 
       // Call the handler.
       impl_.first_waiter_->call();
