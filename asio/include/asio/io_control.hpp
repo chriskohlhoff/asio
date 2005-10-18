@@ -63,13 +63,21 @@ public:
   }
 
   /// Get the address of the command data.
-  void* data()
+#if defined(GENERATING_DOCUMENTATION)
+  implementation_defined data()
+#else
+  detail::ioctl_arg_type* data()
+#endif
   {
     return &value_;
   }
 
   /// Get the address of the command data.
-  const void* data() const
+#if defined(GENERATING_DOCUMENTATION)
+  implementation_defined data() const
+#else
+  const detail::ioctl_arg_type* data() const
+#endif
   {
     return &value_;
   }
@@ -114,13 +122,21 @@ public:
   }
 
   /// Get the address of the command data.
-  void* data()
+#if defined(GENERATING_DOCUMENTATION)
+  implementation_defined data()
+#else
+  detail::ioctl_arg_type* data()
+#endif
   {
     return &value_;
   }
 
   /// Get the address of the command data.
-  const void* data() const
+#if defined(GENERATING_DOCUMENTATION)
+  implementation_defined data() const
+#else
+  const detail::ioctl_arg_type* data() const
+#endif
   {
     return &value_;
   }

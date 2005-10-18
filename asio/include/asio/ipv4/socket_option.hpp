@@ -76,13 +76,21 @@ public:
   }
 
   /// Get the address of the flag data.
-  void* data()
+#if defined(GENERATING_DOCUMENTATION)
+  implementation_defined data()
+#else
+  in_addr* data()
+#endif
   {
     return &value_;
   }
 
   /// Get the address of the flag data.
-  const void* data() const
+#if defined(GENERATING_DOCUMENTATION)
+  implementation_defined data() const
+#else
+  const in_addr* data() const
+#endif
   {
     return &value_;
   }

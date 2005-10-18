@@ -69,13 +69,21 @@ public:
   }
 
   /// Get the address of the boolean data.
-  void* data()
+#if defined(GENERATING_DOCUMENTATION)
+  implementation_defined data()
+#else
+  int* data()
+#endif
   {
     return &value_;
   }
 
   /// Get the address of the boolean data.
-  const void* data() const
+#if defined(GENERATING_DOCUMENTATION)
+  implementation_defined data() const
+#else
+  const int* data() const
+#endif
   {
     return &value_;
   }
@@ -132,13 +140,21 @@ public:
   }
 
   /// Get the address of the int data.
-  void* data()
+#if defined(GENERATING_DOCUMENTATION)
+  implementation_defined data()
+#else
+  int* data()
+#endif
   {
     return &value_;
   }
 
   /// Get the address of the int data.
-  const void* data() const
+#if defined(GENERATING_DOCUMENTATION)
+  implementation_defined data() const
+#else
+  const int* data() const
+#endif
   {
     return &value_;
   }
@@ -209,13 +225,21 @@ public:
   }
 
   /// Get the address of the int data.
-  void* data()
+#if defined(GENERATING_DOCUMENTATION)
+  implementation_defined data()
+#else
+  ::linger* data()
+#endif
   {
     return &value_;
   }
 
   /// Get the address of the int data.
-  const void* data() const
+#if defined(GENERATING_DOCUMENTATION)
+  implementation_defined data() const
+#else
+  const ::linger* data() const
+#endif
   {
     return &value_;
   }

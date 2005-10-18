@@ -83,13 +83,21 @@ public:
   }
 
   /// Get the address of the option data.
-  void* data()
+#if defined(GENERATING_DOCUMENTATION)
+  implementation_defined data()
+#else
+  ip_mreq* data()
+#endif
   {
     return &value_;
   }
 
   /// Get the address of the option data.
-  const void* data() const
+#if defined(GENERATING_DOCUMENTATION)
+  implementation_defined data() const
+#else
+  const ip_mreq* data() const
+#endif
   {
     return &value_;
   }

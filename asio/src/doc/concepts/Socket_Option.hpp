@@ -38,12 +38,12 @@ public:
   /// Get the name of the socket option.
   int name() const;
 
-  /// Get the address of the socket option data.
-  void* data();
+  /// Get a pointer to the socket option data.
+  implementation_defined data();
 
-  /// Get the address of the socket option data.
-  const void* data() const;
+  /// Get a pointer to the socket option data.
+  implementation_defined data() const;
 
-  /// Get the size of the socket option data.
+  /// Get the size of the socket option data in bytes.
   std::size_t size() const;
 };

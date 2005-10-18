@@ -21,8 +21,8 @@ public:
   int name() const;
 
   /// Get the data associated with the command.
-  void* data();
+  implementation_defined data();
 
   /// Get the data associated with the command.
-  const void* data() const;
+  implementation_defined data() const;
 };
