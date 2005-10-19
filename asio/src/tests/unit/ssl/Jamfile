@@ -1,0 +1,12 @@
+subproject libs/asio/test/ssl ;
+
+# bring in the rules for testing
+import testing ;
+
+run basic_context_test.cpp ;
+run context_base_test.cpp ;
+run context_service_test.cpp ;
+run context_test.cpp ;
+run stream_base_test.cpp ;
+run stream_service_test.cpp ;
+run stream_test.cpp ;
