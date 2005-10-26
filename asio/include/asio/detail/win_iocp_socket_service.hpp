@@ -274,7 +274,7 @@ public:
     ::WSABUF bufs[max_buffers];
     typename Const_Buffers::const_iterator iter = buffers.begin();
     typename Const_Buffers::const_iterator end = buffers.end();
-    size_t i = 0;
+    DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       bufs[i].len = static_cast<u_long>(iter->size());
@@ -348,7 +348,7 @@ public:
     ::WSABUF bufs[max_buffers];
     typename Const_Buffers::const_iterator iter = buffers.begin();
     typename Const_Buffers::const_iterator end = buffers.end();
-    size_t i = 0;
+    DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       bufs[i].len = static_cast<u_long>(iter->size());
@@ -384,7 +384,7 @@ public:
     ::WSABUF bufs[max_buffers];
     typename Const_Buffers::const_iterator iter = buffers.begin();
     typename Const_Buffers::const_iterator end = buffers.end();
-    size_t i = 0;
+    DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       bufs[i].len = static_cast<u_long>(iter->size());
@@ -445,7 +445,7 @@ public:
     ::WSABUF bufs[max_buffers];
     typename Const_Buffers::const_iterator iter = buffers.begin();
     typename Const_Buffers::const_iterator end = buffers.end();
-    size_t i = 0;
+    DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       bufs[i].len = static_cast<u_long>(iter->size());
@@ -480,7 +480,7 @@ public:
     ::WSABUF bufs[max_buffers];
     typename Mutable_Buffers::const_iterator iter = buffers.begin();
     typename Mutable_Buffers::const_iterator end = buffers.end();
-    size_t i = 0;
+    DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       bufs[i].len = static_cast<u_long>(iter->size());
@@ -556,7 +556,7 @@ public:
     ::WSABUF bufs[max_buffers];
     typename Mutable_Buffers::const_iterator iter = buffers.begin();
     typename Mutable_Buffers::const_iterator end = buffers.end();
-    size_t i = 0;
+    DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       bufs[i].len = static_cast<u_long>(iter->size());
@@ -591,7 +591,7 @@ public:
     ::WSABUF bufs[max_buffers];
     typename Mutable_Buffers::const_iterator iter = buffers.begin();
     typename Mutable_Buffers::const_iterator end = buffers.end();
-    size_t i = 0;
+    DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       bufs[i].len = static_cast<u_long>(iter->size());
@@ -669,7 +669,7 @@ public:
     ::WSABUF bufs[max_buffers];
     typename Mutable_Buffers::const_iterator iter = buffers.begin();
     typename Mutable_Buffers::const_iterator end = buffers.end();
-    size_t i = 0;
+    DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       bufs[i].len = static_cast<u_long>(iter->size());

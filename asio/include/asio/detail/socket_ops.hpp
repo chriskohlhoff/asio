@@ -122,10 +122,11 @@ inline int recv(socket_type s, bufs* b, size_t count, int flags)
   }
 
   // Receive some data.
+  DWORD recv_buf_count = static_cast<DWORD>(count);
   DWORD bytes_transferred = 0;
   DWORD recv_flags = flags;
   int result = error_wrapper(::WSARecv(s, recv_bufs,
-        count, &bytes_transferred, &recv_flags, 0, 0));
+        recv_buf_count, &bytes_transferred, &recv_flags, 0, 0));
   if (result != 0)
     return -1;
   return bytes_transferred;
@@ -202,9 +203,10 @@ inline int recvfrom(socket_type s, bufs* b, size_t count, int flags,
   }
 
   // Receive some data.
+  DWORD recv_buf_count = static_cast<DWORD>(count);
   DWORD bytes_transferred = 0;
   DWORD recv_flags = flags;
-  int result = error_wrapper(::WSARecvFrom(s, recv_bufs, count,
+  int result = error_wrapper(::WSARecvFrom(s, recv_bufs, recv_buf_count,
         &bytes_transferred, &recv_flags, addr, addrlen, 0, 0));
   if (result != 0)
     return -1;
@@ -266,10 +268,11 @@ inline int send(socket_type s, const bufs* b, size_t count, int flags)
   }
 
   // Send the data.
+  DWORD send_buf_count = static_cast<DWORD>(count);
   DWORD bytes_transferred = 0;
   DWORD send_flags = flags;
   int result = error_wrapper(::WSASend(s, send_bufs,
-        count, &bytes_transferred, send_flags, 0, 0));
+        send_buf_count, &bytes_transferred, send_flags, 0, 0));
   if (result != 0)
     return -1;
   return bytes_transferred;
@@ -339,8 +342,9 @@ inline int sendto(socket_type s, const bufs* b, size_t count, int flags,
   }
 
   // Send the data.
+  DWORD send_buf_count = static_cast<DWORD>(count);
   DWORD bytes_transferred = 0;
-  int result = ::WSASendTo(s, send_bufs, count,
+  int result = ::WSASendTo(s, send_bufs, send_buf_count,
       &bytes_transferred, flags, addr, addrlen, 0, 0);
   if (result != 0)
     return -1;
