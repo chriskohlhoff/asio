@@ -4,7 +4,7 @@ BOOSTDIR = ../../boost_1_33_0
 
 CXXFLAGS = -q -O2 -v -vi -y -a8 -b -Ve- -Vx- -tWM -tWR -tWC -w-inl -w-par -I../include -I$(BOOSTDIR)
 DEFINES = -D_WIN32_WINNT=0x0500 -DBOOST_DATE_TIME_NO_LIB
-LDFLAGS = -q -O2 -v -vi -y -a8 -b -Ve- -Vx- -tWM -tWR -tWC
+LDFLAGS = -q -O2 -v -vi -y -a8 -b -Ve- -Vx- -tWM -tWR -tWC -lw-dup
 
 PERFORMANCE_TEST_EXES = \
 	tests\performance\client.exe \
