@@ -91,12 +91,12 @@ private:
   void handle_connect(const error& err)
   {
     ++unwritten_count_;
-    async_write_n(socket_, buffers(write_data_, block_size_),
+    async_write_n(socket_, buffer(write_data_, block_size_),
         dispatcher_.wrap(
           boost::bind(&session::handle_write, this, placeholders::error,
             placeholders::last_bytes_transferred,
             placeholders::total_bytes_transferred)));
-    socket_.async_read(buffers(read_data_, block_size_),
+    socket_.async_read(buffer(read_data_, block_size_),
         dispatcher_.wrap(
           boost::bind(&session::handle_read, this, placeholders::error,
             placeholders::bytes_transferred)));
@@ -113,12 +113,12 @@ private:
       if (unwritten_count_ == 1)
       {
         std::swap(read_data_, write_data_);
-        async_write_n(socket_, buffers(write_data_, read_data_length_),
+        async_write_n(socket_, buffer(write_data_, read_data_length_),
             dispatcher_.wrap(
               boost::bind(&session::handle_write, this, placeholders::error,
                 placeholders::last_bytes_transferred,
                 placeholders::total_bytes_transferred)));
-        socket_.async_read(buffers(read_data_, block_size_),
+        socket_.async_read(buffer(read_data_, block_size_),
             dispatcher_.wrap(
               boost::bind(&session::handle_read, this, placeholders::error,
                 placeholders::bytes_transferred)));
@@ -136,12 +136,12 @@ private:
       if (unwritten_count_ == 1)
       {
         std::swap(read_data_, write_data_);
-        async_write_n(socket_, buffers(write_data_, read_data_length_),
+        async_write_n(socket_, buffer(write_data_, read_data_length_),
             dispatcher_.wrap(
               boost::bind(&session::handle_write, this, placeholders::error,
                 placeholders::last_bytes_transferred,
                 placeholders::total_bytes_transferred)));
-        socket_.async_read(buffers(read_data_, block_size_),
+        socket_.async_read(buffer(read_data_, block_size_),
             dispatcher_.wrap(
               boost::bind(&session::handle_read, this, placeholders::error,
                 placeholders::bytes_transferred)));

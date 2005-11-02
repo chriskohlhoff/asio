@@ -27,7 +27,7 @@ public:
   // Read.
   std::streamsize read(char* s, std::streamsize n)
   {
-    size_t bytes_read = socket_->read(asio::buffers(s, n));
+    size_t bytes_read = socket_->read(asio::buffer(s, n));
     if (bytes_read == 0)
       return -1;
     return bytes_read;
@@ -36,7 +36,7 @@ public:
   // Write.
   std::streamsize write(const char* s, std::streamsize n)
   {
-    return socket_->write(asio::buffers(s, n));
+    return socket_->write(asio::buffer(s, n));
   }
 
 private:

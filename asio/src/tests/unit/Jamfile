@@ -13,7 +13,6 @@ run buffer_test.cpp ;
 run buffered_read_stream_test.cpp ;
 run buffered_stream_test.cpp ;
 run buffered_write_stream_test.cpp ;
-run buffers_test.cpp ;
 run consuming_buffers_test.cpp ;
 run datagram_socket_service_test.cpp ;
 run datagram_socket_test.cpp ;

@@ -26,7 +26,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/buffered_read_stream_fwd.hpp"
-#include "asio/buffers.hpp"
+#include "asio/buffer.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/buffer_resize_guard.hpp"
 
@@ -132,7 +132,7 @@ public:
     detail::buffer_resize_guard<Buffer> resize_guard(buffer_);
     std::size_t previous_size = buffer_.size();
     buffer_.resize(buffer_.capacity());
-    buffer_.resize(previous_size + next_layer_.read(buffers(
+    buffer_.resize(previous_size + next_layer_.read(buffer(
             buffer_.begin() + previous_size,
             buffer_.size() - previous_size)));
     resize_guard.commit();
@@ -148,7 +148,7 @@ public:
     detail::buffer_resize_guard<Buffer> resize_guard(buffer_);
     std::size_t previous_size = buffer_.size();
     buffer_.resize(buffer_.capacity());
-    buffer_.resize(previous_size + next_layer_.read(buffers(
+    buffer_.resize(previous_size + next_layer_.read(buffer(
             buffer_.begin() + previous_size,
             buffer_.size() - previous_size),
           error_handler));
@@ -189,7 +189,7 @@ public:
     std::size_t previous_size = buffer_.size();
     buffer_.resize(buffer_.capacity());
     next_layer_.async_read(
-        buffers(
+        buffer(
           buffer_.begin() + previous_size,
           buffer_.size() - previous_size),
         fill_handler<Handler>(*this, previous_size, handler));

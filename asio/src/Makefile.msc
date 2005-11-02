@@ -40,7 +40,6 @@ UNIT_TEST_EXES = \
 	tests\unit\buffered_read_stream_test.exe \
 	tests\unit\buffered_stream_test.exe \
 	tests\unit\buffered_write_stream_test.exe \
-	tests\unit\buffers_test.exe \
 	tests\unit\buffer_test.exe \
 	tests\unit\consuming_buffers_test.exe \
 	tests\unit\datagram_socket_service_test.exe \

@@ -20,7 +20,7 @@ int main()
       time_t now = time(0);
       std::string msg = ctime(&now);
 
-      asio::write_n(socket, asio::buffers(msg.c_str(), msg.length()), 0,
+      asio::write_n(socket, asio::buffer(msg.c_str(), msg.length()), 0,
           asio::ignore_error());
     }
   }

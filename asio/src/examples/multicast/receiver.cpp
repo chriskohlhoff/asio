@@ -21,7 +21,7 @@ public:
     socket_.set_option(asio::ipv4::multicast::add_membership(multicast_addr));
 
     socket_.async_receive_from(
-        asio::buffers(data_, max_length), 0, sender_endpoint_,
+        asio::buffer(data_, max_length), 0, sender_endpoint_,
         boost::bind(&receiver::handle_receive_from, this,
           asio::placeholders::error, asio::placeholders::bytes_transferred));
   }
@@ -34,7 +34,7 @@ public:
       std::cout << std::endl;
 
       socket_.async_receive_from(
-          asio::buffers(data_, max_length), 0, sender_endpoint_,
+          asio::buffer(data_, max_length), 0, sender_endpoint_,
           boost::bind(&receiver::handle_receive_from, this,
             asio::placeholders::error, asio::placeholders::bytes_transferred));
     }

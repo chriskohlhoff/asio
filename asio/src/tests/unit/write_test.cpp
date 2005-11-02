@@ -65,10 +65,11 @@ public:
     size_t checked_length = 0;
     for (; iter != end && checked_length < length; ++iter)
     {
-      size_t buffer_length = iter->size();
+      size_t buffer_length = asio::buffer_size(*iter);
       if (buffer_length > length - checked_length)
         buffer_length = length - checked_length;
-      if (memcmp(data_ + checked_length, iter->data(), buffer_length) != 0)
+      if (memcmp(data_ + checked_length, asio::buffer_cast<const void*>(*iter),
+            buffer_length) != 0)
         return false;
       checked_length += buffer_length;
     }
@@ -85,14 +86,14 @@ public:
     typename Const_Buffers::const_iterator end = buffers.end();
     for (; iter != end && total_length < next_write_length_; ++iter)
     {
-      size_t length = iter->size();
+      size_t length = asio::buffer_size(*iter);
       if (length > length_ - position_)
         length = length_ - position_;
 
       if (length > next_write_length_ - total_length)
         length = next_write_length_ - total_length;
 
-      memcpy(data_ + position_, iter->data(), length);
+      memcpy(data_ + position_, asio::buffer_cast<const void*>(*iter), length);
       position_ += length;
       total_length += length;
     }
@@ -131,8 +132,8 @@ void test_write()
 {
   asio::demuxer d;
   test_stream s(d);
-  asio::const_buffers<1> buffers =
-    asio::buffers(write_data, sizeof(write_data));
+  asio::const_buffer_container_1 buffers
+    = asio::buffer(write_data, sizeof(write_data));
 
   s.reset();
   size_t last_bytes_transferred = asio::write(s, buffers);
@@ -156,9 +157,8 @@ void test_write_with_error_handler()
 {
   asio::demuxer d;
   test_stream s(d);
-  asio::const_buffers<1> buffers =
-    asio::buffers(write_data, sizeof(write_data));
-
+  asio::const_buffer_container_1 buffers
+    = asio::buffer(write_data, sizeof(write_data));
   s.reset();
   size_t last_bytes_transferred = asio::write(s, buffers, asio::ignore_error());
   BOOST_CHECK(last_bytes_transferred == sizeof(write_data));
@@ -188,8 +188,8 @@ void test_async_write()
 {
   asio::demuxer d;
   test_stream s(d);
-  asio::const_buffers<1> buffers =
-    asio::buffers(write_data, sizeof(write_data));
+  asio::const_buffer_container_1 buffers
+    = asio::buffer(write_data, sizeof(write_data));
 
   s.reset();
   bool called = false;
@@ -228,8 +228,8 @@ void test_write_n()
 {
   asio::demuxer d;
   test_stream s(d);
-  asio::const_buffers<1> buffers =
-    asio::buffers(write_data, sizeof(write_data));
+  asio::const_buffer_container_1 buffers
+    = asio::buffer(write_data, sizeof(write_data));
 
   s.reset();
   size_t last_bytes_transferred = asio::write_n(s, buffers);
@@ -276,8 +276,8 @@ void test_write_n_with_error_handler()
 {
   asio::demuxer d;
   test_stream s(d);
-  asio::const_buffers<1> buffers =
-    asio::buffers(write_data, sizeof(write_data));
+  asio::const_buffer_container_1 buffers
+    = asio::buffer(write_data, sizeof(write_data));
 
   s.reset();
   size_t last_bytes_transferred = asio::write_n(s, buffers, 0,
@@ -337,8 +337,8 @@ void test_async_write_n()
 {
   asio::demuxer d;
   test_stream s(d);
-  asio::const_buffers<1> buffers =
-    asio::buffers(write_data, sizeof(write_data));
+  asio::const_buffer_container_1 buffers
+    = asio::buffer(write_data, sizeof(write_data));
 
   s.reset();
   bool called = false;
@@ -383,8 +383,8 @@ void test_write_at_least_n()
 {
   asio::demuxer d;
   test_stream s(d);
-  asio::const_buffers<1> buffers =
-    asio::buffers(write_data, sizeof(write_data));
+  asio::const_buffer_container_1 buffers
+    = asio::buffer(write_data, sizeof(write_data));
 
   s.reset();
   size_t last_bytes_transferred = asio::write_at_least_n(s, buffers, 1);
@@ -523,8 +523,8 @@ void test_write_at_least_n_with_error_handler()
 {
   asio::demuxer d;
   test_stream s(d);
-  asio::const_buffers<1> buffers =
-    asio::buffers(write_data, sizeof(write_data));
+  asio::const_buffer_container_1 buffers
+    = asio::buffer(write_data, sizeof(write_data));
 
   s.reset();
   size_t last_bytes_transferred = asio::write_at_least_n(s, buffers, 1, 0,
@@ -679,8 +679,8 @@ void test_async_write_at_least_n()
 {
   asio::demuxer d;
   test_stream s(d);
-  asio::const_buffers<1> buffers =
-    asio::buffers(write_data, sizeof(write_data));
+  asio::const_buffer_container_1 buffers
+    = asio::buffer(write_data, sizeof(write_data));
 
   s.reset();
   bool called = false;

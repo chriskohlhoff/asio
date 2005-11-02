@@ -27,6 +27,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/basic_demuxer.hpp"
+#include "asio/buffer.hpp"
 #include "asio/demuxer_service.hpp"
 #include "asio/error.hpp"
 #include "asio/service_factory.hpp"
@@ -277,8 +278,8 @@ public:
     DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
-      bufs[i].len = static_cast<u_long>(iter->size());
-      bufs[i].buf = static_cast<char*>(const_cast<void*>(iter->data()));
+      bufs[i].len = static_cast<u_long>(asio::buffer_size(*iter));
+      bufs[i].buf = const_cast<char*>(asio::buffer_cast<const char*>(*iter));
     }
 
     // Send the data.
@@ -351,8 +352,8 @@ public:
     DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
-      bufs[i].len = static_cast<u_long>(iter->size());
-      bufs[i].buf = static_cast<char*>(const_cast<void*>(iter->data()));
+      bufs[i].len = static_cast<u_long>(asio::buffer_size(*iter));
+      bufs[i].buf = const_cast<char*>(asio::buffer_cast<const char*>(*iter));
     }
 
     // Send the data.
@@ -387,8 +388,8 @@ public:
     DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
-      bufs[i].len = static_cast<u_long>(iter->size());
-      bufs[i].buf = static_cast<char*>(const_cast<void*>(iter->data()));
+      bufs[i].len = static_cast<u_long>(asio::buffer_size(*iter));
+      bufs[i].buf = const_cast<char*>(asio::buffer_cast<const char*>(*iter));
     }
 
     // Send the data.
@@ -448,8 +449,8 @@ public:
     DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
-      bufs[i].len = static_cast<u_long>(iter->size());
-      bufs[i].buf = static_cast<char*>(const_cast<void*>(iter->data()));
+      bufs[i].len = static_cast<u_long>(asio::buffer_size(*iter));
+      bufs[i].buf = const_cast<char*>(asio::buffer_cast<const char*>(*iter));
     }
 
     // Send the data.
@@ -483,8 +484,8 @@ public:
     DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
-      bufs[i].len = static_cast<u_long>(iter->size());
-      bufs[i].buf = static_cast<char*>(iter->data());
+      bufs[i].len = static_cast<u_long>(asio::buffer_size(*iter));
+      bufs[i].buf = asio::buffer_cast<char*>(*iter);
     }
 
     // Receive some data.
@@ -559,8 +560,8 @@ public:
     DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
-      bufs[i].len = static_cast<u_long>(iter->size());
-      bufs[i].buf = static_cast<char*>(iter->data());
+      bufs[i].len = static_cast<u_long>(asio::buffer_size(*iter));
+      bufs[i].buf = asio::buffer_cast<char*>(*iter);
     }
 
     // Receive some data.
@@ -594,8 +595,8 @@ public:
     DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
-      bufs[i].len = static_cast<u_long>(iter->size());
-      bufs[i].buf = static_cast<char*>(iter->data());
+      bufs[i].len = static_cast<u_long>(asio::buffer_size(*iter));
+      bufs[i].buf = asio::buffer_cast<char*>(*iter);
     }
 
     // Receive some data.
@@ -672,8 +673,8 @@ public:
     DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
-      bufs[i].len = static_cast<u_long>(iter->size());
-      bufs[i].buf = static_cast<char*>(iter->data());
+      bufs[i].len = static_cast<u_long>(asio::buffer_size(*iter));
+      bufs[i].buf = asio::buffer_cast<char*>(*iter);
     }
 
     // Receive some data.

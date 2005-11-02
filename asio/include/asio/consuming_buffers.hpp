@@ -23,6 +23,8 @@
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/buffer.hpp"
+
 namespace asio {
 
 /// A proxy for a sub-range in a list of buffers.
@@ -97,9 +99,9 @@ public:
     // Remove buffers from the start until the specified size is reached.
     while (size > 0 && begin_ != buffers_.end())
     {
-      if (begin_->size() <= size)
+      if (buffer_size(*begin_) <= size)
       {
-        size -= begin_->size();
+        size -= buffer_size(*begin_);
         *begin_ = value_type();
         ++begin_;
       }
@@ -111,7 +113,7 @@ public:
     }
 
     // Remove any more empty buffers at the start.
-    while (begin_ != buffers_.end() && begin_->size() == 0)
+    while (begin_ != buffers_.end() && buffer_size(*begin_) == 0)
       ++begin_;
   }
 

@@ -26,7 +26,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/buffered_write_stream_fwd.hpp"
-#include "asio/buffers.hpp"
+#include "asio/buffer.hpp"
 #include "asio/write.hpp"
 #include "asio/detail/bind_handler.hpp"
 
@@ -107,7 +107,7 @@ public:
   {
     std::size_t total_bytes_written = 0;
     std::size_t last_bytes_written = write_n(next_layer_,
-        buffers(buffer_.begin(), buffer_.size()), &total_bytes_written);
+        buffer(buffer_.begin(), buffer_.size()), &total_bytes_written);
     buffer_.pop(total_bytes_written);
     return last_bytes_written;
   }
@@ -120,7 +120,7 @@ public:
   {
     std::size_t total_bytes_written = 0;
     std::size_t last_bytes_written = write_n(next_layer_,
-        buffers(buffer_.begin(), buffer_.size()), &total_bytes_written,
+        buffer(buffer_.begin(), buffer_.size()), &total_bytes_written,
         error_handler);
     buffer_.pop(total_bytes_written);
     return last_bytes_written;
@@ -155,7 +155,7 @@ public:
   template <typename Handler>
   void async_flush(Handler handler)
   {
-    async_write_n(next_layer_, buffers(buffer_.begin(), buffer_.size()),
+    async_write_n(next_layer_, buffer(buffer_.begin(), buffer_.size()),
         flush_handler<Handler>(*this, handler));
   }
 

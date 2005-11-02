@@ -64,10 +64,11 @@ public:
     size_t checked_length = 0;
     for (; iter != end && checked_length < length; ++iter)
     {
-      size_t buffer_length = iter->size();
+      size_t buffer_length = asio::buffer_size(*iter);
       if (buffer_length > length - checked_length)
         buffer_length = length - checked_length;
-      if (memcmp(data_ + checked_length, iter->data(), buffer_length) != 0)
+      if (memcmp(data_ + checked_length, asio::buffer_cast<const void*>(*iter),
+            buffer_length) != 0)
         return false;
       checked_length += buffer_length;
     }
@@ -84,14 +85,14 @@ public:
     typename Mutable_Buffers::const_iterator end = buffers.end();
     for (; iter != end && total_length < next_read_length_; ++iter)
     {
-      size_t length = iter->size();
+      size_t length = asio::buffer_size(*iter);
       if (length > length_ - position_)
         length = length_ - position_;
 
       if (length > next_read_length_ - total_length)
         length = next_read_length_ - total_length;
 
-      memcpy(iter->data(), data_ + position_, length);
+      memcpy(asio::buffer_cast<void*>(*iter), data_ + position_, length);
       position_ += length;
       total_length += length;
     }
@@ -131,7 +132,8 @@ void test_read()
   asio::demuxer d;
   test_stream s(d);
   char read_buf[1024];
-  asio::mutable_buffers<1> buffers = asio::buffers(read_buf, sizeof(read_buf));
+  asio::mutable_buffer_container_1 buffers
+    = asio::buffer(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
@@ -159,7 +161,8 @@ void test_read_with_error_handler()
   asio::demuxer d;
   test_stream s(d);
   char read_buf[1024];
-  asio::mutable_buffers<1> buffers = asio::buffers(read_buf, sizeof(read_buf));
+  asio::mutable_buffer_container_1 buffers
+    = asio::buffer(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
@@ -194,7 +197,8 @@ void test_async_read()
   asio::demuxer d;
   test_stream s(d);
   char read_buf[1024];
-  asio::mutable_buffers<1> buffers = asio::buffers(read_buf, sizeof(read_buf));
+  asio::mutable_buffer_container_1 buffers
+    = asio::buffer(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
@@ -237,7 +241,8 @@ void test_read_n()
   asio::demuxer d;
   test_stream s(d);
   char read_buf[sizeof(read_data)];
-  asio::mutable_buffers<1> buffers = asio::buffers(read_buf, sizeof(read_buf));
+  asio::mutable_buffer_container_1 buffers
+    = asio::buffer(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
@@ -291,7 +296,8 @@ void test_read_n_with_error_handler()
   asio::demuxer d;
   test_stream s(d);
   char read_buf[sizeof(read_data)];
-  asio::mutable_buffers<1> buffers = asio::buffers(read_buf, sizeof(read_buf));
+  asio::mutable_buffer_container_1 buffers
+    = asio::buffer(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
@@ -358,7 +364,8 @@ void test_async_read_n()
   asio::demuxer d;
   test_stream s(d);
   char read_buf[sizeof(read_data)];
-  asio::mutable_buffers<1> buffers = asio::buffers(read_buf, sizeof(read_buf));
+  asio::mutable_buffer_container_1 buffers
+    = asio::buffer(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
@@ -407,7 +414,8 @@ void test_read_at_least_n()
   asio::demuxer d;
   test_stream s(d);
   char read_buf[sizeof(read_data)];
-  asio::mutable_buffers<1> buffers = asio::buffers(read_buf, sizeof(read_buf));
+  asio::mutable_buffer_container_1 buffers
+    = asio::buffer(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
@@ -562,7 +570,8 @@ void test_read_at_least_n_with_error_handler()
   asio::demuxer d;
   test_stream s(d);
   char read_buf[sizeof(read_data)];
-  asio::mutable_buffers<1> buffers = asio::buffers(read_buf, sizeof(read_buf));
+  asio::mutable_buffer_container_1 buffers
+    = asio::buffer(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
@@ -736,7 +745,8 @@ void test_async_read_at_least_n()
   asio::demuxer d;
   test_stream s(d);
   char read_buf[sizeof(read_data)];
-  asio::mutable_buffers<1> buffers = asio::buffers(read_buf, sizeof(read_buf));
+  asio::mutable_buffer_container_1 buffers
+    = asio::buffer(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));

@@ -11,7 +11,7 @@
 /// Mutable_Buffers concept.
 /**
  * @par Implemented By:
- * asio::mutable_buffers @n
+ * asio::mutable_buffer_container_1 @n
  * std::deque<asio::mutable_buffer> @n
  * std::list<asio::mutable_buffer> @n
  * std::vector<asio::mutable_buffer> @n

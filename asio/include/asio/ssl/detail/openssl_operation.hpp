@@ -22,7 +22,7 @@
 #include <boost/bind.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/buffers.hpp"
+#include "asio/buffer.hpp"
 #include "asio/placeholders.hpp"
 #include "asio/read.hpp"
 #include "asio/write.hpp"
@@ -223,7 +223,7 @@ private:
         asio::async_write_n
         ( 
           socket_, 
-          asio::buffers(send_buf_.get_unused_start(), len),
+          asio::buffer(send_buf_.get_unused_start(), len),
           boost::bind
           (
             &openssl_operation::async_write_handler, 
@@ -284,7 +284,7 @@ private:
     asio::async_read
     ( 
       socket_, 
-      asio::buffers(recv_buf_.get_unused_start(), recv_buf_.get_unused_len()),
+      asio::buffer(recv_buf_.get_unused_start(), recv_buf_.get_unused_len()),
       boost::bind
       (
         &openssl_operation::async_read_handler, 
@@ -351,7 +351,7 @@ private:
           size_t sent_len = 0;
           size_t result = asio::write_n( 
                   socket_, 
-                  asio::buffers(send_buf_.get_unused_start(), len),
+                  asio::buffer(send_buf_.get_unused_start(), len),
                   &sent_len
                   );
 
@@ -383,7 +383,7 @@ private:
     size_t len = asio::read
       ( 
         socket_, 
-        asio::buffers(recv_buf_.get_unused_start(), recv_buf_.get_unused_len())
+        asio::buffer(recv_buf_.get_unused_start(), recv_buf_.get_unused_len())
       );
 
     if (len)

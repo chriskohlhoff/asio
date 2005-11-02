@@ -216,7 +216,7 @@ Create an object for the remote endpoint, UDP port 13 on the server.
 Since UDP is datagram-oriented, we will not be using a stream socket. Create an
 asio::datagram_socket and initiate contact with the remote endpoint.
 
-\until asio::buffers(send_buf,
+\until asio::buffer(send_buf,
 
 Now we need to be ready to accept whatever the server sends back to us. The
 endpoint on our side that receives the server's response will be initialised by
@@ -475,7 +475,7 @@ this tutorial program, both of the argument placeholders
 therefore be removed:
 
 @code
-socket->async_send_to(asio::buffers(send_buf, send_length), *remote_address,
+socket->async_send_to(asio::buffer(send_buf, send_length), *remote_address,
     boost::bind(handle_send_to, send_buf)); @endcode
 
 The <tt>handle_recvfrom()</tt> functions's <tt>bytes_transferred</tt> parameter

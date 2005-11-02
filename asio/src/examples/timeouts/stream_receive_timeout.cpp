@@ -29,7 +29,7 @@ public:
     {
       std::cout << "Successful accept\n";
 
-      socket_.async_read(asio::buffers(buf_, sizeof(buf_)),
+      socket_.async_read(asio::buffer(buf_, sizeof(buf_)),
           boost::bind(&stream_handler::handle_recv, this,
             asio::placeholders::error));
       timer_.expires_from_now(boost::posix_time::seconds(5));

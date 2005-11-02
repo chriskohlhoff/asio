@@ -39,7 +39,7 @@ public:
       std::cin.getline(request_, max_length);
       size_t request_length = strlen(request_);
 
-      asio::async_write_n(socket_, asio::buffers(request_, request_length),
+      asio::async_write_n(socket_, asio::buffer(request_, request_length),
           boost::bind(&client::handle_write, this, asio::placeholders::error,
             asio::placeholders::last_bytes_transferred,
             asio::placeholders::total_bytes_transferred));
@@ -56,7 +56,7 @@ public:
     if (!error && last_bytes_transferred > 0)
     {
       asio::async_read_n(socket_,
-          asio::buffers(reply_, total_bytes_transferred),
+          asio::buffer(reply_, total_bytes_transferred),
           boost::bind(&client::handle_read, this, asio::placeholders::error,
             asio::placeholders::total_bytes_transferred));
     }

@@ -22,7 +22,7 @@ asio::stream_socket& connection::socket()
 
 void connection::start()
 {
-  asio::async_read(socket_, asio::buffers(buffer_),
+  asio::async_read(socket_, asio::buffer(buffer_),
       boost::bind(&connection::handle_read, shared_from_this(),
         asio::placeholders::error, asio::placeholders::bytes_transferred));
 }
@@ -57,7 +57,7 @@ void connection::handle_read(const asio::error& e,
     }
     else
     {
-      asio::async_read(socket_, asio::buffers(buffer_),
+      asio::async_read(socket_, asio::buffer(buffer_),
           boost::bind(&connection::handle_read, shared_from_this(),
             asio::placeholders::error, asio::placeholders::bytes_transferred));
     }

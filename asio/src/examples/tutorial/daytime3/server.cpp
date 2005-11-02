@@ -22,7 +22,7 @@ void handle_accept(asio::socket_acceptor* acceptor,
     char* write_buf = strdup(ctime(&now));
     size_t write_length = strlen(write_buf);
 
-    asio::async_write_n(*socket, asio::buffers(write_buf, write_length),
+    asio::async_write_n(*socket, asio::buffer(write_buf, write_length),
         boost::bind(handle_write, socket, write_buf,
           asio::placeholders::error,
           asio::placeholders::last_bytes_transferred,

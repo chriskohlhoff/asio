@@ -28,7 +28,6 @@
 #include "asio/buffered_stream.hpp"
 #include "asio/buffered_write_stream_fwd.hpp"
 #include "asio/buffered_write_stream.hpp"
-#include "asio/buffers.hpp"
 #include "asio/consuming_buffers.hpp"
 #include "asio/datagram_socket.hpp"
 #include "asio/datagram_socket_service.hpp"

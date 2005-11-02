@@ -11,8 +11,8 @@
 /// Const_Buffers concept.
 /**
  * @par Implemented By:
- * asio::const_buffers @n
- * asio::mutable_buffers @n
+ * asio::const_buffer_container_1 @n
+ * asio::mutable_buffer_container_1 @n
  * std::deque<asio::const_buffer> @n
  * std::deque<asio::mutable_buffer> @n
  * std::list<asio::const_buffer> @n

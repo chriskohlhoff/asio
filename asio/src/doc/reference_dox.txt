@@ -76,7 +76,6 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 <H2>Classes</H2>
 
 \li asio::const_buffer
-\li asio::const_buffers
 \li asio::datagram_socket
 \li asio::deadline_timer
 \li asio::demuxer
@@ -90,7 +89,6 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 \li asio::ipv4::udp::endpoint
 \li asio::locking_dispatcher
 \li asio::mutable_buffer
-\li asio::mutable_buffers
 \li asio::socket_acceptor
 \li asio::socket_base
 \li asio::stream_socket
@@ -120,7 +118,6 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 
 <H2>Free Functions</H2>
 \li \ref buffer
-\li \ref buffers
 \li \ref read
 \li \ref read_n
 \li \ref read_at_least_n
