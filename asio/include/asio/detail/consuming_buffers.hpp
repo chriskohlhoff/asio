@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_CONSUMING_BUFFERS_HPP
-#define ASIO_CONSUMING_BUFFERS_HPP
+#ifndef ASIO_DETAIL_CONSUMING_BUFFERS_HPP
+#define ASIO_DETAIL_CONSUMING_BUFFERS_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -26,29 +26,30 @@
 #include "asio/buffer.hpp"
 
 namespace asio {
+namespace detail {
 
-/// A proxy for a sub-range in a list of buffers.
+// A proxy for a sub-range in a list of buffers.
 template <typename Buffers>
 class consuming_buffers
 {
 public:
-  /// The type for each element in the list of buffers.
+  // The type for each element in the list of buffers.
   typedef typename Buffers::value_type value_type;
 
-  /// A forward-only iterator type that may be used to read or modify elements.
+  // A forward-only iterator type that may be used to read or modify elements.
   typedef typename Buffers::iterator iterator;
 
-  /// A forward-only iterator type that may be used to read elements.
+  // A forward-only iterator type that may be used to read elements.
   typedef typename Buffers::const_iterator const_iterator;
 
-  /// Construct to represent the entire list of buffers.
+  // Construct to represent the entire list of buffers.
   consuming_buffers(const Buffers& buffers)
     : buffers_(buffers),
       begin_(buffers_.begin())
   {
   }
 
-  /// Copy constructor.
+  // Copy constructor.
   consuming_buffers(const consuming_buffers& other)
     : buffers_(other.buffers_),
       begin_(buffers_.begin())
@@ -58,7 +59,7 @@ public:
     std::advance(begin_, std::distance(first, second));
   }
 
-  /// Assignment operator.
+  // Assignment operator.
   consuming_buffers& operator=(const consuming_buffers& other)
   {
     buffers_ = other.buffers_;
@@ -69,31 +70,31 @@ public:
     return *this;
   }
 
-  /// Get a forward-only iterator to the first element.
+  // Get a forward-only iterator to the first element.
   iterator begin()
   {
     return begin_;
   }
 
-  /// Get a forward-only iterator to the first element.
+  // Get a forward-only iterator to the first element.
   const_iterator begin() const
   {
     return begin_;
   }
 
-  /// Get a forward-only iterator for one past the last element.
+  // Get a forward-only iterator for one past the last element.
   iterator end()
   {
     return buffers_.end();
   }
 
-  /// Get a forward-only iterator for one past the last element.
+  // Get a forward-only iterator for one past the last element.
   const_iterator end() const
   {
     return buffers_.end();
   }
 
-  /// Consume the specified number of bytes from the buffers.
+  // Consume the specified number of bytes from the buffers.
   void consume(std::size_t size)
   {
     // Remove buffers from the start until the specified size is reached.
@@ -122,8 +123,9 @@ private:
   iterator begin_;
 };
 
+} // namespace detail
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_CONSUMING_BUFFERS_HPP
+#endif // ASIO_DETAIL_CONSUMING_BUFFERS_HPP

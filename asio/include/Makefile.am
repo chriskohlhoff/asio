@@ -13,7 +13,6 @@ nobase_include_HEADERS = \
 	asio/buffered_stream.hpp \
 	asio/buffered_write_stream_fwd.hpp \
 	asio/buffered_write_stream.hpp \
-	asio/consuming_buffers.hpp \
 	asio/datagram_socket.hpp \
 	asio/datagram_socket_service.hpp \
 	asio/deadline_timer.hpp \
@@ -23,6 +22,7 @@ nobase_include_HEADERS = \
 	asio/demuxer_service.hpp \
 	asio/detail/bind_handler.hpp \
 	asio/detail/buffer_resize_guard.hpp \
+	asio/detail/consuming_buffers.hpp \
 	asio/detail/demuxer_run_call_stack.hpp \
 	asio/detail/epoll_reactor.hpp \
 	asio/detail/event.hpp \

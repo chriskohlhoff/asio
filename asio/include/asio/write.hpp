@@ -22,8 +22,8 @@
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/consuming_buffers.hpp"
 #include "asio/detail/bind_handler.hpp"
+#include "asio/detail/consuming_buffers.hpp"
 
 namespace asio {
 
@@ -189,7 +189,7 @@ template <typename Sync_Write_Stream, typename Const_Buffers>
 std::size_t write_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
     std::size_t* total_bytes_transferred = 0)
 {
-  consuming_buffers<Const_Buffers> tmp(buffers);
+  asio::detail::consuming_buffers<Const_Buffers> tmp(buffers);
   std::size_t bytes_transferred = 0;
   std::size_t total_transferred = 0;
   while (tmp.begin() != tmp.end())
@@ -246,7 +246,7 @@ template <typename Sync_Write_Stream, typename Const_Buffers,
 std::size_t write_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
     std::size_t* total_bytes_transferred, Error_Handler error_handler)
 {
-  consuming_buffers<Const_Buffers> tmp(buffers);
+  asio::detail::consuming_buffers<Const_Buffers> tmp(buffers);
   std::size_t bytes_transferred = 0;
   std::size_t total_transferred = 0;
   while (tmp.begin() != tmp.end())
@@ -302,7 +302,7 @@ namespace detail
 
   private:
     Async_Write_Stream& stream_;
-    consuming_buffers<Const_Buffers> buffers_;
+    asio::detail::consuming_buffers<Const_Buffers> buffers_;
     std::size_t total_transferred_;
     Handler handler_;
   };
@@ -419,7 +419,7 @@ template <typename Sync_Write_Stream, typename Const_Buffers>
 std::size_t write_at_least_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
     std::size_t min_length, std::size_t* total_bytes_transferred = 0)
 {
-  consuming_buffers<Const_Buffers> tmp(buffers);
+  asio::detail::consuming_buffers<Const_Buffers> tmp(buffers);
   std::size_t bytes_transferred = 0;
   std::size_t total_transferred = 0;
   while (tmp.begin() != tmp.end() && total_transferred < min_length)
@@ -482,7 +482,7 @@ std::size_t write_at_least_n(Sync_Write_Stream& s, const Const_Buffers& buffers,
     std::size_t min_length, std::size_t* total_bytes_transferred,
     Error_Handler error_handler)
 {
-  consuming_buffers<Const_Buffers> tmp(buffers);
+  asio::detail::consuming_buffers<Const_Buffers> tmp(buffers);
   std::size_t bytes_transferred = 0;
   std::size_t total_transferred = 0;
   while (tmp.begin() != tmp.end() && total_transferred < min_length)
@@ -540,7 +540,7 @@ namespace detail
 
   private:
     Async_Write_Stream& stream_;
-    consuming_buffers<Const_Buffers> buffers_;
+    asio::detail::consuming_buffers<Const_Buffers> buffers_;
     std::size_t min_length_;
     std::size_t total_transferred_;
     Handler handler_;
