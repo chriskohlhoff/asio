@@ -88,10 +88,10 @@ void is_write_buffered_test()
   BOOST_CHECK(!asio::is_write_buffered<
       asio::buffered_read_stream<asio::stream_socket> >::value);
 
-  BOOST_CHECK(asio::is_write_buffered<
+  BOOST_CHECK(!!asio::is_write_buffered<
       asio::buffered_write_stream<asio::stream_socket> >::value);
 
-  BOOST_CHECK(asio::is_write_buffered<
+  BOOST_CHECK(!!asio::is_write_buffered<
       asio::buffered_stream<asio::stream_socket> >::value);
 
   BOOST_CHECK(!asio::is_write_buffered<test_stream>::value);
@@ -99,10 +99,10 @@ void is_write_buffered_test()
   BOOST_CHECK(!asio::is_write_buffered<
       asio::buffered_read_stream<test_stream> >::value);
 
-  BOOST_CHECK(asio::is_write_buffered<
+  BOOST_CHECK(!!asio::is_write_buffered<
       asio::buffered_write_stream<test_stream> >::value);
 
-  BOOST_CHECK(asio::is_write_buffered<
+  BOOST_CHECK(!!asio::is_write_buffered<
       asio::buffered_stream<test_stream> >::value);
 }
 
