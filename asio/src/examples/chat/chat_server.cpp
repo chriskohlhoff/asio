@@ -170,7 +170,8 @@ typedef boost::shared_ptr<chat_session> chat_session_ptr;
 class chat_server
 {
 public:
-  chat_server(asio::demuxer& d, const asio::ipv4::tcp::endpoint& endpoint)
+  chat_server(asio::demuxer& d,
+      const asio::ipv4::tcp::endpoint& endpoint)
     : demuxer_(d),
       acceptor_(d, endpoint)
   {

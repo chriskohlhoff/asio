@@ -1,0 +1,15 @@
+subproject libs/asio/example/chat ;
+
+exe chat_client
+  : <lib>../../../thread/build/boost_thread
+    chat_client.cpp
+  : <include>$(BOOST_ROOT)
+    <threading>multi
+  ;
+
+exe chat_server
+  : <lib>../../../thread/build/boost_thread
+    chat_server.cpp
+  : <include>$(BOOST_ROOT)
+    <threading>multi
+  ;

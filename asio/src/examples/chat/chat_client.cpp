@@ -10,7 +10,8 @@ typedef std::deque<chat_message> chat_message_queue;
 class chat_client
 {
 public:
-  chat_client(asio::demuxer& d, const asio::ipv4::tcp::endpoint& endpoint)
+  chat_client(asio::demuxer& d,
+      const asio::ipv4::tcp::endpoint& endpoint)
     : demuxer_(d),
       socket_(d)
   {
@@ -145,7 +146,7 @@ int main(int argc, char* argv[])
 
     chat_client c(d, ep);
 
-    asio::detail::thread t(boost::bind(&asio::demuxer::run, &d));
+    asio::thread t(boost::bind(&asio::demuxer::run, &d));
 
     char line[chat_message::max_body_length + 1];
     while (std::cin.getline(line, chat_message::max_body_length + 1))
