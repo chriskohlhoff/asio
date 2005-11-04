@@ -1,11 +1,14 @@
 #include <iostream>
+#include <string>
+#include <asio.hpp>
+#include <boost/bind.hpp>
+#include <boost/lexical_cast.hpp>
+#include "server.hpp"
+
+#if !defined(_WIN32)
+
 #include <pthread.h>
 #include <signal.h>
-#include <string>
-#include "asio.hpp"
-#include "boost/bind.hpp"
-#include "boost/lexical_cast.hpp"
-#include "server.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -58,3 +61,5 @@ int main(int argc, char* argv[])
 
   return 0;
 }
+
+#endif // !defined(_WIN32)

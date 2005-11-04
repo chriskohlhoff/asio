@@ -83,7 +83,8 @@ private:
 
 void is_read_buffered_test()
 {
-  BOOST_CHECK(!asio::is_read_buffered<asio::stream_socket>::value);
+  BOOST_CHECK(!asio::is_read_buffered<
+      asio::stream_socket>::value);
 
   BOOST_CHECK(!!asio::is_read_buffered<
       asio::buffered_read_stream<asio::stream_socket> >::value);

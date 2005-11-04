@@ -1,6 +1,6 @@
 #include "connection.hpp"
 #include <vector>
-#include "boost/bind.hpp"
+#include <boost/bind.hpp>
 #include "connection_manager.hpp"
 #include "request_handler.hpp"
 
@@ -24,7 +24,8 @@ void connection::start()
 {
   asio::async_read(socket_, asio::buffer(buffer_),
       boost::bind(&connection::handle_read, shared_from_this(),
-        asio::placeholders::error, asio::placeholders::bytes_transferred));
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred));
 }
 
 void connection::stop()
@@ -59,7 +60,8 @@ void connection::handle_read(const asio::error& e,
     {
       asio::async_read(socket_, asio::buffer(buffer_),
           boost::bind(&connection::handle_read, shared_from_this(),
-            asio::placeholders::error, asio::placeholders::bytes_transferred));
+            asio::placeholders::error,
+            asio::placeholders::bytes_transferred));
     }
   }
   else if (e != asio::error::operation_aborted)

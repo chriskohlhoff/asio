@@ -1,0 +1,12 @@
+subproject libs/asio/example/timeouts ;
+
+template asio_timeouts_example
+  : <lib>../../../thread/build/boost_thread
+  : <include>$(BOOST_ROOT)
+    <threading>multi
+  ;
+
+exe accept_timeout : <template>asio_timeouts_example accept_timeout.cpp ;
+exe connect_timeout : <template>asio_timeouts_example connect_timeout.cpp ;
+exe datagram_receive_timeout : <template>asio_timeouts_example datagram_receive_timeout.cpp ;
+exe stream_receive_timeout : <template>asio_timeouts_example stream_receive_timeout.cpp ;

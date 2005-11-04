@@ -1,0 +1,7 @@
+subproject libs/asio/example/iostreams ;
+
+exe daytime_client
+  : daytime_client.cpp
+  : <include>$(BOOST_ROOT)
+    <threading>multi
+  ;

@@ -1,10 +1,12 @@
 #include <iostream>
 #include <string>
-#include "asio.hpp"
-#include "boost/bind.hpp"
-#include "boost/function.hpp"
-#include "boost/lexical_cast.hpp"
+#include <asio.hpp>
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+#include <boost/lexical_cast.hpp>
 #include "server.hpp"
+
+#if defined(_WIN32)
 
 boost::function0<void> console_ctrl_function;
 
@@ -57,3 +59,5 @@ int main(int argc, char* argv[])
 
   return 0;
 }
+
+#endif // defined(_WIN32)

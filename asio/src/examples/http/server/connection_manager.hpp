@@ -2,7 +2,7 @@
 #define HTTP_CONNECTION_MANAGER_HPP
 
 #include <set>
-#include "boost/noncopyable.hpp"
+#include <boost/noncopyable.hpp>
 #include "connection.hpp"
 
 namespace http {

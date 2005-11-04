@@ -1,0 +1,17 @@
+subproject libs/asio/example/ssl ;
+
+exe client
+  : client.cpp
+  : <include>$(BOOST_ROOT)
+    <threading>multi
+    <find-library>ssl
+    <find-library>crypto
+  ;
+
+exe server
+  : server.cpp
+  : <include>$(BOOST_ROOT)
+    <threading>multi
+    <find-library>ssl
+    <find-library>crypto
+  ;

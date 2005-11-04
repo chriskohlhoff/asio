@@ -18,12 +18,14 @@ public:
     socket_.bind(asio::ipv4::udp::endpoint(multicast_port));
 
     // Join the multicast group.
-    socket_.set_option(asio::ipv4::multicast::add_membership(multicast_addr));
+    socket_.set_option(
+        asio::ipv4::multicast::add_membership(multicast_addr));
 
     socket_.async_receive_from(
         asio::buffer(data_, max_length), 0, sender_endpoint_,
         boost::bind(&receiver::handle_receive_from, this,
-          asio::placeholders::error, asio::placeholders::bytes_transferred));
+          asio::placeholders::error,
+          asio::placeholders::bytes_transferred));
   }
 
   void handle_receive_from(const asio::error& error, size_t bytes_recvd)
@@ -36,7 +38,8 @@ public:
       socket_.async_receive_from(
           asio::buffer(data_, max_length), 0, sender_endpoint_,
           boost::bind(&receiver::handle_receive_from, this,
-            asio::placeholders::error, asio::placeholders::bytes_transferred));
+            asio::placeholders::error,
+            asio::placeholders::bytes_transferred));
     }
   }
 

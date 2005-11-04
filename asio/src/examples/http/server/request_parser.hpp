@@ -1,8 +1,8 @@
 #ifndef HTTP_REQUEST_PARSER_HPP
 #define HTTP_REQUEST_PARSER_HPP
 
-#include "boost/logic/tribool.hpp"
-#include "boost/tuple/tuple.hpp"
+#include <boost/logic/tribool.hpp>
+#include <boost/tuple/tuple.hpp>
 
 namespace http {
 namespace server {

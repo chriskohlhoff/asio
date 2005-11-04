@@ -1,0 +1,17 @@
+subproject libs/asio/example/http/server ;
+
+exe http_server
+  : <lib>../../../../thread/build/boost_thread
+    <lib>../../../../date_time/build/boost_date_time
+    connection.cpp
+    connection_manager.cpp
+    mime_types.cpp
+    posix_main.cpp
+    reply.cpp
+    request_handler.cpp
+    request_parser.cpp
+    server.cpp
+    win_main.cpp
+  : <include>$(BOOST_ROOT)
+    <threading>multi
+  ;
