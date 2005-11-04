@@ -10,3 +10,5 @@ install-sh
 doc
 lib
 *.gz
+*.bz2
+*.zip

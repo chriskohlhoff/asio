@@ -44,7 +44,8 @@ int main()
     size_t recv_length = sizeof(recv_buf);
     asio::ipv4::udp::endpoint remote_endpoint;
 
-    asio::datagram_socket socket(demuxer, asio::ipv4::udp::endpoint(13));
+    asio::datagram_socket socket(demuxer,
+        asio::ipv4::udp::endpoint(13));
     socket.async_receive_from(
         asio::buffer(recv_buf, recv_length), 0, remote_endpoint,
         boost::bind(handle_receive_from, &socket, recv_buf, recv_length,

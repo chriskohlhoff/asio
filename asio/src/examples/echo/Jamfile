@@ -6,9 +6,32 @@ template asio_echo_example
     <threading>multi
   ;
 
-exe async_tcp_echo_server : <template>asio_echo_example async_tcp_echo_server.cpp ;
-exe async_udp_echo_server : <template>asio_echo_example async_udp_echo_server.cpp ;
-exe blocking_tcp_echo_client : <template>asio_echo_example blocking_tcp_echo_client.cpp ;
-exe blocking_tcp_echo_server : <template>asio_echo_example blocking_tcp_echo_server.cpp ;
-exe blocking_udp_echo_client : <template>asio_echo_example blocking_udp_echo_client.cpp ;
-exe blocking_udp_echo_server : <template>asio_echo_example blocking_udp_echo_server.cpp ;
+exe async_tcp_echo_server
+  : <template>asio_echo_example
+    async_tcp_echo_server.cpp
+  ;
+
+exe async_udp_echo_server
+  : <template>asio_echo_example
+    async_udp_echo_server.cpp
+  ;
+
+exe blocking_tcp_echo_client
+  : <template>asio_echo_example
+    blocking_tcp_echo_client.cpp
+  ;
+
+exe blocking_tcp_echo_server
+  : <template>asio_echo_example
+    blocking_tcp_echo_server.cpp
+  ;
+
+exe blocking_udp_echo_client
+  : <template>asio_echo_example
+    blocking_udp_echo_client.cpp
+  ;
+
+exe blocking_udp_echo_server
+  : <template>asio_echo_example
+    blocking_udp_echo_server.cpp
+  ;

@@ -22,7 +22,8 @@ void handle_accept(asio::socket_acceptor* acceptor,
     char* write_buf = strdup(ctime(&now));
     size_t write_length = strlen(write_buf);
 
-    asio::async_write_n(*socket, asio::buffer(write_buf, write_length),
+    asio::async_write_n(*socket,
+        asio::buffer(write_buf, write_length),
         boost::bind(handle_write, socket, write_buf,
           asio::placeholders::error,
           asio::placeholders::last_bytes_transferred,
@@ -46,9 +47,11 @@ int main()
   {
     asio::demuxer demuxer;
 
-    asio::socket_acceptor acceptor(demuxer, asio::ipv4::tcp::endpoint(13));
+    asio::socket_acceptor acceptor(demuxer,
+        asio::ipv4::tcp::endpoint(13));
 
-    asio::stream_socket* socket = new asio::stream_socket(demuxer);
+    asio::stream_socket* socket
+      = new asio::stream_socket(demuxer);
 
     acceptor.async_accept(*socket,
         boost::bind(handle_accept, &acceptor, socket,

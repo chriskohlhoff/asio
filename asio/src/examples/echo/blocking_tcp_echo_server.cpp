@@ -37,7 +37,8 @@ void server(asio::demuxer& d, short port)
     stream_socket_ptr sock(new asio::stream_socket(d));
     asio::error error;
     a.accept(*sock,
-        asio::throw_error_if(asio::the_error != asio::error::connection_aborted)
+        asio::throw_error_if(
+          asio::the_error != asio::error::connection_aborted)
         || asio::set_error(error));
     if (!error)
       asio::thread t(boost::bind(session, sock));
