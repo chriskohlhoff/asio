@@ -52,9 +52,9 @@ namespace asio {
  * is written before the blocking operation completes.
  *
  * @par Example:
- * To write a single data buffer use the @ref buffers function as follows:
- * @code asio::write(s, asio::buffers(data, size)); @endcode
- * See the @ref buffers documentation for information on writing multiple
+ * To write a single data buffer use the @ref buffer function as follows:
+ * @code asio::write(s, asio::buffer(data, size)); @endcode
+ * See the @ref buffer documentation for information on writing multiple
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */
@@ -133,9 +133,9 @@ inline std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
  * all data is written before the asynchronous operation completes.
  *
  * @par Example:
- * To write a single data buffer use the @ref buffers function as follows:
- * @code asio::async_write(s, asio::buffers(data, size), handler); @endcode
- * See the @ref buffers documentation for information on writing multiple
+ * To write a single data buffer use the @ref buffer function as follows:
+ * @code asio::async_write(s, asio::buffer(data, size), handler); @endcode
+ * See the @ref buffer documentation for information on writing multiple
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */
@@ -179,9 +179,9 @@ inline void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
  * on the underlying stream's write operation.
  *
  * @par Example:
- * To write a single data buffer use the @ref buffers function as follows:
- * @code asio::write_n(s, asio::buffers(data, size)); @endcode
- * See the @ref buffers documentation for information on writing multiple
+ * To write a single data buffer use the @ref buffer function as follows:
+ * @code asio::write_n(s, asio::buffer(data, size)); @endcode
+ * See the @ref buffer documentation for information on writing multiple
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */
@@ -355,9 +355,9 @@ namespace detail
  * ); @endcode
  *
  * @par Example:
- * To write a single data buffer use the @ref buffers function as follows:
- * @code asio::async_write_n(s, asio::buffers(data, size), handler); @endcode
- * See the @ref buffers documentation for information on writing multiple
+ * To write a single data buffer use the @ref buffer function as follows:
+ * @code asio::async_write_n(s, asio::buffer(data, size), handler); @endcode
+ * See the @ref buffer documentation for information on writing multiple
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */
@@ -408,10 +408,10 @@ inline void async_write_n(Async_Write_Stream& s, const Const_Buffers& buffers,
  * on the underlying stream's write operation.
  *
  * @par Example:
- * To write a single data buffer use the @ref buffers function as follows:
+ * To write a single data buffer use the @ref buffer function as follows:
  * @code asio::write_at_least_n(s,
- *     asio::buffers(data, size), min_length); @endcode
- * See the @ref buffers documentation for information on writing multiple
+ *     asio::buffer(data, size), min_length); @endcode
+ * See the @ref buffer documentation for information on writing multiple
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */
@@ -600,10 +600,10 @@ namespace detail
  * ); @endcode
  *
  * @par Example:
- * To write a single data buffer use the @ref buffers function as follows:
+ * To write a single data buffer use the @ref buffer function as follows:
  * @code asio::async_write_at_least_n(s,
- *     asio::buffers(data, size), min_length, handler); @endcode
- * See the @ref buffers documentation for information on writing multiple
+ *     asio::buffer(data, size), min_length, handler); @endcode
+ * See the @ref buffer documentation for information on writing multiple
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */

@@ -511,9 +511,9 @@ public:
    * the send_to function to send data on an unconnected datagram socket.
    *
    * @par Example:
-   * To send a single data buffer use the @ref buffers function as follows:
-   * @code socket.send(asio::buffers(data, size), 0); @endcode
-   * See the @ref buffers documentation for information on sending multiple
+   * To send a single data buffer use the @ref buffer function as follows:
+   * @code socket.send(asio::buffer(data, size), 0); @endcode
+   * See the @ref buffer documentation for information on sending multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
@@ -578,9 +578,9 @@ public:
    * socket.
    *
    * @par Example:
-   * To send a single data buffer use the @ref buffers function as follows:
-   * @code socket.async_send(asio::buffers(data, size), 0, handler); @endcode
-   * See the @ref buffers documentation for information on sending multiple
+   * To send a single data buffer use the @ref buffer function as follows:
+   * @code socket.async_send(asio::buffer(data, size), 0, handler); @endcode
+   * See the @ref buffer documentation for information on sending multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
@@ -608,9 +608,9 @@ public:
    * @throws asio::error Thrown on failure.
    *
    * @par Example:
-   * To send a single data buffer use the @ref buffers function as follows:
-   * @code socket.send_to(asio::buffers(data, size), 0, destination); @endcode
-   * See the @ref buffers documentation for information on sending multiple
+   * To send a single data buffer use the @ref buffer function as follows:
+   * @code socket.send_to(asio::buffer(data, size), 0, destination); @endcode
+   * See the @ref buffer documentation for information on sending multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
@@ -674,10 +674,10 @@ public:
    * ); @endcode
    *
    * @par Example:
-   * To send a single data buffer use the @ref buffers function as follows:
+   * To send a single data buffer use the @ref buffer function as follows:
    * @code socket.async_send_to(
-   *     asio::buffers(data, size), 0, destination, handler); @endcode
-   * See the @ref buffers documentation for information on sending multiple
+   *     asio::buffer(data, size), 0, destination, handler); @endcode
+   * See the @ref buffer documentation for information on sending multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
@@ -707,10 +707,10 @@ public:
    * socket.
    *
    * @par Example:
-   * To receive into a single data buffer use the @ref buffers function as
+   * To receive into a single data buffer use the @ref buffer function as
    * follows:
-   * @code socket.receive(asio::buffers(data, size), 0); @endcode
-   * See the @ref buffers documentation for information on receiving into
+   * @code socket.receive(asio::buffer(data, size), 0); @endcode
+   * See the @ref buffer documentation for information on receiving into
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
@@ -775,10 +775,10 @@ public:
    * datagram socket.
    *
    * @par Example:
-   * To receive into a single data buffer use the @ref buffers function as
+   * To receive into a single data buffer use the @ref buffer function as
    * follows:
-   * @code socket.async_receive(asio::buffers(data, size), 0, handler); @endcode
-   * See the @ref buffers documentation for information on receiving into
+   * @code socket.async_receive(asio::buffer(data, size), 0, handler); @endcode
+   * See the @ref buffer documentation for information on receiving into
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
@@ -806,11 +806,11 @@ public:
    * @throws asio::error Thrown on failure.
    *
    * @par Example:
-   * To receive into a single data buffer use the @ref buffers function as
+   * To receive into a single data buffer use the @ref buffer function as
    * follows:
    * @code socket.receive_from(
-   *     asio::buffers(data, size), 0, sender_endpoint); @endcode
-   * See the @ref buffers documentation for information on receiving into
+   *     asio::buffer(data, size), 0, sender_endpoint); @endcode
+   * See the @ref buffer documentation for information on receiving into
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
@@ -877,11 +877,11 @@ public:
    * ); @endcode
    *
    * @par Example:
-   * To receive into a single data buffer use the @ref buffers function as
+   * To receive into a single data buffer use the @ref buffer function as
    * follows:
    * @code socket.async_receive_from(
-   *     asio::buffers(data, size), 0, sender_endpoint, handler); @endcode
-   * See the @ref buffers documentation for information on receiving into
+   *     asio::buffer(data, size), 0, sender_endpoint, handler); @endcode
+   * See the @ref buffer documentation for information on receiving into
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */

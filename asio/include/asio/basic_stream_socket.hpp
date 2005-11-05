@@ -500,9 +500,9 @@ public:
    * data is written before the blocking operation completes.
    *
    * @par Example:
-   * To send a single data buffer use the @ref buffers function as follows:
-   * @code socket.send(asio::buffers(data, size), 0); @endcode
-   * See the @ref buffers documentation for information on sending multiple
+   * To send a single data buffer use the @ref buffer function as follows:
+   * @code socket.send(asio::buffer(data, size), 0); @endcode
+   * See the @ref buffer documentation for information on sending multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
@@ -567,9 +567,9 @@ public:
    * that all data is written before the asynchronous operation completes.
    *
    * @par Example:
-   * To send a single data buffer use the @ref buffers function as follows:
-   * @code socket.async_send(asio::buffers(data, size), 0, handler); @endcode
-   * See the @ref buffers documentation for information on sending multiple
+   * To send a single data buffer use the @ref buffer function as follows:
+   * @code socket.async_send(asio::buffer(data, size), 0, handler); @endcode
+   * See the @ref buffer documentation for information on sending multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
@@ -601,10 +601,10 @@ public:
    * completes.
    *
    * @par Example:
-   * To receive into a single data buffer use the @ref buffers function as
+   * To receive into a single data buffer use the @ref buffer function as
    * follows:
-   * @code socket.receive(asio::buffers(data, size), 0); @endcode
-   * See the @ref buffers documentation for information on receiving into
+   * @code socket.receive(asio::buffer(data, size), 0); @endcode
+   * See the @ref buffer documentation for information on receiving into
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
@@ -670,10 +670,10 @@ public:
    * asynchronous operation completes.
    *
    * @par Example:
-   * To receive into a single data buffer use the @ref buffers function as
+   * To receive into a single data buffer use the @ref buffer function as
    * follows:
-   * @code socket.async_receive(asio::buffers(data, size), 0, handler); @endcode
-   * See the @ref buffers documentation for information on receiving into
+   * @code socket.async_receive(asio::buffer(data, size), 0, handler); @endcode
+   * See the @ref buffer documentation for information on receiving into
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
@@ -700,9 +700,9 @@ public:
    * data is written before the blocking operation completes.
    *
    * @par Example:
-   * To write a single data buffer use the @ref buffers function as follows:
-   * @code socket.write(asio::buffers(data, size)); @endcode
-   * See the @ref buffers documentation for information on writing multiple
+   * To write a single data buffer use the @ref buffer function as follows:
+   * @code socket.write(asio::buffer(data, size)); @endcode
+   * See the @ref buffer documentation for information on writing multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
@@ -761,9 +761,9 @@ public:
    * that all data is written before the asynchronous operation completes.
    *
    * @par Example:
-   * To write a single data buffer use the @ref buffers function as follows:
-   * @code socket.async_write(asio::buffers(data, size), handler); @endcode
-   * See the @ref buffers documentation for information on writing multiple
+   * To write a single data buffer use the @ref buffer function as follows:
+   * @code socket.async_write(asio::buffer(data, size), handler); @endcode
+   * See the @ref buffer documentation for information on writing multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
@@ -790,9 +790,9 @@ public:
    * requested amount of data is read before the blocking operation completes.
    *
    * @par Example:
-   * To read into a single data buffer use the @ref buffers function as follows:
-   * @code socket.read(asio::buffers(data, size)); @endcode
-   * See the @ref buffers documentation for information on reading into multiple
+   * To read into a single data buffer use the @ref buffer function as follows:
+   * @code socket.read(asio::buffer(data, size)); @endcode
+   * See the @ref buffer documentation for information on reading into multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
@@ -853,9 +853,9 @@ public:
    * completes.
    *
    * @par Example:
-   * To read into a single data buffer use the @ref buffers function as follows:
-   * @code socket.async_read(asio::buffers(data, size), handler); @endcode
-   * See the @ref buffers documentation for information on reading into multiple
+   * To read into a single data buffer use the @ref buffer function as follows:
+   * @code socket.async_read(asio::buffer(data, size), handler); @endcode
+   * See the @ref buffer documentation for information on reading into multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
@@ -879,10 +879,10 @@ public:
    * @throws asio::error Thrown on failure.
    *
    * @par Example:
-   * To peek using a single data buffer use the @ref buffers function as
+   * To peek using a single data buffer use the @ref buffer function as
    * follows:
-   * @code socket.peek(asio::buffers(data, size)); @endcode
-   * See the @ref buffers documentation for information on using multiple
+   * @code socket.peek(asio::buffer(data, size)); @endcode
+   * See the @ref buffer documentation for information on using multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */

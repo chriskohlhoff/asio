@@ -52,9 +52,9 @@ namespace asio {
  * requested amount of data is read before the blocking operation completes.
  *
  * @par Example:
- * To read into a single data buffer use the @ref buffers function as follows:
- * @code asio::read(s, asio::buffers(data, size)); @endcode
- * See the @ref buffers documentation for information on reading into multiple
+ * To read into a single data buffer use the @ref buffer function as follows:
+ * @code asio::read(s, asio::buffer(data, size)); @endcode
+ * See the @ref buffer documentation for information on reading into multiple
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */
@@ -135,9 +135,9 @@ inline std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  * completes.
  *
  * @par Example:
- * To read into a single data buffer use the @ref buffers function as follows:
- * @code asio::async_read(s, asio::buffers(data, size), handler); @endcode
- * See the @ref buffers documentation for information on reading into multiple
+ * To read into a single data buffer use the @ref buffer function as follows:
+ * @code asio::async_read(s, asio::buffer(data, size), handler); @endcode
+ * See the @ref buffer documentation for information on reading into multiple
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */
@@ -186,9 +186,9 @@ inline void async_read(Async_Read_Stream& s, const Mutable_Buffers& buffers,
  * on the underlying stream's read operation.
  *
  * @par Example:
- * To read into a single data buffer use the @ref buffers function as follows:
- * @code asio::read_n(s, asio::buffers(data, size)); @endcode
- * See the @ref buffers documentation for information on reading into multiple
+ * To read into a single data buffer use the @ref buffer function as follows:
+ * @code asio::read_n(s, asio::buffer(data, size)); @endcode
+ * See the @ref buffer documentation for information on reading into multiple
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */
@@ -372,9 +372,9 @@ namespace detail
  * ); @endcode
  *
  * @par Example:
- * To read into a single data buffer use the @ref buffers function as follows:
- * @code asio::async_read_n(s, asio::buffers(data, size), handler); @endcode
- * See the @ref buffers documentation for information on reading into multiple
+ * To read into a single data buffer use the @ref buffer function as follows:
+ * @code asio::async_read_n(s, asio::buffer(data, size), handler); @endcode
+ * See the @ref buffer documentation for information on reading into multiple
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */
@@ -432,10 +432,10 @@ inline void async_read_n(Async_Read_Stream& s, const Mutable_Buffers& buffers,
  * on the underlying stream's read operation.
  *
  * @par Example:
- * To read into a single data buffer use the @ref buffers function as follows:
- * @code asio::read_at_least_n(s, asio::buffers(data, size), min_length);
+ * To read into a single data buffer use the @ref buffer function as follows:
+ * @code asio::read_at_least_n(s, asio::buffer(data, size), min_length);
  * @endcode
- * See the @ref buffers documentation for information on reading into multiple
+ * See the @ref buffer documentation for information on reading into multiple
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */
@@ -634,10 +634,10 @@ namespace detail
  * ); @endcode
  *
  * @par Example:
- * To read into a single data buffer use the @ref buffers function as follows:
+ * To read into a single data buffer use the @ref buffer function as follows:
  * @code asio::async_read_at_least_n(s,
- *     asio::buffers(data, size), min_length, handler); @endcode
- * See the @ref buffers documentation for information on reading into multiple
+ *     asio::buffer(data, size), min_length, handler); @endcode
+ * See the @ref buffer documentation for information on reading into multiple
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */
