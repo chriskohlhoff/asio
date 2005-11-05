@@ -22,7 +22,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/service_factory.hpp"
-#include "asio/wrapped_handler.hpp"
+#include "asio/detail/wrapped_handler.hpp"
 
 namespace asio {
 
@@ -140,14 +140,29 @@ public:
    *
    * @param handler The handler to be wrapped. The dispatcher will make a copy
    * of the handler object as required. The equivalent function signature of
-   * the handler must be: @code void handler(); @endcode
+   * the handler must be: @code void handler(A1 a1, ... An an); @endcode
+   *
+   * @return A function object that, when invoked, passes the wrapped handler to
+   * the dispatcher's dispatch function. Given a function object with the
+   * signature:
+   * @code R f(A1 a1, ... An an); @endcode
+   * If this function object is passed to the wrap function like so:
+   * @code dispatcher.wrap(f); @endcode
+   * then the return value is a function object with the signature
+   * @code void g(A1 a1, ... An an); @endcode
+   * that, when invoked, executes code equivalent to:
+   * @code dispatcher.dispatch(boost::bind(f, a1, ... an)); @endcode
    */
   template <typename Handler>
-  wrapped_handler<basic_locking_dispatcher<Service>, Handler> wrap(
-      Handler handler)
+#if defined(GENERATING_DOCUMENTATION)
+  implementation_defined
+#else
+  detail::wrapped_handler<basic_locking_dispatcher<Service>, Handler>
+#endif
+  wrap(Handler handler)
   {
-    return wrapped_handler<basic_locking_dispatcher<Service>, Handler>(*this,
-        handler);
+    return detail::wrapped_handler<basic_locking_dispatcher<Service>, Handler>(
+        *this, handler);
   }
 
 private:

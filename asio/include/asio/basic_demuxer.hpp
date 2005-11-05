@@ -22,11 +22,11 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/service_factory.hpp"
-#include "asio/wrapped_handler.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/service_registry.hpp"
 #include "asio/detail/signal_init.hpp"
 #include "asio/detail/winsock_init.hpp"
+#include "asio/detail/wrapped_handler.hpp"
 
 namespace asio {
 
@@ -164,18 +164,33 @@ public:
   /**
    * This function is used to create a new handler function object that, when
    * invoked, will automatically pass the wrapped handler to the demuxer's
-   * dispatch() function.
+   * dispatch function.
    *
-   * @param handler The handler to be wrapped. The demuxer will make a copy
-   * of the handler object as required. The equivalent function signature of
-   * the handler must be: @code void handler(); @endcode
+   * @param handler The handler to be wrapped. The demuxer will make a copy of
+   * the handler object as required. The equivalent function signature of the
+   * handler must be: @code void handler(A1 a1, ... An an); @endcode
+   *
+   * @return A function object that, when invoked, passes the wrapped handler to
+   * the demuxer's dispatch function. Given a function object with the
+   * signature:
+   * @code R f(A1 a1, ... An an); @endcode
+   * If this function object is passed to the wrap function like so:
+   * @code demuxer.wrap(f); @endcode
+   * then the return value is a function object with the signature
+   * @code void g(A1 a1, ... An an); @endcode
+   * that, when invoked, executes code equivalent to:
+   * @code demuxer.dispatch(boost::bind(f, a1, ... an)); @endcode
    */
   template <typename Handler>
-  wrapped_handler<basic_demuxer<Demuxer_Service>, Handler> wrap(
-      Handler handler)
+#if defined(GENERATING_DOCUMENTATION)
+  implementation_defined
+#else
+  detail::wrapped_handler<basic_demuxer<Demuxer_Service>, Handler>
+#endif
+  wrap(Handler handler)
   {
-    return wrapped_handler<basic_demuxer<Demuxer_Service>, Handler>(*this,
-        handler);
+    return detail::wrapped_handler<basic_demuxer<Demuxer_Service>, Handler>(
+        *this, handler);
   }
 
   /// Obtain the service interface corresponding to the given type.

@@ -47,11 +47,22 @@ public:
   /**
    * This function is used to create a new handler function object that, when
    * invoked, will automatically pass the wrapped handler to the dispatcher's
-   * dispatch() function.
+   * dispatch function.
    *
    * @param handler The handler to be wrapped. The dispatcher will make a copy
    * of the handler object as required. The equivalent function signature of
-   * the handler must be: @code void handler(); @endcode
+   * the handler must be: @code void handler(A1 a1, ... An an); @endcode
+   *
+   * @return A function object that, when invoked, passes the wrapped handler to
+   * the dispatcher's dispatch function. Given a function object with the
+   * signature:
+   * @code R f(A1 a1, ... An an); @endcode
+   * If this function object is passed to the wrap function like so:
+   * @code dispatcher.wrap(f); @endcode
+   * then the return value is a function object with the signature
+   * @code void g(A1 a1, ... An an); @endcode
+   * that, when invoked, executes code equivalent to:
+   * @code dispatcher.dispatch(boost::bind(f, a1, ... an)); @endcode
    */
   template <typename Handler>
   implementation_defined wrap(Handler handler);

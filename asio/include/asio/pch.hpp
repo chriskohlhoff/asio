@@ -66,7 +66,6 @@
 #include "asio/stream_socket_service.hpp"
 #include "asio/thread.hpp"
 #include "asio/time_traits.hpp"
-#include "asio/wrapped_handler.hpp"
 #include "asio/write.hpp"
 
 #endif // ASIO_PCH_HPP

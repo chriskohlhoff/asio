@@ -48,5 +48,4 @@ run socket_option_test.cpp ;
 run stream_socket_service_test.cpp ;
 run stream_socket_test.cpp ;
 run time_traits_test.cpp ;
-run wrapped_handler_test.cpp ;
 run write_test.cpp ;

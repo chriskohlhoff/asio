@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_WRAPPED_HANDLER_HPP
-#define ASIO_WRAPPED_HANDLER_HPP
+#ifndef ASIO_DETAIL_WRAPPED_HANDLER_HPP
+#define ASIO_DETAIL_WRAPPED_HANDLER_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -20,6 +20,7 @@
 #include "asio/detail/bind_handler.hpp"
 
 namespace asio {
+namespace detail {
 
 template <typename Dispatcher, typename Handler>
 class wrapped_handler
@@ -114,8 +115,9 @@ private:
   Handler handler_;
 };
 
+} // namespace detail
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_WRAPPED_HANDLER_HPP
+#endif // ASIO_DETAIL_WRAPPED_HANDLER_HPP

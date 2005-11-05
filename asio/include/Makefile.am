@@ -69,6 +69,7 @@ nobase_include_HEADERS = \
 	asio/detail/win_thread.hpp \
 	asio/detail/win_time.hpp \
 	asio/detail/win_tss_ptr.hpp \
+	asio/detail/wrapped_handler.hpp \
 	asio/error_handler.hpp \
 	asio/error.hpp \
 	asio/fixed_buffer.hpp \
@@ -113,7 +114,6 @@ nobase_include_HEADERS = \
 	asio/stream_socket_service.hpp \
 	asio/thread.hpp \
 	asio/time_traits.hpp \
-	asio/wrapped_handler.hpp \
 	asio/write.hpp
 
 MAINTAINERCLEANFILES = \
