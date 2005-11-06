@@ -195,6 +195,28 @@ public:
       asio::detail::socket_ops::host_to_network_long(addr.to_ulong());
   }
 
+  /// Compare two endpoints for equality.
+  friend bool operator==(const endpoint& e1, const endpoint& e2)
+  {
+    return e1.address() == e2.address() && e1.port() == e2.port();
+  }
+
+  /// Compare two endpoints for inequality.
+  friend bool operator!=(const endpoint& e1, const endpoint& e2)
+  {
+    return e1.address() != e2.address() || e1.port() != e2.port();
+  }
+
+  /// Compare endpoints for ordering.
+  friend bool operator<(const endpoint& e1, const endpoint& e2)
+  {
+    if (e1.address() < e2.address())
+      return true;
+    if (e1.address() != e2.address())
+      return false;
+    return e1.port() < e2.port();
+  }
+
 private:
   // The underlying IPv4 socket address.
   asio::detail::inet_addr_v4_type addr_;
