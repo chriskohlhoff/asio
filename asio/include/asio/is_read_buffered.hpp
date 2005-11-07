@@ -17,6 +17,10 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <boost/config.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/buffered_read_stream_fwd.hpp"
 #include "asio/buffered_stream_fwd.hpp"
 
@@ -46,7 +50,8 @@ public:
   /// read data.
   static const bool value;
 #else
-  enum { value = sizeof(detail::is_read_buffered_helper((Stream*)0)) == 1 };
+  BOOST_STATIC_CONSTANT(bool,
+      value = sizeof(detail::is_read_buffered_helper((Stream*)0)) == 1);
 #endif
 };
 

@@ -17,6 +17,10 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <boost/config.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/io_control.hpp"
 #include "asio/socket_option.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -61,11 +65,12 @@ public:
   /// Specify that the data should not be subject to routing.
   static const int message_do_not_route = implementation_defined;
 #else
-  enum {
-    message_peek = asio::detail::message_peek,
-    message_out_of_band = asio::detail::message_out_of_band,
-    message_do_not_route = asio::detail::message_do_not_route
-  };
+  BOOST_STATIC_CONSTANT(int,
+      message_peek = asio::detail::message_peek);
+  BOOST_STATIC_CONSTANT(int,
+      message_out_of_band = asio::detail::message_out_of_band);
+  BOOST_STATIC_CONSTANT(int,
+      message_do_not_route = asio::detail::message_do_not_route);
 #endif
 
   /// Socket option to permit sending of broadcast messages.

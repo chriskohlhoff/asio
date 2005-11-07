@@ -17,6 +17,10 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <boost/config.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/ssl/detail/openssl_types.hpp"
 
 namespace asio {
@@ -86,13 +90,11 @@ public:
   /// Disable TLS v1.
   static const int no_tlsv1 = implementation_defined;
 #else
-  enum {
-    default_workarounds = SSL_OP_ALL,
-    single_dh_use = SSL_OP_SINGLE_DH_USE,
-    no_sslv2 = SSL_OP_NO_SSLv2,
-    no_sslv3 = SSL_OP_NO_SSLv3,
-    no_tlsv1 = SSL_OP_NO_TLSv1
-  };
+  BOOST_STATIC_CONSTANT(int, default_workarounds = SSL_OP_ALL);
+  BOOST_STATIC_CONSTANT(int, single_dh_use = SSL_OP_SINGLE_DH_USE);
+  BOOST_STATIC_CONSTANT(int, no_sslv2 = SSL_OP_NO_SSLv2);
+  BOOST_STATIC_CONSTANT(int, no_sslv3 = SSL_OP_NO_SSLv3);
+  BOOST_STATIC_CONSTANT(int, no_tlsv1 = SSL_OP_NO_TLSv1);
 #endif
 
   /// File format types.
@@ -123,12 +125,11 @@ public:
   /// verify_peer is set.
   static const int verify_client_once = implementation_defined;
 #else
-  enum {
-    verify_none = SSL_VERIFY_NONE,
-    verify_peer = SSL_VERIFY_PEER,
-    verify_fail_if_no_peer_cert = SSL_VERIFY_FAIL_IF_NO_PEER_CERT,
-    verify_client_once = SSL_VERIFY_CLIENT_ONCE
-  };
+  BOOST_STATIC_CONSTANT(int, verify_none = SSL_VERIFY_NONE);
+  BOOST_STATIC_CONSTANT(int, verify_peer = SSL_VERIFY_PEER);
+  BOOST_STATIC_CONSTANT(int,
+      verify_fail_if_no_peer_cert = SSL_VERIFY_FAIL_IF_NO_PEER_CERT);
+  BOOST_STATIC_CONSTANT(int, verify_client_once = SSL_VERIFY_CLIENT_ONCE);
 #endif
 
 protected:
