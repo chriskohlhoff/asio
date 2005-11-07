@@ -482,7 +482,11 @@ inline const char* inet_ntop(int af, const void* src, char* dest,
   if (addr_str)
   {
     *dest = '\0';
+#if defined(_MSC_VER) && (_MSC_VER >= 1400)
+    strncat_s(dest, length, addr_str, length);
+#else
     strncat(dest, addr_str, length);
+#endif
     return dest;
   }
 

@@ -60,19 +60,26 @@ public:
   }
 
 private:
-  friend void* asio::detail::buffer_cast_helper(const mutable_buffer& b)
-  {
-    return b.data_;
-  }
-
-  friend std::size_t asio::detail::buffer_size_helper(const mutable_buffer& b)
-  {
-    return b.size_;
-  }
+  friend void* asio::detail::buffer_cast_helper(const mutable_buffer& b);
+  friend std::size_t asio::detail::buffer_size_helper(const mutable_buffer& b);
 
   void* data_;
   std::size_t size_;
 };
+
+namespace detail {
+
+inline void* buffer_cast_helper(const mutable_buffer& b)
+{
+  return b.data_;
+}
+
+inline std::size_t buffer_size_helper(const mutable_buffer& b)
+{
+  return b.size_;
+}
+
+} // namespace detail
 
 /// Cast a non-modifiable buffer to a specified pointer to POD type.
 template <typename Pointer_To_Pod_Type>
@@ -184,19 +191,26 @@ public:
   }
 
 private:
-  friend const void* asio::detail::buffer_cast_helper(const const_buffer& b)
-  {
-    return b.data_;
-  }
-
-  friend std::size_t asio::detail::buffer_size_helper(const const_buffer& b)
-  {
-    return b.size_;
-  }
+  friend const void* asio::detail::buffer_cast_helper(const const_buffer& b);
+  friend std::size_t asio::detail::buffer_size_helper(const const_buffer& b);
 
   const void* data_;
   std::size_t size_;
 };
+
+namespace detail {
+
+inline const void* buffer_cast_helper(const const_buffer& b)
+{
+  return b.data_;
+}
+
+inline std::size_t buffer_size_helper(const const_buffer& b)
+{
+  return b.size_;
+}
+
+} // namespace detail
 
 /// Cast a non-modifiable buffer to a specified pointer to POD type.
 template <typename Pointer_To_Pod_Type>
