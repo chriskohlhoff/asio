@@ -21,11 +21,11 @@ UNIT_TEST_EXES = \
 	tests\unit\buffered_stream_test.exe \
 	tests\unit\buffered_write_stream_test.exe \
 	tests\unit\buffer_test.exe \
+	tests\unit\completion_condition_test.exe \
 	tests\unit\datagram_socket_service_test.exe \
 	tests\unit\datagram_socket_test.exe \
 	tests\unit\deadline_timer_service_test.exe \
 	tests\unit\deadline_timer_test.exe \
-	tests\unit\default_error_handler_test.exe \
 	tests\unit\demuxer_service_test.exe \
 	tests\unit\demuxer_test.exe \
 	tests\unit\error_handler_test.exe \
@@ -45,7 +45,6 @@ UNIT_TEST_EXES = \
 	tests\unit\is_write_buffered_test.exe \
 	tests\unit\locking_dispatcher_service_test.exe \
 	tests\unit\locking_dispatcher_test.exe \
-	tests\unit\null_error_handler_test.exe \
 	tests\unit\placeholders_test.exe \
 	tests\unit\read_test.exe \
 	tests\unit\service_factory_test.exe \

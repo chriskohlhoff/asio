@@ -43,9 +43,8 @@ Now create and connect the socket.
 
 The connection is open. All we need to do now is read the
 response from the daytime service. When the server closes the connection, the
-asio::stream_socket::read() function will return 0, which is how we know to
-exit the loop. If an error occurs during reading then an asio::error exception
-is thrown.
+asio::stream_socket::read_some() function will exit with the asio::error::eof
+error, which is how we know to exit the loop.
 
 \until }
 
@@ -152,9 +151,9 @@ Determine what we are going to send.
 
 \until size_t write_length
 
-We now call \ref async_write_n to serve the data to the client. Note that we
-are using \ref async_write_n, rather than \ref async_write, to ensure that the
-entire block of data is sent.
+We now call \ref async_write to serve the data to the client. Note that we
+are using \ref async_write, rather than asio::stream_socket::write_some, to
+ensure that the entire block of data is sent.
 
 \until asio::placeholders::total_bytes_transferred
 

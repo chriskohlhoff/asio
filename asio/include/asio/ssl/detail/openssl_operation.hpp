@@ -24,7 +24,6 @@
 
 #include "asio/buffer.hpp"
 #include "asio/placeholders.hpp"
-#include "asio/read.hpp"
 #include "asio/write.hpp"
 #include "asio/ssl/detail/openssl_types.hpp"
 
@@ -220,7 +219,7 @@ private:
          
       if (len > 0)
       {
-        asio::async_write_n
+        asio::async_write
         ( 
           socket_, 
           asio::buffer(send_buf_.get_unused_start(), len),
@@ -231,8 +230,7 @@ private:
             is_operation_done,
             rc, 
             asio::placeholders::error, 
-            asio::placeholders::last_bytes_transferred,
-            asio::placeholders::total_bytes_transferred
+            asio::placeholders::bytes_transferred
           )
         );
           
@@ -260,13 +258,12 @@ private:
   }
 
   void async_write_handler(bool is_operation_done, int rc, 
-    const asio::error& error, 
-    size_t last_bytes_sent, size_t total_bytes_sent)
+    const asio::error& error, size_t bytes_sent)
   {
     if (!error)
     {
       // Remove data from send buffer
-      send_buf_.data_removed(total_bytes_sent);
+      send_buf_.data_removed(bytes_sent);
 
       if (is_operation_done)
         handler_(asio::error(), rc);
@@ -281,9 +278,8 @@ private:
   void do_async_read()
   {
     // Wait for new data
-    asio::async_read
+    socket_.async_read_some
     ( 
-      socket_, 
       asio::buffer(recv_buf_.get_unused_start(), recv_buf_.get_unused_len()),
       boost::bind
       (
@@ -297,7 +293,7 @@ private:
 
   void async_read_handler(const asio::error& error, size_t bytes_recvd)
   {
-    if (!error && bytes_recvd > 0)
+    if (!error)
     {
       recv_buf_.data_added(bytes_recvd);
 
@@ -323,12 +319,7 @@ private:
     {
       // Error in network level...
       // SSL can't continue either...
-      if (!error)
-        handler_(asio::error(asio::error::timed_out), 0); 
-                            // Recvd bytes is 0, connection was closed 
-                            // prematurely
-      else
-        handler_(error, 0);
+      handler_(error, 0);
     }
   }
 
@@ -348,21 +339,13 @@ private:
          
       if (len > 0)
       {
-          size_t sent_len = 0;
-          size_t result = asio::write_n( 
+        size_t sent_len = asio::write( 
                   socket_, 
-                  asio::buffer(send_buf_.get_unused_start(), len),
-                  &sent_len
+                  asio::buffer(send_buf_.get_unused_start(), len)
                   );
 
-          send_buf_.data_added(len);
-          send_buf_.data_removed(sent_len);
-  
-          if (!result)
-          {
-            // TCP connection was closed
-            return 0;
-          }
+        send_buf_.data_added(len);
+        send_buf_.data_removed(sent_len);
       }          
       else
         // Seems like fatal error
@@ -380,35 +363,28 @@ private:
 
   int do_sync_read()
   {
-    size_t len = asio::read
+    size_t len = socket_.asio::read_some
       ( 
-        socket_, 
         asio::buffer(recv_buf_.get_unused_start(), recv_buf_.get_unused_len())
       );
 
-    if (len)
+    // Write data to ssl
+    recv_buf_.data_added(len);
+
+    // Pass the received data to SSL
+    int written = ::BIO_write
+    ( 
+      ssl_bio_, 
+      recv_buf_.get_data_start(), 
+      recv_buf_.get_data_len() 
+    );
+
+    if (written > 0)
     {
-      // Write data to ssl
-      recv_buf_.data_added(len);
-
-      // Pass the received data to SSL
-      int written = ::BIO_write
-      ( 
-        ssl_bio_, 
-        recv_buf_.get_data_start(), 
-        recv_buf_.get_data_len() 
-      );
-
-      if (written > 0)
-      {
-        recv_buf_.data_removed(written);
-      } else if (written < 0)
-        // Some serios error with BIO....
-        throw asio::error(asio::error::no_recovery);
-    }
-    else 
-      // TCP disconnect..
-      return 0;
+      recv_buf_.data_removed(written);
+    } else if (written < 0)
+      // Some serios error with BIO....
+      throw asio::error(asio::error::no_recovery);
 
     // Try the operation again
     return start();

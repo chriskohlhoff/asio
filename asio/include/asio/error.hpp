@@ -71,6 +71,9 @@ public:
     /// Bad file descriptor.
     bad_descriptor = ASIO_SOCKET_ERROR(EBADF),
 
+    /// End of file or stream.
+    eof = ASIO_WIN_OR_POSIX_ERROR(ERROR_HANDLE_EOF, -1),
+
     /// Bad address.
     fault = ASIO_SOCKET_ERROR(EFAULT),
 
@@ -252,6 +255,9 @@ Ostream& operator<<(Ostream& os, const error& e)
 #else // _WIN32
   switch (e.code())
   {
+  case error::eof:
+    os << "End of file.";
+    break;
   case error::host_not_found:
     os << "Host not found (authoritative).";
     break;

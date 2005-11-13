@@ -501,6 +501,11 @@ public:
       error_handler(asio::error(last_error));
       return 0;
     }
+    if (bytes_transferred == 0)
+    {
+      error_handler(asio::error(asio::error::eof));
+      return 0;
+    }
 
     return bytes_transferred;
   }
@@ -533,6 +538,12 @@ public:
           last_error = ERROR_OPERATION_ABORTED;
         else
           last_error = WSAECONNRESET;
+      }
+
+      // Check for connection closed.
+      else if (last_error == 0 && bytes_transferred == 0)
+      {
+        last_error = asio::error::eof;
       }
 
       asio::error error(last_error);
@@ -611,6 +622,11 @@ public:
       error_handler(asio::error(last_error));
       return 0;
     }
+    if (bytes_transferred == 0)
+    {
+      error_handler(asio::error(asio::error::eof));
+      return 0;
+    }
 
     sender_endpoint.size(endpoint_size);
 
@@ -644,6 +660,13 @@ public:
     {
       std::auto_ptr<receive_from_operation<Endpoint, Handler> > h(
           static_cast<receive_from_operation<Endpoint, Handler>*>(op));
+
+      // Check for connection closed.
+      if (last_error == 0 && bytes_transferred == 0)
+      {
+        last_error = asio::error::eof;
+      }
+
       h->endpoint_.size(h->endpoint_size_);
       asio::error error(last_error);
       h->handler_(error, bytes_transferred);

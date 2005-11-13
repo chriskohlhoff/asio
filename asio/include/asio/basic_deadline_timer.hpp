@@ -21,6 +21,7 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/error.hpp"
 #include "asio/service_factory.hpp"
 
 namespace asio {
@@ -37,7 +38,7 @@ namespace asio {
  * @e Shared @e objects: Unsafe.
  *
  * @par Concepts:
- * Async_Object.
+ * Async_Object, Error_Source.
  *
  * @sa @ref deadline_timer_reset
  */
@@ -54,6 +55,9 @@ public:
 
   /// The demuxer type for this asynchronous type.
   typedef typename service_type::demuxer_type demuxer_type;
+
+  /// The type used for reporting errors.
+  typedef asio::error error_type;
 
   /// The time type.
   typedef typename service_type::time_type time_type;

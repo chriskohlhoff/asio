@@ -14,29 +14,33 @@
  * asio::basic_stream_socket @n
  * asio::buffered_read_stream @n
  * asio::buffered_write_stream @n
- * asio::buffered_stream
+ * asio::buffered_stream @n
+ * asio::ssl::stream
  */
 class Sync_Read_Stream
+  : public Error_Source
 {
 public:
   /// Read some data from the stream.
   /**
    * This function is used to read data from the stream. The function call will
-   * block until data has been read successfully or an error occurs.
+   * block until one or more bytes of data has been read successfully, or until
+   * an error occurs.
    *
    * @param buffers The buffers into which the data will be read.
    *
-   * @returns The number of bytes read or 0 if the stream was closed cleanly.
+   * @returns The number of bytes read.
    *
-   * @throws implementation_defined Thrown on failure.
+   * @throws Sync_Read_Stream::error_type Thrown on failure.
    */
   template <typename Mutable_Buffers>
-  std::size_t read(const Mutable_Buffers& buffers);
+  std::size_t read_some(const Mutable_Buffers& buffers);
 
   /// Read some data from the stream.
   /**
    * This function is used to read data from the stream. The function call will
-   * block until data has been read successfully or an error occurs.
+   * block until one or more bytes of data has been read successfully, or until
+   * an error occurs.
    *
    * @param buffers The buffers into which the data will be read.
    *
@@ -44,13 +48,15 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const implementation_defined& error // Result of operation
+   *   const Sync_Read_Stream::error_type& error // Result of operation.
    * ); @endcode
    *
-   * @returns The number of bytes read or 0 if the stream was closed cleanly.
+   * @returns The number of bytes read. Returns 0 if an error occurred and the
+   * error handler did not throw an exception.
    */
   template <typename Mutable_Buffers, typename Error_Handler>
-  std::size_t read(const Mutable_Buffers& buffers, Error_Handler error_handler);
+  std::size_t read_some(const Mutable_Buffers& buffers,
+      Error_Handler error_handler);
 
   /// Peek at the incoming data on the stream.
   /**
@@ -60,9 +66,9 @@ public:
    *
    * @param buffers The buffers into which the data will be read.
    *
-   * @returns The number of bytes read or 0 if the stream was closed cleanly.
+   * @returns The number of bytes read.
    *
-   * @throws implementation_defined Thrown on failure.
+   * @throws Sync_Read_Stream::error_type Thrown on failure.
    */
   template <typename Mutable_Buffers>
   std::size_t peek(const Mutable_Buffers& buffers);
@@ -79,11 +85,11 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const implementation_defined& error // Result of operation
+   *   const Sync_Read_Stream::error_type& error // Result of operation.
    * ); @endcode
    *
-   * @returns The number of bytes read or 0 if the stream was closed
-   * cleanly.
+   * @returns The number of bytes read. Returns 0 if an error occurred and the
+   * error handler did not throw an exception.
    */
   template <typename Mutable_Buffers, typename Error_Handler>
   std::size_t peek(const Mutable_Buffers& buffers, Error_Handler error_handler);
@@ -95,7 +101,7 @@ public:
    *
    * @returns The number of bytes of data that can be read without blocking.
    *
-   * @throws implementation_defined Thrown on failure.
+   * @throws Sync_Read_Stream::error_type Thrown on failure.
    */
   std::size_t in_avail();
 
@@ -108,7 +114,7 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const implementation_defined& error // Result of operation
+   *   const Sync_Read_Stream::error_type& error // Result of operation
    * ); @endcode
    *
    * @returns The number of bytes of data that can be read without blocking.

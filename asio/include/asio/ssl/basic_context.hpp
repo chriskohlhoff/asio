@@ -23,7 +23,7 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/default_error_handler.hpp"
+#include "asio/error_handler.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/ssl/context_base.hpp"
 
@@ -83,7 +83,7 @@ public:
    */
   void set_options(options o)
   {
-    service_.set_options(impl_, o, default_error_handler());
+    service_.set_options(impl_, o, throw_error());
   }
 
   /// Set options on the context.
@@ -119,7 +119,7 @@ public:
    */
   void set_verify_mode(verify_mode v)
   {
-    service_.set_verify_mode(impl_, v, default_error_handler());
+    service_.set_verify_mode(impl_, v, throw_error());
   }
 
   /// Set the peer verification mode.
@@ -155,7 +155,7 @@ public:
    */
   void load_verify_file(const std::string& filename)
   {
-    service_.load_verify_file(impl_, filename, default_error_handler());
+    service_.load_verify_file(impl_, filename, throw_error());
   }
 
   /// Load a certification authority file for performing verification.
@@ -194,7 +194,7 @@ public:
    */
   void add_verify_path(const std::string& path)
   {
-    service_.add_verify_path(impl_, path, default_error_handler());
+    service_.add_verify_path(impl_, path, throw_error());
   }
 
   /// Add a directory containing certificate authority files to be used for
@@ -232,8 +232,7 @@ public:
    */
   void use_certificate_file(const std::string& filename, file_format format)
   {
-    service_.use_certificate_file(impl_, filename, format,
-        default_error_handler());
+    service_.use_certificate_file(impl_, filename, format, throw_error());
   }
 
   /// Use a certificate from a file.
@@ -270,8 +269,7 @@ public:
    */
   void use_certificate_chain_file(const std::string& filename)
   {
-    service_.use_certificate_chain_file(impl_, filename,
-        default_error_handler());
+    service_.use_certificate_chain_file(impl_, filename, throw_error());
   }
 
   /// Use a certificate chain from a file.
@@ -308,8 +306,7 @@ public:
    */
   void use_private_key_file(const std::string& filename, file_format format)
   {
-    service_.use_private_key_file(impl_, filename, format,
-        default_error_handler());
+    service_.use_private_key_file(impl_, filename, format, throw_error());
   }
 
   /// Use a private key from a file.
@@ -347,8 +344,7 @@ public:
    */
   void use_rsa_private_key_file(const std::string& filename, file_format format)
   {
-    service_.use_rsa_private_key_file(impl_, filename, format,
-        default_error_handler());
+    service_.use_rsa_private_key_file(impl_, filename, format, throw_error());
   }
 
   /// Use an RSA private key from a file.
@@ -386,7 +382,7 @@ public:
    */
   void use_tmp_dh_file(const std::string& filename)
   {
-    service_.use_tmp_dh_file(impl_, filename, default_error_handler());
+    service_.use_tmp_dh_file(impl_, filename, throw_error());
   }
 
   /// Use the specified file to obtain the temporary Diffie-Hellman parameters.

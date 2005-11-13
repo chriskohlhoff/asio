@@ -27,6 +27,7 @@
 
 #include "asio/buffered_write_stream_fwd.hpp"
 #include "asio/buffer.hpp"
+#include "asio/error.hpp"
 #include "asio/write.hpp"
 #include "asio/detail/bind_handler.hpp"
 
@@ -42,7 +43,7 @@ namespace asio {
  * @e Shared @e objects: Unsafe.
  *
  * @par Concepts:
- * Async_Object, Async_Read_Stream, Async_Write_Stream, Stream,
+ * Async_Object, Async_Read_Stream, Async_Write_Stream, Error_Source, Stream,
  * Sync_Read_Stream, Sync_Write_Stream.
  */
 template <typename Stream, typename Buffer>
@@ -50,6 +51,21 @@ class buffered_write_stream
   : private boost::noncopyable
 {
 public:
+  /// The type of the next layer.
+  typedef typename boost::remove_reference<Stream>::type next_layer_type;
+
+  /// The type of the lowest layer.
+  typedef typename next_layer_type::lowest_layer_type lowest_layer_type;
+
+  /// The demuxer type for this asynchronous type.
+  typedef typename next_layer_type::demuxer_type demuxer_type;
+
+  /// The type used for reporting errors.
+  typedef typename next_layer_type::error_type error_type;
+
+  /// The buffer type for this buffering layer.
+  typedef Buffer buffer_type;
+
   /// Construct, passing the specified argument to initialise the next layer.
   template <typename Arg>
   explicit buffered_write_stream(Arg& a)
@@ -58,17 +74,11 @@ public:
   {
   }
 
-  /// The type of the next layer.
-  typedef typename boost::remove_reference<Stream>::type next_layer_type;
-
   /// Get a reference to the next layer.
   next_layer_type& next_layer()
   {
     return next_layer_;
   }
-
-  /// The type of the lowest layer.
-  typedef typename next_layer_type::lowest_layer_type lowest_layer_type;
 
   /// Get a reference to the lowest layer.
   lowest_layer_type& lowest_layer()
@@ -76,17 +86,11 @@ public:
     return next_layer_.lowest_layer();
   }
 
-  /// The demuxer type for this asynchronous type.
-  typedef typename next_layer_type::demuxer_type demuxer_type;
-
   /// Get the demuxer associated with the asynchronous object.
   demuxer_type& demuxer()
   {
     return next_layer_.demuxer();
   }
-
-  /// The buffer type for this buffering layer.
-  typedef Buffer buffer_type;
 
   /// Get the write buffer used by this buffering layer.
   buffer_type& write_buffer()
@@ -100,30 +104,34 @@ public:
     next_layer_.close();
   }
 
-  /// Flush all data from the buffer to the next layer. Returns the number of
-  /// bytes written to the next layer on the last write operation, or 0 if the
-  /// underlying stream was closed. Throws an exception on failure.
-  std::size_t flush()
+  /// Close the stream.
+  template <typename Error_Handler>
+  void close(Error_Handler error_handler)
   {
-    std::size_t total_bytes_written = 0;
-    std::size_t last_bytes_written = write_n(next_layer_,
-        buffer(buffer_.begin(), buffer_.size()), &total_bytes_written);
-    buffer_.pop(total_bytes_written);
-    return last_bytes_written;
+    next_layer_.close(error_handler);
   }
 
   /// Flush all data from the buffer to the next layer. Returns the number of
-  /// bytes written to the next layer on the last write operation, or 0 if the
-  /// underlying stream was closed.
+  /// bytes written to the next layer on the last write operation. Throws an
+  /// exception on failure.
+  std::size_t flush()
+  {
+    std::size_t bytes_written = write(next_layer_,
+        buffer(buffer_.begin(), buffer_.size()));
+    buffer_.pop(bytes_written);
+    return bytes_written;
+  }
+
+  /// Flush all data from the buffer to the next layer. Returns the number of
+  /// bytes written to the next layer on the last write operation, or 0 if an
+  /// error occurred and the error handler did not throw.
   template <typename Error_Handler>
   std::size_t flush(Error_Handler error_handler)
   {
-    std::size_t total_bytes_written = 0;
-    std::size_t last_bytes_written = write_n(next_layer_,
-        buffer(buffer_.begin(), buffer_.size()), &total_bytes_written,
-        error_handler);
-    buffer_.pop(total_bytes_written);
-    return last_bytes_written;
+    std::size_t bytes_written = write(next_layer_,
+        buffer(buffer_.begin(), buffer_.size()), error_handler);
+    buffer_.pop(bytes_written);
+    return bytes_written;
   }
 
   template <typename Handler>
@@ -137,13 +145,11 @@ public:
     {
     }
 
-    template <typename Error>
-    void operator()(const Error& e, std::size_t last_bytes_written,
-        std::size_t total_bytes_written)
+    void operator()(const error_type& e, std::size_t bytes_written)
     {
-      stream_.write_buffer().pop(total_bytes_written);
+      stream_.write_buffer().pop(bytes_written);
       stream_.demuxer().dispatch(
-          detail::bind_handler(handler_, e, last_bytes_written));
+          detail::bind_handler(handler_, e, bytes_written));
     }
 
   private:
@@ -155,24 +161,25 @@ public:
   template <typename Handler>
   void async_flush(Handler handler)
   {
-    async_write_n(next_layer_, buffer(buffer_.begin(), buffer_.size()),
+    async_write(next_layer_, buffer(buffer_.begin(), buffer_.size()),
         flush_handler<Handler>(*this, handler));
   }
 
-  /// Write the given data to the stream. Returns the number of bytes written or
-  /// 0 if the stream was closed cleanly. Throws an exception on failure.
+  /// Write the given data to the stream. Returns the number of bytes written.
+  /// Throws an exception on failure.
   template <typename Const_Buffers>
-  std::size_t write(const Const_Buffers& buffers)
+  std::size_t write_some(const Const_Buffers& buffers)
   {
-    if (buffer_.size() == buffer_.capacity() && !flush())
-      return 0;
+    if (buffer_.size() == buffer_.capacity())
+      flush();
     return copy(buffers);
   }
 
-  /// Write the given data to the stream. Returns the number of bytes written or
-  /// 0 if the stream was closed cleanly.
+  /// Write the given data to the stream. Returns the number of bytes written,
+  /// or 0 if an error occurred and the error handler did not throw.
   template <typename Const_Buffers, typename Error_Handler>
-  std::size_t write(const Const_Buffers& buffers, Error_Handler error_handler)
+  std::size_t write_some(const Const_Buffers& buffers,
+      Error_Handler error_handler)
   {
     if (buffer_.size() == buffer_.capacity() && !flush(error_handler))
       return 0;
@@ -180,10 +187,10 @@ public:
   }
 
   template <typename Const_Buffers, typename Handler>
-  class write_handler
+  class write_some_handler
   {
   public:
-    write_handler(buffered_write_stream<Stream, Buffer>& stream,
+    write_some_handler(buffered_write_stream<Stream, Buffer>& stream,
         const Const_Buffers& buffers, Handler handler)
       : stream_(stream),
         buffers_(buffers),
@@ -191,10 +198,9 @@ public:
     {
     }
 
-    template <typename Error>
-    void operator()(const Error& e, std::size_t bytes_written)
+    void operator()(const error_type& e, std::size_t bytes_written)
     {
-      if (e || bytes_written == 0)
+      if (e)
       {
         std::size_t length = 0;
         stream_.demuxer().dispatch(detail::bind_handler(handler_, e, length));
@@ -234,11 +240,11 @@ public:
   /// Start an asynchronous write. The data being written must be valid for the
   /// lifetime of the asynchronous operation.
   template <typename Const_Buffers, typename Handler>
-  void async_write(const Const_Buffers& buffers, Handler handler)
+  void async_write_some(const Const_Buffers& buffers, Handler handler)
   {
     if (buffer_.size() == buffer_.capacity())
     {
-      async_flush(write_handler<Const_Buffers, Handler>(
+      async_flush(write_some_handler<Const_Buffers, Handler>(
             *this, buffers, handler));
     }
     else
@@ -249,40 +255,41 @@ public:
     }
   }
 
-  /// Read some data from the stream. Returns the number of bytes read or 0 if
-  /// the stream was closed cleanly. Throws an exception on failure.
+  /// Read some data from the stream. Returns the number of bytes read. Throws
+  /// an exception on failure.
   template <typename Mutable_Buffers>
-  std::size_t read(const Mutable_Buffers& buffers)
+  std::size_t read_some(const Mutable_Buffers& buffers)
   {
-    return next_layer_.read(buffers);
+    return next_layer_.read_some(buffers);
   }
 
   /// Read some data from the stream. Returns the number of bytes read or 0 if
-  /// the stream was closed cleanly.
+  /// an error occurred and the error handler did not throw an exception.
   template <typename Mutable_Buffers, typename Error_Handler>
-  std::size_t read(const Mutable_Buffers& buffers, Error_Handler error_handler)
+  std::size_t read_some(const Mutable_Buffers& buffers,
+      Error_Handler error_handler)
   {
-    return next_layer_.read(buffers, error_handler);
+    return next_layer_.read_some(buffers, error_handler);
   }
 
   /// Start an asynchronous read. The buffer into which the data will be read
   /// must be valid for the lifetime of the asynchronous operation.
   template <typename Mutable_Buffers, typename Handler>
-  void async_read(const Mutable_Buffers& buffers, Handler handler)
+  void async_read_some(const Mutable_Buffers& buffers, Handler handler)
   {
-    next_layer_.async_read(buffers, handler);
+    next_layer_.async_read_some(buffers, handler);
   }
 
-  /// Peek at the incoming data on the stream. Returns the number of bytes read
-  /// or 0 if the stream was closed cleanly.
+  /// Peek at the incoming data on the stream. Returns the number of bytes read.
+  /// Throws an exception on failure.
   template <typename Mutable_Buffers>
   std::size_t peek(const Mutable_Buffers& buffers)
   {
     return next_layer_.peek(buffers);
   }
 
-  /// Peek at the incoming data on the stream. Returns the number of bytes read
-  /// or 0 if the stream was closed cleanly.
+  /// Peek at the incoming data on the stream. Returns the number of bytes read,
+  /// or 0 if an error occurred and the error handler did not throw.
   template <typename Mutable_Buffers, typename Error_Handler>
   std::size_t peek(const Mutable_Buffers& buffers, Error_Handler error_handler)
   {

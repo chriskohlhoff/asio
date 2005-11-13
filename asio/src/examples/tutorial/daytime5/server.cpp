@@ -16,11 +16,12 @@ int main()
     {
       char recv_buf[1];
       asio::ipv4::udp::endpoint remote_endpoint;
+      asio::error error;
       socket.receive_from(
           asio::buffer(recv_buf, sizeof(recv_buf)),
-          0, remote_endpoint,
-          asio::throw_error_if(
-            asio::the_error != asio::error::message_size));
+          0, remote_endpoint, asio::assign_error(error));
+      if (error && error != asio::error::message_size)
+        throw error;
 
       using namespace std; // For time_t, time and ctime.
       time_t now = time(0);

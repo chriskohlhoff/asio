@@ -294,7 +294,7 @@ public:
 
   // Write some data to the stream.
   template <typename Stream, typename Const_Buffers, typename Error_Handler>
-  std::size_t write(impl_type& impl, Stream& next_layer,
+  std::size_t write_some(impl_type& impl, Stream& next_layer,
       const Const_Buffers& buffers, Error_Handler error_handler)
   {
     boost::function<int (SSL*)> send_func =
@@ -312,7 +312,7 @@ public:
 
   // Start an asynchronous write.
   template <typename Stream, typename Const_Buffers, typename Handler>
-  void async_write(impl_type& impl, Stream& next_layer,
+  void async_write_some(impl_type& impl, Stream& next_layer,
       const Const_Buffers& buffers, Handler handler)
   {
     typedef io_handler<Stream, Handler> send_handler;
@@ -345,7 +345,7 @@ public:
 
   // Read some data from the stream.
   template <typename Stream, typename Mutable_Buffers, typename Error_Handler>
-  std::size_t read(impl_type& impl, Stream& next_layer,
+  std::size_t read_some(impl_type& impl, Stream& next_layer,
       const Mutable_Buffers& buffers, Error_Handler error_handler)
   {
     boost::function<int (SSL*)> recv_func =
@@ -363,7 +363,7 @@ public:
 
   // Start an asynchronous read.
   template <typename Stream, typename Mutable_Buffers, typename Handler>
-  void async_read(impl_type& impl, Stream& next_layer,
+  void async_read_some(impl_type& impl, Stream& next_layer,
       const Mutable_Buffers& buffers, Handler handler)
   {
     typedef io_handler<Stream, Handler> recv_handler;

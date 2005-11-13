@@ -96,7 +96,7 @@ void ipv4_host_resolver_test()
   resolver.get_local_host(h1);
 
   ipv4::host h2;
-  resolver.get_local_host(h2, throw_error_if(the_error != error::success));
+  resolver.get_local_host(h2, throw_error());
 
   BOOST_CHECK(test_if_hosts_equal(h1, h2));
 
@@ -104,8 +104,7 @@ void ipv4_host_resolver_test()
   resolver.get_host_by_address(h3, h1.address(0));
 
   ipv4::host h4;
-  resolver.get_host_by_address(h4, h1.address(0),
-      throw_error_if(the_error != error::success));
+  resolver.get_host_by_address(h4, h1.address(0), throw_error());
 
   BOOST_CHECK(test_if_hosts_equal(h3, h4));
   BOOST_CHECK(test_if_addresses_intersect(h1, h3));
@@ -114,8 +113,7 @@ void ipv4_host_resolver_test()
   resolver.get_host_by_name(h5, h1.name());
 
   ipv4::host h6;
-  resolver.get_host_by_name(h6, h1.name(),
-      throw_error_if(the_error != error::success));
+  resolver.get_host_by_name(h6, h1.name(), throw_error());
 
   BOOST_CHECK(test_if_hosts_equal(h5, h6));
   BOOST_CHECK(test_if_addresses_intersect(h1, h5));

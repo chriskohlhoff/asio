@@ -22,7 +22,7 @@ asio::stream_socket& connection::socket()
 
 void connection::start()
 {
-  asio::async_read(socket_, asio::buffer(buffer_),
+  socket_.async_read_some(asio::buffer(buffer_),
       boost::bind(&connection::handle_read, shared_from_this(),
         asio::placeholders::error,
         asio::placeholders::bytes_transferred));
@@ -36,7 +36,7 @@ void connection::stop()
 void connection::handle_read(const asio::error& e,
     std::size_t bytes_transferred)
 {
-  if (!e && bytes_transferred > 0)
+  if (!e)
   {
     boost::tribool result;
     boost::tie(result, boost::tuples::ignore) = request_parser_.parse(
@@ -45,20 +45,20 @@ void connection::handle_read(const asio::error& e,
     if (result)
     {
       request_handler_.handle_request(request_, reply_);
-      asio::async_write_n(socket_, reply_.to_buffers(),
+      asio::async_write(socket_, reply_.to_buffers(),
           boost::bind(&connection::handle_write, shared_from_this(),
             asio::placeholders::error));
     }
     else if (!result)
     {
       reply_ = reply::stock_reply(reply::bad_request);
-      asio::async_write_n(socket_, reply_.to_buffers(),
+      asio::async_write(socket_, reply_.to_buffers(),
           boost::bind(&connection::handle_write, shared_from_this(),
             asio::placeholders::error));
     }
     else
     {
-      asio::async_read(socket_, asio::buffer(buffer_),
+      socket_.async_read_some(asio::buffer(buffer_),
           boost::bind(&connection::handle_read, shared_from_this(),
             asio::placeholders::error,
             asio::placeholders::bytes_transferred));

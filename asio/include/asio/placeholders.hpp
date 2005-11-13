@@ -39,43 +39,21 @@ static inline boost::arg<2> bytes_transferred()
   return boost::arg<2>();
 }
 
-static inline boost::arg<2> last_bytes_transferred()
-{
-  return boost::arg<2>();
-}
-
-static inline boost::arg<3> total_bytes_transferred()
-{
-  return boost::arg<3>();
-}
-
 #elif defined(_MSC_VER) && (_MSC_VER < 1400)
 
 static boost::arg<1> error;
 static boost::arg<2> bytes_transferred;
-static boost::arg<2> last_bytes_transferred;
-static boost::arg<3> total_bytes_transferred;
 
 #else
 
-/// An argument placeholder, for use with \ref boost_bind, that corresponds to
+/// An argument placeholder, for use with @ref boost_bind, that corresponds to
 /// the error argument of a handler for any of the asynchronous functions.
 boost::arg<1> error;
 
-/// An argument placeholder, for use with \ref boost_bind, that corresponds to
+/// An argument placeholder, for use with @ref boost_bind, that corresponds to
 /// the bytes_transferred argument of a handler for asynchronous functions such
-/// as asio::async_write or asio::stream_socket::async_write.
+/// as asio::async_write or asio::stream_socket::async_write_some.
 boost::arg<2> bytes_transferred;
-
-/// An argument placeholder, for use with \ref boost_bind, that corresponds to
-/// the last_bytes_transferred argument of a handler for asynchronous functions
-/// such as asio::async_write_n or asio::async_read_at_least_n.
-boost::arg<2> last_bytes_transferred;
-
-/// An argument placeholder, for use with \ref boost_bind, that corresponds to
-/// the total_bytes_transferred argument of a handler for asynchronous functions
-/// such as asio::async_write_n or asio::async_read_at_least_n.
-boost::arg<3> total_bytes_transferred;
 
 #endif
 

@@ -27,16 +27,20 @@ public:
   // Read.
   std::streamsize read(char* s, std::streamsize n)
   {
-    size_t bytes_read = socket_->read(asio::buffer(s, n));
-    if (bytes_read == 0)
+    asio::error error;
+    size_t bytes_read = socket_->read_some(
+        asio::buffer(s, n), asio::assign_error(error));
+    if (error == asio::error::eof)
       return -1;
+    else if (error)
+      throw error;
     return bytes_read;
   }
 
   // Write.
   std::streamsize write(const char* s, std::streamsize n)
   {
-    return socket_->write(asio::buffer(s, n));
+    return socket_->write_some(asio::buffer(s, n));
   }
 
 private:

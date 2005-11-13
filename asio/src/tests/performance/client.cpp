@@ -91,12 +91,11 @@ private:
   void handle_connect(const error& err)
   {
     ++unwritten_count_;
-    async_write_n(socket_, buffer(write_data_, block_size_),
+    async_write(socket_, buffer(write_data_, block_size_),
         dispatcher_.wrap(
           boost::bind(&session::handle_write, this, placeholders::error,
-            placeholders::last_bytes_transferred,
-            placeholders::total_bytes_transferred)));
-    socket_.async_read(buffer(read_data_, block_size_),
+            placeholders::bytes_transferred)));
+    socket_.async_read_some(buffer(read_data_, block_size_),
         dispatcher_.wrap(
           boost::bind(&session::handle_read, this, placeholders::error,
             placeholders::bytes_transferred)));
@@ -104,7 +103,7 @@ private:
 
   void handle_read(const error& err, size_t length)
   {
-    if (!err && length > 0)
+    if (!err)
     {
       bytes_read_ += length;
 
@@ -113,12 +112,11 @@ private:
       if (unwritten_count_ == 1)
       {
         std::swap(read_data_, write_data_);
-        async_write_n(socket_, buffer(write_data_, read_data_length_),
+        async_write(socket_, buffer(write_data_, read_data_length_),
             dispatcher_.wrap(
               boost::bind(&session::handle_write, this, placeholders::error,
-                placeholders::last_bytes_transferred,
-                placeholders::total_bytes_transferred)));
-        socket_.async_read(buffer(read_data_, block_size_),
+                placeholders::bytes_transferred)));
+        socket_.async_read_some(buffer(read_data_, block_size_),
             dispatcher_.wrap(
               boost::bind(&session::handle_read, this, placeholders::error,
                 placeholders::bytes_transferred)));
@@ -126,22 +124,21 @@ private:
     }
   }
 
-  void handle_write(const error& err, size_t last_length, size_t total_length)
+  void handle_write(const error& err, size_t length)
   {
-    if (!err && last_length > 0)
+    if (!err && length > 0)
     {
-      bytes_written_ += total_length;
+      bytes_written_ += length;
 
       --unwritten_count_;
       if (unwritten_count_ == 1)
       {
         std::swap(read_data_, write_data_);
-        async_write_n(socket_, buffer(write_data_, read_data_length_),
+        async_write(socket_, buffer(write_data_, read_data_length_),
             dispatcher_.wrap(
               boost::bind(&session::handle_write, this, placeholders::error,
-                placeholders::last_bytes_transferred,
-                placeholders::total_bytes_transferred)));
-        socket_.async_read(buffer(read_data_, block_size_),
+                placeholders::bytes_transferred)));
+        socket_.async_read_some(buffer(read_data_, block_size_),
             dispatcher_.wrap(
               boost::bind(&session::handle_read, this, placeholders::error,
                 placeholders::bytes_transferred)));

@@ -25,7 +25,8 @@
 #include <boost/type_traits.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/default_error_handler.hpp"
+#include "asio/error.hpp"
+#include "asio/error_handler.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/ssl/basic_context.hpp"
 #include "asio/ssl/stream_base.hpp"
@@ -50,7 +51,7 @@ namespace ssl {
  * asio::ssl::stream<asio::stream_socket> sock(demuxer, context); @endcode
  *
  * @par Concepts:
- * Async_Object, Async_Read_Stream, Async_Write_Stream, Stream,
+ * Async_Object, Async_Read_Stream, Async_Write_Stream, Error_Source, Stream,
  * Sync_Read_Stream, Sync_Write_Stream.
  */
 template <typename Stream, typename Service = stream_service<> >
@@ -67,6 +68,9 @@ public:
 
   /// The demuxer type for this asynchronous type.
   typedef typename next_layer_type::demuxer_type demuxer_type;
+
+  /// The type used for reporting errors.
+  typedef typename next_layer_type::error_type error_type;
 
   /// The type of the service that will be used to provide stream operations.
   typedef Service service_type;
@@ -160,7 +164,7 @@ public:
    */
   void handshake(handshake_type type)
   {
-    service_.handshake(impl_, next_layer_, type, default_error_handler());
+    service_.handshake(impl_, next_layer_, type, throw_error());
   }
 
   /// Perform SSL handshaking.
@@ -214,7 +218,7 @@ public:
    */
   void shutdown()
   {
-    service_.shutdown(impl_, next_layer_, default_error_handler());
+    service_.shutdown(impl_, next_layer_, throw_error());
   }
 
   /// Shut down SSL on the stream.
@@ -255,29 +259,31 @@ public:
 
   /// Write some data to the stream.
   /**
-   * This function is used to write data to the stream. The function call will
-   * block until the data has been written successfully or an error occurs.
+   * This function is used to write data on the stream. The function call will
+   * block until one or more bytes of data has been written successfully, or
+   * until an error occurs.
    *
-   * @param buffers The data to be written to the stream.
+   * @param buffers The data to be written.
    *
    * @returns The number of bytes written.
    *
    * @throws asio::error Thrown on failure.
    *
-   * @note The write operation may not transmit all of the data to the peer.
-   * Consider using the asio::write_n() function if you need to ensure that all
+   * @note The write_some operation may not transmit all of the data to the
+   * peer. Consider using the @ref write function if you need to ensure that all
    * data is written before the blocking operation completes.
    */
   template <typename Const_Buffers>
-  std::size_t write(const Const_Buffers& buffers)
+  std::size_t write_some(const Const_Buffers& buffers)
   {
-    return service_.write(impl_, next_layer_, buffers, default_error_handler());
+    return service_.write_some(impl_, next_layer_, buffers, throw_error());
   }
 
   /// Write some data to the stream.
   /**
-   * This function is used to write data to the stream. The function call will
-   * block until the data has been written successfully or an error occurs.
+   * This function is used to write data on the stream. The function call will
+   * block until one or more bytes of data has been written successfully, or
+   * until an error occurs.
    *
    * @param buffers The data to be written to the stream.
    *
@@ -285,26 +291,27 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::error& error // Result of operation
+   *   const asio::error& error // Result of operation.
    * ); @endcode
    *
-   * @returns The number of bytes written.
-   * cleanly.
+   * @returns The number of bytes written. Returns 0 if an error occurred and
+   * the error handler did not throw an exception.
    *
-   * @note The write operation may not transmit all of the data to the peer.
-   * Consider using the asio::write_n() function if you need to ensure that all
+   * @note The write_some operation may not transmit all of the data to the
+   * peer. Consider using the @ref write function if you need to ensure that all
    * data is written before the blocking operation completes.
    */
   template <typename Const_Buffers, typename Error_Handler>
-  std::size_t write(const Const_Buffers& buffers, Error_Handler error_handler)
+  std::size_t write_some(const Const_Buffers& buffers,
+      Error_Handler error_handler)
   {
-    return service_.write(impl_, next_layer_, buffers, error_handler);
+    return service_.write_some(impl_, next_layer_, buffers, error_handler);
   }
 
   /// Start an asynchronous write.
   /**
-   * This function is used to asynchronously write data to the stream. The
-   * function call always returns immediately.
+   * This function is used to asynchronously write one or more bytes of data to
+   * the stream. The function call always returns immediately.
    *
    * @param buffers The data to be written to the stream. Although the buffers
    * object may be copied as necessary, ownership of the underlying buffers is
@@ -315,45 +322,47 @@ public:
    * Copies will be made of the handler as required. The equivalent function
    * signature of the handler must be:
    * @code void handler(
-   *   const asio::error& error,     // Result of operation
-   *   std::size_t bytes_transferred // Number of bytes written
+   *   const asio::error& error,     // Result of operation.
+   *   std::size_t bytes_transferred // Number of bytes written.
    * ); @endcode
    *
-   * @note The write operation may not transmit all of the data to the peer.
-   * Consider using the asio::async_write_n() function if you need to ensure
-   * that all data is written before the asynchronous operation completes.
+   * @note The async_write_some operation may not transmit all of the data to
+   * the peer. Consider using the @ref async_write function if you need to
+   * ensure that all data is written before the blocking operation completes.
    */
   template <typename Const_Buffers, typename Handler>
-  void async_write(const Const_Buffers& buffers, Handler handler)
+  void async_write_some(const Const_Buffers& buffers, Handler handler)
   {
-    service_.async_write(impl_, next_layer_, buffers, handler);
+    service_.async_write_some(impl_, next_layer_, buffers, handler);
   }
 
   /// Read some data from the stream.
   /**
    * This function is used to read data from the stream. The function call will
-   * block until data has been read successfully or an error occurs.
+   * block until one or more bytes of data has been read successfully, or until
+   * an error occurs.
    *
    * @param buffers The buffers into which the data will be read.
    *
-   * @returns The number of bytes read or 0 if the stream was closed cleanly.
+   * @returns The number of bytes read.
    *
    * @throws asio::error Thrown on failure.
    *
-   * @note The read operation may not read all of the requested number of bytes.
-   * Consider using the asio::read_n() function if you need to ensure that the
+   * @note The read_some operation may not read all of the requested number of
+   * bytes. Consider using the @ref read function if you need to ensure that the
    * requested amount of data is read before the blocking operation completes.
    */
   template <typename Mutable_Buffers>
-  std::size_t read(const Mutable_Buffers& buffers)
+  std::size_t read_some(const Mutable_Buffers& buffers)
   {
-    return service_.read(impl_, next_layer_, buffers, default_error_handler());
+    return service_.read_some(impl_, next_layer_, buffers, throw_error());
   }
 
   /// Read some data from the stream.
   /**
    * This function is used to read data from the stream. The function call will
-   * block until data has been read successfully or an error occurs.
+   * block until one or more bytes of data has been read successfully, or until
+   * an error occurs.
    *
    * @param buffers The buffers into which the data will be read.
    *
@@ -361,26 +370,27 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::error& error // Result of operation
+   *   const asio::error& error // Result of operation.
    * ); @endcode
    *
-   * @returns The number of bytes read or 0 if the connection was closed
-   * cleanly.
+   * @returns The number of bytes read. Returns 0 if an error occurred and the
+   * error handler did not throw an exception.
    *
-   * @note The read operation may not read all of the requested number of bytes.
-   * Consider using the asio::read_n() function if you need to ensure that the
+   * @note The read_some operation may not read all of the requested number of
+   * bytes. Consider using the @ref read function if you need to ensure that the
    * requested amount of data is read before the blocking operation completes.
    */
   template <typename Mutable_Buffers, typename Error_Handler>
-  std::size_t read(const Mutable_Buffers& buffers, Error_Handler error_handler)
+  std::size_t read_some(const Mutable_Buffers& buffers,
+      Error_Handler error_handler)
   {
-    return service_.read(impl_, next_layer_, buffers, error_handler);
+    return service_.read_some(impl_, next_layer_, buffers, error_handler);
   }
 
   /// Start an asynchronous read.
   /**
-   * This function is used to asynchronously read data from the stream. The
-   * function call always returns immediately.
+   * This function is used to asynchronously read one or more bytes of data from
+   * the stream. The function call always returns immediately.
    *
    * @param buffers The buffers into which the data will be read. Although the
    * buffers object may be copied as necessary, ownership of the underlying
@@ -391,19 +401,19 @@ public:
    * Copies will be made of the handler as required. The equivalent function
    * signature of the handler must be:
    * @code void handler(
-   *   const asio::error& error,     // Result of operation
-   *   std::size_t bytes_transferred // Number of bytes read
+   *   const asio::error& error,     // Result of operation.
+   *   std::size_t bytes_transferred // Number of bytes read.
    * ); @endcode
    *
-   * @note The read operation may not read all of the requested number of bytes.
-   * Consider using the asio::async_read_n() function if you need to ensure that
-   * the requested amount of data is read before the asynchronous operation
-   * completes.
+   * @note The async_read_some operation may not read all of the requested
+   * number of bytes. Consider using the @ref async_read function if you need to
+   * ensure that the requested amount of data is read before the asynchronous
+   * operation completes.
    */
   template <typename Mutable_Buffers, typename Handler>
-  void async_read(const Mutable_Buffers& buffers, Handler handler)
+  void async_read_some(const Mutable_Buffers& buffers, Handler handler)
   {
-    service_.async_read(impl_, next_layer_, buffers, handler);
+    service_.async_read_some(impl_, next_layer_, buffers, handler);
   }
 
   /// Peek at the incoming data on the stream.
@@ -414,15 +424,14 @@ public:
    *
    * @param buffers The buffers into which the data will be read.
    *
-   * @returns The number of bytes read or 0 if the connection was closed
-   * cleanly.
+   * @returns The number of bytes read.
    *
    * @throws asio::error Thrown on failure.
    */
   template <typename Mutable_Buffers>
   std::size_t peek(const Mutable_Buffers& buffers)
   {
-    return service_.peek(impl_, next_layer_, buffers, default_error_handler());
+    return service_.peek(impl_, next_layer_, buffers, throw_error());
   }
 
   /// Peek at the incoming data on the stream.
@@ -437,11 +446,11 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::error& error // Result of operation
+   *   const asio::error& error // Result of operation.
    * ); @endcode
    *
-   * @returns The number of bytes read or 0 if the connection was closed
-   * cleanly.
+   * @returns The number of bytes read. Returns 0 if an error occurred and the
+   * error handler did not throw an exception.
    */
   template <typename Mutable_Buffers, typename Error_Handler>
   std::size_t peek(const Mutable_Buffers& buffers, Error_Handler error_handler)
@@ -460,7 +469,7 @@ public:
    */
   std::size_t in_avail()
   {
-    return service_.in_avail(impl_, next_layer_, default_error_handler());
+    return service_.in_avail(impl_, next_layer_, throw_error());
   }
 
   /// Determine the amount of data that may be read without blocking.

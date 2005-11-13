@@ -15,11 +15,11 @@ noinst_PROGRAMS = \
 	tests/unit/buffered_stream_test \
 	tests/unit/buffered_write_stream_test \
 	tests/unit/buffer_test \
+	tests/unit/completion_condition_test \
 	tests/unit/datagram_socket_service_test \
 	tests/unit/datagram_socket_test \
 	tests/unit/deadline_timer_service_test \
 	tests/unit/deadline_timer_test \
-	tests/unit/default_error_handler_test \
 	tests/unit/demuxer_service_test \
 	tests/unit/demuxer_test \
 	tests/unit/error_handler_test \
@@ -39,7 +39,6 @@ noinst_PROGRAMS = \
 	tests/unit/is_write_buffered_test \
 	tests/unit/locking_dispatcher_service_test \
 	tests/unit/locking_dispatcher_test \
-	tests/unit/null_error_handler_test \
 	tests/unit/placeholders_test \
 	tests/unit/read_test \
 	tests/unit/service_factory_test \
@@ -107,11 +106,11 @@ TESTS = \
 	tests/unit/buffered_stream_test \
 	tests/unit/buffered_write_stream_test \
 	tests/unit/buffer_test \
+	tests/unit/completion_condition_test \
 	tests/unit/datagram_socket_service_test \
 	tests/unit/datagram_socket_test \
 	tests/unit/deadline_timer_service_test \
 	tests/unit/deadline_timer_test \
-	tests/unit/default_error_handler_test \
 	tests/unit/demuxer_service_test \
 	tests/unit/demuxer_test \
 	tests/unit/error_handler_test \
@@ -131,7 +130,6 @@ TESTS = \
 	tests/unit/is_write_buffered_test \
 	tests/unit/locking_dispatcher_service_test \
 	tests/unit/locking_dispatcher_test \
-	tests/unit/null_error_handler_test \
 	tests/unit/placeholders_test \
 	tests/unit/read_test \
 	tests/unit/service_factory_test \
@@ -188,8 +186,8 @@ tests_unit_is_write_buffered_test_SOURCES = tests/unit/is_write_buffered_test.cp
 tests_unit_basic_datagram_socket_test_SOURCES = tests/unit/basic_datagram_socket_test.cpp
 tests_unit_deadline_timer_test_SOURCES = tests/unit/deadline_timer_test.cpp
 tests_unit_buffer_test_SOURCES = tests/unit/buffer_test.cpp
+tests_unit_completion_condition_test_SOURCES = tests/unit/completion_condition_test.cpp
 tests_unit_error_handler_test_SOURCES = tests/unit/error_handler_test.cpp
-tests_unit_null_error_handler_test_SOURCES = tests/unit/null_error_handler_test.cpp
 tests_unit_basic_deadline_timer_test_SOURCES = tests/unit/basic_deadline_timer_test.cpp
 tests_unit_basic_demuxer_test_SOURCES = tests/unit/basic_demuxer_test.cpp
 tests_unit_basic_locking_dispatcher_test_SOURCES = tests/unit/basic_locking_dispatcher_test.cpp
@@ -200,7 +198,6 @@ tests_unit_buffered_stream_test_SOURCES = tests/unit/buffered_stream_test.cpp
 tests_unit_buffered_write_stream_test_SOURCES = tests/unit/buffered_write_stream_test.cpp
 tests_unit_datagram_socket_service_test_SOURCES = tests/unit/datagram_socket_service_test.cpp
 tests_unit_deadline_timer_service_test_SOURCES = tests/unit/deadline_timer_service_test.cpp
-tests_unit_default_error_handler_test_SOURCES = tests/unit/default_error_handler_test.cpp
 tests_unit_demuxer_service_test_SOURCES = tests/unit/demuxer_service_test.cpp
 tests_unit_error_test_SOURCES = tests/unit/error_test.cpp
 tests_unit_io_control_test_SOURCES = tests/unit/io_control_test.cpp

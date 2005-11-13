@@ -40,12 +40,11 @@ public:
       std::cin.getline(request_, max_length);
       size_t request_length = strlen(request_);
 
-      asio::async_write_n(socket_,
+      asio::async_write(socket_,
           asio::buffer(request_, request_length),
           boost::bind(&client::handle_write, this,
             asio::placeholders::error,
-            asio::placeholders::last_bytes_transferred,
-            asio::placeholders::total_bytes_transferred));
+            asio::placeholders::bytes_transferred));
     }
     else
     {
@@ -53,16 +52,15 @@ public:
     }
   }
 
-  void handle_write(const asio::error& error,
-      size_t last_bytes_transferred, size_t total_bytes_transferred)
+  void handle_write(const asio::error& error, size_t bytes_transferred)
   {
-    if (!error && last_bytes_transferred > 0)
+    if (!error)
     {
-      asio::async_read_n(socket_,
-          asio::buffer(reply_, total_bytes_transferred),
+      asio::async_read(socket_,
+          asio::buffer(reply_, bytes_transferred),
           boost::bind(&client::handle_read, this,
             asio::placeholders::error,
-            asio::placeholders::total_bytes_transferred));
+            asio::placeholders::bytes_transferred));
     }
     else
     {
@@ -70,13 +68,12 @@ public:
     }
   }
 
-  void handle_read(const asio::error& error,
-      size_t total_bytes_transferred)
+  void handle_read(const asio::error& error, size_t bytes_transferred)
   {
     if (!error)
     {
       std::cout << "Reply: ";
-      std::cout.write(reply_, total_bytes_transferred);
+      std::cout.write(reply_, bytes_transferred);
       std::cout << "\n";
     }
     else

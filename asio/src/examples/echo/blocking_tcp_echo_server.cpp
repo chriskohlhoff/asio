@@ -12,12 +12,20 @@ void session(stream_socket_ptr sock)
 {
   try
   {
-    char data[max_length];
+    for (;;)
+    {
+      char data[max_length];
 
-    size_t length;
-    while ((length = sock->read(asio::buffer(data, max_length))) > 0)
-      if (asio::write_n(*sock, asio::buffer(data, length)) == 0)
-        break;
+      asio::error error;
+      size_t length = sock->read_some(
+          asio::buffer(data), asio::assign_error(error));
+      if (error == asio::error::eof)
+        break; // Connection closed cleanly by peer.
+      else if (error)
+        throw error; // Some other error.
+
+      asio::write(*sock, asio::buffer(data, length));
+    }
   }
   catch (asio::error& e)
   {
@@ -36,12 +44,11 @@ void server(asio::demuxer& d, short port)
   {
     stream_socket_ptr sock(new asio::stream_socket(d));
     asio::error error;
-    a.accept(*sock,
-        asio::throw_error_if(
-          asio::the_error != asio::error::connection_aborted)
-        || asio::set_error(error));
+    a.accept(*sock, asio::assign_error(error));
     if (!error)
       asio::thread t(boost::bind(session, sock));
+    else if (error != asio::error::connection_aborted)
+      throw error;
   }
 }
 

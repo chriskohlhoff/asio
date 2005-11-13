@@ -21,6 +21,7 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/error.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/detail/wrapped_handler.hpp"
 
@@ -39,7 +40,7 @@ namespace asio {
  * @e Shared @e objects: Safe.
  *
  * @par Concepts:
- * Async_Object, Dispatcher.
+ * Async_Object, Dispatcher, Error_Source.
  */
 template <typename Service>
 class basic_locking_dispatcher
@@ -55,6 +56,9 @@ public:
 
   /// The demuxer type for this dispatcher.
   typedef typename service_type::demuxer_type demuxer_type;
+
+  /// The type used for reporting errors.
+  typedef asio::error error_type;
 
   /// Constructor.
   /**

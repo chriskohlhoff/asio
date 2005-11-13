@@ -21,9 +21,18 @@ int main(int argc, char* argv[])
     asio::stream_socket socket(demuxer);
     socket.connect(remote_endpoint);
 
-    char buf[128];
-    while (size_t len = socket.read(asio::buffer(buf, sizeof(buf))))
+    for (;;)
+    {
+      char buf[128];
+      asio::error error;
+      size_t len = socket.read_some(
+          asio::buffer(buf), asio::assign_error(error));
+      if (error == asio::error::eof)
+        break; // Connection closed cleanly by peer.
+      else if (error)
+        throw error; // Some other error.
       std::cout.write(buf, len);
+    }
   }
   catch (asio::error& e)
   {

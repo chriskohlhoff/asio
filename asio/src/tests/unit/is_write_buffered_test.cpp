@@ -24,6 +24,8 @@ class test_stream
 public:
   typedef asio::demuxer demuxer_type;
 
+  typedef asio::error error_type;
+
   typedef test_stream lowest_layer_type;
 
   test_stream(asio::demuxer& d)

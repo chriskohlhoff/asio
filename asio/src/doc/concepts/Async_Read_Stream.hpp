@@ -14,16 +14,18 @@
  * asio::basic_stream_socket @n
  * asio::buffered_read_stream @n
  * asio::buffered_write_stream @n
- * asio::buffered_stream
+ * asio::buffered_stream @n
+ * asio::ssl::stream
  */
 class Async_Read_Stream
-  : public Async_Object
+  : public Async_Object,
+    public Error_Source
 {
 public:
   /// Start an asynchronous read.
   /**
-   * This function is used to asynchronously read data from the stream. The
-   * function call always returns immediately.
+   * This function is used to asynchronously read one or more bytes of data from
+   * the stream. The function call always returns immediately.
    *
    * @param buffers The buffers into which the data will be read. Although the
    * buffers object may be copied as necessary, ownership of the underlying
@@ -34,10 +36,10 @@ public:
    * Copies will be made of the handler as required. The equivalent function
    * signature of the handler must be:
    * @code void handler(
-   *   const implementation_defined& error, // Result of operation
-   *   std::size_t bytes_transferred        // Number of bytes read
+   *   const Async_Read_Stream::error_type& error, // Result of operation.
+   *   std::size_t bytes_transferred               // Number of bytes read.
    * ); @endcode
    */
   template <typename Mutable_Buffers, typename Handler>
-  void async_read(const Mutable_Buffers& buffers, Handler handler);
+  void async_read_some(const Mutable_Buffers& buffers, Handler handler);
 };

@@ -46,7 +46,7 @@ public:
   void start()
   {
     ++op_count_;
-    socket_.async_read(buffer(read_data_, block_size_),
+    socket_.async_read_some(buffer(read_data_, block_size_),
         dispatcher_.wrap(
           boost::bind(&session::handle_read, this, placeholders::error,
             placeholders::bytes_transferred)));
@@ -56,7 +56,7 @@ public:
   {
     --op_count_;
 
-    if (!err && length > 0)
+    if (!err)
     {
       read_data_length_ = length;
       ++unsent_count_;
@@ -64,11 +64,11 @@ public:
       {
         op_count_ += 2;
         std::swap(read_data_, write_data_);
-        async_write_n(socket_, buffer(write_data_, read_data_length_),
+        async_write(socket_, buffer(write_data_, read_data_length_),
             dispatcher_.wrap(
               boost::bind(&session::handle_write, this, placeholders::error,
-                placeholders::last_bytes_transferred)));
-        socket_.async_read(buffer(read_data_, block_size_),
+                placeholders::bytes_transferred)));
+        socket_.async_read_some(buffer(read_data_, block_size_),
             dispatcher_.wrap(
               boost::bind(&session::handle_read, this, placeholders::error,
                 placeholders::bytes_transferred)));
@@ -83,18 +83,18 @@ public:
   {
     --op_count_;
 
-    if (!err && last_length > 0)
+    if (!err)
     {
       --unsent_count_;
       if (unsent_count_ == 1)
       {
         op_count_ += 2;
         std::swap(read_data_, write_data_);
-        async_write_n(socket_, buffer(write_data_, read_data_length_),
+        async_write(socket_, buffer(write_data_, read_data_length_),
             dispatcher_.wrap(
               boost::bind(&session::handle_write, this, placeholders::error,
-                placeholders::last_bytes_transferred)));
-        socket_.async_read(buffer(read_data_, block_size_),
+                placeholders::bytes_transferred)));
+        socket_.async_read_some(buffer(read_data_, block_size_),
             dispatcher_.wrap(
               boost::bind(&session::handle_read, this, placeholders::error,
                 placeholders::bytes_transferred)));

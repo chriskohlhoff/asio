@@ -13,11 +13,11 @@ nobase_include_HEADERS = \
 	asio/buffered_stream.hpp \
 	asio/buffered_write_stream_fwd.hpp \
 	asio/buffered_write_stream.hpp \
+	asio/completion_condition.hpp \
 	asio/datagram_socket.hpp \
 	asio/datagram_socket_service.hpp \
 	asio/deadline_timer.hpp \
 	asio/deadline_timer_service.hpp \
-	asio/default_error_handler.hpp \
 	asio/demuxer.hpp \
 	asio/demuxer_service.hpp \
 	asio/detail/bind_handler.hpp \
@@ -88,10 +88,9 @@ nobase_include_HEADERS = \
 	asio/is_write_buffered.hpp \
 	asio/locking_dispatcher.hpp \
 	asio/locking_dispatcher_service.hpp \
-	asio/null_error_handler.hpp \
-	asio/pch.hpp \
 	asio/placeholders.hpp \
 	asio/read.hpp \
+	asio/read.ipp \
 	asio/service_factory.hpp \
 	asio/socket_acceptor.hpp \
 	asio/socket_acceptor_service.hpp \
@@ -114,7 +113,8 @@ nobase_include_HEADERS = \
 	asio/stream_socket_service.hpp \
 	asio/thread.hpp \
 	asio/time_traits.hpp \
-	asio/write.hpp
+	asio/write.hpp \
+	asio/write.ipp
 
 MAINTAINERCLEANFILES = \
 	$(srcdir)/Makefile.in

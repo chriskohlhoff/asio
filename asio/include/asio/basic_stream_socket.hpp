@@ -23,8 +23,8 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/default_error_handler.hpp"
-#include "asio/null_error_handler.hpp"
+#include "asio/error.hpp"
+#include "asio/error_handler.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_base.hpp"
 
@@ -42,7 +42,7 @@ namespace asio {
  * @e Shared @e objects: Unsafe.
  *
  * @par Concepts:
- * Async_Object, Async_Read_Stream, Async_Write_Stream, Stream,
+ * Async_Object, Async_Read_Stream, Async_Write_Stream, Error_Source, Stream,
  * Sync_Read_Stream, Sync_Write_Stream.
  */
 template <typename Service>
@@ -59,6 +59,9 @@ public:
 
   /// The demuxer type for this asynchronous type.
   typedef typename service_type::demuxer_type demuxer_type;
+
+  /// The type used for reporting errors.
+  typedef asio::error error_type;
 
   /// A basic_stream_socket is always the lowest layer.
   typedef basic_stream_socket<service_type> lowest_layer_type;
@@ -81,7 +84,7 @@ public:
   /// Destructor.
   ~basic_stream_socket()
   {
-    service_.close(impl_, null_error_handler());
+    service_.close(impl_, ignore_error());
   }
 
   /// Get the demuxer associated with the asynchronous object.
@@ -109,7 +112,7 @@ public:
   template <typename Protocol>
   void open(const Protocol& protocol)
   {
-    service_.open(impl_, protocol, default_error_handler());
+    service_.open(impl_, protocol, throw_error());
   }
 
   /// Open the socket using the specified protocol.
@@ -141,7 +144,7 @@ public:
    */
   void close()
   {
-    service_.close(impl_, default_error_handler());
+    service_.close(impl_, throw_error());
   }
 
   /// Close the socket.
@@ -212,7 +215,7 @@ public:
   template <typename Endpoint>
   void bind(const Endpoint& endpoint)
   {
-    service_.bind(impl_, endpoint, default_error_handler());
+    service_.bind(impl_, endpoint, throw_error());
   }
 
   /// Bind the socket to the given local endpoint.
@@ -250,7 +253,7 @@ public:
   template <typename Endpoint>
   void connect(const Endpoint& peer_endpoint)
   {
-    service_.connect(impl_, peer_endpoint, default_error_handler());
+    service_.connect(impl_, peer_endpoint, throw_error());
   }
 
   /// Connect a stream socket to the specified endpoint.
@@ -307,7 +310,7 @@ public:
   template <typename Socket_Option>
   void set_option(const Socket_Option& option)
   {
-    service_.set_option(impl_, option, default_error_handler());
+    service_.set_option(impl_, option, throw_error());
   }
 
   /// Set an option on the socket.
@@ -340,7 +343,7 @@ public:
   template <typename Socket_Option>
   void get_option(Socket_Option& option) const
   {
-    service_.get_option(impl_, option, default_error_handler());
+    service_.get_option(impl_, option, throw_error());
   }
 
   /// Get an option from the socket.
@@ -373,7 +376,7 @@ public:
   template <typename IO_Control_Command>
   void io_control(IO_Control_Command& command)
   {
-    service_.io_control(impl_, command, default_error_handler());
+    service_.io_control(impl_, command, throw_error());
   }
 
   /// Perform an IO control command on the socket.
@@ -407,7 +410,7 @@ public:
   template <typename Endpoint>
   void get_local_endpoint(Endpoint& endpoint) const
   {
-    service_.get_local_endpoint(impl_, endpoint, default_error_handler());
+    service_.get_local_endpoint(impl_, endpoint, throw_error());
   }
 
   /// Get the local endpoint of the socket.
@@ -443,7 +446,7 @@ public:
   template <typename Endpoint>
   void get_remote_endpoint(Endpoint& endpoint) const
   {
-    service_.get_remote_endpoint(impl_, endpoint, default_error_handler());
+    service_.get_remote_endpoint(impl_, endpoint, throw_error());
   }
 
   /// Get the remote endpoint of the socket.
@@ -478,14 +481,14 @@ public:
    */
   void shutdown(shutdown_type what)
   {
-    service_.shutdown(impl_, what, default_error_handler());
+    service_.shutdown(impl_, what, throw_error());
   }
 
   /// Send some data on the socket.
   /**
    * This function is used to send data on the stream socket. The function
-   * call will block until the data has been sent successfully or an error
-   * occurs.
+   * call will block until one or more bytes of the data has been sent
+   * successfully, or an until error occurs.
    *
    * @param buffers One or more data buffers to be sent on the socket.
    *
@@ -496,8 +499,8 @@ public:
    * @throws asio::error Thrown on failure.
    *
    * @note The send operation may not transmit all of the data to the peer.
-   * Consider using the asio::write_n() function if you need to ensure that all
-   * data is written before the blocking operation completes.
+   * Consider using the @ref write function if you need to ensure that all data
+   * is written before the blocking operation completes.
    *
    * @par Example:
    * To send a single data buffer use the @ref buffer function as follows:
@@ -509,14 +512,14 @@ public:
   template <typename Const_Buffers>
   std::size_t send(const Const_Buffers& buffers, message_flags flags)
   {
-    return service_.send(impl_, buffers, flags, default_error_handler());
+    return service_.send(impl_, buffers, flags, throw_error());
   }
 
   /// Send some data on the socket.
   /**
    * This function is used to send data on the stream socket. The function
-   * call will block until the data has been sent successfully or an error
-   * occurs.
+   * call will block until one or more bytes of the data has been sent
+   * successfully, or an until error occurs.
    *
    * @param buffers One or more data buffers to be sent on the socket.
    *
@@ -526,14 +529,15 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::error& error // Result of operation
+   *   const asio::error& error // Result of operation.
    * ); @endcode
    *
-   * @returns The number of bytes sent.
+   * @returns The number of bytes sent. Returns 0 if an error occurred and the
+   * error handler did not throw an exception.
    *
    * @note The send operation may not transmit all of the data to the peer.
-   * Consider using the asio::write_n() function if you need to ensure that all
-   * data is written before the blocking operation completes.
+   * Consider using the @ref write function if you need to ensure that all data
+   * is written before the blocking operation completes.
    */
   template <typename Const_Buffers, typename Error_Handler>
   std::size_t send(const Const_Buffers& buffers, message_flags flags,
@@ -558,13 +562,13 @@ public:
    * Copies will be made of the handler as required. The equivalent function
    * signature of the handler must be:
    * @code void handler(
-   *   const asio::error& error,     // Result of operation
-   *   std::size_t bytes_transferred // Number of bytes sent
+   *   const asio::error& error,     // Result of operation.
+   *   std::size_t bytes_transferred // Number of bytes sent.
    * ); @endcode
    *
    * @note The send operation may not transmit all of the data to the peer.
-   * Consider using the asio::async_write_n() function if you need to ensure
-   * that all data is written before the asynchronous operation completes.
+   * Consider using the @ref async_write function if you need to ensure that all
+   * data is written before the asynchronous operation completes.
    *
    * @par Example:
    * To send a single data buffer use the @ref buffer function as follows:
@@ -583,22 +587,21 @@ public:
   /// Receive some data on the socket.
   /**
    * This function is used to receive data on the stream socket. The function
-   * call will block until data has been received successfully or an error
-   * occurs.
+   * call will block until one or more bytes of data has been received
+   * successfully, or until an error occurs.
    *
    * @param buffers One or more buffers into which the data will be received.
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
-   * @returns The number of bytes received or 0 if the connection was closed
-   * cleanly.
+   * @returns The number of bytes received.
    *
-   * @throws asio::error Thrown on failure.
+   * @throws asio::error Thrown on failure. An error code of asio::error::eof
+   * indicates that the connection was closed by the peer.
    *
    * @note The receive operation may not receive all of the requested number of
-   * bytes. Consider using the asio::read_n() function if you need to ensure
-   * that the requested amount of data is read before the blocking operation
-   * completes.
+   * bytes. Consider using the @ref read function if you need to ensure that the
+   * requested amount of data is read before the blocking operation completes.
    *
    * @par Example:
    * To receive into a single data buffer use the @ref buffer function as
@@ -611,14 +614,14 @@ public:
   template <typename Mutable_Buffers>
   std::size_t receive(const Mutable_Buffers& buffers, message_flags flags)
   {
-    return service_.receive(impl_, buffers, flags, default_error_handler());
+    return service_.receive(impl_, buffers, flags, throw_error());
   }
 
   /// Receive some data on a connected socket.
   /**
-   * This function is used to receive data on the datagram socket. The function
-   * call will block until data has been received successfully or an error
-   * occurs.
+   * This function is used to receive data on the stream socket. The function
+   * call will block until one or more bytes of data has been received
+   * successfully, or until an error occurs.
    *
    * @param buffers One or more buffers into which the data will be received.
    *
@@ -631,11 +634,12 @@ public:
    *   const asio::error& error // Result of operation
    * ); @endcode
    *
-   * @returns The number of bytes received.
+   * @returns The number of bytes received. Returns 0 if an error occurred and
+   * the error handler did not throw an exception.
    *
-   * @note The receive operation can only be used with a connected socket. Use
-   * the receive_from function to receive data on an unconnected datagram
-   * socket.
+   * @note The receive operation may not receive all of the requested number of
+   * bytes. Consider using the @ref read function if you need to ensure that the
+   * requested amount of data is read before the blocking operation completes.
    */
   template <typename Mutable_Buffers, typename Error_Handler>
   std::size_t receive(const Mutable_Buffers& buffers, message_flags flags,
@@ -660,14 +664,14 @@ public:
    * completes. Copies will be made of the handler as required. The equivalent
    * function signature of the handler must be:
    * @code void handler(
-   *   const asio::error& error,     // Result of operation
-   *   std::size_t bytes_transferred // Number of bytes received
+   *   const asio::error& error,     // Result of operation.
+   *   std::size_t bytes_transferred // Number of bytes received.
    * ); @endcode
    *
    * @note The receive operation may not receive all of the requested number of
-   * bytes. Consider using the asio::async_read_n() function if you need to
-   * ensure that the requested amount of data is received before the
-   * asynchronous operation completes.
+   * bytes. Consider using the @ref async_read function if you need to ensure
+   * that the requested amount of data is received before the asynchronous
+   * operation completes.
    *
    * @par Example:
    * To receive into a single data buffer use the @ref buffer function as
@@ -687,35 +691,38 @@ public:
   /// Write some data to the socket.
   /**
    * This function is used to write data to the stream socket. The function call
-   * will block until the data has been written successfully or an error occurs.
+   * will block until one or more bytes of the data has been written
+   * successfully, or until an error occurs.
    *
    * @param buffers One or more data buffers to be written to the socket.
    *
    * @returns The number of bytes written.
    *
-   * @throws asio::error Thrown on failure.
+   * @throws asio::error Thrown on failure. An error code of asio::error::eof
+   * indicates that the connection was closed by the peer.
    *
-   * @note The write operation may not transmit all of the data to the peer.
-   * Consider using the asio::write_n() function if you need to ensure that all
-   * data is written before the blocking operation completes.
+   * @note The write_some operation may not transmit all of the data to the
+   * peer. Consider using the @ref write function if you need to ensure that
+   * all data is written before the blocking operation completes.
    *
    * @par Example:
    * To write a single data buffer use the @ref buffer function as follows:
-   * @code socket.write(asio::buffer(data, size)); @endcode
+   * @code socket.write_some(asio::buffer(data, size)); @endcode
    * See the @ref buffer documentation for information on writing multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
   template <typename Const_Buffers>
-  std::size_t write(const Const_Buffers& buffers)
+  std::size_t write_some(const Const_Buffers& buffers)
   {
-    return service_.send(impl_, buffers, 0, default_error_handler());
+    return service_.send(impl_, buffers, 0, throw_error());
   }
 
   /// Write some data to the socket.
   /**
    * This function is used to write data to the stream socket. The function call
-   * will block until the data has been written successfully or an error occurs.
+   * will block until one or more bytes of the data has been written
+   * successfully, or until an error occurs.
    *
    * @param buffers One or more data buffers to be written to the socket.
    *
@@ -723,17 +730,19 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::error& error // Result of operation
+   *   const asio::error& error // Result of operation.
    * ); @endcode
    *
-   * @returns The number of bytes written.
+   * @returns The number of bytes written. Returns 0 if an error occurred and
+   * the error handler did not throw an exception.
    *
-   * @note The write operation may not transmit all of the data to the peer.
-   * Consider using the asio::write_n() function if you need to ensure that all
-   * data is written before the blocking operation completes.
+   * @note The write_some operation may not transmit all of the data to the
+   * peer. Consider using the @ref write function if you need to ensure that
+   * all data is written before the blocking operation completes.
    */
   template <typename Const_Buffers, typename Error_Handler>
-  std::size_t write(const Const_Buffers& buffers, Error_Handler error_handler)
+  std::size_t write_some(const Const_Buffers& buffers,
+      Error_Handler error_handler)
   {
     return service_.send(impl_, buffers, 0, error_handler);
   }
@@ -752,23 +761,23 @@ public:
    * Copies will be made of the handler as required. The equivalent function
    * signature of the handler must be:
    * @code void handler(
-   *   const asio::error& error,     // Result of operation
-   *   std::size_t bytes_transferred // Number of bytes written
+   *   const asio::error& error,     // Result of operation.
+   *   std::size_t bytes_transferred // Number of bytes written.
    * ); @endcode
    *
    * @note The write operation may not transmit all of the data to the peer.
-   * Consider using the asio::async_write_n() function if you need to ensure
-   * that all data is written before the asynchronous operation completes.
+   * Consider using the @ref async_write function if you need to ensure that all
+   * data is written before the asynchronous operation completes.
    *
    * @par Example:
    * To write a single data buffer use the @ref buffer function as follows:
-   * @code socket.async_write(asio::buffer(data, size), handler); @endcode
+   * @code socket.async_write_some(asio::buffer(data, size), handler); @endcode
    * See the @ref buffer documentation for information on writing multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
   template <typename Const_Buffers, typename Handler>
-  void async_write(const Const_Buffers& buffers, Handler handler)
+  void async_write_some(const Const_Buffers& buffers, Handler handler)
   {
     service_.async_send(impl_, buffers, 0, handler);
   }
@@ -776,36 +785,39 @@ public:
   /// Read some data from the socket.
   /**
    * This function is used to read data from the stream socket. The function
-   * call will block until data has been read successfully or an error occurs.
+   * call will block until one or more bytes of data has been read successfully,
+   * or until an error occurs.
    *
    * @param buffers One or more buffers into which the data will be read.
    *
-   * @returns The number of bytes read or 0 if the connection was closed
-   * cleanly.
+   * @returns The number of bytes read.
    *
-   * @throws asio::error Thrown on failure.
+   * @throws asio::error Thrown on failure. An error code of asio::error::eof
+   * indicates that the connection was closed by the peer.
    *
-   * @note The read operation may not read all of the requested number of bytes.
-   * Consider using the asio::read_n() function if you need to ensure that the
-   * requested amount of data is read before the blocking operation completes.
+   * @note The read_some operation may not read all of the requested number of
+   * bytes. Consider using the @ref read function if you need to ensure that
+   * the requested amount of data is read before the blocking operation
+   * completes.
    *
    * @par Example:
    * To read into a single data buffer use the @ref buffer function as follows:
-   * @code socket.read(asio::buffer(data, size)); @endcode
+   * @code socket.read_some(asio::buffer(data, size)); @endcode
    * See the @ref buffer documentation for information on reading into multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
   template <typename Mutable_Buffers>
-  std::size_t read(const Mutable_Buffers& buffers)
+  std::size_t read_some(const Mutable_Buffers& buffers)
   {
-    return service_.receive(impl_, buffers, 0, default_error_handler());
+    return service_.receive(impl_, buffers, 0, throw_error());
   }
 
   /// Read some data from the socket.
   /**
    * This function is used to read data from the stream socket. The function
-   * call will block until data has been read successfully or an error occurs.
+   * call will block until one or more bytes of data has been read successfully,
+   * or until an error occurs.
    *
    * @param buffers One or more buffers into which the data will be read.
    *
@@ -813,18 +825,20 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::error& error // Result of operation
+   *   const asio::error& error // Result of operation.
    * ); @endcode
    *
-   * @returns The number of bytes read or 0 if the connection was closed
-   * cleanly.
+   * @returns The number of bytes read. Returns 0 if an error occurred and the
+   * error handler did not throw an exception.
    *
-   * @note The read operation may not read all of the requested number of bytes.
-   * Consider using the asio::read_n() function if you need to ensure that the
-   * requested amount of data is read before the blocking operation completes.
+   * @note The read_some operation may not read all of the requested number of
+   * bytes. Consider using the @ref read function if you need to ensure that
+   * the requested amount of data is read before the blocking operation
+   * completes.
    */
   template <typename Mutable_Buffers, typename Error_Handler>
-  std::size_t read(const Mutable_Buffers& buffers, Error_Handler error_handler)
+  std::size_t read_some(const Mutable_Buffers& buffers,
+      Error_Handler error_handler)
   {
     return service_.receive(impl_, buffers, 0, error_handler);
   }
@@ -843,13 +857,13 @@ public:
    * Copies will be made of the handler as required. The equivalent function
    * signature of the handler must be:
    * @code void handler(
-   *   const asio::error& error,     // Result of operation
-   *   std::size_t bytes_transferred // Number of bytes read
+   *   const asio::error& error,     // Result of operation.
+   *   std::size_t bytes_transferred // Number of bytes read.
    * ); @endcode
    *
    * @note The read operation may not read all of the requested number of bytes.
-   * Consider using the asio::async_read_n() function if you need to ensure that
-   * the requested amount of data is read before the asynchronous operation
+   * Consider using the @ref async_read function if you need to ensure that the
+   * requested amount of data is read before the asynchronous operation
    * completes.
    *
    * @par Example:
@@ -860,7 +874,7 @@ public:
    * std::vector.
    */
   template <typename Mutable_Buffers, typename Handler>
-  void async_read(const Mutable_Buffers& buffers, Handler handler)
+  void async_read_some(const Mutable_Buffers& buffers, Handler handler)
   {
     service_.async_receive(impl_, buffers, 0, handler);
   }
@@ -873,8 +887,7 @@ public:
    *
    * @param buffers One or more buffers into which the data will be read.
    *
-   * @returns The number of bytes read or 0 if the connection was closed
-   * cleanly.
+   * @returns The number of bytes read.
    *
    * @throws asio::error Thrown on failure.
    *
@@ -889,8 +902,7 @@ public:
   template <typename Mutable_Buffers>
   std::size_t peek(const Mutable_Buffers& buffers)
   {
-    return service_.receive(impl_, buffers, message_peek,
-        default_error_handler());
+    return service_.receive(impl_, buffers, message_peek, throw_error());
   }
 
   /// Peek at the incoming data on the stream socket.
@@ -905,11 +917,11 @@ public:
    * will be made of the handler as required. The equivalent function signature
    * of the handler must be:
    * @code void error_handler(
-   *   const asio::error& error // Result of operation
+   *   const asio::error& error // Result of operation.
    * ); @endcode
    *
-   * @returns The number of bytes read or 0 if the connection was closed
-   * cleanly.
+   * @returns The number of bytes read. Returns 0 if an error occurred and the
+   * error handler did not throw an exception.
    */
   template <typename Mutable_Buffers, typename Error_Handler>
   std::size_t peek(const Mutable_Buffers& buffers, Error_Handler error_handler)
@@ -929,7 +941,7 @@ public:
   std::size_t in_avail()
   {
     bytes_readable command;
-    service_.io_control(impl_, command, default_error_handler());
+    service_.io_control(impl_, command, throw_error());
     return command.get();
   }
 

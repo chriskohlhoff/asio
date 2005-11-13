@@ -22,7 +22,8 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/default_error_handler.hpp"
+#include "asio/error.hpp"
+#include "asio/error_handler.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/ipv4/address.hpp"
 #include "asio/ipv4/host.hpp"
@@ -40,6 +41,9 @@ namespace ipv4 {
  * @par Thread Safety:
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
+ *
+ * @par Concepts:
+ * Async_Object, Error_Source.
  */
 template <typename Service>
 class basic_host_resolver
@@ -55,6 +59,9 @@ public:
 
   /// The demuxer type for this asynchronous type.
   typedef typename service_type::demuxer_type demuxer_type;
+
+  /// The type used for reporting errors.
+  typedef asio::error error_type;
 
   /// Construct a basic_host_resolver.
   /**
@@ -74,6 +81,19 @@ public:
   ~basic_host_resolver()
   {
     service_.close(impl_);
+  }
+
+  /// Get the demuxer associated with the asynchronous object.
+  /**
+   * This function may be used to obtain the demuxer object that the host
+   * resolver uses to dispatch handlers for asynchronous operations.
+   *
+   * @return A reference to the demuxer object that host resolver will use to
+   * dispatch handlers. Ownership is not transferred to the caller.
+   */
+  demuxer_type& demuxer()
+  {
+    return service_.demuxer();
   }
 
   /// Open the host resolver.
@@ -102,7 +122,7 @@ public:
    */
   void get_local_host(host& h)
   {
-    service_.get_local_host(impl_, h, default_error_handler());
+    service_.get_local_host(impl_, h, throw_error());
   }
 
   /// Get host information for the local machine.
@@ -141,7 +161,7 @@ public:
    */
   void get_host_by_address(host& h, const address& addr)
   {
-    service_.get_host_by_address(impl_, h, addr, default_error_handler());
+    service_.get_host_by_address(impl_, h, addr, throw_error());
   }
 
   /// Get host information for a specified address.
@@ -210,7 +230,7 @@ public:
    */
   void get_host_by_name(host& h, const std::string& name)
   {
-    service_.get_host_by_name(impl_, h, name, default_error_handler());
+    service_.get_host_by_name(impl_, h, name, throw_error());
   }
 
   /// Get host information for a named host.

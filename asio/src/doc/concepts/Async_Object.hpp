@@ -18,7 +18,9 @@
  * asio::basic_stream_socket @n
  * asio::buffered_read_stream @n
  * asio::buffered_write_stream @n
- * asio::buffered_stream
+ * asio::buffered_stream @n
+ * asio::ipv4::basic_host_resolver @n
+ * asio::ssl::stream
  */
 class Async_Object
 {

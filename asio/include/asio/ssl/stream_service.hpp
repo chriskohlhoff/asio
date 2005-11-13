@@ -121,34 +121,34 @@ public:
 
   /// Write some data to the stream.
   template <typename Stream, typename Const_Buffers, typename Error_Handler>
-  std::size_t write(impl_type& impl, Stream& next_layer,
+  std::size_t write_some(impl_type& impl, Stream& next_layer,
       const Const_Buffers& buffers, Error_Handler error_handler)
   {
-    return service_impl_.write(impl, next_layer, buffers, error_handler);
+    return service_impl_.write_some(impl, next_layer, buffers, error_handler);
   }
 
   /// Start an asynchronous write.
   template <typename Stream, typename Const_Buffers, typename Handler>
-  void async_write(impl_type& impl, Stream& next_layer,
+  void async_write_some(impl_type& impl, Stream& next_layer,
       const Const_Buffers& buffers, Handler handler)
   {
-    service_impl_.async_write(impl, next_layer, buffers, handler);
+    service_impl_.async_write_some(impl, next_layer, buffers, handler);
   }
 
   /// Read some data from the stream.
   template <typename Stream, typename Mutable_Buffers, typename Error_Handler>
-  std::size_t read(impl_type& impl, Stream& next_layer,
+  std::size_t read_some(impl_type& impl, Stream& next_layer,
       const Mutable_Buffers& buffers, Error_Handler error_handler)
   {
-    return service_impl_.read(impl, next_layer, buffers, error_handler);
+    return service_impl_.read_some(impl, next_layer, buffers, error_handler);
   }
 
   /// Start an asynchronous read.
   template <typename Stream, typename Mutable_Buffers, typename Handler>
-  void async_read(impl_type& impl, Stream& next_layer,
+  void async_read_some(impl_type& impl, Stream& next_layer,
       const Mutable_Buffers& buffers, Handler handler)
   {
-    service_impl_.async_read(impl, next_layer, buffers, handler);
+    service_impl_.async_read_some(impl, next_layer, buffers, handler);
   }
 
   /// Peek at the incoming data on the stream.

@@ -4,8 +4,7 @@
 #include "asio.hpp"
 
 void handle_write(asio::stream_socket* socket, char* write_buf,
-    const asio::error& /*error*/, size_t /*last_bytes_transferred*/,
-    size_t /*total_bytes_transferred*/)
+    const asio::error& /*error*/, size_t /*bytes_transferred*/)
 {
   using namespace std; // For free.
   free(write_buf);
@@ -22,12 +21,11 @@ void handle_accept(asio::socket_acceptor* acceptor,
     char* write_buf = strdup(ctime(&now));
     size_t write_length = strlen(write_buf);
 
-    asio::async_write_n(*socket,
+    asio::async_write(*socket,
         asio::buffer(write_buf, write_length),
         boost::bind(handle_write, socket, write_buf,
           asio::placeholders::error,
-          asio::placeholders::last_bytes_transferred,
-          asio::placeholders::total_bytes_transferred));
+          asio::placeholders::bytes_transferred));
 
     socket = new asio::stream_socket(acceptor->demuxer());
 

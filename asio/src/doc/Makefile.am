@@ -101,6 +101,7 @@ EXTRA_DIST = \
 	concepts/Const_Buffers.hpp \
 	concepts/Dispatcher.hpp \
 	concepts/Endpoint.hpp \
+	concepts/Error_Source.hpp \
 	concepts/IO_Control_Command.hpp \
 	concepts/Mutable_Buffers.hpp \
 	concepts/Protocol.hpp \
