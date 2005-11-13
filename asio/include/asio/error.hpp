@@ -18,6 +18,7 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <boost/config.hpp>
 #include <cerrno>
 #include <exception>
 #include "asio/detail/pop_options.hpp"
@@ -26,7 +27,7 @@
 
 namespace asio {
 
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
 # define ASIO_SOCKET_ERROR(e) WSA ## e
 # define ASIO_NETDB_ERROR(e) WSA ## e
 # define ASIO_WIN_OR_POSIX_ERROR(e_win, e_posix) e_win
@@ -237,7 +238,7 @@ private:
 template <typename Ostream>
 Ostream& operator<<(Ostream& os, const error& e)
 {
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
   LPTSTR msg = 0;
   DWORD length = ::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER
       | FORMAT_MESSAGE_FROM_SYSTEM
@@ -252,7 +253,7 @@ Ostream& operator<<(Ostream& os, const error& e)
   else
     os << e.what() << ' ' << e.code();
   ::LocalFree(msg);
-#else // _WIN32
+#else // BOOST_WINDOWS
   switch (e.code())
   {
   case error::eof:
@@ -292,7 +293,7 @@ Ostream& operator<<(Ostream& os, const error& e)
 #endif
     break;
   }
-#endif // _WIN32
+#endif // BOOST_WINDOWS
   return os;
 }
 

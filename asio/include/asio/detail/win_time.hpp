@@ -17,7 +17,11 @@
 
 #include "asio/detail/push_options.hpp"
 
-#if defined(_WIN32)
+#include "asio/detail/push_options.hpp"
+#include <boost/config.hpp>
+#include "asio/detail/pop_options.hpp"
+
+#if defined(BOOST_WINDOWS)
 
 #include "asio/detail/socket_types.hpp"
 
@@ -132,7 +136,7 @@ private:
 } // namespace detail
 } // namespace asio
 
-#endif // defined(_WIN32)
+#endif // defined(BOOST_WINDOWS)
 
 #include "asio/detail/pop_options.hpp"
 

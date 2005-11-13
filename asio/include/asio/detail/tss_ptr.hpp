@@ -17,6 +17,10 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <boost/config.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/detail/posix_tss_ptr.hpp"
 #include "asio/detail/win_tss_ptr.hpp"
 
@@ -25,7 +29,7 @@ namespace detail {
 
 template <typename T>
 class tss_ptr
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
   : public win_tss_ptr<T>
 #else
   : public posix_tss_ptr<T>
@@ -34,7 +38,7 @@ class tss_ptr
 public:
   void operator=(T* value)
   {
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
     win_tss_ptr<T>::operator=(value);
 #else
     posix_tss_ptr<T>::operator=(value);

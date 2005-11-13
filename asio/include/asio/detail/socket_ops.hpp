@@ -18,6 +18,7 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <boost/config.hpp>
 #include <cstring>
 #include <cerrno>
 #include <vector>
@@ -32,27 +33,27 @@ namespace socket_ops {
 
 inline int get_error()
 {
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
   return WSAGetLastError();
-#else // defined(_WIN32)
+#else // defined(BOOST_WINDOWS)
   return errno;
-#endif // defined(_WIN32)
+#endif // defined(BOOST_WINDOWS)
 }
 
 inline void set_error(int error)
 {
   errno = error;
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
   WSASetLastError(error);
-#endif // defined(_WIN32)
+#endif // defined(BOOST_WINDOWS)
 }
 
 template <typename ReturnType>
 inline ReturnType error_wrapper(ReturnType return_value)
 {
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
   errno = WSAGetLastError();
-#endif // defined(_WIN32)
+#endif // defined(BOOST_WINDOWS)
   return return_value;
 }
 
@@ -73,11 +74,11 @@ inline int bind(socket_type s, const socket_addr_type* addr,
 inline int close(socket_type s)
 {
   set_error(0);
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
   return error_wrapper(::closesocket(s));
-#else // defined(_WIN32)
+#else // defined(BOOST_WINDOWS)
   return error_wrapper(::close(s));
-#endif // defined(_WIN32)
+#endif // defined(BOOST_WINDOWS)
 }
 
 inline int shutdown(socket_type s, int what)
@@ -110,7 +111,7 @@ enum { max_bufs = 16 };
 inline int recv(socket_type s, bufs* b, size_t count, int flags)
 {
   set_error(0);
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
   // Copy buffers into WSABUF array.
   WSABUF recv_bufs[max_bufs];
   if (count > max_bufs)
@@ -130,7 +131,7 @@ inline int recv(socket_type s, bufs* b, size_t count, int flags)
   if (result != 0)
     return -1;
   return bytes_transferred;
-#else // defined(_WIN32)
+#else // defined(BOOST_WINDOWS)
   if (count == 1)
   {
     // We only have to receive into a single buffer, so use normal recv call.
@@ -184,14 +185,14 @@ inline int recv(socket_type s, bufs* b, size_t count, int flags)
 
     return result;
   }
-#endif // defined(_WIN32)
+#endif // defined(BOOST_WINDOWS)
 }
 
 inline int recvfrom(socket_type s, bufs* b, size_t count, int flags,
     socket_addr_type* addr, socket_addr_len_type* addrlen)
 {
   set_error(0);
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
   // Copy buffers into WSABUF array.
   WSABUF recv_bufs[max_bufs];
   if (count > max_bufs)
@@ -211,7 +212,7 @@ inline int recvfrom(socket_type s, bufs* b, size_t count, int flags,
   if (result != 0)
     return -1;
   return bytes_transferred;
-#else // defined(_WIN32)
+#else // defined(BOOST_WINDOWS)
   if (count == 1)
   {
     // We only have to receive into a single buffer, so use normal recvfrom
@@ -250,13 +251,13 @@ inline int recvfrom(socket_type s, bufs* b, size_t count, int flags,
 
     return result;
   }
-#endif // defined(_WIN32)
+#endif // defined(BOOST_WINDOWS)
 }
 
 inline int send(socket_type s, const bufs* b, size_t count, int flags)
 {
   set_error(0);
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
   // Copy buffers into WSABUF array.
   WSABUF send_bufs[max_bufs];
   if (count > max_bufs)
@@ -276,7 +277,7 @@ inline int send(socket_type s, const bufs* b, size_t count, int flags)
   if (result != 0)
     return -1;
   return bytes_transferred;
-#else // defined(_WIN32)
+#else // defined(BOOST_WINDOWS)
   if (count == 1)
   {
     // We only have to send a single buffer, so use normal send call.
@@ -323,14 +324,14 @@ inline int send(socket_type s, const bufs* b, size_t count, int flags)
     // Receive some data.
     return error_wrapper(::send(s, &buffer[0], buf_size, flags));
   }
-#endif // defined(_WIN32)
+#endif // defined(BOOST_WINDOWS)
 }
 
 inline int sendto(socket_type s, const bufs* b, size_t count, int flags,
     const socket_addr_type* addr, socket_addr_len_type addrlen)
 {
   set_error(0);
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
   // Copy buffers into WSABUF array.
   WSABUF send_bufs[max_bufs];
   if (count > max_bufs)
@@ -349,7 +350,7 @@ inline int sendto(socket_type s, const bufs* b, size_t count, int flags,
   if (result != 0)
     return -1;
   return bytes_transferred;
-#else // defined(_WIN32)
+#else // defined(BOOST_WINDOWS)
   if (count == 1)
   {
     // We only have to send a single buffer, so use normal sendto call.
@@ -380,50 +381,50 @@ inline int sendto(socket_type s, const bufs* b, size_t count, int flags,
     return error_wrapper(::sendto(s,
           &buffer[0], buf_size, flags, addr, addrlen));
   }
-#endif // defined(_WIN32)
+#endif // defined(BOOST_WINDOWS)
 }
 
 inline socket_type socket(int af, int type, int protocol)
 {
   set_error(0);
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
   return error_wrapper(::WSASocket(af, type, protocol, 0, 0,
         WSA_FLAG_OVERLAPPED));
-#else // defined(_WIN32)
+#else // defined(BOOST_WINDOWS)
   return error_wrapper(::socket(af, type, protocol));
-#endif // defined(_WIN32)
+#endif // defined(BOOST_WINDOWS)
 }
 
 inline int setsockopt(socket_type s, int level, int optname,
     const void* optval, size_t optlen)
 {
   set_error(0);
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
   return error_wrapper(::setsockopt(s, level, optname,
         reinterpret_cast<const char*>(optval), static_cast<int>(optlen)));
-#else // defined(_WIN32)
+#else // defined(BOOST_WINDOWS)
   return error_wrapper(::setsockopt(s, level, optname, optval,
         static_cast<socklen_t>(optlen)));
-#endif // defined(_WIN32)
+#endif // defined(BOOST_WINDOWS)
 }
 
 inline int getsockopt(socket_type s, int level, int optname, void* optval,
     size_t* optlen)
 {
   set_error(0);
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
   int tmp_optlen = static_cast<int>(*optlen);
   int result = error_wrapper(::getsockopt(s, level, optname,
         reinterpret_cast<char*>(optval), &tmp_optlen));
   *optlen = static_cast<size_t>(tmp_optlen);
   return result;
-#else // defined(_WIN32)
+#else // defined(BOOST_WINDOWS)
   socklen_t tmp_optlen = static_cast<socklen_t>(*optlen);
   int result = error_wrapper(::getsockopt(s, level, optname,
         optval, &tmp_optlen));
   *optlen = static_cast<size_t>(tmp_optlen);
   return result;
-#endif // defined(_WIN32)
+#endif // defined(BOOST_WINDOWS)
 }
 
 inline int getpeername(socket_type s, socket_addr_type* addr,
@@ -443,24 +444,24 @@ inline int getsockname(socket_type s, socket_addr_type* addr,
 inline int ioctl(socket_type s, long cmd, ioctl_arg_type* arg)
 {
   set_error(0);
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
   return error_wrapper(::ioctlsocket(s, cmd, arg));
-#else // defined(_WIN32)
+#else // defined(BOOST_WINDOWS)
   return error_wrapper(::ioctl(s, cmd, arg));
-#endif // defined(_WIN32)
+#endif // defined(BOOST_WINDOWS)
 }
 
 inline int select(int nfds, fd_set* readfds, fd_set* writefds,
     fd_set* exceptfds, timeval* timeout)
 {
   set_error(0);
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
   if (!readfds && !writefds && !exceptfds && timeout)
   {
     ::Sleep(timeout->tv_sec * 1000 + timeout->tv_usec / 1000);
     return 0;
   }
-#endif // defined(_WIN32)
+#endif // defined(BOOST_WINDOWS)
   return error_wrapper(::select(nfds, readfds, writefds, exceptfds, timeout));
 }
 
@@ -468,7 +469,7 @@ inline const char* inet_ntop(int af, const void* src, char* dest,
     size_t length)
 {
   set_error(0);
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
   using namespace std; // For strncat.
 
   if (af != AF_INET)
@@ -496,18 +497,18 @@ inline const char* inet_ntop(int af, const void* src, char* dest,
 
   return 0;
 
-#else // defined(_WIN32)
+#else // defined(BOOST_WINDOWS)
   const char* result = error_wrapper(::inet_ntop(af, src, dest, length));
   if (result == 0 && get_error() == 0)
     set_error(asio::error::invalid_argument);
   return result;
-#endif // defined(_WIN32)
+#endif // defined(BOOST_WINDOWS)
 }
 
 inline int inet_pton(int af, const char* src, void* dest)
 {
   set_error(0);
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
   using namespace std; // For strcmp.
 
   if (af != AF_INET)
@@ -528,12 +529,12 @@ inline int inet_pton(int af, const char* src, void* dest)
     set_error(asio::error::invalid_argument);
 
   return 0;
-#else // defined(_WIN32)
+#else // defined(BOOST_WINDOWS)
   int result = error_wrapper(::inet_pton(af, src, dest));
   if (result <= 0 && get_error() == 0)
     set_error(asio::error::invalid_argument);
   return result;
-#endif // defined(_WIN32)
+#endif // defined(BOOST_WINDOWS)
 }
 
 inline int gethostname(char* name, int namelen)
@@ -565,7 +566,7 @@ inline hostent* gethostbyaddr(const char* addr, int length, int type,
     hostent* result, char* buffer, int buflength, int* error)
 {
   set_error(0);
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
   hostent* retval = error_wrapper(::gethostbyaddr(addr, length, type));
   *error = get_error();
   if (!retval)
@@ -597,7 +598,7 @@ inline hostent* gethostbyname(const char* name, struct hostent* result,
     char* buffer, int buflength, int* error)
 {
   set_error(0);
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
   hostent* retval = error_wrapper(::gethostbyname(name));
   *error = get_error();
   if (!retval)

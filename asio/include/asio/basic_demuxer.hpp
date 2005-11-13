@@ -18,6 +18,7 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <boost/config.hpp>
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -215,7 +216,7 @@ public:
   friend class work;
 
 private:
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
   detail::winsock_init<> init_;
 #else
   detail::signal_init<> init_;

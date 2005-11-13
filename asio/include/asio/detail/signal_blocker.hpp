@@ -17,13 +17,17 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <boost/config.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/detail/posix_signal_blocker.hpp"
 #include "asio/detail/win_signal_blocker.hpp"
 
 namespace asio {
 namespace detail {
 
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
 typedef win_signal_blocker signal_blocker;
 #else
 typedef posix_signal_blocker signal_blocker;

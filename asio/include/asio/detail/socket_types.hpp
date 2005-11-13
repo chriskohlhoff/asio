@@ -18,7 +18,11 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
-#if defined(_WIN32)
+#include <boost/config.hpp>
+#include "asio/detail/pop_options.hpp"
+
+#include "asio/detail/push_options.hpp"
+#if defined(BOOST_WINDOWS)
 # if !defined(_WIN32_WINNT) && !defined(_WIN32_WINDOWS)
 #  if defined(_MSC_VER) || defined(__BORLANDC__)
 #   pragma message("Please define _WIN32_WINNT or _WIN32_WINDOWS appropriately")
@@ -63,7 +67,7 @@
 namespace asio {
 namespace detail {
 
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
 typedef SOCKET socket_type;
 const SOCKET invalid_socket = INVALID_SOCKET;
 const int socket_error_retval = SOCKET_ERROR;

@@ -17,13 +17,17 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <boost/config.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/detail/pipe_select_interrupter.hpp"
 #include "asio/detail/socket_select_interrupter.hpp"
 
 namespace asio {
 namespace detail {
 
-#if defined(_WIN32)
+#if defined(BOOST_WINDOWS)
 typedef socket_select_interrupter select_interrupter;
 #else
 typedef pipe_select_interrupter select_interrupter;

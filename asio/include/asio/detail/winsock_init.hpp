@@ -17,7 +17,11 @@
 
 #include "asio/detail/push_options.hpp"
 
-#if defined(_WIN32)
+#include "asio/detail/push_options.hpp"
+#include <boost/config.hpp>
+#include "asio/detail/pop_options.hpp"
+
+#if defined(BOOST_WINDOWS)
 
 #include "asio/detail/push_options.hpp"
 #include <boost/noncopyable.hpp>
@@ -88,7 +92,7 @@ winsock_init<Major, Minor> winsock_init<Major, Minor>::instance_;
 } // namespace detail
 } // namespace asio
 
-#endif // _WIN32
+#endif // defined(BOOST_WINDOWS)
 
 #include "asio/detail/pop_options.hpp"
 
