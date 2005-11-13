@@ -19,6 +19,7 @@
 
 #include "asio/detail/push_options.hpp"
 #include <boost/config.hpp>
+#include <boost/noncopyable.hpp>
 #include <cerrno>
 #include <exception>
 #include "asio/detail/pop_options.hpp"
@@ -223,6 +224,22 @@ private:
   int code_;
 };
 
+#if defined(BOOST_WINDOWS)
+// Helper class to clean up buffer allocated by FormatMessageA in an
+// exception-safe manner.
+namespace detail {
+class local_free_on_block_exit
+  : private boost::noncopyable
+{
+public:
+  explicit local_free_on_block_exit(void* p) : p_(p) {}
+  ~local_free_on_block_exit() { ::LocalFree(p_); }
+private:
+  void* p_;
+};
+} // namespace detail
+#endif // defined(BOOST_WINDOWS)
+
 /// Output the string associated with an error.
 /**
  * Used to output a human-readable string that is associated with an error.
@@ -239,11 +256,12 @@ template <typename Ostream>
 Ostream& operator<<(Ostream& os, const error& e)
 {
 #if defined(BOOST_WINDOWS)
-  LPTSTR msg = 0;
-  DWORD length = ::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER
+  char* msg = 0;
+  DWORD length = ::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER
       | FORMAT_MESSAGE_FROM_SYSTEM
       | FORMAT_MESSAGE_IGNORE_INSERTS, 0, e.code(),
-      MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&msg, 0, 0);
+      MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (char*)&msg, 0, 0);
+  detail::local_free_on_block_exit local_free_obj(msg);
   if (length && msg[length - 1] == '\n')
     msg[--length] = '\0';
   if (length && msg[length - 1] == '\r')
@@ -251,9 +269,8 @@ Ostream& operator<<(Ostream& os, const error& e)
   if (length)
     os << msg;
   else
-    os << e.what() << ' ' << e.code();
-  ::LocalFree(msg);
-#else // BOOST_WINDOWS
+    os << e.what() << " " << e.code();
+#else // defined(BOOST_WINDOWS)
   switch (e.code())
   {
   case error::eof:
@@ -275,7 +292,7 @@ Ostream& operator<<(Ostream& os, const error& e)
   case error::operation_aborted:
     os << "Operation aborted.";
     break;
-#endif // !__sun
+#endif // !defined(__sun)
   default:
 #if defined(__sun)
     os << strerror(e.code());
@@ -293,7 +310,7 @@ Ostream& operator<<(Ostream& os, const error& e)
 #endif
     break;
   }
-#endif // BOOST_WINDOWS
+#endif // defined(BOOST_WINDOWS)
   return os;
 }
 
