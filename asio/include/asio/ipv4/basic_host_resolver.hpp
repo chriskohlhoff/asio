@@ -33,8 +33,8 @@ namespace ipv4 {
 
 /// Implements resolution of host names and addresses.
 /**
- * The asio::ipv4::basic_host_resolver class template provides the ability to
- * lookup hosts based on their names or addresses.
+ * The asio::ipv4::basic_host_resolver class template provides the
+ * ability to lookup hosts based on their names or addresses.
  *
  * Most applications will use the asio::ipv4::host_resolver typedef.
  *

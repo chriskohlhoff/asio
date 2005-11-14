@@ -204,7 +204,8 @@ public:
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       bufs[i].size = asio::buffer_size(*iter);
-      bufs[i].data = const_cast<void*>(asio::buffer_cast<const void*>(*iter));
+      bufs[i].data = const_cast<void*>(
+          asio::buffer_cast<const void*>(*iter));
     }
 
     // Send the data.
@@ -250,7 +251,8 @@ public:
       for (; iter != end && i < max_buffers; ++iter, ++i)
       {
         bufs[i].size = asio::buffer_size(*iter);
-        bufs[i].data = const_cast<void*>(asio::buffer_cast<const void*>(*iter));
+        bufs[i].data = const_cast<void*>(
+            asio::buffer_cast<const void*>(*iter));
       }
 
       // Send the data.
@@ -303,7 +305,8 @@ public:
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       bufs[i].size = asio::buffer_size(*iter);
-      bufs[i].data = const_cast<void*>(asio::buffer_cast<const void*>(*iter));
+      bufs[i].data = const_cast<void*>(
+          asio::buffer_cast<const void*>(*iter));
     }
 
     // Send the data.
@@ -352,7 +355,8 @@ public:
       for (; iter != end && i < max_buffers; ++iter, ++i)
       {
         bufs[i].size = asio::buffer_size(*iter);
-        bufs[i].data = const_cast<void*>(asio::buffer_cast<const void*>(*iter));
+        bufs[i].data = const_cast<void*>(
+            asio::buffer_cast<const void*>(*iter));
       }
 
       // Send the data.

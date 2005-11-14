@@ -76,7 +76,8 @@ public:
         class cleanup
         {
         public:
-          cleanup(asio::detail::mutex::scoped_lock& lock, int& outstanding_work)
+          cleanup(asio::detail::mutex::scoped_lock& lock,
+              int& outstanding_work)
             : lock_(lock),
               outstanding_work_(outstanding_work)
           {
@@ -107,7 +108,8 @@ public:
         class cleanup
         {
         public:
-          cleanup(asio::detail::mutex::scoped_lock& lock, bool& task_is_running)
+          cleanup(asio::detail::mutex::scoped_lock& lock,
+              bool& task_is_running)
             : lock_(lock),
               task_is_running_(task_is_running)
           {

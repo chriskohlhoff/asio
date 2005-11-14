@@ -3,6 +3,28 @@
 use strict;
 use File::Path;
 
+my $boost_dir;
+
+sub determine_boost_dir
+{
+  # Parse the configure.ac to determine the asio version.
+  my $asio_version = "unknown";
+  open(my $input, "<configure.ac") or die("Can't read configure.ac");
+  while (my $line = <$input>)
+  {
+    chomp($line);
+    if ($line =~ /AM_INIT_AUTOMAKE\(asio, \[([^\]]*)\]\)/)
+    {
+      $asio_version = $1;
+    }
+  }
+  close($input);
+
+  # Create the boost directory name.
+  our $boost_dir;
+  $boost_dir = "boost-asio-proposal-$asio_version";
+}
+
 sub print_line
 {
   my ($output, $line, $from, $lineno) = @_;
@@ -142,14 +164,15 @@ sub copy_include_files
 
   foreach my $dir (@dirs)
   {
-    my @files = glob("$dir/*.hpp");
+    our $boost_dir;
+    my @files = ( glob("$dir/*.hpp"), glob("$dir/*.ipp") );
     foreach my $file (@files)
     {
       if ($file ne "include/asio/thread.hpp")
       {
         my $from = $file;
         my $to = $file;
-        $to =~ s/^include\//boost\/boost\//;
+        $to =~ s/^include\//$boost_dir\/boost\//;
         copy_source_file($from, $to);
       }
     }
@@ -163,9 +186,10 @@ sub create_lib_directory
       "example",
       "test");
 
+  our $boost_dir;
   foreach my $dir (@dirs)
   {
-    mkpath("boost/libs/asio/$dir");
+    mkpath("$boost_dir/libs/asio/$dir");
   }
 }
 
@@ -176,6 +200,7 @@ sub copy_unit_tests
       "src/tests/unit/ipv4",
       "src/tests/unit/ssl");
 
+  our $boost_dir;
   foreach my $dir (@dirs)
   {
     my @files = ( glob("$dir/*.*pp"), glob("$dir/Jamfile*") );
@@ -185,7 +210,7 @@ sub copy_unit_tests
       {
         my $from = $file;
         my $to = $file;
-        $to =~ s/^src\/tests\/unit\//boost\/libs\/asio\/test\//;
+        $to =~ s/^src\/tests\/unit\//$boost_dir\/libs\/asio\/test\//;
         copy_source_file($from, $to);
       }
     }
@@ -216,6 +241,7 @@ sub copy_examples
       "src/examples/tutorial/timer4",
       "src/examples/tutorial/timer5");
 
+  our $boost_dir;
   foreach my $dir (@dirs)
   {
     my @files = (
@@ -226,7 +252,7 @@ sub copy_examples
     {
       my $from = $file;
       my $to = $file;
-      $to =~ s/^src\/examples\//boost\/libs\/asio\/example\//;
+      $to =~ s/^src\/examples\//$boost_dir\/libs\/asio\/example\//;
       copy_source_file($from, $to);
     }
   }
@@ -234,8 +260,9 @@ sub copy_examples
 
 sub create_root_html
 {
-  open(my $output, ">boost/libs/asio/index.html")
-    or die("Can't open boost/libs/asio/index.html for writing");
+  our $boost_dir;
+  open(my $output, ">$boost_dir/libs/asio/index.html")
+    or die("Can't open $boost_dir/libs/asio/index.html for writing");
   print($output "<html>\n");
   print($output "<head>\n");
   print($output "<meta http-equiv=\"refresh\"");
@@ -249,6 +276,7 @@ sub create_root_html
   close($output);
 }
 
+determine_boost_dir();
 copy_include_files();
 create_lib_directory();
 copy_unit_tests();

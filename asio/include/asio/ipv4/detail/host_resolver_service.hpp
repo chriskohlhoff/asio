@@ -46,9 +46,22 @@ private:
     : private boost::noncopyable
   {
   public:
-    explicit auto_hostent(hostent* h) : h_(h) {}
-    ~auto_hostent() { if (h_) asio::detail::socket_ops::freehostent(h_); }
-    operator hostent*() { return h_; }
+    explicit auto_hostent(hostent* h)
+      : h_(h)
+    {
+    }
+
+    ~auto_hostent()
+    {
+      if (h_)
+        asio::detail::socket_ops::freehostent(h_);
+    }
+
+    operator hostent*()
+    {
+      return h_;
+    }
+
   private:
     hostent* h_;
   };
@@ -117,9 +130,14 @@ public:
   {
     char name[1024];
     if (asio::detail::socket_ops::gethostname(name, sizeof(name)) != 0)
-      error_handler(asio::error(asio::detail::socket_ops::get_error()));
+    {
+      error_handler(asio::error(
+            asio::detail::socket_ops::get_error()));
+    }
     else
+    {
       get_host_by_name(impl, h, name, error_handler);
+    }
   }
 
   // Get host information for a specified address.
@@ -131,7 +149,8 @@ public:
     char buf[8192] = ""; // Size recommended by Stevens, UNPv1.
     int error = 0;
     in_addr a;
-    a.s_addr = asio::detail::socket_ops::host_to_network_long(addr.to_ulong());
+    a.s_addr = asio::detail::socket_ops::host_to_network_long(
+        addr.to_ulong());
     auto_hostent result(asio::detail::socket_ops::gethostbyaddr(
           reinterpret_cast<const char*>(&a), sizeof(in_addr), AF_INET, &ent,
           buf, sizeof(buf), &error));
@@ -215,8 +234,8 @@ public:
     hostent ent;
     char buf[8192] = ""; // Size recommended by Stevens, UNPv1.
     int error = 0;
-    auto_hostent result(asio::detail::socket_ops::gethostbyname(name.c_str(),
-          &ent, buf, sizeof(buf), &error));
+    auto_hostent result(asio::detail::socket_ops::gethostbyname(
+          name.c_str(), &ent, buf, sizeof(buf), &error));
     if (result == 0)
       error_handler(asio::error(error));
     else if (ent.h_addrtype != AF_INET || ent.h_length != sizeof(in_addr))
@@ -298,8 +317,8 @@ public:
       using namespace std; // For memcpy.
       in_addr a;
       memcpy(&a, *addr, sizeof(in_addr));
-      addresses.push_back(
-          address(asio::detail::socket_ops::network_to_host_long(a.s_addr)));
+      addresses.push_back(address(
+            asio::detail::socket_ops::network_to_host_long(a.s_addr)));
     }
 
     host tmp(ent.h_name, addresses.front(), aliases.begin(), aliases.end(),

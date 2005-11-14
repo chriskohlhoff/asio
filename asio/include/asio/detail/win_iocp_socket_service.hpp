@@ -284,7 +284,8 @@ public:
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       bufs[i].len = static_cast<u_long>(asio::buffer_size(*iter));
-      bufs[i].buf = const_cast<char*>(asio::buffer_cast<const char*>(*iter));
+      bufs[i].buf = const_cast<char*>(
+          asio::buffer_cast<const char*>(*iter));
     }
 
     // Send the data.
@@ -358,7 +359,8 @@ public:
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       bufs[i].len = static_cast<u_long>(asio::buffer_size(*iter));
-      bufs[i].buf = const_cast<char*>(asio::buffer_cast<const char*>(*iter));
+      bufs[i].buf = const_cast<char*>(
+          asio::buffer_cast<const char*>(*iter));
     }
 
     // Send the data.
@@ -394,7 +396,8 @@ public:
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       bufs[i].len = static_cast<u_long>(asio::buffer_size(*iter));
-      bufs[i].buf = const_cast<char*>(asio::buffer_cast<const char*>(*iter));
+      bufs[i].buf = const_cast<char*>(
+          asio::buffer_cast<const char*>(*iter));
     }
 
     // Send the data.
@@ -455,7 +458,8 @@ public:
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       bufs[i].len = static_cast<u_long>(asio::buffer_size(*iter));
-      bufs[i].buf = const_cast<char*>(asio::buffer_cast<const char*>(*iter));
+      bufs[i].buf = const_cast<char*>(
+          asio::buffer_cast<const char*>(*iter));
     }
 
     // Send the data.

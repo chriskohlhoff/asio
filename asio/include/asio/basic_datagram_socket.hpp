@@ -582,7 +582,9 @@ public:
    *
    * @par Example:
    * To send a single data buffer use the @ref buffer function as follows:
-   * @code socket.async_send(asio::buffer(data, size), 0, handler); @endcode
+   * @code
+   * socket.async_send(asio::buffer(data, size), 0, handler);
+   * @endcode
    * See the @ref buffer documentation for information on sending multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
@@ -612,7 +614,9 @@ public:
    *
    * @par Example:
    * To send a single data buffer use the @ref buffer function as follows:
-   * @code socket.send_to(asio::buffer(data, size), 0, destination); @endcode
+   * @code
+   * socket.send_to(asio::buffer(data, size), 0, destination);
+   * @endcode
    * See the @ref buffer documentation for information on sending multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
@@ -779,7 +783,9 @@ public:
    * @par Example:
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
-   * @code socket.async_receive(asio::buffer(data, size), 0, handler); @endcode
+   * @code
+   * socket.async_receive(asio::buffer(data, size), 0, handler);
+   * @endcode
    * See the @ref buffer documentation for information on receiving into
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.

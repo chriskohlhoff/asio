@@ -267,13 +267,13 @@ private:
  * has undefined behaviour. To safely change a timer's expiry, pending
  * asynchronous waits need to be cancelled first. This works as follows:
  *
- * @li The asio::basic_deadline_timer::cancel() function returns the number of
- * asynchronous waits that were cancelled. If it returns 0 then you were too
- * late and the wait handler has already been executed, or will soon be
+ * @li The asio::basic_deadline_timer::cancel() function returns the
+ * number of asynchronous waits that were cancelled. If it returns 0 then you
+ * were too late and the wait handler has already been executed, or will soon be
  * executed. If it returns 1 then the wait handler was successfully cancelled.
  *
- * @li If a wait handler is cancelled, the asio::error passed to it contains the
- * value asio::error::operation_aborted.
+ * @li If a wait handler is cancelled, the asio::error passed to it
+ * contains the value asio::error::operation_aborted.
  *
  * For example, to reset a timer's expiry time in response to some event you
  * would do something like this:

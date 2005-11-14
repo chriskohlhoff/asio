@@ -20,8 +20,8 @@
 namespace asio {
 namespace ssl {
 
-/// The stream_base class is used as a base for the asio::ssl::stream class
-/// template so that we have a common place to define various enums.
+/// The stream_base class is used as a base for the asio::ssl::stream
+/// class template so that we have a common place to define various enums.
 class stream_base
 {
 public:

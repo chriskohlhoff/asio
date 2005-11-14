@@ -60,8 +60,10 @@ public:
   }
 
 private:
-  friend void* asio::detail::buffer_cast_helper(const mutable_buffer& b);
-  friend std::size_t asio::detail::buffer_size_helper(const mutable_buffer& b);
+  friend void* asio::detail::buffer_cast_helper(
+      const mutable_buffer& b);
+  friend std::size_t asio::detail::buffer_size_helper(
+      const mutable_buffer& b);
 
   void* data_;
   std::size_t size_;
@@ -191,8 +193,10 @@ public:
   }
 
 private:
-  friend const void* asio::detail::buffer_cast_helper(const const_buffer& b);
-  friend std::size_t asio::detail::buffer_size_helper(const const_buffer& b);
+  friend const void* asio::detail::buffer_cast_helper(
+      const const_buffer& b);
+  friend std::size_t asio::detail::buffer_size_helper(
+      const const_buffer& b);
 
   const void* data_;
   std::size_t size_;
@@ -293,19 +297,18 @@ public:
 
 /** @defgroup buffer asio::buffer
  *
- * @brief The asio::buffer function is used to create a buffer object that
- * represents raw memory, an array of POD elements, or a vector of POD
- * elements.
+ * @brief The asio::buffer function is used to create a buffer object to
+ * represent raw memory, an array of POD elements, or a vector of POD elements.
  *
  * The simplest use case involves reading or writing a single buffer of a
  * specified size:
  *
  * @code sock.write(asio::buffer(data, size)); @endcode
  *
- * In the above example, the return type of asio::buffer meets the requirements
- * of the Const_Buffers concept so that it may be directly passed to the
- * socket's write function. A buffer created for modifiable memory also meets
- * the requirements of the Mutable_Buffers concept.
+ * In the above example, the return value of asio::buffer meets the
+ * requirements of the Const_Buffers concept so that it may be directly passed
+ * to the socket's write function. A buffer created for modifiable memory also
+ * meets the requirements of the Mutable_Buffers concept.
  *
  * An individual buffer may be created from a builtin array, std::vector or
  * boost::array of POD elements. This helps prevent buffer overruns by

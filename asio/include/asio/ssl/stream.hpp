@@ -46,9 +46,11 @@ namespace ssl {
  *
  * @par Example:
  * To use the SSL stream template with a stream_socket, you would write:
- * @code asio::demuxer demuxer;
- * asio::ssl::context context(demuxer, asio::ssl::context::sslv23);
- * asio::ssl::stream<asio::stream_socket> sock(demuxer, context); @endcode
+ * @code
+ * asio::demuxer d;
+ * asio::ssl::context context(d, asio::ssl::context::sslv23);
+ * asio::ssl::stream<asio::stream_socket> sock(demuxer, context);
+ * @endcode
  *
  * @par Concepts:
  * Async_Object, Async_Read_Stream, Async_Write_Stream, Error_Source, Stream,

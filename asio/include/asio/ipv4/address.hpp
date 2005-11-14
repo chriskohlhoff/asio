@@ -30,8 +30,8 @@ namespace ipv4 {
 
 /// Implements IP version 4 style addresses.
 /**
- * The asio::ipv4::address class provides the ability to use and manipulate IP
- * version 4 addresses.
+ * The asio::ipv4::address class provides the ability to use and
+ * manipulate IP version 4 addresses.
  *
  * @par Thread Safety:
  * @e Distinct @e objects: Safe.@n
@@ -62,7 +62,8 @@ public:
   /// Construct an address using an IP address string in dotted decimal form.
   address(const std::string& host)
   {
-    if (asio::detail::socket_ops::inet_pton(AF_INET, host.c_str(), &addr_) <= 0)
+    if (asio::detail::socket_ops::inet_pton(
+          AF_INET, host.c_str(), &addr_) <= 0)
       throw asio::error(asio::detail::socket_ops::get_error());
   }
 
@@ -112,8 +113,9 @@ public:
   std::string to_string() const
   {
     char addr_str[asio::detail::max_addr_str_len];
-    const char* addr = asio::detail::socket_ops::inet_ntop(AF_INET, &addr_,
-        addr_str, asio::detail::max_addr_str_len);
+    const char* addr =
+      asio::detail::socket_ops::inet_ntop(AF_INET, &addr_, addr_str,
+          asio::detail::max_addr_str_len);
     if (addr == 0)
       throw asio::error(asio::detail::socket_ops::get_error());
     return addr;

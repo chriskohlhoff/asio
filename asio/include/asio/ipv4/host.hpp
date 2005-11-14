@@ -31,7 +31,7 @@ namespace ipv4 {
 
 /// Encapsulates information about an IP version 4 host.
 /**
- * The asio::ipv4::host structure contains properties which describe a host.
+ * The asio::ipv4::host structure contains properties to describe a host.
  *
  * @par Thread Safety:
  * @e Distinct @e objects: Safe.@n

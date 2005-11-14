@@ -168,7 +168,8 @@ public:
 
 // Private implementation
 private:
-  typedef boost::function<int (const asio::error&, int)> int_handler_func;
+  typedef boost::function<int (const asio::error&, int)>
+    int_handler_func;
   typedef boost::function<int (bool, int)> write_func;
 
   ssl_primitive_func  primitive_;
@@ -280,7 +281,8 @@ private:
     // Wait for new data
     socket_.async_read_some
     ( 
-      asio::buffer(recv_buf_.get_unused_start(), recv_buf_.get_unused_len()),
+      asio::buffer(recv_buf_.get_unused_start(),
+        recv_buf_.get_unused_len()),
       boost::bind
       (
         &openssl_operation::async_read_handler, 
@@ -365,7 +367,8 @@ private:
   {
     size_t len = socket_.asio::read_some
       ( 
-        asio::buffer(recv_buf_.get_unused_start(), recv_buf_.get_unused_len())
+        asio::buffer(recv_buf_.get_unused_start(),
+          recv_buf_.get_unused_len())
       );
 
     // Write data to ssl

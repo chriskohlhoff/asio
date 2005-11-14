@@ -222,7 +222,9 @@ std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  *
  * @par Example:
  * To read into a single data buffer use the @ref buffer function as follows:
- * @code asio::async_read(s, asio::buffer(data, size), handler); @endcode
+ * @code
+ * asio::async_read(s, asio::buffer(data, size), handler);
+ * @endcode
  * See the @ref buffer documentation for information on reading into multiple
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.

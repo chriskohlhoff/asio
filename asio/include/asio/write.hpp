@@ -221,7 +221,9 @@ std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
  *
  * @par Example:
  * To write a single data buffer use the @ref buffer function as follows:
- * @code asio::async_write(s, asio::buffer(data, size), handler); @endcode
+ * @code
+ * asio::async_write(s, asio::buffer(data, size), handler);
+ * @endcode
  * See the @ref buffer documentation for information on writing multiple
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.

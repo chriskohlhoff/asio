@@ -504,7 +504,9 @@ public:
    *
    * @par Example:
    * To send a single data buffer use the @ref buffer function as follows:
-   * @code socket.send(asio::buffer(data, size), 0); @endcode
+   * @code
+   * socket.send(asio::buffer(data, size), 0);
+   * @endcode
    * See the @ref buffer documentation for information on sending multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
@@ -572,7 +574,9 @@ public:
    *
    * @par Example:
    * To send a single data buffer use the @ref buffer function as follows:
-   * @code socket.async_send(asio::buffer(data, size), 0, handler); @endcode
+   * @code
+   * socket.async_send(asio::buffer(data, size), 0, handler);
+   * @endcode
    * See the @ref buffer documentation for information on sending multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
@@ -596,8 +600,9 @@ public:
    *
    * @returns The number of bytes received.
    *
-   * @throws asio::error Thrown on failure. An error code of asio::error::eof
-   * indicates that the connection was closed by the peer.
+   * @throws asio::error Thrown on failure. An error code of
+   * asio::error::eof indicates that the connection was closed by the
+   * peer.
    *
    * @note The receive operation may not receive all of the requested number of
    * bytes. Consider using the @ref read function if you need to ensure that the
@@ -606,7 +611,9 @@ public:
    * @par Example:
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
-   * @code socket.receive(asio::buffer(data, size), 0); @endcode
+   * @code
+   * socket.receive(asio::buffer(data, size), 0);
+   * @endcode
    * See the @ref buffer documentation for information on receiving into
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
@@ -676,7 +683,9 @@ public:
    * @par Example:
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
-   * @code socket.async_receive(asio::buffer(data, size), 0, handler); @endcode
+   * @code
+   * socket.async_receive(asio::buffer(data, size), 0, handler);
+   * @endcode
    * See the @ref buffer documentation for information on receiving into
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
@@ -698,8 +707,9 @@ public:
    *
    * @returns The number of bytes written.
    *
-   * @throws asio::error Thrown on failure. An error code of asio::error::eof
-   * indicates that the connection was closed by the peer.
+   * @throws asio::error Thrown on failure. An error code of
+   * asio::error::eof indicates that the connection was closed by the
+   * peer.
    *
    * @note The write_some operation may not transmit all of the data to the
    * peer. Consider using the @ref write function if you need to ensure that
@@ -707,7 +717,9 @@ public:
    *
    * @par Example:
    * To write a single data buffer use the @ref buffer function as follows:
-   * @code socket.write_some(asio::buffer(data, size)); @endcode
+   * @code
+   * socket.write_some(asio::buffer(data, size));
+   * @endcode
    * See the @ref buffer documentation for information on writing multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
@@ -771,7 +783,9 @@ public:
    *
    * @par Example:
    * To write a single data buffer use the @ref buffer function as follows:
-   * @code socket.async_write_some(asio::buffer(data, size), handler); @endcode
+   * @code
+   * socket.async_write_some(asio::buffer(data, size), handler);
+   * @endcode
    * See the @ref buffer documentation for information on writing multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
@@ -792,8 +806,9 @@ public:
    *
    * @returns The number of bytes read.
    *
-   * @throws asio::error Thrown on failure. An error code of asio::error::eof
-   * indicates that the connection was closed by the peer.
+   * @throws asio::error Thrown on failure. An error code of
+   * asio::error::eof indicates that the connection was closed by the
+   * peer.
    *
    * @note The read_some operation may not read all of the requested number of
    * bytes. Consider using the @ref read function if you need to ensure that
@@ -802,7 +817,9 @@ public:
    *
    * @par Example:
    * To read into a single data buffer use the @ref buffer function as follows:
-   * @code socket.read_some(asio::buffer(data, size)); @endcode
+   * @code
+   * socket.read_some(asio::buffer(data, size));
+   * @endcode
    * See the @ref buffer documentation for information on reading into multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
