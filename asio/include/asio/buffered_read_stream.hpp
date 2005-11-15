@@ -257,10 +257,10 @@ public:
         typename Mutable_Buffers::const_iterator end = buffers_.end();
         for (; iter != end && bytes_avail > 0; ++iter)
         {
-          std::size_t max_length = iter->size();
+          std::size_t max_length = buffer_size(*iter);
           std::size_t length = (max_length < bytes_avail)
             ? max_length : bytes_avail;
-          memcpy(iter->data(),
+          memcpy(buffer_cast<void*>(*iter),
               stream_.read_buffer().begin() + bytes_copied, length);
           bytes_copied += length;
           bytes_avail -= length;
@@ -343,10 +343,10 @@ private:
     typename Mutable_Buffers::const_iterator end = buffers.end();
     for (; iter != end && bytes_avail > 0; ++iter)
     {
-      std::size_t max_length = iter->size();
+      std::size_t max_length = buffer_size(*iter);
       std::size_t length = (max_length < bytes_avail)
         ? max_length : bytes_avail;
-      memcpy(iter->data(), buffer_.begin() + bytes_copied, length);
+      memcpy(buffer_cast<void*>(*iter), buffer_.begin() + bytes_copied, length);
       bytes_copied += length;
       bytes_avail -= length;
     }
@@ -370,10 +370,10 @@ private:
     typename Mutable_Buffers::const_iterator end = buffers.end();
     for (; iter != end && bytes_avail > 0; ++iter)
     {
-      std::size_t max_length = iter->size();
+      std::size_t max_length = buffer_size(*iter);
       std::size_t length = (max_length < bytes_avail)
         ? max_length : bytes_avail;
-      memcpy(iter->data(), buffer_.begin() + bytes_copied, length);
+      memcpy(buffer_cast<void*>(*iter), buffer_.begin() + bytes_copied, length);
       bytes_copied += length;
       bytes_avail -= length;
     }

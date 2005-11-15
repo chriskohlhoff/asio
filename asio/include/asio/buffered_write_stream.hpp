@@ -27,6 +27,7 @@
 
 #include "asio/buffered_write_stream_fwd.hpp"
 #include "asio/buffer.hpp"
+#include "asio/completion_condition.hpp"
 #include "asio/error.hpp"
 #include "asio/write.hpp"
 #include "asio/detail/bind_handler.hpp"
@@ -129,7 +130,7 @@ public:
   std::size_t flush(Error_Handler error_handler)
   {
     std::size_t bytes_written = write(next_layer_,
-        buffer(buffer_.begin(), buffer_.size()), error_handler);
+        buffer(buffer_.begin(), buffer_.size()), transfer_all(), error_handler);
     buffer_.pop(bytes_written);
     return bytes_written;
   }
@@ -217,11 +218,12 @@ public:
         typename Const_Buffers::const_iterator end = buffers_.end();
         for (; iter != end && space_avail > 0; ++iter)
         {
-          std::size_t length = (iter->size() < space_avail)
-            ? iter->size() : space_avail;
+          std::size_t bytes_avail = buffer_size(*iter);
+          std::size_t length = (bytes_avail < space_avail)
+            ? bytes_avail : space_avail;
           stream_.write_buffer().resize(orig_size + bytes_copied + length);
           memcpy(stream_.write_buffer().begin() + orig_size + bytes_copied,
-              iter->data(), length);
+              buffer_cast<const void*>(*iter), length);
           bytes_copied += length;
           space_avail -= length;
         }
@@ -325,10 +327,12 @@ private:
     typename Const_Buffers::const_iterator end = buffers.end();
     for (; iter != end && space_avail > 0; ++iter)
     {
-      std::size_t length = (iter->size() < space_avail)
-        ? iter->size() : space_avail;
+      std::size_t bytes_avail = buffer_size(*iter);
+      std::size_t length = (bytes_avail < space_avail)
+        ? bytes_avail : space_avail;
       buffer_.resize(orig_size + bytes_copied + length);
-      memcpy(buffer_.begin() + orig_size + bytes_copied, iter->data(), length);
+      memcpy(buffer_.begin() + orig_size + bytes_copied,
+          buffer_cast<const void*>(*iter), length);
       bytes_copied += length;
       space_avail -= length;
     }
