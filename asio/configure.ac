@@ -72,7 +72,7 @@ case $host in
 esac
 
 if test "$GXX" = yes; then
-  CXXFLAGS="$CXXFLAGS -ftemplate-depth-32"
+  CXXFLAGS="$CXXFLAGS -ftemplate-depth-256"
 fi
 
 AC_CHECK_PROG(DOXYGEN_FOUND,doxygen,yes)
