@@ -28,11 +28,11 @@ namespace asio {
 
 namespace detail {
 
-template <typename Stream, typename Buffer>
-char is_read_buffered_helper(buffered_stream<Stream, Buffer>* s);
+template <typename Stream>
+char is_read_buffered_helper(buffered_stream<Stream>* s);
 
-template <typename Stream, typename Buffer>
-char is_read_buffered_helper(buffered_read_stream<Stream, Buffer>* s);
+template <typename Stream>
+char is_read_buffered_helper(buffered_read_stream<Stream>* s);
 
 struct is_read_buffered_big_type { char data[10]; };
 is_read_buffered_big_type is_read_buffered_helper(...);

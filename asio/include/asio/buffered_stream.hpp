@@ -43,7 +43,7 @@ namespace asio {
  * Async_Object, Async_Read_Stream, Async_Write_Stream, Error_Source, Stream,
  * Sync_Read_Stream, Sync_Write_Stream.
  */
-template <typename Stream, typename Buffer>
+template <typename Stream>
 class buffered_stream
   : private boost::noncopyable
 {
@@ -60,13 +60,20 @@ public:
   /// The type used for reporting errors.
   typedef typename next_layer_type::error_type error_type;
 
-  /// The buffer type for this buffering layer.
-  typedef Buffer buffer_type;
-
   /// Construct, passing the specified argument to initialise the next layer.
   template <typename Arg>
   explicit buffered_stream(Arg& a)
-    : stream_impl_(a)
+    : inner_stream_impl_(a),
+      stream_impl_(inner_stream_impl_)
+  {
+  }
+
+  /// Construct, passing the specified argument to initialise the next layer.
+  template <typename Arg>
+  explicit buffered_stream(Arg& a, std::size_t read_buffer_size,
+      std::size_t write_buffer_size)
+    : inner_stream_impl_(a, write_buffer_size),
+      stream_impl_(inner_stream_impl_, read_buffer_size)
   {
   }
 
@@ -86,18 +93,6 @@ public:
   demuxer_type& demuxer()
   {
     return stream_impl_.demuxer();
-  }
-
-  /// Get the read buffer used by this buffering layer.
-  buffer_type& read_buffer()
-  {
-    return stream_impl_.read_buffer();
-  }
-
-  /// Get the write buffer used by this buffering layer.
-  buffer_type& write_buffer()
-  {
-    return stream_impl_.next_layer().write_buffer();
   }
 
   /// Close the stream.
@@ -240,9 +235,13 @@ public:
   }
 
 private:
-  /// The buffered stream implementation.
-  buffered_read_stream<buffered_write_stream<Stream, Buffer>, Buffer>
-    stream_impl_;
+  // The buffered write stream.
+  typedef buffered_write_stream<Stream> write_stream_type;
+  write_stream_type inner_stream_impl_;
+
+  // The buffered read stream.
+  typedef buffered_read_stream<write_stream_type&> read_stream_type;
+  read_stream_type stream_impl_;
 };
 
 } // namespace asio

@@ -24,7 +24,6 @@ noinst_PROGRAMS = \
 	tests/unit/demuxer_test \
 	tests/unit/error_handler_test \
 	tests/unit/error_test \
-	tests/unit/fixed_buffer_test \
 	tests/unit/io_control_test \
 	tests/unit/ipv4/address_test \
 	tests/unit/ipv4/basic_host_resolver_test \
@@ -115,7 +114,6 @@ TESTS = \
 	tests/unit/demuxer_test \
 	tests/unit/error_handler_test \
 	tests/unit/error_test \
-	tests/unit/fixed_buffer_test \
 	tests/unit/io_control_test \
 	tests/unit/ipv4/address_test \
 	tests/unit/ipv4/basic_host_resolver_test \
@@ -175,7 +173,6 @@ tests_unit_ipv4_multicast_test_SOURCES = tests/unit/ipv4/multicast_test.cpp
 tests_unit_ipv4_socket_option_test_SOURCES = tests/unit/ipv4/socket_option_test.cpp
 tests_unit_ipv4_tcp_test_SOURCES = tests/unit/ipv4/tcp_test.cpp
 tests_unit_ipv4_udp_test_SOURCES = tests/unit/ipv4/udp_test.cpp
-tests_unit_fixed_buffer_test_SOURCES = tests/unit/fixed_buffer_test.cpp
 tests_unit_locking_dispatcher_test_SOURCES = tests/unit/locking_dispatcher_test.cpp
 tests_unit_is_read_buffered_test_SOURCES = tests/unit/is_read_buffered_test.cpp
 tests_unit_socket_acceptor_test_SOURCES = tests/unit/socket_acceptor_test.cpp

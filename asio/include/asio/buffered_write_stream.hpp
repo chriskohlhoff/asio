@@ -31,6 +31,7 @@
 #include "asio/error.hpp"
 #include "asio/write.hpp"
 #include "asio/detail/bind_handler.hpp"
+#include "asio/detail/buffered_stream_storage.hpp"
 
 namespace asio {
 
@@ -47,7 +48,7 @@ namespace asio {
  * Async_Object, Async_Read_Stream, Async_Write_Stream, Error_Source, Stream,
  * Sync_Read_Stream, Sync_Write_Stream.
  */
-template <typename Stream, typename Buffer>
+template <typename Stream>
 class buffered_write_stream
   : private boost::noncopyable
 {
@@ -64,14 +65,26 @@ public:
   /// The type used for reporting errors.
   typedef typename next_layer_type::error_type error_type;
 
-  /// The buffer type for this buffering layer.
-  typedef Buffer buffer_type;
+#if defined(GENERATING_DOCUMENTATION)
+  /// The default buffer size.
+  static const std::size_t default_buffer_size = implementation_defined;
+#else
+  BOOST_STATIC_CONSTANT(std::size_t, default_buffer_size = 1024);
+#endif
 
   /// Construct, passing the specified argument to initialise the next layer.
   template <typename Arg>
   explicit buffered_write_stream(Arg& a)
     : next_layer_(a),
-      buffer_()
+      storage_(default_buffer_size)
+  {
+  }
+
+  /// Construct, passing the specified argument to initialise the next layer.
+  template <typename Arg>
+  buffered_write_stream(Arg& a, std::size_t buffer_size)
+    : next_layer_(a),
+      storage_(buffer_size)
   {
   }
 
@@ -93,12 +106,6 @@ public:
     return next_layer_.demuxer();
   }
 
-  /// Get the write buffer used by this buffering layer.
-  buffer_type& write_buffer()
-  {
-    return buffer_;
-  }
-
   /// Close the stream.
   void close()
   {
@@ -118,8 +125,8 @@ public:
   std::size_t flush()
   {
     std::size_t bytes_written = write(next_layer_,
-        buffer(buffer_.begin(), buffer_.size()));
-    buffer_.pop(bytes_written);
+        buffer(storage_.data(), storage_.size()));
+    storage_.consume(bytes_written);
     return bytes_written;
   }
 
@@ -130,8 +137,9 @@ public:
   std::size_t flush(Error_Handler error_handler)
   {
     std::size_t bytes_written = write(next_layer_,
-        buffer(buffer_.begin(), buffer_.size()), transfer_all(), error_handler);
-    buffer_.pop(bytes_written);
+        buffer(storage_.data(), storage_.size()),
+        transfer_all(), error_handler);
+    storage_.consume(bytes_written);
     return bytes_written;
   }
 
@@ -139,22 +147,23 @@ public:
   class flush_handler
   {
   public:
-    flush_handler(buffered_write_stream<Stream, Buffer>& stream,
-        Handler handler)
-      : stream_(stream),
+    flush_handler(demuxer_type& demuxer,
+        detail::buffered_stream_storage& storage, Handler handler)
+      : demuxer_(demuxer),
+        storage_(storage),
         handler_(handler)
     {
     }
 
     void operator()(const error_type& e, std::size_t bytes_written)
     {
-      stream_.write_buffer().pop(bytes_written);
-      stream_.demuxer().dispatch(
-          detail::bind_handler(handler_, e, bytes_written));
+      storage_.consume(bytes_written);
+      demuxer_.dispatch(detail::bind_handler(handler_, e, bytes_written));
     }
 
   private:
-    buffered_write_stream<Stream, Buffer>& stream_;
+    demuxer_type& demuxer_;
+    detail::buffered_stream_storage& storage_;
     Handler handler_;
   };
 
@@ -162,8 +171,8 @@ public:
   template <typename Handler>
   void async_flush(Handler handler)
   {
-    async_write(next_layer_, buffer(buffer_.begin(), buffer_.size()),
-        flush_handler<Handler>(*this, handler));
+    async_write(next_layer_, buffer(storage_.data(), storage_.size()),
+        flush_handler<Handler>(demuxer(), storage_, handler));
   }
 
   /// Write the given data to the stream. Returns the number of bytes written.
@@ -171,7 +180,7 @@ public:
   template <typename Const_Buffers>
   std::size_t write_some(const Const_Buffers& buffers)
   {
-    if (buffer_.size() == buffer_.capacity())
+    if (storage_.size() == storage_.capacity())
       flush();
     return copy(buffers);
   }
@@ -182,7 +191,7 @@ public:
   std::size_t write_some(const Const_Buffers& buffers,
       Error_Handler error_handler)
   {
-    if (buffer_.size() == buffer_.capacity() && !flush(error_handler))
+    if (storage_.size() == storage_.capacity() && !flush(error_handler))
       return 0;
     return copy(buffers);
   }
@@ -191,9 +200,11 @@ public:
   class write_some_handler
   {
   public:
-    write_some_handler(buffered_write_stream<Stream, Buffer>& stream,
+    write_some_handler(demuxer_type& demuxer,
+        detail::buffered_stream_storage& storage,
         const Const_Buffers& buffers, Handler handler)
-      : stream_(stream),
+      : demuxer_(demuxer),
+        storage_(storage),
         buffers_(buffers),
         handler_(handler)
     {
@@ -204,14 +215,14 @@ public:
       if (e)
       {
         std::size_t length = 0;
-        stream_.demuxer().dispatch(detail::bind_handler(handler_, e, length));
+        demuxer_.dispatch(detail::bind_handler(handler_, e, length));
       }
       else
       {
         using namespace std; // For memcpy.
 
-        std::size_t orig_size = stream_.write_buffer().size();
-        std::size_t space_avail = stream_.write_buffer().capacity() - orig_size;
+        std::size_t orig_size = storage_.size();
+        std::size_t space_avail = storage_.capacity() - orig_size;
         std::size_t bytes_copied = 0;
 
         typename Const_Buffers::const_iterator iter = buffers_.begin();
@@ -221,20 +232,20 @@ public:
           std::size_t bytes_avail = buffer_size(*iter);
           std::size_t length = (bytes_avail < space_avail)
             ? bytes_avail : space_avail;
-          stream_.write_buffer().resize(orig_size + bytes_copied + length);
-          memcpy(stream_.write_buffer().begin() + orig_size + bytes_copied,
+          storage_.resize(orig_size + bytes_copied + length);
+          memcpy(storage_.data() + orig_size + bytes_copied,
               buffer_cast<const void*>(*iter), length);
           bytes_copied += length;
           space_avail -= length;
         }
 
-        stream_.demuxer().dispatch(
-            detail::bind_handler(handler_, e, bytes_copied));
+        demuxer_.dispatch(detail::bind_handler(handler_, e, bytes_copied));
       }
     }
 
   private:
-    buffered_write_stream<Stream, Buffer>& stream_;
+    demuxer_type& demuxer_;
+    detail::buffered_stream_storage& storage_;
     Const_Buffers buffers_;
     Handler handler_;
   };
@@ -244,16 +255,15 @@ public:
   template <typename Const_Buffers, typename Handler>
   void async_write_some(const Const_Buffers& buffers, Handler handler)
   {
-    if (buffer_.size() == buffer_.capacity())
+    if (storage_.size() == storage_.capacity())
     {
       async_flush(write_some_handler<Const_Buffers, Handler>(
-            *this, buffers, handler));
+            demuxer(), storage_, buffers, handler));
     }
     else
     {
       std::size_t bytes_copied = copy(buffers);
-      next_layer_.demuxer().post(
-          detail::bind_handler(handler, 0, bytes_copied));
+      demuxer().post(detail::bind_handler(handler, 0, bytes_copied));
     }
   }
 
@@ -319,8 +329,8 @@ private:
   {
     using namespace std; // For memcpy.
 
-    std::size_t orig_size = buffer_.size();
-    std::size_t space_avail = buffer_.capacity() - orig_size;
+    std::size_t orig_size = storage_.size();
+    std::size_t space_avail = storage_.capacity() - orig_size;
     std::size_t bytes_copied = 0;
 
     typename Const_Buffers::const_iterator iter = buffers.begin();
@@ -330,8 +340,8 @@ private:
       std::size_t bytes_avail = buffer_size(*iter);
       std::size_t length = (bytes_avail < space_avail)
         ? bytes_avail : space_avail;
-      buffer_.resize(orig_size + bytes_copied + length);
-      memcpy(buffer_.begin() + orig_size + bytes_copied,
+      storage_.resize(orig_size + bytes_copied + length);
+      memcpy(storage_.data() + orig_size + bytes_copied,
           buffer_cast<const void*>(*iter), length);
       bytes_copied += length;
       space_avail -= length;
@@ -344,7 +354,7 @@ private:
   Stream next_layer_;
 
   // The data in the buffer.
-  Buffer buffer_;
+  detail::buffered_stream_storage storage_;
 };
 
 } // namespace asio

@@ -30,6 +30,7 @@
 #include "asio/error.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/buffer_resize_guard.hpp"
+#include "asio/detail/buffered_stream_storage.hpp"
 
 namespace asio {
 
@@ -46,7 +47,7 @@ namespace asio {
  * Async_Object, Async_Read_Stream, Async_Write_Stream, Error_Source, Stream,
  * Sync_Read_Stream, Sync_Write_Stream.
  */
-template <typename Stream, typename Buffer>
+template <typename Stream>
 class buffered_read_stream
   : private boost::noncopyable
 {
@@ -63,14 +64,26 @@ public:
   /// The type used for reporting errors.
   typedef typename next_layer_type::error_type error_type;
 
-  /// The buffer type for this buffering layer.
-  typedef Buffer buffer_type;
+#if defined(GENERATING_DOCUMENTATION)
+  /// The default buffer size.
+  static const std::size_t default_buffer_size = implementation_defined;
+#else
+  BOOST_STATIC_CONSTANT(std::size_t, default_buffer_size = 1024);
+#endif
 
   /// Construct, passing the specified demuxer to initialise the next layer.
   template <typename Arg>
   explicit buffered_read_stream(Arg& a)
     : next_layer_(a),
-      buffer_()
+      storage_(default_buffer_size)
+  {
+  }
+
+  /// Construct, passing the specified demuxer to initialise the next layer.
+  template <typename Arg>
+  buffered_read_stream(Arg& a, std::size_t buffer_size)
+    : next_layer_(a),
+      storage_(buffer_size)
   {
   }
 
@@ -90,12 +103,6 @@ public:
   demuxer_type& demuxer()
   {
     return next_layer_.demuxer();
-  }
-
-  /// Get the read buffer used by this buffering layer.
-  buffer_type& read_buffer()
-  {
-    return buffer_;
   }
 
   /// Close the stream.
@@ -140,14 +147,15 @@ public:
   /// buffer as a result of the operation. Throws an exception on failure.
   std::size_t fill()
   {
-    detail::buffer_resize_guard<Buffer> resize_guard(buffer_);
-    std::size_t previous_size = buffer_.size();
-    buffer_.resize(buffer_.capacity());
-    buffer_.resize(previous_size + next_layer_.read_some(buffer(
-            buffer_.begin() + previous_size,
-            buffer_.size() - previous_size)));
+    detail::buffer_resize_guard<detail::buffered_stream_storage>
+      resize_guard(storage_);
+    std::size_t previous_size = storage_.size();
+    storage_.resize(storage_.capacity());
+    storage_.resize(previous_size + next_layer_.read_some(buffer(
+            storage_.data() + previous_size,
+            storage_.size() - previous_size)));
     resize_guard.commit();
-    return buffer_.size() - previous_size;
+    return storage_.size() - previous_size;
   }
 
   /// Fill the buffer with some data. Returns the number of bytes placed in the
@@ -156,24 +164,27 @@ public:
   template <typename Error_Handler>
   std::size_t fill(Error_Handler error_handler)
   {
-    detail::buffer_resize_guard<Buffer> resize_guard(buffer_);
-    std::size_t previous_size = buffer_.size();
-    buffer_.resize(buffer_.capacity());
-    buffer_.resize(previous_size + next_layer_.read_some(buffer(
-            buffer_.begin() + previous_size,
-            buffer_.size() - previous_size),
+    detail::buffer_resize_guard<detail::buffered_stream_storage>
+      resize_guard(storage_);
+    std::size_t previous_size = storage_.size();
+    storage_.resize(storage_.capacity());
+    storage_.resize(previous_size + next_layer_.read_some(buffer(
+            storage_.data() + previous_size,
+            storage_.size() - previous_size),
           error_handler));
     resize_guard.commit();
-    return buffer_.size() - previous_size;
+    return storage_.size() - previous_size;
   }
 
   template <typename Handler>
   class fill_handler
   {
   public:
-    fill_handler(buffered_read_stream<Stream, Buffer>& stream,
+    fill_handler(demuxer_type& demuxer,
+        detail::buffered_stream_storage& storage,
         std::size_t previous_size, Handler handler)
-      : stream_(stream),
+      : demuxer_(demuxer),
+        storage_(storage),
         previous_size_(previous_size),
         handler_(handler)
     {
@@ -182,13 +193,13 @@ public:
     template <typename Error>
     void operator()(const Error& e, std::size_t bytes_transferred)
     {
-      stream_.read_buffer().resize(previous_size_ + bytes_transferred);
-      stream_.demuxer().dispatch(
-          detail::bind_handler(handler_, e, bytes_transferred));
+      storage_.resize(previous_size_ + bytes_transferred);
+      demuxer_.dispatch(detail::bind_handler(handler_, e, bytes_transferred));
     }
 
   private:
-    buffered_read_stream<Stream, Buffer>& stream_;
+    demuxer_type& demuxer_;
+    detail::buffered_stream_storage& storage_;
     std::size_t previous_size_;
     Handler handler_;
   };
@@ -197,13 +208,13 @@ public:
   template <typename Handler>
   void async_fill(Handler handler)
   {
-    std::size_t previous_size = buffer_.size();
-    buffer_.resize(buffer_.capacity());
+    std::size_t previous_size = storage_.size();
+    storage_.resize(storage_.capacity());
     next_layer_.async_read_some(
         buffer(
-          buffer_.begin() + previous_size,
-          buffer_.size() - previous_size),
-        fill_handler<Handler>(*this, previous_size, handler));
+          storage_.data() + previous_size,
+          storage_.size() - previous_size),
+        fill_handler<Handler>(demuxer(), storage_, previous_size, handler));
   }
 
   /// Read some data from the stream. Returns the number of bytes read. Throws
@@ -211,7 +222,7 @@ public:
   template <typename Mutable_Buffers>
   std::size_t read_some(const Mutable_Buffers& buffers)
   {
-    if (buffer_.empty())
+    if (storage_.empty())
       fill();
     return copy(buffers);
   }
@@ -222,7 +233,7 @@ public:
   std::size_t read_some(const Mutable_Buffers& buffers,
       Error_Handler error_handler)
   {
-    if (buffer_.empty() && !fill(error_handler))
+    if (storage_.empty() && !fill(error_handler))
       return 0;
     return copy(buffers);
   }
@@ -231,9 +242,11 @@ public:
   class read_some_handler
   {
   public:
-    read_some_handler(buffered_read_stream<Stream, Buffer>& stream,
+    read_some_handler(demuxer_type& demuxer,
+        detail::buffered_stream_storage& storage,
         const Mutable_Buffers& buffers, Handler handler)
-      : stream_(stream),
+      : demuxer_(demuxer),
+        storage_(storage),
         buffers_(buffers),
         handler_(handler)
     {
@@ -241,16 +254,16 @@ public:
 
     void operator()(const error_type& e, std::size_t bytes_transferred)
     {
-      if (e || stream_.read_buffer().empty())
+      if (e || storage_.empty())
       {
         std::size_t length = 0;
-        stream_.demuxer().dispatch(detail::bind_handler(handler_, e, length));
+        demuxer_.dispatch(detail::bind_handler(handler_, e, length));
       }
       else
       {
         using namespace std; // For memcpy.
 
-        std::size_t bytes_avail = stream_.read_buffer().size();
+        std::size_t bytes_avail = storage_.size();
         std::size_t bytes_copied = 0;
 
         typename Mutable_Buffers::const_iterator iter = buffers_.begin();
@@ -261,19 +274,19 @@ public:
           std::size_t length = (max_length < bytes_avail)
             ? max_length : bytes_avail;
           memcpy(buffer_cast<void*>(*iter),
-              stream_.read_buffer().begin() + bytes_copied, length);
+              storage_.data() + bytes_copied, length);
           bytes_copied += length;
           bytes_avail -= length;
         }
 
-        stream_.read_buffer().pop(bytes_copied);
-        stream_.demuxer().dispatch(
-            detail::bind_handler(handler_, e, bytes_copied));
+        storage_.consume(bytes_copied);
+        demuxer_.dispatch(detail::bind_handler(handler_, e, bytes_copied));
       }
     }
 
   private:
-    buffered_read_stream<Stream, Buffer>& stream_;
+    demuxer_type& demuxer_;
+    detail::buffered_stream_storage& storage_;
     Mutable_Buffers buffers_;
     Handler handler_;
   };
@@ -283,10 +296,10 @@ public:
   template <typename Mutable_Buffers, typename Handler>
   void async_read_some(const Mutable_Buffers& buffers, Handler handler)
   {
-    if (buffer_.empty())
+    if (storage_.empty())
     {
       async_fill(read_some_handler<Mutable_Buffers, Handler>(
-            *this, buffers, handler));
+            demuxer(), storage_, buffers, handler));
     }
     else
     {
@@ -300,7 +313,7 @@ public:
   template <typename Mutable_Buffers>
   std::size_t peek(const Mutable_Buffers& buffers)
   {
-    if (buffer_.empty())
+    if (storage_.empty())
       fill();
     return peek_copy(buffers);
   }
@@ -310,7 +323,7 @@ public:
   template <typename Mutable_Buffers, typename Error_Handler>
   std::size_t peek(const Mutable_Buffers& buffers, Error_Handler error_handler)
   {
-    if (buffer_.empty() && !fill(error_handler))
+    if (storage_.empty() && !fill(error_handler))
       return 0;
     return peek_copy(buffers);
   }
@@ -318,14 +331,14 @@ public:
   /// Determine the amount of data that may be read without blocking.
   std::size_t in_avail()
   {
-    return buffer_.size();
+    return storage_.size();
   }
 
   /// Determine the amount of data that may be read without blocking.
   template <typename Error_Handler>
   std::size_t in_avail(Error_Handler error_handler)
   {
-    return buffer_.size();
+    return storage_.size();
   }
 
 private:
@@ -336,7 +349,7 @@ private:
   {
     using namespace std; // For memcpy.
 
-    std::size_t bytes_avail = buffer_.size();
+    std::size_t bytes_avail = storage_.size();
     std::size_t bytes_copied = 0;
 
     typename Mutable_Buffers::const_iterator iter = buffers.begin();
@@ -346,12 +359,12 @@ private:
       std::size_t max_length = buffer_size(*iter);
       std::size_t length = (max_length < bytes_avail)
         ? max_length : bytes_avail;
-      memcpy(buffer_cast<void*>(*iter), buffer_.begin() + bytes_copied, length);
+      memcpy(buffer_cast<void*>(*iter), storage_.data() + bytes_copied, length);
       bytes_copied += length;
       bytes_avail -= length;
     }
 
-    buffer_.pop(bytes_copied);
+    storage_.consume(bytes_copied);
     return bytes_copied;
   }
 
@@ -363,7 +376,7 @@ private:
   {
     using namespace std; // For memcpy.
 
-    std::size_t bytes_avail = buffer_.size();
+    std::size_t bytes_avail = storage_.size();
     std::size_t bytes_copied = 0;
 
     typename Mutable_Buffers::const_iterator iter = buffers.begin();
@@ -373,7 +386,7 @@ private:
       std::size_t max_length = buffer_size(*iter);
       std::size_t length = (max_length < bytes_avail)
         ? max_length : bytes_avail;
-      memcpy(buffer_cast<void*>(*iter), buffer_.begin() + bytes_copied, length);
+      memcpy(buffer_cast<void*>(*iter), storage_.data() + bytes_copied, length);
       bytes_copied += length;
       bytes_avail -= length;
     }
@@ -385,7 +398,7 @@ private:
   Stream next_layer_;
 
   // The data in the buffer.
-  Buffer buffer_;
+  detail::buffered_stream_storage storage_;
 };
 
 } // namespace asio

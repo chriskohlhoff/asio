@@ -28,11 +28,11 @@ namespace asio {
 
 namespace detail {
 
-template <typename Stream, typename Buffer>
-char is_write_buffered_helper(buffered_stream<Stream, Buffer>* s);
+template <typename Stream>
+char is_write_buffered_helper(buffered_stream<Stream>* s);
 
-template <typename Stream, typename Buffer>
-char is_write_buffered_helper(buffered_write_stream<Stream, Buffer>* s);
+template <typename Stream>
+char is_write_buffered_helper(buffered_write_stream<Stream>* s);
 
 struct is_write_buffered_big_type { char data[10]; };
 is_write_buffered_big_type is_write_buffered_helper(...);

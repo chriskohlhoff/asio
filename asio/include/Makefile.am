@@ -22,6 +22,7 @@ nobase_include_HEADERS = \
 	asio/demuxer_service.hpp \
 	asio/detail/bind_handler.hpp \
 	asio/detail/buffer_resize_guard.hpp \
+	asio/detail/buffered_stream_storage.hpp \
 	asio/detail/consuming_buffers.hpp \
 	asio/detail/demuxer_run_call_stack.hpp \
 	asio/detail/epoll_reactor.hpp \
@@ -72,7 +73,6 @@ nobase_include_HEADERS = \
 	asio/detail/wrapped_handler.hpp \
 	asio/error_handler.hpp \
 	asio/error.hpp \
-	asio/fixed_buffer.hpp \
 	asio/io_control.hpp \
 	asio/ipv4/address.hpp \
 	asio/ipv4/basic_host_resolver.hpp \

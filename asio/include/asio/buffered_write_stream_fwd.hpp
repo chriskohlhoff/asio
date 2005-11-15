@@ -17,11 +17,9 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/fixed_buffer.hpp"
-
 namespace asio {
 
-template <typename Stream, typename Buffer = fixed_buffer<8192> >
+template <typename Stream>
 class buffered_write_stream;
 
 } // namespace asio

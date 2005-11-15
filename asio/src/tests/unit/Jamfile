@@ -22,7 +22,6 @@ run demuxer_service_test.cpp ;
 run demuxer_test.cpp <lib>../../thread/build/boost_thread ;
 run error_handler_test.cpp ;
 run error_test.cpp ;
-run fixed_buffer_test.cpp ;
 run io_control_test.cpp ;
 run ipv4/address_test.cpp ;
 run ipv4/basic_host_resolver_test.cpp ;
