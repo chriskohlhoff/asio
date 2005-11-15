@@ -184,7 +184,7 @@ public:
    */
   template <typename Handler>
 #if defined(GENERATING_DOCUMENTATION)
-  implementation_defined
+  unspecified
 #else
   detail::wrapped_handler<basic_demuxer<Demuxer_Service>, Handler>
 #endif

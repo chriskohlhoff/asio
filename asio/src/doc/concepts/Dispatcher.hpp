@@ -65,5 +65,5 @@ public:
    * @code dispatcher.dispatch(boost::bind(f, a1, ... an)); @endcode
    */
   template <typename Handler>
-  implementation_defined wrap(Handler handler);
+  unspecified wrap(Handler handler);
 };
