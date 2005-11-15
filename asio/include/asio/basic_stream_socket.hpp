@@ -885,7 +885,9 @@ public:
    *
    * @par Example:
    * To read into a single data buffer use the @ref buffer function as follows:
-   * @code socket.async_read(asio::buffer(data, size), handler); @endcode
+   * @code
+   * socket.async_read_some(asio::buffer(data, size), handler);
+   * @endcode
    * See the @ref buffer documentation for information on reading into multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
