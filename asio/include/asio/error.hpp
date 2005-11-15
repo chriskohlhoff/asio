@@ -31,11 +31,11 @@ namespace asio {
 #if defined(BOOST_WINDOWS)
 # define ASIO_SOCKET_ERROR(e) WSA ## e
 # define ASIO_NETDB_ERROR(e) WSA ## e
-# define ASIO_WIN_OR_POSIX_ERROR(e_win, e_posix) e_win
+# define ASIO_OS_ERROR(e_win, e_posix) e_win
 #else
 # define ASIO_SOCKET_ERROR(e) e
 # define ASIO_NETDB_ERROR(e) 16384 + e
-# define ASIO_WIN_OR_POSIX_ERROR(e_win, e_posix) e_posix
+# define ASIO_OS_ERROR(e_win, e_posix) e_posix
 #endif
 
 /// The error class is used to encapsulate system error codes.
@@ -74,7 +74,7 @@ public:
     bad_descriptor = ASIO_SOCKET_ERROR(EBADF),
 
     /// End of file or stream.
-    eof = ASIO_WIN_OR_POSIX_ERROR(ERROR_HANDLE_EOF, -1),
+    eof = ASIO_OS_ERROR(ERROR_HANDLE_EOF, -1),
 
     /// Bad address.
     fault = ASIO_SOCKET_ERROR(EFAULT),
@@ -119,10 +119,10 @@ public:
     no_host_data = ASIO_NETDB_ERROR(NO_DATA),
 
     /// Cannot allocate memory.
-    no_memory = ASIO_WIN_OR_POSIX_ERROR(ERROR_OUTOFMEMORY, ENOMEM),
+    no_memory = ASIO_OS_ERROR(ERROR_OUTOFMEMORY, ENOMEM),
 
     /// Operation not permitted.
-    no_permission = ASIO_WIN_OR_POSIX_ERROR(ERROR_ACCESS_DENIED, EPERM),
+    no_permission = ASIO_OS_ERROR(ERROR_ACCESS_DENIED, EPERM),
 
     /// Protocol not available.
     no_protocol_option = ASIO_SOCKET_ERROR(ENOPROTOOPT),
@@ -140,8 +140,7 @@ public:
     not_supported = ASIO_SOCKET_ERROR(EOPNOTSUPP),
 
     /// Operation cancelled.
-    operation_aborted =
-      ASIO_WIN_OR_POSIX_ERROR(ERROR_OPERATION_ABORTED, ECANCELED),
+    operation_aborted = ASIO_OS_ERROR(ERROR_OPERATION_ABORTED, ECANCELED),
 
     /// Cannot send after transport endpoint shutdown.
     shut_down = ASIO_SOCKET_ERROR(ESHUTDOWN),
@@ -153,7 +152,7 @@ public:
     timed_out = ASIO_SOCKET_ERROR(ETIMEDOUT),
 
     /// Resource temporarily unavailable.
-    try_again = ASIO_WIN_OR_POSIX_ERROR(ERROR_RETRY, EAGAIN),
+    try_again = ASIO_OS_ERROR(ERROR_RETRY, EAGAIN),
 
     /// The socket is marked non-blocking and the requested operation would
     /// block.
@@ -318,7 +317,7 @@ Ostream& operator<<(Ostream& os, const error& e)
 
 #undef ASIO_SOCKET_ERROR
 #undef ASIO_NETDB_ERROR
-#undef ASIO_WIN_OR_POSIX_ERROR
+#undef ASIO_OS_ERROR
 
 #include "asio/detail/pop_options.hpp"
 
