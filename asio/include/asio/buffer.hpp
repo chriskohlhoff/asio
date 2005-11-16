@@ -84,6 +84,9 @@ inline std::size_t buffer_size_helper(const mutable_buffer& b)
 } // namespace detail
 
 /// Cast a non-modifiable buffer to a specified pointer to POD type.
+/**
+ * @relates mutable_buffer
+ */
 template <typename Pointer_To_Pod_Type>
 inline Pointer_To_Pod_Type buffer_cast(const mutable_buffer& b)
 {
@@ -91,12 +94,18 @@ inline Pointer_To_Pod_Type buffer_cast(const mutable_buffer& b)
 }
 
 /// Get the number of bytes in a non-modifiable buffer.
+/**
+ * @relates mutable_buffer
+ */
 inline std::size_t buffer_size(const mutable_buffer& b)
 {
   return detail::buffer_size_helper(b);
 }
 
 /// Create a new modifiable buffer that is offset from the start of another.
+/**
+ * @relates mutable_buffer
+ */
 inline mutable_buffer operator+(const mutable_buffer& b, std::size_t start)
 {
   if (start > buffer_size(b))
@@ -107,6 +116,9 @@ inline mutable_buffer operator+(const mutable_buffer& b, std::size_t start)
 }
 
 /// Create a new modifiable buffer that is offset from the start of another.
+/**
+ * @relates mutable_buffer
+ */
 inline mutable_buffer operator+(std::size_t start, const mutable_buffer& b)
 {
   if (start > buffer_size(b))
@@ -217,6 +229,9 @@ inline std::size_t buffer_size_helper(const const_buffer& b)
 } // namespace detail
 
 /// Cast a non-modifiable buffer to a specified pointer to POD type.
+/**
+ * @relates const_buffer
+ */
 template <typename Pointer_To_Pod_Type>
 inline Pointer_To_Pod_Type buffer_cast(const const_buffer& b)
 {
@@ -224,12 +239,18 @@ inline Pointer_To_Pod_Type buffer_cast(const const_buffer& b)
 }
 
 /// Get the number of bytes in a non-modifiable buffer.
+/**
+ * @relates const_buffer
+ */
 inline std::size_t buffer_size(const const_buffer& b)
 {
   return detail::buffer_size_helper(b);
 }
 
 /// Create a new non-modifiable buffer that is offset from the start of another.
+/**
+ * @relates const_buffer
+ */
 inline const_buffer operator+(const const_buffer& b, std::size_t start)
 {
   if (start > buffer_size(b))
@@ -240,6 +261,9 @@ inline const_buffer operator+(const const_buffer& b, std::size_t start)
 }
 
 /// Create a new non-modifiable buffer that is offset from the start of another.
+/**
+ * @relates const_buffer
+ */
 inline const_buffer operator+(std::size_t start, const const_buffer& b)
 {
   if (start > buffer_size(b))
