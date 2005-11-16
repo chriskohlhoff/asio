@@ -21,6 +21,7 @@
 #include <boost/config.hpp>
 #include <boost/noncopyable.hpp>
 #include <cerrno>
+#include <cstring>
 #include <exception>
 #include "asio/detail/pop_options.hpp"
 
