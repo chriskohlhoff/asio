@@ -10,7 +10,7 @@
 
 /**
 \namespace asio::ipv4
-\brief The asio namespace defines the classes associated with IP version 4.
+\brief The asio::ipv4 namespace defines the classes associated with IP version 4.
 */
 
 /**

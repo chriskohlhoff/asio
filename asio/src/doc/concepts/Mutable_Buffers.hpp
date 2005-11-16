@@ -21,7 +21,8 @@ class Mutable_Buffers
 {
 public:
   /// The type for each element in the list of buffers. The type must be
-  /// asio::mutable_buffer or be convertible to asio::mutable_buffer.
+  /// asio::mutable_buffer or be convertible to an instance of
+  /// asio::mutable_buffer.
   typedef implementation_defined value_type;
 
   /// A forward iterator type that may be used to read or modify elements.

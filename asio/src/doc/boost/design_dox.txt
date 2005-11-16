@@ -1,0 +1,10 @@
+/**
+\mainpage Design Index
+
+Some design notes:
+
+\li \ref designservices
+\li \ref designhandlers
+\li \ref designcloseascancel
+
+*/
