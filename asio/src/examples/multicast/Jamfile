@@ -3,11 +3,13 @@ subproject libs/asio/example/multicast ;
 exe receiver
   : receiver.cpp
   : <include>$(BOOST_ROOT)
+    <include>../../../..
     <threading>multi
   ;
 
 exe sender
   : sender.cpp
   : <include>$(BOOST_ROOT)
+    <include>../../../..
     <threading>multi
   ;

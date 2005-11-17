@@ -1,8 +1,11 @@
 subproject libs/asio/example/tutorial ;
 
+project boost : $(BOOST_ROOT) ;
+
 template asio_tutorial
-  : <lib>../../../thread/build/boost_thread
+  : <lib>@boost/libs/thread/build/boost_thread
   : <include>$(BOOST_ROOT)
+    <include>../../../..
     <threading>multi
   ;
 

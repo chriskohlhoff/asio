@@ -3,6 +3,7 @@ subproject libs/asio/example/ssl ;
 exe client
   : client.cpp
   : <include>$(BOOST_ROOT)
+    <include>../../../..
     <threading>multi
     <find-library>ssl
     <find-library>crypto
@@ -11,6 +12,7 @@ exe client
 exe server
   : server.cpp
   : <include>$(BOOST_ROOT)
+    <include>../../../..
     <threading>multi
     <find-library>ssl
     <find-library>crypto
