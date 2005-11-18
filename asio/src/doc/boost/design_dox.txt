@@ -6,5 +6,8 @@ Some design notes:
 \li \ref designservices
 \li \ref designhandlers
 \li \ref designcloseascancel
+\li \ref designthreads
+\li \ref designbuffers
+\li \ref designproactor
 
 */

@@ -76,6 +76,54 @@
       </ul>
     </p>
 
+    <h2>Rationale</h2>
+    <p>
+      The Boost.Asio library is intended for programmers using C++ for systems
+      programming, where access to operating system functionality such as
+      networking is often required. In particular, Boost.Asio attempts to
+      address the following goals:
+      <ul>
+        <li>
+          <b>Portability.</b> The library should support, and provide consistent
+          behaviour across, a range of commonly used operating systems.
+        </li>
+        <li>
+          <b>Scalability.</b> The library should allow, and indeed encourage,
+          the development of network applications that scale to hundreds or
+          thousands of concurrent connections. The library implementation for
+          each operating system should use the mechanism that best enables this
+          scalability.
+        </li>
+        <li>
+          <b>Efficiency.</b> The library should support techniques such as
+          scatter-gather I/O, and allow protocol implementations that minimise
+          data copying.
+        </li>
+        <li>
+          <b>Model Berkeley sockets.</b> The Berkeley sockets API is widely
+          implemented and understood, as well as being covered in much
+          literature. Other programming languages often use a similar interface
+          for networking APIs.
+        </li>
+        <li>
+          <b>Ease of use.</b> Lower the entry barrier for new users by taking a
+          toolkit, rather than framework, approach. That is, try to minimise
+          the up-front investment in time to just learning a few basic rules and
+          guidelines. After that, a library user should only need to understand
+          the specific functions that are being used.
+        </li>
+        <li>
+          <b>Basis for further abstraction.</b> The library should permit the
+          development of other libraries that provide higher levels of
+          abstraction. For example, implementations of commonly used protocols
+          such as HTTP.
+        </li>
+      </ul>
+      Although the current incarnation of Boost.Asio focuses primarily on
+      networking, its concepts of asynchronous I/O can be extended to include
+      other operating system resources such as files.
+    </p>
+
     <div class="copyright">
       Copyright &copy; 2003-2005 Christopher M. Kohlhoff
     </div>
