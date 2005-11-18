@@ -1,5 +1,5 @@
 Thanks goes to the following people for their assistance and feedback on the
-design, implementation and testing of asio:
+design, implementation, documentation and testing of asio:
 
 Alexander Libman <libman at terabit dot com dot au>
 James Anderson <jg_anderson at yahoo dot com>
@@ -16,3 +16,4 @@ Roland Schwarz <roland dot schwarz at chello dot at>
 Arvid Norberg <c99ang at cs dot umu dot se>
 Indrek Juhani <Indrek dot Juhani at voipster dot com>
 Beman Dawes <bdawes at acm dot org>
+Dick Bridges <Dick dot Bridges at us dot thalesgroup dot com>
