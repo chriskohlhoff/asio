@@ -67,7 +67,7 @@
       asio supports the following platforms and compilers:
       <ul>
         <li>
-          Win32 using Visual C++ 7.1.
+          Win32 using Visual C++ 7.1 and Visual C++ 8.0.
         </li>
         <li>
           Win32 using Borland C++Builder 6 patch 4.

@@ -69,8 +69,8 @@
     <h3>Building with MSVC</h3>
 
     <p>
-      To build using the MSVC 7.1 command line compiler, perform the following
-      steps in a Command Prompt window:
+      To build using the MSVC 7.1 or MSVC 8.0 command line compiler, perform the
+      following steps in a Command Prompt window:
     </p>
 
     <ul>
