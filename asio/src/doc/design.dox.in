@@ -378,7 +378,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = ./design/index_dox.txt ./design/handlers_dox.txt ./design/closeascancel_dox.txt ./design/services_dox.txt ./design/threads_dox.txt ./design/proactor_dox.txt
+INPUT                  = ./design/index_dox.txt ./design/handlers_dox.txt ./design/closeascancel_dox.txt ./design/services_dox.txt ./design/threads_dox.txt ./design/buffers_dox.txt ./design/proactor_dox.txt
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
