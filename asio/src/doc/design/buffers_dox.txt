@@ -9,7 +9,7 @@ more buffers (where each buffer is a contiguous region of memory):
 \li A <b>gather-write</b> transmits multiple buffers.
 
 Therefore we require an abstraction to represent a collection of buffers. The
-approach asio uses is to define a type (or actually types) to represent a
+approach asio uses is to define a type (actually two types) to represent a
 single buffer. These can be stored in a container, which may be passed to the
 scatter-gather operations.
 
@@ -31,8 +31,8 @@ However, the asio library does not use the above definitions, but instead
 defines two classes: asio::mutable_buffer and asio::const_buffer. The goal of
 these is to provide an opaque representation of contiguous memory, where:
 
-\li Types behave as std::pair would in conversions. That is, a const_buffer is
-convertible to a mutable_buffer, but the opposite conversion is disallowed.
+\li Types behave as std::pair would in conversions. That is, a mutable_buffer is
+convertible to a const_buffer, but the opposite conversion is disallowed.
 \li There is protection against buffer overruns. Given a buffer instance, a
 user can only create another buffer representing the same range of memory or a
 sub-range of it. To provide further safety, the library also includes
