@@ -11,12 +11,12 @@ We start by including the necessary header files.
 All of the asio classes can be used by simply including the <tt>"asio.hpp"</tt>
 header file.
 
-\until #include "asio.hpp"
+\until asio.hpp
 
 Since this example users timers, we need to include the appropriate
 Boost.Date_Time header file for manipulating times.
 
-\until #include "boost/date_time/posix_time/posix_time.hpp"
+\until posix_time.hpp
 
 All programs that use asio need to have at least one asio::demuxer object. This
 class provides access to the event demultiplexing functionality. We declare an
@@ -69,7 +69,7 @@ asynchronous wait on the timer.
 
 \dontinclude timer2/timer.cpp
 
-\until #include "boost/date_time/posix_time/posix_time.hpp"
+\until posix_time.hpp
 
 Using asio's asynchronous functionality means having a callback
 function that will be called when an asynchronous operation completes. In this
@@ -128,7 +128,7 @@ your handler function.
 
 \dontinclude timer3/timer.cpp
 
-\until #include "boost/date_time/posix_time/posix_time.hpp"
+\until posix_time.hpp
 
 To implement a repeating timer using asio you need to change
 the timer's expiry time in your callback function, and to then start a new
@@ -219,7 +219,7 @@ tutorial Timer.3.
 
 \dontinclude timer4/timer.cpp
 
-\until #include "boost/date_time/posix_time/posix_time.hpp"
+\until posix_time.hpp
 
 Instead of defining a free function <tt>print</tt> as the
 callback handler, as we did in the earlier tutorial programs, we now define a
@@ -307,7 +307,7 @@ when handlers might be accessing a shared, thread-unsafe resource.
 
 \dontinclude timer5/timer.cpp
 
-\until #include "boost/date_time/posix_time/posix_time.hpp"
+\until posix_time.hpp
 
 We start by defining a class called <tt>printer</tt>, similar
 to the class in the previous tutorial. This class will extend the previous

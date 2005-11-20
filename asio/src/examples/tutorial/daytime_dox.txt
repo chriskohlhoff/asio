@@ -8,7 +8,7 @@ with TCP.
 
 We start by including the necessary header files.
 
-\until #include "asio.hpp"
+\until asio.hpp
 
 The purpose of this application is to access a daytime service,
 so we need the user to specify the server.
