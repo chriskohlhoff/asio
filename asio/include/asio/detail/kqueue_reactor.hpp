@@ -28,6 +28,7 @@
 #include <sys/types.h>
 #include <sys/event.h>
 #include <sys/time.h>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -41,7 +42,6 @@
 #include "asio/detail/select_interrupter.hpp"
 #include "asio/detail/signal_blocker.hpp"
 #include "asio/detail/socket_types.hpp"
-#include "asio/detail/time.hpp"
 
 namespace asio {
 namespace detail {
@@ -232,10 +232,11 @@ public:
   // expires. Returns a token that may be used for cancelling the timer, but it
   // is not valid after the timer expires.
   template <typename Handler>
-  void schedule_timer(long sec, long usec, Handler handler, void* token)
+  void schedule_timer(const boost::posix_time::ptime& time,
+      Handler handler, void* token)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
-    if (timer_queue_.enqueue_timer(detail::time(sec, usec), handler, token))
+    if (timer_queue_.enqueue_timer(time, handler, token))
       interrupter_.interrupt();
   }
 
@@ -366,7 +367,8 @@ private:
       read_op_queue_.dispatch_cancellations();
       write_op_queue_.dispatch_cancellations();
       except_op_queue_.dispatch_cancellations();
-      timer_queue_.dispatch_timers(detail::time::now());
+      timer_queue_.dispatch_timers(
+          boost::posix_time::microsec_clock::universal_time());
 
       // Issue any pending cancellations.
       pending_cancellations_map::iterator i = pending_cancellations_.begin();
@@ -419,15 +421,15 @@ private:
     if (timer_queue_.empty())
       return 0;
 
-    detail::time now = detail::time::now();
-    detail::time earliest_timer;
+    boost::posix_time::ptime now
+      = boost::posix_time::microsec_clock::universal_time();
+    boost::posix_time::ptime earliest_timer;
     timer_queue_.get_earliest_time(earliest_timer);
     if (now < earliest_timer)
     {
-      detail::time timeout = earliest_timer;
-      timeout -= now;
-      ts.tv_sec = timeout.sec();
-      ts.tv_nsec = timeout.usec() * 1000;
+      boost::posix_time::time_duration timeout = earliest_timer - now;
+      ts.tv_sec = timeout.total_seconds();
+      ts.tv_nsec = timeout.total_nanoseconds() % 1000000000;
     }
     else
     {
@@ -472,7 +474,7 @@ private:
   reactor_op_queue<socket_type> except_op_queue_;
 
   // The queue of timers.
-  reactor_timer_queue<detail::time> timer_queue_;
+  reactor_timer_queue<boost::posix_time::ptime> timer_queue_;
 
   // The type for a map of descriptors to be cancelled.
   typedef hash_map<socket_type, bool> pending_cancellations_map;

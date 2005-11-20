@@ -31,6 +31,7 @@
 #include "asio/detail/push_options.hpp"
 #include <new>
 #include <sys/epoll.h>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -44,7 +45,6 @@
 #include "asio/detail/select_interrupter.hpp"
 #include "asio/detail/signal_blocker.hpp"
 #include "asio/detail/socket_types.hpp"
-#include "asio/detail/time.hpp"
 
 namespace asio {
 namespace detail {
@@ -293,10 +293,11 @@ public:
   // Schedule a timer to expire at the specified absolute time. The handler
   // object will be invoked when the timer expires.
   template <typename Handler>
-  void schedule_timer(long sec, long usec, Handler handler, void* token)
+  void schedule_timer(const boost::posix_time::ptime& time,
+      Handler handler, void* token)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
-    if (timer_queue_.enqueue_timer(detail::time(sec, usec), handler, token))
+    if (timer_queue_.enqueue_timer(time, handler, token))
       interrupter_.interrupt();
   }
 
@@ -414,7 +415,8 @@ private:
       read_op_queue_.dispatch_cancellations();
       write_op_queue_.dispatch_cancellations();
       except_op_queue_.dispatch_cancellations();
-      timer_queue_.dispatch_timers(detail::time::now());
+      timer_queue_.dispatch_timers(
+          boost::posix_time::microsec_clock::universal_time());
 
       // Issue any pending cancellations.
       pending_cancellations_map::iterator i = pending_cancellations_.begin();
@@ -472,18 +474,18 @@ private:
     if (timer_queue_.empty())
       return -1;
 
-    detail::time now = detail::time::now();
-    detail::time earliest_timer;
+    boost::posix_time::ptime now
+      = boost::posix_time::microsec_clock::universal_time();
+    boost::posix_time::ptime earliest_timer;
     timer_queue_.get_earliest_time(earliest_timer);
     if (now < earliest_timer)
     {
-      detail::time timeout = earliest_timer;
-      timeout -= now;
+      boost::posix_time::time_duration timeout = earliest_timer - now;
       const int max_timeout_in_seconds = INT_MAX / 1000;
-      if (max_timeout_in_seconds < timeout)
+      if (max_timeout_in_seconds < timeout.total_seconds())
         return max_timeout_in_seconds * 1000;
       else
-        return timeout.sec() * 1000 + timeout.usec() / 1000;
+        return timeout.total_milliseconds();
     }
     else
     {
@@ -525,7 +527,7 @@ private:
   reactor_op_queue<socket_type> except_op_queue_;
 
   // The queue of timers.
-  reactor_timer_queue<detail::time> timer_queue_;
+  reactor_timer_queue<boost::posix_time::ptime> timer_queue_;
 
   // The type for a map of descriptors that are registered with epoll.
   typedef hash_map<socket_type, bool> epoll_registration_map;

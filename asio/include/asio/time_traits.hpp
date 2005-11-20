@@ -23,8 +23,6 @@
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/detail/time.hpp"
-
 namespace asio {
 
 /// Time traits suitable for use with the deadline timer.

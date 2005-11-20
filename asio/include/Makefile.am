@@ -39,7 +39,6 @@ nobase_include_HEADERS = \
 	asio/detail/posix_mutex.hpp \
 	asio/detail/posix_signal_blocker.hpp \
 	asio/detail/posix_thread.hpp \
-	asio/detail/posix_time.hpp \
 	asio/detail/posix_tss_ptr.hpp \
 	asio/detail/push_options.hpp \
 	asio/detail/reactive_deadline_timer_service.hpp \
@@ -58,7 +57,6 @@ nobase_include_HEADERS = \
 	asio/detail/socket_types.hpp \
 	asio/detail/task_demuxer_service.hpp \
 	asio/detail/thread.hpp \
-	asio/detail/time.hpp \
 	asio/detail/tss_ptr.hpp \
 	asio/detail/win_event.hpp \
 	asio/detail/win_iocp_demuxer_service.hpp \
@@ -68,7 +66,6 @@ nobase_include_HEADERS = \
 	asio/detail/win_signal_blocker.hpp \
 	asio/detail/winsock_init.hpp \
 	asio/detail/win_thread.hpp \
-	asio/detail/win_time.hpp \
 	asio/detail/win_tss_ptr.hpp \
 	asio/detail/wrapped_handler.hpp \
 	asio/error_handler.hpp \
