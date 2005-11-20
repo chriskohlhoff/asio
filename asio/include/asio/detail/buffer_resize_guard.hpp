@@ -17,6 +17,11 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <limits>
+#include <boost/config.hpp>
+#include "asio/detail/pop_options.hpp"
+
 namespace asio {
 namespace detail {
 
@@ -28,22 +33,25 @@ public:
   // Constructor.
   buffer_resize_guard(Buffer& buffer)
     : buffer_(buffer),
-      old_size_(buffer.size()),
-      committed_(false)
+      old_size_(buffer.size())
   {
   }
 
   // Destructor rolls back the buffer resize unless commit was called.
   ~buffer_resize_guard()
   {
-    if (!committed_)
+    if (old_size_
+        != std::numeric_limits<size_t>::max BOOST_PREVENT_MACRO_SUBSTITUTION())
+    {
       buffer_.resize(old_size_);
+    }
   }
 
   // Commit the resize transaction.
   void commit()
   {
-    committed_ = true;
+    old_size_
+      = std::numeric_limits<size_t>::max BOOST_PREVENT_MACRO_SUBSTITUTION();
   }
 
 private:
@@ -52,9 +60,6 @@ private:
 
   // The size of the buffer at the time the guard was constructed.
   size_t old_size_;
-
-  // Whether commit has been called.
-  bool committed_;
 };
 
 } // namespace detail
