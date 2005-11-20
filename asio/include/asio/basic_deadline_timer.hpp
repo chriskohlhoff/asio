@@ -96,7 +96,9 @@ public:
       impl_(service_.null())
   {
     service_.create(impl_);
+    destroy_on_block_exit auto_destroy(service_, impl_);
     service_.expires_at(impl_, expiry_time);
+    auto_destroy.cancel();
   }
 
   /// Constructor to set a particular expiry time relative to now.
@@ -114,7 +116,9 @@ public:
       impl_(service_.null())
   {
     service_.create(impl_);
+    destroy_on_block_exit auto_destroy(service_, impl_);
     service_.expires_from_now(impl_, expiry_time);
+    auto_destroy.cancel();
   }
 
   /// Destructor.
@@ -258,6 +262,33 @@ private:
 
   /// The underlying native implementation.
   impl_type impl_;
+
+  // Helper class to automatically destroy the implementation on block exit.
+  class destroy_on_block_exit
+  {
+  public:
+    destroy_on_block_exit(service_type& service, impl_type& impl)
+      : service_(&service), impl_(impl)
+    {
+    }
+
+    ~destroy_on_block_exit()
+    {
+      if (service_)
+      {
+        service_->destroy(impl_);
+      }
+    }
+
+    void cancel()
+    {
+      service_ = 0;
+    }
+
+  private:
+    service_type* service_;
+    impl_type& impl_;
+  };
 };
 
 /**

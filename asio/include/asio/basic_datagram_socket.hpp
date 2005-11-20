@@ -100,7 +100,9 @@ public:
       impl_(service_.null())
   {
     service_.open(impl_, endpoint.protocol(), throw_error());
+    close_on_block_exit auto_close(service_, impl_);
     service_.bind(impl_, endpoint, throw_error());
+    auto_close.cancel();
   }
 
   /// Destructor.
@@ -907,6 +909,33 @@ private:
 
   /// The underlying native implementation.
   impl_type impl_;
+
+  // Helper class to automatically close the implementation on block exit.
+  class close_on_block_exit
+  {
+  public:
+    close_on_block_exit(service_type& service, impl_type& impl)
+      : service_(&service), impl_(impl)
+    {
+    }
+
+    ~close_on_block_exit()
+    {
+      if (service_)
+      {
+        service_->close(impl_, ignore_error());
+      }
+    }
+
+    void cancel()
+    {
+      service_ = 0;
+    }
+
+  private:
+    service_type* service_;
+    impl_type& impl_;
+  };
 };
 
 } // namespace asio
