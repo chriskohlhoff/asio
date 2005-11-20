@@ -309,7 +309,7 @@ void async_read(Async_Read_Stream& s, const Mutable_Buffers& buffers,
 
 } // namespace asio
 
-#include "asio/read.ipp"
+#include "asio/impl/read.ipp"
 
 #include "asio/detail/pop_options.hpp"
 

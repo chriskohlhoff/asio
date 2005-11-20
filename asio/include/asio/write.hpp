@@ -302,7 +302,7 @@ void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
 
 } // namespace asio
 
-#include "asio/write.ipp"
+#include "asio/impl/write.ipp"
 
 #include "asio/detail/pop_options.hpp"
 

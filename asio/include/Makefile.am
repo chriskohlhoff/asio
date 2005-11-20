@@ -73,6 +73,8 @@ nobase_include_HEADERS = \
 	asio/detail/wrapped_handler.hpp \
 	asio/error_handler.hpp \
 	asio/error.hpp \
+	asio/impl/read.ipp \
+	asio/impl/write.ipp \
 	asio/io_control.hpp \
 	asio/ipv4/address.hpp \
 	asio/ipv4/basic_host_resolver.hpp \
@@ -90,7 +92,6 @@ nobase_include_HEADERS = \
 	asio/locking_dispatcher_service.hpp \
 	asio/placeholders.hpp \
 	asio/read.hpp \
-	asio/read.ipp \
 	asio/service_factory.hpp \
 	asio/socket_acceptor.hpp \
 	asio/socket_acceptor_service.hpp \
@@ -113,8 +114,7 @@ nobase_include_HEADERS = \
 	asio/stream_socket_service.hpp \
 	asio/thread.hpp \
 	asio/time_traits.hpp \
-	asio/write.hpp \
-	asio/write.ipp
+	asio/write.hpp
 
 MAINTAINERCLEANFILES = \
 	$(srcdir)/Makefile.in

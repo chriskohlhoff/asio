@@ -163,6 +163,7 @@ sub copy_include_files
       "include",
       "include/asio",
       "include/asio/detail",
+      "include/asio/impl",
       "include/asio/ipv4",
       "include/asio/ipv4/detail",
       "include/asio/ssl",
