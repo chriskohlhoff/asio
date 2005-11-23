@@ -21,8 +21,13 @@
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/detail/posix_tss_ptr.hpp"
-#include "asio/detail/win_tss_ptr.hpp"
+#if defined(BOOST_WINDOWS)
+# include "asio/detail/win_tss_ptr.hpp"
+#elif defined(BOOST_HAS_PTHREADS)
+# include "asio/detail/posix_tss_ptr.hpp"
+#else
+# error Only Windows and POSIX are supported!
+#endif
 
 namespace asio {
 namespace detail {
@@ -31,7 +36,7 @@ template <typename T>
 class tss_ptr
 #if defined(BOOST_WINDOWS)
   : public win_tss_ptr<T>
-#else
+#elif defined(BOOST_HAS_PTHREADS)
   : public posix_tss_ptr<T>
 #endif
 {
@@ -40,7 +45,7 @@ public:
   {
 #if defined(BOOST_WINDOWS)
     win_tss_ptr<T>::operator=(value);
-#else
+#elif defined(BOOST_HAS_PTHREADS)
     posix_tss_ptr<T>::operator=(value);
 #endif
   }

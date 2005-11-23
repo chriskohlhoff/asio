@@ -21,15 +21,20 @@
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/detail/posix_mutex.hpp"
-#include "asio/detail/win_mutex.hpp"
+#if defined(BOOST_WINDOWS)
+# include "asio/detail/win_mutex.hpp"
+#elif defined(BOOST_HAS_PTHREADS)
+# include "asio/detail/posix_mutex.hpp"
+#else
+# error Only Windows and POSIX are supported!
+#endif
 
 namespace asio {
 namespace detail {
 
 #if defined(BOOST_WINDOWS)
 typedef win_mutex mutex;
-#else
+#elif defined(BOOST_HAS_PTHREADS)
 typedef posix_mutex mutex;
 #endif
 

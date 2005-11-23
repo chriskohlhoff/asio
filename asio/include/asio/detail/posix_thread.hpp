@@ -21,7 +21,7 @@
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#if !defined(BOOST_WINDOWS)
+#if defined(BOOST_HAS_PTHREADS)
 
 #include "asio/detail/push_options.hpp"
 #include <new>
@@ -112,7 +112,7 @@ inline void* asio_detail_posix_thread_function(void* arg)
 } // namespace detail
 } // namespace asio
 
-#endif // !defined(BOOST_WINDOWS)
+#endif // defined(BOOST_HAS_PTHREADS)
 
 #include "asio/detail/pop_options.hpp"
 

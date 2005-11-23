@@ -21,15 +21,20 @@
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/detail/posix_event.hpp"
-#include "asio/detail/win_event.hpp"
+#if defined(BOOST_WINDOWS)
+# include "asio/detail/win_event.hpp"
+#elif defined(BOOST_HAS_PTHREADS)
+# include "asio/detail/posix_event.hpp"
+#else
+# error Only Windows and POSIX are supported!
+#endif
 
 namespace asio {
 namespace detail {
 
 #if defined(BOOST_WINDOWS)
 typedef win_event event;
-#else
+#elif defined(BOOST_HAS_PTHREADS)
 typedef posix_event event;
 #endif
 

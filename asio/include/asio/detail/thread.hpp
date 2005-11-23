@@ -21,15 +21,20 @@
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/detail/posix_thread.hpp"
-#include "asio/detail/win_thread.hpp"
+#if defined(BOOST_WINDOWS)
+# include "asio/detail/win_thread.hpp"
+#elif defined(BOOST_HAS_PTHREADS)
+# include "asio/detail/posix_thread.hpp"
+#else
+# error Only Windows and POSIX are supported!
+#endif
 
 namespace asio {
 namespace detail {
 
 #if defined(BOOST_WINDOWS)
 typedef win_thread thread;
-#else
+#elif defined(BOOST_HAS_PTHREADS)
 typedef posix_thread thread;
 #endif
 
