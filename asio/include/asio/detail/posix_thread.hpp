@@ -24,6 +24,7 @@
 #if defined(BOOST_HAS_PTHREADS)
 
 #include "asio/detail/push_options.hpp"
+#include <memory>
 #include <new>
 #include <boost/noncopyable.hpp>
 #include <pthread.h>
@@ -45,9 +46,13 @@ public:
   posix_thread(Function f)
     : joined_(false)
   {
-    func_base* arg = new func<Function>(f);
-    if (::pthread_create(&thread_, 0, asio_detail_posix_thread_function, arg))
+    std::auto_ptr<func_base> arg(new func<Function>(f));
+    if (::pthread_create(&thread_, 0,
+          asio_detail_posix_thread_function, arg.get()))
+    {
       throw std::bad_alloc();
+    }
+    arg.release();
   }
 
   // Destructor.
@@ -102,10 +107,9 @@ private:
 
 inline void* asio_detail_posix_thread_function(void* arg)
 {
-  posix_thread::func_base* f =
-    static_cast<posix_thread::func_base*>(arg);
+  std::auto_ptr<posix_thread::func_base> f(
+      static_cast<posix_thread::func_base*>(arg));
   f->run();
-  delete f;
   return 0;
 }
 
