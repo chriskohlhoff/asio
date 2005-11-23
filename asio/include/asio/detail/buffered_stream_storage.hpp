@@ -39,9 +39,9 @@ public:
 
   // Constructor.
   explicit buffered_stream_storage(std::size_t capacity)
-    : buffer_(capacity),
-      begin_offset_(0),
-      end_offset_(0)
+    : begin_offset_(0),
+      end_offset_(0),
+      buffer_(capacity)
   {
   }
 
@@ -109,14 +109,14 @@ public:
   }
 
 private:
-  // The data in the buffer.
-  std::vector<byte_type> buffer_;
-
   // The offset to the beginning of the unread data.
   size_type begin_offset_;
 
   // The offset to the end of the unread data.
   size_type end_offset_;
+  
+  // The data in the buffer.
+  std::vector<byte_type> buffer_;
 };
 
 } // namespace detail
