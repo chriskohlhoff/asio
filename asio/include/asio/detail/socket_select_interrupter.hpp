@@ -17,6 +17,10 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <boost/throw_exception.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/error.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
@@ -34,11 +38,14 @@ public:
     socket_holder acceptor(socket_ops::socket(AF_INET, SOCK_STREAM,
           IPPROTO_TCP));
     if (acceptor.get() == invalid_socket)
-      throw asio::error(socket_ops::get_error());
+    {
+      asio::error e(socket_ops::get_error());
+      boost::throw_exception(e);
+    }
 
     int opt = 1;
-    socket_ops::setsockopt(acceptor.get(), SOL_SOCKET, SO_REUSEADDR, &opt,
-        sizeof(opt));
+    socket_ops::setsockopt(acceptor.get(),
+        SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
     inet_addr_v4_type addr;
     socket_addr_len_type addr_len = sizeof(addr);
@@ -47,42 +54,66 @@ public:
     addr.sin_port = 0;
     if (socket_ops::bind(acceptor.get(), (const socket_addr_type*)&addr,
           addr_len) == socket_error_retval)
-      throw asio::error(socket_ops::get_error());
+    {
+      asio::error e(socket_ops::get_error());
+      boost::throw_exception(e);
+    }
 
     if (getsockname(acceptor.get(), (socket_addr_type*)&addr, &addr_len)
         == socket_error_retval)
-      throw asio::error(socket_ops::get_error());
+    {
+      asio::error e(socket_ops::get_error());
+      boost::throw_exception(e);
+    }
 
     if (socket_ops::listen(acceptor.get(), SOMAXCONN) == socket_error_retval)
-      throw asio::error(socket_ops::get_error());
+    {
+      asio::error e(socket_ops::get_error());
+      boost::throw_exception(e);
+    }
 
     socket_holder client(socket_ops::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP));
     if (client.get() == invalid_socket)
-      throw asio::error(socket_ops::get_error());
+    {
+      asio::error e(socket_ops::get_error());
+      boost::throw_exception(e);
+    }
 
     if (socket_ops::connect(client.get(), (const socket_addr_type*)&addr,
           addr_len) == socket_error_retval)
-      throw asio::error(socket_ops::get_error());
+    {
+      asio::error e(socket_ops::get_error());
+      boost::throw_exception(e);
+    }
 
     socket_holder server(socket_ops::accept(acceptor.get(), 0, 0));
     if (server.get() == invalid_socket)
-      throw asio::error(socket_ops::get_error());
+    {
+      asio::error e(socket_ops::get_error());
+      boost::throw_exception(e);
+    }
     
     ioctl_arg_type non_blocking = 1;
     if (socket_ops::ioctl(client.get(), FIONBIO, &non_blocking))
-      throw asio::error(socket_ops::get_error());
+    {
+      asio::error e(socket_ops::get_error());
+      boost::throw_exception(e);
+    }
 
     opt = 1;
-    socket_ops::setsockopt(client.get(), IPPROTO_TCP, TCP_NODELAY, &opt,
-        sizeof(opt));
+    socket_ops::setsockopt(client.get(),
+        IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt));
 
     non_blocking = 1;
     if (socket_ops::ioctl(server.get(), FIONBIO, &non_blocking))
-      throw asio::error(socket_ops::get_error());
+    {
+      asio::error e(socket_ops::get_error());
+      boost::throw_exception(e);
+    }
 
     opt = 1;
-    socket_ops::setsockopt(server.get(), IPPROTO_TCP, TCP_NODELAY, &opt,
-        sizeof(opt));
+    socket_ops::setsockopt(server.get(),
+        IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt));
 
     read_descriptor_ = server.release();
     write_descriptor_ = client.release();

@@ -17,6 +17,10 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <boost/throw_exception.hpp>
+#include "asio/detail/pop_options.hpp"
+
 namespace asio {
 
 namespace detail {
@@ -40,7 +44,7 @@ public:
   template <typename Error>
   void operator()(const Error& err) const
   {
-    throw err;
+    boost::throw_exception(err);
   }
 };
 

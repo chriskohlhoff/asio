@@ -19,6 +19,7 @@
 
 #include "asio/detail/push_options.hpp"
 #include <string>
+#include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
@@ -56,7 +57,10 @@ public:
   address(const char* host)
   {
     if (asio::detail::socket_ops::inet_pton(AF_INET, host, &addr_) <= 0)
-      throw asio::error(asio::detail::socket_ops::get_error());
+    {
+      asio::error e(asio::detail::socket_ops::get_error());
+      boost::throw_exception(e);
+    }
   }
 
   /// Construct an address using an IP address string in dotted decimal form.
@@ -64,7 +68,10 @@ public:
   {
     if (asio::detail::socket_ops::inet_pton(
           AF_INET, host.c_str(), &addr_) <= 0)
-      throw asio::error(asio::detail::socket_ops::get_error());
+    {
+      asio::error e(asio::detail::socket_ops::get_error());
+      boost::throw_exception(e);
+    }
   }
 
   /// Copy constructor.
@@ -117,7 +124,10 @@ public:
       asio::detail::socket_ops::inet_ntop(AF_INET, &addr_, addr_str,
           asio::detail::max_addr_str_len);
     if (addr == 0)
-      throw asio::error(asio::detail::socket_ops::get_error());
+    {
+      asio::error e(asio::detail::socket_ops::get_error());
+      boost::throw_exception(e);
+    }
     return addr;
   }
 

@@ -17,6 +17,10 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <boost/throw_exception.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/error.hpp"
 #include "asio/ipv4/address.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -166,7 +170,10 @@ public:
   void size(size_type size)
   {
     if (size != sizeof(addr_))
-      throw asio::error(asio::error::invalid_argument);
+    {
+      asio::error e(asio::error::invalid_argument);
+      boost::throw_exception(e);
+    }
   }
 
   /// Get the port associated with the endpoint. The port number is always in
