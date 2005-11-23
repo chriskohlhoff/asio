@@ -47,7 +47,7 @@ public:
     std::auto_ptr<func_base> arg(new func<Function>(f));
     unsigned int thread_id = 0;
     thread_ = reinterpret_cast<HANDLE>(::_beginthreadex(0, 0,
-          asio_detail_win_thread_function, arg.get(), 0, &thread_id));
+          win_thread_function, arg.get(), 0, &thread_id));
     if (!thread_)
       throw std::bad_alloc();
     arg.release();
