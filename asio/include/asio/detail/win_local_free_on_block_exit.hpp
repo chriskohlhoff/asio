@@ -1,6 +1,6 @@
 //
-// win_event.hpp
-// ~~~~~~~~~~~~~
+// win_local_free_on_block_exit.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2005 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_WIN_EVENT_HPP
-#define ASIO_DETAIL_WIN_EVENT_HPP
+#ifndef ASIO_DETAIL_WIN_LOCAL_FREE_ON_BLOCK_EXIT_HPP
+#define ASIO_DETAIL_WIN_LOCAL_FREE_ON_BLOCK_EXIT_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -23,59 +23,33 @@
 
 #if defined(BOOST_WINDOWS)
 
-#include "asio/system_exception.hpp"
-#include "asio/detail/socket_types.hpp"
-
 #include "asio/detail/push_options.hpp"
 #include <boost/noncopyable.hpp>
-#include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
+
+#include "asio/detail/socket_types.hpp"
 
 namespace asio {
 namespace detail {
 
-class win_event
+class win_local_free_on_block_exit
   : private boost::noncopyable
 {
 public:
-  // Constructor.
-  win_event()
-    : event_(::CreateEvent(0, true, false, 0))
+  // Constructor blocks all signals for the calling thread.
+  explicit win_local_free_on_block_exit(void* p)
+    : p_(p)
   {
-    if (!event_)
-    {
-      DWORD last_error = ::GetLastError();
-      system_exception e(system_exception::event, last_error);
-      boost::throw_exception(e);
-    }
   }
 
-  // Destructor.
-  ~win_event()
+  // Destructor restores the previous signal mask.
+  ~win_local_free_on_block_exit()
   {
-    ::CloseHandle(event_);
-  }
-
-  // Signal the event.
-  void signal()
-  {
-    ::SetEvent(event_);
-  }
-
-  // Reset the event.
-  void clear()
-  {
-    ::ResetEvent(event_);
-  }
-
-  // Wait for the event to become signalled.
-  void wait()
-  {
-    ::WaitForSingleObject(event_, INFINITE);
+    ::LocalFree(p_);
   }
 
 private:
-  HANDLE event_;
+  void* p_;
 };
 
 } // namespace detail
@@ -85,4 +59,4 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_WIN_EVENT_HPP
+#endif // ASIO_DETAIL_WIN_LOCAL_FREE_ON_BLOCK_EXIT_HPP

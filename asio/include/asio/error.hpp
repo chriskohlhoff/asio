@@ -19,13 +19,13 @@
 
 #include "asio/detail/push_options.hpp"
 #include <boost/config.hpp>
-#include <boost/noncopyable.hpp>
 #include <cerrno>
 #include <cstring>
 #include <exception>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/win_local_free_on_block_exit.hpp"
 
 namespace asio {
 
@@ -172,12 +172,12 @@ public:
   {
   }
 
-  // Destructor.
+  /// Destructor.
   virtual ~error() throw ()
   {
   }
 
-  // Get the string for the type of exception.
+  /// Get the string for the type of exception.
   virtual const char* what() const throw ()
   {
     return "asio error";
@@ -224,22 +224,6 @@ private:
   int code_;
 };
 
-#if defined(BOOST_WINDOWS)
-// Helper class to clean up buffer allocated by FormatMessageA in an
-// exception-safe manner.
-namespace detail {
-class local_free_on_block_exit
-  : private boost::noncopyable
-{
-public:
-  explicit local_free_on_block_exit(void* p) : p_(p) {}
-  ~local_free_on_block_exit() { ::LocalFree(p_); }
-private:
-  void* p_;
-};
-} // namespace detail
-#endif // defined(BOOST_WINDOWS)
-
 /// Output the string associated with an error.
 /**
  * Used to output a human-readable string that is associated with an error.
@@ -261,7 +245,7 @@ Ostream& operator<<(Ostream& os, const error& e)
       | FORMAT_MESSAGE_FROM_SYSTEM
       | FORMAT_MESSAGE_IGNORE_INSERTS, 0, e.code(),
       MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (char*)&msg, 0, 0);
-  detail::local_free_on_block_exit local_free_obj(msg);
+  detail::win_local_free_on_block_exit local_free_obj(msg);
   if (length && msg[length - 1] == '\n')
     msg[--length] = '\0';
   if (length && msg[length - 1] == '\r')

@@ -25,11 +25,12 @@
 
 #include "asio/detail/push_options.hpp"
 #include <memory>
-#include <new>
 #include <boost/noncopyable.hpp>
+#include <boost/throw_exception.hpp>
 #include <pthread.h>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/system_exception.hpp"
 #include "asio/detail/scoped_lock.hpp"
 
 namespace asio {
@@ -47,10 +48,12 @@ public:
     : joined_(false)
   {
     std::auto_ptr<func_base> arg(new func<Function>(f));
-    if (::pthread_create(&thread_, 0,
-          asio_detail_posix_thread_function, arg.get()))
+    int error = ::pthread_create(&thread_, 0,
+          asio_detail_posix_thread_function, arg.get());
+    if (error != 0)
     {
-      throw std::bad_alloc();
+      system_exception e(system_exception::thread, error);
+      boost::throw_exception(e);
     }
     arg.release();
   }

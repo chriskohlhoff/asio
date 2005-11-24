@@ -23,12 +23,13 @@
 
 #if defined(BOOST_WINDOWS)
 
-#include "asio/detail/push_options.hpp"
-#include <new>
-#include <boost/noncopyable.hpp>
-#include "asio/detail/pop_options.hpp"
-
+#include "asio/system_exception.hpp"
 #include "asio/detail/socket_types.hpp"
+
+#include "asio/detail/push_options.hpp"
+#include <boost/noncopyable.hpp>
+#include <boost/throw_exception.hpp>
+#include "asio/detail/pop_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -43,7 +44,11 @@ public:
   {
     tss_key_ = ::TlsAlloc();
     if (tss_key_ == TLS_OUT_OF_INDEXES)
-      throw std::bad_alloc();
+    {
+      DWORD last_error = ::GetLastError();
+      system_exception e(system_exception::tss, last_error);
+      boost::throw_exception(e);
+    }
   }
 
   // Destructor.

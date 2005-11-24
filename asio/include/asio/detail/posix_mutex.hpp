@@ -25,9 +25,11 @@
 
 #include "asio/detail/push_options.hpp"
 #include <boost/noncopyable.hpp>
+#include <boost/throw_exception.hpp>
 #include <pthread.h>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/system_exception.hpp"
 #include "asio/detail/scoped_lock.hpp"
 
 namespace asio {
@@ -42,7 +44,12 @@ public:
   // Constructor.
   posix_mutex()
   {
-    ::pthread_mutex_init(&mutex_, 0);
+    int error = ::pthread_mutex_init(&mutex_, 0);
+    if (error != 0)
+    {
+      system_exception e(system_exception::mutex, error);
+      boost::throw_exception(e);
+    }
   }
 
   // Destructor.

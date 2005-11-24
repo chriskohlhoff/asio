@@ -23,11 +23,13 @@
 
 #if defined(BOOST_WINDOWS)
 
+#include "asio/system_exception.hpp"
 #include "asio/detail/socket_types.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <boost/noncopyable.hpp>
+#include <boost/throw_exception.hpp>
 #include <memory>
-#include <new>
 #include <process.h>
 #include "asio/detail/pop_options.hpp"
 
@@ -49,7 +51,11 @@ public:
     thread_ = reinterpret_cast<HANDLE>(::_beginthreadex(0, 0,
           win_thread_function, arg.get(), 0, &thread_id));
     if (!thread_)
-      throw std::bad_alloc();
+    {
+      DWORD last_error = ::GetLastError();
+      system_exception e(system_exception::thread, last_error);
+      boost::throw_exception(e);
+    }
     arg.release();
   }
 

@@ -60,6 +60,7 @@
 #include "asio/socket_option.hpp"
 #include "asio/stream_socket.hpp"
 #include "asio/stream_socket_service.hpp"
+#include "asio/system_exception.hpp"
 #include "asio/thread.hpp"
 #include "asio/time_traits.hpp"
 #include "asio/write.hpp"

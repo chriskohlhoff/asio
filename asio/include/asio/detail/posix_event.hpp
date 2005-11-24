@@ -25,8 +25,11 @@
 
 #include "asio/detail/push_options.hpp"
 #include <boost/noncopyable.hpp>
+#include <boost/throw_exception.hpp>
 #include <pthread.h>
 #include "asio/detail/pop_options.hpp"
+
+#include "asio/system_exception.hpp"
 
 namespace asio {
 namespace detail {
@@ -39,8 +42,20 @@ public:
   posix_event()
     : signalled_(false)
   {
-    ::pthread_mutex_init(&mutex_, 0);
-    ::pthread_cond_init(&cond_, 0);
+    int error = ::pthread_mutex_init(&mutex_, 0);
+    if (error != 0)
+    {
+      system_exception e(system_exception::event, error);
+      boost::throw_exception(e);
+    }
+
+    error = ::pthread_cond_init(&cond_, 0);
+    if (error != 0)
+    {
+      ::pthread_mutex_destroy(&mutex_);
+      system_exception e(system_exception::event, error);
+      boost::throw_exception(e);
+    }
   }
 
   // Destructor.

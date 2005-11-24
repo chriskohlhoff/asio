@@ -24,10 +24,12 @@
 #if defined(BOOST_HAS_PTHREADS)
 
 #include "asio/detail/push_options.hpp"
-#include <new>
-#include <pthread.h>
 #include <boost/noncopyable.hpp>
+#include <boost/throw_exception.hpp>
+#include <pthread.h>
 #include "asio/detail/pop_options.hpp"
+
+#include "asio/system_exception.hpp"
 
 namespace asio {
 namespace detail {
@@ -40,8 +42,12 @@ public:
   // Constructor.
   posix_tss_ptr()
   {
-    if (::pthread_key_create(&tss_key_, 0) != 0)
-      throw std::bad_alloc();
+    int error = ::pthread_key_create(&tss_key_, 0);
+    if (error != 0)
+    {
+      system_exception e(system_exception::tss, error);
+      boost::throw_exception(e);
+    }
   }
 
   // Destructor.

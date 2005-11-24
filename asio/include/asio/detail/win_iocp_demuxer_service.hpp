@@ -29,9 +29,11 @@
 #define ASIO_HAS_IOCP_DEMUXER 1
 
 #include "asio/detail/push_options.hpp"
+#include <boost/throw_exception.hpp>
 #include <memory>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/system_exception.hpp"
 #include "asio/detail/demuxer_run_call_stack.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/win_iocp_operation.hpp"
@@ -49,6 +51,12 @@ public:
       outstanding_work_(0),
       interrupted_(0)
   {
+    if (!iocp_.handle)
+    {
+      DWORD last_error = ::GetLastError();
+      system_exception e(system_exception::iocp, last_error);
+      boost::throw_exception(e);
+    }
   }
 
   // Register a socket with the demuxer.

@@ -95,6 +95,7 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 \li boost::asio::ssl::context
 \li boost::asio::ssl::context_base
 \li boost::asio::ssl::stream_base
+\li boost::asio::system_exception
 
 <H2>Class Templates</H2>
 

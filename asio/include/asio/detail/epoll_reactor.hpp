@@ -29,12 +29,13 @@
 #define ASIO_HAS_EPOLL_REACTOR 1
 
 #include "asio/detail/push_options.hpp"
-#include <new>
 #include <sys/epoll.h>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/noncopyable.hpp>
+#include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/system_exception.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/hash_map.hpp"
 #include "asio/detail/mutex.hpp"
@@ -462,7 +463,10 @@ private:
   {
     int fd = epoll_create(epoll_size);
     if (fd == -1)
-      throw std::bad_alloc();
+    {
+      system_exception e(system_exception::epoll, errno);
+      boost::throw_exception(system_exception);
+    }
     return fd;
   }
 

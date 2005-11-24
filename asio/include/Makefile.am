@@ -62,6 +62,7 @@ nobase_include_HEADERS = \
 	asio/detail/win_iocp_demuxer_service.hpp \
 	asio/detail/win_iocp_operation.hpp \
 	asio/detail/win_iocp_socket_service.hpp \
+	asio/detail/win_local_free_on_block_exit.hpp \
 	asio/detail/win_mutex.hpp \
 	asio/detail/win_signal_blocker.hpp \
 	asio/detail/winsock_init.hpp \
@@ -109,6 +110,7 @@ nobase_include_HEADERS = \
   asio/ssl/stream_service.hpp \
 	asio/stream_socket.hpp \
 	asio/stream_socket_service.hpp \
+	asio/system_exception.hpp \
 	asio/thread.hpp \
 	asio/time_traits.hpp \
 	asio/write.hpp

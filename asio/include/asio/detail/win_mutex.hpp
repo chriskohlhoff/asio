@@ -23,13 +23,14 @@
 
 #if defined(BOOST_WINDOWS)
 
-#include "asio/detail/push_options.hpp"
-#include <new>
-#include <boost/noncopyable.hpp>
-#include "asio/detail/pop_options.hpp"
-
+#include "asio/system_exception.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/scoped_lock.hpp"
+
+#include "asio/detail/push_options.hpp"
+#include <boost/noncopyable.hpp>
+#include <boost/throw_exception.hpp>
+#include "asio/detail/pop_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -43,8 +44,12 @@ public:
   // Constructor.
   win_mutex()
   {
-    if (!do_init())
-      throw std::bad_alloc();
+    int error = do_init();
+    if (error != 0)
+    {
+      system_exception e(system_exception::mutex, error);
+      boost::throw_exception(e);
+    }
   }
 
   // Destructor.
@@ -56,8 +61,12 @@ public:
   // Lock the mutex.
   void lock()
   {
-    if (!do_lock())
-      throw std::bad_alloc();
+    int error = do_lock();
+    if (error != 0)
+    {
+      system_exception e(system_exception::mutex, error);
+      boost::throw_exception(e);
+    }
   }
 
   // Unlock the mutex.
@@ -70,13 +79,13 @@ private:
   // Initialisation must be performed in a separate function to the constructor
   // since the compiler does not support the use of structured exceptions and
   // C++ exceptions in the same function.
-  bool do_init()
+  int do_init()
   {
 #if defined(__MINGW32__)
     // Not sure if MinGW supports structured exception handling, so for now
     // we'll just call the Windows API and hope.
     ::InitializeCriticalSection(&crit_section_);
-    return true;
+    return 0;
 #else
     __try
     {
@@ -85,35 +94,38 @@ private:
     __except(GetExceptionCode() == STATUS_NO_MEMORY
         ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH)
     {
-      return false;
+      return ERROR_OUTOFMEMORY;
     }
 
-    return true;
+    return 0;
 #endif
   }
 
   // Locking must be performed in a separate function to lock() since the
   // compiler does not support the use of structured exceptions and C++
   // exceptions in the same function.
-  bool do_lock()
+  int do_lock()
   {
 #if defined(__MINGW32__)
     // Not sure if MinGW supports structured exception handling, so for now
     // we'll just call the Windows API and hope.
     ::EnterCriticalSection(&crit_section_);
-    return true;
+    return 0;
 #else
     __try
     {
       ::EnterCriticalSection(&crit_section_);
     }
     __except(GetExceptionCode() == STATUS_INVALID_HANDLE
+        || GetExceptionCode() == STATUS_NO_MEMORY
         ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH)
     {
-      return false;
+      if (GetExceptionCode() == STATUS_NO_MEMORY)
+        return ERROR_OUTOFMEMORY;
+      return ERROR_INVALID_HANDLE;
     }
 
-    return true;
+    return 0;
 #endif
   }
 
