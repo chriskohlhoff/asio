@@ -233,6 +233,9 @@ private:
   asio::detail::inet_addr_v4_type addr_;
 };
 
+} // namespace ipv4
+} // namespace asio
+
 /// Output an endpoint as a string.
 /**
  * Used to output a human-readable string for a specified endpoint.
@@ -246,14 +249,12 @@ private:
  * @relates tcp::endpoint
  */
 template <typename Ostream>
-Ostream& operator<<(Ostream& os, const udp::endpoint& endpoint)
+Ostream& operator<<(Ostream& os,
+    const asio::ipv4::udp::endpoint& endpoint)
 {
   os << endpoint.address().to_string() << ':' << endpoint.port();
   return os;
 }
-
-} // namespace ipv4
-} // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
