@@ -41,12 +41,14 @@
 # define FD_SETSIZE 1024
 # include <winsock2.h>
 # include <ws2tcpip.h>
+# include <mswsock.h>
 # if defined(ASIO_WSPIAPI_H_DEFINED)
 #  undef _WSPIAPI_H_
 #  undef ASIO_WSPIAPI_H_DEFINED
 # endif // defined(ASIO_WSPIAPI_H_DEFINED)
 # if defined(_MSC_VER) || defined(__BORLANDC__)
 #  pragma comment(lib, "ws2_32.lib")
+#  pragma comment(lib, "mswsock.lib")
 # endif // defined(_MSC_VER) || defined(__BORLANDC__)
 #else
 # include <sys/ioctl.h>

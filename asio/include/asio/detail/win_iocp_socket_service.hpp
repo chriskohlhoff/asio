@@ -26,6 +26,7 @@
 #if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
 
 #include "asio/detail/push_options.hpp"
+#include <cstring>
 #include <memory>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
@@ -774,42 +775,85 @@ public:
   }
 
   template <typename Socket, typename Handler>
-  class accept_handler
+  class accept_operation
+    : public win_iocp_operation
   {
   public:
-    accept_handler(impl_type impl, demuxer_type& demuxer, Socket& peer,
-        Handler handler)
-      : impl_(impl),
+    accept_operation(demuxer_type& demuxer, impl_type& impl,
+        socket_type new_socket, Socket& peer, Handler handler)
+      : win_iocp_operation(
+          &accept_operation<Socket, Handler>::do_completion_impl),
         demuxer_(demuxer),
+        impl_(impl),
+        new_socket_(new_socket),
         peer_(peer),
         work_(demuxer),
         handler_(handler)
     {
     }
 
-    void operator()(int result)
+    socket_type new_socket()
     {
-      // Check whether the operation was successful.
-      if (result != 0)
-      {
-        asio::error error(result);
-        demuxer_.post(bind_handler(handler_, error));
-        return;
-      }
+      return new_socket_.get();
+    }
 
-      // Accept the waiting connection.
-      impl_type new_socket(socket_ops::accept(impl_, 0, 0));
-      asio::error error(new_socket == invalid_socket
-          ? socket_ops::get_error() : asio::error::success);
-      peer_.set_impl(new_socket);
-      demuxer_.post(bind_handler(handler_, error));
+    void* output_buffer()
+    {
+      return output_buffer_;
+    }
+
+    DWORD address_length()
+    {
+      return sizeof(sockaddr_storage) + 16;
     }
 
   private:
-    impl_type impl_;
+    static void do_completion_impl(win_iocp_operation* op,
+        DWORD last_error, size_t bytes_transferred)
+    {
+      std::auto_ptr<accept_operation<Socket, Handler> > h(
+          static_cast<accept_operation<Socket, Handler>*>(op));
+
+      // Check for connection aborted.
+      if (last_error == ERROR_NETNAME_DELETED)
+      {
+        last_error = asio::error::connection_aborted;
+      }
+
+      // Check whether the operation was successful.
+      if (last_error != 0)
+      {
+        asio::error error(last_error);
+        h->handler_(error);
+        return;
+      }
+
+      // Need to set the SO_UPDATE_ACCEPT_CONTEXT option so that getsockname
+      // and getpeername will work on the accepted socket.
+      DWORD update_ctx_param = h->impl_;
+      if (socket_ops::setsockopt(h->new_socket_.get(), SOL_SOCKET,
+            SO_UPDATE_ACCEPT_CONTEXT, &update_ctx_param, sizeof(DWORD)) != 0)
+      {
+        asio::error error(socket_ops::get_error());
+        h->handler_(error);
+        return;
+      }
+
+      // Socket was successfully connected. Transfer ownership of the socket to
+      // the peer object.
+      impl_type new_socket(h->new_socket_.get());
+      h->peer_.set_impl(new_socket);
+      h->new_socket_.release();
+      asio::error error(asio::error::success);
+      h->handler_(error);
+    }
+
     demuxer_type& demuxer_;
+    impl_type& impl_;
+    socket_holder new_socket_;
     Socket& peer_;
     typename demuxer_type::work work_;
+    unsigned char output_buffer_[(sizeof(sockaddr_storage) + 16) * 2];
     Handler handler_;
   };
 
@@ -818,31 +862,80 @@ public:
   template <typename Socket, typename Handler>
   void async_accept(impl_type& impl, Socket& peer, Handler handler)
   {
+    // Check whether acceptor has been initialised.
     if (impl == null())
     {
       asio::error error(asio::error::bad_descriptor);
       demuxer_.post(bind_handler(handler, error));
+      return;
     }
-    else if (peer.impl() != invalid_socket)
+
+    // Check that peer socket has not already been connected.
+    if (peer.impl() != invalid_socket)
     {
       asio::error error(asio::error::already_connected);
       demuxer_.post(bind_handler(handler, error));
+      return;
+    }
+
+    // Get information about the protocol used by the socket.
+    WSAPROTOCOL_INFO protocol_info;
+    std::size_t protocol_info_size = sizeof(protocol_info);
+    if (socket_ops::getsockopt(impl, SOL_SOCKET, SO_PROTOCOL_INFO,
+          &protocol_info, &protocol_info_size) != 0)
+    {
+      asio::error error(socket_ops::get_error());
+      demuxer_.post(bind_handler(handler, error));
+      return;
+    }
+
+    // Create a new socket for the connection.
+    socket_holder sock(socket_ops::socket(protocol_info.iAddressFamily,
+          protocol_info.iSocketType, protocol_info.iProtocol));
+    if (sock.get() == invalid_socket)
+    {
+      asio::error error(socket_ops::get_error());
+      demuxer_.post(bind_handler(handler, error));
+      return;
+    }
+
+    // Create new operation object. Ownership of new socket is transferred.
+    std::auto_ptr<accept_operation<Socket, Handler> > op(
+        new accept_operation<Socket, Handler>(
+          demuxer_, impl, sock.get(), peer, handler));
+    sock.release();
+
+    // Accept a connection.
+    DWORD bytes_read = 0;
+    BOOL result = ::AcceptEx(impl, op->new_socket(), op->output_buffer(), 0,
+        op->address_length(), op->address_length(), &bytes_read, op.get());
+    DWORD last_error = ::WSAGetLastError();
+
+    // Check if the operation completed immediately.
+    if (!result && last_error != WSA_IO_PENDING)
+    {
+      asio::error error(last_error);
+      demuxer_service_.post(bind_handler(handler, error));
     }
     else
     {
-      reactor_.start_read_op(impl,
-          accept_handler<Socket, Handler>(impl, demuxer_, peer, handler));
+      op.release();
     }
   }
 
   template <typename Socket, typename Endpoint, typename Handler>
-  class accept_endp_handler
+  class accept_endp_operation
+    : public win_iocp_operation
   {
   public:
-    accept_endp_handler(impl_type impl, demuxer_type& demuxer, Socket& peer,
-        Endpoint& peer_endpoint, Handler handler)
-      : impl_(impl),
+    accept_endp_operation(demuxer_type& demuxer, impl_type& impl,
+        socket_type new_socket, Socket& peer, Endpoint& peer_endpoint,
+        Handler handler)
+      : win_iocp_operation(&accept_endp_operation<
+            Socket, Endpoint, Handler>::do_completion_impl),
         demuxer_(demuxer),
+        impl_(impl),
+        new_socket_(new_socket),
         peer_(peer),
         peer_endpoint_(peer_endpoint),
         work_(demuxer),
@@ -850,33 +943,87 @@ public:
     {
     }
 
-    void operator()(int result)
+    socket_type new_socket()
     {
-      // Check whether the operation was successful.
-      if (result != 0)
-      {
-        asio::error error(result);
-        demuxer_.post(bind_handler(handler_, error));
-        return;
-      }
+      return new_socket_.get();
+    }
 
-      // Accept the waiting connection.
-      socket_addr_len_type addr_len = peer_endpoint_.size();
-      impl_type new_socket(socket_ops::accept(impl_,
-            peer_endpoint_.data(), &addr_len));
-      asio::error error(new_socket == invalid_socket
-          ? socket_ops::get_error() : asio::error::success);
-      peer_endpoint_.size(addr_len);
-      peer_.set_impl(new_socket);
-      demuxer_.post(bind_handler(handler_, error));
+    void* output_buffer()
+    {
+      return output_buffer_;
+    }
+
+    DWORD address_length()
+    {
+      return sizeof(sockaddr_storage) + 16;
     }
 
   private:
-    impl_type impl_;
+    static void do_completion_impl(win_iocp_operation* op,
+        DWORD last_error, size_t bytes_transferred)
+    {
+      std::auto_ptr<accept_endp_operation<Socket, Endpoint, Handler> > h(
+          static_cast<accept_endp_operation<Socket, Endpoint, Handler>*>(op));
+
+      // Check for connection aborted.
+      if (last_error == ERROR_NETNAME_DELETED)
+      {
+        last_error = asio::error::connection_aborted;
+      }
+
+      // Check whether the operation was successful.
+      if (last_error != 0)
+      {
+        asio::error error(last_error);
+        h->handler_(error);
+        return;
+      }
+
+      // Get the address of the peer.
+      LPSOCKADDR local_addr = 0;
+      int local_addr_length = 0;
+      LPSOCKADDR remote_addr = 0;
+      int remote_addr_length = 0;
+      GetAcceptExSockaddrs(h->output_buffer(), 0, h->address_length(),
+          h->address_length(), &local_addr, &local_addr_length, &remote_addr,
+          &remote_addr_length);
+      if (remote_addr_length > h->peer_endpoint_.size())
+      {
+        asio::error error(asio::error::invalid_argument);
+        h->handler_(error);
+        return;
+      }
+      h->peer_endpoint_.size(remote_addr_length);
+      using namespace std; // For memcpy.
+      memcpy(h->peer_endpoint_.data(), remote_addr, remote_addr_length);
+
+      // Need to set the SO_UPDATE_ACCEPT_CONTEXT option so that getsockname
+      // and getpeername will work on the accepted socket.
+      DWORD update_ctx_param = h->impl_;
+      if (socket_ops::setsockopt(h->new_socket_.get(), SOL_SOCKET,
+            SO_UPDATE_ACCEPT_CONTEXT, &update_ctx_param, sizeof(DWORD)) != 0)
+      {
+        asio::error error(socket_ops::get_error());
+        h->handler_(error);
+        return;
+      }
+
+      // Socket was successfully connected. Transfer ownership of the socket to
+      // the peer object.
+      impl_type new_socket(h->new_socket_.get());
+      h->peer_.set_impl(new_socket);
+      h->new_socket_.release();
+      asio::error error(asio::error::success);
+      h->handler_(error);
+    }
+
     demuxer_type& demuxer_;
+    impl_type& impl_;
+    socket_holder new_socket_;
     Socket& peer_;
     Endpoint& peer_endpoint_;
     typename demuxer_type::work work_;
+    unsigned char output_buffer_[(sizeof(sockaddr_storage) + 16) * 2];
     Handler handler_;
   };
 
@@ -886,21 +1033,64 @@ public:
   void async_accept_endpoint(impl_type& impl, Socket& peer,
       Endpoint& peer_endpoint, Handler handler)
   {
+    // Check whether acceptor has been initialised.
     if (impl == null())
     {
       asio::error error(asio::error::bad_descriptor);
       demuxer_.post(bind_handler(handler, error));
+      return;
     }
-    else if (peer.impl() != invalid_socket)
+
+    // Check that peer socket has not already been connected.
+    if (peer.impl() != invalid_socket)
     {
       asio::error error(asio::error::already_connected);
       demuxer_.post(bind_handler(handler, error));
+      return;
+    }
+
+    // Get information about the protocol used by the socket.
+    WSAPROTOCOL_INFO protocol_info;
+    std::size_t protocol_info_size = sizeof(protocol_info);
+    if (socket_ops::getsockopt(impl, SOL_SOCKET, SO_PROTOCOL_INFO,
+          &protocol_info, &protocol_info_size) != 0)
+    {
+      asio::error error(socket_ops::get_error());
+      demuxer_.post(bind_handler(handler, error));
+      return;
+    }
+
+    // Create a new socket for the connection.
+    socket_holder sock(socket_ops::socket(protocol_info.iAddressFamily,
+          protocol_info.iSocketType, protocol_info.iProtocol));
+    if (sock.get() == invalid_socket)
+    {
+      asio::error error(socket_ops::get_error());
+      demuxer_.post(bind_handler(handler, error));
+      return;
+    }
+
+    // Create new operation object. Ownership of new socket is transferred.
+    std::auto_ptr<accept_endp_operation<Socket, Endpoint, Handler> > op(
+        new accept_endp_operation<Socket, Endpoint, Handler>(
+          demuxer_, impl, sock.get(), peer, peer_endpoint, handler));
+    sock.release();
+
+    // Accept a connection.
+    DWORD bytes_read = 0;
+    BOOL result = ::AcceptEx(impl, op->new_socket(), op->output_buffer(), 0,
+        op->address_length(), op->address_length(), &bytes_read, op.get());
+    DWORD last_error = ::WSAGetLastError();
+
+    // Check if the operation completed immediately.
+    if (!result && last_error != WSA_IO_PENDING)
+    {
+      asio::error error(last_error);
+      demuxer_service_.post(bind_handler(handler, error));
     }
     else
     {
-      reactor_.start_read_op(impl,
-          accept_endp_handler<Socket, Endpoint, Handler>(
-            impl, demuxer_, peer, peer_endpoint, handler));
+      op.release();
     }
   }
 
@@ -1069,7 +1259,6 @@ public:
       demuxer_.post(bind_handler(handler, error));
     }
   }
-
 
 private:
   // The demuxer associated with the service.
