@@ -23,18 +23,18 @@
 #include <memory>
 #include <vector>
 #include <boost/config.hpp>
-#include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
 #include "asio/detail/hash_map.hpp"
+#include "asio/detail/noncopyable.hpp"
 
 namespace asio {
 namespace detail {
 
 template <typename Time, typename Comparator = std::less<Time> >
 class reactor_timer_queue
-  : private boost::noncopyable
+  : private noncopyable
 {
 public:
   // Constructor.

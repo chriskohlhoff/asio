@@ -19,18 +19,18 @@
 
 #include "asio/detail/push_options.hpp"
 #include <memory>
-#include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
 #include "asio/detail/hash_map.hpp"
+#include "asio/detail/noncopyable.hpp"
 
 namespace asio {
 namespace detail {
 
 template <typename Descriptor>
 class reactor_op_queue
-  : private boost::noncopyable
+  : private noncopyable
 {
 public:
   // Constructor.

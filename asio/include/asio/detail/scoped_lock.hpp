@@ -17,9 +17,7 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/noncopyable.hpp>
-#include "asio/detail/pop_options.hpp"
+#include "asio/detail/noncopyable.hpp"
 
 namespace asio {
 namespace detail {
@@ -27,7 +25,7 @@ namespace detail {
 // Helper class to lock and unlock a mutex automatically.
 template <typename Mutex>
 class scoped_lock
-  : private boost::noncopyable
+  : private noncopyable
 {
 public:
   // Constructor acquires the lock.

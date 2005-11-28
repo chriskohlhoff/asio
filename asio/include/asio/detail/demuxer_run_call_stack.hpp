@@ -17,10 +17,7 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/noncopyable.hpp>
-#include "asio/detail/pop_options.hpp"
-
+#include "asio/detail/noncopyable.hpp"
 #include "asio/detail/tss_ptr.hpp"
 
 namespace asio {
@@ -34,7 +31,7 @@ class demuxer_run_call_stack
 public:
   // Context class automatically pushes a demuxer on to the stack.
   class context
-    : private boost::noncopyable
+    : private noncopyable
   {
   public:
     // Push the demuxer on to the stack.

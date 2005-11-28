@@ -28,7 +28,6 @@
 #include <sys/event.h>
 #include <sys/time.h>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-#include <boost/noncopyable.hpp>
 #include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -36,6 +35,7 @@
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/hash_map.hpp"
 #include "asio/detail/mutex.hpp"
+#include "asio/detail/noncopyable.hpp"
 #include "asio/detail/task_demuxer_service.hpp"
 #include "asio/detail/thread.hpp"
 #include "asio/detail/reactor_op_queue.hpp"
@@ -49,7 +49,7 @@ namespace detail {
 
 template <bool Own_Thread>
 class kqueue_reactor
-  : private boost::noncopyable
+  : private noncopyable
 {
 public:
   // Constructor.

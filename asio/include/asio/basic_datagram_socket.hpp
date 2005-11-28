@@ -20,13 +20,13 @@
 #include "asio/detail/push_options.hpp"
 #include <cstddef>
 #include <boost/config.hpp>
-#include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
 #include "asio/error_handler.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_base.hpp"
+#include "asio/detail/noncopyable.hpp"
 
 namespace asio {
 
@@ -47,7 +47,7 @@ namespace asio {
 template <typename Service>
 class basic_datagram_socket
   : public socket_base,
-    private boost::noncopyable
+    private noncopyable
 {
 public:
   /// The type of the service that will be used to provide socket operations.

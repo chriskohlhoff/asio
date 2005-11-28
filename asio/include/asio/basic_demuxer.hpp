@@ -17,13 +17,9 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
-#include <boost/noncopyable.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/service_factory.hpp"
 #include "asio/detail/bind_handler.hpp"
+#include "asio/detail/noncopyable.hpp"
 #include "asio/detail/service_registry.hpp"
 #include "asio/detail/signal_init.hpp"
 #include "asio/detail/winsock_init.hpp"
@@ -56,7 +52,7 @@ namespace asio {
  */
 template <typename Demuxer_Service>
 class basic_demuxer
-  : private boost::noncopyable
+  : private noncopyable
 {
 public:
   /// The type of the service that will be used to provide demuxer operations.

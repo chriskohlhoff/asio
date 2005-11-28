@@ -24,10 +24,10 @@
 #if defined(BOOST_WINDOWS)
 
 #include "asio/detail/push_options.hpp"
-#include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_types.hpp"
 
 namespace asio {
@@ -35,7 +35,7 @@ namespace detail {
 
 template <int Major = 2, int Minor = 0>
 class winsock_init
-  : private boost::noncopyable
+  : private noncopyable
 {
 private:
   // Structure to perform the actual initialisation.

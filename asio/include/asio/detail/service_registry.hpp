@@ -19,18 +19,18 @@
 
 #include "asio/detail/push_options.hpp"
 #include <typeinfo>
-#include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/service_factory.hpp"
 #include "asio/detail/mutex.hpp"
+#include "asio/detail/noncopyable.hpp"
 
 namespace asio {
 namespace detail {
 
 template <typename Owner>
 class service_registry
-  : private boost::noncopyable
+  : private noncopyable
 {
 public:
   // Constructor.
@@ -87,7 +87,7 @@ public:
 private:
   // The base holder for a single service.
   class service_holder_base
-    : private boost::noncopyable
+    : private noncopyable
   {
   public:
     // Constructor.

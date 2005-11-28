@@ -22,7 +22,6 @@
 #include "asio/detail/push_options.hpp"
 #include <memory>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-#include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/basic_demuxer.hpp"
@@ -30,6 +29,7 @@
 #include "asio/time_traits.hpp"
 #include "asio/detail/epoll_reactor.hpp"
 #include "asio/detail/kqueue_reactor.hpp"
+#include "asio/detail/noncopyable.hpp"
 #include "asio/detail/select_reactor.hpp"
 #include "asio/detail/reactive_deadline_timer_service.hpp"
 #include "asio/detail/win_iocp_demuxer_service.hpp"
@@ -41,7 +41,7 @@ template <typename Time_Type = boost::posix_time::ptime,
     typename Time_Traits = asio::time_traits<Time_Type>,
     typename Allocator = std::allocator<void> >
 class deadline_timer_service
-  : private boost::noncopyable
+  : private noncopyable
 {
 public:
   /// The demuxer type.

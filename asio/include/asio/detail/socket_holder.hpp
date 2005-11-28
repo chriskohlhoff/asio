@@ -17,10 +17,7 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/noncopyable.hpp>
-#include "asio/detail/pop_options.hpp"
-
+#include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_ops.hpp"
 
 namespace asio {
@@ -28,7 +25,7 @@ namespace detail {
 
 // Implement the resource acquisition is initialisation idiom for sockets.
 class socket_holder
-  : private boost::noncopyable
+  : private noncopyable
 {
 public:
   // Construct as an uninitialised socket.

@@ -25,13 +25,12 @@
 
 #include "asio/detail/push_options.hpp"
 #include <memory>
-#include <boost/noncopyable.hpp>
 #include <boost/throw_exception.hpp>
 #include <pthread.h>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/system_exception.hpp"
-#include "asio/detail/scoped_lock.hpp"
+#include "asio/detail/noncopyable.hpp"
 
 namespace asio {
 namespace detail {
@@ -39,7 +38,7 @@ namespace detail {
 extern "C" void* asio_detail_posix_thread_function(void* arg);
 
 class posix_thread
-  : private boost::noncopyable
+  : private noncopyable
 {
 public:
   // Constructor.

@@ -17,10 +17,6 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/noncopyable.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/detail/locking_dispatcher_impl.hpp"
 
 namespace asio {

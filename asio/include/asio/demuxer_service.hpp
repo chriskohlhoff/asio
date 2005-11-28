@@ -19,13 +19,13 @@
 
 #include "asio/detail/push_options.hpp"
 #include <memory>
-#include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/basic_demuxer.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/detail/epoll_reactor.hpp"
 #include "asio/detail/kqueue_reactor.hpp"
+#include "asio/detail/noncopyable.hpp"
 #include "asio/detail/select_reactor.hpp"
 #include "asio/detail/task_demuxer_service.hpp"
 #include "asio/detail/win_iocp_demuxer_service.hpp"
@@ -35,7 +35,7 @@ namespace asio {
 /// Default service implementation for a demuxer.
 template <typename Allocator = std::allocator<void> >
 class demuxer_service
-  : private boost::noncopyable
+  : private noncopyable
 {
 public:
   /// The demuxer type for this service.

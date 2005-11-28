@@ -26,14 +26,15 @@
 #include "asio/detail/push_options.hpp"
 #include <csignal>
 #include <pthread.h>
-#include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
+
+#include "asio/detail/noncopyable.hpp"
 
 namespace asio {
 namespace detail {
 
 class posix_signal_blocker
-  : private boost::noncopyable
+  : private noncopyable
 {
 public:
   // Constructor blocks all signals for the calling thread.

@@ -24,11 +24,11 @@
 #if defined(BOOST_WINDOWS)
 
 #include "asio/system_exception.hpp"
+#include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/scoped_lock.hpp"
 
 #include "asio/detail/push_options.hpp"
-#include <boost/noncopyable.hpp>
 #include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -36,7 +36,7 @@ namespace asio {
 namespace detail {
 
 class win_mutex
-  : private boost::noncopyable
+  : private noncopyable
 {
 public:
   typedef asio::detail::scoped_lock<win_mutex> scoped_lock;

@@ -22,15 +22,16 @@
 #include <list>
 #include <utility>
 #include <boost/functional/hash.hpp>
-#include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
+
+#include "asio/detail/noncopyable.hpp"
 
 namespace asio {
 namespace detail {
 
 template <typename K, typename V>
 class hash_map
-  : private boost::noncopyable
+  : private noncopyable
 {
 public:
   // The type of a value in the map.

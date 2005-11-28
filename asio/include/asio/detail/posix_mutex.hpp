@@ -24,19 +24,19 @@
 #if defined(BOOST_HAS_PTHREADS)
 
 #include "asio/detail/push_options.hpp"
-#include <boost/noncopyable.hpp>
 #include <boost/throw_exception.hpp>
 #include <pthread.h>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/system_exception.hpp"
+#include "asio/detail/noncopyable.hpp"
 #include "asio/detail/scoped_lock.hpp"
 
 namespace asio {
 namespace detail {
 
 class posix_mutex
-  : private boost::noncopyable
+  : private noncopyable
 {
 public:
   typedef asio::detail::scoped_lock<posix_mutex> scoped_lock;

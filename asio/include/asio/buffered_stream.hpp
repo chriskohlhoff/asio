@@ -20,13 +20,13 @@
 #include "asio/detail/push_options.hpp"
 #include <cstddef>
 #include <boost/config.hpp>
-#include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/buffered_read_stream.hpp"
 #include "asio/buffered_write_stream.hpp"
 #include "asio/buffered_stream_fwd.hpp"
 #include "asio/error.hpp"
+#include "asio/detail/noncopyable.hpp"
 
 namespace asio {
 
@@ -45,7 +45,7 @@ namespace asio {
  */
 template <typename Stream>
 class buffered_stream
-  : private boost::noncopyable
+  : private noncopyable
 {
 public:
   /// The type of the next layer.

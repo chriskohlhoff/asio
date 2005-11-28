@@ -17,19 +17,16 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/noncopyable.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/mutex.hpp"
+#include "asio/detail/noncopyable.hpp"
 
 namespace asio {
 namespace detail {
 
 template <typename Demuxer>
 class locking_dispatcher_impl
-  : private boost::noncopyable
+  : private noncopyable
 {
 public:
   // Constructor.

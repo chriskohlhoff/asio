@@ -24,10 +24,10 @@
 #if defined(BOOST_WINDOWS)
 
 #include "asio/system_exception.hpp"
+#include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_types.hpp"
 
 #include "asio/detail/push_options.hpp"
-#include <boost/noncopyable.hpp>
 #include <boost/throw_exception.hpp>
 #include <memory>
 #include <process.h>
@@ -39,7 +39,7 @@ namespace detail {
 unsigned int __stdcall win_thread_function(void* arg);
 
 class win_thread
-  : private boost::noncopyable
+  : private noncopyable
 {
 public:
   // Constructor.

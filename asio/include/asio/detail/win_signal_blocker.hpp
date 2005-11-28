@@ -23,15 +23,13 @@
 
 #if defined(BOOST_WINDOWS)
 
-#include "asio/detail/push_options.hpp"
-#include <boost/noncopyable.hpp>
-#include "asio/detail/pop_options.hpp"
+#include "asio/detail/noncopyable.hpp"
 
 namespace asio {
 namespace detail {
 
 class win_signal_blocker
-  : private boost::noncopyable
+  : private noncopyable
 {
 public:
   // Constructor blocks all signals for the calling thread.

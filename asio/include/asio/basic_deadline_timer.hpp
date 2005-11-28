@@ -17,12 +17,9 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/noncopyable.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/error.hpp"
 #include "asio/service_factory.hpp"
+#include "asio/detail/noncopyable.hpp"
 
 namespace asio {
 
@@ -44,7 +41,7 @@ namespace asio {
  */
 template <typename Service>
 class basic_deadline_timer
-  : private boost::noncopyable
+  : private noncopyable
 {
 public:
   /// The type of the service that will be used to provide timer operations.

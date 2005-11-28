@@ -19,12 +19,12 @@
 
 #include "asio/detail/push_options.hpp"
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-#include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/detail/bind_handler.hpp"
+#include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
 
@@ -37,7 +37,7 @@ class reactive_deadline_timer_service
 public:
   // Implementation structure for a timer.
   struct timer_impl
-    : private boost::noncopyable
+    : private noncopyable
   {
     boost::posix_time::ptime expiry;
   };
