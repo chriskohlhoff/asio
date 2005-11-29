@@ -42,6 +42,7 @@ public:
     mutex,
     event,
     tss,
+    winsock,
     epoll,
     kqueue,
     iocp
@@ -115,6 +116,9 @@ Ostream& operator<<(Ostream& os, const system_exception& e)
     break;
   case system_exception::tss:
     os << " (tss): ";
+    break;
+  case system_exception::winsock:
+    os << " (winsock): ";
     break;
   case system_exception::epoll:
     os << " (epoll): ";

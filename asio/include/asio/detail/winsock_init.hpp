@@ -25,8 +25,10 @@
 
 #include "asio/detail/push_options.hpp"
 #include <boost/shared_ptr.hpp>
+#include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/system_exception.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_types.hpp"
 
@@ -44,12 +46,17 @@ private:
     do_init()
     {
       WSADATA wsa_data;
-      ::WSAStartup(MAKEWORD(Major, Minor), &wsa_data);
+      result_ = ::WSAStartup(MAKEWORD(Major, Minor), &wsa_data);
     }
 
     ~do_init()
     {
       ::WSACleanup();
+    }
+
+    int result() const
+    {
+      return result_;
     }
 
     // Helper function to manage a do_init singleton. The static instance of the
@@ -62,6 +69,9 @@ private:
       static boost::shared_ptr<do_init> init(new do_init);
       return init;
     }
+
+  private:
+    int result_;
   };
 
 public:
@@ -69,7 +79,14 @@ public:
   winsock_init()
     : ref_(do_init::instance())
   {
-    while (&instance_ == 0); // Ensure winsock_init::instance_ is linked in.
+    // Check whether winsock was successfully initialised. This check is not
+    // performed for the global instance since there will be nobody around to
+    // catch the exception.
+    if (this != &instance_ && ref_->result() != 0)
+    {
+      system_exception e(system_exception::winsock, ref_->result());
+      boost::throw_exception(e);
+    }
   }
 
   // Destructor.
