@@ -74,7 +74,7 @@ public:
   }
 
   /// Return a copy of the allocator associated with the service.
-  Allocator get_allocator() const
+  allocator_type get_allocator() const
   {
     return allocator_;
   }

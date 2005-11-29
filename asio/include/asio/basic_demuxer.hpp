@@ -58,6 +58,9 @@ public:
   /// The type of the service that will be used to provide demuxer operations.
   typedef Demuxer_Service service_type;
 
+  /// The allocator type for the demuxer.
+  typedef typename service_type::allocator_type allocator_type;
+
   /// Default constructor.
   basic_demuxer()
     : service_registry_(*this),
@@ -70,6 +73,18 @@ public:
     : service_registry_(*this),
       service_(get_service(factory))
   {
+  }
+
+  /// Return a copy of the allocator associated with the demuxer.
+  /**
+   * The get_allocator() returns a copy of the allocator object used by the
+   * demuxer.
+   *
+   * @return A copy of the demuxer's allocator.
+   */
+  allocator_type get_allocator() const
+  {
+    return service_.get_allocator();
   }
 
   /// Run the demuxer's event processing loop.
