@@ -33,6 +33,7 @@ nobase_include_HEADERS = \
 	asio/detail/locking_dispatcher_impl.hpp \
 	asio/detail/locking_dispatcher_service.hpp \
 	asio/detail/mutex.hpp \
+	asio/detail/noncopyable.hpp \
 	asio/detail/pipe_select_interrupter.hpp \
 	asio/detail/pop_options.hpp \
 	asio/detail/posix_event.hpp \
