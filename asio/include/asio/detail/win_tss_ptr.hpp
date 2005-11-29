@@ -72,7 +72,7 @@ public:
 private:
   // Thread-specific storage to allow unlocked access to determine whether a
   // thread is a member of the pool.
-  unsigned long tss_key_;
+  DWORD tss_key_;
 };
 
 } // namespace detail
