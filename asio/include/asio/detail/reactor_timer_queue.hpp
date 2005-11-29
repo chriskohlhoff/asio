@@ -50,26 +50,36 @@ public:
   template <typename Handler>
   bool enqueue_timer(const Time& time, Handler handler, void* token)
   {
+    // Ensure that there is space for the timer in the heap. We reserve here so
+    // that the push_back below will not throw due to a reallocation failure.
+    heap_.reserve(heap_.size() + 1);
+
     // Create a new timer object.
-    timer_base* new_timer = new timer<Handler>(time, handler, token);
+    std::auto_ptr<timer<Handler> > new_timer(
+        new timer<Handler>(time, handler, token));
 
     // Insert the new timer into the hash.
     typedef typename hash_map<void*, timer_base*>::iterator iterator;
     typedef typename hash_map<void*, timer_base*>::value_type value_type;
     std::pair<iterator, bool> result =
-      timers_.insert(value_type(token, new_timer));
+      timers_.insert(value_type(token, new_timer.get()));
     if (!result.second)
     {
-      result.first->second->prev_ = new_timer;
+      result.first->second->prev_ = new_timer.get();
       new_timer->next_ = result.first->second;
-      result.first->second = new_timer;
+      result.first->second = new_timer.get();
     }
 
     // Put the timer at the correct position in the heap.
     new_timer->heap_index_ = heap_.size();
-    heap_.push_back(new_timer);
+    heap_.push_back(new_timer.get());
     up_heap(heap_.size() - 1);
-    return (heap_[0] == new_timer);
+    bool is_first = (heap_[0] == new_timer.get());
+
+    // Ownership of the timer is transferred to the timer queue.
+    new_timer.release();
+
+    return is_first;
   }
 
   // Whether there are no timers in the queue.
