@@ -10,7 +10,81 @@
 
 // No header guard
 
-#if defined (_MSC_VER)
+#if defined(__COMO__)
+
+// Comeau C++
+
+#elif defined(__DMC__)
+
+// Digital Mars C++
+
+#elif defined(__INTEL_COMPILER) || defined(__ICL) \
+  || defined(__ICC) || defined(__ECC)
+
+// Intel C++
+
+#elif defined(__GNUC__)
+
+// GNU C++
+
+# if defined (__MINGW32__)
+#  pragma pack (push, 8)
+# endif
+
+#elif defined(__KCC)
+
+// Kai C++
+
+#elif defined(__sgi)
+
+// SGI MIPSpro C++
+
+#elif defined(__DECCXX)
+
+// Compaq Tru64 Unix cxx
+
+#elif defined(__ghs)
+
+// Greenhills C++
+
+#elif defined(__BORLANDC__)
+
+// Borland C++
+
+# pragma option push -a8 -b -Ve- -Vx- -w-inl
+# pragma nopushoptwarn
+# pragma nopackwarning
+# if !defined(__MT__)
+#  error Multithreaded RTL must be selected.
+# endif // !defined(__MT__)
+
+#elif defined(__MWERKS__)
+
+// Metrowerks CodeWarrior
+
+#elif defined(__SUNPRO_CC)
+
+// Sun Workshop Compiler C++
+
+#elif defined(__HP_aCC)
+
+// HP aCC
+
+#elif defined(__MRC__) || defined(__SC__)
+
+// MPW MrCpp or SCpp
+
+#elif defined(__IBMCPP__)
+
+// IBM Visual Age
+
+#elif defined(_MSC_VER)
+
+// Microsoft Visual C++
+//
+// Must remain the last #elif since some other vendors (Metrowerks, for example)
+// also #define _MSC_VER
+
 # pragma warning (disable:4103)
 # pragma warning (push)
 # pragma warning (disable:4244)
@@ -27,13 +101,5 @@
 # if !defined(_MT)
 #  error Multithreaded RTL must be selected.
 # endif // !defined(_MT)
-#elif defined (__BORLANDC__)
-# pragma option push -a8 -b -Ve- -Vx- -w-inl
-# pragma nopushoptwarn
-# pragma nopackwarning
-# if !defined(__MT__)
-#  error Multithreaded RTL must be selected.
-# endif // !defined(__MT__)
-#elif defined (__MINGW32__)
-# pragma pack (push, 8)
+
 #endif
