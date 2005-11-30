@@ -19,6 +19,7 @@
 
 #include "asio/detail/push_options.hpp"
 #include <boost/config.hpp>
+#include <boost/detail/workaround.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/io_control.hpp"
@@ -131,6 +132,12 @@ protected:
   ~socket_base()
   {
   }
+
+#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+private:
+  // Workaround to enable the empty base optimisation with Borland C++.
+  char dummy_;
+#endif
 };
 
 } // namespace asio
