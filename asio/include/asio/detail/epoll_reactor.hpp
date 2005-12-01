@@ -465,7 +465,7 @@ private:
     if (fd == -1)
     {
       system_exception e(system_exception::epoll, errno);
-      boost::throw_exception(system_exception);
+      boost::throw_exception(e);
     }
     return fd;
   }
