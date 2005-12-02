@@ -51,7 +51,7 @@ public:
           asio_detail_posix_thread_function, arg.get());
     if (error != 0)
     {
-      system_exception e(system_exception::thread, error);
+      system_exception e("thread", error);
       boost::throw_exception(e);
     }
     arg.release();

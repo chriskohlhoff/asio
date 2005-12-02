@@ -53,7 +53,7 @@ public:
     if (!thread_)
     {
       DWORD last_error = ::GetLastError();
-      system_exception e(system_exception::thread, last_error);
+      system_exception e("thread", last_error);
       boost::throw_exception(e);
     }
     arg.release();

@@ -45,7 +45,7 @@ public:
     if (!event_)
     {
       DWORD last_error = ::GetLastError();
-      system_exception e(system_exception::event, last_error);
+      system_exception e("event", last_error);
       boost::throw_exception(e);
     }
   }

@@ -22,6 +22,7 @@
 #include <cerrno>
 #include <cstring>
 #include <exception>
+#include <string>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/detail/win_local_free_on_block_exit.hpp"
@@ -34,22 +35,8 @@ class system_exception
   : public std::exception
 {
 public:
-  /// The execution context of exception. The values are intended to be
-  /// implementation-defined.
-  enum context_type
-  {
-    thread,
-    mutex,
-    event,
-    tss,
-    winsock,
-    epoll,
-    kqueue,
-    iocp
-  };
-
   /// Construct with a specific context and error code.
-  system_exception(context_type context, int code)
+  system_exception(const std::string& context, int code)
     : context_(context),
       code_(code)
   {
@@ -67,7 +54,7 @@ public:
   }
 
   /// Get the implementation-defined context associated with the exception.
-  context_type context() const
+  const std::string& context() const
   {
     return context_;
   }
@@ -80,7 +67,7 @@ public:
 
 private:
   // The context associated with the error.
-  context_type context_;
+  const std::string context_;
 
   // The code associated with the error.
   int code_;
@@ -102,37 +89,7 @@ private:
 template <typename Ostream>
 Ostream& operator<<(Ostream& os, const system_exception& e)
 {
-  os << e.what();
-  switch (e.context())
-  {
-  case system_exception::thread:
-    os << " (thread): ";
-    break;
-  case system_exception::mutex:
-    os << " (mutex): ";
-    break;
-  case system_exception::event:
-    os << " (event): ";
-    break;
-  case system_exception::tss:
-    os << " (tss): ";
-    break;
-  case system_exception::winsock:
-    os << " (winsock): ";
-    break;
-  case system_exception::epoll:
-    os << " (epoll): ";
-    break;
-  case system_exception::kqueue:
-    os << " (kqueue): ";
-    break;
-  case system_exception::iocp:
-    os << " (iocp): ";
-    break;
-  default:
-    os << " (unknown): ";
-    break;
-  }
+  os << e.what() << " (" << e.context() << "): ";
 #if defined(BOOST_WINDOWS)
   char* msg = 0;
   DWORD length = ::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER

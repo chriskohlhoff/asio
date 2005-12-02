@@ -47,7 +47,7 @@ public:
     int error = ::pthread_mutex_init(&mutex_, 0);
     if (error != 0)
     {
-      system_exception e(system_exception::mutex, error);
+      system_exception e("mutex", error);
       boost::throw_exception(e);
     }
   }

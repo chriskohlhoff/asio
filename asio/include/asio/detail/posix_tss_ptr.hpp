@@ -45,7 +45,7 @@ public:
     int error = ::pthread_key_create(&tss_key_, 0);
     if (error != 0)
     {
-      system_exception e(system_exception::tss, error);
+      system_exception e("tss", error);
       boost::throw_exception(e);
     }
   }

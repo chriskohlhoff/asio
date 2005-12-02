@@ -84,7 +84,7 @@ public:
     // catch the exception.
     if (this != &instance_ && ref_->result() != 0)
     {
-      system_exception e(system_exception::winsock, ref_->result());
+      system_exception e("winsock", ref_->result());
       boost::throw_exception(e);
     }
   }

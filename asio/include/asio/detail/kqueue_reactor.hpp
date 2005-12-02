@@ -413,7 +413,7 @@ private:
     int fd = kqueue();
     if (fd == -1)
     {
-      system_exception e(system_exception::kqueue, errno);
+      system_exception e("kqueue", errno);
       boost::throw_exception(e);
     }
     return fd;

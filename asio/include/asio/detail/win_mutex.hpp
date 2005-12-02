@@ -47,7 +47,7 @@ public:
     int error = do_init();
     if (error != 0)
     {
-      system_exception e(system_exception::mutex, error);
+      system_exception e("mutex", error);
       boost::throw_exception(e);
     }
   }
@@ -64,7 +64,7 @@ public:
     int error = do_lock();
     if (error != 0)
     {
-      system_exception e(system_exception::mutex, error);
+      system_exception e("mutex", error);
       boost::throw_exception(e);
     }
   }

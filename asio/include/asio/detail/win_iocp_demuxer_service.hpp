@@ -54,7 +54,7 @@ public:
     if (!iocp_.handle)
     {
       DWORD last_error = ::GetLastError();
-      system_exception e(system_exception::iocp, last_error);
+      system_exception e("iocp", last_error);
       boost::throw_exception(e);
     }
   }

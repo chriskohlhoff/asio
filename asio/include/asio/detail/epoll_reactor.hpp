@@ -464,7 +464,7 @@ private:
     int fd = epoll_create(epoll_size);
     if (fd == -1)
     {
-      system_exception e(system_exception::epoll, errno);
+      system_exception e("epoll", errno);
       boost::throw_exception(e);
     }
     return fd;

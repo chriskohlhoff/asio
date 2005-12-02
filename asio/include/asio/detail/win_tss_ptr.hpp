@@ -46,7 +46,7 @@ public:
     if (tss_key_ == TLS_OUT_OF_INDEXES)
     {
       DWORD last_error = ::GetLastError();
-      system_exception e(system_exception::tss, last_error);
+      system_exception e("tss", last_error);
       boost::throw_exception(e);
     }
   }
