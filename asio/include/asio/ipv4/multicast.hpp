@@ -96,7 +96,7 @@ typedef asio::ipv4::detail::socket_option::multicast_request<
  * @par Concepts:
  * Socket_Option, IPv4_MReq_Socket_Option.
  */
-#if defined(GENERATING_DOCUMENTATIONtime_to_live)
+#if defined(GENERATING_DOCUMENTATION)
 typedef implementation_defined drop_membership;
 #else
 typedef asio::ipv4::detail::socket_option::multicast_request<
