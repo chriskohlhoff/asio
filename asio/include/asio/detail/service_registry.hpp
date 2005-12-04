@@ -18,12 +18,19 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <memory>
 #include <typeinfo>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/service_factory.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
+
+#if defined(_MSC_VER)
+# if !defined(_CPPRTTI)
+#  error RTTI must be enabled.
+# endif
+#endif
 
 namespace asio {
 namespace detail {
@@ -67,21 +74,25 @@ public:
       {
         service_holder<Service>* typed_service =
           static_cast<service_holder<Service>*>(service);
-        return typed_service->get_service(factory, owner_);
+        return typed_service->service();
       }
       service = service->next_;
     }
 
-    // We need to create a new service object.
-    service_holder<Service>* new_service = new service_holder<Service>;
-    new_service->next_ = first_service_;
-    first_service_ = new_service;
-
-    // Release the lock to allow calls back into get_service from the new
+    // Create a new service object. The service registry's mutex is not locked
+    // at this time to allow for nested calls into this function from the new
     // service's constructor.
     lock.unlock();
+    std::auto_ptr<service_holder<Service> > new_service(
+        new service_holder<Service>(factory, owner_));
+    Service& new_service_ref = new_service->service();
+    lock.lock();
 
-    return new_service->get_service(factory, owner_);
+    // Service was successfully initialised, pass ownership to registry.
+    new_service->next_ = first_service_;
+    first_service_ = new_service.release();
+
+    return new_service_ref;
   }
 
 private:
@@ -115,14 +126,13 @@ private:
   {
   public:
     // Constructor.
-    service_holder()
-      : mutex_(),
-        service_(0)
+    service_holder(service_factory<Service>& factory, Owner& owner)
+      : service_(factory.create(owner))
     {
     }
 
     // Destructor.
-    ~service_holder()
+    virtual ~service_holder()
     {
       delete service_;
     }
@@ -134,18 +144,12 @@ private:
     }
 
     // Get a pointer to the contained service.
-    Service& get_service(service_factory<Service>& factory, Owner& owner)
+    Service& service()
     {
-      asio::detail::mutex::scoped_lock lock(mutex_);
-      if (!service_)
-        service_ = factory.create(owner);
       return *service_;
     }
 
   private:
-    // Mutex to protect access to the contained service object.
-    asio::detail::mutex mutex_;
-
     // The contained service object.
     Service* service_;
   };
