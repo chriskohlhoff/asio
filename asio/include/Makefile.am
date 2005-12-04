@@ -29,6 +29,7 @@ nobase_include_HEADERS = \
 	asio/detail/event.hpp \
 	asio/detail/fd_set_adapter.hpp \
 	asio/detail/hash_map.hpp \
+	asio/detail/io_control.hpp \
 	asio/detail/kqueue_reactor.hpp \
 	asio/detail/locking_dispatcher_impl.hpp \
 	asio/detail/locking_dispatcher_service.hpp \
@@ -75,7 +76,6 @@ nobase_include_HEADERS = \
 	asio/error.hpp \
 	asio/impl/read.ipp \
 	asio/impl/write.ipp \
-	asio/io_control.hpp \
 	asio/ipv4/address.hpp \
 	asio/ipv4/basic_host_resolver.hpp \
 	asio/ipv4/detail/host_resolver_service.hpp \

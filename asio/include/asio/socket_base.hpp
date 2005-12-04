@@ -22,7 +22,7 @@
 #include <boost/detail/workaround.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/io_control.hpp"
+#include "asio/detail/io_control.hpp"
 #include "asio/detail/socket_option.hpp"
 #include "asio/detail/socket_types.hpp"
 
@@ -375,11 +375,48 @@ public:
 #endif
 
   /// IO control command to set the blocking mode of the socket.
-  typedef asio::io_control::boolean<FIONBIO> non_blocking_io;
+  /**
+   * Implements the FIONBIO IO control command.
+   *
+   * @par Example:
+   * @code
+   * asio::stream_socket socket(demuxer); 
+   * ...
+   * asio::socket_base::non_blocking_io command(true);
+   * socket.io_control(command);
+   * @endcode
+   *
+   * @par Concepts:
+   * IO_Control_Command, Boolean_IO_Control_Command.
+   */
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined non_blocking_io;
+#else
+  typedef asio::detail::io_control::boolean<FIONBIO> non_blocking_io;
+#endif
 
   /// IO control command to get the amount of data that can be read without
   /// blocking.
-  typedef asio::io_control::size<FIONREAD> bytes_readable;
+  /**
+   * Implements the FIONREAD IO control command.
+   *
+   * @par Example:
+   * @code
+   * asio::stream_socket socket(demuxer); 
+   * ...
+   * asio::socket_base::bytes_readable command(true);
+   * socket.io_control(command);
+   * std::size_t bytes_readable = command.get();
+   * @endcode
+   *
+   * @par Concepts:
+   * IO_Control_Command, Size_IO_Control_Command.
+   */
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined bytes_readable;
+#else
+  typedef asio::detail::io_control::size<FIONREAD> bytes_readable;
+#endif
 
 protected:
   /// Protected destructor to prevent deletion through this type.

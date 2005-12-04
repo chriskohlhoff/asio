@@ -100,6 +100,7 @@ EXTRA_DIST = \
 	concepts/Async_Read_Stream.hpp \
 	concepts/Async_Write_Stream.hpp \
 	concepts/Boolean_Socket_Option.hpp \
+	concepts/Boolean_IO_Control_Command.hpp \
 	concepts/Const_Buffers.hpp \
 	concepts/CopyConstructible.hpp \
 	concepts/Dispatcher.hpp \
@@ -112,6 +113,7 @@ EXTRA_DIST = \
 	concepts/Linger_Socket_Option.hpp \
 	concepts/Mutable_Buffers.hpp \
 	concepts/Protocol.hpp \
+	concepts/Size_IO_Control_Command.hpp \
 	concepts/Socket_Option.hpp \
 	concepts/Stream.hpp \
 	concepts/Sync_Read_Stream.hpp \

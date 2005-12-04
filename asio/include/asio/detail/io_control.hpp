@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_IO_CONTROL_HPP
-#define ASIO_IO_CONTROL_HPP
+#ifndef ASIO_DETAIL_IO_CONTROL_HPP
+#define ASIO_DETAIL_IO_CONTROL_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -25,59 +25,52 @@
 #include "asio/detail/socket_types.hpp"
 
 namespace asio {
+namespace detail {
 namespace io_control {
 
-/// Helper template for implementing boolean-based IO control commands.
+// Helper template for implementing boolean-based IO control commands.
 template <int Name>
 class boolean
 {
 public:
-  /// Default constructor.
+  // Default constructor.
   boolean()
     : value_(0)
   {
   }
 
-  /// Construct with a specific command value.
+  // Construct with a specific command value.
   boolean(bool value)
     : value_(value ? 1 : 0)
   {
   }
 
-  /// Get the name of the IO control command.
+  // Get the name of the IO control command.
   int name() const
   {
     return Name;
   }
 
-  /// Set the value of the boolean.
+  // Set the value of the boolean.
   void set(bool value)
   {
     value_ = value ? 1 : 0;
   }
 
-  /// Get the current value of the boolean.
+  // Get the current value of the boolean.
   bool get() const
   {
     return value_ != 0;
   }
 
-  /// Get the address of the command data.
-#if defined(GENERATING_DOCUMENTATION)
-  implementation_defined data()
-#else
+  // Get the address of the command data.
   detail::ioctl_arg_type* data()
-#endif
   {
     return &value_;
   }
 
-  /// Get the address of the command data.
-#if defined(GENERATING_DOCUMENTATION)
-  implementation_defined data() const
-#else
+  // Get the address of the command data.
   const detail::ioctl_arg_type* data() const
-#endif
   {
     return &value_;
   }
@@ -86,57 +79,49 @@ private:
   detail::ioctl_arg_type value_;
 };
 
-/// Helper template for implementing size-based IO control commands.
+// Helper template for implementing size-based IO control commands.
 template <int Name>
 class size
 {
 public:
-  /// Default constructor.
+  // Default constructor.
   size()
     : value_(0)
   {
   }
 
-  /// Construct with a specific command value.
+  // Construct with a specific command value.
   size(std::size_t value)
     : value_(value)
   {
   }
 
-  /// Get the name of the IO control command.
+  // Get the name of the IO control command.
   int name() const
   {
     return Name;
   }
 
-  /// Set the value of the size.
+  // Set the value of the size.
   void set(std::size_t value)
   {
     value_ = static_cast<detail::ioctl_arg_type>(value);
   }
 
-  /// Get the current value of the size.
+  // Get the current value of the size.
   std::size_t get() const
   {
     return static_cast<std::size_t>(value_);
   }
 
-  /// Get the address of the command data.
-#if defined(GENERATING_DOCUMENTATION)
-  implementation_defined data()
-#else
+  // Get the address of the command data.
   detail::ioctl_arg_type* data()
-#endif
   {
     return &value_;
   }
 
-  /// Get the address of the command data.
-#if defined(GENERATING_DOCUMENTATION)
-  implementation_defined data() const
-#else
+  // Get the address of the command data.
   const detail::ioctl_arg_type* data() const
-#endif
   {
     return &value_;
   }
@@ -146,8 +131,9 @@ private:
 };
 
 } // namespace io_control
+} // namespace detail
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_IO_CONTROL_HPP
+#endif // ASIO_DETAIL_IO_CONTROL_HPP

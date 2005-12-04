@@ -4,11 +4,6 @@
 */
 
 /**
-\namespace asio::io_control
-\brief The asio::io_control namespace defines IO control helper templates.
-*/
-
-/**
 \namespace asio::ipv4
 \brief The asio::ipv4 namespace defines the classes associated with IP version 4.
 */
@@ -56,7 +51,6 @@ Standard exception class.
 <H2>Namespaces</H2>
 
 \li ::asio
-\li asio::io_control
 \li asio::ipv4
 \li asio::ipv4::multicast
 \li asio::placeholders
@@ -136,6 +130,7 @@ Standard exception class.
 \li Async_Read_Stream
 \li Async_Write_Stream
 \li Boolean_Socket_Option
+\li Boolean_IO_Control_Command
 \li Const_Buffers
 \li Dispatcher
 \li Endpoint
@@ -147,6 +142,7 @@ Standard exception class.
 \li Linger_Socket_Option
 \li Mutable_Buffers
 \li Protocol
+\li Size_IO_Control_Command
 \li Socket_Option
 \li Stream
 \li Sync_Read_Stream

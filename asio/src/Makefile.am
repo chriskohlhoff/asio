@@ -24,7 +24,6 @@ noinst_PROGRAMS = \
 	tests/unit/demuxer_test \
 	tests/unit/error_handler_test \
 	tests/unit/error_test \
-	tests/unit/io_control_test \
 	tests/unit/ipv4/address_test \
 	tests/unit/ipv4/basic_host_resolver_test \
 	tests/unit/ipv4/host_resolver_service_test \
@@ -112,7 +111,6 @@ TESTS = \
 	tests/unit/demuxer_test \
 	tests/unit/error_handler_test \
 	tests/unit/error_test \
-	tests/unit/io_control_test \
 	tests/unit/ipv4/address_test \
 	tests/unit/ipv4/basic_host_resolver_test \
 	tests/unit/ipv4/host_resolver_service_test \
@@ -192,7 +190,6 @@ tests_unit_datagram_socket_service_test_SOURCES = tests/unit/datagram_socket_ser
 tests_unit_deadline_timer_service_test_SOURCES = tests/unit/deadline_timer_service_test.cpp
 tests_unit_demuxer_service_test_SOURCES = tests/unit/demuxer_service_test.cpp
 tests_unit_error_test_SOURCES = tests/unit/error_test.cpp
-tests_unit_io_control_test_SOURCES = tests/unit/io_control_test.cpp
 tests_unit_locking_dispatcher_service_test_SOURCES = tests/unit/locking_dispatcher_service_test.cpp
 tests_unit_placeholders_test_SOURCES = tests/unit/placeholders_test.cpp
 tests_unit_service_factory_test_SOURCES = tests/unit/service_factory_test.cpp
