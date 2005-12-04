@@ -21,6 +21,7 @@
 #include <cstddef>
 #include <boost/config.hpp>
 #include <boost/array.hpp>
+#include <string>
 #include <vector>
 #include "asio/detail/pop_options.hpp"
 
@@ -509,6 +510,10 @@ inline const_buffer_container_1 buffer(boost::array<const Pod_Type, N>& data,
 }
 
 /// Create a new modifiable buffer that represents the given POD vector.
+/**
+ * @note The buffer is invalidated by any vector operation that would also
+ * invalidate iterators.
+ */
 template <typename Pod_Type>
 inline mutable_buffer_container_1 buffer(std::vector<Pod_Type>& data)
 {
@@ -517,6 +522,10 @@ inline mutable_buffer_container_1 buffer(std::vector<Pod_Type>& data)
 }
 
 /// Create a new modifiable buffer that represents the given POD vector.
+/**
+ * @note The buffer is invalidated by any vector operation that would also
+ * invalidate iterators.
+ */
 template <typename Pod_Type>
 inline mutable_buffer_container_1 buffer(std::vector<Pod_Type>& data,
     std::size_t max_size_in_bytes)
@@ -528,6 +537,10 @@ inline mutable_buffer_container_1 buffer(std::vector<Pod_Type>& data,
 }
 
 /// Create a new non-modifiable buffer that represents the given POD vector.
+/**
+ * @note The buffer is invalidated by any vector operation that would also
+ * invalidate iterators.
+ */
 template <typename Pod_Type>
 inline const_buffer_container_1 buffer(const std::vector<Pod_Type>& data)
 {
@@ -536,6 +549,10 @@ inline const_buffer_container_1 buffer(const std::vector<Pod_Type>& data)
 }
 
 /// Create a new non-modifiable buffer that represents the given POD vector.
+/**
+ * @note The buffer is invalidated by any vector operation that would also
+ * invalidate iterators.
+ */
 template <typename Pod_Type>
 inline const_buffer_container_1 buffer(const std::vector<Pod_Type>& data,
     std::size_t max_size_in_bytes)
@@ -547,6 +564,10 @@ inline const_buffer_container_1 buffer(const std::vector<Pod_Type>& data,
 }
 
 /// Create a new non-modifiable buffer that represents the given POD vector.
+/**
+ * @note The buffer is invalidated by any vector operation that would also
+ * invalidate iterators.
+ */
 template <typename Pod_Type>
 inline const_buffer_container_1 buffer(std::vector<const Pod_Type>& data)
 {
@@ -555,6 +576,10 @@ inline const_buffer_container_1 buffer(std::vector<const Pod_Type>& data)
 }
 
 /// Create a new non-modifiable buffer that represents the given POD vector.
+/**
+ * @note The buffer is invalidated by any vector operation that would also
+ * invalidate iterators.
+ */
 template <typename Pod_Type>
 inline const_buffer_container_1 buffer(std::vector<const Pod_Type>& data,
     std::size_t max_size_in_bytes)
@@ -563,6 +588,30 @@ inline const_buffer_container_1 buffer(std::vector<const Pod_Type>& data,
       const_buffer(&data[0],
         data.size() * sizeof(Pod_Type) < max_size_in_bytes
         ? data.size() * sizeof(Pod_Type) : max_size_in_bytes));
+}
+
+/// Create a new non-modifiable buffer that represents the given string.
+/**
+ * @note The buffer is invalidated by any non-const operation called on the
+ * given string object.
+ */
+inline const_buffer_container_1 buffer(const std::string& data)
+{
+  return const_buffer_container_1(const_buffer(data.data(), data.size()));
+}
+
+/// Create a new non-modifiable buffer that represents the given string.
+/**
+ * @note The buffer is invalidated by any non-const operation called on the
+ * given string object.
+ */
+inline const_buffer_container_1 buffer(const std::string& data,
+    std::size_t max_size_in_bytes)
+{
+  return const_buffer_container_1(
+      const_buffer(data.data(),
+        data.size() < max_size_in_bytes
+        ? data.size() : max_size_in_bytes));
 }
 
 /*@}*/

@@ -14,26 +14,21 @@ struct mapping
   { "htm", "text/html" },
   { "html", "text/html" },
   { "jpg", "image/jpeg" },
-  { "png", "image/png" }
+  { "png", "image/png" },
+  { 0, 0 } // Marks end of list.
 };
 
-template <std::size_t N>
-std::string find_type(const mapping (&array)[N], const std::string& extension)
+std::string extension_to_type(const std::string& extension)
 {
-  for (std::size_t i = 0; i < N; ++i)
+  for (mapping* m = mappings; m->extension; ++m)
   {
-    if (array[i].extension == extension)
+    if (m->extension == extension)
     {
-      return array[i].mime_type;
+      return m->mime_type;
     }
   }
 
   return "text/plain";
-}
-
-std::string extension_to_type(const std::string& extension)
-{
-  return find_type(mappings, extension);
 }
 
 } // namespace mime_types
