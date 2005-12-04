@@ -26,12 +26,6 @@
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
 
-#if defined(_MSC_VER)
-# if !defined(_CPPRTTI)
-#  error RTTI must be enabled.
-# endif
-#endif
-
 namespace asio {
 namespace detail {
 
