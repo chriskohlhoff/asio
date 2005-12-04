@@ -19,6 +19,7 @@
 
 #include "asio/detail/push_options.hpp"
 #include <boost/config.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <cerrno>
 #include <cstring>
 #include <exception>
@@ -42,15 +43,95 @@ public:
   {
   }
 
+  /// Copy constructor.
+  system_exception(const system_exception& e)
+    : context_(e.context_),
+      code_(e.code_)
+  {
+  }
+
   /// Destructor.
   virtual ~system_exception() throw ()
   {
   }
 
+  /// Assignment operator.
+  system_exception& operator=(const system_exception& e)
+  {
+    context_ = e.context_;
+    code_ = e.code_;
+    what_.reset();
+    return *this;
+  }
+
   /// Get the string for the type of exception.
   virtual const char* what() const throw ()
   {
-    return "asio system_exception";
+#if defined(BOOST_WINDOWS)
+    try
+    {
+      if (!what_)
+      {
+        char* msg = 0;
+        DWORD length = ::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER
+            | FORMAT_MESSAGE_FROM_SYSTEM
+            | FORMAT_MESSAGE_IGNORE_INSERTS, 0, code_,
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (char*)&msg, 0, 0);
+        detail::win_local_free_on_block_exit local_free_obj(msg);
+        if (length && msg[length - 1] == '\n')
+          msg[--length] = '\0';
+        if (length && msg[length - 1] == '\r')
+          msg[--length] = '\0';
+        if (length)
+        {
+          std::string tmp(context_);
+          tmp += ": ";
+          tmp += msg;
+          what_.reset(new std::string(tmp));
+        }
+        else
+        {
+          return "asio system_exception";
+        }
+      }
+      return what_->c_str();
+    }
+    catch (std::exception&)
+    {
+      return "asio system_exception";
+    }
+#elif defined(__sun)
+    return strerror(code_);
+#elif defined(__MACH__) && defined(__APPLE__)
+    try
+    {
+      char buf[256] = "";
+      strerror_r(code_, buf, sizeof(buf));
+      std::string tmp(context_);
+      tmp += ": ";
+      tmp += buf;
+      what_.reset(new std::string(tmp));
+      return what_->c_str();
+    }
+    catch (std::exception&)
+    {
+      return "asio system_exception";
+    }
+#else
+    try
+    {
+      char buf[256] = "";
+      std::string tmp(context_);
+      tmp += ": ";
+      tmp += strerror_r(code_, buf, sizeof(buf));
+      what_.reset(new std::string(tmp));
+      return what_->c_str();
+    }
+    catch (std::exception&)
+    {
+      return "asio system_exception";
+    }
+#endif
   }
 
   /// Get the implementation-defined context associated with the exception.
@@ -67,10 +148,13 @@ public:
 
 private:
   // The context associated with the error.
-  const std::string context_;
+  std::string context_;
 
   // The code associated with the error.
   int code_;
+
+  // The string representation of the error.
+  mutable boost::scoped_ptr<std::string> what_;
 };
 
 /// Output the string associated with a system exception.
@@ -89,32 +173,7 @@ private:
 template <typename Ostream>
 Ostream& operator<<(Ostream& os, const system_exception& e)
 {
-  os << e.what() << " (" << e.context() << "): ";
-#if defined(BOOST_WINDOWS)
-  char* msg = 0;
-  DWORD length = ::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER
-      | FORMAT_MESSAGE_FROM_SYSTEM
-      | FORMAT_MESSAGE_IGNORE_INSERTS, 0, e.code(),
-      MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (char*)&msg, 0, 0);
-  detail::win_local_free_on_block_exit local_free_obj(msg);
-  if (length && msg[length - 1] == '\n')
-    msg[--length] = '\0';
-  if (length && msg[length - 1] == '\r')
-    msg[--length] = '\0';
-  if (length)
-    os << msg;
-  else
-    os << e.code();
-#elif defined(__sun)
-  os << strerror(e.code());
-#elif defined(__MACH__) && defined(__APPLE__)
-  char buf[256] = "";
-  strerror_r(e.code(), buf, sizeof(buf));
-  os << buf;
-#else
-  char buf[256] = "";
-  os << strerror_r(e.code(), buf, sizeof(buf));
-#endif
+  os << e.what();
   return os;
 }
 

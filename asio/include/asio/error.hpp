@@ -19,9 +19,11 @@
 
 #include "asio/detail/push_options.hpp"
 #include <boost/config.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <cerrno>
 #include <cstring>
 #include <exception>
+#include <string>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/detail/socket_types.hpp"
@@ -172,15 +174,100 @@ public:
   {
   }
 
+  /// Copy constructor.
+  error(const error& e)
+    : code_(e.code_)
+  {
+  }
+
   /// Destructor.
   virtual ~error() throw ()
   {
   }
 
+  /// Assignment operator.
+  error& operator=(const error& e)
+  {
+    code_ = e.code_;
+    what_.reset();
+    return *this;
+  }
+
   /// Get the string for the type of exception.
   virtual const char* what() const throw ()
   {
-    return "asio error";
+#if defined(BOOST_WINDOWS)
+    try
+    {
+      if (!what_)
+      {
+        char* msg = 0;
+        DWORD length = ::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER
+            | FORMAT_MESSAGE_FROM_SYSTEM
+            | FORMAT_MESSAGE_IGNORE_INSERTS, 0, code_,
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (char*)&msg, 0, 0);
+        detail::win_local_free_on_block_exit local_free_obj(msg);
+        if (length && msg[length - 1] == '\n')
+          msg[--length] = '\0';
+        if (length && msg[length - 1] == '\r')
+          msg[--length] = '\0';
+        if (length)
+          what_.reset(new std::string(msg));
+        else
+          return "asio error";
+      }
+      return what_->c_str();
+    }
+    catch (std::exception&)
+    {
+      return "asio error";
+    }
+#else // defined(BOOST_WINDOWS)
+    switch (code_)
+    {
+    case error::eof:
+      return "End of file.";
+    case error::host_not_found:
+      return "Host not found (authoritative).";
+    case error::host_not_found_try_again:
+      return "Host not found (non-authoritative), try again later.";
+    case error::no_recovery:
+      return "A non-recoverable error occurred during database lookup.";
+    case error::no_host_data:
+      return "The name is valid, but it does not have associated data.";
+#if !defined(__sun)
+    case error::operation_aborted:
+      return "Operation aborted.";
+#endif // !defined(__sun)
+    default:
+#if defined(__sun)
+      return strerror(code_);
+#elif defined(__MACH__) && defined(__APPLE__)
+      try
+      {
+        char buf[256] = "";
+        strerror_r(code_, buf, sizeof(buf));
+        what_.reset(new std::string(buf));
+        return what_->c_str();
+      }
+      catch (std::exception&)
+      {
+        return "asio error";
+      }
+#else
+      try
+      {
+        char buf[256] = "";
+        what_.reset(new std::string(strerror_r(code_, buf, sizeof(buf))));
+        return what_->c_str();
+      }
+      catch (std::exception&)
+      {
+        return "asio error";
+      }
+#endif
+    }
+#endif // defined(BOOST_WINDOWS)
   }
 
   /// Get the code associated with the error.
@@ -222,6 +309,9 @@ public:
 private:
   // The code associated with the error.
   int code_;
+
+  // The string representation of the error.
+  mutable boost::scoped_ptr<std::string> what_;
 };
 
 /// Output the string associated with an error.
@@ -239,62 +329,7 @@ private:
 template <typename Ostream>
 Ostream& operator<<(Ostream& os, const error& e)
 {
-#if defined(BOOST_WINDOWS)
-  char* msg = 0;
-  DWORD length = ::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER
-      | FORMAT_MESSAGE_FROM_SYSTEM
-      | FORMAT_MESSAGE_IGNORE_INSERTS, 0, e.code(),
-      MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (char*)&msg, 0, 0);
-  detail::win_local_free_on_block_exit local_free_obj(msg);
-  if (length && msg[length - 1] == '\n')
-    msg[--length] = '\0';
-  if (length && msg[length - 1] == '\r')
-    msg[--length] = '\0';
-  if (length)
-    os << msg;
-  else
-    os << e.what() << " " << e.code();
-#else // defined(BOOST_WINDOWS)
-  switch (e.code())
-  {
-  case error::eof:
-    os << "End of file.";
-    break;
-  case error::host_not_found:
-    os << "Host not found (authoritative).";
-    break;
-  case error::host_not_found_try_again:
-    os << "Host not found (non-authoritative), try again later.";
-    break;
-  case error::no_recovery:
-    os << "A non-recoverable error occurred during database lookup.";
-    break;
-  case error::no_host_data:
-    os << "The name is valid, but it does not have associated data.";
-    break;
-#if !defined(__sun)
-  case error::operation_aborted:
-    os << "Operation aborted.";
-    break;
-#endif // !defined(__sun)
-  default:
-#if defined(__sun)
-    os << strerror(e.code());
-#elif defined(__MACH__) && defined(__APPLE__)
-    {
-      char buf[256] = "";
-      strerror_r(e.code(), buf, sizeof(buf));
-      os << buf;
-    }
-#else
-    {
-      char buf[256] = "";
-      os << strerror_r(e.code(), buf, sizeof(buf));
-    }
-#endif
-    break;
-  }
-#endif // defined(BOOST_WINDOWS)
+  os << e.what();
   return os;
 }
 
