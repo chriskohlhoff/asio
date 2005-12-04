@@ -22,6 +22,7 @@
 #include <cstring>
 #include <cerrno>
 #include <vector>
+#include <boost/detail/workaround.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
@@ -483,7 +484,7 @@ inline const char* inet_ntop(int af, const void* src, char* dest,
   if (addr_str)
   {
     *dest = '\0';
-#if defined(_MSC_VER) && (_MSC_VER >= 1400)
+#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
     strncat_s(dest, length, addr_str, length);
 #else
     strncat(dest, addr_str, length);
