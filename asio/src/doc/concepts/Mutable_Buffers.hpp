@@ -18,6 +18,7 @@
  * boost::array<asio::mutable_buffer, N>
  */
 class Mutable_Buffers
+  : public CopyConstructible
 {
 public:
   /// The type for each element in the list of buffers. The type must be

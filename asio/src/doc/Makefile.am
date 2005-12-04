@@ -89,6 +89,7 @@ EXTRA_DIST = \
 	examples_dox.txt \
 	examples_header.htm \
 	examples_footer.htm \
+	external.doxytags \
 	reference_dox.txt \
 	reference_header.htm \
 	reference_footer.htm \
@@ -98,21 +99,30 @@ EXTRA_DIST = \
 	concepts/Async_Object.hpp \
 	concepts/Async_Read_Stream.hpp \
 	concepts/Async_Write_Stream.hpp \
+	concepts/Boolean_Socket_Option.hpp \
 	concepts/Const_Buffers.hpp \
+	concepts/CopyConstructible.hpp \
 	concepts/Dispatcher.hpp \
 	concepts/Endpoint.hpp \
 	concepts/Error_Source.hpp \
 	concepts/IO_Control_Command.hpp \
+	concepts/IPv4_Address_Socket_Option.hpp \
+	concepts/IPv4_MReq_Socket_Option.hpp \
+	concepts/Integer_Socket_Option.hpp \
+	concepts/Linger_Socket_Option.hpp \
 	concepts/Mutable_Buffers.hpp \
 	concepts/Protocol.hpp \
 	concepts/Socket_Option.hpp \
 	concepts/Stream.hpp \
 	concepts/Sync_Read_Stream.hpp \
 	concepts/Sync_Write_Stream.hpp \
+	design/buffers_dox.txt \
 	design/closeascancel_dox.txt \
 	design/handlers_dox.txt \
 	design/index_dox.txt \
+	design/proactor_dox.txt \
 	design/services_dox.txt \
+	design/threads_dox.txt \
 	../examples/tutorial/daytime_dox.txt \
 	../examples/tutorial/index_dox.txt \
 	../examples/tutorial/timer_dox.txt

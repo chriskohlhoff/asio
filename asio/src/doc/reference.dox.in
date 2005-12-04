@@ -932,7 +932,7 @@ SKIP_FUNCTION_MACROS   = YES
 # If a tag file is not located in the directory in which doxygen 
 # is run, you must also specify the path to the tagfile here.
 
-TAGFILES               = 
+TAGFILES               = @srcdir@/external.doxytags
 
 # When a file name is specified after GENERATE_TAGFILE, doxygen will create 
 # a tag file that is based on the input files it reads.
@@ -960,10 +960,10 @@ PERL_PATH              = /usr/bin/perl
 # Configuration options related to the dot tool   
 #---------------------------------------------------------------------------
 
-# If the CLASS_DIAGRAMS tag is set to YES (the default) Doxygen will 
-# generate a inheritance diagram (in HTML, RTF and LaTeX) for classes with base or 
-# super classes. Setting the tag to NO turns the diagrams off. Note that this 
-# option is superceded by the HAVE_DOT option below. This is only a fallback. It is 
+# If the CLASS_DIAGRAMS tag is set to YES (the default) Doxygen will generate a
+# inheritance diagram (in HTML, RTF and LaTeX) for classes with base or super
+# classes. Setting the tag to NO turns the diagrams off. Note that this option
+# is superceded by the HAVE_DOT option below. This is only a fallback. It is
 # recommended to install and use dot, since it yields more powerful graphs.
 
 CLASS_DIAGRAMS         = NO
@@ -986,7 +986,7 @@ HAVE_DOT               = @HAVE_DOT@
 # indirect inheritance relations. Setting this tag to YES will force the 
 # the CLASS_DIAGRAMS tag to NO
 
-CLASS_GRAPH            = NO
+CLASS_GRAPH            = YES
 
 # If the COLLABORATION_GRAPH and HAVE_DOT tags are set to YES then doxygen 
 # will generate a graph for each documented class showing the direct and 
@@ -999,7 +999,11 @@ COLLABORATION_GRAPH    = NO
 # collaboration diagrams in a style similiar to the OMG's Unified Modeling 
 # Language.
 
-UML_LOOK               = YES
+UML_LOOK               = NO
+
+# Our custom UML look.
+
+COMPACT_UML_LOOK       = YES
 
 # If set to YES, the inheritance and collaboration graphs will show the 
 # relations between templates and their instances.

@@ -20,27 +20,9 @@ multicast.
 */
 
 /**
-\namespace asio::ipv4::multicast::socket_option
-\brief The asio::ipv4::multicast::socket_option namespace defines socket
-options helper templates.
-*/
-
-/**
-\namespace asio::ipv4::socket_option
-\brief The asio::ipv4::socket_option namespace defines socket options helper
-templates.
-*/
-
-/**
 \namespace asio::placeholders
 \brief The asio::placeholders namespace defines argument placeholders for use
 with \ref boost_bind.
-*/
-
-/**
-\namespace asio::socket_option
-\brief The asio::socket_option namespace defines socket options helper
-templates.
 */
 
 /**
@@ -52,6 +34,16 @@ templates.
 \page boost_bind boost::bind
 See the <a href="http://www.boost.org/libs/bind/bind.html">Boost: bind.hpp
 documentation</a> for more information on how to use <tt>boost::bind</tt>.
+*/
+
+/**
+\page noncopyable noncopyable
+Prevents copy construction and assignment.
+*/
+
+/**
+\page stdexception std::exception
+Standard exception class.
 */
 
 /**
@@ -67,10 +59,7 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 \li asio::io_control
 \li asio::ipv4
 \li asio::ipv4::multicast
-\li asio::ipv4::multicast::socket_option
-\li asio::ipv4::socket_option
 \li asio::placeholders
-\li asio::socket_option
 \li asio::ssl
 
 <H2>Classes</H2>
@@ -146,11 +135,16 @@ documentation</a> for more information on how to use <tt>boost::bind</tt>.
 \li Async_Object
 \li Async_Read_Stream
 \li Async_Write_Stream
+\li Boolean_Socket_Option
 \li Const_Buffers
 \li Dispatcher
 \li Endpoint
 \li Error_Source
+\li Integer_Socket_Option
 \li IO_Control_Command
+\li IPv4_Address_Socket_Option
+\li IPv4_MReq_Socket_Option
+\li Linger_Socket_Option
 \li Mutable_Buffers
 \li Protocol
 \li Socket_Option

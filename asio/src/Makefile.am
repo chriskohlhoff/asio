@@ -31,7 +31,6 @@ noinst_PROGRAMS = \
 	tests/unit/ipv4/host_resolver_test \
 	tests/unit/ipv4/host_test \
 	tests/unit/ipv4/multicast_test \
-	tests/unit/ipv4/socket_option_test \
 	tests/unit/ipv4/tcp_test \
 	tests/unit/ipv4/udp_test \
 	tests/unit/is_read_buffered_test \
@@ -44,7 +43,6 @@ noinst_PROGRAMS = \
 	tests/unit/socket_acceptor_service_test \
 	tests/unit/socket_acceptor_test \
 	tests/unit/socket_base_test \
-	tests/unit/socket_option_test \
 	tests/unit/stream_socket_service_test \
 	tests/unit/stream_socket_test \
 	tests/unit/thread_test \
@@ -121,7 +119,6 @@ TESTS = \
 	tests/unit/ipv4/host_resolver_test \
 	tests/unit/ipv4/host_test \
 	tests/unit/ipv4/multicast_test \
-	tests/unit/ipv4/socket_option_test \
 	tests/unit/ipv4/tcp_test \
 	tests/unit/ipv4/udp_test \
 	tests/unit/is_read_buffered_test \
@@ -134,7 +131,6 @@ TESTS = \
 	tests/unit/socket_acceptor_service_test \
 	tests/unit/socket_acceptor_test \
 	tests/unit/socket_base_test \
-	tests/unit/socket_option_test \
 	tests/unit/stream_socket_service_test \
 	tests/unit/stream_socket_test \
 	tests/unit/thread_test \
@@ -170,7 +166,6 @@ tests_unit_ipv4_host_resolver_service_test_SOURCES = tests/unit/ipv4/host_resolv
 tests_unit_ipv4_host_resolver_test_SOURCES = tests/unit/ipv4/host_resolver_test.cpp
 tests_unit_ipv4_host_test_SOURCES = tests/unit/ipv4/host_test.cpp
 tests_unit_ipv4_multicast_test_SOURCES = tests/unit/ipv4/multicast_test.cpp
-tests_unit_ipv4_socket_option_test_SOURCES = tests/unit/ipv4/socket_option_test.cpp
 tests_unit_ipv4_tcp_test_SOURCES = tests/unit/ipv4/tcp_test.cpp
 tests_unit_ipv4_udp_test_SOURCES = tests/unit/ipv4/udp_test.cpp
 tests_unit_locking_dispatcher_test_SOURCES = tests/unit/locking_dispatcher_test.cpp
@@ -203,7 +198,6 @@ tests_unit_placeholders_test_SOURCES = tests/unit/placeholders_test.cpp
 tests_unit_service_factory_test_SOURCES = tests/unit/service_factory_test.cpp
 tests_unit_socket_acceptor_service_test_SOURCES = tests/unit/socket_acceptor_service_test.cpp
 tests_unit_socket_base_test_SOURCES = tests/unit/socket_base_test.cpp
-tests_unit_socket_option_test_SOURCES = tests/unit/socket_option_test.cpp
 tests_unit_stream_socket_service_test_SOURCES = tests/unit/stream_socket_service_test.cpp
 tests_unit_stream_socket_test_SOURCES = tests/unit/stream_socket_test.cpp
 tests_unit_thread_test_SOURCES = tests/unit/thread_test.cpp

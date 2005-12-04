@@ -67,7 +67,6 @@ UNIT_TEST_EXES = \
 	tests\unit\ipv4\host_resolver_test.exe \
 	tests\unit\ipv4\host_test.exe \
 	tests\unit\ipv4\multicast_test.exe \
-	tests\unit\ipv4\socket_option_test.exe \
 	tests\unit\ipv4\tcp_test.exe \
 	tests\unit\ipv4\udp_test.exe \
 	tests\unit\is_read_buffered_test.exe \
@@ -80,7 +79,6 @@ UNIT_TEST_EXES = \
 	tests\unit\socket_acceptor_service_test.exe \
 	tests\unit\socket_acceptor_test.exe \
 	tests\unit\socket_base_test.exe \
-	tests\unit\socket_option_test.exe \
 	tests\unit\stream_socket_service_test.exe \
 	tests\unit\stream_socket_test.exe \
 	tests\unit\thread_test.exe \

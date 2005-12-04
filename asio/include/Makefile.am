@@ -54,6 +54,7 @@ nobase_include_HEADERS = \
 	asio/detail/signal_init.hpp \
 	asio/detail/socket_holder.hpp \
 	asio/detail/socket_ops.hpp \
+	asio/detail/socket_option.hpp \
 	asio/detail/socket_select_interrupter.hpp \
 	asio/detail/socket_types.hpp \
 	asio/detail/task_demuxer_service.hpp \
@@ -78,11 +79,11 @@ nobase_include_HEADERS = \
 	asio/ipv4/address.hpp \
 	asio/ipv4/basic_host_resolver.hpp \
 	asio/ipv4/detail/host_resolver_service.hpp \
+	asio/ipv4/detail/socket_option.hpp \
 	asio/ipv4/host.hpp \
 	asio/ipv4/host_resolver.hpp \
 	asio/ipv4/host_resolver_service.hpp \
 	asio/ipv4/multicast.hpp \
-	asio/ipv4/socket_option.hpp \
 	asio/ipv4/tcp.hpp \
 	asio/ipv4/udp.hpp \
 	asio/is_read_buffered.hpp \
@@ -95,7 +96,6 @@ nobase_include_HEADERS = \
 	asio/socket_acceptor.hpp \
 	asio/socket_acceptor_service.hpp \
 	asio/socket_base.hpp \
-	asio/socket_option.hpp \
   asio/ssl.hpp \
   asio/ssl/basic_context.hpp \
   asio/ssl/context.hpp \

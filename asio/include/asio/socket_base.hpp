@@ -23,7 +23,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/io_control.hpp"
-#include "asio/socket_option.hpp"
+#include "asio/detail/socket_option.hpp"
 #include "asio/detail/socket_types.hpp"
 
 namespace asio {
@@ -75,50 +75,304 @@ public:
 #endif
 
   /// Socket option to permit sending of broadcast messages.
-  typedef asio::socket_option::boolean<
+  /**
+   * Implements the SOL_SOCKET/SO_BROADCAST socket option.
+   *
+   * @par Examples:
+   * Setting the option:
+   * @code
+   * asio::datagram_socket socket(demuxer); 
+   * ...
+   * asio::socket_base::broadcast option(true);
+   * socket.set_option(option);
+   * @endcode
+   *
+   * @par
+   * Getting the current option value:
+   * @code
+   * asio::datagram_socket socket(demuxer); 
+   * ...
+   * asio::socket_base::broadcast option;
+   * socket.get_option(option);
+   * bool is_set = option.get();
+   * @endcode
+   *
+   * @par Concepts:
+   * Socket_Option, Boolean_Socket_Option.
+   */
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined broadcast;
+#else
+  typedef asio::detail::socket_option::boolean<
     SOL_SOCKET, SO_BROADCAST> broadcast;
+#endif
 
   /// Socket option to prevent routing, use local interfaces only.
-  typedef asio::socket_option::boolean<
+  /**
+   * Implements the SOL_SOCKET/SO_DONTROUTE socket option.
+   *
+   * @par Examples:
+   * Setting the option:
+   * @code
+   * asio::datagram_socket socket(demuxer); 
+   * ...
+   * asio::socket_base::do_not_route option(true);
+   * socket.set_option(option);
+   * @endcode
+   *
+   * @par
+   * Getting the current option value:
+   * @code
+   * asio::datagram_socket socket(demuxer); 
+   * ...
+   * asio::socket_base::do_not_route option;
+   * socket.get_option(option);
+   * bool is_set = option.get();
+   * @endcode
+   *
+   * @par Concepts:
+   * Socket_Option, Boolean_Socket_Option.
+   */
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined do_not_route;
+#else
+  typedef asio::detail::socket_option::boolean<
     SOL_SOCKET, SO_DONTROUTE> do_not_route;
+#endif
 
   /// Socket option to send keep-alives.
-  typedef asio::socket_option::boolean<
+  /**
+   * Implements the SOL_SOCKET/SO_KEEPALIVE socket option.
+   *
+   * @par Examples:
+   * Setting the option:
+   * @code
+   * asio::stream_socket socket(demuxer); 
+   * ...
+   * asio::socket_base::keep_alive option(true);
+   * socket.set_option(option);
+   * @endcode
+   *
+   * @par
+   * Getting the current option value:
+   * @code
+   * asio::stream_socket socket(demuxer); 
+   * ...
+   * asio::socket_base::keep_alive option;
+   * socket.get_option(option);
+   * bool is_set = option.get();
+   * @endcode
+   *
+   * @par Concepts:
+   * Socket_Option, Boolean_Socket_Option.
+   */
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined keep_alive;
+#else
+  typedef asio::detail::socket_option::boolean<
     SOL_SOCKET, SO_KEEPALIVE> keep_alive;
+#endif
 
   /// Socket option for the send buffer size of a socket.
-  typedef asio::socket_option::integer<
+  /**
+   * Implements the SOL_SOCKET/SO_SNDBUF socket option.
+   *
+   * @par Examples:
+   * Setting the option:
+   * @code
+   * asio::stream_socket socket(demuxer); 
+   * ...
+   * asio::socket_base::send_buffer_size option(8192);
+   * socket.set_option(option);
+   * @endcode
+   *
+   * @par
+   * Getting the current option value:
+   * @code
+   * asio::stream_socket socket(demuxer); 
+   * ...
+   * asio::socket_base::send_buffer_size option;
+   * socket.get_option(option);
+   * int size = option.get();
+   * @endcode
+   *
+   * @par Concepts:
+   * Socket_Option, Integer_Socket_Option.
+   */
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined send_buffer_size;
+#else
+  typedef asio::detail::socket_option::integer<
     SOL_SOCKET, SO_SNDBUF> send_buffer_size;
+#endif
 
   /// Socket option for the send low watermark.
-  typedef asio::socket_option::integer<
+  /**
+   * Implements the SOL_SOCKET/SO_SNDLOWAT socket option.
+   *
+   * @par Examples:
+   * Setting the option:
+   * @code
+   * asio::stream_socket socket(demuxer); 
+   * ...
+   * asio::socket_base::send_low_watermark option(1024);
+   * socket.set_option(option);
+   * @endcode
+   *
+   * @par
+   * Getting the current option value:
+   * @code
+   * asio::stream_socket socket(demuxer); 
+   * ...
+   * asio::socket_base::send_low_watermark option;
+   * socket.get_option(option);
+   * int size = option.get();
+   * @endcode
+   *
+   * @par Concepts:
+   * Socket_Option, Integer_Socket_Option.
+   */
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined send_low_watermark;
+#else
+  typedef asio::detail::socket_option::integer<
     SOL_SOCKET, SO_SNDLOWAT> send_low_watermark;
-
-  /// Socket option for the send timeout.
-  typedef asio::socket_option::integer<
-    SOL_SOCKET, SO_SNDTIMEO> send_timeout;
+#endif
 
   /// Socket option for the receive buffer size of a socket.
-  typedef asio::socket_option::integer<
+  /**
+   * Implements the SOL_SOCKET/SO_RCVBUF socket option.
+   *
+   * @par Examples:
+   * Setting the option:
+   * @code
+   * asio::stream_socket socket(demuxer); 
+   * ...
+   * asio::socket_base::receive_buffer_size option(8192);
+   * socket.set_option(option);
+   * @endcode
+   *
+   * @par
+   * Getting the current option value:
+   * @code
+   * asio::stream_socket socket(demuxer); 
+   * ...
+   * asio::socket_base::receive_buffer_size option;
+   * socket.get_option(option);
+   * int size = option.get();
+   * @endcode
+   *
+   * @par Concepts:
+   * Socket_Option, Integer_Socket_Option.
+   */
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined receive_buffer_size;
+#else
+  typedef asio::detail::socket_option::integer<
     SOL_SOCKET, SO_RCVBUF> receive_buffer_size;
+#endif
 
   /// Socket option for the receive low watermark.
-  typedef asio::socket_option::integer<
+  /**
+   * Implements the SOL_SOCKET/SO_RCVLOWAT socket option.
+   *
+   * @par Examples:
+   * Setting the option:
+   * @code
+   * asio::stream_socket socket(demuxer); 
+   * ...
+   * asio::socket_base::receive_low_watermark option(1024);
+   * socket.set_option(option);
+   * @endcode
+   *
+   * @par
+   * Getting the current option value:
+   * @code
+   * asio::stream_socket socket(demuxer); 
+   * ...
+   * asio::socket_base::receive_low_watermark option;
+   * socket.get_option(option);
+   * int size = option.get();
+   * @endcode
+   *
+   * @par Concepts:
+   * Socket_Option, Integer_Socket_Option.
+   */
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined receive_low_watermark;
+#else
+  typedef asio::detail::socket_option::integer<
     SOL_SOCKET, SO_RCVLOWAT> receive_low_watermark;
-
-  /// Socket option for the receive timeout.
-  typedef asio::socket_option::integer<
-    SOL_SOCKET, SO_RCVTIMEO> receive_timeout;
+#endif
 
   /// Socket option to allow the socket to be bound to an address that is
   /// already in use.
-  typedef asio::socket_option::boolean<
+  /**
+   * Implements the SOL_SOCKET/SO_REUSEADDR socket option.
+   *
+   * @par Examples:
+   * Setting the option:
+   * @code
+   * asio::socket_acceptor acceptor(demuxer); 
+   * ...
+   * asio::socket_base::reuse_address option(true);
+   * acceptor.set_option(option);
+   * @endcode
+   *
+   * @par
+   * Getting the current option value:
+   * @code
+   * asio::socket_acceptor acceptor(demuxer); 
+   * ...
+   * asio::socket_base::reuse_address option;
+   * acceptor.get_option(option);
+   * bool is_set = option.get();
+   * @endcode
+   *
+   * @par Concepts:
+   * Socket_Option, Boolean_Socket_Option.
+   */
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined reuse_address;
+#else
+  typedef asio::detail::socket_option::boolean<
     SOL_SOCKET, SO_REUSEADDR> reuse_address;
+#endif
 
   /// Socket option to specify whether the socket lingers on close if unsent
   /// data is present.
-  typedef asio::socket_option::linger<
+  /**
+   * Implements the SOL_SOCKET/SO_LINGER socket option.
+   *
+   * @par Examples:
+   * Setting the option:
+   * @code
+   * asio::stream_socket socket(demuxer); 
+   * ...
+   * asio::socket_base::linger option(true, 30);
+   * socket.set_option(option);
+   * @endcode
+   *
+   * @par
+   * Getting the current option value:
+   * @code
+   * asio::stream_socket socket(demuxer); 
+   * ...
+   * asio::socket_base::linger option;
+   * socket.get_option(option);
+   * bool is_set = option.enabled();
+   * unsigned short timeout = option.timeout();
+   * @endcode
+   *
+   * @par Concepts:
+   * Socket_Option, Linger_Socket_Option.
+   */
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined linger;
+#else
+  typedef asio::detail::socket_option::linger<
     SOL_SOCKET, SO_LINGER> linger;
+#endif
 
   /// IO control command to set the blocking mode of the socket.
   typedef asio::io_control::boolean<FIONBIO> non_blocking_io;
