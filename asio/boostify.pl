@@ -315,6 +315,8 @@ sub copy_docs
       "$boost_dir/libs/asio/doc/reference/asio.css");
   copy_source_file("src/doc/boost/asio.css",
       "$boost_dir/libs/asio/doc/tutorial/asio.css");
+  copy_source_file("src/doc/external.doxytags",
+      "$boost_dir/libs/asio/doc/doxygen/external.doxytags");
 }
 
 sub create_root_html

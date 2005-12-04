@@ -194,7 +194,7 @@ SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------
 # Configuration::additions related to external references   
 #---------------------------------------------------------------------------
-TAGFILES               = 
+TAGFILES               = ./external.doxytags
 GENERATE_TAGFILE       = ./asio.doxytags
 ALLEXTERNALS           = NO
 EXTERNAL_GROUPS        = YES
@@ -208,7 +208,8 @@ HAVE_DOT               = YES
 CLASS_GRAPH            = YES
 COLLABORATION_GRAPH    = NO
 GROUP_GRAPHS           = NO
-UML_LOOK               = YES
+UML_LOOK               = NO
+COMPACT_UML_LOOK       = YES
 TEMPLATE_RELATIONS     = YES
 INCLUDE_GRAPH          = NO
 INCLUDED_BY_GRAPH      = NO

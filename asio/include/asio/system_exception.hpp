@@ -64,7 +64,7 @@ public:
     return *this;
   }
 
-  /// Get the string for the type of exception.
+  /// Get a string representation of the exception.
   virtual const char* what() const throw ()
   {
 #if defined(BOOST_WINDOWS)
