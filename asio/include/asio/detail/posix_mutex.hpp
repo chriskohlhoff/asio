@@ -61,13 +61,23 @@ public:
   // Lock the mutex.
   void lock()
   {
-    ::pthread_mutex_lock(&mutex_);
+    int error = ::pthread_mutex_lock(&mutex_);
+    if (error != 0)
+    {
+      system_exception e("mutex", error);
+      boost::throw_exception(e);
+    }
   }
 
   // Unlock the mutex.
   void unlock()
   {
-    ::pthread_mutex_unlock(&mutex_);
+    int error = ::pthread_mutex_unlock(&mutex_);
+    if (error != 0)
+    {
+      system_exception e("mutex", error);
+      boost::throw_exception(e);
+    }
   }
 
 private:

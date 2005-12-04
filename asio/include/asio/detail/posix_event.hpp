@@ -68,27 +68,27 @@ public:
   // Signal the event.
   void signal()
   {
-    ::pthread_mutex_lock(&mutex_);
+    ::pthread_mutex_lock(&mutex_); // Ignore EINVAL and EDEADLK.
     signalled_ = true;
-    ::pthread_cond_signal(&cond_);
-    ::pthread_mutex_unlock(&mutex_);
+    ::pthread_cond_signal(&cond_); // Ignore EINVAL.
+    ::pthread_mutex_unlock(&mutex_); // Ignore EINVAL and EPERM.
   }
 
   // Reset the event.
   void clear()
   {
-    ::pthread_mutex_lock(&mutex_);
+    ::pthread_mutex_lock(&mutex_); // Ignore EINVAL and EDEADLK.
     signalled_ = false;
-    ::pthread_mutex_unlock(&mutex_);
+    ::pthread_mutex_unlock(&mutex_); // Ignore EINVAL and EPERM.
   }
 
   // Wait for the event to become signalled.
   void wait()
   {
-    ::pthread_mutex_lock(&mutex_);
+    ::pthread_mutex_lock(&mutex_); // Ignore EINVAL and EDEADLK.
     while (!signalled_)
-      ::pthread_cond_wait(&cond_, &mutex_);
-    ::pthread_mutex_unlock(&mutex_);
+      ::pthread_cond_wait(&cond_, &mutex_); // Ignore EINVAL.
+    ::pthread_mutex_unlock(&mutex_); // Ignore EINVAL and EPERM.
   }
 
 private:
