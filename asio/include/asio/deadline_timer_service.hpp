@@ -92,7 +92,7 @@ public:
     return service_impl_.demuxer();
   }
 
-  /// Return a null socket acceptor implementation.
+  /// Return a null timer implementation.
   impl_type null() const
   {
     return service_impl_.null();

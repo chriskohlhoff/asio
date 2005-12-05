@@ -1,0 +1,12 @@
+subproject libs/asio/example/services ;
+
+project boost : $(BOOST_ROOT) ;
+
+exe daytime_client
+  : <lib>@boost/libs/thread/build/boost_thread
+    <lib>@boost/libs/date_time/build/boost_date_time
+    daytime_client.cpp
+  : <include>$(BOOST_ROOT)
+    <include>../../../..
+    <threading>multi
+  ;

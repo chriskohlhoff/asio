@@ -232,6 +232,7 @@ sub copy_examples
       "src/examples/http/server",
       "src/examples/iostreams",
       "src/examples/multicast",
+      "src/examples/services",
       "src/examples/ssl",
       "src/examples/timeouts",
       "src/examples/tutorial",

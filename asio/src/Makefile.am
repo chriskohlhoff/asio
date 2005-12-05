@@ -59,6 +59,7 @@ noinst_PROGRAMS = \
 	examples/iostreams/daytime_client \
 	examples/multicast/receiver \
 	examples/multicast/sender \
+	examples/services/daytime_client \
 	examples/timeouts/accept_timeout \
 	examples/timeouts/connect_timeout \
 	examples/timeouts/datagram_receive_timeout \
@@ -151,7 +152,11 @@ endif
 noinst_HEADERS = \
 	tests/unit/unit_test.hpp \
 	examples/chat/chat_message.hpp \
-	examples/iostreams/socket_stream.hpp
+	examples/iostreams/socket_stream.hpp \
+	examples/services/basic_logger.hpp \
+	examples/services/logger.hpp \
+	examples/services/logger_service.hpp \
+	examples/services/stream_socket_service.hpp
 
 AM_CXXFLAGS = -I$(srcdir)/../include
 
@@ -219,6 +224,7 @@ examples_http_server_http_server_SOURCES = \
 examples_iostreams_daytime_client_SOURCES = examples/iostreams/daytime_client.cpp
 examples_multicast_receiver_SOURCES = examples/multicast/receiver.cpp
 examples_multicast_sender_SOURCES = examples/multicast/sender.cpp
+examples_services_daytime_client_SOURCES = examples/services/daytime_client.cpp
 examples_timeouts_accept_timeout_SOURCES = examples/timeouts/accept_timeout.cpp
 examples_timeouts_connect_timeout_SOURCES = examples/timeouts/connect_timeout.cpp
 examples_timeouts_datagram_receive_timeout_SOURCES = examples/timeouts/datagram_receive_timeout.cpp
