@@ -39,6 +39,10 @@ public:
    *   const Async_Read_Stream::error_type& error, // Result of operation.
    *   std::size_t bytes_transferred               // Number of bytes read.
    * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the handler will not be invoked from within this function. Invocation
+   * of the handler will be performed in a manner equivalent to using
+   * asio::demuxer::post().
    */
   template <typename Mutable_Buffers, typename Handler>
   void async_read_some(const Mutable_Buffers& buffers, Handler handler);

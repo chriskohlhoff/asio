@@ -90,8 +90,8 @@ std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers);
  * stream.
  *
  * @param completion_condition The function object to be called to determine
- * whether the write operation is complete. The equivalent function signature
- * of the handler must be:
+ * whether the write operation is complete. The signature of the function object
+ * must be:
  * @code bool completion_condition(
  *   const Sync_Write_Stream::error_type& error, // Result of latest write_some
  *                                               // operation.
@@ -147,8 +147,8 @@ std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
  * stream.
  *
  * @param completion_condition The function object to be called to determine
- * whether the write operation is complete. The equivalent function signature
- * of the handler must be:
+ * whether the write operation is complete. The signature of the function object
+ * must be:
  * @code bool completion_condition(
  *   const Sync_Write_Stream::error_type& error, // Result of latest write_some
  *                                               // operation.
@@ -161,8 +161,8 @@ std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
  * required.
  *
  * @param error_handler The handler to be called when an error occurs. Copies
- * will be made of the handler as required. The equivalent function signature
- * of the handler must be:
+ * will be made of the handler as required. The function signature of the
+ * handler must be:
  * @code void error_handler(
  *   const Sync_Write_Stream::error_type& error // Result of operation.
  * ); @endcode
@@ -207,8 +207,8 @@ std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
  * that they remain valid until the handler is called.
  *
  * @param handler The handler to be called when the write operation completes.
- * Copies will be made of the handler as required. The equivalent function
- * signature of the handler must be:
+ * Copies will be made of the handler as required. The function signature of
+ * the handler must be:
  * @code void handler(
  *   const Async_Write_Stream::error_type& error, // Result of operation.
  *
@@ -218,6 +218,10 @@ std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
  *                                                // be less than the sum of the
  *                                                // buffer sizes.
  * ); @endcode
+ * Regardless of whether the asynchronous operation completes immediately or
+ * not, the handler will not be invoked from within this function. Invocation of
+ * the handler will be performed in a manner equivalent to using
+ * asio::demuxer::post().
  *
  * @par Example:
  * To write a single data buffer use the @ref buffer function as follows:
@@ -257,8 +261,8 @@ void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
  * that they remain valid until the handler is called.
  *
  * @param completion_condition The function object to be called to determine
- * whether the write operation is complete. The equivalent function signature
- * of the handler must be:
+ * whether the write operation is complete. The signature of the function object
+ * must be:
  * @code bool completion_condition(
  *   const Async_Write_Stream::error_type& error, // Result of latest write_some
  *                                                // operation.
@@ -271,8 +275,8 @@ void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
  * required.
  *
  * @param handler The handler to be called when the write operation completes.
- * Copies will be made of the handler as required. The equivalent function
- * signature of the handler must be:
+ * Copies will be made of the handler as required. The function signature of the
+ * handler must be:
  * @code void handler(
  *   const Async_Write_Stream::error_type& error, // Result of operation.
  *
@@ -282,6 +286,10 @@ void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
  *                                                // be less than the sum of the
  *                                                // buffer sizes.
  * ); @endcode
+ * Regardless of whether the asynchronous operation completes immediately or
+ * not, the handler will not be invoked from within this function. Invocation of
+ * the handler will be performed in a manner equivalent to using
+ * asio::demuxer::post().
  *
  * @par Example:
  * To write a single data buffer use the @ref buffer function as follows:

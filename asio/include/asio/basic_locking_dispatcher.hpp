@@ -101,8 +101,8 @@ public:
    * this function if the guarantee can be met.
    *
    * @param handler The handler to be called. The dispatcher will make
-   * a copy of the handler object as required. The equivalent function
-   * signature of the handler must be: @code void handler(); @endcode
+   * a copy of the handler object as required. The function signature of the
+   * handler must be: @code void handler(); @endcode
    */
   template <typename Handler>
   void dispatch(Handler handler)
@@ -123,8 +123,8 @@ public:
    * dispatcher will be invoked at a time.
    *
    * @param handler The handler to be called. The dispatcher will make
-   * a copy of the handler object as required. The equivalent function
-   * signature of the handler must be: @code void handler(); @endcode
+   * a copy of the handler object as required. The function signature of the
+   * handler must be: @code void handler(); @endcode
    */
   template <typename Handler>
   void post(Handler handler)
@@ -140,8 +140,8 @@ public:
    * dispatch function.
    *
    * @param handler The handler to be wrapped. The dispatcher will make a copy
-   * of the handler object as required. The equivalent function signature of
-   * the handler must be: @code void handler(A1 a1, ... An an); @endcode
+   * of the handler object as required. The function signature of the handler
+   * must be: @code void handler(A1 a1, ... An an); @endcode
    *
    * @return A function object that, when invoked, passes the wrapped handler to
    * the dispatcher's dispatch function. Given a function object with the

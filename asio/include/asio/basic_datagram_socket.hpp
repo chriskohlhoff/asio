@@ -147,8 +147,8 @@ public:
    * @param protocol An object specifying which protocol is to be used.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * will be made of the handler as required. The function signature of the
+   * handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -183,8 +183,8 @@ public:
    * used to again perform send and receive operations.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * will be made of the handler as required. The function signature of the
+   * handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -257,8 +257,8 @@ public:
    * socket will be bound.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * will be made of the handler as required. The function signature of the
+   * handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -296,8 +296,8 @@ public:
    * connected.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * will be made of the handler as required. The function signature of the
+   * handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -317,11 +317,15 @@ public:
    * connected. Copies will be made of the endpoint object as required.
    *
    * @param handler The handler to be called when the connection operation
-   * completes. Copies will be made of the handler as required. The equivalent
-   * function signature of the handler must be:
+   * completes. Copies will be made of the handler as required. The function
+   * signature of the handler must be:
    * @code void handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the handler will not be invoked from within this function. Invocation
+   * of the handler will be performed in a manner equivalent to using
+   * asio::demuxer::post().
    */
   template <typename Endpoint, typename Handler>
   void async_connect(const Endpoint& peer_endpoint, Handler handler)
@@ -350,8 +354,8 @@ public:
    * @param option The new option value to be set on the socket.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * will be made of the handler as required. The function signature of the
+   * handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -383,8 +387,8 @@ public:
    * @param option The option value to be obtained from the socket.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * will be made of the handler as required. The function signature of the
+   * handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -416,8 +420,8 @@ public:
    * @param command The IO control command to be performed on the socket.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * will be made of the handler as required. The function signature of the
+   * handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -451,8 +455,8 @@ public:
    * socket.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * will be made of the handler as required. The function signature of the
+   * handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -486,8 +490,8 @@ public:
    * @param what Determines what types of operation will no longer be allowed.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * will be made of the handler as required. The function signature of the
+   * handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -539,8 +543,8 @@ public:
    * @param flags Flags specifying how the send call is to be made.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * will be made of the handler as required. The function signature of the
+   * handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -571,12 +575,16 @@ public:
    * @param flags Flags specifying how the send call is to be made.
    *
    * @param handler The handler to be called when the send operation completes.
-   * Copies will be made of the handler as required. The equivalent function
-   * signature of the handler must be:
+   * Copies will be made of the handler as required. The function signature of
+   * the handler must be:
    * @code void handler(
    *   const asio::error& error,     // Result of operation
    *   std::size_t bytes_transferred // Number of bytes sent
    * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the handler will not be invoked from within this function. Invocation
+   * of the handler will be performed in a manner equivalent to using
+   * asio::demuxer::post().
    *
    * @note The async_send operation can only be used with a connected socket.
    * Use the async_send_to function to send data on an unconnected datagram
@@ -643,8 +651,8 @@ public:
    * @param destination The remote endpoint to which the data will be sent.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * will be made of the handler as required. The function signature of the
+   * handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -674,12 +682,16 @@ public:
    * Copies will be made of the endpoint as required.
    *
    * @param handler The handler to be called when the send operation completes.
-   * Copies will be made of the handler as required. The equivalent function
-   * signature of the handler must be:
+   * Copies will be made of the handler as required. The function signature of
+   * the handler must be:
    * @code void handler(
    *   const asio::error& error,     // Result of operation
    *   std::size_t bytes_transferred // Number of bytes sent
    * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the handler will not be invoked from within this function. Invocation
+   * of the handler will be performed in a manner equivalent to using
+   * asio::demuxer::post().
    *
    * @par Example:
    * To send a single data buffer use the @ref buffer function as follows:
@@ -739,8 +751,8 @@ public:
    * @param flags Flags specifying how the receive call is to be made.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * will be made of the handler as required. The function signature of the
+   * handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -771,12 +783,16 @@ public:
    * @param flags Flags specifying how the receive call is to be made.
    *
    * @param handler The handler to be called when the receive operation
-   * completes. Copies will be made of the handler as required. The equivalent
-   * function signature of the handler must be:
+   * completes. Copies will be made of the handler as required. The function
+   * signature of the handler must be:
    * @code void handler(
    *   const asio::error& error,     // Result of operation
    *   std::size_t bytes_transferred // Number of bytes received
    * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the handler will not be invoked from within this function. Invocation
+   * of the handler will be performed in a manner equivalent to using
+   * asio::demuxer::post().
    *
    * @note The async_receive operation can only be used with a connected socket.
    * Use the async_receive_from function to receive data on an unconnected
@@ -845,8 +861,8 @@ public:
    * the remote sender of the datagram.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * will be made of the handler as required. The function signature of the
+   * handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -879,12 +895,16 @@ public:
    * handler is called.
    *
    * @param handler The handler to be called when the receive operation
-   * completes. Copies will be made of the handler as required. The equivalent
-   * function signature of the handler must be:
+   * completes. Copies will be made of the handler as required. The function
+   * signature of the handler must be:
    * @code void handler(
    *   const asio::error& error,     // Result of operation
    *   std::size_t bytes_transferred // Number of bytes received
    * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the handler will not be invoked from within this function. Invocation
+   * of the handler will be performed in a manner equivalent to using
+   * asio::demuxer::post().
    *
    * @par Example:
    * To receive into a single data buffer use the @ref buffer function as

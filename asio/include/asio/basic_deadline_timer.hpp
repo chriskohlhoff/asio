@@ -241,11 +241,15 @@ public:
    * code asio::error::operation_aborted.
    *
    * @param handler The handler to be called when the timer expires. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * will be made of the handler as required. The function signature of the
+   * handler must be:
    * @code void handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the handler will not be invoked from within this function. Invocation
+   * of the handler will be performed in a manner equivalent to using
+   * asio::demuxer::post().
    */
   template <typename Handler>
   void async_wait(Handler handler)

@@ -143,8 +143,8 @@ public:
    * may be executed inside this function if the guarantee can be met.
    *
    * @param handler The handler to be called. The demuxer will make
-   * a copy of the handler object as required. The equivalent function
-   * signature of the handler must be: @code void handler(); @endcode
+   * a copy of the handler object as required. The function signature of the
+   * handler must be: @code void handler(); @endcode
    */
   template <typename Handler>
   void dispatch(Handler handler)
@@ -162,8 +162,8 @@ public:
    * which the run() member function is currently being invoked.
    *
    * @param handler The handler to be called. The demuxer will make
-   * a copy of the handler object as required. The equivalent function
-   * signature of the handler must be: @code void handler(); @endcode
+   * a copy of the handler object as required. The function signature of the
+   * handler must be: @code void handler(); @endcode
    */
   template <typename Handler>
   void post(Handler handler)
@@ -179,8 +179,8 @@ public:
    * dispatch function.
    *
    * @param handler The handler to be wrapped. The demuxer will make a copy of
-   * the handler object as required. The equivalent function signature of the
-   * handler must be: @code void handler(A1 a1, ... An an); @endcode
+   * the handler object as required. The function signature of the handler must
+   * be: @code void handler(A1 a1, ... An an); @endcode
    *
    * @return A function object that, when invoked, passes the wrapped handler to
    * the demuxer's dispatch function. Given a function object with the

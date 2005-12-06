@@ -54,7 +54,7 @@ public:
    * or function object.
    *
    * @param f The function or function object to be run in the thread. The
-   * equivalent function signature must be: @code void f(); @endcode
+   * function signature must be: @code void f(); @endcode
    */
   template <typename Function>
   explicit thread(Function f)
