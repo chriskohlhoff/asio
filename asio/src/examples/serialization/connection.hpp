@@ -79,7 +79,7 @@ public:
           boost::make_tuple(handler)));
   }
 
-  /// Handle a complete read of a message header. The handler is passed using
+  /// Handle a completed read of a message header. The handler is passed using
   /// a tuple since boost::bind seems to have trouble binding a function object
   /// created using boost::bind as a parameter.
   template <typename T, typename Handler>
@@ -111,7 +111,7 @@ public:
     }
   }
 
-  /// Handle a complete read of message data.
+  /// Handle a completed read of message data.
   template <typename T, typename Handler>
   void handle_read_data(const asio::error& e, T& t,
       boost::tuple<Handler> handler)
