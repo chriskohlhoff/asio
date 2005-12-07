@@ -97,7 +97,7 @@ sub copy_source_file
       print_line($output, $line, $from, $lineno);
       print_line($output, "} // namespace boost", $from, $lineno);
     }
-    elsif ($line =~ /^(#include )[<"](asio\.hpp)[>"]$/)
+    elsif ($line =~ /^(# *include )[<"](asio\.hpp)[>"]$/)
     {
       print_line($output, $1 . "<boost/" . $2 . ">", $from, $lineno);
       if ($uses_asio_thread)
@@ -105,11 +105,11 @@ sub copy_source_file
         print_line($output, $1 . "<boost/thread.hpp>", $from, $lineno);
       }
     }
-    elsif ($line =~ /#include [<"]asio\/thread\.hpp[>"]/)
+    elsif ($line =~ /# *include [<"]asio\/thread\.hpp[>"]/)
     {
       # Line is removed.
     }
-    elsif ($line =~ /^(#include )[<"](asio\/.*)[>"](.*)$/)
+    elsif ($line =~ /^(# *include )[<"](asio\/.*)[>"](.*)$/)
     {
       print_line($output, $1 . "<boost/" . $2 . ">" . $3, $from, $lineno);
     }
@@ -232,6 +232,7 @@ sub copy_examples
       "src/examples/http/server",
       "src/examples/iostreams",
       "src/examples/multicast",
+      "src/examples/serialization",
       "src/examples/services",
       "src/examples/ssl",
       "src/examples/timeouts",

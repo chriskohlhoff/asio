@@ -6,4 +6,4 @@ index.html
 building.html
 reference.dox
 tutorial.dox
-asio.doxytags
+*.doxytags

@@ -387,7 +387,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = @srcdir@/examples_dox.txt @srcdir@/../../src/examples/http/server
+INPUT                  = @srcdir@/examples_dox.txt @srcdir@/../../src/examples/http/server @srcdir@/../../src/examples/serialization @srcdir@/../../src/examples/services
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
@@ -937,7 +937,8 @@ SKIP_FUNCTION_MACROS   = YES
 # If a tag file is not located in the directory in which doxygen 
 # is run, you must also specify the path to the tagfile here.
 
-TAGFILES               = @srcdir@/asio.doxytags=../reference
+TAGFILES               = @srcdir@/asio.doxytags=../reference \
+                         @srcdir@/design.doxytags=../design
 
 # When a file name is specified after GENERATE_TAGFILE, doxygen will create 
 # a tag file that is based on the input files it reads.

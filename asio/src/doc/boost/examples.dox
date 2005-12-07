@@ -74,7 +74,9 @@ WARN_LOGFILE           =
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 INPUT                  = ./examples_dox.txt \
-                         ./../../example/http/server
+                         ./../../example/http/server \
+                         ./../../example/serialization \
+                         ./../../example/services
 FILE_PATTERNS          = 
 RECURSIVE              = NO
 EXCLUDE                = 
@@ -188,7 +190,8 @@ SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------
 # Configuration::additions related to external references   
 #---------------------------------------------------------------------------
-TAGFILES               = ./asio.doxytags=../reference
+TAGFILES               = ./asio.doxytags=../reference \
+                         ./design.doxytags=../design
 GENERATE_TAGFILE       = 
 ALLEXTERNALS           = NO
 EXTERNAL_GROUPS        = YES
@@ -202,7 +205,8 @@ HAVE_DOT               = YES
 CLASS_GRAPH            = NO
 COLLABORATION_GRAPH    = YES
 GROUP_GRAPHS           = YES
-UML_LOOK               = YES
+UML_LOOK               = NO
+COMPACT_UML_LOOK       = YES
 TEMPLATE_RELATIONS     = YES
 INCLUDE_GRAPH          = NO
 INCLUDED_BY_GRAPH      = NO

@@ -1,0 +1,21 @@
+subproject libs/asio/example/serialization ;
+
+project boost : $(BOOST_ROOT) ;
+
+exe client
+  : <lib>@boost/libs/serialization/build/boost_serialization
+    <lib>@boost/libs/date_time/build/boost_date_time
+    client.cpp
+  : <include>$(BOOST_ROOT)
+    <include>../../../..
+    <threading>multi
+  ;
+
+exe server
+  : <lib>@boost/libs/serialization/build/boost_serialization
+    <lib>@boost/libs/date_time/build/boost_date_time
+    server.cpp
+  : <include>$(BOOST_ROOT)
+    <include>../../../..
+    <threading>multi
+  ;

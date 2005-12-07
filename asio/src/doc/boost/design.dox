@@ -193,7 +193,7 @@ SKIP_FUNCTION_MACROS   = YES
 # Configuration::additions related to external references   
 #---------------------------------------------------------------------------
 TAGFILES               = ./asio.doxytags=../reference
-GENERATE_TAGFILE       = 
+GENERATE_TAGFILE       = ./design.doxytags
 ALLEXTERNALS           = NO
 EXTERNAL_GROUPS        = YES
 PERL_PATH              = /usr/bin/perl
