@@ -348,6 +348,7 @@ sub execute_doxygen
   system("doxygen examples.dox");
   system("doxygen tutorial.dox");
   unlink("asio.doxytags");
+  unlink("design.doxytags");
 }
 
 determine_boost_dir();
