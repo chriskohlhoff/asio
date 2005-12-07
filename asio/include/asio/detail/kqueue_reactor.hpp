@@ -24,9 +24,11 @@
 #define ASIO_HAS_KQUEUE_REACTOR 1
 
 #include "asio/detail/push_options.hpp"
+#include <cstddef>
 #include <sys/types.h>
 #include <sys/event.h>
 #include <sys/time.h>
+#include <boost/config.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
@@ -243,7 +245,7 @@ public:
 
   // Cancel the timer associated with the given token. Returns the number of
   // handlers that have been posted or dispatched.
-  int cancel_timer(void* token)
+  std::size_t cancel_timer(void* token)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
     return timer_queue_.cancel_timer(token);

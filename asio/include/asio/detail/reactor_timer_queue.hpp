@@ -18,6 +18,7 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <cstddef>
 #include <functional>
 #include <limits>
 #include <memory>
@@ -108,9 +109,9 @@ public:
 
   // Cancel the timer with the given token. The handler will be invoked
   // immediately with the result operation_aborted.
-  int cancel_timer(void* timer_token)
+  std::size_t cancel_timer(void* timer_token)
   {
-    int num_cancelled = 0;
+    std::size_t num_cancelled = 0;
     typedef typename hash_map<void*, timer_base*>::iterator iterator;
     iterator it = timers_.find(timer_token);
     if (it != timers_.end())

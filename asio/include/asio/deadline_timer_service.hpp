@@ -20,7 +20,9 @@
 #include "asio/detail/socket_types.hpp" // Must come before posix_time.
 
 #include "asio/detail/push_options.hpp"
+#include <cstddef>
 #include <memory>
+#include <boost/config.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -73,7 +75,7 @@ private:
 #endif
 
 public:
-  /// The native type of the socket acceptor.
+  /// The native type of the deadline timer.
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined impl_type;
 #else
@@ -135,7 +137,7 @@ public:
   }
 
   /// Cancel any asynchronous wait operations associated with the timer.
-  int cancel(impl_type& impl)
+  std::size_t cancel(impl_type& impl)
   {
     return service_impl_.cancel(impl);
   }

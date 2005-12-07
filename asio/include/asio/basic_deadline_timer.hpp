@@ -17,6 +17,11 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <cstddef>
+#include <boost/config.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/error.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/detail/noncopyable.hpp"
@@ -38,6 +43,40 @@ namespace asio {
  * Async_Object, Error_Source.
  *
  * @sa @ref deadline_timer_reset
+ *
+ * @par Examples:
+ * Performing a blocking wait:
+ * @code
+ * // Construct a timer without setting an expiry time.
+ * asio::deadline_timer timer(demuxer);
+ *
+ * // Set an expiry time relative to now.
+ * timer.expires_from_now(boost::posix_time::seconds(5));
+ *
+ * // Wait for the timer to expire.
+ * timer.wait();
+ * @endcode
+ *
+ * @par 
+ * Performing an asynchronous wait:
+ * @code
+ * void handler(const asio::error& e)
+ * {
+ *   if (!e)
+ *   {
+ *     // Timer expired.
+ *   }
+ * }
+ *
+ * // ...
+ *
+ * // Construct a timer with an absolute expiry time.
+ * asio::deadline_timer timer(demuxer,
+ *     boost::posix_time::time_from_string("2005-12-07 23:59:59.000"));
+ *
+ * // Start an asynchronous wait.
+ * timer.async_wait(handler);
+ * @endcode
  */
 template <typename Service>
 class basic_deadline_timer
@@ -210,7 +249,7 @@ public:
    *
    * @return The number of asynchronous operations that were cancelled.
    */
-  int cancel()
+  std::size_t cancel()
   {
     return service_.cancel(impl_);
   }

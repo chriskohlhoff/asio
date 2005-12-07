@@ -18,6 +18,8 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <cstddef>
+#include <boost/config.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -116,7 +118,7 @@ public:
   }
 
   // Cancel any asynchronous wait operations associated with the timer.
-  int cancel(impl_type& impl)
+  std::size_t cancel(impl_type& impl)
   {
     return reactor_.cancel_timer(impl);
   }
