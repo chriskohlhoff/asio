@@ -77,7 +77,10 @@ public:
     impl = null();
   }
 
-  /// Set the output file for the logger.
+  /// Set the output file for the logger. The current implementation sets the
+  /// output file for all logger instances, and so the impl parameter is not
+  /// actually needed. It is retained here to illustrate how service functions
+  /// are typically defined.
   void use_file(impl_type& impl, const std::string& file)
   {
     // Pass the work of opening the file to the background thread.
