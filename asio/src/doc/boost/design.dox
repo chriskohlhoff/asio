@@ -78,7 +78,8 @@ INPUT                  = ./design_dox.txt \
                          ./design/services_dox.txt \
                          ./design/threads_dox.txt \
                          ./design/buffers_dox.txt \
-                         ./design/proactor_dox.txt
+                         ./design/proactor_dox.txt \
+                         ./design/implementation_dox.txt
 FILE_PATTERNS          = 
 RECURSIVE              = NO
 EXCLUDE                = 

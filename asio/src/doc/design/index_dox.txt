@@ -3,11 +3,32 @@
 
 Some design notes:
 
-\li \ref designservices
-\li \ref designhandlers
-\li \ref designcloseascancel
-\li \ref designthreads
-\li \ref designbuffers
-\li \ref designproactor
+\li <b>\ref designproactor</b>: The asio library is based on the Proactor
+pattern. This design note outlines the advantages and disadvantages of this
+approach.
+
+\li <b>\ref designthreads</b>: An implementation of asio for a particular
+platform may make use of one or more additional threads to emulate
+asynchronicity. This design note discusses design rules applied to the use of
+threads in this way.
+
+\li <b>\ref designservices</b>: This design note describes the pattern used for
+structuring asynchronous object implementation.
+
+\li <b>\ref designhandlers</b>: All asynchronous operations take a function
+object that will be called when the operation completes. This design note
+outlines the reasons for making the this handler type a template parameter,
+rather than using boost::function.
+
+\li <b>\ref designcloseascancel</b>: Asynchronous socket operations can be
+cancelled by closing the socket. This design note describes why this approach
+was selected rather than allowing individual operations to be cancelled.
+
+\li <b>\ref designbuffers</b>: This design note examines the buffer abstraction
+used by asio in order to support scatter-gather operations.
+
+\li <b>\ref designimplementation</b>: This design note lists platform-specific
+implementation details, such as the default demultiplexing mechanism, the number
+of threads created internally, and when threads are created.
 
 */

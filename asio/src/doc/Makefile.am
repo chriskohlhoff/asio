@@ -121,6 +121,7 @@ EXTRA_DIST = \
 	design/buffers_dox.txt \
 	design/closeascancel_dox.txt \
 	design/handlers_dox.txt \
+	design/implementation_dox.txt \
 	design/index_dox.txt \
 	design/proactor_dox.txt \
 	design/services_dox.txt \

@@ -1,0 +1,121 @@
+/**
+\page designimplementation Platform-Specific Implementation
+
+This design note lists platform-specific implementation details, such as the
+default demultiplexing mechanism, the number of threads created internally, and
+when threads are created.
+
+
+\section linux24 Linux Kernel 2.4
+
+\subsection linux24demux Demultiplexing Mechanism
+
+Uses \c select for demultiplexing. This means that the number of file
+descriptors in the process cannot be permitted to exceed FD_SETSIZE.
+
+\subsection linux24threads Threads
+
+Demultiplexing using \c select is performed in one of the threads that calls
+asio::demuxer::run().
+
+An additional thread per demuxer is used to emulate asynchronous host
+resolution. This thread is created on the first call to either
+asio::ipv4::host_resolver::async_get_host_by_address() or
+asio::ipv4::host_resolver::async_get_host_by_name().
+
+
+\section linux26 Linux Kernel 2.6
+
+\subsection linux26demux Demultiplexing Mechanism
+
+Uses \c epoll for demultiplexing.
+
+\subsection linux26threads Threads
+
+Demultiplexing using \c epoll is performed in one of the threads that calls
+asio::demuxer::run().
+
+An additional thread per demuxer is used to emulate asynchronous host
+resolution. This thread is created on the first call to either
+asio::ipv4::host_resolver::async_get_host_by_address() or
+asio::ipv4::host_resolver::async_get_host_by_name().
+
+
+\section solaris Solaris
+
+\subsection solarisdemux Demultiplexing Mechanism
+
+Uses \c select for demultiplexing. This means that the number of file
+descriptors in the process cannot be permitted to exceed FD_SETSIZE.
+
+\subsection solaristhreads Threads
+
+Demultiplexing using \c select is performed in one of the threads that calls
+asio::demuxer::run().
+
+An additional thread per demuxer is used to emulate asynchronous host
+resolution. This thread is created on the first call to either
+asio::ipv4::host_resolver::async_get_host_by_address() or
+asio::ipv4::host_resolver::async_get_host_by_name().
+
+
+\section macosx Mac OS X
+
+\subsection macosxdemux Demultiplexing Mechanism
+
+Uses \c kqueue for demultiplexing.
+
+\subsection macosxthreads Threads
+
+Demultiplexing using \c kqueue is performed in one of the threads that calls
+asio::demuxer::run().
+
+An additional thread per demuxer is used to emulate asynchronous host
+resolution. This thread is created on the first call to either
+asio::ipv4::host_resolver::async_get_host_by_address() or
+asio::ipv4::host_resolver::async_get_host_by_name().
+
+
+\section win9x Windows 95, 98 and Me
+
+\subsection win9xdemux Demultiplexing Mechanism
+
+Uses \c select for demultiplexing.
+
+\subsection win9xthreads Threads
+
+Demultiplexing using \c select is performed in one of the threads that calls
+asio::demuxer::run().
+
+An additional thread per demuxer is used to emulate asynchronous host
+resolution. This thread is created on the first call to either
+asio::ipv4::host_resolver::async_get_host_by_address() or
+asio::ipv4::host_resolver::async_get_host_by_name().
+
+
+\section winnt Windows NT, 2000 and XP
+
+\subsection winntdemux Demultiplexing Mechanism
+
+Uses overlapped I/O and I/O completion ports for all asynchronous
+datagram_socket, stream_socket and socket_acceptor operations except for
+asynchronous connect.
+
+Uses \c select for deadline_timer operations and for emulating asynchronous
+connect.
+
+\subsection winnthreads Threads
+
+Demultiplexing using I/O completion ports is performed in all threads that call
+asio::demuxer::run().
+
+An additional thread per demuxer is used to for the \c select demultiplexing.
+This thread is created whenever the first deadline_timer, datagram_socket,
+stream_socket or socket_acceptor is created.
+
+An additional thread per demuxer is used to emulate asynchronous host
+resolution. This thread is created on the first call to either
+asio::ipv4::host_resolver::async_get_host_by_address() or
+asio::ipv4::host_resolver::async_get_host_by_name().
+
+*/
