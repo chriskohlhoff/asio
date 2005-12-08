@@ -3,7 +3,7 @@
 #include <boost/lexical_cast.hpp>
 #include <iostream>
 #include <vector>
-#include "connection.hpp" // Must come before boost/serialization/*.hpp
+#include "connection.hpp" // Must come before boost/serialization headers.
 #include <boost/serialization/vector.hpp>
 #include "stock.hpp"
 
@@ -55,7 +55,9 @@ public:
   {
     if (!e)
     {
-      // Successfully accepted a new connection.
+      // Successfully accepted a new connection. Send the list of stocks to the
+      // client. The connection::async_write() function will automatically
+      // serialize the data structure for us.
       conn->async_write(stocks_,
           boost::bind(&server::handle_write, this,
             asio::placeholders::error, conn));

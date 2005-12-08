@@ -3,7 +3,7 @@
 #include <boost/lexical_cast.hpp>
 #include <iostream>
 #include <vector>
-#include "connection.hpp" // Must come before boost/serialization/*.hpp
+#include "connection.hpp" // Must come before boost/serialization headers.
 #include <boost/serialization/vector.hpp>
 #include "stock.hpp"
 
@@ -35,7 +35,9 @@ public:
   {
     if (!e)
     {
-      // Successfully established connection. Start read operation.
+      // Successfully established connection. Start operation to read the list
+      // of stocks. The connection::async_read() function will automatically
+      // decode the data that is read from the underlying socket.
       connection_.async_read(stocks_,
           boost::bind(&client::handle_read, this,
             asio::placeholders::error));
