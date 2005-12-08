@@ -17,10 +17,8 @@
  * asio::socket_base::linger @n
  * asio::socket_base::send_buffer_size @n
  * asio::socket_base::send_low_watermark @n
- * asio::socket_base::send_timeout @n
  * asio::socket_base::receive_buffer_size @n
  * asio::socket_base::receive_low_watermark @n
- * asio::socket_base::receive_timeout @n
  * asio::socket_base::reuse_address @n
  * asio::ipv4::tcp::no_delay @n
  * asio::ipv4::multicast::add_membership @n

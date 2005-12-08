@@ -275,6 +275,10 @@ public:
    * endpoint. The function call will block until the connection is successfully
    * made or an error occurs.
    *
+   * The socket is automatically opened if it is not already open. If the
+   * connect fails, and the socket was automatically opened, the socket is
+   * returned to the closed state.
+   *
    * @param peer_endpoint The remote endpoint to which the socket will be
    * connected.
    *
@@ -291,6 +295,10 @@ public:
    * This function is used to connect a datagram socket to the specified remote
    * endpoint. The function call will block until the connection is successfully
    * made or an error occurs.
+   *
+   * The socket is automatically opened if it is not already open. If the
+   * connect fails, and the socket was automatically opened, the socket is
+   * returned to the closed state.
    *
    * @param peer_endpoint The remote endpoint to which the socket will be
    * connected.
@@ -312,6 +320,10 @@ public:
   /**
    * This function is used to asynchronously connect a datagram socket to the
    * specified remote endpoint. The function call always returns immediately.
+   *
+   * The socket is automatically opened if it is not already open. If the
+   * connect fails, and the socket was automatically opened, the socket is
+   * returned to the closed state.
    *
    * @param peer_endpoint The remote endpoint to which the socket will be
    * connected. Copies will be made of the endpoint object as required.
@@ -340,6 +352,16 @@ public:
    * @param option The new option value to be set on the socket.
    *
    * @throws asio::error Thrown on failure.
+   *
+   * @sa Socket_Option @n
+   * @sa asio::socket_base::broadcast @n
+   * @sa asio::socket_base::do_not_route @n
+   * @sa asio::socket_base::reuse_address @n
+   * @sa asio::ipv4::multicast::add_membership @n
+   * @sa asio::ipv4::multicast::drop_membership @n
+   * @sa asio::ipv4::multicast::outbound_interface @n
+   * @sa asio::ipv4::multicast::time_to_live @n
+   * @sa asio::ipv4::multicast::enable_loopback
    */
   template <typename Socket_Option>
   void set_option(const Socket_Option& option)

@@ -60,15 +60,15 @@ namespace asio {
  * @par 
  * Performing an asynchronous wait:
  * @code
- * void handler(const asio::error& e)
+ * void handler(const asio::error& error)
  * {
- *   if (!e)
+ *   if (!error)
  *   {
  *     // Timer expired.
  *   }
  * }
  *
- * // ...
+ * ...
  *
  * // Construct a timer with an absolute expiry time.
  * asio::deadline_timer timer(demuxer,

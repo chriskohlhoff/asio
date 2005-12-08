@@ -13,10 +13,8 @@
  * @par Implemented By:
  * asio::socket_base::send_buffer_size @n
  * asio::socket_base::send_low_watermark @n
- * asio::socket_base::send_timeout @n
  * asio::socket_base::receive_buffer_size @n
  * asio::socket_base::receive_low_watermark @n
- * asio::socket_base::receive_timeout @n
  * asio::ipv4::multicast::time_to_live
  */
 class Integer_Socket_Option
