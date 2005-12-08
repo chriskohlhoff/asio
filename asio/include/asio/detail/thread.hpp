@@ -21,6 +21,10 @@
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#if !defined(BOOST_HAS_THREADS)
+# error Thread support is required!
+#endif
+
 #if defined(BOOST_WINDOWS)
 # include "asio/detail/win_thread.hpp"
 #elif defined(BOOST_HAS_PTHREADS)
