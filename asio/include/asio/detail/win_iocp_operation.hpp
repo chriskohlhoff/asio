@@ -34,6 +34,10 @@ class win_iocp_demuxer_service;
 
 // Base class for all IOCP operations. A function pointer is used instead of
 // virtual functions to avoid the associated overhead.
+//
+// This class inherits from OVERLAPPED so that we can downcast to get back to
+// the win_iocp_operation pointer from the LPOVERLAPPED out parameter of
+// GetQueuedCompletionStatus.
 struct win_iocp_operation
   : public OVERLAPPED
 {
