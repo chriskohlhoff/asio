@@ -4,7 +4,8 @@
 \section httpserver_section HTTP Server
 
 This example illustrates the use of Boost.Asio in a server implementation of
-HTTP 1.0:
+HTTP 1.0. It demonstrates how to perform a clean shutdown by cancelling all
+outstanding asynchronous operations.
 
 \li \ref http::server "HTTP Server Classes"
 \li \ref httpserver_files
