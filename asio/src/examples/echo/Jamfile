@@ -3,7 +3,8 @@ subproject libs/asio/example/echo ;
 project boost : $(BOOST_ROOT) ;
 
 template asio_echo_example
-  : <lib>@boost/libs/thread/build/boost_thread
+  : <lib>@boost/libs/date_time/build/boost_date_time
+    <lib>@boost/libs/thread/build/boost_thread
   : <include>$(BOOST_ROOT)
     <include>../../../..
     <threading>multi

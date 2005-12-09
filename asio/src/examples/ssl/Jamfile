@@ -1,7 +1,8 @@
 subproject libs/asio/example/ssl ;
 
 exe client
-  : client.cpp
+  : <lib>@boost/libs/date_time/build/boost_date_time
+    client.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../..
     <threading>multi
@@ -10,7 +11,8 @@ exe client
   ;
 
 exe server
-  : server.cpp
+  : <lib>@boost/libs/date_time/build/boost_date_time
+    server.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../..
     <threading>multi

@@ -1,14 +1,18 @@
 subproject libs/asio/example/multicast ;
 
+project boost : $(BOOST_ROOT) ;
+
 exe receiver
-  : receiver.cpp
+  : <lib>@boost/libs/date_time/build/boost_date_time
+    receiver.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../..
     <threading>multi
   ;
 
 exe sender
-  : sender.cpp
+  : <lib>@boost/libs/date_time/build/boost_date_time
+    sender.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../..
     <threading>multi

@@ -3,10 +3,12 @@ subproject libs/asio/test/ssl ;
 # bring in the rules for testing
 import testing ;
 
-run basic_context_test.cpp : : : <include>../../../.. ;
-run context_base_test.cpp : : : <include>../../../.. ;
-run context_service_test.cpp : : : <include>../../../.. ;
-run context_test.cpp : : : <include>../../../.. ;
-run stream_base_test.cpp : : : <include>../../../.. ;
-run stream_service_test.cpp : : : <include>../../../.. ;
-run stream_test.cpp : : : <include>../../../.. ;
+project boost : $(BOOST_ROOT) ;
+
+run basic_context_test.cpp <lib>@boost/libs/date_time/build/boost_date_time : : : <include>../../../.. ;
+run context_base_test.cpp <lib>@boost/libs/date_time/build/boost_date_time : : : <include>../../../.. ;
+run context_service_test.cpp <lib>@boost/libs/date_time/build/boost_date_time : : : <include>../../../.. ;
+run context_test.cpp <lib>@boost/libs/date_time/build/boost_date_time : : : <include>../../../.. ;
+run stream_base_test.cpp <lib>@boost/libs/date_time/build/boost_date_time : : : <include>../../../.. ;
+run stream_service_test.cpp <lib>@boost/libs/date_time/build/boost_date_time : : : <include>../../../.. ;
+run stream_test.cpp <lib>@boost/libs/date_time/build/boost_date_time : : : <include>../../../.. ;
