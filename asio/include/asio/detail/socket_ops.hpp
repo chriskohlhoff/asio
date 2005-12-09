@@ -562,6 +562,7 @@ inline int translate_netdb_error(int error)
   case NO_DATA:
     return asio::error::no_host_data;
   default:
+    BOOST_ASSERT(false);
     return get_error();
   }
 }
