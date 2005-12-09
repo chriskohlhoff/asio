@@ -31,4 +31,7 @@ used by Boost.Asio in order to support scatter-gather operations.
 implementation details, such as the default demultiplexing mechanism, the number
 of threads created internally, and when threads are created.
 
+\li <b>\ref designglossary</b>: Defines some terms used in the design and
+implementation of Boost.Asio.
+
 */

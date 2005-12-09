@@ -281,6 +281,7 @@ sub copy_docs
     my @files = (
         glob("$dir/*.*pp"),
         glob("$dir/*.dox"),
+        glob("$dir/*.dot"),
         glob("$dir/*.htm"),
         glob("$dir/*.txt"));
     foreach my $file (@files)

@@ -10,6 +10,13 @@
 
 /// Const_Buffers concept.
 /**
+ * Defines the interface that must be implemented by any object passed as the
+ * @c buffers parameter to functions such as:
+ * @li @ref write
+ * @li @ref async_write,
+ * @li asio::stream_socket::write_some
+ * @li asio::stream_socket::async_write_some
+ *
  * @par Implemented By:
  * asio::const_buffer_container_1 @n
  * asio::mutable_buffer_container_1 @n

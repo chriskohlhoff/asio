@@ -79,7 +79,8 @@ INPUT                  = ./design_dox.txt \
                          ./design/threads_dox.txt \
                          ./design/buffers_dox.txt \
                          ./design/proactor_dox.txt \
-                         ./design/implementation_dox.txt
+                         ./design/implementation_dox.txt \
+                         ./design/glossary_dox.txt
 FILE_PATTERNS          = 
 RECURSIVE              = NO
 EXCLUDE                = 
@@ -216,7 +217,7 @@ GRAPHICAL_HIERARCHY    = NO
 DIRECTORY_GRAPH        = YES
 DOT_IMAGE_FORMAT       = png
 DOT_PATH               = 
-DOTFILE_DIRS           = 
+DOTFILE_DIRS           = ./design
 MAX_DOT_GRAPH_WIDTH    = 1024
 MAX_DOT_GRAPH_HEIGHT   = 1024
 MAX_DOT_GRAPH_DEPTH    = 0

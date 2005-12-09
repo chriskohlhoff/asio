@@ -10,6 +10,15 @@
 
 /// Socket_Option concept.
 /**
+ * Defines the interface that must be implemented by an object passed as the
+ * @c option parameter to:
+ * @li asio::stream_socket::get_option
+ * @li asio::stream_socket::set_option
+ * @li asio::datagram_socket::get_option
+ * @li asio::datagram_socket::set_option
+ * @li asio::socket_acceptor::get_option
+ * @li asio::socket_acceptor::set_option
+ *
  * @par Implemented By:
  * asio::socket_base::broadcast @n
  * asio::socket_base::do_not_route @n

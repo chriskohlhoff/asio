@@ -442,14 +442,14 @@ public:
    * @throws asio::error Thrown on failure.
    *
    * @sa Socket_Option @n
-   * @sa asio::socket_base::broadcast @n
-   * @sa asio::socket_base::do_not_route @n
-   * @sa asio::socket_base::reuse_address @n
-   * @sa asio::ipv4::multicast::add_membership @n
-   * @sa asio::ipv4::multicast::drop_membership @n
-   * @sa asio::ipv4::multicast::outbound_interface @n
-   * @sa asio::ipv4::multicast::time_to_live @n
-   * @sa asio::ipv4::multicast::enable_loopback
+   * asio::socket_base::broadcast @n
+   * asio::socket_base::do_not_route @n
+   * asio::socket_base::reuse_address @n
+   * asio::ipv4::multicast::add_membership @n
+   * asio::ipv4::multicast::drop_membership @n
+   * asio::ipv4::multicast::outbound_interface @n
+   * asio::ipv4::multicast::time_to_live @n
+   * asio::ipv4::multicast::enable_loopback
    *
    * @par Example:
    * Setting the SOL_SOCKET/SO_DONTROUTE option.
@@ -480,14 +480,14 @@ public:
    * ); @endcode
    *
    * @sa Socket_Option @n
-   * @sa asio::socket_base::broadcast @n
-   * @sa asio::socket_base::do_not_route @n
-   * @sa asio::socket_base::reuse_address @n
-   * @sa asio::ipv4::multicast::add_membership @n
-   * @sa asio::ipv4::multicast::drop_membership @n
-   * @sa asio::ipv4::multicast::outbound_interface @n
-   * @sa asio::ipv4::multicast::time_to_live @n
-   * @sa asio::ipv4::multicast::enable_loopback
+   * asio::socket_base::broadcast @n
+   * asio::socket_base::do_not_route @n
+   * asio::socket_base::reuse_address @n
+   * asio::ipv4::multicast::add_membership @n
+   * asio::ipv4::multicast::drop_membership @n
+   * asio::ipv4::multicast::outbound_interface @n
+   * asio::ipv4::multicast::time_to_live @n
+   * asio::ipv4::multicast::enable_loopback
    *
    * @par Example:
    * Setting the SOL_SOCKET/SO_DONTROUTE option.
@@ -518,14 +518,14 @@ public:
    * @throws asio::error Thrown on failure.
    *
    * @sa Socket_Option @n
-   * @sa asio::socket_base::broadcast @n
-   * @sa asio::socket_base::do_not_route @n
-   * @sa asio::socket_base::reuse_address @n
-   * @sa asio::ipv4::multicast::add_membership @n
-   * @sa asio::ipv4::multicast::drop_membership @n
-   * @sa asio::ipv4::multicast::outbound_interface @n
-   * @sa asio::ipv4::multicast::time_to_live @n
-   * @sa asio::ipv4::multicast::enable_loopback
+   * asio::socket_base::broadcast @n
+   * asio::socket_base::do_not_route @n
+   * asio::socket_base::reuse_address @n
+   * asio::ipv4::multicast::add_membership @n
+   * asio::ipv4::multicast::drop_membership @n
+   * asio::ipv4::multicast::outbound_interface @n
+   * asio::ipv4::multicast::time_to_live @n
+   * asio::ipv4::multicast::enable_loopback
    *
    * @par Example:
    * Getting the value of the SOL_SOCKET/SO_DONTROUTE option.
@@ -557,14 +557,14 @@ public:
    * ); @endcode
    *
    * @sa Socket_Option @n
-   * @sa asio::socket_base::broadcast @n
-   * @sa asio::socket_base::do_not_route @n
-   * @sa asio::socket_base::reuse_address @n
-   * @sa asio::ipv4::multicast::add_membership @n
-   * @sa asio::ipv4::multicast::drop_membership @n
-   * @sa asio::ipv4::multicast::outbound_interface @n
-   * @sa asio::ipv4::multicast::time_to_live @n
-   * @sa asio::ipv4::multicast::enable_loopback
+   * asio::socket_base::broadcast @n
+   * asio::socket_base::do_not_route @n
+   * asio::socket_base::reuse_address @n
+   * asio::ipv4::multicast::add_membership @n
+   * asio::ipv4::multicast::drop_membership @n
+   * asio::ipv4::multicast::outbound_interface @n
+   * asio::ipv4::multicast::time_to_live @n
+   * asio::ipv4::multicast::enable_loopback
    *
    * @par Example:
    * Getting the value of the SOL_SOCKET/SO_DONTROUTE option.

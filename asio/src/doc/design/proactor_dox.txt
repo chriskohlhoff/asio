@@ -1,8 +1,85 @@
 /**
 \page designproactor Proactor
 
-The asio library is based on the Proactor pattern [1]. This design note outlines
-the advantages and disadvantages of this approach.
+The asio library is based on the Proactor pattern [1]. This design note
+describes how asio implements this design pattern, and outlines the advantages
+and disadvantages of this approach.
+
+\section designproactoroverview Overview
+
+First, let us examine how the Proactor design pattern is implemented in asio,
+without reference to platform-specific details.
+
+\dotfile proactor.dot "Proactor design pattern (adapted from [1])"
+
+@par Asynchronous Operation
+Defines an operation that is executed asynchronously, such as an asynchronous
+read or write on a socket.
+
+@par Asynchronous Operation Processor
+Executes asynchronous operations and queues events on a completion event queue
+when operations complete. From a high-level point of view, services like
+asio::stream_socket_service are asynchronous operation processors.
+
+@par Completion Event Queue
+Buffers completion events until they are dequeued by an asynchronous event
+demultiplexer.
+
+@par Completion Handler
+Processes the result of an asynchronous operation. These are function objects,
+often created using \ref boost_bind.
+
+@par Asynchronous Event Demultiplexer
+Blocks waiting for events to occur on the completion event queue, and returns a
+completed event to its caller.
+
+@par Proactor
+Calls the asynchronous event demultiplexer to dequeue events, and dispatches
+the completion handler (i.e. invokes the function object) associated with the
+event. This abstraction is represented by asio::demuxer.
+
+@par Initiator
+Application-specific code that starts asynchronous operations. The initiator
+interacts with an asynchronous operation processor via a high-level interface
+such as asio::stream_socket, which in turn delegates to a service like
+asio::stream_socket_service.
+
+\section designproactorposix Implementation using reactor
+
+On many platforms, asio implements the Proactor design pattern in terms of a
+Reactor, such as \c select, \c epoll or \c kqueue. This implementation approach
+corresponds to the Proactor design pattern as follows:
+
+@par Asynchronous Operation Processor
+A reactor implemented using \c select, \c epoll or \c kqueue. When the reactor
+indicates that the resource is ready to perform the operation, the processor
+executes the asynchronous operation and enqueues the associated completion
+handler on the completion event queue.
+
+@par Completion Event Queue
+A linked list of completion handlers (i.e. function objects).
+
+@par Asynchronous Event Demultiplexer
+This is implemented by waiting on an event or condition variable until a
+completion handler is available in the completion event queue.
+
+\section designproactorwin Implementation using Windows overlapped I/O
+
+On Windows NT, 2000 and XP, asio takes advantage of overlapped I/O to provide
+an efficient implementation of the Proactor design pattern. This implementation
+approach corresponds to the Proactor design pattern as follows:
+
+@par Asynchronous Operation Processor
+This is implemented by the operating system. Operations are initiated by calling
+an overlapped function such as \c AcceptEx.
+
+@par Completion Event Queue
+This is implemented by the operating system, and is associated with an I/O
+completion port. There is one I/O completion port for each asio::demuxer
+instance.
+
+@par Asynchronous Event Demultiplexer
+called by asio to dequeue events and their associated completion handlers.
 
 \section designproactoradv Advantages
 

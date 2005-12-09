@@ -1,0 +1,29 @@
+/**
+\page designglossary Glossary
+
+@section designglossary_demuxer Demuxer
+The asio library's implementation of the Proactor design pattern. Acts as a
+registry of available services, and as a thread pool for dispatching handlers
+associated with completed asynchronous operations.
+
+@section designglossary_handler Handler
+A function object, typically one invoked when an asynchronous operations
+completes. Referred to as "Completion Handler" in the Proactor design pattern.
+
+@section designglossary_proactor Proactor
+A design pattern for asynchronous event demultiplexing. A Proactor executes long
+running operations asynchronously, and invokes completion handlers with the
+result of the operation when they finish.
+
+@section designglossary_reactor Reactor
+A design pattern for synchronous event demultiplexing. A Reactor associates
+event handlers with operating system resources (such as sockets) and notifies
+the event handlers when the resource is ready to perform an operation (e.g.
+ready to read or write without blocking). It is the responsibility of an event
+handler to perform the actual operation.
+
+@section designglossary_service Service
+An object, registered with a Demuxer, responsible for implementing asynchronous
+operations.
+
+*/

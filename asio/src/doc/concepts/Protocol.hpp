@@ -10,6 +10,12 @@
 
 /// Protocol concept.
 /**
+ * Defines the interface that must be implemented by an object passed as the
+ * @c protocol parameter to:
+ * @li asio::socket_acceptor::open
+ * @li asio::stream_socket::open
+ * @li asio::datagram_socket::open
+ *
  * @par Implemented By:
  * asio::ipv4::tcp @n
  * asio::ipv4::udp
