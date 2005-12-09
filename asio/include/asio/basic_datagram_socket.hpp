@@ -132,6 +132,12 @@ public:
    * @param protocol An object specifying which protocol is to be used.
    *
    * @throws asio::error Thrown on failure.
+   *
+   * @par Example:
+   * @code
+   * asio::datagram_socket socket(demuxer);
+   * socket.open(asio::ipv4::udp());
+   * @endcode
    */
   template <typename Protocol>
   void open(const Protocol& protocol)
@@ -152,6 +158,17 @@ public:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   *
+   * @par Example:
+   * @code
+   * asio::datagram_socket socket(demuxer);
+   * asio::error error;
+   * socket.open(asio::ipv4::udp(), asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * @endcode
    */
   template <typename Protocol, typename Error_Handler>
   void open(const Protocol& protocol, Error_Handler error_handler)
@@ -188,6 +205,18 @@ public:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   *
+   * @par Example:
+   * @code
+   * asio::datagram_socket socket(demuxer);
+   * ...
+   * asio::error error;
+   * socket.close(asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * @endcode
    */
   template <typename Error_Handler>
   void close(Error_Handler error_handler)
@@ -241,6 +270,13 @@ public:
    * socket will be bound.
    *
    * @throws asio::error Thrown on failure.
+   *
+   * @par Example:
+   * @code
+   * asio::datagram_socket socket(demuxer);
+   * socket.open(asio::ipv4::udp());
+   * socket.bind(asio::ipv4::udp::endpoint(12345));
+   * @endcode
    */
   template <typename Endpoint>
   void bind(const Endpoint& endpoint)
@@ -262,6 +298,19 @@ public:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   *
+   * @par Example:
+   * @code
+   * asio::datagram_socket socket(demuxer);
+   * socket.open(asio::ipv4::udp());
+   * asio::error error;
+   * socket.bind(asio::ipv4::udp::endpoint(12345),
+   *     asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * @endcode
    */
   template <typename Endpoint, typename Error_Handler>
   void bind(const Endpoint& endpoint, Error_Handler error_handler)
@@ -283,6 +332,14 @@ public:
    * connected.
    *
    * @throws asio::error Thrown on failure.
+   *
+   * @par Example:
+   * @code
+   * asio::datagram_socket socket(demuxer);
+   * ...
+   * asio::ipv4::udp::endpoint endpoint(12345, "1.2.3.4");
+   * socket.connect(endpoint);
+   * @endcode
    */
   template <typename Endpoint>
   void connect(const Endpoint& peer_endpoint)
@@ -309,6 +366,19 @@ public:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   *
+   * @par Example:
+   * @code
+   * asio::datagram_socket socket(demuxer);
+   * ...
+   * asio::ipv4::udp::endpoint endpoint(12345, "1.2.3.4");
+   * asio::error error;
+   * socket.connect(endpoint, asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * @endcode
    */
   template <typename Endpoint, typename Error_Handler>
   void connect(const Endpoint& peer_endpoint, Error_Handler error_handler)
@@ -338,6 +408,24 @@ public:
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
    * asio::demuxer::post().
+   *
+   * @par Example:
+   * @code
+   * void connect_handler(const asio::error& error)
+   * {
+   *   if (!error)
+   *   {
+   *     // Connect succeeded.
+   *   }
+   * }
+   *
+   * ...
+   *
+   * asio::datagram_socket socket(demuxer);
+   * ...
+   * asio::ipv4::udp::endpoint endpoint(12345, "1.2.3.4");
+   * socket.async_connect(endpoint, connect_handler);
+   * @endcode
    */
   template <typename Endpoint, typename Handler>
   void async_connect(const Endpoint& peer_endpoint, Handler handler)
@@ -362,6 +450,15 @@ public:
    * @sa asio::ipv4::multicast::outbound_interface @n
    * @sa asio::ipv4::multicast::time_to_live @n
    * @sa asio::ipv4::multicast::enable_loopback
+   *
+   * @par Example:
+   * Setting the SOL_SOCKET/SO_DONTROUTE option.
+   * @code
+   * asio::datagram_socket socket(demuxer);
+   * ...
+   * asio::datagram_socket::do_not_route option(true);
+   * socket.set_option(option);
+   * @endcode
    */
   template <typename Socket_Option>
   void set_option(const Socket_Option& option)
@@ -381,6 +478,30 @@ public:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   *
+   * @sa Socket_Option @n
+   * @sa asio::socket_base::broadcast @n
+   * @sa asio::socket_base::do_not_route @n
+   * @sa asio::socket_base::reuse_address @n
+   * @sa asio::ipv4::multicast::add_membership @n
+   * @sa asio::ipv4::multicast::drop_membership @n
+   * @sa asio::ipv4::multicast::outbound_interface @n
+   * @sa asio::ipv4::multicast::time_to_live @n
+   * @sa asio::ipv4::multicast::enable_loopback
+   *
+   * @par Example:
+   * Setting the SOL_SOCKET/SO_DONTROUTE option.
+   * @code
+   * asio::datagram_socket socket(demuxer);
+   * ...
+   * asio::datagram_socket::do_not_route option(true);
+   * asio::error error;
+   * socket.set_option(option, asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * @endcode
    */
   template <typename Socket_Option, typename Error_Handler>
   void set_option(const Socket_Option& option, Error_Handler error_handler)
@@ -395,6 +516,26 @@ public:
    * @param option The option value to be obtained from the socket.
    *
    * @throws asio::error Thrown on failure.
+   *
+   * @sa Socket_Option @n
+   * @sa asio::socket_base::broadcast @n
+   * @sa asio::socket_base::do_not_route @n
+   * @sa asio::socket_base::reuse_address @n
+   * @sa asio::ipv4::multicast::add_membership @n
+   * @sa asio::ipv4::multicast::drop_membership @n
+   * @sa asio::ipv4::multicast::outbound_interface @n
+   * @sa asio::ipv4::multicast::time_to_live @n
+   * @sa asio::ipv4::multicast::enable_loopback
+   *
+   * @par Example:
+   * Getting the value of the SOL_SOCKET/SO_DONTROUTE option.
+   * @code
+   * asio::datagram_socket socket(demuxer);
+   * ...
+   * asio::datagram_socket::do_not_route option(true);
+   * socket.get_option(option);
+   * bool is_set = option.get();
+   * @endcode
    */
   template <typename Socket_Option>
   void get_option(Socket_Option& option) const
@@ -414,6 +555,31 @@ public:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   *
+   * @sa Socket_Option @n
+   * @sa asio::socket_base::broadcast @n
+   * @sa asio::socket_base::do_not_route @n
+   * @sa asio::socket_base::reuse_address @n
+   * @sa asio::ipv4::multicast::add_membership @n
+   * @sa asio::ipv4::multicast::drop_membership @n
+   * @sa asio::ipv4::multicast::outbound_interface @n
+   * @sa asio::ipv4::multicast::time_to_live @n
+   * @sa asio::ipv4::multicast::enable_loopback
+   *
+   * @par Example:
+   * Getting the value of the SOL_SOCKET/SO_DONTROUTE option.
+   * @code
+   * asio::datagram_socket socket(demuxer);
+   * ...
+   * asio::datagram_socket::do_not_route option(true);
+   * asio::error error;
+   * socket.get_option(option, asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * bool is_set = option.get();
+   * @endcode
    */
   template <typename Socket_Option, typename Error_Handler>
   void get_option(Socket_Option& option, Error_Handler error_handler) const
@@ -428,6 +594,20 @@ public:
    * @param command The IO control command to be performed on the socket.
    *
    * @throws asio::error Thrown on failure.
+   *
+   * @sa IO_Control_Command @n
+   * asio::socket_base::bytes_readable @n
+   * asio::socket_base::non_blocking_io
+   *
+   * @par Example:
+   * Getting the number of bytes ready to read:
+   * @code
+   * asio::datagram_socket socket(demuxer);
+   * ...
+   * asio::datagram_socket::bytes_readable command;
+   * socket.io_control(command);
+   * std::size_t bytes_readable = command.get();
+   * @endcode
    */
   template <typename IO_Control_Command>
   void io_control(IO_Control_Command& command)
@@ -447,6 +627,25 @@ public:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   *
+   * @sa IO_Control_Command @n
+   * asio::socket_base::bytes_readable @n
+   * asio::socket_base::non_blocking_io
+   *
+   * @par Example:
+   * Getting the number of bytes ready to read:
+   * @code
+   * asio::datagram_socket socket(demuxer);
+   * ...
+   * asio::datagram_socket::bytes_readable command;
+   * asio::error error;
+   * socket.io_control(command, asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * std::size_t bytes_readable = command.get();
+   * @endcode
    */
   template <typename IO_Control_Command, typename Error_Handler>
   void io_control(IO_Control_Command& command, Error_Handler error_handler)
@@ -462,6 +661,14 @@ public:
    * socket.
    *
    * @throws asio::error Thrown on failure.
+   *
+   * @par Example:
+   * @code
+   * asio::datagram_socket socket(demuxer);
+   * ...
+   * asio::ipv4::udp::endpoint endpoint;
+   * socket.get_local_endpoint(endpoint);
+   * @endcode
    */
   template <typename Endpoint>
   void get_local_endpoint(Endpoint& endpoint) const
@@ -482,12 +689,82 @@ public:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   *
+   * @par Example:
+   * @code
+   * asio::datagram_socket socket(demuxer);
+   * ...
+   * asio::ipv4::udp::endpoint endpoint;
+   * asio::error error;
+   * socket.get_local_endpoint(endpoint, asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * @endcode
    */
   template <typename Endpoint, typename Error_Handler>
   void get_local_endpoint(Endpoint& endpoint,
       Error_Handler error_handler) const
   {
     service_.get_local_endpoint(impl_, endpoint, error_handler);
+  }
+
+  /// Get the remote endpoint of the socket.
+  /**
+   * This function is used to obtain the remote endpoint of the socket.
+   *
+   * @param endpoint An endpoint object that receives the remote endpoint of
+   * the socket.
+   *
+   * @throws asio::error Thrown on failure.
+   *
+   * @par Example:
+   * @code
+   * asio::datagram_socket socket(demuxer);
+   * ...
+   * asio::ipv4::udp::endpoint endpoint;
+   * socket.get_remote_endpoint(endpoint);
+   * @endcode
+   */
+  template <typename Endpoint>
+  void get_remote_endpoint(Endpoint& endpoint) const
+  {
+    service_.get_remote_endpoint(impl_, endpoint, throw_error());
+  }
+
+  /// Get the remote endpoint of the socket.
+  /**
+   * This function is used to obtain the remote endpoint of the socket.
+   *
+   * @param endpoint An endpoint object that receives the remote endpoint of
+   * the socket.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The function signature of the
+   * handler must be:
+   * @code void error_handler(
+   *   const asio::error& error // Result of operation
+   * ); @endcode
+   *
+   * @par Example:
+   * @code
+   * asio::datagram_socket socket(demuxer);
+   * ...
+   * asio::ipv4::udp::endpoint endpoint;
+   * asio::error error;
+   * socket.get_remote_endpoint(endpoint, asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * @endcode
+   */
+  template <typename Endpoint, typename Error_Handler>
+  void get_remote_endpoint(Endpoint& endpoint,
+      Error_Handler error_handler) const
+  {
+    service_.get_remote_endpoint(impl_, endpoint, error_handler);
   }
 
   /// Disable sends or receives on the socket.
@@ -498,6 +775,14 @@ public:
    * @param what Determines what types of operation will no longer be allowed.
    *
    * @throws asio::error Thrown on failure.
+   *
+   * @par Example:
+   * Shutting down the send side of the socket:
+   * @code
+   * asio::datagram_socket socket(demuxer);
+   * ...
+   * socket.shutdown(asio::datagram_socket::shutdown_send);
+   * @endcode
    */
   void shutdown(shutdown_type what)
   {
@@ -517,6 +802,20 @@ public:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   *
+   * @par Example:
+   * Shutting down the send side of the socket:
+   * @code
+   * asio::datagram_socket socket(demuxer);
+   * ...
+   * asio::error error;
+   * socket.shutdown(asio::datagram_socket::shutdown_send,
+   *     asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * @endcode
    */
   template <typename Error_Handler>
   void shutdown(shutdown_type what, Error_Handler error_handler)
@@ -647,6 +946,7 @@ public:
    * @par Example:
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
+   * asio::ipv4::udp::endpoint destination(12345, "1.2.3.4");
    * socket.send_to(asio::buffer(data, size), 0, destination);
    * @endcode
    * See the @ref buffer documentation for information on sending multiple
@@ -717,8 +1017,11 @@ public:
    *
    * @par Example:
    * To send a single data buffer use the @ref buffer function as follows:
-   * @code socket.async_send_to(
-   *     asio::buffer(data, size), 0, destination, handler); @endcode
+   * @code
+   * asio::ipv4::udp::endpoint destination(12345, "1.2.3.4");
+   * socket.async_send_to(
+   *     asio::buffer(data, size), 0, destination, handler);
+   * @endcode
    * See the @ref buffer documentation for information on sending multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
@@ -856,8 +1159,11 @@ public:
    * @par Example:
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
-   * @code socket.receive_from(
-   *     asio::buffer(data, size), 0, sender_endpoint); @endcode
+   * @code
+   * asio::ipv4::udp::endpoint sender_endpoint;
+   * socket.receive_from(
+   *     asio::buffer(data, size), 0, sender_endpoint);
+   * @endcode
    * See the @ref buffer documentation for information on receiving into
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.

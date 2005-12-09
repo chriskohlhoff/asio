@@ -119,6 +119,16 @@ public:
    * @param h A host object that receives information about the local machine.
    *
    * @throws asio::error Thrown on failure.
+   *
+   * @par Example:
+   * @code
+   * asio::ipv4::host_resolver resolver(demuxer);
+   * ...
+   * asio::ipv4::host host;
+   * resolver.get_local_host(host);
+   * std::cout << "Name: " << host.name();
+   * std::cout << "Address: " << host.addresses(0);
+   * @endcode
    */
   void get_local_host(host& h)
   {
@@ -139,6 +149,19 @@ public:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   *
+   * @par Example:
+   * @code
+   * asio::ipv4::host_resolver resolver(demuxer);
+   * ...
+   * asio::ipv4::host host;
+   * asio::error error;
+   * resolver.get_local_host(host, asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * @endcode
    */
   template <typename Error_Handler>
   void get_local_host(host& h, Error_Handler error_handler)
@@ -158,6 +181,16 @@ public:
    * @param addr An address object that identifies a host.
    *
    * @throws asio::error Thrown on failure.
+   *
+   * @par Example:
+   * @code
+   * asio::ipv4::host_resolver resolver(demuxer);
+   * ...
+   * asio::ipv4::host host;
+   * asio::ipv4::address address("1.2.3.4");
+   * resolver.get_host_by_address(host, address);
+   * std::cout << "Name: " << host.name();
+   * @endcode
    */
   void get_host_by_address(host& h, const address& addr)
   {
@@ -181,6 +214,22 @@ public:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   *
+   * @par Example:
+   * @code
+   * asio::ipv4::host_resolver resolver(demuxer);
+   * ...
+   * asio::ipv4::host host;
+   * asio::ipv4::address address("1.2.3.4");
+   * asio::error error;
+   * resolver.get_host_by_address(host, address,
+   *     asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * std::cout << "Name: " << host.name();
+   * @endcode
    */
   template <typename Error_Handler>
   void get_host_by_address(host& h, const address& addr,
@@ -227,6 +276,16 @@ public:
    * @param name A name that identifies a host.
    *
    * @throws asio::error Thrown on failure.
+   *
+   * @par Example:
+   * @code
+   * asio::ipv4::host_resolver resolver(demuxer);
+   * ...
+   * asio::ipv4::host host;
+   * std::string name("myhost");
+   * resolver.get_host_by_name(host, name);
+   * std::cout << "Address: " << host.addresses(0);
+   * @endcode
    */
   void get_host_by_name(host& h, const std::string& name)
   {
@@ -249,6 +308,21 @@ public:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   *
+   * @par Example:
+   * @code
+   * asio::ipv4::host_resolver resolver(demuxer);
+   * ...
+   * asio::ipv4::host host;
+   * std::string name("myhost");
+   * asio::error error;
+   * resolver.get_host_by_name(host, name, asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * std::cout << "Address: " << host.addresses(0);
+   * @endcode
    */
   template <typename Error_Handler>
   void get_host_by_name(host& h, const std::string& name,

@@ -418,7 +418,7 @@ public:
    * asio::ipv4::tcp::no_delay
    *
    * @par Example:
-   * Setting the IPPROTO_TCP/TCP_NODELAY option.
+   * Setting the IPPROTO_TCP/TCP_NODELAY option:
    * @code
    * asio::stream_socket socket(demuxer);
    * ...
@@ -455,7 +455,7 @@ public:
    * asio::ipv4::tcp::no_delay
    *
    * @par Example:
-   * Setting the IPPROTO_TCP/TCP_NODELAY option.
+   * Setting the IPPROTO_TCP/TCP_NODELAY option:
    * @code
    * asio::stream_socket socket(demuxer);
    * ...
@@ -492,7 +492,7 @@ public:
    * asio::ipv4::tcp::no_delay
    *
    * @par Example:
-   * Getting the value of the SOL_SOCKET/SO_KEEPALIVE option.
+   * Getting the value of the SOL_SOCKET/SO_KEEPALIVE option:
    * @code
    * asio::stream_socket socket(demuxer);
    * ...
@@ -530,7 +530,7 @@ public:
    * asio::ipv4::tcp::no_delay
    *
    * @par Example:
-   * Getting the value of the SOL_SOCKET/SO_KEEPALIVE option.
+   * Getting the value of the SOL_SOCKET/SO_KEEPALIVE option:
    * @code
    * asio::stream_socket socket(demuxer);
    * ...

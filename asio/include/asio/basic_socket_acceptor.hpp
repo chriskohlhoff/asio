@@ -17,8 +17,6 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/basic_datagram_socket.hpp"
-#include "asio/basic_stream_socket.hpp"
 #include "asio/error.hpp"
 #include "asio/error_handler.hpp"
 #include "asio/service_factory.hpp"
@@ -147,6 +145,12 @@ public:
    * protocol.
    *
    * @param protocol An object specifying which protocol is to be used.
+   *
+   * @par Example:
+   * @code
+   * asio::socket_acceptor acceptor(demuxer);
+   * acceptor.open(asio::ipv4::tcp());
+   * @endcode
    */
   template <typename Protocol>
   void open(const Protocol& protocol)
@@ -167,6 +171,17 @@ public:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   *
+   * @par Example:
+   * @code
+   * asio::socket_acceptor acceptor(demuxer);
+   * asio::error error;
+   * acceptor.open(asio::ipv4::tcp(), asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * @endcode
    */
   template <typename Protocol, typename Error_Handler>
   void open(const Protocol& protocol, Error_Handler error_handler)
@@ -183,6 +198,13 @@ public:
    * acceptor will be bound.
    *
    * @throws asio::error Thrown on failure.
+   *
+   * @par Example:
+   * @code
+   * asio::socket_acceptor acceptor(demuxer);
+   * acceptor.open(asio::ipv4::tcp());
+   * acceptor.bind(asio::ipv4::tcp::endpoint(12345));
+   * @endcode
    */
   template <typename Endpoint>
   void bind(const Endpoint& endpoint)
@@ -204,6 +226,19 @@ public:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   *
+   * @par Example:
+   * @code
+   * asio::socket_acceptor acceptor(demuxer);
+   * acceptor.open(asio::ipv4::tcp());
+   * asio::error error;
+   * acceptor.bind(asio::ipv4::tcp::endpoint(12345),
+   *     asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * @endcode
    */
   template <typename Endpoint, typename Error_Handler>
   void bind(const Endpoint& endpoint, Error_Handler error_handler)
@@ -240,6 +275,18 @@ public:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   *
+   * @par Example:
+   * @code
+   * asio::socket_acceptor acceptor(demuxer);
+   * ...
+   * asio::error error;
+   * acceptor.listen(0, asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * @endcode
    */
   template <typename Error_Handler>
   void listen(int backlog, Error_Handler error_handler)
@@ -276,6 +323,18 @@ public:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   *
+   * @par Example:
+   * @code
+   * asio::socket_acceptor acceptor(demuxer);
+   * ...
+   * asio::error error;
+   * acceptor.close(asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * @endcode
    */
   template <typename Error_Handler>
   void close(Error_Handler error_handler)
@@ -301,6 +360,18 @@ public:
    * @param option The new option value to be set on the acceptor.
    *
    * @throws asio::error Thrown on failure.
+   *
+   * @sa Socket_Option @n
+   * asio::socket_base::reuse_address
+   *
+   * @par Example:
+   * Setting the SOL_SOCKET/SO_REUSEADDR option:
+   * @code
+   * asio::socket_acceptor acceptor(demuxer);
+   * ...
+   * asio::socket_acceptor::reuse_address option(true);
+   * acceptor.set_option(option);
+   * @endcode
    */
   template <typename Option>
   void set_option(const Option& option)
@@ -320,6 +391,23 @@ public:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   *
+   * @sa Socket_Option @n
+   * asio::socket_base::reuse_address
+   *
+   * @par Example:
+   * Setting the SOL_SOCKET/SO_REUSEADDR option:
+   * @code
+   * asio::socket_acceptor acceptor(demuxer);
+   * ...
+   * asio::socket_acceptor::reuse_address option(true);
+   * asio::error error;
+   * acceptor.set_option(option, asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * @endcode
    */
   template <typename Option, typename Error_Handler>
   void set_option(const Option& option, Error_Handler error_handler)
@@ -335,6 +423,19 @@ public:
    * @param option The option value to be obtained from the acceptor.
    *
    * @throws asio::error Thrown on failure.
+   *
+   * @sa Socket_Option @n
+   * asio::socket_base::reuse_address
+   *
+   * @par Example:
+   * Getting the value of the SOL_SOCKET/SO_REUSEADDR option:
+   * @code
+   * asio::socket_acceptor acceptor(demuxer);
+   * ...
+   * asio::socket_acceptor::reuse_address option;
+   * acceptor.get_option(option);
+   * bool is_set = option.get();
+   * @endcode
    */
   template <typename Option>
   void get_option(Option& option)
@@ -355,6 +456,24 @@ public:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   *
+   * @sa Socket_Option @n
+   * asio::socket_base::reuse_address
+   *
+   * @par Example:
+   * Getting the value of the SOL_SOCKET/SO_REUSEADDR option:
+   * @code
+   * asio::socket_acceptor acceptor(demuxer);
+   * ...
+   * asio::socket_acceptor::reuse_address option;
+   * asio::error error;
+   * acceptor.get_option(option, asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * bool is_set = option.get();
+   * @endcode
    */
   template <typename Option, typename Error_Handler>
   void get_option(Option& option, Error_Handler error_handler)
@@ -371,6 +490,14 @@ public:
    * acceptor.
    *
    * @throws asio::error Thrown on failure.
+   *
+   * @par Example:
+   * @code
+   * asio::socket_acceptor acceptor(demuxer);
+   * ...
+   * asio::ipv4::tcp::endpoint endpoint;
+   * acceptor.get_local_endpoint(endpoint);
+   * @endcode
    */
   template <typename Endpoint>
   void get_local_endpoint(Endpoint& endpoint)
@@ -392,6 +519,19 @@ public:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   *
+   * @par Example:
+   * @code
+   * asio::socket_acceptor acceptor(demuxer);
+   * ...
+   * asio::ipv4::tcp::endpoint endpoint;
+   * asio::error error;
+   * acceptor.get_local_endpoint(endpoint, asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * @endcode
    */
   template <typename Endpoint, typename Error_Handler>
   void get_local_endpoint(Endpoint& endpoint, Error_Handler error_handler)
@@ -408,6 +548,14 @@ public:
    * @param peer The socket into which the new connection will be accepted.
    *
    * @throws asio::error Thrown on failure.
+   *
+   * @par Example:
+   * @code
+   * asio::socket_acceptor acceptor(demuxer);
+   * ...
+   * asio::stream_socket socket;
+   * acceptor.accept(socket);
+   * @endcode
    */
   template <typename Socket>
   void accept(Socket& peer)
@@ -429,6 +577,19 @@ public:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   *
+   * @par Example:
+   * @code
+   * asio::socket_acceptor acceptor(demuxer);
+   * ...
+   * asio::stream_socket socket;
+   * asio::error error;
+   * acceptor.accept(socket, asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * @endcode
    */
   template <typename Socket, typename Error_Handler>
   void accept(Socket& peer, Error_Handler error_handler)
@@ -455,6 +616,24 @@ public:
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
    * asio::demuxer::post().
+   *
+   * @par Example:
+   * @code
+   * void accept_handler(const asio::error& error)
+   * {
+   *   if (!error)
+   *   {
+   *     // Accept succeeded.
+   *   }
+   * }
+   *
+   * ...
+   *
+   * asio::socket_acceptor acceptor(demuxer);
+   * ...
+   * asio::stream_socket socket;
+   * acceptor.async_accept(socket, accept_handler);
+   * @endcode
    */
   template <typename Socket, typename Handler>
   void async_accept(Socket& peer, Handler handler)
@@ -475,6 +654,15 @@ public:
    * the remote peer.
    *
    * @throws asio::error Thrown on failure.
+   *
+   * @par Example:
+   * @code
+   * asio::socket_acceptor acceptor(demuxer);
+   * ...
+   * asio::stream_socket socket;
+   * asio::ipv4::tcp::endpoint endpoint;
+   * acceptor.accept_endpoint(socket, endpoint);
+   * @endcode
    */
   template <typename Socket, typename Endpoint>
   void accept_endpoint(Socket& peer, Endpoint& peer_endpoint)
@@ -501,6 +689,21 @@ public:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
+   *
+   * @par Example:
+   * @code
+   * asio::socket_acceptor acceptor(demuxer);
+   * ...
+   * asio::stream_socket socket;
+   * asio::ipv4::tcp::endpoint endpoint;
+   * asio::error error;
+   * acceptor.accept_endpoint(socket, endpoint,
+   *     asio::assign_error(error));
+   * if (error)
+   * {
+   *   // An error occurred.
+   * }
+   * @endcode
    */
   template <typename Socket, typename Endpoint, typename Error_Handler>
   void accept_endpoint(Socket& peer, Endpoint& peer_endpoint,
