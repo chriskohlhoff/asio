@@ -5,10 +5,72 @@ import testing ;
 
 project boost : $(BOOST_ROOT) ;
 
-run basic_context_test.cpp <lib>@boost/libs/date_time/build/boost_date_time : : : <include>../../../.. ;
-run context_base_test.cpp <lib>@boost/libs/date_time/build/boost_date_time : : : <include>../../../.. ;
-run context_service_test.cpp <lib>@boost/libs/date_time/build/boost_date_time : : : <include>../../../.. ;
-run context_test.cpp <lib>@boost/libs/date_time/build/boost_date_time : : : <include>../../../.. ;
-run stream_base_test.cpp <lib>@boost/libs/date_time/build/boost_date_time : : : <include>../../../.. ;
-run stream_service_test.cpp <lib>@boost/libs/date_time/build/boost_date_time : : : <include>../../../.. ;
-run stream_test.cpp <lib>@boost/libs/date_time/build/boost_date_time : : : <include>../../../.. ;
+run basic_context_test.cpp
+    <lib>@boost/libs/date_time/build/boost_date_time
+  :
+  :
+  : <include>../../../..
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+  ;
+
+run context_base_test.cpp
+    <lib>@boost/libs/date_time/build/boost_date_time
+  :
+  :
+  : <include>../../../..
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+  ;
+
+run context_service_test.cpp
+    <lib>@boost/libs/date_time/build/boost_date_time
+  :
+  :
+  : <include>../../../..
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+  ;
+
+run context_test.cpp
+    <lib>@boost/libs/date_time/build/boost_date_time
+  :
+  :
+  : <include>../../../..
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+  ;
+
+run stream_base_test.cpp
+    <lib>@boost/libs/date_time/build/boost_date_time
+  :
+  :
+  : <include>../../../..
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+  ;
+
+run stream_service_test.cpp
+    <lib>@boost/libs/date_time/build/boost_date_time
+  :
+  :
+  : <include>../../../..
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+  ;
+
+run stream_test.cpp
+    <lib>@boost/libs/date_time/build/boost_date_time
+  :
+  :
+  : <include>../../../..
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+  ;

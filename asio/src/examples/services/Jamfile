@@ -9,4 +9,6 @@ exe daytime_client
   : <include>$(BOOST_ROOT)
     <include>../../../..
     <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
   ;

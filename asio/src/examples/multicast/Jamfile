@@ -8,6 +8,8 @@ exe receiver
   : <include>$(BOOST_ROOT)
     <include>../../../..
     <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
   ;
 
 exe sender
@@ -16,4 +18,6 @@ exe sender
   : <include>$(BOOST_ROOT)
     <include>../../../..
     <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
   ;

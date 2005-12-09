@@ -8,6 +8,8 @@ exe client
     <threading>multi
     <find-library>ssl
     <find-library>crypto
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
   ;
 
 exe server
@@ -18,4 +20,6 @@ exe server
     <threading>multi
     <find-library>ssl
     <find-library>crypto
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
   ;
