@@ -270,6 +270,10 @@ EXTRA_DIST = \
 	examples/http/server/request_parser.hpp \
 	examples/http/server/server.hpp \
 	examples/http/server/win_main.cpp \
+	examples/serialization/client.cpp \
+	examples/serialization/server.cpp \
+	examples/serialization/connection.hpp \
+	examples/serialization/stock.hpp \
 	examples/ssl/README \
 	examples/ssl/ca.pem \
 	examples/ssl/server.pem \

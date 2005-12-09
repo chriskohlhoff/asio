@@ -120,9 +120,11 @@ EXTRA_DIST = \
 	concepts/Sync_Write_Stream.hpp \
 	design/buffers_dox.txt \
 	design/closeascancel_dox.txt \
+	design/glossary_dox.txt \
 	design/handlers_dox.txt \
 	design/implementation_dox.txt \
 	design/index_dox.txt \
+	design/proactor.dot \
 	design/proactor_dox.txt \
 	design/services_dox.txt \
 	design/threads_dox.txt \
