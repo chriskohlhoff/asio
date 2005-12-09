@@ -79,6 +79,7 @@ An asio::socket_acceptor object needs to be created to listen
 for new connections. It is initialised to listen on TCP port 13.
 
 \until asio::socket_acceptor
+\until endpoint
 
 This is an iterative server, which means that it will handle one
 connection at a time. Create a socket that will represent the connection to the
@@ -118,10 +119,12 @@ Return to \ref tutdaytime2
 \dontinclude daytime3/server.cpp
 \skip int main()
 \until asio::socket_acceptor acceptor
+\until endpoint
 
 We need to set up the initial socket to hold an accepted client connection.
 
 \until asio::stream_socket*
+\until stream_socket
 
 The function asio::socket_acceptor::async_accept() will cause the
 application to listen in the background for a new connection. When such a
@@ -155,14 +158,13 @@ We now call \ref async_write to serve the data to the client. Note that we
 are using \ref async_write, rather than asio::stream_socket::write_some, to
 ensure that the entire block of data is sent.
 
-\until asio::placeholders::total_bytes_transferred
+\until asio::placeholders::bytes_transferred
 
 When initiating the asynchronous operation, and if using \ref boost_bind, you
 must specify only the arguments that match the handler's parameter list. In
-this program, all three of the argument placeholders
-(asio::placeholders::error, asio::placeholders::last_bytes_transferred and
-asio::placeholders::total_bytes_transferred) could potentially have been
-removed.
+this program, both of the argument placeholders
+(asio::placeholders::error, and asio::placeholders::bytes_transferred) could
+potentially have been removed.
 
 Any further actions for this client connection are now the responsibility of
 <tt>handle_write()</tt>.
@@ -216,6 +218,7 @@ Since UDP is datagram-oriented, we will not be using a stream socket. Create an
 asio::datagram_socket and initiate contact with the remote endpoint.
 
 \until asio::buffer(send_buf,
+\until receiver_endpoint
 
 Now we need to be ready to accept whatever the server sends back to us. The
 endpoint on our side that receives the server's response will be initialised by
@@ -253,11 +256,12 @@ with UDP.
 Create an asio::datagram_socket object to receive requests on UDP port 13.
 
 \until asio::datagram_socket
+\until endpoint
 
 Wait for a client to initiate contact with us. The remote_endpoint object will
 be populated by asio::datagram_socket::receive_from().
 
-\until asio::throw_error_if
+\until throw
 
 Determine what we are going to send back to the client.
 
@@ -298,6 +302,7 @@ Return to \ref tutdaytime5
 Create an asio::datagram_socket object to receive requests on UDP port 13.
 
 \until asio::datagram_socket
+\until endpoint
 
 The function asio::datagram_socket::async_receive_from() will cause the
 application to listen in the background for a new request. When such a
@@ -444,14 +449,13 @@ Removed Bits
 from Daytime.3:
 \section tutdaytime3remunused Removing Unused Handler Parameters
 
-You may have noticed that the <tt>error</tt>, <tt>last_bytes_sent</tt> and
-<tt>total_bytes_sent</tt> parameters are not used in the body of the
+You may have noticed that the <tt>error</tt, and
+<tt>bytes_sent</tt> parameters are not used in the body of the
 <tt>handle_write()</tt> function. If parameters are not needed, it is possible
 to remove them from the function:
 
-Since <tt>handle_write()</tt> does not use the parameters <tt>error</tt>,
-<tt>last_bytes_sent</tt> and <tt>total_bytes_sent</tt>, they have been removed
-from the function.
+Since <tt>handle_write()</tt> does not use the parameters <tt>error</tt> and
+<tt>bytes_sent</tt>, they have been removed from the function.
 
 from Daytime.6:
 \section tutdaytime6remunused Removing Unused Handler Parameters
