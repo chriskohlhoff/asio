@@ -2,6 +2,17 @@ subproject libs/asio/example/multicast ;
 
 project boost : $(BOOST_ROOT) ;
 
+if $(UNIX)
+{
+  switch $(JAMUNAME)
+  {
+  case SunOS* :
+    {
+      SOCKET_LIBS = <find-library>socket <find-library>nsl ;
+    }
+  }
+}
+
 exe receiver
   : <lib>@boost/libs/date_time/build/boost_date_time
     receiver.cpp
@@ -10,6 +21,7 @@ exe receiver
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 exe sender
@@ -20,4 +32,5 @@ exe sender
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;

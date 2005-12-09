@@ -5,6 +5,17 @@ import testing ;
 
 project boost : $(BOOST_ROOT) ;
 
+if $(UNIX)
+{
+  switch $(JAMUNAME)
+  {
+  case SunOS* :
+    {
+      SOCKET_LIBS = <find-library>socket <find-library>nsl ;
+    }
+  }
+}
+
 run basic_datagram_socket_test.cpp
     <lib>@boost/libs/date_time/build/boost_date_time
   :
@@ -13,6 +24,7 @@ run basic_datagram_socket_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run basic_deadline_timer_test.cpp
@@ -23,6 +35,7 @@ run basic_deadline_timer_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run basic_demuxer_test.cpp
@@ -33,6 +46,7 @@ run basic_demuxer_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run basic_locking_dispatcher_test.cpp
@@ -43,6 +57,7 @@ run basic_locking_dispatcher_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run basic_socket_acceptor_test.cpp
@@ -53,6 +68,7 @@ run basic_socket_acceptor_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run basic_stream_socket_test.cpp
@@ -63,6 +79,7 @@ run basic_stream_socket_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run buffer_test.cpp
@@ -73,6 +90,7 @@ run buffer_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run buffered_read_stream_test.cpp
@@ -83,6 +101,7 @@ run buffered_read_stream_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run buffered_stream_test.cpp
@@ -93,6 +112,7 @@ run buffered_stream_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run buffered_write_stream_test.cpp
@@ -103,6 +123,7 @@ run buffered_write_stream_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run completion_condition_test.cpp
@@ -113,6 +134,7 @@ run completion_condition_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run datagram_socket_service_test.cpp
@@ -123,6 +145,7 @@ run datagram_socket_service_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run datagram_socket_test.cpp
@@ -133,6 +156,7 @@ run datagram_socket_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run deadline_timer_service_test.cpp
@@ -143,6 +167,7 @@ run deadline_timer_service_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run deadline_timer_test.cpp
@@ -153,6 +178,7 @@ run deadline_timer_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run demuxer_service_test.cpp
@@ -163,6 +189,7 @@ run demuxer_service_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run demuxer_test.cpp
@@ -174,6 +201,7 @@ run demuxer_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run error_handler_test.cpp
@@ -184,6 +212,7 @@ run error_handler_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run error_test.cpp
@@ -194,6 +223,7 @@ run error_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run ipv4/address_test.cpp
@@ -204,6 +234,7 @@ run ipv4/address_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run ipv4/basic_host_resolver_test.cpp
@@ -214,6 +245,7 @@ run ipv4/basic_host_resolver_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run ipv4/host_resolver_service_test.cpp
@@ -224,6 +256,7 @@ run ipv4/host_resolver_service_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run ipv4/host_resolver_test.cpp
@@ -234,6 +267,7 @@ run ipv4/host_resolver_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run ipv4/host_test.cpp
@@ -244,6 +278,7 @@ run ipv4/host_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run ipv4/multicast_test.cpp
@@ -254,6 +289,7 @@ run ipv4/multicast_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run ipv4/tcp_test.cpp
@@ -264,6 +300,7 @@ run ipv4/tcp_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run ipv4/udp_test.cpp
@@ -274,6 +311,7 @@ run ipv4/udp_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run is_read_buffered_test.cpp
@@ -284,6 +322,7 @@ run is_read_buffered_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run is_write_buffered_test.cpp
@@ -294,6 +333,7 @@ run is_write_buffered_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run locking_dispatcher_service_test.cpp
@@ -304,6 +344,7 @@ run locking_dispatcher_service_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run locking_dispatcher_test.cpp
@@ -315,6 +356,7 @@ run locking_dispatcher_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run placeholders_test.cpp
@@ -325,6 +367,7 @@ run placeholders_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run read_test.cpp
@@ -335,6 +378,7 @@ run read_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run service_factory_test.cpp
@@ -345,6 +389,7 @@ run service_factory_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run socket_acceptor_service_test.cpp
@@ -355,6 +400,7 @@ run socket_acceptor_service_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run socket_acceptor_test.cpp
@@ -365,6 +411,7 @@ run socket_acceptor_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run socket_base_test.cpp
@@ -375,6 +422,7 @@ run socket_base_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run stream_socket_service_test.cpp
@@ -385,6 +433,7 @@ run stream_socket_service_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run stream_socket_test.cpp
@@ -395,6 +444,7 @@ run stream_socket_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run time_traits_test.cpp
@@ -405,6 +455,7 @@ run time_traits_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run write_test.cpp
@@ -415,5 +466,6 @@ run write_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 

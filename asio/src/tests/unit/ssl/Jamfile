@@ -5,6 +5,17 @@ import testing ;
 
 project boost : $(BOOST_ROOT) ;
 
+if $(UNIX)
+{
+  switch $(JAMUNAME)
+  {
+  case SunOS* :
+    {
+      SOCKET_LIBS = <find-library>socket <find-library>nsl ;
+    }
+  }
+}
+
 run basic_context_test.cpp
     <lib>@boost/libs/date_time/build/boost_date_time
   :
@@ -13,6 +24,7 @@ run basic_context_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run context_base_test.cpp
@@ -23,6 +35,7 @@ run context_base_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run context_service_test.cpp
@@ -33,6 +46,7 @@ run context_service_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run context_test.cpp
@@ -43,6 +57,7 @@ run context_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run stream_base_test.cpp
@@ -53,6 +68,7 @@ run stream_base_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run stream_service_test.cpp
@@ -63,6 +79,7 @@ run stream_service_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 run stream_test.cpp
@@ -73,4 +90,5 @@ run stream_test.cpp
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;

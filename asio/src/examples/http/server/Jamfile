@@ -2,6 +2,17 @@ subproject libs/asio/example/http/server ;
 
 project boost : $(BOOST_ROOT) ;
 
+if $(UNIX)
+{
+  switch $(JAMUNAME)
+  {
+  case SunOS* :
+    {
+      SOCKET_LIBS = <find-library>socket <find-library>nsl ;
+    }
+  }
+}
+
 exe http_server
   : <lib>@boost/libs/date_time/build/boost_date_time
     <lib>@boost/libs/thread/build/boost_thread
@@ -19,4 +30,5 @@ exe http_server
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;

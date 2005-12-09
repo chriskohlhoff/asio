@@ -2,6 +2,17 @@ subproject libs/asio/example/ssl ;
 
 project boost : $(BOOST_ROOT) ;
 
+if $(UNIX)
+{
+  switch $(JAMUNAME)
+  {
+  case SunOS* :
+    {
+      SOCKET_LIBS = <find-library>socket <find-library>nsl ;
+    }
+  }
+}
+
 exe client
   : <lib>@boost/libs/date_time/build/boost_date_time
     client.cpp
@@ -12,6 +23,7 @@ exe client
     <find-library>crypto
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
 
 exe server
@@ -24,4 +36,5 @@ exe server
     <find-library>crypto
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
   ;
