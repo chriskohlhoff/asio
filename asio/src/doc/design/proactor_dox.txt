@@ -79,7 +79,7 @@ completion port. There is one I/O completion port for each asio::demuxer
 instance.
 
 @par Asynchronous Event Demultiplexer
-called by asio to dequeue events and their associated completion handlers.
+Called by asio to dequeue events and their associated completion handlers.
 
 \section designproactoradv Advantages
 
