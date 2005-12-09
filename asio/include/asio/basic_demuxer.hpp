@@ -49,6 +49,8 @@ namespace asio {
  *
  * @par Concepts:
  * Dispatcher.
+ *
+ * @sa \ref demuxer_handler_exception
  */
 template <typename Demuxer_Service>
 class basic_demuxer
@@ -295,6 +297,40 @@ private:
   /// The underlying demuxer service implementation.
   Demuxer_Service& service_;
 };
+
+/**
+ * @page demuxer_handler_exception Effect of exceptions thrown from handlers
+ *
+ * If an exception is thrown from a handler, the exception is allowed to
+ * propagate through the throwing thread's invocation of
+ * asio::demuxer::run(). No other threads that are calling
+ * asio::demuxer::run() are affected. It is then the responsibility of
+ * the application to catch the exception.
+ *
+ * After the exception has been caught, the asio::demuxer::run() call
+ * may be restarted @em without the need for an intervening call to
+ * asio::demuxer::reset(). This allows the thread to rejoin the
+ * demuxer's thread pool without impacting any other threads in the
+ * pool.
+ *
+ * @par Example:
+ * @code
+ * asio::demuxer demuxer;
+ * ...
+ * for (;;)
+ * {
+ *   try
+ *   {
+ *     demuxer.run();
+ *     break; // run() exited normally
+ *   }
+ *   catch (my_exception& e)
+ *   {
+ *     // Deal with exception as appropriate.
+ *   }
+ * }
+ * @endcode
+ */
 
 } // namespace asio
 
