@@ -125,8 +125,8 @@ public:
       // Extract the data structure from the data just received.
       try
       {
-        std::istringstream archive_stream(std::string(
-              &inbound_data_[0], inbound_data_.size()));
+        std::string archive_data(&inbound_data_[0], inbound_data_.size());
+        std::istringstream archive_stream(archive_data);
         boost::archive::text_iarchive archive(archive_stream);
         archive >> t;
       }
