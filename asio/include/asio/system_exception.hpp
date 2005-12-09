@@ -24,6 +24,10 @@
 #include <cstring>
 #include <exception>
 #include <string>
+#include <boost/detail/workaround.hpp>
+#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+# include <iostream>
+#endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/detail/win_local_free_on_block_exit.hpp"
@@ -170,12 +174,20 @@ private:
  *
  * @relates asio::system_exception
  */
+#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+std::ostream& operator<<(std::ostream& os, const system_exception& e)
+{
+  os << e.what();
+  return os;
+}
+#else // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
 template <typename Ostream>
 Ostream& operator<<(Ostream& os, const system_exception& e)
 {
   os << e.what();
   return os;
 }
+#endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
 
 } // namespace asio
 

@@ -19,6 +19,10 @@
 
 #include "asio/detail/push_options.hpp"
 #include <boost/throw_exception.hpp>
+#include <boost/detail/workaround.hpp>
+#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+# include <iostream>
+#endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
@@ -243,14 +247,22 @@ private:
  *
  * @return The output stream.
  *
- * @relates tcp::endpoint
+ * @relates udp::endpoint
  */
+#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+std::ostream& operator<<(std::ostream& os, const udp::endpoint& endpoint)
+{
+  os << endpoint.address().to_string() << ':' << endpoint.port();
+  return os;
+}
+#else // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
 template <typename Ostream>
 Ostream& operator<<(Ostream& os, const udp::endpoint& endpoint)
 {
   os << endpoint.address().to_string() << ':' << endpoint.port();
   return os;
 }
+#endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
 
 } // namespace ipv4
 } // namespace asio
