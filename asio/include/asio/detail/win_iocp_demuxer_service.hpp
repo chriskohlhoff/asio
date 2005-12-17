@@ -102,7 +102,12 @@ public:
         if (::InterlockedExchangeAdd(&interrupted_, 0) != 0)
         {
           // Wake up next thread that is blocked on GetQueuedCompletionStatus.
-          ::PostQueuedCompletionStatus(iocp_.handle, 0, 0, 0);
+          if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, 0))
+          {
+            DWORD last_error = ::GetLastError();
+            system_exception e("pqcs", last_error);
+            boost::throw_exception(e);
+          }
           break;
         }
       }
@@ -113,7 +118,14 @@ public:
   void interrupt()
   {
     if (::InterlockedExchange(&interrupted_, 1) == 0)
-      ::PostQueuedCompletionStatus(iocp_.handle, 0, 0, 0);
+    {
+      if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, 0))
+      {
+        DWORD last_error = ::GetLastError();
+        system_exception e("pqcs", last_error);
+        boost::throw_exception(e);
+      }
+    }
   }
 
   // Reset the demuxer in preparation for a subsequent run invocation.
@@ -183,8 +195,15 @@ public:
   template <typename Handler>
   void post(Handler handler)
   {
-    win_iocp_operation* op = new handler_operation<Handler>(*this, handler);
-    ::PostQueuedCompletionStatus(iocp_.handle, 0, 0, op);
+    handler_operation<Handler>* op =
+      new handler_operation<Handler>(*this, handler);
+    if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, op))
+    {
+      DWORD last_error = ::GetLastError();
+      delete op;
+      system_exception e("pqcs", last_error);
+      boost::throw_exception(e);
+    }
   }
 
 private:
