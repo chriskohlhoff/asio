@@ -52,8 +52,9 @@ template <typename Allocator>
 class win_iocp_socket_service
 {
 public:
-  typedef boost::shared_ptr<const socket_type> socket_shared_ptr_type;
-  typedef boost::weak_ptr<const socket_type> socket_weak_ptr_type;
+  struct noop_deleter { void operator()(void*) {} };
+  typedef boost::shared_ptr<void> shared_cancel_token_type;
+  typedef boost::weak_ptr<void> weak_cancel_token_type;
 
   // The native type of the socket. We use a custom class here rather than just
   // SOCKET to workaround the broken Windows support for cancellation. MSDN says
@@ -67,19 +68,22 @@ public:
   public:
     // Default constructor.
     impl_type()
-      : socket_(new socket_type(invalid_socket))
+      : socket_(invalid_socket),
+        cancel_token_(static_cast<void*>(0), noop_deleter())
     {
     }
 
     // Construct from socket type.
     explicit impl_type(socket_type s)
-      : socket_(new socket_type(s))
+      : socket_(s),
+        cancel_token_(static_cast<void*>(0), noop_deleter())
     {
     }
 
     // Copy constructor.
     impl_type(const impl_type& other)
-      : socket_(other.socket_)
+      : socket_(other.socket_),
+        cancel_token_(other.cancel_token_)
     {
     }
 
@@ -87,26 +91,31 @@ public:
     impl_type& operator=(const impl_type& other)
     {
       socket_ = other.socket_;
+      cancel_token_ = other.cancel_token_;
       return *this;
     }
 
     // Assign from socket type.
     impl_type& operator=(socket_type s)
     {
-      socket_ = socket_shared_ptr_type(new socket_type(s));
+      cancel_token_.reset(static_cast<void*>(0), noop_deleter());
+      socket_ = s;
       return *this;
     }
 
     // Convert to socket type.
     operator socket_type() const
     {
-      return *socket_;
+      return socket_;
     }
 
   private:
+    socket_type socket_;
     friend class win_iocp_socket_service<Allocator>;
-    socket_shared_ptr_type socket_;
+    shared_cancel_token_type cancel_token_;
   };
+
+  static impl_type null_impl_;
 
   // The demuxer type for this service.
   typedef basic_demuxer<demuxer_service<Allocator> > demuxer_type;
@@ -125,7 +134,7 @@ public:
     : demuxer_(demuxer),
       demuxer_service_(demuxer.get_service(
           service_factory<win_iocp_demuxer_service>())),
-      reactor_(demuxer.get_service(service_factory<reactor_type>()))
+      reactor_(0)
   {
   }
 
@@ -138,7 +147,7 @@ public:
   // Return a null socket implementation.
   static impl_type null()
   {
-    return impl_type();
+    return null_impl_;
   }
 
   // Open a new socket implementation.
@@ -172,7 +181,15 @@ public:
   {
     if (impl != null())
     {
-      reactor_.close_descriptor(impl);
+      // Check if the reactor was created, in which case we need to close the
+      // socket on the reactor as well to cancel any operations that might be
+      // running there.
+      reactor_type* reactor = static_cast<reactor_type*>(
+          ::InterlockedCompareExchangePointer(
+            reinterpret_cast<void**>(&reactor_), 0, 0));
+      if (reactor)
+        reactor->close_descriptor(impl);
+
       if (socket_ops::close(impl) == socket_error_retval)
         error_handler(asio::error(socket_ops::get_error()));
       else
@@ -310,10 +327,10 @@ public:
   {
   public:
     send_operation(demuxer_type& demuxer,
-        socket_weak_ptr_type socket_ptr, Handler handler)
+        weak_cancel_token_type cancel_token, Handler handler)
       : win_iocp_operation(&send_operation<Handler>::do_completion_impl),
         work_(demuxer),
-        socket_ptr_(socket_ptr),
+        cancel_token_(cancel_token),
         handler_(handler)
     {
     }
@@ -328,7 +345,7 @@ public:
       // Map ERROR_NETNAME_DELETED to more useful error.
       if (last_error == ERROR_NETNAME_DELETED)
       {
-        if (h->socket_ptr_.expired())
+        if (h->cancel_token_.expired())
           last_error = ERROR_OPERATION_ABORTED;
         else
           last_error = WSAECONNRESET;
@@ -339,7 +356,7 @@ public:
     }
 
     typename demuxer_type::work work_;
-    socket_weak_ptr_type socket_ptr_;
+    weak_cancel_token_type cancel_token_;
     Handler handler_;
   };
 
@@ -350,7 +367,7 @@ public:
       socket_base::message_flags flags, Handler handler)
   {
     std::auto_ptr<send_operation<Handler> > op(
-        new send_operation<Handler>(demuxer_, impl.socket_, handler));
+        new send_operation<Handler>(demuxer_, impl.cancel_token_, handler));
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -526,10 +543,10 @@ public:
   {
   public:
     receive_operation(demuxer_type& demuxer,
-        socket_weak_ptr_type socket_ptr, Handler handler)
+        weak_cancel_token_type cancel_token, Handler handler)
       : win_iocp_operation(&receive_operation<Handler>::do_completion_impl),
         work_(demuxer),
-        socket_ptr_(socket_ptr),
+        cancel_token_(cancel_token),
         handler_(handler)
     {
     }
@@ -544,7 +561,7 @@ public:
       // Map ERROR_NETNAME_DELETED to more useful error.
       if (last_error == ERROR_NETNAME_DELETED)
       {
-        if (h->socket_ptr_.expired())
+        if (h->cancel_token_.expired())
           last_error = ERROR_OPERATION_ABORTED;
         else
           last_error = WSAECONNRESET;
@@ -561,7 +578,7 @@ public:
     }
 
     typename demuxer_type::work work_;
-    socket_weak_ptr_type socket_ptr_;
+    weak_cancel_token_type cancel_token_;
     Handler handler_;
   };
 
@@ -572,7 +589,7 @@ public:
       socket_base::message_flags flags, Handler handler)
   {
     std::auto_ptr<receive_operation<Handler> > op(
-        new receive_operation<Handler>(demuxer_, impl.socket_, handler));
+        new receive_operation<Handler>(demuxer_, impl.cancel_token_, handler));
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -1205,6 +1222,16 @@ public:
   void async_connect(impl_type& impl, const Endpoint& peer_endpoint,
       Handler handler)
   {
+    // Check if the reactor was already obtained from the demuxer.
+    reactor_type* reactor = static_cast<reactor_type*>(
+        ::InterlockedCompareExchangePointer(
+          reinterpret_cast<void**>(&reactor_), 0, 0));
+    if (!reactor)
+    {
+      reactor = &(demuxer_.get_service(service_factory<reactor_type>()));
+      InterlockedExchangePointer(reinterpret_cast<void**>(&reactor_), reactor);
+    }
+
     // Open the socket if it is not already open.
     if (impl == invalid_socket)
     {
@@ -1249,8 +1276,8 @@ public:
       // The connection is happening in the background, and we need to wait
       // until the socket becomes writeable.
       boost::shared_ptr<bool> completed(new bool(false));
-      reactor_.start_write_and_except_ops(impl, connect_handler<Handler>(
-            impl, completed, demuxer_, reactor_, handler));
+      reactor->start_write_and_except_ops(impl, connect_handler<Handler>(
+            impl, completed, demuxer_, *reactor, handler));
     }
     else
     {
@@ -1268,9 +1295,14 @@ private:
   // dispatching handlers.
   win_iocp_demuxer_service& demuxer_service_;
 
-  // The reactor used for performing accept and connect operations.
-  reactor_type& reactor_;
+  // The reactor used for performing connect operations. This object is created
+  // only if needed.
+  reactor_type* reactor_;
 };
+
+template <typename Allocator>
+typename win_iocp_socket_service<Allocator>::impl_type
+win_iocp_socket_service<Allocator>::null_impl_;
 
 } // namespace detail
 } // namespace asio
