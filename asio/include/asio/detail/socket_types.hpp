@@ -39,6 +39,11 @@
 #  define ASIO_WSPIAPI_H_DEFINED
 # endif // defined(__BORLANDC__) && !defined(_WSPIAPI_H_)
 # define FD_SETSIZE 1024
+# if !defined(ASIO_NO_WIN32_LEAN_AND_MEAN)
+#  if !defined(WIN32_LEAN_AND_MEAN)
+#   define WIN32_LEAN_AND_MEAN
+#  endif // !defined(WIN32_LEAN_AND_MEAN)
+# endif // !defined(ASIO_NO_WIN32_LEAN_AND_MEAN)
 # include <winsock2.h>
 # include <ws2tcpip.h>
 # include <mswsock.h>
