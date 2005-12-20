@@ -500,7 +500,7 @@ public:
    * @endcode
    */
   template <typename Endpoint>
-  void get_local_endpoint(Endpoint& endpoint)
+  void get_local_endpoint(Endpoint& endpoint) const
   {
     service_.get_local_endpoint(impl_, endpoint, throw_error());
   }
@@ -534,7 +534,7 @@ public:
    * @endcode
    */
   template <typename Endpoint, typename Error_Handler>
-  void get_local_endpoint(Endpoint& endpoint, Error_Handler error_handler)
+  void get_local_endpoint(Endpoint& endpoint, Error_Handler error_handler) const
   {
     service_.get_local_endpoint(impl_, endpoint, error_handler);
   }

@@ -131,8 +131,8 @@ public:
 
   /// Get the local endpoint.
   template <typename Endpoint, typename Error_Handler>
-  void get_local_endpoint(impl_type& impl, Endpoint& endpoint,
-      Error_Handler error_handler)
+  void get_local_endpoint(const impl_type& impl, Endpoint& endpoint,
+      Error_Handler error_handler) const
   {
     service_impl_.get_local_endpoint(impl, endpoint, error_handler);
   }
