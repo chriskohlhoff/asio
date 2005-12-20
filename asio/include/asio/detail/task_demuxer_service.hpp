@@ -101,7 +101,6 @@ public:
       {
         // Prepare to execute the task.
         task_is_running_ = true;
-        task_.reset();
         lock.unlock();
 
         // Helper class to perform operations on block exit.
@@ -127,6 +126,7 @@ public:
         } c(lock, task_is_running_);
 
         // Run the task. May throw an exception.
+        task_.reset();
         task_.run();
       }
       else 
