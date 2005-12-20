@@ -365,7 +365,7 @@ private:
 
   int do_sync_read()
   {
-    size_t len = socket_.asio::read_some
+    size_t len = socket_.read_some
       ( 
         asio::buffer(recv_buf_.get_unused_start(),
           recv_buf_.get_unused_len())
