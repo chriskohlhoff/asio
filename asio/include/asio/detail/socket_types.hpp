@@ -35,6 +35,9 @@
 # endif // !defined(_WIN32_WINNT) && !defined(_WIN32_WINDOWS)
 # if defined(__BORLANDC__) && !defined(_WSPIAPI_H_)
 #  include <stdlib.h> // Needed for __errno
+#  if defined(__WIN32__) && !defined(WIN32)
+#   define WIN32 // Needed for correct types in winsock2.h
+#  endif // defined(__WIN32__) && !defined(WIN32)
 #  define _WSPIAPI_H_
 #  define ASIO_WSPIAPI_H_DEFINED
 # endif // defined(__BORLANDC__) && !defined(_WSPIAPI_H_)

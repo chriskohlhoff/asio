@@ -35,21 +35,27 @@
 
 #include "asio/system_exception.hpp"
 #include "asio/detail/demuxer_run_call_stack.hpp"
+#include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/win_iocp_operation.hpp"
 
 namespace asio {
 namespace detail {
 
+template <typename Allocator>
 class win_iocp_demuxer_service
 {
 public:
+  // Base class for all operations.
+  typedef win_iocp_operation<Allocator> operation;
+
   // Constructor.
   template <typename Demuxer>
   win_iocp_demuxer_service(Demuxer& demuxer)
     : iocp_(::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)),
       outstanding_work_(0),
-      interrupted_(0)
+      interrupted_(0),
+      allocator_(demuxer.get_allocator())
   {
     if (!iocp_.handle)
     {
@@ -72,7 +78,8 @@ public:
     if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
       return;
 
-    demuxer_run_call_stack<win_iocp_demuxer_service>::context ctx(this);
+    typedef demuxer_run_call_stack<win_iocp_demuxer_service<Allocator> > drcs;
+    typename drcs::context ctx(this);
 
     for (;;)
     {
@@ -91,9 +98,28 @@ public:
 
       if (overlapped)
       {
+        // Ensure that the demuxer does not exit due to running out of work
+        // while we make the upcall.
+        struct auto_work
+        {
+          auto_work(win_iocp_demuxer_service& demuxer_service)
+            : demuxer_service_(demuxer_service)
+          {
+            demuxer_service_.work_started();
+          }
+
+          ~auto_work()
+          {
+            demuxer_service_.work_finished();
+          }
+
+        private:
+          win_iocp_demuxer_service& demuxer_service_;
+        } work(*this);
+
         // Dispatch the operation.
-        win_iocp_operation* op = static_cast<win_iocp_operation*>(overlapped);
-        op->do_completion(last_error, bytes_transferred);
+        operation* op = static_cast<operation*>(overlapped);
+        op->do_completion(last_error, bytes_transferred, allocator_);
       }
       else
       {
@@ -149,11 +175,11 @@ public:
 
   template <typename Handler>
   struct handler_operation
-    : public win_iocp_operation
+    : public operation
   {
     handler_operation(win_iocp_demuxer_service& demuxer_service,
         Handler handler)
-      : win_iocp_operation(&handler_operation<Handler>::do_completion_impl),
+      : operation(&handler_operation<Handler>::do_completion_impl),
         demuxer_service_(demuxer_service),
         handler_(handler)
     {
@@ -170,11 +196,25 @@ public:
     handler_operation(const handler_operation&);
     void operator=(const handler_operation&);
     
-    static void do_completion_impl(win_iocp_operation* op, DWORD, size_t)
+    static void do_completion_impl(operation* op, DWORD, size_t,
+        const Allocator& void_allocator)
     {
-      std::auto_ptr<handler_operation<Handler> > h(
-          static_cast<handler_operation<Handler>*>(op));
-      h->handler_();
+      // Take ownership of the operation object.
+      typedef handler_operation<Handler> op_type;
+      op_type* handler_op(static_cast<op_type*>(op));
+      typedef handler_alloc_traits<Handler, op_type, Allocator> alloc_traits;
+      handler_ptr<alloc_traits> ptr(handler_op->handler_,
+          void_allocator, handler_op);
+
+      // Make a copy of the handler so that the memory can be deallocated before
+      // the upcall is made.
+      Handler handler(handler_op->handler_);
+
+      // Free the memory associated with the handler.
+      ptr.reset();
+
+      // Make the upcall.
+      handler();
     }
 
     win_iocp_demuxer_service& demuxer_service_;
@@ -195,15 +235,22 @@ public:
   template <typename Handler>
   void post(Handler handler)
   {
-    handler_operation<Handler>* op =
-      new handler_operation<Handler>(*this, handler);
-    if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, op))
+    // Allocate and construct an operation to wrap the handler.
+    typedef handler_operation<Handler> value_type;
+    typedef handler_alloc_traits<Handler, value_type, Allocator> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler, allocator_);
+    handler_ptr<alloc_traits> ptr(raw_ptr, *this, handler);
+
+    // Enqueue the operation on the I/O completion port.
+    if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, ptr.get()))
     {
       DWORD last_error = ::GetLastError();
-      delete op;
       system_exception e("pqcs", last_error);
       boost::throw_exception(e);
     }
+
+    // Operation has been successfully posted.
+    ptr.release();
   }
 
 private:
@@ -220,6 +267,9 @@ private:
 
   // Flag to indicate whether the event loop has been interrupted.
   long interrupted_;
+
+  // The allocator to be used for allocating dynamic objects.
+  Allocator allocator_;
 };
 
 } // namespace detail

@@ -222,16 +222,13 @@ void demuxer_test()
   BOOST_CHECK(count == 3);
   BOOST_CHECK(exception_count == 2);
 
-#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
   // Use a non-default allocator type.
   typedef std::allocator<int> allocator_type;
   typedef demuxer_service<allocator_type> demuxer_service_type;
-  typedef basic_demuxer<demuxer_service_type> demuxer_type;
+  typedef basic_demuxer<demuxer_service_type, allocator_type> demuxer_type;
   allocator_type allocator;
-  service_factory<demuxer_service_type> factory(allocator);
-  demuxer_type d3(factory);
+  demuxer_type d3(allocator);
   d3.run();
-#endif // !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
 }
 
 test_suite* init_unit_test_suite(int argc, char* argv[])

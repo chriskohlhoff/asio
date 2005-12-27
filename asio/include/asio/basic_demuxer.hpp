@@ -17,6 +17,10 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <memory>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/service_factory.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/noncopyable.hpp"
@@ -52,7 +56,7 @@ namespace asio {
  *
  * @sa \ref demuxer_handler_exception
  */
-template <typename Demuxer_Service>
+template <typename Demuxer_Service, typename Allocator = std::allocator<void> >
 class basic_demuxer
   : private noncopyable
 {
@@ -61,7 +65,7 @@ public:
   typedef Demuxer_Service service_type;
 
   /// The allocator type for the demuxer.
-  typedef typename service_type::allocator_type allocator_type;
+  typedef Allocator allocator_type;
 
   /// Default constructor.
   basic_demuxer()
@@ -70,9 +74,27 @@ public:
   {
   }
 
+  /// Construct using the supplied allocator.
+  explicit basic_demuxer(const allocator_type& allocator)
+    : allocator_(allocator),
+      service_registry_(*this),
+      service_(get_service(service_factory<Demuxer_Service>()))
+  {
+  }
+
   /// Construct using the supplied service_factory to get the demuxer service.
   explicit basic_demuxer(const service_factory<Demuxer_Service>& factory)
     : service_registry_(*this),
+      service_(get_service(factory))
+  {
+  }
+
+  /// Construct using the supplied service_factory to get the demuxer service,
+  /// as well as a custom allocator.
+  explicit basic_demuxer(const service_factory<Demuxer_Service>& factory,
+      const allocator_type& allocator)
+    : allocator_(allocator),
+      service_registry_(*this),
       service_(get_service(factory))
   {
   }
@@ -86,7 +108,7 @@ public:
    */
   allocator_type get_allocator() const
   {
-    return service_.get_allocator();
+    return allocator_;
   }
 
   /// Run the demuxer's event processing loop.
@@ -199,12 +221,12 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
   unspecified
 #else
-  detail::wrapped_handler<basic_demuxer<Demuxer_Service>, Handler>
+  detail::wrapped_handler<basic_demuxer<Demuxer_Service, Allocator>, Handler>
 #endif
   wrap(Handler handler)
   {
-    return detail::wrapped_handler<basic_demuxer<Demuxer_Service>, Handler>(
-        *this, handler);
+    return detail::wrapped_handler<
+      basic_demuxer<Demuxer_Service, Allocator>, Handler>(*this, handler);
   }
 
   /// Obtain the service interface corresponding to the given type.
@@ -235,8 +257,12 @@ private:
   detail::signal_init<> init_;
 #endif
 
+  // The allocator associated with the demuxer.
+  allocator_type allocator_;
+
   /// The service registry.
-  detail::service_registry<basic_demuxer<Demuxer_Service> > service_registry_;
+  detail::service_registry<basic_demuxer<Demuxer_Service, Allocator> >
+    service_registry_;
 
   /// The underlying demuxer service implementation.
   Demuxer_Service& service_;
@@ -251,8 +277,8 @@ private:
  * The work class is copy-constructible so that it may be used as a data member
  * in a handler class. It is not assignable.
  */
-template <typename Demuxer_Service>
-class basic_demuxer<Demuxer_Service>::work
+template <typename Demuxer_Service, typename Allocator>
+class basic_demuxer<Demuxer_Service, typename Allocator>::work
 {
 public:
   /// Constructor notifies the demuxer that work is starting.

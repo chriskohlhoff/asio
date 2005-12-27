@@ -39,15 +39,12 @@ class demuxer_service
 {
 public:
   /// The demuxer type for this service.
-  typedef basic_demuxer<demuxer_service<Allocator> > demuxer_type;
-
-  /// The allocator type for this service.
-  typedef Allocator allocator_type;
+  typedef basic_demuxer<demuxer_service<Allocator>, Allocator> demuxer_type;
 
 private:
   // The type of the platform-specific implementation.
 #if defined(ASIO_HAS_IOCP_DEMUXER)
-  typedef detail::win_iocp_demuxer_service service_impl_type;
+  typedef detail::win_iocp_demuxer_service<Allocator> service_impl_type;
 #elif defined(ASIO_HAS_EPOLL_REACTOR)
   typedef detail::task_demuxer_service<detail::epoll_reactor<false> >
     service_impl_type;
@@ -64,19 +61,6 @@ public:
   explicit demuxer_service(demuxer_type& demuxer)
     : service_impl_(demuxer.get_service(service_factory<service_impl_type>()))
   {
-  }
-
-  /// Constructor.
-  demuxer_service(demuxer_type& demuxer, const allocator_type& allocator)
-    : service_impl_(demuxer.get_service(service_factory<service_impl_type>())),
-      allocator_(allocator)
-  {
-  }
-
-  /// Return a copy of the allocator associated with the service.
-  allocator_type get_allocator() const
-  {
-    return allocator_;
   }
 
   /// Run the demuxer's event processing loop.
@@ -126,42 +110,7 @@ public:
 private:
   // The service that provides the platform-specific implementation.
   service_impl_type& service_impl_;
-
-  // The allocator associated with the service.
-  allocator_type allocator_;
 };
-
-#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
-
-/// Specialisation of service_factory to allow an allocator to be specified.
-template <typename Allocator>
-class service_factory<demuxer_service<Allocator> >
-{
-public:
-  /// Default constructor.
-  service_factory()
-  {
-  }
-
-  /// Construct with a specified allocator.
-  explicit service_factory(const Allocator& allocator)
-    : allocator_(allocator)
-  {
-  }
-
-  /// Create a service with the specified owner.
-  template <typename Owner>
-  demuxer_service<Allocator>* create(Owner& owner)
-  {
-    return new demuxer_service<Allocator>(owner, allocator_);
-  }
-
-private:
-  // The allocator to be passed to the service.
-  Allocator allocator_;
-};
-
-#endif // !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
 
 } // namespace asio
 

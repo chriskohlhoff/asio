@@ -35,7 +35,7 @@ class locking_dispatcher_service
 {
 public:
   /// The demuxer type for this service.
-  typedef basic_demuxer<demuxer_service<Allocator> > demuxer_type;
+  typedef basic_demuxer<demuxer_service<Allocator>, Allocator> demuxer_type;
 
 private:
   // The type of the platform-specific implementation.
