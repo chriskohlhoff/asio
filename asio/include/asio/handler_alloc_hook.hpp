@@ -110,7 +110,7 @@ public:
    * allocator has been rebound such that its value_type is the internal asio
    * type to be allocated.
    *
-   * @param A pointer to the memory to be deallocated.
+   * @param pointer A pointer to the memory to be deallocated.
    *
    * @param count The number of objects to be deallocated.
    */

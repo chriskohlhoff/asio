@@ -46,14 +46,14 @@ private:
 #if defined(ASIO_HAS_IOCP_DEMUXER)
   typedef detail::win_iocp_demuxer_service<Allocator> service_impl_type;
 #elif defined(ASIO_HAS_EPOLL_REACTOR)
-  typedef detail::task_demuxer_service<detail::epoll_reactor<false> >
-    service_impl_type;
+  typedef detail::task_demuxer_service<
+      detail::epoll_reactor<false, Allocator>, Allocator> service_impl_type;
 #elif defined(ASIO_HAS_KQUEUE_REACTOR)
-  typedef detail::task_demuxer_service<detail::kqueue_reactor<false> >
-    service_impl_type;
+  typedef detail::task_demuxer_service<
+      detail::kqueue_reactor<false, Allocator>, Allocator> service_impl_type;
 #else
-  typedef detail::task_demuxer_service<detail::select_reactor<false> >
-    service_impl_type;
+  typedef detail::task_demuxer_service<
+      detail::select_reactor<false, Allocator>, Allocator> service_impl_type;
 #endif
 
 public:

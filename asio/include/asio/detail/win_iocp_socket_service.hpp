@@ -125,7 +125,7 @@ public:
   typedef basic_demuxer<demuxer_service<Allocator>, Allocator> demuxer_type;
 
   // The type of the reactor used for connect operations.
-  typedef detail::select_reactor<true> reactor_type;
+  typedef detail::select_reactor<true, Allocator> reactor_type;
 
   // The maximum number of buffers to support in a single operation.
   enum { max_buffers = 16 };

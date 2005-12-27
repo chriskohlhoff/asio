@@ -62,16 +62,16 @@ private:
   // The type of the platform-specific implementation.
 #if defined(ASIO_HAS_IOCP_DEMUXER)
   typedef detail::reactive_deadline_timer_service<demuxer_type,
-    traits_type, detail::select_reactor<true> > service_impl_type;
+    traits_type, detail::select_reactor<true, Allocator> > service_impl_type;
 #elif defined(ASIO_HAS_EPOLL_REACTOR)
   typedef detail::reactive_deadline_timer_service<demuxer_type,
-    traits_type, detail::epoll_reactor<false> > service_impl_type;
+    traits_type, detail::epoll_reactor<false, Allocator> > service_impl_type;
 #elif defined(ASIO_HAS_KQUEUE_REACTOR)
   typedef detail::reactive_deadline_timer_service<demuxer_type,
-    traits_type, detail::kqueue_reactor<false> > service_impl_type;
+    traits_type, detail::kqueue_reactor<false, Allocator> > service_impl_type;
 #else
   typedef detail::reactive_deadline_timer_service<demuxer_type,
-    traits_type, detail::select_reactor<false> > service_impl_type;
+    traits_type, detail::select_reactor<false, Allocator> > service_impl_type;
 #endif
 
 public:

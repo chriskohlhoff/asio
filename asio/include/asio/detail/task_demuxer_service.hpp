@@ -27,12 +27,13 @@
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/demuxer_run_call_stack.hpp"
 #include "asio/detail/event.hpp"
+#include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/mutex.hpp"
 
 namespace asio {
 namespace detail {
 
-template <typename Task>
+template <typename Task, typename Allocator>
 class task_demuxer_service
 {
 public:
@@ -40,6 +41,7 @@ public:
   template <typename Demuxer>
   task_demuxer_service(Demuxer& demuxer)
     : mutex_(),
+      allocator_(demuxer.get_allocator()),
       task_(demuxer.get_service(service_factory<Task>())),
       task_is_running_(false),
       outstanding_work_(0),
@@ -95,7 +97,7 @@ public:
         } c(lock, outstanding_work_);
 
         // Invoke the handler. May throw an exception.
-        h->call(); // call() deletes the handler object
+        h->call(allocator_); // call() deletes the handler object
       }
       else if (!task_is_running_)
       {
@@ -210,19 +212,25 @@ public:
   template <typename Handler>
   void post(Handler handler)
   {
+    // Allocate and construct an operation to wrap the handler.
+    typedef handler_wrapper<Handler> value_type;
+    typedef handler_alloc_traits<Handler, value_type, Allocator> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler, allocator_);
+    handler_ptr<alloc_traits> ptr(raw_ptr, handler);
+
     asio::detail::mutex::scoped_lock lock(mutex_);
 
     // Add the handler to the end of the queue.
-    handler_base* h = new handler_wrapper<Handler>(handler);
     if (handler_queue_end_)
     {
-      handler_queue_end_->next_ = h;
-      handler_queue_end_ = h;
+      handler_queue_end_->next_ = ptr.get();
+      handler_queue_end_ = ptr.get();
     }
     else
     {
-      handler_queue_ = handler_queue_end_ = h;
+      handler_queue_ = handler_queue_end_ = ptr.get();
     }
+    ptr.release();
 
     // An undelivered handler is treated as unfinished work.
     ++outstanding_work_;
@@ -286,7 +294,7 @@ private:
   class handler_base
   {
   public:
-    typedef void (*func_type)(handler_base*);
+    typedef void (*func_type)(handler_base*, const Allocator&);
 
     handler_base(func_type func)
       : next_(0),
@@ -294,9 +302,9 @@ private:
     {
     }
 
-    void call()
+    void call(const Allocator& void_allocator)
     {
-      func_(this);
+      func_(this, void_allocator);
     }
 
   protected:
@@ -306,7 +314,7 @@ private:
     }
 
   private:
-    friend class task_demuxer_service<Task>;
+    friend class task_demuxer_service<Task, Allocator>;
     handler_base* next_;
     func_type func_;
   };
@@ -323,11 +331,23 @@ private:
     {
     }
 
-    static void do_call(handler_base* base)
+    static void do_call(handler_base* base, const Allocator& void_allocator)
     {
-      std::auto_ptr<handler_wrapper<Handler> > h(
-          static_cast<handler_wrapper<Handler>*>(base));
-      h->handler_();
+      // Take ownership of the handler object.
+      typedef handler_wrapper<Handler> this_type;
+      this_type* h(static_cast<this_type*>(base));
+      typedef handler_alloc_traits<Handler, this_type, Allocator> alloc_traits;
+      handler_ptr<alloc_traits> ptr(h->handler_, void_allocator, h);
+
+      // Make a copy of the handler so that the memory can be deallocated before
+      // the upcall is made.
+      Handler handler(h->handler_);
+
+      // Free the memory associated with the handler.
+      ptr.reset();
+
+      // Make the upcall.
+      handler();
     }
 
   private:
@@ -336,6 +356,9 @@ private:
 
   // Mutex to protect access to internal data.
   asio::detail::mutex mutex_;
+
+  // The allocator to be used for allocating dynamic objects.
+  Allocator allocator_;
 
   // The task to be run by this demuxer service.
   Task& task_;

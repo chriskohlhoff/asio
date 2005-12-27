@@ -278,7 +278,7 @@ private:
  * in a handler class. It is not assignable.
  */
 template <typename Demuxer_Service, typename Allocator>
-class basic_demuxer<Demuxer_Service, typename Allocator>::work
+class basic_demuxer<Demuxer_Service, Allocator>::work
 {
 public:
   /// Constructor notifies the demuxer that work is starting.

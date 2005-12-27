@@ -48,13 +48,13 @@ private:
   typedef detail::win_iocp_socket_service<Allocator> service_impl_type;
 #elif defined(ASIO_HAS_EPOLL_REACTOR)
   typedef detail::reactive_socket_service<
-    demuxer_type, detail::epoll_reactor<false> > service_impl_type;
+    demuxer_type, detail::epoll_reactor<false, Allocator> > service_impl_type;
 #elif defined(ASIO_HAS_KQUEUE_REACTOR)
   typedef detail::reactive_socket_service<
-    demuxer_type, detail::kqueue_reactor<false> > service_impl_type;
+    demuxer_type, detail::kqueue_reactor<false, Allocator> > service_impl_type;
 #else
   typedef detail::reactive_socket_service<
-    demuxer_type, detail::select_reactor<false> > service_impl_type;
+    demuxer_type, detail::select_reactor<false, Allocator> > service_impl_type;
 #endif
 
 public:

@@ -49,7 +49,7 @@
 namespace asio {
 namespace detail {
 
-template <bool Own_Thread>
+template <bool Own_Thread, typename Allocator>
 class kqueue_reactor
   : private noncopyable
 {
@@ -206,7 +206,7 @@ public:
   // Enqueue cancellation of all operations associated with the given
   // descriptor. The handlers associated with the descriptor will be invoked
   // with the operation_aborted error. This function does not acquire the
-  // select_reactor's mutex, and so should only be used from within a reactor
+  // kqueue_reactor's mutex, and so should only be used from within a reactor
   // handler.
   void enqueue_cancel_ops_unlocked(socket_type descriptor)
   {
@@ -252,7 +252,8 @@ public:
   }
 
 private:
-  friend class task_demuxer_service<kqueue_reactor<Own_Thread> >;
+  friend class task_demuxer_service<
+      kqueue_reactor<Own_Thread, Allocator>, Allocator>;
 
   // Reset the select loop before a new run.
   void reset()

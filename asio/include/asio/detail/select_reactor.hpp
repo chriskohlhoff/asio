@@ -39,7 +39,7 @@
 namespace asio {
 namespace detail {
 
-template <bool Own_Thread>
+template <bool Own_Thread, typename Allocator>
 class select_reactor
   : private noncopyable
 {
@@ -171,7 +171,8 @@ public:
   }
 
 private:
-  friend class task_demuxer_service<select_reactor<Own_Thread> >;
+  friend class task_demuxer_service<
+      select_reactor<Own_Thread, Allocator>, Allocator>;
 
   // Reset the select loop before a new run.
   void reset()

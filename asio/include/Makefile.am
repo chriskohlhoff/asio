@@ -28,6 +28,7 @@ nobase_include_HEADERS = \
 	asio/detail/epoll_reactor.hpp \
 	asio/detail/event.hpp \
 	asio/detail/fd_set_adapter.hpp \
+	asio/detail/handler_alloc_helpers.hpp \
 	asio/detail/hash_map.hpp \
 	asio/detail/io_control.hpp \
 	asio/detail/kqueue_reactor.hpp \
@@ -74,6 +75,7 @@ nobase_include_HEADERS = \
 	asio/detail/wrapped_handler.hpp \
 	asio/error_handler.hpp \
 	asio/error.hpp \
+	asio/handler_alloc_hook.hpp \
 	asio/impl/read.ipp \
 	asio/impl/write.ipp \
 	asio/ipv4/address.hpp \
