@@ -30,6 +30,7 @@
 
 #include "asio/detail/push_options.hpp"
 #include <cstddef>
+#include <vector>
 #include <sys/epoll.h>
 #include <boost/config.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
@@ -67,7 +68,6 @@ public:
       read_op_queue_(),
       write_op_queue_(),
       except_op_queue_(),
-      epoll_registrations_(),
       pending_cancellations_(),
       stop_thread_(false),
       thread_(0)
@@ -103,6 +103,21 @@ public:
     close(epoll_fd_);
   }
 
+  // Register a socket with the reactor. Returns 0 on success, system error
+  // code on failure.
+  int register_descriptor(socket_type descriptor)
+  {
+    // No need to lock according to epoll documentation.
+
+    epoll_event ev = { 0 };
+    ev.events = 0;
+    ev.data.fd = descriptor;
+    int result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
+    if (result != 0)
+      return errno;
+    return 0;
+  }
+
   // Start a new read operation. The handler object will be invoked when the
   // given descriptor is ready to be read, or an error has occurred.
   template <typename Handler>
@@ -120,18 +135,7 @@ public:
         ev.events |= EPOLLPRI;
       ev.data.fd = descriptor;
 
-      int result;
-      if (epoll_registrations_.find(descriptor) == epoll_registrations_.end())
-      {
-        epoll_registrations_.insert(
-            epoll_registration_map::value_type(descriptor, true));
-        result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
-      }
-      else
-      {
-        result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
-      }
-
+      int result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
       if (result != 0)
       {
         int error = errno;
@@ -157,18 +161,7 @@ public:
         ev.events |= EPOLLPRI;
       ev.data.fd = descriptor;
 
-      int result;
-      if (epoll_registrations_.find(descriptor) == epoll_registrations_.end())
-      {
-        epoll_registrations_.insert(
-            epoll_registration_map::value_type(descriptor, true));
-        result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
-      }
-      else
-      {
-        result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
-      }
-
+      int result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
       if (result != 0)
       {
         int error = errno;
@@ -194,18 +187,7 @@ public:
         ev.events |= EPOLLOUT;
       ev.data.fd = descriptor;
 
-      int result;
-      if (epoll_registrations_.find(descriptor) == epoll_registrations_.end())
-      {
-        epoll_registrations_.insert(
-            epoll_registration_map::value_type(descriptor, true));
-        result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
-      }
-      else
-      {
-        result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
-      }
-
+      int result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
       if (result != 0)
       {
         int error = errno;
@@ -233,18 +215,7 @@ public:
         ev.events |= EPOLLIN;
       ev.data.fd = descriptor;
 
-      int result;
-      if (epoll_registrations_.find(descriptor) == epoll_registrations_.end())
-      {
-        epoll_registrations_.insert(
-            epoll_registration_map::value_type(descriptor, true));
-        result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
-      }
-      else
-      {
-        result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
-      }
-
+      int result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
       if (result != 0)
       {
         int error = errno;
@@ -270,8 +241,7 @@ public:
   // handler.
   void enqueue_cancel_ops_unlocked(socket_type descriptor)
   {
-    pending_cancellations_.insert(
-        pending_cancellations_map::value_type(descriptor, true));
+    pending_cancellations_.push_back(descriptor);
   }
 
   // Cancel any operations that are running against the descriptor and remove
@@ -281,13 +251,8 @@ public:
     asio::detail::mutex::scoped_lock lock(mutex_);
 
     // Remove the descriptor from epoll.
-    epoll_registration_map::iterator it = epoll_registrations_.find(descriptor);
-    if (it != epoll_registrations_.end())
-    {
-      epoll_event ev = { 0 };
-      epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, descriptor, &ev);
-      epoll_registrations_.erase(it);
-    }
+    epoll_event ev = { 0 };
+    epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, descriptor, &ev);
 
     // Cancel any outstanding operations associated with the descriptor.
     cancel_ops_unlocked(descriptor);
@@ -316,16 +281,8 @@ private:
   friend class task_demuxer_service<
       epoll_reactor<Own_Thread, Allocator>, Allocator>;
 
-  // Reset the select loop before a new run.
-  void reset()
-  {
-    asio::detail::mutex::scoped_lock lock(mutex_);
-    stop_thread_ = false;
-    interrupter_.reset();
-  }
-
   // Run the epoll loop.
-  void run()
+  void run(bool block)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
@@ -335,10 +292,16 @@ private:
     write_op_queue_.dispatch_cancellations();
     except_op_queue_.dispatch_cancellations();
 
+    // We can return immediately if there's no work to do and the reactor is
+    // not supposed to block.
+    if (!block && read_op_queue_.empty() && write_op_queue_.empty()
+        && except_op_queue_.empty() && timer_queue_.empty())
+      return;
+
     bool stop = false;
     while (!stop && !stop_thread_)
     {
-      int timeout = get_timeout();
+      int timeout = block ? get_timeout() : 0;
       wait_in_progress_ = true;
       lock.unlock();
 
@@ -423,14 +386,17 @@ private:
           boost::posix_time::microsec_clock::universal_time());
 
       // Issue any pending cancellations.
-      pending_cancellations_map::iterator i = pending_cancellations_.begin();
-      while (i != pending_cancellations_.end())
-      {
-        cancel_ops_unlocked(i->first);
-        ++i;
-      }
+      for (size_t i = 0; i < pending_cancellations_.size(); ++i)
+        cancel_ops_unlocked(pending_cancellations_[i]);
       pending_cancellations_.clear();
+
+      if (!block)
+        break;
     }
+
+    // Reset for next run.
+    stop_thread_ = false;
+    interrupter_.reset();
   }
 
   // Run the select loop in the thread.
@@ -440,7 +406,7 @@ private:
     while (!stop_thread_)
     {
       lock.unlock();
-      run();
+      run(true);
       lock.lock();
     }
   }
@@ -536,17 +502,8 @@ private:
   // The queue of timers.
   reactor_timer_queue<boost::posix_time::ptime> timer_queue_;
 
-  // The type for a map of descriptors that are registered with epoll.
-  typedef hash_map<socket_type, bool> epoll_registration_map;
-
-  // The map of descriptors that are registered with epoll.
-  epoll_registration_map epoll_registrations_;
-
-  // The type for a map of descriptors to be cancelled.
-  typedef hash_map<socket_type, bool> pending_cancellations_map;
-
-  // The map of descriptors that are pending cancellation.
-  pending_cancellations_map pending_cancellations_;
+  // The descriptors that are pending cancellation.
+  std::vector<socket_type> pending_cancellations_;
 
   // Does the reactor loop thread need to stop.
   bool stop_thread_;

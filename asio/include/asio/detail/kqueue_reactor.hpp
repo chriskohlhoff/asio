@@ -25,6 +25,7 @@
 
 #include "asio/detail/push_options.hpp"
 #include <cstddef>
+#include <vector>
 #include <sys/types.h>
 #include <sys/event.h>
 #include <sys/time.h>
@@ -35,7 +36,6 @@
 
 #include "asio/system_exception.hpp"
 #include "asio/detail/bind_handler.hpp"
-#include "asio/detail/hash_map.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/task_demuxer_service.hpp"
@@ -97,6 +97,13 @@ public:
     }
 
     close(kqueue_fd_);
+  }
+
+  // Register a socket with the reactor. Returns 0 on success, system error
+  // code on failure.
+  int register_descriptor(socket_type descriptor)
+  {
+    return 0;
   }
 
   // Start a new read operation. The handler object will be invoked when the
@@ -210,8 +217,7 @@ public:
   // handler.
   void enqueue_cancel_ops_unlocked(socket_type descriptor)
   {
-    pending_cancellations_.insert(
-        pending_cancellations_map::value_type(descriptor, true));
+    pending_cancellations_.push_back(descriptor);
   }
 
   // Cancel any operations that are running against the descriptor and remove
@@ -255,16 +261,8 @@ private:
   friend class task_demuxer_service<
       kqueue_reactor<Own_Thread, Allocator>, Allocator>;
 
-  // Reset the select loop before a new run.
-  void reset()
-  {
-    asio::detail::mutex::scoped_lock lock(mutex_);
-    stop_thread_ = false;
-    interrupter_.reset();
-  }
-
-  // Run the epoll loop.
-  void run()
+  // Run the kqueue loop.
+  void run(bool block)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
@@ -274,11 +272,17 @@ private:
     write_op_queue_.dispatch_cancellations();
     except_op_queue_.dispatch_cancellations();
 
+    // We can return immediately if there's no work to do and the reactor is
+    // not supposed to block.
+    if (!block && read_op_queue_.empty() && write_op_queue_.empty()
+        && except_op_queue_.empty() && timer_queue_.empty())
+      return;
+
     bool stop = false;
     while (!stop && !stop_thread_)
     {
-      timespec timeout_buf;
-      timespec* timeout = get_timeout(timeout_buf);
+      timespec timeout_buf = { 0, 0 };
+      timespec* timeout = block ? get_timeout(timeout_buf) : &timeout_buf;
       wait_in_progress_ = true;
       lock.unlock();
 
@@ -375,14 +379,17 @@ private:
           boost::posix_time::microsec_clock::universal_time());
 
       // Issue any pending cancellations.
-      pending_cancellations_map::iterator i = pending_cancellations_.begin();
-      while (i != pending_cancellations_.end())
-      {
-        cancel_ops_unlocked(i->first);
-        ++i;
-      }
+      for (size_t i = 0; i < pending_cancellations_.size(); ++i)
+        cancel_ops_unlocked(pending_cancellations_[i]);
       pending_cancellations_.clear();
+
+      if (!block)
+        break;
     }
+
+    // Reset for next run.
+    stop_thread_ = false;
+    interrupter_.reset();
   }
 
   // Run the select loop in the thread.
@@ -392,7 +399,7 @@ private:
     while (!stop_thread_)
     {
       lock.unlock();
-      run();
+      run(true);
       lock.lock();
     }
   }
@@ -483,11 +490,8 @@ private:
   // The queue of timers.
   reactor_timer_queue<boost::posix_time::ptime> timer_queue_;
 
-  // The type for a map of descriptors to be cancelled.
-  typedef hash_map<socket_type, bool> pending_cancellations_map;
-
-  // The map of descriptors that are pending cancellation.
-  pending_cancellations_map pending_cancellations_;
+  // The descriptors that are pending cancellation.
+  std::vector<socket_type> pending_cancellations_;
 
   // Does the reactor loop thread need to stop.
   bool stop_thread_;

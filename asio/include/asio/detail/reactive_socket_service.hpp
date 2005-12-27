@@ -74,14 +74,27 @@ public:
     socket_holder sock(socket_ops::socket(protocol.family(),
           protocol.type(), protocol.protocol()));
     if (sock.get() == invalid_socket)
+    {
       error_handler(asio::error(socket_ops::get_error()));
-    else
-      impl = sock.release();
+      return;
+    }
+
+    int err = reactor_.register_descriptor(sock.get());
+    if (err)
+    {
+      error_handler(asio::error(err));
+      return;
+    }
+
+    impl = sock.release();
   }
 
   // Assign a new socket implementation.
   void assign(impl_type& impl, impl_type new_impl)
   {
+    int err = reactor_.register_descriptor(new_impl);
+    if (err)
+      return;
     impl = new_impl;
   }
 
@@ -233,14 +246,14 @@ public:
     {
     }
 
-    void operator()(int result)
+    bool operator()(int result)
     {
       // Check whether the operation was successful.
       if (result != 0)
       {
         asio::error error(result);
         demuxer_.post(bind_handler(handler_, error, 0));
-        return;
+        return true;
       }
 
       // Copy buffers into array.
@@ -259,7 +272,13 @@ public:
       int bytes = socket_ops::send(impl_, bufs, i, flags_);
       asio::error error(bytes < 0
           ? socket_ops::get_error() : asio::error::success);
+
+      // Check if we need to run the operation again.
+      if (error == asio::error::would_block)
+        return false;
+
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
+      return true;
     }
 
   private:
@@ -337,14 +356,14 @@ public:
     {
     }
 
-    void operator()(int result)
+    bool operator()(int result)
     {
       // Check whether the operation was successful.
       if (result != 0)
       {
         asio::error error(result);
         demuxer_.post(bind_handler(handler_, error, 0));
-        return;
+        return true;
       }
 
       // Copy buffers into array.
@@ -364,7 +383,13 @@ public:
           destination_.data(), destination_.size());
       asio::error error(bytes < 0
           ? socket_ops::get_error() : asio::error::success);
+
+      // Check if we need to run the operation again.
+      if (error == asio::error::would_block)
+        return false;
+
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
+      return true;
     }
 
   private:
@@ -445,14 +470,14 @@ public:
     {
     }
 
-    void operator()(int result)
+    bool operator()(int result)
     {
       // Check whether the operation was successful.
       if (result != 0)
       {
         asio::error error(result);
         demuxer_.post(bind_handler(handler_, error, 0));
-        return;
+        return true;
       }
 
       // Copy buffers into array.
@@ -474,7 +499,13 @@ public:
       else if (bytes == 0)
         error_code = asio::error::eof;
       asio::error error(error_code);
+
+      // Check if we need to run the operation again.
+      if (error == asio::error::would_block)
+        return false;
+
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
+      return true;
     }
 
   private:
@@ -569,14 +600,14 @@ public:
     {
     }
 
-    void operator()(int result)
+    bool operator()(int result)
     {
       // Check whether the operation was successful.
       if (result != 0)
       {
         asio::error error(result);
         demuxer_.post(bind_handler(handler_, error, 0));
-        return;
+        return true;
       }
 
       // Copy buffers into array.
@@ -600,8 +631,14 @@ public:
       else if (bytes == 0)
         error_code = asio::error::eof;
       asio::error error(error_code);
+
+      // Check if we need to run the operation again.
+      if (error == asio::error::would_block)
+        return false;
+
       sender_endpoint_.size(addr_len);
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
+      return true;
     }
 
   private:
@@ -696,22 +733,28 @@ public:
     {
     }
 
-    void operator()(int result)
+    bool operator()(int result)
     {
       // Check whether the operation was successful.
       if (result != 0)
       {
         asio::error error(result);
         demuxer_.post(bind_handler(handler_, error));
-        return;
+        return true;
       }
 
       // Accept the waiting connection.
       socket_type new_socket = socket_ops::accept(impl_, 0, 0);
       asio::error error(new_socket == invalid_socket
           ? socket_ops::get_error() : asio::error::success);
+
+      // Check if we need to run the operation again.
+      if (error == asio::error::would_block)
+        return false;
+
       peer_.set_impl(new_socket);
       demuxer_.post(bind_handler(handler_, error));
+      return true;
     }
 
   private:
@@ -759,14 +802,14 @@ public:
     {
     }
 
-    void operator()(int result)
+    bool operator()(int result)
     {
       // Check whether the operation was successful.
       if (result != 0)
       {
         asio::error error(result);
         demuxer_.post(bind_handler(handler_, error));
-        return;
+        return true;
       }
 
       // Accept the waiting connection.
@@ -775,9 +818,15 @@ public:
           peer_endpoint_.data(), &addr_len);
       asio::error error(new_socket == invalid_socket
           ? socket_ops::get_error() : asio::error::success);
+
+      // Check if we need to run the operation again.
+      if (error == asio::error::would_block)
+        return false;
+
       peer_endpoint_.size(addr_len);
       peer_.set_impl(new_socket);
       demuxer_.post(bind_handler(handler_, error));
+      return true;
     }
 
   private:
@@ -833,6 +882,15 @@ public:
         error_handler(asio::error(socket_ops::get_error()));
         return;
       }
+
+      // Register the socket with the reactor.
+      int err = reactor_.register_descriptor(impl);
+      if (err)
+      {
+        socket_ops::close(impl);
+        error_handler(asio::error(err));
+        return;
+      }
     }
 
     // Perform the connect operation.
@@ -857,12 +915,12 @@ public:
     {
     }
 
-    void operator()(int result)
+    bool operator()(int result)
     {
       // Check whether a handler has already been called for the connection.
       // If it has, then we don't want to do anything in this handler.
       if (*completed_)
-        return;
+        return true;
 
       // Cancel the other reactor operation for the connection.
       *completed_ = true;
@@ -873,7 +931,7 @@ public:
       {
         asio::error error(result);
         demuxer_.post(bind_handler(handler_, error));
-        return;
+        return true;
       }
 
       // Get the error code from the connect operation.
@@ -884,7 +942,7 @@ public:
       {
         asio::error error(socket_ops::get_error());
         demuxer_.post(bind_handler(handler_, error));
-        return;
+        return true;
       }
 
       // If connection failed then post the handler with the error code.
@@ -892,7 +950,7 @@ public:
       {
         asio::error error(connect_error);
         demuxer_.post(bind_handler(handler_, error));
-        return;
+        return true;
       }
 
       // Make the socket blocking again (the default).
@@ -901,12 +959,14 @@ public:
       {
         asio::error error(socket_ops::get_error());
         demuxer_.post(bind_handler(handler_, error));
-        return;
+        return true;
       }
 
       // Post the result of the successful connection operation.
       asio::error error(asio::error::success);
       demuxer_.post(bind_handler(handler_, error));
+
+      return true;
     }
 
   private:
@@ -936,6 +996,16 @@ public:
       if (impl == invalid_socket)
       {
         asio::error error(socket_ops::get_error());
+        demuxer_.post(bind_handler(handler, error));
+        return;
+      }
+
+      // Register the socket with the reactor.
+      int err = reactor_.register_descriptor(impl);
+      if (err)
+      {
+        socket_ops::close(impl);
+        asio::error error(err);
         demuxer_.post(bind_handler(handler, error));
         return;
       }

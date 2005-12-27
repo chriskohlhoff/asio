@@ -106,16 +106,27 @@ public:
     {
       op_base* next_op = i->second->next_;
       i->second->next_ = 0;
-      i->second->invoke(result);
-      if (next_op)
+      bool done = i->second->invoke(result);
+      if (done)
       {
-        i->second = next_op;
-        return true;
+        // Operation has finished.
+        if (next_op)
+        {
+          i->second = next_op;
+          return true;
+        }
+        else
+        {
+          operations_.erase(i);
+          return false;
+        }
       }
       else
       {
-        operations_.erase(i);
-        return false;
+        // Operation wants to be called again. Leave it at the front of the
+        // queue for this descriptor.
+        i->second->next_ = next_op;
+        return true;
       }
     }
     return false;
@@ -127,14 +138,19 @@ public:
     typename operation_map::iterator i = operations_.find(descriptor);
     if (i != operations_.end())
     {
-      op_base* op = i->second;
       operations_.erase(i);
-      while (op)
+      while (i->second)
       {
-        op_base* next_op = op->next_;
-        op->next_ = 0;
-        op->invoke(result);
-        op = next_op;
+        op_base* next_op = i->second->next_;
+        i->second->next_ = 0;
+        bool done = i->second->invoke(result);
+        if (!done)
+        {
+          // Operation has not finished yet, so leave at front of queue.
+          i->second->next_ = next_op;
+          return;
+        }
+        i->second = next_op;
       }
     }
   }
@@ -165,11 +181,18 @@ public:
       {
         op_base* next_op = op->second->next_;
         op->second->next_ = 0;
-        op->second->invoke(result);
-        if (next_op)
-          op->second = next_op;
+        bool done = op->second->invoke(result);
+        if (done)
+        {
+          if (next_op)
+            op->second = next_op;
+          else
+            operations_.erase(op);
+        }
         else
-          operations_.erase(op);
+        {
+          op->second->next_ = next_op;
+        }
       }
     }
   }
@@ -199,13 +222,13 @@ private:
     }
 
     // Perform the operation.
-    void invoke(int result)
+    bool invoke(int result)
     {
-      func_(this, result);
+      return func_(this, result);
     }
 
   protected:
-    typedef void (*func_type)(op_base*, int);
+    typedef bool (*func_type)(op_base*, int);
 
     // Construct an operation for the given descriptor.
     op_base(func_type func, Descriptor descriptor)
@@ -247,10 +270,13 @@ private:
     }
 
     // Invoke the handler.
-    static void invoke_handler(op_base* base, int result)
+    static bool invoke_handler(op_base* base, int result)
     {
       std::auto_ptr<op<Handler> > o(static_cast<op<Handler>*>(base));
-      o->handler_(result);
+      bool done = o->handler_(result);
+      if (!done)
+        o.release();
+      return done;
     }
 
   private:

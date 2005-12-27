@@ -43,10 +43,9 @@ public:
     : mutex_(),
       allocator_(demuxer.get_allocator()),
       task_(demuxer.get_service(service_factory<Task>())),
-      task_is_running_(false),
       outstanding_work_(0),
-      handler_queue_(0),
-      handler_queue_end_(0),
+      handler_queue_(&task_handler_),
+      handler_queue_end_(&task_handler_),
       interrupted_(false),
       first_idle_thread_(0)
   {
@@ -72,64 +71,80 @@ public:
         handler_queue_ = h->next_;
         if (handler_queue_ == 0)
           handler_queue_end_ = 0;
+        bool more_handlers = (handler_queue_ != 0);
         lock.unlock();
 
-        // Helper class to perform operations on block exit.
-        class cleanup
+        if (h == &task_handler_)
         {
-        public:
-          cleanup(asio::detail::mutex::scoped_lock& lock,
-              int& outstanding_work)
-            : lock_(lock),
-              outstanding_work_(outstanding_work)
+          // Helper class to perform operations on block exit.
+          class cleanup
           {
-          }
+          public:
+            cleanup(asio::detail::mutex::scoped_lock& lock,
+                handler_base*& handler_queue, handler_base*& handler_queue_end,
+                handler_base& task_handler)
+              : lock_(lock),
+                handler_queue_(handler_queue),
+                handler_queue_end_(handler_queue_end),
+                task_handler_(task_handler)
+            {
+            }
 
-          ~cleanup()
-          {
-            lock_.lock();
-            --outstanding_work_;
-          }
+            ~cleanup()
+            {
+              // Reinsert the task at the end of the handler queue.
+              lock_.lock();
+              task_handler_.next_ = 0;
+              if (handler_queue_end_)
+              {
+                handler_queue_end_->next_ = &task_handler_;
+                handler_queue_end_ = &task_handler_;
+              }
+              else
+              {
+                handler_queue_ = handler_queue_end_ = &task_handler_;
+              }
+            }
 
-        private:
-          asio::detail::mutex::scoped_lock& lock_;
-          int& outstanding_work_;
-        } c(lock, outstanding_work_);
+          private:
+            asio::detail::mutex::scoped_lock& lock_;
+            handler_base*& handler_queue_;
+            handler_base*& handler_queue_end_;
+            handler_base& task_handler_;
+          } c(lock, handler_queue_, handler_queue_end_, task_handler_);
 
-        // Invoke the handler. May throw an exception.
-        h->call(allocator_); // call() deletes the handler object
-      }
-      else if (!task_is_running_)
-      {
-        // Prepare to execute the task.
-        task_is_running_ = true;
-        lock.unlock();
-
-        // Helper class to perform operations on block exit.
-        class cleanup
+          // Run the task. May throw an exception. Only block if the handler
+          // queue is empty, otherwise we want to return as soon as possible to
+          // execute the handlers.
+          task_.run(!more_handlers);
+        }
+        else
         {
-        public:
-          cleanup(asio::detail::mutex::scoped_lock& lock,
-              bool& task_is_running)
-            : lock_(lock),
-              task_is_running_(task_is_running)
+          // Helper class to perform operations on block exit.
+          class cleanup
           {
-          }
+          public:
+            cleanup(asio::detail::mutex::scoped_lock& lock,
+                int& outstanding_work)
+              : lock_(lock),
+                outstanding_work_(outstanding_work)
+            {
+            }
 
-          ~cleanup()
-          {
-            lock_.lock();
-            task_is_running_ = false;
-          }
+            ~cleanup()
+            {
+              lock_.lock();
+              --outstanding_work_;
+            }
 
-        private:
-          asio::detail::mutex::scoped_lock& lock_;
-          bool& task_is_running_;
-        } c(lock, task_is_running_);
+          private:
+            asio::detail::mutex::scoped_lock& lock_;
+            int& outstanding_work_;
+          } c(lock, outstanding_work_);
 
-        // Run the task. May throw an exception.
-        task_.reset();
-        task_.run();
+          // Invoke the handler. May throw an exception.
+          h->call(allocator_); // call() deletes the handler object
+        }
       }
       else 
       {
@@ -237,7 +252,8 @@ public:
 
     // Wake up a thread to execute the handler.
     if (!interrupt_one_idle_thread())
-      interrupt_task();
+      if (task_handler_.next_ == 0 && handler_queue_end_ != &task_handler_)
+        task_.interrupt();
   }
 
 private:
@@ -246,7 +262,8 @@ private:
   {
     interrupted_ = true;
     interrupt_all_idle_threads();
-    interrupt_task();
+    if (task_handler_.next_ == 0 && handler_queue_end_ != &task_handler_)
+      task_.interrupt();
   }
 
   // Interrupt a single idle thread. Returns true if a thread was interrupted,
@@ -275,18 +292,6 @@ private:
         current_idle_thread = current_idle_thread->next;
       }
     }
-  }
-
-  // Interrupt the task. Returns true if the task was interrupted, false if
-  // the task was not running and so could not be interrupted.
-  bool interrupt_task()
-  {
-    if (task_is_running_)
-    {
-      task_.interrupt();
-      return true;
-    }
-    return false;
   }
 
   // The base class for all handler wrappers. A function pointer is used
@@ -363,8 +368,16 @@ private:
   // The task to be run by this demuxer service.
   Task& task_;
 
-  // Whether the task is currently running.
-  bool task_is_running_;
+  // Handler object to represent the position of the task in the queue.
+  class task_handler
+    : public handler_base
+  {
+  public:
+    task_handler()
+      : handler_base(0)
+    {
+    }
+  } task_handler_;
 
   // The count of unfinished work.
   int outstanding_work_;

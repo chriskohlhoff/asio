@@ -75,6 +75,12 @@ public:
     return values_.end();
   }
 
+  // Check whether the map is empty.
+  bool empty() const
+  {
+    return values_.empty();
+  }
+
   // Find an entry in the map.
   iterator find(const K& k)
   {
