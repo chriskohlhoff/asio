@@ -1279,12 +1279,12 @@ public:
     {
     }
 
-    void operator()(int result)
+    bool operator()(int result)
     {
       // Check whether a handler has already been called for the connection.
       // If it has, then we don't want to do anything in this handler.
       if (*completed_)
-        return;
+        return true;
 
       // Cancel the other reactor operation for the connection.
       *completed_ = true;
@@ -1295,7 +1295,7 @@ public:
       {
         asio::error error(result);
         demuxer_.post(bind_handler(handler_, error));
-        return;
+        return true;
       }
 
       // Get the error code from the connect operation.
@@ -1306,7 +1306,7 @@ public:
       {
         asio::error error(socket_ops::get_error());
         demuxer_.post(bind_handler(handler_, error));
-        return;
+        return true;
       }
 
       // If connection failed then post the handler with the error code.
@@ -1314,7 +1314,7 @@ public:
       {
         asio::error error(connect_error);
         demuxer_.post(bind_handler(handler_, error));
-        return;
+        return true;
       }
 
       // Make the socket blocking again (the default).
@@ -1323,12 +1323,13 @@ public:
       {
         asio::error error(socket_ops::get_error());
         demuxer_.post(bind_handler(handler_, error));
-        return;
+        return true;
       }
 
       // Post the result of the successful connection operation.
       asio::error error(asio::error::success);
       demuxer_.post(bind_handler(handler_, error));
+      return true;
     }
 
   private:
