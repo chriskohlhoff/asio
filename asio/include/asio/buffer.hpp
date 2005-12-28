@@ -39,8 +39,8 @@ std::size_t buffer_size_helper(const const_buffer&);
 
 /// Holds a buffer that can be modified.
 /**
- * The const_buffer class provides a safe representation of a buffer that can be
- * modified. It does not own the underlying data, and so is cheap to copy or
+ * The mutable_buffer class provides a safe representation of a buffer that can
+ * be modified. It does not own the underlying data, and so is cheap to copy or
  * assign.
  */
 class mutable_buffer
