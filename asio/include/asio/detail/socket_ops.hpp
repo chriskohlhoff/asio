@@ -469,6 +469,42 @@ inline int select(int nfds, fd_set* readfds, fd_set* writefds,
   return error_wrapper(::select(nfds, readfds, writefds, exceptfds, timeout));
 }
 
+inline int poll_read(socket_type s)
+{
+#if defined(BOOST_WINDOWS)
+  FD_SET fds;
+  FD_ZERO(&fds);
+  FD_SET(s, &fds);
+  set_error(0);
+  return error_wrapper(::select(s, &fds, 0, 0, 0));
+#else // defined(BOOST_WINDOWS)
+  pollfd fds;
+  fds.fd = s;
+  fds.events = POLLIN;
+  fds.revents = 0;
+  set_error(0);
+  return error_wrapper(::poll(&fds, 1, -1));
+#endif // defined(BOOST_WINDOWS)
+}
+
+inline int poll_write(socket_type s)
+{
+#if defined(BOOST_WINDOWS)
+  FD_SET fds;
+  FD_ZERO(&fds);
+  FD_SET(s, &fds);
+  set_error(0);
+  return error_wrapper(::select(s, 0, &fds, 0, 0));
+#else // defined(BOOST_WINDOWS)
+  pollfd fds;
+  fds.fd = s;
+  fds.events = POLLOUT;
+  fds.revents = 0;
+  set_error(0);
+  return error_wrapper(::poll(&fds, 1, -1));
+#endif // defined(BOOST_WINDOWS)
+}
+
 inline const char* inet_ntop(int af, const void* src, char* dest,
     size_t length)
 {

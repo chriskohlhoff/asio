@@ -113,6 +113,18 @@ public:
       return socket_;
     }
 
+    // Compare two sockets.
+    friend bool operator==(const impl_type& a, const impl_type& b)
+    {
+      return a.socket_ == b.socket_;
+    }
+
+    // Compare two sockets.
+    friend bool operator!=(const impl_type& a, const impl_type& b)
+    {
+      return a.socket_ != b.socket_;
+    }
+
   private:
     socket_type socket_;
     friend class win_iocp_socket_service<Allocator>;

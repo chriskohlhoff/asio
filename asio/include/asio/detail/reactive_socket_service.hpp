@@ -39,7 +39,80 @@ class reactive_socket_service
 public:
   // The native type of the socket. This type is dependent on the
   // underlying implementation of the socket layer.
-  typedef socket_type impl_type;
+  class impl_type
+  {
+  public:
+    // Default constructor.
+    impl_type()
+      : socket_(invalid_socket),
+        non_blocking_(false)
+    {
+    }
+
+    // Construct from socket type.
+    explicit impl_type(socket_type s)
+      : socket_(s),
+        non_blocking_(false)
+    {
+    }
+
+    // Copy constructor.
+    impl_type(const impl_type& other)
+      : socket_(other.socket_),
+        non_blocking_(false)
+    {
+    }
+
+    // Assignment operator.
+    impl_type& operator=(const impl_type& other)
+    {
+      socket_ = other.socket_;
+      non_blocking_ = other.non_blocking_;
+      return *this;
+    }
+
+    // Assign from socket type.
+    impl_type& operator=(socket_type s)
+    {
+      socket_ = s;
+      non_blocking_ = false;
+      return *this;
+    }
+
+    // Convert to socket type.
+    operator socket_type() const
+    {
+      return socket_;
+    }
+
+    // Determine whether the socket is non-blocking.
+    bool non_blocking() const
+    {
+      return non_blocking_;
+    }
+
+    // Set whether the socket is non-blocking.
+    void non_blocking(bool value)
+    {
+      non_blocking_ = value;
+    }
+
+    // Compare two sockets.
+    friend bool operator==(const impl_type& a, const impl_type& b)
+    {
+      return a.socket_ == b.socket_;
+    }
+
+    // Compare two sockets.
+    friend bool operator!=(const impl_type& a, const impl_type& b)
+    {
+      return a.socket_ != b.socket_;
+    }
+
+  private:
+    socket_type socket_;
+    bool non_blocking_;
+  };
 
   // The maximum number of buffers to support in a single operation.
   enum { max_buffers = 16 };
@@ -63,7 +136,7 @@ public:
   // Return a null socket implementation.
   static impl_type null()
   {
-    return invalid_socket;
+    return impl_type();
   }
 
   // Open a new socket implementation.
@@ -74,6 +147,13 @@ public:
     socket_holder sock(socket_ops::socket(protocol.family(),
           protocol.type(), protocol.protocol()));
     if (sock.get() == invalid_socket)
+    {
+      error_handler(asio::error(socket_ops::get_error()));
+      return;
+    }
+
+    ioctl_arg_type non_blocking = 1;
+    if (socket_ops::ioctl(sock.get(), FIONBIO, &non_blocking))
     {
       error_handler(asio::error(socket_ops::get_error()));
       return;
@@ -92,6 +172,10 @@ public:
   // Assign a new socket implementation.
   void assign(impl_type& impl, impl_type new_impl)
   {
+    ioctl_arg_type non_blocking = 1;
+    if (socket_ops::ioctl(new_impl, FIONBIO, &non_blocking))
+      return;
+
     int err = reactor_.register_descriptor(new_impl);
     if (err)
       return;
@@ -105,6 +189,10 @@ public:
     if (impl != null())
     {
       reactor_.close_descriptor(impl);
+
+      ioctl_arg_type non_blocking = 0;
+      socket_ops::ioctl(impl, FIONBIO, &non_blocking);
+
       if (socket_ops::close(impl) == socket_error_retval)
         error_handler(asio::error(socket_ops::get_error()));
       else
@@ -159,9 +247,16 @@ public:
   void io_control(impl_type& impl, IO_Control_Command& command,
       Error_Handler error_handler)
   {
-    if (socket_ops::ioctl(impl, command.name(),
-          static_cast<ioctl_arg_type*>(command.data())))
-      error_handler(asio::error(socket_ops::get_error()));
+    if (command.name() == static_cast<int>(FIONBIO))
+    {
+      impl.non_blocking(command.get());
+    }
+    else
+    {
+      if (socket_ops::ioctl(impl, command.name(),
+            static_cast<ioctl_arg_type*>(command.data())))
+        error_handler(asio::error(socket_ops::get_error()));
+    }
   }
 
   // Get the local endpoint.
@@ -222,13 +317,33 @@ public:
     }
 
     // Send the data.
-    int bytes_sent = socket_ops::send(impl, bufs, i, flags);
-    if (bytes_sent < 0)
+    for (;;)
     {
-      error_handler(asio::error(socket_ops::get_error()));
-      return 0;
+      // Try to complete the operation without blocking.
+      int bytes_sent = socket_ops::send(impl, bufs, i, flags);
+      asio::error error(socket_ops::get_error());
+
+      // Check if operation succeeded.
+      if (bytes_sent >= 0)
+        return bytes_sent;
+
+      // Operation failed.
+      if (impl.non_blocking()
+          || (error != asio::error::would_block
+            && error != asio::error::try_again))
+      {
+        error_handler(error);
+        return 0;
+      }
+
+      // Wait for socket to become ready.
+      int poll_result = socket_ops::poll_write(impl);
+      if (poll_result < 0)
+      {
+        error_handler(asio::error(socket_ops::get_error()));
+        return 0;
+      }
     }
-    return bytes_sent;
   }
 
   template <typename Const_Buffers, typename Handler>
@@ -274,7 +389,8 @@ public:
           ? socket_ops::get_error() : asio::error::success);
 
       // Check if we need to run the operation again.
-      if (error == asio::error::would_block)
+      if (error == asio::error::would_block
+          || error == asio::error::try_again)
         return false;
 
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
@@ -329,14 +445,34 @@ public:
     }
 
     // Send the data.
-    int bytes_sent = socket_ops::sendto(impl, bufs, i, flags,
-        destination.data(), destination.size());
-    if (bytes_sent < 0)
+    for (;;)
     {
-      error_handler(asio::error(socket_ops::get_error()));
-      return 0;
+      // Try to complete the operation without blocking.
+      int bytes_sent = socket_ops::sendto(impl, bufs, i, flags,
+          destination.data(), destination.size());
+      asio::error error(socket_ops::get_error());
+
+      // Check if operation succeeded.
+      if (bytes_sent >= 0)
+        return bytes_sent;
+
+      // Operation failed.
+      if (impl.non_blocking()
+          || (error != asio::error::would_block
+            && error != asio::error::try_again))
+      {
+        error_handler(error);
+        return 0;
+      }
+
+      // Wait for socket to become ready.
+      int poll_result = socket_ops::poll_write(impl);
+      if (poll_result < 0)
+      {
+        error_handler(asio::error(socket_ops::get_error()));
+        return 0;
+      }
     }
-    return bytes_sent;
   }
 
   template <typename Const_Buffers, typename Endpoint, typename Handler>
@@ -385,7 +521,8 @@ public:
           ? socket_ops::get_error() : asio::error::success);
 
       // Check if we need to run the operation again.
-      if (error == asio::error::would_block)
+      if (error == asio::error::would_block
+          || error == asio::error::try_again)
         return false;
 
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
@@ -440,18 +577,40 @@ public:
     }
 
     // Receive some data.
-    int bytes_recvd = socket_ops::recv(impl, bufs, i, flags);
-    if (bytes_recvd < 0)
+    for (;;)
     {
-      error_handler(asio::error(socket_ops::get_error()));
-      return 0;
+      // Try to complete the operation without blocking.
+      int bytes_recvd = socket_ops::recv(impl, bufs, i, flags);
+      asio::error error(socket_ops::get_error());
+
+      // Check if operation succeeded.
+      if (bytes_recvd > 0)
+        return bytes_recvd;
+
+      // Check for EOF.
+      if (bytes_recvd == 0)
+      {
+        error_handler(asio::error(asio::error::eof));
+        return 0;
+      }
+
+      // Operation failed.
+      if (impl.non_blocking()
+          || (error != asio::error::would_block
+            && error != asio::error::try_again))
+      {
+        error_handler(error);
+        return 0;
+      }
+
+      // Wait for socket to become ready.
+      int poll_result = socket_ops::poll_read(impl);
+      if (poll_result < 0)
+      {
+        error_handler(asio::error(socket_ops::get_error()));
+        return 0;
+      }
     }
-    if (bytes_recvd == 0)
-    {
-      error_handler(asio::error(asio::error::eof));
-      return 0;
-    }
-    return bytes_recvd;
   }
 
   template <typename Mutable_Buffers, typename Handler>
@@ -501,7 +660,8 @@ public:
       asio::error error(error_code);
 
       // Check if we need to run the operation again.
-      if (error == asio::error::would_block)
+      if (error == asio::error::would_block
+          || error == asio::error::try_again)
         return false;
 
       demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
@@ -564,23 +724,45 @@ public:
     }
 
     // Receive some data.
-    socket_addr_len_type addr_len = sender_endpoint.size();
-    int bytes_recvd = socket_ops::recvfrom(impl, bufs, i, flags,
-        sender_endpoint.data(), &addr_len);
-    if (bytes_recvd < 0)
+    for (;;)
     {
-      error_handler(asio::error(socket_ops::get_error()));
-      return 0;
-    }
-    if (bytes_recvd == 0)
-    {
-      error_handler(asio::error(asio::error::eof));
-      return 0;
-    }
+      // Try to complete the operation without blocking.
+      socket_addr_len_type addr_len = sender_endpoint.size();
+      int bytes_recvd = socket_ops::recvfrom(impl, bufs, i, flags,
+          sender_endpoint.data(), &addr_len);
+      asio::error error(socket_ops::get_error());
 
-    sender_endpoint.size(addr_len);
+      // Check if operation succeeded.
+      if (bytes_recvd > 0)
+      {
+        sender_endpoint.size(addr_len);
+        return bytes_recvd;
+      }
 
-    return bytes_recvd;
+      // Check for EOF.
+      if (bytes_recvd == 0)
+      {
+        error_handler(asio::error(asio::error::eof));
+        return 0;
+      }
+
+      // Operation failed.
+      if (impl.non_blocking()
+          || (error != asio::error::would_block
+            && error != asio::error::try_again))
+      {
+        error_handler(error);
+        return 0;
+      }
+
+      // Wait for socket to become ready.
+      int poll_result = socket_ops::poll_read(impl);
+      if (poll_result < 0)
+      {
+        error_handler(asio::error(socket_ops::get_error()));
+        return 0;
+      }
+    }
   }
 
   template <typename Mutable_Buffers, typename Endpoint, typename Handler>
@@ -633,7 +815,8 @@ public:
       asio::error error(error_code);
 
       // Check if we need to run the operation again.
-      if (error == asio::error::would_block)
+      if (error == asio::error::would_block
+          || error == asio::error::try_again)
         return false;
 
       sender_endpoint_.size(addr_len);
@@ -683,14 +866,38 @@ public:
       return;
     }
 
-    socket_type new_socket = socket_ops::accept(impl, 0, 0);
-    if (int err = socket_ops::get_error())
+    // Accept a socket.
+    for (;;)
     {
-      error_handler(asio::error(err));
-      return;
-    }
+      // Try to complete the operation without blocking.
+      socket_type new_socket = socket_ops::accept(impl, 0, 0);
+      asio::error error(socket_ops::get_error());
 
-    peer.set_impl(new_socket);
+      // Check if operation succeeded.
+      if (new_socket >= 0)
+      {
+        impl_type new_impl(new_socket);
+        peer.set_impl(new_impl);
+        return;
+      }
+
+      // Operation failed.
+      if (impl.non_blocking()
+          || (error != asio::error::would_block
+            && error != asio::error::try_again))
+      {
+        error_handler(error);
+        return;
+      }
+
+      // Wait for socket to become ready.
+      int poll_result = socket_ops::poll_read(impl);
+      if (poll_result < 0)
+      {
+        error_handler(asio::error(socket_ops::get_error()));
+        return;
+      }
+    }
   }
 
   // Accept a new connection.
@@ -705,18 +912,47 @@ public:
       return;
     }
 
-    socket_addr_len_type addr_len = peer_endpoint.size();
-    socket_type new_socket = socket_ops::accept(impl,
-        peer_endpoint.data(), &addr_len);
     if (int err = socket_ops::get_error())
     {
       error_handler(asio::error(err));
       return;
     }
 
-    peer_endpoint.size(addr_len);
+    // Accept a socket.
+    for (;;)
+    {
+      // Try to complete the operation without blocking.
+      socket_addr_len_type addr_len = peer_endpoint.size();
+      socket_type new_socket = socket_ops::accept(impl,
+          peer_endpoint.data(), &addr_len);
+      asio::error error(socket_ops::get_error());
 
-    peer.set_impl(new_socket);
+      // Check if operation succeeded.
+      if (new_socket >= 0)
+      {
+        peer_endpoint.size(addr_len);
+        impl_type new_impl(new_socket);
+        peer.set_impl(new_impl);
+        return;
+      }
+
+      // Operation failed.
+      if (impl.non_blocking()
+          || (error != asio::error::would_block
+            && error != asio::error::try_again))
+      {
+        error_handler(error);
+        return;
+      }
+
+      // Wait for socket to become ready.
+      int poll_result = socket_ops::poll_read(impl);
+      if (poll_result < 0)
+      {
+        error_handler(asio::error(socket_ops::get_error()));
+        return;
+      }
+    }
   }
 
   template <typename Socket, typename Handler>
@@ -749,10 +985,12 @@ public:
           ? socket_ops::get_error() : asio::error::success);
 
       // Check if we need to run the operation again.
-      if (error == asio::error::would_block)
+      if (error == asio::error::would_block
+          || error == asio::error::try_again)
         return false;
 
-      peer_.set_impl(new_socket);
+      impl_type new_impl(new_socket);
+      peer_.set_impl(new_impl);
       demuxer_.post(bind_handler(handler_, error));
       return true;
     }
@@ -820,11 +1058,13 @@ public:
           ? socket_ops::get_error() : asio::error::success);
 
       // Check if we need to run the operation again.
-      if (error == asio::error::would_block)
+      if (error == asio::error::would_block
+          || error == asio::error::try_again)
         return false;
 
       peer_endpoint_.size(addr_len);
-      peer_.set_impl(new_socket);
+      impl_type new_impl(new_socket);
+      peer_.set_impl(new_impl);
       demuxer_.post(bind_handler(handler_, error));
       return true;
     }
@@ -892,12 +1132,32 @@ public:
         return;
       }
     }
+    else
+    {
+      // Mark the socket as blocking while we perform the connect.
+      ioctl_arg_type non_blocking = 0;
+      if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
+      {
+        error_handler(asio::error(socket_ops::get_error()));
+        return;
+      }
+    }
 
     // Perform the connect operation.
     int result = socket_ops::connect(impl, peer_endpoint.data(),
         peer_endpoint.size());
+    asio::error error;
     if (result == socket_error_retval)
-      error_handler(asio::error(socket_ops::get_error()));
+      error = socket_ops::get_error();
+
+    // Mark the socket as non-blocking.
+    ioctl_arg_type non_blocking = 1;
+    if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
+      if (!error)
+        error = socket_ops::get_error();
+
+    if (error)
+      error_handler(error);
   }
 
   template <typename Handler>
@@ -953,15 +1213,6 @@ public:
         return true;
       }
 
-      // Make the socket blocking again (the default).
-      ioctl_arg_type non_blocking = 0;
-      if (socket_ops::ioctl(impl_, FIONBIO, &non_blocking))
-      {
-        asio::error error(socket_ops::get_error());
-        demuxer_.post(bind_handler(handler_, error));
-        return true;
-      }
-
       // Post the result of the successful connection operation.
       asio::error error(asio::error::success);
       demuxer_.post(bind_handler(handler_, error));
@@ -1000,6 +1251,16 @@ public:
         return;
       }
 
+      // Mark the socket as non-blocking.
+      ioctl_arg_type non_blocking = 1;
+      if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
+      {
+        socket_ops::close(impl);
+        asio::error error(socket_ops::get_error());
+        demuxer_.post(bind_handler(handler, error));
+        return;
+      }
+
       // Register the socket with the reactor.
       int err = reactor_.register_descriptor(impl);
       if (err)
@@ -1011,17 +1272,8 @@ public:
       }
     }
 
-    // Mark the socket as non-blocking so that the connection will take place
-    // asynchronously.
-    ioctl_arg_type non_blocking = 1;
-    if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
-    {
-      asio::error error(socket_ops::get_error());
-      demuxer_.post(bind_handler(handler, error));
-      return;
-    }
-
-    // Start the connect operation.
+    // Start the connect operation. The socket is already marked as non-blocking
+    // so the connection will take place asynchronously.
     if (socket_ops::connect(impl, peer_endpoint.data(),
           peer_endpoint.size()) == 0)
     {

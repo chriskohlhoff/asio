@@ -113,6 +113,10 @@ public:
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
+    if (!read_op_queue_.has_operation(descriptor))
+      if (handler(0))
+        return;
+
     if (read_op_queue_.enqueue_operation(descriptor, handler))
     {
       struct kevent event;
@@ -131,6 +135,10 @@ public:
   void start_write_op(socket_type descriptor, Handler handler)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
+
+    if (!write_op_queue_.has_operation(descriptor))
+      if (handler(0))
+        return;
 
     if (write_op_queue_.enqueue_operation(descriptor, handler))
     {

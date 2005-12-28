@@ -60,6 +60,7 @@
 # endif // defined(_MSC_VER) || defined(__BORLANDC__)
 #else
 # include <sys/ioctl.h>
+# include <sys/poll.h>
 # include <sys/types.h>
 # include <sys/select.h>
 # include <sys/socket.h>
