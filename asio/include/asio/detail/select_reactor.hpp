@@ -34,6 +34,7 @@
 #include "asio/detail/reactor_timer_queue.hpp"
 #include "asio/detail/select_interrupter.hpp"
 #include "asio/detail/signal_blocker.hpp"
+#include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
 
 namespace asio {
@@ -180,7 +181,7 @@ private:
   friend class task_demuxer_service<
       select_reactor<Own_Thread, Allocator>, Allocator>;
 
-  // Run the select loop.
+  // Run select once until interrupted or events are ready to be dispatched.
   void run(bool block)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
@@ -191,74 +192,67 @@ private:
     write_op_queue_.dispatch_cancellations();
     except_op_queue_.dispatch_cancellations();
 
+    // Check if the thread is supposed to stop.
+    if (stop_thread_)
+      return;
+
     // We can return immediately if there's no work to do and the reactor is
     // not supposed to block.
     if (!block && read_op_queue_.empty() && write_op_queue_.empty()
         && except_op_queue_.empty() && timer_queue_.empty())
       return;
 
-    bool stop = false;
-    while (!stop && !stop_thread_)
+    // Set up the descriptor sets.
+    fd_set_adapter read_fds;
+    read_fds.set(interrupter_.read_descriptor());
+    read_op_queue_.get_descriptors(read_fds);
+    fd_set_adapter write_fds;
+    write_op_queue_.get_descriptors(write_fds);
+    fd_set_adapter except_fds;
+    except_op_queue_.get_descriptors(except_fds);
+    socket_type max_fd = read_fds.max_descriptor();
+    if (write_fds.max_descriptor() > max_fd)
+      max_fd = write_fds.max_descriptor();
+    if (except_fds.max_descriptor() > max_fd)
+      max_fd = except_fds.max_descriptor();
+
+    // Block on the select call without holding the lock so that new
+    // operations can be started while the call is executing.
+    timeval tv_buf = { 0, 0 };
+    timeval* tv = block ? get_timeout(tv_buf) : &tv_buf;
+    select_in_progress_ = true;
+    lock.unlock();
+    int retval = socket_ops::select(static_cast<int>(max_fd),
+        read_fds, write_fds, except_fds, tv);
+    lock.lock();
+    select_in_progress_ = false;
+
+    // Block signals while dispatching operations.
+    asio::detail::signal_blocker sb;
+
+    // Reset the interrupter.
+    if (retval > 0 && read_fds.is_set(interrupter_.read_descriptor()))
+      interrupter_.reset();
+
+    // Dispatch all ready operations.
+    if (retval > 0)
     {
-      // Set up the descriptor sets.
-      fd_set_adapter read_fds;
-      read_fds.set(interrupter_.read_descriptor());
-      read_op_queue_.get_descriptors(read_fds);
-      fd_set_adapter write_fds;
-      write_op_queue_.get_descriptors(write_fds);
-      fd_set_adapter except_fds;
-      except_op_queue_.get_descriptors(except_fds);
-      socket_type max_fd = read_fds.max_descriptor();
-      if (write_fds.max_descriptor() > max_fd)
-        max_fd = write_fds.max_descriptor();
-      if (except_fds.max_descriptor() > max_fd)
-        max_fd = except_fds.max_descriptor();
-
-      // Block on the select call without holding the lock so that new
-      // operations can be started while the call is executing.
-      timeval tv_buf = { 0, 0 };
-      timeval* tv = block ? get_timeout(tv_buf) : &tv_buf;
-      select_in_progress_ = true;
-      lock.unlock();
-      int retval = socket_ops::select(static_cast<int>(max_fd + 1),
-          read_fds, write_fds, except_fds, tv);
-      lock.lock();
-      select_in_progress_ = false;
-
-      // Block signals while dispatching operations.
-      asio::detail::signal_blocker sb;
-
-      // Reset the interrupter.
-      if (retval > 0 && read_fds.is_set(interrupter_.read_descriptor()))
-        stop = interrupter_.reset();
-
-      // Dispatch all ready operations.
-      if (retval > 0)
-      {
-        // Exception operations must be processed first to ensure that any
-        // out-of-band data is read before normal data.
-        except_op_queue_.dispatch_descriptors(except_fds, 0);
-        read_op_queue_.dispatch_descriptors(read_fds, 0);
-        write_op_queue_.dispatch_descriptors(write_fds, 0);
-        except_op_queue_.dispatch_cancellations();
-        read_op_queue_.dispatch_cancellations();
-        write_op_queue_.dispatch_cancellations();
-      }
-      timer_queue_.dispatch_timers(
-          boost::posix_time::microsec_clock::universal_time());
-
-      // Issue any pending cancellations.
-      for (size_t i = 0; i < pending_cancellations_.size(); ++i)
-        cancel_ops_unlocked(pending_cancellations_[i]);
-      pending_cancellations_.clear();
-
-      if (!block)
-        break;
+      // Exception operations must be processed first to ensure that any
+      // out-of-band data is read before normal data.
+      except_op_queue_.dispatch_descriptors(except_fds, 0);
+      read_op_queue_.dispatch_descriptors(read_fds, 0);
+      write_op_queue_.dispatch_descriptors(write_fds, 0);
+      except_op_queue_.dispatch_cancellations();
+      read_op_queue_.dispatch_cancellations();
+      write_op_queue_.dispatch_cancellations();
     }
+    timer_queue_.dispatch_timers(
+        boost::posix_time::microsec_clock::universal_time());
 
-    // Reset for next run.
-    stop_thread_ = false;
-    interrupter_.reset();
+    // Issue any pending cancellations.
+    for (size_t i = 0; i < pending_cancellations_.size(); ++i)
+      cancel_ops_unlocked(pending_cancellations_[i]);
+    pending_cancellations_.clear();
   }
 
   // Run the select loop in the thread.

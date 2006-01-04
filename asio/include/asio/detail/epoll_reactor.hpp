@@ -289,7 +289,7 @@ private:
   friend class task_demuxer_service<
       epoll_reactor<Own_Thread, Allocator>, Allocator>;
 
-  // Run the epoll loop.
+  // Run epoll once until interrupted or events are ready to be dispatched.
   void run(bool block)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
@@ -300,111 +300,104 @@ private:
     write_op_queue_.dispatch_cancellations();
     except_op_queue_.dispatch_cancellations();
 
+    // Check if the thread is supposed to stop.
+    if (stop_thread_)
+      return;
+
     // We can return immediately if there's no work to do and the reactor is
     // not supposed to block.
     if (!block && read_op_queue_.empty() && write_op_queue_.empty()
         && except_op_queue_.empty() && timer_queue_.empty())
       return;
 
-    bool stop = false;
-    while (!stop && !stop_thread_)
+    int timeout = block ? get_timeout() : 0;
+    wait_in_progress_ = true;
+    lock.unlock();
+
+    // Block on the epoll descriptor.
+    epoll_event events[128];
+    int num_events = epoll_wait(epoll_fd_, events, 128, timeout);
+
+    lock.lock();
+    wait_in_progress_ = false;
+
+    // Block signals while dispatching operations.
+    asio::detail::signal_blocker sb;
+
+    // Dispatch the waiting events.
+    for (int i = 0; i < num_events; ++i)
     {
-      int timeout = block ? get_timeout() : 0;
-      wait_in_progress_ = true;
-      lock.unlock();
-
-      // Block on the epoll descriptor.
-      epoll_event events[128];
-      int num_events = epoll_wait(epoll_fd_, events, 128, timeout);
-
-      lock.lock();
-      wait_in_progress_ = false;
-
-      // Block signals while dispatching operations.
-      asio::detail::signal_blocker sb;
-
-      // Dispatch the waiting events.
-      for (int i = 0; i < num_events; ++i)
+      int descriptor = events[i].data.fd;
+      if (descriptor == interrupter_.read_descriptor())
       {
-        int descriptor = events[i].data.fd;
-        if (descriptor == interrupter_.read_descriptor())
+        interrupter_.reset();
+      }
+      else
+      {
+        if (events[i].events & (EPOLLERR | EPOLLHUP))
         {
-          stop = interrupter_.reset();
+          except_op_queue_.dispatch_all_operations(descriptor, 0);
+          read_op_queue_.dispatch_all_operations(descriptor, 0);
+          write_op_queue_.dispatch_all_operations(descriptor, 0);
+
+          epoll_event ev = { 0 };
+          ev.events = 0;
+          ev.data.fd = descriptor;
+          epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
         }
         else
         {
-          if (events[i].events & (EPOLLERR | EPOLLHUP))
-          {
-            except_op_queue_.dispatch_all_operations(descriptor, 0);
-            read_op_queue_.dispatch_all_operations(descriptor, 0);
-            write_op_queue_.dispatch_all_operations(descriptor, 0);
+          bool more_reads = false;
+          bool more_writes = false;
+          bool more_except = false;
 
-            epoll_event ev = { 0 };
-            ev.events = 0;
-            ev.data.fd = descriptor;
-            epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
-          }
+          // Exception operations must be processed first to ensure that any
+          // out-of-band data is read before normal data.
+          if (events[i].events & EPOLLPRI)
+            more_except = except_op_queue_.dispatch_operation(descriptor, 0);
           else
+            more_except = except_op_queue_.has_operation(descriptor);
+
+          if (events[i].events & EPOLLIN)
+            more_reads = read_op_queue_.dispatch_operation(descriptor, 0);
+          else
+            more_reads = read_op_queue_.has_operation(descriptor);
+
+          if (events[i].events & EPOLLOUT)
+            more_writes = write_op_queue_.dispatch_operation(descriptor, 0);
+          else
+            more_writes = write_op_queue_.has_operation(descriptor);
+
+          epoll_event ev = { 0 };
+          ev.events = EPOLLERR | EPOLLHUP;
+          if (more_reads)
+            ev.events |= EPOLLIN;
+          if (more_writes)
+            ev.events |= EPOLLOUT;
+          if (more_except)
+            ev.events |= EPOLLPRI;
+          ev.data.fd = descriptor;
+          int result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
+          if (result != 0)
           {
-            bool more_reads = false;
-            bool more_writes = false;
-            bool more_except = false;
-
-            // Exception operations must be processed first to ensure that any
-            // out-of-band data is read before normal data.
-            if (events[i].events & EPOLLPRI)
-              more_except = except_op_queue_.dispatch_operation(descriptor, 0);
-            else
-              more_except = except_op_queue_.has_operation(descriptor);
-
-            if (events[i].events & EPOLLIN)
-              more_reads = read_op_queue_.dispatch_operation(descriptor, 0);
-            else
-              more_reads = read_op_queue_.has_operation(descriptor);
-
-            if (events[i].events & EPOLLOUT)
-              more_writes = write_op_queue_.dispatch_operation(descriptor, 0);
-            else
-              more_writes = write_op_queue_.has_operation(descriptor);
-
-            epoll_event ev = { 0 };
-            ev.events = EPOLLERR | EPOLLHUP;
-            if (more_reads)
-              ev.events |= EPOLLIN;
-            if (more_writes)
-              ev.events |= EPOLLOUT;
-            if (more_except)
-              ev.events |= EPOLLPRI;
-            ev.data.fd = descriptor;
-            int result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
-            if (result != 0)
-            {
-              int error = errno;
-              read_op_queue_.dispatch_all_operations(descriptor, error);
-              write_op_queue_.dispatch_all_operations(descriptor, error);
-              except_op_queue_.dispatch_all_operations(descriptor, error);
-            }
+            int error = errno;
+            read_op_queue_.dispatch_all_operations(descriptor, error);
+            write_op_queue_.dispatch_all_operations(descriptor, error);
+            except_op_queue_.dispatch_all_operations(descriptor, error);
           }
         }
       }
-      read_op_queue_.dispatch_cancellations();
-      write_op_queue_.dispatch_cancellations();
-      except_op_queue_.dispatch_cancellations();
-      timer_queue_.dispatch_timers(
-          boost::posix_time::microsec_clock::universal_time());
-
-      // Issue any pending cancellations.
-      for (size_t i = 0; i < pending_cancellations_.size(); ++i)
-        cancel_ops_unlocked(pending_cancellations_[i]);
-      pending_cancellations_.clear();
-
-      if (!block)
-        break;
     }
+    read_op_queue_.dispatch_cancellations();
+    write_op_queue_.dispatch_cancellations();
+    except_op_queue_.dispatch_cancellations();
+    timer_queue_.dispatch_timers(
+        boost::posix_time::microsec_clock::universal_time());
 
-    // Reset for next run.
-    stop_thread_ = false;
-    interrupter_.reset();
+    // Issue any pending cancellations.
+    for (size_t i = 0; i < pending_cancellations_.size(); ++i)
+      cancel_ops_unlocked(pending_cancellations_[i]);
+    pending_cancellations_.clear();
   }
 
   // Run the select loop in the thread.

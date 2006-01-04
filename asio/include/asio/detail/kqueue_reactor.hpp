@@ -280,124 +280,119 @@ private:
     write_op_queue_.dispatch_cancellations();
     except_op_queue_.dispatch_cancellations();
 
+    // Check if the thread is supposed to stop.
+    if (stop_thread_)
+      return;
+
     // We can return immediately if there's no work to do and the reactor is
     // not supposed to block.
     if (!block && read_op_queue_.empty() && write_op_queue_.empty()
         && except_op_queue_.empty() && timer_queue_.empty())
       return;
 
-    bool stop = false;
-    while (!stop && !stop_thread_)
+    // Determine how long to block while waiting for events.
+    timespec timeout_buf = { 0, 0 };
+    timespec* timeout = block ? get_timeout(timeout_buf) : &timeout_buf;
+
+    wait_in_progress_ = true;
+    lock.unlock();
+
+    // Block on the kqueue descriptor.
+    struct kevent events[128];
+    int num_events = kevent(kqueue_fd_, 0, 0, events, 128, timeout);
+
+    lock.lock();
+    wait_in_progress_ = false;
+
+    // Block signals while dispatching operations.
+    asio::detail::signal_blocker sb;
+
+    // Dispatch the waiting events.
+    for (int i = 0; i < num_events; ++i)
     {
-      timespec timeout_buf = { 0, 0 };
-      timespec* timeout = block ? get_timeout(timeout_buf) : &timeout_buf;
-      wait_in_progress_ = true;
-      lock.unlock();
-
-      // Block on the kqueue descriptor.
-      struct kevent events[128];
-      int num_events = kevent(kqueue_fd_, 0, 0, events, 128, timeout);
-
-      lock.lock();
-      wait_in_progress_ = false;
-
-      // Block signals while dispatching operations.
-      asio::detail::signal_blocker sb;
-
-      // Dispatch the waiting events.
-      for (int i = 0; i < num_events; ++i)
+      int descriptor = events[i].ident;
+      if (descriptor == interrupter_.read_descriptor())
       {
-        int descriptor = events[i].ident;
-        if (descriptor == interrupter_.read_descriptor())
+        interrupter_.reset();
+      }
+      else if (events[i].filter == EVFILT_READ)
+      {
+        // Dispatch operations associated with the descriptor.
+        bool more_reads = false;
+        bool more_except = false;
+        if (events[i].flags & EV_ERROR)
         {
-          stop = interrupter_.reset();
+          int error = events[i].data;
+          except_op_queue_.dispatch_all_operations(descriptor, error);
+          read_op_queue_.dispatch_all_operations(descriptor, error);
         }
-        else if (events[i].filter == EVFILT_READ)
+        else if (events[i].flags & EV_OOBAND)
         {
-          // Dispatch operations associated with the descriptor.
-          bool more_reads = false;
-          bool more_except = false;
-          if (events[i].flags & EV_ERROR)
-          {
-            int error = events[i].data;
-            except_op_queue_.dispatch_all_operations(descriptor, error);
-            read_op_queue_.dispatch_all_operations(descriptor, error);
-          }
-          else if (events[i].flags & EV_OOBAND)
-          {
-            more_except = except_op_queue_.dispatch_operation(descriptor, 0);
-            if (events[i].data > 0)
-              more_reads = read_op_queue_.dispatch_operation(descriptor, 0);
-            else
-              more_reads = read_op_queue_.has_operation(descriptor);
-          }
-          else
-          {
+          more_except = except_op_queue_.dispatch_operation(descriptor, 0);
+          if (events[i].data > 0)
             more_reads = read_op_queue_.dispatch_operation(descriptor, 0);
-            more_except = except_op_queue_.has_operation(descriptor);
-          }
-
-          // Update the descriptor in the kqueue.
-          struct kevent event;
-          if (more_reads)
-            EV_SET(&event, descriptor, EVFILT_READ, EV_ADD, 0, 0, 0);
-          else if (more_except)
-            EV_SET(&event, descriptor, EVFILT_READ, EV_ADD, EV_OOBAND, 0, 0);
           else
-            EV_SET(&event, descriptor, EVFILT_READ, EV_DELETE, 0, 0, 0);
-          if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
-          {
-            int error = errno;
-            except_op_queue_.dispatch_all_operations(descriptor, error);
-            read_op_queue_.dispatch_all_operations(descriptor, error);
-          }
+            more_reads = read_op_queue_.has_operation(descriptor);
         }
-        else if (events[i].filter == EVFILT_WRITE)
+        else
         {
-          // Dispatch operations associated with the descriptor.
-          bool more_writes = false;
-          if (events[i].flags & EV_ERROR)
-          {
-            int error = events[i].data;
-            write_op_queue_.dispatch_all_operations(descriptor, error);
-          }
-          else
-          {
-            more_writes = write_op_queue_.dispatch_operation(descriptor, 0);
-          }
+          more_reads = read_op_queue_.dispatch_operation(descriptor, 0);
+          more_except = except_op_queue_.has_operation(descriptor);
+        }
 
-          // Update the descriptor in the kqueue.
-          struct kevent event;
-          if (more_writes)
-            EV_SET(&event, descriptor, EVFILT_WRITE, EV_ADD, 0, 0, 0);
-          else
-            EV_SET(&event, descriptor, EVFILT_WRITE, EV_DELETE, 0, 0, 0);
-          if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
-          {
-            int error = errno;
-            write_op_queue_.dispatch_all_operations(descriptor, error);
-          }
+        // Update the descriptor in the kqueue.
+        struct kevent event;
+        if (more_reads)
+          EV_SET(&event, descriptor, EVFILT_READ, EV_ADD, 0, 0, 0);
+        else if (more_except)
+          EV_SET(&event, descriptor, EVFILT_READ, EV_ADD, EV_OOBAND, 0, 0);
+        else
+          EV_SET(&event, descriptor, EVFILT_READ, EV_DELETE, 0, 0, 0);
+        if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
+        {
+          int error = errno;
+          except_op_queue_.dispatch_all_operations(descriptor, error);
+          read_op_queue_.dispatch_all_operations(descriptor, error);
         }
       }
+      else if (events[i].filter == EVFILT_WRITE)
+      {
+        // Dispatch operations associated with the descriptor.
+        bool more_writes = false;
+        if (events[i].flags & EV_ERROR)
+        {
+          int error = events[i].data;
+          write_op_queue_.dispatch_all_operations(descriptor, error);
+        }
+        else
+        {
+          more_writes = write_op_queue_.dispatch_operation(descriptor, 0);
+        }
 
-      read_op_queue_.dispatch_cancellations();
-      write_op_queue_.dispatch_cancellations();
-      except_op_queue_.dispatch_cancellations();
-      timer_queue_.dispatch_timers(
-          boost::posix_time::microsec_clock::universal_time());
-
-      // Issue any pending cancellations.
-      for (size_t i = 0; i < pending_cancellations_.size(); ++i)
-        cancel_ops_unlocked(pending_cancellations_[i]);
-      pending_cancellations_.clear();
-
-      if (!block)
-        break;
+        // Update the descriptor in the kqueue.
+        struct kevent event;
+        if (more_writes)
+          EV_SET(&event, descriptor, EVFILT_WRITE, EV_ADD, 0, 0, 0);
+        else
+          EV_SET(&event, descriptor, EVFILT_WRITE, EV_DELETE, 0, 0, 0);
+        if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
+        {
+          int error = errno;
+          write_op_queue_.dispatch_all_operations(descriptor, error);
+        }
+      }
     }
 
-    // Reset for next run.
-    stop_thread_ = false;
-    interrupter_.reset();
+    read_op_queue_.dispatch_cancellations();
+    write_op_queue_.dispatch_cancellations();
+    except_op_queue_.dispatch_cancellations();
+    timer_queue_.dispatch_timers(
+        boost::posix_time::microsec_clock::universal_time());
+
+    // Issue any pending cancellations.
+    for (size_t i = 0; i < pending_cancellations_.size(); ++i)
+      cancel_ops_unlocked(pending_cancellations_[i]);
+    pending_cancellations_.clear();
   }
 
   // Run the select loop in the thread.
