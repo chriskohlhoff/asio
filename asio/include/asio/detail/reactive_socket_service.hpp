@@ -45,21 +45,21 @@ public:
     // Default constructor.
     impl_type()
       : socket_(invalid_socket),
-        non_blocking_(false)
+        flags_(0)
     {
     }
 
     // Construct from socket type.
     explicit impl_type(socket_type s)
       : socket_(s),
-        non_blocking_(false)
+        flags_(0)
     {
     }
 
     // Copy constructor.
     impl_type(const impl_type& other)
       : socket_(other.socket_),
-        non_blocking_(false)
+        flags_(0)
     {
     }
 
@@ -67,7 +67,7 @@ public:
     impl_type& operator=(const impl_type& other)
     {
       socket_ = other.socket_;
-      non_blocking_ = other.non_blocking_;
+      flags_ = other.flags_;
       return *this;
     }
 
@@ -75,7 +75,7 @@ public:
     impl_type& operator=(socket_type s)
     {
       socket_ = s;
-      non_blocking_ = false;
+      flags_ = 0;
       return *this;
     }
 
@@ -83,18 +83,6 @@ public:
     operator socket_type() const
     {
       return socket_;
-    }
-
-    // Determine whether the socket is non-blocking.
-    bool non_blocking() const
-    {
-      return non_blocking_;
-    }
-
-    // Set whether the socket is non-blocking.
-    void non_blocking(bool value)
-    {
-      non_blocking_ = value;
     }
 
     // Compare two sockets.
@@ -111,7 +99,16 @@ public:
 
   private:
     socket_type socket_;
-    bool non_blocking_;
+
+    enum
+    {
+      user_set_non_blocking = 1, // The user wants a non-blocking socket.
+      internal_non_blocking = 2 // The socket has been set non-blocking.
+    };
+
+    unsigned char flags_;
+
+    friend class reactive_socket_service<Demuxer, Reactor>;
   };
 
   // The maximum number of buffers to support in a single operation.
@@ -152,13 +149,6 @@ public:
       return;
     }
 
-    ioctl_arg_type non_blocking = 1;
-    if (socket_ops::ioctl(sock.get(), FIONBIO, &non_blocking))
-    {
-      error_handler(asio::error(socket_ops::get_error()));
-      return;
-    }
-
     int err = reactor_.register_descriptor(sock.get());
     if (err)
     {
@@ -172,10 +162,6 @@ public:
   // Assign a new socket implementation.
   void assign(impl_type& impl, impl_type new_impl)
   {
-    ioctl_arg_type non_blocking = 1;
-    if (socket_ops::ioctl(new_impl, FIONBIO, &non_blocking))
-      return;
-
     int err = reactor_.register_descriptor(new_impl);
     if (err)
       return;
@@ -190,8 +176,12 @@ public:
     {
       reactor_.close_descriptor(impl);
 
-      ioctl_arg_type non_blocking = 0;
-      socket_ops::ioctl(impl, FIONBIO, &non_blocking);
+      if (impl.flags_ & impl_type::internal_non_blocking)
+      {
+        ioctl_arg_type non_blocking = 0;
+        socket_ops::ioctl(impl, FIONBIO, &non_blocking);
+        impl.flags_ &= ~impl_type::internal_non_blocking;
+      }
 
       if (socket_ops::close(impl) == socket_error_retval)
         error_handler(asio::error(socket_ops::get_error()));
@@ -249,7 +239,10 @@ public:
   {
     if (command.name() == static_cast<int>(FIONBIO))
     {
-      impl.non_blocking(command.get());
+      if (command.get())
+        impl.flags_ |= impl_type::user_set_non_blocking;
+      else
+        impl.flags_ &= ~impl_type::user_set_non_blocking;
     }
     else
     {
@@ -321,18 +314,18 @@ public:
     {
       // Try to complete the operation without blocking.
       int bytes_sent = socket_ops::send(impl, bufs, i, flags);
-      asio::error error(socket_ops::get_error());
+      int error = socket_ops::get_error();
 
       // Check if operation succeeded.
       if (bytes_sent >= 0)
         return bytes_sent;
 
       // Operation failed.
-      if (impl.non_blocking()
+      if ((impl.flags_ & impl_type::user_set_non_blocking)
           || (error != asio::error::would_block
             && error != asio::error::try_again))
       {
-        error_handler(error);
+        error_handler(asio::error(error));
         return 0;
       }
 
@@ -420,6 +413,19 @@ public:
     }
     else
     {
+      // Make socket non-blocking.
+      if (!(impl.flags_ & impl_type::internal_non_blocking))
+      {
+        ioctl_arg_type non_blocking = 1;
+        if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
+        {
+          asio::error error(socket_ops::get_error());
+          demuxer_.post(bind_handler(handler, error, 0));
+          return;
+        }
+        impl.flags_ |= impl_type::internal_non_blocking;
+      }
+
       reactor_.start_write_op(impl, send_handler<Const_Buffers, Handler>(
             impl, demuxer_, buffers, flags, handler));
     }
@@ -450,18 +456,18 @@ public:
       // Try to complete the operation without blocking.
       int bytes_sent = socket_ops::sendto(impl, bufs, i, flags,
           destination.data(), destination.size());
-      asio::error error(socket_ops::get_error());
+      int error = socket_ops::get_error();
 
       // Check if operation succeeded.
       if (bytes_sent >= 0)
         return bytes_sent;
 
       // Operation failed.
-      if (impl.non_blocking()
+      if ((impl.flags_ & impl_type::user_set_non_blocking)
           || (error != asio::error::would_block
             && error != asio::error::try_again))
       {
-        error_handler(error);
+        error_handler(asio::error(error));
         return 0;
       }
 
@@ -553,6 +559,19 @@ public:
     }
     else
     {
+      // Make socket non-blocking.
+      if (!(impl.flags_ & impl_type::internal_non_blocking))
+      {
+        ioctl_arg_type non_blocking = 1;
+        if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
+        {
+          asio::error error(socket_ops::get_error());
+          demuxer_.post(bind_handler(handler, error, 0));
+          return;
+        }
+        impl.flags_ |= impl_type::internal_non_blocking;
+      }
+
       reactor_.start_write_op(impl,
           send_to_handler<Const_Buffers, Endpoint, Handler>(
             impl, demuxer_, buffers, flags, destination, handler));
@@ -581,7 +600,7 @@ public:
     {
       // Try to complete the operation without blocking.
       int bytes_recvd = socket_ops::recv(impl, bufs, i, flags);
-      asio::error error(socket_ops::get_error());
+      int error = socket_ops::get_error();
 
       // Check if operation succeeded.
       if (bytes_recvd > 0)
@@ -595,11 +614,11 @@ public:
       }
 
       // Operation failed.
-      if (impl.non_blocking()
+      if ((impl.flags_ & impl_type::user_set_non_blocking)
           || (error != asio::error::would_block
             && error != asio::error::try_again))
       {
-        error_handler(error);
+        error_handler(asio::error(error));
         return 0;
       }
 
@@ -690,6 +709,19 @@ public:
     }
     else
     {
+      // Make socket non-blocking.
+      if (!(impl.flags_ & impl_type::internal_non_blocking))
+      {
+        ioctl_arg_type non_blocking = 1;
+        if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
+        {
+          asio::error error(socket_ops::get_error());
+          demuxer_.post(bind_handler(handler, error, 0));
+          return;
+        }
+        impl.flags_ |= impl_type::internal_non_blocking;
+      }
+
       if (flags & socket_base::message_out_of_band)
       {
         reactor_.start_except_op(impl,
@@ -730,7 +762,7 @@ public:
       socket_addr_len_type addr_len = sender_endpoint.size();
       int bytes_recvd = socket_ops::recvfrom(impl, bufs, i, flags,
           sender_endpoint.data(), &addr_len);
-      asio::error error(socket_ops::get_error());
+      int error = socket_ops::get_error();
 
       // Check if operation succeeded.
       if (bytes_recvd > 0)
@@ -747,11 +779,11 @@ public:
       }
 
       // Operation failed.
-      if (impl.non_blocking()
+      if ((impl.flags_ & impl_type::user_set_non_blocking)
           || (error != asio::error::would_block
             && error != asio::error::try_again))
       {
-        error_handler(error);
+        error_handler(asio::error(error));
         return 0;
       }
 
@@ -849,6 +881,19 @@ public:
     }
     else
     {
+      // Make socket non-blocking.
+      if (!(impl.flags_ & impl_type::internal_non_blocking))
+      {
+        ioctl_arg_type non_blocking = 1;
+        if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
+        {
+          asio::error error(socket_ops::get_error());
+          demuxer_.post(bind_handler(handler, error, 0));
+          return;
+        }
+        impl.flags_ |= impl_type::internal_non_blocking;
+      }
+
       reactor_.start_read_op(impl,
           receive_from_handler<Mutable_Buffers, Endpoint, Handler>(
             impl, demuxer_, buffers, flags, sender_endpoint, handler));
@@ -871,7 +916,7 @@ public:
     {
       // Try to complete the operation without blocking.
       socket_type new_socket = socket_ops::accept(impl, 0, 0);
-      asio::error error(socket_ops::get_error());
+      int error = socket_ops::get_error();
 
       // Check if operation succeeded.
       if (new_socket >= 0)
@@ -882,11 +927,11 @@ public:
       }
 
       // Operation failed.
-      if (impl.non_blocking()
+      if ((impl.flags_ & impl_type::user_set_non_blocking)
           || (error != asio::error::would_block
             && error != asio::error::try_again))
       {
-        error_handler(error);
+        error_handler(asio::error(error));
         return;
       }
 
@@ -925,7 +970,7 @@ public:
       socket_addr_len_type addr_len = peer_endpoint.size();
       socket_type new_socket = socket_ops::accept(impl,
           peer_endpoint.data(), &addr_len);
-      asio::error error(socket_ops::get_error());
+      int error = socket_ops::get_error();
 
       // Check if operation succeeded.
       if (new_socket >= 0)
@@ -937,11 +982,11 @@ public:
       }
 
       // Operation failed.
-      if (impl.non_blocking()
+      if ((impl.flags_ & impl_type::user_set_non_blocking)
           || (error != asio::error::would_block
             && error != asio::error::try_again))
       {
-        error_handler(error);
+        error_handler(asio::error(error));
         return;
       }
 
@@ -1020,6 +1065,19 @@ public:
     }
     else
     {
+      // Make socket non-blocking.
+      if (!(impl.flags_ & impl_type::internal_non_blocking))
+      {
+        ioctl_arg_type non_blocking = 1;
+        if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
+        {
+          asio::error error(socket_ops::get_error());
+          demuxer_.post(bind_handler(handler, error));
+          return;
+        }
+        impl.flags_ |= impl_type::internal_non_blocking;
+      }
+
       reactor_.start_read_op(impl,
           accept_handler<Socket, Handler>(impl, demuxer_, peer, handler));
     }
@@ -1096,6 +1154,19 @@ public:
     }
     else
     {
+      // Make socket non-blocking.
+      if (!(impl.flags_ & impl_type::internal_non_blocking))
+      {
+        ioctl_arg_type non_blocking = 1;
+        if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
+        {
+          asio::error error(socket_ops::get_error());
+          demuxer_.post(bind_handler(handler, error));
+          return;
+        }
+        impl.flags_ |= impl_type::internal_non_blocking;
+      }
+
       reactor_.start_read_op(impl,
           accept_endp_handler<Socket, Endpoint, Handler>(
             impl, demuxer_, peer, peer_endpoint, handler));
@@ -1132,7 +1203,7 @@ public:
         return;
       }
     }
-    else
+    else if (impl.flags_ & impl_type::internal_non_blocking)
     {
       // Mark the socket as blocking while we perform the connect.
       ioctl_arg_type non_blocking = 0;
@@ -1141,23 +1212,14 @@ public:
         error_handler(asio::error(socket_ops::get_error()));
         return;
       }
+      impl.flags_ &= ~impl_type::internal_non_blocking;
     }
 
     // Perform the connect operation.
     int result = socket_ops::connect(impl, peer_endpoint.data(),
         peer_endpoint.size());
-    asio::error error;
     if (result == socket_error_retval)
-      error = socket_ops::get_error();
-
-    // Mark the socket as non-blocking.
-    ioctl_arg_type non_blocking = 1;
-    if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
-      if (!error)
-        error = socket_ops::get_error();
-
-    if (error)
-      error_handler(error);
+      error_handler(asio::error(socket_ops::get_error()));
   }
 
   template <typename Handler>
@@ -1251,16 +1313,6 @@ public:
         return;
       }
 
-      // Mark the socket as non-blocking.
-      ioctl_arg_type non_blocking = 1;
-      if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
-      {
-        socket_ops::close(impl);
-        asio::error error(socket_ops::get_error());
-        demuxer_.post(bind_handler(handler, error));
-        return;
-      }
-
       // Register the socket with the reactor.
       int err = reactor_.register_descriptor(impl);
       if (err)
@@ -1270,6 +1322,19 @@ public:
         demuxer_.post(bind_handler(handler, error));
         return;
       }
+    }
+
+    // Make socket non-blocking.
+    if (!(impl.flags_ & impl_type::internal_non_blocking))
+    {
+      ioctl_arg_type non_blocking = 1;
+      if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
+      {
+        asio::error error(socket_ops::get_error());
+        demuxer_.post(bind_handler(handler, error));
+        return;
+      }
+      impl.flags_ |= impl_type::internal_non_blocking;
     }
 
     // Start the connect operation. The socket is already marked as non-blocking
