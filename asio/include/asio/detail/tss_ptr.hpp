@@ -22,10 +22,8 @@
 #include "asio/detail/pop_options.hpp"
 
 #if !defined(BOOST_HAS_THREADS)
-# error Thread support is required!
-#endif
-
-#if defined(BOOST_WINDOWS)
+# include "asio/detail/null_tss_ptr.hpp"
+#elif defined(BOOST_WINDOWS)
 # include "asio/detail/win_tss_ptr.hpp"
 #elif defined(BOOST_HAS_PTHREADS)
 # include "asio/detail/posix_tss_ptr.hpp"
@@ -38,7 +36,9 @@ namespace detail {
 
 template <typename T>
 class tss_ptr
-#if defined(BOOST_WINDOWS)
+#if !defined(BOOST_HAS_THREADS)
+  : public null_tss_ptr<T>
+#elif defined(BOOST_WINDOWS)
   : public win_tss_ptr<T>
 #elif defined(BOOST_HAS_PTHREADS)
   : public posix_tss_ptr<T>
@@ -47,7 +47,9 @@ class tss_ptr
 public:
   void operator=(T* value)
   {
-#if defined(BOOST_WINDOWS)
+#if !defined(BOOST_HAS_THREADS)
+    null_tss_ptr<T>::operator=(value);
+#elif defined(BOOST_WINDOWS)
     win_tss_ptr<T>::operator=(value);
 #elif defined(BOOST_HAS_PTHREADS)
     posix_tss_ptr<T>::operator=(value);

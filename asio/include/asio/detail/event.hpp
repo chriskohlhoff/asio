@@ -22,10 +22,8 @@
 #include "asio/detail/pop_options.hpp"
 
 #if !defined(BOOST_HAS_THREADS)
-# error Thread support is required!
-#endif
-
-#if defined(BOOST_WINDOWS)
+# include "asio/detail/null_event.hpp"
+#elif defined(BOOST_WINDOWS)
 # include "asio/detail/win_event.hpp"
 #elif defined(BOOST_HAS_PTHREADS)
 # include "asio/detail/posix_event.hpp"
@@ -36,7 +34,9 @@
 namespace asio {
 namespace detail {
 
-#if defined(BOOST_WINDOWS)
+#if !defined(BOOST_HAS_THREADS)
+typedef null_event event;
+#elif defined(BOOST_WINDOWS)
 typedef win_event event;
 #elif defined(BOOST_HAS_PTHREADS)
 typedef posix_event event;
