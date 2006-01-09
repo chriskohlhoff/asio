@@ -42,7 +42,7 @@ namespace asio {
  * @par Example:
  * Opening a socket acceptor with the SO_REUSEADDR option enabled:
  * @code
- * asio::socket_acceptor acceptor(demuxer);
+ * asio::socket_acceptor acceptor(io_service);
  * asio::ipv4::tcp::endpoint endpoint(port);
  * acceptor.open(endpoint.protocol());
  * acceptor.set_option(asio::socket_acceptor::reuse_address(true));
@@ -62,8 +62,8 @@ public:
   /// The native implementation type of the socket acceptor.
   typedef typename service_type::impl_type impl_type;
 
-  /// The demuxer type for this asynchronous type.
-  typedef typename service_type::demuxer_type demuxer_type;
+  /// The io_service type for this type.
+  typedef typename service_type::io_service_type io_service_type;
 
   /// The type used for reporting errors.
   typedef asio::error error_type;
@@ -74,11 +74,12 @@ public:
    * connections. The open() function must be called before the acceptor can
    * accept new socket connections.
    *
-   * @param d The demuxer object that the acceptor will use to dispatch
-   * handlers for any asynchronous operations performed on the acceptor.
+   * @param io_service The io_service object that the acceptor will use to
+   * dispatch handlers for any asynchronous operations performed on the
+   * acceptor.
    */
-  explicit basic_socket_acceptor(demuxer_type& d)
-    : service_(d.get_service(service_factory<Service>())),
+  explicit basic_socket_acceptor(io_service_type& io_service)
+    : service_(io_service.get_service(service_factory<Service>())),
       impl_(service_.null())
   {
   }
@@ -88,8 +89,9 @@ public:
    * This constructor creates an acceptor and automatically opens it to listen
    * for new connections on the specified endpoint.
    *
-   * @param d The demuxer object that the acceptor will use to dispatch
-   * handlers for any asynchronous operations performed on the acceptor.
+   * @param io_service The io_service object that the acceptor will use to
+   * dispatch handlers for any asynchronous operations performed on the
+   * acceptor.
    *
    * @param endpoint An endpoint on the local machine on which the acceptor
    * will listen for new connections.
@@ -101,16 +103,16 @@ public:
    *
    * @note This constructor is equivalent to the following code:
    * @code
-   * asio::socket_acceptor acceptor(demuxer);
+   * asio::socket_acceptor acceptor(io_service);
    * acceptor.open(endpoint.protocol());
    * acceptor.bind(endpoint);
    * acceptor.listen(listen_backlog);
    * @endcode
    */
   template <typename Endpoint>
-  basic_socket_acceptor(demuxer_type& d, const Endpoint& endpoint,
+  basic_socket_acceptor(io_service_type& io_service, const Endpoint& endpoint,
       int listen_backlog = 0)
-    : service_(d.get_service(service_factory<Service>())),
+    : service_(io_service.get_service(service_factory<Service>())),
       impl_(service_.null())
   {
     service_.open(impl_, endpoint.protocol(), throw_error());
@@ -126,17 +128,17 @@ public:
     service_.close(impl_, ignore_error());
   }
 
-  /// Get the demuxer associated with the asynchronous object.
+  /// Get the io_service associated with the object.
   /**
-   * This function may be used to obtain the demuxer object that the acceptor
+   * This function may be used to obtain the io_service object that the acceptor
    * uses to dispatch handlers for asynchronous operations.
    *
-   * @return A reference to the demuxer object that acceptor will use to
+   * @return A reference to the io_service object that the acceptor will use to
    * dispatch handlers. Ownership is not transferred to the caller.
    */
-  demuxer_type& demuxer()
+  io_service_type& io_service()
   {
-    return service_.demuxer();
+    return service_.io_service();
   }
 
   /// Open the acceptor using the specified protocol.
@@ -148,7 +150,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(demuxer);
+   * asio::socket_acceptor acceptor(io_service);
    * acceptor.open(asio::ipv4::tcp());
    * @endcode
    */
@@ -174,7 +176,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(demuxer);
+   * asio::socket_acceptor acceptor(io_service);
    * asio::error error;
    * acceptor.open(asio::ipv4::tcp(), asio::assign_error(error));
    * if (error)
@@ -201,7 +203,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(demuxer);
+   * asio::socket_acceptor acceptor(io_service);
    * acceptor.open(asio::ipv4::tcp());
    * acceptor.bind(asio::ipv4::tcp::endpoint(12345));
    * @endcode
@@ -229,7 +231,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(demuxer);
+   * asio::socket_acceptor acceptor(io_service);
    * acceptor.open(asio::ipv4::tcp());
    * asio::error error;
    * acceptor.bind(asio::ipv4::tcp::endpoint(12345),
@@ -278,7 +280,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(demuxer);
+   * asio::socket_acceptor acceptor(io_service);
    * ...
    * asio::error error;
    * acceptor.listen(0, asio::assign_error(error));
@@ -326,7 +328,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(demuxer);
+   * asio::socket_acceptor acceptor(io_service);
    * ...
    * asio::error error;
    * acceptor.close(asio::assign_error(error));
@@ -367,7 +369,7 @@ public:
    * @par Example:
    * Setting the SOL_SOCKET/SO_REUSEADDR option:
    * @code
-   * asio::socket_acceptor acceptor(demuxer);
+   * asio::socket_acceptor acceptor(io_service);
    * ...
    * asio::socket_acceptor::reuse_address option(true);
    * acceptor.set_option(option);
@@ -398,7 +400,7 @@ public:
    * @par Example:
    * Setting the SOL_SOCKET/SO_REUSEADDR option:
    * @code
-   * asio::socket_acceptor acceptor(demuxer);
+   * asio::socket_acceptor acceptor(io_service);
    * ...
    * asio::socket_acceptor::reuse_address option(true);
    * asio::error error;
@@ -430,7 +432,7 @@ public:
    * @par Example:
    * Getting the value of the SOL_SOCKET/SO_REUSEADDR option:
    * @code
-   * asio::socket_acceptor acceptor(demuxer);
+   * asio::socket_acceptor acceptor(io_service);
    * ...
    * asio::socket_acceptor::reuse_address option;
    * acceptor.get_option(option);
@@ -463,7 +465,7 @@ public:
    * @par Example:
    * Getting the value of the SOL_SOCKET/SO_REUSEADDR option:
    * @code
-   * asio::socket_acceptor acceptor(demuxer);
+   * asio::socket_acceptor acceptor(io_service);
    * ...
    * asio::socket_acceptor::reuse_address option;
    * asio::error error;
@@ -493,7 +495,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(demuxer);
+   * asio::socket_acceptor acceptor(io_service);
    * ...
    * asio::ipv4::tcp::endpoint endpoint;
    * acceptor.get_local_endpoint(endpoint);
@@ -522,7 +524,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(demuxer);
+   * asio::socket_acceptor acceptor(io_service);
    * ...
    * asio::ipv4::tcp::endpoint endpoint;
    * asio::error error;
@@ -551,7 +553,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(demuxer);
+   * asio::socket_acceptor acceptor(io_service);
    * ...
    * asio::stream_socket socket;
    * acceptor.accept(socket);
@@ -580,7 +582,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(demuxer);
+   * asio::socket_acceptor acceptor(io_service);
    * ...
    * asio::stream_socket socket;
    * asio::error error;
@@ -615,7 +617,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * asio::demuxer::post().
+   * asio::io_service::post().
    *
    * @par Example:
    * @code
@@ -629,7 +631,7 @@ public:
    *
    * ...
    *
-   * asio::socket_acceptor acceptor(demuxer);
+   * asio::socket_acceptor acceptor(io_service);
    * ...
    * asio::stream_socket socket;
    * acceptor.async_accept(socket, accept_handler);
@@ -657,7 +659,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(demuxer);
+   * asio::socket_acceptor acceptor(io_service);
    * ...
    * asio::stream_socket socket;
    * asio::ipv4::tcp::endpoint endpoint;
@@ -692,7 +694,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(demuxer);
+   * asio::socket_acceptor acceptor(io_service);
    * ...
    * asio::stream_socket socket;
    * asio::ipv4::tcp::endpoint endpoint;
@@ -737,7 +739,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * asio::demuxer::post().
+   * asio::io_service::post().
    */
   template <typename Socket, typename Endpoint, typename Handler>
   void async_accept_endpoint(Socket& peer, Endpoint& peer_endpoint,

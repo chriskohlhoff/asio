@@ -1,6 +1,6 @@
 //
-// locking_dispatcher_service_test.cpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// basic_io_service_test.cpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2005 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -9,12 +9,12 @@
 //
 
 // Test that header file is self-contained.
-#include "asio/locking_dispatcher_service.hpp"
+#include "asio/basic_io_service.hpp"
 
 #include "unit_test.hpp"
 
 test_suite* init_unit_test_suite(int argc, char* argv[])
 {
-  test_suite* test = BOOST_TEST_SUITE("locking_dispatcher_service");
+  test_suite* test = BOOST_TEST_SUITE("basic_io_service");
   return test;
 }

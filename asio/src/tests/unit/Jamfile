@@ -38,7 +38,7 @@ run basic_deadline_timer_test.cpp
     $(SOCKET_LIBS)
   ;
 
-run basic_demuxer_test.cpp
+run basic_io_service_test.cpp
     <lib>@boost/libs/date_time/build/boost_date_time
   :
   :
@@ -181,29 +181,6 @@ run deadline_timer_test.cpp
     $(SOCKET_LIBS)
   ;
 
-run demuxer_service_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run demuxer_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-    <lib>@boost/libs/thread/build/boost_thread
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
 run error_handler_test.cpp
     <lib>@boost/libs/date_time/build/boost_date_time
   :
@@ -217,6 +194,18 @@ run error_handler_test.cpp
 
 run error_test.cpp
     <lib>@boost/libs/date_time/build/boost_date_time
+  :
+  :
+  : <include>../../..
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
+  ;
+
+run io_service_test.cpp
+    <lib>@boost/libs/date_time/build/boost_date_time
+    <lib>@boost/libs/thread/build/boost_thread
   :
   :
   : <include>../../..

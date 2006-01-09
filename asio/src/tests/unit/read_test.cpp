@@ -23,20 +23,20 @@ class test_stream
   : private boost::noncopyable
 {
 public:
-  typedef asio::demuxer demuxer_type;
+  typedef asio::io_service io_service_type;
   typedef asio::error error_type;
 
-  test_stream(asio::demuxer& d)
-    : demuxer_(d),
+  test_stream(asio::io_service& io_service)
+    : io_service_(io_service),
       length_(0),
       position_(0),
       next_read_length_(0)
   {
   }
 
-  demuxer_type& demuxer()
+  io_service_type& io_service()
   {
-    return demuxer_;
+    return io_service_;
   }
 
   void reset(const void* data, size_t length)
@@ -112,12 +112,12 @@ public:
   {
     size_t bytes_transferred = read_some(buffers);
     asio::error error;
-    demuxer_.post(
+    io_service_.post(
         asio::detail::bind_handler(handler, error, bytes_transferred));
   }
 
 private:
-  demuxer_type& demuxer_;
+  io_service_type& io_service_;
   enum { max_length = 8192 };
   char data_[max_length];
   size_t length_;
@@ -130,8 +130,8 @@ static const char read_data[]
 
 void test_2_arg_read()
 {
-  asio::demuxer d;
-  test_stream s(d);
+  asio::io_service ios;
+  test_stream s(ios);
   char read_buf[sizeof(read_data)];
   asio::mutable_buffer_container_1 buffers
     = asio::buffer(read_buf, sizeof(read_buf));
@@ -159,8 +159,8 @@ void test_2_arg_read()
 
 void test_3_arg_read()
 {
-  asio::demuxer d;
-  test_stream s(d);
+  asio::io_service ios;
+  test_stream s(ios);
   char read_buf[sizeof(read_data)];
   asio::mutable_buffer_container_1 buffers
     = asio::buffer(read_buf, sizeof(read_buf));
@@ -260,8 +260,8 @@ void test_3_arg_read()
 
 void test_4_arg_read()
 {
-  asio::demuxer d;
-  test_stream s(d);
+  asio::io_service ios;
+  test_stream s(ios);
   char read_buf[sizeof(read_data)];
   asio::mutable_buffer_container_1 buffers
     = asio::buffer(read_buf, sizeof(read_buf));
@@ -393,8 +393,8 @@ void async_read_handler(const asio::error& e, size_t bytes_transferred,
 
 void test_3_arg_async_read()
 {
-  asio::demuxer d;
-  test_stream s(d);
+  asio::io_service ios;
+  test_stream s(ios);
   char read_buf[sizeof(read_data)];
   asio::mutable_buffer_container_1 buffers
     = asio::buffer(read_buf, sizeof(read_buf));
@@ -407,8 +407,8 @@ void test_3_arg_async_read()
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
         sizeof(read_data), &called));
-  d.reset();
-  d.run();
+  ios.reset();
+  ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check(buffers, sizeof(read_data)));
 
@@ -421,8 +421,8 @@ void test_3_arg_async_read()
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
         sizeof(read_data), &called));
-  d.reset();
-  d.run();
+  ios.reset();
+  ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check(buffers, sizeof(read_data)));
 
@@ -435,16 +435,16 @@ void test_3_arg_async_read()
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
         sizeof(read_data), &called));
-  d.reset();
-  d.run();
+  ios.reset();
+  ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check(buffers, sizeof(read_data)));
 }
 
 void test_4_arg_async_read()
 {
-  asio::demuxer d;
-  test_stream s(d);
+  asio::io_service ios;
+  test_stream s(ios);
   char read_buf[sizeof(read_data)];
   asio::mutable_buffer_container_1 buffers
     = asio::buffer(read_buf, sizeof(read_buf));
@@ -457,8 +457,8 @@ void test_4_arg_async_read()
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
         sizeof(read_data), &called));
-  d.reset();
-  d.run();
+  ios.reset();
+  ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check(buffers, sizeof(read_data)));
 
@@ -471,8 +471,8 @@ void test_4_arg_async_read()
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
         sizeof(read_data), &called));
-  d.reset();
-  d.run();
+  ios.reset();
+  ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check(buffers, sizeof(read_data)));
 
@@ -485,8 +485,8 @@ void test_4_arg_async_read()
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
         sizeof(read_data), &called));
-  d.reset();
-  d.run();
+  ios.reset();
+  ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check(buffers, sizeof(read_data)));
 
@@ -498,8 +498,8 @@ void test_4_arg_async_read()
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
         sizeof(read_data), &called));
-  d.reset();
-  d.run();
+  ios.reset();
+  ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check(buffers, sizeof(read_data)));
 
@@ -512,8 +512,8 @@ void test_4_arg_async_read()
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
         1, &called));
-  d.reset();
-  d.run();
+  ios.reset();
+  ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check(buffers, 1));
 
@@ -526,8 +526,8 @@ void test_4_arg_async_read()
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
         10, &called));
-  d.reset();
-  d.run();
+  ios.reset();
+  ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check(buffers, 10));
 
@@ -539,8 +539,8 @@ void test_4_arg_async_read()
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
         sizeof(read_data), &called));
-  d.reset();
-  d.run();
+  ios.reset();
+  ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check(buffers, sizeof(read_data)));
 
@@ -553,8 +553,8 @@ void test_4_arg_async_read()
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
         10, &called));
-  d.reset();
-  d.run();
+  ios.reset();
+  ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check(buffers, 10));
 
@@ -567,8 +567,8 @@ void test_4_arg_async_read()
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
         10, &called));
-  d.reset();
-  d.run();
+  ios.reset();
+  ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check(buffers, 10));
 
@@ -580,8 +580,8 @@ void test_4_arg_async_read()
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
         sizeof(read_data), &called));
-  d.reset();
-  d.run();
+  ios.reset();
+  ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check(buffers, sizeof(read_data)));
 
@@ -594,8 +594,8 @@ void test_4_arg_async_read()
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
         42, &called));
-  d.reset();
-  d.run();
+  ios.reset();
+  ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check(buffers, 42));
 
@@ -608,8 +608,8 @@ void test_4_arg_async_read()
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
         50, &called));
-  d.reset();
-  d.run();
+  ios.reset();
+  ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check(buffers, 50));
 }

@@ -8,11 +8,11 @@ using namespace asio;
 class accept_handler
 {
 public:
-  accept_handler(demuxer& d)
-    : demuxer_(d),
-      timer_(d),
-      acceptor_(d, ipv4::tcp::endpoint(32123)),
-      socket_(d)
+  accept_handler(io_service& ios)
+    : io_service_(ios),
+      timer_(ios),
+      acceptor_(ios, ipv4::tcp::endpoint(32123)),
+      socket_(ios)
   {
     acceptor_.async_accept(socket_,
         boost::bind(&accept_handler::handle_accept, this,
@@ -40,7 +40,7 @@ public:
   }
 
 private:
-  demuxer& demuxer_;
+  io_service& io_service_;
   deadline_timer timer_;
   socket_acceptor acceptor_;
   stream_socket socket_;
@@ -50,9 +50,9 @@ int main()
 {
   try
   {
-    demuxer d;
-    accept_handler ah(d);
-    d.run();
+    io_service ios;
+    accept_handler ah(ios);
+    ios.run();
   }
   catch (asio::error& e)
   {

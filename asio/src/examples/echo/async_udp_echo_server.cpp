@@ -6,9 +6,9 @@
 class server
 {
 public:
-  server(asio::demuxer& d, short port)
-    : demuxer_(d),
-      socket_(d, asio::ipv4::udp::endpoint(port))
+  server(asio::io_service& io_service, short port)
+    : io_service_(io_service),
+      socket_(io_service, asio::ipv4::udp::endpoint(port))
   {
     socket_.async_receive_from(asio::buffer(data_, max_length), 0,
         sender_endpoint_,
@@ -47,7 +47,7 @@ public:
   }
 
 private:
-  asio::demuxer& demuxer_;
+  asio::io_service& io_service_;
   asio::datagram_socket socket_;
   asio::ipv4::udp::endpoint sender_endpoint_;
   enum { max_length = 1024 };
@@ -64,12 +64,12 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::demuxer d;
+    asio::io_service io_service;
 
     using namespace std; // For atoi.
-    server s(d, atoi(argv[1]));
+    server s(io_service, atoi(argv[1]));
 
-    d.run();
+    io_service.run();
   }
   catch (asio::error& e)
   {

@@ -31,7 +31,7 @@ namespace asio {
 namespace ssl {
 namespace detail {
 
-template <typename Demuxer>
+template <typename IO_Service>
 class openssl_context_service
 {
 public:
@@ -39,18 +39,18 @@ public:
   typedef ::SSL_CTX* impl_type;
 
   // Constructor.
-  openssl_context_service(Demuxer& d)
-    : demuxer_(d)
+  openssl_context_service(IO_Service& io_service)
+    : io_service_(io_service)
   {
   }
 
-  // The demuxer type for this service.
-  typedef Demuxer demuxer_type;
+  // The io_service type for this service.
+  typedef IO_Service io_service_type;
 
-  // Get the demuxer associated with the service.
-  demuxer_type& demuxer()
+  // Get the io_service associated with the service.
+  io_service_type& io_service()
   {
-    return demuxer_;
+    return io_service_;
   }
 
   // Return a null context implementation.
@@ -291,8 +291,8 @@ public:
   }
 
 private:
-  // The demuxer that owns the service.
-  Demuxer& demuxer_;
+  // The io_service that owns the service.
+  IO_Service& io_service_;
 
   // Ensure openssl is initialised.
   openssl_init<> init_;

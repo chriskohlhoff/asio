@@ -26,15 +26,13 @@
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/basic_demuxer.hpp"
-#include "asio/demuxer_service.hpp"
+#include "asio/basic_io_service.hpp"
 #include "asio/time_traits.hpp"
 #include "asio/detail/epoll_reactor.hpp"
 #include "asio/detail/kqueue_reactor.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/select_reactor.hpp"
 #include "asio/detail/reactive_deadline_timer_service.hpp"
-#include "asio/detail/win_iocp_demuxer_service.hpp"
 
 namespace asio {
 
@@ -46,8 +44,8 @@ class deadline_timer_service
   : private noncopyable
 {
 public:
-  /// The demuxer type.
-  typedef basic_demuxer<demuxer_service<Allocator>, Allocator> demuxer_type;
+  /// The io_service type.
+  typedef basic_io_service<Allocator> io_service_type;
 
   /// The time traits type.
   typedef Time_Traits traits_type;
@@ -60,17 +58,17 @@ public:
 
 private:
   // The type of the platform-specific implementation.
-#if defined(ASIO_HAS_IOCP_DEMUXER)
-  typedef detail::reactive_deadline_timer_service<demuxer_type,
+#if defined(ASIO_HAS_IOCP)
+  typedef detail::reactive_deadline_timer_service<io_service_type,
     traits_type, detail::select_reactor<true, Allocator> > service_impl_type;
-#elif defined(ASIO_HAS_EPOLL_REACTOR)
-  typedef detail::reactive_deadline_timer_service<demuxer_type,
+#elif defined(ASIO_HAS_EPOLL)
+  typedef detail::reactive_deadline_timer_service<io_service_type,
     traits_type, detail::epoll_reactor<false, Allocator> > service_impl_type;
-#elif defined(ASIO_HAS_KQUEUE_REACTOR)
-  typedef detail::reactive_deadline_timer_service<demuxer_type,
+#elif defined(ASIO_HAS_KQUEUE)
+  typedef detail::reactive_deadline_timer_service<io_service_type,
     traits_type, detail::kqueue_reactor<false, Allocator> > service_impl_type;
 #else
-  typedef detail::reactive_deadline_timer_service<demuxer_type,
+  typedef detail::reactive_deadline_timer_service<io_service_type,
     traits_type, detail::select_reactor<false, Allocator> > service_impl_type;
 #endif
 
@@ -82,16 +80,17 @@ public:
   typedef typename service_impl_type::impl_type impl_type;
 #endif
 
-  /// Construct a new timer service for the specified demuxer.
-  explicit deadline_timer_service(demuxer_type& demuxer)
-    : service_impl_(demuxer.get_service(service_factory<service_impl_type>()))
+  /// Construct a new timer service for the specified io_service.
+  explicit deadline_timer_service(io_service_type& io_service)
+    : service_impl_(io_service.get_service(
+          service_factory<service_impl_type>()))
   {
   }
 
-  /// Get the demuxer associated with the service.
-  demuxer_type& demuxer()
+  /// Get the io_service associated with the service.
+  io_service_type& io_service()
   {
-    return service_impl_.demuxer();
+    return service_impl_.io_service();
   }
 
   /// Return a null timer implementation.

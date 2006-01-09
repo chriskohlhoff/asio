@@ -23,8 +23,7 @@
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/basic_demuxer.hpp"
-#include "asio/demuxer_service.hpp"
+#include "asio/basic_io_service.hpp"
 #include "asio/detail/epoll_reactor.hpp"
 #include "asio/detail/kqueue_reactor.hpp"
 #include "asio/detail/noncopyable.hpp"
@@ -40,22 +39,22 @@ class datagram_socket_service
   : private noncopyable
 {
 public:
-  /// The demuxer type.
-  typedef basic_demuxer<demuxer_service<Allocator>, Allocator> demuxer_type;
+  /// The io_service type.
+  typedef basic_io_service<Allocator> io_service_type;
 
 private:
   // The type of the platform-specific implementation.
-#if defined(ASIO_HAS_IOCP_DEMUXER)
+#if defined(ASIO_HAS_IOCP)
   typedef detail::win_iocp_socket_service<Allocator> service_impl_type;
-#elif defined(ASIO_HAS_EPOLL_REACTOR)
-  typedef detail::reactive_socket_service<
-    demuxer_type, detail::epoll_reactor<false, Allocator> > service_impl_type;
-#elif defined(ASIO_HAS_KQUEUE_REACTOR)
-  typedef detail::reactive_socket_service<
-    demuxer_type, detail::kqueue_reactor<false, Allocator> > service_impl_type;
+#elif defined(ASIO_HAS_EPOLL)
+  typedef detail::reactive_socket_service<io_service_type,
+      detail::epoll_reactor<false, Allocator> > service_impl_type;
+#elif defined(ASIO_HAS_KQUEUE)
+  typedef detail::reactive_socket_service<io_service_type,
+      detail::kqueue_reactor<false, Allocator> > service_impl_type;
 #else
-  typedef detail::reactive_socket_service<
-    demuxer_type, detail::select_reactor<false, Allocator> > service_impl_type;
+  typedef detail::reactive_socket_service<io_service_type,
+      detail::select_reactor<false, Allocator> > service_impl_type;
 #endif
 
 public:
@@ -66,16 +65,17 @@ public:
   typedef typename service_impl_type::impl_type impl_type;
 #endif
 
-  /// Construct a new stream socket service for the specified demuxer.
-  explicit datagram_socket_service(demuxer_type& demuxer)
-    : service_impl_(demuxer.get_service(service_factory<service_impl_type>()))
+  /// Construct a new stream socket service for the specified io_service.
+  explicit datagram_socket_service(io_service_type& io_service)
+    : service_impl_(io_service.get_service(
+          service_factory<service_impl_type>()))
   {
   }
 
-  /// Get the demuxer associated with the service.
-  demuxer_type& demuxer()
+  /// Get the io_service associated with the service.
+  io_service_type& io_service()
   {
-    return service_impl_.demuxer();
+    return service_impl_.io_service();
   }
 
   /// Return a null stream socket implementation.

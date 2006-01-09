@@ -1,6 +1,6 @@
 //
-// demuxer_test.cpp
-// ~~~~~~~~~~~~~~~~
+// io_service_test.cpp
+// ~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2005 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -9,7 +9,7 @@
 //
 
 // Test that header file is self-contained.
-#include "asio/demuxer.hpp"
+#include "asio/io_service.hpp"
 
 #include <sstream>
 #include <boost/bind.hpp>
@@ -23,50 +23,50 @@ void increment(int* count)
   ++(*count);
 }
 
-void decrement_to_zero(demuxer* d, int* count)
+void decrement_to_zero(io_service* ios, int* count)
 {
   if (*count > 0)
   {
     --(*count);
 
     int before_value = *count;
-    d->post(boost::bind(decrement_to_zero, d, count));
+    ios->post(boost::bind(decrement_to_zero, ios, count));
 
     // Handler execution cannot nest, so count value should remain unchanged.
     BOOST_CHECK(*count == before_value);
   }
 }
 
-void nested_decrement_to_zero(demuxer* d, int* count)
+void nested_decrement_to_zero(io_service* ios, int* count)
 {
   if (*count > 0)
   {
     --(*count);
 
-    d->dispatch(boost::bind(nested_decrement_to_zero, d, count));
+    ios->dispatch(boost::bind(nested_decrement_to_zero, ios, count));
 
     // Handler execution is nested, so count value should now be zero.
     BOOST_CHECK(*count == 0);
   }
 }
 
-void sleep_increment(demuxer* d, int* count)
+void sleep_increment(io_service* ios, int* count)
 {
-  deadline_timer t(*d, boost::posix_time::seconds(2));
+  deadline_timer t(*ios, boost::posix_time::seconds(2));
   t.wait();
 
   if (++(*count) < 3)
-    d->post(boost::bind(sleep_increment, d, count));
+    ios->post(boost::bind(sleep_increment, ios, count));
 }
 
-void start_sleep_increments(demuxer* d, int* count)
+void start_sleep_increments(io_service* ios, int* count)
 {
   // Give all threads a chance to start.
-  deadline_timer t(*d, boost::posix_time::seconds(2));
+  deadline_timer t(*ios, boost::posix_time::seconds(2));
   t.wait();
 
   // Start the first of three increments.
-  d->post(boost::bind(sleep_increment, d, count));
+  ios->post(boost::bind(sleep_increment, ios, count));
 }
 
 void throw_exception()
@@ -74,102 +74,102 @@ void throw_exception()
   throw 1;
 }
 
-void demuxer_test()
+void io_service_test()
 {
-  demuxer d;
+  io_service ios;
   int count = 0;
 
-  d.post(boost::bind(increment, &count));
+  ios.post(boost::bind(increment, &count));
 
   // No handlers can be called until run() is called.
   BOOST_CHECK(count == 0);
 
-  d.run();
+  ios.run();
 
   // The run() call will not return until all work has finished.
   BOOST_CHECK(count == 1);
 
   count = 0;
-  d.reset();
-  d.post(boost::bind(increment, &count));
-  d.post(boost::bind(increment, &count));
-  d.post(boost::bind(increment, &count));
-  d.post(boost::bind(increment, &count));
-  d.post(boost::bind(increment, &count));
+  ios.reset();
+  ios.post(boost::bind(increment, &count));
+  ios.post(boost::bind(increment, &count));
+  ios.post(boost::bind(increment, &count));
+  ios.post(boost::bind(increment, &count));
+  ios.post(boost::bind(increment, &count));
 
   // No handlers can be called until run() is called.
   BOOST_CHECK(count == 0);
 
-  d.run();
+  ios.run();
 
   // The run() call will not return until all work has finished.
   BOOST_CHECK(count == 5);
 
   count = 0;
-  d.reset();
-  demuxer::work* w = new demuxer::work(d);
-  d.post(boost::bind(&demuxer::interrupt, &d));
-  d.run();
+  ios.reset();
+  io_service::work* w = new io_service::work(ios);
+  ios.post(boost::bind(&io_service::interrupt, &ios));
+  ios.run();
 
   // The only operation executed should have been to interrupt run().
   BOOST_CHECK(count == 0);
 
-  d.reset();
-  d.post(boost::bind(increment, &count));
+  ios.reset();
+  ios.post(boost::bind(increment, &count));
   delete w;
 
   // No handlers can be called until run() is called.
   BOOST_CHECK(count == 0);
 
-  d.run();
+  ios.run();
 
   // The run() call will not return until all work has finished.
   BOOST_CHECK(count == 1);
 
   count = 10;
-  d.reset();
-  d.post(boost::bind(decrement_to_zero, &d, &count));
+  ios.reset();
+  ios.post(boost::bind(decrement_to_zero, &ios, &count));
 
   // No handlers can be called until run() is called.
   BOOST_CHECK(count == 10);
 
-  d.run();
+  ios.run();
 
   // The run() call will not return until all work has finished.
   BOOST_CHECK(count == 0);
 
   count = 10;
-  d.reset();
-  d.post(boost::bind(nested_decrement_to_zero, &d, &count));
+  ios.reset();
+  ios.post(boost::bind(nested_decrement_to_zero, &ios, &count));
 
   // No handlers can be called until run() is called.
   BOOST_CHECK(count == 10);
 
-  d.run();
+  ios.run();
 
   // The run() call will not return until all work has finished.
   BOOST_CHECK(count == 0);
 
   count = 10;
-  d.reset();
-  d.dispatch(boost::bind(nested_decrement_to_zero, &d, &count));
+  ios.reset();
+  ios.dispatch(boost::bind(nested_decrement_to_zero, &ios, &count));
 
   // No handlers can be called until run() is called, even though nested
   // delivery was specifically allowed in the previous call.
   BOOST_CHECK(count == 10);
 
-  d.run();
+  ios.run();
 
   // The run() call will not return until all work has finished.
   BOOST_CHECK(count == 0);
 
   count = 0;
   int count2 = 0;
-  d.reset();
-  d.post(boost::bind(start_sleep_increments, &d, &count));
-  d.post(boost::bind(start_sleep_increments, &d, &count2));
-  thread thread1(boost::bind(&demuxer::run, &d));
-  thread thread2(boost::bind(&demuxer::run, &d));
+  ios.reset();
+  ios.post(boost::bind(start_sleep_increments, &ios, &count));
+  ios.post(boost::bind(start_sleep_increments, &ios, &count2));
+  thread thread1(boost::bind(&io_service::run, &ios));
+  thread thread2(boost::bind(&io_service::run, &ios));
   thread1.join();
   thread2.join();
 
@@ -178,28 +178,28 @@ void demuxer_test()
   BOOST_CHECK(count2 == 3);
 
   count = 10;
-  demuxer d2;
-  d.dispatch(d2.wrap(boost::bind(decrement_to_zero, &d2, &count)));
-  d.reset();
-  d.run();
+  io_service ios2;
+  ios.dispatch(ios2.wrap(boost::bind(decrement_to_zero, &ios2, &count)));
+  ios.reset();
+  ios.run();
 
   // No decrement_to_zero handlers can be called until run() is called on the
-  // second demuxer object.
+  // second io_service object.
   BOOST_CHECK(count == 10);
 
-  d2.run();
+  ios2.run();
 
   // The run() call will not return until all work has finished.
   BOOST_CHECK(count == 0);
 
   count = 0;
   int exception_count = 0;
-  d.reset();
-  d.post(throw_exception);
-  d.post(boost::bind(increment, &count));
-  d.post(boost::bind(increment, &count));
-  d.post(throw_exception);
-  d.post(boost::bind(increment, &count));
+  ios.reset();
+  ios.post(throw_exception);
+  ios.post(boost::bind(increment, &count));
+  ios.post(boost::bind(increment, &count));
+  ios.post(throw_exception);
+  ios.post(boost::bind(increment, &count));
 
   // No handlers can be called until run() is called.
   BOOST_CHECK(count == 0);
@@ -209,7 +209,7 @@ void demuxer_test()
   {
     try
     {
-      d.run();
+      ios.run();
       break;
     }
     catch (int)
@@ -224,16 +224,15 @@ void demuxer_test()
 
   // Use a non-default allocator type.
   typedef std::allocator<int> allocator_type;
-  typedef demuxer_service<allocator_type> demuxer_service_type;
-  typedef basic_demuxer<demuxer_service_type, allocator_type> demuxer_type;
+  typedef basic_io_service<allocator_type> io_service_type;
   allocator_type allocator;
-  demuxer_type d3(allocator);
-  d3.run();
+  io_service_type ios3(allocator);
+  ios3.run();
 }
 
 test_suite* init_unit_test_suite(int argc, char* argv[])
 {
-  test_suite* test = BOOST_TEST_SUITE("demuxer");
-  test->add(BOOST_TEST_CASE(&demuxer_test));
+  test_suite* test = BOOST_TEST_SUITE("io_service");
+  test->add(BOOST_TEST_CASE(&io_service_test));
   return test;
 }

@@ -36,7 +36,7 @@ namespace asio {
 namespace ipv4 {
 namespace detail {
 
-template <typename Demuxer>
+template <typename IO_Service>
 class host_resolver_service
   : private boost::noncopyable
 {
@@ -83,11 +83,11 @@ public:
   }
 
   // Constructor.
-  host_resolver_service(Demuxer& d)
+  host_resolver_service(IO_Service& d)
     : mutex_(),
-      demuxer_(d),
-      work_demuxer_(),
-      work_(new typename Demuxer::work(work_demuxer_)),
+      io_service_(d),
+      work_io_service_(),
+      work_(new typename IO_Service::work(work_io_service_)),
       work_thread_(0)
   {
   }
@@ -103,13 +103,13 @@ public:
     }
   }
 
-  // The demuxer type for this service.
-  typedef Demuxer demuxer_type;
+  // The io_service type for this service.
+  typedef IO_Service io_service_type;
 
-  // Get the demuxer associated with the service.
-  demuxer_type& demuxer()
+  // Get the io_service associated with the service.
+  io_service_type& io_service()
   {
-    return demuxer_;
+    return io_service_;
   }
 
   // Open a new host resolver implementation.
@@ -167,12 +167,12 @@ public:
   {
   public:
     get_host_by_address_handler(impl_type impl, host& h, const address& addr,
-        Demuxer& demuxer, Handler handler)
+        IO_Service& io_service, Handler handler)
       : impl_(impl),
         host_(h),
         address_(addr),
-        demuxer_(demuxer),
-        work_(demuxer),
+        io_service_(io_service),
+        work_(io_service),
         handler_(handler)
     {
     }
@@ -182,7 +182,7 @@ public:
       // Check if the operation has been cancelled.
       if (impl_.expired())
       {
-        demuxer_.post(asio::detail::bind_handler(handler_,
+        io_service_.post(asio::detail::bind_handler(handler_,
               asio::error(asio::error::operation_aborted)));
         return;
       }
@@ -204,15 +204,15 @@ public:
         e = asio::error(asio::error::host_not_found);
       else
         populate_host_object(host_, ent);
-      demuxer_.post(asio::detail::bind_handler(handler_, e));
+      io_service_.post(asio::detail::bind_handler(handler_, e));
     }
 
   private:
     boost::weak_ptr<resolver_impl> impl_;
     host& host_;
     address address_;
-    Demuxer& demuxer_;
-    typename Demuxer::work work_;
+    IO_Service& io_service_;
+    typename IO_Service::work work_;
     Handler handler_;
   };
 
@@ -222,8 +222,8 @@ public:
       Handler handler)
   {
     start_work_thread();
-    work_demuxer_.post(get_host_by_address_handler<Handler>(
-          impl, h, addr, demuxer_, handler));
+    work_io_service_.post(get_host_by_address_handler<Handler>(
+          impl, h, addr, io_service_, handler));
   }
 
   // Get host information for a named host.
@@ -249,12 +249,12 @@ public:
   {
   public:
     get_host_by_name_handler(impl_type impl, host& h, const std::string& name,
-        Demuxer& demuxer, Handler handler)
+        IO_Service& io_service, Handler handler)
       : impl_(impl),
         host_(h),
         name_(name),
-        demuxer_(demuxer),
-        work_(demuxer),
+        io_service_(io_service),
+        work_(io_service),
         handler_(handler)
     {
     }
@@ -264,7 +264,7 @@ public:
       // Check if the operation has been cancelled.
       if (impl_.expired())
       {
-        demuxer_.post(asio::detail::bind_handler(handler_,
+        io_service_.post(asio::detail::bind_handler(handler_,
               asio::error(asio::error::operation_aborted)));
         return;
       }
@@ -282,15 +282,15 @@ public:
         e = asio::error(asio::error::host_not_found);
       else
         populate_host_object(host_, ent);
-      demuxer_.post(asio::detail::bind_handler(handler_, e));
+      io_service_.post(asio::detail::bind_handler(handler_, e));
     }
 
   private:
     boost::weak_ptr<resolver_impl> impl_;
     host& host_;
     std::string name_;
-    Demuxer& demuxer_;
-    typename Demuxer::work work_;
+    IO_Service& io_service_;
+    typename IO_Service::work work_;
     Handler handler_;
   };
 
@@ -300,8 +300,8 @@ public:
       Handler handler)
   {
     start_work_thread();
-    work_demuxer_.post(get_host_by_name_handler<Handler>(
-          impl, h, name, demuxer_, handler));
+    work_io_service_.post(get_host_by_name_handler<Handler>(
+          impl, h, name, io_service_, handler));
   }
 
   // Populate a host object from a hostent structure.
@@ -327,14 +327,14 @@ public:
   }
 
 private:
-  // Helper class to run the work demuxer in a thread.
-  class work_demuxer_runner
+  // Helper class to run the work io_service in a thread.
+  class work_io_service_runner
   {
   public:
-    work_demuxer_runner(Demuxer& demuxer) : demuxer_(demuxer) {}
-    void operator()() { demuxer_.run(); }
+    work_io_service_runner(IO_Service& io_service) : io_service_(io_service) {}
+    void operator()() { io_service_.run(); }
   private:
-    Demuxer& demuxer_;
+    IO_Service& io_service_;
   };
 
   // Start the work thread if it's not already running.
@@ -344,23 +344,23 @@ private:
     if (work_thread_ == 0)
     {
       work_thread_ = new asio::detail::thread(
-          work_demuxer_runner(work_demuxer_));
+          work_io_service_runner(work_io_service_));
     }
   }
 
   // Mutex to protect access to internal data.
   asio::detail::mutex mutex_;
 
-  // The demuxer used for dispatching handlers.
-  Demuxer& demuxer_;
+  // The io_service used for dispatching handlers.
+  IO_Service& io_service_;
 
-  // Private demuxer used for performing asynchronous host resolution.
-  Demuxer work_demuxer_;
+  // Private io_service used for performing asynchronous host resolution.
+  IO_Service work_io_service_;
 
-  // Work for the private demuxer to perform.
-  typename Demuxer::work* work_;
+  // Work for the private io_service to perform.
+  typename IO_Service::work* work_;
 
-  // Thread used for running the work demuxer's run loop.
+  // Thread used for running the work io_service's run loop.
   asio::detail::thread* work_thread_;
 };
 

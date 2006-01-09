@@ -17,6 +17,8 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/socket_types.hpp" // Must come before posix_time.
+
 #include "asio/detail/push_options.hpp"
 #include <cstddef>
 #include <boost/config.hpp>
@@ -28,7 +30,7 @@
 #include "asio/detail/fd_set_adapter.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/task_demuxer_service.hpp"
+#include "asio/detail/task_io_service.hpp"
 #include "asio/detail/thread.hpp"
 #include "asio/detail/reactor_op_queue.hpp"
 #include "asio/detail/reactor_timer_queue.hpp"
@@ -46,8 +48,8 @@ class select_reactor
 {
 public:
   // Constructor.
-  template <typename Demuxer>
-  select_reactor(Demuxer&)
+  template <typename IO_Service>
+  select_reactor(IO_Service&)
     : mutex_(),
       select_in_progress_(false),
       interrupter_(),
@@ -178,7 +180,7 @@ public:
   }
 
 private:
-  friend class task_demuxer_service<
+  friend class task_io_service<
       select_reactor<Own_Thread, Allocator>, Allocator>;
 
   // Run select once until interrupted or events are ready to be dispatched.

@@ -17,25 +17,24 @@ private:
   typedef asio::stream_socket_service<Allocator> service_impl_type;
 
 public:
-  /// The demuxer type.
-  typedef asio::basic_demuxer<
-    asio::demuxer_service<Allocator> > demuxer_type;
+  /// The io_service type for this service.
+  typedef asio::basic_io_service<Allocator> io_service_type;
 
   /// The type of a stream socket.
   typedef typename service_impl_type::impl_type impl_type;
 
-  /// Construct a new stream socket service for the specified demuxer.
-  explicit stream_socket_service(demuxer_type& demuxer)
-    : service_impl_(demuxer.get_service(
+  /// Construct a new stream socket service for the specified io_service.
+  explicit stream_socket_service(io_service_type& io_service)
+    : service_impl_(io_service.get_service(
           asio::service_factory<service_impl_type>())),
-      logger_(demuxer, "stream_socket")
+      logger_(io_service, "stream_socket")
   {
   }
 
-  /// Get the demuxer associated with the service.
-  demuxer_type& demuxer()
+  /// Get the io_service associated with the service.
+  io_service_type& io_service()
   {
-    return service_impl_.demuxer();
+    return service_impl_.io_service();
   }
 
   /// Return a null stream socket implementation.

@@ -57,8 +57,8 @@ public:
   /// The native implementation type of the stream socket.
   typedef typename service_type::impl_type impl_type;
 
-  /// The demuxer type for this asynchronous type.
-  typedef typename service_type::demuxer_type demuxer_type;
+  /// The io_service type for this type.
+  typedef typename service_type::io_service_type io_service_type;
 
   /// The type used for reporting errors.
   typedef asio::error error_type;
@@ -72,11 +72,11 @@ public:
    * peer. The socket needs to be connected or accepted before data can be sent
    * or received on it.
    *
-   * @param d The demuxer object that the stream socket will use to dispatch
-   * handlers for any asynchronous operations performed on the socket.
+   * @param io_service The io_service object that the stream socket will use to
+   * dispatch handlers for any asynchronous operations performed on the socket.
    */
-  explicit basic_stream_socket(demuxer_type& d)
-    : service_(d.get_service(service_factory<Service>())),
+  explicit basic_stream_socket(io_service_type& io_service)
+    : service_(io_service.get_service(service_factory<Service>())),
       impl_(service_.null())
   {
   }
@@ -87,17 +87,17 @@ public:
     service_.close(impl_, ignore_error());
   }
 
-  /// Get the demuxer associated with the asynchronous object.
+  /// Get the io_service associated with the object.
   /**
-   * This function may be used to obtain the demuxer object that the stream
+   * This function may be used to obtain the io_service object that the stream
    * socket uses to dispatch handlers for asynchronous operations.
    *
-   * @return A reference to the demuxer object that stream socket will use to
-   * dispatch handlers. Ownership is not transferred to the caller.
+   * @return A reference to the io_service object that the stream socket will
+   * use to dispatch handlers. Ownership is not transferred to the caller.
    */
-  demuxer_type& demuxer()
+  io_service_type& io_service()
   {
-    return service_.demuxer();
+    return service_.io_service();
   }
 
   /// Open the socket using the specified protocol.
@@ -111,7 +111,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::stream_socket socket(demuxer);
+   * asio::stream_socket socket(io_service);
    * socket.open(asio::ipv4::tcp());
    * @endcode
    */
@@ -137,7 +137,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::stream_socket socket(demuxer);
+   * asio::stream_socket socket(io_service);
    * asio::error error;
    * socket.open(asio::ipv4::tcp(), asio::assign_error(error));
    * if (error)
@@ -178,7 +178,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::stream_socket socket(demuxer);
+   * asio::stream_socket socket(io_service);
    * ...
    * asio::error error;
    * socket.close(asio::assign_error(error));
@@ -243,7 +243,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::stream_socket socket(demuxer);
+   * asio::stream_socket socket(io_service);
    * socket.open(asio::ipv4::tcp());
    * socket.bind(asio::ipv4::tcp::endpoint(12345));
    * @endcode
@@ -271,7 +271,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::stream_socket socket(demuxer);
+   * asio::stream_socket socket(io_service);
    * socket.open(asio::ipv4::tcp());
    * asio::error error;
    * socket.bind(asio::ipv4::tcp::endpoint(12345),
@@ -305,7 +305,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::stream_socket socket(demuxer);
+   * asio::stream_socket socket(io_service);
    * asio::ipv4::tcp::endpoint endpoint(12345, "1.2.3.4");
    * socket.connect(endpoint);
    * @endcode
@@ -338,7 +338,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::stream_socket socket(demuxer);
+   * asio::stream_socket socket(io_service);
    * asio::ipv4::tcp::endpoint endpoint(12345, "1.2.3.4");
    * asio::error error;
    * socket.connect(endpoint, asio::assign_error(error));
@@ -375,7 +375,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * asio::demuxer::post().
+   * asio::io_service::post().
    *
    * @par Example:
    * @code
@@ -389,7 +389,7 @@ public:
    *
    * ...
    *
-   * asio::stream_socket socket(demuxer);
+   * asio::stream_socket socket(io_service);
    * asio::ipv4::tcp::endpoint endpoint(12345, "1.2.3.4");
    * socket.async_connect(endpoint, connect_handler);
    * @endcode
@@ -420,7 +420,7 @@ public:
    * @par Example:
    * Setting the IPPROTO_TCP/TCP_NODELAY option:
    * @code
-   * asio::stream_socket socket(demuxer);
+   * asio::stream_socket socket(io_service);
    * ...
    * asio::ipv4::tcp::no_delay option(true);
    * socket.set_option(option);
@@ -457,7 +457,7 @@ public:
    * @par Example:
    * Setting the IPPROTO_TCP/TCP_NODELAY option:
    * @code
-   * asio::stream_socket socket(demuxer);
+   * asio::stream_socket socket(io_service);
    * ...
    * asio::ipv4::tcp::no_delay option(true);
    * asio::error error;
@@ -494,7 +494,7 @@ public:
    * @par Example:
    * Getting the value of the SOL_SOCKET/SO_KEEPALIVE option:
    * @code
-   * asio::stream_socket socket(demuxer);
+   * asio::stream_socket socket(io_service);
    * ...
    * asio::stream_socket::keep_alive option;
    * socket.get_option(option);
@@ -532,7 +532,7 @@ public:
    * @par Example:
    * Getting the value of the SOL_SOCKET/SO_KEEPALIVE option:
    * @code
-   * asio::stream_socket socket(demuxer);
+   * asio::stream_socket socket(io_service);
    * ...
    * asio::stream_socket::keep_alive option;
    * asio::error error;
@@ -565,7 +565,7 @@ public:
    * @par Example:
    * Getting the number of bytes ready to read:
    * @code
-   * asio::stream_socket socket(demuxer);
+   * asio::stream_socket socket(io_service);
    * ...
    * asio::stream_socket::bytes_readable command;
    * socket.io_control(command);
@@ -598,7 +598,7 @@ public:
    * @par Example:
    * Getting the number of bytes ready to read:
    * @code
-   * asio::stream_socket socket(demuxer);
+   * asio::stream_socket socket(io_service);
    * ...
    * asio::stream_socket::bytes_readable command;
    * asio::error error;
@@ -627,7 +627,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::stream_socket socket(demuxer);
+   * asio::stream_socket socket(io_service);
    * ...
    * asio::ipv4::tcp::endpoint endpoint;
    * socket.get_local_endpoint(endpoint);
@@ -655,7 +655,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::stream_socket socket(demuxer);
+   * asio::stream_socket socket(io_service);
    * ...
    * asio::ipv4::tcp::endpoint endpoint;
    * asio::error error;
@@ -684,7 +684,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::stream_socket socket(demuxer);
+   * asio::stream_socket socket(io_service);
    * ...
    * asio::ipv4::tcp::endpoint endpoint;
    * socket.get_remote_endpoint(endpoint);
@@ -712,7 +712,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::stream_socket socket(demuxer);
+   * asio::stream_socket socket(io_service);
    * ...
    * asio::ipv4::tcp::endpoint endpoint;
    * asio::error error;
@@ -742,7 +742,7 @@ public:
    * @par Example:
    * Shutting down the send side of the socket:
    * @code
-   * asio::stream_socket socket(demuxer);
+   * asio::stream_socket socket(io_service);
    * ...
    * socket.shutdown(asio::stream_socket::shutdown_send);
    * @endcode
@@ -769,7 +769,7 @@ public:
    * @par Example:
    * Shutting down the send side of the socket:
    * @code
-   * asio::stream_socket socket(demuxer);
+   * asio::stream_socket socket(io_service);
    * ...
    * asio::error error;
    * socket.shutdown(asio::stream_socket::shutdown_send,
@@ -872,7 +872,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * asio::demuxer::post().
+   * asio::io_service::post().
    *
    * @note The send operation may not transmit all of the data to the peer.
    * Consider using the @ref async_write function if you need to ensure that all
@@ -983,7 +983,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * asio::demuxer::post().
+   * asio::io_service::post().
    *
    * @note The receive operation may not receive all of the requested number of
    * bytes. Consider using the @ref async_read function if you need to ensure
@@ -1089,7 +1089,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * asio::demuxer::post().
+   * asio::io_service::post().
    *
    * @note The write operation may not transmit all of the data to the peer.
    * Consider using the @ref async_write function if you need to ensure that all
@@ -1194,7 +1194,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * asio::demuxer::post().
+   * asio::io_service::post().
    *
    * @note The read operation may not read all of the requested number of bytes.
    * Consider using the @ref async_read function if you need to ensure that the

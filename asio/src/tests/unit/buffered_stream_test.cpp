@@ -22,18 +22,18 @@ void test_sync_operations()
 {
   using namespace std; // For memcmp.
 
-  asio::demuxer demuxer;
+  asio::io_service io_service;
 
-  asio::socket_acceptor acceptor(demuxer,
+  asio::socket_acceptor acceptor(io_service,
       asio::ipv4::tcp::endpoint(0));
   asio::ipv4::tcp::endpoint server_endpoint;
   acceptor.get_local_endpoint(server_endpoint);
   server_endpoint.address(asio::ipv4::address::loopback());
 
-  stream_type client_socket(demuxer);
+  stream_type client_socket(io_service);
   client_socket.lowest_layer().connect(server_endpoint);
 
-  stream_type server_socket(demuxer);
+  stream_type server_socket(io_service);
   acceptor.accept(server_socket);
 
   const char write_data[]
@@ -136,21 +136,21 @@ void test_async_operations()
 {
   using namespace std; // For memcmp.
 
-  asio::demuxer demuxer;
+  asio::io_service io_service;
 
-  asio::socket_acceptor acceptor(demuxer,
+  asio::socket_acceptor acceptor(io_service,
       asio::ipv4::tcp::endpoint(0));
   asio::ipv4::tcp::endpoint server_endpoint;
   acceptor.get_local_endpoint(server_endpoint);
   server_endpoint.address(asio::ipv4::address::loopback());
 
-  stream_type client_socket(demuxer);
+  stream_type client_socket(io_service);
   client_socket.lowest_layer().connect(server_endpoint);
 
-  stream_type server_socket(demuxer);
+  stream_type server_socket(io_service);
   acceptor.async_accept(server_socket, handle_accept);
-  demuxer.run();
-  demuxer.reset();
+  io_service.run();
+  io_service.reset();
 
   const char write_data[]
     = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -163,12 +163,12 @@ void test_async_operations()
         asio::buffer(write_buf + bytes_written),
         boost::bind(handle_write, asio::placeholders::error,
           asio::placeholders::bytes_transferred, &bytes_written));
-    demuxer.run();
-    demuxer.reset();
+    io_service.run();
+    io_service.reset();
     client_socket.async_flush(
         boost::bind(handle_flush, asio::placeholders::error));
-    demuxer.run();
-    demuxer.reset();
+    io_service.run();
+    io_service.reset();
   }
 
   char read_data[sizeof(write_data)];
@@ -181,8 +181,8 @@ void test_async_operations()
         asio::buffer(read_buf + bytes_read),
         boost::bind(handle_read, asio::placeholders::error,
           asio::placeholders::bytes_transferred, &bytes_read));
-    demuxer.run();
-    demuxer.reset();
+    io_service.run();
+    io_service.reset();
   }
 
   BOOST_CHECK(bytes_written == sizeof(write_data));
@@ -196,12 +196,12 @@ void test_async_operations()
         asio::buffer(write_buf + bytes_written),
         boost::bind(handle_write, asio::placeholders::error,
           asio::placeholders::bytes_transferred, &bytes_written));
-    demuxer.run();
-    demuxer.reset();
+    io_service.run();
+    io_service.reset();
     server_socket.async_flush(
         boost::bind(handle_flush, asio::placeholders::error));
-    demuxer.run();
-    demuxer.reset();
+    io_service.run();
+    io_service.reset();
   }
 
   bytes_read = 0;
@@ -211,8 +211,8 @@ void test_async_operations()
         asio::buffer(read_buf + bytes_read),
         boost::bind(handle_read, asio::placeholders::error,
           asio::placeholders::bytes_transferred, &bytes_read));
-    demuxer.run();
-    demuxer.reset();
+    io_service.run();
+    io_service.reset();
   }
 
   BOOST_CHECK(bytes_written == sizeof(write_data));

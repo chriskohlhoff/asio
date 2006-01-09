@@ -33,7 +33,7 @@
 namespace asio {
 namespace detail {
 
-template <typename Demuxer, typename Time_Traits, typename Reactor>
+template <typename IO_Service, typename Time_Traits, typename Reactor>
 class reactive_deadline_timer_service
 {
 public:
@@ -48,8 +48,8 @@ public:
   // implementation of the timer service.
   typedef timer_impl* impl_type;
 
-  // The demuxer type for this service.
-  typedef Demuxer demuxer_type;
+  // The io_service type associated with this service.
+  typedef IO_Service io_service_type;
 
   // The time type.
   typedef typename Time_Traits::time_type time_type;
@@ -58,16 +58,16 @@ public:
   typedef typename Time_Traits::duration_type duration_type;
 
   // Constructor.
-  reactive_deadline_timer_service(demuxer_type& d)
-    : demuxer_(d),
-      reactor_(d.get_service(service_factory<Reactor>()))
+  reactive_deadline_timer_service(io_service_type& io_service)
+    : io_service_(io_service),
+      reactor_(io_service.get_service(service_factory<Reactor>()))
   {
   }
 
-  // Get the demuxer associated with the service.
-  demuxer_type& demuxer()
+  // Get the io_service associated with the service.
+  io_service_type& io_service()
   {
-    return demuxer_;
+    return io_service_;
   }
 
   // Return a null timer implementation.
@@ -143,10 +143,10 @@ public:
   class wait_handler
   {
   public:
-    wait_handler(impl_type& impl, Demuxer& demuxer, Handler handler)
+    wait_handler(impl_type& impl, IO_Service& io_service, Handler handler)
       : impl_(impl),
-        demuxer_(demuxer),
-        work_(demuxer),
+        io_service_(io_service),
+        work_(io_service),
         handler_(handler)
     {
     }
@@ -154,13 +154,13 @@ public:
     void operator()(int result)
     {
       asio::error e(result);
-      demuxer_.post(detail::bind_handler(handler_, e));
+      io_service_.post(detail::bind_handler(handler_, e));
     }
 
   private:
     impl_type& impl_;
-    Demuxer& demuxer_;
-    typename Demuxer::work work_;
+    IO_Service& io_service_;
+    typename IO_Service::work work_;
     Handler handler_;
   };
 
@@ -169,12 +169,12 @@ public:
   void async_wait(impl_type& impl, Handler handler)
   {
     reactor_.schedule_timer(impl->expiry,
-        wait_handler<Handler>(impl, demuxer_, handler), impl);
+        wait_handler<Handler>(impl, io_service_, handler), impl);
   }
 
 private:
-  // The demuxer used for dispatching handlers.
-  Demuxer& demuxer_;
+  // The io_service used for dispatching handlers.
+  IO_Service& io_service_;
 
   // The selector that performs event demultiplexing for the provider.
   Reactor& reactor_;

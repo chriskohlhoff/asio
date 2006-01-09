@@ -75,7 +75,7 @@ public:
    * @par Examples:
    * Setting the option:
    * @code
-   * asio::stream_socket socket(demuxer); 
+   * asio::stream_socket socket(io_service); 
    * ...
    * asio::ipv4::tcp::no_delay option(true);
    * socket.set_option(option);
@@ -84,7 +84,7 @@ public:
    * @par
    * Getting the current option value:
    * @code
-   * asio::stream_socket socket(demuxer); 
+   * asio::stream_socket socket(io_service); 
    * ...
    * asio::ipv4::tcp::no_delay option;
    * socket.get_option(option);

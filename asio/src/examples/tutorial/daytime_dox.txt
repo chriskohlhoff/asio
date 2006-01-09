@@ -15,9 +15,9 @@ so we need the user to specify the server.
 
 \until }
 
-All programs that use asio need to have at least one asio::demuxer object.
+All programs that use asio need to have at least one asio::io_service object.
 
-\until asio::demuxer
+\until asio::io_service
 
 We need to turn the server name that was specified as a
 parameter to the application, into an IP address. To do this we use an
@@ -73,7 +73,7 @@ with TCP.
 
 \dontinclude daytime2/server.cpp
 
-\until asio::demuxer
+\until asio::io_service
 
 An asio::socket_acceptor object needs to be created to listen
 for new connections. It is initialised to listen on TCP port 13.
@@ -128,12 +128,12 @@ We need to set up the initial socket to hold an accepted client connection.
 
 The function asio::socket_acceptor::async_accept() will cause the
 application to listen in the background for a new connection. When such a
-connection is received, the demuxer will invoke the <tt>handle_accept()</tt>
+connection is received, the io_service will invoke the <tt>handle_accept()</tt>
 function with an asio::error argument.
 
 \until asio::placeholders::error
 
-Now that we have created some work for it to do, we can run the demuxer.
+Now that we have created some work for it to do, we can run the io_service.
 
 \until return 0;
 \until }
@@ -251,7 +251,7 @@ with UDP.
 
 \dontinclude daytime5/server.cpp
 
-\until asio::demuxer
+\until asio::io_service
 
 Create an asio::datagram_socket object to receive requests on UDP port 13.
 
@@ -305,13 +305,13 @@ Create an asio::datagram_socket object to receive requests on UDP port 13.
 \until endpoint
 
 The function asio::datagram_socket::async_receive_from() will cause the
-application to listen in the background for a new request. When such a
-request is received, the demuxer will invoke the <tt>handle_receive_from()</tt>
+application to listen in the background for a new request. When such a request
+is received, the io_service will invoke the <tt>handle_receive_from()</tt>
 function with two arguments: asio::error, and bytes_transferred.
 
 \until asio::placeholders::bytes_transferred
 
-Now that we have created some work for it to do, we can run the demuxer.
+Now that we have created some work for it to do, we can run the io_service.
 
 \until return 0;
 \until }
@@ -326,8 +326,8 @@ The function <tt>handle_receive_from()</tt> will service the client request.
 
 The <tt>error</tt> parameter contains the result of the asynchronous operation.
 Since we only provided a 1-byte buffer to contain the client's request, the
-demuxer would return an error if the client sent anything larger. We can ignore
-such an error if it comes up.
+io_service would return an error if the client sent anything larger. We can
+ignore such an error if it comes up.
 
 \until {
 
@@ -385,7 +385,7 @@ have just written, into a single server application.
 
 \dontinclude daytime7/server.cpp
 \skip int main()
-\until asio::demuxer
+\until asio::io_service
 
 We will begin by creating an asio::stream_socket object to hold an accepted TCP
 client connection.
@@ -396,7 +396,7 @@ Now we need an asio::datagram_socket object for UDP client requests.
 
 \until &remote_endpoint, asio::placeholders::error
 
-We have created two lots of work for the demuxer to do.
+We have created two lots of work for the io_service to do.
 
 \until return 0;
 \until }

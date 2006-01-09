@@ -51,9 +51,9 @@ private:
 class session
 {
 public:
-  session(demuxer& d, size_t block_size, stats& s)
-    : dispatcher_(d),
-      socket_(d),
+  session(io_service& ios, size_t block_size, stats& s)
+    : dispatcher_(ios),
+      socket_(ios),
       block_size_(block_size),
       read_data_(new char[block_size]),
       read_data_length_(0),
@@ -167,10 +167,10 @@ private:
 class client
 {
 public:
-  client(demuxer& d, const ipv4::tcp::endpoint& server_endpoint,
+  client(io_service& ios, const ipv4::tcp::endpoint& server_endpoint,
       size_t block_size, size_t session_count, int timeout)
-    : demuxer_(d),
-      stop_timer_(d),
+    : io_service_(ios),
+      stop_timer_(ios),
       sessions_(),
       stats_()
   {
@@ -179,7 +179,7 @@ public:
 
     for (size_t i = 0; i < session_count; ++i)
     {
-      session* new_session = new session(demuxer_, block_size, stats_);
+      session* new_session = new session(io_service_, block_size, stats_);
       new_session->start(server_endpoint);
       sessions_.push_back(new_session);
     }
@@ -203,7 +203,7 @@ public:
   }
 
 private:
-  demuxer& demuxer_;
+  io_service& io_service_;
   deadline_timer stop_timer_;
   std::list<session*> sessions_;
   stats stats_;
@@ -228,23 +228,23 @@ int main(int argc, char* argv[])
     size_t session_count = atoi(argv[5]);
     int timeout = atoi(argv[6]);
 
-    demuxer d;
+    io_service ios;
 
-    ipv4::host_resolver hr(d);
+    ipv4::host_resolver hr(ios);
     ipv4::host h;
     hr.get_host_by_name(h, host);
     ipv4::tcp::endpoint ep(port, h.address(0));
 
-    client c(d, ep, block_size, session_count, timeout);
+    client c(ios, ep, block_size, session_count, timeout);
 
     std::list<thread*> threads;
     while (--thread_count > 0)
     {
-      thread* new_thread = new thread(boost::bind(&demuxer::run, &d));
+      thread* new_thread = new thread(boost::bind(&io_service::run, &ios));
       threads.push_back(new_thread);
     }
 
-    d.run();
+    ios.run();
 
     while (!threads.empty())
     {

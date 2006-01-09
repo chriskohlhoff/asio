@@ -222,7 +222,7 @@ std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of
  * the handler will be performed in a manner equivalent to using
- * asio::demuxer::post().
+ * asio::io_service::post().
  *
  * @par Example:
  * To read into a single data buffer use the @ref buffer function as follows:
@@ -296,7 +296,7 @@ void async_read(Async_Read_Stream& s, const Mutable_Buffers& buffers,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of
  * the handler will be performed in a manner equivalent to using
- * asio::demuxer::post().
+ * asio::io_service::post().
  *
  * @par Example:
  * To read into a single data buffer use the @ref buffer function as follows:

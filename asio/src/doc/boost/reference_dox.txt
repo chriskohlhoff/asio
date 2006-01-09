@@ -61,8 +61,8 @@ Standard exception class.
 \li boost::asio::const_buffer
 \li boost::asio::datagram_socket
 \li boost::asio::deadline_timer
-\li boost::asio::demuxer
 \li boost::asio::error
+\li boost::asio::io_service
 \li boost::asio::ipv4::address
 \li boost::asio::ipv4::host
 \li boost::asio::ipv4::host_resolver
@@ -82,9 +82,9 @@ Standard exception class.
 
 <H2>Class Templates</H2>
 
-\li boost::asio::basic_demuxer
 \li boost::asio::basic_datagram_socket
 \li boost::asio::basic_deadline_timer
+\li boost::asio::basic_io_service
 \li boost::asio::basic_locking_dispatcher
 \li boost::asio::basic_socket_acceptor
 \li boost::asio::basic_stream_socket
@@ -115,8 +115,6 @@ Standard exception class.
 
 \li boost::asio::datagram_socket_service
 \li boost::asio::deadline_timer_service
-\li boost::asio::demuxer_service
-\li boost::asio::locking_dispatcher_service
 \li boost::asio::socket_acceptor_service
 \li boost::asio::stream_socket_service
 \li boost::asio::ipv4::host_resolver_service

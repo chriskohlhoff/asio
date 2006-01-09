@@ -1,10 +1,10 @@
 /**
 \page designglossary Glossary
 
-@section designglossary_demuxer Demuxer
-The asio library's implementation of the Proactor design pattern. Acts as a
-registry of available services, and as a thread pool for dispatching handlers
-associated with completed asynchronous operations.
+@section designglossary_io_service IO_Service
+Contains the asio library's implementation of the Proactor design pattern. Acts
+as a registry of available services, and as a thread pool for dispatching
+handlers associated with completed asynchronous operations.
 
 @section designglossary_handler Handler
 A function object, typically one invoked when an asynchronous operations
@@ -23,7 +23,7 @@ ready to read or write without blocking). It is the responsibility of an event
 handler to perform the actual operation.
 
 @section designglossary_service Service
-An object, registered with a Demuxer, responsible for implementing asynchronous
-operations.
+An object, registered with an IO_Service, responsible for implementing
+asynchronous operations.
 
 */

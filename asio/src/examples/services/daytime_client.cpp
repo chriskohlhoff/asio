@@ -46,26 +46,26 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::demuxer demuxer;
+    asio::io_service io_service;
 
     // Set the name of the file that all logger instances will use.
-    services::logger logger(demuxer, "");
+    services::logger logger(io_service, "");
     logger.use_file("log.txt");
 
     // Resolve the address corresponding to the given host.
-    asio::ipv4::host_resolver host_resolver(demuxer);
+    asio::ipv4::host_resolver host_resolver(io_service);
     asio::ipv4::host host;
     host_resolver.get_host_by_name(host, argv[1]);
     asio::ipv4::tcp::endpoint remote_endpoint(13, host.address(0));
 
     // Start an asynchronous connect.
-    debug_stream_socket socket(demuxer);
+    debug_stream_socket socket(io_service);
     socket.async_connect(remote_endpoint,
         boost::bind(connect_handler,
           asio::placeholders::error, &socket));
 
-    // Run the demuxer until all operations have finished.
-    demuxer.run();
+    // Run the io_service until all operations have finished.
+    io_service.run();
   }
   catch (std::exception& e)
   {

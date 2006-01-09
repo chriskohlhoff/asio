@@ -48,7 +48,7 @@ namespace asio {
  * Performing a blocking wait:
  * @code
  * // Construct a timer without setting an expiry time.
- * asio::deadline_timer timer(demuxer);
+ * asio::deadline_timer timer(io_service);
  *
  * // Set an expiry time relative to now.
  * timer.expires_from_now(boost::posix_time::seconds(5));
@@ -71,7 +71,7 @@ namespace asio {
  * ...
  *
  * // Construct a timer with an absolute expiry time.
- * asio::deadline_timer timer(demuxer,
+ * asio::deadline_timer timer(io_service,
  *     boost::posix_time::time_from_string("2005-12-07 23:59:59.000"));
  *
  * // Start an asynchronous wait.
@@ -89,8 +89,8 @@ public:
   /// The native implementation type of the timer.
   typedef typename service_type::impl_type impl_type;
 
-  /// The demuxer type for this asynchronous type.
-  typedef typename service_type::demuxer_type demuxer_type;
+  /// The io_service type for this type.
+  typedef typename service_type::io_service_type io_service_type;
 
   /// The type used for reporting errors.
   typedef asio::error error_type;
@@ -107,11 +107,11 @@ public:
    * expires_at() or expires_from_now() functions must be called to set an
    * expiry time before the timer can be waited on.
    *
-   * @param d The demuxer object that the timer will use to dispatch handlers
-   * for any asynchronous operations performed on the timer.
+   * @param io_service The io_service object that the timer will use to dispatch
+   * handlers for any asynchronous operations performed on the timer.
    */
-  explicit basic_deadline_timer(demuxer_type& d)
-    : service_(d.get_service(service_factory<Service>())),
+  explicit basic_deadline_timer(io_service_type& io_service)
+    : service_(io_service.get_service(service_factory<Service>())),
       impl_(service_.null())
   {
     service_.create(impl_);
@@ -121,14 +121,15 @@ public:
   /**
    * This constructor creates a timer and sets the expiry time.
    *
-   * @param d The demuxer object that the timer will use to dispatch handlers
-   * for any asynchronous operations performed on the timer.
+   * @param io_service The io_service object that the timer will use to dispatch
+   * handlers for any asynchronous operations performed on the timer.
    *
    * @param expiry_time The expiry time to be used for the timer, expressed
    * as an absolute time.
    */
-  basic_deadline_timer(demuxer_type& d, const time_type& expiry_time)
-    : service_(d.get_service(service_factory<Service>())),
+  basic_deadline_timer(io_service_type& io_service,
+      const time_type& expiry_time)
+    : service_(io_service.get_service(service_factory<Service>())),
       impl_(service_.null())
   {
     service_.create(impl_);
@@ -141,14 +142,15 @@ public:
   /**
    * This constructor creates a timer and sets the expiry time.
    *
-   * @param d The demuxer object that the timer will use to dispatch handlers
-   * for any asynchronous operations performed on the timer.
+   * @param io_service The io_service object that the timer will use to dispatch
+   * handlers for any asynchronous operations performed on the timer.
    *
    * @param expiry_time The expiry time to be used for the timer, relative to
    * now.
    */
-  basic_deadline_timer(demuxer_type& d, const duration_type& expiry_time)
-    : service_(d.get_service(service_factory<Service>())),
+  basic_deadline_timer(io_service_type& io_service,
+      const duration_type& expiry_time)
+    : service_(io_service.get_service(service_factory<Service>())),
       impl_(service_.null())
   {
     service_.create(impl_);
@@ -163,17 +165,17 @@ public:
     service_.destroy(impl_);
   }
 
-  /// Get the demuxer associated with the asynchronous object.
+  /// Get the io_service associated with the object.
   /**
-   * This function may be used to obtain the demuxer object that the timer uses
-   * to dispatch handlers for asynchronous operations.
+   * This function may be used to obtain the io_service object that the timer
+   * uses to dispatch handlers for asynchronous operations.
    *
-   * @return A reference to the demuxer object that the timer will use to
+   * @return A reference to the io_service object that the timer will use to
    * dispatch handlers. Ownership is not transferred to the caller.
    */
-  demuxer_type& demuxer()
+  io_service_type& io_service()
   {
-    return service_.demuxer();
+    return service_.io_service();
   }
 
   /// Get the underlying implementation in the native type.
@@ -288,7 +290,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * asio::demuxer::post().
+   * asio::io_service::post().
    */
   template <typename Handler>
   void async_wait(Handler handler)

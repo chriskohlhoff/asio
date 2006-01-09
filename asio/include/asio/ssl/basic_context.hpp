@@ -43,12 +43,12 @@ public:
   /// The native implementation type of the locking dispatcher.
   typedef typename service_type::impl_type impl_type;
 
-  /// The demuxer type for this context.
-  typedef typename service_type::demuxer_type demuxer_type;
+  /// The io_service type for this context.
+  typedef typename service_type::io_service_type io_service_type;
 
   /// Constructor.
-  basic_context(demuxer_type& d, method m)
-    : service_(d.get_service(service_factory<Service>())),
+  basic_context(io_service_type& io_service, method m)
+    : service_(io_service.get_service(service_factory<Service>())),
       impl_(service_.null())
   {
     service_.create(impl_, m);

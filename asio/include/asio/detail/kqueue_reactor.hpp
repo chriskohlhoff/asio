@@ -21,7 +21,7 @@
 #if defined(__MACH__) && defined(__APPLE__)
 
 // Define this to indicate that epoll is supported on the target platform.
-#define ASIO_HAS_KQUEUE_REACTOR 1
+#define ASIO_HAS_KQUEUE 1
 
 #include "asio/detail/push_options.hpp"
 #include <cstddef>
@@ -38,7 +38,7 @@
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/task_demuxer_service.hpp"
+#include "asio/detail/task_io_service.hpp"
 #include "asio/detail/thread.hpp"
 #include "asio/detail/reactor_op_queue.hpp"
 #include "asio/detail/reactor_timer_queue.hpp"
@@ -55,8 +55,8 @@ class kqueue_reactor
 {
 public:
   // Constructor.
-  template <typename Demuxer>
-  kqueue_reactor(Demuxer&)
+  template <typename IO_Service>
+  kqueue_reactor(IO_Service&)
     : mutex_(),
       kqueue_fd_(do_kqueue_create()),
       wait_in_progress_(false),
@@ -266,7 +266,7 @@ public:
   }
 
 private:
-  friend class task_demuxer_service<
+  friend class task_io_service<
       kqueue_reactor<Own_Thread, Allocator>, Allocator>;
 
   // Run the kqueue loop.

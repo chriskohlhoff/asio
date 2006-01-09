@@ -19,9 +19,9 @@ using namespace asio;
 
 void error_handler_test()
 {
-  demuxer d;
+  io_service ios;
 
-  stream_socket s(d);
+  stream_socket s(ios);
   ipv4::tcp::endpoint endpoint(321, ipv4::address::any());
 
   error expected_err;

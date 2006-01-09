@@ -4,9 +4,10 @@
 
 enum { max_length = 1024 };
 
-void server(asio::demuxer& d, short port)
+void server(asio::io_service& io_service, short port)
 {
-  asio::datagram_socket sock(d, asio::ipv4::udp::endpoint(port));
+  asio::datagram_socket sock(io_service,
+      asio::ipv4::udp::endpoint(port));
   for (;;)
   {
     char data[max_length];
@@ -27,10 +28,10 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::demuxer d;
+    asio::io_service io_service;
 
     using namespace std; // For atoi.
-    server(d, atoi(argv[1]));
+    server(io_service, atoi(argv[1]));
   }
   catch (asio::error& e)
   {

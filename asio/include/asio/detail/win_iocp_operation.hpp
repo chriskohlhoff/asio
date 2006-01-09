@@ -30,9 +30,6 @@
 namespace asio {
 namespace detail {
 
-template <typename Allocator>
-class win_iocp_demuxer_service;
-
 // Base class for all IOCP operations. A function pointer is used instead of
 // virtual functions to avoid the associated overhead.
 //

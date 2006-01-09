@@ -1,6 +1,6 @@
 //
-// win_iocp_demuxer_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// win_iocp_io_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2005 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_WIN_IOCP_DEMUXER_SERVICE_HPP
-#define ASIO_DETAIL_WIN_IOCP_DEMUXER_SERVICE_HPP
+#ifndef ASIO_DETAIL_WIN_IOCP_IO_SERVICE_HPP
+#define ASIO_DETAIL_WIN_IOCP_IO_SERVICE_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -26,7 +26,7 @@
 #if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
 
 // Define this to indicate that IOCP is supported on the target platform.
-#define ASIO_HAS_IOCP_DEMUXER 1
+#define ASIO_HAS_IOCP 1
 
 #include "asio/detail/push_options.hpp"
 #include <boost/throw_exception.hpp>
@@ -34,7 +34,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/system_exception.hpp"
-#include "asio/detail/demuxer_run_call_stack.hpp"
+#include "asio/detail/call_stack.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/win_iocp_operation.hpp"
@@ -43,19 +43,19 @@ namespace asio {
 namespace detail {
 
 template <typename Allocator>
-class win_iocp_demuxer_service
+class win_iocp_io_service
 {
 public:
   // Base class for all operations.
   typedef win_iocp_operation<Allocator> operation;
 
   // Constructor.
-  template <typename Demuxer>
-  win_iocp_demuxer_service(Demuxer& demuxer)
+  template <typename IO_Service>
+  win_iocp_io_service(IO_Service& io_service)
     : iocp_(::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)),
       outstanding_work_(0),
       interrupted_(0),
-      allocator_(demuxer.get_allocator())
+      allocator_(io_service.get_allocator())
   {
     if (!iocp_.handle)
     {
@@ -65,21 +65,21 @@ public:
     }
   }
 
-  // Register a socket with the demuxer.
+  // Register a socket with the IO completion port.
   void register_socket(socket_type sock)
   {
     HANDLE sock_as_handle = reinterpret_cast<HANDLE>(sock);
     ::CreateIoCompletionPort(sock_as_handle, iocp_.handle, 0, 0);
   }
 
-  // Run the demuxer's event processing loop.
+  // Run the event processing loop.
   void run()
   {
     if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
       return;
 
-    typedef demuxer_run_call_stack<win_iocp_demuxer_service<Allocator> > drcs;
-    typename drcs::context ctx(this);
+    typedef call_stack<win_iocp_io_service<Allocator> > cs;
+    typename cs::context ctx(this);
 
     for (;;)
     {
@@ -98,23 +98,23 @@ public:
 
       if (overlapped)
       {
-        // Ensure that the demuxer does not exit due to running out of work
+        // Ensure that the io_service does not exit due to running out of work
         // while we make the upcall.
         struct auto_work
         {
-          auto_work(win_iocp_demuxer_service& demuxer_service)
-            : demuxer_service_(demuxer_service)
+          auto_work(win_iocp_io_service& io_service)
+            : io_service_(io_service)
           {
-            demuxer_service_.work_started();
+            io_service_.work_started();
           }
 
           ~auto_work()
           {
-            demuxer_service_.work_finished();
+            io_service_.work_finished();
           }
 
         private:
-          win_iocp_demuxer_service& demuxer_service_;
+          win_iocp_io_service& io_service_;
         } work(*this);
 
         // Dispatch the operation.
@@ -140,7 +140,7 @@ public:
     }
   }
 
-  // Interrupt the demuxer's event processing loop.
+  // Interrupt the event processing loop.
   void interrupt()
   {
     if (::InterlockedExchange(&interrupted_, 1) == 0)
@@ -154,19 +154,19 @@ public:
     }
   }
 
-  // Reset the demuxer in preparation for a subsequent run invocation.
+  // Reset in preparation for a subsequent run invocation.
   void reset()
   {
     ::InterlockedExchange(&interrupted_, 0);
   }
 
-  // Notify the demuxer that some work has started.
+  // Notify that some work has started.
   void work_started()
   {
     ::InterlockedIncrement(&outstanding_work_);
   }
 
-  // Notify the demuxer that some work has finished.
+  // Notify that some work has finished.
   void work_finished()
   {
     if (::InterlockedDecrement(&outstanding_work_) == 0)
@@ -177,18 +177,18 @@ public:
   struct handler_operation
     : public operation
   {
-    handler_operation(win_iocp_demuxer_service& demuxer_service,
+    handler_operation(win_iocp_io_service& io_service,
         Handler handler)
       : operation(&handler_operation<Handler>::do_completion_impl),
-        demuxer_service_(demuxer_service),
+        io_service_(io_service),
         handler_(handler)
     {
-      demuxer_service_.work_started();
+      io_service_.work_started();
     }
 
     ~handler_operation()
     {
-      demuxer_service_.work_finished();
+      io_service_.work_finished();
     }
 
   private:
@@ -217,21 +217,21 @@ public:
       handler();
     }
 
-    win_iocp_demuxer_service& demuxer_service_;
+    win_iocp_io_service& io_service_;
     Handler handler_;
   };
 
-  // Request the demuxer to invoke the given handler.
+  // Request invocation of the given handler.
   template <typename Handler>
   void dispatch(Handler handler)
   {
-    if (demuxer_run_call_stack<win_iocp_demuxer_service>::contains(this))
+    if (call_stack<win_iocp_io_service>::contains(this))
       handler();
     else
       post(handler);
   }
 
-  // Request the demuxer to invoke the given handler and return immediately.
+  // Request invocation of the given handler and return immediately.
   template <typename Handler>
   void post(Handler handler)
   {
@@ -280,4 +280,4 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_WIN_IOCP_DEMUXER_SERVICE_HPP
+#endif // ASIO_DETAIL_WIN_IOCP_IO_SERVICE_HPP

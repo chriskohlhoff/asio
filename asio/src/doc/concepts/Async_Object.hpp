@@ -10,11 +10,11 @@
 
 /// Asynchronous object concept.
 /**
- * The asynchronous object concept provides callers with access to the demuxer
- * used to dispatch handlers for asynchronous operations. This allows the
- * asynchronous object's operations to be wrapped in a higher-level operation,
- * such that the handler for the higher-level operation be dispatched through
- * the correct demuxer.
+ * The asynchronous object concept provides callers with access to the
+ * io_service used to dispatch handlers for asynchronous operations. This
+ * allows the asynchronous object's operations to be wrapped in a higher-level
+ * operation, such that the handler for the higher-level operation be
+ * dispatched through the correct io_service.
  *
  * @par Implemented By:
  * asio::basic_deadline_timer @n
@@ -31,16 +31,16 @@
 class Async_Object
 {
 public:
-  /// The demuxer type for this asynchronous object.
-  typedef implementation_defined demuxer_type;
+  /// The io_service type for this object.
+  typedef implementation_defined io_service_type;
 
-  /// Get the demuxer associated with the asynchronous object.
+  /// Get the io_service associated with the object.
   /**
-   * This function may be used to obtain the demuxer object that the object
+   * This function may be used to obtain the io_service object that the object
    * uses to dispatch handlers for asynchronous operations.
    *
-   * @return A reference to the demuxer object that the object will use to
+   * @return A reference to the io_service object that the object will use to
    * dispatch handlers. Ownership is not transferred to the caller.
    */
-  demuxer_type& demuxer();
+  io_service_type& io_service();
 };

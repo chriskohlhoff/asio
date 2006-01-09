@@ -19,10 +19,10 @@ using namespace asio;
 class session
 {
 public:
-  session(demuxer& d, size_t block_size)
-    : demuxer_(d),
-      dispatcher_(d),
-      socket_(d),
+  session(io_service& ios, size_t block_size)
+    : io_service_(ios),
+      dispatcher_(ios),
+      socket_(ios),
       block_size_(block_size),
       read_data_(new char[block_size]),
       read_data_length_(0),
@@ -76,7 +76,7 @@ public:
     }
 
     if (op_count_ == 0)
-      demuxer_.post(boost::bind(&session::destroy, this));
+      io_service_.post(boost::bind(&session::destroy, this));
   }
 
   void handle_write(const error& err, size_t last_length)
@@ -102,7 +102,7 @@ public:
     }
 
     if (op_count_ == 0)
-      demuxer_.post(boost::bind(&session::destroy, this));
+      io_service_.post(boost::bind(&session::destroy, this));
   }
 
   static void destroy(session* s)
@@ -111,7 +111,7 @@ public:
   }
 
 private:
-  demuxer& demuxer_;
+  io_service& io_service_;
   locking_dispatcher dispatcher_;
   stream_socket socket_;
   size_t block_size_;
@@ -125,9 +125,10 @@ private:
 class server
 {
 public:
-  server(demuxer& d, const ipv4::tcp::endpoint& endpoint, size_t block_size)
-    : demuxer_(d),
-      acceptor_(d),
+  server(io_service& ios, const ipv4::tcp::endpoint& endpoint,
+      size_t block_size)
+    : io_service_(ios),
+      acceptor_(ios),
       block_size_(block_size)
   {
     acceptor_.open(ipv4::tcp());
@@ -135,7 +136,7 @@ public:
     acceptor_.bind(endpoint);
     acceptor_.listen();
 
-    session* new_session = new session(demuxer_, block_size_);
+    session* new_session = new session(io_service_, block_size_);
     acceptor_.async_accept(new_session->socket(),
         boost::bind(&server::handle_accept, this, new_session,
           placeholders::error));
@@ -146,7 +147,7 @@ public:
     if (!err)
     {
       new_session->start();
-      new_session = new session(demuxer_, block_size_);
+      new_session = new session(io_service_, block_size_);
       acceptor_.async_accept(new_session->socket(),
           boost::bind(&server::handle_accept, this, new_session,
             placeholders::error));
@@ -164,7 +165,7 @@ public:
   }
 
 private:
-  demuxer& demuxer_;
+  io_service& io_service_;
   socket_acceptor acceptor_;
   size_t block_size_;
 };
@@ -184,19 +185,19 @@ int main(int argc, char* argv[])
     int thread_count = atoi(argv[2]);
     size_t block_size = atoi(argv[3]);
 
-    demuxer d;
+    io_service ios;
 
-    server s(d, ipv4::tcp::endpoint(port), block_size);
+    server s(ios, ipv4::tcp::endpoint(port), block_size);
 
     // Threads not currently supported in this test.
     std::list<thread*> threads;
     while (--thread_count > 0)
     {
-      thread* new_thread = new thread(boost::bind(&demuxer::run, &d));
+      thread* new_thread = new thread(boost::bind(&io_service::run, &ios));
       threads.push_back(new_thread);
     }
 
-    d.run();
+    ios.run();
 
     while (!threads.empty())
     {

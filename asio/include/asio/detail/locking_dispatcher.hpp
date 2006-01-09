@@ -1,6 +1,6 @@
 //
-// locking_dispatcher_impl.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// locking_dispatcher.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2005 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_LOCKING_DISPATCHER_IMPL_HPP
-#define ASIO_DETAIL_LOCKING_DISPATCHER_IMPL_HPP
+#ifndef ASIO_DETAIL_LOCKING_DISPATCHER_HPP
+#define ASIO_DETAIL_LOCKING_DISPATCHER_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -18,28 +18,43 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/bind_handler.hpp"
+#include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
 
 namespace asio {
 namespace detail {
 
-template <typename Demuxer>
-class locking_dispatcher_impl
+template <typename Dispatcher, typename Allocator>
+class locking_dispatcher
   : private noncopyable
 {
 public:
   // Constructor.
-  locking_dispatcher_impl()
-    : first_waiter_(0),
+  locking_dispatcher(Dispatcher& dispatcher, const Allocator& allocator)
+    : dispatcher_(dispatcher),
+      allocator_(allocator),
+      first_waiter_(0),
       last_waiter_(0),
       mutex_()
   {
   }
 
+  // Get the underlying dispatcher associated with the locking_dispatcher.
+  Dispatcher& dispatcher()
+  {
+    return dispatcher_;
+  }
+
+  // Return a copy of the allocator associated with the locking_dispatcher.
+  Allocator get_allocator() const
+  {
+    return allocator_;
+  }
+
   // Request a dispatcher to invoke the given handler.
   template <typename Handler>
-  void dispatch(Demuxer& demuxer, Handler handler)
+  void dispatch(Handler handler)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
@@ -48,7 +63,7 @@ public:
       // This handler now has the lock, so can be dispatched immediately.
       first_waiter_ = last_waiter_ = new waiter<Handler>(handler);
       lock.unlock();
-      demuxer.dispatch(waiter_handler(demuxer, *this));
+      dispatcher_.dispatch(waiter_handler(*this));
     }
     else
     {
@@ -62,7 +77,7 @@ public:
 
   // Request a dispatcher to invoke the given handler and return immediately.
   template <typename Handler>
-  void post(Demuxer& demuxer, Handler handler)
+  void post(Handler handler)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
@@ -71,7 +86,7 @@ public:
       // This handler now has the lock, so can be posted immediately.
       first_waiter_ = last_waiter_ = new waiter<Handler>(handler);
       lock.unlock();
-      demuxer.post(waiter_handler(demuxer, *this));
+      dispatcher_.post(waiter_handler(*this));
     }
     else
     {
@@ -126,9 +141,8 @@ private:
   class waiter_handler
   {
   public:
-    waiter_handler(Demuxer& demuxer, locking_dispatcher_impl<Demuxer>& impl)
-      : demuxer_(demuxer),
-        impl_(impl)
+    waiter_handler(locking_dispatcher<Dispatcher, Allocator>& impl)
+      : impl_(impl)
     {
     }
 
@@ -178,7 +192,7 @@ private:
         delete tmp;
 
         // There is more work to do, so post this handler again.
-        demuxer_.post(*this);
+        impl_.dispatcher_.post(*this);
       }
       else
       {
@@ -195,11 +209,16 @@ private:
     }
 
   private:
-    Demuxer& demuxer_;
-    locking_dispatcher_impl<Demuxer>& impl_;
+    locking_dispatcher<Dispatcher, Allocator>& impl_;
   };
 
   friend class waiter_handler;
+
+  // The dispatcher through which all handlers will be dispatched.
+  Dispatcher& dispatcher_;
+
+  // The allocator associated with the dispatcher.
+  Allocator allocator_;
 
   // The start of the list of waiters for the dispatcher. If this pointer
   // is non-null then it indicates that a handler holds the lock.
@@ -217,4 +236,4 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_LOCKING_DISPATCHER_IMPL_HPP
+#endif // ASIO_DETAIL_LOCKING_DISPATCHER_HPP

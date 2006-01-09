@@ -75,22 +75,22 @@ to the basic_stream_socket template.
 \li To make the most common usage appear no different to a class (in a similar
 fashion to std::string vs std::basic_string).
 
-\section designservicesanddemuxer Services and the Demuxer
+\section designservicesandioservice Services and the Demuxer
 
-The asio::demuxer object acts as an extensible collection of services, not
-dissimilar to the way a std::locale object is composed of facets. The demuxer
+The asio::io_service object acts as an extensible collection of services, not
+dissimilar to the way a std::locale object is composed of facets. The io_service
 contains one service object for each service type, and the service objects are
-accessed by their types (see asio::basic_demuxer::get_service).
+accessed by their types (see asio::basic_io_service::get_service).
 
-However, unlike std::locale, services are loaded by the demuxer only when first
-used. This means that you do not pay for the resources associated with a
+However, unlike std::locale, services are loaded by the io_service only when
+first used. This means that you do not pay for the resources associated with a
 service unless you instantiate the corresponding class. For example, the
 deadline_timer_service implementation for Win32 uses a background thread, but
 this thread will not be created if there are no deadline_timer objects in a
 program.
 
-This design also allows the demuxer to be extended by user-defined services. As
-an example, a user may want to simulate asynchronous database access using a
+This design also allows the io_service to be extended by user-defined services.
+As an example, a user may want to simulate asynchronous database access using a
 pool of background threads. A database_connection_service class can be defined
 to create and manage the thread pool, and each database_connection object uses
 this service.

@@ -20,7 +20,7 @@ public:
   /// files from the given directory.
   explicit server(short port, const std::string& doc_root);
 
-  /// Run the server's demuxer loop.
+  /// Run the server's io_service loop.
   void run();
 
   /// Stop the server.
@@ -33,8 +33,8 @@ private:
   /// Handle a request to stop the server.
   void handle_stop();
 
-  /// The demuxer used to perform asynchronous operations.
-  asio::demuxer demuxer_;
+  /// The io_service used to perform asynchronous operations.
+  asio::io_service io_service_;
 
   /// Acceptor used to listen for incoming connections.
   asio::socket_acceptor acceptor_;

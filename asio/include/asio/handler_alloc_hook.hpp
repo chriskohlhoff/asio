@@ -79,7 +79,7 @@ public:
    * that this handler may be a copy of the original handler object passed to
    * the original function.
    *
-   * @param allocator The allocator object associated with the demuxer. The
+   * @param allocator The allocator object associated with the io_service. The
    * allocator has been rebound such that its value_type is the internal asio
    * type to be allocated.
    *
@@ -106,7 +106,7 @@ public:
    * that this handler may be a copy of the original handler object passed to
    * the original function.
    *
-   * @param allocator The allocator object associated with the demuxer. The
+   * @param allocator The allocator object associated with the io_service. The
    * allocator has been rebound such that its value_type is the internal asio
    * type to be allocated.
    *

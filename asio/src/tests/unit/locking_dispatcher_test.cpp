@@ -45,24 +45,24 @@ void increment_with_lock(locking_dispatcher* l, int* count)
   BOOST_CHECK(*count == original_count);
 }
 
-void sleep_increment(demuxer* d, int* count)
+void sleep_increment(io_service* ios, int* count)
 {
-  deadline_timer t(*d, boost::posix_time::seconds(2));
+  deadline_timer t(*ios, boost::posix_time::seconds(2));
   t.wait();
 
   ++(*count);
 }
 
-void start_sleep_increments(demuxer* d, locking_dispatcher* l, int* count)
+void start_sleep_increments(io_service* ios, locking_dispatcher* l, int* count)
 {
   // Give all threads a chance to start.
-  deadline_timer t(*d, boost::posix_time::seconds(2));
+  deadline_timer t(*ios, boost::posix_time::seconds(2));
   t.wait();
 
   // Start three increments.
-  l->post(boost::bind(sleep_increment, d, count));
-  l->post(boost::bind(sleep_increment, d, count));
-  l->post(boost::bind(sleep_increment, d, count));
+  l->post(boost::bind(sleep_increment, ios, count));
+  l->post(boost::bind(sleep_increment, ios, count));
+  l->post(boost::bind(sleep_increment, ios, count));
 }
 
 void throw_exception()
@@ -72,40 +72,40 @@ void throw_exception()
 
 void locking_dispatcher_test()
 {
-  demuxer d;
-  locking_dispatcher l(d);
+  io_service ios;
+  locking_dispatcher l(ios);
   int count = 0;
 
-  d.post(boost::bind(increment_without_lock, &l, &count));
+  ios.post(boost::bind(increment_without_lock, &l, &count));
 
   // No handlers can be called until run() is called.
   BOOST_CHECK(count == 0);
 
-  d.run();
+  ios.run();
 
   // The run() call will not return until all work has finished.
   BOOST_CHECK(count == 1);
 
   count = 0;
-  d.reset();
+  ios.reset();
   l.post(boost::bind(increment_with_lock, &l, &count));
 
   // No handlers can be called until run() is called.
   BOOST_CHECK(count == 0);
 
-  d.run();
+  ios.run();
 
   // The run() call will not return until all work has finished.
   BOOST_CHECK(count == 1);
 
   count = 0;
-  d.reset();
-  d.post(boost::bind(start_sleep_increments, &d, &l, &count));
-  thread thread1(boost::bind(&demuxer::run, &d));
-  thread thread2(boost::bind(&demuxer::run, &d));
+  ios.reset();
+  ios.post(boost::bind(start_sleep_increments, &ios, &l, &count));
+  thread thread1(boost::bind(&io_service::run, &ios));
+  thread thread2(boost::bind(&io_service::run, &ios));
 
   // Check all events run one after another even though there are two threads.
-  deadline_timer timer1(d, boost::posix_time::seconds(3));
+  deadline_timer timer1(ios, boost::posix_time::seconds(3));
   timer1.wait();
   BOOST_CHECK(count == 0);
   timer1.expires_at(timer1.expires_at() + boost::posix_time::seconds(2));
@@ -123,7 +123,7 @@ void locking_dispatcher_test()
 
   count = 0;
   int exception_count = 0;
-  d.reset();
+  ios.reset();
   l.post(throw_exception);
   l.post(boost::bind(increment, &count));
   l.post(boost::bind(increment, &count));
@@ -138,7 +138,7 @@ void locking_dispatcher_test()
   {
     try
     {
-      d.run();
+      ios.run();
       break;
     }
     catch (int)

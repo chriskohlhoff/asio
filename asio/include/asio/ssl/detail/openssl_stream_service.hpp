@@ -26,8 +26,7 @@
 #include <boost/bind.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/basic_demuxer.hpp"
-#include "asio/demuxer_service.hpp"
+#include "asio/basic_io_service.hpp"
 #include "asio/ssl/basic_context.hpp"
 #include "asio/ssl/stream_base.hpp"
 #include "asio/ssl/detail/openssl_operation.hpp"
@@ -42,8 +41,8 @@ class openssl_stream_service
   : private boost::noncopyable
 {
 public:
-  // The demuxer type.
-  typedef basic_demuxer<demuxer_service<Allocator> > demuxer_type;
+  // The io_service type.
+  typedef basic_io_service<Allocator> io_service_type;
 
 private:
   //Base handler for asyncrhonous operations
@@ -53,10 +52,10 @@ private:
   public:
     typedef boost::function<void (const asio::error&, size_t)> func_t;
 
-    base_handler(demuxer_type& d)
+    base_handler(io_service_type& io_service)
       : op_(NULL)
-      , demuxer_(d)
-      , work_(d)
+      , io_service_(io_service)
+      , work_(io_service)
     {}
     
     void do_func(const asio::error& error, size_t size)
@@ -75,8 +74,8 @@ private:
   private:
     func_t func_;
     openssl_operation<Stream>* op_;
-    demuxer_type& demuxer_;
-    typename demuxer_type::work work_;
+    io_service_type& io_service_;
+    typename io_service_type::work work_;
   };  // class base_handler
 
   // Handler for asynchronous IO (write/read) operations
@@ -85,8 +84,8 @@ private:
     : public base_handler<Stream>
   {
   public:
-    io_handler(Handler handler, demuxer_type& d)
-      : base_handler<Stream>(d)
+    io_handler(Handler handler, io_service_type& io_service)
+      : base_handler<Stream>(io_service)
       , handler_(handler)
     {
       set_func(boost::bind(
@@ -109,8 +108,8 @@ private:
     : public base_handler<Stream>
   {
   public:
-    handshake_handler(Handler handler, demuxer_type& d)
-      : base_handler<Stream>(d)
+    handshake_handler(Handler handler, io_service_type& io_service)
+      : base_handler<Stream>(io_service)
       , handler_(handler)
     {
       set_func(boost::bind(
@@ -134,8 +133,8 @@ private:
     : public base_handler<Stream>
   {
   public:
-    shutdown_handler(Handler handler, demuxer_type& d)
-      : base_handler<Stream>(d),
+    shutdown_handler(Handler handler, io_service_type& io_service)
+      : base_handler<Stream>(io_service),
         handler_(handler)
     { 
       set_func(boost::bind(
@@ -160,16 +159,16 @@ public:
     ::BIO* ext_bio;
   } * impl_type;
 
-  // Construct a new stream socket service for the specified demuxer.
-  explicit openssl_stream_service(demuxer_type& demuxer)
-    : demuxer_(demuxer)
+  // Construct a new stream socket service for the specified io_service.
+  explicit openssl_stream_service(io_service_type& io_service)
+    : io_service_(io_service)
   {
   }
 
-  // Get the demuxer associated with the service.
-  demuxer_type& demuxer()
+  // Get the io_service associated with the service.
+  io_service_type& io_service()
   {
-    return demuxer_;
+    return io_service_;
   }
 
   // Return a null stream implementation.
@@ -228,7 +227,7 @@ public:
     typedef handshake_handler<Stream, Handler> connect_handler;
 
     connect_handler* local_handler = 
-      new connect_handler(handler, demuxer_);
+      new connect_handler(handler, io_service_);
 
     openssl_operation<Stream>* op = new openssl_operation<Stream>
     (
@@ -248,7 +247,7 @@ public:
     );
     local_handler->set_operation(op);
 
-    demuxer_.post(boost::bind(&openssl_operation<Stream>::start, op));
+    io_service_.post(boost::bind(&openssl_operation<Stream>::start, op));
   }
 
   // Shut down SSL on the stream.
@@ -271,7 +270,7 @@ public:
     typedef shutdown_handler<Stream, Handler> disconnect_handler;
 
     disconnect_handler* local_handler = 
-      new disconnect_handler(handler, demuxer_);
+      new disconnect_handler(handler, io_service_);
 
     openssl_operation<Stream>* op = new openssl_operation<Stream>
     (
@@ -289,7 +288,7 @@ public:
     );
     local_handler->set_operation(op);
 
-    demuxer_.post(boost::bind(&openssl_operation<Stream>::start, op));        
+    io_service_.post(boost::bind(&openssl_operation<Stream>::start, op));        
   }
 
   // Write some data to the stream.
@@ -317,7 +316,7 @@ public:
   {
     typedef io_handler<Stream, Handler> send_handler;
 
-    send_handler* local_handler = new send_handler(handler, demuxer_);
+    send_handler* local_handler = new send_handler(handler, io_service_);
 
     boost::function<int (SSL*)> send_func =
       boost::bind(&::SSL_write, boost::arg<1>(),
@@ -340,7 +339,7 @@ public:
     );
     local_handler->set_operation(op);
 
-    demuxer_.post(boost::bind(&openssl_operation<Stream>::start, op));        
+    io_service_.post(boost::bind(&openssl_operation<Stream>::start, op));        
   }
 
   // Read some data from the stream.
@@ -368,7 +367,7 @@ public:
   {
     typedef io_handler<Stream, Handler> recv_handler;
 
-    recv_handler* local_handler = new recv_handler(handler, demuxer_);
+    recv_handler* local_handler = new recv_handler(handler, io_service_);
 
     boost::function<int (SSL*)> recv_func =
       boost::bind(&::SSL_read, boost::arg<1>(),
@@ -391,7 +390,7 @@ public:
     );
     local_handler->set_operation(op);
 
-    demuxer_.post(boost::bind(&openssl_operation<Stream>::start, op));        
+    io_service_.post(boost::bind(&openssl_operation<Stream>::start, op));        
   }
 
   // Peek at the incoming data on the stream.
@@ -411,8 +410,8 @@ public:
   }
 
 private:
-  // The demuxer used to dispatch handlers.
-  demuxer_type& demuxer_;
+  // The io_service used to dispatch handlers.
+  io_service_type& io_service_;
 };
 
 } // namespace detail

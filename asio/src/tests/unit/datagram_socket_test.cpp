@@ -36,14 +36,14 @@ void datagram_socket_test()
 {
   using namespace std; // For memcmp and memset.
 
-  demuxer d;
+  io_service ios;
 
-  datagram_socket s1(d, ipv4::udp::endpoint(0));
+  datagram_socket s1(ios, ipv4::udp::endpoint(0));
   ipv4::udp::endpoint target_endpoint;
   s1.get_local_endpoint(target_endpoint);
   target_endpoint.address(ipv4::address::loopback());
 
-  datagram_socket s2(d);
+  datagram_socket s2(ios);
   s2.open(ipv4::udp());
   s2.bind(ipv4::udp::endpoint(0));
   char send_msg[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -67,7 +67,7 @@ void datagram_socket_test()
       boost::bind(handle_recv, sizeof(recv_msg),
         placeholders::error, placeholders::bytes_transferred));
 
-  d.run();
+  ios.run();
 
   BOOST_CHECK(memcmp(send_msg, recv_msg, sizeof(send_msg)) == 0);
 }

@@ -33,7 +33,7 @@
 namespace asio {
 namespace detail {
 
-template <typename Demuxer, typename Reactor>
+template <typename IO_Service, typename Reactor>
 class reactive_socket_service
 {
 public:
@@ -108,26 +108,23 @@ public:
 
     unsigned char flags_;
 
-    friend class reactive_socket_service<Demuxer, Reactor>;
+    friend class reactive_socket_service<IO_Service, Reactor>;
   };
 
   // The maximum number of buffers to support in a single operation.
   enum { max_buffers = 16 };
 
   // Constructor.
-  reactive_socket_service(Demuxer& d)
-    : demuxer_(d),
-      reactor_(d.get_service(service_factory<Reactor>()))
+  reactive_socket_service(IO_Service& io_service)
+    : io_service_(io_service),
+      reactor_(io_service.get_service(service_factory<Reactor>()))
   {
   }
 
-  // The demuxer type for this service.
-  typedef Demuxer demuxer_type;
-
-  // Get the demuxer associated with the service.
-  demuxer_type& demuxer()
+  // Get the io_service associated with the service.
+  IO_Service& io_service()
   {
-    return demuxer_;
+    return io_service_;
   }
 
   // Return a null socket implementation.
@@ -343,11 +340,12 @@ public:
   class send_handler
   {
   public:
-    send_handler(impl_type impl, Demuxer& demuxer, const Const_Buffers& buffers,
-        socket_base::message_flags flags, Handler handler)
+    send_handler(impl_type impl, IO_Service& io_service,
+        const Const_Buffers& buffers, socket_base::message_flags flags,
+        Handler handler)
       : impl_(impl),
-        demuxer_(demuxer),
-        work_(demuxer),
+        io_service_(io_service),
+        work_(io_service),
         buffers_(buffers),
         flags_(flags),
         handler_(handler)
@@ -360,7 +358,7 @@ public:
       if (result != 0)
       {
         asio::error error(result);
-        demuxer_.post(bind_handler(handler_, error, 0));
+        io_service_.post(bind_handler(handler_, error, 0));
         return true;
       }
 
@@ -386,14 +384,14 @@ public:
           || error == asio::error::try_again)
         return false;
 
-      demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
+      io_service_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
       return true;
     }
 
   private:
     impl_type impl_;
-    Demuxer& demuxer_;
-    typename Demuxer::work work_;
+    IO_Service& io_service_;
+    typename IO_Service::work work_;
     Const_Buffers buffers_;
     size_t buffer_count_;
     socket_base::message_flags flags_;
@@ -409,7 +407,7 @@ public:
     if (impl == null())
     {
       asio::error error(asio::error::bad_descriptor);
-      demuxer_.post(bind_handler(handler, error, 0));
+      io_service_.post(bind_handler(handler, error, 0));
     }
     else
     {
@@ -420,14 +418,14 @@ public:
         if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
         {
           asio::error error(socket_ops::get_error());
-          demuxer_.post(bind_handler(handler, error, 0));
+          io_service_.post(bind_handler(handler, error, 0));
           return;
         }
         impl.flags_ |= impl_type::internal_non_blocking;
       }
 
       reactor_.start_write_op(impl, send_handler<Const_Buffers, Handler>(
-            impl, demuxer_, buffers, flags, handler));
+            impl, io_service_, buffers, flags, handler));
     }
   }
 
@@ -485,12 +483,12 @@ public:
   class send_to_handler
   {
   public:
-    send_to_handler(impl_type impl, Demuxer& demuxer,
+    send_to_handler(impl_type impl, IO_Service& io_service,
         const Const_Buffers& buffers, socket_base::message_flags flags,
         const Endpoint& endpoint, Handler handler)
       : impl_(impl),
-        demuxer_(demuxer),
-        work_(demuxer),
+        io_service_(io_service),
+        work_(io_service),
         buffers_(buffers),
         flags_(flags),
         destination_(endpoint),
@@ -504,7 +502,7 @@ public:
       if (result != 0)
       {
         asio::error error(result);
-        demuxer_.post(bind_handler(handler_, error, 0));
+        io_service_.post(bind_handler(handler_, error, 0));
         return true;
       }
 
@@ -531,14 +529,14 @@ public:
           || error == asio::error::try_again)
         return false;
 
-      demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
+      io_service_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
       return true;
     }
 
   private:
     impl_type impl_;
-    Demuxer& demuxer_;
-    typename Demuxer::work work_;
+    IO_Service& io_service_;
+    typename IO_Service::work work_;
     Const_Buffers buffers_;
     socket_base::message_flags flags_;
     Endpoint destination_;
@@ -555,7 +553,7 @@ public:
     if (impl == null())
     {
       asio::error error(asio::error::bad_descriptor);
-      demuxer_.post(bind_handler(handler, error, 0));
+      io_service_.post(bind_handler(handler, error, 0));
     }
     else
     {
@@ -566,7 +564,7 @@ public:
         if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
         {
           asio::error error(socket_ops::get_error());
-          demuxer_.post(bind_handler(handler, error, 0));
+          io_service_.post(bind_handler(handler, error, 0));
           return;
         }
         impl.flags_ |= impl_type::internal_non_blocking;
@@ -574,7 +572,7 @@ public:
 
       reactor_.start_write_op(impl,
           send_to_handler<Const_Buffers, Endpoint, Handler>(
-            impl, demuxer_, buffers, flags, destination, handler));
+            impl, io_service_, buffers, flags, destination, handler));
     }
   }
 
@@ -636,12 +634,12 @@ public:
   class receive_handler
   {
   public:
-    receive_handler(impl_type impl, Demuxer& demuxer,
+    receive_handler(impl_type impl, IO_Service& io_service,
         const Mutable_Buffers& buffers, socket_base::message_flags flags,
         Handler handler)
       : impl_(impl),
-        demuxer_(demuxer),
-        work_(demuxer),
+        io_service_(io_service),
+        work_(io_service),
         buffers_(buffers),
         flags_(flags),
         handler_(handler)
@@ -654,7 +652,7 @@ public:
       if (result != 0)
       {
         asio::error error(result);
-        demuxer_.post(bind_handler(handler_, error, 0));
+        io_service_.post(bind_handler(handler_, error, 0));
         return true;
       }
 
@@ -683,14 +681,14 @@ public:
           || error == asio::error::try_again)
         return false;
 
-      demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
+      io_service_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
       return true;
     }
 
   private:
     impl_type impl_;
-    Demuxer& demuxer_;
-    typename Demuxer::work work_;
+    IO_Service& io_service_;
+    typename IO_Service::work work_;
     Mutable_Buffers buffers_;
     socket_base::message_flags flags_;
     Handler handler_;
@@ -705,7 +703,7 @@ public:
     if (impl == null())
     {
       asio::error error(asio::error::bad_descriptor);
-      demuxer_.post(bind_handler(handler, error, 0));
+      io_service_.post(bind_handler(handler, error, 0));
     }
     else
     {
@@ -716,7 +714,7 @@ public:
         if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
         {
           asio::error error(socket_ops::get_error());
-          demuxer_.post(bind_handler(handler, error, 0));
+          io_service_.post(bind_handler(handler, error, 0));
           return;
         }
         impl.flags_ |= impl_type::internal_non_blocking;
@@ -726,13 +724,13 @@ public:
       {
         reactor_.start_except_op(impl,
             receive_handler<Mutable_Buffers, Handler>(
-              impl, demuxer_, buffers, flags, handler));
+              impl, io_service_, buffers, flags, handler));
       }
       else
       {
         reactor_.start_read_op(impl,
             receive_handler<Mutable_Buffers, Handler>(
-              impl, demuxer_, buffers, flags, handler));
+              impl, io_service_, buffers, flags, handler));
       }
     }
   }
@@ -801,12 +799,12 @@ public:
   class receive_from_handler
   {
   public:
-    receive_from_handler(impl_type impl, Demuxer& demuxer,
+    receive_from_handler(impl_type impl, IO_Service& io_service,
         const Mutable_Buffers& buffers, socket_base::message_flags flags,
         Endpoint& endpoint, Handler handler)
       : impl_(impl),
-        demuxer_(demuxer),
-        work_(demuxer),
+        io_service_(io_service),
+        work_(io_service),
         buffers_(buffers),
         flags_(flags),
         sender_endpoint_(endpoint),
@@ -820,7 +818,7 @@ public:
       if (result != 0)
       {
         asio::error error(result);
-        demuxer_.post(bind_handler(handler_, error, 0));
+        io_service_.post(bind_handler(handler_, error, 0));
         return true;
       }
 
@@ -852,14 +850,14 @@ public:
         return false;
 
       sender_endpoint_.size(addr_len);
-      demuxer_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
+      io_service_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
       return true;
     }
 
   private:
     impl_type impl_;
-    Demuxer& demuxer_;
-    typename Demuxer::work work_;
+    IO_Service& io_service_;
+    typename IO_Service::work work_;
     Mutable_Buffers buffers_;
     socket_base::message_flags flags_;
     Endpoint& sender_endpoint_;
@@ -877,7 +875,7 @@ public:
     if (impl == null())
     {
       asio::error error(asio::error::bad_descriptor);
-      demuxer_.post(bind_handler(handler, error, 0));
+      io_service_.post(bind_handler(handler, error, 0));
     }
     else
     {
@@ -888,7 +886,7 @@ public:
         if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
         {
           asio::error error(socket_ops::get_error());
-          demuxer_.post(bind_handler(handler, error, 0));
+          io_service_.post(bind_handler(handler, error, 0));
           return;
         }
         impl.flags_ |= impl_type::internal_non_blocking;
@@ -896,7 +894,7 @@ public:
 
       reactor_.start_read_op(impl,
           receive_from_handler<Mutable_Buffers, Endpoint, Handler>(
-            impl, demuxer_, buffers, flags, sender_endpoint, handler));
+            impl, io_service_, buffers, flags, sender_endpoint, handler));
     }
   }
 
@@ -1004,11 +1002,11 @@ public:
   class accept_handler
   {
   public:
-    accept_handler(impl_type impl, Demuxer& demuxer, Socket& peer,
+    accept_handler(impl_type impl, IO_Service& io_service, Socket& peer,
         Handler handler)
       : impl_(impl),
-        demuxer_(demuxer),
-        work_(demuxer),
+        io_service_(io_service),
+        work_(io_service),
         peer_(peer),
         handler_(handler)
     {
@@ -1020,7 +1018,7 @@ public:
       if (result != 0)
       {
         asio::error error(result);
-        demuxer_.post(bind_handler(handler_, error));
+        io_service_.post(bind_handler(handler_, error));
         return true;
       }
 
@@ -1036,14 +1034,14 @@ public:
 
       impl_type new_impl(new_socket);
       peer_.set_impl(new_impl);
-      demuxer_.post(bind_handler(handler_, error));
+      io_service_.post(bind_handler(handler_, error));
       return true;
     }
 
   private:
     impl_type impl_;
-    Demuxer& demuxer_;
-    typename Demuxer::work work_;
+    IO_Service& io_service_;
+    typename IO_Service::work work_;
     Socket& peer_;
     Handler handler_;
   };
@@ -1056,12 +1054,12 @@ public:
     if (impl == null())
     {
       asio::error error(asio::error::bad_descriptor);
-      demuxer_.post(bind_handler(handler, error));
+      io_service_.post(bind_handler(handler, error));
     }
     else if (peer.impl() != invalid_socket)
     {
       asio::error error(asio::error::already_connected);
-      demuxer_.post(bind_handler(handler, error));
+      io_service_.post(bind_handler(handler, error));
     }
     else
     {
@@ -1072,14 +1070,14 @@ public:
         if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
         {
           asio::error error(socket_ops::get_error());
-          demuxer_.post(bind_handler(handler, error));
+          io_service_.post(bind_handler(handler, error));
           return;
         }
         impl.flags_ |= impl_type::internal_non_blocking;
       }
 
       reactor_.start_read_op(impl,
-          accept_handler<Socket, Handler>(impl, demuxer_, peer, handler));
+          accept_handler<Socket, Handler>(impl, io_service_, peer, handler));
     }
   }
 
@@ -1087,11 +1085,11 @@ public:
   class accept_endp_handler
   {
   public:
-    accept_endp_handler(impl_type impl, Demuxer& demuxer, Socket& peer,
+    accept_endp_handler(impl_type impl, IO_Service& io_service, Socket& peer,
         Endpoint& peer_endpoint, Handler handler)
       : impl_(impl),
-        demuxer_(demuxer),
-        work_(demuxer),
+        io_service_(io_service),
+        work_(io_service),
         peer_(peer),
         peer_endpoint_(peer_endpoint),
         handler_(handler)
@@ -1104,7 +1102,7 @@ public:
       if (result != 0)
       {
         asio::error error(result);
-        demuxer_.post(bind_handler(handler_, error));
+        io_service_.post(bind_handler(handler_, error));
         return true;
       }
 
@@ -1123,14 +1121,14 @@ public:
       peer_endpoint_.size(addr_len);
       impl_type new_impl(new_socket);
       peer_.set_impl(new_impl);
-      demuxer_.post(bind_handler(handler_, error));
+      io_service_.post(bind_handler(handler_, error));
       return true;
     }
 
   private:
     impl_type impl_;
-    Demuxer& demuxer_;
-    typename Demuxer::work work_;
+    IO_Service& io_service_;
+    typename IO_Service::work work_;
     Socket& peer_;
     Endpoint& peer_endpoint_;
     Handler handler_;
@@ -1145,12 +1143,12 @@ public:
     if (impl == null())
     {
       asio::error error(asio::error::bad_descriptor);
-      demuxer_.post(bind_handler(handler, error));
+      io_service_.post(bind_handler(handler, error));
     }
     else if (peer.impl() != invalid_socket)
     {
       asio::error error(asio::error::already_connected);
-      demuxer_.post(bind_handler(handler, error));
+      io_service_.post(bind_handler(handler, error));
     }
     else
     {
@@ -1161,7 +1159,7 @@ public:
         if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
         {
           asio::error error(socket_ops::get_error());
-          demuxer_.post(bind_handler(handler, error));
+          io_service_.post(bind_handler(handler, error));
           return;
         }
         impl.flags_ |= impl_type::internal_non_blocking;
@@ -1169,7 +1167,7 @@ public:
 
       reactor_.start_read_op(impl,
           accept_endp_handler<Socket, Endpoint, Handler>(
-            impl, demuxer_, peer, peer_endpoint, handler));
+            impl, io_service_, peer, peer_endpoint, handler));
     }
   }
 
@@ -1227,11 +1225,11 @@ public:
   {
   public:
     connect_handler(impl_type& impl, boost::shared_ptr<bool> completed,
-        Demuxer& demuxer, Reactor& reactor, Handler handler)
+        IO_Service& io_service, Reactor& reactor, Handler handler)
       : impl_(impl),
         completed_(completed),
-        demuxer_(demuxer),
-        work_(demuxer),
+        io_service_(io_service),
+        work_(io_service),
         reactor_(reactor),
         handler_(handler)
     {
@@ -1252,7 +1250,7 @@ public:
       if (result != 0)
       {
         asio::error error(result);
-        demuxer_.post(bind_handler(handler_, error));
+        io_service_.post(bind_handler(handler_, error));
         return true;
       }
 
@@ -1263,7 +1261,7 @@ public:
             &connect_error, &connect_error_len) == socket_error_retval)
       {
         asio::error error(socket_ops::get_error());
-        demuxer_.post(bind_handler(handler_, error));
+        io_service_.post(bind_handler(handler_, error));
         return true;
       }
 
@@ -1271,13 +1269,13 @@ public:
       if (connect_error)
       {
         asio::error error(connect_error);
-        demuxer_.post(bind_handler(handler_, error));
+        io_service_.post(bind_handler(handler_, error));
         return true;
       }
 
       // Post the result of the successful connection operation.
       asio::error error(asio::error::success);
-      demuxer_.post(bind_handler(handler_, error));
+      io_service_.post(bind_handler(handler_, error));
 
       return true;
     }
@@ -1285,8 +1283,8 @@ public:
   private:
     impl_type& impl_;
     boost::shared_ptr<bool> completed_;
-    Demuxer& demuxer_;
-    typename Demuxer::work work_;
+    IO_Service& io_service_;
+    typename IO_Service::work work_;
     Reactor& reactor_;
     Handler handler_;
   };
@@ -1309,7 +1307,7 @@ public:
       if (impl == invalid_socket)
       {
         asio::error error(socket_ops::get_error());
-        demuxer_.post(bind_handler(handler, error));
+        io_service_.post(bind_handler(handler, error));
         return;
       }
 
@@ -1319,7 +1317,7 @@ public:
       {
         socket_ops::close(impl);
         asio::error error(err);
-        demuxer_.post(bind_handler(handler, error));
+        io_service_.post(bind_handler(handler, error));
         return;
       }
     }
@@ -1331,7 +1329,7 @@ public:
       if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
       {
         asio::error error(socket_ops::get_error());
-        demuxer_.post(bind_handler(handler, error));
+        io_service_.post(bind_handler(handler, error));
         return;
       }
       impl.flags_ |= impl_type::internal_non_blocking;
@@ -1345,7 +1343,7 @@ public:
       // The connect operation has finished successfully so we need to post the
       // handler immediately.
       asio::error error(asio::error::success);
-      demuxer_.post(bind_handler(handler, error));
+      io_service_.post(bind_handler(handler, error));
     }
     else if (socket_ops::get_error() == asio::error::in_progress
         || socket_ops::get_error() == asio::error::would_block)
@@ -1354,19 +1352,19 @@ public:
       // until the socket becomes writeable.
       boost::shared_ptr<bool> completed(new bool(false));
       reactor_.start_write_and_except_ops(impl, connect_handler<Handler>(
-            impl, completed, demuxer_, reactor_, handler));
+            impl, completed, io_service_, reactor_, handler));
     }
     else
     {
       // The connect operation has failed, so post the handler immediately.
       asio::error error(socket_ops::get_error());
-      demuxer_.post(bind_handler(handler, error));
+      io_service_.post(bind_handler(handler, error));
     }
   }
 
 private:
-  // The demuxer used for dispatching handlers.
-  Demuxer& demuxer_;
+  // The io_service used for dispatching handlers.
+  IO_Service& io_service_;
 
   // The selector that performs event demultiplexing for the provider.
   Reactor& reactor_;

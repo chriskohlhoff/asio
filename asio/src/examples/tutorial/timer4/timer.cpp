@@ -6,8 +6,8 @@
 class printer
 {
 public:
-  printer(asio::demuxer& d)
-    : timer_(d, boost::posix_time::seconds(1)),
+  printer(asio::io_service& io)
+    : timer_(io, boost::posix_time::seconds(1)),
       count_(0)
   {
     timer_.async_wait(boost::bind(&printer::print, this));
@@ -37,9 +37,9 @@ private:
 
 int main()
 {
-  asio::demuxer d;
-  printer p(d);
-  d.run();
+  asio::io_service io;
+  printer p(io);
+  io.run();
 
   return 0;
 }

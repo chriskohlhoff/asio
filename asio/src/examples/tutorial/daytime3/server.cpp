@@ -27,7 +27,7 @@ void handle_accept(asio::socket_acceptor* acceptor,
           asio::placeholders::error,
           asio::placeholders::bytes_transferred));
 
-    socket = new asio::stream_socket(acceptor->demuxer());
+    socket = new asio::stream_socket(acceptor->io_service());
 
     acceptor->async_accept(*socket,
         boost::bind(handle_accept, acceptor, socket,
@@ -43,19 +43,19 @@ int main()
 {
   try
   {
-    asio::demuxer demuxer;
+    asio::io_service io_service;
 
-    asio::socket_acceptor acceptor(demuxer,
+    asio::socket_acceptor acceptor(io_service,
         asio::ipv4::tcp::endpoint(13));
 
     asio::stream_socket* socket
-      = new asio::stream_socket(demuxer);
+      = new asio::stream_socket(io_service);
 
     acceptor.async_accept(*socket,
         boost::bind(handle_accept, &acceptor, socket,
           asio::placeholders::error));
 
-    demuxer.run();
+    io_service.run();
   }
   catch (asio::error& e)
   {

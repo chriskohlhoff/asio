@@ -61,8 +61,8 @@ Standard exception class.
 \li asio::const_buffer
 \li asio::datagram_socket
 \li asio::deadline_timer
-\li asio::demuxer
 \li asio::error
+\li asio::io_service
 \li asio::ipv4::address
 \li asio::ipv4::host
 \li asio::ipv4::host_resolver
@@ -83,9 +83,9 @@ Standard exception class.
 
 <H2>Class Templates</H2>
 
-\li asio::basic_demuxer
 \li asio::basic_datagram_socket
 \li asio::basic_deadline_timer
+\li asio::basic_io_service
 \li asio::basic_locking_dispatcher
 \li asio::basic_socket_acceptor
 \li asio::basic_stream_socket
@@ -116,8 +116,6 @@ Standard exception class.
 
 \li asio::datagram_socket_service
 \li asio::deadline_timer_service
-\li asio::demuxer_service
-\li asio::locking_dispatcher_service
 \li asio::socket_acceptor_service
 \li asio::stream_socket_service
 \li asio::ipv4::host_resolver_service

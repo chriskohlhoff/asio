@@ -23,7 +23,8 @@ encode and decode structures for transmission over a socket.
 This example demonstrates how to:
 
 \li Integrate custom functionality (in this case, for logging) into Boost.Asio's
-demuxer. It follows the pattern defined in the \ref designservices design note. 
+io_service. It follows the pattern defined in the \ref designservices design
+note. 
 \li Use a custom service with boost::asio::basic_stream_socket.
 
 \li \ref ::services "Services Classes"

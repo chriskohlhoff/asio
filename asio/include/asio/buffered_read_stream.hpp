@@ -58,8 +58,8 @@ public:
   /// The type of the lowest layer.
   typedef typename next_layer_type::lowest_layer_type lowest_layer_type;
 
-  /// The demuxer type for this asynchronous type.
-  typedef typename next_layer_type::demuxer_type demuxer_type;
+  /// The io_service type for this type.
+  typedef typename next_layer_type::io_service_type io_service_type;
 
   /// The type used for reporting errors.
   typedef typename next_layer_type::error_type error_type;
@@ -71,7 +71,7 @@ public:
   BOOST_STATIC_CONSTANT(std::size_t, default_buffer_size = 1024);
 #endif
 
-  /// Construct, passing the specified demuxer to initialise the next layer.
+  /// Construct, passing the specified argument to initialise the next layer.
   template <typename Arg>
   explicit buffered_read_stream(Arg& a)
     : next_layer_(a),
@@ -79,7 +79,7 @@ public:
   {
   }
 
-  /// Construct, passing the specified demuxer to initialise the next layer.
+  /// Construct, passing the specified argument to initialise the next layer.
   template <typename Arg>
   buffered_read_stream(Arg& a, std::size_t buffer_size)
     : next_layer_(a),
@@ -99,10 +99,10 @@ public:
     return next_layer_.lowest_layer();
   }
 
-  /// Get the demuxer associated with the asynchronous object.
-  demuxer_type& demuxer()
+  /// Get the io_service associated with the object.
+  io_service_type& io_service()
   {
-    return next_layer_.demuxer();
+    return next_layer_.io_service();
   }
 
   /// Close the stream.
@@ -180,10 +180,10 @@ public:
   class fill_handler
   {
   public:
-    fill_handler(demuxer_type& demuxer,
+    fill_handler(io_service_type& io_service,
         detail::buffered_stream_storage& storage,
         std::size_t previous_size, Handler handler)
-      : demuxer_(demuxer),
+      : io_service_(io_service),
         storage_(storage),
         previous_size_(previous_size),
         handler_(handler)
@@ -194,11 +194,12 @@ public:
     void operator()(const Error& e, std::size_t bytes_transferred)
     {
       storage_.resize(previous_size_ + bytes_transferred);
-      demuxer_.dispatch(detail::bind_handler(handler_, e, bytes_transferred));
+      io_service_.dispatch(detail::bind_handler(
+            handler_, e, bytes_transferred));
     }
 
   private:
-    demuxer_type& demuxer_;
+    io_service_type& io_service_;
     detail::buffered_stream_storage& storage_;
     std::size_t previous_size_;
     Handler handler_;
@@ -214,7 +215,7 @@ public:
         buffer(
           storage_.data() + previous_size,
           storage_.size() - previous_size),
-        fill_handler<Handler>(demuxer(), storage_, previous_size, handler));
+        fill_handler<Handler>(io_service(), storage_, previous_size, handler));
   }
 
   /// Read some data from the stream. Returns the number of bytes read. Throws
@@ -242,10 +243,10 @@ public:
   class read_some_handler
   {
   public:
-    read_some_handler(demuxer_type& demuxer,
+    read_some_handler(io_service_type& io_service,
         detail::buffered_stream_storage& storage,
         const Mutable_Buffers& buffers, Handler handler)
-      : demuxer_(demuxer),
+      : io_service_(io_service),
         storage_(storage),
         buffers_(buffers),
         handler_(handler)
@@ -257,7 +258,7 @@ public:
       if (e || storage_.empty())
       {
         std::size_t length = 0;
-        demuxer_.dispatch(detail::bind_handler(handler_, e, length));
+        io_service_.dispatch(detail::bind_handler(handler_, e, length));
       }
       else
       {
@@ -280,12 +281,12 @@ public:
         }
 
         storage_.consume(bytes_copied);
-        demuxer_.dispatch(detail::bind_handler(handler_, e, bytes_copied));
+        io_service_.dispatch(detail::bind_handler(handler_, e, bytes_copied));
       }
     }
 
   private:
-    demuxer_type& demuxer_;
+    io_service_type& io_service_;
     detail::buffered_stream_storage& storage_;
     Mutable_Buffers buffers_;
     Handler handler_;
@@ -299,12 +300,12 @@ public:
     if (storage_.empty())
     {
       async_fill(read_some_handler<Mutable_Buffers, Handler>(
-            demuxer(), storage_, buffers, handler));
+            io_service(), storage_, buffers, handler));
     }
     else
     {
       std::size_t length = copy(buffers);
-      demuxer().post(detail::bind_handler(handler, 0, length));
+      io_service().post(detail::bind_handler(handler, 0, length));
     }
   }
 

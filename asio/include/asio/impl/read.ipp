@@ -88,7 +88,7 @@ namespace detail
       if (completion_condition_(e, total_transferred_)
           || buffers_.begin() == buffers_.end())
       {
-        stream_.demuxer().dispatch(
+        stream_.io_service().dispatch(
             detail::bind_handler(handler_, e, total_transferred_));
       }
       else

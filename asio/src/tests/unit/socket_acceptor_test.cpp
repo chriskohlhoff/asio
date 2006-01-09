@@ -30,15 +30,15 @@ void handle_connect(const error& err)
 
 void socket_acceptor_test()
 {
-  demuxer d;
+  io_service ios;
 
-  socket_acceptor acceptor(d, ipv4::tcp::endpoint(0));
+  socket_acceptor acceptor(ios, ipv4::tcp::endpoint(0));
   ipv4::tcp::endpoint server_endpoint;
   acceptor.get_local_endpoint(server_endpoint);
   server_endpoint.address(ipv4::address::loopback());
 
-  stream_socket client_side_socket(d);
-  stream_socket server_side_socket(d);
+  stream_socket client_side_socket(ios);
+  stream_socket server_side_socket(ios);
 
   client_side_socket.connect(server_endpoint);
   acceptor.accept(server_side_socket);
@@ -64,7 +64,7 @@ void socket_acceptor_test()
   acceptor.async_accept(server_side_socket, handle_accept);
   client_side_socket.async_connect(server_endpoint, handle_connect);
 
-  d.run();
+  ios.run();
 
   client_side_socket.close();
   server_side_socket.close();
@@ -73,8 +73,8 @@ void socket_acceptor_test()
       handle_accept);
   client_side_socket.async_connect(server_endpoint, handle_connect);
 
-  d.reset();
-  d.run();
+  ios.reset();
+  ios.run();
 
   client_side_socket.get_local_endpoint(client_side_local_endpoint);
   BOOST_CHECK(client_side_local_endpoint.port() == client_endpoint.port());

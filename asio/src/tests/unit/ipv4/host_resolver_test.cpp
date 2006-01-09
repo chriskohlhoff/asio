@@ -88,9 +88,9 @@ bool test_if_addresses_intersect(const ipv4::host& h1, const ipv4::host& h2)
 
 void ipv4_host_resolver_test()
 {
-  demuxer d;
+  io_service ios;
 
-  ipv4::host_resolver resolver(d);
+  ipv4::host_resolver resolver(ios);
 
   ipv4::host h1;
   resolver.get_local_host(h1);
@@ -121,16 +121,16 @@ void ipv4_host_resolver_test()
   ipv4::host h7;
   resolver.async_get_host_by_address(h7, h1.address(0),
       handle_get_host_by_address);
-  d.reset();
-  d.run();
+  ios.reset();
+  ios.run();
 
   BOOST_CHECK(test_if_hosts_equal(h3, h7));
   BOOST_CHECK(test_if_addresses_intersect(h1, h7));
 
   ipv4::host h8;
   resolver.async_get_host_by_name(h8, h1.name(), handle_get_host_by_name);
-  d.reset();
-  d.run();
+  ios.reset();
+  ios.run();
 
   BOOST_CHECK(test_if_hosts_equal(h5, h8));
   BOOST_CHECK(test_if_addresses_intersect(h1, h8));

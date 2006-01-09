@@ -59,8 +59,8 @@ public:
   /// The type of the lowest layer.
   typedef typename next_layer_type::lowest_layer_type lowest_layer_type;
 
-  /// The demuxer type for this asynchronous type.
-  typedef typename next_layer_type::demuxer_type demuxer_type;
+  /// The io_service type for this type.
+  typedef typename next_layer_type::io_service_type io_service_type;
 
   /// The type used for reporting errors.
   typedef typename next_layer_type::error_type error_type;
@@ -100,10 +100,10 @@ public:
     return next_layer_.lowest_layer();
   }
 
-  /// Get the demuxer associated with the asynchronous object.
-  demuxer_type& demuxer()
+  /// Get the io_service associated with the object.
+  io_service_type& io_service()
   {
-    return next_layer_.demuxer();
+    return next_layer_.io_service();
   }
 
   /// Close the stream.
@@ -147,9 +147,9 @@ public:
   class flush_handler
   {
   public:
-    flush_handler(demuxer_type& demuxer,
+    flush_handler(io_service_type& io_service,
         detail::buffered_stream_storage& storage, Handler handler)
-      : demuxer_(demuxer),
+      : io_service_(io_service),
         storage_(storage),
         handler_(handler)
     {
@@ -158,11 +158,11 @@ public:
     void operator()(const error_type& e, std::size_t bytes_written)
     {
       storage_.consume(bytes_written);
-      demuxer_.dispatch(detail::bind_handler(handler_, e, bytes_written));
+      io_service_.dispatch(detail::bind_handler(handler_, e, bytes_written));
     }
 
   private:
-    demuxer_type& demuxer_;
+    io_service_type& io_service_;
     detail::buffered_stream_storage& storage_;
     Handler handler_;
   };
@@ -172,7 +172,7 @@ public:
   void async_flush(Handler handler)
   {
     async_write(next_layer_, buffer(storage_.data(), storage_.size()),
-        flush_handler<Handler>(demuxer(), storage_, handler));
+        flush_handler<Handler>(io_service(), storage_, handler));
   }
 
   /// Write the given data to the stream. Returns the number of bytes written.
@@ -200,10 +200,10 @@ public:
   class write_some_handler
   {
   public:
-    write_some_handler(demuxer_type& demuxer,
+    write_some_handler(io_service_type& io_service,
         detail::buffered_stream_storage& storage,
         const Const_Buffers& buffers, Handler handler)
-      : demuxer_(demuxer),
+      : io_service_(io_service),
         storage_(storage),
         buffers_(buffers),
         handler_(handler)
@@ -215,7 +215,7 @@ public:
       if (e)
       {
         std::size_t length = 0;
-        demuxer_.dispatch(detail::bind_handler(handler_, e, length));
+        io_service_.dispatch(detail::bind_handler(handler_, e, length));
       }
       else
       {
@@ -239,12 +239,12 @@ public:
           space_avail -= length;
         }
 
-        demuxer_.dispatch(detail::bind_handler(handler_, e, bytes_copied));
+        io_service_.dispatch(detail::bind_handler(handler_, e, bytes_copied));
       }
     }
 
   private:
-    demuxer_type& demuxer_;
+    io_service_type& io_service_;
     detail::buffered_stream_storage& storage_;
     Const_Buffers buffers_;
     Handler handler_;
@@ -258,12 +258,12 @@ public:
     if (storage_.size() == storage_.capacity())
     {
       async_flush(write_some_handler<Const_Buffers, Handler>(
-            demuxer(), storage_, buffers, handler));
+            io_service(), storage_, buffers, handler));
     }
     else
     {
       std::size_t bytes_copied = copy(buffers);
-      demuxer().post(detail::bind_handler(handler, 0, bytes_copied));
+      io_service().post(detail::bind_handler(handler, 0, bytes_copied));
     }
   }
 

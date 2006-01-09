@@ -37,12 +37,13 @@ void session(stream_socket_ptr sock)
   }
 }
 
-void server(asio::demuxer& d, short port)
+void server(asio::io_service& io_service, short port)
 {
-  asio::socket_acceptor a(d, asio::ipv4::tcp::endpoint(port));
+  asio::socket_acceptor a(io_service,
+      asio::ipv4::tcp::endpoint(port));
   for (;;)
   {
-    stream_socket_ptr sock(new asio::stream_socket(d));
+    stream_socket_ptr sock(new asio::stream_socket(io_service));
     asio::error error;
     a.accept(*sock, asio::assign_error(error));
     if (!error)
@@ -62,10 +63,10 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::demuxer d;
+    asio::io_service io_service;
 
     using namespace std; // For atoi.
-    server(d, atoi(argv[1]));
+    server(io_service, atoi(argv[1]));
   }
   catch (asio::error& e)
   {

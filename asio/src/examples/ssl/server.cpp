@@ -7,8 +7,8 @@
 class session
 {
 public:
-  session(asio::demuxer& d, asio::ssl::context& c)
-    : socket_(d, c)
+  session(asio::io_service& io_service, asio::ssl::context& context)
+    : socket_(io_service, context)
   {
   }
 
@@ -78,10 +78,10 @@ private:
 class server
 {
 public:
-  server(asio::demuxer& d, short port)
-    : demuxer_(d),
-      acceptor_(d, asio::ipv4::tcp::endpoint(port)),
-      context_(d, asio::ssl::context::sslv23)
+  server(asio::io_service& io_service, unsigned short port)
+    : io_service_(io_service),
+      acceptor_(io_service, asio::ipv4::tcp::endpoint(port)),
+      context_(io_service, asio::ssl::context::sslv23)
   {
     context_.set_options(
         asio::ssl::context::default_workarounds
@@ -91,7 +91,7 @@ public:
     context_.use_private_key_file("server.pem", asio::ssl::context::pem);
     context_.use_tmp_dh_file("dh512.pem");
 
-    session* new_session = new session(demuxer_, context_);
+    session* new_session = new session(io_service_, context_);
     acceptor_.async_accept(new_session->socket(),
         boost::bind(&server::handle_accept, this, new_session,
           asio::placeholders::error));
@@ -102,7 +102,7 @@ public:
     if (!error)
     {
       new_session->start();
-      new_session = new session(demuxer_, context_);
+      new_session = new session(io_service_, context_);
       acceptor_.async_accept(new_session->socket(),
           boost::bind(&server::handle_accept, this, new_session,
             asio::placeholders::error));
@@ -120,7 +120,7 @@ public:
   }
 
 private:
-  asio::demuxer& demuxer_;
+  asio::io_service& io_service_;
   asio::socket_acceptor acceptor_;
   asio::ssl::context context_;
 };
@@ -135,12 +135,12 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::demuxer d;
+    asio::io_service io_service;
 
     using namespace std; // For atoi.
-    server s(d, atoi(argv[1]));
+    server s(io_service, atoi(argv[1]));
 
-    d.run();
+    io_service.run();
   }
   catch (asio::error& e)
   {

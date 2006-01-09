@@ -57,8 +57,8 @@ public:
   /// The native implementation type of the host resolver.
   typedef typename service_type::impl_type impl_type;
 
-  /// The demuxer type for this asynchronous type.
-  typedef typename service_type::demuxer_type demuxer_type;
+  /// The io_service type for this type.
+  typedef typename service_type::io_service_type io_service_type;
 
   /// The type used for reporting errors.
   typedef asio::error error_type;
@@ -67,11 +67,11 @@ public:
   /**
    * This constructor creates a basic_host_resolver.
    *
-   * @param d The demuxer object that the host resolver will use to dispatch
-   * handlers for any asynchronous operations.
+   * @param io_service The io_service object that the host resolver will use to
+   * dispatch handlers for any asynchronous operations.
    */
-  explicit basic_host_resolver(demuxer_type& d)
-    : service_(d.get_service(service_factory<Service>())),
+  explicit basic_host_resolver(io_service_type& io_service)
+    : service_(io_service.get_service(service_factory<Service>())),
       impl_(service_.null())
   {
     service_.open(impl_);
@@ -83,17 +83,17 @@ public:
     service_.close(impl_);
   }
 
-  /// Get the demuxer associated with the asynchronous object.
+  /// Get the io_service associated with the object.
   /**
-   * This function may be used to obtain the demuxer object that the host
+   * This function may be used to obtain the io_service object that the host
    * resolver uses to dispatch handlers for asynchronous operations.
    *
-   * @return A reference to the demuxer object that host resolver will use to
+   * @return A reference to the io_service object that host resolver will use to
    * dispatch handlers. Ownership is not transferred to the caller.
    */
-  demuxer_type& demuxer()
+  io_service_type& io_service()
   {
-    return service_.demuxer();
+    return service_.io_service();
   }
 
   /// Open the host resolver.
@@ -122,7 +122,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::host_resolver resolver(demuxer);
+   * asio::ipv4::host_resolver resolver(io_service);
    * ...
    * asio::ipv4::host host;
    * resolver.get_local_host(host);
@@ -152,7 +152,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::host_resolver resolver(demuxer);
+   * asio::ipv4::host_resolver resolver(io_service);
    * ...
    * asio::ipv4::host host;
    * asio::error error;
@@ -184,7 +184,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::host_resolver resolver(demuxer);
+   * asio::ipv4::host_resolver resolver(io_service);
    * ...
    * asio::ipv4::host host;
    * asio::ipv4::address address("1.2.3.4");
@@ -217,7 +217,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::host_resolver resolver(demuxer);
+   * asio::ipv4::host_resolver resolver(io_service);
    * ...
    * asio::ipv4::host host;
    * asio::ipv4::address address("1.2.3.4");
@@ -279,7 +279,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::host_resolver resolver(demuxer);
+   * asio::ipv4::host_resolver resolver(io_service);
    * ...
    * asio::ipv4::host host;
    * std::string name("myhost");
@@ -311,7 +311,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::host_resolver resolver(demuxer);
+   * asio::ipv4::host_resolver resolver(io_service);
    * ...
    * asio::ipv4::host host;
    * std::string name("myhost");

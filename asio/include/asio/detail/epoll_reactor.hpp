@@ -26,7 +26,7 @@
 #if LINUX_VERSION_CODE >= KERNEL_VERSION (2,5,45) // Only kernels >= 2.5.45.
 
 // Define this to indicate that epoll is supported on the target platform.
-#define ASIO_HAS_EPOLL_REACTOR 1
+#define ASIO_HAS_EPOLL 1
 
 #include "asio/detail/push_options.hpp"
 #include <cstddef>
@@ -42,7 +42,7 @@
 #include "asio/detail/hash_map.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/task_demuxer_service.hpp"
+#include "asio/detail/task_io_service.hpp"
 #include "asio/detail/thread.hpp"
 #include "asio/detail/reactor_op_queue.hpp"
 #include "asio/detail/reactor_timer_queue.hpp"
@@ -59,8 +59,8 @@ class epoll_reactor
 {
 public:
   // Constructor.
-  template <typename Demuxer>
-  epoll_reactor(Demuxer&)
+  template <typename IO_Service>
+  epoll_reactor(IO_Service&)
     : mutex_(),
       epoll_fd_(do_epoll_create()),
       wait_in_progress_(false),
@@ -286,7 +286,7 @@ public:
   }
 
 private:
-  friend class task_demuxer_service<
+  friend class task_io_service<
       epoll_reactor<Own_Thread, Allocator>, Allocator>;
 
   // Run epoll once until interrupted or events are ready to be dispatched.

@@ -17,8 +17,11 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/error.hpp"
-#include "asio/service_factory.hpp"
+#include "asio/detail/push_options.hpp"
+#include <memory>
+#include "asio/detail/pop_options.hpp"
+
+#include "asio/detail/locking_dispatcher.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/wrapped_handler.hpp"
 
@@ -37,77 +40,86 @@ namespace asio {
  * @e Shared @e objects: Safe.
  *
  * @par Concepts:
- * Async_Object, Dispatcher, Error_Source.
+ * Dispatcher.
  */
-template <typename Service>
+template <typename Dispatcher, typename Allocator = std::allocator<void> >
 class basic_locking_dispatcher
   : private noncopyable
 {
 public:
-  /// The type of the service that will be used to provide locking dispatcher
-  /// operations.
-  typedef Service service_type;
+  /// The underlying dispatcher type.
+  typedef Dispatcher dispatcher_type;
 
-  /// The native implementation type of the locking dispatcher.
-  typedef typename service_type::impl_type impl_type;
-
-  /// The demuxer type for this dispatcher.
-  typedef typename service_type::demuxer_type demuxer_type;
-
-  /// The type used for reporting errors.
-  typedef asio::error error_type;
+  /// The allocator type for the locking dispatcher.
+  typedef Allocator allocator_type;
 
   /// Constructor.
   /**
    * Constructs the locking dispatcher.
    *
-   * @param d The demuxer object that the locking dispatcher will use to
-   * dispatch handlers that are ready to be run.
+   * @param dispatcher The dispatcher object that the locking_dispatcher will
+   * use to dispatch handlers that are ready to be run.
+   *
+   * @param allocator The allocator object used by the locking_dispatcher to
+   * dynamically allocate internal objects.
    */
-  explicit basic_locking_dispatcher(demuxer_type& d)
-    : service_(d.get_service(service_factory<Service>())),
-      impl_(service_.null())
+  explicit basic_locking_dispatcher(dispatcher_type& dispatcher,
+      const allocator_type& allocator = allocator_type())
+    : impl_(dispatcher, allocator)
   {
-    service_.create(impl_);
   }
 
   /// Destructor.
   ~basic_locking_dispatcher()
   {
-    service_.destroy(impl_);
   }
 
-  /// Get the demuxer associated with the asynchronous object.
+  /// Get the underlying dispatcher associated with the locking_dispatcher.
   /**
-   * This function may be used to obtain the demuxer object that the locking
+   * This function may be used to obtain the dispatcher object that the locking
    * dispatcher uses to dispatch handlers for asynchronous operations.
    *
-   * @return A reference to the demuxer object that the dispatcher will use to
-   * dispatch handlers. Ownership is not transferred to the caller.
+   * @return A reference to the dispatcher object that the locking dispatcher
+   * will use to dispatch handlers. Ownership is not transferred to the caller.
    */
-  demuxer_type& demuxer()
+  dispatcher_type& dispatcher()
   {
-    return service_.demuxer();
+    return impl_.dispatcher();
+  }
+
+  /// Return a copy of the allocator associated with the locking_dispatcher.
+  /**
+   * The get_allocator() returns a copy of the allocator object used by the
+   * locking_dispatcher.
+   *
+   * @return A copy of the locking_dispatcher's allocator.
+   */
+  allocator_type get_allocator() const
+  {
+    return impl_.get_allocator();
   }
 
   /// Request the dispatcher to invoke the given handler.
   /**
    * This function is used to ask the dispatcher to execute the given handler.
    *
-   * The dispatcher guarantees that the handler will only be called in a thread
-   * in which the underlying demuxer's run member function is currently being
-   * invoked. It also guarantees that only one handler executed through this
-   * dispatcher will be invoked at a time. The handler may be executed inside
-   * this function if the guarantee can be met.
+   * The locking dispatcher guarantees that only one handler executed through
+   * this dispatcher will be invoked at a time. The handler may be executed
+   * inside this function if the guarantee can be met.
    *
-   * @param handler The handler to be called. The dispatcher will make
+   * The locking dispatcher's guarantee is in addition to any guarantee
+   * provided by the underlying dispatcher. For example, the io_service
+   * guarantees that the handler will only be called in a thread in which the
+   * io_services's run member function is currently being invoked.
+   *
+   * @param handler The handler to be called. The locking dispatcher will make
    * a copy of the handler object as required. The function signature of the
    * handler must be: @code void handler(); @endcode
    */
   template <typename Handler>
   void dispatch(Handler handler)
   {
-    service_.dispatch(impl_, handler);
+    impl_.dispatch(handler);
   }
 
   /// Request the dispatcher to invoke the given handler and return
@@ -117,19 +129,23 @@ public:
    * but without allowing the dispatcher to call the handler from inside this
    * function.
    *
-   * The dispatcher guarantees that the handler will only be called in a thread
-   * in which the underlying demuxer's run member function is currently being
-   * invoked. It also guarantees that only one handler executed through this
-   * dispatcher will be invoked at a time.
+   * The locking dispatcher guarantees that only one handler executed through
+   * this dispatcher will be invoked at a time. The handler may be executed
+   * inside this function if the guarantee can be met.
    *
-   * @param handler The handler to be called. The dispatcher will make
+   * The locking dispatcher's guarantee is in addition to any guarantee
+   * provided by the underlying dispatcher. For example, the io_service
+   * guarantees that the handler will only be called in a thread in which the
+   * io_services's run member function is currently being invoked.
+   *
+   * @param handler The handler to be called. The locking dispatcher will make
    * a copy of the handler object as required. The function signature of the
    * handler must be: @code void handler(); @endcode
    */
   template <typename Handler>
   void post(Handler handler)
   {
-    service_.post(impl_, handler);
+    impl_.post(handler);
   }
 
   /// Create a new handler that automatically dispatches the wrapped handler
@@ -158,20 +174,20 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
   unspecified
 #else
-  detail::wrapped_handler<basic_locking_dispatcher<Service>, Handler>
+  detail::wrapped_handler<
+      basic_locking_dispatcher<Dispatcher, Allocator>,
+      Handler>
 #endif
   wrap(Handler handler)
   {
-    return detail::wrapped_handler<basic_locking_dispatcher<Service>, Handler>(
-        *this, handler);
+    return detail::wrapped_handler<
+        basic_locking_dispatcher<Dispatcher, Allocator>,
+        Handler>(*this, handler);
   }
 
 private:
-  /// The backend service implementation.
-  service_type& service_;
-
   /// The underlying native implementation.
-  impl_type impl_;
+  detail::locking_dispatcher<Dispatcher, Allocator> impl_;
 };
 
 } // namespace asio

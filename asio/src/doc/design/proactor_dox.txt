@@ -36,7 +36,7 @@ completed event to its caller.
 @par Proactor
 Calls the asynchronous event demultiplexer to dequeue events, and dispatches
 the completion handler (i.e. invokes the function object) associated with the
-event. This abstraction is represented by asio::demuxer.
+event. This abstraction is represented by asio::io_service.
 
 @par Initiator
 Application-specific code that starts asynchronous operations. The initiator
@@ -75,7 +75,7 @@ an overlapped function such as \c AcceptEx.
 
 @par Completion Event Queue
 This is implemented by the operating system, and is associated with an I/O
-completion port. There is one I/O completion port for each asio::demuxer
+completion port. There is one I/O completion port for each asio::io_service
 instance.
 
 @par Asynchronous Event Demultiplexer

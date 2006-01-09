@@ -22,20 +22,20 @@ class test_stream
   : private boost::noncopyable
 {
 public:
-  typedef asio::demuxer demuxer_type;
+  typedef asio::io_service io_service_type;
 
   typedef asio::error error_type;
 
   typedef test_stream lowest_layer_type;
 
-  test_stream(asio::demuxer& d)
-    : demuxer_(d)
+  test_stream(asio::io_service& io_service)
+    : io_service_(io_service)
   {
   }
 
-  demuxer_type& demuxer()
+  io_service_type& io_service()
   {
-    return demuxer_;
+    return io_service_;
   }
 
   lowest_layer_type& lowest_layer()
@@ -58,7 +58,7 @@ public:
   void async_write(const void* data, size_t length, Handler handler)
   {
     asio::error error;
-    demuxer_.post(asio::detail::bind_handler(handler, error, 0));
+    io_service_.post(asio::detail::bind_handler(handler, error, 0));
   }
 
   size_t read(void* data, size_t length)
@@ -76,11 +76,11 @@ public:
   void async_read(void* data, size_t length, Handler handler)
   {
     asio::error error;
-    demuxer_.post(asio::detail::bind_handler(handler, error, 0));
+    io_service_.post(asio::detail::bind_handler(handler, error, 0));
   }
 
 private:
-  demuxer_type& demuxer_;
+  io_service_type& io_service_;
 };
 
 void is_write_buffered_test()

@@ -32,9 +32,8 @@
 #include <boost/weak_ptr.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/basic_demuxer.hpp"
+#include "asio/basic_io_service.hpp"
 #include "asio/buffer.hpp"
-#include "asio/demuxer_service.hpp"
 #include "asio/error.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_base.hpp"
@@ -44,7 +43,7 @@
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
-#include "asio/detail/win_iocp_demuxer_service.hpp"
+#include "asio/detail/win_iocp_io_service.hpp"
 
 namespace asio {
 namespace detail {
@@ -133,8 +132,8 @@ public:
 
   static impl_type null_impl_;
 
-  // The demuxer type for this service.
-  typedef basic_demuxer<demuxer_service<Allocator>, Allocator> demuxer_type;
+  // The io_service type for this service.
+  typedef basic_io_service<Allocator> io_service_type;
 
   // The type of the reactor used for connect operations.
   typedef detail::select_reactor<true, Allocator> reactor_type;
@@ -142,22 +141,20 @@ public:
   // The maximum number of buffers to support in a single operation.
   enum { max_buffers = 16 };
 
-  // Constructor. This socket service can only work if the demuxer is
-  // using the win_iocp_demuxer_service. By using this type as the parameter we
-  // will cause a compile error if this is not the case.
+  // Constructor.
   win_iocp_socket_service(
-      demuxer_type& demuxer)
-    : demuxer_(demuxer),
-      demuxer_service_(demuxer.get_service(
-          service_factory<win_iocp_demuxer_service<Allocator> >())),
+      io_service_type& io_service)
+    : io_service_(io_service),
+      iocp_service_(io_service.get_service(
+          service_factory<win_iocp_io_service<Allocator> >())),
       reactor_(0)
   {
   }
 
-  // Get the demuxer associated with the service.
-  demuxer_type& demuxer()
+  // Get the io_service associated with the service.
+  io_service_type& io_service()
   {
-    return demuxer_;
+    return io_service_;
   }
 
   // Return a null socket implementation.
@@ -179,7 +176,7 @@ public:
       return;
     }
 
-    demuxer_service_.register_socket(sock.get());
+    iocp_service_.register_socket(sock.get());
 
     impl = sock.release();
   }
@@ -187,7 +184,7 @@ public:
   // Assign a new socket implementation.
   void assign(impl_type& impl, impl_type new_impl)
   {
-    demuxer_service_.register_socket(new_impl);
+    iocp_service_.register_socket(new_impl);
     impl = new_impl;
   }
 
@@ -342,10 +339,10 @@ public:
     : public operation
   {
   public:
-    send_operation(demuxer_type& demuxer,
+    send_operation(io_service_type& io_service,
         weak_cancel_token_type cancel_token, Handler handler)
       : operation(&send_operation<Handler>::do_completion_impl),
-        work_(demuxer),
+        work_(io_service),
         cancel_token_(cancel_token),
         handler_(handler)
     {
@@ -384,7 +381,7 @@ public:
       handler(error, bytes_transferred);
     }
 
-    typename demuxer_type::work work_;
+    typename io_service_type::work work_;
     weak_cancel_token_type cancel_token_;
     Handler handler_;
   };
@@ -398,9 +395,9 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef send_operation<Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type, Allocator> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler, demuxer_.get_allocator());
+    raw_handler_ptr<alloc_traits> raw_ptr(handler, io_service_.get_allocator());
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        demuxer_, impl.cancel_token_, handler);
+        io_service_, impl.cancel_token_, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -425,7 +422,7 @@ public:
     {
       ptr.reset();
       asio::error error(last_error);
-      demuxer_service_.post(bind_handler(handler, error, bytes_transferred));
+      iocp_service_.post(bind_handler(handler, error, bytes_transferred));
     }
     else
     {
@@ -471,9 +468,9 @@ public:
     : public operation
   {
   public:
-    send_to_operation(demuxer_type& demuxer, Handler handler)
+    send_to_operation(io_service_type& io_service, Handler handler)
       : operation(&send_to_operation<Handler>::do_completion_impl),
-        work_(demuxer),
+        work_(io_service),
         handler_(handler)
     {
     }
@@ -502,7 +499,7 @@ public:
       handler(error, bytes_transferred);
     }
 
-    typename demuxer_type::work work_;
+    typename io_service_type::work work_;
     Handler handler_;
   };
 
@@ -516,8 +513,8 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef send_to_operation<Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type, Allocator> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler, demuxer_.get_allocator());
-    handler_ptr<alloc_traits> ptr(raw_ptr, demuxer_, handler);
+    raw_handler_ptr<alloc_traits> raw_ptr(handler, io_service_.get_allocator());
+    handler_ptr<alloc_traits> ptr(raw_ptr, io_service_, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -542,7 +539,7 @@ public:
     {
       ptr.reset();
       asio::error error(last_error);
-      demuxer_service_.post(bind_handler(handler, error, bytes_transferred));
+      iocp_service_.post(bind_handler(handler, error, bytes_transferred));
     }
     else
     {
@@ -594,10 +591,10 @@ public:
     : public operation
   {
   public:
-    receive_operation(demuxer_type& demuxer,
+    receive_operation(io_service_type& io_service,
         weak_cancel_token_type cancel_token, Handler handler)
       : operation(&receive_operation<Handler>::do_completion_impl),
-        work_(demuxer),
+        work_(io_service),
         cancel_token_(cancel_token),
         handler_(handler)
     {
@@ -642,7 +639,7 @@ public:
       handler(error, bytes_transferred);
     }
 
-    typename demuxer_type::work work_;
+    typename io_service_type::work work_;
     weak_cancel_token_type cancel_token_;
     Handler handler_;
   };
@@ -656,9 +653,9 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef receive_operation<Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type, Allocator> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler, demuxer_.get_allocator());
+    raw_handler_ptr<alloc_traits> raw_ptr(handler, io_service_.get_allocator());
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        demuxer_, impl.cancel_token_, handler);
+        io_service_, impl.cancel_token_, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -681,7 +678,7 @@ public:
     {
       ptr.reset();
       asio::error error(last_error);
-      demuxer_service_.post(bind_handler(handler, error, bytes_transferred));
+      iocp_service_.post(bind_handler(handler, error, bytes_transferred));
     }
     else
     {
@@ -735,13 +732,13 @@ public:
     : public operation
   {
   public:
-    receive_from_operation(demuxer_type& demuxer, Endpoint& endpoint,
+    receive_from_operation(io_service_type& io_service, Endpoint& endpoint,
         Handler handler)
       : operation(
           &receive_from_operation<Endpoint, Handler>::do_completion_impl),
         endpoint_(endpoint),
         endpoint_size_(endpoint.size()),
-        work_(demuxer),
+        work_(io_service),
         handler_(handler)
     {
     }
@@ -786,7 +783,7 @@ public:
 
     Endpoint& endpoint_;
     int endpoint_size_;
-    typename demuxer_type::work work_;
+    typename io_service_type::work work_;
     Handler handler_;
   };
 
@@ -800,8 +797,8 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef receive_from_operation<Endpoint, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type, Allocator> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler, demuxer_.get_allocator());
-    handler_ptr<alloc_traits> ptr(raw_ptr, demuxer_, sender_endp, handler);
+    raw_handler_ptr<alloc_traits> raw_ptr(handler, io_service_.get_allocator());
+    handler_ptr<alloc_traits> ptr(raw_ptr, io_service_, sender_endp, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -824,7 +821,7 @@ public:
     {
       ptr.reset();
       asio::error error(last_error);
-      demuxer_service_.post(bind_handler(handler, error, bytes_transferred));
+      iocp_service_.post(bind_handler(handler, error, bytes_transferred));
     }
     else
     {
@@ -884,15 +881,15 @@ public:
     : public operation
   {
   public:
-    accept_operation(demuxer_type& demuxer, impl_type& impl,
+    accept_operation(io_service_type& io_service, impl_type& impl,
         socket_type new_socket, Socket& peer, Handler handler)
       : operation(
           &accept_operation<Socket, Handler>::do_completion_impl),
-        demuxer_(demuxer),
+        io_service_(io_service),
         impl_(impl),
         new_socket_(new_socket),
         peer_(peer),
-        work_(demuxer),
+        work_(io_service),
         handler_(handler)
     {
     }
@@ -963,11 +960,11 @@ public:
       handler(error);
     }
 
-    demuxer_type& demuxer_;
+    io_service_type& io_service_;
     impl_type& impl_;
     socket_holder new_socket_;
     Socket& peer_;
-    typename demuxer_type::work work_;
+    typename io_service_type::work work_;
     unsigned char output_buffer_[(sizeof(sockaddr_storage) + 16) * 2];
     Handler handler_;
   };
@@ -981,7 +978,7 @@ public:
     if (impl == null())
     {
       asio::error error(asio::error::bad_descriptor);
-      demuxer_.post(bind_handler(handler, error));
+      io_service_.post(bind_handler(handler, error));
       return;
     }
 
@@ -989,7 +986,7 @@ public:
     if (peer.impl() != invalid_socket)
     {
       asio::error error(asio::error::already_connected);
-      demuxer_.post(bind_handler(handler, error));
+      io_service_.post(bind_handler(handler, error));
       return;
     }
 
@@ -1000,7 +997,7 @@ public:
           &protocol_info, &protocol_info_size) != 0)
     {
       asio::error error(socket_ops::get_error());
-      demuxer_.post(bind_handler(handler, error));
+      io_service_.post(bind_handler(handler, error));
       return;
     }
 
@@ -1010,17 +1007,17 @@ public:
     if (sock.get() == invalid_socket)
     {
       asio::error error(socket_ops::get_error());
-      demuxer_.post(bind_handler(handler, error));
+      io_service_.post(bind_handler(handler, error));
       return;
     }
 
     // Allocate and construct an operation to wrap the handler.
     typedef accept_operation<Socket, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type, Allocator> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler, demuxer_.get_allocator());
+    raw_handler_ptr<alloc_traits> raw_ptr(handler, io_service_.get_allocator());
     socket_type new_socket = sock.get();
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        demuxer_, impl, new_socket, peer, handler);
+        io_service_, impl, new_socket, peer, handler);
     sock.release();
 
     // Accept a connection.
@@ -1035,7 +1032,7 @@ public:
     {
       ptr.reset();
       asio::error error(last_error);
-      demuxer_service_.post(bind_handler(handler, error));
+      iocp_service_.post(bind_handler(handler, error));
     }
     else
     {
@@ -1048,17 +1045,17 @@ public:
     : public operation
   {
   public:
-    accept_endp_operation(demuxer_type& demuxer, impl_type& impl,
+    accept_endp_operation(io_service_type& io_service, impl_type& impl,
         socket_type new_socket, Socket& peer, Endpoint& peer_endpoint,
         Handler handler)
       : operation(&accept_endp_operation<
             Socket, Endpoint, Handler>::do_completion_impl),
-        demuxer_(demuxer),
+        io_service_(io_service),
         impl_(impl),
         new_socket_(new_socket),
         peer_(peer),
         peer_endpoint_(peer_endpoint),
-        work_(demuxer),
+        work_(io_service),
         handler_(handler)
     {
     }
@@ -1152,12 +1149,12 @@ public:
       handler(error);
     }
 
-    demuxer_type& demuxer_;
+    io_service_type& io_service_;
     impl_type& impl_;
     socket_holder new_socket_;
     Socket& peer_;
     Endpoint& peer_endpoint_;
-    typename demuxer_type::work work_;
+    typename io_service_type::work work_;
     unsigned char output_buffer_[(sizeof(sockaddr_storage) + 16) * 2];
     Handler handler_;
   };
@@ -1172,7 +1169,7 @@ public:
     if (impl == null())
     {
       asio::error error(asio::error::bad_descriptor);
-      demuxer_.post(bind_handler(handler, error));
+      io_service_.post(bind_handler(handler, error));
       return;
     }
 
@@ -1180,7 +1177,7 @@ public:
     if (peer.impl() != invalid_socket)
     {
       asio::error error(asio::error::already_connected);
-      demuxer_.post(bind_handler(handler, error));
+      io_service_.post(bind_handler(handler, error));
       return;
     }
 
@@ -1191,7 +1188,7 @@ public:
           &protocol_info, &protocol_info_size) != 0)
     {
       asio::error error(socket_ops::get_error());
-      demuxer_.post(bind_handler(handler, error));
+      io_service_.post(bind_handler(handler, error));
       return;
     }
 
@@ -1201,17 +1198,17 @@ public:
     if (sock.get() == invalid_socket)
     {
       asio::error error(socket_ops::get_error());
-      demuxer_.post(bind_handler(handler, error));
+      io_service_.post(bind_handler(handler, error));
       return;
     }
 
     // Allocate and construct an operation to wrap the handler.
     typedef accept_endp_operation<Socket, Endpoint, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type, Allocator> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler, demuxer_.get_allocator());
+    raw_handler_ptr<alloc_traits> raw_ptr(handler, io_service_.get_allocator());
     socket_type new_socket = sock.get();
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        demuxer_, impl, new_socket, peer, peer_endpoint, handler);
+        io_service_, impl, new_socket, peer, peer_endpoint, handler);
     sock.release();
 
     // Accept a connection.
@@ -1226,7 +1223,7 @@ public:
     {
       ptr.reset();
       asio::error error(last_error);
-      demuxer_service_.post(bind_handler(handler, error));
+      iocp_service_.post(bind_handler(handler, error));
     }
     else
     {
@@ -1254,7 +1251,7 @@ public:
         error_handler(asio::error(socket_ops::get_error()));
         return;
       }
-      demuxer_service_.register_socket(impl);
+      iocp_service_.register_socket(impl);
     }
 
     // Perform the connect operation.
@@ -1269,12 +1266,12 @@ public:
   {
   public:
     connect_handler(impl_type& impl, boost::shared_ptr<bool> completed,
-        demuxer_type& demuxer, reactor_type& reactor, Handler handler)
+        io_service_type& io_service, reactor_type& reactor, Handler handler)
       : impl_(impl),
         completed_(completed),
-        demuxer_(demuxer),
+        io_service_(io_service),
         reactor_(reactor),
-        work_(demuxer),
+        work_(io_service),
         handler_(handler)
     {
     }
@@ -1294,7 +1291,7 @@ public:
       if (result != 0)
       {
         asio::error error(result);
-        demuxer_.post(bind_handler(handler_, error));
+        io_service_.post(bind_handler(handler_, error));
         return true;
       }
 
@@ -1305,7 +1302,7 @@ public:
             &connect_error, &connect_error_len) == socket_error_retval)
       {
         asio::error error(socket_ops::get_error());
-        demuxer_.post(bind_handler(handler_, error));
+        io_service_.post(bind_handler(handler_, error));
         return true;
       }
 
@@ -1313,7 +1310,7 @@ public:
       if (connect_error)
       {
         asio::error error(connect_error);
-        demuxer_.post(bind_handler(handler_, error));
+        io_service_.post(bind_handler(handler_, error));
         return true;
       }
 
@@ -1322,22 +1319,22 @@ public:
       if (socket_ops::ioctl(impl_, FIONBIO, &non_blocking))
       {
         asio::error error(socket_ops::get_error());
-        demuxer_.post(bind_handler(handler_, error));
+        io_service_.post(bind_handler(handler_, error));
         return true;
       }
 
       // Post the result of the successful connection operation.
       asio::error error(asio::error::success);
-      demuxer_.post(bind_handler(handler_, error));
+      io_service_.post(bind_handler(handler_, error));
       return true;
     }
 
   private:
     impl_type& impl_;
     boost::shared_ptr<bool> completed_;
-    demuxer_type& demuxer_;
+    io_service_type& io_service_;
     reactor_type& reactor_;
-    typename demuxer_type::work work_;
+    typename io_service_type::work work_;
     Handler handler_;
   };
 
@@ -1346,13 +1343,13 @@ public:
   void async_connect(impl_type& impl, const Endpoint& peer_endpoint,
       Handler handler)
   {
-    // Check if the reactor was already obtained from the demuxer.
+    // Check if the reactor was already obtained from the io_service.
     reactor_type* reactor = static_cast<reactor_type*>(
           InterlockedCompareExchangePointer(
           reinterpret_cast<void**>(&reactor_), 0, 0));
     if (!reactor)
     {
-      reactor = &(demuxer_.get_service(service_factory<reactor_type>()));
+      reactor = &(io_service_.get_service(service_factory<reactor_type>()));
       InterlockedExchangePointer(reinterpret_cast<void**>(&reactor_), reactor);
     }
 
@@ -1369,10 +1366,10 @@ public:
       if (impl == invalid_socket)
       {
         asio::error error(socket_ops::get_error());
-        demuxer_.post(bind_handler(handler, error));
+        io_service_.post(bind_handler(handler, error));
         return;
       }
-      demuxer_service_.register_socket(impl);
+      iocp_service_.register_socket(impl);
     }
 
     // Mark the socket as non-blocking so that the connection will take place
@@ -1381,7 +1378,7 @@ public:
     if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
     {
       asio::error error(socket_ops::get_error());
-      demuxer_.post(bind_handler(handler, error));
+      io_service_.post(bind_handler(handler, error));
       return;
     }
 
@@ -1392,7 +1389,7 @@ public:
       // The connect operation has finished successfully so we need to post the
       // handler immediately.
       asio::error error(asio::error::success);
-      demuxer_.post(bind_handler(handler, error));
+      io_service_.post(bind_handler(handler, error));
     }
     else if (socket_ops::get_error() == asio::error::in_progress
         || socket_ops::get_error() == asio::error::would_block)
@@ -1401,23 +1398,23 @@ public:
       // until the socket becomes writeable.
       boost::shared_ptr<bool> completed(new bool(false));
       reactor->start_write_and_except_ops(impl, connect_handler<Handler>(
-            impl, completed, demuxer_, *reactor, handler));
+            impl, completed, io_service_, *reactor, handler));
     }
     else
     {
       // The connect operation has failed, so post the handler immediately.
       asio::error error(socket_ops::get_error());
-      demuxer_.post(bind_handler(handler, error));
+      io_service_.post(bind_handler(handler, error));
     }
   }
 
 private:
-  // The demuxer associated with the service.
-  demuxer_type& demuxer_;
+  // The io_service associated with the service.
+  io_service_type& io_service_;
 
-  // The demuxer service used for running asynchronous operations and
-  // dispatching handlers.
-  win_iocp_demuxer_service<Allocator>& demuxer_service_;
+  // The IOCP service used for running asynchronous operations and dispatching
+  // handlers.
+  win_iocp_io_service<Allocator>& iocp_service_;
 
   // The reactor used for performing connect operations. This object is created
   // only if needed.

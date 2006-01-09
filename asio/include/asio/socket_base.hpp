@@ -81,7 +81,7 @@ public:
    * @par Examples:
    * Setting the option:
    * @code
-   * asio::datagram_socket socket(demuxer); 
+   * asio::datagram_socket socket(io_service); 
    * ...
    * asio::socket_base::broadcast option(true);
    * socket.set_option(option);
@@ -90,7 +90,7 @@ public:
    * @par
    * Getting the current option value:
    * @code
-   * asio::datagram_socket socket(demuxer); 
+   * asio::datagram_socket socket(io_service); 
    * ...
    * asio::socket_base::broadcast option;
    * socket.get_option(option);
@@ -114,7 +114,7 @@ public:
    * @par Examples:
    * Setting the option:
    * @code
-   * asio::datagram_socket socket(demuxer); 
+   * asio::datagram_socket socket(io_service); 
    * ...
    * asio::socket_base::do_not_route option(true);
    * socket.set_option(option);
@@ -123,7 +123,7 @@ public:
    * @par
    * Getting the current option value:
    * @code
-   * asio::datagram_socket socket(demuxer); 
+   * asio::datagram_socket socket(io_service); 
    * ...
    * asio::socket_base::do_not_route option;
    * socket.get_option(option);
@@ -147,7 +147,7 @@ public:
    * @par Examples:
    * Setting the option:
    * @code
-   * asio::stream_socket socket(demuxer); 
+   * asio::stream_socket socket(io_service); 
    * ...
    * asio::socket_base::keep_alive option(true);
    * socket.set_option(option);
@@ -156,7 +156,7 @@ public:
    * @par
    * Getting the current option value:
    * @code
-   * asio::stream_socket socket(demuxer); 
+   * asio::stream_socket socket(io_service); 
    * ...
    * asio::socket_base::keep_alive option;
    * socket.get_option(option);
@@ -180,7 +180,7 @@ public:
    * @par Examples:
    * Setting the option:
    * @code
-   * asio::stream_socket socket(demuxer); 
+   * asio::stream_socket socket(io_service); 
    * ...
    * asio::socket_base::send_buffer_size option(8192);
    * socket.set_option(option);
@@ -189,7 +189,7 @@ public:
    * @par
    * Getting the current option value:
    * @code
-   * asio::stream_socket socket(demuxer); 
+   * asio::stream_socket socket(io_service); 
    * ...
    * asio::socket_base::send_buffer_size option;
    * socket.get_option(option);
@@ -213,7 +213,7 @@ public:
    * @par Examples:
    * Setting the option:
    * @code
-   * asio::stream_socket socket(demuxer); 
+   * asio::stream_socket socket(io_service); 
    * ...
    * asio::socket_base::send_low_watermark option(1024);
    * socket.set_option(option);
@@ -222,7 +222,7 @@ public:
    * @par
    * Getting the current option value:
    * @code
-   * asio::stream_socket socket(demuxer); 
+   * asio::stream_socket socket(io_service); 
    * ...
    * asio::socket_base::send_low_watermark option;
    * socket.get_option(option);
@@ -246,7 +246,7 @@ public:
    * @par Examples:
    * Setting the option:
    * @code
-   * asio::stream_socket socket(demuxer); 
+   * asio::stream_socket socket(io_service); 
    * ...
    * asio::socket_base::receive_buffer_size option(8192);
    * socket.set_option(option);
@@ -255,7 +255,7 @@ public:
    * @par
    * Getting the current option value:
    * @code
-   * asio::stream_socket socket(demuxer); 
+   * asio::stream_socket socket(io_service); 
    * ...
    * asio::socket_base::receive_buffer_size option;
    * socket.get_option(option);
@@ -279,7 +279,7 @@ public:
    * @par Examples:
    * Setting the option:
    * @code
-   * asio::stream_socket socket(demuxer); 
+   * asio::stream_socket socket(io_service); 
    * ...
    * asio::socket_base::receive_low_watermark option(1024);
    * socket.set_option(option);
@@ -288,7 +288,7 @@ public:
    * @par
    * Getting the current option value:
    * @code
-   * asio::stream_socket socket(demuxer); 
+   * asio::stream_socket socket(io_service); 
    * ...
    * asio::socket_base::receive_low_watermark option;
    * socket.get_option(option);
@@ -313,7 +313,7 @@ public:
    * @par Examples:
    * Setting the option:
    * @code
-   * asio::socket_acceptor acceptor(demuxer); 
+   * asio::socket_acceptor acceptor(io_service); 
    * ...
    * asio::socket_base::reuse_address option(true);
    * acceptor.set_option(option);
@@ -322,7 +322,7 @@ public:
    * @par
    * Getting the current option value:
    * @code
-   * asio::socket_acceptor acceptor(demuxer); 
+   * asio::socket_acceptor acceptor(io_service); 
    * ...
    * asio::socket_base::reuse_address option;
    * acceptor.get_option(option);
@@ -347,7 +347,7 @@ public:
    * @par Examples:
    * Setting the option:
    * @code
-   * asio::stream_socket socket(demuxer); 
+   * asio::stream_socket socket(io_service); 
    * ...
    * asio::socket_base::linger option(true, 30);
    * socket.set_option(option);
@@ -356,7 +356,7 @@ public:
    * @par
    * Getting the current option value:
    * @code
-   * asio::stream_socket socket(demuxer); 
+   * asio::stream_socket socket(io_service); 
    * ...
    * asio::socket_base::linger option;
    * socket.get_option(option);
@@ -380,7 +380,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::stream_socket socket(demuxer); 
+   * asio::stream_socket socket(io_service); 
    * ...
    * asio::socket_base::non_blocking_io command(true);
    * socket.io_control(command);
@@ -402,7 +402,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::stream_socket socket(demuxer); 
+   * asio::stream_socket socket(io_service); 
    * ...
    * asio::socket_base::bytes_readable command(true);
    * socket.io_control(command);

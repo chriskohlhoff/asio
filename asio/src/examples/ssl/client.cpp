@@ -9,9 +9,9 @@ enum { max_length = 1024 };
 class client
 {
 public:
-  client(asio::demuxer& d, asio::ssl::context& context,
+  client(asio::io_service& io_service, asio::ssl::context& context,
       const asio::ipv4::tcp::endpoint& server_endpoint)
-    : socket_(d, context)
+    : socket_(io_service, context)
   {
     socket_.lowest_layer().async_connect(server_endpoint,
         boost::bind(&client::handle_connect, this,
@@ -98,20 +98,20 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::demuxer d;
+    asio::io_service io_service;
 
     using namespace std; // For atoi.
-    asio::ipv4::host_resolver hr(d);
+    asio::ipv4::host_resolver hr(io_service);
     asio::ipv4::host h;
     hr.get_host_by_name(h, argv[1]);
     asio::ipv4::tcp::endpoint ep(atoi(argv[2]), h.address(0));
 
-    asio::ssl::context ctx(d, asio::ssl::context::sslv23);
+    asio::ssl::context ctx(io_service, asio::ssl::context::sslv23);
     ctx.set_verify_mode(asio::ssl::context::verify_peer);
     ctx.load_verify_file("ca.pem");
-    client c(d, ctx, ep);
+    client c(io_service, ctx, ep);
 
-    d.run();
+    io_service.run();
   }
   catch (asio::error& e)
   {

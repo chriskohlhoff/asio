@@ -65,9 +65,9 @@ class chat_session
     public boost::enable_shared_from_this<chat_session>
 {
 public:
-  chat_session(asio::demuxer& d, chat_room& r)
-    : socket_(d),
-      room_(r)
+  chat_session(asio::io_service& io_service, chat_room& room)
+    : socket_(io_service),
+      room_(room)
   {
   }
 
@@ -165,12 +165,12 @@ typedef boost::shared_ptr<chat_session> chat_session_ptr;
 class chat_server
 {
 public:
-  chat_server(asio::demuxer& d,
+  chat_server(asio::io_service& io_service,
       const asio::ipv4::tcp::endpoint& endpoint)
-    : demuxer_(d),
-      acceptor_(d, endpoint)
+    : io_service_(io_service),
+      acceptor_(io_service, endpoint)
   {
-    chat_session_ptr new_session(new chat_session(demuxer_, room_));
+    chat_session_ptr new_session(new chat_session(io_service_, room_));
     acceptor_.async_accept(new_session->socket(),
         boost::bind(&chat_server::handle_accept, this, new_session,
           asio::placeholders::error));
@@ -181,7 +181,7 @@ public:
     if (!error)
     {
       session->start();
-      chat_session_ptr new_session(new chat_session(demuxer_, room_));
+      chat_session_ptr new_session(new chat_session(io_service_, room_));
       acceptor_.async_accept(new_session->socket(),
           boost::bind(&chat_server::handle_accept, this, new_session,
             asio::placeholders::error));
@@ -195,7 +195,7 @@ public:
   }
 
 private:
-  asio::demuxer& demuxer_;
+  asio::io_service& io_service_;
   asio::socket_acceptor acceptor_;
   chat_room room_;
 };
@@ -215,18 +215,18 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::demuxer d;
+    asio::io_service io_service;
 
     chat_server_list servers;
     for (int i = 1; i < argc; ++i)
     {
       using namespace std; // For atoi.
       asio::ipv4::tcp::endpoint endpoint(atoi(argv[i]));
-      chat_server_ptr server(new chat_server(d, endpoint));
+      chat_server_ptr server(new chat_server(io_service, endpoint));
       servers.push_back(server);
     }
 
-    d.run();
+    io_service.run();
   }
   catch (asio::error& e)
   {

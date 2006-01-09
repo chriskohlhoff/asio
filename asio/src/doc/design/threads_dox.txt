@@ -10,17 +10,17 @@ additional threads to emulate asynchronicity. As far as possible, these threads 
 This approach is complemented by the following guarantee:
 
 \li Asynchronous completion handlers will only be called from threads that are
-currently calling asio::demuxer::run().
+currently calling asio::io_service::run().
 
 Consequently, it is the library user's responsibility to create and manage all
 threads to which the notifications will be delivered.
 
 \section designthreadsrationale Rationale
 
-\li By only calling asio::demuxer::run() from a single thread, the user's code
-can be avoid the development complexity associated with synchronisation. For
-example, a library user can implement scalable servers that are single-threaded
-(from the user's point of view).
+\li By only calling asio::io_service::run() from a single thread, the user's
+code can be avoid the development complexity associated with synchronisation.
+For example, a library user can implement scalable servers that are
+single-threaded (from the user's point of view).
 \li A library user may need to perform initialisation in a thread shortly after
 the thread starts and before any other application code is executed. For
 example, users of Microsoft's COM must call CoInitializeEx before any other COM

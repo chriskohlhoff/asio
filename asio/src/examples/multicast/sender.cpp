@@ -12,9 +12,9 @@ const int max_message_count = 10;
 class sender
 {
 public:
-  sender(asio::demuxer& d)
-    : socket_(d, asio::ipv4::udp::endpoint(0)),
-      timer_(d),
+  sender(asio::io_service& io_service)
+    : socket_(io_service, asio::ipv4::udp::endpoint(0)),
+      timer_(io_service),
       message_count_(0)
   {
     std::ostringstream os;
@@ -66,9 +66,9 @@ int main(int argc, char* argv[])
 {
   try
   {
-    asio::demuxer d;
-    sender s(d);
-    d.run();
+    asio::io_service io_service;
+    sender s(io_service);
+    io_service.run();
   }
   catch (asio::error& e)
   {

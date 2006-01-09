@@ -14,10 +14,10 @@ class socket_device
 public:
   // Constructor.
   socket_device(short port, const char* hostname)
-    : demuxer_(new asio::demuxer),
-      socket_(new asio::stream_socket(*demuxer_))
+    : io_service_(new asio::io_service),
+      socket_(new asio::stream_socket(*io_service_))
   {
-    asio::ipv4::host_resolver host_resolver(*demuxer_);
+    asio::ipv4::host_resolver host_resolver(*io_service_);
     asio::ipv4::host host;
     host_resolver.get_host_by_name(host, hostname);
     asio::ipv4::tcp::endpoint endpoint(port, host.address(0));
@@ -44,7 +44,7 @@ public:
   }
 
 private:
-  boost::shared_ptr<asio::demuxer> demuxer_;
+  boost::shared_ptr<asio::io_service> io_service_;
   boost::shared_ptr<asio::stream_socket> socket_;
 };
 

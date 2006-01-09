@@ -47,9 +47,9 @@ namespace ssl {
  * @par Example:
  * To use the SSL stream template with a stream_socket, you would write:
  * @code
- * asio::demuxer d;
- * asio::ssl::context context(d, asio::ssl::context::sslv23);
- * asio::ssl::stream<asio::stream_socket> sock(demuxer, context);
+ * asio::io_service io_service;
+ * asio::ssl::context context(io_service, asio::ssl::context::sslv23);
+ * asio::ssl::stream<asio::stream_socket> sock(io_service, context);
  * @endcode
  *
  * @par Concepts:
@@ -68,8 +68,8 @@ public:
   /// The type of the lowest layer.
   typedef typename next_layer_type::lowest_layer_type lowest_layer_type;
 
-  /// The demuxer type for this asynchronous type.
-  typedef typename next_layer_type::demuxer_type demuxer_type;
+  /// The io_service type for this type.
+  typedef typename next_layer_type::io_service_type io_service_type;
 
   /// The type used for reporting errors.
   typedef typename next_layer_type::error_type error_type;
@@ -92,7 +92,8 @@ public:
   template <typename Arg, typename Context_Service>
   explicit stream(Arg& arg, basic_context<Context_Service>& context)
     : next_layer_(arg),
-      service_(next_layer_.demuxer().get_service(service_factory<Service>())),
+      service_(next_layer_.io_service().get_service(
+            service_factory<Service>())),
       impl_(service_.null())
   {
     service_.create(impl_, next_layer_, context);
@@ -104,17 +105,17 @@ public:
     service_.destroy(impl_, next_layer_);
   }
 
-  /// Get the demuxer associated with the asynchronous object.
+  /// Get the io_service associated with the object.
   /**
-   * This function may be used to obtain the demuxer object that the stream uses
-   * to dispatch handlers for asynchronous operations.
+   * This function may be used to obtain the io_service object that the stream
+   * uses to dispatch handlers for asynchronous operations.
    *
-   * @return A reference to the demuxer object that stream will use to dispatch
-   * handlers. Ownership is not transferred to the caller.
+   * @return A reference to the io_service object that stream will use to
+   * dispatch handlers. Ownership is not transferred to the caller.
    */
-  demuxer_type& demuxer()
+  io_service_type& io_service()
   {
-    return next_layer_.demuxer();
+    return next_layer_.io_service();
   }
 
   /// Get a reference to the next layer.

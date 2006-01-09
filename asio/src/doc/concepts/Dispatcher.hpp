@@ -11,7 +11,7 @@
 /// Dispatcher concept.
 /**
  * @par Implemented By:
- * asio::basic_demuxer @n
+ * asio::basic_io_service @n
  * asio::basic_locking_dispatcher
  */
 class Dispatcher

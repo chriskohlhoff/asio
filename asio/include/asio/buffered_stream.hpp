@@ -54,8 +54,8 @@ public:
   /// The type of the lowest layer.
   typedef typename next_layer_type::lowest_layer_type lowest_layer_type;
 
-  /// The demuxer type for this asynchronous type.
-  typedef typename next_layer_type::demuxer_type demuxer_type;
+  /// The io_service type for this type.
+  typedef typename next_layer_type::io_service_type io_service_type;
 
   /// The type used for reporting errors.
   typedef typename next_layer_type::error_type error_type;
@@ -89,10 +89,10 @@ public:
     return stream_impl_.lowest_layer();
   }
 
-  /// Get the demuxer associated with the asynchronous object.
-  demuxer_type& demuxer()
+  /// Get the io_service associated with the object.
+  io_service_type& io_service()
   {
-    return stream_impl_.demuxer();
+    return stream_impl_.io_service();
   }
 
   /// Close the stream.

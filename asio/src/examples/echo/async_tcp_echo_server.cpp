@@ -6,8 +6,8 @@
 class session
 {
 public:
-  session(asio::demuxer& d)
-    : socket_(d)
+  session(asio::io_service& io_service)
+    : socket_(io_service)
   {
   }
 
@@ -63,11 +63,11 @@ private:
 class server
 {
 public:
-  server(asio::demuxer& d, short port)
-    : demuxer_(d),
-      acceptor_(d, asio::ipv4::tcp::endpoint(port))
+  server(asio::io_service& io_service, short port)
+    : io_service_(io_service),
+      acceptor_(io_service, asio::ipv4::tcp::endpoint(port))
   {
-    session* new_session = new session(demuxer_);
+    session* new_session = new session(io_service_);
     acceptor_.async_accept(new_session->socket(),
         boost::bind(&server::handle_accept, this, new_session,
           asio::placeholders::error));
@@ -78,7 +78,7 @@ public:
     if (!error)
     {
       new_session->start();
-      new_session = new session(demuxer_);
+      new_session = new session(io_service_);
       acceptor_.async_accept(new_session->socket(),
           boost::bind(&server::handle_accept, this, new_session,
             asio::placeholders::error));
@@ -96,7 +96,7 @@ public:
   }
 
 private:
-  asio::demuxer& demuxer_;
+  asio::io_service& io_service_;
   asio::socket_acceptor acceptor_;
 };
 
@@ -110,12 +110,12 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::demuxer d;
+    asio::io_service io_service;
 
     using namespace std; // For atoi.
-    server s(d, atoi(argv[1]));
+    server s(io_service, atoi(argv[1]));
 
-    d.run();
+    io_service.run();
   }
   catch (asio::error& e)
   {

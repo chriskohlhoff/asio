@@ -1,6 +1,6 @@
 //
-// task_demuxer_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+// task_io_service.hpp
+  // ~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2005 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_TASK_DEMUXER_SERVICE_HPP
-#define ASIO_DETAIL_TASK_DEMUXER_SERVICE_HPP
+#ifndef ASIO_DETAIL_TASK_IO_SERVICE_HPP
+#define ASIO_DETAIL_TASK_IO_SERVICE_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -21,11 +21,9 @@
 #include <memory>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/basic_demuxer.hpp"
-#include "asio/demuxer_service.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/detail/bind_handler.hpp"
-#include "asio/detail/demuxer_run_call_stack.hpp"
+#include "asio/detail/call_stack.hpp"
 #include "asio/detail/event.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/mutex.hpp"
@@ -34,15 +32,15 @@ namespace asio {
 namespace detail {
 
 template <typename Task, typename Allocator>
-class task_demuxer_service
+class task_io_service
 {
 public:
   // Constructor.
-  template <typename Demuxer>
-  task_demuxer_service(Demuxer& demuxer)
+  template <typename IO_Service>
+  task_io_service(IO_Service& io_service)
     : mutex_(),
-      allocator_(demuxer.get_allocator()),
-      task_(demuxer.get_service(service_factory<Task>())),
+      allocator_(io_service.get_allocator()),
+      task_(io_service.get_service(service_factory<Task>())),
       outstanding_work_(0),
       handler_queue_(&task_handler_),
       handler_queue_end_(&task_handler_),
@@ -51,10 +49,10 @@ public:
   {
   }
 
-  // Run the demuxer's event processing loop.
+  // Run the event processing loop.
   void run()
   {
-    typename demuxer_run_call_stack<task_demuxer_service>::context ctx(this);
+    typename call_stack<task_io_service>::context ctx(this);
 
     idle_thread_info this_idle_thread;
     this_idle_thread.prev = &this_idle_thread;
@@ -184,28 +182,28 @@ public:
     }
   }
 
-  // Interrupt the demuxer's event processing loop.
+  // Interrupt the event processing loop.
   void interrupt()
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
     interrupt_all_threads();
   }
 
-  // Reset the demuxer in preparation for a subsequent run invocation.
+  // Reset in preparation for a subsequent run invocation.
   void reset()
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
     interrupted_ = false;
   }
 
-  // Notify the demuxer that some work has started.
+  // Notify that some work has started.
   void work_started()
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
     ++outstanding_work_;
   }
 
-  // Notify the demuxer that some work has finished.
+  // Notify that some work has finished.
   void work_finished()
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
@@ -213,17 +211,17 @@ public:
       interrupt_all_threads();
   }
 
-  // Request the demuxer to invoke the given handler.
+  // Request invocation of the given handler.
   template <typename Handler>
   void dispatch(Handler handler)
   {
-    if (demuxer_run_call_stack<task_demuxer_service>::contains(this))
+    if (call_stack<task_io_service>::contains(this))
       handler();
     else
       post(handler);
   }
 
-  // Request the demuxer to invoke the given handler and return immediately.
+  // Request invocation of the given handler and return immediately.
   template <typename Handler>
   void post(Handler handler)
   {
@@ -319,7 +317,7 @@ private:
     }
 
   private:
-    friend class task_demuxer_service<Task, Allocator>;
+    friend class task_io_service<Task, Allocator>;
     handler_base* next_;
     func_type func_;
   };
@@ -365,7 +363,7 @@ private:
   // The allocator to be used for allocating dynamic objects.
   Allocator allocator_;
 
-  // The task to be run by this demuxer service.
+  // The task to be run by this service.
   Task& task_;
 
   // Handler object to represent the position of the task in the queue.
@@ -408,4 +406,4 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_TASK_DEMUXER_SERVICE_HPP
+#endif // ASIO_DETAIL_TASK_IO_SERVICE_HPP

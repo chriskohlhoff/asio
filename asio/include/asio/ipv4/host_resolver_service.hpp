@@ -23,8 +23,7 @@
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/basic_demuxer.hpp"
-#include "asio/demuxer_service.hpp"
+#include "asio/basic_io_service.hpp"
 #include "asio/error.hpp"
 #include "asio/ipv4/detail/host_resolver_service.hpp"
 #include "asio/detail/socket_ops.hpp"
@@ -40,12 +39,12 @@ class host_resolver_service
   : private boost::noncopyable
 {
 public:
-  /// The demuxer type for this service.
-  typedef basic_demuxer<demuxer_service<Allocator> > demuxer_type;
+  /// The io_service type.
+  typedef basic_io_service<Allocator> io_service_type;
 
 private:
   // The type of the platform-specific implementation.
-  typedef detail::host_resolver_service<demuxer_type> service_impl_type;
+  typedef detail::host_resolver_service<io_service_type> service_impl_type;
 
 public:
   /// The type of the host resolver.
@@ -56,15 +55,16 @@ public:
 #endif
 
   /// Constructor.
-  host_resolver_service(demuxer_type& demuxer)
-    : service_impl_(demuxer.get_service(service_factory<service_impl_type>()))
+  host_resolver_service(io_service_type& io_service)
+    : service_impl_(io_service.get_service(
+          service_factory<service_impl_type>()))
   {
   }
 
-  /// Get the demuxer associated with the service.
-  demuxer_type& demuxer()
+  /// Get the io_service associated with the service.
+  io_service_type& io_service()
   {
-    return service_impl_.demuxer();
+    return service_impl_.io_service();
   }
 
   /// Return a null host resolver implementation.

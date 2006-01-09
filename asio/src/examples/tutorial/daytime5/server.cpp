@@ -7,9 +7,9 @@ int main()
 {
   try
   {
-    asio::demuxer demuxer;
+    asio::io_service io_service;
 
-    asio::datagram_socket socket(demuxer,
+    asio::datagram_socket socket(io_service,
         asio::ipv4::udp::endpoint(13));
 
     for (;;)

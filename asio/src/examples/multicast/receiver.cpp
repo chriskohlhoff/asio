@@ -9,8 +9,8 @@ const std::string multicast_addr = "225.0.0.1";
 class receiver
 {
 public:
-  receiver(asio::demuxer& d)
-    : socket_(d)
+  receiver(asio::io_service& io_service)
+    : socket_(io_service)
   {
     // Create the socket so that multiple may be bound to the same address.
     socket_.open(asio::ipv4::udp());
@@ -54,9 +54,9 @@ int main(int argc, char* argv[])
 {
   try
   {
-    asio::demuxer d;
-    receiver s(d);
-    d.run();
+    asio::io_service io_service;
+    receiver r(io_service);
+    io_service.run();
   }
   catch (asio::error& e)
   {
