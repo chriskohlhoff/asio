@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
     host_resolver.get_host_by_name(host, argv[1]);
     asio::ipv4::tcp::endpoint remote_endpoint(13, host.address(0));
 
-    asio::stream_socket socket(io_service);
+    asio::ipv4::tcp::socket socket(io_service);
     socket.connect(remote_endpoint);
 
     for (;;)

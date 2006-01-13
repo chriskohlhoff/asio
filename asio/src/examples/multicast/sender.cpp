@@ -56,7 +56,7 @@ public:
   }
 
 private:
-  asio::datagram_socket socket_;
+  asio::ipv4::udp::socket socket_;
   asio::deadline_timer timer_;
   int message_count_;
   std::string message_;

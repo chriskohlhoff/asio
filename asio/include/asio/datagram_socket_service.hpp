@@ -19,7 +19,6 @@
 
 #include "asio/detail/push_options.hpp"
 #include <cstddef>
-#include <memory>
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -34,13 +33,19 @@
 namespace asio {
 
 /// Default service implementation for a datagram socket.
-template <typename Allocator = std::allocator<void> >
+template <typename Protocol, typename Allocator>
 class datagram_socket_service
   : private noncopyable
 {
 public:
   /// The io_service type.
   typedef basic_io_service<Allocator> io_service_type;
+
+  /// The protocol type.
+  typedef Protocol protocol_type;
+
+  /// The endpoint type.
+  typedef typename Protocol::endpoint endpoint_type;
 
 private:
   // The type of the platform-specific implementation.
@@ -85,8 +90,8 @@ public:
   }
 
   // Open a new datagram socket implementation.
-  template <typename Protocol, typename Error_Handler>
-  void open(impl_type& impl, const Protocol& protocol,
+  template <typename Error_Handler>
+  void open(impl_type& impl, const protocol_type& protocol,
       Error_Handler error_handler)
   {
     if (protocol.type() == SOCK_DGRAM)
@@ -109,24 +114,24 @@ public:
   }
 
   // Bind the datagram socket to the specified local endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void bind(impl_type& impl, const Endpoint& endpoint,
+  template <typename Error_Handler>
+  void bind(impl_type& impl, const endpoint_type& endpoint,
       Error_Handler error_handler)
   {
     service_impl_.bind(impl, endpoint, error_handler);
   }
 
   /// Connect the datagram socket to the specified endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void connect(impl_type& impl, const Endpoint& peer_endpoint,
+  template <typename Error_Handler>
+  void connect(impl_type& impl, const endpoint_type& peer_endpoint,
       Error_Handler error_handler)
   {
     service_impl_.connect(impl, peer_endpoint, error_handler);
   }
 
   /// Start an asynchronous connect.
-  template <typename Endpoint, typename Handler>
-  void async_connect(impl_type& impl, const Endpoint& peer_endpoint,
+  template <typename Handler>
+  void async_connect(impl_type& impl, const endpoint_type& peer_endpoint,
       Handler handler)
   {
     service_impl_.async_connect(impl, peer_endpoint, handler);
@@ -157,16 +162,16 @@ public:
   }
 
   /// Get the local endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void get_local_endpoint(const impl_type& impl, Endpoint& endpoint,
+  template <typename Error_Handler>
+  void get_local_endpoint(const impl_type& impl, endpoint_type& endpoint,
       Error_Handler error_handler) const
   {
     service_impl_.get_local_endpoint(impl, endpoint, error_handler);
   }
 
   // Get the remote endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void get_remote_endpoint(const impl_type& impl, Endpoint& endpoint,
+  template <typename Error_Handler>
+  void get_remote_endpoint(const impl_type& impl, endpoint_type& endpoint,
       Error_Handler error_handler) const
   {
     service_impl_.get_remote_endpoint(impl, endpoint, error_handler);
@@ -197,9 +202,9 @@ public:
   }
 
   /// Send a datagram to the specified endpoint.
-  template <typename Const_Buffers, typename Endpoint, typename Error_Handler>
+  template <typename Const_Buffers, typename Error_Handler>
   std::size_t send_to(impl_type& impl, const Const_Buffers& buffers,
-      socket_base::message_flags flags, const Endpoint& destination,
+      socket_base::message_flags flags, const endpoint_type& destination,
       Error_Handler error_handler)
   {
     return service_impl_.send_to(impl, buffers, flags, destination,
@@ -207,9 +212,9 @@ public:
   }
 
   /// Start an asynchronous send.
-  template <typename Const_Buffers, typename Endpoint, typename Handler>
+  template <typename Const_Buffers, typename Handler>
   void async_send_to(impl_type& impl, const Const_Buffers& buffers,
-      socket_base::message_flags flags, const Endpoint& destination,
+      socket_base::message_flags flags, const endpoint_type& destination,
       Handler handler)
   {
     service_impl_.async_send_to(impl, buffers, flags, destination, handler);
@@ -232,9 +237,9 @@ public:
   }
 
   /// Receive a datagram with the endpoint of the sender.
-  template <typename Mutable_Buffers, typename Endpoint, typename Error_Handler>
+  template <typename Mutable_Buffers, typename Error_Handler>
   std::size_t receive_from(impl_type& impl, const Mutable_Buffers& buffers,
-      socket_base::message_flags flags, Endpoint& sender_endpoint,
+      socket_base::message_flags flags, endpoint_type& sender_endpoint,
       Error_Handler error_handler)
   {
     return service_impl_.receive_from(impl, buffers, flags, sender_endpoint,
@@ -242,9 +247,9 @@ public:
   }
 
   /// Start an asynchronous receive that will get the endpoint of the sender.
-  template <typename Mutable_Buffers, typename Endpoint, typename Handler>
+  template <typename Mutable_Buffers, typename Handler>
   void async_receive_from(impl_type& impl, const Mutable_Buffers& buffers,
-      socket_base::message_flags flags, Endpoint& sender_endpoint,
+      socket_base::message_flags flags, endpoint_type& sender_endpoint,
       Handler handler)
   {
     service_impl_.async_receive_from(impl, buffers, flags, sender_endpoint,

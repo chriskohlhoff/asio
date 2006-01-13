@@ -17,10 +17,6 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <memory>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/basic_io_service.hpp"
 #include "asio/basic_stream_socket.hpp"
 #include "asio/detail/epoll_reactor.hpp"
@@ -33,13 +29,22 @@
 namespace asio {
 
 /// Default service implementation for a socket acceptor.
-template <typename Allocator = std::allocator<void> >
+template <typename Protocol, typename Socket, typename Allocator>
 class socket_acceptor_service
   : private noncopyable
 {
 public:
   /// The io_service type.
   typedef basic_io_service<Allocator> io_service_type;
+
+  /// The protocol type.
+  typedef Protocol protocol_type;
+
+  /// The endpoint type.
+  typedef typename protocol_type::endpoint endpoint_type;
+
+  /// The socket type to be accepted.
+  typedef Socket socket_type;
 
 private:
   // The type of the platform-specific implementation.
@@ -84,16 +89,22 @@ public:
   }
 
   /// Open a new socket acceptor implementation.
-  template <typename Protocol, typename Error_Handler>
-  void open(impl_type& impl, const Protocol& protocol,
+  template <typename Error_Handler>
+  void open(impl_type& impl, const protocol_type& protocol,
       Error_Handler error_handler)
   {
     service_impl_.open(impl, protocol, error_handler);
   }
 
+  /// Assign a new datagram socket implementation.
+  void assign(impl_type& impl, impl_type new_impl)
+  {
+    service_impl_.assign(impl, new_impl);
+  }
+
   /// Bind the socket acceptor to the specified local endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void bind(impl_type& impl, const Endpoint& endpoint,
+  template <typename Error_Handler>
+  void bind(impl_type& impl, const endpoint_type& endpoint,
       Error_Handler error_handler)
   {
     service_impl_.bind(impl, endpoint, error_handler);
@@ -130,39 +141,39 @@ public:
   }
 
   /// Get the local endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void get_local_endpoint(const impl_type& impl, Endpoint& endpoint,
+  template <typename Error_Handler>
+  void get_local_endpoint(const impl_type& impl, endpoint_type& endpoint,
       Error_Handler error_handler) const
   {
     service_impl_.get_local_endpoint(impl, endpoint, error_handler);
   }
 
   /// Accept a new connection.
-  template <typename Socket, typename Error_Handler>
-  void accept(impl_type& impl, Socket& peer, Error_Handler error_handler)
+  template <typename Error_Handler>
+  void accept(impl_type& impl, socket_type& peer, Error_Handler error_handler)
   {
     service_impl_.accept(impl, peer, error_handler);
   }
 
   /// Accept a new connection.
-  template <typename Socket, typename Endpoint, typename Error_Handler>
-  void accept_endpoint(impl_type& impl, Socket& peer, Endpoint& peer_endpoint,
-      Error_Handler error_handler)
+  template <typename Error_Handler>
+  void accept_endpoint(impl_type& impl, socket_type& peer,
+      endpoint_type& peer_endpoint, Error_Handler error_handler)
   {
     service_impl_.accept_endpoint(impl, peer, peer_endpoint, error_handler);
   }
 
   /// Start an asynchronous accept.
-  template <typename Socket, typename Handler>
-  void async_accept(impl_type& impl, Socket& peer, Handler handler)
+  template <typename Handler>
+  void async_accept(impl_type& impl, socket_type& peer, Handler handler)
   {
     service_impl_.async_accept(impl, peer, handler);
   }
 
   /// Start an asynchronous accept.
-  template <typename Socket, typename Endpoint, typename Handler>
-  void async_accept_endpoint(impl_type& impl, Socket& peer,
-      Endpoint& peer_endpoint, Handler handler)
+  template <typename Handler>
+  void async_accept_endpoint(impl_type& impl, socket_type& peer,
+      endpoint_type& peer_endpoint, Handler handler)
   {
     service_impl_.async_accept_endpoint(impl, peer, peer_endpoint, handler);
   }

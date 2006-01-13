@@ -116,7 +116,7 @@ private:
 
 private:
   asio::io_service& io_service_;
-  asio::stream_socket socket_;
+  asio::ipv4::tcp::socket socket_;
   chat_message read_msg_;
   chat_message_queue write_msgs_;
 };

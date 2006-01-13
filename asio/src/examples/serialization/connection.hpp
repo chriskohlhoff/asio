@@ -25,14 +25,14 @@ class connection
 {
 public:
   /// Constructor.
-  connection(asio::demuxer& demuxer)
-    : socket_(demuxer)
+  connection(asio::io_service& io_service)
+    : socket_(io_service)
   {
   }
 
   /// Get the underlying socket. Used for making a connection or for accepting
   /// an incoming connection.
-  asio::stream_socket& socket()
+  asio::ipv4::tcp::socket& socket()
   {
     return socket_;
   }
@@ -55,7 +55,7 @@ public:
     {
       // Something went wrong, inform the caller.
       asio::error error(asio::error::invalid_argument);
-      socket_.demuxer().post(boost::bind(handler, error));
+      socket_.io_service().post(boost::bind(handler, error));
       return;
     }
     outbound_header_ = header_stream.str();
@@ -145,7 +145,7 @@ public:
 
 private:
   /// The underlying socket.
-  asio::stream_socket socket_;
+  asio::ipv4::tcp::socket socket_;
 
   /// The size of a fixed length header.
   enum { header_length = 8 };

@@ -15,7 +15,7 @@ public:
   // Constructor.
   socket_device(short port, const char* hostname)
     : io_service_(new asio::io_service),
-      socket_(new asio::stream_socket(*io_service_))
+      socket_(new asio::ipv4::tcp::socket(*io_service_))
   {
     asio::ipv4::host_resolver host_resolver(*io_service_);
     asio::ipv4::host host;
@@ -45,7 +45,7 @@ public:
 
 private:
   boost::shared_ptr<asio::io_service> io_service_;
-  boost::shared_ptr<asio::stream_socket> socket_;
+  boost::shared_ptr<asio::ipv4::tcp::socket> socket_;
 };
 
 // Typedefs for iostreams types.

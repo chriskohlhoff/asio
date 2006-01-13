@@ -12,7 +12,7 @@ public:
   {
   }
 
-  asio::stream_socket& socket()
+  asio::ipv4::tcp::socket& socket()
   {
     return socket_.lowest_layer();
   }
@@ -70,7 +70,7 @@ public:
   }
 
 private:
-  asio::ssl::stream<asio::stream_socket> socket_;
+  asio::ssl::stream<asio::ipv4::tcp::socket> socket_;
   enum { max_length = 1024 };
   char data_[max_length];
 };
@@ -121,7 +121,7 @@ public:
 
 private:
   asio::io_service& io_service_;
-  asio::socket_acceptor acceptor_;
+  asio::ipv4::tcp::acceptor acceptor_;
   asio::ssl::context context_;
 };
 

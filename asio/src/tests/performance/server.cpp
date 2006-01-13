@@ -38,7 +38,7 @@ public:
     delete[] write_data_;
   }
 
-  stream_socket& socket()
+  ipv4::tcp::socket& socket()
   {
     return socket_;
   }
@@ -113,7 +113,7 @@ public:
 private:
   io_service& io_service_;
   locking_dispatcher dispatcher_;
-  stream_socket socket_;
+  ipv4::tcp::socket socket_;
   size_t block_size_;
   char* read_data_;
   size_t read_data_length_;
@@ -132,7 +132,7 @@ public:
       block_size_(block_size)
   {
     acceptor_.open(ipv4::tcp());
-    acceptor_.set_option(stream_socket::reuse_address(1));
+    acceptor_.set_option(ipv4::tcp::acceptor::reuse_address(1));
     acceptor_.bind(endpoint);
     acceptor_.listen();
 
@@ -166,7 +166,7 @@ public:
 
 private:
   io_service& io_service_;
-  socket_acceptor acceptor_;
+  ipv4::tcp::acceptor acceptor_;
   size_t block_size_;
 };
 

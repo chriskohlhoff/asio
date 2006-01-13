@@ -5,7 +5,7 @@
 #include "stream_socket_service.hpp"
 
 typedef asio::basic_stream_socket<
-  services::stream_socket_service<> > debug_stream_socket;
+  services::stream_socket_service<asio::ipv4::tcp> > debug_stream_socket;
 
 char read_buffer[1024];
 

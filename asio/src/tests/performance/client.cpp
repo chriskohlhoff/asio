@@ -153,7 +153,7 @@ private:
 
 private:
   locking_dispatcher dispatcher_;
-  stream_socket socket_;
+  ipv4::tcp::socket socket_;
   size_t block_size_;
   char* read_data_;
   size_t read_data_length_;

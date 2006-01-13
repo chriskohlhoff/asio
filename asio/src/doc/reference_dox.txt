@@ -59,7 +59,6 @@ Standard exception class.
 <H2>Classes</H2>
 
 \li asio::const_buffer
-\li asio::datagram_socket
 \li asio::deadline_timer
 \li asio::error
 \li asio::io_service
@@ -67,14 +66,15 @@ Standard exception class.
 \li asio::ipv4::host
 \li asio::ipv4::host_resolver
 \li asio::ipv4::tcp
+\li asio::ipv4::tcp::acceptor
 \li asio::ipv4::tcp::endpoint
+\li asio::ipv4::tcp::socket
 \li asio::ipv4::udp
 \li asio::ipv4::udp::endpoint
+\li asio::ipv4::udp::socket
 \li asio::locking_dispatcher
 \li asio::mutable_buffer
-\li asio::socket_acceptor
 \li asio::socket_base
-\li asio::stream_socket
 \li asio::ssl::context
 \li asio::ssl::context_base
 \li asio::ssl::stream_base

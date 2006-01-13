@@ -15,7 +15,7 @@ server::server(short port, const std::string& doc_root)
   // Open the acceptor with the option to reuse the address (i.e. SO_REUSEADDR).
   asio::ipv4::tcp::endpoint endpoint(port);
   acceptor_.open(endpoint.protocol());
-  acceptor_.set_option(asio::socket_acceptor::reuse_address(true));
+  acceptor_.set_option(asio::ipv4::tcp::acceptor::reuse_address(true));
   acceptor_.bind(endpoint);
   acceptor_.listen();
   acceptor_.async_accept(new_connection_->socket(),

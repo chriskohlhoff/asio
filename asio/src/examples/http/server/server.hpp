@@ -37,7 +37,7 @@ private:
   asio::io_service io_service_;
 
   /// Acceptor used to listen for incoming connections.
-  asio::socket_acceptor acceptor_;
+  asio::ipv4::tcp::acceptor acceptor_;
 
   /// The connection manager which owns all live connections.
   connection_manager connection_manager_;

@@ -17,7 +17,8 @@ int main(int argc, char* argv[])
 
     asio::io_service io_service;
 
-    asio::datagram_socket s(io_service, asio::ipv4::udp::endpoint(0));
+    asio::ipv4::udp::socket s(io_service,
+        asio::ipv4::udp::endpoint(0));
 
     asio::ipv4::host_resolver hr(io_service);
     asio::ipv4::host h;

@@ -1,5 +1,4 @@
 nobase_include_HEADERS = \
-	asio.hpp \
 	asio/basic_datagram_socket.hpp \
 	asio/basic_deadline_timer.hpp \
 	asio/basic_io_service.hpp \
@@ -14,7 +13,6 @@ nobase_include_HEADERS = \
 	asio/buffered_write_stream.hpp \
 	asio/buffered_write_stream_fwd.hpp \
 	asio/completion_condition.hpp \
-	asio/datagram_socket.hpp \
 	asio/datagram_socket_service.hpp \
 	asio/deadline_timer.hpp \
 	asio/deadline_timer_service.hpp \
@@ -97,7 +95,6 @@ nobase_include_HEADERS = \
 	asio/placeholders.hpp \
 	asio/read.hpp \
 	asio/service_factory.hpp \
-	asio/socket_acceptor.hpp \
 	asio/socket_acceptor_service.hpp \
 	asio/socket_base.hpp \
 	asio/ssl/basic_context.hpp \
@@ -113,12 +110,13 @@ nobase_include_HEADERS = \
 	asio/ssl/stream_base.hpp \
 	asio/ssl/stream_service.hpp \
 	asio/ssl.hpp \
-	asio/stream_socket.hpp \
 	asio/stream_socket_service.hpp \
 	asio/system_exception.hpp \
 	asio/thread.hpp \
 	asio/time_traits.hpp \
-	asio/write.hpp
+	asio/write.hpp \
+	asio.hpp
 
 MAINTAINERCLEANFILES = \
 	$(srcdir)/Makefile.in
+

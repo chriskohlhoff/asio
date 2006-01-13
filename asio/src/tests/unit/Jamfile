@@ -148,17 +148,6 @@ run datagram_socket_service_test.cpp
     $(SOCKET_LIBS)
   ;
 
-run datagram_socket_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
 run deadline_timer_service_test.cpp
     <lib>@boost/libs/date_time/build/boost_date_time
   :
@@ -392,17 +381,6 @@ run socket_acceptor_service_test.cpp
     $(SOCKET_LIBS)
   ;
 
-run socket_acceptor_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
 run socket_base_test.cpp
     <lib>@boost/libs/date_time/build/boost_date_time
   :
@@ -415,17 +393,6 @@ run socket_base_test.cpp
   ;
 
 run stream_socket_service_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run stream_socket_test.cpp
     <lib>@boost/libs/date_time/build/boost_date_time
   :
   :

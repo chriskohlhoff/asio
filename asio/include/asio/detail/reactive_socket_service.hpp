@@ -920,7 +920,8 @@ public:
       if (new_socket >= 0)
       {
         impl_type new_impl(new_socket);
-        peer.set_impl(new_impl);
+        Socket tmp(peer.io_service(), new_impl);
+        tmp.swap(peer);
         return;
       }
 
@@ -975,7 +976,8 @@ public:
       {
         peer_endpoint.size(addr_len);
         impl_type new_impl(new_socket);
-        peer.set_impl(new_impl);
+        Socket tmp(peer.io_service(), new_impl);
+        tmp.swap(peer);
         return;
       }
 
@@ -1033,7 +1035,8 @@ public:
         return false;
 
       impl_type new_impl(new_socket);
-      peer_.set_impl(new_impl);
+      Socket tmp(peer_.io_service(), new_impl);
+      tmp.swap(peer_);
       io_service_.post(bind_handler(handler_, error));
       return true;
     }
@@ -1120,7 +1123,8 @@ public:
 
       peer_endpoint_.size(addr_len);
       impl_type new_impl(new_socket);
-      peer_.set_impl(new_impl);
+      Socket tmp(peer_.io_service(), new_impl);
+      tmp.swap(peer_);
       io_service_.post(bind_handler(handler_, error));
       return true;
     }

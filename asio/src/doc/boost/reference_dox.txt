@@ -59,7 +59,6 @@ Standard exception class.
 <H2>Classes</H2>
 
 \li boost::asio::const_buffer
-\li boost::asio::datagram_socket
 \li boost::asio::deadline_timer
 \li boost::asio::error
 \li boost::asio::io_service
@@ -67,14 +66,15 @@ Standard exception class.
 \li boost::asio::ipv4::host
 \li boost::asio::ipv4::host_resolver
 \li boost::asio::ipv4::tcp
+\li boost::asio::ipv4::tcp::acceptor
 \li boost::asio::ipv4::tcp::endpoint
+\li boost::asio::ipv4::tcp::socket
 \li boost::asio::ipv4::udp
 \li boost::asio::ipv4::udp::endpoint
+\li boost::asio::ipv4::udp::socket
 \li boost::asio::locking_dispatcher
 \li boost::asio::mutable_buffer
-\li boost::asio::socket_acceptor
 \li boost::asio::socket_base
-\li boost::asio::stream_socket
 \li boost::asio::ssl::context
 \li boost::asio::ssl::context_base
 \li boost::asio::ssl::stream_base

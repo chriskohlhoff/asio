@@ -21,7 +21,7 @@ void error_handler_test()
 {
   io_service ios;
 
-  stream_socket s(ios);
+  ipv4::tcp::socket s(ios);
   ipv4::tcp::endpoint endpoint(321, ipv4::address::any());
 
   error expected_err;

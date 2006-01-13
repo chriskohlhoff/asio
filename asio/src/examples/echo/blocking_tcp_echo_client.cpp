@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
     hr.get_host_by_name(h, argv[1]);
     asio::ipv4::tcp::endpoint ep(atoi(argv[2]), h.address(0));
 
-    asio::stream_socket s(io_service);
+    asio::ipv4::tcp::socket s(io_service);
     s.connect(ep);
 
     std::cout << "Enter message: ";

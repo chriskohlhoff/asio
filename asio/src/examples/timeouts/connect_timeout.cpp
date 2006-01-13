@@ -41,7 +41,7 @@ public:
 private:
   io_service& io_service_;
   deadline_timer timer_;
-  stream_socket socket_;
+  ipv4::tcp::socket socket_;
 };
 
 int main()
@@ -49,7 +49,7 @@ int main()
   try
   {
     io_service ios;
-    socket_acceptor a(ios, ipv4::tcp::endpoint(32123), 1);
+    ipv4::tcp::acceptor a(ios, ipv4::tcp::endpoint(32123), 1);
 
     // Make lots of connections so that at least some of them will block.
     connect_handler ch1(ios);

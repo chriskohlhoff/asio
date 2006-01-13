@@ -95,7 +95,7 @@ public:
 
 private:
   /// The acceptor object used to accept incoming socket connections.
-  asio::socket_acceptor acceptor_;
+  asio::ipv4::tcp::acceptor acceptor_;
 
   /// The data to be sent to each client.
   std::vector<stock> stocks_;

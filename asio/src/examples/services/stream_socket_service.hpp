@@ -8,17 +8,24 @@
 namespace services {
 
 /// Debugging stream socket service that wraps the normal stream socket service.
-template <typename Allocator = std::allocator<void> >
+template <typename Protocol, typename Allocator = std::allocator<void> >
 class stream_socket_service
   : private boost::noncopyable
 {
 private:
   /// The type of the wrapped stream socket service.
-  typedef asio::stream_socket_service<Allocator> service_impl_type;
+  typedef asio::stream_socket_service<
+      Protocol, Allocator> service_impl_type;
 
 public:
   /// The io_service type for this service.
   typedef asio::basic_io_service<Allocator> io_service_type;
+
+  /// The protocol type.
+  typedef Protocol protocol_type;
+
+  /// The endpoint type.
+  typedef typename Protocol::endpoint endpoint_type;
 
   /// The type of a stream socket.
   typedef typename service_impl_type::impl_type impl_type;
@@ -44,8 +51,8 @@ public:
   }
 
   /// Open a new stream socket implementation.
-  template <typename Protocol, typename Error_Handler>
-  void open(impl_type& impl, const Protocol& protocol,
+  template <typename Error_Handler>
+  void open(impl_type& impl, const protocol_type& protocol,
       Error_Handler error_handler)
   {
     logger_.log("Opening new socket");
@@ -68,8 +75,8 @@ public:
   }
 
   /// Bind the stream socket to the specified local endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void bind(impl_type& impl, const Endpoint& endpoint,
+  template <typename Error_Handler>
+  void bind(impl_type& impl, const endpoint_type& endpoint,
       Error_Handler error_handler)
   {
     logger_.log("Binding socket");
@@ -77,8 +84,8 @@ public:
   }
 
   /// Connect the stream socket to the specified endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void connect(impl_type& impl, const Endpoint& peer_endpoint,
+  template <typename Error_Handler>
+  void connect(impl_type& impl, const endpoint_type& peer_endpoint,
       Error_Handler error_handler)
   {
     logger_.log("Connecting socket");
@@ -118,8 +125,8 @@ public:
   };
 
   /// Start an asynchronous connect.
-  template <typename Endpoint, typename Handler>
-  void async_connect(impl_type& impl, const Endpoint& peer_endpoint,
+  template <typename Handler>
+  void async_connect(impl_type& impl, const endpoint_type& peer_endpoint,
       Handler handler)
   {
     logger_.log("Starting asynchronous connect");
@@ -155,8 +162,8 @@ public:
   }
 
   /// Get the local endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void get_local_endpoint(const impl_type& impl, Endpoint& endpoint,
+  template <typename Error_Handler>
+  void get_local_endpoint(const impl_type& impl, endpoint_type& endpoint,
       Error_Handler error_handler) const
   {
     logger_.log("Getting socket's local endpoint");
@@ -164,8 +171,8 @@ public:
   }
 
   /// Get the remote endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void get_remote_endpoint(const impl_type& impl, Endpoint& endpoint,
+  template <typename Error_Handler>
+  void get_remote_endpoint(const impl_type& impl, endpoint_type& endpoint,
       Error_Handler error_handler) const
   {
     logger_.log("Getting socket's remote endpoint");

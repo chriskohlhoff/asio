@@ -6,9 +6,9 @@
 
 const int max_length = 1024;
 
-typedef boost::shared_ptr<asio::stream_socket> stream_socket_ptr;
+typedef boost::shared_ptr<asio::ipv4::tcp::socket> socket_ptr;
 
-void session(stream_socket_ptr sock)
+void session(socket_ptr sock)
 {
   try
   {
@@ -39,11 +39,11 @@ void session(stream_socket_ptr sock)
 
 void server(asio::io_service& io_service, short port)
 {
-  asio::socket_acceptor a(io_service,
+  asio::ipv4::tcp::acceptor a(io_service,
       asio::ipv4::tcp::endpoint(port));
   for (;;)
   {
-    stream_socket_ptr sock(new asio::stream_socket(io_service));
+    socket_ptr sock(new asio::ipv4::tcp::socket(io_service));
     asio::error error;
     a.accept(*sock, asio::assign_error(error));
     if (!error)

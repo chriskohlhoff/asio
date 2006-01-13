@@ -57,8 +57,8 @@ public:
 private:
   io_service& io_service_;
   deadline_timer timer_;
-  socket_acceptor acceptor_;
-  stream_socket socket_;
+  ipv4::tcp::acceptor acceptor_;
+  ipv4::tcp::socket socket_;
   char buf_[1024];
 };
 
@@ -75,7 +75,7 @@ int main()
 
     stream_handler sh(ios);
 
-    stream_socket s(ios);
+    ipv4::tcp::socket s(ios);
     s.async_connect(ipv4::tcp::endpoint(32123, ipv4::address::loopback()),
         boost::bind(connect_handler));
 

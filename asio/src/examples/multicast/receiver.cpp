@@ -14,7 +14,7 @@ public:
   {
     // Create the socket so that multiple may be bound to the same address.
     socket_.open(asio::ipv4::udp());
-    socket_.set_option(asio::datagram_socket::reuse_address(true));
+    socket_.set_option(asio::ipv4::udp::socket::reuse_address(true));
     socket_.bind(asio::ipv4::udp::endpoint(multicast_port));
 
     // Join the multicast group.
@@ -44,7 +44,7 @@ public:
   }
 
 private:
-  asio::datagram_socket socket_;
+  asio::ipv4::udp::socket socket_;
   asio::ipv4::udp::endpoint sender_endpoint_;
   enum { max_length = 1024 };
   char data_[max_length];

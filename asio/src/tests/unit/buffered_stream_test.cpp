@@ -16,7 +16,8 @@
 #include "asio.hpp"
 #include "unit_test.hpp"
 
-typedef asio::buffered_stream<asio::stream_socket> stream_type;
+typedef asio::buffered_stream<
+    asio::ipv4::tcp::socket> stream_type;
 
 void test_sync_operations()
 {
@@ -24,7 +25,7 @@ void test_sync_operations()
 
   asio::io_service io_service;
 
-  asio::socket_acceptor acceptor(io_service,
+  asio::ipv4::tcp::acceptor acceptor(io_service,
       asio::ipv4::tcp::endpoint(0));
   asio::ipv4::tcp::endpoint server_endpoint;
   acceptor.get_local_endpoint(server_endpoint);
@@ -34,7 +35,7 @@ void test_sync_operations()
   client_socket.lowest_layer().connect(server_endpoint);
 
   stream_type server_socket(io_service);
-  acceptor.accept(server_socket);
+  acceptor.accept(server_socket.lowest_layer());
 
   const char write_data[]
     = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -138,7 +139,7 @@ void test_async_operations()
 
   asio::io_service io_service;
 
-  asio::socket_acceptor acceptor(io_service,
+  asio::ipv4::tcp::acceptor acceptor(io_service,
       asio::ipv4::tcp::endpoint(0));
   asio::ipv4::tcp::endpoint server_endpoint;
   acceptor.get_local_endpoint(server_endpoint);
@@ -148,7 +149,7 @@ void test_async_operations()
   client_socket.lowest_layer().connect(server_endpoint);
 
   stream_type server_socket(io_service);
-  acceptor.async_accept(server_socket, handle_accept);
+  acceptor.async_accept(server_socket.lowest_layer(), handle_accept);
   io_service.run();
   io_service.reset();
 

@@ -6,7 +6,7 @@ enum { max_length = 1024 };
 
 void server(asio::io_service& io_service, short port)
 {
-  asio::datagram_socket sock(io_service,
+  asio::ipv4::udp::socket sock(io_service,
       asio::ipv4::udp::endpoint(port));
   for (;;)
   {

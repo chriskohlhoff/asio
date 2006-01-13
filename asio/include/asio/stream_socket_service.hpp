@@ -19,7 +19,6 @@
 
 #include "asio/detail/push_options.hpp"
 #include <cstddef>
-#include <memory>
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -34,13 +33,19 @@
 namespace asio {
 
 /// Default service implementation for a stream socket.
-template <typename Allocator = std::allocator<void> >
+template <typename Protocol, typename Allocator>
 class stream_socket_service
   : private noncopyable
 {
 public:
   /// The io_service type.
   typedef basic_io_service<Allocator> io_service_type;
+
+  /// The protocol type.
+  typedef Protocol protocol_type;
+
+  /// The endpoint type.
+  typedef typename Protocol::endpoint endpoint_type;
 
 private:
   // The type of the platform-specific implementation.
@@ -81,12 +86,12 @@ public:
   /// Return a null stream socket implementation.
   impl_type null() const
   {
-    return service_impl_.null();
+    return service_impl_type::null();
   }
 
   /// Open a new stream socket implementation.
-  template <typename Protocol, typename Error_Handler>
-  void open(impl_type& impl, const Protocol& protocol,
+  template <typename Error_Handler>
+  void open(impl_type& impl, const protocol_type& protocol,
       Error_Handler error_handler)
   {
     if (protocol.type() == SOCK_STREAM)
@@ -109,24 +114,24 @@ public:
   }
 
   /// Bind the stream socket to the specified local endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void bind(impl_type& impl, const Endpoint& endpoint,
+  template <typename Error_Handler>
+  void bind(impl_type& impl, const endpoint_type& endpoint,
       Error_Handler error_handler)
   {
     service_impl_.bind(impl, endpoint, error_handler);
   }
 
   /// Connect the stream socket to the specified endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void connect(impl_type& impl, const Endpoint& peer_endpoint,
+  template <typename Error_Handler>
+  void connect(impl_type& impl, const endpoint_type& peer_endpoint,
       Error_Handler error_handler)
   {
     service_impl_.connect(impl, peer_endpoint, error_handler);
   }
 
   /// Start an asynchronous connect.
-  template <typename Endpoint, typename Handler>
-  void async_connect(impl_type& impl, const Endpoint& peer_endpoint,
+  template <typename Handler>
+  void async_connect(impl_type& impl, const endpoint_type& peer_endpoint,
       Handler handler)
   {
     service_impl_.async_connect(impl, peer_endpoint, handler);
@@ -157,16 +162,16 @@ public:
   }
 
   /// Get the local endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void get_local_endpoint(const impl_type& impl, Endpoint& endpoint,
+  template <typename Error_Handler>
+  void get_local_endpoint(const impl_type& impl, endpoint_type& endpoint,
       Error_Handler error_handler) const
   {
     service_impl_.get_local_endpoint(impl, endpoint, error_handler);
   }
 
   /// Get the remote endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void get_remote_endpoint(const impl_type& impl, Endpoint& endpoint,
+  template <typename Error_Handler>
+  void get_remote_endpoint(const impl_type& impl, endpoint_type& endpoint,
       Error_Handler error_handler) const
   {
     service_impl_.get_remote_endpoint(impl, endpoint, error_handler);

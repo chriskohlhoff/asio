@@ -43,7 +43,7 @@ public:
 private:
   io_service& io_service_;
   deadline_timer timer_;
-  datagram_socket socket_;
+  ipv4::udp::socket socket_;
   ipv4::udp::endpoint sender_endpoint_;
   enum { max_length = 512 };
   char data_[max_length];

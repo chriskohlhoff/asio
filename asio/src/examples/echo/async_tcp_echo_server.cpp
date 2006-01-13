@@ -11,7 +11,7 @@ public:
   {
   }
 
-  asio::stream_socket& socket()
+  asio::ipv4::tcp::socket& socket()
   {
     return socket_;
   }
@@ -55,7 +55,7 @@ public:
   }
 
 private:
-  asio::stream_socket socket_;
+  asio::ipv4::tcp::socket socket_;
   enum { max_length = 1024 };
   char data_[max_length];
 };
@@ -97,7 +97,7 @@ public:
 
 private:
   asio::io_service& io_service_;
-  asio::socket_acceptor acceptor_;
+  asio::ipv4::tcp::acceptor acceptor_;
 };
 
 int main(int argc, char* argv[])

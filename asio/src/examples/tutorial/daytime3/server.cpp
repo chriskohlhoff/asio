@@ -3,7 +3,7 @@
 #include <boost/bind.hpp>
 #include <asio.hpp>
 
-void handle_write(asio::stream_socket* socket, char* write_buf,
+void handle_write(asio::ipv4::tcp::socket* socket, char* write_buf,
     const asio::error& /*error*/, size_t /*bytes_transferred*/)
 {
   using namespace std; // For free.
@@ -11,8 +11,8 @@ void handle_write(asio::stream_socket* socket, char* write_buf,
   delete socket;
 }
 
-void handle_accept(asio::socket_acceptor* acceptor,
-    asio::stream_socket* socket, const asio::error& error)
+void handle_accept(asio::ipv4::tcp::acceptor* acceptor,
+    asio::ipv4::tcp::socket* socket, const asio::error& error)
 {
   if (!error)
   {
@@ -27,7 +27,7 @@ void handle_accept(asio::socket_acceptor* acceptor,
           asio::placeholders::error,
           asio::placeholders::bytes_transferred));
 
-    socket = new asio::stream_socket(acceptor->io_service());
+    socket = new asio::ipv4::tcp::socket(acceptor->io_service());
 
     acceptor->async_accept(*socket,
         boost::bind(handle_accept, acceptor, socket,
@@ -45,11 +45,11 @@ int main()
   {
     asio::io_service io_service;
 
-    asio::socket_acceptor acceptor(io_service,
+    asio::ipv4::tcp::acceptor acceptor(io_service,
         asio::ipv4::tcp::endpoint(13));
 
-    asio::stream_socket* socket
-      = new asio::stream_socket(io_service);
+    asio::ipv4::tcp::socket* socket
+      = new asio::ipv4::tcp::socket(io_service);
 
     acceptor.async_accept(*socket,
         boost::bind(handle_accept, &acceptor, socket,

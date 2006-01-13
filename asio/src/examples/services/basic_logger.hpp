@@ -27,7 +27,7 @@ public:
   /**
    * This constructor creates a logger.
    *
-   * @param d The io_service object used to locate the logger service.
+   * @param io_service The io_service object used to locate the logger service.
    *
    * @param identifier An identifier for this logger.
    */

@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
     asio::ipv4::udp::endpoint receiver_endpoint(13, host.address(0));
 
     char send_buf[1] = { 0 };
-    asio::datagram_socket socket(io_service,
+    asio::ipv4::udp::socket socket(io_service,
         asio::ipv4::udp::endpoint(0));
     socket.send_to(
         asio::buffer(send_buf, sizeof(send_buf)),

@@ -9,7 +9,7 @@ int main()
   {
     asio::io_service io_service;
 
-    asio::datagram_socket socket(io_service,
+    asio::ipv4::udp::socket socket(io_service,
         asio::ipv4::udp::endpoint(13));
 
     for (;;)

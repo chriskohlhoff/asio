@@ -48,7 +48,7 @@ public:
 
 private:
   asio::io_service& io_service_;
-  asio::datagram_socket socket_;
+  asio::ipv4::udp::socket socket_;
   asio::ipv4::udp::endpoint sender_endpoint_;
   enum { max_length = 1024 };
   char data_[max_length];

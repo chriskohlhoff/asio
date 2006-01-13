@@ -71,7 +71,7 @@ public:
   {
   }
 
-  asio::stream_socket& socket()
+  asio::ipv4::tcp::socket& socket()
   {
     return socket_;
   }
@@ -152,7 +152,7 @@ public:
   }
 
 private:
-  asio::stream_socket socket_;
+  asio::ipv4::tcp::socket socket_;
   chat_room& room_;
   chat_message read_msg_;
   chat_message_queue write_msgs_;
@@ -196,7 +196,7 @@ public:
 
 private:
   asio::io_service& io_service_;
-  asio::socket_acceptor acceptor_;
+  asio::ipv4::tcp::acceptor acceptor_;
   chat_room room_;
 };
 

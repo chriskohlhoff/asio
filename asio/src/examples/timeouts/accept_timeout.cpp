@@ -42,8 +42,8 @@ public:
 private:
   io_service& io_service_;
   deadline_timer timer_;
-  socket_acceptor acceptor_;
-  stream_socket socket_;
+  ipv4::tcp::acceptor acceptor_;
+  ipv4::tcp::socket socket_;
 };
 
 int main()

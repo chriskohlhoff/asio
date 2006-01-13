@@ -83,7 +83,7 @@ public:
   }
 
 private:
-  asio::ssl::stream<asio::stream_socket> socket_;
+  asio::ssl::stream<asio::ipv4::tcp::socket> socket_;
   char request_[max_length];
   char reply_[max_length];
 };
