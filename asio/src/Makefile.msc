@@ -53,7 +53,6 @@ UNIT_TEST_EXES = \
 	tests\unit\buffer_test.exe \
 	tests\unit\completion_condition_test.exe \
 	tests\unit\datagram_socket_service_test.exe \
-	tests\unit\datagram_socket_test.exe \
 	tests\unit\deadline_timer_service_test.exe \
 	tests\unit\deadline_timer_test.exe \
 	tests\unit\io_service_test.exe \
@@ -74,10 +73,8 @@ UNIT_TEST_EXES = \
 	tests\unit\read_test.exe \
 	tests\unit\service_factory_test.exe \
 	tests\unit\socket_acceptor_service_test.exe \
-	tests\unit\socket_acceptor_test.exe \
 	tests\unit\socket_base_test.exe \
 	tests\unit\stream_socket_service_test.exe \
-	tests\unit\stream_socket_test.exe \
 	tests\unit\thread_test.exe \
 	tests\unit\time_traits_test.exe \
 	tests\unit\write_test.exe

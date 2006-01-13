@@ -847,7 +847,8 @@ public:
       return;
     }
 
-    peer.set_impl(new_socket);
+    Socket tmp(peer.io_service(), new_socket);
+    tmp.swap(peer);
   }
 
   // Accept a new connection.
@@ -873,7 +874,8 @@ public:
 
     peer_endpoint.size(addr_len);
 
-    peer.set_impl(new_socket);
+    Socket tmp(peer.io_service(), new_socket);
+    tmp.swap(peer);
   }
 
   template <typename Socket, typename Handler>
@@ -944,7 +946,8 @@ public:
       if (last_error == 0)
       {
         impl_type new_socket(handler_op->new_socket_.get());
-        handler_op->peer_.set_impl(new_socket);
+        Socket tmp(handler_op->peer_.io_service(), new_socket);
+        tmp.swap(handler_op->peer_);
         handler_op->new_socket_.release();
       }
 
@@ -1133,7 +1136,8 @@ public:
       if (last_error == 0)
       {
         impl_type new_socket(handler_op->new_socket_.get());
-        handler_op->peer_.set_impl(new_socket);
+        Socket tmp(handler_op->peer_.io_service(), new_socket);
+        tmp.swap(handler_op->peer_);
         handler_op->new_socket_.release();
       }
 
