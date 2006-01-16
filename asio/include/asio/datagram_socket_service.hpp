@@ -101,9 +101,10 @@ public:
   }
 
   /// Assign a new datagram socket implementation.
-  void assign(impl_type& impl, impl_type new_impl)
+  template <typename Error_Handler>
+  void open(impl_type& impl, impl_type new_impl, Error_Handler error_handler)
   {
-    service_impl_.assign(impl, new_impl);
+    service_impl_.open(impl, new_impl, error_handler);
   }
 
   /// Close a stream socket implementation.

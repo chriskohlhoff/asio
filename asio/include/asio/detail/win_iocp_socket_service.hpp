@@ -182,7 +182,8 @@ public:
   }
 
   // Assign a new socket implementation.
-  void assign(impl_type& impl, impl_type new_impl)
+  template <typename Error_Handler>
+  void open(impl_type& impl, impl_type new_impl, Error_Handler error_handler)
   {
     iocp_service_.register_socket(new_impl);
     impl = new_impl;
@@ -847,8 +848,7 @@ public:
       return;
     }
 
-    Socket tmp(peer.io_service(), new_socket);
-    tmp.swap(peer);
+    peer.open(new_socket);
   }
 
   // Accept a new connection.
@@ -874,8 +874,7 @@ public:
 
     peer_endpoint.size(addr_len);
 
-    Socket tmp(peer.io_service(), new_socket);
-    tmp.swap(peer);
+    peer.open(new_socket);
   }
 
   template <typename Socket, typename Handler>
@@ -946,8 +945,7 @@ public:
       if (last_error == 0)
       {
         impl_type new_socket(handler_op->new_socket_.get());
-        Socket tmp(handler_op->peer_.io_service(), new_socket);
-        tmp.swap(handler_op->peer_);
+        handler_op->peer_.open(new_socket);
         handler_op->new_socket_.release();
       }
 
@@ -1136,8 +1134,7 @@ public:
       if (last_error == 0)
       {
         impl_type new_socket(handler_op->new_socket_.get());
-        Socket tmp(handler_op->peer_.io_service(), new_socket);
-        tmp.swap(handler_op->peer_);
+        handler_op->peer_.open(new_socket);
         handler_op->new_socket_.release();
       }
 

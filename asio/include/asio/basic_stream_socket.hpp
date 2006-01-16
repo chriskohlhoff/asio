@@ -18,7 +18,6 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
-#include <algorithm>
 #include <cstddef>
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
@@ -81,8 +80,8 @@ public:
    * dispatch handlers for any asynchronous operations performed on the socket.
    */
   explicit basic_stream_socket(io_service_type& io_service)
-    : service_(&io_service.get_service(service_factory<Service>())),
-      impl_(service_->null())
+    : service_(io_service.get_service(service_factory<Service>())),
+      impl_(service_.null())
   {
   }
 
@@ -100,10 +99,10 @@ public:
    */
   basic_stream_socket(io_service_type& io_service,
       const protocol_type& protocol)
-    : service_(&io_service.get_service(service_factory<Service>())),
-      impl_(service_->null())
+    : service_(io_service.get_service(service_factory<Service>())),
+      impl_(service_.null())
   {
-    service_->open(impl_, protocol, throw_error());
+    service_.open(impl_, protocol, throw_error());
   }
 
   /// Construct a basic_stream_socket, opening it and binding it to the given
@@ -123,12 +122,12 @@ public:
    */
   basic_stream_socket(io_service_type& io_service,
       const endpoint_type& endpoint)
-    : service_(&io_service.get_service(service_factory<Service>())),
-      impl_(service_->null())
+    : service_(io_service.get_service(service_factory<Service>())),
+      impl_(service_.null())
   {
-    service_->open(impl_, endpoint.protocol(), throw_error());
+    service_.open(impl_, endpoint.protocol(), throw_error());
     close_on_block_exit auto_close(service_, impl_);
-    service_->bind(impl_, endpoint, throw_error());
+    service_.bind(impl_, endpoint, throw_error());
     auto_close.cancel();
   }
 
@@ -145,16 +144,16 @@ public:
    * @throws asio::error Thrown on failure.
    */
   basic_stream_socket(io_service_type& io_service, impl_type impl)
-    : service_(&io_service.get_service(service_factory<Service>())),
+    : service_(io_service.get_service(service_factory<Service>())),
       impl_(impl)
   {
-    service_->assign(impl_, impl);
+    service_.open(impl_, impl, throw_error());
   }
 
   /// Destructor.
   ~basic_stream_socket()
   {
-    service_->close(impl_, ignore_error());
+    service_.close(impl_, ignore_error());
   }
 
   /// Get the io_service associated with the object.
@@ -167,7 +166,7 @@ public:
    */
   io_service_type& io_service()
   {
-    return service_->io_service();
+    return service_.io_service();
   }
 
   /// Open the socket using the specified protocol.
@@ -187,7 +186,7 @@ public:
    */
   void open(const protocol_type& protocol = protocol_type())
   {
-    service_->open(impl_, protocol, throw_error());
+    service_.open(impl_, protocol, throw_error());
   }
 
   /// Open the socket using the specified protocol.
@@ -218,7 +217,39 @@ public:
   template <typename Error_Handler>
   void open(const protocol_type& protocol, Error_Handler error_handler)
   {
-    service_->open(impl_, protocol, error_handler);
+    service_.open(impl_, protocol, error_handler);
+  }
+
+  /// Open a socket on an existing implementation.
+  /*
+   * This function opens the stream socket on an existing implementation.
+   *
+   * @param impl The new underlying socket implementation.
+   *
+   * @throws asio::error Thrown on failure.
+   */
+  void open(impl_type impl)
+  {
+    service_.open(impl_, impl, throw_error());
+  }
+
+  /// Open a socket on an existing implementation.
+  /*
+   * This function opens the stream socket on an existing implementation.
+   *
+   * @param impl The new underlying socket implementation.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The function signature of the
+   * handler must be:
+   * @code void error_handler(
+   *   const asio::error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Error_Handler>
+  void open(impl_type impl, Error_Handler error_handler)
+  {
+    service_.open(impl_, impl, error_handler);
   }
 
   /// Close the socket.
@@ -230,7 +261,7 @@ public:
    */
   void close()
   {
-    service_->close(impl_, throw_error());
+    service_.close(impl_, throw_error());
   }
 
   /// Close the socket.
@@ -260,7 +291,7 @@ public:
   template <typename Error_Handler>
   void close(Error_Handler error_handler)
   {
-    service_->close(impl_, error_handler);
+    service_.close(impl_, error_handler);
   }
 
   /// Get a reference to the lowest layer.
@@ -307,7 +338,7 @@ public:
    */
   void bind(const endpoint_type& endpoint)
   {
-    service_->bind(impl_, endpoint, throw_error());
+    service_.bind(impl_, endpoint, throw_error());
   }
 
   /// Bind the socket to the given local endpoint.
@@ -341,7 +372,7 @@ public:
   template <typename Error_Handler>
   void bind(const endpoint_type& endpoint, Error_Handler error_handler)
   {
-    service_->bind(impl_, endpoint, error_handler);
+    service_.bind(impl_, endpoint, error_handler);
   }
 
   /// Connect a stream socket to the specified endpoint.
@@ -368,7 +399,7 @@ public:
    */
   void connect(const endpoint_type& peer_endpoint)
   {
-    service_->connect(impl_, peer_endpoint, throw_error());
+    service_.connect(impl_, peer_endpoint, throw_error());
   }
 
   /// Connect a stream socket to the specified endpoint.
@@ -406,7 +437,7 @@ public:
   template <typename Error_Handler>
   void connect(const endpoint_type& peer_endpoint, Error_Handler error_handler)
   {
-    service_->connect(impl_, peer_endpoint, error_handler);
+    service_.connect(impl_, peer_endpoint, error_handler);
   }
 
   /// Start an asynchronous connect.
@@ -452,7 +483,7 @@ public:
   template <typename Handler>
   void async_connect(const endpoint_type& peer_endpoint, Handler handler)
   {
-    service_->async_connect(impl_, peer_endpoint, handler);
+    service_.async_connect(impl_, peer_endpoint, handler);
   }
 
   /// Set an option on the socket.
@@ -484,7 +515,7 @@ public:
   template <typename Socket_Option>
   void set_option(const Socket_Option& option)
   {
-    service_->set_option(impl_, option, throw_error());
+    service_.set_option(impl_, option, throw_error());
   }
 
   /// Set an option on the socket.
@@ -526,7 +557,7 @@ public:
   template <typename Socket_Option, typename Error_Handler>
   void set_option(const Socket_Option& option, Error_Handler error_handler)
   {
-    service_->set_option(impl_, option, error_handler);
+    service_.set_option(impl_, option, error_handler);
   }
 
   /// Get an option from the socket.
@@ -559,7 +590,7 @@ public:
   template <typename Socket_Option>
   void get_option(Socket_Option& option) const
   {
-    service_->get_option(impl_, option, throw_error());
+    service_.get_option(impl_, option, throw_error());
   }
 
   /// Get an option from the socket.
@@ -602,7 +633,7 @@ public:
   template <typename Socket_Option, typename Error_Handler>
   void get_option(Socket_Option& option, Error_Handler error_handler) const
   {
-    service_->get_option(impl_, option, error_handler);
+    service_.get_option(impl_, option, error_handler);
   }
 
   /// Perform an IO control command on the socket.
@@ -630,7 +661,7 @@ public:
   template <typename IO_Control_Command>
   void io_control(IO_Control_Command& command)
   {
-    service_->io_control(impl_, command, throw_error());
+    service_.io_control(impl_, command, throw_error());
   }
 
   /// Perform an IO control command on the socket.
@@ -668,7 +699,7 @@ public:
   template <typename IO_Control_Command, typename Error_Handler>
   void io_control(IO_Control_Command& command, Error_Handler error_handler)
   {
-    service_->io_control(impl_, command, error_handler);
+    service_.io_control(impl_, command, error_handler);
   }
 
   /// Get the local endpoint of the socket.
@@ -690,7 +721,7 @@ public:
    */
   void get_local_endpoint(endpoint_type& endpoint) const
   {
-    service_->get_local_endpoint(impl_, endpoint, throw_error());
+    service_.get_local_endpoint(impl_, endpoint, throw_error());
   }
 
   /// Get the local endpoint of the socket.
@@ -724,7 +755,7 @@ public:
   void get_local_endpoint(endpoint_type& endpoint,
       Error_Handler error_handler) const
   {
-    service_->get_local_endpoint(impl_, endpoint, error_handler);
+    service_.get_local_endpoint(impl_, endpoint, error_handler);
   }
 
   /// Get the remote endpoint of the socket.
@@ -746,7 +777,7 @@ public:
    */
   void get_remote_endpoint(endpoint_type& endpoint) const
   {
-    service_->get_remote_endpoint(impl_, endpoint, throw_error());
+    service_.get_remote_endpoint(impl_, endpoint, throw_error());
   }
 
   /// Get the remote endpoint of the socket.
@@ -780,7 +811,7 @@ public:
   void get_remote_endpoint(endpoint_type& endpoint,
       Error_Handler error_handler) const
   {
-    service_->get_remote_endpoint(impl_, endpoint, error_handler);
+    service_.get_remote_endpoint(impl_, endpoint, error_handler);
   }
 
   /// Disable sends or receives on the socket.
@@ -802,7 +833,7 @@ public:
    */
   void shutdown(shutdown_type what)
   {
-    service_->shutdown(impl_, what, throw_error());
+    service_.shutdown(impl_, what, throw_error());
   }
 
   /// Disable sends or receives on the socket.
@@ -836,7 +867,7 @@ public:
   template <typename Error_Handler>
   void shutdown(shutdown_type what, Error_Handler error_handler)
   {
-    service_->shutdown(impl_, what, error_handler);
+    service_.shutdown(impl_, what, error_handler);
   }
 
   /// Send some data on the socket.
@@ -869,7 +900,7 @@ public:
   template <typename Const_Buffers>
   std::size_t send(const Const_Buffers& buffers, message_flags flags)
   {
-    return service_->send(impl_, buffers, flags, throw_error());
+    return service_.send(impl_, buffers, flags, throw_error());
   }
 
   /// Send some data on the socket.
@@ -900,7 +931,7 @@ public:
   std::size_t send(const Const_Buffers& buffers, message_flags flags,
       Error_Handler error_handler)
   {
-    return service_->send(impl_, buffers, flags, error_handler);
+    return service_.send(impl_, buffers, flags, error_handler);
   }
 
   /// Start an asynchronous send.
@@ -944,7 +975,7 @@ public:
   void async_send(const Const_Buffers& buffers, message_flags flags,
       Handler handler)
   {
-    service_->async_send(impl_, buffers, flags, handler);
+    service_.async_send(impl_, buffers, flags, handler);
   }
 
   /// Receive some data on the socket.
@@ -980,7 +1011,7 @@ public:
   template <typename Mutable_Buffers>
   std::size_t receive(const Mutable_Buffers& buffers, message_flags flags)
   {
-    return service_->receive(impl_, buffers, flags, throw_error());
+    return service_.receive(impl_, buffers, flags, throw_error());
   }
 
   /// Receive some data on a connected socket.
@@ -1011,7 +1042,7 @@ public:
   std::size_t receive(const Mutable_Buffers& buffers, message_flags flags,
       Error_Handler error_handler)
   {
-    return service_->receive(impl_, buffers, flags, error_handler);
+    return service_.receive(impl_, buffers, flags, error_handler);
   }
 
   /// Start an asynchronous receive.
@@ -1057,7 +1088,7 @@ public:
   void async_receive(const Mutable_Buffers& buffers, message_flags flags,
       Handler handler)
   {
-    service_->async_receive(impl_, buffers, flags, handler);
+    service_.async_receive(impl_, buffers, flags, handler);
   }
 
   /// Write some data to the socket.
@@ -1090,7 +1121,7 @@ public:
   template <typename Const_Buffers>
   std::size_t write_some(const Const_Buffers& buffers)
   {
-    return service_->send(impl_, buffers, 0, throw_error());
+    return service_.send(impl_, buffers, 0, throw_error());
   }
 
   /// Write some data to the socket.
@@ -1119,7 +1150,7 @@ public:
   std::size_t write_some(const Const_Buffers& buffers,
       Error_Handler error_handler)
   {
-    return service_->send(impl_, buffers, 0, error_handler);
+    return service_.send(impl_, buffers, 0, error_handler);
   }
 
   /// Start an asynchronous write.
@@ -1160,7 +1191,7 @@ public:
   template <typename Const_Buffers, typename Handler>
   void async_write_some(const Const_Buffers& buffers, Handler handler)
   {
-    service_->async_send(impl_, buffers, 0, handler);
+    service_.async_send(impl_, buffers, 0, handler);
   }
 
   /// Read some data from the socket.
@@ -1194,7 +1225,7 @@ public:
   template <typename Mutable_Buffers>
   std::size_t read_some(const Mutable_Buffers& buffers)
   {
-    return service_->receive(impl_, buffers, 0, throw_error());
+    return service_.receive(impl_, buffers, 0, throw_error());
   }
 
   /// Read some data from the socket.
@@ -1224,7 +1255,7 @@ public:
   std::size_t read_some(const Mutable_Buffers& buffers,
       Error_Handler error_handler)
   {
-    return service_->receive(impl_, buffers, 0, error_handler);
+    return service_.receive(impl_, buffers, 0, error_handler);
   }
 
   /// Start an asynchronous read.
@@ -1266,7 +1297,7 @@ public:
   template <typename Mutable_Buffers, typename Handler>
   void async_read_some(const Mutable_Buffers& buffers, Handler handler)
   {
-    service_->async_receive(impl_, buffers, 0, handler);
+    service_.async_receive(impl_, buffers, 0, handler);
   }
 
   /// Peek at the incoming data on the stream socket.
@@ -1292,7 +1323,7 @@ public:
   template <typename Mutable_Buffers>
   std::size_t peek(const Mutable_Buffers& buffers)
   {
-    return service_->receive(impl_, buffers, message_peek, throw_error());
+    return service_.receive(impl_, buffers, message_peek, throw_error());
   }
 
   /// Peek at the incoming data on the stream socket.
@@ -1316,7 +1347,7 @@ public:
   template <typename Mutable_Buffers, typename Error_Handler>
   std::size_t peek(const Mutable_Buffers& buffers, Error_Handler error_handler)
   {
-    return service_->receive(impl_, buffers, message_peek, error_handler);
+    return service_.receive(impl_, buffers, message_peek, error_handler);
   }
 
   /// Determine the amount of data that may be read without blocking.
@@ -1331,7 +1362,7 @@ public:
   std::size_t in_avail()
   {
     bytes_readable command;
-    service_->io_control(impl_, command, throw_error());
+    service_.io_control(impl_, command, throw_error());
     return command.get();
   }
 
@@ -1353,20 +1384,13 @@ public:
   std::size_t in_avail(Error_Handler error_handler)
   {
     bytes_readable command;
-    service_->io_control(impl_, command, error_handler);
+    service_.io_control(impl_, command, error_handler);
     return command.get();
-  }
-
-  /// Swap implementation of socket with another.
-  void swap(basic_stream_socket<Service>& other)
-  {
-    std::swap(service_, other.service_);
-    std::swap(impl_, other.impl_);
   }
 
 private:
   /// The backend service implementation.
-  service_type* service_;
+  service_type& service_;
 
   /// The underlying native implementation.
   impl_type impl_;
@@ -1375,8 +1399,8 @@ private:
   class close_on_block_exit
   {
   public:
-    close_on_block_exit(service_type* service, impl_type& impl)
-      : service_(service), impl_(impl)
+    close_on_block_exit(service_type& service, impl_type& impl)
+      : service_(&service), impl_(impl)
     {
     }
 
@@ -1398,14 +1422,6 @@ private:
     impl_type& impl_;
   };
 };
-
-/// Swap implementation of socket with another.
-template <typename Service>
-inline void swap(basic_stream_socket<Service>& a,
-    basic_stream_socket<Service>& b)
-{
-  a.swap(b);
-}
 
 } // namespace asio
 

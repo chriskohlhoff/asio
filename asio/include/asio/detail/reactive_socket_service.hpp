@@ -157,11 +157,15 @@ public:
   }
 
   // Assign a new socket implementation.
-  void assign(impl_type& impl, impl_type new_impl)
+  template <typename Error_Handler>
+  void open(impl_type& impl, impl_type new_impl, Error_Handler error_handler)
   {
     int err = reactor_.register_descriptor(new_impl);
     if (err)
+    {
+      error_handler(asio::error(err));
       return;
+    }
     impl = new_impl;
   }
 
@@ -920,8 +924,7 @@ public:
       if (new_socket >= 0)
       {
         impl_type new_impl(new_socket);
-        Socket tmp(peer.io_service(), new_impl);
-        tmp.swap(peer);
+        peer.open(new_impl);
         return;
       }
 
@@ -976,8 +979,7 @@ public:
       {
         peer_endpoint.size(addr_len);
         impl_type new_impl(new_socket);
-        Socket tmp(peer.io_service(), new_impl);
-        tmp.swap(peer);
+        peer.open(new_impl);
         return;
       }
 
@@ -1035,8 +1037,7 @@ public:
         return false;
 
       impl_type new_impl(new_socket);
-      Socket tmp(peer_.io_service(), new_impl);
-      tmp.swap(peer_);
+      peer_.open(new_impl);
       io_service_.post(bind_handler(handler_, error));
       return true;
     }
@@ -1123,8 +1124,7 @@ public:
 
       peer_endpoint_.size(addr_len);
       impl_type new_impl(new_socket);
-      Socket tmp(peer_.io_service(), new_impl);
-      tmp.swap(peer_);
+      peer_.open(new_impl);
       io_service_.post(bind_handler(handler_, error));
       return true;
     }
