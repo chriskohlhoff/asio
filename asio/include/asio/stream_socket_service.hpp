@@ -63,7 +63,7 @@ private:
 #endif
 
 public:
-  /// The type of a stream socket.
+  /// The type of a stream socket implementation.
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined impl_type;
 #else

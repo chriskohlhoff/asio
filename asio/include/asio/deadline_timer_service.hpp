@@ -93,16 +93,10 @@ public:
     return service_impl_.io_service();
   }
 
-  /// Return a null timer implementation.
-  impl_type null() const
+  /// Construct a new timer implementation.
+  void construct(impl_type& impl)
   {
-    return service_impl_.null();
-  }
-
-  /// Create a new timer implementation.
-  void create(impl_type& impl)
-  {
-    service_impl_.create(impl);
+    service_impl_.construct(impl);
   }
 
   /// Destroy a timer implementation.

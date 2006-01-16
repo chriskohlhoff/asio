@@ -111,10 +111,9 @@ public:
    * handlers for any asynchronous operations performed on the timer.
    */
   explicit basic_deadline_timer(io_service_type& io_service)
-    : service_(io_service.get_service(service_factory<Service>())),
-      impl_(service_.null())
+    : service_(io_service.get_service(service_factory<Service>()))
   {
-    service_.create(impl_);
+    service_.construct(impl_);
   }
 
   /// Constructor to set a particular expiry time as an absolute time.
@@ -129,10 +128,9 @@ public:
    */
   basic_deadline_timer(io_service_type& io_service,
       const time_type& expiry_time)
-    : service_(io_service.get_service(service_factory<Service>())),
-      impl_(service_.null())
+    : service_(io_service.get_service(service_factory<Service>()))
   {
-    service_.create(impl_);
+    service_.construct(impl_);
     destroy_on_block_exit auto_destroy(service_, impl_);
     service_.expires_at(impl_, expiry_time);
     auto_destroy.cancel();
@@ -150,10 +148,9 @@ public:
    */
   basic_deadline_timer(io_service_type& io_service,
       const duration_type& expiry_time)
-    : service_(io_service.get_service(service_factory<Service>())),
-      impl_(service_.null())
+    : service_(io_service.get_service(service_factory<Service>()))
   {
-    service_.create(impl_);
+    service_.construct(impl_);
     destroy_on_block_exit auto_destroy(service_, impl_);
     service_.expires_from_now(impl_, expiry_time);
     auto_destroy.cancel();

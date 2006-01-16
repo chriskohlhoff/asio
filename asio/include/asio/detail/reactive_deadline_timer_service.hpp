@@ -37,16 +37,13 @@ template <typename IO_Service, typename Time_Traits, typename Reactor>
 class reactive_deadline_timer_service
 {
 public:
-  // Implementation structure for a timer.
-  struct timer_impl
+  // The implementation type of the timer. This type is dependent on the
+  // underlying implementation of the timer service.
+  struct impl_type
     : private noncopyable
   {
     boost::posix_time::ptime expiry;
   };
-
-  // The native type of the timer. This type is dependent on the underlying
-  // implementation of the timer service.
-  typedef timer_impl* impl_type;
 
   // The io_service type associated with this service.
   typedef IO_Service io_service_type;
@@ -70,39 +67,28 @@ public:
     return io_service_;
   }
 
-  // Return a null timer implementation.
-  static impl_type null()
+  // Construct a new timer implementation.
+  void construct(impl_type& impl)
   {
-    return 0;
-  }
-
-  // Create a new timer implementation.
-  void create(impl_type& impl)
-  {
-    impl = new timer_impl;
+    impl.expiry = boost::posix_time::ptime();
   }
 
   // Destroy a timer implementation.
   void destroy(impl_type& impl)
   {
-    if (impl != null())
-    {
-      reactor_.cancel_timer(impl);
-      delete impl;
-      impl = null();
-    }
+    // Nothing to do.
   }
 
   // Get the expiry time for the timer as an absolute time.
   time_type expires_at(const impl_type& impl) const
   {
-    return Time_Traits::from_utc(impl->expiry);
+    return Time_Traits::from_utc(impl.expiry);
   }
 
   // Set the expiry time for the timer as an absolute time.
   void expires_at(impl_type& impl, const time_type& expiry_time)
   {
-    impl->expiry = Time_Traits::to_utc(expiry_time);
+    impl.expiry = Time_Traits::to_utc(expiry_time);
   }
 
   // Get the expiry time for the timer relative to now.
@@ -120,7 +106,7 @@ public:
   // Cancel any asynchronous wait operations associated with the timer.
   std::size_t cancel(impl_type& impl)
   {
-    return reactor_.cancel_timer(impl);
+    return reactor_.cancel_timer(&impl);
   }
 
   // Perform a blocking wait on the timer.
@@ -128,9 +114,9 @@ public:
   {
     boost::posix_time::ptime now
       = boost::posix_time::microsec_clock::universal_time();
-    while (now < impl->expiry)
+    while (now < impl.expiry)
     {
-      boost::posix_time::time_duration timeout = impl->expiry - now;
+      boost::posix_time::time_duration timeout = impl.expiry - now;
       ::timeval tv;
       tv.tv_sec = timeout.total_seconds();
       tv.tv_usec = timeout.total_microseconds() % 1000000;
@@ -168,8 +154,8 @@ public:
   template <typename Handler>
   void async_wait(impl_type& impl, Handler handler)
   {
-    reactor_.schedule_timer(impl->expiry,
-        wait_handler<Handler>(impl, io_service_, handler), impl);
+    reactor_.schedule_timer(impl.expiry,
+        wait_handler<Handler>(impl, io_service_, handler), &impl);
   }
 
 private:
