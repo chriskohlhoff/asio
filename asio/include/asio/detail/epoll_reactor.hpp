@@ -302,13 +302,29 @@ private:
 
     // Check if the thread is supposed to stop.
     if (stop_thread_)
+    {
+      // Clean up operations. We must not hold the lock since the operations may
+      // make calls back into this reactor.
+      lock.unlock();
+      read_op_queue_.cleanup_operations();
+      write_op_queue_.cleanup_operations();
+      except_op_queue_.cleanup_operations();
       return;
+    }
 
     // We can return immediately if there's no work to do and the reactor is
     // not supposed to block.
     if (!block && read_op_queue_.empty() && write_op_queue_.empty()
         && except_op_queue_.empty() && timer_queue_.empty())
+    {
+      // Clean up operations. We must not hold the lock since the operations may
+      // make calls back into this reactor.
+      lock.unlock();
+      read_op_queue_.cleanup_operations();
+      write_op_queue_.cleanup_operations();
+      except_op_queue_.cleanup_operations();
       return;
+    }
 
     int timeout = block ? get_timeout() : 0;
     wait_in_progress_ = true;
@@ -398,6 +414,13 @@ private:
     for (size_t i = 0; i < pending_cancellations_.size(); ++i)
       cancel_ops_unlocked(pending_cancellations_[i]);
     pending_cancellations_.clear();
+
+    // Clean up operations. We must not hold the lock since the operations may
+    // make calls back into this reactor.
+    lock.unlock();
+    read_op_queue_.cleanup_operations();
+    write_op_queue_.cleanup_operations();
+    except_op_queue_.cleanup_operations();
   }
 
   // Run the select loop in the thread.
