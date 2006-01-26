@@ -97,6 +97,8 @@ public:
   void open(implementation_type& impl, const Protocol& protocol,
       Error_Handler error_handler)
   {
+    close(impl, asio::ignore_error());
+
     socket_holder sock(socket_ops::socket(protocol.family(),
           protocol.type(), protocol.protocol()));
     if (sock.get() == invalid_socket)
@@ -120,6 +122,8 @@ public:
   void open(implementation_type& impl, const native_type& native_socket,
       Error_Handler error_handler)
   {
+    close(impl, asio::ignore_error());
+
     if (int err = reactor_.register_descriptor(native_socket))
     {
       error_handler(asio::error(err));

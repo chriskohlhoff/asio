@@ -39,6 +39,7 @@
 #include "asio/socket_base.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
+#include "asio/detail/noncopyable.hpp"
 #include "asio/detail/select_reactor.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
@@ -59,78 +60,27 @@ public:
   typedef boost::shared_ptr<void> shared_cancel_token_type;
   typedef boost::weak_ptr<void> weak_cancel_token_type;
 
-  // The native type of the socket. We use a custom class here rather than just
-  // SOCKET to workaround the broken Windows support for cancellation. MSDN says
-  // that when you call closesocket any outstanding WSARecv or WSASend
-  // operations will complete with the error ERROR_OPERATION_ABORTED. In
-  // practice they complete with ERROR_NETNAME_DELETED, which means you can't
-  // tell the difference between a local cancellation and the socket being
-  // hard-closed by the peer.
-  class impl_type
+  // The native type of a socket.
+  typedef socket_type native_type;
+
+  // The implementation type of the socket.
+  class implementation_type
   {
-  public:
-    // Default constructor.
-    impl_type()
-      : socket_(invalid_socket),
-        cancel_token_(static_cast<void*>(0), noop_deleter())
-    {
-    }
-
-    // Construct from socket type.
-    explicit impl_type(socket_type s)
-      : socket_(s),
-        cancel_token_(static_cast<void*>(0), noop_deleter())
-    {
-    }
-
-    // Copy constructor.
-    impl_type(const impl_type& other)
-      : socket_(other.socket_),
-        cancel_token_(other.cancel_token_)
-    {
-    }
-
-    // Assignment operator.
-    impl_type& operator=(const impl_type& other)
-    {
-      socket_ = other.socket_;
-      cancel_token_ = other.cancel_token_;
-      return *this;
-    }
-
-    // Assign from socket type.
-    impl_type& operator=(socket_type s)
-    {
-      cancel_token_.reset(static_cast<void*>(0), noop_deleter());
-      socket_ = s;
-      return *this;
-    }
-
-    // Convert to socket type.
-    operator socket_type() const
-    {
-      return socket_;
-    }
-
-    // Compare two sockets.
-    friend bool operator==(const impl_type& a, const impl_type& b)
-    {
-      return a.socket_ == b.socket_;
-    }
-
-    // Compare two sockets.
-    friend bool operator!=(const impl_type& a, const impl_type& b)
-    {
-      return a.socket_ != b.socket_;
-    }
-
   private:
-    socket_type socket_;
+    // Only this service will have access to the internal values.
     friend class win_iocp_socket_service<Allocator>;
+
+    // The native socket representation.
+    socket_type socket_;
+
+    // We use a shared pointer as a cancellation token here work around the
+    // broken Windows support for cancellation. MSDN says that when you call
+    // closesocket any outstanding WSARecv or WSASend operations will complete
+    // with the error ERROR_OPERATION_ABORTED. In practice they complete with
+    // ERROR_NETNAME_DELETED, which means you can't tell the difference between
+    // a local cancellation and the socket being hard-closed by the peer.
     shared_cancel_token_type cancel_token_;
   };
-
-  static impl_type null_impl_;
 
   // The io_service type for this service.
   typedef basic_io_service<Allocator> io_service_type;
@@ -157,17 +107,26 @@ public:
     return io_service_;
   }
 
-  // Return a null socket implementation.
-  static impl_type null()
+  // Construct a new socket implementation.
+  void construct(implementation_type& impl)
   {
-    return null_impl_;
+    impl.socket_ = invalid_socket;
+    impl.cancel_token_.reset();
+  }
+
+  // Destroy a socket implementation.
+  void destroy(implementation_type& impl)
+  {
+    close(impl, asio::ignore_error());
   }
 
   // Open a new socket implementation.
   template <typename Protocol, typename Error_Handler>
-  void open(impl_type& impl, const Protocol& protocol,
+  void open(implementation_type& impl, const Protocol& protocol,
       Error_Handler error_handler)
   {
+    close(impl, asio::ignore_error());
+
     socket_holder sock(socket_ops::socket(protocol.family(), protocol.type(),
           protocol.protocol()));
     if (sock.get() == invalid_socket)
@@ -178,22 +137,28 @@ public:
 
     iocp_service_.register_socket(sock.get());
 
-    impl = sock.release();
+    impl.socket_ = sock.release();
+    impl.cancel_token_.reset(static_cast<void*>(0), noop_deleter());
   }
 
-  // Assign a new socket implementation.
+  // Open a new socket implementation from a native socket.
   template <typename Error_Handler>
-  void open(impl_type& impl, impl_type new_impl, Error_Handler error_handler)
+  void open(implementation_type& impl, const native_type& native_socket,
+      Error_Handler error_handler)
   {
-    iocp_service_.register_socket(new_impl);
-    impl = new_impl;
+    close(impl, asio::ignore_error());
+
+    iocp_service_.register_socket(native_socket);
+
+    impl.socket_ = native_socket;
+    impl.cancel_token_.reset(static_cast<void*>(0), noop_deleter());
   }
 
   // Destroy a socket implementation.
   template <typename Error_Handler>
-  void close(impl_type& impl, Error_Handler error_handler)
+  void close(implementation_type& impl, Error_Handler error_handler)
   {
-    if (impl != null())
+    if (impl.socket_ != invalid_socket)
     {
       // Check if the reactor was created, in which case we need to close the
       // socket on the reactor as well to cancel any operations that might be
@@ -202,74 +167,86 @@ public:
             InterlockedCompareExchangePointer(
             reinterpret_cast<void**>(&reactor_), 0, 0));
       if (reactor)
-        reactor->close_descriptor(impl);
+        reactor->close_descriptor(impl.socket_);
 
-      if (socket_ops::close(impl) == socket_error_retval)
+      if (socket_ops::close(impl.socket_) == socket_error_retval)
+      {
         error_handler(asio::error(socket_ops::get_error()));
+      }
       else
-        impl = null();
+      {
+        impl.socket_ = invalid_socket;
+        impl.cancel_token_.reset();
+      }
     }
+  }
+
+  // Get the native socket representation.
+  native_type native(implementation_type& impl)
+  {
+    return impl.socket_;
   }
 
   // Bind the socket to the specified local endpoint.
   template <typename Endpoint, typename Error_Handler>
-  void bind(impl_type& impl, const Endpoint& endpoint,
+  void bind(implementation_type& impl, const Endpoint& endpoint,
       Error_Handler error_handler)
   {
-    if (socket_ops::bind(impl, endpoint.data(),
+    if (socket_ops::bind(impl.socket_, endpoint.data(),
           endpoint.size()) == socket_error_retval)
       error_handler(asio::error(socket_ops::get_error()));
   }
 
   // Place the socket into the state where it will listen for new connections.
   template <typename Error_Handler>
-  void listen(impl_type& impl, int backlog, Error_Handler error_handler)
+  void listen(implementation_type& impl, int backlog,
+      Error_Handler error_handler)
   {
     if (backlog == 0)
       backlog = SOMAXCONN;
 
-    if (socket_ops::listen(impl, backlog) == socket_error_retval)
+    if (socket_ops::listen(impl.socket_, backlog) == socket_error_retval)
       error_handler(asio::error(socket_ops::get_error()));
   }
 
   // Set a socket option.
   template <typename Option, typename Error_Handler>
-  void set_option(impl_type& impl, const Option& option,
+  void set_option(implementation_type& impl, const Option& option,
       Error_Handler error_handler)
   {
-    if (socket_ops::setsockopt(impl, option.level(), option.name(),
+    if (socket_ops::setsockopt(impl.socket_, option.level(), option.name(),
           option.data(), option.size()))
       error_handler(asio::error(socket_ops::get_error()));
   }
 
   // Set a socket option.
   template <typename Option, typename Error_Handler>
-  void get_option(const impl_type& impl, Option& option,
+  void get_option(const implementation_type& impl, Option& option,
       Error_Handler error_handler) const
   {
     size_t size = option.size();
-    if (socket_ops::getsockopt(impl, option.level(), option.name(),
+    if (socket_ops::getsockopt(impl.socket_, option.level(), option.name(),
           option.data(), &size))
       error_handler(asio::error(socket_ops::get_error()));
   }
 
   // Perform an IO control command on the socket.
   template <typename IO_Control_Command, typename Error_Handler>
-  void io_control(impl_type& impl, IO_Control_Command& command,
+  void io_control(implementation_type& impl, IO_Control_Command& command,
       Error_Handler error_handler)
   {
-    if (socket_ops::ioctl(impl, command.name(),
+    if (socket_ops::ioctl(impl.socket_, command.name(),
           static_cast<ioctl_arg_type*>(command.data())))
       error_handler(asio::error(socket_ops::get_error()));
   }
 
   // Get the local endpoint.
   template <typename Endpoint, typename Error_Handler>
-  void get_local_endpoint(const impl_type& impl, Endpoint& endpoint,
+  void get_local_endpoint(const implementation_type& impl, Endpoint& endpoint,
       Error_Handler error_handler) const
   {
     socket_addr_len_type addr_len = endpoint.size();
-    if (socket_ops::getsockname(impl, endpoint.data(), &addr_len))
+    if (socket_ops::getsockname(impl.socket_, endpoint.data(), &addr_len))
     {
       error_handler(asio::error(socket_ops::get_error()));
       return;
@@ -280,11 +257,11 @@ public:
 
   // Get the remote endpoint.
   template <typename Endpoint, typename Error_Handler>
-  void get_remote_endpoint(const impl_type& impl, Endpoint& endpoint,
+  void get_remote_endpoint(const implementation_type& impl, Endpoint& endpoint,
       Error_Handler error_handler) const
   {
     socket_addr_len_type addr_len = endpoint.size();
-    if (socket_ops::getpeername(impl, endpoint.data(), &addr_len))
+    if (socket_ops::getpeername(impl.socket_, endpoint.data(), &addr_len))
     {
       error_handler(asio::error(socket_ops::get_error()));
       return;
@@ -295,17 +272,17 @@ public:
 
   /// Disable sends or receives on the socket.
   template <typename Error_Handler>
-  void shutdown(impl_type& impl, socket_base::shutdown_type what,
+  void shutdown(implementation_type& impl, socket_base::shutdown_type what,
       Error_Handler error_handler)
   {
-    if (socket_ops::shutdown(impl, what) != 0)
+    if (socket_ops::shutdown(impl.socket_, what) != 0)
       error_handler(asio::error(socket_ops::get_error()));
   }
 
   // Send the given data to the peer. Returns the number of bytes sent or
   // 0 if the connection was closed cleanly.
   template <typename Const_Buffers, typename Error_Handler>
-  size_t send(impl_type& impl, const Const_Buffers& buffers,
+  size_t send(implementation_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, Error_Handler error_handler)
   {
     // Copy buffers into WSABUF array.
@@ -315,14 +292,16 @@ public:
     DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
-      bufs[i].len = static_cast<u_long>(asio::buffer_size(*iter));
+      asio::const_buffer buffer(*iter);
+      bufs[i].len = static_cast<u_long>(asio::buffer_size(buffer));
       bufs[i].buf = const_cast<char*>(
-          asio::buffer_cast<const char*>(*iter));
+          asio::buffer_cast<const char*>(buffer));
     }
 
     // Send the data.
     DWORD bytes_transferred = 0;
-    int result = ::WSASend(impl, bufs, i, &bytes_transferred, flags, 0, 0);
+    int result = ::WSASend(impl.socket_, bufs,
+        i, &bytes_transferred, flags, 0, 0);
     if (result != 0)
     {
       DWORD last_error = ::WSAGetLastError();
@@ -390,7 +369,7 @@ public:
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
   template <typename Const_Buffers, typename Handler>
-  void async_send(impl_type& impl, const Const_Buffers& buffers,
+  void async_send(implementation_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
@@ -407,14 +386,15 @@ public:
     DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
-      bufs[i].len = static_cast<u_long>(asio::buffer_size(*iter));
+      asio::const_buffer buffer(*iter);
+      bufs[i].len = static_cast<u_long>(asio::buffer_size(buffer));
       bufs[i].buf = const_cast<char*>(
-          asio::buffer_cast<const char*>(*iter));
+          asio::buffer_cast<const char*>(buffer));
     }
 
     // Send the data.
     DWORD bytes_transferred = 0;
-    int result = ::WSASend(impl, bufs, i,
+    int result = ::WSASend(impl.socket_, bufs, i,
         &bytes_transferred, flags, ptr.get(), 0);
     DWORD last_error = ::WSAGetLastError();
 
@@ -434,7 +414,7 @@ public:
   // Send a datagram to the specified endpoint. Returns the number of bytes
   // sent.
   template <typename Const_Buffers, typename Endpoint, typename Error_Handler>
-  size_t send_to(impl_type& impl, const Const_Buffers& buffers,
+  size_t send_to(implementation_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, const Endpoint& destination,
       Error_Handler error_handler)
   {
@@ -445,15 +425,16 @@ public:
     DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
-      bufs[i].len = static_cast<u_long>(asio::buffer_size(*iter));
+      asio::const_buffer buffer(*iter);
+      bufs[i].len = static_cast<u_long>(asio::buffer_size(buffer));
       bufs[i].buf = const_cast<char*>(
-          asio::buffer_cast<const char*>(*iter));
+          asio::buffer_cast<const char*>(buffer));
     }
 
     // Send the data.
     DWORD bytes_transferred = 0;
-    int result = ::WSASendTo(impl, bufs, i, &bytes_transferred, flags,
-        destination.data(), destination.size(), 0, 0);
+    int result = ::WSASendTo(impl.socket_, bufs, i, &bytes_transferred,
+        flags, destination.data(), destination.size(), 0, 0);
     if (result != 0)
     {
       DWORD last_error = ::WSAGetLastError();
@@ -507,7 +488,7 @@ public:
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
   template <typename Const_Buffers, typename Endpoint, typename Handler>
-  void async_send_to(impl_type& impl, const Const_Buffers& buffers,
+  void async_send_to(implementation_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, const Endpoint& destination,
       Handler handler)
   {
@@ -524,15 +505,16 @@ public:
     DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
-      bufs[i].len = static_cast<u_long>(asio::buffer_size(*iter));
+      asio::const_buffer buffer(*iter);
+      bufs[i].len = static_cast<u_long>(asio::buffer_size(buffer));
       bufs[i].buf = const_cast<char*>(
-          asio::buffer_cast<const char*>(*iter));
+          asio::buffer_cast<const char*>(buffer));
     }
 
     // Send the data.
     DWORD bytes_transferred = 0;
-    int result = ::WSASendTo(impl, bufs, i, &bytes_transferred, flags,
-        destination.data(), destination.size(), ptr.get(), 0);
+    int result = ::WSASendTo(impl.socket_, bufs, i, &bytes_transferred,
+        flags, destination.data(), destination.size(), ptr.get(), 0);
     DWORD last_error = ::WSAGetLastError();
 
     // Check if the operation completed immediately.
@@ -551,7 +533,7 @@ public:
   // Receive some data from the peer. Returns the number of bytes received or
   // 0 if the connection was closed cleanly.
   template <typename Mutable_Buffers, typename Error_Handler>
-  size_t receive(impl_type& impl, const Mutable_Buffers& buffers,
+  size_t receive(implementation_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Error_Handler error_handler)
   {
     // Copy buffers into WSABUF array.
@@ -561,14 +543,15 @@ public:
     DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
-      bufs[i].len = static_cast<u_long>(asio::buffer_size(*iter));
-      bufs[i].buf = asio::buffer_cast<char*>(*iter);
+      asio::mutable_buffer buffer(*iter);
+      bufs[i].len = static_cast<u_long>(asio::buffer_size(buffer));
+      bufs[i].buf = asio::buffer_cast<char*>(buffer);
     }
 
     // Receive some data.
     DWORD bytes_transferred = 0;
     DWORD recv_flags = flags;
-    int result = ::WSARecv(impl, bufs, i,
+    int result = ::WSARecv(impl.socket_, bufs, i,
         &bytes_transferred, &recv_flags, 0, 0);
     if (result != 0)
     {
@@ -648,7 +631,7 @@ public:
   // Start an asynchronous receive. The buffer for the data being received
   // must be valid for the lifetime of the asynchronous operation.
   template <typename Mutable_Buffers, typename Handler>
-  void async_receive(impl_type& impl, const Mutable_Buffers& buffers,
+  void async_receive(implementation_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
@@ -665,14 +648,15 @@ public:
     DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
-      bufs[i].len = static_cast<u_long>(asio::buffer_size(*iter));
-      bufs[i].buf = asio::buffer_cast<char*>(*iter);
+      asio::mutable_buffer buffer(*iter);
+      bufs[i].len = static_cast<u_long>(asio::buffer_size(buffer));
+      bufs[i].buf = asio::buffer_cast<char*>(buffer);
     }
 
     // Receive some data.
     DWORD bytes_transferred = 0;
     DWORD recv_flags = flags;
-    int result = ::WSARecv(impl, bufs, i,
+    int result = ::WSARecv(impl.socket_, bufs, i,
         &bytes_transferred, &recv_flags, ptr.get(), 0);
     DWORD last_error = ::WSAGetLastError();
     if (result != 0 && last_error != WSA_IO_PENDING)
@@ -690,7 +674,7 @@ public:
   // Receive a datagram with the endpoint of the sender. Returns the number of
   // bytes received.
   template <typename Mutable_Buffers, typename Endpoint, typename Error_Handler>
-  size_t receive_from(impl_type& impl, const Mutable_Buffers& buffers,
+  size_t receive_from(implementation_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Endpoint& sender_endpoint,
       Error_Handler error_handler)
   {
@@ -701,16 +685,17 @@ public:
     DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
-      bufs[i].len = static_cast<u_long>(asio::buffer_size(*iter));
-      bufs[i].buf = asio::buffer_cast<char*>(*iter);
+      asio::mutable_buffer buffer(*iter);
+      bufs[i].len = static_cast<u_long>(asio::buffer_size(buffer));
+      bufs[i].buf = asio::buffer_cast<char*>(buffer);
     }
 
     // Receive some data.
     DWORD bytes_transferred = 0;
     DWORD recv_flags = flags;
     int endpoint_size = sender_endpoint.size();
-    int result = ::WSARecvFrom(impl, bufs, i, &bytes_transferred, &recv_flags,
-        sender_endpoint.data(), &endpoint_size, 0, 0);
+    int result = ::WSARecvFrom(impl.socket_, bufs, i, &bytes_transferred,
+        &recv_flags, sender_endpoint.data(), &endpoint_size, 0, 0);
     if (result != 0)
     {
       DWORD last_error = ::WSAGetLastError();
@@ -792,8 +777,9 @@ public:
   // the sender_endpoint object must both be valid for the lifetime of the
   // asynchronous operation.
   template <typename Mutable_Buffers, typename Endpoint, typename Handler>
-  void async_receive_from(impl_type& impl, const Mutable_Buffers& buffers,
-      socket_base::message_flags flags, Endpoint& sender_endp, Handler handler)
+  void async_receive_from(implementation_type& impl,
+      const Mutable_Buffers& buffers, socket_base::message_flags flags,
+      Endpoint& sender_endp, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef receive_from_operation<Endpoint, Handler> value_type;
@@ -808,15 +794,17 @@ public:
     DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
-      bufs[i].len = static_cast<u_long>(asio::buffer_size(*iter));
-      bufs[i].buf = asio::buffer_cast<char*>(*iter);
+      asio::mutable_buffer buffer(*iter);
+      bufs[i].len = static_cast<u_long>(asio::buffer_size(buffer));
+      bufs[i].buf = asio::buffer_cast<char*>(buffer);
     }
 
     // Receive some data.
     DWORD bytes_transferred = 0;
     DWORD recv_flags = flags;
-    int result = ::WSARecvFrom(impl, bufs, i, &bytes_transferred, &recv_flags,
-        sender_endp.data(), &ptr.get()->endpoint_size(), ptr.get(), 0);
+    int result = ::WSARecvFrom(impl.socket_, bufs, i, &bytes_transferred,
+        &recv_flags, sender_endp.data(), &ptr.get()->endpoint_size(),
+        ptr.get(), 0);
     DWORD last_error = ::WSAGetLastError();
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
@@ -832,40 +820,46 @@ public:
 
   // Accept a new connection.
   template <typename Socket, typename Error_Handler>
-  void accept(impl_type& impl, Socket& peer, Error_Handler error_handler)
+  void accept(implementation_type& impl, Socket& peer,
+      Error_Handler error_handler)
   {
     // We cannot accept a socket that is already open.
-    if (peer.impl() != invalid_socket)
+    if (peer.native() != invalid_socket)
     {
       error_handler(asio::error(asio::error::already_connected));
       return;
     }
 
-    impl_type new_socket(socket_ops::accept(impl, 0, 0));
+    socket_holder new_socket(socket_ops::accept(impl.socket_, 0, 0));
     if (int err = socket_ops::get_error())
     {
       error_handler(asio::error(err));
       return;
     }
 
-    peer.open(new_socket);
+    asio::error temp_error;
+    peer.open(new_socket.get(), asio::assign_error(temp_error));
+    if (temp_error)
+      error_handler(temp_error);
+    else
+      new_socket.release();
   }
 
   // Accept a new connection.
   template <typename Socket, typename Endpoint, typename Error_Handler>
-  void accept_endpoint(impl_type& impl, Socket& peer, Endpoint& peer_endpoint,
-      Error_Handler error_handler)
+  void accept_endpoint(implementation_type& impl, Socket& peer,
+      Endpoint& peer_endpoint, Error_Handler error_handler)
   {
     // We cannot accept a socket that is already open.
-    if (peer.impl() != invalid_socket)
+    if (peer.native() != invalid_socket)
     {
       error_handler(asio::error(asio::error::already_connected));
       return;
     }
 
     socket_addr_len_type addr_len = peer_endpoint.size();
-    impl_type new_socket(socket_ops::accept(impl,
-          peer_endpoint.data(), &addr_len));
+    socket_holder new_socket(socket_ops::accept(
+          impl.socket_, peer_endpoint.data(), &addr_len));
     if (int err = socket_ops::get_error())
     {
       error_handler(asio::error(err));
@@ -874,7 +868,12 @@ public:
 
     peer_endpoint.size(addr_len);
 
-    peer.open(new_socket);
+    asio::error temp_error;
+    peer.open(new_socket.get(), asio::assign_error(temp_error));
+    if (temp_error)
+      error_handler(temp_error);
+    else
+      new_socket.release();
   }
 
   template <typename Socket, typename Handler>
@@ -882,12 +881,12 @@ public:
     : public operation
   {
   public:
-    accept_operation(io_service_type& io_service, impl_type& impl,
+    accept_operation(io_service_type& io_service, socket_type socket,
         socket_type new_socket, Socket& peer, Handler handler)
       : operation(
           &accept_operation<Socket, Handler>::do_completion_impl),
         io_service_(io_service),
-        impl_(impl),
+        socket_(socket),
         new_socket_(new_socket),
         peer_(peer),
         work_(io_service),
@@ -932,7 +931,7 @@ public:
       // and getpeername will work on the accepted socket.
       if (last_error == 0)
       {
-        DWORD update_ctx_param = handler_op->impl_;
+        DWORD update_ctx_param = handler_op->socket_;
         if (socket_ops::setsockopt(handler_op->new_socket_.get(), SOL_SOCKET,
               SO_UPDATE_ACCEPT_CONTEXT, &update_ctx_param, sizeof(DWORD)) != 0)
         {
@@ -944,9 +943,13 @@ public:
       // socket to the peer object.
       if (last_error == 0)
       {
-        impl_type new_socket(handler_op->new_socket_.get());
-        handler_op->peer_.open(new_socket);
-        handler_op->new_socket_.release();
+        asio::error temp_error;
+        handler_op->peer_.open(handler_op->new_socket_.get(),
+            asio::assign_error(temp_error));
+        if (temp_error)
+          last_error = temp_error.code();
+        else
+          handler_op->new_socket_.release();
       }
 
       // Make a copy of the handler so that the memory can be deallocated before
@@ -962,7 +965,7 @@ public:
     }
 
     io_service_type& io_service_;
-    impl_type& impl_;
+    socket_type socket_;
     socket_holder new_socket_;
     Socket& peer_;
     typename io_service_type::work work_;
@@ -973,10 +976,10 @@ public:
   // Start an asynchronous accept. The peer object must be valid until the
   // accept's handler is invoked.
   template <typename Socket, typename Handler>
-  void async_accept(impl_type& impl, Socket& peer, Handler handler)
+  void async_accept(implementation_type& impl, Socket& peer, Handler handler)
   {
     // Check whether acceptor has been initialised.
-    if (impl == null())
+    if (impl.socket_ == invalid_socket)
     {
       asio::error error(asio::error::bad_descriptor);
       io_service_.post(bind_handler(handler, error));
@@ -984,7 +987,7 @@ public:
     }
 
     // Check that peer socket has not already been connected.
-    if (peer.impl() != invalid_socket)
+    if (peer.native() != invalid_socket)
     {
       asio::error error(asio::error::already_connected);
       io_service_.post(bind_handler(handler, error));
@@ -994,7 +997,7 @@ public:
     // Get information about the protocol used by the socket.
     WSAPROTOCOL_INFO protocol_info;
     std::size_t protocol_info_size = sizeof(protocol_info);
-    if (socket_ops::getsockopt(impl, SOL_SOCKET, SO_PROTOCOL_INFO,
+    if (socket_ops::getsockopt(impl.socket_, SOL_SOCKET, SO_PROTOCOL_INFO,
           &protocol_info, &protocol_info_size) != 0)
     {
       asio::error error(socket_ops::get_error());
@@ -1018,12 +1021,12 @@ public:
     raw_handler_ptr<alloc_traits> raw_ptr(handler, io_service_.get_allocator());
     socket_type new_socket = sock.get();
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        io_service_, impl, new_socket, peer, handler);
+        io_service_, impl.socket_, new_socket, peer, handler);
     sock.release();
 
     // Accept a connection.
     DWORD bytes_read = 0;
-    BOOL result = ::AcceptEx(impl, ptr.get()->new_socket(),
+    BOOL result = ::AcceptEx(impl.socket_, ptr.get()->new_socket(),
         ptr.get()->output_buffer(), 0, ptr.get()->address_length(),
         ptr.get()->address_length(), &bytes_read, ptr.get());
     DWORD last_error = ::WSAGetLastError();
@@ -1046,13 +1049,13 @@ public:
     : public operation
   {
   public:
-    accept_endp_operation(io_service_type& io_service, impl_type& impl,
+    accept_endp_operation(io_service_type& io_service, socket_type socket,
         socket_type new_socket, Socket& peer, Endpoint& peer_endpoint,
         Handler handler)
       : operation(&accept_endp_operation<
             Socket, Endpoint, Handler>::do_completion_impl),
         io_service_(io_service),
-        impl_(impl),
+        socket_(socket),
         new_socket_(new_socket),
         peer_(peer),
         peer_endpoint_(peer_endpoint),
@@ -1121,7 +1124,7 @@ public:
       // and getpeername will work on the accepted socket.
       if (last_error == 0)
       {
-        DWORD update_ctx_param = handler_op->impl_;
+        DWORD update_ctx_param = handler_op->socket_;
         if (socket_ops::setsockopt(handler_op->new_socket_.get(), SOL_SOCKET,
               SO_UPDATE_ACCEPT_CONTEXT, &update_ctx_param, sizeof(DWORD)) != 0)
         {
@@ -1133,9 +1136,13 @@ public:
       // socket to the peer object.
       if (last_error == 0)
       {
-        impl_type new_socket(handler_op->new_socket_.get());
-        handler_op->peer_.open(new_socket);
-        handler_op->new_socket_.release();
+        asio::error temp_error;
+        handler_op->peer_.open(handler_op->new_socket_.get(),
+            asio::assign_error(temp_error));
+        if (temp_error)
+          last_error = temp_error.code();
+        else
+          handler_op->new_socket_.release();
       }
 
       // Make a copy of the handler so that the memory can be deallocated before
@@ -1151,7 +1158,7 @@ public:
     }
 
     io_service_type& io_service_;
-    impl_type& impl_;
+    socket_type socket_;
     socket_holder new_socket_;
     Socket& peer_;
     Endpoint& peer_endpoint_;
@@ -1163,11 +1170,11 @@ public:
   // Start an asynchronous accept. The peer and peer_endpoint objects
   // must be valid until the accept's handler is invoked.
   template <typename Socket, typename Endpoint, typename Handler>
-  void async_accept_endpoint(impl_type& impl, Socket& peer,
+  void async_accept_endpoint(implementation_type& impl, Socket& peer,
       Endpoint& peer_endpoint, Handler handler)
   {
     // Check whether acceptor has been initialised.
-    if (impl == null())
+    if (impl.socket_ == invalid_socket)
     {
       asio::error error(asio::error::bad_descriptor);
       io_service_.post(bind_handler(handler, error));
@@ -1175,7 +1182,7 @@ public:
     }
 
     // Check that peer socket has not already been connected.
-    if (peer.impl() != invalid_socket)
+    if (peer.native() != invalid_socket)
     {
       asio::error error(asio::error::already_connected);
       io_service_.post(bind_handler(handler, error));
@@ -1185,7 +1192,7 @@ public:
     // Get information about the protocol used by the socket.
     WSAPROTOCOL_INFO protocol_info;
     std::size_t protocol_info_size = sizeof(protocol_info);
-    if (socket_ops::getsockopt(impl, SOL_SOCKET, SO_PROTOCOL_INFO,
+    if (socket_ops::getsockopt(impl.socket_, SOL_SOCKET, SO_PROTOCOL_INFO,
           &protocol_info, &protocol_info_size) != 0)
     {
       asio::error error(socket_ops::get_error());
@@ -1209,12 +1216,12 @@ public:
     raw_handler_ptr<alloc_traits> raw_ptr(handler, io_service_.get_allocator());
     socket_type new_socket = sock.get();
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        io_service_, impl, new_socket, peer, peer_endpoint, handler);
+        io_service_, impl.socket_, new_socket, peer, peer_endpoint, handler);
     sock.release();
 
     // Accept a connection.
     DWORD bytes_read = 0;
-    BOOL result = ::AcceptEx(impl, ptr.get()->new_socket(),
+    BOOL result = ::AcceptEx(impl.socket_, ptr.get()->new_socket(),
         ptr.get()->output_buffer(), 0, ptr.get()->address_length(),
         ptr.get()->address_length(), &bytes_read, ptr.get());
     DWORD last_error = ::WSAGetLastError();
@@ -1234,11 +1241,11 @@ public:
 
   // Connect the socket to the specified endpoint.
   template <typename Endpoint, typename Error_Handler>
-  void connect(impl_type& impl, const Endpoint& peer_endpoint,
+  void connect(implementation_type& impl, const Endpoint& peer_endpoint,
       Error_Handler error_handler)
   {
     // Open the socket if it is not already open.
-    if (impl == invalid_socket)
+    if (impl.socket_ == invalid_socket)
     {
       // Get the flags used to create the new socket.
       int family = peer_endpoint.protocol().family();
@@ -1246,18 +1253,18 @@ public:
       int proto = peer_endpoint.protocol().protocol();
 
       // Create a new socket.
-      impl = socket_ops::socket(family, type, proto);
-      if (impl == invalid_socket)
+      impl.socket_ = socket_ops::socket(family, type, proto);
+      if (impl.socket_ == invalid_socket)
       {
         error_handler(asio::error(socket_ops::get_error()));
         return;
       }
-      iocp_service_.register_socket(impl);
+      iocp_service_.register_socket(impl.socket_);
     }
 
     // Perform the connect operation.
-    int result = socket_ops::connect(impl, peer_endpoint.data(),
-        peer_endpoint.size());
+    int result = socket_ops::connect(impl.socket_,
+        peer_endpoint.data(), peer_endpoint.size());
     if (result == socket_error_retval)
       error_handler(asio::error(socket_ops::get_error()));
   }
@@ -1266,9 +1273,9 @@ public:
   class connect_handler
   {
   public:
-    connect_handler(impl_type& impl, boost::shared_ptr<bool> completed,
+    connect_handler(socket_type socket, boost::shared_ptr<bool> completed,
         io_service_type& io_service, reactor_type& reactor, Handler handler)
-      : impl_(impl),
+      : socket_(socket),
         completed_(completed),
         io_service_(io_service),
         reactor_(reactor),
@@ -1286,7 +1293,7 @@ public:
 
       // Cancel the other reactor operation for the connection.
       *completed_ = true;
-      reactor_.enqueue_cancel_ops_unlocked(impl_);
+      reactor_.enqueue_cancel_ops_unlocked(socket_);
 
       // Check whether the operation was successful.
       if (result != 0)
@@ -1299,7 +1306,7 @@ public:
       // Get the error code from the connect operation.
       int connect_error = 0;
       size_t connect_error_len = sizeof(connect_error);
-      if (socket_ops::getsockopt(impl_, SOL_SOCKET, SO_ERROR,
+      if (socket_ops::getsockopt(socket_, SOL_SOCKET, SO_ERROR,
             &connect_error, &connect_error_len) == socket_error_retval)
       {
         asio::error error(socket_ops::get_error());
@@ -1317,7 +1324,7 @@ public:
 
       // Make the socket blocking again (the default).
       ioctl_arg_type non_blocking = 0;
-      if (socket_ops::ioctl(impl_, FIONBIO, &non_blocking))
+      if (socket_ops::ioctl(socket_, FIONBIO, &non_blocking))
       {
         asio::error error(socket_ops::get_error());
         io_service_.post(bind_handler(handler_, error));
@@ -1331,7 +1338,7 @@ public:
     }
 
   private:
-    impl_type& impl_;
+    socket_type socket_;
     boost::shared_ptr<bool> completed_;
     io_service_type& io_service_;
     reactor_type& reactor_;
@@ -1341,7 +1348,7 @@ public:
 
   // Start an asynchronous connect.
   template <typename Endpoint, typename Handler>
-  void async_connect(impl_type& impl, const Endpoint& peer_endpoint,
+  void async_connect(implementation_type& impl, const Endpoint& peer_endpoint,
       Handler handler)
   {
     // Check if the reactor was already obtained from the io_service.
@@ -1355,7 +1362,7 @@ public:
     }
 
     // Open the socket if it is not already open.
-    if (impl == invalid_socket)
+    if (impl.socket_ == invalid_socket)
     {
       // Get the flags used to create the new socket.
       int family = peer_endpoint.protocol().family();
@@ -1363,20 +1370,20 @@ public:
       int proto = peer_endpoint.protocol().protocol();
 
       // Create a new socket.
-      impl = socket_ops::socket(family, type, proto);
-      if (impl == invalid_socket)
+      impl.socket_ = socket_ops::socket(family, type, proto);
+      if (impl.socket_ == invalid_socket)
       {
         asio::error error(socket_ops::get_error());
         io_service_.post(bind_handler(handler, error));
         return;
       }
-      iocp_service_.register_socket(impl);
+      iocp_service_.register_socket(impl.socket_);
     }
 
     // Mark the socket as non-blocking so that the connection will take place
     // asynchronously.
     ioctl_arg_type non_blocking = 1;
-    if (socket_ops::ioctl(impl, FIONBIO, &non_blocking))
+    if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking))
     {
       asio::error error(socket_ops::get_error());
       io_service_.post(bind_handler(handler, error));
@@ -1384,7 +1391,7 @@ public:
     }
 
     // Start the connect operation.
-    if (socket_ops::connect(impl, peer_endpoint.data(),
+    if (socket_ops::connect(impl.socket_, peer_endpoint.data(),
           peer_endpoint.size()) == 0)
     {
       // The connect operation has finished successfully so we need to post the
@@ -1398,8 +1405,9 @@ public:
       // The connection is happening in the background, and we need to wait
       // until the socket becomes writeable.
       boost::shared_ptr<bool> completed(new bool(false));
-      reactor->start_write_and_except_ops(impl, connect_handler<Handler>(
-            impl, completed, io_service_, *reactor, handler));
+      reactor->start_write_and_except_ops(impl.socket_,
+          connect_handler<Handler>(
+            impl.socket_, completed, io_service_, *reactor, handler));
     }
     else
     {
@@ -1421,10 +1429,6 @@ private:
   // only if needed.
   reactor_type* reactor_;
 };
-
-template <typename Allocator>
-typename win_iocp_socket_service<Allocator>::impl_type
-win_iocp_socket_service<Allocator>::null_impl_;
 
 } // namespace detail
 } // namespace asio

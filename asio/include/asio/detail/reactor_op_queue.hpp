@@ -105,11 +105,11 @@ public:
     typename operation_map::iterator i = operations_.find(descriptor);
     if (i != operations_.end())
     {
-      op_base* op = i->second;
-      i->second = op->next_;
-      op->next_ = cleanup_operations_;
-      cleanup_operations_ = op;
-      bool done = op->invoke(result);
+      op_base* this_op = i->second;
+      i->second = this_op->next_;
+      this_op->next_ = cleanup_operations_;
+      cleanup_operations_ = this_op;
+      bool done = this_op->invoke(result);
       if (done)
       {
         // Operation has finished.
@@ -127,9 +127,9 @@ public:
       {
         // Operation wants to be called again. Leave it at the front of the
         // queue for this descriptor, and remove from the cleanup list.
-        cleanup_operations_ = op->next_;
-        op->next_ = i->second;
-        i->second = op;
+        cleanup_operations_ = this_op->next_;
+        this_op->next_ = i->second;
+        i->second = this_op;
         return true;
       }
     }
@@ -144,18 +144,18 @@ public:
     {
       while (i->second)
       {
-        op_base* op = i->second;
-        i->second = op->next_;
-        op->next_ = cleanup_operations_;
-        cleanup_operations_ = op;
+        op_base* this_op = i->second;
+        i->second = this_op->next_;
+        this_op->next_ = cleanup_operations_;
+        cleanup_operations_ = this_op;
         bool done = i->second->invoke(result);
         if (!done)
         {
           // Operation has not finished yet, so leave at front of queue, and
           // remove from the cleanup list.
-          cleanup_operations_ = op->next_;
-          op->next_ = i->second;
-          i->second = op;
+          cleanup_operations_ = this_op->next_;
+          this_op->next_ = i->second;
+          i->second = this_op;
           return;
         }
         operations_.erase(i);
@@ -187,23 +187,23 @@ public:
       typename operation_map::iterator op_iter = i++;
       if (descriptors.is_set(op_iter->first))
       {
-        op_base* op = op_iter->second;
-        op_iter->second = op->next_;
-        op->next_ = cleanup_operations_;
-        cleanup_operations_ = op;
-        bool done = op->second->invoke(result);
+        op_base* this_op = op_iter->second;
+        op_iter->second = this_op->next_;
+        this_op->next_ = cleanup_operations_;
+        cleanup_operations_ = this_op;
+        bool done = this_op->invoke(result);
         if (done)
         {
           if (!op_iter->second)
-            operations_.erase(op);
+            operations_.erase(op_iter);
         }
         else
         {
           // Operation has not finished yet, so leave at front of queue, and
           // remove from the cleanup list.
-          cleanup_operations_ = op->next_;
-          op->next_ = op_iter->second;
-          op_iter->second = op;
+          cleanup_operations_ = this_op->next_;
+          this_op->next_ = op_iter->second;
+          op_iter->second = this_op;
         }
       }
     }
@@ -214,11 +214,11 @@ public:
   {
     while (cancelled_operations_)
     {
-      op_base* op = cancelled_operations_;
-      cancelled_operations_ = op->next_;
-      op->next_ = cleanup_operations_;
-      cleanup_operations_ = op;
-      op->invoke(asio::error::operation_aborted);
+      op_base* this_op = cancelled_operations_;
+      cancelled_operations_ = this_op->next_;
+      this_op->next_ = cleanup_operations_;
+      cleanup_operations_ = this_op;
+      this_op->invoke(asio::error::operation_aborted);
     }
   }
 
