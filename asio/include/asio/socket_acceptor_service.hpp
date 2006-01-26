@@ -63,7 +63,7 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined implementation_type;
 #else
-  typedef typename service_impl_type::impl_type implementation_type;
+  typedef typename service_impl_type::implementation_type implementation_type;
 #endif
 
   /// The native acceptor type.
