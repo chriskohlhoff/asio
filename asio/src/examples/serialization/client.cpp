@@ -14,12 +14,12 @@ class client
 {
 public:
   /// Constructor starts the asynchronous connect operation.
-  client(asio::demuxer& demuxer,
+  client(asio::io_service& io_service,
       const std::string& hostname, unsigned short port)
-    : connection_(demuxer)
+    : connection_(io_service)
   {
     // Resolve the host name into an IP address.
-    asio::ipv4::host_resolver host_resolver(demuxer);
+    asio::ipv4::host_resolver host_resolver(io_service);
     asio::ipv4::host host;
     host_resolver.get_host_by_name(host, hostname);
 
@@ -45,7 +45,7 @@ public:
     else
     {
       // An error occurred. Log it and return. Since we are not starting a new
-      // operation the demuxer will run out of work to do and the client will
+      // operation the io_service will run out of work to do and the client will
       // exit.
       std::cerr << e << std::endl;
     }
@@ -78,7 +78,7 @@ public:
       std::cerr << e << std::endl;
     }
 
-    // Since we are not starting a new operation the demuxer will run out of
+    // Since we are not starting a new operation the io_service will run out of
     // work to do and the client will exit.
   }
 
@@ -105,9 +105,9 @@ int main(int argc, char* argv[])
     std::string host = argv[1];
     unsigned short port = boost::lexical_cast<unsigned short>(argv[2]);
 
-    asio::demuxer demuxer;
-    serialization::client client(demuxer, host, port);
-    demuxer.run();
+    asio::io_service io_service;
+    serialization::client client(io_service, host, port);
+    io_service.run();
   }
   catch (std::exception& e)
   {

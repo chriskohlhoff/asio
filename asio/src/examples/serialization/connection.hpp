@@ -73,8 +73,10 @@ public:
   void async_read(T& t, Handler handler)
   {
     // Issue a read operation to read exactly the number of bytes in a header.
+    void (connection::*f)(const asio::error&, T&, boost::tuple<Handler>)
+      = &connection::handle_read_header<T, Handler>;
     asio::async_read(socket_, asio::buffer(inbound_header_),
-        boost::bind(&connection::handle_read_header<T, Handler>,
+        boost::bind(f,
           this, asio::placeholders::error, boost::ref(t),
           boost::make_tuple(handler)));
   }
@@ -105,8 +107,10 @@ public:
 
       // Start an asynchronous call to receive the data.
       inbound_data_.resize(inbound_data_size);
+      void (connection::*f)(const asio::error&, T&, boost::tuple<Handler>)
+        = &connection::handle_read_data<T, Handler>;
       asio::async_read(socket_, asio::buffer(inbound_data_),
-        boost::bind(&connection::handle_read_data<T, Handler>, this,
+        boost::bind(f, this,
           asio::placeholders::error, boost::ref(t), handler));
     }
   }

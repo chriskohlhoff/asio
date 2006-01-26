@@ -15,8 +15,8 @@ class server
 public:
   /// Constructor opens the acceptor and starts waiting for the first incoming
   /// connection.
-  server(asio::demuxer& demuxer, unsigned short port)
-    : acceptor_(demuxer, asio::ipv4::tcp::endpoint(port))
+  server(asio::io_service& io_service, unsigned short port)
+    : acceptor_(io_service, asio::ipv4::tcp::endpoint(port))
   {
     // Create the data to be sent to each client.
     stock s;
@@ -44,7 +44,7 @@ public:
     stocks_.push_back(s);
 
     // Start an accept operation for a new connection.
-    connection_ptr new_conn(new connection(acceptor_.demuxer()));
+    connection_ptr new_conn(new connection(acceptor_.io_service()));
     acceptor_.async_accept(new_conn->socket(),
         boost::bind(&server::handle_accept, this,
           asio::placeholders::error, new_conn));
@@ -63,7 +63,7 @@ public:
             asio::placeholders::error, conn));
 
       // Start an accept operation for a new connection.
-      connection_ptr new_conn(new connection(acceptor_.demuxer()));
+      connection_ptr new_conn(new connection(acceptor_.io_service()));
       acceptor_.async_accept(new_conn->socket(),
           boost::bind(&server::handle_accept, this,
             asio::placeholders::error, new_conn));
@@ -80,8 +80,8 @@ public:
     else
     {
       // Some other error. Log it and return. Since we are not starting a new
-      // accept operation the demuxer will run out of work to do and the server
-      // will exit.
+      // accept operation the io_service will run out of work to do and the
+      // server will exit.
       std::cerr << e << std::endl;
     }
   }
@@ -115,9 +115,9 @@ int main(int argc, char* argv[])
     }
     unsigned short port = boost::lexical_cast<unsigned short>(argv[1]);
 
-    asio::demuxer demuxer;
-    serialization::server server(demuxer, port);
-    demuxer.run();
+    asio::io_service io_service;
+    serialization::server server(io_service, port);
+    io_service.run();
   }
   catch (std::exception& e)
   {
