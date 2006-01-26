@@ -27,8 +27,7 @@ void test_sync_operations()
 
   asio::ipv4::tcp::acceptor acceptor(io_service,
       asio::ipv4::tcp::endpoint(0));
-  asio::ipv4::tcp::endpoint server_endpoint;
-  acceptor.get_local_endpoint(server_endpoint);
+  asio::ipv4::tcp::endpoint server_endpoint = acceptor.local_endpoint();
   server_endpoint.address(asio::ipv4::address::loopback());
 
   stream_type client_socket(io_service);
@@ -141,8 +140,7 @@ void test_async_operations()
 
   asio::ipv4::tcp::acceptor acceptor(io_service,
       asio::ipv4::tcp::endpoint(0));
-  asio::ipv4::tcp::endpoint server_endpoint;
-  acceptor.get_local_endpoint(server_endpoint);
+  asio::ipv4::tcp::endpoint server_endpoint = acceptor.local_endpoint();
   server_endpoint.address(asio::ipv4::address::loopback());
 
   stream_type client_socket(io_service);

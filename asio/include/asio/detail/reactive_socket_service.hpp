@@ -23,6 +23,7 @@
 
 #include "asio/buffer.hpp"
 #include "asio/error.hpp"
+#include "asio/error_handler.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_base.hpp"
 #include "asio/detail/bind_handler.hpp"
@@ -37,8 +38,10 @@ template <typename IO_Service, typename Reactor>
 class reactive_socket_service
 {
 public:
-  // The native type of the socket. This type is dependent on the
-  // underlying implementation of the socket layer.
+  // The native type of a socket.
+  typedef socket_type native_type;
+
+  // The implementation type of the socket.
   class impl_type
   {
   public:
@@ -127,10 +130,16 @@ public:
     return io_service_;
   }
 
-  // Return a null socket implementation.
-  static impl_type null()
+  // Construct a new socket implementation.
+  void construct(impl_type& impl)
   {
-    return impl_type();
+    impl = impl_type();
+  }
+
+  // Destroy a socket implementation.
+  void destroy(impl_type& impl)
+  {
+    close(impl, asio::ignore_error());
   }
 
   // Open a new socket implementation.
@@ -158,22 +167,23 @@ public:
 
   // Assign a new socket implementation.
   template <typename Error_Handler>
-  void open(impl_type& impl, impl_type new_impl, Error_Handler error_handler)
+  void open(impl_type& impl, const native_type& native_socket,
+      Error_Handler error_handler)
   {
-    int err = reactor_.register_descriptor(new_impl);
+    int err = reactor_.register_descriptor(native_socket);
     if (err)
     {
       error_handler(asio::error(err));
       return;
     }
-    impl = new_impl;
+    impl = native_socket;
   }
 
   // Destroy a socket implementation.
   template <typename Error_Handler>
   void close(impl_type& impl, Error_Handler error_handler)
   {
-    if (impl != null())
+    if (impl.socket_ != invalid_socket)
     {
       reactor_.close_descriptor(impl);
 
@@ -187,8 +197,14 @@ public:
       if (socket_ops::close(impl) == socket_error_retval)
         error_handler(asio::error(socket_ops::get_error()));
       else
-        impl = null();
+        impl = impl_type();
     }
+  }
+
+  // Get the native socket representation.
+  native_type native(impl_type& impl)
+  {
+    return impl.socket_;
   }
 
   // Bind the socket to the specified local endpoint.
@@ -408,7 +424,7 @@ public:
   void async_send(impl_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, Handler handler)
   {
-    if (impl == null())
+    if (impl.socket_ == invalid_socket)
     {
       asio::error error(asio::error::bad_descriptor);
       io_service_.post(bind_handler(handler, error, 0));
@@ -554,7 +570,7 @@ public:
       socket_base::message_flags flags, const Endpoint& destination,
       Handler handler)
   {
-    if (impl == null())
+    if (impl.socket_ == invalid_socket)
     {
       asio::error error(asio::error::bad_descriptor);
       io_service_.post(bind_handler(handler, error, 0));
@@ -704,7 +720,7 @@ public:
   void async_receive(impl_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Handler handler)
   {
-    if (impl == null())
+    if (impl.socket_ == invalid_socket)
     {
       asio::error error(asio::error::bad_descriptor);
       io_service_.post(bind_handler(handler, error, 0));
@@ -876,7 +892,7 @@ public:
       socket_base::message_flags flags, Endpoint& sender_endpoint,
       Handler handler)
   {
-    if (impl == null())
+    if (impl.socket_ == invalid_socket)
     {
       asio::error error(asio::error::bad_descriptor);
       io_service_.post(bind_handler(handler, error, 0));
@@ -907,7 +923,7 @@ public:
   void accept(impl_type& impl, Socket& peer, Error_Handler error_handler)
   {
     // We cannot accept a socket that is already open.
-    if (peer.impl() != invalid_socket)
+    if (peer.native() != invalid_socket)
     {
       error_handler(asio::error(asio::error::already_connected));
       return;
@@ -953,7 +969,7 @@ public:
       Error_Handler error_handler)
   {
     // We cannot accept a socket that is already open.
-    if (peer.impl() != invalid_socket)
+    if (peer.native() != invalid_socket)
     {
       error_handler(asio::error(asio::error::already_connected));
       return;
@@ -1055,12 +1071,12 @@ public:
   template <typename Socket, typename Handler>
   void async_accept(impl_type& impl, Socket& peer, Handler handler)
   {
-    if (impl == null())
+    if (impl.socket_ == invalid_socket)
     {
       asio::error error(asio::error::bad_descriptor);
       io_service_.post(bind_handler(handler, error));
     }
-    else if (peer.impl() != invalid_socket)
+    else if (peer.native() != invalid_socket)
     {
       asio::error error(asio::error::already_connected);
       io_service_.post(bind_handler(handler, error));
@@ -1144,12 +1160,12 @@ public:
   void async_accept_endpoint(impl_type& impl, Socket& peer,
       Endpoint& peer_endpoint, Handler handler)
   {
-    if (impl == null())
+    if (impl.socket_ == invalid_socket)
     {
       asio::error error(asio::error::bad_descriptor);
       io_service_.post(bind_handler(handler, error));
     }
-    else if (peer.impl() != invalid_socket)
+    else if (peer.native() != invalid_socket)
     {
       asio::error error(asio::error::already_connected);
       io_service_.post(bind_handler(handler, error));

@@ -17,11 +17,11 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/basic_io_object.hpp"
+#include "asio/basic_socket.hpp"
 #include "asio/error.hpp"
 #include "asio/error_handler.hpp"
-#include "asio/service_factory.hpp"
 #include "asio/socket_base.hpp"
-#include "asio/detail/noncopyable.hpp"
 
 namespace asio {
 
@@ -29,8 +29,6 @@ namespace asio {
 /**
  * The basic_socket_acceptor class template is used for accepting new socket
  * connections.
- *
- * Most applications would use the asio::socket_acceptor typedef.
  *
  * @par Thread Safety:
  * @e Distinct @e objects: Safe.@n
@@ -42,37 +40,31 @@ namespace asio {
  * @par Example:
  * Opening a socket acceptor with the SO_REUSEADDR option enabled:
  * @code
- * asio::socket_acceptor acceptor(io_service);
+ * asio::ipv4::tcp::acceptor acceptor(io_service);
  * asio::ipv4::tcp::endpoint endpoint(port);
  * acceptor.open(endpoint.protocol());
- * acceptor.set_option(asio::socket_acceptor::reuse_address(true));
+ * acceptor.set_option(asio::ipv4::tcp::acceptor::reuse_address(true));
  * acceptor.bind(endpoint);
  * acceptor.listen();
  * @endcode
  */
 template <typename Service>
 class basic_socket_acceptor
-  : public socket_base,
-    private noncopyable
+  : public basic_io_object<Service>,
+    public socket_base
 {
 public:
-  /// The type of the service that will be used to provide accept operations.
-  typedef Service service_type;
+  /// The io_service type for this I/O object.
+  typedef typename Service::io_service_type io_service_type;
 
-  /// The native implementation type of the socket acceptor.
-  typedef typename service_type::impl_type impl_type;
-
-  /// The io_service type for this type.
-  typedef typename service_type::io_service_type io_service_type;
+  /// The native representation of an acceptor.
+  typedef typename Service::native_type native_type;
 
   /// The protocol type.
-  typedef typename service_type::protocol_type protocol_type;
+  typedef typename Service::protocol_type protocol_type;
 
   /// The endpoint type.
-  typedef typename service_type::endpoint_type endpoint_type;
-
-  /// The socket type to be accepted.
-  typedef typename service_type::socket_type socket_type;
+  typedef typename Service::endpoint_type endpoint_type;
 
   /// The type used for reporting errors.
   typedef asio::error error_type;
@@ -88,8 +80,7 @@ public:
    * acceptor.
    */
   explicit basic_socket_acceptor(io_service_type& io_service)
-    : service_(io_service.get_service(service_factory<Service>())),
-      impl_(service_.null())
+    : basic_io_object<Service>(io_service)
   {
   }
 
@@ -107,10 +98,9 @@ public:
    */
   basic_socket_acceptor(io_service_type& io_service,
       const protocol_type& protocol)
-    : service_(io_service.get_service(service_factory<Service>())),
-      impl_(service_.null())
+    : basic_io_object<Service>(io_service)
   {
-    service_.open(impl_, protocol, throw_error());
+    this->service.open(this->implementation, protocol, throw_error());
   }
 
   /// Construct an acceptor opened on the given endpoint.
@@ -132,7 +122,7 @@ public:
    *
    * @note This constructor is equivalent to the following code:
    * @code
-   * asio::socket_acceptor acceptor(io_service);
+   * asio::ipv4::tcp::acceptor acceptor(io_service);
    * acceptor.open(endpoint.protocol());
    * acceptor.bind(endpoint);
    * acceptor.listen(listen_backlog);
@@ -140,51 +130,31 @@ public:
    */
   basic_socket_acceptor(io_service_type& io_service,
       const endpoint_type& endpoint, int listen_backlog = 0)
-    : service_(io_service.get_service(service_factory<Service>())),
-      impl_(service_.null())
+    : basic_io_object<Service>(io_service)
   {
-    service_.open(impl_, endpoint.protocol(), throw_error());
-    close_on_block_exit auto_close(service_, impl_);
-    service_.bind(impl_, endpoint, throw_error());
-    service_.listen(impl_, listen_backlog, throw_error());
-    auto_close.cancel();
+    this->service.open(this->implementation, endpoint.protocol(),
+        throw_error());
+    this->service.bind(this->implementation, endpoint, throw_error());
+    this->service.listen(this->implementation, listen_backlog, throw_error());
   }
 
-  /// Construct a basic_socket_acceptor on an existing implementation.
+  /// Construct a basic_socket_acceptor on an existing native acceptor.
   /**
-   * This constructor creates an acceptor to hold an existing implementation.
+   * This constructor creates an acceptor object to hold an existing native
+   * acceptor.
    *
    * @param io_service The io_service object that the acceptor will use to
    * dispatch handlers for any asynchronous operations performed on the socket.
    *
-   * @param impl The new underlying acceptor implementation.
+   * @param native_acceptor A native acceptor.
    *
    * @throws asio::error Thrown on failure.
    */
-  basic_socket_acceptor(io_service_type& io_service, impl_type impl)
-    : service_(io_service.get_service(service_factory<Service>())),
-      impl_(impl)
+  basic_socket_acceptor(io_service_type& io_service,
+      const native_type& native_acceptor)
+    : basic_io_object<Service>(io_service)
   {
-    service_.assign(impl_, impl);
-  }
-
-  /// Destructor.
-  ~basic_socket_acceptor()
-  {
-    service_.close(impl_, ignore_error());
-  }
-
-  /// Get the io_service associated with the object.
-  /**
-   * This function may be used to obtain the io_service object that the acceptor
-   * uses to dispatch handlers for asynchronous operations.
-   *
-   * @return A reference to the io_service object that the acceptor will use to
-   * dispatch handlers. Ownership is not transferred to the caller.
-   */
-  io_service_type& io_service()
-  {
-    return service_.io_service();
+    this->service.open(this->implementation, native_acceptor, throw_error());
   }
 
   /// Open the acceptor using the specified protocol.
@@ -196,13 +166,13 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(io_service);
+   * asio::ipv4::tcp::acceptor acceptor(io_service);
    * acceptor.open(asio::ipv4::tcp());
    * @endcode
    */
   void open(const protocol_type& protocol = protocol_type())
   {
-    service_.open(impl_, protocol, throw_error());
+    this->service.open(this->implementation, protocol, throw_error());
   }
 
   /// Open the acceptor using the specified protocol.
@@ -221,7 +191,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(io_service);
+   * asio::ipv4::tcp::acceptor acceptor(io_service);
    * asio::error error;
    * acceptor.open(asio::ipv4::tcp(), asio::assign_error(error));
    * if (error)
@@ -233,27 +203,27 @@ public:
   template <typename Error_Handler>
   void open(const protocol_type& protocol, Error_Handler error_handler)
   {
-    service_.open(impl_, protocol, error_handler);
+    this->service.open(this->implementation, protocol, error_handler);
   }
 
-  /// Open an acceptor on an existing implementation.
+  /// Open an acceptor on an existing native acceptor.
   /*
-   * This function opens the acceptor on an existing implementation.
+   * This function opens the acceptor to hold an existing native acceptor.
    *
-   * @param impl The new underlying acceptor implementation.
+   * @param native_acceptor A native acceptor.
    *
    * @throws asio::error Thrown on failure.
    */
-  void open(impl_type impl)
+  void open(const native_type& native_acceptor)
   {
-    service_.open(impl_, impl, throw_error());
+    this->service.open(this->implementation, native_acceptor, throw_error());
   }
 
-  /// Open an acceptor on an existing implementation.
+  /// Open an acceptor on an existing native acceptor.
   /*
-   * This function opens the acceptor on an existing implementation.
+   * This function opens the acceptor to hold an existing native acceptor.
    *
-   * @param impl The new underlying acceptor implementation.
+   * @param native_acceptor A native acceptor.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The function signature of the
@@ -263,9 +233,9 @@ public:
    * ); @endcode
    */
   template <typename Error_Handler>
-  void open(impl_type impl, Error_Handler error_handler)
+  void open(const native_type& native_acceptor, Error_Handler error_handler)
   {
-    service_.open(impl_, impl, error_handler);
+    this->service.open(this->implementation, native_acceptor, error_handler);
   }
 
   /// Bind the acceptor to the given local endpoint.
@@ -280,14 +250,14 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(io_service);
+   * asio::ipv4::tcp::acceptor acceptor(io_service);
    * acceptor.open(asio::ipv4::tcp());
    * acceptor.bind(asio::ipv4::tcp::endpoint(12345));
    * @endcode
    */
   void bind(const endpoint_type& endpoint)
   {
-    service_.bind(impl_, endpoint, throw_error());
+    this->service.bind(this->implementation, endpoint, throw_error());
   }
 
   /// Bind the acceptor to the given local endpoint.
@@ -307,7 +277,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(io_service);
+   * asio::ipv4::tcp::acceptor acceptor(io_service);
    * acceptor.open(asio::ipv4::tcp());
    * asio::error error;
    * acceptor.bind(asio::ipv4::tcp::endpoint(12345),
@@ -321,7 +291,7 @@ public:
   template <typename Error_Handler>
   void bind(const endpoint_type& endpoint, Error_Handler error_handler)
   {
-    service_.bind(impl_, endpoint, error_handler);
+    this->service.bind(this->implementation, endpoint, error_handler);
   }
 
   /// Place the acceptor into the state where it will listen for new
@@ -335,7 +305,7 @@ public:
    */
   void listen(int backlog = 0)
   {
-    service_.listen(impl_, backlog, throw_error());
+    this->service.listen(this->implementation, backlog, throw_error());
   }
 
   /// Place the acceptor into the state where it will listen for new
@@ -356,7 +326,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(io_service);
+   * asio::ipv4::tcp::acceptor acceptor(io_service);
    * ...
    * asio::error error;
    * acceptor.listen(0, asio::assign_error(error));
@@ -369,7 +339,7 @@ public:
   template <typename Error_Handler>
   void listen(int backlog, Error_Handler error_handler)
   {
-    service_.listen(impl_, backlog, error_handler);
+    this->service.listen(this->implementation, backlog, error_handler);
   }
 
   /// Close the acceptor.
@@ -384,7 +354,7 @@ public:
    */
   void close()
   {
-    service_.close(impl_, throw_error());
+    this->service.close(this->implementation, throw_error());
   }
 
   /// Close the acceptor.
@@ -404,7 +374,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(io_service);
+   * asio::ipv4::tcp::acceptor acceptor(io_service);
    * ...
    * asio::error error;
    * acceptor.close(asio::assign_error(error));
@@ -417,18 +387,18 @@ public:
   template <typename Error_Handler>
   void close(Error_Handler error_handler)
   {
-    service_.close(impl_, error_handler);
+    this->service.close(this->implementation, error_handler);
   }
 
-  /// Get the underlying implementation in the native type.
+  /// Get the native acceptor representation.
   /**
-   * This function may be used to obtain the underlying implementation of the
-   * socket acceptor. This is intended to allow access to native socket
-   * functionality that is not otherwise provided.
+   * This function may be used to obtain the underlying representation of the
+   * acceptor. This is intended to allow access to native acceptor functionality
+   * that is not otherwise provided.
    */
-  impl_type impl()
+  native_type native()
   {
-    return impl_;
+    return this->service.native(this->implementation);
   }
 
   /// Set an option on the acceptor.
@@ -445,16 +415,16 @@ public:
    * @par Example:
    * Setting the SOL_SOCKET/SO_REUSEADDR option:
    * @code
-   * asio::socket_acceptor acceptor(io_service);
+   * asio::ipv4::tcp::acceptor acceptor(io_service);
    * ...
-   * asio::socket_acceptor::reuse_address option(true);
+   * asio::ipv4::tcp::acceptor::reuse_address option(true);
    * acceptor.set_option(option);
    * @endcode
    */
   template <typename Option>
   void set_option(const Option& option)
   {
-    service_.set_option(impl_, option, throw_error());
+    this->service.set_option(this->implementation, option, throw_error());
   }
 
   /// Set an option on the acceptor.
@@ -476,9 +446,9 @@ public:
    * @par Example:
    * Setting the SOL_SOCKET/SO_REUSEADDR option:
    * @code
-   * asio::socket_acceptor acceptor(io_service);
+   * asio::ipv4::tcp::acceptor acceptor(io_service);
    * ...
-   * asio::socket_acceptor::reuse_address option(true);
+   * asio::ipv4::tcp::acceptor::reuse_address option(true);
    * asio::error error;
    * acceptor.set_option(option, asio::assign_error(error));
    * if (error)
@@ -490,7 +460,7 @@ public:
   template <typename Option, typename Error_Handler>
   void set_option(const Option& option, Error_Handler error_handler)
   {
-    service_.set_option(impl_, option, error_handler);
+    this->service.set_option(this->implementation, option, error_handler);
   }
 
   /// Get an option from the acceptor.
@@ -508,9 +478,9 @@ public:
    * @par Example:
    * Getting the value of the SOL_SOCKET/SO_REUSEADDR option:
    * @code
-   * asio::socket_acceptor acceptor(io_service);
+   * asio::ipv4::tcp::acceptor acceptor(io_service);
    * ...
-   * asio::socket_acceptor::reuse_address option;
+   * asio::ipv4::tcp::acceptor::reuse_address option;
    * acceptor.get_option(option);
    * bool is_set = option.get();
    * @endcode
@@ -518,7 +488,7 @@ public:
   template <typename Option>
   void get_option(Option& option)
   {
-    service_.get_option(impl_, option, throw_error());
+    this->service.get_option(this->implementation, option, throw_error());
   }
 
   /// Get an option from the acceptor.
@@ -541,9 +511,9 @@ public:
    * @par Example:
    * Getting the value of the SOL_SOCKET/SO_REUSEADDR option:
    * @code
-   * asio::socket_acceptor acceptor(io_service);
+   * asio::ipv4::tcp::acceptor acceptor(io_service);
    * ...
-   * asio::socket_acceptor::reuse_address option;
+   * asio::ipv4::tcp::acceptor::reuse_address option;
    * asio::error error;
    * acceptor.get_option(option, asio::assign_error(error));
    * if (error)
@@ -556,39 +526,32 @@ public:
   template <typename Option, typename Error_Handler>
   void get_option(Option& option, Error_Handler error_handler)
   {
-    service_.get_option(impl_, option, error_handler);
+    this->service.get_option(this->implementation, option, error_handler);
   }
 
   /// Get the local endpoint of the acceptor.
   /**
-   * This function is used to obtain the locally bound endpoint of the
-   * acceptor.
+   * This function is used to obtain the locally bound endpoint of the acceptor.
    *
-   * @param endpoint An endpoint object that receives the local endpoint of the
-   * acceptor.
+   * @returns An object that represents the local endpoint of the acceptor.
    *
    * @throws asio::error Thrown on failure.
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(io_service);
+   * asio::ipv4::tcp::acceptor acceptor(io_service);
    * ...
-   * asio::ipv4::tcp::endpoint endpoint;
-   * acceptor.get_local_endpoint(endpoint);
+   * asio::ipv4::tcp::endpoint endpoint = acceptor.local_endpoint();
    * @endcode
    */
-  void get_local_endpoint(endpoint_type& endpoint) const
+  endpoint_type local_endpoint() const
   {
-    service_.get_local_endpoint(impl_, endpoint, throw_error());
+    return this->service.local_endpoint(this->implementation, throw_error());
   }
 
   /// Get the local endpoint of the acceptor.
   /**
-   * This function is used to obtain the locally bound endpoint of the
-   * acceptor.
-   *
-   * @param endpoint An endpoint object that receives the local endpoint of the
-   * acceptor.
+   * This function is used to obtain the locally bound endpoint of the acceptor.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The function signature of the
@@ -597,13 +560,17 @@ public:
    *   const asio::error& error // Result of operation
    * ); @endcode
    *
+   * @returns An object that represents the local endpoint of the acceptor.
+   * Returns a default-constructed endpoint object if an error occurred and the
+   * error handler did not throw an exception.
+   *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(io_service);
+   * asio::ipv4::tcp::acceptor acceptor(io_service);
    * ...
-   * asio::ipv4::tcp::endpoint endpoint;
    * asio::error error;
-   * acceptor.get_local_endpoint(endpoint, asio::assign_error(error));
+   * asio::ipv4::tcp::endpoint endpoint
+   *   = acceptor.local_endpoint(asio::assign_error(error));
    * if (error)
    * {
    *   // An error occurred.
@@ -611,10 +578,9 @@ public:
    * @endcode
    */
   template <typename Error_Handler>
-  void get_local_endpoint(endpoint_type& endpoint,
-      Error_Handler error_handler) const
+  endpoint_type local_endpoint(Error_Handler error_handler) const
   {
-    service_.get_local_endpoint(impl_, endpoint, error_handler);
+    return this->service.local_endpoint(this->implementation, error_handler);
   }
 
   /// Accept a new connection.
@@ -629,15 +595,16 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(io_service);
+   * asio::ipv4::tcp::acceptor acceptor(io_service);
    * ...
    * asio::stream_socket socket;
    * acceptor.accept(socket);
    * @endcode
    */
-  void accept(socket_type& peer)
+  template <typename Socket_Service>
+  void accept(basic_socket<Socket_Service>& peer)
   {
-    service_.accept(impl_, peer, throw_error());
+    this->service.accept(this->implementation, peer, throw_error());
   }
 
   /// Accept a new connection.
@@ -657,7 +624,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(io_service);
+   * asio::ipv4::tcp::acceptor acceptor(io_service);
    * ...
    * asio::stream_socket socket;
    * asio::error error;
@@ -668,10 +635,10 @@ public:
    * }
    * @endcode
    */
-  template <typename Error_Handler>
-  void accept(socket_type& peer, Error_Handler error_handler)
+  template <typename Socket_Service, typename Error_Handler>
+  void accept(basic_socket<Socket_Service>& peer, Error_Handler error_handler)
   {
-    service_.accept(impl_, peer, error_handler);
+    this->service.accept(this->implementation, peer, error_handler);
   }
 
   /// Start an asynchronous accept.
@@ -706,16 +673,16 @@ public:
    *
    * ...
    *
-   * asio::socket_acceptor acceptor(io_service);
+   * asio::ipv4::tcp::acceptor acceptor(io_service);
    * ...
    * asio::stream_socket socket;
    * acceptor.async_accept(socket, accept_handler);
    * @endcode
    */
-  template <typename Handler>
-  void async_accept(socket_type& peer, Handler handler)
+  template <typename Socket_Service, typename Handler>
+  void async_accept(basic_socket<Socket_Service>& peer, Handler handler)
   {
-    service_.async_accept(impl_, peer, handler);
+    this->service.async_accept(this->implementation, peer, handler);
   }
 
   /// Accept a new connection and obtain the endpoint of the peer
@@ -734,16 +701,19 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(io_service);
+   * asio::ipv4::tcp::acceptor acceptor(io_service);
    * ...
    * asio::stream_socket socket;
    * asio::ipv4::tcp::endpoint endpoint;
    * acceptor.accept_endpoint(socket, endpoint);
    * @endcode
    */
-  void accept_endpoint(socket_type& peer, endpoint_type& peer_endpoint)
+  template <typename Socket_Service>
+  void accept_endpoint(basic_socket<Socket_Service>& peer,
+      endpoint_type& peer_endpoint)
   {
-    service_.accept_endpoint(impl_, peer, peer_endpoint, throw_error());
+    this->service.accept_endpoint(this->implementation, peer, peer_endpoint,
+        throw_error());
   }
 
   /// Accept a new connection and obtain the endpoint of the peer
@@ -767,7 +737,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::socket_acceptor acceptor(io_service);
+   * asio::ipv4::tcp::acceptor acceptor(io_service);
    * ...
    * asio::stream_socket socket;
    * asio::ipv4::tcp::endpoint endpoint;
@@ -780,11 +750,12 @@ public:
    * }
    * @endcode
    */
-  template <typename Error_Handler>
-  void accept_endpoint(socket_type& peer, endpoint_type& peer_endpoint,
-      Error_Handler error_handler)
+  template <typename Socket_Service, typename Error_Handler>
+  void accept_endpoint(basic_socket<Socket_Service>& peer,
+      endpoint_type& peer_endpoint, Error_Handler error_handler)
   {
-    service_.accept_endpoint(impl_, peer, peer_endpoint, error_handler);
+    this->service.accept_endpoint(this->implementation, peer, peer_endpoint,
+        error_handler);
   }
 
   /// Start an asynchronous accept.
@@ -813,46 +784,13 @@ public:
    * of the handler will be performed in a manner equivalent to using
    * asio::io_service::post().
    */
-  template <typename Handler>
-  void async_accept_endpoint(socket_type& peer, endpoint_type& peer_endpoint,
-      Handler handler)
+  template <typename Socket_Service, typename Handler>
+  void async_accept_endpoint(basic_socket<Socket_Service>& peer,
+      endpoint_type& peer_endpoint, Handler handler)
   {
-    service_.async_accept_endpoint(impl_, peer, peer_endpoint, handler);
+    this->service.async_accept_endpoint(this->implementation, peer,
+        peer_endpoint, handler);
   }
-
-private:
-  /// The backend service implementation.
-  service_type& service_;
-
-  /// The underlying native implementation.
-  impl_type impl_;
-
-  // Helper class to automatically close the implementation on block exit.
-  class close_on_block_exit
-  {
-  public:
-    close_on_block_exit(service_type& service, impl_type& impl)
-      : service_(&service), impl_(impl)
-    {
-    }
-
-    ~close_on_block_exit()
-    {
-      if (service_)
-      {
-        service_->close(impl_, ignore_error());
-      }
-    }
-
-    void cancel()
-    {
-      service_ = 0;
-    }
-
-  private:
-    service_type* service_;
-    impl_type& impl_;
-  };
 };
 
 } // namespace asio

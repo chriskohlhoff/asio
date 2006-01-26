@@ -84,7 +84,7 @@ public:
     typedef basic_stream_socket<socket_service> socket;
 
     /// The service type for IPv4 TCP acceptors.
-    typedef socket_acceptor_service<tcp, socket, Allocator> acceptor_service;
+    typedef socket_acceptor_service<tcp, Allocator> acceptor_service;
 
     /// The IPv4 TCP acceptor type.
     typedef basic_socket_acceptor<acceptor_service> acceptor;

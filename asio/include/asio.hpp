@@ -17,6 +17,7 @@
 
 #include "asio/basic_datagram_socket.hpp"
 #include "asio/basic_deadline_timer.hpp"
+#include "asio/basic_io_object.hpp"
 #include "asio/basic_io_service.hpp"
 #include "asio/basic_locking_dispatcher.hpp"
 #include "asio/basic_socket_acceptor.hpp"

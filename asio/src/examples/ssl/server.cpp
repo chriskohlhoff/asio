@@ -4,6 +4,8 @@
 #include "asio.hpp"
 #include "asio/ssl.hpp"
 
+typedef asio::ssl::stream<asio::ipv4::tcp::socket> ssl_socket;
+
 class session
 {
 public:
@@ -12,7 +14,7 @@ public:
   {
   }
 
-  asio::ipv4::tcp::socket& socket()
+  ssl_socket::lowest_layer_type& socket()
   {
     return socket_.lowest_layer();
   }
@@ -70,7 +72,7 @@ public:
   }
 
 private:
-  asio::ssl::stream<asio::ipv4::tcp::socket> socket_;
+  ssl_socket socket_;
   enum { max_length = 1024 };
   char data_[max_length];
 };

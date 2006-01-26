@@ -1,8 +1,10 @@
 nobase_include_HEADERS = \
 	asio/basic_datagram_socket.hpp \
 	asio/basic_deadline_timer.hpp \
+	asio/basic_io_object.hpp \
 	asio/basic_io_service.hpp \
 	asio/basic_locking_dispatcher.hpp \
+	asio/basic_socket.hpp \
 	asio/basic_socket_acceptor.hpp \
 	asio/basic_stream_socket.hpp \
 	asio/buffer.hpp \

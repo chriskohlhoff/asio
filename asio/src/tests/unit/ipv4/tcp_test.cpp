@@ -33,8 +33,7 @@ void ipv4_tcp_acceptor_test()
   io_service ios;
 
   ipv4::tcp::acceptor acceptor(ios, ipv4::tcp::endpoint(0));
-  ipv4::tcp::endpoint server_endpoint;
-  acceptor.get_local_endpoint(server_endpoint);
+  ipv4::tcp::endpoint server_endpoint = acceptor.local_endpoint();
   server_endpoint.address(ipv4::address::loopback());
 
   ipv4::tcp::socket client_side_socket(ios);
@@ -50,12 +49,12 @@ void ipv4_tcp_acceptor_test()
   ipv4::tcp::endpoint client_endpoint;
   acceptor.accept_endpoint(server_side_socket, client_endpoint);
 
-  ipv4::tcp::endpoint client_side_local_endpoint;
-  client_side_socket.get_local_endpoint(client_side_local_endpoint);
+  ipv4::tcp::endpoint client_side_local_endpoint
+    = client_side_socket.local_endpoint();
   BOOST_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
 
-  ipv4::tcp::endpoint server_side_remote_endpoint;
-  server_side_socket.get_remote_endpoint(server_side_remote_endpoint);
+  ipv4::tcp::endpoint server_side_remote_endpoint
+    = server_side_socket.remote_endpoint();
   BOOST_CHECK(server_side_remote_endpoint.port() == client_endpoint.port());
 
   client_side_socket.close();
@@ -76,10 +75,10 @@ void ipv4_tcp_acceptor_test()
   ios.reset();
   ios.run();
 
-  client_side_socket.get_local_endpoint(client_side_local_endpoint);
+  client_side_local_endpoint = client_side_socket.local_endpoint();
   BOOST_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
 
-  server_side_socket.get_remote_endpoint(server_side_remote_endpoint);
+  server_side_remote_endpoint = server_side_socket.remote_endpoint();
   BOOST_CHECK(server_side_remote_endpoint.port() == client_endpoint.port());
 }
 

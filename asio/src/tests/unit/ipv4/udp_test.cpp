@@ -39,8 +39,7 @@ void ipv4_udp_test()
   io_service ios;
 
   ipv4::udp::socket s1(ios, ipv4::udp::endpoint(0));
-  ipv4::udp::endpoint target_endpoint;
-  s1.get_local_endpoint(target_endpoint);
+  ipv4::udp::endpoint target_endpoint = s1.local_endpoint();
   target_endpoint.address(ipv4::address::loopback());
 
   ipv4::udp::socket s2(ios);
