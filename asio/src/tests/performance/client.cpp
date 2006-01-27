@@ -232,7 +232,7 @@ int main(int argc, char* argv[])
 
     ipv4::host_resolver hr(ios);
     ipv4::host h;
-    hr.get_host_by_name(h, host);
+    hr.by_name(h, host);
     ipv4::tcp::endpoint ep(port, h.address(0));
 
     client c(ios, ep, block_size, session_count, timeout);

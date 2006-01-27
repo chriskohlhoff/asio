@@ -31,12 +31,12 @@ void handle_connect(const error& err)
   BOOST_CHECK(!err);
 }
 
-void handle_get_host_by_address(const error& err)
+void handle_by_address(const error& err)
 {
   BOOST_CHECK(!err);
 }
 
-void handle_get_host_by_name(const error& err)
+void handle_by_name(const error& err)
 {
   BOOST_CHECK(!err);
 }
@@ -93,34 +93,33 @@ void ipv4_host_resolver_test()
   ipv4::host_resolver resolver(ios);
 
   ipv4::host h1;
-  resolver.get_local_host(h1);
+  resolver.local(h1);
 
   ipv4::host h2;
-  resolver.get_local_host(h2, throw_error());
+  resolver.local(h2, throw_error());
 
   BOOST_CHECK(test_if_hosts_equal(h1, h2));
 
   ipv4::host h3;
-  resolver.get_host_by_address(h3, h1.address(0));
+  resolver.by_address(h3, h1.address(0));
 
   ipv4::host h4;
-  resolver.get_host_by_address(h4, h1.address(0), throw_error());
+  resolver.by_address(h4, h1.address(0), throw_error());
 
   BOOST_CHECK(test_if_hosts_equal(h3, h4));
   BOOST_CHECK(test_if_addresses_intersect(h1, h3));
 
   ipv4::host h5;
-  resolver.get_host_by_name(h5, h1.name());
+  resolver.by_name(h5, h1.name());
 
   ipv4::host h6;
-  resolver.get_host_by_name(h6, h1.name(), throw_error());
+  resolver.by_name(h6, h1.name(), throw_error());
 
   BOOST_CHECK(test_if_hosts_equal(h5, h6));
   BOOST_CHECK(test_if_addresses_intersect(h1, h5));
 
   ipv4::host h7;
-  resolver.async_get_host_by_address(h7, h1.address(0),
-      handle_get_host_by_address);
+  resolver.async_by_address(h7, h1.address(0), handle_by_address);
   ios.reset();
   ios.run();
 
@@ -128,7 +127,7 @@ void ipv4_host_resolver_test()
   BOOST_CHECK(test_if_addresses_intersect(h1, h7));
 
   ipv4::host h8;
-  resolver.async_get_host_by_name(h8, h1.name(), handle_get_host_by_name);
+  resolver.async_by_name(h8, h1.name(), handle_by_name);
   ios.reset();
   ios.run();
 

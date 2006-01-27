@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 
     asio::ipv4::host_resolver hr(io_service);
     asio::ipv4::host h;
-    hr.get_host_by_name(h, argv[1]);
+    hr.by_name(h, argv[1]);
     asio::ipv4::udp::endpoint receiver_endpoint(
         atoi(argv[2]), h.address(0));
 

@@ -18,17 +18,13 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
-#include <cstring>
 #include <memory>
-#include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/basic_io_service.hpp"
-#include "asio/error.hpp"
-#include "asio/ipv4/detail/host_resolver_service.hpp"
-#include "asio/detail/socket_ops.hpp"
-#include "asio/detail/socket_types.hpp"
 #include "asio/ipv4/host.hpp"
+#include "asio/ipv4/detail/host_resolver_service.hpp"
+#include "asio/detail/noncopyable.hpp"
 
 namespace asio {
 namespace ipv4 {
@@ -36,7 +32,7 @@ namespace ipv4 {
 /// Default service implementation for a host resolver.
 template <typename Allocator = std::allocator<void> >
 class host_resolver_service
-  : private boost::noncopyable
+  : private noncopyable
 {
 public:
   /// The io_service type.
@@ -49,9 +45,9 @@ private:
 public:
   /// The type of the host resolver.
 #if defined(GENERATING_DOCUMENTATION)
-  typedef implementation_defined impl_type;
+  typedef implementation_defined implementation_type;
 #else
-  typedef typename service_impl_type::impl_type impl_type;
+  typedef typename service_impl_type::implementation_type implementation_type;
 #endif
 
   /// Constructor.
@@ -67,61 +63,61 @@ public:
     return service_impl_.io_service();
   }
 
-  /// Return a null host resolver implementation.
-  impl_type null() const
+  /// Construct a new host resolver implementation.
+  void construct(implementation_type& impl)
   {
-    return service_impl_.null();
+    service_impl_.construct(impl);
   }
 
-  /// Open a new host resolver implementation.
-  void open(impl_type& impl)
+  /// Destroy a host resolver implementation.
+  void destroy(implementation_type& impl)
   {
-    service_impl_.open(impl);
+    service_impl_.destroy(impl);
   }
 
-  /// Close a host resolver implementation.
-  void close(impl_type& impl)
+  /// Cancel pending asynchronous operations.
+  void cancel(implementation_type& impl)
   {
-    service_impl_.close(impl);
+    service_impl_.cancel(impl);
   }
 
   /// Get host information for the local machine.
   template <typename Error_Handler>
-  void get_local_host(impl_type& impl, host& h, Error_Handler error_handler)
+  void local(implementation_type& impl, host& h, Error_Handler error_handler)
   {
-    service_impl_.get_local_host(impl, h, error_handler);
+    service_impl_.local(impl, h, error_handler);
   }
 
   /// Get host information for a specified address.
   template <typename Error_Handler>
-  void get_host_by_address(impl_type& impl, host& h, const address& addr,
+  void by_address(implementation_type& impl, host& h, const address& addr,
       Error_Handler error_handler)
   {
-    service_impl_.get_host_by_address(impl, h, addr, error_handler);
+    service_impl_.by_address(impl, h, addr, error_handler);
   }
 
   // Asynchronously get host information for a specified address.
   template <typename Handler>
-  void async_get_host_by_address(impl_type& impl, host& h, const address& addr,
+  void async_by_address(implementation_type& impl, host& h, const address& addr,
       Handler handler)
   {
-    service_impl_.async_get_host_by_address(impl, h, addr, handler);
+    service_impl_.async_by_address(impl, h, addr, handler);
   }
 
   /// Get host information for a named host.
   template <typename Error_Handler>
-  void get_host_by_name(impl_type& impl, host& h, const std::string& name,
+  void by_name(implementation_type& impl, host& h, const std::string& name,
       Error_Handler error_handler)
   {
-    service_impl_.get_host_by_name(impl, h, name, error_handler);
+    service_impl_.by_name(impl, h, name, error_handler);
   }
 
   // Asynchronously get host information for a named host.
   template <typename Handler>
-  void async_get_host_by_name(impl_type& impl, host& h, const std::string& name,
-      Handler handler)
+  void async_by_name(implementation_type& impl, host& h,
+      const std::string& name, Handler handler)
   {
-    service_impl_.async_get_host_by_name(impl, h, name, handler);
+    service_impl_.async_by_name(impl, h, name, handler);
   }
 
 private:

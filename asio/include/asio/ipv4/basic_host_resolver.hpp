@@ -19,12 +19,11 @@
 
 #include "asio/detail/push_options.hpp"
 #include <string>
-#include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/basic_io_object.hpp"
 #include "asio/error.hpp"
 #include "asio/error_handler.hpp"
-#include "asio/service_factory.hpp"
 #include "asio/ipv4/address.hpp"
 #include "asio/ipv4/host.hpp"
 
@@ -47,18 +46,11 @@ namespace ipv4 {
  */
 template <typename Service>
 class basic_host_resolver
-  : private boost::noncopyable
+  : public basic_io_object<Service>
 {
 public:
-  /// The type of the service that will be used to provide host resolution
-  /// operations.
-  typedef Service service_type;
-
-  /// The native implementation type of the host resolver.
-  typedef typename service_type::impl_type impl_type;
-
-  /// The io_service type for this type.
-  typedef typename service_type::io_service_type io_service_type;
+  /// The io_service type for this I/O object.
+  typedef typename Service::io_service_type io_service_type;
 
   /// The type used for reporting errors.
   typedef asio::error error_type;
@@ -71,45 +63,19 @@ public:
    * dispatch handlers for any asynchronous operations.
    */
   explicit basic_host_resolver(io_service_type& io_service)
-    : service_(io_service.get_service(service_factory<Service>())),
-      impl_(service_.null())
+    : basic_io_object<Service>(io_service)
   {
-    service_.open(impl_);
   }
 
-  /// Destructor.
-  ~basic_host_resolver()
-  {
-    service_.close(impl_);
-  }
-
-  /// Get the io_service associated with the object.
+  /// Cancel any asynchronous operations on the host resolver.
   /**
-   * This function may be used to obtain the io_service object that the host
-   * resolver uses to dispatch handlers for asynchronous operations.
-   *
-   * @return A reference to the io_service object that host resolver will use to
-   * dispatch handlers. Ownership is not transferred to the caller.
+   * This function forces the completion of any pending asynchronous
+   * operations on the host resolver. The handler for each cancelled operation
+   * will be invoked with the asio::error::operation_aborted error code.
    */
-  io_service_type& io_service()
+  void cancel()
   {
-    return service_.io_service();
-  }
-
-  /// Open the host resolver.
-  void open()
-  {
-    service_.open(impl_);
-  }
-
-  /// Close the host resolver.
-  /**
-   * This function is used to close the host resolver. Any asynchronous
-   * operations will be cancelled immediately.
-   */
-  void close()
-  {
-    service_.close(impl_);
+    this->service.cancel(this->implementation);
   }
 
   /// Get host information for the local machine.
@@ -125,14 +91,14 @@ public:
    * asio::ipv4::host_resolver resolver(io_service);
    * ...
    * asio::ipv4::host host;
-   * resolver.get_local_host(host);
+   * resolver.local(host);
    * std::cout << "Name: " << host.name();
    * std::cout << "Address: " << host.addresses(0);
    * @endcode
    */
-  void get_local_host(host& h)
+  void local(host& h)
   {
-    service_.get_local_host(impl_, h, throw_error());
+    this->service.local(this->implementation, h, throw_error());
   }
 
   /// Get host information for the local machine.
@@ -144,8 +110,8 @@ public:
    * object is guaranteed to contain at least one address.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * will be made of the handler as required. The function signature of the
+   * handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -156,7 +122,7 @@ public:
    * ...
    * asio::ipv4::host host;
    * asio::error error;
-   * resolver.get_local_host(host, asio::assign_error(error));
+   * resolver.local(host, asio::assign_error(error));
    * if (error)
    * {
    *   // An error occurred.
@@ -164,9 +130,9 @@ public:
    * @endcode
    */
   template <typename Error_Handler>
-  void get_local_host(host& h, Error_Handler error_handler)
+  void local(host& h, Error_Handler error_handler)
   {
-    service_.get_local_host(impl_, h, error_handler);
+    this->service.local(this->implementation, h, error_handler);
   }
 
   /// Get host information for a specified address.
@@ -188,13 +154,13 @@ public:
    * ...
    * asio::ipv4::host host;
    * asio::ipv4::address address("1.2.3.4");
-   * resolver.get_host_by_address(host, address);
+   * resolver.by_address(host, address);
    * std::cout << "Name: " << host.name();
    * @endcode
    */
-  void get_host_by_address(host& h, const address& addr)
+  void by_address(host& h, const address& addr)
   {
-    service_.get_host_by_address(impl_, h, addr, throw_error());
+    this->service.by_address(this->implementation, h, addr, throw_error());
   }
 
   /// Get host information for a specified address.
@@ -209,8 +175,8 @@ public:
    * @param addr An address object that identifies a host.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * will be made of the handler as required. The function signature of the
+   * handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -222,7 +188,7 @@ public:
    * asio::ipv4::host host;
    * asio::ipv4::address address("1.2.3.4");
    * asio::error error;
-   * resolver.get_host_by_address(host, address,
+   * resolver.by_address(host, address,
    *     asio::assign_error(error));
    * if (error)
    * {
@@ -232,10 +198,10 @@ public:
    * @endcode
    */
   template <typename Error_Handler>
-  void get_host_by_address(host& h, const address& addr,
+  void by_address(host& h, const address& addr,
       Error_Handler error_handler)
   {
-    service_.get_host_by_address(impl_, h, addr, error_handler);
+    this->service.by_address(this->implementation, h, addr, error_handler);
   }
 
   /// Asynchronously get host information for a specified address.
@@ -253,16 +219,16 @@ public:
    * of the address object as required.
    *
    * @param handler The handler to be called when the resolve operation
-   * completes. Copies will be made of the handler as required. The equivalent
-   * function signature of the handler must be:
+   * completes. Copies will be made of the handler as required. The function
+   * signature of the handler must be:
    * @code void handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Handler>
-  void async_get_host_by_address(host& h, const address& addr, Handler handler)
+  void async_by_address(host& h, const address& addr, Handler handler)
   {
-    service_.async_get_host_by_address(impl_, h, addr, handler);
+    this->service.async_by_address(this->implementation, h, addr, handler);
   }
 
   /// Get host information for a named host.
@@ -283,13 +249,13 @@ public:
    * ...
    * asio::ipv4::host host;
    * std::string name("myhost");
-   * resolver.get_host_by_name(host, name);
+   * resolver.by_name(host, name);
    * std::cout << "Address: " << host.addresses(0);
    * @endcode
    */
-  void get_host_by_name(host& h, const std::string& name)
+  void by_name(host& h, const std::string& name)
   {
-    service_.get_host_by_name(impl_, h, name, throw_error());
+    this->service.by_name(this->implementation, h, name, throw_error());
   }
 
   /// Get host information for a named host.
@@ -303,8 +269,8 @@ public:
    * @param name A name that identifies a host.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * will be made of the handler as required. The function signature of the
+   * handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -316,7 +282,7 @@ public:
    * asio::ipv4::host host;
    * std::string name("myhost");
    * asio::error error;
-   * resolver.get_host_by_name(host, name, asio::assign_error(error));
+   * resolver.by_name(host, name, asio::assign_error(error));
    * if (error)
    * {
    *   // An error occurred.
@@ -325,10 +291,10 @@ public:
    * @endcode
    */
   template <typename Error_Handler>
-  void get_host_by_name(host& h, const std::string& name,
+  void by_name(host& h, const std::string& name,
       Error_Handler error_handler)
   {
-    service_.get_host_by_name(impl_, h, name, error_handler);
+    this->service.by_name(this->implementation, h, name, error_handler);
   }
 
   /// Asynchronously get host information for a named host.
@@ -346,24 +312,17 @@ public:
    * as required.
    *
    * @param handler The handler to be called when the resolve operation
-   * completes. Copies will be made of the handler as required. The equivalent
-   * function signature of the handler must be:
+   * completes. Copies will be made of the handler as required. The function
+   * signature of the handler must be:
    * @code void handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
    */
   template <typename Handler>
-  void async_get_host_by_name(host& h, const std::string& name, Handler handler)
+  void async_by_name(host& h, const std::string& name, Handler handler)
   {
-    service_.async_get_host_by_name(impl_, h, name, handler);
+    this->service.async_by_name(this->implementation, h, name, handler);
   }
-
-private:
-  /// The backend service implementation.
-  service_type& service_;
-
-  /// The underlying native implementation.
-  impl_type impl_;
 };
 
 } // namespace ipv4

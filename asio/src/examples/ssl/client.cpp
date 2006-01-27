@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
     using namespace std; // For atoi.
     asio::ipv4::host_resolver hr(io_service);
     asio::ipv4::host h;
-    hr.get_host_by_name(h, argv[1]);
+    hr.by_name(h, argv[1]);
     asio::ipv4::tcp::endpoint ep(atoi(argv[2]), h.address(0));
 
     asio::ssl::context ctx(io_service, asio::ssl::context::sslv23);

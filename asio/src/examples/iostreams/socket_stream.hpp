@@ -19,7 +19,7 @@ public:
   {
     asio::ipv4::host_resolver host_resolver(*io_service_);
     asio::ipv4::host host;
-    host_resolver.get_host_by_name(host, hostname);
+    host_resolver.by_name(host, hostname);
     asio::ipv4::tcp::endpoint endpoint(port, host.address(0));
     socket_->connect(endpoint);
   }
