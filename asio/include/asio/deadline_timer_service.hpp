@@ -75,9 +75,9 @@ private:
 public:
   /// The native type of the deadline timer.
 #if defined(GENERATING_DOCUMENTATION)
-  typedef implementation_defined impl_type;
+  typedef implementation_defined implementation_type;
 #else
-  typedef typename service_impl_type::impl_type impl_type;
+  typedef typename service_impl_type::implementation_type implementation_type;
 #endif
 
   /// Construct a new timer service for the specified io_service.
@@ -94,56 +94,58 @@ public:
   }
 
   /// Construct a new timer implementation.
-  void construct(impl_type& impl)
+  void construct(implementation_type& impl)
   {
     service_impl_.construct(impl);
   }
 
   /// Destroy a timer implementation.
-  void destroy(impl_type& impl)
+  void destroy(implementation_type& impl)
   {
     service_impl_.destroy(impl);
   }
 
+  /// Cancel any asynchronous wait operations associated with the timer.
+  std::size_t cancel(implementation_type& impl)
+  {
+    return service_impl_.cancel(impl);
+  }
+
   /// Get the expiry time for the timer as an absolute time.
-  time_type expires_at(const impl_type& impl) const
+  time_type expires_at(const implementation_type& impl) const
   {
     return service_impl_.expires_at(impl);
   }
 
   /// Set the expiry time for the timer as an absolute time.
-  void expires_at(impl_type& impl, const time_type& expiry_time)
+  std::size_t expires_at(implementation_type& impl,
+      const time_type& expiry_time)
   {
-    service_impl_.expires_at(impl, expiry_time);
+    return service_impl_.expires_at(impl, expiry_time);
   }
 
   /// Get the expiry time for the timer relative to now.
-  duration_type expires_from_now(const impl_type& impl) const
+  duration_type expires_from_now(const implementation_type& impl) const
   {
     return service_impl_.expires_from_now(impl);
   }
 
   /// Set the expiry time for the timer relative to now.
-  void expires_from_now(impl_type& impl, const duration_type& expiry_time)
+  std::size_t expires_from_now(implementation_type& impl,
+      const duration_type& expiry_time)
   {
-    service_impl_.expires_from_now(impl, expiry_time);
-  }
-
-  /// Cancel any asynchronous wait operations associated with the timer.
-  std::size_t cancel(impl_type& impl)
-  {
-    return service_impl_.cancel(impl);
+    return service_impl_.expires_from_now(impl, expiry_time);
   }
 
   // Perform a blocking wait on the timer.
-  void wait(impl_type& impl)
+  void wait(implementation_type& impl)
   {
     service_impl_.wait(impl);
   }
 
   // Start an asynchronous wait on the timer.
   template <typename Handler>
-  void async_wait(impl_type& impl, Handler handler)
+  void async_wait(implementation_type& impl, Handler handler)
   {
     service_impl_.async_wait(impl, handler);
   }

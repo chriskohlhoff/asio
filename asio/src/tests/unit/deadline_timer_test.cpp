@@ -46,7 +46,7 @@ void increment_if_not_cancelled(int* count, const asio::error& e)
 
 void cancel_timer(asio::deadline_timer* t)
 {
-  int num_cancelled = t->cancel();
+  std::size_t num_cancelled = t->cancel();
   BOOST_CHECK(num_cancelled == 1);
 }
 

@@ -22,9 +22,8 @@
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/basic_io_object.hpp"
 #include "asio/error.hpp"
-#include "asio/service_factory.hpp"
-#include "asio/detail/noncopyable.hpp"
 
 namespace asio {
 
@@ -80,26 +79,20 @@ namespace asio {
  */
 template <typename Service>
 class basic_deadline_timer
-  : private noncopyable
+  : public basic_io_object<Service>
 {
 public:
-  /// The type of the service that will be used to provide timer operations.
-  typedef Service service_type;
-
-  /// The native implementation type of the timer.
-  typedef typename service_type::impl_type impl_type;
-
-  /// The io_service type for this type.
-  typedef typename service_type::io_service_type io_service_type;
+  /// The io_service type for this I/O object.
+  typedef typename Service::io_service_type io_service_type;
 
   /// The type used for reporting errors.
   typedef asio::error error_type;
 
   /// The time type.
-  typedef typename service_type::time_type time_type;
+  typedef typename Service::time_type time_type;
 
   /// The duration type.
-  typedef typename service_type::duration_type duration_type;
+  typedef typename Service::duration_type duration_type;
 
   /// Constructor.
   /**
@@ -111,9 +104,8 @@ public:
    * handlers for any asynchronous operations performed on the timer.
    */
   explicit basic_deadline_timer(io_service_type& io_service)
-    : service_(io_service.get_service(service_factory<Service>()))
+    : basic_io_object<Service>(io_service)
   {
-    service_.construct(impl_);
   }
 
   /// Constructor to set a particular expiry time as an absolute time.
@@ -128,12 +120,9 @@ public:
    */
   basic_deadline_timer(io_service_type& io_service,
       const time_type& expiry_time)
-    : service_(io_service.get_service(service_factory<Service>()))
+    : basic_io_object<Service>(io_service)
   {
-    service_.construct(impl_);
-    destroy_on_block_exit auto_destroy(service_, impl_);
-    service_.expires_at(impl_, expiry_time);
-    auto_destroy.cancel();
+    this->service.expires_at(this->implementation, expiry_time);
   }
 
   /// Constructor to set a particular expiry time relative to now.
@@ -148,42 +137,24 @@ public:
    */
   basic_deadline_timer(io_service_type& io_service,
       const duration_type& expiry_time)
-    : service_(io_service.get_service(service_factory<Service>()))
+    : basic_io_object<Service>(io_service)
   {
-    service_.construct(impl_);
-    destroy_on_block_exit auto_destroy(service_, impl_);
-    service_.expires_from_now(impl_, expiry_time);
-    auto_destroy.cancel();
+    this->service.expires_from_now(this->implementation, expiry_time);
   }
 
-  /// Destructor.
-  ~basic_deadline_timer()
-  {
-    service_.destroy(impl_);
-  }
-
-  /// Get the io_service associated with the object.
+  /// Cancel any asynchronous operations that are waiting on the timer.
   /**
-   * This function may be used to obtain the io_service object that the timer
-   * uses to dispatch handlers for asynchronous operations.
+   * This function forces the completion of any pending asynchronous wait
+   * operations against the timer. The handler for each cancelled operation will
+   * be invoked with the asio::error::operation_aborted error code.
    *
-   * @return A reference to the io_service object that the timer will use to
-   * dispatch handlers. Ownership is not transferred to the caller.
+   * Cancelling the timer does not change the expiry time.
+   *
+   * @return The number of asynchronous operations that were cancelled.
    */
-  io_service_type& io_service()
+  std::size_t cancel()
   {
-    return service_.io_service();
-  }
-
-  /// Get the underlying implementation in the native type.
-  /**
-   * This function may be used to obtain the underlying implementation of the
-   * timer. This is intended to allow access to native timer functionality that
-   * is not otherwise provided.
-   */
-  impl_type impl()
-  {
-    return impl_;
+    return this->service.cancel(this->implementation);
   }
 
   /// Get the timer's expiry time as an absolute time.
@@ -193,23 +164,25 @@ public:
    */
   time_type expires_at() const
   {
-    return service_.expires_at(impl_);
+    return this->service.expires_at(this->implementation);
   }
 
   /// Set the timer's expiry time as an absolute time.
   /**
-   * This function sets the expiry time.
+   * This function sets the expiry time. Any pending asynchronous wait
+   * operations will be cancelled. The handler for each cancelled operation will
+   * be invoked with the asio::error::operation_aborted error code.
+   *
+   * See @ref deadline_timer_reset for more information on altering the expiry
+   * time of an active timer.
    *
    * @param expiry_time The expiry time to be used for the timer.
    *
-   * @note Modifying the expiry time of a timer while it is active (where
-   * active means there are asynchronous waits on the timer) has undefined
-   * behaviour. See @ref deadline_timer_reset for information on how to safely
-   * alter a timer's expiry in this case.
+   * @return The number of asynchronous operations that were cancelled.
    */
-  void expires_at(const time_type& expiry_time)
+  std::size_t expires_at(const time_type& expiry_time)
   {
-    service_.expires_at(impl_, expiry_time);
+    return this->service.expires_at(this->implementation, expiry_time);
   }
 
   /// Get the timer's expiry time relative to now.
@@ -219,38 +192,25 @@ public:
    */
   duration_type expires_from_now() const
   {
-    return service_.expires_from_now(impl_);
+    return this->service.expires_from_now(this->implementation);
   }
 
   /// Set the timer's expiry time relative to now.
   /**
-   * This function sets the expiry time.
+   * This function sets the expiry time. Any pending asynchronous wait
+   * operations will be cancelled. The handler for each cancelled operation will
+   * be invoked with the asio::error::operation_aborted error code.
+   *
+   * See @ref deadline_timer_reset for more information on altering the expiry
+   * time of an active timer.
    *
    * @param expiry_time The expiry time to be used for the timer.
    *
-   * @note Modifying the expiry time of a timer while it is active (where
-   * active means there are asynchronous waits on the timer) has undefined
-   * behaviour. See @ref deadline_timer_reset for information on how to safely
-   * alter a timer's expiry in this case.
-   */
-  void expires_from_now(const duration_type& expiry_time)
-  {
-    service_.expires_from_now(impl_, expiry_time);
-  }
-
-  /// Cancel any asynchronous operations that are waiting on the timer.
-  /**
-   * This function forces the completion of any pending asynchronous wait
-   * operations against the timer. The handler for each cancelled operation
-   * will be invoked with the asio::error::operation_aborted error code.
-   *
-   * Cancelling the timer does not change the expiry time.
-   *
    * @return The number of asynchronous operations that were cancelled.
    */
-  std::size_t cancel()
+  std::size_t expires_from_now(const duration_type& expiry_time)
   {
-    return service_.cancel(impl_);
+    return this->service.expires_from_now(this->implementation, expiry_time);
   }
 
   /// Perform a blocking wait on the timer.
@@ -262,7 +222,7 @@ public:
    */
   void wait()
   {
-    service_.wait(impl_);
+    this->service.wait(this->implementation);
   }
 
   /// Start an asynchronous wait on the timer.
@@ -292,69 +252,24 @@ public:
   template <typename Handler>
   void async_wait(Handler handler)
   {
-    service_.async_wait(impl_, handler);
+    this->service.async_wait(this->implementation, handler);
   }
-
-private:
-  /// The backend service implementation.
-  service_type& service_;
-
-  /// The underlying native implementation.
-  impl_type impl_;
-
-  // Helper class to automatically destroy the implementation on block exit.
-  class destroy_on_block_exit
-  {
-  public:
-    destroy_on_block_exit(service_type& service, impl_type& impl)
-      : service_(&service), impl_(impl)
-    {
-    }
-
-    ~destroy_on_block_exit()
-    {
-      if (service_)
-      {
-        service_->destroy(impl_);
-      }
-    }
-
-    void cancel()
-    {
-      service_ = 0;
-    }
-
-  private:
-    service_type* service_;
-    impl_type& impl_;
-  };
 };
 
 /**
  * @page deadline_timer_reset Changing an active deadline_timer's expiry time
  *
- * Changing the expiry time of a timer while there are asynchronous waits on it
- * has undefined behaviour. To safely change a timer's expiry, pending
- * asynchronous waits need to be cancelled first. This works as follows:
- *
- * @li The asio::basic_deadline_timer::cancel() function returns the
- * number of asynchronous waits that were cancelled. If it returns 0 then you
- * were too late and the wait handler has already been executed, or will soon be
- * executed. If it returns 1 then the wait handler was successfully cancelled.
- *
- * @li If a wait handler is cancelled, the asio::error passed to it
- * contains the value asio::error::operation_aborted.
- *
- * For example, to reset a timer's expiry time in response to some event you
- * would do something like this:
+ * Changing the expiry time of a timer while there are pending asynchronous
+ * waits causes those wait operations to be cancelled. To ensure that the action
+ * associated with the timer is performed only once, use something like this:
+ * used:
  *
  * @code
  * void on_some_event()
  * {
- *   if (my_timer.cancel() > 0)
+ *   if (my_timer.expires_from_now(seconds(5)) > 0)
  *   {
- *     // We managed to cancel the timer. Set new expiry time.
- *     my_timer.expires_from_now(seconds(5));
+ *     // We managed to cancel the timer. Start new asynchronous wait.
  *     my_timer.async_wait(on_timeout);
  *   }
  *   else
@@ -371,6 +286,15 @@ private:
  *   }
  * }
  * @endcode
+ *
+ * @li The asio::basic_deadline_timer::expires_from_now() function cancels any
+ * pending asynchronous waits, and returns the number of asynchronous waits that
+ * were cancelled. If it returns 0 then you were too late and the wait handler
+ * has already been executed, or will soon be executed. If it returns 1 then the
+ * wait handler was successfully cancelled.
+ *
+ * @li If a wait handler is cancelled, the asio::error passed to it
+ * contains the value asio::error::operation_aborted.
  *
  * @sa asio::basic_deadline_timer
  */

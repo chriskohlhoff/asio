@@ -39,10 +39,11 @@ class reactive_deadline_timer_service
 public:
   // The implementation type of the timer. This type is dependent on the
   // underlying implementation of the timer service.
-  struct impl_type
+  struct implementation_type
     : private noncopyable
   {
     boost::posix_time::ptime expiry;
+    bool might_have_pending_waits;
   };
 
   // The io_service type associated with this service.
@@ -68,49 +69,58 @@ public:
   }
 
   // Construct a new timer implementation.
-  void construct(impl_type& impl)
+  void construct(implementation_type& impl)
   {
     impl.expiry = boost::posix_time::ptime();
+    impl.might_have_pending_waits = false;
   }
 
   // Destroy a timer implementation.
-  void destroy(impl_type& impl)
+  void destroy(implementation_type& impl)
   {
-    // Nothing to do.
+    cancel(impl);
+  }
+
+  // Cancel any asynchronous wait operations associated with the timer.
+  std::size_t cancel(implementation_type& impl)
+  {
+    if (!impl.might_have_pending_waits)
+      return 0;
+    std::size_t count = reactor_.cancel_timer(&impl);
+    impl.might_have_pending_waits = false;
+    return count;
   }
 
   // Get the expiry time for the timer as an absolute time.
-  time_type expires_at(const impl_type& impl) const
+  time_type expires_at(const implementation_type& impl) const
   {
     return Time_Traits::from_utc(impl.expiry);
   }
 
   // Set the expiry time for the timer as an absolute time.
-  void expires_at(impl_type& impl, const time_type& expiry_time)
+  std::size_t expires_at(implementation_type& impl,
+      const time_type& expiry_time)
   {
+    std::size_t count = cancel(impl);
     impl.expiry = Time_Traits::to_utc(expiry_time);
+    return count;
   }
 
   // Get the expiry time for the timer relative to now.
-  duration_type expires_from_now(const impl_type& impl) const
+  duration_type expires_from_now(const implementation_type& impl) const
   {
     return Time_Traits::subtract(expires_at(impl), Time_Traits::now());
   }
 
   // Set the expiry time for the timer relative to now.
-  void expires_from_now(impl_type& impl, const duration_type& expiry_time)
+  std::size_t expires_from_now(implementation_type& impl,
+      const duration_type& expiry_time)
   {
-    expires_at(impl, Time_Traits::add(Time_Traits::now(), expiry_time));
-  }
-
-  // Cancel any asynchronous wait operations associated with the timer.
-  std::size_t cancel(impl_type& impl)
-  {
-    return reactor_.cancel_timer(&impl);
+    return expires_at(impl, Time_Traits::add(Time_Traits::now(), expiry_time));
   }
 
   // Perform a blocking wait on the timer.
-  void wait(impl_type& impl)
+  void wait(implementation_type& impl)
   {
     boost::posix_time::ptime now
       = boost::posix_time::microsec_clock::universal_time();
@@ -129,9 +139,8 @@ public:
   class wait_handler
   {
   public:
-    wait_handler(impl_type& impl, IO_Service& io_service, Handler handler)
-      : impl_(impl),
-        io_service_(io_service),
+    wait_handler(IO_Service& io_service, Handler handler)
+      : io_service_(io_service),
         work_(io_service),
         handler_(handler)
     {
@@ -144,7 +153,6 @@ public:
     }
 
   private:
-    impl_type& impl_;
     IO_Service& io_service_;
     typename IO_Service::work work_;
     Handler handler_;
@@ -152,10 +160,11 @@ public:
 
   // Start an asynchronous wait on the timer.
   template <typename Handler>
-  void async_wait(impl_type& impl, Handler handler)
+  void async_wait(implementation_type& impl, Handler handler)
   {
+    impl.might_have_pending_waits = true;
     reactor_.schedule_timer(impl.expiry,
-        wait_handler<Handler>(impl, io_service_, handler), &impl);
+        wait_handler<Handler>(io_service_, handler), &impl);
   }
 
 private:
