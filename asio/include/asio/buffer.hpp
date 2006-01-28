@@ -514,8 +514,8 @@ inline const_buffer_container_1 buffer(boost::array<const Pod_Type, N>& data,
  * @note The buffer is invalidated by any vector operation that would also
  * invalidate iterators.
  */
-template <typename Pod_Type>
-inline mutable_buffer_container_1 buffer(std::vector<Pod_Type>& data)
+template <typename Pod_Type, typename Allocator>
+inline mutable_buffer_container_1 buffer(std::vector<Pod_Type, Allocator>& data)
 {
   return mutable_buffer_container_1(
       mutable_buffer(&data[0], data.size() * sizeof(Pod_Type)));
@@ -526,8 +526,8 @@ inline mutable_buffer_container_1 buffer(std::vector<Pod_Type>& data)
  * @note The buffer is invalidated by any vector operation that would also
  * invalidate iterators.
  */
-template <typename Pod_Type>
-inline mutable_buffer_container_1 buffer(std::vector<Pod_Type>& data,
+template <typename Pod_Type, typename Allocator>
+inline mutable_buffer_container_1 buffer(std::vector<Pod_Type, Allocator>& data,
     std::size_t max_size_in_bytes)
 {
   return mutable_buffer_container_1(
@@ -541,8 +541,9 @@ inline mutable_buffer_container_1 buffer(std::vector<Pod_Type>& data,
  * @note The buffer is invalidated by any vector operation that would also
  * invalidate iterators.
  */
-template <typename Pod_Type>
-inline const_buffer_container_1 buffer(const std::vector<Pod_Type>& data)
+template <typename Pod_Type, typename Allocator>
+inline const_buffer_container_1 buffer(
+    const std::vector<Pod_Type, Allocator>& data)
 {
   return const_buffer_container_1(
       const_buffer(&data[0], data.size() * sizeof(Pod_Type)));
@@ -553,9 +554,9 @@ inline const_buffer_container_1 buffer(const std::vector<Pod_Type>& data)
  * @note The buffer is invalidated by any vector operation that would also
  * invalidate iterators.
  */
-template <typename Pod_Type>
-inline const_buffer_container_1 buffer(const std::vector<Pod_Type>& data,
-    std::size_t max_size_in_bytes)
+template <typename Pod_Type, typename Allocator>
+inline const_buffer_container_1 buffer(
+    const std::vector<Pod_Type, Allocator>& data, std::size_t max_size_in_bytes)
 {
   return const_buffer_container_1(
       const_buffer(&data[0],
@@ -568,8 +569,9 @@ inline const_buffer_container_1 buffer(const std::vector<Pod_Type>& data,
  * @note The buffer is invalidated by any vector operation that would also
  * invalidate iterators.
  */
-template <typename Pod_Type>
-inline const_buffer_container_1 buffer(std::vector<const Pod_Type>& data)
+template <typename Pod_Type, typename Allocator>
+inline const_buffer_container_1 buffer(
+    std::vector<const Pod_Type, Allocator>& data)
 {
   return const_buffer_container_1(
       const_buffer(&data[0], data.size() * sizeof(Pod_Type)));
@@ -580,9 +582,9 @@ inline const_buffer_container_1 buffer(std::vector<const Pod_Type>& data)
  * @note The buffer is invalidated by any vector operation that would also
  * invalidate iterators.
  */
-template <typename Pod_Type>
-inline const_buffer_container_1 buffer(std::vector<const Pod_Type>& data,
-    std::size_t max_size_in_bytes)
+template <typename Pod_Type, typename Allocator>
+inline const_buffer_container_1 buffer(
+    std::vector<const Pod_Type, Allocator>& data, std::size_t max_size_in_bytes)
 {
   return const_buffer_container_1(
       const_buffer(&data[0],
