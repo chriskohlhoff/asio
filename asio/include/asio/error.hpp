@@ -280,7 +280,10 @@ public:
     return code_;
   }
 
-  struct unspecified_bool_type_t;
+  struct unspecified_bool_type_t
+  {
+  };
+
   typedef unspecified_bool_type_t* unspecified_bool_type;
 
   /// Operator returns non-null if there is a non-success error code.
