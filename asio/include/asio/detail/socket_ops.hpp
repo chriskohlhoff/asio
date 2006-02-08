@@ -510,33 +510,45 @@ inline const char* inet_ntop(int af, const void* src, char* dest,
 {
   set_error(0);
 #if defined(BOOST_WINDOWS)
-  using namespace std; // For strncat.
+  using namespace std; // For memcpy.
 
-  if (af != AF_INET)
+  if (af != AF_INET && af != AF_INET6)
   {
     set_error(asio::error::address_family_not_supported);
     return 0;
   }
 
-  char* addr_str = error_wrapper(
-      ::inet_ntoa(*static_cast<const in_addr*>(src)));
-  if (addr_str)
+  sockaddr_storage address;
+  DWORD address_length;
+  if (af == AF_INET)
   {
-    *dest = '\0';
-#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
-    strncat_s(dest, length, addr_str, length);
-#else
-    strncat(dest, addr_str, length);
-#endif
-    return dest;
+    address_length = sizeof(sockaddr_in);
+    sockaddr_in* ipv4_address = reinterpret_cast<sockaddr_in*>(&address);
+    ipv4_address->sin_family = AF_INET;
+    ipv4_address->sin_port = 0;
+    memcpy(&ipv4_address->sin_addr, src, sizeof(in_addr));
+  }
+  else // AF_INET6
+  {
+    address_length = sizeof(sockaddr_in6);
+    sockaddr_in6* ipv6_address = reinterpret_cast<sockaddr_in6*>(&address);
+    ipv6_address->sin6_family = AF_INET6;
+    ipv6_address->sin6_port = 0;
+    ipv6_address->sin6_flowinfo = 0;
+    ipv6_address->sin6_scope_id = 0;
+    memcpy(&ipv6_address->sin6_addr, src, sizeof(in6_addr));
   }
 
+  DWORD string_length = length;
+  int result = error_wrapper(::WSAAddressToStringA(
+        reinterpret_cast<sockaddr*>(&address),
+        address_length, 0, dest, &string_length));
+
   // Windows may not set an error code on failure.
-  if (get_error() == 0)
+  if (result == socket_error_retval && get_error() == 0)
     set_error(asio::error::invalid_argument);
 
-  return 0;
-
+  return result == socket_error_retval ? 0 : dest;
 #else // defined(BOOST_WINDOWS)
   const char* result = error_wrapper(::inet_ntop(af, src, dest, length));
   if (result == 0 && get_error() == 0)
@@ -549,26 +561,47 @@ inline int inet_pton(int af, const char* src, void* dest)
 {
   set_error(0);
 #if defined(BOOST_WINDOWS)
-  using namespace std; // For strcmp.
+  using namespace std; // For memcpy and strcmp.
 
-  if (af != AF_INET)
+  if (af != AF_INET && af != AF_INET6)
   {
     set_error(asio::error::address_family_not_supported);
     return -1;
   }
 
-  u_long_type addr = error_wrapper(::inet_addr(src));
-  if (addr != INADDR_NONE || strcmp(src, "255.255.255.255") == 0)
+  sockaddr_storage address;
+  int address_length = sizeof(sockaddr_storage);
+  int result = error_wrapper(::WSAStringToAddressA(
+        const_cast<char*>(src), af, 0,
+        reinterpret_cast<sockaddr*>(&address),
+        &address_length));
+
+  if (af == AF_INET)
   {
-    static_cast<in_addr*>(dest)->s_addr = addr;
-    return 1;
+    if (result != socket_error_retval)
+    {
+      sockaddr_in* ipv4_address = reinterpret_cast<sockaddr_in*>(&address);
+      memcpy(dest, &ipv4_address->sin_addr, sizeof(in_addr));
+    }
+    else if (strcmp(src, "255.255.255.255") == 0)
+    {
+      static_cast<in_addr*>(dest)->s_addr = INADDR_NONE;
+    }
+  }
+  else // AF_INET6
+  {
+    if (result != socket_error_retval)
+    {
+      sockaddr_in6* ipv6_address = reinterpret_cast<sockaddr_in6*>(&address);
+      memcpy(dest, &ipv6_address->sin6_addr, sizeof(in6_addr));
+    }
   }
 
   // Windows may not set an error code on failure.
-  if (get_error() == 0)
+  if (result == socket_error_retval && get_error() == 0)
     set_error(asio::error::invalid_argument);
 
-  return 0;
+  return result == socket_error_retval ? -1 : 1;
 #else // defined(BOOST_WINDOWS)
   int result = error_wrapper(::inet_pton(af, src, dest));
   if (result <= 0 && get_error() == 0)

@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_IPV4_ADDRESS_HPP
-#define ASIO_IPV4_ADDRESS_HPP
+#ifndef ASIO_IPV6_ADDRESS_HPP
+#define ASIO_IPV6_ADDRESS_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -18,7 +18,9 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <cstring>
 #include <string>
+#include <stdexcept>
 #include <boost/array.hpp>
 #include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
@@ -28,12 +30,12 @@
 #include "asio/detail/socket_types.hpp"
 
 namespace asio {
-namespace ipv4 {
+namespace ipv6 {
 
-/// Implements IP version 4 style addresses.
+/// Implements IP version 6 style addresses.
 /**
- * The asio::ipv4::address class provides the ability to use and
- * manipulate IP version 4 addresses.
+ * The asio::ipv6::address class provides the ability to use and
+ * manipulate IP version 6 addresses.
  *
  * @par Thread Safety:
  * @e Distinct @e objects: Safe.@n
@@ -43,42 +45,37 @@ class address
 {
 public:
   /// The type used to represent an address as an array of bytes.
-  typedef boost::array<unsigned char, 4> bytes_type;
+  typedef boost::array<unsigned char, 16> bytes_type;
 
   /// Default constructor.
   address()
   {
-    addr_.s_addr = 0;
+    in6_addr tmp_addr = IN6ADDR_ANY_INIT;
+    addr_ = tmp_addr;
   }
 
   /// Construct an address from raw bytes.
   address(const bytes_type& bytes)
   {
     using namespace std; // For memcpy.
-    memcpy(&addr_.s_addr, bytes.elems, 4);
+    memcpy(addr_.s6_addr, bytes.elems, 16);
   }
 
-  /// Construct an address from a unsigned long in host byte order.
-  address(unsigned long addr)
-  {
-    addr_.s_addr = asio::detail::socket_ops::host_to_network_long(addr);
-  }
-
-  /// Construct an address using an IP address string in dotted decimal form.
+  /// Construct an address using an IP address string.
   address(const char* host)
   {
-    if (asio::detail::socket_ops::inet_pton(AF_INET, host, &addr_) <= 0)
+    if (asio::detail::socket_ops::inet_pton(AF_INET6, host, &addr_) <= 0)
     {
       asio::error e(asio::detail::socket_ops::get_error());
       boost::throw_exception(e);
     }
   }
 
-  /// Construct an address using an IP address string in dotted decimal form.
+  /// Construct an address using an IP address string.
   address(const std::string& host)
   {
     if (asio::detail::socket_ops::inet_pton(
-          AF_INET, host.c_str(), &addr_) <= 0)
+          AF_INET6, host.c_str(), &addr_) <= 0)
     {
       asio::error e(asio::detail::socket_ops::get_error());
       boost::throw_exception(e);
@@ -98,14 +95,7 @@ public:
     return *this;
   }
 
-  /// Assign from an unsigned long.
-  address& operator=(unsigned long addr)
-  {
-    addr_.s_addr = asio::detail::socket_ops::host_to_network_long(addr);
-    return *this;
-  }
-
-  /// Assign from an IP address string in dotted decimal form.
+  /// Assign from an IP address string.
   address& operator=(const char* addr)
   {
     address tmp(addr);
@@ -113,7 +103,7 @@ public:
     return *this;
   }
 
-  /// Assign from an IP address string in dotted decimal form.
+  /// Assign from an IP address string.
   address& operator=(const std::string& addr)
   {
     address tmp(addr);
@@ -126,23 +116,17 @@ public:
   {
     using namespace std; // For memcpy.
     bytes_type bytes;
-    memcpy(bytes.elems, &addr_.s_addr, 4);
+    memcpy(bytes.elems, addr_.s6_addr, 16);
     return bytes;
   }
 
-  /// Get the address as an unsigned long in host byte order
-  unsigned long to_ulong() const
-  {
-    return asio::detail::socket_ops::network_to_host_long(addr_.s_addr);
-  }
-
-  /// Get the address as a string in dotted decimal format.
+  /// Get the address as a string.
   std::string to_string() const
   {
-    char addr_str[asio::detail::max_addr_v4_str_len];
+    char addr_str[asio::detail::max_addr_v6_str_len];
     const char* addr =
-      asio::detail::socket_ops::inet_ntop(AF_INET, &addr_, addr_str,
-          asio::detail::max_addr_v4_str_len);
+      asio::detail::socket_ops::inet_ntop(AF_INET6, &addr_, addr_str,
+          asio::detail::max_addr_v6_str_len);
     if (addr == 0)
     {
       asio::error e(asio::detail::socket_ops::get_error());
@@ -151,75 +135,75 @@ public:
     return addr;
   }
 
-  /// Determine whether the address is a class A address.
-  bool is_class_A() const
+  /// Determine whether the address is link local.
+  bool is_link_local() const
   {
-    return IN_CLASSA(to_ulong());
+    return IN6_IS_ADDR_LINKLOCAL(&addr_) != 0;
   }
 
-  /// Determine whether the address is a class B address.
-  bool is_class_B() const
+  /// Determine whether the address is site local.
+  bool is_site_local() const
   {
-    return IN_CLASSB(to_ulong());
+    return IN6_IS_ADDR_SITELOCAL(&addr_) != 0;
   }
 
-  /// Determine whether the address is a class C address.
-  bool is_class_C() const
+  /// Determine whether the address is a mapped IPv4 address.
+  bool is_ipv4_mapped() const
   {
-    return IN_CLASSC(to_ulong());
+    return IN6_IS_ADDR_V4MAPPED(&addr_) != 0;
   }
 
-  /// Determine whether the address is a class D address.
-  bool is_class_D() const
+  /// Determine whether the address is an IPv4-compatible address.
+  bool is_ipv4_compatible() const
   {
-    return IN_CLASSD(to_ulong());
+    return IN6_IS_ADDR_V4COMPAT(&addr_) != 0;
   }
 
   /// Determine whether the address is a multicast address.
   bool is_multicast() const
   {
-    return IN_MULTICAST(to_ulong());
+    return IN6_IS_ADDR_MULTICAST(&addr_) != 0;
   }
 
   /// Compare two addresses for equality.
   friend bool operator==(const address& a1, const address& a2)
   {
-    return a1.addr_.s_addr == a2.addr_.s_addr;
+    using namespace std; // For memcmp.
+    return memcmp(&a1.addr_, &a2.addr_, sizeof(in6_addr)) == 0;
   }
 
   /// Compare two addresses for inequality.
   friend bool operator!=(const address& a1, const address& a2)
   {
-    return a1.addr_.s_addr != a2.addr_.s_addr;
+    using namespace std; // For memcmp.
+    return memcmp(&a1.addr_, &a2.addr_, sizeof(in6_addr)) != 0;
   }
 
   /// Compare addresses for ordering.
   friend bool operator<(const address& a1, const address& a2)
   {
-    return a1.to_ulong() < a2.to_ulong();
+    using namespace std; // For memcmp.
+    return memcmp(&a1.addr_, &a2.addr_, sizeof(in6_addr)) < 0;
   }
 
   /// Obtain an address object that represents any address.
   static address any()
   {
-    return address(static_cast<unsigned long>(INADDR_ANY));
+    return address();
   }
 
   /// Obtain an address object that represents the loopback address.
   static address loopback()
   {
-    return address(static_cast<unsigned long>(INADDR_LOOPBACK));
-  }
-
-  /// Obtain an address object that represents the broadcast address.
-  static address broadcast()
-  {
-    return address(static_cast<unsigned long>(INADDR_BROADCAST));
+    address tmp;
+    in6_addr tmp_addr = IN6ADDR_LOOPBACK_INIT;
+    tmp.addr_ = tmp_addr;
+    return tmp;
   }
 
 private:
-  // The underlying IPv4 address.
-  in_addr addr_;
+  // The underlying IPv6 address.
+  in6_addr addr_;
 };
 
 /// Output an address as a string.
@@ -241,9 +225,9 @@ Ostream& operator<<(Ostream& os, const address& addr)
   return os;
 }
 
-} // namespace ipv4
+} // namespace ipv6
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_IPV4_ADDRESS_HPP
+#endif // ASIO_IPV6_ADDRESS_HPP
