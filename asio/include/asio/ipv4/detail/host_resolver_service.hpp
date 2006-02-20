@@ -71,6 +71,7 @@ public:
   // as a cancellation token to indicate to the background thread that the
   // operation has been cancelled.
   typedef boost::shared_ptr<void> implementation_type;
+  struct noop_deleter { void operator()(void*) {} };
 
   // Constructor.
   host_resolver_service(IO_Service& d)
@@ -105,6 +106,7 @@ public:
   // Construct a new host resolver implementation.
   void construct(implementation_type& impl)
   {
+    impl.reset(static_cast<void*>(0), noop_deleter());
   }
 
   // Destroy a host resolver implementation.
@@ -115,7 +117,7 @@ public:
   /// Cancel pending asynchronous operations.
   void cancel(implementation_type& impl)
   {
-    impl.reset(0);
+    impl.reset(static_cast<void*>(0), noop_deleter());
   }
 
   // Get host information for the local machine.
