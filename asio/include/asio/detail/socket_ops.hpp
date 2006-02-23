@@ -19,6 +19,7 @@
 
 #include "asio/detail/push_options.hpp"
 #include <boost/config.hpp>
+#include <cstdlib>
 #include <cstring>
 #include <cerrno>
 #include <vector>
@@ -505,8 +506,8 @@ inline int poll_write(socket_type s)
 #endif // defined(BOOST_WINDOWS)
 }
 
-inline const char* inet_ntop(int af, const void* src, char* dest,
-    size_t length)
+inline const char* inet_ntop(int af, const void* src, char* dest, size_t length,
+    unsigned long scope_id = 0)
 {
   set_error(0);
 #if defined(BOOST_WINDOWS)
@@ -535,7 +536,7 @@ inline const char* inet_ntop(int af, const void* src, char* dest,
     ipv6_address->sin6_family = AF_INET6;
     ipv6_address->sin6_port = 0;
     ipv6_address->sin6_flowinfo = 0;
-    ipv6_address->sin6_scope_id = 0;
+    ipv6_address->sin6_scope_id = scope_id;
     memcpy(&ipv6_address->sin6_addr, src, sizeof(in6_addr));
   }
 
@@ -553,11 +554,22 @@ inline const char* inet_ntop(int af, const void* src, char* dest,
   const char* result = error_wrapper(::inet_ntop(af, src, dest, length));
   if (result == 0 && get_error() == 0)
     set_error(asio::error::invalid_argument);
+  if (result != 0 && af == AF_INET6 && scope_id != 0)
+  {
+    using namespace std; // For strcat and sprintf.
+    char if_name[IF_NAMESIZE + 1] = "%";
+    const in6_addr* ipv6_address = static_cast<const in6_addr*>(src);
+    bool is_link_local = IN6_IS_ADDR_LINKLOCAL(ipv6_address);
+    if (!is_link_local || if_indextoname(scope_id, if_name + 1) == 0)
+      sprintf(if_name + 1, "%lu", scope_id);
+    strcat(dest, if_name);
+  }
   return result;
 #endif // defined(BOOST_WINDOWS)
 }
 
-inline int inet_pton(int af, const char* src, void* dest)
+inline int inet_pton(int af, const char* src, void* dest,
+    unsigned long* scope_id = 0)
 {
   set_error(0);
 #if defined(BOOST_WINDOWS)
@@ -594,6 +606,8 @@ inline int inet_pton(int af, const char* src, void* dest)
     {
       sockaddr_in6* ipv6_address = reinterpret_cast<sockaddr_in6*>(&address);
       memcpy(dest, &ipv6_address->sin6_addr, sizeof(in6_addr));
+      if (scope_id)
+        *scope_id = ipv6_address->sin6_scope_id;
     }
   }
 
@@ -606,6 +620,20 @@ inline int inet_pton(int af, const char* src, void* dest)
   int result = error_wrapper(::inet_pton(af, src, dest));
   if (result <= 0 && get_error() == 0)
     set_error(asio::error::invalid_argument);
+  if (result > 0 && af == AF_INET6 && scope_id)
+  {
+    using namespace std; // For strchr and atoi.
+    *scope_id = 0;
+    if (const char* if_name = strchr(src, '%'))
+    {
+      in6_addr* ipv6_address = static_cast<in6_addr*>(dest);
+      bool is_link_local = IN6_IS_ADDR_LINKLOCAL(ipv6_address);
+      if (is_link_local)
+        *scope_id = if_nametoindex(if_name + 1);
+      if (*scope_id == 0)
+        *scope_id = atoi(if_name + 1);
+    }
+  }
   return result;
 #endif // defined(BOOST_WINDOWS)
 }

@@ -69,6 +69,7 @@
 # include <netinet/tcp.h>
 # include <arpa/inet.h>
 # include <netdb.h>
+# include <net/if.h>
 # if defined(__sun)
 #  include <sys/filio.h>
 # endif
@@ -102,7 +103,7 @@ typedef int socket_type;
 const int invalid_socket = -1;
 const int socket_error_retval = -1;
 const int max_addr_v4_str_len = INET_ADDRSTRLEN;
-const int max_addr_v6_str_len = INET6_ADDRSTRLEN;
+const int max_addr_v6_str_len = INET6_ADDRSTRLEN + 1 + IF_NAMESIZE;
 typedef sockaddr socket_addr_type;
 typedef sockaddr_in inet_addr_v4_type;
 typedef sockaddr_in6 inet_addr_v6_type;

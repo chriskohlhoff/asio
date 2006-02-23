@@ -156,7 +156,7 @@ public:
     addr_.sin6_flowinfo = 0;
     asio::ipv6::address::bytes_type bytes = addr.to_bytes();
     memcpy(addr_.sin6_addr.s6_addr, bytes.elems, 16);
-    addr_.sin6_scope_id = 0;
+    addr_.sin6_scope_id = addr.scope_id();
   }
 
   /// Copy constructor.
@@ -228,7 +228,7 @@ public:
     using namespace std; // For memcpy.
     asio::ipv6::address::bytes_type bytes;
     memcpy(bytes.elems, addr_.sin6_addr.s6_addr, 16);
-    return asio::ipv6::address(bytes);
+    return asio::ipv6::address(bytes, addr_.sin6_scope_id);
   }
 
   /// Set the IP address associated with the endpoint.
@@ -237,6 +237,7 @@ public:
     using namespace std; // For memcpy.
     asio::ipv6::address::bytes_type bytes = addr.to_bytes();
     memcpy(addr_.sin6_addr.s6_addr, bytes.elems, 16);
+    addr_.sin6_scope_id = addr.scope_id();
   }
 
   /// Compare two endpoints for equality.
