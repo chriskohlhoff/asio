@@ -147,13 +147,19 @@ public:
   }
 
   /// Set the underlying size of the endpoint in the native type.
-  void size(size_type size)
+  void resize(size_type size)
   {
     if (size != sizeof(addr_))
     {
       asio::error e(asio::error::invalid_argument);
       boost::throw_exception(e);
     }
+  }
+
+  /// Get the capacity of the endpoint in the native type.
+  size_type capacity() const
+  {
+    return sizeof(addr_);
   }
 
   /// Get the port associated with the endpoint. The port number is always in

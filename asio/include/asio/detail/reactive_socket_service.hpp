@@ -230,14 +230,14 @@ public:
   void get_local_endpoint(const implementation_type& impl, Endpoint& endpoint,
       Error_Handler error_handler) const
   {
-    socket_addr_len_type addr_len = endpoint.size();
+    socket_addr_len_type addr_len = endpoint.capacity();
     if (socket_ops::getsockname(impl.socket_, endpoint.data(), &addr_len))
     {
       error_handler(asio::error(socket_ops::get_error()));
       return;
     }
 
-    endpoint.size(addr_len);
+    endpoint.resize(addr_len);
   }
 
   // Get the remote endpoint.
@@ -245,14 +245,14 @@ public:
   void get_remote_endpoint(const implementation_type& impl, Endpoint& endpoint,
       Error_Handler error_handler) const
   {
-    socket_addr_len_type addr_len = endpoint.size();
+    socket_addr_len_type addr_len = endpoint.capacity();
     if (socket_ops::getpeername(impl.socket_, endpoint.data(), &addr_len))
     {
       error_handler(asio::error(socket_ops::get_error()));
       return;
     }
 
-    endpoint.size(addr_len);
+    endpoint.resize(addr_len);
   }
 
   /// Disable sends or receives on the socket.
@@ -736,7 +736,7 @@ public:
     for (;;)
     {
       // Try to complete the operation without blocking.
-      socket_addr_len_type addr_len = sender_endpoint.size();
+      socket_addr_len_type addr_len = sender_endpoint.capacity();
       int bytes_recvd = socket_ops::recvfrom(impl.socket_, bufs, i, flags,
           sender_endpoint.data(), &addr_len);
       int error = socket_ops::get_error();
@@ -744,7 +744,7 @@ public:
       // Check if operation succeeded.
       if (bytes_recvd > 0)
       {
-        sender_endpoint.size(addr_len);
+        sender_endpoint.resize(addr_len);
         return bytes_recvd;
       }
 
@@ -813,7 +813,7 @@ public:
       }
 
       // Receive some data.
-      socket_addr_len_type addr_len = sender_endpoint_.size();
+      socket_addr_len_type addr_len = sender_endpoint_.capacity();
       int bytes = socket_ops::recvfrom(socket_, bufs, i, flags_,
           sender_endpoint_.data(), &addr_len);
       int error_code = asio::error::success;
@@ -828,7 +828,7 @@ public:
           || error == asio::error::try_again)
         return false;
 
-      sender_endpoint_.size(addr_len);
+      sender_endpoint_.resize(addr_len);
       io_service_.post(bind_handler(handler_, error, bytes < 0 ? 0 : bytes));
       return true;
     }
@@ -949,7 +949,7 @@ public:
     for (;;)
     {
       // Try to complete the operation without blocking.
-      socket_addr_len_type addr_len = peer_endpoint.size();
+      socket_addr_len_type addr_len = peer_endpoint.capacity();
       socket_holder new_socket(socket_ops::accept(
             impl.socket_, peer_endpoint.data(), &addr_len));
       int error = socket_ops::get_error();
@@ -957,7 +957,7 @@ public:
       // Check if operation succeeded.
       if (new_socket.get() >= 0)
       {
-        peer_endpoint.size(addr_len);
+        peer_endpoint.resize(addr_len);
         asio::error temp_error;
         peer.open(new_socket.get(), asio::assign_error(temp_error));
         if (temp_error)
@@ -1101,7 +1101,7 @@ public:
       }
 
       // Accept the waiting connection.
-      socket_addr_len_type addr_len = peer_endpoint_.size();
+      socket_addr_len_type addr_len = peer_endpoint_.capacity();
       socket_holder new_socket(socket_ops::accept(
             socket_, peer_endpoint_.data(), &addr_len));
       asio::error error(new_socket.get() == invalid_socket
@@ -1115,7 +1115,7 @@ public:
       // Transfer ownership of the new socket to the peer object.
       if (!error)
       {
-        peer_endpoint_.size(addr_len);
+        peer_endpoint_.resize(addr_len);
         peer_.open(new_socket.get(), asio::assign_error(error));
         if (!error)
           new_socket.release();

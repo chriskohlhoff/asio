@@ -38,7 +38,7 @@ public:
     delete[] write_data_;
   }
 
-  ipv4::tcp::socket& socket()
+  ip::tcp::socket& socket()
   {
     return socket_;
   }
@@ -113,7 +113,7 @@ public:
 private:
   io_service& io_service_;
   locking_dispatcher dispatcher_;
-  ipv4::tcp::socket socket_;
+  ip::tcp::socket socket_;
   size_t block_size_;
   char* read_data_;
   size_t read_data_length_;
@@ -125,14 +125,14 @@ private:
 class server
 {
 public:
-  server(io_service& ios, const ipv4::tcp::endpoint& endpoint,
+  server(io_service& ios, const ip::tcp::endpoint& endpoint,
       size_t block_size)
     : io_service_(ios),
       acceptor_(ios),
       block_size_(block_size)
   {
-    acceptor_.open(ipv4::tcp());
-    acceptor_.set_option(ipv4::tcp::acceptor::reuse_address(1));
+    acceptor_.open(endpoint.protocol());
+    acceptor_.set_option(ip::tcp::acceptor::reuse_address(1));
     acceptor_.bind(endpoint);
     acceptor_.listen();
 
@@ -166,7 +166,7 @@ public:
 
 private:
   io_service& io_service_;
-  ipv4::tcp::acceptor acceptor_;
+  ip::tcp::acceptor acceptor_;
   size_t block_size_;
 };
 
@@ -174,20 +174,21 @@ int main(int argc, char* argv[])
 {
   try
   {
-    if (argc != 4)
+    if (argc != 5)
     {
-      std::cerr << "Usage: server <port> <threads> <blocksize>\n";
+      std::cerr << "Usage: server <address> <port> <threads> <blocksize>\n";
       return 1;
     }
 
     using namespace std; // For atoi.
-    short port = atoi(argv[1]);
-    int thread_count = atoi(argv[2]);
-    size_t block_size = atoi(argv[3]);
+    std::string address = argv[1];
+    short port = atoi(argv[2]);
+    int thread_count = atoi(argv[3]);
+    size_t block_size = atoi(argv[4]);
 
     io_service ios;
 
-    server s(ios, ipv4::tcp::endpoint(port), block_size);
+    server s(ios, ip::tcp::endpoint(port, address), block_size);
 
     // Threads not currently supported in this test.
     std::list<thread*> threads;

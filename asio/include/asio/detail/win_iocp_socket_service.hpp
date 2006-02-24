@@ -245,14 +245,14 @@ public:
   void get_local_endpoint(const implementation_type& impl, Endpoint& endpoint,
       Error_Handler error_handler) const
   {
-    socket_addr_len_type addr_len = endpoint.size();
+    socket_addr_len_type addr_len = endpoint.capacity();
     if (socket_ops::getsockname(impl.socket_, endpoint.data(), &addr_len))
     {
       error_handler(asio::error(socket_ops::get_error()));
       return;
     }
 
-    endpoint.size(addr_len);
+    endpoint.resize(addr_len);
   }
 
   // Get the remote endpoint.
@@ -260,14 +260,14 @@ public:
   void get_remote_endpoint(const implementation_type& impl, Endpoint& endpoint,
       Error_Handler error_handler) const
   {
-    socket_addr_len_type addr_len = endpoint.size();
+    socket_addr_len_type addr_len = endpoint.capacity();
     if (socket_ops::getpeername(impl.socket_, endpoint.data(), &addr_len))
     {
       error_handler(asio::error(socket_ops::get_error()));
       return;
     }
 
-    endpoint.size(addr_len);
+    endpoint.resize(addr_len);
   }
 
   /// Disable sends or receives on the socket.
@@ -693,7 +693,7 @@ public:
     // Receive some data.
     DWORD bytes_transferred = 0;
     DWORD recv_flags = flags;
-    int endpoint_size = sender_endpoint.size();
+    int endpoint_size = sender_endpoint.capacity();
     int result = ::WSARecvFrom(impl.socket_, bufs, i, &bytes_transferred,
         &recv_flags, sender_endpoint.data(), &endpoint_size, 0, 0);
     if (result != 0)
@@ -708,7 +708,7 @@ public:
       return 0;
     }
 
-    sender_endpoint.size(endpoint_size);
+    sender_endpoint.resize(endpoint_size);
 
     return bytes_transferred;
   }
@@ -723,7 +723,7 @@ public:
       : operation(
           &receive_from_operation<Endpoint, Handler>::do_completion_impl),
         endpoint_(endpoint),
-        endpoint_size_(endpoint.size()),
+        endpoint_size_(endpoint.capacity()),
         work_(io_service),
         handler_(handler)
     {
@@ -753,7 +753,7 @@ public:
       }
 
       // Record the size of the endpoint returned by the operation.
-      handler_op->endpoint_.size(handler_op->endpoint_size_);
+      handler_op->endpoint_.resize(handler_op->endpoint_size_);
 
       // Make a copy of the handler so that the memory can be deallocated before
       // the upcall is made.
@@ -857,7 +857,7 @@ public:
       return;
     }
 
-    socket_addr_len_type addr_len = peer_endpoint.size();
+    socket_addr_len_type addr_len = peer_endpoint.capacity();
     socket_holder new_socket(socket_ops::accept(
           impl.socket_, peer_endpoint.data(), &addr_len));
     if (int err = socket_ops::get_error())
@@ -866,7 +866,7 @@ public:
       return;
     }
 
-    peer_endpoint.size(addr_len);
+    peer_endpoint.resize(addr_len);
 
     asio::error temp_error;
     peer.open(new_socket.get(), asio::assign_error(temp_error));
@@ -1107,13 +1107,13 @@ public:
         GetAcceptExSockaddrs(handler_op->output_buffer(), 0,
             handler_op->address_length(), handler_op->address_length(),
             &local_addr, &local_addr_length, &remote_addr, &remote_addr_length);
-        if (remote_addr_length > handler_op->peer_endpoint_.size())
+        if (remote_addr_length > handler_op->peer_endpoint_.capacity())
         {
           last_error = asio::error::invalid_argument;
         }
         else
         {
-          handler_op->peer_endpoint_.size(remote_addr_length);
+          handler_op->peer_endpoint_.resize(remote_addr_length);
           using namespace std; // For memcpy.
           memcpy(handler_op->peer_endpoint_.data(),
               remote_addr, remote_addr_length);

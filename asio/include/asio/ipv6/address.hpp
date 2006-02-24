@@ -26,6 +26,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
+#include "asio/error_handler.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
 
@@ -75,6 +76,18 @@ public:
   }
 
   /// Construct an address using an IP address string.
+  template <typename Error_Handler>
+  address(const char* host, Error_Handler error_handler)
+  {
+    if (asio::detail::socket_ops::inet_pton(
+          AF_INET6, host, &addr_, &scope_id_) <= 0)
+    {
+      asio::error e(asio::detail::socket_ops::get_error());
+      error_handler(e);
+    }
+  }
+
+  /// Construct an address using an IP address string.
   address(const std::string& host)
   {
     if (asio::detail::socket_ops::inet_pton(
@@ -82,6 +95,18 @@ public:
     {
       asio::error e(asio::detail::socket_ops::get_error());
       boost::throw_exception(e);
+    }
+  }
+
+  /// Construct an address using an IP address string.
+  template <typename Error_Handler>
+  address(const std::string& host, Error_Handler error_handler)
+  {
+    if (asio::detail::socket_ops::inet_pton(
+          AF_INET6, host.c_str(), &addr_, &scope_id_) <= 0)
+    {
+      asio::error e(asio::detail::socket_ops::get_error());
+      error_handler(e);
     }
   }
 
@@ -140,6 +165,13 @@ public:
   /// Get the address as a string.
   std::string to_string() const
   {
+    return to_string(asio::throw_error());
+  }
+
+  /// Get the address as a string.
+  template <typename Error_Handler>
+  std::string to_string(Error_Handler error_handler) const
+  {
     char addr_str[asio::detail::max_addr_v6_str_len];
     const char* addr =
       asio::detail::socket_ops::inet_ntop(AF_INET6, &addr_, addr_str,
@@ -147,7 +179,8 @@ public:
     if (addr == 0)
     {
       asio::error e(asio::detail::socket_ops::get_error());
-      boost::throw_exception(e);
+      error_handler(e);
+      return std::string();
     }
     return addr;
   }

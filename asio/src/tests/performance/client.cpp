@@ -75,7 +75,7 @@ public:
     delete[] write_data_;
   }
 
-  void start(const ipv4::tcp::endpoint& server_endpoint)
+  void start(const ip::tcp::endpoint& server_endpoint)
   {
     socket_.async_connect(server_endpoint,
         dispatcher_.wrap(boost::bind(&session::handle_connect, this,
@@ -153,7 +153,7 @@ private:
 
 private:
   locking_dispatcher dispatcher_;
-  ipv4::tcp::socket socket_;
+  ip::tcp::socket socket_;
   size_t block_size_;
   char* read_data_;
   size_t read_data_length_;
@@ -167,7 +167,7 @@ private:
 class client
 {
 public:
-  client(io_service& ios, const ipv4::tcp::endpoint& server_endpoint,
+  client(io_service& ios, const ip::tcp::endpoint& server_endpoint,
       size_t block_size, size_t session_count, int timeout)
     : io_service_(ios),
       stop_timer_(ios),
