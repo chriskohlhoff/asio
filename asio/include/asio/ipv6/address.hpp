@@ -228,21 +228,28 @@ public:
   friend bool operator==(const address& a1, const address& a2)
   {
     using namespace std; // For memcmp.
-    return memcmp(&a1.addr_, &a2.addr_, sizeof(in6_addr)) == 0;
+    return memcmp(&a1.addr_, &a2.addr_, sizeof(in6_addr)) == 0
+      && a1.scope_id_ == a2.scope_id_;
   }
 
   /// Compare two addresses for inequality.
   friend bool operator!=(const address& a1, const address& a2)
   {
     using namespace std; // For memcmp.
-    return memcmp(&a1.addr_, &a2.addr_, sizeof(in6_addr)) != 0;
+    return memcmp(&a1.addr_, &a2.addr_, sizeof(in6_addr)) != 0
+      || a1.scope_id_ != a2.scope_id_;
   }
 
   /// Compare addresses for ordering.
   friend bool operator<(const address& a1, const address& a2)
   {
     using namespace std; // For memcmp.
-    return memcmp(&a1.addr_, &a2.addr_, sizeof(in6_addr)) < 0;
+    int memcmp_result = memcmp(&a1.addr_, &a2.addr_, sizeof(in6_addr)) < 0;
+    if (memcmp_result < 0)
+      return true;
+    if (memcmp_result > 0)
+      return false;
+    return a1.scope_id_ < a2.scope_id_;
   }
 
   /// Obtain an address object that represents any address.
