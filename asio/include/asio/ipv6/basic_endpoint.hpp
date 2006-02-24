@@ -26,6 +26,7 @@
 #endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/error.hpp"
 #include "asio/ipv6/address.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"

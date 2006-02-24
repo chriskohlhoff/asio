@@ -23,11 +23,10 @@
 
 #include "asio/basic_socket_acceptor.hpp"
 #include "asio/basic_stream_socket.hpp"
-#include "asio/error.hpp"
 #include "asio/socket_acceptor_service.hpp"
 #include "asio/stream_socket_service.hpp"
-#include "asio/ipv6/address.hpp"
 #include "asio/ipv6/basic_endpoint.hpp"
+#include "asio/detail/socket_option.hpp"
 #include "asio/detail/socket_types.hpp"
 
 namespace asio {
@@ -98,7 +97,7 @@ public:
    * @par Examples:
    * Setting the option:
    * @code
-   * asio::stream_socket socket(io_service); 
+   * asio::ipv6::tcp::socket socket(io_service); 
    * ...
    * asio::ipv6::tcp::no_delay option(true);
    * socket.set_option(option);
@@ -107,7 +106,7 @@ public:
    * @par
    * Getting the current option value:
    * @code
-   * asio::stream_socket socket(io_service); 
+   * asio::ipv6::tcp::socket socket(io_service); 
    * ...
    * asio::ipv6::tcp::no_delay option;
    * socket.get_option(option);
