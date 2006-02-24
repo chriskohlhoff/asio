@@ -19,7 +19,7 @@ public:
 
     // Join the multicast group.
     socket_.set_option(
-        asio::ipv4::multicast::add_membership(multicast_addr));
+        asio::ipv4::multicast::join_group(multicast_addr));
 
     socket_.async_receive_from(
         asio::buffer(data_, max_length), 0, sender_endpoint_,

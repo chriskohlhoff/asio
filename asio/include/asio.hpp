@@ -47,6 +47,7 @@
 #include "asio/ipv4/udp.hpp"
 #include "asio/ipv6/address.hpp"
 #include "asio/ipv6/basic_endpoint.hpp"
+#include "asio/ipv6/multicast.hpp"
 #include "asio/ipv6/tcp.hpp"
 #include "asio/ipv6/udp.hpp"
 #include "asio/is_read_buffered.hpp"

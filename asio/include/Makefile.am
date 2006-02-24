@@ -93,6 +93,8 @@ nobase_include_HEADERS = \
 	asio/ipv4/udp.hpp \
 	asio/ipv6/address.hpp \
 	asio/ipv6/basic_endpoint.hpp \
+	asio/ipv6/detail/socket_option.hpp \
+	asio/ipv6/multicast.hpp \
 	asio/ipv6/tcp.hpp \
 	asio/ipv6/udp.hpp \
 	asio/is_read_buffered.hpp \
