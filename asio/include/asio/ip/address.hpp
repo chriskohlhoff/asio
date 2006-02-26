@@ -74,22 +74,22 @@ public:
       ipv6_address_()
   {
     asio::error error;
-    asio::ipv4::address ipv4_address(address_string,
-        asio::assign_error(error));
-    if (!error)
-    {
-      type_ = ipv4;
-      ipv4_address_ = ipv4_address;
-      return;
-    }
-
-    error = asio::error();
     asio::ipv6::address ipv6_address(address_string,
         asio::assign_error(error));
     if (!error)
     {
       type_ = ipv6;
       ipv6_address_ = ipv6_address;
+      return;
+    }
+
+    error = asio::error();
+    asio::ipv4::address ipv4_address(address_string,
+        asio::assign_error(error));
+    if (!error)
+    {
+      type_ = ipv4;
+      ipv4_address_ = ipv4_address;
       return;
     }
 
@@ -105,22 +105,22 @@ public:
       ipv6_address_()
   {
     asio::error error;
-    asio::ipv4::address ipv4_address(address_string,
-        asio::assign_error(error));
-    if (!error)
-    {
-      type_ = ipv4;
-      ipv4_address_ = ipv4_address;
-      return;
-    }
-
-    error = asio::error();
     asio::ipv6::address ipv6_address(address_string,
         asio::assign_error(error));
     if (!error)
     {
       type_ = ipv6;
       ipv6_address_ = ipv6_address;
+      return;
+    }
+
+    error = asio::error();
+    asio::ipv4::address ipv4_address(address_string,
+        asio::assign_error(error));
+    if (!error)
+    {
+      type_ = ipv4;
+      ipv4_address_ = ipv4_address;
       return;
     }
 
@@ -132,22 +132,22 @@ public:
   address(const std::string& address_string)
   {
     asio::error error;
-    asio::ipv4::address ipv4_address(address_string,
-        asio::assign_error(error));
-    if (!error)
-    {
-      type_ = ipv4;
-      ipv4_address_ = ipv4_address;
-      return;
-    }
-
-    error = asio::error();
     asio::ipv6::address ipv6_address(address_string,
         asio::assign_error(error));
     if (!error)
     {
       type_ = ipv6;
       ipv6_address_ = ipv6_address;
+      return;
+    }
+
+    error = asio::error();
+    asio::ipv4::address ipv4_address(address_string,
+        asio::assign_error(error));
+    if (!error)
+    {
+      type_ = ipv4;
+      ipv4_address_ = ipv4_address;
       return;
     }
 
@@ -160,22 +160,22 @@ public:
   address(const std::string& address_string, Error_Handler error_handler)
   {
     asio::error error;
-    asio::ipv4::address ipv4_address(address_string,
-        asio::assign_error(error));
-    if (!error)
-    {
-      type_ = ipv4;
-      ipv4_address_ = ipv4_address;
-      return;
-    }
-
-    error = asio::error();
     asio::ipv6::address ipv6_address(address_string,
         asio::assign_error(error));
     if (!error)
     {
       type_ = ipv6;
       ipv6_address_ = ipv6_address;
+      return;
+    }
+
+    error = asio::error();
+    asio::ipv4::address ipv4_address(address_string,
+        asio::assign_error(error));
+    if (!error)
+    {
+      type_ = ipv4;
+      ipv4_address_ = ipv4_address;
       return;
     }
 
