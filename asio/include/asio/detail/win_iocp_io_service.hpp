@@ -72,6 +72,23 @@ public:
     ::CreateIoCompletionPort(sock_as_handle, iocp_.handle, 0, 0);
   }
 
+  struct auto_work
+  {
+    auto_work(win_iocp_io_service& io_service)
+      : io_service_(io_service)
+    {
+      io_service_.work_started();
+    }
+
+    ~auto_work()
+    {
+      io_service_.work_finished();
+    }
+
+  private:
+    win_iocp_io_service& io_service_;
+  };
+
   // Run the event processing loop.
   void run()
   {
@@ -100,22 +117,7 @@ public:
       {
         // Ensure that the io_service does not exit due to running out of work
         // while we make the upcall.
-        struct auto_work
-        {
-          auto_work(win_iocp_io_service& io_service)
-            : io_service_(io_service)
-          {
-            io_service_.work_started();
-          }
-
-          ~auto_work()
-          {
-            io_service_.work_finished();
-          }
-
-        private:
-          win_iocp_io_service& io_service_;
-        } work(*this);
+        auto_work work(*this);
 
         // Dispatch the operation.
         operation* op = static_cast<operation*>(overlapped);

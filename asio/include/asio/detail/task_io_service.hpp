@@ -74,42 +74,8 @@ public:
 
         if (h == &task_handler_)
         {
-          // Helper class to perform operations on block exit.
-          class cleanup
-          {
-          public:
-            cleanup(asio::detail::mutex::scoped_lock& lock,
-                handler_base*& handler_queue, handler_base*& handler_queue_end,
-                handler_base& task_handler)
-              : lock_(lock),
-                handler_queue_(handler_queue),
-                handler_queue_end_(handler_queue_end),
-                task_handler_(task_handler)
-            {
-            }
-
-            ~cleanup()
-            {
-              // Reinsert the task at the end of the handler queue.
-              lock_.lock();
-              task_handler_.next_ = 0;
-              if (handler_queue_end_)
-              {
-                handler_queue_end_->next_ = &task_handler_;
-                handler_queue_end_ = &task_handler_;
-              }
-              else
-              {
-                handler_queue_ = handler_queue_end_ = &task_handler_;
-              }
-            }
-
-          private:
-            asio::detail::mutex::scoped_lock& lock_;
-            handler_base*& handler_queue_;
-            handler_base*& handler_queue_end_;
-            handler_base& task_handler_;
-          } c(lock, handler_queue_, handler_queue_end_, task_handler_);
+          task_cleanup c(lock, handler_queue_,
+              handler_queue_end_, task_handler_);
 
           // Run the task. May throw an exception. Only block if the handler
           // queue is empty, otherwise we want to return as soon as possible to
@@ -118,27 +84,7 @@ public:
         }
         else
         {
-          // Helper class to perform operations on block exit.
-          class cleanup
-          {
-          public:
-            cleanup(asio::detail::mutex::scoped_lock& lock,
-                int& outstanding_work)
-              : lock_(lock),
-                outstanding_work_(outstanding_work)
-            {
-            }
-
-            ~cleanup()
-            {
-              lock_.lock();
-              --outstanding_work_;
-            }
-
-          private:
-            asio::detail::mutex::scoped_lock& lock_;
-            int& outstanding_work_;
-          } c(lock, outstanding_work_);
+          handler_cleanup c(lock, outstanding_work_);
 
           // Invoke the handler. May throw an exception.
           h->call(allocator_); // call() deletes the handler object
@@ -355,6 +301,65 @@ private:
 
   private:
     Handler handler_;
+  };
+
+  // Helper class to perform task-related operations on block exit.
+  class task_cleanup
+  {
+  public:
+    task_cleanup(asio::detail::mutex::scoped_lock& lock,
+        handler_base*& handler_queue, handler_base*& handler_queue_end,
+        handler_base& task_handler)
+      : lock_(lock),
+        handler_queue_(handler_queue),
+        handler_queue_end_(handler_queue_end),
+        task_handler_(task_handler)
+    {
+    }
+
+    ~task_cleanup()
+    {
+      // Reinsert the task at the end of the handler queue.
+      lock_.lock();
+      task_handler_.next_ = 0;
+      if (handler_queue_end_)
+      {
+        handler_queue_end_->next_ = &task_handler_;
+        handler_queue_end_ = &task_handler_;
+      }
+      else
+      {
+        handler_queue_ = handler_queue_end_ = &task_handler_;
+      }
+    }
+
+  private:
+    asio::detail::mutex::scoped_lock& lock_;
+    handler_base*& handler_queue_;
+    handler_base*& handler_queue_end_;
+    handler_base& task_handler_;
+  };
+
+  // Helper class to perform handler-related operations on block exit.
+  class handler_cleanup
+  {
+  public:
+    handler_cleanup(asio::detail::mutex::scoped_lock& lock,
+        int& outstanding_work)
+      : lock_(lock),
+        outstanding_work_(outstanding_work)
+    {
+    }
+
+    ~handler_cleanup()
+    {
+      lock_.lock();
+      --outstanding_work_;
+    }
+
+  private:
+    asio::detail::mutex::scoped_lock& lock_;
+    int& outstanding_work_;
   };
 
   // Mutex to protect access to internal data.
