@@ -238,6 +238,8 @@ private:
     }
   }
 
+  class task_cleanup;
+
   // The base class for all handler wrappers. A function pointer is used
   // instead of virtual functions to avoid the associated overhead.
   class handler_base
@@ -264,6 +266,7 @@ private:
 
   private:
     friend class task_io_service<Task, Allocator>;
+    friend class task_cleanup;
     handler_base* next_;
     func_type func_;
   };
