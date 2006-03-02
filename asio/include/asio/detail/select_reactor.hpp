@@ -240,7 +240,7 @@ private:
     timeval* tv = block ? get_timeout(tv_buf) : &tv_buf;
     select_in_progress_ = true;
     lock.unlock();
-    int retval = socket_ops::select(static_cast<int>(max_fd),
+    int retval = socket_ops::select(static_cast<int>(max_fd + 1),
         read_fds, write_fds, except_fds, tv);
     lock.lock();
     select_in_progress_ = false;
