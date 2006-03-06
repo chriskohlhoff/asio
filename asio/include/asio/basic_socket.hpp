@@ -799,7 +799,7 @@ public:
   template <typename Error_Handler>
   endpoint_type remote_endpoint(Error_Handler error_handler) const
   {
-    this->service.remote_endpoint(this->implementation, error_handler);
+    return this->service.remote_endpoint(this->implementation, error_handler);
   }
 
   /// Disable sends or receives on the socket.
