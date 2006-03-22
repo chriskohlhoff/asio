@@ -62,7 +62,24 @@ inline socket_type accept(socket_type s, socket_addr_type* addr,
     socket_addr_len_type* addrlen)
 {
   set_error(0);
+#if defined(__MACH__) && defined(__APPLE__)
+  socket_type new_s = error_wrapper(::accept(s, addr, addrlen));
+  if (new_s == invalid_socket)
+    return new_s;
+
+  int optval = 1;
+  int result = error_wrapper(::setsockopt(new_s,
+        SOL_SOCKET, SO_NOSIGPIPE, &optval, sizeof(optval)));
+  if (result != 0)
+  {
+    ::close(new_s);
+    return invalid_socket;
+  }
+
+  return new_s;
+#else
   return error_wrapper(::accept(s, addr, addrlen));
+#endif
 }
 
 inline int bind(socket_type s, const socket_addr_type* addr,
@@ -206,6 +223,9 @@ inline int send(socket_type s, const buf* bufs, size_t count, int flags)
   msg.msg_control = 0;
   msg.msg_controllen = 0;
   msg.msg_flags = 0;
+#if defined(__linux__)
+  flags |= MSG_NOSIGNAL;
+#endif // defined(__linux__)
   return error_wrapper(::sendmsg(s, &msg, flags));
 #endif // defined(BOOST_WINDOWS)
 }
@@ -232,6 +252,9 @@ inline int sendto(socket_type s, const buf* bufs, size_t count, int flags,
   msg.msg_control = 0;
   msg.msg_controllen = 0;
   msg.msg_flags = 0;
+#if defined(__linux__)
+  flags |= MSG_NOSIGNAL;
+#endif // defined(__linux__)
   return error_wrapper(::sendmsg(s, &msg, flags));
 #endif // defined(BOOST_WINDOWS)
 }
@@ -242,9 +265,24 @@ inline socket_type socket(int af, int type, int protocol)
 #if defined(BOOST_WINDOWS)
   return error_wrapper(::WSASocket(af, type, protocol, 0, 0,
         WSA_FLAG_OVERLAPPED));
-#else // defined(BOOST_WINDOWS)
+#elif defined(__MACH__) && defined(__APPLE__)
+  socket_type s = error_wrapper(::socket(af, type, protocol));
+  if (s == invalid_socket)
+    return s;
+
+  int optval = 1;
+  int result = error_wrapper(::setsockopt(s,
+        SOL_SOCKET, SO_NOSIGPIPE, &optval, sizeof(optval)));
+  if (result != 0)
+  {
+    ::close(s);
+    return invalid_socket;
+  }
+
+  return s;
+#else
   return error_wrapper(::socket(af, type, protocol));
-#endif // defined(BOOST_WINDOWS)
+#endif
 }
 
 inline int setsockopt(socket_type s, int level, int optname,
