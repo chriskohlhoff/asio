@@ -270,16 +270,16 @@ public:
       socket_base::message_flags flags, Error_Handler error_handler)
   {
     // Copy buffers into array.
-    socket_ops::bufs bufs[max_buffers];
+    socket_ops::buf bufs[max_buffers];
     typename Const_Buffers::const_iterator iter = buffers.begin();
     typename Const_Buffers::const_iterator end = buffers.end();
     size_t i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       asio::const_buffer buffer(*iter);
-      bufs[i].size = asio::buffer_size(buffer);
-      bufs[i].data = const_cast<void*>(
-          asio::buffer_cast<const void*>(buffer));
+      socket_ops::init_buf(bufs[i],
+          asio::buffer_cast<const void*>(buffer),
+          asio::buffer_size(buffer));
     }
 
     // Send the data.
@@ -338,16 +338,16 @@ public:
       }
 
       // Copy buffers into array.
-      socket_ops::bufs bufs[max_buffers];
+      socket_ops::buf bufs[max_buffers];
       typename Const_Buffers::const_iterator iter = buffers_.begin();
       typename Const_Buffers::const_iterator end = buffers_.end();
       size_t i = 0;
       for (; iter != end && i < max_buffers; ++iter, ++i)
       {
         asio::const_buffer buffer(*iter);
-        bufs[i].size = asio::buffer_size(buffer);
-        bufs[i].data = const_cast<void*>(
-            asio::buffer_cast<const void*>(buffer));
+        socket_ops::init_buf(bufs[i],
+            asio::buffer_cast<const void*>(buffer),
+            asio::buffer_size(buffer));
       }
 
       // Send the data.
@@ -413,16 +413,16 @@ public:
       Error_Handler error_handler)
   {
     // Copy buffers into array.
-    socket_ops::bufs bufs[max_buffers];
+    socket_ops::buf bufs[max_buffers];
     typename Const_Buffers::const_iterator iter = buffers.begin();
     typename Const_Buffers::const_iterator end = buffers.end();
     size_t i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       asio::const_buffer buffer(*iter);
-      bufs[i].size = asio::buffer_size(buffer);
-      bufs[i].data = const_cast<void*>(
-          asio::buffer_cast<const void*>(buffer));
+      socket_ops::init_buf(bufs[i],
+          asio::buffer_cast<const void*>(buffer),
+          asio::buffer_size(buffer));
     }
 
     // Send the data.
@@ -483,16 +483,16 @@ public:
       }
 
       // Copy buffers into array.
-      socket_ops::bufs bufs[max_buffers];
+      socket_ops::buf bufs[max_buffers];
       typename Const_Buffers::const_iterator iter = buffers_.begin();
       typename Const_Buffers::const_iterator end = buffers_.end();
       size_t i = 0;
       for (; iter != end && i < max_buffers; ++iter, ++i)
       {
         asio::const_buffer buffer(*iter);
-        bufs[i].size = asio::buffer_size(buffer);
-        bufs[i].data = const_cast<void*>(
-            asio::buffer_cast<const void*>(buffer));
+        socket_ops::init_buf(bufs[i],
+            asio::buffer_cast<const void*>(buffer),
+            asio::buffer_size(buffer));
       }
 
       // Send the data.
@@ -560,15 +560,16 @@ public:
       socket_base::message_flags flags, Error_Handler error_handler)
   {
     // Copy buffers into array.
-    socket_ops::bufs bufs[max_buffers];
+    socket_ops::buf bufs[max_buffers];
     typename Mutable_Buffers::const_iterator iter = buffers.begin();
     typename Mutable_Buffers::const_iterator end = buffers.end();
     size_t i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       asio::mutable_buffer buffer(*iter);
-      bufs[i].size = asio::buffer_size(buffer);
-      bufs[i].data = asio::buffer_cast<void*>(buffer);
+      socket_ops::init_buf(bufs[i],
+          asio::buffer_cast<void*>(buffer),
+          asio::buffer_size(buffer));
     }
 
     // Receive some data.
@@ -634,15 +635,16 @@ public:
       }
 
       // Copy buffers into array.
-      socket_ops::bufs bufs[max_buffers];
+      socket_ops::buf bufs[max_buffers];
       typename Mutable_Buffers::const_iterator iter = buffers_.begin();
       typename Mutable_Buffers::const_iterator end = buffers_.end();
       size_t i = 0;
       for (; iter != end && i < max_buffers; ++iter, ++i)
       {
         asio::mutable_buffer buffer(*iter);
-        bufs[i].size = asio::buffer_size(buffer);
-        bufs[i].data = asio::buffer_cast<void*>(buffer);
+        socket_ops::init_buf(bufs[i],
+            asio::buffer_cast<void*>(buffer),
+            asio::buffer_size(buffer));
       }
 
       // Receive some data.
@@ -721,15 +723,16 @@ public:
       Error_Handler error_handler)
   {
     // Copy buffers into array.
-    socket_ops::bufs bufs[max_buffers];
+    socket_ops::buf bufs[max_buffers];
     typename Mutable_Buffers::const_iterator iter = buffers.begin();
     typename Mutable_Buffers::const_iterator end = buffers.end();
     size_t i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       asio::mutable_buffer buffer(*iter);
-      bufs[i].size = asio::buffer_size(buffer);
-      bufs[i].data = asio::buffer_cast<void*>(buffer);
+      socket_ops::init_buf(bufs[i],
+          asio::buffer_cast<void*>(buffer),
+          asio::buffer_size(buffer));
     }
 
     // Receive some data.
@@ -801,15 +804,16 @@ public:
       }
 
       // Copy buffers into array.
-      socket_ops::bufs bufs[max_buffers];
+      socket_ops::buf bufs[max_buffers];
       typename Mutable_Buffers::const_iterator iter = buffers_.begin();
       typename Mutable_Buffers::const_iterator end = buffers_.end();
       size_t i = 0;
       for (; iter != end && i < max_buffers; ++iter, ++i)
       {
         asio::mutable_buffer buffer(*iter);
-        bufs[i].size = asio::buffer_size(buffer);
-        bufs[i].data = asio::buffer_cast<void*>(buffer);
+        socket_ops::init_buf(bufs[i],
+            asio::buffer_cast<void*>(buffer),
+            asio::buffer_size(buffer));
       }
 
       // Receive some data.

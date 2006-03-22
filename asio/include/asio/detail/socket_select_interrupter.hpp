@@ -132,9 +132,8 @@ public:
   void interrupt()
   {
     char byte = 0;
-    socket_ops::bufs b;
-    b.data = &byte;
-    b.size = 1;
+    socket_ops::buf b;
+    socket_ops::init_buf(b, &byte, 1);
     socket_ops::send(write_descriptor_, &b, 1, 0);
   }
 
@@ -142,9 +141,8 @@ public:
   bool reset()
   {
     char data[1024];
-    socket_ops::bufs b;
-    b.data = data;
-    b.size = sizeof(data);
+    socket_ops::buf b;
+    socket_ops::init_buf(b, data, sizeof(data));
     int bytes_read = socket_ops::recv(read_descriptor_, &b, 1, 0);
     bool was_interrupted = (bytes_read > 0);
     while (bytes_read == sizeof(data))
