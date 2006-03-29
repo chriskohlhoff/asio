@@ -564,34 +564,6 @@ inline const_buffer_container_1 buffer(
         ? data.size() * sizeof(Pod_Type) : max_size_in_bytes));
 }
 
-/// Create a new non-modifiable buffer that represents the given POD vector.
-/**
- * @note The buffer is invalidated by any vector operation that would also
- * invalidate iterators.
- */
-template <typename Pod_Type, typename Allocator>
-inline const_buffer_container_1 buffer(
-    std::vector<const Pod_Type, Allocator>& data)
-{
-  return const_buffer_container_1(
-      const_buffer(&data[0], data.size() * sizeof(Pod_Type)));
-}
-
-/// Create a new non-modifiable buffer that represents the given POD vector.
-/**
- * @note The buffer is invalidated by any vector operation that would also
- * invalidate iterators.
- */
-template <typename Pod_Type, typename Allocator>
-inline const_buffer_container_1 buffer(
-    std::vector<const Pod_Type, Allocator>& data, std::size_t max_size_in_bytes)
-{
-  return const_buffer_container_1(
-      const_buffer(&data[0],
-        data.size() * sizeof(Pod_Type) < max_size_in_bytes
-        ? data.size() * sizeof(Pod_Type) : max_size_in_bytes));
-}
-
 /// Create a new non-modifiable buffer that represents the given string.
 /**
  * @note The buffer is invalidated by any non-const operation called on the
