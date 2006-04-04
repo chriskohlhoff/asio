@@ -161,12 +161,12 @@ public:
   // Remove all entries from the map.
   void clear()
   {
+    // Clear the values.
+    values_.clear();
+
     // Initialise all buckets to empty.
     for (size_t i = 0; i < num_buckets; ++i)
       buckets_[i].first = buckets_[i].last = values_.end();
-
-    // Clear the values.
-    values_.clear();
   }
 
 private:
