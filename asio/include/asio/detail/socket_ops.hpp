@@ -563,7 +563,7 @@ inline hostent* gethostbyaddr(const char* addr, int length, int type,
     return 0;
   *result = *retval;
   return retval;
-#elif defined(__sun)
+#elif defined(__sun) || defined(__QNX__)
   hostent* retval = error_wrapper(::gethostbyaddr_r(addr, length, type, result,
         buffer, buflength, error));
   *error = translate_netdb_error(*error);
@@ -595,7 +595,7 @@ inline hostent* gethostbyname(const char* name, struct hostent* result,
     return 0;
   *result = *retval;
   return result;
-#elif defined(__sun)
+#elif defined(__sun) || defined(__QNX__)
   hostent* retval = error_wrapper(::gethostbyname_r(name, result, buffer,
         buflength, error));
   *error = translate_netdb_error(*error);

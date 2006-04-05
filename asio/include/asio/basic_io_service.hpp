@@ -254,7 +254,7 @@ public:
 private:
 #if defined(BOOST_WINDOWS)
   detail::winsock_init<> init_;
-#elif defined(__sun)
+#elif defined(__sun) || defined(__QNX__)
   detail::signal_init<> init_;
 #endif
 

@@ -244,7 +244,7 @@ public:
       return "Operation aborted.";
 #endif // !defined(__sun)
     default:
-#if defined(__sun)
+#if defined(__sun) || defined(__QNX__)
       return strerror(code_);
 #elif defined(__MACH__) && defined(__APPLE__)
       try

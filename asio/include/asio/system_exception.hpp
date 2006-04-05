@@ -104,7 +104,7 @@ public:
     {
       return "asio system_exception";
     }
-#elif defined(__sun)
+#elif defined(__sun) || defined(__QNX__)
     return strerror(code_);
 #elif defined(__MACH__) && defined(__APPLE__)
     try
