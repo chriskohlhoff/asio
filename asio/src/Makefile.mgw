@@ -29,6 +29,8 @@ UNIT_TEST_EXES = \
 	tests/unit/io_service_test.exe \
 	tests/unit/error_handler_test.exe \
 	tests/unit/error_test.exe \
+	tests/unit/ip/tcp_test.exe \
+	tests/unit/ip/udp_test.exe \
 	tests/unit/ipv4/address_test.exe \
 	tests/unit/ipv4/basic_host_resolver_test.exe \
 	tests/unit/ipv4/host_resolver_service_test.exe \

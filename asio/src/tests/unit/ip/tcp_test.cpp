@@ -9,7 +9,7 @@
 //
 
 // Test that header file is self-contained.
-#include "asio/ipv4/tcp.hpp"
+#include "asio/ip/tcp.hpp"
 
 #include <boost/bind.hpp>
 #include <cstring>
@@ -18,12 +18,12 @@
 
 //------------------------------------------------------------------------------
 
-// ipv4_tcp_socket_compile test
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ip_tcp_socket_compile test
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~
 // The following test checks that all public member functions on the class
-// ipv4::tcp::socket compile and link correctly. Runtime failures are ignored.
+// ip::tcp::socket compile and link correctly. Runtime failures are ignored.
 
-namespace ipv4_tcp_socket_compile {
+namespace ip_tcp_socket_compile {
 
 using namespace asio;
 
@@ -64,11 +64,13 @@ void test()
 
     // basic_stream_socket constructors.
 
-    ipv4::tcp::socket socket1(ios);
-    ipv4::tcp::socket socket2(ios, ipv4::tcp());
-    ipv4::tcp::socket socket3(ios, ipv4::tcp::endpoint(0));
+    ip::tcp::socket socket1(ios);
+    ip::tcp::socket socket2(ios, ipv4::tcp());
+    ip::tcp::socket socket3(ios, ipv6::tcp());
+    ip::tcp::socket socket4(ios, ipv4::tcp::endpoint(0));
+    ip::tcp::socket socket5(ios, ipv6::tcp::endpoint(0));
     int native_socket1 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    ipv4::tcp::socket socket4(ios, native_socket1);
+    ip::tcp::socket socket6(ios, native_socket1);
 
     // basic_io_object functions.
 
@@ -77,11 +79,13 @@ void test()
 
     // basic_socket functions.
 
-    ipv4::tcp::socket::lowest_layer_type& lowest_layer = socket1.lowest_layer();
+    ip::tcp::socket::lowest_layer_type& lowest_layer = socket1.lowest_layer();
     (void)lowest_layer;
 
     socket1.open(ipv4::tcp());
+    socket1.open(ipv6::tcp());
     socket1.open(ipv4::tcp(), error_handler);
+    socket1.open(ipv6::tcp(), error_handler);
     int native_socket2 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     socket1.open(native_socket2);
     int native_socket3 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -90,16 +94,21 @@ void test()
     socket1.close();
     socket1.close(error_handler);
 
-    ipv4::tcp::socket::native_type native_socket4 = socket1.native();
+    ip::tcp::socket::native_type native_socket4 = socket1.native();
     (void)native_socket4;
 
     socket1.bind(ipv4::tcp::endpoint(0));
+    socket1.bind(ipv6::tcp::endpoint(0));
     socket1.bind(ipv4::tcp::endpoint(0), error_handler);
+    socket1.bind(ipv6::tcp::endpoint(0), error_handler);
 
     socket1.connect(ipv4::tcp::endpoint(0));
+    socket1.connect(ipv6::tcp::endpoint(0));
     socket1.connect(ipv4::tcp::endpoint(0), error_handler);
+    socket1.connect(ipv6::tcp::endpoint(0), error_handler);
 
     socket1.async_connect(ipv4::tcp::endpoint(0), connect_handler);
+    socket1.async_connect(ipv6::tcp::endpoint(0), connect_handler);
 
     socket1.set_option(socket_option);
     socket1.set_option(socket_option, error_handler);
@@ -110,11 +119,11 @@ void test()
     socket1.io_control(io_control_command);
     socket1.io_control(io_control_command, error_handler);
 
-    ipv4::tcp::endpoint endpoint1 = socket1.local_endpoint();
-    ipv4::tcp::endpoint endpoint2 = socket1.local_endpoint(error_handler);
+    ip::tcp::endpoint endpoint1 = socket1.local_endpoint();
+    ip::tcp::endpoint endpoint2 = socket1.local_endpoint(error_handler);
 
-    ipv4::tcp::endpoint endpoint3 = socket1.remote_endpoint();
-    ipv4::tcp::endpoint endpoint4 = socket1.remote_endpoint(error_handler);
+    ip::tcp::endpoint endpoint3 = socket1.remote_endpoint();
+    ip::tcp::endpoint endpoint4 = socket1.remote_endpoint(error_handler);
 
     socket1.shutdown(socket_base::shutdown_both);
     socket1.shutdown(socket_base::shutdown_both, error_handler);
@@ -167,16 +176,16 @@ void test()
   }
 }
 
-} // namespace ipv4_tcp_socket_compile
+} // namespace ip_tcp_socket_compile
 
 //------------------------------------------------------------------------------
 
-// ipv4_tcp_acceptor_runtime test
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// The following test checks the runtime operation of the ipv4::tcp::acceptor
+// ip_tcp_acceptor_runtime test
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// The following test checks the runtime operation of the ip::tcp::acceptor
 // class.
 
-namespace ipv4_tcp_acceptor_runtime {
+namespace ip_tcp_acceptor_runtime {
 
 using namespace asio;
 
@@ -194,12 +203,12 @@ void test()
 {
   io_service ios;
 
-  ipv4::tcp::acceptor acceptor(ios, ipv4::tcp::endpoint(0));
-  ipv4::tcp::endpoint server_endpoint = acceptor.local_endpoint();
+  ip::tcp::acceptor acceptor(ios, ipv4::tcp::endpoint(0));
+  ip::tcp::endpoint server_endpoint = acceptor.local_endpoint();
   server_endpoint.address(ipv4::address::loopback());
 
-  ipv4::tcp::socket client_side_socket(ios);
-  ipv4::tcp::socket server_side_socket(ios);
+  ip::tcp::socket client_side_socket(ios);
+  ip::tcp::socket server_side_socket(ios);
 
   client_side_socket.connect(server_endpoint);
   acceptor.accept(server_side_socket);
@@ -208,14 +217,14 @@ void test()
   server_side_socket.close();
 
   client_side_socket.connect(server_endpoint);
-  ipv4::tcp::endpoint client_endpoint;
+  ip::tcp::endpoint client_endpoint;
   acceptor.accept_endpoint(server_side_socket, client_endpoint);
 
-  ipv4::tcp::endpoint client_side_local_endpoint
+  ip::tcp::endpoint client_side_local_endpoint
     = client_side_socket.local_endpoint();
   BOOST_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
 
-  ipv4::tcp::endpoint server_side_remote_endpoint
+  ip::tcp::endpoint server_side_remote_endpoint
     = server_side_socket.remote_endpoint();
   BOOST_CHECK(server_side_remote_endpoint.port() == client_endpoint.port());
 
@@ -244,14 +253,14 @@ void test()
   BOOST_CHECK(server_side_remote_endpoint.port() == client_endpoint.port());
 }
 
-} // namespace ipv4_tcp_acceptor_runtime
+} // namespace ip_tcp_acceptor_runtime
 
 //------------------------------------------------------------------------------
 
 test_suite* init_unit_test_suite(int argc, char* argv[])
 {
-  test_suite* test = BOOST_TEST_SUITE("ipv4/tcp");
-  test->add(BOOST_TEST_CASE(&ipv4_tcp_socket_compile::test));
-  test->add(BOOST_TEST_CASE(&ipv4_tcp_acceptor_runtime::test));
+  test_suite* test = BOOST_TEST_SUITE("ip/tcp");
+  test->add(BOOST_TEST_CASE(&ip_tcp_socket_compile::test));
+  test->add(BOOST_TEST_CASE(&ip_tcp_acceptor_runtime::test));
   return test;
 }

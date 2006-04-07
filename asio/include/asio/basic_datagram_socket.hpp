@@ -125,8 +125,36 @@ public:
    */
   basic_datagram_socket(io_service_type& io_service,
       const native_type& native_socket)
-    : basic_io_object<Service>(io_service, native_socket)
+    : basic_socket<Service>(io_service, native_socket)
   {
+  }
+
+  /// Send some data on a connected socket.
+  /**
+   * This function is used to send data on the datagram socket. The function
+   * call will block until the data has been sent successfully or an error
+   * occurs.
+   *
+   * @param buffers One ore more data buffers to be sent on the socket.
+   *
+   * @returns The number of bytes sent.
+   *
+   * @throws asio::error Thrown on failure.
+   *
+   * @note The send operation can only be used with a connected socket. Use
+   * the send_to function to send data on an unconnected datagram socket.
+   *
+   * @par Example:
+   * To send a single data buffer use the @ref buffer function as follows:
+   * @code socket.send(asio::buffer(data, size)); @endcode
+   * See the @ref buffer documentation for information on sending multiple
+   * buffers in one go, and how to use it with arrays, boost::array or
+   * std::vector.
+   */
+  template <typename Const_Buffers>
+  std::size_t send(const Const_Buffers& buffers)
+  {
+    return this->service.send(this->implementation, buffers, 0, throw_error());
   }
 
   /// Send some data on a connected socket.
@@ -145,13 +173,6 @@ public:
    *
    * @note The send operation can only be used with a connected socket. Use
    * the send_to function to send data on an unconnected datagram socket.
-   *
-   * @par Example:
-   * To send a single data buffer use the @ref buffer function as follows:
-   * @code socket.send(asio::buffer(data, size), 0); @endcode
-   * See the @ref buffer documentation for information on sending multiple
-   * buffers in one go, and how to use it with arrays, boost::array or
-   * std::vector.
    */
   template <typename Const_Buffers>
   std::size_t send(const Const_Buffers& buffers,
@@ -175,7 +196,7 @@ public:
    * will be made of the handler as required. The function signature of the
    * handler must be:
    * @code void error_handler(
-   *   const asio::error& error // Result of operation
+   *   const asio::error& error // Result of operation.
    * ); @endcode
    *
    * @returns The number of bytes sent.
@@ -202,14 +223,12 @@ public:
    * memory blocks is retained by the caller, which must guarantee that they
    * remain valid until the handler is called.
    *
-   * @param flags Flags specifying how the send call is to be made.
-   *
    * @param handler The handler to be called when the send operation completes.
    * Copies will be made of the handler as required. The function signature of
    * the handler must be:
    * @code void handler(
-   *   const asio::error& error,     // Result of operation
-   *   std::size_t bytes_transferred // Number of bytes sent
+   *   const asio::error& error,     // Result of operation.
+   *   std::size_t bytes_transferred // Number of bytes sent.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
@@ -223,11 +242,46 @@ public:
    * @par Example:
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
-   * socket.async_send(asio::buffer(data, size), 0, handler);
+   * socket.async_send(asio::buffer(data, size), handler);
    * @endcode
    * See the @ref buffer documentation for information on sending multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
+   */
+  template <typename Const_Buffers, typename Handler>
+  void async_send(const Const_Buffers& buffers, Handler handler)
+  {
+    this->service.async_send(this->implementation, buffers, 0, handler);
+  }
+
+  /// Start an asynchronous send on a connected socket.
+  /**
+   * This function is used to send data on the datagram socket. The function
+   * call will block until the data has been sent successfully or an error
+   * occurs.
+   *
+   * @param buffers One or more data buffers to be sent on the socket. Although
+   * the buffers object may be copied as necessary, ownership of the underlying
+   * memory blocks is retained by the caller, which must guarantee that they
+   * remain valid until the handler is called.
+   *
+   * @param flags Flags specifying how the send call is to be made.
+   *
+   * @param handler The handler to be called when the send operation completes.
+   * Copies will be made of the handler as required. The function signature of
+   * the handler must be:
+   * @code void handler(
+   *   const asio::error& error,     // Result of operation.
+   *   std::size_t bytes_transferred // Number of bytes sent.
+   * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the handler will not be invoked from within this function. Invocation
+   * of the handler will be performed in a manner equivalent to using
+   * asio::io_service::post().
+   *
+   * @note The async_send operation can only be used with a connected socket.
+   * Use the async_send_to function to send data on an unconnected datagram
+   * socket.
    */
   template <typename Const_Buffers, typename Handler>
   void async_send(const Const_Buffers& buffers,
@@ -244,8 +298,6 @@ public:
    *
    * @param buffers One or more data buffers to be sent to the remote endpoint.
    *
-   * @param flags Flags specifying how the send call is to be made.
-   *
    * @param destination The remote endpoint to which the data will be sent.
    *
    * @returns The number of bytes sent.
@@ -256,7 +308,7 @@ public:
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
    * asio::ipv4::udp::endpoint destination(12345, "1.2.3.4");
-   * socket.send_to(asio::buffer(data, size), 0, destination);
+   * socket.send_to(asio::buffer(data, size), destination);
    * @endcode
    * See the @ref buffer documentation for information on sending multiple
    * buffers in one go, and how to use it with arrays, boost::array or
@@ -264,10 +316,10 @@ public:
    */
   template <typename Const_Buffers>
   std::size_t send_to(const Const_Buffers& buffers,
-      socket_base::message_flags flags, const endpoint_type& destination)
+      const endpoint_type& destination)
   {
-    return this->service.send_to(this->implementation, buffers, flags,
-        destination, throw_error());
+    return this->service.send_to(this->implementation, buffers, destination, 0,
+        throw_error());
   }
 
   /// Send a datagram to the specified endpoint.
@@ -278,26 +330,94 @@ public:
    *
    * @param buffers One or more data buffers to be sent to the remote endpoint.
    *
+   * @param destination The remote endpoint to which the data will be sent.
+   *
    * @param flags Flags specifying how the send call is to be made.
    *
+   * @returns The number of bytes sent.
+   *
+   * @throws asio::error Thrown on failure.
+   */
+  template <typename Const_Buffers>
+  std::size_t send_to(const Const_Buffers& buffers,
+      const endpoint_type& destination, socket_base::message_flags flags)
+  {
+    return this->service.send_to(this->implementation, buffers, destination,
+        flags, throw_error());
+  }
+
+  /// Send a datagram to the specified endpoint.
+  /**
+   * This function is used to send a datagram to the specified remote endpoint.
+   * The function call will block until the data has been sent successfully or
+   * an error occurs.
+   *
+   * @param buffers One or more data buffers to be sent to the remote endpoint.
+   *
    * @param destination The remote endpoint to which the data will be sent.
+   *
+   * @param flags Flags specifying how the send call is to be made.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The function signature of the
    * handler must be:
    * @code void error_handler(
-   *   const asio::error& error // Result of operation
+   *   const asio::error& error // Result of operation.
    * ); @endcode
    *
    * @returns The number of bytes sent.
    */
   template <typename Const_Buffers, typename Error_Handler>
   std::size_t send_to(const Const_Buffers& buffers,
-      socket_base::message_flags flags, const endpoint_type& destination,
+      const endpoint_type& destination, socket_base::message_flags flags,
       Error_Handler error_handler)
   {
-    return this->service.send_to(this->implementation, buffers, flags,
-        destination, error_handler);
+    return this->service.send_to(this->implementation, buffers, destination,
+        flags, error_handler);
+  }
+
+  /// Start an asynchronous send.
+  /**
+   * This function is used to asynchronously send a datagram to the specified
+   * remote endpoint. The function call always returns immediately.
+   *
+   * @param buffers One or more data buffers to be sent to the remote endpoint.
+   * Although the buffers object may be copied as necessary, ownership of the
+   * underlying memory blocks is retained by the caller, which must guarantee
+   * that they remain valid until the handler is called.
+   *
+   * @param destination The remote endpoint to which the data will be sent.
+   * Copies will be made of the endpoint as required.
+   *
+   * @param handler The handler to be called when the send operation completes.
+   * Copies will be made of the handler as required. The function signature of
+   * the handler must be:
+   * @code void handler(
+   *   const asio::error& error,     // Result of operation.
+   *   std::size_t bytes_transferred // Number of bytes sent.
+   * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the handler will not be invoked from within this function. Invocation
+   * of the handler will be performed in a manner equivalent to using
+   * asio::io_service::post().
+   *
+   * @par Example:
+   * To send a single data buffer use the @ref buffer function as follows:
+   * @code
+   * asio::ipv4::udp::endpoint destination(12345, "1.2.3.4");
+   * socket.async_send_to(
+   *     asio::buffer(data, size), destination, handler);
+   * @endcode
+   * See the @ref buffer documentation for information on sending multiple
+   * buffers in one go, and how to use it with arrays, boost::array or
+   * std::vector.
+   */
+  template <typename Const_Buffers, typename Handler>
+  void async_send_to(const Const_Buffers& buffers,
+      const endpoint_type& destination, Handler handler)
+  {
+    this->service.async_send_to(this->implementation, buffers, destination, 0,
+        handler);
   }
 
   /// Start an asynchronous send.
@@ -319,32 +439,52 @@ public:
    * Copies will be made of the handler as required. The function signature of
    * the handler must be:
    * @code void handler(
-   *   const asio::error& error,     // Result of operation
-   *   std::size_t bytes_transferred // Number of bytes sent
+   *   const asio::error& error,     // Result of operation.
+   *   std::size_t bytes_transferred // Number of bytes sent.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
    * asio::io_service::post().
-   *
-   * @par Example:
-   * To send a single data buffer use the @ref buffer function as follows:
-   * @code
-   * asio::ipv4::udp::endpoint destination(12345, "1.2.3.4");
-   * socket.async_send_to(
-   *     asio::buffer(data, size), 0, destination, handler);
-   * @endcode
-   * See the @ref buffer documentation for information on sending multiple
-   * buffers in one go, and how to use it with arrays, boost::array or
-   * std::vector.
    */
   template <typename Const_Buffers, typename Handler>
   void async_send_to(const Const_Buffers& buffers,
-      socket_base::message_flags flags, const endpoint_type& destination,
+      const endpoint_type& destination, socket_base::message_flags flags,
       Handler handler)
   {
-    this->service.async_send_to(this->implementation, buffers, flags,
-        destination, handler);
+    this->service.async_send_to(this->implementation, buffers, destination,
+        flags, handler);
+  }
+
+  /// Receive some data on a connected socket.
+  /**
+   * This function is used to receive data on the datagram socket. The function
+   * call will block until data has been received successfully or an error
+   * occurs.
+   *
+   * @param buffers One or more buffers into which the data will be received.
+   *
+   * @returns The number of bytes received.
+   *
+   * @throws asio::error Thrown on failure.
+   *
+   * @note The receive operation can only be used with a connected socket. Use
+   * the receive_from function to receive data on an unconnected datagram
+   * socket.
+   *
+   * @par Example:
+   * To receive into a single data buffer use the @ref buffer function as
+   * follows:
+   * @code socket.receive(asio::buffer(data, size)); @endcode
+   * See the @ref buffer documentation for information on receiving into
+   * multiple buffers in one go, and how to use it with arrays, boost::array or
+   * std::vector.
+   */
+  template <typename Mutable_Buffers>
+  std::size_t receive(const Mutable_Buffers& buffers)
+  {
+    return this->service.receive(this->implementation, buffers, 0,
+        throw_error());
   }
 
   /// Receive some data on a connected socket.
@@ -364,14 +504,6 @@ public:
    * @note The receive operation can only be used with a connected socket. Use
    * the receive_from function to receive data on an unconnected datagram
    * socket.
-   *
-   * @par Example:
-   * To receive into a single data buffer use the @ref buffer function as
-   * follows:
-   * @code socket.receive(asio::buffer(data, size), 0); @endcode
-   * See the @ref buffer documentation for information on receiving into
-   * multiple buffers in one go, and how to use it with arrays, boost::array or
-   * std::vector.
    */
   template <typename Mutable_Buffers>
   std::size_t receive(const Mutable_Buffers& buffers,
@@ -395,7 +527,7 @@ public:
    * will be made of the handler as required. The function signature of the
    * handler must be:
    * @code void error_handler(
-   *   const asio::error& error // Result of operation
+   *   const asio::error& error // Result of operation.
    * ); @endcode
    *
    * @returns The number of bytes received.
@@ -422,14 +554,12 @@ public:
    * underlying memory blocks is retained by the caller, which must guarantee
    * that they remain valid until the handler is called.
    *
-   * @param flags Flags specifying how the receive call is to be made.
-   *
    * @param handler The handler to be called when the receive operation
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const asio::error& error,     // Result of operation
-   *   std::size_t bytes_transferred // Number of bytes received
+   *   const asio::error& error,     // Result of operation.
+   *   std::size_t bytes_transferred // Number of bytes received.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
@@ -444,11 +574,45 @@ public:
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
    * @code
-   * socket.async_receive(asio::buffer(data, size), 0, handler);
+   * socket.async_receive(asio::buffer(data, size), handler);
    * @endcode
    * See the @ref buffer documentation for information on receiving into
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
+   */
+  template <typename Mutable_Buffers, typename Handler>
+  void async_receive(const Mutable_Buffers& buffers, Handler handler)
+  {
+    this->service.async_receive(this->implementation, buffers, 0, handler);
+  }
+
+  /// Start an asynchronous receive on a connected socket.
+  /**
+   * This function is used to asynchronously receive data from the datagram
+   * socket. The function call always returns immediately.
+   *
+   * @param buffers One or more buffers into which the data will be received.
+   * Although the buffers object may be copied as necessary, ownership of the
+   * underlying memory blocks is retained by the caller, which must guarantee
+   * that they remain valid until the handler is called.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
+   *
+   * @param handler The handler to be called when the receive operation
+   * completes. Copies will be made of the handler as required. The function
+   * signature of the handler must be:
+   * @code void handler(
+   *   const asio::error& error,     // Result of operation.
+   *   std::size_t bytes_transferred // Number of bytes received.
+   * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the handler will not be invoked from within this function. Invocation
+   * of the handler will be performed in a manner equivalent to using
+   * asio::io_service::post().
+   *
+   * @note The async_receive operation can only be used with a connected socket.
+   * Use the async_receive_from function to receive data on an unconnected
+   * datagram socket.
    */
   template <typename Mutable_Buffers, typename Handler>
   void async_receive(const Mutable_Buffers& buffers,
@@ -464,8 +628,6 @@ public:
    *
    * @param buffers One or more buffers into which the data will be received.
    *
-   * @param flags Flags specifying how the receive call is to be made.
-   *
    * @param sender_endpoint An endpoint object that receives the endpoint of
    * the remote sender of the datagram.
    *
@@ -479,7 +641,7 @@ public:
    * @code
    * asio::ipv4::udp::endpoint sender_endpoint;
    * socket.receive_from(
-   *     asio::buffer(data, size), 0, sender_endpoint);
+   *     asio::buffer(data, size), sender_endpoint);
    * @endcode
    * See the @ref buffer documentation for information on receiving into
    * multiple buffers in one go, and how to use it with arrays, boost::array or
@@ -487,10 +649,10 @@ public:
    */
   template <typename Mutable_Buffers>
   std::size_t receive_from(const Mutable_Buffers& buffers,
-      socket_base::message_flags flags, endpoint_type& sender_endpoint)
+      endpoint_type& sender_endpoint)
   {
-    return this->service.receive_from(this->implementation, buffers, flags,
-        sender_endpoint, throw_error());
+    return this->service.receive_from(this->implementation, buffers,
+        sender_endpoint, 0, throw_error());
   }
   
   /// Receive a datagram with the endpoint of the sender.
@@ -500,29 +662,53 @@ public:
    *
    * @param buffers One or more buffers into which the data will be received.
    *
+   * @param sender_endpoint An endpoint object that receives the endpoint of
+   * the remote sender of the datagram.
+   *
    * @param flags Flags specifying how the receive call is to be made.
+   *
+   * @returns The number of bytes received.
+   *
+   * @throws asio::error Thrown on failure.
+   */
+  template <typename Mutable_Buffers>
+  std::size_t receive_from(const Mutable_Buffers& buffers,
+      endpoint_type& sender_endpoint, socket_base::message_flags flags)
+  {
+    return this->service.receive_from(this->implementation, buffers,
+        sender_endpoint, flags, throw_error());
+  }
+  
+  /// Receive a datagram with the endpoint of the sender.
+  /**
+   * This function is used to receive a datagram. The function call will block
+   * until data has been received successfully or an error occurs.
+   *
+   * @param buffers One or more buffers into which the data will be received.
    *
    * @param sender_endpoint An endpoint object that receives the endpoint of
    * the remote sender of the datagram.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
    *
    * @param error_handler The handler to be called when an error occurs. Copies
    * will be made of the handler as required. The function signature of the
    * handler must be:
    * @code void error_handler(
-   *   const asio::error& error // Result of operation
+   *   const asio::error& error // Result of operation.
    * ); @endcode
    *
    * @returns The number of bytes received.
    */
   template <typename Mutable_Buffers, typename Error_Handler>
   std::size_t receive_from(const Mutable_Buffers& buffers,
-      socket_base::message_flags flags, endpoint_type& sender_endpoint,
+      endpoint_type& sender_endpoint, socket_base::message_flags flags,
       Error_Handler error_handler)
   {
-    return this->service.receive_from(this->implementation, buffers, flags,
-        sender_endpoint, error_handler);
+    return this->service.receive_from(this->implementation, buffers,
+        sender_endpoint, flags, error_handler);
   }
-  
+
   /// Start an asynchronous receive.
   /**
    * This function is used to asynchronously receive a datagram. The function
@@ -533,8 +719,6 @@ public:
    * underlying memory blocks is retained by the caller, which must guarantee
    * that they remain valid until the handler is called.
    *
-   * @param flags Flags specifying how the receive call is to be made.
-   *
    * @param sender_endpoint An endpoint object that receives the endpoint of
    * the remote sender of the datagram. Ownership of the sender_endpoint object
    * is retained by the caller, which must guarantee that it is valid until the
@@ -544,8 +728,8 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const asio::error& error,     // Result of operation
-   *   std::size_t bytes_transferred // Number of bytes received
+   *   const asio::error& error,     // Result of operation.
+   *   std::size_t bytes_transferred // Number of bytes received.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
@@ -563,11 +747,48 @@ public:
    */
   template <typename Mutable_Buffers, typename Handler>
   void async_receive_from(const Mutable_Buffers& buffers,
-      socket_base::message_flags flags, endpoint_type& sender_endpoint,
+      endpoint_type& sender_endpoint, Handler handler)
+  {
+    this->service.async_receive_from(this->implementation, buffers,
+        sender_endpoint, 0, handler);
+  }
+
+  /// Start an asynchronous receive.
+  /**
+   * This function is used to asynchronously receive a datagram. The function
+   * call always returns immediately.
+   *
+   * @param buffers One or more buffers into which the data will be received.
+   * Although the buffers object may be copied as necessary, ownership of the
+   * underlying memory blocks is retained by the caller, which must guarantee
+   * that they remain valid until the handler is called.
+   *
+   * @param sender_endpoint An endpoint object that receives the endpoint of
+   * the remote sender of the datagram. Ownership of the sender_endpoint object
+   * is retained by the caller, which must guarantee that it is valid until the
+   * handler is called.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
+   *
+   * @param handler The handler to be called when the receive operation
+   * completes. Copies will be made of the handler as required. The function
+   * signature of the handler must be:
+   * @code void handler(
+   *   const asio::error& error,     // Result of operation.
+   *   std::size_t bytes_transferred // Number of bytes received.
+   * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the handler will not be invoked from within this function. Invocation
+   * of the handler will be performed in a manner equivalent to using
+   * asio::io_service::post().
+   */
+  template <typename Mutable_Buffers, typename Handler>
+  void async_receive_from(const Mutable_Buffers& buffers,
+      endpoint_type& sender_endpoint, socket_base::message_flags flags,
       Handler handler)
   {
-    this->service.async_receive_from(this->implementation, buffers, flags,
-        sender_endpoint, handler);
+    this->service.async_receive_from(this->implementation, buffers,
+        sender_endpoint, flags, handler);
   }
 };
 

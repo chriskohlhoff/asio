@@ -204,6 +204,28 @@ run io_service_test.cpp
     $(SOCKET_LIBS)
   ;
 
+run ip/tcp_test.cpp
+    <lib>@boost/libs/date_time/build/boost_date_time
+  :
+  :
+  : <include>../../..
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
+  ;
+
+run ip/udp_test.cpp
+    <lib>@boost/libs/date_time/build/boost_date_time
+  :
+  :
+  : <include>../../..
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
+  ;
+
 run ipv4/address_test.cpp
     <lib>@boost/libs/date_time/build/boost_date_time
   :

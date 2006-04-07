@@ -13,8 +13,8 @@ void server(asio::io_service& io_service, short port)
     char data[max_length];
     asio::ipv4::udp::endpoint sender_endpoint;
     size_t length = sock.receive_from(
-        asio::buffer(data, max_length), 0, sender_endpoint);
-    sock.send_to(asio::buffer(data, length), 0, sender_endpoint);
+        asio::buffer(data, max_length), sender_endpoint);
+    sock.send_to(asio::buffer(data, length), sender_endpoint);
   }
 }
 

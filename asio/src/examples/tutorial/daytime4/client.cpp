@@ -23,13 +23,13 @@ int main(int argc, char* argv[])
         asio::ipv4::udp::endpoint(0));
     socket.send_to(
         asio::buffer(send_buf, sizeof(send_buf)),
-        0, receiver_endpoint);
+        receiver_endpoint);
 
     char recv_buf[128];
     asio::ipv4::udp::endpoint sender_endpoint;
     size_t len = socket.receive_from(
         asio::buffer(recv_buf, sizeof(recv_buf)),
-        0, sender_endpoint);
+        sender_endpoint);
     std::cout.write(recv_buf, len);
   }
   catch (asio::error& e)

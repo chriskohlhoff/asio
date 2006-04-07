@@ -279,8 +279,7 @@ public:
       error_handler(asio::error(socket_ops::get_error()));
   }
 
-  // Send the given data to the peer. Returns the number of bytes sent or
-  // 0 if the connection was closed cleanly.
+  // Send the given data to the peer. Returns the number of bytes sent.
   template <typename Const_Buffers, typename Error_Handler>
   size_t send(implementation_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, Error_Handler error_handler)
@@ -415,7 +414,7 @@ public:
   // sent.
   template <typename Const_Buffers, typename Endpoint, typename Error_Handler>
   size_t send_to(implementation_type& impl, const Const_Buffers& buffers,
-      socket_base::message_flags flags, const Endpoint& destination,
+      const Endpoint& destination, socket_base::message_flags flags,
       Error_Handler error_handler)
   {
     // Copy buffers into WSABUF array.
@@ -489,7 +488,7 @@ public:
   // lifetime of the asynchronous operation.
   template <typename Const_Buffers, typename Endpoint, typename Handler>
   void async_send_to(implementation_type& impl, const Const_Buffers& buffers,
-      socket_base::message_flags flags, const Endpoint& destination,
+      const Endpoint& destination, socket_base::message_flags flags,
       Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
@@ -530,8 +529,7 @@ public:
     }
   }
 
-  // Receive some data from the peer. Returns the number of bytes received or
-  // 0 if the connection was closed cleanly.
+  // Receive some data from the peer. Returns the number of bytes received.
   template <typename Mutable_Buffers, typename Error_Handler>
   size_t receive(implementation_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Error_Handler error_handler)
@@ -675,7 +673,7 @@ public:
   // bytes received.
   template <typename Mutable_Buffers, typename Endpoint, typename Error_Handler>
   size_t receive_from(implementation_type& impl, const Mutable_Buffers& buffers,
-      socket_base::message_flags flags, Endpoint& sender_endpoint,
+      Endpoint& sender_endpoint, socket_base::message_flags flags,
       Error_Handler error_handler)
   {
     // Copy buffers into WSABUF array.
@@ -778,8 +776,8 @@ public:
   // asynchronous operation.
   template <typename Mutable_Buffers, typename Endpoint, typename Handler>
   void async_receive_from(implementation_type& impl,
-      const Mutable_Buffers& buffers, socket_base::message_flags flags,
-      Endpoint& sender_endp, Handler handler)
+      const Mutable_Buffers& buffers, Endpoint& sender_endp,
+      socket_base::message_flags flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef receive_from_operation<Endpoint, Handler> value_type;

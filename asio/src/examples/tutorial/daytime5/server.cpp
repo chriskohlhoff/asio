@@ -19,7 +19,7 @@ int main()
       asio::error error;
       socket.receive_from(
           asio::buffer(recv_buf, sizeof(recv_buf)),
-          0, remote_endpoint, asio::assign_error(error));
+          remote_endpoint, 0, asio::assign_error(error));
       if (error && error != asio::error::message_size)
         throw error;
 
@@ -28,7 +28,7 @@ int main()
       std::string msg = ctime(&now);
 
       socket.send_to(asio::buffer(msg.c_str(), msg.length()),
-          0, remote_endpoint, asio::ignore_error());
+          remote_endpoint, 0, asio::ignore_error());
     }
   }
   catch (asio::error& e)

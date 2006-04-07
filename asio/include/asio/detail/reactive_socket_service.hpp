@@ -409,7 +409,7 @@ public:
   // sent.
   template <typename Const_Buffers, typename Endpoint, typename Error_Handler>
   size_t send_to(implementation_type& impl, const Const_Buffers& buffers,
-      socket_base::message_flags flags, const Endpoint& destination,
+      const Endpoint& destination, socket_base::message_flags flags,
       Error_Handler error_handler)
   {
     // Copy buffers into array.
@@ -460,14 +460,14 @@ public:
   {
   public:
     send_to_handler(socket_type socket, IO_Service& io_service,
-        const Const_Buffers& buffers, socket_base::message_flags flags,
-        const Endpoint& endpoint, Handler handler)
+        const Const_Buffers& buffers, const Endpoint& endpoint,
+        socket_base::message_flags flags, Handler handler)
       : socket_(socket),
         io_service_(io_service),
         work_(io_service),
         buffers_(buffers),
-        flags_(flags),
         destination_(endpoint),
+        flags_(flags),
         handler_(handler)
     {
     }
@@ -515,8 +515,8 @@ public:
     IO_Service& io_service_;
     typename IO_Service::work work_;
     Const_Buffers buffers_;
-    socket_base::message_flags flags_;
     Endpoint destination_;
+    socket_base::message_flags flags_;
     Handler handler_;
   };
 
@@ -524,7 +524,7 @@ public:
   // lifetime of the asynchronous operation.
   template <typename Const_Buffers, typename Endpoint, typename Handler>
   void async_send_to(implementation_type& impl, const Const_Buffers& buffers,
-      socket_base::message_flags flags, const Endpoint& destination,
+      const Endpoint& destination, socket_base::message_flags flags,
       Handler handler)
   {
     if (impl.socket_ == invalid_socket)
@@ -549,12 +549,11 @@ public:
 
       reactor_.start_write_op(impl.socket_,
           send_to_handler<Const_Buffers, Endpoint, Handler>(
-            impl.socket_, io_service_, buffers, flags, destination, handler));
+            impl.socket_, io_service_, buffers, destination, flags, handler));
     }
   }
 
-  // Receive some data from the peer. Returns the number of bytes received or
-  // 0 if the connection was closed cleanly.
+  // Receive some data from the peer. Returns the number of bytes received.
   template <typename Mutable_Buffers, typename Error_Handler>
   size_t receive(implementation_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Error_Handler error_handler)
@@ -719,7 +718,7 @@ public:
   // bytes received.
   template <typename Mutable_Buffers, typename Endpoint, typename Error_Handler>
   size_t receive_from(implementation_type& impl, const Mutable_Buffers& buffers,
-      socket_base::message_flags flags, Endpoint& sender_endpoint,
+      Endpoint& sender_endpoint, socket_base::message_flags flags,
       Error_Handler error_handler)
   {
     // Copy buffers into array.
@@ -781,14 +780,14 @@ public:
   {
   public:
     receive_from_handler(socket_type socket, IO_Service& io_service,
-        const Mutable_Buffers& buffers, socket_base::message_flags flags,
-        Endpoint& endpoint, Handler handler)
+        const Mutable_Buffers& buffers, Endpoint& endpoint,
+        socket_base::message_flags flags, Handler handler)
       : socket_(socket),
         io_service_(io_service),
         work_(io_service),
         buffers_(buffers),
-        flags_(flags),
         sender_endpoint_(endpoint),
+        flags_(flags),
         handler_(handler)
     {
     }
@@ -842,8 +841,8 @@ public:
     IO_Service& io_service_;
     typename IO_Service::work work_;
     Mutable_Buffers buffers_;
-    socket_base::message_flags flags_;
     Endpoint& sender_endpoint_;
+    socket_base::message_flags flags_;
     Handler handler_;
   };
 
@@ -852,8 +851,8 @@ public:
   // asynchronous operation.
   template <typename Mutable_Buffers, typename Endpoint, typename Handler>
   void async_receive_from(implementation_type& impl,
-      const Mutable_Buffers& buffers, socket_base::message_flags flags,
-      Endpoint& sender_endpoint, Handler handler)
+      const Mutable_Buffers& buffers, Endpoint& sender_endpoint,
+      socket_base::message_flags flags, Handler handler)
   {
     if (impl.socket_ == invalid_socket)
     {
@@ -877,8 +876,8 @@ public:
 
       reactor_.start_read_op(impl.socket_,
           receive_from_handler<Mutable_Buffers, Endpoint, Handler>(
-            impl.socket_, io_service_, buffers, flags,
-            sender_endpoint, handler));
+            impl.socket_, io_service_, buffers,
+            sender_endpoint, flags, handler));
     }
   }
 

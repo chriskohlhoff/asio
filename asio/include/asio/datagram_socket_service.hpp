@@ -229,20 +229,20 @@ public:
   /// Send a datagram to the specified endpoint.
   template <typename Const_Buffers, typename Error_Handler>
   std::size_t send_to(implementation_type& impl, const Const_Buffers& buffers,
-      socket_base::message_flags flags, const endpoint_type& destination,
+      const endpoint_type& destination, socket_base::message_flags flags,
       Error_Handler error_handler)
   {
-    return service_impl_.send_to(impl, buffers, flags, destination,
+    return service_impl_.send_to(impl, buffers, destination, flags,
         error_handler);
   }
 
   /// Start an asynchronous send.
   template <typename Const_Buffers, typename Handler>
   void async_send_to(implementation_type& impl, const Const_Buffers& buffers,
-      socket_base::message_flags flags, const endpoint_type& destination,
+      const endpoint_type& destination, socket_base::message_flags flags,
       Handler handler)
   {
-    service_impl_.async_send_to(impl, buffers, flags, destination, handler);
+    service_impl_.async_send_to(impl, buffers, destination, flags, handler);
   }
 
   /// Receive some data from the peer.
@@ -264,20 +264,20 @@ public:
   /// Receive a datagram with the endpoint of the sender.
   template <typename Mutable_Buffers, typename Error_Handler>
   std::size_t receive_from(implementation_type& impl,
-      const Mutable_Buffers& buffers, socket_base::message_flags flags,
-      endpoint_type& sender_endpoint, Error_Handler error_handler)
+      const Mutable_Buffers& buffers, endpoint_type& sender_endpoint,
+      socket_base::message_flags flags, Error_Handler error_handler)
   {
-    return service_impl_.receive_from(impl, buffers, flags, sender_endpoint,
+    return service_impl_.receive_from(impl, buffers, sender_endpoint, flags,
         error_handler);
   }
 
   /// Start an asynchronous receive that will get the endpoint of the sender.
   template <typename Mutable_Buffers, typename Handler>
   void async_receive_from(implementation_type& impl,
-      const Mutable_Buffers& buffers, socket_base::message_flags flags,
-      endpoint_type& sender_endpoint, Handler handler)
+      const Mutable_Buffers& buffers, endpoint_type& sender_endpoint,
+      socket_base::message_flags flags, Handler handler)
   {
-    service_impl_.async_receive_from(impl, buffers, flags, sender_endpoint,
+    service_impl_.async_receive_from(impl, buffers, sender_endpoint, flags,
         handler);
   }
 

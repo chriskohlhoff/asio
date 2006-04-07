@@ -22,6 +22,8 @@ noinst_PROGRAMS = \
 	tests/unit/error_handler_test \
 	tests/unit/error_test \
 	tests/unit/io_service_test \
+	tests/unit/ip/tcp_test \
+	tests/unit/ip/udp_test \
 	tests/unit/ipv4/address_test \
 	tests/unit/ipv4/basic_host_resolver_test \
 	tests/unit/ipv4/host_resolver_service_test \
@@ -105,6 +107,8 @@ TESTS = \
 	tests/unit/error_handler_test \
 	tests/unit/error_test \
 	tests/unit/io_service_test \
+	tests/unit/ip/tcp_test \
+	tests/unit/ip/udp_test \
 	tests/unit/ipv4/address_test \
 	tests/unit/ipv4/basic_host_resolver_test \
 	tests/unit/ipv4/host_resolver_service_test \
@@ -153,6 +157,8 @@ AM_CXXFLAGS = -I$(srcdir)/../include
 tests_performance_client_SOURCES = tests/performance/client.cpp
 tests_performance_server_SOURCES = tests/performance/server.cpp
 tests_unit_io_service_test_SOURCES = tests/unit/io_service_test.cpp
+tests_unit_ip_tcp_test_SOURCES = tests/unit/ip/tcp_test.cpp
+tests_unit_ip_udp_test_SOURCES = tests/unit/ip/udp_test.cpp
 tests_unit_ipv4_address_test_SOURCES = tests/unit/ipv4/address_test.cpp
 tests_unit_ipv4_basic_host_resolver_test_SOURCES = tests/unit/ipv4/basic_host_resolver_test.cpp
 tests_unit_ipv4_host_resolver_service_test_SOURCES = tests/unit/ipv4/host_resolver_service_test.cpp
