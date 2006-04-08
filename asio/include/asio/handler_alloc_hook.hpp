@@ -17,17 +17,24 @@
 
 #include "asio/detail/push_options.hpp"
 
-namespace asio {
+#include "asio/detail/push_options.hpp"
+#include <cstddef>
+#include <boost/config.hpp>
+#include "asio/detail/pop_options.hpp"
 
-/// Allocation hook for handlers.
+/// Default allocation function for handlers.
 /**
  * Asynchronous operations may need to allocate temporary objects. Since
  * asynchronous operations have a handler function object, these temporary
  * objects can be said to be associated with the handler.
  *
- * Specialise this class template for your own handlers to provide custom
- * allocation for these temporary objects. The default implementation simply
- * forwards the calls to the supplied allocator object.
+ * Implement asio_handler_allocate and asio_handler_deallocate for your own
+ * handlers to provide custom allocation for these temporary objects.
+ *
+ * This default implementation is simply:
+ * @code
+ * return ::operator new(bytes);
+ * @endcode
  *
  * @note All temporary objects associated with a handler will be deallocated
  * before the upcall to the handler is performed. This allows the same memory to
@@ -37,92 +44,38 @@ namespace asio {
  * @code
  * class my_handler;
  *
- * template <>
- * class asio::handler_alloc_hook<my_handler>
+ * void* asio_handler_allocate(std::size_t size, my_handler* context)
  * {
- * public:
- *   template <typename Allocator>
- *   static typename Allocator::pointer allocate(
- *       Handler& handler, Allocator& allocator,
- *       typename Allocator::size_type count)
- *   {
- *     typedef typename Allocator::pointer pointer_type;
- *     typedef typename Allocator::value_type value_type;
- *     void* mem = ::operator new(sizeof(value_type) * count);
- *     return static_cast<pointer_type>(mem);
- *   }
+ *   return ::operator new(size);
+ * }
  *
- *   template <typename Allocator>
- *   static void deallocate(Handler& handler,
- *       Allocator& allocator,
- *       typename Allocator::pointer pointer,
- *       typename Allocator::size_type count)
- *   {
- *     ::operator delete(pointer);
- *   }
- * };
+ * void asio_handler_deallocate(void* pointer, my_handler* context)
+ * {
+ *   ::operator delete(pointer);
+ * }
  * @endcode
  */
-template <typename Handler>
-class handler_alloc_hook
+inline void* asio_handler_allocate(std::size_t size, ...)
 {
-public:
-  /**
-   * Handle a request to allocate some memory associated with a handler. The
-   * default implementation is:
-   * @code
-   * return allocator.allocate(count);
-   * @endcode
-   *
-   * @param handler A reference to the user handler object. May be used to
-   * access pre-allocated memory that is associated with a handler object. Note
-   * that this handler may be a copy of the original handler object passed to
-   * the original function.
-   *
-   * @param allocator The allocator object associated with the io_service. The
-   * allocator has been rebound such that its value_type is the internal asio
-   * type to be allocated.
-   *
-   * @param count The number of objects to be allocated.
-   *
-   * @throws std::bad_alloc Thrown if memory cannot be allocated.
-   */
-  template <typename Allocator>
-  static typename Allocator::pointer allocate(Handler& handler,
-    Allocator& allocator, typename Allocator::size_type count)
-  {
-    return allocator.allocate(count);
-  }
+  return ::operator new(size);
+}
 
-  /**
-   * Handle a request to deallocate some memory associated with a handler. The
-   * default implementation is:
-   * @code
-   * allocator.deallocate(pointer, count);
-   * @endcode
-   *
-   * @param handler A reference to the user handler object. May be used to
-   * access pre-allocated memory that is associated with a handler object. Note
-   * that this handler may be a copy of the original handler object passed to
-   * the original function.
-   *
-   * @param allocator The allocator object associated with the io_service. The
-   * allocator has been rebound such that its value_type is the internal asio
-   * type to be allocated.
-   *
-   * @param pointer A pointer to the memory to be deallocated.
-   *
-   * @param count The number of objects to be deallocated.
-   */
-  template <typename Allocator>
-  static void deallocate(Handler& handler, Allocator& allocator,
-      typename Allocator::pointer pointer, typename Allocator::size_type count)
-  {
-    allocator.deallocate(pointer, count);
-  }
-};
-
-} // namespace asio
+/// Default deallocation function for handlers.
+/**
+ * Implement asio_handler_allocate and asio_handler_deallocate for your own
+ * handlers to provide custom allocation for the associated temporary objects.
+ *
+ * This default implementation is simply:
+ * @code
+ * ::operator delete(pointer);
+ * @endcode
+ *
+ * @sa asio_handler_allocate.
+ */
+inline void asio_handler_deallocate(void* pointer, ...)
+{
+  return ::operator delete(pointer);
+}
 
 #include "asio/detail/pop_options.hpp"
 

@@ -89,6 +89,7 @@
 # pragma warning (push)
 # pragma warning (disable:4244)
 # pragma warning (disable:4355)
+# pragma warning (disable:4675)
 # pragma pack (push, 8)
 // Note that if the /Og optimisation flag is enabled with MSVC6, the compiler
 // has a tendency to incorrectly optimise away some calls to member template

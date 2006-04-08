@@ -17,58 +17,7 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/handler_alloc_hook.hpp"
-
-// Custom bind handlers so that allocation hooks are correctly forwarded.
-
-namespace asio {
-namespace detail {
-
-template <typename Handler, typename Arg1>
-class binder1;
-
-template <typename Handler, typename Arg1, typename Arg2>
-class binder2;
-
-template <typename Handler, typename Arg1, typename Arg2, typename Arg3>
-class binder3;
-
-template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4>
-class binder4;
-
-template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5>
-class binder5;
-
-} // namespace detail
-} // namespace asio
-
-namespace asio {
-
-template <typename Handler, typename Arg1>
-class handler_alloc_hook<
-  asio::detail::binder1<Handler, Arg1> >;
-
-template <typename Handler, typename Arg1, typename Arg2>
-class handler_alloc_hook<
-  asio::detail::binder2<Handler, Arg1, Arg2> >;
-
-template <typename Handler, typename Arg1, typename Arg2, typename Arg3>
-class handler_alloc_hook<
-  asio::detail::binder3<Handler, Arg1, Arg2, Arg3> >;
-
-template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4>
-class handler_alloc_hook<
-  asio::detail::binder4<Handler, Arg1, Arg2, Arg3, Arg4> >;
-
-template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5>
-class handler_alloc_hook<
-  asio::detail::binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5> >;
-
-} // namespace asio
+#include "asio/detail/handler_alloc_helpers.hpp"
 
 namespace asio {
 namespace detail {
@@ -93,11 +42,21 @@ public:
     handler_(arg1_);
   }
 
+  friend void* asio_handler_allocate(std::size_t size,
+      binder1<Handler, Arg1>* this_handler)
+  {
+    return asio_handler_alloc_helpers::allocate(size, &this_handler->handler_);
+  }
+
+  friend void asio_handler_deallocate(void* pointer,
+      binder1<Handler, Arg1>* this_handler)
+  {
+    asio_handler_alloc_helpers::deallocate(pointer, &this_handler->handler_);
+  }
+
 private:
   Handler handler_;
   Arg1 arg1_;
-  friend class asio::handler_alloc_hook<
-    binder1<Handler, Arg1> >;
 };
 
 template <typename Handler, typename Arg1>
@@ -127,12 +86,22 @@ public:
     handler_(arg1_, arg2_);
   }
 
+  friend void* asio_handler_allocate(std::size_t size,
+      binder2<Handler, Arg1, Arg2>* this_handler)
+  {
+    return asio_handler_alloc_helpers::allocate(size, &this_handler->handler_);
+  }
+
+  friend void asio_handler_deallocate(void* pointer,
+      binder2<Handler, Arg1, Arg2>* this_handler)
+  {
+    asio_handler_alloc_helpers::deallocate(pointer, &this_handler->handler_);
+  }
+
 private:
   Handler handler_;
   Arg1 arg1_;
   Arg2 arg2_;
-  friend class asio::handler_alloc_hook<
-    binder2<Handler, Arg1, Arg2> >;
 };
 
 template <typename Handler, typename Arg1, typename Arg2>
@@ -164,13 +133,23 @@ public:
     handler_(arg1_, arg2_, arg3_);
   }
 
+  friend void* asio_handler_allocate(std::size_t size,
+      binder3<Handler, Arg1, Arg2, Arg3>* this_handler)
+  {
+    return asio_handler_alloc_helpers::allocate(size, &this_handler->handler_);
+  }
+
+  friend void asio_handler_deallocate(void* pointer,
+      binder3<Handler, Arg1, Arg2, Arg3>* this_handler)
+  {
+    asio_handler_alloc_helpers::deallocate(pointer, &this_handler->handler_);
+  }
+
 private:
   Handler handler_;
   Arg1 arg1_;
   Arg2 arg2_;
   Arg3 arg3_;
-  friend class asio::handler_alloc_hook<
-    binder3<Handler, Arg1, Arg2, Arg3> >;
 };
 
 template <typename Handler, typename Arg1, typename Arg2, typename Arg3>
@@ -204,14 +183,24 @@ public:
     handler_(arg1_, arg2_, arg3_, arg4_);
   }
 
+  friend void* asio_handler_allocate(std::size_t size,
+      binder4<Handler, Arg1, Arg2, Arg3, Arg4>* this_handler)
+  {
+    return asio_handler_alloc_helpers::allocate(size, &this_handler->handler_);
+  }
+
+  friend void asio_handler_deallocate(void* pointer,
+      binder4<Handler, Arg1, Arg2, Arg3, Arg4>* this_handler)
+  {
+    asio_handler_alloc_helpers::deallocate(pointer, &this_handler->handler_);
+  }
+
 private:
   Handler handler_;
   Arg1 arg1_;
   Arg2 arg2_;
   Arg3 arg3_;
   Arg4 arg4_;
-  friend class asio::handler_alloc_hook<
-    binder4<Handler, Arg1, Arg2, Arg3, Arg4> >;
 };
 
 template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
@@ -249,6 +238,18 @@ public:
     handler_(arg1_, arg2_, arg3_, arg4_, arg5_);
   }
 
+  friend void* asio_handler_allocate(std::size_t size,
+      binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>* this_handler)
+  {
+    return asio_handler_alloc_helpers::allocate(size, &this_handler->handler_);
+  }
+
+  friend void asio_handler_deallocate(void* pointer,
+      binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>* this_handler)
+  {
+    asio_handler_alloc_helpers::deallocate(pointer, &this_handler->handler_);
+  }
+
 private:
   Handler handler_;
   Arg1 arg1_;
@@ -256,8 +257,6 @@ private:
   Arg3 arg3_;
   Arg4 arg4_;
   Arg5 arg5_;
-  friend class asio::handler_alloc_hook<
-    binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5> >;
 };
 
 template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
@@ -271,130 +270,6 @@ binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5> bind_handler(Handler handler,
 
 } // namespace detail
 } // namespace asio
-
-template <typename Handler, typename Arg1>
-class asio::handler_alloc_hook<
-  asio::detail::binder1<Handler, Arg1> >
-{
-public:
-  typedef asio::detail::binder1<Handler, Arg1> handler_type;
-
-  template <typename Allocator>
-  static typename Allocator::pointer allocate(handler_type& handler,
-      Allocator& allocator, typename Allocator::size_type count)
-  {
-    return asio::handler_alloc_hook<Handler>::allocate(
-        handler.handler_, allocator, count);
-  }
-
-  template <typename Allocator>
-  static void deallocate(handler_type& handler, Allocator& allocator,
-      typename Allocator::pointer pointer, typename Allocator::size_type count)
-  {
-    return asio::handler_alloc_hook<Handler>::deallocate(
-        handler.handler_, allocator, pointer, count);
-  }
-};
-
-template <typename Handler, typename Arg1, typename Arg2>
-class asio::handler_alloc_hook<
-  asio::detail::binder2<Handler, Arg1, Arg2> >
-{
-public:
-  typedef asio::detail::binder2<Handler, Arg1, Arg2> handler_type;
-
-  template <typename Allocator>
-  static typename Allocator::pointer allocate(handler_type& handler,
-      Allocator& allocator, typename Allocator::size_type count)
-  {
-    return asio::handler_alloc_hook<Handler>::allocate(
-        handler.handler_, allocator, count);
-  }
-
-  template <typename Allocator>
-  static void deallocate(handler_type& handler, Allocator& allocator,
-      typename Allocator::pointer pointer, typename Allocator::size_type count)
-  {
-    return asio::handler_alloc_hook<Handler>::deallocate(
-        handler.handler_, allocator, pointer, count);
-  }
-};
-
-template <typename Handler, typename Arg1, typename Arg2, typename Arg3>
-class asio::handler_alloc_hook<
-  asio::detail::binder3<Handler, Arg1, Arg2, Arg3> >
-{
-public:
-  typedef asio::detail::binder3<Handler, Arg1, Arg2, Arg3> handler_type;
-
-  template <typename Allocator>
-  static typename Allocator::pointer allocate(handler_type& handler,
-      Allocator& allocator, typename Allocator::size_type count)
-  {
-    return asio::handler_alloc_hook<Handler>::allocate(
-        handler.handler_, allocator, count);
-  }
-
-  template <typename Allocator>
-  static void deallocate(handler_type& handler, Allocator& allocator,
-      typename Allocator::pointer pointer, typename Allocator::size_type count)
-  {
-    return asio::handler_alloc_hook<Handler>::deallocate(
-        handler.handler_, allocator, pointer, count);
-  }
-};
-
-template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4>
-class asio::handler_alloc_hook<
-  asio::detail::binder4<Handler, Arg1, Arg2, Arg3, Arg4> >
-{
-public:
-  typedef asio::detail::binder4<
-    Handler, Arg1, Arg2, Arg3, Arg4> handler_type;
-
-  template <typename Allocator>
-  static typename Allocator::pointer allocate(handler_type& handler,
-      Allocator& allocator, typename Allocator::size_type count)
-  {
-    return asio::handler_alloc_hook<Handler>::allocate(
-        handler.handler_, allocator, count);
-  }
-
-  template <typename Allocator>
-  static void deallocate(handler_type& handler, Allocator& allocator,
-      typename Allocator::pointer pointer, typename Allocator::size_type count)
-  {
-    return asio::handler_alloc_hook<Handler>::deallocate(
-        handler.handler_, allocator, pointer, count);
-  }
-};
-
-template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5>
-class asio::handler_alloc_hook<
-  asio::detail::binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5> >
-{
-public:
-  typedef asio::detail::binder5<
-    Handler, Arg1, Arg2, Arg3, Arg4, Arg5> handler_type;
-
-  template <typename Allocator>
-  static typename Allocator::pointer allocate(handler_type& handler,
-      Allocator& allocator, typename Allocator::size_type count)
-  {
-    return asio::handler_alloc_hook<Handler>::allocate(
-        handler.handler_, allocator, count);
-  }
-
-  template <typename Allocator>
-  static void deallocate(handler_type& handler, Allocator& allocator,
-      typename Allocator::pointer pointer, typename Allocator::size_type count)
-  {
-    return asio::handler_alloc_hook<Handler>::deallocate(
-        handler.handler_, allocator, pointer, count);
-  }
-};
 
 #include "asio/detail/pop_options.hpp"
 

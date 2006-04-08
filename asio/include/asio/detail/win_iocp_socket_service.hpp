@@ -335,9 +335,8 @@ public:
       // Take ownership of the operation object.
       typedef send_operation<Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
-      typedef handler_alloc_traits<Handler, op_type, Allocator> alloc_traits;
-      handler_ptr<alloc_traits> ptr(handler_op->handler_,
-          void_allocator, handler_op);
+      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
+      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
 
       // Map ERROR_NETNAME_DELETED to more useful error.
       if (last_error == ERROR_NETNAME_DELETED)
@@ -373,8 +372,8 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef send_operation<Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type, Allocator> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler, io_service_.get_allocator());
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr,
         io_service_, impl.cancel_token_, handler);
 
@@ -464,9 +463,8 @@ public:
       // Take ownership of the operation object.
       typedef send_to_operation<Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
-      typedef handler_alloc_traits<Handler, op_type, Allocator> alloc_traits;
-      handler_ptr<alloc_traits> ptr(handler_op->handler_,
-          void_allocator, handler_op);
+      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
+      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
 
       // Make a copy of the handler so that the memory can be deallocated before
       // the upcall is made.
@@ -493,8 +491,8 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef send_to_operation<Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type, Allocator> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler, io_service_.get_allocator());
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr, io_service_, handler);
 
     // Copy buffers into WSABUF array.
@@ -590,9 +588,8 @@ public:
       // Take ownership of the operation object.
       typedef receive_operation<Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
-      typedef handler_alloc_traits<Handler, op_type, Allocator> alloc_traits;
-      handler_ptr<alloc_traits> ptr(handler_op->handler_,
-          void_allocator, handler_op);
+      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
+      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
 
       // Map ERROR_NETNAME_DELETED to more useful error.
       if (last_error == ERROR_NETNAME_DELETED)
@@ -634,8 +631,8 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef receive_operation<Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type, Allocator> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler, io_service_.get_allocator());
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr,
         io_service_, impl.cancel_token_, handler);
 
@@ -740,9 +737,8 @@ public:
       // Take ownership of the operation object.
       typedef receive_from_operation<Endpoint, Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
-      typedef handler_alloc_traits<Handler, op_type, Allocator> alloc_traits;
-      handler_ptr<alloc_traits> ptr(handler_op->handler_,
-          void_allocator, handler_op);
+      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
+      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
 
       // Check for connection closed.
       if (last_error == 0 && bytes_transferred == 0)
@@ -781,8 +777,8 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef receive_from_operation<Endpoint, Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type, Allocator> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler, io_service_.get_allocator());
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr, io_service_, sender_endp, handler);
 
     // Copy buffers into WSABUF array.
@@ -915,9 +911,8 @@ public:
       // Take ownership of the operation object.
       typedef accept_operation<Socket, Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
-      typedef handler_alloc_traits<Handler, op_type, Allocator> alloc_traits;
-      handler_ptr<alloc_traits> ptr(handler_op->handler_,
-          void_allocator, handler_op);
+      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
+      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
 
       // Check for connection aborted.
       if (last_error == ERROR_NETNAME_DELETED)
@@ -1015,8 +1010,8 @@ public:
 
     // Allocate and construct an operation to wrap the handler.
     typedef accept_operation<Socket, Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type, Allocator> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler, io_service_.get_allocator());
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
     socket_type new_socket = sock.get();
     handler_ptr<alloc_traits> ptr(raw_ptr,
         io_service_, impl.socket_, new_socket, peer, handler);
@@ -1085,9 +1080,8 @@ public:
       // Take ownership of the operation object.
       typedef accept_endp_operation<Socket, Endpoint, Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
-      typedef handler_alloc_traits<Handler, op_type, Allocator> alloc_traits;
-      handler_ptr<alloc_traits> ptr(handler_op->handler_,
-          void_allocator, handler_op);
+      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
+      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
 
       // Check for connection aborted.
       if (last_error == ERROR_NETNAME_DELETED)
@@ -1210,8 +1204,8 @@ public:
 
     // Allocate and construct an operation to wrap the handler.
     typedef accept_endp_operation<Socket, Endpoint, Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type, Allocator> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler, io_service_.get_allocator());
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
     socket_type new_socket = sock.get();
     handler_ptr<alloc_traits> ptr(raw_ptr,
         io_service_, impl.socket_, new_socket, peer, peer_endpoint, handler);

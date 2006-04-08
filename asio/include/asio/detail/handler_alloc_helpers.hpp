@@ -20,19 +20,36 @@
 #include "asio/handler_alloc_hook.hpp"
 #include "asio/detail/noncopyable.hpp"
 
+// Calls to asio_handler_allocate and asio_handler_deallocate must be made from
+// a namespace that does not contain any overloads of these functions. The
+// asio_handler_alloc_helpers namespace is defined here for that purpose.
+namespace asio_handler_alloc_helpers {
+
+template <typename Handler>
+inline void* allocate(std::size_t s, Handler* h)
+{
+  return asio_handler_allocate(s, h);
+}
+
+template <typename Handler>
+inline void deallocate(void* p, Handler* h)
+{
+  asio_handler_deallocate(p, h);
+}
+
+} // namespace asio_handler_alloc_helpers
+
 namespace asio {
 namespace detail {
 
 // Traits for handler allocation.
-template <typename Handler, typename Object, typename Void_Allocator>
+template <typename Handler, typename Object>
 struct handler_alloc_traits
 {
   typedef Handler handler_type;
-  typedef Void_Allocator void_allocator_type;
-  typedef typename Void_Allocator::template rebind<Object>::other
-    allocator_type;
-  typedef typename allocator_type::value_type value_type;
-  typedef typename allocator_type::pointer pointer_type;
+  typedef Object value_type;
+  typedef Object* pointer_type;
+  BOOST_STATIC_CONSTANT(std::size_t, value_size = sizeof(Object));
 };
 
 template <typename Alloc_Traits>
@@ -45,18 +62,15 @@ class raw_handler_ptr
 {
 public:
   typedef typename Alloc_Traits::handler_type handler_type;
-  typedef typename Alloc_Traits::void_allocator_type void_allocator_type;
-  typedef typename Alloc_Traits::allocator_type allocator_type;
   typedef typename Alloc_Traits::value_type value_type;
   typedef typename Alloc_Traits::pointer_type pointer_type;
-  typedef handler_alloc_hook<handler_type> hook_type;
+  BOOST_STATIC_CONSTANT(std::size_t, value_size = Alloc_Traits::value_size);
 
   // Constructor allocates the memory.
-  raw_handler_ptr(handler_type& handler,
-      const void_allocator_type& void_allocator)
+  raw_handler_ptr(handler_type& handler)
     : handler_(handler),
-      allocator_(void_allocator),
-      pointer_(hook_type::allocate(handler_, allocator_, 1))
+      pointer_(static_cast<pointer_type>(
+            asio_handler_alloc_helpers::allocate(value_size, &handler_)))
   {
   }
 
@@ -65,13 +79,12 @@ public:
   ~raw_handler_ptr()
   {
     if (pointer_)
-      hook_type::deallocate(handler_, allocator_, pointer_, 1);
+      asio_handler_alloc_helpers::deallocate(pointer_, &handler_);
   }
 
 private:
   friend class handler_ptr<Alloc_Traits>;
   handler_type& handler_;
-  allocator_type allocator_;
   pointer_type pointer_;
 };
 
@@ -82,18 +95,14 @@ class handler_ptr
 {
 public:
   typedef typename Alloc_Traits::handler_type handler_type;
-  typedef typename Alloc_Traits::void_allocator_type void_allocator_type;
-  typedef typename Alloc_Traits::allocator_type allocator_type;
   typedef typename Alloc_Traits::value_type value_type;
   typedef typename Alloc_Traits::pointer_type pointer_type;
-  typedef handler_alloc_hook<handler_type> hook_type;
+  BOOST_STATIC_CONSTANT(std::size_t, value_size = Alloc_Traits::value_size);
   typedef raw_handler_ptr<Alloc_Traits> raw_ptr_type;
 
   // Take ownership of existing memory.
-  handler_ptr(handler_type& handler,
-      const void_allocator_type& void_allocator, pointer_type pointer)
+  handler_ptr(handler_type& handler, pointer_type pointer)
     : handler_(handler),
-      allocator_(void_allocator),
       pointer_(pointer)
   {
   }
@@ -101,7 +110,6 @@ public:
   // Construct object in raw memory and take ownership if construction succeeds.
   handler_ptr(raw_ptr_type& raw_ptr)
     : handler_(raw_ptr.handler_),
-      allocator_(raw_ptr.allocator_),
       pointer_(new (raw_ptr.pointer_) value_type)
   {
     raw_ptr.pointer_ = 0;
@@ -111,7 +119,6 @@ public:
   template <typename Arg1>
   handler_ptr(raw_ptr_type& raw_ptr, Arg1& a1)
     : handler_(raw_ptr.handler_),
-      allocator_(raw_ptr.allocator_),
       pointer_(new (raw_ptr.pointer_) value_type(a1))
   {
     raw_ptr.pointer_ = 0;
@@ -121,7 +128,6 @@ public:
   template <typename Arg1, typename Arg2>
   handler_ptr(raw_ptr_type& raw_ptr, Arg1& a1, Arg2& a2)
     : handler_(raw_ptr.handler_),
-      allocator_(raw_ptr.allocator_),
       pointer_(new (raw_ptr.pointer_) value_type(a1, a2))
   {
     raw_ptr.pointer_ = 0;
@@ -131,7 +137,6 @@ public:
   template <typename Arg1, typename Arg2, typename Arg3>
   handler_ptr(raw_ptr_type& raw_ptr, Arg1& a1, Arg2& a2, Arg3& a3)
     : handler_(raw_ptr.handler_),
-      allocator_(raw_ptr.allocator_),
       pointer_(new (raw_ptr.pointer_) value_type(a1, a2, a3))
   {
     raw_ptr.pointer_ = 0;
@@ -141,7 +146,6 @@ public:
   template <typename Arg1, typename Arg2, typename Arg3, typename Arg4>
   handler_ptr(raw_ptr_type& raw_ptr, Arg1& a1, Arg2& a2, Arg3& a3, Arg4& a4)
     : handler_(raw_ptr.handler_),
-      allocator_(raw_ptr.allocator_),
       pointer_(new (raw_ptr.pointer_) value_type(a1, a2, a3, a4))
   {
     raw_ptr.pointer_ = 0;
@@ -153,7 +157,6 @@ public:
   handler_ptr(raw_ptr_type& raw_ptr, Arg1& a1, Arg2& a2, Arg3& a3, Arg4& a4,
       Arg5& a5)
     : handler_(raw_ptr.handler_),
-      allocator_(raw_ptr.allocator_),
       pointer_(new (raw_ptr.pointer_) value_type(a1, a2, a3, a4, a5))
   {
     raw_ptr.pointer_ = 0;
@@ -165,7 +168,6 @@ public:
   handler_ptr(raw_ptr_type& raw_ptr, Arg1& a1, Arg2& a2, Arg3& a3, Arg4& a4,
       Arg5& a5, Arg6& a6)
     : handler_(raw_ptr.handler_),
-      allocator_(raw_ptr.allocator_),
       pointer_(new (raw_ptr.pointer_) value_type(a1, a2, a3, a4, a5, a6))
   {
     raw_ptr.pointer_ = 0;
@@ -196,15 +198,14 @@ public:
   {
     if (pointer_)
     {
-      allocator_.destroy(pointer_);
-      hook_type::deallocate(handler_, allocator_, pointer_, 1);
+      pointer_->value_type::~value_type();
+      asio_handler_alloc_helpers::deallocate(pointer_, &handler_);
       pointer_ = 0;
     }
   }
 
 private:
   handler_type& handler_;
-  allocator_type allocator_;
   pointer_type pointer_;
 };
 

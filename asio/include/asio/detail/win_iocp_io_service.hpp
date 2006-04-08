@@ -204,9 +204,8 @@ public:
       // Take ownership of the operation object.
       typedef handler_operation<Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
-      typedef handler_alloc_traits<Handler, op_type, Allocator> alloc_traits;
-      handler_ptr<alloc_traits> ptr(handler_op->handler_,
-          void_allocator, handler_op);
+      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
+      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
 
       // Make a copy of the handler so that the memory can be deallocated before
       // the upcall is made.
@@ -239,8 +238,8 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef handler_operation<Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type, Allocator> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler, allocator_);
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr, *this, handler);
 
     // Enqueue the operation on the I/O completion port.

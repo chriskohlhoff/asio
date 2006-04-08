@@ -173,8 +173,8 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef handler_wrapper<Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type, Allocator> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler, allocator_);
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr, handler);
 
     asio::detail::mutex::scoped_lock lock(mutex_);
@@ -288,8 +288,8 @@ private:
       // Take ownership of the handler object.
       typedef handler_wrapper<Handler> this_type;
       this_type* h(static_cast<this_type*>(base));
-      typedef handler_alloc_traits<Handler, this_type, Allocator> alloc_traits;
-      handler_ptr<alloc_traits> ptr(h->handler_, void_allocator, h);
+      typedef handler_alloc_traits<Handler, this_type> alloc_traits;
+      handler_ptr<alloc_traits> ptr(h->handler_, h);
 
       // Make a copy of the handler so that the memory can be deallocated before
       // the upcall is made.
