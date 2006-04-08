@@ -64,52 +64,6 @@ public:
     memcpy(addr_.s6_addr, bytes.elems, 16);
   }
 
-  /// Construct an address using an IP address string.
-  address(const char* host)
-  {
-    if (asio::detail::socket_ops::inet_pton(
-          AF_INET6, host, &addr_, &scope_id_) <= 0)
-    {
-      asio::error e(asio::detail::socket_ops::get_error());
-      boost::throw_exception(e);
-    }
-  }
-
-  /// Construct an address using an IP address string.
-  template <typename Error_Handler>
-  address(const char* host, Error_Handler error_handler)
-  {
-    if (asio::detail::socket_ops::inet_pton(
-          AF_INET6, host, &addr_, &scope_id_) <= 0)
-    {
-      asio::error e(asio::detail::socket_ops::get_error());
-      error_handler(e);
-    }
-  }
-
-  /// Construct an address using an IP address string.
-  address(const std::string& host)
-  {
-    if (asio::detail::socket_ops::inet_pton(
-          AF_INET6, host.c_str(), &addr_, &scope_id_) <= 0)
-    {
-      asio::error e(asio::detail::socket_ops::get_error());
-      boost::throw_exception(e);
-    }
-  }
-
-  /// Construct an address using an IP address string.
-  template <typename Error_Handler>
-  address(const std::string& host, Error_Handler error_handler)
-  {
-    if (asio::detail::socket_ops::inet_pton(
-          AF_INET6, host.c_str(), &addr_, &scope_id_) <= 0)
-    {
-      asio::error e(asio::detail::socket_ops::get_error());
-      error_handler(e);
-    }
-  }
-
   /// Copy constructor.
   address(const address& other)
     : addr_(other.addr_),
@@ -122,22 +76,6 @@ public:
   {
     addr_ = other.addr_;
     scope_id_ = other.scope_id_;
-    return *this;
-  }
-
-  /// Assign from an IP address string.
-  address& operator=(const char* addr)
-  {
-    address tmp(addr);
-    addr_ = tmp.addr_;
-    return *this;
-  }
-
-  /// Assign from an IP address string.
-  address& operator=(const std::string& addr)
-  {
-    address tmp(addr);
-    addr_ = tmp.addr_;
     return *this;
   }
 
@@ -183,6 +121,41 @@ public:
       return std::string();
     }
     return addr;
+  }
+
+  /// Create an address from an IP address string.
+  static address from_string(const char* str)
+  {
+    return from_string(str, asio::throw_error());
+  }
+
+  /// Create an address from an IP address string.
+  template <typename Error_Handler>
+  static address from_string(const char* str, Error_Handler error_handler)
+  {
+    address tmp;
+    if (asio::detail::socket_ops::inet_pton(
+          AF_INET6, str, &tmp.addr_, &tmp.scope_id_) <= 0)
+    {
+      asio::error e(asio::detail::socket_ops::get_error());
+      error_handler(e);
+      return address();
+    }
+    return tmp;
+  }
+
+  /// Create an address from an IP address string.
+  static address from_string(const std::string& str)
+  {
+    return from_string(str.c_str(), asio::throw_error());
+  }
+
+  /// Create an address from an IP address string.
+  template <typename Error_Handler>
+  static address from_string(const std::string& str,
+      Error_Handler error_handler)
+  {
+    return from_string(str.c_str(), error_handler);
   }
 
   /// Determine whether the address is a loopback address.

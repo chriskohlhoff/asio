@@ -4,7 +4,8 @@
 #include "boost/bind.hpp"
 
 const short multicast_port = 30001;
-const std::string multicast_addr = "225.0.0.1";
+const asio::ipv4::address multicast_addr =
+  asio::ipv4::address::from_string("225.0.0.1");
 
 class receiver
 {

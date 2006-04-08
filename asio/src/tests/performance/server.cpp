@@ -181,7 +181,7 @@ int main(int argc, char* argv[])
     }
 
     using namespace std; // For atoi.
-    std::string address = argv[1];
+    ip::address address = ip::address::from_string(argv[1]);
     short port = atoi(argv[2]);
     int thread_count = atoi(argv[3]);
     size_t block_size = atoi(argv[4]);

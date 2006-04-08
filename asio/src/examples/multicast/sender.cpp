@@ -6,7 +6,8 @@
 #include "boost/date_time/posix_time/posix_time_types.hpp"
 
 const short multicast_port = 30001;
-const std::string multicast_addr = "225.0.0.1";
+const asio::ipv4::address multicast_addr =
+  asio::ipv4::address::from_string("225.0.0.1");
 const int max_message_count = 10;
 
 class sender

@@ -65,50 +65,6 @@ public:
     addr_.s_addr = asio::detail::socket_ops::host_to_network_long(addr);
   }
 
-  /// Construct an address using an IP address string in dotted decimal form.
-  address(const char* host)
-  {
-    if (asio::detail::socket_ops::inet_pton(AF_INET, host, &addr_) <= 0)
-    {
-      asio::error e(asio::detail::socket_ops::get_error());
-      boost::throw_exception(e);
-    }
-  }
-
-  /// Construct an address using an IP address string in dotted decimal form.
-  template <typename Error_Handler>
-  address(const char* host, Error_Handler error_handler)
-  {
-    if (asio::detail::socket_ops::inet_pton(AF_INET, host, &addr_) <= 0)
-    {
-      asio::error e(asio::detail::socket_ops::get_error());
-      error_handler(e);
-    }
-  }
-
-  /// Construct an address using an IP address string in dotted decimal form.
-  address(const std::string& host)
-  {
-    if (asio::detail::socket_ops::inet_pton(
-          AF_INET, host.c_str(), &addr_) <= 0)
-    {
-      asio::error e(asio::detail::socket_ops::get_error());
-      boost::throw_exception(e);
-    }
-  }
-
-  /// Construct an address using an IP address string in dotted decimal form.
-  template <typename Error_Handler>
-  address(const std::string& host, Error_Handler error_handler)
-  {
-    if (asio::detail::socket_ops::inet_pton(
-          AF_INET, host.c_str(), &addr_) <= 0)
-    {
-      asio::error e(asio::detail::socket_ops::get_error());
-      error_handler(e);
-    }
-  }
-
   /// Copy constructor.
   address(const address& other)
     : addr_(other.addr_)
@@ -126,22 +82,6 @@ public:
   address& operator=(unsigned long addr)
   {
     addr_.s_addr = asio::detail::socket_ops::host_to_network_long(addr);
-    return *this;
-  }
-
-  /// Assign from an IP address string in dotted decimal form.
-  address& operator=(const char* addr)
-  {
-    address tmp(addr);
-    addr_ = tmp.addr_;
-    return *this;
-  }
-
-  /// Assign from an IP address string in dotted decimal form.
-  address& operator=(const std::string& addr)
-  {
-    address tmp(addr);
-    addr_ = tmp.addr_;
     return *this;
   }
 
@@ -181,6 +121,40 @@ public:
       return std::string();
     }
     return addr;
+  }
+
+  /// Create an address from an IP address string in dotted decimal form.
+  static address from_string(const char* str)
+  {
+    return from_string(str, asio::throw_error());
+  }
+
+  /// Create an address from an IP address string in dotted decimal form.
+  template <typename Error_Handler>
+  static address from_string(const char* str, Error_Handler error_handler)
+  {
+    address tmp;
+    if (asio::detail::socket_ops::inet_pton(AF_INET, str, &tmp.addr_) <= 0)
+    {
+      asio::error e(asio::detail::socket_ops::get_error());
+      error_handler(e);
+      return address();
+    }
+    return tmp;
+  }
+
+  /// Create an address from an IP address string in dotted decimal form.
+  static address from_string(const std::string& str)
+  {
+    return from_string(str.c_str(), asio::throw_error());
+  }
+
+  /// Create an address from an IP address string in dotted decimal form.
+  template <typename Error_Handler>
+  static address from_string(const std::string& str,
+      Error_Handler error_handler)
+  {
+    return from_string(str.c_str(), error_handler);
   }
 
   /// Determine whether the address is a class A address.
