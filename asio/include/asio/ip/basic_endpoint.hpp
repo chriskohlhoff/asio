@@ -150,8 +150,12 @@ public:
   protocol_type protocol() const
   {
     if (data_.ss_family == AF_INET)
-      return Protocol(typename Protocol::ipv4_protocol());
-    return Protocol(typename Protocol::ipv6_protocol());
+    {
+      typename Protocol::ipv4_protocol ipv4_protocol;
+      return Protocol(ipv4_protocol);
+    }
+    typename Protocol::ipv6_protocol ipv6_protocol;
+    return Protocol(ipv6_protocol);
   }
 
   /// Get the underlying endpoint in the native type.
