@@ -30,7 +30,6 @@
 
 #include "asio/detail/push_options.hpp"
 #include <boost/throw_exception.hpp>
-#include <memory>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/system_exception.hpp"
@@ -42,20 +41,18 @@
 namespace asio {
 namespace detail {
 
-template <typename Allocator>
 class win_iocp_io_service
 {
 public:
   // Base class for all operations.
-  typedef win_iocp_operation<Allocator> operation;
+  typedef win_iocp_operation operation;
 
   // Constructor.
   template <typename IO_Service>
   win_iocp_io_service(IO_Service& io_service)
     : iocp_(::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)),
       outstanding_work_(0),
-      interrupted_(0),
-      allocator_(io_service.get_allocator())
+      interrupted_(0)
   {
     if (!iocp_.handle)
     {
@@ -95,8 +92,7 @@ public:
     if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
       return;
 
-    typedef call_stack<win_iocp_io_service<Allocator> > cs;
-    typename cs::context ctx(this);
+    call_stack<win_iocp_io_service>::context ctx(this);
 
     for (;;)
     {
@@ -121,7 +117,7 @@ public:
 
         // Dispatch the operation.
         operation* op = static_cast<operation*>(overlapped);
-        op->do_completion(last_error, bytes_transferred, allocator_);
+        op->do_completion(last_error, bytes_transferred);
       }
       else
       {
@@ -198,8 +194,7 @@ public:
     handler_operation(const handler_operation&);
     void operator=(const handler_operation&);
     
-    static void do_completion_impl(operation* op, DWORD, size_t,
-        const Allocator& void_allocator)
+    static void do_completion_impl(operation* op, DWORD, size_t)
     {
       // Take ownership of the operation object.
       typedef handler_operation<Handler> op_type;
@@ -268,9 +263,6 @@ private:
 
   // Flag to indicate whether the event loop has been interrupted.
   long interrupted_;
-
-  // The allocator to be used for allocating dynamic objects.
-  Allocator allocator_;
 };
 
 } // namespace detail

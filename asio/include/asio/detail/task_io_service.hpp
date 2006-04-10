@@ -1,6 +1,6 @@
 //
 // task_io_service.hpp
-  // ~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -17,10 +17,6 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <memory>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/service_factory.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/call_stack.hpp"
@@ -31,7 +27,7 @@
 namespace asio {
 namespace detail {
 
-template <typename Task, typename Allocator>
+template <typename Task>
 class task_io_service
 {
 public:
@@ -39,7 +35,6 @@ public:
   template <typename IO_Service>
   task_io_service(IO_Service& io_service)
     : mutex_(),
-      allocator_(io_service.get_allocator()),
       task_(io_service.get_service(service_factory<Task>())),
       outstanding_work_(0),
       handler_queue_(&task_handler_),
@@ -87,7 +82,7 @@ public:
           handler_cleanup c(lock, outstanding_work_);
 
           // Invoke the handler. May throw an exception.
-          h->call(allocator_); // call() deletes the handler object
+          h->call(); // call() deletes the handler object
         }
       }
       else 
@@ -245,7 +240,7 @@ private:
   class handler_base
   {
   public:
-    typedef void (*func_type)(handler_base*, const Allocator&);
+    typedef void (*func_type)(handler_base*);
 
     handler_base(func_type func)
       : next_(0),
@@ -253,9 +248,9 @@ private:
     {
     }
 
-    void call(const Allocator& void_allocator)
+    void call()
     {
-      func_(this, void_allocator);
+      func_(this);
     }
 
   protected:
@@ -265,7 +260,7 @@ private:
     }
 
   private:
-    friend class task_io_service<Task, Allocator>;
+    friend class task_io_service<Task>;
     friend class task_cleanup;
     handler_base* next_;
     func_type func_;
@@ -283,7 +278,7 @@ private:
     {
     }
 
-    static void do_call(handler_base* base, const Allocator& void_allocator)
+    static void do_call(handler_base* base)
     {
       // Take ownership of the handler object.
       typedef handler_wrapper<Handler> this_type;
@@ -367,9 +362,6 @@ private:
 
   // Mutex to protect access to internal data.
   asio::detail::mutex mutex_;
-
-  // The allocator to be used for allocating dynamic objects.
-  Allocator allocator_;
 
   // The task to be run by this service.
   Task& task_;

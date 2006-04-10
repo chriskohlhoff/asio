@@ -44,9 +44,6 @@ class basic_datagram_socket
   : public basic_socket<Service>
 {
 public:
-  /// The io_service type for this I/O object.
-  typedef typename Service::io_service_type io_service_type;
-
   /// The native representation of a socket.
   typedef typename Service::native_type native_type;
 
@@ -61,11 +58,11 @@ public:
    * This constructor creates a datagram socket without opening it. The open()
    * function must be called before data can be sent or received on the socket.
    *
-   * @param io_service The io_service object that the datagram socket will usei
+   * @param io_service The io_service object that the datagram socket will use
    * to dispatch handlers for any asynchronous operations performed on the
    * socket.
    */
-  explicit basic_datagram_socket(io_service_type& io_service)
+  explicit basic_datagram_socket(asio::io_service& io_service)
     : basic_socket<Service>(io_service)
   {
   }
@@ -82,7 +79,7 @@ public:
    *
    * @throws asio::error Thrown on failure.
    */
-  basic_datagram_socket(io_service_type& io_service,
+  basic_datagram_socket(asio::io_service& io_service,
       const protocol_type& protocol)
     : basic_socket<Service>(io_service, protocol)
   {
@@ -104,7 +101,7 @@ public:
    *
    * @throws asio::error Thrown on failure.
    */
-  basic_datagram_socket(io_service_type& io_service,
+  basic_datagram_socket(asio::io_service& io_service,
       const endpoint_type& endpoint)
     : basic_socket<Service>(io_service, endpoint)
   {
@@ -123,7 +120,7 @@ public:
    *
    * @throws asio::error Thrown on failure.
    */
-  basic_datagram_socket(io_service_type& io_service,
+  basic_datagram_socket(asio::io_service& io_service,
       const native_type& native_socket)
     : basic_socket<Service>(io_service, native_socket)
   {

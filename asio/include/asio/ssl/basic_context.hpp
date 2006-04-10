@@ -24,6 +24,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error_handler.hpp"
+#include "asio/io_service.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/ssl/context_base.hpp"
 
@@ -43,11 +44,8 @@ public:
   /// The native implementation type of the locking dispatcher.
   typedef typename service_type::impl_type impl_type;
 
-  /// The io_service type for this context.
-  typedef typename service_type::io_service_type io_service_type;
-
   /// Constructor.
-  basic_context(io_service_type& io_service, method m)
+  basic_context(asio::io_service& io_service, method m)
     : service_(io_service.get_service(service_factory<Service>())),
       impl_(service_.null())
   {

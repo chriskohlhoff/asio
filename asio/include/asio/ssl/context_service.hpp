@@ -19,12 +19,11 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
-#include <memory>
 #include <string>
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/basic_io_service.hpp"
+#include "asio/io_service.hpp"
 #include "asio/ssl/context_base.hpp"
 #include "asio/ssl/detail/openssl_context_service.hpp"
 
@@ -32,35 +31,30 @@ namespace asio {
 namespace ssl {
 
 /// Default service implementation for a context.
-template <typename Allocator = std::allocator<void> >
 class context_service
   : private boost::noncopyable
 {
-public:
-  /// The io_service type for this service.
-  typedef basic_io_service<Allocator> io_service_type;
-
 private:
   // The type of the platform-specific implementation.
-  typedef detail::openssl_context_service<io_service_type> service_impl_type;
+  typedef detail::openssl_context_service service_impl_type;
 
 public:
   /// The type of the context.
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined impl_type;
 #else
-  typedef typename service_impl_type::impl_type impl_type;
+  typedef service_impl_type::impl_type impl_type;
 #endif
 
   /// Constructor.
-  explicit context_service(io_service_type& io_service)
+  explicit context_service(asio::io_service& io_service)
     : service_impl_(io_service.get_service(
           service_factory<service_impl_type>()))
   {
   }
 
   /// Get the io_service associated with the service.
-  io_service_type& io_service()
+  asio::io_service& io_service()
   {
     return service_impl_.io_service();
   }

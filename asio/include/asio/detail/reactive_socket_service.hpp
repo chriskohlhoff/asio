@@ -24,6 +24,7 @@
 #include "asio/buffer.hpp"
 #include "asio/error.hpp"
 #include "asio/error_handler.hpp"
+#include "asio/io_service.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_base.hpp"
 #include "asio/detail/bind_handler.hpp"
@@ -35,7 +36,7 @@
 namespace asio {
 namespace detail {
 
-template <typename IO_Service, typename Reactor>
+template <typename Reactor>
 class reactive_socket_service
 {
 public:
@@ -48,7 +49,7 @@ public:
   {
   private:
     // Only this service will have access to the internal values.
-    friend class reactive_socket_service<IO_Service, Reactor>;
+    friend class reactive_socket_service<Reactor>;
 
     // The native socket representation.
     socket_type socket_;
@@ -67,14 +68,14 @@ public:
   enum { max_buffers = 16 };
 
   // Constructor.
-  reactive_socket_service(IO_Service& io_service)
+  reactive_socket_service(asio::io_service& io_service)
     : io_service_(io_service),
       reactor_(io_service.get_service(service_factory<Reactor>()))
   {
   }
 
   // Get the io_service associated with the service.
-  IO_Service& io_service()
+  asio::io_service& io_service()
   {
     return io_service_;
   }
@@ -315,7 +316,7 @@ public:
   class send_handler
   {
   public:
-    send_handler(socket_type socket, IO_Service& io_service,
+    send_handler(socket_type socket, asio::io_service& io_service,
         const Const_Buffers& buffers, socket_base::message_flags flags,
         Handler handler)
       : socket_(socket),
@@ -366,8 +367,8 @@ public:
 
   private:
     socket_type socket_;
-    IO_Service& io_service_;
-    typename IO_Service::work work_;
+    asio::io_service& io_service_;
+    asio::io_service::work work_;
     Const_Buffers buffers_;
     socket_base::message_flags flags_;
     Handler handler_;
@@ -459,7 +460,7 @@ public:
   class send_to_handler
   {
   public:
-    send_to_handler(socket_type socket, IO_Service& io_service,
+    send_to_handler(socket_type socket, asio::io_service& io_service,
         const Const_Buffers& buffers, const Endpoint& endpoint,
         socket_base::message_flags flags, Handler handler)
       : socket_(socket),
@@ -512,8 +513,8 @@ public:
 
   private:
     socket_type socket_;
-    IO_Service& io_service_;
-    typename IO_Service::work work_;
+    asio::io_service& io_service_;
+    asio::io_service::work work_;
     Const_Buffers buffers_;
     Endpoint destination_;
     socket_base::message_flags flags_;
@@ -611,7 +612,7 @@ public:
   class receive_handler
   {
   public:
-    receive_handler(socket_type socket, IO_Service& io_service,
+    receive_handler(socket_type socket, asio::io_service& io_service,
         const Mutable_Buffers& buffers, socket_base::message_flags flags,
         Handler handler)
       : socket_(socket),
@@ -666,8 +667,8 @@ public:
 
   private:
     socket_type socket_;
-    IO_Service& io_service_;
-    typename IO_Service::work work_;
+    asio::io_service& io_service_;
+    asio::io_service::work work_;
     Mutable_Buffers buffers_;
     socket_base::message_flags flags_;
     Handler handler_;
@@ -779,7 +780,7 @@ public:
   class receive_from_handler
   {
   public:
-    receive_from_handler(socket_type socket, IO_Service& io_service,
+    receive_from_handler(socket_type socket, asio::io_service& io_service,
         const Mutable_Buffers& buffers, Endpoint& endpoint,
         socket_base::message_flags flags, Handler handler)
       : socket_(socket),
@@ -838,8 +839,8 @@ public:
 
   private:
     socket_type socket_;
-    IO_Service& io_service_;
-    typename IO_Service::work work_;
+    asio::io_service& io_service_;
+    asio::io_service::work work_;
     Mutable_Buffers buffers_;
     Endpoint& sender_endpoint_;
     socket_base::message_flags flags_;
@@ -992,8 +993,8 @@ public:
   class accept_handler
   {
   public:
-    accept_handler(socket_type socket, IO_Service& io_service, Socket& peer,
-        Handler handler)
+    accept_handler(socket_type socket, asio::io_service& io_service,
+        Socket& peer, Handler handler)
       : socket_(socket),
         io_service_(io_service),
         work_(io_service),
@@ -1036,8 +1037,8 @@ public:
 
   private:
     socket_type socket_;
-    IO_Service& io_service_;
-    typename IO_Service::work work_;
+    asio::io_service& io_service_;
+    asio::io_service::work work_;
     Socket& peer_;
     Handler handler_;
   };
@@ -1082,7 +1083,7 @@ public:
   class accept_endp_handler
   {
   public:
-    accept_endp_handler(socket_type socket, IO_Service& io_service,
+    accept_endp_handler(socket_type socket, asio::io_service& io_service,
         Socket& peer, Endpoint& peer_endpoint, Handler handler)
       : socket_(socket),
         io_service_(io_service),
@@ -1130,8 +1131,8 @@ public:
 
   private:
     socket_type socket_;
-    IO_Service& io_service_;
-    typename IO_Service::work work_;
+    asio::io_service& io_service_;
+    asio::io_service::work work_;
     Socket& peer_;
     Endpoint& peer_endpoint_;
     Handler handler_;
@@ -1227,7 +1228,7 @@ public:
   {
   public:
     connect_handler(socket_type socket, boost::shared_ptr<bool> completed,
-        IO_Service& io_service, Reactor& reactor, Handler handler)
+        asio::io_service& io_service, Reactor& reactor, Handler handler)
       : socket_(socket),
         completed_(completed),
         io_service_(io_service),
@@ -1285,8 +1286,8 @@ public:
   private:
     socket_type socket_;
     boost::shared_ptr<bool> completed_;
-    IO_Service& io_service_;
-    typename IO_Service::work work_;
+    asio::io_service& io_service_;
+    asio::io_service::work work_;
     Reactor& reactor_;
     Handler handler_;
   };
@@ -1366,7 +1367,7 @@ public:
 
 private:
   // The io_service used for dispatching handlers.
-  IO_Service& io_service_;
+  asio::io_service& io_service_;
 
   // The selector that performs event demultiplexing for the provider.
   Reactor& reactor_;

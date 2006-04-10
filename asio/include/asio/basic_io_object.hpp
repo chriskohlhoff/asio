@@ -17,6 +17,7 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/io_service.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/detail/noncopyable.hpp"
 
@@ -34,11 +35,8 @@ public:
   /// The underlying implementation type of I/O object.
   typedef typename service_type::implementation_type implementation_type;
 
-  /// The io_service type for this I/O object.
-  typedef typename service_type::io_service_type io_service_type;
-
   /// Construct a basic_io_object.
-  explicit basic_io_object(io_service_type& io_service)
+  explicit basic_io_object(asio::io_service& io_service)
     : service(io_service.get_service(service_factory<Service>()))
   {
     service.construct(implementation);
@@ -52,7 +50,7 @@ public:
    * @return A reference to the io_service object that the I/O object will use
    * to dispatch handlers. Ownership is not transferred to the caller.
    */
-  io_service_type& io_service()
+  asio::io_service& io_service()
   {
     return service.io_service();
   }

@@ -18,22 +18,20 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/bind_handler.hpp"
-#include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
 
 namespace asio {
 namespace detail {
 
-template <typename Dispatcher, typename Allocator>
+template <typename Dispatcher>
 class locking_dispatcher
   : private noncopyable
 {
 public:
   // Constructor.
-  locking_dispatcher(Dispatcher& dispatcher, const Allocator& allocator)
+  locking_dispatcher(Dispatcher& dispatcher)
     : dispatcher_(dispatcher),
-      allocator_(allocator),
       first_waiter_(0),
       last_waiter_(0),
       mutex_()
@@ -44,12 +42,6 @@ public:
   Dispatcher& dispatcher()
   {
     return dispatcher_;
-  }
-
-  // Return a copy of the allocator associated with the locking_dispatcher.
-  Allocator get_allocator() const
-  {
-    return allocator_;
   }
 
   // Request a dispatcher to invoke the given handler.
@@ -141,7 +133,7 @@ private:
   class waiter_handler
   {
   public:
-    waiter_handler(locking_dispatcher<Dispatcher, Allocator>& impl)
+    waiter_handler(locking_dispatcher<Dispatcher>& impl)
       : impl_(impl)
     {
     }
@@ -209,16 +201,13 @@ private:
     }
 
   private:
-    locking_dispatcher<Dispatcher, Allocator>& impl_;
+    locking_dispatcher<Dispatcher>& impl_;
   };
 
   friend class waiter_handler;
 
   // The dispatcher through which all handlers will be dispatched.
   Dispatcher& dispatcher_;
-
-  // The allocator associated with the dispatcher.
-  Allocator allocator_;
 
   // The start of the list of waiters for the dispatcher. If this pointer
   // is non-null then it indicates that a handler holds the lock.

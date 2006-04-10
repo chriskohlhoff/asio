@@ -28,6 +28,7 @@
 #include "asio/buffer.hpp"
 #include "asio/completion_condition.hpp"
 #include "asio/error.hpp"
+#include "asio/io_service.hpp"
 #include "asio/write.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/buffered_stream_storage.hpp"
@@ -58,9 +59,6 @@ public:
 
   /// The type of the lowest layer.
   typedef typename next_layer_type::lowest_layer_type lowest_layer_type;
-
-  /// The io_service type for this type.
-  typedef typename next_layer_type::io_service_type io_service_type;
 
   /// The type used for reporting errors.
   typedef typename next_layer_type::error_type error_type;
@@ -101,7 +99,7 @@ public:
   }
 
   /// Get the io_service associated with the object.
-  io_service_type& io_service()
+  asio::io_service& io_service()
   {
     return next_layer_.io_service();
   }
@@ -147,7 +145,7 @@ public:
   class flush_handler
   {
   public:
-    flush_handler(io_service_type& io_service,
+    flush_handler(asio::io_service& io_service,
         detail::buffered_stream_storage& storage, Handler handler)
       : io_service_(io_service),
         storage_(storage),
@@ -162,7 +160,7 @@ public:
     }
 
   private:
-    io_service_type& io_service_;
+    asio::io_service& io_service_;
     detail::buffered_stream_storage& storage_;
     Handler handler_;
   };
@@ -200,7 +198,7 @@ public:
   class write_some_handler
   {
   public:
-    write_some_handler(io_service_type& io_service,
+    write_some_handler(asio::io_service& io_service,
         detail::buffered_stream_storage& storage,
         const Const_Buffers& buffers, Handler handler)
       : io_service_(io_service),
@@ -244,7 +242,7 @@ public:
     }
 
   private:
-    io_service_type& io_service_;
+    asio::io_service& io_service_;
     detail::buffered_stream_storage& storage_;
     Const_Buffers buffers_;
     Handler handler_;

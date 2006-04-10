@@ -8,19 +8,15 @@
 namespace services {
 
 /// Debugging stream socket service that wraps the normal stream socket service.
-template <typename Protocol, typename Allocator = std::allocator<void> >
+template <typename Protocol>
 class stream_socket_service
   : private boost::noncopyable
 {
 private:
   /// The type of the wrapped stream socket service.
-  typedef asio::stream_socket_service<
-      Protocol, Allocator> service_impl_type;
+  typedef asio::stream_socket_service<Protocol> service_impl_type;
 
 public:
-  /// The io_service type for this service.
-  typedef asio::basic_io_service<Allocator> io_service_type;
-
   /// The protocol type.
   typedef Protocol protocol_type;
 
@@ -34,7 +30,7 @@ public:
   typedef typename service_impl_type::native_type native_type;
 
   /// Construct a new stream socket service for the specified io_service.
-  explicit stream_socket_service(io_service_type& io_service)
+  explicit stream_socket_service(asio::io_service& io_service)
     : service_impl_(io_service.get_service(
           asio::service_factory<service_impl_type>())),
       logger_(io_service, "stream_socket")
@@ -42,7 +38,7 @@ public:
   }
 
   /// Get the io_service associated with the service.
-  io_service_type& io_service()
+  asio::io_service& io_service()
   {
     return service_impl_.io_service();
   }

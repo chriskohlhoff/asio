@@ -221,13 +221,6 @@ void io_service_test()
   // The run() calls will not return until all work has finished.
   BOOST_CHECK(count == 3);
   BOOST_CHECK(exception_count == 2);
-
-  // Use a non-default allocator type.
-  typedef std::allocator<int> allocator_type;
-  typedef basic_io_service<allocator_type> io_service_type;
-  allocator_type allocator;
-  io_service_type ios3(allocator);
-  ios3.run();
 }
 
 test_suite* init_unit_test_suite(int argc, char* argv[])

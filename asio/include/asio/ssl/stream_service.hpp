@@ -20,12 +20,11 @@
 
 #include "asio/detail/push_options.hpp"
 #include <cstddef>
-#include <memory>
 #include <boost/config.hpp>
 #include <boost/noncopyable.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/basic_io_service.hpp"
+#include "asio/io_service.hpp"
 #include "asio/ssl/basic_context.hpp"
 #include "asio/ssl/stream_base.hpp"
 #include "asio/ssl/detail/openssl_stream_service.hpp"
@@ -34,35 +33,30 @@ namespace asio {
 namespace ssl {
 
 /// Default service implementation for an SSL stream.
-template <typename Allocator = std::allocator<void> >
 class stream_service
   : private boost::noncopyable
 {
-public:
-  /// The io_service type.
-  typedef basic_io_service<Allocator> io_service_type;
-
 private:
   // The type of the platform-specific implementation.
-  typedef detail::openssl_stream_service<Allocator> service_impl_type;
+  typedef detail::openssl_stream_service service_impl_type;
 
 public:
   /// The type of a stream implementation.
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined impl_type;
 #else
-  typedef typename service_impl_type::impl_type impl_type;
+  typedef service_impl_type::impl_type impl_type;
 #endif
 
   /// Construct a new stream service for the specified io_service.
-  explicit stream_service(io_service_type& io_service)
+  explicit stream_service(asio::io_service& io_service)
     : service_impl_(io_service.get_service(
           service_factory<service_impl_type>()))
   {
   }
 
   /// Get the io_service associated with the service.
-  io_service_type& io_service()
+  asio::io_service& io_service()
   {
     return service_impl_.io_service();
   }

@@ -23,6 +23,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
+#include "asio/io_service.hpp"
 #include "asio/ssl/context_base.hpp"
 #include "asio/ssl/detail/openssl_init.hpp"
 #include "asio/ssl/detail/openssl_types.hpp"
@@ -31,7 +32,6 @@ namespace asio {
 namespace ssl {
 namespace detail {
 
-template <typename IO_Service>
 class openssl_context_service
 {
 public:
@@ -39,16 +39,13 @@ public:
   typedef ::SSL_CTX* impl_type;
 
   // Constructor.
-  openssl_context_service(IO_Service& io_service)
+  openssl_context_service(asio::io_service& io_service)
     : io_service_(io_service)
   {
   }
 
-  // The io_service type for this service.
-  typedef IO_Service io_service_type;
-
   // Get the io_service associated with the service.
-  io_service_type& io_service()
+  asio::io_service& io_service()
   {
     return io_service_;
   }
@@ -292,7 +289,7 @@ public:
 
 private:
   // The io_service that owns the service.
-  IO_Service& io_service_;
+  asio::io_service& io_service_;
 
   // Ensure openssl is initialised.
   openssl_init<> init_;

@@ -13,14 +13,10 @@
 namespace services {
 
 /// Service implementation for the logger.
-template <typename Allocator = std::allocator<void> >
 class logger_service
   : private boost::noncopyable
 {
 public:
-  /// The io_service type for this service.
-  typedef asio::basic_io_service<Allocator> io_service_type;
-
   /// The backend implementation of a logger.
   struct logger_impl
   {
@@ -32,12 +28,12 @@ public:
   typedef logger_impl* impl_type;
 
   /// Constructor creates a thread to run a private io_service.
-  logger_service(io_service_type& io_service)
+  logger_service(asio::io_service& io_service)
     : io_service_(io_service),
       work_io_service_(),
-      work_(new typename io_service_type::work(work_io_service_)),
+      work_(new asio::io_service::work(work_io_service_)),
       work_thread_(new asio::thread(
-            boost::bind(&io_service_type::run, &work_io_service_)))
+            boost::bind(&asio::io_service::run, &work_io_service_)))
   {
   }
 
@@ -52,7 +48,7 @@ public:
   }
 
   /// Get the io_service associated with the service.
-  io_service_type& io_service()
+  asio::io_service& io_service()
   {
     return io_service_;
   }
@@ -118,15 +114,15 @@ private:
   }
 
   /// The io_service that owns this service.
-  io_service_type& io_service_;
+  asio::io_service& io_service_;
 
   /// Private io_service used for performing logging operations.
-  io_service_type work_io_service_;
+  asio::io_service work_io_service_;
 
   /// Work for the private io_service to perform. If we do not give the
   /// io_service some work to do then the io_service::run() function will exit
   /// immediately.
-  boost::scoped_ptr<typename io_service_type::work> work_;
+  boost::scoped_ptr<asio::io_service::work> work_;
 
   /// Thread used for running the work io_service's run loop.
   boost::scoped_ptr<asio::thread> work_thread_;

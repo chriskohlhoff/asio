@@ -42,7 +42,7 @@
 namespace asio {
 namespace detail {
 
-template <bool Own_Thread, typename Allocator>
+template <bool Own_Thread>
 class select_reactor
   : private noncopyable
 {
@@ -180,8 +180,7 @@ public:
   }
 
 private:
-  friend class task_io_service<
-      select_reactor<Own_Thread, Allocator>, Allocator>;
+  friend class task_io_service<select_reactor<Own_Thread> >;
 
   // Run select once until interrupted or events are ready to be dispatched.
   void run(bool block)

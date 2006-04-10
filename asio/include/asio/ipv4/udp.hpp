@@ -17,10 +17,6 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <memory>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/basic_datagram_socket.hpp"
 #include "asio/datagram_socket_service.hpp"
 #include "asio/ipv4/basic_endpoint.hpp"
@@ -64,19 +60,11 @@ public:
     return PF_INET;
   }
 
-  /// Template typedefs for socket types.
-  template <typename Allocator>
-  struct types
-  {
-    /// The service type for IPv4 UDP sockets.
-    typedef datagram_socket_service<udp, Allocator> socket_service;
-
-    /// The IPv4 UDP socket type.
-    typedef basic_datagram_socket<socket_service> socket;
-  };
+  /// The service type for IPv4 UDP sockets.
+  typedef datagram_socket_service<udp> socket_service;
 
   /// The IPv4 UDP socket type.
-  typedef types<std::allocator<void> >::socket socket;
+  typedef basic_datagram_socket<socket_service> socket;
 };
 
 } // namespace ipv4

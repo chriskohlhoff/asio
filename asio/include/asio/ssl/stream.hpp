@@ -56,7 +56,7 @@ namespace ssl {
  * Async_Object, Async_Read_Stream, Async_Write_Stream, Error_Source, Stream,
  * Sync_Read_Stream, Sync_Write_Stream.
  */
-template <typename Stream, typename Service = stream_service<> >
+template <typename Stream, typename Service = stream_service>
 class stream
   : public stream_base,
     private boost::noncopyable
@@ -67,9 +67,6 @@ public:
 
   /// The type of the lowest layer.
   typedef typename next_layer_type::lowest_layer_type lowest_layer_type;
-
-  /// The io_service type for this type.
-  typedef typename next_layer_type::io_service_type io_service_type;
 
   /// The type used for reporting errors.
   typedef typename next_layer_type::error_type error_type;
@@ -113,7 +110,7 @@ public:
    * @return A reference to the io_service object that stream will use to
    * dispatch handlers. Ownership is not transferred to the caller.
    */
-  io_service_type& io_service()
+  asio::io_service& io_service()
   {
     return next_layer_.io_service();
   }

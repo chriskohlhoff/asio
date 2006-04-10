@@ -17,10 +17,6 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <memory>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/basic_socket_acceptor.hpp"
 #include "asio/basic_stream_socket.hpp"
 #include "asio/socket_acceptor_service.hpp"
@@ -67,28 +63,17 @@ public:
     return PF_INET6;
   }
 
-  /// Template typedefs for acceptor and socket types.
-  template <typename Allocator>
-  struct types
-  {
-    /// The service type for IPv4 TCP sockets.
-    typedef stream_socket_service<tcp, Allocator> socket_service;
-
-    /// The IPv4 TCP socket type.
-    typedef basic_stream_socket<socket_service> socket;
-
-    /// The service type for IPv4 TCP acceptors.
-    typedef socket_acceptor_service<tcp, Allocator> acceptor_service;
-
-    /// The IPv4 TCP acceptor type.
-    typedef basic_socket_acceptor<acceptor_service> acceptor;
-  };
+  /// The service type for IPv4 TCP sockets.
+  typedef stream_socket_service<tcp> socket_service;
 
   /// The IPv4 TCP socket type.
-  typedef types<std::allocator<void> >::socket socket;
+  typedef basic_stream_socket<socket_service> socket;
+
+  /// The service type for IPv4 TCP acceptors.
+  typedef socket_acceptor_service<tcp> acceptor_service;
 
   /// The IPv4 TCP acceptor type.
-  typedef types<std::allocator<void> >::acceptor acceptor;
+  typedef basic_socket_acceptor<acceptor_service> acceptor;
 
   /// Socket option for disabling the Nagle algorithm.
   /**

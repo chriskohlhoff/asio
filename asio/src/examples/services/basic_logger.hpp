@@ -20,9 +20,6 @@ public:
   /// The native implementation type of the timer.
   typedef typename service_type::impl_type impl_type;
 
-  /// The io_service type for this type.
-  typedef typename service_type::io_service_type io_service_type;
-
   /// Constructor.
   /**
    * This constructor creates a logger.
@@ -31,7 +28,7 @@ public:
    *
    * @param identifier An identifier for this logger.
    */
-  explicit basic_logger(io_service_type& io_service,
+  explicit basic_logger(asio::io_service& io_service,
       const std::string& identifier)
     : service_(io_service.get_service(asio::service_factory<Service>())),
       impl_(service_.null())
@@ -46,7 +43,7 @@ public:
   }
 
   /// Get the io_service associated with the object.
-  io_service_type& io_service()
+  asio::io_service& io_service()
   {
     return service_.io_service();
   }

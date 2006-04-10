@@ -21,12 +21,11 @@
 
 #include "asio/detail/push_options.hpp"
 #include <cstddef>
-#include <memory>
 #include <boost/config.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/basic_io_service.hpp"
+#include "asio/io_service.hpp"
 #include "asio/time_traits.hpp"
 #include "asio/detail/epoll_reactor.hpp"
 #include "asio/detail/kqueue_reactor.hpp"
@@ -38,15 +37,11 @@ namespace asio {
 
 /// Default service implementation for a timer.
 template <typename Time_Type = boost::posix_time::ptime,
-    typename Time_Traits = asio::time_traits<Time_Type>,
-    typename Allocator = std::allocator<void> >
+    typename Time_Traits = asio::time_traits<Time_Type> >
 class deadline_timer_service
   : private noncopyable
 {
 public:
-  /// The io_service type.
-  typedef basic_io_service<Allocator> io_service_type;
-
   /// The time traits type.
   typedef Time_Traits traits_type;
 
@@ -59,17 +54,17 @@ public:
 private:
   // The type of the platform-specific implementation.
 #if defined(ASIO_HAS_IOCP)
-  typedef detail::reactive_deadline_timer_service<io_service_type,
-    traits_type, detail::select_reactor<true, Allocator> > service_impl_type;
+  typedef detail::reactive_deadline_timer_service<
+    traits_type, detail::select_reactor<true> > service_impl_type;
 #elif defined(ASIO_HAS_EPOLL)
-  typedef detail::reactive_deadline_timer_service<io_service_type,
-    traits_type, detail::epoll_reactor<false, Allocator> > service_impl_type;
+  typedef detail::reactive_deadline_timer_service<
+    traits_type, detail::epoll_reactor<false> > service_impl_type;
 #elif defined(ASIO_HAS_KQUEUE)
-  typedef detail::reactive_deadline_timer_service<io_service_type,
-    traits_type, detail::kqueue_reactor<false, Allocator> > service_impl_type;
+  typedef detail::reactive_deadline_timer_service<
+    traits_type, detail::kqueue_reactor<false> > service_impl_type;
 #else
-  typedef detail::reactive_deadline_timer_service<io_service_type,
-    traits_type, detail::select_reactor<false, Allocator> > service_impl_type;
+  typedef detail::reactive_deadline_timer_service<
+    traits_type, detail::select_reactor<false> > service_impl_type;
 #endif
 
 public:
@@ -81,14 +76,14 @@ public:
 #endif
 
   /// Construct a new timer service for the specified io_service.
-  explicit deadline_timer_service(io_service_type& io_service)
+  explicit deadline_timer_service(asio::io_service& io_service)
     : service_impl_(io_service.get_service(
           service_factory<service_impl_type>()))
   {
   }
 
   /// Get the io_service associated with the service.
-  io_service_type& io_service()
+  asio::io_service& io_service()
   {
     return service_impl_.io_service();
   }

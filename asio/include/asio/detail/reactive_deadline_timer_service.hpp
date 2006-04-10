@@ -24,6 +24,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
+#include "asio/io_service.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/noncopyable.hpp"
@@ -33,7 +34,7 @@
 namespace asio {
 namespace detail {
 
-template <typename IO_Service, typename Time_Traits, typename Reactor>
+template <typename Time_Traits, typename Reactor>
 class reactive_deadline_timer_service
 {
 public:
@@ -46,9 +47,6 @@ public:
     bool might_have_pending_waits;
   };
 
-  // The io_service type associated with this service.
-  typedef IO_Service io_service_type;
-
   // The time type.
   typedef typename Time_Traits::time_type time_type;
 
@@ -56,14 +54,14 @@ public:
   typedef typename Time_Traits::duration_type duration_type;
 
   // Constructor.
-  reactive_deadline_timer_service(io_service_type& io_service)
+  reactive_deadline_timer_service(asio::io_service& io_service)
     : io_service_(io_service),
       reactor_(io_service.get_service(service_factory<Reactor>()))
   {
   }
 
   // Get the io_service associated with the service.
-  io_service_type& io_service()
+  asio::io_service& io_service()
   {
     return io_service_;
   }
@@ -139,7 +137,7 @@ public:
   class wait_handler
   {
   public:
-    wait_handler(IO_Service& io_service, Handler handler)
+    wait_handler(asio::io_service& io_service, Handler handler)
       : io_service_(io_service),
         work_(io_service),
         handler_(handler)
@@ -153,8 +151,8 @@ public:
     }
 
   private:
-    IO_Service& io_service_;
-    typename IO_Service::work work_;
+    asio::io_service& io_service_;
+    asio::io_service::work work_;
     Handler handler_;
   };
 
@@ -169,7 +167,7 @@ public:
 
 private:
   // The io_service used for dispatching handlers.
-  IO_Service& io_service_;
+  asio::io_service& io_service_;
 
   // The selector that performs event demultiplexing for the provider.
   Reactor& reactor_;

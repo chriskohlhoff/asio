@@ -49,7 +49,7 @@
 namespace asio {
 namespace detail {
 
-template <bool Own_Thread, typename Allocator>
+template <bool Own_Thread>
 class kqueue_reactor
   : private noncopyable
 {
@@ -266,8 +266,7 @@ public:
   }
 
 private:
-  friend class task_io_service<
-      kqueue_reactor<Own_Thread, Allocator>, Allocator>;
+  friend class task_io_service<kqueue_reactor<Own_Thread> >;
 
   // Run the kqueue loop.
   void run(bool block)

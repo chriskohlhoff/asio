@@ -14,7 +14,6 @@ PERFORMANCE_TEST_EXES = \
 UNIT_TEST_EXES = \
 	tests/unit/basic_datagram_socket_test.exe \
 	tests/unit/basic_deadline_timer_test.exe \
-	tests/unit/basic_io_service_test.exe \
 	tests/unit/basic_locking_dispatcher_test.exe \
 	tests/unit/basic_socket_acceptor_test.exe \
 	tests/unit/basic_stream_socket_test.exe \

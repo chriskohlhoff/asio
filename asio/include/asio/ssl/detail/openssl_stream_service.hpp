@@ -26,7 +26,7 @@
 #include <boost/bind.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/basic_io_service.hpp"
+#include "asio/io_service.hpp"
 #include "asio/ssl/basic_context.hpp"
 #include "asio/ssl/stream_base.hpp"
 #include "asio/ssl/detail/openssl_operation.hpp"
@@ -36,14 +36,9 @@ namespace asio {
 namespace ssl {
 namespace detail {
 
-template <typename Allocator>
 class openssl_stream_service
   : private boost::noncopyable
 {
-public:
-  // The io_service type.
-  typedef basic_io_service<Allocator> io_service_type;
-
 private:
   //Base handler for asyncrhonous operations
   template <typename Stream>
@@ -52,7 +47,7 @@ private:
   public:
     typedef boost::function<void (const asio::error&, size_t)> func_t;
 
-    base_handler(io_service_type& io_service)
+    base_handler(asio::io_service& io_service)
       : op_(NULL)
       , io_service_(io_service)
       , work_(io_service)
@@ -74,8 +69,8 @@ private:
   private:
     func_t func_;
     openssl_operation<Stream>* op_;
-    io_service_type& io_service_;
-    typename io_service_type::work work_;
+    asio::io_service& io_service_;
+    asio::io_service::work work_;
   };  // class base_handler
 
   // Handler for asynchronous IO (write/read) operations
@@ -84,7 +79,7 @@ private:
     : public base_handler<Stream>
   {
   public:
-    io_handler(Handler handler, io_service_type& io_service)
+    io_handler(Handler handler, asio::io_service& io_service)
       : base_handler<Stream>(io_service)
       , handler_(handler)
     {
@@ -108,7 +103,7 @@ private:
     : public base_handler<Stream>
   {
   public:
-    handshake_handler(Handler handler, io_service_type& io_service)
+    handshake_handler(Handler handler, asio::io_service& io_service)
       : base_handler<Stream>(io_service)
       , handler_(handler)
     {
@@ -133,7 +128,7 @@ private:
     : public base_handler<Stream>
   {
   public:
-    shutdown_handler(Handler handler, io_service_type& io_service)
+    shutdown_handler(Handler handler, asio::io_service& io_service)
       : base_handler<Stream>(io_service),
         handler_(handler)
     { 
@@ -160,13 +155,13 @@ public:
   } * impl_type;
 
   // Construct a new stream socket service for the specified io_service.
-  explicit openssl_stream_service(io_service_type& io_service)
+  explicit openssl_stream_service(asio::io_service& io_service)
     : io_service_(io_service)
   {
   }
 
   // Get the io_service associated with the service.
-  io_service_type& io_service()
+  asio::io_service& io_service()
   {
     return io_service_;
   }
@@ -411,7 +406,7 @@ public:
 
 private:
   // The io_service used to dispatch handlers.
-  io_service_type& io_service_;
+  asio::io_service& io_service_;
 };
 
 } // namespace detail

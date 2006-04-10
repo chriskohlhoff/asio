@@ -17,10 +17,6 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <memory>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/detail/locking_dispatcher.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/wrapped_handler.hpp"
@@ -42,7 +38,7 @@ namespace asio {
  * @par Concepts:
  * Dispatcher.
  */
-template <typename Dispatcher, typename Allocator = std::allocator<void> >
+template <typename Dispatcher>
 class basic_locking_dispatcher
   : private noncopyable
 {
@@ -50,22 +46,15 @@ public:
   /// The underlying dispatcher type.
   typedef Dispatcher dispatcher_type;
 
-  /// The allocator type for the locking dispatcher.
-  typedef Allocator allocator_type;
-
   /// Constructor.
   /**
    * Constructs the locking dispatcher.
    *
    * @param dispatcher The dispatcher object that the locking_dispatcher will
    * use to dispatch handlers that are ready to be run.
-   *
-   * @param allocator The allocator object used by the locking_dispatcher to
-   * dynamically allocate internal objects.
    */
-  explicit basic_locking_dispatcher(dispatcher_type& dispatcher,
-      const allocator_type& allocator = allocator_type())
-    : impl_(dispatcher, allocator)
+  explicit basic_locking_dispatcher(dispatcher_type& dispatcher)
+    : impl_(dispatcher)
   {
   }
 
@@ -85,18 +74,6 @@ public:
   dispatcher_type& dispatcher()
   {
     return impl_.dispatcher();
-  }
-
-  /// Return a copy of the allocator associated with the locking_dispatcher.
-  /**
-   * The get_allocator() returns a copy of the allocator object used by the
-   * locking_dispatcher.
-   *
-   * @return A copy of the locking_dispatcher's allocator.
-   */
-  allocator_type get_allocator() const
-  {
-    return impl_.get_allocator();
   }
 
   /// Request the dispatcher to invoke the given handler.
@@ -174,20 +151,18 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
   unspecified
 #else
-  detail::wrapped_handler<
-      basic_locking_dispatcher<Dispatcher, Allocator>,
-      Handler>
+  detail::wrapped_handler<basic_locking_dispatcher<Dispatcher>, Handler>
 #endif
   wrap(Handler handler)
   {
     return detail::wrapped_handler<
-        basic_locking_dispatcher<Dispatcher, Allocator>,
+        basic_locking_dispatcher<Dispatcher>,
         Handler>(*this, handler);
   }
 
 private:
   /// The underlying native implementation.
-  detail::locking_dispatcher<Dispatcher, Allocator> impl_;
+  detail::locking_dispatcher<Dispatcher> impl_;
 };
 
 } // namespace asio

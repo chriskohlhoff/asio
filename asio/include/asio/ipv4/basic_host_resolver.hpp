@@ -24,6 +24,7 @@
 #include "asio/basic_io_object.hpp"
 #include "asio/error.hpp"
 #include "asio/error_handler.hpp"
+#include "asio/io_service.hpp"
 #include "asio/ipv4/address.hpp"
 #include "asio/ipv4/host.hpp"
 
@@ -49,9 +50,6 @@ class basic_host_resolver
   : public basic_io_object<Service>
 {
 public:
-  /// The io_service type for this I/O object.
-  typedef typename Service::io_service_type io_service_type;
-
   /// The type used for reporting errors.
   typedef asio::error error_type;
 
@@ -62,7 +60,7 @@ public:
    * @param io_service The io_service object that the host resolver will use to
    * dispatch handlers for any asynchronous operations.
    */
-  explicit basic_host_resolver(io_service_type& io_service)
+  explicit basic_host_resolver(asio::io_service& io_service)
     : basic_io_object<Service>(io_service)
   {
   }

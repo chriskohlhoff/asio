@@ -25,7 +25,7 @@ namespace asio {
 namespace ipv4 {
 
 /// Typedef for the typical usage of host_resolver.
-typedef basic_host_resolver<host_resolver_service<> > host_resolver;
+typedef basic_host_resolver<host_resolver_service> host_resolver;
 
 } // namespace ipv4
 } // namespace asio

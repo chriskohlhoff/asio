@@ -54,9 +54,6 @@ class basic_socket_acceptor
     public socket_base
 {
 public:
-  /// The io_service type for this I/O object.
-  typedef typename Service::io_service_type io_service_type;
-
   /// The native representation of an acceptor.
   typedef typename Service::native_type native_type;
 
@@ -79,7 +76,7 @@ public:
    * dispatch handlers for any asynchronous operations performed on the
    * acceptor.
    */
-  explicit basic_socket_acceptor(io_service_type& io_service)
+  explicit basic_socket_acceptor(asio::io_service& io_service)
     : basic_io_object<Service>(io_service)
   {
   }
@@ -96,7 +93,7 @@ public:
    *
    * @throws asio::error Thrown on failure.
    */
-  basic_socket_acceptor(io_service_type& io_service,
+  basic_socket_acceptor(asio::io_service& io_service,
       const protocol_type& protocol)
     : basic_io_object<Service>(io_service)
   {
@@ -128,7 +125,7 @@ public:
    * acceptor.listen(listen_backlog);
    * @endcode
    */
-  basic_socket_acceptor(io_service_type& io_service,
+  basic_socket_acceptor(asio::io_service& io_service,
       const endpoint_type& endpoint, int listen_backlog = 0)
     : basic_io_object<Service>(io_service)
   {
@@ -144,13 +141,14 @@ public:
    * acceptor.
    *
    * @param io_service The io_service object that the acceptor will use to
-   * dispatch handlers for any asynchronous operations performed on the socket.
+   * dispatch handlers for any asynchronous operations performed on the
+   * acceptor.
    *
    * @param native_acceptor A native acceptor.
    *
    * @throws asio::error Thrown on failure.
    */
-  basic_socket_acceptor(io_service_type& io_service,
+  basic_socket_acceptor(asio::io_service& io_service,
       const native_type& native_acceptor)
     : basic_io_object<Service>(io_service)
   {

@@ -85,7 +85,6 @@ Standard exception class.
 
 \li asio::basic_datagram_socket
 \li asio::basic_deadline_timer
-\li asio::basic_io_service
 \li asio::basic_locking_dispatcher
 \li asio::basic_socket_acceptor
 \li asio::basic_stream_socket

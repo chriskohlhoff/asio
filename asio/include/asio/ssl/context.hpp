@@ -25,7 +25,7 @@ namespace asio {
 namespace ssl {
 
 /// Typedef for the typical usage of context.
-typedef basic_context<context_service<> > context;
+typedef basic_context<context_service> context;
 
 } // namespace ssl
 } // namespace asio

@@ -42,9 +42,6 @@ class basic_socket
     public socket_base
 {
 public:
-  /// The io_service type for this I/O object.
-  typedef typename Service::io_service_type io_service_type;
-
   /// The native representation of a socket.
   typedef typename Service::native_type native_type;
 
@@ -67,7 +64,7 @@ public:
    * @param io_service The io_service object that the socket will use to
    * dispatch handlers for any asynchronous operations performed on the socket.
    */
-  explicit basic_socket(io_service_type& io_service)
+  explicit basic_socket(asio::io_service& io_service)
     : basic_io_object<Service>(io_service)
   {
   }
@@ -83,7 +80,8 @@ public:
    *
    * @throws asio::error Thrown on failure.
    */
-  basic_socket(io_service_type& io_service, const protocol_type& protocol)
+  basic_socket(asio::io_service& io_service,
+      const protocol_type& protocol)
     : basic_io_object<Service>(io_service)
   {
     this->service.open(this->implementation, protocol, throw_error());
@@ -104,7 +102,8 @@ public:
    *
    * @throws asio::error Thrown on failure.
    */
-  basic_socket(io_service_type& io_service, const endpoint_type& endpoint)
+  basic_socket(asio::io_service& io_service,
+      const endpoint_type& endpoint)
     : basic_io_object<Service>(io_service)
   {
     this->service.open(this->implementation, endpoint.protocol(),
@@ -123,7 +122,8 @@ public:
    *
    * @throws asio::error Thrown on failure.
    */
-  basic_socket(io_service_type& io_service, const native_type& native_socket)
+  basic_socket(asio::io_service& io_service,
+      const native_type& native_socket)
     : basic_io_object<Service>(io_service)
   {
     this->service.open(this->implementation, native_socket, throw_error());

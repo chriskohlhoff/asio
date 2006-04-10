@@ -53,7 +53,7 @@
 namespace asio {
 namespace detail {
 
-template <bool Own_Thread, typename Allocator>
+template <bool Own_Thread>
 class epoll_reactor
   : private noncopyable
 {
@@ -286,8 +286,7 @@ public:
   }
 
 private:
-  friend class task_io_service<
-      epoll_reactor<Own_Thread, Allocator>, Allocator>;
+  friend class task_io_service<epoll_reactor<Own_Thread> >;
 
   // Run epoll once until interrupted or events are ready to be dispatched.
   void run(bool block)

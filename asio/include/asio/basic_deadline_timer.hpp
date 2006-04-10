@@ -82,9 +82,6 @@ class basic_deadline_timer
   : public basic_io_object<Service>
 {
 public:
-  /// The io_service type for this I/O object.
-  typedef typename Service::io_service_type io_service_type;
-
   /// The type used for reporting errors.
   typedef asio::error error_type;
 
@@ -103,7 +100,7 @@ public:
    * @param io_service The io_service object that the timer will use to dispatch
    * handlers for any asynchronous operations performed on the timer.
    */
-  explicit basic_deadline_timer(io_service_type& io_service)
+  explicit basic_deadline_timer(asio::io_service& io_service)
     : basic_io_object<Service>(io_service)
   {
   }
@@ -118,7 +115,7 @@ public:
    * @param expiry_time The expiry time to be used for the timer, expressed
    * as an absolute time.
    */
-  basic_deadline_timer(io_service_type& io_service,
+  basic_deadline_timer(asio::io_service& io_service,
       const time_type& expiry_time)
     : basic_io_object<Service>(io_service)
   {
@@ -135,7 +132,7 @@ public:
    * @param expiry_time The expiry time to be used for the timer, relative to
    * now.
    */
-  basic_deadline_timer(io_service_type& io_service,
+  basic_deadline_timer(asio::io_service& io_service,
       const duration_type& expiry_time)
     : basic_io_object<Service>(io_service)
   {

@@ -27,6 +27,7 @@
 #include "asio/buffered_read_stream_fwd.hpp"
 #include "asio/buffer.hpp"
 #include "asio/error.hpp"
+#include "asio/io_service.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/buffer_resize_guard.hpp"
 #include "asio/detail/buffered_stream_storage.hpp"
@@ -57,9 +58,6 @@ public:
 
   /// The type of the lowest layer.
   typedef typename next_layer_type::lowest_layer_type lowest_layer_type;
-
-  /// The io_service type for this type.
-  typedef typename next_layer_type::io_service_type io_service_type;
 
   /// The type used for reporting errors.
   typedef typename next_layer_type::error_type error_type;
@@ -100,7 +98,7 @@ public:
   }
 
   /// Get the io_service associated with the object.
-  io_service_type& io_service()
+  asio::io_service& io_service()
   {
     return next_layer_.io_service();
   }
@@ -180,7 +178,7 @@ public:
   class fill_handler
   {
   public:
-    fill_handler(io_service_type& io_service,
+    fill_handler(asio::io_service& io_service,
         detail::buffered_stream_storage& storage,
         std::size_t previous_size, Handler handler)
       : io_service_(io_service),
@@ -199,7 +197,7 @@ public:
     }
 
   private:
-    io_service_type& io_service_;
+    asio::io_service& io_service_;
     detail::buffered_stream_storage& storage_;
     std::size_t previous_size_;
     Handler handler_;
@@ -243,7 +241,7 @@ public:
   class read_some_handler
   {
   public:
-    read_some_handler(io_service_type& io_service,
+    read_some_handler(asio::io_service& io_service,
         detail::buffered_stream_storage& storage,
         const Mutable_Buffers& buffers, Handler handler)
       : io_service_(io_service),
@@ -286,7 +284,7 @@ public:
     }
 
   private:
-    io_service_type& io_service_;
+    asio::io_service& io_service_;
     detail::buffered_stream_storage& storage_;
     Mutable_Buffers buffers_;
     Handler handler_;

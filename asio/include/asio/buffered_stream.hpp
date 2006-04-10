@@ -26,6 +26,7 @@
 #include "asio/buffered_write_stream.hpp"
 #include "asio/buffered_stream_fwd.hpp"
 #include "asio/error.hpp"
+#include "asio/io_service.hpp"
 #include "asio/detail/noncopyable.hpp"
 
 namespace asio {
@@ -53,9 +54,6 @@ public:
 
   /// The type of the lowest layer.
   typedef typename next_layer_type::lowest_layer_type lowest_layer_type;
-
-  /// The io_service type for this type.
-  typedef typename next_layer_type::io_service_type io_service_type;
 
   /// The type used for reporting errors.
   typedef typename next_layer_type::error_type error_type;
@@ -90,7 +88,7 @@ public:
   }
 
   /// Get the io_service associated with the object.
-  io_service_type& io_service()
+  asio::io_service& io_service()
   {
     return stream_impl_.io_service();
   }

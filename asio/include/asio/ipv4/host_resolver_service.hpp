@@ -17,11 +17,7 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <memory>
-#include "asio/detail/pop_options.hpp"
-
-#include "asio/basic_io_service.hpp"
+#include "asio/io_service.hpp"
 #include "asio/ipv4/host.hpp"
 #include "asio/ipv4/detail/host_resolver_service.hpp"
 #include "asio/detail/noncopyable.hpp"
@@ -30,35 +26,30 @@ namespace asio {
 namespace ipv4 {
 
 /// Default service implementation for a host resolver.
-template <typename Allocator = std::allocator<void> >
 class host_resolver_service
   : private noncopyable
 {
-public:
-  /// The io_service type.
-  typedef basic_io_service<Allocator> io_service_type;
-
 private:
   // The type of the platform-specific implementation.
-  typedef detail::host_resolver_service<io_service_type> service_impl_type;
+  typedef detail::host_resolver_service<asio::io_service> service_impl_type;
 
 public:
   /// The type of the host resolver.
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined implementation_type;
 #else
-  typedef typename service_impl_type::implementation_type implementation_type;
+  typedef service_impl_type::implementation_type implementation_type;
 #endif
 
   /// Constructor.
-  host_resolver_service(io_service_type& io_service)
+  host_resolver_service(asio::io_service& io_service)
     : service_impl_(io_service.get_service(
           service_factory<service_impl_type>()))
   {
   }
 
   /// Get the io_service associated with the service.
-  io_service_type& io_service()
+  asio::io_service& io_service()
   {
     return service_impl_.io_service();
   }

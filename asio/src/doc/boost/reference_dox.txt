@@ -84,7 +84,6 @@ Standard exception class.
 
 \li boost::asio::basic_datagram_socket
 \li boost::asio::basic_deadline_timer
-\li boost::asio::basic_io_service
 \li boost::asio::basic_locking_dispatcher
 \li boost::asio::basic_socket_acceptor
 \li boost::asio::basic_stream_socket

@@ -7,7 +7,7 @@
 namespace services {
 
 /// Typedef for typical logger usage.
-typedef basic_logger<logger_service<> > logger;
+typedef basic_logger<logger_service> logger;
 
 } // namespace services
 

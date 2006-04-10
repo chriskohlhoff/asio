@@ -27,14 +27,14 @@
 
 #include "asio/detail/push_options.hpp"
 #include <cstring>
-#include <memory>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/basic_io_service.hpp"
 #include "asio/buffer.hpp"
 #include "asio/error.hpp"
+#include "asio/error_handler.hpp"
+#include "asio/io_service.hpp"
 #include "asio/service_factory.hpp"
 #include "asio/socket_base.hpp"
 #include "asio/detail/bind_handler.hpp"
@@ -49,12 +49,11 @@
 namespace asio {
 namespace detail {
 
-template <typename Allocator>
 class win_iocp_socket_service
 {
 public:
   // Base class for all operations.
-  typedef win_iocp_operation<Allocator> operation;
+  typedef win_iocp_operation operation;
 
   struct noop_deleter { void operator()(void*) {} };
   typedef boost::shared_ptr<void> shared_cancel_token_type;
@@ -68,7 +67,7 @@ public:
   {
   private:
     // Only this service will have access to the internal values.
-    friend class win_iocp_socket_service<Allocator>;
+    friend class win_iocp_socket_service;
 
     // The native socket representation.
     socket_type socket_;
@@ -82,27 +81,23 @@ public:
     shared_cancel_token_type cancel_token_;
   };
 
-  // The io_service type for this service.
-  typedef basic_io_service<Allocator> io_service_type;
-
   // The type of the reactor used for connect operations.
-  typedef detail::select_reactor<true, Allocator> reactor_type;
+  typedef detail::select_reactor<true> reactor_type;
 
   // The maximum number of buffers to support in a single operation.
   enum { max_buffers = 16 };
 
   // Constructor.
-  win_iocp_socket_service(
-      io_service_type& io_service)
+  win_iocp_socket_service(asio::io_service& io_service)
     : io_service_(io_service),
       iocp_service_(io_service.get_service(
-          service_factory<win_iocp_io_service<Allocator> >())),
+            service_factory<win_iocp_io_service>())),
       reactor_(0)
   {
   }
 
   // Get the io_service associated with the service.
-  io_service_type& io_service()
+  asio::io_service& io_service()
   {
     return io_service_;
   }
@@ -318,7 +313,7 @@ public:
     : public operation
   {
   public:
-    send_operation(io_service_type& io_service,
+    send_operation(asio::io_service& io_service,
         weak_cancel_token_type cancel_token, Handler handler)
       : operation(&send_operation<Handler>::do_completion_impl),
         work_(io_service),
@@ -329,8 +324,7 @@ public:
 
   private:
     static void do_completion_impl(operation* op,
-        DWORD last_error, size_t bytes_transferred,
-        const Allocator& void_allocator)
+        DWORD last_error, size_t bytes_transferred)
     {
       // Take ownership of the operation object.
       typedef send_operation<Handler> op_type;
@@ -359,7 +353,7 @@ public:
       handler(error, bytes_transferred);
     }
 
-    typename io_service_type::work work_;
+    asio::io_service::work work_;
     weak_cancel_token_type cancel_token_;
     Handler handler_;
   };
@@ -448,7 +442,7 @@ public:
     : public operation
   {
   public:
-    send_to_operation(io_service_type& io_service, Handler handler)
+    send_to_operation(asio::io_service& io_service, Handler handler)
       : operation(&send_to_operation<Handler>::do_completion_impl),
         work_(io_service),
         handler_(handler)
@@ -457,8 +451,7 @@ public:
 
   private:
     static void do_completion_impl(operation* op,
-        DWORD last_error, size_t bytes_transferred,
-        const Allocator& void_allocator)
+        DWORD last_error, size_t bytes_transferred)
     {
       // Take ownership of the operation object.
       typedef send_to_operation<Handler> op_type;
@@ -478,7 +471,7 @@ public:
       handler(error, bytes_transferred);
     }
 
-    typename io_service_type::work work_;
+    asio::io_service::work work_;
     Handler handler_;
   };
 
@@ -571,7 +564,7 @@ public:
     : public operation
   {
   public:
-    receive_operation(io_service_type& io_service,
+    receive_operation(asio::io_service& io_service,
         weak_cancel_token_type cancel_token, Handler handler)
       : operation(&receive_operation<Handler>::do_completion_impl),
         work_(io_service),
@@ -582,8 +575,7 @@ public:
 
   private:
     static void do_completion_impl(operation* op,
-        DWORD last_error, size_t bytes_transferred,
-        const Allocator& void_allocator)
+        DWORD last_error, size_t bytes_transferred)
     {
       // Take ownership of the operation object.
       typedef receive_operation<Handler> op_type;
@@ -618,7 +610,7 @@ public:
       handler(error, bytes_transferred);
     }
 
-    typename io_service_type::work work_;
+    asio::io_service::work work_;
     weak_cancel_token_type cancel_token_;
     Handler handler_;
   };
@@ -713,8 +705,8 @@ public:
     : public operation
   {
   public:
-    receive_from_operation(io_service_type& io_service, Endpoint& endpoint,
-        Handler handler)
+    receive_from_operation(asio::io_service& io_service,
+        Endpoint& endpoint, Handler handler)
       : operation(
           &receive_from_operation<Endpoint, Handler>::do_completion_impl),
         endpoint_(endpoint),
@@ -731,8 +723,7 @@ public:
 
   private:
     static void do_completion_impl(operation* op,
-        DWORD last_error, size_t bytes_transferred,
-        const Allocator& void_allocator)
+        DWORD last_error, size_t bytes_transferred)
     {
       // Take ownership of the operation object.
       typedef receive_from_operation<Endpoint, Handler> op_type;
@@ -763,7 +754,7 @@ public:
 
     Endpoint& endpoint_;
     int endpoint_size_;
-    typename io_service_type::work work_;
+    asio::io_service::work work_;
     Handler handler_;
   };
 
@@ -875,7 +866,7 @@ public:
     : public operation
   {
   public:
-    accept_operation(io_service_type& io_service, socket_type socket,
+    accept_operation(asio::io_service& io_service, socket_type socket,
         socket_type new_socket, Socket& peer, Handler handler)
       : operation(
           &accept_operation<Socket, Handler>::do_completion_impl),
@@ -905,8 +896,7 @@ public:
 
   private:
     static void do_completion_impl(operation* op,
-        DWORD last_error, size_t bytes_transferred,
-        const Allocator& void_allocator)
+        DWORD last_error, size_t bytes_transferred)
     {
       // Take ownership of the operation object.
       typedef accept_operation<Socket, Handler> op_type;
@@ -957,11 +947,11 @@ public:
       handler(error);
     }
 
-    io_service_type& io_service_;
+    asio::io_service& io_service_;
     socket_type socket_;
     socket_holder new_socket_;
     Socket& peer_;
-    typename io_service_type::work work_;
+    asio::io_service::work work_;
     unsigned char output_buffer_[(sizeof(sockaddr_storage) + 16) * 2];
     Handler handler_;
   };
@@ -1042,7 +1032,7 @@ public:
     : public operation
   {
   public:
-    accept_endp_operation(io_service_type& io_service, socket_type socket,
+    accept_endp_operation(asio::io_service& io_service, socket_type socket,
         socket_type new_socket, Socket& peer, Endpoint& peer_endpoint,
         Handler handler)
       : operation(&accept_endp_operation<
@@ -1074,8 +1064,7 @@ public:
 
   private:
     static void do_completion_impl(operation* op,
-        DWORD last_error, size_t bytes_transferred,
-        const Allocator& void_allocator)
+        DWORD last_error, size_t bytes_transferred)
     {
       // Take ownership of the operation object.
       typedef accept_endp_operation<Socket, Endpoint, Handler> op_type;
@@ -1149,12 +1138,12 @@ public:
       handler(error);
     }
 
-    io_service_type& io_service_;
+    asio::io_service& io_service_;
     socket_type socket_;
     socket_holder new_socket_;
     Socket& peer_;
     Endpoint& peer_endpoint_;
-    typename io_service_type::work work_;
+    asio::io_service::work work_;
     unsigned char output_buffer_[(sizeof(sockaddr_storage) + 16) * 2];
     Handler handler_;
   };
@@ -1266,7 +1255,7 @@ public:
   {
   public:
     connect_handler(socket_type socket, boost::shared_ptr<bool> completed,
-        io_service_type& io_service, reactor_type& reactor, Handler handler)
+        asio::io_service& io_service, reactor_type& reactor, Handler handler)
       : socket_(socket),
         completed_(completed),
         io_service_(io_service),
@@ -1332,9 +1321,9 @@ public:
   private:
     socket_type socket_;
     boost::shared_ptr<bool> completed_;
-    io_service_type& io_service_;
+    asio::io_service& io_service_;
     reactor_type& reactor_;
-    typename io_service_type::work work_;
+    asio::io_service::work work_;
     Handler handler_;
   };
 
@@ -1411,11 +1400,11 @@ public:
 
 private:
   // The io_service associated with the service.
-  io_service_type& io_service_;
+  asio::io_service& io_service_;
 
   // The IOCP service used for running asynchronous operations and dispatching
   // handlers.
-  win_iocp_io_service<Allocator>& iocp_service_;
+  win_iocp_io_service& iocp_service_;
 
   // The reactor used for performing connect operations. This object is created
   // only if needed.

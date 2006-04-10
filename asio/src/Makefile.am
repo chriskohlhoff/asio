@@ -7,7 +7,6 @@ noinst_PROGRAMS = \
 	tests/performance/server \
 	tests/unit/basic_datagram_socket_test \
 	tests/unit/basic_deadline_timer_test \
-	tests/unit/basic_io_service_test \
 	tests/unit/basic_locking_dispatcher_test \
 	tests/unit/basic_socket_acceptor_test \
 	tests/unit/basic_stream_socket_test \
@@ -92,7 +91,6 @@ endif
 TESTS = \
 	tests/unit/basic_datagram_socket_test \
 	tests/unit/basic_deadline_timer_test \
-	tests/unit/basic_io_service_test \
 	tests/unit/basic_locking_dispatcher_test \
 	tests/unit/basic_socket_acceptor_test \
 	tests/unit/basic_stream_socket_test \
@@ -178,7 +176,6 @@ tests_unit_buffer_test_SOURCES = tests/unit/buffer_test.cpp
 tests_unit_completion_condition_test_SOURCES = tests/unit/completion_condition_test.cpp
 tests_unit_error_handler_test_SOURCES = tests/unit/error_handler_test.cpp
 tests_unit_basic_deadline_timer_test_SOURCES = tests/unit/basic_deadline_timer_test.cpp
-tests_unit_basic_io_service_test_SOURCES = tests/unit/basic_io_service_test.cpp
 tests_unit_basic_locking_dispatcher_test_SOURCES = tests/unit/basic_locking_dispatcher_test.cpp
 tests_unit_basic_socket_acceptor_test_SOURCES = tests/unit/basic_socket_acceptor_test.cpp
 tests_unit_basic_stream_socket_test_SOURCES = tests/unit/basic_stream_socket_test.cpp
