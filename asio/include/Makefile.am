@@ -78,6 +78,7 @@ nobase_include_HEADERS = \
 	asio/error_handler.hpp \
 	asio/handler_alloc_hook.hpp \
 	asio/impl/basic_datagram_socket.ipp \
+	asio/impl/io_service.ipp \
 	asio/impl/read.ipp \
 	asio/impl/write.ipp \
 	asio/io_service.hpp \
