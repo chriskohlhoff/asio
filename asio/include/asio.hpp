@@ -59,7 +59,6 @@
 #include "asio/locking_dispatcher.hpp"
 #include "asio/placeholders.hpp"
 #include "asio/read.hpp"
-#include "asio/service_factory.hpp"
 #include "asio/socket_acceptor_service.hpp"
 #include "asio/socket_base.hpp"
 #include "asio/stream_socket_service.hpp"

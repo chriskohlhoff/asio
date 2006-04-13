@@ -25,7 +25,6 @@
 
 #include "asio/error_handler.hpp"
 #include "asio/io_service.hpp"
-#include "asio/service_factory.hpp"
 #include "asio/ssl/context_base.hpp"
 
 namespace asio {
@@ -46,7 +45,7 @@ public:
 
   /// Constructor.
   basic_context(asio::io_service& io_service, method m)
-    : service_(io_service.get_service(service_factory<Service>())),
+    : service_(asio::use_service<Service>(io_service)),
       impl_(service_.null())
   {
     service_.create(impl_, m);

@@ -33,6 +33,7 @@ namespace ssl {
 namespace detail {
 
 class openssl_context_service
+  : public asio::io_service::service
 {
 public:
   // The native type of the context.
@@ -40,14 +41,8 @@ public:
 
   // Constructor.
   openssl_context_service(asio::io_service& io_service)
-    : io_service_(io_service)
+    : asio::io_service::service(io_service)
   {
-  }
-
-  // Get the io_service associated with the service.
-  asio::io_service& io_service()
-  {
-    return io_service_;
   }
 
   // Return a null context implementation.
@@ -288,9 +283,6 @@ public:
   }
 
 private:
-  // The io_service that owns the service.
-  asio::io_service& io_service_;
-
   // Ensure openssl is initialised.
   openssl_init<> init_;
 };

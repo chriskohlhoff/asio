@@ -1,6 +1,6 @@
 //
-// service_factory.hpp
-// ~~~~~~~~~~~~~~~~~~~
+// select_reactor_fwd.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_SERVICE_FACTORY_HPP
-#define ASIO_SERVICE_FACTORY_HPP
+#ifndef ASIO_DETAIL_SELECT_REACTOR_FWD_HPP
+#define ASIO_DETAIL_SELECT_REACTOR_FWD_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -18,22 +18,14 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+namespace detail {
 
-/// This class may be specialised to provide custom service creation.
-template <typename Service>
-class service_factory
-{
-public:
-  /// Create a service with the specified owner.
-  template <typename Owner>
-  Service* create(Owner& owner)
-  {
-    return new Service(owner);
-  }
-};
+template <bool Own_Thread>
+class select_reactor;
 
+} // namespace detail
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_SERVICE_FACTORY_HPP
+#endif // ASIO_DETAIL_SELECT_REACTOR_FWD_HPP

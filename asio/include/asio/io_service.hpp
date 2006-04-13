@@ -17,14 +17,22 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/epoll_reactor.hpp"
-#include "asio/detail/kqueue_reactor.hpp"
+#include "asio/detail/push_options.hpp"
+#include <cstddef>
+#include <stdexcept>
+#include <typeinfo>
+#include <boost/config.hpp>
+#include <boost/throw_exception.hpp>
+#include "asio/detail/pop_options.hpp"
+
+#include "asio/detail/epoll_reactor_fwd.hpp"
+#include "asio/detail/kqueue_reactor_fwd.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/select_reactor.hpp"
+#include "asio/detail/select_reactor_fwd.hpp"
 #include "asio/detail/service_registry.hpp"
 #include "asio/detail/signal_init.hpp"
-#include "asio/detail/task_io_service.hpp"
-#include "asio/detail/win_iocp_io_service.hpp"
+#include "asio/detail/task_io_service_fwd.hpp"
+#include "asio/detail/win_iocp_io_service_fwd.hpp"
 #include "asio/detail/winsock_init.hpp"
 #include "asio/detail/wrapped_handler.hpp"
 
@@ -51,7 +59,7 @@ namespace asio {
  * @par Concepts:
  * Dispatcher.
  *
- * @sa \ref io_service_handler_exception
+ * @sa @ref io_service_handler_exception
  */
 class io_service
   : private noncopyable
@@ -69,6 +77,11 @@ private:
 #endif
 
 public:
+  class work;
+  friend class work;
+
+  class service;
+
   /// Default constructor.
   io_service();
 
@@ -99,12 +112,17 @@ public:
 #endif
   wrap(Handler handler);
 
-  /// Obtain the service interface corresponding to the given type.
+  /// Obtain the service object corresponding to the given type.
   template <typename Service>
-  Service& get_service(service_factory<Service> factory);
+  friend Service& use_service(io_service& ios);
 
-  class work;
-  friend class work;
+  /// Add a service object to the io_service.
+  template <typename Service>
+  friend void add_service(io_service& ios, Service* svc);
+
+  /// Determine if an io_service contains a specified service type.
+  template <typename Service>
+  friend bool has_service(io_service& ios);
 
 private:
 #if defined(BOOST_WINDOWS)
@@ -148,6 +166,51 @@ private:
 
   // The io_service's implementation.
   io_service::impl_type& impl_;
+};
+
+/// Base class for all io_service services.
+class io_service::service
+  : private noncopyable
+{
+public:
+  /// Get the io_service object that owns the service.
+  io_service& owner();
+
+protected:
+  /// Constructor.
+  service(io_service& owner);
+
+  /// Destructor.
+  virtual ~service();
+
+private:
+  friend class detail::service_registry<io_service>;
+  io_service& owner_;
+  const std::type_info* type_info_;
+  service* next_;
+};
+
+/// Exception thrown when trying to add a duplicate service to an io_service.
+class service_already_exists
+  : public std::logic_error
+{
+public:
+  service_already_exists()
+    : std::logic_error("Service already exists.")
+  {
+  }
+};
+
+/// Exception thrown when trying to add a service object to an io_service where
+/// the service has a different owner.
+class invalid_service_owner
+  : public std::logic_error
+{
+public:
+  invalid_service_owner()
+    : std::logic_error("Invalid service owner.")
+  {
+  }
 };
 
 } // namespace asio

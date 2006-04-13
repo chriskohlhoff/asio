@@ -37,7 +37,7 @@ namespace ssl {
 namespace detail {
 
 class openssl_stream_service
-  : private boost::noncopyable
+  : public asio::io_service::service
 {
 private:
   //Base handler for asyncrhonous operations
@@ -156,14 +156,8 @@ public:
 
   // Construct a new stream socket service for the specified io_service.
   explicit openssl_stream_service(asio::io_service& io_service)
-    : io_service_(io_service)
+    : asio::io_service::service(io_service)
   {
-  }
-
-  // Get the io_service associated with the service.
-  asio::io_service& io_service()
-  {
-    return io_service_;
   }
 
   // Return a null stream implementation.
@@ -222,7 +216,7 @@ public:
     typedef handshake_handler<Stream, Handler> connect_handler;
 
     connect_handler* local_handler = 
-      new connect_handler(handler, io_service_);
+      new connect_handler(handler, owner());
 
     openssl_operation<Stream>* op = new openssl_operation<Stream>
     (
@@ -242,7 +236,7 @@ public:
     );
     local_handler->set_operation(op);
 
-    io_service_.post(boost::bind(&openssl_operation<Stream>::start, op));
+    owner().post(boost::bind(&openssl_operation<Stream>::start, op));
   }
 
   // Shut down SSL on the stream.
@@ -265,7 +259,7 @@ public:
     typedef shutdown_handler<Stream, Handler> disconnect_handler;
 
     disconnect_handler* local_handler = 
-      new disconnect_handler(handler, io_service_);
+      new disconnect_handler(handler, owner());
 
     openssl_operation<Stream>* op = new openssl_operation<Stream>
     (
@@ -283,7 +277,7 @@ public:
     );
     local_handler->set_operation(op);
 
-    io_service_.post(boost::bind(&openssl_operation<Stream>::start, op));        
+    owner().post(boost::bind(&openssl_operation<Stream>::start, op));        
   }
 
   // Write some data to the stream.
@@ -311,7 +305,7 @@ public:
   {
     typedef io_handler<Stream, Handler> send_handler;
 
-    send_handler* local_handler = new send_handler(handler, io_service_);
+    send_handler* local_handler = new send_handler(handler, owner());
 
     boost::function<int (SSL*)> send_func =
       boost::bind(&::SSL_write, boost::arg<1>(),
@@ -334,7 +328,7 @@ public:
     );
     local_handler->set_operation(op);
 
-    io_service_.post(boost::bind(&openssl_operation<Stream>::start, op));        
+    owner().post(boost::bind(&openssl_operation<Stream>::start, op));        
   }
 
   // Read some data from the stream.
@@ -362,7 +356,7 @@ public:
   {
     typedef io_handler<Stream, Handler> recv_handler;
 
-    recv_handler* local_handler = new recv_handler(handler, io_service_);
+    recv_handler* local_handler = new recv_handler(handler, owner());
 
     boost::function<int (SSL*)> recv_func =
       boost::bind(&::SSL_read, boost::arg<1>(),
@@ -385,7 +379,7 @@ public:
     );
     local_handler->set_operation(op);
 
-    io_service_.post(boost::bind(&openssl_operation<Stream>::start, op));        
+    owner().post(boost::bind(&openssl_operation<Stream>::start, op));        
   }
 
   // Peek at the incoming data on the stream.
@@ -403,10 +397,6 @@ public:
   {
     return 0;
   }
-
-private:
-  // The io_service used to dispatch handlers.
-  asio::io_service& io_service_;
 };
 
 } // namespace detail

@@ -36,7 +36,6 @@ noinst_PROGRAMS = \
 	tests/unit/locking_dispatcher_test \
 	tests/unit/placeholders_test \
 	tests/unit/read_test \
-	tests/unit/service_factory_test \
 	tests/unit/socket_acceptor_service_test \
 	tests/unit/socket_base_test \
 	tests/unit/stream_socket_service_test \
@@ -120,7 +119,6 @@ TESTS = \
 	tests/unit/locking_dispatcher_test \
 	tests/unit/placeholders_test \
 	tests/unit/read_test \
-	tests/unit/service_factory_test \
 	tests/unit/socket_acceptor_service_test \
 	tests/unit/socket_base_test \
 	tests/unit/stream_socket_service_test \
@@ -186,7 +184,6 @@ tests_unit_datagram_socket_service_test_SOURCES = tests/unit/datagram_socket_ser
 tests_unit_deadline_timer_service_test_SOURCES = tests/unit/deadline_timer_service_test.cpp
 tests_unit_error_test_SOURCES = tests/unit/error_test.cpp
 tests_unit_placeholders_test_SOURCES = tests/unit/placeholders_test.cpp
-tests_unit_service_factory_test_SOURCES = tests/unit/service_factory_test.cpp
 tests_unit_socket_acceptor_service_test_SOURCES = tests/unit/socket_acceptor_service_test.cpp
 tests_unit_socket_base_test_SOURCES = tests/unit/socket_base_test.cpp
 tests_unit_stream_socket_service_test_SOURCES = tests/unit/stream_socket_service_test.cpp

@@ -18,10 +18,9 @@
 
 #include "asio/detail/push_options.hpp"
 
-#if defined(__MACH__) && defined(__APPLE__)
+#include "asio/detail/kqueue_reactor_fwd.hpp"
 
-// Define this to indicate that epoll is supported on the target platform.
-#define ASIO_HAS_KQUEUE 1
+#if defined(ASIO_HAS_KQUEUE)
 
 #include "asio/detail/push_options.hpp"
 #include <cstddef>
@@ -34,10 +33,10 @@
 #include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/io_service.hpp"
 #include "asio/system_exception.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/mutex.hpp"
-#include "asio/detail/noncopyable.hpp"
 #include "asio/detail/task_io_service.hpp"
 #include "asio/detail/thread.hpp"
 #include "asio/detail/reactor_op_queue.hpp"
@@ -51,13 +50,13 @@ namespace detail {
 
 template <bool Own_Thread>
 class kqueue_reactor
-  : private noncopyable
+  : public asio::io_service::service
 {
 public:
   // Constructor.
-  template <typename IO_Service>
-  kqueue_reactor(IO_Service&)
-    : mutex_(),
+  kqueue_reactor(asio::io_service& io_service)
+    : asio::io_service::service(io_service),
+      mutex_(),
       kqueue_fd_(do_kqueue_create()),
       wait_in_progress_(false),
       interrupter_(),
@@ -528,7 +527,7 @@ private:
 } // namespace detail
 } // namespace asio
 
-#endif // defined(__MACH__) && defined(__APPLE__)
+#endif // defined(ASIO_HAS_KQUEUE)
 
 #include "asio/detail/pop_options.hpp"
 

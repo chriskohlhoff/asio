@@ -35,7 +35,6 @@
 #include "asio/error.hpp"
 #include "asio/error_handler.hpp"
 #include "asio/io_service.hpp"
-#include "asio/service_factory.hpp"
 #include "asio/socket_base.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
@@ -50,6 +49,7 @@ namespace asio {
 namespace detail {
 
 class win_iocp_socket_service
+  : public asio::io_service::service
 {
 public:
   // Base class for all operations.
@@ -89,17 +89,10 @@ public:
 
   // Constructor.
   win_iocp_socket_service(asio::io_service& io_service)
-    : io_service_(io_service),
-      iocp_service_(io_service.get_service(
-            service_factory<win_iocp_io_service>())),
+    : asio::io_service::service(io_service),
+      iocp_service_(asio::use_service<win_iocp_io_service>(io_service)),
       reactor_(0)
   {
-  }
-
-  // Get the io_service associated with the service.
-  asio::io_service& io_service()
-  {
-    return io_service_;
   }
 
   // Construct a new socket implementation.
@@ -369,7 +362,7 @@ public:
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        io_service_, impl.cancel_token_, handler);
+        owner(), impl.cancel_token_, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -486,7 +479,7 @@ public:
     typedef send_to_operation<Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr, io_service_, handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr, owner(), handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -626,7 +619,7 @@ public:
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        io_service_, impl.cancel_token_, handler);
+        owner(), impl.cancel_token_, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -770,7 +763,7 @@ public:
     typedef receive_from_operation<Endpoint, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr, io_service_, sender_endp, handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr, owner(), sender_endp, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -965,7 +958,7 @@ public:
     if (impl.socket_ == invalid_socket)
     {
       asio::error error(asio::error::bad_descriptor);
-      io_service_.post(bind_handler(handler, error));
+      owner().post(bind_handler(handler, error));
       return;
     }
 
@@ -973,7 +966,7 @@ public:
     if (peer.native() != invalid_socket)
     {
       asio::error error(asio::error::already_connected);
-      io_service_.post(bind_handler(handler, error));
+      owner().post(bind_handler(handler, error));
       return;
     }
 
@@ -984,7 +977,7 @@ public:
           &protocol_info, &protocol_info_size) != 0)
     {
       asio::error error(socket_ops::get_error());
-      io_service_.post(bind_handler(handler, error));
+      owner().post(bind_handler(handler, error));
       return;
     }
 
@@ -994,7 +987,7 @@ public:
     if (sock.get() == invalid_socket)
     {
       asio::error error(socket_ops::get_error());
-      io_service_.post(bind_handler(handler, error));
+      owner().post(bind_handler(handler, error));
       return;
     }
 
@@ -1004,7 +997,7 @@ public:
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     socket_type new_socket = sock.get();
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        io_service_, impl.socket_, new_socket, peer, handler);
+        owner(), impl.socket_, new_socket, peer, handler);
     sock.release();
 
     // Accept a connection.
@@ -1158,7 +1151,7 @@ public:
     if (impl.socket_ == invalid_socket)
     {
       asio::error error(asio::error::bad_descriptor);
-      io_service_.post(bind_handler(handler, error));
+      owner().post(bind_handler(handler, error));
       return;
     }
 
@@ -1166,7 +1159,7 @@ public:
     if (peer.native() != invalid_socket)
     {
       asio::error error(asio::error::already_connected);
-      io_service_.post(bind_handler(handler, error));
+      owner().post(bind_handler(handler, error));
       return;
     }
 
@@ -1177,7 +1170,7 @@ public:
           &protocol_info, &protocol_info_size) != 0)
     {
       asio::error error(socket_ops::get_error());
-      io_service_.post(bind_handler(handler, error));
+      owner().post(bind_handler(handler, error));
       return;
     }
 
@@ -1187,7 +1180,7 @@ public:
     if (sock.get() == invalid_socket)
     {
       asio::error error(socket_ops::get_error());
-      io_service_.post(bind_handler(handler, error));
+      owner().post(bind_handler(handler, error));
       return;
     }
 
@@ -1197,7 +1190,7 @@ public:
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     socket_type new_socket = sock.get();
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        io_service_, impl.socket_, new_socket, peer, peer_endpoint, handler);
+        owner(), impl.socket_, new_socket, peer, peer_endpoint, handler);
     sock.release();
 
     // Accept a connection.
@@ -1338,7 +1331,7 @@ public:
           reinterpret_cast<void**>(&reactor_), 0, 0));
     if (!reactor)
     {
-      reactor = &(io_service_.get_service(service_factory<reactor_type>()));
+      reactor = &(asio::use_service<reactor_type>(owner()));
       InterlockedExchangePointer(reinterpret_cast<void**>(&reactor_), reactor);
     }
 
@@ -1355,7 +1348,7 @@ public:
       if (impl.socket_ == invalid_socket)
       {
         asio::error error(socket_ops::get_error());
-        io_service_.post(bind_handler(handler, error));
+        owner().post(bind_handler(handler, error));
         return;
       }
       iocp_service_.register_socket(impl.socket_);
@@ -1367,7 +1360,7 @@ public:
     if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking))
     {
       asio::error error(socket_ops::get_error());
-      io_service_.post(bind_handler(handler, error));
+      owner().post(bind_handler(handler, error));
       return;
     }
 
@@ -1378,7 +1371,7 @@ public:
       // The connect operation has finished successfully so we need to post the
       // handler immediately.
       asio::error error(asio::error::success);
-      io_service_.post(bind_handler(handler, error));
+      owner().post(bind_handler(handler, error));
     }
     else if (socket_ops::get_error() == asio::error::in_progress
         || socket_ops::get_error() == asio::error::would_block)
@@ -1388,20 +1381,17 @@ public:
       boost::shared_ptr<bool> completed(new bool(false));
       reactor->start_write_and_except_ops(impl.socket_,
           connect_handler<Handler>(
-            impl.socket_, completed, io_service_, *reactor, handler));
+            impl.socket_, completed, owner(), *reactor, handler));
     }
     else
     {
       // The connect operation has failed, so post the handler immediately.
       asio::error error(socket_ops::get_error());
-      io_service_.post(bind_handler(handler, error));
+      owner().post(bind_handler(handler, error));
     }
   }
 
 private:
-  // The io_service associated with the service.
-  asio::io_service& io_service_;
-
   // The IOCP service used for running asynchronous operations and dispatching
   // handlers.
   win_iocp_io_service& iocp_service_;

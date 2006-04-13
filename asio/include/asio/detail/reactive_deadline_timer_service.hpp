@@ -25,7 +25,6 @@
 
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
-#include "asio/service_factory.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_ops.hpp"
@@ -36,6 +35,7 @@ namespace detail {
 
 template <typename Time_Traits, typename Reactor>
 class reactive_deadline_timer_service
+  : public asio::io_service::service
 {
 public:
   // The implementation type of the timer. This type is dependent on the
@@ -55,15 +55,9 @@ public:
 
   // Constructor.
   reactive_deadline_timer_service(asio::io_service& io_service)
-    : io_service_(io_service),
-      reactor_(io_service.get_service(service_factory<Reactor>()))
+    : asio::io_service::service(io_service),
+      reactor_(asio::use_service<Reactor>(io_service))
   {
-  }
-
-  // Get the io_service associated with the service.
-  asio::io_service& io_service()
-  {
-    return io_service_;
   }
 
   // Construct a new timer implementation.
@@ -162,13 +156,10 @@ public:
   {
     impl.might_have_pending_waits = true;
     reactor_.schedule_timer(impl.expiry,
-        wait_handler<Handler>(io_service_, handler), &impl);
+        wait_handler<Handler>(owner(), handler), &impl);
   }
 
 private:
-  // The io_service used for dispatching handlers.
-  asio::io_service& io_service_;
-
   // The selector that performs event demultiplexing for the provider.
   Reactor& reactor_;
 };

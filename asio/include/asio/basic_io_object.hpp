@@ -18,7 +18,6 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/io_service.hpp"
-#include "asio/service_factory.hpp"
 #include "asio/detail/noncopyable.hpp"
 
 namespace asio {
@@ -37,7 +36,7 @@ public:
 
   /// Construct a basic_io_object.
   explicit basic_io_object(asio::io_service& io_service)
-    : service(io_service.get_service(service_factory<Service>()))
+    : service(asio::use_service<Service>(io_service))
   {
     service.construct(implementation);
   }
@@ -52,7 +51,7 @@ public:
    */
   asio::io_service& io_service()
   {
-    return service.io_service();
+    return service.owner();
   }
 
 protected:

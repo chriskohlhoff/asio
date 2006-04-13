@@ -14,7 +14,7 @@ namespace services {
 
 /// Service implementation for the logger.
 class logger_service
-  : private boost::noncopyable
+  : public asio::io_service::service
 {
 public:
   /// The backend implementation of a logger.
@@ -29,7 +29,7 @@ public:
 
   /// Constructor creates a thread to run a private io_service.
   logger_service(asio::io_service& io_service)
-    : io_service_(io_service),
+    : asio::io_service::service(io_service),
       work_io_service_(),
       work_(new asio::io_service::work(work_io_service_)),
       work_thread_(new asio::thread(
@@ -45,12 +45,6 @@ public:
     work_.reset();
     if (work_thread_)
       work_thread_->join();
-  }
-
-  /// Get the io_service associated with the service.
-  asio::io_service& io_service()
-  {
-    return io_service_;
   }
 
   /// Return a null logger implementation.
@@ -112,9 +106,6 @@ private:
   {
     ofstream_ << text << std::endl;
   }
-
-  /// The io_service that owns this service.
-  asio::io_service& io_service_;
 
   /// Private io_service used for performing logging operations.
   asio::io_service work_io_service_;

@@ -30,7 +30,7 @@ public:
    */
   explicit basic_logger(asio::io_service& io_service,
       const std::string& identifier)
-    : service_(io_service.get_service(asio::service_factory<Service>())),
+    : service_(asio::use_service<Service>(io_service)),
       impl_(service_.null())
   {
     service_.create(impl_, identifier);

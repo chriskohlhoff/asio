@@ -27,7 +27,6 @@
 
 #include "asio/error.hpp"
 #include "asio/error_handler.hpp"
-#include "asio/service_factory.hpp"
 #include "asio/ssl/basic_context.hpp"
 #include "asio/ssl/stream_base.hpp"
 #include "asio/ssl/stream_service.hpp"
@@ -89,8 +88,7 @@ public:
   template <typename Arg, typename Context_Service>
   explicit stream(Arg& arg, basic_context<Context_Service>& context)
     : next_layer_(arg),
-      service_(next_layer_.io_service().get_service(
-            service_factory<Service>())),
+      service_(asio::use_service<Service>(next_layer_.io_service())),
       impl_(service_.null())
   {
     service_.create(impl_, next_layer_, context);

@@ -23,12 +23,14 @@ nobase_include_HEADERS = \
 	asio/detail/call_stack.hpp \
 	asio/detail/consuming_buffers.hpp \
 	asio/detail/epoll_reactor.hpp \
+	asio/detail/epoll_reactor_fwd.hpp \
 	asio/detail/event.hpp \
 	asio/detail/fd_set_adapter.hpp \
 	asio/detail/handler_alloc_helpers.hpp \
 	asio/detail/hash_map.hpp \
 	asio/detail/io_control.hpp \
 	asio/detail/kqueue_reactor.hpp \
+	asio/detail/kqueue_reactor_fwd.hpp \
 	asio/detail/locking_dispatcher.hpp \
 	asio/detail/mutex.hpp \
 	asio/detail/noncopyable.hpp \
@@ -52,6 +54,7 @@ nobase_include_HEADERS = \
 	asio/detail/scoped_lock.hpp \
 	asio/detail/select_interrupter.hpp \
 	asio/detail/select_reactor.hpp \
+	asio/detail/select_reactor_fwd.hpp \
 	asio/detail/service_registry.hpp \
 	asio/detail/signal_blocker.hpp \
 	asio/detail/signal_init.hpp \
@@ -61,10 +64,12 @@ nobase_include_HEADERS = \
 	asio/detail/socket_select_interrupter.hpp \
 	asio/detail/socket_types.hpp \
 	asio/detail/task_io_service.hpp \
+	asio/detail/task_io_service_fwd.hpp \
 	asio/detail/thread.hpp \
 	asio/detail/tss_ptr.hpp \
 	asio/detail/win_event.hpp \
 	asio/detail/win_iocp_io_service.hpp \
+	asio/detail/win_iocp_io_service_fwd.hpp \
 	asio/detail/win_iocp_operation.hpp \
 	asio/detail/win_iocp_socket_service.hpp \
 	asio/detail/win_local_free_on_block_exit.hpp \
@@ -108,7 +113,6 @@ nobase_include_HEADERS = \
 	asio/locking_dispatcher.hpp \
 	asio/placeholders.hpp \
 	asio/read.hpp \
-	asio/service_factory.hpp \
 	asio/socket_acceptor_service.hpp \
 	asio/socket_base.hpp \
 	asio/ssl/basic_context.hpp \

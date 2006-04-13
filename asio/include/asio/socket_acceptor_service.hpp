@@ -21,7 +21,6 @@
 #include "asio/io_service.hpp"
 #include "asio/detail/epoll_reactor.hpp"
 #include "asio/detail/kqueue_reactor.hpp"
-#include "asio/detail/noncopyable.hpp"
 #include "asio/detail/select_reactor.hpp"
 #include "asio/detail/reactive_socket_service.hpp"
 #include "asio/detail/win_iocp_socket_service.hpp"
@@ -31,7 +30,7 @@ namespace asio {
 /// Default service implementation for a socket acceptor.
 template <typename Protocol>
 class socket_acceptor_service
-  : private noncopyable
+  : public asio::io_service::service
 {
 public:
   /// The protocol type.
@@ -72,15 +71,9 @@ public:
 
   /// Construct a new socket acceptor service for the specified io_service.
   explicit socket_acceptor_service(asio::io_service& io_service)
-    : service_impl_(io_service.get_service(
-          service_factory<service_impl_type>()))
+    : asio::io_service::service(io_service),
+      service_impl_(asio::use_service<service_impl_type>(io_service))
   {
-  }
-
-  /// Get the io_service associated with the service.
-  asio::io_service& io_service()
-  {
-    return service_impl_.io_service();
   }
 
   /// Construct a new socket acceptor implementation.

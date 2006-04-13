@@ -17,16 +17,9 @@
 
 #include "asio/detail/push_options.hpp"
 
-#if defined(__linux__) // This service is only supported on Linux.
+#include "asio/detail/epoll_reactor_fwd.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <linux/version.h>
-#include "asio/detail/pop_options.hpp"
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION (2,5,45) // Only kernels >= 2.5.45.
-
-// Define this to indicate that epoll is supported on the target platform.
-#define ASIO_HAS_EPOLL 1
+#if defined(ASIO_HAS_EPOLL)
 
 #include "asio/detail/push_options.hpp"
 #include <cstddef>
@@ -37,11 +30,11 @@
 #include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/io_service.hpp"
 #include "asio/system_exception.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/hash_map.hpp"
 #include "asio/detail/mutex.hpp"
-#include "asio/detail/noncopyable.hpp"
 #include "asio/detail/task_io_service.hpp"
 #include "asio/detail/thread.hpp"
 #include "asio/detail/reactor_op_queue.hpp"
@@ -55,13 +48,13 @@ namespace detail {
 
 template <bool Own_Thread>
 class epoll_reactor
-  : private noncopyable
+  : public asio::io_service::service
 {
 public:
   // Constructor.
-  template <typename IO_Service>
-  epoll_reactor(IO_Service&)
-    : mutex_(),
+  epoll_reactor(asio::io_service& io_service)
+    : asio::io_service::service(io_service),
+      mutex_(),
       epoll_fd_(do_epoll_create()),
       wait_in_progress_(false),
       interrupter_(),
@@ -538,8 +531,7 @@ private:
 } // namespace detail
 } // namespace asio
 
-#endif //  LINUX_VERSION_CODE >= KERNEL_VERSION (2,5,45)
-#endif // __linux__
+#endif // defined(ASIO_HAS_EPOLL)
 
 #include "asio/detail/pop_options.hpp"
 

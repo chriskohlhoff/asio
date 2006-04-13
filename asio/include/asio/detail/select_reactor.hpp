@@ -26,6 +26,7 @@
 #include <vector>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/io_service.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/fd_set_adapter.hpp"
 #include "asio/detail/mutex.hpp"
@@ -35,6 +36,7 @@
 #include "asio/detail/reactor_op_queue.hpp"
 #include "asio/detail/reactor_timer_queue.hpp"
 #include "asio/detail/select_interrupter.hpp"
+#include "asio/detail/select_reactor_fwd.hpp"
 #include "asio/detail/signal_blocker.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -44,13 +46,13 @@ namespace detail {
 
 template <bool Own_Thread>
 class select_reactor
-  : private noncopyable
+  : public asio::io_service::service
 {
 public:
   // Constructor.
-  template <typename IO_Service>
-  select_reactor(IO_Service&)
-    : mutex_(),
+  select_reactor(asio::io_service& io_service)
+    : asio::io_service::service(io_service),
+      mutex_(),
       select_in_progress_(false),
       interrupter_(),
       read_op_queue_(),

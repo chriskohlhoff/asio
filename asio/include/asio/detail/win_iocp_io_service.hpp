@@ -17,21 +17,15 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
+#include "asio/detail/win_iocp_io_service_fwd.hpp"
 
-// This service is only supported on Win32 (NT4 and later).
-#if defined(BOOST_WINDOWS)
-#if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
-
-// Define this to indicate that IOCP is supported on the target platform.
-#define ASIO_HAS_IOCP 1
+#if defined(ASIO_HAS_IOCP)
 
 #include "asio/detail/push_options.hpp"
 #include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/io_service.hpp"
 #include "asio/system_exception.hpp"
 #include "asio/detail/call_stack.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
@@ -42,15 +36,16 @@ namespace asio {
 namespace detail {
 
 class win_iocp_io_service
+  : public asio::io_service::service
 {
 public:
   // Base class for all operations.
   typedef win_iocp_operation operation;
 
   // Constructor.
-  template <typename IO_Service>
-  win_iocp_io_service(IO_Service& io_service)
-    : iocp_(::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)),
+  win_iocp_io_service(asio::io_service& io_service)
+    : asio::io_service::service(io_service),
+      iocp_(::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)),
       outstanding_work_(0),
       interrupted_(0)
   {
@@ -268,8 +263,7 @@ private:
 } // namespace detail
 } // namespace asio
 
-#endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(ASIO_HAS_IOCP)
 
 #include "asio/detail/pop_options.hpp"
 

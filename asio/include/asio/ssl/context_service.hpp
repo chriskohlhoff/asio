@@ -32,7 +32,7 @@ namespace ssl {
 
 /// Default service implementation for a context.
 class context_service
-  : private boost::noncopyable
+  : public asio::io_service::service
 {
 private:
   // The type of the platform-specific implementation.
@@ -48,15 +48,9 @@ public:
 
   /// Constructor.
   explicit context_service(asio::io_service& io_service)
-    : service_impl_(io_service.get_service(
-          service_factory<service_impl_type>()))
+    : asio::io_service::service(io_service),
+      service_impl_(asio::use_service<service_impl_type>(io_service))
   {
-  }
-
-  /// Get the io_service associated with the service.
-  asio::io_service& io_service()
-  {
-    return service_impl_.io_service();
   }
 
   /// Return a null context implementation.

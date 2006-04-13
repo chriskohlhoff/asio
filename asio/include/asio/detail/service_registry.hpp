@@ -22,7 +22,6 @@
 #include <typeinfo>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/service_factory.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
 
@@ -46,7 +45,7 @@ public:
   {
     while (first_service_)
     {
-      service_holder_base* next_service = first_service_->next_;
+      typename Owner::service* next_service = first_service_->next_;
       delete first_service_;
       first_service_ = next_service;
     }
@@ -56,20 +55,16 @@ public:
   // create a new service object automatically if no such object already
   // exists. Ownership of the service object is not transferred to the caller.
   template <typename Service>
-  Service& get_service(service_factory<Service> factory)
+  Service& use_service()
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
     // First see if there is an existing service object for the given type.
-    service_holder_base* service = first_service_;
+    typename Owner::service* service = first_service_;
     while (service)
     {
-      if (service->is_same_type(typeid(Service)))
-      {
-        service_holder<Service>* typed_service =
-          static_cast<service_holder<Service>*>(service);
-        return typed_service->service();
-      }
+      if (*service->type_info_ == typeid(Service))
+        return *static_cast<Service*>(service);
       service = service->next_;
     }
 
@@ -77,10 +72,20 @@ public:
     // at this time to allow for nested calls into this function from the new
     // service's constructor.
     lock.unlock();
-    std::auto_ptr<service_holder<Service> > new_service(
-        new service_holder<Service>(factory, owner_));
-    Service& new_service_ref = new_service->service();
+    std::auto_ptr<Service> new_service(new Service(owner_));
+    new_service->type_info_ = &typeid(Service);
+    Service& new_service_ref = *new_service;
     lock.lock();
+
+    // Check that nobody else created another service object of the same type
+    // while the lock was released.
+    service = first_service_;
+    while (service)
+    {
+      if (*service->type_info_ == typeid(Service))
+        return *static_cast<Service*>(service);
+      service = service->next_;
+    }
 
     // Service was successfully initialised, pass ownership to registry.
     new_service->next_ = first_service_;
@@ -89,73 +94,54 @@ public:
     return new_service_ref;
   }
 
-private:
-  // The base holder for a single service.
-  class service_holder_base
-    : private noncopyable
-  {
-  public:
-    // Constructor.
-    service_holder_base()
-      : next_(0)
-    {
-    }
-
-    // Destructor.
-    virtual ~service_holder_base()
-    {
-    }
-
-    // Determine whether this service is the given type.
-    virtual bool is_same_type(const std::type_info&) = 0;
-
-    // A pointer to the next service holder in the list.
-    service_holder_base* next_;
-  };
-
-  // Template used as the concrete holder for the service types.
+  // Add a service object. Returns false on error, in which case ownership of
+  // the object is retained by the caller.
   template <typename Service>
-  class service_holder
-    : public service_holder_base
+  bool add_service(Service* new_service)
   {
-  public:
-    // Constructor.
-    service_holder(service_factory<Service>& factory, Owner& owner)
-      : service_(factory.create(owner))
+    asio::detail::mutex::scoped_lock lock(mutex_);
+
+    // Check if there is an existing service object for the given type.
+    typename Owner::service* service = first_service_;
+    while (service)
     {
+      if (*service->type_info_ == typeid(Service))
+        return false;
+      service = service->next_;
     }
 
-    // Destructor.
-    virtual ~service_holder()
+    // Take ownership of the service object.
+    new_service->type_info_ = &typeid(Service);
+    new_service->next_ = first_service_;
+    first_service_ = new_service;
+  }
+
+  // Check whether a service object of the specified type already exists.
+  template <typename Service>
+  bool has_service() const
+  {
+    asio::detail::mutex::scoped_lock lock(mutex_);
+
+    typename Owner::service* service = first_service_;
+    while (service)
     {
-      delete service_;
+      if (*service->type_info_ == typeid(Service))
+        return true;
+      service = service->next_;
     }
 
-    // Determine whether this service is the given type.
-    virtual bool is_same_type(const std::type_info& other_info)
-    {
-      return other_info == typeid(Service) ? true : false;
-    }
+    return false;
+  }
 
-    // Get a pointer to the contained service.
-    Service& service()
-    {
-      return *service_;
-    }
-
-  private:
-    // The contained service object.
-    Service* service_;
-  };
-
+private:
   // Mutex to protect access to internal data.
-  asio::detail::mutex mutex_;
+  mutable asio::detail::mutex mutex_;
 
   // The owner of this service registry and the services it contains.
   Owner& owner_;
 
   // The first service in the list of contained services.
-  service_holder_base* first_service_;
+  typename Owner::service* first_service_;
 };
 
 } // namespace detail

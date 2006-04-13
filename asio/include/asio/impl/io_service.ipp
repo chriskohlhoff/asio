@@ -17,13 +17,17 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/service_factory.hpp"
+#include "asio/detail/epoll_reactor.hpp"
+#include "asio/detail/kqueue_reactor.hpp"
+#include "asio/detail/select_reactor.hpp"
+#include "asio/detail/task_io_service.hpp"
+#include "asio/detail/win_iocp_io_service.hpp"
 
 namespace asio {
 
 inline io_service::io_service()
   : service_registry_(*this),
-    impl_(get_service(service_factory<impl_type>()))
+    impl_(service_registry_.use_service<impl_type>())
 {
 }
 
@@ -139,23 +143,6 @@ io_service::wrap(Handler handler)
 }
 
 /**
- * This function is used to locate a service interface that corresponds to
- * the given service type. If there is no existing implementation of the
- * service, then the io_service will use the supplied factory to create a new
- * instance.
- *
- * @param factory The factory to use to create the service.
- *
- * @return The service interface implementing the specified service type.
- * Ownership of the service interface is not transferred to the caller.
- */
-template <typename Service>
-inline Service& io_service::get_service(service_factory<Service> factory)
-{
-  return service_registry_.get_service(factory);
-}
-
-/**
  * The constructor is used to inform the io_service that some work has begun.
  * This ensures that the io_service's run() function will not exit while the
  * work is underway.
@@ -185,6 +172,80 @@ inline io_service::work::work(const work& other)
 inline io_service::work::~work()
 {
   impl_.work_finished();
+}
+
+/**
+ * @param owner The io_service object that owns the service.
+ */
+inline io_service::service::service(io_service& owner)
+  : owner_(owner),
+    type_info_(0),
+    next_(0)
+{
+}
+
+inline io_service::service::~service()
+{
+}
+
+inline io_service& io_service::service::owner()
+{
+  return owner_;
+}
+
+/**
+ * This function is used to locate a service object that corresponds to
+ * the given service type. If there is no existing implementation of the
+ * service, then the io_service will create a new instance of the service.
+ *
+ * @param ios The io_service object that owns the service.
+ *
+ * @return The service interface implementing the specified service type.
+ * Ownership of the service interface is not transferred to the caller.
+ */
+template <typename Service>
+Service& use_service(io_service& ios)
+{
+  return ios.service_registry_.use_service<Service>();
+}
+
+/**
+ * This function is used to add a service to the io_service.
+ *
+ * @param ios The io_service object that owns the service.
+ *
+ * @param svc The service object. On success, ownership of the service object is
+ * transferred to the io_service. When the io_service object is destroyed, it
+ * will destroy the service object by performing:
+ * @code delete static_cast<io_service::service*>(svc) @endcode
+ *
+ * @throws asio::service_already_exists Thrown if a service of the given type
+ * is already present in the io_service.
+ *
+ * @throws asio::invalid_service_owner Thrown if the service's owning io_service
+ * is not the io_service object specified by the ios parameter.
+ */
+template <typename Service>
+void add_service(io_service& ios, Service* svc)
+{
+  if (&ios != &svc->owner())
+    boost::throw_exception(invalid_service_owner());
+  if (!ios.service_registry_.add_service<Service>(svc))
+    boost::throw_exception(service_already_exists());
+}
+
+/**
+ * This function is used to determine whether the io_service contains a service
+ * object corresponding to the given service type.
+ *
+ * @param ios The io_service object that owns the service.
+ *
+ * @return A boolean indicating whether the io_service contains the service.
+ */
+template <typename Service>
+bool has_service(io_service& ios)
+{
+  return ios.service_registry_.has_service<Service>();
 }
 
 /**

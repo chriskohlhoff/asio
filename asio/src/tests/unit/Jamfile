@@ -370,17 +370,6 @@ run read_test.cpp
     $(SOCKET_LIBS)
   ;
 
-run service_factory_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
 run socket_acceptor_service_test.cpp
     <lib>@boost/libs/date_time/build/boost_date_time
   :

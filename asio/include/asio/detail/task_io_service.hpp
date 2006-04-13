@@ -17,25 +17,26 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/service_factory.hpp"
-#include "asio/detail/bind_handler.hpp"
+#include "asio/io_service.hpp"
 #include "asio/detail/call_stack.hpp"
 #include "asio/detail/event.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/mutex.hpp"
+#include "asio/detail/task_io_service_fwd.hpp"
 
 namespace asio {
 namespace detail {
 
 template <typename Task>
 class task_io_service
+  : public asio::io_service::service
 {
 public:
   // Constructor.
-  template <typename IO_Service>
-  task_io_service(IO_Service& io_service)
-    : mutex_(),
-      task_(io_service.get_service(service_factory<Task>())),
+  task_io_service(asio::io_service& io_service)
+    : asio::io_service::service(io_service),
+      mutex_(),
+      task_(use_service<Task>(io_service)),
       outstanding_work_(0),
       handler_queue_(&task_handler_),
       handler_queue_end_(&task_handler_),

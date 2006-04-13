@@ -43,7 +43,6 @@ UNIT_TEST_EXES = \
 	tests/unit/locking_dispatcher_test.exe \
 	tests/unit/placeholders_test.exe \
 	tests/unit/read_test.exe \
-	tests/unit/service_factory_test.exe \
 	tests/unit/socket_acceptor_service_test.exe \
 	tests/unit/socket_base_test.exe \
 	tests/unit/stream_socket_service_test.exe \

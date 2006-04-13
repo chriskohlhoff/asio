@@ -24,6 +24,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
+#include "asio/io_service.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
@@ -36,9 +37,8 @@ namespace asio {
 namespace ipv4 {
 namespace detail {
 
-template <typename IO_Service>
 class host_resolver_service
-  : private boost::noncopyable
+  : public asio::io_service::service
 {
 private:
   // Helper class to perform exception-safe cleanup of hostent objects.
@@ -74,11 +74,11 @@ public:
   struct noop_deleter { void operator()(void*) {} };
 
   // Constructor.
-  host_resolver_service(IO_Service& d)
-    : mutex_(),
-      io_service_(d),
+  host_resolver_service(asio::io_service& io_service)
+    : asio::io_service::service(io_service),
+      mutex_(),
       work_io_service_(),
-      work_(new typename IO_Service::work(work_io_service_)),
+      work_(new asio::io_service::work(work_io_service_)),
       work_thread_(0)
   {
   }
@@ -92,15 +92,6 @@ public:
       work_thread_->join();
       delete work_thread_;
     }
-  }
-
-  // The io_service type for this service.
-  typedef IO_Service io_service_type;
-
-  // Get the io_service associated with the service.
-  io_service_type& io_service()
-  {
-    return io_service_;
   }
 
   // Construct a new host resolver implementation.
@@ -163,7 +154,7 @@ public:
   {
   public:
     by_address_handler(implementation_type impl, host& h, const address& addr,
-        IO_Service& io_service, Handler handler)
+        asio::io_service& io_service, Handler handler)
       : impl_(impl),
         host_(h),
         address_(addr),
@@ -207,8 +198,8 @@ public:
     boost::weak_ptr<void> impl_;
     host& host_;
     address address_;
-    IO_Service& io_service_;
-    typename IO_Service::work work_;
+    asio::io_service& io_service_;
+    asio::io_service::work work_;
     Handler handler_;
   };
 
@@ -220,7 +211,7 @@ public:
     start_work_thread();
     work_io_service_.post(
         by_address_handler<Handler>(
-          impl, h, addr, io_service_, handler));
+          impl, h, addr, owner(), handler));
   }
 
   // Get host information for a named host.
@@ -246,7 +237,7 @@ public:
   {
   public:
     by_name_handler(implementation_type impl, host& h, const std::string& name,
-        IO_Service& io_service, Handler handler)
+        asio::io_service& io_service, Handler handler)
       : impl_(impl),
         host_(h),
         name_(name),
@@ -286,8 +277,8 @@ public:
     boost::weak_ptr<void> impl_;
     host& host_;
     std::string name_;
-    IO_Service& io_service_;
-    typename IO_Service::work work_;
+    asio::io_service& io_service_;
+    asio::io_service::work work_;
     Handler handler_;
   };
 
@@ -299,7 +290,7 @@ public:
     start_work_thread();
     work_io_service_.post(
         by_name_handler<Handler>(
-          impl, h, name, io_service_, handler));
+          impl, h, name, owner(), handler));
   }
 
   // Populate a host object from a hostent structure.
@@ -329,10 +320,11 @@ private:
   class work_io_service_runner
   {
   public:
-    work_io_service_runner(IO_Service& io_service) : io_service_(io_service) {}
+    work_io_service_runner(asio::io_service& io_service)
+      : io_service_(io_service) {}
     void operator()() { io_service_.run(); }
   private:
-    IO_Service& io_service_;
+    asio::io_service& io_service_;
   };
 
   // Start the work thread if it's not already running.
@@ -349,14 +341,11 @@ private:
   // Mutex to protect access to internal data.
   asio::detail::mutex mutex_;
 
-  // The io_service used for dispatching handlers.
-  IO_Service& io_service_;
-
   // Private io_service used for performing asynchronous host resolution.
-  IO_Service work_io_service_;
+  asio::io_service work_io_service_;
 
   // Work for the private io_service to perform.
-  typename IO_Service::work* work_;
+  asio::io_service::work* work_;
 
   // Thread used for running the work io_service's run loop.
   asio::detail::thread* work_thread_;
