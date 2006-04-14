@@ -41,7 +41,7 @@ public:
   // The implementation type of the timer. This type is dependent on the
   // underlying implementation of the timer service.
   struct implementation_type
-    : private noncopyable
+    : private asio::detail::noncopyable
   {
     boost::posix_time::ptime expiry;
     bool might_have_pending_waits;

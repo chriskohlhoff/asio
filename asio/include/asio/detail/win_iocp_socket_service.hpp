@@ -38,7 +38,6 @@
 #include "asio/socket_base.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
-#include "asio/detail/noncopyable.hpp"
 #include "asio/detail/select_reactor.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"

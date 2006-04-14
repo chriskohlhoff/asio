@@ -45,7 +45,7 @@ public:
 
   // The implementation type of the socket.
   class implementation_type
-    : private noncopyable
+    : private asio::detail::noncopyable
   {
   private:
     // Only this service will have access to the internal values.
