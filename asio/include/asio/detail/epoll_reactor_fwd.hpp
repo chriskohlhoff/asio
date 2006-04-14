@@ -17,6 +17,7 @@
 
 #include "asio/detail/push_options.hpp"
 
+#if !defined(ASIO_DISABLE_EPOLL)
 #if defined(__linux__) // This service is only supported on Linux.
 
 #include "asio/detail/push_options.hpp"
@@ -37,8 +38,9 @@ class epoll_reactor;
 } // namespace detail
 } // namespace asio
 
-#endif //  LINUX_VERSION_CODE >= KERNEL_VERSION (2,5,45)
-#endif // __linux__
+#endif // LINUX_VERSION_CODE >= KERNEL_VERSION (2,5,45)
+#endif // defined(__linux__)
+#endif // !defined(ASIO_DISABLE_EPOLL)
 
 #include "asio/detail/pop_options.hpp"
 

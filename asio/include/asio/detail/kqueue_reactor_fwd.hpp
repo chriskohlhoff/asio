@@ -18,6 +18,7 @@
 
 #include "asio/detail/push_options.hpp"
 
+#if !defined(ASIO_DISABLE_KQUEUE)
 #if defined(__MACH__) && defined(__APPLE__)
 
 // Define this to indicate that epoll is supported on the target platform.
@@ -33,6 +34,7 @@ class kqueue_reactor;
 } // namespace asio
 
 #endif // defined(__MACH__) && defined(__APPLE__)
+#endif // !defined(ASIO_DISABLE_KQUEUE)
 
 #include "asio/detail/pop_options.hpp"
 

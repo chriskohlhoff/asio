@@ -22,6 +22,7 @@
 #include "asio/detail/pop_options.hpp"
 
 // This service is only supported on Win32 (NT4 and later).
+#if !defined(ASIO_DISABLE_IOCP)
 #if defined(BOOST_WINDOWS)
 #if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
 
@@ -38,6 +39,7 @@ class win_iocp_io_service;
 
 #endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
 #endif // defined(BOOST_WINDOWS)
+#endif // !defined(ASIO_DISABLE_IOCP)
 
 #include "asio/detail/pop_options.hpp"
 
