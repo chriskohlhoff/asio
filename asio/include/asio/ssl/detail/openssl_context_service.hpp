@@ -45,6 +45,11 @@ public:
   {
   }
 
+  // Destroy all user-defined handler objects owned by the service.
+  void shutdown_service()
+  {
+  }
+
   // Return a null context implementation.
   static impl_type null()
   {

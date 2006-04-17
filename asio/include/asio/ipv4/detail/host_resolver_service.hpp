@@ -19,6 +19,7 @@
 
 #include "asio/detail/push_options.hpp"
 #include <cstring>
+#include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 #include "asio/detail/pop_options.hpp"
@@ -77,8 +78,8 @@ public:
   host_resolver_service(asio::io_service& io_service)
     : asio::io_service::service(io_service),
       mutex_(),
-      work_io_service_(),
-      work_(new asio::io_service::work(work_io_service_)),
+      work_io_service_(new asio::io_service),
+      work_(new asio::io_service::work(*work_io_service_)),
       work_thread_(0)
   {
   }
@@ -86,11 +87,22 @@ public:
   // Destructor.
   ~host_resolver_service()
   {
-    delete work_;
-    if (work_thread_)
+    shutdown_service();
+  }
+
+  // Destroy all user-defined handler objects owned by the service.
+  void shutdown_service()
+  {
+    work_.reset();
+    if (work_io_service_)
     {
-      work_thread_->join();
-      delete work_thread_;
+      work_io_service_->interrupt();
+      if (work_thread_)
+      {
+        work_thread_->join();
+        work_thread_.reset();
+      }
+      work_io_service_.reset();
     }
   }
 
@@ -208,10 +220,13 @@ public:
   void async_by_address(implementation_type& impl, host& h, const address& addr,
       Handler handler)
   {
-    start_work_thread();
-    work_io_service_.post(
-        by_address_handler<Handler>(
-          impl, h, addr, owner(), handler));
+    if (work_io_service_)
+    {
+      start_work_thread();
+      work_io_service_->post(
+          by_address_handler<Handler>(
+            impl, h, addr, owner(), handler));
+    }
   }
 
   // Get host information for a named host.
@@ -287,10 +302,13 @@ public:
   void async_by_name(implementation_type& impl, host& h,
       const std::string& name, Handler handler)
   {
-    start_work_thread();
-    work_io_service_.post(
-        by_name_handler<Handler>(
-          impl, h, name, owner(), handler));
+    if (work_io_service_)
+    {
+      start_work_thread();
+      work_io_service_->post(
+          by_name_handler<Handler>(
+            impl, h, name, owner(), handler));
+    }
   }
 
   // Populate a host object from a hostent structure.
@@ -333,8 +351,8 @@ private:
     asio::detail::mutex::scoped_lock lock(mutex_);
     if (work_thread_ == 0)
     {
-      work_thread_ = new asio::detail::thread(
-          work_io_service_runner(work_io_service_));
+      work_thread_.reset(new asio::detail::thread(
+            work_io_service_runner(*work_io_service_)));
     }
   }
 
@@ -342,13 +360,13 @@ private:
   asio::detail::mutex mutex_;
 
   // Private io_service used for performing asynchronous host resolution.
-  asio::io_service work_io_service_;
+  boost::scoped_ptr<asio::io_service> work_io_service_;
 
   // Work for the private io_service to perform.
-  asio::io_service::work* work_;
+  boost::scoped_ptr<asio::io_service::work> work_;
 
   // Thread used for running the work io_service's run loop.
-  asio::detail::thread* work_thread_;
+  boost::scoped_ptr<asio::detail::thread> work_thread_;
 };
 
 } // namespace detail

@@ -129,24 +129,49 @@ public:
     return num_cancelled;
   }
 
+  // Destroy all timers.
+  void destroy_timers()
+  {
+    typename hash_map<void*, timer_base*>::iterator i = timers_.begin();
+    typename hash_map<void*, timer_base*>::iterator end = timers_.end();
+    while (i != end)
+    {
+      timer_base* timer = i->second;
+      typename hash_map<void*, timer_base*>::iterator old_i = i++;
+      timers_.erase(old_i);
+      timer->destroy();
+    }
+    heap_.clear();
+    timers_.clear();
+  }
+
 private:
-  // Base class for timer operations. A function pointer is used instead of
+  // Base class for timer operations. Function pointers are used instead of
   // virtual functions to avoid the associated overhead.
   class timer_base
   {
   public:
-    // Perform the timer operation.
+    // Perform the timer operation and then destroy.
     void invoke(int result)
     {
-      func_(this, result);
+      invoke_func_(this, result);
+    }
+
+    // Destroy the timer operation.
+    void destroy()
+    {
+      destroy_func_(this);
     }
 
   protected:
-    typedef void (*func_type)(timer_base*, int);
+    typedef void (*invoke_func_type)(timer_base*, int);
+    typedef void (*destroy_func_type)(timer_base*);
 
     // Constructor.
-    timer_base(func_type func, const Time& time, void* token)
-      : func_(func),
+    timer_base(invoke_func_type invoke_func, destroy_func_type destroy_func,
+        const Time& time, void* token)
+      : invoke_func_(invoke_func),
+        destroy_func_(destroy_func),
         time_(time),
         token_(token),
         next_(0),
@@ -165,7 +190,10 @@ private:
     friend class reactor_timer_queue<Time, Comparator>;
 
     // The function to be called to dispatch the handler.
-    func_type func_;
+    invoke_func_type invoke_func_;
+
+    // The function to be called to destroy the handler.
+    destroy_func_type destroy_func_;
 
     // The time when the operation should fire.
     Time time_;
@@ -191,16 +219,23 @@ private:
   public:
     // Constructor.
     timer(const Time& time, Handler handler, void* token)
-      : timer_base(&timer<Handler>::invoke_handler, time, token),
+      : timer_base(&timer<Handler>::invoke_handler,
+          &timer<Handler>::destroy_handler, time, token),
         handler_(handler)
     {
     }
 
-    // Invoke the handler.
+    // Invoke the handler and then destroy it.
     static void invoke_handler(timer_base* base, int result)
     {
       std::auto_ptr<timer<Handler> > t(static_cast<timer<Handler>*>(base));
       t->handler_(result);
+    }
+
+    // Destroy the handler.
+    static void destroy_handler(timer_base* base)
+    {
+      delete static_cast<timer<Handler>*>(base);
     }
 
   private:

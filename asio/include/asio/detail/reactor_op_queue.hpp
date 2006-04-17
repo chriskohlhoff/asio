@@ -234,6 +234,41 @@ public:
     }
   }
 
+  // Destroy all operations owned by the queue.
+  void destroy_operations()
+  {
+    while (cancelled_operations_)
+    {
+      op_base* next_op = cancelled_operations_->next_;
+      cancelled_operations_->next_ = 0;
+      cancelled_operations_->destroy();
+      cancelled_operations_ = next_op;
+    }
+
+    while (cleanup_operations_)
+    {
+      op_base* next_op = cleanup_operations_->next_;
+      cleanup_operations_->next_ = 0;
+      cleanup_operations_->destroy();
+      cleanup_operations_ = next_op;
+    }
+
+    typename operation_map::iterator i = operations_.begin();
+    while (i != operations_.end())
+    {
+      typename operation_map::iterator op_iter = i++;
+      op_base* op = op_iter->second;
+      operations_.erase(op_iter);
+      while (op)
+      {
+        op_base* next_op = op->next_;
+        op->next_ = 0;
+        op->destroy();
+        op = next_op;
+      }
+    }
+  }
+
 private:
   // Base class for reactor operations. A function pointer is used instead of
   // virtual functions to avoid the associated overhead.

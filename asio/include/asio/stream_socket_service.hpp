@@ -80,6 +80,11 @@ public:
   {
   }
 
+  /// Destroy all user-defined handler objects owned by the service.
+  void shutdown_service()
+  {
+  }
+
   /// Construct a new stream socket implementation.
   void construct(implementation_type& impl)
   {

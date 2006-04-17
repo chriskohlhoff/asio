@@ -41,8 +41,30 @@ public:
       handler_queue_(&task_handler_),
       handler_queue_end_(&task_handler_),
       interrupted_(false),
+      shutdown_(false),
       first_idle_thread_(0)
   {
+  }
+
+  // Destroy all user-defined handler objects owned by the service.
+  void shutdown_service()
+  {
+    asio::detail::mutex::scoped_lock lock(mutex_);
+    shutdown_ = true;
+    lock.unlock();
+
+    // Destroy handler objects.
+    while (handler_queue_)
+    {
+      handler_base* h = handler_queue_;
+      handler_queue_ = h->next_;
+      if (h != &task_handler_)
+        h->destroy();
+    }
+
+    // Reset handler queue to initial state.
+    handler_queue_ = &task_handler_;
+    handler_queue_end_ = &task_handler_;
   }
 
   // Run the event processing loop.
@@ -175,6 +197,10 @@ public:
 
     asio::detail::mutex::scoped_lock lock(mutex_);
 
+    // If the service has been shut down we silently discard the handler.
+    if (shutdown_)
+      return;
+
     // Add the handler to the end of the queue.
     if (handler_queue_end_)
     {
@@ -241,17 +267,24 @@ private:
   class handler_base
   {
   public:
-    typedef void (*func_type)(handler_base*);
+    typedef void (*call_func_type)(handler_base*);
+    typedef void (*destroy_func_type)(handler_base*);
 
-    handler_base(func_type func)
+    handler_base(call_func_type call_func, destroy_func_type destroy_func)
       : next_(0),
-        func_(func)
+        call_func_(call_func),
+        destroy_func_(destroy_func)
     {
     }
 
     void call()
     {
-      func_(this);
+      call_func_(this);
+    }
+
+    void destroy()
+    {
+      destroy_func_(this);
     }
 
   protected:
@@ -264,7 +297,8 @@ private:
     friend class task_io_service<Task>;
     friend class task_cleanup;
     handler_base* next_;
-    func_type func_;
+    call_func_type call_func_;
+    destroy_func_type destroy_func_;
   };
 
   // Template wrapper for handlers.
@@ -274,7 +308,8 @@ private:
   {
   public:
     handler_wrapper(Handler handler)
-      : handler_base(&handler_wrapper<Handler>::do_call),
+      : handler_base(&handler_wrapper<Handler>::do_call,
+          &handler_wrapper<Handler>::do_destroy),
         handler_(handler)
     {
     }
@@ -296,6 +331,15 @@ private:
 
       // Make the upcall.
       handler();
+    }
+
+    static void do_destroy(handler_base* base)
+    {
+      // Take ownership of the handler object.
+      typedef handler_wrapper<Handler> this_type;
+      this_type* h(static_cast<this_type*>(base));
+      typedef handler_alloc_traits<Handler, this_type> alloc_traits;
+      handler_ptr<alloc_traits> ptr(h->handler_, h);
     }
 
   private:
@@ -373,7 +417,7 @@ private:
   {
   public:
     task_handler()
-      : handler_base(0)
+      : handler_base(0, 0)
     {
     }
   } task_handler_;
@@ -389,6 +433,9 @@ private:
 
   // Flag to indicate that the dispatcher has been interrupted.
   bool interrupted_;
+
+  // Flag to indicate that the dispatcher has been shut down.
+  bool shutdown_;
 
   // Structure containing information about an idle thread.
   struct idle_thread_info

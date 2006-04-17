@@ -55,6 +55,11 @@ public:
   {
   }
 
+  /// Destroy all user-defined handler objects owned by the service.
+  void shutdown_service()
+  {
+  }
+
   /// Return a null stream implementation.
   impl_type null() const
   {

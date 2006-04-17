@@ -63,7 +63,8 @@ public:
       except_op_queue_(),
       pending_cancellations_(),
       stop_thread_(false),
-      thread_(0)
+      thread_(0),
+      shutdown_(false)
   {
     // Start the reactor's internal thread only if needed.
     if (Own_Thread)
@@ -96,6 +97,19 @@ public:
     close(epoll_fd_);
   }
 
+  // Destroy all user-defined handler objects owned by the service.
+  void shutdown_service()
+  {
+    asio::detail::mutex::scoped_lock lock(mutex_);
+    shutdown_ = true;
+    lock.unlock();
+
+    read_op_queue_.destroy_operations();
+    write_op_queue_.destroy_operations();
+    except_op_queue_.destroy_operations();
+    timer_queue_.destroy_timers();
+  }
+
   // Register a socket with the reactor. Returns 0 on success, system error
   // code on failure.
   int register_descriptor(socket_type descriptor)
@@ -117,6 +131,9 @@ public:
   void start_read_op(socket_type descriptor, Handler handler)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
+
+    if (shutdown_)
+      return;
 
     if (!read_op_queue_.has_operation(descriptor))
       if (handler(0))
@@ -148,6 +165,9 @@ public:
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
+    if (shutdown_)
+      return;
+
     if (!write_op_queue_.has_operation(descriptor))
       if (handler(0))
         return;
@@ -178,6 +198,9 @@ public:
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
+    if (shutdown_)
+      return;
+
     if (except_op_queue_.enqueue_operation(descriptor, handler))
     {
       epoll_event ev = { 0 };
@@ -204,6 +227,9 @@ public:
   void start_write_and_except_ops(socket_type descriptor, Handler handler)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
+
+    if (shutdown_)
+      return;
 
     bool need_mod = write_op_queue_.enqueue_operation(descriptor, handler);
     need_mod = except_op_queue_.enqueue_operation(descriptor, handler)
@@ -266,8 +292,9 @@ public:
       Handler handler, void* token)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
-    if (timer_queue_.enqueue_timer(time, handler, token))
-      interrupter_.interrupt();
+    if (!shutdown_)
+      if (timer_queue_.enqueue_timer(time, handler, token))
+        interrupter_.interrupt();
   }
 
   // Cancel the timer associated with the given token. Returns the number of
@@ -526,6 +553,9 @@ private:
 
   // The thread that is running the reactor loop.
   asio::detail::thread* thread_;
+
+  // Whether the service has been shut down.
+  bool shutdown_;
 };
 
 } // namespace detail

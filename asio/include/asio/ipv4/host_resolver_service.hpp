@@ -47,6 +47,11 @@ public:
   {
   }
 
+  /// Destroy all user-defined handler objects owned by the service.
+  void shutdown_service()
+  {
+  }
+
   /// Construct a new host resolver implementation.
   void construct(implementation_type& impl)
   {

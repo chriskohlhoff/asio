@@ -184,6 +184,9 @@ protected:
   virtual ~service();
 
 private:
+  /// Destroy all user-defined handler objects owned by the service.
+  virtual void shutdown_service() = 0;
+
   friend class detail::service_registry<io_service>;
   io_service& owner_;
   const std::type_info* type_info_;

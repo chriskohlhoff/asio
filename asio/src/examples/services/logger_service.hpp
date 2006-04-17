@@ -47,6 +47,11 @@ public:
       work_thread_->join();
   }
 
+  /// Destroy all user-defined handler objects owned by the service.
+  void shutdown_service()
+  {
+  }
+
   /// Return a null logger implementation.
   impl_type null() const
   {

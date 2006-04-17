@@ -43,6 +43,17 @@ public:
   // Destructor.
   ~service_registry()
   {
+    // Shutdown all services. This must be done in a separate loop before the
+    // services are destroyed since the destructors of user-defined handler
+    // objects may try to access other service objects.
+    typename Owner::service* service = first_service_;
+    while (service)
+    {
+      service->shutdown_service();
+      service = service->next_;
+    }
+
+    // Destroy all services.
     while (first_service_)
     {
       typename Owner::service* next_service = first_service_->next_;
