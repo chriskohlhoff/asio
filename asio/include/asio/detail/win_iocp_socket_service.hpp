@@ -94,6 +94,11 @@ public:
   {
   }
 
+  // Destroy all user-defined handler objects owned by the service.
+  void shutdown_service()
+  {
+  }
+
   // Construct a new socket implementation.
   void construct(implementation_type& impl)
   {
@@ -307,7 +312,8 @@ public:
   public:
     send_operation(asio::io_service& io_service,
         weak_cancel_token_type cancel_token, Handler handler)
-      : operation(&send_operation<Handler>::do_completion_impl),
+      : operation(&send_operation<Handler>::do_completion_impl,
+          &send_operation<Handler>::destroy_impl),
         work_(io_service),
         cancel_token_(cancel_token),
         handler_(handler)
@@ -343,6 +349,15 @@ public:
       // Call the handler.
       asio::error error(last_error);
       handler(error, bytes_transferred);
+    }
+
+    static void destroy_impl(operation* op)
+    {
+      // Take ownership of the operation object.
+      typedef send_operation<Handler> op_type;
+      op_type* handler_op(static_cast<op_type*>(op));
+      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
+      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
     }
 
     asio::io_service::work work_;
@@ -435,7 +450,8 @@ public:
   {
   public:
     send_to_operation(asio::io_service& io_service, Handler handler)
-      : operation(&send_to_operation<Handler>::do_completion_impl),
+      : operation(&send_to_operation<Handler>::do_completion_impl,
+          &send_to_operation<Handler>::destroy_impl),
         work_(io_service),
         handler_(handler)
     {
@@ -461,6 +477,15 @@ public:
       // Call the handler.
       asio::error error(last_error);
       handler(error, bytes_transferred);
+    }
+
+    static void destroy_impl(operation* op)
+    {
+      // Take ownership of the operation object.
+      typedef send_to_operation<Handler> op_type;
+      op_type* handler_op(static_cast<op_type*>(op));
+      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
+      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
     }
 
     asio::io_service::work work_;
@@ -558,7 +583,8 @@ public:
   public:
     receive_operation(asio::io_service& io_service,
         weak_cancel_token_type cancel_token, Handler handler)
-      : operation(&receive_operation<Handler>::do_completion_impl),
+      : operation(&receive_operation<Handler>::do_completion_impl,
+          &receive_operation<Handler>::destroy_impl),
         work_(io_service),
         cancel_token_(cancel_token),
         handler_(handler)
@@ -600,6 +626,15 @@ public:
       // Call the handler.
       asio::error error(last_error);
       handler(error, bytes_transferred);
+    }
+
+    static void destroy_impl(operation* op)
+    {
+      // Take ownership of the operation object.
+      typedef receive_operation<Handler> op_type;
+      op_type* handler_op(static_cast<op_type*>(op));
+      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
+      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
     }
 
     asio::io_service::work work_;
@@ -700,7 +735,8 @@ public:
     receive_from_operation(asio::io_service& io_service,
         Endpoint& endpoint, Handler handler)
       : operation(
-          &receive_from_operation<Endpoint, Handler>::do_completion_impl),
+          &receive_from_operation<Endpoint, Handler>::do_completion_impl,
+          &receive_from_operation<Endpoint, Handler>::destroy_impl),
         endpoint_(endpoint),
         endpoint_size_(endpoint.capacity()),
         work_(io_service),
@@ -742,6 +778,15 @@ public:
       // Call the handler.
       asio::error error(last_error);
       handler(error, bytes_transferred);
+    }
+
+    static void destroy_impl(operation* op)
+    {
+      // Take ownership of the operation object.
+      typedef receive_from_operation<Endpoint, Handler> op_type;
+      op_type* handler_op(static_cast<op_type*>(op));
+      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
+      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
     }
 
     Endpoint& endpoint_;
@@ -861,7 +906,8 @@ public:
     accept_operation(asio::io_service& io_service, socket_type socket,
         socket_type new_socket, Socket& peer, Handler handler)
       : operation(
-          &accept_operation<Socket, Handler>::do_completion_impl),
+          &accept_operation<Socket, Handler>::do_completion_impl,
+          &accept_operation<Socket, Handler>::destroy_impl),
         io_service_(io_service),
         socket_(socket),
         new_socket_(new_socket),
@@ -937,6 +983,15 @@ public:
       // Call the handler.
       asio::error error(last_error);
       handler(error);
+    }
+
+    static void destroy_impl(operation* op)
+    {
+      // Take ownership of the operation object.
+      typedef accept_operation<Socket, Handler> op_type;
+      op_type* handler_op(static_cast<op_type*>(op));
+      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
+      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
     }
 
     asio::io_service& io_service_;
@@ -1027,8 +1082,11 @@ public:
     accept_endp_operation(asio::io_service& io_service, socket_type socket,
         socket_type new_socket, Socket& peer, Endpoint& peer_endpoint,
         Handler handler)
-      : operation(&accept_endp_operation<
-            Socket, Endpoint, Handler>::do_completion_impl),
+      : operation(
+          &accept_endp_operation<
+            Socket, Endpoint, Handler>::do_completion_impl,
+          &accept_endp_operation<
+            Socket, Endpoint, Handler>::destroy_impl),
         io_service_(io_service),
         socket_(socket),
         new_socket_(new_socket),
@@ -1128,6 +1186,15 @@ public:
       // Call the handler.
       asio::error error(last_error);
       handler(error);
+    }
+
+    static void destroy_impl(operation* op)
+    {
+      // Take ownership of the operation object.
+      typedef accept_endp_operation<Socket, Endpoint, Handler> op_type;
+      op_type* handler_op(static_cast<op_type*>(op));
+      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
+      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
     }
 
     asio::io_service& io_service_;

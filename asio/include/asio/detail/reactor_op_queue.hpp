@@ -257,14 +257,14 @@ public:
     while (i != operations_.end())
     {
       typename operation_map::iterator op_iter = i++;
-      op_base* op = op_iter->second;
+      op_base* curr_op = op_iter->second;
       operations_.erase(op_iter);
-      while (op)
+      while (curr_op)
       {
-        op_base* next_op = op->next_;
-        op->next_ = 0;
-        op->destroy();
-        op = next_op;
+        op_base* next_op = curr_op->next_;
+        curr_op->next_ = 0;
+        curr_op->destroy();
+        curr_op = next_op;
       }
     }
   }

@@ -39,10 +39,13 @@ namespace detail {
 struct win_iocp_operation
   : public OVERLAPPED
 {
-  typedef void (*func_type)(win_iocp_operation*, DWORD, size_t);
+  typedef void (*invoke_func_type)(win_iocp_operation*, DWORD, size_t);
+  typedef void (*destroy_func_type)(win_iocp_operation*);
 
-  win_iocp_operation(func_type func)
-    : func_(func)
+  win_iocp_operation(invoke_func_type invoke_func,
+      destroy_func_type destroy_func)
+    : invoke_func_(invoke_func),
+      destroy_func_(destroy_func)
   {
     Internal = 0;
     InternalHigh = 0;
@@ -53,7 +56,12 @@ struct win_iocp_operation
 
   void do_completion(DWORD last_error, size_t bytes_transferred)
   {
-    func_(this, last_error, bytes_transferred);
+    invoke_func_(this, last_error, bytes_transferred);
+  }
+
+  void destroy()
+  {
+    destroy_func_(this);
   }
 
 protected:
@@ -63,7 +71,8 @@ protected:
   }
 
 private:
-  func_type func_;
+  invoke_func_type invoke_func_;
+  destroy_func_type destroy_func_;
 };
 
 } // namespace detail

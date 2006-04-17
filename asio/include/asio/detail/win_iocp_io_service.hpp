@@ -47,13 +47,38 @@ public:
     : asio::io_service::service(io_service),
       iocp_(::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)),
       outstanding_work_(0),
-      interrupted_(0)
+      interrupted_(0),
+      shutdown_(0)
   {
     if (!iocp_.handle)
     {
       DWORD last_error = ::GetLastError();
       system_exception e("iocp", last_error);
       boost::throw_exception(e);
+    }
+  }
+
+  // Destroy all user-defined handler objects owned by the service.
+  void shutdown_service()
+  {
+    ::InterlockedExchange(&shutdown_, 1);
+
+    for (;;)
+    {
+      DWORD bytes_transferred = 0;
+#if (WINVER < 0x0500)
+      DWORD completion_key = 0;
+#else
+      DWORD_PTR completion_key = 0;
+#endif
+      LPOVERLAPPED overlapped = 0;
+      BOOL result = ::GetQueuedCompletionStatus(iocp_.handle,
+          &bytes_transferred, &completion_key, &overlapped, 0);
+      if (!result)
+        break;
+      DWORD last_error = ::GetLastError();
+      if (overlapped)
+        static_cast<operation*>(overlapped)->destroy();
     }
   }
 
@@ -172,7 +197,8 @@ public:
   {
     handler_operation(win_iocp_io_service& io_service,
         Handler handler)
-      : operation(&handler_operation<Handler>::do_completion_impl),
+      : operation(&handler_operation<Handler>::do_completion_impl,
+          &handler_operation<Handler>::destroy_impl),
         io_service_(io_service),
         handler_(handler)
     {
@@ -208,6 +234,15 @@ public:
       handler();
     }
 
+    static void destroy_impl(operation* op)
+    {
+      // Take ownership of the operation object.
+      typedef handler_operation<Handler> op_type;
+      op_type* handler_op(static_cast<op_type*>(op));
+      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
+      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
+    }
+
     win_iocp_io_service& io_service_;
     Handler handler_;
   };
@@ -226,6 +261,10 @@ public:
   template <typename Handler>
   void post(Handler handler)
   {
+    // If the service has been shut down we silently discard the handler.
+    if (::InterlockedExchangeAdd(&shutdown_, 0) != 0)
+      return;
+
     // Allocate and construct an operation to wrap the handler.
     typedef handler_operation<Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
@@ -258,6 +297,9 @@ private:
 
   // Flag to indicate whether the event loop has been interrupted.
   long interrupted_;
+
+  // Flag to indicate whether the service has been shut down.
+  long shutdown_;
 };
 
 } // namespace detail

@@ -136,10 +136,10 @@ public:
     typename hash_map<void*, timer_base*>::iterator end = timers_.end();
     while (i != end)
     {
-      timer_base* timer = i->second;
+      timer_base* t = i->second;
       typename hash_map<void*, timer_base*>::iterator old_i = i++;
       timers_.erase(old_i);
-      timer->destroy();
+      t->destroy();
     }
     heap_.clear();
     timers_.clear();
