@@ -1,6 +1,6 @@
 //
-// locking_dispatcher.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~
+// strand.hpp
+// ~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_LOCKING_DISPATCHER_HPP
-#define ASIO_LOCKING_DISPATCHER_HPP
+#ifndef ASIO_STRAND_HPP
+#define ASIO_STRAND_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -17,16 +17,16 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/basic_locking_dispatcher.hpp"
-#include "asio/io_service.hpp"
+#include "asio/basic_strand.hpp"
+#include "asio/strand_service.hpp"
 
 namespace asio {
 
-/// Typedef for the typical usage of locking_dispatcher.
-typedef basic_locking_dispatcher<io_service> locking_dispatcher;
+/// Typedef for the typical usage of strand.
+typedef basic_strand<strand_service> strand;
 
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_LOCKING_DISPATCHER_HPP
+#endif // ASIO_STRAND_HPP

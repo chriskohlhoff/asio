@@ -52,7 +52,7 @@ class session
 {
 public:
   session(io_service& ios, size_t block_size, stats& s)
-    : dispatcher_(ios),
+    : strand_(ios),
       socket_(ios),
       block_size_(block_size),
       read_data_(new char[block_size]),
@@ -78,13 +78,13 @@ public:
   void start(const ip::tcp::endpoint& server_endpoint)
   {
     socket_.async_connect(server_endpoint,
-        dispatcher_.wrap(boost::bind(&session::handle_connect, this,
+        strand_.wrap(boost::bind(&session::handle_connect, this,
             placeholders::error)));
   }
 
   void stop()
   {
-    dispatcher_.post(boost::bind(&session::close_socket, this));
+    strand_.post(boost::bind(&session::close_socket, this));
   }
 
 private:
@@ -92,11 +92,11 @@ private:
   {
     ++unwritten_count_;
     async_write(socket_, buffer(write_data_, block_size_),
-        dispatcher_.wrap(
+        strand_.wrap(
           boost::bind(&session::handle_write, this, placeholders::error,
             placeholders::bytes_transferred)));
     socket_.async_read_some(buffer(read_data_, block_size_),
-        dispatcher_.wrap(
+        strand_.wrap(
           boost::bind(&session::handle_read, this, placeholders::error,
             placeholders::bytes_transferred)));
   }
@@ -113,11 +113,11 @@ private:
       {
         std::swap(read_data_, write_data_);
         async_write(socket_, buffer(write_data_, read_data_length_),
-            dispatcher_.wrap(
+            strand_.wrap(
               boost::bind(&session::handle_write, this, placeholders::error,
                 placeholders::bytes_transferred)));
         socket_.async_read_some(buffer(read_data_, block_size_),
-            dispatcher_.wrap(
+            strand_.wrap(
               boost::bind(&session::handle_read, this, placeholders::error,
                 placeholders::bytes_transferred)));
       }
@@ -135,11 +135,11 @@ private:
       {
         std::swap(read_data_, write_data_);
         async_write(socket_, buffer(write_data_, read_data_length_),
-            dispatcher_.wrap(
+            strand_.wrap(
               boost::bind(&session::handle_write, this, placeholders::error,
                 placeholders::bytes_transferred)));
         socket_.async_read_some(buffer(read_data_, block_size_),
-            dispatcher_.wrap(
+            strand_.wrap(
               boost::bind(&session::handle_read, this, placeholders::error,
                 placeholders::bytes_transferred)));
       }
@@ -152,7 +152,7 @@ private:
   }
 
 private:
-  locking_dispatcher dispatcher_;
+  strand strand_;
   ip::tcp::socket socket_;
   size_t block_size_;
   char* read_data_;

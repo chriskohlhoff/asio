@@ -1,6 +1,6 @@
 //
-// locking_dispatcher_test.cpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// strand_test.cpp
+// ~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -9,7 +9,7 @@
 //
 
 // Test that header file is self-contained.
-#include "asio/locking_dispatcher.hpp"
+#include "asio/strand.hpp"
 
 #include <sstream>
 #include <boost/bind.hpp>
@@ -23,24 +23,24 @@ void increment(int* count)
   ++(*count);
 }
 
-void increment_without_lock(locking_dispatcher* l, int* count)
+void increment_without_lock(strand* s, int* count)
 {
   int original_count = *count;
 
-  l->dispatch(boost::bind(increment, count));
+  s->dispatch(boost::bind(increment, count));
 
   // No other functions are currently executing through the locking dispatcher,
   // so the previous call to dispatch should have successfully nested.
   BOOST_CHECK(*count == original_count + 1);
 }
 
-void increment_with_lock(locking_dispatcher* l, int* count)
+void increment_with_lock(strand* s, int* count)
 {
   int original_count = *count;
 
-  l->dispatch(boost::bind(increment, count));
+  s->dispatch(boost::bind(increment, count));
 
-  // The current function already holds the locking_dispatcher's lock, so the
+  // The current function already holds the strand's lock, so the
   // previous call to dispatch should not have nested.
   BOOST_CHECK(*count == original_count);
 }
@@ -53,16 +53,16 @@ void sleep_increment(io_service* ios, int* count)
   ++(*count);
 }
 
-void start_sleep_increments(io_service* ios, locking_dispatcher* l, int* count)
+void start_sleep_increments(io_service* ios, strand* s, int* count)
 {
   // Give all threads a chance to start.
   deadline_timer t(*ios, boost::posix_time::seconds(2));
   t.wait();
 
   // Start three increments.
-  l->post(boost::bind(sleep_increment, ios, count));
-  l->post(boost::bind(sleep_increment, ios, count));
-  l->post(boost::bind(sleep_increment, ios, count));
+  s->post(boost::bind(sleep_increment, ios, count));
+  s->post(boost::bind(sleep_increment, ios, count));
+  s->post(boost::bind(sleep_increment, ios, count));
 }
 
 void throw_exception()
@@ -70,13 +70,13 @@ void throw_exception()
   throw 1;
 }
 
-void locking_dispatcher_test()
+void strand_test()
 {
   io_service ios;
-  locking_dispatcher l(ios);
+  strand s(ios);
   int count = 0;
 
-  ios.post(boost::bind(increment_without_lock, &l, &count));
+  ios.post(boost::bind(increment_without_lock, &s, &count));
 
   // No handlers can be called until run() is called.
   BOOST_CHECK(count == 0);
@@ -88,7 +88,7 @@ void locking_dispatcher_test()
 
   count = 0;
   ios.reset();
-  l.post(boost::bind(increment_with_lock, &l, &count));
+  s.post(boost::bind(increment_with_lock, &s, &count));
 
   // No handlers can be called until run() is called.
   BOOST_CHECK(count == 0);
@@ -100,7 +100,7 @@ void locking_dispatcher_test()
 
   count = 0;
   ios.reset();
-  ios.post(boost::bind(start_sleep_increments, &ios, &l, &count));
+  ios.post(boost::bind(start_sleep_increments, &ios, &s, &count));
   thread thread1(boost::bind(&io_service::run, &ios));
   thread thread2(boost::bind(&io_service::run, &ios));
 
@@ -124,11 +124,11 @@ void locking_dispatcher_test()
   count = 0;
   int exception_count = 0;
   ios.reset();
-  l.post(throw_exception);
-  l.post(boost::bind(increment, &count));
-  l.post(boost::bind(increment, &count));
-  l.post(throw_exception);
-  l.post(boost::bind(increment, &count));
+  s.post(throw_exception);
+  s.post(boost::bind(increment, &count));
+  s.post(boost::bind(increment, &count));
+  s.post(throw_exception);
+  s.post(boost::bind(increment, &count));
 
   // No handlers can be called until run() is called.
   BOOST_CHECK(count == 0);
@@ -154,7 +154,7 @@ void locking_dispatcher_test()
 
 test_suite* init_unit_test_suite(int argc, char* argv[])
 {
-  test_suite* test = BOOST_TEST_SUITE("locking_dispatcher");
-  test->add(BOOST_TEST_CASE(&locking_dispatcher_test));
+  test_suite* test = BOOST_TEST_SUITE("strand");
+  test->add(BOOST_TEST_CASE(&strand_test));
   return test;
 }

@@ -2,9 +2,9 @@ nobase_include_HEADERS = \
 	asio/basic_datagram_socket.hpp \
 	asio/basic_deadline_timer.hpp \
 	asio/basic_io_object.hpp \
-	asio/basic_locking_dispatcher.hpp \
 	asio/basic_socket.hpp \
 	asio/basic_socket_acceptor.hpp \
+	asio/basic_strand.hpp \
 	asio/basic_stream_socket.hpp \
 	asio/buffer.hpp \
 	asio/buffered_read_stream.hpp \
@@ -31,7 +31,6 @@ nobase_include_HEADERS = \
 	asio/detail/io_control.hpp \
 	asio/detail/kqueue_reactor.hpp \
 	asio/detail/kqueue_reactor_fwd.hpp \
-	asio/detail/locking_dispatcher.hpp \
 	asio/detail/mutex.hpp \
 	asio/detail/noncopyable.hpp \
 	asio/detail/null_event.hpp \
@@ -63,6 +62,7 @@ nobase_include_HEADERS = \
 	asio/detail/socket_option.hpp \
 	asio/detail/socket_select_interrupter.hpp \
 	asio/detail/socket_types.hpp \
+	asio/detail/strand_service.hpp \
 	asio/detail/task_io_service.hpp \
 	asio/detail/task_io_service_fwd.hpp \
 	asio/detail/thread.hpp \
@@ -110,7 +110,6 @@ nobase_include_HEADERS = \
 	asio/ipv6/udp.hpp \
 	asio/is_read_buffered.hpp \
 	asio/is_write_buffered.hpp \
-	asio/locking_dispatcher.hpp \
 	asio/placeholders.hpp \
 	asio/read.hpp \
 	asio/socket_acceptor_service.hpp \
@@ -128,6 +127,8 @@ nobase_include_HEADERS = \
 	asio/ssl/stream_base.hpp \
 	asio/ssl/stream_service.hpp \
 	asio/ssl.hpp \
+	asio/strand.hpp \
+	asio/strand_service.hpp \
 	asio/stream_socket_service.hpp \
 	asio/system_exception.hpp \
 	asio/thread.hpp \

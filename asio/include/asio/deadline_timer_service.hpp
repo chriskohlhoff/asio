@@ -67,7 +67,7 @@ private:
 #endif
 
 public:
-  /// The native type of the deadline timer.
+  /// The implementation type of the deadline timer.
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined implementation_type;
 #else

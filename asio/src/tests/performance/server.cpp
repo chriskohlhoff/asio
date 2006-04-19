@@ -21,7 +21,7 @@ class session
 public:
   session(io_service& ios, size_t block_size)
     : io_service_(ios),
-      dispatcher_(ios),
+      strand_(ios),
       socket_(ios),
       block_size_(block_size),
       read_data_(new char[block_size]),
@@ -47,7 +47,7 @@ public:
   {
     ++op_count_;
     socket_.async_read_some(buffer(read_data_, block_size_),
-        dispatcher_.wrap(
+        strand_.wrap(
           boost::bind(&session::handle_read, this, placeholders::error,
             placeholders::bytes_transferred)));
   }
@@ -65,11 +65,11 @@ public:
         op_count_ += 2;
         std::swap(read_data_, write_data_);
         async_write(socket_, buffer(write_data_, read_data_length_),
-            dispatcher_.wrap(
+            strand_.wrap(
               boost::bind(&session::handle_write, this, placeholders::error,
                 placeholders::bytes_transferred)));
         socket_.async_read_some(buffer(read_data_, block_size_),
-            dispatcher_.wrap(
+            strand_.wrap(
               boost::bind(&session::handle_read, this, placeholders::error,
                 placeholders::bytes_transferred)));
       }
@@ -91,11 +91,11 @@ public:
         op_count_ += 2;
         std::swap(read_data_, write_data_);
         async_write(socket_, buffer(write_data_, read_data_length_),
-            dispatcher_.wrap(
+            strand_.wrap(
               boost::bind(&session::handle_write, this, placeholders::error,
                 placeholders::bytes_transferred)));
         socket_.async_read_some(buffer(read_data_, block_size_),
-            dispatcher_.wrap(
+            strand_.wrap(
               boost::bind(&session::handle_read, this, placeholders::error,
                 placeholders::bytes_transferred)));
       }
@@ -112,7 +112,7 @@ public:
 
 private:
   io_service& io_service_;
-  locking_dispatcher dispatcher_;
+  strand strand_;
   ip::tcp::socket socket_;
   size_t block_size_;
   char* read_data_;

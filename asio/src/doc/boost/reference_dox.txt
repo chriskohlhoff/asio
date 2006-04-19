@@ -72,20 +72,20 @@ Standard exception class.
 \li boost::asio::ipv4::udp
 \li boost::asio::ipv4::udp::endpoint
 \li boost::asio::ipv4::udp::socket
-\li boost::asio::locking_dispatcher
 \li boost::asio::mutable_buffer
 \li boost::asio::socket_base
 \li boost::asio::ssl::context
 \li boost::asio::ssl::context_base
 \li boost::asio::ssl::stream_base
+\li boost::asio::strand
 \li boost::asio::system_exception
 
 <H2>Class Templates</H2>
 
 \li boost::asio::basic_datagram_socket
 \li boost::asio::basic_deadline_timer
-\li boost::asio::basic_locking_dispatcher
 \li boost::asio::basic_socket_acceptor
+\li boost::asio::basic_strand
 \li boost::asio::basic_stream_socket
 \li boost::asio::buffered_read_stream
 \li boost::asio::buffered_write_stream
@@ -115,6 +115,7 @@ Standard exception class.
 \li boost::asio::datagram_socket_service
 \li boost::asio::deadline_timer_service
 \li boost::asio::socket_acceptor_service
+\li boost::asio::strand_service
 \li boost::asio::stream_socket_service
 \li boost::asio::ipv4::host_resolver_service
 \li boost::asio::ssl::context_service

@@ -13,8 +13,8 @@ PERFORMANCE_TEST_EXES = \
 UNIT_TEST_EXES = \
 	tests\unit\basic_datagram_socket_test.exe \
 	tests\unit\basic_deadline_timer_test.exe \
-	tests\unit\basic_locking_dispatcher_test.exe \
 	tests\unit\basic_socket_acceptor_test.exe \
+	tests\unit\basic_strand_test.exe \
 	tests\unit\basic_stream_socket_test.exe \
 	tests\unit\buffered_read_stream_test.exe \
 	tests\unit\buffered_stream_test.exe \
@@ -39,11 +39,12 @@ UNIT_TEST_EXES = \
 	tests\unit\ipv4\udp_test.exe \
 	tests\unit\is_read_buffered_test.exe \
 	tests\unit\is_write_buffered_test.exe \
-	tests\unit\locking_dispatcher_test.exe \
 	tests\unit\placeholders_test.exe \
 	tests\unit\read_test.exe \
 	tests\unit\socket_acceptor_service_test.exe \
 	tests\unit\socket_base_test.exe \
+	tests\unit\strand_service_test.exe \
+	tests\unit\strand_test.exe \
 	tests\unit\stream_socket_service_test.exe \
 	tests\unit\thread_test.exe \
 	tests\unit\time_traits_test.exe \

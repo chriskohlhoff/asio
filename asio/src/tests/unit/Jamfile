@@ -38,7 +38,7 @@ run basic_deadline_timer_test.cpp
     $(SOCKET_LIBS)
   ;
 
-run basic_locking_dispatcher_test.cpp
+run basic_socket_acceptor_test.cpp
     <lib>@boost/libs/date_time/build/boost_date_time
   :
   :
@@ -49,7 +49,7 @@ run basic_locking_dispatcher_test.cpp
     $(SOCKET_LIBS)
   ;
 
-run basic_socket_acceptor_test.cpp
+run basic_strand_test.cpp
     <lib>@boost/libs/date_time/build/boost_date_time
   :
   :
@@ -325,29 +325,6 @@ run is_write_buffered_test.cpp
     $(SOCKET_LIBS)
   ;
 
-run locking_dispatcher_service_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run locking_dispatcher_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-    <lib>@boost/libs/thread/build/boost_thread
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
 run placeholders_test.cpp
     <lib>@boost/libs/date_time/build/boost_date_time
   :
@@ -383,6 +360,29 @@ run socket_acceptor_service_test.cpp
 
 run socket_base_test.cpp
     <lib>@boost/libs/date_time/build/boost_date_time
+  :
+  :
+  : <include>../../..
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
+  ;
+
+run strand_service_test.cpp
+    <lib>@boost/libs/date_time/build/boost_date_time
+  :
+  :
+  : <include>../../..
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
+  ;
+
+run strand_test.cpp
+    <lib>@boost/libs/date_time/build/boost_date_time
+    <lib>@boost/libs/thread/build/boost_thread
   :
   :
   : <include>../../..

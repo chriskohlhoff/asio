@@ -281,8 +281,8 @@ Return to \ref tuttimer4
 /**
 \page tuttimer5 Timer.5 - Synchronising handlers in multithreaded programs
 
-This tutorial demonstrates the use of the asio::locking_dispatcher class to
-synchronise callback handlers in a multithreaded program.
+This tutorial demonstrates the use of the asio::strand class to synchronise
+callback handlers in a multithreaded program.
 
 The previous four tutorials avoided the issue of handler synchronisation by
 calling the asio::io_service::run() function from one thread only. As you
@@ -315,27 +315,24 @@ tutorial by running two timers in parallel.
 
 \until public
 
-In addition to initialising a pair of asio::deadline_timer
-members, the constructor initialises the <tt>dispatcher_</tt> member, an object
-of type asio::locking_dispatcher.
+In addition to initialising a pair of asio::deadline_timer members, the
+constructor initialises the <tt>strand_</tt> member, an object of type
+asio::strand.
 
-An asio::locking_dispatcher guarantees that, for those handlers that are
-dispatched through it, an executing handler will be allowed to complete before
-the next one is started. This is guaranteed irrespective of the number of
-threads that are calling asio::io_service::run(). Of course, the handlers may
-still execute concurrently with other handlers that were <b>not</b> dispatched
-through an asio::locking_dispatcher, or were dispatched through a different
-asio::locking_dispatcher object.
+An asio::strand guarantees that, for those handlers that are dispatched through
+it, an executing handler will be allowed to complete before the next one is
+started. This is guaranteed irrespective of the number of threads that are
+calling asio::io_service::run(). Of course, the handlers may still execute
+concurrently with other handlers that were <b>not</b> dispatched through an
+asio::strand, or were dispatched through a different asio::strand object.
 
 \until {
 
-When initiating the asynchronous operations, each callback
-handler is "wrapped" using the asio::locking_dispatcher object. The
-asio::locking_dispatcher::wrap() function returns a new handler that
-automatically dispatches its contained handler through the
-asio::locking_dispatcher object. By wrapping the handlers using the same
-asio::locking_dispatcher, we are ensuring that they cannot execute
-concurrently.
+When initiating the asynchronous operations, each callback handler is "wrapped"
+using the asio::strand object. The asio::strand::wrap() function returns a new
+handler that automatically dispatches its contained handler through the
+asio::strand object. By wrapping the handlers using the same asio::strand, we
+are ensuring that they cannot execute concurrently.
 
 \until }
 \until }

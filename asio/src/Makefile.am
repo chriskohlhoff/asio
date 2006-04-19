@@ -7,8 +7,8 @@ noinst_PROGRAMS = \
 	tests/performance/server \
 	tests/unit/basic_datagram_socket_test \
 	tests/unit/basic_deadline_timer_test \
-	tests/unit/basic_locking_dispatcher_test \
 	tests/unit/basic_socket_acceptor_test \
+	tests/unit/basic_strand_test \
 	tests/unit/basic_stream_socket_test \
 	tests/unit/buffered_read_stream_test \
 	tests/unit/buffered_stream_test \
@@ -33,11 +33,12 @@ noinst_PROGRAMS = \
 	tests/unit/ipv4/udp_test \
 	tests/unit/is_read_buffered_test \
 	tests/unit/is_write_buffered_test \
-	tests/unit/locking_dispatcher_test \
 	tests/unit/placeholders_test \
 	tests/unit/read_test \
 	tests/unit/socket_acceptor_service_test \
 	tests/unit/socket_base_test \
+	tests/unit/strand_service_test \
+	tests/unit/strand_test \
 	tests/unit/stream_socket_service_test \
 	tests/unit/thread_test \
 	tests/unit/time_traits_test \
@@ -90,8 +91,8 @@ endif
 TESTS = \
 	tests/unit/basic_datagram_socket_test \
 	tests/unit/basic_deadline_timer_test \
-	tests/unit/basic_locking_dispatcher_test \
 	tests/unit/basic_socket_acceptor_test \
+	tests/unit/basic_strand_test \
 	tests/unit/basic_stream_socket_test \
 	tests/unit/buffered_read_stream_test \
 	tests/unit/buffered_stream_test \
@@ -116,11 +117,12 @@ TESTS = \
 	tests/unit/ipv4/udp_test \
 	tests/unit/is_read_buffered_test \
 	tests/unit/is_write_buffered_test \
-	tests/unit/locking_dispatcher_test \
 	tests/unit/placeholders_test \
 	tests/unit/read_test \
 	tests/unit/socket_acceptor_service_test \
 	tests/unit/socket_base_test \
+	tests/unit/strand_service_test \
+	tests/unit/strand_test \
 	tests/unit/stream_socket_service_test \
 	tests/unit/thread_test \
 	tests/unit/time_traits_test \
@@ -163,7 +165,6 @@ tests_unit_ipv4_host_test_SOURCES = tests/unit/ipv4/host_test.cpp
 tests_unit_ipv4_multicast_test_SOURCES = tests/unit/ipv4/multicast_test.cpp
 tests_unit_ipv4_tcp_test_SOURCES = tests/unit/ipv4/tcp_test.cpp
 tests_unit_ipv4_udp_test_SOURCES = tests/unit/ipv4/udp_test.cpp
-tests_unit_locking_dispatcher_test_SOURCES = tests/unit/locking_dispatcher_test.cpp
 tests_unit_is_read_buffered_test_SOURCES = tests/unit/is_read_buffered_test.cpp
 tests_unit_read_test_SOURCES = tests/unit/read_test.cpp
 tests_unit_write_test_SOURCES = tests/unit/write_test.cpp
@@ -174,8 +175,8 @@ tests_unit_buffer_test_SOURCES = tests/unit/buffer_test.cpp
 tests_unit_completion_condition_test_SOURCES = tests/unit/completion_condition_test.cpp
 tests_unit_error_handler_test_SOURCES = tests/unit/error_handler_test.cpp
 tests_unit_basic_deadline_timer_test_SOURCES = tests/unit/basic_deadline_timer_test.cpp
-tests_unit_basic_locking_dispatcher_test_SOURCES = tests/unit/basic_locking_dispatcher_test.cpp
 tests_unit_basic_socket_acceptor_test_SOURCES = tests/unit/basic_socket_acceptor_test.cpp
+tests_unit_basic_strand_test_SOURCES = tests/unit/basic_strand_test.cpp
 tests_unit_basic_stream_socket_test_SOURCES = tests/unit/basic_stream_socket_test.cpp
 tests_unit_buffered_read_stream_test_SOURCES = tests/unit/buffered_read_stream_test.cpp
 tests_unit_buffered_stream_test_SOURCES = tests/unit/buffered_stream_test.cpp
@@ -186,6 +187,8 @@ tests_unit_error_test_SOURCES = tests/unit/error_test.cpp
 tests_unit_placeholders_test_SOURCES = tests/unit/placeholders_test.cpp
 tests_unit_socket_acceptor_service_test_SOURCES = tests/unit/socket_acceptor_service_test.cpp
 tests_unit_socket_base_test_SOURCES = tests/unit/socket_base_test.cpp
+tests_unit_strand_service_test_SOURCES = tests/unit/strand_service_test.cpp
+tests_unit_strand_test_SOURCES = tests/unit/strand_test.cpp
 tests_unit_stream_socket_service_test_SOURCES = tests/unit/stream_socket_service_test.cpp
 tests_unit_thread_test_SOURCES = tests/unit/thread_test.cpp
 tests_unit_time_traits_test_SOURCES = tests/unit/time_traits_test.cpp

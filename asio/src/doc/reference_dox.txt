@@ -72,12 +72,12 @@ Standard exception class.
 \li asio::ipv4::udp
 \li asio::ipv4::udp::endpoint
 \li asio::ipv4::udp::socket
-\li asio::locking_dispatcher
 \li asio::mutable_buffer
 \li asio::socket_base
 \li asio::ssl::context
 \li asio::ssl::context_base
 \li asio::ssl::stream_base
+\li asio::strand
 \li asio::system_exception
 \li asio::thread
 
@@ -85,8 +85,8 @@ Standard exception class.
 
 \li asio::basic_datagram_socket
 \li asio::basic_deadline_timer
-\li asio::basic_locking_dispatcher
 \li asio::basic_socket_acceptor
+\li asio::basic_strand
 \li asio::basic_stream_socket
 \li asio::buffered_read_stream
 \li asio::buffered_write_stream
@@ -116,6 +116,7 @@ Standard exception class.
 \li asio::datagram_socket_service
 \li asio::deadline_timer_service
 \li asio::socket_acceptor_service
+\li asio::strand_service
 \li asio::stream_socket_service
 \li asio::ipv4::host_resolver_service
 \li asio::ssl::context_service
