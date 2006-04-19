@@ -38,6 +38,7 @@
 #include "asio/socket_base.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
+#include "asio/detail/mutex.hpp"
 #include "asio/detail/select_reactor.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
@@ -78,6 +79,10 @@ public:
     // ERROR_NETNAME_DELETED, which means you can't tell the difference between
     // a local cancellation and the socket being hard-closed by the peer.
     shared_cancel_token_type cancel_token_;
+
+    // Pointers to adjacent socket implementations in linked list.
+    implementation_type* next_;
+    implementation_type* prev_;
   };
 
   // The type of the reactor used for connect operations.
@@ -90,13 +95,23 @@ public:
   win_iocp_socket_service(asio::io_service& io_service)
     : asio::io_service::service(io_service),
       iocp_service_(asio::use_service<win_iocp_io_service>(io_service)),
-      reactor_(0)
+      reactor_(0),
+      mutex_(),
+      impl_list_(0)
   {
   }
 
   // Destroy all user-defined handler objects owned by the service.
   void shutdown_service()
   {
+    // Close all implementations, causing all operations to complete.
+    asio::detail::mutex::scoped_lock lock(mutex_);
+    implementation_type* impl = impl_list_;
+    while (impl)
+    {
+      close(*impl, asio::ignore_error());
+      impl = impl->next_;
+    }
   }
 
   // Construct a new socket implementation.
@@ -104,12 +119,31 @@ public:
   {
     impl.socket_ = invalid_socket;
     impl.cancel_token_.reset();
+
+    // Insert implementation into linked list of all implementations.
+    asio::detail::mutex::scoped_lock lock(mutex_);
+    impl.next_ = impl_list_;
+    impl.prev_ = 0;
+    if (impl_list_)
+      impl_list_->prev_ = &impl;
+    impl_list_ = &impl;
   }
 
   // Destroy a socket implementation.
   void destroy(implementation_type& impl)
   {
     close(impl, asio::ignore_error());
+
+    // Remove implementation from linked list of all implementations.
+    asio::detail::mutex::scoped_lock lock(mutex_);
+    if (impl_list_ == &impl)
+      impl_list_ = impl.next_;
+    if (impl.prev_)
+      impl.prev_->next_ = impl.next_;
+    if (impl.next_)
+      impl.next_->prev_= impl.prev_;
+    impl.next_ = 0;
+    impl.prev_ = 0;
   }
 
   // Open a new socket implementation.
@@ -1465,6 +1499,12 @@ private:
   // The reactor used for performing connect operations. This object is created
   // only if needed.
   reactor_type* reactor_;
+
+  // Mutex to protect access to the linked list of implementations. 
+  asio::detail::mutex mutex_;
+
+  // The head of a linked list of all implementations.
+  implementation_type* impl_list_;
 };
 
 } // namespace detail
