@@ -261,6 +261,19 @@ public:
   // Destroy a timer implementation.
   void destroy(implementation_type& impl)
   {
+    if (impl.current_handler_)
+    {
+      impl.current_handler_->destroy();
+      impl.current_handler_ = 0;
+    }
+
+    while (impl.first_waiter_)
+    {
+      handler_base* next = impl.first_waiter_->next_;
+      impl.first_waiter_->destroy();
+      impl.first_waiter_ = next;
+    }
+    impl.last_waiter_ = 0;
   }
 
   // Request the io_service to invoke the given handler.
