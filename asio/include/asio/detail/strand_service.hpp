@@ -65,6 +65,10 @@ public:
 
     // Storage for posted handlers.
     boost::aligned_storage<64> handler_storage_;
+
+    // Pointers to adjacent socket implementations in linked list.
+    implementation_type* next_;
+    implementation_type* prev_;
   };
 
   // Base class for all handler types.
@@ -241,13 +245,45 @@ public:
 
   // Construct a new timer service for the specified io_service.
   explicit strand_service(asio::io_service& io_service)
-    : asio::io_service::service(io_service)
+    : asio::io_service::service(io_service),
+      mutex_(),
+      impl_list_(0)
   {
   }
 
   // Destroy all user-defined handler objects owned by the service.
   void shutdown_service()
   {
+    // Construct a list of all handlers to be destroyed.
+    asio::detail::mutex::scoped_lock lock(mutex_);
+    implementation_type* impl = impl_list_;
+    handler_base* first_handler = 0;
+    while (impl)
+    {
+      if (impl->current_handler_)
+      {
+        impl->current_handler_->next_ = first_handler;
+        first_handler = impl->current_handler_;
+        impl->current_handler_ = 0;
+      }
+      if (impl->first_waiter_)
+      {
+        impl->last_waiter_->next_ = first_handler;
+        first_handler = impl->first_waiter_;
+        impl->first_waiter_ = 0;
+        impl->last_waiter_ = 0;
+      }
+      impl = impl->next_;
+    }
+
+    // Destroy all handlers without holding the lock.
+    lock.unlock();
+    while (first_handler)
+    {
+      handler_base* next = first_handler->next_;
+      first_handler->destroy();
+      first_handler = next;
+    }
   }
 
   // Construct a new timer implementation.
@@ -256,6 +292,14 @@ public:
     impl.current_handler_ = 0;
     impl.first_waiter_ = 0;
     impl.last_waiter_ = 0;
+
+    // Insert implementation into linked list of all implementations.
+    asio::detail::mutex::scoped_lock lock(mutex_);
+    impl.next_ = impl_list_;
+    impl.prev_ = 0;
+    if (impl_list_)
+      impl_list_->prev_ = &impl;
+    impl_list_ = &impl;
   }
 
   // Destroy a timer implementation.
@@ -274,6 +318,17 @@ public:
       impl.first_waiter_ = next;
     }
     impl.last_waiter_ = 0;
+
+    // Remove implementation from linked list of all implementations.
+    asio::detail::mutex::scoped_lock lock(mutex_);
+    if (impl_list_ == &impl)
+      impl_list_ = impl.next_;
+    if (impl.prev_)
+      impl.prev_->next_ = impl.next_;
+    if (impl.next_)
+      impl.next_->prev_= impl.prev_;
+    impl.next_ = 0;
+    impl.prev_ = 0;
   }
 
   // Request the io_service to invoke the given handler.
@@ -353,6 +408,13 @@ public:
       ptr.release();
     }
   }
+
+private:
+  // Mutex to protect access to the linked list of implementations. 
+  asio::detail::mutex mutex_;
+
+  // The head of a linked list of all implementations.
+  implementation_type* impl_list_;
 };
 
 } // namespace detail
