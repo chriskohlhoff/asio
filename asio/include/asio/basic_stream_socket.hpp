@@ -115,13 +115,15 @@ public:
    * @param io_service The io_service object that the stream socket will use to
    * dispatch handlers for any asynchronous operations performed on the socket.
    *
+   * @param protocol An object specifying protocol parameters to be used.
+   *
    * @param native_socket The new underlying socket implementation.
    *
    * @throws asio::error Thrown on failure.
    */
   basic_stream_socket(asio::io_service& io_service,
-      const native_type& native_socket)
-    : basic_socket<Service>(io_service, native_socket)
+      const protocol_type& protocol, const native_type& native_socket)
+    : basic_socket<Service>(io_service, protocol, native_socket)
   {
   }
 

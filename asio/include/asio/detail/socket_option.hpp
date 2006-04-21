@@ -45,18 +45,6 @@ public:
   {
   }
 
-  // Get the level of the socket option.
-  int level() const
-  {
-    return Level;
-  }
-
-  // Get the name of the socket option.
-  int name() const
-  {
-    return Name;
-  }
-
   // Set the value of the boolean.
   void set(bool value)
   {
@@ -69,20 +57,37 @@ public:
     return value_;
   }
 
+  // Get the level of the socket option.
+  template <typename Protocol>
+  int level(const Protocol&) const
+  {
+    return Level;
+  }
+
+  // Get the name of the socket option.
+  template <typename Protocol>
+  int name(const Protocol&) const
+  {
+    return Name;
+  }
+
   // Get the address of the boolean data.
-  int* data()
+  template <typename Protocol>
+  int* data(const Protocol&)
   {
     return &value_;
   }
 
   // Get the address of the boolean data.
-  const int* data() const
+  template <typename Protocol>
+  const int* data(const Protocol&) const
   {
     return &value_;
   }
 
   // Get the size of the boolean data.
-  std::size_t size() const
+  template <typename Protocol>
+  std::size_t size(const Protocol&) const
   {
     return sizeof(value_);
   }
@@ -108,18 +113,6 @@ public:
   {
   }
 
-  // Get the level of the socket option.
-  int level() const
-  {
-    return Level;
-  }
-
-  // Get the name of the socket option.
-  int name() const
-  {
-    return Name;
-  }
-
   // Set the value of the int option.
   void set(int value)
   {
@@ -132,20 +125,37 @@ public:
     return value_;
   }
 
+  // Get the level of the socket option.
+  template <typename Protocol>
+  int level(const Protocol&) const
+  {
+    return Level;
+  }
+
+  // Get the name of the socket option.
+  template <typename Protocol>
+  int name(const Protocol&) const
+  {
+    return Name;
+  }
+
   // Get the address of the int data.
-  int* data()
+  template <typename Protocol>
+  int* data(const Protocol&)
   {
     return &value_;
   }
 
   // Get the address of the int data.
-  const int* data() const
+  template <typename Protocol>
+  const int* data(const Protocol&) const
   {
     return &value_;
   }
 
   // Get the size of the int data.
-  std::size_t size() const
+  template <typename Protocol>
+  std::size_t size(const Protocol&) const
   {
     return sizeof(value_);
   }
@@ -171,18 +181,6 @@ public:
   {
   }
 
-  // Get the level of the socket option.
-  int level() const
-  {
-    return Level;
-  }
-
-  // Get the name of the socket option.
-  int name() const
-  {
-    return Name;
-  }
-
   // Set the value of the int option.
   void set(unsigned int value)
   {
@@ -195,20 +193,37 @@ public:
     return value_;
   }
 
+  // Get the level of the socket option.
+  template <typename Protocol>
+  int level(const Protocol&) const
+  {
+    return Level;
+  }
+
+  // Get the name of the socket option.
+  template <typename Protocol>
+  int name(const Protocol&) const
+  {
+    return Name;
+  }
+
   // Get the address of the int data.
-  unsigned int* data()
+  template <typename Protocol>
+  unsigned int* data(const Protocol&)
   {
     return &value_;
   }
 
   // Get the address of the int data.
-  const unsigned int* data() const
+  template <typename Protocol>
+  const unsigned int* data(const Protocol&) const
   {
     return &value_;
   }
 
   // Get the size of the int data.
-  std::size_t size() const
+  template <typename Protocol>
+  std::size_t size(const Protocol&) const
   {
     return sizeof(value_);
   }
@@ -236,18 +251,6 @@ public:
     value_.l_linger = timeout;
   }
 
-  // Get the level of the socket option.
-  int level() const
-  {
-    return Level;
-  }
-
-  // Get the name of the socket option.
-  int name() const
-  {
-    return Name;
-  }
-
   // Set the value for whether linger is enabled.
   void enabled(bool value)
   {
@@ -272,20 +275,37 @@ public:
     return value_.l_linger;
   }
 
+  // Get the level of the socket option.
+  template <typename Protocol>
+  int level(const Protocol&) const
+  {
+    return Level;
+  }
+
+  // Get the name of the socket option.
+  template <typename Protocol>
+  int name(const Protocol&) const
+  {
+    return Name;
+  }
+
   // Get the address of the linger data.
-  ::linger* data()
+  template <typename Protocol>
+  ::linger* data(const Protocol&)
   {
     return &value_;
   }
 
   // Get the address of the linger data.
-  const ::linger* data() const
+  template <typename Protocol>
+  const ::linger* data(const Protocol&) const
   {
     return &value_;
   }
 
   // Get the size of the linger data.
-  std::size_t size() const
+  template <typename Protocol>
+  std::size_t size(const Protocol&) const
   {
     return sizeof(value_);
   }

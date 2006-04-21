@@ -50,18 +50,6 @@ public:
       asio::detail::socket_ops::host_to_network_long(value.to_ulong());
   }
 
-  // Get the level of the socket option.
-  int level() const
-  {
-    return Level;
-  }
-
-  // Get the name of the socket option.
-  int name() const
-  {
-    return Name;
-  }
-
   // Set the value of the socket option.
   void set(const asio::ipv4::address& value)
   {
@@ -76,20 +64,37 @@ public:
         asio::detail::socket_ops::network_to_host_long(value_.s_addr));
   }
 
+  // Get the level of the socket option.
+  template <typename Protocol>
+  int level(const Protocol&) const
+  {
+    return Level;
+  }
+
+  // Get the name of the socket option.
+  template <typename Protocol>
+  int name(const Protocol&) const
+  {
+    return Name;
+  }
+
   // Get the address of the option data.
-  in_addr* data()
+  template <typename Protocol>
+  in_addr* data(const Protocol&)
   {
     return &value_;
   }
 
   // Get the address of the option data.
-  const in_addr* data() const
+  template <typename Protocol>
+  const in_addr* data(const Protocol&) const
   {
     return &value_;
   }
 
   // Get the size of the option data.
-  std::size_t size() const
+  template <typename Protocol>
+  std::size_t size(const Protocol&) const
   {
     return sizeof(value_);
   }
@@ -138,31 +143,36 @@ public:
   }
 
   // Get the level of the socket option.
-  int level() const
+  template <typename Protocol>
+  int level(const Protocol&) const
   {
     return Level;
   }
 
   // Get the name of the socket option.
-  int name() const
+  template <typename Protocol>
+  int name(const Protocol&) const
   {
     return Name;
   }
 
   // Get the address of the option data.
-  ip_mreq* data()
+  template <typename Protocol>
+  ip_mreq* data(const Protocol&)
   {
     return &value_;
   }
 
   // Get the address of the option data.
-  const ip_mreq* data() const
+  template <typename Protocol>
+  const ip_mreq* data(const Protocol&) const
   {
     return &value_;
   }
 
   // Get the size of the option data.
-  std::size_t size() const
+  template <typename Protocol>
+  std::size_t size(const Protocol&) const
   {
     return sizeof(value_);
   }

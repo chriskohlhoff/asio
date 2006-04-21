@@ -35,11 +35,17 @@
 namespace asio {
 namespace detail {
 
-template <typename Reactor>
+template <typename Protocol, typename Reactor>
 class reactive_socket_service
   : public asio::io_service::service
 {
 public:
+  /// The protocol type.
+  typedef Protocol protocol_type;
+
+  /// The endpoint type.
+  typedef typename Protocol::endpoint endpoint_type;
+
   // The native type of a socket.
   typedef socket_type native_type;
 
@@ -47,9 +53,18 @@ public:
   class implementation_type
     : private asio::detail::noncopyable
   {
+  public:
+    // Default constructor.
+    implementation_type()
+      : socket_(invalid_socket),
+        flags_(0),
+        protocol_(endpoint_type().protocol())
+    {
+    }
+
   private:
     // Only this service will have access to the internal values.
-    friend class reactive_socket_service<Reactor>;
+    friend class reactive_socket_service<Protocol, Reactor>;
 
     // The native socket representation.
     socket_type socket_;
@@ -62,6 +77,9 @@ public:
 
     // Flags indicating the current state of the socket.
     unsigned char flags_;
+
+    // The protocol associated with the socket.
+    protocol_type protocol_;
   };
 
   // The maximum number of buffers to support in a single operation.
@@ -93,8 +111,8 @@ public:
   }
 
   // Open a new socket implementation.
-  template <typename Protocol, typename Error_Handler>
-  void open(implementation_type& impl, const Protocol& protocol,
+  template <typename Error_Handler>
+  void open(implementation_type& impl, const protocol_type& protocol,
       Error_Handler error_handler)
   {
     close(impl, asio::ignore_error());
@@ -115,12 +133,13 @@ public:
 
     impl.socket_ = sock.release();
     impl.flags_ = 0;
+    impl.protocol_ = protocol;
   }
 
   // Open a new socket implementation from a native socket.
   template <typename Error_Handler>
-  void open(implementation_type& impl, const native_type& native_socket,
-      Error_Handler error_handler)
+  void open(implementation_type& impl, const protocol_type& protocol,
+      const native_type& native_socket, Error_Handler error_handler)
   {
     close(impl, asio::ignore_error());
 
@@ -132,6 +151,7 @@ public:
 
     impl.socket_ = native_socket;
     impl.flags_ = 0;
+    impl.protocol_ = protocol;
   }
 
   // Destroy a socket implementation.
@@ -163,8 +183,8 @@ public:
   }
 
   // Bind the socket to the specified local endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void bind(implementation_type& impl, const Endpoint& endpoint,
+  template <typename Error_Handler>
+  void bind(implementation_type& impl, const endpoint_type& endpoint,
       Error_Handler error_handler)
   {
     if (socket_ops::bind(impl.socket_, endpoint.data(),
@@ -189,8 +209,9 @@ public:
   void set_option(implementation_type& impl, const Option& option,
       Error_Handler error_handler)
   {
-    if (socket_ops::setsockopt(impl.socket_, option.level(), option.name(),
-          option.data(), option.size()))
+    if (socket_ops::setsockopt(impl.socket_,
+          option.level(impl.protocol_), option.name(impl.protocol_),
+          option.data(impl.protocol_), option.size(impl.protocol_)))
       error_handler(asio::error(socket_ops::get_error()));
   }
 
@@ -199,9 +220,10 @@ public:
   void get_option(const implementation_type& impl, Option& option,
       Error_Handler error_handler) const
   {
-    size_t size = option.size();
-    if (socket_ops::getsockopt(impl.socket_, option.level(), option.name(),
-          option.data(), &size))
+    size_t size = option.size(impl.protocol_);
+    if (socket_ops::getsockopt(impl.socket_,
+          option.level(impl.protocol_), option.name(impl.protocol_),
+          option.data(impl.protocol_), &size))
       error_handler(asio::error(socket_ops::get_error()));
   }
 
@@ -226,9 +248,9 @@ public:
   }
 
   // Get the local endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void get_local_endpoint(const implementation_type& impl, Endpoint& endpoint,
-      Error_Handler error_handler) const
+  template <typename Error_Handler>
+  void get_local_endpoint(const implementation_type& impl,
+      endpoint_type& endpoint, Error_Handler error_handler) const
   {
     socket_addr_len_type addr_len = endpoint.capacity();
     if (socket_ops::getsockname(impl.socket_, endpoint.data(), &addr_len))
@@ -241,9 +263,9 @@ public:
   }
 
   // Get the remote endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void get_remote_endpoint(const implementation_type& impl, Endpoint& endpoint,
-      Error_Handler error_handler) const
+  template <typename Error_Handler>
+  void get_remote_endpoint(const implementation_type& impl,
+      endpoint_type& endpoint, Error_Handler error_handler) const
   {
     socket_addr_len_type addr_len = endpoint.capacity();
     if (socket_ops::getpeername(impl.socket_, endpoint.data(), &addr_len))
@@ -407,9 +429,9 @@ public:
 
   // Send a datagram to the specified endpoint. Returns the number of bytes
   // sent.
-  template <typename Const_Buffers, typename Endpoint, typename Error_Handler>
+  template <typename Const_Buffers, typename Error_Handler>
   size_t send_to(implementation_type& impl, const Const_Buffers& buffers,
-      const Endpoint& destination, socket_base::message_flags flags,
+      const endpoint_type& destination, socket_base::message_flags flags,
       Error_Handler error_handler)
   {
     // Copy buffers into array.
@@ -455,12 +477,12 @@ public:
     }
   }
 
-  template <typename Const_Buffers, typename Endpoint, typename Handler>
+  template <typename Const_Buffers, typename Handler>
   class send_to_handler
   {
   public:
     send_to_handler(socket_type socket, asio::io_service& io_service,
-        const Const_Buffers& buffers, const Endpoint& endpoint,
+        const Const_Buffers& buffers, const endpoint_type& endpoint,
         socket_base::message_flags flags, Handler handler)
       : socket_(socket),
         io_service_(io_service),
@@ -515,16 +537,16 @@ public:
     asio::io_service& io_service_;
     asio::io_service::work work_;
     Const_Buffers buffers_;
-    Endpoint destination_;
+    endpoint_type destination_;
     socket_base::message_flags flags_;
     Handler handler_;
   };
 
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
-  template <typename Const_Buffers, typename Endpoint, typename Handler>
+  template <typename Const_Buffers, typename Handler>
   void async_send_to(implementation_type& impl, const Const_Buffers& buffers,
-      const Endpoint& destination, socket_base::message_flags flags,
+      const endpoint_type& destination, socket_base::message_flags flags,
       Handler handler)
   {
     if (impl.socket_ == invalid_socket)
@@ -548,7 +570,7 @@ public:
       }
 
       reactor_.start_write_op(impl.socket_,
-          send_to_handler<Const_Buffers, Endpoint, Handler>(
+          send_to_handler<Const_Buffers, Handler>(
             impl.socket_, owner(), buffers, destination, flags, handler));
     }
   }
@@ -716,9 +738,9 @@ public:
 
   // Receive a datagram with the endpoint of the sender. Returns the number of
   // bytes received.
-  template <typename Mutable_Buffers, typename Endpoint, typename Error_Handler>
+  template <typename Mutable_Buffers, typename Error_Handler>
   size_t receive_from(implementation_type& impl, const Mutable_Buffers& buffers,
-      Endpoint& sender_endpoint, socket_base::message_flags flags,
+      endpoint_type& sender_endpoint, socket_base::message_flags flags,
       Error_Handler error_handler)
   {
     // Copy buffers into array.
@@ -775,12 +797,12 @@ public:
     }
   }
 
-  template <typename Mutable_Buffers, typename Endpoint, typename Handler>
+  template <typename Mutable_Buffers, typename Handler>
   class receive_from_handler
   {
   public:
     receive_from_handler(socket_type socket, asio::io_service& io_service,
-        const Mutable_Buffers& buffers, Endpoint& endpoint,
+        const Mutable_Buffers& buffers, endpoint_type& endpoint,
         socket_base::message_flags flags, Handler handler)
       : socket_(socket),
         io_service_(io_service),
@@ -841,7 +863,7 @@ public:
     asio::io_service& io_service_;
     asio::io_service::work work_;
     Mutable_Buffers buffers_;
-    Endpoint& sender_endpoint_;
+    endpoint_type& sender_endpoint_;
     socket_base::message_flags flags_;
     Handler handler_;
   };
@@ -849,9 +871,9 @@ public:
   // Start an asynchronous receive. The buffer for the data being received and
   // the sender_endpoint object must both be valid for the lifetime of the
   // asynchronous operation.
-  template <typename Mutable_Buffers, typename Endpoint, typename Handler>
+  template <typename Mutable_Buffers, typename Handler>
   void async_receive_from(implementation_type& impl,
-      const Mutable_Buffers& buffers, Endpoint& sender_endpoint,
+      const Mutable_Buffers& buffers, endpoint_type& sender_endpoint,
       socket_base::message_flags flags, Handler handler)
   {
     if (impl.socket_ == invalid_socket)
@@ -875,7 +897,7 @@ public:
       }
 
       reactor_.start_read_op(impl.socket_,
-          receive_from_handler<Mutable_Buffers, Endpoint, Handler>(
+          receive_from_handler<Mutable_Buffers, Handler>(
             impl.socket_, owner(), buffers,
             sender_endpoint, flags, handler));
     }
@@ -904,7 +926,8 @@ public:
       if (new_socket.get() >= 0)
       {
         asio::error temp_error;
-        peer.open(new_socket.get(), asio::assign_error(temp_error));
+        peer.open(impl.protocol_, new_socket.get(),
+            asio::assign_error(temp_error));
         if (temp_error)
           error_handler(temp_error);
         else
@@ -931,9 +954,9 @@ public:
   }
 
   // Accept a new connection.
-  template <typename Socket, typename Endpoint, typename Error_Handler>
+  template <typename Socket, typename Error_Handler>
   void accept_endpoint(implementation_type& impl, Socket& peer,
-      Endpoint& peer_endpoint, Error_Handler error_handler)
+      endpoint_type& peer_endpoint, Error_Handler error_handler)
   {
     // We cannot accept a socket that is already open.
     if (peer.native() != invalid_socket)
@@ -962,7 +985,8 @@ public:
       {
         peer_endpoint.resize(addr_len);
         asio::error temp_error;
-        peer.open(new_socket.get(), asio::assign_error(temp_error));
+        peer.open(impl.protocol_, new_socket.get(),
+            asio::assign_error(temp_error));
         if (temp_error)
           error_handler(temp_error);
         else
@@ -993,11 +1017,12 @@ public:
   {
   public:
     accept_handler(socket_type socket, asio::io_service& io_service,
-        Socket& peer, Handler handler)
+        Socket& peer, const protocol_type& protocol, Handler handler)
       : socket_(socket),
         io_service_(io_service),
         work_(io_service),
         peer_(peer),
+        protocol_(protocol),
         handler_(handler)
     {
     }
@@ -1025,7 +1050,7 @@ public:
       // Transfer ownership of the new socket to the peer object.
       if (!error)
       {
-        peer_.open(new_socket.get(), asio::assign_error(error));
+        peer_.open(protocol_, new_socket.get(), asio::assign_error(error));
         if (!error)
           new_socket.release();
       }
@@ -1039,6 +1064,7 @@ public:
     asio::io_service& io_service_;
     asio::io_service::work work_;
     Socket& peer_;
+    protocol_type protocol_;
     Handler handler_;
   };
 
@@ -1074,16 +1100,16 @@ public:
 
       reactor_.start_read_op(impl.socket_,
           accept_handler<Socket, Handler>(
-            impl.socket_, owner(), peer, handler));
+            impl.socket_, owner(), peer, impl.protocol_, handler));
     }
   }
 
-  template <typename Socket, typename Endpoint, typename Handler>
+  template <typename Socket, typename Handler>
   class accept_endp_handler
   {
   public:
     accept_endp_handler(socket_type socket, asio::io_service& io_service,
-        Socket& peer, Endpoint& peer_endpoint, Handler handler)
+        Socket& peer, endpoint_type& peer_endpoint, Handler handler)
       : socket_(socket),
         io_service_(io_service),
         work_(io_service),
@@ -1119,7 +1145,8 @@ public:
       if (!error)
       {
         peer_endpoint_.resize(addr_len);
-        peer_.open(new_socket.get(), asio::assign_error(error));
+        peer_.open(peer_endpoint_.protocol(), new_socket.get(),
+            asio::assign_error(error));
         if (!error)
           new_socket.release();
       }
@@ -1133,15 +1160,15 @@ public:
     asio::io_service& io_service_;
     asio::io_service::work work_;
     Socket& peer_;
-    Endpoint& peer_endpoint_;
+    endpoint_type& peer_endpoint_;
     Handler handler_;
   };
 
   // Start an asynchronous accept. The peer and peer_endpoint objects
   // must be valid until the accept's handler is invoked.
-  template <typename Socket, typename Endpoint, typename Handler>
+  template <typename Socket, typename Handler>
   void async_accept_endpoint(implementation_type& impl, Socket& peer,
-      Endpoint& peer_endpoint, Handler handler)
+      endpoint_type& peer_endpoint, Handler handler)
   {
     if (impl.socket_ == invalid_socket)
     {
@@ -1169,14 +1196,14 @@ public:
       }
 
       reactor_.start_read_op(impl.socket_,
-          accept_endp_handler<Socket, Endpoint, Handler>(
+          accept_endp_handler<Socket, Handler>(
             impl.socket_, owner(), peer, peer_endpoint, handler));
     }
   }
 
   // Connect the socket to the specified endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void connect(implementation_type& impl, const Endpoint& peer_endpoint,
+  template <typename Error_Handler>
+  void connect(implementation_type& impl, const endpoint_type& peer_endpoint,
       Error_Handler error_handler)
   {
     // Open the socket if it is not already open.
@@ -1292,9 +1319,9 @@ public:
   };
 
   // Start an asynchronous connect.
-  template <typename Endpoint, typename Handler>
-  void async_connect(implementation_type& impl, const Endpoint& peer_endpoint,
-      Handler handler)
+  template <typename Handler>
+  void async_connect(implementation_type& impl,
+      const endpoint_type& peer_endpoint, Handler handler)
   {
     // Open the socket if it is not already open.
     if (impl.socket_ == invalid_socket)

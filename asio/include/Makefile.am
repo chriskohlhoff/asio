@@ -89,8 +89,10 @@ nobase_include_HEADERS = \
 	asio/io_service.hpp \
 	asio/ip/address.hpp \
 	asio/ip/basic_endpoint.hpp \
+	asio/ip/multicast.hpp \
 	asio/ip/tcp.hpp \
 	asio/ip/udp.hpp \
+	asio/ip/detail/socket_option.hpp \
 	asio/ipv4/address.hpp \
 	asio/ipv4/basic_endpoint.hpp \
 	asio/ipv4/basic_host_resolver.hpp \

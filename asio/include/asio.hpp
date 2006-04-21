@@ -38,6 +38,7 @@
 #include "asio/io_service.hpp"
 #include "asio/ip/address.hpp"
 #include "asio/ip/basic_endpoint.hpp"
+#include "asio/ip/multicast.hpp"
 #include "asio/ip/tcp.hpp"
 #include "asio/ip/udp.hpp"
 #include "asio/ipv4/address.hpp"

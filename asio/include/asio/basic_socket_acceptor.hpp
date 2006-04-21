@@ -144,15 +144,18 @@ public:
    * dispatch handlers for any asynchronous operations performed on the
    * acceptor.
    *
+   * @param protocol An object specifying protocol parameters to be used.
+   *
    * @param native_acceptor A native acceptor.
    *
    * @throws asio::error Thrown on failure.
    */
   basic_socket_acceptor(asio::io_service& io_service,
-      const native_type& native_acceptor)
+      const protocol_type& protocol, const native_type& native_acceptor)
     : basic_io_object<Service>(io_service)
   {
-    this->service.open(this->implementation, native_acceptor, throw_error());
+    this->service.open(this->implementation, protocol, native_acceptor,
+        throw_error());
   }
 
   /// Open the acceptor using the specified protocol.
@@ -208,18 +211,23 @@ public:
   /*
    * This function opens the acceptor to hold an existing native acceptor.
    *
+   * @param protocol An object specifying which protocol is to be used.
+   *
    * @param native_acceptor A native acceptor.
    *
    * @throws asio::error Thrown on failure.
    */
-  void open(const native_type& native_acceptor)
+  void open(const protocol_type& protocol, const native_type& native_acceptor)
   {
-    this->service.open(this->implementation, native_acceptor, throw_error());
+    this->service.open(this->implementation, protocol, native_acceptor,
+        throw_error());
   }
 
   /// Open an acceptor on an existing native acceptor.
   /*
    * This function opens the acceptor to hold an existing native acceptor.
+   *
+   * @param protocol An object specifying which protocol is to be used.
    *
    * @param native_acceptor A native acceptor.
    *
@@ -231,9 +239,11 @@ public:
    * ); @endcode
    */
   template <typename Error_Handler>
-  void open(const native_type& native_acceptor, Error_Handler error_handler)
+  void open(const protocol_type& protocol, const native_type& native_acceptor,
+      Error_Handler error_handler)
   {
-    this->service.open(this->implementation, native_acceptor, error_handler);
+    this->service.open(this->implementation, protocol, native_acceptor,
+        error_handler);
   }
 
   /// Bind the acceptor to the given local endpoint.

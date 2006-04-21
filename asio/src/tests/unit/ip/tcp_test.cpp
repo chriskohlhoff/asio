@@ -70,7 +70,7 @@ void test()
     ip::tcp::socket socket4(ios, ipv4::tcp::endpoint(0));
     ip::tcp::socket socket5(ios, ipv6::tcp::endpoint(0));
     int native_socket1 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    ip::tcp::socket socket6(ios, native_socket1);
+    ip::tcp::socket socket6(ios, ipv4::tcp(), native_socket1);
 
     // basic_io_object functions.
 
@@ -87,9 +87,9 @@ void test()
     socket1.open(ipv4::tcp(), error_handler);
     socket1.open(ipv6::tcp(), error_handler);
     int native_socket2 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    socket1.open(native_socket2);
+    socket1.open(ipv4::tcp(), native_socket2);
     int native_socket3 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    socket1.open(native_socket3, error_handler);
+    socket1.open(ipv4::tcp(), native_socket3, error_handler);
 
     socket1.close();
     socket1.close(error_handler);

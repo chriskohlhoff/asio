@@ -49,13 +49,13 @@ private:
   typedef detail::win_iocp_socket_service service_impl_type;
 #elif defined(ASIO_HAS_EPOLL)
   typedef detail::reactive_socket_service<
-      detail::epoll_reactor<false> > service_impl_type;
+      Protocol, detail::epoll_reactor<false> > service_impl_type;
 #elif defined(ASIO_HAS_KQUEUE)
   typedef detail::reactive_socket_service<
-      detail::kqueue_reactor<false> > service_impl_type;
+      Protocol, detail::kqueue_reactor<false> > service_impl_type;
 #else
   typedef detail::reactive_socket_service<
-      detail::select_reactor<false> > service_impl_type;
+      Protocol, detail::select_reactor<false> > service_impl_type;
 #endif
 
 public:
@@ -110,10 +110,10 @@ public:
 
   /// Open a stream socket from an existing native socket.
   template <typename Error_Handler>
-  void open(implementation_type& impl, const native_type& native_socket,
-      Error_Handler error_handler)
+  void open(implementation_type& impl, const protocol_type& protocol,
+      const native_type& native_socket, Error_Handler error_handler)
   {
-    service_impl_.open(impl, native_socket, error_handler);
+    service_impl_.open(impl, protocol, native_socket, error_handler);
   }
 
   /// Close a stream socket implementation.

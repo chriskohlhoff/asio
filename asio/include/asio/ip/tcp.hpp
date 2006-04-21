@@ -95,6 +95,39 @@ public:
   /// The IPv4 TCP acceptor type.
   typedef basic_socket_acceptor<acceptor_service> acceptor;
 
+  /// Socket option for disabling the Nagle algorithm.
+  /**
+   * Implements the IPPROTO_TCP/TCP_NODELAY socket option.
+   *
+   * @par Examples:
+   * Setting the option:
+   * @code
+   * asio::ipv6::tcp::socket socket(io_service); 
+   * ...
+   * asio::ipv6::tcp::no_delay option(true);
+   * socket.set_option(option);
+   * @endcode
+   *
+   * @par
+   * Getting the current option value:
+   * @code
+   * asio::ipv6::tcp::socket socket(io_service); 
+   * ...
+   * asio::ipv6::tcp::no_delay option;
+   * socket.get_option(option);
+   * bool is_set = option.get();
+   * @endcode
+   *
+   * @par Concepts:
+   * Socket_Option, Boolean_Socket_Option.
+   */
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined no_delay;
+#else
+  typedef asio::detail::socket_option::boolean<
+    IPPROTO_TCP, TCP_NODELAY> no_delay;
+#endif
+
 private:
   int family_;
 };

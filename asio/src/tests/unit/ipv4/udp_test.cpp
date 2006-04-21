@@ -60,7 +60,7 @@ void test()
     ipv4::udp::socket socket2(ios, ipv4::udp());
     ipv4::udp::socket socket3(ios, ipv4::udp::endpoint(0));
     int native_socket1 = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    ipv4::udp::socket socket4(ios, native_socket1);
+    ipv4::udp::socket socket4(ios, ipv4::udp(), native_socket1);
 
     // basic_io_object functions.
 
@@ -75,9 +75,9 @@ void test()
     socket1.open(ipv4::udp());
     socket1.open(ipv4::udp(), error_handler);
     int native_socket2 = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    socket1.open(native_socket2);
+    socket1.open(ipv4::udp(), native_socket2);
     int native_socket3 = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    socket1.open(native_socket3, error_handler);
+    socket1.open(ipv4::udp(), native_socket3, error_handler);
 
     socket1.close();
     socket1.close(error_handler);

@@ -65,31 +65,36 @@ public:
   }
 
   // Get the level of the socket option.
-  int level() const
+  template <typename Protocol>
+  int level(const Protocol&) const
   {
     return Level;
   }
 
   // Get the name of the socket option.
-  int name() const
+  template <typename Protocol>
+  int name(const Protocol&) const
   {
     return Name;
   }
 
   // Get the address of the option data.
-  ipv6_mreq* data()
+  template <typename Protocol>
+  ipv6_mreq* data(const Protocol&)
   {
     return &value_;
   }
 
   // Get the address of the option data.
-  const ipv6_mreq* data() const
+  template <typename Protocol>
+  const ipv6_mreq* data(const Protocol&) const
   {
     return &value_;
   }
 
   // Get the size of the option data.
-  std::size_t size() const
+  template <typename Protocol>
+  std::size_t size(const Protocol&) const
   {
     return sizeof(value_);
   }

@@ -83,14 +83,17 @@ inline basic_datagram_socket<Service>::basic_datagram_socket(
  * to dispatch handlers for any asynchronous operations performed on the
  * socket.
  *
+ * @param protocol An object specifying protocol parameters to be used.
+ *
  * @param native_socket The new underlying socket implementation.
  *
  * @throws asio::error Thrown on failure.
  */
 template <typename Service>
 inline basic_datagram_socket<Service>::basic_datagram_socket(
-    asio::io_service& io_service, const native_type& native_socket)
-  : basic_socket<Service>(io_service, native_socket)
+    asio::io_service& io_service, const protocol_type& protocol,
+    const native_type& native_socket)
+  : basic_socket<Service>(io_service, protocol, native_socket)
 {
 }
 

@@ -66,7 +66,7 @@ public:
 
   /// Construct a basic_datagram_socket on an existing native socket.
   basic_datagram_socket(asio::io_service& io_service,
-      const native_type& native_socket);
+      const protocol_type& protocol, const native_type& native_socket);
 
   /// Send some data on a connected socket.
   template <typename Const_Buffers>

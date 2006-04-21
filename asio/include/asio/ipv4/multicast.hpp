@@ -36,7 +36,7 @@ namespace multicast {
  * @par Examples:
  * Setting the option to join a multicast group:
  * @code
- * asio::datagram_socket socket(io_service); 
+ * asio::ipv4::udp::socket socket(io_service); 
  * ...
  * asio::ipv4::address multicast_address("225.0.0.1");
  * asio::ipv4::multicast::join_group option(multicast_address);
@@ -47,7 +47,7 @@ namespace multicast {
  * Setting the option to join a multicast group on the specified local
  * interface.
  * @code
- * asio::datagram_socket socket(io_service); 
+ * asio::ipv4::udp::socket socket(io_service); 
  * asio::ipv4::address multicast_address("225.0.0.1");
  * asio::ipv4::address local_interface("1.2.3.4");
  * asio::ipv4::multicast::join_group option(
@@ -73,7 +73,7 @@ typedef asio::ipv4::detail::socket_option::multicast_request<
  * @par Examples:
  * Setting the option to leave a multicast group:
  * @code
- * asio::datagram_socket socket(io_service); 
+ * asio::ipv4::udp::socket socket(io_service); 
  * ...
  * asio::ipv4::address multicast_address("225.0.0.1");
  * asio::ipv4::multicast::leave_group option(multicast_address);
@@ -84,7 +84,7 @@ typedef asio::ipv4::detail::socket_option::multicast_request<
  * Setting the option to leave a multicast group on the specified local
  * interface.
  * @code
- * asio::datagram_socket socket(io_service); 
+ * asio::ipv4::udp::socket socket(io_service); 
  * asio::ipv4::address multicast_address("225.0.0.1");
  * asio::ipv4::address local_interface("1.2.3.4");
  * asio::ipv4::multicast::leave_group option(
@@ -110,7 +110,7 @@ typedef asio::ipv4::detail::socket_option::multicast_request<
  * @par Examples:
  * Setting the option:
  * @code
- * asio::datagram_socket socket(io_service); 
+ * asio::ipv4::udp::socket socket(io_service); 
  * ...
  * asio::ipv4::address local_interface("1.2.3.4");
  * asio::ipv4::multicast::outbound_interface option(local_interface);
@@ -120,7 +120,7 @@ typedef asio::ipv4::detail::socket_option::multicast_request<
  * @par
  * Getting the current option value:
  * @code
- * asio::datagram_socket socket(io_service); 
+ * asio::ipv4::udp::socket socket(io_service); 
  * ...
  * asio::ipv4::multicast::outbound_interface option;
  * socket.get_option(option);
@@ -144,7 +144,7 @@ typedef asio::ipv4::detail::socket_option::address<
  * @par Examples:
  * Setting the option:
  * @code
- * asio::datagram_socket socket(io_service); 
+ * asio::ipv4::udp::socket socket(io_service); 
  * ...
  * asio::ipv4::multicast::hops option(4);
  * socket.set_option(option);
@@ -153,7 +153,7 @@ typedef asio::ipv4::detail::socket_option::address<
  * @par
  * Getting the current option value:
  * @code
- * asio::datagram_socket socket(io_service); 
+ * asio::ipv4::udp::socket socket(io_service); 
  * ...
  * asio::ipv4::multicast::hops option;
  * socket.get_option(option);
@@ -178,7 +178,7 @@ typedef asio::detail::socket_option::integer<
  * @par Examples:
  * Setting the option:
  * @code
- * asio::datagram_socket socket(io_service); 
+ * asio::ipv4::udp::socket socket(io_service); 
  * ...
  * asio::ipv4::multicast::enable_loopback option(true);
  * socket.set_option(option);
@@ -187,7 +187,7 @@ typedef asio::detail::socket_option::integer<
  * @par
  * Getting the current option value:
  * @code
- * asio::datagram_socket socket(io_service); 
+ * asio::ipv4::udp::socket socket(io_service); 
  * ...
  * asio::ipv4::multicast::enable_loopback option;
  * socket.get_option(option);

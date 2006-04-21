@@ -118,15 +118,18 @@ public:
    * @param io_service The io_service object that the socket will use to
    * dispatch handlers for any asynchronous operations performed on the socket.
    *
+   * @param protocol An object specifying protocol parameters to be used.
+   *
    * @param native_socket A native socket.
    *
    * @throws asio::error Thrown on failure.
    */
   basic_socket(asio::io_service& io_service,
-      const native_type& native_socket)
+      const protocol_type& protocol, const native_type& native_socket)
     : basic_io_object<Service>(io_service)
   {
-    this->service.open(this->implementation, native_socket, throw_error());
+    this->service.open(this->implementation, protocol, native_socket,
+        throw_error());
   }
 
   /// Get a reference to the lowest layer.
@@ -196,18 +199,23 @@ public:
   /*
    * This function opens the socket to hold an existing native socket.
    *
+   * @param protocol An object specifying which protocol is to be used.
+   *
    * @param native_socket A native socket.
    *
    * @throws asio::error Thrown on failure.
    */
-  void open(const native_type& native_socket)
+  void open(const protocol_type& protocol, const native_type& native_socket)
   {
-    this->service.open(this->implementation, native_socket, throw_error());
+    this->service.open(this->implementation, protocol, native_socket,
+        throw_error());
   }
 
   /// Open a socket on an existing native socket.
   /*
    * This function opens the socket to hold an existing native socket.
+   *
+   * @param protocol An object specifying which protocol is to be used.
    *
    * @param native_socket A native socket.
    *
@@ -219,9 +227,11 @@ public:
    * ); @endcode
    */
   template <typename Error_Handler>
-  void open(const native_type& native_socket, Error_Handler error_handler)
+  void open(const protocol_type& protocol, const native_type& native_socket,
+      Error_Handler error_handler)
   {
-    this->service.open(this->implementation, native_socket, error_handler);
+    this->service.open(this->implementation, protocol, native_socket,
+        error_handler);
   }
 
   /// Close the socket.

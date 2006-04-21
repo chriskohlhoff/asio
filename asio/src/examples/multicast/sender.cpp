@@ -6,15 +6,15 @@
 #include "boost/date_time/posix_time/posix_time_types.hpp"
 
 const short multicast_port = 30001;
-const asio::ipv4::address multicast_addr =
-  asio::ipv4::address::from_string("225.0.0.1");
 const int max_message_count = 10;
 
 class sender
 {
 public:
-  sender(asio::io_service& io_service)
-    : socket_(io_service, asio::ipv4::udp::endpoint(0)),
+  sender(asio::io_service& io_service,
+      const asio::ip::address& multicast_address)
+    : endpoint_(multicast_port, multicast_address),
+      socket_(io_service, endpoint_.protocol()),
       timer_(io_service),
       message_count_(0)
   {
@@ -22,9 +22,8 @@ public:
     os << "Message " << message_count_++;
     message_ = os.str();
 
-    asio::ipv4::udp::endpoint target(multicast_port, multicast_addr);
     socket_.async_send_to(
-        asio::buffer(message_), target,
+        asio::buffer(message_), endpoint_,
         boost::bind(&sender::handle_send_to, this,
           asio::placeholders::error));
   }
@@ -48,16 +47,16 @@ public:
       os << "Message " << message_count_++;
       message_ = os.str();
 
-      asio::ipv4::udp::endpoint target(multicast_port, multicast_addr);
       socket_.async_send_to(
-          asio::buffer(message_), target,
+          asio::buffer(message_), endpoint_,
           boost::bind(&sender::handle_send_to, this,
             asio::placeholders::error));
     }
   }
 
 private:
-  asio::ipv4::udp::socket socket_;
+  asio::ip::udp::endpoint endpoint_;
+  asio::ip::udp::socket socket_;
   asio::deadline_timer timer_;
   int message_count_;
   std::string message_;
@@ -67,8 +66,18 @@ int main(int argc, char* argv[])
 {
   try
   {
+    if (argc != 2)
+    {
+      std::cerr << "Usage: sender <multicast_address>\n";
+      std::cerr << "  For IPv4, try:\n";
+      std::cerr << "    sender 239.255.0.1\n";
+      std::cerr << "  For IPv6, try:\n";
+      std::cerr << "    sender ff31::8000:1234\n";
+      return 1;
+    }
+
     asio::io_service io_service;
-    sender s(io_service);
+    sender s(io_service, asio::ip::address::from_string(argv[1]));
     io_service.run();
   }
   catch (asio::error& e)
