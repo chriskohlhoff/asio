@@ -51,7 +51,7 @@
 
 // Borland C++
 
-# pragma option push -a8 -b -Ve- -Vx- -w-inl
+# pragma option push -a8 -b -Ve- -Vx- -w-inl -vi-
 # pragma nopushoptwarn
 # pragma nopackwarning
 # if !defined(__MT__)
