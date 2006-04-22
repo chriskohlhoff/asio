@@ -86,10 +86,11 @@ void test()
     socket1.open(ipv6::tcp());
     socket1.open(ipv4::tcp(), error_handler);
     socket1.open(ipv6::tcp(), error_handler);
+
     int native_socket2 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    socket1.open(ipv4::tcp(), native_socket2);
+    socket1.assign(ipv4::tcp(), native_socket2);
     int native_socket3 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    socket1.open(ipv4::tcp(), native_socket3, error_handler);
+    socket1.assign(ipv4::tcp(), native_socket3, error_handler);
 
     socket1.close();
     socket1.close(error_handler);

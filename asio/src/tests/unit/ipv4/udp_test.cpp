@@ -74,10 +74,11 @@ void test()
 
     socket1.open(ipv4::udp());
     socket1.open(ipv4::udp(), error_handler);
+
     int native_socket2 = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    socket1.open(ipv4::udp(), native_socket2);
+    socket1.assign(ipv4::udp(), native_socket2);
     int native_socket3 = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    socket1.open(ipv4::udp(), native_socket3, error_handler);
+    socket1.assign(ipv4::udp(), native_socket3, error_handler);
 
     socket1.close();
     socket1.close(error_handler);

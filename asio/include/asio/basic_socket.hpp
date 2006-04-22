@@ -128,7 +128,7 @@ public:
       const protocol_type& protocol, const native_type& native_socket)
     : basic_io_object<Service>(io_service)
   {
-    this->service.open(this->implementation, protocol, native_socket,
+    this->service.assign(this->implementation, protocol, native_socket,
         throw_error());
   }
 
@@ -195,7 +195,7 @@ public:
     this->service.open(this->implementation, protocol, error_handler);
   }
 
-  /// Open a socket on an existing native socket.
+  /// Assign an existing native socket to the socket.
   /*
    * This function opens the socket to hold an existing native socket.
    *
@@ -205,13 +205,13 @@ public:
    *
    * @throws asio::error Thrown on failure.
    */
-  void open(const protocol_type& protocol, const native_type& native_socket)
+  void assign(const protocol_type& protocol, const native_type& native_socket)
   {
-    this->service.open(this->implementation, protocol, native_socket,
+    this->service.assign(this->implementation, protocol, native_socket,
         throw_error());
   }
 
-  /// Open a socket on an existing native socket.
+  /// Assign an existing native socket to the socket.
   /*
    * This function opens the socket to hold an existing native socket.
    *
@@ -227,10 +227,10 @@ public:
    * ); @endcode
    */
   template <typename Error_Handler>
-  void open(const protocol_type& protocol, const native_type& native_socket,
+  void assign(const protocol_type& protocol, const native_type& native_socket,
       Error_Handler error_handler)
   {
-    this->service.open(this->implementation, protocol, native_socket,
+    this->service.assign(this->implementation, protocol, native_socket,
         error_handler);
   }
 

@@ -46,7 +46,7 @@ public:
 private:
   // The type of the platform-specific implementation.
 #if defined(ASIO_HAS_IOCP)
-  typedef detail::win_iocp_socket_service service_impl_type;
+  typedef detail::win_iocp_socket_service<Protocol> service_impl_type;
 #elif defined(ASIO_HAS_EPOLL)
   typedef detail::reactive_socket_service<
       Protocol, detail::epoll_reactor<false> > service_impl_type;
@@ -108,12 +108,12 @@ public:
       error_handler(asio::error(asio::error::invalid_argument));
   }
 
-  /// Open a datagram socket from an existing native socket.
+  /// Assign an existing native socket to a datagram socket.
   template <typename Error_Handler>
-  void open(implementation_type& impl, const protocol_type& protocol,
+  void assign(implementation_type& impl, const protocol_type& protocol,
       const native_type& native_socket, Error_Handler error_handler)
   {
-    service_impl_.open(impl, protocol, native_socket, error_handler);
+    service_impl_.assign(impl, protocol, native_socket, error_handler);
   }
 
   /// Close a datagram socket implementation.

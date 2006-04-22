@@ -154,7 +154,7 @@ public:
       const protocol_type& protocol, const native_type& native_acceptor)
     : basic_io_object<Service>(io_service)
   {
-    this->service.open(this->implementation, protocol, native_acceptor,
+    this->service.assign(this->implementation, protocol, native_acceptor,
         throw_error());
   }
 
@@ -207,7 +207,7 @@ public:
     this->service.open(this->implementation, protocol, error_handler);
   }
 
-  /// Open an acceptor on an existing native acceptor.
+  /// Assigns an existing native acceptor to the acceptor.
   /*
    * This function opens the acceptor to hold an existing native acceptor.
    *
@@ -217,13 +217,13 @@ public:
    *
    * @throws asio::error Thrown on failure.
    */
-  void open(const protocol_type& protocol, const native_type& native_acceptor)
+  void assign(const protocol_type& protocol, const native_type& native_acceptor)
   {
-    this->service.open(this->implementation, protocol, native_acceptor,
+    this->service.assign(this->implementation, protocol, native_acceptor,
         throw_error());
   }
 
-  /// Open an acceptor on an existing native acceptor.
+  /// Assigns an existing native acceptor to the acceptor.
   /*
    * This function opens the acceptor to hold an existing native acceptor.
    *
@@ -239,10 +239,10 @@ public:
    * ); @endcode
    */
   template <typename Error_Handler>
-  void open(const protocol_type& protocol, const native_type& native_acceptor,
+  void assign(const protocol_type& protocol, const native_type& native_acceptor,
       Error_Handler error_handler)
   {
-    this->service.open(this->implementation, protocol, native_acceptor,
+    this->service.assign(this->implementation, protocol, native_acceptor,
         error_handler);
   }
 

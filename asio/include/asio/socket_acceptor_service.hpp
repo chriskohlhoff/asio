@@ -42,7 +42,7 @@ public:
 private:
   // The type of the platform-specific implementation.
 #if defined(ASIO_HAS_IOCP)
-  typedef detail::win_iocp_socket_service service_impl_type;
+  typedef detail::win_iocp_socket_service<Protocol> service_impl_type;
 #elif defined(ASIO_HAS_EPOLL)
   typedef detail::reactive_socket_service<
       Protocol, detail::epoll_reactor<false> > service_impl_type;
@@ -101,12 +101,12 @@ public:
     service_impl_.open(impl, protocol, error_handler);
   }
 
-  /// Open a socket acceptor from an existing native acceptor.
+  /// Assign an existing native acceptor to a socket acceptor.
   template <typename Error_Handler>
-  void open(implementation_type& impl, const protocol_type& protocol,
+  void assign(implementation_type& impl, const protocol_type& protocol,
       const native_type& native_acceptor, Error_Handler error_handler)
   {
-    service_impl_.open(impl, protocol, native_acceptor, error_handler);
+    service_impl_.assign(impl, protocol, native_acceptor, error_handler);
   }
 
   /// Bind the socket acceptor to the specified local endpoint.

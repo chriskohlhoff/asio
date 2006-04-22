@@ -40,10 +40,10 @@ class reactive_socket_service
   : public asio::io_service::service
 {
 public:
-  /// The protocol type.
+  // The protocol type.
   typedef Protocol protocol_type;
 
-  /// The endpoint type.
+  // The endpoint type.
   typedef typename Protocol::endpoint endpoint_type;
 
   // The native type of a socket.
@@ -136,9 +136,9 @@ public:
     impl.protocol_ = protocol;
   }
 
-  // Open a new socket implementation from a native socket.
+  // Assign a native socket to a socket implementation.
   template <typename Error_Handler>
-  void open(implementation_type& impl, const protocol_type& protocol,
+  void assign(implementation_type& impl, const protocol_type& protocol,
       const native_type& native_socket, Error_Handler error_handler)
   {
     close(impl, asio::ignore_error());
@@ -926,7 +926,7 @@ public:
       if (new_socket.get() >= 0)
       {
         asio::error temp_error;
-        peer.open(impl.protocol_, new_socket.get(),
+        peer.assign(impl.protocol_, new_socket.get(),
             asio::assign_error(temp_error));
         if (temp_error)
           error_handler(temp_error);
@@ -985,7 +985,7 @@ public:
       {
         peer_endpoint.resize(addr_len);
         asio::error temp_error;
-        peer.open(impl.protocol_, new_socket.get(),
+        peer.assign(impl.protocol_, new_socket.get(),
             asio::assign_error(temp_error));
         if (temp_error)
           error_handler(temp_error);
@@ -1050,7 +1050,7 @@ public:
       // Transfer ownership of the new socket to the peer object.
       if (!error)
       {
-        peer_.open(protocol_, new_socket.get(), asio::assign_error(error));
+        peer_.assign(protocol_, new_socket.get(), asio::assign_error(error));
         if (!error)
           new_socket.release();
       }
@@ -1145,7 +1145,7 @@ public:
       if (!error)
       {
         peer_endpoint_.resize(addr_len);
-        peer_.open(peer_endpoint_.protocol(), new_socket.get(),
+        peer_.assign(peer_endpoint_.protocol(), new_socket.get(),
             asio::assign_error(error));
         if (!error)
           new_socket.release();

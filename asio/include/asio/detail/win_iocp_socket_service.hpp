@@ -17,13 +17,9 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
+#include "asio/detail/win_iocp_io_service_fwd.hpp"
 
-// This service is only supported on Win32 (NT4 and later).
-#if defined(BOOST_WINDOWS)
-#if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
+#if defined(ASIO_HAS_IOCP)
 
 #include "asio/detail/push_options.hpp"
 #include <cstring>
@@ -48,10 +44,17 @@
 namespace asio {
 namespace detail {
 
+template <typename Protocol>
 class win_iocp_socket_service
   : public asio::io_service::service
 {
 public:
+  // The protocol type.
+  typedef Protocol protocol_type;
+
+  // The endpoint type.
+  typedef typename Protocol::endpoint endpoint_type;
+
   // Base class for all operations.
   typedef win_iocp_operation operation;
 
@@ -65,6 +68,17 @@ public:
   // The implementation type of the socket.
   class implementation_type
   {
+  public:
+    // Default constructor.
+    implementation_type()
+      : socket_(invalid_socket),
+        cancel_token_(),
+        protocol_(endpoint_type().protocol()),
+        next_(0),
+        prev_(0)
+    {
+    }
+
   private:
     // Only this service will have access to the internal values.
     friend class win_iocp_socket_service;
@@ -79,6 +93,9 @@ public:
     // ERROR_NETNAME_DELETED, which means you can't tell the difference between
     // a local cancellation and the socket being hard-closed by the peer.
     shared_cancel_token_type cancel_token_;
+
+    // The protocol associated with the socket.
+    protocol_type protocol_;
 
     // Pointers to adjacent socket implementations in linked list.
     implementation_type* next_;
@@ -147,8 +164,8 @@ public:
   }
 
   // Open a new socket implementation.
-  template <typename Protocol, typename Error_Handler>
-  void open(implementation_type& impl, const Protocol& protocol,
+  template <typename Error_Handler>
+  void open(implementation_type& impl, const protocol_type& protocol,
       Error_Handler error_handler)
   {
     close(impl, asio::ignore_error());
@@ -165,12 +182,13 @@ public:
 
     impl.socket_ = sock.release();
     impl.cancel_token_.reset(static_cast<void*>(0), noop_deleter());
+    impl.protocol_ = protocol;
   }
 
-  // Open a new socket implementation from a native socket.
+  // Assign a native socket to a socket implementation.
   template <typename Error_Handler>
-  void open(implementation_type& impl, const native_type& native_socket,
-      Error_Handler error_handler)
+  void assign(implementation_type& impl, const protocol_type& protocol,
+      const native_type& native_socket, Error_Handler error_handler)
   {
     close(impl, asio::ignore_error());
 
@@ -178,6 +196,7 @@ public:
 
     impl.socket_ = native_socket;
     impl.cancel_token_.reset(static_cast<void*>(0), noop_deleter());
+    impl.protocol_ = protocol;
   }
 
   // Destroy a socket implementation.
@@ -214,8 +233,8 @@ public:
   }
 
   // Bind the socket to the specified local endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void bind(implementation_type& impl, const Endpoint& endpoint,
+  template <typename Error_Handler>
+  void bind(implementation_type& impl, const endpoint_type& endpoint,
       Error_Handler error_handler)
   {
     if (socket_ops::bind(impl.socket_, endpoint.data(),
@@ -240,8 +259,9 @@ public:
   void set_option(implementation_type& impl, const Option& option,
       Error_Handler error_handler)
   {
-    if (socket_ops::setsockopt(impl.socket_, option.level(), option.name(),
-          option.data(), option.size()))
+    if (socket_ops::setsockopt(impl.socket_,
+          option.level(impl.protocol_), option.name(impl.protocol_),
+          option.data(impl.protocol_), option.size(impl.protocol_)))
       error_handler(asio::error(socket_ops::get_error()));
   }
 
@@ -250,9 +270,10 @@ public:
   void get_option(const implementation_type& impl, Option& option,
       Error_Handler error_handler) const
   {
-    size_t size = option.size();
-    if (socket_ops::getsockopt(impl.socket_, option.level(), option.name(),
-          option.data(), &size))
+    size_t size = option.size(impl.protocol_);
+    if (socket_ops::getsockopt(impl.socket_,
+          option.level(impl.protocol_), option.name(impl.protocol_),
+          option.data(impl.protocol_), &size))
       error_handler(asio::error(socket_ops::get_error()));
   }
 
@@ -267,9 +288,9 @@ public:
   }
 
   // Get the local endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void get_local_endpoint(const implementation_type& impl, Endpoint& endpoint,
-      Error_Handler error_handler) const
+  template <typename Error_Handler>
+  void get_local_endpoint(const implementation_type& impl,
+      endpoint_type& endpoint, Error_Handler error_handler) const
   {
     socket_addr_len_type addr_len = endpoint.capacity();
     if (socket_ops::getsockname(impl.socket_, endpoint.data(), &addr_len))
@@ -282,9 +303,9 @@ public:
   }
 
   // Get the remote endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void get_remote_endpoint(const implementation_type& impl, Endpoint& endpoint,
-      Error_Handler error_handler) const
+  template <typename Error_Handler>
+  void get_remote_endpoint(const implementation_type& impl,
+      endpoint_type& endpoint, Error_Handler error_handler) const
   {
     socket_addr_len_type addr_len = endpoint.capacity();
     if (socket_ops::getpeername(impl.socket_, endpoint.data(), &addr_len))
@@ -446,9 +467,9 @@ public:
 
   // Send a datagram to the specified endpoint. Returns the number of bytes
   // sent.
-  template <typename Const_Buffers, typename Endpoint, typename Error_Handler>
+  template <typename Const_Buffers, typename Error_Handler>
   size_t send_to(implementation_type& impl, const Const_Buffers& buffers,
-      const Endpoint& destination, socket_base::message_flags flags,
+      const endpoint_type& destination, socket_base::message_flags flags,
       Error_Handler error_handler)
   {
     // Copy buffers into WSABUF array.
@@ -528,9 +549,9 @@ public:
 
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
-  template <typename Const_Buffers, typename Endpoint, typename Handler>
+  template <typename Const_Buffers, typename Handler>
   void async_send_to(implementation_type& impl, const Const_Buffers& buffers,
-      const Endpoint& destination, socket_base::message_flags flags,
+      const endpoint_type& destination, socket_base::message_flags flags,
       Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
@@ -721,9 +742,9 @@ public:
 
   // Receive a datagram with the endpoint of the sender. Returns the number of
   // bytes received.
-  template <typename Mutable_Buffers, typename Endpoint, typename Error_Handler>
+  template <typename Mutable_Buffers, typename Error_Handler>
   size_t receive_from(implementation_type& impl, const Mutable_Buffers& buffers,
-      Endpoint& sender_endpoint, socket_base::message_flags flags,
+      endpoint_type& sender_endpoint, socket_base::message_flags flags,
       Error_Handler error_handler)
   {
     // Copy buffers into WSABUF array.
@@ -761,16 +782,16 @@ public:
     return bytes_transferred;
   }
 
-  template <typename Endpoint, typename Handler>
+  template <typename Handler>
   class receive_from_operation
     : public operation
   {
   public:
     receive_from_operation(asio::io_service& io_service,
-        Endpoint& endpoint, Handler handler)
+        endpoint_type& endpoint, Handler handler)
       : operation(
-          &receive_from_operation<Endpoint, Handler>::do_completion_impl,
-          &receive_from_operation<Endpoint, Handler>::destroy_impl),
+          &receive_from_operation<Handler>::do_completion_impl,
+          &receive_from_operation<Handler>::destroy_impl),
         endpoint_(endpoint),
         endpoint_size_(endpoint.capacity()),
         work_(io_service),
@@ -788,7 +809,7 @@ public:
         DWORD last_error, size_t bytes_transferred)
     {
       // Take ownership of the operation object.
-      typedef receive_from_operation<Endpoint, Handler> op_type;
+      typedef receive_from_operation<Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
@@ -817,13 +838,13 @@ public:
     static void destroy_impl(operation* op)
     {
       // Take ownership of the operation object.
-      typedef receive_from_operation<Endpoint, Handler> op_type;
+      typedef receive_from_operation<Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
     }
 
-    Endpoint& endpoint_;
+    endpoint_type& endpoint_;
     int endpoint_size_;
     asio::io_service::work work_;
     Handler handler_;
@@ -832,13 +853,13 @@ public:
   // Start an asynchronous receive. The buffer for the data being received and
   // the sender_endpoint object must both be valid for the lifetime of the
   // asynchronous operation.
-  template <typename Mutable_Buffers, typename Endpoint, typename Handler>
+  template <typename Mutable_Buffers, typename Handler>
   void async_receive_from(implementation_type& impl,
-      const Mutable_Buffers& buffers, Endpoint& sender_endp,
+      const Mutable_Buffers& buffers, endpoint_type& sender_endp,
       socket_base::message_flags flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef receive_from_operation<Endpoint, Handler> value_type;
+    typedef receive_from_operation<Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr, owner(), sender_endp, handler);
@@ -894,7 +915,8 @@ public:
     }
 
     asio::error temp_error;
-    peer.open(new_socket.get(), asio::assign_error(temp_error));
+    peer.assign(impl.protocol_, new_socket.get(),
+        asio::assign_error(temp_error));
     if (temp_error)
       error_handler(temp_error);
     else
@@ -902,9 +924,9 @@ public:
   }
 
   // Accept a new connection.
-  template <typename Socket, typename Endpoint, typename Error_Handler>
+  template <typename Socket, typename Error_Handler>
   void accept_endpoint(implementation_type& impl, Socket& peer,
-      Endpoint& peer_endpoint, Error_Handler error_handler)
+      endpoint_type& peer_endpoint, Error_Handler error_handler)
   {
     // We cannot accept a socket that is already open.
     if (peer.native() != invalid_socket)
@@ -925,7 +947,8 @@ public:
     peer_endpoint.resize(addr_len);
 
     asio::error temp_error;
-    peer.open(new_socket.get(), asio::assign_error(temp_error));
+    peer.assign(impl.protocol_, new_socket.get(),
+        asio::assign_error(temp_error));
     if (temp_error)
       error_handler(temp_error);
     else
@@ -938,7 +961,8 @@ public:
   {
   public:
     accept_operation(asio::io_service& io_service, socket_type socket,
-        socket_type new_socket, Socket& peer, Handler handler)
+        socket_type new_socket, Socket& peer, const protocol_type& protocol,
+        Handler handler)
       : operation(
           &accept_operation<Socket, Handler>::do_completion_impl,
           &accept_operation<Socket, Handler>::destroy_impl),
@@ -946,6 +970,7 @@ public:
         socket_(socket),
         new_socket_(new_socket),
         peer_(peer),
+        protocol_(protocol),
         work_(io_service),
         handler_(handler)
     {
@@ -999,7 +1024,8 @@ public:
       if (last_error == 0)
       {
         asio::error temp_error;
-        handler_op->peer_.open(handler_op->new_socket_.get(),
+        handler_op->peer_.assign(handler_op->protocol_,
+            handler_op->new_socket_.get(),
             asio::assign_error(temp_error));
         if (temp_error)
           last_error = temp_error.code();
@@ -1032,6 +1058,7 @@ public:
     socket_type socket_;
     socket_holder new_socket_;
     Socket& peer_;
+    protocol_type protocol_;
     asio::io_service::work work_;
     unsigned char output_buffer_[(sizeof(sockaddr_storage) + 16) * 2];
     Handler handler_;
@@ -1085,7 +1112,7 @@ public:
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     socket_type new_socket = sock.get();
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        owner(), impl.socket_, new_socket, peer, handler);
+        owner(), impl.socket_, new_socket, peer, impl.protocol_, handler);
     sock.release();
 
     // Accept a connection.
@@ -1108,19 +1135,17 @@ public:
     }
   }
 
-  template <typename Socket, typename Endpoint, typename Handler>
+  template <typename Socket, typename Handler>
   class accept_endp_operation
     : public operation
   {
   public:
     accept_endp_operation(asio::io_service& io_service, socket_type socket,
-        socket_type new_socket, Socket& peer, Endpoint& peer_endpoint,
+        socket_type new_socket, Socket& peer, endpoint_type& peer_endpoint,
         Handler handler)
       : operation(
-          &accept_endp_operation<
-            Socket, Endpoint, Handler>::do_completion_impl,
-          &accept_endp_operation<
-            Socket, Endpoint, Handler>::destroy_impl),
+          &accept_endp_operation<Socket, Handler>::do_completion_impl,
+          &accept_endp_operation<Socket, Handler>::destroy_impl),
         io_service_(io_service),
         socket_(socket),
         new_socket_(new_socket),
@@ -1151,7 +1176,7 @@ public:
         DWORD last_error, size_t bytes_transferred)
     {
       // Take ownership of the operation object.
-      typedef accept_endp_operation<Socket, Endpoint, Handler> op_type;
+      typedef accept_endp_operation<Socket, Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
@@ -1202,7 +1227,8 @@ public:
       if (last_error == 0)
       {
         asio::error temp_error;
-        handler_op->peer_.open(handler_op->new_socket_.get(),
+        handler_op->peer_.assign(handler_op->peer_endpoint_.protocol(),
+            handler_op->new_socket_.get(),
             asio::assign_error(temp_error));
         if (temp_error)
           last_error = temp_error.code();
@@ -1225,7 +1251,7 @@ public:
     static void destroy_impl(operation* op)
     {
       // Take ownership of the operation object.
-      typedef accept_endp_operation<Socket, Endpoint, Handler> op_type;
+      typedef accept_endp_operation<Socket, Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
@@ -1235,7 +1261,7 @@ public:
     socket_type socket_;
     socket_holder new_socket_;
     Socket& peer_;
-    Endpoint& peer_endpoint_;
+    endpoint_type& peer_endpoint_;
     asio::io_service::work work_;
     unsigned char output_buffer_[(sizeof(sockaddr_storage) + 16) * 2];
     Handler handler_;
@@ -1243,9 +1269,9 @@ public:
 
   // Start an asynchronous accept. The peer and peer_endpoint objects
   // must be valid until the accept's handler is invoked.
-  template <typename Socket, typename Endpoint, typename Handler>
+  template <typename Socket, typename Handler>
   void async_accept_endpoint(implementation_type& impl, Socket& peer,
-      Endpoint& peer_endpoint, Handler handler)
+      endpoint_type& peer_endpoint, Handler handler)
   {
     // Check whether acceptor has been initialised.
     if (impl.socket_ == invalid_socket)
@@ -1285,7 +1311,7 @@ public:
     }
 
     // Allocate and construct an operation to wrap the handler.
-    typedef accept_endp_operation<Socket, Endpoint, Handler> value_type;
+    typedef accept_endp_operation<Socket, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     socket_type new_socket = sock.get();
@@ -1314,8 +1340,8 @@ public:
   }
 
   // Connect the socket to the specified endpoint.
-  template <typename Endpoint, typename Error_Handler>
-  void connect(implementation_type& impl, const Endpoint& peer_endpoint,
+  template <typename Error_Handler>
+  void connect(implementation_type& impl, const endpoint_type& peer_endpoint,
       Error_Handler error_handler)
   {
     // Open the socket if it is not already open.
@@ -1421,9 +1447,9 @@ public:
   };
 
   // Start an asynchronous connect.
-  template <typename Endpoint, typename Handler>
-  void async_connect(implementation_type& impl, const Endpoint& peer_endpoint,
-      Handler handler)
+  template <typename Handler>
+  void async_connect(implementation_type& impl,
+      const endpoint_type& peer_endpoint, Handler handler)
   {
     // Check if the reactor was already obtained from the io_service.
     reactor_type* reactor = static_cast<reactor_type*>(
@@ -1510,8 +1536,7 @@ private:
 } // namespace detail
 } // namespace asio
 
-#endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(ASIO_HAS_IOCP)
 
 #include "asio/detail/pop_options.hpp"
 
