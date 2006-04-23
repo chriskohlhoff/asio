@@ -667,6 +667,13 @@ inline int getnameinfo(const socket_addr_type* addr,
     socket_addr_len_type addrlen, char* host, std::size_t hostlen,
     char* serv, std::size_t servlen, int flags)
 {
+#if defined(__MACH__) && defined(__APPLE__)
+  using namespace std; // For memcpy.
+  sockaddr_storage tmp_addr;
+  memcpy(&tmp_addr, addr, addrlen);
+  tmp_addr.ss_len = addrlen;
+  addr = reinterpret_cast<socket_addr_type*>(&tmp_addr);
+#endif
   set_error(0);
   int error = ::getnameinfo(addr, addrlen, host, hostlen, serv, servlen, flags);
   return translate_addrinfo_error(error);
