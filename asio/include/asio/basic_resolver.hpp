@@ -79,7 +79,6 @@ public:
   }
 
   /// Resolve a query to a list of entries.
-  template <typename Error_Handler>
   iterator resolve(const query& q)
   {
     return this->service.resolve(this->implementation, q, throw_error());
@@ -100,7 +99,6 @@ public:
   }
 
   /// Resolve an endpoint to a list of entries.
-  template <typename Error_Handler>
   iterator resolve(const endpoint_type& e)
   {
     return this->service.resolve(this->implementation, e, throw_error());
