@@ -545,7 +545,7 @@ inline int translate_netdb_error(int error)
   case NO_RECOVERY:
     return asio::error::no_recovery;
   case NO_DATA:
-    return asio::error::no_host_data;
+    return asio::error::no_data;
   default:
     BOOST_ASSERT(false);
     return get_error();
@@ -621,6 +621,55 @@ inline void freehostent(hostent* h)
 #if defined(__MACH__) && defined(__APPLE__)
   ::freehostent(h);
 #endif
+}
+
+inline int translate_addrinfo_error(int error)
+{
+  switch (error)
+  {
+  case 0:
+    return asio::error::success;
+  case EAI_AGAIN:
+    return asio::error::host_not_found_try_again;
+  case EAI_BADFLAGS:
+    return asio::error::invalid_argument;
+  case EAI_FAIL:
+    return asio::error::no_recovery;
+  case EAI_FAMILY:
+    return asio::error::address_family_not_supported;
+  case EAI_MEMORY:
+    return asio::error::no_memory;
+  case EAI_NONAME:
+    return asio::error::host_not_found;
+  case EAI_SERVICE:
+    return asio::error::service_not_found;
+  case EAI_SOCKTYPE:
+    return asio::error::socket_type_not_supported;
+  default: // Possibly the non-portable EAI_SYSTEM.
+    return get_error();
+  }
+}
+
+inline int getaddrinfo(const char* host, const char* service,
+    const addrinfo* hints, addrinfo** result)
+{
+  set_error(0);
+  int error = ::getaddrinfo(host, service, hints, result);
+  return translate_addrinfo_error(error);
+}
+
+inline void freeaddrinfo(addrinfo* ai)
+{
+  ::freeaddrinfo(ai);
+}
+
+inline int getnameinfo(const socket_addr_type* addr,
+    socket_addr_len_type addrlen, char* host, std::size_t hostlen,
+    char* serv, std::size_t servlen, int flags)
+{
+  set_error(0);
+  int error = ::getnameinfo(addr, addrlen, host, hostlen, serv, servlen, flags);
+  return translate_addrinfo_error(error);
 }
 
 inline u_long_type network_to_host_long(u_long_type value)

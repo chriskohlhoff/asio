@@ -1,0 +1,144 @@
+//
+// basic_resolver_iterator.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+// Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+#ifndef ASIO_IP_BASIC_RESOLVER_ITERATOR_HPP
+#define ASIO_IP_BASIC_RESOLVER_ITERATOR_HPP
+
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+# pragma once
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+
+#include "asio/detail/push_options.hpp"
+
+#include "asio/detail/push_options.hpp"
+#include <boost/iterator/iterator_facade.hpp>
+#include <boost/shared_ptr.hpp>
+#include <cstring>
+#include <string>
+#include <vector>
+#include "asio/detail/pop_options.hpp"
+
+#include "asio/ip/basic_resolver_entry.hpp"
+
+namespace asio {
+namespace ip {
+
+/// An iterator over the entries produced by a resolver.
+/**
+ * The asio::ip::basic_resolver_iterator class template is used to define
+ * iterators over the results returned by a resolver.
+ *
+ * @par Thread Safety:
+ * @e Distinct @e objects: Safe.@n
+ * @e Shared @e objects: Unsafe.
+ */
+template <typename Protocol>
+class basic_resolver_iterator
+  : public boost::iterator_facade<
+        basic_resolver_iterator<Protocol>,
+        const basic_resolver_entry<Protocol>,
+        boost::forward_traversal_tag>
+{
+public:
+  /// Default constructor creates an end iterator.
+  basic_resolver_iterator()
+  {
+  }
+
+  /// Create an iterator from an addrinfo list returned by getaddrinfo.
+  static basic_resolver_iterator create(::addrinfo* address_info,
+      const std::string& host_name, const std::string& service_name)
+  {
+    basic_resolver_iterator iter;
+    if (!address_info)
+      return iter;
+
+    std::string actual_host_name = host_name;
+    if (address_info->ai_canonname)
+      actual_host_name = address_info->ai_canonname;
+
+    iter.values_.reset(new values_type);
+
+    while (address_info)
+    {
+      if (address_info->ai_family == PF_INET
+          || address_info->ai_family == PF_INET6)
+      {
+        using namespace std; // For memcpy.
+        basic_endpoint<Protocol> endpoint;
+        endpoint.resize(address_info->ai_addrlen);
+        memcpy(endpoint.data(), address_info->ai_addr,
+            address_info->ai_addrlen);
+        iter.values_->push_back(
+            basic_resolver_entry<Protocol>(endpoint,
+              actual_host_name, service_name));
+      }
+      address_info = address_info->ai_next;
+    }
+
+    if (iter.values_->size())
+      iter.iter_ = iter.values_->begin();
+    else
+      iter.values_.reset();
+
+    return iter;
+  }
+
+  /// Create an iterator from an endpoint, host name and service name.
+  static basic_resolver_iterator create(
+      const typename Protocol::endpoint& endpoint,
+      const std::string& host_name, const std::string& service_name)
+  {
+    basic_resolver_iterator iter;
+    iter.values_.reset(new values_type);
+    iter.values_->push_back(
+        basic_resolver_entry<Protocol>(endpoint, host_name, service_name));
+    iter.iter_ = iter.values_->begin();
+    return iter;
+  }
+
+private:
+  friend class boost::iterator_core_access;
+
+  void increment()
+  {
+    if (++iter_ == values_->end())
+    {
+      // Reset state to match a default constructed end iterator.
+      values_.reset();
+      iter_ = typename values_type::const_iterator();
+    }
+  }
+
+  bool equal(const basic_resolver_iterator& other) const
+  {
+    if (!values_ && !other.values_)
+      return true;
+    if (values_ != other.values_)
+      return false;
+    return iter_ == other.iter_;
+  }
+
+  const basic_resolver_entry<Protocol>& dereference() const
+  {
+    return *iter_;
+  }
+
+  typedef std::vector<basic_resolver_entry<Protocol> > values_type;
+  boost::shared_ptr<values_type> values_;
+  typename values_type::const_iterator iter_;
+};
+
+} // namespace ip
+} // namespace asio
+
+#include "asio/detail/pop_options.hpp"
+
+#endif // ASIO_IP_BASIC_RESOLVER_ITERATOR_HPP

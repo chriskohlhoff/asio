@@ -38,10 +38,12 @@ namespace asio {
 #if defined(BOOST_WINDOWS)
 # define ASIO_SOCKET_ERROR(e) WSA ## e
 # define ASIO_NETDB_ERROR(e) WSA ## e
+# define ASIO_GETADDRINFO_ERROR(e) e
 # define ASIO_OS_ERROR(e_win, e_posix) e_win
 #else
 # define ASIO_SOCKET_ERROR(e) e
 # define ASIO_NETDB_ERROR(e) 16384 + e
+# define ASIO_GETADDRINFO_ERROR(e) 32768 + e
 # define ASIO_OS_ERROR(e_win, e_posix) e_posix
 #endif
 
@@ -122,8 +124,8 @@ public:
     /// No buffer space available.
     no_buffer_space = ASIO_SOCKET_ERROR(ENOBUFS),
 
-    /// The host is valid but does not have address data.
-    no_host_data = ASIO_NETDB_ERROR(NO_DATA),
+    /// The query is valid but does not have associated address data.
+    no_data = ASIO_NETDB_ERROR(NO_DATA),
 
     /// Cannot allocate memory.
     no_memory = ASIO_OS_ERROR(ERROR_OUTOFMEMORY, ENOMEM),
@@ -148,6 +150,14 @@ public:
 
     /// Operation cancelled.
     operation_aborted = ASIO_OS_ERROR(ERROR_OPERATION_ABORTED, ECANCELED),
+
+    /// The service is not supported for the given socket type.
+    service_not_found = ASIO_OS_ERROR(
+        WSATYPE_NOT_FOUND,
+        ASIO_GETADDRINFO_ERROR(EAI_SERVICE)),
+
+    /// The socket type is not supported.
+    socket_type_not_supported = ASIO_GETADDRINFO_ERROR(EAI_SOCKTYPE),
 
     /// Cannot send after transport endpoint shutdown.
     shut_down = ASIO_SOCKET_ERROR(ESHUTDOWN),
@@ -237,12 +247,16 @@ public:
       return "Host not found (non-authoritative), try again later.";
     case error::no_recovery:
       return "A non-recoverable error occurred during database lookup.";
-    case error::no_host_data:
-      return "The name is valid, but it does not have associated data.";
+    case error::no_data:
+      return "The query is valid, but it does not have associated data.";
 #if !defined(__sun)
     case error::operation_aborted:
       return "Operation aborted.";
 #endif // !defined(__sun)
+    case error::service_not_found:
+      return "Service not found.";
+    case error::socket_type_not_supported:
+      return "Socket type not supported.";
     default:
 #if defined(__sun) || defined(__QNX__)
       return strerror(code_);

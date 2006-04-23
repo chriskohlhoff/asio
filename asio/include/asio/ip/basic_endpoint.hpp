@@ -323,7 +323,7 @@ Ostream& operator<<(Ostream& os, const basic_endpoint<Protocol>& endpoint)
 }
 #endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
 
-} // namespace ipv6
+} // namespace ip
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

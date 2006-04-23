@@ -2,6 +2,7 @@ nobase_include_HEADERS = \
 	asio/basic_datagram_socket.hpp \
 	asio/basic_deadline_timer.hpp \
 	asio/basic_io_object.hpp \
+	asio/basic_resolver.hpp \
 	asio/basic_socket.hpp \
 	asio/basic_socket_acceptor.hpp \
 	asio/basic_strand.hpp \
@@ -50,6 +51,7 @@ nobase_include_HEADERS = \
 	asio/detail/reactive_socket_service.hpp \
 	asio/detail/reactor_op_queue.hpp \
 	asio/detail/reactor_timer_queue.hpp \
+	asio/detail/resolver_service.hpp \
 	asio/detail/scoped_lock.hpp \
 	asio/detail/select_interrupter.hpp \
 	asio/detail/select_reactor.hpp \
@@ -89,6 +91,9 @@ nobase_include_HEADERS = \
 	asio/io_service.hpp \
 	asio/ip/address.hpp \
 	asio/ip/basic_endpoint.hpp \
+	asio/ip/basic_resolver_entry.hpp \
+	asio/ip/basic_resolver_iterator.hpp \
+	asio/ip/basic_resolver_query.hpp \
 	asio/ip/multicast.hpp \
 	asio/ip/tcp.hpp \
 	asio/ip/udp.hpp \
@@ -114,6 +119,7 @@ nobase_include_HEADERS = \
 	asio/is_write_buffered.hpp \
 	asio/placeholders.hpp \
 	asio/read.hpp \
+	asio/resolver_service.hpp \
 	asio/socket_acceptor_service.hpp \
 	asio/socket_base.hpp \
 	asio/ssl/basic_context.hpp \

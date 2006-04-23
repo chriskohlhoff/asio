@@ -17,11 +17,15 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/basic_resolver.hpp"
 #include "asio/basic_socket_acceptor.hpp"
 #include "asio/basic_stream_socket.hpp"
+#include "asio/resolver_service.hpp"
 #include "asio/socket_acceptor_service.hpp"
 #include "asio/stream_socket_service.hpp"
 #include "asio/ip/basic_endpoint.hpp"
+#include "asio/ip/basic_resolver_iterator.hpp"
+#include "asio/ip/basic_resolver_query.hpp"
 #include "asio/ipv4/tcp.hpp"
 #include "asio/ipv6/tcp.hpp"
 #include "asio/detail/socket_option.hpp"
@@ -53,6 +57,12 @@ public:
   /// The type of a TCP endpoint.
   typedef basic_endpoint<tcp> endpoint;
 
+  /// The type of a resolver query.
+  typedef basic_resolver_query<tcp> resolver_query;
+
+  /// The type of a resolver iterator.
+  typedef basic_resolver_iterator<tcp> resolver_iterator;
+
   /// Construct to represent the IPv4 TCP protocol.
   tcp(const ipv4_protocol&)
     : family_(PF_INET)
@@ -83,17 +93,23 @@ public:
     return family_;
   }
 
-  /// The service type for IPv4 TCP sockets.
+  /// The service type for TCP sockets.
   typedef stream_socket_service<tcp> socket_service;
 
-  /// The IPv4 TCP socket type.
+  /// The TCP socket type.
   typedef basic_stream_socket<socket_service> socket;
 
-  /// The service type for IPv4 TCP acceptors.
+  /// The service type for TCP acceptors.
   typedef socket_acceptor_service<tcp> acceptor_service;
 
-  /// The IPv4 TCP acceptor type.
+  /// The TCP acceptor type.
   typedef basic_socket_acceptor<acceptor_service> acceptor;
+
+  /// The service type for TCP resolvers.
+  typedef resolver_service<tcp> resolver_service;
+
+  /// The TCP acceptor type.
+  typedef basic_resolver<resolver_service> resolver;
 
   /// Socket option for disabling the Nagle algorithm.
   /**

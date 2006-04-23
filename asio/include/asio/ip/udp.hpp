@@ -18,8 +18,12 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/basic_datagram_socket.hpp"
+#include "asio/basic_resolver.hpp"
 #include "asio/datagram_socket_service.hpp"
+#include "asio/resolver_service.hpp"
 #include "asio/ip/basic_endpoint.hpp"
+#include "asio/ip/basic_resolver_iterator.hpp"
+#include "asio/ip/basic_resolver_query.hpp"
 #include "asio/ipv4/udp.hpp"
 #include "asio/ipv6/udp.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -49,6 +53,12 @@ public:
 
   /// The type of a UDP endpoint.
   typedef basic_endpoint<udp> endpoint;
+
+  /// The type of a resolver query.
+  typedef basic_resolver_query<udp> resolver_query;
+
+  /// The type of a resolver iterator.
+  typedef basic_resolver_iterator<udp> resolver_iterator;
 
   /// Construct to represent the IPv4 UDP protocol.
   udp(const ipv4_protocol&)
@@ -85,6 +95,12 @@ public:
 
   /// The IPv4 UDP socket type.
   typedef basic_datagram_socket<socket_service> socket;
+
+  /// The service type for TCP resolvers.
+  typedef resolver_service<udp> resolver_service;
+
+  /// The TCP acceptor type.
+  typedef basic_resolver<resolver_service> resolver;
 
 private:
   int family_;
