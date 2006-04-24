@@ -13,17 +13,18 @@ int main(int argc, char* argv[])
 
     asio::io_service io_service;
 
-    asio::ip::tcp::socket socket(io_service);
     asio::ip::tcp::resolver resolver(io_service);
     asio::ip::tcp::resolver::query query(argv[1], "daytime");
-    asio::ip::tcp::resolver::iterator iterator = resolver.resolve(query);
-
-    asio::error error = asio::error::host_not_found;
+    asio::ip::tcp::resolver::iterator endpoint_iterator =
+      resolver.resolve(query);
     asio::ip::tcp::resolver::iterator end;
-    while (error && iterator != end)
+
+    asio::ip::tcp::socket socket(io_service);
+    asio::error error = asio::error::host_not_found;
+    while (error && endpoint_iterator != end)
     {
       socket.close();
-      socket.connect(*iterator++, asio::assign_error(error));
+      socket.connect(*endpoint_iterator++, asio::assign_error(error));
     }
     if (error)
       throw error;

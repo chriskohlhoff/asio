@@ -19,31 +19,33 @@ All programs that use asio need to have at least one asio::io_service object.
 
 \until asio::io_service
 
-We need to turn the server name that was specified as a
-parameter to the application, into an IP address. To do this we use an
-asio::ipv4::host_resolver object.
+We need to turn the server name that was specified as a parameter to the
+application, into a TCP endpoint. To do this we use an
+asio::ip::tcp::resolver object.
 
-\until asio::ipv4::host_resolver
+\until asio::ip::tcp::resolver
 
-Now we need an object of type asio::ipv4::host for the server.
-The asio::ipv4::host_resolver::get_host_by_name() function takes a
-hostname and populates the <tt>host</tt> object with the corresponding IP
-address.
+A resolver takes a query object and turns it into a list of endpoints. We
+construct a query using the name of the server, specified in <tt>argv[1]</tt>,
+and the name of the service, in this case <tt>"daytime"</tt>.
 
-\until host_resolver.get_host_by_name
+\until asio::ip::tcp::resolver::query
 
-The socket is to connect to the daytime service, TCP port 13, on
-the server. Create an object for this remote endpoint.
+The list of endpoints is returned using an iterator of type
+asio::ip::tcp::resolver::iterator. A default constructed
+asio::ip::tcp::resolver::iterator object is used as the end iterator.
 
-\until asio::ipv4::tcp::endpoint
+\until asio::ip::tcp::resolver::iterator end;
 
-Now create and connect the socket.
+Now we create and connect the socket. The list of endpoints obtained above may
+contain both IPv4 and IPv6 endpoints, so we need to try each of them until we
+find one that works.
 
-\until socket.connect
+\until throw error
 
 The connection is open. All we need to do now is read the
 response from the daytime service. When the server closes the connection, the
-asio::ipv4::tcp::socket::read_some() function will exit with the
+asio::ip::tcp::socket::read_some() function will exit with the
 asio::error::eof error, which is how we know to exit the loop.
 
 \until }
@@ -75,10 +77,10 @@ with TCP.
 
 \until asio::io_service
 
-An asio::ipv4::tcp::acceptor object needs to be created to listen
-for new connections. It is initialised to listen on TCP port 13.
+An asio::ip::tcp::acceptor object needs to be created to listen
+for new connections. It is initialised to listen on TCP port 13, for IP version 4.
 
-\until asio::ipv4::tcp::acceptor
+\until asio::ip::tcp::acceptor
 \until endpoint
 
 This is an iterative server, which means that it will handle one
@@ -118,15 +120,15 @@ Return to \ref tutdaytime2
 
 \dontinclude daytime3/server.cpp
 \skip int main()
-\until asio::ipv4::tcp::acceptor acceptor
+\until asio::ip::tcp::acceptor acceptor
 \until endpoint
 
 We need to set up the initial socket to hold an accepted client connection.
 
-\until asio::ipv4::tcp::socket*
-\until ipv4::tcp::socket
+\until asio::ip::tcp::socket*
+\until ip::tcp::socket
 
-The function asio::ipv4::tcp::acceptor::async_accept() will cause the
+The function asio::ip::tcp::acceptor::async_accept() will cause the
 application to listen in the background for a new connection. When such a
 connection is received, the io_service will invoke the <tt>handle_accept()</tt>
 function with an asio::error argument.
@@ -155,7 +157,7 @@ Determine what we are going to send.
 \until size_t write_length
 
 We now call \ref async_write to serve the data to the client. Note that we
-are using \ref async_write, rather than asio::ipv4::tcp::socket::write_some, to
+are using \ref async_write, rather than asio::ip::tcp::socket::write_some, to
 ensure that the entire block of data is sent.
 
 \until asio::placeholders::bytes_transferred
@@ -208,21 +210,29 @@ with UDP.
 The start of the application is essentially the same as for the TCP daytime
 client.
 
-\until host_resolver.get_host_by_name
+\until asio::io_service
 
-Create an object for the remote endpoint, UDP port 13 on the server.
+We use an asio::ip::udp::resolver object to find the correct remote endpoint to
+use based on the host and service names. The query is restricted to return only
+IPv4 endpoints by the asio::ip::udp::v4() argument.
 
-\until asio::ipv4::udp::endpoint
+\until asio::ip::udp::v4
+
+The asio::ip::udp::resolver::resolve() function is guaranteed to return at
+least one endpoint in the list if it does not fail. This means it is safe to
+dereference the return value directly.
+
+\until asio::ip::udp::endpoint
 
 Since UDP is datagram-oriented, we will not be using a stream socket. Create an
-asio::ipv4::udp::socket and initiate contact with the remote endpoint.
+asio::ip::udp::socket and initiate contact with the remote endpoint.
 
 \until asio::buffer(send_buf,
 \until receiver_endpoint
 
 Now we need to be ready to accept whatever the server sends back to us. The
 endpoint on our side that receives the server's response will be initialised by
-asio::ipv4::udp::socket::receive_from(). 
+asio::ip::udp::socket::receive_from(). 
 
 \until }
 
@@ -253,13 +263,13 @@ with UDP.
 
 \until asio::io_service
 
-Create an asio::ipv4::udp::socket object to receive requests on UDP port 13.
+Create an asio::ip::udp::socket object to receive requests on UDP port 13.
 
-\until asio::ipv4::udp::socket
+\until asio::ip::udp::socket
 \until endpoint
 
 Wait for a client to initiate contact with us. The remote_endpoint object will
-be populated by asio::ipv4::udp::socket::receive_from().
+be populated by asio::ip::udp::socket::receive_from().
 
 \until throw
 
@@ -297,14 +307,14 @@ Return to \ref tutdaytime5
 
 \dontinclude daytime6/server.cpp
 \skip int main()
-\until asio::ipv4::udp::endpoint
+\until asio::ip::udp::endpoint
 
-Create an asio::ipv4::udp::socket object to receive requests on UDP port 13.
+Create an asio::ip::udp::socket object to receive requests on UDP port 13.
 
-\until asio::ipv4::udp::socket
+\until asio::ip::udp::socket
 \until endpoint
 
-The function asio::ipv4::udp::socket::async_receive_from() will cause the
+The function asio::ip::udp::socket::async_receive_from() will cause the
 application to listen in the background for a new request. When such a request
 is received, the io_service will invoke the <tt>handle_receive_from()</tt>
 function with two arguments: asio::error, and bytes_transferred.
@@ -335,7 +345,7 @@ Determine what we are going to send.
 
 \until size_t send_length
 
-We now call asio::ipv4::udp::socket::async_send_to() to serve the data to the
+We now call asio::ip::udp::socket::async_send_to() to serve the data to the
 client.
 
 \until asio::placeholders::bytes_transferred
@@ -387,12 +397,12 @@ have just written, into a single server application.
 \skip int main()
 \until asio::io_service
 
-We will begin by creating an asio::ipv4::tcp::socket object to hold an accepted
+We will begin by creating an asio::ip::tcp::socket object to hold an accepted
 TCP client connection.
 
 \until asio::placeholders::error
 
-Now we need an asio::ipv4::udp::socket object for UDP client requests.
+Now we need an asio::ip::udp::socket object for UDP client requests.
 
 \until &remote_endpoint, asio::placeholders::error
 

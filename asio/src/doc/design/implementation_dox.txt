@@ -20,8 +20,8 @@ asio::io_service::run().
 
 An additional thread per io_service is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
-asio::ipv4::host_resolver::async_get_host_by_address() or
-asio::ipv4::host_resolver::async_get_host_by_name().
+asio::ip::tcp::resolver::async_resolve() or
+asio::ip::udp::resolver::async_resolve().
 
 
 \section linux26 Linux Kernel 2.6
@@ -37,8 +37,8 @@ asio::io_service::run().
 
 An additional thread per io_service is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
-asio::ipv4::host_resolver::async_get_host_by_address() or
-asio::ipv4::host_resolver::async_get_host_by_name().
+asio::ip::tcp::resolver::async_resolve() or
+asio::ip::udp::resolver::async_resolve().
 
 
 \section solaris Solaris
@@ -55,8 +55,8 @@ asio::io_service::run().
 
 An additional thread per io_service is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
-asio::ipv4::host_resolver::async_get_host_by_address() or
-asio::ipv4::host_resolver::async_get_host_by_name().
+asio::ip::tcp::resolver::async_resolve() or
+asio::ip::udp::resolver::async_resolve().
 
 
 \section macosx Mac OS X
@@ -72,8 +72,8 @@ asio::io_service::run().
 
 An additional thread per io_service is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
-asio::ipv4::host_resolver::async_get_host_by_address() or
-asio::ipv4::host_resolver::async_get_host_by_name().
+asio::ip::tcp::resolver::async_resolve() or
+asio::ip::udp::resolver::async_resolve().
 
 
 \section win9x Windows 95, 98 and Me
@@ -89,8 +89,8 @@ asio::io_service::run().
 
 An additional thread per io_service is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
-asio::ipv4::host_resolver::async_get_host_by_address() or
-asio::ipv4::host_resolver::async_get_host_by_name().
+asio::ip::tcp::resolver::async_resolve() or
+asio::ip::udp::resolver::async_resolve().
 
 
 \section winnt Windows NT, 2000 and XP
@@ -115,7 +115,7 @@ stream_socket or socket_acceptor is created.
 
 An additional thread per io_service is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
-asio::ipv4::host_resolver::async_get_host_by_address() or
-asio::ipv4::host_resolver::async_get_host_by_name().
+asio::ip::tcp::resolver::async_resolve() or
+asio::ip::udp::resolver::async_resolve().
 
 */
