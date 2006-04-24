@@ -16,7 +16,8 @@ public:
   /// Constructor opens the acceptor and starts waiting for the first incoming
   /// connection.
   server(asio::io_service& io_service, unsigned short port)
-    : acceptor_(io_service, asio::ipv4::tcp::endpoint(port))
+    : acceptor_(io_service,
+        asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
   {
     // Create the data to be sent to each client.
     stock s;
@@ -95,7 +96,7 @@ public:
 
 private:
   /// The acceptor object used to accept incoming socket connections.
-  asio::ipv4::tcp::acceptor acceptor_;
+  asio::ip::tcp::acceptor acceptor_;
 
   /// The data to be sent to each client.
   std::vector<stock> stocks_;

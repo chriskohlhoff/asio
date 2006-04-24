@@ -24,8 +24,6 @@
 #include "asio/ip/basic_endpoint.hpp"
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
-#include "asio/ipv4/udp.hpp"
-#include "asio/ipv6/udp.hpp"
 #include "asio/detail/socket_types.hpp"
 
 namespace asio {
@@ -45,12 +43,6 @@ namespace ip {
 class udp
 {
 public:
-  /// The IPv4 protocol type.
-  typedef asio::ipv4::udp ipv4_protocol;
-
-  /// The IPv6 protocol type.
-  typedef asio::ipv6::udp ipv6_protocol;
-
   /// The type of a UDP endpoint.
   typedef basic_endpoint<udp> endpoint;
 
@@ -61,15 +53,15 @@ public:
   typedef basic_resolver_iterator<udp> resolver_iterator;
 
   /// Construct to represent the IPv4 UDP protocol.
-  udp(const ipv4_protocol&)
-    : family_(PF_INET)
+  static udp v4()
   {
+    return udp(PF_INET);
   }
 
   /// Construct to represent the IPv4 UDP protocol.
-  udp(const ipv6_protocol&)
-    : family_(PF_INET6)
+  static udp v6()
   {
+    return udp(PF_INET6);
   }
 
   /// Obtain an identifier for the type of the protocol.
@@ -99,10 +91,16 @@ public:
   /// The service type for TCP resolvers.
   typedef resolver_service<udp> resolver_service;
 
-  /// The TCP acceptor type.
+  /// The TCP resolver type.
   typedef basic_resolver<resolver_service> resolver;
 
 private:
+  // Construct with a specific family.
+  explicit udp(int family)
+    : family_(family)
+  {
+  }
+
   int family_;
 };
 

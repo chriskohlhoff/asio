@@ -9,13 +9,13 @@ int main()
   {
     asio::io_service io_service;
 
-    asio::ipv4::udp::socket socket(io_service,
-        asio::ipv4::udp::endpoint(13));
+    asio::ip::udp::socket socket(io_service,
+        asio::ip::udp::endpoint(asio::ip::udp::v4(), 13));
 
     for (;;)
     {
       char recv_buf[1];
-      asio::ipv4::udp::endpoint remote_endpoint;
+      asio::ip::udp::endpoint remote_endpoint;
       asio::error error;
       socket.receive_from(
           asio::buffer(recv_buf, sizeof(recv_buf)),

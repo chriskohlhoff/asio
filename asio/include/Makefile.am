@@ -90,6 +90,8 @@ nobase_include_HEADERS = \
 	asio/impl/write.ipp \
 	asio/io_service.hpp \
 	asio/ip/address.hpp \
+	asio/ip/address_v4.hpp \
+	asio/ip/address_v6.hpp \
 	asio/ip/basic_endpoint.hpp \
 	asio/ip/basic_resolver_entry.hpp \
 	asio/ip/basic_resolver_iterator.hpp \
@@ -98,23 +100,6 @@ nobase_include_HEADERS = \
 	asio/ip/tcp.hpp \
 	asio/ip/udp.hpp \
 	asio/ip/detail/socket_option.hpp \
-	asio/ipv4/address.hpp \
-	asio/ipv4/basic_endpoint.hpp \
-	asio/ipv4/basic_host_resolver.hpp \
-	asio/ipv4/detail/host_resolver_service.hpp \
-	asio/ipv4/detail/socket_option.hpp \
-	asio/ipv4/host.hpp \
-	asio/ipv4/host_resolver.hpp \
-	asio/ipv4/host_resolver_service.hpp \
-	asio/ipv4/multicast.hpp \
-	asio/ipv4/tcp.hpp \
-	asio/ipv4/udp.hpp \
-	asio/ipv6/address.hpp \
-	asio/ipv6/basic_endpoint.hpp \
-	asio/ipv6/detail/socket_option.hpp \
-	asio/ipv6/multicast.hpp \
-	asio/ipv6/tcp.hpp \
-	asio/ipv6/udp.hpp \
 	asio/is_read_buffered.hpp \
 	asio/is_write_buffered.hpp \
 	asio/placeholders.hpp \

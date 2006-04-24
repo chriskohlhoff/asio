@@ -21,8 +21,8 @@ void error_handler_test()
 {
   io_service ios;
 
-  ipv4::tcp::socket s(ios);
-  ipv4::tcp::endpoint endpoint(321, ipv4::address::any());
+  ip::tcp::socket s(ios);
+  ip::tcp::endpoint endpoint(ip::tcp::v4(), 321);
 
   error expected_err;
   s.connect(endpoint, assign_error(expected_err));

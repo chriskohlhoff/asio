@@ -25,6 +25,8 @@
 #include <vector>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/detail/socket_ops.hpp"
+#include "asio/detail/socket_types.hpp"
 #include "asio/ip/basic_resolver_entry.hpp"
 
 namespace asio {
@@ -72,7 +74,7 @@ public:
           || address_info->ai_family == PF_INET6)
       {
         using namespace std; // For memcpy.
-        basic_endpoint<Protocol> endpoint;
+        typename Protocol::endpoint endpoint;
         endpoint.resize(address_info->ai_addrlen);
         memcpy(endpoint.data(), address_info->ai_addr,
             address_info->ai_addrlen);

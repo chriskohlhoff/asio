@@ -2,7 +2,6 @@
 #include <string>
 #include <asio.hpp>
 #include <boost/bind.hpp>
-#include <boost/lexical_cast.hpp>
 #include "server.hpp"
 
 #if !defined(_WIN32)
@@ -17,11 +16,13 @@ int main(int argc, char* argv[])
     // Check command line arguments.
     if (argc != 3)
     {
-      std::cerr << "Usage: http_server <port> <doc_root>\n";
+      std::cerr << "Usage: http_server <address> <port> <doc_root>\n";
+      std::cerr << "  For IPv4, try:\n";
+      std::cerr << "    receiver 0.0.0.0 80 .\n";
+      std::cerr << "  For IPv6, try:\n";
+      std::cerr << "    receiver 0::0 80 .\n";
       return 1;
     }
-    unsigned short port = boost::lexical_cast<unsigned short>(argv[1]);
-    std::string doc_root = argv[2];
 
     // Block all signals for background thread.
     sigset_t new_mask;
@@ -30,7 +31,7 @@ int main(int argc, char* argv[])
     pthread_sigmask(SIG_BLOCK, &new_mask, &old_mask);
 
     // Run server in background thread.
-    http::server::server s(port, doc_root);
+    http::server::server s(argv[1], argv[2], argv[3]);
     asio::thread t(boost::bind(&http::server::server::run, &s));
 
     // Restore previous signals.

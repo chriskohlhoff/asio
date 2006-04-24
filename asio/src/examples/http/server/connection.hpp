@@ -27,7 +27,7 @@ public:
       connection_manager& manager, request_handler& handler);
 
   /// Get the socket associated with the connection.
-  asio::ipv4::tcp::socket& socket();
+  asio::ip::tcp::socket& socket();
 
   /// Start the first asynchronous operation for the connection.
   void start();
@@ -43,7 +43,7 @@ private:
   void handle_write(const asio::error& e);
 
   /// Socket for the connection.
-  asio::ipv4::tcp::socket socket_;
+  asio::ip::tcp::socket socket_;
 
   /// The manager for this connection.
   connection_manager& connection_manager_;

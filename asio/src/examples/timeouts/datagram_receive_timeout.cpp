@@ -11,7 +11,7 @@ public:
   datagram_handler(io_service& ios)
     : io_service_(ios),
       timer_(ios),
-      socket_(ios, ipv4::udp::endpoint(32124))
+      socket_(ios, ip::udp::endpoint(ip::udp::v4(), 32124))
   {
     socket_.async_receive_from(
         asio::buffer(data_, max_length), sender_endpoint_,
@@ -43,8 +43,8 @@ public:
 private:
   io_service& io_service_;
   deadline_timer timer_;
-  ipv4::udp::socket socket_;
-  ipv4::udp::endpoint sender_endpoint_;
+  ip::udp::socket socket_;
+  ip::udp::endpoint sender_endpoint_;
   enum { max_length = 512 };
   char data_[max_length];
 };

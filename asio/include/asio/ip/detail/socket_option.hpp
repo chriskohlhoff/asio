@@ -186,10 +186,10 @@ public:
   {
     ipv4_value_.imr_multiaddr.s_addr =
       asio::detail::socket_ops::host_to_network_long(
-          asio::ipv4::address::any().to_ulong());
+          asio::ip::address_v4::any().to_ulong());
     ipv4_value_.imr_interface.s_addr =
       asio::detail::socket_ops::host_to_network_long(
-          asio::ipv4::address::any().to_ulong());
+          asio::ip::address_v4::any().to_ulong());
 
     in6_addr tmp_addr = IN6ADDR_ANY_INIT;
     ipv6_value_.ipv6mr_multiaddr = tmp_addr;
@@ -199,18 +199,18 @@ public:
   // Construct with multicast address only.
   multicast_request(const asio::ip::address& multicast_address)
   {
-    if (multicast_address.is_ipv6())
+    if (multicast_address.is_v6())
     {
       ipv4_value_.imr_multiaddr.s_addr =
         asio::detail::socket_ops::host_to_network_long(
-            asio::ipv4::address::any().to_ulong());
+            asio::ip::address_v4::any().to_ulong());
       ipv4_value_.imr_interface.s_addr =
         asio::detail::socket_ops::host_to_network_long(
-            asio::ipv4::address::any().to_ulong());
+            asio::ip::address_v4::any().to_ulong());
 
       using namespace std; // For memcpy.
-      asio::ipv6::address ipv6_address = multicast_address.to_ipv6();
-      asio::ipv6::address::bytes_type bytes = ipv6_address.to_bytes();
+      asio::ip::address_v6 ipv6_address = multicast_address.to_v6();
+      asio::ip::address_v6::bytes_type bytes = ipv6_address.to_bytes();
       memcpy(ipv6_value_.ipv6mr_multiaddr.s6_addr, bytes.elems, 16);
       ipv6_value_.ipv6mr_interface = 0;
     }
@@ -218,10 +218,10 @@ public:
     {
       ipv4_value_.imr_multiaddr.s_addr =
         asio::detail::socket_ops::host_to_network_long(
-            multicast_address.to_ipv4().to_ulong());
+            multicast_address.to_v4().to_ulong());
       ipv4_value_.imr_interface.s_addr =
         asio::detail::socket_ops::host_to_network_long(
-            asio::ipv4::address::any().to_ulong());
+            asio::ip::address_v4::any().to_ulong());
 
       in6_addr tmp_addr = IN6ADDR_ANY_INIT;
       ipv6_value_.ipv6mr_multiaddr = tmp_addr;

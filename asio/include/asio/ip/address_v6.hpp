@@ -1,6 +1,6 @@
 //
-// address.hpp
-// ~~~~~~~~~~~
+// address_v6.hpp
+// ~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_IPV6_ADDRESS_HPP
-#define ASIO_IPV6_ADDRESS_HPP
+#ifndef ASIO_IP_ADDRESS_V6_HPP
+#define ASIO_IP_ADDRESS_V6_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -31,25 +31,25 @@
 #include "asio/detail/socket_types.hpp"
 
 namespace asio {
-namespace ipv6 {
+namespace ip {
 
 /// Implements IP version 6 style addresses.
 /**
- * The asio::ipv6::address class provides the ability to use and
+ * The asio::ip::address_v6 class provides the ability to use and
  * manipulate IP version 6 addresses.
  *
  * @par Thread Safety:
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
-class address
+class address_v6
 {
 public:
   /// The type used to represent an address as an array of bytes.
   typedef boost::array<unsigned char, 16> bytes_type;
 
   /// Default constructor.
-  address()
+  address_v6()
     : scope_id_(0)
   {
     in6_addr tmp_addr = IN6ADDR_ANY_INIT;
@@ -57,7 +57,7 @@ public:
   }
 
   /// Construct an address from raw bytes and scope ID.
-  address(const bytes_type& bytes, unsigned long scope_id = 0)
+  address_v6(const bytes_type& bytes, unsigned long scope_id = 0)
     : scope_id_(scope_id)
   {
     using namespace std; // For memcpy.
@@ -65,14 +65,14 @@ public:
   }
 
   /// Copy constructor.
-  address(const address& other)
+  address_v6(const address_v6& other)
     : addr_(other.addr_),
       scope_id_(other.scope_id_)
   {
   }
 
   /// Assign from another address.
-  address& operator=(const address& other)
+  address_v6& operator=(const address_v6& other)
   {
     addr_ = other.addr_;
     scope_id_ = other.scope_id_;
@@ -124,35 +124,35 @@ public:
   }
 
   /// Create an address from an IP address string.
-  static address from_string(const char* str)
+  static address_v6 from_string(const char* str)
   {
     return from_string(str, asio::throw_error());
   }
 
   /// Create an address from an IP address string.
   template <typename Error_Handler>
-  static address from_string(const char* str, Error_Handler error_handler)
+  static address_v6 from_string(const char* str, Error_Handler error_handler)
   {
-    address tmp;
+    address_v6 tmp;
     if (asio::detail::socket_ops::inet_pton(
           AF_INET6, str, &tmp.addr_, &tmp.scope_id_) <= 0)
     {
       asio::error e(asio::detail::socket_ops::get_error());
       error_handler(e);
-      return address();
+      return address_v6();
     }
     return tmp;
   }
 
   /// Create an address from an IP address string.
-  static address from_string(const std::string& str)
+  static address_v6 from_string(const std::string& str)
   {
     return from_string(str.c_str(), asio::throw_error());
   }
 
   /// Create an address from an IP address string.
   template <typename Error_Handler>
-  static address from_string(const std::string& str,
+  static address_v6 from_string(const std::string& str,
       Error_Handler error_handler)
   {
     return from_string(str.c_str(), error_handler);
@@ -231,7 +231,7 @@ public:
   }
 
   /// Compare two addresses for equality.
-  friend bool operator==(const address& a1, const address& a2)
+  friend bool operator==(const address_v6& a1, const address_v6& a2)
   {
     using namespace std; // For memcmp.
     return memcmp(&a1.addr_, &a2.addr_, sizeof(in6_addr)) == 0
@@ -239,7 +239,7 @@ public:
   }
 
   /// Compare two addresses for inequality.
-  friend bool operator!=(const address& a1, const address& a2)
+  friend bool operator!=(const address_v6& a1, const address_v6& a2)
   {
     using namespace std; // For memcmp.
     return memcmp(&a1.addr_, &a2.addr_, sizeof(in6_addr)) != 0
@@ -247,7 +247,7 @@ public:
   }
 
   /// Compare addresses for ordering.
-  friend bool operator<(const address& a1, const address& a2)
+  friend bool operator<(const address_v6& a1, const address_v6& a2)
   {
     using namespace std; // For memcmp.
     int memcmp_result = memcmp(&a1.addr_, &a2.addr_, sizeof(in6_addr)) < 0;
@@ -259,15 +259,15 @@ public:
   }
 
   /// Obtain an address object that represents any address.
-  static address any()
+  static address_v6 any()
   {
-    return address();
+    return address_v6();
   }
 
   /// Obtain an address object that represents the loopback address.
-  static address loopback()
+  static address_v6 loopback()
   {
-    address tmp;
+    address_v6 tmp;
     in6_addr tmp_addr = IN6ADDR_LOOPBACK_INIT;
     tmp.addr_ = tmp_addr;
     return tmp;
@@ -291,18 +291,19 @@ private:
  *
  * @return The output stream.
  *
- * @relates ipv6::address
+ * @relates address_v6
  */
-template <typename Ostream>
-Ostream& operator<<(Ostream& os, const address& addr)
+template <typename Elem, typename Traits>
+std::basic_ostream<Elem, Traits>& operator<<(
+    std::basic_ostream<Elem, Traits>& os, const address_v6& addr)
 {
   os << addr.to_string();
   return os;
 }
 
-} // namespace ipv6
+} // namespace ip
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_IPV6_ADDRESS_HPP
+#endif // ASIO_IP_ADDRESS_V6_HPP

@@ -4,9 +4,11 @@
 #include <boost/smart_ptr.hpp>
 #include "asio.hpp"
 
+using asio::ip::tcp;
+
 const int max_length = 1024;
 
-typedef boost::shared_ptr<asio::ipv4::tcp::socket> socket_ptr;
+typedef boost::shared_ptr<tcp::socket> socket_ptr;
 
 void session(socket_ptr sock)
 {
@@ -39,11 +41,10 @@ void session(socket_ptr sock)
 
 void server(asio::io_service& io_service, short port)
 {
-  asio::ipv4::tcp::acceptor a(io_service,
-      asio::ipv4::tcp::endpoint(port));
+  tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), port));
   for (;;)
   {
-    socket_ptr sock(new asio::ipv4::tcp::socket(io_service));
+    socket_ptr sock(new tcp::socket(io_service));
     asio::error error;
     a.accept(*sock, asio::assign_error(error));
     if (!error)

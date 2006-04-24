@@ -32,7 +32,7 @@ public:
 
   /// Get the underlying socket. Used for making a connection or for accepting
   /// an incoming connection.
-  asio::ipv4::tcp::socket& socket()
+  asio::ip::tcp::socket& socket()
   {
     return socket_;
   }
@@ -149,7 +149,7 @@ public:
 
 private:
   /// The underlying socket.
-  asio::ipv4::tcp::socket socket_;
+  asio::ip::tcp::socket socket_;
 
   /// The size of a fixed length header.
   enum { header_length = 8 };

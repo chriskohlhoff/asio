@@ -3,6 +3,7 @@
 
 #include <boost/iostreams/stream.hpp>
 #include <boost/shared_ptr.hpp>
+#include <string>
 #include "asio.hpp"
 
 namespace io = boost::iostreams;
@@ -13,15 +14,26 @@ class socket_device
 {
 public:
   // Constructor.
-  socket_device(short port, const char* hostname)
+  socket_device(const std::string& host, const std::string& service)
     : io_service_(new asio::io_service),
-      socket_(new asio::ipv4::tcp::socket(*io_service_))
+      socket_(new asio::ip::tcp::socket(*io_service_))
   {
-    asio::ipv4::host_resolver host_resolver(*io_service_);
-    asio::ipv4::host host;
-    host_resolver.by_name(host, hostname);
-    asio::ipv4::tcp::endpoint endpoint(port, host.address(0));
-    socket_->connect(endpoint);
+    // Get a list of endpoints that match the supplied host and service.
+    asio::ip::tcp::resolver resolver(*io_service_);
+    asio::ip::tcp::resolver::query query(host, service);
+    asio::ip::tcp::resolver::iterator iterator = resolver.resolve(query);
+
+    // Try each endpoint in the list until we get one that works.
+    asio::error error(asio::error::host_not_found);
+    while (error && iterator != asio::ip::tcp::resolver::iterator())
+    {
+      error = 0;
+      socket_->close();
+      socket_->connect(*iterator, asio::assign_error(error));
+      ++iterator;
+    }
+    if (error)
+      throw error;
   }
 
   // Read.
@@ -45,7 +57,7 @@ public:
 
 private:
   boost::shared_ptr<asio::io_service> io_service_;
-  boost::shared_ptr<asio::ipv4::tcp::socket> socket_;
+  boost::shared_ptr<asio::ip::tcp::socket> socket_;
 };
 
 // Typedefs for iostreams types.

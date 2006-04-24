@@ -11,7 +11,7 @@ public:
   accept_handler(io_service& ios)
     : io_service_(ios),
       timer_(ios),
-      acceptor_(ios, ipv4::tcp::endpoint(32123)),
+      acceptor_(ios, ip::tcp::endpoint(ip::tcp::v4(), 32123)),
       socket_(ios)
   {
     acceptor_.async_accept(socket_,
@@ -42,8 +42,8 @@ public:
 private:
   io_service& io_service_;
   deadline_timer timer_;
-  ipv4::tcp::acceptor acceptor_;
-  ipv4::tcp::socket socket_;
+  ip::tcp::acceptor acceptor_;
+  ip::tcp::socket socket_;
 };
 
 int main()

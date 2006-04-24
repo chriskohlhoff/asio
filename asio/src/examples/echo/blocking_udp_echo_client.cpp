@@ -3,6 +3,8 @@
 #include <iostream>
 #include "asio.hpp"
 
+using asio::ip::udp;
+
 enum { max_length = 1024 };
 
 int main(int argc, char* argv[])
@@ -17,25 +19,21 @@ int main(int argc, char* argv[])
 
     asio::io_service io_service;
 
-    asio::ipv4::udp::socket s(io_service,
-        asio::ipv4::udp::endpoint(0));
+    udp::socket s(io_service, udp::endpoint(udp::v4(), 0));
 
-    asio::ipv4::host_resolver hr(io_service);
-    asio::ipv4::host h;
-    hr.by_name(h, argv[1]);
-    asio::ipv4::udp::endpoint receiver_endpoint(
-        atoi(argv[2]), h.address(0));
+    udp::resolver resolver(io_service);
+    udp::resolver::query query(udp::v4(), argv[1], argv[2]);
+    udp::resolver::iterator iterator = resolver.resolve(query);
 
-    using namespace std; // For atoi and strlen.
+    using namespace std; // For strlen.
     std::cout << "Enter message: ";
     char request[max_length];
     std::cin.getline(request, max_length);
     size_t request_length = strlen(request);
-    s.connect(receiver_endpoint);
-    s.send(asio::buffer(request, request_length));
+    s.send_to(asio::buffer(request, request_length), *iterator);
 
     char reply[max_length];
-    asio::ipv4::udp::endpoint sender_endpoint;
+    udp::endpoint sender_endpoint;
     size_t reply_length = s.receive_from(
         asio::buffer(reply, max_length), sender_endpoint);
     std::cout << "Reply is: ";

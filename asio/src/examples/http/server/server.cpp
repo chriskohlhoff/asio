@@ -4,7 +4,8 @@
 namespace http {
 namespace server {
 
-server::server(short port, const std::string& doc_root)
+server::server(const std::string& address, const std::string& port,
+    const std::string& doc_root)
   : io_service_(),
     acceptor_(io_service_),
     connection_manager_(),
@@ -13,9 +14,11 @@ server::server(short port, const std::string& doc_root)
     request_handler_(doc_root)
 {
   // Open the acceptor with the option to reuse the address (i.e. SO_REUSEADDR).
-  asio::ipv4::tcp::endpoint endpoint(port);
+  asio::ip::tcp::resolver resolver(io_service_);
+  asio::ip::tcp::resolver::query query(address, port);
+  asio::ip::tcp::endpoint endpoint = *resolver.resolve(query);
   acceptor_.open(endpoint.protocol());
-  acceptor_.set_option(asio::ipv4::tcp::acceptor::reuse_address(true));
+  acceptor_.set_option(asio::ip::tcp::acceptor::reuse_address(true));
   acceptor_.bind(endpoint);
   acceptor_.listen();
   acceptor_.async_accept(new_connection_->socket(),

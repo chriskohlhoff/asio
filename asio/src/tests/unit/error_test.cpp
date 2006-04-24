@@ -62,7 +62,7 @@ void error_test()
   test_error_code(asio::error::network_unreachable);
   test_error_code(asio::error::no_descriptors);
   test_error_code(asio::error::no_buffer_space);
-  test_error_code(asio::error::no_host_data);
+  test_error_code(asio::error::no_data);
   test_error_code(asio::error::no_memory);
   test_error_code(asio::error::no_permission);
   test_error_code(asio::error::no_protocol_option);
@@ -71,6 +71,7 @@ void error_test()
   test_error_code(asio::error::not_socket);
   test_error_code(asio::error::not_supported);
   test_error_code(asio::error::operation_aborted);
+  test_error_code(asio::error::service_not_found);
   test_error_code(asio::error::shut_down);
   test_error_code(asio::error::success);
   test_error_code(asio::error::timed_out);

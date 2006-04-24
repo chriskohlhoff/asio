@@ -3,15 +3,15 @@
 #include <boost/bind.hpp>
 #include <asio.hpp>
 
-void handle_tcp_write(asio::ipv4::tcp::socket* socket, char* write_buf)
+void handle_tcp_write(asio::ip::tcp::socket* socket, char* write_buf)
 {
   using namespace std; // For free.
   free(write_buf);
   delete socket;
 }
 
-void handle_tcp_accept(asio::ipv4::tcp::acceptor* acceptor,
-    asio::ipv4::tcp::socket* socket, const asio::error& error)
+void handle_tcp_accept(asio::ip::tcp::acceptor* acceptor,
+    asio::ip::tcp::socket* socket, const asio::error& error)
 {
   if (!error)
   {
@@ -24,7 +24,7 @@ void handle_tcp_accept(asio::ipv4::tcp::acceptor* acceptor,
         asio::buffer(write_buf, write_length),
         boost::bind(handle_tcp_write, socket, write_buf));
 
-    socket = new asio::ipv4::tcp::socket(acceptor->io_service());
+    socket = new asio::ip::tcp::socket(acceptor->io_service());
 
     acceptor->async_accept(*socket,
         boost::bind(handle_tcp_accept, acceptor, socket,
@@ -42,9 +42,9 @@ void handle_udp_send_to(char* send_buf)
   free(send_buf);
 }
 
-void handle_udp_receive_from(asio::ipv4::udp::socket* socket,
+void handle_udp_receive_from(asio::ip::udp::socket* socket,
     char* recv_buf, size_t recv_length,
-    asio::ipv4::udp::endpoint* remote_endpoint,
+    asio::ip::udp::endpoint* remote_endpoint,
     const asio::error& error)
 {
   if (!error || error == asio::error::message_size)
@@ -71,22 +71,22 @@ int main()
   {
     asio::io_service io_service;
 
-    asio::ipv4::tcp::acceptor tcp_acceptor(io_service,
-        asio::ipv4::tcp::endpoint(13));
+    asio::ip::tcp::acceptor tcp_acceptor(io_service,
+        asio::ip::tcp::endpoint(asio::ip::tcp::v4(), 13));
 
-    asio::ipv4::tcp::socket* tcp_socket
-      = new asio::ipv4::tcp::socket(io_service);
+    asio::ip::tcp::socket* tcp_socket
+      = new asio::ip::tcp::socket(io_service);
 
     tcp_acceptor.async_accept(*tcp_socket,
         boost::bind(handle_tcp_accept, &tcp_acceptor, tcp_socket,
           asio::placeholders::error));
 
-    asio::ipv4::udp::socket udp_socket(io_service,
-        asio::ipv4::udp::endpoint(13));
+    asio::ip::udp::socket udp_socket(io_service,
+        asio::ip::udp::endpoint(asio::ip::udp::v4(), 13));
 
     char recv_buf[1];
     size_t recv_length = sizeof(recv_buf);
-    asio::ipv4::udp::endpoint remote_endpoint;
+    asio::ip::udp::endpoint remote_endpoint;
 
     udp_socket.async_receive_from(
         asio::buffer(recv_buf, recv_length), remote_endpoint,

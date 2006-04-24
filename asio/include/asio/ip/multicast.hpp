@@ -76,6 +76,42 @@ typedef asio::ip::detail::socket_option::multicast_request<
   IPPROTO_IP, IP_DROP_MEMBERSHIP, IPPROTO_IPV6, IPV6_LEAVE_GROUP> leave_group;
 #endif
 
+#if 0
+/// Socket option for local interface to use for outgoing multicast packets.
+/**
+ * Implements the IPPROTO_IP/IP_MULTICAST_IF socket option.
+ *
+ * @par Examples:
+ * Setting the option:
+ * @code
+ * asio::ipv4::udp::socket socket(io_service); 
+ * ...
+ * asio::ipv4::address local_interface("1.2.3.4");
+ * asio::ipv4::multicast::outbound_interface option(local_interface);
+ * socket.set_option(option);
+ * @endcode
+ *
+ * @par
+ * Getting the current option value:
+ * @code
+ * asio::ipv4::udp::socket socket(io_service); 
+ * ...
+ * asio::ipv4::multicast::outbound_interface option;
+ * socket.get_option(option);
+ * asio::ipv4::address local_interface = option.get();
+ * @endcode
+ *
+ * @par Concepts:
+ * Socket_Option, IPv4_Address_Socket_Option.
+ */
+#if defined(GENERATING_DOCUMENTATION)
+typedef implementation_defined outbound_interface;
+#else
+typedef asio::ipv4::detail::socket_option::address<
+  IPPROTO_IP, IP_MULTICAST_IF> outbound_interface;
+#endif
+#endif
+
 /// Socket option for time-to-live associated with outgoing multicast packets.
 /**
  * Implements the IPPROTO_IP/IP_MULTICAST_TTL socket option.

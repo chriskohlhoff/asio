@@ -26,8 +26,6 @@
 #include "asio/ip/basic_endpoint.hpp"
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
-#include "asio/ipv4/tcp.hpp"
-#include "asio/ipv6/tcp.hpp"
 #include "asio/detail/socket_option.hpp"
 #include "asio/detail/socket_types.hpp"
 
@@ -48,12 +46,6 @@ namespace ip {
 class tcp
 {
 public:
-  /// The IPv4 protocol type.
-  typedef asio::ipv4::tcp ipv4_protocol;
-
-  /// The IPv6 protocol type.
-  typedef asio::ipv6::tcp ipv6_protocol;
-
   /// The type of a TCP endpoint.
   typedef basic_endpoint<tcp> endpoint;
 
@@ -64,15 +56,15 @@ public:
   typedef basic_resolver_iterator<tcp> resolver_iterator;
 
   /// Construct to represent the IPv4 TCP protocol.
-  tcp(const ipv4_protocol&)
-    : family_(PF_INET)
+  static tcp v4()
   {
+    return tcp(PF_INET);
   }
 
   /// Construct to represent the IPv4 TCP protocol.
-  tcp(const ipv6_protocol&)
-    : family_(PF_INET6)
+  static tcp v6()
   {
+    return tcp(PF_INET6);
   }
 
   /// Obtain an identifier for the type of the protocol.
@@ -108,7 +100,7 @@ public:
   /// The service type for TCP resolvers.
   typedef resolver_service<tcp> resolver_service;
 
-  /// The TCP acceptor type.
+  /// The TCP resolver type.
   typedef basic_resolver<resolver_service> resolver;
 
   /// Socket option for disabling the Nagle algorithm.
@@ -145,6 +137,12 @@ public:
 #endif
 
 private:
+  // Construct with a specific family.
+  explicit tcp(int family)
+    : family_(family)
+  {
+  }
+
   int family_;
 };
 

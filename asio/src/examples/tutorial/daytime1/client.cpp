@@ -13,13 +13,20 @@ int main(int argc, char* argv[])
 
     asio::io_service io_service;
 
-    asio::ipv4::host_resolver host_resolver(io_service);
-    asio::ipv4::host host;
-    host_resolver.by_name(host, argv[1]);
-    asio::ipv4::tcp::endpoint remote_endpoint(13, host.address(0));
+    asio::ip::tcp::socket socket(io_service);
+    asio::ip::tcp::resolver resolver(io_service);
+    asio::ip::tcp::resolver::query query(argv[1], "daytime");
+    asio::ip::tcp::resolver::iterator iterator = resolver.resolve(query);
 
-    asio::ipv4::tcp::socket socket(io_service);
-    socket.connect(remote_endpoint);
+    asio::error error = asio::error::host_not_found;
+    asio::ip::tcp::resolver::iterator end;
+    while (error && iterator != end)
+    {
+      socket.close();
+      socket.connect(*iterator++, asio::assign_error(error));
+    }
+    if (error)
+      throw error;
 
     for (;;)
     {

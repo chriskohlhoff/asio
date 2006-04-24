@@ -3,6 +3,8 @@
 #include <boost/bind.hpp>
 #include "asio.hpp"
 
+using asio::ip::tcp;
+
 class session
 {
 public:
@@ -11,7 +13,7 @@ public:
   {
   }
 
-  asio::ipv4::tcp::socket& socket()
+  tcp::socket& socket()
   {
     return socket_;
   }
@@ -55,7 +57,7 @@ public:
   }
 
 private:
-  asio::ipv4::tcp::socket socket_;
+  tcp::socket socket_;
   enum { max_length = 1024 };
   char data_[max_length];
 };
@@ -65,7 +67,7 @@ class server
 public:
   server(asio::io_service& io_service, short port)
     : io_service_(io_service),
-      acceptor_(io_service, asio::ipv4::tcp::endpoint(port))
+      acceptor_(io_service, tcp::endpoint(tcp::v4(), port))
   {
     session* new_session = new session(io_service_);
     acceptor_.async_accept(new_session->socket(),
@@ -97,7 +99,7 @@ public:
 
 private:
   asio::io_service& io_service_;
-  asio::ipv4::tcp::acceptor acceptor_;
+  tcp::acceptor acceptor_;
 };
 
 int main(int argc, char* argv[])

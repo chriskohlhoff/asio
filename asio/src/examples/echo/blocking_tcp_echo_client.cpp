@@ -3,6 +3,8 @@
 #include <iostream>
 #include "asio.hpp"
 
+using asio::ip::tcp;
+
 enum { max_length = 1024 };
 
 int main(int argc, char* argv[])
@@ -17,15 +19,14 @@ int main(int argc, char* argv[])
 
     asio::io_service io_service;
 
-    using namespace std; // For atoi and strlen.
-    asio::ipv4::host_resolver hr(io_service);
-    asio::ipv4::host h;
-    hr.by_name(h, argv[1]);
-    asio::ipv4::tcp::endpoint ep(atoi(argv[2]), h.address(0));
+    tcp::resolver resolver(io_service);
+    tcp::resolver::query query(tcp::v4(), argv[1], argv[2]);
+    tcp::resolver::iterator iterator = resolver.resolve(query);
 
-    asio::ipv4::tcp::socket s(io_service);
-    s.connect(ep);
+    tcp::socket s(io_service);
+    s.connect(*iterator);
 
+    using namespace std; // For strlen.
     std::cout << "Enter message: ";
     char request[max_length];
     std::cin.getline(request, max_length);

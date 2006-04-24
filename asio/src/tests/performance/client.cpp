@@ -75,11 +75,11 @@ public:
     delete[] write_data_;
   }
 
-  void start(const ip::tcp::endpoint& server_endpoint)
+  void start(ip::tcp::resolver::iterator endpoint_iterator)
   {
-    socket_.async_connect(server_endpoint,
+    socket_.async_connect(*endpoint_iterator,
         strand_.wrap(boost::bind(&session::handle_connect, this,
-            placeholders::error)));
+            placeholders::error, ++endpoint_iterator)));
   }
 
   void stop()
@@ -88,17 +88,28 @@ public:
   }
 
 private:
-  void handle_connect(const error& err)
+  void handle_connect(const error& err,
+      ip::tcp::resolver::iterator endpoint_iterator)
   {
-    ++unwritten_count_;
-    async_write(socket_, buffer(write_data_, block_size_),
-        strand_.wrap(
-          boost::bind(&session::handle_write, this, placeholders::error,
-            placeholders::bytes_transferred)));
-    socket_.async_read_some(buffer(read_data_, block_size_),
-        strand_.wrap(
-          boost::bind(&session::handle_read, this, placeholders::error,
-            placeholders::bytes_transferred)));
+    if (!err)
+    {
+      ++unwritten_count_;
+      async_write(socket_, buffer(write_data_, block_size_),
+          strand_.wrap(
+            boost::bind(&session::handle_write, this, placeholders::error,
+              placeholders::bytes_transferred)));
+      socket_.async_read_some(buffer(read_data_, block_size_),
+          strand_.wrap(
+            boost::bind(&session::handle_read, this, placeholders::error,
+              placeholders::bytes_transferred)));
+    }
+    else if (endpoint_iterator != ip::tcp::resolver::iterator())
+    {
+      socket_.close();
+      socket_.async_connect(*endpoint_iterator,
+          strand_.wrap(boost::bind(&session::handle_connect, this,
+              placeholders::error, ++endpoint_iterator)));
+    }
   }
 
   void handle_read(const error& err, size_t length)
@@ -167,7 +178,7 @@ private:
 class client
 {
 public:
-  client(io_service& ios, const ip::tcp::endpoint& server_endpoint,
+  client(io_service& ios, const ip::tcp::resolver::iterator endpoint_iterator,
       size_t block_size, size_t session_count, int timeout)
     : io_service_(ios),
       stop_timer_(ios),
@@ -180,7 +191,7 @@ public:
     for (size_t i = 0; i < session_count; ++i)
     {
       session* new_session = new session(io_service_, block_size, stats_);
-      new_session->start(server_endpoint);
+      new_session->start(endpoint_iterator);
       sessions_.push_back(new_session);
     }
   }
@@ -222,7 +233,7 @@ int main(int argc, char* argv[])
 
     using namespace std; // For atoi.
     const char* host = argv[1];
-    short port = atoi(argv[2]);
+    const char* port = argv[2];
     int thread_count = atoi(argv[3]);
     size_t block_size = atoi(argv[4]);
     size_t session_count = atoi(argv[5]);
@@ -230,12 +241,11 @@ int main(int argc, char* argv[])
 
     io_service ios;
 
-    ipv4::host_resolver hr(ios);
-    ipv4::host h;
-    hr.by_name(h, host);
-    ipv4::tcp::endpoint ep(port, h.address(0));
+    ip::tcp::resolver r(ios);
+    ip::tcp::resolver::iterator iter =
+      r.resolve(ip::tcp::resolver::query(host, port));
 
-    client c(ios, ep, block_size, session_count, timeout);
+    client c(ios, iter, block_size, session_count, timeout);
 
     std::list<thread*> threads;
     while (--thread_count > 0)

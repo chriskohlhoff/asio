@@ -3,6 +3,7 @@
 
 #include <asio.hpp>
 #include <boost/noncopyable.hpp>
+#include <boost/lexical_cast.hpp>
 #include "logger.hpp"
 
 namespace services {
@@ -94,7 +95,8 @@ public:
   void connect(implementation_type& impl, const endpoint_type& peer_endpoint,
       Error_Handler error_handler)
   {
-    logger_.log("Connecting socket");
+    logger_.log("Connecting socket to " +
+        boost::lexical_cast<std::string>(peer_endpoint));
     service_impl_.connect(impl, peer_endpoint, error_handler);
   }
 
@@ -135,7 +137,8 @@ public:
   void async_connect(implementation_type& impl,
       const endpoint_type& peer_endpoint, Handler handler)
   {
-    logger_.log("Starting asynchronous connect");
+    logger_.log("Starting asynchronous connect to " +
+        boost::lexical_cast<std::string>(peer_endpoint));
     service_impl_.async_connect(impl, peer_endpoint, 
         connect_handler<Handler>(handler, logger_));
   }

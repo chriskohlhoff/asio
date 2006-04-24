@@ -75,7 +75,7 @@ WARN_LOGFILE           =
 INPUT                  = ./../../../../boost \
                          ./../../../../boost/asio \
                          ./../../../../boost/asio/impl \
-                         ./../../../../boost/asio/ipv4 \
+                         ./../../../../boost/asio/ip \
                          ./../../../../boost/asio/ssl \
                          ../concepts \
                          ./reference_dox.txt

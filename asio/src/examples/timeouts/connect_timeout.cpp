@@ -13,7 +13,8 @@ public:
       timer_(ios),
       socket_(ios)
   {
-    socket_.async_connect(ipv4::tcp::endpoint(32123, ipv4::address::loopback()),
+    socket_.async_connect(
+        ip::tcp::endpoint(ip::address_v4::loopback(), 32123),
         boost::bind(&connect_handler::handle_connect, this,
           asio::placeholders::error));
 
@@ -41,7 +42,7 @@ public:
 private:
   io_service& io_service_;
   deadline_timer timer_;
-  ipv4::tcp::socket socket_;
+  ip::tcp::socket socket_;
 };
 
 int main()
@@ -49,7 +50,7 @@ int main()
   try
   {
     io_service ios;
-    ipv4::tcp::acceptor a(ios, ipv4::tcp::endpoint(32123), 1);
+    ip::tcp::acceptor a(ios, ip::tcp::endpoint(ip::tcp::v4(), 32123), 1);
 
     // Make lots of connections so that at least some of them will block.
     connect_handler ch1(ios);

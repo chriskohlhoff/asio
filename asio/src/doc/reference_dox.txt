@@ -4,13 +4,13 @@
 */
 
 /**
-\namespace asio::ipv4
-\brief The asio::ipv4 namespace defines the classes associated with IP version 4.
+\namespace asio::ip
+\brief The asio::ip namespace defines the classes associated with IP.
 */
 
 /**
-\namespace asio::ipv4::multicast
-\brief The asio::ipv4::multicast namespace defines the socket options used for
+\namespace asio::ip::multicast
+\brief The asio::ip::multicast namespace defines the socket options used for
 multicast.
 */
 
@@ -51,8 +51,8 @@ Standard exception class.
 <H2>Namespaces</H2>
 
 \li ::asio
-\li asio::ipv4
-\li asio::ipv4::multicast
+\li asio::ip
+\li asio::ip::multicast
 \li asio::placeholders
 \li asio::ssl
 
@@ -62,16 +62,18 @@ Standard exception class.
 \li asio::deadline_timer
 \li asio::error
 \li asio::io_service
-\li asio::ipv4::address
-\li asio::ipv4::host
-\li asio::ipv4::host_resolver
-\li asio::ipv4::tcp
-\li asio::ipv4::tcp::acceptor
-\li asio::ipv4::tcp::endpoint
-\li asio::ipv4::tcp::socket
-\li asio::ipv4::udp
-\li asio::ipv4::udp::endpoint
-\li asio::ipv4::udp::socket
+\li asio::ip::address
+\li asio::ip::address_v4
+\li asio::ip::address_v6
+\li asio::ip::tcp
+\li asio::ip::tcp::acceptor
+\li asio::ip::tcp::endpoint
+\li asio::ip::tcp::resolver
+\li asio::ip::tcp::socket
+\li asio::ip::udp
+\li asio::ip::udp::endpoint
+\li asio::ip::udp::resolver
+\li asio::ip::udp::socket
 \li asio::mutable_buffer
 \li asio::socket_base
 \li asio::ssl::context
@@ -85,14 +87,17 @@ Standard exception class.
 
 \li asio::basic_datagram_socket
 \li asio::basic_deadline_timer
+\li asio::basic_resolver
 \li asio::basic_socket_acceptor
 \li asio::basic_strand
 \li asio::basic_stream_socket
 \li asio::buffered_read_stream
 \li asio::buffered_write_stream
 \li asio::buffered_stream
-\li asio::ipv4::basic_host_resolver
-\li asio::service_factory
+\li asio::ip::basic_endpoint
+\li asio::ip::basic_resolver_entry
+\li asio::ip::basic_resolver_iterator
+\li asio::ip::basic_resolver_query
 \li asio::ssl::basic_context
 \li asio::ssl::stream
 
@@ -115,10 +120,10 @@ Standard exception class.
 
 \li asio::datagram_socket_service
 \li asio::deadline_timer_service
+\li asio::resolver_service
 \li asio::socket_acceptor_service
 \li asio::strand_service
 \li asio::stream_socket_service
-\li asio::ipv4::host_resolver_service
 \li asio::ssl::context_service
 \li asio::ssl::stream_service
 
@@ -135,8 +140,8 @@ Standard exception class.
 \li Error_Source
 \li Integer_Socket_Option
 \li IO_Control_Command
-\li IPv4_Address_Socket_Option
-\li IPv4_MReq_Socket_Option
+\li IP_Address_Socket_Option
+\li IP_MReq_Socket_Option
 \li Linger_Socket_Option
 \li Mutable_Buffers
 \li Protocol

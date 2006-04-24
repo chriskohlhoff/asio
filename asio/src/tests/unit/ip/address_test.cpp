@@ -1,6 +1,6 @@
 //
-// multicast_test.cpp
-// ~~~~~~~~~~~~~~~~~~
+// address_test.cpp
+// ~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -9,12 +9,12 @@
 //
 
 // Test that header file is self-contained.
-#include "asio/ipv4/multicast.hpp"
+#include "asio/ip/address.hpp"
 
 #include "../unit_test.hpp"
 
 test_suite* init_unit_test_suite(int argc, char* argv[])
 {
-  test_suite* test = BOOST_TEST_SUITE("ipv4/multicast");
+  test_suite* test = BOOST_TEST_SUITE("ip/address");
   return test;
 }

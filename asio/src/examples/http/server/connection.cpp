@@ -15,7 +15,7 @@ connection::connection(asio::io_service& io_service,
 {
 }
 
-asio::ipv4::tcp::socket& connection::socket()
+asio::ip::tcp::socket& connection::socket()
 {
   return socket_;
 }

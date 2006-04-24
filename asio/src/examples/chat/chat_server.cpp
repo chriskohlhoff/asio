@@ -10,6 +10,8 @@
 #include "asio.hpp"
 #include "chat_message.hpp"
 
+using asio::ip::tcp;
+
 //----------------------------------------------------------------------
 
 typedef std::deque<chat_message> chat_message_queue;
@@ -71,7 +73,7 @@ public:
   {
   }
 
-  asio::ipv4::tcp::socket& socket()
+  tcp::socket& socket()
   {
     return socket_;
   }
@@ -152,7 +154,7 @@ public:
   }
 
 private:
-  asio::ipv4::tcp::socket socket_;
+  tcp::socket socket_;
   chat_room& room_;
   chat_message read_msg_;
   chat_message_queue write_msgs_;
@@ -166,7 +168,7 @@ class chat_server
 {
 public:
   chat_server(asio::io_service& io_service,
-      const asio::ipv4::tcp::endpoint& endpoint)
+      const tcp::endpoint& endpoint)
     : io_service_(io_service),
       acceptor_(io_service, endpoint)
   {
@@ -196,7 +198,7 @@ public:
 
 private:
   asio::io_service& io_service_;
-  asio::ipv4::tcp::acceptor acceptor_;
+  tcp::acceptor acceptor_;
   chat_room room_;
 };
 
@@ -221,7 +223,7 @@ int main(int argc, char* argv[])
     for (int i = 1; i < argc; ++i)
     {
       using namespace std; // For atoi.
-      asio::ipv4::tcp::endpoint endpoint(atoi(argv[i]));
+      tcp::endpoint endpoint(tcp::v4(), atoi(argv[i]));
       chat_server_ptr server(new chat_server(io_service, endpoint));
       servers.push_back(server);
     }

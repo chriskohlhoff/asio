@@ -188,7 +188,7 @@ int main(int argc, char* argv[])
 
     io_service ios;
 
-    server s(ios, ip::tcp::endpoint(port, address), block_size);
+    server s(ios, ip::tcp::endpoint(address, port), block_size);
 
     // Threads not currently supported in this test.
     std::list<thread*> threads;

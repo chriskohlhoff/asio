@@ -1,6 +1,5 @@
 #include <asio.hpp>
 #include <boost/bind.hpp>
-#include <boost/lexical_cast.hpp>
 #include <iostream>
 #include <vector>
 #include "connection.hpp" // Must come before boost/serialization headers.
@@ -15,23 +14,24 @@ class client
 public:
   /// Constructor starts the asynchronous connect operation.
   client(asio::io_service& io_service,
-      const std::string& hostname, unsigned short port)
+      const std::string& host, const std::string& service)
     : connection_(io_service)
   {
     // Resolve the host name into an IP address.
-    asio::ipv4::host_resolver host_resolver(io_service);
-    asio::ipv4::host host;
-    host_resolver.get_host_by_name(host, hostname);
+    asio::ip::tcp::resolver resolver(io_service);
+    asio::ip::tcp::resolver::query query(host, service);
+    asio::ip::tcp::resolver::iterator endpoint_iterator =
+      resolver.resolve(query);
 
     // Start an asynchronous connect operation.
-    asio::ipv4::tcp::endpoint endpoint(port, host.address(0));
-    connection_.socket().async_connect(endpoint,
+    connection_.socket().async_connect(*endpoint_iterator,
         boost::bind(&client::handle_connect, this,
-          asio::placeholders::error));
+          asio::placeholders::error, ++endpoint_iterator));
   }
 
   /// Handle completion of a connect operation.
-  void handle_connect(const asio::error& e)
+  void handle_connect(const asio::error& e,
+      asio::ip::tcp::resolver::iterator endpoint_iterator)
   {
     if (!e)
     {
@@ -41,6 +41,14 @@ public:
       connection_.async_read(stocks_,
           boost::bind(&client::handle_read, this,
             asio::placeholders::error));
+    }
+    else if (endpoint_iterator != asio::ip::tcp::resolver::iterator())
+    {
+      // Try the next endpoint.
+      connection_.socket().close();
+      connection_.socket().async_connect(*endpoint_iterator,
+          boost::bind(&client::handle_connect, this,
+            asio::placeholders::error, ++endpoint_iterator));
     }
     else
     {

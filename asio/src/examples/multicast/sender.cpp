@@ -13,7 +13,7 @@ class sender
 public:
   sender(asio::io_service& io_service,
       const asio::ip::address& multicast_address)
-    : endpoint_(multicast_port, multicast_address),
+    : endpoint_(multicast_address, multicast_port),
       socket_(io_service, endpoint_.protocol()),
       timer_(io_service),
       message_count_(0)

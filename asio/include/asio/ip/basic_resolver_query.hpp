@@ -18,8 +18,11 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <boost/config.hpp>
 #include <string>
 #include "asio/detail/pop_options.hpp"
+
+#include "asio/detail/socket_ops.hpp"
 
 namespace asio {
 namespace ip {

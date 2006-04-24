@@ -17,7 +17,7 @@
 #include "unit_test.hpp"
 
 typedef asio::buffered_write_stream<
-    asio::ipv4::tcp::socket> stream_type;
+    asio::ip::tcp::socket> stream_type;
 
 void test_sync_operations()
 {
@@ -25,10 +25,10 @@ void test_sync_operations()
 
   asio::io_service io_service;
 
-  asio::ipv4::tcp::acceptor acceptor(io_service,
-      asio::ipv4::tcp::endpoint(0));
-  asio::ipv4::tcp::endpoint server_endpoint = acceptor.local_endpoint();
-  server_endpoint.address(asio::ipv4::address::loopback());
+  asio::ip::tcp::acceptor acceptor(io_service,
+      asio::ip::tcp::endpoint(asio::ip::tcp::v4(), 0));
+  asio::ip::tcp::endpoint server_endpoint = acceptor.local_endpoint();
+  server_endpoint.address(asio::ip::address_v4::loopback());
 
   stream_type client_socket(io_service);
   client_socket.lowest_layer().connect(server_endpoint);
@@ -138,10 +138,10 @@ void test_async_operations()
 
   asio::io_service io_service;
 
-  asio::ipv4::tcp::acceptor acceptor(io_service,
-      asio::ipv4::tcp::endpoint(0));
-  asio::ipv4::tcp::endpoint server_endpoint = acceptor.local_endpoint();
-  server_endpoint.address(asio::ipv4::address::loopback());
+  asio::ip::tcp::acceptor acceptor(io_service,
+      asio::ip::tcp::endpoint(asio::ip::tcp::v4(), 0));
+  asio::ip::tcp::endpoint server_endpoint = acceptor.local_endpoint();
+  server_endpoint.address(asio::ip::address_v4::loopback());
 
   stream_type client_socket(io_service);
   client_socket.lowest_layer().connect(server_endpoint);

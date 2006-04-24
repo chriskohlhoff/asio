@@ -1,6 +1,6 @@
 //
-// address_test.cpp
-// ~~~~~~~~~~~~~~~~
+// basic_resolver_test.cpp
+// ~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -9,12 +9,12 @@
 //
 
 // Test that header file is self-contained.
-#include "asio/ipv4/address.hpp"
+#include "asio/basic_resolver.hpp"
 
-#include "../unit_test.hpp"
+#include "unit_test.hpp"
 
 test_suite* init_unit_test_suite(int argc, char* argv[])
 {
-  test_suite* test = BOOST_TEST_SUITE("ipv4/address");
+  test_suite* test = BOOST_TEST_SUITE("basic_resolver");
   return test;
 }

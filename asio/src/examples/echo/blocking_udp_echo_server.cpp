@@ -2,16 +2,17 @@
 #include <iostream>
 #include "asio.hpp"
 
+using asio::ip::udp;
+
 enum { max_length = 1024 };
 
 void server(asio::io_service& io_service, short port)
 {
-  asio::ipv4::udp::socket sock(io_service,
-      asio::ipv4::udp::endpoint(port));
+  udp::socket sock(io_service, udp::endpoint(udp::v4(), port));
   for (;;)
   {
     char data[max_length];
-    asio::ipv4::udp::endpoint sender_endpoint;
+    udp::endpoint sender_endpoint;
     size_t length = sock.receive_from(
         asio::buffer(data, max_length), sender_endpoint);
     sock.send_to(asio::buffer(data, length), sender_endpoint);

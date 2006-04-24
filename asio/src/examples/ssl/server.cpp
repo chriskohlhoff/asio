@@ -4,7 +4,7 @@
 #include "asio.hpp"
 #include "asio/ssl.hpp"
 
-typedef asio::ssl::stream<asio::ipv4::tcp::socket> ssl_socket;
+typedef asio::ssl::stream<asio::ip::tcp::socket> ssl_socket;
 
 class session
 {
@@ -82,7 +82,8 @@ class server
 public:
   server(asio::io_service& io_service, unsigned short port)
     : io_service_(io_service),
-      acceptor_(io_service, asio::ipv4::tcp::endpoint(port)),
+      acceptor_(io_service,
+          asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port)),
       context_(io_service, asio::ssl::context::sslv23)
   {
     context_.set_options(
@@ -123,7 +124,7 @@ public:
 
 private:
   asio::io_service& io_service_;
-  asio::ipv4::tcp::acceptor acceptor_;
+  asio::ip::tcp::acceptor acceptor_;
   asio::ssl::context context_;
 };
 

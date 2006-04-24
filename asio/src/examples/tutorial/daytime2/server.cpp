@@ -9,12 +9,12 @@ int main()
   {
     asio::io_service io_service;
 
-    asio::ipv4::tcp::acceptor acceptor(io_service,
-        asio::ipv4::tcp::endpoint(13));
+    asio::ip::tcp::acceptor acceptor(io_service,
+        asio::ip::tcp::endpoint(asio::ip::tcp::v4(), 13));
 
     for (;;)
     {
-      asio::ipv4::tcp::socket socket(io_service);
+      asio::ip::tcp::socket socket(io_service);
       acceptor.accept(socket);
 
       using namespace std; // For time_t, time and ctime.

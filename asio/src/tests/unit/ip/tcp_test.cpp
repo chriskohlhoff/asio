@@ -65,12 +65,12 @@ void test()
     // basic_stream_socket constructors.
 
     ip::tcp::socket socket1(ios);
-    ip::tcp::socket socket2(ios, ipv4::tcp());
-    ip::tcp::socket socket3(ios, ipv6::tcp());
-    ip::tcp::socket socket4(ios, ipv4::tcp::endpoint(0));
-    ip::tcp::socket socket5(ios, ipv6::tcp::endpoint(0));
+    ip::tcp::socket socket2(ios, ip::tcp::v4());
+    ip::tcp::socket socket3(ios, ip::tcp::v6());
+    ip::tcp::socket socket4(ios, ip::tcp::endpoint(ip::tcp::v4(), 0));
+    ip::tcp::socket socket5(ios, ip::tcp::endpoint(ip::tcp::v6(), 0));
     int native_socket1 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    ip::tcp::socket socket6(ios, ipv4::tcp(), native_socket1);
+    ip::tcp::socket socket6(ios, ip::tcp::v4(), native_socket1);
 
     // basic_io_object functions.
 
@@ -82,15 +82,15 @@ void test()
     ip::tcp::socket::lowest_layer_type& lowest_layer = socket1.lowest_layer();
     (void)lowest_layer;
 
-    socket1.open(ipv4::tcp());
-    socket1.open(ipv6::tcp());
-    socket1.open(ipv4::tcp(), error_handler);
-    socket1.open(ipv6::tcp(), error_handler);
+    socket1.open(ip::tcp::v4());
+    socket1.open(ip::tcp::v6());
+    socket1.open(ip::tcp::v4(), error_handler);
+    socket1.open(ip::tcp::v6(), error_handler);
 
     int native_socket2 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    socket1.assign(ipv4::tcp(), native_socket2);
+    socket1.assign(ip::tcp::v4(), native_socket2);
     int native_socket3 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    socket1.assign(ipv4::tcp(), native_socket3, error_handler);
+    socket1.assign(ip::tcp::v4(), native_socket3, error_handler);
 
     socket1.close();
     socket1.close(error_handler);
@@ -98,18 +98,18 @@ void test()
     ip::tcp::socket::native_type native_socket4 = socket1.native();
     (void)native_socket4;
 
-    socket1.bind(ipv4::tcp::endpoint(0));
-    socket1.bind(ipv6::tcp::endpoint(0));
-    socket1.bind(ipv4::tcp::endpoint(0), error_handler);
-    socket1.bind(ipv6::tcp::endpoint(0), error_handler);
+    socket1.bind(ip::tcp::endpoint(ip::tcp::v4(), 0));
+    socket1.bind(ip::tcp::endpoint(ip::tcp::v6(), 0));
+    socket1.bind(ip::tcp::endpoint(ip::tcp::v4(), 0), error_handler);
+    socket1.bind(ip::tcp::endpoint(ip::tcp::v6(), 0), error_handler);
 
-    socket1.connect(ipv4::tcp::endpoint(0));
-    socket1.connect(ipv6::tcp::endpoint(0));
-    socket1.connect(ipv4::tcp::endpoint(0), error_handler);
-    socket1.connect(ipv6::tcp::endpoint(0), error_handler);
+    socket1.connect(ip::tcp::endpoint(ip::tcp::v4(), 0));
+    socket1.connect(ip::tcp::endpoint(ip::tcp::v6(), 0));
+    socket1.connect(ip::tcp::endpoint(ip::tcp::v4(), 0), error_handler);
+    socket1.connect(ip::tcp::endpoint(ip::tcp::v6(), 0), error_handler);
 
-    socket1.async_connect(ipv4::tcp::endpoint(0), connect_handler);
-    socket1.async_connect(ipv6::tcp::endpoint(0), connect_handler);
+    socket1.async_connect(ip::tcp::endpoint(ip::tcp::v4(), 0), connect_handler);
+    socket1.async_connect(ip::tcp::endpoint(ip::tcp::v6(), 0), connect_handler);
 
     socket1.set_option(socket_option);
     socket1.set_option(socket_option, error_handler);
@@ -204,9 +204,9 @@ void test()
 {
   io_service ios;
 
-  ip::tcp::acceptor acceptor(ios, ipv4::tcp::endpoint(0));
+  ip::tcp::acceptor acceptor(ios, ip::tcp::endpoint(ip::tcp::v4(), 0));
   ip::tcp::endpoint server_endpoint = acceptor.local_endpoint();
-  server_endpoint.address(ipv4::address::loopback());
+  server_endpoint.address(ip::address_v4::loopback());
 
   ip::tcp::socket client_side_socket(ios);
   ip::tcp::socket server_side_socket(ios);

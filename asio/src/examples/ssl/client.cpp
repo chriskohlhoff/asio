@@ -10,21 +10,29 @@ class client
 {
 public:
   client(asio::io_service& io_service, asio::ssl::context& context,
-      const asio::ipv4::tcp::endpoint& server_endpoint)
+      asio::ip::tcp::resolver::iterator endpoint_iterator)
     : socket_(io_service, context)
   {
-    socket_.lowest_layer().async_connect(server_endpoint,
+    socket_.lowest_layer().async_connect(*endpoint_iterator,
         boost::bind(&client::handle_connect, this,
-          asio::placeholders::error));
+          asio::placeholders::error, ++endpoint_iterator));
   }
 
-  void handle_connect(const asio::error& error)
+  void handle_connect(const asio::error& error,
+      asio::ip::tcp::resolver::iterator endpoint_iterator)
   {
     if (!error)
     {
       socket_.async_handshake(asio::ssl::stream_base::client,
           boost::bind(&client::handle_handshake, this,
             asio::placeholders::error));
+    }
+    else if (endpoint_iterator != asio::ip::tcp::resolver::iterator())
+    {
+      socket_.lowest_layer().close();
+      socket_.lowest_layer().async_connect(*endpoint_iterator,
+          boost::bind(&client::handle_connect, this,
+            asio::placeholders::error, ++endpoint_iterator));
     }
     else
     {
@@ -83,7 +91,7 @@ public:
   }
 
 private:
-  asio::ssl::stream<asio::ipv4::tcp::socket> socket_;
+  asio::ssl::stream<asio::ip::tcp::socket> socket_;
   char request_[max_length];
   char reply_[max_length];
 };
@@ -100,16 +108,15 @@ int main(int argc, char* argv[])
 
     asio::io_service io_service;
 
-    using namespace std; // For atoi.
-    asio::ipv4::host_resolver hr(io_service);
-    asio::ipv4::host h;
-    hr.by_name(h, argv[1]);
-    asio::ipv4::tcp::endpoint ep(atoi(argv[2]), h.address(0));
+    asio::ip::tcp::resolver resolver(io_service);
+    asio::ip::tcp::resolver::query query(argv[1], argv[2]);
+    asio::ip::tcp::resolver::iterator iterator = resolver.resolve(query);
 
     asio::ssl::context ctx(io_service, asio::ssl::context::sslv23);
     ctx.set_verify_mode(asio::ssl::context::verify_peer);
     ctx.load_verify_file("ca.pem");
-    client c(io_service, ctx, ep);
+
+    client c(io_service, ctx, iterator);
 
     io_service.run();
   }

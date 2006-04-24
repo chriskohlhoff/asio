@@ -18,14 +18,15 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <iosfwd>
 #include <string>
 #include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
 #include "asio/error_handler.hpp"
-#include "asio/ipv4/address.hpp"
-#include "asio/ipv6/address.hpp"
+#include "asio/ip/address_v4.hpp"
+#include "asio/ip/address_v6.hpp"
 
 namespace asio {
 namespace ip {
@@ -51,7 +52,7 @@ public:
   }
 
   /// Construct an address from an IPv4 address.
-  address(const asio::ipv4::address& ipv4_address)
+  address(const asio::ip::address_v4& ipv4_address)
     : type_(ipv4),
       ipv4_address_(ipv4_address),
       ipv6_address_()
@@ -59,7 +60,7 @@ public:
   }
 
   /// Construct an address from an IPv6 address.
-  address(const asio::ipv6::address& ipv6_address)
+  address(const asio::ip::address_v6& ipv6_address)
     : type_(ipv6),
       ipv4_address_(),
       ipv6_address_(ipv6_address)
@@ -84,37 +85,37 @@ public:
   }
 
   /// Assign from an IPv4 address.
-  address& operator=(const asio::ipv4::address& ipv4_address)
+  address& operator=(const asio::ip::address_v4& ipv4_address)
   {
     type_ = ipv4;
     ipv4_address_ = ipv4_address;
-    ipv6_address_ = asio::ipv6::address();
+    ipv6_address_ = asio::ip::address_v6();
     return *this;
   }
 
   /// Assign from an IPv6 address.
-  address& operator=(const asio::ipv6::address& ipv6_address)
+  address& operator=(const asio::ip::address_v6& ipv6_address)
   {
     type_ = ipv6;
-    ipv4_address_ = asio::ipv4::address();
+    ipv4_address_ = asio::ip::address_v4();
     ipv6_address_ = ipv6_address;
     return *this;
   }
 
   /// Get whether the address is an IP version 4 address.
-  bool is_ipv4() const
+  bool is_v4() const
   {
     return type_ == ipv4;
   }
 
   /// Get whether the address is an IP version 6 address.
-  bool is_ipv6() const
+  bool is_v6() const
   {
     return type_ == ipv6;
   }
 
   /// Get the address as an IP version 4 address.
-  asio::ipv4::address to_ipv4() const
+  asio::ip::address_v4 to_v4() const
   {
     if (type_ != ipv4)
     {
@@ -125,7 +126,7 @@ public:
   }
 
   /// Get the address as an IP version 6 address.
-  asio::ipv6::address to_ipv6() const
+  asio::ip::address_v6 to_v6() const
   {
     if (type_ != ipv6)
     {
@@ -165,8 +166,8 @@ public:
   static address from_string(const char* str, Error_Handler error_handler)
   {
     asio::error error;
-    asio::ipv6::address ipv6_address =
-      asio::ipv6::address::from_string(str,
+    asio::ip::address_v6 ipv6_address =
+      asio::ip::address_v6::from_string(str,
         asio::assign_error(error));
     if (!error)
     {
@@ -177,8 +178,8 @@ public:
     }
 
     error = asio::error();
-    asio::ipv4::address ipv4_address =
-      asio::ipv4::address::from_string(str,
+    asio::ip::address_v4 ipv4_address =
+      asio::ip::address_v4::from_string(str,
         asio::assign_error(error));
     if (!error)
     {
@@ -245,10 +246,10 @@ private:
   enum { ipv4, ipv6 } type_;
 
   // The underlying IPv4 address.
-  asio::ipv4::address ipv4_address_;
+  asio::ip::address_v4 ipv4_address_;
 
   // The underlying IPv6 address.
-  asio::ipv6::address ipv6_address_;
+  asio::ip::address_v6 ipv6_address_;
 };
 
 /// Output an address as a string.
@@ -263,8 +264,9 @@ private:
  *
  * @relates tcp::endpoint
  */
-template <typename Ostream>
-Ostream& operator<<(Ostream& os, const address& addr)
+template <typename Elem, typename Traits>
+std::basic_ostream<Elem, Traits>& operator<<(
+    std::basic_ostream<Elem, Traits>& os, const address& addr)
 {
   os << addr.to_string();
   return os;

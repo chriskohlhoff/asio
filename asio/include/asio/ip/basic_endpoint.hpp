@@ -53,12 +53,6 @@ public:
   /// The protocol type associated with the endpoint.
   typedef Protocol protocol_type;
 
-  /// The IPv4 endpoint type.
-  typedef typename Protocol::ipv4_protocol::endpoint ipv4_endpoint;
-
-  /// The IPv6 endpoint type.
-  typedef typename Protocol::ipv6_protocol::endpoint ipv6_endpoint;
-
   /// The type of the endpoint structure. This type is dependent on the
   /// underlying implementation of the socket layer.
 #if defined(GENERATING_DOCUMENTATION)
@@ -78,59 +72,73 @@ public:
   /// Default constructor.
   basic_endpoint()
   {
-    using namespace std; // For memcpy and memset.
-    ipv4_endpoint endpoint;
-    memcpy(&data_, endpoint.data(), endpoint.size());
+    asio::detail::inet_addr_v4_type& data
+      = reinterpret_cast<asio::detail::inet_addr_v4_type&>(data_);
+    data.sin_family = AF_INET;
+    data.sin_port = 0;
+    data.sin_addr.s_addr = INADDR_ANY;
   }
 
   /// Construct an endpoint using a port number, specified in the host's byte
-  /// order. The IP address will be the any address (i.e. in6addr_any). This
-  /// constructor would typically be used for accepting new connections.
-  basic_endpoint(unsigned short port_num, const Protocol& protocol)
+  /// order. The IP address will be the any address (i.e. INADDR_ANY or
+  /// in6addr_any). This constructor would typically be used for accepting new
+  /// connections.
+  basic_endpoint(const Protocol& protocol, unsigned short port_num)
   {
     using namespace std; // For memcpy.
     if (protocol.family() == PF_INET)
     {
-      ipv4_endpoint endpoint(port_num);
-      memcpy(&data_, endpoint.data(), endpoint.size());
+      asio::detail::inet_addr_v4_type& data
+        = reinterpret_cast<asio::detail::inet_addr_v4_type&>(data_);
+      data.sin_family = AF_INET;
+      data.sin_port =
+        asio::detail::socket_ops::host_to_network_short(port_num);
+      data.sin_addr.s_addr = INADDR_ANY;
     }
     else
     {
-      ipv6_endpoint endpoint(port_num);
-      memcpy(&data_, endpoint.data(), endpoint.size());
+      asio::detail::inet_addr_v6_type& data
+        = reinterpret_cast<asio::detail::inet_addr_v6_type&>(data_);
+      data.sin6_family = AF_INET6;
+      data.sin6_port =
+        asio::detail::socket_ops::host_to_network_short(port_num);
+      data.sin6_flowinfo = 0;
+      in6_addr tmp_addr = IN6ADDR_ANY_INIT;
+      data.sin6_addr = tmp_addr;
+      data.sin6_scope_id = 0;
     }
   }
 
   /// Construct an endpoint using a port number and an IP address. This
   /// constructor may be used for accepting connections on a specific interface
   /// or for making a connection to a remote endpoint.
-  basic_endpoint(unsigned short port_num, const asio::ip::address& addr)
+  basic_endpoint(const asio::ip::address& addr, unsigned short port_num)
   {
     using namespace std; // For memcpy.
-    if (addr.is_ipv4())
+    if (addr.is_v4())
     {
-      ipv4_endpoint endpoint(port_num, addr.to_ipv4());
-      memcpy(&data_, endpoint.data(), endpoint.size());
+      asio::detail::inet_addr_v4_type& data
+        = reinterpret_cast<asio::detail::inet_addr_v4_type&>(data_);
+      data.sin_family = AF_INET;
+      data.sin_port =
+        asio::detail::socket_ops::host_to_network_short(port_num);
+      data.sin_addr.s_addr =
+        asio::detail::socket_ops::host_to_network_long(
+            addr.to_v4().to_ulong());
     }
     else
     {
-      ipv6_endpoint endpoint(port_num, addr.to_ipv6());
-      memcpy(&data_, endpoint.data(), endpoint.size());
+      asio::detail::inet_addr_v6_type& data
+        = reinterpret_cast<asio::detail::inet_addr_v6_type&>(data_);
+      data.sin6_family = AF_INET6;
+      data.sin6_port =
+        asio::detail::socket_ops::host_to_network_short(port_num);
+      data.sin6_flowinfo = 0;
+      asio::ip::address_v6 v6_addr = addr.to_v6();
+      asio::ip::address_v6::bytes_type bytes = v6_addr.to_bytes();
+      memcpy(data.sin6_addr.s6_addr, bytes.elems, 16);
+      data.sin6_scope_id = v6_addr.scope_id();
     }
-  }
-
-  /// Construct an endpoint from an IPv4 endpoint.
-  basic_endpoint(const ipv4_endpoint& endpoint)
-  {
-    using namespace std; // For memcpy.
-    memcpy(&data_, endpoint.data(), endpoint.size());
-  }
-
-  /// Construct an endpoint from an IPv6 endpoint.
-  basic_endpoint(const ipv6_endpoint& endpoint)
-  {
-    using namespace std; // For memcpy.
-    memcpy(&data_, endpoint.data(), endpoint.size());
   }
 
   /// Copy constructor.
@@ -150,12 +158,8 @@ public:
   protocol_type protocol() const
   {
     if (data_.ss_family == AF_INET)
-    {
-      typename Protocol::ipv4_protocol ipv4_protocol;
-      return Protocol(ipv4_protocol);
-    }
-    typename Protocol::ipv6_protocol ipv6_protocol;
-    return Protocol(ipv6_protocol);
+      return Protocol::v4();
+    return Protocol::v6();
   }
 
   /// Get the underlying endpoint in the native type.
@@ -235,22 +239,28 @@ public:
     using namespace std; // For memcpy.
     if (data_.ss_family == AF_INET)
     {
-      ipv4_endpoint endpoint;
-      memcpy(endpoint.data(), &data_, endpoint.size());
-      return endpoint.address();
+      const asio::detail::inet_addr_v4_type& data
+        = reinterpret_cast<const asio::detail::inet_addr_v4_type&>(
+            data_);
+      return asio::ip::address_v4(
+          asio::detail::socket_ops::network_to_host_long(
+            data.sin_addr.s_addr));
     }
     else
     {
-      ipv6_endpoint endpoint;
-      memcpy(endpoint.data(), &data_, endpoint.size());
-      return endpoint.address();
+      const asio::detail::inet_addr_v6_type& data
+        = reinterpret_cast<const asio::detail::inet_addr_v6_type&>(
+            data_);
+      asio::ip::address_v6::bytes_type bytes;
+      memcpy(bytes.elems, data.sin6_addr.s6_addr, 16);
+      return asio::ip::address_v6(bytes, data.sin6_scope_id);
     }
   }
 
   /// Set the IP address associated with the endpoint.
   void address(const asio::ip::address& addr)
   {
-    basic_endpoint<Protocol> tmp_endpoint(port(), addr);
+    basic_endpoint<Protocol> tmp_endpoint(addr, port());
     data_ = tmp_endpoint.data_;
   }
 
@@ -302,7 +312,7 @@ std::ostream& operator<<(std::ostream& os,
     const basic_endpoint<Protocol>& endpoint)
 {
   const address& addr = endpoint.address();
-  if (addr.is_ipv4())
+  if (addr.is_v4())
     os << addr.to_string();
   else
     os << '[' << addr.to_string() << ']';
@@ -310,11 +320,13 @@ std::ostream& operator<<(std::ostream& os,
   return os;
 }
 #else // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
-template <typename Ostream, typename Protocol>
-Ostream& operator<<(Ostream& os, const basic_endpoint<Protocol>& endpoint)
+template <typename Elem, typename Traits, typename Protocol>
+std::basic_ostream<Elem, Traits>& operator<<(
+    std::basic_ostream<Elem, Traits>& os,
+    const basic_endpoint<Protocol>& endpoint)
 {
   const address& addr = endpoint.address();
-  if (addr.is_ipv4())
+  if (addr.is_v4())
     os << addr.to_string();
   else
     os << '[' << addr.to_string() << ']';

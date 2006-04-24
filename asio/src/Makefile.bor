@@ -13,6 +13,7 @@ PERFORMANCE_TEST_EXES = \
 UNIT_TEST_EXES = \
 	tests\unit\basic_datagram_socket_test.exe \
 	tests\unit\basic_deadline_timer_test.exe \
+	tests\unit\basic_resolver_test.exe \
 	tests\unit\basic_socket_acceptor_test.exe \
 	tests\unit\basic_strand_test.exe \
 	tests\unit\basic_stream_socket_test.exe \
@@ -27,20 +28,21 @@ UNIT_TEST_EXES = \
 	tests\unit\io_service_test.exe \
 	tests\unit\error_handler_test.exe \
 	tests\unit\error_test.exe \
+	tests\unit\ip\address_test.exe \
+	tests\unit\ip\address_v4_test.exe \
+	tests\unit\ip\address_v6_test.exe \
+	tests\unit\ip\basic_endpoint_test.exe \
+	tests\unit\ip\basic_resolver_entry_test.exe \
+	tests\unit\ip\basic_resolver_iterator_test.exe \
+	tests\unit\ip\basic_resolver_query_test.exe \
+	tests\unit\ip\multicast_test.exe \
 	tests\unit\ip\tcp_test.exe \
 	tests\unit\ip\udp_test.exe \
-	tests\unit\ipv4\address_test.exe \
-	tests\unit\ipv4\basic_host_resolver_test.exe \
-	tests\unit\ipv4\host_resolver_service_test.exe \
-	tests\unit\ipv4\host_resolver_test.exe \
-	tests\unit\ipv4\host_test.exe \
-	tests\unit\ipv4\multicast_test.exe \
-	tests\unit\ipv4\tcp_test.exe \
-	tests\unit\ipv4\udp_test.exe \
 	tests\unit\is_read_buffered_test.exe \
 	tests\unit\is_write_buffered_test.exe \
 	tests\unit\placeholders_test.exe \
 	tests\unit\read_test.exe \
+	tests\unit\resolver_service_test.exe \
 	tests\unit\socket_acceptor_service_test.exe \
 	tests\unit\socket_base_test.exe \
 	tests\unit\strand_service_test.exe \

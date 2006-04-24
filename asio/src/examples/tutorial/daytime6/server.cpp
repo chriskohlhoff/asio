@@ -10,8 +10,8 @@ void handle_send_to(char* send_buf, const asio::error& /*error*/,
   free(send_buf);
 }
 
-void handle_receive_from(asio::ipv4::udp::socket* socket, char* recv_buf,
-    size_t recv_length, asio::ipv4::udp::endpoint* remote_endpoint,
+void handle_receive_from(asio::ip::udp::socket* socket, char* recv_buf,
+    size_t recv_length, asio::ip::udp::endpoint* remote_endpoint,
     const asio::error& error, size_t /*bytes_transferred*/)
 {
   if (!error || error == asio::error::message_size)
@@ -42,10 +42,10 @@ int main()
 
     char recv_buf[1];
     size_t recv_length = sizeof(recv_buf);
-    asio::ipv4::udp::endpoint remote_endpoint;
+    asio::ip::udp::endpoint remote_endpoint;
 
-    asio::ipv4::udp::socket socket(io_service,
-        asio::ipv4::udp::endpoint(13));
+    asio::ip::udp::socket socket(io_service,
+        asio::ip::udp::endpoint(asio::ip::udp::v4(), 13));
     socket.async_receive_from(
         asio::buffer(recv_buf, recv_length), remote_endpoint,
         boost::bind(handle_receive_from, &socket, recv_buf, recv_length,
