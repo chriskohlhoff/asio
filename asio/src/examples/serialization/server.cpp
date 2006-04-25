@@ -7,7 +7,7 @@
 #include <boost/serialization/vector.hpp>
 #include "stock.hpp"
 
-namespace serialization {
+namespace s11n_example {
 
 /// Serves stock quote information to any client that connects to it.
 class server
@@ -102,7 +102,7 @@ private:
   std::vector<stock> stocks_;
 };
 
-} // namespace serialization
+} // namespace s11n_example
 
 int main(int argc, char* argv[])
 {
@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
     unsigned short port = boost::lexical_cast<unsigned short>(argv[1]);
 
     asio::io_service io_service;
-    serialization::server server(io_service, port);
+    s11n_example::server server(io_service, port);
     io_service.run();
   }
   catch (std::exception& e)

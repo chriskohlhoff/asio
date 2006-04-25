@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace serialization {
+namespace s11n_example {
 
 /// Structure to hold information about a single stock.
 struct stock
@@ -35,6 +35,6 @@ struct stock
   }
 };
 
-} // namespace serialization
+} // namespace s11n_example
 
 #endif // SERIALIZATION_STOCK_HPP

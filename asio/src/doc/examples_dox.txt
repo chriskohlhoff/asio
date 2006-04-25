@@ -15,7 +15,7 @@ asynchronous operations.
 This example shows how Boost.Serialization can be used with asio to encode and
 decode structures for transmission over a socket.
 
-\li \ref ::serialization "Serialization Classes"
+\li \ref ::s11n_example "Serialization Classes"
 \li \ref serialization_files
 
 \section services_section Services

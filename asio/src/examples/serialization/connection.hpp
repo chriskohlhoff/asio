@@ -12,7 +12,7 @@
 #include <sstream>
 #include <vector>
 
-namespace serialization {
+namespace s11n_example {
 
 /// The connection class provides serialization primitives on top of a socket.
 /**
@@ -169,6 +169,6 @@ private:
 
 typedef boost::shared_ptr<connection> connection_ptr;
 
-} // namespace serialization
+} // namespace s11n_example
 
 #endif // SERIALIZATION_CONNECTION_HPP
