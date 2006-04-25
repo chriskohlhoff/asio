@@ -45,6 +45,7 @@
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
 #include "asio/ip/multicast.hpp"
+#include "asio/ip/resolver_query_base.hpp"
 #include "asio/ip/tcp.hpp"
 #include "asio/ip/udp.hpp"
 #include "asio/is_read_buffered.hpp"

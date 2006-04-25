@@ -30,6 +30,7 @@ noinst_PROGRAMS = \
 	tests/unit/ip/basic_resolver_iterator_test \
 	tests/unit/ip/basic_resolver_query_test \
 	tests/unit/ip/multicast_test \
+	tests/unit/ip/resolver_query_base_test \
 	tests/unit/ip/tcp_test \
 	tests/unit/ip/udp_test \
 	tests/unit/is_read_buffered_test \
@@ -116,6 +117,7 @@ TESTS = \
 	tests/unit/ip/basic_resolver_iterator_test \
 	tests/unit/ip/basic_resolver_query_test \
 	tests/unit/ip/multicast_test \
+	tests/unit/ip/resolver_query_base_test \
 	tests/unit/ip/tcp_test \
 	tests/unit/ip/udp_test \
 	tests/unit/is_read_buffered_test \
@@ -183,6 +185,7 @@ tests_unit_ip_basic_resolver_entry_test_SOURCES = tests/unit/ip/basic_resolver_e
 tests_unit_ip_basic_resolver_iterator_test_SOURCES = tests/unit/ip/basic_resolver_iterator_test.cpp
 tests_unit_ip_basic_resolver_query_test_SOURCES = tests/unit/ip/basic_resolver_query_test.cpp
 tests_unit_ip_multicast_test_SOURCES = tests/unit/ip/multicast_test.cpp
+tests_unit_ip_resolver_query_base_test_SOURCES = tests/unit/ip/resolver_query_base_test.cpp
 tests_unit_ip_tcp_test_SOURCES = tests/unit/ip/tcp_test.cpp
 tests_unit_ip_udp_test_SOURCES = tests/unit/ip/udp_test.cpp
 tests_unit_is_read_buffered_test_SOURCES = tests/unit/is_read_buffered_test.cpp

@@ -65,6 +65,7 @@ Standard exception class.
 \li boost::asio::ip::address
 \li boost::asio::ip::address_v4
 \li boost::asio::ip::address_v6
+\li boost::asio::ip::resolver_query_base
 \li boost::asio::ip::tcp
 \li boost::asio::ip::tcp::acceptor
 \li boost::asio::ip::tcp::endpoint

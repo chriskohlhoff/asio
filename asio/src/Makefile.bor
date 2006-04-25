@@ -36,6 +36,7 @@ UNIT_TEST_EXES = \
 	tests\unit\ip\basic_resolver_iterator_test.exe \
 	tests\unit\ip\basic_resolver_query_test.exe \
 	tests\unit\ip\multicast_test.exe \
+	tests\unit\ip\resolver_query_base_test.exe \
 	tests\unit\ip\tcp_test.exe \
 	tests\unit\ip\udp_test.exe \
 	tests\unit\is_read_buffered_test.exe \

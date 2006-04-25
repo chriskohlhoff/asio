@@ -23,6 +23,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/detail/socket_ops.hpp"
+#include "asio/ip/resolver_query_base.hpp"
 
 namespace asio {
 namespace ip {
@@ -41,27 +42,11 @@ namespace ip {
  */
 template <typename Protocol>
 class basic_resolver_query
+  : public resolver_query_base
 {
 public:
   /// The protocol type associated with the endpoint query.
   typedef Protocol protocol_type;
-
-#if defined(GENERATING_DOCUMENTATION)
-  /// Determine the canonical name of the host specified in the query.
-  static const int canonical_name = implementation_defined;
-
-  /// Host name should be treated as a numeric string defining an IPv4 or IPv6
-  /// address and no name resolution should be attempted.
-  static const int numeric_host = implementation_defined;
-
-  /// Indicate that returned endpoint is intended for use as a locally bound
-  /// socket endpoint.
-  static const int passive = implementation_defined;
-#else
-  BOOST_STATIC_CONSTANT(int, canonical_name = AI_CANONNAME);
-  BOOST_STATIC_CONSTANT(int, numeric_host = AI_NUMERICHOST);
-  BOOST_STATIC_CONSTANT(int, passive = AI_PASSIVE);
-#endif
 
   /// Construct with specified host name and service name for any protocol.
   basic_resolver_query(const std::string& service_name, int flags = passive)

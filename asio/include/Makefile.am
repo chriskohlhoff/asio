@@ -97,6 +97,7 @@ nobase_include_HEADERS = \
 	asio/ip/basic_resolver_iterator.hpp \
 	asio/ip/basic_resolver_query.hpp \
 	asio/ip/multicast.hpp \
+	asio/ip/resolver_query_base.hpp \
 	asio/ip/tcp.hpp \
 	asio/ip/udp.hpp \
 	asio/ip/detail/socket_option.hpp \
