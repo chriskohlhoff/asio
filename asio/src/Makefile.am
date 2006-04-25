@@ -47,6 +47,7 @@ noinst_PROGRAMS = \
 	tests/unit/thread_test \
 	tests/unit/time_traits_test \
 	tests/unit/write_test \
+	examples/allocation/server \
 	examples/chat/chat_client \
 	examples/chat/chat_server \
 	examples/echo/async_tcp_echo_server \
@@ -204,6 +205,7 @@ tests_unit_stream_socket_service_test_SOURCES = tests/unit/stream_socket_service
 tests_unit_thread_test_SOURCES = tests/unit/thread_test.cpp
 tests_unit_time_traits_test_SOURCES = tests/unit/time_traits_test.cpp
 tests_unit_write_test_SOURCES = tests/unit/write_test.cpp
+examples_allocation_server_SOURCES = examples/allocation/server.cpp
 examples_chat_chat_client_SOURCES = examples/chat/chat_client.cpp
 examples_chat_chat_server_SOURCES = examples/chat/chat_server.cpp
 examples_echo_async_tcp_echo_server_SOURCES = examples/echo/async_tcp_echo_server.cpp

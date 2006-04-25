@@ -86,6 +86,7 @@ UNIT_TEST_EXES = \
 	tests\unit\write_test.exe
 
 EXAMPLE_EXES = \
+	examples\allocation\server.exe \
 	examples\chat\chat_client.exe \
 	examples\chat\chat_server.exe \
 	examples\echo\async_tcp_echo_server.exe \
@@ -129,6 +130,9 @@ check: $(UNIT_TEST_EXES)
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
 
 {tests\unit\ip}.cpp{tests\unit\ip}.exe:
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+
+{examples\allocation}.cpp{examples\allocation}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
 
 {examples\chat}.cpp{examples\chat}.exe:
