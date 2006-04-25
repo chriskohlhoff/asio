@@ -11,19 +11,30 @@
 #ifndef UNIT_TEST_HPP
 #define UNIT_TEST_HPP
 
+#include <boost/config.hpp>
+
 #if defined(__BORLANDC__)
 
 // Prevent use of intrinsic for strcmp.
-#include <cstring>
-#undef strcmp
-
+# include <cstring>
+# undef strcmp
+ 
 // Suppress error about condition always being true.
-#pragma option -w-ccc
+# pragma option -w-ccc
 
 #endif // defined(__BORLANDC__)
+
+#if defined(BOOST_MSVC)
+# pragma warning (push)
+# pragma warning (disable:4244)
+#endif // defined(BOOST_MSVC)
 
 #include <boost/test/unit_test.hpp>
 #include <boost/test/included/unit_test_framework.hpp>
 using boost::unit_test::test_suite;
+
+#if defined(BOOST_MSVC)
+# pragma warning (pop)
+#endif // defined(BOOST_MSVC)
 
 #endif // UNIT_TEST_HPP
