@@ -1,7 +1,7 @@
 .deps
 .dirstamp
 *.exe
-server
+reference_counted
 *.ilk
 *.pdb
 *.tds
