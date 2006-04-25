@@ -115,7 +115,8 @@ private:
     {
       // Reset state to match a default constructed end iterator.
       values_.reset();
-      iter_ = typename values_type::const_iterator();
+      typedef typename values_type::const_iterator values_iterator_type;
+      iter_ = values_iterator_type();
     }
   }
 

@@ -48,7 +48,7 @@ std::string host_name(Error_Handler error_handler)
     error_handler(asio::error(asio::detail::socket_ops::get_error()));
     return std::string();
   }
-  return name;
+  return std::string(name);
 }
 
 } // namespace ip
