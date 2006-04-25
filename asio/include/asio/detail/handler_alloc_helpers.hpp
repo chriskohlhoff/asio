@@ -17,6 +17,10 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <boost/detail/workaround.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/handler_alloc_hook.hpp"
 #include "asio/detail/noncopyable.hpp"
 
@@ -28,13 +32,21 @@ namespace asio_handler_alloc_helpers {
 template <typename Handler>
 inline void* allocate(std::size_t s, Handler* h)
 {
+#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+  return ::operator new(s);
+#else
   return asio_handler_allocate(s, h);
+#endif
 }
 
 template <typename Handler>
 inline void deallocate(void* p, Handler* h)
 {
+#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+  ::operator delete(p);
+#else
   asio_handler_deallocate(p, h);
+#endif
 }
 
 } // namespace asio_handler_alloc_helpers
