@@ -79,12 +79,48 @@ public:
   }
 
   /// Resolve a query to a list of entries.
+  /**
+   * This function is used to resolve a query into a list of endpoint entries.
+   *
+   * @param q A query object that determines what endpoints will be returned.
+   *
+   * @returns A forward-only iterator that can be used to traverse the list
+   * of endpoint entries.
+   *
+   * @throws asio::error Thrown on failure.
+   *
+   * @note A default constructed iterator represents the end of the list.
+   *
+   * @note A successful call to this function is guaranteed to return at least
+   * one entry.
+   */
   iterator resolve(const query& q)
   {
     return this->service.resolve(this->implementation, q, throw_error());
   }
 
   /// Resolve a query to a list of entries.
+  /**
+   * This function is used to resolve a query into a list of endpoint entries.
+   *
+   * @param q A query object that determines what endpoints will be returned.
+   *
+   * @returns A forward-only iterator that can be used to traverse the list
+   * of endpoint entries. Returns a default constructed iterator if an error
+   * occurs.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The function signature of the
+   * handler must be:
+   * @code void error_handler(
+   *   const asio::error& error // Result of operation.
+   * ); @endcode
+   *
+   * @note A default constructed iterator represents the end of the list.
+   *
+   * @note A successful call to this function is guaranteed to return at least
+   * one entry.
+   */
   template <typename Error_Handler>
   iterator resolve(const query& q, Error_Handler error_handler)
   {
@@ -92,6 +128,30 @@ public:
   }
 
   /// Asynchronously resolve a query to a list of entries.
+  /**
+   * This function is used to asynchronously resolve a query into a list of
+   * endpoint entries.
+   *
+   * @param q A query object that determines what endpoints will be returned.
+   *
+   * @param handler The handler to be called when the resolve operation
+   * completes. Copies will be made of the handler as required. The function
+   * signature of the handler must be:
+   * @code void handler(
+   *   const asio::error& error,   // Result of operation.
+   *   resolver::iterator iterator // Forward-only iterator that can be used to
+   *                               // traverse the list of endpoint entries.
+   * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the handler will not be invoked from within this function. Invocation
+   * of the handler will be performed in a manner equivalent to using
+   * asio::io_service::post().
+   *
+   * @note A default constructed iterator represents the end of the list.
+   *
+   * @note A successful resolve operation is guaranteed to pass at least one
+   * entry to the handler.
+   */
   template <typename Handler>
   void async_resolve(const query& q, Handler handler)
   {
@@ -99,12 +159,50 @@ public:
   }
 
   /// Resolve an endpoint to a list of entries.
+  /**
+   * This function is used to resolve an endpoint into a list of endpoint
+   * entries.
+   *
+   * @param q A query object that determines what endpoints will be returned.
+   *
+   * @returns A forward-only iterator that can be used to traverse the list
+   * of endpoint entries.
+   *
+   * @throws asio::error Thrown on failure.
+   *
+   * @note A default constructed iterator represents the end of the list.
+   *
+   * @note A successful call to this function is guaranteed to return at least
+   * one entry.
+   */
   iterator resolve(const endpoint_type& e)
   {
     return this->service.resolve(this->implementation, e, throw_error());
   }
 
   /// Resolve an endpoint to a list of entries.
+  /**
+   * This function is used to resolve an endpoint into a list of endpoint
+   * entries.
+   *
+   * @param q A query object that determines what endpoints will be returned.
+   *
+   * @returns A forward-only iterator that can be used to traverse the list
+   * of endpoint entries. Returns a default constructed iterator if an error
+   * occurs.
+   *
+   * @param error_handler The handler to be called when an error occurs. Copies
+   * will be made of the handler as required. The function signature of the
+   * handler must be:
+   * @code void error_handler(
+   *   const asio::error& error // Result of operation.
+   * ); @endcode
+   *
+   * @note A default constructed iterator represents the end of the list.
+   *
+   * @note A successful call to this function is guaranteed to return at least
+   * one entry.
+   */
   template <typename Error_Handler>
   iterator resolve(const endpoint_type& e, Error_Handler error_handler)
   {
@@ -112,6 +210,30 @@ public:
   }
 
   /// Asynchronously resolve an endpoint to a list of entries.
+  /**
+   * This function is used to asynchronously resolve an endpoint into a list of
+   * endpoint entries.
+   *
+   * @param q A query object that determines what endpoints will be returned.
+   *
+   * @param handler The handler to be called when the resolve operation
+   * completes. Copies will be made of the handler as required. The function
+   * signature of the handler must be:
+   * @code void handler(
+   *   const asio::error& error,   // Result of operation.
+   *   resolver::iterator iterator // Forward-only iterator that can be used to
+   *                               // traverse the list of endpoint entries.
+   * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the handler will not be invoked from within this function. Invocation
+   * of the handler will be performed in a manner equivalent to using
+   * asio::io_service::post().
+   *
+   * @note A default constructed iterator represents the end of the list.
+   *
+   * @note A successful resolve operation is guaranteed to pass at least one
+   * entry to the handler.
+   */
   template <typename Handler>
   void async_resolve(const endpoint_type& e, Handler handler)
   {
