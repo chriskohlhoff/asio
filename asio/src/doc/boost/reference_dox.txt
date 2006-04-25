@@ -110,6 +110,7 @@ Standard exception class.
 \li \ref async_read
 \li \ref write
 \li \ref async_write
+\li \ref asio::ip::host_name
 
 <H2>Type Traits</H2>
 
