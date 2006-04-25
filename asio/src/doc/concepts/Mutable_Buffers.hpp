@@ -33,20 +33,11 @@ public:
   /// asio::mutable_buffer.
   typedef implementation_defined value_type;
 
-  /// A forward iterator type that may be used to read or modify elements.
-  typedef implementation_defined iterator;
-
   /// A forward iterator type that may be used to read elements.
   typedef implementation_defined const_iterator;
 
   /// Get an iterator to the first element.
-  iterator begin();
-
-  /// Get an iterator to the first element.
   const_iterator begin() const;
-
-  /// Get an iterator for one past the last element.
-  iterator end();
 
   /// Get an iterator for one past the last element.
   const_iterator end() const;

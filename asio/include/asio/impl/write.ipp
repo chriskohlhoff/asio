@@ -17,6 +17,7 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/buffer.hpp"
 #include "asio/completion_condition.hpp"
 #include "asio/error_handler.hpp"
 #include "asio/detail/bind_handler.hpp"
@@ -30,7 +31,8 @@ template <typename Sync_Write_Stream, typename Const_Buffers,
 std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
     Completion_Condition completion_condition, Error_Handler error_handler)
 {
-  asio::detail::consuming_buffers<Const_Buffers> tmp(buffers);
+  asio::detail::consuming_buffers<
+    const_buffer, Const_Buffers> tmp(buffers);
   std::size_t total_transferred = 0;
   while (tmp.begin() != tmp.end())
   {
@@ -116,7 +118,8 @@ namespace detail
 
   private:
     Async_Write_Stream& stream_;
-    asio::detail::consuming_buffers<Const_Buffers> buffers_;
+    asio::detail::consuming_buffers<
+      const_buffer, Const_Buffers> buffers_;
     std::size_t total_transferred_;
     Completion_Condition completion_condition_;
     Handler handler_;

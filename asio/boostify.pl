@@ -234,6 +234,7 @@ sub copy_examples
 {
   my @dirs = (
       "src/examples/allocation",
+      "src/examples/buffers",
       "src/examples/chat",
       "src/examples/echo",
       "src/examples/http/server",

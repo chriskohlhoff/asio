@@ -56,6 +56,7 @@ UNIT_TEST_EXES = \
 
 EXAMPLE_EXES = \
 	examples\allocation\server.exe \
+	examples\buffers\reference_counted.exe \
 	examples\chat\chat_client.exe \
 	examples\chat\chat_server.exe \
 	examples\echo\async_tcp_echo_server.exe \

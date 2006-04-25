@@ -1,0 +1,25 @@
+subproject libs/asio/example/buffers ;
+
+project boost : $(BOOST_ROOT) ;
+
+if $(UNIX)
+{
+  switch $(JAMUNAME)
+  {
+  case SunOS* :
+    {
+      SOCKET_LIBS = <find-library>socket <find-library>nsl ;
+    }
+  }
+}
+
+exe server
+  : <lib>@boost/libs/date_time/build/boost_date_time
+    reference_counted.cpp
+  : <include>$(BOOST_ROOT)
+    <include>../../../..
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
+  ;
