@@ -163,7 +163,8 @@ public:
    * This function is used to resolve an endpoint into a list of endpoint
    * entries.
    *
-   * @param q A query object that determines what endpoints will be returned.
+   * @param e An endpoint object that determines what endpoints will be
+   * returned.
    *
    * @returns A forward-only iterator that can be used to traverse the list
    * of endpoint entries.
@@ -185,7 +186,8 @@ public:
    * This function is used to resolve an endpoint into a list of endpoint
    * entries.
    *
-   * @param q A query object that determines what endpoints will be returned.
+   * @param e An endpoint object that determines what endpoints will be
+   * returned.
    *
    * @returns A forward-only iterator that can be used to traverse the list
    * of endpoint entries. Returns a default constructed iterator if an error
@@ -214,7 +216,8 @@ public:
    * This function is used to asynchronously resolve an endpoint into a list of
    * endpoint entries.
    *
-   * @param q A query object that determines what endpoints will be returned.
+   * @param e An endpoint object that determines what endpoints will be
+   * returned.
    *
    * @param handler The handler to be called when the resolve operation
    * completes. Copies will be made of the handler as required. The function
