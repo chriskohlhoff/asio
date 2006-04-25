@@ -186,7 +186,7 @@ public:
   /// Set the underlying size of the endpoint in the native type.
   void resize(size_type size)
   {
-    if (size > sizeof(data_))
+    if (size > size_type(sizeof(data_)))
     {
       asio::error e(asio::error::invalid_argument);
       boost::throw_exception(e);
