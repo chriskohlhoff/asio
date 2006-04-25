@@ -37,7 +37,8 @@ namespace multicast {
  * @code
  * asio::ip::udp::socket socket(io_service); 
  * ...
- * asio::ip::address multicast_address("225.0.0.1");
+ * asio::ip::address multicast_address =
+ *   asio::ip::address::from_string("225.0.0.1");
  * asio::ip::multicast::join_group option(multicast_address);
  * socket.set_option(option);
  * @endcode
@@ -61,7 +62,8 @@ typedef asio::ip::detail::socket_option::multicast_request<
  * @code
  * asio::ip::udp::socket socket(io_service); 
  * ...
- * asio::ip::address multicast_address("225.0.0.1");
+ * asio::ip::address multicast_address =
+ *   asio::ip::address::from_string("225.0.0.1");
  * asio::ip::multicast::leave_group option(multicast_address);
  * socket.set_option(option);
  * @endcode
@@ -76,7 +78,6 @@ typedef asio::ip::detail::socket_option::multicast_request<
   IPPROTO_IP, IP_DROP_MEMBERSHIP, IPPROTO_IPV6, IPV6_LEAVE_GROUP> leave_group;
 #endif
 
-#if 0
 /// Socket option for local interface to use for outgoing multicast packets.
 /**
  * Implements the IPPROTO_IP/IP_MULTICAST_IF socket option.
@@ -84,32 +85,23 @@ typedef asio::ip::detail::socket_option::multicast_request<
  * @par Examples:
  * Setting the option:
  * @code
- * asio::ipv4::udp::socket socket(io_service); 
+ * asio::ip::udp::socket socket(io_service); 
  * ...
- * asio::ipv4::address local_interface("1.2.3.4");
- * asio::ipv4::multicast::outbound_interface option(local_interface);
+ * asio::ip::address_v4 local_interface =
+ *   asio::ip::address_v4::from_string("1.2.3.4");
+ * asio::ip::multicast::outbound_interface option(local_interface);
  * socket.set_option(option);
  * @endcode
  *
- * @par
- * Getting the current option value:
- * @code
- * asio::ipv4::udp::socket socket(io_service); 
- * ...
- * asio::ipv4::multicast::outbound_interface option;
- * socket.get_option(option);
- * asio::ipv4::address local_interface = option.get();
- * @endcode
- *
  * @par Concepts:
- * Socket_Option, IPv4_Address_Socket_Option.
+ * Socket_Option, IP_Network_Interface_Socket_Option.
  */
 #if defined(GENERATING_DOCUMENTATION)
 typedef implementation_defined outbound_interface;
 #else
-typedef asio::ipv4::detail::socket_option::address<
-  IPPROTO_IP, IP_MULTICAST_IF> outbound_interface;
-#endif
+typedef asio::ip::detail::socket_option::network_interface<
+  IPPROTO_IP, IP_MULTICAST_IF, IPPROTO_IPV6, IPV6_MULTICAST_IF>
+  outbound_interface;
 #endif
 
 /// Socket option for time-to-live associated with outgoing multicast packets.

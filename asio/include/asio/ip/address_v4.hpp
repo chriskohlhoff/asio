@@ -53,14 +53,14 @@ public:
   }
 
   /// Construct an address from raw bytes.
-  address_v4(const bytes_type& bytes)
+  explicit address_v4(const bytes_type& bytes)
   {
     using namespace std; // For memcpy.
     memcpy(&addr_.s_addr, bytes.elems, 4);
   }
 
   /// Construct an address from a unsigned long in host byte order.
-  address_v4(unsigned long addr)
+  explicit address_v4(unsigned long addr)
   {
     addr_.s_addr = asio::detail::socket_ops::host_to_network_long(addr);
   }

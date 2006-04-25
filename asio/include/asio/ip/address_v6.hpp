@@ -57,7 +57,7 @@ public:
   }
 
   /// Construct an address from raw bytes and scope ID.
-  address_v6(const bytes_type& bytes, unsigned long scope_id = 0)
+  explicit address_v6(const bytes_type& bytes, unsigned long scope_id = 0)
     : scope_id_(scope_id)
   {
     using namespace std; // For memcpy.

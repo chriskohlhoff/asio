@@ -229,6 +229,40 @@ public:
     }
   }
 
+  // Construct with multicast address and IPv4 address specifying an interface.
+  multicast_request(const asio::ip::address_v4& multicast_address,
+      const asio::ip::address_v4& network_interface
+        = asio::ip::address_v4::any())
+  {
+    ipv4_value_.imr_multiaddr.s_addr =
+      asio::detail::socket_ops::host_to_network_long(
+          multicast_address.to_ulong());
+    ipv4_value_.imr_interface.s_addr =
+      asio::detail::socket_ops::host_to_network_long(
+          network_interface.to_ulong());
+
+    in6_addr tmp_addr = IN6ADDR_ANY_INIT;
+    ipv6_value_.ipv6mr_multiaddr = tmp_addr;
+    ipv6_value_.ipv6mr_interface = 0;
+  }
+
+  // Construct with multicast address and IPv6 network interface index.
+  multicast_request(const asio::ip::address_v6& multicast_address,
+      unsigned long network_interface = 0)
+  {
+    ipv4_value_.imr_multiaddr.s_addr =
+      asio::detail::socket_ops::host_to_network_long(
+          asio::ip::address_v4::any().to_ulong());
+    ipv4_value_.imr_interface.s_addr =
+      asio::detail::socket_ops::host_to_network_long(
+          asio::ip::address_v4::any().to_ulong());
+
+    using namespace std; // For memcpy.
+    asio::ip::address_v6::bytes_type bytes = multicast_address.to_bytes();
+    memcpy(ipv6_value_.ipv6mr_multiaddr.s6_addr, bytes.elems, 16);
+    ipv6_value_.ipv6mr_interface = network_interface;
+  }
+
   // Get the level of the socket option.
   template <typename Protocol>
   int level(const Protocol& protocol) const
@@ -277,6 +311,88 @@ public:
 private:
   ip_mreq ipv4_value_;
   ipv6_mreq ipv6_value_;
+};
+
+// Helper template for implementing options that specify a network interface.
+template <int IPv4_Level, int IPv4_Name, int IPv6_Level, int IPv6_Name>
+class network_interface
+{
+public:
+  // Default constructor.
+  network_interface()
+  {
+    ipv4_value_.s_addr =
+      asio::detail::socket_ops::host_to_network_long(
+          asio::ip::address_v4::any().to_ulong());
+    ipv6_value_ = 0;
+  }
+
+  // Construct with IPv4 interface.
+  network_interface(const asio::ip::address_v4& ipv4_interface)
+  {
+    ipv4_value_.s_addr =
+      asio::detail::socket_ops::host_to_network_long(
+          ipv4_interface.to_ulong());
+    ipv6_value_ = 0;
+  }
+
+  // Construct with IPv6 interface.
+  network_interface(unsigned long ipv6_interface)
+  {
+    ipv4_value_.s_addr =
+      asio::detail::socket_ops::host_to_network_long(
+          asio::ip::address_v4::any().to_ulong());
+    ipv6_value_ = ipv6_interface;
+  }
+
+  // Get the level of the socket option.
+  template <typename Protocol>
+  int level(const Protocol& protocol) const
+  {
+    if (protocol.family() == PF_INET6)
+      return IPv6_Level;
+    return IPv4_Level;
+  }
+
+  // Get the name of the socket option.
+  template <typename Protocol>
+  int name(const Protocol& protocol) const
+  {
+    if (protocol.family() == PF_INET6)
+      return IPv6_Name;
+    return IPv4_Name;
+  }
+
+  // Get the address of the option data.
+  template <typename Protocol>
+  void* data(const Protocol& protocol)
+  {
+    if (protocol.family() == PF_INET6)
+      return &ipv6_value_;
+    return &ipv4_value_;
+  }
+
+  // Get the address of the option data.
+  template <typename Protocol>
+  const void* data(const Protocol& protocol) const
+  {
+    if (protocol.family() == PF_INET6)
+      return &ipv6_value_;
+    return &ipv4_value_;
+  }
+
+  // Get the size of the option data.
+  template <typename Protocol>
+  std::size_t size(const Protocol& protocol) const
+  {
+    if (protocol.family() == PF_INET6)
+      return sizeof(ipv6_value_);
+    return sizeof(ipv4_value_);
+  }
+
+private:
+  in_addr ipv4_value_;
+  unsigned long ipv6_value_;
 };
 
 } // namespace socket_option
