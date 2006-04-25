@@ -360,17 +360,20 @@ public:
     return bytes_transferred;
   }
 
-  template <typename Handler>
+  template <typename Const_Buffers, typename Handler>
   class send_operation
     : public operation
   {
   public:
     send_operation(asio::io_service& io_service,
-        weak_cancel_token_type cancel_token, Handler handler)
-      : operation(&send_operation<Handler>::do_completion_impl,
-          &send_operation<Handler>::destroy_impl),
+        weak_cancel_token_type cancel_token,
+        const Const_Buffers& buffers, Handler handler)
+      : operation(
+          &send_operation<Const_Buffers, Handler>::do_completion_impl,
+          &send_operation<Const_Buffers, Handler>::destroy_impl),
         work_(io_service),
         cancel_token_(cancel_token),
+        buffers_(buffers),
         handler_(handler)
     {
     }
@@ -380,7 +383,7 @@ public:
         DWORD last_error, size_t bytes_transferred)
     {
       // Take ownership of the operation object.
-      typedef send_operation<Handler> op_type;
+      typedef send_operation<Const_Buffers, Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
@@ -409,7 +412,7 @@ public:
     static void destroy_impl(operation* op)
     {
       // Take ownership of the operation object.
-      typedef send_operation<Handler> op_type;
+      typedef send_operation<Const_Buffers, Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
@@ -417,6 +420,7 @@ public:
 
     asio::io_service::work work_;
     weak_cancel_token_type cancel_token_;
+    Const_Buffers buffers_;
     Handler handler_;
   };
 
@@ -427,11 +431,11 @@ public:
       socket_base::message_flags flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef send_operation<Handler> value_type;
+    typedef send_operation<Const_Buffers, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        owner(), impl.cancel_token_, handler);
+        owner(), impl.cancel_token_, buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -499,15 +503,18 @@ public:
     return bytes_transferred;
   }
 
-  template <typename Handler>
+  template <typename Const_Buffers, typename Handler>
   class send_to_operation
     : public operation
   {
   public:
-    send_to_operation(asio::io_service& io_service, Handler handler)
-      : operation(&send_to_operation<Handler>::do_completion_impl,
-          &send_to_operation<Handler>::destroy_impl),
+    send_to_operation(asio::io_service& io_service,
+        const Const_Buffers& buffers, Handler handler)
+      : operation(
+          &send_to_operation<Const_Buffers, Handler>::do_completion_impl,
+          &send_to_operation<Const_Buffers, Handler>::destroy_impl),
         work_(io_service),
+        buffers_(buffers),
         handler_(handler)
     {
     }
@@ -517,7 +524,7 @@ public:
         DWORD last_error, size_t bytes_transferred)
     {
       // Take ownership of the operation object.
-      typedef send_to_operation<Handler> op_type;
+      typedef send_to_operation<Const_Buffers, Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
@@ -537,13 +544,14 @@ public:
     static void destroy_impl(operation* op)
     {
       // Take ownership of the operation object.
-      typedef send_to_operation<Handler> op_type;
+      typedef send_to_operation<Const_Buffers, Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
     }
 
     asio::io_service::work work_;
+    Const_Buffers buffers_;
     Handler handler_;
   };
 
@@ -555,10 +563,10 @@ public:
       Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef send_to_operation<Handler> value_type;
+    typedef send_to_operation<Const_Buffers, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr, owner(), handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr, owner(), buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -631,17 +639,20 @@ public:
     return bytes_transferred;
   }
 
-  template <typename Handler>
+  template <typename Mutable_Buffers, typename Handler>
   class receive_operation
     : public operation
   {
   public:
     receive_operation(asio::io_service& io_service,
-        weak_cancel_token_type cancel_token, Handler handler)
-      : operation(&receive_operation<Handler>::do_completion_impl,
-          &receive_operation<Handler>::destroy_impl),
+        weak_cancel_token_type cancel_token,
+        const Mutable_Buffers& buffers, Handler handler)
+      : operation(
+          &receive_operation<Mutable_Buffers, Handler>::do_completion_impl,
+          &receive_operation<Mutable_Buffers, Handler>::destroy_impl),
         work_(io_service),
         cancel_token_(cancel_token),
+        buffers_(buffers),
         handler_(handler)
     {
     }
@@ -651,7 +662,7 @@ public:
         DWORD last_error, size_t bytes_transferred)
     {
       // Take ownership of the operation object.
-      typedef receive_operation<Handler> op_type;
+      typedef receive_operation<Mutable_Buffers, Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
@@ -686,7 +697,7 @@ public:
     static void destroy_impl(operation* op)
     {
       // Take ownership of the operation object.
-      typedef receive_operation<Handler> op_type;
+      typedef receive_operation<Mutable_Buffers, Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
@@ -694,6 +705,7 @@ public:
 
     asio::io_service::work work_;
     weak_cancel_token_type cancel_token_;
+    Mutable_Buffers buffers_;
     Handler handler_;
   };
 
@@ -704,11 +716,11 @@ public:
       socket_base::message_flags flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef receive_operation<Handler> value_type;
+    typedef receive_operation<Mutable_Buffers, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        owner(), impl.cancel_token_, handler);
+        owner(), impl.cancel_token_, buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -782,19 +794,21 @@ public:
     return bytes_transferred;
   }
 
-  template <typename Handler>
+  template <typename Mutable_Buffers, typename Handler>
   class receive_from_operation
     : public operation
   {
   public:
     receive_from_operation(asio::io_service& io_service,
-        endpoint_type& endpoint, Handler handler)
+        endpoint_type& endpoint, const Mutable_Buffers& buffers,
+        Handler handler)
       : operation(
-          &receive_from_operation<Handler>::do_completion_impl,
-          &receive_from_operation<Handler>::destroy_impl),
+          &receive_from_operation<Mutable_Buffers, Handler>::do_completion_impl,
+          &receive_from_operation<Mutable_Buffers, Handler>::destroy_impl),
         endpoint_(endpoint),
         endpoint_size_(endpoint.capacity()),
         work_(io_service),
+        buffers_(buffers),
         handler_(handler)
     {
     }
@@ -809,7 +823,7 @@ public:
         DWORD last_error, size_t bytes_transferred)
     {
       // Take ownership of the operation object.
-      typedef receive_from_operation<Handler> op_type;
+      typedef receive_from_operation<Mutable_Buffers, Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
@@ -838,7 +852,7 @@ public:
     static void destroy_impl(operation* op)
     {
       // Take ownership of the operation object.
-      typedef receive_from_operation<Handler> op_type;
+      typedef receive_from_operation<Mutable_Buffers, Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
@@ -847,6 +861,7 @@ public:
     endpoint_type& endpoint_;
     int endpoint_size_;
     asio::io_service::work work_;
+    Mutable_Buffers buffers_;
     Handler handler_;
   };
 
@@ -859,10 +874,11 @@ public:
       socket_base::message_flags flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef receive_from_operation<Handler> value_type;
+    typedef receive_from_operation<Mutable_Buffers, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr, owner(), sender_endp, handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr,
+        owner(), sender_endp, buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
