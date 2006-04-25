@@ -45,7 +45,8 @@ std::string host_name(Error_Handler error_handler)
   char name[1024];
   if (asio::detail::socket_ops::gethostname(name, sizeof(name)) != 0)
   {
-    error_handler(asio::error(asio::detail::socket_ops::get_error()));
+    asio::error error(asio::detail::socket_ops::get_error());
+    error_handler(error);
     return std::string();
   }
   return std::string(name);

@@ -36,8 +36,8 @@ namespace ip {
 
 /// Describes an endpoint for a version-independent IP socket.
 /**
- * The asio::ip::basic_endpoint class template describes an endpoint that may
- * be associated with a particular socket.
+ * The asio::ip::basic_endpoint class template describes an endpoint that
+ * may be associated with a particular socket.
  *
  * @par Thread Safety:
  * @e Distinct @e objects: Safe.@n
@@ -304,7 +304,7 @@ private:
  *
  * @return The output stream.
  *
- * @relates asio::ipv6::basic_endpoint
+ * @relates asio::ip::basic_endpoint
  */
 #if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
 template <typename Protocol>

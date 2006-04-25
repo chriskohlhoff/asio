@@ -33,8 +33,8 @@ namespace ip {
 
 /// Implements version-independent IP addresses.
 /**
- * The asio::ip::address class provides the ability to use either IP version 4
- * or version 6 addresses.
+ * The asio::ip::address class provides the ability to use either IP
+ * version 4 or version 6 addresses.
  *
  * @par Thread Safety:
  * @e Distinct @e objects: Safe.@n
@@ -119,7 +119,8 @@ public:
   {
     if (type_ != ipv4)
     {
-      asio::error error(asio::error::address_family_not_supported);
+      asio::error error(
+          asio::error::address_family_not_supported);
       boost::throw_exception(error);
     }
     return ipv4_address_;
@@ -130,7 +131,8 @@ public:
   {
     if (type_ != ipv6)
     {
-      asio::error error(asio::error::address_family_not_supported);
+      asio::error error(
+          asio::error::address_family_not_supported);
       boost::throw_exception(error);
     }
     return ipv6_address_;
@@ -262,7 +264,7 @@ private:
  *
  * @return The output stream.
  *
- * @relates tcp::endpoint
+ * @relates asio::ip::address
  */
 template <typename Elem, typename Traits>
 std::basic_ostream<Elem, Traits>& operator<<(

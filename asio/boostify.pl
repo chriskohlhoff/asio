@@ -16,13 +16,14 @@ sub determine_boost_dir
     if ($line =~ /AM_INIT_AUTOMAKE\(asio, \[([^\]]*)\]\)/)
     {
       $asio_version = $1;
+      $asio_version =~ s/\./_/g;
     }
   }
   close($input);
 
   # Create the boost directory name.
   our $boost_dir;
-  $boost_dir = "boost-asio-proposal-$asio_version";
+  $boost_dir = "boost_asio_$asio_version";
 }
 
 sub print_line
@@ -92,7 +93,7 @@ sub copy_source_file
       print_line($output, "namespace boost {", $from, $lineno);
       print_line($output, $line, $from, $lineno);
     }
-    elsif ($line =~ /^} \/\/ namespace asio/)
+    elsif ($line =~ /^} \/\/ namespace asio$/)
     {
       print_line($output, $line, $from, $lineno);
       print_line($output, "} // namespace boost", $from, $lineno);
@@ -145,6 +146,11 @@ sub copy_source_file
       $line =~ s/using namespace asio/using namespace boost::asio/g;
       print_line($output, $line, $from, $lineno);
     }
+    elsif ($line =~ /asio_handler_alloc_helpers/)
+    {
+      $line =~ s/asio_handler_alloc_helpers/boost_asio_handler_alloc_helpers/g;
+      print_line($output, $line, $from, $lineno);
+    }
     else
     {
       print_line($output, $line, $from, $lineno);
@@ -164,8 +170,8 @@ sub copy_include_files
       "include/asio",
       "include/asio/detail",
       "include/asio/impl",
-      "include/asio/ipv4",
-      "include/asio/ipv4/detail",
+      "include/asio/ip",
+      "include/asio/ip/detail",
       "include/asio/ssl",
       "include/asio/ssl/detail");
 
@@ -204,7 +210,7 @@ sub copy_unit_tests
 {
   my @dirs = (
       "src/tests/unit",
-      "src/tests/unit/ipv4",
+      "src/tests/unit/ip",
       "src/tests/unit/ssl");
 
   our $boost_dir;
@@ -227,6 +233,7 @@ sub copy_unit_tests
 sub copy_examples
 {
   my @dirs = (
+      "src/examples/allocation",
       "src/examples/chat",
       "src/examples/echo",
       "src/examples/http/server",
@@ -257,6 +264,7 @@ sub copy_examples
         glob("$dir/*.*pp"),
         glob("$dir/Jamfile*"),
         glob("$dir/*.pem"),
+        glob("$dir/README*"),
         glob("$dir/*.txt"));
     foreach my $file (@files)
     {

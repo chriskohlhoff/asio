@@ -58,7 +58,8 @@ boost::arg<1> error;
 
 /// An argument placeholder, for use with @ref boost_bind, that corresponds to
 /// the bytes_transferred argument of a handler for asynchronous functions such
-/// as asio::async_write or asio::basic_stream_socket::async_write_some.
+/// as asio::basic_stream_socket::async_write_some or
+/// asio::async_write.
 boost::arg<2> bytes_transferred;
 
 /// An argument placeholder, for use with @ref boost_bind, that corresponds to

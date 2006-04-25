@@ -26,8 +26,8 @@ namespace ip {
 
 /// An entry produced by a resolver.
 /**
- * The asio::ip::basic_resolver_entry class template describes an entry as
- * returned by a resolver.
+ * The asio::ip::basic_resolver_entry class template describes an entry
+ * as returned by a resolver.
  *
  * @par Thread Safety:
  * @e Distinct @e objects: Safe.@n

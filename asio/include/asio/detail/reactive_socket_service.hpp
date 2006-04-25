@@ -801,9 +801,10 @@ public:
   class receive_from_handler
   {
   public:
-    receive_from_handler(socket_type socket, asio::io_service& io_service,
-        const Mutable_Buffers& buffers, endpoint_type& endpoint,
-        socket_base::message_flags flags, Handler handler)
+    receive_from_handler(socket_type socket,
+        asio::io_service& io_service, const Mutable_Buffers& buffers,
+        endpoint_type& endpoint, socket_base::message_flags flags,
+        Handler handler)
       : socket_(socket),
         io_service_(io_service),
         work_(io_service),
@@ -1050,7 +1051,8 @@ public:
       // Transfer ownership of the new socket to the peer object.
       if (!error)
       {
-        peer_.assign(protocol_, new_socket.get(), asio::assign_error(error));
+        peer_.assign(protocol_, new_socket.get(),
+            asio::assign_error(error));
         if (!error)
           new_socket.release();
       }

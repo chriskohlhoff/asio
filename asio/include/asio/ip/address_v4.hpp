@@ -134,7 +134,8 @@ public:
   static address_v4 from_string(const char* str, Error_Handler error_handler)
   {
     address_v4 tmp;
-    if (asio::detail::socket_ops::inet_pton(AF_INET, str, &tmp.addr_) <= 0)
+    if (asio::detail::socket_ops::inet_pton(
+          AF_INET, str, &tmp.addr_) <= 0)
     {
       asio::error e(asio::detail::socket_ops::get_error());
       error_handler(e);
@@ -238,7 +239,7 @@ private:
  *
  * @return The output stream.
  *
- * @relates address_v4
+ * @relates asio::ip::address_v4
  */
 template <typename Elem, typename Traits>
 std::basic_ostream<Elem, Traits>& operator<<(

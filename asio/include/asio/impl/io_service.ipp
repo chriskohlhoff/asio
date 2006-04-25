@@ -219,11 +219,11 @@ Service& use_service(io_service& ios)
  * will destroy the service object by performing:
  * @code delete static_cast<io_service::service*>(svc) @endcode
  *
- * @throws asio::service_already_exists Thrown if a service of the given type
- * is already present in the io_service.
+ * @throws asio::service_already_exists Thrown if a service of the given
+ * type is already present in the io_service.
  *
- * @throws asio::invalid_service_owner Thrown if the service's owning io_service
- * is not the io_service object specified by the ios parameter.
+ * @throws asio::invalid_service_owner Thrown if the service's owning
+ * io_service is not the io_service object specified by the ios parameter.
  */
 template <typename Service>
 void add_service(io_service& ios, Service* svc)

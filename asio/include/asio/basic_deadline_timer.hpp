@@ -284,11 +284,11 @@ public:
  * }
  * @endcode
  *
- * @li The asio::basic_deadline_timer::expires_from_now() function cancels any
- * pending asynchronous waits, and returns the number of asynchronous waits that
- * were cancelled. If it returns 0 then you were too late and the wait handler
- * has already been executed, or will soon be executed. If it returns 1 then the
- * wait handler was successfully cancelled.
+ * @li The asio::basic_deadline_timer::expires_from_now() function
+ * cancels any pending asynchronous waits, and returns the number of
+ * asynchronous waits that were cancelled. If it returns 0 then you were too
+ * late and the wait handler has already been executed, or will soon be
+ * executed. If it returns 1 then the wait handler was successfully cancelled.
  *
  * @li If a wait handler is cancelled, the asio::error passed to it
  * contains the value asio::error::operation_aborted.

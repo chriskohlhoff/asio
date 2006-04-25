@@ -258,7 +258,8 @@ public:
           asio::ip::address_v4::any().to_ulong());
 
     using namespace std; // For memcpy.
-    asio::ip::address_v6::bytes_type bytes = multicast_address.to_bytes();
+    asio::ip::address_v6::bytes_type bytes =
+      multicast_address.to_bytes();
     memcpy(ipv6_value_.ipv6mr_multiaddr.s6_addr, bytes.elems, 16);
     ipv6_value_.ipv6mr_interface = network_interface;
   }

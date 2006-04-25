@@ -16,79 +16,22 @@ if $(UNIX)
   }
 }
 
-run basic_context_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
+template unit_test
+  : <lib>@boost/libs/date_time/build/boost_date_time
+    <lib>@boost/libs/thread/build/boost_thread
   : <include>../../../..
     <threading>multi
+    <find-library>ssl
+    <find-library>crypto
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
     $(SOCKET_LIBS)
   ;
 
-run context_base_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run context_service_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run context_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run stream_base_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run stream_service_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run stream_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
+run basic_context_test.cpp <template>unit_test ;
+run context_base_test.cpp <template>unit_test ;
+run context_service_test.cpp <template>unit_test ;
+run context_test.cpp <template>unit_test ;
+run stream_base_test.cpp <template>unit_test ;
+run stream_service_test.cpp <template>unit_test ;
+run stream_test.cpp <template>unit_test ;

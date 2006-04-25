@@ -1,6 +1,6 @@
 //
 // resolver_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -176,7 +176,8 @@ public:
       {
         iterator_type iterator;
         io_service_.post(asio::detail::bind_handler(handler_,
-              asio::error(asio::error::operation_aborted), iterator));
+              asio::error(asio::error::operation_aborted),
+              iterator));
         return;
       }
 
@@ -195,7 +196,8 @@ public:
       iterator_type iterator;
       if (result == 0)
         iterator = iterator_type::create(address_info, host_name, service_name);
-      io_service_.post(asio::detail::bind_handler(handler_, e, iterator));
+      io_service_.post(asio::detail::bind_handler(
+            handler_, e, iterator));
     }
 
   private:
@@ -270,7 +272,8 @@ public:
       {
         iterator_type iterator;
         io_service_.post(asio::detail::bind_handler(handler_,
-              asio::error(asio::error::operation_aborted), iterator));
+              asio::error(asio::error::operation_aborted),
+              iterator));
         return;
       }
 
@@ -294,7 +297,8 @@ public:
       iterator_type iterator;
       if (result == 0)
         iterator = iterator_type::create(endpoint_, host_name, service_name);
-      io_service_.post(asio::detail::bind_handler(handler_, e, iterator));
+      io_service_.post(asio::detail::bind_handler(
+            handler_, e, iterator));
     }
 
   private:

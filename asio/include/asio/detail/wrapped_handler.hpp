@@ -114,13 +114,15 @@ public:
   friend void* asio_handler_allocate(std::size_t size,
       wrapped_handler<Dispatcher, Handler>* this_handler)
   {
-    return asio_handler_alloc_helpers::allocate(size, &this_handler->handler_);
+    return asio_handler_alloc_helpers::allocate(
+        size, &this_handler->handler_);
   }
 
   friend void asio_handler_deallocate(void* pointer,
       wrapped_handler<Dispatcher, Handler>* this_handler)
   {
-    asio_handler_alloc_helpers::deallocate(pointer, &this_handler->handler_);
+    asio_handler_alloc_helpers::deallocate(
+        pointer, &this_handler->handler_);
   }
 
 private:

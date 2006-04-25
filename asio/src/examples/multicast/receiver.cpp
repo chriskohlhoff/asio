@@ -14,7 +14,8 @@ public:
     : socket_(io_service)
   {
     // Create the socket so that multiple may be bound to the same address.
-    asio::ip::udp::endpoint listen_endpoint(listen_address, multicast_port);
+    asio::ip::udp::endpoint listen_endpoint(
+        listen_address, multicast_port);
     socket_.open(listen_endpoint.protocol());
     socket_.set_option(asio::ip::udp::socket::reuse_address(true));
     socket_.bind(listen_endpoint);

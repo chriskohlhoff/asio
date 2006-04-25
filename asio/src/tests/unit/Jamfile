@@ -16,176 +16,9 @@ if $(UNIX)
   }
 }
 
-run basic_datagram_socket_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run basic_deadline_timer_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run basic_socket_acceptor_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run basic_strand_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run basic_stream_socket_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run buffer_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run buffered_read_stream_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run buffered_stream_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run buffered_write_stream_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run completion_condition_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run datagram_socket_service_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run deadline_timer_service_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run deadline_timer_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run error_handler_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run error_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run io_service_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
+template unit_test
+  : <lib>@boost/libs/date_time/build/boost_date_time
     <lib>@boost/libs/thread/build/boost_thread
-  :
-  :
   : <include>../../..
     <threading>multi
     <mingw><*><find-library>ws2_32
@@ -193,235 +26,44 @@ run io_service_test.cpp
     $(SOCKET_LIBS)
   ;
 
-run ip/tcp_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run ip/udp_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run ipv4/address_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run ipv4/basic_host_resolver_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run ipv4/host_resolver_service_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run ipv4/host_resolver_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run ipv4/host_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run ipv4/multicast_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run ipv4/tcp_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run ipv4/udp_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run is_read_buffered_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run is_write_buffered_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run placeholders_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run read_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run socket_acceptor_service_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run socket_base_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run strand_service_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run strand_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-    <lib>@boost/libs/thread/build/boost_thread
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run stream_socket_service_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run time_traits_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
-run write_test.cpp
-    <lib>@boost/libs/date_time/build/boost_date_time
-  :
-  :
-  : <include>../../..
-    <threading>multi
-    <mingw><*><find-library>ws2_32
-    <mingw><*><find-library>mswsock
-    $(SOCKET_LIBS)
-  ;
-
+run basic_datagram_socket_test.cpp <template>unit_test ;
+run basic_deadline_timer_test.cpp <template>unit_test ;
+run basic_resolver_test.cpp <template>unit_test ;
+run basic_socket_acceptor_test.cpp <template>unit_test ;
+run basic_strand_test.cpp <template>unit_test ;
+run basic_stream_socket_test.cpp <template>unit_test ;
+run buffer_test.cpp <template>unit_test ;
+run buffered_read_stream_test.cpp <template>unit_test ;
+run buffered_stream_test.cpp <template>unit_test ;
+run buffered_write_stream_test.cpp <template>unit_test ;
+run completion_condition_test.cpp <template>unit_test ;
+run datagram_socket_service_test.cpp <template>unit_test ;
+run deadline_timer_service_test.cpp <template>unit_test ;
+run deadline_timer_test.cpp <template>unit_test ;
+run error_handler_test.cpp <template>unit_test ;
+run error_test.cpp <template>unit_test ;
+run io_service_test.cpp <template>unit_test ;
+run ip/address_test.cpp <template>unit_test ;
+run ip/address_v4_test.cpp <template>unit_test ;
+run ip/address_v6_test.cpp <template>unit_test ;
+run ip/basic_endpoint_test.cpp <template>unit_test ;
+run ip/basic_resolver_entry_test.cpp <template>unit_test ;
+run ip/basic_resolver_iterator_test.cpp <template>unit_test ;
+run ip/basic_resolver_query_test.cpp <template>unit_test ;
+run ip/host_name_test.cpp <template>unit_test ;
+run ip/multicast_test.cpp <template>unit_test ;
+run ip/resolver_query_base_test.cpp <template>unit_test ;
+run ip/tcp_test.cpp <template>unit_test ;
+run ip/udp_test.cpp <template>unit_test ;
+run is_read_buffered_test.cpp <template>unit_test ;
+run is_write_buffered_test.cpp <template>unit_test ;
+run placeholders_test.cpp <template>unit_test ;
+run read_test.cpp <template>unit_test ;
+run resolver_service_test.cpp <template>unit_test ;
+run socket_acceptor_service_test.cpp <template>unit_test ;
+run socket_base_test.cpp <template>unit_test ;
+run strand_service_test.cpp <template>unit_test ;
+run strand_test.cpp <template>unit_test ;
+run stream_socket_service_test.cpp <template>unit_test ;
+run time_traits_test.cpp <template>unit_test ;
+run write_test.cpp <template>unit_test ;

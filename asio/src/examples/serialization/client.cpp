@@ -110,11 +110,9 @@ int main(int argc, char* argv[])
       std::cerr << "Usage: client <host> <port>" << std::endl;
       return 1;
     }
-    std::string host = argv[1];
-    unsigned short port = boost::lexical_cast<unsigned short>(argv[2]);
 
     asio::io_service io_service;
-    s11n_example::client client(io_service, host, port);
+    s11n_example::client client(io_service, argv[1], argv[2]);
     io_service.run();
   }
   catch (std::exception& e)

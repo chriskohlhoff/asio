@@ -291,7 +291,7 @@ private:
  *
  * @return The output stream.
  *
- * @relates address_v6
+ * @relates asio::ip::address_v6
  */
 template <typename Elem, typename Traits>
 std::basic_ostream<Elem, Traits>& operator<<(

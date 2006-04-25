@@ -45,13 +45,15 @@ public:
   friend void* asio_handler_allocate(std::size_t size,
       binder1<Handler, Arg1>* this_handler)
   {
-    return asio_handler_alloc_helpers::allocate(size, &this_handler->handler_);
+    return asio_handler_alloc_helpers::allocate(
+        size, &this_handler->handler_);
   }
 
   friend void asio_handler_deallocate(void* pointer,
       binder1<Handler, Arg1>* this_handler)
   {
-    asio_handler_alloc_helpers::deallocate(pointer, &this_handler->handler_);
+    asio_handler_alloc_helpers::deallocate(
+        pointer, &this_handler->handler_);
   }
 
 private:
@@ -89,13 +91,15 @@ public:
   friend void* asio_handler_allocate(std::size_t size,
       binder2<Handler, Arg1, Arg2>* this_handler)
   {
-    return asio_handler_alloc_helpers::allocate(size, &this_handler->handler_);
+    return asio_handler_alloc_helpers::allocate(
+        size, &this_handler->handler_);
   }
 
   friend void asio_handler_deallocate(void* pointer,
       binder2<Handler, Arg1, Arg2>* this_handler)
   {
-    asio_handler_alloc_helpers::deallocate(pointer, &this_handler->handler_);
+    asio_handler_alloc_helpers::deallocate(
+        pointer, &this_handler->handler_);
   }
 
 private:
@@ -136,13 +140,15 @@ public:
   friend void* asio_handler_allocate(std::size_t size,
       binder3<Handler, Arg1, Arg2, Arg3>* this_handler)
   {
-    return asio_handler_alloc_helpers::allocate(size, &this_handler->handler_);
+    return asio_handler_alloc_helpers::allocate(
+        size, &this_handler->handler_);
   }
 
   friend void asio_handler_deallocate(void* pointer,
       binder3<Handler, Arg1, Arg2, Arg3>* this_handler)
   {
-    asio_handler_alloc_helpers::deallocate(pointer, &this_handler->handler_);
+    asio_handler_alloc_helpers::deallocate(
+        pointer, &this_handler->handler_);
   }
 
 private:
@@ -186,13 +192,15 @@ public:
   friend void* asio_handler_allocate(std::size_t size,
       binder4<Handler, Arg1, Arg2, Arg3, Arg4>* this_handler)
   {
-    return asio_handler_alloc_helpers::allocate(size, &this_handler->handler_);
+    return asio_handler_alloc_helpers::allocate(
+        size, &this_handler->handler_);
   }
 
   friend void asio_handler_deallocate(void* pointer,
       binder4<Handler, Arg1, Arg2, Arg3, Arg4>* this_handler)
   {
-    asio_handler_alloc_helpers::deallocate(pointer, &this_handler->handler_);
+    asio_handler_alloc_helpers::deallocate(
+        pointer, &this_handler->handler_);
   }
 
 private:
@@ -241,13 +249,15 @@ public:
   friend void* asio_handler_allocate(std::size_t size,
       binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>* this_handler)
   {
-    return asio_handler_alloc_helpers::allocate(size, &this_handler->handler_);
+    return asio_handler_alloc_helpers::allocate(
+        size, &this_handler->handler_);
   }
 
   friend void asio_handler_deallocate(void* pointer,
       binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>* this_handler)
   {
-    asio_handler_alloc_helpers::deallocate(pointer, &this_handler->handler_);
+    asio_handler_alloc_helpers::deallocate(
+        pointer, &this_handler->handler_);
   }
 
 private:

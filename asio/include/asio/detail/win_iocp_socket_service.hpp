@@ -1156,9 +1156,9 @@ public:
     : public operation
   {
   public:
-    accept_endp_operation(asio::io_service& io_service, socket_type socket,
-        socket_type new_socket, Socket& peer, endpoint_type& peer_endpoint,
-        Handler handler)
+    accept_endp_operation(asio::io_service& io_service,
+        socket_type socket, socket_type new_socket, Socket& peer,
+        endpoint_type& peer_endpoint, Handler handler)
       : operation(
           &accept_endp_operation<Socket, Handler>::do_completion_impl,
           &accept_endp_operation<Socket, Handler>::destroy_impl),
@@ -1389,8 +1389,10 @@ public:
   class connect_handler
   {
   public:
-    connect_handler(socket_type socket, boost::shared_ptr<bool> completed,
-        asio::io_service& io_service, reactor_type& reactor, Handler handler)
+    connect_handler(socket_type socket,
+        boost::shared_ptr<bool> completed,
+        asio::io_service& io_service,
+        reactor_type& reactor, Handler handler)
       : socket_(socket),
         completed_(completed),
         io_service_(io_service),
