@@ -21,6 +21,7 @@
 #include "asio/error_handler.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/consuming_buffers.hpp"
+#include "asio/detail/handler_alloc_helpers.hpp"
 
 namespace asio {
 
@@ -95,6 +96,22 @@ namespace detail
       {
         stream_.async_read_some(buffers_, *this);
       }
+    }
+
+    friend void* asio_handler_allocate(std::size_t size,
+        read_handler<Async_Read_Stream, Mutable_Buffers,
+          Completion_Condition, Handler>* this_handler)
+    {
+      return asio_handler_alloc_helpers::allocate(
+          size, &this_handler->handler_);
+    }
+
+    friend void asio_handler_deallocate(void* pointer,
+        read_handler<Async_Read_Stream, Mutable_Buffers,
+          Completion_Condition, Handler>* this_handler)
+    {
+      asio_handler_alloc_helpers::deallocate(
+          pointer, &this_handler->handler_);
     }
 
   private:
