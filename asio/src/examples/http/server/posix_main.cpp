@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
   try
   {
     // Check command line arguments.
-    if (argc != 3)
+    if (argc != 4)
     {
       std::cerr << "Usage: http_server <address> <port> <doc_root>\n";
       std::cerr << "  For IPv4, try:\n";
