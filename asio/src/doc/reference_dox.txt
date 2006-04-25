@@ -142,8 +142,8 @@ Standard exception class.
 \li Error_Source
 \li Integer_Socket_Option
 \li IO_Control_Command
-\li IP_Address_Socket_Option
 \li IP_MReq_Socket_Option
+\li IP_Network_Interface_Socket_Option
 \li Linger_Socket_Option
 \li Mutable_Buffers
 \li Protocol

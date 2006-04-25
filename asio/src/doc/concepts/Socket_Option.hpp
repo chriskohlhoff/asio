@@ -12,12 +12,12 @@
 /**
  * Defines the interface that must be implemented by an object passed as the
  * @c option parameter to:
- * @li asio::stream_socket::get_option
- * @li asio::stream_socket::set_option
- * @li asio::datagram_socket::get_option
- * @li asio::datagram_socket::set_option
- * @li asio::socket_acceptor::get_option
- * @li asio::socket_acceptor::set_option
+ * @li asio::tcp::socket::get_option
+ * @li asio::tcp::socket::set_option
+ * @li asio::udp::socket::get_option
+ * @li asio::udp::socket::set_option
+ * @li asio::tcp::acceptor::get_option
+ * @li asio::tcp::acceptor::set_option
  *
  * @par Implemented By:
  * asio::socket_base::broadcast @n
@@ -29,28 +29,33 @@
  * asio::socket_base::receive_buffer_size @n
  * asio::socket_base::receive_low_watermark @n
  * asio::socket_base::reuse_address @n
- * asio::ipv4::tcp::no_delay @n
- * asio::ipv4::multicast::add_membership @n
- * asio::ipv4::multicast::drop_membership @n
- * asio::ipv4::multicast::outbound_interface @n
- * asio::ipv4::multicast::time_to_live @n
- * asio::ipv4::multicast::enable_loopback
+ * asio::ip::tcp::no_delay @n
+ * asio::ip::multicast::join_group @n
+ * asio::ip::multicast::leave_group @n
+ * asio::ip::multicast::outbound_interface @n
+ * asio::ip::multicast::hops @n
+ * asio::ip::multicast::enable_loopback
  */
 class Socket_Option
 {
 public:
   /// Get the level of the socket option.
-  int level() const;
+  template <typename Protocol>
+  int level(const Protocol& protocol) const;
 
   /// Get the name of the socket option.
-  int name() const;
+  template <typename Protocol>
+  int name(const Protocol& protocol) const;
 
   /// Get a pointer to the socket option data.
-  implementation_defined data();
+  template <typename Protocol>
+  implementation_defined data(const Protocol& protocol);
 
   /// Get a pointer to the socket option data.
-  implementation_defined data() const;
+  template <typename Protocol>
+  implementation_defined data(const Protocol& protocol) const;
 
   /// Get the size of the socket option data in bytes.
-  std::size_t size() const;
+  template <typename Protocol>
+  std::size_t size(const Protocol& protocol) const;
 };
