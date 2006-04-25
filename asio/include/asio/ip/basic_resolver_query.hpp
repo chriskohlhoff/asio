@@ -28,10 +28,10 @@
 namespace asio {
 namespace ip {
 
-/// An query produced by a resolver.
+/// An query to be passed to a resolver.
 /**
- * The asio::ip::basic_resolver_query class template describes an query
- * as returned by a resolver.
+ * The asio::ip::basic_resolver_query class template describes a query
+ * that can be passed to a resolver.
  *
  * @par Thread Safety:
  * @e Distinct @e objects: Safe.@n
