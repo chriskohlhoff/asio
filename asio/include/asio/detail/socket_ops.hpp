@@ -354,6 +354,14 @@ inline int select(int nfds, fd_set* readfds, fd_set* writefds,
     ::Sleep(milliseconds);
     return 0;
   }
+
+  // Sometimes select() seems to return immediately on Windows when the timeout
+  // value is really small. This can lead to a spinning select_reactor, meaning
+  // increased CPU usage. As a workaround we will round up short timeouts to 10
+  // milliseconds.
+  if (timeout && timeout->tv_sec == 0
+      && timeout->tv_usec > 0 && timeout->tv_usec < 10000)
+    timeout->tv_usec = 10000;
 #endif // defined(BOOST_WINDOWS)
   return error_wrapper(::select(nfds, readfds, writefds, exceptfds, timeout));
 }
