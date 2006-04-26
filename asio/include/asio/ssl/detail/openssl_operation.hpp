@@ -151,6 +151,9 @@ public:
       // SSL connection is shut down cleanly
       return handler_(asio::error(), 1);
 
+    if (is_shut_down_received && !is_write_needed)
+      return handler_(asio::error(asio::error::eof), 0);
+
     if (is_shut_down_received)
       // Shutdown has been requested, while we were reading or writing...
       // abort our action...
