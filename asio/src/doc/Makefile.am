@@ -107,8 +107,8 @@ EXTRA_DIST = \
 	concepts/Endpoint.hpp \
 	concepts/Error_Source.hpp \
 	concepts/IO_Control_Command.hpp \
-	concepts/IPv4_Address_Socket_Option.hpp \
-	concepts/IPv4_MReq_Socket_Option.hpp \
+	concepts/IP_MReq_Socket_Option.hpp \
+	concepts/IP_Network_Interface_Socket_Option.hpp \
 	concepts/Integer_Socket_Option.hpp \
 	concepts/Linger_Socket_Option.hpp \
 	concepts/Mutable_Buffers.hpp \
