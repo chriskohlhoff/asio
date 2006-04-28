@@ -27,7 +27,7 @@
 namespace asio {
 namespace detail {
 
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 typedef socket_select_interrupter select_interrupter;
 #else
 typedef pipe_select_interrupter select_interrupter;

@@ -220,11 +220,17 @@ examples_http_server_http_server_SOURCES = \
 	examples/http/server/connection.cpp \
 	examples/http/server/connection_manager.cpp \
 	examples/http/server/mime_types.cpp \
-	examples/http/server/posix_main.cpp \
 	examples/http/server/reply.cpp \
 	examples/http/server/request_handler.cpp \
 	examples/http/server/request_parser.cpp \
 	examples/http/server/server.cpp
+if WINDOWS_TARGET
+examples_http_server_http_server_SOURCES += \
+	examples/http/server/win_main.cpp
+else
+examples_http_server_http_server_SOURCES += \
+	examples/http/server/posix_main.cpp
+endif
 examples_iostreams_daytime_client_SOURCES = examples/iostreams/daytime_client.cpp
 examples_multicast_receiver_SOURCES = examples/multicast/receiver.cpp
 examples_multicast_sender_SOURCES = examples/multicast/sender.cpp

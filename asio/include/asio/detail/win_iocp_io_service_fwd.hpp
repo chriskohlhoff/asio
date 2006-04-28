@@ -23,7 +23,7 @@
 
 // This service is only supported on Win32 (NT4 and later).
 #if !defined(ASIO_DISABLE_IOCP)
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 #if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
 
 // Define this to indicate that IOCP is supported on the target platform.
@@ -38,7 +38,7 @@ class win_iocp_io_service;
 } // namespace asio
 
 #endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 #endif // !defined(ASIO_DISABLE_IOCP)
 
 #include "asio/detail/pop_options.hpp"

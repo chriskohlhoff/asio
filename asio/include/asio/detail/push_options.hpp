@@ -27,7 +27,7 @@
 
 // GNU C++
 
-# if defined (__MINGW32__)
+# if defined(__MINGW32__) || defined(__CYGWIN__)
 #  pragma pack (push, 8)
 # endif
 

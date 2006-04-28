@@ -21,7 +21,7 @@
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
 #include "asio/detail/push_options.hpp"
 #include <boost/shared_ptr.hpp>
@@ -109,7 +109,7 @@ winsock_init<Major, Minor> winsock_init<Major, Minor>::instance_;
 } // namespace detail
 } // namespace asio
 
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
 #include "asio/detail/pop_options.hpp"
 

@@ -125,7 +125,7 @@ public:
   friend bool has_service(io_service& ios);
 
 private:
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   detail::winsock_init<> init_;
 #elif defined(__sun) || defined(__QNX__)
   detail::signal_init<> init_;

@@ -35,7 +35,7 @@
 
 namespace asio {
 
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 # define ASIO_SOCKET_ERROR(e) WSA ## e
 # define ASIO_NETDB_ERROR(e) WSA ## e
 # define ASIO_GETADDRINFO_ERROR(e) e
@@ -210,7 +210,7 @@ public:
   /// Get a string representation of the exception.
   virtual const char* what() const throw ()
   {
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
     try
     {
       if (!what_)

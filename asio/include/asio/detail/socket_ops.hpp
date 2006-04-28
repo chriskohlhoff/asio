@@ -34,27 +34,27 @@ namespace socket_ops {
 
 inline int get_error()
 {
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   return WSAGetLastError();
-#else // defined(BOOST_WINDOWS)
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   return errno;
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 inline void set_error(int error)
 {
   errno = error;
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   WSASetLastError(error);
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 template <typename ReturnType>
 inline ReturnType error_wrapper(ReturnType return_value)
 {
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   errno = WSAGetLastError();
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   return return_value;
 }
 
@@ -92,11 +92,11 @@ inline int bind(socket_type s, const socket_addr_type* addr,
 inline int close(socket_type s)
 {
   set_error(0);
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   return error_wrapper(::closesocket(s));
-#else // defined(BOOST_WINDOWS)
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   return error_wrapper(::close(s));
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 inline int shutdown(socket_type s, int what)
@@ -118,38 +118,38 @@ inline int listen(socket_type s, int backlog)
   return error_wrapper(::listen(s, backlog));
 }
 
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 typedef WSABUF buf;
-#else // defined(BOOST_WINDOWS)
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 typedef iovec buf;
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
 inline void init_buf(buf& b, void* data, size_t size)
 {
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   b.buf = static_cast<char*>(data);
   b.len = static_cast<u_long>(size);
-#else // defined(BOOST_WINDOWS)
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   b.iov_base = data;
   b.iov_len = size;
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 inline void init_buf(buf& b, const void* data, size_t size)
 {
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   b.buf = static_cast<char*>(const_cast<void*>(data));
   b.len = static_cast<u_long>(size);
-#else // defined(BOOST_WINDOWS)
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   b.iov_base = const_cast<void*>(data);
   b.iov_len = size;
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 inline int recv(socket_type s, buf* bufs, size_t count, int flags)
 {
   set_error(0);
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   // Receive some data.
   DWORD recv_buf_count = static_cast<DWORD>(count);
   DWORD bytes_transferred = 0;
@@ -159,7 +159,7 @@ inline int recv(socket_type s, buf* bufs, size_t count, int flags)
   if (result != 0)
     return -1;
   return bytes_transferred;
-#else // defined(BOOST_WINDOWS)
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   msghdr msg;
   msg.msg_name = 0;
   msg.msg_namelen = 0;
@@ -169,14 +169,14 @@ inline int recv(socket_type s, buf* bufs, size_t count, int flags)
   msg.msg_controllen = 0;
   msg.msg_flags = 0;
   return error_wrapper(::recvmsg(s, &msg, flags));
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 inline int recvfrom(socket_type s, buf* bufs, size_t count, int flags,
     socket_addr_type* addr, socket_addr_len_type* addrlen)
 {
   set_error(0);
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   // Receive some data.
   DWORD recv_buf_count = static_cast<DWORD>(count);
   DWORD bytes_transferred = 0;
@@ -186,7 +186,7 @@ inline int recvfrom(socket_type s, buf* bufs, size_t count, int flags,
   if (result != 0)
     return -1;
   return bytes_transferred;
-#else // defined(BOOST_WINDOWS)
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   msghdr msg;
   msg.msg_name = addr;
   msg.msg_namelen = *addrlen;
@@ -198,13 +198,13 @@ inline int recvfrom(socket_type s, buf* bufs, size_t count, int flags,
   int result = error_wrapper(::recvmsg(s, &msg, flags));
   *addrlen = msg.msg_namelen;
   return result;
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 inline int send(socket_type s, const buf* bufs, size_t count, int flags)
 {
   set_error(0);
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   // Send the data.
   DWORD send_buf_count = static_cast<DWORD>(count);
   DWORD bytes_transferred = 0;
@@ -214,7 +214,7 @@ inline int send(socket_type s, const buf* bufs, size_t count, int flags)
   if (result != 0)
     return -1;
   return bytes_transferred;
-#else // defined(BOOST_WINDOWS)
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   msghdr msg;
   msg.msg_name = 0;
   msg.msg_namelen = 0;
@@ -227,14 +227,14 @@ inline int send(socket_type s, const buf* bufs, size_t count, int flags)
   flags |= MSG_NOSIGNAL;
 #endif // defined(__linux__)
   return error_wrapper(::sendmsg(s, &msg, flags));
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 inline int sendto(socket_type s, const buf* bufs, size_t count, int flags,
     const socket_addr_type* addr, socket_addr_len_type addrlen)
 {
   set_error(0);
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   // Send the data.
   DWORD send_buf_count = static_cast<DWORD>(count);
   DWORD bytes_transferred = 0;
@@ -243,7 +243,7 @@ inline int sendto(socket_type s, const buf* bufs, size_t count, int flags,
   if (result != 0)
     return -1;
   return bytes_transferred;
-#else // defined(BOOST_WINDOWS)
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   msghdr msg;
   msg.msg_name = const_cast<socket_addr_type*>(addr);
   msg.msg_namelen = addrlen;
@@ -256,13 +256,13 @@ inline int sendto(socket_type s, const buf* bufs, size_t count, int flags,
   flags |= MSG_NOSIGNAL;
 #endif // defined(__linux__)
   return error_wrapper(::sendmsg(s, &msg, flags));
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 inline socket_type socket(int af, int type, int protocol)
 {
   set_error(0);
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   return error_wrapper(::WSASocket(af, type, protocol, 0, 0,
         WSA_FLAG_OVERLAPPED));
 #elif defined(__MACH__) && defined(__APPLE__)
@@ -289,32 +289,32 @@ inline int setsockopt(socket_type s, int level, int optname,
     const void* optval, size_t optlen)
 {
   set_error(0);
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   return error_wrapper(::setsockopt(s, level, optname,
         reinterpret_cast<const char*>(optval), static_cast<int>(optlen)));
-#else // defined(BOOST_WINDOWS)
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   return error_wrapper(::setsockopt(s, level, optname, optval,
         static_cast<socklen_t>(optlen)));
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 inline int getsockopt(socket_type s, int level, int optname, void* optval,
     size_t* optlen)
 {
   set_error(0);
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   int tmp_optlen = static_cast<int>(*optlen);
   int result = error_wrapper(::getsockopt(s, level, optname,
         reinterpret_cast<char*>(optval), &tmp_optlen));
   *optlen = static_cast<size_t>(tmp_optlen);
   return result;
-#else // defined(BOOST_WINDOWS)
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   socklen_t tmp_optlen = static_cast<socklen_t>(*optlen);
   int result = error_wrapper(::getsockopt(s, level, optname,
         optval, &tmp_optlen));
   *optlen = static_cast<size_t>(tmp_optlen);
   return result;
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 inline int getpeername(socket_type s, socket_addr_type* addr,
@@ -334,18 +334,18 @@ inline int getsockname(socket_type s, socket_addr_type* addr,
 inline int ioctl(socket_type s, long cmd, ioctl_arg_type* arg)
 {
   set_error(0);
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   return error_wrapper(::ioctlsocket(s, cmd, arg));
-#else // defined(BOOST_WINDOWS)
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   return error_wrapper(::ioctl(s, cmd, arg));
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 inline int select(int nfds, fd_set* readfds, fd_set* writefds,
     fd_set* exceptfds, timeval* timeout)
 {
   set_error(0);
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   if (!readfds && !writefds && !exceptfds && timeout)
   {
     DWORD milliseconds = timeout->tv_sec * 1000 + timeout->tv_usec / 1000;
@@ -362,51 +362,51 @@ inline int select(int nfds, fd_set* readfds, fd_set* writefds,
   if (timeout && timeout->tv_sec == 0
       && timeout->tv_usec > 0 && timeout->tv_usec < 10000)
     timeout->tv_usec = 10000;
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   return error_wrapper(::select(nfds, readfds, writefds, exceptfds, timeout));
 }
 
 inline int poll_read(socket_type s)
 {
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   FD_SET fds;
   FD_ZERO(&fds);
   FD_SET(s, &fds);
   set_error(0);
   return error_wrapper(::select(s, &fds, 0, 0, 0));
-#else // defined(BOOST_WINDOWS)
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   pollfd fds;
   fds.fd = s;
   fds.events = POLLIN;
   fds.revents = 0;
   set_error(0);
   return error_wrapper(::poll(&fds, 1, -1));
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 inline int poll_write(socket_type s)
 {
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   FD_SET fds;
   FD_ZERO(&fds);
   FD_SET(s, &fds);
   set_error(0);
   return error_wrapper(::select(s, 0, &fds, 0, 0));
-#else // defined(BOOST_WINDOWS)
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   pollfd fds;
   fds.fd = s;
   fds.events = POLLOUT;
   fds.revents = 0;
   set_error(0);
   return error_wrapper(::poll(&fds, 1, -1));
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 inline const char* inet_ntop(int af, const void* src, char* dest, size_t length,
     unsigned long scope_id = 0)
 {
   set_error(0);
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   using namespace std; // For memcpy.
 
   if (af != AF_INET && af != AF_INET6)
@@ -446,7 +446,7 @@ inline const char* inet_ntop(int af, const void* src, char* dest, size_t length,
     set_error(asio::error::invalid_argument);
 
   return result == socket_error_retval ? 0 : dest;
-#else // defined(BOOST_WINDOWS)
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   const char* result = error_wrapper(::inet_ntop(af, src, dest, length));
   if (result == 0 && get_error() == 0)
     set_error(asio::error::invalid_argument);
@@ -461,14 +461,14 @@ inline const char* inet_ntop(int af, const void* src, char* dest, size_t length,
     strcat(dest, if_name);
   }
   return result;
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 inline int inet_pton(int af, const char* src, void* dest,
     unsigned long* scope_id = 0)
 {
   set_error(0);
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   using namespace std; // For memcpy and strcmp.
 
   if (af != AF_INET && af != AF_INET6)
@@ -512,7 +512,7 @@ inline int inet_pton(int af, const char* src, void* dest,
     set_error(asio::error::invalid_argument);
 
   return result == socket_error_retval ? -1 : 1;
-#else // defined(BOOST_WINDOWS)
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   int result = error_wrapper(::inet_pton(af, src, dest));
   if (result <= 0 && get_error() == 0)
     set_error(asio::error::invalid_argument);
@@ -531,7 +531,7 @@ inline int inet_pton(int af, const char* src, void* dest,
     }
   }
   return result;
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 inline int gethostname(char* name, int namelen)
@@ -564,7 +564,7 @@ inline hostent* gethostbyaddr(const char* addr, int length, int type,
     hostent* result, char* buffer, int buflength, int* error)
 {
   set_error(0);
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   hostent* retval = error_wrapper(::gethostbyaddr(addr, length, type));
   *error = get_error();
   if (!retval)
@@ -596,7 +596,7 @@ inline hostent* gethostbyname(const char* name, struct hostent* result,
     char* buffer, int buflength, int* error)
 {
   set_error(0);
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   hostent* retval = error_wrapper(::gethostbyname(name));
   *error = get_error();
   if (!retval)

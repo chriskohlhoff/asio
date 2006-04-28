@@ -21,7 +21,7 @@
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
 #include "asio/detail/noncopyable.hpp"
 
@@ -60,7 +60,7 @@ public:
 } // namespace detail
 } // namespace asio
 
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
 #include "asio/detail/pop_options.hpp"
 

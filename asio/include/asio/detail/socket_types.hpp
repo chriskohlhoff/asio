@@ -22,7 +22,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/detail/push_options.hpp"
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 # if !defined(_WIN32_WINNT) && !defined(_WIN32_WINDOWS)
 #  if defined(_MSC_VER) || defined(__BORLANDC__)
 #   pragma message("Please define _WIN32_WINNT or _WIN32_WINDOWS appropriately")
@@ -47,6 +47,14 @@
 #   define WIN32_LEAN_AND_MEAN
 #  endif // !defined(WIN32_LEAN_AND_MEAN)
 # endif // !defined(ASIO_NO_WIN32_LEAN_AND_MEAN)
+# if defined(__CYGWIN__)
+#  if !defined(__USE_W32_SOCKETS)
+#   error You must add -D__USE_W32_SOCKETS to your compiler options.
+#  endif // !defined(__USE_W32_SOCKETS)
+#  if !defined(NOMINMAX)
+#   define NOMINMAX 1
+#  endif // !defined(NOMINMAX)
+# endif // defined(__CYGWIN__)
 # include <winsock2.h>
 # include <ws2tcpip.h>
 # include <mswsock.h>
@@ -79,7 +87,7 @@
 namespace asio {
 namespace detail {
 
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 typedef SOCKET socket_type;
 const SOCKET invalid_socket = INVALID_SOCKET;
 const int socket_error_retval = SOCKET_ERROR;
