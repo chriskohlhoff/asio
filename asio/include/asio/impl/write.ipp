@@ -108,12 +108,12 @@ namespace detail
           size, &this_handler->handler_);
     }
 
-    friend void asio_handler_deallocate(void* pointer,
+    friend void asio_handler_deallocate(void* pointer, std::size_t size,
         write_handler<Async_Write_Stream, Const_Buffers,
           Completion_Condition, Handler>* this_handler)
     {
       asio_handler_alloc_helpers::deallocate(
-          pointer, &this_handler->handler_);
+          pointer, size, &this_handler->handler_);
     }
 
   private:

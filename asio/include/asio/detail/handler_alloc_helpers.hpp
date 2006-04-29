@@ -40,12 +40,12 @@ inline void* allocate(std::size_t s, Handler* h)
 }
 
 template <typename Handler>
-inline void deallocate(void* p, Handler* h)
+inline void deallocate(void* p, std::size_t s, Handler* h)
 {
 #if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
   ::operator delete(p);
 #else
-  asio_handler_deallocate(p, h);
+  asio_handler_deallocate(p, s, h);
 #endif
 }
 
@@ -91,7 +91,8 @@ public:
   ~raw_handler_ptr()
   {
     if (pointer_)
-      asio_handler_alloc_helpers::deallocate(pointer_, &handler_);
+      asio_handler_alloc_helpers::deallocate(
+          pointer_, value_size, &handler_);
   }
 
 private:
@@ -211,7 +212,8 @@ public:
     if (pointer_)
     {
       pointer_->value_type::~value_type();
-      asio_handler_alloc_helpers::deallocate(pointer_, &handler_);
+      asio_handler_alloc_helpers::deallocate(
+          pointer_, value_size, &handler_);
       pointer_ = 0;
     }
   }

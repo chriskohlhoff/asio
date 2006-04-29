@@ -49,7 +49,8 @@
  *   return ::operator new(size);
  * }
  *
- * void asio_handler_deallocate(void* pointer, my_handler* context)
+ * void asio_handler_deallocate(void* pointer, std::size_t size,
+ *     my_handler* context)
  * {
  *   ::operator delete(pointer);
  * }
@@ -72,7 +73,7 @@ inline void* asio_handler_allocate(std::size_t size, ...)
  *
  * @sa asio_handler_allocate.
  */
-inline void asio_handler_deallocate(void* pointer, ...)
+inline void asio_handler_deallocate(void* pointer, std::size_t size, ...)
 {
   return ::operator delete(pointer);
 }

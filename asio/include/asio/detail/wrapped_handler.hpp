@@ -118,11 +118,11 @@ public:
         size, &this_handler->handler_);
   }
 
-  friend void asio_handler_deallocate(void* pointer,
+  friend void asio_handler_deallocate(void* pointer, std::size_t size,
       wrapped_handler<Dispatcher, Handler>* this_handler)
   {
     asio_handler_alloc_helpers::deallocate(
-        pointer, &this_handler->handler_);
+        pointer, size, &this_handler->handler_);
   }
 
 private:
