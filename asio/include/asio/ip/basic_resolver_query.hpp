@@ -49,7 +49,8 @@ public:
   typedef Protocol protocol_type;
 
   /// Construct with specified host name and service name for any protocol.
-  basic_resolver_query(const std::string& service_name, int flags = passive)
+  basic_resolver_query(const std::string& service_name,
+      int flags = passive | address_configured)
     : hints_(),
       host_name_(),
       service_name_(service_name)
@@ -63,7 +64,8 @@ public:
 
   /// Construct with specified host name and service name for any protocol.
   basic_resolver_query(const protocol_type& protocol,
-      const std::string& service_name, int flags = passive)
+      const std::string& service_name,
+      int flags = passive | address_configured)
     : hints_(),
       host_name_(),
       service_name_(service_name)
@@ -76,7 +78,7 @@ public:
 
   /// Construct with specified host name and service name for any protocol.
   basic_resolver_query(const std::string& host_name,
-      const std::string& service_name, int flags = 0)
+      const std::string& service_name, int flags = address_configured)
     : hints_(),
       host_name_(host_name),
       service_name_(service_name)
@@ -91,7 +93,7 @@ public:
   /// Construct with specified host name and service name for a given protocol.
   basic_resolver_query(const protocol_type& protocol,
       const std::string& host_name, const std::string& service_name,
-      int flags = 0)
+      int flags = address_configured)
     : hints_(),
       host_name_(host_name),
       service_name_(service_name)

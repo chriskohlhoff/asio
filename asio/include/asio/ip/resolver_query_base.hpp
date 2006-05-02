@@ -37,17 +37,53 @@ public:
   /// Determine the canonical name of the host specified in the query.
   static const int canonical_name = implementation_defined;
 
+  /// Indicate that returned endpoint is intended for use as a locally bound
+  /// socket endpoint.
+  static const int passive = implementation_defined;
+
   /// Host name should be treated as a numeric string defining an IPv4 or IPv6
   /// address and no name resolution should be attempted.
   static const int numeric_host = implementation_defined;
 
-  /// Indicate that returned endpoint is intended for use as a locally bound
-  /// socket endpoint.
-  static const int passive = implementation_defined;
+  /// Service name should be treated as a numeric string defining a port number
+  /// and no name resolution should be attempted.
+  static const int numeric_service = implementation_defined;
+
+  /// If the query protocol family is specified as IPv6, return IPv4-mapped
+  /// IPv6 addresses on finding no IPv6 addresses.
+  static const int v4_mapped = implementation_defined;
+
+  /// If used with v4_mapped, return all matching IPv6 and IPv4 addresses.
+  static const int all_matching = implementation_defined;
+
+  /// Only return IPv4 addresses if a non-loopback IPv4 address is configured
+  /// for the system. Only return IPv6 addresses if a non-loopback IPv6 address
+  /// is configured for the system.
+  static const int address_configured = implementation_defined;
 #else
   BOOST_STATIC_CONSTANT(int, canonical_name = AI_CANONNAME);
-  BOOST_STATIC_CONSTANT(int, numeric_host = AI_NUMERICHOST);
   BOOST_STATIC_CONSTANT(int, passive = AI_PASSIVE);
+  BOOST_STATIC_CONSTANT(int, numeric_host = AI_NUMERICHOST);
+# if defined(AI_NUMERICSERV)
+  BOOST_STATIC_CONSTANT(int, numeric_service = AI_NUMERICSERV);
+# else
+  BOOST_STATIC_CONSTANT(int, numeric_service = 0);
+# endif
+# if defined(AI_V4MAPPED)
+  BOOST_STATIC_CONSTANT(int, v4_mapped = AI_V4MAPPED);
+# else
+  BOOST_STATIC_CONSTANT(int, v4_mapped = 0);
+# endif
+# if defined(AI_ALL)
+  BOOST_STATIC_CONSTANT(int, all_matching = AI_ALL);
+# else
+  BOOST_STATIC_CONSTANT(int, all_matching = 0);
+# endif
+# if defined(AI_ADDRCONFIG)
+  BOOST_STATIC_CONSTANT(int, address_configured = AI_ADDRCONFIG);
+# else
+  BOOST_STATIC_CONSTANT(int, address_configured = 0);
+# endif
 #endif
 
 protected:
