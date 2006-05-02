@@ -23,6 +23,7 @@
 #include <cstring>
 #include <cerrno>
 #include <boost/detail/workaround.hpp>
+#include <new>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
@@ -560,24 +561,24 @@ inline int translate_netdb_error(int error)
   }
 }
 
-inline hostent* gethostbyaddr(const char* addr, int length, int type,
+inline hostent* gethostbyaddr(const char* addr, int length, int af,
     hostent* result, char* buffer, int buflength, int* error)
 {
   set_error(0);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  hostent* retval = error_wrapper(::gethostbyaddr(addr, length, type));
+  hostent* retval = error_wrapper(::gethostbyaddr(addr, length, af));
   *error = get_error();
   if (!retval)
     return 0;
   *result = *retval;
   return retval;
 #elif defined(__sun) || defined(__QNX__)
-  hostent* retval = error_wrapper(::gethostbyaddr_r(addr, length, type, result,
+  hostent* retval = error_wrapper(::gethostbyaddr_r(addr, length, af, result,
         buffer, buflength, error));
   *error = translate_netdb_error(*error);
   return retval;
 #elif defined(__MACH__) && defined(__APPLE__)
-  hostent* retval = error_wrapper(::getipnodebyaddr(addr, length, type, error));
+  hostent* retval = error_wrapper(::getipnodebyaddr(addr, length, af, error));
   *error = translate_netdb_error(*error);
   if (!retval)
     return 0;
@@ -585,18 +586,23 @@ inline hostent* gethostbyaddr(const char* addr, int length, int type,
   return retval;
 #else
   hostent* retval = 0;
-  error_wrapper(::gethostbyaddr_r(addr, length, type, result, buffer,
+  error_wrapper(::gethostbyaddr_r(addr, length, af, result, buffer,
         buflength, &retval, error));
   *error = translate_netdb_error(*error);
   return retval;
 #endif
 }
 
-inline hostent* gethostbyname(const char* name, struct hostent* result,
-    char* buffer, int buflength, int* error)
+inline hostent* gethostbyname(const char* name, int af, struct hostent* result,
+    char* buffer, int buflength, int* error, int ai_flags = 0)
 {
   set_error(0);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  if (af != AF_INET)
+  {
+    *error = asio::error::address_family_not_supported;
+    return 0;
+  }
   hostent* retval = error_wrapper(::gethostbyname(name));
   *error = get_error();
   if (!retval)
@@ -604,18 +610,29 @@ inline hostent* gethostbyname(const char* name, struct hostent* result,
   *result = *retval;
   return result;
 #elif defined(__sun) || defined(__QNX__)
+  if (af != AF_INET)
+  {
+    *error = asio::error::address_family_not_supported;
+    return 0;
+  }
   hostent* retval = error_wrapper(::gethostbyname_r(name, result, buffer,
         buflength, error));
   *error = translate_netdb_error(*error);
   return retval;
 #elif defined(__MACH__) && defined(__APPLE__)
-  hostent* retval = error_wrapper(::getipnodebyname(name, AF_INET, 0, error));
+  hostent* retval = error_wrapper(::getipnodebyname(
+        name, af, ai_flags, error));
   *error = translate_netdb_error(*error);
   if (!retval)
     return 0;
   *result = *retval;
   return retval;
 #else
+  if (af != AF_INET)
+  {
+    *error = asio::error::address_family_not_supported;
+    return 0;
+  }
   hostent* retval = 0;
   error_wrapper(::gethostbyname_r(name, result, buffer, buflength, &retval,
         error));
@@ -629,6 +646,569 @@ inline void freehostent(hostent* h)
 #if defined(__MACH__) && defined(__APPLE__)
   ::freehostent(h);
 #endif
+}
+
+// Emulation of getaddrinfo based on implementation in:
+// Stevens, W. R., UNIX Network Programming Vol. 1, 2nd Ed., Prentice-Hall 1998.
+
+struct gai_search
+{
+  const char* host;
+  int family;
+};
+
+inline int gai_nsearch(const char* host,
+    const addrinfo* hints, gai_search (&search)[2])
+{
+  int search_count = 0;
+  if (host == 0 || host[0] == '\0')
+  {
+    if (hints->ai_flags & AI_PASSIVE)
+    {
+      // No host and AI_PASSIVE implies wildcard bind.
+      switch (hints->ai_family)
+      {
+      case AF_INET:
+        search[search_count].host = "0.0.0.0";
+        search[search_count].family = AF_INET;
+        ++search_count;
+        break;
+      case AF_INET6:
+        search[search_count].host = "0::0";
+        search[search_count].family = AF_INET6;
+        ++search_count;
+        break;
+      case AF_UNSPEC:
+        search[search_count].host = "0::0";
+        search[search_count].family = AF_INET6;
+        ++search_count;
+        search[search_count].host = "0.0.0.0";
+        search[search_count].family = AF_INET;
+        ++search_count;
+        break;
+      default:
+        break;
+      }
+    }
+    else
+    {
+      // No host and not AI_PASSIVE means connect to local host.
+      switch (hints->ai_family)
+      {
+      case AF_INET:
+        search[search_count].host = "127.0.0.1";
+        search[search_count].family = AF_INET;
+        ++search_count;
+        break;
+      case AF_INET6:
+        search[search_count].host = "0::1";
+        search[search_count].family = AF_INET6;
+        ++search_count;
+        break;
+      case AF_UNSPEC:
+        search[search_count].host = "0::1";
+        search[search_count].family = AF_INET6;
+        ++search_count;
+        search[search_count].host = "127.0.0.1";
+        search[search_count].family = AF_INET;
+        ++search_count;
+        break;
+      default:
+        break;
+      }
+    }
+  }
+  else
+  {
+    // Host is specified.
+    switch (hints->ai_family)
+    {
+    case AF_INET:
+      search[search_count].host = host;
+      search[search_count].family = AF_INET;
+      ++search_count;
+      break;
+    case AF_INET6:
+      search[search_count].host = host;
+      search[search_count].family = AF_INET6;
+      ++search_count;
+      break;
+    case AF_UNSPEC:
+      search[search_count].host = host;
+      search[search_count].family = AF_INET6;
+      ++search_count;
+      search[search_count].host = host;
+      search[search_count].family = AF_INET;
+      ++search_count;
+      break;
+    default:
+      break;
+    }
+  }
+  return search_count;
+}
+
+enum { gai_clone_flag = 1 << 30 };
+
+inline int gai_aistruct(addrinfo*** next, const addrinfo* hints,
+    const void* addr, int family)
+{
+  using namespace std;
+
+  addrinfo* ai = new (std::nothrow) addrinfo();
+  if (ai == 0)
+    return EAI_MEMORY;
+
+  ai->ai_next = 0;
+  **next = ai;
+  *next = &ai->ai_next;
+
+  ai->ai_canonname = 0;
+  ai->ai_socktype = hints->ai_socktype;
+  if (ai->ai_socktype == 0)
+    ai->ai_flags |= gai_clone_flag;
+  ai->ai_protocol = hints->ai_protocol;
+  ai->ai_family = family;
+
+  switch (ai->ai_family)
+  {
+  case AF_INET:
+    {
+      sockaddr_in* sinptr = new (std::nothrow) sockaddr_in();
+      if (sinptr == 0)
+        return EAI_MEMORY;
+      sinptr->sin_family = AF_INET;
+      memcpy(&sinptr->sin_addr, addr, sizeof(in_addr));
+      ai->ai_addr = reinterpret_cast<sockaddr*>(sinptr);
+      ai->ai_addrlen = sizeof(sockaddr_in);
+      break;
+    }
+  case AF_INET6:
+    {
+      sockaddr_in6* sin6ptr = new (std::nothrow) sockaddr_in6();
+      if (sin6ptr == 0)
+        return EAI_MEMORY;
+      sin6ptr->sin6_family = AF_INET6;
+      memcpy(&sin6ptr->sin6_addr, addr, sizeof(in6_addr));
+      ai->ai_addr = reinterpret_cast<sockaddr*>(sin6ptr);
+      ai->ai_addrlen = sizeof(sockaddr_in6);
+      break;
+    }
+  default:
+    break;
+  }
+
+  return 0;
+}
+
+inline addrinfo* gai_clone(addrinfo* ai)
+{
+  using namespace std;
+
+  addrinfo* new_ai = new (std::nothrow) addrinfo();
+  if (new_ai == 0)
+    return new_ai;
+
+  new_ai->ai_next = ai->ai_next;
+  ai->ai_next = new_ai;
+
+  new_ai->ai_flags = 0;
+  new_ai->ai_family = ai->ai_family;
+  new_ai->ai_socktype = ai->ai_socktype;
+  new_ai->ai_protocol = ai->ai_protocol;
+  new_ai->ai_canonname = 0;
+  new_ai->ai_addrlen = ai->ai_addrlen;
+  switch (ai->ai_family)
+  {
+  case AF_INET:
+    new_ai->ai_addr = reinterpret_cast<sockaddr*>(
+        new (std::nothrow) sockaddr_in(
+          *reinterpret_cast<sockaddr_in*>(ai->ai_addr)));
+    break;
+  case AF_INET6:
+    new_ai->ai_addr = reinterpret_cast<sockaddr*>(
+        new (std::nothrow) sockaddr_in6(
+          *reinterpret_cast<sockaddr_in6*>(ai->ai_addr)));
+    break;
+  default:
+    new_ai->ai_addr = 0;
+    break;
+  }
+
+  return new_ai;
+}
+
+inline int gai_port(addrinfo* aihead, int port, int socktype)
+{
+  int num_found = 0;
+
+  for (addrinfo* ai = aihead; ai; ai = ai->ai_next)
+  {
+    if (ai->ai_flags & gai_clone_flag)
+    {
+      if (ai->ai_socktype != 0)
+      {
+        ai = gai_clone(ai);
+        if (ai == 0)
+          return -1;
+        // ai now points to newly cloned entry.
+      }
+    }
+    else if (ai->ai_socktype != socktype)
+    {
+      // Ignore if mismatch on socket type.
+      continue;
+    }
+
+    ai->ai_socktype = socktype;
+
+    switch (ai->ai_family)
+    {
+    case AF_INET:
+      {
+        sockaddr_in* sinptr = reinterpret_cast<sockaddr_in*>(ai->ai_addr);
+        sinptr->sin_port = port;
+        ++num_found;
+        break;
+      }
+    case AF_INET6:
+      {
+        sockaddr_in6* sin6ptr = reinterpret_cast<sockaddr_in6*>(ai->ai_addr);
+        sin6ptr->sin6_port = port;
+        ++num_found;
+        break;
+      }
+    default:
+      break;
+    }
+  }
+
+  return num_found;
+}
+
+inline int gai_serv(addrinfo* aihead, const addrinfo* hints, const char* serv)
+{
+  using namespace std;
+
+  int num_found = 0;
+
+  if (
+#if defined(AI_NUMERICSERV)
+      (hints->ai_flags & AI_NUMERICSERV) ||
+#endif
+      isdigit(serv[0]))
+  {
+    int port = htons(atoi(serv));
+    if (hints->ai_socktype)
+    {
+      // Caller specifies socket type.
+      int rc = gai_port(aihead, port, hints->ai_socktype);
+      if (rc < 0)
+        return EAI_MEMORY;
+      num_found += rc;
+    }
+    else
+    {
+      // Caller does not specify socket type.
+      int rc = gai_port(aihead, port, SOCK_STREAM);
+      if (rc < 0)
+        return EAI_MEMORY;
+      num_found += rc;
+      rc = gai_port(aihead, port, SOCK_DGRAM);
+      if (rc < 0)
+        return EAI_MEMORY;
+      num_found += rc;
+    }
+  }
+  else
+  {
+    // Try service name with TCP first, then UDP.
+    if (hints->ai_socktype == 0 || hints->ai_socktype == SOCK_STREAM)
+    {
+      servent* sptr = getservbyname(serv, "tcp");
+      if (sptr != 0)
+      {
+        int rc = gai_port(aihead, sptr->s_port, SOCK_STREAM);
+        if (rc < 0)
+          return EAI_MEMORY;
+        num_found += rc;
+      }
+    }
+    if (hints->ai_socktype == 0 || hints->ai_socktype == SOCK_DGRAM)
+    {
+      servent* sptr = getservbyname(serv, "udp");
+      if (sptr != 0)
+      {
+        int rc = gai_port(aihead, sptr->s_port, SOCK_DGRAM);
+        if (rc < 0)
+          return EAI_MEMORY;
+        num_found += rc;
+      }
+    }
+  }
+
+  if (num_found == 0)
+  {
+    if (hints->ai_socktype == 0)
+    {
+      // All calls to getservbyname() failed.
+      return EAI_NONAME;
+    }
+    else
+    {
+      // Service not supported for socket type.
+      return EAI_SERVICE;
+    }
+  }
+
+  return 0;
+}
+
+inline void gai_freeaddrinfo(addrinfo* aihead)
+{
+  addrinfo* ai = aihead;
+  while (ai)
+  {
+    switch(ai->ai_family)
+    {
+    case AF_INET:
+      delete reinterpret_cast<sockaddr_in*>(ai->ai_addr);
+      break;
+    case AF_INET6:
+      delete reinterpret_cast<sockaddr_in6*>(ai->ai_addr);
+      break;
+    default:
+      break;
+    }
+
+    delete[] ai->ai_canonname;
+
+    addrinfo* ainext = ai->ai_next;
+    delete ai;
+    ai = ainext;
+  }
+}
+
+inline int gai_echeck(const char* host, const char* service,
+    int flags, int family, int socktype, int protocol)
+{
+  // Host or service must be specified.
+  if (host == 0 || host[0] == '\0')
+    if (service == 0 || service[0] == '\0')
+      return EAI_NONAME;
+
+  // Check combination of family and socket type.
+  switch (family)
+  {
+  case AF_UNSPEC:
+    break;
+  case AF_INET:
+  case AF_INET6:
+    if (socktype != 0 && socktype != SOCK_STREAM && socktype != SOCK_DGRAM)
+      return EAI_SOCKTYPE;
+    break;
+  default:
+    return EAI_FAMILY;
+  }
+
+  return 0;
+}
+
+inline int gai_getaddrinfo(const char* host, const char* service,
+    const addrinfo* hintsp, addrinfo** result)
+{
+  // Set up linked list of addrinfo structures.
+  addrinfo* aihead = 0;
+  addrinfo** ainext = &aihead;
+  char* canon = 0;
+
+  // Supply default hints if not specified by caller.
+  addrinfo hints = addrinfo();
+  hints.ai_family = AF_UNSPEC;
+  if (hintsp)
+    hints = *hintsp;
+
+  // If the resolution is not specifically for AF_INET6, remove the AI_V4MAPPED
+  // and AI_ALL flags.
+#if defined(AI_V4MAPPED)
+  if (hints.ai_family != AF_INET6)
+    hints.ai_flags &= ~AI_V4MAPPED;
+#endif
+#if defined(AI_ALL)
+  if (hints.ai_family != AF_INET6)
+    hints.ai_flags &= ~AI_ALL;
+#endif
+
+  // Basic error checking.
+  int rc = gai_echeck(host, service, hints.ai_flags, hints.ai_family,
+      hints.ai_socktype, hints.ai_protocol);
+  if (rc != 0)
+  {
+    gai_freeaddrinfo(aihead);
+    return rc;
+  }
+
+  gai_search search[2];
+  int search_count = gai_nsearch(host, &hints, search);
+  for (gai_search* sptr = search; sptr < search + search_count; ++sptr)
+  {
+    // Check for IPv4 dotted decimal string.
+    in_addr inaddr;
+    if (socket_ops::inet_pton(AF_INET, sptr->host, &inaddr) == 1)
+    {
+      if (hints.ai_family != AF_UNSPEC && hints.ai_family != AF_INET)
+      {
+        gai_freeaddrinfo(aihead);
+        delete[] canon;
+        return EAI_ADDRFAMILY;
+      }
+      if (sptr->family == AF_INET)
+      {
+        rc = gai_aistruct(&ainext, &hints, &inaddr, AF_INET);
+        if (rc != 0)
+        {
+          gai_freeaddrinfo(aihead);
+          delete[] canon;
+          return rc;
+        }
+      }
+      continue;
+    }
+
+    // Check for IPv6 hex string.
+    in6_addr in6addr;
+    if (socket_ops::inet_pton(AF_INET6, sptr->host, &in6addr) == 1)
+    {
+      if (hints.ai_family != AF_UNSPEC && hints.ai_family != AF_INET6)
+      {
+        gai_freeaddrinfo(aihead);
+        delete[] canon;
+        return EAI_ADDRFAMILY;
+      }
+      if (sptr->family == AF_INET6)
+      {
+        rc = gai_aistruct(&ainext, &hints, &in6addr, AF_INET6);
+        if (rc != 0)
+        {
+          gai_freeaddrinfo(aihead);
+          delete[] canon;
+          return rc;
+        }
+      }
+      continue;
+    }
+
+    // Look up hostname.
+    hostent hent;
+    char hbuf[8192] = "";
+    int herr = 0;
+    hostent* hptr = socket_ops::gethostbyname(sptr->host,
+        sptr->family, &hent, hbuf, sizeof(hbuf), &herr, hints.ai_flags);
+    if (hptr == 0)
+    {
+      if (search_count == 2)
+      {
+        // Failure is OK if there are multiple searches.
+        continue;
+      }
+      gai_freeaddrinfo(aihead);
+      delete[] canon;
+      switch (herr)
+      {
+      case HOST_NOT_FOUND:
+        return EAI_NONAME;
+      case TRY_AGAIN:
+        return EAI_AGAIN;
+      case NO_RECOVERY:
+        return EAI_FAIL;
+      case NO_DATA:
+        return EAI_NODATA;
+      default:
+        return EAI_NONAME;
+      }
+    }
+
+    // Check for address family mismatch if one was specified.
+    if (hints.ai_family != AF_UNSPEC && hints.ai_family != hptr->h_addrtype)
+    {
+      gai_freeaddrinfo(aihead);
+      delete[] canon;
+      socket_ops::freehostent(hptr);
+      return EAI_ADDRFAMILY;
+    }
+
+    // Save canonical name first time.
+    if (host != 0 && host[0] != '\0' && hptr->h_name
+        && (hints.ai_flags & AI_CANONNAME) && canon == 0)
+    {
+      canon = new (std::nothrow) char[strlen(hptr->h_name) + 1];
+      if (canon == 0)
+      {
+        gai_freeaddrinfo(aihead);
+        socket_ops::freehostent(hptr);
+        return EAI_MEMORY;
+      }
+      strcpy(canon, hptr->h_name);
+    }
+
+    // Create an addrinfo structure for each returned address.
+    for (char** ap = hptr->h_addr_list; *ap; ++ap)
+    {
+      rc = gai_aistruct(&ainext, &hints, *ap, hptr->h_addrtype);
+      if (rc != 0)
+      {
+        gai_freeaddrinfo(aihead);
+        delete[] canon;
+        socket_ops::freehostent(hptr);
+        return EAI_ADDRFAMILY;
+      }
+    }
+
+    socket_ops::freehostent(hptr);
+  }
+
+  // Check if we found anything.
+  if (aihead == 0)
+  {
+    delete[] canon;
+    return EAI_NONAME;
+  }
+
+  // Return canonical name in first entry.
+  if (host != 0 && host[0] != '\0' && (hints.ai_flags & AI_CANONNAME))
+  {
+    if (canon)
+    {
+      aihead->ai_canonname = canon;
+      canon = 0;
+    }
+    else
+    {
+      aihead->ai_canonname =
+        new (std::nothrow) char[strlen(search[0].host) + 1];
+      if (aihead->ai_canonname == 0)
+      {
+        gai_freeaddrinfo(aihead);
+        return EAI_MEMORY;
+      }
+      strcpy(aihead->ai_canonname, search[0].host);
+    }
+  }
+
+  // Process the service name.
+  if (service != 0 && service[0] != '\0')
+  {
+    rc = gai_serv(aihead, &hints, service);
+    if (rc != 0)
+    {
+      gai_freeaddrinfo(aihead);
+      return rc;
+    }
+  }
+
+  // Return result to caller.
+  *result = aihead;
+  return 0;
 }
 
 inline int translate_addrinfo_error(int error)
@@ -662,13 +1242,21 @@ inline int getaddrinfo(const char* host, const char* service,
     const addrinfo* hints, addrinfo** result)
 {
   set_error(0);
+#if defined(__MACH__) && defined(__APPLE__)
+  int error = gai_getaddrinfo(host, service, hints, result);
+#else
   int error = ::getaddrinfo(host, service, hints, result);
+#endif
   return translate_addrinfo_error(error);
 }
 
 inline void freeaddrinfo(addrinfo* ai)
 {
+#if defined(__MACH__) && defined(__APPLE__)
+  gai_freeaddrinfo(ai);
+#else
   ::freeaddrinfo(ai);
+#endif
 }
 
 inline int getnameinfo(const socket_addr_type* addr,
