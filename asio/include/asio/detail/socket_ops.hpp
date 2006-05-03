@@ -1060,7 +1060,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
       {
         gai_freeaddrinfo(aihead);
         delete[] canon;
-        return EAI_ADDRFAMILY;
+        return EAI_FAMILY;
       }
       if (sptr->family == AF_INET)
       {
@@ -1083,7 +1083,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
       {
         gai_freeaddrinfo(aihead);
         delete[] canon;
-        return EAI_ADDRFAMILY;
+        return EAI_FAMILY;
       }
       if (sptr->family == AF_INET6)
       {
@@ -1134,7 +1134,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
       gai_freeaddrinfo(aihead);
       delete[] canon;
       socket_ops::freehostent(hptr);
-      return EAI_ADDRFAMILY;
+      return EAI_FAMILY;
     }
 
     // Save canonical name first time.
@@ -1160,7 +1160,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
         gai_freeaddrinfo(aihead);
         delete[] canon;
         socket_ops::freehostent(hptr);
-        return EAI_ADDRFAMILY;
+        return EAI_FAMILY;
       }
     }
 
