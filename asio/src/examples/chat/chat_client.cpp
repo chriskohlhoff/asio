@@ -17,7 +17,8 @@ public:
     : io_service_(io_service),
       socket_(io_service)
   {
-    socket_.async_connect(*endpoint_iterator,
+    tcp::endpoint endpoint = *endpoint_iterator;
+    socket_.async_connect(endpoint,
         boost::bind(&chat_client::handle_connect, this,
           asio::placeholders::error, ++endpoint_iterator));
   }
@@ -47,7 +48,8 @@ private:
     else if (endpoint_iterator != tcp::resolver::iterator())
     {
       socket_.close();
-      socket_.async_connect(*endpoint_iterator,
+      tcp::endpoint endpoint = *endpoint_iterator;
+      socket_.async_connect(endpoint,
           boost::bind(&chat_client::handle_connect, this,
             asio::placeholders::error, ++endpoint_iterator));
     }

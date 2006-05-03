@@ -34,7 +34,8 @@ void connect_handler(const asio::error& e, debug_stream_socket* s,
   else if (endpoint_iterator != asio::ip::tcp::resolver::iterator())
   {
     s->close();
-    s->async_connect(*endpoint_iterator,
+    asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
+    s->async_connect(endpoint,
         boost::bind(connect_handler,
           asio::placeholders::error, s, ++endpoint_iterator));
   }
@@ -64,10 +65,11 @@ int main(int argc, char* argv[])
     asio::ip::tcp::resolver resolver(io_service);
     asio::ip::tcp::resolver::query query(argv[1], "daytime");
     asio::ip::tcp::resolver::iterator iterator = resolver.resolve(query);
+    asio::ip::tcp::endpoint endpoint = *iterator;
 
     // Start an asynchronous connect.
     debug_stream_socket socket(io_service);
-    socket.async_connect(*iterator,
+    socket.async_connect(endpoint,
         boost::bind(connect_handler,
           asio::placeholders::error, &socket, ++iterator));
 

@@ -60,6 +60,10 @@ public:
     hints_.ai_family = PF_UNSPEC;
     hints_.ai_socktype = endpoint.protocol().type();
     hints_.ai_protocol = endpoint.protocol().protocol();
+    hints_.ai_addrlen = 0;
+    hints_.ai_canonname = 0;
+    hints_.ai_addr = 0;
+    hints_.ai_next = 0;
   }
 
   /// Construct with specified host name and service name for any protocol.
@@ -74,6 +78,10 @@ public:
     hints_.ai_family = protocol.family();
     hints_.ai_socktype = protocol.type();
     hints_.ai_protocol = protocol.protocol();
+    hints_.ai_addrlen = 0;
+    hints_.ai_canonname = 0;
+    hints_.ai_addr = 0;
+    hints_.ai_next = 0;
   }
 
   /// Construct with specified host name and service name for any protocol.
@@ -88,6 +96,10 @@ public:
     hints_.ai_family = PF_UNSPEC;
     hints_.ai_socktype = endpoint.protocol().type();
     hints_.ai_protocol = endpoint.protocol().protocol();
+    hints_.ai_addrlen = 0;
+    hints_.ai_canonname = 0;
+    hints_.ai_addr = 0;
+    hints_.ai_next = 0;
   }
 
   /// Construct with specified host name and service name for a given protocol.
@@ -102,6 +114,10 @@ public:
     hints_.ai_family = protocol.family();
     hints_.ai_socktype = protocol.type();
     hints_.ai_protocol = protocol.protocol();
+    hints_.ai_addrlen = 0;
+    hints_.ai_canonname = 0;
+    hints_.ai_addr = 0;
+    hints_.ai_next = 0;
   }
 
   /// Get the hints associated with the query.

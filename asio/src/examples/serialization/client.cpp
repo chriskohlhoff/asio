@@ -22,9 +22,10 @@ public:
     asio::ip::tcp::resolver::query query(host, service);
     asio::ip::tcp::resolver::iterator endpoint_iterator =
       resolver.resolve(query);
+    asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
 
     // Start an asynchronous connect operation.
-    connection_.socket().async_connect(*endpoint_iterator,
+    connection_.socket().async_connect(endpoint,
         boost::bind(&client::handle_connect, this,
           asio::placeholders::error, ++endpoint_iterator));
   }
@@ -46,7 +47,8 @@ public:
     {
       // Try the next endpoint.
       connection_.socket().close();
-      connection_.socket().async_connect(*endpoint_iterator,
+      asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
+      connection_.socket().async_connect(endpoint,
           boost::bind(&client::handle_connect, this,
             asio::placeholders::error, ++endpoint_iterator));
     }

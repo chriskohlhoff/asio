@@ -13,7 +13,8 @@ public:
       asio::ip::tcp::resolver::iterator endpoint_iterator)
     : socket_(io_service, context)
   {
-    socket_.lowest_layer().async_connect(*endpoint_iterator,
+    asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
+    socket_.lowest_layer().async_connect(endpoint,
         boost::bind(&client::handle_connect, this,
           asio::placeholders::error, ++endpoint_iterator));
   }
@@ -30,7 +31,8 @@ public:
     else if (endpoint_iterator != asio::ip::tcp::resolver::iterator())
     {
       socket_.lowest_layer().close();
-      socket_.lowest_layer().async_connect(*endpoint_iterator,
+      asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
+      socket_.lowest_layer().async_connect(endpoint,
           boost::bind(&client::handle_connect, this,
             asio::placeholders::error, ++endpoint_iterator));
     }

@@ -77,7 +77,8 @@ public:
 
   void start(ip::tcp::resolver::iterator endpoint_iterator)
   {
-    socket_.async_connect(*endpoint_iterator,
+    ip::tcp::endpoint endpoint = *endpoint_iterator;
+    socket_.async_connect(endpoint,
         strand_.wrap(boost::bind(&session::handle_connect, this,
             placeholders::error, ++endpoint_iterator)));
   }
@@ -106,7 +107,8 @@ private:
     else if (endpoint_iterator != ip::tcp::resolver::iterator())
     {
       socket_.close();
-      socket_.async_connect(*endpoint_iterator,
+      ip::tcp::endpoint endpoint = *endpoint_iterator;
+      socket_.async_connect(endpoint,
           strand_.wrap(boost::bind(&session::handle_connect, this,
               placeholders::error, ++endpoint_iterator)));
     }
