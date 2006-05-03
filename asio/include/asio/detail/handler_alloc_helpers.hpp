@@ -35,6 +35,7 @@ inline void* allocate(std::size_t s, Handler* h)
 #if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
   return ::operator new(s);
 #else
+  using namespace asio;
   return asio_handler_allocate(s, h);
 #endif
 }
@@ -45,6 +46,7 @@ inline void deallocate(void* p, std::size_t s, Handler* h)
 #if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
   ::operator delete(p);
 #else
+  using namespace asio;
   asio_handler_deallocate(p, s, h);
 #endif
 }

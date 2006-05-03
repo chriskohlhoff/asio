@@ -22,6 +22,8 @@
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
+namespace asio {
+
 /// Default allocation function for handlers.
 /**
  * Asynchronous operations may need to allocate temporary objects. Since
@@ -77,6 +79,8 @@ inline void asio_handler_deallocate(void* pointer, std::size_t size, ...)
 {
   return ::operator delete(pointer);
 }
+
+} // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
