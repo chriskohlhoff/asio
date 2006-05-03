@@ -1243,17 +1243,55 @@ inline int getaddrinfo(const char* host, const char* service,
     const addrinfo* hints, addrinfo** result)
 {
   set_error(0);
-#if defined(__MACH__) && defined(__APPLE__)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501)
+  // Building for Windows XP, Windows Server 2003, or later.
+  int error = ::getaddrinfo(host, service, hints, result);
+  return translate_addrinfo_error(error);
+# else
+  // Building for Windows 2000 or earlier.
+  typedef int (WSAAPI *gai_t)(const char*,
+      const char*, const addrinfo*, addrinfo**);
+  if (HMODULE winsock_module = ::GetModuleHandleA("ws2_32"))
+  {
+    if (gai_t gai = (gai_t)::GetProcAddress(winsock_module, "getaddrinfo"))
+    {
+      int error = gai(host, service, hints, result);
+      return translate_addrinfo_error(error);
+    }
+  }
   int error = gai_getaddrinfo(host, service, hints, result);
+  return translate_addrinfo_error(error);
+# endif
+#elif defined(__MACH__) && defined(__APPLE__)
+  int error = gai_getaddrinfo(host, service, hints, result);
+  return translate_addrinfo_error(error);
 #else
   int error = ::getaddrinfo(host, service, hints, result);
-#endif
   return translate_addrinfo_error(error);
+#endif
 }
 
 inline void freeaddrinfo(addrinfo* ai)
 {
-#if defined(__MACH__) && defined(__APPLE__)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501)
+  // Building for Windows XP, Windows Server 2003, or later.
+  ::freeaddrinfo(ai);
+# else
+  // Building for Windows 2000 or earlier.
+  typedef int (WSAAPI *fai_t)(addrinfo*);
+  if (HMODULE winsock_module = ::GetModuleHandleA("ws2_32"))
+  {
+    if (fai_t fai = (fai_t)::GetProcAddress(winsock_module, "freeaddrinfo"))
+    {
+      fai(ai);
+      return;
+    }
+  }
+  gai_freeaddrinfo(ai);
+# endif
+#elif defined(__MACH__) && defined(__APPLE__)
   gai_freeaddrinfo(ai);
 #else
   ::freeaddrinfo(ai);
