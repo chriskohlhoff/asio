@@ -748,6 +748,21 @@ inline int gai_nsearch(const char* host,
   return search_count;
 }
 
+template <typename T>
+inline T* gai_alloc(std::size_t size = sizeof(T))
+{
+  using namespace std;
+  T* p = static_cast<T*>(::operator new(size, std::nothrow));
+  if (p)
+    memset(p, 0, size);
+  return p;
+}
+
+inline void gai_free(void* p)
+{
+  ::operator delete(p);
+}
+
 enum { gai_clone_flag = 1 << 30 };
 
 inline int gai_aistruct(addrinfo*** next, const addrinfo* hints,
@@ -755,7 +770,7 @@ inline int gai_aistruct(addrinfo*** next, const addrinfo* hints,
 {
   using namespace std;
 
-  addrinfo* ai = new (std::nothrow) addrinfo();
+  addrinfo* ai = gai_alloc<addrinfo>();
   if (ai == 0)
     return EAI_MEMORY;
 
@@ -774,7 +789,7 @@ inline int gai_aistruct(addrinfo*** next, const addrinfo* hints,
   {
   case AF_INET:
     {
-      sockaddr_in* sinptr = new (std::nothrow) sockaddr_in();
+      sockaddr_in* sinptr = gai_alloc<sockaddr_in>();
       if (sinptr == 0)
         return EAI_MEMORY;
       sinptr->sin_family = AF_INET;
@@ -785,7 +800,7 @@ inline int gai_aistruct(addrinfo*** next, const addrinfo* hints,
     }
   case AF_INET6:
     {
-      sockaddr_in6* sin6ptr = new (std::nothrow) sockaddr_in6();
+      sockaddr_in6* sin6ptr = gai_alloc<sockaddr_in6>();
       if (sin6ptr == 0)
         return EAI_MEMORY;
       sin6ptr->sin6_family = AF_INET6;
@@ -805,7 +820,7 @@ inline addrinfo* gai_clone(addrinfo* ai)
 {
   using namespace std;
 
-  addrinfo* new_ai = new (std::nothrow) addrinfo();
+  addrinfo* new_ai = gai_alloc<addrinfo>();
   if (new_ai == 0)
     return new_ai;
 
@@ -818,22 +833,8 @@ inline addrinfo* gai_clone(addrinfo* ai)
   new_ai->ai_protocol = ai->ai_protocol;
   new_ai->ai_canonname = 0;
   new_ai->ai_addrlen = ai->ai_addrlen;
-  switch (ai->ai_family)
-  {
-  case AF_INET:
-    new_ai->ai_addr = reinterpret_cast<sockaddr*>(
-        new (std::nothrow) sockaddr_in(
-          *reinterpret_cast<sockaddr_in*>(ai->ai_addr)));
-    break;
-  case AF_INET6:
-    new_ai->ai_addr = reinterpret_cast<sockaddr*>(
-        new (std::nothrow) sockaddr_in6(
-          *reinterpret_cast<sockaddr_in6*>(ai->ai_addr)));
-    break;
-  default:
-    new_ai->ai_addr = 0;
-    break;
-  }
+  new_ai->ai_addr = gai_alloc<sockaddr>(ai->ai_addrlen);
+  memcpy(new_ai->ai_addr, ai->ai_addr, ai->ai_addrlen);
 
   return new_ai;
 }
@@ -969,22 +970,10 @@ inline void gai_freeaddrinfo(addrinfo* aihead)
   addrinfo* ai = aihead;
   while (ai)
   {
-    switch(ai->ai_family)
-    {
-    case AF_INET:
-      delete reinterpret_cast<sockaddr_in*>(ai->ai_addr);
-      break;
-    case AF_INET6:
-      delete reinterpret_cast<sockaddr_in6*>(ai->ai_addr);
-      break;
-    default:
-      break;
-    }
-
-    delete[] ai->ai_canonname;
-
+    gai_free(ai->ai_addr);
+    gai_free(ai->ai_canonname);
     addrinfo* ainext = ai->ai_next;
-    delete ai;
+    gai_free(ai);
     ai = ainext;
   }
 }
@@ -1059,7 +1048,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
       if (hints.ai_family != AF_UNSPEC && hints.ai_family != AF_INET)
       {
         gai_freeaddrinfo(aihead);
-        delete[] canon;
+        gai_free(canon);
         return EAI_FAMILY;
       }
       if (sptr->family == AF_INET)
@@ -1068,7 +1057,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
         if (rc != 0)
         {
           gai_freeaddrinfo(aihead);
-          delete[] canon;
+          gai_free(canon);
           return rc;
         }
       }
@@ -1082,7 +1071,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
       if (hints.ai_family != AF_UNSPEC && hints.ai_family != AF_INET6)
       {
         gai_freeaddrinfo(aihead);
-        delete[] canon;
+        gai_free(canon);
         return EAI_FAMILY;
       }
       if (sptr->family == AF_INET6)
@@ -1091,7 +1080,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
         if (rc != 0)
         {
           gai_freeaddrinfo(aihead);
-          delete[] canon;
+          gai_free(canon);
           return rc;
         }
       }
@@ -1112,7 +1101,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
         continue;
       }
       gai_freeaddrinfo(aihead);
-      delete[] canon;
+      gai_free(canon);
       switch (herr)
       {
       case HOST_NOT_FOUND:
@@ -1132,7 +1121,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
     if (hints.ai_family != AF_UNSPEC && hints.ai_family != hptr->h_addrtype)
     {
       gai_freeaddrinfo(aihead);
-      delete[] canon;
+      gai_free(canon);
       socket_ops::freehostent(hptr);
       return EAI_FAMILY;
     }
@@ -1141,7 +1130,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
     if (host != 0 && host[0] != '\0' && hptr->h_name && hptr->h_name[0]
         && (hints.ai_flags & AI_CANONNAME) && canon == 0)
     {
-      canon = new (std::nothrow) char[strlen(hptr->h_name) + 1];
+      canon = gai_alloc<char>(strlen(hptr->h_name) + 1);
       if (canon == 0)
       {
         gai_freeaddrinfo(aihead);
@@ -1158,7 +1147,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
       if (rc != 0)
       {
         gai_freeaddrinfo(aihead);
-        delete[] canon;
+        gai_free(canon);
         socket_ops::freehostent(hptr);
         return EAI_FAMILY;
       }
@@ -1170,7 +1159,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
   // Check if we found anything.
   if (aihead == 0)
   {
-    delete[] canon;
+    gai_free(canon);
     return EAI_NONAME;
   }
 
@@ -1184,8 +1173,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
     }
     else
     {
-      aihead->ai_canonname =
-        new (std::nothrow) char[strlen(search[0].host) + 1];
+      aihead->ai_canonname = gai_alloc<char>(strlen(search[0].host) + 1);
       if (aihead->ai_canonname == 0)
       {
         gai_freeaddrinfo(aihead);
@@ -1194,7 +1182,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
       strcpy(aihead->ai_canonname, search[0].host);
     }
   }
-  delete[] canon;
+  gai_free(canon);
 
   // Process the service name.
   if (service != 0 && service[0] != '\0')

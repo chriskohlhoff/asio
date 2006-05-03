@@ -54,7 +54,7 @@ private:
     ~auto_addrinfo()
     {
       if (ai_)
-        ::freeaddrinfo(ai_);
+        socket_ops::freeaddrinfo(ai_);
     }
 
     operator ::addrinfo*()
