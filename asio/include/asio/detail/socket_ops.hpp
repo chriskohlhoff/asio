@@ -696,20 +696,20 @@ inline int gai_nsearch(const char* host,
       switch (hints->ai_family)
       {
       case AF_INET:
-        search[search_count].host = "127.0.0.1";
+        search[search_count].host = "localhost";
         search[search_count].family = AF_INET;
         ++search_count;
         break;
       case AF_INET6:
-        search[search_count].host = "0::1";
+        search[search_count].host = "localhost";
         search[search_count].family = AF_INET6;
         ++search_count;
         break;
       case AF_UNSPEC:
-        search[search_count].host = "0::1";
+        search[search_count].host = "localhost";
         search[search_count].family = AF_INET6;
         ++search_count;
-        search[search_count].host = "127.0.0.1";
+        search[search_count].host = "localhost";
         search[search_count].family = AF_INET;
         ++search_count;
         break;
@@ -1138,7 +1138,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
     }
 
     // Save canonical name first time.
-    if (host != 0 && host[0] != '\0' && hptr->h_name
+    if (host != 0 && host[0] != '\0' && hptr->h_name && hptr->h_name[0]
         && (hints.ai_flags & AI_CANONNAME) && canon == 0)
     {
       canon = new (std::nothrow) char[strlen(hptr->h_name) + 1];
@@ -1194,6 +1194,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
       strcpy(aihead->ai_canonname, search[0].host);
     }
   }
+  delete[] canon;
 
   // Process the service name.
   if (service != 0 && service[0] != '\0')
