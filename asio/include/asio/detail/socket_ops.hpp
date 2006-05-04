@@ -644,7 +644,8 @@ inline hostent* gethostbyname(const char* name, int af, struct hostent* result,
 inline void freehostent(hostent* h)
 {
 #if defined(__MACH__) && defined(__APPLE__)
-  ::freehostent(h);
+  if (h)
+    ::freehostent(h);
 #endif
 }
 
@@ -965,19 +966,6 @@ inline int gai_serv(addrinfo* aihead, const addrinfo* hints, const char* serv)
   return 0;
 }
 
-inline void gai_freeaddrinfo(addrinfo* aihead)
-{
-  addrinfo* ai = aihead;
-  while (ai)
-  {
-    gai_free(ai->ai_addr);
-    gai_free(ai->ai_canonname);
-    addrinfo* ainext = ai->ai_next;
-    gai_free(ai);
-    ai = ainext;
-  }
-}
-
 inline int gai_echeck(const char* host, const char* service,
     int flags, int family, int socktype, int protocol)
 {
@@ -1003,7 +991,20 @@ inline int gai_echeck(const char* host, const char* service,
   return 0;
 }
 
-inline int gai_getaddrinfo(const char* host, const char* service,
+inline void freeaddrinfo_emulation(addrinfo* aihead)
+{
+  addrinfo* ai = aihead;
+  while (ai)
+  {
+    gai_free(ai->ai_addr);
+    gai_free(ai->ai_canonname);
+    addrinfo* ainext = ai->ai_next;
+    gai_free(ai);
+    ai = ainext;
+  }
+}
+
+inline int getaddrinfo_emulation(const char* host, const char* service,
     const addrinfo* hintsp, addrinfo** result)
 {
   // Set up linked list of addrinfo structures.
@@ -1033,7 +1034,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
       hints.ai_socktype, hints.ai_protocol);
   if (rc != 0)
   {
-    gai_freeaddrinfo(aihead);
+    freeaddrinfo_emulation(aihead);
     return rc;
   }
 
@@ -1047,7 +1048,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
     {
       if (hints.ai_family != AF_UNSPEC && hints.ai_family != AF_INET)
       {
-        gai_freeaddrinfo(aihead);
+        freeaddrinfo_emulation(aihead);
         gai_free(canon);
         return EAI_FAMILY;
       }
@@ -1056,7 +1057,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
         rc = gai_aistruct(&ainext, &hints, &inaddr, AF_INET);
         if (rc != 0)
         {
-          gai_freeaddrinfo(aihead);
+          freeaddrinfo_emulation(aihead);
           gai_free(canon);
           return rc;
         }
@@ -1070,7 +1071,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
     {
       if (hints.ai_family != AF_UNSPEC && hints.ai_family != AF_INET6)
       {
-        gai_freeaddrinfo(aihead);
+        freeaddrinfo_emulation(aihead);
         gai_free(canon);
         return EAI_FAMILY;
       }
@@ -1079,7 +1080,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
         rc = gai_aistruct(&ainext, &hints, &in6addr, AF_INET6);
         if (rc != 0)
         {
-          gai_freeaddrinfo(aihead);
+          freeaddrinfo_emulation(aihead);
           gai_free(canon);
           return rc;
         }
@@ -1100,7 +1101,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
         // Failure is OK if there are multiple searches.
         continue;
       }
-      gai_freeaddrinfo(aihead);
+      freeaddrinfo_emulation(aihead);
       gai_free(canon);
       switch (herr)
       {
@@ -1120,7 +1121,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
     // Check for address family mismatch if one was specified.
     if (hints.ai_family != AF_UNSPEC && hints.ai_family != hptr->h_addrtype)
     {
-      gai_freeaddrinfo(aihead);
+      freeaddrinfo_emulation(aihead);
       gai_free(canon);
       socket_ops::freehostent(hptr);
       return EAI_FAMILY;
@@ -1133,7 +1134,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
       canon = gai_alloc<char>(strlen(hptr->h_name) + 1);
       if (canon == 0)
       {
-        gai_freeaddrinfo(aihead);
+        freeaddrinfo_emulation(aihead);
         socket_ops::freehostent(hptr);
         return EAI_MEMORY;
       }
@@ -1146,7 +1147,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
       rc = gai_aistruct(&ainext, &hints, *ap, hptr->h_addrtype);
       if (rc != 0)
       {
-        gai_freeaddrinfo(aihead);
+        freeaddrinfo_emulation(aihead);
         gai_free(canon);
         socket_ops::freehostent(hptr);
         return EAI_FAMILY;
@@ -1176,7 +1177,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
       aihead->ai_canonname = gai_alloc<char>(strlen(search[0].host) + 1);
       if (aihead->ai_canonname == 0)
       {
-        gai_freeaddrinfo(aihead);
+        freeaddrinfo_emulation(aihead);
         return EAI_MEMORY;
       }
       strcpy(aihead->ai_canonname, search[0].host);
@@ -1190,7 +1191,7 @@ inline int gai_getaddrinfo(const char* host, const char* service,
     rc = gai_serv(aihead, &hints, service);
     if (rc != 0)
     {
-      gai_freeaddrinfo(aihead);
+      freeaddrinfo_emulation(aihead);
       return rc;
     }
   }
@@ -1248,11 +1249,11 @@ inline int getaddrinfo(const char* host, const char* service,
       return translate_addrinfo_error(error);
     }
   }
-  int error = gai_getaddrinfo(host, service, hints, result);
+  int error = getaddrinfo_emulation(host, service, hints, result);
   return translate_addrinfo_error(error);
 # endif
 #elif defined(__MACH__) && defined(__APPLE__)
-  int error = gai_getaddrinfo(host, service, hints, result);
+  int error = getaddrinfo_emulation(host, service, hints, result);
   return translate_addrinfo_error(error);
 #else
   int error = ::getaddrinfo(host, service, hints, result);
@@ -1277,29 +1278,162 @@ inline void freeaddrinfo(addrinfo* ai)
       return;
     }
   }
-  gai_freeaddrinfo(ai);
+  freeaddrinfo_emulation(ai);
 # endif
 #elif defined(__MACH__) && defined(__APPLE__)
-  gai_freeaddrinfo(ai);
+  freeaddrinfo_emulation(ai);
 #else
   ::freeaddrinfo(ai);
 #endif
+}
+
+inline int getnameinfo_emulation(const socket_addr_type* sa,
+    socket_addr_len_type salen, char* host, std::size_t hostlen,
+    char* serv, std::size_t servlen, int flags)
+{
+  using namespace std;
+
+  const char* addr;
+  size_t addr_len;
+  unsigned short port;
+  switch (sa->sa_family)
+  {
+  case AF_INET:
+    addr = reinterpret_cast<const char*>(
+        &reinterpret_cast<const sockaddr_in*>(sa)->sin_addr);
+    addr_len = sizeof(in_addr);
+    port = reinterpret_cast<const sockaddr_in*>(sa)->sin_port;
+    break;
+  case AF_INET6:
+    addr = reinterpret_cast<const char*>(
+        &reinterpret_cast<const sockaddr_in6*>(sa)->sin6_addr);
+    addr_len = sizeof(in6_addr);
+    port = reinterpret_cast<const sockaddr_in6*>(sa)->sin6_port;
+    break;
+  default:
+    set_error(asio::error::address_family_not_supported);
+    return 1;
+  }
+
+  if (host && hostlen > 0)
+  {
+    if (flags & NI_NUMERICHOST)
+    {
+      if (socket_ops::inet_ntop(sa->sa_family, addr, host, hostlen) == 0)
+      {
+        return 1;
+      }
+    }
+    else
+    {
+      hostent hent;
+      char hbuf[8192] = "";
+      int herr = 0;
+      hostent* hptr = socket_ops::gethostbyaddr(addr, addr_len,
+          sa->sa_family, &hent, hbuf, sizeof(hbuf), &herr);
+      if (hptr && hptr->h_name && hptr->h_name[0] != '\0')
+      {
+        if (flags & NI_NOFQDN)
+        {
+          char* dot = strchr(hptr->h_name, '.');
+          if (dot)
+          {
+            *dot = 0;
+          }
+        }
+        snprintf(host, hostlen, "%s", hptr->h_name);
+        socket_ops::freehostent(hptr);
+      }
+      else
+      {
+        socket_ops::freehostent(hptr);
+        if (flags & NI_NAMEREQD)
+        {
+          set_error(asio::error::host_not_found);
+          return 1;
+        }
+        if (socket_ops::inet_ntop(sa->sa_family, addr, host, hostlen) == 0)
+        {
+          return 1;
+        }
+      }
+    }
+  }
+
+  if (serv && servlen > 0)
+  {
+    if (flags & NI_NUMERICSERV)
+    {
+      snprintf(serv, servlen, "%u", ntohs(port));
+    }
+    else
+    {
+#if defined(BOOST_HAS_THREADS) && defined(BOOST_HAS_PTHREADS)
+      static ::pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+      ::pthread_mutex_lock(&mutex);
+#endif // defined(BOOST_HAS_THREADS) && defined(BOOST_HAS_PTHREADS)
+      servent* sptr = ::getservbyport(port, (flags & NI_DGRAM) ? "udp" : 0);
+      if (sptr && sptr->s_name && sptr->s_name[0] != '\0')
+      {
+        snprintf(serv, servlen, "%s", sptr->s_name);
+      }
+      else
+      {
+        snprintf(serv, servlen, "%u", ntohs(port));
+      }
+#if defined(BOOST_HAS_THREADS) && defined(BOOST_HAS_PTHREADS)
+      ::pthread_mutex_unlock(&mutex);
+#endif // defined(BOOST_HAS_THREADS) && defined(BOOST_HAS_PTHREADS)
+    }
+  }
+
+  set_error(0);
+  return 0;
 }
 
 inline int getnameinfo(const socket_addr_type* addr,
     socket_addr_len_type addrlen, char* host, std::size_t hostlen,
     char* serv, std::size_t servlen, int flags)
 {
-#if defined(__MACH__) && defined(__APPLE__)
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501)
+  // Building for Windows XP, Windows Server 2003, or later.
+  set_error(0);
+  int error = ::getnameinfo(addr, addrlen, host, hostlen, serv, servlen, flags);
+  return translate_addrinfo_error(error);
+# else
+  // Building for Windows 2000 or earlier.
+  typedef int (WSAAPI *gni_t)(const socket_addr_type*,
+      socket_addr_len_type, char*, std::size_t, char*, std::size_t, int);
+  if (HMODULE winsock_module = ::GetModuleHandleA("ws2_32"))
+  {
+    if (gni_t gni = (gni_t)::GetProcAddress(winsock_module, "getnameinfo"))
+    {
+      set_error(0);
+      int error = gni(addr, addrlen, host, hostlen, serv, servlen, flags);
+      return translate_addrinfo_error(error);
+    }
+  }
+  set_error(0);
+  int error = getnameinfo_emulation(addr, addrlen,
+      host, hostlen, serv, servlen, flags);
+  return translate_addrinfo_error(error);
+# endif
+#elif defined(__MACH__) && defined(__APPLE__)
   using namespace std; // For memcpy.
   sockaddr_storage tmp_addr;
   memcpy(&tmp_addr, addr, addrlen);
   tmp_addr.ss_len = addrlen;
   addr = reinterpret_cast<socket_addr_type*>(&tmp_addr);
-#endif
+  set_error(0);
+  int error = getnameinfo_emulation(addr, addrlen,
+      host, hostlen, serv, servlen, flags);
+  return translate_addrinfo_error(error);
+#else
   set_error(0);
   int error = ::getnameinfo(addr, addrlen, host, hostlen, serv, servlen, flags);
   return translate_addrinfo_error(error);
+#endif
 }
 
 inline u_long_type network_to_host_long(u_long_type value)
