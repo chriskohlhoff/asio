@@ -1341,7 +1341,8 @@ inline int getnameinfo_emulation(const socket_addr_type* sa,
             *dot = 0;
           }
         }
-        snprintf(host, hostlen, "%s", hptr->h_name);
+        *host = '\0';
+        strncat(host, hptr->h_name, hostlen);
         socket_ops::freehostent(hptr);
       }
       else
@@ -1364,7 +1365,12 @@ inline int getnameinfo_emulation(const socket_addr_type* sa,
   {
     if (flags & NI_NUMERICSERV)
     {
-      snprintf(serv, servlen, "%u", ntohs(port));
+      if (servlen < 6)
+      {
+        set_error(asio::error::no_buffer_space);
+        return 1;
+      }
+      sprintf(serv, "%u", ntohs(port));
     }
     else
     {
@@ -1375,11 +1381,17 @@ inline int getnameinfo_emulation(const socket_addr_type* sa,
       servent* sptr = ::getservbyport(port, (flags & NI_DGRAM) ? "udp" : 0);
       if (sptr && sptr->s_name && sptr->s_name[0] != '\0')
       {
-        snprintf(serv, servlen, "%s", sptr->s_name);
+        *serv = '\0';
+        strncat(serv, sptr->s_name, servlen);
       }
       else
       {
-        snprintf(serv, servlen, "%u", ntohs(port));
+        if (servlen < 6)
+        {
+          set_error(asio::error::no_buffer_space);
+          return 1;
+        }
+        sprintf(serv, "%u", ntohs(port));
       }
 #if defined(BOOST_HAS_THREADS) && defined(BOOST_HAS_PTHREADS)
       ::pthread_mutex_unlock(&mutex);
