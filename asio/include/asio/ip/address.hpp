@@ -176,6 +176,7 @@ public:
       address tmp;
       tmp.type_ = ipv6;
       tmp.ipv6_address_ = ipv6_address;
+      error_handler(error);
       return tmp;
     }
 
@@ -188,6 +189,7 @@ public:
       address tmp;
       tmp.type_ = ipv4;
       tmp.ipv4_address_ = ipv4_address;
+      error_handler(error);
       return tmp;
     }
 

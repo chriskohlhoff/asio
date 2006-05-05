@@ -183,6 +183,8 @@ public:
     impl.socket_ = sock.release();
     impl.cancel_token_.reset(static_cast<void*>(0), noop_deleter());
     impl.protocol_ = protocol;
+
+    error_handler(asio::error(0));
   }
 
   // Assign a native socket to a socket implementation.
@@ -197,6 +199,8 @@ public:
     impl.socket_ = native_socket;
     impl.cancel_token_.reset(static_cast<void*>(0), noop_deleter());
     impl.protocol_ = protocol;
+
+    error_handler(asio::error(0));
   }
 
   // Destroy a socket implementation.
@@ -217,6 +221,7 @@ public:
       if (socket_ops::close(impl.socket_) == socket_error_retval)
       {
         error_handler(asio::error(socket_ops::get_error()));
+        return;
       }
       else
       {
@@ -224,6 +229,8 @@ public:
         impl.cancel_token_.reset();
       }
     }
+
+    error_handler(asio::error(0));
   }
 
   // Get the native socket representation.
@@ -240,6 +247,8 @@ public:
     if (socket_ops::bind(impl.socket_, endpoint.data(),
           endpoint.size()) == socket_error_retval)
       error_handler(asio::error(socket_ops::get_error()));
+    else
+      error_handler(asio::error(0));
   }
 
   // Place the socket into the state where it will listen for new connections.
@@ -252,6 +261,8 @@ public:
 
     if (socket_ops::listen(impl.socket_, backlog) == socket_error_retval)
       error_handler(asio::error(socket_ops::get_error()));
+    else
+      error_handler(asio::error(0));
   }
 
   // Set a socket option.
@@ -263,6 +274,8 @@ public:
           option.level(impl.protocol_), option.name(impl.protocol_),
           option.data(impl.protocol_), option.size(impl.protocol_)))
       error_handler(asio::error(socket_ops::get_error()));
+    else
+      error_handler(asio::error(0));
   }
 
   // Set a socket option.
@@ -275,6 +288,8 @@ public:
           option.level(impl.protocol_), option.name(impl.protocol_),
           option.data(impl.protocol_), &size))
       error_handler(asio::error(socket_ops::get_error()));
+    else
+      error_handler(asio::error(0));
   }
 
   // Perform an IO control command on the socket.
@@ -285,6 +300,8 @@ public:
     if (socket_ops::ioctl(impl.socket_, command.name(),
           static_cast<ioctl_arg_type*>(command.data())))
       error_handler(asio::error(socket_ops::get_error()));
+    else
+      error_handler(asio::error(0));
   }
 
   // Get the local endpoint.
@@ -300,6 +317,7 @@ public:
     }
 
     endpoint.resize(addr_len);
+    error_handler(asio::error(0));
   }
 
   // Get the remote endpoint.
@@ -315,6 +333,7 @@ public:
     }
 
     endpoint.resize(addr_len);
+    error_handler(asio::error(0));
   }
 
   /// Disable sends or receives on the socket.
@@ -324,6 +343,8 @@ public:
   {
     if (socket_ops::shutdown(impl.socket_, what) != 0)
       error_handler(asio::error(socket_ops::get_error()));
+    else
+      error_handler(asio::error(0));
   }
 
   // Send the given data to the peer. Returns the number of bytes sent.
@@ -357,6 +378,7 @@ public:
       return 0;
     }
 
+    error_handler(asio::error(0));
     return bytes_transferred;
   }
 
@@ -500,6 +522,7 @@ public:
       return 0;
     }
 
+    error_handler(asio::error(0));
     return bytes_transferred;
   }
 
@@ -636,6 +659,7 @@ public:
       return 0;
     }
 
+    error_handler(asio::error(0));
     return bytes_transferred;
   }
 
@@ -791,6 +815,7 @@ public:
 
     sender_endpoint.resize(endpoint_size);
 
+    error_handler(asio::error(0));
     return bytes_transferred;
   }
 
@@ -934,9 +959,14 @@ public:
     peer.assign(impl.protocol_, new_socket.get(),
         asio::assign_error(temp_error));
     if (temp_error)
+    {
       error_handler(temp_error);
+    }
     else
+    {
       new_socket.release();
+      error_handler(asio::error(0));
+    }
   }
 
   // Accept a new connection.
@@ -966,9 +996,14 @@ public:
     peer.assign(impl.protocol_, new_socket.get(),
         asio::assign_error(temp_error));
     if (temp_error)
+    {
       error_handler(temp_error);
+    }
     else
+    {
       new_socket.release();
+      error_handler(asio::error(0));
+    }
   }
 
   template <typename Socket, typename Handler>
@@ -1383,6 +1418,8 @@ public:
         peer_endpoint.data(), peer_endpoint.size());
     if (result == socket_error_retval)
       error_handler(asio::error(socket_ops::get_error()));
+    else
+      error_handler(asio::error(0));
   }
 
   template <typename Handler>

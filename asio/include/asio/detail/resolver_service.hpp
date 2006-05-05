@@ -146,12 +146,9 @@ public:
         service_name.c_str(), &hints, &address_info);
     auto_addrinfo auto_address_info(address_info);
 
+    error_handler(asio::error(result));
     if (result != 0)
-    {
-      error_handler(asio::error(result));
       return iterator_type();
-    }
-
     return iterator_type::create(address_info, host_name, service_name);
   }
 
@@ -241,12 +238,9 @@ public:
           host_name, NI_MAXHOST, service_name, NI_MAXSERV, flags);
     }
 
+    error_handler(asio::error(result));
     if (result != 0)
-    {
-      error_handler(asio::error(result));
       return iterator_type();
-    }
-
     return iterator_type::create(endpoint, host_name, service_name);
   }
 

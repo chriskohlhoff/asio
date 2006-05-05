@@ -157,9 +157,9 @@ std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  * A return value of true indicates that the read operation is complete. False
  * indicates that further calls to the stream's read_some function are required.
  *
- * @param error_handler The handler to be called when an error occurs. Copies
- * will be made of the handler as required. The function signature of the
- * handler must be:
+ * @param error_handler A handler to be called when the operation completes,
+ * to indicate whether or not an error has occurred. Copies will be made of
+ * the handler as required. The function signature of the handler must be:
  * @code void error_handler(
  *   const Sync_Read_Stream::error_type& error // Result of operation.
  * ); @endcode

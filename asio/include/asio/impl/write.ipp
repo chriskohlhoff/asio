@@ -42,13 +42,12 @@ std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
     total_transferred += bytes_transferred;
     if (completion_condition(e, total_transferred))
     {
-      if (e)
-      {
-        error_handler(e);
-      }
+      error_handler(e);
       return total_transferred;
     }
   }
+  typename Sync_Write_Stream::error_type e;
+  error_handler(e);
   return total_transferred;
 }
 

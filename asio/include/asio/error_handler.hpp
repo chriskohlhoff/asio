@@ -44,7 +44,8 @@ public:
   template <typename Error>
   void operator()(const Error& err) const
   {
-    boost::throw_exception(err);
+    if (err)
+      boost::throw_exception(err);
   }
 };
 

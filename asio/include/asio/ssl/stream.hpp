@@ -173,9 +173,9 @@ public:
    * @param type The type of handshaking to be performed, i.e. as a client or as
    * a server.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -224,9 +224,9 @@ public:
    * This function is used to shut down SSL on the stream. The function call
    * will block until SSL has been shut down or an error occurs.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -285,9 +285,9 @@ public:
    *
    * @param buffers The data to be written to the stream.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation.
    * ); @endcode
@@ -364,9 +364,9 @@ public:
    *
    * @param buffers The buffers into which the data will be read.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation.
    * ); @endcode
@@ -440,9 +440,9 @@ public:
    *
    * @param buffers The buffers into which the data will be read.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation.
    * ); @endcode
@@ -475,9 +475,9 @@ public:
    * This function is used to determine the amount of data, in bytes, that may
    * be read from the stream without blocking.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The equivalent function signature
-   * of the handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode

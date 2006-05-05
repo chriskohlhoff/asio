@@ -171,9 +171,9 @@ public:
    *
    * @param protocol An object specifying which protocol is to be used.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The function signature of the
-   * handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -219,9 +219,9 @@ public:
    *
    * @param native_socket A native socket.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The function signature of the
-   * handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -253,9 +253,9 @@ public:
    * operations will be cancelled immediately, and will complete with the
    * asio::error::operation_aborted error.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The function signature of the
-   * handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -319,9 +319,9 @@ public:
    * @param endpoint An endpoint on the local machine to which the socket will
    * be bound.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The function signature of the
-   * handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -385,9 +385,9 @@ public:
    * @param peer_endpoint The remote endpoint to which the socket will be
    * connected.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The function signature of the
-   * handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -502,9 +502,9 @@ public:
    *
    * @param option The new option value to be set on the socket.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The function signature of the
-   * handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -593,9 +593,9 @@ public:
    *
    * @param option The option value to be obtained from the socket.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The function signature of the
-   * handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -672,9 +672,9 @@ public:
    *
    * @param command The IO control command to be performed on the socket.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The function signature of the
-   * handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -728,9 +728,9 @@ public:
   /**
    * This function is used to obtain the locally bound endpoint of the socket.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The function signature of the
-   * handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -782,9 +782,9 @@ public:
   /**
    * This function is used to obtain the remote endpoint of the socket.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The function signature of the
-   * handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -841,9 +841,9 @@ public:
    *
    * @param what Determines what types of operation will no longer be allowed.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The function signature of the
-   * handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode

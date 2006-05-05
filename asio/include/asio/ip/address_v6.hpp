@@ -120,6 +120,8 @@ public:
       error_handler(e);
       return std::string();
     }
+    asio::error e;
+    error_handler(e);
     return addr;
   }
 
@@ -141,6 +143,8 @@ public:
       error_handler(e);
       return address_v6();
     }
+    asio::error e;
+    error_handler(e);
     return tmp;
   }
 

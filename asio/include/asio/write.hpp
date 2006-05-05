@@ -160,9 +160,9 @@ std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
  * indicates that further calls to the stream's write_some function are
  * required.
  *
- * @param error_handler The handler to be called when an error occurs. Copies
- * will be made of the handler as required. The function signature of the
- * handler must be:
+ * @param error_handler A handler to be called when the operation completes,
+ * to indicate whether or not an error has occurred. Copies will be made of
+ * the handler as required. The function signature of the handler must be:
  * @code void error_handler(
  *   const Sync_Write_Stream::error_type& error // Result of operation.
  * ); @endcode

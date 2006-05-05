@@ -203,9 +203,9 @@ public:
    *
    * @param flags Flags specifying how the send call is to be made.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The function signature of the
-   * handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation.
    * ); @endcode
@@ -394,9 +394,9 @@ public:
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The function signature of the
-   * handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode
@@ -546,9 +546,9 @@ public:
    *
    * @param buffers One or more data buffers to be written to the socket.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The function signature of the
-   * handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation.
    * ); @endcode
@@ -651,9 +651,9 @@ public:
    *
    * @param buffers One or more buffers into which the data will be read.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The function signature of the
-   * handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation.
    * ); @endcode
@@ -751,9 +751,9 @@ public:
    *
    * @param buffers One or more buffers into which the data will be read.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The function signature of the
-   * handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation.
    * ); @endcode
@@ -789,9 +789,9 @@ public:
    * This function is used to determine the amount of data, in bytes, that may
    * be read from the stream socket without blocking.
    *
-   * @param error_handler The handler to be called when an error occurs. Copies
-   * will be made of the handler as required. The function signature of the
-   * handler must be:
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
    * @code void error_handler(
    *   const asio::error& error // Result of operation
    * ); @endcode

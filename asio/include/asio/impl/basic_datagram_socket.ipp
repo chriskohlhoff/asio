@@ -160,9 +160,9 @@ inline std::size_t basic_datagram_socket<Service>::send(
  *
  * @param flags Flags specifying how the send call is to be made.
  *
- * @param error_handler The handler to be called when an error occurs. Copies
- * will be made of the handler as required. The function signature of the
- * handler must be:
+ * @param error_handler A handler to be called when the operation completes,
+ * to indicate whether or not an error has occurred. Copies will be made of
+ * the handler as required. The function signature of the handler must be:
  * @code void error_handler(
  *   const asio::error& error // Result of operation.
  * ); @endcode
@@ -330,9 +330,9 @@ inline std::size_t basic_datagram_socket<Service>::send_to(
  *
  * @param flags Flags specifying how the send call is to be made.
  *
- * @param error_handler The handler to be called when an error occurs. Copies
- * will be made of the handler as required. The function signature of the
- * handler must be:
+ * @param error_handler A handler to be called when the operation completes,
+ * to indicate whether or not an error has occurred. Copies will be made of
+ * the handler as required. The function signature of the handler must be:
  * @code void error_handler(
  *   const asio::error& error // Result of operation.
  * ); @endcode
@@ -497,9 +497,9 @@ inline std::size_t basic_datagram_socket<Service>::receive(
  *
  * @param flags Flags specifying how the receive call is to be made.
  *
- * @param error_handler The handler to be called when an error occurs. Copies
- * will be made of the handler as required. The function signature of the
- * handler must be:
+ * @param error_handler A handler to be called when the operation completes,
+ * to indicate whether or not an error has occurred. Copies will be made of
+ * the handler as required. The function signature of the handler must be:
  * @code void error_handler(
  *   const asio::error& error // Result of operation.
  * ); @endcode
@@ -669,9 +669,9 @@ inline std::size_t basic_datagram_socket<Service>::receive_from(
  *
  * @param flags Flags specifying how the receive call is to be made.
  *
- * @param error_handler The handler to be called when an error occurs. Copies
- * will be made of the handler as required. The function signature of the
- * handler must be:
+ * @param error_handler A handler to be called when the operation completes,
+ * to indicate whether or not an error has occurred. Copies will be made of
+ * the handler as required. The function signature of the handler must be:
  * @code void error_handler(
  *   const asio::error& error // Result of operation.
  * ); @endcode
