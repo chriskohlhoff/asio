@@ -32,7 +32,7 @@ public:
   typedef bool result_type;
 
   template <typename Error>
-  bool operator()(const Error& err, std::size_t bytes_transferred)
+  bool operator()(const Error& err, std::size_t)
   {
     return !!err;
   }

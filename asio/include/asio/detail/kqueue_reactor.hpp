@@ -114,7 +114,7 @@ public:
 
   // Register a socket with the reactor. Returns 0 on success, system error
   // code on failure.
-  int register_descriptor(socket_type descriptor)
+  int register_descriptor(socket_type)
   {
     return 0;
   }

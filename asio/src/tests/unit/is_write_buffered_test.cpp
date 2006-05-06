@@ -43,37 +43,39 @@ public:
     return *this;
   }
 
-  size_t write(const void* data, size_t length)
+  template <typename Const_Buffers>
+  size_t write(const Const_Buffers&)
   {
     return 0;
   }
 
-  template <typename Error_Handler>
-  size_t write(const void* data, size_t length, Error_Handler error_handler)
+  template <typename Const_Buffers, typename Error_Handler>
+  size_t write(const Const_Buffers&, Error_Handler)
   {
     return 0;
   }
 
-  template <typename Handler>
-  void async_write(const void* data, size_t length, Handler handler)
+  template <typename Const_Buffers, typename Handler>
+  void async_write(const Const_Buffers&, Handler handler)
   {
     asio::error error;
     io_service_.post(asio::detail::bind_handler(handler, error, 0));
   }
 
-  size_t read(void* data, size_t length)
+  template <typename Mutable_Buffers>
+  size_t read(const Mutable_Buffers&)
   {
     return 0;
   }
 
-  template <typename Error_Handler>
-  size_t read(void* data, size_t length, Error_Handler error_handler)
+  template <typename Mutable_Buffers, typename Error_Handler>
+  size_t read(const Mutable_Buffers&, Error_Handler error_handler)
   {
     return 0;
   }
 
-  template <typename Handler>
-  void async_read(void* data, size_t length, Handler handler)
+  template <typename Mutable_Buffers, typename Handler>
+  void async_read(const Mutable_Buffers&, Handler handler)
   {
     asio::error error;
     io_service_.post(asio::detail::bind_handler(handler, error, 0));

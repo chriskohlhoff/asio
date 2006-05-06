@@ -566,6 +566,8 @@ inline hostent* gethostbyaddr(const char* addr, int length, int af,
 {
   set_error(0);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  (void)(buffer);
+  (void)(buflength);
   hostent* retval = error_wrapper(::gethostbyaddr(addr, length, af));
   *error = get_error();
   if (!retval)
@@ -578,6 +580,8 @@ inline hostent* gethostbyaddr(const char* addr, int length, int af,
   *error = translate_netdb_error(*error);
   return retval;
 #elif defined(__MACH__) && defined(__APPLE__)
+  (void)(buffer);
+  (void)(buflength);
   hostent* retval = error_wrapper(::getipnodebyaddr(addr, length, af, error));
   *error = translate_netdb_error(*error);
   if (!retval)
@@ -598,6 +602,8 @@ inline hostent* gethostbyname(const char* name, int af, struct hostent* result,
 {
   set_error(0);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  (void)(buffer);
+  (void)(buflength);
   if (af != AF_INET)
   {
     *error = asio::error::address_family_not_supported;
@@ -620,6 +626,8 @@ inline hostent* gethostbyname(const char* name, int af, struct hostent* result,
   *error = translate_netdb_error(*error);
   return retval;
 #elif defined(__MACH__) && defined(__APPLE__)
+  (void)(buffer);
+  (void)(buflength);
   hostent* retval = error_wrapper(::getipnodebyname(
         name, af, ai_flags, error));
   *error = translate_netdb_error(*error);
@@ -969,6 +977,9 @@ inline int gai_serv(addrinfo* aihead, const addrinfo* hints, const char* serv)
 inline int gai_echeck(const char* host, const char* service,
     int flags, int family, int socktype, int protocol)
 {
+  (void)(flags);
+  (void)(protocol);
+
   // Host or service must be specified.
   if (host == 0 || host[0] == '\0')
     if (service == 0 || service[0] == '\0')
@@ -1299,12 +1310,22 @@ inline int getnameinfo_emulation(const socket_addr_type* sa,
   switch (sa->sa_family)
   {
   case AF_INET:
+    if (salen != sizeof(sockaddr_in))
+    {
+      set_error(asio::error::invalid_argument);
+      return 1;
+    }
     addr = reinterpret_cast<const char*>(
         &reinterpret_cast<const sockaddr_in*>(sa)->sin_addr);
     addr_len = sizeof(in_addr);
     port = reinterpret_cast<const sockaddr_in*>(sa)->sin_port;
     break;
   case AF_INET6:
+    if (salen != sizeof(sockaddr_in6))
+    {
+      set_error(asio::error::invalid_argument);
+      return 1;
+    }
     addr = reinterpret_cast<const char*>(
         &reinterpret_cast<const sockaddr_in6*>(sa)->sin6_addr);
     addr_len = sizeof(in6_addr);

@@ -121,7 +121,7 @@ public:
   }
 
   // Destroy a resolver implementation.
-  void destroy(implementation_type& impl)
+  void destroy(implementation_type&)
   {
   }
 
@@ -133,7 +133,7 @@ public:
 
   // Resolve a query to a list of entries.
   template <typename Error_Handler>
-  iterator_type resolve(implementation_type& impl, const query_type& query,
+  iterator_type resolve(implementation_type&, const query_type& query,
       Error_Handler error_handler)
   {
     ::addrinfo* address_info = 0;
@@ -221,7 +221,7 @@ public:
 
   // Resolve an endpoint to a list of entries.
   template <typename Error_Handler>
-  iterator_type resolve(implementation_type& impl,
+  iterator_type resolve(implementation_type&,
       const endpoint_type& endpoint, Error_Handler error_handler)
   {
     // First try resolving with the service name. If that fails try resolving

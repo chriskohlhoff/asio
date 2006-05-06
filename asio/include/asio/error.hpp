@@ -190,7 +190,8 @@ public:
 
   /// Copy constructor.
   error(const error& e)
-    : code_(e.code_)
+    : std::exception(e),
+      code_(e.code_)
   {
   }
 

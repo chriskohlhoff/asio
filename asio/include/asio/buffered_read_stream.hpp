@@ -251,7 +251,7 @@ public:
     {
     }
 
-    void operator()(const error_type& e, std::size_t bytes_transferred)
+    void operator()(const error_type& e, std::size_t)
     {
       if (e || storage_.empty())
       {

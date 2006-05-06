@@ -31,7 +31,7 @@ public:
   typedef void result_type;
 
   template <typename Error>
-  void operator()(const Error& err) const
+  void operator()(const Error&) const
   {
   }
 };

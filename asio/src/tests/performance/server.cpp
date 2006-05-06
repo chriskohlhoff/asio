@@ -66,8 +66,7 @@ public:
         std::swap(read_data_, write_data_);
         async_write(socket_, buffer(write_data_, read_data_length_),
             strand_.wrap(
-              boost::bind(&session::handle_write, this, placeholders::error,
-                placeholders::bytes_transferred)));
+              boost::bind(&session::handle_write, this, placeholders::error)));
         socket_.async_read_some(buffer(read_data_, block_size_),
             strand_.wrap(
               boost::bind(&session::handle_read, this, placeholders::error,
@@ -79,7 +78,7 @@ public:
       io_service_.post(boost::bind(&session::destroy, this));
   }
 
-  void handle_write(const error& err, size_t last_length)
+  void handle_write(const error& err)
   {
     --op_count_;
 
@@ -92,8 +91,7 @@ public:
         std::swap(read_data_, write_data_);
         async_write(socket_, buffer(write_data_, read_data_length_),
             strand_.wrap(
-              boost::bind(&session::handle_write, this, placeholders::error,
-                placeholders::bytes_transferred)));
+              boost::bind(&session::handle_write, this, placeholders::error)));
         socket_.async_read_some(buffer(read_data_, block_size_),
             strand_.wrap(
               boost::bind(&session::handle_read, this, placeholders::error,

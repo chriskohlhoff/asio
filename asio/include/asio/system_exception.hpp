@@ -49,7 +49,8 @@ public:
 
   /// Copy constructor.
   system_exception(const system_exception& e)
-    : context_(e.context_),
+    : std::exception(e),
+      context_(e.context_),
       code_(e.code_)
   {
   }
