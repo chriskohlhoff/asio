@@ -604,6 +604,7 @@ inline hostent* gethostbyname(const char* name, int af, struct hostent* result,
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   (void)(buffer);
   (void)(buflength);
+  (void)(ai_flags);
   if (af != AF_INET)
   {
     *error = asio::error::address_family_not_supported;
@@ -616,6 +617,7 @@ inline hostent* gethostbyname(const char* name, int af, struct hostent* result,
   *result = *retval;
   return result;
 #elif defined(__sun) || defined(__QNX__)
+  (void)(ai_flags);
   if (af != AF_INET)
   {
     *error = asio::error::address_family_not_supported;
@@ -636,6 +638,7 @@ inline hostent* gethostbyname(const char* name, int af, struct hostent* result,
   *result = *retval;
   return retval;
 #else
+  (void)(ai_flags);
   if (af != AF_INET)
   {
     *error = asio::error::address_family_not_supported;
@@ -654,6 +657,8 @@ inline void freehostent(hostent* h)
 #if defined(__MACH__) && defined(__APPLE__)
   if (h)
     ::freehostent(h);
+#else
+  (void)(h);
 #endif
 }
 
