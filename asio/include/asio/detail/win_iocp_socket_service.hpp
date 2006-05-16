@@ -1039,7 +1039,7 @@ public:
 
     DWORD address_length()
     {
-      return sizeof(sockaddr_storage) + 16;
+      return sizeof(sockaddr_storage_type) + 16;
     }
 
   private:
@@ -1111,7 +1111,7 @@ public:
     Socket& peer_;
     protocol_type protocol_;
     asio::io_service::work work_;
-    unsigned char output_buffer_[(sizeof(sockaddr_storage) + 16) * 2];
+    unsigned char output_buffer_[(sizeof(sockaddr_storage_type) + 16) * 2];
     Handler handler_;
   };
 
@@ -1219,7 +1219,7 @@ public:
 
     DWORD address_length()
     {
-      return sizeof(sockaddr_storage) + 16;
+      return sizeof(sockaddr_storage_type) + 16;
     }
 
   private:
@@ -1314,7 +1314,7 @@ public:
     Socket& peer_;
     endpoint_type& peer_endpoint_;
     asio::io_service::work work_;
-    unsigned char output_buffer_[(sizeof(sockaddr_storage) + 16) * 2];
+    unsigned char output_buffer_[(sizeof(sockaddr_storage_type) + 16) * 2];
     Handler handler_;
   };
 

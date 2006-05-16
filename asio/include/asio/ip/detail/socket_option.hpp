@@ -191,7 +191,7 @@ public:
       asio::detail::socket_ops::host_to_network_long(
           asio::ip::address_v4::any().to_ulong());
 
-    in6_addr tmp_addr = IN6ADDR_ANY_INIT;
+    asio::detail::in6_addr_type tmp_addr = IN6ADDR_ANY_INIT;
     ipv6_value_.ipv6mr_multiaddr = tmp_addr;
     ipv6_value_.ipv6mr_interface = 0;
   }
@@ -223,7 +223,7 @@ public:
         asio::detail::socket_ops::host_to_network_long(
             asio::ip::address_v4::any().to_ulong());
 
-      in6_addr tmp_addr = IN6ADDR_ANY_INIT;
+      asio::detail::in6_addr_type tmp_addr = IN6ADDR_ANY_INIT;
       ipv6_value_.ipv6mr_multiaddr = tmp_addr;
       ipv6_value_.ipv6mr_interface = 0;
     }
@@ -241,7 +241,7 @@ public:
       asio::detail::socket_ops::host_to_network_long(
           network_interface.to_ulong());
 
-    in6_addr tmp_addr = IN6ADDR_ANY_INIT;
+    asio::detail::in6_addr_type tmp_addr = IN6ADDR_ANY_INIT;
     ipv6_value_.ipv6mr_multiaddr = tmp_addr;
     ipv6_value_.ipv6mr_interface = 0;
   }
@@ -310,8 +310,8 @@ public:
   }
 
 private:
-  ip_mreq ipv4_value_;
-  ipv6_mreq ipv6_value_;
+  asio::detail::in4_mreq_type ipv4_value_;
+  asio::detail::in6_mreq_type ipv6_value_;
 };
 
 // Helper template for implementing options that specify a network interface.
@@ -392,7 +392,7 @@ public:
   }
 
 private:
-  in_addr ipv4_value_;
+  asio::detail::in4_addr_type ipv4_value_;
   unsigned long ipv6_value_;
 };
 

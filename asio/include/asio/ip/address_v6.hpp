@@ -52,7 +52,7 @@ public:
   address_v6()
     : scope_id_(0)
   {
-    in6_addr tmp_addr = IN6ADDR_ANY_INIT;
+    asio::detail::in6_addr_type tmp_addr = IN6ADDR_ANY_INIT;
     addr_ = tmp_addr;
   }
 
@@ -165,72 +165,84 @@ public:
   /// Determine whether the address is a loopback address.
   bool is_loopback() const
   {
+    using namespace asio::detail;
     return IN6_IS_ADDR_LOOPBACK(&addr_) != 0;
   }
 
   /// Determine whether the address is unspecified.
   bool is_unspecified() const
   {
+    using namespace asio::detail;
     return IN6_IS_ADDR_UNSPECIFIED(&addr_) != 0;
   }
 
   /// Determine whether the address is link local.
   bool is_link_local() const
   {
+    using namespace asio::detail;
     return IN6_IS_ADDR_LINKLOCAL(&addr_) != 0;
   }
 
   /// Determine whether the address is site local.
   bool is_site_local() const
   {
+    using namespace asio::detail;
     return IN6_IS_ADDR_SITELOCAL(&addr_) != 0;
   }
 
   /// Determine whether the address is a mapped IPv4 address.
   bool is_ipv4_mapped() const
   {
+    using namespace asio::detail;
     return IN6_IS_ADDR_V4MAPPED(&addr_) != 0;
   }
 
   /// Determine whether the address is an IPv4-compatible address.
   bool is_ipv4_compatible() const
   {
+    using namespace asio::detail;
     return IN6_IS_ADDR_V4COMPAT(&addr_) != 0;
   }
 
   /// Determine whether the address is a multicast address.
   bool is_multicast() const
   {
+    using namespace asio::detail;
     return IN6_IS_ADDR_MULTICAST(&addr_) != 0;
   }
 
   /// Determine whether the address is a global multicast address.
   bool is_multicast_global() const
   {
+    using namespace asio::detail;
     return IN6_IS_ADDR_MC_GLOBAL(&addr_) != 0;
   }
 
   /// Determine whether the address is a link-local multicast address.
   bool is_multicast_link_local() const
   {
+    using namespace asio::detail;
     return IN6_IS_ADDR_MC_LINKLOCAL(&addr_) != 0;
   }
 
   /// Determine whether the address is a node-local multicast address.
   bool is_multicast_node_local() const
   {
+    using namespace asio::detail;
     return IN6_IS_ADDR_MC_NODELOCAL(&addr_) != 0;
   }
 
   /// Determine whether the address is a org-local multicast address.
   bool is_multicast_org_local() const
   {
+    using namespace asio::detail;
     return IN6_IS_ADDR_MC_ORGLOCAL(&addr_) != 0;
   }
 
   /// Determine whether the address is a site-local multicast address.
   bool is_multicast_site_local() const
   {
+    using namespace asio::detail;
     return IN6_IS_ADDR_MC_SITELOCAL(&addr_) != 0;
   }
 
@@ -238,7 +250,8 @@ public:
   friend bool operator==(const address_v6& a1, const address_v6& a2)
   {
     using namespace std; // For memcmp.
-    return memcmp(&a1.addr_, &a2.addr_, sizeof(in6_addr)) == 0
+    return memcmp(&a1.addr_, &a2.addr_,
+        sizeof(asio::detail::in6_addr_type)) == 0
       && a1.scope_id_ == a2.scope_id_;
   }
 
@@ -246,7 +259,8 @@ public:
   friend bool operator!=(const address_v6& a1, const address_v6& a2)
   {
     using namespace std; // For memcmp.
-    return memcmp(&a1.addr_, &a2.addr_, sizeof(in6_addr)) != 0
+    return memcmp(&a1.addr_, &a2.addr_,
+        sizeof(asio::detail::in6_addr_type)) != 0
       || a1.scope_id_ != a2.scope_id_;
   }
 
@@ -254,7 +268,8 @@ public:
   friend bool operator<(const address_v6& a1, const address_v6& a2)
   {
     using namespace std; // For memcmp.
-    int memcmp_result = memcmp(&a1.addr_, &a2.addr_, sizeof(in6_addr)) < 0;
+    int memcmp_result = memcmp(&a1.addr_, &a2.addr_,
+        sizeof(asio::detail::in6_addr_type)) < 0;
     if (memcmp_result < 0)
       return true;
     if (memcmp_result > 0)
@@ -272,14 +287,14 @@ public:
   static address_v6 loopback()
   {
     address_v6 tmp;
-    in6_addr tmp_addr = IN6ADDR_LOOPBACK_INIT;
+    asio::detail::in6_addr_type tmp_addr = IN6ADDR_LOOPBACK_INIT;
     tmp.addr_ = tmp_addr;
     return tmp;
   }
 
 private:
   // The underlying IPv6 address.
-  in6_addr addr_;
+  asio::detail::in6_addr_type addr_;
 
   // The scope ID associated with the address.
   unsigned long scope_id_;

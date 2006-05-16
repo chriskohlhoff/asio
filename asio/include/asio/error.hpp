@@ -157,7 +157,9 @@ public:
         ASIO_GETADDRINFO_ERROR(EAI_SERVICE)),
 
     /// The socket type is not supported.
-    socket_type_not_supported = ASIO_GETADDRINFO_ERROR(EAI_SOCKTYPE),
+    socket_type_not_supported = ASIO_OS_ERROR(
+        WSAESOCKTNOSUPPORT,
+        ASIO_GETADDRINFO_ERROR(EAI_SOCKTYPE)),
 
     /// Cannot send after transport endpoint shutdown.
     shut_down = ASIO_SOCKET_ERROR(ESHUTDOWN),
@@ -367,6 +369,7 @@ Ostream& operator<<(Ostream& os, const error& e)
 
 #undef ASIO_SOCKET_ERROR
 #undef ASIO_NETDB_ERROR
+#undef ASIO_GETADDRINFO_ERROR
 #undef ASIO_OS_ERROR
 
 #include "asio/detail/pop_options.hpp"

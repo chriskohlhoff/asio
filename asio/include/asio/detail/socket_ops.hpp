@@ -425,7 +425,7 @@ inline const char* inet_ntop(int af, const void* src, char* dest, size_t length,
       reinterpret_cast<sockaddr_in4_type*>(&address);
     ipv4_address->sin_family = AF_INET;
     ipv4_address->sin_port = 0;
-    memcpy(&ipv4_address->sin_addr, src, sizeof(in_addr));
+    memcpy(&ipv4_address->sin_addr, src, sizeof(in4_addr_type));
   }
   else // AF_INET6
   {
@@ -436,7 +436,7 @@ inline const char* inet_ntop(int af, const void* src, char* dest, size_t length,
     ipv6_address->sin6_port = 0;
     ipv6_address->sin6_flowinfo = 0;
     ipv6_address->sin6_scope_id = scope_id;
-    memcpy(&ipv6_address->sin6_addr, src, sizeof(in6_addr));
+    memcpy(&ipv6_address->sin6_addr, src, sizeof(in6_addr_type));
   }
 
   DWORD string_length = length;
@@ -457,7 +457,7 @@ inline const char* inet_ntop(int af, const void* src, char* dest, size_t length,
   {
     using namespace std; // For strcat and sprintf.
     char if_name[IF_NAMESIZE + 1] = "%";
-    const in6_addr* ipv6_address = static_cast<const in6_addr*>(src);
+    const in6_addr_type* ipv6_address = static_cast<const in6_addr_type*>(src);
     bool is_link_local = IN6_IS_ADDR_LINKLOCAL(ipv6_address);
     if (!is_link_local || if_indextoname(scope_id, if_name + 1) == 0)
       sprintf(if_name + 1, "%lu", scope_id);
@@ -493,11 +493,11 @@ inline int inet_pton(int af, const char* src, void* dest,
     {
       sockaddr_in4_type* ipv4_address =
         reinterpret_cast<sockaddr_in4_type*>(&address);
-      memcpy(dest, &ipv4_address->sin_addr, sizeof(in_addr));
+      memcpy(dest, &ipv4_address->sin_addr, sizeof(in4_addr_type));
     }
     else if (strcmp(src, "255.255.255.255") == 0)
     {
-      static_cast<in_addr*>(dest)->s_addr = INADDR_NONE;
+      static_cast<in4_addr_type*>(dest)->s_addr = INADDR_NONE;
     }
   }
   else // AF_INET6
@@ -506,7 +506,7 @@ inline int inet_pton(int af, const char* src, void* dest,
     {
       sockaddr_in6_type* ipv6_address =
         reinterpret_cast<sockaddr_in6_type*>(&address);
-      memcpy(dest, &ipv6_address->sin6_addr, sizeof(in6_addr));
+      memcpy(dest, &ipv6_address->sin6_addr, sizeof(in6_addr_type));
       if (scope_id)
         *scope_id = ipv6_address->sin6_scope_id;
     }
@@ -527,7 +527,7 @@ inline int inet_pton(int af, const char* src, void* dest,
     *scope_id = 0;
     if (const char* if_name = strchr(src, '%'))
     {
-      in6_addr* ipv6_address = static_cast<in6_addr*>(dest);
+      in6_addr_type* ipv6_address = static_cast<in6_addr_type*>(dest);
       bool is_link_local = IN6_IS_ADDR_LINKLOCAL(ipv6_address);
       if (is_link_local)
         *scope_id = if_nametoindex(if_name + 1);
@@ -676,7 +676,7 @@ struct gai_search
 };
 
 inline int gai_nsearch(const char* host,
-    const addrinfo* hints, gai_search (&search)[2])
+    const addrinfo_type* hints, gai_search (&search)[2])
 {
   int search_count = 0;
   if (host == 0 || host[0] == '\0')
@@ -783,12 +783,12 @@ inline void gai_free(void* p)
 
 enum { gai_clone_flag = 1 << 30 };
 
-inline int gai_aistruct(addrinfo*** next, const addrinfo* hints,
+inline int gai_aistruct(addrinfo_type*** next, const addrinfo_type* hints,
     const void* addr, int family)
 {
   using namespace std;
 
-  addrinfo* ai = gai_alloc<addrinfo>();
+  addrinfo_type* ai = gai_alloc<addrinfo_type>();
   if (ai == 0)
     return EAI_MEMORY;
 
@@ -811,7 +811,7 @@ inline int gai_aistruct(addrinfo*** next, const addrinfo* hints,
       if (sinptr == 0)
         return EAI_MEMORY;
       sinptr->sin_family = AF_INET;
-      memcpy(&sinptr->sin_addr, addr, sizeof(in_addr));
+      memcpy(&sinptr->sin_addr, addr, sizeof(in4_addr_type));
       ai->ai_addr = reinterpret_cast<sockaddr*>(sinptr);
       ai->ai_addrlen = sizeof(sockaddr_in4_type);
       break;
@@ -822,7 +822,7 @@ inline int gai_aistruct(addrinfo*** next, const addrinfo* hints,
       if (sin6ptr == 0)
         return EAI_MEMORY;
       sin6ptr->sin6_family = AF_INET6;
-      memcpy(&sin6ptr->sin6_addr, addr, sizeof(in6_addr));
+      memcpy(&sin6ptr->sin6_addr, addr, sizeof(in6_addr_type));
       ai->ai_addr = reinterpret_cast<sockaddr*>(sin6ptr);
       ai->ai_addrlen = sizeof(sockaddr_in6_type);
       break;
@@ -834,11 +834,11 @@ inline int gai_aistruct(addrinfo*** next, const addrinfo* hints,
   return 0;
 }
 
-inline addrinfo* gai_clone(addrinfo* ai)
+inline addrinfo_type* gai_clone(addrinfo_type* ai)
 {
   using namespace std;
 
-  addrinfo* new_ai = gai_alloc<addrinfo>();
+  addrinfo_type* new_ai = gai_alloc<addrinfo_type>();
   if (new_ai == 0)
     return new_ai;
 
@@ -857,11 +857,11 @@ inline addrinfo* gai_clone(addrinfo* ai)
   return new_ai;
 }
 
-inline int gai_port(addrinfo* aihead, int port, int socktype)
+inline int gai_port(addrinfo_type* aihead, int port, int socktype)
 {
   int num_found = 0;
 
-  for (addrinfo* ai = aihead; ai; ai = ai->ai_next)
+  for (addrinfo_type* ai = aihead; ai; ai = ai->ai_next)
   {
     if (ai->ai_flags & gai_clone_flag)
     {
@@ -907,7 +907,8 @@ inline int gai_port(addrinfo* aihead, int port, int socktype)
   return num_found;
 }
 
-inline int gai_serv(addrinfo* aihead, const addrinfo* hints, const char* serv)
+inline int gai_serv(addrinfo_type* aihead,
+    const addrinfo_type* hints, const char* serv)
 {
   using namespace std;
 
@@ -1013,29 +1014,29 @@ inline int gai_echeck(const char* host, const char* service,
   return 0;
 }
 
-inline void freeaddrinfo_emulation(addrinfo* aihead)
+inline void freeaddrinfo_emulation(addrinfo_type* aihead)
 {
-  addrinfo* ai = aihead;
+  addrinfo_type* ai = aihead;
   while (ai)
   {
     gai_free(ai->ai_addr);
     gai_free(ai->ai_canonname);
-    addrinfo* ainext = ai->ai_next;
+    addrinfo_type* ainext = ai->ai_next;
     gai_free(ai);
     ai = ainext;
   }
 }
 
 inline int getaddrinfo_emulation(const char* host, const char* service,
-    const addrinfo* hintsp, addrinfo** result)
+    const addrinfo_type* hintsp, addrinfo_type** result)
 {
   // Set up linked list of addrinfo structures.
-  addrinfo* aihead = 0;
-  addrinfo** ainext = &aihead;
+  addrinfo_type* aihead = 0;
+  addrinfo_type** ainext = &aihead;
   char* canon = 0;
 
   // Supply default hints if not specified by caller.
-  addrinfo hints = addrinfo();
+  addrinfo_type hints = addrinfo_type();
   hints.ai_family = AF_UNSPEC;
   if (hintsp)
     hints = *hintsp;
@@ -1065,7 +1066,7 @@ inline int getaddrinfo_emulation(const char* host, const char* service,
   for (gai_search* sptr = search; sptr < search + search_count; ++sptr)
   {
     // Check for IPv4 dotted decimal string.
-    in_addr inaddr;
+    in4_addr_type inaddr;
     if (socket_ops::inet_pton(AF_INET, sptr->host, &inaddr) == 1)
     {
       if (hints.ai_family != AF_UNSPEC && hints.ai_family != AF_INET)
@@ -1088,7 +1089,7 @@ inline int getaddrinfo_emulation(const char* host, const char* service,
     }
 
     // Check for IPv6 hex string.
-    in6_addr in6addr;
+    in6_addr_type in6addr;
     if (socket_ops::inet_pton(AF_INET6, sptr->host, &in6addr) == 1)
     {
       if (hints.ai_family != AF_UNSPEC && hints.ai_family != AF_INET6)
@@ -1251,7 +1252,7 @@ inline int translate_addrinfo_error(int error)
 }
 
 inline int getaddrinfo(const char* host, const char* service,
-    const addrinfo* hints, addrinfo** result)
+    const addrinfo_type* hints, addrinfo_type** result)
 {
   set_error(0);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -1262,7 +1263,7 @@ inline int getaddrinfo(const char* host, const char* service,
 # else
   // Building for Windows 2000 or earlier.
   typedef int (WSAAPI *gai_t)(const char*,
-      const char*, const addrinfo*, addrinfo**);
+      const char*, const addrinfo_type*, addrinfo_type**);
   if (HMODULE winsock_module = ::GetModuleHandleA("ws2_32"))
   {
     if (gai_t gai = (gai_t)::GetProcAddress(winsock_module, "getaddrinfo"))
@@ -1283,7 +1284,7 @@ inline int getaddrinfo(const char* host, const char* service,
 #endif
 }
 
-inline void freeaddrinfo(addrinfo* ai)
+inline void freeaddrinfo(addrinfo_type* ai)
 {
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 # if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501)
@@ -1291,7 +1292,7 @@ inline void freeaddrinfo(addrinfo* ai)
   ::freeaddrinfo(ai);
 # else
   // Building for Windows 2000 or earlier.
-  typedef int (WSAAPI *fai_t)(addrinfo*);
+  typedef int (WSAAPI *fai_t)(addrinfo_type*);
   if (HMODULE winsock_module = ::GetModuleHandleA("ws2_32"))
   {
     if (fai_t fai = (fai_t)::GetProcAddress(winsock_module, "freeaddrinfo"))
@@ -1328,7 +1329,7 @@ inline int getnameinfo_emulation(const socket_addr_type* sa,
     }
     addr = reinterpret_cast<const char*>(
         &reinterpret_cast<const sockaddr_in4_type*>(sa)->sin_addr);
-    addr_len = sizeof(in_addr);
+    addr_len = sizeof(in4_addr_type);
     port = reinterpret_cast<const sockaddr_in4_type*>(sa)->sin_port;
     break;
   case AF_INET6:
@@ -1339,7 +1340,7 @@ inline int getnameinfo_emulation(const socket_addr_type* sa,
     }
     addr = reinterpret_cast<const char*>(
         &reinterpret_cast<const sockaddr_in6_type*>(sa)->sin6_addr);
-    addr_len = sizeof(in6_addr);
+    addr_len = sizeof(in6_addr_type);
     port = reinterpret_cast<const sockaddr_in6_type*>(sa)->sin6_port;
     break;
   default:

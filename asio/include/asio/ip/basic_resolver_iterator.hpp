@@ -55,7 +55,8 @@ public:
   }
 
   /// Create an iterator from an addrinfo list returned by getaddrinfo.
-  static basic_resolver_iterator create(::addrinfo* address_info,
+  static basic_resolver_iterator create(
+      asio::detail::addrinfo_type* address_info,
       const std::string& host_name, const std::string& service_name)
   {
     basic_resolver_iterator iter;

@@ -66,6 +66,7 @@
 #  pragma comment(lib, "ws2_32.lib")
 #  pragma comment(lib, "mswsock.lib")
 # endif // defined(_MSC_VER) || defined(__BORLANDC__)
+# include "asio/detail/old_win_sdk_compat.hpp"
 #else
 # include <sys/ioctl.h>
 # include <sys/poll.h>
@@ -94,10 +95,23 @@ const int socket_error_retval = SOCKET_ERROR;
 const int max_addr_v4_str_len = 256;
 const int max_addr_v6_str_len = 256;
 typedef sockaddr socket_addr_type;
+typedef int socket_addr_len_type;
+typedef in_addr in4_addr_type;
+typedef ip_mreq in4_mreq_type;
 typedef sockaddr_in sockaddr_in4_type;
+# if defined(ASIO_HAS_OLD_WIN_SDK)
+typedef in6_addr_emulation in6_addr_type;
+typedef ipv6_mreq_emulation in6_mreq_type;
+typedef sockaddr_in6_emulation sockaddr_in6_type;
+typedef sockaddr_storage_emulation sockaddr_storage_type;
+typedef addrinfo_emulation addrinfo_type;
+# else
+typedef in6_addr in6_addr_type;
+typedef ipv6_mreq in6_mreq_type;
 typedef sockaddr_in6 sockaddr_in6_type;
 typedef sockaddr_storage sockaddr_storage_type;
-typedef int socket_addr_len_type;
+typedef addrinfo addrinfo_type;
+# endif
 typedef unsigned long ioctl_arg_type;
 typedef u_long u_long_type;
 typedef u_short u_short_type;
@@ -114,10 +128,15 @@ const int socket_error_retval = -1;
 const int max_addr_v4_str_len = INET_ADDRSTRLEN;
 const int max_addr_v6_str_len = INET6_ADDRSTRLEN + 1 + IF_NAMESIZE;
 typedef sockaddr socket_addr_type;
+typedef socklen_t socket_addr_len_type;
+typedef in_addr in4_addr_type;
+typedef ip_mreq in4_mreq_type;
 typedef sockaddr_in sockaddr_in4_type;
+typedef in6_addr in6_addr_type;
+typedef ipv6_mreq in6_mreq_type;
 typedef sockaddr_in6 sockaddr_in6_type;
 typedef sockaddr_storage sockaddr_storage_type;
-typedef socklen_t socket_addr_len_type;
+typedef addrinfo addrinfo_type;
 typedef int ioctl_arg_type;
 typedef uint32_t u_long_type;
 typedef uint16_t u_short_type;

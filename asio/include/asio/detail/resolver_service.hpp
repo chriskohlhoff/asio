@@ -46,7 +46,7 @@ private:
     : private asio::detail::noncopyable
   {
   public:
-    explicit auto_addrinfo(::addrinfo* ai)
+    explicit auto_addrinfo(asio::detail::addrinfo_type* ai)
       : ai_(ai)
     {
     }
@@ -57,13 +57,13 @@ private:
         socket_ops::freeaddrinfo(ai_);
     }
 
-    operator ::addrinfo*()
+    operator asio::detail::addrinfo_type*()
     {
       return ai_;
     }
 
   private:
-    ::addrinfo* ai_;
+    asio::detail::addrinfo_type* ai_;
   };
 
 public:
@@ -136,10 +136,10 @@ public:
   iterator_type resolve(implementation_type&, const query_type& query,
       Error_Handler error_handler)
   {
-    ::addrinfo* address_info = 0;
+    asio::detail::addrinfo_type* address_info = 0;
     std::string host_name = query.host_name();
     std::string service_name = query.service_name();
-    addrinfo hints = query.hints();
+    asio::detail::addrinfo_type hints = query.hints();
 
     int result = socket_ops::getaddrinfo(
         host_name.length() ? host_name.c_str() : 0,
@@ -179,10 +179,10 @@ public:
       }
 
       // Perform the blocking host resolution operation.
-      ::addrinfo* address_info = 0;
+      asio::detail::addrinfo_type* address_info = 0;
       std::string host_name = query_.host_name();
       std::string service_name = query_.service_name();
-      addrinfo hints = query_.hints();
+      asio::detail::addrinfo_type hints = query_.hints();
       int result = socket_ops::getaddrinfo(
           host_name.length() ? host_name.c_str() : 0,
           service_name.c_str(), &hints, &address_info);

@@ -121,7 +121,7 @@ public:
   }
 
   /// Get the hints associated with the query.
-  const ::addrinfo& hints() const
+  const asio::detail::addrinfo_type& hints() const
   {
     return hints_;
   }
@@ -139,7 +139,7 @@ public:
   }
 
 private:
-  ::addrinfo hints_;
+  asio::detail::addrinfo_type hints_;
   std::string host_name_;
   std::string service_name_;
 };

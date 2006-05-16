@@ -39,6 +39,7 @@ nobase_include_HEADERS = \
 	asio/detail/null_signal_blocker.hpp \
 	asio/detail/null_thread.hpp \
 	asio/detail/null_tss_ptr.hpp \
+	asio/detail/old_win_sdk_compat.hpp \
 	asio/detail/pipe_select_interrupter.hpp \
 	asio/detail/pop_options.hpp \
 	asio/detail/posix_event.hpp \

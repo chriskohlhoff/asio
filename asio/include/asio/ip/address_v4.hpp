@@ -230,7 +230,7 @@ public:
 
 private:
   // The underlying IPv4 address.
-  in_addr addr_;
+  asio::detail::in4_addr_type addr_;
 };
 
 /// Output an address as a string.

@@ -103,7 +103,7 @@ public:
       data.sin6_port =
         asio::detail::socket_ops::host_to_network_short(port_num);
       data.sin6_flowinfo = 0;
-      in6_addr tmp_addr = IN6ADDR_ANY_INIT;
+      asio::detail::in6_addr_type tmp_addr = IN6ADDR_ANY_INIT;
       data.sin6_addr = tmp_addr;
       data.sin6_scope_id = 0;
     }
