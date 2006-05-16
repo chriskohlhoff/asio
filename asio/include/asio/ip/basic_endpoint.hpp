@@ -72,8 +72,8 @@ public:
   /// Default constructor.
   basic_endpoint()
   {
-    asio::detail::inet_addr_v4_type& data
-      = reinterpret_cast<asio::detail::inet_addr_v4_type&>(data_);
+    asio::detail::sockaddr_in4_type& data
+      = reinterpret_cast<asio::detail::sockaddr_in4_type&>(data_);
     data.sin_family = AF_INET;
     data.sin_port = 0;
     data.sin_addr.s_addr = INADDR_ANY;
@@ -88,8 +88,8 @@ public:
     using namespace std; // For memcpy.
     if (protocol.family() == PF_INET)
     {
-      asio::detail::inet_addr_v4_type& data
-        = reinterpret_cast<asio::detail::inet_addr_v4_type&>(data_);
+      asio::detail::sockaddr_in4_type& data
+        = reinterpret_cast<asio::detail::sockaddr_in4_type&>(data_);
       data.sin_family = AF_INET;
       data.sin_port =
         asio::detail::socket_ops::host_to_network_short(port_num);
@@ -97,8 +97,8 @@ public:
     }
     else
     {
-      asio::detail::inet_addr_v6_type& data
-        = reinterpret_cast<asio::detail::inet_addr_v6_type&>(data_);
+      asio::detail::sockaddr_in6_type& data
+        = reinterpret_cast<asio::detail::sockaddr_in6_type&>(data_);
       data.sin6_family = AF_INET6;
       data.sin6_port =
         asio::detail::socket_ops::host_to_network_short(port_num);
@@ -117,8 +117,8 @@ public:
     using namespace std; // For memcpy.
     if (addr.is_v4())
     {
-      asio::detail::inet_addr_v4_type& data
-        = reinterpret_cast<asio::detail::inet_addr_v4_type&>(data_);
+      asio::detail::sockaddr_in4_type& data
+        = reinterpret_cast<asio::detail::sockaddr_in4_type&>(data_);
       data.sin_family = AF_INET;
       data.sin_port =
         asio::detail::socket_ops::host_to_network_short(port_num);
@@ -128,8 +128,8 @@ public:
     }
     else
     {
-      asio::detail::inet_addr_v6_type& data
-        = reinterpret_cast<asio::detail::inet_addr_v6_type&>(data_);
+      asio::detail::sockaddr_in6_type& data
+        = reinterpret_cast<asio::detail::sockaddr_in6_type&>(data_);
       data.sin6_family = AF_INET6;
       data.sin6_port =
         asio::detail::socket_ops::host_to_network_short(port_num);
@@ -178,9 +178,9 @@ public:
   size_type size() const
   {
     if (data_.ss_family == AF_INET)
-      return sizeof(asio::detail::inet_addr_v4_type);
+      return sizeof(asio::detail::sockaddr_in4_type);
     else
-      return sizeof(asio::detail::inet_addr_v6_type);
+      return sizeof(asio::detail::sockaddr_in6_type);
   }
 
   /// Set the underlying size of the endpoint in the native type.
@@ -206,13 +206,13 @@ public:
     if (data_.ss_family == AF_INET)
     {
       return asio::detail::socket_ops::network_to_host_short(
-          reinterpret_cast<const asio::detail::inet_addr_v4_type&>(
+          reinterpret_cast<const asio::detail::sockaddr_in4_type&>(
             data_).sin_port);
     }
     else
     {
       return asio::detail::socket_ops::network_to_host_short(
-          reinterpret_cast<const asio::detail::inet_addr_v6_type&>(
+          reinterpret_cast<const asio::detail::sockaddr_in6_type&>(
             data_).sin6_port);
     }
   }
@@ -223,12 +223,12 @@ public:
   {
     if (data_.ss_family == AF_INET)
     {
-      reinterpret_cast<asio::detail::inet_addr_v4_type&>(data_).sin_port
+      reinterpret_cast<asio::detail::sockaddr_in4_type&>(data_).sin_port
         = asio::detail::socket_ops::host_to_network_short(port_num);
     }
     else
     {
-      reinterpret_cast<asio::detail::inet_addr_v6_type&>(data_).sin6_port
+      reinterpret_cast<asio::detail::sockaddr_in6_type&>(data_).sin6_port
         = asio::detail::socket_ops::host_to_network_short(port_num);
     }
   }
@@ -239,8 +239,8 @@ public:
     using namespace std; // For memcpy.
     if (data_.ss_family == AF_INET)
     {
-      const asio::detail::inet_addr_v4_type& data
-        = reinterpret_cast<const asio::detail::inet_addr_v4_type&>(
+      const asio::detail::sockaddr_in4_type& data
+        = reinterpret_cast<const asio::detail::sockaddr_in4_type&>(
             data_);
       return asio::ip::address_v4(
           asio::detail::socket_ops::network_to_host_long(
@@ -248,8 +248,8 @@ public:
     }
     else
     {
-      const asio::detail::inet_addr_v6_type& data
-        = reinterpret_cast<const asio::detail::inet_addr_v6_type&>(
+      const asio::detail::sockaddr_in6_type& data
+        = reinterpret_cast<const asio::detail::sockaddr_in6_type&>(
             data_);
       asio::ip::address_v6::bytes_type bytes;
       memcpy(bytes.elems, data.sin6_addr.s6_addr, 16);
@@ -291,7 +291,7 @@ public:
 
 private:
   // The underlying IP socket address.
-  asio::detail::inet_addr_storage_type data_;
+  asio::detail::sockaddr_storage_type data_;
 };
 
 /// Output an endpoint as a string.

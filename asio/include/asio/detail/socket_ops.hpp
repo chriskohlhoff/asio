@@ -416,20 +416,22 @@ inline const char* inet_ntop(int af, const void* src, char* dest, size_t length,
     return 0;
   }
 
-  sockaddr_storage address;
+  sockaddr_storage_type address;
   DWORD address_length;
   if (af == AF_INET)
   {
-    address_length = sizeof(sockaddr_in);
-    sockaddr_in* ipv4_address = reinterpret_cast<sockaddr_in*>(&address);
+    address_length = sizeof(sockaddr_in4_type);
+    sockaddr_in4_type* ipv4_address =
+      reinterpret_cast<sockaddr_in4_type*>(&address);
     ipv4_address->sin_family = AF_INET;
     ipv4_address->sin_port = 0;
     memcpy(&ipv4_address->sin_addr, src, sizeof(in_addr));
   }
   else // AF_INET6
   {
-    address_length = sizeof(sockaddr_in6);
-    sockaddr_in6* ipv6_address = reinterpret_cast<sockaddr_in6*>(&address);
+    address_length = sizeof(sockaddr_in6_type);
+    sockaddr_in6_type* ipv6_address =
+      reinterpret_cast<sockaddr_in6_type*>(&address);
     ipv6_address->sin6_family = AF_INET6;
     ipv6_address->sin6_port = 0;
     ipv6_address->sin6_flowinfo = 0;
@@ -478,8 +480,8 @@ inline int inet_pton(int af, const char* src, void* dest,
     return -1;
   }
 
-  sockaddr_storage address;
-  int address_length = sizeof(sockaddr_storage);
+  sockaddr_storage_type address;
+  int address_length = sizeof(sockaddr_storage_type);
   int result = error_wrapper(::WSAStringToAddressA(
         const_cast<char*>(src), af, 0,
         reinterpret_cast<sockaddr*>(&address),
@@ -489,7 +491,8 @@ inline int inet_pton(int af, const char* src, void* dest,
   {
     if (result != socket_error_retval)
     {
-      sockaddr_in* ipv4_address = reinterpret_cast<sockaddr_in*>(&address);
+      sockaddr_in4_type* ipv4_address =
+        reinterpret_cast<sockaddr_in4_type*>(&address);
       memcpy(dest, &ipv4_address->sin_addr, sizeof(in_addr));
     }
     else if (strcmp(src, "255.255.255.255") == 0)
@@ -501,7 +504,8 @@ inline int inet_pton(int af, const char* src, void* dest,
   {
     if (result != socket_error_retval)
     {
-      sockaddr_in6* ipv6_address = reinterpret_cast<sockaddr_in6*>(&address);
+      sockaddr_in6_type* ipv6_address =
+        reinterpret_cast<sockaddr_in6_type*>(&address);
       memcpy(dest, &ipv6_address->sin6_addr, sizeof(in6_addr));
       if (scope_id)
         *scope_id = ipv6_address->sin6_scope_id;
@@ -803,24 +807,24 @@ inline int gai_aistruct(addrinfo*** next, const addrinfo* hints,
   {
   case AF_INET:
     {
-      sockaddr_in* sinptr = gai_alloc<sockaddr_in>();
+      sockaddr_in4_type* sinptr = gai_alloc<sockaddr_in4_type>();
       if (sinptr == 0)
         return EAI_MEMORY;
       sinptr->sin_family = AF_INET;
       memcpy(&sinptr->sin_addr, addr, sizeof(in_addr));
       ai->ai_addr = reinterpret_cast<sockaddr*>(sinptr);
-      ai->ai_addrlen = sizeof(sockaddr_in);
+      ai->ai_addrlen = sizeof(sockaddr_in4_type);
       break;
     }
   case AF_INET6:
     {
-      sockaddr_in6* sin6ptr = gai_alloc<sockaddr_in6>();
+      sockaddr_in6_type* sin6ptr = gai_alloc<sockaddr_in6_type>();
       if (sin6ptr == 0)
         return EAI_MEMORY;
       sin6ptr->sin6_family = AF_INET6;
       memcpy(&sin6ptr->sin6_addr, addr, sizeof(in6_addr));
       ai->ai_addr = reinterpret_cast<sockaddr*>(sin6ptr);
-      ai->ai_addrlen = sizeof(sockaddr_in6);
+      ai->ai_addrlen = sizeof(sockaddr_in6_type);
       break;
     }
   default:
@@ -881,14 +885,16 @@ inline int gai_port(addrinfo* aihead, int port, int socktype)
     {
     case AF_INET:
       {
-        sockaddr_in* sinptr = reinterpret_cast<sockaddr_in*>(ai->ai_addr);
+        sockaddr_in4_type* sinptr =
+          reinterpret_cast<sockaddr_in4_type*>(ai->ai_addr);
         sinptr->sin_port = port;
         ++num_found;
         break;
       }
     case AF_INET6:
       {
-        sockaddr_in6* sin6ptr = reinterpret_cast<sockaddr_in6*>(ai->ai_addr);
+        sockaddr_in6_type* sin6ptr =
+          reinterpret_cast<sockaddr_in6_type*>(ai->ai_addr);
         sin6ptr->sin6_port = port;
         ++num_found;
         break;
@@ -1315,26 +1321,26 @@ inline int getnameinfo_emulation(const socket_addr_type* sa,
   switch (sa->sa_family)
   {
   case AF_INET:
-    if (salen != sizeof(sockaddr_in))
+    if (salen != sizeof(sockaddr_in4_type))
     {
       set_error(asio::error::invalid_argument);
       return 1;
     }
     addr = reinterpret_cast<const char*>(
-        &reinterpret_cast<const sockaddr_in*>(sa)->sin_addr);
+        &reinterpret_cast<const sockaddr_in4_type*>(sa)->sin_addr);
     addr_len = sizeof(in_addr);
-    port = reinterpret_cast<const sockaddr_in*>(sa)->sin_port;
+    port = reinterpret_cast<const sockaddr_in4_type*>(sa)->sin_port;
     break;
   case AF_INET6:
-    if (salen != sizeof(sockaddr_in6))
+    if (salen != sizeof(sockaddr_in6_type))
     {
       set_error(asio::error::invalid_argument);
       return 1;
     }
     addr = reinterpret_cast<const char*>(
-        &reinterpret_cast<const sockaddr_in6*>(sa)->sin6_addr);
+        &reinterpret_cast<const sockaddr_in6_type*>(sa)->sin6_addr);
     addr_len = sizeof(in6_addr);
-    port = reinterpret_cast<const sockaddr_in6*>(sa)->sin6_port;
+    port = reinterpret_cast<const sockaddr_in6_type*>(sa)->sin6_port;
     break;
   default:
     set_error(asio::error::address_family_not_supported);
@@ -1459,7 +1465,7 @@ inline int getnameinfo(const socket_addr_type* addr,
 # endif
 #elif defined(__MACH__) && defined(__APPLE__)
   using namespace std; // For memcpy.
-  sockaddr_storage tmp_addr;
+  sockaddr_storage_type tmp_addr;
   memcpy(&tmp_addr, addr, addrlen);
   tmp_addr.ss_len = addrlen;
   addr = reinterpret_cast<socket_addr_type*>(&tmp_addr);
