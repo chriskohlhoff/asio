@@ -359,6 +359,15 @@ sub execute_doxygen
   system("doxygen tutorial.dox");
   unlink("asio.doxytags");
   unlink("design.doxytags");
+  chdir("..");
+  my @rm_files = (
+      glob("*/*.map"),
+      glob("*/*.md5"),
+      glob("*/doxygen.png"));
+  foreach my $rm_file (@rm_files)
+  {
+    unlink($rm_file);
+  }
 }
 
 determine_boost_dir();
