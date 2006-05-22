@@ -204,9 +204,9 @@ inline io_service& io_service::service::owner()
  * Ownership of the service interface is not transferred to the caller.
  */
 template <typename Service>
-Service& use_service(io_service& ios)
+inline Service& use_service(io_service& ios)
 {
-  return ios.service_registry_.use_service<Service>();
+  return ios.service_registry_.template use_service<Service>();
 }
 
 /**
@@ -230,7 +230,7 @@ void add_service(io_service& ios, Service* svc)
 {
   if (&ios != &svc->owner())
     boost::throw_exception(invalid_service_owner());
-  if (!ios.service_registry_.add_service<Service>(svc))
+  if (!ios.service_registry_.template add_service<Service>(svc))
     boost::throw_exception(service_already_exists());
 }
 
@@ -245,7 +245,7 @@ void add_service(io_service& ios, Service* svc)
 template <typename Service>
 bool has_service(io_service& ios)
 {
-  return ios.service_registry_.has_service<Service>();
+  return ios.service_registry_.template has_service<Service>();
 }
 
 /**
