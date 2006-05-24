@@ -10,10 +10,20 @@ namespace io = boost::iostreams;
 
 // Adapt a stream_socket into a device.
 class socket_device
-  : public io::source
 {
 public:
-  // Constructor.
+  // Typedefs for Boost.Iostreams.
+  typedef char char_type;
+  typedef io::bidirectional_device_tag category;
+
+  // Construct without connecting.
+  socket_device()
+    : io_service_(new asio::io_service),
+      socket_(new asio::ip::tcp::socket(*io_service_))
+  {
+  }
+
+  // Constructor by opening a connection.
   socket_device(const std::string& host, const std::string& service)
     : io_service_(new asio::io_service),
       socket_(new asio::ip::tcp::socket(*io_service_))
@@ -34,6 +44,12 @@ public:
     }
     if (error)
       throw error;
+  }
+
+  // Get underlying socket.
+  asio::ip::tcp::socket& socket()
+  {
+    return *socket_;
   }
 
   // Read.
