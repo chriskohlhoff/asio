@@ -1227,7 +1227,7 @@ public:
       reactor_.start_read_op(impl.socket_,
           accept_handler<Socket, Handler>(
             impl.socket_, owner(), peer, impl.protocol_,
-            impl.flags_ & implementation_type::enable_connection_aborted,
+            (impl.flags_ & implementation_type::enable_connection_aborted) != 0,
             handler));
     }
   }
@@ -1332,7 +1332,7 @@ public:
       reactor_.start_read_op(impl.socket_,
           accept_endp_handler<Socket, Handler>(
             impl.socket_, owner(), peer, peer_endpoint,
-            impl.flags_ & implementation_type::enable_connection_aborted,
+            (impl.flags_ & implementation_type::enable_connection_aborted) != 0,
             handler));
     }
   }

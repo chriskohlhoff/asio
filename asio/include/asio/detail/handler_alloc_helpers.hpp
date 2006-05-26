@@ -188,6 +188,29 @@ public:
     raw_ptr.pointer_ = 0;
   }
 
+  // Construct object in raw memory and take ownership if construction succeeds.
+  template <typename Arg1, typename Arg2, typename Arg3, typename Arg4,
+      typename Arg5, typename Arg6, typename Arg7>
+  handler_ptr(raw_ptr_type& raw_ptr, Arg1& a1, Arg2& a2, Arg3& a3, Arg4& a4,
+      Arg5& a5, Arg6& a6, Arg7& a7)
+    : handler_(raw_ptr.handler_),
+      pointer_(new (raw_ptr.pointer_) value_type(a1, a2, a3, a4, a5, a6, a7))
+  {
+    raw_ptr.pointer_ = 0;
+  }
+
+  // Construct object in raw memory and take ownership if construction succeeds.
+  template <typename Arg1, typename Arg2, typename Arg3, typename Arg4,
+      typename Arg5, typename Arg6, typename Arg7, typename Arg8>
+  handler_ptr(raw_ptr_type& raw_ptr, Arg1& a1, Arg2& a2, Arg3& a3, Arg4& a4,
+      Arg5& a5, Arg6& a6, Arg7& a7, Arg8& a8)
+    : handler_(raw_ptr.handler_),
+      pointer_(new (raw_ptr.pointer_) value_type(
+            a1, a2, a3, a4, a5, a6, a7, a8))
+  {
+    raw_ptr.pointer_ = 0;
+  }
+
   // Destructor automatically deallocates memory, unless it has been released.
   ~handler_ptr()
   {

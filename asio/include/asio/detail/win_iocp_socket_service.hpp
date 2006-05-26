@@ -72,6 +72,7 @@ public:
     // Default constructor.
     implementation_type()
       : socket_(invalid_socket),
+        flags_(0),
         cancel_token_(),
         protocol_(endpoint_type().protocol()),
         next_(0),
@@ -86,7 +87,15 @@ public:
     // The native socket representation.
     socket_type socket_;
 
-    // We use a shared pointer as a cancellation token here work around the
+    enum
+    {
+      enable_connection_aborted = 1 // User wants connection_aborted errors.
+    };
+
+    // Flags indicating the current state of the socket.
+    unsigned char flags_;
+
+    // We use a shared pointer as a cancellation token here to work around the
     // broken Windows support for cancellation. MSDN says that when you call
     // closesocket any outstanding WSARecv or WSASend operations will complete
     // with the error ERROR_OPERATION_ABORTED. In practice they complete with
@@ -270,12 +279,31 @@ public:
   void set_option(implementation_type& impl, const Option& option,
       Error_Handler error_handler)
   {
-    if (socket_ops::setsockopt(impl.socket_,
-          option.level(impl.protocol_), option.name(impl.protocol_),
-          option.data(impl.protocol_), option.size(impl.protocol_)))
-      error_handler(asio::error(socket_ops::get_error()));
+    if (option.level(impl.protocol_) == custom_socket_option_level
+        && option.name(impl.protocol_) == enable_connection_aborted_option)
+    {
+      if (option.size(impl.protocol_) != sizeof(int))
+      {
+        error_handler(asio::error(asio::error::invalid_argument));
+      }
+      else
+      {
+        if (*static_cast<const int*>(option.data(impl.protocol_)))
+          impl.flags_ |= implementation_type::enable_connection_aborted;
+        else
+          impl.flags_ &= ~implementation_type::enable_connection_aborted;
+        error_handler(asio::error(0));
+      }
+    }
     else
-      error_handler(asio::error(0));
+    {
+      if (socket_ops::setsockopt(impl.socket_,
+            option.level(impl.protocol_), option.name(impl.protocol_),
+            option.data(impl.protocol_), option.size(impl.protocol_)))
+        error_handler(asio::error(socket_ops::get_error()));
+      else
+        error_handler(asio::error(0));
+    }
   }
 
   // Set a socket option.
@@ -283,13 +311,33 @@ public:
   void get_option(const implementation_type& impl, Option& option,
       Error_Handler error_handler) const
   {
-    size_t size = option.size(impl.protocol_);
-    if (socket_ops::getsockopt(impl.socket_,
-          option.level(impl.protocol_), option.name(impl.protocol_),
-          option.data(impl.protocol_), &size))
-      error_handler(asio::error(socket_ops::get_error()));
+    if (option.level(impl.protocol_) == custom_socket_option_level
+        && option.name(impl.protocol_) == enable_connection_aborted_option)
+    {
+      if (option.size(impl.protocol_) != sizeof(int))
+      {
+        error_handler(asio::error(asio::error::invalid_argument));
+      }
+      else
+      {
+        int* target = static_cast<int*>(option.data(impl.protocol_));
+        if (impl.flags_ & implementation_type::enable_connection_aborted)
+          *target = 1;
+        else
+          *target = 0;
+        error_handler(asio::error(0));
+      }
+    }
     else
-      error_handler(asio::error(0));
+    {
+      size_t size = option.size(impl.protocol_);
+      if (socket_ops::getsockopt(impl.socket_,
+            option.level(impl.protocol_), option.name(impl.protocol_),
+            option.data(impl.protocol_), &size))
+        error_handler(asio::error(socket_ops::get_error()));
+      else
+        error_handler(asio::error(0));
+    }
   }
 
   // Perform an IO control command on the socket.
@@ -948,24 +996,38 @@ public:
       return;
     }
 
-    socket_holder new_socket(socket_ops::accept(impl.socket_, 0, 0));
-    if (int err = socket_ops::get_error())
+    for (;;)
     {
-      error_handler(asio::error(err));
-      return;
-    }
+      socket_holder new_socket(socket_ops::accept(impl.socket_, 0, 0));
+      if (int err = socket_ops::get_error())
+      {
+        if (err == asio::error::connection_aborted
+            && !(impl.flags_ & implementation_type::enable_connection_aborted))
+        {
+          // Retry accept operation.
+          continue;
+        }
+        else
+        {
+          error_handler(asio::error(err));
+          return;
+        }
+      }
 
-    asio::error temp_error;
-    peer.assign(impl.protocol_, new_socket.get(),
-        asio::assign_error(temp_error));
-    if (temp_error)
-    {
-      error_handler(temp_error);
-    }
-    else
-    {
-      new_socket.release();
-      error_handler(asio::error(0));
+      asio::error temp_error;
+      peer.assign(impl.protocol_, new_socket.get(),
+          asio::assign_error(temp_error));
+      if (temp_error)
+      {
+        error_handler(temp_error);
+        return;
+      }
+      else
+      {
+        new_socket.release();
+        error_handler(asio::error(0));
+        return;
+      }
     }
   }
 
@@ -981,28 +1043,42 @@ public:
       return;
     }
 
-    socket_addr_len_type addr_len = peer_endpoint.capacity();
-    socket_holder new_socket(socket_ops::accept(
-          impl.socket_, peer_endpoint.data(), &addr_len));
-    if (int err = socket_ops::get_error())
+    for (;;)
     {
-      error_handler(asio::error(err));
-      return;
-    }
+      socket_addr_len_type addr_len = peer_endpoint.capacity();
+      socket_holder new_socket(socket_ops::accept(
+            impl.socket_, peer_endpoint.data(), &addr_len));
+      if (int err = socket_ops::get_error())
+      {
+        if (err == asio::error::connection_aborted
+            && !(impl.flags_ & implementation_type::enable_connection_aborted))
+        {
+          // Retry accept operation.
+          continue;
+        }
+        else
+        {
+          error_handler(asio::error(err));
+          return;
+        }
+      }
 
-    peer_endpoint.resize(addr_len);
+      peer_endpoint.resize(addr_len);
 
-    asio::error temp_error;
-    peer.assign(impl.protocol_, new_socket.get(),
-        asio::assign_error(temp_error));
-    if (temp_error)
-    {
-      error_handler(temp_error);
-    }
-    else
-    {
-      new_socket.release();
-      error_handler(asio::error(0));
+      asio::error temp_error;
+      peer.assign(impl.protocol_, new_socket.get(),
+          asio::assign_error(temp_error));
+      if (temp_error)
+      {
+        error_handler(temp_error);
+        return;
+      }
+      else
+      {
+        new_socket.release();
+        error_handler(asio::error(0));
+        return;
+      }
     }
   }
 
@@ -1011,9 +1087,9 @@ public:
     : public operation
   {
   public:
-    accept_operation(asio::io_service& io_service, socket_type socket,
+    accept_operation(win_iocp_io_service& io_service, socket_type socket,
         socket_type new_socket, Socket& peer, const protocol_type& protocol,
-        Handler handler)
+        bool enable_connection_aborted, Handler handler)
       : operation(
           &accept_operation<Socket, Handler>::do_completion_impl,
           &accept_operation<Socket, Handler>::destroy_impl),
@@ -1022,7 +1098,8 @@ public:
         new_socket_(new_socket),
         peer_(peer),
         protocol_(protocol),
-        work_(io_service),
+        work_(io_service.owner()),
+        enable_connection_aborted_(enable_connection_aborted),
         handler_(handler)
     {
     }
@@ -1052,10 +1129,63 @@ public:
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
 
-      // Check for connection aborted.
+      // Map Windows error ERROR_NETNAME_DELETED to connection_aborted.
       if (last_error == ERROR_NETNAME_DELETED)
       {
         last_error = asio::error::connection_aborted;
+      }
+
+      // Restart the accept operation if we got the connection_aborted error
+      // and the enable_connection_aborted socket option is not set.
+      if (last_error == asio::error::connection_aborted
+          && !ptr.get()->enable_connection_aborted_)
+      {
+        // Reset OVERLAPPED structure.
+        ptr.get()->Internal = 0;
+        ptr.get()->InternalHigh = 0;
+        ptr.get()->Offset = 0;
+        ptr.get()->OffsetHigh = 0;
+        ptr.get()->hEvent = 0;
+
+        // Create a new socket for the next connection, since the AcceptEx call
+        // fails with WSAEINVAL if we try to reuse the same socket.
+        ptr.get()->new_socket_.reset();
+        ptr.get()->new_socket_.reset(
+            socket_ops::socket(ptr.get()->protocol_.family(),
+              ptr.get()->protocol_.type(), ptr.get()->protocol_.protocol()));
+        last_error = socket_ops::get_error();
+        if (ptr.get()->new_socket() != invalid_socket)
+        {
+          // Accept a connection.
+          DWORD bytes_read = 0;
+          BOOL result = ::AcceptEx(ptr.get()->socket_, ptr.get()->new_socket(),
+              ptr.get()->output_buffer(), 0, ptr.get()->address_length(),
+              ptr.get()->address_length(), &bytes_read, ptr.get());
+          last_error = ::WSAGetLastError();
+
+          // Check if the operation completed immediately.
+          if (!result && last_error != WSA_IO_PENDING)
+          {
+            if (last_error == ERROR_NETNAME_DELETED
+                || last_error == asio::error::connection_aborted)
+            {
+              // Post this handler so that operation will be restarted again.
+              ptr.get()->io_service_.post_completion(ptr.get(), last_error, 0);
+              ptr.release();
+              return;
+            }
+            else
+            {
+              // Operation already complete. Continue with rest of this handler.
+            }
+          }
+          else
+          {
+            // Asynchronous operation has been successfully restarted.
+            ptr.release();
+            return;
+          }
+        }
       }
 
       // Need to set the SO_UPDATE_ACCEPT_CONTEXT option so that getsockname
@@ -1105,13 +1235,14 @@ public:
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
     }
 
-    asio::io_service& io_service_;
+    win_iocp_io_service& io_service_;
     socket_type socket_;
     socket_holder new_socket_;
     Socket& peer_;
     protocol_type protocol_;
     asio::io_service::work work_;
     unsigned char output_buffer_[(sizeof(sockaddr_storage_type) + 16) * 2];
+    bool enable_connection_aborted_;
     Handler handler_;
   };
 
@@ -1136,20 +1267,9 @@ public:
       return;
     }
 
-    // Get information about the protocol used by the socket.
-    WSAPROTOCOL_INFO protocol_info;
-    std::size_t protocol_info_size = sizeof(protocol_info);
-    if (socket_ops::getsockopt(impl.socket_, SOL_SOCKET, SO_PROTOCOL_INFO,
-          &protocol_info, &protocol_info_size) != 0)
-    {
-      asio::error error(socket_ops::get_error());
-      owner().post(bind_handler(handler, error));
-      return;
-    }
-
     // Create a new socket for the connection.
-    socket_holder sock(socket_ops::socket(protocol_info.iAddressFamily,
-          protocol_info.iSocketType, protocol_info.iProtocol));
+    socket_holder sock(socket_ops::socket(impl.protocol_.family(),
+          impl.protocol_.type(), impl.protocol_.protocol()));
     if (sock.get() == invalid_socket)
     {
       asio::error error(socket_ops::get_error());
@@ -1162,8 +1282,11 @@ public:
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     socket_type new_socket = sock.get();
+    bool enable_connection_aborted =
+      (impl.flags_ & implementation_type::enable_connection_aborted);
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        owner(), impl.socket_, new_socket, peer, impl.protocol_, handler);
+        iocp_service_, impl.socket_, new_socket, peer, impl.protocol_,
+        enable_connection_aborted, handler);
     sock.release();
 
     // Accept a connection.
@@ -1176,9 +1299,22 @@ public:
     // Check if the operation completed immediately.
     if (!result && last_error != WSA_IO_PENDING)
     {
-      ptr.reset();
-      asio::error error(last_error);
-      iocp_service_.post(bind_handler(handler, error));
+      if (!enable_connection_aborted
+          && (last_error == ERROR_NETNAME_DELETED
+            || last_error == asio::error::connection_aborted))
+      {
+        // Post handler so that operation will be restarted again. We do not
+        // perform the AcceptEx again here to avoid the possibility of starving
+        // other handlers.
+        iocp_service_.post_completion(ptr.get(), last_error, 0);
+        ptr.release();
+      }
+      else
+      {
+        ptr.reset();
+        asio::error error(last_error);
+        iocp_service_.post(bind_handler(handler, error));
+      }
     }
     else
     {
@@ -1191,9 +1327,10 @@ public:
     : public operation
   {
   public:
-    accept_endp_operation(asio::io_service& io_service,
+    accept_endp_operation(win_iocp_io_service& io_service,
         socket_type socket, socket_type new_socket, Socket& peer,
-        endpoint_type& peer_endpoint, Handler handler)
+        const protocol_type& protocol, endpoint_type& peer_endpoint,
+        bool enable_connection_aborted, Handler handler)
       : operation(
           &accept_endp_operation<Socket, Handler>::do_completion_impl,
           &accept_endp_operation<Socket, Handler>::destroy_impl),
@@ -1201,8 +1338,10 @@ public:
         socket_(socket),
         new_socket_(new_socket),
         peer_(peer),
+        protocol_(protocol),
         peer_endpoint_(peer_endpoint),
-        work_(io_service),
+        work_(io_service.owner()),
+        enable_connection_aborted_(enable_connection_aborted),
         handler_(handler)
     {
     }
@@ -1232,10 +1371,63 @@ public:
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
 
-      // Check for connection aborted.
+      // Map Windows error ERROR_NETNAME_DELETED to connection_aborted.
       if (last_error == ERROR_NETNAME_DELETED)
       {
         last_error = asio::error::connection_aborted;
+      }
+
+      // Restart the accept operation if we got the connection_aborted error
+      // and the enable_connection_aborted socket option is not set.
+      if (last_error == asio::error::connection_aborted
+          && !ptr.get()->enable_connection_aborted_)
+      {
+        // Reset OVERLAPPED structure.
+        ptr.get()->Internal = 0;
+        ptr.get()->InternalHigh = 0;
+        ptr.get()->Offset = 0;
+        ptr.get()->OffsetHigh = 0;
+        ptr.get()->hEvent = 0;
+
+        // Create a new socket for the next connection, since the AcceptEx call
+        // fails with WSAEINVAL if we try to reuse the same socket.
+        ptr.get()->new_socket_.reset();
+        ptr.get()->new_socket_.reset(
+            socket_ops::socket(ptr.get()->protocol_.family(),
+              ptr.get()->protocol_.type(), ptr.get()->protocol_.protocol()));
+        last_error = socket_ops::get_error();
+        if (ptr.get()->new_socket() != invalid_socket)
+        {
+          // Accept a connection.
+          DWORD bytes_read = 0;
+          BOOL result = ::AcceptEx(ptr.get()->socket_, ptr.get()->new_socket(),
+              ptr.get()->output_buffer(), 0, ptr.get()->address_length(),
+              ptr.get()->address_length(), &bytes_read, ptr.get());
+          last_error = ::WSAGetLastError();
+
+          // Check if the operation completed immediately.
+          if (!result && last_error != WSA_IO_PENDING)
+          {
+            if (last_error == ERROR_NETNAME_DELETED
+                || last_error == asio::error::connection_aborted)
+            {
+              // Post this handler so that operation will be restarted again.
+              ptr.get()->io_service_.post_completion(ptr.get(), last_error, 0);
+              ptr.release();
+              return;
+            }
+            else
+            {
+              // Operation already complete. Continue with rest of this handler.
+            }
+          }
+          else
+          {
+            // Asynchronous operation has been successfully restarted.
+            ptr.release();
+            return;
+          }
+        }
       }
 
       // Get the address of the peer.
@@ -1308,13 +1500,15 @@ public:
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
     }
 
-    asio::io_service& io_service_;
+    win_iocp_io_service& io_service_;
     socket_type socket_;
     socket_holder new_socket_;
     Socket& peer_;
+    protocol_type protocol_;
     endpoint_type& peer_endpoint_;
     asio::io_service::work work_;
     unsigned char output_buffer_[(sizeof(sockaddr_storage_type) + 16) * 2];
+    bool enable_connection_aborted_;
     Handler handler_;
   };
 
@@ -1340,20 +1534,9 @@ public:
       return;
     }
 
-    // Get information about the protocol used by the socket.
-    WSAPROTOCOL_INFO protocol_info;
-    std::size_t protocol_info_size = sizeof(protocol_info);
-    if (socket_ops::getsockopt(impl.socket_, SOL_SOCKET, SO_PROTOCOL_INFO,
-          &protocol_info, &protocol_info_size) != 0)
-    {
-      asio::error error(socket_ops::get_error());
-      owner().post(bind_handler(handler, error));
-      return;
-    }
-
     // Create a new socket for the connection.
-    socket_holder sock(socket_ops::socket(protocol_info.iAddressFamily,
-          protocol_info.iSocketType, protocol_info.iProtocol));
+    socket_holder sock(socket_ops::socket(impl.protocol_.family(),
+          impl.protocol_.type(), impl.protocol_.protocol()));
     if (sock.get() == invalid_socket)
     {
       asio::error error(socket_ops::get_error());
@@ -1366,8 +1549,11 @@ public:
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     socket_type new_socket = sock.get();
+    bool enable_connection_aborted =
+      (impl.flags_ & implementation_type::enable_connection_aborted);
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        owner(), impl.socket_, new_socket, peer, peer_endpoint, handler);
+        iocp_service_, impl.socket_, new_socket, peer, impl.protocol_,
+        peer_endpoint, enable_connection_aborted, handler);
     sock.release();
 
     // Accept a connection.
@@ -1380,9 +1566,22 @@ public:
     // Check if the operation completed immediately.
     if (!result && last_error != WSA_IO_PENDING)
     {
-      ptr.reset();
-      asio::error error(last_error);
-      iocp_service_.post(bind_handler(handler, error));
+      if (!enable_connection_aborted
+          && (last_error == ERROR_NETNAME_DELETED
+            || last_error == asio::error::connection_aborted))
+      {
+        // Post handler so that operation will be restarted again. We do not
+        // perform the AcceptEx again here to avoid the possibility of starving
+        // other handlers.
+        iocp_service_.post_completion(ptr.get(), last_error, 0);
+        ptr.release();
+      }
+      else
+      {
+        ptr.reset();
+        asio::error error(last_error);
+        iocp_service_.post(bind_handler(handler, error));
+      }
     }
     else
     {

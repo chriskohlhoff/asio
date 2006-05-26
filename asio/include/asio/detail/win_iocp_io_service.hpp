@@ -131,6 +131,12 @@ public:
 
       if (overlapped)
       {
+        // We may have been passed a last_error value in the completion_key.
+        if (last_error == 0)
+        {
+          last_error = completion_key;
+        }
+
         // Ensure that the io_service does not exit due to running out of work
         // while we make the upcall.
         auto_work work(*this);
@@ -281,6 +287,20 @@ public:
 
     // Operation has been successfully posted.
     ptr.release();
+  }
+
+  // Request invocation of the given OVERLAPPED-derived operation.
+  void post_completion(win_iocp_operation* op, DWORD op_last_error,
+      DWORD bytes_transferred)
+  {
+    // Enqueue the operation on the I/O completion port.
+    if (!::PostQueuedCompletionStatus(iocp_.handle,
+          bytes_transferred, op_last_error, op))
+    {
+      DWORD last_error = ::GetLastError();
+      system_exception e("pqcs", last_error);
+      boost::throw_exception(e);
+    }
   }
 
 private:
