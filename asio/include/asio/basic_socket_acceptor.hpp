@@ -419,6 +419,7 @@ public:
    *
    * @sa Socket_Option @n
    * asio::socket_base::reuse_address
+   * asio::socket_base::enable_connection_aborted
    *
    * @par Example:
    * Setting the SOL_SOCKET/SO_REUSEADDR option:
@@ -450,6 +451,7 @@ public:
    *
    * @sa Socket_Option @n
    * asio::socket_base::reuse_address
+   * asio::socket_base::enable_connection_aborted
    *
    * @par Example:
    * Setting the SOL_SOCKET/SO_REUSEADDR option:

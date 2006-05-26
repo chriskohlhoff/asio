@@ -53,12 +53,6 @@ void server::handle_accept(const asio::error& e)
         boost::bind(&server::handle_accept, this,
           asio::placeholders::error));
   }
-  else if (e == asio::error::connection_aborted)
-  {
-    acceptor_.async_accept(new_connection_->socket(),
-        boost::bind(&server::handle_accept, this,
-          asio::placeholders::error));
-  }
 }
 
 void server::handle_stop()

@@ -72,7 +72,8 @@ public:
     enum
     {
       user_set_non_blocking = 1, // The user wants a non-blocking socket.
-      internal_non_blocking = 2 // The socket has been set non-blocking.
+      internal_non_blocking = 2, // The socket has been set non-blocking.
+      enable_connection_aborted = 4, // User wants connection_aborted errors.
     };
 
     // Flags indicating the current state of the socket.
@@ -222,12 +223,31 @@ public:
   void set_option(implementation_type& impl, const Option& option,
       Error_Handler error_handler)
   {
-    if (socket_ops::setsockopt(impl.socket_,
-          option.level(impl.protocol_), option.name(impl.protocol_),
-          option.data(impl.protocol_), option.size(impl.protocol_)))
-      error_handler(asio::error(socket_ops::get_error()));
+    if (option.level(impl.protocol_) == custom_socket_option_level
+        && option.name(impl.protocol_) == enable_connection_aborted_option)
+    {
+      if (option.size(impl.protocol_) != sizeof(int))
+      {
+        error_handler(asio::error(asio::error::invalid_argument));
+      }
+      else
+      {
+        if (*static_cast<const int*>(option.data(impl.protocol_)))
+          impl.flags_ |= implementation_type::enable_connection_aborted;
+        else
+          impl.flags_ &= ~implementation_type::enable_connection_aborted;
+        error_handler(asio::error(0));
+      }
+    }
     else
-      error_handler(asio::error(0));
+    {
+      if (socket_ops::setsockopt(impl.socket_,
+            option.level(impl.protocol_), option.name(impl.protocol_),
+            option.data(impl.protocol_), option.size(impl.protocol_)))
+        error_handler(asio::error(socket_ops::get_error()));
+      else
+        error_handler(asio::error(0));
+    }
   }
 
   // Set a socket option.
@@ -235,13 +255,33 @@ public:
   void get_option(const implementation_type& impl, Option& option,
       Error_Handler error_handler) const
   {
-    size_t size = option.size(impl.protocol_);
-    if (socket_ops::getsockopt(impl.socket_,
-          option.level(impl.protocol_), option.name(impl.protocol_),
-          option.data(impl.protocol_), &size))
-      error_handler(asio::error(socket_ops::get_error()));
+    if (option.level(impl.protocol_) == custom_socket_option_level
+        && option.name(impl.protocol_) == enable_connection_aborted_option)
+    {
+      if (option.size(impl.protocol_) != sizeof(int))
+      {
+        error_handler(asio::error(asio::error::invalid_argument));
+      }
+      else
+      {
+        int* target = static_cast<int*>(option.data(impl.protocol_));
+        if (impl.flags_ & implementation_type::enable_connection_aborted)
+          *target = 1;
+        else
+          *target = 0;
+        error_handler(asio::error(0));
+      }
+    }
     else
-      error_handler(asio::error(0));
+    {
+      size_t size = option.size(impl.protocol_);
+      if (socket_ops::getsockopt(impl.socket_,
+            option.level(impl.protocol_), option.name(impl.protocol_),
+            option.data(impl.protocol_), &size))
+        error_handler(asio::error(socket_ops::get_error()));
+      else
+        error_handler(asio::error(0));
+    }
   }
 
   // Perform an IO control command on the socket.
@@ -976,9 +1016,26 @@ public:
       }
 
       // Operation failed.
-      if ((impl.flags_ & implementation_type::user_set_non_blocking)
-          || (error != asio::error::would_block
-            && error != asio::error::try_again))
+      if (error == asio::error::would_block
+          || error == asio::error::try_again)
+      {
+        if (impl.flags_ & implementation_type::user_set_non_blocking)
+        {
+          error_handler(asio::error(error));
+          return;
+        }
+        // Fall through to retry operation.
+      }
+      else if (error == asio::error::connection_aborted)
+      {
+        if (impl.flags_ & implementation_type::enable_connection_aborted)
+        {
+          error_handler(asio::error(error));
+          return;
+        }
+        // Fall through to retry operation.
+      }
+      else
       {
         error_handler(asio::error(error));
         return;
@@ -1040,9 +1097,26 @@ public:
       }
 
       // Operation failed.
-      if ((impl.flags_ & implementation_type::user_set_non_blocking)
-          || (error != asio::error::would_block
-            && error != asio::error::try_again))
+      if (error == asio::error::would_block
+          || error == asio::error::try_again)
+      {
+        if (impl.flags_ & implementation_type::user_set_non_blocking)
+        {
+          error_handler(asio::error(error));
+          return;
+        }
+        // Fall through to retry operation.
+      }
+      else if (error == asio::error::connection_aborted)
+      {
+        if (impl.flags_ & implementation_type::enable_connection_aborted)
+        {
+          error_handler(asio::error(error));
+          return;
+        }
+        // Fall through to retry operation.
+      }
+      else
       {
         error_handler(asio::error(error));
         return;
@@ -1062,12 +1136,14 @@ public:
   {
   public:
     accept_handler(socket_type socket, asio::io_service& io_service,
-        Socket& peer, const protocol_type& protocol, Handler handler)
+        Socket& peer, const protocol_type& protocol,
+        bool enable_connection_aborted, Handler handler)
       : socket_(socket),
         io_service_(io_service),
         work_(io_service),
         peer_(peer),
         protocol_(protocol),
+        enable_connection_aborted_(enable_connection_aborted),
         handler_(handler)
     {
     }
@@ -1091,6 +1167,9 @@ public:
       if (error == asio::error::would_block
           || error == asio::error::try_again)
         return false;
+      if (error == asio::error::connection_aborted
+          && !enable_connection_aborted_)
+        return false;
 
       // Transfer ownership of the new socket to the peer object.
       if (!error)
@@ -1111,6 +1190,7 @@ public:
     asio::io_service::work work_;
     Socket& peer_;
     protocol_type protocol_;
+    bool enable_connection_aborted_;
     Handler handler_;
   };
 
@@ -1146,7 +1226,9 @@ public:
 
       reactor_.start_read_op(impl.socket_,
           accept_handler<Socket, Handler>(
-            impl.socket_, owner(), peer, impl.protocol_, handler));
+            impl.socket_, owner(), peer, impl.protocol_,
+            impl.flags_ & implementation_type::enable_connection_aborted,
+            handler));
     }
   }
 
@@ -1155,12 +1237,14 @@ public:
   {
   public:
     accept_endp_handler(socket_type socket, asio::io_service& io_service,
-        Socket& peer, endpoint_type& peer_endpoint, Handler handler)
+        Socket& peer, endpoint_type& peer_endpoint,
+        bool enable_connection_aborted, Handler handler)
       : socket_(socket),
         io_service_(io_service),
         work_(io_service),
         peer_(peer),
         peer_endpoint_(peer_endpoint),
+        enable_connection_aborted_(enable_connection_aborted),
         handler_(handler)
     {
     }
@@ -1186,6 +1270,9 @@ public:
       if (error == asio::error::would_block
           || error == asio::error::try_again)
         return false;
+      if (error == asio::error::connection_aborted
+          && !enable_connection_aborted_)
+        return false;
 
       // Transfer ownership of the new socket to the peer object.
       if (!error)
@@ -1207,6 +1294,7 @@ public:
     asio::io_service::work work_;
     Socket& peer_;
     endpoint_type& peer_endpoint_;
+    bool enable_connection_aborted_;
     Handler handler_;
   };
 
@@ -1243,7 +1331,9 @@ public:
 
       reactor_.start_read_op(impl.socket_,
           accept_endp_handler<Socket, Handler>(
-            impl.socket_, owner(), peer, peer_endpoint, handler));
+            impl.socket_, owner(), peer, peer_endpoint,
+            impl.flags_ & implementation_type::enable_connection_aborted,
+            handler));
     }
   }
 

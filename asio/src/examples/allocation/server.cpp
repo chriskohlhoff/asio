@@ -192,12 +192,6 @@ public:
           boost::bind(&server::handle_accept, this, new_session,
             asio::placeholders::error));
     }
-    else if (error == asio::error::connection_aborted)
-    {
-      acceptor_.async_accept(new_session->socket(),
-          boost::bind(&server::handle_accept, this, new_session,
-            asio::placeholders::error));
-    }
   }
 
 private:

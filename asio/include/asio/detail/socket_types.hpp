@@ -147,6 +147,8 @@ const int message_peek = MSG_PEEK;
 const int message_out_of_band = MSG_OOB;
 const int message_do_not_route = MSG_DONTROUTE;
 #endif
+const int custom_socket_option_level = 0xA5100000;
+const int enable_connection_aborted_option = 1;
 
 } // namespace detail
 } // namespace asio

@@ -69,18 +69,9 @@ public:
           boost::bind(&server::handle_accept, this,
             asio::placeholders::error, new_conn));
     }
-    else if (e == asio::error::connection_aborted)
-    {
-      // Accept operation failed because a connection was aborted before we were
-      // able to accept it. We'll try to accept a new connection using the same
-      // socket.
-      acceptor_.async_accept(conn->socket(),
-          boost::bind(&server::handle_accept, this,
-            asio::placeholders::error, conn));
-    }
     else
     {
-      // Some other error. Log it and return. Since we are not starting a new
+      // An error occurred. Log it and return. Since we are not starting a new
       // accept operation the io_service will run out of work to do and the
       // server will exit.
       std::cerr << e << std::endl;

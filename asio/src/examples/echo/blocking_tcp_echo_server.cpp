@@ -45,12 +45,8 @@ void server(asio::io_service& io_service, short port)
   for (;;)
   {
     socket_ptr sock(new tcp::socket(io_service));
-    asio::error error;
-    a.accept(*sock, asio::assign_error(error));
-    if (!error)
-      asio::thread t(boost::bind(session, sock));
-    else if (error != asio::error::connection_aborted)
-      throw error;
+    a.accept(*sock);
+    asio::thread t(boost::bind(session, sock));
   }
 }
 
