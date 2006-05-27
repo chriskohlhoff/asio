@@ -138,9 +138,6 @@ public:
   /// The type for each element in the list of buffers.
   typedef mutable_buffer value_type;
 
-  /// A random-access iterator type that may be used to read or modify elements.
-  typedef mutable_buffer* iterator;
-
   /// A random-access iterator type that may be used to read elements.
   typedef const mutable_buffer* const_iterator;
 
@@ -151,21 +148,9 @@ public:
   }
 
   /// Get a random-access iterator to the first element.
-  iterator begin()
-  {
-    return this;
-  }
-
-  /// Get a random-access iterator to the first element.
   const_iterator begin() const
   {
     return this;
-  }
-
-  /// Get a random-access iterator for one past the last element.
-  iterator end()
-  {
-    return begin() + 1;
   }
 
   /// Get a random-access iterator for one past the last element.
@@ -283,9 +268,6 @@ public:
   /// The type for each element in the list of buffers.
   typedef const_buffer value_type;
 
-  /// A random-access iterator type that may be used to read or modify elements.
-  typedef const_buffer* iterator;
-
   /// A random-access iterator type that may be used to read elements.
   typedef const const_buffer* const_iterator;
 
@@ -296,21 +278,9 @@ public:
   }
 
   /// Get a random-access iterator to the first element.
-  iterator begin()
-  {
-    return this;
-  }
-
-  /// Get a random-access iterator to the first element.
   const_iterator begin() const
   {
     return this;
-  }
-
-  /// Get a random-access iterator for one past the last element.
-  iterator end()
-  {
-    return begin() + 1;
   }
 
   /// Get a random-access iterator for one past the last element.
