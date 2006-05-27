@@ -35,6 +35,15 @@
 
 namespace asio {
 
+#if defined(GENERATING_DOCUMENTATION)
+/// INTERNAL ONLY.
+# define ASIO_SOCKET_ERROR(e) implementation_defined
+/// INTERNAL ONLY.
+# define ASIO_NETDB_ERROR(e) implementation_defined
+/// INTERNAL ONLY.
+# define ASIO_GETADDRINFO_ERROR(e) implementation_defined
+/// INTERNAL ONLY.
+# define ASIO_OS_ERROR(e_win, e_posix) implementation_defined
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 # define ASIO_SOCKET_ERROR(e) WSA ## e
 # define ASIO_NETDB_ERROR(e) WSA ## e

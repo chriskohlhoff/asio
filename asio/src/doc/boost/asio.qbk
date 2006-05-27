@@ -1,0 +1,21 @@
+[library Boost.Asio
+    [copyright 2003 - 2006 Christopher M. Kohlhoff]
+    [purpose Networking library]
+    [license
+        Distributed under the Boost Software License, Version 1.0.
+        (See accompanying file LICENSE_1_0.txt or copy at
+        <ulink url="http://www.boost.org/LICENSE_1_0.txt">
+            http://www.boost.org/LICENSE_1_0.txt
+        </ulink>)
+    ]
+    [authors [Kohlhoff, Christopher]]
+    [category template]
+    [category generic]
+    [last-revision $Date: 2006-05-27 11:55:02 $]
+]
+
+[section:intro Introduction]
+
+[endsect]
+
+[xinclude autodoc.boostbook]
