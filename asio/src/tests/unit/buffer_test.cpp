@@ -112,6 +112,13 @@ void test()
     mb1 = buffer(raw_data, 1024);
     cb1 = buffer(const_raw_data);
     cb1 = buffer(const_raw_data, 1024);
+#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+    (void)array_data;
+    (void)const_array_data_1;
+    (void)const_array_data_2;
+    (void)vector_data;
+    (void)const_vector_data;
+#else // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
     mb1 = buffer(array_data);
     mb1 = buffer(array_data, 1024);
     cb1 = buffer(const_array_data_1);
@@ -122,6 +129,7 @@ void test()
     mb1 = buffer(vector_data, 1024);
     cb1 = buffer(const_vector_data);
     cb1 = buffer(const_vector_data, 1024);
+#endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
     cb1 = buffer(string_data);
     cb1 = buffer(string_data, 1024);
   }
