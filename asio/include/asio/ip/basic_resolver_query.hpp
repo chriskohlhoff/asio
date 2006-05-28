@@ -48,7 +48,7 @@ public:
   /// The protocol type associated with the endpoint query.
   typedef Protocol protocol_type;
 
-  /// Construct with specified host name and service name for any protocol.
+  /// Construct with specified service name for any protocol.
   basic_resolver_query(const std::string& service_name,
       int flags = passive | address_configured)
     : hints_(),
@@ -66,7 +66,7 @@ public:
     hints_.ai_next = 0;
   }
 
-  /// Construct with specified host name and service name for any protocol.
+  /// Construct with specified service name for a given protocol.
   basic_resolver_query(const protocol_type& protocol,
       const std::string& service_name,
       int flags = passive | address_configured)
