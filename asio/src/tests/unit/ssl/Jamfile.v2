@@ -1,0 +1,50 @@
+import os ;
+import feature ;
+
+lib ssl ;
+lib crypto ;
+
+if [ os.name ] = SOLARIS
+{
+  lib socket ;
+  lib nsl ;
+}
+else if [ os.name ] = NT
+{
+  lib ws2_32 ;
+  lib mswsock ;
+}
+
+local USE_SELECT =
+  <define>BOOST_ASIO_DISABLE_EPOLL
+  <define>BOOST_ASIO_DISABLE_KQUEUE
+  <define>BOOST_ASIO_DISABLE_IOCP
+  ;
+
+project
+  : requirements
+    <library>/boost/date_time//boost_date_time
+    <library>/boost/thread//boost_thread
+    <threading>multi
+    <os>SOLARIS:<library>socket
+    <os>SOLARIS:<library>nsl
+    <os>NT<toolset>gcc:<library>ws2_32
+    <os>NT<toolset>gcc:<library>mswsock
+  ;
+
+test-suite "asio-ssl" :
+  [ compile basic_context_test.cpp ]
+  [ compile basic_context_test.cpp : $(USE_SELECT) : basic_context_test_select ]
+  [ compile context_base_test.cpp ]
+  [ compile context_base_test.cpp : $(USE_SELECT) : context_base_test_select ]
+  [ compile context_service_test.cpp ]
+  [ compile context_service_test.cpp : $(USE_SELECT) : context_service_test_select ]
+  [ compile context_test.cpp ]
+  [ compile context_test.cpp : $(USE_SELECT) : context_test_select ]
+  [ compile stream_base_test.cpp ]
+  [ compile stream_base_test.cpp : $(USE_SELECT) : stream_base_test_select ]
+  [ compile stream_service_test.cpp ]
+  [ compile stream_service_test.cpp : $(USE_SELECT) : stream_service_test_select ]
+  [ compile stream_test.cpp ]
+  [ compile stream_test.cpp : $(USE_SELECT) : stream_test_select ]
+  ;
