@@ -223,10 +223,13 @@ private:
          
       if (len > 0)
       {
+        unsigned char *data_start = send_buf_.get_unused_start();
+        send_buf_.data_added(len);
+   
         asio::async_write
         ( 
           socket_, 
-          asio::buffer(send_buf_.get_unused_start(), len),
+          asio::buffer(data_start, len),
           boost::bind
           (
             &openssl_operation::async_write_handler, 
@@ -237,14 +240,16 @@ private:
             asio::placeholders::bytes_transferred
           )
         );
-          
-        send_buf_.data_added(len);
+                  
         return 0;
       }
-      else
+      else if (!BIO_should_retry(ssl_bio_))
+      {
         // Seems like fatal error
         // reading from SSL BIO has failed...
         handler_(asio::error(asio::error::no_recovery), 0);
+        return 0;
+      }
     }
     
     if (is_operation_done)
@@ -313,9 +318,16 @@ private:
       if (written > 0)
       {
         recv_buf_.data_removed(written);
-      } else if (written < 0)
-        // Some serios error with BIO....
-        handler_(asio::error(asio::error::no_recovery), 0);
+      }
+      else if (written < 0)
+      {
+        if (!BIO_should_retry(ssl_bio_))
+        {
+          // Some serios error with BIO....
+          handler_(asio::error(asio::error::no_recovery), 0);
+          return;
+        }
+      }
 
       // and try the SSL primitive again
       start();
@@ -352,10 +364,12 @@ private:
         send_buf_.data_added(len);
         send_buf_.data_removed(sent_len);
       }          
-      else
+      else if (!BIO_should_retry(ssl_bio_))
+      {
         // Seems like fatal error
         // reading from SSL BIO has failed...
         throw asio::error(asio::error::no_recovery);
+      }
     }
     
     if (is_operation_done)
@@ -388,9 +402,15 @@ private:
     if (written > 0)
     {
       recv_buf_.data_removed(written);
-    } else if (written < 0)
-      // Some serios error with BIO....
-      throw asio::error(asio::error::no_recovery);
+    }
+    else if (written < 0)
+    {
+      if (!BIO_should_retry(ssl_bio_))
+      {
+        // Some serios error with BIO....
+        throw asio::error(asio::error::no_recovery);
+      }
+    }
 
     // Try the operation again
     return start();

@@ -205,8 +205,8 @@ public:
   {
     openssl_operation<Stream> op(
       type == stream_base::client ?
-        &::SSL_connect:
-        &::SSL_accept,
+        &ssl_wrap<mutex_type>::SSL_connect:
+        &ssl_wrap<mutex_type>::SSL_accept,
       next_layer,
       impl->ssl,
       impl->ext_bio);
@@ -226,8 +226,8 @@ public:
     openssl_operation<Stream>* op = new openssl_operation<Stream>
     (
       type == stream_base::client ?
-        &::SSL_connect:
-        &::SSL_accept,
+        &ssl_wrap<mutex_type>::SSL_connect:
+        &ssl_wrap<mutex_type>::SSL_accept,
       next_layer,
       impl->ssl,
       impl->ext_bio,
@@ -250,7 +250,7 @@ public:
       Error_Handler error_handler)
   {
     openssl_operation<Stream> op(
-      &::SSL_shutdown,
+      &ssl_wrap<mutex_type>::SSL_shutdown,
       next_layer,
       impl->ssl,
       impl->ext_bio);
@@ -268,7 +268,7 @@ public:
 
     openssl_operation<Stream>* op = new openssl_operation<Stream>
     (
-      &::SSL_shutdown,
+      &ssl_wrap<mutex_type>::SSL_shutdown,
       next_layer,
       impl->ssl,
       impl->ext_bio,
@@ -402,7 +402,36 @@ public:
   {
     return 0;
   }
+private:  
+  typedef asio::detail::mutex mutex_type;
+  
+  template<typename Mutex>
+  struct ssl_wrap
+  {
+    static Mutex ssl_mutex_;
+
+    static int SSL_accept(SSL *ssl)
+    {
+      typename Mutex::scoped_lock lock(ssl_mutex_);
+      return ::SSL_accept(ssl);
+    }
+  
+    static int SSL_connect(SSL *ssl)
+    {
+      typename Mutex::scoped_lock lock(ssl_mutex_);
+      return ::SSL_connect(ssl);
+    }
+  
+    static int SSL_shutdown(SSL *ssl)
+    {
+      typename Mutex::scoped_lock lock(ssl_mutex_);
+      return ::SSL_shutdown(ssl);  
+    }    
+  };  
 };
+
+template<typename Mutex>
+Mutex openssl_stream_service::ssl_wrap<Mutex>::ssl_mutex_;
 
 } // namespace detail
 } // namespace ssl
