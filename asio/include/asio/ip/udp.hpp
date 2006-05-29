@@ -88,10 +88,10 @@ public:
   /// The IPv4 UDP socket type.
   typedef basic_datagram_socket<socket_service> socket;
 
-  /// The service type for TCP resolvers.
+  /// The service type for UDP resolvers.
   typedef resolver_service<udp> resolver_service;
 
-  /// The TCP resolver type.
+  /// The UDP resolver type.
   typedef basic_resolver<resolver_service> resolver;
 
 private:
