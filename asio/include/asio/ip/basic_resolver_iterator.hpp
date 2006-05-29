@@ -37,6 +37,9 @@ namespace ip {
  * The asio::ip::basic_resolver_iterator class template is used to define
  * iterators over the results returned by a resolver.
  *
+ * The iterator's value_type, obtained when the iterator is dereferenced, is:
+ * @code const basic_resolver_entry<Protocol> @endcode
+ *
  * @par Thread Safety:
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
