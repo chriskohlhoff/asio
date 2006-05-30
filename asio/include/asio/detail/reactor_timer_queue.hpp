@@ -99,7 +99,7 @@ public:
   void dispatch_timers(const Time& time)
   {
     Comparator comp;
-    while (!heap_.empty() && comp(heap_[0]->time_, time))
+    while (!heap_.empty() && !comp(time, heap_[0]->time_))
     {
       timer_base* t = heap_[0];
       remove_timer(t);
