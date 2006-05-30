@@ -83,6 +83,18 @@ public:
   /// order. The IP address will be the any address (i.e. INADDR_ANY or
   /// in6addr_any). This constructor would typically be used for accepting new
   /// connections.
+  /**
+   * @par Examples:
+   * To initialise an IPv4 TCP endpoint for port 1234, use:
+   * @code
+   * asio::ip::tcp::endpoint ep(asio::ip::tcp::v4(), 1234);
+   * @endcode
+   *
+   * To specify an IPv6 UDP endpoint for port 9876, use:
+   * @code
+   * asio::ip::udp::endpoint ep(asio::ip::udp::v6(), 9876);
+   * @endcode
+   */
   basic_endpoint(const Protocol& protocol, unsigned short port_num)
   {
     using namespace std; // For memcpy.
