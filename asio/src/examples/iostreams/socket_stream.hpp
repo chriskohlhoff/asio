@@ -17,7 +17,7 @@ public:
   typedef io::bidirectional_device_tag category;
 
   // Construct without connecting.
-  socket_device()
+  socket_device(int /*ignored*/)
     : io_service_(new asio::io_service),
       socket_(new asio::ip::tcp::socket(*io_service_))
   {
