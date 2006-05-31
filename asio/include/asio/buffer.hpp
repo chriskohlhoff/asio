@@ -21,6 +21,7 @@
 #include <cstddef>
 #include <boost/config.hpp>
 #include <boost/array.hpp>
+#include <boost/type_traits/is_const.hpp>
 #include <string>
 #include <vector>
 #include "asio/detail/pop_options.hpp"
@@ -422,6 +423,75 @@ inline const_buffer_container_1 buffer(const Pod_Type (&data)[N],
         ? N * sizeof(Pod_Type) : max_size_in_bytes));
 }
 
+#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+
+// Borland C++ thinks the overloads:
+//
+//   unspecified buffer(boost::array<Pod_Type, N>& array ...);
+//
+// and
+//
+//   unspecified buffer(boost::array<const Pod_Type, N>& array ...);
+//
+// are ambiguous. This will be worked around by using a buffer_types traits
+// class that contains typedefs for the appropriate buffer and container
+// classes, based on whether Pod_Type is const or non-const.
+
+namespace detail {
+
+template <bool IsConst>
+struct buffer_types_base;
+
+template <>
+struct buffer_types_base<false>
+{
+  typedef mutable_buffer buffer_type;
+  typedef mutable_buffer_container_1 container_type;
+};
+
+template <>
+struct buffer_types_base<true>
+{
+  typedef const_buffer buffer_type;
+  typedef const_buffer_container_1 container_type;
+};
+
+template <typename Pod_Type>
+struct buffer_types
+  : public buffer_types_base<boost::is_const<Pod_Type>::value>
+{
+};
+
+} // namespace detail
+
+template <typename Pod_Type, std::size_t N>
+inline typename detail::buffer_types<Pod_Type>::container_type
+buffer(boost::array<Pod_Type, N>& data)
+{
+  typedef typename asio::detail::buffer_types<Pod_Type>::buffer_type
+    buffer_type;
+  typedef typename asio::detail::buffer_types<Pod_Type>::container_type
+    container_type;
+  return container_type(
+      buffer_type(data.c_array(), data.size() * sizeof(Pod_Type)));
+}
+
+template <typename Pod_Type, std::size_t N>
+inline typename detail::buffer_types<Pod_Type>::container_type
+buffer(boost::array<Pod_Type, N>& data, std::size_t max_size_in_bytes)
+{
+  typedef typename asio::detail::buffer_types<Pod_Type>::buffer_type
+    buffer_type;
+  typedef typename asio::detail::buffer_types<Pod_Type>::container_type
+    container_type;
+  return container_type(
+      buffer_type(data.c_array(),
+        data.size() * sizeof(Pod_Type) < max_size_in_bytes
+        ? data.size() * sizeof(Pod_Type) : max_size_in_bytes));
+}
+
+#else // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+
 /// Create a new modifiable buffer that represents the given POD array.
 template <typename Pod_Type, std::size_t N>
 inline mutable_buffer_container_1 buffer(boost::array<Pod_Type, N>& data)
@@ -443,25 +513,6 @@ inline mutable_buffer_container_1 buffer(boost::array<Pod_Type, N>& data,
 
 /// Create a new non-modifiable buffer that represents the given POD array.
 template <typename Pod_Type, std::size_t N>
-inline const_buffer_container_1 buffer(const boost::array<Pod_Type, N>& data)
-{
-  return const_buffer_container_1(
-      const_buffer(data.data(), data.size() * sizeof(Pod_Type)));
-}
-
-/// Create a new non-modifiable buffer that represents the given POD array.
-template <typename Pod_Type, std::size_t N>
-inline const_buffer_container_1 buffer(const boost::array<Pod_Type, N>& data,
-    std::size_t max_size_in_bytes)
-{
-  return const_buffer_container_1(
-      const_buffer(data.data(),
-        data.size() * sizeof(Pod_Type) < max_size_in_bytes
-        ? data.size() * sizeof(Pod_Type) : max_size_in_bytes));
-}
-
-/// Create a new non-modifiable buffer that represents the given POD array.
-template <typename Pod_Type, std::size_t N>
 inline const_buffer_container_1 buffer(boost::array<const Pod_Type, N>& data)
 {
   return const_buffer_container_1(
@@ -471,6 +522,27 @@ inline const_buffer_container_1 buffer(boost::array<const Pod_Type, N>& data)
 /// Create a new non-modifiable buffer that represents the given POD array.
 template <typename Pod_Type, std::size_t N>
 inline const_buffer_container_1 buffer(boost::array<const Pod_Type, N>& data,
+    std::size_t max_size_in_bytes)
+{
+  return const_buffer_container_1(
+      const_buffer(data.data(),
+        data.size() * sizeof(Pod_Type) < max_size_in_bytes
+        ? data.size() * sizeof(Pod_Type) : max_size_in_bytes));
+}
+
+#endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+
+/// Create a new non-modifiable buffer that represents the given POD array.
+template <typename Pod_Type, std::size_t N>
+inline const_buffer_container_1 buffer(const boost::array<Pod_Type, N>& data)
+{
+  return const_buffer_container_1(
+      const_buffer(data.data(), data.size() * sizeof(Pod_Type)));
+}
+
+/// Create a new non-modifiable buffer that represents the given POD array.
+template <typename Pod_Type, std::size_t N>
+inline const_buffer_container_1 buffer(const boost::array<Pod_Type, N>& data,
     std::size_t max_size_in_bytes)
 {
   return const_buffer_container_1(
