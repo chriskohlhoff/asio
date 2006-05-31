@@ -43,9 +43,9 @@ namespace asio {
  * The io_service class provides the core I/O functionality for users of the
  * asynchronous I/O objects, including:
  *
- * @li asio::stream_socket
- * @li asio::datagram_socket
- * @li asio::socket_acceptor
+ * @li asio::ip::tcp::socket
+ * @li asio::ip::tcp::acceptor
+ * @li asio::ip::udp::socket
  * @li asio::deadline_timer.
  *
  * The io_service class also includes facilities intended for developers of
