@@ -3,32 +3,37 @@
 #include <string>
 #include <asio.hpp>
 
+using asio::ip::tcp;
+
+std::string make_daytime_string()
+{
+  using namespace std; // For time_t, time and ctime;
+  time_t now = time(0);
+  return ctime(&now);
+}
+
 int main()
 {
   try
   {
     asio::io_service io_service;
 
-    asio::ip::tcp::acceptor acceptor(io_service,
-        asio::ip::tcp::endpoint(asio::ip::tcp::v4(), 13));
+    tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), 13));
 
     for (;;)
     {
-      asio::ip::tcp::socket socket(io_service);
+      tcp::socket socket(io_service);
       acceptor.accept(socket);
 
-      using namespace std; // For time_t, time and ctime.
-      time_t now = time(0);
-      std::string msg = ctime(&now);
+      std::string message = make_daytime_string();
 
-      asio::write(socket,
-          asio::buffer(msg.c_str(), msg.length()),
+      asio::write(socket, asio::buffer(message),
           asio::transfer_all(), asio::ignore_error());
     }
   }
-  catch (asio::error& e)
+  catch (std::exception& e)
   {
-    std::cerr << e << std::endl;
+    std::cerr << e.what() << std::endl;
   }
 
   return 0;

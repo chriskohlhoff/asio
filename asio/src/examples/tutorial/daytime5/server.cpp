@@ -1,7 +1,17 @@
 #include <ctime>
 #include <iostream>
 #include <string>
+#include <boost/array.hpp>
 #include <asio.hpp>
+
+using asio::ip::udp;
+
+std::string make_daytime_string()
+{
+  using namespace std; // For time_t, time and ctime;
+  time_t now = time(0);
+  return ctime(&now);
+}
 
 int main()
 {
@@ -9,31 +19,28 @@ int main()
   {
     asio::io_service io_service;
 
-    asio::ip::udp::socket socket(io_service,
-        asio::ip::udp::endpoint(asio::ip::udp::v4(), 13));
+    udp::socket socket(io_service, udp::endpoint(udp::v4(), 13));
 
     for (;;)
     {
-      char recv_buf[1];
-      asio::ip::udp::endpoint remote_endpoint;
+      boost::array<char, 1> recv_buf;
+      udp::endpoint remote_endpoint;
       asio::error error;
-      socket.receive_from(
-          asio::buffer(recv_buf, sizeof(recv_buf)),
+      socket.receive_from(asio::buffer(recv_buf),
           remote_endpoint, 0, asio::assign_error(error));
+
       if (error && error != asio::error::message_size)
         throw error;
 
-      using namespace std; // For time_t, time and ctime.
-      time_t now = time(0);
-      std::string msg = ctime(&now);
+      std::string message = make_daytime_string();
 
-      socket.send_to(asio::buffer(msg.c_str(), msg.length()),
+      socket.send_to(asio::buffer(message),
           remote_endpoint, 0, asio::ignore_error());
     }
   }
-  catch (asio::error& e)
+  catch (std::exception& e)
   {
-    std::cerr << e << std::endl;
+    std::cerr << e.what() << std::endl;
   }
 
   return 0;

@@ -1,103 +1,146 @@
 #include <ctime>
 #include <iostream>
+#include <string>
+#include <boost/array.hpp>
 #include <boost/bind.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 #include <asio.hpp>
 
-void handle_tcp_write(asio::ip::tcp::socket* socket, char* write_buf)
+using asio::ip::tcp;
+using asio::ip::udp;
+
+std::string make_daytime_string()
 {
-  using namespace std; // For free.
-  free(write_buf);
-  delete socket;
+  using namespace std; // For time_t, time and ctime;
+  time_t now = time(0);
+  return ctime(&now);
 }
 
-void handle_tcp_accept(asio::ip::tcp::acceptor* acceptor,
-    asio::ip::tcp::socket* socket, const asio::error& error)
+class tcp_connection
+  : public boost::enable_shared_from_this<tcp_connection>
 {
-  if (!error)
+public:
+  typedef boost::shared_ptr<tcp_connection> pointer;
+
+  static pointer create(asio::io_service& io_service)
   {
-    using namespace std; // For time_t, time, ctime, strdup and strlen.
-    time_t now = time(0);
-    char* write_buf = strdup(ctime(&now));
-    size_t write_length = strlen(write_buf);
+    return pointer(new tcp_connection(io_service));
+  }
 
-    asio::async_write(*socket,
-        asio::buffer(write_buf, write_length),
-        boost::bind(handle_tcp_write, socket, write_buf));
+  tcp::socket& socket()
+  {
+    return socket_;
+  }
 
-    socket = new asio::ip::tcp::socket(acceptor->io_service());
+  void start()
+  {
+    message_ = make_daytime_string();
 
-    acceptor->async_accept(*socket,
-        boost::bind(handle_tcp_accept, acceptor, socket,
+    asio::async_write(socket_, asio::buffer(message_),
+        boost::bind(&tcp_connection::handle_write, shared_from_this()));
+  }
+
+private:
+  tcp_connection(asio::io_service& io_service)
+    : socket_(io_service)
+  {
+  }
+
+  void handle_write()
+  {
+  }
+
+  tcp::socket socket_;
+  std::string message_;
+};
+
+class tcp_server
+{
+public:
+  tcp_server(asio::io_service& io_service)
+    : acceptor_(io_service, tcp::endpoint(tcp::v4(), 13))
+  {
+    start_accept();
+  }
+
+private:
+  void start_accept()
+  {
+    tcp_connection::pointer new_connection =
+      tcp_connection::create(acceptor_.io_service());
+
+    acceptor_.async_accept(new_connection->socket(),
+        boost::bind(&tcp_server::handle_accept, this, new_connection,
           asio::placeholders::error));
   }
-  else
+
+  void handle_accept(tcp_connection::pointer new_connection,
+      const asio::error& error)
   {
-    delete socket;
+    if (!error)
+    {
+      new_connection->start();
+      start_accept();
+    }
   }
-}
 
-void handle_udp_send_to(char* send_buf)
-{
-  using namespace std; // For free.
-  free(send_buf);
-}
+  tcp::acceptor acceptor_;
+};
 
-void handle_udp_receive_from(asio::ip::udp::socket* socket,
-    char* recv_buf, size_t recv_length,
-    asio::ip::udp::endpoint* remote_endpoint,
-    const asio::error& error)
+class udp_server
 {
-  if (!error || error == asio::error::message_size)
+public:
+  udp_server(asio::io_service& io_service)
+    : socket_(io_service, udp::endpoint(udp::v4(), 13))
   {
-    using namespace std; // For time_t, time, ctime, strdup and strlen.
-    time_t now = time(0);
-    char* send_buf = strdup(ctime(&now));
-    size_t send_length = strlen(send_buf);
-
-    socket->async_send_to(
-        asio::buffer(send_buf, send_length), *remote_endpoint,
-        boost::bind(handle_udp_send_to, send_buf));
-
-    socket->async_receive_from(
-        asio::buffer(recv_buf, recv_length), *remote_endpoint,
-        boost::bind(handle_udp_receive_from, socket, recv_buf, recv_length,
-          remote_endpoint, asio::placeholders::error));
+    start_receive();
   }
-}
+
+private:
+  void start_receive()
+  {
+    socket_.async_receive_from(
+        asio::buffer(recv_buffer_), remote_endpoint_,
+        boost::bind(&udp_server::handle_receive, this,
+          asio::placeholders::error));
+  }
+
+  void handle_receive(const asio::error& error)
+  {
+    if (!error || error == asio::error::message_size)
+    {
+      boost::shared_ptr<std::string> message(
+          new std::string(make_daytime_string()));
+
+      socket_.async_send_to(asio::buffer(*message), remote_endpoint_,
+          boost::bind(&udp_server::handle_send, this, message));
+
+      start_receive();
+    }
+  }
+
+  void handle_send(boost::shared_ptr<std::string> /*message*/)
+  {
+  }
+
+  udp::socket socket_;
+  udp::endpoint remote_endpoint_;
+  boost::array<char, 1> recv_buffer_;
+};
 
 int main()
 {
   try
   {
     asio::io_service io_service;
-
-    asio::ip::tcp::acceptor tcp_acceptor(io_service,
-        asio::ip::tcp::endpoint(asio::ip::tcp::v4(), 13));
-
-    asio::ip::tcp::socket* tcp_socket
-      = new asio::ip::tcp::socket(io_service);
-
-    tcp_acceptor.async_accept(*tcp_socket,
-        boost::bind(handle_tcp_accept, &tcp_acceptor, tcp_socket,
-          asio::placeholders::error));
-
-    asio::ip::udp::socket udp_socket(io_service,
-        asio::ip::udp::endpoint(asio::ip::udp::v4(), 13));
-
-    char recv_buf[1];
-    size_t recv_length = sizeof(recv_buf);
-    asio::ip::udp::endpoint remote_endpoint;
-
-    udp_socket.async_receive_from(
-        asio::buffer(recv_buf, recv_length), remote_endpoint,
-        boost::bind(handle_udp_receive_from, &udp_socket, recv_buf, recv_length,
-          &remote_endpoint, asio::placeholders::error));
-
+    tcp_server server1(io_service);
+    udp_server server2(io_service);
     io_service.run();
   }
-  catch (asio::error& e)
+  catch (std::exception& e)
   {
-    std::cerr << e << std::endl;
+    std::cerr << e.what() << std::endl;
   }
 
   return 0;

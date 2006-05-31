@@ -1,67 +1,106 @@
 #include <ctime>
 #include <iostream>
+#include <string>
 #include <boost/bind.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 #include <asio.hpp>
 
-void handle_write(asio::ip::tcp::socket* socket, char* write_buf,
-    const asio::error& /*error*/, size_t /*bytes_transferred*/)
+using asio::ip::tcp;
+
+std::string make_daytime_string()
 {
-  using namespace std; // For free.
-  free(write_buf);
-  delete socket;
+  using namespace std; // For time_t, time and ctime;
+  time_t now = time(0);
+  return ctime(&now);
 }
 
-void handle_accept(asio::ip::tcp::acceptor* acceptor,
-    asio::ip::tcp::socket* socket, const asio::error& error)
+class tcp_connection
+  : public boost::enable_shared_from_this<tcp_connection>
 {
-  if (!error)
-  {
-    using namespace std; // For time_t, time, ctime, strdup and strlen.
-    time_t now = time(0);
-    char* write_buf = strdup(ctime(&now));
-    size_t write_length = strlen(write_buf);
+public:
+  typedef boost::shared_ptr<tcp_connection> pointer;
 
-    asio::async_write(*socket,
-        asio::buffer(write_buf, write_length),
-        boost::bind(handle_write, socket, write_buf,
+  static pointer create(asio::io_service& io_service)
+  {
+    return pointer(new tcp_connection(io_service));
+  }
+
+  tcp::socket& socket()
+  {
+    return socket_;
+  }
+
+  void start()
+  {
+    message_ = make_daytime_string();
+
+    asio::async_write(socket_, asio::buffer(message_),
+        boost::bind(&tcp_connection::handle_write, shared_from_this(),
           asio::placeholders::error,
           asio::placeholders::bytes_transferred));
+  }
 
-    socket = new asio::ip::tcp::socket(acceptor->io_service());
+private:
+  tcp_connection(asio::io_service& io_service)
+    : socket_(io_service)
+  {
+  }
 
-    acceptor->async_accept(*socket,
-        boost::bind(handle_accept, acceptor, socket,
+  void handle_write(const asio::error& /*error*/,
+      size_t /*bytes_transferred*/)
+  {
+  }
+
+  tcp::socket socket_;
+  std::string message_;
+};
+
+class tcp_server
+{
+public:
+  tcp_server(asio::io_service& io_service)
+    : acceptor_(io_service, tcp::endpoint(tcp::v4(), 13))
+  {
+    start_accept();
+  }
+
+private:
+  void start_accept()
+  {
+    tcp_connection::pointer new_connection =
+      tcp_connection::create(acceptor_.io_service());
+
+    acceptor_.async_accept(new_connection->socket(),
+        boost::bind(&tcp_server::handle_accept, this, new_connection,
           asio::placeholders::error));
   }
-  else
+
+  void handle_accept(tcp_connection::pointer new_connection,
+      const asio::error& error)
   {
-    delete socket;
+    if (!error)
+    {
+      new_connection->start();
+      start_accept();
+    }
   }
-}
+
+  tcp::acceptor acceptor_;
+};
 
 int main()
 {
   try
   {
     asio::io_service io_service;
-
-    asio::ip::tcp::acceptor acceptor(io_service,
-        asio::ip::tcp::endpoint(asio::ip::tcp::v4(), 13));
-
-    asio::ip::tcp::socket* socket
-      = new asio::ip::tcp::socket(io_service);
-
-    acceptor.async_accept(*socket,
-        boost::bind(handle_accept, &acceptor, socket,
-          asio::placeholders::error));
-
+    tcp_server server(io_service);
     io_service.run();
   }
-  catch (asio::error& e)
+  catch (std::exception& e)
   {
-    std::cerr << e << std::endl;
+    std::cerr << e.what() << std::endl;
   }
 
   return 0;
 }
-

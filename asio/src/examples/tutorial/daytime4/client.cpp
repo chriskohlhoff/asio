@@ -1,5 +1,8 @@
 #include <iostream>
+#include <boost/array.hpp>
 #include <asio.hpp>
+
+using asio::ip::udp;
 
 int main(int argc, char* argv[])
 {
@@ -13,29 +16,26 @@ int main(int argc, char* argv[])
 
     asio::io_service io_service;
 
-    asio::ip::udp::resolver resolver(io_service);
-    asio::ip::udp::resolver::query query(
-        asio::ip::udp::v4(), argv[1], "daytime");
-    asio::ip::udp::endpoint receiver_endpoint = *resolver.resolve(query);
+    udp::resolver resolver(io_service);
+    udp::resolver::query query(udp::v4(), argv[1], "daytime");
+    udp::endpoint receiver_endpoint = *resolver.resolve(query);
 
-    asio::ip::udp::socket socket(io_service);
-    socket.open(asio::ip::udp::v4());
+    udp::socket socket(io_service);
+    socket.open(udp::v4());
 
-    char send_buf[1] = { 0 };
-    socket.send_to(
-        asio::buffer(send_buf, sizeof(send_buf)),
-        receiver_endpoint);
+    boost::array<char, 1> send_buf  = { 0 };
+    socket.send_to(asio::buffer(send_buf), receiver_endpoint);
 
-    char recv_buf[128];
-    asio::ip::udp::endpoint sender_endpoint;
+    boost::array<char, 128> recv_buf;
+    udp::endpoint sender_endpoint;
     size_t len = socket.receive_from(
-        asio::buffer(recv_buf, sizeof(recv_buf)),
-        sender_endpoint);
-    std::cout.write(recv_buf, len);
+        asio::buffer(recv_buf), sender_endpoint);
+
+    std::cout.write(recv_buf.data(), len);
   }
-  catch (asio::error& e)
+  catch (std::exception& e)
   {
-    std::cerr << e << std::endl;
+    std::cerr << e.what() << std::endl;
   }
 
   return 0;
