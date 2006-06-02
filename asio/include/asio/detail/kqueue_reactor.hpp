@@ -86,16 +86,7 @@ public:
   // Destructor.
   ~kqueue_reactor()
   {
-    if (thread_)
-    {
-      asio::detail::mutex::scoped_lock lock(mutex_);
-      stop_thread_ = true;
-      lock.unlock();
-      interrupter_.interrupt();
-      thread_->join();
-      delete thread_;
-    }
-
+    shutdown_service();
     close(kqueue_fd_);
   }
 
@@ -104,7 +95,16 @@ public:
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
     shutdown_ = true;
+    stop_thread_ = true;
     lock.unlock();
+
+    if (thread_)
+    {
+      interrupter_.interrupt();
+      thread_->join();
+      delete thread_;
+      thread_ = 0;
+    }
 
     read_op_queue_.destroy_operations();
     write_op_queue_.destroy_operations();
