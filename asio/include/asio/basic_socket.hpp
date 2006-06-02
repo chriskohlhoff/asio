@@ -236,9 +236,9 @@ public:
 
   /// Close the socket.
   /**
-   * This function is used to close the socket. Any asynchronous send or receive
-   * operations will be cancelled immediately, and will complete with the
-   * asio::error::operation_aborted error.
+   * This function is used to close the socket. Any asynchronous send, receive
+   * or connect operations will be cancelled immediately, and will complete
+   * with the asio::error::operation_aborted error.
    *
    * @throws asio::error Thrown on failure.
    */
@@ -249,9 +249,9 @@ public:
 
   /// Close the socket.
   /**
-   * This function is used to close the socket. Any asynchronous send or receive
-   * operations will be cancelled immediately, and will complete with the
-   * asio::error::operation_aborted error.
+   * This function is used to close the socket. Any asynchronous send, receive
+   * or connect operations will be cancelled immediately, and will complete
+   * with the asio::error::operation_aborted error.
    *
    * @param error_handler A handler to be called when the operation completes,
    * to indicate whether or not an error has occurred. Copies will be made of
