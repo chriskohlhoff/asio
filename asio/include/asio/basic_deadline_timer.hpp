@@ -23,6 +23,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/basic_io_object.hpp"
+#include "asio/deadline_timer_service.hpp"
 #include "asio/error.hpp"
 
 namespace asio {
@@ -77,7 +78,9 @@ namespace asio {
  * timer.async_wait(handler);
  * @endcode
  */
-template <typename Service>
+template <typename Time_Type,
+    typename Time_Traits = asio::time_traits<Time_Type>,
+    typename Service = deadline_timer_service<Time_Type, Time_Traits> >
 class basic_deadline_timer
   : public basic_io_object<Service>
 {
@@ -85,11 +88,14 @@ public:
   /// The type used for reporting errors.
   typedef asio::error error_type;
 
+  /// The time traits type.
+  typedef Time_Traits traits_type;
+
   /// The time type.
-  typedef typename Service::time_type time_type;
+  typedef typename traits_type::time_type time_type;
 
   /// The duration type.
-  typedef typename Service::duration_type duration_type;
+  typedef typename traits_type::duration_type duration_type;
 
   /// Constructor.
   /**

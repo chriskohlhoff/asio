@@ -24,6 +24,7 @@
 
 #include "asio/basic_socket.hpp"
 #include "asio/error_handler.hpp"
+#include "asio/stream_socket_service.hpp"
 
 namespace asio {
 
@@ -40,19 +41,20 @@ namespace asio {
  * Async_Read_Stream, Async_Write_Stream, Error_Source, IO_Object, Stream,
  * Sync_Read_Stream, Sync_Write_Stream.
  */
-template <typename Service>
+template <typename Protocol,
+    typename Service = stream_socket_service<Protocol> >
 class basic_stream_socket
-  : public basic_socket<Service>
+  : public basic_socket<Protocol, Service>
 {
 public:
   /// The native representation of a socket.
   typedef typename Service::native_type native_type;
 
   /// The protocol type.
-  typedef typename Service::protocol_type protocol_type;
+  typedef Protocol protocol_type;
 
   /// The endpoint type.
-  typedef typename Service::endpoint_type endpoint_type;
+  typedef typename Protocol::endpoint endpoint_type;
 
   /// Construct a basic_stream_socket without opening it.
   /**
@@ -64,7 +66,7 @@ public:
    * dispatch handlers for any asynchronous operations performed on the socket.
    */
   explicit basic_stream_socket(asio::io_service& io_service)
-    : basic_socket<Service>(io_service)
+    : basic_socket<Protocol, Service>(io_service)
   {
   }
 
@@ -82,7 +84,7 @@ public:
    */
   basic_stream_socket(asio::io_service& io_service,
       const protocol_type& protocol)
-    : basic_socket<Service>(io_service, protocol)
+    : basic_socket<Protocol, Service>(io_service, protocol)
   {
   }
 
@@ -103,7 +105,7 @@ public:
    */
   basic_stream_socket(asio::io_service& io_service,
       const endpoint_type& endpoint)
-    : basic_socket<Service>(io_service, endpoint)
+    : basic_socket<Protocol, Service>(io_service, endpoint)
   {
   }
 
@@ -123,7 +125,7 @@ public:
    */
   basic_stream_socket(asio::io_service& io_service,
       const protocol_type& protocol, const native_type& native_socket)
-    : basic_socket<Service>(io_service, protocol, native_socket)
+    : basic_socket<Protocol, Service>(io_service, protocol, native_socket)
   {
   }
 

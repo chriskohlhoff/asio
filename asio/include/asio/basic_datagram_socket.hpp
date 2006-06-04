@@ -23,6 +23,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/basic_socket.hpp"
+#include "asio/datagram_socket_service.hpp"
 #include "asio/error_handler.hpp"
 
 namespace asio {
@@ -39,19 +40,20 @@ namespace asio {
  * @par Concepts:
  * Async_Object, Error_Source.
  */
-template <typename Service>
+template <typename Protocol,
+    typename Service = datagram_socket_service<Protocol> >
 class basic_datagram_socket
-  : public basic_socket<Service>
+  : public basic_socket<Protocol, Service>
 {
 public:
   /// The native representation of a socket.
   typedef typename Service::native_type native_type;
 
   /// The protocol type.
-  typedef typename Service::protocol_type protocol_type;
+  typedef Protocol protocol_type;
 
   /// The endpoint type.
-  typedef typename Service::endpoint_type endpoint_type;
+  typedef typename Protocol::endpoint endpoint_type;
 
   /// Construct a basic_datagram_socket without opening it.
   /**
@@ -63,7 +65,7 @@ public:
    * socket.
    */
   explicit basic_datagram_socket(asio::io_service& io_service)
-    : basic_socket<Service>(io_service)
+    : basic_socket<Protocol, Service>(io_service)
   {
   }
 
@@ -81,7 +83,7 @@ public:
    */
   basic_datagram_socket(asio::io_service& io_service,
       const protocol_type& protocol)
-    : basic_socket<Service>(io_service, protocol)
+    : basic_socket<Protocol, Service>(io_service, protocol)
   {
   }
 
@@ -103,7 +105,7 @@ public:
    */
   basic_datagram_socket(asio::io_service& io_service,
       const endpoint_type& endpoint)
-    : basic_socket<Service>(io_service, endpoint)
+    : basic_socket<Protocol, Service>(io_service, endpoint)
   {
   }
 
@@ -124,7 +126,7 @@ public:
    */
   basic_datagram_socket(asio::io_service& io_service,
       const protocol_type& protocol, const native_type& native_socket)
-    : basic_socket<Service>(io_service, protocol, native_socket)
+    : basic_socket<Protocol, Service>(io_service, protocol, native_socket)
   {
   }
 

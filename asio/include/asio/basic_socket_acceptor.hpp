@@ -21,6 +21,7 @@
 #include "asio/basic_socket.hpp"
 #include "asio/error.hpp"
 #include "asio/error_handler.hpp"
+#include "asio/socket_acceptor_service.hpp"
 #include "asio/socket_base.hpp"
 
 namespace asio {
@@ -48,7 +49,8 @@ namespace asio {
  * acceptor.listen();
  * @endcode
  */
-template <typename Service>
+template <typename Protocol,
+    typename Service = socket_acceptor_service<Protocol> >
 class basic_socket_acceptor
   : public basic_io_object<Service>,
     public socket_base
@@ -58,10 +60,10 @@ public:
   typedef typename Service::native_type native_type;
 
   /// The protocol type.
-  typedef typename Service::protocol_type protocol_type;
+  typedef Protocol protocol_type;
 
   /// The endpoint type.
-  typedef typename Service::endpoint_type endpoint_type;
+  typedef typename Protocol::endpoint endpoint_type;
 
   /// The type used for reporting errors.
   typedef asio::error error_type;
@@ -612,7 +614,7 @@ public:
    * @endcode
    */
   template <typename Socket_Service>
-  void accept(basic_socket<Socket_Service>& peer)
+  void accept(basic_socket<protocol_type, Socket_Service>& peer)
   {
     this->service.accept(this->implementation, peer, throw_error());
   }
@@ -646,7 +648,8 @@ public:
    * @endcode
    */
   template <typename Socket_Service, typename Error_Handler>
-  void accept(basic_socket<Socket_Service>& peer, Error_Handler error_handler)
+  void accept(basic_socket<protocol_type, Socket_Service>& peer,
+      Error_Handler error_handler)
   {
     this->service.accept(this->implementation, peer, error_handler);
   }
@@ -690,7 +693,8 @@ public:
    * @endcode
    */
   template <typename Socket_Service, typename Handler>
-  void async_accept(basic_socket<Socket_Service>& peer, Handler handler)
+  void async_accept(basic_socket<protocol_type, Socket_Service>& peer,
+      Handler handler)
   {
     this->service.async_accept(this->implementation, peer, handler);
   }
@@ -719,7 +723,7 @@ public:
    * @endcode
    */
   template <typename Socket_Service>
-  void accept_endpoint(basic_socket<Socket_Service>& peer,
+  void accept_endpoint(basic_socket<protocol_type, Socket_Service>& peer,
       endpoint_type& peer_endpoint)
   {
     this->service.accept_endpoint(this->implementation, peer, peer_endpoint,
@@ -761,7 +765,7 @@ public:
    * @endcode
    */
   template <typename Socket_Service, typename Error_Handler>
-  void accept_endpoint(basic_socket<Socket_Service>& peer,
+  void accept_endpoint(basic_socket<protocol_type, Socket_Service>& peer,
       endpoint_type& peer_endpoint, Error_Handler error_handler)
   {
     this->service.accept_endpoint(this->implementation, peer, peer_endpoint,
@@ -795,7 +799,7 @@ public:
    * asio::io_service::post().
    */
   template <typename Socket_Service, typename Handler>
-  void async_accept_endpoint(basic_socket<Socket_Service>& peer,
+  void async_accept_endpoint(basic_socket<protocol_type, Socket_Service>& peer,
       endpoint_type& peer_endpoint, Handler handler)
   {
     this->service.async_accept_endpoint(this->implementation, peer,

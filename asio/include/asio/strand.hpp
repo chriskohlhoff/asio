@@ -18,12 +18,11 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/basic_strand.hpp"
-#include "asio/strand_service.hpp"
 
 namespace asio {
 
 /// Typedef for the typical usage of strand.
-typedef basic_strand<strand_service> strand;
+typedef basic_strand<> strand;
 
 } // namespace asio
 

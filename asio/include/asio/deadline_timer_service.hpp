@@ -22,7 +22,6 @@
 #include "asio/detail/push_options.hpp"
 #include <cstddef>
 #include <boost/config.hpp>
-#include <boost/date_time/posix_time/posix_time_types.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/io_service.hpp"
@@ -35,7 +34,7 @@
 namespace asio {
 
 /// Default service implementation for a timer.
-template <typename Time_Type = boost::posix_time::ptime,
+template <typename Time_Type,
     typename Time_Traits = asio::time_traits<Time_Type> >
 class deadline_timer_service
   : public asio::io_service::service

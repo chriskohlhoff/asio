@@ -18,6 +18,7 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/basic_io_object.hpp"
+#include "asio/strand_service.hpp"
 #include "asio/detail/wrapped_handler.hpp"
 
 namespace asio {
@@ -37,7 +38,7 @@ namespace asio {
  * @par Concepts:
  * Dispatcher.
  */
-template <typename Service>
+template <typename Service = strand_service>
 class basic_strand
   : public basic_io_object<Service>
 {

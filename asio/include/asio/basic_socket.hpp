@@ -36,7 +36,7 @@ namespace asio {
  * @par Concepts:
  * Error_Source, IO_Object.
  */
-template <typename Service>
+template <typename Protocol, typename Service>
 class basic_socket
   : public basic_io_object<Service>,
     public socket_base
@@ -46,16 +46,16 @@ public:
   typedef typename Service::native_type native_type;
 
   /// The protocol type.
-  typedef typename Service::protocol_type protocol_type;
+  typedef Protocol protocol_type;
 
   /// The endpoint type.
-  typedef typename Service::endpoint_type endpoint_type;
+  typedef typename Protocol::endpoint endpoint_type;
 
   /// The type used for reporting errors.
   typedef asio::error error_type;
 
   /// A basic_socket is always the lowest layer.
-  typedef basic_socket<Service> lowest_layer_type;
+  typedef basic_socket<Protocol, Service> lowest_layer_type;
 
   /// Construct a basic_socket without opening it.
   /**

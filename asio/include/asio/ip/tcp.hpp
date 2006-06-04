@@ -20,9 +20,6 @@
 #include "asio/basic_resolver.hpp"
 #include "asio/basic_socket_acceptor.hpp"
 #include "asio/basic_stream_socket.hpp"
-#include "asio/resolver_service.hpp"
-#include "asio/socket_acceptor_service.hpp"
-#include "asio/stream_socket_service.hpp"
 #include "asio/ip/basic_endpoint.hpp"
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
@@ -85,23 +82,14 @@ public:
     return family_;
   }
 
-  /// The service type for TCP sockets.
-  typedef stream_socket_service<tcp> socket_service;
-
   /// The TCP socket type.
-  typedef basic_stream_socket<socket_service> socket;
-
-  /// The service type for TCP acceptors.
-  typedef socket_acceptor_service<tcp> acceptor_service;
+  typedef basic_stream_socket<tcp> socket;
 
   /// The TCP acceptor type.
-  typedef basic_socket_acceptor<acceptor_service> acceptor;
-
-  /// The service type for TCP resolvers.
-  typedef resolver_service<tcp> resolver_service;
+  typedef basic_socket_acceptor<tcp> acceptor;
 
   /// The TCP resolver type.
-  typedef basic_resolver<resolver_service> resolver;
+  typedef basic_resolver<tcp> resolver;
 
   /// Socket option for disabling the Nagle algorithm.
   /**

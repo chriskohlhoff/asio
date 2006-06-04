@@ -17,13 +17,16 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/basic_deadline_timer.hpp"
-#include "asio/deadline_timer_service.hpp"
 
 namespace asio {
 
 /// Typedef for the typical usage of timer.
-typedef basic_deadline_timer<deadline_timer_service<> > deadline_timer;
+typedef basic_deadline_timer<boost::posix_time::ptime> deadline_timer;
 
 } // namespace asio
 

@@ -167,55 +167,36 @@ public:
 
   /// Accept a new connection.
   template <typename Socket_Service, typename Error_Handler>
-  void accept(implementation_type& impl, basic_socket<Socket_Service>& peer,
+  void accept(implementation_type& impl,
+      basic_socket<protocol_type, Socket_Service>& peer,
       Error_Handler error_handler)
   {
-    // Check that the socket uses the same protocol type.
-    protocol_type* p
-      = static_cast<typename basic_socket<Socket_Service>::protocol_type*>(0);
-    (void)(p);
-
     service_impl_.accept(impl, peer, error_handler);
   }
 
   /// Accept a new connection.
   template <typename Socket_Service, typename Error_Handler>
   void accept_endpoint(implementation_type& impl,
-      basic_socket<Socket_Service>& peer, endpoint_type& peer_endpoint,
-      Error_Handler error_handler)
+      basic_socket<protocol_type, Socket_Service>& peer,
+      endpoint_type& peer_endpoint, Error_Handler error_handler)
   {
-    // Check that the socket uses the same protocol type.
-    protocol_type* p
-      = static_cast<typename basic_socket<Socket_Service>::protocol_type*>(0);
-    (void)(p);
-
     service_impl_.accept_endpoint(impl, peer, peer_endpoint, error_handler);
   }
 
   /// Start an asynchronous accept.
   template <typename Socket_Service, typename Handler>
   void async_accept(implementation_type& impl,
-      basic_socket<Socket_Service>& peer, Handler handler)
+      basic_socket<protocol_type, Socket_Service>& peer, Handler handler)
   {
-    // Check that the socket uses the same protocol type.
-    protocol_type* p
-      = static_cast<typename basic_socket<Socket_Service>::protocol_type*>(0);
-    (void)(p);
-
     service_impl_.async_accept(impl, peer, handler);
   }
 
   /// Start an asynchronous accept.
   template <typename Socket_Service, typename Handler>
   void async_accept_endpoint(implementation_type& impl,
-      basic_socket<Socket_Service>& peer, endpoint_type& peer_endpoint,
-      Handler handler)
+      basic_socket<protocol_type, Socket_Service>& peer,
+      endpoint_type& peer_endpoint, Handler handler)
   {
-    // Check that the socket uses the same protocol type.
-    protocol_type* p
-      = static_cast<typename basic_socket<Socket_Service>::protocol_type*>(0);
-    (void)(p);
-
     service_impl_.async_accept_endpoint(impl, peer, peer_endpoint, handler);
   }
 

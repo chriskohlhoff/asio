@@ -20,6 +20,7 @@
 #include "asio/basic_io_object.hpp"
 #include "asio/error.hpp"
 #include "asio/error_handler.hpp"
+#include "asio/resolver_service.hpp"
 
 namespace asio {
 
@@ -35,22 +36,22 @@ namespace asio {
  * @par Concepts:
  * Async_Object, Error_Source.
  */
-template <typename Service>
+template <typename Protocol, typename Service = resolver_service<Protocol> >
 class basic_resolver
   : public basic_io_object<Service>
 {
 public:
   /// The protocol type.
-  typedef typename Service::protocol_type protocol_type;
+  typedef Protocol protocol_type;
 
   /// The endpoint type.
-  typedef typename Service::endpoint_type endpoint_type;
+  typedef typename Protocol::endpoint endpoint_type;
 
   /// The query type.
-  typedef typename Service::query_type query;
+  typedef typename Protocol::resolver_query query;
 
   /// The iterator type.
-  typedef typename Service::iterator_type iterator;
+  typedef typename Protocol::resolver_iterator iterator;
 
   /// The type used for reporting errors.
   typedef asio::error error_type;

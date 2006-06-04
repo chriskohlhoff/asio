@@ -19,8 +19,6 @@
 
 #include "asio/basic_datagram_socket.hpp"
 #include "asio/basic_resolver.hpp"
-#include "asio/datagram_socket_service.hpp"
-#include "asio/resolver_service.hpp"
 #include "asio/ip/basic_endpoint.hpp"
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
@@ -82,17 +80,11 @@ public:
     return family_;
   }
 
-  /// The service type for IPv4 UDP sockets.
-  typedef datagram_socket_service<udp> socket_service;
-
   /// The IPv4 UDP socket type.
-  typedef basic_datagram_socket<socket_service> socket;
-
-  /// The service type for UDP resolvers.
-  typedef resolver_service<udp> resolver_service;
+  typedef basic_datagram_socket<udp> socket;
 
   /// The UDP resolver type.
-  typedef basic_resolver<resolver_service> resolver;
+  typedef basic_resolver<udp> resolver;
 
 private:
   // Construct with a specific family.
