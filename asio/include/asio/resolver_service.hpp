@@ -22,7 +22,7 @@
 
 namespace asio {
 
-/// Default service implementation for a stream socket.
+/// Default service implementation for a resolver.
 template <typename Protocol>
 class resolver_service
   : public asio::io_service::service
@@ -64,13 +64,13 @@ public:
   {
   }
 
-  /// Construct a new stream socket implementation.
+  /// Construct a new resolver implementation.
   void construct(implementation_type& impl)
   {
     service_impl_.construct(impl);
   }
 
-  /// Destroy a stream socket implementation.
+  /// Destroy a resolver implementation.
   void destroy(implementation_type& impl)
   {
     service_impl_.destroy(impl);
