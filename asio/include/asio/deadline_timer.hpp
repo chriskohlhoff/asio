@@ -17,6 +17,8 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/socket_types.hpp" // Must come before posix_time.
+
 #include "asio/detail/push_options.hpp"
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include "asio/detail/pop_options.hpp"
