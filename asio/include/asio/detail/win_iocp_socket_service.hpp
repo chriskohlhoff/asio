@@ -222,8 +222,8 @@ public:
       // socket on the reactor as well to cancel any operations that might be
       // running there.
       reactor_type* reactor = static_cast<reactor_type*>(
-            InterlockedCompareExchangePointer(
-            reinterpret_cast<void**>(&reactor_), 0, 0));
+            interlocked_compare_exchange_pointer(
+              reinterpret_cast<void**>(&reactor_), 0, 0));
       if (reactor)
         reactor->close_descriptor(impl.socket_);
 
@@ -1707,12 +1707,13 @@ public:
   {
     // Check if the reactor was already obtained from the io_service.
     reactor_type* reactor = static_cast<reactor_type*>(
-          InterlockedCompareExchangePointer(
-          reinterpret_cast<void**>(&reactor_), 0, 0));
+          interlocked_compare_exchange_pointer(
+            reinterpret_cast<void**>(&reactor_), 0, 0));
     if (!reactor)
     {
       reactor = &(asio::use_service<reactor_type>(owner()));
-      InterlockedExchangePointer(reinterpret_cast<void**>(&reactor_), reactor);
+      interlocked_exchange_pointer(
+          reinterpret_cast<void**>(&reactor_), reactor);
     }
 
     // Open the socket if it is not already open.
@@ -1772,6 +1773,31 @@ public:
   }
 
 private:
+  // Helper function to provide InterlockedCompareExchangePointer functionality
+  // on very old Platform SDKs.
+  void* interlocked_compare_exchange_pointer(void** dest, void* exch, void* cmp)
+  {
+#if defined(_WIN32_WINNT) && (_WIN32_WINNT <= 0x400) && (_M_IX86)
+    return reinterpret_cast<void*>(InterlockedCompareExchange(
+          reinterpret_cast<LONG*>(dest), reinterpret_cast<LONG>(exch),
+          reinterpret_cast<LONG>(cmp)));
+#else
+    return InterlockedCompareExchangePointer(dest, exch, cmp);
+#endif
+  }
+
+  // Helper function to provide InterlockedExchangePointer functionality on very
+  // old Platform SDKs.
+  void* interlocked_exchange_pointer(void** dest, void* val)
+  {
+#if defined(_WIN32_WINNT) && (_WIN32_WINNT <= 0x400) && (_M_IX86)
+    return reinterpret_cast<void*>(InterlockedExchange(
+          reinterpret_cast<LONG*>(dest), reinterpret_cast<LONG>(val)));
+#else
+    return InterlockedExchangePointer(dest, val);
+#endif
+  }
+
   // The IOCP service used for running asynchronous operations and dispatching
   // handlers.
   win_iocp_io_service& iocp_service_;
