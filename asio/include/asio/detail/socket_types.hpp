@@ -62,10 +62,12 @@
 #  undef _WSPIAPI_H_
 #  undef ASIO_WSPIAPI_H_DEFINED
 # endif // defined(ASIO_WSPIAPI_H_DEFINED)
-# if defined(_MSC_VER) || defined(__BORLANDC__)
-#  pragma comment(lib, "ws2_32.lib")
-#  pragma comment(lib, "mswsock.lib")
-# endif // defined(_MSC_VER) || defined(__BORLANDC__)
+# if !defined(ASIO_NO_DEFAULT_LINKED_LIBS)
+#  if defined(_MSC_VER) || defined(__BORLANDC__)
+#   pragma comment(lib, "ws2_32.lib")
+#   pragma comment(lib, "mswsock.lib")
+#  endif // defined(_MSC_VER) || defined(__BORLANDC__)
+# endif // !defined(ASIO_NO_DEFAULT_LINKED_LIBS)
 # include "asio/detail/old_win_sdk_compat.hpp"
 #else
 # include <sys/ioctl.h>
