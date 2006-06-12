@@ -7,6 +7,7 @@ nobase_include_HEADERS = \
 	asio/basic_socket_acceptor.hpp \
 	asio/basic_strand.hpp \
 	asio/basic_stream_socket.hpp \
+	asio/basic_streambuf.hpp \
 	asio/buffer.hpp \
 	asio/buffered_read_stream.hpp \
 	asio/buffered_read_stream_fwd.hpp \
@@ -23,6 +24,7 @@ nobase_include_HEADERS = \
 	asio/detail/buffered_stream_storage.hpp \
 	asio/detail/call_stack.hpp \
 	asio/detail/consuming_buffers.hpp \
+	asio/detail/const_buffers_iterator.hpp \
 	asio/detail/epoll_reactor.hpp \
 	asio/detail/epoll_reactor_fwd.hpp \
 	asio/detail/event.hpp \
@@ -106,6 +108,7 @@ nobase_include_HEADERS = \
 	asio/is_write_buffered.hpp \
 	asio/placeholders.hpp \
 	asio/read.hpp \
+	asio/read_until.hpp \
 	asio/resolver_service.hpp \
 	asio/socket_acceptor_service.hpp \
 	asio/socket_base.hpp \
@@ -125,6 +128,7 @@ nobase_include_HEADERS = \
 	asio/strand.hpp \
 	asio/strand_service.hpp \
 	asio/stream_socket_service.hpp \
+	asio/streambuf.hpp \
 	asio/system_exception.hpp \
 	asio/thread.hpp \
 	asio/time_traits.hpp \
