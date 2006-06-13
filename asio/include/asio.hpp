@@ -20,6 +20,8 @@
 #include "asio/basic_io_object.hpp"
 #include "asio/basic_resolver.hpp"
 #include "asio/basic_socket_acceptor.hpp"
+#include "asio/basic_socket_iostream.hpp"
+#include "asio/basic_socketbuf.hpp"
 #include "asio/basic_strand.hpp"
 #include "asio/basic_stream_socket.hpp"
 #include "asio/basic_streambuf.hpp"
