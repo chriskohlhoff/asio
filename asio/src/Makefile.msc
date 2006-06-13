@@ -97,6 +97,7 @@ EXAMPLE_EXES = \
 	examples\echo\blocking_udp_echo_client.exe \
 	examples\echo\blocking_udp_echo_server.exe \
 	examples\http\server\http_server.exe \
+	examples\iostreams\daytime_client.exe \
 	examples\multicast\receiver.exe \
 	examples\multicast\sender.exe \
 	examples\timeouts\accept_timeout.exe \
@@ -143,6 +144,9 @@ check: $(UNIT_TEST_EXES)
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
 
 {examples\echo}.cpp{examples\echo}.exe:
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+
+{examples\iostreams}.cpp{examples\iostreams}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
 
 {examples\multicast}.cpp{examples\multicast}.exe:

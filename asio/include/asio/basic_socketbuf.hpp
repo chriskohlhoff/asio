@@ -102,7 +102,7 @@ public:
   /// Construct a basic_socketbuf without establishing a connection.
   basic_socketbuf()
     : basic_socket<Protocol, Service>(
-        boost::base_from_member<io_service>::member)
+        boost::base_from_member<asio::io_service>::member)
   {
     init_buffers();
   }
@@ -110,7 +110,7 @@ public:
   /// Establish a connection to the specified endpoint.
   explicit basic_socketbuf(const endpoint_type& endpoint)
     : basic_socket<Protocol, Service>(
-        boost::base_from_member<io_service>::member)
+        boost::base_from_member<asio::io_service>::member)
   {
     init_buffers();
     this->basic_socket<Protocol, Service>::connect(endpoint);
@@ -222,7 +222,8 @@ private:
   {
     typedef typename Protocol::resolver resolver_type;
     typedef typename Protocol::resolver_iterator iterator_type;
-    resolver_type resolver(boost::base_from_member<io_service>::member);
+    resolver_type resolver(
+        boost::base_from_member<asio::io_service>::member);
     iterator_type iterator = resolver.resolve(query);
     asio::error error(asio::error::host_not_found);
     while (error && iterator != iterator_type())
