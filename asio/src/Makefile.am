@@ -154,7 +154,6 @@ endif
 noinst_HEADERS = \
 	tests/unit/unit_test.hpp \
 	examples/chat/chat_message.hpp \
-	examples/iostreams/socket_stream.hpp \
 	examples/services/basic_logger.hpp \
 	examples/services/logger.hpp \
 	examples/services/logger_service.hpp \
