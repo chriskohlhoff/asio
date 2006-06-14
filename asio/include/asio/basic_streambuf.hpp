@@ -33,15 +33,25 @@
 
 namespace asio {
 
+/// Automatically resizable buffer class based on std::streambuf.
 template <typename Allocator = std::allocator<char> >
 class basic_streambuf
   : public std::streambuf,
     private noncopyable
 {
 public:
+#if defined(GENERATING_DOCUMENTATION)
+  /// The type used to represent the get area as a list of buffers.
+  typedef implementation_defined const_buffers_type;
+
+  /// The type used to represent the put area as a list of buffers.
+  typedef implementation_defined mutable_buffers_type;
+#else
   typedef asio::const_buffer_container_1 const_buffers_type;
   typedef asio::mutable_buffer_container_1 mutable_buffers_type;
+#endif
 
+  /// Construct a buffer with a specified maximum size.
   explicit basic_streambuf(
       std::size_t max_size = (std::numeric_limits<std::size_t>::max)(),
       const Allocator& allocator = Allocator())
@@ -54,6 +64,7 @@ public:
     setp(&buffer_[0], &buffer_[0] + pend);
   }
 
+  /// Move the start of the get area by the specified number of characters.
   void sbump(std::streamsize n)
   {
     while (n > 0)
@@ -63,6 +74,7 @@ public:
     }
   }
 
+  /// Move the start of the put area by the specified number of characters.
   void spbump(std::streamsize n)
   {
     if (pptr() + n > epptr())
@@ -70,6 +82,8 @@ public:
     pbump(n);
   }
 
+  /// Move the start of the put area by one character, returning the character
+  /// that was just moved into the get area.
   int_type spbumpc()
   {
     if (pptr() == epptr())
@@ -82,12 +96,20 @@ public:
     return c;
   }
 
+  /// Return the size of the get area in characters.
+  std::size_t slength() const
+  {
+    return pptr() - gptr();
+  }
+
+  /// Get a list of buffers that represents the get area.
   const_buffers_type sbuffers() const
   {
     return asio::buffer(asio::const_buffer(gptr(),
           (pptr() - gptr()) * sizeof(char_type)));
   }
 
+  /// Get a list of buffers that represents the put area, with the given size.
   mutable_buffers_type spbuffers(std::size_t size)
   {
     reserve(size);

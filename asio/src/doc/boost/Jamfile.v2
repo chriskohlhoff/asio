@@ -1,25 +1,42 @@
-import toolset ;
-toolset.using doxygen ;
-
-doxygen autodoc 
-  :
-    [ glob ../../../boost/asio/*.hpp ]
-    [ glob ../../../boost/asio/ip/*.hpp ]
-    [ glob ../../../boost/asio/ssl/*.hpp ]
-  :
-    <doxygen:param>MULTILINE_CPP_IS_BRIEF=YES
-    <doxygen:param>REPEAT_BRIEF=YES
-    <doxygen:param>EXTRACT_ALL=NO
-    <doxygen:param>EXTRACT_PRIVATE=YES
-    <doxygen:param>EXTRACT_STATIC=YES
-    <doxygen:param>HIDE_UNDOC_MEMBERS=YES
-    <doxygen:param>HIDE_UNDOC_CLASSES=YES
-    <doxygen:param>ENABLE_PREPROCESSING=YES
-    <doxygen:param>MACRO_EXPANSION=YES
-    <doxygen:param>EXPAND_ONLY_PREDEF=YES
-    <doxygen:param>PREDEFINED="GENERATING_DOCUMENTATION \"BOOST_ASIO_SOCKET_ERROR(e)=implementation_defined\" \"BOOST_ASIO_NETDB_ERROR(e)=implementation_defined\" \"BOOST_ASIO_GETADDRINFO_ERROR(e)=implementation_defined\" \"BOOST_ASIO_OS_ERROR(e1,e2)=implementation_defined\" \"implementation_defined=boost::asio::detail::implementation_defined\" \"unspecified=boost::asio::detail::unspecified\""
-  ;
+#import toolset ;
+#toolset.using doxygen ;
+#
+#doxygen autodoc 
+#  :
+#    [ glob ../../../boost/asio/*.hpp ]
+#    [ glob ../../../boost/asio/ip/*.hpp ]
+#    [ glob ../../../boost/asio/ssl/*.hpp ]
+#  :
+#    <doxygen:param>MULTILINE_CPP_IS_BRIEF=YES
+#    <doxygen:param>REPEAT_BRIEF=YES
+#    <doxygen:param>EXTRACT_ALL=NO
+#    <doxygen:param>EXTRACT_PRIVATE=YES
+#    <doxygen:param>EXTRACT_STATIC=YES
+#    <doxygen:param>HIDE_UNDOC_MEMBERS=YES
+#    <doxygen:param>HIDE_UNDOC_CLASSES=YES
+#    <doxygen:param>ENABLE_PREPROCESSING=YES
+#    <doxygen:param>MACRO_EXPANSION=YES
+#    <doxygen:param>EXPAND_ONLY_PREDEF=YES
+#    <doxygen:param>PREDEFINED="GENERATING_DOCUMENTATION \"BOOST_ASIO_SOCKET_ERROR(e)=implementation_defined\" \"BOOST_ASIO_NETDB_ERROR(e)=implementation_defined\" \"BOOST_ASIO_GETADDRINFO_ERROR(e)=implementation_defined\" \"BOOST_ASIO_OS_ERROR(e1,e2)=implementation_defined\" \"implementation_defined=boost::asio::detail::implementation_defined\" \"unspecified=boost::asio::detail::unspecified\""
+#  ;
 
 using quickbook ;
 
-boostbook asio : asio.qbk ;
+xml asio
+  :
+    asio.qbk
+  ;
+
+boostbook standalone
+  :
+    asio
+  :
+    <xsl:param>chunk.section.depth=4
+    <xsl:param>chunk.first.sections=1
+    <xsl:param>toc.section.depth=1
+    <xsl:param>toc.max.depth=1
+    <xsl:param>generate.section.toc.level=1
+  ;
+
+install html : ../../../doc/html/boostbook.css ;
+install ../ : ../../../boost.png ;

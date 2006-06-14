@@ -28,7 +28,7 @@
 namespace asio {
 
 /**
- * @defgroup read asio::read_until
+ * @defgroup read_until asio::read_until
  */
 /*@{*/
 

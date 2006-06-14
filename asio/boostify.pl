@@ -292,12 +292,22 @@ sub copy_docs
         glob("$dir/*.dox"),
         glob("$dir/*.dot"),
         glob("$dir/*.htm"),
-        glob("$dir/*.txt"));
+        glob("$dir/*.qbk"),
+        glob("$dir/*.txt"),
+        glob("$dir/*.v2"));
     foreach my $file (@files)
     {
       my $from = $file;
       my $to = $file;
-      if ($to =~ /src\/doc\/boost/)
+      if ($to =~ /src\/doc\/boost\/.*\.qbk/)
+      {
+        $to =~ s/^src\/doc\/boost\//$boost_dir\/libs\/asio\/doc\//;
+      }
+      elsif ($to =~ /src\/doc\/boost\/.*\.v2/)
+      {
+        $to =~ s/^src\/doc\/boost\//$boost_dir\/libs\/asio\/doc\//;
+      }
+      elsif ($to =~ /src\/doc\/boost/)
       {
         $to =~ s/^src\/doc\/boost\//$boost_dir\/libs\/asio\/doc\/doxygen\//;
       }
@@ -313,8 +323,6 @@ sub copy_docs
     }
   }
 
-  copy_source_file("src/doc/boost/index.html",
-      "$boost_dir/libs/asio/doc/index.html");
   copy_source_file("src/doc/boost/asio.css",
       "$boost_dir/libs/asio/doc/asio.css");
   copy_source_file("src/doc/boost/asio.css",
@@ -339,11 +347,30 @@ sub create_root_html
   print($output "<html>\n");
   print($output "<head>\n");
   print($output "<meta http-equiv=\"refresh\"");
-  print($output " content=\"0; URL=doc/index.html\">\n");
+  print($output " content=\"0; URL=doc/html/index.html\">\n");
   print($output "</head>\n");
   print($output "<body>\n");
   print($output "Automatic redirection failed, please go to\n");
-  print($output "<a href=\"doc/index.html\">doc/index.html</a>\n");
+  print($output "<a href=\"doc/html/index.html\">doc/html/index.html</a>\n");
+  print($output "</body>\n");
+  print($output "</html>\n");
+  close($output);
+}
+
+sub create_doc_html
+{
+  our $boost_dir;
+  mkdir("$boost_dir/libs/asio/doc");
+  open(my $output, ">$boost_dir/libs/asio/doc/index.html")
+    or die("Can't open $boost_dir/libs/asio/doc/index.html for writing");
+  print($output "<html>\n");
+  print($output "<head>\n");
+  print($output "<meta http-equiv=\"refresh\"");
+  print($output " content=\"0; URL=html/index.html\">\n");
+  print($output "</head>\n");
+  print($output "<body>\n");
+  print($output "Automatic redirection failed, please go to\n");
+  print($output "<a href=\"html/index.html\">html/index.html</a>\n");
   print($output "</body>\n");
   print($output "</html>\n");
   close($output);
@@ -377,4 +404,5 @@ copy_unit_tests();
 copy_examples();
 copy_docs();
 create_root_html();
+create_doc_html();
 execute_doxygen();

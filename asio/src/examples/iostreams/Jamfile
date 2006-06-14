@@ -23,3 +23,14 @@ exe daytime_client
     <mingw><*><find-library>mswsock
     $(SOCKET_LIBS)
   ;
+
+exe daytime_server
+  : <lib>@boost/libs/date_time/build/boost_date_time
+    daytime_server.cpp
+  : <include>$(BOOST_ROOT)
+    <include>../../../..
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
+  ;

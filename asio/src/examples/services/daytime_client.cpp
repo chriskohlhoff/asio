@@ -4,8 +4,8 @@
 #include "logger.hpp"
 #include "stream_socket_service.hpp"
 
-typedef asio::basic_stream_socket<
-  services::stream_socket_service<asio::ip::tcp> > debug_stream_socket;
+typedef asio::basic_stream_socket<asio::ip::tcp,
+    services::stream_socket_service<asio::ip::tcp> > debug_stream_socket;
 
 char read_buffer[1024];
 

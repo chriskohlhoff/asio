@@ -69,6 +69,7 @@ Standard exception class.
 \li boost::asio::ip::tcp
 \li boost::asio::ip::tcp::acceptor
 \li boost::asio::ip::tcp::endpoint
+\li boost::asio::ip::tcp::iostream
 \li boost::asio::ip::tcp::resolver
 \li boost::asio::ip::tcp::socket
 \li boost::asio::ip::udp
@@ -81,6 +82,7 @@ Standard exception class.
 \li boost::asio::ssl::context_base
 \li boost::asio::ssl::stream_base
 \li boost::asio::strand
+\li boost::asio::streambuf
 \li boost::asio::system_exception
 
 <H2>Class Templates</H2>
@@ -89,8 +91,11 @@ Standard exception class.
 \li boost::asio::basic_deadline_timer
 \li boost::asio::basic_resolver
 \li boost::asio::basic_socket_acceptor
+\li boost::asio::basic_socket_iostream
+\li boost::asio::basic_socketbuf
 \li boost::asio::basic_strand
 \li boost::asio::basic_stream_socket
+\li boost::asio::basic_streambuf
 \li boost::asio::buffered_read_stream
 \li boost::asio::buffered_write_stream
 \li boost::asio::buffered_stream
@@ -108,9 +113,14 @@ Standard exception class.
 \li \ref buffer
 \li \ref read
 \li \ref async_read
+\li \ref read_until
+\li \ref async_read_until
 \li \ref write
 \li \ref async_write
-\li \ref asio::ip::host_name
+\li \ref boost::asio::ip::host_name
+\li \ref boost::asio::add_service
+\li \ref boost::asio::has_service
+\li \ref boost::asio::use_service
 
 <H2>Type Traits</H2>
 

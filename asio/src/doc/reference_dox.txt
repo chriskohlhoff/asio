@@ -69,6 +69,7 @@ Standard exception class.
 \li asio::ip::tcp
 \li asio::ip::tcp::acceptor
 \li asio::ip::tcp::endpoint
+\li asio::ip::tcp::iostream
 \li asio::ip::tcp::resolver
 \li asio::ip::tcp::socket
 \li asio::ip::udp
@@ -81,6 +82,7 @@ Standard exception class.
 \li asio::ssl::context_base
 \li asio::ssl::stream_base
 \li asio::strand
+\li asio::streambuf
 \li asio::system_exception
 \li asio::thread
 
@@ -90,8 +92,11 @@ Standard exception class.
 \li asio::basic_deadline_timer
 \li asio::basic_resolver
 \li asio::basic_socket_acceptor
+\li asio::basic_socket_iostream
+\li asio::basic_socketbuf
 \li asio::basic_strand
 \li asio::basic_stream_socket
+\li asio::basic_streambuf
 \li asio::buffered_read_stream
 \li asio::buffered_write_stream
 \li asio::buffered_stream
@@ -109,9 +114,14 @@ Standard exception class.
 \li \ref buffer
 \li \ref read
 \li \ref async_read
+\li \ref read_until
+\li \ref async_read_until
 \li \ref write
 \li \ref async_write
 \li \ref asio::ip::host_name
+\li \ref asio::add_service
+\li \ref asio::has_service
+\li \ref asio::use_service
 
 <H2>Type Traits</H2>
 

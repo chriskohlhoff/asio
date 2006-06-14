@@ -1,5 +1,40 @@
 /**
-\mainpage Examples Index
+\mainpage Boost.Asio Examples
+
+\section allocation_section Allocation
+
+This example shows how to customise the allocation of memory associated with
+asynchronous operations.
+
+\li \ref allocation_server_cpp
+
+\section buffers_section Buffers
+
+This example demonstrates how to create reference counted buffers that can be
+used with socket read and write operations.
+
+\li \ref buffers_reference_counted_cpp
+
+\section chat_section Chat
+
+This example implements a chat server and client. The programs use a custom
+protocol with a fixed length message header and variable length message body.
+
+\li \ref chat_chat_message_hpp
+\li \ref chat_chat_client_cpp
+\li \ref chat_chat_server_cpp
+
+\section echo_section Echo
+
+A collection of simple clients and servers, showing the use of both synchronous
+and asynchronous operations.
+
+\li \ref echo_async_tcp_echo_server_cpp
+\li \ref echo_async_udp_echo_server_cpp
+\li \ref echo_blocking_tcp_echo_client_cpp
+\li \ref echo_blocking_tcp_echo_server_cpp
+\li \ref echo_blocking_udp_echo_client_cpp
+\li \ref echo_blocking_udp_echo_server_cpp
 
 \section httpserver_section HTTP Server
 
@@ -9,6 +44,21 @@ outstanding asynchronous operations.
 
 \li \ref http::server "HTTP Server Classes"
 \li \ref httpserver_files
+
+\section iostreams_section Iostreams
+
+Two examples showing how to use boost::asio::ip::tcp::iostream.
+
+\li \ref iostreams_daytime_client_cpp
+\li \ref iostreams_daytime_server_cpp
+
+\section multicast_section Multicast
+
+An example showing the use of multicast to transmit packets to a group of
+subscribers.
+
+\li \ref multicast_receiver_cpp
+\li \ref multicast_sender_cpp
 
 \section serialization_section Serialization
 
@@ -22,14 +72,87 @@ encode and decode structures for transmission over a socket.
 
 This example demonstrates how to:
 
-\li Integrate custom functionality (in this case, for logging) into Boost.Asio's
-io_service. It follows the pattern defined in the \ref designservices design
-note. 
+\li Integrate custom functionality (in this case, for logging) into
+Boost.Asio's io_service. It follows the pattern defined in the \ref
+designservices design note. 
 \li Use a custom service with boost::asio::basic_stream_socket.
 
 \li \ref ::services "Services Classes"
 \li \ref services_files
 
+\section ssl_section SSL
+
+Example client and server programs showing the use of the
+boost::asio::ssl::stream template with asynchronous operations.
+
+\li \ref ssl_client_cpp
+\li \ref ssl_server_cpp
+
+\section timeouts_section Timeouts
+
+A collection of examples showing how to cancel long running asynchronous
+operations after a period of time.
+
+\li \ref timeouts_accept_timeout_cpp
+\li \ref timeouts_connect_timeout_cpp
+\li \ref timeouts_datagram_receive_timeout_cpp
+\li \ref timeouts_stream_receive_timeout_cpp
+
+*/
+
+/**
+\page allocation_server_cpp allocation/server.cpp
+\include allocation/server.cpp
+*/
+
+/**
+\page buffers_reference_counted_cpp buffers/reference_counted.cpp
+\include buffers/reference_counted.cpp
+*/
+
+/**
+\page chat_chat_message_hpp chat/chat_message.hpp
+\include chat/chat_message.hpp
+*/
+
+/**
+\page chat_chat_client_cpp chat/chat_client.cpp
+\include chat/chat_client.cpp
+*/
+
+/**
+\page chat_chat_server_cpp chat/chat_server.cpp
+\include chat/chat_server.cpp
+*/
+
+/**
+\page echo_async_tcp_echo_server_cpp echo/async_tcp_echo_server.cpp
+\include echo/async_tcp_echo_server.cpp
+*/
+
+/**
+\page echo_async_udp_echo_server_cpp echo/async_udp_echo_server.cpp
+\include echo/async_udp_echo_server.cpp
+*/
+
+/**
+\page echo_blocking_tcp_echo_client_cpp echo/blocking_tcp_echo_client.cpp
+\include echo/blocking_tcp_echo_client.cpp
+*/
+
+/**
+\page echo_blocking_tcp_echo_server_cpp echo/blocking_tcp_echo_server.cpp
+\include echo/blocking_tcp_echo_server.cpp
+*/
+
+/**
+\page echo_blocking_udp_echo_client_cpp echo/blocking_udp_echo_client.cpp
+\include echo/blocking_udp_echo_client.cpp
+*/
+
+/**
+\page echo_blocking_udp_echo_server_cpp echo/blocking_udp_echo_server.cpp
+\include echo/blocking_udp_echo_server.cpp
 */
 
 /**
@@ -57,6 +180,26 @@ note.
 */
 
 /**
+\page iostreams_daytime_client_cpp iostreams/daytime_client.cpp
+\include iostreams/daytime_client.cpp
+*/
+
+/**
+\page iostreams_daytime_server_cpp iostreams/daytime_server.cpp
+\include iostreams/daytime_server.cpp
+*/
+
+/**
+\page multicast_receiver_cpp multicast/receiver.cpp
+\include multicast/receiver.cpp
+*/
+
+/**
+\page multicast_sender_cpp multicast/sender.cpp
+\include multicast/sender.cpp
+*/
+
+/**
 \page serialization_files Serialization Files
 
 \li \ref serialization/client.cpp "client.cpp"
@@ -75,4 +218,34 @@ note.
 \li \ref services/logger_service.hpp "logger_service.hpp"
 \li \ref services/stream_socket_service.hpp "stream_socket_service.hpp"
 
+*/
+
+/**
+\page ssl_client_cpp ssl/client.cpp
+\include ssl/client.cpp
+*/
+
+/**
+\page ssl_server_cpp ssl/server.cpp
+\include ssl/server.cpp
+*/
+
+/**
+\page timeouts_accept_timeout_cpp timeouts/accept_timeout.cpp
+\include timeouts/accept_timeout.cpp
+*/
+
+/**
+\page timeouts_connect_timeout_cpp timeouts/connect_timeout.cpp
+\include timeouts/connect_timeout.cpp
+*/
+
+/**
+\page timeouts_datagram_receive_timeout_cpp timeouts/datagram_receive_timeout.cpp
+\include timeouts/datagram_receive_timeout.cpp
+*/
+
+/**
+\page timeouts_stream_receive_timeout_cpp timeouts/stream_receive_timeout.cpp
+\include timeouts/stream_receive_timeout.cpp
 */

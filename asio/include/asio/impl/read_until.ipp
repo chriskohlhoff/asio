@@ -252,8 +252,9 @@ namespace detail
   {
   public:
     read_until_expr_handler(Async_Read_Stream& stream,
-        asio::basic_streambuf<Allocator>& streambuf, const boost::regex& expr,
-        std::size_t next_search_start, Handler handler)
+        asio::basic_streambuf<Allocator>& streambuf,
+        const boost::regex& expr, std::size_t next_search_start,
+        Handler handler)
       : stream_(stream),
         streambuf_(streambuf),
         expr_(expr),

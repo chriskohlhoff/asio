@@ -49,17 +49,17 @@
 //   }
 // This macro should only persist within this file.
 
-#define ASIO_PRIVATE_CTR_DEF( z, n, data )                          \
-  template < BOOST_PP_ENUM_PARAMS(n, typename T) >                  \
-  explicit basic_socketbuf( BOOST_PP_ENUM_BINARY_PARAMS(n, T, x) )  \
-    : basic_socket<Protocol, Service>(                              \
-        boost::base_from_member<io_service>::member)                \
-  {                                                                 \
-    init_buffers();                                                 \
-    typedef typename Protocol::resolver_query resolver_query;       \
-    resolver_query query( BOOST_PP_ENUM_PARAMS(n, x) );             \
-    resolve_and_connect(query);                                     \
-  }                                                                 \
+#define ASIO_PRIVATE_CTR_DEF( z, n, data ) \
+  template < BOOST_PP_ENUM_PARAMS(n, typename T) > \
+  explicit basic_socketbuf( BOOST_PP_ENUM_BINARY_PARAMS(n, T, x) ) \
+    : basic_socket<Protocol, Service>( \
+        boost::base_from_member<io_service>::member) \
+  { \
+    init_buffers(); \
+    typedef typename Protocol::resolver_query resolver_query; \
+    resolver_query query( BOOST_PP_ENUM_PARAMS(n, x) ); \
+    resolve_and_connect(query); \
+  } \
   /**/
 
 // A macro that should expand to:
@@ -74,20 +74,21 @@
 //   }
 // This macro should only persist within this file.
 
-#define ASIO_PRIVATE_CONNECT_DEF( z, n, data )                      \
-  template < BOOST_PP_ENUM_PARAMS(n, typename T) >                  \
-  void connect( BOOST_PP_ENUM_BINARY_PARAMS(n, T, x) )              \
-  {                                                                 \
-    this->basic_socket<Protocol, Service>::close();                 \
-    init_buffers();                                                 \
-    typedef typename Protocol::resolver_query resolver_query;       \
-    resolver_query query( BOOST_PP_ENUM_PARAMS(n, x) );             \
-    resolve_and_connect(query);                                     \
-  }                                                                 \
+#define ASIO_PRIVATE_CONNECT_DEF( z, n, data ) \
+  template < BOOST_PP_ENUM_PARAMS(n, typename T) > \
+  void connect( BOOST_PP_ENUM_BINARY_PARAMS(n, T, x) ) \
+  { \
+    this->basic_socket<Protocol, Service>::close(); \
+    init_buffers(); \
+    typedef typename Protocol::resolver_query resolver_query; \
+    resolver_query query( BOOST_PP_ENUM_PARAMS(n, x) ); \
+    resolve_and_connect(query); \
+  } \
   /**/
 
 namespace asio {
 
+/// Iostream streambuf for a socket.
 template <typename Protocol,
     typename Service = stream_socket_service<Protocol> >
 class basic_socketbuf
@@ -116,7 +117,8 @@ public:
     this->basic_socket<Protocol, Service>::connect(endpoint);
   }
 
-  BOOST_PP_REPEAT_FROM_TO( 1, BOOST_PP_INC(ASIO_SOCKETBUF_MAX_ARITY),
+  BOOST_PP_REPEAT_FROM_TO(
+      1, BOOST_PP_INC(ASIO_SOCKETBUF_MAX_ARITY),
       ASIO_PRIVATE_CTR_DEF, _ )
 
   /// Destructor flushes buffered data.
@@ -133,7 +135,8 @@ public:
     this->basic_socket<Protocol, Service>::connect(endpoint);
   }
 
-  BOOST_PP_REPEAT_FROM_TO( 1, BOOST_PP_INC(ASIO_SOCKETBUF_MAX_ARITY),
+  BOOST_PP_REPEAT_FROM_TO(
+      1, BOOST_PP_INC(ASIO_SOCKETBUF_MAX_ARITY),
       ASIO_PRIVATE_CONNECT_DEF, _ )
 
   /// Close the connection.
@@ -176,7 +179,8 @@ protected:
     {
       if (pptr() == epptr())
       {
-        asio::const_buffer buffer = asio::buffer(pbase(), pptr() - pbase());
+        asio::const_buffer buffer =
+          asio::buffer(pbase(), pptr() - pbase());
         while (asio::buffer_size(buffer) > 0)
         {
           std::size_t bytes_transferred = this->service.send(
@@ -197,7 +201,8 @@ protected:
 
   int sync()
   {
-    asio::const_buffer buffer = asio::buffer(pbase(), pptr() - pbase());
+    asio::const_buffer buffer =
+      asio::buffer(pbase(), pptr() - pbase());
     while (asio::buffer_size(buffer) > 0)
     {
       std::size_t bytes_transferred = this->service.send(

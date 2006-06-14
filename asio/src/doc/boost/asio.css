@@ -1,17 +1,10 @@
-BODY,H1,H2,H3,H4,H5,H6,P,CENTER,TD,TH,UL,DL,DIV {
-	font-family: Geneva, Arial, Helvetica, sans-serif;
+BODY {
+  text-align: left;
+  font-size: 10pt; 
+  line-height: 1.15;
 }
-BODY,TD {
-       font-size: 90%;
-}
-H1 {
-       font-size: 160%;
-}
-H2 {
-       font-size: 120%;
-}
-H3 {
-       font-size: 100%;
+TD {
+  font-size: 10pt; 
 }
 CAPTION { font-weight: bold }
 DIV.sidebar {
@@ -25,7 +18,7 @@ DIV.sidebar {
 	line-height: 140%;
 }
 DIV.sidebar TABLE TR TD {
-  font-size: 80%;
+  font-size: 10pt;
 }
 DIV.sidebar UL {
   margin-top: 10px;
@@ -55,7 +48,7 @@ DIV.copyright {
 	margin: 2px;
   margin-top: 10px;
 	padding: 2px;
-  font-size: 75%;
+  font-size: 10pt;
   text-align: center;
 }
 DIV.nav {
@@ -76,7 +69,7 @@ DIV.navtab {
        padding: 2px;
 }
 TD.navtab {
-       font-size: 70%;
+       font-size: 10pt;
 }
 A.qindex {
        text-decoration: none;
@@ -118,11 +111,10 @@ A.code:link { text-decoration: none; font-weight: normal; color: #0000FF}
 A.code:visited { text-decoration: none; font-weight: normal; color: #0000FF}
 A.codeRef:link { text-decoration: none; font-weight: normal; color: #0000FF}
 A.codeRef:visited { text-decoration: none; font-weight: normal; color: #0000FF}
-A:hover { text-decoration: none; background-color: #f2f2ff }
 DL.el { margin-left: -1cm }
 .fragment {
        font-family: Fixed, monospace;
-       font-size: 95%;
+       font-size: 10pt;
 }
 PRE.fragment {
 	border: 1px solid #CCCCCC;
@@ -146,7 +138,7 @@ TD.md { background-color: #F4F4FB; font-weight: bold; }
 TD.mdPrefix {
        background-color: #F4F4FB;
        color: #606060;
-	font-size: 80%;
+	font-size: 10pt;
 }
 TD.mdname1 { background-color: #F4F4FB; font-weight: bold; color: #602020; }
 TD.mdname {
@@ -161,13 +153,7 @@ DIV.groupHeader {
        margin-bottom: 6px;
        font-weight: bold;
 }
-DIV.groupText { margin-left: 16px; font-style: italic; font-size: 90% }
-BODY {
-	background: white;
-	color: black;
-	margin-right: 20px;
-	margin-left: 20px;
-}
+DIV.groupText { margin-left: 16px; font-style: italic; font-size: 10pt; }
 TD.indexkey {
 	background-color: #e8eef2;
 	font-weight: bold;
@@ -216,7 +202,7 @@ SPAN.charliteral   { color: #008080 }
 }
 .mdescLeft {
        padding: 0px 8px 4px 8px;
-	font-size: 80%;
+	font-size: 10pt;
 	font-style: italic;
 	background-color: #FAFAFA;
 	border-top: 1px none #E0E0E0;
@@ -227,7 +213,7 @@ SPAN.charliteral   { color: #008080 }
 }
 .mdescRight {
        padding: 0px 8px 4px 8px;
-	font-size: 80%;
+	font-size: 10pt;
 	font-style: italic;
 	background-color: #FAFAFA;
 	border-top: 1px none #E0E0E0;
@@ -252,7 +238,7 @@ SPAN.charliteral   { color: #008080 }
 	border-bottom-style: none;
 	border-left-style: none;
 	background-color: #FAFAFA;
-	font-size: 80%;
+	font-size: 10pt;
 }
 .memItemRight {
 	padding: 1px 8px 0px 8px;
@@ -270,7 +256,7 @@ SPAN.charliteral   { color: #008080 }
 	border-bottom-style: none;
 	border-left-style: none;
 	background-color: #FAFAFA;
-	font-size: 80%;
+	font-size: 10pt;
 }
 .memTemplItemLeft {
 	padding: 1px 0px 0px 8px;
@@ -288,7 +274,7 @@ SPAN.charliteral   { color: #008080 }
 	border-bottom-style: none;
 	border-left-style: none;
 	background-color: #FAFAFA;
-	font-size: 80%;
+	font-size: 10pt;
 }
 .memTemplItemRight {
 	padding: 1px 8px 0px 8px;
@@ -306,7 +292,7 @@ SPAN.charliteral   { color: #008080 }
 	border-bottom-style: none;
 	border-left-style: none;
 	background-color: #FAFAFA;
-	font-size: 80%;
+	font-size: 10pt;
 }
 .memTemplParams {
 	padding: 1px 0px 0px 8px;
@@ -325,7 +311,7 @@ SPAN.charliteral   { color: #008080 }
 	border-left-style: none;
        color: #606060;
 	background-color: #FAFAFA;
-	font-size: 80%;
+	font-size: 10pt;
 }
 .search     { color: #003399;
               font-weight: bold;
@@ -334,18 +320,12 @@ FORM.search {
               margin-bottom: 0px;
               margin-top: 0px;
 }
-INPUT.search { font-size: 75%;
+INPUT.search { font-size: 10pt;
                color: #000080;
                font-weight: normal;
                background-color: #e8eef2;
 }
-TD.tiny      { font-size: 75%;
-}
-a {
-	color: #1A41A8;
-}
-a:visited {
-	color: #2A3798;
+TD.tiny      { font-size: 10pt;
 }
 .dirtab { padding: 4px;
           border-collapse: collapse;
@@ -354,8 +334,3 @@ a:visited {
 TH.dirtab { background: #e8eef2;
             font-weight: bold;
 }
-HR { height: 1px;
-     border: none;
-     border-top: 1px solid black;
-}
-
