@@ -2,6 +2,8 @@
 #include <string>
 #include <asio.hpp>
 
+using asio::ip::tcp;
+
 int main(int argc, char* argv[])
 {
   try
@@ -12,7 +14,7 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::ip::tcp::iostream s(argv[1], "daytime");
+    tcp::iostream s(argv[1], "daytime");
     std::string line;
     std::getline(s, line);
     std::cout << line << std::endl;

@@ -98,6 +98,7 @@ EXAMPLE_EXES = \
 	examples\echo\blocking_udp_echo_server.exe \
 	examples\http\server\http_server.exe \
 	examples\iostreams\daytime_client.exe \
+	examples\iostreams\daytime_server.exe \
 	examples\multicast\receiver.exe \
 	examples\multicast\sender.exe \
 	examples\timeouts\accept_timeout.exe \

@@ -59,6 +59,7 @@ noinst_PROGRAMS = \
 	examples/echo/blocking_udp_echo_server \
 	examples/http/server/http_server \
 	examples/iostreams/daytime_client \
+	examples/iostreams/daytime_server \
 	examples/multicast/receiver \
 	examples/multicast/sender \
 	examples/services/daytime_client \
@@ -231,6 +232,7 @@ examples_http_server_http_server_SOURCES += \
 	examples/http/server/posix_main.cpp
 endif
 examples_iostreams_daytime_client_SOURCES = examples/iostreams/daytime_client.cpp
+examples_iostreams_daytime_server_SOURCES = examples/iostreams/daytime_server.cpp
 examples_multicast_receiver_SOURCES = examples/multicast/receiver.cpp
 examples_multicast_sender_SOURCES = examples/multicast/sender.cpp
 examples_services_daytime_client_SOURCES = examples/services/daytime_client.cpp
