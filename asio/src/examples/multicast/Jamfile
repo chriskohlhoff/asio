@@ -14,10 +14,10 @@ if $(UNIX)
 }
 
 exe receiver
-  : <lib>@boost/libs/date_time/build/boost_date_time
-    receiver.cpp
+  : receiver.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../..
+    <define>BOOST_ALL_NO_LIB=1
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
@@ -25,10 +25,10 @@ exe receiver
   ;
 
 exe sender
-  : <lib>@boost/libs/date_time/build/boost_date_time
-    sender.cpp
+  : sender.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../..
+    <define>BOOST_ALL_NO_LIB=1
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock

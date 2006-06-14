@@ -14,10 +14,10 @@ if $(UNIX)
 }
 
 exe daytime_client
-  : <lib>@boost/libs/date_time/build/boost_date_time
-    daytime_client.cpp
+  : daytime_client.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../..
+    <define>BOOST_ALL_NO_LIB=1
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
@@ -25,10 +25,10 @@ exe daytime_client
   ;
 
 exe daytime_server
-  : <lib>@boost/libs/date_time/build/boost_date_time
-    daytime_server.cpp
+  : daytime_server.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../..
+    <define>BOOST_ALL_NO_LIB=1
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock

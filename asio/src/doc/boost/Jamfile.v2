@@ -38,5 +38,5 @@ boostbook standalone
     <xsl:param>generate.section.toc.level=1
   ;
 
-install html : ../../../doc/html/boostbook.css ;
-install ../ : ../../../boost.png ;
+install html : /boost//doc/html/boostbook.css ;
+install ../ : /boost//boost.png ;

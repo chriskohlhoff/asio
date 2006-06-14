@@ -14,8 +14,7 @@ if $(UNIX)
 }
 
 exe http_server
-  : <lib>@boost/libs/date_time/build/boost_date_time
-    <lib>@boost/libs/thread/build/boost_thread
+  : <lib>@boost/libs/thread/build/boost_thread
     connection.cpp
     connection_manager.cpp
     mime_types.cpp
@@ -27,6 +26,7 @@ exe http_server
     win_main.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../../..
+    <define>BOOST_ALL_NO_LIB=1
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock

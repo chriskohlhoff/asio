@@ -15,10 +15,10 @@ if $(UNIX)
 
 exe client
   : <lib>@boost/libs/serialization/build/boost_serialization
-    <lib>@boost/libs/date_time/build/boost_date_time
     client.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../..
+    <define>BOOST_ALL_NO_LIB=1
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock
@@ -27,10 +27,10 @@ exe client
 
 exe server
   : <lib>@boost/libs/serialization/build/boost_serialization
-    <lib>@boost/libs/date_time/build/boost_date_time
     server.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../..
+    <define>BOOST_ALL_NO_LIB=1
     <threading>multi
     <mingw><*><find-library>ws2_32
     <mingw><*><find-library>mswsock

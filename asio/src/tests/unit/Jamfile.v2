@@ -22,6 +22,7 @@ project
   : requirements
     <library>/boost/date_time//boost_date_time
     <library>/boost/thread//boost_thread
+    <define>BOOST_ALL_NO_LIB=1
     <threading>multi
     <os>SOLARIS:<library>socket
     <os>SOLARIS:<library>nsl
