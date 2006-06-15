@@ -91,6 +91,7 @@ nobase_include_HEADERS = \
 	asio/handler_alloc_hook.hpp \
 	asio/impl/io_service.ipp \
 	asio/impl/read.ipp \
+	asio/impl/read_until.ipp \
 	asio/impl/write.ipp \
 	asio/io_service.hpp \
 	asio/ip/address.hpp \
