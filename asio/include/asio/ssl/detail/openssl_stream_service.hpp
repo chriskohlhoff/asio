@@ -203,14 +203,25 @@ public:
   void handshake(impl_type& impl, Stream& next_layer,
       stream_base::handshake_type type, Error_Handler error_handler)
   {
-    openssl_operation<Stream> op(
-      type == stream_base::client ?
-        &ssl_wrap<mutex_type>::SSL_connect:
-        &ssl_wrap<mutex_type>::SSL_accept,
-      next_layer,
-      impl->ssl,
-      impl->ext_bio);
-    op.start();
+    try
+    {
+      openssl_operation<Stream> op(
+        type == stream_base::client ?
+          &ssl_wrap<mutex_type>::SSL_connect:
+          &ssl_wrap<mutex_type>::SSL_accept,
+        next_layer,
+        impl->ssl,
+        impl->ext_bio);
+      op.start();
+    }
+    catch (asio::error& e)
+    {
+      error_handler(e);
+      return;
+    }
+
+    asio::error e;
+    error_handler(e);
   }
 
   // Start an asynchronous SSL handshake.
@@ -249,12 +260,23 @@ public:
   void shutdown(impl_type& impl, Stream& next_layer,
       Error_Handler error_handler)
   {
-    openssl_operation<Stream> op(
-      &ssl_wrap<mutex_type>::SSL_shutdown,
-      next_layer,
-      impl->ssl,
-      impl->ext_bio);
-    op.start();
+    try
+    {
+      openssl_operation<Stream> op(
+        &ssl_wrap<mutex_type>::SSL_shutdown,
+        next_layer,
+        impl->ssl,
+        impl->ext_bio);
+      op.start();
+    }
+    catch (asio::error& e)
+    {
+      error_handler(e);
+      return;
+    }
+
+    asio::error e;
+    error_handler(e);
   }
 
   // Asynchronously shut down SSL on the stream.
@@ -290,17 +312,30 @@ public:
   std::size_t write_some(impl_type& impl, Stream& next_layer,
       const Const_Buffers& buffers, Error_Handler error_handler)
   {
-    boost::function<int (SSL*)> send_func =
-      boost::bind(&::SSL_write, boost::arg<1>(),  
-          asio::buffer_cast<const void*>(*buffers.begin()),
-          static_cast<int>(asio::buffer_size(*buffers.begin())));
-    openssl_operation<Stream> op(
-      send_func,
-      next_layer,
-      impl->ssl,
-      impl->ext_bio
-    );
-    return static_cast<size_t>(op.start());
+    size_t bytes_transferred = 0;
+    try
+    {
+      boost::function<int (SSL*)> send_func =
+        boost::bind(&::SSL_write, boost::arg<1>(),  
+            asio::buffer_cast<const void*>(*buffers.begin()),
+            static_cast<int>(asio::buffer_size(*buffers.begin())));
+      openssl_operation<Stream> op(
+        send_func,
+        next_layer,
+        impl->ssl,
+        impl->ext_bio
+      );
+      bytes_transferred = static_cast<size_t>(op.start());
+    }
+    catch (asio::error& e)
+    {
+      error_handler(e);
+      return 0;
+    }
+
+    asio::error e;
+    error_handler(e);
+    return bytes_transferred;
   }
 
   // Start an asynchronous write.
@@ -341,17 +376,30 @@ public:
   std::size_t read_some(impl_type& impl, Stream& next_layer,
       const Mutable_Buffers& buffers, Error_Handler error_handler)
   {
-    boost::function<int (SSL*)> recv_func =
-      boost::bind(&::SSL_read, boost::arg<1>(),
-          asio::buffer_cast<void*>(*buffers.begin()),
-          asio::buffer_size(*buffers.begin()));
-    openssl_operation<Stream> op(recv_func,
-      next_layer,
-      impl->ssl,
-      impl->ext_bio
-    );
+    size_t bytes_transferred = 0;
+    try
+    {
+      boost::function<int (SSL*)> recv_func =
+        boost::bind(&::SSL_read, boost::arg<1>(),
+            asio::buffer_cast<void*>(*buffers.begin()),
+            asio::buffer_size(*buffers.begin()));
+      openssl_operation<Stream> op(recv_func,
+        next_layer,
+        impl->ssl,
+        impl->ext_bio
+      );
 
-    return static_cast<size_t>(op.start());
+      bytes_transferred = static_cast<size_t>(op.start());
+    }
+    catch (asio::error& e)
+    {
+      error_handler(e);
+      return 0;
+    }
+
+    asio::error e;
+    error_handler(e);
+    return bytes_transferred;
   }
 
   // Start an asynchronous read.
@@ -392,6 +440,8 @@ public:
   std::size_t peek(impl_type& impl, Stream& next_layer,
       const Mutable_Buffers& buffers, Error_Handler error_handler)
   {
+    asio::error e;
+    error_handler(e);
     return 0;
   }
 
@@ -400,8 +450,11 @@ public:
   std::size_t in_avail(impl_type& impl, Stream& next_layer,
       Error_Handler error_handler)
   {
+    asio::error e;
+    error_handler(e);
     return 0;
   }
+
 private:  
   typedef asio::detail::mutex mutex_type;
   
