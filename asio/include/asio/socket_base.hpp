@@ -313,7 +313,7 @@ public:
    * @par Examples:
    * Setting the option:
    * @code
-   * asio::socket_acceptor acceptor(io_service); 
+   * asio::ip::tcp::acceptor acceptor(io_service); 
    * ...
    * asio::socket_base::reuse_address option(true);
    * acceptor.set_option(option);
@@ -322,7 +322,7 @@ public:
    * @par
    * Getting the current option value:
    * @code
-   * asio::socket_acceptor acceptor(io_service); 
+   * asio::ip::tcp::acceptor acceptor(io_service); 
    * ...
    * asio::socket_base::reuse_address option;
    * acceptor.get_option(option);

@@ -41,10 +41,10 @@ namespace asio {
  * @par Example:
  * Opening a socket acceptor with the SO_REUSEADDR option enabled:
  * @code
- * asio::ipv4::tcp::acceptor acceptor(io_service);
- * asio::ipv4::tcp::endpoint endpoint(port);
+ * asio::ip::tcp::acceptor acceptor(io_service);
+ * asio::ip::tcp::endpoint endpoint(asio::ip::tcp::v4(), port);
  * acceptor.open(endpoint.protocol());
- * acceptor.set_option(asio::ipv4::tcp::acceptor::reuse_address(true));
+ * acceptor.set_option(asio::ip::tcp::acceptor::reuse_address(true));
  * acceptor.bind(endpoint);
  * acceptor.listen();
  * @endcode
@@ -121,7 +121,7 @@ public:
    *
    * @note This constructor is equivalent to the following code:
    * @code
-   * asio::ipv4::tcp::acceptor acceptor(io_service);
+   * basic_socket_acceptor<Protocol> acceptor(io_service);
    * acceptor.open(endpoint.protocol());
    * acceptor.bind(endpoint);
    * acceptor.listen(listen_backlog);
@@ -169,8 +169,8 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::acceptor acceptor(io_service);
-   * acceptor.open(asio::ipv4::tcp());
+   * asio::ip::tcp::acceptor acceptor(io_service);
+   * acceptor.open(asio::ip::tcp::v4());
    * @endcode
    */
   void open(const protocol_type& protocol = protocol_type())
@@ -194,9 +194,9 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::acceptor acceptor(io_service);
+   * asio::ip::tcp::acceptor acceptor(io_service);
    * asio::error error;
-   * acceptor.open(asio::ipv4::tcp(), asio::assign_error(error));
+   * acceptor.open(asio::ip::tcp::v4(), asio::assign_error(error));
    * if (error)
    * {
    *   // An error occurred.
@@ -260,9 +260,9 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::acceptor acceptor(io_service);
-   * acceptor.open(asio::ipv4::tcp());
-   * acceptor.bind(asio::ipv4::tcp::endpoint(12345));
+   * asio::ip::tcp::acceptor acceptor(io_service);
+   * acceptor.open(asio::ip::tcp::v4());
+   * acceptor.bind(asio::ip::tcp::endpoint(12345));
    * @endcode
    */
   void bind(const endpoint_type& endpoint)
@@ -287,10 +287,10 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::acceptor acceptor(io_service);
-   * acceptor.open(asio::ipv4::tcp());
+   * asio::ip::tcp::acceptor acceptor(io_service);
+   * acceptor.open(asio::ip::tcp::v4());
    * asio::error error;
-   * acceptor.bind(asio::ipv4::tcp::endpoint(12345),
+   * acceptor.bind(asio::ip::tcp::endpoint(12345),
    *     asio::assign_error(error));
    * if (error)
    * {
@@ -336,7 +336,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::acceptor acceptor(io_service);
+   * asio::ip::tcp::acceptor acceptor(io_service);
    * ...
    * asio::error error;
    * acceptor.listen(0, asio::assign_error(error));
@@ -384,7 +384,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::acceptor acceptor(io_service);
+   * asio::ip::tcp::acceptor acceptor(io_service);
    * ...
    * asio::error error;
    * acceptor.close(asio::assign_error(error));
@@ -426,9 +426,9 @@ public:
    * @par Example:
    * Setting the SOL_SOCKET/SO_REUSEADDR option:
    * @code
-   * asio::ipv4::tcp::acceptor acceptor(io_service);
+   * asio::ip::tcp::acceptor acceptor(io_service);
    * ...
-   * asio::ipv4::tcp::acceptor::reuse_address option(true);
+   * asio::ip::tcp::acceptor::reuse_address option(true);
    * acceptor.set_option(option);
    * @endcode
    */
@@ -458,9 +458,9 @@ public:
    * @par Example:
    * Setting the SOL_SOCKET/SO_REUSEADDR option:
    * @code
-   * asio::ipv4::tcp::acceptor acceptor(io_service);
+   * asio::ip::tcp::acceptor acceptor(io_service);
    * ...
-   * asio::ipv4::tcp::acceptor::reuse_address option(true);
+   * asio::ip::tcp::acceptor::reuse_address option(true);
    * asio::error error;
    * acceptor.set_option(option, asio::assign_error(error));
    * if (error)
@@ -490,9 +490,9 @@ public:
    * @par Example:
    * Getting the value of the SOL_SOCKET/SO_REUSEADDR option:
    * @code
-   * asio::ipv4::tcp::acceptor acceptor(io_service);
+   * asio::ip::tcp::acceptor acceptor(io_service);
    * ...
-   * asio::ipv4::tcp::acceptor::reuse_address option;
+   * asio::ip::tcp::acceptor::reuse_address option;
    * acceptor.get_option(option);
    * bool is_set = option.get();
    * @endcode
@@ -523,9 +523,9 @@ public:
    * @par Example:
    * Getting the value of the SOL_SOCKET/SO_REUSEADDR option:
    * @code
-   * asio::ipv4::tcp::acceptor acceptor(io_service);
+   * asio::ip::tcp::acceptor acceptor(io_service);
    * ...
-   * asio::ipv4::tcp::acceptor::reuse_address option;
+   * asio::ip::tcp::acceptor::reuse_address option;
    * asio::error error;
    * acceptor.get_option(option, asio::assign_error(error));
    * if (error)
@@ -551,9 +551,9 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::acceptor acceptor(io_service);
+   * asio::ip::tcp::acceptor acceptor(io_service);
    * ...
-   * asio::ipv4::tcp::endpoint endpoint = acceptor.local_endpoint();
+   * asio::ip::tcp::endpoint endpoint = acceptor.local_endpoint();
    * @endcode
    */
   endpoint_type local_endpoint() const
@@ -578,10 +578,10 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::acceptor acceptor(io_service);
+   * asio::ip::tcp::acceptor acceptor(io_service);
    * ...
    * asio::error error;
-   * asio::ipv4::tcp::endpoint endpoint
+   * asio::ip::tcp::endpoint endpoint
    *   = acceptor.local_endpoint(asio::assign_error(error));
    * if (error)
    * {
@@ -607,9 +607,9 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::acceptor acceptor(io_service);
+   * asio::ip::tcp::acceptor acceptor(io_service);
    * ...
-   * asio::stream_socket socket;
+   * asio::ip::tcp::socket socket(io_service);
    * acceptor.accept(socket);
    * @endcode
    */
@@ -636,9 +636,9 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::acceptor acceptor(io_service);
+   * asio::ip::tcp::acceptor acceptor(io_service);
    * ...
-   * asio::stream_socket socket;
+   * asio::ip::tcp::soocket socket(io_service);
    * asio::error error;
    * acceptor.accept(socket, asio::assign_error(error));
    * if (error)
@@ -686,9 +686,9 @@ public:
    *
    * ...
    *
-   * asio::ipv4::tcp::acceptor acceptor(io_service);
+   * asio::ip::tcp::acceptor acceptor(io_service);
    * ...
-   * asio::stream_socket socket;
+   * asio::ip::tcp::socket socket(io_service);
    * acceptor.async_accept(socket, accept_handler);
    * @endcode
    */
@@ -715,10 +715,10 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::acceptor acceptor(io_service);
+   * asio::ip::tcp::acceptor acceptor(io_service);
    * ...
-   * asio::stream_socket socket;
-   * asio::ipv4::tcp::endpoint endpoint;
+   * asio::ip::tcp::socket socket(io_service);
+   * asio::ip::tcp::endpoint endpoint;
    * acceptor.accept_endpoint(socket, endpoint);
    * @endcode
    */
@@ -751,10 +751,10 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::acceptor acceptor(io_service);
+   * asio::ip::tcp::acceptor acceptor(io_service);
    * ...
-   * asio::stream_socket socket;
-   * asio::ipv4::tcp::endpoint endpoint;
+   * asio::ip::tcp::socket socket(io_service);
+   * asio::ip::tcp::endpoint endpoint;
    * asio::error error;
    * acceptor.accept_endpoint(socket, endpoint,
    *     asio::assign_error(error));

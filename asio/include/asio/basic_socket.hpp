@@ -156,8 +156,8 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::socket socket(io_service);
-   * socket.open(asio::ipv4::tcp());
+   * asio::ip::tcp::socket socket(io_service);
+   * socket.open(asio::ip::tcp::v4());
    * @endcode
    */
   void open(const protocol_type& protocol = protocol_type())
@@ -180,9 +180,9 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::socket socket(io_service);
+   * asio::ip::tcp::socket socket(io_service);
    * asio::error error;
-   * socket.open(asio::ipv4::tcp(), asio::assign_error(error));
+   * socket.open(asio::ip::tcp::v4(), asio::assign_error(error));
    * if (error)
    * {
    *   // An error occurred.
@@ -262,7 +262,7 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::socket socket(io_service);
+   * asio::ip::tcp::socket socket(io_service);
    * ...
    * asio::error error;
    * socket.close(asio::assign_error(error));
@@ -301,9 +301,10 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::socket socket(io_service);
-   * socket.open(asio::ipv4::tcp());
-   * socket.bind(asio::ipv4::tcp::endpoint(12345));
+   * asio::ip::tcp::socket socket(io_service);
+   * socket.open(asio::ip::tcp::v4());
+   * socket.bind(asio::ip::tcp::endpoint(
+   *       asio::ip::tcp::v4(), 12345));
    * @endcode
    */
   void bind(const endpoint_type& endpoint)
@@ -328,10 +329,11 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::socket socket(io_service);
-   * socket.open(asio::ipv4::tcp());
+   * asio::ip::tcp::socket socket(io_service);
+   * socket.open(asio::ip::tcp::v4());
    * asio::error error;
-   * socket.bind(asio::ipv4::tcp::endpoint(12345),
+   * socket.bind(asio::ip::tcp::endpoint(
+   *       asio::ip::tcp::v4(), 12345),
    *     asio::assign_error(error));
    * if (error)
    * {
@@ -362,8 +364,9 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::socket socket(io_service);
-   * asio::ipv4::tcp::endpoint endpoint(12345, "1.2.3.4");
+   * asio::ip::tcp::socket socket(io_service);
+   * asio::ip::tcp::endpoint endpoint(
+   *     asio::ip::address::from_string("1.2.3.4"), 12345);
    * socket.connect(endpoint);
    * @endcode
    */
@@ -394,8 +397,9 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::socket socket(io_service);
-   * asio::ipv4::tcp::endpoint endpoint(12345, "1.2.3.4");
+   * asio::ip::tcp::socket socket(io_service);
+   * asio::ip::tcp::endpoint endpoint(
+   *     asio::ip::address::from_string("1.2.3.4"), 12345);
    * asio::error error;
    * socket.connect(endpoint, asio::assign_error(error));
    * if (error)
@@ -445,8 +449,9 @@ public:
    *
    * ...
    *
-   * asio::ipv4::tcp::socket socket(io_service);
-   * asio::ipv4::tcp::endpoint endpoint(12345, "1.2.3.4");
+   * asio::ip::tcp::socket socket(io_service);
+   * asio::ip::tcp::endpoint endpoint(
+   *     asio::ip::address::from_string("1.2.3.4"), 12345);
    * socket.async_connect(endpoint, connect_handler);
    * @endcode
    */
@@ -474,19 +479,19 @@ public:
    * asio::socket_base::reuse_address @n
    * asio::socket_base::send_buffer_size @n
    * asio::socket_base::send_low_watermark @n
-   * asio::ipv4::multicast::add_membership @n
-   * asio::ipv4::multicast::drop_membership @n
-   * asio::ipv4::multicast::enable_loopback @n
-   * asio::ipv4::multicast::outbound_interface @n
-   * asio::ipv4::multicast::time_to_live @n
-   * asio::ipv4::tcp::no_delay
+   * asio::ip::multicast::join_group @n
+   * asio::ip::multicast::leave_group @n
+   * asio::ip::multicast::enable_loopback @n
+   * asio::ip::multicast::outbound_interface @n
+   * asio::ip::multicast::hops @n
+   * asio::ip::tcp::no_delay
    *
    * @par Example:
    * Setting the IPPROTO_TCP/TCP_NODELAY option:
    * @code
-   * asio::ipv4::tcp::socket socket(io_service);
+   * asio::ip::tcp::socket socket(io_service);
    * ...
-   * asio::ipv4::tcp::no_delay option(true);
+   * asio::ip::tcp::no_delay option(true);
    * socket.set_option(option);
    * @endcode
    */
@@ -519,19 +524,19 @@ public:
    * asio::socket_base::reuse_address @n
    * asio::socket_base::send_buffer_size @n
    * asio::socket_base::send_low_watermark @n
-   * asio::ipv4::multicast::add_membership @n
-   * asio::ipv4::multicast::drop_membership @n
-   * asio::ipv4::multicast::enable_loopback @n
-   * asio::ipv4::multicast::outbound_interface @n
-   * asio::ipv4::multicast::time_to_live @n
-   * asio::ipv4::tcp::no_delay
+   * asio::ip::multicast::join_group @n
+   * asio::ip::multicast::leave_group @n
+   * asio::ip::multicast::enable_loopback @n
+   * asio::ip::multicast::outbound_interface @n
+   * asio::ip::multicast::hops @n
+   * asio::ip::tcp::no_delay
    *
    * @par Example:
    * Setting the IPPROTO_TCP/TCP_NODELAY option:
    * @code
-   * asio::ipv4::tcp::socket socket(io_service);
+   * asio::ip::tcp::socket socket(io_service);
    * ...
-   * asio::ipv4::tcp::no_delay option(true);
+   * asio::ip::tcp::no_delay option(true);
    * asio::error error;
    * socket.set_option(option, asio::assign_error(error));
    * if (error)
@@ -564,19 +569,19 @@ public:
    * asio::socket_base::reuse_address @n
    * asio::socket_base::send_buffer_size @n
    * asio::socket_base::send_low_watermark @n
-   * asio::ipv4::multicast::add_membership @n
-   * asio::ipv4::multicast::drop_membership @n
-   * asio::ipv4::multicast::enable_loopback @n
-   * asio::ipv4::multicast::outbound_interface @n
-   * asio::ipv4::multicast::time_to_live @n
-   * asio::ipv4::tcp::no_delay
+   * asio::ip::multicast::join_group @n
+   * asio::ip::multicast::leave_group @n
+   * asio::ip::multicast::enable_loopback @n
+   * asio::ip::multicast::outbound_interface @n
+   * asio::ip::multicast::hops @n
+   * asio::ip::tcp::no_delay
    *
    * @par Example:
    * Getting the value of the SOL_SOCKET/SO_KEEPALIVE option:
    * @code
-   * asio::ipv4::tcp::socket socket(io_service);
+   * asio::ip::tcp::socket socket(io_service);
    * ...
-   * asio::ipv4::tcp::socket::keep_alive option;
+   * asio::ip::tcp::socket::keep_alive option;
    * socket.get_option(option);
    * bool is_set = option.get();
    * @endcode
@@ -610,19 +615,19 @@ public:
    * asio::socket_base::reuse_address @n
    * asio::socket_base::send_buffer_size @n
    * asio::socket_base::send_low_watermark @n
-   * asio::ipv4::multicast::add_membership @n
-   * asio::ipv4::multicast::drop_membership @n
-   * asio::ipv4::multicast::enable_loopback @n
-   * asio::ipv4::multicast::outbound_interface @n
-   * asio::ipv4::multicast::time_to_live @n
-   * asio::ipv4::tcp::no_delay
+   * asio::ip::multicast::join_group @n
+   * asio::ip::multicast::leave_group @n
+   * asio::ip::multicast::enable_loopback @n
+   * asio::ip::multicast::outbound_interface @n
+   * asio::ip::multicast::hops @n
+   * asio::ip::tcp::no_delay
    *
    * @par Example:
    * Getting the value of the SOL_SOCKET/SO_KEEPALIVE option:
    * @code
-   * asio::ipv4::tcp::socket socket(io_service);
+   * asio::ip::tcp::socket socket(io_service);
    * ...
-   * asio::ipv4::tcp::socket::keep_alive option;
+   * asio::ip::tcp::socket::keep_alive option;
    * asio::error error;
    * socket.get_option(option, asio::assign_error(error));
    * if (error)
@@ -653,9 +658,9 @@ public:
    * @par Example:
    * Getting the number of bytes ready to read:
    * @code
-   * asio::ipv4::tcp::socket socket(io_service);
+   * asio::ip::tcp::socket socket(io_service);
    * ...
-   * asio::ipv4::tcp::socket::bytes_readable command;
+   * asio::ip::tcp::socket::bytes_readable command;
    * socket.io_control(command);
    * std::size_t bytes_readable = command.get();
    * @endcode
@@ -686,9 +691,9 @@ public:
    * @par Example:
    * Getting the number of bytes ready to read:
    * @code
-   * asio::ipv4::tcp::socket socket(io_service);
+   * asio::ip::tcp::socket socket(io_service);
    * ...
-   * asio::ipv4::tcp::socket::bytes_readable command;
+   * asio::ip::tcp::socket::bytes_readable command;
    * asio::error error;
    * socket.io_control(command, asio::assign_error(error));
    * if (error)
@@ -714,9 +719,9 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::socket socket(io_service);
+   * asio::ip::tcp::socket socket(io_service);
    * ...
-   * asio::ipv4::tcp::endpoint endpoint = socket.local_endpoint();
+   * asio::ip::tcp::endpoint endpoint = socket.local_endpoint();
    * @endcode
    */
   endpoint_type local_endpoint() const
@@ -741,10 +746,10 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::socket socket(io_service);
+   * asio::ip::tcp::socket socket(io_service);
    * ...
    * asio::error error;
-   * asio::ipv4::tcp::endpoint endpoint
+   * asio::ip::tcp::endpoint endpoint
    *   = socket.local_endpoint(asio::assign_error(error));
    * if (error)
    * {
@@ -768,9 +773,9 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::socket socket(io_service);
+   * asio::ip::tcp::socket socket(io_service);
    * ...
-   * asio::ipv4::tcp::endpoint endpoint = socket.remote_endpoint();
+   * asio::ip::tcp::endpoint endpoint = socket.remote_endpoint();
    * @endcode
    */
   endpoint_type remote_endpoint() const
@@ -795,10 +800,10 @@ public:
    *
    * @par Example:
    * @code
-   * asio::ipv4::tcp::socket socket(io_service);
+   * asio::ip::tcp::socket socket(io_service);
    * ...
    * asio::error error;
-   * asio::ipv4::tcp::endpoint endpoint
+   * asio::ip::tcp::endpoint endpoint
    *   = socket.remote_endpoint(asio::assign_error(error));
    * if (error)
    * {
@@ -824,9 +829,9 @@ public:
    * @par Example:
    * Shutting down the send side of the socket:
    * @code
-   * asio::ipv4::tcp::socket socket(io_service);
+   * asio::ip::tcp::socket socket(io_service);
    * ...
-   * socket.shutdown(asio::ipv4::tcp::socket::shutdown_send);
+   * socket.shutdown(asio::ip::tcp::socket::shutdown_send);
    * @endcode
    */
   void shutdown(shutdown_type what)
@@ -851,10 +856,10 @@ public:
    * @par Example:
    * Shutting down the send side of the socket:
    * @code
-   * asio::ipv4::tcp::socket socket(io_service);
+   * asio::ip::tcp::socket socket(io_service);
    * ...
    * asio::error error;
-   * socket.shutdown(asio::ipv4::tcp::socket::shutdown_send,
+   * socket.shutdown(asio::ip::tcp::socket::shutdown_send,
    *     asio::assign_error(error));
    * if (error)
    * {

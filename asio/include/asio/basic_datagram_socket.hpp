@@ -308,7 +308,8 @@ public:
    * @par Example:
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
-   * asio::ipv4::udp::endpoint destination(12345, "1.2.3.4");
+   * asio::ip::udp::endpoint destination(
+   *     asio::ip::address::from_string("1.2.3.4"), 12345);
    * socket.send_to(asio::buffer(data, size), destination);
    * @endcode
    * See the @ref buffer documentation for information on sending multiple
@@ -405,7 +406,8 @@ public:
    * @par Example:
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
-   * asio::ipv4::udp::endpoint destination(12345, "1.2.3.4");
+   * asio::ip::udp::endpoint destination(
+   *     asio::ip::address::from_string("1.2.3.4"), 12345);
    * socket.async_send_to(
    *     asio::buffer(data, size), destination, handler);
    * @endcode
@@ -640,7 +642,7 @@ public:
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
    * @code
-   * asio::ipv4::udp::endpoint sender_endpoint;
+   * asio::ip::udp::endpoint sender_endpoint;
    * socket.receive_from(
    *     asio::buffer(data, size), sender_endpoint);
    * @endcode
