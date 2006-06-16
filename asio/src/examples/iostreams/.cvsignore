@@ -2,6 +2,7 @@
 .dirstamp
 *.exe
 *_client
+*_server
 *.ilk
 *.pdb
 *.tds
