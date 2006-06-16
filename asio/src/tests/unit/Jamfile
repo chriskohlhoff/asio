@@ -3,8 +3,6 @@ subproject libs/asio/test ;
 # bring in the rules for testing
 import testing ;
 
-project boost : $(BOOST_ROOT) ;
-
 if $(UNIX)
 {
   switch $(JAMUNAME)
@@ -16,8 +14,8 @@ if $(UNIX)
   }
 }
 
-template unit_test
-  : <lib>@boost/libs/thread/build/boost_thread
+template asio_unit_test
+  : <lib>../../../libs/thread/build/boost_thread
   : <include>../../..
     <define>BOOST_ALL_NO_LIB=1
     <threading>multi
@@ -26,44 +24,47 @@ template unit_test
     $(SOCKET_LIBS)
   ;
 
-run basic_datagram_socket_test.cpp <template>unit_test ;
-run basic_deadline_timer_test.cpp <template>unit_test ;
-run basic_resolver_test.cpp <template>unit_test ;
-run basic_socket_acceptor_test.cpp <template>unit_test ;
-run basic_strand_test.cpp <template>unit_test ;
-run basic_stream_socket_test.cpp <template>unit_test ;
-run buffer_test.cpp <template>unit_test ;
-run buffered_read_stream_test.cpp <template>unit_test ;
-run buffered_stream_test.cpp <template>unit_test ;
-run buffered_write_stream_test.cpp <template>unit_test ;
-run completion_condition_test.cpp <template>unit_test ;
-run datagram_socket_service_test.cpp <template>unit_test ;
-run deadline_timer_service_test.cpp <template>unit_test ;
-run deadline_timer_test.cpp <template>unit_test ;
-run error_handler_test.cpp <template>unit_test ;
-run error_test.cpp <template>unit_test ;
-run io_service_test.cpp <template>unit_test ;
-run ip/address_test.cpp <template>unit_test ;
-run ip/address_v4_test.cpp <template>unit_test ;
-run ip/address_v6_test.cpp <template>unit_test ;
-run ip/basic_endpoint_test.cpp <template>unit_test ;
-run ip/basic_resolver_entry_test.cpp <template>unit_test ;
-run ip/basic_resolver_iterator_test.cpp <template>unit_test ;
-run ip/basic_resolver_query_test.cpp <template>unit_test ;
-run ip/host_name_test.cpp <template>unit_test ;
-run ip/multicast_test.cpp <template>unit_test ;
-run ip/resolver_query_base_test.cpp <template>unit_test ;
-run ip/tcp_test.cpp <template>unit_test ;
-run ip/udp_test.cpp <template>unit_test ;
-run is_read_buffered_test.cpp <template>unit_test ;
-run is_write_buffered_test.cpp <template>unit_test ;
-run placeholders_test.cpp <template>unit_test ;
-run read_test.cpp <template>unit_test ;
-run resolver_service_test.cpp <template>unit_test ;
-run socket_acceptor_service_test.cpp <template>unit_test ;
-run socket_base_test.cpp <template>unit_test ;
-run strand_service_test.cpp <template>unit_test ;
-run strand_test.cpp <template>unit_test ;
-run stream_socket_service_test.cpp <template>unit_test ;
-run time_traits_test.cpp <template>unit_test ;
-run write_test.cpp <template>unit_test ;
+test-suite "asio"
+  :
+  [ link basic_datagram_socket_test.cpp <template>asio_unit_test ]
+  [ link basic_deadline_timer_test.cpp <template>asio_unit_test ]
+  [ link basic_resolver_test.cpp <template>asio_unit_test ]
+  [ link basic_socket_acceptor_test.cpp <template>asio_unit_test ]
+  [ link basic_strand_test.cpp <template>asio_unit_test ]
+  [ link basic_stream_socket_test.cpp <template>asio_unit_test ]
+  [ run buffer_test.cpp <template>asio_unit_test ]
+  [ run buffered_read_stream_test.cpp <template>asio_unit_test ]
+  [ run buffered_stream_test.cpp <template>asio_unit_test ]
+  [ run buffered_write_stream_test.cpp <template>asio_unit_test ]
+  [ link completion_condition_test.cpp <template>asio_unit_test ]
+  [ link datagram_socket_service_test.cpp <template>asio_unit_test ]
+  [ link deadline_timer_service_test.cpp <template>asio_unit_test ]
+  [ run deadline_timer_test.cpp <template>asio_unit_test ]
+  [ run error_handler_test.cpp <template>asio_unit_test ]
+  [ run error_test.cpp <template>asio_unit_test ]
+  [ run io_service_test.cpp <template>asio_unit_test ]
+  [ link ip/address_test.cpp <template>asio_unit_test ]
+  [ link ip/address_v4_test.cpp <template>asio_unit_test ]
+  [ link ip/address_v6_test.cpp <template>asio_unit_test ]
+  [ link ip/basic_endpoint_test.cpp <template>asio_unit_test ]
+  [ link ip/basic_resolver_entry_test.cpp <template>asio_unit_test ]
+  [ link ip/basic_resolver_iterator_test.cpp <template>asio_unit_test ]
+  [ link ip/basic_resolver_query_test.cpp <template>asio_unit_test ]
+  [ run ip/host_name_test.cpp <template>asio_unit_test ]
+  [ link ip/multicast_test.cpp <template>asio_unit_test ]
+  [ link ip/resolver_query_base_test.cpp <template>asio_unit_test ]
+  [ run ip/tcp_test.cpp <template>asio_unit_test ]
+  [ run ip/udp_test.cpp <template>asio_unit_test ]
+  [ run is_read_buffered_test.cpp <template>asio_unit_test ]
+  [ run is_write_buffered_test.cpp <template>asio_unit_test ]
+  [ link placeholders_test.cpp <template>asio_unit_test ]
+  [ run read_test.cpp <template>asio_unit_test ]
+  [ link resolver_service_test.cpp <template>asio_unit_test ]
+  [ link socket_acceptor_service_test.cpp <template>asio_unit_test ]
+  [ link socket_base_test.cpp <template>asio_unit_test ]
+  [ link strand_service_test.cpp <template>asio_unit_test ]
+  [ run strand_test.cpp <template>asio_unit_test ]
+  [ link stream_socket_service_test.cpp <template>asio_unit_test ]
+  [ link time_traits_test.cpp <template>asio_unit_test ]
+  [ run write_test.cpp <template>asio_unit_test ]
+  ;
