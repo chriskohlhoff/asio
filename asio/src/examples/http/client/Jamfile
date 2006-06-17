@@ -1,0 +1,38 @@
+subproject libs/asio/example/http/client ;
+
+project boost : $(BOOST_ROOT) ;
+
+if $(UNIX)
+{
+  switch $(JAMUNAME)
+  {
+  case SunOS* :
+    {
+      SOCKET_LIBS = <find-library>socket <find-library>nsl ;
+    }
+  }
+}
+
+exe async_client
+  : <lib>@boost/libs/regex/build/boost_regex
+    async_client.cpp
+  : <include>$(BOOST_ROOT)
+    <include>../../../../..
+    <define>BOOST_ALL_NO_LIB=1
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
+  ;
+
+exe sync_client
+  : <lib>@boost/libs/regex/build/boost_regex
+    sync_client.cpp
+  : <include>$(BOOST_ROOT)
+    <include>../../../../..
+    <define>BOOST_ALL_NO_LIB=1
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
+  ;
