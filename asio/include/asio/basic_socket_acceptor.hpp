@@ -196,7 +196,8 @@ public:
    * @code
    * asio::ip::tcp::acceptor acceptor(io_service);
    * asio::error error;
-   * acceptor.open(asio::ip::tcp::v4(), asio::assign_error(error));
+   * acceptor.open(asio::ip::tcp::v4(),
+   *     asio::assign_error(error));
    * if (error)
    * {
    *   // An error occurred.
