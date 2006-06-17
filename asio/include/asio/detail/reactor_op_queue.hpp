@@ -148,7 +148,7 @@ public:
         i->second = this_op->next_;
         this_op->next_ = cleanup_operations_;
         cleanup_operations_ = this_op;
-        bool done = i->second->invoke(result);
+        bool done = this_op->invoke(result);
         if (!done)
         {
           // Operation has not finished yet, so leave at front of queue, and
