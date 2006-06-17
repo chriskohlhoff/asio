@@ -50,7 +50,7 @@ std::size_t read_until(Sync_Read_Stream& s,
       Allocator>::const_buffers_type const_buffers_type;
     typedef asio::detail::const_buffers_iterator<
       const_buffers_type> iterator;
-    const_buffers_type buffers = b.sbuffers();
+    const_buffers_type buffers = b.data();
     iterator begin(buffers, next_search_start);
     iterator end(buffers, (std::numeric_limits<std::size_t>::max)());
 
@@ -69,7 +69,7 @@ std::size_t read_until(Sync_Read_Stream& s,
 
     // Need more data.
     typename Sync_Read_Stream::error_type error;
-    b.spbump(s.read_some(b.spbuffers(512), asio::assign_error(error)));
+    b.commit(s.read_some(b.prepare(512), asio::assign_error(error)));
     if (error)
     {
       error_handler(error);
@@ -98,7 +98,7 @@ std::size_t read_until(Sync_Read_Stream& s,
       Allocator>::const_buffers_type const_buffers_type;
     typedef asio::detail::const_buffers_iterator<
       const_buffers_type> iterator;
-    const_buffers_type buffers = b.sbuffers();
+    const_buffers_type buffers = b.data();
     iterator begin(buffers, next_search_start);
     iterator end(buffers, (std::numeric_limits<std::size_t>::max)());
 
@@ -126,7 +126,7 @@ std::size_t read_until(Sync_Read_Stream& s,
 
     // Need more data.
     typename Sync_Read_Stream::error_type error;
-    b.spbump(s.read_some(b.spbuffers(512), asio::assign_error(error)));
+    b.commit(s.read_some(b.prepare(512), asio::assign_error(error)));
     if (error)
     {
       error_handler(error);
@@ -164,14 +164,14 @@ namespace detail
       }
 
       // Commit received data to streambuf's get area.
-      streambuf_.spbump(bytes_transferred);
+      streambuf_.commit(bytes_transferred);
 
       // Determine the range of the data to be searched.
       typedef typename asio::basic_streambuf<
         Allocator>::const_buffers_type const_buffers_type;
       typedef asio::detail::const_buffers_iterator<
         const_buffers_type> iterator;
-      const_buffers_type buffers = streambuf_.sbuffers();
+      const_buffers_type buffers = streambuf_.data();
       iterator begin(buffers, next_search_start_);
       iterator end(buffers, (std::numeric_limits<std::size_t>::max)());
 
@@ -187,7 +187,7 @@ namespace detail
 
       // No match. Start a new asynchronous read operation to obtain more data.
       next_search_start_ = end.position();
-      stream_.async_read_some(streambuf_.spbuffers(512), *this);
+      stream_.async_read_some(streambuf_.prepare(512), *this);
     }
 
     friend void* asio_handler_allocate(std::size_t size,
@@ -224,7 +224,7 @@ void async_read_until(Async_Read_Stream& s,
     Allocator>::const_buffers_type const_buffers_type;
   typedef asio::detail::const_buffers_iterator<
     const_buffers_type> iterator;
-  const_buffers_type buffers = b.sbuffers();
+  const_buffers_type buffers = b.data();
   iterator begin(buffers, 0);
   iterator end(buffers, (std::numeric_limits<std::size_t>::max)());
 
@@ -240,7 +240,7 @@ void async_read_until(Async_Read_Stream& s,
   }
 
   // No match. Start a new asynchronous read operation to obtain more data.
-  s.async_read_some(b.spbuffers(512),
+  s.async_read_some(b.prepare(512),
       detail::read_until_delim_handler<Async_Read_Stream, Allocator, Handler>(
         s, b, delim, end.position(), handler));
 }
@@ -275,14 +275,14 @@ namespace detail
       }
 
       // Commit received data to streambuf's get area.
-      streambuf_.spbump(bytes_transferred);
+      streambuf_.commit(bytes_transferred);
 
       // Determine the range of the data to be searched.
       typedef typename asio::basic_streambuf<
         Allocator>::const_buffers_type const_buffers_type;
       typedef asio::detail::const_buffers_iterator<
         const_buffers_type> iterator;
-      const_buffers_type buffers = streambuf_.sbuffers();
+      const_buffers_type buffers = streambuf_.data();
       iterator begin(buffers, next_search_start_);
       iterator end(buffers, (std::numeric_limits<std::size_t>::max)());
 
@@ -312,7 +312,7 @@ namespace detail
 
       // No match. Start a new asynchronous read operation to obtain more data.
       next_search_start_ = end.position();
-      stream_.async_read_some(streambuf_.spbuffers(512), *this);
+      stream_.async_read_some(streambuf_.prepare(512), *this);
     }
 
     friend void* asio_handler_allocate(std::size_t size,
@@ -350,7 +350,7 @@ void async_read_until(Async_Read_Stream& s,
     Allocator>::const_buffers_type const_buffers_type;
   typedef asio::detail::const_buffers_iterator<
     const_buffers_type> iterator;
-  const_buffers_type buffers = b.sbuffers();
+  const_buffers_type buffers = b.data();
   iterator begin(buffers, 0);
   iterator end(buffers, (std::numeric_limits<std::size_t>::max)());
 
@@ -381,7 +381,7 @@ void async_read_until(Async_Read_Stream& s,
   }
 
   // No match. Start a new asynchronous read operation to obtain more data.
-  s.async_read_some(b.spbuffers(512),
+  s.async_read_some(b.prepare(512),
       detail::read_until_expr_handler<Async_Read_Stream, Allocator, Handler>(
         s, b, expr, next_search_start, handler));
 }

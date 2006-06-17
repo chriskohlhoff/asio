@@ -64,57 +64,43 @@ public:
     setp(&buffer_[0], &buffer_[0] + pend);
   }
 
-  /// Move the start of the get area by the specified number of characters.
-  void sbump(std::streamsize n)
-  {
-    while (n > 0)
-    {
-      sbumpc();
-      --n;
-    }
-  }
-
-  /// Move the start of the put area by the specified number of characters.
-  void spbump(std::streamsize n)
-  {
-    if (pptr() + n > epptr())
-      n = epptr() - pptr();
-    pbump(n);
-  }
-
-  /// Move the start of the put area by one character, returning the character
-  /// that was just moved into the get area.
-  int_type spbumpc()
-  {
-    if (pptr() == epptr())
-    {
-      return traits_type::eof();
-    }
-
-    int_type c = traits_type::to_int_type(*pptr());
-    pbump(1);
-    return c;
-  }
-
   /// Return the size of the get area in characters.
-  std::size_t slength() const
+  std::size_t size() const
   {
     return pptr() - gptr();
   }
 
   /// Get a list of buffers that represents the get area.
-  const_buffers_type sbuffers() const
+  const_buffers_type data() const
   {
     return asio::buffer(asio::const_buffer(gptr(),
           (pptr() - gptr()) * sizeof(char_type)));
   }
 
   /// Get a list of buffers that represents the put area, with the given size.
-  mutable_buffers_type spbuffers(std::size_t size)
+  mutable_buffers_type prepare(std::size_t size)
   {
     reserve(size);
     return asio::buffer(asio::mutable_buffer(
           pptr(), size * sizeof(char_type)));
+  }
+
+  /// Move the start of the put area by the specified number of characters.
+  void commit(std::size_t n)
+  {
+    if (pptr() + n > epptr())
+      n = epptr() - pptr();
+    pbump(n);
+  }
+
+  /// Move the start of the get area by the specified number of characters.
+  void consume(std::size_t n)
+  {
+    while (n > 0)
+    {
+      sbumpc();
+      --n;
+    }
   }
 
 protected:
@@ -214,8 +200,8 @@ std::size_t read(Sync_Read_Stream& s,
   {
     typename Sync_Read_Stream::error_type e;
     std::size_t bytes_transferred = s.read_some(
-        b.spbuffers(512), assign_error(e));
-    b.spbump(bytes_transferred);
+        b.prepare(512), assign_error(e));
+    b.commit(bytes_transferred);
     total_transferred += bytes_transferred;
     if (completion_condition(e, total_transferred))
     {
@@ -266,7 +252,7 @@ namespace detail
         std::size_t bytes_transferred)
     {
       total_transferred_ += bytes_transferred;
-      streambuf_.spbump(bytes_transferred);
+      streambuf_.commit(bytes_transferred);
       if (completion_condition_(e, total_transferred_))
       {
         stream_.io_service().dispatch(
@@ -274,7 +260,7 @@ namespace detail
       }
       else
       {
-        stream_.async_read_some(streambuf_.spbuffers(512), *this);
+        stream_.async_read_some(streambuf_.prepare(512), *this);
       }
     }
 
@@ -309,7 +295,7 @@ inline void async_read(Async_Read_Stream& s,
     asio::basic_streambuf<Allocator>& b,
     Completion_Condition completion_condition, Handler handler)
 {
-  s.async_read_some(b.spbuffers(512),
+  s.async_read_some(b.prepare(512),
       detail::read_streambuf_handler<Async_Read_Stream, Allocator,
         Completion_Condition, Handler>(
           s, b, completion_condition, handler));
@@ -329,9 +315,9 @@ std::size_t write(Sync_Write_Stream& s,
     Completion_Condition completion_condition, Error_Handler error_handler)
 {
   typename Sync_Write_Stream::error_type error;
-  std::size_t bytes_transferred = write(s, b.sbuffers(),
+  std::size_t bytes_transferred = write(s, b.data(),
       completion_condition, asio::assign_error(error));
-  b.sbump(bytes_transferred);
+  b.consume(bytes_transferred);
   error_handler(error);
   return bytes_transferred;
 }
@@ -368,7 +354,7 @@ namespace detail
     void operator()(const typename Async_Write_Stream::error_type& e,
         std::size_t bytes_transferred)
     {
-      streambuf_.sbump(bytes_transferred);
+      streambuf_.consume(bytes_transferred);
       handler_(e, bytes_transferred);
     }
 
@@ -400,7 +386,7 @@ inline void async_write(Async_Write_Stream& s,
     asio::basic_streambuf<Allocator>& b,
     Completion_Condition completion_condition, Handler handler)
 {
-  async_write(s, b.sbuffers(),
+  async_write(s, b.data(),
       detail::write_streambuf_handler<Async_Write_Stream, Allocator, Handler>(
         b, handler));
 }
