@@ -237,6 +237,7 @@ sub copy_examples
       "src/examples/buffers",
       "src/examples/chat",
       "src/examples/echo",
+      "src/examples/http/client",
       "src/examples/http/server",
       "src/examples/iostreams",
       "src/examples/multicast",
