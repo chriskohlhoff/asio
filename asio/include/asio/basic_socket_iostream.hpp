@@ -121,13 +121,35 @@ public:
   {
   }
 
+#if defined(GENERATING_DOCUMENTATION)
+  /// Establish a connection to an endpoint corresponding to a resolver query.
+  /**
+   * This constructor automatically establishes a connection based on the
+   * supplied resolver query parameters. The arguments are used to construct
+   * a resolver query object.
+   */
+  template <typename T1, ..., typename TN>
+  explicit basic_socket_iostream(T1 t1, ..., TN tn);
+#else
   BOOST_PP_REPEAT_FROM_TO(
       1, BOOST_PP_INC(ASIO_SOCKET_IOSTREAM_MAX_ARITY),
       ASIO_PRIVATE_CTR_DEF, _ )
+#endif
 
+#if defined(GENERATING_DOCUMENTATION)
+  /// Establish a connection to an endpoint corresponding to a resolver query.
+  /**
+   * This function automatically establishes a connection based on the supplied
+   * resolver query parameters. The arguments are used to construct a resolver
+   * query object.
+   */
+  template <typename T1, ..., typename TN>
+  void connect(T1 t1, ..., TN tn);
+#else
   BOOST_PP_REPEAT_FROM_TO(
       1, BOOST_PP_INC(ASIO_SOCKET_IOSTREAM_MAX_ARITY),
       ASIO_PRIVATE_CONNECT_DEF, _ )
+#endif
 
   /// Close the connection.
   void close()
