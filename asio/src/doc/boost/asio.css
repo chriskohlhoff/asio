@@ -1,10 +1,8 @@
-BODY {
-  text-align: left;
-  font-size: 10pt; 
-  line-height: 1.15;
+BODY,H1,H2,H3,H4,H5,H6,P,CENTER,TD,TH,UL,DL,DIV {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
 }
-TD {
-  font-size: 10pt; 
+BODY,TD {
+       font-size: 10pt;
 }
 CAPTION { font-weight: bold }
 DIV.sidebar {
@@ -32,24 +30,6 @@ DIV.qindex {
 	margin: 2px;
 	padding: 2px;
 	line-height: 140%;
-}
-DIV.top-navbar {
-  width: 100%;
-  background-color: white;
-  border-bottom: 1px solid gray;
-	margin: 2px;
-	padding: 2px;
-	line-height: 140%;
-}
-DIV.copyright {
-  width: 100%;
-  background-color: white;
-  border-top: 1px solid gray;
-	margin: 2px;
-  margin-top: 10px;
-	padding: 2px;
-  font-size: 10pt;
-  text-align: center;
 }
 DIV.nav {
 	width: 100%;
@@ -97,23 +77,17 @@ A.qindexHL:hover {
 	background-color: #6666cc;
 	color: #ffffff;
 }
-A.anchor {
-  text-decoration: none;
-  color: #000000;
-}
-A.qindexHL:visited {
-  text-decoration: none;
-  background-color: #6666cc;
-  color: #ffffff }
+A.qindexHL:visited { text-decoration: none; background-color: #6666cc; color: #ffffff }
 A.el { text-decoration: none; font-weight: bold }
 A.elRef { text-decoration: none; font-weight: bold }
 A.code:link { text-decoration: none; font-weight: normal; color: #0000FF}
 A.code:visited { text-decoration: none; font-weight: normal; color: #0000FF}
 A.codeRef:link { text-decoration: none; font-weight: normal; color: #0000FF}
 A.codeRef:visited { text-decoration: none; font-weight: normal; color: #0000FF}
+A:hover { text-decoration: none; background-color: #f2f2ff }
 DL.el { margin-left: -1cm }
 .fragment {
-       font-family: Fixed, monospace;
+       font-family: monospace, fixed;
        font-size: 10pt;
 }
 PRE.fragment {
@@ -128,32 +102,21 @@ PRE.fragment {
 	padding-top: 4px;
 	padding-bottom: 4px;
 }
-DIV.ah {
-  background-color: black;
-  font-weight: bold; color: #ffffff;
-  margin-bottom: 3px;
-  margin-top: 3px
-}
-TD.md { background-color: #F4F4FB; font-weight: bold; }
-TD.mdPrefix {
-       background-color: #F4F4FB;
-       color: #606060;
-	font-size: 10pt;
-}
-TD.mdname1 { background-color: #F4F4FB; font-weight: bold; color: #602020; }
-TD.mdname {
-  background-color: #F4F4FB;
-  font-weight: bold;
-  color: #602020;
-  width: 600px;
-}
+DIV.ah { background-color: black; font-weight: bold; color: #ffffff; margin-bottom: 3px; margin-top: 3px }
+
 DIV.groupHeader {
        margin-left: 16px;
        margin-top: 12px;
        margin-bottom: 6px;
        font-weight: bold;
 }
-DIV.groupText { margin-left: 16px; font-style: italic; font-size: 10pt; }
+DIV.groupText { margin-left: 16px; font-style: italic; font-size: 10pt }
+BODY {
+	background: white;
+	color: black;
+	margin-right: 20px;
+	margin-left: 20px;
+}
 TD.indexkey {
 	background-color: #e8eef2;
 	font-weight: bold;
@@ -193,13 +156,6 @@ SPAN.comment       { color: #800000 }
 SPAN.preprocessor  { color: #806020 }
 SPAN.stringliteral { color: #002080 }
 SPAN.charliteral   { color: #008080 }
-.mdTable {
-	border: 1px solid #868686;
-	background-color: #F4F4FB;
-}
-.mdRow {
-	padding: 8px 10px;
-}
 .mdescLeft {
        padding: 0px 8px 4px 8px;
 	font-size: 10pt;
@@ -320,17 +276,95 @@ FORM.search {
               margin-bottom: 0px;
               margin-top: 0px;
 }
-INPUT.search { font-size: 10pt;
+INPUT.search { font-size: 75%;
                color: #000080;
                font-weight: normal;
                background-color: #e8eef2;
 }
-TD.tiny      { font-size: 10pt;
+TD.tiny      { font-size: 75%;
 }
+a {
+	color: #1A41A8;
+}
+a:visited {
+	color: #2A3798;
+}
+a.anchor { text-decoration: none; color: black; }
+a.anchor:hover { text-decoration: none; background-color: white; }
 .dirtab { padding: 4px;
           border-collapse: collapse;
           border: 1px solid #84b0c7;
 }
 TH.dirtab { background: #e8eef2;
             font-weight: bold;
+}
+HR { height: 1px;
+     border: none;
+     border-top: 1px solid black;
+}
+
+/* Style for detailed member documentation */
+.memtemplate {
+  font-size: 10pt;
+  color: #606060;
+  font-weight: normal;
+} 
+.memnav { 
+  background-color: #e8eef2;
+  border: 1px solid #84b0c7;
+  text-align: center;
+  margin: 2px;
+  margin-right: 15px;
+  padding: 2px;
+}
+.memitem {
+  padding: 4px;
+  background-color: #eef3f5;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #dedeee;
+  -moz-border-radius: 8px 8px 8px 8px;
+}
+.memname {
+  white-space: nowrap;
+  font-weight: bold;
+}
+.memdoc{
+  padding-left: 10px;
+}
+.memproto {
+  background-color: #d5e1e8;
+  width: 100%;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #84b0c7;
+  font-weight: bold;
+  -moz-border-radius: 8px 8px 8px 8px;
+}
+.paramkey {
+  text-align: right;
+}
+.paramtype {
+  white-space: nowrap;
+}
+.paramname {
+  color: #602020;
+  font-style: italic;
+}
+/* End Styling for detailed member documentation */
+
+/* for the tree view */
+.ftvtree {
+	font-family: sans-serif;
+	margin:0.5em;
+}
+.directory { font-size: 9pt; font-weight: bold; }
+.directory h3 { margin: 0px; margin-top: 1em; font-size: 11pt; }
+.directory > h3 { margin-top: 0; }
+.directory p { margin: 0px; white-space: nowrap; }
+.directory div { display: none; margin: 0px; }
+.directory img { vertical-align: -30%; }
+
+DIV.asio-nav {
+  text-align: right;
 }

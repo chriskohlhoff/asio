@@ -42,7 +42,7 @@ Standard exception class.
 */
 
 /**
-\mainpage Reference Index
+\mainpage Boost.Asio Reference Index
 
 <TABLE BORDER="0" WIDTH="100%">
 <TR>

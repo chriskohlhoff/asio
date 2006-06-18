@@ -293,9 +293,7 @@ sub copy_docs
         glob("$dir/*.dox"),
         glob("$dir/*.dot"),
         glob("$dir/*.htm"),
-        glob("$dir/*.qbk"),
-        glob("$dir/*.txt"),
-        glob("$dir/*.v2"));
+        glob("$dir/*.txt"));
     foreach my $file (@files)
     {
       my $from = $file;
@@ -324,6 +322,8 @@ sub copy_docs
     }
   }
 
+  copy_source_file("src/doc/boost/index.html",
+      "$boost_dir/libs/asio/doc/index.html");
   copy_source_file("src/doc/boost/asio.css",
       "$boost_dir/libs/asio/doc/asio.css");
   copy_source_file("src/doc/boost/asio.css",
@@ -405,5 +405,5 @@ copy_unit_tests();
 copy_examples();
 copy_docs();
 create_root_html();
-create_doc_html();
+#create_doc_html();
 execute_doxygen();

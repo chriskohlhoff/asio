@@ -1,5 +1,5 @@
 /**
-\mainpage Design Index
+\mainpage Boost.Asio Design Index
 
 Some design notes:
 
