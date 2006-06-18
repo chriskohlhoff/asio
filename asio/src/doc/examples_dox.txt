@@ -36,6 +36,14 @@ and asynchronous operations.
 \li \ref echo_blocking_udp_echo_client_cpp
 \li \ref echo_blocking_udp_echo_server_cpp
 
+\section httpclient_section HTTP Client
+
+Example programs implementing simple HTTP 1.0 clients. These examples show how
+to use the \ref read_until and \ref async_read_until functions.
+
+\li \ref httpclient_sync_client_cpp
+\li \ref httpclient_async_client_cpp
+
 \section httpserver_section HTTP Server
 
 This example illustrates the use of asio in a server implementation of HTTP 1.0.
@@ -153,6 +161,16 @@ operations after a period of time.
 /**
 \page echo_blocking_udp_echo_server_cpp echo/blocking_udp_echo_server.cpp
 \include echo/blocking_udp_echo_server.cpp
+*/
+
+/**
+\page httpclient_async_client_cpp http/client/async_client.cpp
+\include http/client/async_client.cpp
+*/
+
+/**
+\page httpclient_sync_client_cpp http/client/sync_client.cpp
+\include http/client/sync_client.cpp
 */
 
 /**
