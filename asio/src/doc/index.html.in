@@ -40,11 +40,13 @@
 
     <h2>Dependencies</h2>
     <p>
-      asio requires <a href="http://www.boost.org">Boost</a> version 1.33. There
-      is no need to build any of the Boost libraries to use asio, as only the
-      header files are required. (Note: with MSVC or Borland C++ you may need to
-      add -DBOOST_DATE_TIME_NO_LIB to your project settings to disable
-      autolinking of the Boost.Date_Time library.)
+      asio requires <a href="http://www.boost.org">Boost</a> version 1.33 or
+      later. There is no need to build any of the Boost libraries to use most
+      of Boost.Asio, and only the header files are required. However, some
+      overloads of <tt>read_until</tt> and <tt>async_read_until</tt> require
+      the Boost.Regex library. (Note: with MSVC or Borland C++ you may need to
+      add -DBOOST_ALL_NO_LIB to your project settings to disable autolinking
+      of the Boost.Date_Time and Boost.Regex libraries.)
     </p>
     <p>
       To use asio's SSL support, <a href="http://www.openssl.org">OpenSSL</a> is
