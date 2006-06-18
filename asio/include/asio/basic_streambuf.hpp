@@ -26,6 +26,7 @@
 #include <vector>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/buffer.hpp"
 #include "asio/detail/noncopyable.hpp"
 
 namespace asio {
