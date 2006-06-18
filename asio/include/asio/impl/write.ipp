@@ -65,6 +65,36 @@ inline std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
   return write(s, buffers, completion_condition, throw_error());
 }
 
+template <typename Sync_Write_Stream, typename Allocator,
+    typename Completion_Condition, typename Error_Handler>
+std::size_t write(Sync_Write_Stream& s,
+    asio::basic_streambuf<Allocator>& b,
+    Completion_Condition completion_condition, Error_Handler error_handler)
+{
+  typename Sync_Write_Stream::error_type error;
+  std::size_t bytes_transferred = write(s, b.data(),
+      completion_condition, asio::assign_error(error));
+  b.consume(bytes_transferred);
+  error_handler(error);
+  return bytes_transferred;
+}
+
+template <typename Sync_Write_Stream, typename Allocator>
+inline std::size_t write(Sync_Write_Stream& s,
+    asio::basic_streambuf<Allocator>& b)
+{
+  return write(s, b, transfer_all(), throw_error());
+}
+
+template <typename Sync_Write_Stream, typename Allocator,
+    typename Completion_Condition>
+inline std::size_t write(Sync_Write_Stream& s,
+    asio::basic_streambuf<Allocator>& b,
+    Completion_Condition completion_condition)
+{
+  return write(s, b, completion_condition, throw_error());
+}
+
 namespace detail
 {
   template <typename Async_Write_Stream, typename Const_Buffers,
@@ -141,6 +171,66 @@ inline void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
     Handler handler)
 {
   async_write(s, buffers, transfer_all(), handler);
+}
+
+namespace detail
+{
+  template <typename Async_Write_Stream, typename Allocator, typename Handler>
+  class write_streambuf_handler
+  {
+  public:
+    write_streambuf_handler(asio::basic_streambuf<Allocator>& streambuf,
+        Handler handler)
+      : streambuf_(streambuf),
+        handler_(handler)
+    {
+    }
+
+    void operator()(const typename Async_Write_Stream::error_type& e,
+        std::size_t bytes_transferred)
+    {
+      streambuf_.consume(bytes_transferred);
+      handler_(e, bytes_transferred);
+    }
+
+    friend void* asio_handler_allocate(std::size_t size,
+        write_streambuf_handler<Async_Write_Stream,
+          Allocator, Handler>* this_handler)
+    {
+      return asio_handler_alloc_helpers::allocate(
+          size, &this_handler->handler_);
+    }
+
+    friend void asio_handler_deallocate(void* pointer, std::size_t size,
+        write_streambuf_handler<Async_Write_Stream,
+          Allocator, Handler>* this_handler)
+    {
+      asio_handler_alloc_helpers::deallocate(
+          pointer, size, &this_handler->handler_);
+    }
+
+  private:
+    asio::basic_streambuf<Allocator>& streambuf_;
+    Handler handler_;
+  };
+} // namespace detail
+
+template <typename Async_Write_Stream, typename Allocator,
+  typename Completion_Condition, typename Handler>
+inline void async_write(Async_Write_Stream& s,
+    asio::basic_streambuf<Allocator>& b,
+    Completion_Condition completion_condition, Handler handler)
+{
+  async_write(s, b.data(),
+      detail::write_streambuf_handler<Async_Write_Stream, Allocator, Handler>(
+        b, handler));
+}
+
+template <typename Async_Write_Stream, typename Allocator, typename Handler>
+inline void async_write(Async_Write_Stream& s,
+    asio::basic_streambuf<Allocator>& b, Handler handler)
+{
+  async_write(s, b, transfer_all(), handler);
 }
 
 } // namespace asio
