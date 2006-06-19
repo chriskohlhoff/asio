@@ -78,6 +78,9 @@
           Win32 using MinGW.
         </li>
         <li>
+          Win32 using Cygwin. (__USE_W32_SOCKETS must be defined.)
+        </li>
+        <li>
           Linux (2.4 or 2.6 kernels) using g++ 3.3 or later.
         </li>
         <li>
