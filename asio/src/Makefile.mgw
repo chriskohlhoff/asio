@@ -5,7 +5,7 @@ endif
 CXXFLAGS = -g -O2 -Wall -mthreads -I../include -I$(BOOSTDIR)
 LDFLAGS = -g -O2 -mthreads
 LIBS = -lws2_32 -lmswsock
-DEFINES = -DWIN32 -D_WIN32_WINNT=0x0500
+DEFINES = -D_WIN32_WINNT=0x0500
 
 PERFORMANCE_TEST_EXES = \
 	tests/performance/client.exe \

@@ -33,14 +33,29 @@
 #  endif // defined(_MSC_VER) || defined(__BORLANDC__)
 #  define _WIN32_WINNT 0x0500
 # endif // !defined(_WIN32_WINNT) && !defined(_WIN32_WINDOWS)
-# if defined(__BORLANDC__) && !defined(_WSPIAPI_H_)
+# if defined(_MSC_VER)
+#  if defined(_WIN32) && !defined(WIN32)
+#   if !defined(_WINSOCK2API_)
+#    define WIN32 // Needed for correct types in winsock2.h
+#   else // !defined(_WINSOCK2API_)
+#    error Please define the macro WIN32 in your compiler options
+#   endif // !defined(_WINSOCK2API_)
+#  endif // defined(_WIN32) && !defined(WIN32)
+# endif // defined(_MSC_VER)
+# if defined(__BORLANDC__)
 #  include <stdlib.h> // Needed for __errno
 #  if defined(__WIN32__) && !defined(WIN32)
-#   define WIN32 // Needed for correct types in winsock2.h
+#   if !defined(_WINSOCK2API_)
+#    define WIN32 // Needed for correct types in winsock2.h
+#   else // !defined(_WINSOCK2API_)
+#    error Please define the macro WIN32 in your compiler options
+#   endif // !defined(_WINSOCK2API_)
 #  endif // defined(__WIN32__) && !defined(WIN32)
-#  define _WSPIAPI_H_
-#  define ASIO_WSPIAPI_H_DEFINED
-# endif // defined(__BORLANDC__) && !defined(_WSPIAPI_H_)
+#  if !defined(_WSPIAPI_H_)
+#   define _WSPIAPI_H_
+#   define ASIO_WSPIAPI_H_DEFINED
+#  endif // !defined(_WSPIAPI_H_)
+# endif // defined(__BORLANDC__)
 # define FD_SETSIZE 1024
 # if !defined(ASIO_NO_WIN32_LEAN_AND_MEAN)
 #  if !defined(WIN32_LEAN_AND_MEAN)
