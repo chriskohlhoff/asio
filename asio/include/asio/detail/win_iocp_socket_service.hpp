@@ -288,7 +288,7 @@ public:
       }
       else
       {
-        if (*static_cast<const int*>(option.data(impl.protocol_)))
+        if (*reinterpret_cast<const int*>(option.data(impl.protocol_)))
           impl.flags_ |= implementation_type::enable_connection_aborted;
         else
           impl.flags_ &= ~implementation_type::enable_connection_aborted;
@@ -320,7 +320,7 @@ public:
       }
       else
       {
-        int* target = static_cast<int*>(option.data(impl.protocol_));
+        int* target = reinterpret_cast<int*>(option.data(impl.protocol_));
         if (impl.flags_ & implementation_type::enable_connection_aborted)
           *target = 1;
         else
