@@ -61,7 +61,7 @@ test-suite "asio"
   [ run read_test.cpp <template>asio_unit_test ]
   [ link resolver_service_test.cpp <template>asio_unit_test ]
   [ link socket_acceptor_service_test.cpp <template>asio_unit_test ]
-  [ link socket_base_test.cpp <template>asio_unit_test ]
+  [ run socket_base_test.cpp <template>asio_unit_test ]
   [ link strand_service_test.cpp <template>asio_unit_test ]
   [ run strand_test.cpp <template>asio_unit_test ]
   [ link stream_socket_service_test.cpp <template>asio_unit_test ]
