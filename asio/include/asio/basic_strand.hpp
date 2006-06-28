@@ -59,9 +59,11 @@ public:
   /**
    * This function is used to ask the strand to execute the given handler.
    *
-   * The strand object guarantees that only one handler executed through this
-   * strand will be invoked at a time. The handler may be executed inside this
-   * function if the guarantee can be met.
+   * The strand object guarantees that handlers posted or dispatched through
+   * the strand will not be executed concurrently. The handler may be executed
+   * inside this function if the guarantee can be met. If this function is
+   * called from within a handler that was posted or dispatched through the same
+   * strand, then the new handler will be executed immediately.
    *
    * The strand's guarantee is in addition to the guarantee provided by the
    * underlying io_service. The io_service guarantees that the handler will only
@@ -84,11 +86,11 @@ public:
    * This function is used to ask the strand to execute the given handler, but
    * without allowing the strand to call the handler from inside this function.
    *
-   * The strand object guarantees that only one handler executed through this
-   * strand will be invoked at a time. The strand's guarantee is in addition to
-   * the guarantee provided by the underlying io_service. The io_service
-   * guarantees that the handler will only be called in a thread in which the
-   * io_service's run member function is currently being invoked.
+   * The strand object guarantees that handlers posted or dispatched through
+   * the strand will not be executed concurrently. The strand's guarantee is in
+   * addition to the guarantee provided by the underlying io_service. The
+   * io_service guarantees that the handler will only be called in a thread in
+   * which the io_service's run member function is currently being invoked.
    *
    * @param handler The handler to be called. The strand will make a copy of the
    * handler object as required. The function signature of the handler must be:

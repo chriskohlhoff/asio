@@ -24,10 +24,10 @@
 
 #include "asio/io_service.hpp"
 #include "asio/detail/bind_handler.hpp"
+#include "asio/detail/call_stack.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/strand_service.hpp"
 
 namespace asio {
 namespace detail {
@@ -226,6 +226,9 @@ public:
       // Free the memory associated with the handler.
       ptr.reset();
 
+      // Indicate that this strand is executing on the current thread.
+      call_stack<implementation_type>::context ctx(&impl);
+
       // Make the upcall.
       handler();
     }
@@ -335,38 +338,45 @@ public:
   template <typename Handler>
   void dispatch(implementation_type& impl, Handler handler)
   {
-    asio::detail::mutex::scoped_lock lock(impl.mutex_);
-
-    // Allocate and construct an object to wrap the handler.
-    typedef handler_wrapper<Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr, handler);
-
-    if (impl.current_handler_ == 0)
+    if (call_stack<implementation_type>::contains(&impl))
     {
-      // This handler now has the lock, so can be dispatched immediately.
-      impl.current_handler_ = ptr.get();
-      lock.unlock();
-      owner().dispatch(invoke_current_handler(*this, impl));
-      ptr.release();
+      handler();
     }
     else
     {
-      // Another handler already holds the lock, so this handler must join the
-      // list of waiters. The handler will be posted automatically when its turn
-      // comes.
-      if (impl.last_waiter_)
+      asio::detail::mutex::scoped_lock lock(impl.mutex_);
+
+      // Allocate and construct an object to wrap the handler.
+      typedef handler_wrapper<Handler> value_type;
+      typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+      raw_handler_ptr<alloc_traits> raw_ptr(handler);
+      handler_ptr<alloc_traits> ptr(raw_ptr, handler);
+
+      if (impl.current_handler_ == 0)
       {
-        impl.last_waiter_->next_ = ptr.get();
-        impl.last_waiter_ = impl.last_waiter_->next_;
+        // This handler now has the lock, so can be dispatched immediately.
+        impl.current_handler_ = ptr.get();
+        lock.unlock();
+        owner().dispatch(invoke_current_handler(*this, impl));
+        ptr.release();
       }
       else
       {
-        impl.first_waiter_ = ptr.get();
-        impl.last_waiter_ = ptr.get();
+        // Another handler already holds the lock, so this handler must join
+        // the list of waiters. The handler will be posted automatically when
+        // its turn comes.
+        if (impl.last_waiter_)
+        {
+          impl.last_waiter_->next_ = ptr.get();
+          impl.last_waiter_ = impl.last_waiter_->next_;
+        }
+        else
+        {
+          impl.first_waiter_ = ptr.get();
+          impl.last_waiter_ = ptr.get();
+        }
+        ptr.release();
       }
-      ptr.release();
     }
   }
 

@@ -46,8 +46,8 @@ void increment_with_lock(strand* s, int* count)
   s->dispatch(boost::bind(increment, count));
 
   // The current function already holds the strand's lock, so the
-  // previous call to dispatch should not have nested.
-  BOOST_CHECK(*count == original_count);
+  // previous call to dispatch should have successfully nested.
+  BOOST_CHECK(*count == original_count + 1);
 }
 
 void sleep_increment(io_service* ios, int* count)
