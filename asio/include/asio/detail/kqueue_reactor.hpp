@@ -45,6 +45,11 @@
 #include "asio/detail/signal_blocker.hpp"
 #include "asio/detail/socket_types.hpp"
 
+// Older versions of Mac OS X may not define EV_OOBAND.
+#if !defined(EV_OOBAND)
+# define EV_OOBAND EV_FLAG1
+#endif // !defined(EV_OOBAND)
+
 namespace asio {
 namespace detail {
 
