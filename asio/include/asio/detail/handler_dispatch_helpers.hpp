@@ -17,6 +17,10 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <boost/detail/workaround.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/handler_dispatch_hook.hpp"
 
 // Calls to asio_handler_dispatch must be made from a namespace that does not
@@ -27,8 +31,13 @@ namespace asio_handler_dispatch_helpers {
 template <typename Handler, typename Context>
 inline void dispatch_handler(const Handler& handler, Context* context)
 {
+#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+  Handler tmp(handler);
+  tmp();
+#else
   using namespace asio;
   asio_handler_dispatch(handler, context);
+#endif
 }
 
 } // namespace asio_handler_dispatch_helpers
