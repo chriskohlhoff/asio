@@ -32,6 +32,7 @@ nobase_include_HEADERS = \
 	asio/detail/event.hpp \
 	asio/detail/fd_set_adapter.hpp \
 	asio/detail/handler_alloc_helpers.hpp \
+	asio/detail/handler_dispatch_helpers.hpp \
 	asio/detail/hash_map.hpp \
 	asio/detail/io_control.hpp \
 	asio/detail/kqueue_reactor.hpp \
@@ -89,6 +90,7 @@ nobase_include_HEADERS = \
 	asio/error.hpp \
 	asio/error_handler.hpp \
 	asio/handler_alloc_hook.hpp \
+	asio/handler_dispatch_hook.hpp \
 	asio/impl/io_service.ipp \
 	asio/impl/read.ipp \
 	asio/impl/read_until.ipp \

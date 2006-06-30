@@ -29,6 +29,7 @@
 #include "asio/system_exception.hpp"
 #include "asio/detail/call_stack.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
+#include "asio/detail/handler_dispatch_helpers.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/win_iocp_operation.hpp"
 
@@ -237,7 +238,7 @@ public:
       ptr.reset();
 
       // Make the upcall.
-      handler();
+      asio_handler_dispatch_helpers::dispatch_handler(handler, &handler);
     }
 
     static void destroy_impl(operation* op)
@@ -258,7 +259,7 @@ public:
   void dispatch(Handler handler)
   {
     if (call_stack<win_iocp_io_service>::contains(this))
-      handler();
+      asio_handler_dispatch_helpers::dispatch_handler(handler, &handler);
     else
       post(handler);
   }

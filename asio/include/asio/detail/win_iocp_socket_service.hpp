@@ -34,6 +34,7 @@
 #include "asio/socket_base.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
+#include "asio/detail/handler_dispatch_helpers.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/select_reactor.hpp"
 #include "asio/detail/socket_holder.hpp"
@@ -476,7 +477,8 @@ public:
 
       // Call the handler.
       asio::error error(last_error);
-      handler(error, bytes_transferred);
+      asio_handler_dispatch_helpers::dispatch_handler(
+          detail::bind_handler(handler, error, bytes_transferred), &handler);
     }
 
     static void destroy_impl(operation* op)
@@ -609,7 +611,8 @@ public:
 
       // Call the handler.
       asio::error error(last_error);
-      handler(error, bytes_transferred);
+      asio_handler_dispatch_helpers::dispatch_handler(
+          detail::bind_handler(handler, error, bytes_transferred), &handler);
     }
 
     static void destroy_impl(operation* op)
@@ -763,7 +766,8 @@ public:
 
       // Call the handler.
       asio::error error(last_error);
-      handler(error, bytes_transferred);
+      asio_handler_dispatch_helpers::dispatch_handler(
+          detail::bind_handler(handler, error, bytes_transferred), &handler);
     }
 
     static void destroy_impl(operation* op)
@@ -919,7 +923,8 @@ public:
 
       // Call the handler.
       asio::error error(last_error);
-      handler(error, bytes_transferred);
+      asio_handler_dispatch_helpers::dispatch_handler(
+          detail::bind_handler(handler, error, bytes_transferred), &handler);
     }
 
     static void destroy_impl(operation* op)
@@ -1223,7 +1228,8 @@ public:
 
       // Call the handler.
       asio::error error(last_error);
-      handler(error);
+      asio_handler_dispatch_helpers::dispatch_handler(
+          detail::bind_handler(handler, error), &handler);
     }
 
     static void destroy_impl(operation* op)
@@ -1488,7 +1494,8 @@ public:
 
       // Call the handler.
       asio::error error(last_error);
-      handler(error);
+      asio_handler_dispatch_helpers::dispatch_handler(
+          detail::bind_handler(handler, error), &handler);
     }
 
     static void destroy_impl(operation* op)

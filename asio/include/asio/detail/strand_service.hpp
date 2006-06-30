@@ -26,6 +26,7 @@
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/call_stack.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
+#include "asio/detail/handler_dispatch_helpers.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
 
@@ -142,6 +143,13 @@ public:
       return impl_.handler_storage_.address();
     }
 
+    template <typename Handler_To_Dispatch>
+    friend void asio_handler_dispatch(Handler_To_Dispatch handler,
+        invoke_current_handler*)
+    {
+      handler();
+    }
+
   private:
     strand_service& service_impl_;
     implementation_type& impl_;
@@ -230,7 +238,7 @@ public:
       call_stack<implementation_type>::context ctx(&impl);
 
       // Make the upcall.
-      handler();
+      asio_handler_dispatch_helpers::dispatch_handler(handler, &handler);
     }
 
     static void do_destroy(handler_base* base)
@@ -340,7 +348,7 @@ public:
   {
     if (call_stack<implementation_type>::contains(&impl))
     {
-      handler();
+      asio_handler_dispatch_helpers::dispatch_handler(handler, &handler);
     }
     else
     {

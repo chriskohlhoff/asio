@@ -19,6 +19,7 @@
 
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
+#include "asio/detail/handler_dispatch_helpers.hpp"
 
 namespace asio {
 namespace detail {
@@ -111,24 +112,34 @@ public:
         detail::bind_handler(handler_, arg1, arg2, arg3, arg4, arg5));
   }
 
-  friend void* asio_handler_allocate(std::size_t size,
-      wrapped_handler<Dispatcher, Handler>* this_handler)
-  {
-    return asio_handler_alloc_helpers::allocate(
-        size, &this_handler->handler_);
-  }
-
-  friend void asio_handler_deallocate(void* pointer, std::size_t size,
-      wrapped_handler<Dispatcher, Handler>* this_handler)
-  {
-    asio_handler_alloc_helpers::deallocate(
-        pointer, size, &this_handler->handler_);
-  }
-
-private:
+//private:
   Dispatcher& dispatcher_;
   Handler handler_;
 };
+
+template <typename Dispatcher, typename Handler>
+inline void* asio_handler_allocate(std::size_t size,
+    wrapped_handler<Dispatcher, Handler>* this_handler)
+{
+  return asio_handler_alloc_helpers::allocate(
+      size, &this_handler->handler_);
+}
+
+template <typename Dispatcher, typename Handler>
+inline void asio_handler_deallocate(void* pointer, std::size_t size,
+    wrapped_handler<Dispatcher, Handler>* this_handler)
+{
+  asio_handler_alloc_helpers::deallocate(
+      pointer, size, &this_handler->handler_);
+}
+
+template <typename Handler_To_Dispatch, typename Dispatcher, typename Handler>
+inline void asio_handler_dispatch(const Handler_To_Dispatch& handler,
+    wrapped_handler<Dispatcher, Handler>* this_handler)
+{
+  asio_handler_dispatch_helpers::dispatch_handler(
+      handler, &this_handler->handler_);
+}
 
 } // namespace detail
 } // namespace asio
