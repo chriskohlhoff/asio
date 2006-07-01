@@ -27,6 +27,7 @@
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/const_buffers_iterator.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
+#include "asio/detail/handler_dispatch_helpers.hpp"
 
 namespace asio {
 
@@ -190,29 +191,41 @@ namespace detail
       stream_.async_read_some(streambuf_.prepare(512), *this);
     }
 
-    friend void* asio_handler_allocate(std::size_t size,
-        read_until_delim_handler<Async_Read_Stream,
-          Allocator, Handler>* this_handler)
-    {
-      return asio_handler_alloc_helpers::allocate(
-          size, &this_handler->handler_);
-    }
-
-    friend void asio_handler_deallocate(void* pointer, std::size_t size,
-        read_until_delim_handler<Async_Read_Stream,
-          Allocator, Handler>* this_handler)
-    {
-      asio_handler_alloc_helpers::deallocate(
-          pointer, size, &this_handler->handler_);
-    }
-
-  private:
+  //private:
     Async_Read_Stream& stream_;
     asio::basic_streambuf<Allocator>& streambuf_;
     char delim_;
     std::size_t next_search_start_;
     Handler handler_;
   };
+
+  template <typename Async_Read_Stream, typename Allocator, typename Handler>
+  inline void* asio_handler_allocate(std::size_t size,
+      read_until_delim_handler<Async_Read_Stream,
+        Allocator, Handler>* this_handler)
+  {
+    return asio_handler_alloc_helpers::allocate(
+        size, &this_handler->handler_);
+  }
+
+  template <typename Async_Read_Stream, typename Allocator, typename Handler>
+  inline void asio_handler_deallocate(void* pointer, std::size_t size,
+      read_until_delim_handler<Async_Read_Stream,
+        Allocator, Handler>* this_handler)
+  {
+    asio_handler_alloc_helpers::deallocate(
+        pointer, size, &this_handler->handler_);
+  }
+
+  template <typename Handler_To_Dispatch, typename Async_Read_Stream,
+      typename Allocator, typename Handler>
+  inline void asio_handler_dispatch(const Handler_To_Dispatch& handler,
+      read_until_delim_handler<Async_Read_Stream,
+        Allocator, Handler>* this_handler)
+  {
+    asio_handler_dispatch_helpers::dispatch_handler(
+        handler, &this_handler->handler_);
+  }
 } // namespace detail
 
 template <typename Async_Read_Stream, typename Allocator, typename Handler>
@@ -315,29 +328,41 @@ namespace detail
       stream_.async_read_some(streambuf_.prepare(512), *this);
     }
 
-    friend void* asio_handler_allocate(std::size_t size,
-        read_until_expr_handler<Async_Read_Stream,
-          Allocator, Handler>* this_handler)
-    {
-      return asio_handler_alloc_helpers::allocate(
-          size, &this_handler->handler_);
-    }
-
-    friend void asio_handler_deallocate(void* pointer, std::size_t size,
-        read_until_expr_handler<Async_Read_Stream,
-          Allocator, Handler>* this_handler)
-    {
-      asio_handler_alloc_helpers::deallocate(
-          pointer, size, &this_handler->handler_);
-    }
-
-  private:
+  //private:
     Async_Read_Stream& stream_;
     asio::basic_streambuf<Allocator>& streambuf_;
     boost::regex expr_;
     std::size_t next_search_start_;
     Handler handler_;
   };
+
+  template <typename Async_Read_Stream, typename Allocator, typename Handler>
+  inline void* asio_handler_allocate(std::size_t size,
+      read_until_expr_handler<Async_Read_Stream,
+        Allocator, Handler>* this_handler)
+  {
+    return asio_handler_alloc_helpers::allocate(
+        size, &this_handler->handler_);
+  }
+
+  template <typename Async_Read_Stream, typename Allocator, typename Handler>
+  inline void asio_handler_deallocate(void* pointer, std::size_t size,
+      read_until_expr_handler<Async_Read_Stream,
+        Allocator, Handler>* this_handler)
+  {
+    asio_handler_alloc_helpers::deallocate(
+        pointer, size, &this_handler->handler_);
+  }
+
+  template <typename Handler_To_Dispatch, typename Async_Read_Stream,
+      typename Allocator, typename Handler>
+  inline void asio_handler_dispatch(const Handler_To_Dispatch& handler,
+      read_until_expr_handler<Async_Read_Stream,
+        Allocator, Handler>* this_handler)
+  {
+    asio_handler_dispatch_helpers::dispatch_handler(
+        handler, &this_handler->handler_);
+  }
 } // namespace detail
 
 template <typename Async_Read_Stream, typename Allocator, typename Handler>
