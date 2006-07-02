@@ -151,6 +151,11 @@ sub copy_source_file
       $line =~ s/asio_handler_alloc_helpers/boost_asio_handler_alloc_helpers/g;
       print_line($output, $line, $from, $lineno);
     }
+    elsif ($line =~ /asio_handler_dispatch_helpers/)
+    {
+      $line =~ s/asio_handler_dispatch_helpers/boost_asio_handler_dispatch_helpers/g;
+      print_line($output, $line, $from, $lineno);
+    }
     else
     {
       print_line($output, $line, $from, $lineno);
