@@ -26,8 +26,8 @@ namespace asio {
  * deadline_timer). Certain guarantees are made on when the handler may be
  * invoked, in particular that a handler can only be invoked from a thread that
  * is currently calling asio::io_service::run() on the corresponding
- * asio::io_service object. Handlers may subsequently be dispatched through
- * other objects (such as asio::strand objects) that provide additional
+ * io_service object. Handlers may subsequently be dispatched through other
+ * objects (such as asio::strand objects) that provide additional
  * guarantees.
  *
  * When asynchronous operations are composed from other asynchronous

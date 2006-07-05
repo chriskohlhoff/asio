@@ -24,7 +24,7 @@
 #include "asio/handler_dispatch_hook.hpp"
 
 // Calls to asio_handler_dispatch must be made from a namespace that does not
-// contain any overloads of this function. The asio_handler_dispatch_helpers
+// contain overloads of this function. The asio_handler_dispatch_helpers
 // namespace is defined here for that purpose.
 namespace asio_handler_dispatch_helpers {
 
