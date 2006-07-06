@@ -73,7 +73,7 @@ public:
     {
       user_set_non_blocking = 1, // The user wants a non-blocking socket.
       internal_non_blocking = 2, // The socket has been set non-blocking.
-      enable_connection_aborted = 4, // User wants connection_aborted errors.
+      enable_connection_aborted = 4 // User wants connection_aborted errors.
     };
 
     // Flags indicating the current state of the socket.
