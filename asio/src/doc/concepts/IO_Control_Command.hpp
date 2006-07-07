@@ -12,8 +12,8 @@
 /**
  * Defines the interface that must be implemented by an object passed as the
  * @c command parameter to:
- * @li asio::stream_socket::io_control
- * @li asio::datagram_socket::io_control
+ * @li asio::basic_stream_socket::io_control
+ * @li asio::basic_datagram_socket::io_control
  *
  * @par Implemented By:
  * asio::socket_base::non_blocking_io @n

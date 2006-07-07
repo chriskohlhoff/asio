@@ -14,8 +14,8 @@
  * @c buffers parameter to functions such as:
  * @li @ref read
  * @li @ref async_read
- * @li asio::stream_socket::read_some
- * @li asio::stream_socket::async_read_some
+ * @li asio::basic_stream_socket::read_some
+ * @li asio::basic_stream_socket::async_read_some
  *
  * @par Implemented By:
  * asio::mutable_buffer_container_1 @n

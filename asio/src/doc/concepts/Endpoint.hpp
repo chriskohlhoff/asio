@@ -12,17 +12,17 @@
 /**
  * Defines the interface that must be implemented by an object passed as a
  * parameter to:
- * @li asio::stream_socket::bind
- * @li asio::stream_socket::connect
- * @li asio::stream_socket::get_local_endpoint
- * @li asio::stream_socket::get_remote_endpoint
- * @li asio::datagram_socket::bind
- * @li asio::datagram_socket::connect
- * @li asio::datagram_socket::get_local_endpoint
- * @li asio::datagram_socket::get_remote_endpoint
- * @li asio::socket_acceptor::bind
- * @li asio::socket_acceptor::get_local_endpoint
- * @li asio::socket_acceptor::accept_address
+ * @li asio::basic_stream_socket::bind
+ * @li asio::basic_stream_socket::connect
+ * @li asio::basic_stream_socket::get_local_endpoint
+ * @li asio::basic_stream_socket::get_remote_endpoint
+ * @li asio::basic_datagram_socket::bind
+ * @li asio::basic_datagram_socket::connect
+ * @li asio::basic_datagram_socket::get_local_endpoint
+ * @li asio::basic_datagram_socket::get_remote_endpoint
+ * @li asio::basic_socket_acceptor::bind
+ * @li asio::basic_socket_acceptor::get_local_endpoint
+ * @li asio::basic_socket_acceptor::accept_address
  *
  * @par Implemented By:
  * asio::ipv4::tcp::endpoint @n
