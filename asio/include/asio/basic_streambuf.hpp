@@ -167,7 +167,7 @@ protected:
     // Ensure buffer is large enough to hold at least the specified size.
     if (n > pend - pnext)
     {
-      if (n <= max_size_ & pnext <= max_size_ - n)
+      if (n <= max_size_ && pnext <= max_size_ - n)
       {
         buffer_.resize((std::max<std::size_t>)(pnext + n, 1));
       }
