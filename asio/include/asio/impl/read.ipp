@@ -86,9 +86,6 @@ std::size_t read(Sync_Read_Stream& s,
       return total_transferred;
     }
   }
-  typename Sync_Read_Stream::error_type e;
-  error_handler(e);
-  return total_transferred;
 }
 
 template <typename Sync_Read_Stream, typename Allocator>
