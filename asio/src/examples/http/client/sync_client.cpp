@@ -3,7 +3,6 @@
 #include <ostream>
 #include <string>
 #include <asio.hpp>
-#include <boost/regex.hpp>
 
 using asio::ip::tcp;
 
@@ -53,7 +52,7 @@ int main(int argc, char* argv[])
 
     // Read the response status line.
     asio::streambuf response;
-    asio::read_until(socket, response, boost::regex("\r\n"));
+    asio::read_until(socket, response, "\r\n");
 
     // Check that response is OK.
     std::istream response_stream(&response);
@@ -75,7 +74,7 @@ int main(int argc, char* argv[])
     }
 
     // Read the response headers, which are terminated by a blank line.
-    asio::read_until(socket, response, boost::regex("\r\n\r\n"));
+    asio::read_until(socket, response, "\r\n\r\n");
 
     // Process the response headers.
     std::string header;

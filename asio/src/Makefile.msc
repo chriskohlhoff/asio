@@ -96,6 +96,8 @@ EXAMPLE_EXES = \
 	examples\echo\blocking_tcp_echo_server.exe \
 	examples\echo\blocking_udp_echo_client.exe \
 	examples\echo\blocking_udp_echo_server.exe \
+	examples\http\client\async_client.exe \
+	examples\http\client\sync_client.exe \
 	examples\http\server\http_server.exe \
 	examples\iostreams\daytime_client.exe \
 	examples\iostreams\daytime_server.exe \
@@ -145,6 +147,9 @@ check: $(UNIT_TEST_EXES)
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
 
 {examples\echo}.cpp{examples\echo}.exe:
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+
+{examples\http\client}.cpp{examples\http\client}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
 
 {examples\iostreams}.cpp{examples\iostreams}.exe:

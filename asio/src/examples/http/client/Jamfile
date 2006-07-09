@@ -14,8 +14,7 @@ if $(UNIX)
 }
 
 exe async_client
-  : <lib>@boost/libs/regex/build/boost_regex
-    async_client.cpp
+  : async_client.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../../..
     <define>BOOST_ALL_NO_LIB=1
@@ -26,8 +25,7 @@ exe async_client
   ;
 
 exe sync_client
-  : <lib>@boost/libs/regex/build/boost_regex
-    sync_client.cpp
+  : sync_client.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../../..
     <define>BOOST_ALL_NO_LIB=1
