@@ -102,7 +102,7 @@ test-suite "asio" :
   [ link socket_acceptor_service_test.cpp ]
   [ link socket_acceptor_service_test.cpp : $(USE_SELECT) : socket_acceptor_service_test_select ]
   [ run socket_base_test.cpp ]
-  [ run socket_base_test.cpp : $(USE_SELECT) : socket_base_test_select ]
+  [ run socket_base_test.cpp : : : $(USE_SELECT) : socket_base_test_select ]
   [ link strand_service_test.cpp ]
   [ link strand_service_test.cpp : $(USE_SELECT) : strand_service_test_select ]
   [ run strand_test.cpp ]
