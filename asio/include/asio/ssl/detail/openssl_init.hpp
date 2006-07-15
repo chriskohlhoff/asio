@@ -78,9 +78,9 @@ private:
     static void openssl_locking_func(int mode, int n, 
       const char *file, int line)
     {
-  	  if (mode & CRYPTO_LOCK)
+      if (mode & CRYPTO_LOCK)
         instance()->mutexes_[n]->lock();
-	    else
+      else
         instance()->mutexes_[n]->unlock();
     }
 
