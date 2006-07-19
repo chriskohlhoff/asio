@@ -27,6 +27,7 @@ nobase_include_HEADERS = \
 	asio/detail/call_stack.hpp \
 	asio/detail/consuming_buffers.hpp \
 	asio/detail/const_buffers_iterator.hpp \
+	asio/detail/deadline_timer_service.hpp \
 	asio/detail/epoll_reactor.hpp \
 	asio/detail/epoll_reactor_fwd.hpp \
 	asio/detail/event.hpp \
@@ -53,10 +54,8 @@ nobase_include_HEADERS = \
 	asio/detail/posix_thread.hpp \
 	asio/detail/posix_tss_ptr.hpp \
 	asio/detail/push_options.hpp \
-	asio/detail/reactive_deadline_timer_service.hpp \
 	asio/detail/reactive_socket_service.hpp \
 	asio/detail/reactor_op_queue.hpp \
-	asio/detail/reactor_timer_queue.hpp \
 	asio/detail/resolver_service.hpp \
 	asio/detail/scoped_lock.hpp \
 	asio/detail/select_interrupter.hpp \
@@ -74,6 +73,8 @@ nobase_include_HEADERS = \
 	asio/detail/task_io_service.hpp \
 	asio/detail/task_io_service_fwd.hpp \
 	asio/detail/thread.hpp \
+	asio/detail/timer_queue.hpp \
+	asio/detail/timer_queue_base.hpp \
 	asio/detail/tss_ptr.hpp \
 	asio/detail/win_event.hpp \
 	asio/detail/win_iocp_io_service.hpp \

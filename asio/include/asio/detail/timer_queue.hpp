@@ -1,6 +1,6 @@
 //
-// reactor_timer_queue.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~
+// timer_queue.hpp
+// ~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_REACTOR_TIMER_QUEUE_HPP
-#define ASIO_DETAIL_REACTOR_TIMER_QUEUE_HPP
+#ifndef ASIO_DETAIL_TIMER_QUEUE_HPP
+#define ASIO_DETAIL_TIMER_QUEUE_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -29,17 +29,24 @@
 #include "asio/error.hpp"
 #include "asio/detail/hash_map.hpp"
 #include "asio/detail/noncopyable.hpp"
+#include "asio/detail/timer_queue_base.hpp"
 
 namespace asio {
 namespace detail {
 
-template <typename Time, typename Comparator = std::less<Time> >
-class reactor_timer_queue
-  : private noncopyable
+template <typename Time_Traits>
+class timer_queue
+  : public timer_queue_base
 {
 public:
+  // The time type.
+  typedef typename Time_Traits::time_type time_type;
+
+  // The duration type.
+  typedef typename Time_Traits::duration_type duration_type;
+
   // Constructor.
-  reactor_timer_queue()
+  timer_queue()
     : timers_(),
       heap_()
   {
@@ -49,7 +56,7 @@ public:
   // earliest in the queue, in which case the reactor's event demultiplexing
   // function call may need to be interrupted and restarted.
   template <typename Handler>
-  bool enqueue_timer(const Time& time, Handler handler, void* token)
+  bool enqueue_timer(const time_type& time, Handler handler, void* token)
   {
     // Ensure that there is space for the timer in the heap. We reserve here so
     // that the push_back below will not throw due to a reallocation failure.
@@ -84,22 +91,23 @@ public:
   }
 
   // Whether there are no timers in the queue.
-  bool empty() const
+  virtual bool empty() const
   {
     return heap_.empty();
   }
 
   // Get the time for the timer that is earliest in the queue.
-  void get_earliest_time(Time& time)
+  virtual boost::posix_time::time_duration wait_duration() const
   {
-    time = heap_[0]->time_;
+    return Time_Traits::to_posix_duration(
+        Time_Traits::subtract(heap_[0]->time_, Time_Traits::now()));
   }
 
   // Dispatch the timers that are earlier than the specified time.
-  void dispatch_timers(const Time& time)
+  virtual void dispatch_timers()
   {
-    Comparator comp;
-    while (!heap_.empty() && !comp(time, heap_[0]->time_))
+    const time_type now = Time_Traits::now();
+    while (!heap_.empty() && !Time_Traits::less_than(now, heap_[0]->time_))
     {
       timer_base* t = heap_[0];
       remove_timer(t);
@@ -130,7 +138,7 @@ public:
   }
 
   // Destroy all timers.
-  void destroy_timers()
+  virtual void destroy_timers()
   {
     typename hash_map<void*, timer_base*>::iterator i = timers_.begin();
     typename hash_map<void*, timer_base*>::iterator end = timers_.end();
@@ -169,7 +177,7 @@ private:
 
     // Constructor.
     timer_base(invoke_func_type invoke_func, destroy_func_type destroy_func,
-        const Time& time, void* token)
+        const time_type& time, void* token)
       : invoke_func_(invoke_func),
         destroy_func_(destroy_func),
         time_(time),
@@ -187,7 +195,7 @@ private:
     }
 
   private:
-    friend class reactor_timer_queue<Time, Comparator>;
+    friend class timer_queue<Time_Traits>;
 
     // The function to be called to dispatch the handler.
     invoke_func_type invoke_func_;
@@ -196,7 +204,7 @@ private:
     destroy_func_type destroy_func_;
 
     // The time when the operation should fire.
-    Time time_;
+    time_type time_;
 
     // The token associated with the timer.
     void* token_;
@@ -218,7 +226,7 @@ private:
   {
   public:
     // Constructor.
-    timer(const Time& time, Handler handler, void* token)
+    timer(const time_type& time, Handler handler, void* token)
       : timer_base(&timer<Handler>::invoke_handler,
           &timer<Handler>::destroy_handler, time, token),
         handler_(handler)
@@ -245,9 +253,9 @@ private:
   // Move the item at the given index up the heap to its correct position.
   void up_heap(size_t index)
   {
-    Comparator comp;
     size_t parent = (index - 1) / 2;
-    while (index > 0 && comp(heap_[index]->time_, heap_[parent]->time_))
+    while (index > 0
+        && Time_Traits::less_than(heap_[index]->time_, heap_[parent]->time_))
     {
       swap_heap(index, parent);
       index = parent;
@@ -258,14 +266,14 @@ private:
   // Move the item at the given index down the heap to its correct position.
   void down_heap(size_t index)
   {
-    Comparator comp;
     size_t child = index * 2 + 1;
     while (child < heap_.size())
     {
       size_t min_child = (child + 1 == heap_.size()
-          || comp(heap_[child]->time_, heap_[child + 1]->time_))
+          || Time_Traits::less_than(
+            heap_[child]->time_, heap_[child + 1]->time_))
         ? child : child + 1;
-      if (comp(heap_[index]->time_, heap_[min_child]->time_))
+      if (Time_Traits::less_than(heap_[index]->time_, heap_[min_child]->time_))
         break;
       swap_heap(index, min_child);
       index = min_child;
@@ -298,9 +306,8 @@ private:
       {
         swap_heap(index, heap_.size() - 1);
         heap_.pop_back();
-        Comparator comp;
         size_t parent = (index - 1) / 2;
-        if (index > 0 && comp(t->time_, heap_[parent]->time_))
+        if (index > 0 && Time_Traits::less_than(t->time_, heap_[parent]->time_))
           up_heap(index);
         else
           down_heap(index);
@@ -335,4 +342,4 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_REACTOR_TIMER_QUEUE_HPP
+#endif // ASIO_DETAIL_TIMER_QUEUE_HPP

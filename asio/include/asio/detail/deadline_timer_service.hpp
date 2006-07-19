@@ -1,6 +1,6 @@
 //
-// reactive_deadline_timer_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// deadline_timer_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_REACTIVE_DEADLINE_TIMER_SERVICE_HPP
-#define ASIO_DETAIL_REACTIVE_DEADLINE_TIMER_SERVICE_HPP
+#ifndef ASIO_DETAIL_DEADLINE_TIMER_SERVICE_HPP
+#define ASIO_DETAIL_DEADLINE_TIMER_SERVICE_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -29,35 +29,37 @@
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/timer_queue.hpp"
 
 namespace asio {
 namespace detail {
 
-template <typename Time_Traits, typename Reactor>
-class reactive_deadline_timer_service
+template <typename Time_Traits, typename Timer_Scheduler>
+class deadline_timer_service
   : public asio::io_service::service
 {
 public:
-  // The implementation type of the timer. This type is dependent on the
-  // underlying implementation of the timer service.
-  struct implementation_type
-    : private asio::detail::noncopyable
-  {
-    boost::posix_time::ptime expiry;
-    bool might_have_pending_waits;
-  };
-
   // The time type.
   typedef typename Time_Traits::time_type time_type;
 
   // The duration type.
   typedef typename Time_Traits::duration_type duration_type;
 
-  // Constructor.
-  reactive_deadline_timer_service(asio::io_service& io_service)
-    : asio::io_service::service(io_service),
-      reactor_(asio::use_service<Reactor>(io_service))
+  // The implementation type of the timer. This type is dependent on the
+  // underlying implementation of the timer service.
+  struct implementation_type
+    : private asio::detail::noncopyable
   {
+    time_type expiry;
+    bool might_have_pending_waits;
+  };
+
+  // Constructor.
+  deadline_timer_service(asio::io_service& io_service)
+    : asio::io_service::service(io_service),
+      scheduler_(asio::use_service<Timer_Scheduler>(io_service))
+  {
+    scheduler_.add_timer_queue(timer_queue_);
   }
 
   // Destroy all user-defined handler objects owned by the service.
@@ -68,7 +70,7 @@ public:
   // Construct a new timer implementation.
   void construct(implementation_type& impl)
   {
-    impl.expiry = boost::posix_time::ptime();
+    impl.expiry = time_type();
     impl.might_have_pending_waits = false;
   }
 
@@ -83,7 +85,7 @@ public:
   {
     if (!impl.might_have_pending_waits)
       return 0;
-    std::size_t count = reactor_.cancel_timer(&impl);
+    std::size_t count = scheduler_.cancel_timer(timer_queue_, &impl);
     impl.might_have_pending_waits = false;
     return count;
   }
@@ -91,7 +93,7 @@ public:
   // Get the expiry time for the timer as an absolute time.
   time_type expires_at(const implementation_type& impl) const
   {
-    return Time_Traits::from_utc(impl.expiry);
+    return impl.expiry;
   }
 
   // Set the expiry time for the timer as an absolute time.
@@ -99,7 +101,7 @@ public:
       const time_type& expiry_time)
   {
     std::size_t count = cancel(impl);
-    impl.expiry = Time_Traits::to_utc(expiry_time);
+    impl.expiry = expiry_time;
     return count;
   }
 
@@ -119,16 +121,16 @@ public:
   // Perform a blocking wait on the timer.
   void wait(implementation_type& impl)
   {
-    boost::posix_time::ptime now
-      = boost::posix_time::microsec_clock::universal_time();
-    while (now < impl.expiry)
+    time_type now = Time_Traits::now();
+    while (Time_Traits::less_than(now, impl.expiry))
     {
-      boost::posix_time::time_duration timeout = impl.expiry - now;
+      boost::posix_time::time_duration timeout =
+        Time_Traits::to_posix_duration(Time_Traits::subtract(impl.expiry, now));
       ::timeval tv;
       tv.tv_sec = timeout.total_seconds();
       tv.tv_usec = timeout.total_microseconds() % 1000000;
       socket_ops::select(0, 0, 0, 0, &tv);
-      now = boost::posix_time::microsec_clock::universal_time();
+      now = Time_Traits::now();
     }
   }
 
@@ -160,13 +162,16 @@ public:
   void async_wait(implementation_type& impl, Handler handler)
   {
     impl.might_have_pending_waits = true;
-    reactor_.schedule_timer(impl.expiry,
+    scheduler_.schedule_timer(timer_queue_, impl.expiry,
         wait_handler<Handler>(owner(), handler), &impl);
   }
 
 private:
-  // The selector that performs event demultiplexing for the provider.
-  Reactor& reactor_;
+  // The queue of timers.
+  timer_queue<Time_Traits> timer_queue_;
+
+  // The object that schedules and executes timers. Usually a reactor.
+  Timer_Scheduler& scheduler_;
 };
 
 } // namespace detail
@@ -174,4 +179,4 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_REACTIVE_DEADLINE_TIMER_SERVICE_HPP
+#endif // ASIO_DETAIL_DEADLINE_TIMER_SERVICE_HPP

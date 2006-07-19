@@ -57,16 +57,17 @@ struct time_traits<boost::posix_time::ptime>
     return t1 - t2;
   }
 
-  /// Convert to UTC in the posix time type.
-  static boost::posix_time::ptime to_utc(const time_type& t)
+  /// Test whether one time is less than another.
+  static bool less_than(const time_type& t1, const time_type& t2)
   {
-    return t;
+    return t1 < t2;
   }
 
-  /// Convert from UTC in the posix time type.
-  static time_type from_utc(const boost::posix_time::ptime& t)
+  /// Convert to POSIX duration type.
+  static boost::posix_time::time_duration to_posix_duration(
+      const duration_type& d)
   {
-    return t;
+    return d;
   }
 };
 
