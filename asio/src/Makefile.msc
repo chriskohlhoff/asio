@@ -107,6 +107,8 @@ EXAMPLE_EXES = \
 	examples\timeouts\connect_timeout.exe \
 	examples\timeouts\datagram_receive_timeout.exe \
 	examples\timeouts\stream_receive_timeout.exe \
+	examples\timers\tick_count_timer.exe \
+	examples\timers\time_t_timer.exe \
 	examples\tutorial\timer1\timer.exe \
 	examples\tutorial\timer2\timer.exe \
 	examples\tutorial\timer3\timer.exe \
@@ -159,6 +161,9 @@ check: $(UNIT_TEST_EXES)
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
 
 {examples\timeouts}.cpp{examples\timeouts}.exe:
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+
+{examples\timers}.cpp{examples\timers}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
 
 {examples\tutorial\timer1}.cpp{examples\tutorial\timer1}.exe:
