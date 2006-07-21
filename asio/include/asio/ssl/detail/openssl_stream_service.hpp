@@ -152,6 +152,7 @@ public:
   {
     ::SSL* ssl;
     ::BIO* ext_bio;
+    net_buffer recv_buf;
   } * impl_type;
 
   // Construct a new stream socket service for the specified io_service.
@@ -179,6 +180,7 @@ public:
     impl = new impl_struct;
     impl->ssl = ::SSL_new(context.impl());
     ::SSL_set_mode(impl->ssl, SSL_MODE_ENABLE_PARTIAL_WRITE);
+    ::SSL_set_mode(impl->ssl, SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER);
     ::BIO* int_bio = 0;
     impl->ext_bio = 0;
     ::BIO_new_bio_pair(&int_bio, 8192, &impl->ext_bio, 8192);
@@ -240,6 +242,7 @@ public:
         &ssl_wrap<mutex_type>::SSL_connect:
         &ssl_wrap<mutex_type>::SSL_accept,
       next_layer,
+      impl->recv_buf,
       impl->ssl,
       impl->ext_bio,
       boost::bind
@@ -265,6 +268,7 @@ public:
       openssl_operation<Stream> op(
         &ssl_wrap<mutex_type>::SSL_shutdown,
         next_layer,
+        impl->recv_buf,
         impl->ssl,
         impl->ext_bio);
       op.start();
@@ -292,6 +296,7 @@ public:
     (
       &ssl_wrap<mutex_type>::SSL_shutdown,
       next_layer,
+      impl->recv_buf,
       impl->ssl,
       impl->ext_bio,
       boost::bind
@@ -322,6 +327,7 @@ public:
       openssl_operation<Stream> op(
         send_func,
         next_layer,
+        impl->recv_buf,
         impl->ssl,
         impl->ext_bio
       );
@@ -356,6 +362,7 @@ public:
     (
       send_func,
       next_layer,
+      impl->recv_buf,
       impl->ssl,
       impl->ext_bio,
       boost::bind
@@ -385,6 +392,7 @@ public:
             asio::buffer_size(*buffers.begin()));
       openssl_operation<Stream> op(recv_func,
         next_layer,
+        impl->recv_buf,
         impl->ssl,
         impl->ext_bio
       );
@@ -420,6 +428,7 @@ public:
     (
       recv_func,
       next_layer,
+      impl->recv_buf,
       impl->ssl,
       impl->ext_bio,
       boost::bind

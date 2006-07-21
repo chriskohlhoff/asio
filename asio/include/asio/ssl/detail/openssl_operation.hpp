@@ -82,12 +82,14 @@ public:
   // Constructor for asynchronous operations
   openssl_operation(ssl_primitive_func primitive,
                     Stream& socket,
+                    net_buffer& recv_buf,
                     SSL* session,
                     BIO* ssl_bio,
                     user_handler_func  handler
                     )
     : primitive_(primitive)
     , user_handler_(handler)
+    , recv_buf_(recv_buf)
     , socket_(socket)
     , ssl_bio_(ssl_bio)
     , session_(session)
@@ -105,9 +107,11 @@ public:
   // Constructor for synchronous operations
   openssl_operation(ssl_primitive_func primitive,
                     Stream& socket,
+                    net_buffer& recv_buf,
                     SSL* session,
                     BIO* ssl_bio)
     : primitive_(primitive)
+    , recv_buf_(recv_buf)
     , socket_(socket)
     , ssl_bio_(ssl_bio)
     , session_(session)
@@ -165,6 +169,36 @@ public:
       // not want network communication nor does want to send shutdown out...
       return handler_(asio::error(error_code), rc); 
 
+    if (!is_operation_done && !is_write_needed)
+    {
+      // We may have left over data that we can pass to SSL immediately
+      if (recv_buf_.get_data_len() > 0)
+      {
+        // Pass the buffered data to SSL
+        int written = ::BIO_write
+        ( 
+          ssl_bio_, 
+          recv_buf_.get_data_start(), 
+          recv_buf_.get_data_len() 
+        );
+
+        if (written > 0)
+        {
+          recv_buf_.data_removed(written);
+        }
+        else if (written < 0)
+        {
+          if (!BIO_should_retry(ssl_bio_))
+          {
+            // Some serios error with BIO....
+            return handler_(asio::error(asio::error::no_recovery), 0);
+          }
+        }
+
+        return start();
+      }
+    }
+
     // Continue with operation, flush any SSL data out to network...
     return write_(is_operation_done, rc); 
   }
@@ -181,7 +215,12 @@ private:
   int_handler_func handler_;
     
   net_buffer send_buf_; // buffers for network IO
-  net_buffer recv_buf_; 
+
+  // The recv buffer is owned by the stream, not the operation, since there can
+  // be left over bytes after passing the data up to the application, and these
+  // bytes need to be kept around for the next read operation issued by the
+  // application.
+  net_buffer& recv_buf_;
 
   Stream& socket_;
   BIO*    ssl_bio_;
@@ -214,9 +253,11 @@ private:
         send_buf_.get_unused_len();
         
       if (len == 0)
+      {
         // In case our send buffer is full, we have just to wait until 
         // previous send to complete...
         return 0;
+      }
 
       // Read outgoing data from bio
       len = ::BIO_read( ssl_bio_, send_buf_.get_unused_start(), len); 
@@ -225,7 +266,7 @@ private:
       {
         unsigned char *data_start = send_buf_.get_unused_start();
         send_buf_.data_added(len);
-   
+  
         asio::async_write
         ( 
           socket_, 
