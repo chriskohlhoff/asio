@@ -212,6 +212,7 @@ public:
           &ssl_wrap<mutex_type>::SSL_connect:
           &ssl_wrap<mutex_type>::SSL_accept,
         next_layer,
+        impl->recv_buf,
         impl->ssl,
         impl->ext_bio);
       op.start();
