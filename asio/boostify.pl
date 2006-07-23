@@ -250,6 +250,7 @@ sub copy_examples
       "src/examples/services",
       "src/examples/ssl",
       "src/examples/timeouts",
+      "src/examples/timers",
       "src/examples/tutorial",
       "src/examples/tutorial/daytime1",
       "src/examples/tutorial/daytime2",

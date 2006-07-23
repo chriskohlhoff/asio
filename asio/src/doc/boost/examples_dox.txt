@@ -106,6 +106,13 @@ operations after a period of time.
 \li \ref timeouts_datagram_receive_timeout_cpp
 \li \ref timeouts_stream_receive_timeout_cpp
 
+\section timers_section Timers
+
+Examples showing how to customise deadline_timer using different time types.
+
+\li \ref timers_tick_count_timer_cpp
+\li \ref timers_time_t_timer_cpp
+
 */
 
 /**
@@ -266,4 +273,14 @@ operations after a period of time.
 /**
 \page timeouts_stream_receive_timeout_cpp timeouts/stream_receive_timeout.cpp
 \include timeouts/stream_receive_timeout.cpp
+*/
+
+/**
+\page timers_tick_count_timer_cpp timers/tick_count_timer.cpp
+\include timers/tick_count_timer.cpp
+*/
+
+/**
+\page timers_time_t_timer_cpp timers/time_t_timer.cpp
+\include timers/time_t_timer.cpp
 */
