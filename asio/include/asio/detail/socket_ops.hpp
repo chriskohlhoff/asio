@@ -454,7 +454,7 @@ inline const char* inet_ntop(int af, const void* src, char* dest, size_t length,
     memcpy(&ipv6_address->sin6_addr, src, sizeof(in6_addr_type));
   }
 
-  DWORD string_length = length;
+  DWORD string_length = static_cast<DWORD>(length);
   int result = error_wrapper(::WSAAddressToStringA(
         reinterpret_cast<sockaddr*>(&address),
         address_length, 0, dest, &string_length));
@@ -1377,8 +1377,9 @@ inline int getnameinfo_emulation(const socket_addr_type* sa,
       hostent hent;
       char hbuf[8192] = "";
       int herr = 0;
-      hostent* hptr = socket_ops::gethostbyaddr(addr, addr_len,
-          sa->sa_family, &hent, hbuf, sizeof(hbuf), &herr);
+      hostent* hptr = socket_ops::gethostbyaddr(addr,
+          static_cast<int>(addr_len), sa->sa_family,
+          &hent, hbuf, sizeof(hbuf), &herr);
       if (hptr && hptr->h_name && hptr->h_name[0] != '\0')
       {
         if (flags & NI_NOFQDN)
