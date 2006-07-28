@@ -88,7 +88,7 @@ public:
   {
     if (pptr() + n > epptr())
       n = epptr() - pptr();
-    pbump(n);
+    pbump(static_cast<int>(n));
   }
 
   /// Move the start of the get area by the specified number of characters.
