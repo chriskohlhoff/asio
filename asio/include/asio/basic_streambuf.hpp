@@ -68,6 +68,12 @@ public:
     return pptr() - gptr();
   }
 
+  /// Return the maximum size of the buffer.
+  std::size_t max_size() const
+  {
+    return max_size_;
+  }
+
   /// Get a list of buffers that represents the get area.
   const_buffers_type data() const
   {
