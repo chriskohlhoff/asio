@@ -129,6 +129,13 @@ public:
     return service_impl_.native(impl);
   }
 
+  /// Cancel all asynchronous operations associated with the socket.
+  template <typename Error_Handler>
+  void cancel(implementation_type& impl, Error_Handler error_handler)
+  {
+    service_impl_.cancel(impl, error_handler);
+  }
+
   /// Bind the stream socket to the specified local endpoint.
   template <typename Error_Handler>
   void bind(implementation_type& impl, const endpoint_type& endpoint,

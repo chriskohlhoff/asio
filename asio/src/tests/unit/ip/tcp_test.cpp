@@ -103,6 +103,9 @@ void test()
     ip::tcp::socket::native_type native_socket4 = socket1.native();
     (void)native_socket4;
 
+    socket1.cancel();
+    socket1.cancel(error_handler);
+
     socket1.bind(ip::tcp::endpoint(ip::tcp::v4(), 0));
     socket1.bind(ip::tcp::endpoint(ip::tcp::v6(), 0));
     socket1.bind(ip::tcp::endpoint(ip::tcp::v4(), 0), error_handler);

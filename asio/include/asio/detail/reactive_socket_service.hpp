@@ -192,6 +192,22 @@ public:
     return impl.socket_;
   }
 
+  // Cancel all operations associated with the socket.
+  template <typename Error_Handler>
+  void cancel(implementation_type& impl, Error_Handler error_handler)
+  {
+    if (impl.socket_ == invalid_socket)
+    {
+      asio::error error(asio::error::bad_descriptor);
+      error_handler(error);
+    }
+    else
+    {
+      reactor_.cancel_ops(impl.socket_);
+      error_handler(asio::error(0));
+    }
+  }
+
   // Bind the socket to the specified local endpoint.
   template <typename Error_Handler>
   void bind(implementation_type& impl, const endpoint_type& endpoint,

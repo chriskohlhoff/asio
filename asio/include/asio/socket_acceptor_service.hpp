@@ -109,6 +109,13 @@ public:
     service_impl_.assign(impl, protocol, native_acceptor, error_handler);
   }
 
+  /// Cancel all asynchronous operations associated with the acceptor.
+  template <typename Error_Handler>
+  void cancel(implementation_type& impl, Error_Handler error_handler)
+  {
+    service_impl_.cancel(impl, error_handler);
+  }
+
   /// Bind the socket acceptor to the specified local endpoint.
   template <typename Error_Handler>
   void bind(implementation_type& impl, const endpoint_type& endpoint,

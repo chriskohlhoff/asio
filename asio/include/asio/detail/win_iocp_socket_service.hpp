@@ -249,6 +249,14 @@ public:
     return impl.socket_;
   }
 
+  // Cancel all operations associated with the socket.
+  template <typename Error_Handler>
+  void cancel(implementation_type& impl, Error_Handler error_handler)
+  {
+    // TODO.
+    error_handler(asio::error(asio::error::not_supported));
+  }
+
   // Bind the socket to the specified local endpoint.
   template <typename Error_Handler>
   void bind(implementation_type& impl, const endpoint_type& endpoint,
