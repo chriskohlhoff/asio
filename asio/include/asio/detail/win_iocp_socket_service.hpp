@@ -107,6 +107,12 @@ public:
     // The protocol associated with the socket.
     protocol_type protocol_;
 
+    // The ID of the thread from which it is safe to cancel asynchronous
+    // operations. 0 means no asynchronous operations have been started yet.
+    // ~0 means asynchronous operations have been started from more than one
+    // thread, and cancellation is not supported for the socket.
+    DWORD safe_cancellation_thread_id_;
+
     // Pointers to adjacent socket implementations in linked list.
     implementation_type* next_;
     implementation_type* prev_;
@@ -146,6 +152,7 @@ public:
   {
     impl.socket_ = invalid_socket;
     impl.cancel_token_.reset();
+    impl.safe_cancellation_thread_id_ = 0;
 
     // Insert implementation into linked list of all implementations.
     asio::detail::mutex::scoped_lock lock(mutex_);
@@ -237,6 +244,7 @@ public:
       {
         impl.socket_ = invalid_socket;
         impl.cancel_token_.reset();
+        impl.safe_cancellation_thread_id_ = 0;
       }
     }
 
@@ -253,8 +261,37 @@ public:
   template <typename Error_Handler>
   void cancel(implementation_type& impl, Error_Handler error_handler)
   {
-    // TODO.
-    error_handler(asio::error(asio::error::not_supported));
+    if (impl.socket_ == invalid_socket)
+    {
+      asio::error error(asio::error::bad_descriptor);
+      error_handler(error);
+    }
+    else if (impl.safe_cancellation_thread_id_ == 0)
+    {
+      // No operations have been started, so there's nothing to cancel.
+      error_handler(asio::error(0));
+    }
+    else if (impl.safe_cancellation_thread_id_ == ::GetCurrentThreadId())
+    {
+      // Asynchronous operations have been started from the current thread only,
+      // so it is safe to try to cancel them using CancelIo.
+      HANDLE sock_as_handle = reinterpret_cast<HANDLE>(impl.socket_);
+      if (!::CancelIo(sock_as_handle))
+      {
+        DWORD last_error = ::GetLastError();
+        error_handler(asio::error(last_error));
+      }
+      else
+      {
+        error_handler(asio::error(0));
+      }
+    }
+    else
+    {
+      // Asynchronous operations have been started from more than one thread,
+      // so cancellation is not safe.
+      error_handler(asio::error(asio::error::not_supported));
+    }
   }
 
   // Bind the socket to the specified local endpoint.
@@ -519,6 +556,12 @@ public:
   void async_send(implementation_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, Handler handler)
   {
+    // Update the ID of the thread from which cancellation is safe.
+    if (impl.safe_cancellation_thread_id_ == 0)
+      impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
+    else
+      impl.safe_cancellation_thread_id_ = ~DWORD(0);
+
     // Allocate and construct an operation to wrap the handler.
     typedef send_operation<Const_Buffers, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
@@ -664,6 +707,12 @@ public:
       const endpoint_type& destination, socket_base::message_flags flags,
       Handler handler)
   {
+    // Update the ID of the thread from which cancellation is safe.
+    if (impl.safe_cancellation_thread_id_ == 0)
+      impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
+    else
+      impl.safe_cancellation_thread_id_ = ~DWORD(0);
+
     // Allocate and construct an operation to wrap the handler.
     typedef send_to_operation<Const_Buffers, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
@@ -828,6 +877,12 @@ public:
   void async_receive(implementation_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Handler handler)
   {
+    // Update the ID of the thread from which cancellation is safe.
+    if (impl.safe_cancellation_thread_id_ == 0)
+      impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
+    else
+      impl.safe_cancellation_thread_id_ = ~DWORD(0);
+
     // Allocate and construct an operation to wrap the handler.
     typedef receive_operation<Mutable_Buffers, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
@@ -999,6 +1054,12 @@ public:
       const Mutable_Buffers& buffers, endpoint_type& sender_endp,
       socket_base::message_flags flags, Handler handler)
   {
+    // Update the ID of the thread from which cancellation is safe.
+    if (impl.safe_cancellation_thread_id_ == 0)
+      impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
+    else
+      impl.safe_cancellation_thread_id_ = ~DWORD(0);
+
     // Allocate and construct an operation to wrap the handler.
     typedef receive_from_operation<Mutable_Buffers, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
@@ -1305,6 +1366,12 @@ public:
   template <typename Socket, typename Handler>
   void async_accept(implementation_type& impl, Socket& peer, Handler handler)
   {
+    // Update the ID of the thread from which cancellation is safe.
+    if (impl.safe_cancellation_thread_id_ == 0)
+      impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
+    else
+      impl.safe_cancellation_thread_id_ = ~DWORD(0);
+
     // Check whether acceptor has been initialised.
     if (impl.socket_ == invalid_socket)
     {
@@ -1573,6 +1640,12 @@ public:
   void async_accept_endpoint(implementation_type& impl, Socket& peer,
       endpoint_type& peer_endpoint, Handler handler)
   {
+    // Update the ID of the thread from which cancellation is safe.
+    if (impl.safe_cancellation_thread_id_ == 0)
+      impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
+    else
+      impl.safe_cancellation_thread_id_ = ~DWORD(0);
+
     // Check whether acceptor has been initialised.
     if (impl.socket_ == invalid_socket)
     {
@@ -1760,6 +1833,12 @@ public:
   void async_connect(implementation_type& impl,
       const endpoint_type& peer_endpoint, Handler handler)
   {
+    // Update the ID of the thread from which cancellation is safe.
+    if (impl.safe_cancellation_thread_id_ == 0)
+      impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
+    else
+      impl.safe_cancellation_thread_id_ = ~DWORD(0);
+
     // Check if the reactor was already obtained from the io_service.
     reactor_type* reactor = static_cast<reactor_type*>(
           interlocked_compare_exchange_pointer(
