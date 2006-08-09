@@ -406,12 +406,21 @@ public:
     typename Const_Buffers::const_iterator iter = buffers.begin();
     typename Const_Buffers::const_iterator end = buffers.end();
     DWORD i = 0;
+    size_t total_buffer_size = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       asio::const_buffer buffer(*iter);
       bufs[i].len = static_cast<u_long>(asio::buffer_size(buffer));
       bufs[i].buf = const_cast<char*>(
           asio::buffer_cast<const char*>(buffer));
+      total_buffer_size += asio::buffer_size(buffer);
+    }
+
+    // A request to receive 0 bytes on a stream socket is a no-op.
+    if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
+    {
+      error_handler(asio::error(0));
+      return 0;
     }
 
     // Send the data.
@@ -514,12 +523,23 @@ public:
     typename Const_Buffers::const_iterator iter = buffers.begin();
     typename Const_Buffers::const_iterator end = buffers.end();
     DWORD i = 0;
+    size_t total_buffer_size = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       asio::const_buffer buffer(*iter);
       bufs[i].len = static_cast<u_long>(asio::buffer_size(buffer));
       bufs[i].buf = const_cast<char*>(
           asio::buffer_cast<const char*>(buffer));
+      total_buffer_size += asio::buffer_size(buffer);
+    }
+
+    // A request to receive 0 bytes on a stream socket is a no-op.
+    if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
+    {
+      ptr.reset();
+      asio::error error(asio::error::success);
+      iocp_service_.post(bind_handler(handler, error, 0));
+      return;
     }
 
     // Send the data.
@@ -684,11 +704,20 @@ public:
     typename Mutable_Buffers::const_iterator iter = buffers.begin();
     typename Mutable_Buffers::const_iterator end = buffers.end();
     DWORD i = 0;
+    size_t total_buffer_size = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       asio::mutable_buffer buffer(*iter);
       bufs[i].len = static_cast<u_long>(asio::buffer_size(buffer));
       bufs[i].buf = asio::buffer_cast<char*>(buffer);
+      total_buffer_size += asio::buffer_size(buffer);
+    }
+
+    // A request to receive 0 bytes on a stream socket is a no-op.
+    if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
+    {
+      error_handler(asio::error(0));
+      return 0;
     }
 
     // Receive some data.
@@ -803,11 +832,22 @@ public:
     typename Mutable_Buffers::const_iterator iter = buffers.begin();
     typename Mutable_Buffers::const_iterator end = buffers.end();
     DWORD i = 0;
+    size_t total_buffer_size = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       asio::mutable_buffer buffer(*iter);
       bufs[i].len = static_cast<u_long>(asio::buffer_size(buffer));
       bufs[i].buf = asio::buffer_cast<char*>(buffer);
+      total_buffer_size += asio::buffer_size(buffer);
+    }
+
+    // A request to receive 0 bytes on a stream socket is a no-op.
+    if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
+    {
+      ptr.reset();
+      asio::error error(asio::error::success);
+      iocp_service_.post(bind_handler(handler, error, 0));
+      return;
     }
 
     // Receive some data.
