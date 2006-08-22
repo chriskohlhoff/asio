@@ -71,6 +71,7 @@ public:
 
   /// Default constructor.
   basic_endpoint()
+    : data_()
   {
     asio::detail::sockaddr_in4_type& data
       = reinterpret_cast<asio::detail::sockaddr_in4_type&>(data_);
@@ -96,6 +97,7 @@ public:
    * @endcode
    */
   basic_endpoint(const Protocol& protocol, unsigned short port_num)
+    : data_()
   {
     using namespace std; // For memcpy.
     if (protocol.family() == PF_INET)
@@ -125,6 +127,7 @@ public:
   /// constructor may be used for accepting connections on a specific interface
   /// or for making a connection to a remote endpoint.
   basic_endpoint(const asio::ip::address& addr, unsigned short port_num)
+    : data_()
   {
     using namespace std; // For memcpy.
     if (addr.is_v4())
