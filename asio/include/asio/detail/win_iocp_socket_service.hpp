@@ -64,7 +64,49 @@ public:
   typedef boost::weak_ptr<void> weak_cancel_token_type;
 
   // The native type of a socket.
-  typedef socket_type native_type;
+  class native_type
+  {
+  public:
+    native_type(socket_type s)
+      : socket_(s),
+        have_remote_endpoint_(false)
+    {
+    }
+
+    native_type(socket_type s, const endpoint_type& ep)
+      : socket_(s),
+        have_remote_endpoint_(true),
+        remote_endpoint_(ep)
+    {
+    }
+
+    void operator=(socket_type s)
+    {
+      socket_ = s;
+      have_remote_endpoint_ = false;
+      remote_endpoint_ = endpoint_type();
+    }
+
+    operator socket_type() const
+    {
+      return socket_;
+    }
+
+    bool have_remote_endpoint() const
+    {
+      return have_remote_endpoint_;
+    }
+
+    endpoint_type remote_endpoint() const
+    {
+      return remote_endpoint_;
+    }
+
+  private:
+    socket_type socket_;
+    bool have_remote_endpoint_;
+    endpoint_type remote_endpoint_;
+  };
 
   // The implementation type of the socket.
   class implementation_type
@@ -86,7 +128,7 @@ public:
     friend class win_iocp_socket_service;
 
     // The native socket representation.
-    socket_type socket_;
+    native_type socket_;
 
     enum
     {
@@ -275,7 +317,8 @@ public:
     {
       // Asynchronous operations have been started from the current thread only,
       // so it is safe to try to cancel them using CancelIo.
-      HANDLE sock_as_handle = reinterpret_cast<HANDLE>(impl.socket_);
+      socket_type sock = impl.socket_;
+      HANDLE sock_as_handle = reinterpret_cast<HANDLE>(sock);
       if (!::CancelIo(sock_as_handle))
       {
         DWORD last_error = ::GetLastError();
@@ -419,15 +462,38 @@ public:
   void get_remote_endpoint(const implementation_type& impl,
       endpoint_type& endpoint, Error_Handler error_handler) const
   {
-    socket_addr_len_type addr_len = endpoint.capacity();
-    if (socket_ops::getpeername(impl.socket_, endpoint.data(), &addr_len))
+    if (impl.socket_.have_remote_endpoint())
     {
-      error_handler(asio::error(socket_ops::get_error()));
-      return;
-    }
+      // Check if socket is still connected.
+      DWORD connect_time = 0;
+      size_t connect_time_len = sizeof(connect_time);
+      if (socket_ops::getsockopt(impl.socket_, SOL_SOCKET, SO_CONNECT_TIME,
+            &connect_time, &connect_time_len) == socket_error_retval)
+      {
+        error_handler(asio::error(socket_ops::get_error()));
+        return;
+      }
+      if (connect_time == 0xFFFFFFFF)
+      {
+        error_handler(asio::error(asio::error::not_connected));
+        return;
+      }
 
-    endpoint.resize(addr_len);
-    error_handler(asio::error(0));
+      endpoint = impl.socket_.remote_endpoint();
+      error_handler(asio::error(0));
+    }
+    else
+    {
+      socket_addr_len_type addr_len = endpoint.capacity();
+      if (socket_ops::getpeername(impl.socket_, endpoint.data(), &addr_len))
+      {
+        error_handler(asio::error(socket_ops::get_error()));
+        return;
+      }
+
+      endpoint.resize(addr_len);
+      error_handler(asio::error(0));
+    }
   }
 
   /// Disable sends or receives on the socket.
@@ -1302,6 +1368,29 @@ public:
         }
       }
 
+      // Get the address of the peer.
+      endpoint_type peer_endpoint;
+      if (last_error == 0)
+      {
+        LPSOCKADDR local_addr = 0;
+        int local_addr_length = 0;
+        LPSOCKADDR remote_addr = 0;
+        int remote_addr_length = 0;
+        GetAcceptExSockaddrs(handler_op->output_buffer(), 0,
+            handler_op->address_length(), handler_op->address_length(),
+            &local_addr, &local_addr_length, &remote_addr, &remote_addr_length);
+        if (remote_addr_length > peer_endpoint.capacity())
+        {
+          last_error = asio::error::invalid_argument;
+        }
+        else
+        {
+          using namespace std; // For memcpy.
+          memcpy(peer_endpoint.data(), remote_addr, remote_addr_length);
+          peer_endpoint.resize(remote_addr_length);
+        }
+      }
+
       // Need to set the SO_UPDATE_ACCEPT_CONTEXT option so that getsockname
       // and getpeername will work on the accepted socket.
       if (last_error == 0)
@@ -1320,7 +1409,7 @@ public:
       {
         asio::error temp_error;
         handler_op->peer_.assign(handler_op->protocol_,
-            handler_op->new_socket_.get(),
+            native_type(handler_op->new_socket_.get(), peer_endpoint),
             asio::assign_error(temp_error));
         if (temp_error)
           last_error = temp_error.code();
@@ -1567,10 +1656,10 @@ public:
         }
         else
         {
-          handler_op->peer_endpoint_.resize(remote_addr_length);
           using namespace std; // For memcpy.
           memcpy(handler_op->peer_endpoint_.data(),
               remote_addr, remote_addr_length);
+          handler_op->peer_endpoint_.resize(remote_addr_length);
         }
       }
 
@@ -1592,7 +1681,8 @@ public:
       {
         asio::error temp_error;
         handler_op->peer_.assign(handler_op->peer_endpoint_.protocol(),
-            handler_op->new_socket_.get(),
+            native_type(handler_op->new_socket_.get(),
+              handler_op->peer_endpoint_),
             asio::assign_error(temp_error));
         if (temp_error)
           last_error = temp_error.code();
