@@ -112,7 +112,8 @@ public:
     handler_base* last_waiter_;
 
     // Storage for posted handlers.
-    boost::aligned_storage<64> handler_storage_;
+    typedef boost::aligned_storage<64> handler_storage_type;
+    handler_storage_type handler_storage_;
 
     // Pointers to adjacent socket implementations in linked list.
     strand_impl* next_;
@@ -132,7 +133,10 @@ public:
       asio::detail::mutex::scoped_lock lock(p->mutex_);
       --p->ref_count_;
       if (p->ref_count_ == 0)
+      {
+        lock.unlock();
         delete p;
+      }
     }
   };
 
@@ -208,7 +212,7 @@ public:
 
     void* do_handler_allocate(std::size_t size)
     {
-      BOOST_ASSERT(size <= impl_->handler_storage_.size);
+      BOOST_ASSERT(size <= strand_impl::handler_storage_type::size);
       return impl_->handler_storage_.address();
     }
 
