@@ -44,7 +44,7 @@ public:
    */
   asio::io_service& io_service()
   {
-    return service.owner();
+    return service.io_service();
   }
 
 protected:

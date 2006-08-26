@@ -163,7 +163,7 @@ public:
   {
     impl.might_have_pending_waits = true;
     scheduler_.schedule_timer(timer_queue_, impl.expiry,
-        wait_handler<Handler>(owner(), handler), &impl);
+        wait_handler<Handler>(io_service(), handler), &impl);
   }
 
 private:

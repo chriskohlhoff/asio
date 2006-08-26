@@ -264,7 +264,7 @@ public:
    * This ensures that the io_service's run() function will not exit while the
    * work is underway.
    */
-  explicit work(io_service& io_service);
+  explicit work(asio::io_service& io_service);
 
   /// Copy constructor notifies the io_service that work is starting.
   /**
@@ -282,12 +282,15 @@ public:
    */
   ~work();
 
+  /// Get the io_service associated with the work.
+  asio::io_service& io_service();
+
 private:
   // Prevent assignment.
   void operator=(const work& other);
 
-  // The io_service's implementation.
-  io_service::impl_type& impl_;
+  // The io_service.
+  asio::io_service& io_service_;
 };
 
 /// Base class for all io_service services.
@@ -296,14 +299,14 @@ class io_service::service
 {
 public:
   /// Get the io_service object that owns the service.
-  io_service& owner();
+  asio::io_service& io_service();
 
 protected:
   /// Constructor.
   /**
    * @param owner The io_service object that owns the service.
    */
-  service(io_service& owner);
+  service(asio::io_service& owner);
 
   /// Destructor.
   virtual ~service();
@@ -312,8 +315,8 @@ private:
   /// Destroy all user-defined handler objects owned by the service.
   virtual void shutdown_service() = 0;
 
-  friend class detail::service_registry<io_service>;
-  io_service& owner_;
+  friend class detail::service_registry<asio::io_service>;
+  asio::io_service& owner_;
   const std::type_info* type_info_;
   service* next_;
 };

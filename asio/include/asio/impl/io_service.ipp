@@ -69,24 +69,29 @@ io_service::wrap(Handler handler)
   return detail::wrapped_handler<io_service, Handler>(*this, handler);
 }
 
-inline io_service::work::work(io_service& io_service)
-  : impl_(io_service.impl_)
+inline io_service::work::work(asio::io_service& io_service)
+  : io_service_(io_service)
 {
-  impl_.work_started();
+  io_service_.impl_.work_started();
 }
 
 inline io_service::work::work(const work& other)
-  : impl_(other.impl_)
+  : io_service_(other.io_service_)
 {
-  impl_.work_started();
+  io_service_.impl_.work_started();
 }
 
 inline io_service::work::~work()
 {
-  impl_.work_finished();
+  io_service_.impl_.work_finished();
 }
 
-inline io_service::service::service(io_service& owner)
+inline asio::io_service& io_service::work::io_service()
+{
+  return io_service_;
+}
+
+inline io_service::service::service(asio::io_service& owner)
   : owner_(owner),
     type_info_(0),
     next_(0)
@@ -97,7 +102,7 @@ inline io_service::service::~service()
 {
 }
 
-inline io_service& io_service::service::owner()
+inline asio::io_service& io_service::service::io_service()
 {
   return owner_;
 }
@@ -111,7 +116,7 @@ inline Service& use_service(io_service& ios)
 template <typename Service>
 void add_service(io_service& ios, Service* svc)
 {
-  if (&ios != &svc->owner())
+  if (&ios != &svc->io_service())
     boost::throw_exception(invalid_service_owner());
   if (!ios.service_registry_.template add_service<Service>(svc))
     boost::throw_exception(service_already_exists());

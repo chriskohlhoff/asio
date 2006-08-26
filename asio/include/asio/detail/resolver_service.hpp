@@ -215,7 +215,7 @@ public:
       start_work_thread();
       work_io_service_->post(
           resolve_query_handler<Handler>(
-            impl, query, owner(), handler));
+            impl, query, io_service(), handler));
     }
   }
 
@@ -313,7 +313,7 @@ public:
       start_work_thread();
       work_io_service_->post(
           resolve_endpoint_handler<Handler>(
-            impl, endpoint, owner(), handler));
+            impl, endpoint, io_service(), handler));
     }
   }
 

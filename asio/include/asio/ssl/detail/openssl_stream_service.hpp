@@ -235,7 +235,7 @@ public:
     typedef handshake_handler<Stream, Handler> connect_handler;
 
     connect_handler* local_handler = 
-      new connect_handler(handler, owner());
+      new connect_handler(handler, io_service());
 
     openssl_operation<Stream>* op = new openssl_operation<Stream>
     (
@@ -256,7 +256,7 @@ public:
     );
     local_handler->set_operation(op);
 
-    owner().post(boost::bind(&openssl_operation<Stream>::start, op));
+    io_service().post(boost::bind(&openssl_operation<Stream>::start, op));
   }
 
   // Shut down SSL on the stream.
@@ -291,7 +291,7 @@ public:
     typedef shutdown_handler<Stream, Handler> disconnect_handler;
 
     disconnect_handler* local_handler = 
-      new disconnect_handler(handler, owner());
+      new disconnect_handler(handler, io_service());
 
     openssl_operation<Stream>* op = new openssl_operation<Stream>
     (
@@ -310,7 +310,7 @@ public:
     );
     local_handler->set_operation(op);
 
-    owner().post(boost::bind(&openssl_operation<Stream>::start, op));        
+    io_service().post(boost::bind(&openssl_operation<Stream>::start, op));        
   }
 
   // Write some data to the stream.
@@ -352,7 +352,7 @@ public:
   {
     typedef io_handler<Stream, Handler> send_handler;
 
-    send_handler* local_handler = new send_handler(handler, owner());
+    send_handler* local_handler = new send_handler(handler, io_service());
 
     boost::function<int (SSL*)> send_func =
       boost::bind(&::SSL_write, boost::arg<1>(),
@@ -376,7 +376,7 @@ public:
     );
     local_handler->set_operation(op);
 
-    owner().post(boost::bind(&openssl_operation<Stream>::start, op));        
+    io_service().post(boost::bind(&openssl_operation<Stream>::start, op));        
   }
 
   // Read some data from the stream.
@@ -418,7 +418,7 @@ public:
   {
     typedef io_handler<Stream, Handler> recv_handler;
 
-    recv_handler* local_handler = new recv_handler(handler, owner());
+    recv_handler* local_handler = new recv_handler(handler, io_service());
 
     boost::function<int (SSL*)> recv_func =
       boost::bind(&::SSL_read, boost::arg<1>(),
@@ -442,7 +442,7 @@ public:
     );
     local_handler->set_operation(op);
 
-    owner().post(boost::bind(&openssl_operation<Stream>::start, op));        
+    io_service().post(boost::bind(&openssl_operation<Stream>::start, op));        
   }
 
   // Peek at the incoming data on the stream.

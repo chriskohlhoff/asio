@@ -496,7 +496,7 @@ public:
     if (impl.socket_ == invalid_socket)
     {
       asio::error error(asio::error::bad_descriptor);
-      owner().post(bind_handler(handler, error, 0));
+      io_service().post(bind_handler(handler, error, 0));
     }
     else
     {
@@ -517,7 +517,7 @@ public:
         if (total_buffer_size == 0)
         {
           asio::error error(asio::error::success);
-          owner().post(bind_handler(handler, error, 0));
+          io_service().post(bind_handler(handler, error, 0));
           return;
         }
       }
@@ -529,7 +529,7 @@ public:
         if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking))
         {
           asio::error error(socket_ops::get_error());
-          owner().post(bind_handler(handler, error, 0));
+          io_service().post(bind_handler(handler, error, 0));
           return;
         }
         impl.flags_ |= implementation_type::internal_non_blocking;
@@ -537,7 +537,7 @@ public:
 
       reactor_.start_write_op(impl.socket_,
           send_handler<Const_Buffers, Handler>(
-            impl.socket_, owner(), buffers, flags, handler));
+            impl.socket_, io_service(), buffers, flags, handler));
     }
   }
 
@@ -669,7 +669,7 @@ public:
     if (impl.socket_ == invalid_socket)
     {
       asio::error error(asio::error::bad_descriptor);
-      owner().post(bind_handler(handler, error, 0));
+      io_service().post(bind_handler(handler, error, 0));
     }
     else
     {
@@ -680,7 +680,7 @@ public:
         if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking))
         {
           asio::error error(socket_ops::get_error());
-          owner().post(bind_handler(handler, error, 0));
+          io_service().post(bind_handler(handler, error, 0));
           return;
         }
         impl.flags_ |= implementation_type::internal_non_blocking;
@@ -688,7 +688,7 @@ public:
 
       reactor_.start_write_op(impl.socket_,
           send_to_handler<Const_Buffers, Handler>(
-            impl.socket_, owner(), buffers, destination, flags, handler));
+            impl.socket_, io_service(), buffers, destination, flags, handler));
     }
   }
 
@@ -833,7 +833,7 @@ public:
     if (impl.socket_ == invalid_socket)
     {
       asio::error error(asio::error::bad_descriptor);
-      owner().post(bind_handler(handler, error, 0));
+      io_service().post(bind_handler(handler, error, 0));
     }
     else
     {
@@ -854,7 +854,7 @@ public:
         if (total_buffer_size == 0)
         {
           asio::error error(asio::error::success);
-          owner().post(bind_handler(handler, error, 0));
+          io_service().post(bind_handler(handler, error, 0));
           return;
         }
       }
@@ -866,7 +866,7 @@ public:
         if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking))
         {
           asio::error error(socket_ops::get_error());
-          owner().post(bind_handler(handler, error, 0));
+          io_service().post(bind_handler(handler, error, 0));
           return;
         }
         impl.flags_ |= implementation_type::internal_non_blocking;
@@ -876,13 +876,13 @@ public:
       {
         reactor_.start_except_op(impl.socket_,
             receive_handler<Mutable_Buffers, Handler>(
-              impl.socket_, owner(), buffers, flags, handler));
+              impl.socket_, io_service(), buffers, flags, handler));
       }
       else
       {
         reactor_.start_read_op(impl.socket_,
             receive_handler<Mutable_Buffers, Handler>(
-              impl.socket_, owner(), buffers, flags, handler));
+              impl.socket_, io_service(), buffers, flags, handler));
       }
     }
   }
@@ -1032,7 +1032,7 @@ public:
     if (impl.socket_ == invalid_socket)
     {
       asio::error error(asio::error::bad_descriptor);
-      owner().post(bind_handler(handler, error, 0));
+      io_service().post(bind_handler(handler, error, 0));
     }
     else
     {
@@ -1043,7 +1043,7 @@ public:
         if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking))
         {
           asio::error error(socket_ops::get_error());
-          owner().post(bind_handler(handler, error, 0));
+          io_service().post(bind_handler(handler, error, 0));
           return;
         }
         impl.flags_ |= implementation_type::internal_non_blocking;
@@ -1051,7 +1051,7 @@ public:
 
       reactor_.start_read_op(impl.socket_,
           receive_from_handler<Mutable_Buffers, Handler>(
-            impl.socket_, owner(), buffers,
+            impl.socket_, io_service(), buffers,
             sender_endpoint, flags, handler));
     }
   }
@@ -1274,12 +1274,12 @@ public:
     if (impl.socket_ == invalid_socket)
     {
       asio::error error(asio::error::bad_descriptor);
-      owner().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler, error));
     }
     else if (peer.native() != invalid_socket)
     {
       asio::error error(asio::error::already_connected);
-      owner().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler, error));
     }
     else
     {
@@ -1290,7 +1290,7 @@ public:
         if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking))
         {
           asio::error error(socket_ops::get_error());
-          owner().post(bind_handler(handler, error));
+          io_service().post(bind_handler(handler, error));
           return;
         }
         impl.flags_ |= implementation_type::internal_non_blocking;
@@ -1298,7 +1298,7 @@ public:
 
       reactor_.start_read_op(impl.socket_,
           accept_handler<Socket, Handler>(
-            impl.socket_, owner(), peer, impl.protocol_,
+            impl.socket_, io_service(), peer, impl.protocol_,
             (impl.flags_ & implementation_type::enable_connection_aborted) != 0,
             handler));
     }
@@ -1379,12 +1379,12 @@ public:
     if (impl.socket_ == invalid_socket)
     {
       asio::error error(asio::error::bad_descriptor);
-      owner().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler, error));
     }
     else if (peer.native() != invalid_socket)
     {
       asio::error error(asio::error::already_connected);
-      owner().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler, error));
     }
     else
     {
@@ -1395,7 +1395,7 @@ public:
         if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking))
         {
           asio::error error(socket_ops::get_error());
-          owner().post(bind_handler(handler, error));
+          io_service().post(bind_handler(handler, error));
           return;
         }
         impl.flags_ |= implementation_type::internal_non_blocking;
@@ -1403,7 +1403,7 @@ public:
 
       reactor_.start_read_op(impl.socket_,
           accept_endp_handler<Socket, Handler>(
-            impl.socket_, owner(), peer, peer_endpoint,
+            impl.socket_, io_service(), peer, peer_endpoint,
             (impl.flags_ & implementation_type::enable_connection_aborted) != 0,
             handler));
     }
@@ -1546,7 +1546,7 @@ public:
       if (impl.socket_ == invalid_socket)
       {
         asio::error error(socket_ops::get_error());
-        owner().post(bind_handler(handler, error));
+        io_service().post(bind_handler(handler, error));
         return;
       }
 
@@ -1555,7 +1555,7 @@ public:
       {
         socket_ops::close(impl.socket_);
         asio::error error(err);
-        owner().post(bind_handler(handler, error));
+        io_service().post(bind_handler(handler, error));
         return;
       }
     }
@@ -1567,7 +1567,7 @@ public:
       if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking))
       {
         asio::error error(socket_ops::get_error());
-        owner().post(bind_handler(handler, error));
+        io_service().post(bind_handler(handler, error));
         return;
       }
       impl.flags_ |= implementation_type::internal_non_blocking;
@@ -1581,7 +1581,7 @@ public:
       // The connect operation has finished successfully so we need to post the
       // handler immediately.
       asio::error error(asio::error::success);
-      owner().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler, error));
     }
     else if (socket_ops::get_error() == asio::error::in_progress
         || socket_ops::get_error() == asio::error::would_block)
@@ -1591,13 +1591,13 @@ public:
       boost::shared_ptr<bool> completed(new bool(false));
       reactor_.start_write_and_except_ops(impl.socket_,
           connect_handler<Handler>(
-            impl.socket_, completed, owner(), reactor_, handler));
+            impl.socket_, completed, io_service(), reactor_, handler));
     }
     else
     {
       // The connect operation has failed, so post the handler immediately.
       asio::error error(socket_ops::get_error());
-      owner().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler, error));
     }
   }
 
