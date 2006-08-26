@@ -46,6 +46,28 @@ public:
   // The underlying implementation of a strand.
   class strand_impl
   {
+#if defined (__BORLANDC__)
+  public:
+#else
+  private:
+#endif
+    void add_ref()
+    {
+      asio::detail::mutex::scoped_lock lock(mutex_);
+      ++ref_count_;
+    }
+
+    void release()
+    {
+      asio::detail::mutex::scoped_lock lock(mutex_);
+      --ref_count_;
+      if (ref_count_ == 0)
+      {
+        lock.unlock();
+        delete this;
+      }
+    }
+
   private:
     // Only this service will have access to the internal values.
     friend class strand_service;
@@ -113,7 +135,11 @@ public:
 
     // Storage for posted handlers.
     typedef boost::aligned_storage<64> handler_storage_type;
+#if defined(__BORLANDC__)
+    boost::aligned_storage<64> handler_storage_;
+#else
     handler_storage_type handler_storage_;
+#endif
 
     // Pointers to adjacent socket implementations in linked list.
     strand_impl* next_;
@@ -122,22 +148,17 @@ public:
     // The reference count on the strand implementation.
     size_t ref_count_;
 
+#if !defined(__BORLANDC__)
     friend void intrusive_ptr_add_ref(strand_impl* p)
     {
-      asio::detail::mutex::scoped_lock lock(p->mutex_);
-      ++p->ref_count_;
+      p->add_ref();
     }
 
     friend void intrusive_ptr_release(strand_impl* p)
     {
-      asio::detail::mutex::scoped_lock lock(p->mutex_);
-      --p->ref_count_;
-      if (p->ref_count_ == 0)
-      {
-        lock.unlock();
-        delete p;
-      }
+      p->release();
     }
+#endif
   };
 
   friend class strand_impl;
@@ -212,7 +233,11 @@ public:
 
     void* do_handler_allocate(std::size_t size)
     {
+#if defined(__BORLANDC__)
+      BOOST_ASSERT(size <= boost::aligned_storage<64>::size);
+#else
       BOOST_ASSERT(size <= strand_impl::handler_storage_type::size);
+#endif
       return impl_->handler_storage_.address();
     }
 
@@ -477,6 +502,26 @@ private:
 
 } // namespace detail
 } // namespace asio
+
+#if defined(__BORLANDC__)
+
+namespace boost {
+
+inline void intrusive_ptr_add_ref(
+    asio::detail::strand_service::strand_impl* p)
+{
+  p->add_ref();
+}
+
+inline void intrusive_ptr_release(
+    asio::detail::strand_service::strand_impl* p)
+{
+  p->release();
+}
+
+} // namespace boost
+
+#endif // defined(__BORLANDC__)
 
 #include "asio/detail/pop_options.hpp"
 
