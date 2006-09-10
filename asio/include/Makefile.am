@@ -6,7 +6,7 @@ nobase_include_HEADERS = \
 	asio/basic_socket.hpp \
 	asio/basic_socket_acceptor.hpp \
 	asio/basic_socket_iostream.hpp \
-	asio/basic_socketbuf.hpp \
+	asio/basic_socket_streambuf.hpp \
 	asio/basic_stream_socket.hpp \
 	asio/basic_streambuf.hpp \
 	asio/buffer.hpp \
