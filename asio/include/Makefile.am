@@ -7,7 +7,6 @@ nobase_include_HEADERS = \
 	asio/basic_socket_acceptor.hpp \
 	asio/basic_socket_iostream.hpp \
 	asio/basic_socketbuf.hpp \
-	asio/basic_strand.hpp \
 	asio/basic_stream_socket.hpp \
 	asio/basic_streambuf.hpp \
 	asio/buffer.hpp \
@@ -132,7 +131,6 @@ nobase_include_HEADERS = \
 	asio/ssl/stream_service.hpp \
 	asio/ssl.hpp \
 	asio/strand.hpp \
-	asio/strand_service.hpp \
 	asio/stream_socket_service.hpp \
 	asio/streambuf.hpp \
 	asio/system_exception.hpp \

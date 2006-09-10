@@ -46,7 +46,6 @@ UNIT_TEST_EXES = \
 	tests\unit\basic_deadline_timer_test.exe \
 	tests\unit\basic_resolver_test.exe \
 	tests\unit\basic_socket_acceptor_test.exe \
-	tests\unit\basic_strand_test.exe \
 	tests\unit\basic_stream_socket_test.exe \
 	tests\unit\buffered_read_stream_test.exe \
 	tests\unit\buffered_stream_test.exe \
@@ -78,7 +77,6 @@ UNIT_TEST_EXES = \
 	tests\unit\resolver_service_test.exe \
 	tests\unit\socket_acceptor_service_test.exe \
 	tests\unit\socket_base_test.exe \
-	tests\unit\strand_service_test.exe \
 	tests\unit\strand_test.exe \
 	tests\unit\stream_socket_service_test.exe \
 	tests\unit\thread_test.exe \

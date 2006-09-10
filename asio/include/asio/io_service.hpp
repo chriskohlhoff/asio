@@ -82,6 +82,8 @@ public:
 
   class service;
 
+  class strand;
+
   /// Default constructor.
   io_service();
 

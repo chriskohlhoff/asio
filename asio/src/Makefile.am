@@ -9,7 +9,6 @@ noinst_PROGRAMS = \
 	tests/unit/basic_deadline_timer_test \
 	tests/unit/basic_resolver_test \
 	tests/unit/basic_socket_acceptor_test \
-	tests/unit/basic_strand_test \
 	tests/unit/basic_stream_socket_test \
 	tests/unit/buffered_read_stream_test \
 	tests/unit/buffered_stream_test \
@@ -41,7 +40,6 @@ noinst_PROGRAMS = \
 	tests/unit/resolver_service_test \
 	tests/unit/socket_acceptor_service_test \
 	tests/unit/socket_base_test \
-	tests/unit/strand_service_test \
 	tests/unit/strand_test \
 	tests/unit/stream_socket_service_test \
 	tests/unit/thread_test \
@@ -103,7 +101,6 @@ TESTS = \
 	tests/unit/basic_deadline_timer_test \
 	tests/unit/basic_resolver_test \
 	tests/unit/basic_socket_acceptor_test \
-	tests/unit/basic_strand_test \
 	tests/unit/basic_stream_socket_test \
 	tests/unit/buffered_read_stream_test \
 	tests/unit/buffered_stream_test \
@@ -135,7 +132,6 @@ TESTS = \
 	tests/unit/resolver_service_test \
 	tests/unit/socket_acceptor_service_test \
 	tests/unit/socket_base_test \
-	tests/unit/strand_service_test \
 	tests/unit/strand_test \
 	tests/unit/stream_socket_service_test \
 	tests/unit/thread_test \
@@ -171,7 +167,6 @@ tests_unit_basic_datagram_socket_test_SOURCES = tests/unit/basic_datagram_socket
 tests_unit_basic_deadline_timer_test_SOURCES = tests/unit/basic_deadline_timer_test.cpp
 tests_unit_basic_resolver_test_SOURCES = tests/unit/basic_resolver_test.cpp
 tests_unit_basic_socket_acceptor_test_SOURCES = tests/unit/basic_socket_acceptor_test.cpp
-tests_unit_basic_strand_test_SOURCES = tests/unit/basic_strand_test.cpp
 tests_unit_basic_stream_socket_test_SOURCES = tests/unit/basic_stream_socket_test.cpp
 tests_unit_buffer_test_SOURCES = tests/unit/buffer_test.cpp
 tests_unit_buffered_read_stream_test_SOURCES = tests/unit/buffered_read_stream_test.cpp
@@ -203,7 +198,6 @@ tests_unit_read_test_SOURCES = tests/unit/read_test.cpp
 tests_unit_resolver_service_test_SOURCES = tests/unit/resolver_service_test.cpp
 tests_unit_socket_acceptor_service_test_SOURCES = tests/unit/socket_acceptor_service_test.cpp
 tests_unit_socket_base_test_SOURCES = tests/unit/socket_base_test.cpp
-tests_unit_strand_service_test_SOURCES = tests/unit/strand_service_test.cpp
 tests_unit_strand_test_SOURCES = tests/unit/strand_test.cpp
 tests_unit_stream_socket_service_test_SOURCES = tests/unit/stream_socket_service_test.cpp
 tests_unit_thread_test_SOURCES = tests/unit/thread_test.cpp
