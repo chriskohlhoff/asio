@@ -132,7 +132,8 @@ public:
 
     enum
     {
-      enable_connection_aborted = 1 // User wants connection_aborted errors.
+      enable_connection_aborted = 1, // User wants connection_aborted errors.
+      user_set_linger = 2 // The user set the linger option.
     };
 
     // Flags indicating the current state of the socket.
@@ -208,7 +209,31 @@ public:
   // Destroy a socket implementation.
   void destroy(implementation_type& impl)
   {
-    close(impl, asio::ignore_error());
+    if (impl.socket_ != invalid_socket)
+    {
+      // Check if the reactor was created, in which case we need to close the
+      // socket on the reactor as well to cancel any operations that might be
+      // running there.
+      reactor_type* reactor = static_cast<reactor_type*>(
+            interlocked_compare_exchange_pointer(
+              reinterpret_cast<void**>(&reactor_), 0, 0));
+      if (reactor)
+        reactor->close_descriptor(impl.socket_);
+
+      if (impl.flags_ & implementation_type::user_set_linger)
+      {
+        ::linger opt;
+        opt.l_onoff = 0;
+        opt.l_linger = 0;
+        socket_ops::setsockopt(impl.socket_,
+            SOL_SOCKET, SO_LINGER, &opt, sizeof(opt));
+      }
+
+      socket_ops::close(impl.socket_);
+      impl.socket_ = invalid_socket;
+      impl.cancel_token_.reset();
+      impl.safe_cancellation_thread_id_ = 0;
+    }
 
     // Remove implementation from linked list of all implementations.
     asio::detail::mutex::scoped_lock lock(mutex_);
@@ -386,6 +411,12 @@ public:
     }
     else
     {
+      if (option.level(impl.protocol_) == SOL_SOCKET
+          && option.name(impl.protocol_) == SO_LINGER)
+      {
+        impl.flags_ |= implementation_type::user_set_linger;
+      }
+
       if (socket_ops::setsockopt(impl.socket_,
             option.level(impl.protocol_), option.name(impl.protocol_),
             option.data(impl.protocol_), option.size(impl.protocol_)))

@@ -73,7 +73,8 @@ public:
     {
       user_set_non_blocking = 1, // The user wants a non-blocking socket.
       internal_non_blocking = 2, // The socket has been set non-blocking.
-      enable_connection_aborted = 4 // User wants connection_aborted errors.
+      enable_connection_aborted = 4, // User wants connection_aborted errors.
+      user_set_linger = 8 // The user set the linger option.
     };
 
     // Flags indicating the current state of the socket.
@@ -108,7 +109,29 @@ public:
   // Destroy a socket implementation.
   void destroy(implementation_type& impl)
   {
-    close(impl, asio::ignore_error());
+    if (impl.socket_ != invalid_socket)
+    {
+      reactor_.close_descriptor(impl.socket_);
+
+      if (impl.flags_ & implementation_type::internal_non_blocking)
+      {
+        ioctl_arg_type non_blocking = 0;
+        socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking);
+        impl.flags_ &= ~implementation_type::internal_non_blocking;
+      }
+
+      if (impl.flags_ & implementation_type::user_set_linger)
+      {
+        ::linger opt;
+        opt.l_onoff = 0;
+        opt.l_linger = 0;
+        socket_ops::setsockopt(impl.socket_,
+            SOL_SOCKET, SO_LINGER, &opt, sizeof(opt));
+      }
+
+      socket_ops::close(impl.socket_);
+      impl.socket_ = invalid_socket;
+    }
   }
 
   // Open a new socket implementation.
@@ -257,6 +280,12 @@ public:
     }
     else
     {
+      if (option.level(impl.protocol_) == SOL_SOCKET
+          && option.name(impl.protocol_) == SO_LINGER)
+      {
+        impl.flags_ |= implementation_type::user_set_linger;
+      }
+
       if (socket_ops::setsockopt(impl.socket_,
             option.level(impl.protocol_), option.name(impl.protocol_),
             option.data(impl.protocol_), option.size(impl.protocol_)))
