@@ -25,6 +25,7 @@
 #include "asio/buffer.hpp"
 #include "asio/placeholders.hpp"
 #include "asio/write.hpp"
+#include "asio/detail/socket_ops.hpp"
 #include "asio/ssl/detail/openssl_types.hpp"
 
 namespace asio {
@@ -132,6 +133,7 @@ public:
   int start()
   {
     int rc = primitive_( session_ );
+    int sys_error_code = asio::detail::socket_ops::get_error();
     bool is_operation_done = (rc > 0);  
                 // For connect/accept/shutdown, the operation
                 // is done, when return code is 1
@@ -165,9 +167,14 @@ public:
 
     if (!is_operation_done && !is_read_needed && !is_write_needed 
       && !is_shut_down_sent)
+    {
       // The operation has failed... It is not completed and does 
       // not want network communication nor does want to send shutdown out...
-      return handler_(asio::error(error_code), rc); 
+      if (error_code == SSL_ERROR_SYSCALL)
+        return handler_(asio::error(sys_error_code), rc); 
+      else
+        return handler_(asio::error(error_code + 1000000), rc); 
+    }
 
     if (!is_operation_done && !is_write_needed)
     {
