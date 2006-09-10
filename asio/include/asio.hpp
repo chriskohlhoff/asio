@@ -39,7 +39,7 @@
 #include "asio/error_handler.hpp"
 #include "asio/error.hpp"
 #include "asio/handler_alloc_hook.hpp"
-#include "asio/handler_dispatch_hook.hpp"
+#include "asio/handler_invoke_hook.hpp"
 #include "asio/io_service.hpp"
 #include "asio/ip/address.hpp"
 #include "asio/ip/address_v4.hpp"

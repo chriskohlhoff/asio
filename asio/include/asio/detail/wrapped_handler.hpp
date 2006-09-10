@@ -19,7 +19,7 @@
 
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
-#include "asio/detail/handler_dispatch_helpers.hpp"
+#include "asio/detail/handler_invoke_helpers.hpp"
 
 namespace asio {
 namespace detail {
@@ -162,21 +162,21 @@ public:
   Context context_;
 };
 
-template <typename Handler_To_Dispatch, typename Dispatcher, typename Handler>
-inline void asio_handler_dispatch(const Handler_To_Dispatch& handler,
+template <typename Function, typename Dispatcher, typename Handler>
+inline void asio_handler_invoke(const Function& function,
     wrapped_handler<Dispatcher, Handler>* this_handler)
 {
   this_handler->dispatcher_.dispatch(
-      rewrapped_handler<Handler_To_Dispatch, Handler>(
-        handler, this_handler->handler_));
+      rewrapped_handler<Function, Handler>(
+        function, this_handler->handler_));
 }
 
-template <typename Handler_To_Dispatch, typename Dispatcher, typename Handler>
-inline void asio_handler_dispatch(const Handler_To_Dispatch& handler,
+template <typename Function, typename Dispatcher, typename Handler>
+inline void asio_handler_invoke(const Function& function,
     rewrapped_handler<Dispatcher, Handler>* this_handler)
 {
-  asio_handler_dispatch_helpers::dispatch_handler(
-      handler, &this_handler->context_);
+  asio_handler_invoke_helpers::invoke(
+      function, &this_handler->context_);
 }
 
 } // namespace detail

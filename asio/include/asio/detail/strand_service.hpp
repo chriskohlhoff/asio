@@ -27,7 +27,7 @@
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/call_stack.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
-#include "asio/detail/handler_dispatch_helpers.hpp"
+#include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
 
@@ -241,11 +241,11 @@ public:
       return impl_->handler_storage_.address();
     }
 
-    template <typename Handler_To_Dispatch>
-    friend void asio_handler_dispatch(Handler_To_Dispatch handler,
+    template <typename Function>
+    friend void asio_handler_invoke(Function function,
         invoke_current_handler*)
     {
-      handler();
+      function();
     }
 
   private:
@@ -336,7 +336,7 @@ public:
       call_stack<strand_impl>::context ctx(impl.get());
 
       // Make the upcall.
-      asio_handler_dispatch_helpers::dispatch_handler(handler, &handler);
+      asio_handler_invoke_helpers::invoke(handler, &handler);
     }
 
     static void do_destroy(handler_base* base)
@@ -413,7 +413,7 @@ public:
   {
     if (call_stack<strand_impl>::contains(impl.get()))
     {
-      asio_handler_dispatch_helpers::dispatch_handler(handler, &handler);
+      asio_handler_invoke_helpers::invoke(handler, &handler);
     }
     else
     {

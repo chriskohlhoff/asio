@@ -21,7 +21,7 @@
 #include "asio/detail/call_stack.hpp"
 #include "asio/detail/event.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
-#include "asio/detail/handler_dispatch_helpers.hpp"
+#include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/task_io_service_fwd.hpp"
 
@@ -181,7 +181,7 @@ public:
   void dispatch(Handler handler)
   {
     if (call_stack<task_io_service>::contains(this))
-      asio_handler_dispatch_helpers::dispatch_handler(handler, &handler);
+      asio_handler_invoke_helpers::invoke(handler, &handler);
     else
       post(handler);
   }
@@ -331,7 +331,7 @@ private:
       ptr.reset();
 
       // Make the upcall.
-      asio_handler_dispatch_helpers::dispatch_handler(handler, &handler);
+      asio_handler_invoke_helpers::invoke(handler, &handler);
     }
 
     static void do_destroy(handler_base* base)

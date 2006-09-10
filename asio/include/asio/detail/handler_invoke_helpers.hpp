@@ -1,6 +1,6 @@
 //
-// handler_dispatch_helpers.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// handler_invoke_helpers.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_HANDLER_DISPATCH_HELPERS_HPP
-#define ASIO_DETAIL_HANDLER_DISPATCH_HELPERS_HPP
+#ifndef ASIO_DETAIL_HANDLER_INVOKE_HELPERS_HPP
+#define ASIO_DETAIL_HANDLER_INVOKE_HELPERS_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -21,27 +21,27 @@
 #include <boost/detail/workaround.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/handler_dispatch_hook.hpp"
+#include "asio/handler_invoke_hook.hpp"
 
-// Calls to asio_handler_dispatch must be made from a namespace that does not
-// contain overloads of this function. The asio_handler_dispatch_helpers
+// Calls to asio_handler_invoke must be made from a namespace that does not
+// contain overloads of this function. The asio_handler_invoke_helpers
 // namespace is defined here for that purpose.
-namespace asio_handler_dispatch_helpers {
+namespace asio_handler_invoke_helpers {
 
-template <typename Handler, typename Context>
-inline void dispatch_handler(const Handler& handler, Context* context)
+template <typename Function, typename Context>
+inline void invoke(const Function& function, Context* context)
 {
 #if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
-  Handler tmp(handler);
+  Function tmp(function);
   tmp();
 #else
   using namespace asio;
-  asio_handler_dispatch(handler, context);
+  asio_handler_invoke(function, context);
 #endif
 }
 
-} // namespace asio_handler_dispatch_helpers
+} // namespace asio_handler_invoke_helpers
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_HANDLER_DISPATCH_HELPERS_HPP
+#endif // ASIO_DETAIL_HANDLER_INVOKE_HELPERS_HPP

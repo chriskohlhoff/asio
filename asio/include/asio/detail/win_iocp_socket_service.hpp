@@ -34,7 +34,7 @@
 #include "asio/socket_base.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
-#include "asio/detail/handler_dispatch_helpers.hpp"
+#include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/select_reactor.hpp"
 #include "asio/detail/socket_holder.hpp"
@@ -628,7 +628,7 @@ public:
 
       // Call the handler.
       asio::error error(last_error);
-      asio_handler_dispatch_helpers::dispatch_handler(
+      asio_handler_invoke_helpers::invoke(
           detail::bind_handler(handler, error, bytes_transferred), &handler);
     }
 
@@ -779,7 +779,7 @@ public:
 
       // Call the handler.
       asio::error error(last_error);
-      asio_handler_dispatch_helpers::dispatch_handler(
+      asio_handler_invoke_helpers::invoke(
           detail::bind_handler(handler, error, bytes_transferred), &handler);
     }
 
@@ -949,7 +949,7 @@ public:
 
       // Call the handler.
       asio::error error(last_error);
-      asio_handler_dispatch_helpers::dispatch_handler(
+      asio_handler_invoke_helpers::invoke(
           detail::bind_handler(handler, error, bytes_transferred), &handler);
     }
 
@@ -1123,7 +1123,7 @@ public:
 
       // Call the handler.
       asio::error error(last_error);
-      asio_handler_dispatch_helpers::dispatch_handler(
+      asio_handler_invoke_helpers::invoke(
           detail::bind_handler(handler, error, bytes_transferred), &handler);
     }
 
@@ -1457,7 +1457,7 @@ public:
 
       // Call the handler.
       asio::error error(last_error);
-      asio_handler_dispatch_helpers::dispatch_handler(
+      asio_handler_invoke_helpers::invoke(
           detail::bind_handler(handler, error), &handler);
     }
 
@@ -1730,7 +1730,7 @@ public:
 
       // Call the handler.
       asio::error error(last_error);
-      asio_handler_dispatch_helpers::dispatch_handler(
+      asio_handler_invoke_helpers::invoke(
           detail::bind_handler(handler, error), &handler);
     }
 

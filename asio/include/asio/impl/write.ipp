@@ -23,7 +23,7 @@
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/consuming_buffers.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
-#include "asio/detail/handler_dispatch_helpers.hpp"
+#include "asio/detail/handler_invoke_helpers.hpp"
 
 namespace asio {
 
@@ -158,14 +158,14 @@ namespace detail
         pointer, size, &this_handler->handler_);
   }
 
-  template <typename Handler_To_Dispatch, typename Async_Write_Stream,
+  template <typename Function, typename Async_Write_Stream,
       typename Const_Buffers, typename Completion_Condition, typename Handler>
-  inline void asio_handler_dispatch(const Handler_To_Dispatch& handler,
+  inline void asio_handler_invoke(const Function& function,
       write_handler<Async_Write_Stream, Const_Buffers,
         Completion_Condition, Handler>* this_handler)
   {
-    asio_handler_dispatch_helpers::dispatch_handler(
-        handler, &this_handler->handler_);
+    asio_handler_invoke_helpers::invoke(
+        function, &this_handler->handler_);
   }
 } // namespace detail
 
@@ -230,14 +230,14 @@ namespace detail
         pointer, size, &this_handler->handler_);
   }
 
-  template <typename Handler_To_Dispatch, typename Async_Write_Stream,
-      typename Allocator, typename Handler>
-  inline void asio_handler_dispatch(const Handler_To_Dispatch& handler,
+  template <typename Function, typename Async_Write_Stream, typename Allocator,
+      typename Handler>
+  inline void asio_handler_invoke(const Function& function,
       write_streambuf_handler<Async_Write_Stream,
         Allocator, Handler>* this_handler)
   {
-    asio_handler_dispatch_helpers::dispatch_handler(
-        handler, &this_handler->handler_);
+    asio_handler_invoke_helpers::invoke(
+        function, &this_handler->handler_);
   }
 } // namespace detail
 
