@@ -60,6 +60,12 @@ private:
       if (Do_Init)
       {
         ::CRYPTO_set_locking_callback(0);
+        ::ERR_free_strings();
+        ::ERR_remove_state(0);
+        ::EVP_cleanup();
+        ::CRYPTO_cleanup_all_ex_data();
+        ::CONF_modules_unload(1);
+        ::ENGINE_cleanup();
       }
     }
 
