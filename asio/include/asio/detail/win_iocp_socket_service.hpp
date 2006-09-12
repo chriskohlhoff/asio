@@ -1426,9 +1426,10 @@ public:
       // and getpeername will work on the accepted socket.
       if (last_error == 0)
       {
-        DWORD update_ctx_param = handler_op->socket_;
-        if (socket_ops::setsockopt(handler_op->new_socket_.get(), SOL_SOCKET,
-              SO_UPDATE_ACCEPT_CONTEXT, &update_ctx_param, sizeof(DWORD)) != 0)
+        SOCKET update_ctx_param = handler_op->socket_;
+        if (socket_ops::setsockopt(handler_op->new_socket_.get(),
+              SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT,
+              &update_ctx_param, sizeof(SOCKET)) != 0)
         {
           last_error = socket_ops::get_error();
         }
@@ -1698,9 +1699,10 @@ public:
       // and getpeername will work on the accepted socket.
       if (last_error == 0)
       {
-        DWORD update_ctx_param = handler_op->socket_;
-        if (socket_ops::setsockopt(handler_op->new_socket_.get(), SOL_SOCKET,
-              SO_UPDATE_ACCEPT_CONTEXT, &update_ctx_param, sizeof(DWORD)) != 0)
+        SOCKET update_ctx_param = handler_op->socket_;
+        if (socket_ops::setsockopt(handler_op->new_socket_.get(),
+              SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT,
+              &update_ctx_param, sizeof(SOCKET)) != 0)
         {
           last_error = socket_ops::get_error();
         }
