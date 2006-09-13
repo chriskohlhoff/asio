@@ -81,6 +81,20 @@ void test()
 
     addr1 = ip::address_v4::netmask(addr2);
 
+    // address_v4 comparisons.
+
+    b = (addr1 == addr2);
+
+    b = (addr1 != addr2);
+
+    b = (addr1 < addr2);
+
+    b = (addr1 > addr2);
+
+    b = (addr1 <= addr2);
+
+    b = (addr1 >= addr2);
+
     // address_v4 I/O.
 
     std::ostringstream os;
@@ -97,6 +111,7 @@ void test()
 } // namespace ip_address_v4_compile
 
 //------------------------------------------------------------------------------
+
 test_suite* init_unit_test_suite(int argc, char* argv[])
 {
   test_suite* test = BOOST_TEST_SUITE("ip/address_v4");
