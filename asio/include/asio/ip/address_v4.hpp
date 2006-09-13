@@ -78,13 +78,6 @@ public:
     return *this;
   }
 
-  /// Assign from an unsigned long.
-  address_v4& operator=(unsigned long addr)
-  {
-    addr_.s_addr = asio::detail::socket_ops::host_to_network_long(addr);
-    return *this;
-  }
-
   /// Get the address in bytes.
   bytes_type to_bytes() const
   {
@@ -163,27 +156,21 @@ public:
   }
 
   /// Determine whether the address is a class A address.
-  bool is_class_A() const
+  bool is_class_a() const
   {
     return IN_CLASSA(to_ulong());
   }
 
   /// Determine whether the address is a class B address.
-  bool is_class_B() const
+  bool is_class_b() const
   {
     return IN_CLASSB(to_ulong());
   }
 
   /// Determine whether the address is a class C address.
-  bool is_class_C() const
+  bool is_class_c() const
   {
     return IN_CLASSC(to_ulong());
-  }
-
-  /// Determine whether the address is a class D address.
-  bool is_class_D() const
-  {
-    return IN_CLASSD(to_ulong());
   }
 
   /// Determine whether the address is a multicast address.
@@ -228,6 +215,26 @@ public:
     return address_v4(static_cast<unsigned long>(INADDR_BROADCAST));
   }
 
+  /// Obtain an address object that represents the broadcast address that
+  /// corresponds to the specified address and netmask.
+  static address_v4 broadcast(const address_v4& addr, const address_v4& mask)
+  {
+    return address_v4(addr.to_ulong() | ~mask.to_ulong());
+  }
+
+  /// Obtain the netmask that corresponds to the address, based on its address
+  /// class.
+  static address_v4 netmask(const address_v4& addr)
+  {
+    if (addr.is_class_a())
+      return address_v4(0xFF000000);
+    if (addr.is_class_b())
+      return address_v4(0xFFFF0000);
+    if (addr.is_class_c())
+      return address_v4(0xFFFFFF00);
+    return address_v4(0xFFFFFFFF);
+  }
+
 private:
   // The underlying IPv4 address.
   asio::detail::in4_addr_type addr_;
@@ -249,7 +256,13 @@ template <typename Elem, typename Traits>
 std::basic_ostream<Elem, Traits>& operator<<(
     std::basic_ostream<Elem, Traits>& os, const address_v4& addr)
 {
-  os << addr.to_string();
+  asio::error e;
+  std::string s = addr.to_string(asio::assign_error(e));
+  if (e)
+    os.setstate(std::ios_base::failbit);
+  else
+    for (std::string::iterator i = s.begin(); i != s.end(); ++i)
+      os << os.widen(*i);
   return os;
 }
 
