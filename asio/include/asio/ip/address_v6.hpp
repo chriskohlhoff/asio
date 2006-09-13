@@ -29,6 +29,7 @@
 #include "asio/error_handler.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/ip/address_v4.hpp"
 
 namespace asio {
 namespace ip {
@@ -162,6 +163,16 @@ public:
     return from_string(str.c_str(), error_handler);
   }
 
+  /// Converts an IPv4-mapped or IPv4-compatible address to an IPv4 address.
+  address_v4 to_v4() const
+  {
+    if (!is_v4_mapped() && !is_v4_compatible())
+      throw std::bad_cast();
+    address_v4::bytes_type v4_bytes = { addr_.s6_addr[12],
+      addr_.s6_addr[13], addr_.s6_addr[14], addr_.s6_addr[15] };
+    return address_v4(v4_bytes);
+  }
+
   /// Determine whether the address is a loopback address.
   bool is_loopback() const
   {
@@ -191,14 +202,14 @@ public:
   }
 
   /// Determine whether the address is a mapped IPv4 address.
-  bool is_ipv4_mapped() const
+  bool is_v4_mapped() const
   {
     using namespace asio::detail;
     return IN6_IS_ADDR_V4MAPPED(&addr_) != 0;
   }
 
   /// Determine whether the address is an IPv4-compatible address.
-  bool is_ipv4_compatible() const
+  bool is_v4_compatible() const
   {
     using namespace asio::detail;
     return IN6_IS_ADDR_V4COMPAT(&addr_) != 0;
@@ -277,6 +288,24 @@ public:
     return a1.scope_id_ < a2.scope_id_;
   }
 
+  /// Compare addresses for ordering.
+  friend bool operator>(const address_v6& a1, const address_v6& a2)
+  {
+    return a2 < a1;
+  }
+
+  /// Compare addresses for ordering.
+  friend bool operator<=(const address_v6& a1, const address_v6& a2)
+  {
+    return !(a2 < a1);
+  }
+
+  /// Compare addresses for ordering.
+  friend bool operator>=(const address_v6& a1, const address_v6& a2)
+  {
+    return !(a1 < a2);
+  }
+
   /// Obtain an address object that represents any address.
   static address_v6 any()
   {
@@ -290,6 +319,24 @@ public:
     asio::detail::in6_addr_type tmp_addr = IN6ADDR_LOOPBACK_INIT;
     tmp.addr_ = tmp_addr;
     return tmp;
+  }
+
+  /// Create an IPv4-mapped IPv6 address.
+  static address_v6 v4_mapped(const address_v4& addr)
+  {
+    address_v4::bytes_type v4_bytes = addr.to_bytes();
+    bytes_type v6_bytes = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF,
+      v4_bytes[0], v4_bytes[1], v4_bytes[2], v4_bytes[3] };
+    return address_v6(v6_bytes);
+  }
+
+  /// Create an IPv4-compatible IPv6 address.
+  static address_v6 v4_compatible(const address_v4& addr)
+  {
+    address_v4::bytes_type v4_bytes = addr.to_bytes();
+    bytes_type v6_bytes = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      v4_bytes[0], v4_bytes[1], v4_bytes[2], v4_bytes[3] };
+    return address_v6(v6_bytes);
   }
 
 private:
@@ -316,7 +363,13 @@ template <typename Elem, typename Traits>
 std::basic_ostream<Elem, Traits>& operator<<(
     std::basic_ostream<Elem, Traits>& os, const address_v6& addr)
 {
-  os << addr.to_string();
+  asio::error e;
+  std::string s = addr.to_string(asio::assign_error(e));
+  if (e)
+    os.setstate(std::ios_base::failbit);
+  else
+    for (std::string::iterator i = s.begin(); i != s.end(); ++i)
+      os << os.widen(*i);
   return os;
 }
 
