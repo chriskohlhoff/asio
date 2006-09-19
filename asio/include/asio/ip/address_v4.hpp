@@ -206,13 +206,13 @@ public:
   /// Compare addresses for ordering.
   friend bool operator<=(const address_v4& a1, const address_v4& a2)
   {
-    return a1.to_ulong() < a2.to_ulong();
+    return a1.to_ulong() <= a2.to_ulong();
   }
 
   /// Compare addresses for ordering.
   friend bool operator>=(const address_v4& a1, const address_v4& a2)
   {
-    return a1.to_ulong() > a2.to_ulong();
+    return a1.to_ulong() >= a2.to_ulong();
   }
 
   /// Obtain an address object that represents any address.
