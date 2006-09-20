@@ -31,9 +31,24 @@ inline io_service::io_service()
 {
 }
 
-inline void io_service::run()
+inline size_t io_service::run()
 {
-  impl_.run();
+  return impl_.run();
+}
+
+inline size_t io_service::run_one()
+{
+  return impl_.run_one();
+}
+
+inline size_t io_service::poll()
+{
+  return impl_.poll();
+}
+
+inline size_t io_service::poll_one()
+{
+  return impl_.poll_one();
 }
 
 inline void io_service::interrupt()

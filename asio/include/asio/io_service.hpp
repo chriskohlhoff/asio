@@ -98,14 +98,44 @@ public:
    *
    * The run() function may be safely called again once it has completed only
    * after a call to reset().
+   *
+   * @return The number of handlers that were executed.
    */
-  void run();
+  size_t run();
+
+  /// Run the io_service's event processing loop to execute at most one handler.
+  /**
+   * The run_one() function blocks until one handler has been dispatched, or
+   * until the io_service has been interrupted.
+   *
+   * @return The number of handlers that were executed.
+   */
+  size_t run_one();
+
+  /// Run the io_service's event processing loop to execute ready handlers.
+  /**
+   * The poll() function runs handlers that are ready to run, without blocking,
+   * until the io_service has been interrupted or there are no more ready
+   * handlers.
+   *
+   * @return The number of handlers that were executed.
+   */
+  size_t poll();
+
+  /// Run the io_service's event processing loop to execute one ready handler.
+  /**
+   * The poll_one() function runs at most one handler that is ready to run,
+   * without blocking.
+   *
+   * @return The number of handlers that were executed.
+   */
+  size_t poll_one();
 
   /// Interrupt the io_service's event processing loop.
   /**
    * This function does not block, but instead simply signals to the io_service
-   * that all invocations of its run() member function should return as soon as
-   * possible.
+   * that all invocations of its run() or run_one() member functions should
+   * return as soon as possible.
    *
    * Note that if the run() function is interrupted and is not called again
    * later then its work may not have finished and handlers may not be
@@ -118,11 +148,12 @@ public:
   /// Reset the io_service in preparation for a subsequent run() invocation.
   /**
    * This function must be called prior to any second or later set of
-   * invocations of the run() function. It allows the io_service to reset any
-   * internal state, such as an interrupt flag.
+   * invocations of the run(), run_one(), poll() or poll_one() functions. It
+   * allows the io_service to reset any internal state, such as an interrupt
+   * flag.
    *
    * This function must not be called while there are any unfinished calls to
-   * the run() function.
+   * the run(), run_one(), poll() or poll_one() functions.
    */
   void reset();
 
@@ -131,8 +162,9 @@ public:
    * This function is used to ask the io_service to execute the given handler.
    *
    * The io_service guarantees that the handler will only be called in a thread
-   * in which the run() member function is currently being invoked. The handler
-   * may be executed inside this function if the guarantee can be met.
+   * in which the run(), run_one(), poll() or poll_one() member functions is
+   * currently being invoked. The handler may be executed inside this function
+   * if the guarantee can be met.
    *
    * @param handler The handler to be called. The io_service will make
    * a copy of the handler object as required. The function signature of the
@@ -148,7 +180,8 @@ public:
    * function.
    *
    * The io_service guarantees that the handler will only be called in a thread
-   * in which the run() member function is currently being invoked.
+   * in which the run(), run_one(), poll() or poll_one() member functions is
+   * currently being invoked.
    *
    * @param handler The handler to be called. The io_service will make
    * a copy of the handler object as required. The function signature of the
@@ -351,15 +384,17 @@ public:
  *
  * If an exception is thrown from a handler, the exception is allowed to
  * propagate through the throwing thread's invocation of
- * asio::io_service::run(). No other threads that are calling
- * asio::io_service::run() are affected. It is then the responsibility of
- * the application to catch the exception.
+ * asio::io_service::run(), asio::io_service::run_one(),
+ * asio::io_service::poll() or asio::io_service::poll_one().
+ * No other threads that are calling any of these functions are affected. It is
+ * then the responsibility of the application to catch the exception.
  *
- * After the exception has been caught, the asio::io_service::run() call
- * may be restarted @em without the need for an intervening call to
- * asio::io_service::reset(). This allows the thread to rejoin the
- * io_service's thread pool without impacting any other threads in the
- * pool.
+ * After the exception has been caught, the
+ * asio::io_service::run(), asio::io_service::run_one(),
+ * asio::io_service::poll() or asio::io_service::poll_one()
+ * call may be restarted @em without the need for an intervening call to
+ * asio::io_service::reset(). This allows the thread to rejoin the io_service's
+ * thread pool without impacting any other threads in the pool.
  *
  * @par Example:
  * @code
