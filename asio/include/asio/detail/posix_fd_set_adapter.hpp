@@ -19,6 +19,8 @@
 
 #include "asio/detail/socket_types.hpp"
 
+#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
 namespace asio {
 namespace detail {
 
@@ -61,6 +63,8 @@ private:
 
 } // namespace detail
 } // namespace asio
+
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 #include "asio/detail/pop_options.hpp"
 
