@@ -23,6 +23,9 @@
 
 #include "asio/detail/push_options.hpp"
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# if defined(_WINSOCKAPI_) && !defined(_WINSOCK2API_)
+#  error WinSock.h has already been included
+# endif // defined(_WINSOCKAPI_) && !defined(_WINSOCK2API_)
 # if !defined(_WIN32_WINNT) && !defined(_WIN32_WINDOWS)
 #  if defined(_MSC_VER) || defined(__BORLANDC__)
 #   pragma message("Please define _WIN32_WINNT or _WIN32_WINDOWS appropriately")
