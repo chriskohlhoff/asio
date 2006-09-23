@@ -48,6 +48,7 @@ nobase_include_HEADERS = \
 	asio/detail/pipe_select_interrupter.hpp \
 	asio/detail/pop_options.hpp \
 	asio/detail/posix_event.hpp \
+	asio/detail/posix_fd_set_adapter.hpp \
 	asio/detail/posix_mutex.hpp \
 	asio/detail/posix_signal_blocker.hpp \
 	asio/detail/posix_thread.hpp \
@@ -76,6 +77,7 @@ nobase_include_HEADERS = \
 	asio/detail/timer_queue_base.hpp \
 	asio/detail/tss_ptr.hpp \
 	asio/detail/win_event.hpp \
+	asio/detail/win_fd_set_adapter.hpp \
 	asio/detail/win_iocp_io_service.hpp \
 	asio/detail/win_iocp_io_service_fwd.hpp \
 	asio/detail/win_iocp_operation.hpp \

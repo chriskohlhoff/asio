@@ -1,0 +1,79 @@
+//
+// win_fd_set_adapter.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~
+//
+// Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+#ifndef ASIO_DETAIL_WIN_FD_SET_ADAPTER_HPP
+#define ASIO_DETAIL_WIN_FD_SET_ADAPTER_HPP
+
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+# pragma once
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+
+#include "asio/detail/push_options.hpp"
+
+#include "asio/detail/socket_types.hpp"
+
+namespace asio {
+namespace detail {
+
+// Adapts the FD_SET type to meet the Descriptor_Set concept's requirements.
+class win_fd_set_adapter
+{
+public:
+  win_fd_set_adapter()
+    : max_descriptor_(invalid_socket)
+  {
+    fd_set_.fd_count = 0;
+  }
+
+  void set(socket_type descriptor)
+  {
+    for (u_int i = 0; i < fd_set_.fd_count; ++i)
+      if (fd_set_.fd_array[i] == descriptor)
+        return;
+    if (fd_set_.fd_count < win_fd_set_size)
+      fd_set_.fd_array[fd_set_.fd_count++] = descriptor;
+  }
+
+  bool is_set(socket_type descriptor) const
+  {
+    return !!__WSAFDIsSet(descriptor,
+        const_cast<fd_set*>(reinterpret_cast<const fd_set*>(&fd_set_)));
+  }
+
+  operator fd_set*()
+  {
+    return reinterpret_cast<fd_set*>(&fd_set_);
+  }
+
+  socket_type max_descriptor() const
+  {
+    return max_descriptor_;
+  }
+
+private:
+  // This structure is defined to be compatible with the Windows API fd_set
+  // structure, but without being dependent on the value of FD_SETSIZE.
+  enum { win_fd_set_size = 1024 };
+  struct win_fd_set
+  {
+    u_int fd_count;
+    SOCKET fd_array[win_fd_set_size];
+  };
+
+  win_fd_set fd_set_;
+  socket_type max_descriptor_;
+};
+
+} // namespace detail
+} // namespace asio
+
+#include "asio/detail/pop_options.hpp"
+
+#endif // ASIO_DETAIL_WIN_FD_SET_ADAPTER_HPP
