@@ -100,6 +100,7 @@ public:
         asio::ssl::context::default_workarounds
         | asio::ssl::context::no_sslv2
         | asio::ssl::context::single_dh_use);
+    context_.set_password_callback(boost::bind(&server::get_password, this));
     context_.use_certificate_chain_file("server.pem");
     context_.use_private_key_file("server.pem", asio::ssl::context::pem);
     context_.use_tmp_dh_file("dh512.pem");
@@ -108,6 +109,11 @@ public:
     acceptor_.async_accept(new_session->socket(),
         boost::bind(&server::handle_accept, this, new_session,
           asio::placeholders::error));
+  }
+
+  std::string get_password() const
+  {
+    return "test";
   }
 
   void handle_accept(session* new_session, const asio::error& error)

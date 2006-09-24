@@ -133,6 +133,16 @@ public:
   BOOST_STATIC_CONSTANT(int, verify_client_once = SSL_VERIFY_CLIENT_ONCE);
 #endif
 
+  /// Purpose of PEM password.
+  enum password_purpose
+  {
+    /// The password is needed for reading/decryption.
+    for_reading,
+
+    /// The password is needed for writing/encryption.
+    for_writing
+  };
+
 protected:
   /// Protected destructor to prevent deletion through this type.
   ~context_base()

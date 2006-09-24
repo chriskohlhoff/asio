@@ -150,6 +150,14 @@ public:
     service_impl_.use_tmp_dh_file(impl, filename, error_handler);
   }
 
+  /// Set the password callback.
+  template <typename Password_Callback, typename Error_Handler>
+  void set_password_callback(impl_type& impl, Password_Callback callback,
+      Error_Handler error_handler)
+  {
+    service_impl_.set_password_callback(impl, callback, error_handler);
+  }
+
 private:
   // The service that provides the platform-specific implementation.
   service_impl_type& service_impl_;

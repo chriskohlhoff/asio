@@ -403,6 +403,54 @@ public:
     service_.use_tmp_dh_file(impl_, filename, error_handler);
   }
 
+  /// Set the password callback.
+  /**
+   * This function is used to specify a callback function to obtain password
+   * information about an encrypted key in PEM format.
+   *
+   * @param callback The function object to be used for obtaining the password.
+   * The function signature of the handler must be:
+   * @code std::string password_callback(
+   *   std::size_t max_length,  // The maximum size for a password.
+   *   password_purpose purpose // Whether password is for reading or writing.
+   * ); @endcode
+   * The return value of the callback is a string containing the password.
+   *
+   * @throws asio::error Thrown on failure.
+   */
+  template <typename Password_Callback>
+  void set_password_callback(Password_Callback callback)
+  {
+    service_.set_password_callback(impl_, callback, throw_error());
+  }
+
+  /// Set the password callback.
+  /**
+   * This function is used to specify a callback function to obtain password
+   * information about an encrypted key in PEM format.
+   *
+   * @param callback The function object to be used for obtaining the password.
+   * The function signature of the handler must be:
+   * @code std::string password_callback(
+   *   std::size_t max_length,  // The maximum size for a password.
+   *   password_purpose purpose // Whether password is for reading or writing.
+   * ); @endcode
+   * The return value of the callback is a string containing the password.
+   *
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
+   * @code void error_handler(
+   *   const asio::error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Password_Callback, typename Error_Handler>
+  void set_password_callback(Password_Callback callback,
+      Error_Handler error_handler)
+  {
+    service_.set_password_callback(impl_, callback, error_handler);
+  }
+
 private:
   /// The backend service implementation.
   service_type& service_;
