@@ -133,7 +133,7 @@ public:
   int start()
   {
     int rc = primitive_( session_ );
-    int sys_error_code = asio::detail::socket_ops::get_error();
+    int sys_error_code = ERR_get_error();
     bool is_operation_done = (rc > 0);  
                 // For connect/accept/shutdown, the operation
                 // is done, when return code is 1
