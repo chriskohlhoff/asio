@@ -114,8 +114,8 @@ public:
    * @param endpoint An endpoint on the local machine on which the acceptor
    * will listen for new connections.
    *
-   * @param listen_backlog The maximum length of the queue of pending
-   * connections. A value of 0 means use the default queue length.
+   * @param reuse_addr Whether the constructor should set the socket option
+   * socket_base::reuse_address.
    *
    * @throws asio::error Thrown on failure.
    *
@@ -123,18 +123,26 @@ public:
    * @code
    * basic_socket_acceptor<Protocol> acceptor(io_service);
    * acceptor.open(endpoint.protocol());
+   * if (reuse_addr)
+   *   acceptor.set_option(socket_base::reuse_address(true));
    * acceptor.bind(endpoint);
    * acceptor.listen(listen_backlog);
    * @endcode
    */
   basic_socket_acceptor(asio::io_service& io_service,
-      const endpoint_type& endpoint, int listen_backlog = 0)
+      const endpoint_type& endpoint, bool reuse_addr = true)
     : basic_io_object<Service>(io_service)
   {
     this->service.open(this->implementation, endpoint.protocol(),
         throw_error());
+    if (reuse_addr)
+    {
+      this->service.set_option(this->implementation,
+          socket_base::reuse_address(true), throw_error());
+    }
     this->service.bind(this->implementation, endpoint, throw_error());
-    this->service.listen(this->implementation, listen_backlog, throw_error());
+    this->service.listen(this->implementation,
+        socket_base::max_connections, throw_error());
   }
 
   /// Construct a basic_socket_acceptor on an existing native acceptor.
@@ -311,10 +319,9 @@ public:
    * This function puts the socket acceptor into the state where it may accept
    * new connections.
    *
-   * @param backlog The maximum length of the queue of pending connections. A
-   * value of 0 means use the default queue length.
+   * @param backlog The maximum length of the queue of pending connections.
    */
-  void listen(int backlog = 0)
+  void listen(int backlog = socket_base::max_connections)
   {
     this->service.listen(this->implementation, backlog, throw_error());
   }
@@ -325,8 +332,7 @@ public:
    * This function puts the socket acceptor into the state where it may accept
    * new connections.
    *
-   * @param backlog The maximum length of the queue of pending connections. A
-   * value of 0 means use the default queue length.
+   * @param backlog The maximum length of the queue of pending connections.
    *
    * @param error_handler A handler to be called when the operation completes,
    * to indicate whether or not an error has occurred. Copies will be made of
@@ -340,7 +346,8 @@ public:
    * asio::ip::tcp::acceptor acceptor(io_service);
    * ...
    * asio::error error;
-   * acceptor.listen(0, asio::assign_error(error));
+   * acceptor.listen(asio::socket_base::max_connections,
+   *     asio::assign_error(error));
    * if (error)
    * {
    *   // An error occurred.

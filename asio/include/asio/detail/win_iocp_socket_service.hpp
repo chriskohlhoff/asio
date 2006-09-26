@@ -379,9 +379,6 @@ public:
   void listen(implementation_type& impl, int backlog,
       Error_Handler error_handler)
   {
-    if (backlog == 0)
-      backlog = SOMAXCONN;
-
     if (socket_ops::listen(impl.socket_, backlog) == socket_error_retval)
       error_handler(asio::error(socket_ops::get_error()));
     else

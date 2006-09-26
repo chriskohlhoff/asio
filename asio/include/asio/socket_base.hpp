@@ -455,6 +455,13 @@ public:
   typedef asio::detail::io_control::size<FIONREAD> bytes_readable;
 #endif
 
+  /// The maximum length of the queue of pending incoming connections.
+#if defined(GENERATING_DOCUMENTATION)
+  static const int max_connections = implementation_defined;
+#else
+  BOOST_STATIC_CONSTANT(int, max_connections = SOMAXCONN);
+#endif
+
 protected:
   /// Protected destructor to prevent deletion through this type.
   ~socket_base()
