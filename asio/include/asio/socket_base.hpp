@@ -429,7 +429,7 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined non_blocking_io;
 #else
-  typedef asio::detail::io_control::boolean<FIONBIO> non_blocking_io;
+  typedef asio::detail::io_control::non_blocking_io non_blocking_io;
 #endif
 
   /// IO control command to get the amount of data that can be read without
@@ -452,7 +452,7 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined bytes_readable;
 #else
-  typedef asio::detail::io_control::size<FIONREAD> bytes_readable;
+  typedef asio::detail::io_control::bytes_readable bytes_readable;
 #endif
 
   /// The maximum length of the queue of pending incoming connections.

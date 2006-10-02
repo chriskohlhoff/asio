@@ -28,19 +28,18 @@ namespace asio {
 namespace detail {
 namespace io_control {
 
-// Helper template for implementing boolean-based IO control commands.
-template <int Name>
-class boolean
+// IO control command for non-blocking I/O.
+class non_blocking_io
 {
 public:
   // Default constructor.
-  boolean()
+  non_blocking_io()
     : value_(0)
   {
   }
 
   // Construct with a specific command value.
-  boolean(bool value)
+  non_blocking_io(bool value)
     : value_(value ? 1 : 0)
   {
   }
@@ -48,16 +47,16 @@ public:
   // Get the name of the IO control command.
   int name() const
   {
-    return Name;
+    return FIONBIO;
   }
 
-  // Set the value of the boolean.
+  // Set the value of the I/O control command.
   void set(bool value)
   {
     value_ = value ? 1 : 0;
   }
 
-  // Get the current value of the boolean.
+  // Get the current value of the I/O control command.
   bool get() const
   {
     return value_ != 0;
@@ -79,19 +78,18 @@ private:
   detail::ioctl_arg_type value_;
 };
 
-// Helper template for implementing size-based IO control commands.
-template <int Name>
-class size
+// I/O control command for getting number of bytes available.
+class bytes_readable
 {
 public:
   // Default constructor.
-  size()
+  bytes_readable()
     : value_(0)
   {
   }
 
   // Construct with a specific command value.
-  size(std::size_t value)
+  bytes_readable(std::size_t value)
     : value_(value)
   {
   }
@@ -99,16 +97,16 @@ public:
   // Get the name of the IO control command.
   int name() const
   {
-    return Name;
+    return FIONREAD;
   }
 
-  // Set the value of the size.
+  // Set the value of the I/O control command.
   void set(std::size_t value)
   {
     value_ = static_cast<detail::ioctl_arg_type>(value);
   }
 
-  // Get the current value of the size.
+  // Get the current value of the I/O control command.
   std::size_t get() const
   {
     return static_cast<std::size_t>(value_);
