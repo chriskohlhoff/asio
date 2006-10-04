@@ -247,7 +247,7 @@ private:
           &completion_key, &overlapped, block ? INFINITE : 0);
       DWORD last_error = ::GetLastError();
 
-      if (!ok)
+      if (!ok && overlapped == 0)
         return 0;
 
       if (overlapped)
