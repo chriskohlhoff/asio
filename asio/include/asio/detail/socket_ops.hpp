@@ -1390,9 +1390,6 @@ inline int translate_addrinfo_error(int error)
     return asio::error::address_family_not_supported;
   case EAI_MEMORY:
     return asio::error::no_memory;
-#if defined(EAI_NODATA) // Non-POSIX, but some platforms define it.
-  case EAI_NODATA:
-#endif // defined(EAI_NODATA)
   case EAI_NONAME:
     return asio::error::host_not_found;
   case EAI_SERVICE:
