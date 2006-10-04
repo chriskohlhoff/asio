@@ -107,7 +107,8 @@ public:
     }
 #elif defined(__sun) || defined(__QNX__)
     return strerror(code_);
-#elif defined(__MACH__) && defined(__APPLE__) || defined(__NetBSD__)
+#elif defined(__MACH__) && defined(__APPLE__) \
+  || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__)
     try
     {
       char buf[256] = "";
