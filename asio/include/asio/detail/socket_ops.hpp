@@ -554,17 +554,17 @@ inline int inet_pton(int af, const char* src, void* dest,
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__) \
-  || defined(__MACH__) && defined(__APPLE__)
-
-// The following functions are only needed for emulation of getaddrinfo and
-// getnameinfo.
-
 inline int gethostname(char* name, int namelen)
 {
   set_error(0);
   return error_wrapper(::gethostname(name, namelen));
 }
+
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__) \
+  || defined(__MACH__) && defined(__APPLE__)
+
+// The following functions are only needed for emulation of getaddrinfo and
+// getnameinfo.
 
 inline int translate_netdb_error(int error)
 {
