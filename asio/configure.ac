@@ -81,6 +81,10 @@ case $host in
     CXXFLAGS="$CXXFLAGS"
     LDFLAGS="$LDFLAGS"
     ;;
+  *-*-freebsd*)
+    CXXFLAGS="$CXXFLAGS -pthread"
+    LDFLAGS="$LDFLAGS -pthread"
+    ;;
 esac
 
 if test "$GXX" = yes; then
