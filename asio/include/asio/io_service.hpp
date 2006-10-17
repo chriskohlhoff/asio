@@ -393,8 +393,8 @@ public:
  * asio::io_service::run(), asio::io_service::run_one(),
  * asio::io_service::poll() or asio::io_service::poll_one()
  * call may be restarted @em without the need for an intervening call to
- * asio::io_service::reset(). This allows the thread to rejoin the io_service's
- * thread pool without impacting any other threads in the pool.
+ * asio::io_service::reset(). This allows the thread to rejoin the
+ * io_service's thread pool without impacting any other threads in the pool.
  *
  * @par Example:
  * @code
