@@ -78,7 +78,7 @@ inline void* asio_handler_allocate(std::size_t size, ...)
 inline void asio_handler_deallocate(void* pointer, std::size_t size, ...)
 {
   (void)(size);
-  return ::operator delete(pointer);
+  ::operator delete(pointer);
 }
 
 } // namespace asio
