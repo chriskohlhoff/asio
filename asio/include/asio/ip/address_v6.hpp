@@ -21,6 +21,7 @@
 #include <cstring>
 #include <string>
 #include <stdexcept>
+#include <typeinfo>
 #include <boost/array.hpp>
 #include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
@@ -176,15 +177,37 @@ public:
   /// Determine whether the address is a loopback address.
   bool is_loopback() const
   {
+#if defined(__BORLANDC__)
+    return ((addr_.s6_addr[0] == 0) && (addr_.s6_addr[1] == 0)
+        && (addr_.s6_addr[2] == 0) && (addr_.s6_addr[3] == 0)
+        && (addr_.s6_addr[4] == 0) && (addr_.s6_addr[5] == 0)
+        && (addr_.s6_addr[6] == 0) && (addr_.s6_addr[7] == 0)
+        && (addr_.s6_addr[8] == 0) && (addr_.s6_addr[9] == 0)
+        && (addr_.s6_addr[10] == 0) && (addr_.s6_addr[11] == 0)
+        && (addr_.s6_addr[12] == 0) && (addr_.s6_addr[13] == 0)
+        && (addr_.s6_addr[14] == 0) && (addr_.s6_addr[15] == 1));
+#else
     using namespace asio::detail;
     return IN6_IS_ADDR_LOOPBACK(&addr_) != 0;
+#endif
   }
 
   /// Determine whether the address is unspecified.
   bool is_unspecified() const
   {
+#if defined(__BORLANDC__)
+    return ((addr_.s6_addr[0] == 0) && (addr_.s6_addr[1] == 0)
+        && (addr_.s6_addr[2] == 0) && (addr_.s6_addr[3] == 0)
+        && (addr_.s6_addr[4] == 0) && (addr_.s6_addr[5] == 0)
+        && (addr_.s6_addr[6] == 0) && (addr_.s6_addr[7] == 0)
+        && (addr_.s6_addr[8] == 0) && (addr_.s6_addr[9] == 0)
+        && (addr_.s6_addr[10] == 0) && (addr_.s6_addr[11] == 0)
+        && (addr_.s6_addr[12] == 0) && (addr_.s6_addr[13] == 0)
+        && (addr_.s6_addr[14] == 0) && (addr_.s6_addr[15] == 0));
+#else
     using namespace asio::detail;
     return IN6_IS_ADDR_UNSPECIFIED(&addr_) != 0;
+#endif
   }
 
   /// Determine whether the address is link local.

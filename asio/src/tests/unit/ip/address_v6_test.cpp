@@ -49,30 +49,43 @@ void test()
     addr1.scope_id(scope_id);
 
     bool b = addr1.is_unspecified();
+    (void)b;
 
     b = addr1.is_loopback();
+    (void)b;
 
     b = addr1.is_multicast();
+    (void)b;
 
     b = addr1.is_link_local();
+    (void)b;
 
     b = addr1.is_site_local();
+    (void)b;
 
     b = addr1.is_v4_mapped();
+    (void)b;
 
     b = addr1.is_v4_compatible();
+    (void)b;
 
     b = addr1.is_multicast_node_local();
+    (void)b;
 
     b = addr1.is_multicast_link_local();
+    (void)b;
 
     b = addr1.is_multicast_site_local();
+    (void)b;
 
     b = addr1.is_multicast_org_local();
+    (void)b;
 
     b = addr1.is_multicast_global();
+    (void)b;
 
     ip::address_v6::bytes_type bytes_value = addr1.to_bytes();
+    (void)bytes_value;
 
     std::string string_value = addr1.to_string();
     string_value = addr1.to_string(error_handler);
@@ -97,16 +110,22 @@ void test()
     // address_v6 comparisons.
 
     b = (addr1 == addr2);
+    (void)b;
 
     b = (addr1 != addr2);
+    (void)b;
 
     b = (addr1 < addr2);
+    (void)b;
 
     b = (addr1 > addr2);
+    (void)b;
 
     b = (addr1 <= addr2);
+    (void)b;
 
     b = (addr1 >= addr2);
+    (void)b;
 
     // address_v6 I/O.
 

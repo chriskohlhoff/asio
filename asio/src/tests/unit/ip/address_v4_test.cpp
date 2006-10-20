@@ -49,14 +49,19 @@ void test()
     // address_v4 functions.
 
     bool b = addr1.is_class_a();
+    (void)b;
 
     b = addr1.is_class_b();
+    (void)b;
 
     b = addr1.is_class_c();
+    (void)b;
 
     b = addr1.is_multicast();
+    (void)b;
 
     ip::address_v4::bytes_type bytes_value = addr1.to_bytes();
+    (void)bytes_value;
 
     unsigned long ulong_value = addr1.to_ulong();
     (void)ulong_value;
@@ -84,16 +89,22 @@ void test()
     // address_v4 comparisons.
 
     b = (addr1 == addr2);
+    (void)b;
 
     b = (addr1 != addr2);
+    (void)b;
 
     b = (addr1 < addr2);
+    (void)b;
 
     b = (addr1 > addr2);
+    (void)b;
 
     b = (addr1 <= addr2);
+    (void)b;
 
     b = (addr1 >= addr2);
+    (void)b;
 
     // address_v4 I/O.
 
