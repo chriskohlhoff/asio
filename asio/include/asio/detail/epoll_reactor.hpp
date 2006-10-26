@@ -302,8 +302,13 @@ public:
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
     for (std::size_t i = 0; i < timer_queues_.size(); ++i)
+    {
       if (timer_queues_[i] == &timer_queue)
+      {
         timer_queues_.erase(timer_queues_.begin() + i);
+        return;
+      }
+    }
   }
 
   // Schedule a timer in the given timer queue to expire at the specified
