@@ -607,6 +607,20 @@ public:
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
 
+#if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
+      // Check whether buffers are still valid.
+      typename Const_Buffers::const_iterator iter
+        = handler_op->buffers_.begin();
+      typename Const_Buffers::const_iterator end
+        = handler_op->buffers_.end();
+      while (iter != end)
+      {
+        asio::const_buffer buffer(*iter);
+        asio::buffer_cast<const char*>(buffer);
+        ++iter;
+      }
+#endif // defined(ASIO_ENABLE_BUFFER_DEBUGGING)
+
       // Map ERROR_NETNAME_DELETED to more useful error.
       if (last_error == ERROR_NETNAME_DELETED)
       {
@@ -767,6 +781,20 @@ public:
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
 
+#if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
+      // Check whether buffers are still valid.
+      typename Const_Buffers::const_iterator iter
+        = handler_op->buffers_.begin();
+      typename Const_Buffers::const_iterator end
+        = handler_op->buffers_.end();
+      while (iter != end)
+      {
+        asio::const_buffer buffer(*iter);
+        asio::buffer_cast<const char*>(buffer);
+        ++iter;
+      }
+#endif // defined(ASIO_ENABLE_BUFFER_DEBUGGING)
+
       // Make a copy of the handler so that the memory can be deallocated before
       // the upcall is made.
       Handler handler(handler_op->handler_);
@@ -921,6 +949,20 @@ public:
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
+
+#if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
+      // Check whether buffers are still valid.
+      typename Mutable_Buffers::const_iterator iter
+        = handler_op->buffers_.begin();
+      typename Mutable_Buffers::const_iterator end
+        = handler_op->buffers_.end();
+      while (iter != end)
+      {
+        asio::mutable_buffer buffer(*iter);
+        asio::buffer_cast<char*>(buffer);
+        ++iter;
+      }
+#endif // defined(ASIO_ENABLE_BUFFER_DEBUGGING)
 
       // Map ERROR_NETNAME_DELETED to more useful error.
       if (last_error == ERROR_NETNAME_DELETED)
@@ -1101,6 +1143,20 @@ public:
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
+
+#if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
+      // Check whether buffers are still valid.
+      typename Mutable_Buffers::const_iterator iter
+        = handler_op->buffers_.begin();
+      typename Mutable_Buffers::const_iterator end
+        = handler_op->buffers_.end();
+      while (iter != end)
+      {
+        asio::mutable_buffer buffer(*iter);
+        asio::buffer_cast<char*>(buffer);
+        ++iter;
+      }
+#endif // defined(ASIO_ENABLE_BUFFER_DEBUGGING)
 
       // Check for connection closed.
       if (last_error == 0 && bytes_transferred == 0)
