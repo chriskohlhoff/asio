@@ -74,10 +74,11 @@ public:
       DWORD_PTR completion_key = 0;
 #endif
       LPOVERLAPPED overlapped = 0;
-      ::GetQueuedCompletionStatus(iocp_.handle,
+      ::SetLastError(0);
+      BOOL ok = ::GetQueuedCompletionStatus(iocp_.handle,
           &bytes_transferred, &completion_key, &overlapped, 0);
       DWORD last_error = ::GetLastError();
-      if (last_error == WAIT_TIMEOUT)
+      if (!ok && overlapped == 0 && last_error == WAIT_TIMEOUT)
         break;
       if (overlapped)
         static_cast<operation*>(overlapped)->destroy();
