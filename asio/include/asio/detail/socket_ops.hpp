@@ -1468,7 +1468,8 @@ inline int getnameinfo(const socket_addr_type* addr,
 # if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501)
   // Building for Windows XP, Windows Server 2003, or later.
   set_error(0);
-  int error = ::getnameinfo(addr, addrlen, host, hostlen, serv, servlen, flags);
+  int error = ::getnameinfo(addr, addrlen, host, static_cast<DWORD>(hostlen),
+      serv, static_cast<DWORD>(servlen), flags);
   return translate_addrinfo_error(error);
 # else
   // Building for Windows 2000 or earlier.

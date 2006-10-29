@@ -90,7 +90,7 @@ public:
 
   // Construct with a specific command value.
   bytes_readable(std::size_t value)
-    : value_(value)
+    : value_(static_cast<detail::ioctl_arg_type>(value))
   {
   }
 
