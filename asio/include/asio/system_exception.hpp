@@ -30,7 +30,7 @@
 #endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/detail/win_local_free_on_block_exit.hpp"
+#include "asio/detail/local_free_on_block_exit.hpp"
 
 namespace asio {
 
@@ -82,7 +82,7 @@ public:
             | FORMAT_MESSAGE_FROM_SYSTEM
             | FORMAT_MESSAGE_IGNORE_INSERTS, 0, code_,
             MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (char*)&msg, 0, 0);
-        detail::win_local_free_on_block_exit local_free_obj(msg);
+        detail::local_free_on_block_exit local_free_obj(msg);
         if (length && msg[length - 1] == '\n')
           msg[--length] = '\0';
         if (length && msg[length - 1] == '\r')

@@ -36,6 +36,7 @@ nobase_include_HEADERS = \
 	asio/detail/io_control.hpp \
 	asio/detail/kqueue_reactor.hpp \
 	asio/detail/kqueue_reactor_fwd.hpp \
+	asio/detail/local_free_on_block_exit.hpp \
 	asio/detail/mutex.hpp \
 	asio/detail/noncopyable.hpp \
 	asio/detail/null_event.hpp \
@@ -81,7 +82,6 @@ nobase_include_HEADERS = \
 	asio/detail/win_iocp_io_service_fwd.hpp \
 	asio/detail/win_iocp_operation.hpp \
 	asio/detail/win_iocp_socket_service.hpp \
-	asio/detail/win_local_free_on_block_exit.hpp \
 	asio/detail/win_mutex.hpp \
 	asio/detail/win_signal_blocker.hpp \
 	asio/detail/win_thread.hpp \
