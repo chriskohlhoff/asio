@@ -1,7 +1,13 @@
 .deps
 .dirstamp
 *.exe
-*_test
 *.ilk
 *.pdb
 *.tds
+basic_context
+context
+context_base
+context_service
+stream
+stream_base
+stream_service

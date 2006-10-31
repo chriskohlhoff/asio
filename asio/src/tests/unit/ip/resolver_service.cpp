@@ -16,7 +16,7 @@
 // Test that header file is self-contained.
 #include "asio/ip/resolver_service.hpp"
 
-#include "unit_test.hpp"
+#include "../unit_test.hpp"
 
 test_suite* init_unit_test_suite(int argc, char* argv[])
 {
