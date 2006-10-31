@@ -44,6 +44,7 @@ UNIT_TEST_EXES = \
 	tests\unit\is_write_buffered_test.exe \
 	tests\unit\placeholders_test.exe \
 	tests\unit\read_test.exe \
+	tests\unit\read_until_test.exe \
 	tests\unit\socket_acceptor_service_test.exe \
 	tests\unit\socket_base_test.exe \
 	tests\unit\strand_test.exe \

@@ -104,6 +104,8 @@ test-suite "asio" :
   [ link placeholders_test.cpp : $(USE_SELECT) : placeholders_test_select ]
   [ run read_test.cpp ]
   [ run read_test.cpp : : : $(USE_SELECT) : read_test_select ]
+  [ run read_until_test.cpp ]
+  [ run read_until_test.cpp : : : $(USE_SELECT) : read_until_test_select ]
   [ link socket_acceptor_service_test.cpp ]
   [ link socket_acceptor_service_test.cpp : $(USE_SELECT) : socket_acceptor_service_test_select ]
   [ run socket_base_test.cpp ]

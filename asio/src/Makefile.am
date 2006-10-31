@@ -38,6 +38,7 @@ noinst_PROGRAMS = \
 	tests/unit/is_write_buffered_test \
 	tests/unit/placeholders_test \
 	tests/unit/read_test \
+	tests/unit/read_until_test \
 	tests/unit/socket_acceptor_service_test \
 	tests/unit/socket_base_test \
 	tests/unit/strand_test \
@@ -130,6 +131,7 @@ TESTS = \
 	tests/unit/is_write_buffered_test \
 	tests/unit/placeholders_test \
 	tests/unit/read_test \
+	tests/unit/read_until_test \
 	tests/unit/socket_acceptor_service_test \
 	tests/unit/socket_base_test \
 	tests/unit/strand_test \
@@ -196,6 +198,7 @@ tests_unit_is_read_buffered_test_SOURCES = tests/unit/is_read_buffered_test.cpp
 tests_unit_is_write_buffered_test_SOURCES = tests/unit/is_write_buffered_test.cpp
 tests_unit_placeholders_test_SOURCES = tests/unit/placeholders_test.cpp
 tests_unit_read_test_SOURCES = tests/unit/read_test.cpp
+tests_unit_read_until_test_SOURCES = tests/unit/read_until_test.cpp
 tests_unit_socket_acceptor_service_test_SOURCES = tests/unit/socket_acceptor_service_test.cpp
 tests_unit_socket_base_test_SOURCES = tests/unit/socket_base_test.cpp
 tests_unit_strand_test_SOURCES = tests/unit/strand_test.cpp

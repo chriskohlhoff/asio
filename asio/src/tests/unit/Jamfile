@@ -66,6 +66,7 @@ test-suite "asio"
   [ run is_write_buffered_test.cpp <template>asio_unit_test ]
   [ link placeholders_test.cpp <template>asio_unit_test ]
   [ run read_test.cpp <template>asio_unit_test ]
+  [ link read_until_test.cpp <template>asio_unit_test ]
   [ link socket_acceptor_service_test.cpp <template>asio_unit_test ]
   [ run socket_base_test.cpp <template>asio_unit_test ]
   [ run strand_test.cpp <template>asio_unit_test ]
