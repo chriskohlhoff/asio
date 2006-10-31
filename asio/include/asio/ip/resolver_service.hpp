@@ -43,7 +43,7 @@ public:
 
 private:
   // The type of the platform-specific implementation.
-  typedef detail::resolver_service<Protocol> service_impl_type;
+  typedef asio::detail::resolver_service<Protocol> service_impl_type;
 
 public:
   /// The type of a resolver implementation.
