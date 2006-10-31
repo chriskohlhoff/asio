@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_RESOLVER_SERVICE_HPP
-#define ASIO_RESOLVER_SERVICE_HPP
+#ifndef ASIO_IP_RESOLVER_SERVICE_HPP
+#define ASIO_IP_RESOLVER_SERVICE_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -21,6 +21,7 @@
 #include "asio/detail/resolver_service.hpp"
 
 namespace asio {
+namespace ip {
 
 /// Default service implementation for a resolver.
 template <typename Protocol>
@@ -119,8 +120,9 @@ private:
   service_impl_type& service_impl_;
 };
 
+} // namespace ip
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_RESOLVER_SERVICE_HPP
+#endif // ASIO_IP_RESOLVER_SERVICE_HPP

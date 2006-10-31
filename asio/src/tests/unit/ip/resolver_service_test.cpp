@@ -14,12 +14,12 @@
 #endif // !defined(BOOST_ALL_NO_LIB)
 
 // Test that header file is self-contained.
-#include "asio/resolver_service.hpp"
+#include "asio/ip/resolver_service.hpp"
 
 #include "unit_test.hpp"
 
 test_suite* init_unit_test_suite(int argc, char* argv[])
 {
-  test_suite* test = BOOST_TEST_SUITE("resolver_service");
+  test_suite* test = BOOST_TEST_SUITE("ip/resolver_service");
   return test;
 }

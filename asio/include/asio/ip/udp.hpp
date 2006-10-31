@@ -18,8 +18,8 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/basic_datagram_socket.hpp"
-#include "asio/basic_resolver.hpp"
 #include "asio/ip/basic_endpoint.hpp"
+#include "asio/ip/basic_resolver.hpp"
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
 #include "asio/detail/socket_types.hpp"
