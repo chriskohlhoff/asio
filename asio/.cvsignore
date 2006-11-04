@@ -9,7 +9,7 @@ depcomp
 install-sh
 doc
 lib
-boost-asio-proposal-*
+boost_asio_*
 *.gz
 *.bz2
 *.zip
