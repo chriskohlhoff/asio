@@ -28,7 +28,7 @@
 #include <pthread.h>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/system_exception.hpp"
+#include "asio/system_error.hpp"
 #include "asio/detail/noncopyable.hpp"
 
 namespace asio {
@@ -45,7 +45,9 @@ public:
     int error = ::pthread_key_create(&tss_key_, 0);
     if (error != 0)
     {
-      system_exception e("tss", error);
+      asio::system_error e(
+          asio::error_code(error, asio::native_ecat),
+          "tss");
       boost::throw_exception(e);
     }
   }

@@ -7,6 +7,8 @@
 
 subproject libs/asio/test ;
 
+project boost : $(BOOST_ROOT) ;
+
 # bring in the rules for testing
 import testing ;
 
@@ -22,7 +24,8 @@ if $(UNIX)
 }
 
 template asio_unit_test
-  : <lib>../../../libs/thread/build/boost_thread
+  : <lib>@boost/libs/thread/build/boost_thread
+    <lib>@boost/libs/system/build/boost_system
   : <include>../../..
     <define>BOOST_ALL_NO_LIB=1
     <threading>multi
@@ -45,7 +48,6 @@ test-suite "asio"
   [ link datagram_socket_service.cpp <template>asio_unit_test ]
   [ link deadline_timer_service.cpp <template>asio_unit_test ]
   [ run deadline_timer.cpp <template>asio_unit_test ]
-  [ run error_handler.cpp <template>asio_unit_test ]
   [ run error.cpp <template>asio_unit_test ]
   [ run io_service.cpp <template>asio_unit_test ]
   [ link ip/address.cpp <template>asio_unit_test ]

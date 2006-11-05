@@ -1,5 +1,5 @@
 //
-// null_thread.hpp
+// throw_error.hpp
 // ~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_NULL_THREAD_HPP
-#define ASIO_DETAIL_NULL_THREAD_HPP
+#ifndef ASIO_DETAIL_THROW_ERROR_HPP
+#define ASIO_DETAIL_THROW_ERROR_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -18,50 +18,27 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
-
-#if !defined(BOOST_HAS_THREADS)
-
-#include "asio/detail/push_options.hpp"
 #include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/error.hpp"
+#include "asio/error_code.hpp"
 #include "asio/system_error.hpp"
-#include "asio/detail/noncopyable.hpp"
 
 namespace asio {
 namespace detail {
 
-class null_thread
-  : private noncopyable
+inline void throw_error(const asio::error_code& err)
 {
-public:
-  // Constructor.
-  template <typename Function>
-  null_thread(Function f)
+  if (err)
   {
-    asio::system_error e(asio::error::not_supported, "thread");
+    asio::system_error e(err);
     boost::throw_exception(e);
   }
-
-  // Destructor.
-  ~null_thread()
-  {
-  }
-
-  // Wait for the thread to exit.
-  void join()
-  {
-  }
-};
+}
 
 } // namespace detail
 } // namespace asio
 
-#endif // !defined(BOOST_HAS_THREADS)
-
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_NULL_THREAD_HPP
+#endif // ASIO_DETAIL_THROW_ERROR_HPP

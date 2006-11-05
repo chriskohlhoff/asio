@@ -22,6 +22,7 @@ if $(UNIX)
 
 exe chat_client
   : <lib>@boost/libs/thread/build/boost_thread
+    <lib>@boost/libs/system/build/boost_system
     chat_client.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../..
@@ -34,6 +35,7 @@ exe chat_client
 
 exe chat_server
   : <lib>@boost/libs/thread/build/boost_thread
+    <lib>@boost/libs/system/build/boost_system
     chat_server.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../..

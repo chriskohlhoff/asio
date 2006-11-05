@@ -55,7 +55,6 @@ UNIT_TEST_EXES = \
 	tests\unit\deadline_timer_service.exe \
 	tests\unit\deadline_timer.exe \
 	tests\unit\io_service.exe \
-	tests\unit\error_handler.exe \
 	tests\unit\error.exe \
 	tests\unit\ip\address.exe \
 	tests\unit\ip\address_v4.exe \

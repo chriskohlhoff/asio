@@ -29,7 +29,6 @@ class test_stream
 {
 public:
   typedef asio::io_service io_service_type;
-  typedef asio::error error_type;
 
   test_stream(asio::io_service& io_service)
     : io_service_(io_service),
@@ -108,9 +107,10 @@ public:
     return total_length;
   }
 
-  template <typename Const_Buffers, typename Error_Handler>
-  size_t write_some(const Const_Buffers& buffers, Error_Handler)
+  template <typename Const_Buffers>
+  size_t write_some(const Const_Buffers& buffers, asio::error_code& ec)
   {
+    ec = asio::error::success;
     return write_some(buffers);
   }
 
@@ -118,9 +118,8 @@ public:
   void async_write_some(const Const_Buffers& buffers, Handler handler)
   {
     size_t bytes_transferred = write_some(buffers);
-    asio::error error;
-    io_service_.post(
-        asio::detail::bind_handler(handler, error, bytes_transferred));
+    io_service_.post(asio::detail::bind_handler(
+          handler, asio::error::success, bytes_transferred));
   }
 
 private:
@@ -256,112 +255,112 @@ void test_4_arg_write()
     = asio::buffer(write_data, sizeof(write_data));
 
   s.reset();
-  asio::error error;
+  asio::error_code error;
   size_t bytes_transferred = asio::write(s, buffers,
-      asio::transfer_all(), asio::assign_error(error));
+      asio::transfer_all(), error);
   BOOST_CHECK(bytes_transferred == sizeof(write_data));
   BOOST_CHECK(s.check(buffers, sizeof(write_data)));
   BOOST_CHECK(!error);
 
   s.reset();
   s.next_write_length(1);
-  error = asio::error();
+  error = asio::error_code();
   bytes_transferred = asio::write(s, buffers,
-      asio::transfer_all(), asio::assign_error(error));
+      asio::transfer_all(), error);
   BOOST_CHECK(bytes_transferred == sizeof(write_data));
   BOOST_CHECK(s.check(buffers, sizeof(write_data)));
   BOOST_CHECK(!error);
 
   s.reset();
   s.next_write_length(10);
-  error = asio::error();
+  error = asio::error_code();
   bytes_transferred = asio::write(s, buffers,
-      asio::transfer_all(), asio::assign_error(error));
+      asio::transfer_all(), error);
   BOOST_CHECK(bytes_transferred == sizeof(write_data));
   BOOST_CHECK(s.check(buffers, sizeof(write_data)));
   BOOST_CHECK(!error);
 
   s.reset();
-  error = asio::error();
+  error = asio::error_code();
   bytes_transferred = asio::write(s, buffers,
-      asio::transfer_at_least(1), asio::assign_error(error));
+      asio::transfer_at_least(1), error);
   BOOST_CHECK(bytes_transferred == sizeof(write_data));
   BOOST_CHECK(s.check(buffers, sizeof(write_data)));
   BOOST_CHECK(!error);
 
   s.reset();
   s.next_write_length(1);
-  error = asio::error();
+  error = asio::error_code();
   bytes_transferred = asio::write(s, buffers,
-      asio::transfer_at_least(1), asio::assign_error(error));
+      asio::transfer_at_least(1), error);
   BOOST_CHECK(bytes_transferred == 1);
   BOOST_CHECK(s.check(buffers, 1));
   BOOST_CHECK(!error);
 
   s.reset();
   s.next_write_length(10);
-  error = asio::error();
+  error = asio::error_code();
   bytes_transferred = asio::write(s, buffers,
-      asio::transfer_at_least(1), asio::assign_error(error));
+      asio::transfer_at_least(1), error);
   BOOST_CHECK(bytes_transferred == 10);
   BOOST_CHECK(s.check(buffers, 10));
   BOOST_CHECK(!error);
 
   s.reset();
-  error = asio::error();
+  error = asio::error_code();
   bytes_transferred = asio::write(s, buffers,
-      asio::transfer_at_least(10), asio::assign_error(error));
+      asio::transfer_at_least(10), error);
   BOOST_CHECK(bytes_transferred == sizeof(write_data));
   BOOST_CHECK(s.check(buffers, sizeof(write_data)));
   BOOST_CHECK(!error);
 
   s.reset();
   s.next_write_length(1);
-  error = asio::error();
+  error = asio::error_code();
   bytes_transferred = asio::write(s, buffers,
-      asio::transfer_at_least(10), asio::assign_error(error));
+      asio::transfer_at_least(10), error);
   BOOST_CHECK(bytes_transferred == 10);
   BOOST_CHECK(s.check(buffers, 10));
   BOOST_CHECK(!error);
 
   s.reset();
   s.next_write_length(10);
-  error = asio::error();
+  error = asio::error_code();
   bytes_transferred = asio::write(s, buffers,
-      asio::transfer_at_least(10), asio::assign_error(error));
+      asio::transfer_at_least(10), error);
   BOOST_CHECK(bytes_transferred == 10);
   BOOST_CHECK(s.check(buffers, 10));
   BOOST_CHECK(!error);
 
   s.reset();
-  error = asio::error();
+  error = asio::error_code();
   bytes_transferred = asio::write(s, buffers,
-      asio::transfer_at_least(42), asio::assign_error(error));
+      asio::transfer_at_least(42), error);
   BOOST_CHECK(bytes_transferred == sizeof(write_data));
   BOOST_CHECK(s.check(buffers, sizeof(write_data)));
   BOOST_CHECK(!error);
 
   s.reset();
   s.next_write_length(1);
-  error = asio::error();
+  error = asio::error_code();
   bytes_transferred = asio::write(s, buffers,
-      asio::transfer_at_least(42), asio::assign_error(error));
+      asio::transfer_at_least(42), error);
   BOOST_CHECK(bytes_transferred == 42);
   BOOST_CHECK(s.check(buffers, 42));
   BOOST_CHECK(!error);
 
   s.reset();
   s.next_write_length(10);
-  error = asio::error();
+  error = asio::error_code();
   bytes_transferred = asio::write(s, buffers,
-      asio::transfer_at_least(42), asio::assign_error(error));
+      asio::transfer_at_least(42), error);
   BOOST_CHECK(bytes_transferred == 50);
   BOOST_CHECK(s.check(buffers, 50));
   BOOST_CHECK(!error);
 }
 
-void async_write_handler(const asio::error& e, size_t bytes_transferred,
-    size_t expected_bytes_transferred, bool* called)
+void async_write_handler(const asio::error_code& e,
+    size_t bytes_transferred, size_t expected_bytes_transferred, bool* called)
 {
   *called = true;
   BOOST_CHECK(!e);

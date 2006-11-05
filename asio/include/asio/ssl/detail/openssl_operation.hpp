@@ -33,7 +33,8 @@ namespace ssl {
 namespace detail {
 
 typedef boost::function<int (::SSL*)> ssl_primitive_func; 
-typedef boost::function<void (const error&, int)> user_handler_func;
+typedef boost::function<void (const asio::error_code&, int)>
+  user_handler_func;
 
 // Network send_/recv buffer implementation
 //
@@ -155,15 +156,15 @@ public:
 
     if (is_shut_down_sent && is_shut_down_received && is_operation_done)
       // SSL connection is shut down cleanly
-      return handler_(asio::error(), 1);
+      return handler_(asio::error::success, 1);
 
     if (is_shut_down_received && !is_write_needed)
-      return handler_(asio::error(asio::error::eof), 0);
+      return handler_(asio::error::eof, 0);
 
     if (is_shut_down_received)
       // Shutdown has been requested, while we were reading or writing...
       // abort our action...
-      return handler_(asio::error(asio::error::shut_down), 0);
+      return handler_(asio::error::shut_down, 0);
 
     if (!is_operation_done && !is_read_needed && !is_write_needed 
       && !is_shut_down_sent)
@@ -171,9 +172,15 @@ public:
       // The operation has failed... It is not completed and does 
       // not want network communication nor does want to send shutdown out...
       if (error_code == SSL_ERROR_SYSCALL)
-        return handler_(asio::error(sys_error_code), rc); 
+      {
+        return handler_(asio::error_code(
+              sys_error_code, asio::native_ecat), rc); 
+      }
       else
-        return handler_(asio::error(error_code + 1000000), rc); 
+      {
+        return handler_(asio::error_code(
+              error_code, asio::ssl_ecat), rc); 
+      }
     }
 
     if (!is_operation_done && !is_write_needed)
@@ -198,7 +205,7 @@ public:
           if (!BIO_should_retry(ssl_bio_))
           {
             // Some serios error with BIO....
-            return handler_(asio::error(asio::error::no_recovery), 0);
+            return handler_(asio::error::no_recovery, 0);
           }
         }
 
@@ -212,7 +219,7 @@ public:
 
 // Private implementation
 private:
-  typedef boost::function<int (const asio::error&, int)>
+  typedef boost::function<int (const asio::error_code&, int)>
     int_handler_func;
   typedef boost::function<int (bool, int)> write_func;
 
@@ -234,15 +241,15 @@ private:
   SSL*    session_;
 
   //
-  int sync_user_handler(const asio::error& error, int rc)
+  int sync_user_handler(const asio::error_code& error, int rc)
   {
     if (!error)
       return rc;
 
-    throw error;
+    throw asio::system_error(error);
   }
     
-  int async_user_handler(const asio::error& error, int rc)
+  int async_user_handler(const asio::error_code& error, int rc)
   {
     user_handler_(error, rc);
     return 0;
@@ -295,7 +302,7 @@ private:
       {
         // Seems like fatal error
         // reading from SSL BIO has failed...
-        handler_(asio::error(asio::error::no_recovery), 0);
+        handler_(asio::error::no_recovery, 0);
         return 0;
       }
     }
@@ -303,7 +310,7 @@ private:
     if (is_operation_done)
     {
       // Finish the operation, with success
-      handler_(asio::error(), rc);
+      handler_(asio::error::success, rc);
       return 0;
     }
     
@@ -315,7 +322,7 @@ private:
   }
 
   void async_write_handler(bool is_operation_done, int rc, 
-    const asio::error& error, size_t bytes_sent)
+    const asio::error_code& error, size_t bytes_sent)
   {
     if (!error)
     {
@@ -323,7 +330,7 @@ private:
       send_buf_.data_removed(bytes_sent);
 
       if (is_operation_done)
-        handler_(asio::error(), rc);
+        handler_(asio::error::success, rc);
       else
         // Since the operation was not completed, try it again...
         start();
@@ -349,7 +356,8 @@ private:
     );
   }
 
-  void async_read_handler(const asio::error& error, size_t bytes_recvd)
+  void async_read_handler(const asio::error_code& error,
+      size_t bytes_recvd)
   {
     if (!error)
     {
@@ -372,7 +380,7 @@ private:
         if (!BIO_should_retry(ssl_bio_))
         {
           // Some serios error with BIO....
-          handler_(asio::error(asio::error::no_recovery), 0);
+          handler_(asio::error::no_recovery, 0);
           return;
         }
       }
@@ -416,7 +424,7 @@ private:
       {
         // Seems like fatal error
         // reading from SSL BIO has failed...
-        throw asio::error(asio::error::no_recovery);
+        throw asio::system_error(asio::error::no_recovery);
       }
     }
     
@@ -456,7 +464,7 @@ private:
       if (!BIO_should_retry(ssl_bio_))
       {
         // Some serios error with BIO....
-        throw asio::error(asio::error::no_recovery);
+        throw asio::system_error(asio::error::no_recovery);
       }
     }
 

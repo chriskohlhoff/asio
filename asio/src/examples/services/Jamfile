@@ -22,6 +22,7 @@ if $(UNIX)
 
 exe daytime_client
   : <lib>@boost/libs/thread/build/boost_thread
+    <lib>@boost/libs/system/build/boost_system
     daytime_client.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../..

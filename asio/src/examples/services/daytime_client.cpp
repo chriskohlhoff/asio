@@ -19,7 +19,7 @@ typedef asio::basic_stream_socket<asio::ip::tcp,
 
 char read_buffer[1024];
 
-void read_handler(const asio::error& e,
+void read_handler(const asio::error_code& e,
     std::size_t bytes_transferred, debug_stream_socket* s)
 {
   if (!e)
@@ -32,7 +32,7 @@ void read_handler(const asio::error& e,
   }
 }
 
-void connect_handler(const asio::error& e, debug_stream_socket* s,
+void connect_handler(const asio::error_code& e, debug_stream_socket* s,
     asio::ip::tcp::resolver::iterator endpoint_iterator)
 {
   if (!e)

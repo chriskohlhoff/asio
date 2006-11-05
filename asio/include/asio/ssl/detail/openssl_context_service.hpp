@@ -130,64 +130,58 @@ public:
   }
 
   // Set options on the context.
-  template <typename Error_Handler>
-  void set_options(impl_type& impl, context_base::options o,
-      Error_Handler error_handler)
+  asio::error_code set_options(impl_type& impl,
+      context_base::options o, asio::error_code& ec)
   {
     ::SSL_CTX_set_options(impl, o);
 
-    asio::error e;
-    error_handler(e);
+    ec = asio::error_code();
+    return ec;
   }
 
   // Set peer verification mode.
-  template <typename Error_Handler>
-  void set_verify_mode(impl_type& impl, context_base::verify_mode v,
-      Error_Handler error_handler)
+  asio::error_code set_verify_mode(impl_type& impl,
+      context_base::verify_mode v, asio::error_code& ec)
   {
     ::SSL_CTX_set_verify(impl, v, 0);
 
-    asio::error e;
-    error_handler(e);
+    ec = asio::error_code();
+    return ec;
   }
 
   // Load a certification authority file for performing verification.
-  template <typename Error_Handler>
-  void load_verify_file(impl_type& impl, const std::string& filename,
-      Error_Handler error_handler)
+  asio::error_code load_verify_file(impl_type& impl,
+      const std::string& filename, asio::error_code& ec)
   {
     if (::SSL_CTX_load_verify_locations(impl, filename.c_str(), 0) != 1)
     {
-      asio::error e(asio::error::invalid_argument);
-      error_handler(e);
-      return;
+      ec = asio::error::invalid_argument;
+      return ec;
     }
 
-    asio::error e;
-    error_handler(e);
+    ec = asio::error_code();
+    return ec;
   }
 
   // Add a directory containing certification authority files to be used for
   // performing verification.
-  template <typename Error_Handler>
-  void add_verify_path(impl_type& impl, const std::string& path,
-      Error_Handler error_handler)
+  asio::error_code add_verify_path(impl_type& impl,
+      const std::string& path, asio::error_code& ec)
   {
     if (::SSL_CTX_load_verify_locations(impl, 0, path.c_str()) != 1)
     {
-      asio::error e(asio::error::invalid_argument);
-      error_handler(e);
-      return;
+      ec = asio::error::invalid_argument;
+      return ec;
     }
 
-    asio::error e;
-    error_handler(e);
+    ec = asio::error_code();
+    return ec;
   }
 
   // Use a certificate from a file.
-  template <typename Error_Handler>
-  void use_certificate_file(impl_type& impl, const std::string& filename,
-      context_base::file_format format, Error_Handler error_handler)
+  asio::error_code use_certificate_file(impl_type& impl,
+      const std::string& filename, context_base::file_format format,
+      asio::error_code& ec)
   {
     int file_type;
     switch (format)
@@ -200,43 +194,39 @@ public:
       break;
     default:
       {
-        asio::error e(asio::error::invalid_argument);
-        error_handler(e);
-        return;
+        ec = asio::error::invalid_argument;
+        return ec;
       }
     }
 
     if (::SSL_CTX_use_certificate_file(impl, filename.c_str(), file_type) != 1)
     {
-      asio::error e(asio::error::invalid_argument);
-      error_handler(e);
-      return;
+      ec = asio::error::invalid_argument;
+      return ec;
     }
 
-    asio::error e;
-    error_handler(e);
+    ec = asio::error_code();
+    return ec;
   }
 
   // Use a certificate chain from a file.
-  template <typename Error_Handler>
-  void use_certificate_chain_file(impl_type& impl, const std::string& filename,
-      Error_Handler error_handler)
+  asio::error_code use_certificate_chain_file(impl_type& impl,
+      const std::string& filename, asio::error_code& ec)
   {
     if (::SSL_CTX_use_certificate_chain_file(impl, filename.c_str()) != 1)
     {
-      asio::error e(asio::error::invalid_argument);
-      error_handler(e);
-      return;
+      ec = asio::error::invalid_argument;
+      return ec;
     }
 
-    asio::error e;
-    error_handler(e);
+    ec = asio::error_code();
+    return ec;
   }
 
   // Use a private key from a file.
-  template <typename Error_Handler>
-  void use_private_key_file(impl_type& impl, const std::string& filename,
-      context_base::file_format format, Error_Handler error_handler)
+  asio::error_code use_private_key_file(impl_type& impl,
+      const std::string& filename, context_base::file_format format,
+      asio::error_code& ec)
   {
     int file_type;
     switch (format)
@@ -249,27 +239,25 @@ public:
       break;
     default:
       {
-        asio::error e(asio::error::invalid_argument);
-        error_handler(e);
-        return;
+        ec = asio::error::invalid_argument;
+        return ec;
       }
     }
 
     if (::SSL_CTX_use_PrivateKey_file(impl, filename.c_str(), file_type) != 1)
     {
-      asio::error e(asio::error::invalid_argument);
-      error_handler(e);
-      return;
+      ec = asio::error::invalid_argument;
+      return ec;
     }
 
-    asio::error e;
-    error_handler(e);
+    ec = asio::error_code();
+    return ec;
   }
 
   // Use an RSA private key from a file.
-  template <typename Error_Handler>
-  void use_rsa_private_key_file(impl_type& impl, const std::string& filename,
-      context_base::file_format format, Error_Handler error_handler)
+  asio::error_code use_rsa_private_key_file(impl_type& impl,
+      const std::string& filename, context_base::file_format format,
+      asio::error_code& ec)
   {
     int file_type;
     switch (format)
@@ -282,44 +270,39 @@ public:
       break;
     default:
       {
-        asio::error e(asio::error::invalid_argument);
-        error_handler(e);
-        return;
+        ec = asio::error::invalid_argument;
+        return ec;
       }
     }
 
     if (::SSL_CTX_use_RSAPrivateKey_file(
           impl, filename.c_str(), file_type) != 1)
     {
-      asio::error e(asio::error::invalid_argument);
-      error_handler(e);
-      return;
+      ec = asio::error::invalid_argument;
+      return ec;
     }
 
-    asio::error e;
-    error_handler(e);
+    ec = asio::error_code();
+    return ec;
   }
 
   // Use the specified file to obtain the temporary Diffie-Hellman parameters.
-  template <typename Error_Handler>
-  void use_tmp_dh_file(impl_type& impl, const std::string& filename,
-      Error_Handler error_handler)
+  asio::error_code use_tmp_dh_file(impl_type& impl,
+      const std::string& filename, asio::error_code& ec)
   {
     ::BIO* bio = ::BIO_new_file(filename.c_str(), "r");
     if (!bio)
     {
-      asio::error e(asio::error::invalid_argument);
-      error_handler(e);
-      return;
+      ec = asio::error::invalid_argument;
+      return ec;
     }
 
     ::DH* dh = ::PEM_read_bio_DHparams(bio, 0, 0, 0);
     if (!dh)
     {
       ::BIO_free(bio);
-      asio::error e(asio::error::invalid_argument);
-      error_handler(e);
-      return;
+      ec = asio::error::invalid_argument;
+      return ec;
     }
 
     ::BIO_free(bio);
@@ -327,13 +310,12 @@ public:
     if (result != 1)
     {
       ::DH_free(dh);
-      asio::error e(asio::error::invalid_argument);
-      error_handler(e);
-      return;
+      ec = asio::error::invalid_argument;
+      return ec;
     }
 
-    asio::error e;
-    error_handler(e);
+    ec = asio::error_code();
+    return ec;
   }
 
   static int password_callback(char* buf, int size, int purpose, void* data)
@@ -355,9 +337,9 @@ public:
   }
 
   // Set the password callback.
-  template <typename Password_Callback, typename Error_Handler>
-  void set_password_callback(impl_type& impl, Password_Callback callback,
-      Error_Handler error_handler)
+  template <typename Password_Callback>
+  asio::error_code set_password_callback(impl_type& impl,
+      Password_Callback callback, asio::error_code& ec)
   {
     // Allocate callback function object if not already present.
     if (impl->default_passwd_callback_userdata)
@@ -378,8 +360,8 @@ public:
     SSL_CTX_set_default_passwd_cb(impl,
         &openssl_context_service::password_callback);
 
-    asio::error e;
-    error_handler(e);
+    ec = asio::error::success;
+    return ec;
   }
 
 private:

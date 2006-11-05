@@ -21,7 +21,8 @@ if $(UNIX)
 }
 
 exe async_client
-  : async_client.cpp
+  : <lib>@boost/libs/system/build/boost_system
+    async_client.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../../..
     <define>BOOST_ALL_NO_LIB=1
@@ -32,7 +33,8 @@ exe async_client
   ;
 
 exe sync_client
-  : sync_client.cpp
+  : <lib>@boost/libs/system/build/boost_system
+    sync_client.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../../..
     <define>BOOST_ALL_NO_LIB=1

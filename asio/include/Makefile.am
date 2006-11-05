@@ -73,6 +73,7 @@ nobase_include_HEADERS = \
 	asio/detail/task_io_service.hpp \
 	asio/detail/task_io_service_fwd.hpp \
 	asio/detail/thread.hpp \
+	asio/detail/throw_error.hpp \
 	asio/detail/timer_queue.hpp \
 	asio/detail/timer_queue_base.hpp \
 	asio/detail/tss_ptr.hpp \
@@ -89,9 +90,10 @@ nobase_include_HEADERS = \
 	asio/detail/winsock_init.hpp \
 	asio/detail/wrapped_handler.hpp \
 	asio/error.hpp \
-	asio/error_handler.hpp \
+	asio/error_code.hpp \
 	asio/handler_alloc_hook.hpp \
 	asio/handler_invoke_hook.hpp \
+	asio/impl/error_code.ipp \
 	asio/impl/io_service.ipp \
 	asio/impl/read.ipp \
 	asio/impl/read_until.ipp \
@@ -135,7 +137,7 @@ nobase_include_HEADERS = \
 	asio/strand.hpp \
 	asio/stream_socket_service.hpp \
 	asio/streambuf.hpp \
-	asio/system_exception.hpp \
+	asio/system_error.hpp \
 	asio/thread.hpp \
 	asio/time_traits.hpp \
 	asio/write.hpp \

@@ -141,7 +141,6 @@ Standard exception class.
 
 <H2>Concepts</H2>
 
-\li Async_Object
 \li Async_Read_Stream
 \li Async_Write_Stream
 \li Boolean_Socket_Option
@@ -149,7 +148,6 @@ Standard exception class.
 \li Const_Buffers
 \li Dispatcher
 \li Endpoint
-\li Error_Source
 \li Integer_Socket_Option
 \li IO_Control_Command
 \li IP_MReq_Socket_Option

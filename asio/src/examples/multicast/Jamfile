@@ -21,7 +21,8 @@ if $(UNIX)
 }
 
 exe receiver
-  : receiver.cpp
+  : <lib>@boost/libs/system/build/boost_system
+    receiver.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../..
     <define>BOOST_ALL_NO_LIB=1
@@ -32,7 +33,8 @@ exe receiver
   ;
 
 exe sender
-  : sender.cpp
+  : <lib>@boost/libs/system/build/boost_system
+    sender.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../..
     <define>BOOST_ALL_NO_LIB=1

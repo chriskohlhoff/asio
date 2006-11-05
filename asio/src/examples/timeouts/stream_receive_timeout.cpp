@@ -29,7 +29,7 @@ public:
           asio::placeholders::error));
   }
 
-  void handle_accept(const error& err)
+  void handle_accept(const asio::error_code& err)
   {
     if (err)
     {
@@ -47,7 +47,7 @@ public:
     }
   }
 
-  void handle_recv(const error& err)
+  void handle_recv(const asio::error_code& err)
   {
     if (err)
     {
@@ -90,10 +90,6 @@ int main()
         boost::bind(connect_handler));
 
     ios.run();
-  }
-  catch (asio::error& e)
-  {
-    std::cerr << "Exception: " << e << "\n";
   }
   catch (std::exception& e)
   {

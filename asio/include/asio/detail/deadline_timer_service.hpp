@@ -135,7 +135,8 @@ public:
       ::timeval tv;
       tv.tv_sec = timeout.total_seconds();
       tv.tv_usec = timeout.total_microseconds() % 1000000;
-      socket_ops::select(0, 0, 0, 0, &tv);
+      asio::error_code ec;
+      socket_ops::select(0, 0, 0, 0, &tv, ec);
       now = Time_Traits::now();
     }
   }
@@ -151,10 +152,9 @@ public:
     {
     }
 
-    void operator()(int result)
+    void operator()(const asio::error_code& result)
     {
-      asio::error e(result);
-      io_service_.post(detail::bind_handler(handler_, e));
+      io_service_.post(detail::bind_handler(handler_, result));
     }
 
   private:

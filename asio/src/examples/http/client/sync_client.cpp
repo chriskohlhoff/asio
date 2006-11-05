@@ -38,11 +38,11 @@ int main(int argc, char* argv[])
 
     // Try each endpoint until we successfully establish a connection.
     tcp::socket socket(io_service);
-    asio::error error = asio::error::host_not_found;
+    asio::error_code error = asio::error::host_not_found;
     while (error && endpoint_iterator != end)
     {
       socket.close();
-      socket.connect(*endpoint_iterator++, asio::assign_error(error));
+      socket.connect(*endpoint_iterator++, error);
     }
     if (error)
       throw error;
@@ -98,8 +98,7 @@ int main(int argc, char* argv[])
 
     // Read until EOF, writing data to output as we go.
     while (asio::read(socket, response,
-          asio::transfer_at_least(1),
-          asio::assign_error(error)))
+          asio::transfer_at_least(1), error))
       std::cout << &response;
     if (error != asio::error::eof)
       throw error;

@@ -22,6 +22,7 @@ if $(UNIX)
 
 exe http_server
   : <lib>@boost/libs/thread/build/boost_thread
+    <lib>@boost/libs/system/build/boost_system
     connection.cpp
     connection_manager.cpp
     mime_types.cpp

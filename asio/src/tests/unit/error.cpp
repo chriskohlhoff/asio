@@ -19,27 +19,26 @@
 #include <sstream>
 #include "unit_test.hpp"
 
-void test_error_code(int code)
+void test_error_code(const asio::error_code& code)
 {
-  asio::error error(code);
-  BOOST_CHECK(code == error.code());
-  BOOST_CHECK(error.what() != 0);
+  asio::error_code error(code);
+  BOOST_CHECK(code == error);
 
   BOOST_CHECK(code == 0 || error);
   BOOST_CHECK(code == 0 || !!error);
 
-  asio::error error2(error);
+  asio::error_code error2(error);
   BOOST_CHECK(error == error2);
   BOOST_CHECK(!(error != error2));
 
-  asio::error error3;
+  asio::error_code error3;
   error3 = error;
   BOOST_CHECK(error == error3);
   BOOST_CHECK(!(error != error3));
 
   std::ostringstream os;
   os << error;
-  BOOST_CHECK(os.str() == error.what());
+  BOOST_CHECK(!os.str().empty());
 }
 
 void error_test()

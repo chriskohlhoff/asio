@@ -62,7 +62,7 @@ public:
   }
 
   /// Handle completion of a accept operation.
-  void handle_accept(const asio::error& e, connection_ptr conn)
+  void handle_accept(const asio::error_code& e, connection_ptr conn)
   {
     if (!e)
     {
@@ -89,7 +89,7 @@ public:
   }
 
   /// Handle completion of a write operation.
-  void handle_write(const asio::error& e, connection_ptr conn)
+  void handle_write(const asio::error_code& e, connection_ptr conn)
   {
     // Nothing to do. The socket will be closed automatically when the last
     // reference to the connection object goes away.

@@ -22,6 +22,7 @@ if $(UNIX)
 
 template asio_tutorial
   : <lib>@boost/libs/thread/build/boost_thread
+    <lib>@boost/libs/system/build/boost_system
   : <include>$(BOOST_ROOT)
     <include>../../../..
     <define>BOOST_ALL_NO_LIB=1

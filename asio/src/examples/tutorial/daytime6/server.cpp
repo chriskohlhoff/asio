@@ -44,7 +44,7 @@ private:
           asio::placeholders::bytes_transferred));
   }
 
-  void handle_receive(const asio::error& error,
+  void handle_receive(const asio::error_code& error,
       std::size_t /*bytes_transferred*/)
   {
     if (!error || error == asio::error::message_size)
@@ -62,7 +62,8 @@ private:
   }
 
   void handle_send(boost::shared_ptr<std::string> /*message*/,
-      const asio::error& /*error*/, std::size_t /*bytes_transferred*/)
+      const asio::error_code& /*error*/,
+      std::size_t /*bytes_transferred*/)
   {
   }
 

@@ -27,9 +27,9 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
-#include "asio/error_handler.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/throw_error.hpp"
 #include "asio/ip/address_v4.hpp"
 
 namespace asio {
@@ -105,63 +105,54 @@ public:
   /// Get the address as a string.
   std::string to_string() const
   {
-    return to_string(asio::throw_error());
+    asio::error_code ec;
+    std::string addr = to_string(ec);
+    asio::detail::throw_error(ec);
+    return addr;
   }
 
   /// Get the address as a string.
-  template <typename Error_Handler>
-  std::string to_string(Error_Handler error_handler) const
+  std::string to_string(asio::error_code& ec) const
   {
     char addr_str[asio::detail::max_addr_v6_str_len];
     const char* addr =
       asio::detail::socket_ops::inet_ntop(AF_INET6, &addr_, addr_str,
-          asio::detail::max_addr_v6_str_len, scope_id_);
+          asio::detail::max_addr_v6_str_len, scope_id_, ec);
     if (addr == 0)
-    {
-      asio::error e(asio::detail::socket_ops::get_error());
-      error_handler(e);
       return std::string();
-    }
-    asio::error e;
-    error_handler(e);
     return addr;
   }
 
   /// Create an address from an IP address string.
   static address_v6 from_string(const char* str)
   {
-    return from_string(str, asio::throw_error());
+    asio::error_code ec;
+    address_v6 addr = from_string(str, ec);
+    asio::detail::throw_error(ec);
+    return addr;
   }
 
   /// Create an address from an IP address string.
-  template <typename Error_Handler>
-  static address_v6 from_string(const char* str, Error_Handler error_handler)
+  static address_v6 from_string(const char* str, asio::error_code& ec)
   {
     address_v6 tmp;
     if (asio::detail::socket_ops::inet_pton(
-          AF_INET6, str, &tmp.addr_, &tmp.scope_id_) <= 0)
-    {
-      asio::error e(asio::detail::socket_ops::get_error());
-      error_handler(e);
+          AF_INET6, str, &tmp.addr_, &tmp.scope_id_, ec) <= 0)
       return address_v6();
-    }
-    asio::error e;
-    error_handler(e);
     return tmp;
   }
 
   /// Create an address from an IP address string.
   static address_v6 from_string(const std::string& str)
   {
-    return from_string(str.c_str(), asio::throw_error());
+    return from_string(str.c_str());
   }
 
   /// Create an address from an IP address string.
-  template <typename Error_Handler>
   static address_v6 from_string(const std::string& str,
-      Error_Handler error_handler)
+      asio::error_code& ec)
   {
-    return from_string(str.c_str(), error_handler);
+    return from_string(str.c_str(), ec);
   }
 
   /// Converts an IPv4-mapped or IPv4-compatible address to an IPv4 address.
@@ -386,9 +377,9 @@ template <typename Elem, typename Traits>
 std::basic_ostream<Elem, Traits>& operator<<(
     std::basic_ostream<Elem, Traits>& os, const address_v6& addr)
 {
-  asio::error e;
-  std::string s = addr.to_string(asio::assign_error(e));
-  if (e)
+  asio::error_code ec;
+  std::string s = addr.to_string(ec);
+  if (ec)
     os.setstate(std::ios_base::failbit);
   else
     for (std::string::iterator i = s.begin(); i != s.end(); ++i)

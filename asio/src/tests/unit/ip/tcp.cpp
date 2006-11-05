@@ -32,27 +32,23 @@ namespace ip_tcp_socket_compile {
 
 using namespace asio;
 
-void error_handler(const error&)
+void connect_handler(const asio::error_code&)
 {
 }
 
-void connect_handler(const error&)
+void send_handler(const asio::error_code&, std::size_t)
 {
 }
 
-void send_handler(const error&, std::size_t)
+void receive_handler(const asio::error_code&, std::size_t)
 {
 }
 
-void receive_handler(const error&, std::size_t)
+void write_some_handler(const asio::error_code&, std::size_t)
 {
 }
 
-void write_some_handler(const error&, std::size_t)
-{
-}
-
-void read_some_handler(const error&, std::size_t)
+void read_some_handler(const asio::error_code&, std::size_t)
 {
 }
 
@@ -66,6 +62,7 @@ void test()
     socket_base::message_flags in_flags = 0;
     socket_base::keep_alive socket_option;
     socket_base::bytes_readable io_control_command;
+    asio::error_code ec;
 
     // basic_stream_socket constructors.
 
@@ -89,53 +86,53 @@ void test()
 
     socket1.open(ip::tcp::v4());
     socket1.open(ip::tcp::v6());
-    socket1.open(ip::tcp::v4(), error_handler);
-    socket1.open(ip::tcp::v6(), error_handler);
+    socket1.open(ip::tcp::v4(), ec);
+    socket1.open(ip::tcp::v6(), ec);
 
     int native_socket2 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     socket1.assign(ip::tcp::v4(), native_socket2);
     int native_socket3 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    socket1.assign(ip::tcp::v4(), native_socket3, error_handler);
+    socket1.assign(ip::tcp::v4(), native_socket3, ec);
 
     socket1.close();
-    socket1.close(error_handler);
+    socket1.close(ec);
 
     ip::tcp::socket::native_type native_socket4 = socket1.native();
     (void)native_socket4;
 
     socket1.cancel();
-    socket1.cancel(error_handler);
+    socket1.cancel(ec);
 
     socket1.bind(ip::tcp::endpoint(ip::tcp::v4(), 0));
     socket1.bind(ip::tcp::endpoint(ip::tcp::v6(), 0));
-    socket1.bind(ip::tcp::endpoint(ip::tcp::v4(), 0), error_handler);
-    socket1.bind(ip::tcp::endpoint(ip::tcp::v6(), 0), error_handler);
+    socket1.bind(ip::tcp::endpoint(ip::tcp::v4(), 0), ec);
+    socket1.bind(ip::tcp::endpoint(ip::tcp::v6(), 0), ec);
 
     socket1.connect(ip::tcp::endpoint(ip::tcp::v4(), 0));
     socket1.connect(ip::tcp::endpoint(ip::tcp::v6(), 0));
-    socket1.connect(ip::tcp::endpoint(ip::tcp::v4(), 0), error_handler);
-    socket1.connect(ip::tcp::endpoint(ip::tcp::v6(), 0), error_handler);
+    socket1.connect(ip::tcp::endpoint(ip::tcp::v4(), 0), ec);
+    socket1.connect(ip::tcp::endpoint(ip::tcp::v6(), 0), ec);
 
     socket1.async_connect(ip::tcp::endpoint(ip::tcp::v4(), 0), connect_handler);
     socket1.async_connect(ip::tcp::endpoint(ip::tcp::v6(), 0), connect_handler);
 
     socket1.set_option(socket_option);
-    socket1.set_option(socket_option, error_handler);
+    socket1.set_option(socket_option, ec);
 
     socket1.get_option(socket_option);
-    socket1.get_option(socket_option, error_handler);
+    socket1.get_option(socket_option, ec);
 
     socket1.io_control(io_control_command);
-    socket1.io_control(io_control_command, error_handler);
+    socket1.io_control(io_control_command, ec);
 
     ip::tcp::endpoint endpoint1 = socket1.local_endpoint();
-    ip::tcp::endpoint endpoint2 = socket1.local_endpoint(error_handler);
+    ip::tcp::endpoint endpoint2 = socket1.local_endpoint(ec);
 
     ip::tcp::endpoint endpoint3 = socket1.remote_endpoint();
-    ip::tcp::endpoint endpoint4 = socket1.remote_endpoint(error_handler);
+    ip::tcp::endpoint endpoint4 = socket1.remote_endpoint(ec);
 
     socket1.shutdown(socket_base::shutdown_both);
-    socket1.shutdown(socket_base::shutdown_both, error_handler);
+    socket1.shutdown(socket_base::shutdown_both, ec);
 
     // basic_stream_socket functions.
 
@@ -143,8 +140,8 @@ void test()
     socket1.send(buffer(const_char_buffer));
     socket1.send(buffer(mutable_char_buffer), in_flags);
     socket1.send(buffer(const_char_buffer), in_flags);
-    socket1.send(buffer(mutable_char_buffer), in_flags, error_handler);
-    socket1.send(buffer(const_char_buffer), in_flags, error_handler);
+    socket1.send(buffer(mutable_char_buffer), in_flags, ec);
+    socket1.send(buffer(const_char_buffer), in_flags, ec);
 
     socket1.async_send(buffer(mutable_char_buffer), send_handler);
     socket1.async_send(buffer(const_char_buffer), send_handler);
@@ -153,7 +150,7 @@ void test()
 
     socket1.receive(buffer(mutable_char_buffer));
     socket1.receive(buffer(mutable_char_buffer), in_flags);
-    socket1.receive(buffer(mutable_char_buffer), in_flags, error_handler);
+    socket1.receive(buffer(mutable_char_buffer), in_flags, ec);
 
     socket1.async_receive(buffer(mutable_char_buffer), receive_handler);
     socket1.async_receive(buffer(mutable_char_buffer), in_flags,
@@ -161,23 +158,23 @@ void test()
 
     socket1.write_some(buffer(mutable_char_buffer));
     socket1.write_some(buffer(const_char_buffer));
-    socket1.write_some(buffer(mutable_char_buffer), error_handler);
-    socket1.write_some(buffer(const_char_buffer), error_handler);
+    socket1.write_some(buffer(mutable_char_buffer), ec);
+    socket1.write_some(buffer(const_char_buffer), ec);
 
     socket1.async_write_some(buffer(mutable_char_buffer), write_some_handler);
     socket1.async_write_some(buffer(const_char_buffer), write_some_handler);
 
     socket1.read_some(buffer(mutable_char_buffer));
-    socket1.read_some(buffer(mutable_char_buffer), error_handler);
+    socket1.read_some(buffer(mutable_char_buffer), ec);
 
     socket1.async_read_some(buffer(mutable_char_buffer), read_some_handler);
 
     socket1.peek(buffer(mutable_char_buffer));
-    socket1.peek(buffer(mutable_char_buffer), error_handler);
+    socket1.peek(buffer(mutable_char_buffer), ec);
 
     std::size_t in_avail1 = socket1.in_avail();
     (void)in_avail1;
-    std::size_t in_avail2 = socket1.in_avail(error_handler);
+    std::size_t in_avail2 = socket1.in_avail(ec);
     (void)in_avail2;
   }
   catch (std::exception&)
@@ -198,12 +195,12 @@ namespace ip_tcp_acceptor_runtime {
 
 using namespace asio;
 
-void handle_accept(const error& err)
+void handle_accept(const asio::error_code& err)
 {
   BOOST_CHECK(!err);
 }
 
-void handle_connect(const error& err)
+void handle_connect(const asio::error_code& err)
 {
   BOOST_CHECK(!err);
 }

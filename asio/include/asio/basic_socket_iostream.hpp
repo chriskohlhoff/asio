@@ -42,7 +42,7 @@
 //     {
 //       rdbuf()->connect ( x1, ..., xn );
 //     }
-//     catch (asio::error&)
+//     catch (asio::system_error&)
 //     {
 //       this->setstate(std::ios_base::failbit);
 //       if (this->exceptions() & std::ios_base::failbit)
@@ -61,7 +61,7 @@
     { \
       rdbuf()->connect( BOOST_PP_ENUM_PARAMS(n, x) ); \
     } \
-    catch (asio::error&) \
+    catch (asio::system_error&) \
     { \
       this->setstate(std::ios_base::failbit); \
       if (this->exceptions() & std::ios_base::failbit) \
@@ -78,7 +78,7 @@
 //     {
 //       rdbuf()->connect ( x1, ..., xn );
 //     }
-//     catch (asio::error&)
+//     catch (asio::system_error&)
 //     {
 //       this->setstate(std::ios_base::failbit);
 //       if (this->exceptions() & std::ios_base::failbit)
@@ -95,7 +95,7 @@
     { \
       rdbuf()->connect( BOOST_PP_ENUM_PARAMS(n, x) ); \
     } \
-    catch (asio::error&) \
+    catch (asio::system_error&) \
     { \
       this->setstate(std::ios_base::failbit); \
       if (this->exceptions() & std::ios_base::failbit) \

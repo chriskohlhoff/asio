@@ -21,8 +21,9 @@
 #include <string>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/error_handler.hpp"
+#include "asio/error.hpp"
 #include "asio/detail/socket_ops.hpp"
+#include "asio/detail/throw_error.hpp"
 
 namespace asio {
 namespace ip {
@@ -31,24 +32,25 @@ namespace ip {
 std::string host_name();
 
 /// Get the current host name.
-template <typename Error_Handler>
-std::string host_name(Error_Handler error_handler);
+std::string host_name(asio::error_code& ec);
 
 inline std::string host_name()
 {
-  return host_name(asio::throw_error());
-}
-
-template <typename Error_Handler>
-std::string host_name(Error_Handler error_handler)
-{
   char name[1024];
-  if (asio::detail::socket_ops::gethostname(name, sizeof(name)) != 0)
+  asio::error_code ec;
+  if (asio::detail::socket_ops::gethostname(name, sizeof(name), ec) != 0)
   {
-    asio::error error(asio::detail::socket_ops::get_error());
-    error_handler(error);
+    asio::detail::throw_error(ec);
     return std::string();
   }
+  return std::string(name);
+}
+
+inline std::string host_name(asio::error_code& ec)
+{
+  char name[1024];
+  if (asio::detail::socket_ops::gethostname(name, sizeof(name), ec) != 0)
+    return std::string();
   return std::string(name);
 }
 

@@ -19,6 +19,7 @@
 
 #include "asio/detail/push_options.hpp"
 #include <boost/config.hpp>
+#include <boost/assert.hpp>
 #include <cstdlib>
 #include <cstring>
 #include <cerrno>
@@ -36,44 +37,39 @@ namespace asio {
 namespace detail {
 namespace socket_ops {
 
-inline int get_error()
+inline void clear_error(asio::error_code& ec)
 {
+  errno = 0;
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  return WSAGetLastError();
-#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  return errno;
+  WSASetLastError(0);
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-}
-
-inline void set_error(int error)
-{
-  errno = error;
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  WSASetLastError(error);
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  ec = asio::error_code();
 }
 
 template <typename ReturnType>
-inline ReturnType error_wrapper(ReturnType return_value)
+inline ReturnType error_wrapper(ReturnType return_value,
+    asio::error_code& ec)
 {
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  errno = WSAGetLastError();
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  ec = asio::error_code(WSAGetLastError(), asio::native_ecat);
+#else
+  ec = asio::error_code(errno, asio::native_ecat);
+#endif
   return return_value;
 }
 
 inline socket_type accept(socket_type s, socket_addr_type* addr,
-    socket_addr_len_type* addrlen)
+    socket_addr_len_type* addrlen, asio::error_code& ec)
 {
-  set_error(0);
+  clear_error(ec);
 #if defined(__MACH__) && defined(__APPLE__)
-  socket_type new_s = error_wrapper(::accept(s, addr, addrlen));
+  socket_type new_s = error_wrapper(::accept(s, addr, addrlen), ec);
   if (new_s == invalid_socket)
     return new_s;
 
   int optval = 1;
   int result = error_wrapper(::setsockopt(new_s,
-        SOL_SOCKET, SO_NOSIGPIPE, &optval, sizeof(optval)));
+        SOL_SOCKET, SO_NOSIGPIPE, &optval, sizeof(optval)), ec);
   if (result != 0)
   {
     ::close(new_s);
@@ -82,44 +78,44 @@ inline socket_type accept(socket_type s, socket_addr_type* addr,
 
   return new_s;
 #else
-  return error_wrapper(::accept(s, addr, addrlen));
+  return error_wrapper(::accept(s, addr, addrlen), ec);
 #endif
 }
 
 inline int bind(socket_type s, const socket_addr_type* addr,
-    socket_addr_len_type addrlen)
+    socket_addr_len_type addrlen, asio::error_code& ec)
 {
-  set_error(0);
-  return error_wrapper(::bind(s, addr, addrlen));
+  clear_error(ec);
+  return error_wrapper(::bind(s, addr, addrlen), ec);
 }
 
-inline int close(socket_type s)
+inline int close(socket_type s, asio::error_code& ec)
 {
-  set_error(0);
+  clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  return error_wrapper(::closesocket(s));
+  return error_wrapper(::closesocket(s), ec);
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  return error_wrapper(::close(s));
+  return error_wrapper(::close(s), ec);
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
-inline int shutdown(socket_type s, int what)
+inline int shutdown(socket_type s, int what, asio::error_code& ec)
 {
-  set_error(0);
-  return error_wrapper(::shutdown(s, what));
+  clear_error(ec);
+  return error_wrapper(::shutdown(s, what), ec);
 }
 
 inline int connect(socket_type s, const socket_addr_type* addr,
-    socket_addr_len_type addrlen)
+    socket_addr_len_type addrlen, asio::error_code& ec)
 {
-  set_error(0);
-  return error_wrapper(::connect(s, addr, addrlen));
+  clear_error(ec);
+  return error_wrapper(::connect(s, addr, addrlen), ec);
 }
 
-inline int listen(socket_type s, int backlog)
+inline int listen(socket_type s, int backlog, asio::error_code& ec)
 {
-  set_error(0);
-  return error_wrapper(::listen(s, backlog));
+  clear_error(ec);
+  return error_wrapper(::listen(s, backlog), ec);
 }
 
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -150,16 +146,17 @@ inline void init_buf(buf& b, const void* data, size_t size)
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
-inline int recv(socket_type s, buf* bufs, size_t count, int flags)
+inline int recv(socket_type s, buf* bufs, size_t count, int flags,
+    asio::error_code& ec)
 {
-  set_error(0);
+  clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   // Receive some data.
   DWORD recv_buf_count = static_cast<DWORD>(count);
   DWORD bytes_transferred = 0;
   DWORD recv_flags = flags;
   int result = error_wrapper(::WSARecv(s, bufs,
-        recv_buf_count, &bytes_transferred, &recv_flags, 0, 0));
+        recv_buf_count, &bytes_transferred, &recv_flags, 0, 0), ec);
   if (result != 0)
     return -1;
   return bytes_transferred;
@@ -172,21 +169,22 @@ inline int recv(socket_type s, buf* bufs, size_t count, int flags)
   msg.msg_control = 0;
   msg.msg_controllen = 0;
   msg.msg_flags = 0;
-  return error_wrapper(::recvmsg(s, &msg, flags));
+  return error_wrapper(::recvmsg(s, &msg, flags), ec);
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 inline int recvfrom(socket_type s, buf* bufs, size_t count, int flags,
-    socket_addr_type* addr, socket_addr_len_type* addrlen)
+    socket_addr_type* addr, socket_addr_len_type* addrlen,
+    asio::error_code& ec)
 {
-  set_error(0);
+  clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   // Receive some data.
   DWORD recv_buf_count = static_cast<DWORD>(count);
   DWORD bytes_transferred = 0;
   DWORD recv_flags = flags;
   int result = error_wrapper(::WSARecvFrom(s, bufs, recv_buf_count,
-        &bytes_transferred, &recv_flags, addr, addrlen, 0, 0));
+        &bytes_transferred, &recv_flags, addr, addrlen, 0, 0), ec);
   if (result != 0)
     return -1;
   return bytes_transferred;
@@ -204,22 +202,23 @@ inline int recvfrom(socket_type s, buf* bufs, size_t count, int flags,
   msg.msg_control = 0;
   msg.msg_controllen = 0;
   msg.msg_flags = 0;
-  int result = error_wrapper(::recvmsg(s, &msg, flags));
+  int result = error_wrapper(::recvmsg(s, &msg, flags), ec);
   *addrlen = msg.msg_namelen;
   return result;
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
-inline int send(socket_type s, const buf* bufs, size_t count, int flags)
+inline int send(socket_type s, const buf* bufs, size_t count, int flags,
+    asio::error_code& ec)
 {
-  set_error(0);
+  clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   // Send the data.
   DWORD send_buf_count = static_cast<DWORD>(count);
   DWORD bytes_transferred = 0;
   DWORD send_flags = flags;
   int result = error_wrapper(::WSASend(s, const_cast<buf*>(bufs),
-        send_buf_count, &bytes_transferred, send_flags, 0, 0));
+        send_buf_count, &bytes_transferred, send_flags, 0, 0), ec);
   if (result != 0)
     return -1;
   return bytes_transferred;
@@ -235,20 +234,21 @@ inline int send(socket_type s, const buf* bufs, size_t count, int flags)
 #if defined(__linux__)
   flags |= MSG_NOSIGNAL;
 #endif // defined(__linux__)
-  return error_wrapper(::sendmsg(s, &msg, flags));
+  return error_wrapper(::sendmsg(s, &msg, flags), ec);
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 inline int sendto(socket_type s, const buf* bufs, size_t count, int flags,
-    const socket_addr_type* addr, socket_addr_len_type addrlen)
+    const socket_addr_type* addr, socket_addr_len_type addrlen,
+    asio::error_code& ec)
 {
-  set_error(0);
+  clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   // Send the data.
   DWORD send_buf_count = static_cast<DWORD>(count);
   DWORD bytes_transferred = 0;
-  int result = ::WSASendTo(s, const_cast<buf*>(bufs), send_buf_count,
-      &bytes_transferred, flags, addr, addrlen, 0, 0);
+  int result = error_wrapper(::WSASendTo(s, const_cast<buf*>(bufs),
+        send_buf_count, &bytes_transferred, flags, addr, addrlen, 0, 0), ec);
   if (result != 0)
     return -1;
   return bytes_transferred;
@@ -269,24 +269,25 @@ inline int sendto(socket_type s, const buf* bufs, size_t count, int flags,
 #if defined(__linux__)
   flags |= MSG_NOSIGNAL;
 #endif // defined(__linux__)
-  return error_wrapper(::sendmsg(s, &msg, flags));
+  return error_wrapper(::sendmsg(s, &msg, flags), ec);
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
-inline socket_type socket(int af, int type, int protocol)
+inline socket_type socket(int af, int type, int protocol,
+    asio::error_code& ec)
 {
-  set_error(0);
+  clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   return error_wrapper(::WSASocket(af, type, protocol, 0, 0,
-        WSA_FLAG_OVERLAPPED));
+        WSA_FLAG_OVERLAPPED), ec);
 #elif defined(__MACH__) && defined(__APPLE__)
-  socket_type s = error_wrapper(::socket(af, type, protocol));
+  socket_type s = error_wrapper(::socket(af, type, protocol), ec);
   if (s == invalid_socket)
     return s;
 
   int optval = 1;
   int result = error_wrapper(::setsockopt(s,
-        SOL_SOCKET, SO_NOSIGPIPE, &optval, sizeof(optval)));
+        SOL_SOCKET, SO_NOSIGPIPE, &optval, sizeof(optval)), ec);
   if (result != 0)
   {
     ::close(s);
@@ -295,77 +296,78 @@ inline socket_type socket(int af, int type, int protocol)
 
   return s;
 #else
-  return error_wrapper(::socket(af, type, protocol));
+  return error_wrapper(::socket(af, type, protocol), ec);
 #endif
 }
 
 inline int setsockopt(socket_type s, int level, int optname,
-    const void* optval, size_t optlen)
+    const void* optval, size_t optlen, asio::error_code& ec)
 {
-  set_error(0);
+  clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   return error_wrapper(::setsockopt(s, level, optname,
-        reinterpret_cast<const char*>(optval), static_cast<int>(optlen)));
+        reinterpret_cast<const char*>(optval), static_cast<int>(optlen)), ec);
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   return error_wrapper(::setsockopt(s, level, optname, optval,
-        static_cast<socklen_t>(optlen)));
+        static_cast<socklen_t>(optlen)), ec);
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 inline int getsockopt(socket_type s, int level, int optname, void* optval,
-    size_t* optlen)
+    size_t* optlen, asio::error_code& ec)
 {
-  set_error(0);
+  clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   int tmp_optlen = static_cast<int>(*optlen);
   int result = error_wrapper(::getsockopt(s, level, optname,
-        reinterpret_cast<char*>(optval), &tmp_optlen));
+        reinterpret_cast<char*>(optval), &tmp_optlen), ec);
   *optlen = static_cast<size_t>(tmp_optlen);
   return result;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   socklen_t tmp_optlen = static_cast<socklen_t>(*optlen);
   int result = error_wrapper(::getsockopt(s, level, optname,
-        optval, &tmp_optlen));
+        optval, &tmp_optlen), ec);
   *optlen = static_cast<size_t>(tmp_optlen);
   return result;
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 inline int getpeername(socket_type s, socket_addr_type* addr,
-    socket_addr_len_type* addrlen)
+    socket_addr_len_type* addrlen, asio::error_code& ec)
 {
-  set_error(0);
-  return error_wrapper(::getpeername(s, addr, addrlen));
+  clear_error(ec);
+  return error_wrapper(::getpeername(s, addr, addrlen), ec);
 }
 
 inline int getsockname(socket_type s, socket_addr_type* addr,
-    socket_addr_len_type* addrlen)
+    socket_addr_len_type* addrlen, asio::error_code& ec)
 {
-  set_error(0);
-  return error_wrapper(::getsockname(s, addr, addrlen));
+  clear_error(ec);
+  return error_wrapper(::getsockname(s, addr, addrlen), ec);
 }
 
-inline int ioctl(socket_type s, long cmd, ioctl_arg_type* arg)
+inline int ioctl(socket_type s, long cmd, ioctl_arg_type* arg,
+    asio::error_code& ec)
 {
-  set_error(0);
+  clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  return error_wrapper(::ioctlsocket(s, cmd, arg));
+  return error_wrapper(::ioctlsocket(s, cmd, arg), ec);
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  return error_wrapper(::ioctl(s, cmd, arg));
+  return error_wrapper(::ioctl(s, cmd, arg), ec);
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 inline int select(int nfds, fd_set* readfds, fd_set* writefds,
-    fd_set* exceptfds, timeval* timeout)
+    fd_set* exceptfds, timeval* timeout, asio::error_code& ec)
 {
-  set_error(0);
+  clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   if (!readfds && !writefds && !exceptfds && timeout)
   {
     DWORD milliseconds = timeout->tv_sec * 1000 + timeout->tv_usec / 1000;
     if (milliseconds == 0)
       milliseconds = 1; // Force context switch.
-    ::Sleep(milliseconds);
+    ec = asio::error::success;
     return 0;
   }
 
@@ -379,55 +381,56 @@ inline int select(int nfds, fd_set* readfds, fd_set* writefds,
       && timeout->tv_usec > 0 && timeout->tv_usec < 1000)
     timeout->tv_usec = 1000;
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  return error_wrapper(::select(nfds, readfds, writefds, exceptfds, timeout));
+  return error_wrapper(::select(nfds, readfds,
+        writefds, exceptfds, timeout), ec);
 }
 
-inline int poll_read(socket_type s)
+inline int poll_read(socket_type s, asio::error_code& ec)
 {
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   FD_SET fds;
   FD_ZERO(&fds);
   FD_SET(s, &fds);
-  set_error(0);
-  return error_wrapper(::select(s, &fds, 0, 0, 0));
+  clear_error(ec);
+  return error_wrapper(::select(s, &fds, 0, 0, 0), ec);
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   pollfd fds;
   fds.fd = s;
   fds.events = POLLIN;
   fds.revents = 0;
-  set_error(0);
-  return error_wrapper(::poll(&fds, 1, -1));
+  clear_error(ec);
+  return error_wrapper(::poll(&fds, 1, -1), ec);
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
-inline int poll_write(socket_type s)
+inline int poll_write(socket_type s, asio::error_code& ec)
 {
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   FD_SET fds;
   FD_ZERO(&fds);
   FD_SET(s, &fds);
-  set_error(0);
-  return error_wrapper(::select(s, 0, &fds, 0, 0));
+  clear_error(ec);
+  return error_wrapper(::select(s, 0, &fds, 0, 0), ec);
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   pollfd fds;
   fds.fd = s;
   fds.events = POLLOUT;
   fds.revents = 0;
-  set_error(0);
-  return error_wrapper(::poll(&fds, 1, -1));
+  clear_error(ec);
+  return error_wrapper(::poll(&fds, 1, -1), ec);
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
 inline const char* inet_ntop(int af, const void* src, char* dest, size_t length,
-    unsigned long scope_id = 0)
+    unsigned long scope_id, asio::error_code& ec)
 {
-  set_error(0);
+  clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   using namespace std; // For memcpy.
 
   if (af != AF_INET && af != AF_INET6)
   {
-    set_error(asio::error::address_family_not_supported);
+    ec = asio::error::address_family_not_supported;
     return 0;
   }
 
@@ -457,17 +460,17 @@ inline const char* inet_ntop(int af, const void* src, char* dest, size_t length,
   DWORD string_length = static_cast<DWORD>(length);
   int result = error_wrapper(::WSAAddressToStringA(
         reinterpret_cast<sockaddr*>(&address),
-        address_length, 0, dest, &string_length));
+        address_length, 0, dest, &string_length), ec);
 
   // Windows may not set an error code on failure.
-  if (result == socket_error_retval && get_error() == 0)
-    set_error(asio::error::invalid_argument);
+  if (result == socket_error_retval && !ec)
+    ec = asio::error::invalid_argument;
 
   return result == socket_error_retval ? 0 : dest;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  const char* result = error_wrapper(::inet_ntop(af, src, dest, length));
-  if (result == 0 && get_error() == 0)
-    set_error(asio::error::invalid_argument);
+  const char* result = error_wrapper(::inet_ntop(af, src, dest, length), ec);
+  if (result == 0 && !ec)
+    ec = asio::error::invalid_argument;
   if (result != 0 && af == AF_INET6 && scope_id != 0)
   {
     using namespace std; // For strcat and sprintf.
@@ -483,15 +486,15 @@ inline const char* inet_ntop(int af, const void* src, char* dest, size_t length,
 }
 
 inline int inet_pton(int af, const char* src, void* dest,
-    unsigned long* scope_id = 0)
+    unsigned long* scope_id, asio::error_code& ec)
 {
-  set_error(0);
+  clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   using namespace std; // For memcpy and strcmp.
 
   if (af != AF_INET && af != AF_INET6)
   {
-    set_error(asio::error::address_family_not_supported);
+    ec = asio::error::address_family_not_supported;
     return -1;
   }
 
@@ -500,7 +503,7 @@ inline int inet_pton(int af, const char* src, void* dest,
   int result = error_wrapper(::WSAStringToAddressA(
         const_cast<char*>(src), af, 0,
         reinterpret_cast<sockaddr*>(&address),
-        &address_length));
+        &address_length), ec);
 
   if (af == AF_INET)
   {
@@ -528,14 +531,14 @@ inline int inet_pton(int af, const char* src, void* dest,
   }
 
   // Windows may not set an error code on failure.
-  if (result == socket_error_retval && get_error() == 0)
-    set_error(asio::error::invalid_argument);
+  if (result == socket_error_retval && !ec)
+    ec = asio::error::invalid_argument;
 
   return result == socket_error_retval ? -1 : 1;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  int result = error_wrapper(::inet_pton(af, src, dest));
-  if (result <= 0 && get_error() == 0)
-    set_error(asio::error::invalid_argument);
+  int result = error_wrapper(::inet_pton(af, src, dest), ec);
+  if (result <= 0 && !ec)
+    ec = asio::error::invalid_argument;
   if (result > 0 && af == AF_INET6 && scope_id)
   {
     using namespace std; // For strchr and atoi.
@@ -554,10 +557,10 @@ inline int inet_pton(int af, const char* src, void* dest,
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
-inline int gethostname(char* name, int namelen)
+inline int gethostname(char* name, int namelen, asio::error_code& ec)
 {
-  set_error(0);
-  return error_wrapper(::gethostname(name, namelen));
+  clear_error(ec);
+  return error_wrapper(::gethostname(name, namelen), ec);
 }
 
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__) \
@@ -566,7 +569,7 @@ inline int gethostname(char* name, int namelen)
 // The following functions are only needed for emulation of getaddrinfo and
 // getnameinfo.
 
-inline int translate_netdb_error(int error)
+inline asio::error_code translate_netdb_error(int error)
 {
   switch (error)
   {
@@ -582,61 +585,66 @@ inline int translate_netdb_error(int error)
     return asio::error::no_data;
   default:
     BOOST_ASSERT(false);
-    return get_error();
+    return asio::error::invalid_argument;
   }
 }
 
 inline hostent* gethostbyaddr(const char* addr, int length, int af,
-    hostent* result, char* buffer, int buflength, int* error)
+    hostent* result, char* buffer, int buflength, asio::error_code& ec)
 {
-  set_error(0);
+  clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   (void)(buffer);
   (void)(buflength);
-  hostent* retval = error_wrapper(::gethostbyaddr(addr, length, af));
-  *error = get_error();
+  hostent* retval = error_wrapper(::gethostbyaddr(addr, length, af), ec);
   if (!retval)
     return 0;
   *result = *retval;
   return retval;
 #elif defined(__sun) || defined(__QNX__)
+  int error = 0;
   hostent* retval = error_wrapper(::gethostbyaddr_r(addr, length, af, result,
-        buffer, buflength, error));
-  *error = translate_netdb_error(*error);
+        buffer, buflength, &error), ec);
+  if (error)
+    ec = translate_netdb_error(error);
   return retval;
 #elif defined(__MACH__) && defined(__APPLE__)
   (void)(buffer);
   (void)(buflength);
-  hostent* retval = error_wrapper(::getipnodebyaddr(addr, length, af, error));
-  *error = translate_netdb_error(*error);
+  int error = 0;
+  hostent* retval = error_wrapper(::getipnodebyaddr(
+        addr, length, af, &error), ec);
+  if (error)
+    ec = translate_netdb_error(error);
   if (!retval)
     return 0;
   *result = *retval;
   return retval;
 #else
   hostent* retval = 0;
+  int error = 0;
   error_wrapper(::gethostbyaddr_r(addr, length, af, result, buffer,
-        buflength, &retval, error));
-  *error = translate_netdb_error(*error);
+        buflength, &retval, &error), ec);
+  if (error)
+    ec = translate_netdb_error(error);
   return retval;
 #endif
 }
 
 inline hostent* gethostbyname(const char* name, int af, struct hostent* result,
-    char* buffer, int buflength, int* error, int ai_flags = 0)
+    char* buffer, int buflength, int ai_flags, asio::error_code& ec)
 {
-  set_error(0);
+  clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   (void)(buffer);
   (void)(buflength);
   (void)(ai_flags);
   if (af != AF_INET)
   {
-    *error = asio::error::address_family_not_supported;
+    ec = asio::error::address_family_not_supported;
     return 0;
   }
-  hostent* retval = error_wrapper(::gethostbyname(name));
-  *error = get_error();
+  hostent* retval = error_wrapper(::gethostbyname(name), ec);
   if (!retval)
     return 0;
   *result = *retval;
@@ -645,19 +653,23 @@ inline hostent* gethostbyname(const char* name, int af, struct hostent* result,
   (void)(ai_flags);
   if (af != AF_INET)
   {
-    *error = asio::error::address_family_not_supported;
+    ec = asio::error::address_family_not_supported;
     return 0;
   }
+  int error = 0;
   hostent* retval = error_wrapper(::gethostbyname_r(name, result, buffer,
-        buflength, error));
-  *error = translate_netdb_error(*error);
+        buflength, &error), ec);
+  if (error)
+    ec = translate_netdb_error(error);
   return retval;
 #elif defined(__MACH__) && defined(__APPLE__)
   (void)(buffer);
   (void)(buflength);
+  int error = 0;
   hostent* retval = error_wrapper(::getipnodebyname(
-        name, af, ai_flags, error));
-  *error = translate_netdb_error(*error);
+        name, af, ai_flags, &error), ec);
+  if (error)
+    ec = translate_netdb_error(error);
   if (!retval)
     return 0;
   *result = *retval;
@@ -666,13 +678,15 @@ inline hostent* gethostbyname(const char* name, int af, struct hostent* result,
   (void)(ai_flags);
   if (af != AF_INET)
   {
-    *error = asio::error::address_family_not_supported;
+    ec = asio::error::address_family_not_supported;
     return 0;
   }
   hostent* retval = 0;
-  error_wrapper(::gethostbyname_r(name, result, buffer, buflength, &retval,
-        error));
-  *error = translate_netdb_error(*error);
+  int error = 0;
+  error_wrapper(::gethostbyname_r(name, result,
+        buffer, buflength, &retval, &error), ec);
+  if (error)
+    ec = translate_netdb_error(error);
   return retval;
 #endif
 }
@@ -1088,7 +1102,8 @@ inline int getaddrinfo_emulation(const char* host, const char* service,
   {
     // Check for IPv4 dotted decimal string.
     in4_addr_type inaddr;
-    if (socket_ops::inet_pton(AF_INET, sptr->host, &inaddr) == 1)
+    asio::error_code ec;
+    if (socket_ops::inet_pton(AF_INET, sptr->host, &inaddr, 0, ec) == 1)
     {
       if (hints.ai_family != AF_UNSPEC && hints.ai_family != AF_INET)
       {
@@ -1111,7 +1126,7 @@ inline int getaddrinfo_emulation(const char* host, const char* service,
 
     // Check for IPv6 hex string.
     in6_addr_type in6addr;
-    if (socket_ops::inet_pton(AF_INET6, sptr->host, &in6addr) == 1)
+    if (socket_ops::inet_pton(AF_INET6, sptr->host, &in6addr, 0, ec) == 1)
     {
       if (hints.ai_family != AF_UNSPEC && hints.ai_family != AF_INET6)
       {
@@ -1135,9 +1150,8 @@ inline int getaddrinfo_emulation(const char* host, const char* service,
     // Look up hostname.
     hostent hent;
     char hbuf[8192] = "";
-    int herr = 0;
     hostent* hptr = socket_ops::gethostbyname(sptr->host,
-        sptr->family, &hent, hbuf, sizeof(hbuf), &herr, hints.ai_flags);
+        sptr->family, &hent, hbuf, sizeof(hbuf), hints.ai_flags, ec);
     if (hptr == 0)
     {
       if (search_count == 2)
@@ -1147,18 +1161,15 @@ inline int getaddrinfo_emulation(const char* host, const char* service,
       }
       freeaddrinfo_emulation(aihead);
       gai_free(canon);
-      switch (herr)
-      {
-      case HOST_NOT_FOUND:
+      if (ec == asio::error::host_not_found)
         return EAI_NONAME;
-      case TRY_AGAIN:
+      if (ec == asio::error::host_not_found_try_again)
         return EAI_AGAIN;
-      case NO_RECOVERY:
+      if (ec == asio::error::no_recovery)
         return EAI_FAIL;
-      case NO_DATA:
-      default:
+      if (ec == asio::error::no_data)
         return EAI_NONAME;
-      }
+      return EAI_NONAME;
     }
 
     // Check for address family mismatch if one was specified.
@@ -1244,9 +1255,10 @@ inline int getaddrinfo_emulation(const char* host, const char* service,
   return 0;
 }
 
-inline int getnameinfo_emulation(const socket_addr_type* sa,
-    socket_addr_len_type salen, char* host, std::size_t hostlen,
-    char* serv, std::size_t servlen, int flags)
+inline asio::error_code getnameinfo_emulation(
+    const socket_addr_type* sa, socket_addr_len_type salen, char* host,
+    std::size_t hostlen, char* serv, std::size_t servlen, int flags,
+    asio::error_code& ec)
 {
   using namespace std;
 
@@ -1258,8 +1270,7 @@ inline int getnameinfo_emulation(const socket_addr_type* sa,
   case AF_INET:
     if (salen != sizeof(sockaddr_in4_type))
     {
-      set_error(asio::error::invalid_argument);
-      return 1;
+      return ec = asio::error::invalid_argument;
     }
     addr = reinterpret_cast<const char*>(
         &reinterpret_cast<const sockaddr_in4_type*>(sa)->sin_addr);
@@ -1269,8 +1280,7 @@ inline int getnameinfo_emulation(const socket_addr_type* sa,
   case AF_INET6:
     if (salen != sizeof(sockaddr_in6_type))
     {
-      set_error(asio::error::invalid_argument);
-      return 1;
+      return ec = asio::error::invalid_argument;
     }
     addr = reinterpret_cast<const char*>(
         &reinterpret_cast<const sockaddr_in6_type*>(sa)->sin6_addr);
@@ -1278,27 +1288,25 @@ inline int getnameinfo_emulation(const socket_addr_type* sa,
     port = reinterpret_cast<const sockaddr_in6_type*>(sa)->sin6_port;
     break;
   default:
-    set_error(asio::error::address_family_not_supported);
-    return 1;
+    return ec = asio::error::address_family_not_supported;
   }
 
   if (host && hostlen > 0)
   {
     if (flags & NI_NUMERICHOST)
     {
-      if (socket_ops::inet_ntop(sa->sa_family, addr, host, hostlen) == 0)
+      if (socket_ops::inet_ntop(sa->sa_family, addr, host, hostlen, 0, ec) == 0)
       {
-        return 1;
+        return ec;
       }
     }
     else
     {
       hostent hent;
       char hbuf[8192] = "";
-      int herr = 0;
       hostent* hptr = socket_ops::gethostbyaddr(addr,
           static_cast<int>(addr_len), sa->sa_family,
-          &hent, hbuf, sizeof(hbuf), &herr);
+          &hent, hbuf, sizeof(hbuf), ec);
       if (hptr && hptr->h_name && hptr->h_name[0] != '\0')
       {
         if (flags & NI_NOFQDN)
@@ -1318,12 +1326,12 @@ inline int getnameinfo_emulation(const socket_addr_type* sa,
         socket_ops::freehostent(hptr);
         if (flags & NI_NAMEREQD)
         {
-          set_error(asio::error::host_not_found);
-          return 1;
+          return ec = asio::error::host_not_found;
         }
-        if (socket_ops::inet_ntop(sa->sa_family, addr, host, hostlen) == 0)
+        if (socket_ops::inet_ntop(sa->sa_family,
+              addr, host, hostlen, 0, ec) == 0)
         {
-          return 1;
+          return ec;
         }
       }
     }
@@ -1335,8 +1343,7 @@ inline int getnameinfo_emulation(const socket_addr_type* sa,
     {
       if (servlen < 6)
       {
-        set_error(asio::error::no_buffer_space);
-        return 1;
+        return ec = asio::error::no_buffer_space;
       }
       sprintf(serv, "%u", ntohs(port));
     }
@@ -1356,8 +1363,7 @@ inline int getnameinfo_emulation(const socket_addr_type* sa,
       {
         if (servlen < 6)
         {
-          set_error(asio::error::no_buffer_space);
-          return 1;
+          return ec = asio::error::no_buffer_space;
         }
         sprintf(serv, "%u", ntohs(port));
       }
@@ -1367,14 +1373,14 @@ inline int getnameinfo_emulation(const socket_addr_type* sa,
     }
   }
 
-  set_error(0);
-  return 0;
+  clear_error(ec);
+  return ec;
 }
 
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
        //   || defined(__MACH__) && defined(__APPLE__)
 
-inline int translate_addrinfo_error(int error)
+inline asio::error_code translate_addrinfo_error(int error)
 {
   switch (error)
   {
@@ -1397,19 +1403,24 @@ inline int translate_addrinfo_error(int error)
   case EAI_SOCKTYPE:
     return asio::error::socket_type_not_supported;
   default: // Possibly the non-portable EAI_SYSTEM.
-    return get_error();
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+    return asio::error_code(WSAGetLastError(), asio::native_ecat);
+#else
+    return asio::error_code(errno, asio::native_ecat);
+#endif
   }
 }
 
-inline int getaddrinfo(const char* host, const char* service,
-    const addrinfo_type* hints, addrinfo_type** result)
+inline asio::error_code getaddrinfo(const char* host,
+    const char* service, const addrinfo_type* hints, addrinfo_type** result,
+    asio::error_code& ec)
 {
-  set_error(0);
+  clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 # if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501)
   // Building for Windows XP, Windows Server 2003, or later.
   int error = ::getaddrinfo(host, service, hints, result);
-  return translate_addrinfo_error(error);
+  return ec = translate_addrinfo_error(error);
 # else
   // Building for Windows 2000 or earlier.
   typedef int (WSAAPI *gai_t)(const char*,
@@ -1419,18 +1430,18 @@ inline int getaddrinfo(const char* host, const char* service,
     if (gai_t gai = (gai_t)::GetProcAddress(winsock_module, "getaddrinfo"))
     {
       int error = gai(host, service, hints, result);
-      return translate_addrinfo_error(error);
+      return ec = translate_addrinfo_error(error);
     }
   }
   int error = getaddrinfo_emulation(host, service, hints, result);
-  return translate_addrinfo_error(error);
+  return ec = translate_addrinfo_error(error);
 # endif
 #elif defined(__MACH__) && defined(__APPLE__)
   int error = getaddrinfo_emulation(host, service, hints, result);
-  return translate_addrinfo_error(error);
+  return ec = translate_addrinfo_error(error);
 #else
   int error = ::getaddrinfo(host, service, hints, result);
-  return translate_addrinfo_error(error);
+  return ec = translate_addrinfo_error(error);
 #endif
 }
 
@@ -1460,17 +1471,17 @@ inline void freeaddrinfo(addrinfo_type* ai)
 #endif
 }
 
-inline int getnameinfo(const socket_addr_type* addr,
+inline asio::error_code getnameinfo(const socket_addr_type* addr,
     socket_addr_len_type addrlen, char* host, std::size_t hostlen,
-    char* serv, std::size_t servlen, int flags)
+    char* serv, std::size_t servlen, int flags, asio::error_code& ec)
 {
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 # if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501)
   // Building for Windows XP, Windows Server 2003, or later.
-  set_error(0);
+  clear_error(ec);
   int error = ::getnameinfo(addr, addrlen, host, static_cast<DWORD>(hostlen),
       serv, static_cast<DWORD>(servlen), flags);
-  return translate_addrinfo_error(error);
+  return ec = translate_addrinfo_error(error);
 # else
   // Building for Windows 2000 or earlier.
   typedef int (WSAAPI *gni_t)(const socket_addr_type*,
@@ -1479,15 +1490,14 @@ inline int getnameinfo(const socket_addr_type* addr,
   {
     if (gni_t gni = (gni_t)::GetProcAddress(winsock_module, "getnameinfo"))
     {
-      set_error(0);
+      clear_error(ec);
       int error = gni(addr, addrlen, host, hostlen, serv, servlen, flags);
-      return translate_addrinfo_error(error);
+      return ec = translate_addrinfo_error(error);
     }
   }
-  set_error(0);
-  int error = getnameinfo_emulation(addr, addrlen,
-      host, hostlen, serv, servlen, flags);
-  return translate_addrinfo_error(error);
+  clear_error(ec);
+  return getnameinfo_emulation(addr, addrlen,
+      host, hostlen, serv, servlen, flags, ec);
 # endif
 #elif defined(__MACH__) && defined(__APPLE__)
   using namespace std; // For memcpy.
@@ -1495,14 +1505,13 @@ inline int getnameinfo(const socket_addr_type* addr,
   memcpy(&tmp_addr, addr, addrlen);
   tmp_addr.ss_len = addrlen;
   addr = reinterpret_cast<socket_addr_type*>(&tmp_addr);
-  set_error(0);
-  int error = getnameinfo_emulation(addr, addrlen,
-      host, hostlen, serv, servlen, flags);
-  return translate_addrinfo_error(error);
+  clear_error(ec);
+  return getnameinfo_emulation(addr, addrlen,
+      host, hostlen, serv, servlen, flags, ec);
 #else
-  set_error(0);
+  clear_error(ec);
   int error = ::getnameinfo(addr, addrlen, host, hostlen, serv, servlen, flags);
-  return translate_addrinfo_error(error);
+  return ec = translate_addrinfo_error(error);
 #endif
 }
 

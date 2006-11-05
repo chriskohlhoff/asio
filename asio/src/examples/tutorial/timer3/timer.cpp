@@ -13,7 +13,7 @@
 #include <boost/bind.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-void print(const asio::error& /*e*/,
+void print(const asio::error_code& /*e*/,
     asio::deadline_timer* t, int* count)
 {
   if (*count < 5)

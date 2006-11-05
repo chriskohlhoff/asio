@@ -86,7 +86,7 @@ private:
   }
 
   void handle_accept(tcp_connection::pointer new_connection,
-      const asio::error& error)
+      const asio::error_code& error)
   {
     if (!error)
     {
@@ -116,7 +116,7 @@ private:
           asio::placeholders::error));
   }
 
-  void handle_receive(const asio::error& error)
+  void handle_receive(const asio::error_code& error)
   {
     if (!error || error == asio::error::message_size)
     {

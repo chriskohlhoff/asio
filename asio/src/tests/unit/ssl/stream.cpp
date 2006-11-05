@@ -31,23 +31,19 @@ namespace ssl_stream_compile {
 
 using namespace asio;
 
-void error_handler(const error&)
+void handshake_handler(const asio::error_code&)
 {
 }
 
-void handshake_handler(const error&)
+void shutdown_handler(const asio::error_code&)
 {
 }
 
-void shutdown_handler(const error&)
+void write_some_handler(const asio::error_code&, std::size_t)
 {
 }
 
-void write_some_handler(const error&, std::size_t)
-{
-}
-
-void read_some_handler(const error&, std::size_t)
+void read_some_handler(const asio::error_code&, std::size_t)
 {
 }
 
@@ -59,6 +55,7 @@ void test()
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     asio::ssl::context context(ios, asio::ssl::context::sslv23);
+    asio::error_code ec;
 
     // ssl::stream constructors.
 
@@ -79,36 +76,36 @@ void test()
 
     stream1.handshake(ssl::stream_base::client);
     stream1.handshake(ssl::stream_base::server);
-    stream1.handshake(ssl::stream_base::client, error_handler);
-    stream1.handshake(ssl::stream_base::server, error_handler);
+    stream1.handshake(ssl::stream_base::client, ec);
+    stream1.handshake(ssl::stream_base::server, ec);
 
     stream1.async_handshake(ssl::stream_base::client, handshake_handler);
     stream1.async_handshake(ssl::stream_base::server, handshake_handler);
 
     stream1.shutdown();
-    stream1.shutdown(error_handler);
+    stream1.shutdown(ec);
 
     stream1.async_shutdown(shutdown_handler);
 
     stream1.write_some(buffer(mutable_char_buffer));
     stream1.write_some(buffer(const_char_buffer));
-    stream1.write_some(buffer(mutable_char_buffer), error_handler);
-    stream1.write_some(buffer(const_char_buffer), error_handler);
+    stream1.write_some(buffer(mutable_char_buffer), ec);
+    stream1.write_some(buffer(const_char_buffer), ec);
 
     stream1.async_write_some(buffer(mutable_char_buffer), write_some_handler);
     stream1.async_write_some(buffer(const_char_buffer), write_some_handler);
 
     stream1.read_some(buffer(mutable_char_buffer));
-    stream1.read_some(buffer(mutable_char_buffer), error_handler);
+    stream1.read_some(buffer(mutable_char_buffer), ec);
 
     stream1.async_read_some(buffer(mutable_char_buffer), read_some_handler);
 
     stream1.peek(buffer(mutable_char_buffer));
-    stream1.peek(buffer(mutable_char_buffer), error_handler);
+    stream1.peek(buffer(mutable_char_buffer), ec);
 
     std::size_t in_avail1 = stream1.in_avail();
     (void)in_avail1;
-    std::size_t in_avail2 = stream1.in_avail(error_handler);
+    std::size_t in_avail2 = stream1.in_avail(ec);
     (void)in_avail2;
   }
   catch (std::exception&)

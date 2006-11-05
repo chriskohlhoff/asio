@@ -60,7 +60,7 @@ struct time_t_traits
 typedef asio::basic_deadline_timer<
     std::time_t, time_t_traits> time_t_timer;
 
-void handle_timeout(const asio::error&)
+void handle_timeout(const asio::error_code&)
 {
   std::cout << "handle_timeout\n";
 }

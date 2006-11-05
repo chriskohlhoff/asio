@@ -41,7 +41,7 @@ namespace asio {
  * @e Shared @e objects: Unsafe.
  *
  * @par Concepts:
- * Async_Object, Async_Read_Stream, Async_Write_Stream, Error_Source, Stream,
+ * Async_Object, Async_Read_Stream, Async_Write_Stream, Stream,
  * Sync_Read_Stream, Sync_Write_Stream.
  */
 template <typename Stream>
@@ -54,9 +54,6 @@ public:
 
   /// The type of the lowest layer.
   typedef typename next_layer_type::lowest_layer_type lowest_layer_type;
-
-  /// The type used for reporting errors.
-  typedef typename next_layer_type::error_type error_type;
 
   /// Construct, passing the specified argument to initialise the next layer.
   template <typename Arg>
@@ -100,10 +97,9 @@ public:
   }
 
   /// Close the stream.
-  template <typename Error_Handler>
-  void close(Error_Handler error_handler)
+  asio::error_code close(asio::error_code& ec)
   {
-    stream_impl_.close(error_handler);
+    return stream_impl_.close(ec);
   }
 
   /// Flush all data from the buffer to the next layer. Returns the number of
@@ -116,11 +112,10 @@ public:
 
   /// Flush all data from the buffer to the next layer. Returns the number of
   /// bytes written to the next layer on the last write operation, or 0 if an
-  /// error occurred and the error handler did not throw.
-  template <typename Error_Handler>
-  std::size_t flush(Error_Handler error_handler)
+  /// error occurred.
+  std::size_t flush(asio::error_code& ec)
   {
-    return stream_impl_.next_layer().flush(error_handler);
+    return stream_impl_.next_layer().flush(ec);
   }
 
   /// Start an asynchronous flush.
@@ -139,12 +134,12 @@ public:
   }
 
   /// Write the given data to the stream. Returns the number of bytes written,
-  /// or 0 if an error occurred and the error handler did not throw.
-  template <typename Const_Buffers, typename Error_Handler>
+  /// or 0 if an error occurred.
+  template <typename Const_Buffers>
   std::size_t write_some(const Const_Buffers& buffers,
-      Error_Handler error_handler)
+      asio::error_code& ec)
   {
-    return stream_impl_.write_some(buffers, error_handler);
+    return stream_impl_.write_some(buffers, ec);
   }
 
   /// Start an asynchronous write. The data being written must be valid for the
@@ -163,12 +158,10 @@ public:
   }
 
   /// Fill the buffer with some data. Returns the number of bytes placed in the
-  /// buffer as a result of the operation, or 0 if an error occurred and the
-  /// error handler did not throw.
-  template <typename Error_Handler>
-  std::size_t fill(Error_Handler error_handler)
+  /// buffer as a result of the operation, or 0 if an error occurred.
+  std::size_t fill(asio::error_code& ec)
   {
-    return stream_impl_.fill(error_handler);
+    return stream_impl_.fill(ec);
   }
 
   /// Start an asynchronous fill.
@@ -187,12 +180,12 @@ public:
   }
 
   /// Read some data from the stream. Returns the number of bytes read or 0 if
-  /// an error occurred and the error handler did not throw an exception.
-  template <typename Mutable_Buffers, typename Error_Handler>
+  /// an error occurred.
+  template <typename Mutable_Buffers>
   std::size_t read_some(const Mutable_Buffers& buffers,
-      Error_Handler error_handler)
+      asio::error_code& ec)
   {
-    return stream_impl_.read_some(buffers, error_handler);
+    return stream_impl_.read_some(buffers, ec);
   }
 
   /// Start an asynchronous read. The buffer into which the data will be read
@@ -212,11 +205,12 @@ public:
   }
 
   /// Peek at the incoming data on the stream. Returns the number of bytes read,
-  /// or 0 if an error occurred and the error handler did not throw.
-  template <typename Mutable_Buffers, typename Error_Handler>
-  std::size_t peek(const Mutable_Buffers& buffers, Error_Handler error_handler)
+  /// or 0 if an error occurred.
+  template <typename Mutable_Buffers>
+  std::size_t peek(const Mutable_Buffers& buffers,
+      asio::error_code& ec)
   {
-    return stream_impl_.peek(buffers, error_handler);
+    return stream_impl_.peek(buffers, ec);
   }
 
   /// Determine the amount of data that may be read without blocking.
@@ -226,10 +220,9 @@ public:
   }
 
   /// Determine the amount of data that may be read without blocking.
-  template <typename Error_Handler>
-  std::size_t in_avail(Error_Handler error_handler)
+  std::size_t in_avail(asio::error_code& ec)
   {
-    return stream_impl_.in_avail(error_handler);
+    return stream_impl_.in_avail(ec);
   }
 
 private:

@@ -29,7 +29,6 @@
 
 #include "asio/buffer.hpp"
 #include "asio/error.hpp"
-#include "asio/error_handler.hpp"
 #include "asio/io_service.hpp"
 #include "asio/socket_base.hpp"
 #include "asio/detail/bind_handler.hpp"
@@ -185,7 +184,8 @@ public:
     implementation_type* impl = impl_list_;
     while (impl)
     {
-      close(*impl, asio::ignore_error());
+      asio::error_code ignored_ec;
+      close(*impl, ignored_ec);
       impl = impl->next_;
     }
   }
@@ -229,7 +229,8 @@ public:
             SOL_SOCKET, SO_LINGER, &opt, sizeof(opt));
       }
 
-      socket_ops::close(impl.socket_);
+      asio::error_code ignored_ec;
+      socket_ops::close(impl.socket_, ignored_ec);
       impl.socket_ = invalid_socket;
       impl.cancel_token_.reset();
       impl.safe_cancellation_thread_id_ = 0;
@@ -248,48 +249,46 @@ public:
   }
 
   // Open a new socket implementation.
-  template <typename Error_Handler>
-  void open(implementation_type& impl, const protocol_type& protocol,
-      Error_Handler error_handler)
+  asio::error_code open(implementation_type& impl,
+      const protocol_type& protocol, asio::error_code& ec)
   {
-    close(impl, asio::ignore_error());
+    asio::error_code ignored_ec;
+    close(impl, ignored_ec);
 
     socket_holder sock(socket_ops::socket(protocol.family(), protocol.type(),
-          protocol.protocol()));
+          protocol.protocol(), ec));
     if (sock.get() == invalid_socket)
-    {
-      error_handler(asio::error(socket_ops::get_error()));
-      return;
-    }
+      return ec;
 
     iocp_service_.register_socket(sock.get());
 
     impl.socket_ = sock.release();
     impl.cancel_token_.reset(static_cast<void*>(0), noop_deleter());
     impl.protocol_ = protocol;
-
-    error_handler(asio::error(0));
+    ec = asio::error_code();
+    return ec;
   }
 
   // Assign a native socket to a socket implementation.
-  template <typename Error_Handler>
-  void assign(implementation_type& impl, const protocol_type& protocol,
-      const native_type& native_socket, Error_Handler error_handler)
+  asio::error_code assign(implementation_type& impl,
+      const protocol_type& protocol, const native_type& native_socket,
+      asio::error_code& ec)
   {
-    close(impl, asio::ignore_error());
+    asio::error_code ignored_ec;
+    close(impl, ignored_ec);
 
     iocp_service_.register_socket(native_socket);
 
     impl.socket_ = native_socket;
     impl.cancel_token_.reset(static_cast<void*>(0), noop_deleter());
     impl.protocol_ = protocol;
-
-    error_handler(asio::error(0));
+    ec = asio::error_code();
+    return ec;
   }
 
   // Destroy a socket implementation.
-  template <typename Error_Handler>
-  void close(implementation_type& impl, Error_Handler error_handler)
+  asio::error_code close(implementation_type& impl,
+      asio::error_code& ec)
   {
     if (impl.socket_ != invalid_socket)
     {
@@ -302,20 +301,16 @@ public:
       if (reactor)
         reactor->close_descriptor(impl.socket_);
 
-      if (socket_ops::close(impl.socket_) == socket_error_retval)
-      {
-        error_handler(asio::error(socket_ops::get_error()));
-        return;
-      }
-      else
-      {
-        impl.socket_ = invalid_socket;
-        impl.cancel_token_.reset();
-        impl.safe_cancellation_thread_id_ = 0;
-      }
+      if (socket_ops::close(impl.socket_, ec) == socket_error_retval)
+        return ec;
+
+      impl.socket_ = invalid_socket;
+      impl.cancel_token_.reset();
+      impl.safe_cancellation_thread_id_ = 0;
     }
 
-    error_handler(asio::error(0));
+    ec = asio::error_code();
+    return ec;
   }
 
   // Get the native socket representation.
@@ -325,18 +320,17 @@ public:
   }
 
   // Cancel all operations associated with the socket.
-  template <typename Error_Handler>
-  void cancel(implementation_type& impl, Error_Handler error_handler)
+  asio::error_code cancel(implementation_type& impl,
+      asio::error_code& ec)
   {
     if (impl.socket_ == invalid_socket)
     {
-      asio::error error(asio::error::bad_descriptor);
-      error_handler(error);
+      ec = asio::error::bad_descriptor;
     }
     else if (impl.safe_cancellation_thread_id_ == 0)
     {
       // No operations have been started, so there's nothing to cancel.
-      error_handler(asio::error(0));
+      ec = asio::error::success;
     }
     else if (impl.safe_cancellation_thread_id_ == ::GetCurrentThreadId())
     {
@@ -347,55 +341,48 @@ public:
       if (!::CancelIo(sock_as_handle))
       {
         DWORD last_error = ::GetLastError();
-        error_handler(asio::error(last_error));
+        ec = asio::error_code(last_error, asio::native_ecat);
       }
       else
       {
-        error_handler(asio::error(0));
+        ec = asio::error::success;
       }
     }
     else
     {
       // Asynchronous operations have been started from more than one thread,
       // so cancellation is not safe.
-      error_handler(asio::error(asio::error::not_supported));
+      ec = asio::error::not_supported;
     }
   }
 
   // Bind the socket to the specified local endpoint.
-  template <typename Error_Handler>
-  void bind(implementation_type& impl, const endpoint_type& endpoint,
-      Error_Handler error_handler)
+  asio::error_code bind(implementation_type& impl,
+      const endpoint_type& endpoint, asio::error_code& ec)
   {
-    if (socket_ops::bind(impl.socket_, endpoint.data(),
-          endpoint.size()) == socket_error_retval)
-      error_handler(asio::error(socket_ops::get_error()));
-    else
-      error_handler(asio::error(0));
+    socket_ops::bind(impl.socket_, endpoint.data(), endpoint.size(), ec);
+    return ec;
   }
 
   // Place the socket into the state where it will listen for new connections.
-  template <typename Error_Handler>
-  void listen(implementation_type& impl, int backlog,
-      Error_Handler error_handler)
+  asio::error_code listen(implementation_type& impl, int backlog,
+      asio::error_code& ec)
   {
-    if (socket_ops::listen(impl.socket_, backlog) == socket_error_retval)
-      error_handler(asio::error(socket_ops::get_error()));
-    else
-      error_handler(asio::error(0));
+    socket_ops::listen(impl.socket_, backlog, ec);
+    return ec;
   }
 
   // Set a socket option.
-  template <typename Option, typename Error_Handler>
-  void set_option(implementation_type& impl, const Option& option,
-      Error_Handler error_handler)
+  template <typename Option>
+  asio::error_code set_option(implementation_type& impl,
+      const Option& option, asio::error_code& ec)
   {
     if (option.level(impl.protocol_) == custom_socket_option_level
         && option.name(impl.protocol_) == enable_connection_aborted_option)
     {
       if (option.size(impl.protocol_) != sizeof(int))
       {
-        error_handler(asio::error(asio::error::invalid_argument));
+        ec = asio::error::invalid_argument;
       }
       else
       {
@@ -403,8 +390,9 @@ public:
           impl.flags_ |= implementation_type::enable_connection_aborted;
         else
           impl.flags_ &= ~implementation_type::enable_connection_aborted;
-        error_handler(asio::error(0));
+        ec = asio::error_code();
       }
+      return ec;
     }
     else
     {
@@ -414,26 +402,24 @@ public:
         impl.flags_ |= implementation_type::user_set_linger;
       }
 
-      if (socket_ops::setsockopt(impl.socket_,
-            option.level(impl.protocol_), option.name(impl.protocol_),
-            option.data(impl.protocol_), option.size(impl.protocol_)))
-        error_handler(asio::error(socket_ops::get_error()));
-      else
-        error_handler(asio::error(0));
+      socket_ops::setsockopt(impl.socket_,
+          option.level(impl.protocol_), option.name(impl.protocol_),
+          option.data(impl.protocol_), option.size(impl.protocol_), ec);
+      return ec;
     }
   }
 
   // Set a socket option.
-  template <typename Option, typename Error_Handler>
-  void get_option(const implementation_type& impl, Option& option,
-      Error_Handler error_handler) const
+  template <typename Option>
+  asio::error_code get_option(const implementation_type& impl,
+      Option& option, asio::error_code& ec) const
   {
     if (option.level(impl.protocol_) == custom_socket_option_level
         && option.name(impl.protocol_) == enable_connection_aborted_option)
     {
       if (option.size(impl.protocol_) != sizeof(int))
       {
-        error_handler(asio::error(asio::error::invalid_argument));
+        ec = asio::error::invalid_argument;
       }
       else
       {
@@ -442,53 +428,45 @@ public:
           *target = 1;
         else
           *target = 0;
-        error_handler(asio::error(0));
+        ec = asio::error_code();
       }
+      return ec;
     }
     else
     {
       size_t size = option.size(impl.protocol_);
-      if (socket_ops::getsockopt(impl.socket_,
-            option.level(impl.protocol_), option.name(impl.protocol_),
-            option.data(impl.protocol_), &size))
-        error_handler(asio::error(socket_ops::get_error()));
-      else
-        error_handler(asio::error(0));
+      socket_ops::getsockopt(impl.socket_,
+          option.level(impl.protocol_), option.name(impl.protocol_),
+          option.data(impl.protocol_), &size, ec);
+      return ec;
     }
   }
 
   // Perform an IO control command on the socket.
-  template <typename IO_Control_Command, typename Error_Handler>
-  void io_control(implementation_type& impl, IO_Control_Command& command,
-      Error_Handler error_handler)
+  template <typename IO_Control_Command>
+  asio::error_code io_control(implementation_type& impl,
+      IO_Control_Command& command, asio::error_code& ec)
   {
-    if (socket_ops::ioctl(impl.socket_, command.name(),
-          static_cast<ioctl_arg_type*>(command.data())))
-      error_handler(asio::error(socket_ops::get_error()));
-    else
-      error_handler(asio::error(0));
+    socket_ops::ioctl(impl.socket_, command.name(),
+        static_cast<ioctl_arg_type*>(command.data()), ec);
+    return ec;
   }
 
   // Get the local endpoint.
-  template <typename Error_Handler>
-  void get_local_endpoint(const implementation_type& impl,
-      endpoint_type& endpoint, Error_Handler error_handler) const
+  endpoint_type local_endpoint(const implementation_type& impl,
+      asio::error_code& ec) const
   {
+    endpoint_type endpoint;
     socket_addr_len_type addr_len = endpoint.capacity();
-    if (socket_ops::getsockname(impl.socket_, endpoint.data(), &addr_len))
-    {
-      error_handler(asio::error(socket_ops::get_error()));
-      return;
-    }
-
+    if (socket_ops::getsockname(impl.socket_, endpoint.data(), &addr_len, ec))
+      return endpoint_type();
     endpoint.resize(addr_len);
-    error_handler(asio::error(0));
+    return endpoint;
   }
 
   // Get the remote endpoint.
-  template <typename Error_Handler>
-  void get_remote_endpoint(const implementation_type& impl,
-      endpoint_type& endpoint, Error_Handler error_handler) const
+  endpoint_type remote_endpoint(const implementation_type& impl,
+      asio::error_code& ec) const
   {
     if (impl.socket_.have_remote_endpoint())
     {
@@ -496,49 +474,42 @@ public:
       DWORD connect_time = 0;
       size_t connect_time_len = sizeof(connect_time);
       if (socket_ops::getsockopt(impl.socket_, SOL_SOCKET, SO_CONNECT_TIME,
-            &connect_time, &connect_time_len) == socket_error_retval)
+            &connect_time, &connect_time_len, ec) == socket_error_retval)
       {
-        error_handler(asio::error(socket_ops::get_error()));
-        return;
+        return endpoint_type();
       }
       if (connect_time == 0xFFFFFFFF)
       {
-        error_handler(asio::error(asio::error::not_connected));
-        return;
+        ec = asio::error::not_connected;
+        return endpoint_type();
       }
 
-      endpoint = impl.socket_.remote_endpoint();
-      error_handler(asio::error(0));
+      ec = asio::error::success;
+      return impl.socket_.remote_endpoint();
     }
     else
     {
+      endpoint_type endpoint;
       socket_addr_len_type addr_len = endpoint.capacity();
-      if (socket_ops::getpeername(impl.socket_, endpoint.data(), &addr_len))
-      {
-        error_handler(asio::error(socket_ops::get_error()));
-        return;
-      }
-
+      if (socket_ops::getpeername(impl.socket_, endpoint.data(), &addr_len, ec))
+        return endpoint_type();
       endpoint.resize(addr_len);
-      error_handler(asio::error(0));
+      return endpoint;
     }
   }
 
   /// Disable sends or receives on the socket.
-  template <typename Error_Handler>
-  void shutdown(implementation_type& impl, socket_base::shutdown_type what,
-      Error_Handler error_handler)
+  asio::error_code shutdown(implementation_type& impl,
+      socket_base::shutdown_type what, asio::error_code& ec)
   {
-    if (socket_ops::shutdown(impl.socket_, what) != 0)
-      error_handler(asio::error(socket_ops::get_error()));
-    else
-      error_handler(asio::error(0));
+    socket_ops::shutdown(impl.socket_, what, ec);
+    return ec;
   }
 
   // Send the given data to the peer. Returns the number of bytes sent.
-  template <typename Const_Buffers, typename Error_Handler>
+  template <typename Const_Buffers>
   size_t send(implementation_type& impl, const Const_Buffers& buffers,
-      socket_base::message_flags flags, Error_Handler error_handler)
+      socket_base::message_flags flags, asio::error_code& ec)
   {
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -558,7 +529,7 @@ public:
     // A request to receive 0 bytes on a stream socket is a no-op.
     if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
     {
-      error_handler(asio::error(0));
+      ec = asio::error::success;
       return 0;
     }
 
@@ -571,11 +542,11 @@ public:
       DWORD last_error = ::WSAGetLastError();
       if (last_error == ERROR_NETNAME_DELETED)
         last_error = WSAECONNRESET;
-      error_handler(asio::error(last_error));
+      ec = asio::error_code(last_error, asio::native_ecat);
       return 0;
     }
 
-    error_handler(asio::error(0));
+    ec = asio::error_code();
     return bytes_transferred;
   }
 
@@ -638,9 +609,9 @@ public:
       ptr.reset();
 
       // Call the handler.
-      asio::error error(last_error);
+      asio::error_code ec(last_error, asio::native_ecat);
       asio_handler_invoke_helpers::invoke(
-          detail::bind_handler(handler, error, bytes_transferred), &handler);
+          detail::bind_handler(handler, ec, bytes_transferred), &handler);
     }
 
     static void destroy_impl(operation* op)
@@ -711,8 +682,8 @@ public:
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
       ptr.reset();
-      asio::error error(last_error);
-      iocp_service_.post(bind_handler(handler, error, bytes_transferred));
+      asio::error_code ec(last_error, asio::native_ecat);
+      iocp_service_.post(bind_handler(handler, ec, bytes_transferred));
     }
     else
     {
@@ -722,10 +693,10 @@ public:
 
   // Send a datagram to the specified endpoint. Returns the number of bytes
   // sent.
-  template <typename Const_Buffers, typename Error_Handler>
+  template <typename Const_Buffers>
   size_t send_to(implementation_type& impl, const Const_Buffers& buffers,
       const endpoint_type& destination, socket_base::message_flags flags,
-      Error_Handler error_handler)
+      asio::error_code& ec)
   {
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -747,11 +718,11 @@ public:
     if (result != 0)
     {
       DWORD last_error = ::WSAGetLastError();
-      error_handler(asio::error(last_error));
+      ec = asio::error_code(last_error, asio::native_ecat);
       return 0;
     }
 
-    error_handler(asio::error(0));
+    ec = asio::error_code();
     return bytes_transferred;
   }
 
@@ -803,9 +774,9 @@ public:
       ptr.reset();
 
       // Call the handler.
-      asio::error error(last_error);
+      asio::error_code ec(last_error, asio::native_ecat);
       asio_handler_invoke_helpers::invoke(
-          detail::bind_handler(handler, error, bytes_transferred), &handler);
+          detail::bind_handler(handler, ec, bytes_transferred), &handler);
     }
 
     static void destroy_impl(operation* op)
@@ -864,8 +835,8 @@ public:
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
       ptr.reset();
-      asio::error error(last_error);
-      iocp_service_.post(bind_handler(handler, error, bytes_transferred));
+      asio::error_code ec(last_error, asio::native_ecat);
+      iocp_service_.post(bind_handler(handler, ec, bytes_transferred));
     }
     else
     {
@@ -874,9 +845,9 @@ public:
   }
 
   // Receive some data from the peer. Returns the number of bytes received.
-  template <typename Mutable_Buffers, typename Error_Handler>
+  template <typename Mutable_Buffers>
   size_t receive(implementation_type& impl, const Mutable_Buffers& buffers,
-      socket_base::message_flags flags, Error_Handler error_handler)
+      socket_base::message_flags flags, asio::error_code& ec)
   {
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -895,7 +866,7 @@ public:
     // A request to receive 0 bytes on a stream socket is a no-op.
     if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
     {
-      error_handler(asio::error(0));
+      ec = asio::error::success;
       return 0;
     }
 
@@ -909,16 +880,16 @@ public:
       DWORD last_error = ::WSAGetLastError();
       if (last_error == ERROR_NETNAME_DELETED)
         last_error = WSAECONNRESET;
-      error_handler(asio::error(last_error));
+      ec = asio::error_code(last_error, asio::native_ecat);
       return 0;
     }
     if (bytes_transferred == 0)
     {
-      error_handler(asio::error(asio::error::eof));
+      ec = asio::error::eof;
       return 0;
     }
 
-    error_handler(asio::error(0));
+    ec = asio::error_code();
     return bytes_transferred;
   }
 
@@ -976,7 +947,7 @@ public:
       // Check for connection closed.
       else if (last_error == 0 && bytes_transferred == 0)
       {
-        last_error = asio::error::eof;
+        last_error = ERROR_HANDLE_EOF;
       }
 
       // Make a copy of the handler so that the memory can be deallocated before
@@ -987,9 +958,9 @@ public:
       ptr.reset();
 
       // Call the handler.
-      asio::error error(last_error);
+      asio::error_code ec(last_error, asio::native_ecat);
       asio_handler_invoke_helpers::invoke(
-          detail::bind_handler(handler, error, bytes_transferred), &handler);
+          detail::bind_handler(handler, ec, bytes_transferred), &handler);
     }
 
     static void destroy_impl(operation* op)
@@ -1058,8 +1029,8 @@ public:
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
       ptr.reset();
-      asio::error error(last_error);
-      iocp_service_.post(bind_handler(handler, error, bytes_transferred));
+      asio::error_code ec(last_error, asio::native_ecat);
+      iocp_service_.post(bind_handler(handler, ec, bytes_transferred));
     }
     else
     {
@@ -1069,10 +1040,10 @@ public:
 
   // Receive a datagram with the endpoint of the sender. Returns the number of
   // bytes received.
-  template <typename Mutable_Buffers, typename Error_Handler>
+  template <typename Mutable_Buffers>
   size_t receive_from(implementation_type& impl, const Mutable_Buffers& buffers,
       endpoint_type& sender_endpoint, socket_base::message_flags flags,
-      Error_Handler error_handler)
+      asio::error_code& ec)
   {
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -1095,18 +1066,18 @@ public:
     if (result != 0)
     {
       DWORD last_error = ::WSAGetLastError();
-      error_handler(asio::error(last_error));
+      ec = asio::error_code(last_error, asio::native_ecat);
       return 0;
     }
     if (bytes_transferred == 0)
     {
-      error_handler(asio::error(asio::error::eof));
+      ec = asio::error::eof;
       return 0;
     }
 
     sender_endpoint.resize(endpoint_size);
 
-    error_handler(asio::error(0));
+    ec = asio::error_code();
     return bytes_transferred;
   }
 
@@ -1161,7 +1132,7 @@ public:
       // Check for connection closed.
       if (last_error == 0 && bytes_transferred == 0)
       {
-        last_error = asio::error::eof;
+        last_error = ERROR_HANDLE_EOF;
       }
 
       // Record the size of the endpoint returned by the operation.
@@ -1175,9 +1146,9 @@ public:
       ptr.reset();
 
       // Call the handler.
-      asio::error error(last_error);
+      asio::error_code ec(last_error, asio::native_ecat);
       asio_handler_invoke_helpers::invoke(
-          detail::bind_handler(handler, error, bytes_transferred), &handler);
+          detail::bind_handler(handler, ec, bytes_transferred), &handler);
     }
 
     static void destroy_impl(operation* op)
@@ -1239,8 +1210,8 @@ public:
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
       ptr.reset();
-      asio::error error(last_error);
-      iocp_service_.post(bind_handler(handler, error, bytes_transferred));
+      asio::error_code ec(last_error, asio::native_ecat);
+      iocp_service_.post(bind_handler(handler, ec, bytes_transferred));
     }
     else
     {
@@ -1249,23 +1220,23 @@ public:
   }
 
   // Accept a new connection.
-  template <typename Socket, typename Error_Handler>
+  template <typename Socket>
   void accept(implementation_type& impl, Socket& peer,
-      Error_Handler error_handler)
+      asio::error_code& ec)
   {
     // We cannot accept a socket that is already open.
     if (peer.native() != invalid_socket)
     {
-      error_handler(asio::error(asio::error::already_connected));
+      ec = asio::error::already_connected;
       return;
     }
 
     for (;;)
     {
-      socket_holder new_socket(socket_ops::accept(impl.socket_, 0, 0));
-      if (int err = socket_ops::get_error())
+      socket_holder new_socket(socket_ops::accept(impl.socket_, 0, 0, ec));
+      if (ec)
       {
-        if (err == asio::error::connection_aborted
+        if (ec == asio::error::connection_aborted
             && !(impl.flags_ & implementation_type::enable_connection_aborted))
         {
           // Retry accept operation.
@@ -1273,37 +1244,26 @@ public:
         }
         else
         {
-          error_handler(asio::error(err));
           return;
         }
       }
 
-      asio::error temp_error;
-      peer.assign(impl.protocol_, new_socket.get(),
-          asio::assign_error(temp_error));
-      if (temp_error)
-      {
-        error_handler(temp_error);
-        return;
-      }
-      else
-      {
+      peer.assign(impl.protocol_, new_socket.get(), ec);
+      if (!ec)
         new_socket.release();
-        error_handler(asio::error(0));
-        return;
-      }
+      return;
     }
   }
 
   // Accept a new connection.
-  template <typename Socket, typename Error_Handler>
+  template <typename Socket>
   void accept_endpoint(implementation_type& impl, Socket& peer,
-      endpoint_type& peer_endpoint, Error_Handler error_handler)
+      endpoint_type& peer_endpoint, asio::error_code& ec)
   {
     // We cannot accept a socket that is already open.
     if (peer.native() != invalid_socket)
     {
-      error_handler(asio::error(asio::error::already_connected));
+      ec = asio::error::already_connected;
       return;
     }
 
@@ -1311,10 +1271,10 @@ public:
     {
       socket_addr_len_type addr_len = peer_endpoint.capacity();
       socket_holder new_socket(socket_ops::accept(
-            impl.socket_, peer_endpoint.data(), &addr_len));
+            impl.socket_, peer_endpoint.data(), &addr_len, ec));
       if (int err = socket_ops::get_error())
       {
-        if (err == asio::error::connection_aborted
+        if (ec == asio::error::connection_aborted
             && !(impl.flags_ & implementation_type::enable_connection_aborted))
         {
           // Retry accept operation.
@@ -1322,27 +1282,16 @@ public:
         }
         else
         {
-          error_handler(asio::error(err));
           return;
         }
       }
 
       peer_endpoint.resize(addr_len);
 
-      asio::error temp_error;
-      peer.assign(impl.protocol_, new_socket.get(),
-          asio::assign_error(temp_error));
-      if (temp_error)
-      {
-        error_handler(temp_error);
-        return;
-      }
-      else
-      {
+      peer.assign(impl.protocol_, new_socket.get(), ec);
+      if (!ec)
         new_socket.release();
-        error_handler(asio::error(0));
-        return;
-      }
+      return;
     }
   }
 
@@ -1396,12 +1345,12 @@ public:
       // Map Windows error ERROR_NETNAME_DELETED to connection_aborted.
       if (last_error == ERROR_NETNAME_DELETED)
       {
-        last_error = asio::error::connection_aborted;
+        last_error = WSAECONNABORTED;
       }
 
       // Restart the accept operation if we got the connection_aborted error
       // and the enable_connection_aborted socket option is not set.
-      if (last_error == asio::error::connection_aborted
+      if (last_error == WSAECONNABORTED
           && !ptr.get()->enable_connection_aborted_)
       {
         // Reset OVERLAPPED structure.
@@ -1413,11 +1362,11 @@ public:
 
         // Create a new socket for the next connection, since the AcceptEx call
         // fails with WSAEINVAL if we try to reuse the same socket.
+        asio::error_code ec;
         ptr.get()->new_socket_.reset();
-        ptr.get()->new_socket_.reset(
-            socket_ops::socket(ptr.get()->protocol_.family(),
-              ptr.get()->protocol_.type(), ptr.get()->protocol_.protocol()));
-        last_error = socket_ops::get_error();
+        ptr.get()->new_socket_.reset(socket_ops::socket(
+              ptr.get()->protocol_.family(), ptr.get()->protocol_.type(),
+              ptr.get()->protocol_.protocol(), ec));
         if (ptr.get()->new_socket() != invalid_socket)
         {
           // Accept a connection.
@@ -1431,7 +1380,7 @@ public:
           if (!result && last_error != WSA_IO_PENDING)
           {
             if (last_error == ERROR_NETNAME_DELETED
-                || last_error == asio::error::connection_aborted)
+                || last_error == WSAECONNABORTED)
             {
               // Post this handler so that operation will be restarted again.
               ptr.get()->io_service_.post_completion(ptr.get(), last_error, 0);
@@ -1480,11 +1429,12 @@ public:
       if (last_error == 0)
       {
         SOCKET update_ctx_param = handler_op->socket_;
+        asio::error_code ec;
         if (socket_ops::setsockopt(handler_op->new_socket_.get(),
               SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT,
-              &update_ctx_param, sizeof(SOCKET)) != 0)
+              &update_ctx_param, sizeof(SOCKET), ec) != 0)
         {
-          last_error = socket_ops::get_error();
+          last_error = ec.value();
         }
       }
 
@@ -1492,12 +1442,11 @@ public:
       // socket to the peer object.
       if (last_error == 0)
       {
-        asio::error temp_error;
+        asio::error_code ec;
         handler_op->peer_.assign(handler_op->protocol_,
-            native_type(handler_op->new_socket_.get(), peer_endpoint),
-            asio::assign_error(temp_error));
-        if (temp_error)
-          last_error = temp_error.code();
+            native_type(handler_op->new_socket_.get(), peer_endpoint), ec);
+        if (ec)
+          last_error = ec.value();
         else
           handler_op->new_socket_.release();
       }
@@ -1510,9 +1459,9 @@ public:
       ptr.reset();
 
       // Call the handler.
-      asio::error error(last_error);
+      asio::error_code ec(last_error, asio::native_ecat);
       asio_handler_invoke_helpers::invoke(
-          detail::bind_handler(handler, error), &handler);
+          detail::bind_handler(handler, ec), &handler);
     }
 
     static void destroy_impl(operation* op)
@@ -1549,26 +1498,26 @@ public:
     // Check whether acceptor has been initialised.
     if (impl.socket_ == invalid_socket)
     {
-      asio::error error(asio::error::bad_descriptor);
-      io_service().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler,
+            asio::error::bad_descriptor));
       return;
     }
 
     // Check that peer socket has not already been connected.
     if (peer.native() != invalid_socket)
     {
-      asio::error error(asio::error::already_connected);
-      io_service().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler,
+            asio::error::already_connected));
       return;
     }
 
     // Create a new socket for the connection.
+    asio::error_code ec;
     socket_holder sock(socket_ops::socket(impl.protocol_.family(),
-          impl.protocol_.type(), impl.protocol_.protocol()));
+          impl.protocol_.type(), impl.protocol_.protocol(), ec));
     if (sock.get() == invalid_socket)
     {
-      asio::error error(socket_ops::get_error());
-      io_service().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler, ec));
       return;
     }
 
@@ -1596,7 +1545,7 @@ public:
     {
       if (!enable_connection_aborted
           && (last_error == ERROR_NETNAME_DELETED
-            || last_error == asio::error::connection_aborted))
+            || last_error == WSAECONNABORTED))
       {
         // Post handler so that operation will be restarted again. We do not
         // perform the AcceptEx again here to avoid the possibility of starving
@@ -1607,8 +1556,8 @@ public:
       else
       {
         ptr.reset();
-        asio::error error(last_error);
-        iocp_service_.post(bind_handler(handler, error));
+        asio::error_code ec(last_error, asio::native_ecat);
+        iocp_service_.post(bind_handler(handler, ec));
       }
     }
     else
@@ -1669,12 +1618,12 @@ public:
       // Map Windows error ERROR_NETNAME_DELETED to connection_aborted.
       if (last_error == ERROR_NETNAME_DELETED)
       {
-        last_error = asio::error::connection_aborted;
+        last_error = WSAECONNABORTED;
       }
 
       // Restart the accept operation if we got the connection_aborted error
       // and the enable_connection_aborted socket option is not set.
-      if (last_error == asio::error::connection_aborted
+      if (last_error == WSAECONNABORTED
           && !ptr.get()->enable_connection_aborted_)
       {
         // Reset OVERLAPPED structure.
@@ -1686,11 +1635,11 @@ public:
 
         // Create a new socket for the next connection, since the AcceptEx call
         // fails with WSAEINVAL if we try to reuse the same socket.
+        asio::error_code ec;
         ptr.get()->new_socket_.reset();
-        ptr.get()->new_socket_.reset(
-            socket_ops::socket(ptr.get()->protocol_.family(),
-              ptr.get()->protocol_.type(), ptr.get()->protocol_.protocol()));
-        last_error = socket_ops::get_error();
+        ptr.get()->new_socket_.reset(socket_ops::socket(
+              ptr.get()->protocol_.family(), ptr.get()->protocol_.type(),
+              ptr.get()->protocol_.protocol(), ec));
         if (ptr.get()->new_socket() != invalid_socket)
         {
           // Accept a connection.
@@ -1704,7 +1653,7 @@ public:
           if (!result && last_error != WSA_IO_PENDING)
           {
             if (last_error == ERROR_NETNAME_DELETED
-                || last_error == asio::error::connection_aborted)
+                || last_error == WSAECONNABORTED)
             {
               // Post this handler so that operation will be restarted again.
               ptr.get()->io_service_.post_completion(ptr.get(), last_error, 0);
@@ -1737,7 +1686,7 @@ public:
             &local_addr, &local_addr_length, &remote_addr, &remote_addr_length);
         if (remote_addr_length > handler_op->peer_endpoint_.capacity())
         {
-          last_error = asio::error::invalid_argument;
+          last_error = WSAEINVAL;
         }
         else
         {
@@ -1753,11 +1702,12 @@ public:
       if (last_error == 0)
       {
         SOCKET update_ctx_param = handler_op->socket_;
+        asio::error_code ec;
         if (socket_ops::setsockopt(handler_op->new_socket_.get(),
               SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT,
-              &update_ctx_param, sizeof(SOCKET)) != 0)
+              &update_ctx_param, sizeof(SOCKET), ec) != 0)
         {
-          last_error = socket_ops::get_error();
+          last_error = ec.value();
         }
       }
 
@@ -1765,13 +1715,12 @@ public:
       // socket to the peer object.
       if (last_error == 0)
       {
-        asio::error temp_error;
+        asio::error_code ec;
         handler_op->peer_.assign(handler_op->peer_endpoint_.protocol(),
             native_type(handler_op->new_socket_.get(),
-              handler_op->peer_endpoint_),
-            asio::assign_error(temp_error));
-        if (temp_error)
-          last_error = temp_error.code();
+              handler_op->peer_endpoint_), ec);
+        if (ec)
+          last_error = ec.value();
         else
           handler_op->new_socket_.release();
       }
@@ -1784,9 +1733,9 @@ public:
       ptr.reset();
 
       // Call the handler.
-      asio::error error(last_error);
+      asio::error_code ec(last_error, asio::native_ecat);
       asio_handler_invoke_helpers::invoke(
-          detail::bind_handler(handler, error), &handler);
+          detail::bind_handler(handler, ec), &handler);
     }
 
     static void destroy_impl(operation* op)
@@ -1825,26 +1774,26 @@ public:
     // Check whether acceptor has been initialised.
     if (impl.socket_ == invalid_socket)
     {
-      asio::error error(asio::error::bad_descriptor);
-      io_service().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler,
+            asio::error::bad_descriptor));
       return;
     }
 
     // Check that peer socket has not already been connected.
     if (peer.native() != invalid_socket)
     {
-      asio::error error(asio::error::already_connected);
-      io_service().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler,
+            asio::error::already_connected));
       return;
     }
 
     // Create a new socket for the connection.
+    asio::error_code ec;
     socket_holder sock(socket_ops::socket(impl.protocol_.family(),
-          impl.protocol_.type(), impl.protocol_.protocol()));
+          impl.protocol_.type(), impl.protocol_.protocol(), ec));
     if (sock.get() == invalid_socket)
     {
-      asio::error error(socket_ops::get_error());
-      io_service().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler, ec));
       return;
     }
 
@@ -1883,8 +1832,8 @@ public:
       else
       {
         ptr.reset();
-        asio::error error(last_error);
-        iocp_service_.post(bind_handler(handler, error));
+        asio::error_code ec(last_error, asio::native_ecat);
+        iocp_service_.post(bind_handler(handler, ec));
       }
     }
     else
@@ -1894,9 +1843,8 @@ public:
   }
 
   // Connect the socket to the specified endpoint.
-  template <typename Error_Handler>
-  void connect(implementation_type& impl, const endpoint_type& peer_endpoint,
-      Error_Handler error_handler)
+  asio::error_code connect(implementation_type& impl,
+      const endpoint_type& peer_endpoint, asio::error_code& ec)
   {
     // Open the socket if it is not already open.
     if (impl.socket_ == invalid_socket)
@@ -1907,22 +1855,16 @@ public:
       int proto = peer_endpoint.protocol().protocol();
 
       // Create a new socket.
-      impl.socket_ = socket_ops::socket(family, type, proto);
+      impl.socket_ = socket_ops::socket(family, type, proto, ec);
       if (impl.socket_ == invalid_socket)
-      {
-        error_handler(asio::error(socket_ops::get_error()));
-        return;
-      }
+        return ec;
       iocp_service_.register_socket(impl.socket_);
     }
 
     // Perform the connect operation.
-    int result = socket_ops::connect(impl.socket_,
-        peer_endpoint.data(), peer_endpoint.size());
-    if (result == socket_error_retval)
-      error_handler(asio::error(socket_ops::get_error()));
-    else
-      error_handler(asio::error(0));
+    socket_ops::connect(impl.socket_,
+        peer_endpoint.data(), peer_endpoint.size(), ec);
+    return ec;
   }
 
   template <typename Handler>
@@ -1942,7 +1884,7 @@ public:
     {
     }
 
-    bool operator()(int result)
+    bool operator()(const asio::error_code& result)
     {
       // Check whether a handler has already been called for the connection.
       // If it has, then we don't want to do anything in this handler.
@@ -1954,44 +1896,42 @@ public:
       reactor_.enqueue_cancel_ops_unlocked(socket_);
 
       // Check whether the operation was successful.
-      if (result != 0)
+      if (result)
       {
-        asio::error error(result);
-        io_service_.post(bind_handler(handler_, error));
+        io_service_.post(bind_handler(handler_, result));
         return true;
       }
 
       // Get the error code from the connect operation.
       int connect_error = 0;
       size_t connect_error_len = sizeof(connect_error);
+      asio::error_code ec;
       if (socket_ops::getsockopt(socket_, SOL_SOCKET, SO_ERROR,
-            &connect_error, &connect_error_len) == socket_error_retval)
+            &connect_error, &connect_error_len, ec) == socket_error_retval)
       {
-        asio::error error(socket_ops::get_error());
-        io_service_.post(bind_handler(handler_, error));
+        io_service_.post(bind_handler(handler_, ec));
         return true;
       }
 
       // If connection failed then post the handler with the error code.
       if (connect_error)
       {
-        asio::error error(connect_error);
-        io_service_.post(bind_handler(handler_, error));
+        ec = asio::error_code(connect_error, asio::native_ecat);
+        io_service_.post(bind_handler(handler_, ec));
         return true;
       }
 
       // Make the socket blocking again (the default).
       ioctl_arg_type non_blocking = 0;
-      if (socket_ops::ioctl(socket_, FIONBIO, &non_blocking))
+      if (socket_ops::ioctl(socket_, FIONBIO, &non_blocking, ec))
       {
-        asio::error error(socket_ops::get_error());
-        io_service_.post(bind_handler(handler_, error));
+        io_service_.post(bind_handler(handler_, ec));
         return true;
       }
 
       // Post the result of the successful connection operation.
-      asio::error error(asio::error::success);
-      io_service_.post(bind_handler(handler_, error));
+      ec = asio::error_code();
+      io_service_.post(bind_handler(handler_, ec));
       return true;
     }
 
@@ -2035,11 +1975,11 @@ public:
       int proto = peer_endpoint.protocol().protocol();
 
       // Create a new socket.
-      impl.socket_ = socket_ops::socket(family, type, proto);
+      asio::error_code ec;
+      impl.socket_ = socket_ops::socket(family, type, proto, ec);
       if (impl.socket_ == invalid_socket)
       {
-        asio::error error(socket_ops::get_error());
-        io_service().post(bind_handler(handler, error));
+        io_service().post(bind_handler(handler, ec));
         return;
       }
       iocp_service_.register_socket(impl.socket_);
@@ -2048,24 +1988,23 @@ public:
     // Mark the socket as non-blocking so that the connection will take place
     // asynchronously.
     ioctl_arg_type non_blocking = 1;
-    if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking))
+    asio::error_code ec;
+    if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
     {
-      asio::error error(socket_ops::get_error());
-      io_service().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler, ec));
       return;
     }
 
     // Start the connect operation.
     if (socket_ops::connect(impl.socket_, peer_endpoint.data(),
-          peer_endpoint.size()) == 0)
+          peer_endpoint.size(), ec) == 0)
     {
       // The connect operation has finished successfully so we need to post the
       // handler immediately.
-      asio::error error(asio::error::success);
-      io_service().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler, ec));
     }
-    else if (socket_ops::get_error() == asio::error::in_progress
-        || socket_ops::get_error() == asio::error::would_block)
+    else if (ec == asio::error::in_progress
+        || ec == asio::error::would_block)
     {
       // The connection is happening in the background, and we need to wait
       // until the socket becomes writeable.
@@ -2077,8 +2016,7 @@ public:
     else
     {
       // The connect operation has failed, so post the handler immediately.
-      asio::error error(socket_ops::get_error());
-      io_service().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler, ec));
     }
   }
 

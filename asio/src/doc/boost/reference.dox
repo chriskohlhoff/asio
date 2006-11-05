@@ -189,6 +189,7 @@ INCLUDE_FILE_PATTERNS  =
 PREDEFINED             = GENERATING_DOCUMENTATION \
                          BOOST_ASIO_SOCKET_ERROR(e)=implementation_defined \
                          BOOST_ASIO_NETDB_ERROR(e)=implementation_defined \
+                         BOOST_ASIO_EOF_ERROR(e)=implementation_defined \
                          BOOST_ASIO_OS_ERROR(e1,e2)=implementation_defined
 EXPAND_AS_DEFINED      = 
 SKIP_FUNCTION_MACROS   = YES

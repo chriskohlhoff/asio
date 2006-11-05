@@ -22,6 +22,7 @@ if $(UNIX)
 
 exe client
   : <lib>@boost/libs/serialization/build/boost_serialization
+    <lib>@boost/libs/system/build/boost_system
     client.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../..
@@ -34,6 +35,7 @@ exe client
 
 exe server
   : <lib>@boost/libs/serialization/build/boost_serialization
+    <lib>@boost/libs/system/build/boost_system
     server.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../..

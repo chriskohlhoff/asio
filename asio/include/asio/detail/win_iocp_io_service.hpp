@@ -27,7 +27,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/io_service.hpp"
-#include "asio/system_exception.hpp"
+#include "asio/system_error.hpp"
 #include "asio/detail/call_stack.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
@@ -55,7 +55,9 @@ public:
     if (!iocp_.handle)
     {
       DWORD last_error = ::GetLastError();
-      system_exception e("iocp", last_error);
+      asio::system_error e(
+          asio::error_code(last_error, asio::native_ecat),
+          "iocp");
       boost::throw_exception(e);
     }
   }
@@ -152,7 +154,9 @@ public:
       if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, 0))
       {
         DWORD last_error = ::GetLastError();
-        system_exception e("pqcs", last_error);
+        asio::system_error e(
+            asio::error_code(last_error, asio::native_ecat),
+            "pqcs");
         boost::throw_exception(e);
       }
     }
@@ -205,7 +209,9 @@ public:
     if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, ptr.get()))
     {
       DWORD last_error = ::GetLastError();
-      system_exception e("pqcs", last_error);
+      asio::system_error e(
+          asio::error_code(last_error, asio::native_ecat),
+          "pqcs");
       boost::throw_exception(e);
     }
 
@@ -222,7 +228,9 @@ public:
           bytes_transferred, op_last_error, op))
     {
       DWORD last_error = ::GetLastError();
-      system_exception e("pqcs", last_error);
+      asio::system_error e(
+          asio::error_code(last_error, asio::native_ecat),
+          "pqcs");
       boost::throw_exception(e);
     }
   }
@@ -279,7 +287,9 @@ private:
           if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, 0))
           {
             DWORD last_error = ::GetLastError();
-            system_exception e("pqcs", last_error);
+            asio::system_error e(
+                asio::error_code(last_error, asio::native_ecat),
+                "pqcs");
             boost::throw_exception(e);
           }
 

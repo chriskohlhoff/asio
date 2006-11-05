@@ -203,7 +203,7 @@ public:
   {
     if (size > size_type(sizeof(data_)))
     {
-      asio::error e(asio::error::invalid_argument);
+      asio::system_error e(asio::error::invalid_argument);
       boost::throw_exception(e);
     }
   }

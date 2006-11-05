@@ -30,14 +30,12 @@ namespace ip_address_v4_compile {
 
 using namespace asio;
 
-void error_handler(const error&)
-{
-}
-
 void test()
 {
   try
   {
+    asio::error_code ec;
+
     // address_v4 constructors.
 
     ip::address_v4 addr1;
@@ -67,14 +65,14 @@ void test()
     (void)ulong_value;
 
     std::string string_value = addr1.to_string();
-    string_value = addr1.to_string(error_handler);
+    string_value = addr1.to_string(ec);
 
     // address_v4 static functions.
 
     addr1 = ip::address_v4::from_string("127.0.0.1");
-    addr1 = ip::address_v4::from_string("127.0.0.1", error_handler);
+    addr1 = ip::address_v4::from_string("127.0.0.1", ec);
     addr1 = ip::address_v4::from_string(string_value);
-    addr1 = ip::address_v4::from_string(string_value, error_handler);
+    addr1 = ip::address_v4::from_string(string_value, ec);
 
     addr1 = ip::address_v4::any();
 

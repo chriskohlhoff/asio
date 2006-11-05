@@ -33,8 +33,9 @@
 #include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/error.hpp"
 #include "asio/io_service.hpp"
-#include "asio/system_exception.hpp"
+#include "asio/system_error.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/task_io_service.hpp"
@@ -138,7 +139,7 @@ public:
       return;
 
     if (!read_op_queue_.has_operation(descriptor))
-      if (handler(0))
+      if (handler(asio::error::success))
         return;
 
     if (read_op_queue_.enqueue_operation(descriptor, handler))
@@ -147,8 +148,8 @@ public:
       EV_SET(&event, descriptor, EVFILT_READ, EV_ADD, 0, 0, 0);
       if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
       {
-        int error = errno;
-        read_op_queue_.dispatch_all_operations(descriptor, error);
+        asio::error_code ec(errno, asio::native_ecat);
+        read_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
   }
@@ -164,7 +165,7 @@ public:
       return;
 
     if (!write_op_queue_.has_operation(descriptor))
-      if (handler(0))
+      if (handler(asio::error::success))
         return;
 
     if (write_op_queue_.enqueue_operation(descriptor, handler))
@@ -173,8 +174,8 @@ public:
       EV_SET(&event, descriptor, EVFILT_WRITE, EV_ADD, 0, 0, 0);
       if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
       {
-        int error = errno;
-        write_op_queue_.dispatch_all_operations(descriptor, error);
+        asio::error_code ec(errno, asio::native_ecat);
+        write_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
   }
@@ -198,8 +199,8 @@ public:
         EV_SET(&event, descriptor, EVFILT_READ, EV_ADD, EV_OOBAND, 0, 0);
       if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
       {
-        int error = errno;
-        except_op_queue_.dispatch_all_operations(descriptor, error);
+        asio::error_code ec(errno, asio::native_ecat);
+        except_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
   }
@@ -221,8 +222,8 @@ public:
       EV_SET(&event, descriptor, EVFILT_WRITE, EV_ADD, 0, 0, 0);
       if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
       {
-        int error = errno;
-        write_op_queue_.dispatch_all_operations(descriptor, error);
+        asio::error_code ec(errno, asio::native_ecat);
+        write_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
 
@@ -235,9 +236,9 @@ public:
         EV_SET(&event, descriptor, EVFILT_READ, EV_ADD, EV_OOBAND, 0, 0);
       if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
       {
-        int error = errno;
-        except_op_queue_.dispatch_all_operations(descriptor, error);
-        write_op_queue_.dispatch_all_operations(descriptor, error);
+        asio::error_code ec(errno, asio::native_ecat);
+        except_op_queue_.dispatch_all_operations(descriptor, ec);
+        write_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
   }
@@ -393,21 +394,24 @@ private:
         bool more_except = false;
         if (events[i].flags & EV_ERROR)
         {
-          int error = events[i].data;
+          asio::error_code error(
+              events[i].data, asio::native_ecat);
           except_op_queue_.dispatch_all_operations(descriptor, error);
           read_op_queue_.dispatch_all_operations(descriptor, error);
         }
         else if (events[i].flags & EV_OOBAND)
         {
-          more_except = except_op_queue_.dispatch_operation(descriptor, 0);
+          asio::error_code error;
+          more_except = except_op_queue_.dispatch_operation(descriptor, error);
           if (events[i].data > 0)
-            more_reads = read_op_queue_.dispatch_operation(descriptor, 0);
+            more_reads = read_op_queue_.dispatch_operation(descriptor, error);
           else
             more_reads = read_op_queue_.has_operation(descriptor);
         }
         else
         {
-          more_reads = read_op_queue_.dispatch_operation(descriptor, 0);
+          asio::error_code error;
+          more_reads = read_op_queue_.dispatch_operation(descriptor, error);
           more_except = except_op_queue_.has_operation(descriptor);
         }
 
@@ -421,7 +425,7 @@ private:
           EV_SET(&event, descriptor, EVFILT_READ, EV_DELETE, 0, 0, 0);
         if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
         {
-          int error = errno;
+          asio::error_code error(errno, asio::native_ecat);
           except_op_queue_.dispatch_all_operations(descriptor, error);
           read_op_queue_.dispatch_all_operations(descriptor, error);
         }
@@ -432,12 +436,14 @@ private:
         bool more_writes = false;
         if (events[i].flags & EV_ERROR)
         {
-          int error = events[i].data;
+          asio::error_code error(
+              events[i].data, asio::native_ecat);
           write_op_queue_.dispatch_all_operations(descriptor, error);
         }
         else
         {
-          more_writes = write_op_queue_.dispatch_operation(descriptor, 0);
+          asio::error_code error;
+          more_writes = write_op_queue_.dispatch_operation(descriptor, error);
         }
 
         // Update the descriptor in the kqueue.
@@ -448,7 +454,7 @@ private:
           EV_SET(&event, descriptor, EVFILT_WRITE, EV_DELETE, 0, 0, 0);
         if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
         {
-          int error = errno;
+          asio::error_code error(errno, asio::native_ecat);
           write_op_queue_.dispatch_all_operations(descriptor, error);
         }
       }
@@ -504,7 +510,9 @@ private:
     int fd = kqueue();
     if (fd == -1)
     {
-      system_exception e("kqueue", errno);
+      asio::system_error e(
+          asio::error_code(errno, asio::native_ecat),
+          "kqueue");
       boost::throw_exception(e);
     }
     return fd;

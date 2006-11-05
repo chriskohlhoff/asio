@@ -23,7 +23,7 @@
 
 #if defined(BOOST_WINDOWS)
 
-#include "asio/system_exception.hpp"
+#include "asio/system_error.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_types.hpp"
 
@@ -45,7 +45,9 @@ public:
     if (!event_)
     {
       DWORD last_error = ::GetLastError();
-      system_exception e("event", last_error);
+      asio::system_error e(
+          asio::error_code(last_error, asio::native_ecat),
+          "event");
       boost::throw_exception(e);
     }
   }

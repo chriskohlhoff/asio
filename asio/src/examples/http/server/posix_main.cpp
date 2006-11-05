@@ -61,10 +61,6 @@ int main(int argc, char* argv[])
     s.stop();
     t.join();
   }
-  catch (asio::error& e)
-  {
-    std::cerr << "asio error: " << e << "\n";
-  }
   catch (std::exception& e)
   {
     std::cerr << "exception: " << e.what() << "\n";

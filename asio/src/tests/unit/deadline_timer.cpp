@@ -43,9 +43,10 @@ void decrement_to_zero(asio::deadline_timer* t, int* count)
   }
 }
 
-void increment_if_not_cancelled(int* count, const asio::error& e)
+void increment_if_not_cancelled(int* count,
+    const asio::error_code& ec)
 {
-  if (!e)
+  if (!ec)
     ++(*count);
 }
 

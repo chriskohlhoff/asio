@@ -39,7 +39,7 @@ public:
 
 private:
   /// Handle completion of an asynchronous accept operation.
-  void handle_accept(const asio::error& e);
+  void handle_accept(const asio::error_code& e);
 
   /// Handle a request to stop the server.
   void handle_stop();

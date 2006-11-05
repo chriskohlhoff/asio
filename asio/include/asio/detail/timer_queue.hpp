@@ -111,7 +111,7 @@ public:
     {
       timer_base* t = heap_[0];
       remove_timer(t);
-      t->invoke(0);
+      t->invoke(asio::error::success);
     }
   }
 
@@ -160,7 +160,7 @@ private:
   {
   public:
     // Perform the timer operation and then destroy.
-    void invoke(int result)
+    void invoke(const asio::error_code& result)
     {
       invoke_func_(this, result);
     }
@@ -172,7 +172,8 @@ private:
     }
 
   protected:
-    typedef void (*invoke_func_type)(timer_base*, int);
+    typedef void (*invoke_func_type)(timer_base*,
+        const asio::error_code&);
     typedef void (*destroy_func_type)(timer_base*);
 
     // Constructor.
@@ -234,7 +235,8 @@ private:
     }
 
     // Invoke the handler and then destroy it.
-    static void invoke_handler(timer_base* base, int result)
+    static void invoke_handler(timer_base* base,
+        const asio::error_code& result)
     {
       std::auto_ptr<timer<Handler> > t(static_cast<timer<Handler>*>(base));
       t->handler_(result);

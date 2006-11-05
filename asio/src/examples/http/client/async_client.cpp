@@ -44,7 +44,7 @@ public:
   }
 
 private:
-  void handle_resolve(const asio::error& err,
+  void handle_resolve(const asio::error_code& err,
       tcp::resolver::iterator endpoint_iterator)
   {
     if (!err)
@@ -62,7 +62,7 @@ private:
     }
   }
 
-  void handle_connect(const asio::error& err,
+  void handle_connect(const asio::error_code& err,
       tcp::resolver::iterator endpoint_iterator)
   {
     if (!err)
@@ -87,7 +87,7 @@ private:
     }
   }
 
-  void handle_write_request(const asio::error& err)
+  void handle_write_request(const asio::error_code& err)
   {
     if (!err)
     {
@@ -102,7 +102,7 @@ private:
     }
   }
 
-  void handle_read_status_line(const asio::error& err)
+  void handle_read_status_line(const asio::error_code& err)
   {
     if (!err)
     {
@@ -137,7 +137,7 @@ private:
     }
   }
 
-  void handle_read_headers(const asio::error& err)
+  void handle_read_headers(const asio::error_code& err)
   {
     if (!err)
     {
@@ -164,7 +164,7 @@ private:
     }
   }
 
-  void handle_read_content(const asio::error& err)
+  void handle_read_content(const asio::error_code& err)
   {
     if (!err)
     {

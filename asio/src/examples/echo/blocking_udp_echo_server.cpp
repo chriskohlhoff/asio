@@ -44,10 +44,6 @@ int main(int argc, char* argv[])
     using namespace std; // For atoi.
     server(io_service, atoi(argv[1]));
   }
-  catch (asio::error& e)
-  {
-    std::cerr << e << "\n";
-  }
   catch (std::exception& e)
   {
     std::cerr << "Exception: " << e.what() << "\n";

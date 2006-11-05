@@ -24,9 +24,9 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
-#include "asio/error_handler.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/throw_error.hpp"
 
 namespace asio {
 namespace ip {
@@ -96,63 +96,54 @@ public:
   /// Get the address as a string in dotted decimal format.
   std::string to_string() const
   {
-    return to_string(asio::throw_error());
+    asio::error_code ec;
+    std::string addr = to_string(ec);
+    asio::detail::throw_error(ec);
+    return addr;
   }
 
   /// Get the address as a string in dotted decimal format.
-  template <typename Error_Handler>
-  std::string to_string(Error_Handler error_handler) const
+  std::string to_string(asio::error_code& ec) const
   {
     char addr_str[asio::detail::max_addr_v4_str_len];
     const char* addr =
       asio::detail::socket_ops::inet_ntop(AF_INET, &addr_, addr_str,
-          asio::detail::max_addr_v4_str_len);
+          asio::detail::max_addr_v4_str_len, 0, ec);
     if (addr == 0)
-    {
-      asio::error e(asio::detail::socket_ops::get_error());
-      error_handler(e);
       return std::string();
-    }
-    asio::error e;
-    error_handler(e);
     return addr;
   }
 
   /// Create an address from an IP address string in dotted decimal form.
   static address_v4 from_string(const char* str)
   {
-    return from_string(str, asio::throw_error());
+    asio::error_code ec;
+    address_v4 addr = from_string(str, ec);
+    asio::detail::throw_error(ec);
+    return addr;
   }
 
   /// Create an address from an IP address string in dotted decimal form.
-  template <typename Error_Handler>
-  static address_v4 from_string(const char* str, Error_Handler error_handler)
+  static address_v4 from_string(const char* str, asio::error_code& ec)
   {
     address_v4 tmp;
     if (asio::detail::socket_ops::inet_pton(
-          AF_INET, str, &tmp.addr_) <= 0)
-    {
-      asio::error e(asio::detail::socket_ops::get_error());
-      error_handler(e);
+          AF_INET, str, &tmp.addr_, 0, ec) <= 0)
       return address_v4();
-    }
-    asio::error e;
-    error_handler(e);
     return tmp;
   }
 
   /// Create an address from an IP address string in dotted decimal form.
   static address_v4 from_string(const std::string& str)
   {
-    return from_string(str.c_str(), asio::throw_error());
+    return from_string(str.c_str());
   }
 
   /// Create an address from an IP address string in dotted decimal form.
-  template <typename Error_Handler>
   static address_v4 from_string(const std::string& str,
-      Error_Handler error_handler)
+      asio::error_code& ec)
   {
-    return from_string(str.c_str(), error_handler);
+    return from_string(str.c_str(), ec);
   }
 
   /// Determine whether the address is a class A address.
@@ -274,9 +265,9 @@ template <typename Elem, typename Traits>
 std::basic_ostream<Elem, Traits>& operator<<(
     std::basic_ostream<Elem, Traits>& os, const address_v4& addr)
 {
-  asio::error e;
-  std::string s = addr.to_string(asio::assign_error(e));
-  if (e)
+  asio::error_code ec;
+  std::string s = addr.to_string(ec);
+  if (ec)
     os.setstate(std::ios_base::failbit);
   else
     for (std::string::iterator i = s.begin(); i != s.end(); ++i)

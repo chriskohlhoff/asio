@@ -32,11 +32,11 @@ int main(int argc, char* argv[])
     tcp::resolver::iterator end;
 
     tcp::socket socket(io_service);
-    asio::error error = asio::error::host_not_found;
+    asio::error_code error = asio::error::host_not_found;
     while (error && endpoint_iterator != end)
     {
       socket.close();
-      socket.connect(*endpoint_iterator++, asio::assign_error(error));
+      socket.connect(*endpoint_iterator++, error);
     }
     if (error)
       throw error;
@@ -44,10 +44,9 @@ int main(int argc, char* argv[])
     for (;;)
     {
       boost::array<char, 128> buf;
-      asio::error error;
+      asio::error_code error;
 
-      size_t len = socket.read_some(
-          asio::buffer(buf), asio::assign_error(error));
+      size_t len = socket.read_some(asio::buffer(buf), error);
 
       if (error == asio::error::eof)
         break; // Connection closed cleanly by peer.

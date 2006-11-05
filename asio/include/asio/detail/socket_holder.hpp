@@ -44,7 +44,10 @@ public:
   ~socket_holder()
   {
     if (socket_ != invalid_socket)
-      socket_ops::close(socket_);
+    {
+      asio::error_code ec;
+      socket_ops::close(socket_, ec);
+    }
   }
 
   // Get the underlying socket.
@@ -58,7 +61,8 @@ public:
   {
     if (socket_ != invalid_socket)
     {
-      socket_ops::close(socket_);
+      asio::error_code ec;
+      socket_ops::close(socket_, ec);
       socket_ = invalid_socket;
     }
   }

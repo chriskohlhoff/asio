@@ -29,9 +29,9 @@ int main(int argc, char* argv[])
     std::getline(s, line);
     std::cout << line << std::endl;
   }
-  catch (asio::error& e)
+  catch (std::exception& e)
   {
-    std::cout << e << std::endl;
+    std::cout << "Exception: " << e.what() << std::endl;
   }
 
   return 0;

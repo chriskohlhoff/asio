@@ -52,7 +52,7 @@ void server::stop()
   io_service_.post(boost::bind(&server::handle_stop, this));
 }
 
-void server::handle_accept(const asio::error& e)
+void server::handle_accept(const asio::error_code& e)
 {
   if (!e)
   {

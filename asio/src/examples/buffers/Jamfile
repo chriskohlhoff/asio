@@ -21,7 +21,8 @@ if $(UNIX)
 }
 
 exe server
-  : reference_counted.cpp
+  : <lib>@boost/libs/system/build/boost_system
+    reference_counted.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../..
     <define>BOOST_ALL_NO_LIB=1

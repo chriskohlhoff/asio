@@ -23,7 +23,7 @@
 
 #if defined(BOOST_WINDOWS)
 
-#include "asio/system_exception.hpp"
+#include "asio/system_error.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_types.hpp"
 
@@ -46,7 +46,9 @@ public:
     if (tss_key_ == TLS_OUT_OF_INDEXES)
     {
       DWORD last_error = ::GetLastError();
-      system_exception e("tss", last_error);
+      asio::system_error e(
+          asio::error_code(last_error, asio::native_ecat),
+          "tss");
       boost::throw_exception(e);
     }
   }

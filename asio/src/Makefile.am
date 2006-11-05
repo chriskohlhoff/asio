@@ -17,7 +17,6 @@ noinst_PROGRAMS = \
 	tests/unit/datagram_socket_service \
 	tests/unit/deadline_timer_service \
 	tests/unit/deadline_timer \
-	tests/unit/error_handler \
 	tests/unit/error \
 	tests/unit/io_service \
 	tests/unit/ip/address \
@@ -110,7 +109,6 @@ TESTS = \
 	tests/unit/datagram_socket_service \
 	tests/unit/deadline_timer_service \
 	tests/unit/deadline_timer \
-	tests/unit/error_handler \
 	tests/unit/error \
 	tests/unit/io_service \
 	tests/unit/ip/address \
@@ -177,7 +175,6 @@ tests_unit_completion_condition_SOURCES = tests/unit/completion_condition.cpp
 tests_unit_datagram_socket_service_SOURCES = tests/unit/datagram_socket_service.cpp
 tests_unit_deadline_timer_service_SOURCES = tests/unit/deadline_timer_service.cpp
 tests_unit_deadline_timer_SOURCES = tests/unit/deadline_timer.cpp
-tests_unit_error_handler_SOURCES = tests/unit/error_handler.cpp
 tests_unit_error_SOURCES = tests/unit/error.cpp
 tests_unit_io_service_SOURCES = tests/unit/io_service.cpp
 tests_unit_ip_address_SOURCES = tests/unit/ip/address.cpp

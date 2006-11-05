@@ -45,7 +45,7 @@ namespace asio {
  * @e Shared @e objects: Unsafe.
  *
  * @par Concepts:
- * Async_Object, Async_Read_Stream, Async_Write_Stream, Error_Source, Stream,
+ * Async_Object, Async_Read_Stream, Async_Write_Stream, Stream,
  * Sync_Read_Stream, Sync_Write_Stream.
  */
 template <typename Stream>
@@ -58,9 +58,6 @@ public:
 
   /// The type of the lowest layer.
   typedef typename next_layer_type::lowest_layer_type lowest_layer_type;
-
-  /// The type used for reporting errors.
-  typedef typename next_layer_type::error_type error_type;
 
 #if defined(GENERATING_DOCUMENTATION)
   /// The default buffer size.
@@ -110,10 +107,9 @@ public:
   }
 
   /// Close the stream.
-  template <typename Error_Handler>
-  void close(Error_Handler error_handler)
+  asio::error_code close(asio::error_code& ec)
   {
-    next_layer_.close(error_handler);
+    return next_layer_.close(ec);
   }
 
   /// Write the given data to the stream. Returns the number of bytes written.
@@ -125,12 +121,12 @@ public:
   }
 
   /// Write the given data to the stream. Returns the number of bytes written,
-  /// or 0 if an error occurred and the error handler did not throw.
-  template <typename Const_Buffers, typename Error_Handler>
+  /// or 0 if an error occurred.
+  template <typename Const_Buffers>
   std::size_t write_some(const Const_Buffers& buffers,
-      Error_Handler error_handler)
+      asio::error_code& ec)
   {
-    return next_layer_.write_some(buffers, error_handler);
+    return next_layer_.write_some(buffers, ec);
   }
 
   /// Start an asynchronous write. The data being written must be valid for the
@@ -157,10 +153,8 @@ public:
   }
 
   /// Fill the buffer with some data. Returns the number of bytes placed in the
-  /// buffer as a result of the operation, or 0 if an error occurred and the
-  /// error handler did not throw.
-  template <typename Error_Handler>
-  std::size_t fill(Error_Handler error_handler)
+  /// buffer as a result of the operation, or 0 if an error occurred.
+  std::size_t fill(asio::error_code& ec)
   {
     detail::buffer_resize_guard<detail::buffered_stream_storage>
       resize_guard(storage_);
@@ -169,7 +163,7 @@ public:
     storage_.resize(previous_size + next_layer_.read_some(buffer(
             storage_.data() + previous_size,
             storage_.size() - previous_size),
-          error_handler));
+          ec));
     resize_guard.commit();
     return storage_.size() - previous_size;
   }
@@ -188,12 +182,12 @@ public:
     {
     }
 
-    template <typename Error>
-    void operator()(const Error& e, std::size_t bytes_transferred)
+    void operator()(const asio::error_code& ec,
+        std::size_t bytes_transferred)
     {
       storage_.resize(previous_size_ + bytes_transferred);
       io_service_.dispatch(detail::bind_handler(
-            handler_, e, bytes_transferred));
+            handler_, ec, bytes_transferred));
     }
 
   private:
@@ -227,12 +221,13 @@ public:
   }
 
   /// Read some data from the stream. Returns the number of bytes read or 0 if
-  /// an error occurred and the error handler did not throw an exception.
-  template <typename Mutable_Buffers, typename Error_Handler>
+  /// an error occurred.
+  template <typename Mutable_Buffers>
   std::size_t read_some(const Mutable_Buffers& buffers,
-      Error_Handler error_handler)
+      asio::error_code& ec)
   {
-    if (storage_.empty() && !fill(error_handler))
+    ec = asio::error_code();
+    if (storage_.empty() && !fill(ec))
       return 0;
     return copy(buffers);
   }
@@ -251,12 +246,12 @@ public:
     {
     }
 
-    void operator()(const error_type& e, std::size_t)
+    void operator()(const asio::error_code& ec, std::size_t)
     {
-      if (e || storage_.empty())
+      if (ec || storage_.empty())
       {
         std::size_t length = 0;
-        io_service_.dispatch(detail::bind_handler(handler_, e, length));
+        io_service_.dispatch(detail::bind_handler(handler_, ec, length));
       }
       else
       {
@@ -279,7 +274,7 @@ public:
         }
 
         storage_.consume(bytes_copied);
-        io_service_.dispatch(detail::bind_handler(handler_, e, bytes_copied));
+        io_service_.dispatch(detail::bind_handler(handler_, ec, bytes_copied));
       }
     }
 
@@ -303,7 +298,8 @@ public:
     else
     {
       std::size_t length = copy(buffers);
-      io_service().post(detail::bind_handler(handler, 0, length));
+      io_service().post(detail::bind_handler(
+            handler, asio::error::success, length));
     }
   }
 
@@ -318,11 +314,13 @@ public:
   }
 
   /// Peek at the incoming data on the stream. Returns the number of bytes read,
-  /// or 0 if an error occurred and the error handler did not throw.
-  template <typename Mutable_Buffers, typename Error_Handler>
-  std::size_t peek(const Mutable_Buffers& buffers, Error_Handler error_handler)
+  /// or 0 if an error occurred.
+  template <typename Mutable_Buffers>
+  std::size_t peek(const Mutable_Buffers& buffers,
+      asio::error_code& ec)
   {
-    if (storage_.empty() && !fill(error_handler))
+    ec = asio::error_code();
+    if (storage_.empty() && !fill(ec))
       return 0;
     return peek_copy(buffers);
   }
@@ -334,9 +332,9 @@ public:
   }
 
   /// Determine the amount of data that may be read without blocking.
-  template <typename Error_Handler>
-  std::size_t in_avail(Error_Handler error_handler)
+  std::size_t in_avail(asio::error_code& ec)
   {
+    ec = asio::error_code();
     return storage_.size();
   }
 

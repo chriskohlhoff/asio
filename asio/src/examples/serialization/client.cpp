@@ -41,7 +41,7 @@ public:
   }
 
   /// Handle completion of a connect operation.
-  void handle_connect(const asio::error& e,
+  void handle_connect(const asio::error_code& e,
       asio::ip::tcp::resolver::iterator endpoint_iterator)
   {
     if (!e)
@@ -72,7 +72,7 @@ public:
   }
 
   /// Handle completion of a read operation.
-  void handle_read(const asio::error& e)
+  void handle_read(const asio::error_code& e)
   {
     if (!e)
     {

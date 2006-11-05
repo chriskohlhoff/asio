@@ -29,7 +29,8 @@ public:
           asio::placeholders::bytes_transferred));
   }
 
-  void handle_receive_from(const asio::error& error, size_t bytes_recvd)
+  void handle_receive_from(const asio::error_code& error,
+      size_t bytes_recvd)
   {
     if (!error && bytes_recvd > 0)
     {
@@ -49,7 +50,7 @@ public:
     }
   }
 
-  void handle_send_to(const asio::error& error, size_t bytes_sent)
+  void handle_send_to(const asio::error_code& error, size_t bytes_sent)
   {
     socket_.async_receive_from(
         asio::buffer(data_, max_length), sender_endpoint_,
@@ -82,10 +83,6 @@ int main(int argc, char* argv[])
     server s(io_service, atoi(argv[1]));
 
     io_service.run();
-  }
-  catch (asio::error& e)
-  {
-    std::cerr << e << "\n";
   }
   catch (std::exception& e)
   {

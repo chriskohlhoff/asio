@@ -28,9 +28,8 @@ void session(socket_ptr sock)
     {
       char data[max_length];
 
-      asio::error error;
-      size_t length = sock->read_some(
-          asio::buffer(data), asio::assign_error(error));
+      asio::error_code error;
+      size_t length = sock->read_some(asio::buffer(data), error);
       if (error == asio::error::eof)
         break; // Connection closed cleanly by peer.
       else if (error)
@@ -38,10 +37,6 @@ void session(socket_ptr sock)
 
       asio::write(*sock, asio::buffer(data, length));
     }
-  }
-  catch (asio::error& e)
-  {
-    std::cerr << "Error in thread: " << e << "\n";
   }
   catch (std::exception& e)
   {
@@ -74,10 +69,6 @@ int main(int argc, char* argv[])
 
     using namespace std; // For atoi.
     server(io_service, atoi(argv[1]));
-  }
-  catch (asio::error& e)
-  {
-    std::cerr << e << "\n";
   }
   catch (std::exception& e)
   {

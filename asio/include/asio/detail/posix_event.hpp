@@ -28,7 +28,7 @@
 #include <pthread.h>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/system_exception.hpp"
+#include "asio/system_error.hpp"
 #include "asio/detail/noncopyable.hpp"
 
 namespace asio {
@@ -45,7 +45,9 @@ public:
     int error = ::pthread_mutex_init(&mutex_, 0);
     if (error != 0)
     {
-      system_exception e("event", error);
+      asio::system_error e(
+          asio::error_code(error, asio::native_ecat),
+          "event");
       boost::throw_exception(e);
     }
 
@@ -53,7 +55,9 @@ public:
     if (error != 0)
     {
       ::pthread_mutex_destroy(&mutex_);
-      system_exception e("event", error);
+      asio::system_error e(
+          asio::error_code(errno, asio::native_ecat),
+          "event");
       boost::throw_exception(e);
     }
   }

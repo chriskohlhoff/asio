@@ -59,10 +59,6 @@ int main(int argc, char* argv[])
     // Run the server until stopped.
     s.run();
   }
-  catch (asio::error& e)
-  {
-    std::cerr << "asio error: " << e << "\n";
-  }
   catch (std::exception& e)
   {
     std::cerr << "exception: " << e.what() << "\n";

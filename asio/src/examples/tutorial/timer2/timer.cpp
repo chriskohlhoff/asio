@@ -12,7 +12,7 @@
 #include <asio.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-void print(const asio::error& /*e*/)
+void print(const asio::error_code& /*e*/)
 {
   std::cout << "Hello, world!\n";
 }

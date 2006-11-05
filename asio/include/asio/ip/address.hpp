@@ -24,9 +24,9 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
-#include "asio/error_handler.hpp"
 #include "asio/ip/address_v4.hpp"
 #include "asio/ip/address_v6.hpp"
+#include "asio/detail/throw_error.hpp"
 
 namespace asio {
 namespace ip {
@@ -119,9 +119,9 @@ public:
   {
     if (type_ != ipv4)
     {
-      asio::error error(
+      asio::system_error e(
           asio::error::address_family_not_supported);
-      boost::throw_exception(error);
+      boost::throw_exception(e);
     }
     return ipv4_address_;
   }
@@ -131,9 +131,9 @@ public:
   {
     if (type_ != ipv6)
     {
-      asio::error error(
+      asio::system_error e(
           asio::error::address_family_not_supported);
-      boost::throw_exception(error);
+      boost::throw_exception(e);
     }
     return ipv6_address_;
   }
@@ -147,53 +147,47 @@ public:
   }
 
   /// Get the address as a string in dotted decimal format.
-  template <typename Error_Handler>
-  std::string to_string(Error_Handler error_handler) const
+  std::string to_string(asio::error_code& ec) const
   {
     if (type_ == ipv6)
-      return ipv6_address_.to_string(error_handler);
-    return ipv4_address_.to_string(error_handler);
+      return ipv6_address_.to_string(ec);
+    return ipv4_address_.to_string(ec);
   }
 
   /// Create an address from an IPv4 address string in dotted decimal form,
   /// or from an IPv6 address in hexadecimal notation.
   static address from_string(const char* str)
   {
-    return from_string(str, asio::throw_error());
+    asio::error_code ec;
+    address addr = from_string(str, ec);
+    asio::detail::throw_error(ec);
+    return addr;
   }
 
   /// Create an address from an IPv4 address string in dotted decimal form,
   /// or from an IPv6 address in hexadecimal notation.
-  template <typename Error_Handler>
-  static address from_string(const char* str, Error_Handler error_handler)
+  static address from_string(const char* str, asio::error_code& ec)
   {
-    asio::error error;
     asio::ip::address_v6 ipv6_address =
-      asio::ip::address_v6::from_string(str,
-        asio::assign_error(error));
-    if (!error)
+      asio::ip::address_v6::from_string(str, ec);
+    if (!ec)
     {
       address tmp;
       tmp.type_ = ipv6;
       tmp.ipv6_address_ = ipv6_address;
-      error_handler(error);
       return tmp;
     }
 
-    error = asio::error();
     asio::ip::address_v4 ipv4_address =
-      asio::ip::address_v4::from_string(str,
-        asio::assign_error(error));
-    if (!error)
+      asio::ip::address_v4::from_string(str, ec);
+    if (!ec)
     {
       address tmp;
       tmp.type_ = ipv4;
       tmp.ipv4_address_ = ipv4_address;
-      error_handler(error);
       return tmp;
     }
 
-    error_handler(error);
     return address();
   }
 
@@ -201,16 +195,15 @@ public:
   /// or from an IPv6 address in hexadecimal notation.
   static address from_string(const std::string& str)
   {
-    return from_string(str.c_str(), asio::throw_error());
+    return from_string(str.c_str());
   }
 
   /// Create an address from an IPv4 address string in dotted decimal form,
   /// or from an IPv6 address in hexadecimal notation.
-  template <typename Error_Handler>
   static address from_string(const std::string& str,
-      Error_Handler error_handler)
+      asio::error_code& ec)
   {
-    return from_string(str.c_str(), error_handler);
+    return from_string(str.c_str(), ec);
   }
 
   /// Compare two addresses for equality.

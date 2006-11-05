@@ -62,8 +62,6 @@ test-suite "asio" :
   [ link deadline_timer_service.cpp : $(USE_SELECT) : deadline_timer_service_select ]
   [ run deadline_timer.cpp ]
   [ run deadline_timer.cpp : : : $(USE_SELECT) : deadline_timer_select ]
-  [ run error_handler.cpp ]
-  [ run error_handler.cpp : : : $(USE_SELECT) : error_handler_select ]
   [ run error.cpp ]
   [ run error.cpp : : : $(USE_SELECT) : error_select ]
   [ run io_service.cpp ]

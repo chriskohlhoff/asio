@@ -290,8 +290,9 @@ private:
     timeval* tv = block ? get_timeout(tv_buf) : &tv_buf;
     select_in_progress_ = true;
     lock.unlock();
+    asio::error_code ec;
     int retval = socket_ops::select(static_cast<int>(max_fd + 1),
-        read_fds, write_fds, except_fds, tv);
+        read_fds, write_fds, except_fds, tv, ec);
     lock.lock();
     select_in_progress_ = false;
 
@@ -307,9 +308,12 @@ private:
     {
       // Exception operations must be processed first to ensure that any
       // out-of-band data is read before normal data.
-      except_op_queue_.dispatch_descriptors(except_fds, 0);
-      read_op_queue_.dispatch_descriptors(read_fds, 0);
-      write_op_queue_.dispatch_descriptors(write_fds, 0);
+      except_op_queue_.dispatch_descriptors(except_fds,
+          asio::error::success);
+      read_op_queue_.dispatch_descriptors(read_fds,
+          asio::error::success);
+      write_op_queue_.dispatch_descriptors(write_fds,
+          asio::error::success);
       except_op_queue_.dispatch_cancellations();
       read_op_queue_.dispatch_cancellations();
       write_op_queue_.dispatch_cancellations();

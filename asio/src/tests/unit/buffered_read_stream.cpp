@@ -70,16 +70,14 @@ void test_sync_operations()
   while (bytes_written < sizeof(write_data))
   {
     bytes_written += server_socket.write_some(
-        asio::buffer(write_buf + bytes_written),
-        asio::throw_error());
+        asio::buffer(write_buf + bytes_written));
   }
 
   bytes_read = 0;
   while (bytes_read < sizeof(read_data))
   {
     bytes_read += client_socket.read_some(
-        asio::buffer(read_buf + bytes_read),
-        asio::throw_error());
+        asio::buffer(read_buf + bytes_read));
   }
 
   BOOST_CHECK(bytes_written == sizeof(write_data));
@@ -87,23 +85,22 @@ void test_sync_operations()
   BOOST_CHECK(memcmp(write_data, read_data, sizeof(write_data)) == 0);
 
   server_socket.close();
-  asio::error error;
+  asio::error_code error;
   bytes_read = client_socket.read_some(
-      asio::buffer(read_buf),
-      asio::assign_error(error));
+      asio::buffer(read_buf), error);
 
   BOOST_CHECK(bytes_read == 0);
   BOOST_CHECK(error == asio::error::eof);
 
-  client_socket.close(asio::throw_error());
+  client_socket.close(error);
 }
 
-void handle_accept(const asio::error& e)
+void handle_accept(const asio::error_code& e)
 {
   BOOST_CHECK(!e);
 }
 
-void handle_write(const asio::error& e,
+void handle_write(const asio::error_code& e,
     std::size_t bytes_transferred,
     std::size_t* total_bytes_written)
 {
@@ -113,7 +110,7 @@ void handle_write(const asio::error& e,
   *total_bytes_written += bytes_transferred;
 }
 
-void handle_read(const asio::error& e,
+void handle_read(const asio::error_code& e,
     std::size_t bytes_transferred,
     std::size_t* total_bytes_read)
 {
@@ -123,7 +120,7 @@ void handle_read(const asio::error& e,
   *total_bytes_read += bytes_transferred;
 }
 
-void handle_read_eof(const asio::error& e,
+void handle_read_eof(const asio::error_code& e,
     std::size_t bytes_transferred)
 {
   BOOST_CHECK(e == asio::error::eof);

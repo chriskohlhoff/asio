@@ -52,7 +52,7 @@ public:
             placeholders::bytes_transferred)));
   }
 
-  void handle_read(const error& err, size_t length)
+  void handle_read(const asio::error_code& err, size_t length)
   {
     --op_count_;
 
@@ -78,7 +78,7 @@ public:
       io_service_.post(boost::bind(&session::destroy, this));
   }
 
-  void handle_write(const error& err)
+  void handle_write(const asio::error_code& err)
   {
     --op_count_;
 
@@ -140,7 +140,7 @@ public:
           placeholders::error));
   }
 
-  void handle_accept(session* new_session, const error& err)
+  void handle_accept(session* new_session, const asio::error_code& err)
   {
     if (!err)
     {
@@ -198,10 +198,6 @@ int main(int argc, char* argv[])
       delete threads.front();
       threads.pop_front();
     }
-  }
-  catch (asio::error& e)
-  {
-    std::cerr << "Exception: " << e << "\n";
   }
   catch (std::exception& e)
   {

@@ -82,11 +82,11 @@ public:
   }
 
   /// Perform SSL handshaking.
-  template <typename Stream, typename Error_Handler>
-  void handshake(impl_type& impl, Stream& next_layer,
-      stream_base::handshake_type type, Error_Handler error_handler)
+  template <typename Stream>
+  asio::error_code handshake(impl_type& impl, Stream& next_layer,
+      stream_base::handshake_type type, asio::error_code& ec)
   {
-    service_impl_.handshake(impl, next_layer, type, error_handler);
+    return service_impl_.handshake(impl, next_layer, type, ec);
   }
 
   /// Start an asynchronous SSL handshake.
@@ -98,11 +98,11 @@ public:
   }
 
   /// Shut down SSL on the stream.
-  template <typename Stream, typename Error_Handler>
-  void shutdown(impl_type& impl, Stream& next_layer,
-      Error_Handler error_handler)
+  template <typename Stream>
+  asio::error_code shutdown(impl_type& impl, Stream& next_layer,
+      asio::error_code& ec)
   {
-    service_impl_.shutdown(impl, next_layer, error_handler);
+    return service_impl_.shutdown(impl, next_layer, ec);
   }
 
   /// Asynchronously shut down SSL on the stream.
@@ -113,11 +113,11 @@ public:
   }
 
   /// Write some data to the stream.
-  template <typename Stream, typename Const_Buffers, typename Error_Handler>
+  template <typename Stream, typename Const_Buffers>
   std::size_t write_some(impl_type& impl, Stream& next_layer,
-      const Const_Buffers& buffers, Error_Handler error_handler)
+      const Const_Buffers& buffers, asio::error_code& ec)
   {
-    return service_impl_.write_some(impl, next_layer, buffers, error_handler);
+    return service_impl_.write_some(impl, next_layer, buffers, ec);
   }
 
   /// Start an asynchronous write.
@@ -129,11 +129,11 @@ public:
   }
 
   /// Read some data from the stream.
-  template <typename Stream, typename Mutable_Buffers, typename Error_Handler>
+  template <typename Stream, typename Mutable_Buffers>
   std::size_t read_some(impl_type& impl, Stream& next_layer,
-      const Mutable_Buffers& buffers, Error_Handler error_handler)
+      const Mutable_Buffers& buffers, asio::error_code& ec)
   {
-    return service_impl_.read_some(impl, next_layer, buffers, error_handler);
+    return service_impl_.read_some(impl, next_layer, buffers, ec);
   }
 
   /// Start an asynchronous read.
@@ -145,19 +145,19 @@ public:
   }
 
   /// Peek at the incoming data on the stream.
-  template <typename Stream, typename Mutable_Buffers, typename Error_Handler>
+  template <typename Stream, typename Mutable_Buffers>
   std::size_t peek(impl_type& impl, Stream& next_layer,
-      const Mutable_Buffers& buffers, Error_Handler error_handler)
+      const Mutable_Buffers& buffers, asio::error_code& ec)
   {
-    return service_impl_.peek(impl, next_layer, buffers, error_handler);
+    return service_impl_.peek(impl, next_layer, buffers, ec);
   }
 
   /// Determine the amount of data that may be read without blocking.
-  template <typename Stream, typename Error_Handler>
+  template <typename Stream>
   std::size_t in_avail(impl_type& impl, Stream& next_layer,
-      Error_Handler error_handler)
+      asio::error_code& ec)
   {
-    return service_impl_.in_avail(impl, next_layer, error_handler);
+    return service_impl_.in_avail(impl, next_layer, ec);
   }
 
 private:

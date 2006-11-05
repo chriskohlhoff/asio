@@ -25,6 +25,7 @@ if $(UNIX)
 
 template unit_test
   : <lib>@boost/libs/thread/build/boost_thread
+    <lib>@boost/libs/system/build/boost_system
   : <include>../../../..
     <define>BOOST_ALL_NO_LIB=1
     <threading>multi

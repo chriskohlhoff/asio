@@ -26,10 +26,10 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
-#include "asio/error_handler.hpp"
 #include "asio/ssl/basic_context.hpp"
 #include "asio/ssl/stream_base.hpp"
 #include "asio/ssl/stream_service.hpp"
+#include "asio/detail/throw_error.hpp"
 
 namespace asio {
 namespace ssl {
@@ -66,9 +66,6 @@ public:
 
   /// The type of the lowest layer.
   typedef typename next_layer_type::lowest_layer_type lowest_layer_type;
-
-  /// The type used for reporting errors.
-  typedef typename next_layer_type::error_type error_type;
 
   /// The type of the service that will be used to provide stream operations.
   typedef Service service_type;
@@ -158,11 +155,13 @@ public:
    * @param type The type of handshaking to be performed, i.e. as a client or as
    * a server.
    *
-   * @throws asio::error Thrown on failure.
+   * @throws asio::system_error Thrown on failure.
    */
   void handshake(handshake_type type)
   {
-    service_.handshake(impl_, next_layer_, type, throw_error());
+    asio::error_code ec;
+    service_.handshake(impl_, next_layer_, type, ec);
+    asio::detail::throw_error(ec);
   }
 
   /// Perform SSL handshaking.
@@ -173,17 +172,12 @@ public:
    * @param type The type of handshaking to be performed, i.e. as a client or as
    * a server.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    */
-  template <typename Error_Handler>
-  void handshake(handshake_type type, Error_Handler error_handler)
+  asio::error_code handshake(handshake_type type,
+      asio::error_code& ec)
   {
-    service_.handshake(impl_, next_layer_, type, error_handler);
+    return service_.handshake(impl_, next_layer_, type, ec);
   }
 
   /// Start an asynchronous SSL handshake.
@@ -198,7 +192,7 @@ public:
    * completes. Copies will be made of the handler as required. The equivalent
    * function signature of the handler must be:
    * @code void handler(
-   *   const asio::error& error,     // Result of operation
+   *   const asio::error_code& error // Result of operation.
    * ); @endcode
    */
   template <typename Handler>
@@ -212,11 +206,13 @@ public:
    * This function is used to shut down SSL on the stream. The function call
    * will block until SSL has been shut down or an error occurs.
    *
-   * @throws asio::error Thrown on failure.
+   * @throws asio::system_error Thrown on failure.
    */
   void shutdown()
   {
-    service_.shutdown(impl_, next_layer_, throw_error());
+    asio::error_code ec;
+    service_.shutdown(impl_, next_layer_, ec);
+    asio::detail::throw_error(ec);
   }
 
   /// Shut down SSL on the stream.
@@ -224,17 +220,11 @@ public:
    * This function is used to shut down SSL on the stream. The function call
    * will block until SSL has been shut down or an error occurs.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    */
-  template <typename Error_Handler>
-  void shutdown(Error_Handler error_handler)
+  asio::error_code shutdown(asio::error_code& ec)
   {
-    service_.shutdown(impl_, next_layer_, error_handler);
+    return service_.shutdown(impl_, next_layer_, ec);
   }
 
   /// Asynchronously shut down SSL on the stream.
@@ -246,7 +236,7 @@ public:
    * completes. Copies will be made of the handler as required. The equivalent
    * function signature of the handler must be:
    * @code void handler(
-   *   const asio::error& error,     // Result of operation
+   *   const asio::error_code& error // Result of operation.
    * ); @endcode
    */
   template <typename Handler>
@@ -265,7 +255,7 @@ public:
    *
    * @returns The number of bytes written.
    *
-   * @throws asio::error Thrown on failure.
+   * @throws asio::system_error Thrown on failure.
    *
    * @note The write_some operation may not transmit all of the data to the
    * peer. Consider using the @ref write function if you need to ensure that all
@@ -274,7 +264,10 @@ public:
   template <typename Const_Buffers>
   std::size_t write_some(const Const_Buffers& buffers)
   {
-    return service_.write_some(impl_, next_layer_, buffers, throw_error());
+    asio::error_code ec;
+    std::size_t s = service_.write_some(impl_, next_layer_, buffers, ec);
+    asio::detail::throw_error(ec);
+    return s;
   }
 
   /// Write some data to the stream.
@@ -285,25 +278,19 @@ public:
    *
    * @param buffers The data to be written to the stream.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const asio::error& error // Result of operation.
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    *
-   * @returns The number of bytes written. Returns 0 if an error occurred and
-   * the error handler did not throw an exception.
+   * @returns The number of bytes written. Returns 0 if an error occurred.
    *
    * @note The write_some operation may not transmit all of the data to the
    * peer. Consider using the @ref write function if you need to ensure that all
    * data is written before the blocking operation completes.
    */
-  template <typename Const_Buffers, typename Error_Handler>
+  template <typename Const_Buffers>
   std::size_t write_some(const Const_Buffers& buffers,
-      Error_Handler error_handler)
+      asio::error_code& ec)
   {
-    return service_.write_some(impl_, next_layer_, buffers, error_handler);
+    return service_.write_some(impl_, next_layer_, buffers, ec);
   }
 
   /// Start an asynchronous write.
@@ -320,8 +307,8 @@ public:
    * Copies will be made of the handler as required. The equivalent function
    * signature of the handler must be:
    * @code void handler(
-   *   const asio::error& error,     // Result of operation.
-   *   std::size_t bytes_transferred // Number of bytes written.
+   *   const asio::error_code& error, // Result of operation.
+   *   std::size_t bytes_transferred           // Number of bytes written.
    * ); @endcode
    *
    * @note The async_write_some operation may not transmit all of the data to
@@ -344,7 +331,7 @@ public:
    *
    * @returns The number of bytes read.
    *
-   * @throws asio::error Thrown on failure.
+   * @throws asio::system_error Thrown on failure.
    *
    * @note The read_some operation may not read all of the requested number of
    * bytes. Consider using the @ref read function if you need to ensure that the
@@ -353,7 +340,10 @@ public:
   template <typename Mutable_Buffers>
   std::size_t read_some(const Mutable_Buffers& buffers)
   {
-    return service_.read_some(impl_, next_layer_, buffers, throw_error());
+    asio::error_code ec;
+    std::size_t s = service_.read_some(impl_, next_layer_, buffers, ec);
+    asio::detail::throw_error(ec);
+    return s;
   }
 
   /// Read some data from the stream.
@@ -364,25 +354,19 @@ public:
    *
    * @param buffers The buffers into which the data will be read.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const asio::error& error // Result of operation.
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    *
-   * @returns The number of bytes read. Returns 0 if an error occurred and the
-   * error handler did not throw an exception.
+   * @returns The number of bytes read. Returns 0 if an error occurred.
    *
    * @note The read_some operation may not read all of the requested number of
    * bytes. Consider using the @ref read function if you need to ensure that the
    * requested amount of data is read before the blocking operation completes.
    */
-  template <typename Mutable_Buffers, typename Error_Handler>
+  template <typename Mutable_Buffers>
   std::size_t read_some(const Mutable_Buffers& buffers,
-      Error_Handler error_handler)
+      asio::error_code& ec)
   {
-    return service_.read_some(impl_, next_layer_, buffers, error_handler);
+    return service_.read_some(impl_, next_layer_, buffers, ec);
   }
 
   /// Start an asynchronous read.
@@ -399,8 +383,8 @@ public:
    * Copies will be made of the handler as required. The equivalent function
    * signature of the handler must be:
    * @code void handler(
-   *   const asio::error& error,     // Result of operation.
-   *   std::size_t bytes_transferred // Number of bytes read.
+   *   const asio::error_code& error, // Result of operation.
+   *   std::size_t bytes_transferred           // Number of bytes read.
    * ); @endcode
    *
    * @note The async_read_some operation may not read all of the requested
@@ -424,12 +408,15 @@ public:
    *
    * @returns The number of bytes read.
    *
-   * @throws asio::error Thrown on failure.
+   * @throws asio::system_error Thrown on failure.
    */
   template <typename Mutable_Buffers>
   std::size_t peek(const Mutable_Buffers& buffers)
   {
-    return service_.peek(impl_, next_layer_, buffers, throw_error());
+    asio::error_code ec;
+    std::size_t s = service_.peek(impl_, next_layer_, buffers, ec);
+    asio::detail::throw_error(ec);
+    return s;
   }
 
   /// Peek at the incoming data on the stream.
@@ -440,20 +427,15 @@ public:
    *
    * @param buffers The buffers into which the data will be read.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const asio::error& error // Result of operation.
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    *
-   * @returns The number of bytes read. Returns 0 if an error occurred and the
-   * error handler did not throw an exception.
+   * @returns The number of bytes read. Returns 0 if an error occurred.
    */
-  template <typename Mutable_Buffers, typename Error_Handler>
-  std::size_t peek(const Mutable_Buffers& buffers, Error_Handler error_handler)
+  template <typename Mutable_Buffers>
+  std::size_t peek(const Mutable_Buffers& buffers,
+      asio::error_code& ec)
   {
-    return service_.peek(impl_, next_layer_, buffers, error_handler);
+    return service_.peek(impl_, next_layer_, buffers, ec);
   }
 
   /// Determine the amount of data that may be read without blocking.
@@ -463,11 +445,14 @@ public:
    *
    * @returns The number of bytes of data that can be read without blocking.
    *
-   * @throws asio::error Thrown on failure.
+   * @throws asio::system_error Thrown on failure.
    */
   std::size_t in_avail()
   {
-    return service_.in_avail(impl_, next_layer_, throw_error());
+    asio::error_code ec;
+    std::size_t s = service_.in_avail(impl_, next_layer_, ec);
+    asio::detail::throw_error(ec);
+    return s;
   }
 
   /// Determine the amount of data that may be read without blocking.
@@ -475,19 +460,13 @@ public:
    * This function is used to determine the amount of data, in bytes, that may
    * be read from the stream without blocking.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    *
    * @returns The number of bytes of data that can be read without blocking.
    */
-  template <typename Error_Handler>
-  std::size_t in_avail(Error_Handler error_handler)
+  std::size_t in_avail(asio::error_code& ec)
   {
-    return service_.in_avail(impl_, next_layer_, error_handler);
+    return service_.in_avail(impl_, next_layer_, ec);
   }
 
 private:

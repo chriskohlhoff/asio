@@ -29,14 +29,12 @@ namespace ip_address_v6_compile {
 
 using namespace asio;
 
-void error_handler(const error&)
-{
-}
-
 void test()
 {
   try
   {
+    asio::error_code ec;
+
     // address_v6 constructors.
 
     ip::address_v6 addr1;
@@ -88,16 +86,16 @@ void test()
     (void)bytes_value;
 
     std::string string_value = addr1.to_string();
-    string_value = addr1.to_string(error_handler);
+    string_value = addr1.to_string(ec);
 
     ip::address_v4 addr3 = addr1.to_v4();
 
     // address_v6 static functions.
 
     addr1 = ip::address_v6::from_string("0::0");
-    addr1 = ip::address_v6::from_string("0::0", error_handler);
+    addr1 = ip::address_v6::from_string("0::0", ec);
     addr1 = ip::address_v6::from_string(string_value);
-    addr1 = ip::address_v6::from_string(string_value, error_handler);
+    addr1 = ip::address_v6::from_string(string_value, ec);
 
     addr1 = ip::address_v6::any();
 

@@ -50,10 +50,6 @@ int main(int argc, char* argv[])
     std::cout.write(reply, reply_length);
     std::cout << "\n";
   }
-  catch (asio::error& e)
-  {
-    std::cerr << e << "\n";
-  }
   catch (std::exception& e)
   {
     std::cerr << "Exception: " << e.what() << "\n";
