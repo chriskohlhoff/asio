@@ -33,7 +33,10 @@ sub print_line
   # Warn if the resulting line is >80 characters wide.
   if (length($line) > 80)
   {
-    print("Warning: $from:$lineno: output >80 characters wide.\n");
+    if ($from =~ /\.[chi]pp$/)
+    {
+      print("Warning: $from:$lineno: output >80 characters wide.\n");
+    }
   }
 
   # Write the output.
@@ -67,6 +70,206 @@ sub source_contains_asio_thread_usage
   return 0;
 }
 
+sub source_contains_asio_error_code_include
+{
+  my ($from) = @_;
+
+  # Open the input file.
+  open(my $input, "<$from") or die("Can't open $from for reading");
+
+  # Check file for inclusion of asio/error_code.hpp.
+  while (my $line = <$input>)
+  {
+    chomp($line);
+    if ($line =~ /# *include [<"]asio\/error_code\.hpp[>"]/)
+    {
+      close($input);
+      return 1;
+    }
+  }
+
+  close($input);
+  return 0;
+}
+
+sub source_contains_asio_system_error_include
+{
+  my ($from) = @_;
+
+  # Open the input file.
+  open(my $input, "<$from") or die("Can't open $from for reading");
+
+  # Check file for inclusion of asio/system_error.hpp.
+  while (my $line = <$input>)
+  {
+    chomp($line);
+    if ($line =~ /# *include [<"]asio\/system_error\.hpp[>"]/)
+    {
+      close($input);
+      return 1;
+    }
+  }
+
+  close($input);
+  return 0;
+}
+
+my $error_cat_decls = <<"EOF";
+#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+  static boost::system::error_category netdb_ecat;
+  static int netdb_ed(const boost::system::error_code& ec);
+  static std::string netdb_md(const boost::system::error_code& ec);
+  static boost::system::wstring_t netdb_wmd(
+      const boost::system::error_code& ec);
+
+  static boost::system::error_category addrinfo_ecat;
+  static int addrinfo_ed(const boost::system::error_code& ec);
+  static std::string addrinfo_md(const boost::system::error_code& ec);
+  static boost::system::wstring_t addrinfo_wmd(
+      const boost::system::error_code& ec);
+
+  static boost::system::error_category eof_ecat;
+  static int eof_ed(const boost::system::error_code& ec);
+  static std::string eof_md(const boost::system::error_code& ec);
+  static boost::system::wstring_t eof_wmd(const boost::system::error_code& ec);
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
+  static boost::system::error_category ssl_ecat;
+  static int ssl_ed(const boost::system::error_code& ec);
+  static std::string ssl_md(const boost::system::error_code& ec);
+  static boost::system::wstring_t ssl_wmd(const boost::system::error_code& ec);
+EOF
+
+my $error_cat_defns = <<"EOF";
+#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
+template <typename T>
+boost::system::error_category error_base<T>::netdb_ecat(
+    boost::system::error_code::new_category(&error_base<T>::netdb_ed,
+      &error_base<T>::netdb_md, &error_base<T>::netdb_wmd));
+
+template <typename T>
+int error_base<T>::netdb_ed(const boost::system::error_code& ec)
+{
+  return EOTHER;
+}
+
+template <typename T>
+std::string error_base<T>::netdb_md(const boost::system::error_code& ec)
+{
+  if (ec == error_base<T>::host_not_found)
+    return "Host not found (authoritative)";
+  if (ec == error_base<T>::host_not_found_try_again)
+    return "Host not found (non-authoritative), try again later";
+  if (ec == error_base<T>::no_data)
+    return "The query is valid, but it does not have associated data";
+  if (ec == error_base<T>::no_recovery)
+    return "A non-recoverable error occurred during database lookup";
+  return "EINVAL";
+}
+
+template <typename T>
+boost::system::wstring_t error_base<T>::netdb_wmd(
+    const boost::system::error_code& ec)
+{
+  if (ec == error_base<T>::host_not_found)
+    return L"Host not found (authoritative)";
+  if (ec == error_base<T>::host_not_found_try_again)
+    return L"Host not found (non-authoritative), try again later";
+  if (ec == error_base<T>::no_data)
+    return L"The query is valid, but it does not have associated data";
+  if (ec == error_base<T>::no_recovery)
+    return L"A non-recoverable error occurred during database lookup";
+  return L"EINVAL";
+}
+
+template <typename T>
+boost::system::error_category error_base<T>::addrinfo_ecat(
+    boost::system::error_code::new_category(&error_base<T>::addrinfo_ed,
+      &error_base<T>::addrinfo_md, &error_base<T>::addrinfo_wmd));
+
+template <typename T>
+int error_base<T>::addrinfo_ed(const boost::system::error_code& ec)
+{
+  return EOTHER;
+}
+
+template <typename T>
+std::string error_base<T>::addrinfo_md(const boost::system::error_code& ec)
+{
+  if (ec == error_base<T>::service_not_found)
+    return "Service not found";
+  if (ec == error_base<T>::socket_type_not_supported)
+    return "Socket type not supported";
+  return "EINVAL";
+}
+
+template <typename T>
+boost::system::wstring_t error_base<T>::addrinfo_wmd(
+    const boost::system::error_code& ec)
+{
+  if (ec == error_base<T>::service_not_found)
+    return L"Service not found";
+  if (ec == error_base<T>::socket_type_not_supported)
+    return L"Socket type not supported";
+  return L"EINVAL";
+}
+
+template <typename T>
+boost::system::error_category error_base<T>::eof_ecat(
+    boost::system::error_code::new_category(&error_base<T>::eof_ed,
+      &error_base<T>::eof_md, &error_base<T>::eof_wmd));
+
+template <typename T>
+int error_base<T>::eof_ed(const boost::system::error_code& ec)
+{
+  return EOTHER;
+}
+
+template <typename T>
+std::string error_base<T>::eof_md(const boost::system::error_code& ec)
+{
+  if (ec == error_base<T>::eof)
+    return "End of file";
+  return "EINVAL";
+}
+
+template <typename T>
+boost::system::wstring_t error_base<T>::eof_wmd(
+    const boost::system::error_code& ec)
+{
+  if (ec == error_base<T>::eof)
+    return L"End of file";
+  return L"EINVAL";
+}
+
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
+template <typename T>
+boost::system::error_category error_base<T>::ssl_ecat(
+    boost::system::error_code::new_category(&error_base<T>::ssl_ed,
+      &error_base<T>::ssl_md, &error_base<T>::ssl_wmd));
+
+template <typename T>
+int error_base<T>::ssl_ed(const boost::system::error_code& ec)
+{
+  return EOTHER;
+}
+
+template <typename T>
+std::string error_base<T>::ssl_md(const boost::system::error_code& ec)
+{
+  return "SSL error";
+}
+
+template <typename T>
+boost::system::wstring_t error_base<T>::ssl_wmd(
+    const boost::system::error_code& ec)
+{
+  return L"SSL error";
+}
+EOF
+
 sub copy_source_file
 {
   my ($from, $to) = @_;
@@ -78,6 +281,10 @@ sub copy_source_file
 
   # First determine whether the file makes any use of asio::thread.
   my $uses_asio_thread = source_contains_asio_thread_usage($from);
+
+  # Check whether the file includes error handling header files.
+  my $includes_error_code = source_contains_asio_error_code_include($from);
+  my $includes_system_error = source_contains_asio_system_error_include($from);
 
   # Open the files.
   open(my $input, "<$from") or die("Can't open $from for reading");
@@ -106,7 +313,33 @@ sub copy_source_file
         print_line($output, $1 . "<boost/thread.hpp>", $from, $lineno);
       }
     }
+    elsif ($line =~ /^(# *include )[<"](asio\/detail\/pop_options\.hpp)[>"]$/)
+    {
+      if ($includes_error_code)
+      {
+        $includes_error_code = 0;
+        print_line($output, $1 . "<boost/system/error_code.hpp>", $from, $lineno);
+      }
+      if ($includes_system_error)
+      {
+        $includes_system_error = 0;
+        print_line($output, $1 . "<boost/system/system_error.hpp>", $from, $lineno);
+      }
+      print_line($output, $1 . "<boost/" . $2 . ">", $from, $lineno);
+    }
     elsif ($line =~ /# *include [<"]asio\/thread\.hpp[>"]/)
+    {
+      # Line is removed.
+    }
+    elsif ($line =~ /# *include [<"]asio\/error_code\.hpp[>"]/)
+    {
+      # Line is removed.
+    }
+    elsif ($line =~ /# *include [<"]asio\/impl\/error_code\.ipp[>"]/)
+    {
+      # Line is removed.
+    }
+    elsif ($line =~ /# *include [<"]asio\/system_error\.hpp[>"]/)
     {
       # Line is removed.
     }
@@ -136,8 +369,33 @@ sub copy_source_file
       }
       print_line($output, $1 . "boost::thread" . $2, $from, $lineno);
     }
+    elsif ($line =~ /boostify: error category declarations go here/)
+    {
+      print($output $error_cat_decls);
+    }
+    elsif ($line =~ /boostify: error category definitions go here/)
+    {
+      print($output $error_cat_defns);
+    }
     elsif ($line =~ /asio::/ && !($line =~ /boost::asio::/))
     {
+      $line =~ s/asio::error_code/boost::system::error_code/g;
+      $line =~ s/asio::system_error/boost::system::system_error/g;
+      $line =~ s/asio::native_ecat/boost::system::native_ecat/g;
+      if ($from =~ /error\.hpp/)
+      {
+        $line =~ s/asio::netdb_ecat/asio::error_base<T>::netdb_ecat/g;
+        $line =~ s/asio::addrinfo_ecat/asio::error_base<T>::addrinfo_ecat/g;
+        $line =~ s/asio::eof_ecat/asio::error_base<T>::eof_ecat/g;
+        $line =~ s/asio::ssl_ecat/asio::error_base<T>::ssl_ecat/g;
+      }
+      else
+      {
+        $line =~ s/asio::netdb_ecat/asio::error::netdb_ecat/g;
+        $line =~ s/asio::addrinfo_ecat/asio::error::addrinfo_ecat/g;
+        $line =~ s/asio::eof_ecat/asio::error::eof_ecat/g;
+        $line =~ s/asio::ssl_ecat/asio::error::ssl_ecat/g;
+      }
       $line =~ s/asio::/boost::asio::/g;
       print_line($output, $line, $from, $lineno);
     }
@@ -153,7 +411,7 @@ sub copy_source_file
     }
     elsif ($line =~ /asio_handler_dispatch_helpers/)
     {
-      $line =~ s/asio_handler_dispatch_helpers/boost_asio_handler_dispatch_helpers/g;
+      $line =~ s/asio_handler_invoke_helpers/boost_asio_handler_invoke_helpers/g;
       print_line($output, $line, $from, $lineno);
     }
     else
@@ -186,7 +444,10 @@ sub copy_include_files
     my @files = ( glob("$dir/*.hpp"), glob("$dir/*.ipp") );
     foreach my $file (@files)
     {
-      if ($file ne "include/asio/thread.hpp")
+      if ($file ne "include/asio/thread.hpp"
+          and $file ne "include/asio/error_code.hpp"
+          and $file ne "include/asio/system_error.hpp"
+          and $file ne "include/asio/impl/error_code.ipp")
       {
         my $from = $file;
         my $to = $file;
@@ -224,7 +485,8 @@ sub copy_unit_tests
     my @files = ( glob("$dir/*.*pp"), glob("$dir/Jamfile*") );
     foreach my $file (@files)
     {
-      if ($file ne "src/tests/unit/thread_test.cpp")
+      if ($file ne "src/tests/unit/thread.cpp"
+          and $file ne "src/tests/unit/error_handler.cpp")
       {
         my $from = $file;
         my $to = $file;
@@ -412,4 +674,4 @@ copy_examples();
 copy_docs();
 create_root_html();
 #create_doc_html();
-execute_doxygen();
+#execute_doxygen();

@@ -288,7 +288,8 @@ private:
           {
             DWORD last_error = ::GetLastError();
             asio::system_error e(
-                asio::error_code(last_error, asio::native_ecat),
+                asio::error_code(last_error, 
+                  asio::native_ecat),
                 "pqcs");
             boost::throw_exception(e);
           }

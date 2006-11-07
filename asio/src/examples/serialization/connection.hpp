@@ -64,7 +64,7 @@ public:
     if (!header_stream || header_stream.str().size() != header_length)
     {
       // Something went wrong, inform the caller.
-      asio::error error(asio::error::invalid_argument);
+      asio::error_code error(asio::error::invalid_argument);
       socket_.io_service().post(boost::bind(handler, error));
       return;
     }
@@ -83,7 +83,9 @@ public:
   void async_read(T& t, Handler handler)
   {
     // Issue a read operation to read exactly the number of bytes in a header.
-    void (connection::*f)(const asio::error&, T&, boost::tuple<Handler>)
+    void (connection::*f)(
+        const asio::error_code&,
+        T&, boost::tuple<Handler>)
       = &connection::handle_read_header<T, Handler>;
     asio::async_read(socket_, asio::buffer(inbound_header_),
         boost::bind(f,
@@ -95,8 +97,8 @@ public:
   /// a tuple since boost::bind seems to have trouble binding a function object
   /// created using boost::bind as a parameter.
   template <typename T, typename Handler>
-  void handle_read_header(const asio::error& e, T& t,
-      boost::tuple<Handler> handler)
+  void handle_read_header(const asio::error_code& e,
+      T& t, boost::tuple<Handler> handler)
   {
     if (e)
     {
@@ -110,14 +112,16 @@ public:
       if (!(is >> std::hex >> inbound_data_size))
       {
         // Header doesn't seem to be valid. Inform the caller.
-        asio::error error(asio::error::invalid_argument);
+        asio::error_code error(asio::error::invalid_argument);
         boost::get<0>(handler)(error);
         return;
       }
 
       // Start an asynchronous call to receive the data.
       inbound_data_.resize(inbound_data_size);
-      void (connection::*f)(const asio::error&, T&, boost::tuple<Handler>)
+      void (connection::*f)(
+          const asio::error_code&,
+          T&, boost::tuple<Handler>)
         = &connection::handle_read_data<T, Handler>;
       asio::async_read(socket_, asio::buffer(inbound_data_),
         boost::bind(f, this,
@@ -127,8 +131,8 @@ public:
 
   /// Handle a completed read of message data.
   template <typename T, typename Handler>
-  void handle_read_data(const asio::error& e, T& t,
-      boost::tuple<Handler> handler)
+  void handle_read_data(const asio::error_code& e,
+      T& t, boost::tuple<Handler> handler)
   {
     if (e)
     {
@@ -147,7 +151,7 @@ public:
       catch (std::exception& e)
       {
         // Unable to decode data.
-        asio::error error(asio::error::invalid_argument);
+        asio::error_code error(asio::error::invalid_argument);
         boost::get<0>(handler)(error);
         return;
       }

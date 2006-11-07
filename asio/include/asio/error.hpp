@@ -70,6 +70,8 @@ template <typename T>
 class error_base
 {
 public:
+  // boostify: error category declarations go here.
+
   /// Permission denied.
   static const asio::error_code access_denied;
 
@@ -191,11 +193,14 @@ private:
   error_base();
 };
 
+// boostify: error category definitions go here.
+
 template <typename T> const asio::error_code
 error_base<T>::access_denied = ASIO_SOCKET_ERROR(EACCES);
 
 template <typename T> const asio::error_code
-error_base<T>::address_family_not_supported = ASIO_SOCKET_ERROR(EAFNOSUPPORT);
+error_base<T>::address_family_not_supported = ASIO_SOCKET_ERROR(
+    EAFNOSUPPORT);
 
 template <typename T> const asio::error_code
 error_base<T>::address_in_use = ASIO_SOCKET_ERROR(EADDRINUSE);

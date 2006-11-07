@@ -28,6 +28,7 @@ local USE_SELECT =
 project
   : requirements
     <library>/boost/date_time//boost_date_time
+    <library>/boost/system//boost_system
     <library>/boost/thread//boost_thread
     <define>BOOST_ALL_NO_LIB=1
     <threading>multi
@@ -102,8 +103,8 @@ test-suite "asio" :
   [ link placeholders.cpp : $(USE_SELECT) : placeholders_select ]
   [ run read.cpp ]
   [ run read.cpp : : : $(USE_SELECT) : read_select ]
-  [ run read_until.cpp ]
-  [ run read_until.cpp : : : $(USE_SELECT) : read_until_select ]
+  [ link read_until.cpp ]
+  [ link read_until.cpp : $(USE_SELECT) : read_until_select ]
   [ link socket_acceptor_service.cpp ]
   [ link socket_acceptor_service.cpp : $(USE_SELECT) : socket_acceptor_service_select ]
   [ run socket_base.cpp ]

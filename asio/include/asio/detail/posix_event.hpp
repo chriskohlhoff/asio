@@ -56,7 +56,7 @@ public:
     {
       ::pthread_mutex_destroy(&mutex_);
       asio::system_error e(
-          asio::error_code(errno, asio::native_ecat),
+          asio::error_code(error, asio::native_ecat),
           "event");
       boost::throw_exception(e);
     }

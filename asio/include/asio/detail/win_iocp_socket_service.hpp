@@ -1916,7 +1916,8 @@ public:
       // If connection failed then post the handler with the error code.
       if (connect_error)
       {
-        ec = asio::error_code(connect_error, asio::native_ecat);
+        ec = asio::error_code(
+            connect_error, asio::native_ecat);
         io_service_.post(bind_handler(handler_, ec));
         return true;
       }

@@ -1404,9 +1404,11 @@ inline asio::error_code translate_addrinfo_error(int error)
     return asio::error::socket_type_not_supported;
   default: // Possibly the non-portable EAI_SYSTEM.
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-    return asio::error_code(WSAGetLastError(), asio::native_ecat);
+    return asio::error_code(
+        WSAGetLastError(), asio::native_ecat);
 #else
-    return asio::error_code(errno, asio::native_ecat);
+    return asio::error_code(
+        errno, asio::native_ecat);
 #endif
   }
 }
