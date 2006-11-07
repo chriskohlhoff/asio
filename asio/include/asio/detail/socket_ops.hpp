@@ -367,6 +367,7 @@ inline int select(int nfds, fd_set* readfds, fd_set* writefds,
     DWORD milliseconds = timeout->tv_sec * 1000 + timeout->tv_usec / 1000;
     if (milliseconds == 0)
       milliseconds = 1; // Force context switch.
+    ::Sleep(milliseconds);
     ec = asio::error::success;
     return 0;
   }
