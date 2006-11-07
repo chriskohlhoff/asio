@@ -37,7 +37,7 @@ inline std::string error_code::message() const
       | FORMAT_MESSAGE_FROM_SYSTEM
       | FORMAT_MESSAGE_IGNORE_INSERTS, 0, value_,
       MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (char*)&msg, 0, 0);
-  detail::win_local_free_on_block_exit local_free_obj(msg);
+  detail::local_free_on_block_exit local_free_obj(msg);
   if (length && msg[length - 1] == '\n')
     msg[--length] = '\0';
   if (length && msg[length - 1] == '\r')

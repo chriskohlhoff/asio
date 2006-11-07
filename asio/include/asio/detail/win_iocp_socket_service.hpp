@@ -225,8 +225,9 @@ public:
         ::linger opt;
         opt.l_onoff = 0;
         opt.l_linger = 0;
+        asio::error_code ignored_ec;
         socket_ops::setsockopt(impl.socket_,
-            SOL_SOCKET, SO_LINGER, &opt, sizeof(opt));
+            SOL_SOCKET, SO_LINGER, &opt, sizeof(opt), ignored_ec);
       }
 
       asio::error_code ignored_ec;
@@ -354,6 +355,8 @@ public:
       // so cancellation is not safe.
       ec = asio::error::not_supported;
     }
+
+    return ec;
   }
 
   // Bind the socket to the specified local endpoint.
@@ -667,7 +670,7 @@ public:
     if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
     {
       ptr.reset();
-      asio::error error(asio::error::success);
+      asio::error_code error(asio::error::success);
       iocp_service_.post(bind_handler(handler, error, 0));
       return;
     }
@@ -1015,7 +1018,7 @@ public:
     if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
     {
       ptr.reset();
-      asio::error error(asio::error::success);
+      asio::error_code error(asio::error::success);
       iocp_service_.post(bind_handler(handler, error, 0));
       return;
     }
@@ -1221,14 +1224,14 @@ public:
 
   // Accept a new connection.
   template <typename Socket>
-  void accept(implementation_type& impl, Socket& peer,
+  asio::error_code accept(implementation_type& impl, Socket& peer,
       asio::error_code& ec)
   {
     // We cannot accept a socket that is already open.
     if (peer.native() != invalid_socket)
     {
       ec = asio::error::already_connected;
-      return;
+      return ec;
     }
 
     for (;;)
@@ -1244,27 +1247,27 @@ public:
         }
         else
         {
-          return;
+          return ec;
         }
       }
 
       peer.assign(impl.protocol_, new_socket.get(), ec);
       if (!ec)
         new_socket.release();
-      return;
+      return ec;
     }
   }
 
   // Accept a new connection.
   template <typename Socket>
-  void accept_endpoint(implementation_type& impl, Socket& peer,
-      endpoint_type& peer_endpoint, asio::error_code& ec)
+  asio::error_code accept_endpoint(implementation_type& impl,
+      Socket& peer, endpoint_type& peer_endpoint, asio::error_code& ec)
   {
     // We cannot accept a socket that is already open.
     if (peer.native() != invalid_socket)
     {
       ec = asio::error::already_connected;
-      return;
+      return ec;
     }
 
     for (;;)
@@ -1272,7 +1275,7 @@ public:
       socket_addr_len_type addr_len = peer_endpoint.capacity();
       socket_holder new_socket(socket_ops::accept(
             impl.socket_, peer_endpoint.data(), &addr_len, ec));
-      if (int err = socket_ops::get_error())
+      if (ec)
       {
         if (ec == asio::error::connection_aborted
             && !(impl.flags_ & implementation_type::enable_connection_aborted))
@@ -1282,7 +1285,7 @@ public:
         }
         else
         {
-          return;
+          return ec;
         }
       }
 
@@ -1291,7 +1294,7 @@ public:
       peer.assign(impl.protocol_, new_socket.get(), ec);
       if (!ec)
         new_socket.release();
-      return;
+      return ec;
     }
   }
 
@@ -1414,7 +1417,7 @@ public:
             &local_addr, &local_addr_length, &remote_addr, &remote_addr_length);
         if (remote_addr_length > peer_endpoint.capacity())
         {
-          last_error = asio::error::invalid_argument;
+          last_error = asio::error::invalid_argument.value();
         }
         else
         {
@@ -1821,7 +1824,7 @@ public:
     {
       if (!enable_connection_aborted
           && (last_error == ERROR_NETNAME_DELETED
-            || last_error == asio::error::connection_aborted))
+            || last_error == WSAECONNABORTED))
       {
         // Post handler so that operation will be restarted again. We do not
         // perform the AcceptEx again here to avoid the possibility of starving
