@@ -1,6 +1,6 @@
 //
-// address_v6_test.cpp
-// ~~~~~~~~~~~~~~~~~~~
+// address_v6.cpp
+// ~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //

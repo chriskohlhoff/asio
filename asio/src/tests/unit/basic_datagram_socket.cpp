@@ -1,6 +1,6 @@
 //
-// basic_datagram_socket_test.cpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// basic_datagram_socket.cpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //

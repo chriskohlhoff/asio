@@ -1,6 +1,6 @@
 //
-// deadline_timer_service_test.cpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// deadline_timer_service.cpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //

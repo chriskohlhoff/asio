@@ -1,6 +1,6 @@
 //
-// basic_resolver_iterator_test.cpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// basic_resolver_iterator.cpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //

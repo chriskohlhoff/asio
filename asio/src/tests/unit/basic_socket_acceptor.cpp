@@ -1,6 +1,6 @@
 //
-// basic_socket_acceptor_test.cpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// basic_socket_acceptor.cpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //

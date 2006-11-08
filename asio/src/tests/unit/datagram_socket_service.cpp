@@ -1,6 +1,6 @@
 //
-// datagram_socket_service_test.cpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// datagram_socket_service.cpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //

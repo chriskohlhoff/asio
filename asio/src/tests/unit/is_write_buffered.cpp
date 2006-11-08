@@ -1,6 +1,6 @@
 //
-// is_write_buffered_test.cpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~
+// is_write_buffered.cpp
+// ~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //

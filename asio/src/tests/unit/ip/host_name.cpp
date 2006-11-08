@@ -1,6 +1,6 @@
 //
-// host_name_test.cpp
-// ~~~~~~~~~~~~~~~~~~
+// host_name.cpp
+// ~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------
 
 // ip_host_name_compile test
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~
 // The following test checks that all host_name functions compile and link
 // correctly. Runtime failures are ignored.
 

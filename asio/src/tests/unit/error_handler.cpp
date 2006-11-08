@@ -1,6 +1,6 @@
 //
-// error_handler_test.cpp
-// ~~~~~~~~~~~~~~~~~~~~~~
+// error_handler.cpp
+// ~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //

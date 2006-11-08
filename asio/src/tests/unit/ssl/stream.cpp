@@ -1,6 +1,6 @@
 //
-// stream_test.cpp
-// ~~~~~~~~~~~~~~~
+// stream.cpp
+// ~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //

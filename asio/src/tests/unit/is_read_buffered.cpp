@@ -1,6 +1,6 @@
 //
-// is_read_buffered_test.cpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~
+// is_read_buffered.cpp
+// ~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //

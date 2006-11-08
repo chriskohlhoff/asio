@@ -1,6 +1,6 @@
 //
-// socket_acceptor_service_test.cpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// socket_acceptor_service.cpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
