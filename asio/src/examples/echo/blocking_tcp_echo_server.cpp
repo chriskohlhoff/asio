@@ -33,7 +33,7 @@ void session(socket_ptr sock)
       if (error == asio::error::eof)
         break; // Connection closed cleanly by peer.
       else if (error)
-        throw error; // Some other error.
+        throw asio::system_error(error); // Some other error.
 
       asio::write(*sock, asio::buffer(data, length));
     }

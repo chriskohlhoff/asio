@@ -40,7 +40,7 @@ int main()
           remote_endpoint, 0, error);
 
       if (error && error != asio::error::message_size)
-        throw error;
+        throw asio::system_error(error);
 
       std::string message = make_daytime_string();
 

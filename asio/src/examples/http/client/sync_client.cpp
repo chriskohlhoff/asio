@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
       socket.connect(*endpoint_iterator++, error);
     }
     if (error)
-      throw error;
+      throw asio::system_error(error);
 
     // Form the request. We specify the "Connection: close" header so that the
     // server will close the socket after transmitting the response. This will
@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
           asio::transfer_at_least(1), error))
       std::cout << &response;
     if (error != asio::error::eof)
-      throw error;
+      throw asio::system_error(error);
   }
   catch (std::exception& e)
   {
