@@ -136,12 +136,6 @@ public:
    * This function does not block, but instead simply signals to the io_service
    * that all invocations of its run() or run_one() member functions should
    * return as soon as possible.
-   *
-   * Note that if the run() function is interrupted and is not called again
-   * later then its work may not have finished and handlers may not be
-   * delivered. In this case an io_service implementation is not required to
-   * make any guarantee that the resources associated with unfinished work will
-   * be cleaned up.
    */
   void interrupt();
 
