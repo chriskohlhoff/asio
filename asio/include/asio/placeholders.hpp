@@ -42,7 +42,7 @@ unspecified bytes_transferred;
 /// asio::basic_resolver::resolve.
 unspecified iterator;
 
-#elif defined(__BORLANDC__)
+#elif defined(__BORLANDC__) || defined(__GNUC__)
 
 inline boost::arg<1> error()
 {
