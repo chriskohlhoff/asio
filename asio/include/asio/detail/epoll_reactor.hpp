@@ -506,10 +506,9 @@ private:
     int fd = epoll_create(epoll_size);
     if (fd == -1)
     {
-      asio::system_error e(
-          asio::error_code(errno, asio::native_ecat),
-          "epoll");
-      boost::throw_exception(e);
+      boost::throw_exception(asio::system_error(
+            asio::error_code(errno, asio::native_ecat),
+            "epoll"));
     }
     return fd;
   }

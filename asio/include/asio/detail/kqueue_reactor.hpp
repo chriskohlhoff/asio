@@ -510,10 +510,9 @@ private:
     int fd = kqueue();
     if (fd == -1)
     {
-      asio::system_error e(
-          asio::error_code(errno, asio::native_ecat),
-          "kqueue");
-      boost::throw_exception(e);
+      boost::throw_exception(asio::system_error(
+            asio::error_code(errno, asio::native_ecat),
+            "kqueue"));
     }
     return fd;
   }
