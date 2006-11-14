@@ -51,7 +51,8 @@ public:
 
   /// Copy constructor.
   system_error(const system_error& other)
-    : code_(other.code_),
+    : std::exception(other),
+      code_(other.code_),
       context_(other.context_),
       what_()
   {
