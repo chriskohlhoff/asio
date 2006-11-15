@@ -17,6 +17,10 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <limits>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/detail/epoll_reactor.hpp"
 #include "asio/detail/kqueue_reactor.hpp"
 #include "asio/detail/select_reactor.hpp"
@@ -29,6 +33,14 @@ inline io_service::io_service()
   : service_registry_(*this),
     impl_(service_registry_.use_service<impl_type>())
 {
+  impl_.init((std::numeric_limits<size_t>::max)());
+}
+
+inline io_service::io_service(size_t concurrency_hint)
+  : service_registry_(*this),
+    impl_(service_registry_.use_service<impl_type>())
+{
+  impl_.init(concurrency_hint);
 }
 
 inline size_t io_service::run()

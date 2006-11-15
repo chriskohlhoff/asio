@@ -87,6 +87,13 @@ public:
   /// Default constructor.
   io_service();
 
+  /// Construct with a hint about the required level of concurrency.
+  /**
+   * @param concurrency_hint A suggestion to the implementation on how many
+   * threads it should allow to run simultaneously.
+   */
+  explicit io_service(size_t concurrency_hint);
+
   /// Run the io_service's event processing loop.
   /**
    * The run() function blocks until all work has finished and there are no

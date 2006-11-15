@@ -47,11 +47,17 @@ public:
   // Constructor.
   win_iocp_io_service(asio::io_service& io_service)
     : asio::io_service::service(io_service),
-      iocp_(::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)),
+      iocp_(),
       outstanding_work_(0),
       interrupted_(0),
       shutdown_(0)
   {
+  }
+
+  void init(size_t concurrency_hint)
+  {
+    iocp_.handle = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0,
+        static_cast<DWORD>((std::min<size_t>)(concurrency_hint, DWORD(~0))));
     if (!iocp_.handle)
     {
       DWORD last_error = ::GetLastError();
@@ -377,8 +383,8 @@ private:
   struct iocp_holder
   {
     HANDLE handle;
-    iocp_holder(HANDLE h) : handle(h) {}
-    ~iocp_holder() { ::CloseHandle(handle); }
+    iocp_holder() : handle(0) {}
+    ~iocp_holder() { if (handle) ::CloseHandle(handle); }
   } iocp_;
 
   // The count of unfinished work.
