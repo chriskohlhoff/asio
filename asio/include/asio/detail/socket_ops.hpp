@@ -513,6 +513,7 @@ inline int inet_pton(int af, const char* src, void* dest,
       sockaddr_in4_type* ipv4_address =
         reinterpret_cast<sockaddr_in4_type*>(&address);
       memcpy(dest, &ipv4_address->sin_addr, sizeof(in4_addr_type));
+      clear_error(ec);
     }
     else if (strcmp(src, "255.255.255.255") == 0)
     {
@@ -528,6 +529,7 @@ inline int inet_pton(int af, const char* src, void* dest,
       memcpy(dest, &ipv6_address->sin6_addr, sizeof(in6_addr_type));
       if (scope_id)
         *scope_id = ipv6_address->sin6_scope_id;
+      clear_error(ec);
     }
   }
 
