@@ -114,6 +114,28 @@ sub source_contains_asio_system_error_include
   return 0;
 }
 
+sub source_contains_boostify_error_categories
+{
+  my ($from) = @_;
+
+  # Open the input file.
+  open(my $input, "<$from") or die("Can't open $from for reading");
+
+  # Check file for boostify error category directive.
+  while (my $line = <$input>)
+  {
+    chomp($line);
+    if ($line =~ /boostify: error category/)
+    {
+      close($input);
+      return 1;
+    }
+  }
+
+  close($input);
+  return 0;
+}
+
 my $error_cat_decls = <<"EOF";
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
   static boost::system::error_category netdb_ecat;
@@ -285,6 +307,7 @@ sub copy_source_file
   # Check whether the file includes error handling header files.
   my $includes_error_code = source_contains_asio_error_code_include($from);
   my $includes_system_error = source_contains_asio_system_error_include($from);
+  my $includes_boostify_ecats = source_contains_boostify_error_categories($from);
 
   # Open the files.
   open(my $input, "<$from") or die("Can't open $from for reading");
@@ -315,6 +338,11 @@ sub copy_source_file
     }
     elsif ($line =~ /^(# *include )[<"](asio\/detail\/pop_options\.hpp)[>"]$/)
     {
+      if ($includes_boostify_ecats)
+      {
+        $includes_boostify_ecats = 0;
+        print_line($output, $1 . "<boost/cerrno.hpp>", $from, $lineno);
+      }
       if ($includes_error_code)
       {
         $includes_error_code = 0;
