@@ -241,12 +241,9 @@ public:
       return impl_->handler_storage_.address();
     }
 
-    template <typename Function>
-    friend void asio_handler_invoke(Function function,
-        invoke_current_handler*)
-    {
-      function();
-    }
+    // The asio_handler_invoke hook is not defined here since the default one
+    // provides the correct behaviour, and including it here breaks MSVC 7.1
+    // in some situations.
 
   private:
     strand_service& service_impl_;
