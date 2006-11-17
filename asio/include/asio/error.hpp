@@ -176,9 +176,6 @@ public:
   /// Cannot send after transport endpoint shutdown.
   static const asio::error_code shut_down;
 
-  /// Success.
-  static const asio::error_code success;
-
   /// Connection timed out.
   static const asio::error_code timed_out;
 
@@ -311,9 +308,6 @@ error_base<T>::socket_type_not_supported = ASIO_WIN_OR_POSIX(
 
 template <typename T> const asio::error_code
 error_base<T>::shut_down = ASIO_SOCKET_ERROR(ESHUTDOWN);
-
-template <typename T> const asio::error_code
-error_base<T>::success;
 
 template <typename T> const asio::error_code
 error_base<T>::timed_out = ASIO_SOCKET_ERROR(ETIMEDOUT);

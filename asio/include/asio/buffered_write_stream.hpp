@@ -259,7 +259,7 @@ public:
     {
       std::size_t bytes_copied = copy(buffers);
       io_service().post(detail::bind_handler(
-            handler, asio::error::success, bytes_copied));
+            handler, asio::error_code(), bytes_copied));
     }
   }
 

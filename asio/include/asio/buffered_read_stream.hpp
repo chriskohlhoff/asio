@@ -299,7 +299,7 @@ public:
     {
       std::size_t length = copy(buffers);
       io_service().post(detail::bind_handler(
-            handler, asio::error::success, length));
+            handler, asio::error_code(), length));
     }
   }
 

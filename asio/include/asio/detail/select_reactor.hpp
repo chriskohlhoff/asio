@@ -309,11 +309,11 @@ private:
       // Exception operations must be processed first to ensure that any
       // out-of-band data is read before normal data.
       except_op_queue_.dispatch_descriptors(except_fds,
-          asio::error::success);
+          asio::error_code());
       read_op_queue_.dispatch_descriptors(read_fds,
-          asio::error::success);
+          asio::error_code());
       write_op_queue_.dispatch_descriptors(write_fds,
-          asio::error::success);
+          asio::error_code());
       except_op_queue_.dispatch_cancellations();
       read_op_queue_.dispatch_cancellations();
       write_op_queue_.dispatch_cancellations();

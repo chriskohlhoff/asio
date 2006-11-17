@@ -368,7 +368,7 @@ inline int select(int nfds, fd_set* readfds, fd_set* writefds,
     if (milliseconds == 0)
       milliseconds = 1; // Force context switch.
     ::Sleep(milliseconds);
-    ec = asio::error::success;
+    ec = asio::error_code();
     return 0;
   }
 
@@ -577,7 +577,7 @@ inline asio::error_code translate_netdb_error(int error)
   switch (error)
   {
   case 0:
-    return asio::error::success;
+    return asio::error_code();
   case HOST_NOT_FOUND:
     return asio::error::host_not_found;
   case TRY_AGAIN:
@@ -1388,7 +1388,7 @@ inline asio::error_code translate_addrinfo_error(int error)
   switch (error)
   {
   case 0:
-    return asio::error::success;
+    return asio::error_code();
   case EAI_AGAIN:
     return asio::error::host_not_found_try_again;
   case EAI_BADFLAGS:

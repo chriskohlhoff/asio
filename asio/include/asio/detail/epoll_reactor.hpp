@@ -140,7 +140,7 @@ public:
       return;
 
     if (!read_op_queue_.has_operation(descriptor))
-      if (handler(asio::error::success))
+      if (handler(asio::error_code()))
         return;
 
     if (read_op_queue_.enqueue_operation(descriptor, handler))
@@ -173,7 +173,7 @@ public:
       return;
 
     if (!write_op_queue_.has_operation(descriptor))
-      if (handler(asio::error::success))
+      if (handler(asio::error_code()))
         return;
 
     if (write_op_queue_.enqueue_operation(descriptor, handler))

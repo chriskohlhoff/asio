@@ -360,7 +360,7 @@ public:
     SSL_CTX_set_default_passwd_cb(impl,
         &openssl_context_service::password_callback);
 
-    ec = asio::error::success;
+    ec = asio::error_code();
     return ec;
   }
 

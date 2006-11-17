@@ -111,7 +111,7 @@ public:
     {
       timer_base* t = heap_[0];
       remove_timer(t);
-      t->invoke(asio::error::success);
+      t->invoke(asio::error_code());
     }
   }
 

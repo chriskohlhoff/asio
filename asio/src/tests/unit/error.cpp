@@ -77,7 +77,6 @@ void error_test()
   test_error_code(asio::error::operation_aborted);
   test_error_code(asio::error::service_not_found);
   test_error_code(asio::error::shut_down);
-  test_error_code(asio::error::success);
   test_error_code(asio::error::timed_out);
   test_error_code(asio::error::try_again);
   test_error_code(asio::error::would_block);
