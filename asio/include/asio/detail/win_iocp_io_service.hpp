@@ -259,11 +259,15 @@ private:
       LPOVERLAPPED overlapped = 0;
       ::SetLastError(0);
       BOOL ok = ::GetQueuedCompletionStatus(iocp_.handle, &bytes_transferred,
-          &completion_key, &overlapped, block ? INFINITE : 0);
+          &completion_key, &overlapped, block ? 1000 : 0);
       DWORD last_error = ::GetLastError();
 
       if (!ok && overlapped == 0)
+      {
+        if (block && last_error == WAIT_TIMEOUT)
+          continue;
         return 0;
+      }
 
       if (overlapped)
       {
