@@ -22,7 +22,7 @@
 #include <boost/detail/workaround.hpp>
 #include <cstring>
 #if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
-# include <iostream>
+# include <ostream>
 #endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
 #include "asio/detail/pop_options.hpp"
 
