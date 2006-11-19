@@ -170,7 +170,7 @@ const int custom_socket_option_level = 0xA5100000;
 const int enable_connection_aborted_option = 1;
 
 #if defined(_WIN64)
-std::size_t hash_value(SOCKET s)
+inline std::size_t hash_value(SOCKET s)
 {
   return static_cast<std::size_t>(s);
 }
