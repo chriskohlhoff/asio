@@ -86,6 +86,18 @@ public:
   /// The UDP resolver type.
   typedef basic_resolver<udp> resolver;
 
+  /// Compare two protocols for equality.
+  friend bool operator==(const udp& p1, const udp& p2)
+  {
+    return p1.family_ == p2.family_;
+  }
+
+  /// Compare two protocols for inequality.
+  friend bool operator!=(const udp& p1, const udp& p2)
+  {
+    return p1.family_ != p2.family_;
+  }
+
 private:
   // Construct with a specific family.
   explicit udp(int family)

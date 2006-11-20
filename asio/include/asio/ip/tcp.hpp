@@ -128,6 +128,18 @@ public:
     IPPROTO_TCP, TCP_NODELAY> no_delay;
 #endif
 
+  /// Compare two protocols for equality.
+  friend bool operator==(const tcp& p1, const tcp& p2)
+  {
+    return p1.family_ == p2.family_;
+  }
+
+  /// Compare two protocols for inequality.
+  friend bool operator!=(const tcp& p1, const tcp& p2)
+  {
+    return p1.family_ != p2.family_;
+  }
+
 private:
   // Construct with a specific family.
   explicit tcp(int family)
