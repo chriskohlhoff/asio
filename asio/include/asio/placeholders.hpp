@@ -74,7 +74,7 @@ namespace detail
   };
 }
 
-#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1400)
 
 static boost::arg<1>& error
   = asio::placeholders::detail::placeholder<1>::get();
