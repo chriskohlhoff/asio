@@ -93,11 +93,10 @@ public:
     }
   }
 
-  // Register a socket with the IO completion port.
-  void register_socket(socket_type sock)
+  // Register a handle with the IO completion port.
+  void register_handle(HANDLE handle)
   {
-    HANDLE sock_as_handle = reinterpret_cast<HANDLE>(sock);
-    ::CreateIoCompletionPort(sock_as_handle, iocp_.handle, 0, 0);
+    ::CreateIoCompletionPort(handle, iocp_.handle, 0, 0);
   }
 
   // Run the event loop until interrupted or no more work.
