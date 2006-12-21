@@ -36,7 +36,7 @@
 //   template < typename T1, ..., typename Tn >
 //   explicit basic_socket_iostream( T1 x1, ..., Tn xn )
 //     : basic_iostream<char>(&this->boost::base_from_member<
-//         basic_socket_streambuf<Protocol, Service> >::member)
+//         basic_socket_streambuf<Protocol, StreamSocketService> >::member)
 //   {
 //     try
 //     {
@@ -55,7 +55,7 @@
   template < BOOST_PP_ENUM_PARAMS(n, typename T) > \
   explicit basic_socket_iostream( BOOST_PP_ENUM_BINARY_PARAMS(n, T, x) ) \
     : std::basic_iostream<char>(&this->boost::base_from_member< \
-        basic_socket_streambuf<Protocol, Service> >::member) \
+        basic_socket_streambuf<Protocol, StreamSocketService> >::member) \
   { \
     try \
     { \
@@ -108,16 +108,17 @@ namespace asio {
 
 /// Iostream interface for a socket.
 template <typename Protocol,
-    typename Service = stream_socket_service<Protocol> >
+    typename StreamSocketService = stream_socket_service<Protocol> >
 class basic_socket_iostream
-  : public boost::base_from_member<basic_socket_streambuf<Protocol, Service> >,
+  : public boost::base_from_member<
+      basic_socket_streambuf<Protocol, StreamSocketService> >,
     public std::basic_iostream<char>
 {
 public:
   /// Construct a basic_socket_iostream without establishing a connection.
   basic_socket_iostream()
     : std::basic_iostream<char>(&this->boost::base_from_member<
-        basic_socket_streambuf<Protocol, Service> >::member)
+        basic_socket_streambuf<Protocol, StreamSocketService> >::member)
   {
   }
 
@@ -158,11 +159,11 @@ public:
   }
 
   /// Return a pointer to the underlying streambuf.
-  basic_socket_streambuf<Protocol, Service>* rdbuf() const
+  basic_socket_streambuf<Protocol, StreamSocketService>* rdbuf() const
   {
-    return const_cast<basic_socket_streambuf<Protocol, Service>*>(
+    return const_cast<basic_socket_streambuf<Protocol, StreamSocketService>*>(
         &this->boost::base_from_member<
-          basic_socket_streambuf<Protocol, Service> >::member);
+          basic_socket_streambuf<Protocol, StreamSocketService> >::member);
   }
 };
 

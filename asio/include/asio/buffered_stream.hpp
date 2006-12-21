@@ -41,8 +41,7 @@ namespace asio {
  * @e Shared @e objects: Unsafe.
  *
  * @par Concepts:
- * Async_Object, Async_Read_Stream, Async_Write_Stream, Stream,
- * Sync_Read_Stream, Sync_Write_Stream.
+ * AsyncReadStream, AsyncWriteStream, Stream, SyncReadStream, SyncWriteStream.
  */
 template <typename Stream>
 class buffered_stream
@@ -119,24 +118,24 @@ public:
   }
 
   /// Start an asynchronous flush.
-  template <typename Handler>
-  void async_flush(Handler handler)
+  template <typename WriteHandler>
+  void async_flush(WriteHandler handler)
   {
     return stream_impl_.next_layer().async_flush(handler);
   }
 
   /// Write the given data to the stream. Returns the number of bytes written.
   /// Throws an exception on failure.
-  template <typename Const_Buffers>
-  std::size_t write_some(const Const_Buffers& buffers)
+  template <typename ConstBufferSequence>
+  std::size_t write_some(const ConstBufferSequence& buffers)
   {
     return stream_impl_.write_some(buffers);
   }
 
   /// Write the given data to the stream. Returns the number of bytes written,
   /// or 0 if an error occurred.
-  template <typename Const_Buffers>
-  std::size_t write_some(const Const_Buffers& buffers,
+  template <typename ConstBufferSequence>
+  std::size_t write_some(const ConstBufferSequence& buffers,
       asio::error_code& ec)
   {
     return stream_impl_.write_some(buffers, ec);
@@ -144,8 +143,9 @@ public:
 
   /// Start an asynchronous write. The data being written must be valid for the
   /// lifetime of the asynchronous operation.
-  template <typename Const_Buffers, typename Handler>
-  void async_write_some(const Const_Buffers& buffers, Handler handler)
+  template <typename ConstBufferSequence, typename WriteHandler>
+  void async_write_some(const ConstBufferSequence& buffers,
+      WriteHandler handler)
   {
     stream_impl_.async_write_some(buffers, handler);
   }
@@ -165,24 +165,24 @@ public:
   }
 
   /// Start an asynchronous fill.
-  template <typename Handler>
-  void async_fill(Handler handler)
+  template <typename ReadHandler>
+  void async_fill(ReadHandler handler)
   {
     stream_impl_.async_fill(handler);
   }
 
   /// Read some data from the stream. Returns the number of bytes read. Throws
   /// an exception on failure.
-  template <typename Mutable_Buffers>
-  std::size_t read_some(const Mutable_Buffers& buffers)
+  template <typename MutableBufferSequence>
+  std::size_t read_some(const MutableBufferSequence& buffers)
   {
     return stream_impl_.read_some(buffers);
   }
 
   /// Read some data from the stream. Returns the number of bytes read or 0 if
   /// an error occurred.
-  template <typename Mutable_Buffers>
-  std::size_t read_some(const Mutable_Buffers& buffers,
+  template <typename MutableBufferSequence>
+  std::size_t read_some(const MutableBufferSequence& buffers,
       asio::error_code& ec)
   {
     return stream_impl_.read_some(buffers, ec);
@@ -190,24 +190,25 @@ public:
 
   /// Start an asynchronous read. The buffer into which the data will be read
   /// must be valid for the lifetime of the asynchronous operation.
-  template <typename Mutable_Buffers, typename Handler>
-  void async_read_some(const Mutable_Buffers& buffers, Handler handler)
+  template <typename MutableBufferSequence, typename ReadHandler>
+  void async_read_some(const MutableBufferSequence& buffers,
+      ReadHandler handler)
   {
     stream_impl_.async_read_some(buffers, handler);
   }
 
   /// Peek at the incoming data on the stream. Returns the number of bytes read.
   /// Throws an exception on failure.
-  template <typename Mutable_Buffers>
-  std::size_t peek(const Mutable_Buffers& buffers)
+  template <typename MutableBufferSequence>
+  std::size_t peek(const MutableBufferSequence& buffers)
   {
     return stream_impl_.peek(buffers);
   }
 
   /// Peek at the incoming data on the stream. Returns the number of bytes read,
   /// or 0 if an error occurred.
-  template <typename Mutable_Buffers>
-  std::size_t peek(const Mutable_Buffers& buffers,
+  template <typename MutableBufferSequence>
+  std::size_t peek(const MutableBufferSequence& buffers,
       asio::error_code& ec)
   {
     return stream_impl_.peek(buffers, ec);

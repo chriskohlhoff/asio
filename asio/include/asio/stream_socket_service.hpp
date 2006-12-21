@@ -152,33 +152,33 @@ public:
   }
 
   /// Start an asynchronous connect.
-  template <typename Handler>
+  template <typename ConnectHandler>
   void async_connect(implementation_type& impl,
-      const endpoint_type& peer_endpoint, Handler handler)
+      const endpoint_type& peer_endpoint, ConnectHandler handler)
   {
     service_impl_.async_connect(impl, peer_endpoint, handler);
   }
 
   /// Set a socket option.
-  template <typename Option>
+  template <typename SettableSocketOption>
   asio::error_code set_option(implementation_type& impl,
-      const Option& option, asio::error_code& ec)
+      const SettableSocketOption& option, asio::error_code& ec)
   {
     return service_impl_.set_option(impl, option, ec);
   }
 
   /// Get a socket option.
-  template <typename Option>
+  template <typename GettableSocketOption>
   asio::error_code get_option(const implementation_type& impl,
-      Option& option, asio::error_code& ec) const
+      GettableSocketOption& option, asio::error_code& ec) const
   {
     return service_impl_.get_option(impl, option, ec);
   }
 
   /// Perform an IO control command on the socket.
-  template <typename IO_Control_Command>
+  template <typename IoControlCommand>
   asio::error_code io_control(implementation_type& impl,
-      IO_Control_Command& command, asio::error_code& ec)
+      IoControlCommand& command, asio::error_code& ec)
   {
     return service_impl_.io_control(impl, command, ec);
   }
@@ -205,33 +205,37 @@ public:
   }
 
   /// Send the given data to the peer.
-  template <typename Const_Buffers>
-  std::size_t send(implementation_type& impl, const Const_Buffers& buffers,
+  template <typename ConstBufferSequence>
+  std::size_t send(implementation_type& impl,
+      const ConstBufferSequence& buffers,
       socket_base::message_flags flags, asio::error_code& ec)
   {
     return service_impl_.send(impl, buffers, flags, ec);
   }
 
   /// Start an asynchronous send.
-  template <typename Const_Buffers, typename Handler>
-  void async_send(implementation_type& impl, const Const_Buffers& buffers,
-      socket_base::message_flags flags, Handler handler)
+  template <typename ConstBufferSequence, typename WriteHandler>
+  void async_send(implementation_type& impl,
+      const ConstBufferSequence& buffers,
+      socket_base::message_flags flags, WriteHandler handler)
   {
     service_impl_.async_send(impl, buffers, flags, handler);
   }
 
   /// Receive some data from the peer.
-  template <typename Mutable_Buffers>
-  std::size_t receive(implementation_type& impl, const Mutable_Buffers& buffers,
+  template <typename MutableBufferSequence>
+  std::size_t receive(implementation_type& impl,
+      const MutableBufferSequence& buffers,
       socket_base::message_flags flags, asio::error_code& ec)
   {
     return service_impl_.receive(impl, buffers, flags, ec);
   }
 
   /// Start an asynchronous receive.
-  template <typename Mutable_Buffers, typename Handler>
-  void async_receive(implementation_type& impl, const Mutable_Buffers& buffers,
-      socket_base::message_flags flags, Handler handler)
+  template <typename MutableBufferSequence, typename ReadHandler>
+  void async_receive(implementation_type& impl,
+      const MutableBufferSequence& buffers,
+      socket_base::message_flags flags, ReadHandler handler)
   {
     service_impl_.async_receive(impl, buffers, flags, handler);
   }

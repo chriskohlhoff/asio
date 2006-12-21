@@ -46,8 +46,7 @@ namespace asio {
  * @e Shared @e objects: Unsafe.
  *
  * @par Concepts:
- * Async_Read_Stream, Async_Write_Stream, Stream, Sync_Read_Stream,
- * Sync_Write_Stream.
+ * AsyncReadStream, AsyncWriteStream, Stream, SyncReadStream, SyncWriteStream.
  */
 template <typename Stream>
 class buffered_write_stream
@@ -136,12 +135,12 @@ public:
     return bytes_written;
   }
 
-  template <typename Handler>
+  template <typename WriteHandler>
   class flush_handler
   {
   public:
     flush_handler(asio::io_service& io_service,
-        detail::buffered_stream_storage& storage, Handler handler)
+        detail::buffered_stream_storage& storage, WriteHandler handler)
       : io_service_(io_service),
         storage_(storage),
         handler_(handler)
@@ -158,21 +157,21 @@ public:
   private:
     asio::io_service& io_service_;
     detail::buffered_stream_storage& storage_;
-    Handler handler_;
+    WriteHandler handler_;
   };
 
   /// Start an asynchronous flush.
-  template <typename Handler>
-  void async_flush(Handler handler)
+  template <typename WriteHandler>
+  void async_flush(WriteHandler handler)
   {
     async_write(next_layer_, buffer(storage_.data(), storage_.size()),
-        flush_handler<Handler>(io_service(), storage_, handler));
+        flush_handler<WriteHandler>(io_service(), storage_, handler));
   }
 
   /// Write the given data to the stream. Returns the number of bytes written.
   /// Throws an exception on failure.
-  template <typename Const_Buffers>
-  std::size_t write_some(const Const_Buffers& buffers)
+  template <typename ConstBufferSequence>
+  std::size_t write_some(const ConstBufferSequence& buffers)
   {
     if (storage_.size() == storage_.capacity())
       flush();
@@ -181,8 +180,8 @@ public:
 
   /// Write the given data to the stream. Returns the number of bytes written,
   /// or 0 if an error occurred and the error handler did not throw.
-  template <typename Const_Buffers>
-  std::size_t write_some(const Const_Buffers& buffers,
+  template <typename ConstBufferSequence>
+  std::size_t write_some(const ConstBufferSequence& buffers,
       asio::error_code& ec)
   {
     ec = asio::error_code();
@@ -191,13 +190,13 @@ public:
     return copy(buffers);
   }
 
-  template <typename Const_Buffers, typename Handler>
+  template <typename ConstBufferSequence, typename WriteHandler>
   class write_some_handler
   {
   public:
     write_some_handler(asio::io_service& io_service,
         detail::buffered_stream_storage& storage,
-        const Const_Buffers& buffers, Handler handler)
+        const ConstBufferSequence& buffers, WriteHandler handler)
       : io_service_(io_service),
         storage_(storage),
         buffers_(buffers),
@@ -220,8 +219,8 @@ public:
         std::size_t space_avail = storage_.capacity() - orig_size;
         std::size_t bytes_copied = 0;
 
-        typename Const_Buffers::const_iterator iter = buffers_.begin();
-        typename Const_Buffers::const_iterator end = buffers_.end();
+        typename ConstBufferSequence::const_iterator iter = buffers_.begin();
+        typename ConstBufferSequence::const_iterator end = buffers_.end();
         for (; iter != end && space_avail > 0; ++iter)
         {
           std::size_t bytes_avail = buffer_size(*iter);
@@ -241,18 +240,19 @@ public:
   private:
     asio::io_service& io_service_;
     detail::buffered_stream_storage& storage_;
-    Const_Buffers buffers_;
-    Handler handler_;
+    ConstBufferSequence buffers_;
+    WriteHandler handler_;
   };
 
   /// Start an asynchronous write. The data being written must be valid for the
   /// lifetime of the asynchronous operation.
-  template <typename Const_Buffers, typename Handler>
-  void async_write_some(const Const_Buffers& buffers, Handler handler)
+  template <typename ConstBufferSequence, typename WriteHandler>
+  void async_write_some(const ConstBufferSequence& buffers,
+      WriteHandler handler)
   {
     if (storage_.size() == storage_.capacity())
     {
-      async_flush(write_some_handler<Const_Buffers, Handler>(
+      async_flush(write_some_handler<ConstBufferSequence, WriteHandler>(
             io_service(), storage_, buffers, handler));
     }
     else
@@ -265,16 +265,16 @@ public:
 
   /// Read some data from the stream. Returns the number of bytes read. Throws
   /// an exception on failure.
-  template <typename Mutable_Buffers>
-  std::size_t read_some(const Mutable_Buffers& buffers)
+  template <typename MutableBufferSequence>
+  std::size_t read_some(const MutableBufferSequence& buffers)
   {
     return next_layer_.read_some(buffers);
   }
 
   /// Read some data from the stream. Returns the number of bytes read or 0 if
   /// an error occurred.
-  template <typename Mutable_Buffers>
-  std::size_t read_some(const Mutable_Buffers& buffers,
+  template <typename MutableBufferSequence>
+  std::size_t read_some(const MutableBufferSequence& buffers,
       asio::error_code& ec)
   {
     return next_layer_.read_some(buffers, ec);
@@ -282,24 +282,25 @@ public:
 
   /// Start an asynchronous read. The buffer into which the data will be read
   /// must be valid for the lifetime of the asynchronous operation.
-  template <typename Mutable_Buffers, typename Handler>
-  void async_read_some(const Mutable_Buffers& buffers, Handler handler)
+  template <typename MutableBufferSequence, typename ReadHandler>
+  void async_read_some(const MutableBufferSequence& buffers,
+      ReadHandler handler)
   {
     next_layer_.async_read_some(buffers, handler);
   }
 
   /// Peek at the incoming data on the stream. Returns the number of bytes read.
   /// Throws an exception on failure.
-  template <typename Mutable_Buffers>
-  std::size_t peek(const Mutable_Buffers& buffers)
+  template <typename MutableBufferSequence>
+  std::size_t peek(const MutableBufferSequence& buffers)
   {
     return next_layer_.peek(buffers);
   }
 
   /// Peek at the incoming data on the stream. Returns the number of bytes read,
   /// or 0 if an error occurred.
-  template <typename Mutable_Buffers>
-  std::size_t peek(const Mutable_Buffers& buffers,
+  template <typename MutableBufferSequence>
+  std::size_t peek(const MutableBufferSequence& buffers,
       asio::error_code& ec)
   {
     return next_layer_.peek(buffers, ec);
@@ -320,8 +321,8 @@ public:
 private:
   /// Copy data into the internal buffer from the specified source buffer.
   /// Returns the number of bytes copied.
-  template <typename Const_Buffers>
-  std::size_t copy(const Const_Buffers& buffers)
+  template <typename ConstBufferSequence>
+  std::size_t copy(const ConstBufferSequence& buffers)
   {
     using namespace std; // For memcpy.
 
@@ -329,8 +330,8 @@ private:
     std::size_t space_avail = storage_.capacity() - orig_size;
     std::size_t bytes_copied = 0;
 
-    typename Const_Buffers::const_iterator iter = buffers.begin();
-    typename Const_Buffers::const_iterator end = buffers.end();
+    typename ConstBufferSequence::const_iterator iter = buffers.begin();
+    typename ConstBufferSequence::const_iterator end = buffers.end();
     for (; iter != end && space_avail > 0; ++iter)
     {
       std::size_t bytes_avail = buffer_size(*iter);

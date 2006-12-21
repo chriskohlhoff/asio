@@ -38,17 +38,17 @@ namespace ip {
  * iterators over the results returned by a resolver.
  *
  * The iterator's value_type, obtained when the iterator is dereferenced, is:
- * @code const basic_resolver_entry<Protocol> @endcode
+ * @code const basic_resolver_entry<InternetProtocol> @endcode
  *
  * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
-template <typename Protocol>
+template <typename InternetProtocol>
 class basic_resolver_iterator
   : public boost::iterator_facade<
-        basic_resolver_iterator<Protocol>,
-        const basic_resolver_entry<Protocol>,
+        basic_resolver_iterator<InternetProtocol>,
+        const basic_resolver_entry<InternetProtocol>,
         boost::forward_traversal_tag>
 {
 public:
@@ -78,14 +78,14 @@ public:
           || address_info->ai_family == PF_INET6)
       {
         using namespace std; // For memcpy.
-        typename Protocol::endpoint endpoint;
+        typename InternetProtocol::endpoint endpoint;
         endpoint.resize(
             static_cast<asio::detail::socket_addr_len_type>(
               address_info->ai_addrlen));
         memcpy(endpoint.data(), address_info->ai_addr,
             address_info->ai_addrlen);
         iter.values_->push_back(
-            basic_resolver_entry<Protocol>(endpoint,
+            basic_resolver_entry<InternetProtocol>(endpoint,
               actual_host_name, service_name));
       }
       address_info = address_info->ai_next;
@@ -101,13 +101,14 @@ public:
 
   /// Create an iterator from an endpoint, host name and service name.
   static basic_resolver_iterator create(
-      const typename Protocol::endpoint& endpoint,
+      const typename InternetProtocol::endpoint& endpoint,
       const std::string& host_name, const std::string& service_name)
   {
     basic_resolver_iterator iter;
     iter.values_.reset(new values_type);
     iter.values_->push_back(
-        basic_resolver_entry<Protocol>(endpoint, host_name, service_name));
+        basic_resolver_entry<InternetProtocol>(
+          endpoint, host_name, service_name));
     iter.iter_ = iter.values_->begin();
     return iter;
   }
@@ -135,12 +136,12 @@ private:
     return iter_ == other.iter_;
   }
 
-  const basic_resolver_entry<Protocol>& dereference() const
+  const basic_resolver_entry<InternetProtocol>& dereference() const
   {
     return *iter_;
   }
 
-  typedef std::vector<basic_resolver_entry<Protocol> > values_type;
+  typedef std::vector<basic_resolver_entry<InternetProtocol> > values_type;
   boost::shared_ptr<values_type> values_;
   typename values_type::const_iterator iter_;
 };

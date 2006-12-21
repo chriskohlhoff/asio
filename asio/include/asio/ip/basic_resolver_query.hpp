@@ -36,17 +36,14 @@ namespace ip {
  * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
- *
- * @par Concepts:
- * Endpoint.
  */
-template <typename Protocol>
+template <typename InternetProtocol>
 class basic_resolver_query
   : public resolver_query_base
 {
 public:
   /// The protocol type associated with the endpoint query.
-  typedef Protocol protocol_type;
+  typedef InternetProtocol protocol_type;
 
   /// Construct with specified service name for any protocol.
   basic_resolver_query(const std::string& service_name,
@@ -55,7 +52,7 @@ public:
       host_name_(),
       service_name_(service_name)
   {
-    typename Protocol::endpoint endpoint;
+    typename InternetProtocol::endpoint endpoint;
     hints_.ai_flags = flags;
     hints_.ai_family = PF_UNSPEC;
     hints_.ai_socktype = endpoint.protocol().type();
@@ -91,7 +88,7 @@ public:
       host_name_(host_name),
       service_name_(service_name)
   {
-    typename Protocol::endpoint endpoint;
+    typename InternetProtocol::endpoint endpoint;
     hints_.ai_flags = flags;
     hints_.ai_family = PF_UNSPEC;
     hints_.ai_socktype = endpoint.protocol().type();

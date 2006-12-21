@@ -47,14 +47,14 @@ namespace asio {
  * @endcode
  */
 template <typename Protocol,
-    typename Service = socket_acceptor_service<Protocol> >
+    typename SocketAcceptorService = socket_acceptor_service<Protocol> >
 class basic_socket_acceptor
-  : public basic_io_object<Service>,
+  : public basic_io_object<SocketAcceptorService>,
     public socket_base
 {
 public:
   /// The native representation of an acceptor.
-  typedef typename Service::native_type native_type;
+  typedef typename SocketAcceptorService::native_type native_type;
 
   /// The protocol type.
   typedef Protocol protocol_type;
@@ -73,7 +73,7 @@ public:
    * acceptor.
    */
   explicit basic_socket_acceptor(asio::io_service& io_service)
-    : basic_io_object<Service>(io_service)
+    : basic_io_object<SocketAcceptorService>(io_service)
   {
   }
 
@@ -91,7 +91,7 @@ public:
    */
   basic_socket_acceptor(asio::io_service& io_service,
       const protocol_type& protocol)
-    : basic_io_object<Service>(io_service)
+    : basic_io_object<SocketAcceptorService>(io_service)
   {
     asio::error_code ec;
     this->service.open(this->implementation, protocol, ec);
@@ -127,7 +127,7 @@ public:
    */
   basic_socket_acceptor(asio::io_service& io_service,
       const endpoint_type& endpoint, bool reuse_addr = true)
-    : basic_io_object<Service>(io_service)
+    : basic_io_object<SocketAcceptorService>(io_service)
   {
     asio::error_code ec;
     this->service.open(this->implementation, endpoint.protocol(), ec);
@@ -162,7 +162,7 @@ public:
    */
   basic_socket_acceptor(asio::io_service& io_service,
       const protocol_type& protocol, const native_type& native_acceptor)
-    : basic_io_object<Service>(io_service)
+    : basic_io_object<SocketAcceptorService>(io_service)
   {
     asio::error_code ec;
     this->service.assign(this->implementation, protocol, native_acceptor, ec);
@@ -438,7 +438,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @sa Socket_Option @n
+   * @sa SettableSocketOption @n
    * asio::socket_base::reuse_address
    * asio::socket_base::enable_connection_aborted
    *
@@ -451,8 +451,8 @@ public:
    * acceptor.set_option(option);
    * @endcode
    */
-  template <typename Option>
-  void set_option(const Option& option)
+  template <typename SettableSocketOption>
+  void set_option(const SettableSocketOption& option)
   {
     asio::error_code ec;
     this->service.set_option(this->implementation, option, ec);
@@ -467,7 +467,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @sa Socket_Option @n
+   * @sa SettableSocketOption @n
    * asio::socket_base::reuse_address
    * asio::socket_base::enable_connection_aborted
    *
@@ -485,8 +485,8 @@ public:
    * }
    * @endcode
    */
-  template <typename Option>
-  asio::error_code set_option(const Option& option,
+  template <typename SettableSocketOption>
+  asio::error_code set_option(const SettableSocketOption& option,
       asio::error_code& ec)
   {
     return this->service.set_option(this->implementation, option, ec);
@@ -501,7 +501,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @sa Socket_Option @n
+   * @sa GettableSocketOption @n
    * asio::socket_base::reuse_address
    *
    * @par Example
@@ -514,8 +514,8 @@ public:
    * bool is_set = option.get();
    * @endcode
    */
-  template <typename Option>
-  void get_option(Option& option)
+  template <typename GettableSocketOption>
+  void get_option(GettableSocketOption& option)
   {
     asio::error_code ec;
     this->service.get_option(this->implementation, option, ec);
@@ -531,7 +531,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @sa Socket_Option @n
+   * @sa GettableSocketOption @n
    * asio::socket_base::reuse_address
    *
    * @par Example
@@ -549,8 +549,8 @@ public:
    * bool is_set = option.get();
    * @endcode
    */
-  template <typename Option>
-  asio::error_code get_option(Option& option,
+  template <typename GettableSocketOption>
+  asio::error_code get_option(GettableSocketOption& option,
       asio::error_code& ec)
   {
     return this->service.get_option(this->implementation, option, ec);
@@ -624,8 +624,8 @@ public:
    * acceptor.accept(socket);
    * @endcode
    */
-  template <typename Socket_Service>
-  void accept(basic_socket<protocol_type, Socket_Service>& peer)
+  template <typename SocketService>
+  void accept(basic_socket<protocol_type, SocketService>& peer)
   {
     asio::error_code ec;
     this->service.accept(this->implementation, peer, ec);
@@ -655,9 +655,9 @@ public:
    * }
    * @endcode
    */
-  template <typename Socket_Service>
+  template <typename SocketService>
   asio::error_code accept(
-      basic_socket<protocol_type, Socket_Service>& peer,
+      basic_socket<protocol_type, SocketService>& peer,
       asio::error_code& ec)
   {
     return this->service.accept(this->implementation, peer, ec);
@@ -701,9 +701,9 @@ public:
    * acceptor.async_accept(socket, accept_handler);
    * @endcode
    */
-  template <typename Socket_Service, typename Handler>
-  void async_accept(basic_socket<protocol_type, Socket_Service>& peer,
-      Handler handler)
+  template <typename SocketService, typename AcceptHandler>
+  void async_accept(basic_socket<protocol_type, SocketService>& peer,
+      AcceptHandler handler)
   {
     this->service.async_accept(this->implementation, peer, handler);
   }
@@ -731,8 +731,8 @@ public:
    * acceptor.accept_endpoint(socket, endpoint);
    * @endcode
    */
-  template <typename Socket_Service>
-  void accept_endpoint(basic_socket<protocol_type, Socket_Service>& peer,
+  template <typename SocketService>
+  void accept_endpoint(basic_socket<protocol_type, SocketService>& peer,
       endpoint_type& peer_endpoint)
   {
     asio::error_code ec;
@@ -769,9 +769,9 @@ public:
    * }
    * @endcode
    */
-  template <typename Socket_Service>
+  template <typename SocketService>
   asio::error_code accept_endpoint(
-      basic_socket<protocol_type, Socket_Service>& peer,
+      basic_socket<protocol_type, SocketService>& peer,
       endpoint_type& peer_endpoint, asio::error_code& ec)
   {
     return this->service.accept_endpoint(
@@ -804,9 +804,9 @@ public:
    * of the handler will be performed in a manner equivalent to using
    * asio::io_service::post().
    */
-  template <typename Socket_Service, typename Handler>
-  void async_accept_endpoint(basic_socket<protocol_type, Socket_Service>& peer,
-      endpoint_type& peer_endpoint, Handler handler)
+  template <typename SocketService, typename AcceptHandler>
+  void async_accept_endpoint(basic_socket<protocol_type, SocketService>& peer,
+      endpoint_type& peer_endpoint, AcceptHandler handler)
   {
     this->service.async_accept_endpoint(this->implementation, peer,
         peer_endpoint, handler);

@@ -195,8 +195,8 @@ public:
    *   const asio::error_code& error // Result of operation.
    * ); @endcode
    */
-  template <typename Handler>
-  void async_handshake(handshake_type type, Handler handler)
+  template <typename HandshakeHandler>
+  void async_handshake(handshake_type type, HandshakeHandler handler)
   {
     service_.async_handshake(impl_, next_layer_, type, handler);
   }
@@ -239,8 +239,8 @@ public:
    *   const asio::error_code& error // Result of operation.
    * ); @endcode
    */
-  template <typename Handler>
-  void async_shutdown(Handler handler)
+  template <typename ShutdownHandler>
+  void async_shutdown(ShutdownHandler handler)
   {
     service_.async_shutdown(impl_, next_layer_, handler);
   }
@@ -261,8 +261,8 @@ public:
    * peer. Consider using the @ref write function if you need to ensure that all
    * data is written before the blocking operation completes.
    */
-  template <typename Const_Buffers>
-  std::size_t write_some(const Const_Buffers& buffers)
+  template <typename ConstBufferSequence>
+  std::size_t write_some(const ConstBufferSequence& buffers)
   {
     asio::error_code ec;
     std::size_t s = service_.write_some(impl_, next_layer_, buffers, ec);
@@ -286,8 +286,8 @@ public:
    * peer. Consider using the @ref write function if you need to ensure that all
    * data is written before the blocking operation completes.
    */
-  template <typename Const_Buffers>
-  std::size_t write_some(const Const_Buffers& buffers,
+  template <typename ConstBufferSequence>
+  std::size_t write_some(const ConstBufferSequence& buffers,
       asio::error_code& ec)
   {
     return service_.write_some(impl_, next_layer_, buffers, ec);
@@ -315,8 +315,9 @@ public:
    * the peer. Consider using the @ref async_write function if you need to
    * ensure that all data is written before the blocking operation completes.
    */
-  template <typename Const_Buffers, typename Handler>
-  void async_write_some(const Const_Buffers& buffers, Handler handler)
+  template <typename ConstBufferSequence, typename WriteHandler>
+  void async_write_some(const ConstBufferSequence& buffers,
+      WriteHandler handler)
   {
     service_.async_write_some(impl_, next_layer_, buffers, handler);
   }
@@ -337,8 +338,8 @@ public:
    * bytes. Consider using the @ref read function if you need to ensure that the
    * requested amount of data is read before the blocking operation completes.
    */
-  template <typename Mutable_Buffers>
-  std::size_t read_some(const Mutable_Buffers& buffers)
+  template <typename MutableBufferSequence>
+  std::size_t read_some(const MutableBufferSequence& buffers)
   {
     asio::error_code ec;
     std::size_t s = service_.read_some(impl_, next_layer_, buffers, ec);
@@ -362,8 +363,8 @@ public:
    * bytes. Consider using the @ref read function if you need to ensure that the
    * requested amount of data is read before the blocking operation completes.
    */
-  template <typename Mutable_Buffers>
-  std::size_t read_some(const Mutable_Buffers& buffers,
+  template <typename MutableBufferSequence>
+  std::size_t read_some(const MutableBufferSequence& buffers,
       asio::error_code& ec)
   {
     return service_.read_some(impl_, next_layer_, buffers, ec);
@@ -392,8 +393,9 @@ public:
    * ensure that the requested amount of data is read before the asynchronous
    * operation completes.
    */
-  template <typename Mutable_Buffers, typename Handler>
-  void async_read_some(const Mutable_Buffers& buffers, Handler handler)
+  template <typename MutableBufferSequence, typename ReadHandler>
+  void async_read_some(const MutableBufferSequence& buffers,
+      ReadHandler handler)
   {
     service_.async_read_some(impl_, next_layer_, buffers, handler);
   }
@@ -410,8 +412,8 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    */
-  template <typename Mutable_Buffers>
-  std::size_t peek(const Mutable_Buffers& buffers)
+  template <typename MutableBufferSequence>
+  std::size_t peek(const MutableBufferSequence& buffers)
   {
     asio::error_code ec;
     std::size_t s = service_.peek(impl_, next_layer_, buffers, ec);
@@ -431,8 +433,8 @@ public:
    *
    * @returns The number of bytes read. Returns 0 if an error occurred.
    */
-  template <typename Mutable_Buffers>
-  std::size_t peek(const Mutable_Buffers& buffers,
+  template <typename MutableBufferSequence>
+  std::size_t peek(const MutableBufferSequence& buffers,
       asio::error_code& ec)
   {
     return service_.peek(impl_, next_layer_, buffers, ec);

@@ -34,22 +34,23 @@ namespace ip {
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
-template <typename Protocol, typename Service = resolver_service<Protocol> >
+template <typename InternetProtocol,
+    typename ResolverService = resolver_service<InternetProtocol> >
 class basic_resolver
-  : public basic_io_object<Service>
+  : public basic_io_object<ResolverService>
 {
 public:
   /// The protocol type.
-  typedef Protocol protocol_type;
+  typedef InternetProtocol protocol_type;
 
   /// The endpoint type.
-  typedef typename Protocol::endpoint endpoint_type;
+  typedef typename InternetProtocol::endpoint endpoint_type;
 
   /// The query type.
-  typedef typename Protocol::resolver_query query;
+  typedef typename InternetProtocol::resolver_query query;
 
   /// The iterator type.
-  typedef typename Protocol::resolver_iterator iterator;
+  typedef typename InternetProtocol::resolver_iterator iterator;
 
   /// Constructor.
   /**
@@ -59,7 +60,7 @@ public:
    * dispatch handlers for any asynchronous operations performed on the timer.
    */
   explicit basic_resolver(asio::io_service& io_service)
-    : basic_io_object<Service>(io_service)
+    : basic_io_object<ResolverService>(io_service)
   {
   }
 
@@ -146,8 +147,8 @@ public:
    * A successful resolve operation is guaranteed to pass at least one entry to
    * the handler.
    */
-  template <typename Handler>
-  void async_resolve(const query& q, Handler handler)
+  template <typename ResolveHandler>
+  void async_resolve(const query& q, ResolveHandler handler)
   {
     return this->service.async_resolve(this->implementation, q, handler);
   }
@@ -229,8 +230,8 @@ public:
    * A successful resolve operation is guaranteed to pass at least one entry to
    * the handler.
    */
-  template <typename Handler>
-  void async_resolve(const endpoint_type& e, Handler handler)
+  template <typename ResolveHandler>
+  void async_resolve(const endpoint_type& e, ResolveHandler handler)
   {
     return this->service.async_resolve(this->implementation, e, handler);
   }

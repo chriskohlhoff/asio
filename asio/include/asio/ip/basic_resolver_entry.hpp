@@ -32,19 +32,16 @@ namespace ip {
  * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
- *
- * @par Concepts:
- * Endpoint.
  */
-template <typename Protocol>
+template <typename InternetProtocol>
 class basic_resolver_entry
 {
 public:
   /// The protocol type associated with the endpoint entry.
-  typedef Protocol protocol_type;
+  typedef InternetProtocol protocol_type;
 
   /// The endpoint type associated with the endpoint entry.
-  typedef typename Protocol::endpoint endpoint_type;
+  typedef typename InternetProtocol::endpoint endpoint_type;
 
   /// Default constructor.
   basic_resolver_entry()

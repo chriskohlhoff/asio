@@ -134,8 +134,8 @@ public:
   }
 
   // Start an asynchronous wait on the timer.
-  template <typename Handler>
-  void async_wait(implementation_type& impl, Handler handler)
+  template <typename WaitHandler>
+  void async_wait(implementation_type& impl, WaitHandler handler)
   {
     service_impl_.async_wait(impl, handler);
   }

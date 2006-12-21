@@ -388,8 +388,8 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    */
-  template <typename Password_Callback>
-  void set_password_callback(Password_Callback callback)
+  template <typename PasswordCallback>
+  void set_password_callback(PasswordCallback callback)
   {
     asio::error_code ec;
     service_.set_password_callback(impl_, callback, ec);
@@ -411,8 +411,8 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    */
-  template <typename Password_Callback>
-  asio::error_code set_password_callback(Password_Callback callback,
+  template <typename PasswordCallback>
+  asio::error_code set_password_callback(PasswordCallback callback,
       asio::error_code& ec)
   {
     return service_.set_password_callback(impl_, callback, ec);

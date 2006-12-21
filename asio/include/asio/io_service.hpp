@@ -173,8 +173,8 @@ public:
    * a copy of the handler object as required. The function signature of the
    * handler must be: @code void handler(); @endcode
    */
-  template <typename Handler>
-  void dispatch(Handler handler);
+  template <typename CompletionHandler>
+  void dispatch(CompletionHandler handler);
 
   /// Request the io_service to invoke the given handler and return immediately.
   /**
@@ -190,8 +190,8 @@ public:
    * a copy of the handler object as required. The function signature of the
    * handler must be: @code void handler(); @endcode
    */
-  template <typename Handler>
-  void post(Handler handler);
+  template <typename CompletionHandler>
+  void post(CompletionHandler handler);
 
   /// Create a new handler that automatically dispatches the wrapped handler
   /// on the io_service.

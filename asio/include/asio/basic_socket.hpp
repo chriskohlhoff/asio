@@ -32,18 +32,15 @@ namespace asio {
  * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
- *
- * @par Concepts:
- * IO_Object.
  */
-template <typename Protocol, typename Service>
+template <typename Protocol, typename SocketService>
 class basic_socket
-  : public basic_io_object<Service>,
+  : public basic_io_object<SocketService>,
     public socket_base
 {
 public:
   /// The native representation of a socket.
-  typedef typename Service::native_type native_type;
+  typedef typename SocketService::native_type native_type;
 
   /// The protocol type.
   typedef Protocol protocol_type;
@@ -52,7 +49,7 @@ public:
   typedef typename Protocol::endpoint endpoint_type;
 
   /// A basic_socket is always the lowest layer.
-  typedef basic_socket<Protocol, Service> lowest_layer_type;
+  typedef basic_socket<Protocol, SocketService> lowest_layer_type;
 
   /// Construct a basic_socket without opening it.
   /**
@@ -62,7 +59,7 @@ public:
    * dispatch handlers for any asynchronous operations performed on the socket.
    */
   explicit basic_socket(asio::io_service& io_service)
-    : basic_io_object<Service>(io_service)
+    : basic_io_object<SocketService>(io_service)
   {
   }
 
@@ -79,7 +76,7 @@ public:
    */
   basic_socket(asio::io_service& io_service,
       const protocol_type& protocol)
-    : basic_io_object<Service>(io_service)
+    : basic_io_object<SocketService>(io_service)
   {
     asio::error_code ec;
     this->service.open(this->implementation, protocol, ec);
@@ -103,7 +100,7 @@ public:
    */
   basic_socket(asio::io_service& io_service,
       const endpoint_type& endpoint)
-    : basic_io_object<Service>(io_service)
+    : basic_io_object<SocketService>(io_service)
   {
     asio::error_code ec;
     this->service.open(this->implementation, endpoint.protocol(), ec);
@@ -127,7 +124,7 @@ public:
    */
   basic_socket(asio::io_service& io_service,
       const protocol_type& protocol, const native_type& native_socket)
-    : basic_io_object<Service>(io_service)
+    : basic_io_object<SocketService>(io_service)
   {
     asio::error_code ec;
     this->service.assign(this->implementation, protocol, native_socket, ec);
@@ -466,8 +463,8 @@ public:
    * socket.async_connect(endpoint, connect_handler);
    * @endcode
    */
-  template <typename Handler>
-  void async_connect(const endpoint_type& peer_endpoint, Handler handler)
+  template <typename ConnectHandler>
+  void async_connect(const endpoint_type& peer_endpoint, ConnectHandler handler)
   {
     this->service.async_connect(this->implementation, peer_endpoint, handler);
   }
@@ -480,7 +477,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @sa Socket_Option @n
+   * @sa SettableSocketOption @n
    * asio::socket_base::broadcast @n
    * asio::socket_base::do_not_route @n
    * asio::socket_base::keep_alive @n
@@ -506,8 +503,8 @@ public:
    * socket.set_option(option);
    * @endcode
    */
-  template <typename Socket_Option>
-  void set_option(const Socket_Option& option)
+  template <typename SettableSocketOption>
+  void set_option(const SettableSocketOption& option)
   {
     asio::error_code ec;
     this->service.set_option(this->implementation, option, ec);
@@ -522,7 +519,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @sa Socket_Option @n
+   * @sa SettableSocketOption @n
    * asio::socket_base::broadcast @n
    * asio::socket_base::do_not_route @n
    * asio::socket_base::keep_alive @n
@@ -553,8 +550,8 @@ public:
    * }
    * @endcode
    */
-  template <typename Socket_Option>
-  asio::error_code set_option(const Socket_Option& option,
+  template <typename SettableSocketOption>
+  asio::error_code set_option(const SettableSocketOption& option,
       asio::error_code& ec)
   {
     return this->service.set_option(this->implementation, option, ec);
@@ -568,7 +565,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @sa Socket_Option @n
+   * @sa GettableSocketOption @n
    * asio::socket_base::broadcast @n
    * asio::socket_base::do_not_route @n
    * asio::socket_base::keep_alive @n
@@ -595,8 +592,8 @@ public:
    * bool is_set = option.get();
    * @endcode
    */
-  template <typename Socket_Option>
-  void get_option(Socket_Option& option) const
+  template <typename GettableSocketOption>
+  void get_option(GettableSocketOption& option) const
   {
     asio::error_code ec;
     this->service.get_option(this->implementation, option, ec);
@@ -611,7 +608,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @sa Socket_Option @n
+   * @sa GettableSocketOption @n
    * asio::socket_base::broadcast @n
    * asio::socket_base::do_not_route @n
    * asio::socket_base::keep_alive @n
@@ -643,8 +640,8 @@ public:
    * bool is_set = option.get();
    * @endcode
    */
-  template <typename Socket_Option>
-  asio::error_code get_option(Socket_Option& option,
+  template <typename GettableSocketOption>
+  asio::error_code get_option(GettableSocketOption& option,
       asio::error_code& ec) const
   {
     return this->service.get_option(this->implementation, option, ec);
@@ -658,7 +655,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @sa IO_Control_Command @n
+   * @sa IoControlCommand @n
    * asio::socket_base::bytes_readable @n
    * asio::socket_base::non_blocking_io
    *
@@ -672,8 +669,8 @@ public:
    * std::size_t bytes_readable = command.get();
    * @endcode
    */
-  template <typename IO_Control_Command>
-  void io_control(IO_Control_Command& command)
+  template <typename IoControlCommand>
+  void io_control(IoControlCommand& command)
   {
     asio::error_code ec;
     this->service.io_control(this->implementation, command, ec);
@@ -688,7 +685,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @sa IO_Control_Command @n
+   * @sa IoControlCommand @n
    * asio::socket_base::bytes_readable @n
    * asio::socket_base::non_blocking_io
    *
@@ -707,8 +704,8 @@ public:
    * std::size_t bytes_readable = command.get();
    * @endcode
    */
-  template <typename IO_Control_Command>
-  asio::error_code io_control(IO_Control_Command& command,
+  template <typename IoControlCommand>
+  asio::error_code io_control(IoControlCommand& command,
       asio::error_code& ec)
   {
     return this->service.io_control(this->implementation, command, ec);

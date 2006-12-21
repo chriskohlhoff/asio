@@ -39,7 +39,7 @@
 // A macro that should expand to:
 //   template < typename T1, ..., typename Tn >
 //   explicit basic_socket_streambuf( T1 x1, ..., Tn xn )
-//     : basic_socket<Protocol, Service>(
+//     : basic_socket<Protocol, StreamSocketService>(
 //         boost::base_from_member<io_service>::member)
 //   {
 //     init_buffers();
@@ -52,7 +52,7 @@
 #define ASIO_PRIVATE_CTR_DEF( z, n, data ) \
   template < BOOST_PP_ENUM_PARAMS(n, typename T) > \
   explicit basic_socket_streambuf( BOOST_PP_ENUM_BINARY_PARAMS(n, T, x) ) \
-    : basic_socket<Protocol, Service>( \
+    : basic_socket<Protocol, StreamSocketService>( \
         boost::base_from_member<io_service>::member) \
   { \
     init_buffers(); \
@@ -66,7 +66,7 @@
 //   template < typename T1, ..., typename Tn >
 //   void connect( T1 x1, ..., Tn xn )
 //   {
-//     this->basic_socket<Protocol, Service>::close();
+//     this->basic_socket<Protocol, StreamSocketService>::close();
 //     init_buffers();
 //     typedef typename Protocol::resolver_query resolver_query;
 //     resolver_query query( x1, ..., xn );
@@ -78,7 +78,7 @@
   template < BOOST_PP_ENUM_PARAMS(n, typename T) > \
   void connect( BOOST_PP_ENUM_BINARY_PARAMS(n, T, x) ) \
   { \
-    this->basic_socket<Protocol, Service>::close(); \
+    this->basic_socket<Protocol, StreamSocketService>::close(); \
     init_buffers(); \
     typedef typename Protocol::resolver_query resolver_query; \
     resolver_query query( BOOST_PP_ENUM_PARAMS(n, x) ); \
@@ -90,11 +90,11 @@ namespace asio {
 
 /// Iostream streambuf for a socket.
 template <typename Protocol,
-    typename Service = stream_socket_service<Protocol> >
+    typename StreamSocketService = stream_socket_service<Protocol> >
 class basic_socket_streambuf
   : public std::streambuf,
     private boost::base_from_member<io_service>,
-    public basic_socket<Protocol, Service>
+    public basic_socket<Protocol, StreamSocketService>
 {
 public:
   /// The endpoint type.
@@ -102,7 +102,7 @@ public:
 
   /// Construct a basic_socket_streambuf without establishing a connection.
   basic_socket_streambuf()
-    : basic_socket<Protocol, Service>(
+    : basic_socket<Protocol, StreamSocketService>(
         boost::base_from_member<asio::io_service>::member)
   {
     init_buffers();
@@ -110,11 +110,11 @@ public:
 
   /// Establish a connection to the specified endpoint.
   explicit basic_socket_streambuf(const endpoint_type& endpoint)
-    : basic_socket<Protocol, Service>(
+    : basic_socket<Protocol, StreamSocketService>(
         boost::base_from_member<asio::io_service>::member)
   {
     init_buffers();
-    this->basic_socket<Protocol, Service>::connect(endpoint);
+    this->basic_socket<Protocol, StreamSocketService>::connect(endpoint);
   }
 
 #if defined(GENERATING_DOCUMENTATION)
@@ -141,9 +141,9 @@ public:
   /// Establish a connection to the specified endpoint.
   void connect(const endpoint_type& endpoint)
   {
-    this->basic_socket<Protocol, Service>::close();
+    this->basic_socket<Protocol, StreamSocketService>::close();
     init_buffers();
-    this->basic_socket<Protocol, Service>::connect(endpoint);
+    this->basic_socket<Protocol, StreamSocketService>::connect(endpoint);
   }
 
 #if defined(GENERATING_DOCUMENTATION)
@@ -165,7 +165,7 @@ public:
   void close()
   {
     sync();
-    this->basic_socket<Protocol, Service>::close();
+    this->basic_socket<Protocol, StreamSocketService>::close();
     init_buffers();
   }
 
@@ -259,8 +259,8 @@ private:
     asio::error_code ec(asio::error::host_not_found);
     while (ec && iterator != iterator_type())
     {
-      this->basic_socket<Protocol, Service>::close();
-      this->basic_socket<Protocol, Service>::connect(*iterator, ec);
+      this->basic_socket<Protocol, StreamSocketService>::close();
+      this->basic_socket<Protocol, StreamSocketService>::connect(*iterator, ec);
       ++iterator;
     }
     asio::detail::throw_error(ec);

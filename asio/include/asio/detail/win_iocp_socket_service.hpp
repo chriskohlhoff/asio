@@ -516,14 +516,14 @@ public:
   }
 
   // Send the given data to the peer. Returns the number of bytes sent.
-  template <typename Const_Buffers>
-  size_t send(implementation_type& impl, const Const_Buffers& buffers,
+  template <typename ConstBufferSequence>
+  size_t send(implementation_type& impl, const ConstBufferSequence& buffers,
       socket_base::message_flags flags, asio::error_code& ec)
   {
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
-    typename Const_Buffers::const_iterator iter = buffers.begin();
-    typename Const_Buffers::const_iterator end = buffers.end();
+    typename ConstBufferSequence::const_iterator iter = buffers.begin();
+    typename ConstBufferSequence::const_iterator end = buffers.end();
     DWORD i = 0;
     size_t total_buffer_size = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
@@ -561,17 +561,17 @@ public:
     return bytes_transferred;
   }
 
-  template <typename Const_Buffers, typename Handler>
+  template <typename ConstBufferSequence, typename Handler>
   class send_operation
     : public operation
   {
   public:
     send_operation(asio::io_service& io_service,
         weak_cancel_token_type cancel_token,
-        const Const_Buffers& buffers, Handler handler)
+        const ConstBufferSequence& buffers, Handler handler)
       : operation(
-          &send_operation<Const_Buffers, Handler>::do_completion_impl,
-          &send_operation<Const_Buffers, Handler>::destroy_impl),
+          &send_operation<ConstBufferSequence, Handler>::do_completion_impl,
+          &send_operation<ConstBufferSequence, Handler>::destroy_impl),
         work_(io_service),
         cancel_token_(cancel_token),
         buffers_(buffers),
@@ -584,16 +584,16 @@ public:
         DWORD last_error, size_t bytes_transferred)
     {
       // Take ownership of the operation object.
-      typedef send_operation<Const_Buffers, Handler> op_type;
+      typedef send_operation<ConstBufferSequence, Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
 
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
       // Check whether buffers are still valid.
-      typename Const_Buffers::const_iterator iter
+      typename ConstBufferSequence::const_iterator iter
         = handler_op->buffers_.begin();
-      typename Const_Buffers::const_iterator end
+      typename ConstBufferSequence::const_iterator end
         = handler_op->buffers_.end();
       while (iter != end)
       {
@@ -632,7 +632,7 @@ public:
     static void destroy_impl(operation* op)
     {
       // Take ownership of the operation object.
-      typedef send_operation<Const_Buffers, Handler> op_type;
+      typedef send_operation<ConstBufferSequence, Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
@@ -640,14 +640,14 @@ public:
 
     asio::io_service::work work_;
     weak_cancel_token_type cancel_token_;
-    Const_Buffers buffers_;
+    ConstBufferSequence buffers_;
     Handler handler_;
   };
 
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
-  template <typename Const_Buffers, typename Handler>
-  void async_send(implementation_type& impl, const Const_Buffers& buffers,
+  template <typename ConstBufferSequence, typename Handler>
+  void async_send(implementation_type& impl, const ConstBufferSequence& buffers,
       socket_base::message_flags flags, Handler handler)
   {
     // Update the ID of the thread from which cancellation is safe.
@@ -657,7 +657,7 @@ public:
       impl.safe_cancellation_thread_id_ = ~DWORD(0);
 
     // Allocate and construct an operation to wrap the handler.
-    typedef send_operation<Const_Buffers, Handler> value_type;
+    typedef send_operation<ConstBufferSequence, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr,
@@ -665,8 +665,8 @@ public:
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
-    typename Const_Buffers::const_iterator iter = buffers.begin();
-    typename Const_Buffers::const_iterator end = buffers.end();
+    typename ConstBufferSequence::const_iterator iter = buffers.begin();
+    typename ConstBufferSequence::const_iterator end = buffers.end();
     DWORD i = 0;
     size_t total_buffer_size = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
@@ -708,15 +708,15 @@ public:
 
   // Send a datagram to the specified endpoint. Returns the number of bytes
   // sent.
-  template <typename Const_Buffers>
-  size_t send_to(implementation_type& impl, const Const_Buffers& buffers,
+  template <typename ConstBufferSequence>
+  size_t send_to(implementation_type& impl, const ConstBufferSequence& buffers,
       const endpoint_type& destination, socket_base::message_flags flags,
       asio::error_code& ec)
   {
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
-    typename Const_Buffers::const_iterator iter = buffers.begin();
-    typename Const_Buffers::const_iterator end = buffers.end();
+    typename ConstBufferSequence::const_iterator iter = buffers.begin();
+    typename ConstBufferSequence::const_iterator end = buffers.end();
     DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
@@ -743,16 +743,16 @@ public:
     return bytes_transferred;
   }
 
-  template <typename Const_Buffers, typename Handler>
+  template <typename ConstBufferSequence, typename Handler>
   class send_to_operation
     : public operation
   {
   public:
     send_to_operation(asio::io_service& io_service,
-        const Const_Buffers& buffers, Handler handler)
+        const ConstBufferSequence& buffers, Handler handler)
       : operation(
-          &send_to_operation<Const_Buffers, Handler>::do_completion_impl,
-          &send_to_operation<Const_Buffers, Handler>::destroy_impl),
+          &send_to_operation<ConstBufferSequence, Handler>::do_completion_impl,
+          &send_to_operation<ConstBufferSequence, Handler>::destroy_impl),
         work_(io_service),
         buffers_(buffers),
         handler_(handler)
@@ -764,16 +764,16 @@ public:
         DWORD last_error, size_t bytes_transferred)
     {
       // Take ownership of the operation object.
-      typedef send_to_operation<Const_Buffers, Handler> op_type;
+      typedef send_to_operation<ConstBufferSequence, Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
 
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
       // Check whether buffers are still valid.
-      typename Const_Buffers::const_iterator iter
+      typename ConstBufferSequence::const_iterator iter
         = handler_op->buffers_.begin();
-      typename Const_Buffers::const_iterator end
+      typename ConstBufferSequence::const_iterator end
         = handler_op->buffers_.end();
       while (iter != end)
       {
@@ -805,23 +805,23 @@ public:
     static void destroy_impl(operation* op)
     {
       // Take ownership of the operation object.
-      typedef send_to_operation<Const_Buffers, Handler> op_type;
+      typedef send_to_operation<ConstBufferSequence, Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
     }
 
     asio::io_service::work work_;
-    Const_Buffers buffers_;
+    ConstBufferSequence buffers_;
     Handler handler_;
   };
 
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
-  template <typename Const_Buffers, typename Handler>
-  void async_send_to(implementation_type& impl, const Const_Buffers& buffers,
-      const endpoint_type& destination, socket_base::message_flags flags,
-      Handler handler)
+  template <typename ConstBufferSequence, typename Handler>
+  void async_send_to(implementation_type& impl,
+      const ConstBufferSequence& buffers, const endpoint_type& destination,
+      socket_base::message_flags flags, Handler handler)
   {
     // Update the ID of the thread from which cancellation is safe.
     if (impl.safe_cancellation_thread_id_ == 0)
@@ -830,15 +830,15 @@ public:
       impl.safe_cancellation_thread_id_ = ~DWORD(0);
 
     // Allocate and construct an operation to wrap the handler.
-    typedef send_to_operation<Const_Buffers, Handler> value_type;
+    typedef send_to_operation<ConstBufferSequence, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr, io_service(), buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
-    typename Const_Buffers::const_iterator iter = buffers.begin();
-    typename Const_Buffers::const_iterator end = buffers.end();
+    typename ConstBufferSequence::const_iterator iter = buffers.begin();
+    typename ConstBufferSequence::const_iterator end = buffers.end();
     DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
@@ -868,14 +868,15 @@ public:
   }
 
   // Receive some data from the peer. Returns the number of bytes received.
-  template <typename Mutable_Buffers>
-  size_t receive(implementation_type& impl, const Mutable_Buffers& buffers,
+  template <typename MutableBufferSequence>
+  size_t receive(implementation_type& impl,
+      const MutableBufferSequence& buffers,
       socket_base::message_flags flags, asio::error_code& ec)
   {
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
-    typename Mutable_Buffers::const_iterator iter = buffers.begin();
-    typename Mutable_Buffers::const_iterator end = buffers.end();
+    typename MutableBufferSequence::const_iterator iter = buffers.begin();
+    typename MutableBufferSequence::const_iterator end = buffers.end();
     DWORD i = 0;
     size_t total_buffer_size = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
@@ -918,17 +919,19 @@ public:
     return bytes_transferred;
   }
 
-  template <typename Mutable_Buffers, typename Handler>
+  template <typename MutableBufferSequence, typename Handler>
   class receive_operation
     : public operation
   {
   public:
     receive_operation(asio::io_service& io_service,
         weak_cancel_token_type cancel_token,
-        const Mutable_Buffers& buffers, Handler handler)
+        const MutableBufferSequence& buffers, Handler handler)
       : operation(
-          &receive_operation<Mutable_Buffers, Handler>::do_completion_impl,
-          &receive_operation<Mutable_Buffers, Handler>::destroy_impl),
+          &receive_operation<
+            MutableBufferSequence, Handler>::do_completion_impl,
+          &receive_operation<
+            MutableBufferSequence, Handler>::destroy_impl),
         work_(io_service),
         cancel_token_(cancel_token),
         buffers_(buffers),
@@ -941,16 +944,16 @@ public:
         DWORD last_error, size_t bytes_transferred)
     {
       // Take ownership of the operation object.
-      typedef receive_operation<Mutable_Buffers, Handler> op_type;
+      typedef receive_operation<MutableBufferSequence, Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
 
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
       // Check whether buffers are still valid.
-      typename Mutable_Buffers::const_iterator iter
+      typename MutableBufferSequence::const_iterator iter
         = handler_op->buffers_.begin();
-      typename Mutable_Buffers::const_iterator end
+      typename MutableBufferSequence::const_iterator end
         = handler_op->buffers_.end();
       while (iter != end)
       {
@@ -995,7 +998,7 @@ public:
     static void destroy_impl(operation* op)
     {
       // Take ownership of the operation object.
-      typedef receive_operation<Mutable_Buffers, Handler> op_type;
+      typedef receive_operation<MutableBufferSequence, Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
@@ -1003,14 +1006,15 @@ public:
 
     asio::io_service::work work_;
     weak_cancel_token_type cancel_token_;
-    Mutable_Buffers buffers_;
+    MutableBufferSequence buffers_;
     Handler handler_;
   };
 
   // Start an asynchronous receive. The buffer for the data being received
   // must be valid for the lifetime of the asynchronous operation.
-  template <typename Mutable_Buffers, typename Handler>
-  void async_receive(implementation_type& impl, const Mutable_Buffers& buffers,
+  template <typename MutableBufferSequence, typename Handler>
+  void async_receive(implementation_type& impl,
+      const MutableBufferSequence& buffers,
       socket_base::message_flags flags, Handler handler)
   {
     // Update the ID of the thread from which cancellation is safe.
@@ -1020,7 +1024,7 @@ public:
       impl.safe_cancellation_thread_id_ = ~DWORD(0);
 
     // Allocate and construct an operation to wrap the handler.
-    typedef receive_operation<Mutable_Buffers, Handler> value_type;
+    typedef receive_operation<MutableBufferSequence, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr,
@@ -1028,8 +1032,8 @@ public:
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
-    typename Mutable_Buffers::const_iterator iter = buffers.begin();
-    typename Mutable_Buffers::const_iterator end = buffers.end();
+    typename MutableBufferSequence::const_iterator iter = buffers.begin();
+    typename MutableBufferSequence::const_iterator end = buffers.end();
     DWORD i = 0;
     size_t total_buffer_size = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
@@ -1069,15 +1073,16 @@ public:
 
   // Receive a datagram with the endpoint of the sender. Returns the number of
   // bytes received.
-  template <typename Mutable_Buffers>
-  size_t receive_from(implementation_type& impl, const Mutable_Buffers& buffers,
+  template <typename MutableBufferSequence>
+  size_t receive_from(implementation_type& impl,
+      const MutableBufferSequence& buffers,
       endpoint_type& sender_endpoint, socket_base::message_flags flags,
       asio::error_code& ec)
   {
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
-    typename Mutable_Buffers::const_iterator iter = buffers.begin();
-    typename Mutable_Buffers::const_iterator end = buffers.end();
+    typename MutableBufferSequence::const_iterator iter = buffers.begin();
+    typename MutableBufferSequence::const_iterator end = buffers.end();
     DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
@@ -1112,17 +1117,19 @@ public:
     return bytes_transferred;
   }
 
-  template <typename Mutable_Buffers, typename Handler>
+  template <typename MutableBufferSequence, typename Handler>
   class receive_from_operation
     : public operation
   {
   public:
     receive_from_operation(asio::io_service& io_service,
-        endpoint_type& endpoint, const Mutable_Buffers& buffers,
+        endpoint_type& endpoint, const MutableBufferSequence& buffers,
         Handler handler)
       : operation(
-          &receive_from_operation<Mutable_Buffers, Handler>::do_completion_impl,
-          &receive_from_operation<Mutable_Buffers, Handler>::destroy_impl),
+          &receive_from_operation<
+            MutableBufferSequence, Handler>::do_completion_impl,
+          &receive_from_operation<
+            MutableBufferSequence, Handler>::destroy_impl),
         endpoint_(endpoint),
         endpoint_size_(endpoint.capacity()),
         work_(io_service),
@@ -1141,16 +1148,16 @@ public:
         DWORD last_error, size_t bytes_transferred)
     {
       // Take ownership of the operation object.
-      typedef receive_from_operation<Mutable_Buffers, Handler> op_type;
+      typedef receive_from_operation<MutableBufferSequence, Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
 
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
       // Check whether buffers are still valid.
-      typename Mutable_Buffers::const_iterator iter
+      typename MutableBufferSequence::const_iterator iter
         = handler_op->buffers_.begin();
-      typename Mutable_Buffers::const_iterator end
+      typename MutableBufferSequence::const_iterator end
         = handler_op->buffers_.end();
       while (iter != end)
       {
@@ -1191,7 +1198,7 @@ public:
     static void destroy_impl(operation* op)
     {
       // Take ownership of the operation object.
-      typedef receive_from_operation<Mutable_Buffers, Handler> op_type;
+      typedef receive_from_operation<MutableBufferSequence, Handler> op_type;
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
@@ -1200,16 +1207,16 @@ public:
     endpoint_type& endpoint_;
     int endpoint_size_;
     asio::io_service::work work_;
-    Mutable_Buffers buffers_;
+    MutableBufferSequence buffers_;
     Handler handler_;
   };
 
   // Start an asynchronous receive. The buffer for the data being received and
   // the sender_endpoint object must both be valid for the lifetime of the
   // asynchronous operation.
-  template <typename Mutable_Buffers, typename Handler>
+  template <typename MutableBufferSequence, typename Handler>
   void async_receive_from(implementation_type& impl,
-      const Mutable_Buffers& buffers, endpoint_type& sender_endp,
+      const MutableBufferSequence& buffers, endpoint_type& sender_endp,
       socket_base::message_flags flags, Handler handler)
   {
     // Update the ID of the thread from which cancellation is safe.
@@ -1219,7 +1226,7 @@ public:
       impl.safe_cancellation_thread_id_ = ~DWORD(0);
 
     // Allocate and construct an operation to wrap the handler.
-    typedef receive_from_operation<Mutable_Buffers, Handler> value_type;
+    typedef receive_from_operation<MutableBufferSequence, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr,
@@ -1227,8 +1234,8 @@ public:
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
-    typename Mutable_Buffers::const_iterator iter = buffers.begin();
-    typename Mutable_Buffers::const_iterator end = buffers.end();
+    typename MutableBufferSequence::const_iterator iter = buffers.begin();
+    typename MutableBufferSequence::const_iterator end = buffers.end();
     DWORD i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {

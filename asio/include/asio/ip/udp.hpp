@@ -36,7 +36,7 @@ namespace ip {
  * @e Shared @e objects: Safe.
  *
  * @par Concepts:
- * Protocol.
+ * Protocol, InternetProtocol.
  */
 class udp
 {

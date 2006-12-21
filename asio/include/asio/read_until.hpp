@@ -49,7 +49,7 @@ namespace asio {
  * delimiter, the function returns immediately.
  *
  * @param s The stream from which the data is to be read. The type must support
- * the Sync_Read_Stream concept.
+ * the SyncReadStream concept.
  *
  * @param b A streambuf object into which the data will be read.
  *
@@ -68,8 +68,8 @@ namespace asio {
  * std::string line;
  * std::getline(is, line); @endcode
  */
-template <typename Sync_Read_Stream, typename Allocator>
-std::size_t read_until(Sync_Read_Stream& s,
+template <typename SyncReadStream, typename Allocator>
+std::size_t read_until(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, char delim);
 
 /// Read data into a streambuf until a delimiter is encountered.
@@ -87,7 +87,7 @@ std::size_t read_until(Sync_Read_Stream& s,
  * delimiter, the function returns immediately.
  *
  * @param s The stream from which the data is to be read. The type must support
- * the Sync_Read_Stream concept.
+ * the SyncReadStream concept.
  *
  * @param b A streambuf object into which the data will be read.
  *
@@ -98,8 +98,8 @@ std::size_t read_until(Sync_Read_Stream& s,
  * @returns The number of bytes in the streambuf's get area up to and including
  * the delimiter. Returns 0 if an error occurred.
  */
-template <typename Sync_Read_Stream, typename Allocator>
-std::size_t read_until(Sync_Read_Stream& s,
+template <typename SyncReadStream, typename Allocator>
+std::size_t read_until(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, char delim,
     asio::error_code& ec);
 
@@ -118,7 +118,7 @@ std::size_t read_until(Sync_Read_Stream& s,
  * delimiter, the function returns immediately.
  *
  * @param s The stream from which the data is to be read. The type must support
- * the Sync_Read_Stream concept.
+ * the SyncReadStream concept.
  *
  * @param b A streambuf object into which the data will be read.
  *
@@ -137,8 +137,8 @@ std::size_t read_until(Sync_Read_Stream& s,
  * std::string line;
  * std::getline(is, line); @endcode
  */
-template <typename Sync_Read_Stream, typename Allocator>
-std::size_t read_until(Sync_Read_Stream& s,
+template <typename SyncReadStream, typename Allocator>
+std::size_t read_until(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, const std::string& delim);
 
 /// Read data into a streambuf until a delimiter is encountered.
@@ -156,7 +156,7 @@ std::size_t read_until(Sync_Read_Stream& s,
  * delimiter, the function returns immediately.
  *
  * @param s The stream from which the data is to be read. The type must support
- * the Sync_Read_Stream concept.
+ * the SyncReadStream concept.
  *
  * @param b A streambuf object into which the data will be read.
  *
@@ -167,8 +167,8 @@ std::size_t read_until(Sync_Read_Stream& s,
  * @returns The number of bytes in the streambuf's get area up to and including
  * the delimiter. Returns 0 if an error occurred.
  */
-template <typename Sync_Read_Stream, typename Allocator>
-std::size_t read_until(Sync_Read_Stream& s,
+template <typename SyncReadStream, typename Allocator>
+std::size_t read_until(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, const std::string& delim,
     asio::error_code& ec);
 
@@ -187,7 +187,7 @@ std::size_t read_until(Sync_Read_Stream& s,
  * matches the regular expression, the function returns immediately.
  *
  * @param s The stream from which the data is to be read. The type must support
- * the Sync_Read_Stream concept.
+ * the SyncReadStream concept.
  *
  * @param b A streambuf object into which the data will be read.
  *
@@ -206,8 +206,8 @@ std::size_t read_until(Sync_Read_Stream& s,
  * std::string line;
  * std::getline(is, line); @endcode
  */
-template <typename Sync_Read_Stream, typename Allocator>
-std::size_t read_until(Sync_Read_Stream& s,
+template <typename SyncReadStream, typename Allocator>
+std::size_t read_until(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, const boost::regex& expr);
 
 /// Read data into a streambuf until a regular expression is located.
@@ -225,7 +225,7 @@ std::size_t read_until(Sync_Read_Stream& s,
  * matches the regular expression, the function returns immediately.
  *
  * @param s The stream from which the data is to be read. The type must support
- * the Sync_Read_Stream concept.
+ * the SyncReadStream concept.
  *
  * @param b A streambuf object into which the data will be read.
  *
@@ -237,10 +237,10 @@ std::size_t read_until(Sync_Read_Stream& s,
  * the substring that matches the regular expression. Returns 0 if an error
  * occurred.
  */
-template <typename Sync_Read_Stream, typename Allocator>
-std::size_t read_until(Sync_Read_Stream& s,
-  asio::basic_streambuf<Allocator>& b, const boost::regex& expr,
-  asio::error_code& ec);
+template <typename SyncReadStream, typename Allocator>
+std::size_t read_until(SyncReadStream& s,
+    asio::basic_streambuf<Allocator>& b, const boost::regex& expr,
+    asio::error_code& ec);
 
 /*@}*/
 /**
@@ -265,7 +265,7 @@ std::size_t read_until(Sync_Read_Stream& s,
  * delimiter, the asynchronous operation completes immediately.
  *
  * @param s The stream from which the data is to be read. The type must support
- * the Async_Read_Stream concept.
+ * the AsyncReadStream concept.
  *
  * @param b A streambuf object into which the data will be read. Ownership of
  * the streambuf is retained by the caller, which must guarantee that it remains
@@ -306,9 +306,10 @@ std::size_t read_until(Sync_Read_Stream& s,
  * ...
  * asio::async_read_until(s, b, '\n', handler); @endcode
  */
-template <typename Async_Read_Stream, typename Allocator, typename Handler>
-void async_read_until(Async_Read_Stream& s,
-  asio::basic_streambuf<Allocator>& b, char delim, Handler handler);
+template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
+void async_read_until(AsyncReadStream& s,
+    asio::basic_streambuf<Allocator>& b,
+    char delim, ReadHandler handler);
 
 /// Start an asynchronous operation to read data into a streambuf until a
 /// delimiter is encountered.
@@ -327,7 +328,7 @@ void async_read_until(Async_Read_Stream& s,
  * delimiter, the asynchronous operation completes immediately.
  *
  * @param s The stream from which the data is to be read. The type must support
- * the Async_Read_Stream concept.
+ * the AsyncReadStream concept.
  *
  * @param b A streambuf object into which the data will be read. Ownership of
  * the streambuf is retained by the caller, which must guarantee that it remains
@@ -368,10 +369,10 @@ void async_read_until(Async_Read_Stream& s,
  * ...
  * asio::async_read_until(s, b, "\r\n", handler); @endcode
  */
-template <typename Async_Read_Stream, typename Allocator, typename Handler>
-void async_read_until(Async_Read_Stream& s,
-  asio::basic_streambuf<Allocator>& b, const std::string& delim,
-  Handler handler);
+template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
+void async_read_until(AsyncReadStream& s,
+    asio::basic_streambuf<Allocator>& b, const std::string& delim,
+    ReadHandler handler);
 
 /// Start an asynchronous operation to read data into a streambuf until a
 /// regular expression is located.
@@ -391,7 +392,7 @@ void async_read_until(Async_Read_Stream& s,
  * that matches the regular expression, the function returns immediately.
  *
  * @param s The stream from which the data is to be read. The type must support
- * the Async_Read_Stream concept.
+ * the AsyncReadStream concept.
  *
  * @param b A streambuf object into which the data will be read. Ownership of
  * the streambuf is retained by the caller, which must guarantee that it remains
@@ -435,10 +436,10 @@ void async_read_until(Async_Read_Stream& s,
  * ...
  * asio::async_read_until(s, b, boost::regex("\r\n"), handler); @endcode
  */
-template <typename Async_Read_Stream, typename Allocator, typename Handler>
-void async_read_until(Async_Read_Stream& s,
+template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
+void async_read_until(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, const boost::regex& expr,
-    Handler handler);
+    ReadHandler handler);
 
 /*@}*/
 

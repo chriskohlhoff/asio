@@ -44,7 +44,7 @@ namespace multicast {
  * @endcode
  *
  * @par Concepts:
- * Socket_Option, IP_MReq_Socket_Option.
+ * SettableSocketOption.
  */
 #if defined(GENERATING_DOCUMENTATION)
 typedef implementation_defined join_group;
@@ -69,7 +69,7 @@ typedef asio::ip::detail::socket_option::multicast_request<
  * @endcode
  *
  * @par Concepts:
- * Socket_Option, IP_MReq_Socket_Option.
+ * SettableSocketOption.
  */
 #if defined(GENERATING_DOCUMENTATION)
 typedef implementation_defined leave_group;
@@ -94,7 +94,7 @@ typedef asio::ip::detail::socket_option::multicast_request<
  * @endcode
  *
  * @par Concepts:
- * Socket_Option, IP_Network_Interface_Socket_Option.
+ * SettableSocketOption.
  */
 #if defined(GENERATING_DOCUMENTATION)
 typedef implementation_defined outbound_interface;
@@ -128,7 +128,7 @@ typedef asio::ip::detail::socket_option::network_interface<
  * @endcode
  *
  * @par Concepts:
- * Socket_Option, Integer_Socket_Option.
+ * GettableSocketOption, SettableSocketOption.
  */
 #if defined(GENERATING_DOCUMENTATION)
 typedef implementation_defined hops;
@@ -162,7 +162,7 @@ typedef asio::ip::detail::socket_option::integer<
  * @endcode
  *
  * @par Concepts:
- * Socket_Option, Boolean_Socket_Option.
+ * GettableSocketOption, SettableSocketOption.
  */
 #if defined(GENERATING_DOCUMENTATION)
 typedef implementation_defined enable_loopback;

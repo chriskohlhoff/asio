@@ -75,15 +75,15 @@ namespace asio {
  * timer.async_wait(handler);
  * @endcode
  */
-template <typename Time_Type,
-    typename Time_Traits = asio::time_traits<Time_Type>,
-    typename Service = deadline_timer_service<Time_Type, Time_Traits> >
+template <typename Time,
+    typename TimeTraits = asio::time_traits<Time>,
+    typename TimerService = deadline_timer_service<Time, TimeTraits> >
 class basic_deadline_timer
-  : public basic_io_object<Service>
+  : public basic_io_object<TimerService>
 {
 public:
   /// The time traits type.
-  typedef Time_Traits traits_type;
+  typedef TimeTraits traits_type;
 
   /// The time type.
   typedef typename traits_type::time_type time_type;
@@ -101,7 +101,7 @@ public:
    * handlers for any asynchronous operations performed on the timer.
    */
   explicit basic_deadline_timer(asio::io_service& io_service)
-    : basic_io_object<Service>(io_service)
+    : basic_io_object<TimerService>(io_service)
   {
   }
 
@@ -117,7 +117,7 @@ public:
    */
   basic_deadline_timer(asio::io_service& io_service,
       const time_type& expiry_time)
-    : basic_io_object<Service>(io_service)
+    : basic_io_object<TimerService>(io_service)
   {
     this->service.expires_at(this->implementation, expiry_time);
   }
@@ -134,7 +134,7 @@ public:
    */
   basic_deadline_timer(asio::io_service& io_service,
       const duration_type& expiry_time)
-    : basic_io_object<Service>(io_service)
+    : basic_io_object<TimerService>(io_service)
   {
     this->service.expires_from_now(this->implementation, expiry_time);
   }
@@ -246,8 +246,8 @@ public:
    * of the handler will be performed in a manner equivalent to using
    * asio::io_service::post().
    */
-  template <typename Handler>
-  void async_wait(Handler handler)
+  template <typename WaitHandler>
+  void async_wait(WaitHandler handler)
   {
     this->service.async_wait(this->implementation, handler);
   }
