@@ -34,7 +34,7 @@ namespace asio {
  * The basic_stream_socket class template provides asynchronous and blocking
  * stream-oriented socket functionality.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  *
@@ -146,7 +146,7 @@ public:
    * Consider using the @ref write function if you need to ensure that all data
    * is written before the blocking operation completes.
    *
-   * @par Example:
+   * @par Example
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
    * socket.send(asio::buffer(data, size));
@@ -183,7 +183,7 @@ public:
    * Consider using the @ref write function if you need to ensure that all data
    * is written before the blocking operation completes.
    *
-   * @par Example:
+   * @par Example
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
    * socket.send(asio::buffer(data, size), 0);
@@ -254,7 +254,7 @@ public:
    * Consider using the @ref async_write function if you need to ensure that all
    * data is written before the asynchronous operation completes.
    *
-   * @par Example:
+   * @par Example
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
    * socket.async_send(asio::buffer(data, size), handler);
@@ -297,7 +297,7 @@ public:
    * Consider using the @ref async_write function if you need to ensure that all
    * data is written before the asynchronous operation completes.
    *
-   * @par Example:
+   * @par Example
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
    * socket.async_send(asio::buffer(data, size), 0, handler);
@@ -331,7 +331,7 @@ public:
    * bytes. Consider using the @ref read function if you need to ensure that the
    * requested amount of data is read before the blocking operation completes.
    *
-   * @par Example:
+   * @par Example
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
    * @code
@@ -370,7 +370,7 @@ public:
    * bytes. Consider using the @ref read function if you need to ensure that the
    * requested amount of data is read before the blocking operation completes.
    *
-   * @par Example:
+   * @par Example
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
    * @code
@@ -443,7 +443,7 @@ public:
    * that the requested amount of data is received before the asynchronous
    * operation completes.
    *
-   * @par Example:
+   * @par Example
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
    * @code
@@ -488,7 +488,7 @@ public:
    * that the requested amount of data is received before the asynchronous
    * operation completes.
    *
-   * @par Example:
+   * @par Example
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
    * @code
@@ -523,7 +523,7 @@ public:
    * peer. Consider using the @ref write function if you need to ensure that
    * all data is written before the blocking operation completes.
    *
-   * @par Example:
+   * @par Example
    * To write a single data buffer use the @ref buffer function as follows:
    * @code
    * socket.write_some(asio::buffer(data, size));
@@ -590,7 +590,7 @@ public:
    * Consider using the @ref async_write function if you need to ensure that all
    * data is written before the asynchronous operation completes.
    *
-   * @par Example:
+   * @par Example
    * To write a single data buffer use the @ref buffer function as follows:
    * @code
    * socket.async_write_some(asio::buffer(data, size), handler);
@@ -624,7 +624,7 @@ public:
    * the requested amount of data is read before the blocking operation
    * completes.
    *
-   * @par Example:
+   * @par Example
    * To read into a single data buffer use the @ref buffer function as follows:
    * @code
    * socket.read_some(asio::buffer(data, size));
@@ -693,7 +693,7 @@ public:
    * requested amount of data is read before the asynchronous operation
    * completes.
    *
-   * @par Example:
+   * @par Example
    * To read into a single data buffer use the @ref buffer function as follows:
    * @code
    * socket.async_read_some(asio::buffer(data, size), handler);
@@ -720,7 +720,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * To peek using a single data buffer use the @ref buffer function as
    * follows:
    * @code socket.peek(asio::buffer(data, size)); @endcode

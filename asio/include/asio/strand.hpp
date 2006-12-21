@@ -29,7 +29,7 @@ namespace asio {
  * handlers with the guarantee that none of those handlers will execute
  * concurrently.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Safe.
  *

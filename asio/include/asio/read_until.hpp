@@ -60,7 +60,7 @@ namespace asio {
  *
  * @throws asio::system_error Thrown on failure.
  *
- * @par Example:
+ * @par Example
  * To read data into a streambuf until a newline is encountered:
  * @code asio::streambuf b;
  * asio::read_until(s, b, '\n');
@@ -129,7 +129,7 @@ std::size_t read_until(Sync_Read_Stream& s,
  *
  * @throws asio::system_error Thrown on failure.
  *
- * @par Example:
+ * @par Example
  * To read data into a streambuf until a newline is encountered:
  * @code asio::streambuf b;
  * asio::read_until(s, b, "\r\n");
@@ -198,7 +198,7 @@ std::size_t read_until(Sync_Read_Stream& s,
  *
  * @throws asio::system_error Thrown on failure.
  *
- * @par Example:
+ * @par Example
  * To read data into a streambuf until a CR-LF sequence is encountered:
  * @code asio::streambuf b;
  * asio::read_until(s, b, boost::regex("\r\n"));
@@ -289,7 +289,7 @@ std::size_t read_until(Sync_Read_Stream& s,
  * the handler will be performed in a manner equivalent to using
  * asio::io_service::post().
  *
- * @par Example:
+ * @par Example
  * To asynchronously read data into a streambuf until a newline is encountered:
  * @code asio::streambuf b;
  * ...
@@ -351,7 +351,7 @@ void async_read_until(Async_Read_Stream& s,
  * the handler will be performed in a manner equivalent to using
  * asio::io_service::post().
  *
- * @par Example:
+ * @par Example
  * To asynchronously read data into a streambuf until a newline is encountered:
  * @code asio::streambuf b;
  * ...
@@ -417,7 +417,7 @@ void async_read_until(Async_Read_Stream& s,
  * the handler will be performed in a manner equivalent to using
  * asio::io_service::post().
  *
- * @par Example:
+ * @par Example
  * To asynchronously read data into a streambuf until a CR-LF sequence is
  * encountered:
  * @code asio::streambuf b;

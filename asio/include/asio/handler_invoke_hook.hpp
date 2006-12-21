@@ -45,7 +45,7 @@ namespace asio {
  * function();
  * @endcode
  *
- * @par Example:
+ * @par Example
  * @code
  * class my_handler;
  *

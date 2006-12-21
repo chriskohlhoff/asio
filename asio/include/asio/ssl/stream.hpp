@@ -39,11 +39,11 @@ namespace ssl {
  * The stream class template provides asynchronous and blocking stream-oriented
  * functionality using SSL.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  *
- * @par Example:
+ * @par Example
  * To use the SSL stream template with a stream_socket, you would write:
  * @code
  * asio::io_service io_service;

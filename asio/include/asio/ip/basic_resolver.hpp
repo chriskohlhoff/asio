@@ -30,7 +30,7 @@ namespace ip {
  * The basic_resolver class template provides the ability to resolve a query
  * to a list of endpoints.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
@@ -87,8 +87,8 @@ public:
    *
    * @note A default constructed iterator represents the end of the list.
    *
-   * @note A successful call to this function is guaranteed to return at least
-   * one entry.
+   * A successful call to this function is guaranteed to return at least one
+   * entry.
    */
   iterator resolve(const query& q)
   {
@@ -104,16 +104,16 @@ public:
    *
    * @param q A query object that determines what endpoints will be returned.
    *
+   * @param ec Set to indicate what error occurred, if any.
+   *
    * @returns A forward-only iterator that can be used to traverse the list
    * of endpoint entries. Returns a default constructed iterator if an error
    * occurs.
    *
-   * @param ec Set to indicate what error occurred, if any.
-   *
    * @note A default constructed iterator represents the end of the list.
    *
-   * @note A successful call to this function is guaranteed to return at least
-   * one entry.
+   * A successful call to this function is guaranteed to return at least one
+   * entry.
    */
   iterator resolve(const query& q, asio::error_code& ec)
   {
@@ -143,8 +143,8 @@ public:
    *
    * @note A default constructed iterator represents the end of the list.
    *
-   * @note A successful resolve operation is guaranteed to pass at least one
-   * entry to the handler.
+   * A successful resolve operation is guaranteed to pass at least one entry to
+   * the handler.
    */
   template <typename Handler>
   void async_resolve(const query& q, Handler handler)
@@ -167,8 +167,8 @@ public:
    *
    * @note A default constructed iterator represents the end of the list.
    *
-   * @note A successful call to this function is guaranteed to return at least
-   * one entry.
+   * A successful call to this function is guaranteed to return at least one
+   * entry.
    */
   iterator resolve(const endpoint_type& e)
   {
@@ -186,16 +186,16 @@ public:
    * @param e An endpoint object that determines what endpoints will be
    * returned.
    *
+   * @param ec Set to indicate what error occurred, if any.
+   *
    * @returns A forward-only iterator that can be used to traverse the list
    * of endpoint entries. Returns a default constructed iterator if an error
    * occurs.
    *
-   * @param ec Set to indicate what error occurred, if any.
-   *
    * @note A default constructed iterator represents the end of the list.
    *
-   * @note A successful call to this function is guaranteed to return at least
-   * one entry.
+   * A successful call to this function is guaranteed to return at least one
+   * entry.
    */
   iterator resolve(const endpoint_type& e, asio::error_code& ec)
   {
@@ -226,8 +226,8 @@ public:
    *
    * @note A default constructed iterator represents the end of the list.
    *
-   * @note A successful resolve operation is guaranteed to pass at least one
-   * entry to the handler.
+   * A successful resolve operation is guaranteed to pass at least one entry to
+   * the handler.
    */
   template <typename Handler>
   void async_resolve(const endpoint_type& e, Handler handler)

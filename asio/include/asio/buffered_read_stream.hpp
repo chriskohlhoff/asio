@@ -40,7 +40,7 @@ namespace asio {
  * The buffered_read_stream class template can be used to add buffering to the
  * synchronous and asynchronous read operations of a stream.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  *

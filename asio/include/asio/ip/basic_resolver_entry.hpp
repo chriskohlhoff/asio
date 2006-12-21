@@ -29,7 +29,7 @@ namespace ip {
  * The asio::ip::basic_resolver_entry class template describes an entry
  * as returned by a resolver.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  *

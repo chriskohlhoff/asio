@@ -33,7 +33,7 @@ namespace ip {
  * The asio::ip::basic_resolver_query class template describes a query
  * that can be passed to a resolver.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  *

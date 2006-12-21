@@ -41,7 +41,7 @@ namespace asio {
  * The buffered_write_stream class template can be used to add buffering to the
  * synchronous and asynchronous write operations of a stream.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  *

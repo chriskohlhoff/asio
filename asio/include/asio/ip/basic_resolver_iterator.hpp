@@ -40,7 +40,7 @@ namespace ip {
  * The iterator's value_type, obtained when the iterator is dereferenced, is:
  * @code const basic_resolver_entry<Protocol> @endcode
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */

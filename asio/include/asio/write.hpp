@@ -56,7 +56,7 @@ namespace asio {
  *
  * @throws asio::system_error Thrown on failure.
  *
- * @par Example:
+ * @par Example
  * To write a single data buffer use the @ref buffer function as follows:
  * @code asio::write(s, asio::buffer(data, size)); @endcode
  * See the @ref buffer documentation for information on writing multiple
@@ -109,7 +109,7 @@ std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers);
  *
  * @throws asio::system_error Thrown on failure.
  *
- * @par Example:
+ * @par Example
  * To write a single data buffer use the @ref buffer function as follows:
  * @code asio::write(s, asio::buffer(data, size),
  *     asio::transfer_at_least(32)); @endcode
@@ -322,7 +322,7 @@ std::size_t write(Sync_Write_Stream& s, basic_streambuf<Allocator>& b,
  * the handler will be performed in a manner equivalent to using
  * asio::io_service::post().
  *
- * @par Example:
+ * @par Example
  * To write a single data buffer use the @ref buffer function as follows:
  * @code
  * asio::async_write(s, asio::buffer(data, size), handler);
@@ -389,7 +389,7 @@ void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
  * the handler will be performed in a manner equivalent to using
  * asio::io_service::post().
  *
- * @par Example:
+ * @par Example
  * To write a single data buffer use the @ref buffer function as follows:
  * @code asio::async_write(s,
  *     asio::buffer(data, size),

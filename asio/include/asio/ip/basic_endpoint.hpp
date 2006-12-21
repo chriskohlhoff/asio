@@ -39,7 +39,7 @@ namespace ip {
  * The asio::ip::basic_endpoint class template describes an endpoint that
  * may be associated with a particular socket.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  *
@@ -85,7 +85,7 @@ public:
   /// in6addr_any). This constructor would typically be used for accepting new
   /// connections.
   /**
-   * @par Examples:
+   * @par Examples
    * To initialise an IPv4 TCP endpoint for port 1234, use:
    * @code
    * asio::ip::tcp::endpoint ep(asio::ip::tcp::v4(), 1234);

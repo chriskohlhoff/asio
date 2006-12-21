@@ -29,7 +29,7 @@ namespace asio {
  * The basic_socket class template provides functionality that is common to both
  * stream-oriented and datagram-oriented sockets.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  *
@@ -156,7 +156,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::socket socket(io_service);
    * socket.open(asio::ip::tcp::v4());
@@ -177,7 +177,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::socket socket(io_service);
    * asio::error_code ec;
@@ -251,7 +251,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::socket socket(io_service);
    * ...
@@ -317,7 +317,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::socket socket(io_service);
    * socket.open(asio::ip::tcp::v4());
@@ -342,7 +342,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::socket socket(io_service);
    * socket.open(asio::ip::tcp::v4());
@@ -376,7 +376,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::socket socket(io_service);
    * asio::ip::tcp::endpoint endpoint(
@@ -406,7 +406,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::socket socket(io_service);
    * asio::ip::tcp::endpoint endpoint(
@@ -448,7 +448,7 @@ public:
    * of the handler will be performed in a manner equivalent to using
    * asio::io_service::post().
    *
-   * @par Example:
+   * @par Example
    * @code
    * void connect_handler(const asio::error_code& error)
    * {
@@ -497,7 +497,7 @@ public:
    * asio::ip::multicast::hops @n
    * asio::ip::tcp::no_delay
    *
-   * @par Example:
+   * @par Example
    * Setting the IPPROTO_TCP/TCP_NODELAY option:
    * @code
    * asio::ip::tcp::socket socket(io_service);
@@ -539,7 +539,7 @@ public:
    * asio::ip::multicast::hops @n
    * asio::ip::tcp::no_delay
    *
-   * @par Example:
+   * @par Example
    * Setting the IPPROTO_TCP/TCP_NODELAY option:
    * @code
    * asio::ip::tcp::socket socket(io_service);
@@ -585,7 +585,7 @@ public:
    * asio::ip::multicast::hops @n
    * asio::ip::tcp::no_delay
    *
-   * @par Example:
+   * @par Example
    * Getting the value of the SOL_SOCKET/SO_KEEPALIVE option:
    * @code
    * asio::ip::tcp::socket socket(io_service);
@@ -628,7 +628,7 @@ public:
    * asio::ip::multicast::hops @n
    * asio::ip::tcp::no_delay
    *
-   * @par Example:
+   * @par Example
    * Getting the value of the SOL_SOCKET/SO_KEEPALIVE option:
    * @code
    * asio::ip::tcp::socket socket(io_service);
@@ -662,7 +662,7 @@ public:
    * asio::socket_base::bytes_readable @n
    * asio::socket_base::non_blocking_io
    *
-   * @par Example:
+   * @par Example
    * Getting the number of bytes ready to read:
    * @code
    * asio::ip::tcp::socket socket(io_service);
@@ -692,7 +692,7 @@ public:
    * asio::socket_base::bytes_readable @n
    * asio::socket_base::non_blocking_io
    *
-   * @par Example:
+   * @par Example
    * Getting the number of bytes ready to read:
    * @code
    * asio::ip::tcp::socket socket(io_service);
@@ -722,7 +722,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::socket socket(io_service);
    * ...
@@ -746,7 +746,7 @@ public:
    * @returns An object that represents the local endpoint of the socket.
    * Returns a default-constructed endpoint object if an error occurred.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::socket socket(io_service);
    * ...
@@ -771,7 +771,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::socket socket(io_service);
    * ...
@@ -795,7 +795,7 @@ public:
    * @returns An object that represents the remote endpoint of the socket.
    * Returns a default-constructed endpoint object if an error occurred.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::socket socket(io_service);
    * ...
@@ -821,7 +821,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * Shutting down the send side of the socket:
    * @code
    * asio::ip::tcp::socket socket(io_service);
@@ -845,7 +845,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @par Example:
+   * @par Example
    * Shutting down the send side of the socket:
    * @code
    * asio::ip::tcp::socket socket(io_service);

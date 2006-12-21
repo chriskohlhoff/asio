@@ -34,7 +34,7 @@ namespace asio {
  * The basic_datagram_socket class template provides asynchronous and blocking
  * datagram-oriented socket functionality.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  *
@@ -146,7 +146,7 @@ public:
    * @note The send operation can only be used with a connected socket. Use
    * the send_to function to send data on an unconnected datagram socket.
    *
-   * @par Example:
+   * @par Example
    * To send a single data buffer use the @ref buffer function as follows:
    * @code socket.send(asio::buffer(data, size)); @endcode
    * See the @ref buffer documentation for information on sending multiple
@@ -241,7 +241,7 @@ public:
    * Use the async_send_to function to send data on an unconnected datagram
    * socket.
    *
-   * @par Example:
+   * @par Example
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
    * socket.async_send(asio::buffer(data, size), handler);
@@ -306,7 +306,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
    * asio::ip::udp::endpoint destination(
@@ -405,7 +405,7 @@ public:
    * of the handler will be performed in a manner equivalent to using
    * asio::io_service::post().
    *
-   * @par Example:
+   * @par Example
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
    * asio::ip::udp::endpoint destination(
@@ -477,7 +477,7 @@ public:
    * the receive_from function to receive data on an unconnected datagram
    * socket.
    *
-   * @par Example:
+   * @par Example
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
    * @code socket.receive(asio::buffer(data, size)); @endcode
@@ -575,7 +575,7 @@ public:
    * Use the async_receive_from function to receive data on an unconnected
    * datagram socket.
    *
-   * @par Example:
+   * @par Example
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
    * @code
@@ -640,7 +640,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
    * @code
@@ -742,7 +742,7 @@ public:
    * of the handler will be performed in a manner equivalent to using
    * asio::io_service::post().
    *
-   * @par Example:
+   * @par Example
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
    * @code socket.async_receive_from(

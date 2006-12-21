@@ -42,7 +42,7 @@ namespace asio {
  * before the upcall to the handler is performed. This allows the same memory to
  * be reused for a subsequent asynchronous operation initiated by the handler.
  *
- * @par Example:
+ * @par Example
  * @code
  * class my_handler;
  *

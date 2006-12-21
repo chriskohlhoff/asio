@@ -56,7 +56,7 @@ namespace asio {
  *
  * @throws asio::system_error Thrown on failure.
  *
- * @par Example:
+ * @par Example
  * To read into a single data buffer use the @ref buffer function as follows:
  * @code asio::read(s, asio::buffer(data, size)); @endcode
  * See the @ref buffer documentation for information on reading into multiple
@@ -108,7 +108,7 @@ std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers);
  *
  * @throws asio::system_error Thrown on failure.
  *
- * @par Example:
+ * @par Example
  * To read into a single data buffer use the @ref buffer function as follows:
  * @code asio::read(s, asio::buffer(data, size),
  *     asio::transfer_at_least(32)); @endcode
@@ -314,7 +314,7 @@ std::size_t read(Sync_Read_Stream& s, basic_streambuf<Allocator>& b,
  * the handler will be performed in a manner equivalent to using
  * asio::io_service::post().
  *
- * @par Example:
+ * @par Example
  * To read into a single data buffer use the @ref buffer function as follows:
  * @code
  * asio::async_read(s, asio::buffer(data, size), handler);
@@ -387,7 +387,7 @@ void async_read(Async_Read_Stream& s, const Mutable_Buffers& buffers,
  * the handler will be performed in a manner equivalent to using
  * asio::io_service::post().
  *
- * @par Example:
+ * @par Example
  * To read into a single data buffer use the @ref buffer function as follows:
  * @code asio::async_read(s,
  *     asio::buffer(data, size),
@@ -412,11 +412,11 @@ void async_read(Async_Read_Stream& s, const Mutable_Buffers& buffers,
  *
  * @li An error occurred.
  *
- * @param s The stream from which the data is to be read. The type must support
- * the Async_Read_Stream concept.
- *
  * This operation is implemented in terms of one or more calls to the stream's
  * async_read_some function.
+ *
+ * @param s The stream from which the data is to be read. The type must support
+ * the Async_Read_Stream concept.
  *
  * @param b A basic_streambuf object into which the data will be read. Ownership
  * of the streambuf is retained by the caller, which must guarantee that it

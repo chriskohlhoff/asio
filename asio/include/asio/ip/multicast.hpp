@@ -32,7 +32,7 @@ namespace multicast {
 /**
  * Implements the IPPROTO_IP/IP_ADD_MEMBERSHIP socket option.
  *
- * @par Examples:
+ * @par Examples
  * Setting the option to join a multicast group:
  * @code
  * asio::ip::udp::socket socket(io_service); 
@@ -57,7 +57,7 @@ typedef asio::ip::detail::socket_option::multicast_request<
 /**
  * Implements the IPPROTO_IP/IP_DROP_MEMBERSHIP socket option.
  *
- * @par Examples:
+ * @par Examples
  * Setting the option to leave a multicast group:
  * @code
  * asio::ip::udp::socket socket(io_service); 
@@ -82,7 +82,7 @@ typedef asio::ip::detail::socket_option::multicast_request<
 /**
  * Implements the IPPROTO_IP/IP_MULTICAST_IF socket option.
  *
- * @par Examples:
+ * @par Examples
  * Setting the option:
  * @code
  * asio::ip::udp::socket socket(io_service); 
@@ -108,7 +108,7 @@ typedef asio::ip::detail::socket_option::network_interface<
 /**
  * Implements the IPPROTO_IP/IP_MULTICAST_TTL socket option.
  *
- * @par Examples:
+ * @par Examples
  * Setting the option:
  * @code
  * asio::ip::udp::socket socket(io_service); 
@@ -142,7 +142,7 @@ typedef asio::ip::detail::socket_option::integer<
 /**
  * Implements the IPPROTO_IP/IP_MULTICAST_LOOP socket option.
  *
- * @par Examples:
+ * @par Examples
  * Setting the option:
  * @code
  * asio::ip::udp::socket socket(io_service); 

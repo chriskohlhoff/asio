@@ -78,7 +78,7 @@ public:
   /**
    * Implements the SOL_SOCKET/SO_BROADCAST socket option.
    *
-   * @par Examples:
+   * @par Examples
    * Setting the option:
    * @code
    * asio::ip::udp::socket socket(io_service); 
@@ -111,7 +111,7 @@ public:
   /**
    * Implements the SOL_SOCKET/SO_DONTROUTE socket option.
    *
-   * @par Examples:
+   * @par Examples
    * Setting the option:
    * @code
    * asio::ip::udp::socket socket(io_service); 
@@ -144,7 +144,7 @@ public:
   /**
    * Implements the SOL_SOCKET/SO_KEEPALIVE socket option.
    *
-   * @par Examples:
+   * @par Examples
    * Setting the option:
    * @code
    * asio::ip::tcp::socket socket(io_service); 
@@ -177,7 +177,7 @@ public:
   /**
    * Implements the SOL_SOCKET/SO_SNDBUF socket option.
    *
-   * @par Examples:
+   * @par Examples
    * Setting the option:
    * @code
    * asio::ip::tcp::socket socket(io_service); 
@@ -210,7 +210,7 @@ public:
   /**
    * Implements the SOL_SOCKET/SO_SNDLOWAT socket option.
    *
-   * @par Examples:
+   * @par Examples
    * Setting the option:
    * @code
    * asio::ip::tcp::socket socket(io_service); 
@@ -243,7 +243,7 @@ public:
   /**
    * Implements the SOL_SOCKET/SO_RCVBUF socket option.
    *
-   * @par Examples:
+   * @par Examples
    * Setting the option:
    * @code
    * asio::ip::tcp::socket socket(io_service); 
@@ -276,7 +276,7 @@ public:
   /**
    * Implements the SOL_SOCKET/SO_RCVLOWAT socket option.
    *
-   * @par Examples:
+   * @par Examples
    * Setting the option:
    * @code
    * asio::ip::tcp::socket socket(io_service); 
@@ -310,7 +310,7 @@ public:
   /**
    * Implements the SOL_SOCKET/SO_REUSEADDR socket option.
    *
-   * @par Examples:
+   * @par Examples
    * Setting the option:
    * @code
    * asio::ip::tcp::acceptor acceptor(io_service); 
@@ -344,7 +344,7 @@ public:
   /**
    * Implements the SOL_SOCKET/SO_LINGER socket option.
    *
-   * @par Examples:
+   * @par Examples
    * Setting the option:
    * @code
    * asio::ip::tcp::socket socket(io_service); 
@@ -380,7 +380,7 @@ public:
    * operation is permitted to fail with asio::error::connection_aborted.
    * By default the option is false.
    *
-   * @par Examples:
+   * @par Examples
    * Setting the option:
    * @code
    * asio::ip::tcp::acceptor acceptor(io_service); 
@@ -415,7 +415,7 @@ public:
   /**
    * Implements the FIONBIO IO control command.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::socket socket(io_service); 
    * ...
@@ -437,7 +437,7 @@ public:
   /**
    * Implements the FIONREAD IO control command.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::socket socket(io_service); 
    * ...

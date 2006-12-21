@@ -40,7 +40,7 @@ namespace ip {
  * The asio::ip::address_v6 class provides the ability to use and
  * manipulate IP version 6 addresses.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
@@ -81,13 +81,19 @@ public:
     return *this;
   }
 
-  /// Get the scope ID of the address.
+  /// The scope ID of the address.
+  /**
+   * Returns the scope ID associated with the IPv6 address.
+   */
   unsigned long scope_id() const
   {
     return scope_id_;
   }
 
-  /// Set the scope ID of the address.
+  /// The scope ID of the address.
+  /**
+   * Modifies the scope ID associated with the IPv6 address.
+   */
   void scope_id(unsigned long id)
   {
     scope_id_ = id;

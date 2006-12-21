@@ -51,7 +51,7 @@ namespace asio {
  * The io_service class also includes facilities intended for developers of
  * custom asynchronous services.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Safe, with the exception that calling reset()
  * while there are unfinished run() calls results in undefined behaviour.
@@ -84,11 +84,13 @@ public:
 
   class strand;
 
-  /// Default constructor.
+  /// Constructor.
   io_service();
 
-  /// Construct with a hint about the required level of concurrency.
+  /// Constructor.
   /**
+   * Construct with a hint about the required level of concurrency.
+   *
    * @param concurrency_hint A suggestion to the implementation on how many
    * threads it should allow to run simultaneously.
    */
@@ -397,7 +399,7 @@ public:
  * asio::io_service::reset(). This allows the thread to rejoin the
  * io_service's thread pool without impacting any other threads in the pool.
  *
- * @par Example:
+ * @par Example
  * @code
  * asio::io_service io_service;
  * ...

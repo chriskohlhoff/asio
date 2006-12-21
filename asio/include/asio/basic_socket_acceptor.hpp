@@ -31,11 +31,11 @@ namespace asio {
  * The basic_socket_acceptor class template is used for accepting new socket
  * connections.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  *
- * @par Example:
+ * @par Example
  * Opening a socket acceptor with the SO_REUSEADDR option enabled:
  * @code
  * asio::ip::tcp::acceptor acceptor(io_service);
@@ -178,7 +178,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::acceptor acceptor(io_service);
    * acceptor.open(asio::ip::tcp::v4());
@@ -200,7 +200,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::acceptor acceptor(io_service);
    * asio::error_code ec;
@@ -261,7 +261,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::acceptor acceptor(io_service);
    * acceptor.open(asio::ip::tcp::v4());
@@ -285,7 +285,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::acceptor acceptor(io_service);
    * acceptor.open(asio::ip::tcp::v4());
@@ -330,7 +330,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::acceptor acceptor(io_service);
    * ...
@@ -374,7 +374,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::acceptor acceptor(io_service);
    * ...
@@ -442,7 +442,7 @@ public:
    * asio::socket_base::reuse_address
    * asio::socket_base::enable_connection_aborted
    *
-   * @par Example:
+   * @par Example
    * Setting the SOL_SOCKET/SO_REUSEADDR option:
    * @code
    * asio::ip::tcp::acceptor acceptor(io_service);
@@ -471,7 +471,7 @@ public:
    * asio::socket_base::reuse_address
    * asio::socket_base::enable_connection_aborted
    *
-   * @par Example:
+   * @par Example
    * Setting the SOL_SOCKET/SO_REUSEADDR option:
    * @code
    * asio::ip::tcp::acceptor acceptor(io_service);
@@ -504,7 +504,7 @@ public:
    * @sa Socket_Option @n
    * asio::socket_base::reuse_address
    *
-   * @par Example:
+   * @par Example
    * Getting the value of the SOL_SOCKET/SO_REUSEADDR option:
    * @code
    * asio::ip::tcp::acceptor acceptor(io_service);
@@ -534,7 +534,7 @@ public:
    * @sa Socket_Option @n
    * asio::socket_base::reuse_address
    *
-   * @par Example:
+   * @par Example
    * Getting the value of the SOL_SOCKET/SO_REUSEADDR option:
    * @code
    * asio::ip::tcp::acceptor acceptor(io_service);
@@ -564,7 +564,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::acceptor acceptor(io_service);
    * ...
@@ -589,7 +589,7 @@ public:
    * Returns a default-constructed endpoint object if an error occurred and the
    * error handler did not throw an exception.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::acceptor acceptor(io_service);
    * ...
@@ -616,7 +616,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::acceptor acceptor(io_service);
    * ...
@@ -642,7 +642,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::acceptor acceptor(io_service);
    * ...
@@ -683,7 +683,7 @@ public:
    * of the handler will be performed in a manner equivalent to using
    * asio::io_service::post().
    *
-   * @par Example:
+   * @par Example
    * @code
    * void accept_handler(const asio::error_code& error)
    * {
@@ -722,7 +722,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::acceptor acceptor(io_service);
    * ...
@@ -755,7 +755,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @par Example:
+   * @par Example
    * @code
    * asio::ip::tcp::acceptor acceptor(io_service);
    * ...

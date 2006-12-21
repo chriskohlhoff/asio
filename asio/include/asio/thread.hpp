@@ -29,11 +29,11 @@ namespace asio {
  * a thread and waiting for it to exit. If more extensive threading
  * capabilities are required, you are strongly advised to use something else.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  *
- * @par Example:
+ * @par Example
  * A typical use of asio::thread would be to launch a thread to run an
  * io_service's event processing loop:
  *

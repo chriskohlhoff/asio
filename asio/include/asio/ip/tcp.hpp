@@ -34,7 +34,7 @@ namespace ip {
 /**
  * The asio::ip::tcp class contains flags necessary for TCP sockets.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Safe.
  *
@@ -99,21 +99,21 @@ public:
   /**
    * Implements the IPPROTO_TCP/TCP_NODELAY socket option.
    *
-   * @par Examples:
+   * @par Examples
    * Setting the option:
    * @code
-   * asio::ipv6::tcp::socket socket(io_service); 
+   * asio::ip::tcp::socket socket(io_service); 
    * ...
-   * asio::ipv6::tcp::no_delay option(true);
+   * asio::ip::tcp::no_delay option(true);
    * socket.set_option(option);
    * @endcode
    *
    * @par
    * Getting the current option value:
    * @code
-   * asio::ipv6::tcp::socket socket(io_service); 
+   * asio::ip::tcp::socket socket(io_service); 
    * ...
-   * asio::ipv6::tcp::no_delay option;
+   * asio::ip::tcp::no_delay option;
    * socket.get_option(option);
    * bool is_set = option.get();
    * @endcode

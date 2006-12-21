@@ -36,7 +36,7 @@ namespace ip {
  * The asio::ip::address class provides the ability to use either IP
  * version 4 or version 6 addresses.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */

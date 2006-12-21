@@ -35,13 +35,13 @@ namespace asio {
  *
  * Most applications will use the asio::deadline_timer typedef.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  *
  * @sa @ref deadline_timer_reset
  *
- * @par Examples:
+ * @par Examples
  * Performing a blocking wait:
  * @code
  * // Construct a timer without setting an expiry time.
