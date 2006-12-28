@@ -318,6 +318,13 @@ sub copy_source_file
   while (my $line = <$input>)
   {
     chomp($line);
+
+    # Unconditional replacements.
+    $line =~ s/[\\@]ref boost_bind/boost::bind()/g;
+    $line =~ s/[\\@]ref async_read/boost::asio::async_read()/g;
+    $line =~ s/[\\@]ref async_write/boost::asio::async_write()/g;
+
+    # Conditional replacements.
     if ($line =~ /^namespace asio {/)
     {
       print_line($output, "namespace boost {", $from, $lineno);
@@ -440,6 +447,11 @@ sub copy_source_file
     elsif ($line =~ /asio_handler_dispatch_helpers/)
     {
       $line =~ s/asio_handler_invoke_helpers/boost_asio_handler_invoke_helpers/g;
+      print_line($output, $line, $from, $lineno);
+    }
+    elsif ($line =~ /[\\@]ref boost_bind/)
+    {
+      $line =~ s/[\\@]ref boost_bind/boost::bind()/g;
       print_line($output, $line, $from, $lineno);
     }
     else

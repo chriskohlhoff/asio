@@ -5,6 +5,7 @@ This tutorial program introduces asio by showing how to perform a blocking
 wait on a timer.
 
 \dontinclude timer1/timer.cpp
+\skip #include
 
 We start by including the necessary header files.
 
@@ -26,7 +27,7 @@ type first thing in the main function.
 
 Next we declare an object of type asio::deadline_timer. The core asio classes
 that provide I/O functionality (or as in this case timer functionality) always
-take a reference to a io_service as their first constructor argument. The
+take a reference to an io_service as their first constructor argument. The
 second argument to the constructor sets the timer to expire 5 seconds from now.
 
 \until asio::deadline_timer
@@ -67,6 +68,7 @@ functionality by modifying the program from tutorial Timer.1 to perform an
 asynchronous wait on the timer.
 
 \dontinclude timer2/timer.cpp
+\skip #include
 
 \until posix_time.hpp
 
@@ -127,6 +129,7 @@ timer fires once a second. This will show how to pass additional parameters to
 your handler function.
 
 \dontinclude timer3/timer.cpp
+\skip #include
 
 \until posix_time.hpp
 
@@ -164,11 +167,11 @@ Then we start a new asynchronous wait on the timer. As you can
 see, the \ref boost_bind function is used to associate the extra parameters
 with your callback handler. The asio::deadline_timer::async_wait() function
 expects a handler function (or function object) with the signature
-<tt>void(const asio::error&)</tt>. Binding the additional parameters converts
-your <tt>print</tt> function into a function object that matches the signature
-correctly.
+<tt>void(const asio::error_code&)</tt>. Binding the additional parameters
+converts your <tt>print</tt> function into a function object that matches the
+signature correctly.
 
-See the <a href="http://www.boost.org/libs/bind/bind.html">Boost: bind.hpp
+See the <a href="http://www.boost.org/libs/bind/bind.html">Boost.Bind
 documentation</a> for more information on how to use \ref boost_bind.
 
 In this example, the asio::placeholders::error argument to \ref boost_bind is a
@@ -218,6 +221,7 @@ handler. The program should execute identically to the tutorial program from
 tutorial Timer.3.
 
 \dontinclude timer4/timer.cpp
+\skip #include
 
 \until posix_time.hpp
 
@@ -239,7 +243,7 @@ functions have an implicit <tt>this</tt> parameter, we need to bind
 <tt>this</tt> to the function. As in tutorial Timer.3, \ref boost_bind
 converts our callback handler (now a member function) into a function object
 that can be invoked as though it has the signature <tt>void(const
-asio::error&)</tt>.
+asio::error_code&)</tt>.
 
 You will note that the asio::placeholders::error placeholder is not specified
 here, as the <tt>print</tt> member function does not accept an error object as
@@ -306,6 +310,7 @@ allows handlers to execute concurrently, we need a method of synchronisation
 when handlers might be accessing a shared, thread-unsafe resource.
 
 \dontinclude timer5/timer.cpp
+\skip #include
 
 \until posix_time.hpp
 

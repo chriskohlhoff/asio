@@ -251,8 +251,9 @@ public:
    * asio::io_service::post().
    *
    * @note The send operation may not transmit all of the data to the peer.
-   * Consider using the @ref async_write function if you need to ensure that all
-   * data is written before the asynchronous operation completes.
+   * Consider using the @ref async_write function if you need to
+   * ensure that all data is written before the asynchronous operation
+   * completes.
    *
    * @par Example
    * To send a single data buffer use the @ref buffer function as follows:
@@ -294,8 +295,9 @@ public:
    * asio::io_service::post().
    *
    * @note The send operation may not transmit all of the data to the peer.
-   * Consider using the @ref async_write function if you need to ensure that all
-   * data is written before the asynchronous operation completes.
+   * Consider using the @ref async_write function if you need to
+   * ensure that all data is written before the asynchronous operation
+   * completes.
    *
    * @par Example
    * To send a single data buffer use the @ref buffer function as follows:
@@ -439,9 +441,9 @@ public:
    * asio::io_service::post().
    *
    * @note The receive operation may not receive all of the requested number of
-   * bytes. Consider using the @ref async_read function if you need to ensure
-   * that the requested amount of data is received before the asynchronous
-   * operation completes.
+   * bytes. Consider using the @ref async_read function if you need to
+   * ensure that the requested amount of data is received before the
+   * asynchronous operation completes.
    *
    * @par Example
    * To receive into a single data buffer use the @ref buffer function as
@@ -484,9 +486,9 @@ public:
    * asio::io_service::post().
    *
    * @note The receive operation may not receive all of the requested number of
-   * bytes. Consider using the @ref async_read function if you need to ensure
-   * that the requested amount of data is received before the asynchronous
-   * operation completes.
+   * bytes. Consider using the @ref async_read function if you need to
+   * ensure that the requested amount of data is received before the
+   * asynchronous operation completes.
    *
    * @par Example
    * To receive into a single data buffer use the @ref buffer function as
@@ -587,8 +589,9 @@ public:
    * asio::io_service::post().
    *
    * @note The write operation may not transmit all of the data to the peer.
-   * Consider using the @ref async_write function if you need to ensure that all
-   * data is written before the asynchronous operation completes.
+   * Consider using the @ref async_write function if you need to
+   * ensure that all data is written before the asynchronous operation
+   * completes.
    *
    * @par Example
    * To write a single data buffer use the @ref buffer function as follows:
@@ -690,9 +693,9 @@ public:
    * asio::io_service::post().
    *
    * @note The read operation may not read all of the requested number of bytes.
-   * Consider using the @ref async_read function if you need to ensure that the
-   * requested amount of data is read before the asynchronous operation
-   * completes.
+   * Consider using the @ref async_read function if you need to ensure
+   * that the requested amount of data is read before the asynchronous
+   * operation completes.
    *
    * @par Example
    * To read into a single data buffer use the @ref buffer function as follows:

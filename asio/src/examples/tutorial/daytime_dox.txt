@@ -5,6 +5,7 @@ This tutorial program shows how to use asio to implement a client application
 with TCP.
 
 \dontinclude daytime1/client.cpp
+\skip #include
 
 We start by including the necessary header files.
 
@@ -43,7 +44,7 @@ contain both IPv4 and IPv6 endpoints, so we need to try each of them until we
 find one that works. This keeps the client program independent of a specific IP
 version.
 
-\until throw error
+\until throw
 
 The connection is open. All we need to do now is read the response from the
 daytime service.
@@ -53,7 +54,7 @@ function automatically determines the size of the array to help prevent buffer
 overruns. Instead of a <tt>boost::array</tt>, we could have used a <tt>char
 []</tt> or <tt>std::vector</tt>.
 
-\until assign_error
+\until read_some
 
 When the server closes the connection, the asio::ip::tcp::socket::read_some()
 function will exit with the asio::error::eof error, which is how we know to
@@ -85,6 +86,7 @@ This tutorial program shows how to use asio to implement a server application
 with TCP.
 
 \dontinclude daytime2/server.cpp
+\skip #include
 
 \until using
 
@@ -251,6 +253,7 @@ This tutorial program shows how to use asio to implement a client application
 with UDP.
 
 \dontinclude daytime4/client.cpp
+\skip #include
 \until using asio::ip::udp;
 
 The start of the application is essentially the same as for the TCP daytime
@@ -374,8 +377,10 @@ The constructor initialises a socket to listen on UDP port 13.
 The function asio::ip::udp::socket::async_receive_from() will cause the
 application to listen in the background for a new request. When such a request
 is received, the asio::io_service object will invoke the
-<tt>handle_receive()</tt> function with two arguments: asio::error, and
-<tt>bytes_transferred</tt>.
+<tt>handle_receive()</tt> function with two arguments: a value of type
+asio::error_code indicating whether the operation succeeded or failed, and a
+<tt>size_t</tt> value <tt>bytes_transferred</tt> specifying the number of bytes
+received.
 
 \until }
 
