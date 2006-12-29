@@ -42,6 +42,7 @@
 #include "asio/detail/thread.hpp"
 #include "asio/detail/reactor_op_queue.hpp"
 #include "asio/detail/select_interrupter.hpp"
+#include "asio/detail/service_base.hpp"
 #include "asio/detail/signal_blocker.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/timer_queue.hpp"
@@ -56,12 +57,13 @@ namespace detail {
 
 template <bool Own_Thread>
 class kqueue_reactor
-  : public asio::io_service::service
+  : public asio::detail::service_base<kqueue_reactor<Own_Thread> >
 {
 public:
   // Constructor.
   kqueue_reactor(asio::io_service& io_service)
-    : asio::io_service::service(io_service),
+    : asio::detail::service_base<
+        kqueue_reactor<Own_Thread> >(io_service),
       mutex_(),
       kqueue_fd_(do_kqueue_create()),
       wait_in_progress_(false),

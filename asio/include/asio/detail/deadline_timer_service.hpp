@@ -27,6 +27,7 @@
 #include "asio/io_service.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/noncopyable.hpp"
+#include "asio/detail/service_base.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/timer_queue.hpp"
@@ -36,7 +37,8 @@ namespace detail {
 
 template <typename Time_Traits, typename Timer_Scheduler>
 class deadline_timer_service
-  : public asio::io_service::service
+  : public asio::detail::service_base<
+      deadline_timer_service<Time_Traits, Timer_Scheduler> >
 {
 public:
   // The time type.
@@ -56,7 +58,8 @@ public:
 
   // Constructor.
   deadline_timer_service(asio::io_service& io_service)
-    : asio::io_service::service(io_service),
+    : asio::detail::service_base<
+        deadline_timer_service<Time_Traits, Timer_Scheduler> >(io_service),
       scheduler_(asio::use_service<Timer_Scheduler>(io_service))
   {
     scheduler_.add_timer_queue(timer_queue_);
@@ -169,7 +172,7 @@ public:
   {
     impl.might_have_pending_waits = true;
     scheduler_.schedule_timer(timer_queue_, impl.expiry,
-        wait_handler<Handler>(io_service(), handler), &impl);
+        wait_handler<Handler>(this->io_service(), handler), &impl);
   }
 
 private:

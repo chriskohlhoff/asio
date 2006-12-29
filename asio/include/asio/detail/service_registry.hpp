@@ -22,19 +22,20 @@
 #include <typeinfo>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/io_service.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
+#include "asio/detail/service_id.hpp"
 
 namespace asio {
 namespace detail {
 
-template <typename Owner>
 class service_registry
   : private noncopyable
 {
 public:
   // Constructor.
-  service_registry(Owner& o)
+  service_registry(asio::io_service& o)
     : owner_(o),
       first_service_(0)
   {
@@ -46,7 +47,7 @@ public:
     // Shutdown all services. This must be done in a separate loop before the
     // services are destroyed since the destructors of user-defined handler
     // objects may try to access other service objects.
-    typename Owner::service* service = first_service_;
+    asio::io_service::service* service = first_service_;
     while (service)
     {
       service->shutdown_service();
@@ -56,7 +57,7 @@ public:
     // Destroy all services.
     while (first_service_)
     {
-      typename Owner::service* next_service = first_service_->next_;
+      asio::io_service::service* next_service = first_service_->next_;
       delete first_service_;
       first_service_ = next_service;
     }
@@ -71,10 +72,10 @@ public:
     asio::detail::mutex::scoped_lock lock(mutex_);
 
     // First see if there is an existing service object for the given type.
-    typename Owner::service* service = first_service_;
+    asio::io_service::service* service = first_service_;
     while (service)
     {
-      if (*service->type_info_ == typeid(Service))
+      if (service_id_matches(*service, Service::id))
         return *static_cast<Service*>(service);
       service = service->next_;
     }
@@ -84,7 +85,7 @@ public:
     // service's constructor.
     lock.unlock();
     std::auto_ptr<Service> new_service(new Service(owner_));
-    new_service->type_info_ = &typeid(Service);
+    init_service_id(*new_service, Service::id);
     Service& new_service_ref = *new_service;
     lock.lock();
 
@@ -93,7 +94,7 @@ public:
     service = first_service_;
     while (service)
     {
-      if (*service->type_info_ == typeid(Service))
+      if (service_id_matches(*service, Service::id))
         return *static_cast<Service*>(service);
       service = service->next_;
     }
@@ -113,16 +114,16 @@ public:
     asio::detail::mutex::scoped_lock lock(mutex_);
 
     // Check if there is an existing service object for the given type.
-    typename Owner::service* service = first_service_;
+    asio::io_service::service* service = first_service_;
     while (service)
     {
-      if (*service->type_info_ == typeid(Service))
+      if (service_id_matches(*service, Service::id))
         return false;
       service = service->next_;
     }
 
     // Take ownership of the service object.
-    new_service->type_info_ = &typeid(Service);
+    init_service_id(*new_service, Service::id);
     new_service->next_ = first_service_;
     first_service_ = new_service;
   }
@@ -133,10 +134,10 @@ public:
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
-    typename Owner::service* service = first_service_;
+    asio::io_service::service* service = first_service_;
     while (service)
     {
-      if (*service->type_info_ == typeid(Service))
+      if (service_id_matches(*service, Service::id))
         return true;
       service = service->next_;
     }
@@ -145,14 +146,46 @@ public:
   }
 
 private:
+  // Set a service's id.
+  void init_service_id(asio::io_service::service& service,
+      const asio::io_service::id& id)
+  {
+    service.type_info_ = 0;
+    service.id_ = &id;
+  }
+
+  // Set a service's id.
+  template <typename Service>
+  void init_service_id(asio::io_service::service& service,
+      const asio::detail::service_id<Service>& id)
+  {
+    service.type_info_ = &typeid(Service);
+    service.id_ = 0;
+  }
+
+  // Check if a service matches the given id.
+  bool service_id_matches(const asio::io_service::service& service,
+      const asio::io_service::id& id)
+  {
+    return service.id_ == &id;
+  }
+
+  // Check if a service matches the given id.
+  template <typename Service>
+  bool service_id_matches(const asio::io_service::service& service,
+      const asio::detail::service_id<Service>& id)
+  {
+    return *service.type_info_ == typeid(Service);
+  }
+
   // Mutex to protect access to internal data.
   mutable asio::detail::mutex mutex_;
 
   // The owner of this service registry and the services it contains.
-  Owner& owner_;
+  asio::io_service& owner_;
 
   // The first service in the list of contained services.
-  typename Owner::service* first_service_;
+  asio::io_service::service* first_service_;
 };
 
 } // namespace detail

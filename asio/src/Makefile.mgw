@@ -70,6 +70,7 @@ EXAMPLE_EXES = \
 	examples/iostreams/daytime_server.exe \
 	examples/multicast/receiver.exe \
 	examples/multicast/sender.exe \
+	examples/services/daytime_client.exe \
 	examples/timeouts/accept_timeout.exe \
 	examples/timeouts/connect_timeout.exe \
 	examples/timeouts/datagram_receive_timeout.exe \
@@ -89,14 +90,15 @@ EXAMPLE_EXES = \
 	examples/tutorial/daytime6/server.exe \
 	examples/tutorial/daytime7/server.exe
 
-HTTP_EXAMPLE_EXES = \
-	examples/http/server/http_server.exe
+OTHER_EXAMPLE_EXES = \
+	examples/http/server/http_server.exe \
+	examples/services/daytime_client.exe
 
 all: \
 	$(PERFORMANCE_TEST_EXES) \
 	$(UNIT_TEST_EXES) \
 	$(EXAMPLE_EXES) \
-	$(HTTP_EXAMPLE_EXES)
+	$(OTHER_EXAMPLE_EXES)
 
 check: $(UNIT_TEST_EXES) $(addprefix run.,$(UNIT_TEST_EXES))
 
@@ -125,6 +127,11 @@ examples/http/server/http_server.exe: \
 		examples/http/server/request_parser.o \
 		examples/http/server/server.o \
 		examples/http/server/win_main.o
+	g++ -o$@ $(LDFLAGS) $^ $(LIBS)
+
+examples/services/http_server.exe: \
+		examples/services/daytime_client.o \
+		examples/services/logger_service.o
 	g++ -o$@ $(LDFLAGS) $^ $(LIBS)
 
 .cpp.o:

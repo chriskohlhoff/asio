@@ -27,6 +27,7 @@
 #include "asio/detail/epoll_reactor.hpp"
 #include "asio/detail/kqueue_reactor.hpp"
 #include "asio/detail/select_reactor.hpp"
+#include "asio/detail/service_id.hpp"
 #include "asio/detail/win_iocp_socket_service.hpp"
 #include "asio/detail/reactive_socket_service.hpp"
 
@@ -38,6 +39,13 @@ class stream_socket_service
   : public asio::io_service::service
 {
 public:
+#if defined(GENERATING_DOCUMENTATION)
+  /// The unique service identifier.
+  static asio::io_service::id id;
+#else
+  static asio::detail::service_id<stream_socket_service<Protocol> > id;
+#endif
+
   /// The protocol type.
   typedef Protocol protocol_type;
 
@@ -244,6 +252,10 @@ private:
   // The service that provides the platform-specific implementation.
   service_impl_type& service_impl_;
 };
+
+template <typename Protocol>
+asio::detail::service_id<stream_socket_service<Protocol> >
+stream_socket_service<Protocol>::id;
 
 } // namespace asio
 

@@ -61,7 +61,10 @@ nobase_include_HEADERS = \
 	asio/detail/select_interrupter.hpp \
 	asio/detail/select_reactor.hpp \
 	asio/detail/select_reactor_fwd.hpp \
+	asio/detail/service_base.hpp \
+	asio/detail/service_id.hpp \
 	asio/detail/service_registry.hpp \
+	asio/detail/service_registry_fwd.hpp \
 	asio/detail/signal_blocker.hpp \
 	asio/detail/signal_init.hpp \
 	asio/detail/socket_holder.hpp \

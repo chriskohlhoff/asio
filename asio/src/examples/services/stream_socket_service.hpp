@@ -28,6 +28,9 @@ private:
   typedef asio::stream_socket_service<Protocol> service_impl_type;
 
 public:
+  /// The unique service identifier.
+  static asio::io_service::id id;
+
   /// The protocol type.
   typedef Protocol protocol_type;
 
@@ -320,6 +323,9 @@ private:
   /// The logger used for writing debug messages.
   logger logger_;
 };
+
+template <typename Protocol>
+asio::io_service::id stream_socket_service<Protocol>::id;
 
 } // namespace services
 

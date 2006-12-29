@@ -23,6 +23,7 @@
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/mutex.hpp"
+#include "asio/detail/service_base.hpp"
 #include "asio/detail/task_io_service_fwd.hpp"
 
 namespace asio {
@@ -30,12 +31,12 @@ namespace detail {
 
 template <typename Task>
 class task_io_service
-  : public asio::io_service::service
+  : public asio::detail::service_base<task_io_service<Task> >
 {
 public:
   // Constructor.
   task_io_service(asio::io_service& io_service)
-    : asio::io_service::service(io_service),
+    : asio::detail::service_base<task_io_service<Task> >(io_service),
       mutex_(),
       task_(use_service<Task>(io_service)),
       outstanding_work_(0),

@@ -28,6 +28,7 @@
 #include "asio/detail/epoll_reactor.hpp"
 #include "asio/detail/kqueue_reactor.hpp"
 #include "asio/detail/select_reactor.hpp"
+#include "asio/detail/service_id.hpp"
 
 namespace asio {
 
@@ -38,6 +39,14 @@ class deadline_timer_service
   : public asio::io_service::service
 {
 public:
+#if defined(GENERATING_DOCUMENTATION)
+  /// The unique service identifier.
+  static asio::io_service::id id;
+#else
+  static asio::detail::service_id<
+      deadline_timer_service<Time_Type, Time_Traits> > id;
+#endif
+
   /// The time traits type.
   typedef Time_Traits traits_type;
 
@@ -144,6 +153,10 @@ private:
   // The service that provides the platform-specific implementation.
   service_impl_type& service_impl_;
 };
+
+template <typename Time_Type, typename Time_Traits>
+asio::detail::service_id<deadline_timer_service<Time_Type, Time_Traits> >
+deadline_timer_service<Time_Type, Time_Traits>::id;
 
 } // namespace asio
 

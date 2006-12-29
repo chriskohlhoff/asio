@@ -27,6 +27,9 @@ class logger_service
   : public asio::io_service::service
 {
 public:
+  /// The unique service identifier.
+  static asio::io_service::id id;
+
   /// The backend implementation of a logger.
   struct logger_impl
   {

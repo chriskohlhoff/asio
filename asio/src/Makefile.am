@@ -234,7 +234,9 @@ examples_iostreams_daytime_client_SOURCES = examples/iostreams/daytime_client.cp
 examples_iostreams_daytime_server_SOURCES = examples/iostreams/daytime_server.cpp
 examples_multicast_receiver_SOURCES = examples/multicast/receiver.cpp
 examples_multicast_sender_SOURCES = examples/multicast/sender.cpp
-examples_services_daytime_client_SOURCES = examples/services/daytime_client.cpp
+examples_services_daytime_client_SOURCES = \
+	examples/services/daytime_client.cpp \
+	examples/services/logger_service.cpp
 examples_timeouts_accept_timeout_SOURCES = examples/timeouts/accept_timeout.cpp
 examples_timeouts_connect_timeout_SOURCES = examples/timeouts/connect_timeout.cpp
 examples_timeouts_datagram_receive_timeout_SOURCES = examples/timeouts/datagram_receive_timeout.cpp

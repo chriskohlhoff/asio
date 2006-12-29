@@ -31,14 +31,15 @@
 #include "asio/detail/fd_set_adapter.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/task_io_service.hpp"
-#include "asio/detail/thread.hpp"
 #include "asio/detail/reactor_op_queue.hpp"
 #include "asio/detail/select_interrupter.hpp"
 #include "asio/detail/select_reactor_fwd.hpp"
+#include "asio/detail/service_base.hpp"
 #include "asio/detail/signal_blocker.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/task_io_service.hpp"
+#include "asio/detail/thread.hpp"
 #include "asio/detail/timer_queue.hpp"
 
 namespace asio {
@@ -46,12 +47,13 @@ namespace detail {
 
 template <bool Own_Thread>
 class select_reactor
-  : public asio::io_service::service
+  : public asio::detail::service_base<select_reactor<Own_Thread> >
 {
 public:
   // Constructor.
   select_reactor(asio::io_service& io_service)
-    : asio::io_service::service(io_service),
+    : asio::detail::service_base<
+        select_reactor<Own_Thread> >(io_service),
       mutex_(),
       select_in_progress_(false),
       interrupter_(),

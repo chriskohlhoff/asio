@@ -29,7 +29,7 @@
 #include "asio/detail/kqueue_reactor_fwd.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/select_reactor_fwd.hpp"
-#include "asio/detail/service_registry.hpp"
+#include "asio/detail/service_registry_fwd.hpp"
 #include "asio/detail/signal_init.hpp"
 #include "asio/detail/task_io_service_fwd.hpp"
 #include "asio/detail/win_iocp_io_service_fwd.hpp"
@@ -80,6 +80,8 @@ public:
   class work;
   friend class work;
 
+  class id;
+
   class service;
 
   class strand;
@@ -95,6 +97,9 @@ public:
    * threads it should allow to run simultaneously.
    */
   explicit io_service(size_t concurrency_hint);
+
+  /// Destructor.
+  ~io_service();
 
   /// Run the io_service's event processing loop.
   /**
@@ -277,7 +282,7 @@ private:
 #endif
 
   // The service registry.
-  detail::service_registry<io_service> service_registry_;
+  asio::detail::service_registry* service_registry_;
 
   // The implementation.
   impl_type& impl_;
@@ -331,6 +336,15 @@ private:
   asio::io_service& io_service_;
 };
 
+/// Class used to uniquely identify a service.
+class io_service::id
+  : private noncopyable
+{
+public:
+  /// Constructor.
+  id() {}
+};
+
 /// Base class for all io_service services.
 class io_service::service
   : private noncopyable
@@ -353,9 +367,10 @@ private:
   /// Destroy all user-defined handler objects owned by the service.
   virtual void shutdown_service() = 0;
 
-  friend class detail::service_registry<asio::io_service>;
+  friend class asio::detail::service_registry;
   asio::io_service& owner_;
   const std::type_info* type_info_;
+  const asio::io_service::id* id_;
   service* next_;
 };
 

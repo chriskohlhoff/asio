@@ -25,6 +25,7 @@
 
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
+#include "asio/detail/service_base.hpp"
 #include "asio/ssl/context_base.hpp"
 #include "asio/ssl/detail/openssl_context_service.hpp"
 
@@ -33,13 +34,22 @@ namespace ssl {
 
 /// Default service implementation for a context.
 class context_service
+#if defined(GENERATING_DOCUMENTATION)
   : public asio::io_service::service
+#else
+  : public asio::detail::service_base<context_service>
+#endif
 {
 private:
   // The type of the platform-specific implementation.
   typedef detail::openssl_context_service service_impl_type;
 
 public:
+#if defined(GENERATING_DOCUMENTATION)
+  /// The unique service identifier.
+  static asio::io_service::id id;
+#endif
+
   /// The type of the context.
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined impl_type;
@@ -49,7 +59,7 @@ public:
 
   /// Constructor.
   explicit context_service(asio::io_service& io_service)
-    : asio::io_service::service(io_service),
+    : asio::detail::service_base<context_service>(io_service),
       service_impl_(asio::use_service<service_impl_type>(io_service))
   {
   }
