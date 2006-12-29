@@ -126,6 +126,8 @@ public:
     init_service_id(*new_service, Service::id);
     new_service->next_ = first_service_;
     first_service_ = new_service;
+
+    return true;
   }
 
   // Check whether a service object of the specified type already exists.
