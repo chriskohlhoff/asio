@@ -100,8 +100,7 @@ public:
   {
     // Format the text to be logged.
     std::ostringstream os;
-    os << boost::posix_time::microsec_clock::universal_time();
-    os << " - " << impl->identifier << " - " << message;
+    os << impl->identifier << ": " << message;
 
     // Pass the work of opening the file to the background thread.
     work_io_service_.post(boost::bind(

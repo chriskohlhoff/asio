@@ -28,7 +28,7 @@
 #include "asio/detail/epoll_reactor.hpp"
 #include "asio/detail/kqueue_reactor.hpp"
 #include "asio/detail/select_reactor.hpp"
-#include "asio/detail/service_id.hpp"
+#include "asio/detail/service_base.hpp"
 
 namespace asio {
 
@@ -36,15 +36,17 @@ namespace asio {
 template <typename Time_Type,
     typename Time_Traits = asio::time_traits<Time_Type> >
 class deadline_timer_service
+#if defined(GENERATING_DOCUMENTATION)
   : public asio::io_service::service
+#else
+  : public asio::detail::service_base<
+      deadline_timer_service<Time_Type, Time_Traits> >
+#endif
 {
 public:
 #if defined(GENERATING_DOCUMENTATION)
   /// The unique service identifier.
   static asio::io_service::id id;
-#else
-  static asio::detail::service_id<
-      deadline_timer_service<Time_Type, Time_Traits> > id;
 #endif
 
   /// The time traits type.
@@ -82,7 +84,8 @@ public:
 
   /// Construct a new timer service for the specified io_service.
   explicit deadline_timer_service(asio::io_service& io_service)
-    : asio::io_service::service(io_service),
+    : asio::detail::service_base<
+        deadline_timer_service<Time_Type, Time_Traits> >(io_service),
       service_impl_(asio::use_service<service_impl_type>(io_service))
   {
   }
@@ -153,10 +156,6 @@ private:
   // The service that provides the platform-specific implementation.
   service_impl_type& service_impl_;
 };
-
-template <typename Time_Type, typename Time_Traits>
-asio::detail::service_id<deadline_timer_service<Time_Type, Time_Traits> >
-deadline_timer_service<Time_Type, Time_Traits>::id;
 
 } // namespace asio
 

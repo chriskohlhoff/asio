@@ -20,6 +20,7 @@
 #include "asio/detail/push_options.hpp"
 #include <boost/config.hpp>
 #include <boost/assert.hpp>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <cerrno>

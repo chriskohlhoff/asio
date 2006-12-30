@@ -20,7 +20,7 @@
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/detail/resolver_service.hpp"
-#include "asio/detail/service_id.hpp"
+#include "asio/detail/service_base.hpp"
 
 namespace asio {
 namespace ip {
@@ -28,15 +28,17 @@ namespace ip {
 /// Default service implementation for a resolver.
 template <typename InternetProtocol>
 class resolver_service
+#if defined(GENERATING_DOCUMENTATION)
   : public asio::io_service::service
+#else
+  : public asio::detail::service_base<
+      resolver_service<InternetProtocol> >
+#endif
 {
 public:
 #if defined(GENERATING_DOCUMENTATION)
   /// The unique service identifier.
   static asio::io_service::id id;
-#else
-  static asio::detail::service_id<
-      resolver_service<InternetProtocol> > id;
 #endif
 
   /// The protocol type.
@@ -66,7 +68,8 @@ public:
 
   /// Construct a new resolver service for the specified io_service.
   explicit resolver_service(asio::io_service& io_service)
-    : asio::io_service::service(io_service),
+    : asio::detail::service_base<
+        resolver_service<InternetProtocol> >(io_service),
       service_impl_(asio::use_service<service_impl_type>(io_service))
   {
   }
@@ -128,10 +131,6 @@ private:
   // The service that provides the platform-specific implementation.
   service_impl_type& service_impl_;
 };
-
-template <typename InternetProtocol>
-asio::detail::service_id<resolver_service<InternetProtocol> >
-resolver_service<InternetProtocol>::id;
 
 } // namespace ip
 } // namespace asio

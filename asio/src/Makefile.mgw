@@ -70,7 +70,6 @@ EXAMPLE_EXES = \
 	examples/iostreams/daytime_server.exe \
 	examples/multicast/receiver.exe \
 	examples/multicast/sender.exe \
-	examples/services/daytime_client.exe \
 	examples/timeouts/accept_timeout.exe \
 	examples/timeouts/connect_timeout.exe \
 	examples/timeouts/datagram_receive_timeout.exe \
@@ -129,7 +128,7 @@ examples/http/server/http_server.exe: \
 		examples/http/server/win_main.o
 	g++ -o$@ $(LDFLAGS) $^ $(LIBS)
 
-examples/services/http_server.exe: \
+examples/services/daytime_client.exe: \
 		examples/services/daytime_client.o \
 		examples/services/logger_service.o
 	g++ -o$@ $(LDFLAGS) $^ $(LIBS)

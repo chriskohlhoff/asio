@@ -23,7 +23,7 @@
 #include "asio/detail/epoll_reactor.hpp"
 #include "asio/detail/kqueue_reactor.hpp"
 #include "asio/detail/select_reactor.hpp"
-#include "asio/detail/service_id.hpp"
+#include "asio/detail/service_base.hpp"
 #include "asio/detail/reactive_socket_service.hpp"
 #include "asio/detail/win_iocp_socket_service.hpp"
 
@@ -32,14 +32,16 @@ namespace asio {
 /// Default service implementation for a socket acceptor.
 template <typename Protocol>
 class socket_acceptor_service
+#if defined(GENERATING_DOCUMENTATION)
   : public asio::io_service::service
+#else
+  : public asio::detail::service_base<socket_acceptor_service<Protocol> >
+#endif
 {
 public:
 #if defined(GENERATING_DOCUMENTATION)
   /// The unique service identifier.
   static asio::io_service::id id;
-#else
-  static asio::detail::service_id<socket_acceptor_service<Protocol> > id;
 #endif
 
   /// The protocol type.
@@ -80,7 +82,8 @@ public:
 
   /// Construct a new socket acceptor service for the specified io_service.
   explicit socket_acceptor_service(asio::io_service& io_service)
-    : asio::io_service::service(io_service),
+    : asio::detail::service_base<
+        socket_acceptor_service<Protocol> >(io_service),
       service_impl_(asio::use_service<service_impl_type>(io_service))
   {
   }
@@ -222,10 +225,6 @@ private:
   // The service that provides the platform-specific implementation.
   service_impl_type& service_impl_;
 };
-
-template <typename Protocol>
-asio::detail::service_id<socket_acceptor_service<Protocol> >
-socket_acceptor_service<Protocol>::id;
 
 } // namespace asio
 

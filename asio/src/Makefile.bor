@@ -118,8 +118,8 @@ examples\http\server\http_server.exe: \
 	bcc32 -e$@ $(LDFLAGS) $**
 
 examples\services\daytime_client.exe: \
-		examples\http\server\daytime_client.obj \
-		examples\http\server\logger_service.obj
+		examples\services\daytime_client.obj \
+		examples\services\logger_service.obj
 	bcc32 -e$@ $(LDFLAGS) $**
 
 .obj.exe:
