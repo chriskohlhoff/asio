@@ -33,14 +33,14 @@
 namespace asio {
 
 /// Default service implementation for a timer.
-template <typename Time_Type,
-    typename Time_Traits = asio::time_traits<Time_Type> >
+template <typename TimeType,
+    typename TimeTraits = asio::time_traits<TimeType> >
 class deadline_timer_service
 #if defined(GENERATING_DOCUMENTATION)
   : public asio::io_service::service
 #else
   : public asio::detail::service_base<
-      deadline_timer_service<Time_Type, Time_Traits> >
+      deadline_timer_service<TimeType, TimeTraits> >
 #endif
 {
 public:
@@ -50,7 +50,7 @@ public:
 #endif
 
   /// The time traits type.
-  typedef Time_Traits traits_type;
+  typedef TimeTraits traits_type;
 
   /// The time type.
   typedef typename traits_type::time_type time_type;
@@ -85,7 +85,7 @@ public:
   /// Construct a new timer service for the specified io_service.
   explicit deadline_timer_service(asio::io_service& io_service)
     : asio::detail::service_base<
-        deadline_timer_service<Time_Type, Time_Traits> >(io_service),
+        deadline_timer_service<TimeType, TimeTraits> >(io_service),
       service_impl_(asio::use_service<service_impl_type>(io_service))
   {
   }
