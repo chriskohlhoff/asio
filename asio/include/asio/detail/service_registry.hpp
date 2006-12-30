@@ -177,7 +177,7 @@ private:
   bool service_id_matches(const asio::io_service::service& service,
       const asio::detail::service_id<Service>& id)
   {
-    return *service.type_info_ == typeid(Service);
+    return !!(*service.type_info_ == typeid(Service));
   }
 
   // Mutex to protect access to internal data.
