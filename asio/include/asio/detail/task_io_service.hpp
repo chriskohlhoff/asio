@@ -48,7 +48,7 @@ public:
   {
   }
 
-  void init(size_t concurrency_hint)
+  void init(size_t /*concurrency_hint*/)
   {
   }
 

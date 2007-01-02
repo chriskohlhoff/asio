@@ -159,7 +159,7 @@ private:
   // Set a service's id.
   template <typename Service>
   void init_service_id(asio::io_service::service& service,
-      const asio::detail::service_id<Service>& id)
+      const asio::detail::service_id<Service>& /*id*/)
   {
     service.type_info_ = &typeid(Service);
     service.id_ = 0;
@@ -175,7 +175,7 @@ private:
   // Check if a service matches the given id.
   template <typename Service>
   bool service_id_matches(const asio::io_service::service& service,
-      const asio::detail::service_id<Service>& id)
+      const asio::detail::service_id<Service>& /*id*/)
   {
     return !!(*service.type_info_ == typeid(Service));
   }
