@@ -62,16 +62,16 @@ void test()
     mb1 = mb2 + 128;
     mb1 = 128 + mb2;
 
-    // mutable_buffer_container_1 constructors.
+    // mutable_buffers_1 constructors.
 
-    mutable_buffer_container_1 mbc1(mb1);
-    mutable_buffer_container_1 mbc2(mbc1);
+    mutable_buffers_1 mbc1(mb1);
+    mutable_buffers_1 mbc2(mbc1);
 
-    // mutable_buffer_container_1 functions.
+    // mutable_buffers_1 functions.
 
-    mutable_buffer_container_1::const_iterator iter1 = mbc1.begin();
+    mutable_buffers_1::const_iterator iter1 = mbc1.begin();
     (void)iter1;
-    mutable_buffer_container_1::const_iterator iter2 = mbc1.end();
+    mutable_buffers_1::const_iterator iter2 = mbc1.end();
     (void)iter2;
 
     // const_buffer constructors.
@@ -93,16 +93,16 @@ void test()
     cb1 = cb2 + 128;
     cb1 = 128 + cb2;
 
-    // const_buffer_container_1 constructors.
+    // const_buffers_1 constructors.
 
-    const_buffer_container_1 cbc1(cb1);
-    const_buffer_container_1 cbc2(cbc1);
+    const_buffers_1 cbc1(cb1);
+    const_buffers_1 cbc2(cbc1);
 
-    // const_buffer_container_1 functions.
+    // const_buffers_1 functions.
 
-    const_buffer_container_1::const_iterator iter3 = cbc1.begin();
+    const_buffers_1::const_iterator iter3 = cbc1.begin();
     (void)iter3;
-    const_buffer_container_1::const_iterator iter4 = cbc1.end();
+    const_buffers_1::const_iterator iter4 = cbc1.end();
     (void)iter4;
 
     // buffer function overloads.

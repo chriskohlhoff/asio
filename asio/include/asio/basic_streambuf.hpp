@@ -45,8 +45,8 @@ public:
   /// The type used to represent the put area as a list of buffers.
   typedef implementation_defined mutable_buffers_type;
 #else
-  typedef asio::const_buffer_container_1 const_buffers_type;
-  typedef asio::mutable_buffer_container_1 mutable_buffers_type;
+  typedef asio::const_buffers_1 const_buffers_type;
+  typedef asio::mutable_buffers_1 mutable_buffers_type;
 #endif
 
   /// Construct a buffer with a specified maximum size.
