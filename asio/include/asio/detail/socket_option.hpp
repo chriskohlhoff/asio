@@ -19,6 +19,7 @@
 
 #include "asio/detail/push_options.hpp"
 #include <cstddef>
+#include <stdexcept>
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -40,21 +41,34 @@ public:
   }
 
   // Construct with a specific option value.
-  boolean(bool value)
-    : value_(value ? 1 : 0)
+  explicit boolean(bool v)
+    : value_(v ? 1 : 0)
   {
   }
 
-  // Set the value of the boolean.
-  void set(bool value)
+  // Set the current value of the boolean.
+  boolean& operator=(bool v)
   {
-    value_ = value ? 1 : 0;
+    value_ = v ? 1 : 0;
+    return *this;
   }
 
   // Get the current value of the boolean.
-  bool get() const
+  bool value() const
   {
-    return value_;
+    return !!value_;
+  }
+
+  // Convert to bool.
+  operator bool() const
+  {
+    return !!value_;
+  }
+
+  // Test for false.
+  bool operator!() const
+  {
+    return !value_;
   }
 
   // Get the level of the socket option.
@@ -92,6 +106,14 @@ public:
     return sizeof(value_);
   }
 
+  // Set the size of the boolean data.
+  template <typename Protocol>
+  void resize(const Protocol&, std::size_t s) const
+  {
+    if (s != sizeof(value_))
+      throw std::length_error("boolean socket option resize");
+  }
+
 private:
   int value_;
 };
@@ -108,19 +130,20 @@ public:
   }
 
   // Construct with a specific option value.
-  integer(int value)
-    : value_(value)
+  explicit integer(int v)
+    : value_(v)
   {
   }
 
   // Set the value of the int option.
-  void set(int value)
+  integer& operator=(int v)
   {
-    value_ = value;
+    value_ = v;
+    return *this;
   }
 
   // Get the current value of the int option.
-  int get() const
+  int value() const
   {
     return value_;
   }
@@ -160,76 +183,16 @@ public:
     return sizeof(value_);
   }
 
-private:
-  int value_;
-};
-
-// Helper template for implementing unsigned integer options.
-template <int Level, int Name>
-class unsigned_integer
-{
-public:
-  // Default constructor.
-  unsigned_integer()
-    : value_(0)
-  {
-  }
-
-  // Construct with a specific option value.
-  unsigned_integer(unsigned int value)
-    : value_(value)
-  {
-  }
-
-  // Set the value of the int option.
-  void set(unsigned int value)
-  {
-    value_ = value;
-  }
-
-  // Get the current value of the int option.
-  unsigned int get() const
-  {
-    return value_;
-  }
-
-  // Get the level of the socket option.
+  // Set the size of the int data.
   template <typename Protocol>
-  int level(const Protocol&) const
+  void resize(const Protocol&, std::size_t s) const
   {
-    return Level;
-  }
-
-  // Get the name of the socket option.
-  template <typename Protocol>
-  int name(const Protocol&) const
-  {
-    return Name;
-  }
-
-  // Get the address of the int data.
-  template <typename Protocol>
-  unsigned int* data(const Protocol&)
-  {
-    return &value_;
-  }
-
-  // Get the address of the int data.
-  template <typename Protocol>
-  const unsigned int* data(const Protocol&) const
-  {
-    return &value_;
-  }
-
-  // Get the size of the int data.
-  template <typename Protocol>
-  std::size_t size(const Protocol&) const
-  {
-    return sizeof(value_);
+    if (s != sizeof(value_))
+      throw std::length_error("integer socket option resize");
   }
 
 private:
-  unsigned int value_;
+  int value_;
 };
 
 // Helper template for implementing linger options.
@@ -245,10 +208,10 @@ public:
   }
 
   // Construct with specific option values.
-  linger(bool value, unsigned short timeout)
+  linger(bool e, int t)
   {
-    value_.l_onoff = value ? 1 : 0;
-    value_.l_linger = timeout;
+    enabled(e);
+    timeout(t);
   }
 
   // Set the value for whether linger is enabled.
@@ -264,15 +227,19 @@ public:
   }
 
   // Set the value for the linger timeout.
-  void timeout(unsigned short value)
+  void timeout(int value)
   {
+#if defined(WIN32)
+    value_.l_linger = static_cast<u_short>(value);
+#else
     value_.l_linger = value;
+#endif
   }
 
   // Get the value for the linger timeout.
-  unsigned short timeout() const
+  int timeout() const
   {
-    return value_.l_linger;
+    return static_cast<int>(value_.l_linger);
   }
 
   // Get the level of the socket option.
@@ -308,6 +275,14 @@ public:
   std::size_t size(const Protocol&) const
   {
     return sizeof(value_);
+  }
+
+  // Set the size of the int data.
+  template <typename Protocol>
+  void resize(const Protocol&, std::size_t s) const
+  {
+    if (s != sizeof(value_))
+      throw std::length_error("linger socket option resize");
   }
 
 private:

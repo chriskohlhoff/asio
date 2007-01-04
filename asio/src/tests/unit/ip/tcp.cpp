@@ -23,6 +23,42 @@
 
 //------------------------------------------------------------------------------
 
+// ip_tcp_compile test
+// ~~~~~~~~~~~~~~~~~~~
+// The following test checks that all nested classes, enums and constants in
+// ip::tcp compile and link correctly. Runtime failures are ignored.
+
+namespace ip_tcp_compile {
+
+using namespace asio;
+
+void test()
+{
+  try
+  {
+    io_service ios;
+    ip::tcp::socket sock(ios);
+
+    // no_delay class.
+
+    ip::tcp::no_delay no_delay1(true);
+    sock.set_option(no_delay1);
+    ip::tcp::no_delay no_delay2;
+    sock.get_option(no_delay2);
+    no_delay1 = true;
+    static_cast<bool>(no_delay1);
+    static_cast<bool>(!no_delay1);
+    static_cast<bool>(no_delay1.value());
+  }
+  catch (std::exception&)
+  {
+  }
+}
+
+} // namespace ip_tcp_compile
+
+//------------------------------------------------------------------------------
+
 // ip_tcp_socket_compile test
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 // The following test checks that all public member functions on the class
@@ -266,6 +302,7 @@ void test()
 test_suite* init_unit_test_suite(int argc, char* argv[])
 {
   test_suite* test = BOOST_TEST_SUITE("ip/tcp");
+  test->add(BOOST_TEST_CASE(&ip_tcp_compile::test));
   test->add(BOOST_TEST_CASE(&ip_tcp_socket_compile::test));
   test->add(BOOST_TEST_CASE(&ip_tcp_acceptor_runtime::test));
   return test;

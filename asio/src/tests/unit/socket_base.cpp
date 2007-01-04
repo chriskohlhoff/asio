@@ -56,6 +56,10 @@ void test()
     sock.set_option(broadcast1);
     socket_base::broadcast broadcast2;
     sock.get_option(broadcast2);
+    broadcast1 = true;
+    static_cast<bool>(broadcast1);
+    static_cast<bool>(!broadcast1);
+    static_cast<bool>(broadcast1.value());
 
     // do_not_route class.
 
@@ -63,6 +67,10 @@ void test()
     sock.set_option(do_not_route1);
     socket_base::do_not_route do_not_route2;
     sock.get_option(do_not_route2);
+    do_not_route1 = true;
+    static_cast<bool>(do_not_route1);
+    static_cast<bool>(!do_not_route1);
+    static_cast<bool>(do_not_route1.value());
 
     // keep_alive class.
 
@@ -70,6 +78,10 @@ void test()
     sock.set_option(keep_alive1);
     socket_base::keep_alive keep_alive2;
     sock.get_option(keep_alive2);
+    keep_alive1 = true;
+    static_cast<bool>(keep_alive1);
+    static_cast<bool>(!keep_alive1);
+    static_cast<bool>(keep_alive1.value());
 
     // send_buffer_size class.
 
@@ -77,6 +89,8 @@ void test()
     sock.set_option(send_buffer_size1);
     socket_base::send_buffer_size send_buffer_size2;
     sock.get_option(send_buffer_size2);
+    send_buffer_size1 = 1;
+    static_cast<int>(send_buffer_size1.value());
 
     // send_low_watermark class.
 
@@ -84,6 +98,8 @@ void test()
     sock.set_option(send_low_watermark1);
     socket_base::send_low_watermark send_low_watermark2;
     sock.get_option(send_low_watermark2);
+    send_low_watermark1 = 1;
+    static_cast<int>(send_low_watermark1.value());
 
     // receive_buffer_size class.
 
@@ -91,6 +107,8 @@ void test()
     sock.set_option(receive_buffer_size1);
     socket_base::receive_buffer_size receive_buffer_size2;
     sock.get_option(receive_buffer_size2);
+    receive_buffer_size1 = 1;
+    static_cast<int>(receive_buffer_size1.value());
 
     // receive_low_watermark class.
 
@@ -98,6 +116,8 @@ void test()
     sock.set_option(receive_low_watermark1);
     socket_base::receive_low_watermark receive_low_watermark2;
     sock.get_option(receive_low_watermark2);
+    receive_low_watermark1 = 1;
+    static_cast<int>(receive_low_watermark1.value());
 
     // reuse_address class.
 
@@ -105,6 +125,10 @@ void test()
     sock.set_option(reuse_address1);
     socket_base::reuse_address reuse_address2;
     sock.get_option(reuse_address2);
+    reuse_address1 = true;
+    static_cast<bool>(reuse_address1);
+    static_cast<bool>(!reuse_address1);
+    static_cast<bool>(reuse_address1.value());
 
     // linger class.
 
@@ -112,6 +136,10 @@ void test()
     sock.set_option(linger1);
     socket_base::linger linger2;
     sock.get_option(linger2);
+    linger1.enabled(true);
+    static_cast<bool>(linger1.enabled());
+    linger1.timeout(1);
+    static_cast<int>(linger1.timeout());
 
     // enable_connection_aborted class.
 
@@ -119,6 +147,10 @@ void test()
     sock.set_option(enable_connection_aborted1);
     socket_base::enable_connection_aborted enable_connection_aborted2;
     sock.get_option(enable_connection_aborted2);
+    enable_connection_aborted1 = true;
+    static_cast<bool>(enable_connection_aborted1);
+    static_cast<bool>(!enable_connection_aborted1);
+    static_cast<bool>(enable_connection_aborted1.value());
 
     // non_blocking_io class.
 
@@ -138,6 +170,8 @@ void test()
 }
 
 } // namespace socket_base_compile
+
+//------------------------------------------------------------------------------
 
 test_suite* init_unit_test_suite(int argc, char* argv[])
 {
