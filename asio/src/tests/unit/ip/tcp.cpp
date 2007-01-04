@@ -59,6 +59,50 @@ void test()
 
 //------------------------------------------------------------------------------
 
+// ip_tcp_runtime test
+// ~~~~~~~~~~~~~~~~~~~
+// The following test checks the runtime operation of the ip::tcp class.
+
+namespace ip_tcp_runtime {
+
+using namespace asio;
+
+void test()
+{
+  io_service ios;
+  ip::tcp::socket sock(ios, ip::tcp::v4());
+
+  // no_delay class.
+
+  ip::tcp::no_delay no_delay1(true);
+  BOOST_CHECK(no_delay1.value());
+  BOOST_CHECK(static_cast<bool>(no_delay1));
+  BOOST_CHECK(!!no_delay1);
+  sock.set_option(no_delay1);
+
+  ip::tcp::no_delay no_delay2;
+  sock.get_option(no_delay2);
+  BOOST_CHECK(no_delay2.value());
+  BOOST_CHECK(static_cast<bool>(no_delay2));
+  BOOST_CHECK(!!no_delay2);
+
+  ip::tcp::no_delay no_delay3(false);
+  BOOST_CHECK(!no_delay3.value());
+  BOOST_CHECK(!static_cast<bool>(no_delay3));
+  BOOST_CHECK(!no_delay3);
+  sock.set_option(no_delay3);
+
+  ip::tcp::no_delay no_delay4;
+  sock.get_option(no_delay4);
+  BOOST_CHECK(!no_delay4.value());
+  BOOST_CHECK(!static_cast<bool>(no_delay4));
+  BOOST_CHECK(!no_delay4);
+}
+
+} // namespace ip_tcp_runtime
+
+//------------------------------------------------------------------------------
+
 // ip_tcp_socket_compile test
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 // The following test checks that all public member functions on the class
@@ -303,6 +347,7 @@ test_suite* init_unit_test_suite(int argc, char* argv[])
 {
   test_suite* test = BOOST_TEST_SUITE("ip/tcp");
   test->add(BOOST_TEST_CASE(&ip_tcp_compile::test));
+  test->add(BOOST_TEST_CASE(&ip_tcp_runtime::test));
   test->add(BOOST_TEST_CASE(&ip_tcp_socket_compile::test));
   test->add(BOOST_TEST_CASE(&ip_tcp_acceptor_runtime::test));
   return test;
