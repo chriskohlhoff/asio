@@ -422,10 +422,10 @@ sub copy_source_file
       $line =~ s/asio::native_ecat/boost::system::native_ecat/g;
       if ($from =~ /error\.hpp/)
       {
-        $line =~ s/asio::netdb_ecat/asio::error_base<T>::netdb_ecat/g;
-        $line =~ s/asio::addrinfo_ecat/asio::error_base<T>::addrinfo_ecat/g;
-        $line =~ s/asio::eof_ecat/asio::error_base<T>::eof_ecat/g;
-        $line =~ s/asio::ssl_ecat/asio::error_base<T>::ssl_ecat/g;
+        $line =~ s/asio::netdb_ecat/asio::detail::error_base<T>::netdb_ecat/g;
+        $line =~ s/asio::addrinfo_ecat/asio::detail::error_base<T>::addrinfo_ecat/g;
+        $line =~ s/asio::eof_ecat/asio::detail::error_base<T>::eof_ecat/g;
+        $line =~ s/asio::ssl_ecat/asio::detail::error_base<T>::ssl_ecat/g;
       }
       else
       {

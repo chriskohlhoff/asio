@@ -38,27 +38,37 @@
 # define ASIO_WIN_OR_POSIX(e_win, e_posix) implementation_defined
 #elif defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 # define ASIO_NATIVE_ERROR(e) \
-    asio::error_code(e, asio::native_ecat)
+    asio::error_code(e, \
+        asio::native_ecat)
 # define ASIO_SOCKET_ERROR(e) \
-    asio::error_code(WSA ## e, asio::native_ecat)
+    asio::error_code(WSA ## e, \
+        asio::native_ecat)
 # define ASIO_NETDB_ERROR(e) \
-    asio::error_code(WSA ## e, asio::native_ecat)
+    asio::error_code(WSA ## e, \
+        asio::native_ecat)
 # define ASIO_GETADDRINFO_ERROR(e) \
-    asio::error_code(WSA ## e, asio::native_ecat)
+    asio::error_code(WSA ## e, \
+        asio::native_ecat)
 # define ASIO_EOF_ERROR(e) \
-    asio::error_code(e, asio::native_ecat)
+    asio::error_code(e, \
+        asio::native_ecat)
 # define ASIO_WIN_OR_POSIX(e_win, e_posix) e_win
 #else
 # define ASIO_NATIVE_ERROR(e) \
-    asio::error_code(e, asio::native_ecat)
+    asio::error_code(e, \
+        asio::native_ecat)
 # define ASIO_SOCKET_ERROR(e) \
-    asio::error_code(e, asio::native_ecat)
+    asio::error_code(e, \
+        asio::native_ecat)
 # define ASIO_NETDB_ERROR(e) \
-    asio::error_code(e, asio::netdb_ecat)
+    asio::error_code(e, \
+        asio::netdb_ecat)
 # define ASIO_GETADDRINFO_ERROR(e) \
-    asio::error_code(e, asio::addrinfo_ecat)
+    asio::error_code(e, \
+        asio::addrinfo_ecat)
 # define ASIO_EOF_ERROR(e) \
-    asio::error_code(e, asio::eof_ecat)
+    asio::error_code(e, \
+        asio::eof_ecat)
 # define ASIO_WIN_OR_POSIX(e_win, e_posix) e_posix
 #endif
 
