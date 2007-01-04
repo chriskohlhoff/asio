@@ -64,6 +64,8 @@
 
 namespace asio {
 
+namespace detail {
+
 /// Hack to keep asio library header-file-only.
 template <typename T>
 class error_base
@@ -320,8 +322,10 @@ error_base<T>::try_again = ASIO_WIN_OR_POSIX(
 template <typename T> const asio::error_code
 error_base<T>::would_block = ASIO_SOCKET_ERROR(EWOULDBLOCK);
 
+} // namespace detail
+
 /// Contains error constants.
-class error : public error_base<error>
+class error : public asio::detail::error_base<error>
 {
 private:
   error();
