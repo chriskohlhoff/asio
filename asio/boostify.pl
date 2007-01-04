@@ -321,8 +321,11 @@ sub copy_source_file
 
     # Unconditional replacements.
     $line =~ s/[\\@]ref boost_bind/boost::bind()/g;
-    $line =~ s/[\\@]ref async_read/boost::asio::async_read()/g;
-    $line =~ s/[\\@]ref async_write/boost::asio::async_write()/g;
+    if ($from =~ /.*\.txt$/)
+    {
+      $line =~ s/[\\@]ref async_read/boost::asio::async_read()/g;
+      $line =~ s/[\\@]ref async_write/boost::asio::async_write()/g;
+    }
 
     # Conditional replacements.
     if ($line =~ /^namespace asio {/)
