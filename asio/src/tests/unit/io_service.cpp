@@ -113,10 +113,10 @@ void io_service_test()
   count = 0;
   ios.reset();
   io_service::work* w = new io_service::work(ios);
-  ios.post(boost::bind(&io_service::interrupt, &ios));
+  ios.post(boost::bind(&io_service::stop, &ios));
   ios.run();
 
-  // The only operation executed should have been to interrupt run().
+  // The only operation executed should have been to stop run().
   BOOST_CHECK(count == 0);
 
   ios.reset();

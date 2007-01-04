@@ -106,7 +106,7 @@ public:
     work_.reset();
     if (work_io_service_)
     {
-      work_io_service_->interrupt();
+      work_io_service_->stop();
       if (work_thread_)
       {
         work_thread_->join();

@@ -42,7 +42,7 @@ public:
       outstanding_work_(0),
       handler_queue_(&task_handler_),
       handler_queue_end_(&task_handler_),
-      interrupted_(false),
+      stopped_(false),
       shutdown_(false),
       first_idle_thread_(0)
   {
@@ -130,17 +130,17 @@ public:
   }
 
   // Interrupt the event processing loop.
-  void interrupt()
+  void stop()
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
-    interrupt_all_threads();
+    stop_all_threads();
   }
 
   // Reset in preparation for a subsequent run invocation.
   void reset()
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
-    interrupted_ = false;
+    stopped_ = false;
   }
 
   // Notify that some work has started.
@@ -155,7 +155,7 @@ public:
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
     if (--outstanding_work_ == 0)
-      interrupt_all_threads();
+      stop_all_threads();
   }
 
   // Request invocation of the given handler.
@@ -211,15 +211,15 @@ private:
   size_t do_one(asio::detail::mutex::scoped_lock& lock,
       idle_thread_info* this_idle_thread)
   {
-    if (outstanding_work_ == 0 && !interrupted_)
+    if (outstanding_work_ == 0 && !stopped_)
     {
-      interrupt_all_threads();
+      stop_all_threads();
       return 0;
     }
 
     bool polling = !this_idle_thread;
     bool task_has_run = false;
-    while (!interrupted_)
+    while (!stopped_)
     {
       if (handler_queue_)
       {
@@ -293,10 +293,10 @@ private:
     return 0;
   }
 
-  // Interrupt the task and all idle threads.
-  void interrupt_all_threads()
+  // Stop the task and all idle threads.
+  void stop_all_threads()
   {
-    interrupted_ = true;
+    stopped_ = true;
     interrupt_all_idle_threads();
     if (task_handler_.next_ == 0 && handler_queue_end_ != &task_handler_)
       task_.interrupt();
@@ -471,7 +471,7 @@ private:
     {
       lock_.lock();
       if (--task_io_service_.outstanding_work_ == 0)
-        task_io_service_.interrupt_all_threads();
+        task_io_service_.stop_all_threads();
     }
 
   private:
@@ -505,8 +505,8 @@ private:
   // The end of a linked list of handlers that are ready to be delivered.
   handler_base* handler_queue_end_;
 
-  // Flag to indicate that the dispatcher has been interrupted.
-  bool interrupted_;
+  // Flag to indicate that the dispatcher has been stopped.
+  bool stopped_;
 
   // Flag to indicate that the dispatcher has been shut down.
   bool shutdown_;

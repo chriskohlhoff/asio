@@ -69,9 +69,9 @@ inline size_t io_service::poll_one()
   return impl_.poll_one();
 }
 
-inline void io_service::interrupt()
+inline void io_service::stop()
 {
-  impl_.interrupt();
+  impl_.stop();
 }
 
 inline void io_service::reset()

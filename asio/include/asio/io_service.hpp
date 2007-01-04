@@ -104,8 +104,7 @@ public:
   /// Run the io_service's event processing loop.
   /**
    * The run() function blocks until all work has finished and there are no
-   * more handlers to be dispatched, or until the io_service has been
-   * interrupted.
+   * more handlers to be dispatched, or until the io_service has been stopped.
    *
    * Multiple threads may call the run() function to set up a pool of threads
    * from which the io_service may execute handlers.
@@ -120,7 +119,7 @@ public:
   /// Run the io_service's event processing loop to execute at most one handler.
   /**
    * The run_one() function blocks until one handler has been dispatched, or
-   * until the io_service has been interrupted.
+   * until the io_service has been stopped.
    *
    * @return The number of handlers that were executed.
    */
@@ -129,8 +128,7 @@ public:
   /// Run the io_service's event processing loop to execute ready handlers.
   /**
    * The poll() function runs handlers that are ready to run, without blocking,
-   * until the io_service has been interrupted or there are no more ready
-   * handlers.
+   * until the io_service has been stopped or there are no more ready handlers.
    *
    * @return The number of handlers that were executed.
    */
@@ -145,20 +143,22 @@ public:
    */
   size_t poll_one();
 
-  /// Interrupt the io_service's event processing loop.
+  /// Stop the io_service's event processing loop.
   /**
-   * This function does not block, but instead simply signals to the io_service
-   * that all invocations of its run() or run_one() member functions should
-   * return as soon as possible.
+   * This function does not block, but instead simply signals the io_service to
+   * stop. All invocations of its run() or run_one() member functions should
+   * return as soon as possible. Subsequent calls to run(), run_one(), poll()
+   * or poll_one() will return immediately until reset() is called.
    */
-  void interrupt();
+  void stop();
 
   /// Reset the io_service in preparation for a subsequent run() invocation.
   /**
    * This function must be called prior to any second or later set of
-   * invocations of the run(), run_one(), poll() or poll_one() functions. It
-   * allows the io_service to reset any internal state, such as an interrupt
-   * flag.
+   * invocations of the run(), run_one(), poll() or poll_one() functions when a
+   * previous invocation of these functions returned due to the io_service
+   * being stopped or running out of work. This function allows the io_service
+   * to reset any internal state, such as a "stopped" flag.
    *
    * This function must not be called while there are any unfinished calls to
    * the run(), run_one(), poll() or poll_one() functions.
