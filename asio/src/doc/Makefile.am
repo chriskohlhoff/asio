@@ -96,28 +96,6 @@ EXTRA_DIST = \
 	release_checklist.htm \
 	tutorial_header.htm \
 	tutorial_footer.htm \
-	concepts/Async_Object.hpp \
-	concepts/Async_Read_Stream.hpp \
-	concepts/Async_Write_Stream.hpp \
-	concepts/Boolean_Socket_Option.hpp \
-	concepts/Boolean_IO_Control_Command.hpp \
-	concepts/Const_Buffers.hpp \
-	concepts/CopyConstructible.hpp \
-	concepts/Dispatcher.hpp \
-	concepts/Endpoint.hpp \
-	concepts/Error_Source.hpp \
-	concepts/IO_Control_Command.hpp \
-	concepts/IP_MReq_Socket_Option.hpp \
-	concepts/IP_Network_Interface_Socket_Option.hpp \
-	concepts/Integer_Socket_Option.hpp \
-	concepts/Linger_Socket_Option.hpp \
-	concepts/Mutable_Buffers.hpp \
-	concepts/Protocol.hpp \
-	concepts/Size_IO_Control_Command.hpp \
-	concepts/Socket_Option.hpp \
-	concepts/Stream.hpp \
-	concepts/Sync_Read_Stream.hpp \
-	concepts/Sync_Write_Stream.hpp \
 	design/buffers_dox.txt \
 	design/closeascancel_dox.txt \
 	design/glossary_dox.txt \
