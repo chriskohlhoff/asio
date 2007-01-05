@@ -53,6 +53,7 @@
 #include "asio/ip/resolver_service.hpp"
 #include "asio/ip/tcp.hpp"
 #include "asio/ip/udp.hpp"
+#include "asio/ip/unicast.hpp"
 #include "asio/is_read_buffered.hpp"
 #include "asio/is_write_buffered.hpp"
 #include "asio/placeholders.hpp"

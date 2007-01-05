@@ -18,3 +18,4 @@ resolver_query_base
 resolver_service
 tcp
 udp
+unicast

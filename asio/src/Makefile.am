@@ -33,6 +33,7 @@ noinst_PROGRAMS = \
 	tests/unit/ip/resolver_service \
 	tests/unit/ip/tcp \
 	tests/unit/ip/udp \
+	tests/unit/ip/unicast \
 	tests/unit/is_read_buffered \
 	tests/unit/is_write_buffered \
 	tests/unit/placeholders \
@@ -125,6 +126,7 @@ TESTS = \
 	tests/unit/ip/resolver_service \
 	tests/unit/ip/tcp \
 	tests/unit/ip/udp \
+	tests/unit/ip/unicast \
 	tests/unit/is_read_buffered \
 	tests/unit/is_write_buffered \
 	tests/unit/placeholders \
@@ -191,6 +193,7 @@ tests_unit_ip_resolver_query_base_SOURCES = tests/unit/ip/resolver_query_base.cp
 tests_unit_ip_resolver_service_SOURCES = tests/unit/ip/resolver_service.cpp
 tests_unit_ip_tcp_SOURCES = tests/unit/ip/tcp.cpp
 tests_unit_ip_udp_SOURCES = tests/unit/ip/udp.cpp
+tests_unit_ip_unicast_SOURCES = tests/unit/ip/unicast.cpp
 tests_unit_is_read_buffered_SOURCES = tests/unit/is_read_buffered.cpp
 tests_unit_is_write_buffered_SOURCES = tests/unit/is_write_buffered.cpp
 tests_unit_placeholders_SOURCES = tests/unit/placeholders.cpp
