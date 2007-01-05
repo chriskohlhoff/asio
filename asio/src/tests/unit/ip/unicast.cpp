@@ -97,15 +97,15 @@ void test()
     BOOST_CHECK(!ec);
     BOOST_CHECK(hops2.value() == 1);
 
-    ip::unicast::hops hops3(0);
-    BOOST_CHECK(hops3.value() == 0);
+    ip::unicast::hops hops3(255);
+    BOOST_CHECK(hops3.value() == 255);
     sock_v4.set_option(hops3, ec);
     BOOST_CHECK(!ec);
 
     ip::unicast::hops hops4;
     sock_v4.get_option(hops4, ec);
     BOOST_CHECK(!ec);
-    BOOST_CHECK(hops4.value() == 0);
+    BOOST_CHECK(hops4.value() == 255);
   }
 
   if (have_v6)
@@ -120,15 +120,15 @@ void test()
     BOOST_CHECK(!ec);
     BOOST_CHECK(hops2.value() == 1);
 
-    ip::unicast::hops hops3(0);
-    BOOST_CHECK(hops3.value() == 0);
+    ip::unicast::hops hops3(255);
+    BOOST_CHECK(hops3.value() == 255);
     sock_v6.set_option(hops3, ec);
     BOOST_CHECK(!ec);
 
     ip::unicast::hops hops4;
     sock_v6.get_option(hops4, ec);
     BOOST_CHECK(!ec);
-    BOOST_CHECK(hops4.value() == 0);
+    BOOST_CHECK(hops4.value() == 255);
   }
 }
 
