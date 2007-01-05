@@ -281,15 +281,15 @@ void test()
 
   // send_buffer_size class.
 
-  socket_base::send_buffer_size send_buffer_size1(1024);
-  BOOST_CHECK(send_buffer_size1.value() == 1024);
+  socket_base::send_buffer_size send_buffer_size1(4096);
+  BOOST_CHECK(send_buffer_size1.value() == 4096);
   tcp_sock.set_option(send_buffer_size1, ec);
   BOOST_CHECK(!ec);
 
   socket_base::send_buffer_size send_buffer_size2;
   tcp_sock.get_option(send_buffer_size2, ec);
   BOOST_CHECK(!ec);
-  BOOST_CHECK(send_buffer_size2.value() == 1024);
+  BOOST_CHECK(send_buffer_size2.value() == 4096);
 
   socket_base::send_buffer_size send_buffer_size3(16384);
   BOOST_CHECK(send_buffer_size3.value() == 16384);
@@ -303,11 +303,11 @@ void test()
 
   // send_low_watermark class.
 
-  socket_base::send_low_watermark send_low_watermark1(1024);
-  BOOST_CHECK(send_low_watermark1.value() == 1024);
+  socket_base::send_low_watermark send_low_watermark1(4096);
+  BOOST_CHECK(send_low_watermark1.value() == 4096);
   tcp_sock.set_option(send_low_watermark1, ec);
-#if defined(WIN32)
-  BOOST_CHECK(!!ec); // SO_SNDLOWAT is not supported on Windows.
+#if defined(WIN32) || defined(__linux__)
+  BOOST_CHECK(!!ec); // SO_SNDLOWAT is not supported on Windows or Linux.
 #else
   BOOST_CHECK(!ec);
 #endif
@@ -316,16 +316,18 @@ void test()
   tcp_sock.get_option(send_low_watermark2, ec);
 #if defined(WIN32)
   BOOST_CHECK(!!ec); // SO_SNDLOWAT is not supported on Windows.
+#elif defined(__linux__)
+  BOOST_CHECK(!ec); // SO_SNDLOWAT is not supported on Linux but can get value.
 #else
   BOOST_CHECK(!ec);
-  BOOST_CHECK(send_low_watermark2.value() == 1024);
+  BOOST_CHECK(send_low_watermark2.value() == 4096);
 #endif
 
-  socket_base::send_low_watermark send_low_watermark3(2048);
-  BOOST_CHECK(send_low_watermark3.value() == 2048);
+  socket_base::send_low_watermark send_low_watermark3(8192);
+  BOOST_CHECK(send_low_watermark3.value() == 8192);
   tcp_sock.set_option(send_low_watermark3, ec);
-#if defined(WIN32)
-  BOOST_CHECK(!!ec); // SO_SNDLOWAT is not supported on Windows.
+#if defined(WIN32) || defined(__linux__)
+  BOOST_CHECK(!!ec); // SO_SNDLOWAT is not supported on Windows or Linux.
 #else
   BOOST_CHECK(!ec);
 #endif
@@ -334,22 +336,24 @@ void test()
   tcp_sock.get_option(send_low_watermark4, ec);
 #if defined(WIN32)
   BOOST_CHECK(!!ec); // SO_SNDLOWAT is not supported on Windows.
+#elif defined(__linux__)
+  BOOST_CHECK(!ec); // SO_SNDLOWAT is not supported on Linux but can get value.
 #else
   BOOST_CHECK(!ec);
-  BOOST_CHECK(send_low_watermark4.value() == 2048);
+  BOOST_CHECK(send_low_watermark4.value() == 8192);
 #endif
 
   // receive_buffer_size class.
 
-  socket_base::receive_buffer_size receive_buffer_size1(1024);
-  BOOST_CHECK(receive_buffer_size1.value() == 1024);
+  socket_base::receive_buffer_size receive_buffer_size1(4096);
+  BOOST_CHECK(receive_buffer_size1.value() == 4096);
   tcp_sock.set_option(receive_buffer_size1, ec);
   BOOST_CHECK(!ec);
 
   socket_base::receive_buffer_size receive_buffer_size2;
   tcp_sock.get_option(receive_buffer_size2, ec);
   BOOST_CHECK(!ec);
-  BOOST_CHECK(receive_buffer_size2.value() == 1024);
+  BOOST_CHECK(receive_buffer_size2.value() == 4096);
 
   socket_base::receive_buffer_size receive_buffer_size3(16384);
   BOOST_CHECK(receive_buffer_size3.value() == 16384);
@@ -363,8 +367,8 @@ void test()
 
   // receive_low_watermark class.
 
-  socket_base::receive_low_watermark receive_low_watermark1(1024);
-  BOOST_CHECK(receive_low_watermark1.value() == 1024);
+  socket_base::receive_low_watermark receive_low_watermark1(4096);
+  BOOST_CHECK(receive_low_watermark1.value() == 4096);
   tcp_sock.set_option(receive_low_watermark1, ec);
 #if defined(WIN32)
   BOOST_CHECK(!!ec); // SO_RCVLOWAT is not supported on Windows.
@@ -378,11 +382,11 @@ void test()
   BOOST_CHECK(!!ec); // SO_RCVLOWAT is not supported on Windows.
 #else
   BOOST_CHECK(!ec);
-  BOOST_CHECK(receive_low_watermark2.value() == 1024);
+  BOOST_CHECK(receive_low_watermark2.value() == 4096);
 #endif
 
-  socket_base::receive_low_watermark receive_low_watermark3(2048);
-  BOOST_CHECK(receive_low_watermark3.value() == 2048);
+  socket_base::receive_low_watermark receive_low_watermark3(8192);
+  BOOST_CHECK(receive_low_watermark3.value() == 8192);
   tcp_sock.set_option(receive_low_watermark3, ec);
 #if defined(WIN32)
   BOOST_CHECK(!!ec); // SO_RCVLOWAT is not supported on Windows.
@@ -396,7 +400,7 @@ void test()
   BOOST_CHECK(!!ec); // SO_RCVLOWAT is not supported on Windows.
 #else
   BOOST_CHECK(!ec);
-  BOOST_CHECK(receive_low_watermark4.value() == 2048);
+  BOOST_CHECK(receive_low_watermark4.value() == 8192);
 #endif
 
   // reuse_address class.
@@ -453,7 +457,6 @@ void test()
   tcp_sock.get_option(linger4, ec);
   BOOST_CHECK(!ec);
   BOOST_CHECK(!linger4.enabled());
-  BOOST_CHECK(linger4.timeout() == 0);
 
   // enable_connection_aborted class.
 

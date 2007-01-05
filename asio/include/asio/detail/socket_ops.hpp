@@ -329,6 +329,18 @@ inline int getsockopt(socket_type s, int level, int optname, void* optval,
   int result = error_wrapper(::getsockopt(s, level, optname,
         optval, &tmp_optlen), ec);
   *optlen = static_cast<size_t>(tmp_optlen);
+#if defined(__linux__)
+  if (result == 0 && level == SOL_SOCKET && *optlen == sizeof(int)
+      && (optname == SO_SNDBUF || optname == SO_RCVBUF))
+  {
+    // On Linux, setting SO_SNDBUF or SO_RCVBUF to N actually causes the kernel
+    // to set the buffer size to N*2. Linux puts additional stuff into the
+    // buffers so that only about half is actually available to the application.
+    // The retrieved value is divided by 2 here to make it appear as though the
+    // correct value has been set.
+    *static_cast<int*>(optval) /= 2;
+  }
+#endif // defined(__linux__)
   return result;
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
