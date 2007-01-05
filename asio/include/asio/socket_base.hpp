@@ -94,7 +94,7 @@ public:
    * ...
    * asio::socket_base::broadcast option;
    * socket.get_option(option);
-   * bool is_set = option.get();
+   * bool is_set = option.value();
    * @endcode
    *
    * @par Concepts:
@@ -127,7 +127,7 @@ public:
    * ...
    * asio::socket_base::do_not_route option;
    * socket.get_option(option);
-   * bool is_set = option.get();
+   * bool is_set = option.value();
    * @endcode
    *
    * @par Concepts:
@@ -160,7 +160,7 @@ public:
    * ...
    * asio::socket_base::keep_alive option;
    * socket.get_option(option);
-   * bool is_set = option.get();
+   * bool is_set = option.value();
    * @endcode
    *
    * @par Concepts:
@@ -193,7 +193,7 @@ public:
    * ...
    * asio::socket_base::send_buffer_size option;
    * socket.get_option(option);
-   * int size = option.get();
+   * int size = option.value();
    * @endcode
    *
    * @par Concepts:
@@ -226,7 +226,7 @@ public:
    * ...
    * asio::socket_base::send_low_watermark option;
    * socket.get_option(option);
-   * int size = option.get();
+   * int size = option.value();
    * @endcode
    *
    * @par Concepts:
@@ -259,7 +259,7 @@ public:
    * ...
    * asio::socket_base::receive_buffer_size option;
    * socket.get_option(option);
-   * int size = option.get();
+   * int size = option.value();
    * @endcode
    *
    * @par Concepts:
@@ -292,7 +292,7 @@ public:
    * ...
    * asio::socket_base::receive_low_watermark option;
    * socket.get_option(option);
-   * int size = option.get();
+   * int size = option.value();
    * @endcode
    *
    * @par Concepts:
@@ -326,7 +326,7 @@ public:
    * ...
    * asio::socket_base::reuse_address option;
    * acceptor.get_option(option);
-   * bool is_set = option.get();
+   * bool is_set = option.value();
    * @endcode
    *
    * @par Concepts:
@@ -396,7 +396,7 @@ public:
    * ...
    * asio::socket_base::enable_connection_aborted option;
    * acceptor.get_option(option);
-   * bool is_set = option.get();
+   * bool is_set = option.value();
    * @endcode
    *
    * @par Concepts:
