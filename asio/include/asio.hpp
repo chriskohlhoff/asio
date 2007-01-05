@@ -54,6 +54,7 @@
 #include "asio/ip/tcp.hpp"
 #include "asio/ip/udp.hpp"
 #include "asio/ip/unicast.hpp"
+#include "asio/ip/v6_only.hpp"
 #include "asio/is_read_buffered.hpp"
 #include "asio/is_write_buffered.hpp"
 #include "asio/placeholders.hpp"

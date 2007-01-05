@@ -19,3 +19,4 @@ resolver_service
 tcp
 udp
 unicast
+v6_only

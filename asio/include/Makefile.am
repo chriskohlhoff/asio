@@ -116,7 +116,7 @@ nobase_include_HEADERS = \
 	asio/ip/resolver_service.hpp \
 	asio/ip/tcp.hpp \
 	asio/ip/udp.hpp \
-	asio/ip/unicast.hpp \
+	asio/ip/v6_only.hpp \
 	asio/ip/detail/socket_option.hpp \
 	asio/is_read_buffered.hpp \
 	asio/is_write_buffered.hpp \

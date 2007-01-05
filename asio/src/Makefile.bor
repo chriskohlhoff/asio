@@ -40,6 +40,7 @@ UNIT_TEST_EXES = \
 	tests\unit\ip\tcp.exe \
 	tests\unit\ip\udp.exe \
 	tests\unit\ip\unicast.exe \
+	tests\unit\ip\v6_only.exe \
 	tests\unit\is_read_buffered.exe \
 	tests\unit\is_write_buffered.exe \
 	tests\unit\placeholders.exe \
