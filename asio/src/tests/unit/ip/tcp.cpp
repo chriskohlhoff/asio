@@ -71,6 +71,7 @@ void test()
 {
   io_service ios;
   ip::tcp::socket sock(ios, ip::tcp::v4());
+  asio::error_code ec;
 
   // no_delay class.
 
@@ -78,10 +79,12 @@ void test()
   BOOST_CHECK(no_delay1.value());
   BOOST_CHECK(static_cast<bool>(no_delay1));
   BOOST_CHECK(!!no_delay1);
-  sock.set_option(no_delay1);
+  sock.set_option(no_delay1, ec);
+  BOOST_CHECK(!ec);
 
   ip::tcp::no_delay no_delay2;
-  sock.get_option(no_delay2);
+  sock.get_option(no_delay2, ec);
+  BOOST_CHECK(!ec);
   BOOST_CHECK(no_delay2.value());
   BOOST_CHECK(static_cast<bool>(no_delay2));
   BOOST_CHECK(!!no_delay2);
@@ -90,10 +93,12 @@ void test()
   BOOST_CHECK(!no_delay3.value());
   BOOST_CHECK(!static_cast<bool>(no_delay3));
   BOOST_CHECK(!no_delay3);
-  sock.set_option(no_delay3);
+  sock.set_option(no_delay3, ec);
+  BOOST_CHECK(!ec);
 
   ip::tcp::no_delay no_delay4;
-  sock.get_option(no_delay4);
+  sock.get_option(no_delay4, ec);
+  BOOST_CHECK(!ec);
   BOOST_CHECK(!no_delay4.value());
   BOOST_CHECK(!static_cast<bool>(no_delay4));
   BOOST_CHECK(!no_delay4);

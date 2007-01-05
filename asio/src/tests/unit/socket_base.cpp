@@ -188,6 +188,7 @@ void test()
   ip::udp::socket udp_sock(ios, ip::udp::v4());
   ip::tcp::socket tcp_sock(ios, ip::tcp::v4());
   ip::tcp::acceptor tcp_acceptor(ios, ip::tcp::v4());
+  asio::error_code ec;
 
   // broadcast class.
 
@@ -195,10 +196,12 @@ void test()
   BOOST_CHECK(broadcast1.value());
   BOOST_CHECK(static_cast<bool>(broadcast1));
   BOOST_CHECK(!!broadcast1);
-  udp_sock.set_option(broadcast1);
+  udp_sock.set_option(broadcast1, ec);
+  BOOST_CHECK(!ec);
 
   socket_base::broadcast broadcast2;
-  udp_sock.get_option(broadcast2);
+  udp_sock.get_option(broadcast2, ec);
+  BOOST_CHECK(!ec);
   BOOST_CHECK(broadcast2.value());
   BOOST_CHECK(static_cast<bool>(broadcast2));
   BOOST_CHECK(!!broadcast2);
@@ -207,10 +210,12 @@ void test()
   BOOST_CHECK(!broadcast3.value());
   BOOST_CHECK(!static_cast<bool>(broadcast3));
   BOOST_CHECK(!broadcast3);
-  udp_sock.set_option(broadcast3);
+  udp_sock.set_option(broadcast3, ec);
+  BOOST_CHECK(!ec);
 
   socket_base::broadcast broadcast4;
-  udp_sock.get_option(broadcast4);
+  udp_sock.get_option(broadcast4, ec);
+  BOOST_CHECK(!ec);
   BOOST_CHECK(!broadcast4.value());
   BOOST_CHECK(!static_cast<bool>(broadcast4));
   BOOST_CHECK(!broadcast4);
@@ -221,10 +226,11 @@ void test()
   BOOST_CHECK(do_not_route1.value());
   BOOST_CHECK(static_cast<bool>(do_not_route1));
   BOOST_CHECK(!!do_not_route1);
-  udp_sock.set_option(do_not_route1);
+  udp_sock.set_option(do_not_route1, ec);
+  BOOST_CHECK(!ec);
 
   socket_base::do_not_route do_not_route2;
-  udp_sock.get_option(do_not_route2);
+  udp_sock.get_option(do_not_route2, ec);
   BOOST_CHECK(do_not_route2.value());
   BOOST_CHECK(static_cast<bool>(do_not_route2));
   BOOST_CHECK(!!do_not_route2);
@@ -233,10 +239,12 @@ void test()
   BOOST_CHECK(!do_not_route3.value());
   BOOST_CHECK(!static_cast<bool>(do_not_route3));
   BOOST_CHECK(!do_not_route3);
-  udp_sock.set_option(do_not_route3);
+  udp_sock.set_option(do_not_route3, ec);
+  BOOST_CHECK(!ec);
 
   socket_base::do_not_route do_not_route4;
-  udp_sock.get_option(do_not_route4);
+  udp_sock.get_option(do_not_route4, ec);
+  BOOST_CHECK(!ec);
   BOOST_CHECK(!do_not_route4.value());
   BOOST_CHECK(!static_cast<bool>(do_not_route4));
   BOOST_CHECK(!do_not_route4);
@@ -247,10 +255,12 @@ void test()
   BOOST_CHECK(keep_alive1.value());
   BOOST_CHECK(static_cast<bool>(keep_alive1));
   BOOST_CHECK(!!keep_alive1);
-  tcp_sock.set_option(keep_alive1);
+  tcp_sock.set_option(keep_alive1, ec);
+  BOOST_CHECK(!ec);
 
   socket_base::keep_alive keep_alive2;
-  tcp_sock.get_option(keep_alive2);
+  tcp_sock.get_option(keep_alive2, ec);
+  BOOST_CHECK(!ec);
   BOOST_CHECK(keep_alive2.value());
   BOOST_CHECK(static_cast<bool>(keep_alive2));
   BOOST_CHECK(!!keep_alive2);
@@ -259,10 +269,12 @@ void test()
   BOOST_CHECK(!keep_alive3.value());
   BOOST_CHECK(!static_cast<bool>(keep_alive3));
   BOOST_CHECK(!keep_alive3);
-  tcp_sock.set_option(keep_alive3);
+  tcp_sock.set_option(keep_alive3, ec);
+  BOOST_CHECK(!ec);
 
   socket_base::keep_alive keep_alive4;
-  tcp_sock.get_option(keep_alive4);
+  tcp_sock.get_option(keep_alive4, ec);
+  BOOST_CHECK(!ec);
   BOOST_CHECK(!keep_alive4.value());
   BOOST_CHECK(!static_cast<bool>(keep_alive4));
   BOOST_CHECK(!keep_alive4);
@@ -271,73 +283,121 @@ void test()
 
   socket_base::send_buffer_size send_buffer_size1(1024);
   BOOST_CHECK(send_buffer_size1.value() == 1024);
-  tcp_sock.set_option(send_buffer_size1);
+  tcp_sock.set_option(send_buffer_size1, ec);
+  BOOST_CHECK(!ec);
 
   socket_base::send_buffer_size send_buffer_size2;
-  tcp_sock.get_option(send_buffer_size2);
+  tcp_sock.get_option(send_buffer_size2, ec);
+  BOOST_CHECK(!ec);
   BOOST_CHECK(send_buffer_size2.value() == 1024);
 
   socket_base::send_buffer_size send_buffer_size3(16384);
   BOOST_CHECK(send_buffer_size3.value() == 16384);
-  tcp_sock.set_option(send_buffer_size3);
+  tcp_sock.set_option(send_buffer_size3, ec);
+  BOOST_CHECK(!ec);
 
   socket_base::send_buffer_size send_buffer_size4;
-  tcp_sock.get_option(send_buffer_size4);
+  tcp_sock.get_option(send_buffer_size4, ec);
+  BOOST_CHECK(!ec);
   BOOST_CHECK(send_buffer_size4.value() == 16384);
 
   // send_low_watermark class.
 
   socket_base::send_low_watermark send_low_watermark1(1024);
   BOOST_CHECK(send_low_watermark1.value() == 1024);
-  tcp_sock.set_option(send_low_watermark1);
+  tcp_sock.set_option(send_low_watermark1, ec);
+#if defined(WIN32)
+  BOOST_CHECK(!!ec); // SO_SNDLOWAT is not supported on Windows.
+#else
+  BOOST_CHECK(!ec);
+#endif
 
   socket_base::send_low_watermark send_low_watermark2;
-  tcp_sock.get_option(send_low_watermark2);
+  tcp_sock.get_option(send_low_watermark2, ec);
+#if defined(WIN32)
+  BOOST_CHECK(!!ec); // SO_SNDLOWAT is not supported on Windows.
+#else
+  BOOST_CHECK(!ec);
   BOOST_CHECK(send_low_watermark2.value() == 1024);
+#endif
 
   socket_base::send_low_watermark send_low_watermark3(2048);
   BOOST_CHECK(send_low_watermark3.value() == 2048);
-  tcp_sock.set_option(send_low_watermark3);
+  tcp_sock.set_option(send_low_watermark3, ec);
+#if defined(WIN32)
+  BOOST_CHECK(!!ec); // SO_SNDLOWAT is not supported on Windows.
+#else
+  BOOST_CHECK(!ec);
+#endif
 
   socket_base::send_low_watermark send_low_watermark4;
-  tcp_sock.get_option(send_low_watermark4);
+  tcp_sock.get_option(send_low_watermark4, ec);
+#if defined(WIN32)
+  BOOST_CHECK(!!ec); // SO_SNDLOWAT is not supported on Windows.
+#else
+  BOOST_CHECK(!ec);
   BOOST_CHECK(send_low_watermark4.value() == 2048);
+#endif
 
   // receive_buffer_size class.
 
   socket_base::receive_buffer_size receive_buffer_size1(1024);
   BOOST_CHECK(receive_buffer_size1.value() == 1024);
-  tcp_sock.set_option(receive_buffer_size1);
+  tcp_sock.set_option(receive_buffer_size1, ec);
+  BOOST_CHECK(!ec);
 
   socket_base::receive_buffer_size receive_buffer_size2;
-  tcp_sock.get_option(receive_buffer_size2);
+  tcp_sock.get_option(receive_buffer_size2, ec);
+  BOOST_CHECK(!ec);
   BOOST_CHECK(receive_buffer_size2.value() == 1024);
 
   socket_base::receive_buffer_size receive_buffer_size3(16384);
   BOOST_CHECK(receive_buffer_size3.value() == 16384);
-  tcp_sock.set_option(receive_buffer_size3);
+  tcp_sock.set_option(receive_buffer_size3, ec);
+  BOOST_CHECK(!ec);
 
   socket_base::receive_buffer_size receive_buffer_size4;
-  tcp_sock.get_option(receive_buffer_size4);
+  tcp_sock.get_option(receive_buffer_size4, ec);
+  BOOST_CHECK(!ec);
   BOOST_CHECK(receive_buffer_size4.value() == 16384);
 
   // receive_low_watermark class.
 
   socket_base::receive_low_watermark receive_low_watermark1(1024);
   BOOST_CHECK(receive_low_watermark1.value() == 1024);
-  tcp_sock.set_option(receive_low_watermark1);
+  tcp_sock.set_option(receive_low_watermark1, ec);
+#if defined(WIN32)
+  BOOST_CHECK(!!ec); // SO_RCVLOWAT is not supported on Windows.
+#else
+  BOOST_CHECK(!ec);
+#endif
 
   socket_base::receive_low_watermark receive_low_watermark2;
-  tcp_sock.get_option(receive_low_watermark2);
+  tcp_sock.get_option(receive_low_watermark2, ec);
+#if defined(WIN32)
+  BOOST_CHECK(!!ec); // SO_RCVLOWAT is not supported on Windows.
+#else
+  BOOST_CHECK(!ec);
   BOOST_CHECK(receive_low_watermark2.value() == 1024);
+#endif
 
   socket_base::receive_low_watermark receive_low_watermark3(2048);
   BOOST_CHECK(receive_low_watermark3.value() == 2048);
-  tcp_sock.set_option(receive_low_watermark3);
+  tcp_sock.set_option(receive_low_watermark3, ec);
+#if defined(WIN32)
+  BOOST_CHECK(!!ec); // SO_RCVLOWAT is not supported on Windows.
+#else
+  BOOST_CHECK(!ec);
+#endif
 
   socket_base::receive_low_watermark receive_low_watermark4;
-  tcp_sock.get_option(receive_low_watermark4);
+  tcp_sock.get_option(receive_low_watermark4, ec);
+#if defined(WIN32)
+  BOOST_CHECK(!!ec); // SO_RCVLOWAT is not supported on Windows.
+#else
+  BOOST_CHECK(!ec);
   BOOST_CHECK(receive_low_watermark4.value() == 2048);
+#endif
 
   // reuse_address class.
 
@@ -345,10 +405,12 @@ void test()
   BOOST_CHECK(reuse_address1.value());
   BOOST_CHECK(static_cast<bool>(reuse_address1));
   BOOST_CHECK(!!reuse_address1);
-  udp_sock.set_option(reuse_address1);
+  udp_sock.set_option(reuse_address1, ec);
+  BOOST_CHECK(!ec);
 
   socket_base::reuse_address reuse_address2;
-  udp_sock.get_option(reuse_address2);
+  udp_sock.get_option(reuse_address2, ec);
+  BOOST_CHECK(!ec);
   BOOST_CHECK(reuse_address2.value());
   BOOST_CHECK(static_cast<bool>(reuse_address2));
   BOOST_CHECK(!!reuse_address2);
@@ -357,10 +419,12 @@ void test()
   BOOST_CHECK(!reuse_address3.value());
   BOOST_CHECK(!static_cast<bool>(reuse_address3));
   BOOST_CHECK(!reuse_address3);
-  udp_sock.set_option(reuse_address3);
+  udp_sock.set_option(reuse_address3, ec);
+  BOOST_CHECK(!ec);
 
   socket_base::reuse_address reuse_address4;
-  udp_sock.get_option(reuse_address4);
+  udp_sock.get_option(reuse_address4, ec);
+  BOOST_CHECK(!ec);
   BOOST_CHECK(!reuse_address4.value());
   BOOST_CHECK(!static_cast<bool>(reuse_address4));
   BOOST_CHECK(!reuse_address4);
@@ -370,20 +434,24 @@ void test()
   socket_base::linger linger1(true, 60);
   BOOST_CHECK(linger1.enabled());
   BOOST_CHECK(linger1.timeout() == 60);
-  tcp_sock.set_option(linger1);
+  tcp_sock.set_option(linger1, ec);
+  BOOST_CHECK(!ec);
 
   socket_base::linger linger2;
-  tcp_sock.get_option(linger2);
+  tcp_sock.get_option(linger2, ec);
+  BOOST_CHECK(!ec);
   BOOST_CHECK(linger2.enabled());
   BOOST_CHECK(linger2.timeout() == 60);
 
   socket_base::linger linger3(false, 0);
   BOOST_CHECK(!linger3.enabled());
   BOOST_CHECK(linger3.timeout() == 0);
-  tcp_sock.set_option(linger3);
+  tcp_sock.set_option(linger3, ec);
+  BOOST_CHECK(!ec);
 
   socket_base::linger linger4;
-  tcp_sock.get_option(linger4);
+  tcp_sock.get_option(linger4, ec);
+  BOOST_CHECK(!ec);
   BOOST_CHECK(!linger4.enabled());
   BOOST_CHECK(linger4.timeout() == 0);
 
@@ -393,10 +461,12 @@ void test()
   BOOST_CHECK(enable_connection_aborted1.value());
   BOOST_CHECK(static_cast<bool>(enable_connection_aborted1));
   BOOST_CHECK(!!enable_connection_aborted1);
-  tcp_acceptor.set_option(enable_connection_aborted1);
+  tcp_acceptor.set_option(enable_connection_aborted1, ec);
+  BOOST_CHECK(!ec);
 
   socket_base::enable_connection_aborted enable_connection_aborted2;
-  tcp_acceptor.get_option(enable_connection_aborted2);
+  tcp_acceptor.get_option(enable_connection_aborted2, ec);
+  BOOST_CHECK(!ec);
   BOOST_CHECK(enable_connection_aborted2.value());
   BOOST_CHECK(static_cast<bool>(enable_connection_aborted2));
   BOOST_CHECK(!!enable_connection_aborted2);
@@ -405,10 +475,12 @@ void test()
   BOOST_CHECK(!enable_connection_aborted3.value());
   BOOST_CHECK(!static_cast<bool>(enable_connection_aborted3));
   BOOST_CHECK(!enable_connection_aborted3);
-  tcp_acceptor.set_option(enable_connection_aborted3);
+  tcp_acceptor.set_option(enable_connection_aborted3, ec);
+  BOOST_CHECK(!ec);
 
   socket_base::enable_connection_aborted enable_connection_aborted4;
-  tcp_acceptor.get_option(enable_connection_aborted4);
+  tcp_acceptor.get_option(enable_connection_aborted4, ec);
+  BOOST_CHECK(!ec);
   BOOST_CHECK(!enable_connection_aborted4.value());
   BOOST_CHECK(!static_cast<bool>(enable_connection_aborted4));
   BOOST_CHECK(!enable_connection_aborted4);
@@ -416,15 +488,18 @@ void test()
   // non_blocking_io class.
 
   socket_base::non_blocking_io non_blocking_io1(true);
-  tcp_sock.io_control(non_blocking_io1);
+  tcp_sock.io_control(non_blocking_io1, ec);
+  BOOST_CHECK(!ec);
 
   socket_base::non_blocking_io non_blocking_io2(false);
-  tcp_sock.io_control(non_blocking_io2);
+  tcp_sock.io_control(non_blocking_io2, ec);
+  BOOST_CHECK(!ec);
 
   // bytes_readable class.
 
   socket_base::bytes_readable bytes_readable;
-  udp_sock.io_control(bytes_readable);
+  udp_sock.io_control(bytes_readable, ec);
+  BOOST_CHECK(!ec);
 }
 
 } // namespace socket_base_runtime

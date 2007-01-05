@@ -111,39 +111,47 @@ void test()
   ip::udp::endpoint ep(ip::address_v4::any(), 0);
   ip::udp::socket sock(ios, ep);
   const ip::address multicast_address = ip::address::from_string("239.255.0.1");
+  asio::error_code ec;
 
   // join_group class.
 
   ip::multicast::join_group join_group(multicast_address);
-  sock.set_option(join_group);
+  sock.set_option(join_group, ec);
+  BOOST_CHECK(!ec);
 
   // leave_group class.
 
   ip::multicast::leave_group leave_group(multicast_address);
-  sock.set_option(leave_group);
+  sock.set_option(leave_group, ec);
+  BOOST_CHECK(!ec);
 
   // outbound_interface class.
 
   ip::multicast::outbound_interface outbound_interface(
       ip::address_v4::loopback());
-  sock.set_option(outbound_interface);
+  sock.set_option(outbound_interface, ec);
+  BOOST_CHECK(!ec);
 
   // hops class.
 
   ip::multicast::hops hops1(1);
   BOOST_CHECK(hops1.value() == 1);
-  sock.set_option(hops1);
+  sock.set_option(hops1, ec);
+  BOOST_CHECK(!ec);
 
   ip::multicast::hops hops2;
-  sock.get_option(hops2);
+  sock.get_option(hops2, ec);
+  BOOST_CHECK(!ec);
   BOOST_CHECK(hops2.value() == 1);
 
   ip::multicast::hops hops3(0);
   BOOST_CHECK(hops3.value() == 0);
-  sock.set_option(hops3);
+  sock.set_option(hops3, ec);
+  BOOST_CHECK(!ec);
 
   ip::multicast::hops hops4;
-  sock.get_option(hops4);
+  sock.get_option(hops4, ec);
+  BOOST_CHECK(!ec);
   BOOST_CHECK(hops4.value() == 0);
 
   // enable_loopback class.
@@ -152,10 +160,12 @@ void test()
   BOOST_CHECK(enable_loopback1.value());
   BOOST_CHECK(static_cast<bool>(enable_loopback1));
   BOOST_CHECK(!!enable_loopback1);
-  sock.set_option(enable_loopback1);
+  sock.set_option(enable_loopback1, ec);
+  BOOST_CHECK(!ec);
 
   ip::multicast::enable_loopback enable_loopback2;
-  sock.get_option(enable_loopback2);
+  sock.get_option(enable_loopback2, ec);
+  BOOST_CHECK(!ec);
   BOOST_CHECK(enable_loopback2.value());
   BOOST_CHECK(static_cast<bool>(enable_loopback2));
   BOOST_CHECK(!!enable_loopback2);
@@ -164,10 +174,12 @@ void test()
   BOOST_CHECK(!enable_loopback3.value());
   BOOST_CHECK(!static_cast<bool>(enable_loopback3));
   BOOST_CHECK(!enable_loopback3);
-  sock.set_option(enable_loopback3);
+  sock.set_option(enable_loopback3, ec);
+  BOOST_CHECK(!ec);
 
   ip::multicast::enable_loopback enable_loopback4;
-  sock.get_option(enable_loopback4);
+  sock.get_option(enable_loopback4, ec);
+  BOOST_CHECK(!ec);
   BOOST_CHECK(!enable_loopback4.value());
   BOOST_CHECK(!static_cast<bool>(enable_loopback4));
   BOOST_CHECK(!enable_loopback4);
