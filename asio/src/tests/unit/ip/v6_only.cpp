@@ -79,8 +79,7 @@ void test()
   {
     ip::v6_only v6_only1;
     acceptor_v6.get_option(v6_only1, ec);
-    BOOST_CHECK(!ec);
-    bool have_dual_stack = !v6_only1.value();
+    bool have_dual_stack = !ec && !v6_only1.value();
 
     if (have_dual_stack)
     {
