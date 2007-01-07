@@ -150,10 +150,10 @@ my $error_cat_decls = <<"EOF";
   static boost::system::wstring_t addrinfo_wmd(
       const boost::system::error_code& ec);
 
-  static boost::system::error_category eof_ecat;
-  static int eof_ed(const boost::system::error_code& ec);
-  static std::string eof_md(const boost::system::error_code& ec);
-  static boost::system::wstring_t eof_wmd(const boost::system::error_code& ec);
+  static boost::system::error_category misc_ecat;
+  static int misc_ed(const boost::system::error_code& ec);
+  static std::string misc_md(const boost::system::error_code& ec);
+  static boost::system::wstring_t misc_wmd(const boost::system::error_code& ec);
 #endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
   static boost::system::error_category ssl_ecat;
@@ -238,18 +238,18 @@ boost::system::wstring_t error_base<T>::addrinfo_wmd(
 }
 
 template <typename T>
-boost::system::error_category error_base<T>::eof_ecat(
-    boost::system::error_code::new_category(&error_base<T>::eof_ed,
-      &error_base<T>::eof_md, &error_base<T>::eof_wmd));
+boost::system::error_category error_base<T>::misc_ecat(
+    boost::system::error_code::new_category(&error_base<T>::misc_ed,
+      &error_base<T>::misc_md, &error_base<T>::misc_wmd));
 
 template <typename T>
-int error_base<T>::eof_ed(const boost::system::error_code& ec)
+int error_base<T>::misc_ed(const boost::system::error_code& ec)
 {
   return EOTHER;
 }
 
 template <typename T>
-std::string error_base<T>::eof_md(const boost::system::error_code& ec)
+std::string error_base<T>::misc_md(const boost::system::error_code& ec)
 {
   if (ec == error_base<T>::eof)
     return "End of file";
@@ -257,7 +257,7 @@ std::string error_base<T>::eof_md(const boost::system::error_code& ec)
 }
 
 template <typename T>
-boost::system::wstring_t error_base<T>::eof_wmd(
+boost::system::wstring_t error_base<T>::misc_wmd(
     const boost::system::error_code& ec)
 {
   if (ec == error_base<T>::eof)
@@ -424,14 +424,14 @@ sub copy_source_file
       {
         $line =~ s/asio::netdb_ecat/asio::detail::error_base<T>::netdb_ecat/g;
         $line =~ s/asio::addrinfo_ecat/asio::detail::error_base<T>::addrinfo_ecat/g;
-        $line =~ s/asio::eof_ecat/asio::detail::error_base<T>::eof_ecat/g;
+        $line =~ s/asio::misc_ecat/asio::detail::error_base<T>::misc_ecat/g;
         $line =~ s/asio::ssl_ecat/asio::detail::error_base<T>::ssl_ecat/g;
       }
       else
       {
         $line =~ s/asio::netdb_ecat/asio::error::netdb_ecat/g;
         $line =~ s/asio::addrinfo_ecat/asio::error::addrinfo_ecat/g;
-        $line =~ s/asio::eof_ecat/asio::error::eof_ecat/g;
+        $line =~ s/asio::misc_ecat/asio::error::misc_ecat/g;
         $line =~ s/asio::ssl_ecat/asio::error::ssl_ecat/g;
       }
       $line =~ s/asio::/boost::asio::/g;

@@ -17,6 +17,10 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <algorithm>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/buffer.hpp"
 #include "asio/completion_condition.hpp"
 #include "asio/error.hpp"
@@ -77,10 +81,13 @@ std::size_t read(SyncReadStream& s,
   std::size_t total_transferred = 0;
   for (;;)
   {
-    std::size_t bytes_transferred = s.read_some(b.prepare(512), ec);
+    std::size_t bytes_available =
+      std::min<std::size_t>(512, b.max_size() - b.size());
+    std::size_t bytes_transferred = s.read_some(b.prepare(bytes_available), ec);
     b.commit(bytes_transferred);
     total_transferred += bytes_transferred;
-    if (completion_condition(ec, total_transferred))
+    if (b.size() == b.max_size()
+        || completion_condition(ec, total_transferred))
       return total_transferred;
   }
 }
@@ -223,13 +230,16 @@ namespace detail
     {
       total_transferred_ += bytes_transferred;
       streambuf_.commit(bytes_transferred);
-      if (completion_condition_(ec, total_transferred_))
+      if (streambuf_.size() == streambuf_.max_size()
+          || completion_condition_(ec, total_transferred_))
       {
         handler_(ec, total_transferred_);
       }
       else
       {
-        stream_.async_read_some(streambuf_.prepare(512), *this);
+        std::size_t bytes_available =
+          std::min<std::size_t>(512, streambuf_.max_size() - streambuf_.size());
+        stream_.async_read_some(streambuf_.prepare(bytes_available), *this);
       }
     }
 
@@ -278,7 +288,9 @@ inline void async_read(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition, ReadHandler handler)
 {
-  s.async_read_some(b.prepare(512),
+  std::size_t bytes_available =
+    std::min<std::size_t>(512, b.max_size() - b.size());
+  s.async_read_some(b.prepare(bytes_available),
       detail::read_streambuf_handler<AsyncReadStream, Allocator,
         CompletionCondition, ReadHandler>(
           s, b, completion_condition, handler));

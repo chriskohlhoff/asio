@@ -57,6 +57,8 @@ inline std::string error_code::message() const
     return "A non-recoverable error occurred during database lookup.";
   if (*this == error::no_data)
     return "The query is valid, but it does not have associated data.";
+  if (*this == error::not_found)
+    return "Element not found.";
 #if !defined(__sun)
   if (*this == error::operation_aborted)
     return "Operation aborted.";

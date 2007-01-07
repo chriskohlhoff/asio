@@ -49,7 +49,7 @@
 # define ASIO_GETADDRINFO_ERROR(e) \
     asio::error_code(WSA ## e, \
         asio::native_ecat)
-# define ASIO_EOF_ERROR(e) \
+# define ASIO_MISC_ERROR(e) \
     asio::error_code(e, \
         asio::native_ecat)
 # define ASIO_WIN_OR_POSIX(e_win, e_posix) e_win
@@ -66,9 +66,9 @@
 # define ASIO_GETADDRINFO_ERROR(e) \
     asio::error_code(e, \
         asio::addrinfo_ecat)
-# define ASIO_EOF_ERROR(e) \
+# define ASIO_MISC_ERROR(e) \
     asio::error_code(e, \
-        asio::eof_ecat)
+        asio::misc_ecat)
 # define ASIO_WIN_OR_POSIX(e_win, e_posix) e_posix
 #endif
 
@@ -170,6 +170,9 @@ public:
   /// Transport endpoint is not connected.
   static const asio::error_code not_connected;
 
+  /// Element not found.
+  static const asio::error_code not_found;
+
   /// Socket operation on non-socket.
   static const asio::error_code not_socket;
 
@@ -233,8 +236,8 @@ error_base<T>::bad_descriptor = ASIO_SOCKET_ERROR(EBADF);
 
 template <typename T> const asio::error_code
 error_base<T>::eof = ASIO_WIN_OR_POSIX(
-    ASIO_EOF_ERROR(ERROR_HANDLE_EOF),
-    ASIO_EOF_ERROR(-1));
+    ASIO_MISC_ERROR(ERROR_HANDLE_EOF),
+    ASIO_MISC_ERROR(1));
 
 template <typename T> const asio::error_code
 error_base<T>::fault = ASIO_SOCKET_ERROR(EFAULT);
@@ -298,6 +301,11 @@ template <typename T> const asio::error_code
 error_base<T>::not_connected = ASIO_SOCKET_ERROR(ENOTCONN);
 
 template <typename T> const asio::error_code
+error_base<T>::not_found = ASIO_WIN_OR_POSIX(
+    ASIO_MISC_ERROR(ERROR_NOT_FOUND),
+    ASIO_MISC_ERROR(2));
+
+template <typename T> const asio::error_code
 error_base<T>::not_socket = ASIO_SOCKET_ERROR(ENOTSOCK);
 
 template <typename T> const asio::error_code
@@ -347,7 +355,7 @@ private:
 #undef ASIO_SOCKET_ERROR
 #undef ASIO_NETDB_ERROR
 #undef ASIO_GETADDRINFO_ERROR
-#undef ASIO_EOF_ERROR
+#undef ASIO_MISC_ERROR
 #undef ASIO_WIN_OR_POSIX
 
 #include "asio/impl/error_code.ipp"

@@ -44,8 +44,8 @@ enum error_category
   /// Error codes from getaddrinfo.
   addrinfo_ecat = ASIO_WIN_OR_POSIX(native_ecat, 2),
 
-  /// EOF error code.
-  eof_ecat = ASIO_WIN_OR_POSIX(native_ecat, 3),
+  /// Miscellaneous error codes.
+  misc_ecat = ASIO_WIN_OR_POSIX(native_ecat, 3),
 
   /// SSL error codes.
   ssl_ecat = ASIO_WIN_OR_POSIX(4, 4)
