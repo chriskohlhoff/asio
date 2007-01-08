@@ -1412,8 +1412,8 @@ public:
 
   // Accept a new connection.
   template <typename Socket>
-  asio::error_code accept_endpoint(implementation_type& impl,
-      Socket& peer, endpoint_type* peer_endpoint, asio::error_code& ec)
+  asio::error_code accept(implementation_type& impl, Socket& peer,
+      endpoint_type* peer_endpoint, asio::error_code& ec)
   {
     if (!is_open(impl))
     {
@@ -1667,7 +1667,7 @@ public:
   // Start an asynchronous accept. The peer and peer_endpoint objects
   // must be valid until the accept's handler is invoked.
   template <typename Socket, typename Handler>
-  void async_accept_endpoint(implementation_type& impl, Socket& peer,
+  void async_accept(implementation_type& impl, Socket& peer,
       endpoint_type* peer_endpoint, Handler handler)
   {
     // Check whether acceptor has been initialised.
