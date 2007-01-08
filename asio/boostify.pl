@@ -253,6 +253,8 @@ std::string error_base<T>::misc_md(const boost::system::error_code& ec)
 {
   if (ec == error_base<T>::eof)
     return "End of file";
+  if (ec == error_base<T>::not_found)
+    return "Element not found";
   return "EINVAL";
 }
 
@@ -262,6 +264,8 @@ boost::system::wstring_t error_base<T>::misc_wmd(
 {
   if (ec == error_base<T>::eof)
     return L"End of file";
+  if (ec == error_base<T>::not_found)
+    return L"Element not found";
   return L"EINVAL";
 }
 
