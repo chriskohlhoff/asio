@@ -107,6 +107,39 @@ public:
     SOL_SOCKET, SO_BROADCAST> broadcast;
 #endif
 
+  /// Socket option to enable socket-level debugging.
+  /**
+   * Implements the SOL_SOCKET/SO_DEBUG socket option.
+   *
+   * @par Examples
+   * Setting the option:
+   * @code
+   * asio::ip::tcp::socket socket(io_service); 
+   * ...
+   * asio::socket_base::debug option(true);
+   * socket.set_option(option);
+   * @endcode
+   *
+   * @par
+   * Getting the current option value:
+   * @code
+   * asio::ip::tcp::socket socket(io_service); 
+   * ...
+   * asio::socket_base::debug option;
+   * socket.get_option(option);
+   * bool is_set = option.value();
+   * @endcode
+   *
+   * @par Concepts:
+   * Socket_Option, Boolean_Socket_Option.
+   */
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined debug;
+#else
+  typedef asio::detail::socket_option::boolean<
+    SOL_SOCKET, SO_DEBUG> debug;
+#endif
+
   /// Socket option to prevent routing, use local interfaces only.
   /**
    * Implements the SOL_SOCKET/SO_DONTROUTE socket option.

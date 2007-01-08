@@ -61,6 +61,17 @@ void test()
     static_cast<bool>(!broadcast1);
     static_cast<bool>(broadcast1.value());
 
+    // debug class.
+
+    socket_base::debug debug1(true);
+    sock.set_option(debug1);
+    socket_base::debug debug2;
+    sock.get_option(debug2);
+    debug1 = true;
+    static_cast<bool>(debug1);
+    static_cast<bool>(!debug1);
+    static_cast<bool>(debug1.value());
+
     // do_not_route class.
 
     socket_base::do_not_route do_not_route1(true);
@@ -219,6 +230,36 @@ void test()
   BOOST_CHECK(!broadcast4.value());
   BOOST_CHECK(!static_cast<bool>(broadcast4));
   BOOST_CHECK(!broadcast4);
+
+  // debug class.
+
+  socket_base::debug debug1(true);
+  BOOST_CHECK(debug1.value());
+  BOOST_CHECK(static_cast<bool>(debug1));
+  BOOST_CHECK(!!debug1);
+  udp_sock.set_option(debug1, ec);
+  BOOST_CHECK(!ec);
+
+  socket_base::debug debug2;
+  udp_sock.get_option(debug2, ec);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(debug2.value());
+  BOOST_CHECK(static_cast<bool>(debug2));
+  BOOST_CHECK(!!debug2);
+
+  socket_base::debug debug3(false);
+  BOOST_CHECK(!debug3.value());
+  BOOST_CHECK(!static_cast<bool>(debug3));
+  BOOST_CHECK(!debug3);
+  udp_sock.set_option(debug3, ec);
+  BOOST_CHECK(!ec);
+
+  socket_base::debug debug4;
+  udp_sock.get_option(debug4, ec);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(!debug4.value());
+  BOOST_CHECK(!static_cast<bool>(debug4));
+  BOOST_CHECK(!debug4);
 
   // do_not_route class.
 
