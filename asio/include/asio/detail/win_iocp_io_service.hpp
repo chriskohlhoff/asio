@@ -311,7 +311,8 @@ private:
           if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, 0))
           {
             DWORD last_error = ::GetLastError();
-            ec = asio::error_code(last_error, asio::native_ecat);
+            ec = asio::error_code(last_error,
+                asio::native_ecat);
             return 0;
           }
 
