@@ -25,6 +25,7 @@
 #include "asio/basic_io_object.hpp"
 #include "asio/deadline_timer_service.hpp"
 #include "asio/error.hpp"
+#include "asio/detail/throw_error.hpp"
 
 namespace asio {
 
@@ -119,7 +120,9 @@ public:
       const time_type& expiry_time)
     : basic_io_object<TimerService>(io_service)
   {
-    this->service.expires_at(this->implementation, expiry_time);
+    asio::error_code ec;
+    this->service.expires_at(this->implementation, expiry_time, ec);
+    asio::detail::throw_error(ec);
   }
 
   /// Constructor to set a particular expiry time relative to now.
@@ -136,7 +139,9 @@ public:
       const duration_type& expiry_time)
     : basic_io_object<TimerService>(io_service)
   {
-    this->service.expires_from_now(this->implementation, expiry_time);
+    asio::error_code ec;
+    this->service.expires_from_now(this->implementation, expiry_time, ec);
+    asio::detail::throw_error(ec);
   }
 
   /// Cancel any asynchronous operations that are waiting on the timer.
@@ -148,10 +153,32 @@ public:
    * Cancelling the timer does not change the expiry time.
    *
    * @return The number of asynchronous operations that were cancelled.
+   *
+   * @throws asio::system_error Thrown on failure.
    */
   std::size_t cancel()
   {
-    return this->service.cancel(this->implementation);
+    asio::error_code ec;
+    std::size_t s = this->service.cancel(this->implementation, ec);
+    asio::detail::throw_error(ec);
+    return s;
+  }
+
+  /// Cancel any asynchronous operations that are waiting on the timer.
+  /**
+   * This function forces the completion of any pending asynchronous wait
+   * operations against the timer. The handler for each cancelled operation will
+   * be invoked with the asio::error::operation_aborted error code.
+   *
+   * Cancelling the timer does not change the expiry time.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @return The number of asynchronous operations that were cancelled.
+   */
+  std::size_t cancel(asio::error_code& ec)
+  {
+    return this->service.cancel(this->implementation, ec);
   }
 
   /// Get the timer's expiry time as an absolute time.
@@ -176,10 +203,37 @@ public:
    * @param expiry_time The expiry time to be used for the timer.
    *
    * @return The number of asynchronous operations that were cancelled.
+   *
+   * @throws asio::system_error Thrown on failure.
    */
   std::size_t expires_at(const time_type& expiry_time)
   {
-    return this->service.expires_at(this->implementation, expiry_time);
+    asio::error_code ec;
+    std::size_t s = this->service.expires_at(
+        this->implementation, expiry_time, ec);
+    asio::detail::throw_error(ec);
+    return s;
+  }
+
+  /// Set the timer's expiry time as an absolute time.
+  /**
+   * This function sets the expiry time. Any pending asynchronous wait
+   * operations will be cancelled. The handler for each cancelled operation will
+   * be invoked with the asio::error::operation_aborted error code.
+   *
+   * See @ref deadline_timer_reset for more information on altering the expiry
+   * time of an active timer.
+   *
+   * @param expiry_time The expiry time to be used for the timer.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @return The number of asynchronous operations that were cancelled.
+   */
+  std::size_t expires_at(const time_type& expiry_time,
+      asio::error_code& ec)
+  {
+    return this->service.expires_at(this->implementation, expiry_time, ec);
   }
 
   /// Get the timer's expiry time relative to now.
@@ -204,10 +258,38 @@ public:
    * @param expiry_time The expiry time to be used for the timer.
    *
    * @return The number of asynchronous operations that were cancelled.
+   *
+   * @throws asio::system_error Thrown on failure.
    */
   std::size_t expires_from_now(const duration_type& expiry_time)
   {
-    return this->service.expires_from_now(this->implementation, expiry_time);
+    asio::error_code ec;
+    std::size_t s = this->service.expires_from_now(
+        this->implementation, expiry_time, ec);
+    asio::detail::throw_error(ec);
+    return s;
+  }
+
+  /// Set the timer's expiry time relative to now.
+  /**
+   * This function sets the expiry time. Any pending asynchronous wait
+   * operations will be cancelled. The handler for each cancelled operation will
+   * be invoked with the asio::error::operation_aborted error code.
+   *
+   * See @ref deadline_timer_reset for more information on altering the expiry
+   * time of an active timer.
+   *
+   * @param expiry_time The expiry time to be used for the timer.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @return The number of asynchronous operations that were cancelled.
+   */
+  std::size_t expires_from_now(const duration_type& expiry_time,
+      asio::error_code& ec)
+  {
+    return this->service.expires_from_now(
+        this->implementation, expiry_time, ec);
   }
 
   /// Perform a blocking wait on the timer.
@@ -219,7 +301,21 @@ public:
    */
   void wait()
   {
-    this->service.wait(this->implementation);
+    asio::error_code ec;
+    this->service.wait(this->implementation, ec);
+    asio::detail::throw_error(ec);
+  }
+
+  /// Perform a blocking wait on the timer.
+  /**
+   * This function is used to wait for the timer to expire. This function
+   * blocks and does not return until the timer has expired.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   */
+  void wait(asio::error_code& ec)
+  {
+    this->service.wait(this->implementation, ec);
   }
 
   /// Start an asynchronous wait on the timer.

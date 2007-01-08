@@ -108,9 +108,9 @@ public:
   }
 
   /// Cancel any asynchronous wait operations associated with the timer.
-  std::size_t cancel(implementation_type& impl)
+  std::size_t cancel(implementation_type& impl, asio::error_code& ec)
   {
-    return service_impl_.cancel(impl);
+    return service_impl_.cancel(impl, ec);
   }
 
   /// Get the expiry time for the timer as an absolute time.
@@ -121,9 +121,9 @@ public:
 
   /// Set the expiry time for the timer as an absolute time.
   std::size_t expires_at(implementation_type& impl,
-      const time_type& expiry_time)
+      const time_type& expiry_time, asio::error_code& ec)
   {
-    return service_impl_.expires_at(impl, expiry_time);
+    return service_impl_.expires_at(impl, expiry_time, ec);
   }
 
   /// Get the expiry time for the timer relative to now.
@@ -134,15 +134,15 @@ public:
 
   /// Set the expiry time for the timer relative to now.
   std::size_t expires_from_now(implementation_type& impl,
-      const duration_type& expiry_time)
+      const duration_type& expiry_time, asio::error_code& ec)
   {
-    return service_impl_.expires_from_now(impl, expiry_time);
+    return service_impl_.expires_from_now(impl, expiry_time, ec);
   }
 
   // Perform a blocking wait on the timer.
-  void wait(implementation_type& impl)
+  void wait(implementation_type& impl, asio::error_code& ec)
   {
-    service_impl_.wait(impl);
+    service_impl_.wait(impl, ec);
   }
 
   // Start an asynchronous wait on the timer.
