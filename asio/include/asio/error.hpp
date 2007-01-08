@@ -51,7 +51,7 @@
         asio::native_ecat)
 # define ASIO_MISC_ERROR(e) \
     asio::error_code(e, \
-        asio::native_ecat)
+        asio::misc_ecat)
 # define ASIO_WIN_OR_POSIX(e_win, e_posix) e_win
 #else
 # define ASIO_NATIVE_ERROR(e) \
@@ -94,6 +94,9 @@ public:
 
   /// Transport endpoint is already connected.
   static const asio::error_code already_connected;
+
+  /// Already open.
+  static const asio::error_code already_open;
 
   /// Operation already in progress.
   static const asio::error_code already_started;
@@ -176,11 +179,11 @@ public:
   /// Socket operation on non-socket.
   static const asio::error_code not_socket;
 
-  /// Operation not supported.
-  static const asio::error_code not_supported;
-
   /// Operation cancelled.
   static const asio::error_code operation_aborted;
+
+  /// Operation not supported.
+  static const asio::error_code operation_not_supported;
 
   /// The service is not supported for the given socket type.
   static const asio::error_code service_not_found;
@@ -220,6 +223,9 @@ template <typename T> const asio::error_code
 error_base<T>::already_connected = ASIO_SOCKET_ERROR(EISCONN);
 
 template <typename T> const asio::error_code
+error_base<T>::already_open = ASIO_MISC_ERROR(1);
+
+template <typename T> const asio::error_code
 error_base<T>::already_started = ASIO_SOCKET_ERROR(EALREADY);
 
 template <typename T> const asio::error_code
@@ -235,9 +241,7 @@ template <typename T> const asio::error_code
 error_base<T>::bad_descriptor = ASIO_SOCKET_ERROR(EBADF);
 
 template <typename T> const asio::error_code
-error_base<T>::eof = ASIO_WIN_OR_POSIX(
-    ASIO_MISC_ERROR(ERROR_HANDLE_EOF),
-    ASIO_MISC_ERROR(1));
+error_base<T>::eof = ASIO_MISC_ERROR(2);
 
 template <typename T> const asio::error_code
 error_base<T>::fault = ASIO_SOCKET_ERROR(EFAULT);
@@ -301,20 +305,18 @@ template <typename T> const asio::error_code
 error_base<T>::not_connected = ASIO_SOCKET_ERROR(ENOTCONN);
 
 template <typename T> const asio::error_code
-error_base<T>::not_found = ASIO_WIN_OR_POSIX(
-    ASIO_MISC_ERROR(ERROR_NOT_FOUND),
-    ASIO_MISC_ERROR(2));
+error_base<T>::not_found = ASIO_MISC_ERROR(3);
 
 template <typename T> const asio::error_code
 error_base<T>::not_socket = ASIO_SOCKET_ERROR(ENOTSOCK);
 
 template <typename T> const asio::error_code
-error_base<T>::not_supported = ASIO_SOCKET_ERROR(EOPNOTSUPP);
-
-template <typename T> const asio::error_code
 error_base<T>::operation_aborted = ASIO_WIN_OR_POSIX(
     ASIO_NATIVE_ERROR(ERROR_OPERATION_ABORTED),
     ASIO_NATIVE_ERROR(ECANCELED));
+
+template <typename T> const asio::error_code
+error_base<T>::operation_not_supported = ASIO_SOCKET_ERROR(EOPNOTSUPP);
 
 template <typename T> const asio::error_code
 error_base<T>::service_not_found = ASIO_WIN_OR_POSIX(

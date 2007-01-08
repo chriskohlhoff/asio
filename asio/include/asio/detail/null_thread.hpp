@@ -42,7 +42,8 @@ public:
   template <typename Function>
   null_thread(Function f)
   {
-    asio::system_error e(asio::error::not_supported, "thread");
+    asio::system_error e(
+        asio::error::operation_not_supported, "thread");
     boost::throw_exception(e);
   }
 

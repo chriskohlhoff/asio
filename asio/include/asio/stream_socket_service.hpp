@@ -128,6 +128,12 @@ public:
     return service_impl_.assign(impl, protocol, native_socket, ec);
   }
 
+  /// Determine whether the socket is open.
+  bool is_open(const implementation_type& impl) const
+  {
+    return service_impl_.is_open(impl);
+  }
+
   /// Close a stream socket implementation.
   asio::error_code close(implementation_type& impl,
       asio::error_code& ec)
@@ -146,6 +152,20 @@ public:
       asio::error_code& ec)
   {
     return service_impl_.cancel(impl, ec);
+  }
+
+  /// Determine whether the socket is at the out-of-band data mark.
+  bool at_mark(const implementation_type& impl,
+      asio::error_code& ec) const
+  {
+    return service_impl_.at_mark(impl, ec);
+  }
+
+  /// Determine the number of bytes available for reading.
+  std::size_t available(const implementation_type& impl,
+      asio::error_code& ec) const
+  {
+    return service_impl_.available(impl, ec);
   }
 
   /// Bind the stream socket to the specified local endpoint.

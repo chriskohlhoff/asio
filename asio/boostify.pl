@@ -251,6 +251,8 @@ int error_base<T>::misc_ed(const boost::system::error_code& ec)
 template <typename T>
 std::string error_base<T>::misc_md(const boost::system::error_code& ec)
 {
+  if (ec == error_base<T>::already_open)
+    return "Already open";
   if (ec == error_base<T>::eof)
     return "End of file";
   if (ec == error_base<T>::not_found)

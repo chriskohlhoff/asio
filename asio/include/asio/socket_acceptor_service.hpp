@@ -190,35 +190,18 @@ public:
   template <typename SocketService>
   asio::error_code accept(implementation_type& impl,
       basic_socket<protocol_type, SocketService>& peer,
-      asio::error_code& ec)
+      endpoint_type* peer_endpoint, asio::error_code& ec)
   {
-    return service_impl_.accept(impl, peer, ec);
-  }
-
-  /// Accept a new connection.
-  template <typename SocketService>
-  asio::error_code accept_endpoint(implementation_type& impl,
-      basic_socket<protocol_type, SocketService>& peer,
-      endpoint_type& peer_endpoint, asio::error_code& ec)
-  {
-    return service_impl_.accept_endpoint(impl, peer, peer_endpoint, ec);
+    return service_impl_.accept(impl, peer, peer_endpoint, ec);
   }
 
   /// Start an asynchronous accept.
   template <typename SocketService, typename AcceptHandler>
   void async_accept(implementation_type& impl,
-      basic_socket<protocol_type, SocketService>& peer, AcceptHandler handler)
-  {
-    service_impl_.async_accept(impl, peer, handler);
-  }
-
-  /// Start an asynchronous accept.
-  template <typename SocketService, typename AcceptHandler>
-  void async_accept_endpoint(implementation_type& impl,
       basic_socket<protocol_type, SocketService>& peer,
-      endpoint_type& peer_endpoint, AcceptHandler handler)
+      endpoint_type* peer_endpoint, AcceptHandler handler)
   {
-    service_impl_.async_accept_endpoint(impl, peer, peer_endpoint, handler);
+    service_impl_.async_accept(impl, peer, peer_endpoint, handler);
   }
 
 private:

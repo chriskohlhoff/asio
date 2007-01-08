@@ -86,6 +86,9 @@ void test()
     int native_socket3 = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     socket1.assign(ip::udp::v4(), native_socket3, ec);
 
+    bool is_open = socket1.is_open();
+    (void)is_open;
+
     socket1.close();
     socket1.close(ec);
 
@@ -94,6 +97,16 @@ void test()
 
     socket1.cancel();
     socket1.cancel(ec);
+
+    bool at_mark1 = socket1.at_mark();
+    (void)at_mark1;
+    bool at_mark2 = socket1.at_mark(ec);
+    (void)at_mark2;
+
+    std::size_t available1 = socket1.available();
+    (void)available1;
+    std::size_t available2 = socket1.available(ec);
+    (void)available2;
 
     socket1.bind(ip::udp::endpoint(ip::udp::v4(), 0));
     socket1.bind(ip::udp::endpoint(ip::udp::v6(), 0));

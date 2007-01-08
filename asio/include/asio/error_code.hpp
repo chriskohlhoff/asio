@@ -45,7 +45,7 @@ enum error_category
   addrinfo_ecat = ASIO_WIN_OR_POSIX(native_ecat, 2),
 
   /// Miscellaneous error codes.
-  misc_ecat = ASIO_WIN_OR_POSIX(native_ecat, 3),
+  misc_ecat = ASIO_WIN_OR_POSIX(3, 3),
 
   /// SSL error codes.
   ssl_ecat = ASIO_WIN_OR_POSIX(4, 4)

@@ -69,48 +69,68 @@ public:
   }
 
   /// Open a new stream socket implementation.
-  template <typename Error_Handler>
-  void open(implementation_type& impl, const protocol_type& protocol,
-      Error_Handler error_handler)
+  asio::error_code open(implementation_type& impl,
+      const protocol_type& protocol, asio::error_code& ec)
   {
     logger_.log("Opening new socket");
-    service_impl_.open(impl, protocol, error_handler);
+    return service_impl_.open(impl, protocol, ec);
   }
 
   /// Open a stream socket from an existing native socket.
-  template <typename Error_Handler>
-  void open(implementation_type& impl, const native_type& native_socket,
-      Error_Handler error_handler)
+  asio::error_code assign(implementation_type& impl,
+      const protocol_type& protocol, const native_type& native_socket,
+      asio::error_code& ec)
   {
-    logger_.log("Opening native socket");
-    service_impl_.open(impl, native_socket, error_handler);
+    logger_.log("Assigning from a native socket");
+    return service_impl_.assign(impl, protocol, native_socket, ec);
+  }
+
+  /// Determine whether the socket is open.
+  bool is_open(const implementation_type& impl) const
+  {
+    logger_.log("Checking if socket is open");
+    return service_impl_.is_open(impl);
   }
 
   /// Close a stream socket implementation.
-  template <typename Error_Handler>
-  void close(implementation_type& impl, Error_Handler error_handler)
+  asio::error_code close(implementation_type& impl,
+      asio::error_code& ec)
   {
     logger_.log("Closing socket");
-    service_impl_.close(impl, error_handler);
+    return service_impl_.close(impl, ec);
+  }
+
+  /// Determine whether the socket is at the out-of-band data mark.
+  bool at_mark(const implementation_type& impl,
+      asio::error_code& ec) const
+  {
+    logger_.log("Checking if socket is at out-of-band data mark");
+    return service_impl_.at_mark(impl, ec);
+  }
+
+  /// Determine the number of bytes available for reading.
+  std::size_t available(const implementation_type& impl,
+      asio::error_code& ec) const
+  {
+    logger_.log("Determining number of bytes available for reading");
+    return service_impl_.available(impl, ec);
   }
 
   /// Bind the stream socket to the specified local endpoint.
-  template <typename Error_Handler>
-  void bind(implementation_type& impl, const endpoint_type& endpoint,
-      Error_Handler error_handler)
+  asio::error_code bind(implementation_type& impl,
+      const endpoint_type& endpoint, asio::error_code& ec)
   {
     logger_.log("Binding socket");
-    service_impl_.bind(impl, endpoint, error_handler);
+    return service_impl_.bind(impl, endpoint, ec);
   }
 
   /// Connect the stream socket to the specified endpoint.
-  template <typename Error_Handler>
-  void connect(implementation_type& impl, const endpoint_type& peer_endpoint,
-      Error_Handler error_handler)
+  asio::error_code connect(implementation_type& impl,
+      const endpoint_type& peer_endpoint, asio::error_code& ec)
   {
     logger_.log("Connecting socket to " +
         boost::lexical_cast<std::string>(peer_endpoint));
-    service_impl_.connect(impl, peer_endpoint, error_handler);
+    return service_impl_.connect(impl, peer_endpoint, ec);
   }
 
   /// Handler to wrap asynchronous connect completion.
@@ -157,67 +177,65 @@ public:
   }
 
   /// Set a socket option.
-  template <typename Option, typename Error_Handler>
-  void set_option(implementation_type& impl, const Option& option,
-      Error_Handler error_handler)
+  template <typename Option>
+  asio::error_code set_option(implementation_type& impl,
+      const Option& option, asio::error_code& ec)
   {
     logger_.log("Setting socket option");
-    service_impl_.set_option(impl, option, error_handler);
+    return service_impl_.set_option(impl, option, ec);
   }
 
   /// Get a socket option.
-  template <typename Option, typename Error_Handler>
-  void get_option(const implementation_type& impl, Option& option,
-      Error_Handler error_handler) const
+  template <typename Option>
+  asio::error_code get_option(const implementation_type& impl,
+      Option& option, asio::error_code& ec) const
   {
     logger_.log("Getting socket option");
-    service_impl_.get_option(impl, option, error_handler);
+    return service_impl_.get_option(impl, option, ec);
   }
 
   /// Perform an IO control command on the socket.
-  template <typename IO_Control_Command, typename Error_Handler>
-  void io_control(implementation_type& impl, IO_Control_Command& command,
-      Error_Handler error_handler)
+  template <typename IO_Control_Command>
+  asio::error_code io_control(implementation_type& impl,
+      IO_Control_Command& command, asio::error_code& ec)
   {
     logger_.log("Performing IO control command on socket");
-    service_impl_.io_control(impl, command, error_handler);
+    return service_impl_.io_control(impl, command, ec);
   }
 
   /// Get the local endpoint.
-  template <typename Error_Handler>
-  void local_endpoint(const implementation_type& impl,
-      Error_Handler error_handler) const
+  endpoint_type local_endpoint(const implementation_type& impl,
+      asio::error_code& ec) const
   {
     logger_.log("Getting socket's local endpoint");
-    return service_impl_.local_endpoint(impl, error_handler);
+    return service_impl_.local_endpoint(impl, ec);
   }
 
   /// Get the remote endpoint.
-  template <typename Error_Handler>
   endpoint_type remote_endpoint(const implementation_type& impl,
-      Error_Handler error_handler) const
+      asio::error_code& ec) const
   {
     logger_.log("Getting socket's remote endpoint");
-    return service_impl_.remote_endpoint(impl, error_handler);
+    return service_impl_.remote_endpoint(impl, ec);
   }
 
   /// Disable sends or receives on the socket.
-  template <typename Error_Handler>
-  void shutdown(implementation_type& impl,
-      asio::socket_base::shutdown_type what, Error_Handler error_handler)
+  asio::error_code shutdown(implementation_type& impl,
+      asio::socket_base::shutdown_type what,
+      asio::error_code& ec)
   {
     logger_.log("Shutting down socket");
-    service_impl_.shutdown(impl, what, error_handler);
+    return service_impl_.shutdown(impl, what, ec);
   }
 
   /// Send the given data to the peer.
-  template <typename Const_Buffers, typename Error_Handler>
+  template <typename Const_Buffers>
   std::size_t send(implementation_type& impl, const Const_Buffers& buffers,
       asio::socket_base::message_flags flags,
-      Error_Handler error_handler)
+      asio::error_code& ec)
   {
     logger_.log("Sending data on socket");
-    return service_impl_.send(impl, buffers, flags, error_handler);
+    return service_impl_.send(impl, buffers, flags, ec);
   }
 
   /// Handler to wrap asynchronous send completion.
@@ -264,13 +282,14 @@ public:
   }
 
   /// Receive some data from the peer.
-  template <typename Mutable_Buffers, typename Error_Handler>
-  std::size_t receive(implementation_type& impl, const Mutable_Buffers& buffers,
+  template <typename Mutable_Buffers>
+  std::size_t receive(implementation_type& impl,
+      const Mutable_Buffers& buffers,
       asio::socket_base::message_flags flags,
-      Error_Handler error_handler)
+      asio::error_code& ec)
   {
     logger_.log("Receiving data on socket");
-    return service_impl_.receive(impl, buffers, flags, error_handler);
+    return service_impl_.receive(impl, buffers, flags, ec);
   }
 
   /// Handler to wrap asynchronous receive completion.
@@ -321,7 +340,7 @@ private:
   service_impl_type& service_impl_;
 
   /// The logger used for writing debug messages.
-  logger logger_;
+  mutable logger logger_;
 };
 
 template <typename Protocol>

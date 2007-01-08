@@ -179,6 +179,9 @@ void test()
     int native_socket3 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     socket1.assign(ip::tcp::v4(), native_socket3, ec);
 
+    bool is_open = socket1.is_open();
+    (void)is_open;
+
     socket1.close();
     socket1.close(ec);
 
@@ -187,6 +190,16 @@ void test()
 
     socket1.cancel();
     socket1.cancel(ec);
+
+    bool at_mark1 = socket1.at_mark();
+    (void)at_mark1;
+    bool at_mark2 = socket1.at_mark(ec);
+    (void)at_mark2;
+
+    std::size_t available1 = socket1.available();
+    (void)available1;
+    std::size_t available2 = socket1.available(ec);
+    (void)available2;
 
     socket1.bind(ip::tcp::endpoint(ip::tcp::v4(), 0));
     socket1.bind(ip::tcp::endpoint(ip::tcp::v6(), 0));
@@ -253,14 +266,6 @@ void test()
     socket1.read_some(buffer(mutable_char_buffer), ec);
 
     socket1.async_read_some(buffer(mutable_char_buffer), read_some_handler);
-
-    socket1.peek(buffer(mutable_char_buffer));
-    socket1.peek(buffer(mutable_char_buffer), ec);
-
-    std::size_t in_avail1 = socket1.in_avail();
-    (void)in_avail1;
-    std::size_t in_avail2 = socket1.in_avail(ec);
-    (void)in_avail2;
   }
   catch (std::exception&)
   {
@@ -309,7 +314,7 @@ void test()
 
   client_side_socket.connect(server_endpoint);
   ip::tcp::endpoint client_endpoint;
-  acceptor.accept_endpoint(server_side_socket, client_endpoint);
+  acceptor.accept(server_side_socket, client_endpoint);
 
   ip::tcp::endpoint client_side_local_endpoint
     = client_side_socket.local_endpoint();
@@ -330,8 +335,7 @@ void test()
   client_side_socket.close();
   server_side_socket.close();
 
-  acceptor.async_accept_endpoint(server_side_socket, client_endpoint,
-      handle_accept);
+  acceptor.async_accept(server_side_socket, client_endpoint, handle_accept);
   client_side_socket.async_connect(server_endpoint, handle_connect);
 
   ios.reset();
