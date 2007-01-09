@@ -92,9 +92,13 @@ EXAMPLE_EXES = \
 	examples\tutorial\daytime6\server.exe \
 	examples\tutorial\daytime7\server.exe
 
-all: \
-	$(PERFORMANCE_TEST_EXES) \
+# Only build unit tests by default with Borland C++ since the performance tests
+# and examples may use language that are not supported.
+tests: $(UNIT_TEST_EXES)
+
+all:
 	$(UNIT_TEST_EXES) \
+	$(PERFORMANCE_TEST_EXES) \
 	$(EXAMPLE_EXES)
 
 check: $(UNIT_TEST_EXES)
