@@ -73,6 +73,7 @@ EXAMPLE_EXES = \
 	examples\multicast\receiver.exe \
 	examples\multicast\sender.exe \
 	examples\services\daytime_client.exe \
+	examples\socks4\sync_client.exe \
 	examples\timeouts\accept_timeout.exe \
 	examples\timeouts\connect_timeout.exe \
 	examples\timeouts\datagram_receive_timeout.exe \

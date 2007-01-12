@@ -65,6 +65,7 @@ noinst_PROGRAMS = \
 	examples/multicast/receiver \
 	examples/multicast/sender \
 	examples/services/daytime_client \
+	examples/socks4/sync_client \
 	examples/timeouts/accept_timeout \
 	examples/timeouts/connect_timeout \
 	examples/timeouts/datagram_receive_timeout \
@@ -243,6 +244,7 @@ examples_multicast_sender_SOURCES = examples/multicast/sender.cpp
 examples_services_daytime_client_SOURCES = \
 	examples/services/daytime_client.cpp \
 	examples/services/logger_service.cpp
+examples_socks4_sync_client_SOURCES = examples/socks4/sync_client.cpp
 examples_timeouts_accept_timeout_SOURCES = examples/timeouts/accept_timeout.cpp
 examples_timeouts_connect_timeout_SOURCES = examples/timeouts/connect_timeout.cpp
 examples_timeouts_datagram_receive_timeout_SOURCES = examples/timeouts/datagram_receive_timeout.cpp
@@ -293,6 +295,11 @@ EXTRA_DIST = \
 	examples/serialization/server.cpp \
 	examples/serialization/connection.hpp \
 	examples/serialization/stock.hpp \
+	examples/services/basic_logger.hpp \
+	examples/services/logger.hpp \
+	examples/services/logger_service.hpp \
+	examples/services/stream_socket_service.hpp \
+	examples/socks4/socks4.hpp \
 	examples/ssl/README \
 	examples/ssl/ca.pem \
 	examples/ssl/server.pem \

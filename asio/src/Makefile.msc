@@ -104,6 +104,7 @@ EXAMPLE_EXES = \
 	examples\multicast\receiver.exe \
 	examples\multicast\sender.exe \
 	examples\services\daytime_client.exe \
+	examples\socks4\sync_client.exe \
 	examples\timeouts\accept_timeout.exe \
 	examples\timeouts\connect_timeout.exe \
 	examples\timeouts\datagram_receive_timeout.exe \
@@ -159,6 +160,9 @@ check: $(UNIT_TEST_EXES)
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
 
 {examples\multicast}.cpp{examples\multicast}.exe:
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+
+{examples\socks4}.cpp{examples\socks4}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
 
 {examples\timeouts}.cpp{examples\timeouts}.exe:
