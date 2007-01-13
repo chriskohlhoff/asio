@@ -107,7 +107,10 @@ namespace detail
   class write_handler
   {
   public:
-    write_handler(AsyncWriteStream& stream, const ConstBufferSequence& buffers,
+    typedef asio::detail::consuming_buffers<
+      const_buffer, ConstBufferSequence> buffers_type;
+
+    write_handler(AsyncWriteStream& stream, const buffers_type& buffers,
         CompletionCondition completion_condition, WriteHandler handler)
       : stream_(stream),
         buffers_(buffers),
@@ -135,8 +138,7 @@ namespace detail
 
   //private:
     AsyncWriteStream& stream_;
-    asio::detail::consuming_buffers<
-      const_buffer, ConstBufferSequence> buffers_;
+    buffers_type buffers_;
     std::size_t total_transferred_;
     CompletionCondition completion_condition_;
     WriteHandler handler_;
@@ -179,10 +181,12 @@ template <typename AsyncWriteStream, typename ConstBufferSequence,
 inline void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition, WriteHandler handler)
 {
-  s.async_write_some(buffers,
+  asio::detail::consuming_buffers<
+    const_buffer, ConstBufferSequence> tmp(buffers);
+  s.async_write_some(tmp,
       detail::write_handler<AsyncWriteStream, ConstBufferSequence,
         CompletionCondition, WriteHandler>(
-          s, buffers, completion_condition, handler));
+          s, tmp, completion_condition, handler));
 }
 
 template <typename AsyncWriteStream, typename ConstBufferSequence,

@@ -49,21 +49,30 @@ public:
     : at_end_(at_end),
       first_(first),
       begin_remainder_(begin_remainder),
-      end_remainder_(end_remainder)
+      end_remainder_(end_remainder),
+      offset_(0)
   {
   }
 
 private:
   friend class boost::iterator_core_access;
 
+  enum { max_size = 65536 };
+
   void increment()
   {
     if (!at_end_)
     {
-      if (begin_remainder_ == end_remainder_)
+      if (begin_remainder_ == end_remainder_
+          || offset_ + buffer_size(first_) >= max_size)
+      {
         at_end_ = true;
+      }
       else
+      {
+        offset_ += buffer_size(first_);
         first_ = *begin_remainder_++;
+      }
     }
   }
 
@@ -81,13 +90,14 @@ private:
 
   const Buffer& dereference() const
   {
-    return first_;
+    return buffer(first_, max_size - offset_);
   }
 
   bool at_end_;
   Buffer first_;
   Buffer_Iterator begin_remainder_;
   Buffer_Iterator end_remainder_;
+  std::size_t offset_;
 };
 
 // A proxy for a sub-range in a list of buffers.
