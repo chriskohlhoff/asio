@@ -149,12 +149,12 @@ my $error_cat_decls = <<"EOF";
   static std::string addrinfo_md(const boost::system::error_code& ec);
   static boost::system::wstring_t addrinfo_wmd(
       const boost::system::error_code& ec);
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
   static boost::system::error_category misc_ecat;
   static int misc_ed(const boost::system::error_code& ec);
   static std::string misc_md(const boost::system::error_code& ec);
   static boost::system::wstring_t misc_wmd(const boost::system::error_code& ec);
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
   static boost::system::error_category ssl_ecat;
   static int ssl_ed(const boost::system::error_code& ec);
@@ -237,6 +237,8 @@ boost::system::wstring_t error_base<T>::addrinfo_wmd(
   return L"EINVAL";
 }
 
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
 template <typename T>
 boost::system::error_category error_base<T>::misc_ecat(
     boost::system::error_code::new_category(&error_base<T>::misc_ed,
@@ -270,8 +272,6 @@ boost::system::wstring_t error_base<T>::misc_wmd(
     return L"Element not found";
   return L"EINVAL";
 }
-
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 template <typename T>
 boost::system::error_category error_base<T>::ssl_ecat(
