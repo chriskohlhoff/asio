@@ -559,6 +559,7 @@ sub copy_examples
       "src/examples/multicast",
       "src/examples/serialization",
       "src/examples/services",
+      "src/examples/socks4",
       "src/examples/ssl",
       "src/examples/timeouts",
       "src/examples/timers",
