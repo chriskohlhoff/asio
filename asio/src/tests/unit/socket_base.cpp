@@ -238,28 +238,50 @@ void test()
   BOOST_CHECK(static_cast<bool>(debug1));
   BOOST_CHECK(!!debug1);
   udp_sock.set_option(debug1, ec);
+#if defined(__linux__)
+  // On Linux, only root can set SO_DEBUG.
+  bool not_root = (ec == asio::error::access_denied);
+  BOOST_CHECK(!ec || not_root);
+#else // defined(__linux__)
   BOOST_CHECK(!ec);
+#endif // defined(__linux__)
 
   socket_base::debug debug2;
   udp_sock.get_option(debug2, ec);
   BOOST_CHECK(!ec);
+#if defined(__linux__)
+  BOOST_CHECK(debug2.value() || not_root);
+  BOOST_CHECK(static_cast<bool>(debug2) || not_root);
+  BOOST_CHECK(!!debug2 || not_root);
+#else // defined(__linux__)
   BOOST_CHECK(debug2.value());
   BOOST_CHECK(static_cast<bool>(debug2));
   BOOST_CHECK(!!debug2);
+#endif // defined(__linux__)
 
   socket_base::debug debug3(false);
   BOOST_CHECK(!debug3.value());
   BOOST_CHECK(!static_cast<bool>(debug3));
   BOOST_CHECK(!debug3);
   udp_sock.set_option(debug3, ec);
+#if defined(__linux__)
+  BOOST_CHECK(!ec || not_root);
+#else // defined(__linux__)
   BOOST_CHECK(!ec);
+#endif // defined(__linux__)
 
   socket_base::debug debug4;
   udp_sock.get_option(debug4, ec);
   BOOST_CHECK(!ec);
+#if defined(__linux__)
+  BOOST_CHECK(!debug4.value() || not_root);
+  BOOST_CHECK(!static_cast<bool>(debug4) || not_root);
+  BOOST_CHECK(!debug4 || not_root);
+#else // defined(__linux__)
   BOOST_CHECK(!debug4.value());
   BOOST_CHECK(!static_cast<bool>(debug4));
   BOOST_CHECK(!debug4);
+#endif // defined(__linux__)
 
   // do_not_route class.
 
