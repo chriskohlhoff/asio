@@ -242,6 +242,7 @@ void test()
   // On Linux, only root can set SO_DEBUG.
   bool not_root = (ec == asio::error::access_denied);
   BOOST_CHECK(!ec || not_root);
+  BOOST_WARN_MESSAGE(!ec, "Must be root to set debug socket option");
 #else // defined(__linux__)
   BOOST_CHECK(!ec);
 #endif // defined(__linux__)
