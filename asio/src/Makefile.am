@@ -303,7 +303,8 @@ EXTRA_DIST = \
 	examples/ssl/README \
 	examples/ssl/ca.pem \
 	examples/ssl/server.pem \
-	examples/ssl/dh512.pem
+	examples/ssl/dh512.pem \
+	examples/timers/tick_count_timer.cpp
 
 MAINTAINERCLEANFILES = \
 	$(srcdir)/Makefile.in
