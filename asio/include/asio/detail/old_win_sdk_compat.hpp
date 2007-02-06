@@ -24,9 +24,9 @@
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
 // Guess whether we are building against on old Platform SDK.
-#if !defined(IPPROTO_IPV6)
+#if !defined(IN6ADDR_ANY_INIT)
 #define ASIO_HAS_OLD_WIN_SDK 1
-#endif // !defined(IPPROTO_IPV6)
+#endif // !defined(IN6ADDR_ANY_INIT)
 
 #if defined(ASIO_HAS_OLD_WIN_SDK)
 
