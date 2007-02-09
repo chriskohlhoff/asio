@@ -120,6 +120,12 @@ public:
     return service_impl_.assign(impl, protocol, native_acceptor, ec);
   }
 
+  /// Determine whether the acceptor is open.
+  bool is_open(const implementation_type& impl) const
+  {
+    return service_impl_.is_open(impl);
+  }
+
   /// Cancel all asynchronous operations associated with the acceptor.
   asio::error_code cancel(implementation_type& impl,
       asio::error_code& ec)

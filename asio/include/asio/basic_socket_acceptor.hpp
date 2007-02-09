@@ -251,6 +251,12 @@ public:
         protocol, native_acceptor, ec);
   }
 
+  /// Determine whether the acceptor is open.
+  bool is_open() const
+  {
+    return this->service.is_open(this->implementation);
+  }
+
   /// Bind the acceptor to the given local endpoint.
   /**
    * This function binds the socket acceptor to the specified endpoint on the
