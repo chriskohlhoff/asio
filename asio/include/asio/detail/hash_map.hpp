@@ -25,6 +25,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/detail/noncopyable.hpp"
+#include "asio/detail/socket_types.hpp"
 
 namespace asio {
 namespace detail {
@@ -32,12 +33,15 @@ namespace detail {
 template <typename T>
 inline std::size_t calculate_hash_value(const T& t)
 {
-  // It would be better to use "using boost::hash_value;" here, but it makes
-  // Borland C++ crash.
-  using namespace boost;
-
-  return hash_value(t);
+  return boost::hash_value(t);
 }
+
+#if defined(_WIN64)
+inline std::size_t calculate_hash_value(SOCKET s)
+{
+  return static_cast<std::size_t>(s);
+}
+#endif // defined(_WIN64)
 
 template <typename K, typename V>
 class hash_map
