@@ -31,6 +31,7 @@ public:
   posix_fd_set_adapter()
     : max_descriptor_(invalid_socket)
   {
+    using namespace std; // Needed for memset on Solaris.
     FD_ZERO(&fd_set_);
   }
 
