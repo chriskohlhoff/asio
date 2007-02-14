@@ -70,7 +70,8 @@ inline std::string error_code::message() const
 #if defined(__sun) || defined(__QNX__)
   return strerror(value_);
 #elif defined(__MACH__) && defined(__APPLE__) \
-|| defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__)
+|| defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__) \
+|| defined(_AIX)
   char buf[256] = "";
   strerror_r(value_, buf, sizeof(buf));
   return buf;

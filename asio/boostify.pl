@@ -371,6 +371,17 @@ sub copy_source_file
       }
       print_line($output, $1 . "<boost/" . $2 . ">", $from, $lineno);
     }
+    elsif ($line =~ /# *include <cerrno>/)
+    {
+      if ($includes_boostify_ecats)
+      {
+        # Line is removed.
+      }
+      else
+      {
+        print_line($output, $line, $from, $lineno);
+      }
+    }
     elsif ($line =~ /# *include [<"]asio\/thread\.hpp[>"]/)
     {
       # Line is removed.

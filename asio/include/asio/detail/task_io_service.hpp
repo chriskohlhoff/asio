@@ -339,6 +339,7 @@ private:
   }
 
   class task_cleanup;
+  friend class task_cleanup;
 
   // The base class for all handler wrappers. A function pointer is used
   // instead of virtual functions to avoid the associated overhead.
@@ -425,8 +426,6 @@ private:
   };
 
   // Helper class to perform task-related operations on block exit.
-  class task_cleanup;
-  friend class task_cleanup;
   class task_cleanup
   {
   public:
