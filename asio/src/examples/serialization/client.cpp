@@ -67,7 +67,7 @@ public:
       // An error occurred. Log it and return. Since we are not starting a new
       // operation the io_service will run out of work to do and the client will
       // exit.
-      std::cerr << e << std::endl;
+      std::cerr << e.message() << std::endl;
     }
   }
 
@@ -95,7 +95,7 @@ public:
     else
     {
       // An error occurred.
-      std::cerr << e << std::endl;
+      std::cerr << e.message() << std::endl;
     }
 
     // Since we are not starting a new operation the io_service will run out of

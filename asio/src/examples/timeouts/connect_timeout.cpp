@@ -36,7 +36,7 @@ public:
   {
     if (err)
     {
-      std::cout << "Connect error: " << err << "\n";
+      std::cout << "Connect error: " << err.message() << "\n";
     }
     else
     {
