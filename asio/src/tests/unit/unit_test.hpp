@@ -13,6 +13,10 @@
 
 #include <boost/config.hpp>
 
+#if defined(__sun)
+# include <stdlib.h> // Needed for lrand48.
+#endif // defined(__sun)
+
 #if defined(__BORLANDC__)
 
 // Prevent use of intrinsic for strcmp.

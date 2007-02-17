@@ -26,6 +26,7 @@
 #include "asio/detail/push_options.hpp"
 #include <csignal>
 #include <pthread.h>
+#include <signal.h>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/detail/noncopyable.hpp"

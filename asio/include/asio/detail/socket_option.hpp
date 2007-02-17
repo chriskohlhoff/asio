@@ -108,7 +108,7 @@ public:
 
   // Set the size of the boolean data.
   template <typename Protocol>
-  void resize(const Protocol&, std::size_t s) const
+  void resize(const Protocol&, std::size_t s)
   {
     if (s != sizeof(value_))
       throw std::length_error("boolean socket option resize");
@@ -185,7 +185,7 @@ public:
 
   // Set the size of the int data.
   template <typename Protocol>
-  void resize(const Protocol&, std::size_t s) const
+  void resize(const Protocol&, std::size_t s)
   {
     if (s != sizeof(value_))
       throw std::length_error("integer socket option resize");
@@ -279,7 +279,7 @@ public:
 
   // Set the size of the int data.
   template <typename Protocol>
-  void resize(const Protocol&, std::size_t s) const
+  void resize(const Protocol&, std::size_t s)
   {
     if (s != sizeof(value_))
       throw std::length_error("linger socket option resize");
