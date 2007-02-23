@@ -69,17 +69,17 @@ void test()
   io_service ios;
   asio::error_code ec;
 
-  ip::udp::endpoint ep_v4(ip::address_v4::any(), 0);
+  ip::udp::endpoint ep_v4(ip::address_v4::loopback(), 0);
   ip::udp::socket sock_v4(ios);
   sock_v4.open(ep_v4.protocol(), ec);
+  sock_v4.bind(ep_v4, ec);
   bool have_v4 = !ec;
-  sock_v4.bind(ep_v4);
 
-  ip::udp::endpoint ep_v6(ip::address_v6::any(), 0);
+  ip::udp::endpoint ep_v6(ip::address_v6::loopback(), 0);
   ip::udp::socket sock_v6(ios);
   sock_v6.open(ep_v6.protocol(), ec);
+  sock_v6.bind(ep_v6, ec);
   bool have_v6 = !ec;
-  sock_v6.bind(ep_v6);
 
   BOOST_CHECK(have_v4 || have_v6);
 
