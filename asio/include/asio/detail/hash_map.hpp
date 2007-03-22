@@ -49,7 +49,7 @@ class hash_map
 {
 public:
   // The type of a value in the map.
-  typedef std::pair<const K, V> value_type;
+  typedef std::pair<K, V> value_type;
 
   // The type of a non-const iterator over the hash map.
   typedef typename std::list<value_type>::iterator iterator;
