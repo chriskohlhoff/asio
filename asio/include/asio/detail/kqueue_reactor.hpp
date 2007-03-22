@@ -563,7 +563,7 @@ private:
 
   // Cancel all operations associated with the given descriptor. The do_cancel
   // function of the handler objects will be invoked. This function does not
-  // acquire the epoll_reactor's mutex.
+  // acquire the kqueue_reactor's mutex.
   void cancel_ops_unlocked(socket_type descriptor)
   {
     bool interrupt = read_op_queue_.cancel_operations(descriptor);
@@ -576,13 +576,13 @@ private:
   // Mutex to protect access to internal data.
   asio::detail::mutex mutex_;
 
-  // The epoll file descriptor.
+  // The kqueue file descriptor.
   int kqueue_fd_;
 
   // Whether the kqueue wait call is currently in progress
   bool wait_in_progress_;
 
-  // The interrupter is used to break a blocking epoll_wait call.
+  // The interrupter is used to break a blocking kevent call.
   select_interrupter interrupter_;
 
   // The queue of read operations.
