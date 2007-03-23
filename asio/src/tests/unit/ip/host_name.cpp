@@ -29,6 +29,7 @@
 namespace ip_host_name_compile {
 
 using namespace asio;
+namespace ip = asio::ip;
 
 void test()
 {

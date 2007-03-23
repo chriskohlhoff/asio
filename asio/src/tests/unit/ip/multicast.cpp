@@ -29,6 +29,7 @@
 namespace ip_multicast_compile {
 
 using namespace asio;
+namespace ip = asio::ip;
 
 void test()
 {
@@ -104,6 +105,7 @@ void test()
 namespace ip_multicast_runtime {
 
 using namespace asio;
+namespace ip = asio::ip;
 
 void test()
 {

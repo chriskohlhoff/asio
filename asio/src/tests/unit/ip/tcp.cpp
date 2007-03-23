@@ -31,6 +31,7 @@
 namespace ip_tcp_compile {
 
 using namespace asio;
+namespace ip = asio::ip;
 
 void test()
 {
@@ -66,6 +67,7 @@ void test()
 namespace ip_tcp_runtime {
 
 using namespace asio;
+namespace ip = asio::ip;
 
 void test()
 {
@@ -116,6 +118,7 @@ void test()
 namespace ip_tcp_socket_compile {
 
 using namespace asio;
+namespace ip = asio::ip;
 
 void connect_handler(const asio::error_code&)
 {
@@ -284,6 +287,7 @@ void test()
 namespace ip_tcp_acceptor_runtime {
 
 using namespace asio;
+namespace ip = asio::ip;
 
 void handle_accept(const asio::error_code& err)
 {

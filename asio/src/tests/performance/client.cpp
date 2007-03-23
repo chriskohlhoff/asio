@@ -16,8 +16,6 @@
 #include <list>
 #include <string>
 
-using namespace asio;
-
 class stats
 {
 public:
@@ -30,20 +28,20 @@ public:
 
   void add(size_t bytes_written, size_t bytes_read)
   {
-    detail::mutex::scoped_lock lock(mutex_);
+    asio::detail::mutex::scoped_lock lock(mutex_);
     total_bytes_written_ += bytes_written;
     total_bytes_read_ += bytes_read;
   }
 
   void print()
   {
-    detail::mutex::scoped_lock lock(mutex_);
+    asio::detail::mutex::scoped_lock lock(mutex_);
     std::cout << total_bytes_written_ << " total bytes written\n";
     std::cout << total_bytes_read_ << " total bytes read\n";
   }
 
 private:
-  detail::mutex mutex_;
+  asio::detail::mutex mutex_;
   size_t total_bytes_written_;
   size_t total_bytes_read_;
 };
@@ -51,7 +49,7 @@ private:
 class session
 {
 public:
-  session(io_service& ios, size_t block_size, stats& s)
+  session(asio::io_service& ios, size_t block_size, stats& s)
     : strand_(ios),
       socket_(ios),
       block_size_(block_size),
@@ -75,12 +73,12 @@ public:
     delete[] write_data_;
   }
 
-  void start(ip::tcp::resolver::iterator endpoint_iterator)
+  void start(asio::ip::tcp::resolver::iterator endpoint_iterator)
   {
-    ip::tcp::endpoint endpoint = *endpoint_iterator;
+    asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
     socket_.async_connect(endpoint,
         strand_.wrap(boost::bind(&session::handle_connect, this,
-            placeholders::error, ++endpoint_iterator)));
+            asio::placeholders::error, ++endpoint_iterator)));
   }
 
   void stop()
@@ -90,27 +88,29 @@ public:
 
 private:
   void handle_connect(const asio::error_code& err,
-      ip::tcp::resolver::iterator endpoint_iterator)
+      asio::ip::tcp::resolver::iterator endpoint_iterator)
   {
     if (!err)
     {
       ++unwritten_count_;
-      async_write(socket_, buffer(write_data_, block_size_),
+      async_write(socket_, asio::buffer(write_data_, block_size_),
           strand_.wrap(
-            boost::bind(&session::handle_write, this, placeholders::error,
-              placeholders::bytes_transferred)));
-      socket_.async_read_some(buffer(read_data_, block_size_),
+            boost::bind(&session::handle_write, this,
+              asio::placeholders::error,
+              asio::placeholders::bytes_transferred)));
+      socket_.async_read_some(asio::buffer(read_data_, block_size_),
           strand_.wrap(
-            boost::bind(&session::handle_read, this, placeholders::error,
-              placeholders::bytes_transferred)));
+            boost::bind(&session::handle_read, this,
+              asio::placeholders::error,
+              asio::placeholders::bytes_transferred)));
     }
-    else if (endpoint_iterator != ip::tcp::resolver::iterator())
+    else if (endpoint_iterator != asio::ip::tcp::resolver::iterator())
     {
       socket_.close();
-      ip::tcp::endpoint endpoint = *endpoint_iterator;
+      asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
       socket_.async_connect(endpoint,
           strand_.wrap(boost::bind(&session::handle_connect, this,
-              placeholders::error, ++endpoint_iterator)));
+              asio::placeholders::error, ++endpoint_iterator)));
     }
   }
 
@@ -125,14 +125,16 @@ private:
       if (unwritten_count_ == 1)
       {
         std::swap(read_data_, write_data_);
-        async_write(socket_, buffer(write_data_, read_data_length_),
+        async_write(socket_, asio::buffer(write_data_, read_data_length_),
             strand_.wrap(
-              boost::bind(&session::handle_write, this, placeholders::error,
-                placeholders::bytes_transferred)));
-        socket_.async_read_some(buffer(read_data_, block_size_),
+              boost::bind(&session::handle_write, this,
+                asio::placeholders::error,
+                asio::placeholders::bytes_transferred)));
+        socket_.async_read_some(asio::buffer(read_data_, block_size_),
             strand_.wrap(
-              boost::bind(&session::handle_read, this, placeholders::error,
-                placeholders::bytes_transferred)));
+              boost::bind(&session::handle_read, this,
+                asio::placeholders::error,
+                asio::placeholders::bytes_transferred)));
       }
     }
   }
@@ -147,14 +149,16 @@ private:
       if (unwritten_count_ == 1)
       {
         std::swap(read_data_, write_data_);
-        async_write(socket_, buffer(write_data_, read_data_length_),
+        async_write(socket_, asio::buffer(write_data_, read_data_length_),
             strand_.wrap(
-              boost::bind(&session::handle_write, this, placeholders::error,
-                placeholders::bytes_transferred)));
-        socket_.async_read_some(buffer(read_data_, block_size_),
+              boost::bind(&session::handle_write, this,
+                asio::placeholders::error,
+                asio::placeholders::bytes_transferred)));
+        socket_.async_read_some(asio::buffer(read_data_, block_size_),
             strand_.wrap(
-              boost::bind(&session::handle_read, this, placeholders::error,
-                placeholders::bytes_transferred)));
+              boost::bind(&session::handle_read, this,
+                asio::placeholders::error,
+                asio::placeholders::bytes_transferred)));
       }
     }
   }
@@ -165,8 +169,8 @@ private:
   }
 
 private:
-  strand strand_;
-  ip::tcp::socket socket_;
+  asio::io_service::strand strand_;
+  asio::ip::tcp::socket socket_;
   size_t block_size_;
   char* read_data_;
   size_t read_data_length_;
@@ -180,7 +184,8 @@ private:
 class client
 {
 public:
-  client(io_service& ios, const ip::tcp::resolver::iterator endpoint_iterator,
+  client(asio::io_service& ios,
+      const asio::ip::tcp::resolver::iterator endpoint_iterator,
       size_t block_size, size_t session_count, int timeout)
     : io_service_(ios),
       stop_timer_(ios),
@@ -216,8 +221,8 @@ public:
   }
 
 private:
-  io_service& io_service_;
-  deadline_timer stop_timer_;
+  asio::io_service& io_service_;
+  asio::deadline_timer stop_timer_;
   std::list<session*> sessions_;
   stats stats_;
 };
@@ -241,18 +246,19 @@ int main(int argc, char* argv[])
     size_t session_count = atoi(argv[5]);
     int timeout = atoi(argv[6]);
 
-    io_service ios;
+    asio::io_service ios;
 
-    ip::tcp::resolver r(ios);
-    ip::tcp::resolver::iterator iter =
-      r.resolve(ip::tcp::resolver::query(host, port));
+    asio::ip::tcp::resolver r(ios);
+    asio::ip::tcp::resolver::iterator iter =
+      r.resolve(asio::ip::tcp::resolver::query(host, port));
 
     client c(ios, iter, block_size, session_count, timeout);
 
-    std::list<thread*> threads;
+    std::list<asio::thread*> threads;
     while (--thread_count > 0)
     {
-      thread* new_thread = new thread(boost::bind(&io_service::run, &ios));
+      asio::thread* new_thread = new asio::thread(
+          boost::bind(&asio::io_service::run, &ios));
       threads.push_back(new_thread);
     }
 

@@ -31,6 +31,7 @@
 namespace ip_udp_socket_compile {
 
 using namespace asio;
+namespace ip = asio::ip;
 
 void connect_handler(const asio::error_code&)
 {
@@ -229,6 +230,7 @@ void test()
 namespace ip_udp_socket_runtime {
 
 using namespace asio;
+namespace ip = asio::ip;
 
 void handle_send(size_t expected_bytes_sent,
     const asio::error_code& err, size_t bytes_sent)

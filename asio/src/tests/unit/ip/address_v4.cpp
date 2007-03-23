@@ -29,6 +29,7 @@
 namespace ip_address_v4_compile {
 
 using namespace asio;
+namespace ip = asio::ip;
 
 void test()
 {
