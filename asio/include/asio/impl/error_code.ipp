@@ -31,11 +31,20 @@ namespace asio {
 
 inline std::string error_code::message() const
 {
+  if (*this == error::already_open)
+    return "Already open.";
+  if (*this == error::not_found)
+    return "Not found.";
+  if (category_ == ssl_ecat)
+    return "SSL error.";
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  value_type value = value_;
+  if (*this == error::eof)
+    value = ERROR_HANDLE_EOF;
   char* msg = 0;
   DWORD length = ::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER
       | FORMAT_MESSAGE_FROM_SYSTEM
-      | FORMAT_MESSAGE_IGNORE_INSERTS, 0, value_,
+      | FORMAT_MESSAGE_IGNORE_INSERTS, 0, value,
       MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (char*)&msg, 0, 0);
   detail::local_free_on_block_exit local_free_obj(msg);
   if (length && msg[length - 1] == '\n')
