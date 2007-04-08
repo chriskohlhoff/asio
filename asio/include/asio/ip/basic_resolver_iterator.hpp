@@ -19,6 +19,7 @@
 
 #include "asio/detail/push_options.hpp"
 #include <boost/iterator/iterator_facade.hpp>
+#include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <cstring>
 #include <string>
@@ -118,12 +119,12 @@ private:
 
   void increment()
   {
-    if (++iter_ == values_->end())
+    if (++*iter_ == values_->end())
     {
       // Reset state to match a default constructed end iterator.
       values_.reset();
       typedef typename values_type::const_iterator values_iterator_type;
-      iter_ = values_iterator_type();
+      iter_.reset();
     }
   }
 
@@ -133,17 +134,18 @@ private:
       return true;
     if (values_ != other.values_)
       return false;
-    return iter_ == other.iter_;
+    return *iter_ == *other.iter_;
   }
 
   const basic_resolver_entry<InternetProtocol>& dereference() const
   {
-    return *iter_;
+    return **iter_;
   }
 
   typedef std::vector<basic_resolver_entry<InternetProtocol> > values_type;
+  typedef typename values_type::const_iterator values_iter_type;
   boost::shared_ptr<values_type> values_;
-  typename values_type::const_iterator iter_;
+  boost::optional<values_iter_type> iter_;
 };
 
 } // namespace ip
