@@ -34,6 +34,14 @@
 # endif // defined(_HAS_ITERATOR_DEBUGGING)
 #endif // defined(BOOST_MSVC)
 
+#if defined(__GNUC__)
+# if defined(_GLIBCXX_DEBUG)
+#  if !defined(ASIO_DISABLE_BUFFER_DEBUGGING)
+#   define ASIO_ENABLE_BUFFER_DEBUGGING
+#  endif // !defined(ASIO_DISABLE_BUFFER_DEBUGGING)
+# endif // defined(_GLIBCXX_DEBUG)
+#endif // defined(__GNUC__)
+
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
 # include "asio/detail/push_options.hpp"
 # include <boost/function.hpp>
