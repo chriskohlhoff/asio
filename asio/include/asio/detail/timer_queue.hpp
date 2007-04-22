@@ -309,7 +309,7 @@ private:
         swap_heap(index, heap_.size() - 1);
         heap_.pop_back();
         size_t parent = (index - 1) / 2;
-        if (index > 0 && Time_Traits::less_than(t->time_, heap_[parent]->time_))
+        if (index > 0 && Time_Traits::less_than(heap_[index]->time_, heap_[parent]->time_))
           up_heap(index);
         else
           down_heap(index);
