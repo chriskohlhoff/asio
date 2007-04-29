@@ -21,5 +21,6 @@
 test_suite* init_unit_test_suite(int argc, char* argv[])
 {
   test_suite* test = BOOST_TEST_SUITE("ip/basic_resolver_iterator");
+  test->add(BOOST_TEST_CASE(&null_test));
   return test;
 }

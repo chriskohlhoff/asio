@@ -41,4 +41,8 @@ using boost::unit_test::test_suite;
 # pragma warning (pop)
 #endif // defined(BOOST_MSVC)
 
+inline void null_test()
+{
+}
+
 #endif // UNIT_TEST_HPP
