@@ -37,6 +37,12 @@ template <int IPv4_Level, int IPv4_Name, int IPv6_Level, int IPv6_Name>
 class boolean
 {
 public:
+#if defined(__sun)
+  typedef unsigned char value_type;
+#else
+  typedef int value_type;
+#endif
+
   // Default constructor.
   boolean()
     : value_(0)
@@ -94,14 +100,14 @@ public:
 
   // Get the address of the boolean data.
   template <typename Protocol>
-  int* data(const Protocol&)
+  value_type* data(const Protocol&)
   {
     return &value_;
   }
 
   // Get the address of the boolean data.
   template <typename Protocol>
-  const int* data(const Protocol&) const
+  const value_type* data(const Protocol&) const
   {
     return &value_;
   }
@@ -122,7 +128,7 @@ public:
   }
 
 private:
-  int value_;
+  value_type value_;
 };
 
 // Helper template for implementing unicast hops options.
