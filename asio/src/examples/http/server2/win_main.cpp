@@ -10,10 +10,10 @@
 
 #include <iostream>
 #include <string>
-#include <cstdlib>
 #include <asio.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
+#include <boost/lexical_cast.hpp>
 #include "server.hpp"
 
 #if defined(_WIN32)
@@ -51,8 +51,7 @@ int main(int argc, char* argv[])
     }
 
     // Initialise server.
-    using namespace std; // For atoi.
-    std::size_t num_threads = static_cast<std::size_t>(atoi(argv[3]));
+    std::size_t num_threads = boost::lexical_cast<std::size_t>(argv[3]);
     http::server2::server s(argv[1], argv[2], argv[4], num_threads);
 
     // Set console control handler to allow server to be stopped.

@@ -12,7 +12,7 @@
 #include <string>
 #include <asio.hpp>
 #include <boost/bind.hpp>
-#include <cstdlib>
+#include <boost/lexical_cast.hpp>
 #include "server.hpp"
 
 #if !defined(_WIN32)
@@ -42,8 +42,7 @@ int main(int argc, char* argv[])
     pthread_sigmask(SIG_BLOCK, &new_mask, &old_mask);
 
     // Run server in background thread.
-    using namespace std; // For atoi.
-    std::size_t num_threads = static_cast<std::size_t>(atoi(argv[3]));
+    std::size_t num_threads = boost::lexical_cast<std::size_t>(argv[3]);
     http::server2::server s(argv[1], argv[2], argv[4], num_threads);
     asio::thread t(boost::bind(&http::server2::server::run, &s));
 

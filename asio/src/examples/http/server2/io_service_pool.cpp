@@ -9,6 +9,7 @@
 //
 
 #include "server.hpp"
+#include <stdexcept>
 #include <boost/bind.hpp>
 
 namespace http {
@@ -17,6 +18,9 @@ namespace server2 {
 io_service_pool::io_service_pool(std::size_t pool_size)
   : next_io_service_(0)
 {
+  if (pool_size == 0)
+    throw std::runtime_error("io_service_pool size is 0");
+
   // Give all the io_services work to do so that their run() functions will not
   // exit until they are explicitly stopped.
   for (std::size_t i = 0; i < pool_size; ++i)
