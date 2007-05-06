@@ -108,7 +108,9 @@ public:
    * more handlers to be dispatched, or until the io_service has been stopped.
    *
    * Multiple threads may call the run() function to set up a pool of threads
-   * from which the io_service may execute handlers.
+   * from which the io_service may execute handlers. All threads that are
+   * waiting in the pool are equivalent and the io_service may choose any one
+   * of them to invoke a handler.
    *
    * The run() function may be safely called again once it has completed only
    * after a call to reset().
@@ -125,7 +127,9 @@ public:
    * more handlers to be dispatched, or until the io_service has been stopped.
    *
    * Multiple threads may call the run() function to set up a pool of threads
-   * from which the io_service may execute handlers.
+   * from which the io_service may execute handlers. All threads that are
+   * waiting in the pool are equivalent and the io_service may choose any one
+   * of them to invoke a handler.
    *
    * The run() function may be safely called again once it has completed only
    * after a call to reset().
