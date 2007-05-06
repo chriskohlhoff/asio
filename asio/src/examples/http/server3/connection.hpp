@@ -31,7 +31,8 @@ class connection
 {
 public:
   /// Construct a connection with the given io_service.
-  explicit connection(asio::io_service& io_service, request_handler& handler);
+  explicit connection(asio::io_service& io_service,
+      request_handler& handler);
 
   /// Get the socket associated with the connection.
   asio::ip::tcp::socket& socket();
