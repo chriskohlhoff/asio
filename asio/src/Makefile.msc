@@ -99,6 +99,8 @@ EXAMPLE_EXES = \
 	examples\http\client\async_client.exe \
 	examples\http\client\sync_client.exe \
 	examples\http\server\http_server.exe \
+	examples\http\server2\http_server.exe \
+	examples\http\server3\http_server.exe \
 	examples\iostreams\daytime_client.exe \
 	examples\iostreams\daytime_server.exe \
 	examples\multicast\receiver.exe \
@@ -217,6 +219,27 @@ examples\http\server\http_server.exe: \
 		examples\http\server\server.cpp \
 		examples\http\server\win_main.cpp
 	cl -Fe$@ -Foexamples\http\server\ $(CXXFLAGS) $(DEFINES) $** -link -opt:ref
+
+examples\http\server2\http_server.exe: \
+		examples\http\server2\connection.cpp \
+		examples\http\server2\io_service_pool.cpp \
+		examples\http\server2\mime_types.cpp \
+		examples\http\server2\reply.cpp \
+		examples\http\server2\request_handler.cpp \
+		examples\http\server2\request_parser.cpp \
+		examples\http\server2\server.cpp \
+		examples\http\server2\win_main.cpp
+	cl -Fe$@ -Foexamples\http\server2\ $(CXXFLAGS) $(DEFINES) $** -link -opt:ref
+
+examples\http\server3\http_server.exe: \
+		examples\http\server3\connection.cpp \
+		examples\http\server3\mime_types.cpp \
+		examples\http\server3\reply.cpp \
+		examples\http\server3\request_handler.cpp \
+		examples\http\server3\request_parser.cpp \
+		examples\http\server3\server.cpp \
+		examples\http\server3\win_main.cpp
+	cl -Fe$@ -Foexamples\http\server3\ $(CXXFLAGS) $(DEFINES) $** -link -opt:ref
 
 examples\services\daytime_client.exe: \
 		examples\services\daytime_client.cpp \

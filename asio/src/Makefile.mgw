@@ -94,6 +94,8 @@ EXAMPLE_EXES = \
 
 OTHER_EXAMPLE_EXES = \
 	examples/http/server/http_server.exe \
+	examples/http/server2/http_server.exe \
+	examples/http/server3/http_server.exe \
 	examples/services/daytime_client.exe
 
 all: \
@@ -116,6 +118,8 @@ clean:
 	-rm -f $(UNIT_TEST_EXES:.exe=.o)
 	-rm -f $(EXAMPLE_EXES)
 	-rm -f $(EXAMPLE_EXES:.exe=.o)
+	-rm -f $(OTHER_EXAMPLE_EXES)
+	-rm -f $(OTHER_EXAMPLE_EXES:.exe=.o)
 
 $(PERFORMANCE_TEST_EXES) $(UNIT_TEST_EXES) $(EXAMPLE_EXES): %.exe: %.o
 	g++ -o$@ $(LDFLAGS) $< $(LIBS)
@@ -129,6 +133,27 @@ examples/http/server/http_server.exe: \
 		examples/http/server/request_parser.o \
 		examples/http/server/server.o \
 		examples/http/server/win_main.o
+	g++ -o$@ $(LDFLAGS) $^ $(LIBS)
+
+examples/http/server2/http_server.exe: \
+		examples/http/server2/connection.o \
+		examples/http/server2/io_service_pool.o \
+		examples/http/server2/mime_types.o \
+		examples/http/server2/reply.o \
+		examples/http/server2/request_handler.o \
+		examples/http/server2/request_parser.o \
+		examples/http/server2/server.o \
+		examples/http/server2/win_main.o
+	g++ -o$@ $(LDFLAGS) $^ $(LIBS)
+
+examples/http/server3/http_server.exe: \
+		examples/http/server3/connection.o \
+		examples/http/server3/mime_types.o \
+		examples/http/server3/reply.o \
+		examples/http/server3/request_handler.o \
+		examples/http/server3/request_parser.o \
+		examples/http/server3/server.o \
+		examples/http/server3/win_main.o
 	g++ -o$@ $(LDFLAGS) $^ $(LIBS)
 
 examples/services/daytime_client.exe: \

@@ -68,6 +68,8 @@ EXAMPLE_EXES = \
 	examples\http\client\async_client.exe \
 	examples\http\client\sync_client.exe \
 	examples\http\server\http_server.exe \
+	examples\http\server2\http_server.exe \
+	examples\http\server3\http_server.exe \
 	examples\iostreams\daytime_client.exe \
 	examples\iostreams\daytime_server.exe \
 	examples\multicast\receiver.exe \
@@ -122,6 +124,27 @@ examples\http\server\http_server.exe: \
 		examples\http\server\request_parser.obj \
 		examples\http\server\server.obj \
 		examples\http\server\win_main.obj
+	bcc32 -e$@ $(LDFLAGS) $**
+
+examples\http\server2\http_server.exe: \
+		examples\http\server2\connection.obj \
+		examples\http\server2\io_service_pool.obj \
+		examples\http\server2\mime_types.obj \
+		examples\http\server2\reply.obj \
+		examples\http\server2\request_handler.obj \
+		examples\http\server2\request_parser.obj \
+		examples\http\server2\server.obj \
+		examples\http\server2\win_main.obj
+	bcc32 -e$@ $(LDFLAGS) $**
+
+examples\http\server3\http_server.exe: \
+		examples\http\server3\connection.obj \
+		examples\http\server3\mime_types.obj \
+		examples\http\server3\reply.obj \
+		examples\http\server3\request_handler.obj \
+		examples\http\server3\request_parser.obj \
+		examples\http\server3\server.obj \
+		examples\http\server3\win_main.obj
 	bcc32 -e$@ $(LDFLAGS) $**
 
 examples\services\daytime_client.exe: \
