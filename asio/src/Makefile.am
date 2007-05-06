@@ -61,6 +61,7 @@ noinst_PROGRAMS = \
 	examples/http/client/sync_client \
 	examples/http/server/http_server \
 	examples/http/server2/http_server \
+	examples/http/server3/http_server \
 	examples/iostreams/daytime_client \
 	examples/iostreams/daytime_server \
 	examples/multicast/receiver \
@@ -253,6 +254,20 @@ else
 examples_http_server2_http_server_SOURCES += \
 	examples/http/server2/posix_main.cpp
 endif
+examples_http_server3_http_server_SOURCES = \
+	examples/http/server3/connection.cpp \
+	examples/http/server3/mime_types.cpp \
+	examples/http/server3/reply.cpp \
+	examples/http/server3/request_handler.cpp \
+	examples/http/server3/request_parser.cpp \
+	examples/http/server3/server.cpp
+if WINDOWS_TARGET
+examples_http_server3_http_server_SOURCES += \
+	examples/http/server3/win_main.cpp
+else
+examples_http_server3_http_server_SOURCES += \
+	examples/http/server3/posix_main.cpp
+endif
 examples_iostreams_daytime_client_SOURCES = examples/iostreams/daytime_client.cpp
 examples_iostreams_daytime_server_SOURCES = examples/iostreams/daytime_server.cpp
 examples_multicast_receiver_SOURCES = examples/multicast/receiver.cpp
@@ -317,6 +332,15 @@ EXTRA_DIST = \
 	examples/http/server2/request_parser.hpp \
 	examples/http/server2/server.hpp \
 	examples/http/server2/win_main.cpp \
+	examples/http/server3/connection.hpp \
+	examples/http/server3/header.hpp \
+	examples/http/server3/mime_types.hpp \
+	examples/http/server3/reply.hpp \
+	examples/http/server3/request.hpp \
+	examples/http/server3/request_handler.hpp \
+	examples/http/server3/request_parser.hpp \
+	examples/http/server3/server.hpp \
+	examples/http/server3/win_main.cpp \
 	examples/serialization/client.cpp \
 	examples/serialization/server.cpp \
 	examples/serialization/connection.hpp \
