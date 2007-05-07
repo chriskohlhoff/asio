@@ -596,6 +596,7 @@ sub copy_examples
   {
     my @files = (
         glob("$dir/*.*pp"),
+        glob("$dir/*.html"),
         glob("$dir/Jamfile*"),
         glob("$dir/*.pem"),
         glob("$dir/README*"),
