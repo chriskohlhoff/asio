@@ -11,6 +11,7 @@
 #include "server.hpp"
 #include <stdexcept>
 #include <boost/bind.hpp>
+#include <boost/shared_ptr.hpp>
 
 namespace http {
 namespace server2 {

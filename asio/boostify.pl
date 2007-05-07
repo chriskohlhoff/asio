@@ -350,7 +350,17 @@ sub copy_source_file
       if ($uses_asio_thread)
       {
         print_line($output, $1 . "<boost/thread.hpp>", $from, $lineno);
+        $uses_asio_thread = 0;
       }
+    }
+    elsif ($line =~ /^(# *include )[<"]boost\/.*[>"].*$/)
+    {
+      if ($uses_asio_thread)
+      {
+        print_line($output, $1 . "<boost/thread.hpp>", $from, $lineno);
+        $uses_asio_thread = 0;
+      }
+      print_line($output, $line, $from, $lineno);
     }
     elsif ($line =~ /^(# *include )[<"](asio\/detail\/pop_options\.hpp)[>"]$/)
     {
