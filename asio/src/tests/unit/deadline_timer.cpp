@@ -161,7 +161,7 @@ void deadline_timer_test()
   BOOST_CHECK(count == 0);
   end = now();
   expected_end = start + seconds(2);
-  BOOST_CHECK(end < expected_end);
+  BOOST_CHECK(end <= expected_end);
 
   // Wait on the timer again without cancelling it. This time the asynchronous
   // wait should run to completion and increment the counter.
