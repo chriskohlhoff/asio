@@ -145,6 +145,7 @@ nobase_include_HEADERS = \
 	asio/system_error.hpp \
 	asio/thread.hpp \
 	asio/time_traits.hpp \
+	asio/version.hpp \
 	asio/write.hpp \
 	asio.hpp
 

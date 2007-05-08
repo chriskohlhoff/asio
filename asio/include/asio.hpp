@@ -68,6 +68,7 @@
 #include "asio/system_error.hpp"
 #include "asio/thread.hpp"
 #include "asio/time_traits.hpp"
+#include "asio/version.hpp"
 #include "asio/write.hpp"
 
 #endif // ASIO_HPP
