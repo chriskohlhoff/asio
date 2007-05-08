@@ -70,6 +70,7 @@ EXAMPLE_EXES = \
 	examples\http\server\http_server.exe \
 	examples\http\server2\http_server.exe \
 	examples\http\server3\http_server.exe \
+	examples\invocation\prioritised_handlers.exe \
 	examples\iostreams\daytime_client.exe \
 	examples\iostreams\daytime_server.exe \
 	examples\multicast\receiver.exe \

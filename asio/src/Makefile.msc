@@ -101,6 +101,7 @@ EXAMPLE_EXES = \
 	examples\http\server\http_server.exe \
 	examples\http\server2\http_server.exe \
 	examples\http\server3\http_server.exe \
+	examples\invocation\prioritised_handlers.exe \
 	examples\iostreams\daytime_client.exe \
 	examples\iostreams\daytime_server.exe \
 	examples\multicast\receiver.exe \
@@ -156,6 +157,9 @@ check: $(UNIT_TEST_EXES)
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
 
 {examples\http\client}.cpp{examples\http\client}.exe:
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+
+{examples\invocation}.cpp{examples\invocation}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
 
 {examples\iostreams}.cpp{examples\iostreams}.exe:

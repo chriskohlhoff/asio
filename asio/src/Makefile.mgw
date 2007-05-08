@@ -68,6 +68,7 @@ EXAMPLE_EXES = \
 	examples/echo/blocking_udp_echo_server.exe \
 	examples/http/client/async_client.exe \
 	examples/http/client/sync_client.exe \
+	examples/invocation/prioritised_handlers.exe \
 	examples/iostreams/daytime_client.exe \
 	examples/iostreams/daytime_server.exe \
 	examples/multicast/receiver.exe \

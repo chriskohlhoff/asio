@@ -62,6 +62,7 @@ noinst_PROGRAMS = \
 	examples/http/server/http_server \
 	examples/http/server2/http_server \
 	examples/http/server3/http_server \
+	examples/invocation/prioritised_handlers \
 	examples/iostreams/daytime_client \
 	examples/iostreams/daytime_server \
 	examples/multicast/receiver \
@@ -268,6 +269,7 @@ else
 examples_http_server3_http_server_SOURCES += \
 	examples/http/server3/posix_main.cpp
 endif
+examples_invocation_prioritised_handlers_SOURCES = examples/invocation/prioritised_handlers.cpp
 examples_iostreams_daytime_client_SOURCES = examples/iostreams/daytime_client.cpp
 examples_iostreams_daytime_server_SOURCES = examples/iostreams/daytime_server.cpp
 examples_multicast_receiver_SOURCES = examples/multicast/receiver.cpp
