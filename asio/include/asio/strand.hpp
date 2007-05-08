@@ -54,6 +54,12 @@ public:
   }
 
   /// Destructor.
+  /**
+   * Destroys a strand.
+   *
+   * Handlers posted through the strand that have not yet been invoked will
+   * still be dispatched in a way that meets the guarantee of non-concurrency.
+   */
   ~strand()
   {
     service_.destroy(impl_);
