@@ -1263,6 +1263,14 @@ public:
           return ec;
         // Fall through to retry operation.
       }
+#if defined(EPROTO)
+      else if (ec.value() == EPROTO)
+      {
+        if (impl.flags_ & implementation_type::enable_connection_aborted)
+          return ec;
+        // Fall through to retry operation.
+      }
+#endif // defined(EPROTO)
       else
         return ec;
 
@@ -1322,6 +1330,10 @@ public:
       if (ec == asio::error::connection_aborted
           && !enable_connection_aborted_)
         return false;
+#if defined(EPROTO)
+      if (ec.value() == EPROTO && !enable_connection_aborted_)
+        return false;
+#endif // defined(EPROTO)
 
       // Transfer ownership of the new socket to the peer object.
       if (!ec)
