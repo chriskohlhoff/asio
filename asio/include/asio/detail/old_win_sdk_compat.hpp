@@ -164,6 +164,10 @@ struct addrinfo_emulation
 # define IPPROTO_IPV6 41
 #endif
 
+#if !defined(IPV6_UNICAST_HOPS)
+# define IPV6_UNICAST_HOPS 4
+#endif
+
 #if !defined(IPV6_MULTICAST_IF)
 # define IPV6_MULTICAST_IF 9
 #endif
