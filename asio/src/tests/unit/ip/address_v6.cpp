@@ -39,7 +39,7 @@ void test()
     // address_v6 constructors.
 
     ip::address_v6 addr1;
-    const ip::address_v6::bytes_type const_bytes_value = { 0 };
+    const ip::address_v6::bytes_type const_bytes_value = { { 0 } };
     ip::address_v6 addr2(const_bytes_value);
 
     // address_v6 functions.

@@ -40,7 +40,7 @@ void test()
     // address_v4 constructors.
 
     ip::address_v4 addr1;
-    const ip::address_v4::bytes_type const_bytes_value = { 127, 0, 0, 1 };
+    const ip::address_v4::bytes_type const_bytes_value = { { 127, 0, 0, 1 } };
     ip::address_v4 addr2(const_bytes_value);
     const unsigned long const_ulong_value = 0x7F00001;
     ip::address_v4 addr3(const_ulong_value);
