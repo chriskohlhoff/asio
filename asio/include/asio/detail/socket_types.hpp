@@ -169,6 +169,7 @@ const int message_do_not_route = MSG_DONTROUTE;
 #endif
 const int custom_socket_option_level = 0xA5100000;
 const int enable_connection_aborted_option = 1;
+const int always_fail_option = 2;
 
 } // namespace detail
 } // namespace asio

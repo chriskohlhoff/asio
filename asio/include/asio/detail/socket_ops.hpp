@@ -318,6 +318,12 @@ inline socket_type socket(int af, int type, int protocol,
 inline int setsockopt(socket_type s, int level, int optname,
     const void* optval, size_t optlen, asio::error_code& ec)
 {
+  if (level == custom_socket_option_level && optname == always_fail_option)
+  {
+    ec = asio::error::invalid_argument;
+    return -1;
+  }
+
   clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   return error_wrapper(::setsockopt(s, level, optname,
@@ -331,6 +337,12 @@ inline int setsockopt(socket_type s, int level, int optname,
 inline int getsockopt(socket_type s, int level, int optname, void* optval,
     size_t* optlen, asio::error_code& ec)
 {
+  if (level == custom_socket_option_level && optname == always_fail_option)
+  {
+    ec = asio::error::invalid_argument;
+    return -1;
+  }
+
   clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   int tmp_optlen = static_cast<int>(*optlen);
