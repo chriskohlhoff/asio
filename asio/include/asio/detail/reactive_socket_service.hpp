@@ -350,6 +350,22 @@ public:
       socket_ops::setsockopt(impl.socket_,
           option.level(impl.protocol_), option.name(impl.protocol_),
           option.data(impl.protocol_), option.size(impl.protocol_), ec);
+
+#if defined(__MACH__) && defined(__APPLE__) \
+|| defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__)
+      // To implement portable behaviour for SO_REUSEADDR with UDP sockets we
+      // need to also set SO_REUSEPORT on BSD-based platforms.
+      if (!ec && impl.protocol_.type() == SOCK_DGRAM
+          && option.level(impl.protocol_) == SOL_SOCKET
+          && option.name(impl.protocol_) == SO_REUSEADDR)
+      {
+        asio::error_code ignored_ec;
+        socket_ops::setsockopt(impl.socket_, SOL_SOCKET, SO_REUSEPORT,
+            option.data(impl.protocol_), option.size(impl.protocol_),
+            ignored_ec);
+      }
+#endif
+
       return ec;
     }
   }
