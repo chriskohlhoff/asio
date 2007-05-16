@@ -63,7 +63,7 @@ inline socket_type accept(socket_type s, socket_addr_type* addr,
     socket_addr_len_type* addrlen, asio::error_code& ec)
 {
   clear_error(ec);
-#if defined(__MACH__) && defined(__APPLE__)
+#if defined(__MACH__) && defined(__APPLE__) || defined(__FreeBSD__)
   socket_type new_s = error_wrapper(::accept(s, addr, addrlen), ec);
   if (new_s == invalid_socket)
     return new_s;
@@ -295,7 +295,7 @@ inline socket_type socket(int af, int type, int protocol,
   }
 
   return s;
-#elif defined(__MACH__) && defined(__APPLE__)
+#elif defined(__MACH__) && defined(__APPLE__) || defined(__FreeBSD__)
   socket_type s = error_wrapper(::socket(af, type, protocol), ec);
   if (s == invalid_socket)
     return s;
