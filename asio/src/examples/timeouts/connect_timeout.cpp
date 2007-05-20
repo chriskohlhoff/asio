@@ -14,6 +14,7 @@
 #include <iostream>
 
 using namespace asio;
+using asio::ip::tcp;
 
 class connect_handler
 {
@@ -24,7 +25,7 @@ public:
       socket_(ios)
   {
     socket_.async_connect(
-        ip::tcp::endpoint(ip::address_v4::loopback(), 32123),
+        tcp::endpoint(asio::ip::address_v4::loopback(), 32123),
         boost::bind(&connect_handler::handle_connect, this,
           asio::placeholders::error));
 
@@ -52,7 +53,7 @@ public:
 private:
   io_service& io_service_;
   deadline_timer timer_;
-  ip::tcp::socket socket_;
+  tcp::socket socket_;
 };
 
 int main()
@@ -60,7 +61,7 @@ int main()
   try
   {
     io_service ios;
-    ip::tcp::acceptor a(ios, ip::tcp::endpoint(ip::tcp::v4(), 32123), 1);
+    tcp::acceptor a(ios, tcp::endpoint(tcp::v4(), 32123), 1);
 
     // Make lots of connections so that at least some of them will block.
     connect_handler ch1(ios);

@@ -14,6 +14,7 @@
 #include <iostream>
 
 using namespace asio;
+using asio::ip::tcp;
 
 class stream_handler
 {
@@ -21,7 +22,7 @@ public:
   stream_handler(io_service& ios)
     : io_service_(ios),
       timer_(ios),
-      acceptor_(ios, ip::tcp::endpoint(ip::tcp::v4(), 32123)),
+      acceptor_(ios, tcp::endpoint(tcp::v4(), 32123)),
       socket_(ios)
   {
     acceptor_.async_accept(socket_,
@@ -67,8 +68,8 @@ public:
 private:
   io_service& io_service_;
   deadline_timer timer_;
-  ip::tcp::acceptor acceptor_;
-  ip::tcp::socket socket_;
+  tcp::acceptor acceptor_;
+  tcp::socket socket_;
   char buf_[1024];
 };
 
@@ -85,8 +86,9 @@ int main()
 
     stream_handler sh(ios);
 
-    ip::tcp::socket s(ios);
-    s.async_connect(ip::tcp::endpoint(ip::address_v4::loopback(), 32123),
+    tcp::socket s(ios);
+    s.async_connect(
+        tcp::endpoint(asio::ip::address_v4::loopback(), 32123),
         boost::bind(connect_handler));
 
     ios.run();

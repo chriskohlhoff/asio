@@ -29,8 +29,6 @@
 
 namespace ssl_stream_compile {
 
-using namespace asio;
-
 void handshake_handler(const asio::error_code&)
 {
 }
@@ -49,6 +47,9 @@ void read_some_handler(const asio::error_code&, std::size_t)
 
 void test()
 {
+  using namespace asio;
+  namespace ip = asio::ip;
+
   try
   {
     io_service ios;

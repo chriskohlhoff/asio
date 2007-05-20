@@ -14,6 +14,7 @@
 #include <iostream>
 
 using namespace asio;
+using asio::ip::udp;
 
 class datagram_handler
 {
@@ -21,7 +22,7 @@ public:
   datagram_handler(io_service& ios)
     : io_service_(ios),
       timer_(ios),
-      socket_(ios, ip::udp::endpoint(ip::udp::v4(), 32124))
+      socket_(ios, udp::endpoint(udp::v4(), 32124))
   {
     socket_.async_receive_from(
         asio::buffer(data_, max_length), sender_endpoint_,
@@ -53,8 +54,8 @@ public:
 private:
   io_service& io_service_;
   deadline_timer timer_;
-  ip::udp::socket socket_;
-  ip::udp::endpoint sender_endpoint_;
+  udp::socket socket_;
+  udp::endpoint sender_endpoint_;
   enum { max_length = 512 };
   char data_[max_length];
 };

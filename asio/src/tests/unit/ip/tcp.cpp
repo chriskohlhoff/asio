@@ -30,11 +30,11 @@
 
 namespace ip_tcp_compile {
 
-using namespace asio;
-namespace ip = asio::ip;
-
 void test()
 {
+  using namespace asio;
+  namespace ip = asio::ip;
+
   try
   {
     io_service ios;
@@ -66,11 +66,11 @@ void test()
 
 namespace ip_tcp_runtime {
 
-using namespace asio;
-namespace ip = asio::ip;
-
 void test()
 {
+  using namespace asio;
+  namespace ip = asio::ip;
+
   io_service ios;
   ip::tcp::socket sock(ios, ip::tcp::v4());
   asio::error_code ec;
@@ -117,9 +117,6 @@ void test()
 
 namespace ip_tcp_socket_compile {
 
-using namespace asio;
-namespace ip = asio::ip;
-
 void connect_handler(const asio::error_code&)
 {
 }
@@ -142,6 +139,9 @@ void read_some_handler(const asio::error_code&, std::size_t)
 
 void test()
 {
+  using namespace asio;
+  namespace ip = asio::ip;
+
   try
   {
     io_service ios;
@@ -286,9 +286,6 @@ void test()
 
 namespace ip_tcp_acceptor_runtime {
 
-using namespace asio;
-namespace ip = asio::ip;
-
 void handle_accept(const asio::error_code& err)
 {
   BOOST_CHECK(!err);
@@ -301,6 +298,9 @@ void handle_connect(const asio::error_code& err)
 
 void test()
 {
+  using namespace asio;
+  namespace ip = asio::ip;
+
   io_service ios;
 
   ip::tcp::acceptor acceptor(ios, ip::tcp::endpoint(ip::tcp::v4(), 0));

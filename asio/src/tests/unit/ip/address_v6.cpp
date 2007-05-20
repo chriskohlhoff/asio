@@ -27,11 +27,11 @@
 
 namespace ip_address_v6_compile {
 
-using namespace asio;
-namespace ip = asio::ip;
-
 void test()
 {
+  using namespace asio;
+  namespace ip = asio::ip;
+
   try
   {
     asio::error_code ec;

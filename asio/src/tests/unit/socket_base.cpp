@@ -28,11 +28,11 @@
 
 namespace socket_base_compile {
 
-using namespace asio;
-namespace ip = asio::ip;
-
 void test()
 {
+  using namespace asio;
+  namespace ip = asio::ip;
+
   try
   {
     io_service ios;
@@ -192,11 +192,11 @@ void test()
 
 namespace socket_base_runtime {
 
-using namespace asio;
-namespace ip = asio::ip;
-
 void test()
 {
+  using namespace asio;
+  namespace ip = asio::ip;
+
   io_service ios;
   ip::udp::socket udp_sock(ios, ip::udp::v4());
   ip::tcp::socket tcp_sock(ios, ip::tcp::v4());
