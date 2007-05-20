@@ -56,7 +56,7 @@ public:
     return udp(PF_INET);
   }
 
-  /// Construct to represent the IPv4 UDP protocol.
+  /// Construct to represent the IPv6 UDP protocol.
   static udp v6()
   {
     return udp(PF_INET6);
@@ -80,7 +80,7 @@ public:
     return family_;
   }
 
-  /// The IPv4 UDP socket type.
+  /// The UDP socket type.
   typedef basic_datagram_socket<udp> socket;
 
   /// The UDP resolver type.

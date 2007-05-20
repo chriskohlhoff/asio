@@ -59,7 +59,7 @@ public:
     return tcp(PF_INET);
   }
 
-  /// Construct to represent the IPv4 TCP protocol.
+  /// Construct to represent the IPv6 TCP protocol.
   static tcp v6()
   {
     return tcp(PF_INET6);

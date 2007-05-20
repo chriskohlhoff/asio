@@ -60,7 +60,40 @@ namespace asio {
  * @par Concepts:
  * Dispatcher.
  *
- * @sa @ref io_service_handler_exception
+ * @par Effect of exceptions thrown from handlers
+ *
+ * If an exception is thrown from a handler, the exception is allowed to
+ * propagate through the throwing thread's invocation of
+ * asio::io_service::run(), asio::io_service::run_one(),
+ * asio::io_service::poll() or asio::io_service::poll_one().
+ * No other threads that are calling any of these functions are affected. It is
+ * then the responsibility of the application to catch the exception.
+ *
+ * After the exception has been caught, the
+ * asio::io_service::run(), asio::io_service::run_one(),
+ * asio::io_service::poll() or asio::io_service::poll_one()
+ * call may be restarted @em without the need for an intervening call to
+ * asio::io_service::reset(). This allows the thread to rejoin the
+ * io_service's thread pool without impacting any other threads in the pool.
+ *
+ * For example:
+ *
+ * @code
+ * asio::io_service io_service;
+ * ...
+ * for (;;)
+ * {
+ *   try
+ *   {
+ *     io_service.run();
+ *     break; // run() exited normally
+ *   }
+ *   catch (my_exception& e)
+ *   {
+ *     // Deal with exception as appropriate.
+ *   }
+ * }
+ * @endcode
  */
 class io_service
   : private noncopyable
@@ -459,42 +492,6 @@ public:
   {
   }
 };
-
-/**
- * @page io_service_handler_exception Effect of exceptions thrown from handlers
- *
- * If an exception is thrown from a handler, the exception is allowed to
- * propagate through the throwing thread's invocation of
- * asio::io_service::run(), asio::io_service::run_one(),
- * asio::io_service::poll() or asio::io_service::poll_one().
- * No other threads that are calling any of these functions are affected. It is
- * then the responsibility of the application to catch the exception.
- *
- * After the exception has been caught, the
- * asio::io_service::run(), asio::io_service::run_one(),
- * asio::io_service::poll() or asio::io_service::poll_one()
- * call may be restarted @em without the need for an intervening call to
- * asio::io_service::reset(). This allows the thread to rejoin the
- * io_service's thread pool without impacting any other threads in the pool.
- *
- * @par Example
- * @code
- * asio::io_service io_service;
- * ...
- * for (;;)
- * {
- *   try
- *   {
- *     io_service.run();
- *     break; // run() exited normally
- *   }
- *   catch (my_exception& e)
- *   {
- *     // Deal with exception as appropriate.
- *   }
- * }
- * @endcode
- */
 
 } // namespace asio
 

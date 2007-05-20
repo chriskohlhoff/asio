@@ -40,8 +40,6 @@ namespace asio {
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  *
- * @sa @ref deadline_timer_reset
- *
  * @par Examples
  * Performing a blocking wait:
  * @code
@@ -75,6 +73,45 @@ namespace asio {
  * // Start an asynchronous wait.
  * timer.async_wait(handler);
  * @endcode
+ *
+ * @par Changing an active deadline_timer's expiry time
+ *
+ * Changing the expiry time of a timer while there are pending asynchronous
+ * waits causes those wait operations to be cancelled. To ensure that the action
+ * associated with the timer is performed only once, use something like this:
+ * used:
+ *
+ * @code
+ * void on_some_event()
+ * {
+ *   if (my_timer.expires_from_now(seconds(5)) > 0)
+ *   {
+ *     // We managed to cancel the timer. Start new asynchronous wait.
+ *     my_timer.async_wait(on_timeout);
+ *   }
+ *   else
+ *   {
+ *     // Too late, timer has already expired!
+ *   }
+ * }
+ *
+ * void on_timeout(const asio::error_code& e)
+ * {
+ *   if (e != asio::error::operation_aborted)
+ *   {
+ *     // Timer was not cancelled, take necessary action.
+ *   }
+ * }
+ * @endcode
+ *
+ * @li The asio::basic_deadline_timer::expires_from_now() function
+ * cancels any pending asynchronous waits, and returns the number of
+ * asynchronous waits that were cancelled. If it returns 0 then you were too
+ * late and the wait handler has already been executed, or will soon be
+ * executed. If it returns 1 then the wait handler was successfully cancelled.
+ *
+ * @li If a wait handler is cancelled, the asio::error_code passed to
+ * it contains the value asio::error::operation_aborted.
  */
 template <typename Time,
     typename TimeTraits = asio::time_traits<Time>,
@@ -197,9 +234,6 @@ public:
    * operations will be cancelled. The handler for each cancelled operation will
    * be invoked with the asio::error::operation_aborted error code.
    *
-   * See @ref deadline_timer_reset for more information on altering the expiry
-   * time of an active timer.
-   *
    * @param expiry_time The expiry time to be used for the timer.
    *
    * @return The number of asynchronous operations that were cancelled.
@@ -220,9 +254,6 @@ public:
    * This function sets the expiry time. Any pending asynchronous wait
    * operations will be cancelled. The handler for each cancelled operation will
    * be invoked with the asio::error::operation_aborted error code.
-   *
-   * See @ref deadline_timer_reset for more information on altering the expiry
-   * time of an active timer.
    *
    * @param expiry_time The expiry time to be used for the timer.
    *
@@ -252,9 +283,6 @@ public:
    * operations will be cancelled. The handler for each cancelled operation will
    * be invoked with the asio::error::operation_aborted error code.
    *
-   * See @ref deadline_timer_reset for more information on altering the expiry
-   * time of an active timer.
-   *
    * @param expiry_time The expiry time to be used for the timer.
    *
    * @return The number of asynchronous operations that were cancelled.
@@ -275,9 +303,6 @@ public:
    * This function sets the expiry time. Any pending asynchronous wait
    * operations will be cancelled. The handler for each cancelled operation will
    * be invoked with the asio::error::operation_aborted error code.
-   *
-   * See @ref deadline_timer_reset for more information on altering the expiry
-   * time of an active timer.
    *
    * @param expiry_time The expiry time to be used for the timer.
    *
@@ -348,49 +373,6 @@ public:
     this->service.async_wait(this->implementation, handler);
   }
 };
-
-/**
- * @page deadline_timer_reset Changing an active deadline_timer's expiry time
- *
- * Changing the expiry time of a timer while there are pending asynchronous
- * waits causes those wait operations to be cancelled. To ensure that the action
- * associated with the timer is performed only once, use something like this:
- * used:
- *
- * @code
- * void on_some_event()
- * {
- *   if (my_timer.expires_from_now(seconds(5)) > 0)
- *   {
- *     // We managed to cancel the timer. Start new asynchronous wait.
- *     my_timer.async_wait(on_timeout);
- *   }
- *   else
- *   {
- *     // Too late, timer has already expired!
- *   }
- * }
- *
- * void on_timeout(const asio::error_code& e)
- * {
- *   if (e != asio::error::operation_aborted)
- *   {
- *     // Timer was not cancelled, take necessary action.
- *   }
- * }
- * @endcode
- *
- * @li The asio::basic_deadline_timer::expires_from_now() function
- * cancels any pending asynchronous waits, and returns the number of
- * asynchronous waits that were cancelled. If it returns 0 then you were too
- * late and the wait handler has already been executed, or will soon be
- * executed. If it returns 1 then the wait handler was successfully cancelled.
- *
- * @li If a wait handler is cancelled, the asio::error_code passed to
- * it contains the value asio::error::operation_aborted.
- *
- * @sa asio::basic_deadline_timer
- */
 
 } // namespace asio
 
