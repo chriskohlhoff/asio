@@ -324,11 +324,29 @@ inline int setsockopt(socket_type s, int level, int optname,
     return -1;
   }
 
+#if defined(__BORLANDC__)
+  // Mysteriously, using the getsockopt and setsockopt functions directly with
+  // Borland C++ results in incorrect values being set and read. The bug can be
+  // worked around by using function addresses resolved with GetProcAddress.
+  if (HMODULE winsock_module = ::GetModuleHandleA("ws2_32"))
+  {
+    typedef int (WSAAPI *sso_t)(SOCKET, int, int, const char*, int);
+    if (sso_t sso = (sso_t)::GetProcAddress(winsock_module, "setsockopt"))
+    {
+      clear_error(ec);
+      return error_wrapper(sso(s, level, optname,
+            reinterpret_cast<const char*>(optval),
+            static_cast<int>(optlen)), ec);
+    }
+  }
+  ec = asio::error::fault;
+  return -1;
+#elif defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   clear_error(ec);
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   return error_wrapper(::setsockopt(s, level, optname,
         reinterpret_cast<const char*>(optval), static_cast<int>(optlen)), ec);
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  clear_error(ec);
   return error_wrapper(::setsockopt(s, level, optname, optval,
         static_cast<socklen_t>(optlen)), ec);
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -343,8 +361,38 @@ inline int getsockopt(socket_type s, int level, int optname, void* optval,
     return -1;
   }
 
+#if defined(__BORLANDC__)
+  // Mysteriously, using the getsockopt and setsockopt functions directly with
+  // Borland C++ results in incorrect values being set and read. The bug can be
+  // worked around by using function addresses resolved with GetProcAddress.
+  if (HMODULE winsock_module = ::GetModuleHandleA("ws2_32"))
+  {
+    typedef int (WSAAPI *gso_t)(SOCKET, int, int, char*, int*);
+    if (gso_t gso = (gso_t)::GetProcAddress(winsock_module, "getsockopt"))
+    {
+      clear_error(ec);
+      int tmp_optlen = static_cast<int>(*optlen);
+      int result = error_wrapper(gso(s, level, optname,
+            reinterpret_cast<char*>(optval), &tmp_optlen), ec);
+      *optlen = static_cast<size_t>(tmp_optlen);
+      if (result != 0 && level == IPPROTO_IPV6 && optname == IPV6_V6ONLY
+          && ec.value() == WSAENOPROTOOPT && *optlen == sizeof(DWORD))
+      {
+        // Dual-stack IPv4/v6 sockets, and the IPV6_V6ONLY socket option, are
+        // only supported on Windows Vista and later. To simplify program logic
+        // we will fake success of getting this option and specify that the
+        // value is non-zero (i.e. true). This corresponds to the behavior of
+        // IPv6 sockets on Windows platforms pre-Vista.
+        *static_cast<DWORD*>(optval) = 1;
+        clear_error(ec);
+      }
+      return result;
+    }
+  }
+  ec = asio::error::fault;
+  return -1;
+#elif defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   clear_error(ec);
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   int tmp_optlen = static_cast<int>(*optlen);
   int result = error_wrapper(::getsockopt(s, level, optname,
         reinterpret_cast<char*>(optval), &tmp_optlen), ec);
@@ -362,6 +410,7 @@ inline int getsockopt(socket_type s, int level, int optname, void* optval,
   }
   return result;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  clear_error(ec);
   socklen_t tmp_optlen = static_cast<socklen_t>(*optlen);
   int result = error_wrapper(::getsockopt(s, level, optname,
         optval, &tmp_optlen), ec);
