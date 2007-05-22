@@ -1,0 +1,7 @@
+.deps
+.dirstamp
+*.exe
+prioritised_handlers
+*.ilk
+*.pdb
+*.tds
