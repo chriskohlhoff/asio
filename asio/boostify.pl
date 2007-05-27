@@ -266,6 +266,8 @@ template <typename T>
 boost::system::wstring_t error_base<T>::misc_wmd(
     const boost::system::error_code& ec)
 {
+  if (ec == error_base<T>::already_open)
+    return L"Already open";
   if (ec == error_base<T>::eof)
     return L"End of file";
   if (ec == error_base<T>::not_found)
