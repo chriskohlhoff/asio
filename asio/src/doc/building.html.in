@@ -167,6 +167,12 @@
 
     </ul>
 
+    <p>
+      Note: the above instructions do not work when building inside MSYS. If
+      you want to build using MSYS, you should use <tt>export</tt> rather than
+      <tt>set</tt> to specify the location of boost.
+    </p>
+
     <div class="qindex">
       <table border="0" width="100%">
         <tr>
