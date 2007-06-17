@@ -106,6 +106,10 @@ bool request_handler::url_decode(const std::string& in, std::string& out)
         return false;
       }
     }
+    else if (in[i] == '+')
+    {
+      out += ' ';
+    }
     else
     {
       out += in[i];
