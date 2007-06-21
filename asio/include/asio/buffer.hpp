@@ -117,7 +117,7 @@ namespace detail {
 inline void* buffer_cast_helper(const mutable_buffer& b)
 {
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
-  if (b.debug_check_)
+  if (b.size_ && b.debug_check_)
     b.debug_check_();
 #endif // ASIO_ENABLE_BUFFER_DEBUGGING
   return b.data_;
@@ -281,7 +281,7 @@ namespace detail {
 inline const void* buffer_cast_helper(const const_buffer& b)
 {
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
-  if (b.debug_check_)
+  if (b.size_ && b.debug_check_)
     b.debug_check_();
 #endif // ASIO_ENABLE_BUFFER_DEBUGGING
   return b.data_;
