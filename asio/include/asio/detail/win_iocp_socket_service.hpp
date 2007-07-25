@@ -1950,26 +1950,29 @@ public:
   }
 
 private:
-  // Helper function to provide InterlockedCompareExchangePointer functionality
-  // on very old Platform SDKs.
+  // Helper function to emulate InterlockedCompareExchangePointer functionality
+  // for:
+  // - very old Platform SDKs; and
+  // - platform SDKs where MSVC's /Wp64 option causes spurious warnings.
   void* interlocked_compare_exchange_pointer(void** dest, void* exch, void* cmp)
   {
-#if defined(_WIN32_WINNT) && (_WIN32_WINNT <= 0x400) && (_M_IX86)
+#if defined(_M_IX86)
     return reinterpret_cast<void*>(InterlockedCompareExchange(
-          reinterpret_cast<LONG*>(dest), reinterpret_cast<LONG>(exch),
+          reinterpret_cast<PLONG>(dest), reinterpret_cast<LONG>(exch),
           reinterpret_cast<LONG>(cmp)));
 #else
     return InterlockedCompareExchangePointer(dest, exch, cmp);
 #endif
   }
 
-  // Helper function to provide InterlockedExchangePointer functionality on very
-  // old Platform SDKs.
+  // Helper function to emulate InterlockedExchangePointer functionality for:
+  // - very old Platform SDKs; and
+  // - platform SDKs where MSVC's /Wp64 option causes spurious warnings.
   void* interlocked_exchange_pointer(void** dest, void* val)
   {
-#if defined(_WIN32_WINNT) && (_WIN32_WINNT <= 0x400) && (_M_IX86)
+#if defined(_M_IX86)
     return reinterpret_cast<void*>(InterlockedExchange(
-          reinterpret_cast<LONG*>(dest), reinterpret_cast<LONG>(val)));
+          reinterpret_cast<PLONG>(dest), reinterpret_cast<LONG>(val)));
 #else
     return InterlockedExchangePointer(dest, val);
 #endif
