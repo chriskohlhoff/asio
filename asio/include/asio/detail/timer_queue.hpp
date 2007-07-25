@@ -48,7 +48,9 @@ public:
   // Constructor.
   timer_queue()
     : timers_(),
-      heap_()
+      heap_(),
+      cancelled_timers_(0),
+      cleanup_timers_(0)
   {
   }
 
@@ -111,12 +113,17 @@ public:
     {
       timer_base* t = heap_[0];
       remove_timer(t);
+      t->prev_ = 0;
+      t->next_ = cleanup_timers_;
+      cleanup_timers_ = t;
       t->invoke(asio::error_code());
     }
   }
 
-  // Cancel the timer with the given token. The handler will be invoked
-  // immediately with the result operation_aborted.
+  // Cancel the timers with the given token. Any timers pending for the token
+  // will be notified that they have been cancelled next time
+  // dispatch_cancellations is called. Returns the number of timers that were
+  // cancelled.
   std::size_t cancel_timer(void* timer_token)
   {
     std::size_t num_cancelled = 0;
@@ -129,12 +136,39 @@ public:
       {
         timer_base* next = t->next_;
         remove_timer(t);
-        t->invoke(asio::error::operation_aborted);
+        t->prev_ = 0;
+        t->next_ = cancelled_timers_;
+        cancelled_timers_ = t;
         t = next;
         ++num_cancelled;
       }
     }
     return num_cancelled;
+  }
+
+  // Dispatch any pending cancels for timers.
+  virtual void dispatch_cancellations()
+  {
+    while (cancelled_timers_)
+    {
+      timer_base* this_timer = cancelled_timers_;
+      cancelled_timers_ = this_timer->next_;
+      this_timer->next_ = cleanup_timers_;
+      cleanup_timers_ = this_timer;
+      this_timer->invoke(asio::error::operation_aborted);
+    }
+  }
+
+  // Destroy timers that are waiting to be cleaned up.
+  virtual void cleanup_timers()
+  {
+    while (cleanup_timers_)
+    {
+      timer_base* next_timer = cleanup_timers_->next_;
+      cleanup_timers_->next_ = 0;
+      cleanup_timers_->destroy();
+      cleanup_timers_ = next_timer;
+    }
   }
 
   // Destroy all timers.
@@ -151,6 +185,7 @@ public:
     }
     heap_.clear();
     timers_.clear();
+    cleanup_timers();
   }
 
 private:
@@ -238,8 +273,7 @@ private:
     static void invoke_handler(timer_base* base,
         const asio::error_code& result)
     {
-      std::auto_ptr<timer<Handler> > t(static_cast<timer<Handler>*>(base));
-      t->handler_(result);
+      static_cast<timer<Handler>*>(base)->handler_(result);
     }
 
     // Destroy the handler.
@@ -338,6 +372,12 @@ private:
 
   // The heap of timers, with the earliest timer at the front.
   std::vector<timer_base*> heap_;
+
+  // The list of timers to be cancelled.
+  timer_base* cancelled_timers_;
+
+  // The list of timers to be destroyed.
+  timer_base* cleanup_timers_;
 };
 
 } // namespace detail

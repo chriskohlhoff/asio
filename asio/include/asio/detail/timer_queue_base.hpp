@@ -44,6 +44,12 @@ public:
   // Dispatch all ready timers.
   virtual void dispatch_timers() = 0;
 
+  // Dispatch any pending cancels for timers.
+  virtual void dispatch_cancellations() = 0;
+
+  // Destroy timers that are waiting to be cleaned up.
+  virtual void cleanup_timers() = 0;
+
   // Destroy all timers.
   virtual void destroy_timers() = 0;
 };
