@@ -71,6 +71,28 @@ private:
 /// Return a completion condition function object that indicates that a read or
 /// write operation should continue until all of the data has been transferred,
 /// or until an error occurs.
+/**
+ * This function is used to create an object, of unspecified type, that meets
+ * CompletionCondition requirements.
+ *
+ * @par Example
+ * Reading until a buffer is full:
+ * @code
+ * boost::array<char, 128> buf;
+ * asio::error_code ec;
+ * std::size_t n = asio::read(
+ *     sock, asio::buffer(buf),
+ *     asio::transfer_all(), ec);
+ * if (ec)
+ * {
+ *   // An error occurred.
+ * }
+ * else
+ * {
+ *   // n == 128
+ * }
+ * @endcode
+ */
 #if defined(GENERATING_DOCUMENTATION)
 unspecified transfer_all();
 #else
@@ -83,6 +105,28 @@ inline detail::transfer_all_t transfer_all()
 /// Return a completion condition function object that indicates that a read or
 /// write operation should continue until a minimum number of bytes has been
 /// transferred, or until an error occurs.
+/**
+ * This function is used to create an object, of unspecified type, that meets
+ * CompletionCondition requirements.
+ *
+ * @par Example
+ * Reading until a buffer is full or contains at least 64 bytes:
+ * @code
+ * boost::array<char, 128> buf;
+ * asio::error_code ec;
+ * std::size_t n = asio::read(
+ *     sock, asio::buffer(buf),
+ *     asio::transfer_at_least(64), ec);
+ * if (ec)
+ * {
+ *   // An error occurred.
+ * }
+ * else
+ * {
+ *   // n >= 64 && n <= 128
+ * }
+ * @endcode
+ */
 #if defined(GENERATING_DOCUMENTATION)
 unspecified transfer_at_least(std::size_t minimum);
 #else

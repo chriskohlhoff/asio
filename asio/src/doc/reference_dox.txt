@@ -116,6 +116,8 @@ Standard exception class.
 \li \ref asio::add_service
 \li \ref asio::has_service
 \li \ref asio::use_service
+\li \ref asio::transfer_all
+\li \ref asio::transfer_at_least
 
 <H2>Class Templates</H2>
 
