@@ -398,59 +398,44 @@ private:
       }
       else
       {
-        if (events[i].events & (EPOLLERR | EPOLLHUP))
+        bool more_reads = false;
+        bool more_writes = false;
+        bool more_except = false;
+        asio::error_code ec;
+
+        // Exception operations must be processed first to ensure that any
+        // out-of-band data is read before normal data.
+        if (events[i].events & (EPOLLPRI | EPOLLERR | EPOLLHUP))
+          more_except = except_op_queue_.dispatch_operation(descriptor, ec);
+        else
+          more_except = except_op_queue_.has_operation(descriptor);
+
+        if (events[i].events & (EPOLLIN | EPOLLERR | EPOLLHUP))
+          more_reads = read_op_queue_.dispatch_operation(descriptor, ec);
+        else
+          more_reads = read_op_queue_.has_operation(descriptor);
+
+        if (events[i].events & (EPOLLOUT | EPOLLERR | EPOLLHUP))
+          more_writes = write_op_queue_.dispatch_operation(descriptor, ec);
+        else
+          more_writes = write_op_queue_.has_operation(descriptor);
+
+        epoll_event ev = { 0, { 0 } };
+        ev.events = EPOLLERR | EPOLLHUP;
+        if (more_reads)
+          ev.events |= EPOLLIN;
+        if (more_writes)
+          ev.events |= EPOLLOUT;
+        if (more_except)
+          ev.events |= EPOLLPRI;
+        ev.data.fd = descriptor;
+        int result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
+        if (result != 0)
         {
-          asio::error_code ec;
-          except_op_queue_.dispatch_all_operations(descriptor, ec);
+          ec = asio::error_code(errno, asio::native_ecat);
           read_op_queue_.dispatch_all_operations(descriptor, ec);
           write_op_queue_.dispatch_all_operations(descriptor, ec);
-
-          epoll_event ev = { 0, { 0 } };
-          ev.events = 0;
-          ev.data.fd = descriptor;
-          epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
-        }
-        else
-        {
-          bool more_reads = false;
-          bool more_writes = false;
-          bool more_except = false;
-          asio::error_code ec;
-
-          // Exception operations must be processed first to ensure that any
-          // out-of-band data is read before normal data.
-          if (events[i].events & EPOLLPRI)
-            more_except = except_op_queue_.dispatch_operation(descriptor, ec);
-          else
-            more_except = except_op_queue_.has_operation(descriptor);
-
-          if (events[i].events & EPOLLIN)
-            more_reads = read_op_queue_.dispatch_operation(descriptor, ec);
-          else
-            more_reads = read_op_queue_.has_operation(descriptor);
-
-          if (events[i].events & EPOLLOUT)
-            more_writes = write_op_queue_.dispatch_operation(descriptor, ec);
-          else
-            more_writes = write_op_queue_.has_operation(descriptor);
-
-          epoll_event ev = { 0, { 0 } };
-          ev.events = EPOLLERR | EPOLLHUP;
-          if (more_reads)
-            ev.events |= EPOLLIN;
-          if (more_writes)
-            ev.events |= EPOLLOUT;
-          if (more_except)
-            ev.events |= EPOLLPRI;
-          ev.data.fd = descriptor;
-          int result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
-          if (result != 0)
-          {
-            ec = asio::error_code(errno, asio::native_ecat);
-            read_op_queue_.dispatch_all_operations(descriptor, ec);
-            write_op_queue_.dispatch_all_operations(descriptor, ec);
-            except_op_queue_.dispatch_all_operations(descriptor, ec);
-          }
+          except_op_queue_.dispatch_all_operations(descriptor, ec);
         }
       }
     }
