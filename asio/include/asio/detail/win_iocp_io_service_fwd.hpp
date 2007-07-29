@@ -21,6 +21,8 @@
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/detail/socket_types.hpp"
+
 // This service is only supported on Win32 (NT4 and later).
 #if !defined(ASIO_DISABLE_IOCP)
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
