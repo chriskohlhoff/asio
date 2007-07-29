@@ -1504,6 +1504,12 @@ inline asio::error_code translate_addrinfo_error(int error)
   case EAI_MEMORY:
     return asio::error::no_memory;
   case EAI_NONAME:
+#if defined(EAI_ADDRFAMILY)
+  case EAI_ADDRFAMILY:
+#endif
+#if defined(EAI_NODATA) && (EAI_NODATA != EAI_NONAME)
+  case EAI_NODATA:
+#endif
     return asio::error::host_not_found;
   case EAI_SERVICE:
     return asio::error::service_not_found;
