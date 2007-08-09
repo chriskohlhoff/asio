@@ -138,7 +138,8 @@ public:
     {
       enable_connection_aborted = 1, // User wants connection_aborted errors.
       user_set_linger = 2, // The user set the linger option.
-      user_set_non_blocking = 4 // The user wants a non-blocking socket.
+      user_set_hard_close = 4, // The user set the linger option for hard close.
+      user_set_non_blocking = 8 // The user wants a non-blocking socket.
     };
 
     // Flags indicating the current state of the socket.
@@ -192,7 +193,7 @@ public:
     while (impl)
     {
       asio::error_code ignored_ec;
-      close(*impl, ignored_ec);
+      close_for_destruction(*impl);
       impl = impl->next_;
     }
   }
@@ -217,34 +218,7 @@ public:
   // Destroy a socket implementation.
   void destroy(implementation_type& impl)
   {
-    if (impl.socket_ != invalid_socket)
-    {
-      // Check if the reactor was created, in which case we need to close the
-      // socket on the reactor as well to cancel any operations that might be
-      // running there.
-      reactor_type* reactor = static_cast<reactor_type*>(
-            interlocked_compare_exchange_pointer(
-              reinterpret_cast<void**>(&reactor_), 0, 0));
-      if (reactor)
-        reactor->close_descriptor(impl.socket_);
-
-      if (impl.flags_ & implementation_type::user_set_linger)
-      {
-        ::linger opt;
-        opt.l_onoff = 0;
-        opt.l_linger = 0;
-        asio::error_code ignored_ec;
-        socket_ops::setsockopt(impl.socket_,
-            SOL_SOCKET, SO_LINGER, &opt, sizeof(opt), ignored_ec);
-      }
-
-      asio::error_code ignored_ec;
-      socket_ops::close(impl.socket_, ignored_ec);
-      impl.socket_ = invalid_socket;
-      impl.flags_ = 0;
-      impl.cancel_token_.reset();
-      impl.safe_cancellation_thread_id_ = 0;
-    }
+    close_for_destruction(impl);
 
     // Remove implementation from linked list of all implementations.
     asio::detail::mutex::scoped_lock lock(mutex_);
@@ -325,6 +299,18 @@ public:
               reinterpret_cast<void**>(&reactor_), 0, 0));
       if (reactor)
         reactor->close_descriptor(impl.socket_);
+
+      // Work around a Windows bug where if the socket is closed while there is
+      // a pending asynchronous read operation, the peer receives the connection
+      // reset error. There is no need to perform this workaround if no
+      // asynchronous operations have been started or if the user has set the
+      // linger option for a hard close.
+      if (impl.safe_cancellation_thread_id_ != 0
+          && !(impl.flags_ & implementation_type::user_set_hard_close))
+      {
+        asio::error_code ignored_ec;
+        socket_ops::shutdown(impl.socket_, shutdown_send, ignored_ec);
+      }
 
       if (socket_ops::close(impl.socket_, ec) == socket_error_retval)
         return ec;
@@ -476,6 +462,12 @@ public:
           && option.name(impl.protocol_) == SO_LINGER)
       {
         impl.flags_ |= implementation_type::user_set_linger;
+        const ::linger* linger_option =
+          reinterpret_cast<const ::linger*>(option.data(impl.protocol_));
+        if (linger_option->l_onoff != 0 && linger_option->l_linger == 0)
+          impl.flags_ |= implementation_type::user_set_hard_close;
+        else
+          impl.flags_ &= ~implementation_type::user_set_hard_close;
       }
 
       socket_ops::setsockopt(impl.socket_,
@@ -1950,6 +1942,56 @@ public:
   }
 
 private:
+  // Helper function to close a socket when the associated object is being
+  // destroyed.
+  void close_for_destruction(implementation_type& impl)
+  {
+    if (is_open(impl))
+    {
+      // Check if the reactor was created, in which case we need to close the
+      // socket on the reactor as well to cancel any operations that might be
+      // running there.
+      reactor_type* reactor = static_cast<reactor_type*>(
+            interlocked_compare_exchange_pointer(
+              reinterpret_cast<void**>(&reactor_), 0, 0));
+      if (reactor)
+        reactor->close_descriptor(impl.socket_);
+
+      // Work around a Windows bug where if the socket is closed while there is
+      // a pending asynchronous read operation, the peer receives the connection
+      // reset error. There is no need to perform this workaround if no
+      // asynchronous operations have been started or if the user has set the
+      // linger option for a hard close.
+      if (impl.safe_cancellation_thread_id_ != 0
+          && !(impl.flags_ & implementation_type::user_set_hard_close))
+      {
+        asio::error_code ignored_ec;
+        socket_ops::shutdown(impl.socket_, shutdown_send, ignored_ec);
+      }
+
+      // The socket destructor must not block. If the user has changed the
+      // linger option to block in the foreground, we will change it back to the
+      // default so that the closure is performed in the background.
+      if ((impl.flags_ & implementation_type::user_set_linger)
+          && !(impl.flags_ & implementation_type::user_set_hard_close))
+      {
+        ::linger opt;
+        opt.l_onoff = 0;
+        opt.l_linger = 0;
+        asio::error_code ignored_ec;
+        socket_ops::setsockopt(impl.socket_,
+            SOL_SOCKET, SO_LINGER, &opt, sizeof(opt), ignored_ec);
+      }
+
+      asio::error_code ignored_ec;
+      socket_ops::close(impl.socket_, ignored_ec);
+      impl.socket_ = invalid_socket;
+      impl.flags_ = 0;
+      impl.cancel_token_.reset();
+      impl.safe_cancellation_thread_id_ = 0;
+    }
+  }
+
   // Helper function to emulate InterlockedCompareExchangePointer functionality
   // for:
   // - very old Platform SDKs; and
