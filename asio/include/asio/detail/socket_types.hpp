@@ -141,6 +141,11 @@ const int shutdown_both = SD_BOTH;
 const int message_peek = MSG_PEEK;
 const int message_out_of_band = MSG_OOB;
 const int message_do_not_route = MSG_DONTROUTE;
+# if defined (_WIN32_WINNT)
+const int max_iov_len = 64;
+# else
+const int max_iov_len = 16;
+# endif
 #else
 typedef int socket_type;
 const int invalid_socket = -1;
@@ -166,6 +171,7 @@ const int shutdown_both = SHUT_RDWR;
 const int message_peek = MSG_PEEK;
 const int message_out_of_band = MSG_OOB;
 const int message_do_not_route = MSG_DONTROUTE;
+const int max_iov_len = IOV_MAX;
 #endif
 const int custom_socket_option_level = 0xA5100000;
 const int enable_connection_aborted_option = 1;

@@ -86,7 +86,7 @@ public:
   };
 
   // The maximum number of buffers to support in a single operation.
-  enum { max_buffers = 16 };
+  enum { max_buffers = 64 < max_iov_len ? 64 : max_iov_len };
 
   // Constructor.
   reactive_socket_service(asio::io_service& io_service)
