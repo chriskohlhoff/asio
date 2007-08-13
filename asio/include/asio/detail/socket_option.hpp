@@ -110,8 +110,19 @@ public:
   template <typename Protocol>
   void resize(const Protocol&, std::size_t s)
   {
-    if (s != sizeof(value_))
+    // On some platforms (e.g. Windows Vista), the getsockopt function will
+    // return the size of a boolean socket option as one byte, even though a
+    // four byte integer was passed in.
+    switch (s)
+    {
+    case sizeof(char):
+      value_ = *reinterpret_cast<char*>(&value_) ? 1 : 0;
+      break;
+    case sizeof(value_):
+      break;
+    default:
       throw std::length_error("boolean socket option resize");
+    }
   }
 
 private:
