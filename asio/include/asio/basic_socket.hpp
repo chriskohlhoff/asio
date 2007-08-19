@@ -238,6 +238,9 @@ public:
    * with the asio::error::operation_aborted error.
    *
    * @throws asio::system_error Thrown on failure.
+   *
+   * @note For portable behaviour with respect to graceful closure of a
+   * connected socket, call shutdown() before closing the socket.
    */
   void close()
   {
@@ -265,6 +268,9 @@ public:
    *   // An error occurred.
    * }
    * @endcode
+   *
+   * @note For portable behaviour with respect to graceful closure of a
+   * connected socket, call shutdown() before closing the socket.
    */
   asio::error_code close(asio::error_code& ec)
   {

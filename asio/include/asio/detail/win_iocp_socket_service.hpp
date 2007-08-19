@@ -137,9 +137,8 @@ public:
     enum
     {
       enable_connection_aborted = 1, // User wants connection_aborted errors.
-      user_set_linger = 2, // The user set the linger option.
-      user_set_hard_close = 4, // The user set the linger option for hard close.
-      user_set_non_blocking = 8 // The user wants a non-blocking socket.
+      close_might_block = 2, // User set linger option for blocking close.
+      user_set_non_blocking = 4 // The user wants a non-blocking socket.
     };
 
     // Flags indicating the current state of the socket.
@@ -300,18 +299,6 @@ public:
       if (reactor)
         reactor->close_descriptor(impl.socket_);
 
-      // Work around a Windows bug where if the socket is closed while there is
-      // a pending asynchronous read operation, the peer receives the connection
-      // reset error. There is no need to perform this workaround if no
-      // asynchronous operations have been started or if the user has set the
-      // linger option for a hard close.
-      if (impl.safe_cancellation_thread_id_ != 0
-          && !(impl.flags_ & implementation_type::user_set_hard_close))
-      {
-        asio::error_code ignored_ec;
-        socket_ops::shutdown(impl.socket_, shutdown_send, ignored_ec);
-      }
-
       if (socket_ops::close(impl.socket_, ec) == socket_error_retval)
         return ec;
 
@@ -461,13 +448,12 @@ public:
       if (option.level(impl.protocol_) == SOL_SOCKET
           && option.name(impl.protocol_) == SO_LINGER)
       {
-        impl.flags_ |= implementation_type::user_set_linger;
         const ::linger* linger_option =
           reinterpret_cast<const ::linger*>(option.data(impl.protocol_));
-        if (linger_option->l_onoff != 0 && linger_option->l_linger == 0)
-          impl.flags_ |= implementation_type::user_set_hard_close;
+        if (linger_option->l_onoff != 0 && linger_option->l_linger != 0)
+          impl.flags_ |= implementation_type::close_might_block;
         else
-          impl.flags_ &= ~implementation_type::user_set_hard_close;
+          impl.flags_ &= ~implementation_type::close_might_block;
       }
 
       socket_ops::setsockopt(impl.socket_,
@@ -1957,23 +1943,10 @@ private:
       if (reactor)
         reactor->close_descriptor(impl.socket_);
 
-      // Work around a Windows bug where if the socket is closed while there is
-      // a pending asynchronous read operation, the peer receives the connection
-      // reset error. There is no need to perform this workaround if no
-      // asynchronous operations have been started or if the user has set the
-      // linger option for a hard close.
-      if (impl.safe_cancellation_thread_id_ != 0
-          && !(impl.flags_ & implementation_type::user_set_hard_close))
-      {
-        asio::error_code ignored_ec;
-        socket_ops::shutdown(impl.socket_, shutdown_send, ignored_ec);
-      }
-
       // The socket destructor must not block. If the user has changed the
       // linger option to block in the foreground, we will change it back to the
       // default so that the closure is performed in the background.
-      if ((impl.flags_ & implementation_type::user_set_linger)
-          && !(impl.flags_ & implementation_type::user_set_hard_close))
+      if (impl.flags_ & implementation_type::close_might_block)
       {
         ::linger opt;
         opt.l_onoff = 0;
