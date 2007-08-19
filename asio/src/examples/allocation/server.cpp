@@ -97,7 +97,7 @@ public:
     return this_handler->allocator_.allocate(size);
   }
 
-  friend void asio_handler_deallocate(void* pointer, std::size_t size,
+  friend void asio_handler_deallocate(void* pointer, std::size_t /*size*/,
       custom_alloc_handler<Handler>* this_handler)
   {
     this_handler->allocator_.deallocate(pointer);

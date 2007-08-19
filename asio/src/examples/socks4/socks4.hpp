@@ -55,13 +55,15 @@ public:
   {
     boost::array<asio::const_buffer, 7> bufs =
     {
-      asio::buffer(&version_, 1),
-      asio::buffer(&command_, 1),
-      asio::buffer(&port_high_byte_, 1),
-      asio::buffer(&port_low_byte_, 1),
-      asio::buffer(address_),
-      asio::buffer(user_id_),
-      asio::buffer(&null_byte_, 1)
+      {
+        asio::buffer(&version_, 1),
+        asio::buffer(&command_, 1),
+        asio::buffer(&port_high_byte_, 1),
+        asio::buffer(&port_low_byte_, 1),
+        asio::buffer(address_),
+        asio::buffer(user_id_),
+        asio::buffer(&null_byte_, 1)
+      }
     };
     return bufs;
   }
@@ -97,11 +99,13 @@ public:
   {
     boost::array<asio::mutable_buffer, 5> bufs =
     {
-      asio::buffer(&null_byte_, 1),
-      asio::buffer(&status_, 1),
-      asio::buffer(&port_high_byte_, 1),
-      asio::buffer(&port_low_byte_, 1),
-      asio::buffer(address_)
+      {
+        asio::buffer(&null_byte_, 1),
+        asio::buffer(&status_, 1),
+        asio::buffer(&port_high_byte_, 1),
+        asio::buffer(&port_low_byte_, 1),
+        asio::buffer(address_)
+      }
     };
     return bufs;
   }

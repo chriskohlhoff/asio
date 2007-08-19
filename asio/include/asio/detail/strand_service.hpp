@@ -239,6 +239,7 @@ public:
 #else
       BOOST_ASSERT(size <= strand_impl::handler_storage_type::size);
 #endif
+      (void)size;
       return impl_->handler_storage_.address();
     }
 

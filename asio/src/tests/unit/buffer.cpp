@@ -39,7 +39,7 @@ void test()
     const void* const_void_ptr_data = const_raw_data;
     boost::array<char, 1024> array_data;
     const boost::array<char, 1024>& const_array_data_1 = array_data;
-    boost::array<const char, 1024> const_array_data_2 = { 0 };
+    boost::array<const char, 1024> const_array_data_2 = { { 0 } };
     std::vector<char> vector_data(1024);
     const std::vector<char>& const_vector_data = vector_data;
     const std::string string_data(1024, ' ');
