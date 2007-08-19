@@ -326,6 +326,24 @@ public:
     {
       ec = asio::error::bad_descriptor;
     }
+    else if (FARPROC cancel_io_ex_ptr = ::GetProcAddress(
+          ::GetModuleHandle("KERNEL32"), "CancelIoEx"))
+    {
+      // The version of Windows supports cancellation from any thread.
+      typedef BOOL (WINAPI* cancel_io_ex_t)(HANDLE, LPOVERLAPPED);
+      cancel_io_ex_t cancel_io_ex = (cancel_io_ex_t)cancel_io_ex_ptr;
+      socket_type sock = impl.socket_;
+      HANDLE sock_as_handle = reinterpret_cast<HANDLE>(sock);
+      if (!cancel_io_ex(sock_as_handle, 0))
+      {
+        DWORD last_error = ::GetLastError();
+        ec = asio::error_code(last_error, asio::native_ecat);
+      }
+      else
+      {
+        ec = asio::error_code();
+      }
+    }
     else if (impl.safe_cancellation_thread_id_ == 0)
     {
       // No operations have been started, so there's nothing to cancel.
