@@ -38,11 +38,6 @@ void connection::start()
           asio::placeholders::bytes_transferred)));
 }
 
-void connection::stop()
-{
-  socket_.close();
-}
-
 void connection::handle_read(const asio::error_code& e,
     std::size_t bytes_transferred)
 {
@@ -77,18 +72,25 @@ void connection::handle_read(const asio::error_code& e,
               asio::placeholders::bytes_transferred)));
     }
   }
-  else if (e != asio::error::operation_aborted)
-  {
-    stop();
-  }
+
+  // If an error occurs then no new asynchronous operations are started. This
+  // means that all shared_ptr references to the connection object will
+  // disappear and the object will be destroyed automatically after this
+  // handler returns. The connection class's destructor closes the socket.
 }
 
 void connection::handle_write(const asio::error_code& e)
 {
-  if (e != asio::error::operation_aborted)
+  if (!e)
   {
-    stop();
+    // Initiate graceful connection closure.
+    socket_.shutdown(asio::ip::tcp::socket::shutdown_both);
   }
+
+  // No new asynchronous operations are started. This means that all shared_ptr
+  // references to the connection object will disappear and the object will be
+  // destroyed automatically after this handler returns. The connection class's
+  // destructor closes the socket.
 }
 
 } // namespace server3
