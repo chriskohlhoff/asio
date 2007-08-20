@@ -175,7 +175,7 @@ boost::system::error_category error_base<T>::netdb_ecat()
 }
 
 template <typename T>
-int error_base<T>::netdb_ed(const boost::system::error_code& ec)
+int error_base<T>::netdb_ed(const boost::system::error_code&)
 {
   return EOTHER;
 }
@@ -219,7 +219,7 @@ boost::system::error_category error_base<T>::addrinfo_ecat()
 }
 
 template <typename T>
-int error_base<T>::addrinfo_ed(const boost::system::error_code& ec)
+int error_base<T>::addrinfo_ed(const boost::system::error_code&)
 {
   return EOTHER;
 }
@@ -257,7 +257,7 @@ boost::system::error_category error_base<T>::misc_ecat()
 }
 
 template <typename T>
-int error_base<T>::misc_ed(const boost::system::error_code& ec)
+int error_base<T>::misc_ed(const boost::system::error_code&)
 {
   return EOTHER;
 }
@@ -297,20 +297,20 @@ boost::system::error_category error_base<T>::ssl_ecat()
 }
 
 template <typename T>
-int error_base<T>::ssl_ed(const boost::system::error_code& ec)
+int error_base<T>::ssl_ed(const boost::system::error_code&)
 {
   return EOTHER;
 }
 
 template <typename T>
-std::string error_base<T>::ssl_md(const boost::system::error_code& ec)
+std::string error_base<T>::ssl_md(const boost::system::error_code&)
 {
   return "SSL error";
 }
 
 template <typename T>
 boost::system::wstring_t error_base<T>::ssl_wmd(
-    const boost::system::error_code& ec)
+    const boost::system::error_code&)
 {
   return L"SSL error";
 }
