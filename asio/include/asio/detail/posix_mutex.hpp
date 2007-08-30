@@ -35,6 +35,8 @@
 namespace asio {
 namespace detail {
 
+class posix_event;
+
 class posix_mutex
   : private noncopyable
 {
@@ -87,6 +89,7 @@ public:
   }
 
 private:
+  friend class posix_event;
   ::pthread_mutex_t mutex_;
 };
 

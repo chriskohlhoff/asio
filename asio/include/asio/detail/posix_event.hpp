@@ -24,6 +24,7 @@
 #if defined(BOOST_HAS_PTHREADS)
 
 #include "asio/detail/push_options.hpp"
+#include <boost/assert.hpp>
 #include <boost/throw_exception.hpp>
 #include <pthread.h>
 #include "asio/detail/pop_options.hpp"
@@ -42,19 +43,9 @@ public:
   posix_event()
     : signalled_(false)
   {
-    int error = ::pthread_mutex_init(&mutex_, 0);
+    int error = ::pthread_cond_init(&cond_, 0);
     if (error != 0)
     {
-      asio::system_error e(
-          asio::error_code(error, asio::native_ecat),
-          "event");
-      boost::throw_exception(e);
-    }
-
-    error = ::pthread_cond_init(&cond_, 0);
-    if (error != 0)
-    {
-      ::pthread_mutex_destroy(&mutex_);
       asio::system_error e(
           asio::error_code(error, asio::native_ecat),
           "event");
@@ -66,37 +57,37 @@ public:
   ~posix_event()
   {
     ::pthread_cond_destroy(&cond_);
-    ::pthread_mutex_destroy(&mutex_);
   }
 
   // Signal the event.
-  void signal()
+  template <typename Lock>
+  void signal(Lock& lock)
   {
-    ::pthread_mutex_lock(&mutex_); // Ignore EINVAL and EDEADLK.
+    BOOST_ASSERT(lock.locked());
+    (void)lock;
     signalled_ = true;
     ::pthread_cond_signal(&cond_); // Ignore EINVAL.
-    ::pthread_mutex_unlock(&mutex_); // Ignore EINVAL and EPERM.
   }
 
   // Reset the event.
-  void clear()
+  template <typename Lock>
+  void clear(Lock& lock)
   {
-    ::pthread_mutex_lock(&mutex_); // Ignore EINVAL and EDEADLK.
+    BOOST_ASSERT(lock.locked());
+    (void)lock;
     signalled_ = false;
-    ::pthread_mutex_unlock(&mutex_); // Ignore EINVAL and EPERM.
   }
 
   // Wait for the event to become signalled.
-  void wait()
+  template <typename Lock>
+  void wait(Lock& lock)
   {
-    ::pthread_mutex_lock(&mutex_); // Ignore EINVAL and EDEADLK.
+    BOOST_ASSERT(lock.locked());
     while (!signalled_)
-      ::pthread_cond_wait(&cond_, &mutex_); // Ignore EINVAL.
-    ::pthread_mutex_unlock(&mutex_); // Ignore EINVAL and EPERM.
+      ::pthread_cond_wait(&cond_, &lock.mutex().mutex_); // Ignore EINVAL.
   }
 
 private:
-  ::pthread_mutex_t mutex_;
   ::pthread_cond_t cond_;
   bool signalled_;
 };

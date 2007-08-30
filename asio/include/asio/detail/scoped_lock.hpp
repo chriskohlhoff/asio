@@ -63,6 +63,18 @@ public:
     }
   }
 
+  // Test whether the lock is held.
+  bool locked() const
+  {
+    return locked_;
+  }
+
+  // Get the underlying mutex.
+  Mutex& mutex()
+  {
+    return mutex_;
+  }
+
 private:
   // The underlying mutex.
   Mutex& mutex_;

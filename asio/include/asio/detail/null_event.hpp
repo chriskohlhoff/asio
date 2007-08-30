@@ -43,17 +43,20 @@ public:
   }
 
   // Signal the event.
-  void signal()
+  template <typename Lock>
+  void signal(Lock&)
   {
   }
 
   // Reset the event.
-  void clear()
+  template <typename Lock>
+  void clear(Lock&)
   {
   }
 
   // Wait for the event to become signalled.
-  void wait()
+  template <typename Lock>
+  void wait(Lock&)
   {
   }
 };

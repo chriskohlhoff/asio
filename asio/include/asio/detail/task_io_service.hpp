@@ -132,7 +132,7 @@ public:
   void stop()
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
-    stop_all_threads();
+    stop_all_threads(lock);
   }
 
   // Reset in preparation for a subsequent run invocation.
@@ -154,7 +154,7 @@ public:
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
     if (--outstanding_work_ == 0)
-      stop_all_threads();
+      stop_all_threads(lock);
   }
 
   // Request invocation of the given handler.
@@ -199,7 +199,7 @@ public:
     ++outstanding_work_;
 
     // Wake up a thread to execute the handler.
-    if (!interrupt_one_idle_thread())
+    if (!interrupt_one_idle_thread(lock))
       if (task_handler_.next_ == 0 && handler_queue_end_ != &task_handler_)
         task_.interrupt();
   }
@@ -212,7 +212,7 @@ private:
   {
     if (outstanding_work_ == 0 && !stopped_)
     {
-      stop_all_threads();
+      stop_all_threads(lock);
       ec = asio::error_code();
       return 0;
     }
@@ -267,10 +267,8 @@ private:
         // Nothing to run right now, so just wait for work to do.
         this_idle_thread->next = first_idle_thread_;
         first_idle_thread_ = this_idle_thread;
-        this_idle_thread->wakeup_event.clear();
-        lock.unlock();
-        this_idle_thread->wakeup_event.wait();
-        lock.lock();
+        this_idle_thread->wakeup_event.clear(lock);
+        this_idle_thread->wakeup_event.wait(lock);
       }
       else
       {
@@ -284,38 +282,41 @@ private:
   }
 
   // Stop the task and all idle threads.
-  void stop_all_threads()
+  void stop_all_threads(
+      asio::detail::mutex::scoped_lock& lock)
   {
     stopped_ = true;
-    interrupt_all_idle_threads();
+    interrupt_all_idle_threads(lock);
     if (task_handler_.next_ == 0 && handler_queue_end_ != &task_handler_)
       task_.interrupt();
   }
 
   // Interrupt a single idle thread. Returns true if a thread was interrupted,
   // false if no running thread could be found to interrupt.
-  bool interrupt_one_idle_thread()
+  bool interrupt_one_idle_thread(
+      asio::detail::mutex::scoped_lock& lock)
   {
     if (first_idle_thread_)
     {
       idle_thread_info* idle_thread = first_idle_thread_;
       first_idle_thread_ = idle_thread->next;
       idle_thread->next = 0;
-      idle_thread->wakeup_event.signal();
+      idle_thread->wakeup_event.signal(lock);
       return true;
     }
     return false;
   }
 
   // Interrupt all idle threads.
-  void interrupt_all_idle_threads()
+  void interrupt_all_idle_threads(
+      asio::detail::mutex::scoped_lock& lock)
   {
     while (first_idle_thread_)
     {
       idle_thread_info* idle_thread = first_idle_thread_;
       first_idle_thread_ = idle_thread->next;
       idle_thread->next = 0;
-      idle_thread->wakeup_event.signal();
+      idle_thread->wakeup_event.signal(lock);
     }
   }
 
@@ -459,7 +460,7 @@ private:
     {
       lock_.lock();
       if (--task_io_service_.outstanding_work_ == 0)
-        task_io_service_.stop_all_threads();
+        task_io_service_.stop_all_threads(lock_);
     }
 
   private:
