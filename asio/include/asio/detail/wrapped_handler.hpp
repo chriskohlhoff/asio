@@ -177,9 +177,9 @@ inline void asio_handler_invoke(const Function& function,
         function, this_handler->handler_));
 }
 
-template <typename Function, typename Dispatcher, typename Handler>
+template <typename Function, typename Handler, typename Context>
 inline void asio_handler_invoke(const Function& function,
-    rewrapped_handler<Dispatcher, Handler>* this_handler)
+    rewrapped_handler<Handler, Context>* this_handler)
 {
   asio_handler_invoke_helpers::invoke(
       function, &this_handler->context_);
