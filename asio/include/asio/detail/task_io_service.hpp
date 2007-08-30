@@ -80,8 +80,7 @@ public:
     typename call_stack<task_io_service>::context ctx(this);
 
     idle_thread_info this_idle_thread;
-    this_idle_thread.prev = &this_idle_thread;
-    this_idle_thread.next = &this_idle_thread;
+    this_idle_thread.next = 0;
 
     asio::detail::mutex::scoped_lock lock(mutex_);
 
@@ -98,8 +97,7 @@ public:
     typename call_stack<task_io_service>::context ctx(this);
 
     idle_thread_info this_idle_thread;
-    this_idle_thread.prev = &this_idle_thread;
-    this_idle_thread.next = &this_idle_thread;
+    this_idle_thread.next = 0;
 
     asio::detail::mutex::scoped_lock lock(mutex_);
 
@@ -230,11 +228,13 @@ private:
         handler_queue_ = h->next_;
         if (handler_queue_ == 0)
           handler_queue_end_ = 0;
-        bool more_handlers = (handler_queue_ != 0);
-        lock.unlock();
+        h->next_ = 0;
 
         if (h == &task_handler_)
         {
+          bool more_handlers = (handler_queue_ != 0);
+          lock.unlock();
+
           // If the task has already run and we're polling then we're done.
           if (task_has_run && polling)
           {
@@ -252,6 +252,7 @@ private:
         }
         else
         {
+          lock.unlock();
           handler_cleanup c(lock, *this);
 
           // Invoke the handler. May throw an exception.
@@ -264,31 +265,12 @@ private:
       else if (this_idle_thread)
       {
         // Nothing to run right now, so just wait for work to do.
-        if (first_idle_thread_)
-        {
-          this_idle_thread->next = first_idle_thread_;
-          this_idle_thread->prev = first_idle_thread_->prev;
-          first_idle_thread_->prev->next = this_idle_thread;
-          first_idle_thread_->prev = this_idle_thread;
-        }
+        this_idle_thread->next = first_idle_thread_;
         first_idle_thread_ = this_idle_thread;
         this_idle_thread->wakeup_event.clear();
         lock.unlock();
         this_idle_thread->wakeup_event.wait();
         lock.lock();
-        if (this_idle_thread->next == this_idle_thread)
-        {
-          first_idle_thread_ = 0;
-        }
-        else
-        {
-          if (first_idle_thread_ == this_idle_thread)
-            first_idle_thread_ = this_idle_thread->next;
-          this_idle_thread->next->prev = this_idle_thread->prev;
-          this_idle_thread->prev->next = this_idle_thread->next;
-          this_idle_thread->next = this_idle_thread;
-          this_idle_thread->prev = this_idle_thread;
-        }
       }
       else
       {
@@ -316,8 +298,10 @@ private:
   {
     if (first_idle_thread_)
     {
-      first_idle_thread_->wakeup_event.signal();
-      first_idle_thread_ = first_idle_thread_->next;
+      idle_thread_info* idle_thread = first_idle_thread_;
+      first_idle_thread_ = idle_thread->next;
+      idle_thread->next = 0;
+      idle_thread->wakeup_event.signal();
       return true;
     }
     return false;
@@ -326,15 +310,12 @@ private:
   // Interrupt all idle threads.
   void interrupt_all_idle_threads()
   {
-    if (first_idle_thread_)
+    while (first_idle_thread_)
     {
-      first_idle_thread_->wakeup_event.signal();
-      idle_thread_info* current_idle_thread = first_idle_thread_->next;
-      while (current_idle_thread != first_idle_thread_)
-      {
-        current_idle_thread->wakeup_event.signal();
-        current_idle_thread = current_idle_thread->next;
-      }
+      idle_thread_info* idle_thread = first_idle_thread_;
+      first_idle_thread_ = idle_thread->next;
+      idle_thread->next = 0;
+      idle_thread->wakeup_event.signal();
     }
   }
 
@@ -522,7 +503,6 @@ private:
   struct idle_thread_info
   {
     event wakeup_event;
-    idle_thread_info* prev;
     idle_thread_info* next;
   };
 
