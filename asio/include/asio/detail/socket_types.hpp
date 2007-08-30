@@ -98,6 +98,7 @@
 # include <arpa/inet.h>
 # include <netdb.h>
 # include <net/if.h>
+# include <limits.h>
 # if defined(__sun)
 #  include <sys/filio.h>
 #  include <sys/sockio.h>
