@@ -117,7 +117,7 @@ public:
   }
 
 //private:
-  Dispatcher& dispatcher_;
+  Dispatcher dispatcher_;
   Handler handler_;
 };
 

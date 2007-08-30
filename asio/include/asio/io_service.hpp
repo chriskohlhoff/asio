@@ -320,7 +320,7 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
   unspecified
 #else
-  detail::wrapped_handler<io_service, Handler>
+  detail::wrapped_handler<io_service&, Handler>
 #endif
   wrap(Handler handler);
 
