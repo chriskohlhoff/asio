@@ -132,7 +132,7 @@ inline detail::wrapped_handler<io_service&, Handler>
 #endif
 io_service::wrap(Handler handler)
 {
-  return detail::wrapped_handler<io_service, Handler>(*this, handler);
+  return detail::wrapped_handler<io_service&, Handler>(*this, handler);
 }
 
 inline io_service::work::work(asio::io_service& io_service)
