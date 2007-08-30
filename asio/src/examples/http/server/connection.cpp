@@ -85,7 +85,8 @@ void connection::handle_write(const asio::error_code& e)
   if (!e)
   {
     // Initiate graceful connection closure.
-    socket_.shutdown(asio::ip::tcp::socket::shutdown_both);
+    asio::error_code ignored_ec;
+    socket_.shutdown(asio::ip::tcp::socket::shutdown_both, ignored_ec);
   }
 
   if (e != asio::error::operation_aborted)

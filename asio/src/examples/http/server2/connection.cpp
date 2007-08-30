@@ -79,7 +79,8 @@ void connection::handle_write(const asio::error_code& e)
   if (!e)
   {
     // Initiate graceful connection closure.
-    socket_.shutdown(asio::ip::tcp::socket::shutdown_both);
+    asio::error_code ignored_ec;
+    socket_.shutdown(asio::ip::tcp::socket::shutdown_both, ignored_ec);
   }
 
   // No new asynchronous operations are started. This means that all shared_ptr
