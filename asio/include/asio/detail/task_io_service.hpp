@@ -40,6 +40,7 @@ public:
     : asio::detail::service_base<task_io_service<Task> >(io_service),
       mutex_(),
       task_(use_service<Task>(io_service)),
+      task_interrupted_(true),
       outstanding_work_(0),
       handler_queue_(&task_handler_),
       handler_queue_end_(&task_handler_),
@@ -200,8 +201,13 @@ public:
 
     // Wake up a thread to execute the handler.
     if (!interrupt_one_idle_thread(lock))
-      if (task_handler_.next_ == 0 && handler_queue_end_ != &task_handler_)
+    {
+      if (!task_interrupted_)
+      {
+        task_interrupted_ = true;
         task_.interrupt();
+      }
+    }
   }
 
 private:
@@ -233,6 +239,7 @@ private:
         if (h == &task_handler_)
         {
           bool more_handlers = (handler_queue_ != 0);
+          task_interrupted_ = more_handlers || polling;
           lock.unlock();
 
           // If the task has already run and we're polling then we're done.
@@ -287,8 +294,11 @@ private:
   {
     stopped_ = true;
     interrupt_all_idle_threads(lock);
-    if (task_handler_.next_ == 0 && handler_queue_end_ != &task_handler_)
+    if (!task_interrupted_)
+    {
+      task_interrupted_ = true;
       task_.interrupt();
+    }
   }
 
   // Interrupt a single idle thread. Returns true if a thread was interrupted,
@@ -422,6 +432,7 @@ private:
     {
       // Reinsert the task at the end of the handler queue.
       lock_.lock();
+      task_io_service_.task_interrupted_ = true;
       task_io_service_.task_handler_.next_ = 0;
       if (task_io_service_.handler_queue_end_)
       {
@@ -484,6 +495,9 @@ private:
     {
     }
   } task_handler_;
+
+  // Whether the task has been interrupted.
+  bool task_interrupted_;
 
   // The count of unfinished work.
   int outstanding_work_;
