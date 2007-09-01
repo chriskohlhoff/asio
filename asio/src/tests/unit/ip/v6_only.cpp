@@ -73,9 +73,13 @@ void test()
   io_service ios;
   asio::error_code ec;
 
+  ip::tcp::endpoint ep_v6(ip::address_v6::loopback(), 0);
   ip::tcp::acceptor acceptor_v6(ios);
-  acceptor_v6.open(ip::tcp::v6(), ec);
+  acceptor_v6.open(ep_v6.protocol(), ec);
+  acceptor_v6.bind(ep_v6, ec);
   bool have_v6 = !ec;
+  acceptor_v6.close(ec);
+  acceptor_v6.open(ep_v6.protocol(), ec);
 
   if (have_v6)
   {
