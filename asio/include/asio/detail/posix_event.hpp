@@ -47,7 +47,7 @@ public:
     if (error != 0)
     {
       asio::system_error e(
-          asio::error_code(error, asio::native_ecat),
+          asio::error_code(error, asio::error::system_category),
           "event");
       boost::throw_exception(e);
     }

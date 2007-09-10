@@ -311,7 +311,8 @@ namespace detail
       if (streambuf_.size() == streambuf_.max_size())
       {
         std::size_t bytes = 0;
-        handler_(error::not_found, bytes);
+        asio::error_code ec(error::not_found);
+        handler_(ec, bytes);
         return;
       }
 
@@ -388,7 +389,8 @@ void async_read_until(AsyncReadStream& s,
   // No match. Check if buffer is full.
   if (b.size() == b.max_size())
   {
-    s.io_service().post(detail::bind_handler(handler, error::not_found, 0));
+    asio::error_code ec(error::not_found);
+    s.io_service().post(detail::bind_handler(handler, ec, 0));
     return;
   }
 
@@ -469,7 +471,8 @@ namespace detail
       if (streambuf_.size() == streambuf_.max_size())
       {
         std::size_t bytes = 0;
-        handler_(error::not_found, bytes);
+        asio::error_code ec(error::not_found);
+        handler_(ec, bytes);
         return;
       }
 
@@ -559,7 +562,8 @@ void async_read_until(AsyncReadStream& s,
   // Check if buffer is full.
   if (b.size() == b.max_size())
   {
-    s.io_service().post(detail::bind_handler(handler, error::not_found, 0));
+    asio::error_code ec(error::not_found);
+    s.io_service().post(detail::bind_handler(handler, ec, 0));
     return;
   }
 
@@ -641,7 +645,8 @@ namespace detail
       if (streambuf_.size() == streambuf_.max_size())
       {
         std::size_t bytes = 0;
-        handler_(error::not_found, bytes);
+        asio::error_code ec(error::not_found);
+        handler_(ec, bytes);
         return;
       }
 
@@ -731,7 +736,8 @@ void async_read_until(AsyncReadStream& s,
   // Check if buffer is full.
   if (b.size() == b.max_size())
   {
-    s.io_service().post(detail::bind_handler(handler, error::not_found, 0));
+    asio::error_code ec(error::not_found);
+    s.io_service().post(detail::bind_handler(handler, ec, 0));
     return;
   }
 

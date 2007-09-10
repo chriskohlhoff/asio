@@ -157,7 +157,8 @@ public:
       int result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
       if (result != 0)
       {
-        asio::error_code ec(errno, asio::native_ecat);
+        asio::error_code ec(errno,
+            asio::error::system_category);
         read_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
@@ -190,7 +191,8 @@ public:
       int result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
       if (result != 0)
       {
-        asio::error_code ec(errno, asio::native_ecat);
+        asio::error_code ec(errno,
+            asio::error::system_category);
         write_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
@@ -219,7 +221,8 @@ public:
       int result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
       if (result != 0)
       {
-        asio::error_code ec(errno, asio::native_ecat);
+        asio::error_code ec(errno,
+            asio::error::system_category);
         except_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
@@ -250,7 +253,8 @@ public:
       int result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
       if (result != 0)
       {
-        asio::error_code ec(errno, asio::native_ecat);
+        asio::error_code ec(errno,
+            asio::error::system_category);
         write_op_queue_.dispatch_all_operations(descriptor, ec);
         except_op_queue_.dispatch_all_operations(descriptor, ec);
       }
@@ -427,7 +431,8 @@ private:
         int result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
         if (result != 0)
         {
-          ec = asio::error_code(errno, asio::native_ecat);
+          ec = asio::error_code(errno,
+              asio::error::system_category);
           read_op_queue_.dispatch_all_operations(descriptor, ec);
           write_op_queue_.dispatch_all_operations(descriptor, ec);
           except_op_queue_.dispatch_all_operations(descriptor, ec);
@@ -485,8 +490,10 @@ private:
     int fd = epoll_create(epoll_size);
     if (fd == -1)
     {
-      boost::throw_exception(asio::system_error(
-            asio::error_code(errno, asio::native_ecat),
+      boost::throw_exception(
+          asio::system_error(
+            asio::error_code(errno,
+              asio::error::system_category),
             "epoll"));
     }
     return fd;

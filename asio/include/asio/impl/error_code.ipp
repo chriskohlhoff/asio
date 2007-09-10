@@ -35,10 +35,12 @@ inline std::string error_code::message() const
     return "Already open.";
   if (*this == error::not_found)
     return "Not found.";
-  if (category_ == ssl_ecat)
+  if (category_ == error::ssl_category)
     return "SSL error.";
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   value_type value = value_;
+  if (category() != error::system_category && *this != error::eof)
+    return "asio error";
   if (*this == error::eof)
     value = ERROR_HANDLE_EOF;
   char* msg = 0;
@@ -76,6 +78,8 @@ inline std::string error_code::message() const
     return "Service not found.";
   if (*this == error::socket_type_not_supported)
     return "Socket type not supported.";
+  if (category() != error::system_category)
+    return "asio error";
 #if defined(__sun) || defined(__QNX__)
   return strerror(value_);
 #elif defined(__MACH__) && defined(__APPLE__) \

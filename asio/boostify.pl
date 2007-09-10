@@ -136,184 +136,190 @@ sub source_contains_boostify_error_categories
   return 0;
 }
 
-my $error_cat_decls = <<"EOF";
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-  static boost::system::error_category netdb_ecat();
-  static int netdb_ed(const boost::system::error_code& ec);
-  static std::string netdb_md(const boost::system::error_code& ec);
-  static boost::system::wstring_t netdb_wmd(
-      const boost::system::error_code& ec);
-
-  static boost::system::error_category addrinfo_ecat();
-  static int addrinfo_ed(const boost::system::error_code& ec);
-  static std::string addrinfo_md(const boost::system::error_code& ec);
-  static boost::system::wstring_t addrinfo_wmd(
-      const boost::system::error_code& ec);
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-
-  static boost::system::error_category misc_ecat();
-  static int misc_ed(const boost::system::error_code& ec);
-  static std::string misc_md(const boost::system::error_code& ec);
-  static boost::system::wstring_t misc_wmd(const boost::system::error_code& ec);
-
-  static boost::system::error_category ssl_ecat();
-  static int ssl_ed(const boost::system::error_code& ec);
-  static std::string ssl_md(const boost::system::error_code& ec);
-  static boost::system::wstring_t ssl_wmd(const boost::system::error_code& ec);
-EOF
-
 my $error_cat_defns = <<"EOF";
+namespace detail {
+
+inline const boost::system::error_category& get_system_category()
+{
+  return boost::system::system_category;
+}
+
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
-template <typename T>
-boost::system::error_category error_base<T>::netdb_ecat()
+class netdb_category : public boost::system::error_category
 {
-  static boost::system::error_category ecat =
-    boost::system::error_code::new_category(&error_base<T>::netdb_ed,
-      &error_base<T>::netdb_md, &error_base<T>::netdb_wmd);
-  return ecat;
+public:
+  const char* name() const
+  {
+    return "asio.netdb";
+  }
+
+  std::string message(int value) const
+  {
+    if (value == error::host_not_found)
+      return "Host not found (authoritative)";
+    if (value == error::host_not_found_try_again)
+      return "Host not found (non-authoritative), try again later";
+    if (value == error::no_data)
+      return "The query is valid, but it does not have associated data";
+    if (value == error::no_recovery)
+      return "A non-recoverable error occurred during database lookup";
+    return "asio.netdb error";
+  }
+};
+
+inline const boost::system::error_category& get_netdb_category()
+{
+  static netdb_category instance;
+  return instance;
 }
 
-template <typename T>
-int error_base<T>::netdb_ed(const boost::system::error_code&)
+class addrinfo_category : public boost::system::error_category
 {
-  return EOTHER;
+public:
+  const char* name() const
+  {
+    return "asio.addrinfo";
+  }
+
+  std::string message(int value) const
+  {
+    if (value == error::service_not_found)
+      return "Service not found";
+    if (value == error::socket_type_not_supported)
+      return "Socket type not supported";
+    return "asio.addrinfo error";
+  }
+};
+
+inline const boost::system::error_category& get_addrinfo_category()
+{
+  static addrinfo_category instance;
+  return instance;
 }
 
-template <typename T>
-std::string error_base<T>::netdb_md(const boost::system::error_code& ec)
+#else // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
+inline const boost::system::error_category& get_netdb_category()
 {
-  if (ec == error_base<T>::host_not_found)
-    return "Host not found (authoritative)";
-  if (ec == error_base<T>::host_not_found_try_again)
-    return "Host not found (non-authoritative), try again later";
-  if (ec == error_base<T>::no_data)
-    return "The query is valid, but it does not have associated data";
-  if (ec == error_base<T>::no_recovery)
-    return "A non-recoverable error occurred during database lookup";
-  return "EINVAL";
+  return get_system_category();
 }
 
-template <typename T>
-boost::system::wstring_t error_base<T>::netdb_wmd(
-    const boost::system::error_code& ec)
+inline const boost::system::error_category& get_addrinfo_category()
 {
-  if (ec == error_base<T>::host_not_found)
-    return L"Host not found (authoritative)";
-  if (ec == error_base<T>::host_not_found_try_again)
-    return L"Host not found (non-authoritative), try again later";
-  if (ec == error_base<T>::no_data)
-    return L"The query is valid, but it does not have associated data";
-  if (ec == error_base<T>::no_recovery)
-    return L"A non-recoverable error occurred during database lookup";
-  return L"EINVAL";
-}
-
-template <typename T>
-boost::system::error_category error_base<T>::addrinfo_ecat()
-{
-  static boost::system::error_category ecat =
-    boost::system::error_code::new_category(&error_base<T>::addrinfo_ed,
-      &error_base<T>::addrinfo_md, &error_base<T>::addrinfo_wmd);
-  return ecat;
-}
-
-template <typename T>
-int error_base<T>::addrinfo_ed(const boost::system::error_code&)
-{
-  return EOTHER;
-}
-
-template <typename T>
-std::string error_base<T>::addrinfo_md(const boost::system::error_code& ec)
-{
-  if (ec == error_base<T>::service_not_found)
-    return "Service not found";
-  if (ec == error_base<T>::socket_type_not_supported)
-    return "Socket type not supported";
-  return "EINVAL";
-}
-
-template <typename T>
-boost::system::wstring_t error_base<T>::addrinfo_wmd(
-    const boost::system::error_code& ec)
-{
-  if (ec == error_base<T>::service_not_found)
-    return L"Service not found";
-  if (ec == error_base<T>::socket_type_not_supported)
-    return L"Socket type not supported";
-  return L"EINVAL";
+  return get_system_category();
 }
 
 #endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
-template <typename T>
-boost::system::error_category error_base<T>::misc_ecat()
+class misc_category : public boost::system::error_category
 {
-  static boost::system::error_category ecat =
-    boost::system::error_code::new_category(&error_base<T>::misc_ed,
-      &error_base<T>::misc_md, &error_base<T>::misc_wmd);
-  return ecat;
+public:
+  const char* name() const
+  {
+    return "asio.misc";
+  }
+
+  std::string message(int value) const
+  {
+    if (value == error::already_open)
+      return "Already open";
+    if (value == error::eof)
+      return "End of file";
+    if (value == error::not_found)
+      return "Element not found";
+    return "asio.misc error";
+  }
+};
+
+inline const boost::system::error_category& get_misc_category()
+{
+  static misc_category instance;
+  return instance;
 }
 
-template <typename T>
-int error_base<T>::misc_ed(const boost::system::error_code&)
+class ssl_category : public boost::system::error_category
 {
-  return EOTHER;
+public:
+  const char* name() const
+  {
+    return "asio.ssl";
+  }
+
+  std::string message(int value) const
+  {
+    return "asio.ssl error";
+  }
+};
+
+inline const boost::system::error_category& get_ssl_category()
+{
+  static ssl_category instance;
+  return instance;
 }
 
-template <typename T>
-std::string error_base<T>::misc_md(const boost::system::error_code& ec)
-{
-  if (ec == error_base<T>::already_open)
-    return "Already open";
-  if (ec == error_base<T>::eof)
-    return "End of file";
-  if (ec == error_base<T>::not_found)
-    return "Element not found";
-  return "EINVAL";
-}
+} // namespace detail
 
-template <typename T>
-boost::system::wstring_t error_base<T>::misc_wmd(
-    const boost::system::error_code& ec)
-{
-  if (ec == error_base<T>::already_open)
-    return L"Already open";
-  if (ec == error_base<T>::eof)
-    return L"End of file";
-  if (ec == error_base<T>::not_found)
-    return L"Element not found";
-  return L"EINVAL";
-}
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1400)
 
-template <typename T>
-boost::system::error_category error_base<T>::ssl_ecat()
-{
-  static boost::system::error_category ecat =
-    boost::system::error_code::new_category(&error_base<T>::ssl_ed,
-      &error_base<T>::ssl_md, &error_base<T>::ssl_wmd);
-  return ecat;
-}
+static const boost::system::error_category& system_category
+  = boost::asio::error::detail::get_system_category();
+static const boost::system::error_category& netdb_category
+  = boost::asio::error::detail::get_netdb_category();
+static const boost::system::error_category& addrinfo_category
+  = boost::asio::error::detail::get_addrinfo_category();
+static const boost::system::error_category& misc_category
+  = boost::asio::error::detail::get_misc_category();
+static const boost::system::error_category& ssl_category
+  = boost::asio::error::detail::get_ssl_category();
 
-template <typename T>
-int error_base<T>::ssl_ed(const boost::system::error_code&)
-{
-  return EOTHER;
-}
+#else
 
-template <typename T>
-std::string error_base<T>::ssl_md(const boost::system::error_code&)
+namespace
 {
-  return "SSL error";
-}
+  const boost::system::error_category& system_category
+    = boost::asio::error::detail::get_system_category();
+  const boost::system::error_category& netdb_category
+    = boost::asio::error::detail::get_netdb_category();
+  const boost::system::error_category& addrinfo_category
+    = boost::asio::error::detail::get_addrinfo_category();
+  const boost::system::error_category& misc_category
+    = boost::asio::error::detail::get_misc_category();
+  const boost::system::error_category& ssl_category
+    = boost::asio::error::detail::get_ssl_category();
+} // namespace
 
-template <typename T>
-boost::system::wstring_t error_base<T>::ssl_wmd(
-    const boost::system::error_code&)
+#endif
+
+} // namespace error
+} // namespace asio
+
+namespace system {
+
+template<> struct is_error_code_enum<boost::asio::error::basic_errors>
 {
-  return L"SSL error";
-}
+  static const bool value = true;
+};
+
+template<> struct is_error_code_enum<boost::asio::error::netdb_errors>
+{
+  static const bool value = true;
+};
+
+template<> struct is_error_code_enum<boost::asio::error::addrinfo_errors>
+{
+  static const bool value = true;
+};
+
+template<> struct is_error_code_enum<boost::asio::error::misc_errors>
+{
+  static const bool value = true;
+};
+
+} // namespace system
+
+namespace asio {
+namespace error {
 EOF
 
 sub copy_source_file
@@ -452,10 +458,6 @@ sub copy_source_file
       }
       print_line($output, $1 . "boost::thread" . $2, $from, $lineno);
     }
-    elsif ($line =~ /boostify: error category declarations go here/)
-    {
-      print($output $error_cat_decls);
-    }
     elsif ($line =~ /boostify: error category definitions go here/)
     {
       print($output $error_cat_defns);
@@ -464,21 +466,6 @@ sub copy_source_file
     {
       $line =~ s/asio::error_code/boost::system::error_code/g;
       $line =~ s/asio::system_error/boost::system::system_error/g;
-      $line =~ s/asio::native_ecat/boost::system::native_ecat/g;
-      if ($from =~ /error\.hpp/)
-      {
-        $line =~ s/asio::netdb_ecat/asio::detail::error_base<T>::netdb_ecat()/g;
-        $line =~ s/asio::addrinfo_ecat/asio::detail::error_base<T>::addrinfo_ecat()/g;
-        $line =~ s/asio::misc_ecat/asio::detail::error_base<T>::misc_ecat()/g;
-        $line =~ s/asio::ssl_ecat/asio::detail::error_base<T>::ssl_ecat()/g;
-      }
-      else
-      {
-        $line =~ s/asio::netdb_ecat/asio::error::netdb_ecat()/g;
-        $line =~ s/asio::addrinfo_ecat/asio::error::addrinfo_ecat()/g;
-        $line =~ s/asio::misc_ecat/asio::error::misc_ecat()/g;
-        $line =~ s/asio::ssl_ecat/asio::error::ssl_ecat()/g;
-      }
       $line =~ s/asio::/boost::asio::/g;
       print_line($output, $line, $from, $lineno);
     }

@@ -52,9 +52,10 @@ inline ReturnType error_wrapper(ReturnType return_value,
     asio::error_code& ec)
 {
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  ec = asio::error_code(WSAGetLastError(), asio::native_ecat);
+  ec = asio::error_code(WSAGetLastError(),
+      asio::error::system_category);
 #else
-  ec = asio::error_code(errno, asio::native_ecat);
+  ec = asio::error_code(errno, asio::error::system_category);
 #endif
   return return_value;
 }
@@ -1518,10 +1519,10 @@ inline asio::error_code translate_addrinfo_error(int error)
   default: // Possibly the non-portable EAI_SYSTEM.
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
     return asio::error_code(
-        WSAGetLastError(), asio::native_ecat);
+        WSAGetLastError(), asio::error::system_category);
 #else
     return asio::error_code(
-        errno, asio::native_ecat);
+        errno, asio::error::system_category);
 #endif
   }
 }

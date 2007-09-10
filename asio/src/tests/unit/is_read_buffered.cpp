@@ -29,8 +29,6 @@ class test_stream
 public:
   typedef asio::io_service io_service_type;
 
-  typedef asio::error error_type;
-
   typedef test_stream lowest_layer_type;
 
   test_stream(asio::io_service& io_service)
@@ -54,16 +52,17 @@ public:
     return 0;
   }
 
-  template <typename Const_Buffers, typename Error_Handler>
-  size_t write(const Const_Buffers&, Error_Handler)
+  template <typename Const_Buffers>
+  size_t write(const Const_Buffers&, asio::error_code& ec)
   {
+    ec = asio::error_code();
     return 0;
   }
 
   template <typename Const_Buffers, typename Handler>
   void async_write(const Const_Buffers&, Handler handler)
   {
-    asio::error error;
+    asio::error_code error;
     io_service_.post(asio::detail::bind_handler(handler, error, 0));
   }
 
@@ -73,16 +72,17 @@ public:
     return 0;
   }
 
-  template <typename Mutable_Buffers, typename Error_Handler>
-  size_t read(const Mutable_Buffers&, Error_Handler error_handler)
+  template <typename Mutable_Buffers>
+  size_t read(const Mutable_Buffers&, asio::error_code& ec)
   {
+    ec = asio::error_code();
     return 0;
   }
 
   template <typename Mutable_Buffers, typename Handler>
   void async_read(const Mutable_Buffers&, Handler handler)
   {
-    asio::error error;
+    asio::error_code error;
     io_service_.post(asio::detail::bind_handler(handler, error, 0));
   }
 
