@@ -174,12 +174,12 @@ public:
       if (error_code == SSL_ERROR_SYSCALL)
       {
         return handler_(asio::error_code(
-              sys_error_code, asio::native_ecat), rc); 
+              sys_error_code, asio::error::system_category), rc); 
       }
       else
       {
         return handler_(asio::error_code(
-              error_code, asio::ssl_ecat), rc); 
+              error_code, asio::error::ssl_category), rc); 
       }
     }
 
