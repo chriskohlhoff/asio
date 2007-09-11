@@ -28,6 +28,7 @@
 #include <pthread.h>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/error.hpp"
 #include "asio/system_error.hpp"
 #include "asio/detail/noncopyable.hpp"
 
