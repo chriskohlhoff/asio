@@ -924,6 +924,13 @@ inline void gai_free(void* p)
   ::operator delete(p);
 }
 
+inline void gai_strcpy(char* target, const char* source, std::size_t max_size)
+{
+  using namespace std;
+  *target = 0;
+  strncat(target, source, max_size);
+}
+
 enum { gai_clone_flag = 1 << 30 };
 
 inline int gai_aistruct(addrinfo_type*** next, const addrinfo_type* hints,
@@ -1293,14 +1300,15 @@ inline int getaddrinfo_emulation(const char* host, const char* service,
     if (host != 0 && host[0] != '\0' && hptr->h_name && hptr->h_name[0]
         && (hints.ai_flags & AI_CANONNAME) && canon == 0)
     {
-      canon = gai_alloc<char>(strlen(hptr->h_name) + 1);
+      std::size_t canon_len = strlen(hptr->h_name) + 1;
+      canon = gai_alloc<char>(canon_len);
       if (canon == 0)
       {
         freeaddrinfo_emulation(aihead);
         socket_ops::freehostent(hptr);
         return EAI_MEMORY;
       }
-      strcpy(canon, hptr->h_name);
+      gai_strcpy(canon, hptr->h_name, canon_len);
     }
 
     // Create an addrinfo structure for each returned address.
@@ -1336,13 +1344,14 @@ inline int getaddrinfo_emulation(const char* host, const char* service,
     }
     else
     {
-      aihead->ai_canonname = gai_alloc<char>(strlen(search[0].host) + 1);
+      std::size_t canonname_len = strlen(search[0].host) + 1;
+      aihead->ai_canonname = gai_alloc<char>(canonname_len);
       if (aihead->ai_canonname == 0)
       {
         freeaddrinfo_emulation(aihead);
         return EAI_MEMORY;
       }
-      strcpy(aihead->ai_canonname, search[0].host);
+      gai_strcpy(aihead->ai_canonname, search[0].host, canonname_len);
     }
   }
   gai_free(canon);
@@ -1425,8 +1434,7 @@ inline asio::error_code getnameinfo_emulation(
             *dot = 0;
           }
         }
-        *host = '\0';
-        strncat(host, hptr->h_name, hostlen);
+        gai_strcpy(host, hptr->h_name, hostlen);
         socket_ops::freehostent(hptr);
       }
       else
@@ -1464,8 +1472,7 @@ inline asio::error_code getnameinfo_emulation(
       servent* sptr = ::getservbyport(port, (flags & NI_DGRAM) ? "udp" : 0);
       if (sptr && sptr->s_name && sptr->s_name[0] != '\0')
       {
-        *serv = '\0';
-        strncat(serv, sptr->s_name, servlen);
+        gai_strcpy(serv, sptr->s_name, servlen);
       }
       else
       {
