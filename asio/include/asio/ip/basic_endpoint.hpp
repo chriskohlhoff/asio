@@ -307,7 +307,7 @@ public:
 private:
   // Helper function to determine whether the endpoint is IPv4.
 #if defined(_AIX)
-  template <typename T, unsigned short (T::*)> struct is_v4_helper {};
+  template <typename T, unsigned char (T::*)> struct is_v4_helper {};
 
   template <typename T>
   static bool is_v4(const T& ss, is_v4_helper<T, &T::ss_family>* = 0)
