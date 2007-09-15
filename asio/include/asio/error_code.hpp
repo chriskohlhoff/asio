@@ -54,6 +54,9 @@ namespace error
   };
 } // namespace error
 
+/// Bring error category type into the asio namespace.
+typedef asio::error::error_category error_category;
+
 /// Class to represent an error code value.
 class error_code
 {
@@ -69,7 +72,7 @@ public:
   }
 
   /// Construct with specific error code and category.
-  error_code(value_type v, error::error_category c)
+  error_code(value_type v, error_category c)
     : value_(v),
       category_(c)
   {
@@ -89,7 +92,7 @@ public:
   }
 
   /// Get the error category.
-  error::error_category category() const
+  error_category category() const
   {
     return category_;
   }
@@ -135,7 +138,7 @@ private:
   value_type value_;
 
   // The category associated with the error code.
-  error::error_category category_;
+  error_category category_;
 };
 
 } // namespace asio
