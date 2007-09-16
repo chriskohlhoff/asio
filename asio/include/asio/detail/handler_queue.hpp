@@ -164,11 +164,11 @@ private:
     : public handler
   {
   public:
-    handler_wrapper(Handler handler)
+    handler_wrapper(Handler h)
       : handler(
           &handler_wrapper<Handler>::do_call,
           &handler_wrapper<Handler>::do_destroy),
-        handler_(handler)
+        handler_(h)
     {
     }
 
