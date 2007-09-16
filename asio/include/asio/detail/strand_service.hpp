@@ -135,9 +135,9 @@ public:
     handler_base* last_waiter_;
 
     // Storage for posted handlers.
-    typedef boost::aligned_storage<64> handler_storage_type;
+    typedef boost::aligned_storage<128> handler_storage_type;
 #if defined(__BORLANDC__)
-    boost::aligned_storage<64> handler_storage_;
+    boost::aligned_storage<128> handler_storage_;
 #else
     handler_storage_type handler_storage_;
 #endif
@@ -235,7 +235,7 @@ public:
     void* do_handler_allocate(std::size_t size)
     {
 #if defined(__BORLANDC__)
-      BOOST_ASSERT(size <= boost::aligned_storage<64>::size);
+      BOOST_ASSERT(size <= boost::aligned_storage<128>::size);
 #else
       BOOST_ASSERT(size <= strand_impl::handler_storage_type::size);
 #endif
