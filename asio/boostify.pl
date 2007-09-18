@@ -246,7 +246,7 @@ public:
     return "asio.ssl";
   }
 
-  std::string message(int value) const
+  std::string message(int) const
   {
     return "asio.ssl error";
   }
