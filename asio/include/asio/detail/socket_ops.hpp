@@ -68,9 +68,10 @@ inline socket_type call_accept(
     R (*ASIO_SOCKET_CALL)(Arg1, Arg2, Arg3*),
     socket_type s, socket_addr_type* addr, std::size_t* addrlen)
 {
-  Arg3 tmp_addrlen = (Arg3)*addrlen;
+  Arg3 tmp_addrlen = addrlen ? (Arg3)*addrlen : 0;
   R result = ::accept(s, addr, &tmp_addrlen);
-  *addrlen = (std::size_t)tmp_addrlen;
+  if (addrlen)
+    *addrlen = (std::size_t)tmp_addrlen;
   return result;
 }
 
