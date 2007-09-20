@@ -52,7 +52,7 @@ public:
 
     using namespace std; // For memset.
     sockaddr_in4_type addr;
-    socket_addr_len_type addr_len = sizeof(addr);
+    std::size_t addr_len = sizeof(addr);
     memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = inet_addr("127.0.0.1");

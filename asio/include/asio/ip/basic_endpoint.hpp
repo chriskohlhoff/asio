@@ -61,14 +61,6 @@ public:
   typedef asio::detail::socket_addr_type data_type;
 #endif
 
-  /// The type for the size of the endpoint structure. This type is dependent on
-  /// the underlying implementation of the socket layer.
-#if defined(GENERATING_DOCUMENTATION)
-  typedef implementation_defined size_type;
-#else
-  typedef asio::detail::socket_addr_len_type size_type;
-#endif
-
   /// Default constructor.
   basic_endpoint()
     : data_()
@@ -190,7 +182,7 @@ public:
   }
 
   /// Get the underlying size of the endpoint in the native type.
-  size_type size() const
+  std::size_t size() const
   {
     if (is_v4(data_))
       return sizeof(asio::detail::sockaddr_in4_type);
@@ -199,9 +191,9 @@ public:
   }
 
   /// Set the underlying size of the endpoint in the native type.
-  void resize(size_type size)
+  void resize(std::size_t size)
   {
-    if (size > size_type(sizeof(data_)))
+    if (size > sizeof(data_))
     {
       asio::system_error e(asio::error::invalid_argument);
       boost::throw_exception(e);
@@ -209,7 +201,7 @@ public:
   }
 
   /// Get the capacity of the endpoint in the native type.
-  size_type capacity() const
+  std::size_t capacity() const
   {
     return sizeof(data_);
   }

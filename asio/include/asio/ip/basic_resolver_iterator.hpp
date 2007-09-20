@@ -80,9 +80,7 @@ public:
       {
         using namespace std; // For memcpy.
         typename InternetProtocol::endpoint endpoint;
-        endpoint.resize(
-            static_cast<asio::detail::socket_addr_len_type>(
-              address_info->ai_addrlen));
+        endpoint.resize(static_cast<std::size_t>(address_info->ai_addrlen));
         memcpy(endpoint.data(), address_info->ai_addr,
             address_info->ai_addrlen);
         iter.values_->push_back(

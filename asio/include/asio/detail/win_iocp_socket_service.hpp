@@ -561,7 +561,7 @@ public:
     }
 
     endpoint_type endpoint;
-    socket_addr_len_type addr_len = endpoint.capacity();
+    std::size_t addr_len = endpoint.capacity();
     if (socket_ops::getsockname(impl.socket_, endpoint.data(), &addr_len, ec))
       return endpoint_type();
     endpoint.resize(addr_len);
@@ -600,7 +600,7 @@ public:
     else
     {
       endpoint_type endpoint;
-      socket_addr_len_type addr_len = endpoint.capacity();
+      std::size_t addr_len = endpoint.capacity();
       if (socket_ops::getpeername(impl.socket_, endpoint.data(), &addr_len, ec))
         return endpoint_type();
       endpoint.resize(addr_len);
@@ -1463,7 +1463,7 @@ public:
     {
       asio::error_code ec;
       socket_holder new_socket;
-      socket_addr_len_type addr_len = 0;
+      std::size_t addr_len = 0;
       if (peer_endpoint)
       {
         addr_len = peer_endpoint->capacity();
