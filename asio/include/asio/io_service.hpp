@@ -39,6 +39,11 @@
 
 namespace asio {
 
+class io_service;
+template <typename Service> Service& use_service(io_service& ios);
+template <typename Service> void add_service(io_service& ios, Service* svc);
+template <typename Service> bool has_service(io_service& ios);
+
 /// Provides core I/O functionality.
 /**
  * The io_service class provides the core I/O functionality for users of the
