@@ -65,7 +65,7 @@ inline ReturnType error_wrapper(ReturnType return_value,
 
 template <typename R, typename Arg1, typename Arg2, typename Arg3>
 inline socket_type call_accept(
-    R (*ASIO_SOCKET_CALL)(Arg1, Arg2, Arg3*),
+    R (ASIO_SOCKET_CALL*)(Arg1, Arg2, Arg3*),
     socket_type s, socket_addr_type* addr, std::size_t* addrlen)
 {
   Arg3 tmp_addrlen = addrlen ? (Arg3)*addrlen : 0;
@@ -101,7 +101,7 @@ inline socket_type accept(socket_type s, socket_addr_type* addr,
 
 template <typename R, typename Arg1, typename Arg2, typename Arg3>
 inline socket_type call_bind(
-    R (*ASIO_SOCKET_CALL)(Arg1, Arg2, Arg3),
+    R (ASIO_SOCKET_CALL*)(Arg1, Arg2, Arg3),
     socket_type s, const socket_addr_type* addr, std::size_t addrlen)
 {
   return ::bind(s, addr, (Arg3)addrlen);
@@ -132,7 +132,7 @@ inline int shutdown(socket_type s, int what, asio::error_code& ec)
 
 template <typename R, typename Arg1, typename Arg2, typename Arg3>
 inline socket_type call_connect(
-    R (*ASIO_SOCKET_CALL)(Arg1, Arg2, Arg3),
+    R (ASIO_SOCKET_CALL*)(Arg1, Arg2, Arg3),
     socket_type s, const socket_addr_type* addr, std::size_t addrlen)
 {
   return ::connect(s, addr, (Arg3)addrlen);
@@ -233,8 +233,10 @@ inline int recvfrom(socket_type s, buf* bufs, size_t count, int flags,
   DWORD recv_buf_count = static_cast<DWORD>(count);
   DWORD bytes_transferred = 0;
   DWORD recv_flags = flags;
+  int tmp_addrlen = (int)*addrlen;
   int result = error_wrapper(::WSARecvFrom(s, bufs, recv_buf_count,
-        &bytes_transferred, &recv_flags, addr, addrlen, 0, 0), ec);
+        &bytes_transferred, &recv_flags, addr, &tmp_addrlen, 0, 0), ec);
+  *addrlen = (std::size_t)tmp_addrlen;
   if (result != 0)
     return -1;
   return bytes_transferred;
@@ -346,7 +348,7 @@ inline socket_type socket(int af, int type, int protocol,
 template <typename R, typename Arg1, typename Arg2,
     typename Arg3, typename Arg4, typename Arg5>
 inline socket_type call_setsockopt(
-    R (*ASIO_SOCKET_CALL)(Arg1, Arg2, Arg3, Arg4, Arg5),
+    R (ASIO_SOCKET_CALL*)(Arg1, Arg2, Arg3, Arg4, Arg5),
     socket_type s, int level, int optname,
     const void* optval, std::size_t optlen)
 {
@@ -389,7 +391,7 @@ inline int setsockopt(socket_type s, int level, int optname,
 template <typename R, typename Arg1, typename Arg2,
     typename Arg3, typename Arg4, typename Arg5>
 inline socket_type call_getsockopt(
-    R (*ASIO_SOCKET_CALL)(Arg1, Arg2, Arg3, Arg4, Arg5*),
+    R (ASIO_SOCKET_CALL*)(Arg1, Arg2, Arg3, Arg4, Arg5*),
     socket_type s, int level, int optname,
     const void* optval, std::size_t* optlen)
 {
@@ -476,7 +478,7 @@ inline int getsockopt(socket_type s, int level, int optname, void* optval,
 
 template <typename R, typename Arg1, typename Arg2, typename Arg3>
 inline socket_type call_getpeername(
-    R (*ASIO_SOCKET_CALL)(Arg1, Arg2, Arg3*),
+    R (ASIO_SOCKET_CALL*)(Arg1, Arg2, Arg3*),
     socket_type s, socket_addr_type* addr, std::size_t* addrlen)
 {
   Arg3 tmp_addrlen = (Arg3)*addrlen;
@@ -494,7 +496,7 @@ inline int getpeername(socket_type s, socket_addr_type* addr,
 
 template <typename R, typename Arg1, typename Arg2, typename Arg3>
 inline socket_type call_getsockname(
-    R (*ASIO_SOCKET_CALL)(Arg1, Arg2, Arg3*),
+    R (ASIO_SOCKET_CALL*)(Arg1, Arg2, Arg3*),
     socket_type s, socket_addr_type* addr, std::size_t* addrlen)
 {
   Arg3 tmp_addrlen = (Arg3)*addrlen;
