@@ -36,7 +36,7 @@ namespace detail {
 namespace socket_ops {
 
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-struct msghdr { int msg_namelen; }
+struct msghdr { int msg_namelen; };
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
 inline void clear_error(asio::error_code& ec)
