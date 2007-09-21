@@ -31,15 +31,13 @@
 #include "asio/error.hpp"
 #include "asio/detail/socket_types.hpp"
 
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-# define ASIO_SOCKET_CALL __stdcall
-#else
-# define ASIO_SOCKET_CALL
-#endif
-
 namespace asio {
 namespace detail {
 namespace socket_ops {
+
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+struct msghdr { int msg_namelen; }
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
 inline void clear_error(asio::error_code& ec)
 {
@@ -63,13 +61,12 @@ inline ReturnType error_wrapper(ReturnType return_value,
   return return_value;
 }
 
-template <typename R, typename Arg1, typename Arg2, typename Arg3>
-inline socket_type call_accept(
-    R (ASIO_SOCKET_CALL*)(Arg1, Arg2, Arg3*),
+template <typename SockLenType>
+inline socket_type call_accept(SockLenType msghdr::*,
     socket_type s, socket_addr_type* addr, std::size_t* addrlen)
 {
-  Arg3 tmp_addrlen = addrlen ? (Arg3)*addrlen : 0;
-  R result = ::accept(s, addr, addrlen ? &tmp_addrlen : 0);
+  SockLenType tmp_addrlen = addrlen ? (SockLenType)*addrlen : 0;
+  socket_type result = ::accept(s, addr, addrlen ? &tmp_addrlen : 0);
   if (addrlen)
     *addrlen = (std::size_t)tmp_addrlen;
   return result;
@@ -81,7 +78,7 @@ inline socket_type accept(socket_type s, socket_addr_type* addr,
   clear_error(ec);
 
   socket_type new_s = error_wrapper(call_accept(
-        ::accept, s, addr, addrlen), ec);
+        &msghdr::msg_namelen, s, addr, addrlen), ec);
   if (new_s == invalid_socket)
     return new_s;
 
@@ -99,19 +96,18 @@ inline socket_type accept(socket_type s, socket_addr_type* addr,
   return new_s;
 }
 
-template <typename R, typename Arg1, typename Arg2, typename Arg3>
-inline socket_type call_bind(
-    R (ASIO_SOCKET_CALL*)(Arg1, Arg2, Arg3),
+template <typename SockLenType>
+inline int call_bind(SockLenType msghdr::*,
     socket_type s, const socket_addr_type* addr, std::size_t addrlen)
 {
-  return ::bind(s, addr, (Arg3)addrlen);
+  return ::bind(s, addr, (SockLenType)addrlen);
 }
 
 inline int bind(socket_type s, const socket_addr_type* addr,
     std::size_t addrlen, asio::error_code& ec)
 {
   clear_error(ec);
-  return error_wrapper(call_bind(::bind, s, addr, addrlen), ec);
+  return error_wrapper(call_bind(&msghdr::msg_namelen, s, addr, addrlen), ec);
 }
 
 inline int close(socket_type s, asio::error_code& ec)
@@ -130,19 +126,19 @@ inline int shutdown(socket_type s, int what, asio::error_code& ec)
   return error_wrapper(::shutdown(s, what), ec);
 }
 
-template <typename R, typename Arg1, typename Arg2, typename Arg3>
-inline socket_type call_connect(
-    R (ASIO_SOCKET_CALL*)(Arg1, Arg2, Arg3),
+template <typename SockLenType>
+inline int call_connect(SockLenType msghdr::*,
     socket_type s, const socket_addr_type* addr, std::size_t addrlen)
 {
-  return ::connect(s, addr, (Arg3)addrlen);
+  return ::connect(s, addr, (SockLenType)addrlen);
 }
 
 inline int connect(socket_type s, const socket_addr_type* addr,
     std::size_t addrlen, asio::error_code& ec)
 {
   clear_error(ec);
-  return error_wrapper(call_connect(::connect, s, addr, addrlen), ec);
+  return error_wrapper(call_connect(
+        &msghdr::msg_namelen, s, addr, addrlen), ec);
 }
 
 inline int listen(socket_type s, int backlog, asio::error_code& ec)
@@ -345,14 +341,13 @@ inline socket_type socket(int af, int type, int protocol,
 #endif
 }
 
-template <typename R, typename Arg1, typename Arg2,
-    typename Arg3, typename Arg4, typename Arg5>
-inline socket_type call_setsockopt(
-    R (ASIO_SOCKET_CALL*)(Arg1, Arg2, Arg3, Arg4, Arg5),
+template <typename SockLenType>
+inline int call_setsockopt(SockLenType msghdr::*,
     socket_type s, int level, int optname,
     const void* optval, std::size_t optlen)
 {
-  return ::setsockopt(s, level, optname, (Arg4)optval, (Arg5)optlen);
+  return ::setsockopt(s, level, optname,
+      (const char*)optval, (SockLenType)optlen);
 }
 
 inline int setsockopt(socket_type s, int level, int optname,
@@ -383,20 +378,18 @@ inline int setsockopt(socket_type s, int level, int optname,
   return -1;
 #else // defined(__BORLANDC__)
   clear_error(ec);
-  return error_wrapper(call_setsockopt(::setsockopt,
+  return error_wrapper(call_setsockopt(&msghdr::msg_namelen,
         s, level, optname, optval, optlen), ec);
 #endif // defined(__BORLANDC__)
 }
 
-template <typename R, typename Arg1, typename Arg2,
-    typename Arg3, typename Arg4, typename Arg5>
-inline socket_type call_getsockopt(
-    R (ASIO_SOCKET_CALL*)(Arg1, Arg2, Arg3, Arg4, Arg5*),
+template <typename SockLenType>
+inline int call_getsockopt(SockLenType msghdr::*,
     socket_type s, int level, int optname,
-    const void* optval, std::size_t* optlen)
+    void* optval, std::size_t* optlen)
 {
-  Arg5 tmp_optlen = (Arg5)*optlen;
-  R result = ::getsockopt(s, level, optname, (Arg4)optval, &tmp_optlen);
+  SockLenType tmp_optlen = (SockLenType)*optlen;
+  int result = ::getsockopt(s, level, optname, (char*)optval, &tmp_optlen);
   *optlen = (std::size_t)tmp_optlen;
   return result;
 }
@@ -442,7 +435,7 @@ inline int getsockopt(socket_type s, int level, int optname, void* optval,
   return -1;
 #elif defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   clear_error(ec);
-  int result = error_wrapper(call_getsockopt(::getsockopt,
+  int result = error_wrapper(call_getsockopt(&msghdr::msg_namelen,
         s, level, optname, optval, optlen), ec);
   if (result != 0 && level == IPPROTO_IPV6 && optname == IPV6_V6ONLY
       && ec.value() == WSAENOPROTOOPT && *optlen == sizeof(DWORD))
@@ -458,7 +451,7 @@ inline int getsockopt(socket_type s, int level, int optname, void* optval,
   return result;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   clear_error(ec);
-  int result = error_wrapper(call_getsockopt(::getsockopt,
+  int result = error_wrapper(call_getsockopt(&msghdr::msg_namelen,
         s, level, optname, optval, optlen), ec);
 #if defined(__linux__)
   if (result == 0 && level == SOL_SOCKET && *optlen == sizeof(int)
@@ -476,13 +469,12 @@ inline int getsockopt(socket_type s, int level, int optname, void* optval,
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
-template <typename R, typename Arg1, typename Arg2, typename Arg3>
-inline socket_type call_getpeername(
-    R (ASIO_SOCKET_CALL*)(Arg1, Arg2, Arg3*),
+template <typename SockLenType>
+inline int call_getpeername(SockLenType msghdr::*,
     socket_type s, socket_addr_type* addr, std::size_t* addrlen)
 {
-  Arg3 tmp_addrlen = (Arg3)*addrlen;
-  R result = ::getpeername(s, addr, &tmp_addrlen);
+  SockLenType tmp_addrlen = (SockLenType)*addrlen;
+  int result = ::getpeername(s, addr, &tmp_addrlen);
   *addrlen = (std::size_t)tmp_addrlen;
   return result;
 }
@@ -491,16 +483,16 @@ inline int getpeername(socket_type s, socket_addr_type* addr,
     std::size_t* addrlen, asio::error_code& ec)
 {
   clear_error(ec);
-  return error_wrapper(call_getpeername(::getpeername, s, addr, addrlen), ec);
+  return error_wrapper(call_getpeername(
+        &msghdr::msg_namelen, s, addr, addrlen), ec);
 }
 
-template <typename R, typename Arg1, typename Arg2, typename Arg3>
-inline socket_type call_getsockname(
-    R (ASIO_SOCKET_CALL*)(Arg1, Arg2, Arg3*),
+template <typename SockLenType>
+inline int call_getsockname(SockLenType msghdr::*,
     socket_type s, socket_addr_type* addr, std::size_t* addrlen)
 {
-  Arg3 tmp_addrlen = (Arg3)*addrlen;
-  R result = ::getsockname(s, addr, &tmp_addrlen);
+  SockLenType tmp_addrlen = (SockLenType)*addrlen;
+  int result = ::getsockname(s, addr, &tmp_addrlen);
   *addrlen = (std::size_t)tmp_addrlen;
   return result;
 }
@@ -509,7 +501,8 @@ inline int getsockname(socket_type s, socket_addr_type* addr,
     std::size_t* addrlen, asio::error_code& ec)
 {
   clear_error(ec);
-  return error_wrapper(call_getsockname(::getsockname, s, addr, addrlen), ec);
+  return error_wrapper(call_getsockname(
+        &msghdr::msg_namelen, s, addr, addrlen), ec);
 }
 
 inline int ioctl(socket_type s, long cmd, ioctl_arg_type* arg,
