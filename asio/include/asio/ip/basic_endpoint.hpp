@@ -341,11 +341,23 @@ std::ostream& operator<<(std::ostream& os,
     const basic_endpoint<InternetProtocol>& endpoint)
 {
   const address& addr = endpoint.address();
-  if (addr.is_v4())
-    os << addr.to_string();
+  asio::error_code ec;
+  std::string a = addr.to_string(ec);
+  if (ec)
+  {
+    if (os.exceptions() & std::ios::failbit)
+      asio::detail::throw_error(ec);
+    else
+      os.setstate(std::ios_base::failbit);
+  }
   else
-    os << '[' << addr.to_string() << ']';
-  os << ':' << endpoint.port();
+  {
+    if (addr.is_v4())
+      os << a;
+    else
+      os << '[' << a << ']';
+    os << ':' << endpoint.port();
+  }
   return os;
 }
 #else // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
@@ -355,11 +367,23 @@ std::basic_ostream<Elem, Traits>& operator<<(
     const basic_endpoint<InternetProtocol>& endpoint)
 {
   const address& addr = endpoint.address();
-  if (addr.is_v4())
-    os << addr.to_string();
+  asio::error_code ec;
+  std::string a = addr.to_string(ec);
+  if (ec)
+  {
+    if (os.exceptions() & std::ios::failbit)
+      asio::detail::throw_error(ec);
+    else
+      os.setstate(std::ios_base::failbit);
+  }
   else
-    os << '[' << addr.to_string() << ']';
-  os << ':' << endpoint.port();
+  {
+    if (addr.is_v4())
+      os << a;
+    else
+      os << '[' << a << ']';
+    os << ':' << endpoint.port();
+  }
   return os;
 }
 #endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
