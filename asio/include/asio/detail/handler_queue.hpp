@@ -25,7 +25,7 @@ namespace asio {
 namespace detail {
 
 class handler_queue
-  : noncopyable
+  : private noncopyable
 {
 public:
   // Base class for handlers in the queue.
@@ -68,7 +68,7 @@ public:
 
   // Smart point to manager handler lifetimes.
   class scoped_ptr
-    : noncopyable
+    : private noncopyable
   {
   public:
     explicit scoped_ptr(handler* h)
