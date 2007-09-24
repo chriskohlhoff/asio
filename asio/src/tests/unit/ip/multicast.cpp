@@ -140,14 +140,14 @@ void test()
   {
     ip::multicast::join_group join_group(multicast_address_v4);
     sock_v4.set_option(join_group, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
   }
 
   if (have_v6)
   {
     ip::multicast::join_group join_group(multicast_address_v6);
     sock_v6.set_option(join_group, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
   }
 
   // leave_group class.
@@ -156,14 +156,14 @@ void test()
   {
     ip::multicast::leave_group leave_group(multicast_address_v4);
     sock_v4.set_option(leave_group, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
   }
 
   if (have_v6)
   {
     ip::multicast::leave_group leave_group(multicast_address_v6);
     sock_v6.set_option(leave_group, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
   }
 
   // outbound_interface class.
@@ -173,14 +173,14 @@ void test()
     ip::multicast::outbound_interface outbound_interface(
         ip::address_v4::loopback());
     sock_v4.set_option(outbound_interface, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
   }
 
   if (have_v6)
   {
     ip::multicast::outbound_interface outbound_interface(1);
     sock_v6.set_option(outbound_interface, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
   }
 
   // hops class.
@@ -190,21 +190,21 @@ void test()
     ip::multicast::hops hops1(1);
     BOOST_CHECK(hops1.value() == 1);
     sock_v4.set_option(hops1, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
 
     ip::multicast::hops hops2;
     sock_v4.get_option(hops2, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
     BOOST_CHECK(hops2.value() == 1);
 
     ip::multicast::hops hops3(0);
     BOOST_CHECK(hops3.value() == 0);
     sock_v4.set_option(hops3, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
 
     ip::multicast::hops hops4;
     sock_v4.get_option(hops4, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
     BOOST_CHECK(hops4.value() == 0);
   }
 
@@ -213,21 +213,21 @@ void test()
     ip::multicast::hops hops1(1);
     BOOST_CHECK(hops1.value() == 1);
     sock_v6.set_option(hops1, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
 
     ip::multicast::hops hops2;
     sock_v6.get_option(hops2, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
     BOOST_CHECK(hops2.value() == 1);
 
     ip::multicast::hops hops3(0);
     BOOST_CHECK(hops3.value() == 0);
     sock_v6.set_option(hops3, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
 
     ip::multicast::hops hops4;
     sock_v6.get_option(hops4, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
     BOOST_CHECK(hops4.value() == 0);
   }
 
@@ -240,11 +240,11 @@ void test()
     BOOST_CHECK(static_cast<bool>(enable_loopback1));
     BOOST_CHECK(!!enable_loopback1);
     sock_v4.set_option(enable_loopback1, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
 
     ip::multicast::enable_loopback enable_loopback2;
     sock_v4.get_option(enable_loopback2, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
     BOOST_CHECK(enable_loopback2.value());
     BOOST_CHECK(static_cast<bool>(enable_loopback2));
     BOOST_CHECK(!!enable_loopback2);
@@ -254,11 +254,11 @@ void test()
     BOOST_CHECK(!static_cast<bool>(enable_loopback3));
     BOOST_CHECK(!enable_loopback3);
     sock_v4.set_option(enable_loopback3, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
 
     ip::multicast::enable_loopback enable_loopback4;
     sock_v4.get_option(enable_loopback4, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
     BOOST_CHECK(!enable_loopback4.value());
     BOOST_CHECK(!static_cast<bool>(enable_loopback4));
     BOOST_CHECK(!enable_loopback4);
@@ -271,11 +271,11 @@ void test()
     BOOST_CHECK(static_cast<bool>(enable_loopback1));
     BOOST_CHECK(!!enable_loopback1);
     sock_v6.set_option(enable_loopback1, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
 
     ip::multicast::enable_loopback enable_loopback2;
     sock_v6.get_option(enable_loopback2, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
     BOOST_CHECK(enable_loopback2.value());
     BOOST_CHECK(static_cast<bool>(enable_loopback2));
     BOOST_CHECK(!!enable_loopback2);
@@ -285,11 +285,11 @@ void test()
     BOOST_CHECK(!static_cast<bool>(enable_loopback3));
     BOOST_CHECK(!enable_loopback3);
     sock_v6.set_option(enable_loopback3, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
 
     ip::multicast::enable_loopback enable_loopback4;
     sock_v6.get_option(enable_loopback4, ec);
-    BOOST_CHECK(!ec);
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
     BOOST_CHECK(!enable_loopback4.value());
     BOOST_CHECK(!static_cast<bool>(enable_loopback4));
     BOOST_CHECK(!enable_loopback4);
