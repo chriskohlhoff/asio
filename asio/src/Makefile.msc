@@ -252,11 +252,13 @@ examples\services\daytime_client.exe: \
 
 clean:
 	-del /q /s tests\*.exe
+	-del /q /s tests\*.exe.manifest
 	-del /q /s tests\*.exp
 	-del /q /s tests\*.ilk
 	-del /q /s tests\*.pdb
 	-del /q /s tests\*.obj
 	-del /q /s examples\*.exe
+	-del /q /s examples\*.exe.manifest
 	-del /q /s examples\*.exp
 	-del /q /s examples\*.ilk
 	-del /q /s examples\*.pdb
