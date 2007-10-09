@@ -378,7 +378,7 @@ public:
 private:
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   detail::winsock_init<> init_;
-#elif defined(__sun) || defined(__QNX__)
+#elif defined(__sun) || defined(__QNX__) || defined(__hpux) || defined(_AIX)
   detail::signal_init<> init_;
 #endif
 
