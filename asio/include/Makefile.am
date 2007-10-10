@@ -26,12 +26,15 @@ nobase_include_HEADERS = \
 	asio/detail/consuming_buffers.hpp \
 	asio/detail/const_buffers_iterator.hpp \
 	asio/detail/deadline_timer_service.hpp \
+	asio/detail/dev_poll_reactor.hpp \
+	asio/detail/dev_poll_reactor_fwd.hpp \
 	asio/detail/epoll_reactor.hpp \
 	asio/detail/epoll_reactor_fwd.hpp \
 	asio/detail/event.hpp \
 	asio/detail/fd_set_adapter.hpp \
 	asio/detail/handler_alloc_helpers.hpp \
 	asio/detail/handler_invoke_helpers.hpp \
+	asio/detail/handler_queue.hpp \
 	asio/detail/hash_map.hpp \
 	asio/detail/io_control.hpp \
 	asio/detail/kqueue_reactor.hpp \
