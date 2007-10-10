@@ -55,7 +55,8 @@ class dev_poll_reactor
 public:
   // Constructor.
   dev_poll_reactor(asio::io_service& io_service)
-    : asio::detail::service_base<dev_poll_reactor<Own_Thread> >(io_service),
+    : asio::detail::service_base<
+        dev_poll_reactor<Own_Thread> >(io_service),
       mutex_(),
       dev_poll_fd_(do_dev_poll_create()),
       wait_in_progress_(false),
