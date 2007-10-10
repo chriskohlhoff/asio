@@ -64,6 +64,9 @@ private:
 #elif defined(ASIO_HAS_KQUEUE)
   typedef detail::reactive_socket_service<
       Protocol, detail::kqueue_reactor<false> > service_impl_type;
+#elif defined(ASIO_HAS_DEV_POLL)
+  typedef detail::reactive_socket_service<
+      Protocol, detail::dev_poll_reactor<false> > service_impl_type;
 #else
   typedef detail::reactive_socket_service<
       Protocol, detail::select_reactor<false> > service_impl_type;

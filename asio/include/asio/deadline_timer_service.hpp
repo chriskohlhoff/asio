@@ -69,6 +69,9 @@ private:
 #elif defined(ASIO_HAS_KQUEUE)
   typedef detail::deadline_timer_service<
     traits_type, detail::kqueue_reactor<false> > service_impl_type;
+#elif defined(ASIO_HAS_DEV_POLL)
+  typedef detail::deadline_timer_service<
+    traits_type, detail::dev_poll_reactor<false> > service_impl_type;
 #else
   typedef detail::deadline_timer_service<
     traits_type, detail::select_reactor<false> > service_impl_type;
