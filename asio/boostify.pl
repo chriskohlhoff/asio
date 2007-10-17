@@ -296,6 +296,11 @@ template<> struct is_error_code_enum<boost::asio::error::misc_errors>
   static const bool value = true;
 };
 
+template<> struct is_error_code_enum<boost::asio::error::ssl_errors>
+{
+  static const bool value = true;
+};
+
 } // namespace system
 
 namespace asio {
