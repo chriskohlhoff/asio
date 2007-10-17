@@ -260,8 +260,6 @@ inline const boost::system::error_category& get_ssl_category()
 
 } // namespace detail
 
-#if BOOST_WORKAROUND(BOOST_MSVC, < 1400)
-
 static const boost::system::error_category& system_category
   = boost::asio::error::detail::get_system_category();
 static const boost::system::error_category& netdb_category
@@ -272,24 +270,6 @@ static const boost::system::error_category& misc_category
   = boost::asio::error::detail::get_misc_category();
 static const boost::system::error_category& ssl_category
   = boost::asio::error::detail::get_ssl_category();
-
-#else
-
-namespace
-{
-  const boost::system::error_category& system_category
-    = boost::asio::error::detail::get_system_category();
-  const boost::system::error_category& netdb_category
-    = boost::asio::error::detail::get_netdb_category();
-  const boost::system::error_category& addrinfo_category
-    = boost::asio::error::detail::get_addrinfo_category();
-  const boost::system::error_category& misc_category
-    = boost::asio::error::detail::get_misc_category();
-  const boost::system::error_category& ssl_category
-    = boost::asio::error::detail::get_ssl_category();
-} // namespace
-
-#endif
 
 } // namespace error
 } // namespace asio
