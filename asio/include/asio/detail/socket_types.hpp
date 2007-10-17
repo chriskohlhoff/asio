@@ -29,12 +29,12 @@
 # if !defined(_WIN32_WINNT) && !defined(_WIN32_WINDOWS)
 #  if defined(_MSC_VER) || defined(__BORLANDC__)
 #   pragma message("Please define _WIN32_WINNT or _WIN32_WINDOWS appropriately")
-#   pragma message("Assuming _WIN32_WINNT=0x0500 (i.e. Windows 2000 target)")
+#   pragma message("Assuming _WIN32_WINNT=0x0501 (i.e. Windows XP target)")
 #  else // defined(_MSC_VER) || defined(__BORLANDC__)
 #   warning Please define _WIN32_WINNT or _WIN32_WINDOWS appropriately
-#   warning Assuming _WIN32_WINNT=0x0500 (i.e. Windows 2000 target)
+#   warning Assuming _WIN32_WINNT=0x0501 (i.e. Windows XP target)
 #  endif // defined(_MSC_VER) || defined(__BORLANDC__)
-#  define _WIN32_WINNT 0x0500
+#  define _WIN32_WINNT 0x0501
 # endif // !defined(_WIN32_WINNT) && !defined(_WIN32_WINDOWS)
 # if defined(_MSC_VER)
 #  if defined(_WIN32) && !defined(WIN32)
