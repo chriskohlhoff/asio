@@ -316,6 +316,8 @@ private:
   }
 
   // Helper class to perform task-related operations on block exit.
+  class task_cleanup;
+  friend class task_cleanup;
   class task_cleanup
   {
   public:
