@@ -197,6 +197,10 @@ enum misc_errors
   not_found
 };
 
+enum ssl_errors
+{
+};
+
 // boostify: error category definitions go here.
 
 inline asio::error_code make_error_code(basic_errors e)
@@ -217,6 +221,11 @@ inline asio::error_code make_error_code(addrinfo_errors e)
 inline asio::error_code make_error_code(misc_errors e)
 {
   return asio::error_code(static_cast<int>(e), misc_category);
+}
+
+inline asio::error_code make_error_code(ssl_errors e)
+{
+  return asio::error_code(static_cast<int>(e), ssl_category);
 }
 
 } // namespace error
