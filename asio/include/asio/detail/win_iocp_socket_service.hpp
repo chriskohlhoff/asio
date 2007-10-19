@@ -767,7 +767,7 @@ public:
   {
     if (!is_open(impl))
     {
-      this->io_service().post(bind_handler(handler,
+      this->get_io_service().post(bind_handler(handler,
             asio::error::bad_descriptor, 0));
       return;
     }
@@ -783,7 +783,7 @@ public:
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        this->io_service(), impl.cancel_token_, buffers, handler);
+        this->get_io_service(), impl.cancel_token_, buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -803,7 +803,7 @@ public:
     // A request to receive 0 bytes on a stream socket is a no-op.
     if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
     {
-      asio::io_service::work work(this->io_service());
+      asio::io_service::work work(this->get_io_service());
       ptr.reset();
       asio::error_code error;
       iocp_service_.post(bind_handler(handler, error, 0));
@@ -819,7 +819,7 @@ public:
     // Check if the operation completed immediately.
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
-      asio::io_service::work work(this->io_service());
+      asio::io_service::work work(this->get_io_service());
       ptr.reset();
       asio::error_code ec(last_error,
           asio::error::system_category);
@@ -958,7 +958,7 @@ public:
   {
     if (!is_open(impl))
     {
-      this->io_service().post(bind_handler(handler,
+      this->get_io_service().post(bind_handler(handler,
             asio::error::bad_descriptor, 0));
       return;
     }
@@ -974,7 +974,7 @@ public:
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        this->io_service(), buffers, handler);
+        this->get_io_service(), buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -998,7 +998,7 @@ public:
     // Check if the operation completed immediately.
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
-      asio::io_service::work work(this->io_service());
+      asio::io_service::work work(this->get_io_service());
       ptr.reset();
       asio::error_code ec(last_error,
           asio::error::system_category);
@@ -1170,7 +1170,7 @@ public:
   {
     if (!is_open(impl))
     {
-      this->io_service().post(bind_handler(handler,
+      this->get_io_service().post(bind_handler(handler,
             asio::error::bad_descriptor, 0));
       return;
     }
@@ -1186,7 +1186,7 @@ public:
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        this->io_service(), impl.cancel_token_, buffers, handler);
+        this->get_io_service(), impl.cancel_token_, buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -1205,7 +1205,7 @@ public:
     // A request to receive 0 bytes on a stream socket is a no-op.
     if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
     {
-      asio::io_service::work work(this->io_service());
+      asio::io_service::work work(this->get_io_service());
       ptr.reset();
       asio::error_code error;
       iocp_service_.post(bind_handler(handler, error, 0));
@@ -1220,7 +1220,7 @@ public:
     DWORD last_error = ::WSAGetLastError();
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
-      asio::io_service::work work(this->io_service());
+      asio::io_service::work work(this->get_io_service());
       ptr.reset();
       asio::error_code ec(last_error,
           asio::error::system_category);
@@ -1390,7 +1390,7 @@ public:
   {
     if (!is_open(impl))
     {
-      this->io_service().post(bind_handler(handler,
+      this->get_io_service().post(bind_handler(handler,
             asio::error::bad_descriptor, 0));
       return;
     }
@@ -1406,7 +1406,7 @@ public:
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        this->io_service(), sender_endp, buffers, handler);
+        this->get_io_service(), sender_endp, buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -1429,7 +1429,7 @@ public:
     DWORD last_error = ::WSAGetLastError();
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
-      asio::io_service::work work(this->io_service());
+      asio::io_service::work work(this->get_io_service());
       ptr.reset();
       asio::error_code ec(last_error,
           asio::error::system_category);
@@ -1517,7 +1517,7 @@ public:
         peer_(peer),
         protocol_(protocol),
         peer_endpoint_(peer_endpoint),
-        work_(io_service.io_service()),
+        work_(io_service.get_io_service()),
         enable_connection_aborted_(enable_connection_aborted),
         handler_(handler)
     {
@@ -1706,7 +1706,7 @@ public:
     // Check whether acceptor has been initialised.
     if (!is_open(impl))
     {
-      this->io_service().post(bind_handler(handler,
+      this->get_io_service().post(bind_handler(handler,
             asio::error::bad_descriptor));
       return;
     }
@@ -1714,7 +1714,7 @@ public:
     // Check that peer socket has not already been opened.
     if (peer.is_open())
     {
-      this->io_service().post(bind_handler(handler,
+      this->get_io_service().post(bind_handler(handler,
             asio::error::already_open));
       return;
     }
@@ -1731,7 +1731,7 @@ public:
           impl.protocol_.type(), impl.protocol_.protocol(), ec));
     if (sock.get() == invalid_socket)
     {
-      this->io_service().post(bind_handler(handler, ec));
+      this->get_io_service().post(bind_handler(handler, ec));
       return;
     }
 
@@ -1769,7 +1769,7 @@ public:
       }
       else
       {
-        asio::io_service::work work(this->io_service());
+        asio::io_service::work work(this->get_io_service());
         ptr.reset();
         asio::error_code ec(last_error,
             asio::error::system_category);
@@ -1888,7 +1888,7 @@ public:
   {
     if (!is_open(impl))
     {
-      this->io_service().post(bind_handler(handler,
+      this->get_io_service().post(bind_handler(handler,
             asio::error::bad_descriptor));
       return;
     }
@@ -1905,7 +1905,8 @@ public:
             reinterpret_cast<void**>(&reactor_), 0, 0));
     if (!reactor)
     {
-      reactor = &(asio::use_service<reactor_type>(this->io_service()));
+      reactor = &(asio::use_service<reactor_type>(
+            this->get_io_service()));
       interlocked_exchange_pointer(
           reinterpret_cast<void**>(&reactor_), reactor);
     }
@@ -1916,7 +1917,7 @@ public:
     asio::error_code ec;
     if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
     {
-      this->io_service().post(bind_handler(handler, ec));
+      this->get_io_service().post(bind_handler(handler, ec));
       return;
     }
 
@@ -1933,7 +1934,7 @@ public:
 
       // The connect operation has finished successfully so we need to post the
       // handler immediately.
-      this->io_service().post(bind_handler(handler, ec));
+      this->get_io_service().post(bind_handler(handler, ec));
     }
     else if (ec == asio::error::in_progress
         || ec == asio::error::would_block)
@@ -1945,7 +1946,7 @@ public:
           connect_handler<Handler>(
             impl.socket_,
             (impl.flags_ & implementation_type::user_set_non_blocking) != 0,
-            completed, this->io_service(), *reactor, handler));
+            completed, this->get_io_service(), *reactor, handler));
     }
     else
     {
@@ -1958,7 +1959,7 @@ public:
       }
 
       // The connect operation has failed, so post the handler immediately.
-      this->io_service().post(bind_handler(handler, ec));
+      this->get_io_service().post(bind_handler(handler, ec));
     }
   }
 

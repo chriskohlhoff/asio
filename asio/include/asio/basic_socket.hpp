@@ -564,7 +564,8 @@ public:
       if (this->service.open(this->implementation,
             peer_endpoint.protocol(), ec))
       {
-        this->io_service().post(asio::detail::bind_handler(handler, ec));
+        this->get_io_service().post(
+            asio::detail::bind_handler(handler, ec));
         return;
       }
     }

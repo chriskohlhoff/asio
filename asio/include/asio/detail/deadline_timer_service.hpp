@@ -180,7 +180,7 @@ public:
   {
     impl.might_have_pending_waits = true;
     scheduler_.schedule_timer(timer_queue_, impl.expiry,
-        wait_handler<Handler>(this->io_service(), handler), &impl);
+        wait_handler<Handler>(this->get_io_service(), handler), &impl);
   }
 
 private:

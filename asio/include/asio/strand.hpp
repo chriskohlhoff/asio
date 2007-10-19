@@ -65,7 +65,8 @@ public:
     service_.destroy(impl_);
   }
 
-  /// Get the io_service associated with the strand.
+  /// [Deprecated: use get_io_service().] Get the io_service associated with
+  /// the strand.
   /**
    * This function may be used to obtain the io_service object that the strand
    * uses to dispatch handlers for asynchronous operations.
@@ -75,7 +76,20 @@ public:
    */
   asio::io_service& io_service()
   {
-    return service_.io_service();
+    return service_.get_io_service();
+  }
+
+  /// Get the io_service associated with the strand.
+  /**
+   * This function may be used to obtain the io_service object that the strand
+   * uses to dispatch handlers for asynchronous operations.
+   *
+   * @return A reference to the io_service object that the strand will use to
+   * dispatch handlers. Ownership is not transferred to the caller.
+   */
+  asio::io_service& get_io_service()
+  {
+    return service_.get_io_service();
   }
 
   /// Request the strand to invoke the given handler.

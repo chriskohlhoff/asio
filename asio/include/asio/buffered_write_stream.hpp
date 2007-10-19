@@ -94,10 +94,17 @@ public:
     return next_layer_.lowest_layer();
   }
 
-  /// Get the io_service associated with the object.
+  /// [Deprecated: use get_io_service().] Get the io_service associated with
+  /// the object.
   asio::io_service& io_service()
   {
-    return next_layer_.io_service();
+    return next_layer_.get_io_service();
+  }
+
+  /// Get the io_service associated with the object.
+  asio::io_service& get_io_service()
+  {
+    return next_layer_.get_io_service();
   }
 
   /// Close the stream.
@@ -165,7 +172,7 @@ public:
   void async_flush(WriteHandler handler)
   {
     async_write(next_layer_, buffer(storage_.data(), storage_.size()),
-        flush_handler<WriteHandler>(io_service(), storage_, handler));
+        flush_handler<WriteHandler>(get_io_service(), storage_, handler));
   }
 
   /// Write the given data to the stream. Returns the number of bytes written.
@@ -253,12 +260,12 @@ public:
     if (storage_.size() == storage_.capacity())
     {
       async_flush(write_some_handler<ConstBufferSequence, WriteHandler>(
-            io_service(), storage_, buffers, handler));
+            get_io_service(), storage_, buffers, handler));
     }
     else
     {
       std::size_t bytes_copied = copy(buffers);
-      io_service().post(detail::bind_handler(
+      get_io_service().post(detail::bind_handler(
             handler, asio::error_code(), bytes_copied));
     }
   }

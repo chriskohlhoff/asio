@@ -276,7 +276,7 @@ public:
           if (impl_->first_waiter_ == 0)
             impl_->last_waiter_ = 0;
           lock.unlock();
-          service_impl_.io_service().post(
+          service_impl_.get_io_service().post(
               invoke_current_handler(service_impl_, impl_));
         }
       }
@@ -429,7 +429,7 @@ public:
         // This handler now has the lock, so can be dispatched immediately.
         impl->current_handler_ = ptr.get();
         lock.unlock();
-        this->io_service().dispatch(invoke_current_handler(*this, impl));
+        this->get_io_service().dispatch(invoke_current_handler(*this, impl));
         ptr.release();
       }
       else
@@ -469,7 +469,7 @@ public:
       // This handler now has the lock, so can be dispatched immediately.
       impl->current_handler_ = ptr.get();
       lock.unlock();
-      this->io_service().post(invoke_current_handler(*this, impl));
+      this->get_io_service().post(invoke_current_handler(*this, impl));
       ptr.release();
     }
     else

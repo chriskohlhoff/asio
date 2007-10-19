@@ -83,10 +83,17 @@ public:
     return stream_impl_.lowest_layer();
   }
 
-  /// Get the io_service associated with the object.
+  /// [Deprecated: use get_io_service().] Get the io_service associated with
+  /// the object.
   asio::io_service& io_service()
   {
-    return stream_impl_.io_service();
+    return stream_impl_.get_io_service();
+  }
+
+  /// Get the io_service associated with the object.
+  asio::io_service& get_io_service()
+  {
+    return stream_impl_.get_io_service();
   }
 
   /// Close the stream.

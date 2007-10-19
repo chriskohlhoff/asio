@@ -430,8 +430,12 @@ public:
    */
   ~work();
 
-  /// Get the io_service associated with the work.
+  /// [Deprecated: use get_io_service().] Get the io_service associated with the
+  /// work.
   asio::io_service& io_service();
+
+  /// Get the io_service associated with the work.
+  asio::io_service& get_io_service();
 
 private:
   // Prevent assignment.
@@ -455,8 +459,12 @@ class io_service::service
   : private noncopyable
 {
 public:
-  /// Get the io_service object that owns the service.
+  /// [Deprecated: use get_io_service().] Get the io_service object that owns
+  /// the service.
   asio::io_service& io_service();
+
+  /// Get the io_service object that owns the service.
+  asio::io_service& get_io_service();
 
 protected:
   /// Constructor.

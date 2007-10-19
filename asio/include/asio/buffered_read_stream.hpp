@@ -93,10 +93,17 @@ public:
     return next_layer_.lowest_layer();
   }
 
-  /// Get the io_service associated with the object.
+  /// [Deprecated: use get_io_service().] Get the io_service associated with
+  /// the object.
   asio::io_service& io_service()
   {
-    return next_layer_.io_service();
+    return next_layer_.get_io_service();
+  }
+
+  /// Get the io_service associated with the object.
+  asio::io_service& get_io_service()
+  {
+    return next_layer_.get_io_service();
   }
 
   /// Close the stream.
@@ -207,7 +214,7 @@ public:
         buffer(
           storage_.data() + previous_size,
           storage_.size() - previous_size),
-        fill_handler<ReadHandler>(io_service(),
+        fill_handler<ReadHandler>(get_io_service(),
           storage_, previous_size, handler));
   }
 
@@ -295,12 +302,12 @@ public:
     if (storage_.empty())
     {
       async_fill(read_some_handler<MutableBufferSequence, ReadHandler>(
-            io_service(), storage_, buffers, handler));
+            get_io_service(), storage_, buffers, handler));
     }
     else
     {
       std::size_t length = copy(buffers);
-      io_service().post(detail::bind_handler(
+      get_io_service().post(detail::bind_handler(
             handler, asio::error_code(), length));
     }
   }
