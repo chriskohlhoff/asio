@@ -373,16 +373,16 @@ void test()
   socket_base::send_low_watermark send_low_watermark1(4096);
   BOOST_CHECK(send_low_watermark1.value() == 4096);
   tcp_sock.set_option(send_low_watermark1, ec);
-#if defined(WIN32) || defined(__linux__) || defined(__sun) || defined(__hpux)
-  BOOST_CHECK(!!ec); // Not supported on Windows, Linux, Solaris or HP-UX.
+#if defined(WIN32) || defined(__linux__) || defined(__sun)
+  BOOST_CHECK(!!ec); // Not supported on Windows, Linux or Solaris.
 #else
   BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
 #endif
 
   socket_base::send_low_watermark send_low_watermark2;
   tcp_sock.get_option(send_low_watermark2, ec);
-#if defined(WIN32) || defined(__sun) || defined(__hpux)
-  BOOST_CHECK(!!ec); // Not supported on Windows, Solaris or HP-UX.
+#if defined(WIN32) || defined(__sun)
+  BOOST_CHECK(!!ec); // Not supported on Windows or Solaris.
 #elif defined(__linux__)
   BOOST_CHECK(!ec); // Not supported on Linux but can get value.
 #else
@@ -393,16 +393,16 @@ void test()
   socket_base::send_low_watermark send_low_watermark3(8192);
   BOOST_CHECK(send_low_watermark3.value() == 8192);
   tcp_sock.set_option(send_low_watermark3, ec);
-#if defined(WIN32) || defined(__linux__) || defined(__sun) || defined(__hpux)
-  BOOST_CHECK(!!ec); // Not supported on Windows, Linux, Solaris or HP-UX.
+#if defined(WIN32) || defined(__linux__) || defined(__sun)
+  BOOST_CHECK(!!ec); // Not supported on Windows, Linux or Solaris.
 #else
   BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
 #endif
 
   socket_base::send_low_watermark send_low_watermark4;
   tcp_sock.get_option(send_low_watermark4, ec);
-#if defined(WIN32) || defined(__sun) || defined(__hpux)
-  BOOST_CHECK(!!ec); // Not supported on Windows, Solaris or HP-UX.
+#if defined(WIN32) || defined(__sun)
+  BOOST_CHECK(!!ec); // Not supported on Windows or Solaris.
 #elif defined(__linux__)
   BOOST_CHECK(!ec); // Not supported on Linux but can get value.
 #else
@@ -437,16 +437,16 @@ void test()
   socket_base::receive_low_watermark receive_low_watermark1(4096);
   BOOST_CHECK(receive_low_watermark1.value() == 4096);
   tcp_sock.set_option(receive_low_watermark1, ec);
-#if defined(WIN32) || defined(__sun) || defined(__hpux)
-  BOOST_CHECK(!!ec); // Not supported on Windows, Solaris or HP-UX.
+#if defined(WIN32) || defined(__sun)
+  BOOST_CHECK(!!ec); // Not supported on Windows or Solaris.
 #else
   BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
 #endif
 
   socket_base::receive_low_watermark receive_low_watermark2;
   tcp_sock.get_option(receive_low_watermark2, ec);
-#if defined(WIN32) || defined(__sun) || defined(__hpux)
-  BOOST_CHECK(!!ec); // Not supported on Windows, Solaris or HP-UX.
+#if defined(WIN32) || defined(__sun)
+  BOOST_CHECK(!!ec); // Not supported on Windows or Solaris.
 #else
   BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
   BOOST_CHECK(receive_low_watermark2.value() == 4096);
@@ -455,16 +455,16 @@ void test()
   socket_base::receive_low_watermark receive_low_watermark3(8192);
   BOOST_CHECK(receive_low_watermark3.value() == 8192);
   tcp_sock.set_option(receive_low_watermark3, ec);
-#if defined(WIN32) || defined(__sun) || defined(__hpux)
-  BOOST_CHECK(!!ec); // Not supported on Windows, Solaris or HP-UX.
+#if defined(WIN32) || defined(__sun)
+  BOOST_CHECK(!!ec); // Not supported on Windows or Solaris.
 #else
   BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
 #endif
 
   socket_base::receive_low_watermark receive_low_watermark4;
   tcp_sock.get_option(receive_low_watermark4, ec);
-#if defined(WIN32) || defined(__sun) || defined(__hpux)
-  BOOST_CHECK(!!ec); // Not supported on Windows, Solaris or HP-UX.
+#if defined(WIN32) || defined(__sun)
+  BOOST_CHECK(!!ec); // Not supported on Windows or Solaris.
 #else
   BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
   BOOST_CHECK(receive_low_watermark4.value() == 8192);
