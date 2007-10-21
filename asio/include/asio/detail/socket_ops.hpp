@@ -548,8 +548,17 @@ inline int select(int nfds, fd_set* readfds, fd_set* writefds,
       && timeout->tv_usec > 0 && timeout->tv_usec < 1000)
     timeout->tv_usec = 1000;
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+
+#if defined(__hpux)
+  timespec ts;
+  ts.tv_sec = timeout ? timeout->tv_sec : 0;
+  ts.tv_nsec = timeout ? timeout->tv_usec * 1000 : 0;
+  return error_wrapper(::pselect(nfds, readfds,
+        writefds, exceptfds, timeout ? &ts : 0, 0), ec);
+#else
   return error_wrapper(::select(nfds, readfds,
         writefds, exceptfds, timeout), ec);
+#endif
 }
 
 inline int poll_read(socket_type s, asio::error_code& ec)
