@@ -39,6 +39,13 @@ namespace socket_ops {
 struct msghdr { int msg_namelen; };
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
+#if defined(__hpux)
+// HP-UX doesn't declare these functions extern "C", so they are declared again
+// here to avoid linker errors about undefined symbols.
+extern "C" char* if_indextoname(unsigned int, char*);
+extern "C" unsigned int if_nametoindex(const char*);
+#endif // defined(__hpux)
+
 inline void clear_error(asio::error_code& ec)
 {
   errno = 0;
