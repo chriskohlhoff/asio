@@ -37,7 +37,7 @@ template <int IPv4_Level, int IPv4_Name, int IPv6_Level, int IPv6_Name>
 class boolean
 {
 public:
-#if defined(__sun) || defined(_AIX) || defined(__osf__)
+#if defined(__sun) || defined(_AIX) || defined(__osf__) || defined(__hpux)
   typedef unsigned char value_type;
 #else
   typedef int value_type;
