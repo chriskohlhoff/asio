@@ -34,7 +34,7 @@ public:
   /// The underlying implementation type of I/O object.
   typedef typename service_type::implementation_type implementation_type;
 
-  /// [Deprecated: use get_io_service().] Get the io_service associated with
+  /// (Deprecated: use get_io_service().) Get the io_service associated with
   /// the object.
   /**
    * This function may be used to obtain the io_service object that the I/O
