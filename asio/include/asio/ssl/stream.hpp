@@ -97,7 +97,7 @@ public:
     service_.destroy(impl_, next_layer_);
   }
 
-  /// [Deprecated: use get_io_service().] Get the io_service associated with
+  /// (Deprecated: use get_io_service().) Get the io_service associated with
   /// the object.
   /**
    * This function may be used to obtain the io_service object that the stream
