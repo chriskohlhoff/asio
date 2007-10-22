@@ -1,0 +1,58 @@
+[/
+ / Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:buffers Buffers]
+
+To allow the development of efficient network applications, Asio includes
+support for scatter-gather operations. These operations involve one or more
+buffers (where each buffer is a contiguous region of memory):
+
+* A scatter-read receives data into multiple buffers.
+* A gather-write transmits multiple buffers.
+
+Therefore we require an abstraction to represent a collection of buffers. The
+approach used in Asio is to define a type (actually two types) to
+represent a single buffer. These can be stored in a container, which may be
+passed to the scatter-gather operations.
+
+A buffer, as a contiguous region of memory, can be represented by an address
+and size in bytes. There is a distinction between modifiable memory (called
+mutable in Asio) and non-modifiable memory (where the latter is
+created from the storage for a const-qualified variable). These two types could
+therefore be defined as follows:
+
+  typedef std::pair<void*, std::size_t> mutable_buffer;
+  typedef std::pair<const void*, std::size_t> const_buffer;
+
+Here, a mutable_buffer would be convertible to a const_buffer, but conversion
+in the opposite direction is not valid.
+
+However, Asio does not use the above definitions, but instead defines two
+classes: `mutable_buffer` and `const_buffer`. The goal of these is to provide
+an opaque representation of contiguous memory, where:
+
+* Types behave as std::pair would in conversions. That is, a `mutable_buffer` is
+  convertible to a `const_buffer`, but the opposite conversion is disallowed.
+
+* There is protection against buffer overruns. Given a buffer instance, a user
+  can only create another buffer representing the same range of memory or a
+  sub-range of it. To provide further safety, the library also includes
+  mechanisms for automatically determining the size of a buffer from an array,
+  `boost::array` or `std::vector` of POD elements, or from a `std::string`.
+
+* Type safety violations must be explicitly requested using the `buffer_cast`
+  function. In general an application should never need to do this, but it is
+  required by the library implementation to pass the raw memory to the
+  underlying operating system functions.
+
+Finally, multiple buffers can be passed to scatter-gather operations (such as
+`asio::read` or `asio::write`) by putting the buffer objects
+into a container. The `MutableBufferSequence` and `ConstBufferSequence`
+concepts have been defined so that containers such as `std::vector`,
+`std::list`, `std::vector` or `boost::array` can be used.
+
+[endsect]

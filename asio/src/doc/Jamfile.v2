@@ -1,0 +1,53 @@
+#
+# Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+
+project asio-doc ;
+
+using quickbook ;
+
+xml asio : asio.qbk ;
+
+boostbook standalone
+  :
+    asio
+  :
+    <xsl:param>boost.image.src=asio.png
+    <xsl:param>boost.image.alt="asio C++ library"
+    <xsl:param>boost.image.w=250
+    <xsl:param>boost.image.h=60
+    <xsl:param>nav.layout=none
+    <xsl:param>navig.graphics.path=""
+    <xsl:param>admon.graphics.path=""
+    <xsl:param>chapter.autolabel=0
+    <xsl:param>chunk.section.depth=8
+    <xsl:param>chunk.first.sections=1
+    <xsl:param>toc.section.depth=2
+    <xsl:param>toc.max.depth=1
+    <xsl:param>generate.section.toc.level=1
+    <xsl:param>generate.toc="chapter nop section nop"
+  ;
+
+install html
+  :
+    /boost//doc/html/boostbook.css
+    /boost//doc/html/images/blank.png
+    /boost//doc/html/images/caution.png
+    /boost//doc/html/images/draft.png
+    /boost//doc/html/images/home.png
+    /boost//doc/html/images/important.png
+    /boost//doc/html/images/next_disabled.png
+    /boost//doc/html/images/next.png
+    /boost//doc/html/images/note.png
+    /boost//doc/html/images/prev_disabled.png
+    /boost//doc/html/images/prev.png
+    /boost//doc/html/images/tip.png
+    /boost//doc/html/images/up_disabled.png
+    /boost//doc/html/images/up.png
+    /boost//doc/html/images/warning.png
+    design/proactor.png
+    asio.png
+  ;

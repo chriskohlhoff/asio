@@ -1,7 +1,5 @@
 AUTOMAKE_OPTIONS = subdir-objects
 
-SUBDIRS = doc
-
 noinst_PROGRAMS = \
 	tests/performance/client \
 	tests/performance/server \

@@ -15,4 +15,5 @@ MAINTAINERCLEANFILES = \
 	asio-*.tar.gz
 
 EXTRA_DIST = \
-	LICENSE_1_0.txt
+	LICENSE_1_0.txt \
+	doc

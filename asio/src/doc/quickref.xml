@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE library PUBLIC "-//Boost//DTD BoostBook XML V1.0//EN" "../../../boost/tools/boostbook/dtd/boostbook.dtd">
+
+<!--
+  Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+
+  Distributed under the Boost Software License, Version 1.0. (See accompanying
+  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+-->
+
+<informaltable frame="all">
+  <tgroup cols="4">
+    <tbody>
+      <row>
+        <entry valign="top">
+          <bridgehead renderas="sect3">Classes</bridgehead>
+          <itemizedlist>
+            <listitem><link linkend="asio.reference.const_buffer">const_buffer</link></listitem>
+            <listitem><link linkend="asio.reference.const_buffers_1">const_buffers_1</link></listitem>
+            <listitem><link linkend="asio.reference.deadline_timer">deadline_timer</link></listitem>
+            <listitem><link linkend="asio.reference.error_code">error_code</link></listitem>
+            <listitem><link linkend="asio.reference.io_service">io_service</link></listitem>
+            <listitem><link linkend="asio.reference.io_service__id">io_service::id</link></listitem>
+            <listitem><link linkend="asio.reference.io_service__service">io_service::service</link></listitem>
+            <listitem><link linkend="asio.reference.io_service__strand">io_service::strand</link></listitem>
+            <listitem><link linkend="asio.reference.io_service__work">io_service::work</link></listitem>
+            <listitem><link linkend="asio.reference.ip__address">ip::address</link></listitem>
+            <listitem><link linkend="asio.reference.ip__address_v4">ip::address_v4</link></listitem>
+            <listitem><link linkend="asio.reference.ip__address_v6">ip::address_v6</link></listitem>
+            <listitem><link linkend="asio.reference.ip__resolver_query_base">ip::resolver_query_base</link></listitem>
+            <listitem><link linkend="asio.reference.ip__tcp">ip::tcp</link></listitem>
+            <listitem><link linkend="asio.reference.ip__tcp.acceptor">ip::tcp::acceptor</link></listitem>
+            <listitem><link linkend="asio.reference.ip__tcp.endpoint">ip::tcp::endpoint</link></listitem>
+            <listitem><link linkend="asio.reference.ip__tcp.iostream">ip::tcp::iostream</link></listitem>
+            <listitem><link linkend="asio.reference.ip__tcp.resolver">ip::tcp::resolver</link></listitem>
+            <listitem><link linkend="asio.reference.ip__tcp.socket">ip::tcp::socket</link></listitem>
+            <listitem><link linkend="asio.reference.ip__udp">ip::udp</link></listitem>
+            <listitem><link linkend="asio.reference.ip__udp.endpoint">ip::udp::endpoint</link></listitem>
+            <listitem><link linkend="asio.reference.ip__udp.resolver">ip::udp::resolver</link></listitem>
+            <listitem><link linkend="asio.reference.ip__udp.socket">ip::udp::socket</link></listitem>
+            <listitem><link linkend="asio.reference.mutable_buffer">mutable_buffer</link></listitem>
+            <listitem><link linkend="asio.reference.mutable_buffers_1">mutable_buffers_1</link></listitem>
+            <listitem><link linkend="asio.reference.socket_base">socket_base</link></listitem>
+            <listitem><link linkend="asio.reference.ssl__context">ssl::context</link></listitem>
+            <listitem><link linkend="asio.reference.ssl__context_base">ssl::context_base</link></listitem>
+            <listitem><link linkend="asio.reference.ssl__stream_base">ssl::stream_base</link></listitem>
+            <listitem><link linkend="asio.reference.streambuf">streambuf</link></listitem>
+            <listitem><link linkend="asio.reference.system_error">system_error</link></listitem>
+            <listitem><link linkend="asio.reference.thread">thread</link></listitem>
+          </itemizedlist>
+        </entry>
+        <entry valign="top">
+          <bridgehead renderas="sect3">Class Templates</bridgehead>
+          <itemizedlist>
+            <listitem><link linkend="asio.reference.basic_datagram_socket">basic_datagram_socket</link></listitem>
+            <listitem><link linkend="asio.reference.basic_deadline_timer">basic_deadline_timer</link></listitem>
+            <listitem><link linkend="asio.reference.basic_io_object">basic_io_object</link></listitem>
+            <listitem><link linkend="asio.reference.basic_socket">basic_socket</link></listitem>
+            <listitem><link linkend="asio.reference.basic_socket_acceptor">basic_socket_acceptor</link></listitem>
+            <listitem><link linkend="asio.reference.basic_socket_iostream">basic_socket_iostream</link></listitem>
+            <listitem><link linkend="asio.reference.basic_socket_streambuf">basic_socket_streambuf</link></listitem>
+            <listitem><link linkend="asio.reference.basic_stream_socket">basic_stream_socket</link></listitem>
+            <listitem><link linkend="asio.reference.basic_streambuf">basic_streambuf</link></listitem>
+            <listitem><link linkend="asio.reference.buffered_read_stream">buffered_read_stream</link></listitem>
+            <listitem><link linkend="asio.reference.buffered_stream">buffered_stream</link></listitem>
+            <listitem><link linkend="asio.reference.buffered_write_stream">buffered_write_stream</link></listitem>
+            <listitem><link linkend="asio.reference.ip__basic_endpoint">ip::basic_endpoint</link></listitem>
+            <listitem><link linkend="asio.reference.ip__basic_resolver">ip::basic_resolver</link></listitem>
+            <listitem><link linkend="asio.reference.ip__basic_resolver_entry">ip::basic_resolver_entry</link></listitem>
+            <listitem><link linkend="asio.reference.ip__basic_resolver_iterator">ip::basic_resolver_iterator</link></listitem>
+            <listitem><link linkend="asio.reference.ip__basic_resolver_query">ip::basic_resolver_query</link></listitem>
+            <listitem><link linkend="asio.reference.ssl__basic_context">ssl::basic_context</link></listitem>
+            <listitem><link linkend="asio.reference.ssl__stream">ssl::stream</link></listitem>
+          </itemizedlist>
+          <bridgehead renderas="sect3">Services</bridgehead>
+          <itemizedlist>
+            <listitem><link linkend="asio.reference.datagram_socket_service">datagram_socket_service</link></listitem>
+            <listitem><link linkend="asio.reference.deadline_timer_service">deadline_timer_service</link></listitem>
+            <listitem><link linkend="asio.reference.ip__resolver_service">ip::resolver_service</link></listitem>
+            <listitem><link linkend="asio.reference.socket_acceptor_service">socket_acceptor_service</link></listitem>
+            <listitem><link linkend="asio.reference.ssl__context_service">ssl::context_service</link></listitem>
+            <listitem><link linkend="asio.reference.ssl__stream_service">ssl::stream_service</link></listitem>
+            <listitem><link linkend="asio.reference.stream_socket_service">stream_socket_service</link></listitem>
+          </itemizedlist>
+          <bridgehead renderas="sect3">Placeholders</bridgehead>
+          <itemizedlist>
+            <listitem><link linkend="asio.reference.placeholders__bytes_transferred">placeholders::bytes_transferred</link></listitem>
+            <listitem><link linkend="asio.reference.placeholders__error">placeholders::error</link></listitem>
+            <listitem><link linkend="asio.reference.placeholders__iterator">placeholders::iterator</link></listitem>
+          </itemizedlist>
+        </entry>
+        <entry valign="top">
+          <bridgehead renderas="sect3">Free Functions</bridgehead>
+          <itemizedlist>
+            <listitem><link linkend="asio.reference.add_service">add_service</link></listitem>
+            <listitem><link linkend="asio.reference.asio_handler_allocate">asio_handler_allocate</link></listitem>
+            <listitem><link linkend="asio.reference.asio_handler_deallocate">asio_handler_deallocate</link></listitem>
+            <listitem><link linkend="asio.reference.asio_handler_invoke">asio_handler_invoke</link></listitem>
+            <listitem><link linkend="asio.reference.async_read">async_read</link></listitem>
+            <listitem><link linkend="asio.reference.async_read_until">async_read_until</link></listitem>
+            <listitem><link linkend="asio.reference.async_write">async_write</link></listitem>
+            <listitem><link linkend="asio.reference.buffer">buffer</link></listitem>
+            <listitem><link linkend="asio.reference.has_service">has_service</link></listitem>
+            <listitem><link linkend="asio.reference.ip__host_name">ip::host_name</link></listitem>
+            <listitem><link linkend="asio.reference.read">read</link></listitem>
+            <listitem><link linkend="asio.reference.read_until">read_until</link></listitem>
+            <listitem><link linkend="asio.reference.transfer_all">transfer_all</link></listitem>
+            <listitem><link linkend="asio.reference.transfer_at_least">transfer_at_least</link></listitem>
+            <listitem><link linkend="asio.reference.use_service">use_service</link></listitem>
+            <listitem><link linkend="asio.reference.write">write</link></listitem>
+          </itemizedlist>
+          <bridgehead renderas="sect3">Error Codes</bridgehead>
+          <itemizedlist>
+            <listitem><link linkend="asio.reference.error__basic_errors">error::basic_errors</link></listitem>
+            <listitem><link linkend="asio.reference.error__netdb_errors">error::netdb_errors</link></listitem>
+            <listitem><link linkend="asio.reference.error__addrinfo_errors">error::addrinfo_errors</link></listitem>
+            <listitem><link linkend="asio.reference.error__misc_errors">error::misc_errors</link></listitem>
+          </itemizedlist>
+          <bridgehead renderas="sect3">Type Traits</bridgehead>
+          <itemizedlist>
+            <listitem><link linkend="asio.reference.is_read_buffered">is_read_buffered</link></listitem>
+            <listitem><link linkend="asio.reference.is_write_buffered">is_write_buffered</link></listitem>
+          </itemizedlist>
+        </entry>
+        <entry valign="top">
+          <bridgehead renderas="sect3">Type Requirements</bridgehead>
+          <itemizedlist>
+            <listitem><link linkend="asio.reference.asynchronous_operations">Asynchronous operations</link></listitem>
+            <listitem><link linkend="asio.reference.AcceptHandler">AcceptHandler</link></listitem>
+            <listitem><link linkend="asio.reference.AsyncReadStream">AsyncReadStream</link></listitem>
+            <listitem><link linkend="asio.reference.AsyncWriteStream">AsyncWriteStream</link></listitem>
+            <listitem><link linkend="asio.reference.CompletionHandler">CompletionHandler</link></listitem>
+            <listitem><link linkend="asio.reference.ConnectHandler">ConnectHandler</link></listitem>
+            <listitem><link linkend="asio.reference.ConstBufferSequence">ConstBufferSequence</link></listitem>
+            <listitem><link linkend="asio.reference.ConvertibleToConstBuffer">ConvertibleToConstBuffer</link></listitem>
+            <listitem><link linkend="asio.reference.ConvertibleToMutableBuffer">ConvertibleToMutableBuffer</link></listitem>
+            <listitem><link linkend="asio.reference.DatagramSocketService">DatagramSocketService</link></listitem>
+            <listitem><link linkend="asio.reference.Endpoint">Endpoint</link></listitem>
+            <listitem><link linkend="asio.reference.GettableSocketOption">GettableSocketOption</link></listitem>
+            <listitem><link linkend="asio.reference.Handler">Handler</link></listitem>
+            <listitem><link linkend="asio.reference.InternetProtocol">InternetProtocol</link></listitem>
+            <listitem><link linkend="asio.reference.IoControlCommand">IoControlCommand</link></listitem>
+            <listitem><link linkend="asio.reference.IoObjectService">IoObjectService</link></listitem>
+            <listitem><link linkend="asio.reference.MutableBufferSequence">MutableBufferSequence</link></listitem>
+            <listitem><link linkend="asio.reference.Protocol">Protocol</link></listitem>
+            <listitem><link linkend="asio.reference.ReadHandler">ReadHandler</link></listitem>
+            <listitem><link linkend="asio.reference.ResolveHandler">ResolveHandler</link></listitem>
+            <listitem><link linkend="asio.reference.ResolverService">ResolverService</link></listitem>
+            <listitem><link linkend="asio.reference.Service">Service</link></listitem>
+            <listitem><link linkend="asio.reference.SettableSocketOption">SettableSocketOption</link></listitem>
+            <listitem><link linkend="asio.reference.SocketAcceptorService">SocketAcceptorService</link></listitem>
+            <listitem><link linkend="asio.reference.SocketService">SocketService</link></listitem>
+            <listitem><link linkend="asio.reference.StreamSocketService">StreamSocketService</link></listitem>
+            <listitem><link linkend="asio.reference.SyncReadStream">SyncReadStream</link></listitem>
+            <listitem><link linkend="asio.reference.SyncWriteStream">SyncWriteStream</link></listitem>
+            <listitem><link linkend="asio.reference.TimerService">TimerService</link></listitem>
+            <listitem><link linkend="asio.reference.TimeTraits">TimeTraits</link></listitem>
+            <listitem><link linkend="asio.reference.WaitHandler">WaitHandler</link></listitem>
+            <listitem><link linkend="asio.reference.WriteHandler">WriteHandler</link></listitem>
+          </itemizedlist>
+        </entry>
+      </row>
+    </tbody>
+  </tgroup>
+</informaltable>

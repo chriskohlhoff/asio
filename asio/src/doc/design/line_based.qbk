@@ -1,0 +1,50 @@
+[/
+ / Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:line_based Line-Based Protocols]
+
+Many commonly-used internet protocols are line-based, which means that they
+have protocol elements that are delimited by the character sequence `"\r\n"`.
+Examples include HTTP, SMTP and FTP.
+
+To more easily permit the implementation of line-based protocols, as well as
+other protocols that use delimiters, Asio includes the functions
+`read_until()` and `async_read_until()`.
+
+The following example illustrates the use of `async_read_until()` in an HTTP
+server, to receive the first line of an HTTP request from a client:
+
+  class http_connection
+  {
+    ...
+
+    void start()
+    {
+      asio::async_read_until(socket_, data_, "\r\n",
+          boost::bind(&http_connection::handle_request_line, this, _1));
+    }
+
+    void handle_request_line(boost::system::error_code ec)
+    {
+      if (!ec)
+      {
+        std::string method, uri, version;
+        char sp1, sp2, cr, lf;
+        std::istream is(&data_);
+        is.unsetf(std::ios_base::skipws);
+        is >> method >> sp1 >> uri >> sp2 >> version >> cr >> lf;
+        ...
+      }
+    }
+
+    ...
+
+    asio::ip::tcp::socket socket_;
+    asio::streambuf data_;
+  };
+
+[endsect]

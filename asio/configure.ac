@@ -16,17 +16,22 @@ AC_ARG_WITH(boost,
   CPPFLAGS="$CPPFLAGS -I${withval}"
 ],
 [
-  BOOSTDIR="`pwd`/../boost_1_34_0"
+  BOOSTDIR="`pwd`/../boost_1_34_1"
   if test -d "${BOOSTDIR}"; then
     CPPFLAGS="$CPPFLAGS -I${BOOSTDIR}"
   else
-    BOOSTDIR="`pwd`/../boost_1_33_1"
+    BOOSTDIR="`pwd`/../boost_1_34_0"
     if test -d "${BOOSTDIR}"; then
       CPPFLAGS="$CPPFLAGS -I${BOOSTDIR}"
     else
-      BOOSTDIR="`pwd`/../boost_1_33_0"
+      BOOSTDIR="`pwd`/../boost_1_33_1"
       if test -d "${BOOSTDIR}"; then
         CPPFLAGS="$CPPFLAGS -I${BOOSTDIR}"
+      else
+        BOOSTDIR="`pwd`/../boost_1_33_0"
+        if test -d "${BOOSTDIR}"; then
+          CPPFLAGS="$CPPFLAGS -I${BOOSTDIR}"
+        fi
       fi
     fi
   fi
@@ -78,7 +83,7 @@ case $host in
     WINDOWS=yes
     ;;
   *-pc-cygwin*)
-    CXXFLAGS="$CXXFLAGS -D__USE_W32_SOCKETS -D_WIN32_WINNT=0x0500"
+    CXXFLAGS="$CXXFLAGS -D__USE_W32_SOCKETS -D_WIN32_WINNT=0x0501"
     LIBS="$LIBS -lws2_32 -lmswsock"
     WINDOWS=yes
     ;;
@@ -96,20 +101,9 @@ if test "$GXX" = yes; then
   CXXFLAGS="$CXXFLAGS -ftemplate-depth-256"
 fi
 
-AC_CHECK_PROG(DOXYGEN_FOUND,doxygen,yes)
-AM_CONDITIONAL(HAVE_DOXYGEN,test x$DOXYGEN_FOUND = xyes)
-AC_CHECK_PROG(HAVE_DOT,dot,YES,NO)
-AC_SUBST(HAVE_DOT)
 AM_CONDITIONAL(WINDOWS_TARGET,test x$WINDOWS != xno)
 
 AC_OUTPUT([
   Makefile
   include/Makefile
-  src/Makefile
-  src/doc/Makefile
-  src/doc/design.dox
-  src/doc/examples.dox
-  src/doc/index.html
-  src/doc/building.html
-  src/doc/reference.dox
-  src/doc/tutorial.dox])
+  src/Makefile])

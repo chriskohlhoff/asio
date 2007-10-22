@@ -1,0 +1,215 @@
+[/
+ / Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:implementation Platform-Specific Implementation]
+
+This design note lists platform-specific implementation details, such as the
+default demultiplexing mechanism, the number of threads created internally, and
+when threads are created.
+
+
+[heading Linux Kernel 2.4]
+
+Demultiplexing mechanism:
+
+* Uses `select` for demultiplexing. This means that the number of file
+descriptors in the process cannot be permitted to exceed `FD_SETSIZE`.
+
+Threads:
+
+* Demultiplexing using `select` is performed in one of the threads that calls
+`io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
+`io_service::poll_one()`.
+
+* An additional thread per `io_service` is used to emulate asynchronous host
+resolution. This thread is created on the first call to either
+`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+
+
+[heading Linux Kernel 2.6]
+
+Demultiplexing mechanism:
+
+* Uses `epoll` for demultiplexing.
+
+Threads:
+
+* Demultiplexing using `epoll` is performed in one of the threads that calls
+`io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
+`io_service::poll_one()`.
+
+* An additional thread per `io_service` is used to emulate asynchronous host
+resolution. This thread is created on the first call to either
+`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+
+
+[heading Solaris]
+
+Demultiplexing mechanism:
+
+* Uses [^/dev/poll] for demultiplexing.
+
+Threads:
+
+* Demultiplexing using [^/dev/poll] is performed in one of the threads that
+calls `io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
+`io_service::poll_one()`.
+
+* An additional thread per `io_service` is used to emulate asynchronous host
+resolution. This thread is created on the first call to either
+`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+
+
+[heading QNX Neutrino]
+
+Demultiplexing mechanism:
+
+* Uses `select` for demultiplexing. This means that the number of file
+descriptors in the process cannot be permitted to exceed `FD_SETSIZE`.
+
+Threads:
+
+* Demultiplexing using `select` is performed in one of the threads that calls
+`io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
+`io_service::poll_one()`.
+
+* An additional thread per `io_service` is used to emulate asynchronous host
+resolution. This thread is created on the first call to either
+`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+
+
+[heading Mac OS X]
+
+Demultiplexing mechanism:
+
+* Uses `kqueue` for demultiplexing.
+
+Threads:
+
+* Demultiplexing using `kqueue` is performed in one of the threads that calls
+`io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
+`io_service::poll_one()`.
+
+* An additional thread per `io_service` is used to emulate asynchronous host
+resolution. This thread is created on the first call to either
+`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+
+
+[heading FreeBSD]
+
+Demultiplexing mechanism:
+
+* Uses `kqueue` for demultiplexing.
+
+Threads:
+
+* Demultiplexing using `kqueue` is performed in one of the threads that calls
+`io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
+`io_service::poll_one()`.
+
+* An additional thread per `io_service` is used to emulate asynchronous host
+resolution. This thread is created on the first call to either
+`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+
+
+[heading AIX]
+
+Demultiplexing mechanism:
+
+* Uses `select` for demultiplexing. This means that the number of file
+descriptors in the process cannot be permitted to exceed `FD_SETSIZE`.
+
+Threads:
+
+* Demultiplexing using `select` is performed in one of the threads that calls
+`io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
+`io_service::poll_one()`.
+
+* An additional thread per `io_service` is used to emulate asynchronous host
+resolution. This thread is created on the first call to either
+`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+
+
+[heading HP-UX]
+
+Demultiplexing mechanism:
+
+* Uses `select` for demultiplexing. This means that the number of file
+descriptors in the process cannot be permitted to exceed `FD_SETSIZE`.
+
+Threads:
+
+* Demultiplexing using `select` is performed in one of the threads that calls
+`io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
+`io_service::poll_one()`.
+
+* An additional thread per `io_service` is used to emulate asynchronous host
+resolution. This thread is created on the first call to either
+`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+
+
+[heading Tru64]
+
+Demultiplexing mechanism:
+
+* Uses `select` for demultiplexing. This means that the number of file
+descriptors in the process cannot be permitted to exceed `FD_SETSIZE`.
+
+Threads:
+
+* Demultiplexing using `select` is performed in one of the threads that calls
+`io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
+`io_service::poll_one()`.
+
+* An additional thread per `io_service` is used to emulate asynchronous host
+resolution. This thread is created on the first call to either
+`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+
+
+[heading Windows 95, 98 and Me]
+
+Demultiplexing mechanism:
+
+* Uses `select` for demultiplexing.
+
+Threads:
+
+* Demultiplexing using `select` is performed in one of the threads that calls
+`io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
+`io_service::poll_one()`.
+
+* An additional thread per `io_service` is used to emulate asynchronous host
+resolution. This thread is created on the first call to either
+`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+
+
+[heading Windows NT, 2000, XP, 2003 and Vista]
+
+Demultiplexing mechanism:
+
+* Uses overlapped I/O and I/O completion ports for all asynchronous socket
+operations except for asynchronous connect.
+
+* Uses `select` for `deadline_timer` operations and for emulating asynchronous
+connect.
+
+Threads:
+
+* Demultiplexing using I/O completion ports is performed in all threads that call
+`io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
+`io_service::poll_one()`.
+
+* An additional thread per `io_service` is used for the `select`
+demultiplexing. This thread is created whenever the first `deadline_timer` is
+created, or on the first call to `async_connect()`.
+
+* An additional thread per `io_service` is used to emulate asynchronous host
+resolution. This thread is created on the first call to either
+`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+
+
+[endsect]

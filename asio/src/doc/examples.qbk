@@ -1,0 +1,220 @@
+[/
+ / Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:examples Examples]
+
+
+[heading Allocation]
+
+This example shows how to customise the allocation of memory associated with
+asynchronous operations.
+
+* [@../src/examples/allocation/server.cpp]
+
+
+[heading Buffers]
+
+This example demonstrates how to create reference counted buffers that can be
+used with socket read and write operations.
+
+* [@../src/examples/buffers/reference_counted.cpp]
+
+
+[heading Chat]
+
+This example implements a chat server and client. The programs use a custom
+protocol with a fixed length message header and variable length message body.
+
+* [@../src/examples/chat/chat_message.hpp]
+* [@../src/examples/chat/chat_client.cpp]
+* [@../src/examples/chat/chat_server.cpp]
+
+
+[heading Echo]
+
+A collection of simple clients and servers, showing the use of both synchronous
+and asynchronous operations.
+
+* [@../src/examples/echo/async_tcp_echo_server.cpp]
+* [@../src/examples/echo/async_udp_echo_server.cpp]
+* [@../src/examples/echo/blocking_tcp_echo_client.cpp]
+* [@../src/examples/echo/blocking_tcp_echo_server.cpp]
+* [@../src/examples/echo/blocking_udp_echo_client.cpp]
+* [@../src/examples/echo/blocking_udp_echo_server.cpp]
+
+
+[heading HTTP Client]
+
+Example programs implementing simple HTTP 1.0 clients. These examples show how
+to use the [link asio.reference.read_until] and [link
+asio.reference.async_read_until] functions.
+
+* [@../src/examples/http/client/sync_client.cpp]
+* [@../src/examples/http/client/async_client.cpp]
+
+
+[heading HTTP Server]
+
+This example illustrates the use of asio in a simple single-threaded server
+implementation of HTTP 1.0. It demonstrates how to perform a clean shutdown by
+cancelling all outstanding asynchronous operations.
+
+* [@../src/examples/http/server/connection.cpp]
+* [@../src/examples/http/server/connection.hpp]
+* [@../src/examples/http/server/connection_manager.cpp]
+* [@../src/examples/http/server/connection_manager.hpp]
+* [@../src/examples/http/server/header.hpp]
+* [@../src/examples/http/server/mime_types.cpp]
+* [@../src/examples/http/server/mime_types.hpp]
+* [@../src/examples/http/server/posix_main.cpp]
+* [@../src/examples/http/server/reply.cpp]
+* [@../src/examples/http/server/reply.hpp]
+* [@../src/examples/http/server/request.hpp]
+* [@../src/examples/http/server/request_handler.cpp]
+* [@../src/examples/http/server/request_handler.hpp]
+* [@../src/examples/http/server/request_parser.cpp]
+* [@../src/examples/http/server/request_parser.hpp]
+* [@../src/examples/http/server/server.cpp]
+* [@../src/examples/http/server/server.hpp]
+* [@../src/examples/http/server/win_main.cpp]
+
+
+[heading HTTP Server 2]
+
+An HTTP server using an io_service-per-CPU design.
+
+* [@../src/examples/http/server2/connection.cpp]
+* [@../src/examples/http/server2/connection.hpp]
+* [@../src/examples/http/server2/header.hpp]
+* [@../src/examples/http/server2/io_service_pool.cpp]
+* [@../src/examples/http/server2/io_service_pool.hpp]
+* [@../src/examples/http/server2/mime_types.cpp]
+* [@../src/examples/http/server2/mime_types.hpp]
+* [@../src/examples/http/server2/posix_main.cpp]
+* [@../src/examples/http/server2/reply.cpp]
+* [@../src/examples/http/server2/reply.hpp]
+* [@../src/examples/http/server2/request.hpp]
+* [@../src/examples/http/server2/request_handler.cpp]
+* [@../src/examples/http/server2/request_handler.hpp]
+* [@../src/examples/http/server2/request_parser.cpp]
+* [@../src/examples/http/server2/request_parser.hpp]
+* [@../src/examples/http/server2/server.cpp]
+* [@../src/examples/http/server2/server.hpp]
+* [@../src/examples/http/server2/win_main.cpp]
+
+
+[heading HTTP Server 3]
+
+An HTTP server using a single io_service and a thread pool calling `io_service::run()`.
+
+* [@../src/examples/http/server3/connection.cpp]
+* [@../src/examples/http/server3/connection.hpp]
+* [@../src/examples/http/server3/header.hpp]
+* [@../src/examples/http/server3/mime_types.cpp]
+* [@../src/examples/http/server3/mime_types.hpp]
+* [@../src/examples/http/server3/posix_main.cpp]
+* [@../src/examples/http/server3/reply.cpp]
+* [@../src/examples/http/server3/reply.hpp]
+* [@../src/examples/http/server3/request.hpp]
+* [@../src/examples/http/server3/request_handler.cpp]
+* [@../src/examples/http/server3/request_handler.hpp]
+* [@../src/examples/http/server3/request_parser.cpp]
+* [@../src/examples/http/server3/request_parser.hpp]
+* [@../src/examples/http/server3/server.cpp]
+* [@../src/examples/http/server3/server.hpp]
+* [@../src/examples/http/server3/win_main.cpp]
+
+
+[heading Invocation]
+
+This example shows how to customise handler invocation. Completion handlers are
+added to a priority queue rather than executed immediately.
+
+* [@../src/examples/invocation/prioritised_handlers.cpp]
+
+
+[heading Iostreams]
+
+Two examples showing how to use [link asio.reference.ip__tcp.iostream].
+
+* [@../src/examples/iostreams/daytime_client.cpp]
+* [@../src/examples/iostreams/daytime_server.cpp]
+
+
+[heading Multicast]
+
+An example showing the use of multicast to transmit packets to a group of
+subscribers.
+
+* [@../src/examples/multicast/receiver.cpp]
+* [@../src/examples/multicast/sender.cpp]
+
+
+[heading Serialization]
+
+This example shows how Boost.Serialization can be used with asio to encode and
+decode structures for transmission over a socket.
+
+* [@../src/examples/serialization/client.cpp]
+* [@../src/examples/serialization/connection.hpp]
+* [@../src/examples/serialization/server.cpp]
+* [@../src/examples/serialization/stock.hpp]
+
+
+[heading Services]
+
+This example demonstrates how to integrate custom functionality (in this case,
+for logging) into asio's [link asio.reference.io_service io_service], and
+how to use a custom service with [link
+asio.reference.basic_stream_socket].
+
+* [@../src/examples/services/basic_logger.hpp]
+* [@../src/examples/services/daytime_client.cpp]
+* [@../src/examples/services/logger.hpp]
+* [@../src/examples/services/logger_service.cpp]
+* [@../src/examples/services/logger_service.hpp]
+* [@../src/examples/services/stream_socket_service.hpp]
+
+
+[heading SOCKS 4]
+
+Example client program implementing the SOCKS 4 protocol for communication via
+a proxy.
+
+* [@../src/examples/socks4/sync_client.cpp]
+* [@../src/examples/socks4/socks4.hpp]
+
+
+[heading SSL]
+
+Example client and server programs showing the use of the [link
+asio.reference.ssl__stream] template with asynchronous operations.
+
+* [@../src/examples/ssl/client.cpp]
+* [@../src/examples/ssl/server.cpp]
+
+
+[heading Timeouts]
+
+A collection of examples showing how to cancel long running asynchronous
+operations after a period of time.
+
+* [@../src/examples/timeouts/accept_timeout.cpp]
+* [@../src/examples/timeouts/connect_timeout.cpp]
+* [@../src/examples/timeouts/datagram_receive_timeout.cpp]
+* [@../src/examples/timeouts/stream_receive_timeout.cpp]
+
+
+[heading Timers]
+
+Examples showing how to customise deadline_timer using different time types.
+
+* [@../src/examples/timers/tick_count_timer.cpp]
+* [@../src/examples/timers/time_t_timer.cpp]
+
+
+[endsect]

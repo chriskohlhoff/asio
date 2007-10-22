@@ -1,0 +1,44 @@
+[/
+ / Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:rationale Rationale]
+
+The Asio library is intended for programmers using C++ for systems
+programming, where access to operating system functionality such as networking
+is often required. In particular, Asio attempts to address the following
+goals:
+
+* [*Portability.] The library should support, and provide consistent behaviour
+across, a range of commonly used operating systems.
+
+* [*Scalability.] The library should allow, and indeed encourage, the
+development of network applications that scale to hundreds or thousands of
+concurrent connections. The library implementation for each operating system
+should use the mechanism that best enables this scalability.
+
+* [*Efficiency.] The library should support techniques such as scatter-gather
+I/O, and allow protocol implementations that minimise data copying.
+
+* [*Model Berkeley sockets.] The Berkeley sockets API is widely implemented and
+understood, as well as being covered in much literature. Other programming
+languages often use a similar interface for networking APIs.
+
+* [*Ease of use.] Lower the entry barrier for new users by taking a toolkit,
+rather than framework, approach. That is, try to minimise the up-front
+investment in time to just learning a few basic rules and guidelines. After
+that, a library user should only need to understand the specific functions that
+are being used.
+
+* [*Basis for further abstraction.] The library should permit the development
+of other libraries that provide higher levels of abstraction. For example,
+implementations of commonly used protocols such as HTTP.
+
+Although the current incarnation of Asio focuses primarily on networking,
+its concepts of asynchronous I/O can be extended to include other operating
+system resources such as files.
+
+[endsect]

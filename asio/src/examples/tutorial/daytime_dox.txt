@@ -195,8 +195,8 @@ operation that refers to it.
 \until }
 \until }
 
-In the function <tt>start()</tt>, we call \ref async_write to serve the data to
-the client. Note that we are using \ref async_write, rather than
+In the function <tt>start()</tt>, we call asio::async_write() to serve the data
+to the client. Note that we are using asio::async_write(), rather than
 asio::ip::tcp::socket::async_write_some(), to ensure that the entire block of
 data is sent.
 
@@ -233,7 +233,8 @@ that it looks like:
   }
 \endcode
 
-The \ref async_write call used to initiate the call can then be changed to just:
+The asio::async_write() call used to initiate the call can then be changed to
+just:
 
 \code
   asio::async_write(socket_, asio::buffer(message_),

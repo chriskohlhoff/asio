@@ -1,0 +1,133 @@
+[/
+ / Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:using Using Asio]
+
+[heading Supported Platforms]
+
+The following platforms and compilers have been tested:
+
+* Win32 and Win64 using Visual C++ 7.1 and Visual C++ 8.0.
+* Win32 using Borland C++Builder 6 patch 4.
+* Win32 using MinGW.
+* Win32 using Cygwin. (`__USE_W32_SOCKETS` must be defined.)
+* Linux (2.4 or 2.6 kernels) using g++ 3.3 or later.
+* Solaris using g++ 3.3 or later.
+* Mac OS X 10.4 using g++ 3.3 or later.
+
+The following platforms may also work:
+
+* AIX 5.3 using XL C/C++ v9.
+* HP-UX 11i v3 using patched aC++ A.06.14.
+* QNX Neutrino 6.3 using g++ 3.3 or later.
+* Solaris using Sun Studio 11 or later.
+* Tru64 v5.1 using Compaq C++ v7.1.
+
+[heading Dependencies]
+
+The following libraries must be available in order to link programs that use
+Asio:
+
+* Boost.Regex (optional) if you use any of the [link
+asio.reference.read_until `read_until()`] or [link
+asio.reference.async_read_until `async_read_until()`] overloads that take
+a `boost::regex` parameter.
+
+* [@http://www.openssl.org OpenSSL] (optional) if you use Asio's SSL
+support.
+
+Furthermore, some of the examples also require Boost.Date_Time or
+Boost.Serialization libraries.
+
+[note With MSVC or Borland C++ you may want to add `-DBOOST_DATE_TIME_NO_LIB`
+and `-DBOOST_REGEX_NO_LIB` to your project settings to disable autolinking of
+the Boost.Date_Time and Boost.Regex libraries respectively. Alternatively, you
+may choose to build these libraries and link to them.]
+
+[heading Building the tests and examples on Linux or UNIX]
+
+If the boost directory (e.g. the directory called `boost_1_34_1`) is in the
+same directory as the asio source kit, then you may configure asio by simply
+going:
+
+  ./configure
+
+in the root directory of the asio source kit. Note that configure will always
+use the most recent boost version it knows about (i.e. 1.34.1) in preference to
+earlier versions, if there is more than one version present.
+
+If the boost directory is in some other location, then you need to
+specify this directory when running configure:
+
+  ./configure --with-boost=``['path_to_boost]``
+
+When specifying the boost directory in this way you should ensure that you use
+an absolute path.
+
+To build, simply run `make` in the root directory of the asio source kit. To
+test that asio is working correctly, run `make check` after a successful build.
+
+[heading Building the tests and examples with MSVC]
+
+To build using the MSVC 7.1 or MSVC 8.0 command line compiler, perform the
+following steps in a Command Prompt window:
+
+* If you are using a version of boost other than 1.34.1, or if the boost
+  directory (i.e. the directory called `boost_1_34_1`) is not in the same
+  directory as the asio source kit, then specify the location of boost by
+  running a command similar to [^set BOOSTDIR=['path_to_boost]]. Ensure that
+  you specify an absolute path.
+
+* Change to the asio `src` directory.
+
+* Execute the command `nmake -f Makefile.msc`.
+
+* Execute the command `nmake -f Makefile.msc check` to run a suite of tests to
+  confirm that asio is working correctly.
+
+[heading Building the test and examples with Borland C++]
+
+To build using the Borland C++ Builder command line compiler, perform the
+following steps in a Command Prompt window:
+
+* If you are using a version of boost other than 1.34.1, or if the boost
+  directory (i.e. the directory called `boost_1_34_1`) is not in the same
+  directory as the asio source kit, then specify the location of boost by
+  running a command similar to [^set BOOSTDIR=['path_to_boost]]. Ensure that
+  you specify an absolute path.
+
+* Change to the asio `src` directory.
+
+* Execute the command `make -f Makefile.bor`.
+
+* Execute the command `make -f Makefile.bor check` to run a suite of tests to
+  confirm that asio is working correctly.
+
+[heading Building the tests and examples with MinGW]
+
+To build using the MinGW g++ compiler from the command line, perform the
+following steps in a Command Prompt window:
+
+* If you are using a version of boost other than 1.34.1, or if the boost
+  directory (i.e. the directory called `boost_1_34_1`) is not in the same
+  directory as the asio source kit, then specify the location of boost by
+  running a command similar to [^set BOOSTDIR=['path_to_boost]]. Ensure that
+  you specify an absolute path using ['forward slashes] (i.e.
+  `c:/projects/boost_1_34_1` rather than `c:\projects\boost_1_34_1`).
+
+* Change to the asio `src` directory.
+
+* Execute the command `make -f Makefile.mgw`.
+
+* Execute the command `make -f Makefile.mgw check` to run a suite of tests to
+  confirm that asio is working correctly.
+
+[note The above instructions do not work when building inside MSYS. If you want
+to build using MSYS, you should use [^export] rather than [^set] to specify the
+location of boost.]
+
+[endsect]

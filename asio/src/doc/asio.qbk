@@ -1,0 +1,92 @@
+[/
+ / Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[library Asio
+    [quickbook 1.4]
+    [copyright 2003 - 2007 Christopher M. Kohlhoff]
+    [purpose Networking library]
+    [license
+        Distributed under the Boost Software License, Version 1.0.
+        (See accompanying file LICENSE_1_0.txt or copy at
+        [@http://www.boost.org/LICENSE_1_0.txt])
+    ]
+    [category template]
+    [category generic]
+    [last-revision $Date: 2007-10-22 23:00:36 $]
+]
+
+[template mdash[] '''&mdash; ''']
+[def __POSIX__ /POSIX/]
+[def __Windows__ /Windows/]
+[def __accept__ [@http://www.opengroup.org/onlinepubs/000095399/functions/accept.html `accept()`]]
+[def __connect__ [@http://www.opengroup.org/onlinepubs/000095399/functions/connect.html `connect()`]]
+[def __getpeername__ [@http://www.opengroup.org/onlinepubs/000095399/functions/getpeername.html `getpeername()`]]
+[def __getsockname__ [@http://www.opengroup.org/onlinepubs/000095399/functions/getsockname.html `getsockname()`]]
+[def __getsockopt__ [@http://www.opengroup.org/onlinepubs/000095399/functions/getsockopt.html `getsockopt()`]]
+[def __ioctl__ [@http://www.opengroup.org/onlinepubs/000095399/functions/ioctl.html `ioctl()`]]
+[def __recvfrom__ [@http://www.opengroup.org/onlinepubs/000095399/functions/recvfrom.html `recvfrom()`]]
+[def __sendto__ [@http://www.opengroup.org/onlinepubs/000095399/functions/sendto.html `sendto()`]]
+[def __setsockopt__ [@http://www.opengroup.org/onlinepubs/000095399/functions/setsockopt.html `setsockopt()`]]
+[def __socket__ [@http://www.opengroup.org/onlinepubs/000095399/functions/socket.html `socket()`]]
+
+[/=============================================================================]
+
+Asio is a cross-platform C++ library for network programming that provides
+developers with a consistent asynchronous I/O model using a modern C++
+approach.
+
+[variablelist
+  [
+    [
+      [link asio.using Using Asio]
+    ]
+    [
+      How to use Asio in your applications. Includes information on
+      library dependencies and supported platforms.
+    ]
+  ]
+  [
+    [
+      [link asio.tutorial Tutorial]
+    ]
+    [
+      A tutorial that introduces the fundamental concepts required to use
+      Asio, and shows how to use Asio to develop simple client and
+      server programs.
+    ]
+  ]
+  [
+    [
+      [link asio.examples Examples]
+    ]
+    [
+      Examples that illustrate the use of Asio in more complex applications.
+    ]
+  ]
+  [
+    [
+      [link asio.reference Reference]
+    ]
+    [
+      Detailed class and function reference.
+    ]
+  ]
+  [
+    [
+      [link asio.design Design]
+    ]
+    [
+      Rationale and design information for Asio.
+    ]
+  ]
+]
+
+[include using.qbk]
+[include tutorial.qbk]
+[include examples.qbk]
+[include reference.qbk]
+[include design.qbk]
