@@ -732,8 +732,8 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const asio::system_error& error, // Result of operation.
-   *   std::size_t bytes_transferred             // Number of bytes received.
+   *   const asio::error_code& error, // Result of operation.
+   *   std::size_t bytes_transferred           // Number of bytes received.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation

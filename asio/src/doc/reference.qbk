@@ -1791,8 +1791,8 @@ This function is used to asynchronously receive a datagram. The function call al
 [[handler][The handler to be called when the receive operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
    void handler(
-     const asio::system_error& error, // Result of operation.
-     std::size_t bytes_transferred             // Number of bytes received.
+     const asio::error_code& error, // Result of operation.
+     std::size_t bytes_transferred           // Number of bytes received.
    ); 
 
 ``
