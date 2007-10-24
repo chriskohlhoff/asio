@@ -84,7 +84,7 @@ inline std::string error_code::message() const
   return strerror(value_);
 #elif defined(__MACH__) && defined(__APPLE__) \
 || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__) \
-|| defined(_AIX)
+|| defined(_AIX) || defined(__hpux) || defined(__osf__)
   char buf[256] = "";
   strerror_r(value_, buf, sizeof(buf));
   return buf;
