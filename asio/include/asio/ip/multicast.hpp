@@ -167,7 +167,7 @@ typedef asio::ip::detail::socket_option::multicast_hops<
 #if defined(GENERATING_DOCUMENTATION)
 typedef implementation_defined enable_loopback;
 #else
-typedef asio::ip::detail::socket_option::boolean<
+typedef asio::ip::detail::socket_option::multicast_enable_loopback<
   IPPROTO_IP, IP_MULTICAST_LOOP, IPPROTO_IPV6, IPV6_MULTICAST_LOOP>
   enable_loopback;
 #endif

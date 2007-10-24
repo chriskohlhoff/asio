@@ -131,7 +131,7 @@ void test()
   BOOST_CHECK(!have_v4 || !ec);
 
   const ip::address multicast_address_v6 =
-    ip::address::from_string("ff31::8000:1234", ec);
+    ip::address::from_string("ff01::1", ec);
   BOOST_CHECK(!have_v6 || !ec);
 
   // join_group class.
@@ -178,7 +178,11 @@ void test()
 
   if (have_v6)
   {
+#if defined(__hpux)
+    ip::multicast::outbound_interface outbound_interface(if_nametoindex("lo0"));
+#else
     ip::multicast::outbound_interface outbound_interface(1);
+#endif
     sock_v6.set_option(outbound_interface, ec);
     BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
   }
