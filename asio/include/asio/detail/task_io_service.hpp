@@ -225,16 +225,18 @@ private:
         {
           bool more_handlers = (!handler_queue_.empty());
           task_interrupted_ = more_handlers || polling;
-          lock.unlock();
 
           // If the task has already run and we're polling then we're done.
           if (task_has_run && polling)
           {
+            task_interrupted_ = true;
+            handler_queue_.push(&task_handler_);
             ec = asio::error_code();
             return 0;
           }
           task_has_run = true;
-          
+
+          lock.unlock();
           task_cleanup c(lock, *this);
 
           // Run the task. May throw an exception. Only block if the handler
