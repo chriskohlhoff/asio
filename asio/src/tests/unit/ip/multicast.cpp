@@ -104,6 +104,12 @@ void test()
 
 namespace ip_multicast_runtime {
 
+#if defined(__hpux)
+// HP-UX doesn't declare this function extern "C", so it is declared again here
+// to avoid a linker errors about an undefined symbol.
+extern "C" unsigned int if_nametoindex(const char*);
+#endif // defined(__hpux)
+
 void test()
 {
   using namespace asio;
