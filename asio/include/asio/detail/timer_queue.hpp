@@ -162,13 +162,7 @@ public:
   // Destroy timers that are waiting to be cleaned up.
   virtual void cleanup_timers()
   {
-    while (cleanup_timers_)
-    {
-      timer_base* next_timer = cleanup_timers_->next_;
-      cleanup_timers_->next_ = 0;
-      cleanup_timers_->destroy();
-      cleanup_timers_ = next_timer;
-    }
+    destroy_timer_list(cleanup_timers_);
   }
 
   // Destroy all timers.
@@ -181,11 +175,12 @@ public:
       timer_base* t = i->second;
       typename hash_map<void*, timer_base*>::iterator old_i = i++;
       timers_.erase(old_i);
-      t->destroy();
+      destroy_timer_list(t);
     }
     heap_.clear();
     timers_.clear();
-    cleanup_timers();
+    destroy_timer_list(cancelled_timers_);
+    destroy_timer_list(cleanup_timers_);
   }
 
 private:
@@ -364,6 +359,18 @@ private:
         t->next_->prev_ = t->prev_;
       if (it->second == 0)
         timers_.erase(it);
+    }
+  }
+
+  // Destroy all timers in a linked list.
+  void destroy_timer_list(timer_base*& t)
+  {
+    while (t)
+    {
+      timer_base* next = t->next_;
+      t->next_ = 0;
+      t->destroy();
+      t = next;
     }
   }
 
