@@ -24,7 +24,11 @@
 #if !defined(BOOST_HAS_THREADS)
 # include "asio/detail/null_thread.hpp"
 #elif defined(BOOST_WINDOWS)
-# include "asio/detail/win_thread.hpp"
+# if defined(UNDER_CE)
+#  include "asio/detail/wince_thread.hpp"
+# else
+#  include "asio/detail/win_thread.hpp"
+# endif
 #elif defined(BOOST_HAS_PTHREADS)
 # include "asio/detail/posix_thread.hpp"
 #else
@@ -37,7 +41,11 @@ namespace detail {
 #if !defined(BOOST_HAS_THREADS)
 typedef null_thread thread;
 #elif defined(BOOST_WINDOWS)
+# if defined(UNDER_CE)
+typedef wince_thread thread;
+# else
 typedef win_thread thread;
+# endif
 #elif defined(BOOST_HAS_PTHREADS)
 typedef posix_thread thread;
 #endif

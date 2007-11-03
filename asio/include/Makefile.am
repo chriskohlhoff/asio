@@ -93,6 +93,7 @@ nobase_include_HEADERS = \
 	asio/detail/win_signal_blocker.hpp \
 	asio/detail/win_thread.hpp \
 	asio/detail/win_tss_ptr.hpp \
+	asio/detail/wince_thread.hpp \
 	asio/detail/winsock_init.hpp \
 	asio/detail/wrapped_handler.hpp \
 	asio/error.hpp \
