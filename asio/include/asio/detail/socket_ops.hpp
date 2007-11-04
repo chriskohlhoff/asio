@@ -720,9 +720,17 @@ inline const char* inet_ntop(int af, const void* src, char* dest, size_t length,
   }
 
   DWORD string_length = static_cast<DWORD>(length);
+#if defined(BOOST_NO_ANSI_APIS)
+  LPWSTR string_buffer = (LPWSTR)_alloca(length * sizeof(WCHAR));
+  int result = error_wrapper(::WSAAddressToStringW(
+        reinterpret_cast<sockaddr*>(&address),
+        address_length, 0, string_buffer, &string_length), ec);
+  ::WideCharToMultiByte(CP_ACP, 0, string_buffer, -1, dest, length, 0, 0);
+#else
   int result = error_wrapper(::WSAAddressToStringA(
         reinterpret_cast<sockaddr*>(&address),
         address_length, 0, dest, &string_length), ec);
+#endif
 
   // Windows may set error code on success.
   if (result != socket_error_retval)
@@ -766,10 +774,20 @@ inline int inet_pton(int af, const char* src, void* dest,
 
   sockaddr_storage_type address;
   int address_length = sizeof(sockaddr_storage_type);
+#if defined(BOOST_NO_ANSI_APIS)
+  int num_wide_chars = strlen(src) + 1;
+  LPWSTR wide_buffer = (LPWSTR)_alloca(num_wide_chars * sizeof(WCHAR));
+  ::MultiByteToWideChar(CP_ACP, 0, src, -1, wide_buffer, num_wide_chars);
+  int result = error_wrapper(::WSAStringToAddressW(
+        wide_buffer, af, 0,
+        reinterpret_cast<sockaddr*>(&address),
+        &address_length), ec);
+#else
   int result = error_wrapper(::WSAStringToAddressA(
         const_cast<char*>(src), af, 0,
         reinterpret_cast<sockaddr*>(&address),
         &address_length), ec);
+#endif
 
   if (af == AF_INET)
   {
@@ -802,6 +820,11 @@ inline int inet_pton(int af, const char* src, void* dest,
   // Windows may not set an error code on failure.
   if (result == socket_error_retval && !ec)
     ec = asio::error::invalid_argument;
+
+#if defined(UNDER_CE)
+  if (result != socket_error_retval)
+    clear_error(ec);
+#endif
 
   return result == socket_error_retval ? -1 : 1;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
