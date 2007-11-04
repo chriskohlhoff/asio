@@ -329,7 +329,8 @@ inline int sendto(socket_type s, const buf* bufs, size_t count, int flags,
   DWORD send_buf_count = static_cast<DWORD>(count);
   DWORD bytes_transferred = 0;
   int result = error_wrapper(::WSASendTo(s, const_cast<buf*>(bufs),
-        send_buf_count, &bytes_transferred, flags, addr, addrlen, 0, 0), ec);
+        send_buf_count, &bytes_transferred, flags, addr,
+        static_cast<int>(addrlen), 0, 0), ec);
   if (result != 0)
     return -1;
 # if defined(UNDER_CE)
