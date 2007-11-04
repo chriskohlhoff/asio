@@ -1615,7 +1615,7 @@ inline asio::error_code getaddrinfo(const char* host,
 {
   clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-# if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501)
+# if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501) || defined(UNDER_CE)
   // Building for Windows XP, Windows Server 2003, or later.
   int error = ::getaddrinfo(host, service, hints, result);
   return ec = translate_addrinfo_error(error);
@@ -1646,7 +1646,7 @@ inline asio::error_code getaddrinfo(const char* host,
 inline void freeaddrinfo(addrinfo_type* ai)
 {
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-# if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501)
+# if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501) || defined(UNDER_CE)
   // Building for Windows XP, Windows Server 2003, or later.
   ::freeaddrinfo(ai);
 # else
@@ -1674,7 +1674,7 @@ inline asio::error_code getnameinfo(const socket_addr_type* addr,
     char* serv, std::size_t servlen, int flags, asio::error_code& ec)
 {
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-# if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501)
+# if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501) || defined(UNDER_CE)
   // Building for Windows XP, Windows Server 2003, or later.
   clear_error(ec);
   int error = ::getnameinfo(addr, addrlen, host, static_cast<DWORD>(hostlen),
