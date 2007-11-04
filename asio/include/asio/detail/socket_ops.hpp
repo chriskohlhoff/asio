@@ -1833,8 +1833,6 @@ inline u_short_type host_to_network_short(u_short_type value)
 } // namespace detail
 } // namespace asio
 
-#undef ASIO_SOCKET_CALL
-
 #include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_SOCKET_OPS_HPP
