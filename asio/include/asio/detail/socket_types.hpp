@@ -80,7 +80,9 @@
 #  undef ASIO_WSPIAPI_H_DEFINED
 # endif // defined(ASIO_WSPIAPI_H_DEFINED)
 # if !defined(ASIO_NO_DEFAULT_LINKED_LIBS)
-#  if defined(_MSC_VER) || defined(__BORLANDC__)
+#  if defined(UNDER_CE)
+#   pragma comment(lib, "ws2.lib")
+#  elif defined(_MSC_VER) || defined(__BORLANDC__)
 #   pragma comment(lib, "ws2_32.lib")
 #   pragma comment(lib, "mswsock.lib")
 #  endif // defined(_MSC_VER) || defined(__BORLANDC__)
