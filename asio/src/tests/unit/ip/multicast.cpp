@@ -250,28 +250,52 @@ void test()
     BOOST_CHECK(static_cast<bool>(enable_loopback1));
     BOOST_CHECK(!!enable_loopback1);
     sock_v4.set_option(enable_loopback1, ec);
+#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+    // Option is not supported under Windows CE.
+    BOOST_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
+        ec.value() << ", " << ec.message());
+#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
     BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
 
     ip::multicast::enable_loopback enable_loopback2;
     sock_v4.get_option(enable_loopback2, ec);
+#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+    // Option is not supported under Windows CE.
+    BOOST_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
+        ec.value() << ", " << ec.message());
+#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
     BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
     BOOST_CHECK(enable_loopback2.value());
     BOOST_CHECK(static_cast<bool>(enable_loopback2));
     BOOST_CHECK(!!enable_loopback2);
+#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
 
     ip::multicast::enable_loopback enable_loopback3(false);
     BOOST_CHECK(!enable_loopback3.value());
     BOOST_CHECK(!static_cast<bool>(enable_loopback3));
     BOOST_CHECK(!enable_loopback3);
     sock_v4.set_option(enable_loopback3, ec);
+#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+    // Option is not supported under Windows CE.
+    BOOST_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
+        ec.value() << ", " << ec.message());
+#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
     BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
 
     ip::multicast::enable_loopback enable_loopback4;
     sock_v4.get_option(enable_loopback4, ec);
+#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+    // Option is not supported under Windows CE.
+    BOOST_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
+        ec.value() << ", " << ec.message());
+#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
     BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
     BOOST_CHECK(!enable_loopback4.value());
     BOOST_CHECK(!static_cast<bool>(enable_loopback4));
     BOOST_CHECK(!enable_loopback4);
+#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
   }
 
   if (have_v6)

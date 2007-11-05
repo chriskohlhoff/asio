@@ -92,22 +92,46 @@ void test()
     ip::unicast::hops hops1(1);
     BOOST_CHECK(hops1.value() == 1);
     sock_v4.set_option(hops1, ec);
+#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+    // Option is not supported under Windows CE.
+    BOOST_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
+        ec.value() << ", " << ec.message());
+#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
     BOOST_CHECK(!ec);
+#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
 
     ip::unicast::hops hops2;
     sock_v4.get_option(hops2, ec);
+#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+    // Option is not supported under Windows CE.
+    BOOST_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
+        ec.value() << ", " << ec.message());
+#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
     BOOST_CHECK(!ec);
     BOOST_CHECK(hops2.value() == 1);
+#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
 
     ip::unicast::hops hops3(255);
     BOOST_CHECK(hops3.value() == 255);
     sock_v4.set_option(hops3, ec);
+#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+    // Option is not supported under Windows CE.
+    BOOST_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
+        ec.value() << ", " << ec.message());
+#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
     BOOST_CHECK(!ec);
+#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
 
     ip::unicast::hops hops4;
     sock_v4.get_option(hops4, ec);
+#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+    // Option is not supported under Windows CE.
+    BOOST_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
+        ec.value() << ", " << ec.message());
+#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
     BOOST_CHECK(!ec);
     BOOST_CHECK(hops4.value() == 255);
+#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
   }
 
   if (have_v6)
