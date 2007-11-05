@@ -48,10 +48,11 @@ extern "C" unsigned int if_nametoindex(const char*);
 
 inline void clear_error(asio::error_code& ec)
 {
-  errno = 0;
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   WSASetLastError(0);
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#else
+  errno = 0;
+#endif
   ec = asio::error_code();
 }
 
