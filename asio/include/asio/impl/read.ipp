@@ -19,7 +19,6 @@
 
 #include "asio/detail/push_options.hpp"
 #include <algorithm>
-#include <boost/optional.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/buffer.hpp"
@@ -139,25 +138,23 @@ namespace detail
         std::size_t bytes_transferred)
     {
       total_transferred_ += bytes_transferred;
-      buffers_->consume(bytes_transferred);
-      if ((*completion_condition_)(ec, total_transferred_)
-          || buffers_->begin() == buffers_->end())
+      buffers_.consume(bytes_transferred);
+      if (completion_condition_(ec, total_transferred_)
+          || buffers_.begin() == buffers_.end())
       {
-        buffers_.reset();
-        completion_condition_.reset();
         handler_(ec, total_transferred_);
       }
       else
       {
-        stream_.async_read_some(*buffers_, *this);
+        stream_.async_read_some(buffers_, *this);
       }
     }
 
   //private:
     AsyncReadStream& stream_;
-    boost::optional<buffers_type> buffers_;
+    buffers_type buffers_;
     std::size_t total_transferred_;
-    boost::optional<CompletionCondition> completion_condition_;
+    CompletionCondition completion_condition_;
     ReadHandler handler_;
   };
 
@@ -238,9 +235,8 @@ namespace detail
       total_transferred_ += bytes_transferred;
       streambuf_.commit(bytes_transferred);
       if (streambuf_.size() == streambuf_.max_size()
-          || (*completion_condition_)(ec, total_transferred_))
+          || completion_condition_(ec, total_transferred_))
       {
-        completion_condition_.reset();
         handler_(ec, total_transferred_);
       }
       else
@@ -255,7 +251,7 @@ namespace detail
     AsyncReadStream& stream_;
     asio::basic_streambuf<Allocator>& streambuf_;
     std::size_t total_transferred_;
-    boost::optional<CompletionCondition> completion_condition_;
+    CompletionCondition completion_condition_;
     ReadHandler handler_;
   };
 
