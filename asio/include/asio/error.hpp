@@ -205,27 +205,32 @@ enum ssl_errors
 
 inline asio::error_code make_error_code(basic_errors e)
 {
-  return asio::error_code(static_cast<int>(e), system_category);
+  return asio::error_code(
+      static_cast<int>(e), get_system_category());
 }
 
 inline asio::error_code make_error_code(netdb_errors e)
 {
-  return asio::error_code(static_cast<int>(e), netdb_category);
+  return asio::error_code(
+      static_cast<int>(e), get_netdb_category());
 }
 
 inline asio::error_code make_error_code(addrinfo_errors e)
 {
-  return asio::error_code(static_cast<int>(e), addrinfo_category);
+  return asio::error_code(
+      static_cast<int>(e), get_addrinfo_category());
 }
 
 inline asio::error_code make_error_code(misc_errors e)
 {
-  return asio::error_code(static_cast<int>(e), misc_category);
+  return asio::error_code(
+      static_cast<int>(e), get_misc_category());
 }
 
 inline asio::error_code make_error_code(ssl_errors e)
 {
-  return asio::error_code(static_cast<int>(e), ssl_category);
+  return asio::error_code(
+      static_cast<int>(e), get_ssl_category());
 }
 
 } // namespace error

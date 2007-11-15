@@ -137,14 +137,14 @@ sub source_contains_boostify_error_categories
 }
 
 my $error_cat_defns = <<"EOF";
-namespace detail {
-
 inline const boost::system::error_category& get_system_category()
 {
-  return boost::system::system_category;
+  return boost::system::get_system_category();
 }
 
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
+namespace detail {
 
 class netdb_category : public boost::system::error_category
 {
@@ -168,11 +168,15 @@ public:
   }
 };
 
+} // namespace detail
+
 inline const boost::system::error_category& get_netdb_category()
 {
-  static netdb_category instance;
+  static detail::netdb_category instance;
   return instance;
 }
+
+namespace detail {
 
 class addrinfo_category : public boost::system::error_category
 {
@@ -192,9 +196,11 @@ public:
   }
 };
 
+} // namespace detail
+
 inline const boost::system::error_category& get_addrinfo_category()
 {
-  static addrinfo_category instance;
+  static detail::addrinfo_category instance;
   return instance;
 }
 
@@ -211,6 +217,8 @@ inline const boost::system::error_category& get_addrinfo_category()
 }
 
 #endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
+namespace detail {
 
 class misc_category : public boost::system::error_category
 {
@@ -232,11 +240,15 @@ public:
   }
 };
 
+} // namespace detail
+
 inline const boost::system::error_category& get_misc_category()
 {
-  static misc_category instance;
+  static detail::misc_category instance;
   return instance;
 }
+
+namespace detail {
 
 class ssl_category : public boost::system::error_category
 {
@@ -252,24 +264,24 @@ public:
   }
 };
 
+} // namespace detail
+
 inline const boost::system::error_category& get_ssl_category()
 {
-  static ssl_category instance;
+  static detail::ssl_category instance;
   return instance;
 }
 
-} // namespace detail
-
 static const boost::system::error_category& system_category
-  = boost::asio::error::detail::get_system_category();
+  = boost::asio::error::get_system_category();
 static const boost::system::error_category& netdb_category
-  = boost::asio::error::detail::get_netdb_category();
+  = boost::asio::error::get_netdb_category();
 static const boost::system::error_category& addrinfo_category
-  = boost::asio::error::detail::get_addrinfo_category();
+  = boost::asio::error::get_addrinfo_category();
 static const boost::system::error_category& misc_category
-  = boost::asio::error::detail::get_misc_category();
+  = boost::asio::error::get_misc_category();
 static const boost::system::error_category& ssl_category
-  = boost::asio::error::detail::get_ssl_category();
+  = boost::asio::error::get_ssl_category();
 
 } // namespace error
 } // namespace asio

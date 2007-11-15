@@ -53,7 +53,8 @@ public:
     if (error != 0)
     {
       asio::system_error e(
-          asio::error_code(error, asio::error::system_category),
+          asio::error_code(error,
+            asio::error::get_system_category()),
           "thread");
       boost::throw_exception(e);
     }

@@ -87,7 +87,7 @@ public:
     {
       asio::system_error e(
           asio::error_code(ref_->result(),
-            asio::error::system_category),
+            asio::error::get_system_category()),
           "winsock");
       boost::throw_exception(e);
     }

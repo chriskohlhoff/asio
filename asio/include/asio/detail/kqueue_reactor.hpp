@@ -151,7 +151,7 @@ public:
       if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
       {
         asio::error_code ec(errno,
-            asio::error::system_category);
+            asio::error::get_system_category());
         read_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
@@ -178,7 +178,7 @@ public:
       if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
       {
         asio::error_code ec(errno,
-            asio::error::system_category);
+            asio::error::get_system_category());
         write_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
@@ -204,7 +204,7 @@ public:
       if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
       {
         asio::error_code ec(errno,
-            asio::error::system_category);
+            asio::error::get_system_category());
         except_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
@@ -228,7 +228,7 @@ public:
       if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
       {
         asio::error_code ec(errno,
-            asio::error::system_category);
+            asio::error::get_system_category());
         write_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
@@ -243,7 +243,7 @@ public:
       if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
       {
         asio::error_code ec(errno,
-            asio::error::system_category);
+            asio::error::get_system_category());
         except_op_queue_.dispatch_all_operations(descriptor, ec);
         write_op_queue_.dispatch_all_operations(descriptor, ec);
       }
@@ -397,7 +397,7 @@ private:
         if (events[i].flags & EV_ERROR)
         {
           asio::error_code error(
-              events[i].data, asio::error::system_category);
+              events[i].data, asio::error::get_system_category());
           except_op_queue_.dispatch_all_operations(descriptor, error);
           read_op_queue_.dispatch_all_operations(descriptor, error);
         }
@@ -428,7 +428,7 @@ private:
         if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
         {
           asio::error_code error(errno,
-              asio::error::system_category);
+              asio::error::get_system_category());
           except_op_queue_.dispatch_all_operations(descriptor, error);
           read_op_queue_.dispatch_all_operations(descriptor, error);
         }
@@ -440,7 +440,7 @@ private:
         if (events[i].flags & EV_ERROR)
         {
           asio::error_code error(
-              events[i].data, asio::error::system_category);
+              events[i].data, asio::error::get_system_category());
           write_op_queue_.dispatch_all_operations(descriptor, error);
         }
         else
@@ -458,7 +458,7 @@ private:
         if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
         {
           asio::error_code error(errno,
-              asio::error::system_category);
+              asio::error::get_system_category());
           write_op_queue_.dispatch_all_operations(descriptor, error);
         }
       }
@@ -515,7 +515,7 @@ private:
       boost::throw_exception(
           asio::system_error(
             asio::error_code(errno,
-              asio::error::system_category),
+              asio::error::get_system_category()),
             "kqueue"));
     }
     return fd;

@@ -157,7 +157,8 @@ public:
 
     if (int err = reactor_.register_descriptor(sock.get()))
     {
-      ec = asio::error_code(err, asio::error::system_category);
+      ec = asio::error_code(err,
+          asio::error::get_system_category());
       return ec;
     }
 
@@ -181,7 +182,8 @@ public:
 
     if (int err = reactor_.register_descriptor(native_socket))
     {
-      ec = asio::error_code(err, asio::error::system_category);
+      ec = asio::error_code(err,
+          asio::error::get_system_category());
       return ec;
     }
 
@@ -1489,7 +1491,7 @@ public:
       if (connect_error)
       {
         ec = asio::error_code(connect_error,
-            asio::error::system_category);
+            asio::error::get_system_category());
         io_service_.post(bind_handler(handler_, ec));
         return true;
       }

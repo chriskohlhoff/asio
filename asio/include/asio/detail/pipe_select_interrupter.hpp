@@ -51,7 +51,8 @@ public:
     }
     else
     {
-      asio::error_code ec(errno, asio::error::system_category);
+      asio::error_code ec(errno,
+          asio::error::get_system_category());
       asio::system_error e(ec, "pipe_select_interrupter");
       boost::throw_exception(e);
     }

@@ -160,7 +160,7 @@ public:
       if (result != 0)
       {
         asio::error_code ec(errno,
-            asio::error::system_category);
+            asio::error::get_system_category());
         read_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
@@ -196,7 +196,7 @@ public:
       if (result != 0)
       {
         asio::error_code ec(errno,
-            asio::error::system_category);
+            asio::error::get_system_category());
         write_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
@@ -228,7 +228,7 @@ public:
       if (result != 0)
       {
         asio::error_code ec(errno,
-            asio::error::system_category);
+            asio::error::get_system_category());
         except_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
@@ -262,7 +262,7 @@ public:
       if (result != 0)
       {
         asio::error_code ec(errno,
-            asio::error::system_category);
+            asio::error::get_system_category());
         write_op_queue_.dispatch_all_operations(descriptor, ec);
         except_op_queue_.dispatch_all_operations(descriptor, ec);
       }
@@ -456,7 +456,7 @@ private:
           if (result != 0)
           {
             ec = asio::error_code(errno,
-                asio::error::system_category);
+                asio::error::get_system_category());
             read_op_queue_.dispatch_all_operations(descriptor, ec);
             write_op_queue_.dispatch_all_operations(descriptor, ec);
             except_op_queue_.dispatch_all_operations(descriptor, ec);
@@ -518,7 +518,7 @@ private:
       boost::throw_exception(
           asio::system_error(
             asio::error_code(errno,
-              asio::error::system_category),
+              asio::error::get_system_category()),
             "epoll"));
     }
     return fd;

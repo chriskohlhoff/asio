@@ -55,7 +55,7 @@ public:
       DWORD last_error = ::GetLastError();
       asio::system_error e(
           asio::error_code(last_error,
-            asio::error::system_category),
+            asio::error::get_system_category()),
           "tss");
       boost::throw_exception(e);
     }

@@ -41,10 +41,10 @@ namespace error
     system_category = ASIO_WIN_OR_POSIX(0, 0),
 
     /// Error codes from NetDB functions.
-    netdb_category = ASIO_WIN_OR_POSIX(system_category, 1),
+    netdb_category = ASIO_WIN_OR_POSIX(_system_category, 1),
 
     /// Error codes from getaddrinfo.
-    addrinfo_category = ASIO_WIN_OR_POSIX(system_category, 2),
+    addrinfo_category = ASIO_WIN_OR_POSIX(_system_category, 2),
 
     /// Miscellaneous error codes.
     misc_category = ASIO_WIN_OR_POSIX(3, 3),
@@ -52,6 +52,14 @@ namespace error
     /// SSL error codes.
     ssl_category = ASIO_WIN_OR_POSIX(4, 4)
   };
+
+  // Category getters.
+  error_category get_system_category() { return system_category; }
+  error_category get_netdb_category() { return netdb_category; }
+  error_category get_addrinfo_category() { return addrinfo_category; }
+  error_category get_misc_category() { return misc_category; }
+  error_category get_ssl_category() { return ssl_category; }
+
 } // namespace error
 
 /// Bring error category type into the asio namespace.

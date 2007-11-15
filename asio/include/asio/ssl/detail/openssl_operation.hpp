@@ -179,7 +179,7 @@ public:
       else
       {
         return handler_(asio::error_code(
-              error_code, asio::error::ssl_category), rc); 
+              error_code, asio::error::get_ssl_category()), rc); 
       }
     }
 

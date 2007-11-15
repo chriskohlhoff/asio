@@ -338,7 +338,7 @@ public:
       {
         DWORD last_error = ::GetLastError();
         ec = asio::error_code(last_error,
-            asio::error::system_category);
+            asio::error::get_system_category());
       }
       else
       {
@@ -360,7 +360,7 @@ public:
       {
         DWORD last_error = ::GetLastError();
         ec = asio::error_code(last_error,
-            asio::error::system_category);
+            asio::error::get_system_category());
       }
       else
       {
@@ -667,7 +667,7 @@ public:
       else if (last_error == ERROR_PORT_UNREACHABLE)
         last_error = WSAECONNREFUSED;
       ec = asio::error_code(last_error,
-          asio::error::system_category);
+          asio::error::get_system_category());
       return 0;
     }
 
@@ -719,7 +719,7 @@ public:
 
       // Map non-portable errors to their portable counterparts.
       asio::error_code ec(last_error,
-          asio::error::system_category);
+          asio::error::get_system_category());
       if (ec.value() == ERROR_NETNAME_DELETED)
       {
         if (handler_op->cancel_token_.expired())
@@ -822,7 +822,7 @@ public:
       asio::io_service::work work(this->get_io_service());
       ptr.reset();
       asio::error_code ec(last_error,
-          asio::error::system_category);
+          asio::error::get_system_category());
       iocp_service_.post(bind_handler(handler, ec, bytes_transferred));
     }
     else
@@ -867,7 +867,7 @@ public:
       if (last_error == ERROR_PORT_UNREACHABLE)
         last_error = WSAECONNREFUSED;
       ec = asio::error_code(last_error,
-          asio::error::system_category);
+          asio::error::get_system_category());
       return 0;
     }
 
@@ -917,7 +917,7 @@ public:
 
       // Map non-portable errors to their portable counterparts.
       asio::error_code ec(last_error,
-          asio::error::system_category);
+          asio::error::get_system_category());
       if (ec.value() == ERROR_PORT_UNREACHABLE)
       {
         ec = asio::error::connection_refused;
@@ -1001,7 +1001,7 @@ public:
       asio::io_service::work work(this->get_io_service());
       ptr.reset();
       asio::error_code ec(last_error,
-          asio::error::system_category);
+          asio::error::get_system_category());
       iocp_service_.post(bind_handler(handler, ec, bytes_transferred));
     }
     else
@@ -1056,7 +1056,7 @@ public:
       else if (last_error == ERROR_PORT_UNREACHABLE)
         last_error = WSAECONNREFUSED;
       ec = asio::error_code(last_error,
-          asio::error::system_category);
+          asio::error::get_system_category());
       return 0;
     }
     if (bytes_transferred == 0)
@@ -1115,7 +1115,7 @@ public:
 
       // Map non-portable errors to their portable counterparts.
       asio::error_code ec(last_error,
-          asio::error::system_category);
+          asio::error::get_system_category());
       if (ec.value() == ERROR_NETNAME_DELETED)
       {
         if (handler_op->cancel_token_.expired())
@@ -1223,7 +1223,7 @@ public:
       asio::io_service::work work(this->get_io_service());
       ptr.reset();
       asio::error_code ec(last_error,
-          asio::error::system_category);
+          asio::error::get_system_category());
       iocp_service_.post(bind_handler(handler, ec, bytes_transferred));
     }
     else
@@ -1270,7 +1270,7 @@ public:
       if (last_error == ERROR_PORT_UNREACHABLE)
         last_error = WSAECONNREFUSED;
       ec = asio::error_code(last_error,
-          asio::error::system_category);
+          asio::error::get_system_category());
       return 0;
     }
     if (bytes_transferred == 0)
@@ -1337,7 +1337,7 @@ public:
 
       // Map non-portable errors to their portable counterparts.
       asio::error_code ec(last_error,
-          asio::error::system_category);
+          asio::error::get_system_category());
       if (ec.value() == ERROR_PORT_UNREACHABLE)
       {
         ec = asio::error::connection_refused;
@@ -1432,7 +1432,7 @@ public:
       asio::io_service::work work(this->get_io_service());
       ptr.reset();
       asio::error_code ec(last_error,
-          asio::error::system_category);
+          asio::error::get_system_category());
       iocp_service_.post(bind_handler(handler, ec, bytes_transferred));
     }
     else
@@ -1671,7 +1671,7 @@ public:
 
       // Call the handler.
       asio::error_code ec(last_error,
-          asio::error::system_category);
+          asio::error::get_system_category());
       asio_handler_invoke_helpers::invoke(
           detail::bind_handler(handler, ec), &handler);
     }
@@ -1772,7 +1772,7 @@ public:
         asio::io_service::work work(this->get_io_service());
         ptr.reset();
         asio::error_code ec(last_error,
-            asio::error::system_category);
+            asio::error::get_system_category());
         iocp_service_.post(bind_handler(handler, ec));
       }
     }
@@ -1849,7 +1849,7 @@ public:
       if (connect_error)
       {
         ec = asio::error_code(connect_error,
-            asio::error::system_category);
+            asio::error::get_system_category());
         io_service_.post(bind_handler(handler_, ec));
         return true;
       }
