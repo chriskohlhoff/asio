@@ -54,11 +54,11 @@ namespace error
   };
 
   // Category getters.
-  error_category get_system_category() { return system_category; }
-  error_category get_netdb_category() { return netdb_category; }
-  error_category get_addrinfo_category() { return addrinfo_category; }
-  error_category get_misc_category() { return misc_category; }
-  error_category get_ssl_category() { return ssl_category; }
+  inline error_category get_system_category() { return system_category; }
+  inline error_category get_netdb_category() { return netdb_category; }
+  inline error_category get_addrinfo_category() { return addrinfo_category; }
+  inline error_category get_misc_category() { return misc_category; }
+  inline error_category get_ssl_category() { return ssl_category; }
 
 } // namespace error
 
