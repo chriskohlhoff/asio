@@ -41,10 +41,10 @@ namespace error
     system_category = ASIO_WIN_OR_POSIX(0, 0),
 
     /// Error codes from NetDB functions.
-    netdb_category = ASIO_WIN_OR_POSIX(_system_category, 1),
+    netdb_category = ASIO_WIN_OR_POSIX(system_category, 1),
 
     /// Error codes from getaddrinfo.
-    addrinfo_category = ASIO_WIN_OR_POSIX(_system_category, 2),
+    addrinfo_category = ASIO_WIN_OR_POSIX(system_category, 2),
 
     /// Miscellaneous error codes.
     misc_category = ASIO_WIN_OR_POSIX(3, 3),
