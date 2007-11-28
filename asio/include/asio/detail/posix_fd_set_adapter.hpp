@@ -35,11 +35,16 @@ public:
     FD_ZERO(&fd_set_);
   }
 
-  void set(socket_type descriptor)
+  bool set(socket_type descriptor)
   {
-    if (max_descriptor_ == invalid_socket || descriptor > max_descriptor_)
-      max_descriptor_ = descriptor;
-    FD_SET(descriptor, &fd_set_);
+    if (descriptor < FD_SETSIZE)
+    {
+      if (max_descriptor_ == invalid_socket || descriptor > max_descriptor_)
+        max_descriptor_ = descriptor;
+      FD_SET(descriptor, &fd_set_);
+      return true;
+    }
+    return false;
   }
 
   bool is_set(socket_type descriptor) const

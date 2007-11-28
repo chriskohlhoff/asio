@@ -35,6 +35,8 @@ inline std::string error_code::message() const
     return "Already open.";
   if (*this == error::not_found)
     return "Not found.";
+  if (*this == error::fd_set_failure)
+    return "The descriptor does not fit into the select call's fd_set.";
   if (category_ == error::get_ssl_category())
     return "SSL error.";
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)

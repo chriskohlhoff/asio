@@ -236,6 +236,8 @@ public:
       return "End of file";
     if (value == error::not_found)
       return "Element not found";
+    if (value == error::fd_set_failure)
+      return "The descriptor does not fit into the select call's fd_set";
     return "asio.misc error";
   }
 };

@@ -194,7 +194,10 @@ enum misc_errors
   eof,
 
   /// Element not found.
-  not_found
+  not_found,
+
+  /// The descriptor cannot fit into the select system call's fd_set.
+  fd_set_failure
 };
 
 enum ssl_errors
