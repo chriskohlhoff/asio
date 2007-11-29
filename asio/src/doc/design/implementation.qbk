@@ -194,8 +194,7 @@ Demultiplexing mechanism:
 * Uses overlapped I/O and I/O completion ports for all asynchronous socket
 operations except for asynchronous connect.
 
-* Uses `select` for `deadline_timer` operations and for emulating asynchronous
-connect.
+* Uses `select` for emulating asynchronous connect.
 
 Threads:
 
@@ -204,8 +203,7 @@ Threads:
 `io_service::poll_one()`.
 
 * An additional thread per `io_service` is used for the `select`
-demultiplexing. This thread is created whenever the first `deadline_timer` is
-created, or on the first call to `async_connect()`.
+demultiplexing. This thread is created on the first call to `async_connect()`.
 
 * An additional thread per `io_service` is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
