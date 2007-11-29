@@ -130,4 +130,100 @@ following steps in a Command Prompt window:
 to build using MSYS, you should use [^export] rather than [^set] to specify the
 location of boost.]
 
+[heading Macros]
+
+The macros listed in the table below may be used to control the behaviour of
+Asio.
+
+[table
+  [[Macro][Description]]
+  [
+    [`ASIO_ENABLE_BUFFER_DEBUGGING`]
+    [
+      Enables Asio's buffer debugging support, which can help identify when
+      invalid buffers are used in read or write operations (e.g. if a
+      std::string object being written is destroyed before the write operation
+      completes).
+
+      When using Microsoft Visual C++, this macro is defined automatically if
+      the compiler's iterator debugging support is enabled, unless
+      `ASIO_DISABLE_BUFFER_DEBUGGING` has been defined.
+
+      When using g++, this macro is defined automatically if standard library
+      debugging is enabled (`_GLIBCXX_DEBUG` is defined), unless
+      `ASIO_DISABLE_BUFFER_DEBUGGING` has been defined.
+    ]
+  ]
+  [
+    [`ASIO_DISABLE_BUFFER_DEBUGGING`]
+    [
+      Explictly disables Asio's buffer debugging support.
+    ]
+  ]
+  [
+    [`ASIO_DISABLE_DEV_POLL`]
+    [
+      Explicitly disables [^/dev/poll] support on Solaris, forcing the use of
+      a `select`-based implementation.
+    ]
+  ]
+  [
+    [`ASIO_DISABLE_EPOLL`]
+    [
+      Explicitly disables `epoll` support on Linux, forcing the use of a
+      `select`-based implementation.
+    ]
+  ]
+  [
+    [`ASIO_DISABLE_KQUEUE`]
+    [
+      Explicitly disables `kqueue` support on Mac OS X and BSD variants,
+      forcing the use of a `select`-based implementation.
+    ]
+  ]
+  [
+    [`ASIO_DISABLE_IOCP`]
+    [
+      Explicitly disables I/O completion ports support on Windows, forcing the
+      use of a `select`-based implementation.
+    ]
+  ]
+  [
+    [`ASIO_NO_WIN32_LEAN_AND_MEAN`]
+    [
+      By default, Asio will automatically define `WIN32_LEAN_AND_MEAN` when
+      compiling for Windows, to minimise the number of Windows SDK header files
+      and features that are included. The presence of
+      `ASIO_NO_WIN32_LEAN_AND_MEAN` prevents `WIN32_LEAN_AND_MEAN` from
+      being defined.
+    ]
+  ]
+  [
+    [`ASIO_NO_DEFAULT_LINKED_LIBS`]
+    [
+      When compiling for Windows using Microsoft Visual C++ or Borland C++, Asio
+      will automatically link in the necessary Windows SDK libraries for sockets
+      support (i.e. [^ws2_32.lib] and [^mswsock.lib], or [^ws2.lib] when
+      building for Windows CE). The `ASIO_NO_DEFAULT_LINKED_LIBS` macro
+      prevents these libraries from being linked.
+    ]
+  ]
+  [
+    [`ASIO_SOCKET_STREAMBUF_MAX_ARITY`]
+    [
+      Determines the maximum number of arguments that may be passed to the 
+      `basic_socket_streambuf` class template's `connect` member function.
+      Defaults to 5.
+    ]
+  ]
+  [
+    [`ASIO_SOCKET_IOSTREAM_MAX_ARITY`]
+    [
+      Determines the maximum number of arguments that may be passed to the 
+      `basic_socket_iostream` class template's constructor and `connect` member
+      function. Defaults to 5.
+    ]
+  ]
+]
+
 [endsect]
