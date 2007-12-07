@@ -23117,6 +23117,66 @@ Available error code categories.
 [endsect]
 
 
+
+[section:error__get_addrinfo_category error::get_addrinfo_category]
+
+
+
+  error_category get_addrinfo_category();
+
+
+
+[endsect]
+
+
+
+[section:error__get_misc_category error::get_misc_category]
+
+
+
+  error_category get_misc_category();
+
+
+
+[endsect]
+
+
+
+[section:error__get_netdb_category error::get_netdb_category]
+
+
+
+  error_category get_netdb_category();
+
+
+
+[endsect]
+
+
+
+[section:error__get_ssl_category error::get_ssl_category]
+
+
+
+  error_category get_ssl_category();
+
+
+
+[endsect]
+
+
+
+[section:error__get_system_category error::get_system_category]
+
+
+
+  error_category get_system_category();
+
+
+
+[endsect]
+
+
 [section:error__make_error_code error::make_error_code]
 
 
@@ -23226,6 +23286,11 @@ Available error code categories.
   [
     [not_found]
     [Element not found. ]
+  ]
+
+  [
+    [fd_set_failure]
+    [The descriptor cannot fit into the select system call's fd_set. ]
   ]
 
 ]
@@ -23363,6 +23428,11 @@ Class to represent an error code value.
   [
     [[link asio.reference.error_code.operator_not_ [*operator!]]]
     [Operator to test if the error represents success. ]
+  ]
+  
+  [
+    [[link asio.reference.error_code.unspecified_bool_true [*unspecified_bool_true]]]
+    []
   ]
   
   [
@@ -23523,11 +23593,24 @@ Equality operator to compare two error objects.
 
 
 
+[section:unspecified_bool_true error_code::unspecified_bool_true]
+
+
+
+  static void unspecified_bool_true(
+      unspecified_bool_type_t );
+
+
+
+[endsect]
+
+
+
 [section:unspecified_bool_type error_code::unspecified_bool_type]
 
 
 
-  typedef unspecified_bool_type_t * unspecified_bool_type;
+  typedef void(*) unspecified_bool_type;
 
 
 
