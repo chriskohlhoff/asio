@@ -362,7 +362,7 @@ private:
       handler_(error, rc);
   }
 
-  void do_async_read()
+  int do_async_read()
   {
     // Wait for new data
     socket_.async_read_some
@@ -377,6 +377,7 @@ private:
         asio::placeholders::bytes_transferred
       ) 
     );
+    return 0;
   }
 
   void async_read_handler(const asio::error_code& error,
