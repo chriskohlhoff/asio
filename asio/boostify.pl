@@ -70,6 +70,28 @@ sub source_contains_asio_thread_usage
   return 0;
 }
 
+sub source_contains_asio_include
+{
+  my ($from) = @_;
+
+  # Open the input file.
+  open(my $input, "<$from") or die("Can't open $from for reading");
+
+  # Check file for inclusion of asio.hpp.
+  while (my $line = <$input>)
+  {
+    chomp($line);
+    if ($line =~ /# *include [<"]asio\.hpp[>"]/)
+    {
+      close($input);
+      return 1;
+    }
+  }
+
+  close($input);
+  return 0;
+}
+
 sub source_contains_asio_error_code_include
 {
   my ($from) = @_;
@@ -332,6 +354,7 @@ sub copy_source_file
 
   # First determine whether the file makes any use of asio::thread.
   my $uses_asio_thread = source_contains_asio_thread_usage($from);
+  my $includes_asio = source_contains_asio_include($from);
 
   # Check whether the file includes error handling header files.
   my $includes_error_code = source_contains_asio_error_code_include($from);
@@ -378,7 +401,7 @@ sub copy_source_file
     }
     elsif ($line =~ /^(# *include )[<"]boost\/.*[>"].*$/)
     {
-      if ($uses_asio_thread)
+      if (!$includes_asio && $uses_asio_thread)
       {
         print_line($output, $1 . "<boost/thread.hpp>", $from, $lineno);
         $uses_asio_thread = 0;
