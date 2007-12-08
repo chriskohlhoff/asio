@@ -3879,7 +3879,7 @@ The basic_socket class template provides functionality that is common to both st
 
 The maximum length of the queue of pending incoming connections. 
 
-  static const int max_connections;
+  static const int max_connections = implementation_defined;
 
 
 
@@ -3894,7 +3894,7 @@ The maximum length of the queue of pending incoming connections.
 
 Specify that the data should not be subject to routing. 
 
-  static const int message_do_not_route;
+  static const int message_do_not_route = implementation_defined;
 
 
 
@@ -3925,7 +3925,7 @@ Bitmask type for flags that can be passed to send and receive operations.
 
 Process out-of-band data. 
 
-  static const int message_out_of_band;
+  static const int message_out_of_band = implementation_defined;
 
 
 
@@ -3940,7 +3940,7 @@ Process out-of-band data.
 
 Peek at incoming data without removing it from the input queue. 
 
-  static const int message_peek;
+  static const int message_peek = implementation_defined;
 
 
 
@@ -8445,7 +8445,7 @@ The basic_socket class template provides functionality that is common to both st
 
 The maximum length of the queue of pending incoming connections. 
 
-  static const int max_connections;
+  static const int max_connections = implementation_defined;
 
 
 
@@ -8460,7 +8460,7 @@ The maximum length of the queue of pending incoming connections.
 
 Specify that the data should not be subject to routing. 
 
-  static const int message_do_not_route;
+  static const int message_do_not_route = implementation_defined;
 
 
 
@@ -8491,7 +8491,7 @@ Bitmask type for flags that can be passed to send and receive operations.
 
 Process out-of-band data. 
 
-  static const int message_out_of_band;
+  static const int message_out_of_band = implementation_defined;
 
 
 
@@ -8506,7 +8506,7 @@ Process out-of-band data.
 
 Peek at incoming data without removing it from the input queue. 
 
-  static const int message_peek;
+  static const int message_peek = implementation_defined;
 
 
 
@@ -11089,7 +11089,7 @@ An object that represents the local endpoint of the acceptor. Returns a default-
 
 The maximum length of the queue of pending incoming connections. 
 
-  static const int max_connections;
+  static const int max_connections = implementation_defined;
 
 
 
@@ -11104,7 +11104,7 @@ The maximum length of the queue of pending incoming connections.
 
 Specify that the data should not be subject to routing. 
 
-  static const int message_do_not_route;
+  static const int message_do_not_route = implementation_defined;
 
 
 
@@ -11135,7 +11135,7 @@ Bitmask type for flags that can be passed to send and receive operations.
 
 Process out-of-band data. 
 
-  static const int message_out_of_band;
+  static const int message_out_of_band = implementation_defined;
 
 
 
@@ -11150,7 +11150,7 @@ Process out-of-band data.
 
 Peek at incoming data without removing it from the input queue. 
 
-  static const int message_peek;
+  static const int message_peek = implementation_defined;
 
 
 
@@ -13870,7 +13870,7 @@ The basic_socket class template provides functionality that is common to both st
 
 The maximum length of the queue of pending incoming connections. 
 
-  static const int max_connections;
+  static const int max_connections = implementation_defined;
 
 
 
@@ -13885,7 +13885,7 @@ The maximum length of the queue of pending incoming connections.
 
 Specify that the data should not be subject to routing. 
 
-  static const int message_do_not_route;
+  static const int message_do_not_route = implementation_defined;
 
 
 
@@ -13916,7 +13916,7 @@ Bitmask type for flags that can be passed to send and receive operations.
 
 Process out-of-band data. 
 
-  static const int message_out_of_band;
+  static const int message_out_of_band = implementation_defined;
 
 
 
@@ -13931,7 +13931,7 @@ Process out-of-band data.
 
 Peek at incoming data without removing it from the input queue. 
 
-  static const int message_peek;
+  static const int message_peek = implementation_defined;
 
 
 
@@ -17346,7 +17346,7 @@ The basic_socket class template provides functionality that is common to both st
 
 The maximum length of the queue of pending incoming connections. 
 
-  static const int max_connections;
+  static const int max_connections = implementation_defined;
 
 
 
@@ -17361,7 +17361,7 @@ The maximum length of the queue of pending incoming connections.
 
 Specify that the data should not be subject to routing. 
 
-  static const int message_do_not_route;
+  static const int message_do_not_route = implementation_defined;
 
 
 
@@ -17392,7 +17392,7 @@ Bitmask type for flags that can be passed to send and receive operations.
 
 Process out-of-band data. 
 
-  static const int message_out_of_band;
+  static const int message_out_of_band = implementation_defined;
 
 
 
@@ -17407,7 +17407,7 @@ Process out-of-band data.
 
 Peek at incoming data without removing it from the input queue. 
 
-  static const int message_peek;
+  static const int message_peek = implementation_defined;
 
 
 
@@ -19793,7 +19793,7 @@ Close the stream.
 
 The default buffer size. 
 
-  static const std::size_t default_buffer_size;
+  static const std::size_t default_buffer_size = implementation_defined;
 
 
 
@@ -20963,7 +20963,7 @@ Close the stream.
 
 The default buffer size. 
 
-  static const std::size_t default_buffer_size;
+  static const std::size_t default_buffer_size = implementation_defined;
 
 
 
@@ -28119,7 +28119,7 @@ The
 
 Only return IPv4 addresses if a non-loopback IPv4 address is configured for the system. Only return IPv6 addresses if a non-loopback IPv6 address is configured for the system. 
 
-  static const int address_configured;
+  static const int address_configured = implementation_defined;
 
 
 
@@ -28134,7 +28134,7 @@ Only return IPv4 addresses if a non-loopback IPv4 address is configured for the 
 
 If used with v4_mapped, return all matching IPv6 and IPv4 addresses. 
 
-  static const int all_matching;
+  static const int all_matching = implementation_defined;
 
 
 
@@ -28235,7 +28235,7 @@ Construct with specified host name and service name for a given protocol.
 
 Determine the canonical name of the host specified in the query. 
 
-  static const int canonical_name;
+  static const int canonical_name = implementation_defined;
 
 
 
@@ -28274,7 +28274,7 @@ Get the host name associated with the query.
 
 Host name should be treated as a numeric string defining an IPv4 or IPv6 address and no name resolution should be attempted. 
 
-  static const int numeric_host;
+  static const int numeric_host = implementation_defined;
 
 
 
@@ -28289,7 +28289,7 @@ Host name should be treated as a numeric string defining an IPv4 or IPv6 address
 
 Service name should be treated as a numeric string defining a port number and no name resolution should be attempted. 
 
-  static const int numeric_service;
+  static const int numeric_service = implementation_defined;
 
 
 
@@ -28304,7 +28304,7 @@ Service name should be treated as a numeric string defining a port number and no
 
 Indicate that returned endpoint is intended for use as a locally bound socket endpoint. 
 
-  static const int passive;
+  static const int passive = implementation_defined;
 
 
 
@@ -28344,7 +28344,7 @@ Get the service name associated with the query.
 
 If the query protocol family is specified as IPv6, return IPv4-mapped IPv6 addresses on finding no IPv6 addresses. 
 
-  static const int v4_mapped;
+  static const int v4_mapped = implementation_defined;
 
 
 
@@ -28616,7 +28616,7 @@ The resolver_query_base class is used as a base for the basic_resolver_query cla
 
 Only return IPv4 addresses if a non-loopback IPv4 address is configured for the system. Only return IPv6 addresses if a non-loopback IPv6 address is configured for the system. 
 
-  static const int address_configured;
+  static const int address_configured = implementation_defined;
 
 
 
@@ -28628,7 +28628,7 @@ Only return IPv4 addresses if a non-loopback IPv4 address is configured for the 
 
 If used with v4_mapped, return all matching IPv6 and IPv4 addresses. 
 
-  static const int all_matching;
+  static const int all_matching = implementation_defined;
 
 
 
@@ -28640,7 +28640,7 @@ If used with v4_mapped, return all matching IPv6 and IPv4 addresses.
 
 Determine the canonical name of the host specified in the query. 
 
-  static const int canonical_name;
+  static const int canonical_name = implementation_defined;
 
 
 
@@ -28652,7 +28652,7 @@ Determine the canonical name of the host specified in the query.
 
 Host name should be treated as a numeric string defining an IPv4 or IPv6 address and no name resolution should be attempted. 
 
-  static const int numeric_host;
+  static const int numeric_host = implementation_defined;
 
 
 
@@ -28664,7 +28664,7 @@ Host name should be treated as a numeric string defining an IPv4 or IPv6 address
 
 Service name should be treated as a numeric string defining a port number and no name resolution should be attempted. 
 
-  static const int numeric_service;
+  static const int numeric_service = implementation_defined;
 
 
 
@@ -28676,7 +28676,7 @@ Service name should be treated as a numeric string defining a port number and no
 
 Indicate that returned endpoint is intended for use as a locally bound socket endpoint. 
 
-  static const int passive;
+  static const int passive = implementation_defined;
 
 
 
@@ -28688,7 +28688,7 @@ Indicate that returned endpoint is intended for use as a locally bound socket en
 
 If the query protocol family is specified as IPv6, return IPv4-mapped IPv6 addresses on finding no IPv6 addresses. 
 
-  static const int v4_mapped;
+  static const int v4_mapped = implementation_defined;
 
 
 
@@ -33605,7 +33605,7 @@ Getting the current option value:
 
 The maximum length of the queue of pending incoming connections. 
 
-  static const int max_connections;
+  static const int max_connections = implementation_defined;
 
 
 
@@ -33617,7 +33617,7 @@ The maximum length of the queue of pending incoming connections.
 
 Specify that the data should not be subject to routing. 
 
-  static const int message_do_not_route;
+  static const int message_do_not_route = implementation_defined;
 
 
 
@@ -33642,7 +33642,7 @@ Bitmask type for flags that can be passed to send and receive operations.
 
 Process out-of-band data. 
 
-  static const int message_out_of_band;
+  static const int message_out_of_band = implementation_defined;
 
 
 
@@ -33654,7 +33654,7 @@ Process out-of-band data.
 
 Peek at incoming data without removing it from the input queue. 
 
-  static const int message_peek;
+  static const int message_peek = implementation_defined;
 
 
 
@@ -34211,7 +34211,7 @@ Constructor.
 
 Implement various bug workarounds. 
 
-  static const int default_workarounds;
+  static const int default_workarounds = implementation_defined;
 
 
 
@@ -34440,7 +34440,7 @@ Different methods supported by a context.
 
 Disable SSL v2. 
 
-  static const int no_sslv2;
+  static const int no_sslv2 = implementation_defined;
 
 
 
@@ -34455,7 +34455,7 @@ Disable SSL v2.
 
 Disable SSL v3. 
 
-  static const int no_sslv3;
+  static const int no_sslv3 = implementation_defined;
 
 
 
@@ -34470,7 +34470,7 @@ Disable SSL v3.
 
 Disable TLS v1. 
 
-  static const int no_tlsv1;
+  static const int no_tlsv1 = implementation_defined;
 
 
 
@@ -34799,7 +34799,7 @@ This function may be used to configure the peer verification mode used by the co
 
 Always create a new key when using tmp_dh parameters. 
 
-  static const int single_dh_use;
+  static const int single_dh_use = implementation_defined;
 
 
 
@@ -35223,7 +35223,7 @@ This function is used to load Diffie-Hellman parameters into the context from a 
 
 Do not request client certificate on renegotiation. Ignored unless verify_peer is set. 
 
-  static const int verify_client_once;
+  static const int verify_client_once = implementation_defined;
 
 
 
@@ -35238,7 +35238,7 @@ Do not request client certificate on renegotiation. Ignored unless verify_peer i
 
 Fail verification if the peer has no certificate. Ignored unless verify_peer is set. 
 
-  static const int verify_fail_if_no_peer_cert;
+  static const int verify_fail_if_no_peer_cert = implementation_defined;
 
 
 
@@ -35269,7 +35269,7 @@ Bitmask type for peer verification.
 
 No verification. 
 
-  static const int verify_none;
+  static const int verify_none = implementation_defined;
 
 
 
@@ -35284,7 +35284,7 @@ No verification.
 
 Verify the peer. 
 
-  static const int verify_peer;
+  static const int verify_peer = implementation_defined;
 
 
 
@@ -35600,7 +35600,7 @@ The context_base class is used as a base for the basic_context class template so
 
 Implement various bug workarounds. 
 
-  static const int default_workarounds;
+  static const int default_workarounds = implementation_defined;
 
 
 
@@ -35716,7 +35716,7 @@ Different methods supported by a context.
 
 Disable SSL v2. 
 
-  static const int no_sslv2;
+  static const int no_sslv2 = implementation_defined;
 
 
 
@@ -35728,7 +35728,7 @@ Disable SSL v2.
 
 Disable SSL v3. 
 
-  static const int no_sslv3;
+  static const int no_sslv3 = implementation_defined;
 
 
 
@@ -35740,7 +35740,7 @@ Disable SSL v3.
 
 Disable TLS v1. 
 
-  static const int no_tlsv1;
+  static const int no_tlsv1 = implementation_defined;
 
 
 
@@ -35792,7 +35792,7 @@ Purpose of PEM password.
 
 Always create a new key when using tmp_dh parameters. 
 
-  static const int single_dh_use;
+  static const int single_dh_use = implementation_defined;
 
 
 
@@ -35804,7 +35804,7 @@ Always create a new key when using tmp_dh parameters.
 
 Do not request client certificate on renegotiation. Ignored unless verify_peer is set. 
 
-  static const int verify_client_once;
+  static const int verify_client_once = implementation_defined;
 
 
 
@@ -35816,7 +35816,7 @@ Do not request client certificate on renegotiation. Ignored unless verify_peer i
 
 Fail verification if the peer has no certificate. Ignored unless verify_peer is set. 
 
-  static const int verify_fail_if_no_peer_cert;
+  static const int verify_fail_if_no_peer_cert = implementation_defined;
 
 
 
@@ -35841,7 +35841,7 @@ Bitmask type for peer verification.
 
 No verification. 
 
-  static const int verify_none;
+  static const int verify_none = implementation_defined;
 
 
 
@@ -35853,7 +35853,7 @@ No verification.
 
 Verify the peer. 
 
-  static const int verify_peer;
+  static const int verify_peer = implementation_defined;
 
 
 

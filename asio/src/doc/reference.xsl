@@ -793,7 +793,9 @@
 <xsl:template name="variable">
 <xsl:text>
   </xsl:text><xsl:if test="@static='yes'">static </xsl:if><xsl:value-of
- select="type"/><xsl:text> </xsl:text><xsl:value-of select="name"/>;
+ select="type"/><xsl:text> </xsl:text><xsl:value-of select="name"/>
+ <xsl:if test="count(initializer) = 1"><xsl:text> =</xsl:text>
+ <xsl:value-of select="initializer"/></xsl:if>;
 </xsl:template>
 
 
