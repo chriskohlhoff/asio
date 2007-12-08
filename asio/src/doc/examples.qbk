@@ -50,8 +50,8 @@ and asynchronous operations.
 [heading HTTP Client]
 
 Example programs implementing simple HTTP 1.0 clients. These examples show how
-to use the [link asio.reference.read_until] and [link
-asio.reference.async_read_until] functions.
+to use the [link asio.reference.read_until read_until] and [link
+asio.reference.async_read_until async_read_until] functions.
 
 * [@../src/examples/http/client/sync_client.cpp]
 * [@../src/examples/http/client/async_client.cpp]
@@ -139,7 +139,8 @@ added to a priority queue rather than executed immediately.
 
 [heading Iostreams]
 
-Two examples showing how to use [link asio.reference.ip__tcp.iostream].
+Two examples showing how to use [link asio.reference.ip__tcp.iostream
+ip::tcp::iostream].
 
 * [@../src/examples/iostreams/daytime_client.cpp]
 * [@../src/examples/iostreams/daytime_server.cpp]
@@ -170,7 +171,7 @@ decode structures for transmission over a socket.
 This example demonstrates how to integrate custom functionality (in this case,
 for logging) into asio's [link asio.reference.io_service io_service], and
 how to use a custom service with [link
-asio.reference.basic_stream_socket].
+asio.reference.basic_stream_socket basic_stream_socket<>].
 
 * [@../src/examples/services/basic_logger.hpp]
 * [@../src/examples/services/daytime_client.cpp]
@@ -192,7 +193,7 @@ a proxy.
 [heading SSL]
 
 Example client and server programs showing the use of the [link
-asio.reference.ssl__stream] template with asynchronous operations.
+asio.reference.ssl__stream ssl::stream<>] template with asynchronous operations.
 
 * [@../src/examples/ssl/client.cpp]
 * [@../src/examples/ssl/server.cpp]
