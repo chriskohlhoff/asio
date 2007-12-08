@@ -37,7 +37,7 @@ public:
 
   bool set(socket_type descriptor)
   {
-    if (descriptor < FD_SETSIZE)
+    if (descriptor < (socket_type)FD_SETSIZE)
     {
       if (max_descriptor_ == invalid_socket || descriptor > max_descriptor_)
         max_descriptor_ = descriptor;
