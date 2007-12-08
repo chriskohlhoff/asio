@@ -16,7 +16,6 @@
     ]
     [category template]
     [category generic]
-    [last-revision $Date: 2007-10-22 23:00:36 $]
 ]
 
 [template mdash[] '''&mdash; ''']
