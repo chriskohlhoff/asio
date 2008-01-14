@@ -1811,19 +1811,21 @@ inline asio::error_code getnameinfo(const socket_addr_type* addr,
 # if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501) || defined(UNDER_CE)
   // Building for Windows XP, Windows Server 2003, or later.
   clear_error(ec);
-  int error = ::getnameinfo(addr, addrlen, host, static_cast<DWORD>(hostlen),
+  int error = ::getnameinfo(addr, static_cast<socklen_t>(addrlen),
+      host, static_cast<DWORD>(hostlen),
       serv, static_cast<DWORD>(servlen), flags);
   return ec = translate_addrinfo_error(error);
 # else
   // Building for Windows 2000 or earlier.
   typedef int (WSAAPI *gni_t)(const socket_addr_type*,
-      int, char*, std::size_t, char*, std::size_t, int);
+      int, char*, DWORD, char*, DWORD, int);
   if (HMODULE winsock_module = ::GetModuleHandleA("ws2_32"))
   {
     if (gni_t gni = (gni_t)::GetProcAddress(winsock_module, "getnameinfo"))
     {
       clear_error(ec);
-      int error = gni(addr, addrlen, host, hostlen, serv, servlen, flags);
+      int error = gni(addr, addrlen, host, static_cast<DWORD>(hostlen),
+          serv, static_cast<DWORD>(servlen), flags);
       return ec = translate_addrinfo_error(error);
     }
   }
