@@ -74,7 +74,8 @@ public:
       pending_cancellations_(),
       stop_thread_(false),
       thread_(0),
-      shutdown_(false)
+      shutdown_(false),
+      need_kqueue_wait_(true)
   {
     // Start the reactor's internal thread only if needed.
     if (Own_Thread)
@@ -373,7 +374,9 @@ private:
 
     // Block on the kqueue descriptor.
     struct kevent events[128];
-    int num_events = kevent(kqueue_fd_, 0, 0, events, 128, timeout);
+    int num_events = (block || need_kqueue_wait_)
+      ? kevent(kqueue_fd_, 0, 0, events, 128, timeout)
+      : 0;
 
     lock.lock();
     wait_in_progress_ = false;
@@ -477,6 +480,10 @@ private:
     for (std::size_t i = 0; i < pending_cancellations_.size(); ++i)
       cancel_ops_unlocked(pending_cancellations_[i]);
     pending_cancellations_.clear();
+
+    // Determine whether kqueue needs to be called next time the reactor is run.
+    need_kqueue_wait_ = !read_op_queue_.empty()
+      || !write_op_queue_.empty() || !except_op_queue_.empty();
 
     cleanup_operations_and_timers(lock);
   }
@@ -630,6 +637,9 @@ private:
 
   // Whether the service has been shut down.
   bool shutdown_;
+
+  // Whether we need to call kqueue the next time the reactor is run.
+  bool need_kqueue_wait_;
 };
 
 } // namespace detail
