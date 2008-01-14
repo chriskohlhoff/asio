@@ -92,7 +92,7 @@
 # include <sys/ioctl.h>
 # include <sys/poll.h>
 # include <sys/types.h>
-# if defined(__hpux)
+# if defined(__hpux) && !defined(__HP_aCC)
 #  include <sys/time.h>
 # else
 #  include <sys/select.h>
