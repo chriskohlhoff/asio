@@ -70,6 +70,11 @@ enum basic_errors
   /// Operation already in progress.
   already_started = ASIO_SOCKET_ERROR(EALREADY),
 
+  /// Broken pipe.
+  broken_pipe = ASIO_WIN_OR_POSIX(
+      ASIO_NATIVE_ERROR(ERROR_BROKEN_PIPE),
+      ASIO_NATIVE_ERROR(EPIPE)),
+
   /// A connection has been aborted.
   connection_aborted = ASIO_SOCKET_ERROR(ECONNABORTED),
 
