@@ -6,7 +6,7 @@ COMMON_CXXFLAGS = -nologo -EHac -GR -MT -I. -I../include -I$(BOOSTDIR)
 COMMON_LDFLAGS = -nologo -EHac -GR -MT
 
 !ifdef WARNINGS
-WARNINGS_CXXFLAGS = -W3
+WARNINGS_CXXFLAGS = -W3 -Wp64
 !endif
 
 !ifdef DEBUG
