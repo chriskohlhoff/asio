@@ -860,7 +860,7 @@ public:
     // Send the data.
     DWORD bytes_transferred = 0;
     int result = ::WSASendTo(impl.socket_, bufs, i, &bytes_transferred,
-        flags, destination.data(), destination.size(), 0, 0);
+        flags, destination.data(), static_cast<int>(destination.size()), 0, 0);
     if (result != 0)
     {
       DWORD last_error = ::WSAGetLastError();
@@ -991,8 +991,8 @@ public:
 
     // Send the data.
     DWORD bytes_transferred = 0;
-    int result = ::WSASendTo(impl.socket_, bufs, i, &bytes_transferred,
-        flags, destination.data(), destination.size(), ptr.get(), 0);
+    int result = ::WSASendTo(impl.socket_, bufs, i, &bytes_transferred, flags,
+        destination.data(), static_cast<int>(destination.size()), ptr.get(), 0);
     DWORD last_error = ::WSAGetLastError();
 
     // Check if the operation completed immediately.
