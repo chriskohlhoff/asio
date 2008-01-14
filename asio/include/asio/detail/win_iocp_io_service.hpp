@@ -347,7 +347,7 @@ private:
             &timer_thread_, this_thread_id, 0) == 0);
 
       // Calculate timeout for GetQueuedCompletionStatus call.
-      DWORD timeout = max_timeout;
+      DWORD timeout = INFINITE;
       if (dispatching_timers)
       {
         asio::detail::mutex::scoped_lock lock(timer_mutex_);
@@ -371,13 +371,28 @@ private:
       // Dispatch any pending timers.
       if (dispatching_timers)
       {
-        asio::detail::mutex::scoped_lock lock(timer_mutex_);
-        timer_queues_copy_ = timer_queues_;
-        for (std::size_t i = 0; i < timer_queues_.size(); ++i)
+        try
         {
-          timer_queues_[i]->dispatch_timers();
-          timer_queues_[i]->dispatch_cancellations();
-          timer_queues_[i]->cleanup_timers();
+          asio::detail::mutex::scoped_lock lock(timer_mutex_);
+          timer_queues_copy_ = timer_queues_;
+          for (std::size_t i = 0; i < timer_queues_.size(); ++i)
+          {
+            timer_queues_[i]->dispatch_timers();
+            timer_queues_[i]->dispatch_cancellations();
+            timer_queues_[i]->cleanup_timers();
+          }
+        }
+        catch (...)
+        {
+          // Transfer responsibility for dispatching timers to another thread.
+          if (::InterlockedCompareExchange(&timer_thread_,
+                0, this_thread_id) == this_thread_id)
+          {
+            ::PostQueuedCompletionStatus(iocp_.handle,
+                0, transfer_timer_dispatching, 0);
+          }
+
+          throw;
         }
       }
 
@@ -602,7 +617,7 @@ private:
   enum
   {
     // Maximum GetQueuedCompletionStatus timeout, in milliseconds.
-    max_timeout = 1000,
+    max_timeout = 500,
 
     // Completion key value to indicate that responsibility for dispatching
     // timers is being cooperatively transferred from one thread to another.
