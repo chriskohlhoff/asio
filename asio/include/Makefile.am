@@ -87,7 +87,6 @@ nobase_include_HEADERS = \
 	asio/detail/win_fd_set_adapter.hpp \
 	asio/detail/win_iocp_io_service.hpp \
 	asio/detail/win_iocp_io_service_fwd.hpp \
-	asio/detail/win_iocp_operation.hpp \
 	asio/detail/win_iocp_socket_service.hpp \
 	asio/detail/win_mutex.hpp \
 	asio/detail/win_signal_blocker.hpp \
