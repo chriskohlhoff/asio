@@ -29,6 +29,7 @@
 
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
+#include "asio/strand.hpp"
 #include "asio/detail/service_base.hpp"
 #include "asio/ssl/basic_context.hpp"
 #include "asio/ssl/stream_base.hpp"
@@ -163,7 +164,8 @@ public:
 
   // Construct a new stream socket service for the specified io_service.
   explicit openssl_stream_service(asio::io_service& io_service)
-    : asio::detail::service_base<openssl_stream_service>(io_service)
+    : asio::detail::service_base<openssl_stream_service>(io_service),
+      strand_(io_service)
   {
   }
 
@@ -258,11 +260,12 @@ public:
         local_handler,
         boost::arg<1>(),
         boost::arg<2>()
-      )
+      ),
+      strand_
     );
     local_handler->set_operation(op);
 
-    get_io_service().post(boost::bind(&openssl_operation<Stream>::start, op));
+    strand_.post(boost::bind(&openssl_operation<Stream>::start, op));
   }
 
   // Shut down SSL on the stream.
@@ -312,11 +315,12 @@ public:
         local_handler, 
         boost::arg<1>(),
         boost::arg<2>()
-      )
+      ),
+      strand_
     );
     local_handler->set_operation(op);
 
-    get_io_service().post(boost::bind(&openssl_operation<Stream>::start, op));        
+    strand_.post(boost::bind(&openssl_operation<Stream>::start, op));        
   }
 
   // Write some data to the stream.
@@ -385,11 +389,12 @@ public:
         local_handler, 
         boost::arg<1>(),
         boost::arg<2>()
-      )
+      ),
+      strand_
     );
     local_handler->set_operation(op);
 
-    get_io_service().post(boost::bind(&openssl_operation<Stream>::start, op));        
+    strand_.post(boost::bind(&openssl_operation<Stream>::start, op));        
   }
 
   // Read some data from the stream.
@@ -458,11 +463,12 @@ public:
         local_handler, 
         boost::arg<1>(),
         boost::arg<2>()
-      )
+      ),
+      strand_
     );
     local_handler->set_operation(op);
 
-    get_io_service().post(boost::bind(&openssl_operation<Stream>::start, op));        
+    strand_.post(boost::bind(&openssl_operation<Stream>::start, op));        
   }
 
   // Peek at the incoming data on the stream.
@@ -484,6 +490,8 @@ public:
   }
 
 private:  
+  asio::io_service::strand strand_;
+
   typedef asio::detail::mutex mutex_type;
   
   template<typename Mutex>

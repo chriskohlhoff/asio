@@ -19,6 +19,7 @@
 
 #include "asio/detail/push_options.hpp"
 #include <boost/function.hpp>
+#include <boost/assert.hpp>
 #include <boost/bind.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -87,10 +88,12 @@ public:
                     net_buffer& recv_buf,
                     SSL* session,
                     BIO* ssl_bio,
-                    user_handler_func  handler
+                    user_handler_func  handler,
+                    asio::io_service::strand& strand
                     )
     : primitive_(primitive)
     , user_handler_(handler)
+    , strand_(&strand)
     , recv_buf_(recv_buf)
     , socket_(socket)
     , ssl_bio_(ssl_bio)
@@ -117,6 +120,7 @@ public:
                     SSL* session,
                     BIO* ssl_bio)
     : primitive_(primitive)
+    , strand_(0)
     , recv_buf_(recv_buf)
     , socket_(socket)
     , ssl_bio_(ssl_bio)
@@ -240,6 +244,7 @@ private:
 
   ssl_primitive_func  primitive_;
   user_handler_func  user_handler_;
+  asio::io_service::strand* strand_;
   write_func  write_;
   read_func  read_;
   int_handler_func handler_;
@@ -303,19 +308,23 @@ private:
       {
         unsigned char *data_start = send_buf_.get_unused_start();
         send_buf_.data_added(len);
-  
+ 
+        BOOST_ASSERT(strand_); 
         asio::async_write
         ( 
           socket_, 
           asio::buffer(data_start, len),
-          boost::bind
+          strand_->wrap
           (
-            &openssl_operation::async_write_handler, 
-            this, 
-            is_operation_done,
-            rc, 
-            asio::placeholders::error, 
-            asio::placeholders::bytes_transferred
+            boost::bind
+            (
+              &openssl_operation::async_write_handler, 
+              this, 
+              is_operation_done,
+              rc, 
+              asio::placeholders::error, 
+              asio::placeholders::bytes_transferred
+            )
           )
         );
                   
@@ -365,17 +374,21 @@ private:
   int do_async_read()
   {
     // Wait for new data
+    BOOST_ASSERT(strand_);
     socket_.async_read_some
     ( 
       asio::buffer(recv_buf_.get_unused_start(),
         recv_buf_.get_unused_len()),
-      boost::bind
+      strand_->wrap
       (
-        &openssl_operation::async_read_handler, 
-        this, 
-        asio::placeholders::error, 
-        asio::placeholders::bytes_transferred
-      ) 
+        boost::bind
+        (
+          &openssl_operation::async_read_handler, 
+          this, 
+          asio::placeholders::error, 
+          asio::placeholders::bytes_transferred
+        )
+      )
     );
     return 0;
   }
