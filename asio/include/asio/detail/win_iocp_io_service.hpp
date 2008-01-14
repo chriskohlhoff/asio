@@ -34,7 +34,6 @@
 #include "asio/detail/service_base.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/timer_queue.hpp"
-#include "asio/detail/win_iocp_operation.hpp"
 #include "asio/detail/mutex.hpp"
 
 namespace asio {
@@ -44,14 +43,64 @@ class win_iocp_io_service
   : public asio::detail::service_base<win_iocp_io_service>
 {
 public:
-  // Base class for all operations.
-  typedef win_iocp_operation operation;
+  // Base class for all operations. A function pointer is used instead of
+  // virtual functions to avoid the associated overhead.
+  //
+  // This class inherits from OVERLAPPED so that we can downcast to get back to
+  // the operation pointer from the LPOVERLAPPED out parameter of
+  // GetQueuedCompletionStatus.
+  class operation
+    : public OVERLAPPED
+  {
+  public:
+    typedef void (*invoke_func_type)(operation*, DWORD, size_t);
+    typedef void (*destroy_func_type)(operation*);
+
+    operation(win_iocp_io_service& iocp_service,
+        invoke_func_type invoke_func, destroy_func_type destroy_func)
+      : outstanding_operations_(&iocp_service.outstanding_operations_),
+        invoke_func_(invoke_func),
+        destroy_func_(destroy_func)
+    {
+      Internal = 0;
+      InternalHigh = 0;
+      Offset = 0;
+      OffsetHigh = 0;
+      hEvent = 0;
+
+      ::InterlockedIncrement(outstanding_operations_);
+    }
+
+    void do_completion(DWORD last_error, size_t bytes_transferred)
+    {
+      invoke_func_(this, last_error, bytes_transferred);
+    }
+
+    void destroy()
+    {
+      destroy_func_(this);
+    }
+
+  protected:
+    // Prevent deletion through this type.
+    ~operation()
+    {
+      ::InterlockedDecrement(outstanding_operations_);
+    }
+
+  private:
+    long* outstanding_operations_;
+    invoke_func_type invoke_func_;
+    destroy_func_type destroy_func_;
+  };
+
 
   // Constructor.
   win_iocp_io_service(asio::io_service& io_service)
     : asio::detail::service_base<win_iocp_io_service>(io_service),
       iocp_(),
       outstanding_work_(0),
+      outstanding_operations_(0),
       stopped_(0),
       shutdown_(0),
       timer_thread_(0),
@@ -79,7 +128,7 @@ public:
   {
     ::InterlockedExchange(&shutdown_, 1);
 
-    for (;;)
+    while (::InterlockedExchangeAdd(&outstanding_operations_, 0) > 0)
     {
       DWORD bytes_transferred = 0;
 #if (WINVER < 0x0500)
@@ -88,12 +137,8 @@ public:
       DWORD_PTR completion_key = 0;
 #endif
       LPOVERLAPPED overlapped = 0;
-      ::SetLastError(0);
-      BOOL ok = ::GetQueuedCompletionStatus(iocp_.handle,
-          &bytes_transferred, &completion_key, &overlapped, 0);
-      DWORD last_error = ::GetLastError();
-      if (!ok && overlapped == 0 && last_error == WAIT_TIMEOUT)
-        break;
+      ::GetQueuedCompletionStatus(iocp_.handle, &bytes_transferred,
+          &completion_key, &overlapped, INFINITE);
       if (overlapped)
         static_cast<operation*>(overlapped)->destroy();
     }
@@ -249,7 +294,7 @@ public:
   }
 
   // Request invocation of the given OVERLAPPED-derived operation.
-  void post_completion(win_iocp_operation* op, DWORD op_last_error,
+  void post_completion(operation* op, DWORD op_last_error,
       DWORD bytes_transferred)
   {
     // Enqueue the operation on the I/O completion port.
@@ -547,7 +592,7 @@ private:
   {
     handler_operation(win_iocp_io_service& io_service,
         Handler handler)
-      : operation(&handler_operation<Handler>::do_completion_impl,
+      : operation(io_service, &handler_operation<Handler>::do_completion_impl,
           &handler_operation<Handler>::destroy_impl),
         io_service_(io_service),
         handler_(handler)
@@ -607,6 +652,10 @@ private:
 
   // The count of unfinished work.
   long outstanding_work_;
+
+  // The count of unfinished operations.
+  long outstanding_operations_;
+  friend class operation;
 
   // Flag to indicate whether the event loop has been stopped.
   long stopped_;

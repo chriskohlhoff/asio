@@ -56,7 +56,7 @@ public:
   typedef typename Protocol::endpoint endpoint_type;
 
   // Base class for all operations.
-  typedef win_iocp_operation operation;
+  typedef win_iocp_io_service::operation operation;
 
   struct noop_deleter { void operator()(void*) {} };
   typedef boost::shared_ptr<void> shared_cancel_token_type;
@@ -680,13 +680,13 @@ public:
     : public operation
   {
   public:
-    send_operation(asio::io_service& io_service,
+    send_operation(win_iocp_io_service& io_service,
         weak_cancel_token_type cancel_token,
         const ConstBufferSequence& buffers, Handler handler)
-      : operation(
+      : operation(io_service,
           &send_operation<ConstBufferSequence, Handler>::do_completion_impl,
           &send_operation<ConstBufferSequence, Handler>::destroy_impl),
-        work_(io_service),
+        work_(io_service.get_io_service()),
         cancel_token_(cancel_token),
         buffers_(buffers),
         handler_(handler)
@@ -782,8 +782,8 @@ public:
     typedef send_operation<ConstBufferSequence, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr,
-        this->get_io_service(), impl.cancel_token_, buffers, handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr, iocp_service_,
+        impl.cancel_token_, buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -880,12 +880,12 @@ public:
     : public operation
   {
   public:
-    send_to_operation(asio::io_service& io_service,
+    send_to_operation(win_iocp_io_service& io_service,
         const ConstBufferSequence& buffers, Handler handler)
-      : operation(
+      : operation(io_service,
           &send_to_operation<ConstBufferSequence, Handler>::do_completion_impl,
           &send_to_operation<ConstBufferSequence, Handler>::destroy_impl),
-        work_(io_service),
+        work_(io_service.get_io_service()),
         buffers_(buffers),
         handler_(handler)
     {
@@ -973,8 +973,7 @@ public:
     typedef send_to_operation<ConstBufferSequence, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr,
-        this->get_io_service(), buffers, handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr, iocp_service_, buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -1074,15 +1073,15 @@ public:
     : public operation
   {
   public:
-    receive_operation(asio::io_service& io_service,
+    receive_operation(win_iocp_io_service& io_service,
         weak_cancel_token_type cancel_token,
         const MutableBufferSequence& buffers, Handler handler)
-      : operation(
+      : operation(io_service,
           &receive_operation<
             MutableBufferSequence, Handler>::do_completion_impl,
           &receive_operation<
             MutableBufferSequence, Handler>::destroy_impl),
-        work_(io_service),
+        work_(io_service.get_io_service()),
         cancel_token_(cancel_token),
         buffers_(buffers),
         handler_(handler)
@@ -1185,8 +1184,8 @@ public:
     typedef receive_operation<MutableBufferSequence, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr,
-        this->get_io_service(), impl.cancel_token_, buffers, handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr, iocp_service_,
+        impl.cancel_token_, buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -1290,17 +1289,17 @@ public:
     : public operation
   {
   public:
-    receive_from_operation(asio::io_service& io_service,
+    receive_from_operation(win_iocp_io_service& io_service,
         endpoint_type& endpoint, const MutableBufferSequence& buffers,
         Handler handler)
-      : operation(
+      : operation(io_service,
           &receive_from_operation<
             MutableBufferSequence, Handler>::do_completion_impl,
           &receive_from_operation<
             MutableBufferSequence, Handler>::destroy_impl),
         endpoint_(endpoint),
         endpoint_size_(static_cast<int>(endpoint.capacity())),
-        work_(io_service),
+        work_(io_service.get_io_service()),
         buffers_(buffers),
         handler_(handler)
     {
@@ -1405,8 +1404,8 @@ public:
     typedef receive_from_operation<MutableBufferSequence, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr,
-        this->get_io_service(), sender_endp, buffers, handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr, iocp_service_,
+        sender_endp, buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -1508,7 +1507,7 @@ public:
         socket_type socket, socket_type new_socket, Socket& peer,
         const protocol_type& protocol, endpoint_type* peer_endpoint,
         bool enable_connection_aborted, Handler handler)
-      : operation(
+      : operation(io_service,
           &accept_operation<Socket, Handler>::do_completion_impl,
           &accept_operation<Socket, Handler>::destroy_impl),
         io_service_(io_service),
