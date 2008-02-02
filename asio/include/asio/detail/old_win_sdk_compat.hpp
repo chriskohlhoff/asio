@@ -31,6 +31,10 @@
 #if defined(ASIO_HAS_OLD_WIN_SDK)
 
 // Emulation of types that are missing from old Platform SDKs.
+//
+// N.B. this emulation is also used if building for a Windows 2000 target with
+// a recent (i.e. Vista or later) SDK, as the SDK does not provide IPv6 support
+// in that case.
 
 namespace asio {
 namespace detail {
@@ -54,8 +58,18 @@ struct sockaddr_storage_emulation
 
 struct in6_addr_emulation
 {
-  u_char s6_addr[16];
+  union
+  {
+    u_char Byte[16];
+    u_short Word[8];
+  } u;
 };
+
+#if !defined(s6_addr)
+# define _S6_un u
+# define _S6_u8 Byte
+# define s6_addr _S6_un._S6_u8
+#endif // !defined(s6_addr)
 
 struct sockaddr_in6_emulation
 {
