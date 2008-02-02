@@ -1824,7 +1824,8 @@ inline asio::error_code getnameinfo(const socket_addr_type* addr,
     if (gni_t gni = (gni_t)::GetProcAddress(winsock_module, "getnameinfo"))
     {
       clear_error(ec);
-      int error = gni(addr, addrlen, host, static_cast<DWORD>(hostlen),
+      int error = gni(addr, static_cast<int>(addrlen),
+          host, static_cast<DWORD>(hostlen),
           serv, static_cast<DWORD>(servlen), flags);
       return ec = translate_addrinfo_error(error);
     }
