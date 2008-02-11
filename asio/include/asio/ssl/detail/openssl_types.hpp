@@ -17,6 +17,8 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/socket_types.hpp"
+
 #include "asio/detail/push_options.hpp"
 #include <openssl/conf.h>
 #include <openssl/ssl.h>
