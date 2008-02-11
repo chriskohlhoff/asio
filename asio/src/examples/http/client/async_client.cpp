@@ -83,7 +83,7 @@ private:
     }
     else
     {
-      std::cout << "Error: " << err << "\n";
+      std::cout << "Error: " << err.message() << "\n";
     }
   }
 
@@ -98,7 +98,7 @@ private:
     }
     else
     {
-      std::cout << "Error: " << err << "\n";
+      std::cout << "Error: " << err.message() << "\n";
     }
   }
 
