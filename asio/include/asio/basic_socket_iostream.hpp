@@ -49,6 +49,7 @@
     : std::basic_iostream<char>(&this->boost::base_from_member< \
         basic_socket_streambuf<Protocol, StreamSocketService> >::member) \
   { \
+    tie(this); \
     if (rdbuf()->connect(BOOST_PP_ENUM_PARAMS(n, x)) == 0) \
       this->setstate(std::ios_base::failbit); \
   } \
@@ -88,6 +89,7 @@ public:
     : std::basic_iostream<char>(&this->boost::base_from_member<
         basic_socket_streambuf<Protocol, StreamSocketService> >::member)
   {
+    tie(this);
   }
 
 #if defined(GENERATING_DOCUMENTATION)
