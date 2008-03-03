@@ -2,34 +2,61 @@
 BOOSTDIR = ../../boost_1_34_1
 !endif
 
-COMMON_CXXFLAGS = -nologo -EHac -GR -MT -I. -I../include -I$(BOOSTDIR)
-COMMON_LDFLAGS = -nologo -EHac -GR -MT
+COMMON_CXXFLAGS = -nologo -EHac -GR -I. -I../include -I$(BOOSTDIR)
 
 !ifdef WARNINGS
 WARNINGS_CXXFLAGS = -W3 -Wp64
 !endif
 
-!ifdef DEBUG
-DEBUG_CXXFLAGS = -Zi
-DEBUG_LDFLAGS = -Zi
+!ifdef STATICRTL
+! ifdef DEBUG
+DEBUG_CXXFLAGS = -Zi -MTd
+! else
+DEBUG_CXXFLAGS = -O2 -MT
+! endif
 !else
-DEBUG_CXXFLAGS = -O2
-DEBUG_LDFLAGS = -O2
+! ifdef DEBUG
+DEBUG_CXXFLAGS = -Zi -MDd
+! else
+DEBUG_CXXFLAGS = -O2 -MD
+! endif
+!endif
+
+!ifdef UNICODE
+UNICODE_CXXFLAGS = -DUNICODE -D_UNICODE
+!endif
+
+!ifndef _WIN32_WINNT
+_WIN32_WINNT=0x0501
 !endif
 
 !ifdef WIN9X
 DEFINES = \
 	-DASIO_DISABLE_IOCP \
-	-D_WIN32_WINNT=0x0501 \
+	-D_WIN32_WINNT=$(_WIN32_WINNT) \
 	-DBOOST_ALL_NO_LIB
 !else
 DEFINES = \
-	-D_WIN32_WINNT=0x0501 \
+	-D_WIN32_WINNT=$(_WIN32_WINNT) \
 	-DBOOST_ALL_NO_LIB
 !endif
 
-CXXFLAGS = $(COMMON_CXXFLAGS) $(WARNINGS_CXXFLAGS) $(DEBUG_CXXFLAGS)
-LDFLAGS = $(COMMON_LDFLAGS) $(DEBUG_LDFLAGS)
+CXXFLAGS = \
+	$(COMMON_CXXFLAGS) \
+	$(WARNINGS_CXXFLAGS) \
+	$(DEBUG_CXXFLAGS) \
+	$(UNICODE_CXXFLAGS)
+
+!ifndef SSLDIR
+SSLDIR = ../../openssl-0.9.8g
+!endif
+
+SSL_CXXFLAGS = -I$(SSLDIR)/inc32
+
+SSL_LIBS = \
+	$(SSLDIR)/out32/libeay32.lib \
+	$(SSLDIR)/out32/ssleay32.lib \
+	user32.lib advapi32.lib gdi32.lib
 
 PERFORMANCE_TEST_EXES = \
 	tests\performance\client.exe \
@@ -121,10 +148,27 @@ EXAMPLE_EXES = \
 	examples\tutorial\daytime6\server.exe \
 	examples\tutorial\daytime7\server.exe
 
+SSL_UNIT_TEST_EXES = \
+	tests\unit\ssl\basic_context.exe \
+	tests\unit\ssl\context.exe \
+	tests\unit\ssl\context_base.exe \
+	tests\unit\ssl\context_service.exe \
+	tests\unit\ssl\stream.exe \
+	tests\unit\ssl\stream_base.exe \
+	tests\unit\ssl\stream_service.exe
+
+SSL_EXAMPLE_EXES = \
+	examples\ssl\client.exe \
+	examples\ssl\server.exe
+
 all: \
 	$(PERFORMANCE_TEST_EXES) \
 	$(UNIT_TEST_EXES) \
 	$(EXAMPLE_EXES)
+
+ssl: \
+	$(SSL_UNIT_TEST_EXES) \
+	$(SSL_EXAMPLE_EXES)
 
 check: $(UNIT_TEST_EXES)
 	!@echo === Running $** === && $** && echo.
@@ -137,6 +181,9 @@ check: $(UNIT_TEST_EXES)
 
 {tests\unit\ip}.cpp{tests\unit\ip}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+
+{tests\unit\ssl}.cpp{tests\unit\ssl}.exe:
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(SSL_CXXFLAGS) $(DEFINES) $< $(SSL_LIBS) -link -opt:ref
 
 {examples\allocation}.cpp{examples\allocation}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
@@ -164,6 +211,9 @@ check: $(UNIT_TEST_EXES)
 
 {examples\socks4}.cpp{examples\socks4}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+
+{examples\ssl}.cpp{examples\ssl}.exe:
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(SSL_CXXFLAGS) $(DEFINES) $< $(SSL_LIBS) -link -opt:ref
 
 {examples\timeouts}.cpp{examples\timeouts}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
