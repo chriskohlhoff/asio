@@ -155,11 +155,13 @@ public:
     // The protocol associated with the socket.
     protocol_type protocol_;
 
+#if defined(ASIO_ENABLE_CANCELIO)
     // The ID of the thread from which it is safe to cancel asynchronous
     // operations. 0 means no asynchronous operations have been started yet.
     // ~0 means asynchronous operations have been started from more than one
     // thread, and cancellation is not supported for the socket.
     DWORD safe_cancellation_thread_id_;
+#endif // defined(ASIO_ENABLE_CANCELIO)
 
     // Pointers to adjacent socket implementations in linked list.
     implementation_type* next_;
@@ -203,7 +205,9 @@ public:
     impl.socket_ = invalid_socket;
     impl.flags_ = 0;
     impl.cancel_token_.reset();
+#if defined(ASIO_ENABLE_CANCELIO)
     impl.safe_cancellation_thread_id_ = 0;
+#endif // defined(ASIO_ENABLE_CANCELIO)
 
     // Insert implementation into linked list of all implementations.
     asio::detail::mutex::scoped_lock lock(mutex_);
@@ -305,7 +309,9 @@ public:
       impl.socket_ = invalid_socket;
       impl.flags_ = 0;
       impl.cancel_token_.reset();
+#if defined(ASIO_ENABLE_CANCELIO)
       impl.safe_cancellation_thread_id_ = 0;
+#endif // defined(ASIO_ENABLE_CANCELIO)
     }
 
     ec = asio::error_code();
@@ -337,14 +343,25 @@ public:
       if (!cancel_io_ex(sock_as_handle, 0))
       {
         DWORD last_error = ::GetLastError();
-        ec = asio::error_code(last_error,
-            asio::error::get_system_category());
+        if (last_error == ERROR_NOT_FOUND)
+        {
+          // ERROR_NOT_FOUND means that there were no operations to be
+          // cancelled. We swallow this error to match the behaviour on other
+          // platforms.
+          ec = asio::error_code();
+        }
+        else
+        {
+          ec = asio::error_code(last_error,
+              asio::error::get_system_category());
+        }
       }
       else
       {
         ec = asio::error_code();
       }
     }
+#if defined(ASIO_ENABLE_CANCELIO)
     else if (impl.safe_cancellation_thread_id_ == 0)
     {
       // No operations have been started, so there's nothing to cancel.
@@ -373,6 +390,13 @@ public:
       // so cancellation is not safe.
       ec = asio::error::operation_not_supported;
     }
+#else // defined(ASIO_ENABLE_CANCELIO)
+    else
+    {
+      // Cancellation is not supported as CancelIo may not be used.
+      ec = asio::error::operation_not_supported;
+    }
+#endif // defined(ASIO_ENABLE_CANCELIO)
 
     return ec;
   }
@@ -772,11 +796,13 @@ public:
       return;
     }
 
+#if defined(ASIO_ENABLE_CANCELIO)
     // Update the ID of the thread from which cancellation is safe.
     if (impl.safe_cancellation_thread_id_ == 0)
       impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
     else if (impl.safe_cancellation_thread_id_ != ::GetCurrentThreadId())
       impl.safe_cancellation_thread_id_ = ~DWORD(0);
+#endif // defined(ASIO_ENABLE_CANCELIO)
 
     // Allocate and construct an operation to wrap the handler.
     typedef send_operation<ConstBufferSequence, Handler> value_type;
@@ -963,11 +989,13 @@ public:
       return;
     }
 
+#if defined(ASIO_ENABLE_CANCELIO)
     // Update the ID of the thread from which cancellation is safe.
     if (impl.safe_cancellation_thread_id_ == 0)
       impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
     else if (impl.safe_cancellation_thread_id_ != ::GetCurrentThreadId())
       impl.safe_cancellation_thread_id_ = ~DWORD(0);
+#endif // defined(ASIO_ENABLE_CANCELIO)
 
     // Allocate and construct an operation to wrap the handler.
     typedef send_to_operation<ConstBufferSequence, Handler> value_type;
@@ -1174,11 +1202,13 @@ public:
       return;
     }
 
+#if defined(ASIO_ENABLE_CANCELIO)
     // Update the ID of the thread from which cancellation is safe.
     if (impl.safe_cancellation_thread_id_ == 0)
       impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
     else if (impl.safe_cancellation_thread_id_ != ::GetCurrentThreadId())
       impl.safe_cancellation_thread_id_ = ~DWORD(0);
+#endif // defined(ASIO_ENABLE_CANCELIO)
 
     // Allocate and construct an operation to wrap the handler.
     typedef receive_operation<MutableBufferSequence, Handler> value_type;
@@ -1394,11 +1424,13 @@ public:
       return;
     }
 
+#if defined(ASIO_ENABLE_CANCELIO)
     // Update the ID of the thread from which cancellation is safe.
     if (impl.safe_cancellation_thread_id_ == 0)
       impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
     else if (impl.safe_cancellation_thread_id_ != ::GetCurrentThreadId())
       impl.safe_cancellation_thread_id_ = ~DWORD(0);
+#endif // defined(ASIO_ENABLE_CANCELIO)
 
     // Allocate and construct an operation to wrap the handler.
     typedef receive_from_operation<MutableBufferSequence, Handler> value_type;
@@ -1718,11 +1750,13 @@ public:
       return;
     }
 
+#if defined(ASIO_ENABLE_CANCELIO)
     // Update the ID of the thread from which cancellation is safe.
     if (impl.safe_cancellation_thread_id_ == 0)
       impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
     else if (impl.safe_cancellation_thread_id_ != ::GetCurrentThreadId())
       impl.safe_cancellation_thread_id_ = ~DWORD(0);
+#endif // defined(ASIO_ENABLE_CANCELIO)
 
     // Create a new socket for the connection.
     asio::error_code ec;
@@ -1892,11 +1926,13 @@ public:
       return;
     }
 
+#if defined(ASIO_ENABLE_CANCELIO)
     // Update the ID of the thread from which cancellation is safe.
     if (impl.safe_cancellation_thread_id_ == 0)
       impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
     else if (impl.safe_cancellation_thread_id_ != ::GetCurrentThreadId())
       impl.safe_cancellation_thread_id_ = ~DWORD(0);
+#endif // defined(ASIO_ENABLE_CANCELIO)
 
     // Check if the reactor was already obtained from the io_service.
     reactor_type* reactor = static_cast<reactor_type*>(
@@ -1996,7 +2032,9 @@ private:
       impl.socket_ = invalid_socket;
       impl.flags_ = 0;
       impl.cancel_token_.reset();
+#if defined(ASIO_ENABLE_CANCELIO)
       impl.safe_cancellation_thread_id_ = 0;
+#endif // defined(ASIO_ENABLE_CANCELIO)
     }
   }
 

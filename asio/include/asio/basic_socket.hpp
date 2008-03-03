@@ -17,6 +17,10 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/push_options.hpp"
+#include <boost/config.hpp>
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/basic_io_object.hpp"
 #include "asio/error.hpp"
 #include "asio/socket_base.hpp"
@@ -295,7 +299,40 @@ public:
    * will be passed the asio::error::operation_aborted error.
    *
    * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls to cancel() will always fail with
+   * asio::error::operation_not_supported when run on Windows XP, Windows
+   * Server 2003, and earlier versions of Windows, unless
+   * ASIO_ENABLE_CANCELIO is defined. However, the CancelIo function has
+   * two issues that should be considered before enabling its use:
+   *
+   * @li It will only cancel asynchronous operations that were initiated in the
+   * current thread.
+   *
+   * @li It can appear to complete without error, but the request to cancel the
+   * unfinished operations may be silently ignored by the operating system.
+   * Whether it works or not seems to depend on the drivers that are installed.
+   *
+   * For portable cancellation, consider using one of the following
+   * alternatives:
+   *
+   * @li Disable asio's I/O completion port backend by defining
+   * ASIO_DISABLE_IOCP.
+   *
+   * @li Use the close() function to simultaneously cancel the outstanding
+   * operations and close the socket.
+   *
+   * When running on Windows Vista, Windows Server 2008, and later, the
+   * CancelIoEx function is always used. This function does not have the
+   * problems described above.
    */
+#if defined(BOOST_MSVC) && (BOOST_MSVC >= 1400) \
+  && (!defined(_WIN32_WINNT) || _WIN32_WINNT < 0x0600) \
+  && !defined(ASIO_ENABLE_CANCELIO)
+  __declspec(deprecated("By default, this function always fails with "
+        "operation_not_supported when used on Windows XP, Windows Server 2003, "
+        "or earlier. Consult documentation for details."))
+#endif
   void cancel()
   {
     asio::error_code ec;
@@ -310,7 +347,40 @@ public:
    * will be passed the asio::error::operation_aborted error.
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls to cancel() will always fail with
+   * asio::error::operation_not_supported when run on Windows XP, Windows
+   * Server 2003, and earlier versions of Windows, unless
+   * ASIO_ENABLE_CANCELIO is defined. However, the CancelIo function has
+   * two issues that should be considered before enabling its use:
+   *
+   * @li It will only cancel asynchronous operations that were initiated in the
+   * current thread.
+   *
+   * @li It can appear to complete without error, but the request to cancel the
+   * unfinished operations may be silently ignored by the operating system.
+   * Whether it works or not seems to depend on the drivers that are installed.
+   *
+   * For portable cancellation, consider using one of the following
+   * alternatives:
+   *
+   * @li Disable asio's I/O completion port backend by defining
+   * ASIO_DISABLE_IOCP.
+   *
+   * @li Use the close() function to simultaneously cancel the outstanding
+   * operations and close the socket.
+   *
+   * When running on Windows Vista, Windows Server 2008, and later, the
+   * CancelIoEx function is always used. This function does not have the
+   * problems described above.
    */
+#if defined(BOOST_MSVC) && (BOOST_MSVC >= 1400) \
+  && (!defined(_WIN32_WINNT) || _WIN32_WINNT < 0x0600) \
+  && !defined(ASIO_ENABLE_CANCELIO)
+  __declspec(deprecated("By default, this function always fails with "
+        "operation_not_supported when used on Windows XP, Windows Server 2003, "
+        "or earlier. Consult documentation for details."))
+#endif
   asio::error_code cancel(asio::error_code& ec)
   {
     return this->service.cancel(this->implementation, ec);
