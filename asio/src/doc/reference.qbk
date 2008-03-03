@@ -2647,10 +2647,26 @@ This function causes all outstanding asynchronous connect, send and receive oper
 
 [variablelist
   
-[[asio::system_error][Thrown on failure. ]]
+[[asio::system_error][Thrown on failure.]]
 
 ]
 
+[heading Remarks]
+      
+Calls to cancel() will always fail with asio::error::operation\_not\_supported when run on Windows XP, Windows Server 2003, and earlier versions of Windows, unless ASIO\_ENABLE\_CANCELIO is defined. However, the CancelIo function has two issues that should be considered before enabling its use:
+
+* It will only cancel asynchronous operations that were initiated in the current thread.
+
+* It can appear to complete without error, but the request to cancel the unfinished operations may be silently ignored by the operating system. Whether it works or not seems to depend on the drivers that are installed.
+
+For portable cancellation, consider using one of the following alternatives:
+
+
+* Disable asio's I/O completion port backend by defining ASIO_DISABLE_IOCP.
+
+* Use the close() function to simultaneously cancel the outstanding operations and close the socket.
+
+When running on Windows Vista, Windows Server 2008, and later, the CancelIoEx function is always used. This function does not have the problems described above. 
 
 
 [endsect]
@@ -2676,10 +2692,26 @@ This function causes all outstanding asynchronous connect, send and receive oper
 
 [variablelist
   
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
 
+[heading Remarks]
+      
+Calls to cancel() will always fail with asio::error::operation\_not\_supported when run on Windows XP, Windows Server 2003, and earlier versions of Windows, unless ASIO\_ENABLE\_CANCELIO is defined. However, the CancelIo function has two issues that should be considered before enabling its use:
+
+* It will only cancel asynchronous operations that were initiated in the current thread.
+
+* It can appear to complete without error, but the request to cancel the unfinished operations may be silently ignored by the operating system. Whether it works or not seems to depend on the drivers that are installed.
+
+For portable cancellation, consider using one of the following alternatives:
+
+
+* Disable asio's I/O completion port backend by defining ASIO_DISABLE_IOCP.
+
+* Use the close() function to simultaneously cancel the outstanding operations and close the socket.
+
+When running on Windows Vista, Windows Server 2008, and later, the CancelIoEx function is always used. This function does not have the problems described above. 
 
 
 [endsect]
@@ -7239,10 +7271,26 @@ This function causes all outstanding asynchronous connect, send and receive oper
 
 [variablelist
   
-[[asio::system_error][Thrown on failure. ]]
+[[asio::system_error][Thrown on failure.]]
 
 ]
 
+[heading Remarks]
+      
+Calls to cancel() will always fail with asio::error::operation\_not\_supported when run on Windows XP, Windows Server 2003, and earlier versions of Windows, unless ASIO\_ENABLE\_CANCELIO is defined. However, the CancelIo function has two issues that should be considered before enabling its use:
+
+* It will only cancel asynchronous operations that were initiated in the current thread.
+
+* It can appear to complete without error, but the request to cancel the unfinished operations may be silently ignored by the operating system. Whether it works or not seems to depend on the drivers that are installed.
+
+For portable cancellation, consider using one of the following alternatives:
+
+
+* Disable asio's I/O completion port backend by defining ASIO_DISABLE_IOCP.
+
+* Use the close() function to simultaneously cancel the outstanding operations and close the socket.
+
+When running on Windows Vista, Windows Server 2008, and later, the CancelIoEx function is always used. This function does not have the problems described above. 
 
 
 [endsect]
@@ -7265,10 +7313,26 @@ This function causes all outstanding asynchronous connect, send and receive oper
 
 [variablelist
   
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
 
+[heading Remarks]
+      
+Calls to cancel() will always fail with asio::error::operation\_not\_supported when run on Windows XP, Windows Server 2003, and earlier versions of Windows, unless ASIO\_ENABLE\_CANCELIO is defined. However, the CancelIo function has two issues that should be considered before enabling its use:
+
+* It will only cancel asynchronous operations that were initiated in the current thread.
+
+* It can appear to complete without error, but the request to cancel the unfinished operations may be silently ignored by the operating system. Whether it works or not seems to depend on the drivers that are installed.
+
+For portable cancellation, consider using one of the following alternatives:
+
+
+* Disable asio's I/O completion port backend by defining ASIO_DISABLE_IOCP.
+
+* Use the close() function to simultaneously cancel the outstanding operations and close the socket.
+
+When running on Windows Vista, Windows Server 2008, and later, the CancelIoEx function is always used. This function does not have the problems described above. 
 
 
 [endsect]
@@ -12647,10 +12711,26 @@ This function causes all outstanding asynchronous connect, send and receive oper
 
 [variablelist
   
-[[asio::system_error][Thrown on failure. ]]
+[[asio::system_error][Thrown on failure.]]
 
 ]
 
+[heading Remarks]
+      
+Calls to cancel() will always fail with asio::error::operation\_not\_supported when run on Windows XP, Windows Server 2003, and earlier versions of Windows, unless ASIO\_ENABLE\_CANCELIO is defined. However, the CancelIo function has two issues that should be considered before enabling its use:
+
+* It will only cancel asynchronous operations that were initiated in the current thread.
+
+* It can appear to complete without error, but the request to cancel the unfinished operations may be silently ignored by the operating system. Whether it works or not seems to depend on the drivers that are installed.
+
+For portable cancellation, consider using one of the following alternatives:
+
+
+* Disable asio's I/O completion port backend by defining ASIO_DISABLE_IOCP.
+
+* Use the close() function to simultaneously cancel the outstanding operations and close the socket.
+
+When running on Windows Vista, Windows Server 2008, and later, the CancelIoEx function is always used. This function does not have the problems described above. 
 
 
 [endsect]
@@ -12676,10 +12756,26 @@ This function causes all outstanding asynchronous connect, send and receive oper
 
 [variablelist
   
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
 
+[heading Remarks]
+      
+Calls to cancel() will always fail with asio::error::operation\_not\_supported when run on Windows XP, Windows Server 2003, and earlier versions of Windows, unless ASIO\_ENABLE\_CANCELIO is defined. However, the CancelIo function has two issues that should be considered before enabling its use:
+
+* It will only cancel asynchronous operations that were initiated in the current thread.
+
+* It can appear to complete without error, but the request to cancel the unfinished operations may be silently ignored by the operating system. Whether it works or not seems to depend on the drivers that are installed.
+
+For portable cancellation, consider using one of the following alternatives:
+
+
+* Disable asio's I/O completion port backend by defining ASIO_DISABLE_IOCP.
+
+* Use the close() function to simultaneously cancel the outstanding operations and close the socket.
+
+When running on Windows Vista, Windows Server 2008, and later, the CancelIoEx function is always used. This function does not have the problems described above. 
 
 
 [endsect]
@@ -16114,10 +16210,26 @@ This function causes all outstanding asynchronous connect, send and receive oper
 
 [variablelist
   
-[[asio::system_error][Thrown on failure. ]]
+[[asio::system_error][Thrown on failure.]]
 
 ]
 
+[heading Remarks]
+      
+Calls to cancel() will always fail with asio::error::operation\_not\_supported when run on Windows XP, Windows Server 2003, and earlier versions of Windows, unless ASIO\_ENABLE\_CANCELIO is defined. However, the CancelIo function has two issues that should be considered before enabling its use:
+
+* It will only cancel asynchronous operations that were initiated in the current thread.
+
+* It can appear to complete without error, but the request to cancel the unfinished operations may be silently ignored by the operating system. Whether it works or not seems to depend on the drivers that are installed.
+
+For portable cancellation, consider using one of the following alternatives:
+
+
+* Disable asio's I/O completion port backend by defining ASIO_DISABLE_IOCP.
+
+* Use the close() function to simultaneously cancel the outstanding operations and close the socket.
+
+When running on Windows Vista, Windows Server 2008, and later, the CancelIoEx function is always used. This function does not have the problems described above. 
 
 
 [endsect]
@@ -16143,10 +16255,26 @@ This function causes all outstanding asynchronous connect, send and receive oper
 
 [variablelist
   
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
 
+[heading Remarks]
+      
+Calls to cancel() will always fail with asio::error::operation\_not\_supported when run on Windows XP, Windows Server 2003, and earlier versions of Windows, unless ASIO\_ENABLE\_CANCELIO is defined. However, the CancelIo function has two issues that should be considered before enabling its use:
+
+* It will only cancel asynchronous operations that were initiated in the current thread.
+
+* It can appear to complete without error, but the request to cancel the unfinished operations may be silently ignored by the operating system. Whether it works or not seems to depend on the drivers that are installed.
+
+For portable cancellation, consider using one of the following alternatives:
+
+
+* Disable asio's I/O completion port backend by defining ASIO_DISABLE_IOCP.
+
+* Use the close() function to simultaneously cancel the outstanding operations and close the socket.
+
+When running on Windows Vista, Windows Server 2008, and later, the CancelIoEx function is always used. This function does not have the problems described above. 
 
 
 [endsect]
@@ -22936,6 +23064,11 @@ The time traits type.
   [
     [already_started]
     [Operation already in progress. ]
+  ]
+
+  [
+    [broken_pipe]
+    [Broken pipe. ]
   ]
 
   [
@@ -36417,11 +36550,11 @@ The stream class template provides asynchronous and blocking stream-oriented fun
 
 [heading Example]
   
-To use the SSL stream template with a stream\_socket, you would write: 
+To use the SSL stream template with an ip::tcp::socket, you would write: 
 
    asio::io_service io_service;
    asio::ssl::context context(io_service, asio::ssl::context::sslv23);
-   asio::ssl::stream<asio::stream_socket> sock(io_service, context);
+   asio::ssl::stream<asio::ip::tcp::socket> sock(io_service, context);
 
 
 
