@@ -698,40 +698,40 @@ inline const char* inet_ntop(int af, const void* src, char* dest, size_t length,
     return 0;
   }
 
-  sockaddr_storage_type address;
+  union
+  {
+    socket_addr_type base;
+    sockaddr_storage_type storage;
+    sockaddr_in4_type v4;
+    sockaddr_in6_type v6;
+  } address;
   DWORD address_length;
   if (af == AF_INET)
   {
     address_length = sizeof(sockaddr_in4_type);
-    sockaddr_in4_type* ipv4_address =
-      reinterpret_cast<sockaddr_in4_type*>(&address);
-    ipv4_address->sin_family = AF_INET;
-    ipv4_address->sin_port = 0;
-    memcpy(&ipv4_address->sin_addr, src, sizeof(in4_addr_type));
+    address.v4.sin_family = AF_INET;
+    address.v4.sin_port = 0;
+    memcpy(&address.v4.sin_addr, src, sizeof(in4_addr_type));
   }
   else // AF_INET6
   {
     address_length = sizeof(sockaddr_in6_type);
-    sockaddr_in6_type* ipv6_address =
-      reinterpret_cast<sockaddr_in6_type*>(&address);
-    ipv6_address->sin6_family = AF_INET6;
-    ipv6_address->sin6_port = 0;
-    ipv6_address->sin6_flowinfo = 0;
-    ipv6_address->sin6_scope_id = scope_id;
-    memcpy(&ipv6_address->sin6_addr, src, sizeof(in6_addr_type));
+    address.v6.sin6_family = AF_INET6;
+    address.v6.sin6_port = 0;
+    address.v6.sin6_flowinfo = 0;
+    address.v6.sin6_scope_id = scope_id;
+    memcpy(&address.v6.sin6_addr, src, sizeof(in6_addr_type));
   }
 
   DWORD string_length = static_cast<DWORD>(length);
 #if defined(BOOST_NO_ANSI_APIS)
   LPWSTR string_buffer = (LPWSTR)_alloca(length * sizeof(WCHAR));
-  int result = error_wrapper(::WSAAddressToStringW(
-        reinterpret_cast<sockaddr*>(&address),
+  int result = error_wrapper(::WSAAddressToStringW(&address.base,
         address_length, 0, string_buffer, &string_length), ec);
   ::WideCharToMultiByte(CP_ACP, 0, string_buffer, -1, dest, length, 0, 0);
 #else
   int result = error_wrapper(::WSAAddressToStringA(
-        reinterpret_cast<sockaddr*>(&address),
-        address_length, 0, dest, &string_length), ec);
+        &address.base, address_length, 0, dest, &string_length), ec);
 #endif
 
   // Windows may set error code on success.
@@ -774,30 +774,30 @@ inline int inet_pton(int af, const char* src, void* dest,
     return -1;
   }
 
-  sockaddr_storage_type address;
+  union
+  {
+    socket_addr_type base;
+    sockaddr_storage_type storage;
+    sockaddr_in4_type v4;
+    sockaddr_in6_type v6;
+  } address;
   int address_length = sizeof(sockaddr_storage_type);
 #if defined(BOOST_NO_ANSI_APIS)
   int num_wide_chars = strlen(src) + 1;
   LPWSTR wide_buffer = (LPWSTR)_alloca(num_wide_chars * sizeof(WCHAR));
   ::MultiByteToWideChar(CP_ACP, 0, src, -1, wide_buffer, num_wide_chars);
   int result = error_wrapper(::WSAStringToAddressW(
-        wide_buffer, af, 0,
-        reinterpret_cast<sockaddr*>(&address),
-        &address_length), ec);
+        wide_buffer, af, 0, &address.base, &address_length), ec);
 #else
   int result = error_wrapper(::WSAStringToAddressA(
-        const_cast<char*>(src), af, 0,
-        reinterpret_cast<sockaddr*>(&address),
-        &address_length), ec);
+        const_cast<char*>(src), af, 0, &address.base, &address_length), ec);
 #endif
 
   if (af == AF_INET)
   {
     if (result != socket_error_retval)
     {
-      sockaddr_in4_type* ipv4_address =
-        reinterpret_cast<sockaddr_in4_type*>(&address);
-      memcpy(dest, &ipv4_address->sin_addr, sizeof(in4_addr_type));
+      memcpy(dest, &address.v4.sin_addr, sizeof(in4_addr_type));
       clear_error(ec);
     }
     else if (strcmp(src, "255.255.255.255") == 0)
@@ -810,11 +810,9 @@ inline int inet_pton(int af, const char* src, void* dest,
   {
     if (result != socket_error_retval)
     {
-      sockaddr_in6_type* ipv6_address =
-        reinterpret_cast<sockaddr_in6_type*>(&address);
-      memcpy(dest, &ipv6_address->sin6_addr, sizeof(in6_addr_type));
+      memcpy(dest, &address.v6.sin6_addr, sizeof(in6_addr_type));
       if (scope_id)
-        *scope_id = ipv6_address->sin6_scope_id;
+        *scope_id = address.v6.sin6_scope_id;
       clear_error(ec);
     }
   }
