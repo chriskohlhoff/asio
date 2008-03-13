@@ -223,7 +223,7 @@ public:
     }
     else
     {
-      data_.v6.sin_port
+      data_.v6.sin6_port
         = asio::detail::socket_ops::host_to_network_short(port_num);
     }
   }
