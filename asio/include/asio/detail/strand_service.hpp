@@ -427,10 +427,9 @@ public:
       if (impl->current_handler_ == 0)
       {
         // This handler now has the lock, so can be dispatched immediately.
-        impl->current_handler_ = ptr.get();
+        impl->current_handler_ = ptr.release();
         lock.unlock();
         this->get_io_service().dispatch(invoke_current_handler(*this, impl));
-        ptr.release();
       }
       else
       {
@@ -467,10 +466,9 @@ public:
     if (impl->current_handler_ == 0)
     {
       // This handler now has the lock, so can be dispatched immediately.
-      impl->current_handler_ = ptr.get();
+      impl->current_handler_ = ptr.release();
       lock.unlock();
       this->get_io_service().post(invoke_current_handler(*this, impl));
-      ptr.release();
     }
     else
     {
