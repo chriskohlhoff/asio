@@ -7,6 +7,9 @@
 
 project asio-doc ;
 
+import os ;
+local boost = [ os.environ BOOST_ROOT ] ;
+
 using quickbook ;
 
 xml asio : asio.qbk ;
@@ -33,21 +36,21 @@ boostbook standalone
 
 install html
   :
-    /boost//doc/html/boostbook.css
-    /boost//doc/html/images/blank.png
-    /boost//doc/html/images/caution.png
-    /boost//doc/html/images/draft.png
-    /boost//doc/html/images/home.png
-    /boost//doc/html/images/important.png
-    /boost//doc/html/images/next_disabled.png
-    /boost//doc/html/images/next.png
-    /boost//doc/html/images/note.png
-    /boost//doc/html/images/prev_disabled.png
-    /boost//doc/html/images/prev.png
-    /boost//doc/html/images/tip.png
-    /boost//doc/html/images/up_disabled.png
-    /boost//doc/html/images/up.png
-    /boost//doc/html/images/warning.png
+    $(boost)/doc/src/boostbook.css
+    $(boost)/doc/src/images/blank.png
+    $(boost)/doc/src/images/caution.png
+    $(boost)/doc/src/images/draft.png
+    $(boost)/doc/src/images/home.png
+    $(boost)/doc/src/images/important.png
+    $(boost)/doc/src/images/next_disabled.png
+    $(boost)/doc/src/images/next.png
+    $(boost)/doc/src/images/note.png
+    $(boost)/doc/src/images/prev_disabled.png
+    $(boost)/doc/src/images/prev.png
+    $(boost)/doc/src/images/tip.png
+    $(boost)/doc/src/images/up_disabled.png
+    $(boost)/doc/src/images/up.png
+    $(boost)/doc/src/images/warning.png
     design/proactor.png
     asio.png
   ;
