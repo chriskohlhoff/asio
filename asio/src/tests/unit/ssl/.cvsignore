@@ -2,6 +2,7 @@
 .dirstamp
 *.exe
 *.ilk
+*.manifest
 *.pdb
 *.tds
 basic_context
