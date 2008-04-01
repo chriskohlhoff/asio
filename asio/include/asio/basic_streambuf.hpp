@@ -100,11 +100,9 @@ public:
   /// Move the start of the get area by the specified number of characters.
   void consume(std::size_t n)
   {
-    while (n > 0)
-    {
-      sbumpc();
-      --n;
-    }
+    if (gptr() + n > pptr())
+      n = pptr() - gptr();
+    gbump(static_cast<int>(n));
   }
 
 protected:
