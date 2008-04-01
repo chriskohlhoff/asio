@@ -378,6 +378,33 @@ public:
   }
 };
 
+/// An implementation of both the ConstBufferSequence and MutableBufferSequence
+/// concepts to represent a null buffer sequence.
+class null_buffers
+{
+public:
+  /// The type for each element in the list of buffers.
+  typedef mutable_buffer value_type;
+
+  /// A random-access iterator type that may be used to read elements.
+  typedef const mutable_buffer* const_iterator;
+
+  /// Get a random-access iterator to the first element.
+  const_iterator begin() const
+  {
+    return &buf_;
+  }
+
+  /// Get a random-access iterator for one past the last element.
+  const_iterator end() const
+  {
+    return &buf_;
+  }
+
+private:
+  mutable_buffer buf_;
+};
+
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
 namespace detail {
 

@@ -24,6 +24,8 @@
 #include <boost/iterator/iterator_facade.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/buffer.hpp"
+
 namespace asio {
 namespace detail {
 
@@ -195,6 +197,24 @@ private:
   bool at_end_;
   Buffer first_;
   typename Buffers::const_iterator begin_remainder_;
+};
+
+// Specialisation for null_buffers to ensure that the null_buffers type is
+// always passed through to the underlying read or write operation.
+template <typename Buffer>
+class consuming_buffers<Buffer, asio::null_buffers>
+  : public asio::null_buffers
+{
+public:
+  consuming_buffers(const asio::null_buffers&)
+  {
+    // No-op.
+  }
+
+  void consume(std::size_t)
+  {
+    // No-op.
+  }
 };
 
 } // namespace detail

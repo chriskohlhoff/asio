@@ -114,7 +114,8 @@ public:
   // Start a new read operation. The handler object will be invoked when the
   // given descriptor is ready to be read, or an error has occurred.
   template <typename Handler>
-  void start_read_op(socket_type descriptor, Handler handler)
+  void start_read_op(socket_type descriptor, Handler handler,
+      bool /*allow_speculative_read*/ = true)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
     if (!shutdown_)
@@ -125,7 +126,8 @@ public:
   // Start a new write operation. The handler object will be invoked when the
   // given descriptor is ready to be written, or an error has occurred.
   template <typename Handler>
-  void start_write_op(socket_type descriptor, Handler handler)
+  void start_write_op(socket_type descriptor, Handler handler,
+      bool /*allow_speculative_write*/ = true)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
     if (!shutdown_)

@@ -558,6 +558,22 @@ public:
     }
   }
 
+  // Wait until data can be sent without blocking.
+  size_t send(implementation_type& impl, const null_buffers&,
+      socket_base::message_flags, asio::error_code& ec)
+  {
+    if (!is_open(impl))
+    {
+      ec = asio::error::bad_descriptor;
+      return 0;
+    }
+
+    // Wait for socket to become ready.
+    socket_ops::poll_write(impl.socket_, ec);
+
+    return 0;
+  }
+
   template <typename ConstBufferSequence, typename Handler>
   class send_handler
   {
@@ -672,6 +688,45 @@ public:
     }
   }
 
+  template <typename Handler>
+  class null_buffers_handler
+  {
+  public:
+    null_buffers_handler(asio::io_service& io_service, Handler handler)
+      : work_(io_service),
+        handler_(handler)
+    {
+    }
+
+    bool operator()(const asio::error_code& result)
+    {
+      work_.get_io_service().post(bind_handler(handler_, result, 0));
+      return true;
+    }
+
+  private:
+    asio::io_service::work work_;
+    Handler handler_;
+  };
+
+  // Start an asynchronous wait until data can be sent without blocking.
+  template <typename Handler>
+  void async_send(implementation_type& impl, const null_buffers&,
+      socket_base::message_flags, Handler handler)
+  {
+    if (!is_open(impl))
+    {
+      this->get_io_service().post(bind_handler(handler,
+            asio::error::bad_descriptor, 0));
+    }
+    else
+    {
+      reactor_.start_write_op(impl.socket_,
+          null_buffers_handler<Handler>(this->get_io_service(), handler),
+          false);
+    }
+  }
+
   // Send a datagram to the specified endpoint. Returns the number of bytes
   // sent.
   template <typename ConstBufferSequence>
@@ -731,6 +786,23 @@ public:
       if (socket_ops::poll_write(impl.socket_, ec) < 0)
         return 0;
     }
+  }
+
+  // Wait until data can be sent without blocking.
+  size_t send_to(implementation_type& impl, const null_buffers&,
+      socket_base::message_flags, const endpoint_type&,
+      asio::error_code& ec)
+  {
+    if (!is_open(impl))
+    {
+      ec = asio::error::bad_descriptor;
+      return 0;
+    }
+
+    // Wait for socket to become ready.
+    socket_ops::poll_write(impl.socket_, ec);
+
+    return 0;
   }
 
   template <typename ConstBufferSequence, typename Handler>
@@ -831,6 +903,24 @@ public:
     }
   }
 
+  // Start an asynchronous wait until data can be sent without blocking.
+  template <typename Handler>
+  void async_send_to(implementation_type& impl, const null_buffers&,
+      socket_base::message_flags, const endpoint_type&, Handler handler)
+  {
+    if (!is_open(impl))
+    {
+      this->get_io_service().post(bind_handler(handler,
+            asio::error::bad_descriptor, 0));
+    }
+    else
+    {
+      reactor_.start_write_op(impl.socket_,
+          null_buffers_handler<Handler>(this->get_io_service(), handler),
+          false);
+    }
+  }
+
   // Receive some data from the peer. Returns the number of bytes received.
   template <typename MutableBufferSequence>
   size_t receive(implementation_type& impl,
@@ -904,6 +994,23 @@ public:
       if (socket_ops::poll_read(impl.socket_, ec) < 0)
         return 0;
     }
+  }
+
+  // Wait until data can be received without blocking.
+  size_t receive(implementation_type& impl,
+      const null_buffers& buffers,
+      socket_base::message_flags, asio::error_code& ec)
+  {
+    if (!is_open(impl))
+    {
+      ec = asio::error::bad_descriptor;
+      return 0;
+    }
+
+    // Wait for socket to become ready.
+    socket_ops::poll_read(impl.socket_, ec);
+
+    return 0;
   }
 
   template <typename MutableBufferSequence, typename Handler>
@@ -1032,6 +1139,29 @@ public:
     }
   }
 
+  // Wait until data can be received without blocking.
+  template <typename Handler>
+  void async_receive(implementation_type& impl, const null_buffers&,
+      socket_base::message_flags flags, Handler handler)
+  {
+    if (!is_open(impl))
+    {
+      this->get_io_service().post(bind_handler(handler,
+            asio::error::bad_descriptor, 0));
+    }
+    else if (flags & socket_base::message_out_of_band)
+    {
+      reactor_.start_except_op(impl.socket_,
+          null_buffers_handler<Handler>(this->get_io_service(), handler));
+    }
+    else
+    {
+      reactor_.start_read_op(impl.socket_,
+          null_buffers_handler<Handler>(this->get_io_service(), handler),
+          false);
+    }
+  }
+
   // Receive a datagram with the endpoint of the sender. Returns the number of
   // bytes received.
   template <typename MutableBufferSequence>
@@ -1103,6 +1233,26 @@ public:
       if (socket_ops::poll_read(impl.socket_, ec) < 0)
         return 0;
     }
+  }
+
+  // Wait until data can be received without blocking.
+  size_t receive_from(implementation_type& impl,
+      const null_buffers& buffers, endpoint_type& sender_endpoint,
+      socket_base::message_flags, asio::error_code& ec)
+  {
+    if (!is_open(impl))
+    {
+      ec = asio::error::bad_descriptor;
+      return 0;
+    }
+
+    // Wait for socket to become ready.
+    socket_ops::poll_read(impl.socket_, ec);
+
+    // Reset endpoint since it can be given no sensible value at this time.
+    sender_endpoint = endpoint_type();
+
+    return 0;
   }
 
   template <typename MutableBufferSequence, typename Handler>
@@ -1205,6 +1355,36 @@ public:
           receive_from_handler<MutableBufferSequence, Handler>(
             impl.socket_, this->get_io_service(), buffers,
             sender_endpoint, flags, handler));
+    }
+  }
+
+  // Wait until data can be received without blocking.
+  template <typename Handler>
+  void async_receive_from(implementation_type& impl,
+      const null_buffers&, endpoint_type& sender_endpoint,
+      socket_base::message_flags flags, Handler handler)
+  {
+    if (!is_open(impl))
+    {
+      this->get_io_service().post(bind_handler(handler,
+            asio::error::bad_descriptor, 0));
+    }
+    else
+    {
+      // Reset endpoint since it can be given no sensible value at this time.
+      sender_endpoint = endpoint_type();
+
+      if (flags & socket_base::message_out_of_band)
+      {
+        reactor_.start_except_op(impl.socket_,
+            null_buffers_handler<Handler>(this->get_io_service(), handler));
+      }
+      else
+      {
+        reactor_.start_read_op(impl.socket_,
+            null_buffers_handler<Handler>(this->get_io_service(), handler),
+            false);
+      }
     }
   }
 
