@@ -168,14 +168,11 @@ public:
       ((::SSL_get_shutdown( session_ ) & SSL_SENT_SHUTDOWN) ==
             SSL_SENT_SHUTDOWN);
 
-    if (is_shut_down_sent && is_shut_down_received && is_operation_done)
+    if (is_shut_down_sent && is_shut_down_received && is_operation_done && !is_write_needed)
       // SSL connection is shut down cleanly
       return handler_(asio::error_code(), 1);
 
-    if (is_shut_down_received && !is_write_needed)
-      return handler_(asio::error::eof, 0);
-
-    if (is_shut_down_received)
+    if (is_shut_down_received && !is_operation_done)
       // Shutdown has been requested, while we were reading or writing...
       // abort our action...
       return handler_(asio::error::shut_down, 0);
@@ -225,7 +222,7 @@ public:
 
         return start();
       }
-      else if (is_read_needed)
+      else if (is_read_needed || (is_shut_down_sent && !is_shut_down_received))
       {
         return read_();
       }
