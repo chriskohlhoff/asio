@@ -99,6 +99,7 @@
 # endif
 # include <sys/socket.h>
 # include <sys/uio.h>
+# include <sys/un.h>
 # include <netinet/in.h>
 # include <netinet/tcp.h>
 # include <arpa/inet.h>
@@ -175,6 +176,7 @@ typedef in6_addr in6_addr_type;
 typedef ipv6_mreq in6_mreq_type;
 typedef sockaddr_in6 sockaddr_in6_type;
 typedef sockaddr_storage sockaddr_storage_type;
+typedef sockaddr_un sockaddr_un_type;
 typedef addrinfo addrinfo_type;
 typedef int ioctl_arg_type;
 typedef uint32_t u_long_type;

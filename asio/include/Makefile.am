@@ -124,6 +124,10 @@ nobase_include_HEADERS = \
 	asio/ip/detail/socket_option.hpp \
 	asio/is_read_buffered.hpp \
 	asio/is_write_buffered.hpp \
+	asio/local/basic_endpoint.hpp \
+	asio/local/connect_pair.hpp \
+	asio/local/datagram_protocol.hpp \
+	asio/local/stream_protocol.hpp \
 	asio/placeholders.hpp \
 	asio/read.hpp \
 	asio/read_until.hpp \
