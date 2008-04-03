@@ -134,6 +134,10 @@ public:
       asio::system_error e(asio::error::invalid_argument);
       boost::throw_exception(e);
     }
+    else if (size == 0)
+    {
+      path_length_ = 0;
+    }
     else
     {
       path_length_ = size
