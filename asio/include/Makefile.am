@@ -26,6 +26,7 @@ nobase_include_HEADERS = \
 	asio/detail/consuming_buffers.hpp \
 	asio/detail/const_buffers_iterator.hpp \
 	asio/detail/deadline_timer_service.hpp \
+	asio/detail/descriptor_ops.hpp \
 	asio/detail/dev_poll_reactor.hpp \
 	asio/detail/dev_poll_reactor_fwd.hpp \
 	asio/detail/epoll_reactor.hpp \
@@ -58,6 +59,7 @@ nobase_include_HEADERS = \
 	asio/detail/posix_tss_ptr.hpp \
 	asio/detail/push_options.hpp \
 	asio/detail/reactive_socket_service.hpp \
+	asio/detail/reactive_descriptor_service.hpp \
 	asio/detail/reactor_op_queue.hpp \
 	asio/detail/resolver_service.hpp \
 	asio/detail/scoped_lock.hpp \
@@ -130,6 +132,11 @@ nobase_include_HEADERS = \
 	asio/local/datagram_protocol.hpp \
 	asio/local/stream_protocol.hpp \
 	asio/placeholders.hpp \
+	asio/posix/basic_descriptor.hpp \
+	asio/posix/basic_stream_descriptor.hpp \
+	asio/posix/descriptor_base.hpp \
+	asio/posix/stream_descriptor.hpp \
+	asio/posix/stream_descriptor_service.hpp \
 	asio/read.hpp \
 	asio/read_until.hpp \
 	asio/socket_acceptor_service.hpp \
