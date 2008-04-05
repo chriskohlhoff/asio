@@ -35,6 +35,10 @@ noinst_PROGRAMS = \
 	tests/unit/ip/v6_only \
 	tests/unit/is_read_buffered \
 	tests/unit/is_write_buffered \
+	tests/unit/local/basic_endpoint \
+	tests/unit/local/connect_pair \
+	tests/unit/local/datagram_protocol \
+	tests/unit/local/stream_protocol \
 	tests/unit/placeholders \
 	tests/unit/read \
 	tests/unit/read_until \
@@ -133,6 +137,10 @@ TESTS = \
 	tests/unit/ip/v6_only \
 	tests/unit/is_read_buffered \
 	tests/unit/is_write_buffered \
+	tests/unit/local/basic_endpoint \
+	tests/unit/local/connect_pair \
+	tests/unit/local/datagram_protocol \
+	tests/unit/local/stream_protocol \
 	tests/unit/placeholders \
 	tests/unit/read \
 	tests/unit/read_until \
@@ -201,6 +209,10 @@ tests_unit_ip_unicast_SOURCES = tests/unit/ip/unicast.cpp
 tests_unit_ip_v6_only_SOURCES = tests/unit/ip/v6_only.cpp
 tests_unit_is_read_buffered_SOURCES = tests/unit/is_read_buffered.cpp
 tests_unit_is_write_buffered_SOURCES = tests/unit/is_write_buffered.cpp
+tests_unit_local_basic_endpoint_SOURCES = tests/unit/local/basic_endpoint.cpp
+tests_unit_local_connect_pair_SOURCES = tests/unit/local/connect_pair.cpp
+tests_unit_local_datagram_protocol_SOURCES = tests/unit/local/datagram_protocol.cpp
+tests_unit_local_stream_protocol_SOURCES = tests/unit/local/stream_protocol.cpp
 tests_unit_placeholders_SOURCES = tests/unit/placeholders.cpp
 tests_unit_read_SOURCES = tests/unit/read.cpp
 tests_unit_read_until_SOURCES = tests/unit/read_until.cpp
