@@ -73,6 +73,10 @@
 #include "asio/thread.hpp"
 #include "asio/time_traits.hpp"
 #include "asio/version.hpp"
+#include "asio/windows/basic_handle.hpp"
+#include "asio/windows/basic_stream_handle.hpp"
+#include "asio/windows/stream_handle.hpp"
+#include "asio/windows/stream_handle_service.hpp"
 #include "asio/write.hpp"
 
 #endif // ASIO_HPP

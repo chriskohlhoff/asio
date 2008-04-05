@@ -153,6 +153,10 @@ nobase_include_HEADERS = \
 	asio/thread.hpp \
 	asio/time_traits.hpp \
 	asio/version.hpp \
+	asio/windows/basic_handle.hpp \
+	asio/windows/basic_stream_handle.hpp \
+	asio/windows/stream_handle.hpp \
+	asio/windows/stream_handle_service.hpp \
 	asio/write.hpp \
 	asio.hpp
 
