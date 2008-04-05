@@ -1,6 +1,7 @@
 server
 .deps
 .dirstamp
-*.pdb
 *.ilk
+*.manifest
+*.pdb
 *.tds

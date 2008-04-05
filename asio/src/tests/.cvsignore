@@ -3,5 +3,6 @@
 *.exe
 *_test
 *.ilk
+*.manifest
 *.pdb
 *.tds

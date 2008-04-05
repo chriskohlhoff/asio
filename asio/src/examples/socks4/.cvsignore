@@ -3,5 +3,6 @@
 *.exe
 sync_client
 *.ilk
+*.manifest
 *.pdb
 *.tds

@@ -4,5 +4,6 @@
 server
 client
 *.ilk
+*.manifest
 *.pdb
 *.tds

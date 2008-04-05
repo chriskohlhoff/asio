@@ -3,5 +3,6 @@
 *.exe
 *timer
 *.ilk
+*.manifest
 *.pdb
 *.tds

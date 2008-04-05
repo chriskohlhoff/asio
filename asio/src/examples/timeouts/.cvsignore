@@ -3,5 +3,6 @@
 *.exe
 *_timeout
 *.ilk
+*.manifest
 *.pdb
 *.tds

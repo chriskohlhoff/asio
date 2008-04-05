@@ -3,5 +3,6 @@
 *.exe
 server
 *.ilk
+*.manifest
 *.pdb
 *.tds

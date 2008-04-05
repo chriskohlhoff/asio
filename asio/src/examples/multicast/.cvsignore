@@ -4,5 +4,6 @@ receiver
 sender
 *.exe
 *.ilk
+*.manifest
 *.pdb
 *.tds
