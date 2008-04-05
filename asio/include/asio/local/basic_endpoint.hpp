@@ -26,8 +26,10 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
+#include "asio/system_error.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/throw_error.hpp"
 
 #if !defined(ASIO_DISABLE_LOCAL_SOCKETS)
 # if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
