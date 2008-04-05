@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_WINDOWS_BASIC_STREAM_SOCKET_HPP
-#define ASIO_WINDOWS_BASIC_STREAM_SOCKET_HPP
+#ifndef ASIO_WINDOWS_BASIC_STREAM_HANDLE_HPP
+#define ASIO_WINDOWS_BASIC_STREAM_HANDLE_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -297,4 +297,4 @@ public:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_WINDOWS_BASIC_STREAM_SOCKET_HPP
+#endif // ASIO_WINDOWS_BASIC_STREAM_HANDLE_HPP
