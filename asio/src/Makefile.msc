@@ -104,6 +104,10 @@ UNIT_TEST_EXES = \
 	tests\unit\stream_socket_service.exe \
 	tests\unit\thread.exe \
 	tests\unit\time_traits.exe \
+	tests\unit\windows\basic_handle.exe \
+	tests\unit\windows\basic_stream_handle.exe \
+	tests\unit\windows\stream_handle.exe \
+	tests\unit\windows\stream_handle_service.exe \
 	tests\unit\write.exe
 
 EXAMPLE_EXES = \
@@ -184,6 +188,9 @@ check: $(UNIT_TEST_EXES)
 
 {tests\unit\ssl}.cpp{tests\unit\ssl}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(SSL_CXXFLAGS) $(DEFINES) $< $(SSL_LIBS) -link -opt:ref
+
+{tests\unit\windows}.cpp{tests\unit\windows}.exe:
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
 
 {examples\allocation}.cpp{examples\allocation}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref

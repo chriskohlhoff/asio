@@ -1,0 +1,11 @@
+.deps
+.dirstamp
+*.exe
+*.ilk
+*.manifest
+*.pdb
+*.tds
+basic_handle
+basic_stream_handle
+stream_handle
+stream_handle_service

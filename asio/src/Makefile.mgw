@@ -53,6 +53,10 @@ UNIT_TEST_EXES = \
 	tests/unit/stream_socket_service.exe \
 	tests/unit/thread.exe \
 	tests/unit/time_traits.exe \
+	tests/unit/windows/basic_handle.exe \
+	tests/unit/windows/basic_stream_handle.exe \
+	tests/unit/windows/stream_handle.exe \
+	tests/unit/windows/stream_handle_service.exe \
 	tests/unit/write.exe
 
 EXAMPLE_EXES = \
