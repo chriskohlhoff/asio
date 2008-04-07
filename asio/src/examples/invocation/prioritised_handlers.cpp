@@ -13,6 +13,8 @@
 #include <iostream>
 #include <queue>
 
+using asio::ip::tcp;
+
 class handler_priority_queue
 {
 public:
@@ -108,12 +110,12 @@ void asio_handler_invoke(Function f,
 
 //----------------------------------------------------------------------
 
-void high_priority_handler()
+void high_priority_handler(const asio::error_code& /*ec*/)
 {
   std::cout << "High priority handler\n";
 }
 
-void middle_priority_handler()
+void middle_priority_handler(const asio::error_code& /*ec*/)
 {
   std::cout << "Middle priority handler\n";
 }
@@ -129,9 +131,22 @@ int main()
 
   handler_priority_queue pri_queue;
 
+  // Post a completion handler to be run immediately.
   io_service.post(pri_queue.wrap(0, low_priority_handler));
-  io_service.post(pri_queue.wrap(100, high_priority_handler));
-  io_service.post(pri_queue.wrap(42, middle_priority_handler));
+
+  // Start an asynchronous accept that will complete immediately.
+  tcp::endpoint endpoint(asio::ip::address_v4::loopback(), 0);
+  tcp::acceptor acceptor(io_service, endpoint);
+  tcp::socket server_socket(io_service);
+  acceptor.async_accept(server_socket,
+      pri_queue.wrap(100, high_priority_handler));
+  tcp::socket client_socket(io_service);
+  client_socket.connect(acceptor.local_endpoint());
+
+  // Set a deadline timer to expire immediately.
+  asio::deadline_timer timer(io_service);
+  timer.expires_at(boost::posix_time::neg_infin);
+  timer.async_wait(pri_queue.wrap(42, middle_priority_handler));
 
   while (io_service.run_one())
   {
