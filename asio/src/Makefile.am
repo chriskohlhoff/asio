@@ -40,6 +40,10 @@ noinst_PROGRAMS = \
 	tests/unit/local/datagram_protocol \
 	tests/unit/local/stream_protocol \
 	tests/unit/placeholders \
+	tests/unit/posix/basic_descriptor \
+	tests/unit/posix/basic_stream_descriptor \
+	tests/unit/posix/stream_descriptor \
+	tests/unit/posix/stream_descriptor_service \
 	tests/unit/read \
 	tests/unit/read_until \
 	tests/unit/socket_acceptor_service \
@@ -142,6 +146,10 @@ TESTS = \
 	tests/unit/local/datagram_protocol \
 	tests/unit/local/stream_protocol \
 	tests/unit/placeholders \
+	tests/unit/posix/basic_descriptor \
+	tests/unit/posix/basic_stream_descriptor \
+	tests/unit/posix/stream_descriptor \
+	tests/unit/posix/stream_descriptor_service \
 	tests/unit/read \
 	tests/unit/read_until \
 	tests/unit/socket_acceptor_service \
@@ -214,6 +222,10 @@ tests_unit_local_connect_pair_SOURCES = tests/unit/local/connect_pair.cpp
 tests_unit_local_datagram_protocol_SOURCES = tests/unit/local/datagram_protocol.cpp
 tests_unit_local_stream_protocol_SOURCES = tests/unit/local/stream_protocol.cpp
 tests_unit_placeholders_SOURCES = tests/unit/placeholders.cpp
+tests_unit_posix_basic_descriptor_SOURCES = tests/unit/posix/basic_descriptor.cpp
+tests_unit_posix_basic_stream_descriptor_SOURCES = tests/unit/posix/basic_stream_descriptor.cpp
+tests_unit_posix_stream_descriptor_SOURCES = tests/unit/posix/stream_descriptor.cpp
+tests_unit_posix_stream_descriptor_service_SOURCES = tests/unit/posix/stream_descriptor_service.cpp
 tests_unit_read_SOURCES = tests/unit/read.cpp
 tests_unit_read_until_SOURCES = tests/unit/read_until.cpp
 tests_unit_socket_acceptor_service_SOURCES = tests/unit/socket_acceptor_service.cpp
