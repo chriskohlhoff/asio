@@ -23,7 +23,7 @@
 
 // posix_stream_descriptor_compile test
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// The folloposixg test checks that all public member functions on the class
+// The following test checks that all public member functions on the class
 // posix::stream_descriptor compile and link correctly. Runtime failures are
 // ignored.
 

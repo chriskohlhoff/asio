@@ -29,10 +29,10 @@
 namespace asio {
 namespace posix {
 
-/// Provides Windows descriptor functionality.
+/// Provides POSIX descriptor functionality.
 /**
  * The posix::basic_descriptor class template provides the ability to wrap a
- * Windows descriptor.
+ * POSIX descriptor.
  *
  * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
