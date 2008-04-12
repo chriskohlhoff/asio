@@ -27,6 +27,12 @@
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/service_id.hpp"
 
+#if defined(BOOST_NO_TYPEID)
+# if !defined(ASIO_NO_TYPEID)
+#  define ASIO_NO_TYPEID
+# endif // !defined(ASIO_NO_TYPEID)
+#endif // defined(BOOST_NO_TYPEID)
+
 namespace asio {
 namespace detail {
 
@@ -156,6 +162,7 @@ private:
     service.id_ = &id;
   }
 
+#if !defined(ASIO_NO_TYPEID)
   // Set a service's id.
   template <typename Service>
   void init_service_id(asio::io_service::service& service,
@@ -164,6 +171,7 @@ private:
     service.type_info_ = &typeid(Service);
     service.id_ = 0;
   }
+#endif // !defined(ASIO_NO_TYPEID)
 
   // Check if a service matches the given id.
   static bool service_id_matches(
@@ -173,6 +181,7 @@ private:
     return service.id_ == &id;
   }
 
+#if !defined(ASIO_NO_TYPEID)
   // Check if a service matches the given id.
   template <typename Service>
   static bool service_id_matches(
@@ -181,6 +190,7 @@ private:
   {
     return service.type_info_ != 0 && *service.type_info_ == typeid(Service);
   }
+#endif // !defined(ASIO_NO_TYPEID)
 
   // Mutex to protect access to internal data.
   mutable asio::detail::mutex mutex_;
