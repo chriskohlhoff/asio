@@ -29,6 +29,9 @@ Threads:
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
 
+Scatter-Gather:
+
+* At most `min(64,IOV_MAX)` buffers may be transferred in a single operation.
 
 [heading Linux Kernel 2.6]
 
@@ -46,6 +49,10 @@ Threads:
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
 
+Scatter-Gather:
+
+* At most `min(64,IOV_MAX)` buffers may be transferred in a single operation.
+
 
 [heading Solaris]
 
@@ -62,6 +69,10 @@ calls `io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
 * An additional thread per `io_service` is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+
+Scatter-Gather:
+
+* At most `min(64,IOV_MAX)` buffers may be transferred in a single operation.
 
 
 [heading QNX Neutrino]
@@ -81,6 +92,10 @@ Threads:
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
 
+Scatter-Gather:
+
+* At most `min(64,IOV_MAX)` buffers may be transferred in a single operation.
+
 
 [heading Mac OS X]
 
@@ -98,6 +113,10 @@ Threads:
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
 
+Scatter-Gather:
+
+* At most `min(64,IOV_MAX)` buffers may be transferred in a single operation.
+
 
 [heading FreeBSD]
 
@@ -114,6 +133,10 @@ Threads:
 * An additional thread per `io_service` is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+
+Scatter-Gather:
+
+* At most `min(64,IOV_MAX)` buffers may be transferred in a single operation.
 
 
 [heading AIX]
@@ -133,6 +156,10 @@ Threads:
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
 
+Scatter-Gather:
+
+* At most `min(64,IOV_MAX)` buffers may be transferred in a single operation.
+
 
 [heading HP-UX]
 
@@ -150,6 +177,10 @@ Threads:
 * An additional thread per `io_service` is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+
+Scatter-Gather:
+
+* At most `min(64,IOV_MAX)` buffers may be transferred in a single operation.
 
 
 [heading Tru64]
@@ -169,6 +200,10 @@ Threads:
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
 
+Scatter-Gather:
+
+* At most `min(64,IOV_MAX)` buffers may be transferred in a single operation.
+
 
 [heading Windows 95, 98 and Me]
 
@@ -185,6 +220,10 @@ Threads:
 * An additional thread per `io_service` is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+
+Scatter-Gather:
+
+* For sockets, at most 16 buffers may be transferred in a single operation.
 
 
 [heading Windows NT, 2000, XP, 2003 and Vista]
@@ -208,6 +247,13 @@ demultiplexing. This thread is created on the first call to `async_connect()`.
 * An additional thread per `io_service` is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+
+Scatter-Gather:
+
+* For sockets, at most 64 buffers may be transferred in a single operation.
+
+* For stream-oriented handles, only one buffer may be transferred in a single
+operation.
 
 
 [endsect]
