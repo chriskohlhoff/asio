@@ -36,7 +36,8 @@
 # endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 #endif // !defined(ASIO_DISABLE_POSIX_STREAM_DESCRIPTOR)
 
-#if defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
+#if defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR) \
+  || defined(GENERATING_DOCUMENTATION)
 
 namespace asio {
 namespace posix {
@@ -192,6 +193,7 @@ private:
 } // namespace asio
 
 #endif // defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
+       //   || defined(GENERATING_DOCUMENTATION)
 
 #include "asio/detail/pop_options.hpp"
 

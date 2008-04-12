@@ -33789,6 +33789,1280 @@ Protected destructor to prevent deletion through this type.
 
 [endsect]
 
+[section:posix__basic_stream_descriptor posix::basic_stream_descriptor]
+
+Provides stream-oriented descriptor functionality. 
+
+  template<
+      typename ``[link asio.reference.StreamDescriptorservice StreamDescriptorservice]`` = stream_descriptor_service>
+  class basic_stream_descriptor :
+    public posix::basic_descriptor< StreamDescriptorservice >
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.posix__basic_stream_descriptor.bytes_readable [*bytes_readable]]]
+    [IO control command to get the amount of data that can be read without blocking. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_stream_descriptor.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_stream_descriptor.lowest_layer_type [*lowest_layer_type]]]
+    [A basic_descriptor is always the lowest layer. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_stream_descriptor.native_type [*native_type]]]
+    [The native representation of a descriptor. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_stream_descriptor.non_blocking_io [*non_blocking_io]]]
+    [IO control command to set the blocking mode of the descriptor. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_stream_descriptor.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.assign [*assign]]]
+    [Assign an existing native descriptor to the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.async_read_some [*async_read_some]]]
+    [Start an asynchronous read. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.async_write_some [*async_write_some]]]
+    [Start an asynchronous write. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.basic_stream_descriptor [*basic_stream_descriptor]]]
+    [Construct a basic_stream_descriptor without opening it. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.close [*close]]]
+    [Close the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.io_control [*io_control]]]
+    [Perform an IO control command on the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.is_open [*is_open]]]
+    [Determine whether the descriptor is open. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.lowest_layer [*lowest_layer]]]
+    [Get a reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.native [*native]]]
+    [Get the native descriptor representation. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.read_some [*read_some]]]
+    [Read some data from the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.write_some [*write_some]]]
+    [Write some data to the descriptor. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+The posix::basic_stream_descriptor class template provides asynchronous and blocking stream-oriented descriptor functionality.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe.
+
+
+[section:assign posix::basic_stream_descriptor::assign]
+
+Assign an existing native descriptor to the descriptor. 
+
+  void ``[link asio.reference.posix__basic_stream_descriptor.assign.overload1 assign]``(
+      const native_type & native_descriptor);
+
+  asio::error_code ``[link asio.reference.posix__basic_stream_descriptor.assign.overload2 assign]``(
+      const native_type & native_descriptor,
+      asio::error_code & ec);
+
+
+[section:overload1 posix::basic_stream_descriptor::assign (1 of 2 overloads)]
+
+
+['Inherited from posix::basic_descriptor.]
+
+Assign an existing native descriptor to the descriptor. 
+
+  void assign(
+      const native_type & native_descriptor);
+
+
+
+[endsect]
+
+
+
+[section:overload2 posix::basic_stream_descriptor::assign (2 of 2 overloads)]
+
+
+['Inherited from posix::basic_descriptor.]
+
+Assign an existing native descriptor to the descriptor. 
+
+  asio::error_code assign(
+      const native_type & native_descriptor,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:async_read_some posix::basic_stream_descriptor::async_read_some]
+
+Start an asynchronous read. 
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link asio.reference.ReadHandler ReadHandler]``>
+  void async_read_some(
+      const MutableBufferSequence & buffers,
+      ReadHandler descriptorr);
+
+
+This function is used to asynchronously read data from the stream descriptor. The function call always returns immediately.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffers][One or more buffers into which the data will be read. Although the buffers object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the descriptorr is called.]]
+
+[[descriptorr][The descriptorr to be called when the read operation completes. Copies will be made of the descriptorr as required. The function signature of the descriptorr must be: 
+``
+   void descriptorr(
+     const asio::error_code& error, // Result of operation.
+     std::size_t bytes_transferred           // Number of bytes read.
+   ); 
+
+``
+Regardless of whether the asynchronous operation completes immediately or not, the descriptorr will not be invoked from within this function. Invocation of the descriptorr will be performed in a manner equivalent to using asio::io\_service::post().]]
+
+]
+
+[heading Remarks]
+      
+The read operation may not read all of the requested number of bytes. Consider using the 
+[link asio.reference.async_read async_read]  function if you need to ensure that the requested amount of data is read before the asynchronous operation completes.
+
+[heading Example]
+  
+To read into a single data buffer use the 
+[link asio.reference.buffer buffer]  function as follows: 
+
+   descriptor.async_read_some(asio::buffer(data, size), descriptorr);
+
+
+See the 
+[link asio.reference.buffer buffer]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+
+
+
+[endsect]
+
+
+
+[section:async_write_some posix::basic_stream_descriptor::async_write_some]
+
+Start an asynchronous write. 
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link asio.reference.WriteHandler WriteHandler]``>
+  void async_write_some(
+      const ConstBufferSequence & buffers,
+      WriteHandler descriptorr);
+
+
+This function is used to asynchronously write data to the stream descriptor. The function call always returns immediately.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffers][One or more data buffers to be written to the descriptor. Although the buffers object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the descriptorr is called.]]
+
+[[descriptorr][The descriptorr to be called when the write operation completes. Copies will be made of the descriptorr as required. The function signature of the descriptorr must be: 
+``
+   void descriptorr(
+     const asio::error_code& error, // Result of operation.
+     std::size_t bytes_transferred           // Number of bytes written.
+   ); 
+
+``
+Regardless of whether the asynchronous operation completes immediately or not, the descriptorr will not be invoked from within this function. Invocation of the descriptorr will be performed in a manner equivalent to using asio::io\_service::post().]]
+
+]
+
+[heading Remarks]
+      
+The write operation may not transmit all of the data to the peer. Consider using the 
+[link asio.reference.async_write async_write]  function if you need to ensure that all data is written before the asynchronous operation completes.
+
+[heading Example]
+  
+To write a single data buffer use the 
+[link asio.reference.buffer buffer]  function as follows: 
+
+   descriptor.async_write_some(asio::buffer(data, size), descriptorr);
+
+
+See the 
+[link asio.reference.buffer buffer]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+
+
+
+[endsect]
+
+
+[section:basic_stream_descriptor posix::basic_stream_descriptor::basic_stream_descriptor]
+
+Construct a basic_stream_descriptor without opening it. 
+
+  ``[link asio.reference.posix__basic_stream_descriptor.basic_stream_descriptor.overload1 basic_stream_descriptor]``(
+      asio::io_service & io_service);
+
+  ``[link asio.reference.posix__basic_stream_descriptor.basic_stream_descriptor.overload2 basic_stream_descriptor]``(
+      asio::io_service & io_service,
+      const native_type & native_descriptor);
+
+
+[section:overload1 posix::basic_stream_descriptor::basic_stream_descriptor (1 of 2 overloads)]
+
+Construct a basic_stream_descriptor without opening it. 
+
+  basic_stream_descriptor(
+      asio::io_service & io_service);
+
+
+This constructor creates a stream descriptor without opening it. The descriptor needs to be opened and then connected or accepted before data can be sent or received on it.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The io\_service object that the stream descriptor will use to dispatch descriptorrs for any asynchronous operations performed on the descriptor. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 posix::basic_stream_descriptor::basic_stream_descriptor (2 of 2 overloads)]
+
+Construct a basic_stream_descriptor on an existing native descriptor. 
+
+  basic_stream_descriptor(
+      asio::io_service & io_service,
+      const native_type & native_descriptor);
+
+
+This constructor creates a stream descriptor object to hold an existing native descriptor.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The io\_service object that the stream descriptor will use to dispatch descriptorrs for any asynchronous operations performed on the descriptor.]]
+
+[[native_descriptor][The new underlying descriptor implementation.]]
+
+]
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:bytes_readable posix::basic_stream_descriptor::bytes_readable]
+
+
+['Inherited from posix::descriptor_base.]
+
+IO control command to get the amount of data that can be read without blocking. 
+
+  typedef implementation_defined bytes_readable;
+
+
+
+Implements the FIONREAD IO control command.
+
+
+[heading Example]
+  
+
+
+   asio::posix::stream_descriptor descriptor(io_service); 
+   ...
+   asio::descriptor_base::bytes_readable command(true);
+   descriptor.io_control(command);
+   std::size_t bytes_readable = command.get();
+
+
+
+
+
+
+[endsect]
+
+
+[section:cancel posix::basic_stream_descriptor::cancel]
+
+Cancel all asynchronous operations associated with the descriptor. 
+
+  void ``[link asio.reference.posix__basic_stream_descriptor.cancel.overload1 cancel]``();
+
+  asio::error_code ``[link asio.reference.posix__basic_stream_descriptor.cancel.overload2 cancel]``(
+      asio::error_code & ec);
+
+
+[section:overload1 posix::basic_stream_descriptor::cancel (1 of 2 overloads)]
+
+
+['Inherited from posix::basic_descriptor.]
+
+Cancel all asynchronous operations associated with the descriptor. 
+
+  void cancel();
+
+
+This function causes all outstanding asynchronous read or write operations to finish immediately, and the descriptorrs for cancelled operations will be passed the asio::error::operation\_aborted error.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 posix::basic_stream_descriptor::cancel (2 of 2 overloads)]
+
+
+['Inherited from posix::basic_descriptor.]
+
+Cancel all asynchronous operations associated with the descriptor. 
+
+  asio::error_code cancel(
+      asio::error_code & ec);
+
+
+This function causes all outstanding asynchronous read or write operations to finish immediately, and the descriptorrs for cancelled operations will be passed the asio::error::operation\_aborted error.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:close posix::basic_stream_descriptor::close]
+
+Close the descriptor. 
+
+  void ``[link asio.reference.posix__basic_stream_descriptor.close.overload1 close]``();
+
+  asio::error_code ``[link asio.reference.posix__basic_stream_descriptor.close.overload2 close]``(
+      asio::error_code & ec);
+
+
+[section:overload1 posix::basic_stream_descriptor::close (1 of 2 overloads)]
+
+
+['Inherited from posix::basic_descriptor.]
+
+Close the descriptor. 
+
+  void close();
+
+
+This function is used to close the descriptor. Any asynchronous read or write operations will be cancelled immediately, and will complete with the asio::error::operation\_aborted error.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 posix::basic_stream_descriptor::close (2 of 2 overloads)]
+
+
+['Inherited from posix::basic_descriptor.]
+
+Close the descriptor. 
+
+  asio::error_code close(
+      asio::error_code & ec);
+
+
+This function is used to close the descriptor. Any asynchronous read or write operations will be cancelled immediately, and will complete with the asio::error::operation\_aborted error.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:get_io_service posix::basic_stream_descriptor::get_io_service]
+
+
+['Inherited from basic_io_object.]
+
+Get the io_service associated with the object. 
+
+  asio::io_service & get_io_service();
+
+
+This function may be used to obtain the io_service object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:implementation posix::basic_stream_descriptor::implementation]
+
+
+['Inherited from basic_io_object.]
+
+The underlying implementation of the I/O object. 
+
+  implementation_type implementation;
+
+
+
+[endsect]
+
+
+
+[section:implementation_type posix::basic_stream_descriptor::implementation_type]
+
+
+['Inherited from basic_io_object.]
+
+The underlying implementation type of I/O object. 
+
+  typedef service_type::implementation_type implementation_type;
+
+
+
+
+[endsect]
+
+
+[section:io_control posix::basic_stream_descriptor::io_control]
+
+Perform an IO control command on the descriptor. 
+
+  void ``[link asio.reference.posix__basic_stream_descriptor.io_control.overload1 io_control]``(
+      IoControlCommand & command);
+
+  asio::error_code ``[link asio.reference.posix__basic_stream_descriptor.io_control.overload2 io_control]``(
+      IoControlCommand & command,
+      asio::error_code & ec);
+
+
+[section:overload1 posix::basic_stream_descriptor::io_control (1 of 2 overloads)]
+
+
+['Inherited from posix::basic_descriptor.]
+
+Perform an IO control command on the descriptor. 
+
+  void io_control(
+      IoControlCommand & command);
+
+
+This function is used to execute an IO control command on the descriptor.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[command][The IO control command to be performed on the descriptor.]]
+
+]
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure.]]
+
+]
+
+[heading Example]
+  
+Getting the number of bytes ready to read: 
+
+   asio::posix::stream_descriptor descriptor(io_service);
+   ...
+   asio::posix::stream_descriptor::bytes_readable command;
+   descriptor.io_control(command);
+   std::size_t bytes_readable = command.get();
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 posix::basic_stream_descriptor::io_control (2 of 2 overloads)]
+
+
+['Inherited from posix::basic_descriptor.]
+
+Perform an IO control command on the descriptor. 
+
+  asio::error_code io_control(
+      IoControlCommand & command,
+      asio::error_code & ec);
+
+
+This function is used to execute an IO control command on the descriptor.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[command][The IO control command to be performed on the descriptor.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Example]
+  
+Getting the number of bytes ready to read: 
+
+   asio::posix::stream_descriptor descriptor(io_service);
+   ...
+   asio::posix::stream_descriptor::bytes_readable command;
+   asio::error_code ec;
+   descriptor.io_control(command, ec);
+   if (ec)
+   {
+     // An error occurred.
+   }
+   std::size_t bytes_readable = command.get();
+
+
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:io_service posix::basic_stream_descriptor::io_service]
+
+
+['Inherited from basic_io_object.]
+
+(Deprecated: use get_io_service().) Get the io_service associated with the object. 
+
+  asio::io_service & io_service();
+
+
+This function may be used to obtain the io_service object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:is_open posix::basic_stream_descriptor::is_open]
+
+
+['Inherited from posix::basic_descriptor.]
+
+Determine whether the descriptor is open. 
+
+  bool is_open() const;
+
+
+
+[endsect]
+
+
+
+[section:lowest_layer posix::basic_stream_descriptor::lowest_layer]
+
+
+['Inherited from posix::basic_descriptor.]
+
+Get a reference to the lowest layer. 
+
+  lowest_layer_type & lowest_layer();
+
+
+This function returns a reference to the lowest layer in a stack of layers. Since a basic_descriptor cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:lowest_layer_type posix::basic_stream_descriptor::lowest_layer_type]
+
+
+['Inherited from posix::basic_descriptor.]
+
+A basic_descriptor is always the lowest layer. 
+
+  typedef basic_descriptor< StreamDescriptorservice > lowest_layer_type;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.posix__basic_descriptor.bytes_readable [*bytes_readable]]]
+    [IO control command to get the amount of data that can be read without blocking. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_descriptor.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_descriptor.lowest_layer_type [*lowest_layer_type]]]
+    [A basic_descriptor is always the lowest layer. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_descriptor.native_type [*native_type]]]
+    [The native representation of a descriptor. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_descriptor.non_blocking_io [*non_blocking_io]]]
+    [IO control command to set the blocking mode of the descriptor. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_descriptor.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.posix__basic_descriptor.assign [*assign]]]
+    [Assign an existing native descriptor to the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.basic_descriptor [*basic_descriptor]]]
+    [Construct a basic_descriptor without opening it. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.close [*close]]]
+    [Close the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.io_control [*io_control]]]
+    [Perform an IO control command on the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.is_open [*is_open]]]
+    [Determine whether the descriptor is open. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.lowest_layer [*lowest_layer]]]
+    [Get a reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.native [*native]]]
+    [Get the native descriptor representation. ]
+  ]
+  
+]
+
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.posix__basic_descriptor._basic_descriptor [*~basic_descriptor]]]
+    [Protected destructor to prevent deletion through this type. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.posix__basic_descriptor.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.posix__basic_descriptor.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+The posix::basic_descriptor class template provides the ability to wrap a POSIX descriptor.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
+
+
+
+[endsect]
+
+
+
+[section:native posix::basic_stream_descriptor::native]
+
+
+['Inherited from posix::basic_descriptor.]
+
+Get the native descriptor representation. 
+
+  native_type native();
+
+
+This function may be used to obtain the underlying representation of the descriptor. This is intended to allow access to native descriptor functionality that is not otherwise provided. 
+
+
+[endsect]
+
+
+
+[section:native_type posix::basic_stream_descriptor::native_type]
+
+The native representation of a descriptor. 
+
+  typedef StreamDescriptorservice::native_type native_type;
+
+
+
+
+[endsect]
+
+
+
+[section:non_blocking_io posix::basic_stream_descriptor::non_blocking_io]
+
+
+['Inherited from posix::descriptor_base.]
+
+IO control command to set the blocking mode of the descriptor. 
+
+  typedef implementation_defined non_blocking_io;
+
+
+
+Implements the FIONBIO IO control command.
+
+
+[heading Example]
+  
+
+
+   asio::posix::stream_descriptor descriptor(io_service); 
+   ...
+   asio::descriptor_base::non_blocking_io command(true);
+   descriptor.io_control(command);
+
+
+
+
+
+
+[endsect]
+
+
+[section:read_some posix::basic_stream_descriptor::read_some]
+
+Read some data from the descriptor. 
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t ``[link asio.reference.posix__basic_stream_descriptor.read_some.overload1 read_some]``(
+      const MutableBufferSequence & buffers);
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t ``[link asio.reference.posix__basic_stream_descriptor.read_some.overload2 read_some]``(
+      const MutableBufferSequence & buffers,
+      asio::error_code & ec);
+
+
+[section:overload1 posix::basic_stream_descriptor::read_some (1 of 2 overloads)]
+
+Read some data from the descriptor. 
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t read_some(
+      const MutableBufferSequence & buffers);
+
+
+This function is used to read data from the stream descriptor. The function call will block until one or more bytes of data has been read successfully, or until an error occurs.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffers][One or more buffers into which the data will be read.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes read.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. An error code of asio::error::eof indicates that the connection was closed by the peer.]]
+
+]
+
+[heading Remarks]
+      
+The read\_some operation may not read all of the requested number of bytes. Consider using the 
+[link asio.reference.read read]  function if you need to ensure that the requested amount of data is read before the blocking operation completes.
+
+[heading Example]
+  
+To read into a single data buffer use the 
+[link asio.reference.buffer buffer]  function as follows: 
+
+   descriptor.read_some(asio::buffer(data, size));
+
+
+See the 
+[link asio.reference.buffer buffer]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+
+
+
+[endsect]
+
+
+
+[section:overload2 posix::basic_stream_descriptor::read_some (2 of 2 overloads)]
+
+Read some data from the descriptor. 
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t read_some(
+      const MutableBufferSequence & buffers,
+      asio::error_code & ec);
+
+
+This function is used to read data from the stream descriptor. The function call will block until one or more bytes of data has been read successfully, or until an error occurs.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffers][One or more buffers into which the data will be read.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes read. Returns 0 if an error occurred.
+
+[heading Remarks]
+      
+The read\_some operation may not read all of the requested number of bytes. Consider using the 
+[link asio.reference.read read]  function if you need to ensure that the requested amount of data is read before the blocking operation completes. 
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:service posix::basic_stream_descriptor::service]
+
+
+['Inherited from basic_io_object.]
+
+The service associated with the I/O object. 
+
+  service_type & service;
+
+
+
+[endsect]
+
+
+
+[section:service_type posix::basic_stream_descriptor::service_type]
+
+
+['Inherited from basic_io_object.]
+
+The type of the service that will be used to provide I/O operations. 
+
+  typedef StreamDescriptorservice service_type;
+
+
+
+
+[endsect]
+
+
+[section:write_some posix::basic_stream_descriptor::write_some]
+
+Write some data to the descriptor. 
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t ``[link asio.reference.posix__basic_stream_descriptor.write_some.overload1 write_some]``(
+      const ConstBufferSequence & buffers);
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t ``[link asio.reference.posix__basic_stream_descriptor.write_some.overload2 write_some]``(
+      const ConstBufferSequence & buffers,
+      asio::error_code & ec);
+
+
+[section:overload1 posix::basic_stream_descriptor::write_some (1 of 2 overloads)]
+
+Write some data to the descriptor. 
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t write_some(
+      const ConstBufferSequence & buffers);
+
+
+This function is used to write data to the stream descriptor. The function call will block until one or more bytes of the data has been written successfully, or until an error occurs.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffers][One or more data buffers to be written to the descriptor.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes written.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. An error code of asio::error::eof indicates that the connection was closed by the peer.]]
+
+]
+
+[heading Remarks]
+      
+The write\_some operation may not transmit all of the data to the peer. Consider using the 
+[link asio.reference.write write]  function if you need to ensure that all data is written before the blocking operation completes.
+
+[heading Example]
+  
+To write a single data buffer use the 
+[link asio.reference.buffer buffer]  function as follows: 
+
+   descriptor.write_some(asio::buffer(data, size));
+
+
+See the 
+[link asio.reference.buffer buffer]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+
+
+
+[endsect]
+
+
+
+[section:overload2 posix::basic_stream_descriptor::write_some (2 of 2 overloads)]
+
+Write some data to the descriptor. 
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t write_some(
+      const ConstBufferSequence & buffers,
+      asio::error_code & ec);
+
+
+This function is used to write data to the stream descriptor. The function call will block until one or more bytes of the data has been written successfully, or until an error occurs.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffers][One or more data buffers to be written to the descriptor.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes written. Returns 0 if an error occurred.
+
+[heading Remarks]
+      
+The write\_some operation may not transmit all of the data to the peer. Consider using the 
+[link asio.reference.write write]  function if you need to ensure that all data is written before the blocking operation completes. 
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[endsect]
+
 [section:posix__descriptor_base posix::descriptor_base]
 
 The descriptor_base class is used as a base for the basic_stream_descriptor class template so that we have a common place to define the associated IO control commands. 
@@ -33900,6 +35174,169 @@ Protected destructor to prevent deletion through this type.
 
 
 [endsect]
+
+
+[section:posix__stream_descriptor posix::stream_descriptor]
+
+Typedef for the typical usage of a stream-oriented descriptor. 
+
+  typedef basic_stream_descriptor stream_descriptor;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.posix__basic_stream_descriptor.bytes_readable [*bytes_readable]]]
+    [IO control command to get the amount of data that can be read without blocking. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_stream_descriptor.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_stream_descriptor.lowest_layer_type [*lowest_layer_type]]]
+    [A basic_descriptor is always the lowest layer. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_stream_descriptor.native_type [*native_type]]]
+    [The native representation of a descriptor. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_stream_descriptor.non_blocking_io [*non_blocking_io]]]
+    [IO control command to set the blocking mode of the descriptor. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_stream_descriptor.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.assign [*assign]]]
+    [Assign an existing native descriptor to the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.async_read_some [*async_read_some]]]
+    [Start an asynchronous read. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.async_write_some [*async_write_some]]]
+    [Start an asynchronous write. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.basic_stream_descriptor [*basic_stream_descriptor]]]
+    [Construct a basic_stream_descriptor without opening it. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.close [*close]]]
+    [Close the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.io_control [*io_control]]]
+    [Perform an IO control command on the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.is_open [*is_open]]]
+    [Determine whether the descriptor is open. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.lowest_layer [*lowest_layer]]]
+    [Get a reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.native [*native]]]
+    [Get the native descriptor representation. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.read_some [*read_some]]]
+    [Read some data from the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.write_some [*write_some]]]
+    [Write some data to the descriptor. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.posix__basic_stream_descriptor.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+The posix::basic_stream_descriptor class template provides asynchronous and blocking stream-oriented descriptor functionality.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe.
+
+
+
+
+[endsect]
+
 
 [section:posix__stream_descriptor_service posix::stream_descriptor_service]
 
@@ -42459,6 +43896,1588 @@ The type of the service that will be used to provide I/O operations.
 Protected destructor to prevent deletion through this type. 
 
   ~basic_handle();
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:windows__basic_stream_handle windows::basic_stream_handle]
+
+Provides stream-oriented handle functionality. 
+
+  template<
+      typename ``[link asio.reference.StreamHandleService StreamHandleService]`` = stream_handle_service>
+  class basic_stream_handle :
+    public windows::basic_handle< StreamHandleService >
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.windows__basic_stream_handle.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_stream_handle.lowest_layer_type [*lowest_layer_type]]]
+    [A basic_handle is always the lowest layer. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_stream_handle.native_type [*native_type]]]
+    [The native representation of a handle. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_stream_handle.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_stream_handle.assign [*assign]]]
+    [Assign an existing native handle to the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.async_read_some [*async_read_some]]]
+    [Start an asynchronous read. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.async_write_some [*async_write_some]]]
+    [Start an asynchronous write. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.basic_stream_handle [*basic_stream_handle]]]
+    [Construct a basic_stream_handle without opening it. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.close [*close]]]
+    [Close the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.is_open [*is_open]]]
+    [Determine whether the handle is open. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.lowest_layer [*lowest_layer]]]
+    [Get a reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.native [*native]]]
+    [Get the native handle representation. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.read_some [*read_some]]]
+    [Read some data from the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.write_some [*write_some]]]
+    [Write some data to the handle. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_stream_handle.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.windows__basic_stream_handle.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+The windows::basic_stream_handle class template provides asynchronous and blocking stream-oriented handle functionality.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe.
+
+
+[section:assign windows::basic_stream_handle::assign]
+
+Assign an existing native handle to the handle. 
+
+  void ``[link asio.reference.windows__basic_stream_handle.assign.overload1 assign]``(
+      const native_type & native_handle);
+
+  asio::error_code ``[link asio.reference.windows__basic_stream_handle.assign.overload2 assign]``(
+      const native_type & native_handle,
+      asio::error_code & ec);
+
+
+[section:overload1 windows::basic_stream_handle::assign (1 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+Assign an existing native handle to the handle. 
+
+  void assign(
+      const native_type & native_handle);
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_stream_handle::assign (2 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+Assign an existing native handle to the handle. 
+
+  asio::error_code assign(
+      const native_type & native_handle,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:async_read_some windows::basic_stream_handle::async_read_some]
+
+Start an asynchronous read. 
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link asio.reference.ReadHandler ReadHandler]``>
+  void async_read_some(
+      const MutableBufferSequence & buffers,
+      ReadHandler handler);
+
+
+This function is used to asynchronously read data from the stream handle. The function call always returns immediately.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffers][One or more buffers into which the data will be read. Although the buffers object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the handler is called.]]
+
+[[handler][The handler to be called when the read operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
+``
+   void handler(
+     const asio::error_code& error, // Result of operation.
+     std::size_t bytes_transferred           // Number of bytes read.
+   ); 
+
+``
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using asio::io\_service::post().]]
+
+]
+
+[heading Remarks]
+      
+The read operation may not read all of the requested number of bytes. Consider using the 
+[link asio.reference.async_read async_read]  function if you need to ensure that the requested amount of data is read before the asynchronous operation completes.
+
+[heading Example]
+  
+To read into a single data buffer use the 
+[link asio.reference.buffer buffer]  function as follows: 
+
+   handle.async_read_some(asio::buffer(data, size), handler);
+
+
+See the 
+[link asio.reference.buffer buffer]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+
+
+
+[endsect]
+
+
+
+[section:async_write_some windows::basic_stream_handle::async_write_some]
+
+Start an asynchronous write. 
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link asio.reference.WriteHandler WriteHandler]``>
+  void async_write_some(
+      const ConstBufferSequence & buffers,
+      WriteHandler handler);
+
+
+This function is used to asynchronously write data to the stream handle. The function call always returns immediately.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffers][One or more data buffers to be written to the handle. Although the buffers object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the handler is called.]]
+
+[[handler][The handler to be called when the write operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
+``
+   void handler(
+     const asio::error_code& error, // Result of operation.
+     std::size_t bytes_transferred           // Number of bytes written.
+   ); 
+
+``
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using asio::io\_service::post().]]
+
+]
+
+[heading Remarks]
+      
+The write operation may not transmit all of the data to the peer. Consider using the 
+[link asio.reference.async_write async_write]  function if you need to ensure that all data is written before the asynchronous operation completes.
+
+[heading Example]
+  
+To write a single data buffer use the 
+[link asio.reference.buffer buffer]  function as follows: 
+
+   handle.async_write_some(asio::buffer(data, size), handler);
+
+
+See the 
+[link asio.reference.buffer buffer]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+
+
+
+[endsect]
+
+
+[section:basic_stream_handle windows::basic_stream_handle::basic_stream_handle]
+
+Construct a basic_stream_handle without opening it. 
+
+  ``[link asio.reference.windows__basic_stream_handle.basic_stream_handle.overload1 basic_stream_handle]``(
+      asio::io_service & io_service);
+
+  ``[link asio.reference.windows__basic_stream_handle.basic_stream_handle.overload2 basic_stream_handle]``(
+      asio::io_service & io_service,
+      const native_type & native_handle);
+
+
+[section:overload1 windows::basic_stream_handle::basic_stream_handle (1 of 2 overloads)]
+
+Construct a basic_stream_handle without opening it. 
+
+  basic_stream_handle(
+      asio::io_service & io_service);
+
+
+This constructor creates a stream handle without opening it. The handle needs to be opened and then connected or accepted before data can be sent or received on it.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The io\_service object that the stream handle will use to dispatch handlers for any asynchronous operations performed on the handle. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_stream_handle::basic_stream_handle (2 of 2 overloads)]
+
+Construct a basic_stream_handle on an existing native handle. 
+
+  basic_stream_handle(
+      asio::io_service & io_service,
+      const native_type & native_handle);
+
+
+This constructor creates a stream handle object to hold an existing native handle.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The io\_service object that the stream handle will use to dispatch handlers for any asynchronous operations performed on the handle.]]
+
+[[native_handle][The new underlying handle implementation.]]
+
+]
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:cancel windows::basic_stream_handle::cancel]
+
+Cancel all asynchronous operations associated with the handle. 
+
+  void ``[link asio.reference.windows__basic_stream_handle.cancel.overload1 cancel]``();
+
+  asio::error_code ``[link asio.reference.windows__basic_stream_handle.cancel.overload2 cancel]``(
+      asio::error_code & ec);
+
+
+[section:overload1 windows::basic_stream_handle::cancel (1 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+Cancel all asynchronous operations associated with the handle. 
+
+  void cancel();
+
+
+This function causes all outstanding asynchronous read or write operations to finish immediately, and the handlers for cancelled operations will be passed the asio::error::operation\_aborted error.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_stream_handle::cancel (2 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+Cancel all asynchronous operations associated with the handle. 
+
+  asio::error_code cancel(
+      asio::error_code & ec);
+
+
+This function causes all outstanding asynchronous read or write operations to finish immediately, and the handlers for cancelled operations will be passed the asio::error::operation\_aborted error.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:close windows::basic_stream_handle::close]
+
+Close the handle. 
+
+  void ``[link asio.reference.windows__basic_stream_handle.close.overload1 close]``();
+
+  asio::error_code ``[link asio.reference.windows__basic_stream_handle.close.overload2 close]``(
+      asio::error_code & ec);
+
+
+[section:overload1 windows::basic_stream_handle::close (1 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+Close the handle. 
+
+  void close();
+
+
+This function is used to close the handle. Any asynchronous read or write operations will be cancelled immediately, and will complete with the asio::error::operation\_aborted error.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_stream_handle::close (2 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+Close the handle. 
+
+  asio::error_code close(
+      asio::error_code & ec);
+
+
+This function is used to close the handle. Any asynchronous read or write operations will be cancelled immediately, and will complete with the asio::error::operation\_aborted error.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:get_io_service windows::basic_stream_handle::get_io_service]
+
+
+['Inherited from basic_io_object.]
+
+Get the io_service associated with the object. 
+
+  asio::io_service & get_io_service();
+
+
+This function may be used to obtain the io_service object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:implementation windows::basic_stream_handle::implementation]
+
+
+['Inherited from basic_io_object.]
+
+The underlying implementation of the I/O object. 
+
+  implementation_type implementation;
+
+
+
+[endsect]
+
+
+
+[section:implementation_type windows::basic_stream_handle::implementation_type]
+
+
+['Inherited from basic_io_object.]
+
+The underlying implementation type of I/O object. 
+
+  typedef service_type::implementation_type implementation_type;
+
+
+
+
+[endsect]
+
+
+
+[section:io_service windows::basic_stream_handle::io_service]
+
+
+['Inherited from basic_io_object.]
+
+(Deprecated: use get_io_service().) Get the io_service associated with the object. 
+
+  asio::io_service & io_service();
+
+
+This function may be used to obtain the io_service object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:is_open windows::basic_stream_handle::is_open]
+
+
+['Inherited from windows::basic_handle.]
+
+Determine whether the handle is open. 
+
+  bool is_open() const;
+
+
+
+[endsect]
+
+
+
+[section:lowest_layer windows::basic_stream_handle::lowest_layer]
+
+
+['Inherited from windows::basic_handle.]
+
+Get a reference to the lowest layer. 
+
+  lowest_layer_type & lowest_layer();
+
+
+This function returns a reference to the lowest layer in a stack of layers. Since a basic_handle cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:lowest_layer_type windows::basic_stream_handle::lowest_layer_type]
+
+
+['Inherited from windows::basic_handle.]
+
+A basic_handle is always the lowest layer. 
+
+  typedef basic_handle< StreamHandleService > lowest_layer_type;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.windows__basic_handle.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_handle.lowest_layer_type [*lowest_layer_type]]]
+    [A basic_handle is always the lowest layer. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_handle.native_type [*native_type]]]
+    [The native representation of a handle. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_handle.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_handle.assign [*assign]]]
+    [Assign an existing native handle to the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.basic_handle [*basic_handle]]]
+    [Construct a basic_handle without opening it. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.close [*close]]]
+    [Close the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.is_open [*is_open]]]
+    [Determine whether the handle is open. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.lowest_layer [*lowest_layer]]]
+    [Get a reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.native [*native]]]
+    [Get the native handle representation. ]
+  ]
+  
+]
+
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_handle._basic_handle [*~basic_handle]]]
+    [Protected destructor to prevent deletion through this type. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_handle.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.windows__basic_handle.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+The windows::basic_handle class template provides the ability to wrap a Windows handle.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
+
+
+
+[endsect]
+
+
+
+[section:native windows::basic_stream_handle::native]
+
+
+['Inherited from windows::basic_handle.]
+
+Get the native handle representation. 
+
+  native_type native();
+
+
+This function may be used to obtain the underlying representation of the handle. This is intended to allow access to native handle functionality that is not otherwise provided. 
+
+
+[endsect]
+
+
+
+[section:native_type windows::basic_stream_handle::native_type]
+
+The native representation of a handle. 
+
+  typedef StreamHandleService::native_type native_type;
+
+
+
+
+[endsect]
+
+
+[section:read_some windows::basic_stream_handle::read_some]
+
+Read some data from the handle. 
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t ``[link asio.reference.windows__basic_stream_handle.read_some.overload1 read_some]``(
+      const MutableBufferSequence & buffers);
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t ``[link asio.reference.windows__basic_stream_handle.read_some.overload2 read_some]``(
+      const MutableBufferSequence & buffers,
+      asio::error_code & ec);
+
+
+[section:overload1 windows::basic_stream_handle::read_some (1 of 2 overloads)]
+
+Read some data from the handle. 
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t read_some(
+      const MutableBufferSequence & buffers);
+
+
+This function is used to read data from the stream handle. The function call will block until one or more bytes of data has been read successfully, or until an error occurs.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffers][One or more buffers into which the data will be read.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes read.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. An error code of asio::error::eof indicates that the connection was closed by the peer.]]
+
+]
+
+[heading Remarks]
+      
+The read\_some operation may not read all of the requested number of bytes. Consider using the 
+[link asio.reference.read read]  function if you need to ensure that the requested amount of data is read before the blocking operation completes.
+
+[heading Example]
+  
+To read into a single data buffer use the 
+[link asio.reference.buffer buffer]  function as follows: 
+
+   handle.read_some(asio::buffer(data, size));
+
+
+See the 
+[link asio.reference.buffer buffer]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_stream_handle::read_some (2 of 2 overloads)]
+
+Read some data from the handle. 
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t read_some(
+      const MutableBufferSequence & buffers,
+      asio::error_code & ec);
+
+
+This function is used to read data from the stream handle. The function call will block until one or more bytes of data has been read successfully, or until an error occurs.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffers][One or more buffers into which the data will be read.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes read. Returns 0 if an error occurred.
+
+[heading Remarks]
+      
+The read\_some operation may not read all of the requested number of bytes. Consider using the 
+[link asio.reference.read read]  function if you need to ensure that the requested amount of data is read before the blocking operation completes. 
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:service windows::basic_stream_handle::service]
+
+
+['Inherited from basic_io_object.]
+
+The service associated with the I/O object. 
+
+  service_type & service;
+
+
+
+[endsect]
+
+
+
+[section:service_type windows::basic_stream_handle::service_type]
+
+
+['Inherited from basic_io_object.]
+
+The type of the service that will be used to provide I/O operations. 
+
+  typedef StreamHandleService service_type;
+
+
+
+
+[endsect]
+
+
+[section:write_some windows::basic_stream_handle::write_some]
+
+Write some data to the handle. 
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t ``[link asio.reference.windows__basic_stream_handle.write_some.overload1 write_some]``(
+      const ConstBufferSequence & buffers);
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t ``[link asio.reference.windows__basic_stream_handle.write_some.overload2 write_some]``(
+      const ConstBufferSequence & buffers,
+      asio::error_code & ec);
+
+
+[section:overload1 windows::basic_stream_handle::write_some (1 of 2 overloads)]
+
+Write some data to the handle. 
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t write_some(
+      const ConstBufferSequence & buffers);
+
+
+This function is used to write data to the stream handle. The function call will block until one or more bytes of the data has been written successfully, or until an error occurs.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffers][One or more data buffers to be written to the handle.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes written.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. An error code of asio::error::eof indicates that the connection was closed by the peer.]]
+
+]
+
+[heading Remarks]
+      
+The write\_some operation may not transmit all of the data to the peer. Consider using the 
+[link asio.reference.write write]  function if you need to ensure that all data is written before the blocking operation completes.
+
+[heading Example]
+  
+To write a single data buffer use the 
+[link asio.reference.buffer buffer]  function as follows: 
+
+   handle.write_some(asio::buffer(data, size));
+
+
+See the 
+[link asio.reference.buffer buffer]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_stream_handle::write_some (2 of 2 overloads)]
+
+Write some data to the handle. 
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t write_some(
+      const ConstBufferSequence & buffers,
+      asio::error_code & ec);
+
+
+This function is used to write data to the stream handle. The function call will block until one or more bytes of the data has been written successfully, or until an error occurs.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffers][One or more data buffers to be written to the handle.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes written. Returns 0 if an error occurred.
+
+[heading Remarks]
+      
+The write\_some operation may not transmit all of the data to the peer. Consider using the 
+[link asio.reference.write write]  function if you need to ensure that all data is written before the blocking operation completes. 
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:windows__stream_handle windows::stream_handle]
+
+Typedef for the typical usage of a stream-oriented handle. 
+
+  typedef basic_stream_handle stream_handle;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.windows__basic_stream_handle.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_stream_handle.lowest_layer_type [*lowest_layer_type]]]
+    [A basic_handle is always the lowest layer. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_stream_handle.native_type [*native_type]]]
+    [The native representation of a handle. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_stream_handle.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_stream_handle.assign [*assign]]]
+    [Assign an existing native handle to the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.async_read_some [*async_read_some]]]
+    [Start an asynchronous read. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.async_write_some [*async_write_some]]]
+    [Start an asynchronous write. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.basic_stream_handle [*basic_stream_handle]]]
+    [Construct a basic_stream_handle without opening it. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.close [*close]]]
+    [Close the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.is_open [*is_open]]]
+    [Determine whether the handle is open. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.lowest_layer [*lowest_layer]]]
+    [Get a reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.native [*native]]]
+    [Get the native handle representation. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.read_some [*read_some]]]
+    [Read some data from the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_stream_handle.write_some [*write_some]]]
+    [Write some data to the handle. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_stream_handle.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.windows__basic_stream_handle.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+The windows::basic_stream_handle class template provides asynchronous and blocking stream-oriented handle functionality.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe.
+
+
+
+
+[endsect]
+
+
+[section:windows__stream_handle_service windows::stream_handle_service]
+
+Default service implementation for a stream handle. 
+
+  class stream_handle_service :
+    public io_service::service
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.windows__stream_handle_service.implementation_type [*implementation_type]]]
+    [The type of a stream handle implementation. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__stream_handle_service.native_type [*native_type]]]
+    [The native handle type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__stream_handle_service.assign [*assign]]]
+    [Assign an existing native handle to a stream handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__stream_handle_service.async_read_some [*async_read_some]]]
+    [Start an asynchronous read. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__stream_handle_service.async_write_some [*async_write_some]]]
+    [Start an asynchronous write. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__stream_handle_service.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__stream_handle_service.close [*close]]]
+    [Close a stream handle implementation. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__stream_handle_service.construct [*construct]]]
+    [Construct a new stream handle implementation. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__stream_handle_service.destroy [*destroy]]]
+    [Destroy a stream handle implementation. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__stream_handle_service.get_io_service [*get_io_service]]]
+    [Get the io_service object that owns the service. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__stream_handle_service.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service object that owns the service. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__stream_handle_service.is_open [*is_open]]]
+    [Determine whether the handle is open. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__stream_handle_service.native [*native]]]
+    [Get the native handle implementation. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__stream_handle_service.read_some [*read_some]]]
+    [Read some data from the stream. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__stream_handle_service.shutdown_service [*shutdown_service]]]
+    [Destroy all user-defined handler objects owned by the service. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__stream_handle_service.stream_handle_service [*stream_handle_service]]]
+    [Construct a new stream handle service for the specified io_service. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__stream_handle_service.write_some [*write_some]]]
+    [Write the given data to the stream. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__stream_handle_service.id [*id]]]
+    [The unique service identifier. ]
+  ]
+
+]
+
+
+[section:assign windows::stream_handle_service::assign]
+
+Assign an existing native handle to a stream handle. 
+
+  asio::error_code assign(
+      implementation_type & impl,
+      const native_type & native_handle,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:async_read_some windows::stream_handle_service::async_read_some]
+
+Start an asynchronous read. 
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link asio.reference.ReadHandler ReadHandler]``>
+  void async_read_some(
+      implementation_type & impl,
+      const MutableBufferSequence & buffers,
+      ReadHandler handler);
+
+
+
+[endsect]
+
+
+
+[section:async_write_some windows::stream_handle_service::async_write_some]
+
+Start an asynchronous write. 
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link asio.reference.WriteHandler WriteHandler]``>
+  void async_write_some(
+      implementation_type & impl,
+      const ConstBufferSequence & buffers,
+      WriteHandler handler);
+
+
+
+[endsect]
+
+
+
+[section:cancel windows::stream_handle_service::cancel]
+
+Cancel all asynchronous operations associated with the handle. 
+
+  asio::error_code cancel(
+      implementation_type & impl,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:close windows::stream_handle_service::close]
+
+Close a stream handle implementation. 
+
+  asio::error_code close(
+      implementation_type & impl,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:construct windows::stream_handle_service::construct]
+
+Construct a new stream handle implementation. 
+
+  void construct(
+      implementation_type & impl);
+
+
+
+[endsect]
+
+
+
+[section:destroy windows::stream_handle_service::destroy]
+
+Destroy a stream handle implementation. 
+
+  void destroy(
+      implementation_type & impl);
+
+
+
+[endsect]
+
+
+
+[section:get_io_service windows::stream_handle_service::get_io_service]
+
+
+['Inherited from io_service.]
+
+Get the io_service object that owns the service. 
+
+  asio::io_service & get_io_service();
+
+
+
+[endsect]
+
+
+
+[section:id windows::stream_handle_service::id]
+
+The unique service identifier. 
+
+  static asio::io_service::id id;
+
+
+
+[endsect]
+
+
+
+[section:implementation_type windows::stream_handle_service::implementation_type]
+
+The type of a stream handle implementation. 
+
+  typedef implementation_defined implementation_type;
+
+
+
+
+[endsect]
+
+
+
+[section:io_service windows::stream_handle_service::io_service]
+
+
+['Inherited from io_service.]
+
+(Deprecated: use get_io_service().) Get the io_service object that owns the service. 
+
+  asio::io_service & io_service();
+
+
+
+[endsect]
+
+
+
+[section:is_open windows::stream_handle_service::is_open]
+
+Determine whether the handle is open. 
+
+  bool is_open(
+      const implementation_type & impl) const;
+
+
+
+[endsect]
+
+
+
+[section:native windows::stream_handle_service::native]
+
+Get the native handle implementation. 
+
+  native_type native(
+      implementation_type & impl);
+
+
+
+[endsect]
+
+
+
+[section:native_type windows::stream_handle_service::native_type]
+
+The native handle type. 
+
+  typedef implementation_defined native_type;
+
+
+
+
+[endsect]
+
+
+
+[section:read_some windows::stream_handle_service::read_some]
+
+Read some data from the stream. 
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t read_some(
+      implementation_type & impl,
+      const MutableBufferSequence & buffers,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:shutdown_service windows::stream_handle_service::shutdown_service]
+
+Destroy all user-defined handler objects owned by the service. 
+
+  void shutdown_service();
+
+
+
+[endsect]
+
+
+
+[section:stream_handle_service windows::stream_handle_service::stream_handle_service]
+
+Construct a new stream handle service for the specified io_service. 
+
+  stream_handle_service(
+      asio::io_service & io_service);
+
+
+
+[endsect]
+
+
+
+[section:write_some windows::stream_handle_service::write_some]
+
+Write the given data to the stream. 
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t write_some(
+      implementation_type & impl,
+      const ConstBufferSequence & buffers,
+      asio::error_code & ec);
 
 
 

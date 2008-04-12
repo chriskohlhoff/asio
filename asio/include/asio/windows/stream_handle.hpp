@@ -19,7 +19,8 @@
 
 #include "asio/windows/basic_stream_handle.hpp"
 
-#if defined(ASIO_HAS_WINDOWS_STREAM_HANDLE)
+#if defined(ASIO_HAS_WINDOWS_STREAM_HANDLE) \
+  || defined(GENERATING_DOCUMENTATION)
 
 namespace asio {
 namespace windows {
@@ -31,6 +32,7 @@ typedef basic_stream_handle<> stream_handle;
 } // namespace asio
 
 #endif // defined(ASIO_HAS_WINDOWS_STREAM_HANDLE)
+       //   || defined(GENERATING_DOCUMENTATION)
 
 #include "asio/detail/pop_options.hpp"
 

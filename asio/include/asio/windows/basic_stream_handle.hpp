@@ -27,7 +27,8 @@
 #include "asio/windows/stream_handle_service.hpp"
 #include "asio/detail/throw_error.hpp"
 
-#if defined(ASIO_HAS_WINDOWS_STREAM_HANDLE)
+#if defined(ASIO_HAS_WINDOWS_STREAM_HANDLE) \
+  || defined(GENERATING_DOCUMENTATION)
 
 namespace asio {
 namespace windows {
@@ -44,7 +45,7 @@ namespace windows {
  * @par Concepts:
  * AsyncReadStream, AsyncWriteStream, Stream, SyncReadStream, SyncWriteStream.
  */
-template <typename StreamHandleService = stream_handle_service >
+template <typename StreamHandleService = stream_handle_service>
 class basic_stream_handle
   : public basic_handle<StreamHandleService>
 {
@@ -294,6 +295,7 @@ public:
 } // namespace asio
 
 #endif // defined(ASIO_HAS_WINDOWS_STREAM_HANDLE)
+       //   || defined(GENERATING_DOCUMENTATION)
 
 #include "asio/detail/pop_options.hpp"
 

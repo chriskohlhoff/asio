@@ -27,7 +27,8 @@
 #include "asio/posix/stream_descriptor_service.hpp"
 #include "asio/detail/throw_error.hpp"
 
-#if defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
+#if defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR) \
+  || defined(GENERATING_DOCUMENTATION)
 
 namespace asio {
 namespace posix {
@@ -44,7 +45,7 @@ namespace posix {
  * @par Concepts:
  * AsyncReadStream, AsyncWriteStream, Stream, SyncReadStream, SyncWriteStream.
  */
-template <typename StreamDescriptorservice = stream_descriptor_service >
+template <typename StreamDescriptorservice = stream_descriptor_service>
 class basic_stream_descriptor
   : public basic_descriptor<StreamDescriptorservice>
 {
@@ -294,6 +295,7 @@ public:
 } // namespace asio
 
 #endif // defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
+       //   || defined(GENERATING_DOCUMENTATION)
 
 #include "asio/detail/pop_options.hpp"
 

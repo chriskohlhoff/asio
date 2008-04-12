@@ -33,7 +33,8 @@
 # endif // defined(ASIO_HAS_IOCP)
 #endif // !defined(ASIO_DISABLE_WINDOWS_STREAM_HANDLE)
 
-#if defined(ASIO_HAS_WINDOWS_STREAM_HANDLE)
+#if defined(ASIO_HAS_WINDOWS_STREAM_HANDLE) \
+  || defined(GENERATING_DOCUMENTATION)
 
 namespace asio {
 namespace windows {
@@ -169,6 +170,7 @@ private:
 } // namespace asio
 
 #endif // defined(ASIO_HAS_WINDOWS_STREAM_HANDLE)
+       //   || defined(GENERATING_DOCUMENTATION)
 
 #include "asio/detail/pop_options.hpp"
 

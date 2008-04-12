@@ -19,7 +19,8 @@
 
 #include "asio/posix/basic_stream_descriptor.hpp"
 
-#if defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
+#if defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR) \
+  || defined(GENERATING_DOCUMENTATION)
 
 namespace asio {
 namespace posix {
@@ -31,6 +32,7 @@ typedef basic_stream_descriptor<> stream_descriptor;
 } // namespace asio
 
 #endif // defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
+       //   || defined(GENERATING_DOCUMENTATION)
 
 #include "asio/detail/pop_options.hpp"
 
