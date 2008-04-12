@@ -76,7 +76,9 @@ INPUT                  = ./../../include/asio.hpp \
                          ./../../include/asio \
                          ./../../include/asio/impl \
                          ./../../include/asio/ip \
+                         ./../../include/asio/posix \
                          ./../../include/asio/ssl \
+                         ./../../include/asio/windows \
                          ./noncopyable_dox.txt \
                          ./std_exception_dox.txt
 FILE_PATTERNS          = 
