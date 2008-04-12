@@ -63,6 +63,10 @@ public:
 
 protected:
   /// Construct a basic_io_object.
+  /**
+   * Performs:
+   * @code service.construct(implementation); @endcode
+   */
   explicit basic_io_object(asio::io_service& io_service)
     : service(asio::use_service<IoObjectService>(io_service))
   {
@@ -70,15 +74,19 @@ protected:
   }
 
   /// Protected destructor to prevent deletion through this type.
+  /**
+   * Performs:
+   * @code service.destroy(implementation); @endcode
+   */
   ~basic_io_object()
   {
     service.destroy(implementation);
   }
 
-  // The backend service implementation.
+  /// The service associated with the I/O object.
   service_type& service;
 
-  // The underlying native implementation.
+  /// The underlying implementation of the I/O object.
   implementation_type implementation;
 };
 
