@@ -1495,6 +1495,22 @@ Provides datagram-oriented socket functionality.
 
 ]
 
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_datagram_socket.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_datagram_socket.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
 The basic_datagram_socket class template provides asynchronous and blocking datagram-oriented socket functionality.
 
 
@@ -3207,6 +3223,21 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
 [endsect]
 
 
+[section:implementation basic_datagram_socket::implementation]
+
+
+['Inherited from basic_io_object.]
+
+The underlying implementation of the I/O object. 
+
+  implementation_type implementation;
+
+
+
+[endsect]
+
+
+
 [section:implementation_type basic_datagram_socket::implementation_type]
 
 
@@ -3862,6 +3893,17 @@ A basic_socket is always the lowest layer.
   
 ]
 
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_socket._basic_socket [*~basic_socket]]]
+    [Protected destructor to prevent deletion through this type. ]
+  ]
+  
+]
+
 [heading Data Members]
 [table
   [[Name][Description]]
@@ -3884,6 +3926,22 @@ A basic_socket is always the lowest layer.
   [
     [[link asio.reference.basic_socket.message_peek [*message_peek]]]
     [Peek at incoming data without removing it from the input queue. ]
+  ]
+
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_socket.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_socket.service [*service]]]
+    [The service associated with the I/O object. ]
   ]
 
 ]
@@ -5165,6 +5223,21 @@ The number of bytes sent.
 [endsect]
 
 
+[section:service basic_datagram_socket::service]
+
+
+['Inherited from basic_io_object.]
+
+The service associated with the I/O object. 
+
+  service_type & service;
+
+
+
+[endsect]
+
+
+
 [section:service_type basic_datagram_socket::service_type]
 
 
@@ -5537,6 +5610,22 @@ Provides waitable timer functionality.
     [Perform a blocking wait on the timer. ]
   ]
   
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_deadline_timer.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_deadline_timer.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
 ]
 
 The basic_deadline_timer class template provides the ability to perform a blocking or asynchronous wait for a timer to expire.
@@ -6081,6 +6170,21 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 
 
 
+[section:implementation basic_deadline_timer::implementation]
+
+
+['Inherited from basic_io_object.]
+
+The underlying implementation of the I/O object. 
+
+  implementation_type implementation;
+
+
+
+[endsect]
+
+
+
 [section:implementation_type basic_deadline_timer::implementation_type]
 
 
@@ -6113,6 +6217,21 @@ This function may be used to obtain the io_service object that the I/O object us
 [heading Return Value]
       
 A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:service basic_deadline_timer::service]
+
+
+['Inherited from basic_io_object.]
+
+The service associated with the I/O object. 
+
+  service_type & service;
 
 
 
@@ -6272,6 +6391,58 @@ Base class for all I/O objects.
   
 ]
 
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_io_object.basic_io_object [*basic_io_object]]]
+    [Construct a basic_io_object. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_io_object._basic_io_object [*~basic_io_object]]]
+    [Protected destructor to prevent deletion through this type. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_io_object.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_io_object.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+
+[section:basic_io_object basic_io_object::basic_io_object]
+
+Construct a basic_io_object. 
+
+  basic_io_object(
+      asio::io_service & io_service);
+
+
+Performs: 
+
+   service.construct(implementation); 
+
+
+
+
+
+[endsect]
+
+
 
 [section:get_io_service basic_io_object::get_io_service]
 
@@ -6286,6 +6457,18 @@ This function may be used to obtain the io_service object that the I/O object us
 [heading Return Value]
       
 A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:implementation basic_io_object::implementation]
+
+The underlying implementation of the I/O object. 
+
+  implementation_type implementation;
 
 
 
@@ -6326,11 +6509,42 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 
 
 
+[section:service basic_io_object::service]
+
+The service associated with the I/O object. 
+
+  service_type & service;
+
+
+
+[endsect]
+
+
+
 [section:service_type basic_io_object::service_type]
 
 The type of the service that will be used to provide I/O operations. 
 
   typedef IoObjectService service_type;
+
+
+
+
+[endsect]
+
+
+
+[section:_basic_io_object basic_io_object::~basic_io_object]
+
+Protected destructor to prevent deletion through this type. 
+
+  ~basic_io_object();
+
+
+Performs: 
+
+   service.destroy(implementation); 
+
 
 
 
@@ -6617,6 +6831,17 @@ Provides socket functionality.
   
 ]
 
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_socket._basic_socket [*~basic_socket]]]
+    [Protected destructor to prevent deletion through this type. ]
+  ]
+  
+]
+
 [heading Data Members]
 [table
   [[Name][Description]]
@@ -6639,6 +6864,22 @@ Provides socket functionality.
   [
     [[link asio.reference.basic_socket.message_peek [*message_peek]]]
     [Peek at incoming data without removing it from the input queue. ]
+  ]
+
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_socket.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_socket.service [*service]]]
+    [The service associated with the I/O object. ]
   ]
 
 ]
@@ -7818,6 +8059,21 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
 [endsect]
 
 
+[section:implementation basic_socket::implementation]
+
+
+['Inherited from basic_io_object.]
+
+The underlying implementation of the I/O object. 
+
+  implementation_type implementation;
+
+
+
+[endsect]
+
+
+
 [section:implementation_type basic_socket::implementation_type]
 
 
@@ -8460,6 +8716,17 @@ A basic_socket is always the lowest layer.
   
 ]
 
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_socket._basic_socket [*~basic_socket]]]
+    [Protected destructor to prevent deletion through this type. ]
+  ]
+  
+]
+
 [heading Data Members]
 [table
   [[Name][Description]]
@@ -8482,6 +8749,22 @@ A basic_socket is always the lowest layer.
   [
     [[link asio.reference.basic_socket.message_peek [*message_peek]]]
     [Peek at incoming data without removing it from the input queue. ]
+  ]
+
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_socket.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_socket.service [*service]]]
+    [The service associated with the I/O object. ]
   ]
 
 ]
@@ -9064,6 +9347,21 @@ Getting the current option value:
 
 
 
+[section:service basic_socket::service]
+
+
+['Inherited from basic_io_object.]
+
+The service associated with the I/O object. 
+
+  service_type & service;
+
+
+
+[endsect]
+
+
+
 [section:service_type basic_socket::service_type]
 
 
@@ -9326,6 +9624,18 @@ Different ways a socket may be shutdown.
   ]
 
 ]
+
+
+
+[endsect]
+
+
+
+[section:_basic_socket basic_socket::~basic_socket]
+
+Protected destructor to prevent deletion through this type. 
+
+  ~basic_socket();
 
 
 
@@ -9601,6 +9911,22 @@ Provides the ability to accept new connections.
   [
     [[link asio.reference.basic_socket_acceptor.message_peek [*message_peek]]]
     [Peek at incoming data without removing it from the input queue. ]
+  ]
+
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_socket_acceptor.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_socket_acceptor.service [*service]]]
+    [The service associated with the I/O object. ]
   ]
 
 ]
@@ -10818,6 +11144,21 @@ Getting the value of the SOL\_SOCKET/SO\_REUSEADDR option:
 [endsect]
 
 
+[section:implementation basic_socket_acceptor::implementation]
+
+
+['Inherited from basic_io_object.]
+
+The underlying implementation of the I/O object. 
+
+  implementation_type implementation;
+
+
+
+[endsect]
+
+
+
 [section:implementation_type basic_socket_acceptor::implementation_type]
 
 
@@ -11611,6 +11952,21 @@ Getting the current option value:
 
 
 
+[section:service basic_socket_acceptor::service]
+
+
+['Inherited from basic_io_object.]
+
+The service associated with the I/O object. 
+
+  service_type & service;
+
+
+
+[endsect]
+
+
+
 [section:service_type basic_socket_acceptor::service_type]
 
 
@@ -12192,6 +12548,32 @@ Iostream streambuf for a socket.
   
 ]
 
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_socket_streambuf.overflow [*overflow]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_streambuf.setbuf [*setbuf]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_streambuf.sync [*sync]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_streambuf.underflow [*underflow]]]
+    []
+  ]
+  
+]
+
 [heading Data Members]
 [table
   [[Name][Description]]
@@ -12214,6 +12596,22 @@ Iostream streambuf for a socket.
   [
     [[link asio.reference.basic_socket_streambuf.message_peek [*message_peek]]]
     [Peek at incoming data without removing it from the input queue. ]
+  ]
+
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_socket_streambuf.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_socket_streambuf.service [*service]]]
+    [The service associated with the I/O object. ]
   ]
 
 ]
@@ -13262,6 +13660,21 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
 [endsect]
 
 
+[section:implementation basic_socket_streambuf::implementation]
+
+
+['Inherited from basic_io_object.]
+
+The underlying implementation of the I/O object. 
+
+  implementation_type implementation;
+
+
+
+[endsect]
+
+
+
 [section:implementation_type basic_socket_streambuf::implementation_type]
 
 
@@ -13917,6 +14330,17 @@ A basic_socket is always the lowest layer.
   
 ]
 
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_socket._basic_socket [*~basic_socket]]]
+    [Protected destructor to prevent deletion through this type. ]
+  ]
+  
+]
+
 [heading Data Members]
 [table
   [[Name][Description]]
@@ -13939,6 +14363,22 @@ A basic_socket is always the lowest layer.
   [
     [[link asio.reference.basic_socket.message_peek [*message_peek]]]
     [Peek at incoming data without removing it from the input queue. ]
+  ]
+
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_socket.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_socket.service [*service]]]
+    [The service associated with the I/O object. ]
   ]
 
 ]
@@ -14206,6 +14646,19 @@ This function opens the socket so that it will use the specified protocol.
 
 
 [endsect]
+
+
+[section:overflow basic_socket_streambuf::overflow]
+
+
+
+  int_type overflow(
+      int_type c);
+
+
+
+[endsect]
+
 
 
 [section:protocol_type basic_socket_streambuf::protocol_type]
@@ -14542,6 +14995,21 @@ Getting the current option value:
 
 
 
+[section:service basic_socket_streambuf::service]
+
+
+['Inherited from basic_io_object.]
+
+The service associated with the I/O object. 
+
+  service_type & service;
+
+
+
+[endsect]
+
+
+
 [section:service_type basic_socket_streambuf::service_type]
 
 
@@ -14668,6 +15136,20 @@ Setting the IPPROTO\_TCP/TCP\_NODELAY option:
 
 
 [endsect]
+
+
+[section:setbuf basic_socket_streambuf::setbuf]
+
+
+
+  std::streambuf * setbuf(
+      char_type * s,
+      std::streamsize n);
+
+
+
+[endsect]
+
 
 [section:shutdown basic_socket_streambuf::shutdown]
 
@@ -14808,6 +15290,30 @@ Different ways a socket may be shutdown.
   ]
 
 ]
+
+
+
+[endsect]
+
+
+
+[section:sync basic_socket_streambuf::sync]
+
+
+
+  int sync();
+
+
+
+[endsect]
+
+
+
+[section:underflow basic_socket_streambuf::underflow]
+
+
+
+  int_type underflow();
 
 
 
@@ -15166,6 +15672,22 @@ Provides stream-oriented socket functionality.
   [
     [[link asio.reference.basic_stream_socket.message_peek [*message_peek]]]
     [Peek at incoming data without removing it from the input queue. ]
+  ]
+
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_stream_socket.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_stream_socket.service [*service]]]
+    [The service associated with the I/O object. ]
   ]
 
 ]
@@ -16770,6 +17292,21 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
 [endsect]
 
 
+[section:implementation basic_stream_socket::implementation]
+
+
+['Inherited from basic_io_object.]
+
+The underlying implementation of the I/O object. 
+
+  implementation_type implementation;
+
+
+
+[endsect]
+
+
+
 [section:implementation_type basic_stream_socket::implementation_type]
 
 
@@ -17425,6 +17962,17 @@ A basic_socket is always the lowest layer.
   
 ]
 
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_socket._basic_socket [*~basic_socket]]]
+    [Protected destructor to prevent deletion through this type. ]
+  ]
+  
+]
+
 [heading Data Members]
 [table
   [[Name][Description]]
@@ -17447,6 +17995,22 @@ A basic_socket is always the lowest layer.
   [
     [[link asio.reference.basic_socket.message_peek [*message_peek]]]
     [Peek at incoming data without removing it from the input queue. ]
+  ]
+
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_socket.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_socket.service [*service]]]
+    [The service associated with the I/O object. ]
   ]
 
 ]
@@ -18526,6 +19090,21 @@ Getting the current option value:
 
 
 
+[section:service basic_stream_socket::service]
+
+
+['Inherited from basic_io_object.]
+
+The service associated with the I/O object. 
+
+  service_type & service;
+
+
+
+[endsect]
+
+
+
 [section:service_type basic_stream_socket::service_type]
 
 
@@ -18986,6 +19565,27 @@ Automatically resizable buffer class based on std::streambuf.
   
 ]
 
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_streambuf.overflow [*overflow]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.basic_streambuf.reserve [*reserve]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.basic_streambuf.underflow [*underflow]]]
+    []
+  ]
+  
+]
+
 
 [section:basic_streambuf basic_streambuf::basic_streambuf]
 
@@ -19077,6 +19677,19 @@ The type used to represent the put area as a list of buffers.
 
 
 
+[section:overflow basic_streambuf::overflow]
+
+
+
+  int_type overflow(
+      int_type c);
+
+
+
+[endsect]
+
+
+
 [section:prepare basic_streambuf::prepare]
 
 Get a list of buffers that represents the put area, with the given size. 
@@ -19090,11 +19703,36 @@ Get a list of buffers that represents the put area, with the given size.
 
 
 
+[section:reserve basic_streambuf::reserve]
+
+
+
+  void reserve(
+      std::size_t n);
+
+
+
+[endsect]
+
+
+
 [section:size basic_streambuf::size]
 
 Return the size of the get area in characters. 
 
   std::size_t size() const;
+
+
+
+[endsect]
+
+
+
+[section:underflow basic_streambuf::underflow]
+
+
+
+  int_type underflow();
 
 
 
@@ -22519,6 +23157,22 @@ Typedef for the typical usage of timer.
   
 ]
 
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_deadline_timer.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_deadline_timer.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
 The basic_deadline_timer class template provides the ability to perform a blocking or asynchronous wait for a timer to expire.
 
 Most applications will use the asio::deadline\_timer typedef.
@@ -23119,6 +23773,11 @@ The time traits type.
   [
     [message_size]
     [Message too long. ]
+  ]
+
+  [
+    [name_too_long]
+    [The name was too long. ]
   ]
 
   [
@@ -24706,6 +25365,22 @@ Base class for all io_service services.
   
 ]
 
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.io_service__service.service [*service]]]
+    [Constructor. ]
+  ]
+  
+  [
+    [[link asio.reference.io_service__service._service [*~service]]]
+    [Destructor. ]
+  ]
+  
+]
+
 
 [section:get_io_service io_service::service::get_io_service]
 
@@ -24724,6 +25399,42 @@ Get the io_service object that owns the service.
 (Deprecated: use get_io_service().) Get the io_service object that owns the service. 
 
   asio::io_service & io_service();
+
+
+
+[endsect]
+
+
+
+[section:service io_service::service::service]
+
+Constructor. 
+
+  service(
+      asio::io_service & owner);
+
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[owner][The io\_service object that owns the service. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:_service io_service::service::~service]
+
+Destructor. 
+
+  virtual ~service();
 
 
 
@@ -27374,6 +28085,22 @@ Provides endpoint resolution functionality.
   
 ]
 
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__basic_resolver.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.ip__basic_resolver.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
 The basic_resolver class template provides the ability to resolve a query to a list of endpoints.
 
 
@@ -27564,6 +28291,21 @@ This function may be used to obtain the io_service object that the I/O object us
 [heading Return Value]
       
 A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:implementation ip::basic_resolver::implementation]
+
+
+['Inherited from basic_io_object.]
+
+The underlying implementation of the I/O object. 
+
+  implementation_type implementation;
 
 
 
@@ -27831,6 +28573,21 @@ A successful call to this function is guaranteed to return at least one entry.
 
 
 [endsect]
+
+
+[section:service ip::basic_resolver::service]
+
+
+['Inherited from basic_io_object.]
+
+The service associated with the I/O object. 
+
+  service_type & service;
+
+
+
+[endsect]
+
 
 
 [section:service_type ip::basic_resolver::service_type]
@@ -28703,6 +29460,17 @@ The resolver_query_base class is used as a base for the basic_resolver_query cla
   class resolver_query_base
 
 
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__resolver_query_base._resolver_query_base [*~resolver_query_base]]]
+    [Protected destructor to prevent deletion through this type. ]
+  ]
+  
+]
+
 [heading Data Members]
 [table
   [[Name][Description]]
@@ -28822,6 +29590,18 @@ Indicate that returned endpoint is intended for use as a locally bound socket en
 If the query protocol family is specified as IPv6, return IPv4-mapped IPv6 addresses on finding no IPv6 addresses. 
 
   static const int v4_mapped = implementation_defined;
+
+
+
+[endsect]
+
+
+
+[section:_resolver_query_base ip::resolver_query_base::~resolver_query_base]
+
+Protected destructor to prevent deletion through this type. 
+
+  ~resolver_query_base();
 
 
 
@@ -29611,6 +30391,22 @@ The TCP acceptor type.
 
 ]
 
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_socket_acceptor.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_socket_acceptor.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
 The basic_socket_acceptor class template is used for accepting new socket connections.
 
 
@@ -29977,6 +30773,22 @@ The TCP resolver type.
     [Resolve a query to a list of entries. ]
   ]
   
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__basic_resolver.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.ip__basic_resolver.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
 ]
 
 The basic_resolver class template provides the ability to resolve a query to a list of endpoints.
@@ -30483,6 +31295,22 @@ The TCP socket type.
 
 ]
 
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_stream_socket.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_stream_socket.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
 The basic_stream_socket class template provides asynchronous and blocking stream-oriented socket functionality.
 
 
@@ -30901,6 +31729,22 @@ The UDP resolver type.
     [Resolve a query to a list of entries. ]
   ]
   
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__basic_resolver.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.ip__basic_resolver.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
 ]
 
 The basic_resolver class template provides the ability to resolve a query to a list of endpoints.
@@ -31407,6 +32251,22 @@ The UDP socket type.
 
 ]
 
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_datagram_socket.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_datagram_socket.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
 The basic_datagram_socket class template provides asynchronous and blocking datagram-oriented socket functionality.
 
 
@@ -31858,6 +32718,131 @@ The mutable_buffer class provides a safe representation of a buffer that can be 
 
 [endsect]
 
+[section:null_buffers null_buffers]
+
+An implementation of both the ConstBufferSequence and MutableBufferSequence concepts to represent a null buffer sequence. 
+
+  class null_buffers
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.null_buffers.const_iterator [*const_iterator]]]
+    [A random-access iterator type that may be used to read elements. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.null_buffers.value_type [*value_type]]]
+    [The type for each element in the list of buffers. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.null_buffers.begin [*begin]]]
+    [Get a random-access iterator to the first element. ]
+  ]
+  
+  [
+    [[link asio.reference.null_buffers.end [*end]]]
+    [Get a random-access iterator for one past the last element. ]
+  ]
+  
+]
+
+
+[section:begin null_buffers::begin]
+
+Get a random-access iterator to the first element. 
+
+  const_iterator begin() const;
+
+
+
+[endsect]
+
+
+
+[section:const_iterator null_buffers::const_iterator]
+
+A random-access iterator type that may be used to read elements. 
+
+  typedef const mutable_buffer * const_iterator;
+
+
+
+
+[endsect]
+
+
+
+[section:end null_buffers::end]
+
+Get a random-access iterator for one past the last element. 
+
+  const_iterator end() const;
+
+
+
+[endsect]
+
+
+
+[section:value_type null_buffers::value_type]
+
+The type for each element in the list of buffers. 
+
+  typedef mutable_buffer value_type;
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.mutable_buffer.mutable_buffer [*mutable_buffer]]]
+    [Construct an empty buffer. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.mutable_buffer.buffer_cast_helper [*buffer_cast_helper]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.mutable_buffer.buffer_size_helper [*buffer_size_helper]]]
+    []
+  ]
+  
+]
+
+The mutable_buffer class provides a safe representation of a buffer that can be modified. It does not own the underlying data, and so is cheap to copy or assign. 
+
+
+
+[endsect]
+
+
+
+[endsect]
+
 
 [section:placeholders__bytes_transferred placeholders::bytes_transferred]
 
@@ -31893,6 +32878,1431 @@ An argument placeholder, for use with boost::bind(), that corresponds to the ite
 
 [endsect]
 
+
+[section:posix__basic_descriptor posix::basic_descriptor]
+
+Provides POSIX descriptor functionality. 
+
+  template<
+      typename ``[link asio.reference.Descriptorservice Descriptorservice]``>
+  class basic_descriptor :
+    public basic_io_object< Descriptorservice >,
+    public posix::descriptor_base
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.posix__basic_descriptor.bytes_readable [*bytes_readable]]]
+    [IO control command to get the amount of data that can be read without blocking. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_descriptor.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_descriptor.lowest_layer_type [*lowest_layer_type]]]
+    [A basic_descriptor is always the lowest layer. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_descriptor.native_type [*native_type]]]
+    [The native representation of a descriptor. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_descriptor.non_blocking_io [*non_blocking_io]]]
+    [IO control command to set the blocking mode of the descriptor. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_descriptor.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.posix__basic_descriptor.assign [*assign]]]
+    [Assign an existing native descriptor to the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.basic_descriptor [*basic_descriptor]]]
+    [Construct a basic_descriptor without opening it. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.close [*close]]]
+    [Close the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.io_control [*io_control]]]
+    [Perform an IO control command on the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.is_open [*is_open]]]
+    [Determine whether the descriptor is open. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.lowest_layer [*lowest_layer]]]
+    [Get a reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.native [*native]]]
+    [Get the native descriptor representation. ]
+  ]
+  
+]
+
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.posix__basic_descriptor._basic_descriptor [*~basic_descriptor]]]
+    [Protected destructor to prevent deletion through this type. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.posix__basic_descriptor.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.posix__basic_descriptor.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+The posix::basic_descriptor class template provides the ability to wrap a POSIX descriptor.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
+
+[section:assign posix::basic_descriptor::assign]
+
+Assign an existing native descriptor to the descriptor. 
+
+  void ``[link asio.reference.posix__basic_descriptor.assign.overload1 assign]``(
+      const native_type & native_descriptor);
+
+  asio::error_code ``[link asio.reference.posix__basic_descriptor.assign.overload2 assign]``(
+      const native_type & native_descriptor,
+      asio::error_code & ec);
+
+
+[section:overload1 posix::basic_descriptor::assign (1 of 2 overloads)]
+
+Assign an existing native descriptor to the descriptor. 
+
+  void assign(
+      const native_type & native_descriptor);
+
+
+
+[endsect]
+
+
+
+[section:overload2 posix::basic_descriptor::assign (2 of 2 overloads)]
+
+Assign an existing native descriptor to the descriptor. 
+
+  asio::error_code assign(
+      const native_type & native_descriptor,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:basic_descriptor posix::basic_descriptor::basic_descriptor]
+
+Construct a basic_descriptor without opening it. 
+
+  ``[link asio.reference.posix__basic_descriptor.basic_descriptor.overload1 basic_descriptor]``(
+      asio::io_service & io_service);
+
+  ``[link asio.reference.posix__basic_descriptor.basic_descriptor.overload2 basic_descriptor]``(
+      asio::io_service & io_service,
+      const native_type & native_descriptor);
+
+
+[section:overload1 posix::basic_descriptor::basic_descriptor (1 of 2 overloads)]
+
+Construct a basic_descriptor without opening it. 
+
+  basic_descriptor(
+      asio::io_service & io_service);
+
+
+This constructor creates a descriptor without opening it.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The io\_service object that the descriptor will use to dispatch descriptorrs for any asynchronous operations performed on the descriptor. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 posix::basic_descriptor::basic_descriptor (2 of 2 overloads)]
+
+Construct a basic_descriptor on an existing native descriptor. 
+
+  basic_descriptor(
+      asio::io_service & io_service,
+      const native_type & native_descriptor);
+
+
+This constructor creates a descriptor object to hold an existing native descriptor.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The io\_service object that the descriptor will use to dispatch descriptorrs for any asynchronous operations performed on the descriptor.]]
+
+[[native_descriptor][A native descriptor.]]
+
+]
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:bytes_readable posix::basic_descriptor::bytes_readable]
+
+
+['Inherited from posix::descriptor_base.]
+
+IO control command to get the amount of data that can be read without blocking. 
+
+  typedef implementation_defined bytes_readable;
+
+
+
+Implements the FIONREAD IO control command.
+
+
+[heading Example]
+  
+
+
+   asio::posix::stream_descriptor descriptor(io_service); 
+   ...
+   asio::descriptor_base::bytes_readable command(true);
+   descriptor.io_control(command);
+   std::size_t bytes_readable = command.get();
+
+
+
+
+
+
+[endsect]
+
+
+[section:cancel posix::basic_descriptor::cancel]
+
+Cancel all asynchronous operations associated with the descriptor. 
+
+  void ``[link asio.reference.posix__basic_descriptor.cancel.overload1 cancel]``();
+
+  asio::error_code ``[link asio.reference.posix__basic_descriptor.cancel.overload2 cancel]``(
+      asio::error_code & ec);
+
+
+[section:overload1 posix::basic_descriptor::cancel (1 of 2 overloads)]
+
+Cancel all asynchronous operations associated with the descriptor. 
+
+  void cancel();
+
+
+This function causes all outstanding asynchronous read or write operations to finish immediately, and the descriptorrs for cancelled operations will be passed the asio::error::operation\_aborted error.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 posix::basic_descriptor::cancel (2 of 2 overloads)]
+
+Cancel all asynchronous operations associated with the descriptor. 
+
+  asio::error_code cancel(
+      asio::error_code & ec);
+
+
+This function causes all outstanding asynchronous read or write operations to finish immediately, and the descriptorrs for cancelled operations will be passed the asio::error::operation\_aborted error.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:close posix::basic_descriptor::close]
+
+Close the descriptor. 
+
+  void ``[link asio.reference.posix__basic_descriptor.close.overload1 close]``();
+
+  asio::error_code ``[link asio.reference.posix__basic_descriptor.close.overload2 close]``(
+      asio::error_code & ec);
+
+
+[section:overload1 posix::basic_descriptor::close (1 of 2 overloads)]
+
+Close the descriptor. 
+
+  void close();
+
+
+This function is used to close the descriptor. Any asynchronous read or write operations will be cancelled immediately, and will complete with the asio::error::operation\_aborted error.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 posix::basic_descriptor::close (2 of 2 overloads)]
+
+Close the descriptor. 
+
+  asio::error_code close(
+      asio::error_code & ec);
+
+
+This function is used to close the descriptor. Any asynchronous read or write operations will be cancelled immediately, and will complete with the asio::error::operation\_aborted error.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:get_io_service posix::basic_descriptor::get_io_service]
+
+
+['Inherited from basic_io_object.]
+
+Get the io_service associated with the object. 
+
+  asio::io_service & get_io_service();
+
+
+This function may be used to obtain the io_service object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:implementation posix::basic_descriptor::implementation]
+
+
+['Inherited from basic_io_object.]
+
+The underlying implementation of the I/O object. 
+
+  implementation_type implementation;
+
+
+
+[endsect]
+
+
+
+[section:implementation_type posix::basic_descriptor::implementation_type]
+
+
+['Inherited from basic_io_object.]
+
+The underlying implementation type of I/O object. 
+
+  typedef service_type::implementation_type implementation_type;
+
+
+
+
+[endsect]
+
+
+[section:io_control posix::basic_descriptor::io_control]
+
+Perform an IO control command on the descriptor. 
+
+  template<
+      typename ``[link asio.reference.IoControlCommand IoControlCommand]``>
+  void ``[link asio.reference.posix__basic_descriptor.io_control.overload1 io_control]``(
+      IoControlCommand & command);
+
+  template<
+      typename ``[link asio.reference.IoControlCommand IoControlCommand]``>
+  asio::error_code ``[link asio.reference.posix__basic_descriptor.io_control.overload2 io_control]``(
+      IoControlCommand & command,
+      asio::error_code & ec);
+
+
+[section:overload1 posix::basic_descriptor::io_control (1 of 2 overloads)]
+
+Perform an IO control command on the descriptor. 
+
+  template<
+      typename ``[link asio.reference.IoControlCommand IoControlCommand]``>
+  void io_control(
+      IoControlCommand & command);
+
+
+This function is used to execute an IO control command on the descriptor.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[command][The IO control command to be performed on the descriptor.]]
+
+]
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure.]]
+
+]
+
+[heading Example]
+  
+Getting the number of bytes ready to read: 
+
+   asio::posix::stream_descriptor descriptor(io_service);
+   ...
+   asio::posix::stream_descriptor::bytes_readable command;
+   descriptor.io_control(command);
+   std::size_t bytes_readable = command.get();
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 posix::basic_descriptor::io_control (2 of 2 overloads)]
+
+Perform an IO control command on the descriptor. 
+
+  template<
+      typename ``[link asio.reference.IoControlCommand IoControlCommand]``>
+  asio::error_code io_control(
+      IoControlCommand & command,
+      asio::error_code & ec);
+
+
+This function is used to execute an IO control command on the descriptor.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[command][The IO control command to be performed on the descriptor.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Example]
+  
+Getting the number of bytes ready to read: 
+
+   asio::posix::stream_descriptor descriptor(io_service);
+   ...
+   asio::posix::stream_descriptor::bytes_readable command;
+   asio::error_code ec;
+   descriptor.io_control(command, ec);
+   if (ec)
+   {
+     // An error occurred.
+   }
+   std::size_t bytes_readable = command.get();
+
+
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:io_service posix::basic_descriptor::io_service]
+
+
+['Inherited from basic_io_object.]
+
+(Deprecated: use get_io_service().) Get the io_service associated with the object. 
+
+  asio::io_service & io_service();
+
+
+This function may be used to obtain the io_service object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:is_open posix::basic_descriptor::is_open]
+
+Determine whether the descriptor is open. 
+
+  bool is_open() const;
+
+
+
+[endsect]
+
+
+
+[section:lowest_layer posix::basic_descriptor::lowest_layer]
+
+Get a reference to the lowest layer. 
+
+  lowest_layer_type & lowest_layer();
+
+
+This function returns a reference to the lowest layer in a stack of layers. Since a basic_descriptor cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:lowest_layer_type posix::basic_descriptor::lowest_layer_type]
+
+A basic_descriptor is always the lowest layer. 
+
+  typedef basic_descriptor< Descriptorservice > lowest_layer_type;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.posix__basic_descriptor.bytes_readable [*bytes_readable]]]
+    [IO control command to get the amount of data that can be read without blocking. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_descriptor.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_descriptor.lowest_layer_type [*lowest_layer_type]]]
+    [A basic_descriptor is always the lowest layer. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_descriptor.native_type [*native_type]]]
+    [The native representation of a descriptor. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_descriptor.non_blocking_io [*non_blocking_io]]]
+    [IO control command to set the blocking mode of the descriptor. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__basic_descriptor.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.posix__basic_descriptor.assign [*assign]]]
+    [Assign an existing native descriptor to the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.basic_descriptor [*basic_descriptor]]]
+    [Construct a basic_descriptor without opening it. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.close [*close]]]
+    [Close the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.io_control [*io_control]]]
+    [Perform an IO control command on the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.is_open [*is_open]]]
+    [Determine whether the descriptor is open. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.lowest_layer [*lowest_layer]]]
+    [Get a reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__basic_descriptor.native [*native]]]
+    [Get the native descriptor representation. ]
+  ]
+  
+]
+
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.posix__basic_descriptor._basic_descriptor [*~basic_descriptor]]]
+    [Protected destructor to prevent deletion through this type. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.posix__basic_descriptor.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.posix__basic_descriptor.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+The posix::basic_descriptor class template provides the ability to wrap a POSIX descriptor.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
+
+
+
+[endsect]
+
+
+
+[section:native posix::basic_descriptor::native]
+
+Get the native descriptor representation. 
+
+  native_type native();
+
+
+This function may be used to obtain the underlying representation of the descriptor. This is intended to allow access to native descriptor functionality that is not otherwise provided. 
+
+
+[endsect]
+
+
+
+[section:native_type posix::basic_descriptor::native_type]
+
+The native representation of a descriptor. 
+
+  typedef Descriptorservice::native_type native_type;
+
+
+
+
+[endsect]
+
+
+
+[section:non_blocking_io posix::basic_descriptor::non_blocking_io]
+
+
+['Inherited from posix::descriptor_base.]
+
+IO control command to set the blocking mode of the descriptor. 
+
+  typedef implementation_defined non_blocking_io;
+
+
+
+Implements the FIONBIO IO control command.
+
+
+[heading Example]
+  
+
+
+   asio::posix::stream_descriptor descriptor(io_service); 
+   ...
+   asio::descriptor_base::non_blocking_io command(true);
+   descriptor.io_control(command);
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:service posix::basic_descriptor::service]
+
+
+['Inherited from basic_io_object.]
+
+The service associated with the I/O object. 
+
+  service_type & service;
+
+
+
+[endsect]
+
+
+
+[section:service_type posix::basic_descriptor::service_type]
+
+
+['Inherited from basic_io_object.]
+
+The type of the service that will be used to provide I/O operations. 
+
+  typedef Descriptorservice service_type;
+
+
+
+
+[endsect]
+
+
+
+[section:_basic_descriptor posix::basic_descriptor::~basic_descriptor]
+
+Protected destructor to prevent deletion through this type. 
+
+  ~basic_descriptor();
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:posix__descriptor_base posix::descriptor_base]
+
+The descriptor_base class is used as a base for the basic_stream_descriptor class template so that we have a common place to define the associated IO control commands. 
+
+  class descriptor_base
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.posix__descriptor_base.bytes_readable [*bytes_readable]]]
+    [IO control command to get the amount of data that can be read without blocking. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__descriptor_base.non_blocking_io [*non_blocking_io]]]
+    [IO control command to set the blocking mode of the descriptor. ]
+  
+  ]
+
+]
+
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.posix__descriptor_base._descriptor_base [*~descriptor_base]]]
+    [Protected destructor to prevent deletion through this type. ]
+  ]
+  
+]
+
+
+[section:bytes_readable posix::descriptor_base::bytes_readable]
+
+IO control command to get the amount of data that can be read without blocking. 
+
+  typedef implementation_defined bytes_readable;
+
+
+
+Implements the FIONREAD IO control command.
+
+
+[heading Example]
+  
+
+
+   asio::posix::stream_descriptor descriptor(io_service); 
+   ...
+   asio::descriptor_base::bytes_readable command(true);
+   descriptor.io_control(command);
+   std::size_t bytes_readable = command.get();
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:non_blocking_io posix::descriptor_base::non_blocking_io]
+
+IO control command to set the blocking mode of the descriptor. 
+
+  typedef implementation_defined non_blocking_io;
+
+
+
+Implements the FIONBIO IO control command.
+
+
+[heading Example]
+  
+
+
+   asio::posix::stream_descriptor descriptor(io_service); 
+   ...
+   asio::descriptor_base::non_blocking_io command(true);
+   descriptor.io_control(command);
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:_descriptor_base posix::descriptor_base::~descriptor_base]
+
+Protected destructor to prevent deletion through this type. 
+
+  ~descriptor_base();
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:posix__stream_descriptor_service posix::stream_descriptor_service]
+
+Default service implementation for a stream descriptor. 
+
+  class stream_descriptor_service :
+    public io_service::service
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.posix__stream_descriptor_service.implementation_type [*implementation_type]]]
+    [The type of a stream descriptor implementation. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.posix__stream_descriptor_service.native_type [*native_type]]]
+    [The native descriptor type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.posix__stream_descriptor_service.assign [*assign]]]
+    [Assign an existing native descriptor to a stream descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__stream_descriptor_service.async_read_some [*async_read_some]]]
+    [Start an asynchronous read. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__stream_descriptor_service.async_write_some [*async_write_some]]]
+    [Start an asynchronous write. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__stream_descriptor_service.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__stream_descriptor_service.close [*close]]]
+    [Close a stream descriptor implementation. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__stream_descriptor_service.construct [*construct]]]
+    [Construct a new stream descriptor implementation. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__stream_descriptor_service.destroy [*destroy]]]
+    [Destroy a stream descriptor implementation. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__stream_descriptor_service.get_io_service [*get_io_service]]]
+    [Get the io_service object that owns the service. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__stream_descriptor_service.io_control [*io_control]]]
+    [Perform an IO control command on the descriptor. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__stream_descriptor_service.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service object that owns the service. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__stream_descriptor_service.is_open [*is_open]]]
+    [Determine whether the descriptor is open. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__stream_descriptor_service.native [*native]]]
+    [Get the native descriptor implementation. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__stream_descriptor_service.read_some [*read_some]]]
+    [Read some data from the stream. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__stream_descriptor_service.shutdown_service [*shutdown_service]]]
+    [Destroy all user-defined descriptorr objects owned by the service. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__stream_descriptor_service.stream_descriptor_service [*stream_descriptor_service]]]
+    [Construct a new stream descriptor service for the specified io_service. ]
+  ]
+  
+  [
+    [[link asio.reference.posix__stream_descriptor_service.write_some [*write_some]]]
+    [Write the given data to the stream. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.posix__stream_descriptor_service.id [*id]]]
+    [The unique service identifier. ]
+  ]
+
+]
+
+
+[section:assign posix::stream_descriptor_service::assign]
+
+Assign an existing native descriptor to a stream descriptor. 
+
+  asio::error_code assign(
+      implementation_type & impl,
+      const native_type & native_descriptor,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:async_read_some posix::stream_descriptor_service::async_read_some]
+
+Start an asynchronous read. 
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link asio.reference.ReadHandler ReadHandler]``>
+  void async_read_some(
+      implementation_type & impl,
+      const MutableBufferSequence & buffers,
+      ReadHandler descriptorr);
+
+
+
+[endsect]
+
+
+
+[section:async_write_some posix::stream_descriptor_service::async_write_some]
+
+Start an asynchronous write. 
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link asio.reference.WriteHandler WriteHandler]``>
+  void async_write_some(
+      implementation_type & impl,
+      const ConstBufferSequence & buffers,
+      WriteHandler descriptorr);
+
+
+
+[endsect]
+
+
+
+[section:cancel posix::stream_descriptor_service::cancel]
+
+Cancel all asynchronous operations associated with the descriptor. 
+
+  asio::error_code cancel(
+      implementation_type & impl,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:close posix::stream_descriptor_service::close]
+
+Close a stream descriptor implementation. 
+
+  asio::error_code close(
+      implementation_type & impl,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:construct posix::stream_descriptor_service::construct]
+
+Construct a new stream descriptor implementation. 
+
+  void construct(
+      implementation_type & impl);
+
+
+
+[endsect]
+
+
+
+[section:destroy posix::stream_descriptor_service::destroy]
+
+Destroy a stream descriptor implementation. 
+
+  void destroy(
+      implementation_type & impl);
+
+
+
+[endsect]
+
+
+
+[section:get_io_service posix::stream_descriptor_service::get_io_service]
+
+
+['Inherited from io_service.]
+
+Get the io_service object that owns the service. 
+
+  asio::io_service & get_io_service();
+
+
+
+[endsect]
+
+
+
+[section:id posix::stream_descriptor_service::id]
+
+The unique service identifier. 
+
+  static asio::io_service::id id;
+
+
+
+[endsect]
+
+
+
+[section:implementation_type posix::stream_descriptor_service::implementation_type]
+
+The type of a stream descriptor implementation. 
+
+  typedef implementation_defined implementation_type;
+
+
+
+
+[endsect]
+
+
+
+[section:io_control posix::stream_descriptor_service::io_control]
+
+Perform an IO control command on the descriptor. 
+
+  template<
+      typename ``[link asio.reference.IoControlCommand IoControlCommand]``>
+  asio::error_code io_control(
+      implementation_type & impl,
+      IoControlCommand & command,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:io_service posix::stream_descriptor_service::io_service]
+
+
+['Inherited from io_service.]
+
+(Deprecated: use get_io_service().) Get the io_service object that owns the service. 
+
+  asio::io_service & io_service();
+
+
+
+[endsect]
+
+
+
+[section:is_open posix::stream_descriptor_service::is_open]
+
+Determine whether the descriptor is open. 
+
+  bool is_open(
+      const implementation_type & impl) const;
+
+
+
+[endsect]
+
+
+
+[section:native posix::stream_descriptor_service::native]
+
+Get the native descriptor implementation. 
+
+  native_type native(
+      implementation_type & impl);
+
+
+
+[endsect]
+
+
+
+[section:native_type posix::stream_descriptor_service::native_type]
+
+The native descriptor type. 
+
+  typedef implementation_defined native_type;
+
+
+
+
+[endsect]
+
+
+
+[section:read_some posix::stream_descriptor_service::read_some]
+
+Read some data from the stream. 
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t read_some(
+      implementation_type & impl,
+      const MutableBufferSequence & buffers,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:shutdown_service posix::stream_descriptor_service::shutdown_service]
+
+Destroy all user-defined descriptorr objects owned by the service. 
+
+  void shutdown_service();
+
+
+
+[endsect]
+
+
+
+[section:stream_descriptor_service posix::stream_descriptor_service::stream_descriptor_service]
+
+Construct a new stream descriptor service for the specified io_service. 
+
+  stream_descriptor_service(
+      asio::io_service & io_service);
+
+
+
+[endsect]
+
+
+
+[section:write_some posix::stream_descriptor_service::write_some]
+
+Write the given data to the stream. 
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t write_some(
+      implementation_type & impl,
+      const ConstBufferSequence & buffers,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[endsect]
 
 [section:read read]
 
@@ -33436,6 +35846,17 @@ The socket_base class is used as a base for the basic_stream_socket and basic_da
 
 ]
 
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.socket_base._socket_base [*~socket_base]]]
+    [Protected destructor to prevent deletion through this type. ]
+  ]
+  
+]
+
 [heading Data Members]
 [table
   [[Name][Description]]
@@ -34049,6 +36470,18 @@ Different ways a socket may be shutdown.
   ]
 
 ]
+
+
+
+[endsect]
+
+
+
+[section:_socket_base socket_base::~socket_base]
+
+Protected destructor to prevent deletion through this type. 
+
+  ~socket_base();
 
 
 
@@ -35677,6 +38110,17 @@ The context_base class is used as a base for the basic_context class template so
 
 ]
 
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ssl__context_base._context_base [*~context_base]]]
+    [Protected destructor to prevent deletion through this type. ]
+  ]
+  
+]
+
 [heading Data Members]
 [table
   [[Name][Description]]
@@ -35987,6 +38431,18 @@ No verification.
 Verify the peer. 
 
   static const int verify_peer = implementation_defined;
+
+
+
+[endsect]
+
+
+
+[section:_context_base ssl::context_base::~context_base]
+
+Protected destructor to prevent deletion through this type. 
+
+  ~context_base();
 
 
 
@@ -37471,6 +39927,17 @@ The stream_base class is used as a base for the asio::ssl::stream class template
 
 ]
 
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ssl__stream_base._stream_base [*~stream_base]]]
+    [Protected destructor to prevent deletion through this type. ]
+  ]
+  
+]
+
 
 [section:handshake_type ssl::stream_base::handshake_type]
 
@@ -37492,6 +39959,18 @@ Different handshake types.
   ]
 
 ]
+
+
+
+[endsect]
+
+
+
+[section:_stream_base ssl::stream_base::~stream_base]
+
+Protected destructor to prevent deletion through this type. 
+
+  ~stream_base();
 
 
 
@@ -38744,6 +41223,27 @@ Typedef for the typical usage of basic_streambuf.
   
 ]
 
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_streambuf.overflow [*overflow]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.basic_streambuf.reserve [*reserve]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.basic_streambuf.underflow [*underflow]]]
+    []
+  ]
+  
+]
+
 
 
 [endsect]
@@ -39277,6 +41777,696 @@ The service interface implementing the specified service type. Ownership of the 
 
 [endsect]
 
+
+[section:windows__basic_handle windows::basic_handle]
+
+Provides Windows handle functionality. 
+
+  template<
+      typename ``[link asio.reference.HandleService HandleService]``>
+  class basic_handle :
+    public basic_io_object< HandleService >
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.windows__basic_handle.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_handle.lowest_layer_type [*lowest_layer_type]]]
+    [A basic_handle is always the lowest layer. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_handle.native_type [*native_type]]]
+    [The native representation of a handle. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_handle.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_handle.assign [*assign]]]
+    [Assign an existing native handle to the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.basic_handle [*basic_handle]]]
+    [Construct a basic_handle without opening it. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.close [*close]]]
+    [Close the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.is_open [*is_open]]]
+    [Determine whether the handle is open. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.lowest_layer [*lowest_layer]]]
+    [Get a reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.native [*native]]]
+    [Get the native handle representation. ]
+  ]
+  
+]
+
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_handle._basic_handle [*~basic_handle]]]
+    [Protected destructor to prevent deletion through this type. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_handle.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.windows__basic_handle.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+The windows::basic_handle class template provides the ability to wrap a Windows handle.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
+
+[section:assign windows::basic_handle::assign]
+
+Assign an existing native handle to the handle. 
+
+  void ``[link asio.reference.windows__basic_handle.assign.overload1 assign]``(
+      const native_type & native_handle);
+
+  asio::error_code ``[link asio.reference.windows__basic_handle.assign.overload2 assign]``(
+      const native_type & native_handle,
+      asio::error_code & ec);
+
+
+[section:overload1 windows::basic_handle::assign (1 of 2 overloads)]
+
+Assign an existing native handle to the handle. 
+
+  void assign(
+      const native_type & native_handle);
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_handle::assign (2 of 2 overloads)]
+
+Assign an existing native handle to the handle. 
+
+  asio::error_code assign(
+      const native_type & native_handle,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:basic_handle windows::basic_handle::basic_handle]
+
+Construct a basic_handle without opening it. 
+
+  ``[link asio.reference.windows__basic_handle.basic_handle.overload1 basic_handle]``(
+      asio::io_service & io_service);
+
+  ``[link asio.reference.windows__basic_handle.basic_handle.overload2 basic_handle]``(
+      asio::io_service & io_service,
+      const native_type & native_handle);
+
+
+[section:overload1 windows::basic_handle::basic_handle (1 of 2 overloads)]
+
+Construct a basic_handle without opening it. 
+
+  basic_handle(
+      asio::io_service & io_service);
+
+
+This constructor creates a handle without opening it.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The io\_service object that the handle will use to dispatch handlers for any asynchronous operations performed on the handle. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_handle::basic_handle (2 of 2 overloads)]
+
+Construct a basic_handle on an existing native handle. 
+
+  basic_handle(
+      asio::io_service & io_service,
+      const native_type & native_handle);
+
+
+This constructor creates a handle object to hold an existing native handle.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The io\_service object that the handle will use to dispatch handlers for any asynchronous operations performed on the handle.]]
+
+[[native_handle][A native handle.]]
+
+]
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:cancel windows::basic_handle::cancel]
+
+Cancel all asynchronous operations associated with the handle. 
+
+  void ``[link asio.reference.windows__basic_handle.cancel.overload1 cancel]``();
+
+  asio::error_code ``[link asio.reference.windows__basic_handle.cancel.overload2 cancel]``(
+      asio::error_code & ec);
+
+
+[section:overload1 windows::basic_handle::cancel (1 of 2 overloads)]
+
+Cancel all asynchronous operations associated with the handle. 
+
+  void cancel();
+
+
+This function causes all outstanding asynchronous read or write operations to finish immediately, and the handlers for cancelled operations will be passed the asio::error::operation\_aborted error.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_handle::cancel (2 of 2 overloads)]
+
+Cancel all asynchronous operations associated with the handle. 
+
+  asio::error_code cancel(
+      asio::error_code & ec);
+
+
+This function causes all outstanding asynchronous read or write operations to finish immediately, and the handlers for cancelled operations will be passed the asio::error::operation\_aborted error.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:close windows::basic_handle::close]
+
+Close the handle. 
+
+  void ``[link asio.reference.windows__basic_handle.close.overload1 close]``();
+
+  asio::error_code ``[link asio.reference.windows__basic_handle.close.overload2 close]``(
+      asio::error_code & ec);
+
+
+[section:overload1 windows::basic_handle::close (1 of 2 overloads)]
+
+Close the handle. 
+
+  void close();
+
+
+This function is used to close the handle. Any asynchronous read or write operations will be cancelled immediately, and will complete with the asio::error::operation\_aborted error.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_handle::close (2 of 2 overloads)]
+
+Close the handle. 
+
+  asio::error_code close(
+      asio::error_code & ec);
+
+
+This function is used to close the handle. Any asynchronous read or write operations will be cancelled immediately, and will complete with the asio::error::operation\_aborted error.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:get_io_service windows::basic_handle::get_io_service]
+
+
+['Inherited from basic_io_object.]
+
+Get the io_service associated with the object. 
+
+  asio::io_service & get_io_service();
+
+
+This function may be used to obtain the io_service object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:implementation windows::basic_handle::implementation]
+
+
+['Inherited from basic_io_object.]
+
+The underlying implementation of the I/O object. 
+
+  implementation_type implementation;
+
+
+
+[endsect]
+
+
+
+[section:implementation_type windows::basic_handle::implementation_type]
+
+
+['Inherited from basic_io_object.]
+
+The underlying implementation type of I/O object. 
+
+  typedef service_type::implementation_type implementation_type;
+
+
+
+
+[endsect]
+
+
+
+[section:io_service windows::basic_handle::io_service]
+
+
+['Inherited from basic_io_object.]
+
+(Deprecated: use get_io_service().) Get the io_service associated with the object. 
+
+  asio::io_service & io_service();
+
+
+This function may be used to obtain the io_service object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:is_open windows::basic_handle::is_open]
+
+Determine whether the handle is open. 
+
+  bool is_open() const;
+
+
+
+[endsect]
+
+
+
+[section:lowest_layer windows::basic_handle::lowest_layer]
+
+Get a reference to the lowest layer. 
+
+  lowest_layer_type & lowest_layer();
+
+
+This function returns a reference to the lowest layer in a stack of layers. Since a basic_handle cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:lowest_layer_type windows::basic_handle::lowest_layer_type]
+
+A basic_handle is always the lowest layer. 
+
+  typedef basic_handle< HandleService > lowest_layer_type;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.windows__basic_handle.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_handle.lowest_layer_type [*lowest_layer_type]]]
+    [A basic_handle is always the lowest layer. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_handle.native_type [*native_type]]]
+    [The native representation of a handle. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_handle.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_handle.assign [*assign]]]
+    [Assign an existing native handle to the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.basic_handle [*basic_handle]]]
+    [Construct a basic_handle without opening it. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.close [*close]]]
+    [Close the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.is_open [*is_open]]]
+    [Determine whether the handle is open. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.lowest_layer [*lowest_layer]]]
+    [Get a reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.native [*native]]]
+    [Get the native handle representation. ]
+  ]
+  
+]
+
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_handle._basic_handle [*~basic_handle]]]
+    [Protected destructor to prevent deletion through this type. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_handle.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.windows__basic_handle.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+The windows::basic_handle class template provides the ability to wrap a Windows handle.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
+
+
+
+[endsect]
+
+
+
+[section:native windows::basic_handle::native]
+
+Get the native handle representation. 
+
+  native_type native();
+
+
+This function may be used to obtain the underlying representation of the handle. This is intended to allow access to native handle functionality that is not otherwise provided. 
+
+
+[endsect]
+
+
+
+[section:native_type windows::basic_handle::native_type]
+
+The native representation of a handle. 
+
+  typedef HandleService::native_type native_type;
+
+
+
+
+[endsect]
+
+
+
+[section:service windows::basic_handle::service]
+
+
+['Inherited from basic_io_object.]
+
+The service associated with the I/O object. 
+
+  service_type & service;
+
+
+
+[endsect]
+
+
+
+[section:service_type windows::basic_handle::service_type]
+
+
+['Inherited from basic_io_object.]
+
+The type of the service that will be used to provide I/O operations. 
+
+  typedef HandleService service_type;
+
+
+
+
+[endsect]
+
+
+
+[section:_basic_handle windows::basic_handle::~basic_handle]
+
+Protected destructor to prevent deletion through this type. 
+
+  ~basic_handle();
+
+
+
+[endsect]
+
+
+
+[endsect]
 
 [section:write write]
 
