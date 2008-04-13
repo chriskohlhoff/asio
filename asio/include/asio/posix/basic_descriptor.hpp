@@ -38,17 +38,17 @@ namespace posix {
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
-template <typename Descriptorservice>
+template <typename DescriptorService>
 class basic_descriptor
-  : public basic_io_object<Descriptorservice>,
+  : public basic_io_object<DescriptorService>,
     public descriptor_base
 {
 public:
   /// The native representation of a descriptor.
-  typedef typename Descriptorservice::native_type native_type;
+  typedef typename DescriptorService::native_type native_type;
 
   /// A basic_descriptor is always the lowest layer.
-  typedef basic_descriptor<Descriptorservice> lowest_layer_type;
+  typedef basic_descriptor<DescriptorService> lowest_layer_type;
 
   /// Construct a basic_descriptor without opening it.
   /**
@@ -58,7 +58,7 @@ public:
    * dispatch descriptorrs for any asynchronous operations performed on the descriptor.
    */
   explicit basic_descriptor(asio::io_service& io_service)
-    : basic_io_object<Descriptorservice>(io_service)
+    : basic_io_object<DescriptorService>(io_service)
   {
   }
 
@@ -75,7 +75,7 @@ public:
    */
   basic_descriptor(asio::io_service& io_service,
       const native_type& native_descriptor)
-    : basic_io_object<Descriptorservice>(io_service)
+    : basic_io_object<DescriptorService>(io_service)
   {
     asio::error_code ec;
     this->service.assign(this->implementation, native_descriptor, ec);

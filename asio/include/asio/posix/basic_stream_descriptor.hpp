@@ -45,13 +45,13 @@ namespace posix {
  * @par Concepts:
  * AsyncReadStream, AsyncWriteStream, Stream, SyncReadStream, SyncWriteStream.
  */
-template <typename StreamDescriptorservice = stream_descriptor_service>
+template <typename StreamDescriptorService = stream_descriptor_service>
 class basic_stream_descriptor
-  : public basic_descriptor<StreamDescriptorservice>
+  : public basic_descriptor<StreamDescriptorService>
 {
 public:
   /// The native representation of a descriptor.
-  typedef typename StreamDescriptorservice::native_type native_type;
+  typedef typename StreamDescriptorService::native_type native_type;
 
   /// Construct a basic_stream_descriptor without opening it.
   /**
@@ -63,7 +63,7 @@ public:
    * dispatch descriptorrs for any asynchronous operations performed on the descriptor.
    */
   explicit basic_stream_descriptor(asio::io_service& io_service)
-    : basic_descriptor<StreamDescriptorservice>(io_service)
+    : basic_descriptor<StreamDescriptorService>(io_service)
   {
   }
 
@@ -81,7 +81,7 @@ public:
    */
   basic_stream_descriptor(asio::io_service& io_service,
       const native_type& native_descriptor)
-    : basic_descriptor<StreamDescriptorservice>(io_service, native_descriptor)
+    : basic_descriptor<StreamDescriptorService>(io_service, native_descriptor)
   {
   }
 
