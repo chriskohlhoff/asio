@@ -44,8 +44,8 @@ namespace local {
 
 /// Describes an endpoint for a UNIX socket.
 /**
- * The asio::local::basic_endpoint class template describes an endpoint that
- * may be associated with a particular UNIX socket.
+ * The asio::local::basic_endpoint class template describes an endpoint
+ * that may be associated with a particular UNIX socket.
  *
  * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
