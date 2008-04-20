@@ -19,9 +19,11 @@
 [include requirements/ConvertibleToConstBuffer.qbk]
 [include requirements/ConvertibleToMutableBuffer.qbk]
 [include requirements/DatagramSocketService.qbk]
+[include requirements/DescriptorService.qbk]
 [include requirements/Endpoint.qbk]
 [include requirements/GettableSocketOption.qbk]
 [include requirements/Handler.qbk]
+[include requirements/HandleService.qbk]
 [include requirements/InternetProtocol.qbk]
 [include requirements/IoControlCommand.qbk]
 [include requirements/IoObjectService.qbk]
@@ -34,6 +36,8 @@
 [include requirements/SettableSocketOption.qbk]
 [include requirements/SocketAcceptorService.qbk]
 [include requirements/SocketService.qbk]
+[include requirements/StreamDescriptorService.qbk]
+[include requirements/StreamHandleService.qbk]
 [include requirements/StreamSocketService.qbk]
 [include requirements/SyncReadStream.qbk]
 [include requirements/SyncWriteStream.qbk]
@@ -22047,18 +22051,23 @@ Holds a buffer that cannot be modified.
   
 ]
 
-[heading Friends]
+[heading Related Functions]
 [table
   [[Name][Description]]
 
   [
-    [[link asio.reference.const_buffer.buffer_cast_helper [*buffer_cast_helper]]]
-    []
+    [[link asio.reference.const_buffer.buffer_cast [*buffer_cast]]]
+    [Cast a non-modifiable buffer to a specified pointer to POD type. ]
   ]
   
   [
-    [[link asio.reference.const_buffer.buffer_size_helper [*buffer_size_helper]]]
-    []
+    [[link asio.reference.const_buffer.buffer_size [*buffer_size]]]
+    [Get the number of bytes in a non-modifiable buffer. ]
+  ]
+  
+  [
+    [[link asio.reference.const_buffer.operator_plus_ [*operator+]]]
+    [Create a new non-modifiable buffer that is offset from the start of another. ]
   ]
   
 ]
@@ -22066,11 +22075,13 @@ Holds a buffer that cannot be modified.
 The const_buffer class provides a safe representation of a buffer that cannot be modified. It does not own the underlying data, and so is cheap to copy or assign. 
 
 
-[section:buffer_cast_helper const_buffer::buffer_cast_helper]
+[section:buffer_cast const_buffer::buffer_cast]
 
+Cast a non-modifiable buffer to a specified pointer to POD type. 
 
-
-  friend const void * buffer_cast_helper(
+  template<
+      typename ``[link asio.reference.PointerToPodType PointerToPodType]``>
+  PointerToPodType buffer_cast(
       const const_buffer & b);
 
 
@@ -22079,11 +22090,11 @@ The const_buffer class provides a safe representation of a buffer that cannot be
 
 
 
-[section:buffer_size_helper const_buffer::buffer_size_helper]
+[section:buffer_size const_buffer::buffer_size]
 
+Get the number of bytes in a non-modifiable buffer. 
 
-
-  friend std::size_t buffer_size_helper(
+  std::size_t buffer_size(
       const const_buffer & b);
 
 
@@ -22145,6 +22156,48 @@ Construct a non-modifiable buffer from a modifiable one.
 
 [endsect]
 
+[section:operator_plus_ const_buffer::operator+]
+
+Create a new non-modifiable buffer that is offset from the start of another. 
+
+  const_buffer ``[link asio.reference.const_buffer.operator_plus_.overload1 operator+]``(
+      const const_buffer & b,
+      std::size_t start);
+
+  const_buffer ``[link asio.reference.const_buffer.operator_plus_.overload2 operator+]``(
+      std::size_t start,
+      const const_buffer & b);
+
+
+[section:overload1 const_buffer::operator+ (1 of 2 overloads)]
+
+Create a new non-modifiable buffer that is offset from the start of another. 
+
+  const_buffer operator+(
+      const const_buffer & b,
+      std::size_t start);
+
+
+
+[endsect]
+
+
+
+[section:overload2 const_buffer::operator+ (2 of 2 overloads)]
+
+Create a new non-modifiable buffer that is offset from the start of another. 
+
+  const_buffer operator+(
+      std::size_t start,
+      const const_buffer & b);
+
+
+
+[endsect]
+
+
+[endsect]
+
 
 [endsect]
 
@@ -22197,12 +22250,67 @@ Adapts a single non-modifiable buffer so that it meets the requirements of the C
   
 ]
 
+[heading Related Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.const_buffers_1.buffer_cast [*buffer_cast]]]
+    [Cast a non-modifiable buffer to a specified pointer to POD type. ]
+  ]
+  
+  [
+    [[link asio.reference.const_buffers_1.buffer_size [*buffer_size]]]
+    [Get the number of bytes in a non-modifiable buffer. ]
+  ]
+  
+  [
+    [[link asio.reference.const_buffers_1.operator_plus_ [*operator+]]]
+    [Create a new non-modifiable buffer that is offset from the start of another. ]
+  ]
+  
+]
+
 
 [section:begin const_buffers_1::begin]
 
 Get a random-access iterator to the first element. 
 
   const_iterator begin() const;
+
+
+
+[endsect]
+
+
+
+[section:buffer_cast const_buffers_1::buffer_cast]
+
+
+['Inherited from const_buffer.]
+
+Cast a non-modifiable buffer to a specified pointer to POD type. 
+
+  template<
+      typename ``[link asio.reference.PointerToPodType PointerToPodType]``>
+  PointerToPodType buffer_cast(
+      const const_buffer & b);
+
+
+
+[endsect]
+
+
+
+[section:buffer_size const_buffers_1::buffer_size]
+
+
+['Inherited from const_buffer.]
+
+Get the number of bytes in a non-modifiable buffer. 
+
+  std::size_t buffer_size(
+      const const_buffer & b);
 
 
 
@@ -22247,6 +22355,54 @@ Get a random-access iterator for one past the last element.
 [endsect]
 
 
+[section:operator_plus_ const_buffers_1::operator+]
+
+Create a new non-modifiable buffer that is offset from the start of another. 
+
+  const_buffer ``[link asio.reference.const_buffers_1.operator_plus_.overload1 operator+]``(
+      const const_buffer & b,
+      std::size_t start);
+
+  const_buffer ``[link asio.reference.const_buffers_1.operator_plus_.overload2 operator+]``(
+      std::size_t start,
+      const const_buffer & b);
+
+
+[section:overload1 const_buffers_1::operator+ (1 of 2 overloads)]
+
+
+['Inherited from const_buffer.]
+
+Create a new non-modifiable buffer that is offset from the start of another. 
+
+  const_buffer operator+(
+      const const_buffer & b,
+      std::size_t start);
+
+
+
+[endsect]
+
+
+
+[section:overload2 const_buffers_1::operator+ (2 of 2 overloads)]
+
+
+['Inherited from const_buffer.]
+
+Create a new non-modifiable buffer that is offset from the start of another. 
+
+  const_buffer operator+(
+      std::size_t start,
+      const const_buffer & b);
+
+
+
+[endsect]
+
+
+[endsect]
+
 
 [section:value_type const_buffers_1::value_type]
 
@@ -22266,18 +22422,23 @@ The type for each element in the list of buffers.
   
 ]
 
-[heading Friends]
+[heading Related Functions]
 [table
   [[Name][Description]]
 
   [
-    [[link asio.reference.const_buffer.buffer_cast_helper [*buffer_cast_helper]]]
-    []
+    [[link asio.reference.const_buffer.buffer_cast [*buffer_cast]]]
+    [Cast a non-modifiable buffer to a specified pointer to POD type. ]
   ]
   
   [
-    [[link asio.reference.const_buffer.buffer_size_helper [*buffer_size_helper]]]
-    []
+    [[link asio.reference.const_buffer.buffer_size [*buffer_size]]]
+    [Get the number of bytes in a non-modifiable buffer. ]
+  ]
+  
+  [
+    [[link asio.reference.const_buffer.operator_plus_ [*operator+]]]
+    [Create a new non-modifiable buffer that is offset from the start of another. ]
   ]
   
 ]
@@ -25910,6 +26071,17 @@ Implements version-independent IP addresses.
   
 ]
 
+[heading Related Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__address.operator_lt__lt_ [*operator<<]]]
+    [Output an address as a string. ]
+  ]
+  
+]
+
 The 
 [link asio.reference.ip__address ip::address] class provides the ability to use either IP version 4 or version 6 addresses.
 
@@ -26109,6 +26281,42 @@ Compare addresses for ordering.
   friend bool operator<(
       const address & a1,
       const address & a2);
+
+
+
+[endsect]
+
+
+
+[section:operator_lt__lt_ ip::address::operator<<]
+
+Output an address as a string. 
+
+  template<
+      typename ``[link asio.reference.Elem Elem]``,
+      typename ``[link asio.reference.Traits Traits]``>
+  std::basic_ostream< Elem, Traits > & operator<<(
+      std::basic_ostream< Elem, Traits > & os,
+      const address & addr);
+
+
+Used to output a human-readable string for a specified address.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[os][The output stream to which the string will be written.]]
+
+[[addr][The address to be written.]]
+
+]
+
+[heading Return Value]
+      
+The output stream. 
 
 
 
@@ -26374,6 +26582,17 @@ Implements IP version 4 style addresses.
   [
     [[link asio.reference.ip__address_v4.operator_gt__eq_ [*operator>=]]]
     [Compare addresses for ordering. ]
+  ]
+  
+]
+
+[heading Related Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__address_v4.operator_lt__lt_ [*operator<<]]]
+    [Output an address as a string. ]
   ]
   
 ]
@@ -26696,6 +26915,42 @@ Compare addresses for ordering.
 
 
 
+[section:operator_lt__lt_ ip::address_v4::operator<<]
+
+Output an address as a string. 
+
+  template<
+      typename ``[link asio.reference.Elem Elem]``,
+      typename ``[link asio.reference.Traits Traits]``>
+  std::basic_ostream< Elem, Traits > & operator<<(
+      std::basic_ostream< Elem, Traits > & os,
+      const address_v4 & addr);
+
+
+Used to output a human-readable string for a specified address.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[os][The output stream to which the string will be written.]]
+
+[[addr][The address to be written.]]
+
+]
+
+[heading Return Value]
+      
+The output stream. 
+
+
+
+[endsect]
+
+
+
 [section:operator_lt__eq_ ip::address_v4::operator<=]
 
 Compare addresses for ordering. 
@@ -27000,6 +27255,17 @@ Implements IP version 6 style addresses.
   [
     [[link asio.reference.ip__address_v6.operator_gt__eq_ [*operator>=]]]
     [Compare addresses for ordering. ]
+  ]
+  
+]
+
+[heading Related Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__address_v6.operator_lt__lt_ [*operator<<]]]
+    [Output an address as a string. ]
   ]
   
 ]
@@ -27353,6 +27619,42 @@ Compare addresses for ordering.
 
 
 
+[section:operator_lt__lt_ ip::address_v6::operator<<]
+
+Output an address as a string. 
+
+  template<
+      typename ``[link asio.reference.Elem Elem]``,
+      typename ``[link asio.reference.Traits Traits]``>
+  std::basic_ostream< Elem, Traits > & operator<<(
+      std::basic_ostream< Elem, Traits > & os,
+      const address_v6 & addr);
+
+
+Used to output a human-readable string for a specified address.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[os][The output stream to which the string will be written.]]
+
+[[addr][The address to be written.]]
+
+]
+
+[heading Return Value]
+      
+The output stream. 
+
+
+
+[endsect]
+
+
+
 [section:operator_lt__eq_ ip::address_v6::operator<=]
 
 Compare addresses for ordering. 
@@ -27651,6 +27953,17 @@ Describes an endpoint for a version-independent IP socket.
   
 ]
 
+[heading Related Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__basic_endpoint.operator_lt__lt_ [*operator<<]]]
+    [Output an endpoint as a string. ]
+  ]
+  
+]
+
 The 
 [link asio.reference.ip__basic_endpoint ip::basic_endpoint] class template describes an endpoint that may be associated with a particular socket.
 
@@ -27868,6 +28181,39 @@ Compare endpoints for ordering.
   friend bool operator<(
       const basic_endpoint< InternetProtocol > & e1,
       const basic_endpoint< InternetProtocol > & e2);
+
+
+
+[endsect]
+
+
+
+[section:operator_lt__lt_ ip::basic_endpoint::operator<<]
+
+Output an endpoint as a string. 
+
+  std::basic_ostream< Elem, Traits > & operator<<(
+      std::basic_ostream< Elem, Traits > & os,
+      const basic_endpoint< InternetProtocol > & endpoint);
+
+
+Used to output a human-readable string for a specified endpoint.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[os][The output stream to which the string will be written.]]
+
+[[endpoint][The endpoint to be written.]]
+
+]
+
+[heading Return Value]
+      
+The output stream. 
 
 
 
@@ -30536,6 +30882,17 @@ The type of a TCP endpoint.
   
 ]
 
+[heading Related Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__basic_endpoint.operator_lt__lt_ [*operator<<]]]
+    [Output an endpoint as a string. ]
+  ]
+  
+]
+
 The 
 [link asio.reference.ip__basic_endpoint ip::basic_endpoint] class template describes an endpoint that may be associated with a particular socket.
 
@@ -31571,6 +31928,17 @@ The type of a UDP endpoint.
   
 ]
 
+[heading Related Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__basic_endpoint.operator_lt__lt_ [*operator<<]]]
+    [Output an endpoint as a string. ]
+  ]
+  
+]
+
 The 
 [link asio.reference.ip__basic_endpoint ip::basic_endpoint] class template describes an endpoint that may be associated with a particular socket.
 
@@ -32567,6 +32935,17 @@ Describes an endpoint for a UNIX socket.
   
 ]
 
+[heading Related Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.local__basic_endpoint.operator_lt__lt_ [*operator<<]]]
+    [Output an endpoint as a string. ]
+  ]
+  
+]
+
 The 
 [link asio.reference.local__basic_endpoint local::basic_endpoint] class template describes an endpoint that may be associated with a particular UNIX socket.
 
@@ -32734,6 +33113,39 @@ Compare endpoints for ordering.
 
 
 
+[section:operator_lt__lt_ local::basic_endpoint::operator<<]
+
+Output an endpoint as a string. 
+
+  std::basic_ostream< Elem, Traits > & operator<<(
+      std::basic_ostream< Elem, Traits > & os,
+      const basic_endpoint< Protocol > & endpoint);
+
+
+Used to output a human-readable string for a specified endpoint.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[os][The output stream to which the string will be written.]]
+
+[[endpoint][The endpoint to be written.]]
+
+]
+
+[heading Return Value]
+      
+The output stream. 
+
+
+
+[endsect]
+
+
+
 [section:operator_eq_ local::basic_endpoint::operator=]
 
 Assign from another endpoint. 
@@ -32865,6 +33277,1608 @@ Get the underlying size of the endpoint in the native type.
 
 [endsect]
 
+[section:local__connect_pair local::connect_pair]
+
+Create a pair of connected sockets. 
+
+  template<
+      typename ``[link asio.reference.Protocol Protocol]``,
+      typename ``[link asio.reference.SocketService1 SocketService1]``,
+      typename ``[link asio.reference.SocketService2 SocketService2]``>
+  void ``[link asio.reference.local__connect_pair.overload1 connect_pair]``(
+      basic_socket< Protocol, SocketService1 > & socket1,
+      basic_socket< Protocol, SocketService2 > & socket2);
+
+  template<
+      typename ``[link asio.reference.Protocol Protocol]``,
+      typename ``[link asio.reference.SocketService1 SocketService1]``,
+      typename ``[link asio.reference.SocketService2 SocketService2]``>
+  asio::error_code ``[link asio.reference.local__connect_pair.overload2 connect_pair]``(
+      basic_socket< Protocol, SocketService1 > & socket1,
+      basic_socket< Protocol, SocketService2 > & socket2,
+      asio::error_code & ec);
+
+
+[section:overload1 local::connect_pair (1 of 2 overloads)]
+
+Create a pair of connected sockets. 
+
+  template<
+      typename ``[link asio.reference.Protocol Protocol]``,
+      typename ``[link asio.reference.SocketService1 SocketService1]``,
+      typename ``[link asio.reference.SocketService2 SocketService2]``>
+  void connect_pair(
+      basic_socket< Protocol, SocketService1 > & socket1,
+      basic_socket< Protocol, SocketService2 > & socket2);
+
+
+
+[endsect]
+
+
+
+[section:overload2 local::connect_pair (2 of 2 overloads)]
+
+Create a pair of connected sockets. 
+
+  template<
+      typename ``[link asio.reference.Protocol Protocol]``,
+      typename ``[link asio.reference.SocketService1 SocketService1]``,
+      typename ``[link asio.reference.SocketService2 SocketService2]``>
+  asio::error_code connect_pair(
+      basic_socket< Protocol, SocketService1 > & socket1,
+      basic_socket< Protocol, SocketService2 > & socket2,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:local__datagram_protocol local::datagram_protocol]
+
+Encapsulates the flags needed for datagram-oriented UNIX sockets. 
+
+  class datagram_protocol
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.local__datagram_protocol.endpoint [*endpoint]]]
+    [The type of a UNIX domain endpoint. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.local__datagram_protocol.socket [*socket]]]
+    [The UNIX domain socket type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.local__datagram_protocol.family [*family]]]
+    [Obtain an identifier for the protocol family. ]
+  ]
+  
+  [
+    [[link asio.reference.local__datagram_protocol.protocol [*protocol]]]
+    [Obtain an identifier for the protocol. ]
+  ]
+  
+  [
+    [[link asio.reference.local__datagram_protocol.type [*type]]]
+    [Obtain an identifier for the type of the protocol. ]
+  ]
+  
+]
+
+The 
+[link asio.reference.local__datagram_protocol local::datagram_protocol] class contains flags necessary for datagram-oriented UNIX domain sockets.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Safe.
+
+
+
+[section:endpoint local::datagram_protocol::endpoint]
+
+The type of a UNIX domain endpoint. 
+
+  typedef basic_endpoint< datagram_protocol > endpoint;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.local__basic_endpoint.data_type [*data_type]]]
+    [The type of the endpoint structure. This type is dependent on the underlying implementation of the socket layer. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.local__basic_endpoint.protocol_type [*protocol_type]]]
+    [The protocol type associated with the endpoint. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.local__basic_endpoint.basic_endpoint [*basic_endpoint]]]
+    [Default constructor. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.capacity [*capacity]]]
+    [Get the capacity of the endpoint in the native type. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.data [*data]]]
+    [Get the underlying endpoint in the native type. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.operator_eq_ [*operator=]]]
+    [Assign from another endpoint. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.path [*path]]]
+    [Get the path associated with the endpoint. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.protocol [*protocol]]]
+    [The protocol associated with the endpoint. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.resize [*resize]]]
+    [Set the underlying size of the endpoint in the native type. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.size [*size]]]
+    [Get the underlying size of the endpoint in the native type. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.local__basic_endpoint.operator_not__eq_ [*operator!=]]]
+    [Compare two endpoints for inequality. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.operator_lt_ [*operator<]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.operator_eq__eq_ [*operator==]]]
+    [Compare two endpoints for equality. ]
+  ]
+  
+]
+
+[heading Related Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.local__basic_endpoint.operator_lt__lt_ [*operator<<]]]
+    [Output an endpoint as a string. ]
+  ]
+  
+]
+
+The 
+[link asio.reference.local__basic_endpoint local::basic_endpoint] class template describes an endpoint that may be associated with a particular UNIX socket.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe.
+
+
+
+
+[endsect]
+
+
+
+[section:family local::datagram_protocol::family]
+
+Obtain an identifier for the protocol family. 
+
+  int family() const;
+
+
+
+[endsect]
+
+
+
+[section:protocol local::datagram_protocol::protocol]
+
+Obtain an identifier for the protocol. 
+
+  int protocol() const;
+
+
+
+[endsect]
+
+
+
+[section:socket local::datagram_protocol::socket]
+
+The UNIX domain socket type. 
+
+  typedef basic_datagram_socket< datagram_protocol > socket;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.basic_datagram_socket.broadcast [*broadcast]]]
+    [Socket option to permit sending of broadcast messages. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_datagram_socket.bytes_readable [*bytes_readable]]]
+    [IO control command to get the amount of data that can be read without blocking. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_datagram_socket.debug [*debug]]]
+    [Socket option to enable socket-level debugging. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_datagram_socket.do_not_route [*do_not_route]]]
+    [Socket option to prevent routing, use local interfaces only. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_datagram_socket.enable_connection_aborted [*enable_connection_aborted]]]
+    [Socket option to report aborted connections on accept. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_datagram_socket.endpoint_type [*endpoint_type]]]
+    [The endpoint type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_datagram_socket.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_datagram_socket.keep_alive [*keep_alive]]]
+    [Socket option to send keep-alives. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_datagram_socket.linger [*linger]]]
+    [Socket option to specify whether the socket lingers on close if unsent data is present. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_datagram_socket.lowest_layer_type [*lowest_layer_type]]]
+    [A basic_socket is always the lowest layer. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_datagram_socket.message_flags [*message_flags]]]
+    [Bitmask type for flags that can be passed to send and receive operations. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_datagram_socket.native_type [*native_type]]]
+    [The native representation of a socket. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_datagram_socket.non_blocking_io [*non_blocking_io]]]
+    [IO control command to set the blocking mode of the socket. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_datagram_socket.protocol_type [*protocol_type]]]
+    [The protocol type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_datagram_socket.receive_buffer_size [*receive_buffer_size]]]
+    [Socket option for the receive buffer size of a socket. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_datagram_socket.receive_low_watermark [*receive_low_watermark]]]
+    [Socket option for the receive low watermark. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_datagram_socket.reuse_address [*reuse_address]]]
+    [Socket option to allow the socket to be bound to an address that is already in use. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_datagram_socket.send_buffer_size [*send_buffer_size]]]
+    [Socket option for the send buffer size of a socket. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_datagram_socket.send_low_watermark [*send_low_watermark]]]
+    [Socket option for the send low watermark. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_datagram_socket.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_datagram_socket.shutdown_type [*shutdown_type]]]
+    [Different ways a socket may be shutdown. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_datagram_socket.assign [*assign]]]
+    [Assign an existing native socket to the socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.async_connect [*async_connect]]]
+    [Start an asynchronous connect. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.async_receive [*async_receive]]]
+    [Start an asynchronous receive on a connected socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.async_receive_from [*async_receive_from]]]
+    [Start an asynchronous receive. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.async_send [*async_send]]]
+    [Start an asynchronous send on a connected socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.async_send_to [*async_send_to]]]
+    [Start an asynchronous send. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.at_mark [*at_mark]]]
+    [Determine whether the socket is at the out-of-band data mark. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.available [*available]]]
+    [Determine the number of bytes available for reading. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.basic_datagram_socket [*basic_datagram_socket]]]
+    [Construct a basic_datagram_socket without opening it. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.bind [*bind]]]
+    [Bind the socket to the given local endpoint. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.close [*close]]]
+    [Close the socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.connect [*connect]]]
+    [Connect the socket to the specified endpoint. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.get_option [*get_option]]]
+    [Get an option from the socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.io_control [*io_control]]]
+    [Perform an IO control command on the socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.is_open [*is_open]]]
+    [Determine whether the socket is open. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.local_endpoint [*local_endpoint]]]
+    [Get the local endpoint of the socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.lowest_layer [*lowest_layer]]]
+    [Get a reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.native [*native]]]
+    [Get the native socket representation. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.open [*open]]]
+    [Open the socket using the specified protocol. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.receive [*receive]]]
+    [Receive some data on a connected socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.receive_from [*receive_from]]]
+    [Receive a datagram with the endpoint of the sender. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.remote_endpoint [*remote_endpoint]]]
+    [Get the remote endpoint of the socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.send [*send]]]
+    [Send some data on a connected socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.send_to [*send_to]]]
+    [Send a datagram to the specified endpoint. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.set_option [*set_option]]]
+    [Set an option on the socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.shutdown [*shutdown]]]
+    [Disable sends or receives on the socket. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_datagram_socket.max_connections [*max_connections]]]
+    [The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_datagram_socket.message_do_not_route [*message_do_not_route]]]
+    [Specify that the data should not be subject to routing. ]
+  ]
+
+  [
+    [[link asio.reference.basic_datagram_socket.message_out_of_band [*message_out_of_band]]]
+    [Process out-of-band data. ]
+  ]
+
+  [
+    [[link asio.reference.basic_datagram_socket.message_peek [*message_peek]]]
+    [Peek at incoming data without removing it from the input queue. ]
+  ]
+
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_datagram_socket.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_datagram_socket.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+The basic_datagram_socket class template provides asynchronous and blocking datagram-oriented socket functionality.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
+
+
+
+[endsect]
+
+
+
+[section:type local::datagram_protocol::type]
+
+Obtain an identifier for the type of the protocol. 
+
+  int type() const;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:local__stream_protocol local::stream_protocol]
+
+Encapsulates the flags needed for stream-oriented UNIX sockets. 
+
+  class stream_protocol
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.local__stream_protocol.acceptor [*acceptor]]]
+    [The UNIX domain acceptor type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.local__stream_protocol.endpoint [*endpoint]]]
+    [The type of a UNIX domain endpoint. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.local__stream_protocol.iostream [*iostream]]]
+    [The UNIX domain iostream type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.local__stream_protocol.socket [*socket]]]
+    [The UNIX domain socket type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.local__stream_protocol.family [*family]]]
+    [Obtain an identifier for the protocol family. ]
+  ]
+  
+  [
+    [[link asio.reference.local__stream_protocol.protocol [*protocol]]]
+    [Obtain an identifier for the protocol. ]
+  ]
+  
+  [
+    [[link asio.reference.local__stream_protocol.type [*type]]]
+    [Obtain an identifier for the type of the protocol. ]
+  ]
+  
+]
+
+The 
+[link asio.reference.local__stream_protocol local::stream_protocol] class contains flags necessary for stream-oriented UNIX domain sockets.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Safe.
+
+
+
+[section:acceptor local::stream_protocol::acceptor]
+
+The UNIX domain acceptor type. 
+
+  typedef basic_socket_acceptor< stream_protocol > acceptor;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.basic_socket_acceptor.broadcast [*broadcast]]]
+    [Socket option to permit sending of broadcast messages. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_acceptor.bytes_readable [*bytes_readable]]]
+    [IO control command to get the amount of data that can be read without blocking. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_acceptor.debug [*debug]]]
+    [Socket option to enable socket-level debugging. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_acceptor.do_not_route [*do_not_route]]]
+    [Socket option to prevent routing, use local interfaces only. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_acceptor.enable_connection_aborted [*enable_connection_aborted]]]
+    [Socket option to report aborted connections on accept. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_acceptor.endpoint_type [*endpoint_type]]]
+    [The endpoint type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_acceptor.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_acceptor.keep_alive [*keep_alive]]]
+    [Socket option to send keep-alives. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_acceptor.linger [*linger]]]
+    [Socket option to specify whether the socket lingers on close if unsent data is present. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_acceptor.message_flags [*message_flags]]]
+    [Bitmask type for flags that can be passed to send and receive operations. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_acceptor.native_type [*native_type]]]
+    [The native representation of an acceptor. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_acceptor.non_blocking_io [*non_blocking_io]]]
+    [IO control command to set the blocking mode of the socket. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_acceptor.protocol_type [*protocol_type]]]
+    [The protocol type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_acceptor.receive_buffer_size [*receive_buffer_size]]]
+    [Socket option for the receive buffer size of a socket. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_acceptor.receive_low_watermark [*receive_low_watermark]]]
+    [Socket option for the receive low watermark. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_acceptor.reuse_address [*reuse_address]]]
+    [Socket option to allow the socket to be bound to an address that is already in use. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_acceptor.send_buffer_size [*send_buffer_size]]]
+    [Socket option for the send buffer size of a socket. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_acceptor.send_low_watermark [*send_low_watermark]]]
+    [Socket option for the send low watermark. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_acceptor.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_acceptor.shutdown_type [*shutdown_type]]]
+    [Different ways a socket may be shutdown. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_socket_acceptor.accept [*accept]]]
+    [Accept a new connection. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_acceptor.assign [*assign]]]
+    [Assigns an existing native acceptor to the acceptor. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_acceptor.async_accept [*async_accept]]]
+    [Start an asynchronous accept. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_acceptor.basic_socket_acceptor [*basic_socket_acceptor]]]
+    [Construct an acceptor without opening it. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_acceptor.bind [*bind]]]
+    [Bind the acceptor to the given local endpoint. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_acceptor.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the acceptor. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_acceptor.close [*close]]]
+    [Close the acceptor. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_acceptor.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_acceptor.get_option [*get_option]]]
+    [Get an option from the acceptor. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_acceptor.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_acceptor.is_open [*is_open]]]
+    [Determine whether the acceptor is open. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_acceptor.listen [*listen]]]
+    [Place the acceptor into the state where it will listen for new connections. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_acceptor.local_endpoint [*local_endpoint]]]
+    [Get the local endpoint of the acceptor. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_acceptor.native [*native]]]
+    [Get the native acceptor representation. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_acceptor.open [*open]]]
+    [Open the acceptor using the specified protocol. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_acceptor.set_option [*set_option]]]
+    [Set an option on the acceptor. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_socket_acceptor.max_connections [*max_connections]]]
+    [The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_socket_acceptor.message_do_not_route [*message_do_not_route]]]
+    [Specify that the data should not be subject to routing. ]
+  ]
+
+  [
+    [[link asio.reference.basic_socket_acceptor.message_out_of_band [*message_out_of_band]]]
+    [Process out-of-band data. ]
+  ]
+
+  [
+    [[link asio.reference.basic_socket_acceptor.message_peek [*message_peek]]]
+    [Peek at incoming data without removing it from the input queue. ]
+  ]
+
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_socket_acceptor.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_socket_acceptor.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+The basic_socket_acceptor class template is used for accepting new socket connections.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe.
+
+[heading Example]
+  
+Opening a socket acceptor with the SO\_REUSEADDR option enabled: 
+
+   asio::ip::tcp::acceptor acceptor(io_service);
+   asio::ip::tcp::endpoint endpoint(asio::ip::tcp::v4(), port);
+   acceptor.open(endpoint.protocol());
+   acceptor.set_option(asio::ip::tcp::acceptor::reuse_address(true));
+   acceptor.bind(endpoint);
+   acceptor.listen();
+
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:endpoint local::stream_protocol::endpoint]
+
+The type of a UNIX domain endpoint. 
+
+  typedef basic_endpoint< stream_protocol > endpoint;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.local__basic_endpoint.data_type [*data_type]]]
+    [The type of the endpoint structure. This type is dependent on the underlying implementation of the socket layer. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.local__basic_endpoint.protocol_type [*protocol_type]]]
+    [The protocol type associated with the endpoint. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.local__basic_endpoint.basic_endpoint [*basic_endpoint]]]
+    [Default constructor. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.capacity [*capacity]]]
+    [Get the capacity of the endpoint in the native type. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.data [*data]]]
+    [Get the underlying endpoint in the native type. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.operator_eq_ [*operator=]]]
+    [Assign from another endpoint. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.path [*path]]]
+    [Get the path associated with the endpoint. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.protocol [*protocol]]]
+    [The protocol associated with the endpoint. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.resize [*resize]]]
+    [Set the underlying size of the endpoint in the native type. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.size [*size]]]
+    [Get the underlying size of the endpoint in the native type. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.local__basic_endpoint.operator_not__eq_ [*operator!=]]]
+    [Compare two endpoints for inequality. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.operator_lt_ [*operator<]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.operator_eq__eq_ [*operator==]]]
+    [Compare two endpoints for equality. ]
+  ]
+  
+]
+
+[heading Related Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.local__basic_endpoint.operator_lt__lt_ [*operator<<]]]
+    [Output an endpoint as a string. ]
+  ]
+  
+]
+
+The 
+[link asio.reference.local__basic_endpoint local::basic_endpoint] class template describes an endpoint that may be associated with a particular UNIX socket.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe.
+
+
+
+
+[endsect]
+
+
+
+[section:family local::stream_protocol::family]
+
+Obtain an identifier for the protocol family. 
+
+  int family() const;
+
+
+
+[endsect]
+
+
+
+[section:iostream local::stream_protocol::iostream]
+
+The UNIX domain iostream type. 
+
+  typedef basic_socket_iostream< stream_protocol > iostream;
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_socket_iostream.basic_socket_iostream [*basic_socket_iostream]]]
+    [Construct a basic_socket_iostream without establishing a connection. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_iostream.close [*close]]]
+    [Close the connection. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_iostream.connect [*connect]]]
+    [Establish a connection to an endpoint corresponding to a resolver query. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_iostream.rdbuf [*rdbuf]]]
+    [Return a pointer to the underlying streambuf. ]
+  ]
+  
+]
+
+
+
+[endsect]
+
+
+
+[section:protocol local::stream_protocol::protocol]
+
+Obtain an identifier for the protocol. 
+
+  int protocol() const;
+
+
+
+[endsect]
+
+
+
+[section:socket local::stream_protocol::socket]
+
+The UNIX domain socket type. 
+
+  typedef basic_stream_socket< stream_protocol > socket;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.basic_stream_socket.broadcast [*broadcast]]]
+    [Socket option to permit sending of broadcast messages. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_stream_socket.bytes_readable [*bytes_readable]]]
+    [IO control command to get the amount of data that can be read without blocking. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_stream_socket.debug [*debug]]]
+    [Socket option to enable socket-level debugging. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_stream_socket.do_not_route [*do_not_route]]]
+    [Socket option to prevent routing, use local interfaces only. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_stream_socket.enable_connection_aborted [*enable_connection_aborted]]]
+    [Socket option to report aborted connections on accept. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_stream_socket.endpoint_type [*endpoint_type]]]
+    [The endpoint type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_stream_socket.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_stream_socket.keep_alive [*keep_alive]]]
+    [Socket option to send keep-alives. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_stream_socket.linger [*linger]]]
+    [Socket option to specify whether the socket lingers on close if unsent data is present. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_stream_socket.lowest_layer_type [*lowest_layer_type]]]
+    [A basic_socket is always the lowest layer. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_stream_socket.message_flags [*message_flags]]]
+    [Bitmask type for flags that can be passed to send and receive operations. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_stream_socket.native_type [*native_type]]]
+    [The native representation of a socket. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_stream_socket.non_blocking_io [*non_blocking_io]]]
+    [IO control command to set the blocking mode of the socket. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_stream_socket.protocol_type [*protocol_type]]]
+    [The protocol type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_stream_socket.receive_buffer_size [*receive_buffer_size]]]
+    [Socket option for the receive buffer size of a socket. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_stream_socket.receive_low_watermark [*receive_low_watermark]]]
+    [Socket option for the receive low watermark. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_stream_socket.reuse_address [*reuse_address]]]
+    [Socket option to allow the socket to be bound to an address that is already in use. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_stream_socket.send_buffer_size [*send_buffer_size]]]
+    [Socket option for the send buffer size of a socket. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_stream_socket.send_low_watermark [*send_low_watermark]]]
+    [Socket option for the send low watermark. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_stream_socket.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_stream_socket.shutdown_type [*shutdown_type]]]
+    [Different ways a socket may be shutdown. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_stream_socket.assign [*assign]]]
+    [Assign an existing native socket to the socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.async_connect [*async_connect]]]
+    [Start an asynchronous connect. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.async_read_some [*async_read_some]]]
+    [Start an asynchronous read. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.async_receive [*async_receive]]]
+    [Start an asynchronous receive. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.async_send [*async_send]]]
+    [Start an asynchronous send. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.async_write_some [*async_write_some]]]
+    [Start an asynchronous write. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.at_mark [*at_mark]]]
+    [Determine whether the socket is at the out-of-band data mark. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.available [*available]]]
+    [Determine the number of bytes available for reading. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.basic_stream_socket [*basic_stream_socket]]]
+    [Construct a basic_stream_socket without opening it. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.bind [*bind]]]
+    [Bind the socket to the given local endpoint. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.close [*close]]]
+    [Close the socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.connect [*connect]]]
+    [Connect the socket to the specified endpoint. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.get_option [*get_option]]]
+    [Get an option from the socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.io_control [*io_control]]]
+    [Perform an IO control command on the socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.is_open [*is_open]]]
+    [Determine whether the socket is open. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.local_endpoint [*local_endpoint]]]
+    [Get the local endpoint of the socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.lowest_layer [*lowest_layer]]]
+    [Get a reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.native [*native]]]
+    [Get the native socket representation. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.open [*open]]]
+    [Open the socket using the specified protocol. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.read_some [*read_some]]]
+    [Read some data from the socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.receive [*receive]]]
+    [Receive some data on the socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.remote_endpoint [*remote_endpoint]]]
+    [Get the remote endpoint of the socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.send [*send]]]
+    [Send some data on the socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.set_option [*set_option]]]
+    [Set an option on the socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.shutdown [*shutdown]]]
+    [Disable sends or receives on the socket. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_socket.write_some [*write_some]]]
+    [Write some data to the socket. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_stream_socket.max_connections [*max_connections]]]
+    [The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_stream_socket.message_do_not_route [*message_do_not_route]]]
+    [Specify that the data should not be subject to routing. ]
+  ]
+
+  [
+    [[link asio.reference.basic_stream_socket.message_out_of_band [*message_out_of_band]]]
+    [Process out-of-band data. ]
+  ]
+
+  [
+    [[link asio.reference.basic_stream_socket.message_peek [*message_peek]]]
+    [Peek at incoming data without removing it from the input queue. ]
+  ]
+
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_stream_socket.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_stream_socket.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+The basic_stream_socket class template provides asynchronous and blocking stream-oriented socket functionality.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe.
+
+
+
+
+[endsect]
+
+
+
+[section:type local::stream_protocol::type]
+
+Obtain an identifier for the type of the protocol. 
+
+  int type() const;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
 [section:mutable_buffer mutable_buffer]
 
 Holds a buffer that can be modified. 
@@ -32883,18 +34897,23 @@ Holds a buffer that can be modified.
   
 ]
 
-[heading Friends]
+[heading Related Functions]
 [table
   [[Name][Description]]
 
   [
-    [[link asio.reference.mutable_buffer.buffer_cast_helper [*buffer_cast_helper]]]
-    []
+    [[link asio.reference.mutable_buffer.buffer_cast [*buffer_cast]]]
+    [Cast a non-modifiable buffer to a specified pointer to POD type. ]
   ]
   
   [
-    [[link asio.reference.mutable_buffer.buffer_size_helper [*buffer_size_helper]]]
-    []
+    [[link asio.reference.mutable_buffer.buffer_size [*buffer_size]]]
+    [Get the number of bytes in a non-modifiable buffer. ]
+  ]
+  
+  [
+    [[link asio.reference.mutable_buffer.operator_plus_ [*operator+]]]
+    [Create a new modifiable buffer that is offset from the start of another. ]
   ]
   
 ]
@@ -32902,11 +34921,13 @@ Holds a buffer that can be modified.
 The mutable_buffer class provides a safe representation of a buffer that can be modified. It does not own the underlying data, and so is cheap to copy or assign. 
 
 
-[section:buffer_cast_helper mutable_buffer::buffer_cast_helper]
+[section:buffer_cast mutable_buffer::buffer_cast]
 
+Cast a non-modifiable buffer to a specified pointer to POD type. 
 
-
-  friend void * buffer_cast_helper(
+  template<
+      typename ``[link asio.reference.PointerToPodType PointerToPodType]``>
+  PointerToPodType buffer_cast(
       const mutable_buffer & b);
 
 
@@ -32915,11 +34936,11 @@ The mutable_buffer class provides a safe representation of a buffer that can be 
 
 
 
-[section:buffer_size_helper mutable_buffer::buffer_size_helper]
+[section:buffer_size mutable_buffer::buffer_size]
 
+Get the number of bytes in a non-modifiable buffer. 
 
-
-  friend std::size_t buffer_size_helper(
+  std::size_t buffer_size(
       const mutable_buffer & b);
 
 
@@ -32957,6 +34978,48 @@ Construct a buffer to represent a given memory range.
   mutable_buffer(
       void * data,
       std::size_t size);
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:operator_plus_ mutable_buffer::operator+]
+
+Create a new modifiable buffer that is offset from the start of another. 
+
+  mutable_buffer ``[link asio.reference.mutable_buffer.operator_plus_.overload1 operator+]``(
+      const mutable_buffer & b,
+      std::size_t start);
+
+  mutable_buffer ``[link asio.reference.mutable_buffer.operator_plus_.overload2 operator+]``(
+      std::size_t start,
+      const mutable_buffer & b);
+
+
+[section:overload1 mutable_buffer::operator+ (1 of 2 overloads)]
+
+Create a new modifiable buffer that is offset from the start of another. 
+
+  mutable_buffer operator+(
+      const mutable_buffer & b,
+      std::size_t start);
+
+
+
+[endsect]
+
+
+
+[section:overload2 mutable_buffer::operator+ (2 of 2 overloads)]
+
+Create a new modifiable buffer that is offset from the start of another. 
+
+  mutable_buffer operator+(
+      std::size_t start,
+      const mutable_buffer & b);
 
 
 
@@ -33017,12 +35080,67 @@ Adapts a single modifiable buffer so that it meets the requirements of the Mutab
   
 ]
 
+[heading Related Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.mutable_buffers_1.buffer_cast [*buffer_cast]]]
+    [Cast a non-modifiable buffer to a specified pointer to POD type. ]
+  ]
+  
+  [
+    [[link asio.reference.mutable_buffers_1.buffer_size [*buffer_size]]]
+    [Get the number of bytes in a non-modifiable buffer. ]
+  ]
+  
+  [
+    [[link asio.reference.mutable_buffers_1.operator_plus_ [*operator+]]]
+    [Create a new modifiable buffer that is offset from the start of another. ]
+  ]
+  
+]
+
 
 [section:begin mutable_buffers_1::begin]
 
 Get a random-access iterator to the first element. 
 
   const_iterator begin() const;
+
+
+
+[endsect]
+
+
+
+[section:buffer_cast mutable_buffers_1::buffer_cast]
+
+
+['Inherited from mutable_buffer.]
+
+Cast a non-modifiable buffer to a specified pointer to POD type. 
+
+  template<
+      typename ``[link asio.reference.PointerToPodType PointerToPodType]``>
+  PointerToPodType buffer_cast(
+      const mutable_buffer & b);
+
+
+
+[endsect]
+
+
+
+[section:buffer_size mutable_buffers_1::buffer_size]
+
+
+['Inherited from mutable_buffer.]
+
+Get the number of bytes in a non-modifiable buffer. 
+
+  std::size_t buffer_size(
+      const mutable_buffer & b);
 
 
 
@@ -33067,6 +35185,54 @@ Construct to represent a single modifiable buffer.
 [endsect]
 
 
+[section:operator_plus_ mutable_buffers_1::operator+]
+
+Create a new modifiable buffer that is offset from the start of another. 
+
+  mutable_buffer ``[link asio.reference.mutable_buffers_1.operator_plus_.overload1 operator+]``(
+      const mutable_buffer & b,
+      std::size_t start);
+
+  mutable_buffer ``[link asio.reference.mutable_buffers_1.operator_plus_.overload2 operator+]``(
+      std::size_t start,
+      const mutable_buffer & b);
+
+
+[section:overload1 mutable_buffers_1::operator+ (1 of 2 overloads)]
+
+
+['Inherited from mutable_buffer.]
+
+Create a new modifiable buffer that is offset from the start of another. 
+
+  mutable_buffer operator+(
+      const mutable_buffer & b,
+      std::size_t start);
+
+
+
+[endsect]
+
+
+
+[section:overload2 mutable_buffers_1::operator+ (2 of 2 overloads)]
+
+
+['Inherited from mutable_buffer.]
+
+Create a new modifiable buffer that is offset from the start of another. 
+
+  mutable_buffer operator+(
+      std::size_t start,
+      const mutable_buffer & b);
+
+
+
+[endsect]
+
+
+[endsect]
+
 
 [section:value_type mutable_buffers_1::value_type]
 
@@ -33086,18 +35252,23 @@ The type for each element in the list of buffers.
   
 ]
 
-[heading Friends]
+[heading Related Functions]
 [table
   [[Name][Description]]
 
   [
-    [[link asio.reference.mutable_buffer.buffer_cast_helper [*buffer_cast_helper]]]
-    []
+    [[link asio.reference.mutable_buffer.buffer_cast [*buffer_cast]]]
+    [Cast a non-modifiable buffer to a specified pointer to POD type. ]
   ]
   
   [
-    [[link asio.reference.mutable_buffer.buffer_size_helper [*buffer_size_helper]]]
-    []
+    [[link asio.reference.mutable_buffer.buffer_size [*buffer_size]]]
+    [Get the number of bytes in a non-modifiable buffer. ]
+  ]
+  
+  [
+    [[link asio.reference.mutable_buffer.operator_plus_ [*operator+]]]
+    [Create a new modifiable buffer that is offset from the start of another. ]
   ]
   
 ]
@@ -33211,18 +35382,23 @@ The type for each element in the list of buffers.
   
 ]
 
-[heading Friends]
+[heading Related Functions]
 [table
   [[Name][Description]]
 
   [
-    [[link asio.reference.mutable_buffer.buffer_cast_helper [*buffer_cast_helper]]]
-    []
+    [[link asio.reference.mutable_buffer.buffer_cast [*buffer_cast]]]
+    [Cast a non-modifiable buffer to a specified pointer to POD type. ]
   ]
   
   [
-    [[link asio.reference.mutable_buffer.buffer_size_helper [*buffer_size_helper]]]
-    []
+    [[link asio.reference.mutable_buffer.buffer_size [*buffer_size]]]
+    [Get the number of bytes in a non-modifiable buffer. ]
+  ]
+  
+  [
+    [[link asio.reference.mutable_buffer.operator_plus_ [*operator+]]]
+    [Create a new modifiable buffer that is offset from the start of another. ]
   ]
   
 ]
