@@ -76,6 +76,7 @@ INPUT                  = ./../../include/asio.hpp \
                          ./../../include/asio \
                          ./../../include/asio/impl \
                          ./../../include/asio/ip \
+                         ./../../include/asio/local \
                          ./../../include/asio/posix \
                          ./../../include/asio/ssl \
                          ./../../include/asio/windows \

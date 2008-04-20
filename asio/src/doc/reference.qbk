@@ -32471,6 +32471,400 @@ The value member is true only if the Stream type supports buffering of written d
 
 [endsect]
 
+[section:local__basic_endpoint local::basic_endpoint]
+
+Describes an endpoint for a UNIX socket. 
+
+  template<
+      typename ``[link asio.reference.Protocol Protocol]``>
+  class basic_endpoint
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.local__basic_endpoint.data_type [*data_type]]]
+    [The type of the endpoint structure. This type is dependent on the underlying implementation of the socket layer. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.local__basic_endpoint.protocol_type [*protocol_type]]]
+    [The protocol type associated with the endpoint. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.local__basic_endpoint.basic_endpoint [*basic_endpoint]]]
+    [Default constructor. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.capacity [*capacity]]]
+    [Get the capacity of the endpoint in the native type. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.data [*data]]]
+    [Get the underlying endpoint in the native type. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.operator_eq_ [*operator=]]]
+    [Assign from another endpoint. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.path [*path]]]
+    [Get the path associated with the endpoint. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.protocol [*protocol]]]
+    [The protocol associated with the endpoint. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.resize [*resize]]]
+    [Set the underlying size of the endpoint in the native type. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.size [*size]]]
+    [Get the underlying size of the endpoint in the native type. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.local__basic_endpoint.operator_not__eq_ [*operator!=]]]
+    [Compare two endpoints for inequality. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.operator_lt_ [*operator<]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.operator_eq__eq_ [*operator==]]]
+    [Compare two endpoints for equality. ]
+  ]
+  
+]
+
+The 
+[link asio.reference.local__basic_endpoint local::basic_endpoint] class template describes an endpoint that may be associated with a particular UNIX socket.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe.
+
+
+[section:basic_endpoint local::basic_endpoint::basic_endpoint]
+
+Default constructor. 
+
+  ``[link asio.reference.local__basic_endpoint.basic_endpoint.overload1 basic_endpoint]``();
+
+  ``[link asio.reference.local__basic_endpoint.basic_endpoint.overload2 basic_endpoint]``(
+      const char * path);
+
+  ``[link asio.reference.local__basic_endpoint.basic_endpoint.overload3 basic_endpoint]``(
+      const std::string & path);
+
+  ``[link asio.reference.local__basic_endpoint.basic_endpoint.overload4 basic_endpoint]``(
+      const basic_endpoint & other);
+
+
+[section:overload1 local::basic_endpoint::basic_endpoint (1 of 4 overloads)]
+
+Default constructor. 
+
+  basic_endpoint();
+
+
+
+[endsect]
+
+
+
+[section:overload2 local::basic_endpoint::basic_endpoint (2 of 4 overloads)]
+
+Construct an endpoint using the specified path name. 
+
+  basic_endpoint(
+      const char * path);
+
+
+
+[endsect]
+
+
+
+[section:overload3 local::basic_endpoint::basic_endpoint (3 of 4 overloads)]
+
+Construct an endpoint using the specified path name. 
+
+  basic_endpoint(
+      const std::string & path);
+
+
+
+[endsect]
+
+
+
+[section:overload4 local::basic_endpoint::basic_endpoint (4 of 4 overloads)]
+
+Copy constructor. 
+
+  basic_endpoint(
+      const basic_endpoint & other);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:capacity local::basic_endpoint::capacity]
+
+Get the capacity of the endpoint in the native type. 
+
+  std::size_t capacity() const;
+
+
+
+[endsect]
+
+
+[section:data local::basic_endpoint::data]
+
+Get the underlying endpoint in the native type. 
+
+  data_type * ``[link asio.reference.local__basic_endpoint.data.overload1 data]``();
+
+  const data_type * ``[link asio.reference.local__basic_endpoint.data.overload2 data]``() const;
+
+
+[section:overload1 local::basic_endpoint::data (1 of 2 overloads)]
+
+Get the underlying endpoint in the native type. 
+
+  data_type * data();
+
+
+
+[endsect]
+
+
+
+[section:overload2 local::basic_endpoint::data (2 of 2 overloads)]
+
+Get the underlying endpoint in the native type. 
+
+  const data_type * data() const;
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:data_type local::basic_endpoint::data_type]
+
+The type of the endpoint structure. This type is dependent on the underlying implementation of the socket layer. 
+
+  typedef implementation_defined data_type;
+
+
+
+
+[endsect]
+
+
+
+[section:operator_not__eq_ local::basic_endpoint::operator!=]
+
+Compare two endpoints for inequality. 
+
+  friend bool operator!=(
+      const basic_endpoint< Protocol > & e1,
+      const basic_endpoint< Protocol > & e2);
+
+
+
+[endsect]
+
+
+
+[section:operator_lt_ local::basic_endpoint::operator<]
+
+Compare endpoints for ordering. 
+
+  friend bool operator<(
+      const basic_endpoint< Protocol > & e1,
+      const basic_endpoint< Protocol > & e2);
+
+
+
+[endsect]
+
+
+
+[section:operator_eq_ local::basic_endpoint::operator=]
+
+Assign from another endpoint. 
+
+  basic_endpoint & operator=(
+      const basic_endpoint & other);
+
+
+
+[endsect]
+
+
+
+[section:operator_eq__eq_ local::basic_endpoint::operator==]
+
+Compare two endpoints for equality. 
+
+  friend bool operator==(
+      const basic_endpoint< Protocol > & e1,
+      const basic_endpoint< Protocol > & e2);
+
+
+
+[endsect]
+
+
+[section:path local::basic_endpoint::path]
+
+Get the path associated with the endpoint. 
+
+  std::string ``[link asio.reference.local__basic_endpoint.path.overload1 path]``() const;
+
+  void ``[link asio.reference.local__basic_endpoint.path.overload2 path]``(
+      const char * p);
+
+  void ``[link asio.reference.local__basic_endpoint.path.overload3 path]``(
+      const std::string & p);
+
+
+[section:overload1 local::basic_endpoint::path (1 of 3 overloads)]
+
+Get the path associated with the endpoint. 
+
+  std::string path() const;
+
+
+
+[endsect]
+
+
+
+[section:overload2 local::basic_endpoint::path (2 of 3 overloads)]
+
+Set the path associated with the endpoint. 
+
+  void path(
+      const char * p);
+
+
+
+[endsect]
+
+
+
+[section:overload3 local::basic_endpoint::path (3 of 3 overloads)]
+
+Set the path associated with the endpoint. 
+
+  void path(
+      const std::string & p);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:protocol local::basic_endpoint::protocol]
+
+The protocol associated with the endpoint. 
+
+  protocol_type protocol() const;
+
+
+
+[endsect]
+
+
+
+[section:protocol_type local::basic_endpoint::protocol_type]
+
+The protocol type associated with the endpoint. 
+
+  typedef Protocol protocol_type;
+
+
+
+
+[endsect]
+
+
+
+[section:resize local::basic_endpoint::resize]
+
+Set the underlying size of the endpoint in the native type. 
+
+  void resize(
+      std::size_t size);
+
+
+
+[endsect]
+
+
+
+[section:size local::basic_endpoint::size]
+
+Get the underlying size of the endpoint in the native type. 
+
+  std::size_t size() const;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
 [section:mutable_buffer mutable_buffer]
 
 Holds a buffer that can be modified. 
@@ -32884,9 +33278,9 @@ An argument placeholder, for use with boost::bind(), that corresponds to the ite
 Provides POSIX descriptor functionality. 
 
   template<
-      typename ``[link asio.reference.Descriptorservice Descriptorservice]``>
+      typename ``[link asio.reference.DescriptorService DescriptorService]``>
   class basic_descriptor :
-    public basic_io_object< Descriptorservice >,
+    public basic_io_object< DescriptorService >,
     public posix::descriptor_base
 
 
@@ -33535,7 +33929,7 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 A basic_descriptor is always the lowest layer. 
 
-  typedef basic_descriptor< Descriptorservice > lowest_layer_type;
+  typedef basic_descriptor< DescriptorService > lowest_layer_type;
 
 
 [heading Types]
@@ -33703,7 +34097,7 @@ This function may be used to obtain the underlying representation of the descrip
 
 The native representation of a descriptor. 
 
-  typedef Descriptorservice::native_type native_type;
+  typedef DescriptorService::native_type native_type;
 
 
 
@@ -33766,7 +34160,7 @@ The service associated with the I/O object.
 
 The type of the service that will be used to provide I/O operations. 
 
-  typedef Descriptorservice service_type;
+  typedef DescriptorService service_type;
 
 
 
@@ -33794,9 +34188,9 @@ Protected destructor to prevent deletion through this type.
 Provides stream-oriented descriptor functionality. 
 
   template<
-      typename ``[link asio.reference.StreamDescriptorservice StreamDescriptorservice]`` = stream_descriptor_service>
+      typename ``[link asio.reference.StreamDescriptorService StreamDescriptorService]`` = stream_descriptor_service>
   class basic_stream_descriptor :
-    public posix::basic_descriptor< StreamDescriptorservice >
+    public posix::basic_descriptor< StreamDescriptorService >
 
 
 [heading Types]
@@ -34590,7 +34984,7 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 A basic_descriptor is always the lowest layer. 
 
-  typedef basic_descriptor< StreamDescriptorservice > lowest_layer_type;
+  typedef basic_descriptor< StreamDescriptorService > lowest_layer_type;
 
 
 [heading Types]
@@ -34761,7 +35155,7 @@ This function may be used to obtain the underlying representation of the descrip
 
 The native representation of a descriptor. 
 
-  typedef StreamDescriptorservice::native_type native_type;
+  typedef StreamDescriptorService::native_type native_type;
 
 
 
@@ -34938,7 +35332,7 @@ The service associated with the I/O object.
 
 The type of the service that will be used to provide I/O operations. 
 
-  typedef StreamDescriptorservice service_type;
+  typedef StreamDescriptorService service_type;
 
 
 
