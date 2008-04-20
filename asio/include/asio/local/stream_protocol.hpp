@@ -23,7 +23,8 @@
 #include "asio/local/basic_endpoint.hpp"
 #include "asio/detail/socket_types.hpp"
 
-#if defined(ASIO_HAS_LOCAL_SOCKETS)
+#if defined(ASIO_HAS_LOCAL_SOCKETS) \
+  || defined(GENERATING_DOCUMENTATION)
 
 namespace asio {
 namespace local {
@@ -78,6 +79,7 @@ public:
 } // namespace asio
 
 #endif // defined(ASIO_HAS_LOCAL_SOCKETS)
+       //   || defined(GENERATING_DOCUMENTATION)
 
 #include "asio/detail/pop_options.hpp"
 

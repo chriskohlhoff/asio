@@ -23,7 +23,8 @@
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/throw_error.hpp"
 
-#if defined(ASIO_HAS_LOCAL_SOCKETS)
+#if defined(ASIO_HAS_LOCAL_SOCKETS) \
+  || defined(GENERATING_DOCUMENTATION)
 
 namespace asio {
 namespace local {
@@ -92,6 +93,7 @@ inline asio::error_code connect_pair(
 } // namespace asio
 
 #endif // defined(ASIO_HAS_LOCAL_SOCKETS)
+       //   || defined(GENERATING_DOCUMENTATION)
 
 #include "asio/detail/pop_options.hpp"
 
