@@ -515,16 +515,18 @@ private:
       }
       else
       {
+        // Relinquish responsibility for dispatching timers. If the io_service
+        // is not being stopped then the thread will get an opportunity to
+        // reacquire timer responsibility on the next loop iteration.
+        if (dispatching_timers)
+        {
+          ::InterlockedCompareExchange(&timer_thread_, 0, this_thread_id);
+        }
+
         // The stopped_ flag is always checked to ensure that any leftover
         // interrupts from a previous run invocation are ignored.
         if (::InterlockedExchangeAdd(&stopped_, 0) != 0)
         {
-          // Relinquish responsibility for dispatching timers.
-          if (dispatching_timers)
-          {
-            ::InterlockedCompareExchange(&timer_thread_, 0, this_thread_id);
-          }
-
           // Wake up next thread that is blocked on GetQueuedCompletionStatus.
           if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, 0))
           {
