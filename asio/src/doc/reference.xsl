@@ -45,9 +45,11 @@
 [include requirements/ConvertibleToConstBuffer.qbk]
 [include requirements/ConvertibleToMutableBuffer.qbk]
 [include requirements/DatagramSocketService.qbk]
+[include requirements/DescriptorService.qbk]
 [include requirements/Endpoint.qbk]
 [include requirements/GettableSocketOption.qbk]
 [include requirements/Handler.qbk]
+[include requirements/HandleService.qbk]
 [include requirements/InternetProtocol.qbk]
 [include requirements/IoControlCommand.qbk]
 [include requirements/IoObjectService.qbk]
@@ -60,6 +62,8 @@
 [include requirements/SettableSocketOption.qbk]
 [include requirements/SocketAcceptorService.qbk]
 [include requirements/SocketService.qbk]
+[include requirements/StreamDescriptorService.qbk]
+[include requirements/StreamHandleService.qbk]
 [include requirements/StreamSocketService.qbk]
 [include requirements/SyncReadStream.qbk]
 [include requirements/SyncWriteStream.qbk]
@@ -85,7 +89,9 @@
         </xsl:if>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:if test="not(contains(ancestor::*/compoundname, '::detail'))">
+        <xsl:if test="
+            not(contains(ancestor::*/compoundname, '::detail')) and
+            not(contains(ancestor::*/compoundname, '_helper'))">
           <xsl:call-template name="namespace-memberdef"/>
         </xsl:if>
       </xsl:otherwise>
@@ -171,6 +177,12 @@
       <xsl:call-template name="make-id">
         <xsl:with-param name="name"
          select="concat(substring-before($name, '&gt;'), '_gt_', substring-after($name, '&gt;'))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, '+')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '+'), '_plus_', substring-after($name, '+'))"/>
       </xsl:call-template>
     </xsl:when>
     <xsl:when test="contains($name, '~')">
@@ -633,11 +645,41 @@
 ]
 </xsl:if>
 
-<xsl:if test="count(sectiondef[@kind='friend']/memberdef[not(type = 'friend class')]) &gt; 0">
+<xsl:if test="count(sectiondef[@kind='public-attrib' or @kind='public-static-attrib']) > 0">
+[heading Data Members]
+[table
+  [[Name][Description]]
+<xsl:for-each select="sectiondef[@kind='public-attrib' or @kind='public-static-attrib']/memberdef" mode="class-table">
+  <xsl:sort select="name"/>
+  [
+    [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="name"/>
+      <xsl:text> </xsl:text>[*<xsl:value-of select="name"/>]]]
+    [<xsl:value-of select="briefdescription"/>]
+  ]
+</xsl:for-each>
+]
+</xsl:if>
+
+<xsl:if test="count(sectiondef[@kind='protected-attrib' or @kind='protected-static-attrib']) > 0">
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+<xsl:for-each select="sectiondef[@kind='protected-attrib' or @kind='protected-static-attrib']/memberdef" mode="class-table">
+  <xsl:sort select="name"/>
+  [
+    [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="name"/>
+      <xsl:text> </xsl:text>[*<xsl:value-of select="name"/>]]]
+    [<xsl:value-of select="briefdescription"/>]
+  ]
+</xsl:for-each>
+]
+</xsl:if>
+
+<xsl:if test="count(sectiondef[@kind='friend']/memberdef[not(type = 'friend class') and not(contains(name, '_helper'))]) &gt; 0">
 [heading Friends]
 [table
   [[Name][Description]]
-<xsl:for-each select="sectiondef[@kind='friend']/memberdef[not(type = 'friend class')]" mode="class-table">
+<xsl:for-each select="sectiondef[@kind='friend']/memberdef[not(type = 'friend class') and not(contains(name, '_helper'))]" mode="class-table">
   <xsl:sort select="name"/>
   <xsl:variable name="name">
     <xsl:value-of select="name"/>
@@ -668,42 +710,48 @@
 ]
 </xsl:if>
 
-<xsl:if test="count(sectiondef[@kind='public-attrib' or @kind='public-static-attrib']) > 0">
-[heading Data Members]
+<xsl:if test="count(sectiondef[@kind='related']/memberdef) &gt; 0">
+[heading Related Functions]
 [table
   [[Name][Description]]
-<xsl:for-each select="sectiondef[@kind='public-attrib' or @kind='public-static-attrib']/memberdef" mode="class-table">
+<xsl:for-each select="sectiondef[@kind='related']/memberdef" mode="class-table">
   <xsl:sort select="name"/>
+  <xsl:variable name="name">
+    <xsl:value-of select="name"/>
+  </xsl:variable>
+  <xsl:variable name="id">
+    <xsl:call-template name="make-id">
+      <xsl:with-param name="name" select="$name"/>
+    </xsl:call-template>
+  </xsl:variable>
+  <xsl:variable name="doxygen-id">
+    <xsl:value-of select="@id"/>
+  </xsl:variable>
+  <xsl:variable name="overload-position">
+    <xsl:for-each select="../memberdef[name = $name]">
+      <xsl:if test="@id = $doxygen-id">
+        <xsl:value-of select="position()"/>
+      </xsl:if>
+    </xsl:for-each>
+  </xsl:variable>
+  <xsl:if test="$overload-position = 1">
   [
-    [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="name"/>
-      <xsl:text> </xsl:text>[*<xsl:value-of select="name"/>]]]
+    [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="$id"/>
+      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/>]]]
     [<xsl:value-of select="briefdescription"/>]
   ]
+  </xsl:if>
 </xsl:for-each>
 ]
 </xsl:if>
 
-<xsl:if test="count(sectiondef[@kind='protected-attrib' or @kind='protected-static-attrib']) > 0">
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-<xsl:for-each select="sectiondef[@kind='protected-attrib' or @kind='protected-static-attrib']/memberdef" mode="class-table">
-  <xsl:sort select="name"/>
-  [
-    [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="name"/>
-      <xsl:text> </xsl:text>[*<xsl:value-of select="name"/>]]]
-    [<xsl:value-of select="briefdescription"/>]
-  ]
-</xsl:for-each>
-]
-</xsl:if>
 </xsl:template>
 
 
 <xsl:template name="class-members">
 <xsl:param name="class-name"/>
 <xsl:param name="class-id"/>
-<xsl:apply-templates select="sectiondef[@kind='public-type' or @kind='public-func' or @kind='public-static-func' or @kind='public-attrib' or @kind='public-static-attrib' or @kind='protected-func' or @kind='protected-static-func' or @kind='protected-attrib' or @kind='protected-static-attrib' or @kind='friend']/memberdef[not(type = 'friend class')]" mode="class-detail">
+<xsl:apply-templates select="sectiondef[@kind='public-type' or @kind='public-func' or @kind='public-static-func' or @kind='public-attrib' or @kind='public-static-attrib' or @kind='protected-func' or @kind='protected-static-func' or @kind='protected-attrib' or @kind='protected-static-attrib' or @kind='friend' or @kind='related']/memberdef[not(type = 'friend class') and not(contains(name, '_helper'))]" mode="class-detail">
   <xsl:sort select="name"/>
   <xsl:with-param name="class-name" select="$class-name"/>
   <xsl:with-param name="class-id" select="$class-id"/>
