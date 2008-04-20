@@ -211,7 +211,7 @@ private:
   // Initialise with a specified path.
   void init(const char* path, std::size_t path_length)
   {
-    if (path_length > sizeof(data_.local.sun_path))
+    if (path_length > sizeof(data_.local.sun_path) - 1)
     {
       // The buffer is not large enough to store this address.
       asio::error_code ec(asio::error::name_too_long);
@@ -223,6 +223,11 @@ private:
     data_.local.sun_family = AF_UNIX;
     memcpy(data_.local.sun_path, path, path_length);
     path_length_ = path_length;
+
+    // NUL-terminate normal path names. Names that start with a NUL are in the
+    // UNIX domain protocol's "abstract namespace" and are not NUL-terminated.
+    if (path_length > 0 && data_.local.sun_path[0] == 0)
+      data_.local.sun_path[path_length] = 0;
   }
 };
 
