@@ -38,8 +38,18 @@
             <listitem><link linkend="asio.reference.ip__udp.endpoint">ip::udp::endpoint</link></listitem>
             <listitem><link linkend="asio.reference.ip__udp.resolver">ip::udp::resolver</link></listitem>
             <listitem><link linkend="asio.reference.ip__udp.socket">ip::udp::socket</link></listitem>
+            <listitem><link linkend="asio.reference.local__stream_protocol">local::stream_protocol</link></listitem>
+            <listitem><link linkend="asio.reference.local__stream_protocol.acceptor">local::stream_protocol::acceptor</link></listitem>
+            <listitem><link linkend="asio.reference.local__stream_protocol.endpoint">local::stream_protocol::endpoint</link></listitem>
+            <listitem><link linkend="asio.reference.local__stream_protocol.iostream">local::stream_protocol::iostream</link></listitem>
+            <listitem><link linkend="asio.reference.local__stream_protocol.socket">local::stream_protocol::socket</link></listitem>
+            <listitem><link linkend="asio.reference.local__datagram_protocol">local::datagram_protocol</link></listitem>
+            <listitem><link linkend="asio.reference.local__datagram_protocol.endpoint">local::datagram_protocol::endpoint</link></listitem>
+            <listitem><link linkend="asio.reference.local__datagram_protocol.socket">local::datagram_protocol::socket</link></listitem>
             <listitem><link linkend="asio.reference.mutable_buffer">mutable_buffer</link></listitem>
             <listitem><link linkend="asio.reference.mutable_buffers_1">mutable_buffers_1</link></listitem>
+            <listitem><link linkend="asio.reference.posix__descriptor_base">posix::descriptor_base</link></listitem>
+            <listitem><link linkend="asio.reference.posix__stream_descriptor">posix::stream_descriptor</link></listitem>
             <listitem><link linkend="asio.reference.socket_base">socket_base</link></listitem>
             <listitem><link linkend="asio.reference.ssl__context">ssl::context</link></listitem>
             <listitem><link linkend="asio.reference.ssl__context_base">ssl::context_base</link></listitem>
@@ -47,6 +57,7 @@
             <listitem><link linkend="asio.reference.streambuf">streambuf</link></listitem>
             <listitem><link linkend="asio.reference.system_error">system_error</link></listitem>
             <listitem><link linkend="asio.reference.thread">thread</link></listitem>
+            <listitem><link linkend="asio.reference.windows__stream_handle">windows::stream_handle</link></listitem>
           </itemizedlist>
         </entry>
         <entry valign="top">
@@ -69,18 +80,25 @@
             <listitem><link linkend="asio.reference.ip__basic_resolver_entry">ip::basic_resolver_entry</link></listitem>
             <listitem><link linkend="asio.reference.ip__basic_resolver_iterator">ip::basic_resolver_iterator</link></listitem>
             <listitem><link linkend="asio.reference.ip__basic_resolver_query">ip::basic_resolver_query</link></listitem>
+            <listitem><link linkend="asio.reference.local__basic_endpoint">local::basic_endpoint</link></listitem>
+            <listitem><link linkend="asio.reference.posix__basic_descriptor">posix::basic_descriptor</link></listitem>
+            <listitem><link linkend="asio.reference.posix__basic_stream_descriptor">posix::basic_stream_descriptor</link></listitem>
             <listitem><link linkend="asio.reference.ssl__basic_context">ssl::basic_context</link></listitem>
             <listitem><link linkend="asio.reference.ssl__stream">ssl::stream</link></listitem>
+            <listitem><link linkend="asio.reference.windows__basic_handle">windows::basic_handle</link></listitem>
+            <listitem><link linkend="asio.reference.windows__basic_stream_handle">windows::basic_stream_handle</link></listitem>
           </itemizedlist>
           <bridgehead renderas="sect3">Services</bridgehead>
           <itemizedlist>
             <listitem><link linkend="asio.reference.datagram_socket_service">datagram_socket_service</link></listitem>
             <listitem><link linkend="asio.reference.deadline_timer_service">deadline_timer_service</link></listitem>
             <listitem><link linkend="asio.reference.ip__resolver_service">ip::resolver_service</link></listitem>
+            <listitem><link linkend="asio.reference.posix__stream_descriptor_service">posix::stream_descriptor_service</link></listitem>
             <listitem><link linkend="asio.reference.socket_acceptor_service">socket_acceptor_service</link></listitem>
             <listitem><link linkend="asio.reference.ssl__context_service">ssl::context_service</link></listitem>
             <listitem><link linkend="asio.reference.ssl__stream_service">ssl::stream_service</link></listitem>
             <listitem><link linkend="asio.reference.stream_socket_service">stream_socket_service</link></listitem>
+            <listitem><link linkend="asio.reference.windows__stream_handle_service">windows::stream_handle_service</link></listitem>
           </itemizedlist>
           <bridgehead renderas="sect3">Placeholders</bridgehead>
           <itemizedlist>
@@ -100,8 +118,11 @@
             <listitem><link linkend="asio.reference.async_read_until">async_read_until</link></listitem>
             <listitem><link linkend="asio.reference.async_write">async_write</link></listitem>
             <listitem><link linkend="asio.reference.buffer">buffer</link></listitem>
+            <listitem><link linkend="asio.reference.buffer_cast">buffer_cast</link></listitem>
+            <listitem><link linkend="asio.reference.buffer_size">buffer_size</link></listitem>
             <listitem><link linkend="asio.reference.has_service">has_service</link></listitem>
             <listitem><link linkend="asio.reference.ip__host_name">ip::host_name</link></listitem>
+            <listitem><link linkend="asio.reference.local__connect_pair">local::connect_pair</link></listitem>
             <listitem><link linkend="asio.reference.read">read</link></listitem>
             <listitem><link linkend="asio.reference.read_until">read_until</link></listitem>
             <listitem><link linkend="asio.reference.transfer_all">transfer_all</link></listitem>
@@ -135,9 +156,11 @@
             <listitem><link linkend="asio.reference.ConvertibleToConstBuffer">ConvertibleToConstBuffer</link></listitem>
             <listitem><link linkend="asio.reference.ConvertibleToMutableBuffer">ConvertibleToMutableBuffer</link></listitem>
             <listitem><link linkend="asio.reference.DatagramSocketService">DatagramSocketService</link></listitem>
+            <listitem><link linkend="asio.reference.DescriptorService">DescriptorService</link></listitem>
             <listitem><link linkend="asio.reference.Endpoint">Endpoint</link></listitem>
             <listitem><link linkend="asio.reference.GettableSocketOption">GettableSocketOption</link></listitem>
             <listitem><link linkend="asio.reference.Handler">Handler</link></listitem>
+            <listitem><link linkend="asio.reference.HandleService">HandleService</link></listitem>
             <listitem><link linkend="asio.reference.InternetProtocol">InternetProtocol</link></listitem>
             <listitem><link linkend="asio.reference.IoControlCommand">IoControlCommand</link></listitem>
             <listitem><link linkend="asio.reference.IoObjectService">IoObjectService</link></listitem>
@@ -150,6 +173,8 @@
             <listitem><link linkend="asio.reference.SettableSocketOption">SettableSocketOption</link></listitem>
             <listitem><link linkend="asio.reference.SocketAcceptorService">SocketAcceptorService</link></listitem>
             <listitem><link linkend="asio.reference.SocketService">SocketService</link></listitem>
+            <listitem><link linkend="asio.reference.StreamDescriptorService">StreamDescriptorService</link></listitem>
+            <listitem><link linkend="asio.reference.StreamHandleService">StreamHandleService</link></listitem>
             <listitem><link linkend="asio.reference.StreamSocketService">StreamSocketService</link></listitem>
             <listitem><link linkend="asio.reference.SyncReadStream">SyncReadStream</link></listitem>
             <listitem><link linkend="asio.reference.SyncWriteStream">SyncWriteStream</link></listitem>
