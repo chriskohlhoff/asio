@@ -118,8 +118,6 @@
             <listitem><link linkend="asio.reference.async_read_until">async_read_until</link></listitem>
             <listitem><link linkend="asio.reference.async_write">async_write</link></listitem>
             <listitem><link linkend="asio.reference.buffer">buffer</link></listitem>
-            <listitem><link linkend="asio.reference.buffer_cast">buffer_cast</link></listitem>
-            <listitem><link linkend="asio.reference.buffer_size">buffer_size</link></listitem>
             <listitem><link linkend="asio.reference.has_service">has_service</link></listitem>
             <listitem><link linkend="asio.reference.ip__host_name">ip::host_name</link></listitem>
             <listitem><link linkend="asio.reference.local__connect_pair">local::connect_pair</link></listitem>
