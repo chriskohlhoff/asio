@@ -532,8 +532,11 @@ sub copy_include_files
       "include/asio/impl",
       "include/asio/ip",
       "include/asio/ip/detail",
+      "include/asio/local",
+      "include/asio/posix",
       "include/asio/ssl",
-      "include/asio/ssl/detail");
+      "include/asio/ssl/detail",
+      "include/asio/windows");
 
   foreach my $dir (@dirs)
   {
@@ -574,7 +577,10 @@ sub copy_unit_tests
   my @dirs = (
       "src/tests/unit",
       "src/tests/unit/ip",
-      "src/tests/unit/ssl");
+      "src/tests/unit/local",
+      "src/tests/unit/posix",
+      "src/tests/unit/ssl",
+      "src/tests/unit/windows");
 
   our $boost_dir;
   foreach my $dir (@dirs)
@@ -609,6 +615,8 @@ sub copy_examples
       "src/examples/invocation",
       "src/examples/iostreams",
       "src/examples/multicast",
+      "src/examples/nonblocking",
+      "src/examples/porthopper",
       "src/examples/serialization",
       "src/examples/services",
       "src/examples/socks4",
