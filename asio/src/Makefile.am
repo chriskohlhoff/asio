@@ -74,6 +74,9 @@ noinst_PROGRAMS = \
 	examples/iostreams/daytime_server \
 	examples/multicast/receiver \
 	examples/multicast/sender \
+	examples/nonblocking/third_party_lib \
+	examples/porthopper/client \
+	examples/porthopper/server \
 	examples/services/daytime_client \
 	examples/socks4/sync_client \
 	examples/timeouts/accept_timeout \
@@ -299,6 +302,9 @@ examples_iostreams_daytime_client_SOURCES = examples/iostreams/daytime_client.cp
 examples_iostreams_daytime_server_SOURCES = examples/iostreams/daytime_server.cpp
 examples_multicast_receiver_SOURCES = examples/multicast/receiver.cpp
 examples_multicast_sender_SOURCES = examples/multicast/sender.cpp
+examples_nonblocking_third_party_lib_SOURCES = examples/nonblocking/third_party_lib.cpp
+examples_porthopper_client_SOURCES = examples/porthopper/client.cpp
+examples_porthopper_server_SOURCES = examples/porthopper/server.cpp
 examples_services_daytime_client_SOURCES = \
 	examples/services/daytime_client.cpp \
 	examples/services/logger_service.cpp
@@ -368,6 +374,7 @@ EXTRA_DIST = \
 	examples/http/server3/request_parser.hpp \
 	examples/http/server3/server.hpp \
 	examples/http/server3/win_main.cpp \
+	examples/porthopper/protocol.hpp \
 	examples/serialization/client.cpp \
 	examples/serialization/server.cpp \
 	examples/serialization/connection.hpp \
