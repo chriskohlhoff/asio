@@ -644,7 +644,7 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int argc, char* argv[])
+test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("socket_base");
   test->add(BOOST_TEST_CASE(&socket_base_compile::test));

@@ -209,7 +209,7 @@ void test_async_operations()
   client_socket.async_read_some(asio::buffer(read_buf), handle_read_eof);
 }
 
-test_suite* init_unit_test_suite(int argc, char* argv[])
+test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("buffered_read_stream");
   test->add(BOOST_TEST_CASE(&test_sync_operations));

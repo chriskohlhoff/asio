@@ -18,7 +18,7 @@
 
 #include "../unit_test.hpp"
 
-test_suite* init_unit_test_suite(int argc, char* argv[])
+test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("ip/basic_resolver_query");
   test->add(BOOST_TEST_CASE(&null_test));

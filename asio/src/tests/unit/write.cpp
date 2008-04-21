@@ -573,7 +573,7 @@ void test_4_arg_async_write()
   BOOST_CHECK(s.check(buffers, 50));
 }
 
-test_suite* init_unit_test_suite(int argc, char* argv[])
+test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("write");
   test->add(BOOST_TEST_CASE(&test_2_arg_write));

@@ -82,7 +82,7 @@ void error_test()
   test_error_code(asio::error::would_block);
 }
 
-test_suite* init_unit_test_suite(int argc, char* argv[])
+test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("error");
   test->add(BOOST_TEST_CASE(&error_test));

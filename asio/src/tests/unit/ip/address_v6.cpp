@@ -145,7 +145,7 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int argc, char* argv[])
+test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("ip/address_v6");
   test->add(BOOST_TEST_CASE(&ip_address_v6_compile::test));

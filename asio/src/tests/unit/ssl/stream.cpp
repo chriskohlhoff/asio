@@ -118,7 +118,7 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int argc, char* argv[])
+test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("ssl/stream");
   test->add(BOOST_TEST_CASE(&ssl_stream_compile::test));
