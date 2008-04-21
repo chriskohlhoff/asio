@@ -55,12 +55,13 @@ public:
 
   /// Construct a basic_stream_descriptor without opening it.
   /**
-   * This constructor creates a stream descriptor without opening it. The descriptor
-   * needs to be opened and then connected or accepted before data can be sent
-   * or received on it.
+   * This constructor creates a stream descriptor without opening it. The
+   * descriptor needs to be opened and then connected or accepted before data
+   * can be sent or received on it.
    *
-   * @param io_service The io_service object that the stream descriptor will use to
-   * dispatch descriptorrs for any asynchronous operations performed on the descriptor.
+   * @param io_service The io_service object that the stream descriptor will
+   * use to dispatch handlers for any asynchronous operations performed on the
+   * descriptor.
    */
   explicit basic_stream_descriptor(asio::io_service& io_service)
     : basic_descriptor<StreamDescriptorService>(io_service)
@@ -69,11 +70,12 @@ public:
 
   /// Construct a basic_stream_descriptor on an existing native descriptor.
   /**
-   * This constructor creates a stream descriptor object to hold an existing native
-   * descriptor.
+   * This constructor creates a stream descriptor object to hold an existing
+   * native descriptor.
    *
-   * @param io_service The io_service object that the stream descriptor will use to
-   * dispatch descriptorrs for any asynchronous operations performed on the descriptor.
+   * @param io_service The io_service object that the stream descriptor will
+   * use to dispatch handlers for any asynchronous operations performed on the
+   * descriptor.
    *
    * @param native_descriptor The new underlying descriptor implementation.
    *
@@ -87,8 +89,8 @@ public:
 
   /// Write some data to the descriptor.
   /**
-   * This function is used to write data to the stream descriptor. The function call
-   * will block until one or more bytes of the data has been written
+   * This function is used to write data to the stream descriptor. The function
+   * call will block until one or more bytes of the data has been written
    * successfully, or until an error occurs.
    *
    * @param buffers One or more data buffers to be written to the descriptor.
@@ -123,8 +125,8 @@ public:
 
   /// Write some data to the descriptor.
   /**
-   * This function is used to write data to the stream descriptor. The function call
-   * will block until one or more bytes of the data has been written
+   * This function is used to write data to the stream descriptor. The function
+   * call will block until one or more bytes of the data has been written
    * successfully, or until an error occurs.
    *
    * @param buffers One or more data buffers to be written to the descriptor.
@@ -146,24 +148,24 @@ public:
 
   /// Start an asynchronous write.
   /**
-   * This function is used to asynchronously write data to the stream descriptor.
-   * The function call always returns immediately.
+   * This function is used to asynchronously write data to the stream
+   * descriptor. The function call always returns immediately.
    *
    * @param buffers One or more data buffers to be written to the descriptor.
    * Although the buffers object may be copied as necessary, ownership of the
    * underlying memory blocks is retained by the caller, which must guarantee
-   * that they remain valid until the descriptorr is called.
+   * that they remain valid until the handler is called.
    *
-   * @param descriptorr The descriptorr to be called when the write operation completes.
-   * Copies will be made of the descriptorr as required. The function signature of
-   * the descriptorr must be:
-   * @code void descriptorr(
+   * @param handler The handler to be called when the write operation completes.
+   * Copies will be made of the handler as required. The function signature of
+   * the handler must be:
+   * @code void handler(
    *   const asio::error_code& error, // Result of operation.
    *   std::size_t bytes_transferred           // Number of bytes written.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
-   * not, the descriptorr will not be invoked from within this function. Invocation
-   * of the descriptorr will be performed in a manner equivalent to using
+   * not, the handler will not be invoked from within this function. Invocation
+   * of the handler will be performed in a manner equivalent to using
    * asio::io_service::post().
    *
    * @note The write operation may not transmit all of the data to the peer.
@@ -173,7 +175,7 @@ public:
    * @par Example
    * To write a single data buffer use the @ref buffer function as follows:
    * @code
-   * descriptor.async_write_some(asio::buffer(data, size), descriptorr);
+   * descriptor.async_write_some(asio::buffer(data, size), handler);
    * @endcode
    * See the @ref buffer documentation for information on writing multiple
    * buffers in one go, and how to use it with arrays, boost::array or
@@ -181,9 +183,9 @@ public:
    */
   template <typename ConstBufferSequence, typename WriteHandler>
   void async_write_some(const ConstBufferSequence& buffers,
-      WriteHandler descriptorr)
+      WriteHandler handler)
   {
-    this->service.async_write_some(this->implementation, buffers, descriptorr);
+    this->service.async_write_some(this->implementation, buffers, handler);
   }
 
   /// Read some data from the descriptor.
@@ -249,24 +251,24 @@ public:
 
   /// Start an asynchronous read.
   /**
-   * This function is used to asynchronously read data from the stream descriptor.
-   * The function call always returns immediately.
+   * This function is used to asynchronously read data from the stream
+   * descriptor. The function call always returns immediately.
    *
    * @param buffers One or more buffers into which the data will be read.
    * Although the buffers object may be copied as necessary, ownership of the
    * underlying memory blocks is retained by the caller, which must guarantee
-   * that they remain valid until the descriptorr is called.
+   * that they remain valid until the handler is called.
    *
-   * @param descriptorr The descriptorr to be called when the read operation completes.
-   * Copies will be made of the descriptorr as required. The function signature of
-   * the descriptorr must be:
-   * @code void descriptorr(
+   * @param handler The handler to be called when the read operation completes.
+   * Copies will be made of the handler as required. The function signature of
+   * the handler must be:
+   * @code void handler(
    *   const asio::error_code& error, // Result of operation.
    *   std::size_t bytes_transferred           // Number of bytes read.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
-   * not, the descriptorr will not be invoked from within this function. Invocation
-   * of the descriptorr will be performed in a manner equivalent to using
+   * not, the handler will not be invoked from within this function. Invocation
+   * of the handler will be performed in a manner equivalent to using
    * asio::io_service::post().
    *
    * @note The read operation may not read all of the requested number of bytes.
@@ -277,7 +279,7 @@ public:
    * @par Example
    * To read into a single data buffer use the @ref buffer function as follows:
    * @code
-   * descriptor.async_read_some(asio::buffer(data, size), descriptorr);
+   * descriptor.async_read_some(asio::buffer(data, size), handler);
    * @endcode
    * See the @ref buffer documentation for information on reading into multiple
    * buffers in one go, and how to use it with arrays, boost::array or
@@ -285,9 +287,9 @@ public:
    */
   template <typename MutableBufferSequence, typename ReadHandler>
   void async_read_some(const MutableBufferSequence& buffers,
-      ReadHandler descriptorr)
+      ReadHandler handler)
   {
-    this->service.async_read_some(this->implementation, buffers, descriptorr);
+    this->service.async_read_some(this->implementation, buffers, handler);
   }
 };
 

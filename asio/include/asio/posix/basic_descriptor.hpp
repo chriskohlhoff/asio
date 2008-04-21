@@ -55,7 +55,8 @@ public:
    * This constructor creates a descriptor without opening it.
    *
    * @param io_service The io_service object that the descriptor will use to
-   * dispatch descriptorrs for any asynchronous operations performed on the descriptor.
+   * dispatch handlers for any asynchronous operations performed on the
+   * descriptor.
    */
   explicit basic_descriptor(asio::io_service& io_service)
     : basic_io_object<DescriptorService>(io_service)
@@ -64,10 +65,12 @@ public:
 
   /// Construct a basic_descriptor on an existing native descriptor.
   /**
-   * This constructor creates a descriptor object to hold an existing native descriptor.
+   * This constructor creates a descriptor object to hold an existing native
+   * descriptor.
    *
    * @param io_service The io_service object that the descriptor will use to
-   * dispatch descriptorrs for any asynchronous operations performed on the descriptor.
+   * dispatch handlers for any asynchronous operations performed on the
+   * descriptor.
    *
    * @param native_descriptor A native descriptor.
    *
@@ -85,8 +88,8 @@ public:
   /// Get a reference to the lowest layer.
   /**
    * This function returns a reference to the lowest layer in a stack of
-   * layers. Since a basic_descriptor cannot contain any further layers, it simply
-   * returns a reference to itself.
+   * layers. Since a basic_descriptor cannot contain any further layers, it
+   * simply returns a reference to itself.
    *
    * @return A reference to the lowest layer in the stack of layers. Ownership
    * is not transferred to the caller.
@@ -133,8 +136,8 @@ public:
 
   /// Close the descriptor.
   /**
-   * This function is used to close the descriptor. Any asynchronous read or write
-   * operations will be cancelled immediately, and will complete with the
+   * This function is used to close the descriptor. Any asynchronous read or
+   * write operations will be cancelled immediately, and will complete with the
    * asio::error::operation_aborted error.
    *
    * @throws asio::system_error Thrown on failure.
@@ -148,8 +151,8 @@ public:
 
   /// Close the descriptor.
   /**
-   * This function is used to close the descriptor. Any asynchronous read or write
-   * operations will be cancelled immediately, and will complete with the
+   * This function is used to close the descriptor. Any asynchronous read or
+   * write operations will be cancelled immediately, and will complete with the
    * asio::error::operation_aborted error.
    *
    * @param ec Set to indicate what error occurred, if any.
@@ -162,8 +165,8 @@ public:
   /// Get the native descriptor representation.
   /**
    * This function may be used to obtain the underlying representation of the
-   * descriptor. This is intended to allow access to native descriptor functionality
-   * that is not otherwise provided.
+   * descriptor. This is intended to allow access to native descriptor
+   * functionality that is not otherwise provided.
    */
   native_type native()
   {
@@ -173,7 +176,7 @@ public:
   /// Cancel all asynchronous operations associated with the descriptor.
   /**
    * This function causes all outstanding asynchronous read or write operations
-   * to finish immediately, and the descriptorrs for cancelled operations will be
+   * to finish immediately, and the handlers for cancelled operations will be
    * passed the asio::error::operation_aborted error.
    *
    * @throws asio::system_error Thrown on failure.
@@ -188,7 +191,7 @@ public:
   /// Cancel all asynchronous operations associated with the descriptor.
   /**
    * This function causes all outstanding asynchronous read or write operations
-   * to finish immediately, and the descriptorrs for cancelled operations will be
+   * to finish immediately, and the handlers for cancelled operations will be
    * passed the asio::error::operation_aborted error.
    *
    * @param ec Set to indicate what error occurred, if any.
