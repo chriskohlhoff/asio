@@ -42,6 +42,7 @@ noinst_PROGRAMS = \
 	tests/unit/placeholders \
 	tests/unit/posix/basic_descriptor \
 	tests/unit/posix/basic_stream_descriptor \
+	tests/unit/posix/descriptor_base \
 	tests/unit/posix/stream_descriptor \
 	tests/unit/posix/stream_descriptor_service \
 	tests/unit/read \
@@ -148,6 +149,7 @@ TESTS = \
 	tests/unit/placeholders \
 	tests/unit/posix/basic_descriptor \
 	tests/unit/posix/basic_stream_descriptor \
+	tests/unit/posix/descriptor_base \
 	tests/unit/posix/stream_descriptor \
 	tests/unit/posix/stream_descriptor_service \
 	tests/unit/read \
@@ -224,6 +226,7 @@ tests_unit_local_stream_protocol_SOURCES = tests/unit/local/stream_protocol.cpp
 tests_unit_placeholders_SOURCES = tests/unit/placeholders.cpp
 tests_unit_posix_basic_descriptor_SOURCES = tests/unit/posix/basic_descriptor.cpp
 tests_unit_posix_basic_stream_descriptor_SOURCES = tests/unit/posix/basic_stream_descriptor.cpp
+tests_unit_posix_descriptor_base_SOURCES = tests/unit/posix/descriptor_base.cpp
 tests_unit_posix_stream_descriptor_SOURCES = tests/unit/posix/stream_descriptor.cpp
 tests_unit_posix_stream_descriptor_service_SOURCES = tests/unit/posix/stream_descriptor_service.cpp
 tests_unit_read_SOURCES = tests/unit/read.cpp

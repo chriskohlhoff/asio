@@ -39,7 +39,7 @@ void read_some_handler(const asio::error_code&, std::size_t)
 
 void test()
 {
-#if defined(ASIO_HAS_WINDOWS_STREAM_int)
+#if defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
   using namespace asio;
   namespace posix = asio::posix;
 
@@ -48,7 +48,7 @@ void test()
     io_service ios;
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
-    descriptor_base::bytes_readable io_control_command;
+    posix::descriptor_base::bytes_readable io_control_command;
     asio::error_code ec;
 
     // basic_stream_descriptor constructors.
@@ -113,7 +113,7 @@ void test()
   catch (std::exception&)
   {
   }
-#endif // defined(ASIO_HAS_WINDOWS_STREAM_int)
+#endif // defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
 }
 
 } // namespace posix_stream_descriptor_compile
