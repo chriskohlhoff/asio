@@ -7,5 +7,6 @@
 *.tds
 basic_descriptor
 basic_stream_descriptor
+descriptor_base
 stream_descriptor
 stream_descriptor_service
