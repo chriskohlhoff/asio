@@ -179,6 +179,10 @@ inline int socketpair(int af, int type, int protocol,
     socket_type sv[2], asio::error_code& ec)
 {
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  (void)(af);
+  (void)(type);
+  (void)(protocol);
+  (void)(sv);
   ec = asio::error::operation_not_supported;
   return -1;
 #else

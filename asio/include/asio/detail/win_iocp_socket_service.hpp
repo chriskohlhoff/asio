@@ -1214,8 +1214,7 @@ public:
   }
 
   // Wait until data can be received without blocking.
-  size_t receive(implementation_type& impl,
-      const null_buffers& buffers,
+  size_t receive(implementation_type& impl, const null_buffers&,
       socket_base::message_flags, asio::error_code& ec)
   {
     if (!is_open(impl))
@@ -1529,7 +1528,7 @@ public:
 
   // Wait until data can be received without blocking.
   size_t receive_from(implementation_type& impl,
-      const null_buffers& buffers, endpoint_type& sender_endpoint,
+      const null_buffers&, endpoint_type& sender_endpoint,
       socket_base::message_flags, asio::error_code& ec)
   {
     if (!is_open(impl))
@@ -1844,8 +1843,7 @@ public:
     }
 
   private:
-    static void do_completion_impl(operation* op,
-        DWORD last_error, size_t bytes_transferred)
+    static void do_completion_impl(operation* op, DWORD last_error, size_t)
     {
       // Take ownership of the operation object.
       typedef accept_operation<Socket, Handler> op_type;
