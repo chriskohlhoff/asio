@@ -2,6 +2,7 @@ nobase_include_HEADERS = \
 	asio/basic_datagram_socket.hpp \
 	asio/basic_deadline_timer.hpp \
 	asio/basic_io_object.hpp \
+	asio/basic_raw_socket.hpp \
 	asio/basic_socket.hpp \
 	asio/basic_socket_acceptor.hpp \
 	asio/basic_socket_iostream.hpp \
@@ -117,6 +118,7 @@ nobase_include_HEADERS = \
 	asio/ip/basic_resolver_iterator.hpp \
 	asio/ip/basic_resolver_query.hpp \
 	asio/ip/host_name.hpp \
+	asio/ip/icmp.hpp \
 	asio/ip/multicast.hpp \
 	asio/ip/resolver_query_base.hpp \
 	asio/ip/resolver_service.hpp \
@@ -137,6 +139,7 @@ nobase_include_HEADERS = \
 	asio/posix/descriptor_base.hpp \
 	asio/posix/stream_descriptor.hpp \
 	asio/posix/stream_descriptor_service.hpp \
+	asio/raw_socket_service.hpp \
 	asio/read.hpp \
 	asio/read_until.hpp \
 	asio/socket_acceptor_service.hpp \
