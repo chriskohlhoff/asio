@@ -38,6 +38,7 @@ nobase_include_HEADERS = \
 	asio/detail/handler_invoke_helpers.hpp \
 	asio/detail/handler_queue.hpp \
 	asio/detail/hash_map.hpp \
+	asio/detail/indirect_handler_queue.hpp \
 	asio/detail/io_control.hpp \
 	asio/detail/kqueue_reactor.hpp \
 	asio/detail/kqueue_reactor_fwd.hpp \
@@ -80,6 +81,7 @@ nobase_include_HEADERS = \
 	asio/detail/socket_types.hpp \
 	asio/detail/strand_service.hpp \
 	asio/detail/task_io_service.hpp \
+	asio/detail/task_io_service_2lock.hpp \
 	asio/detail/task_io_service_fwd.hpp \
 	asio/detail/thread.hpp \
 	asio/detail/throw_error.hpp \
