@@ -53,6 +53,11 @@ class dev_poll_reactor
   : public asio::detail::service_base<dev_poll_reactor<Own_Thread> >
 {
 public:
+  // Per-descriptor data.
+  struct per_descriptor_data
+  {
+  };
+
   // Constructor.
   dev_poll_reactor(asio::io_service& io_service)
     : asio::detail::service_base<
@@ -115,11 +120,11 @@ public:
     for (std::size_t i = 0; i < timer_queues_.size(); ++i)
       timer_queues_[i]->destroy_timers();
     timer_queues_.clear();
-  }
+  } 
 
   // Register a socket with the reactor. Returns 0 on success, system error
   // code on failure.
-  int register_descriptor(socket_type descriptor)
+  int register_descriptor(socket_type, per_descriptor_data&)
   {
     return 0;
   }
@@ -127,8 +132,8 @@ public:
   // Start a new read operation. The handler object will be invoked when the
   // given descriptor is ready to be read, or an error has occurred.
   template <typename Handler>
-  void start_read_op(socket_type descriptor, Handler handler,
-      bool allow_speculative_read = true)
+  void start_read_op(socket_type descriptor, per_descriptor_data&,
+      Handler handler, bool allow_speculative_read = true)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
@@ -155,8 +160,8 @@ public:
   // Start a new write operation. The handler object will be invoked when the
   // given descriptor is ready to be written, or an error has occurred.
   template <typename Handler>
-  void start_write_op(socket_type descriptor, Handler handler,
-      bool allow_speculative_write = true)
+  void start_write_op(socket_type descriptor, per_descriptor_data&,
+      Handler handler, bool allow_speculative_write = true)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
@@ -183,7 +188,8 @@ public:
   // Start a new exception operation. The handler object will be invoked when
   // the given descriptor has exception information, or an error has occurred.
   template <typename Handler>
-  void start_except_op(socket_type descriptor, Handler handler)
+  void start_except_op(socket_type descriptor,
+      per_descriptor_data&, Handler handler)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
@@ -202,26 +208,25 @@ public:
     }
   }
 
-  // Start new write and exception operations. The handler object will be
-  // invoked when the given descriptor is ready for writing or has exception
+  // Start a new write operation. The handler object will be invoked when the
   // information available, or an error has occurred.
   template <typename Handler>
-  void start_write_and_except_ops(socket_type descriptor, Handler handler)
+  void start_connect_op(socket_type descriptor,
+      per_descriptor_data&, Handler handler)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
     if (shutdown_)
       return;
 
-    bool need_mod = write_op_queue_.enqueue_operation(descriptor, handler);
-    need_mod = except_op_queue_.enqueue_operation(descriptor, handler)
-      && need_mod;
-    if (need_mod)
+    if (write_op_queue_.enqueue_operation(descriptor, handler))
     {
       ::pollfd& ev = add_pending_event_change(descriptor);
-      ev.events = POLLOUT | POLLPRI | POLLERR | POLLHUP;
+      ev.events = POLLOUT | POLLERR | POLLHUP;
       if (read_op_queue_.has_operation(descriptor))
         ev.events |= POLLIN;
+      if (except_op_queue_.has_operation(descriptor))
+        ev.events |= POLLPRI;
       interrupter_.interrupt();
     }
   }
@@ -229,25 +234,15 @@ public:
   // Cancel all operations associated with the given descriptor. The
   // handlers associated with the descriptor will be invoked with the
   // operation_aborted error.
-  void cancel_ops(socket_type descriptor)
+  void cancel_ops(socket_type descriptor, per_descriptor_data&)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
     cancel_ops_unlocked(descriptor);
   }
 
-  // Enqueue cancellation of all operations associated with the given
-  // descriptor. The handlers associated with the descriptor will be invoked
-  // with the operation_aborted error. This function does not acquire the
-  // dev_poll_reactor's mutex, and so should only be used from within a reactor
-  // handler.
-  void enqueue_cancel_ops_unlocked(socket_type descriptor)
-  {
-    pending_cancellations_.push_back(descriptor);
-  }
-
   // Cancel any operations that are running against the descriptor and remove
   // its registration from the reactor.
-  void close_descriptor(socket_type descriptor)
+  void close_descriptor(socket_type descriptor, per_descriptor_data&)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
