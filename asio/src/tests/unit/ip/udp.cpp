@@ -311,10 +311,12 @@ void test()
   target_endpoint = sender_endpoint;
   s1.async_send_to(buffer(send_msg, sizeof(send_msg)), target_endpoint,
       boost::bind(handle_send, sizeof(send_msg),
-        placeholders::error, placeholders::bytes_transferred));
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred));
   s2.async_receive_from(buffer(recv_msg, sizeof(recv_msg)), sender_endpoint,
       boost::bind(handle_recv, sizeof(recv_msg),
-        placeholders::error, placeholders::bytes_transferred));
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred));
 
   ios.run();
 
