@@ -66,13 +66,14 @@ inline void init_buf(buf& b, const void* data, size_t size)
   b.iov_len = size;
 }
 
-inline int readv(int d, buf* bufs, size_t count, asio::error_code& ec)
+inline int scatter_read(int d, buf* bufs, size_t count,
+    asio::error_code& ec)
 {
   clear_error(ec);
   return error_wrapper(::readv(d, bufs, static_cast<int>(count)), ec);
 }
 
-inline int writev(int d, const buf* bufs, size_t count,
+inline int gather_write(int d, const buf* bufs, size_t count,
     asio::error_code& ec)
 {
   clear_error(ec);

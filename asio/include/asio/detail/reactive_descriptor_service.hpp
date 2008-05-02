@@ -272,7 +272,8 @@ public:
     for (;;)
     {
       // Try to complete the operation without blocking.
-      int bytes_sent = descriptor_ops::writev(impl.descriptor_, bufs, i, ec);
+      int bytes_sent = descriptor_ops::gather_write(
+          impl.descriptor_, bufs, i, ec);
 
       // Check if operation succeeded.
       if (bytes_sent >= 0)
@@ -344,7 +345,7 @@ public:
 
       // Write the data.
       asio::error_code ec;
-      int bytes = descriptor_ops::writev(descriptor_, bufs, i, ec);
+      int bytes = descriptor_ops::gather_write(descriptor_, bufs, i, ec);
 
       // Check if we need to run the operation again.
       if (ec == asio::error::would_block
@@ -502,7 +503,8 @@ public:
     for (;;)
     {
       // Try to complete the operation without blocking.
-      int bytes_read = descriptor_ops::readv(impl.descriptor_, bufs, i, ec);
+      int bytes_read = descriptor_ops::scatter_read(
+          impl.descriptor_, bufs, i, ec);
 
       // Check if operation succeeded.
       if (bytes_read > 0)
@@ -581,7 +583,7 @@ public:
 
       // Read some data.
       asio::error_code ec;
-      int bytes = descriptor_ops::readv(descriptor_, bufs, i, ec);
+      int bytes = descriptor_ops::scatter_read(descriptor_, bufs, i, ec);
       if (bytes == 0)
         ec = asio::error::eof;
 
