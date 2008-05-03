@@ -63,6 +63,8 @@ public:
   // Per-descriptor data.
   struct per_descriptor_data
   {
+    bool allow_speculative_read;
+    bool allow_speculative_write;
   };
 
   // Constructor.
@@ -131,17 +133,30 @@ public:
 
   // Register a socket with the reactor. Returns 0 on success, system error
   // code on failure.
-  int register_descriptor(socket_type, per_descriptor_data&)
+  int register_descriptor(socket_type, per_descriptor_data& descriptor_data)
   {
+    descriptor_data.allow_speculative_read = true;
+    descriptor_data.allow_speculative_write = true;
+
     return 0;
   }
 
   // Start a new read operation. The handler object will be invoked when the
   // given descriptor is ready to be read, or an error has occurred.
   template <typename Handler>
-  void start_read_op(socket_type descriptor, per_descriptor_data&,
-      Handler handler, bool allow_speculative_read = true)
+  void start_read_op(socket_type descriptor,
+      per_descriptor_data& descriptor_data, Handler handler,
+      bool allow_speculative_read = true)
   {
+    if (allow_speculative_read && descriptor_data.allow_speculative_read)
+    {
+      if (handler(asio::error_code()))
+        return;
+
+      // We only get one shot at a speculative read in this function.
+      allow_speculative_read = false;
+    }
+
     asio::detail::mutex::scoped_lock lock(mutex_);
 
     if (shutdown_)
@@ -150,8 +165,16 @@ public:
     if (!allow_speculative_read)
       need_kqueue_wait_ = true;
     else if (!read_op_queue_.has_operation(descriptor))
+    {
+      // Speculative reads are ok as there are no queued read operations.
+      descriptor_data.allow_speculative_read = true;
+
       if (handler(asio::error_code()))
         return;
+    }
+
+    // Speculative reads are not ok as there will be queued read operations.
+    descriptor_data.allow_speculative_read = false;
 
     if (read_op_queue_.enqueue_operation(descriptor, handler))
     {
@@ -169,9 +192,19 @@ public:
   // Start a new write operation. The handler object will be invoked when the
   // given descriptor is ready to be written, or an error has occurred.
   template <typename Handler>
-  void start_write_op(socket_type descriptor, per_descriptor_data&,
-      Handler handler, bool allow_speculative_write = true)
+  void start_write_op(socket_type descriptor,
+      per_descriptor_data& descriptor_data, Handler handler,
+      bool allow_speculative_write = true)
   {
+    if (allow_speculative_write && descriptor_data.allow_speculative_write)
+    {
+      if (handler(asio::error_code()))
+        return;
+
+      // We only get one shot at a speculative write in this function.
+      allow_speculative_write = false;
+    }
+
     asio::detail::mutex::scoped_lock lock(mutex_);
 
     if (shutdown_)
@@ -180,8 +213,16 @@ public:
     if (!allow_speculative_write)
       need_kqueue_wait_ = true;
     else if (!write_op_queue_.has_operation(descriptor))
+    {
+      // Speculative writes are ok as there are no queued write operations.
+      descriptor_data.allow_speculative_write = true;
+
       if (handler(asio::error_code()))
         return;
+    }
+
+    // Speculative writes are not ok as there will be queued write operations.
+    descriptor_data.allow_speculative_write = false;
 
     if (write_op_queue_.enqueue_operation(descriptor, handler))
     {
@@ -227,12 +268,15 @@ public:
   // given descriptor is ready to be written, or an error has occurred.
   template <typename Handler>
   void start_connect_op(socket_type descriptor,
-      per_descriptor_data&, Handler handler)
+      per_descriptor_data& descriptor_data, Handler handler)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
     if (shutdown_)
       return;
+
+    // Speculative writes are not ok as there will be queued write operations.
+    descriptor_data.allow_speculative_write = false;
 
     if (write_op_queue_.enqueue_operation(descriptor, handler))
     {
