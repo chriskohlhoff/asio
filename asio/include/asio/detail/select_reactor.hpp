@@ -170,19 +170,30 @@ public:
     {
     }
 
-    bool operator()(const asio::error_code& result)
+    bool perform(asio::error_code& ec,
+        std::size_t& bytes_transferred)
     {
       // Check whether one of the handlers has already been called. If it has,
       // then we don't want to do anything in this handler.
       if (*completed_)
+      {
+        completed_.reset(); // Indicate that this handler should not complete.
         return true;
+      }
 
       // Cancel the other reactor operation for the connection.
       *completed_ = true;
       reactor_.enqueue_cancel_ops_unlocked(descriptor_);
 
       // Call the contained handler.
-      return handler_(result);
+      return handler_.perform(ec, bytes_transferred);
+    }
+
+    void complete(const asio::error_code& ec,
+        std::size_t bytes_transferred)
+    {
+      if (completed_.get())
+        handler_.complete(ec, bytes_transferred);
     }
 
   private:
@@ -299,16 +310,16 @@ private:
 
     // Dispatch any operation cancellations that were made while the select
     // loop was not running.
-    read_op_queue_.dispatch_cancellations();
-    write_op_queue_.dispatch_cancellations();
-    except_op_queue_.dispatch_cancellations();
+    read_op_queue_.perform_cancellations();
+    write_op_queue_.perform_cancellations();
+    except_op_queue_.perform_cancellations();
     for (std::size_t i = 0; i < timer_queues_.size(); ++i)
       timer_queues_[i]->dispatch_cancellations();
 
     // Check if the thread is supposed to stop.
     if (stop_thread_)
     {
-      cleanup_operations_and_timers(lock);
+      complete_operations_and_cleanup_timers(lock);
       return;
     }
 
@@ -317,7 +328,7 @@ private:
     if (!block && read_op_queue_.empty() && write_op_queue_.empty()
         && except_op_queue_.empty() && all_timer_queues_are_empty())
     {
-      cleanup_operations_and_timers(lock);
+      complete_operations_and_cleanup_timers(lock);
       return;
     }
 
@@ -359,15 +370,15 @@ private:
     {
       // Exception operations must be processed first to ensure that any
       // out-of-band data is read before normal data.
-      except_op_queue_.dispatch_descriptors(except_fds,
-          asio::error_code());
-      read_op_queue_.dispatch_descriptors(read_fds,
-          asio::error_code());
-      write_op_queue_.dispatch_descriptors(write_fds,
-          asio::error_code());
-      except_op_queue_.dispatch_cancellations();
-      read_op_queue_.dispatch_cancellations();
-      write_op_queue_.dispatch_cancellations();
+      except_op_queue_.perform_operations_for_descriptors(
+          except_fds, asio::error_code());
+      read_op_queue_.perform_operations_for_descriptors(
+          read_fds, asio::error_code());
+      write_op_queue_.perform_operations_for_descriptors(
+          write_fds, asio::error_code());
+      except_op_queue_.perform_cancellations();
+      read_op_queue_.perform_cancellations();
+      write_op_queue_.perform_cancellations();
     }
     for (std::size_t i = 0; i < timer_queues_.size(); ++i)
     {
@@ -380,7 +391,7 @@ private:
       cancel_ops_unlocked(pending_cancellations_[i]);
     pending_cancellations_.clear();
 
-    cleanup_operations_and_timers(lock);
+    complete_operations_and_cleanup_timers(lock);
   }
 
   // Run the select loop in the thread.
@@ -465,14 +476,14 @@ private:
   // destructors may make calls back into this reactor. We make a copy of the
   // vector of timer queues since the original may be modified while the lock
   // is not held.
-  void cleanup_operations_and_timers(
+  void complete_operations_and_cleanup_timers(
       asio::detail::mutex::scoped_lock& lock)
   {
     timer_queues_for_cleanup_ = timer_queues_;
     lock.unlock();
-    read_op_queue_.cleanup_operations();
-    write_op_queue_.cleanup_operations();
-    except_op_queue_.cleanup_operations();
+    read_op_queue_.complete_operations();
+    write_op_queue_.complete_operations();
+    except_op_queue_.complete_operations();
     for (std::size_t i = 0; i < timer_queues_for_cleanup_.size(); ++i)
       timer_queues_for_cleanup_[i]->cleanup_timers();
   }

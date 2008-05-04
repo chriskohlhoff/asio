@@ -22,6 +22,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
+#include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/hash_map.hpp"
 #include "asio/detail/noncopyable.hpp"
 
@@ -37,36 +38,42 @@ public:
   reactor_op_queue()
     : operations_(),
       cancelled_operations_(0),
-      cleanup_operations_(0)
+      complete_operations_(0)
   {
   }
 
   // Add a new operation to the queue. Returns true if this is the only
   // operation for the given descriptor, in which case the reactor's event
   // demultiplexing function call may need to be interrupted and restarted.
-  template <typename Handler>
-  bool enqueue_operation(Descriptor descriptor, Handler handler)
+  template <typename Operation>
+  bool enqueue_operation(Descriptor descriptor, Operation operation)
   {
-    op_base* new_op = new op<Handler>(descriptor, handler);
+    // Allocate and construct an object to wrap the handler.
+    typedef handler_alloc_traits<Operation, op<Operation> > alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(operation);
+    handler_ptr<alloc_traits> ptr(raw_ptr, descriptor, operation);
 
     typedef typename operation_map::iterator iterator;
     typedef typename operation_map::value_type value_type;
     std::pair<iterator, bool> entry =
-      operations_.insert(value_type(descriptor, new_op));
+      operations_.insert(value_type(descriptor, ptr.get()));
     if (entry.second)
+    {
+      ptr.release();
       return true;
+    }
 
     op_base* current_op = entry.first->second;
     while (current_op->next_)
       current_op = current_op->next_;
-    current_op->next_ = new_op;
+    current_op->next_ = ptr.release();
 
     return false;
   }
 
   // Cancel all operations associated with the descriptor. Any operations
   // pending for the descriptor will be notified that they have been cancelled
-  // next time dispatch_cancellations is called. Returns true if any operations
+  // next time perform_cancellations is called. Returns true if any operations
   // were cancelled, in which case the reactor's event demultiplexing function
   // may need to be interrupted and restarted.
   bool cancel_operations(Descriptor descriptor)
@@ -98,9 +105,9 @@ public:
     return operations_.find(descriptor) != operations_.end();
   }
 
-  // Dispatch the first operation corresponding to the descriptor. Returns true
+  // Perform the first operation corresponding to the descriptor. Returns true
   // if there are more operations queued for the descriptor.
-  bool dispatch_operation(Descriptor descriptor,
+  bool perform_operation(Descriptor descriptor,
       const asio::error_code& result)
   {
     typename operation_map::iterator i = operations_.find(descriptor);
@@ -108,9 +115,9 @@ public:
     {
       op_base* this_op = i->second;
       i->second = this_op->next_;
-      this_op->next_ = cleanup_operations_;
-      cleanup_operations_ = this_op;
-      bool done = this_op->invoke(result);
+      this_op->next_ = complete_operations_;
+      complete_operations_ = this_op;
+      bool done = this_op->perform(result);
       if (done)
       {
         // Operation has finished.
@@ -127,8 +134,8 @@ public:
       else
       {
         // Operation wants to be called again. Leave it at the front of the
-        // queue for this descriptor, and remove from the cleanup list.
-        cleanup_operations_ = this_op->next_;
+        // queue for this descriptor, and remove from the completed list.
+        complete_operations_ = this_op->next_;
         this_op->next_ = i->second;
         i->second = this_op;
         return true;
@@ -137,8 +144,8 @@ public:
     return false;
   }
 
-  // Dispatch all operations corresponding to the descriptor.
-  void dispatch_all_operations(Descriptor descriptor,
+  // Perform all operations corresponding to the descriptor.
+  void perform_all_operations(Descriptor descriptor,
       const asio::error_code& result)
   {
     typename operation_map::iterator i = operations_.find(descriptor);
@@ -148,14 +155,14 @@ public:
       {
         op_base* this_op = i->second;
         i->second = this_op->next_;
-        this_op->next_ = cleanup_operations_;
-        cleanup_operations_ = this_op;
-        bool done = this_op->invoke(result);
+        this_op->next_ = complete_operations_;
+        complete_operations_ = this_op;
+        bool done = this_op->perform(result);
         if (!done)
         {
           // Operation has not finished yet, so leave at front of queue, and
-          // remove from the cleanup list.
-          cleanup_operations_ = this_op->next_;
+          // remove from the completed list.
+          complete_operations_ = this_op->next_;
           this_op->next_ = i->second;
           i->second = this_op;
           return;
@@ -178,15 +185,15 @@ public:
       if (!descriptors.set(descriptor))
       {
         asio::error_code ec(error::fd_set_failure);
-        dispatch_all_operations(descriptor, ec);
+        perform_all_operations(descriptor, ec);
       }
     }
   }
 
-  // Dispatch the operations corresponding to the ready file descriptors
+  // Perform the operations corresponding to the ready file descriptors
   // contained in the given descriptor set.
   template <typename Descriptor_Set>
-  void dispatch_descriptors(const Descriptor_Set& descriptors,
+  void perform_operations_for_descriptors(const Descriptor_Set& descriptors,
       const asio::error_code& result)
   {
     typename operation_map::iterator i = operations_.begin();
@@ -197,9 +204,9 @@ public:
       {
         op_base* this_op = op_iter->second;
         op_iter->second = this_op->next_;
-        this_op->next_ = cleanup_operations_;
-        cleanup_operations_ = this_op;
-        bool done = this_op->invoke(result);
+        this_op->next_ = complete_operations_;
+        complete_operations_ = this_op;
+        bool done = this_op->perform(result);
         if (done)
         {
           if (!op_iter->second)
@@ -208,8 +215,8 @@ public:
         else
         {
           // Operation has not finished yet, so leave at front of queue, and
-          // remove from the cleanup list.
-          cleanup_operations_ = this_op->next_;
+          // remove from the completed list.
+          complete_operations_ = this_op->next_;
           this_op->next_ = op_iter->second;
           op_iter->second = this_op;
         }
@@ -217,28 +224,28 @@ public:
     }
   }
 
-  // Dispatch any pending cancels for operations.
-  void dispatch_cancellations()
+  // Perform any pending cancels for operations.
+  void perform_cancellations()
   {
     while (cancelled_operations_)
     {
       op_base* this_op = cancelled_operations_;
       cancelled_operations_ = this_op->next_;
-      this_op->next_ = cleanup_operations_;
-      cleanup_operations_ = this_op;
-      this_op->invoke(asio::error::operation_aborted);
+      this_op->next_ = complete_operations_;
+      complete_operations_ = this_op;
+      this_op->perform(asio::error::operation_aborted);
     }
   }
 
-  // Destroy operations that are waiting to be cleaned up.
-  void cleanup_operations()
+  // Complete all operations that are waiting to be completed.
+  void complete_operations()
   {
-    while (cleanup_operations_)
+    while (complete_operations_)
     {
-      op_base* next_op = cleanup_operations_->next_;
-      cleanup_operations_->next_ = 0;
-      cleanup_operations_->destroy();
-      cleanup_operations_ = next_op;
+      op_base* next_op = complete_operations_->next_;
+      complete_operations_->next_ = 0;
+      complete_operations_->complete();
+      complete_operations_ = next_op;
     }
   }
 
@@ -253,12 +260,12 @@ public:
       cancelled_operations_ = next_op;
     }
 
-    while (cleanup_operations_)
+    while (complete_operations_)
     {
-      op_base* next_op = cleanup_operations_->next_;
-      cleanup_operations_->next_ = 0;
-      cleanup_operations_->destroy();
-      cleanup_operations_ = next_op;
+      op_base* next_op = complete_operations_->next_;
+      complete_operations_->next_ = 0;
+      complete_operations_->destroy();
+      complete_operations_ = next_op;
     }
 
     typename operation_map::iterator i = operations_.begin();
@@ -290,28 +297,40 @@ private:
     }
 
     // Perform the operation.
-    bool invoke(const asio::error_code& result)
+    bool perform(const asio::error_code& result)
     {
-      return invoke_func_(this, result);
+      result_ = result;
+      return perform_func_(this, result_, bytes_transferred_);
+    }
+
+    // Destroy the operation and post the handler.
+    void complete()
+    {
+      complete_func_(this, result_, bytes_transferred_);
     }
 
     // Destroy the operation.
     void destroy()
     {
-      return destroy_func_(this);
+      destroy_func_(this);
     }
 
   protected:
-    typedef bool (*invoke_func_type)(op_base*,
-        const asio::error_code&);
+    typedef bool (*perform_func_type)(op_base*,
+        asio::error_code&, std::size_t&);
+    typedef void (*complete_func_type)(op_base*,
+        const asio::error_code&, std::size_t);
     typedef void (*destroy_func_type)(op_base*);
 
     // Construct an operation for the given descriptor.
-    op_base(invoke_func_type invoke_func,
+    op_base(perform_func_type perform_func, complete_func_type complete_func,
         destroy_func_type destroy_func, Descriptor descriptor)
-      : invoke_func_(invoke_func),
+      : perform_func_(perform_func),
+        complete_func_(complete_func),
         destroy_func_(destroy_func),
         descriptor_(descriptor),
+        result_(),
+        bytes_transferred_(0),
         next_(0)
     {
     }
@@ -324,48 +343,84 @@ private:
   private:
     friend class reactor_op_queue<Descriptor>;
 
-    // The function to be called to dispatch the handler.
-    invoke_func_type invoke_func_;
+    // The function to be called to perform the operation.
+    perform_func_type perform_func_;
 
-    // The function to be called to delete the handler.
+    // The function to be called to delete the operation and post the handler.
+    complete_func_type complete_func_;
+
+    // The function to be called to delete the operation.
     destroy_func_type destroy_func_;
 
     // The descriptor associated with the operation.
     Descriptor descriptor_;
 
+    // The result of the operation.
+    asio::error_code result_;
+
+    // The number of bytes transferred in the operation.
+    std::size_t bytes_transferred_;
+
     // The next operation for the same file descriptor.
     op_base* next_;
   };
 
-  // Adaptor class template for using handlers in operations.
-  template <typename Handler>
+  // Adaptor class template for operations.
+  template <typename Operation>
   class op
     : public op_base
   {
   public:
     // Constructor.
-    op(Descriptor descriptor, Handler handler)
-      : op_base(&op<Handler>::invoke_handler,
-          &op<Handler>::destroy_handler, descriptor),
-        handler_(handler)
+    op(Descriptor descriptor, Operation operation)
+      : op_base(&op<Operation>::do_perform, &op<Operation>::do_complete,
+          &op<Operation>::do_destroy, descriptor),
+        operation_(operation)
     {
     }
 
-    // Invoke the handler.
-    static bool invoke_handler(op_base* base,
-        const asio::error_code& result)
+    // Perform the operation.
+    static bool do_perform(op_base* base,
+        asio::error_code& result, std::size_t& bytes_transferred)
     {
-      return static_cast<op<Handler>*>(base)->handler_(result);
+      return static_cast<op<Operation>*>(base)->operation_.perform(
+          result, bytes_transferred);
     }
 
-    // Delete the handler.
-    static void destroy_handler(op_base* base)
+    // Destroy the operation and post the handler.
+    static void do_complete(op_base* base,
+        const asio::error_code& result, std::size_t bytes_transferred)
     {
-      delete static_cast<op<Handler>*>(base);
+      // Take ownership of the operation object.
+      typedef op<Operation> this_type;
+      this_type* this_op(static_cast<this_type*>(base));
+      typedef handler_alloc_traits<Operation, this_type> alloc_traits;
+      handler_ptr<alloc_traits> ptr(this_op->operation_, this_op);
+
+      // Make a copy of the error_code and the operation so that the memory can
+      // be deallocated before the upcall is made.
+      asio::error_code ec(result);
+      Operation operation(this_op->operation_);
+
+      // Free the memory associated with the operation.
+      ptr.reset();
+
+      // Make the upcall.
+      operation.complete(ec, bytes_transferred);
+    }
+
+    // Destroy the operation.
+    static void do_destroy(op_base* base)
+    {
+      // Take ownership of the operation object.
+      typedef op<Operation> this_type;
+      this_type* this_op(static_cast<this_type*>(base));
+      typedef handler_alloc_traits<Operation, this_type> alloc_traits;
+      handler_ptr<alloc_traits> ptr(this_op->operation_, this_op);
     }
 
   private:
-    Handler handler_;
+    Operation operation_;
   };
 
   // The type for a map of operations.
@@ -377,8 +432,8 @@ private:
   // The list of operations that have been cancelled.
   op_base* cancelled_operations_;
 
-  // The list of operations to be destroyed.
-  op_base* cleanup_operations_;
+  // The list of operations waiting to be completed.
+  op_base* complete_operations_;
 };
 
 } // namespace detail

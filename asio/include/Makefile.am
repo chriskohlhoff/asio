@@ -35,6 +35,7 @@ nobase_include_HEADERS = \
 	asio/detail/event.hpp \
 	asio/detail/fd_set_adapter.hpp \
 	asio/detail/handler_alloc_helpers.hpp \
+	asio/detail/handler_base_from_member.hpp \
 	asio/detail/handler_invoke_helpers.hpp \
 	asio/detail/handler_queue.hpp \
 	asio/detail/hash_map.hpp \

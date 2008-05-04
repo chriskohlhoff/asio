@@ -127,22 +127,6 @@ public:
   Handler handler_;
 };
 
-template <typename Dispatcher, typename Handler>
-inline void* asio_handler_allocate(std::size_t size,
-    wrapped_handler<Dispatcher, Handler>* this_handler)
-{
-  return asio_handler_alloc_helpers::allocate(
-      size, &this_handler->handler_);
-}
-
-template <typename Dispatcher, typename Handler>
-inline void asio_handler_deallocate(void* pointer, std::size_t size,
-    wrapped_handler<Dispatcher, Handler>* this_handler)
-{
-  asio_handler_alloc_helpers::deallocate(
-      pointer, size, &this_handler->handler_);
-}
-
 template <typename Handler, typename Context>
 class rewrapped_handler
 {
@@ -168,6 +152,22 @@ public:
   Context context_;
 };
 
+template <typename Dispatcher, typename Handler>
+inline void* asio_handler_allocate(std::size_t size,
+    wrapped_handler<Dispatcher, Handler>* this_handler)
+{
+  return asio_handler_alloc_helpers::allocate(
+      size, &this_handler->handler_);
+}
+
+template <typename Dispatcher, typename Handler>
+inline void asio_handler_deallocate(void* pointer, std::size_t size,
+    wrapped_handler<Dispatcher, Handler>* this_handler)
+{
+  asio_handler_alloc_helpers::deallocate(
+      pointer, size, &this_handler->handler_);
+}
+
 template <typename Function, typename Dispatcher, typename Handler>
 inline void asio_handler_invoke(const Function& function,
     wrapped_handler<Dispatcher, Handler>* this_handler)
@@ -175,6 +175,22 @@ inline void asio_handler_invoke(const Function& function,
   this_handler->dispatcher_.dispatch(
       rewrapped_handler<Function, Handler>(
         function, this_handler->handler_));
+}
+
+template <typename Handler, typename Context>
+inline void* asio_handler_allocate(std::size_t size,
+    rewrapped_handler<Handler, Context>* this_handler)
+{
+  return asio_handler_alloc_helpers::allocate(
+      size, &this_handler->context_);
+}
+
+template <typename Handler, typename Context>
+inline void asio_handler_deallocate(void* pointer, std::size_t size,
+    rewrapped_handler<Handler, Context>* this_handler)
+{
+  asio_handler_alloc_helpers::deallocate(
+      pointer, size, &this_handler->context_);
 }
 
 template <typename Function, typename Handler, typename Context>

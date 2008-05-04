@@ -141,9 +141,18 @@ public:
       return;
 
     if (allow_speculative_read)
+    {
       if (!read_op_queue_.has_operation(descriptor))
-        if (handler(asio::error_code()))
+      {
+        asio::error_code ec;
+        std::size_t bytes_transferred = 0;
+        if (handler.perform(ec, bytes_transferred))
+        {
+          handler.complete(ec, bytes_transferred);
           return;
+        }
+      }
+    }
 
     if (read_op_queue_.enqueue_operation(descriptor, handler))
     {
@@ -169,9 +178,18 @@ public:
       return;
 
     if (allow_speculative_write)
+    {
       if (!write_op_queue_.has_operation(descriptor))
-        if (handler(asio::error_code()))
+      {
+        asio::error_code ec;
+        std::size_t bytes_transferred = 0;
+        if (handler.perform(ec, bytes_transferred))
+        {
+          handler.complete(ec, bytes_transferred);
           return;
+        }
+      }
+    }
 
     if (write_op_queue_.enqueue_operation(descriptor, handler))
     {
@@ -312,16 +330,16 @@ private:
 
     // Dispatch any operation cancellations that were made while the select
     // loop was not running.
-    read_op_queue_.dispatch_cancellations();
-    write_op_queue_.dispatch_cancellations();
-    except_op_queue_.dispatch_cancellations();
+    read_op_queue_.perform_cancellations();
+    write_op_queue_.perform_cancellations();
+    except_op_queue_.perform_cancellations();
     for (std::size_t i = 0; i < timer_queues_.size(); ++i)
       timer_queues_[i]->dispatch_cancellations();
 
     // Check if the thread is supposed to stop.
     if (stop_thread_)
     {
-      cleanup_operations_and_timers(lock);
+      complete_operations_and_cleanup_timers(lock);
       return;
     }
 
@@ -330,7 +348,7 @@ private:
     if (!block && read_op_queue_.empty() && write_op_queue_.empty()
         && except_op_queue_.empty() && all_timer_queues_are_empty())
     {
-      cleanup_operations_and_timers(lock);
+      complete_operations_and_cleanup_timers(lock);
       return;
     }
 
@@ -346,9 +364,9 @@ private:
         int descriptor = pending_event_changes_[i].fd;
         asio::error_code ec = asio::error_code(
             errno, asio::error::get_system_category());
-        read_op_queue_.dispatch_all_operations(descriptor, ec);
-        write_op_queue_.dispatch_all_operations(descriptor, ec);
-        except_op_queue_.dispatch_all_operations(descriptor, ec);
+        read_op_queue_.perform_all_operations(descriptor, ec);
+        write_op_queue_.perform_all_operations(descriptor, ec);
+        except_op_queue_.perform_all_operations(descriptor, ec);
       }
     }
     pending_event_changes_.clear();
@@ -369,7 +387,7 @@ private:
     lock.lock();
     wait_in_progress_ = false;
 
-    // Block signals while dispatching operations.
+    // Block signals while performing operations.
     asio::detail::signal_blocker sb;
 
     // Dispatch the waiting events.
@@ -390,17 +408,17 @@ private:
         // Exception operations must be processed first to ensure that any
         // out-of-band data is read before normal data.
         if (events[i].events & (POLLPRI | POLLERR | POLLHUP))
-          more_except = except_op_queue_.dispatch_operation(descriptor, ec);
+          more_except = except_op_queue_.perform_operation(descriptor, ec);
         else
           more_except = except_op_queue_.has_operation(descriptor);
 
         if (events[i].events & (POLLIN | POLLERR | POLLHUP))
-          more_reads = read_op_queue_.dispatch_operation(descriptor, ec);
+          more_reads = read_op_queue_.perform_operation(descriptor, ec);
         else
           more_reads = read_op_queue_.has_operation(descriptor);
 
         if (events[i].events & (POLLOUT | POLLERR | POLLHUP))
-          more_writes = write_op_queue_.dispatch_operation(descriptor, ec);
+          more_writes = write_op_queue_.perform_operation(descriptor, ec);
         else
           more_writes = write_op_queue_.has_operation(descriptor);
 
@@ -435,16 +453,16 @@ private:
           {
             ec = asio::error_code(errno,
                 asio::error::get_system_category());
-            read_op_queue_.dispatch_all_operations(descriptor, ec);
-            write_op_queue_.dispatch_all_operations(descriptor, ec);
-            except_op_queue_.dispatch_all_operations(descriptor, ec);
+            read_op_queue_.perform_all_operations(descriptor, ec);
+            write_op_queue_.perform_all_operations(descriptor, ec);
+            except_op_queue_.perform_all_operations(descriptor, ec);
           }
         }
       }
     }
-    read_op_queue_.dispatch_cancellations();
-    write_op_queue_.dispatch_cancellations();
-    except_op_queue_.dispatch_cancellations();
+    read_op_queue_.perform_cancellations();
+    write_op_queue_.perform_cancellations();
+    except_op_queue_.perform_cancellations();
     for (std::size_t i = 0; i < timer_queues_.size(); ++i)
     {
       timer_queues_[i]->dispatch_timers();
@@ -456,7 +474,7 @@ private:
       cancel_ops_unlocked(pending_cancellations_[i]);
     pending_cancellations_.clear();
 
-    cleanup_operations_and_timers(lock);
+    complete_operations_and_cleanup_timers(lock);
   }
 
   // Run the select loop in the thread.
@@ -556,14 +574,14 @@ private:
   // destructors may make calls back into this reactor. We make a copy of the
   // vector of timer queues since the original may be modified while the lock
   // is not held.
-  void cleanup_operations_and_timers(
+  void complete_operations_and_cleanup_timers(
       asio::detail::mutex::scoped_lock& lock)
   {
     timer_queues_for_cleanup_ = timer_queues_;
     lock.unlock();
-    read_op_queue_.cleanup_operations();
-    write_op_queue_.cleanup_operations();
-    except_op_queue_.cleanup_operations();
+    read_op_queue_.complete_operations();
+    write_op_queue_.complete_operations();
+    except_op_queue_.complete_operations();
     for (std::size_t i = 0; i < timer_queues_for_cleanup_.size(); ++i)
       timer_queues_for_cleanup_[i]->cleanup_timers();
   }
