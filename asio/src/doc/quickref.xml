@@ -48,6 +48,7 @@
             <listitem><link linkend="asio.reference.local__datagram_protocol.socket">local::datagram_protocol::socket</link></listitem>
             <listitem><link linkend="asio.reference.mutable_buffer">mutable_buffer</link></listitem>
             <listitem><link linkend="asio.reference.mutable_buffers_1">mutable_buffers_1</link></listitem>
+            <listitem><link linkend="asio.reference.null_buffers">null_buffers</link></listitem>
             <listitem><link linkend="asio.reference.posix__descriptor_base">posix::descriptor_base</link></listitem>
             <listitem><link linkend="asio.reference.posix__stream_descriptor">posix::stream_descriptor</link></listitem>
             <listitem><link linkend="asio.reference.socket_base">socket_base</link></listitem>
