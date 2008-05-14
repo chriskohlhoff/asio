@@ -101,6 +101,8 @@ public:
   // Get the time for the timer that is earliest in the queue.
   virtual boost::posix_time::time_duration wait_duration() const
   {
+    if (heap_.empty())
+      return boost::posix_time::pos_infin;
     return Time_Traits::to_posix_duration(
         Time_Traits::subtract(heap_[0]->time_, Time_Traits::now()));
   }
