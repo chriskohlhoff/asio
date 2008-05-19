@@ -93,19 +93,25 @@ private:
   {
     if (!err)
     {
-      ++unwritten_count_;
-      async_write(socket_, asio::buffer(write_data_, block_size_),
-          strand_.wrap(
-            make_custom_alloc_handler(write_allocator_,
-              boost::bind(&session::handle_write, this,
-                asio::placeholders::error,
-                asio::placeholders::bytes_transferred))));
-      socket_.async_read_some(asio::buffer(read_data_, block_size_),
-          strand_.wrap(
-            make_custom_alloc_handler(read_allocator_,
-              boost::bind(&session::handle_read, this,
-                asio::placeholders::error,
-                asio::placeholders::bytes_transferred))));
+      asio::error_code set_option_err;
+      asio::ip::tcp::no_delay no_delay(true);
+      socket_.set_option(no_delay, set_option_err);
+      if (!set_option_err)
+      {
+        ++unwritten_count_;
+        async_write(socket_, asio::buffer(write_data_, block_size_),
+            strand_.wrap(
+              make_custom_alloc_handler(write_allocator_,
+                boost::bind(&session::handle_write, this,
+                  asio::placeholders::error,
+                  asio::placeholders::bytes_transferred))));
+        socket_.async_read_some(asio::buffer(read_data_, block_size_),
+            strand_.wrap(
+              make_custom_alloc_handler(read_allocator_,
+                boost::bind(&session::handle_read, this,
+                  asio::placeholders::error,
+                  asio::placeholders::bytes_transferred))));
+      }
     }
     else if (endpoint_iterator != asio::ip::tcp::resolver::iterator())
     {

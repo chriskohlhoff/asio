@@ -44,13 +44,23 @@ public:
 
   void start()
   {
-    ++op_count_;
-    socket_.async_read_some(asio::buffer(read_data_, block_size_),
-        strand_.wrap(
-          make_custom_alloc_handler(read_allocator_,
-            boost::bind(&session::handle_read, this,
-              asio::placeholders::error,
-              asio::placeholders::bytes_transferred))));
+    asio::error_code set_option_err;
+    asio::ip::tcp::no_delay no_delay(true);
+    socket_.set_option(no_delay, set_option_err);
+    if (!set_option_err)
+    {
+      ++op_count_;
+      socket_.async_read_some(asio::buffer(read_data_, block_size_),
+          strand_.wrap(
+            make_custom_alloc_handler(read_allocator_,
+              boost::bind(&session::handle_read, this,
+                asio::placeholders::error,
+                asio::placeholders::bytes_transferred))));
+    }
+    else
+    {
+      io_service_.post(boost::bind(&session::destroy, this));
+    }
   }
 
   void handle_read(const asio::error_code& err, size_t length)
