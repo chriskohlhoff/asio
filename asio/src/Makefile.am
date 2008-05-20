@@ -53,6 +53,10 @@ noinst_PROGRAMS = \
 	tests/unit/stream_socket_service \
 	tests/unit/thread \
 	tests/unit/time_traits \
+	tests/unit/windows/basic_handle \
+	tests/unit/windows/basic_stream_handle \
+	tests/unit/windows/stream_handle \
+	tests/unit/windows/stream_handle_service \
 	tests/unit/write \
 	examples/allocation/server \
 	examples/buffers/reference_counted \
@@ -163,6 +167,10 @@ TESTS = \
 	tests/unit/stream_socket_service \
 	tests/unit/thread \
 	tests/unit/time_traits \
+	tests/unit/windows/basic_handle \
+	tests/unit/windows/basic_stream_handle \
+	tests/unit/windows/stream_handle \
+	tests/unit/windows/stream_handle_service \
 	tests/unit/write
 
 if HAVE_OPENSSL
@@ -240,6 +248,10 @@ tests_unit_strand_SOURCES = tests/unit/strand.cpp
 tests_unit_stream_socket_service_SOURCES = tests/unit/stream_socket_service.cpp
 tests_unit_thread_SOURCES = tests/unit/thread.cpp
 tests_unit_time_traits_SOURCES = tests/unit/time_traits.cpp
+tests_unit_windows_basic_handle_SOURCES = tests/unit/windows/basic_handle.cpp
+tests_unit_windows_basic_stream_handle_SOURCES = tests/unit/windows/basic_stream_handle.cpp
+tests_unit_windows_stream_handle_SOURCES = tests/unit/windows/stream_handle.cpp
+tests_unit_windows_stream_handle_service_SOURCES = tests/unit/windows/stream_handle_service.cpp
 tests_unit_write_SOURCES = tests/unit/write.cpp
 examples_allocation_server_SOURCES = examples/allocation/server.cpp
 examples_buffers_reference_counted_SOURCES = examples/buffers/reference_counted.cpp
@@ -388,7 +400,8 @@ EXTRA_DIST = \
 	examples/ssl/ca.pem \
 	examples/ssl/server.pem \
 	examples/ssl/dh512.pem \
-	examples/timers/tick_count_timer.cpp
+	examples/timers/tick_count_timer.cpp \
+	tests/performance/handler_allocator.hpp
 
 MAINTAINERCLEANFILES = \
 	$(srcdir)/Makefile.in
