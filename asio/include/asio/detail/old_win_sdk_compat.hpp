@@ -328,6 +328,11 @@ inline int IN6_IS_ADDR_MC_GLOBAL(const in6_addr_emulation* a)
 # define IPV6_V6ONLY 27
 #endif
 
+// Some SDKs (e.g. Windows CE) don't define IPPROTO_ICMPV6.
+#if !defined(IPPROTO_ICMPV6)
+# define IPPROTO_ICMPV6 58
+#endif
+
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
 #include "asio/detail/pop_options.hpp"
