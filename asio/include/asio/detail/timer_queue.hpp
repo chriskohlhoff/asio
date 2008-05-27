@@ -312,6 +312,7 @@ private:
       // is required to ensure that any owning sub-object remains valid until
       // after we have deallocated the memory here.
       Handler handler(this_timer->handler_);
+      (void)handler;
 
       // Free the memory associated with the handler.
       ptr.reset();

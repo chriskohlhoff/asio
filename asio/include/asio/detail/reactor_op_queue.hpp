@@ -423,6 +423,7 @@ private:
       // operation is required to ensure that any owning sub-object remains
       // valid until after we have deallocated the memory here.
       Operation operation(this_op->operation_);
+      (void)operation;
 
       // Free the memory associated with the operation.
       ptr.reset();
