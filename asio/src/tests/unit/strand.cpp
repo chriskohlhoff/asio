@@ -160,6 +160,21 @@ void strand_test()
   // The run() calls will not return until all work has finished.
   BOOST_CHECK(count == 3);
   BOOST_CHECK(exception_count == 2);
+
+  count = 0;
+  ios.reset();
+
+  // Check for clean shutdown when handlers posted through an orphaned strand
+  // are abandoned.
+  {
+    strand s2(ios);
+    s2.post(boost::bind(increment, &count));
+    s2.post(boost::bind(increment, &count));
+    s2.post(boost::bind(increment, &count));
+  }
+
+  // No handlers can be called until run() is called.
+  BOOST_CHECK(count == 0);
 }
 
 test_suite* init_unit_test_suite(int, char*[])

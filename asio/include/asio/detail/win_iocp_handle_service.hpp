@@ -408,6 +408,15 @@ public:
       op_type* handler_op(static_cast<op_type*>(op));
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
+
+      // A sub-object of the handler may be the true owner of the memory
+      // associated with the handler. Consequently, a local copy of the handler
+      // is required to ensure that any owning sub-object remains valid until
+      // after we have deallocated the memory here.
+      Handler handler(handler_op->handler_);
+
+      // Free the memory associated with the handler.
+      ptr.reset();
     }
 
     asio::io_service::work work_;
@@ -634,6 +643,15 @@ public:
         Handler, op_type> alloc_traits;
       asio::detail::handler_ptr<alloc_traits> ptr(
         handler_op->handler_, handler_op);
+
+      // A sub-object of the handler may be the true owner of the memory
+      // associated with the handler. Consequently, a local copy of the handler
+      // is required to ensure that any owning sub-object remains valid until
+      // after we have deallocated the memory here.
+      Handler handler(handler_op->handler_);
+
+      // Free the memory associated with the handler.
+      ptr.reset();
     }
 
     asio::io_service::work work_;

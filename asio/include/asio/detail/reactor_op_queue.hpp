@@ -417,6 +417,15 @@ private:
       this_type* this_op(static_cast<this_type*>(base));
       typedef handler_alloc_traits<Operation, this_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(this_op->operation_, this_op);
+
+      // A sub-object of the operation may be the true owner of the memory
+      // associated with the operation. Consequently, a local copy of the
+      // operation is required to ensure that any owning sub-object remains
+      // valid until after we have deallocated the memory here.
+      Operation operation(this_op->operation_);
+
+      // Free the memory associated with the operation.
+      ptr.reset();
     }
 
   private:
