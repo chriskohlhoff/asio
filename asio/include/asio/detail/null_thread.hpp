@@ -38,9 +38,12 @@ class null_thread
   : private noncopyable
 {
 public:
+  // The purpose of the thread.
+  enum purpose { internal, external };
+
   // Constructor.
   template <typename Function>
-  null_thread(Function f)
+  null_thread(Function f, purpose = internal)
   {
     asio::system_error e(
         asio::error::operation_not_supported, "thread");
