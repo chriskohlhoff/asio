@@ -13,6 +13,7 @@ PERFORMANCE_TEST_EXES = \
 UNIT_TEST_EXES = \
 	tests\unit\basic_datagram_socket.exe \
 	tests\unit\basic_deadline_timer.exe \
+	tests\unit\basic_serial_port.exe \
 	tests\unit\basic_socket_acceptor.exe \
 	tests\unit\basic_stream_socket.exe \
 	tests\unit\buffered_read_stream.exe \
@@ -46,6 +47,9 @@ UNIT_TEST_EXES = \
 	tests\unit\placeholders.exe \
 	tests\unit\read.exe \
 	tests\unit\read_until.exe \
+	tests\unit\serial_port.exe \
+	tests\unit\serial_port_base.exe \
+	tests\unit\serial_port_service.exe \
 	tests\unit\socket_acceptor_service.exe \
 	tests\unit\socket_base.exe \
 	tests\unit\strand.exe \
