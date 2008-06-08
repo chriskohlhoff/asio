@@ -176,7 +176,7 @@ public:
   }
 
   // Get the native descriptor representation.
-  native_type native(implementation_type& impl)
+  native_type native(const implementation_type& impl) const
   {
     return impl.descriptor_;
   }

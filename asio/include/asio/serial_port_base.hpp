@@ -22,6 +22,9 @@
 #include <stdexcept>
 #include <boost/config.hpp>
 #include <boost/detail/workaround.hpp>
+#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+# include <termios.h>
+#endif
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error_code.hpp"

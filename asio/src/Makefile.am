@@ -5,6 +5,7 @@ noinst_PROGRAMS = \
 	tests/performance/server \
 	tests/unit/basic_datagram_socket \
 	tests/unit/basic_deadline_timer \
+	tests/unit/basic_serial_port \
 	tests/unit/basic_socket_acceptor \
 	tests/unit/basic_stream_socket \
 	tests/unit/buffered_read_stream \
@@ -47,6 +48,9 @@ noinst_PROGRAMS = \
 	tests/unit/posix/stream_descriptor_service \
 	tests/unit/read \
 	tests/unit/read_until \
+	tests/unit/serial_port \
+	tests/unit/serial_port_base \
+	tests/unit/serial_port_service \
 	tests/unit/socket_acceptor_service \
 	tests/unit/socket_base \
 	tests/unit/strand \
@@ -119,6 +123,7 @@ endif
 TESTS = \
 	tests/unit/basic_datagram_socket \
 	tests/unit/basic_deadline_timer \
+	tests/unit/basic_serial_port \
 	tests/unit/basic_socket_acceptor \
 	tests/unit/basic_stream_socket \
 	tests/unit/buffered_read_stream \
@@ -161,6 +166,9 @@ TESTS = \
 	tests/unit/posix/stream_descriptor_service \
 	tests/unit/read \
 	tests/unit/read_until \
+	tests/unit/serial_port \
+	tests/unit/serial_port_base \
+	tests/unit/serial_port_service \
 	tests/unit/socket_acceptor_service \
 	tests/unit/socket_base \
 	tests/unit/strand \
@@ -200,6 +208,7 @@ tests_performance_client_SOURCES = tests/performance/client.cpp
 tests_performance_server_SOURCES = tests/performance/server.cpp
 tests_unit_basic_datagram_socket_SOURCES = tests/unit/basic_datagram_socket.cpp
 tests_unit_basic_deadline_timer_SOURCES = tests/unit/basic_deadline_timer.cpp
+tests_unit_basic_serial_port_SOURCES = tests/unit/basic_serial_port.cpp
 tests_unit_basic_socket_acceptor_SOURCES = tests/unit/basic_socket_acceptor.cpp
 tests_unit_basic_stream_socket_SOURCES = tests/unit/basic_stream_socket.cpp
 tests_unit_buffer_SOURCES = tests/unit/buffer.cpp
@@ -242,6 +251,9 @@ tests_unit_posix_stream_descriptor_SOURCES = tests/unit/posix/stream_descriptor.
 tests_unit_posix_stream_descriptor_service_SOURCES = tests/unit/posix/stream_descriptor_service.cpp
 tests_unit_read_SOURCES = tests/unit/read.cpp
 tests_unit_read_until_SOURCES = tests/unit/read_until.cpp
+tests_unit_serial_port_SOURCES = tests/unit/serial_port.cpp
+tests_unit_serial_port_base_SOURCES = tests/unit/serial_port_base.cpp
+tests_unit_serial_port_service_SOURCES = tests/unit/serial_port_service.cpp
 tests_unit_socket_acceptor_service_SOURCES = tests/unit/socket_acceptor_service.cpp
 tests_unit_socket_base_SOURCES = tests/unit/socket_base.cpp
 tests_unit_strand_SOURCES = tests/unit/strand.cpp

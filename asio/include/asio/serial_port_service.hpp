@@ -26,7 +26,7 @@
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/detail/service_base.hpp"
-//#include "asio/detail/reactive_serial_port_service.hpp"
+#include "asio/detail/reactive_serial_port_service.hpp"
 #include "asio/detail/win_iocp_serial_port_service.hpp"
 
 #if !defined(ASIO_DISABLE_SERIAL_PORT)

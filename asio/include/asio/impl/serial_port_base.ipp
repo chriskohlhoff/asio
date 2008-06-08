@@ -104,7 +104,7 @@ inline asio::error_code serial_port_base::baud_rate::store(
 # endif
   default:
     baud = B0;
-    ec = asio::error::invalid_value;
+    ec = asio::error::invalid_argument;
     return ec;
   }
   ::cfsetspeed(&storage, baud);
@@ -187,7 +187,7 @@ inline asio::error_code serial_port_base::baud_rate::load(
 # endif
   default:
     value_ = 0;
-    ec = asio::error::invalid_value;
+    ec = asio::error::invalid_argument;
     return ec;
   }
 #endif

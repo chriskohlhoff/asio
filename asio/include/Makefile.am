@@ -3,6 +3,7 @@ nobase_include_HEADERS = \
 	asio/basic_deadline_timer.hpp \
 	asio/basic_io_object.hpp \
 	asio/basic_raw_socket.hpp \
+	asio/basic_serial_port.hpp \
 	asio/basic_socket.hpp \
 	asio/basic_socket_acceptor.hpp \
 	asio/basic_socket_iostream.hpp \
@@ -63,6 +64,7 @@ nobase_include_HEADERS = \
 	asio/detail/push_options.hpp \
 	asio/detail/reactive_socket_service.hpp \
 	asio/detail/reactive_descriptor_service.hpp \
+	asio/detail/reactive_serial_port_service.hpp \
 	asio/detail/reactor_op_queue.hpp \
 	asio/detail/resolver_service.hpp \
 	asio/detail/scoped_lock.hpp \
@@ -94,6 +96,7 @@ nobase_include_HEADERS = \
 	asio/detail/win_iocp_io_service.hpp \
 	asio/detail/win_iocp_io_service_fwd.hpp \
 	asio/detail/win_iocp_handle_service.hpp \
+	asio/detail/win_iocp_serial_port_service.hpp \
 	asio/detail/win_iocp_socket_service.hpp \
 	asio/detail/win_mutex.hpp \
 	asio/detail/win_signal_blocker.hpp \
@@ -145,6 +148,9 @@ nobase_include_HEADERS = \
 	asio/raw_socket_service.hpp \
 	asio/read.hpp \
 	asio/read_until.hpp \
+	asio/serial_port.hpp \
+	asio/serial_port_base.hpp \
+	asio/serial_port_service.hpp \
 	asio/socket_acceptor_service.hpp \
 	asio/socket_base.hpp \
 	asio/ssl/basic_context.hpp \
