@@ -79,6 +79,26 @@ public:
    * port.
    */
   explicit basic_serial_port(asio::io_service& io_service,
+      const char* device)
+    : basic_io_object<SerialPortService>(io_service)
+  {
+    asio::error_code ec;
+    this->service.open(this->implementation, device, ec);
+    asio::detail::throw_error(ec);
+  }
+
+  /// Construct and open a basic_serial_port.
+  /**
+   * This constructor creates and opens a serial port for the specified device
+   * name.
+   *
+   * @param io_service The io_service object that the serial port will use to
+   * dispatch handlers for any asynchronous operations performed on the port.
+   *
+   * @param device The platform-specific device name for this serial
+   * port.
+   */
+  explicit basic_serial_port(asio::io_service& io_service,
       const std::string& device)
     : basic_io_object<SerialPortService>(io_service)
   {
