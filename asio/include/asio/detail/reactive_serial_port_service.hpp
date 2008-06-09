@@ -120,6 +120,13 @@ public:
       return ec;
     }
   
+    // We're done. Take ownership of the serial port descriptor.
+    if (descriptor_service_.assign(impl, fd, ec))
+    {
+      asio::error_code ignored_ec;
+      descriptor_ops::close(fd, ignored_ec);
+    }
+
     return ec;
   }
 
