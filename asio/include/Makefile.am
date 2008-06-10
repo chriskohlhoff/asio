@@ -112,8 +112,10 @@ nobase_include_HEADERS = \
 	asio/impl/error_code.ipp \
 	asio/impl/io_service.ipp \
 	asio/impl/read.ipp \
+	asio/impl/read_at.ipp \
 	asio/impl/read_until.ipp \
 	asio/impl/write.ipp \
+	asio/impl/write_at.ipp \
 	asio/io_service.hpp \
 	asio/ip/address.hpp \
 	asio/ip/address_v4.hpp \
@@ -147,6 +149,7 @@ nobase_include_HEADERS = \
 	asio/posix/stream_descriptor_service.hpp \
 	asio/raw_socket_service.hpp \
 	asio/read.hpp \
+	asio/read_at.hpp \
 	asio/read_until.hpp \
 	asio/serial_port.hpp \
 	asio/serial_port_base.hpp \
@@ -174,10 +177,14 @@ nobase_include_HEADERS = \
 	asio/time_traits.hpp \
 	asio/version.hpp \
 	asio/windows/basic_handle.hpp \
+	asio/windows/basic_random_access_handle.hpp \
 	asio/windows/basic_stream_handle.hpp \
+	asio/windows/random_access_handle.hpp \
+	asio/windows/random_access_handle_service.hpp \
 	asio/windows/stream_handle.hpp \
 	asio/windows/stream_handle_service.hpp \
 	asio/write.hpp \
+	asio/write_at.hpp \
 	asio.hpp
 
 MAINTAINERCLEANFILES = \

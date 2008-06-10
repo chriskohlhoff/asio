@@ -72,6 +72,7 @@
 #include "asio/posix/stream_descriptor_service.hpp"
 #include "asio/raw_socket_service.hpp"
 #include "asio/read.hpp"
+#include "asio/read_at.hpp"
 #include "asio/read_until.hpp"
 #include "asio/serial_port.hpp"
 #include "asio/serial_port_base.hpp"
@@ -86,9 +87,13 @@
 #include "asio/time_traits.hpp"
 #include "asio/version.hpp"
 #include "asio/windows/basic_handle.hpp"
+#include "asio/windows/basic_random_access_handle.hpp"
 #include "asio/windows/basic_stream_handle.hpp"
+#include "asio/windows/random_access_handle.hpp"
+#include "asio/windows/random_access_handle_service.hpp"
 #include "asio/windows/stream_handle.hpp"
 #include "asio/windows/stream_handle_service.hpp"
 #include "asio/write.hpp"
+#include "asio/write_at.hpp"
 
 #endif // ASIO_HPP
