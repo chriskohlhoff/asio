@@ -58,7 +58,10 @@ noinst_PROGRAMS = \
 	tests/unit/thread \
 	tests/unit/time_traits \
 	tests/unit/windows/basic_handle \
+	tests/unit/windows/basic_random_access_handle \
 	tests/unit/windows/basic_stream_handle \
+	tests/unit/windows/random_access_handle \
+	tests/unit/windows/random_access_handle_service \
 	tests/unit/windows/stream_handle \
 	tests/unit/windows/stream_handle_service \
 	tests/unit/write \
@@ -176,7 +179,10 @@ TESTS = \
 	tests/unit/thread \
 	tests/unit/time_traits \
 	tests/unit/windows/basic_handle \
+	tests/unit/windows/basic_random_access_handle \
 	tests/unit/windows/basic_stream_handle \
+	tests/unit/windows/random_access_handle \
+	tests/unit/windows/random_access_handle_service \
 	tests/unit/windows/stream_handle \
 	tests/unit/windows/stream_handle_service \
 	tests/unit/write
@@ -261,7 +267,10 @@ tests_unit_stream_socket_service_SOURCES = tests/unit/stream_socket_service.cpp
 tests_unit_thread_SOURCES = tests/unit/thread.cpp
 tests_unit_time_traits_SOURCES = tests/unit/time_traits.cpp
 tests_unit_windows_basic_handle_SOURCES = tests/unit/windows/basic_handle.cpp
+tests_unit_windows_basic_random_access_handle_SOURCES = tests/unit/windows/basic_random_access_handle.cpp
 tests_unit_windows_basic_stream_handle_SOURCES = tests/unit/windows/basic_stream_handle.cpp
+tests_unit_windows_random_access_handle_SOURCES = tests/unit/windows/random_access_handle.cpp
+tests_unit_windows_random_access_handle_service_SOURCES = tests/unit/windows/random_access_handle_service.cpp
 tests_unit_windows_stream_handle_SOURCES = tests/unit/windows/stream_handle.cpp
 tests_unit_windows_stream_handle_service_SOURCES = tests/unit/windows/stream_handle_service.cpp
 tests_unit_write_SOURCES = tests/unit/write.cpp

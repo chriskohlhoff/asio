@@ -58,7 +58,10 @@ UNIT_TEST_EXES = \
 	tests/unit/thread.exe \
 	tests/unit/time_traits.exe \
 	tests/unit/windows/basic_handle.exe \
+	tests/unit/windows/basic_random_access_handle.exe \
 	tests/unit/windows/basic_stream_handle.exe \
+	tests/unit/windows/random_access_handle.exe \
+	tests/unit/windows/random_access_handle_service.exe \
 	tests/unit/windows/stream_handle.exe \
 	tests/unit/windows/stream_handle_service.exe \
 	tests/unit/write.exe
