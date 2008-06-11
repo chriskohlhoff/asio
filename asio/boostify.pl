@@ -461,6 +461,10 @@ sub copy_source_file
     elsif ($line =~ /ASIO_/ && !($line =~ /BOOST_ASIO_/))
     {
       $line =~ s/ASIO_/BOOST_ASIO_/g;
+      if ($line =~ /asio::error_code/)
+      {
+        $line =~ s/asio::error_code/boost::system::error_code/g;
+      }
       print_line($output, $line, $from, $lineno);
     }
     elsif ($line =~ /asio::thread/)
