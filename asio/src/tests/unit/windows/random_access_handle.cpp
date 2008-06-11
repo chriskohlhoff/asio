@@ -1,6 +1,6 @@
 //
 // random_access_handle.cpp
-// ~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -39,7 +39,7 @@ void read_some_handler(const asio::error_code&, std::size_t)
 
 void test()
 {
-#if defined(ASIO_HAS_WINDOWS_STREAM_HANDLE)
+#if defined(ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE)
   using namespace asio;
   namespace win = asio::windows;
 
@@ -104,7 +104,7 @@ void test()
   catch (std::exception&)
   {
   }
-#endif // defined(ASIO_HAS_WINDOWS_STREAM_HANDLE)
+#endif // defined(ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE)
 }
 
 } // namespace windows_random_access_handle_compile
