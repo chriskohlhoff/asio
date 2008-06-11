@@ -1003,7 +1003,7 @@ public:
         return bytes_recvd;
 
       // Check for EOF.
-      if (bytes_recvd == 0)
+      if (bytes_recvd == 0 && impl.protocol_.type() == SOCK_STREAM)
       {
         ec = asio::error::eof;
         return 0;
@@ -1042,11 +1042,13 @@ public:
     public handler_base_from_member<Handler>
   {
   public:
-    receive_operation(socket_type socket, asio::io_service& io_service,
-        const MutableBufferSequence& buffers, socket_base::message_flags flags,
-        Handler handler)
+    receive_operation(socket_type socket, int protocol_type,
+        asio::io_service& io_service,
+        const MutableBufferSequence& buffers,
+        socket_base::message_flags flags, Handler handler)
       : handler_base_from_member<Handler>(handler),
         socket_(socket),
+        protocol_type_(protocol_type),
         io_service_(io_service),
         work_(io_service),
         buffers_(buffers),
@@ -1079,7 +1081,7 @@ public:
 
       // Receive some data.
       int bytes = socket_ops::recv(socket_, bufs, i, flags_, ec);
-      if (bytes == 0)
+      if (bytes == 0 && protocol_type_ == SOCK_STREAM)
         ec = asio::error::eof;
 
       // Check if we need to run the operation again.
@@ -1099,6 +1101,7 @@ public:
 
   private:
     socket_type socket_;
+    int protocol_type_;
     asio::io_service& io_service_;
     asio::io_service::work work_;
     MutableBufferSequence buffers_;
@@ -1158,13 +1161,15 @@ public:
       {
         reactor_.start_except_op(impl.socket_, impl.reactor_data_,
             receive_operation<MutableBufferSequence, Handler>(
-              impl.socket_, this->get_io_service(), buffers, flags, handler));
+              impl.socket_, impl.protocol_.type(),
+              this->get_io_service(), buffers, flags, handler));
       }
       else
       {
         reactor_.start_read_op(impl.socket_, impl.reactor_data_,
             receive_operation<MutableBufferSequence, Handler>(
-              impl.socket_, this->get_io_service(), buffers, flags, handler));
+              impl.socket_, impl.protocol_.type(),
+              this->get_io_service(), buffers, flags, handler));
       }
     }
   }
@@ -1247,7 +1252,7 @@ public:
       }
 
       // Check for EOF.
-      if (bytes_recvd == 0)
+      if (bytes_recvd == 0 && impl.protocol_.type() == SOCK_STREAM)
       {
         ec = asio::error::eof;
         return 0;
@@ -1290,12 +1295,13 @@ public:
     public handler_base_from_member<Handler>
   {
   public:
-    receive_from_operation(socket_type socket,
+    receive_from_operation(socket_type socket, int protocol_type,
         asio::io_service& io_service,
         const MutableBufferSequence& buffers, endpoint_type& endpoint,
         socket_base::message_flags flags, Handler handler)
       : handler_base_from_member<Handler>(handler),
         socket_(socket),
+        protocol_type_(protocol_type),
         io_service_(io_service),
         work_(io_service),
         buffers_(buffers),
@@ -1331,7 +1337,7 @@ public:
       std::size_t addr_len = sender_endpoint_.capacity();
       int bytes = socket_ops::recvfrom(socket_, bufs, i, flags_,
           sender_endpoint_.data(), &addr_len, ec);
-      if (bytes == 0)
+      if (bytes == 0 && protocol_type_ == SOCK_STREAM)
         ec = asio::error::eof;
 
       // Check if we need to run the operation again.
@@ -1352,6 +1358,7 @@ public:
 
   private:
     socket_type socket_;
+    int protocol_type_;
     asio::io_service& io_service_;
     asio::io_service::work work_;
     MutableBufferSequence buffers_;
@@ -1389,8 +1396,8 @@ public:
 
       reactor_.start_read_op(impl.socket_, impl.reactor_data_,
           receive_from_operation<MutableBufferSequence, Handler>(
-            impl.socket_, this->get_io_service(), buffers,
-            sender_endpoint, flags, handler));
+            impl.socket_, impl.protocol_.type(), this->get_io_service(),
+            buffers, sender_endpoint, flags, handler));
     }
   }
 

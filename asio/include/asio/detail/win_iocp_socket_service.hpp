@@ -1235,7 +1235,7 @@ public:
           asio::error::get_system_category());
       return 0;
     }
-    if (bytes_transferred == 0)
+    if (bytes_transferred == 0 && impl.protocol_.type() == SOCK_STREAM)
     {
       ec = asio::error::eof;
       return 0;
@@ -1266,7 +1266,7 @@ public:
     : public operation
   {
   public:
-    receive_operation(win_iocp_io_service& io_service,
+    receive_operation(int protocol_type, win_iocp_io_service& io_service,
         weak_cancel_token_type cancel_token,
         const MutableBufferSequence& buffers, Handler handler)
       : operation(io_service,
@@ -1274,6 +1274,7 @@ public:
             MutableBufferSequence, Handler>::do_completion_impl,
           &receive_operation<
             MutableBufferSequence, Handler>::destroy_impl),
+        protocol_type_(protocol_type),
         work_(io_service.get_io_service()),
         cancel_token_(cancel_token),
         buffers_(buffers),
@@ -1322,6 +1323,7 @@ public:
 
       // Check for connection closed.
       else if (!ec && bytes_transferred == 0
+          && handler_op->protocol_type_ == SOCK_STREAM
           && !boost::is_same<MutableBufferSequence, null_buffers>::value)
       {
         ec = asio::error::eof;
@@ -1358,6 +1360,7 @@ public:
       ptr.reset();
     }
 
+    int protocol_type_;
     asio::io_service::work work_;
     weak_cancel_token_type cancel_token_;
     MutableBufferSequence buffers_;
@@ -1390,8 +1393,9 @@ public:
     typedef receive_operation<MutableBufferSequence, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr, iocp_service_,
-        impl.cancel_token_, buffers, handler);
+    int protocol_type = impl.protocol_.type();
+    handler_ptr<alloc_traits> ptr(raw_ptr, protocol_type,
+        iocp_service_, impl.cancel_token_, buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -1464,8 +1468,9 @@ public:
       typedef receive_operation<null_buffers, Handler> value_type;
       typedef handler_alloc_traits<Handler, value_type> alloc_traits;
       raw_handler_ptr<alloc_traits> raw_ptr(handler);
-      handler_ptr<alloc_traits> ptr(raw_ptr, iocp_service_,
-          impl.cancel_token_, buffers, handler);
+      int protocol_type = impl.protocol_.type();
+      handler_ptr<alloc_traits> ptr(raw_ptr, protocol_type,
+          iocp_service_, impl.cancel_token_, buffers, handler);
 
       // Issue a receive operation with an empty buffer.
       ::WSABUF buf = { 0, 0 };
@@ -1556,7 +1561,7 @@ public:
           asio::error::get_system_category());
       return 0;
     }
-    if (bytes_transferred == 0)
+    if (bytes_transferred == 0 && impl.protocol_.type() == SOCK_STREAM)
     {
       ec = asio::error::eof;
       return 0;
@@ -1593,7 +1598,7 @@ public:
     : public operation
   {
   public:
-    receive_from_operation(win_iocp_io_service& io_service,
+    receive_from_operation(int protocol_type, win_iocp_io_service& io_service,
         endpoint_type& endpoint, const MutableBufferSequence& buffers,
         Handler handler)
       : operation(io_service,
@@ -1601,6 +1606,7 @@ public:
             MutableBufferSequence, Handler>::do_completion_impl,
           &receive_from_operation<
             MutableBufferSequence, Handler>::destroy_impl),
+        protocol_type_(protocol_type),
         endpoint_(endpoint),
         endpoint_size_(static_cast<int>(endpoint.capacity())),
         work_(io_service.get_io_service()),
@@ -1647,7 +1653,8 @@ public:
       }
 
       // Check for connection closed.
-      if (!ec && bytes_transferred == 0)
+      if (!ec && bytes_transferred == 0
+          && handler_op->protocol_type_ == SOCK_STREAM)
       {
         ec = asio::error::eof;
       }
@@ -1686,6 +1693,7 @@ public:
       ptr.reset();
     }
 
+    int protocol_type_;
     endpoint_type& endpoint_;
     int endpoint_size_;
     asio::io_service::work work_;
@@ -1720,8 +1728,9 @@ public:
     typedef receive_from_operation<MutableBufferSequence, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr, iocp_service_,
-        sender_endp, buffers, handler);
+    int protocol_type = impl.protocol_.type();
+    handler_ptr<alloc_traits> ptr(raw_ptr, protocol_type,
+        iocp_service_, sender_endp, buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
