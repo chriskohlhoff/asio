@@ -6,6 +6,9 @@
 *.pdb
 *.tds
 basic_handle
+basic_random_access_handle
 basic_stream_handle
+random_access_handle
+random_access_handle_service
 stream_handle
 stream_handle_service
