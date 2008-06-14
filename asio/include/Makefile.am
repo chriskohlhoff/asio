@@ -17,6 +17,7 @@ nobase_include_HEADERS = \
 	asio/buffered_stream_fwd.hpp \
 	asio/buffered_write_stream.hpp \
 	asio/buffered_write_stream_fwd.hpp \
+	asio/buffers_iterator.hpp \
 	asio/completion_condition.hpp \
 	asio/datagram_socket_service.hpp \
 	asio/deadline_timer.hpp \

@@ -32,6 +32,7 @@
 #include "asio/buffered_stream.hpp"
 #include "asio/buffered_write_stream_fwd.hpp"
 #include "asio/buffered_write_stream.hpp"
+#include "asio/buffers_iterator.hpp"
 #include "asio/completion_condition.hpp"
 #include "asio/datagram_socket_service.hpp"
 #include "asio/deadline_timer_service.hpp"

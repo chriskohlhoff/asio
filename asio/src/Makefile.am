@@ -12,6 +12,7 @@ noinst_PROGRAMS = \
 	tests/unit/buffered_stream \
 	tests/unit/buffered_write_stream \
 	tests/unit/buffer \
+	tests/unit/buffers_iterator \
 	tests/unit/completion_condition \
 	tests/unit/datagram_socket_service \
 	tests/unit/deadline_timer_service \
@@ -133,6 +134,7 @@ TESTS = \
 	tests/unit/buffered_stream \
 	tests/unit/buffered_write_stream \
 	tests/unit/buffer \
+	tests/unit/buffers_iterator \
 	tests/unit/completion_condition \
 	tests/unit/datagram_socket_service \
 	tests/unit/deadline_timer_service \
@@ -218,6 +220,7 @@ tests_unit_basic_serial_port_SOURCES = tests/unit/basic_serial_port.cpp
 tests_unit_basic_socket_acceptor_SOURCES = tests/unit/basic_socket_acceptor.cpp
 tests_unit_basic_stream_socket_SOURCES = tests/unit/basic_stream_socket.cpp
 tests_unit_buffer_SOURCES = tests/unit/buffer.cpp
+tests_unit_buffers_iterator_SOURCES = tests/unit/buffers_iterator.cpp
 tests_unit_buffered_read_stream_SOURCES = tests/unit/buffered_read_stream.cpp
 tests_unit_buffered_stream_SOURCES = tests/unit/buffered_stream.cpp
 tests_unit_buffered_write_stream_SOURCES = tests/unit/buffered_write_stream.cpp

@@ -20,6 +20,7 @@ UNIT_TEST_EXES = \
 	tests\unit\buffered_stream.exe \
 	tests\unit\buffered_write_stream.exe \
 	tests\unit\buffer.exe \
+	tests\unit\buffers_iterator.exe \
 	tests\unit\completion_condition.exe \
 	tests\unit\datagram_socket_service.exe \
 	tests\unit\deadline_timer_service.exe \
