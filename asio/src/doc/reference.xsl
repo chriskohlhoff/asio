@@ -949,6 +949,9 @@
         <xsl:when test="declname = 'HandshakeHandler'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'MatchCondition'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'N'">
           <xsl:value-of select="declname"/>
         </xsl:when>
