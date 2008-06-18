@@ -175,7 +175,7 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d,
  */
 template <typename SyncRandomAccessWriteDevice, typename ConstBufferSequence,
     typename CompletionCondition>
-std::size_t write(SyncRandomAccessWriteDevice& d,
+std::size_t write_at(SyncRandomAccessWriteDevice& d,
     boost::uint64_t offset, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition, asio::error_code& ec);
 
