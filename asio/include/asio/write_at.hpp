@@ -381,6 +381,8 @@ void async_write_at(AsyncRandomAccessWriteDevice& d, boost::uint64_t offset,
  * @param d The device to which the data is to be written. The type must support
  * the AsyncRandomAccessWriteDevice concept.
  *
+ * @param offset The offset at which the data will be written.
+ *
  * @param buffers One or more buffers containing the data to be written.
  * Although the buffers object may be copied as necessary, ownership of the
  * underlying memory blocks is retained by the caller, which must guarantee
@@ -450,6 +452,8 @@ void async_write_at(AsyncRandomAccessWriteDevice& d,
  * @param d The device to which the data is to be written. The type must support
  * the AsyncRandomAccessWriteDevice concept.
  *
+ * @param offset The offset at which the data will be written.
+ *
  * @param b A basic_streambuf object from which data will be written. Ownership
  * of the streambuf is retained by the caller, which must guarantee that it
  * remains valid until the handler is called.
@@ -492,6 +496,8 @@ void async_write_at(AsyncRandomAccessWriteDevice& d, boost::uint64_t offset,
  *
  * @param d The device to which the data is to be written. The type must support
  * the AsyncRandomAccessWriteDevice concept.
+ *
+ * @param offset The offset at which the data will be written.
  *
  * @param b A basic_streambuf object from which data will be written. Ownership
  * of the streambuf is retained by the caller, which must guarantee that it
