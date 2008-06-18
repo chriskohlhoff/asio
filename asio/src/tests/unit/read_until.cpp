@@ -226,6 +226,88 @@ void test_string_read_until()
   BOOST_CHECK(length == 0);
 }
 
+class match_char
+{
+public:
+  explicit match_char(char c) : c_(c) {}
+
+  template <typename Iterator>
+  std::pair<Iterator, bool> operator()(
+      Iterator begin, Iterator end) const
+  {
+    Iterator i = begin;
+    while (i != end)
+      if (c_ == *i++)
+        return std::make_pair(i, true);
+    return std::make_pair(i, false);
+  }
+
+private:
+  char c_;
+};
+
+namespace asio {
+  template <> struct is_match_condition<match_char>
+    : public boost::true_type {};
+} // namespace asio
+
+void test_match_condition_read_until()
+{
+  asio::io_service ios;
+  test_stream s(ios);
+  asio::streambuf sb1;
+  asio::streambuf sb2(25);
+  asio::error_code ec;
+
+  s.reset(read_data, sizeof(read_data));
+  std::size_t length = asio::read_until(s, sb1, match_char('Z'));
+  BOOST_CHECK(length == 26);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  length = asio::read_until(s, sb1, match_char('Z'));
+  BOOST_CHECK(length == 26);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  length = asio::read_until(s, sb1, match_char('Z'));
+  BOOST_CHECK(length == 26);
+
+  s.reset(read_data, sizeof(read_data));
+  length = asio::read_until(s, sb1, match_char('Z'), ec);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 26);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  length = asio::read_until(s, sb1, match_char('Z'), ec);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 26);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  length = asio::read_until(s, sb1, match_char('Z'), ec);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 26);
+
+  s.reset(read_data, sizeof(read_data));
+  length = asio::read_until(s, sb2, match_char('Z'), ec);
+  BOOST_CHECK(ec == asio::error::not_found);
+  BOOST_CHECK(length == 0);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  length = asio::read_until(s, sb2, match_char('Z'), ec);
+  BOOST_CHECK(ec == asio::error::not_found);
+  BOOST_CHECK(length == 0);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  length = asio::read_until(s, sb2, match_char('Z'), ec);
+  BOOST_CHECK(ec == asio::error::not_found);
+  BOOST_CHECK(length == 0);
+}
+
 void async_read_handler(
     const asio::error_code& err, asio::error_code* err_out,
     std::size_t bytes_transferred, std::size_t* bytes_out, bool* called)
@@ -421,12 +503,107 @@ void test_string_async_read_until()
   BOOST_CHECK(length == 0);
 }
 
+void test_match_condition_async_read_until()
+{
+  asio::io_service ios;
+  test_stream s(ios);
+  asio::streambuf sb1;
+  asio::streambuf sb2(25);
+  asio::error_code ec;
+  std::size_t length;
+  bool called;
+
+  s.reset(read_data, sizeof(read_data));
+  ec = asio::error_code();
+  length = 0;
+  called = false;
+  asio::async_read_until(s, sb1, match_char('Z'),
+      boost::bind(async_read_handler, asio::placeholders::error, &ec,
+        asio::placeholders::bytes_transferred, &length, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 26);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  ec = asio::error_code();
+  length = 0;
+  called = false;
+  asio::async_read_until(s, sb1, match_char('Z'),
+      boost::bind(async_read_handler, asio::placeholders::error, &ec,
+        asio::placeholders::bytes_transferred, &length, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 26);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  ec = asio::error_code();
+  length = 0;
+  called = false;
+  asio::async_read_until(s, sb1, match_char('Z'),
+      boost::bind(async_read_handler, asio::placeholders::error, &ec,
+        asio::placeholders::bytes_transferred, &length, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 26);
+
+  s.reset(read_data, sizeof(read_data));
+  ec = asio::error_code();
+  length = 0;
+  called = false;
+  asio::async_read_until(s, sb2, match_char('Z'),
+      boost::bind(async_read_handler, asio::placeholders::error, &ec,
+        asio::placeholders::bytes_transferred, &length, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(ec == asio::error::not_found);
+  BOOST_CHECK(length == 0);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  ec = asio::error_code();
+  length = 0;
+  called = false;
+  asio::async_read_until(s, sb2, match_char('Z'),
+      boost::bind(async_read_handler, asio::placeholders::error, &ec,
+        asio::placeholders::bytes_transferred, &length, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(ec == asio::error::not_found);
+  BOOST_CHECK(length == 0);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  ec = asio::error_code();
+  length = 0;
+  called = false;
+  asio::async_read_until(s, sb2, match_char('Z'),
+      boost::bind(async_read_handler, asio::placeholders::error, &ec,
+        asio::placeholders::bytes_transferred, &length, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(ec == asio::error::not_found);
+  BOOST_CHECK(length == 0);
+}
+
 test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("read_until");
   test->add(BOOST_TEST_CASE(&test_char_read_until));
   test->add(BOOST_TEST_CASE(&test_string_read_until));
+  test->add(BOOST_TEST_CASE(&test_match_condition_read_until));
   test->add(BOOST_TEST_CASE(&test_char_async_read_until));
   test->add(BOOST_TEST_CASE(&test_string_async_read_until));
+  test->add(BOOST_TEST_CASE(&test_match_condition_async_read_until));
   return test;
 }
