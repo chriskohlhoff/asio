@@ -108,7 +108,16 @@ public:
     s = descriptor_ops::error_wrapper(::tcgetattr(fd, &ios), ec);
     if (s >= 0)
     {
+#if defined(_BSD_SOURCE)
       ::cfmakeraw(&ios);
+#else
+      ios.c_iflag &= ~(IGNBRK | BRKINT | PARMRK
+          | ISTRIP | INLCR | IGNCR | ICRNL | IXON);
+      ios.c_oflag &= ~OPOST;
+      ios.c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
+      ios.c_cflag &= ~(CSIZE | PARENB);
+      ios.c_cflag |= CS8;
+#endif
       ios.c_iflag |= IGNPAR;
       descriptor_ops::clear_error(ec);
       s = descriptor_ops::error_wrapper(::tcsetattr(fd, TCSANOW, &ios), ec);
