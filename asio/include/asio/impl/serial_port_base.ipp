@@ -294,10 +294,12 @@ inline asio::error_code serial_port_base::flow_control::load(
   {
     value_ = software;
   }
+# if defined(_BSD_SOURCE)
   else if (storage.c_cflag & CRTSCTS)
   {
     value_ = hardware;
   }
+# endif
   else
   {
     value_ = none;
