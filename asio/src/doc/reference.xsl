@@ -253,7 +253,9 @@
   <xsl:text>``</xsl:text>
   <xsl:value-of select="$newline"/>
   <xsl:apply-templates mode="codeline"/>
-  <xsl:value-of select="$newline"/>
+  <xsl:if test="substring(., string-length(.)) = $newline">
+    <xsl:value-of select="$newline"/>
+  </xsl:if>
   <xsl:text>``</xsl:text>
   <xsl:value-of select="$newline"/>
 </xsl:template>
