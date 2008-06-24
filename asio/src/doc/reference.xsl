@@ -910,8 +910,8 @@
 
 
 <xsl:template name="enum">
-  enum <xsl:value-of select="name"/>
-
+  enum <xsl:value-of select="name"/><xsl:text>
+</xsl:text><xsl:if test="count(enumvalue) &gt; 0">
 [heading Values]
 [variablelist
 <xsl:for-each select="enumvalue">
@@ -921,6 +921,7 @@
   ]
 </xsl:for-each>
 ]
+</xsl:if>
 </xsl:template>
 
 

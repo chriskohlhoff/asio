@@ -30988,11 +30988,6 @@ Available error code categories.
 
   enum ssl_errors
 
-[heading Values]
-[variablelist
-
-]
-
 
 
 [endsect]
