@@ -109,7 +109,7 @@ Implement asio\_handler\_allocate and asio\_handler\_deallocate for your own han
 
 This default implementation is simply: 
 
-   return ::operator new(bytes);
+   return ::operator new(size);
 
 
 
@@ -1230,11 +1230,11 @@ This operation is implemented in terms of zero or more calls to the stream's asy
 ``
    pair<iterator, bool> match_condition(iterator begin, iterator end);
 ``
-where iterator represents the type: 
+where `iterator` represents the type: 
 ``
    buffers_iterator<basic_streambuf<Allocator>::const_buffers_type>
 ``
-The iterator parameters begin and end define the range of bytes to be scanned to determine whether there is a match. The first member of the return value is an iterator marking one-past-the-end of the bytes that have been consumed by the match function. This iterator is used to calculate the begin parameter for any subsequent invocation of the match condition. The second member of the return value is true if a match has been found, false otherwise.]]
+The iterator parameters `begin` and `end` define the range of bytes to be scanned to determine whether there is a match. The `first` member of the return value is an iterator marking one-past-the-end of the bytes that have been consumed by the match function. This iterator is used to calculate the `begin` parameter for any subsequent invocation of the match condition. The `second` member of the return value is true if a match has been found, false otherwise.]]
 
 [[handler][The handler to be called when the read operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
@@ -1254,7 +1254,7 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 [heading Remarks]
       
-The default implementation of the is_match_condition type trait evaluates to true for function pointers and function objects with a result\_type typedef. It must be specialised for other user-defined function objects.
+The default implementation of the `is_match_condition` type trait evaluates to true for function pointers and function objects with a `result_type` typedef. It must be specialised for other user-defined function objects.
 
 [heading Examples]
   
@@ -19801,7 +19801,7 @@ Close the connection.
 
 [heading Return Value]
       
-this if a connection was successfully established, a null pointer otherwise. 
+`this` if a connection was successfully established, a null pointer otherwise. 
 
 
 
@@ -19893,7 +19893,7 @@ This function establishes a connection to the specified endpoint.
 
 [heading Return Value]
       
-this if a connection was successfully established, a null pointer otherwise. 
+`this` if a connection was successfully established, a null pointer otherwise. 
 
 
 
@@ -19920,7 +19920,7 @@ This function automatically establishes a connection based on the supplied resol
 
 [heading Return Value]
       
-this if a connection was successfully established, a null pointer otherwise. 
+`this` if a connection was successfully established, a null pointer otherwise. 
 
 
 
@@ -48159,11 +48159,11 @@ This operation is implemented in terms of zero or more calls to the stream's rea
 ``
    pair<iterator, bool> match_condition(iterator begin, iterator end);
 ``
-where iterator represents the type: 
+where `iterator` represents the type: 
 ``
    buffers_iterator<basic_streambuf<Allocator>::const_buffers_type>
 ``
-The iterator parameters begin and end define the range of bytes to be scanned to determine whether there is a match. The first member of the return value is an iterator marking one-past-the-end of the bytes that have been consumed by the match function. This iterator is used to calculate the begin parameter for any subsequent invocation of the match condition. The second member of the return value is true if a match has been found, false otherwise.]]
+The iterator parameters `begin` and `end` define the range of bytes to be scanned to determine whether there is a match. The `first` member of the return value is an iterator marking one-past-the-end of the bytes that have been consumed by the match function. This iterator is used to calculate the `begin` parameter for any subsequent invocation of the match condition. The `second` member of the return value is true if a match has been found, false otherwise.]]
 
 ]
 
@@ -48182,7 +48182,7 @@ The number of bytes in the streambuf's get area that have been fully consumed by
 
 [heading Remarks]
       
-The default implementation of the is_match_condition type trait evaluates to true for function pointers and function objects with a result\_type typedef. It must be specialised for other user-defined function objects.
+The default implementation of the `is_match_condition` type trait evaluates to true for function pointers and function objects with a `result_type` typedef. It must be specialised for other user-defined function objects.
 
 [heading Examples]
   
@@ -48284,11 +48284,11 @@ This operation is implemented in terms of zero or more calls to the stream's rea
 ``
    pair<iterator, bool> match_condition(iterator begin, iterator end);
 ``
-where iterator represents the type: 
+where `iterator` represents the type: 
 ``
    buffers_iterator<basic_streambuf<Allocator>::const_buffers_type>
 ``
-The iterator parameters begin and end define the range of bytes to be scanned to determine whether there is a match. The first member of the return value is an iterator marking one-past-the-end of the bytes that have been consumed by the match function. This iterator is used to calculate the begin parameter for any subsequent invocation of the match condition. The second member of the return value is true if a match has been found, false otherwise.]]
+The iterator parameters `begin` and `end` define the range of bytes to be scanned to determine whether there is a match. The `first` member of the return value is an iterator marking one-past-the-end of the bytes that have been consumed by the match function. This iterator is used to calculate the `begin` parameter for any subsequent invocation of the match condition. The `second` member of the return value is true if a match has been found, false otherwise.]]
 
 [[ec][Set to indicate what error occurred, if any.]]
 
@@ -48300,7 +48300,7 @@ The number of bytes in the streambuf's get area that have been fully consumed by
 
 [heading Remarks]
       
-The default implementation of the is_match_condition type trait evaluates to true for function pointers and function objects with a result\_type typedef. It must be specialised for other user-defined function objects. 
+The default implementation of the `is_match_condition` type trait evaluates to true for function pointers and function objects with a `result_type` typedef. It must be specialised for other user-defined function objects. 
 
 
 
