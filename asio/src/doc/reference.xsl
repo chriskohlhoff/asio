@@ -299,6 +299,16 @@
 </xsl:template>
 
 
+<xsl:template match="computeroutput" mode="markup">
+<xsl:text>`</xsl:text><xsl:value-of select="."/><xsl:text>`</xsl:text>
+</xsl:template>
+
+
+<xsl:template match="computeroutput" mode="markup-nested">
+<xsl:text>`</xsl:text><xsl:value-of select="."/><xsl:text>`</xsl:text>
+</xsl:template>
+
+
 <xsl:template match="listitem" mode="markup">
 * <xsl:value-of select="."/><xsl:text>
 </xsl:text>
