@@ -28628,7 +28628,7 @@ Write the given data to the stream. Returns the number of bytes written, or 0 if
 Construct an iterator representing the beginning of the buffers' data. 
 
   template<
-      typename ``[link asio.reference.BufferSequence BufferSequence]``>
+      typename BufferSequence>
   buffers_iterator< BufferSequence > buffers_begin(
       const BufferSequence & buffers);
 
@@ -28643,7 +28643,7 @@ Construct an iterator representing the beginning of the buffers' data.
 Construct an iterator representing the end of the buffers' data. 
 
   template<
-      typename ``[link asio.reference.BufferSequence BufferSequence]``>
+      typename BufferSequence>
   buffers_iterator< BufferSequence > buffers_end(
       const BufferSequence & buffers);
 
@@ -28657,8 +28657,8 @@ Construct an iterator representing the end of the buffers' data.
 A random access iterator over the bytes in a buffer sequence. 
 
   template<
-      typename ``[link asio.reference.BufferSequence BufferSequence]``,
-      typename ``[link asio.reference.ByteType ByteType]`` = char>
+      typename BufferSequence,
+      typename ByteType = char>
   class buffers_iterator
 
 
@@ -28771,7 +28771,7 @@ The const_buffer class provides a safe representation of a buffer that cannot be
 Cast a non-modifiable buffer to a specified pointer to POD type. 
 
   template<
-      typename ``[link asio.reference.PointerToPodType PointerToPodType]``>
+      typename PointerToPodType>
   PointerToPodType buffer_cast(
       const const_buffer & b);
 
@@ -28983,7 +28983,7 @@ Get a random-access iterator to the first element.
 Cast a non-modifiable buffer to a specified pointer to POD type. 
 
   template<
-      typename ``[link asio.reference.PointerToPodType PointerToPodType]``>
+      typename PointerToPodType>
   PointerToPodType buffer_cast(
       const const_buffer & b);
 
@@ -30122,7 +30122,7 @@ Changing the expiry time of a timer while there are pending asynchronous waits c
 Default service implementation for a timer. 
 
   template<
-      typename ``[link asio.reference.TimeType TimeType]``,
+      typename TimeType,
       typename ``[link asio.reference.TimeTraits TimeTraits]`` = asio::time_traits<TimeType>>
   class deadline_timer_service :
     public io_service::service
@@ -31120,7 +31120,7 @@ Default constructor.
       error_category c);
 
   template<
-      typename ``[link asio.reference.ErrorEnum ErrorEnum]``>
+      typename ErrorEnum>
   ``[link asio.reference.error_code.error_code.overload3 error_code]``(
       ErrorEnum e);
 
@@ -31156,7 +31156,7 @@ Construct with specific error code and category.
 Construct from an error code enum. 
 
   template<
-      typename ``[link asio.reference.ErrorEnum ErrorEnum]``>
+      typename ErrorEnum>
   error_code(
       ErrorEnum e);
 
@@ -32972,8 +32972,8 @@ Compare addresses for ordering.
 Output an address as a string. 
 
   template<
-      typename ``[link asio.reference.Elem Elem]``,
-      typename ``[link asio.reference.Traits Traits]``>
+      typename Elem,
+      typename Traits>
   std::basic_ostream< Elem, Traits > & operator<<(
       std::basic_ostream< Elem, Traits > & os,
       const address & addr);
@@ -33599,8 +33599,8 @@ Compare addresses for ordering.
 Output an address as a string. 
 
   template<
-      typename ``[link asio.reference.Elem Elem]``,
-      typename ``[link asio.reference.Traits Traits]``>
+      typename Elem,
+      typename Traits>
   std::basic_ostream< Elem, Traits > & operator<<(
       std::basic_ostream< Elem, Traits > & os,
       const address_v4 & addr);
@@ -34303,8 +34303,8 @@ Compare addresses for ordering.
 Output an address as a string. 
 
   template<
-      typename ``[link asio.reference.Elem Elem]``,
-      typename ``[link asio.reference.Traits Traits]``>
+      typename Elem,
+      typename Traits>
   std::basic_ostream< Elem, Traits > & operator<<(
       std::basic_ostream< Elem, Traits > & os,
       const address_v6 & addr);
@@ -40962,16 +40962,16 @@ Create a pair of connected sockets.
 
   template<
       typename ``[link asio.reference.Protocol Protocol]``,
-      typename ``[link asio.reference.SocketService1 SocketService1]``,
-      typename ``[link asio.reference.SocketService2 SocketService2]``>
+      typename ``[link asio.reference.SocketService SocketService1]``,
+      typename ``[link asio.reference.SocketService SocketService2]``>
   void ``[link asio.reference.local__connect_pair.overload1 connect_pair]``(
       basic_socket< Protocol, SocketService1 > & socket1,
       basic_socket< Protocol, SocketService2 > & socket2);
 
   template<
       typename ``[link asio.reference.Protocol Protocol]``,
-      typename ``[link asio.reference.SocketService1 SocketService1]``,
-      typename ``[link asio.reference.SocketService2 SocketService2]``>
+      typename ``[link asio.reference.SocketService SocketService1]``,
+      typename ``[link asio.reference.SocketService SocketService2]``>
   asio::error_code ``[link asio.reference.local__connect_pair.overload2 connect_pair]``(
       basic_socket< Protocol, SocketService1 > & socket1,
       basic_socket< Protocol, SocketService2 > & socket2,
@@ -40984,8 +40984,8 @@ Create a pair of connected sockets.
 
   template<
       typename ``[link asio.reference.Protocol Protocol]``,
-      typename ``[link asio.reference.SocketService1 SocketService1]``,
-      typename ``[link asio.reference.SocketService2 SocketService2]``>
+      typename ``[link asio.reference.SocketService SocketService1]``,
+      typename ``[link asio.reference.SocketService SocketService2]``>
   void connect_pair(
       basic_socket< Protocol, SocketService1 > & socket1,
       basic_socket< Protocol, SocketService2 > & socket2);
@@ -41002,8 +41002,8 @@ Create a pair of connected sockets.
 
   template<
       typename ``[link asio.reference.Protocol Protocol]``,
-      typename ``[link asio.reference.SocketService1 SocketService1]``,
-      typename ``[link asio.reference.SocketService2 SocketService2]``>
+      typename ``[link asio.reference.SocketService SocketService1]``,
+      typename ``[link asio.reference.SocketService SocketService2]``>
   asio::error_code connect_pair(
       basic_socket< Protocol, SocketService1 > & socket1,
       basic_socket< Protocol, SocketService2 > & socket2,
@@ -42605,7 +42605,7 @@ The mutable_buffer class provides a safe representation of a buffer that can be 
 Cast a non-modifiable buffer to a specified pointer to POD type. 
 
   template<
-      typename ``[link asio.reference.PointerToPodType PointerToPodType]``>
+      typename PointerToPodType>
   PointerToPodType buffer_cast(
       const mutable_buffer & b);
 
@@ -42801,7 +42801,7 @@ Get a random-access iterator to the first element.
 Cast a non-modifiable buffer to a specified pointer to POD type. 
 
   template<
-      typename ``[link asio.reference.PointerToPodType PointerToPodType]``>
+      typename PointerToPodType>
   PointerToPodType buffer_cast(
       const mutable_buffer & b);
 
