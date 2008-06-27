@@ -514,7 +514,7 @@ public:
    *
    * The socket is automatically opened if it is not already open. If the
    * connect fails, and the socket was automatically opened, the socket is
-   * returned to the closed state.
+   * not returned to the closed state.
    *
    * @param peer_endpoint The remote endpoint to which the socket will be
    * connected.
@@ -549,7 +549,7 @@ public:
    *
    * The socket is automatically opened if it is not already open. If the
    * connect fails, and the socket was automatically opened, the socket is
-   * returned to the closed state.
+   * not returned to the closed state.
    *
    * @param peer_endpoint The remote endpoint to which the socket will be
    * connected.
@@ -591,7 +591,7 @@ public:
    *
    * The socket is automatically opened if it is not already open. If the
    * connect fails, and the socket was automatically opened, the socket is
-   * returned to the closed state.
+   * not returned to the closed state.
    *
    * @param peer_endpoint The remote endpoint to which the socket will be
    * connected. Copies will be made of the endpoint object as required.
