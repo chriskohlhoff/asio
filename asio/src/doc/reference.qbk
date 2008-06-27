@@ -2400,7 +2400,7 @@ Start an asynchronous connect.
 
 This function is used to asynchronously connect a socket to the specified remote endpoint. The function call always returns immediately.
 
-The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is returned to the closed state.
+The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is not returned to the closed state.
 
 
 [heading Parameters]
@@ -3657,7 +3657,7 @@ Connect the socket to the specified endpoint.
 
 This function is used to connect a socket to the specified remote endpoint. The function call will block until the connection is successfully made or an error occurs.
 
-The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is returned to the closed state.
+The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is not returned to the closed state.
 
 
 [heading Parameters]
@@ -3710,7 +3710,7 @@ Connect the socket to the specified endpoint.
 
 This function is used to connect a socket to the specified remote endpoint. The function call will block until the connection is successfully made or an error occurs.
 
-The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is returned to the closed state.
+The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is not returned to the closed state.
 
 
 [heading Parameters]
@@ -7791,7 +7791,7 @@ Start an asynchronous connect.
 
 This function is used to asynchronously connect a socket to the specified remote endpoint. The function call always returns immediately.
 
-The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is returned to the closed state.
+The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is not returned to the closed state.
 
 
 [heading Parameters]
@@ -9048,7 +9048,7 @@ Connect the socket to the specified endpoint.
 
 This function is used to connect a socket to the specified remote endpoint. The function call will block until the connection is successfully made or an error occurs.
 
-The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is returned to the closed state.
+The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is not returned to the closed state.
 
 
 [heading Parameters]
@@ -9101,7 +9101,7 @@ Connect the socket to the specified endpoint.
 
 This function is used to connect a socket to the specified remote endpoint. The function call will block until the connection is successfully made or an error occurs.
 
-The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is returned to the closed state.
+The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is not returned to the closed state.
 
 
 [heading Parameters]
@@ -13556,7 +13556,7 @@ Start an asynchronous connect.
 
 This function is used to asynchronously connect a socket to the specified remote endpoint. The function call always returns immediately.
 
-The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is returned to the closed state.
+The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is not returned to the closed state.
 
 
 [heading Parameters]
@@ -14292,7 +14292,7 @@ Connect the socket to the specified endpoint.
 
 This function is used to connect a socket to the specified remote endpoint. The function call will block until the connection is successfully made or an error occurs.
 
-The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is returned to the closed state.
+The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is not returned to the closed state.
 
 
 [heading Parameters]
@@ -14342,7 +14342,7 @@ Connect the socket to the specified endpoint.
 
 This function is used to connect a socket to the specified remote endpoint. The function call will block until the connection is successfully made or an error occurs.
 
-The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is returned to the closed state.
+The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is not returned to the closed state.
 
 
 [heading Parameters]
@@ -19282,7 +19282,7 @@ Start an asynchronous connect.
 
 This function is used to asynchronously connect a socket to the specified remote endpoint. The function call always returns immediately.
 
-The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is returned to the closed state.
+The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is not returned to the closed state.
 
 
 [heading Parameters]
@@ -19942,7 +19942,7 @@ Connect the socket to the specified endpoint.
 
 This function is used to connect a socket to the specified remote endpoint. The function call will block until the connection is successfully made or an error occurs.
 
-The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is returned to the closed state.
+The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is not returned to the closed state.
 
 
 [heading Parameters]
@@ -22367,7 +22367,7 @@ Start an asynchronous connect.
 
 This function is used to asynchronously connect a socket to the specified remote endpoint. The function call always returns immediately.
 
-The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is returned to the closed state.
+The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is not returned to the closed state.
 
 
 [heading Parameters]
@@ -23514,7 +23514,7 @@ Connect the socket to the specified endpoint.
 
 This function is used to connect a socket to the specified remote endpoint. The function call will block until the connection is successfully made or an error occurs.
 
-The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is returned to the closed state.
+The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is not returned to the closed state.
 
 
 [heading Parameters]
@@ -23567,7 +23567,7 @@ Connect the socket to the specified endpoint.
 
 This function is used to connect a socket to the specified remote endpoint. The function call will block until the connection is successfully made or an error occurs.
 
-The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is returned to the closed state.
+The socket is automatically opened if it is not already open. If the connect fails, and the socket was automatically opened, the socket is not returned to the closed state.
 
 
 [heading Parameters]
