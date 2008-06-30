@@ -19,6 +19,8 @@
 ]
 
 [template mdash[] '''&mdash; ''']
+[template indexterm1[term1] '''<indexterm><primary>'''[term1]'''</primary></indexterm>''']
+[template indexterm2[term1 term2] '''<indexterm><primary>'''[term1]'''</primary><secondary>'''[term2]'''</secondary></indexterm>''']
 [def __POSIX__ /POSIX/]
 [def __Windows__ /Windows/]
 [def __accept__ [@http://www.opengroup.org/onlinepubs/000095399/functions/accept.html `accept()`]]
@@ -82,6 +84,14 @@ approach.
       Rationale and design information for Asio.
     ]
   ]
+  [
+    [
+      [link asio.index Index]
+    ]
+    [
+      Book-style text index of Asio documentation.
+    ]
+  ]
 ]
 
 [include using.qbk]
@@ -89,3 +99,4 @@ approach.
 [include examples.qbk]
 [include reference.qbk]
 [include design.qbk]
+[xinclude index.xml]

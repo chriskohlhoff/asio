@@ -802,6 +802,12 @@
 [section:<xsl:value-of select="$id"/><xsl:text> </xsl:text>
 <xsl:value-of select="$class-name"/>::<xsl:value-of select="$name"/>]
 
+<xsl:text>[indexterm2 </xsl:text>
+<xsl:value-of select="$name"/>
+<xsl:text>..</xsl:text>
+<xsl:value-of select="$class-name"/>
+<xsl:text>] </xsl:text>
+
 <xsl:value-of select="briefdescription"/><xsl:text>
 </xsl:text>
 
@@ -831,6 +837,14 @@
 </xsl:call-template>.]<xsl:text>
 
 </xsl:text></xsl:if></xsl:if>
+
+<xsl:if test="$overload-count = 1">
+  <xsl:text>[indexterm2 </xsl:text>
+  <xsl:value-of select="$name"/>
+  <xsl:text>..</xsl:text>
+  <xsl:value-of select="$class-name"/>
+  <xsl:text>] </xsl:text>
+</xsl:if>
 
 <xsl:value-of select="briefdescription"/><xsl:text>
 </xsl:text>
@@ -1073,6 +1087,10 @@
 <xsl:if test="$overload-count &gt; 1 and $overload-position = 1">
 [section:<xsl:value-of select="$id"/><xsl:text> </xsl:text><xsl:value-of select="$name"/>]
 
+<xsl:text>[indexterm1 </xsl:text>
+<xsl:value-of select="$name"/>
+<xsl:text>] </xsl:text>
+
 <xsl:value-of select="briefdescription"/><xsl:text>
 </xsl:text>
 
@@ -1096,6 +1114,12 @@
 </xsl:if><xsl:text> </xsl:text><xsl:value-of select="$name"/>
 <xsl:if test="$overload-count &gt; 1"> (<xsl:value-of
  select="$overload-position"/> of <xsl:value-of select="$overload-count"/> overloads)</xsl:if>]
+
+<xsl:if test="$overload-count = 1">
+  <xsl:text>[indexterm1 </xsl:text>
+  <xsl:value-of select="$name"/>
+  <xsl:text>] </xsl:text>
+</xsl:if>
 
 <xsl:value-of select="briefdescription"/><xsl:text>
 </xsl:text>
