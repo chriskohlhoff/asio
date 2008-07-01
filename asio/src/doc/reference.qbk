@@ -219,7 +219,7 @@ This default implementation is simply:
 [section:async_read async_read]
 
 [indexterm1 async_read] Start an asynchronous operation to read a certain amount of data from a stream. 
-
+      
   template<
       typename ``[link asio.reference.AsyncReadStream AsyncReadStream]``,
       typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``,
@@ -555,7 +555,7 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 [section:async_read_at async_read_at]
 
 [indexterm1 async_read_at] Start an asynchronous operation to read a certain amount of data at the specified offset. 
-
+      
   template<
       typename ``[link asio.reference.AsyncRandomAccessReadDevice AsyncRandomAccessReadDevice]``,
       typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``,
@@ -906,8 +906,8 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 [section:async_read_until async_read_until]
 
-[indexterm1 async_read_until] Start an asynchronous operation to read data into a streambuf until a delimiter is encountered. 
-
+[indexterm1 async_read_until] Start an asynchronous operation to read data into a streambuf until it contains a delimiter, matches a regular expression, or a function object indicates a match. 
+      
   template<
       typename ``[link asio.reference.AsyncReadStream AsyncReadStream]``,
       typename Allocator,
@@ -953,7 +953,7 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 [section:overload1 async_read_until (1 of 4 overloads)]
 
-Start an asynchronous operation to read data into a streambuf until a delimiter is encountered. 
+Start an asynchronous operation to read data into a streambuf until it contains a specified delimiter. 
 
   template<
       typename ``[link asio.reference.AsyncReadStream AsyncReadStream]``,
@@ -990,17 +990,22 @@ This operation is implemented in terms of zero or more calls to the stream's asy
 [[handler][The handler to be called when the read operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
    void handler(
-     const asio::error_code& error,         // Result of operation.
+     // Result of operation.
+     const asio::error_code& error,
 
-     std::size_t bytes_transferred          // The number of bytes in the
-                                            // streambuf's get area up to
-                                            // and including the delimiter.
-                                            // 0 if an error occurred.
+     // The number of bytes in the streambuf's get
+     // area up to and including the delimiter.
+     // 0 if an error occurred.
+     std::size_t bytes_transferred
    ); 
 ``
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using asio::io\_service::post().]]
 
 ]
+
+[heading Remarks]
+      
+After a successful async\_read\_until operation, the streambuf may contain additional data beyond the delimiter. An application will typically leave that data in the streambuf for a subsequent async\_read\_until operation to examine.
 
 [heading Example]
   
@@ -1032,7 +1037,7 @@ To asynchronously read data into a streambuf until a newline is encountered:
 
 [section:overload2 async_read_until (2 of 4 overloads)]
 
-Start an asynchronous operation to read data into a streambuf until a delimiter is encountered. 
+Start an asynchronous operation to read data into a streambuf until it contains a specified delimiter. 
 
   template<
       typename ``[link asio.reference.AsyncReadStream AsyncReadStream]``,
@@ -1069,17 +1074,22 @@ This operation is implemented in terms of zero or more calls to the stream's asy
 [[handler][The handler to be called when the read operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
    void handler(
-     const asio::error_code& error,         // Result of operation.
+     // Result of operation.
+     const asio::error_code& error,
 
-     std::size_t bytes_transferred          // The number of bytes in the
-                                            // streambuf's get area up to
-                                            // and including the delimiter.
-                                            // 0 if an error occurred.
+     // The number of bytes in the streambuf's get
+     // area up to and including the delimiter.
+     // 0 if an error occurred.
+     std::size_t bytes_transferred
    ); 
 ``
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using asio::io\_service::post().]]
 
 ]
+
+[heading Remarks]
+      
+After a successful async\_read\_until operation, the streambuf may contain additional data beyond the delimiter. An application will typically leave that data in the streambuf for a subsequent async\_read\_until operation to examine.
 
 [heading Example]
   
@@ -1111,7 +1121,7 @@ To asynchronously read data into a streambuf until a newline is encountered:
 
 [section:overload3 async_read_until (3 of 4 overloads)]
 
-Start an asynchronous operation to read data into a streambuf until a regular expression is located. 
+Start an asynchronous operation to read data into a streambuf until some part of its data matches a regular expression. 
 
   template<
       typename ``[link asio.reference.AsyncReadStream AsyncReadStream]``,
@@ -1148,19 +1158,23 @@ This operation is implemented in terms of zero or more calls to the stream's asy
 [[handler][The handler to be called when the read operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
    void handler(
-     const asio::error_code& error,         // Result of operation.
+     // Result of operation.
+     const asio::error_code& error,
 
-     std::size_t bytes_transferred          // The number of bytes in the
-                                            // streambuf's get area up to
-                                            // and including the substring
-                                            // that matches the regular.
-                                            // expression. 0 if an error
-                                            // occurred.
+     // The number of bytes in the streambuf's get
+     // area up to and including the substring
+     // that matches the regular. expression.
+     // 0 if an error occurred.
+     std::size_t bytes_transferred
    ); 
 ``
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using asio::io\_service::post().]]
 
 ]
+
+[heading Remarks]
+      
+After a successful async\_read\_until operation, the streambuf may contain additional data beyond that which matched the regular expression. An application will typically leave that data in the streambuf for a subsequent async\_read\_until operation to examine.
 
 [heading Example]
   
@@ -1254,6 +1268,8 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 [heading Remarks]
       
+After a successful async\_read\_until operation, the streambuf may contain additional data beyond that which matched the function object. An application will typically leave that data in the streambuf for a subsequent async\_read\_until operation to examine.
+
 The default implementation of the `is_match_condition` type trait evaluates to true for function pointers and function objects with a `result_type` typedef. It must be specialised for other user-defined function objects.
 
 [heading Examples]
@@ -1324,8 +1340,8 @@ To asynchronously read data into a streambuf until a matching character is found
 
 [section:async_write async_write]
 
-[indexterm1 async_write] Start an asynchronous operation to write all of the supplied data to a stream. 
-
+[indexterm1 async_write] Start an asynchronous operation to write a certain amount of data to a stream. 
+      
   template<
       typename ``[link asio.reference.AsyncWriteStream AsyncWriteStream]``,
       typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``,
@@ -1639,8 +1655,8 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 [section:async_write_at async_write_at]
 
-[indexterm1 async_write_at] Start an asynchronous operation to write all of the supplied data at the specified offset. 
-
+[indexterm1 async_write_at] Start an asynchronous operation to write a certain amount of data at the specified offset. 
+      
   template<
       typename ``[link asio.reference.AsyncRandomAccessWriteDevice AsyncRandomAccessWriteDevice]``,
       typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``,
@@ -26337,8 +26353,8 @@ Automatically resizable buffer class based on std::streambuf.
 
 [section:buffer buffer]
 
-[indexterm1 buffer] Create a new modifiable buffer from an existing buffer. 
-
+[indexterm1 buffer] The asio::buffer function is used to create a buffer object to represent raw memory, an array of POD elements, a vector of POD elements, or a std::string. 
+      
   mutable_buffers_1 ``[link asio.reference.buffer.overload1 buffer]``(
       const mutable_buffer & b);
 
@@ -26459,11 +26475,13 @@ Automatically resizable buffer class based on std::streambuf.
       const std::string & data,
       std::size_t max_size_in_bytes);
 
+A buffer object represents a contiguous region of memory as a 2-tuple consisting of a pointer and size in bytes. A tuple of the form `{void*, size_t}` specifies a mutable (modifiable) region of memory. Similarly, a tuple of the form `{const void*, size_t}` specifies a const (non-modifiable) region of memory. These two forms correspond to the classes mutable_buffer and const_buffer, respectively. To mirror C++'s conversion rules, a mutable_buffer is implicitly convertible to a const_buffer, and the opposite conversion is not permitted.
+
 The simplest use case involves reading or writing a single buffer of a specified size:
 
 
 
-   sock.write(asio::buffer(data, size)); 
+   sock.send(asio::buffer(data, size)); 
 
 
 
@@ -26475,15 +26493,111 @@ An individual buffer may be created from a builtin array, std::vector or boost::
 
 
    char d1[128];
-   size_t bytes_transferred = sock.read(asio::buffer(d1));
+   size_t bytes_transferred = sock.receive(asio::buffer(d1));
 
    std::vector<char> d2(128);
-   bytes_transferred = sock.read(asio::buffer(d2));
+   bytes_transferred = sock.receive(asio::buffer(d2));
 
    boost::array<char, 128> d3;
-   bytes_transferred = sock.read(asio::buffer(d3)); 
+   bytes_transferred = sock.receive(asio::buffer(d3)); 
 
 
+
+
+In all three cases above, the buffers created are exactly 128 bytes long. Note that a vector is [*never]  automatically resized when creating or using a buffer. The buffer size is determined using the vector's `size()` member function, and not its capacity.
+
+
+[heading Accessing Buffer Contents]
+  
+
+
+The contents of a buffer may be accessed using the asio::buffer\_size and asio::buffer\_cast functions:
+
+
+
+   asio::mutable_buffer b1 = ...;
+   std::size_t s1 = asio::buffer_size(b1);
+   unsigned char* p1 = asio::buffer_cast<unsigned char*>(b1);
+
+   asio::const_buffer b2 = ...;
+   std::size_t s2 = asio::buffer_size(b2);
+   const void* p2 = asio::buffer_cast<const void*>(b2); 
+
+
+
+
+The asio::buffer\_cast function permits violations of type safety, so uses of it in application code should be carefully considered.
+
+
+[heading Buffer Invalidation]
+  
+
+
+A buffer object does not have any ownership of the memory it refers to. It is the responsibility of the application to ensure the memory region remains valid until it is no longer required for an I/O operation. When the memory is no longer available, the buffer is said to have been invalidated.
+
+For the asio::buffer overloads that accept an argument of type std::vector, the buffer objects returned are invalidated by any vector operation that also invalidates all references, pointers and iterators referring to the elements in the sequence (C++ Std, 23.2.4)
+
+For the asio::buffer overloads that accept an argument of type std::string, the buffer objects returned are invalidated according to the rules defined for invalidation of references, pointers and iterators referring to elements of the sequence (C++ Std, 21.3).
+
+
+[heading Buffer Arithmetic]
+  
+
+
+Buffer objects may be manipulated using simple arithmetic in a safe way which helps prevent buffer overruns. Consider an array initialised as follows:
+
+
+
+   boost::array<char, 6> a = { 'a', 'b', 'c', 'd', 'e' }; 
+
+
+
+
+A buffer object `b1` created using:
+
+
+
+   b1 = asio::buffer(a); 
+
+
+
+
+represents the entire array, `{ 'a', 'b', 'c', 'd', 'e' }`. An optional second argument to the asio::buffer function may be used to limit the size, in bytes, of the buffer:
+
+
+
+   b2 = asio::buffer(a, 3); 
+
+
+
+
+such that `b2` represents the data `{ 'a', 'b', 'c' }`. Even if the size argument exceeds the actual size of the array, the size of the buffer object created will be limited to the array size.
+
+An offset may be applied to an existing buffer to create a new one:
+
+
+
+   b3 = b1 + 2; 
+
+
+
+
+where `b3` will set to represent `{ 'c', 'd', 'e' }`. If the offset exceeds the size of the existing buffer, the newly created buffer will be empty.
+
+Both an offset and size may be specified to create a buffer that corresponds to a specific range of bytes within an existing buffer:
+
+
+
+   b4 = asio::buffer(b1 + 1, 3); 
+
+
+
+
+so that `b4` will refer to the bytes `{ 'b', 'c', 'd' }`.
+
+
+[heading Buffers and Scatter-Gather I/O]
+  
 
 
 To read or write using multiple buffers (i.e. scatter-gather I/O), multiple buffer objects may be assigned into a container that supports the MutableBufferSequence (for read) or ConstBufferSequence (for write) concepts:
@@ -26498,13 +26612,13 @@ To read or write using multiple buffers (i.e. scatter-gather I/O), multiple buff
      asio::buffer(d1),
      asio::buffer(d2),
      asio::buffer(d3) };
-   bytes_transferred = sock.read(bufs1);
+   bytes_transferred = sock.receive(bufs1);
 
    std::vector<const_buffer> bufs2;
    bufs2.push_back(asio::buffer(d1));
    bufs2.push_back(asio::buffer(d2));
    bufs2.push_back(asio::buffer(d3));
-   bytes_transferred = sock.write(bufs2); 
+   bytes_transferred = sock.send(bufs2); 
 
 
 
@@ -26516,6 +26630,12 @@ Create a new modifiable buffer from an existing buffer.
 
   mutable_buffers_1 buffer(
       const mutable_buffer & b);
+
+
+
+[heading Return Value]
+      
+`mutable_buffers_1(b)`. 
 
 
 
@@ -26533,6 +26653,19 @@ Create a new modifiable buffer from an existing buffer.
 
 
 
+[heading Return Value]
+      
+A mutable_buffers_1 value equivalent to: 
+
+   mutable_buffers_1(
+       buffer_cast<void*>(b),
+       min(buffer_size(b), max_size_in_bytes)); 
+
+
+
+
+
+
 [endsect]
 
 
@@ -26543,6 +26676,12 @@ Create a new non-modifiable buffer from an existing buffer.
 
   const_buffers_1 buffer(
       const const_buffer & b);
+
+
+
+[heading Return Value]
+      
+`const_buffers_1(b)`. 
 
 
 
@@ -26560,6 +26699,19 @@ Create a new non-modifiable buffer from an existing buffer.
 
 
 
+[heading Return Value]
+      
+A const_buffers_1 value equivalent to: 
+
+   const_buffers_1(
+       buffer_cast<const void*>(b),
+       min(buffer_size(b), max_size_in_bytes)); 
+
+
+
+
+
+
 [endsect]
 
 
@@ -26571,6 +26723,12 @@ Create a new modifiable buffer that represents the given memory range.
   mutable_buffers_1 buffer(
       void * data,
       std::size_t size_in_bytes);
+
+
+
+[heading Return Value]
+      
+`mutable_buffers_1(data, size_in_bytes)`. 
 
 
 
@@ -26588,6 +26746,12 @@ Create a new non-modifiable buffer that represents the given memory range.
 
 
 
+[heading Return Value]
+      
+`const_buffers_1(data, size_in_bytes)`. 
+
+
+
 [endsect]
 
 
@@ -26601,6 +26765,19 @@ Create a new modifiable buffer that represents the given POD array.
       std::size_t N>
   mutable_buffers_1 buffer(
       PodType & data);
+
+
+
+[heading Return Value]
+      
+A mutable_buffers_1 value equivalent to: 
+
+   mutable_buffers_1(
+       static_cast<void*>(data),
+       N * sizeof(PodType)); 
+
+
+
 
 
 
@@ -26621,6 +26798,19 @@ Create a new modifiable buffer that represents the given POD array.
 
 
 
+[heading Return Value]
+      
+A mutable_buffers_1 value equivalent to: 
+
+   mutable_buffers_1(
+       static_cast<void*>(data),
+       min(N * sizeof(PodType), max_size_in_bytes)); 
+
+
+
+
+
+
 [endsect]
 
 
@@ -26634,6 +26824,19 @@ Create a new non-modifiable buffer that represents the given POD array.
       std::size_t N>
   const_buffers_1 buffer(
       const PodType & data);
+
+
+
+[heading Return Value]
+      
+A const_buffers_1 value equivalent to: 
+
+   const_buffers_1(
+       static_cast<const void*>(data),
+       N * sizeof(PodType)); 
+
+
+
 
 
 
@@ -26654,6 +26857,19 @@ Create a new non-modifiable buffer that represents the given POD array.
 
 
 
+[heading Return Value]
+      
+A const_buffers_1 value equivalent to: 
+
+   const_buffers_1(
+       static_cast<const void*>(data),
+       min(N * sizeof(PodType), max_size_in_bytes)); 
+
+
+
+
+
+
 [endsect]
 
 
@@ -26667,6 +26883,19 @@ Create a new modifiable buffer that represents the given POD array.
       std::size_t N>
   mutable_buffers_1 buffer(
       boost::array< PodType, N > & data);
+
+
+
+[heading Return Value]
+      
+A mutable_buffers_1 value equivalent to: 
+
+   mutable_buffers_1(
+       data.data(),
+       data.size() * sizeof(PodType)); 
+
+
+
 
 
 
@@ -26687,6 +26916,19 @@ Create a new modifiable buffer that represents the given POD array.
 
 
 
+[heading Return Value]
+      
+A mutable_buffers_1 value equivalent to: 
+
+   mutable_buffers_1(
+       data.data(),
+       min(data.size() * sizeof(PodType), max_size_in_bytes)); 
+
+
+
+
+
+
 [endsect]
 
 
@@ -26700,6 +26942,19 @@ Create a new non-modifiable buffer that represents the given POD array.
       std::size_t N>
   const_buffers_1 buffer(
       boost::array< const PodType, N > & data);
+
+
+
+[heading Return Value]
+      
+A const_buffers_1 value equivalent to: 
+
+   const_buffers_1(
+       data.data(),
+       data.size() * sizeof(PodType)); 
+
+
+
 
 
 
@@ -26720,6 +26975,19 @@ Create a new non-modifiable buffer that represents the given POD array.
 
 
 
+[heading Return Value]
+      
+A const_buffers_1 value equivalent to: 
+
+   const_buffers_1(
+       data.data(),
+       min(data.size() * sizeof(PodType), max_size_in_bytes)); 
+
+
+
+
+
+
 [endsect]
 
 
@@ -26733,6 +27001,19 @@ Create a new non-modifiable buffer that represents the given POD array.
       std::size_t N>
   const_buffers_1 buffer(
       const boost::array< PodType, N > & data);
+
+
+
+[heading Return Value]
+      
+A const_buffers_1 value equivalent to: 
+
+   const_buffers_1(
+       data.data(),
+       data.size() * sizeof(PodType)); 
+
+
+
 
 
 
@@ -26753,6 +27034,19 @@ Create a new non-modifiable buffer that represents the given POD array.
 
 
 
+[heading Return Value]
+      
+A const_buffers_1 value equivalent to: 
+
+   const_buffers_1(
+       data.data(),
+       min(data.size() * sizeof(PodType), max_size_in_bytes)); 
+
+
+
+
+
+
 [endsect]
 
 
@@ -26766,6 +27060,17 @@ Create a new modifiable buffer that represents the given POD vector.
       typename Allocator>
   mutable_buffers_1 buffer(
       std::vector< PodType, Allocator > & data);
+
+
+
+[heading Return Value]
+      
+A mutable_buffers_1 value equivalent to: 
+
+   mutable_buffers_1(
+       data.size() ? &data[0] : 0,
+       data.size() * sizeof(PodType)); 
+
 
 
 
@@ -26792,6 +27097,17 @@ Create a new modifiable buffer that represents the given POD vector.
 
 
 
+[heading Return Value]
+      
+A mutable_buffers_1 value equivalent to: 
+
+   mutable_buffers_1(
+       data.size() ? &data[0] : 0,
+       min(data.size() * sizeof(PodType), max_size_in_bytes)); 
+
+
+
+
 [heading Remarks]
       
 The buffer is invalidated by any vector operation that would also invalidate iterators. 
@@ -26811,6 +27127,17 @@ Create a new non-modifiable buffer that represents the given POD vector.
       typename Allocator>
   const_buffers_1 buffer(
       const std::vector< PodType, Allocator > & data);
+
+
+
+[heading Return Value]
+      
+A const_buffers_1 value equivalent to: 
+
+   const_buffers_1(
+       data.size() ? &data[0] : 0,
+       data.size() * sizeof(PodType)); 
+
 
 
 
@@ -26837,6 +27164,17 @@ Create a new non-modifiable buffer that represents the given POD vector.
 
 
 
+[heading Return Value]
+      
+A const_buffers_1 value equivalent to: 
+
+   const_buffers_1(
+       data.size() ? &data[0] : 0,
+       min(data.size() * sizeof(PodType), max_size_in_bytes)); 
+
+
+
+
 [heading Remarks]
       
 The buffer is invalidated by any vector operation that would also invalidate iterators. 
@@ -26856,6 +27194,10 @@ Create a new non-modifiable buffer that represents the given string.
 
 
 
+[heading Return Value]
+      
+`const_buffers_1(data.data(), data.size())`.
+
 [heading Remarks]
       
 The buffer is invalidated by any non-const operation called on the given string object. 
@@ -26873,6 +27215,17 @@ Create a new non-modifiable buffer that represents the given string.
   const_buffers_1 buffer(
       const std::string & data,
       std::size_t max_size_in_bytes);
+
+
+
+[heading Return Value]
+      
+A const_buffers_1 value equivalent to: 
+
+   const_buffers_1(
+       data.data(),
+       min(data.size(), max_size_in_bytes)); 
+
 
 
 
@@ -28931,7 +29284,7 @@ Adapts a single non-modifiable buffer so that it meets the requirements of the C
   
   [
     [[link asio.reference.const_buffers_1.const_buffers_1 [*const_buffers_1]]]
-    [Construct to represent a single non-modifiable buffer. ]
+    [Construct to represent a given memory range. ]
   ]
   
   [
@@ -29008,10 +29361,35 @@ Adapts a single non-modifiable buffer so that it meets the requirements of the C
 [endsect]
 
 
-
 [section:const_buffers_1 const_buffers_1::const_buffers_1]
 
-[indexterm2 const_buffers_1..const_buffers_1] Construct to represent a single non-modifiable buffer. 
+[indexterm2 const_buffers_1..const_buffers_1] Construct to represent a given memory range. 
+
+  ``[link asio.reference.const_buffers_1.const_buffers_1.overload1 const_buffers_1]``(
+      const void * data,
+      std::size_t size);
+
+  ``[link asio.reference.const_buffers_1.const_buffers_1.overload2 const_buffers_1]``(
+      const const_buffer & b);
+
+
+[section:overload1 const_buffers_1::const_buffers_1 (1 of 2 overloads)]
+
+Construct to represent a given memory range. 
+
+  const_buffers_1(
+      const void * data,
+      std::size_t size);
+
+
+
+[endsect]
+
+
+
+[section:overload2 const_buffers_1::const_buffers_1 (2 of 2 overloads)]
+
+Construct to represent a single non-modifiable buffer. 
 
   const_buffers_1(
       const const_buffer & b);
@@ -29020,6 +29398,8 @@ Adapts a single non-modifiable buffer so that it meets the requirements of the C
 
 [endsect]
 
+
+[endsect]
 
 
 [section:const_iterator const_buffers_1::const_iterator]
@@ -30824,7 +31204,7 @@ Set the expiry time for the timer relative to now.
 [section:error__make_error_code error::make_error_code]
 
 [indexterm1 error::make_error_code] 
-
+    
   asio::error_code ``[link asio.reference.error__make_error_code.overload1 make_error_code]``(
       basic_errors e);
 
@@ -31535,6 +31915,38 @@ For example:
 
 
 
+[heading Stopping the io_service from running out of work]
+  
+
+
+Some applications may need to prevent an io\_service's run() call from returning when there is no more work to do. For example, the io_service may be being run in a background thread that is launched prior to the application's asynchronous operations. The run() call may be kept running by creating an object of type 
+[link asio.reference.io_service__work io_service::work]:
+
+
+
+   asio::io_service io_service;
+   asio::io_service::work work(io_service);
+   ... 
+
+
+
+
+To effect a shutdown, the application will then need to call the io\_service's stop() member function. This will cause the io_servicerun() call to return as soon as possible, abandoning unfinished operations and without permitting ready handlers to be dispatched.
+
+Alternatively, if the application requires that all operations and handlers be allowed to finish normally, the work object may be explicitly destroyed.
+
+
+
+   asio::io_service io_service;
+   auto_ptr<asio::io_service::work> work(
+       new asio::io_service::work(io_service));
+   ...
+   work.reset(); // Allow run() to exit. 
+
+
+
+
+
 [section:add_service io_service::add_service]
 
 [indexterm2 add_service..io_service] Add a service object to the io_service. 
@@ -31918,9 +32330,13 @@ The number of handlers that were executed.
 
 [variablelist
   
-[[asio::system_error][Thrown on failure. ]]
+[[asio::system_error][Thrown on failure.]]
 
 ]
+
+[heading Remarks]
+      
+The poll() function may also be used to dispatch ready handlers, but without blocking. 
 
 
 
@@ -31954,7 +32370,11 @@ The run() function may be safely called again once it has completed only after a
 
 [heading Return Value]
       
-The number of handlers that were executed. 
+The number of handlers that were executed.
+
+[heading Remarks]
+      
+The poll() function may also be used to dispatch ready handlers, but without blocking. 
 
 
 
@@ -36270,7 +36690,7 @@ Construct with specified host name and service name for a given protocol.
 [section:ip__host_name ip::host_name]
 
 [indexterm1 ip::host_name] Get the current host name. 
-
+    
   std::string ``[link asio.reference.ip__host_name.overload1 host_name]``();
 
   std::string ``[link asio.reference.ip__host_name.overload2 host_name]``(
@@ -40959,7 +41379,7 @@ Set the path associated with the endpoint.
 [section:local__connect_pair local::connect_pair]
 
 [indexterm1 local::connect_pair] Create a pair of connected sockets. 
-
+    
   template<
       typename ``[link asio.reference.Protocol Protocol]``,
       typename ``[link asio.reference.SocketService SocketService1]``,
@@ -42754,7 +43174,7 @@ Adapts a single modifiable buffer so that it meets the requirements of the Mutab
   
   [
     [[link asio.reference.mutable_buffers_1.mutable_buffers_1 [*mutable_buffers_1]]]
-    [Construct to represent a single modifiable buffer. ]
+    [Construct to represent a given memory range. ]
   ]
   
 ]
@@ -42851,10 +43271,35 @@ Adapts a single modifiable buffer so that it meets the requirements of the Mutab
 [endsect]
 
 
-
 [section:mutable_buffers_1 mutable_buffers_1::mutable_buffers_1]
 
-[indexterm2 mutable_buffers_1..mutable_buffers_1] Construct to represent a single modifiable buffer. 
+[indexterm2 mutable_buffers_1..mutable_buffers_1] Construct to represent a given memory range. 
+
+  ``[link asio.reference.mutable_buffers_1.mutable_buffers_1.overload1 mutable_buffers_1]``(
+      void * data,
+      std::size_t size);
+
+  ``[link asio.reference.mutable_buffers_1.mutable_buffers_1.overload2 mutable_buffers_1]``(
+      const mutable_buffer & b);
+
+
+[section:overload1 mutable_buffers_1::mutable_buffers_1 (1 of 2 overloads)]
+
+Construct to represent a given memory range. 
+
+  mutable_buffers_1(
+      void * data,
+      std::size_t size);
+
+
+
+[endsect]
+
+
+
+[section:overload2 mutable_buffers_1::mutable_buffers_1 (2 of 2 overloads)]
+
+Construct to represent a single modifiable buffer. 
 
   mutable_buffers_1(
       const mutable_buffer & b);
@@ -42863,6 +43308,8 @@ Adapts a single modifiable buffer so that it meets the requirements of the Mutab
 
 [endsect]
 
+
+[endsect]
 
 [section:operator_plus_ mutable_buffers_1::operator+]
 
@@ -46761,7 +47208,7 @@ Default service implementation for a raw socket.
 [section:read read]
 
 [indexterm1 read] Attempt to read a certain amount of data from a stream before returning. 
-
+      
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
       typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
@@ -47214,7 +47661,7 @@ The number of bytes read. If an error occurs, returns the total number of bytes 
 [section:read_at read_at]
 
 [indexterm1 read_at] Attempt to read a certain amount of data at the specified offset before returning. 
-
+      
   template<
       typename ``[link asio.reference.SyncRandomAccessReadDevice SyncRandomAccessReadDevice]``,
       typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
@@ -47690,8 +48137,8 @@ The number of bytes read. If an error occurs, returns the total number of bytes 
 
 [section:read_until read_until]
 
-[indexterm1 read_until] Read data into a streambuf until a delimiter is encountered. 
-
+[indexterm1 read_until] Read data into a streambuf until it contains a delimiter, matches a regular expression, or a function object indicates a match. 
+      
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator>
@@ -47767,7 +48214,7 @@ The number of bytes read. If an error occurs, returns the total number of bytes 
 
 [section:overload1 read_until (1 of 8 overloads)]
 
-Read data into a streambuf until a delimiter is encountered. 
+Read data into a streambuf until it contains a specified delimiter. 
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
@@ -47814,6 +48261,10 @@ The number of bytes in the streambuf's get area up to and including the delimite
 
 ]
 
+[heading Remarks]
+      
+After a successful read\_until operation, the streambuf may contain additional data beyond the delimiter. An application will typically leave that data in the streambuf for a subsequent read\_until operation to examine.
+
 [heading Example]
   
 To read data into a streambuf until a newline is encountered: 
@@ -47835,7 +48286,7 @@ To read data into a streambuf until a newline is encountered:
 
 [section:overload2 read_until (2 of 8 overloads)]
 
-Read data into a streambuf until a delimiter is encountered. 
+Read data into a streambuf until it contains a specified delimiter. 
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
@@ -47874,7 +48325,11 @@ This operation is implemented in terms of zero or more calls to the stream's rea
 
 [heading Return Value]
       
-The number of bytes in the streambuf's get area up to and including the delimiter. Returns 0 if an error occurred. 
+The number of bytes in the streambuf's get area up to and including the delimiter. Returns 0 if an error occurred.
+
+[heading Remarks]
+      
+After a successful read\_until operation, the streambuf may contain additional data beyond the delimiter. An application will typically leave that data in the streambuf for a subsequent read\_until operation to examine. 
 
 
 
@@ -47884,7 +48339,7 @@ The number of bytes in the streambuf's get area up to and including the delimite
 
 [section:overload3 read_until (3 of 8 overloads)]
 
-Read data into a streambuf until a delimiter is encountered. 
+Read data into a streambuf until it contains a specified delimiter. 
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
@@ -47931,6 +48386,10 @@ The number of bytes in the streambuf's get area up to and including the delimite
 
 ]
 
+[heading Remarks]
+      
+After a successful read\_until operation, the streambuf may contain additional data beyond the delimiter. An application will typically leave that data in the streambuf for a subsequent read\_until operation to examine.
+
 [heading Example]
   
 To read data into a streambuf until a newline is encountered: 
@@ -47952,7 +48411,7 @@ To read data into a streambuf until a newline is encountered:
 
 [section:overload4 read_until (4 of 8 overloads)]
 
-Read data into a streambuf until a delimiter is encountered. 
+Read data into a streambuf until it contains a specified delimiter. 
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
@@ -47991,7 +48450,11 @@ This operation is implemented in terms of zero or more calls to the stream's rea
 
 [heading Return Value]
       
-The number of bytes in the streambuf's get area up to and including the delimiter. Returns 0 if an error occurred. 
+The number of bytes in the streambuf's get area up to and including the delimiter. Returns 0 if an error occurred.
+
+[heading Remarks]
+      
+After a successful read\_until operation, the streambuf may contain additional data beyond the delimiter. An application will typically leave that data in the streambuf for a subsequent read\_until operation to examine. 
 
 
 
@@ -48001,7 +48464,7 @@ The number of bytes in the streambuf's get area up to and including the delimite
 
 [section:overload5 read_until (5 of 8 overloads)]
 
-Read data into a streambuf until a regular expression is located. 
+Read data into a streambuf until some part of the data it contains matches a regular expression. 
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
@@ -48048,6 +48511,10 @@ The number of bytes in the streambuf's get area up to and including the substrin
 
 ]
 
+[heading Remarks]
+      
+After a successful read\_until operation, the streambuf may contain additional data beyond that which matched the regular expression. An application will typically leave that data in the streambuf for a subsequent read\_until operation to examine.
+
 [heading Example]
   
 To read data into a streambuf until a CR-LF sequence is encountered: 
@@ -48069,7 +48536,7 @@ To read data into a streambuf until a CR-LF sequence is encountered:
 
 [section:overload6 read_until (6 of 8 overloads)]
 
-Read data into a streambuf until a regular expression is located. 
+Read data into a streambuf until some part of the data it contains matches a regular expression. 
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
@@ -48108,7 +48575,11 @@ This operation is implemented in terms of zero or more calls to the stream's rea
 
 [heading Return Value]
       
-The number of bytes in the streambuf's get area up to and including the substring that matches the regular expression. Returns 0 if an error occurred. 
+The number of bytes in the streambuf's get area up to and including the substring that matches the regular expression. Returns 0 if an error occurred.
+
+[heading Remarks]
+      
+After a successful read\_until operation, the streambuf may contain additional data beyond that which matched the regular expression. An application will typically leave that data in the streambuf for a subsequent read\_until operation to examine. 
 
 
 
@@ -48177,6 +48648,8 @@ The number of bytes in the streambuf's get area that have been fully consumed by
 
 [heading Remarks]
       
+After a successful read\_until operation, the streambuf may contain additional data beyond that which matched the function object. An application will typically leave that data in the streambuf for a subsequent
+
 The default implementation of the `is_match_condition` type trait evaluates to true for function pointers and function objects with a `result_type` typedef. It must be specialised for other user-defined function objects.
 
 [heading Examples]
@@ -48295,6 +48768,8 @@ The number of bytes in the streambuf's get area that have been fully consumed by
 
 [heading Remarks]
       
+After a successful read\_until operation, the streambuf may contain additional data beyond that which matched the function object. An application will typically leave that data in the streambuf for a subsequent
+
 The default implementation of the `is_match_condition` type trait evaluates to true for function pointers and function objects with a `result_type` typedef. It must be specialised for other user-defined function objects. 
 
 
@@ -60076,8 +60551,8 @@ Default service implementation for a stream handle.
 
 [section:write write]
 
-[indexterm1 write] Write all of the supplied data to a stream before returning. 
-
+[indexterm1 write] Write a certain amount of data to a stream before returning. 
+      
   template<
       typename ``[link asio.reference.SyncWriteStream SyncWriteStream]``,
       typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
@@ -60535,8 +61010,8 @@ The number of bytes written. If an error occurs, returns the total number of byt
 
 [section:write_at write_at]
 
-[indexterm1 write_at] Write all of the supplied data at the specified offset before returning. 
-
+[indexterm1 write_at] Write a certain amount of data at a specified offset before returning. 
+      
   template<
       typename ``[link asio.reference.SyncRandomAccessWriteDevice SyncRandomAccessWriteDevice]``,
       typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
