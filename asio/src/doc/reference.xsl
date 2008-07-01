@@ -1091,8 +1091,18 @@
 <xsl:value-of select="$name"/>
 <xsl:text>] </xsl:text>
 
-<xsl:value-of select="briefdescription"/><xsl:text>
-</xsl:text>
+<xsl:choose>
+  <xsl:when test="count(/doxygen/compounddef[@kind='group' and compoundname=$name]) &gt; 0">
+    <xsl:for-each select="/doxygen/compounddef[@kind='group' and compoundname=$name]">
+      <xsl:value-of select="briefdescription"/><xsl:text>
+      </xsl:text>
+    </xsl:for-each>
+  </xsl:when>
+  <xsl:otherwise>
+    <xsl:value-of select="briefdescription"/><xsl:text>
+    </xsl:text>
+  </xsl:otherwise>
+</xsl:choose>
 
 <xsl:for-each select="../memberdef[name = $unqualified-name]">
 <xsl:text>

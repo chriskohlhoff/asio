@@ -29,6 +29,9 @@ namespace asio {
 
 /**
  * @defgroup read asio::read
+ *
+ * @brief Attempt to read a certain amount of data from a stream before
+ * returning.
  */
 /*@{*/
 
@@ -269,6 +272,9 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
 /*@}*/
 /**
  * @defgroup async_read asio::async_read
+ *
+ * @brief Start an asynchronous operation to read a certain amount of data from
+ * a stream.
  */
 /*@{*/
 
