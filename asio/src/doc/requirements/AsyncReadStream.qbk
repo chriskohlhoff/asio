@@ -7,8 +7,6 @@
 
 [section:AsyncReadStream Buffer-oriented asynchronous read stream requirements]
 
-[index1 AsyncReadStream]
-
 In the table below, `a` denotes an asynchronous read stream object, `mb`
 denotes an object satisfying [link
 asio.reference.MutableBufferSequence mutable buffer sequence]

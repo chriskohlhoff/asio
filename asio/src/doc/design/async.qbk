@@ -7,7 +7,6 @@
 
 [section:async Asynchronous Operations]
 
-[index1 Proactor]
 The proposed library offers side-by-side support for synchronous and
 asynchronous operations. The asynchronous support is based on the Proactor
 design pattern [link asio.design.async.references \[POSA2\]], and the
