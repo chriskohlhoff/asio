@@ -115,6 +115,7 @@ nobase_include_HEADERS = \
 	asio/impl/read.ipp \
 	asio/impl/read_at.ipp \
 	asio/impl/read_until.ipp \
+	asio/impl/serial_port_base.ipp \
 	asio/impl/write.ipp \
 	asio/impl/write_at.ipp \
 	asio/io_service.hpp \
