@@ -21,6 +21,7 @@
 #include "asio/detail/push_options.hpp"
 #include <vector>
 #include <boost/assert.hpp>
+#include <boost/config.hpp>
 #include <boost/shared_ptr.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -86,11 +87,15 @@ private:
   private:
     static unsigned long openssl_id_func()
     {
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+      return ::GetCurrentThreadId();
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
       void* id = instance()->thread_id_;
       if (id == 0)
         instance()->thread_id_ = id = &id; // Ugh.
       BOOST_ASSERT(sizeof(unsigned long) >= sizeof(void*));
       return reinterpret_cast<unsigned long>(id);
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
     }
 
     static void openssl_locking_func(int mode, int n, 
@@ -105,8 +110,10 @@ private:
     // Mutexes to be used in locking callbacks.
     std::vector<boost::shared_ptr<asio::detail::mutex> > mutexes_;
 
+#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
     // The thread identifiers to be used by openssl.
     asio::detail::tss_ptr<void> thread_id_;
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
   };
 
 public:
