@@ -1,0 +1,8 @@
+.deps
+.dirstamp
+*.exe
+connect_pair
+*.ilk
+*.manifest
+*.pdb
+*.tds

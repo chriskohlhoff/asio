@@ -84,6 +84,7 @@ noinst_PROGRAMS = \
 	examples/invocation/prioritised_handlers \
 	examples/iostreams/daytime_client \
 	examples/iostreams/daytime_server \
+	examples/local/connect_pair \
 	examples/multicast/receiver \
 	examples/multicast/sender \
 	examples/nonblocking/third_party_lib \
@@ -336,6 +337,7 @@ endif
 examples_invocation_prioritised_handlers_SOURCES = examples/invocation/prioritised_handlers.cpp
 examples_iostreams_daytime_client_SOURCES = examples/iostreams/daytime_client.cpp
 examples_iostreams_daytime_server_SOURCES = examples/iostreams/daytime_server.cpp
+examples_local_connect_pair_SOURCES = examples/local/connect_pair.cpp
 examples_multicast_receiver_SOURCES = examples/multicast/receiver.cpp
 examples_multicast_sender_SOURCES = examples/multicast/sender.cpp
 examples_nonblocking_third_party_lib_SOURCES = examples/nonblocking/third_party_lib.cpp
