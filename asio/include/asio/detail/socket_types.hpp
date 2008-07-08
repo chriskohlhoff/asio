@@ -187,7 +187,12 @@ const int shutdown_both = SHUT_RDWR;
 const int message_peek = MSG_PEEK;
 const int message_out_of_band = MSG_OOB;
 const int message_do_not_route = MSG_DONTROUTE;
+# if defined(IOV_MAX)
 const int max_iov_len = IOV_MAX;
+# else
+// POSIX platforms are not required to define IOV_MAX.
+const int max_iov_len = 16;
+# endif
 #endif
 const int custom_socket_option_level = 0xA5100000;
 const int enable_connection_aborted_option = 1;
