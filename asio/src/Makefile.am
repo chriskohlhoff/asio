@@ -84,9 +84,6 @@ noinst_PROGRAMS = \
 	examples/invocation/prioritised_handlers \
 	examples/iostreams/daytime_client \
 	examples/iostreams/daytime_server \
-	examples/local/connect_pair \
-	examples/local/stream_server \
-	examples/local/stream_client \
 	examples/multicast/receiver \
 	examples/multicast/sender \
 	examples/nonblocking/third_party_lib \
@@ -111,6 +108,13 @@ noinst_PROGRAMS = \
 	examples/tutorial/daytime5/server \
 	examples/tutorial/daytime6/server \
 	examples/tutorial/daytime7/server
+
+if !WINDOWS_TARGET
+noinst_PROGRAMS += \
+	examples/local/connect_pair \
+	examples/local/stream_server \
+	examples/local/stream_client
+endif
 
 if HAVE_OPENSSL
 
@@ -339,9 +343,6 @@ endif
 examples_invocation_prioritised_handlers_SOURCES = examples/invocation/prioritised_handlers.cpp
 examples_iostreams_daytime_client_SOURCES = examples/iostreams/daytime_client.cpp
 examples_iostreams_daytime_server_SOURCES = examples/iostreams/daytime_server.cpp
-examples_local_connect_pair_SOURCES = examples/local/connect_pair.cpp
-examples_local_stream_server_SOURCES = examples/local/stream_server.cpp
-examples_local_stream_client_SOURCES = examples/local/stream_client.cpp
 examples_multicast_receiver_SOURCES = examples/multicast/receiver.cpp
 examples_multicast_sender_SOURCES = examples/multicast/sender.cpp
 examples_nonblocking_third_party_lib_SOURCES = examples/nonblocking/third_party_lib.cpp
@@ -368,6 +369,12 @@ examples_tutorial_daytime4_client_SOURCES = examples/tutorial/daytime4/client.cp
 examples_tutorial_daytime5_server_SOURCES = examples/tutorial/daytime5/server.cpp
 examples_tutorial_daytime6_server_SOURCES = examples/tutorial/daytime6/server.cpp
 examples_tutorial_daytime7_server_SOURCES = examples/tutorial/daytime7/server.cpp
+
+if !WINDOWS_TARGET
+examples_local_connect_pair_SOURCES = examples/local/connect_pair.cpp
+examples_local_stream_server_SOURCES = examples/local/stream_server.cpp
+examples_local_stream_client_SOURCES = examples/local/stream_client.cpp
+endif
 
 if HAVE_OPENSSL
 

@@ -136,4 +136,6 @@ int main(int argc, char* argv[])
   }
 }
 
+#else // defined(ASIO_HAS_LOCAL_SOCKETS)
+# error Local sockets not available on this platform.
 #endif // defined(ASIO_HAS_LOCAL_SOCKETS)
