@@ -2,6 +2,8 @@
 .dirstamp
 *.exe
 connect_pair
+stream_server
+stream_client
 *.ilk
 *.manifest
 *.pdb
