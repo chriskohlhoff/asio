@@ -13,7 +13,7 @@ sub determine_boost_dir
   while (my $line = <$input>)
   {
     chomp($line);
-    if ($line =~ /AM_INIT_AUTOMAKE\(asio, \[([^\]]*)\]\)/)
+    if ($line =~ /AC_INIT\(asio, \[([^\]]*)\]\)/)
     {
       $asio_version = $1;
       $asio_version =~ s/\./_/g;
@@ -618,6 +618,7 @@ sub copy_examples
       "src/examples/http/server3",
       "src/examples/invocation",
       "src/examples/iostreams",
+      "src/examples/local",
       "src/examples/multicast",
       "src/examples/nonblocking",
       "src/examples/porthopper",
