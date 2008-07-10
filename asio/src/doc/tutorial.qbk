@@ -88,7 +88,8 @@ Since this example users timers, we need to include the appropriate Boost.Date\_
 
 
 
-All programs that use asio need to have at least one asio::io\_service object. This class provides access to I/O functionality. We declare an object of this type first thing in the main function.
+All programs that use asio need to have at least one 
+[link asio.reference.io_service io_service] object. This class provides access to I/O functionality. We declare an object of this type first thing in the main function.
 
 
 
@@ -106,9 +107,9 @@ Next we declare an object of type asio::deadline\_timer. The core asio classes t
 
 
 
-In this simple example we perform a blocking wait on the timer. That is, the call to asio::deadline\_timer::wait() will not return until the timer has expired, 5 seconds after it was created (i.e. not from when the wait starts).
+In this simple example we perform a blocking wait on the timer. That is, the call to [link asio.reference.basic_deadline_timer.wait deadline_timer::wait()] will not return until the timer has expired, 5 seconds after it was created (i.e. not from when the wait starts).
 
-A deadline timer is always in one of two states: "expired" or "not expired". If the asio::deadline\_timer::wait() function is called on an expired timer, it will return immediately.
+A deadline timer is always in one of two states: "expired" or "not expired". If the [link asio.reference.basic_deadline_timer.wait deadline_timer::wait()] function is called on an expired timer, it will return immediately.
 
 
   ``''''''``  t.wait();
@@ -201,20 +202,20 @@ Using asio's asynchronous functionality means having a callback function that wi
 
 
 
-Next, instead of doing a blocking wait as in tutorial Timer.1, we call the asio::deadline\_timer::async\_wait() function to perform an asynchronous wait. When calling this function we pass the `print` callback handler that was defined above.
+Next, instead of doing a blocking wait as in tutorial Timer.1, we call the [link asio.reference.basic_deadline_timer.async_wait deadline_timer::async_wait()] function to perform an asynchronous wait. When calling this function we pass the `print` callback handler that was defined above.
 
 
   ``''''''``  t.async_wait(print);
 
 
 
-Finally, we must call the asio::io\_service::run() member function on the io\_service object.
+Finally, we must call the [link asio.reference.io_service.run io_service::run()] member function on the io\_service object.
 
-The asio library provides a guarantee that callback handlers will only be called from threads that are currently calling asio::io\_service::run(). Therefore unless the asio::io\_service::run() function is called the callback for the asynchronous wait completion will never be invoked.
+The asio library provides a guarantee that callback handlers will only be called from threads that are currently calling [link asio.reference.io_service.run io_service::run()]. Therefore unless the [link asio.reference.io_service.run io_service::run()] function is called the callback for the asynchronous wait completion will never be invoked.
 
-The asio::io\_service::run() function will also continue to run while there is still "work" to do. In this example, the work is the asynchronous wait on the timer, so the call will not return until the timer has expired and the callback has completed.
+The [link asio.reference.io_service.run io_service::run()] function will also continue to run while there is still "work" to do. In this example, the work is the asynchronous wait on the timer, so the call will not return until the timer has expired and the callback has completed.
 
-It is important to remember to give the io\_service some work to do before calling asio::io\_service::run(). For example, if we had omitted the above call to asio::deadline\_timer::async\_wait(), the io\_service would not have had any work to do, and consequently asio::io\_service::run() would have returned immediately.
+It is important to remember to give the io\_service some work to do before calling [link asio.reference.io_service.run io_service::run()]. For example, if we had omitted the above call to [link asio.reference.basic_deadline_timer.async_wait deadline_timer::async_wait()], the io\_service would not have had any work to do, and consequently [link asio.reference.io_service.run io_service::run()] would have returned immediately.
 
 
   ``''''''``  io.run();
@@ -306,7 +307,7 @@ To implement a repeating timer using asio you need to change the timer's expiry 
 
 
 
-As mentioned above, this tutorial program uses a counter to stop running when the timer fires for the sixth time. However you will observe that there is no explicit call to ask the io\_service to stop. Recall that in tutorial Timer.2 we learnt that the asio::io\_service::run() function completes when there is no more "work" to do. By not starting a new asynchronous wait on the timer when `count` reaches 5, the io\_service will run out of work and stop running.
+As mentioned above, this tutorial program uses a counter to stop running when the timer fires for the sixth time. However you will observe that there is no explicit call to ask the io\_service to stop. Recall that in tutorial Timer.2 we learnt that the [link asio.reference.io_service.run io_service::run()] function completes when there is no more "work" to do. By not starting a new asynchronous wait on the timer when `count` reaches 5, the io\_service will run out of work and stop running.
 
 
   ``''''''``  if (*count < 5)
@@ -324,7 +325,7 @@ Next we move the expiry time for the timer along by one second from the previous
 
 
 
-Then we start a new asynchronous wait on the timer. As you can see, the [link asio.tutorial.boost_bind boost::bind]  function is used to associate the extra parameters with your callback handler. The asio::deadline\_timer::async\_wait() function expects a handler function (or function object) with the signature `void(const asio::error_code&)`. Binding the additional parameters converts your `print` function into a function object that matches the signature correctly.
+Then we start a new asynchronous wait on the timer. As you can see, the [link asio.tutorial.boost_bind boost::bind]  function is used to associate the extra parameters with your callback handler. The [link asio.reference.basic_deadline_timer.async_wait deadline_timer::async_wait()] function expects a handler function (or function object) with the signature `void(const asio::error_code&)`. Binding the additional parameters converts your `print` function into a function object that matches the signature correctly.
 
 See the [@http://www.boost.org/libs/bind/bind.html Boost.Bind documentation] for more information on how to use [link asio.tutorial.boost_bind boost::bind] .
 
@@ -351,7 +352,7 @@ A new `count` variable is added so that we can stop the program when the timer f
 
 
 
-As in Step 4, when making the call to asio::deadline\_timer::async\_wait() from `main` we bind the additional parameters needed for the `print` function.
+As in Step 4, when making the call to [link asio.reference.basic_deadline_timer.async_wait deadline_timer::async_wait()] from `main` we bind the additional parameters needed for the `print` function.
 
 
   ``''''''``  t.async_wait(boost::bind(print,
@@ -612,7 +613,7 @@ Return to [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a h
 
 This tutorial demonstrates the use of the asio::strand class to synchronise callback handlers in a multithreaded program.
 
-The previous four tutorials avoided the issue of handler synchronisation by calling the asio::io\_service::run() function from one thread only. As you already know, the asio library provides a guarantee that callback handlers will only be called from threads that are currently calling asio::io\_service::run(). Consequently, calling asio::io\_service::run() from only one thread ensures that callback handlers cannot run concurrently.
+The previous four tutorials avoided the issue of handler synchronisation by calling the [link asio.reference.io_service.run io_service::run()] function from one thread only. As you already know, the asio library provides a guarantee that callback handlers will only be called from threads that are currently calling [link asio.reference.io_service.run io_service::run()]. Consequently, calling [link asio.reference.io_service.run io_service::run()] from only one thread ensures that callback handlers cannot run concurrently.
 
 The single threaded approach is usually the best place to start when developing applications using asio. The downside is the limitations it places on programs, particularly servers, including:
 
@@ -624,7 +625,7 @@ The single threaded approach is usually the best place to start when developing 
 
 
 
-If you find yourself running into these limitations, an alternative approach is to have a pool of threads calling asio::io\_service::run(). However, as this allows handlers to execute concurrently, we need a method of synchronisation when handlers might be accessing a shared, thread-unsafe resource.
+If you find yourself running into these limitations, an alternative approach is to have a pool of threads calling [link asio.reference.io_service.run io_service::run()]. However, as this allows handlers to execute concurrently, we need a method of synchronisation when handlers might be accessing a shared, thread-unsafe resource.
 
 
 
@@ -650,7 +651,7 @@ We start by defining a class called `printer`, similar to the class in the previ
 
 In addition to initialising a pair of asio::deadline\_timer members, the constructor initialises the `strand_` member, an object of type asio::strand.
 
-An asio::strand guarantees that, for those handlers that are dispatched through it, an executing handler will be allowed to complete before the next one is started. This is guaranteed irrespective of the number of threads that are calling asio::io\_service::run(). Of course, the handlers may still execute concurrently with other handlers that were not dispatched through an asio::strand, or were dispatched through a different asio::strand object.
+An asio::strand guarantees that, for those handlers that are dispatched through it, an executing handler will be allowed to complete before the next one is started. This is guaranteed irrespective of the number of threads that are calling [link asio.reference.io_service.run io_service::run()]. Of course, the handlers may still execute concurrently with other handlers that were not dispatched through an asio::strand, or were dispatched through a different asio::strand object.
 
 
   ``''''''``  printer(asio::io_service& io)
@@ -662,7 +663,7 @@ An asio::strand guarantees that, for those handlers that are dispatched through 
 
 
 
-When initiating the asynchronous operations, each callback handler is "wrapped" using the asio::strand object. The asio::strand::wrap() function returns a new handler that automatically dispatches its contained handler through the asio::strand object. By wrapping the handlers using the same asio::strand, we are ensuring that they cannot execute concurrently.
+When initiating the asynchronous operations, each callback handler is "wrapped" using the asio::strand object. The [link asio.reference.io_service__strand.wrap strand::wrap()] function returns a new handler that automatically dispatches its contained handler through the asio::strand object. By wrapping the handlers using the same asio::strand, we are ensuring that they cannot execute concurrently.
 
 
   ``''''''``    timer1_.async_wait(strand_.wrap(boost::bind(&printer::print1, this)));
@@ -713,9 +714,10 @@ In a multithreaded program, the handlers for asynchronous operations should be s
 
 
 
-The `main` function now causes asio::io\_service::run() to be called from two threads: the main thread and one additional thread. This is accomplished using an asio::thread object.
+The `main` function now causes [link asio.reference.io_service.run io_service::run()] to be called from two threads: the main thread and one additional thread. This is accomplished using an 
+[link asio.reference.thread thread] object.
 
-Just as it would with a call from a single thread, concurrent calls to asio::io\_service::run() will continue to execute while there is "work" left to do. The background thread will not exit until all asynchronous operations have completed.
+Just as it would with a call from a single thread, concurrent calls to [link asio.reference.io_service.run io_service::run()] will continue to execute while there is "work" left to do. The background thread will not exit until all asynchronous operations have completed.
 
 
 
@@ -861,7 +863,8 @@ The purpose of this application is to access a daytime service, so we need the u
 
 
 
-All programs that use asio need to have at least one asio::io\_service object.
+All programs that use asio need to have at least one 
+[link asio.reference.io_service io_service] object.
 
 
 
@@ -869,7 +872,7 @@ All programs that use asio need to have at least one asio::io\_service object.
 
 
 
-We need to turn the server name that was specified as a parameter to the application, into a TCP endpoint. To do this we use an asio::ip::tcp::resolver object.
+We need to turn the server name that was specified as a parameter to the application, into a TCP endpoint. To do this we use an [link asio.reference.ip__tcp.resolver ip::tcp::resolver] object.
 
 
 
@@ -884,7 +887,7 @@ A resolver takes a query object and turns it into a list of endpoints. We constr
 
 
 
-The list of endpoints is returned using an iterator of type asio::ip::tcp::resolver::iterator. A default constructed asio::ip::tcp::resolver::iterator object is used as the end iterator.
+The list of endpoints is returned using an iterator of type [link asio.reference.ip__basic_resolver.iterator ip::tcp::resolver::iterator]. A default constructed [link asio.reference.ip__basic_resolver.iterator ip::tcp::resolver::iterator] object is used as the end iterator.
 
 
   ``''''''``    tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
@@ -923,7 +926,7 @@ We use a `boost::array` to hold the received data. The asio::buffer() function a
 
 
 
-When the server closes the connection, the asio::ip::tcp::socket::read\_some() function will exit with the asio::error::eof error, which is how we know to exit the loop.
+When the server closes the connection, the [link asio.reference.basic_stream_socket.read_some ip::tcp::socket::read_some()] function will exit with the asio::error::eof error, which is how we know to exit the loop.
 
 
 
@@ -1068,7 +1071,7 @@ We define the function `make_daytime_string()` to create the string to be sent b
 
 
 
-A asio::ip::tcp::acceptor object needs to be created to listen for new connections. It is initialised to listen on TCP port 13, for IP version 4.
+A [link asio.reference.ip__tcp.acceptor ip::tcp::acceptor] object needs to be created to listen for new connections. It is initialised to listen on TCP port 13, for IP version 4.
 
 
 
@@ -1197,7 +1200,8 @@ Return to [link asio.tutorial.tutdaytime2 Daytime.2 - A synchronous TCP daytime 
 
 
 
-We need to create a server object to accept incoming client connections. The asio::io\_service object provides I/O services, such as sockets, that the server object will use.
+We need to create a server object to accept incoming client connections. The 
+[link asio.reference.io_service io_service] object provides I/O services, such as sockets, that the server object will use.
 
 
   ``''''''``    asio::io_service io_service;
@@ -1205,7 +1209,8 @@ We need to create a server object to accept incoming client connections. The asi
 
 
 
-Run the asio::io\_service object so that it will perform asynchronous operations on your behalf.
+Run the 
+[link asio.reference.io_service io_service] object so that it will perform asynchronous operations on your behalf.
 
 
   ``''''''``    io_service.run();
@@ -1296,7 +1301,7 @@ We will use `shared_ptr` and `enable_shared_from_this` because we want to keep t
 
 
 
-In the function `start()`, we call asio::async\_write() to serve the data to the client. Note that we are using asio::async\_write(), rather than asio::ip::tcp::socket::async\_write\_some(), to ensure that the entire block of data is sent.
+In the function `start()`, we call asio::async\_write() to serve the data to the client. Note that we are using asio::async\_write(), rather than [link asio.reference.basic_stream_socket.async_write_some ip::tcp::socket::async_write_some()], to ensure that the entire block of data is sent.
 
 
 
@@ -1531,7 +1536,7 @@ The start of the application is essentially the same as for the TCP daytime clie
 
 
 
-We use an asio::ip::udp::resolver object to find the correct remote endpoint to use based on the host and service names. The query is restricted to return only IPv4 endpoints by the asio::ip::udp::v4() argument.
+We use an [link asio.reference.ip__udp.resolver ip::udp::resolver] object to find the correct remote endpoint to use based on the host and service names. The query is restricted to return only IPv4 endpoints by the [link asio.reference.ip__udp.v4 ip::udp::v4()] argument.
 
 
 
@@ -1540,14 +1545,14 @@ We use an asio::ip::udp::resolver object to find the correct remote endpoint to 
 
 
 
-The asio::ip::udp::resolver::resolve() function is guaranteed to return at least one endpoint in the list if it does not fail. This means it is safe to dereference the return value directly.
+The [link asio.reference.ip__basic_resolver.resolve ip::udp::resolver::resolve()] function is guaranteed to return at least one endpoint in the list if it does not fail. This means it is safe to dereference the return value directly.
 
 
   ``''''''``    udp::endpoint receiver_endpoint = *resolver.resolve(query);
 
 
 
-Since UDP is datagram-oriented, we will not be using a stream socket. Create an asio::ip::udp::socket and initiate contact with the remote endpoint.
+Since UDP is datagram-oriented, we will not be using a stream socket. Create an [link asio.reference.ip__udp.socket ip::udp::socket] and initiate contact with the remote endpoint.
 
 
 
@@ -1559,7 +1564,7 @@ Since UDP is datagram-oriented, we will not be using a stream socket. Create an 
 
 
 
-Now we need to be ready to accept whatever the server sends back to us. The endpoint on our side that receives the server's response will be initialised by asio::ip::udp::socket::receive\_from().
+Now we need to be ready to accept whatever the server sends back to us. The endpoint on our side that receives the server's response will be initialised by [link asio.reference.basic_datagram_socket.receive_from ip::udp::socket::receive_from()].
 
 
 
@@ -1669,7 +1674,7 @@ This tutorial program shows how to use asio to implement a server application wi
 
 
 
-Create an asio::ip::udp::socket object to receive requests on UDP port 13.
+Create an [link asio.reference.ip__udp.socket ip::udp::socket] object to receive requests on UDP port 13.
 
 
 
@@ -1677,7 +1682,7 @@ Create an asio::ip::udp::socket object to receive requests on UDP port 13.
 
 
 
-Wait for a client to initiate contact with us. The remote\_endpoint object will be populated by asio::ip::udp::socket::receive\_from().
+Wait for a client to initiate contact with us. The remote\_endpoint object will be populated by [link asio.reference.basic_datagram_socket.receive_from ip::udp::socket::receive_from()].
 
 
 
@@ -1817,7 +1822,8 @@ Return to [link asio.tutorial.tutdaytime5 Daytime.5 - A synchronous UDP daytime 
 
 
 
-Create a server object to accept incoming client requests, and run the asio::io\_service object.
+Create a server object to accept incoming client requests, and run the 
+[link asio.reference.io_service io_service] object.
 
 
   ``''''''``    asio::io_service io_service;
@@ -1858,7 +1864,9 @@ The constructor initialises a socket to listen on UDP port 13.
 
 
 
-The function asio::ip::udp::socket::async\_receive\_from() will cause the application to listen in the background for a new request. When such a request is received, the asio::io\_service object will invoke the `handle_receive()` function with two arguments: a value of type asio::error\_code indicating whether the operation succeeded or failed, and a `size_t` value `bytes_transferred` specifying the number of bytes received.
+The function [link asio.reference.basic_datagram_socket.async_receive_from ip::udp::socket::async_receive_from()] will cause the application to listen in the background for a new request. When such a request is received, the 
+[link asio.reference.io_service io_service] object will invoke the `handle_receive()` function with two arguments: a value of type 
+[link asio.reference.error_code error_code] indicating whether the operation succeeded or failed, and a `size_t` value `bytes_transferred` specifying the number of bytes received.
 
 
   ``''''''``    socket_.async_receive_from(
@@ -1880,7 +1888,8 @@ The function `handle_receive()` will service the client request.
 
 
 
-The `error` parameter contains the result of the asynchronous operation. Since we only provide the 1-byte `recv_buffer_` to contain the client's request, the asio::io\_service object would return an error if the client sent anything larger. We can ignore such an error if it comes up.
+The `error` parameter contains the result of the asynchronous operation. Since we only provide the 1-byte `recv_buffer_` to contain the client's request, the 
+[link asio.reference.io_service io_service] object would return an error if the client sent anything larger. We can ignore such an error if it comes up.
 
 
   ``''''''``    if (!error || error == asio::error::message_size)
@@ -1896,7 +1905,7 @@ Determine what we are going to send.
 
 
 
-We now call asio::ip::udp::socket::async\_send\_to() to serve the data to the client.
+We now call [link asio.reference.basic_datagram_socket.async_send_to ip::udp::socket::async_send_to()] to serve the data to the client.
 
 
 
@@ -2080,7 +2089,8 @@ We also need a server object to accept a UDP client request.
 
 
 
-We have created two lots of work for the asio::io\_service object to do.
+We have created two lots of work for the 
+[link asio.reference.io_service io_service] object to do.
 
 
   ``''''''``    io_service.run();

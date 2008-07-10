@@ -70,6 +70,112 @@
 </xsl:template>
 
 
+<!--========== Utilities ==========-->
+
+<xsl:template name="strip-asio-ns">
+  <xsl:param name="name"/>
+  <xsl:choose>
+    <xsl:when test="contains($name, 'asio::')">
+      <xsl:value-of select="substring-after($name, 'asio::')"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:value-of select="$name"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+
+<xsl:template name="make-id">
+  <xsl:param name="name"/>
+  <xsl:choose>
+    <xsl:when test="contains($name, '::')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '::'), '__', substring-after($name, '::'))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, '=')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '='), '_eq_', substring-after($name, '='))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, '!')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '!'), '_not_', substring-after($name, '!'))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, '&lt;')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '&lt;'), '_lt_', substring-after($name, '&lt;'))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, '&gt;')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '&gt;'), '_gt_', substring-after($name, '&gt;'))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, '+')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '+'), '_plus_', substring-after($name, '+'))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, '~')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '~'), '_', substring-after($name, '~'))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, ' ')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, ' '), '_', substring-after($name, ' '))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, 'boost__posix_time__ptime')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, 'boost__posix_time__ptime'), 'ptime', substring-after($name, 'boost__posix_time__ptime'))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:value-of select="$name"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+
+<xsl:template name="replace-scope-marker">
+  <xsl:param name="text"/>
+  <xsl:choose>
+    <xsl:when test="contains($text, '_1_1')">
+      <xsl:call-template name="replace-scope-marker">
+        <xsl:with-param name="text"
+         select="concat(substring-before($text, '_1_1'), '::', substring-after($text, '_1_1'))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:value-of select="$text"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+
+<xsl:template name="refid-to-anchor">
+  <xsl:param name="text"/>
+  <xsl:variable name="scoped-text">
+    <xsl:call-template name="replace-scope-marker">
+      <xsl:with-param name="text" select="$text"/>
+    </xsl:call-template>
+  </xsl:variable>
+  <xsl:value-of select="substring-after($scoped-text, '_1')"/>
+</xsl:template>
+
+
 <!--========== Markup ==========-->
 
 <xsl:template match="para">
@@ -217,6 +323,9 @@
 
 
 <xsl:template match="ref[@kindref='compound']">
+  <xsl:variable name="name">
+    <xsl:value-of select="."/>
+  </xsl:variable>
   <xsl:variable name="refid">
     <xsl:value-of select="@refid"/>
   </xsl:variable>
@@ -235,6 +344,19 @@
       <xsl:value-of select="concat(' ', .)"/>
       <xsl:text>]</xsl:text>
     </xsl:when>
+    <xsl:when test="contains($name, 'asio::')">
+      <xsl:variable name="ref-name">
+        <xsl:call-template name="strip-asio-ns">
+          <xsl:with-param name="name" select="$name"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:variable name="ref-id">
+        <xsl:call-template name="make-id">
+          <xsl:with-param name="name" select="$ref-name"/>
+        </xsl:call-template>
+      </xsl:variable>
+[link asio.reference.<xsl:value-of select="$ref-id"/><xsl:text> </xsl:text><xsl:value-of
+ select="$ref-name"/>]</xsl:when>
     <xsl:otherwise>
       <xsl:apply-templates/>
     </xsl:otherwise>
@@ -246,11 +368,52 @@
   <xsl:variable name="refid">
     <xsl:value-of select="@refid"/>
   </xsl:variable>
+  <xsl:variable name="text">
+    <xsl:call-template name="strip-asio-ns">
+      <xsl:with-param name="name" select="."/>
+    </xsl:call-template>
+  </xsl:variable>
   <xsl:choose>
     <xsl:when test="$refid='index_1index'">
       <xsl:text>[link asio.tutorial </xsl:text>
-      <xsl:value-of select="."/>
+      <xsl:value-of select="$text"/>
       <xsl:text>]</xsl:text>
+    </xsl:when>
+    <xsl:when test="@external='reference.tags'">
+      <xsl:variable name="anchor">
+        <xsl:call-template name="refid-to-anchor">
+          <xsl:with-param name="text" select="$refid"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:choose>
+        <xsl:when test="count(document('reference.tags')/tagfile/compound[@kind='class']/member[anchor=$anchor]) &gt; 0">
+          <xsl:for-each select="document('reference.tags')/tagfile/compound[@kind='class']/member[anchor=$anchor]">
+            <xsl:variable name="scope">
+              <xsl:call-template name="make-id">
+                <xsl:with-param name="name">
+                  <xsl:call-template name="strip-asio-ns">
+                    <xsl:with-param name="name" select="../name"/>
+                  </xsl:call-template>
+                </xsl:with-param>
+              </xsl:call-template>
+            </xsl:variable>
+            <xsl:variable name="name">
+              <xsl:call-template name="make-id">
+                <xsl:with-param name="name" select="name"/>
+              </xsl:call-template>
+            </xsl:variable>
+            <xsl:text>[link asio.reference.</xsl:text>
+            <xsl:if test="string-length($scope) &gt; 0">
+              <xsl:value-of select="$scope"/><xsl:text>.</xsl:text>
+            </xsl:if>
+            <xsl:value-of select="$name"/>
+            <xsl:text> </xsl:text><xsl:value-of select="$text"/><xsl:text>]</xsl:text>
+          </xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates/>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:when>
     <xsl:otherwise>
       <xsl:apply-templates/>
