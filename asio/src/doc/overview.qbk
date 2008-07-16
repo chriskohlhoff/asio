@@ -8,10 +8,10 @@
 [section:overview Overview]
 
 * [link asio.overview.rationale Rationale]
-* Core Concepts and Functionality
+* [link asio.overview.core Core Concepts and Functionality]
+  * [link asio.overview.async The Proactor Design Pattern: Concurrency Without Threads]
+  * [link asio.overview.strands Strands: Use Threads Without Explicit Locking]
   * Thread-safe message passing
-  * Promotes concurrency without requiring threads
-  * Supports threads without requiring explicit locking
   * Buffer management
   * Scatter-gather
   * Facilities for managing short reads/writes
@@ -39,6 +39,21 @@
 * [link asio.overview.ssl SSL]
 
 [include overview/rationale.qbk]
+
+[section:core Core Concepts and Functionality]
+
+* [link asio.overview.async The Proactor Design Pattern: Concurrency Without Threads]
+* [link asio.overview.strands Strands: Use Threads Without Explicit Locking]
+* Thread-safe message passing
+* Buffer management
+* Scatter-gather
+* Facilities for managing short reads/writes
+* Addition of new services
+* null_buffers reactor-style
+* [link asio.overview.line_based Line-Based Operations]
+
+[endsect]
+
 [include overview/async.qbk]
 [include overview/allocation.qbk]
 [include overview/buffers.qbk]

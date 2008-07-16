@@ -5,13 +5,13 @@
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  /]
 
-[section:async Concurrency Without Threads]
+[section:async The Proactor Design Pattern: Concurrency Without Threads]
 
-The proposed library offers side-by-side support for synchronous and
-asynchronous operations. The asynchronous support is based on the Proactor
-design pattern [link asio.design.async.references \[POSA2\]], and the
-advantages and disadvantages of this approach, when compared to a
-synchronous-only or Reactor approach, are outlined below.
+The Asio library offers side-by-side support for synchronous and asynchronous
+operations. The asynchronous support is based on the Proactor design pattern
+[link asio.overview.async.references \[POSA2\]], and the advantages and
+disadvantages of this approach, when compared to a synchronous-only or Reactor
+approach, are outlined below.
 
 [heading Proactor and Asio]
 

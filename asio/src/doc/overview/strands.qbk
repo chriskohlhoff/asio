@@ -5,7 +5,7 @@
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  /]
 
-[section:strands Strands]
+[section:strands Strands: Use Threads Without Explicit Locking]
 
 A strand is defined as a strictly sequential invocation of event handlers (i.e.
 no concurrent invocation). Use of strands allows execution of code in a
@@ -50,7 +50,13 @@ customisable hook associated with the final handler:
   }
 
 The `io_service::strand::wrap()` function creates a new completion handler that
-defines `asio_handler_invoke` so that the function object is executed through the
-strand.
+defines `asio_handler_invoke` so that the function object is executed through
+the strand.
+
+[heading See Also]
+
+[link asio.reference.io_service.strand io_service::strand],
+[link asio.tutorial.tuttimer5 tutorial Timer.5],
+[link asio.examples.http_server_3 HTTP server 3 example].
 
 [endsect]
