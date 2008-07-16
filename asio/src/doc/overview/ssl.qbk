@@ -1,0 +1,68 @@
+[/
+ / Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:ssl SSL]
+
+Asio contains classes and class templates for basic SSL support. These classes
+allow encrypted communication to be layered on top of an existing stream, such
+as a TCP socket.
+
+Before creating an encrypted stream, an application must construct an SSL
+context object. This object is used to set SSL options such as verification
+mode, certificate files, and so on. As an illustration, client-side
+initialisation may look something like:
+
+  ssl::context ctx(io_service, ssl::context::sslv23);
+  ctx.set_verify_mode(ssl::context::verify_peer);
+  ctx.load_verify_file("ca.pem");
+
+To use SSL with a TCP socket, one may write:
+
+  ssl::stream<ip::tcp::socket> ssl_sock(my_io_service, ctx);
+
+To perform socket-specific operations, such as establishing an outbound
+connection or accepting an incoming one, the underlying socket must first be
+obtained using the `ssl::stream` template's [link
+asio.reference.ssl__stream.lowest_layer `lowest_layer()`] member function:
+
+  ip::tcp::socket& sock = ssl_sock.lowest_layer();
+  sock.connect(my_endpoint);
+
+In some use cases the underlying stream object will need to have a longer
+lifetime than the SSL stream, in which case the template parameter should be a
+reference to the stream type:
+
+  ip::tcp::socket sock(my_io_service);
+  ssl::stream<ip::tcp::socket&> ssl_sock(sock, ctx);
+
+Once connected, SSL stream objects are used as synchronous or asynchronous read
+and write streams. This means the objects can be used with any of the [link
+asio.reference.read `read()`], [link asio.reference.async_read `async_read()`],
+[link asio.reference.write `write()`], [link asio.reference.async_write
+`async_write()`], [link asio.reference.read_until `read_until()`] or [link
+asio.reference.async_read_until `async_read_until()`] free functions.
+
+[heading See Also]
+
+[link asio.reference.ssl__basic_context ssl::basic_context],
+[link asio.reference.ssl__context ssl::context],
+[link asio.reference.ssl__context_base ssl::context_base],
+[link asio.reference.ssl__context_service ssl::context_service],
+[link asio.reference.ssl__stream ssl::stream],
+[link asio.reference.ssl__stream_base ssl::stream_base],
+[link asio.reference.ssl__stream_service ssl::stream_service],
+[link asio.examples.ssl SSL Example].
+
+[heading Notes]
+
+[@http://www.openssl.org OpenSSL] is required to make use of Asio's SSL
+support. When an application needs to use OpenSSL functionality that is not
+wrapped by Asio, the underlying OpenSSL types may be obtained by calling [link
+asio.reference.ssl__context.impl `ssl::context::impl()`] or [link
+asio.reference.ssl__stream.impl `ssl::stream::impl()`].
+
+[endsect]
