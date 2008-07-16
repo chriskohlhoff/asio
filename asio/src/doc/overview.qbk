@@ -20,7 +20,7 @@
   * [link asio.overview.line_based Line-Based Operations]
 * Networking
   * iostreams
-  * Sockets, following the BSD sockets
+  * [link asio.overview.bsd_sockets The BSD Socket API and Asio]
   * IPv4 and IPv6 independence
   * TCP
   * UDP
@@ -47,6 +47,7 @@
 [include overview/threads.qbk]
 [include overview/strands.qbk]
 [include overview/implementation.qbk]
+[include overview/bsd_sockets.qbk]
 [include overview/serial_ports.qbk]
 [include overview/posix.qbk]
 [include overview/windows.qbk]
