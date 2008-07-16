@@ -1,0 +1,107 @@
+[/
+ / Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:posix POSIX-Specific Functionality]
+
+[link asio.overview.posix.local UNIX Domain Sockets]
+
+[link asio.overview.posix.stream_descriptor Stream-Oriented File Descriptors]
+
+[section:local UNIX Domain Sockets]
+
+Asio provides basic support UNIX domain sockets (also known as local sockets).
+The simplest use involves creating a pair of connected sockets. The following
+code:
+
+  local::stream_protocol::socket socket1(my_io_service);
+  local::stream_protocol::socket socket2(my_io_service);
+  local::connect_pair(socket1, socket2);
+
+will create a pair of stream-oriented sockets. To do the same for
+datagram-oriented sockets, use:
+
+  local::datagram_protocol::socket socket1(my_io_service);
+  local::datagram_protocol::socket socket2(my_io_service);
+  local::connect_pair(socket1, socket2);
+
+A UNIX domain socket server may be created by binding an acceptor to an
+endpoint, in much the same way as one does for a TCP server:
+
+  ::unlink("/tmp/foobar"); // Remove previous binding.
+  local::stream_protocol::endpoint ep("/tmp/foobar");
+  local::stream_protocol::acceptor acceptor(my_io_service, ep);
+  local::stream_protocol::socket socket(my_io_service);
+  acceptor.accept(socket);
+
+A client that connects to this server might look like:
+
+  local::stream_protocol::endpoint ep("/tmp/foobar");
+  local::stream_protocol::socket socket(my_io_service);
+  socket.connect(ep);
+
+Transmission of file descriptors or credentials across UNIX domain sockets is
+not directly supported within Asio, but may be achieved by accessing the
+socket's underlying descriptor using the [link
+asio.reference.basic_socket.native `native()`] member function.
+
+[heading See Also]
+
+[link asio.reference.local__connect_pair local::connect_pair],
+[link asio.reference.local__datagram_protocol local::datagram_protocol],
+[link asio.reference.local__datagram_protocol.acceptor local::datagram_protocol::acceptor],
+[link asio.reference.local__datagram_protocol.endpoint local::datagram_protocol::endpoint],
+[link asio.reference.local__datagram_protocol.iodatagram local::datagram_protocol::iodatagram],
+[link asio.reference.local__datagram_protocol.socket local::datagram_protocol::socket],
+[link asio.reference.local__stream_protocol local::stream_protocol],
+[link asio.reference.local__stream_protocol.acceptor local::stream_protocol::acceptor],
+[link asio.reference.local__stream_protocol.endpoint local::stream_protocol::endpoint],
+[link asio.reference.local__stream_protocol.iostream local::stream_protocol::iostream],
+[link asio.reference.local__stream_protocol.socket local::stream_protocol::socket],
+[link asio.examples.local UNIX domain sockets examples].
+
+[heading Notes]
+
+UNIX domain sockets are only available at compile time if supported by the
+target operating system. A program may test for the macro
+`ASIO_HAS_LOCAL_SOCKETS` to determine whether they are supported.
+
+[endsect]
+
+[section:stream_descriptor Stream-Oriented File Descriptors]
+
+Asio includes classes added to permit synchronous and asynchronous read and
+write operations to be performed on POSIX file descriptors, such as pipes,
+standard input and output, and various devices (but /not/ regular files).
+
+For example, to perform read and write operations on standard input
+and output, the following objects may be created:
+
+  posix::stream_descriptor in(my_io_service, ::dup(STDIN_FILENO));
+  posix::stream_descriptor out(my_io_service, ::dup(STDOUT_FILENO));
+
+These are then used as synchronous or asynchronous read and write streams. This
+means the objects can be used with any of the [link asio.reference.read
+`read()`], [link asio.reference.async_read `async_read()`], [link
+asio.reference.write `write()`], [link asio.reference.async_write
+`async_write()`], [link asio.reference.read_until `read_until()`] or [link
+asio.reference.async_read_until `async_read_until()`] free functions.
+
+[heading See Also]
+
+[link asio.reference.posix__stream_descriptor posix::stream_descriptor],
+[link asio.reference.posix__basic_stream_descriptor posix::basic_stream_descriptor],
+[link asio.reference.posix__stream_descriptor_service posix::stream_descriptor_service].
+
+[heading Notes]
+
+POSIX stream descriptors are only available at compile time if supported by the
+target operating system. A program may test for the macro
+`ASIO_HAS_POSIX_STREAM_DESCRIPTOR` to determine whether they are supported.
+
+[endsect]
+
+[endsect]

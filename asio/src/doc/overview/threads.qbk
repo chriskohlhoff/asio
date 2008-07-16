@@ -24,6 +24,9 @@ these threads must be invisible to the library user. In particular, the threads:
 
 * must block all signals.
 
+(Note: the implementation of the asynchronous resolver operations currently
+violates the first of these rules.)
+
 This approach is complemented by the following guarantee:
 
 * Asynchronous completion handlers will only be called from threads that are

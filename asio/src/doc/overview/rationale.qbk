@@ -7,6 +7,14 @@
 
 [section:rationale Rationale]
 
+Many programs interact with the outside world in some way, whether it be via a
+file, a network, a serial cable, or the console. Some of these, such as
+networking, pose particular challenges to application development as individual
+I/O operations can take a long (and sometimes indefinite) time to complete.
+Asio provides the tools to manage long running operations like this, without
+requiring programs to use concurrency models based on threads and explicit
+locking.
+
 The Asio library is intended for programmers using C++ for systems
 programming, where access to operating system functionality such as networking
 is often required. In particular, Asio attempts to address the following
@@ -21,11 +29,13 @@ concurrent connections. The library implementation for each operating system
 should use the mechanism that best enables this scalability.
 
 * [*Efficiency.] The library should support techniques such as scatter-gather
-I/O, and allow protocol implementations that minimise data copying.
+I/O, and allow usage that minimise data copying.
 
-* [*Model Berkeley sockets.] The Berkeley sockets API is widely implemented and
-understood, as well as being covered in much literature. Other programming
-languages often use a similar interface for networking APIs.
+* [*Model concepts from established APIs, such as Berkeley sockets.] The
+Berkeley sockets API is widely implemented and understood, as well as being
+covered in much literature. Other programming languages often use a similar
+interface for networking APIs. As far as is reasonable, Asio should leverage
+existing practice and sources of information.
 
 * [*Ease of use.] Lower the entry barrier for new users by taking a toolkit,
 rather than framework, approach. That is, try to minimise the up-front
@@ -37,8 +47,8 @@ are being used.
 of other libraries that provide higher levels of abstraction. For example,
 implementations of commonly used protocols such as HTTP.
 
-Although the current incarnation of Asio focuses primarily on networking,
-its concepts of asynchronous I/O can be extended to include other operating
-system resources such as files.
+Although Asio started life focused primarily on networking, its concepts of
+asynchronous I/O can be, and have been, extended to include other operating
+system resources such as serial ports, file descriptors, and so on.
 
 [endsect]

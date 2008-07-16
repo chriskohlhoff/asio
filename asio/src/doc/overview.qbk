@@ -1,0 +1,54 @@
+[/
+ / Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:overview Overview]
+
+* [link asio.overview.rationale Rationale]
+* Core Concepts and Functionality
+  * Thread-safe message passing
+  * Promotes concurrency without requiring threads
+  * Supports threads without requiring explicit locking
+  * Buffer management
+  * Scatter-gather
+  * Facilities for managing short reads/writes
+  * Addition of new services
+  * null_buffers reactor-style
+  * [link asio.overview.line_based Line-Based Operations]
+* Networking
+  * iostreams
+  * Sockets, following the BSD sockets
+  * IPv4 and IPv6 independence
+  * TCP
+  * UDP
+  * Multicast
+  * Raw sockets
+  * ICMP
+* Timers
+  * Customisable time sources
+* [link asio.overview.serial_ports Serial Ports]
+* [link asio.overview.posix POSIX-Specific Functionality]
+  * [link asio.overview.posix.local UNIX Domain Sockets]
+  * [link asio.overview.posix.stream_descriptor Stream-Oriented File Descriptors]
+* [link asio.overview.windows Windows-Specific Functionality]
+  * [link asio.overview.windows.stream_handle Stream-Oriented HANDLEs]
+  * [link asio.overview.windows.random_access_handle Random-Access HANDLEs]
+* SSL
+
+[include overview/rationale.qbk]
+[include overview/async.qbk]
+[include overview/allocation.qbk]
+[include overview/buffers.qbk]
+[include overview/eof.qbk]
+[include overview/line_based.qbk]
+[include overview/threads.qbk]
+[include overview/strands.qbk]
+[include overview/implementation.qbk]
+[include overview/serial_ports.qbk]
+[include overview/posix.qbk]
+[include overview/windows.qbk]
+
+[endsect]

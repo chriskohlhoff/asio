@@ -5,7 +5,7 @@
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  /]
 
-[section:line_based Line-Based Protocols]
+[section:line_based Line-Based Operations]
 
 Many commonly-used internet protocols are line-based, which means that they
 have protocol elements that are delimited by the character sequence `"\r\n"`.

@@ -5,7 +5,7 @@
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  /]
 
-[section:async Asynchronous Operations]
+[section:async Concurrency Without Threads]
 
 The proposed library offers side-by-side support for synchronous and
 asynchronous operations. The asynchronous support is based on the Proactor

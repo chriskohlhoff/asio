@@ -51,6 +51,6 @@ install html
     $(boost)/doc/src/images/up_disabled.png
     $(boost)/doc/src/images/up.png
     $(boost)/doc/src/images/warning.png
-    design/proactor.png
+    overview/proactor.png
     asio.png
   ;

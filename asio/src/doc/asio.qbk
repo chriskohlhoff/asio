@@ -36,11 +36,19 @@
 
 [/=============================================================================]
 
-Asio is a cross-platform C++ library for network programming that provides
-developers with a consistent asynchronous I/O model using a modern C++
-approach.
+Asio is a cross-platform C++ library for network and low-level I/O programming
+that provides developers with a consistent asynchronous model using a modern
+C++ approach.
 
 [variablelist
+  [
+    [
+      [link asio.overview Overview]
+    ]
+    [
+      An overview of the features included in Asio, plus rationale and design information.
+    ]
+  ]
   [
     [
       [link asio.using Using Asio]
@@ -78,14 +86,6 @@ approach.
   ]
   [
     [
-      [link asio.design Design]
-    ]
-    [
-      Rationale and design information for Asio.
-    ]
-  ]
-  [
-    [
       [link asio.index Index]
     ]
     [
@@ -94,9 +94,9 @@ approach.
   ]
 ]
 
+[include overview.qbk]
 [include using.qbk]
 [include tutorial.qbk]
 [include examples.qbk]
 [include reference.qbk]
-[include design.qbk]
 [xinclude index.xml]
