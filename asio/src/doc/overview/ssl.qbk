@@ -55,7 +55,7 @@ asio.reference.async_read_until `async_read_until()`] free functions.
 [link asio.reference.ssl__stream ssl::stream],
 [link asio.reference.ssl__stream_base ssl::stream_base],
 [link asio.reference.ssl__stream_service ssl::stream_service],
-[link asio.examples.ssl SSL Example].
+[link asio.examples.ssl SSL example].
 
 [heading Notes]
 
