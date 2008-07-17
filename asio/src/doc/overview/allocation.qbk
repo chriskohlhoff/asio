@@ -48,4 +48,20 @@ The implementation will insert appropriate memory barriers to ensure correct
 memory visibility should allocation functions need to be called from different
 threads.
 
+Custom memory allocation support is currently implemented for all asynchronous
+operations with the following exceptions:
+
+* `ip::basic_resolver::async_resolve()` on all platforms.
+
+* `basic_socket::async_connect()` on Windows.
+
+* Any operation involving `null_buffers()` on Windows, other than an
+  asynchronous read performed on a stream-oriented socket.
+
+[heading See Also]
+
+[link asio.reference.asio_handler_allocate asio_handler_allocate],
+[link asio.reference.asio_handler_deallocate asio_handler_deallocate],
+[link asio.examples.allocation custom memory allocation example].
+
 [endsect]

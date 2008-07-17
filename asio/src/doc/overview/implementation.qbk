@@ -5,9 +5,9 @@
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  /]
 
-[section:implementation Platform-Specific Implementation]
+[section:implementation Platform-Specific Implementation Notes]
 
-This design note lists platform-specific implementation details, such as the
+This section lists platform-specific implementation details, such as the
 default demultiplexing mechanism, the number of threads created internally, and
 when threads are created.
 

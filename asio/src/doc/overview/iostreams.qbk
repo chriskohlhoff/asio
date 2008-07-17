@@ -1,0 +1,46 @@
+[/
+ / Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:iostreams Socket Iostreams]
+
+Asio includes classes that implement iostreams on top of sockets. These hide
+away the complexities associated with endpoint resolution, protocol
+independence, etc. To create a connection one might simply write:
+
+  ip::tcp::iostream stream("www.boost.org", "http");
+  if (!stream)
+  {
+    // Can't connect.
+  }
+
+The iostream class can also be used in conjunction with an acceptor to create
+simple servers. For example:
+
+  io_service ios;
+
+  ip::tcp::endpoint endpoint(tcp::v4(), 80);
+  ip::tcp::acceptor acceptor(ios, endpoint);
+
+  for (;;)
+  {
+    ip::tcp::iostream stream;
+    acceptor.accept(*stream.rdbuf());
+    ...
+  }
+
+[heading See Also]
+
+[link asio.reference.ip__tcp.iostream ip::tcp::iostream],
+[link asio.reference.basic_socket_iostream basic_socket_iostream],
+[link asio.examples.iostreams iostreams examples].
+
+[heading Notes]
+
+These iostream templates only support `char`, not `wchar_t`, and do not perform
+any code conversion.
+
+[endsect]

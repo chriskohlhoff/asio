@@ -9,7 +9,7 @@
 
 The Asio library offers side-by-side support for synchronous and asynchronous
 operations. The asynchronous support is based on the Proactor design pattern
-[link asio.overview.async.references \[POSA2\]], and the advantages and
+[link asio.overview.core.async.references \[POSA2\]], and the advantages and
 disadvantages of this approach, when compared to a synchronous-only or Reactor
 approach, are outlined below.
 
