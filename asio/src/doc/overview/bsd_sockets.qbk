@@ -105,7 +105,7 @@ The following table shows the mapping between the BSD socket API and Asio:
   ]
   [
     [`gethostname()`]
-    [          [link asio.reference.ip__gethostname ip::gethostname()] ]
+    [          [link asio.reference.ip__host_name ip::host_name()] ]
   ]
   [
     [`getpeername()`]
