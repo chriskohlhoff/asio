@@ -12,14 +12,13 @@
   * [link asio.overview.core.async The Proactor Design Pattern: Concurrency Without Threads]
   * [link asio.overview.core.threads Threads and Asio]
   * [link asio.overview.core.strands Strands: Use Threads Without Explicit Locking]
-  * Buffer management
-  * Scatter-gather
+  * [link asio.overview.core.buffers Buffers]
   * Facilities for managing short reads/writes
   * Addition of new services
   * null_buffers reactor-style
   * [link asio.overview.core.line_based Line-Based Operations]
   * [link asio.overview.core.allocation Custom Memory Allocation]
-* Networking
+* [link asio.overview.networking Networking]
   * [link asio.overview.networking.iostreams Socket Iostreams]
   * [link asio.overview.networking.bsd_sockets The BSD Socket API and Asio]
   * IPv4 and IPv6 independence
@@ -28,8 +27,7 @@
   * Multicast
   * Raw sockets
   * ICMP
-* Timers
-  * Customisable time sources
+* [link asio.overview.timers Timers]
 * [link asio.overview.serial_ports Serial Ports]
 * [link asio.overview.posix POSIX-Specific Functionality]
   * [link asio.overview.posix.local UNIX Domain Sockets]
@@ -61,6 +59,7 @@
 
 [endsect]
 
+[include overview/timers.qbk]
 [include overview/serial_ports.qbk]
 [include overview/posix.qbk]
 [include overview/windows.qbk]

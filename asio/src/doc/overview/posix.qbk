@@ -46,7 +46,7 @@ A client that connects to this server might look like:
 Transmission of file descriptors or credentials across UNIX domain sockets is
 not directly supported within Asio, but may be achieved by accessing the
 socket's underlying descriptor using the [link
-asio.reference.basic_socket.native `native()`] member function.
+asio.reference.basic_socket.native native()] member function.
 
 [heading See Also]
 
@@ -85,10 +85,10 @@ and output, the following objects may be created:
 
 These are then used as synchronous or asynchronous read and write streams. This
 means the objects can be used with any of the [link asio.reference.read
-`read()`], [link asio.reference.async_read `async_read()`], [link
-asio.reference.write `write()`], [link asio.reference.async_write
-`async_write()`], [link asio.reference.read_until `read_until()`] or [link
-asio.reference.async_read_until `async_read_until()`] free functions.
+read()], [link asio.reference.async_read async_read()], [link
+asio.reference.write write()], [link asio.reference.async_write async_write()],
+[link asio.reference.read_until read_until()] or [link
+asio.reference.async_read_until async_read_until()] free functions.
 
 [heading See Also]
 

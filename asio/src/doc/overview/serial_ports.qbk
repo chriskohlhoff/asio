@@ -16,11 +16,11 @@ where name is something like `"COM1"` on Windows, and `"/dev/ttyS0"` on POSIX
 platforms.
 
 Once opened the serial port may be used as a stream. This means the objects can
-be used with any of the [link asio.reference.read `read()`], [link
-asio.reference.async_read `async_read()`], [link asio.reference.write
-`write()`], [link asio.reference.async_write `async_write()`], [link
-asio.reference.read_until `read_until()`] or [link
-asio.reference.async_read_until `async_read_until()`] free functions.
+be used with any of the [link asio.reference.read read()], [link
+asio.reference.async_read async_read()], [link asio.reference.write write()],
+[link asio.reference.async_write async_write()], [link
+asio.reference.read_until read_until()] or [link
+asio.reference.async_read_until async_read_until()] free functions.
 
 The serial port implementation also includes option classes for configuring the
 port's baud rate, flow control type, parity, stop bits and character size.

@@ -24,10 +24,10 @@ object may be created:
 
 These are then used as synchronous or asynchronous read and write streams. This
 means the objects can be used with any of the [link asio.reference.read
-`read()`], [link asio.reference.async_read `async_read()`], [link
-asio.reference.write `write()`], [link asio.reference.async_write
-`async_write()`], [link asio.reference.read_until `read_until()`] or [link
-asio.reference.async_read_until `async_read_until()`] free functions.
+read()], [link asio.reference.async_read async_read()], [link
+asio.reference.write write()], [link asio.reference.async_write
+async_write()], [link asio.reference.read_until read_until()] or [link
+asio.reference.async_read_until async_read_until()] free functions.
 
 The kernel object referred to by the `HANDLE` must support use with I/O
 completion ports (which means that named pipes are supported, but anonymous
@@ -66,11 +66,11 @@ Data may be read from or written to the handle using one of the
 `async_write_some_at()` member functions. However, like the equivalent
 functions (`read_some()`, etc.) on streams, these functions are only required
 to transfer one or more bytes in a single operation. Therefore free functions
-called [link asio.reference.read_at `read_at()`], [link
-asio.reference.async_read_at `async_read_at()`], [link asio.reference.write_at
-`write_at()`] and [link asio.reference.async_write_at `async_write_at()`] have
-been created to repeatedly call the corresponding [^[**]_some_at()]
-function until all data has been transferred.
+called [link asio.reference.read_at read_at()], [link
+asio.reference.async_read_at async_read_at()], [link asio.reference.write_at
+write_at()] and [link asio.reference.async_write_at async_write_at()] have been
+created to repeatedly call the corresponding [^[**]_some_at()] function until
+all data has been transferred.
 
 [heading See Also]
 

@@ -7,9 +7,11 @@
 
 [section:buffers Buffers]
 
-To allow the development of efficient network applications, Asio includes
-support for scatter-gather operations. These operations involve one or more
-buffers (where each buffer is a contiguous region of memory):
+Fundamentally, I/O involves the transfer of data to and from contiguous regions
+of memory, called buffers. These buffers can be simply expressed as a tuple
+consisting of a pointer and a size in bytes. However, to allow the development
+of efficient network applications, Asio includes support for scatter-gather
+operations. These operations involve one or more buffers:
 
 * A scatter-read receives data into multiple buffers.
 * A gather-write transmits multiple buffers.
@@ -19,11 +21,10 @@ approach used in Asio is to define a type (actually two types) to
 represent a single buffer. These can be stored in a container, which may be
 passed to the scatter-gather operations.
 
-A buffer, as a contiguous region of memory, can be represented by an address
-and size in bytes. There is a distinction between modifiable memory (called
-mutable in Asio) and non-modifiable memory (where the latter is
-created from the storage for a const-qualified variable). These two types could
-therefore be defined as follows:
+In addition to specifying buffers as a pointer and size in bytes, Asio makes a
+distinction between modifiable memory (called mutable) and non-modifiable
+memory (where the latter is created from the storage for a const-qualified
+variable). These two types could therefore be defined as follows:
 
   typedef std::pair<void*, std::size_t> mutable_buffer;
   typedef std::pair<const void*, std::size_t> const_buffer;
@@ -31,7 +32,7 @@ therefore be defined as follows:
 Here, a mutable_buffer would be convertible to a const_buffer, but conversion
 in the opposite direction is not valid.
 
-However, Asio does not use the above definitions, but instead defines two
+However, Asio does not use the above definitions as-is, but instead defines two
 classes: `mutable_buffer` and `const_buffer`. The goal of these is to provide
 an opaque representation of contiguous memory, where:
 
@@ -54,5 +55,56 @@ Finally, multiple buffers can be passed to scatter-gather operations (such as
 into a container. The `MutableBufferSequence` and `ConstBufferSequence`
 concepts have been defined so that containers such as `std::vector`,
 `std::list`, `std::vector` or `boost::array` can be used.
+
+[heading Buffer Debugging]
+
+Some standard library implementations, such as the one that ships with
+Microsoft Visual C++ 8.0 and later, provide a feature called iterator
+debugging. What this means is that the validity of iterators is checked at
+runtime. If a program tries to use an iterator that has been invalidated, an
+assertion will be triggered. For example:
+
+  std::vector<int> v(1)
+  std::vector<int>::iterator i = v.begin();
+  v.clear(); // invalidates iterators
+  *i = 0; // assertion!
+
+Asio takes advantage of this feature to add buffer debugging. Consider the
+following code:
+
+  void dont_do_this()
+  {
+   std::string msg = "Hello, world!";
+   asio::async_write(sock, asio::buffer(msg), my_handler);
+  }
+
+When you call an asynchronous read or write you need to ensure that the buffers
+for the operation are valid until the completion handler is called. In the
+above example, the buffer is the `std::string` variable `msg`. This variable is
+on the stack, and so it goes out of scope before the asynchronous operation
+completes. If you're lucky then the application will crash, but random failures
+are more likely.
+
+When buffer debugging is enabled, Asio stores an iterator into the string until
+the asynchronous operation completes, and then dereferences it to check its
+validity. In the above example you would observe an assertion failure just
+before Asio tries to call the completion handler.
+
+This feature is automatically made available for Microsoft Visual Studio 8.0 or
+later and for GCC when `_GLIBCXX_DEBUG` is defined. There is a performance cost
+to this checking, so buffer debugging is only enabled in debug builds. For
+other compilers it may be enabled by defining `ASIO_ENABLE_BUFFER_DEBUGGING`.
+It can also be explicitly disabled by defining `ASIO_DISABLE_BUFFER_DEBUGGING`.
+
+[heading See Also]
+
+[link asio.reference.buffer buffer],
+[link asio.reference.const_buffer const_buffer],
+[link asio.reference.const_buffers_1 const_buffers_1],
+[link asio.reference.mutable_buffer mutable_buffer],
+[link asio.reference.const_buffers_1 mutable_buffers_1],
+[link asio.reference.ConstBufferSequence ConstBufferSequence],
+[link asio.reference.MutableBufferSequence MutableBufferSequence],
+[link asio.examples.buffers buffers example].
 
 [endsect]
