@@ -14,8 +14,7 @@
   * [link asio.overview.core.strands Strands: Use Threads Without Explicit Locking]
   * [link asio.overview.core.buffers Buffers]
   * Facilities for managing short reads/writes
-  * Addition of new services
-  * null_buffers reactor-style
+  * [link asio.overview.core.reactor Reactor-Style Operations]
   * [link asio.overview.core.line_based Line-Based Operations]
   * [link asio.overview.core.allocation Custom Memory Allocation]
 * [link asio.overview.networking Networking]
@@ -46,6 +45,7 @@
 [include overview/threads.qbk]
 [include overview/strands.qbk]
 [include overview/buffers.qbk]
+[include overview/reactor.qbk]
 [include overview/line_based.qbk]
 [include overview/allocation.qbk]
 [include overview/eof.qbk]

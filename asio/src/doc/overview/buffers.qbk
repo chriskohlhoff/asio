@@ -56,6 +56,54 @@ into a container. The `MutableBufferSequence` and `ConstBufferSequence`
 concepts have been defined so that containers such as `std::vector`,
 `std::list`, `std::vector` or `boost::array` can be used.
 
+[heading Streambuf for Integration with Iostreams]
+
+The class `asio::basic_streambuf` is derived from `std::basic_streambuf` to
+associate the input sequence and output sequence with one or more objects of
+some character array type, whose elements store arbitrary values. These
+character array objects are internal to the streambuf object, but direct access
+to the array elements is provided to permit them to be used with I/O
+operations, such as the send or receive operations of a socket:
+
+* The input sequence of the streambuf is accessible via the [link
+  asio.reference.basic_streambuf.data data()] member function. The return type
+  of this function meets the `ConstBufferSequence` requirements.
+
+* The output sequence of the streambuf is accessible via the [link
+  asio.reference.basic_streambuf.data prepare()] member function. The return
+  type of this function meets the `MutableBufferSequence` requirements.
+
+* Data is transferred from the front of the output sequence to the back of the
+  input sequence by calling the [link asio.reference.basic_streambuf.commmit
+  commit()] member function.
+
+* Data is removed from the front of the input sequence by calling the [link
+  asio.reference.basic_streambuf.consume consume()] member function.
+
+The streambuf constructor accepts a `size_t` argument specifying the maximum of
+the sum of the sizes of the input sequence and output sequence. Any operation
+that would, if successful, grow the internal data beyond this limit will throw
+a `std::length_error` exception.
+
+[heading Bytewise Traversal of Buffer Sequences]
+
+The `buffers_iterator<>` class template allows buffer sequences (i.e. types
+meeting `MutableBufferSequence` or `ConstBufferSequence` requirements) to be
+traversed as though they were a contiguous sequence of bytes. Helper functions
+called buffers_begin() and buffers_end() are also provided, where the
+buffers_iterator<> template parameter is automatically deduced.
+
+As an example, to read a single line from a socket and into a `std::string`,
+you may write:
+
+  asio::streambuf sb;
+  ...
+  std::size_t n = asio::read_until(sock, sb, '\n');
+  asio::streambuf::const_buffers_type bufs = sb.data();
+  std::string line(
+      asio::buffers_begin(bufs),
+      asio::buffers_begin(bufs) + n);
+
 [heading Buffer Debugging]
 
 Some standard library implementations, such as the one that ships with
@@ -99,10 +147,14 @@ It can also be explicitly disabled by defining `ASIO_DISABLE_BUFFER_DEBUGGING`.
 [heading See Also]
 
 [link asio.reference.buffer buffer],
+[link asio.reference.buffers_begin buffers_begin],
+[link asio.reference.buffers_end buffers_end],
+[link asio.reference.buffers_iterator buffers_iterator],
 [link asio.reference.const_buffer const_buffer],
 [link asio.reference.const_buffers_1 const_buffers_1],
 [link asio.reference.mutable_buffer mutable_buffer],
-[link asio.reference.const_buffers_1 mutable_buffers_1],
+[link asio.reference.mutable_buffers_1 mutable_buffers_1],
+[link asio.reference.streambuf streambuf],
 [link asio.reference.ConstBufferSequence ConstBufferSequence],
 [link asio.reference.MutableBufferSequence MutableBufferSequence],
 [link asio.examples.buffers buffers example].
