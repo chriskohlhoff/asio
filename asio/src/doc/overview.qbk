@@ -13,19 +13,19 @@
   * [link asio.overview.core.threads Threads and Asio]
   * [link asio.overview.core.strands Strands: Use Threads Without Explicit Locking]
   * [link asio.overview.core.buffers Buffers]
-  * Facilities for managing short reads/writes
+  * [link asio.overview.core.streams Streams, Short Reads and Short Writes]
   * [link asio.overview.core.reactor Reactor-Style Operations]
   * [link asio.overview.core.line_based Line-Based Operations]
   * [link asio.overview.core.allocation Custom Memory Allocation]
 * [link asio.overview.networking Networking]
   * [link asio.overview.networking.iostreams Socket Iostreams]
   * [link asio.overview.networking.bsd_sockets The BSD Socket API and Asio]
-  * IPv4 and IPv6 independence
+  [/ * IPv4 and IPv6 independence
   * TCP
   * UDP
   * Multicast
   * Raw sockets
-  * ICMP
+  * ICMP ]
 * [link asio.overview.timers Timers]
 * [link asio.overview.serial_ports Serial Ports]
 * [link asio.overview.posix POSIX-Specific Functionality]
@@ -41,18 +41,30 @@
 
 [section:core Core Concepts and Functionality]
 
+* [link asio.overview.core.async The Proactor Design Pattern: Concurrency Without Threads]
+* [link asio.overview.core.threads Threads and Asio]
+* [link asio.overview.core.strands Strands: Use Threads Without Explicit Locking]
+* [link asio.overview.core.buffers Buffers]
+* [link asio.overview.core.streams Streams, Short Reads and Short Writes]
+* [link asio.overview.core.reactor Reactor-Style Operations]
+* [link asio.overview.core.line_based Line-Based Operations]
+* [link asio.overview.core.allocation Custom Memory Allocation]
+
 [include overview/async.qbk]
 [include overview/threads.qbk]
 [include overview/strands.qbk]
 [include overview/buffers.qbk]
+[include overview/streams.qbk]
 [include overview/reactor.qbk]
 [include overview/line_based.qbk]
 [include overview/allocation.qbk]
-[include overview/eof.qbk]
 
 [endsect]
 
 [section:networking Networking]
+
+* [link asio.overview.networking.iostreams Socket Iostreams]
+* [link asio.overview.networking.bsd_sockets The BSD Socket API and Asio]
 
 [include overview/iostreams.qbk]
 [include overview/bsd_sockets.qbk]

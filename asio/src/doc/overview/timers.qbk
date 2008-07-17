@@ -8,7 +8,7 @@
 [section:timers Timers]
 
 Long running I/O operations will often have a deadline by which they must have
-completed. These deadlines may be expressed as absolute times, but are often be
+completed. These deadlines may be expressed as absolute times, but are often
 calculated relative to the current time.
 
 As a simple example, to perform a synchronous wait operation on a timer using a

@@ -31,7 +31,7 @@ read or write on a socket.]
 
 [:Executes asynchronous operations and queues events on a completion event
 queue when operations complete. From a high-level point of view, services like
-asio::stream_socket_service are asynchronous operation processors.]
+`stream_socket_service` are asynchronous operation processors.]
 
 [mdash] Completion Event Queue
 
@@ -52,14 +52,14 @@ a completed event to its caller.]
 
 [:Calls the asynchronous event demultiplexer to dequeue events, and dispatches
 the completion handler (i.e. invokes the function object) associated with the
-event. This abstraction is represented by `asio::io_service`.]
+event. This abstraction is represented by the `io_service` class.]
 
 [mdash] Initiator
 
 [:Application-specific code that starts asynchronous operations. The initiator
 interacts with an asynchronous operation processor via a high-level interface
-such as `asio::basic_stream_socket`, which in turn delegates to a service like
-`asio::stream_socket_service`.]
+such as `basic_stream_socket`, which in turn delegates to a service like
+`stream_socket_service`.]
 
 [heading Implementation Using Reactor]
 
@@ -97,7 +97,7 @@ calling an overlapped function such as `AcceptEx`.]
 [mdash] Completion Event Queue
 
 [:This is implemented by the operating system, and is associated with an I/O
-completion port. There is one I/O completion port for each asio::io_service
+completion port. There is one I/O completion port for each `io_service`
 instance.]
 
 [mdash] Asynchronous Event Demultiplexer

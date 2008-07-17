@@ -218,6 +218,24 @@ Examples showing how to customise deadline_timer using different time types.
 * [@../src/examples/timers/time_t_timer.cpp]
 
 
+[heading Porthopper]
+
+Example illustrating mixed synchronous and asynchronous operations, and how to
+use Boost.Lambda with Asio.
+
+* [@../src/examples/porthopper/protocol.hpp]
+* [@../src/examples/porthopper/client.cpp]
+* [@../src/examples/porthopper/server.cpp]
+
+
+[heading Nonblocking]
+
+Example demonstrating reactor-style operations for integrating a third-party
+library that wants to perform the I/O operations itself.
+
+* [@../src/examples/nonblocking/third_party_lib.cpp]
+
+
 [heading:local UNIX Domain Sockets]
 
 Examples showing how to use UNIX domain (local) sockets.
