@@ -45,11 +45,10 @@ an opaque representation of contiguous memory, where:
   mechanisms for automatically determining the size of a buffer from an array,
   `boost::array` or `std::vector` of POD elements, or from a `std::string`.
 
-* Type safety violations must be explicitly requested using the [link
-  asio.reference.buffer_cast buffer_cast] function. In general an application
-  should never need to do this, but it is required by the library
-  implementation to pass the raw memory to the underlying operating system
-  functions.
+* Type safety violations must be explicitly requested using the `buffer_cast`
+  function. In general an application should never need to do this, but it is
+  required by the library implementation to pass the raw memory to the
+  underlying operating system functions.
 
 Finally, multiple buffers can be passed to scatter-gather operations (such as
 [link asio.reference.read read()] or [link asio.reference.write write()]) by
@@ -75,7 +74,7 @@ operations, such as the send or receive operations of a socket:
   type of this function meets the `MutableBufferSequence` requirements.
 
 * Data is transferred from the front of the output sequence to the back of the
-  input sequence by calling the [link asio.reference.basic_streambuf.commmit
+  input sequence by calling the [link asio.reference.basic_streambuf.commit
   commit()] member function.
 
 * Data is removed from the front of the input sequence by calling the [link

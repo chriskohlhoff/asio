@@ -236,7 +236,7 @@ library that wants to perform the I/O operations itself.
 * [@../src/examples/nonblocking/third_party_lib.cpp]
 
 
-[heading:local UNIX Domain Sockets]
+[heading UNIX Domain Sockets]
 
 Examples showing how to use UNIX domain (local) sockets.
 
