@@ -41,10 +41,10 @@ reference to the stream type:
 
 Once connected, SSL stream objects are used as synchronous or asynchronous read
 and write streams. This means the objects can be used with any of the [link
-asio.reference.read `read()`], [link asio.reference.async_read `async_read()`],
-[link asio.reference.write `write()`], [link asio.reference.async_write
-`async_write()`], [link asio.reference.read_until `read_until()`] or [link
-asio.reference.async_read_until `async_read_until()`] free functions.
+asio.reference.read read()], [link asio.reference.async_read async_read()],
+[link asio.reference.write write()], [link asio.reference.async_write
+async_write()], [link asio.reference.read_until read_until()] or [link
+asio.reference.async_read_until async_read_until()] free functions.
 
 [heading See Also]
 
@@ -62,7 +62,7 @@ asio.reference.async_read_until `async_read_until()`] free functions.
 [@http://www.openssl.org OpenSSL] is required to make use of Asio's SSL
 support. When an application needs to use OpenSSL functionality that is not
 wrapped by Asio, the underlying OpenSSL types may be obtained by calling [link
-asio.reference.ssl__context.impl `ssl::context::impl()`] or [link
+asio.reference.ssl__basic_context.impl `ssl::context::impl()`] or [link
 asio.reference.ssl__stream.impl `ssl::stream::impl()`].
 
 [endsect]

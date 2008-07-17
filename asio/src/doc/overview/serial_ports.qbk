@@ -31,11 +31,11 @@ port's baud rate, flow control type, parity, stop bits and character size.
 [link asio.reference.serial_port_base serial_port_base],
 [link asio.reference.basic_serial_port basic_serial_port],
 [link asio.reference.serial_port_service serial_port_service],
-[link asio.reference.serial_port_base.baud_rate serial_port_base::baud_rate],
-[link asio.reference.serial_port_base.flow_control serial_port_base::flow_control],
-[link asio.reference.serial_port_base.parity serial_port_base::parity],
-[link asio.reference.serial_port_base.stop_bits serial_port_base::stop_bits],
-[link asio.reference.serial_port_base.character_size serial_port_base::character_size].
+[link asio.reference.serial_port_base__baud_rate serial_port_base::baud_rate],
+[link asio.reference.serial_port_base__flow_control serial_port_base::flow_control],
+[link asio.reference.serial_port_base__parity serial_port_base::parity],
+[link asio.reference.serial_port_base__stop_bits serial_port_base::stop_bits],
+[link asio.reference.serial_port_base__character_size serial_port_base::character_size].
 
 [heading Notes]
 

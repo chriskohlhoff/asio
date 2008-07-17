@@ -218,4 +218,13 @@ Examples showing how to customise deadline_timer using different time types.
 * [@../src/examples/timers/time_t_timer.cpp]
 
 
+[heading:local UNIX Domain Sockets]
+
+Examples showing how to use UNIX domain (local) sockets.
+
+* [@../src/examples/local/connect_pair.cpp]
+* [@../src/examples/local/stream_server.cpp]
+* [@../src/examples/local/stream_client.cpp]
+
+
 [endsect]
