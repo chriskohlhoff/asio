@@ -9,7 +9,7 @@
 
 The Asio library offers side-by-side support for synchronous and asynchronous
 operations. The asynchronous support is based on the Proactor design pattern
-[link asio.overview.core.async.references \[POSA2\]], and the advantages and
+[link asio.overview.core.async.references \[POSA2\]]. The advantages and
 disadvantages of this approach, when compared to a synchronous-only or Reactor
 approach, are outlined below.
 
@@ -111,9 +111,9 @@ handlers.]
 
 [:Many operating systems offer a native asynchronous I/O API (such as
 overlapped I/O on __Windows__) as the preferred option for developing high
-performance network applications. The proposed library may be implemented in
-terms of native asynchronous I/O. However, if native support is not available,
-the library may also be implemented using synchronous event demultiplexors that
+performance network applications. The library may be implemented in terms of
+native asynchronous I/O. However, if native support is not available, the
+library may also be implemented using synchronous event demultiplexors that
 typify the Reactor pattern, such as __POSIX__ `select()`.]
 
 [mdash] Decoupling threading from concurrency.
