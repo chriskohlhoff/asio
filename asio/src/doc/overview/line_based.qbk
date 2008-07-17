@@ -26,7 +26,7 @@ server, to receive the first line of an HTTP request from a client:
           boost::bind(&http_connection::handle_request_line, this, _1));
     }
 
-    void handle_request_line(boost::system::error_code ec)
+    void handle_request_line(asio::error_code ec)
     {
       if (!ec)
       {
