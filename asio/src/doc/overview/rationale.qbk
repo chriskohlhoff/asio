@@ -7,48 +7,48 @@
 
 [section:rationale Rationale]
 
-Many programs interact with the outside world in some way, whether it be via a
-file, a network, a serial cable, or the console. Some of these, such as
-networking, pose particular challenges to application development as individual
-I/O operations can take a long (and sometimes indefinite) time to complete.
-Asio provides the tools to manage long running operations like this, without
+Most programs interact with the outside world in some way, whether it be via a
+file, a network, a serial cable, or the console. Sometimes, as is the case with
+networking, individual I/O operations can take a long time to complete. This
+poses particular challenges to application development.
+
+Asio provides the tools to manage these long running operations, without
 requiring programs to use concurrency models based on threads and explicit
 locking.
 
-The Asio library is intended for programmers using C++ for systems
-programming, where access to operating system functionality such as networking
-is often required. In particular, Asio attempts to address the following
-goals:
+The Asio library is intended for programmers using C++ for systems programming,
+where access to operating system functionality such as networking is often
+required. In particular, Asio addresses the following goals:
 
-* [*Portability.] The library should support, and provide consistent behaviour
-across, a range of commonly used operating systems.
+* [*Portability.] The library should support a range of commonly used operating
+systems, and provide consistent behaviour across these operating systems.
 
-* [*Scalability.] The library should allow, and indeed encourage, the
-development of network applications that scale to hundreds or thousands of
-concurrent connections. The library implementation for each operating system
-should use the mechanism that best enables this scalability.
+* [*Scalability.] The library should facilitate the development of network
+applications that scale to thousands of concurrent connections. The library
+implementation for each operating system should use the mechanism that best
+enables this scalability.
 
 * [*Efficiency.] The library should support techniques such as scatter-gather
-I/O, and allow usage that minimise data copying.
+I/O, and allow programs to minimise data copying.
 
-* [*Model concepts from established APIs, such as Berkeley sockets.] The
-Berkeley sockets API is widely implemented and understood, as well as being
-covered in much literature. Other programming languages often use a similar
-interface for networking APIs. As far as is reasonable, Asio should leverage
-existing practice and sources of information.
+* [*Model concepts from established APIs, such as BSD sockets.] The
+BSD socket API is widely implemented and understood, and is covered in much
+literature. Other programming languages often use a similar interface for
+networking APIs. As far as is reasonable, Asio should leverage existing
+practice.
 
-* [*Ease of use.] Lower the entry barrier for new users by taking a toolkit,
-rather than framework, approach. That is, try to minimise the up-front
-investment in time to just learning a few basic rules and guidelines. After
-that, a library user should only need to understand the specific functions that
-are being used.
+* [*Ease of use.] The library should provide a lower entry barrier for new
+users by taking a toolkit, rather than framework, approach. That is, it should
+try to minimise the up-front investment in time to just learning a few basic
+rules and guidelines. After that, a library user should only need to understand
+the specific functions that are being used.
 
 * [*Basis for further abstraction.] The library should permit the development
 of other libraries that provide higher levels of abstraction. For example,
 implementations of commonly used protocols such as HTTP.
 
 Although Asio started life focused primarily on networking, its concepts of
-asynchronous I/O can be, and have been, extended to include other operating
-system resources such as serial ports, file descriptors, and so on.
+asynchronous I/O have been extended to include other operating system resources
+such as serial ports, file descriptors, and so on.
 
 [endsect]
