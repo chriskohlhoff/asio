@@ -19,14 +19,9 @@
   * [link asio.overview.core.line_based Line-Based Operations]
   * [link asio.overview.core.allocation Custom Memory Allocation]
 * [link asio.overview.networking Networking]
+  * [link asio.overview.networking.protocols TCP, UDP and ICMP]
   * [link asio.overview.networking.iostreams Socket Iostreams]
   * [link asio.overview.networking.bsd_sockets The BSD Socket API and Asio]
-  [/ * IPv4 and IPv6 independence
-  * TCP
-  * UDP
-  * Multicast
-  * Raw sockets
-  * ICMP ]
 * [link asio.overview.timers Timers]
 * [link asio.overview.serial_ports Serial Ports]
 * [link asio.overview.posix POSIX-Specific Functionality]
@@ -66,9 +61,11 @@
 
 [section:networking Networking]
 
+* [link asio.overview.networking.protocols TCP, UDP and ICMP]
 * [link asio.overview.networking.iostreams Socket Iostreams]
 * [link asio.overview.networking.bsd_sockets The BSD Socket API and Asio]
 
+[include overview/protocols.qbk]
 [include overview/iostreams.qbk]
 [include overview/bsd_sockets.qbk]
 
