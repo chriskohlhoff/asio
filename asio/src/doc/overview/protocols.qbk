@@ -25,11 +25,11 @@ are looked up and converted into one or more endpoints:
     std::cout << endpoint << std::endl;
   }
 
-The list of endpoints obtained above may contain both IPv4 and IPv6 endpoints,
+The list of endpoints obtained above could contain both IPv4 and IPv6 endpoints,
 so a program may try each of them until it finds one that works. This keeps the
 client program independent of a specific IP version.
 
-When an endpoint is available, a socket may be created and connected:
+When an endpoint is available, a socket can be created and connected:
 
   ip::tcp::socket socket(my_io_service);
   socket.connect(endpoint);
@@ -39,7 +39,7 @@ asio.reference.basic_stream_socket.receive receive()], [link
 asio.reference.basic_stream_socket.async_receive async_receive()], [link
 asio.reference.basic_stream_socket.send send()] or [link
 asio.reference.basic_stream_socket.async_send async_send()] member functions.
-However, as these may result in [link asio.overview.core.streams short writes
+However, as these could result in [link asio.overview.core.streams short writes
 or reads], an application will typically use the following operations instead:
 [link asio.reference.read read()], [link asio.reference.async_read
 async_read()], [link asio.reference.write write()] and [link
@@ -114,7 +114,7 @@ asio.reference.basic_raw_socket.async_send async_send()] member functions.
 
 [heading Other Protocols]
 
-Support for other socket protocols (such as Bluetooth or IRCOMM sockets) may be
+Support for other socket protocols (such as Bluetooth or IRCOMM sockets) can be
 added by implementing the [link asio.reference.Protocol Protocol] type
 requirements.
 
