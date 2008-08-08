@@ -148,7 +148,7 @@ public:
         - offsetof(asio::detail::sockaddr_un_type, sun_path);
 
       // The path returned by the operating system may be NUL-terminated.
-      if (path_length_ > 0 && data_.local.sun_path[path_length_] == 0)
+      if (path_length_ > 0 && data_.local.sun_path[path_length_ - 1] == 0)
         --path_length_;
     }
   }
