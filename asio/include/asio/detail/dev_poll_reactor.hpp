@@ -422,14 +422,15 @@ private:
         else
           more_writes = write_op_queue_.has_operation(descriptor);
 
-        if ((events[i].events == POLLHUP)
-            && !more_except && !more_reads && !more_writes)
+        if ((events[i].events & (POLLERR | POLLHUP)) != 0
+              && (events[i].events & ~(POLLERR | POLLHUP)) == 0
+              && !more_except && !more_reads && !more_writes)
         {
-          // If we have only an POLLHUP event and no operations associated
-          // with the descriptor then we need to delete the descriptor from
-          // /dev/poll. The poll operation might produce POLLHUP events even
-          // if they are not specifically requested, so if we do not remove the
-          // descriptor we can end up in a tight polling loop.
+          // If we have an event and no operations associated with the
+          // descriptor then we need to delete the descriptor from /dev/poll.
+          // The poll operation can produce POLLHUP or POLLERR events when there
+          // is no operation pending, so if we do not remove the descriptor we
+          // can end up in a tight polling loop.
           ::pollfd ev = { 0 };
           ev.fd = descriptor;
           ev.events = POLLREMOVE;

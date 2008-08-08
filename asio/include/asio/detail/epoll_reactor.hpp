@@ -496,14 +496,15 @@ private:
         else
           more_writes = write_op_queue_.has_operation(descriptor);
 
-        if ((events[i].events == EPOLLHUP)
-            && !more_except && !more_reads && !more_writes)
+        if ((events[i].events & (EPOLLERR | EPOLLHUP)) != 0
+              && (events[i].events & ~(EPOLLERR | EPOLLHUP)) == 0
+              && !more_except && !more_reads && !more_writes)
         {
-          // If we have only an EPOLLHUP event and no operations associated
-          // with the descriptor then we need to delete the descriptor from
-          // epoll. The epoll_wait system call will produce EPOLLHUP events
-          // even if they are not specifically requested, so if we do not
-          // remove the descriptor we can end up in a tight loop of repeated
+          // If we have an event and no operations associated with the
+          // descriptor then we need to delete the descriptor from epoll. The
+          // epoll_wait system call can produce EPOLLHUP or EPOLLERR events
+          // when there is no operation pending, so if we do not remove the
+          // descriptor we can end up in a tight loop of repeated
           // calls to epoll_wait.
           epoll_event ev = { 0, { 0 } };
           epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, descriptor, &ev);
