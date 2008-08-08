@@ -29,13 +29,16 @@ ACLOCAL=${ACLOCAL:-aclocal}
 AUTOCONF=${AUTOCONF:-autoconf}
 
 ($AUTOCONF --version) >/dev/null 2>/dev/null || (echo "You need GNU autoconf to install from CVS (ftp://ftp.gnu.org/gnu/autoconf/)"; exit 1) || exit 1
-($AUTOMAKE --version) >/dev/null 2>/dev/null || (echo "You need GNU automake 1.7 to install from CVS (ftp://ftp.gnu.org/gnu/automake/)"; exit 1) || exit 1
+($AUTOMAKE --version) >/dev/null 2>/dev/null || (echo "You need GNU automake 1.7 or higher to install from CVS (ftp://ftp.gnu.org/gnu/automake/)"; exit 1) || exit 1
 
 # Determine the version of automake.
 automake_version=`$AUTOMAKE --version | head -n 1 | sed -e 's/[^12]*\([12]\.[0-9][^ ]*\).*/\1/'`
+automake_major=`echo $automake_version | cut -f1 -d.`
+automake_minor=`echo $automake_version | cut -f2 -d.`
+automake_version_number=`expr "$automake_major" \* 1000 \+ "$automake_minor"`
 
 # Require automake 1.7.
-if expr "1.7" \> "$automake_version" >/dev/null; then
+if expr "1007" \> "$automake_version_number" >/dev/null; then
   $AUTOMAKE --version | head -n 1
   echo ""
   echo "Fatal error: automake 1.7 or higher is required.  Please set \$AUTOMAKE"
