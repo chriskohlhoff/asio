@@ -69,17 +69,19 @@ public:
 # else
   BOOST_STATIC_CONSTANT(int, numeric_service = 0);
 # endif
-# if defined(AI_V4MAPPED)
+  // Note: QNX Neutrino 6.3 defines AI_V4MAPPED, AI_ALL and AI_ADDRCONFIG but
+  // does not implement them. Therefore they are specifically excluded here.
+# if defined(AI_V4MAPPED) && !defined(__QNXNTO__)
   BOOST_STATIC_CONSTANT(int, v4_mapped = AI_V4MAPPED);
 # else
   BOOST_STATIC_CONSTANT(int, v4_mapped = 0);
 # endif
-# if defined(AI_ALL)
+# if defined(AI_ALL) && !defined(__QNXNTO__)
   BOOST_STATIC_CONSTANT(int, all_matching = AI_ALL);
 # else
   BOOST_STATIC_CONSTANT(int, all_matching = 0);
 # endif
-# if defined(AI_ADDRCONFIG)
+# if defined(AI_ADDRCONFIG) && !defined(__QNXNTO__)
   BOOST_STATIC_CONSTANT(int, address_configured = AI_ADDRCONFIG);
 # else
   BOOST_STATIC_CONSTANT(int, address_configured = 0);
