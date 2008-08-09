@@ -119,6 +119,7 @@ public:
       ios.c_cflag |= CS8;
 #endif
       ios.c_iflag |= IGNPAR;
+      ios.c_cflag |= CREAD | CLOCAL;
       descriptor_ops::clear_error(ec);
       s = descriptor_ops::error_wrapper(::tcsetattr(fd, TCSANOW, &ios), ec);
     }
