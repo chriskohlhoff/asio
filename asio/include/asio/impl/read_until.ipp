@@ -537,8 +537,8 @@ namespace detail
       if (streambuf_.size() == streambuf_.max_size())
       {
         std::size_t bytes = 0;
-        asio::error_code ec(error::not_found);
-        handler_(ec, bytes);
+        asio::error_code ec2(error::not_found);
+        handler_(ec2, bytes);
         return;
       }
 

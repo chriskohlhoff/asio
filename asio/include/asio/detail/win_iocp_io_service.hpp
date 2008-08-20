@@ -530,7 +530,7 @@ private:
           // Wake up next thread that is blocked on GetQueuedCompletionStatus.
           if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, 0))
           {
-            DWORD last_error = ::GetLastError();
+            last_error = ::GetLastError();
             ec = asio::error_code(last_error,
                 asio::error::get_system_category());
             return 0;
