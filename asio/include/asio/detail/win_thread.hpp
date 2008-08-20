@@ -79,6 +79,11 @@ public:
         boost::throw_exception(e);
       }
     }
+    else
+    {
+      arg->entry_event_ = 0;
+      arg->exit_event_ = 0;
+    }
 
     unsigned int thread_id = 0;
     thread_ = reinterpret_cast<HANDLE>(::_beginthreadex(0, 0,
