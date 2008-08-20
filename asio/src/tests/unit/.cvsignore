@@ -26,6 +26,7 @@ is_read_buffered
 is_write_buffered
 placeholders
 read
+read_at
 read_until
 serial_port
 serial_port_base
@@ -37,3 +38,4 @@ stream_socket_service
 thread
 time_traits
 write
+write_at

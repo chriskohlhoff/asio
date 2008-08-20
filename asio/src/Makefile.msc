@@ -99,6 +99,7 @@ UNIT_TEST_EXES = \
 	tests\unit\is_write_buffered.exe \
 	tests\unit\placeholders.exe \
 	tests\unit\read.exe \
+	tests\unit\read_at.exe \
 	tests\unit\read_until.exe \
 	tests\unit\serial_port.exe \
 	tests\unit\serial_port_base.exe \
@@ -116,7 +117,8 @@ UNIT_TEST_EXES = \
 	tests\unit\windows\random_access_handle_service.exe \
 	tests\unit\windows\stream_handle.exe \
 	tests\unit\windows\stream_handle_service.exe \
-	tests\unit\write.exe
+	tests\unit\write.exe \
+	tests\unit\write_at.exe
 
 EXAMPLE_EXES = \
 	examples\allocation\server.exe \

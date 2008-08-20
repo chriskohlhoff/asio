@@ -48,6 +48,7 @@ noinst_PROGRAMS = \
 	tests/unit/posix/stream_descriptor \
 	tests/unit/posix/stream_descriptor_service \
 	tests/unit/read \
+	tests/unit/read_at \
 	tests/unit/read_until \
 	tests/unit/serial_port \
 	tests/unit/serial_port_base \
@@ -66,6 +67,7 @@ noinst_PROGRAMS = \
 	tests/unit/windows/stream_handle \
 	tests/unit/windows/stream_handle_service \
 	tests/unit/write \
+	tests/unit/write_at \
 	examples/allocation/server \
 	examples/buffers/reference_counted \
 	examples/chat/chat_client \
@@ -177,6 +179,7 @@ TESTS = \
 	tests/unit/posix/stream_descriptor \
 	tests/unit/posix/stream_descriptor_service \
 	tests/unit/read \
+	tests/unit/read_at \
 	tests/unit/read_until \
 	tests/unit/serial_port \
 	tests/unit/serial_port_base \
@@ -194,7 +197,8 @@ TESTS = \
 	tests/unit/windows/random_access_handle_service \
 	tests/unit/windows/stream_handle \
 	tests/unit/windows/stream_handle_service \
-	tests/unit/write
+	tests/unit/write \
+	tests/unit/write_at
 
 if HAVE_OPENSSL
 
@@ -266,6 +270,7 @@ tests_unit_posix_descriptor_base_SOURCES = tests/unit/posix/descriptor_base.cpp
 tests_unit_posix_stream_descriptor_SOURCES = tests/unit/posix/stream_descriptor.cpp
 tests_unit_posix_stream_descriptor_service_SOURCES = tests/unit/posix/stream_descriptor_service.cpp
 tests_unit_read_SOURCES = tests/unit/read.cpp
+tests_unit_read_at_SOURCES = tests/unit/read_at.cpp
 tests_unit_read_until_SOURCES = tests/unit/read_until.cpp
 tests_unit_serial_port_SOURCES = tests/unit/serial_port.cpp
 tests_unit_serial_port_base_SOURCES = tests/unit/serial_port_base.cpp
@@ -284,6 +289,7 @@ tests_unit_windows_random_access_handle_service_SOURCES = tests/unit/windows/ran
 tests_unit_windows_stream_handle_SOURCES = tests/unit/windows/stream_handle.cpp
 tests_unit_windows_stream_handle_service_SOURCES = tests/unit/windows/stream_handle_service.cpp
 tests_unit_write_SOURCES = tests/unit/write.cpp
+tests_unit_write_at_SOURCES = tests/unit/write_at.cpp
 examples_allocation_server_SOURCES = examples/allocation/server.cpp
 examples_buffers_reference_counted_SOURCES = examples/buffers/reference_counted.cpp
 examples_chat_chat_client_SOURCES = examples/chat/chat_client.cpp
