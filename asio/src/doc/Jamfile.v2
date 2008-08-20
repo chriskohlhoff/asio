@@ -52,5 +52,8 @@ install html
     $(boost)/doc/src/images/up.png
     $(boost)/doc/src/images/warning.png
     overview/proactor.png
+    overview/sync_op.png
+    overview/async_op1.png
+    overview/async_op2.png
     asio.png
   ;
