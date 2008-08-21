@@ -448,7 +448,7 @@ void async_read_until(AsyncReadStream& s,
     // Found a match. We're done.
     asio::error_code ec;
     std::size_t bytes = iter - begin + 1;
-    s.io_service().post(detail::bind_handler(handler, ec, bytes));
+    s.get_io_service().post(detail::bind_handler(handler, ec, bytes));
     return;
   }
 
@@ -456,7 +456,7 @@ void async_read_until(AsyncReadStream& s,
   if (b.size() == b.max_size())
   {
     asio::error_code ec(error::not_found);
-    s.io_service().post(detail::bind_handler(handler, ec, 0));
+    s.get_io_service().post(detail::bind_handler(handler, ec, 0));
     return;
   }
 
@@ -609,7 +609,7 @@ void async_read_until(AsyncReadStream& s,
       // Full match. We're done.
       asio::error_code ec;
       std::size_t bytes = result.first - begin + delim.length();
-      s.io_service().post(detail::bind_handler(handler, ec, bytes));
+      s.get_io_service().post(detail::bind_handler(handler, ec, bytes));
       return;
     }
     else
@@ -628,7 +628,7 @@ void async_read_until(AsyncReadStream& s,
   if (b.size() == b.max_size())
   {
     asio::error_code ec(error::not_found);
-    s.io_service().post(detail::bind_handler(handler, ec, 0));
+    s.get_io_service().post(detail::bind_handler(handler, ec, 0));
     return;
   }
 
@@ -782,7 +782,7 @@ void async_read_until(AsyncReadStream& s,
       // Full match. We're done.
       asio::error_code ec;
       std::size_t bytes = match_results[0].second - begin;
-      s.io_service().post(detail::bind_handler(handler, ec, bytes));
+      s.get_io_service().post(detail::bind_handler(handler, ec, bytes));
       return;
     }
     else
@@ -801,7 +801,7 @@ void async_read_until(AsyncReadStream& s,
   if (b.size() == b.max_size())
   {
     asio::error_code ec(error::not_found);
-    s.io_service().post(detail::bind_handler(handler, ec, 0));
+    s.get_io_service().post(detail::bind_handler(handler, ec, 0));
     return;
   }
 
@@ -957,7 +957,7 @@ void async_read_until(AsyncReadStream& s,
       // Full match. We're done.
       asio::error_code ec;
       std::size_t bytes = result.first - begin;
-      s.io_service().post(detail::bind_handler(handler, ec, bytes));
+      s.get_io_service().post(detail::bind_handler(handler, ec, bytes));
       return;
     }
     else
@@ -976,7 +976,7 @@ void async_read_until(AsyncReadStream& s,
   if (b.size() == b.max_size())
   {
     asio::error_code ec(error::not_found);
-    s.io_service().post(detail::bind_handler(handler, ec, 0));
+    s.get_io_service().post(detail::bind_handler(handler, ec, 0));
     return;
   }
 
