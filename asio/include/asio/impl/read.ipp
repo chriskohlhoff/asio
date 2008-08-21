@@ -37,18 +37,20 @@ template <typename SyncReadStream, typename MutableBufferSequence,
 std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition, asio::error_code& ec)
 {
+  ec = asio::error_code();
   asio::detail::consuming_buffers<
     mutable_buffer, MutableBufferSequence> tmp(buffers);
   std::size_t total_transferred = 0;
+  tmp.set_max_size(detail::adapt_completion_condition_result(
+        completion_condition(ec, total_transferred)));
   while (tmp.begin() != tmp.end())
   {
     std::size_t bytes_transferred = s.read_some(tmp, ec);
     tmp.consume(bytes_transferred);
     total_transferred += bytes_transferred;
-    if (completion_condition(ec, total_transferred))
-      return total_transferred;
+    tmp.set_max_size(detail::adapt_completion_condition_result(
+          completion_condition(ec, total_transferred)));
   }
-  ec = asio::error_code();
   return total_transferred;
 }
 
@@ -78,18 +80,23 @@ std::size_t read(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition, asio::error_code& ec)
 {
+  ec = asio::error_code();
   std::size_t total_transferred = 0;
-  for (;;)
+  std::size_t max_size = detail::adapt_completion_condition_result(
+        completion_condition(ec, total_transferred));
+  std::size_t bytes_available = std::min<std::size_t>(512,
+      std::min<std::size_t>(max_size, b.max_size() - b.size()));
+  while (bytes_available > 0)
   {
-    std::size_t bytes_available =
-      std::min<std::size_t>(512, b.max_size() - b.size());
     std::size_t bytes_transferred = s.read_some(b.prepare(bytes_available), ec);
     b.commit(bytes_transferred);
     total_transferred += bytes_transferred;
-    if (b.size() == b.max_size()
-        || completion_condition(ec, total_transferred))
-      return total_transferred;
+    max_size = detail::adapt_completion_condition_result(
+          completion_condition(ec, total_transferred));
+    bytes_available = std::min<std::size_t>(512,
+        std::min<std::size_t>(max_size, b.max_size() - b.size()));
   }
+  return total_transferred;
 }
 
 template <typename SyncReadStream, typename Allocator>
@@ -139,8 +146,9 @@ namespace detail
     {
       total_transferred_ += bytes_transferred;
       buffers_.consume(bytes_transferred);
-      if (completion_condition_(ec, total_transferred_)
-          || buffers_.begin() == buffers_.end())
+      buffers_.set_max_size(detail::adapt_completion_condition_result(
+            completion_condition_(ec, total_transferred_)));
+      if (buffers_.begin() == buffers_.end())
       {
         handler_(ec, total_transferred_);
       }
@@ -197,6 +205,18 @@ inline void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
 {
   asio::detail::consuming_buffers<
     mutable_buffer, MutableBufferSequence> tmp(buffers);
+
+  asio::error_code ec;
+  std::size_t total_transferred = 0;
+  tmp.set_max_size(detail::adapt_completion_condition_result(
+        completion_condition(ec, total_transferred)));
+  if (tmp.begin() == tmp.end())
+  {
+    s.get_io_service().post(detail::bind_handler(
+          handler, ec, total_transferred));
+    return;
+  }
+
   s.async_read_some(tmp,
       detail::read_handler<AsyncReadStream, MutableBufferSequence,
         CompletionCondition, ReadHandler>(
@@ -234,15 +254,17 @@ namespace detail
     {
       total_transferred_ += bytes_transferred;
       streambuf_.commit(bytes_transferred);
-      if (streambuf_.size() == streambuf_.max_size()
-          || completion_condition_(ec, total_transferred_))
+      std::size_t max_size = detail::adapt_completion_condition_result(
+            completion_condition_(ec, total_transferred_));
+      std::size_t bytes_available = std::min<std::size_t>(512,
+          std::min<std::size_t>(max_size,
+            streambuf_.max_size() - streambuf_.size()));
+      if (bytes_available == 0)
       {
         handler_(ec, total_transferred_);
       }
       else
       {
-        std::size_t bytes_available =
-          std::min<std::size_t>(512, streambuf_.max_size() - streambuf_.size());
         stream_.async_read_some(streambuf_.prepare(bytes_available), *this);
       }
     }
@@ -292,8 +314,19 @@ inline void async_read(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition, ReadHandler handler)
 {
-  std::size_t bytes_available =
-    std::min<std::size_t>(512, b.max_size() - b.size());
+  asio::error_code ec;
+  std::size_t total_transferred = 0;
+  std::size_t max_size = detail::adapt_completion_condition_result(
+        completion_condition(ec, total_transferred));
+  std::size_t bytes_available = std::min<std::size_t>(512,
+      std::min<std::size_t>(max_size, b.max_size() - b.size()));
+  if (bytes_available == 0)
+  {
+    s.get_io_service().post(detail::bind_handler(
+          handler, ec, total_transferred));
+    return;
+  }
+
   s.async_read_some(b.prepare(bytes_available),
       detail::read_streambuf_handler<AsyncReadStream, Allocator,
         CompletionCondition, ReadHandler>(

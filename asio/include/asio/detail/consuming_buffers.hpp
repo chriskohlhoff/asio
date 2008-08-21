@@ -20,11 +20,13 @@
 #include "asio/detail/push_options.hpp"
 #include <algorithm>
 #include <cstddef>
+#include <limits>
 #include <boost/config.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/buffer.hpp"
+#include "asio/completion_condition.hpp"
 
 namespace asio {
 namespace detail {
@@ -46,33 +48,33 @@ public:
   // Construct with a buffer for the first entry and an iterator
   // range for the remaining entries.
   consuming_buffers_iterator(bool at_end, const Buffer& first,
-      Buffer_Iterator begin_remainder, Buffer_Iterator end_remainder)
-    : at_end_(at_end),
+      Buffer_Iterator begin_remainder, Buffer_Iterator end_remainder,
+      std::size_t max_size)
+    : at_end_(max_size > 0 ? at_end : true),
       first_(buffer(first, max_size)),
       begin_remainder_(begin_remainder),
       end_remainder_(end_remainder),
-      offset_(0)
+      offset_(0),
+      max_size_(max_size)
   {
   }
 
 private:
   friend class boost::iterator_core_access;
 
-  enum { max_size = 65536 };
-
   void increment()
   {
     if (!at_end_)
     {
       if (begin_remainder_ == end_remainder_
-          || offset_ + buffer_size(first_) >= max_size)
+          || offset_ + buffer_size(first_) >= max_size_)
       {
         at_end_ = true;
       }
       else
       {
         offset_ += buffer_size(first_);
-        first_ = buffer(*begin_remainder_++, max_size - offset_);
+        first_ = buffer(*begin_remainder_++, max_size_ - offset_);
       }
     }
   }
@@ -99,6 +101,7 @@ private:
   Buffer_Iterator begin_remainder_;
   Buffer_Iterator end_remainder_;
   std::size_t offset_;
+  std::size_t max_size_;
 };
 
 // A proxy for a sub-range in a list of buffers.
@@ -118,7 +121,8 @@ public:
     : buffers_(buffers),
       at_end_(buffers_.begin() == buffers_.end()),
       first_(*buffers_.begin()),
-      begin_remainder_(buffers_.begin())
+      begin_remainder_(buffers_.begin()),
+      max_size_((std::numeric_limits<std::size_t>::max)())
   {
     if (!at_end_)
       ++begin_remainder_;
@@ -129,7 +133,8 @@ public:
     : buffers_(other.buffers_),
       at_end_(other.at_end_),
       first_(other.first_),
-      begin_remainder_(buffers_.begin())
+      begin_remainder_(buffers_.begin()),
+      max_size_(other.max_size_)
   {
     typename Buffers::const_iterator first = other.buffers_.begin();
     typename Buffers::const_iterator second = other.begin_remainder_;
@@ -146,19 +151,27 @@ public:
     typename Buffers::const_iterator first = other.buffers_.begin();
     typename Buffers::const_iterator second = other.begin_remainder_;
     std::advance(begin_remainder_, std::distance(first, second));
+    max_size_ = other.max_size_;
     return *this;
   }
 
   // Get a forward-only iterator to the first element.
   const_iterator begin() const
   {
-    return const_iterator(at_end_, first_, begin_remainder_, buffers_.end());
+    return const_iterator(at_end_, first_,
+        begin_remainder_, buffers_.end(), max_size_);
   }
 
   // Get a forward-only iterator for one past the last element.
   const_iterator end() const
   {
     return const_iterator();
+  }
+
+  // Set the maximum size for a single transfer.
+  void set_max_size(std::size_t max_size)
+  {
+    max_size_ = max_size;
   }
 
   // Consume the specified number of bytes from the buffers.
@@ -197,6 +210,7 @@ private:
   bool at_end_;
   Buffer first_;
   typename Buffers::const_iterator begin_remainder_;
+  std::size_t max_size_;
 };
 
 // Specialisation for null_buffers to ensure that the null_buffers type is
@@ -207,6 +221,11 @@ class consuming_buffers<Buffer, asio::null_buffers>
 {
 public:
   consuming_buffers(const asio::null_buffers&)
+  {
+    // No-op.
+  }
+
+  void set_max_size(std::size_t)
   {
     // No-op.
   }

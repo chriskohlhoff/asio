@@ -33,19 +33,21 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d,
     boost::uint64_t offset, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition, asio::error_code& ec)
 {
+  ec = asio::error_code();
   asio::detail::consuming_buffers<
     const_buffer, ConstBufferSequence> tmp(buffers);
   std::size_t total_transferred = 0;
+  tmp.set_max_size(detail::adapt_completion_condition_result(
+        completion_condition(ec, total_transferred)));
   while (tmp.begin() != tmp.end())
   {
     std::size_t bytes_transferred = d.write_some_at(
         offset + total_transferred, tmp, ec);
     tmp.consume(bytes_transferred);
     total_transferred += bytes_transferred;
-    if (completion_condition(ec, total_transferred))
-      return total_transferred;
+    tmp.set_max_size(detail::adapt_completion_condition_result(
+          completion_condition(ec, total_transferred)));
   }
-  ec = asio::error_code();
   return total_transferred;
 }
 
@@ -135,8 +137,9 @@ namespace detail
     {
       total_transferred_ += bytes_transferred;
       buffers_.consume(bytes_transferred);
-      if (completion_condition_(ec, total_transferred_)
-          || buffers_.begin() == buffers_.end())
+      buffers_.set_max_size(detail::adapt_completion_condition_result(
+            completion_condition_(ec, total_transferred_)));
+      if (buffers_.begin() == buffers_.end())
       {
         handler_(ec, total_transferred_);
       }
@@ -196,6 +199,18 @@ inline void async_write_at(AsyncRandomAccessWriteDevice& d,
 {
   asio::detail::consuming_buffers<
     const_buffer, ConstBufferSequence> tmp(buffers);
+
+  asio::error_code ec;
+  std::size_t total_transferred = 0;
+  tmp.set_max_size(detail::adapt_completion_condition_result(
+        completion_condition(ec, total_transferred)));
+  if (tmp.begin() == tmp.end())
+  {
+    d.get_io_service().post(detail::bind_handler(
+          handler, ec, total_transferred));
+    return;
+  }
+
   d.async_write_some_at(offset, tmp,
       detail::write_at_handler<AsyncRandomAccessWriteDevice,
       ConstBufferSequence, CompletionCondition, WriteHandler>(
