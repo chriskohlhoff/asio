@@ -1116,7 +1116,8 @@ void test_5_arg_async_read_at()
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_at(s, 0, buffers, asio::transfer_at_least(10),
+  asio::async_read_at(s, 0, buffers,
+      asio::transfer_at_least(10),
       boost::bind(async_read_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1129,7 +1130,8 @@ void test_5_arg_async_read_at()
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_at(s, 1234, buffers, asio::transfer_at_least(10),
+  asio::async_read_at(s, 1234, buffers,
+      asio::transfer_at_least(10),
       boost::bind(async_read_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1143,7 +1145,8 @@ void test_5_arg_async_read_at()
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_at(s, 0, buffers, asio::transfer_at_least(10),
+  asio::async_read_at(s, 0, buffers,
+      asio::transfer_at_least(10),
       boost::bind(async_read_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1157,7 +1160,8 @@ void test_5_arg_async_read_at()
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_at(s, 1234, buffers, asio::transfer_at_least(10),
+  asio::async_read_at(s, 1234, buffers,
+      asio::transfer_at_least(10),
       boost::bind(async_read_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1171,7 +1175,8 @@ void test_5_arg_async_read_at()
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_at(s, 0, buffers, asio::transfer_at_least(10),
+  asio::async_read_at(s, 0, buffers,
+      asio::transfer_at_least(10),
       boost::bind(async_read_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1185,7 +1190,8 @@ void test_5_arg_async_read_at()
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_at(s, 1234, buffers, asio::transfer_at_least(10),
+  asio::async_read_at(s, 1234, buffers,
+      asio::transfer_at_least(10),
       boost::bind(async_read_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1198,7 +1204,8 @@ void test_5_arg_async_read_at()
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_at(s, 0, buffers, asio::transfer_at_least(42),
+  asio::async_read_at(s, 0, buffers,
+      asio::transfer_at_least(42),
       boost::bind(async_read_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1211,7 +1218,8 @@ void test_5_arg_async_read_at()
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_at(s, 1234, buffers, asio::transfer_at_least(42),
+  asio::async_read_at(s, 1234, buffers,
+      asio::transfer_at_least(42),
       boost::bind(async_read_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1225,7 +1233,8 @@ void test_5_arg_async_read_at()
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_at(s, 0, buffers, asio::transfer_at_least(42),
+  asio::async_read_at(s, 0, buffers,
+      asio::transfer_at_least(42),
       boost::bind(async_read_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1239,7 +1248,8 @@ void test_5_arg_async_read_at()
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_at(s, 1234, buffers, asio::transfer_at_least(42),
+  asio::async_read_at(s, 1234, buffers,
+      asio::transfer_at_least(42),
       boost::bind(async_read_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1253,7 +1263,8 @@ void test_5_arg_async_read_at()
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_at(s, 0, buffers, asio::transfer_at_least(42),
+  asio::async_read_at(s, 0, buffers,
+      asio::transfer_at_least(42),
       boost::bind(async_read_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1267,7 +1278,8 @@ void test_5_arg_async_read_at()
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
   called = false;
-  asio::async_read_at(s, 1234, buffers, asio::transfer_at_least(42),
+  asio::async_read_at(s, 1234, buffers,
+      asio::transfer_at_least(42),
       boost::bind(async_read_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,

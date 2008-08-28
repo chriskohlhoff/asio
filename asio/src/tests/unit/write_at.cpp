@@ -1019,7 +1019,8 @@ void test_5_arg_async_write_at()
 
   s.reset();
   called = false;
-  asio::async_write_at(s, 0, buffers, asio::transfer_at_least(10),
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_at_least(10),
       boost::bind(async_write_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1031,7 +1032,8 @@ void test_5_arg_async_write_at()
 
   s.reset();
   called = false;
-  asio::async_write_at(s, 1234, buffers, asio::transfer_at_least(10),
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_at_least(10),
       boost::bind(async_write_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1044,7 +1046,8 @@ void test_5_arg_async_write_at()
   s.reset();
   s.next_write_length(1);
   called = false;
-  asio::async_write_at(s, 0, buffers, asio::transfer_at_least(10),
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_at_least(10),
       boost::bind(async_write_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1057,7 +1060,8 @@ void test_5_arg_async_write_at()
   s.reset();
   s.next_write_length(1);
   called = false;
-  asio::async_write_at(s, 1234, buffers, asio::transfer_at_least(10),
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_at_least(10),
       boost::bind(async_write_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1070,7 +1074,8 @@ void test_5_arg_async_write_at()
   s.reset();
   s.next_write_length(10);
   called = false;
-  asio::async_write_at(s, 0, buffers, asio::transfer_at_least(10),
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_at_least(10),
       boost::bind(async_write_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1083,7 +1088,8 @@ void test_5_arg_async_write_at()
   s.reset();
   s.next_write_length(10);
   called = false;
-  asio::async_write_at(s, 1234, buffers, asio::transfer_at_least(10),
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_at_least(10),
       boost::bind(async_write_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1095,7 +1101,8 @@ void test_5_arg_async_write_at()
 
   s.reset();
   called = false;
-  asio::async_write_at(s, 0, buffers, asio::transfer_at_least(42),
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_at_least(42),
       boost::bind(async_write_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1107,7 +1114,8 @@ void test_5_arg_async_write_at()
 
   s.reset();
   called = false;
-  asio::async_write_at(s, 1234, buffers, asio::transfer_at_least(42),
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_at_least(42),
       boost::bind(async_write_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1120,7 +1128,8 @@ void test_5_arg_async_write_at()
   s.reset();
   s.next_write_length(1);
   called = false;
-  asio::async_write_at(s, 0, buffers, asio::transfer_at_least(42),
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_at_least(42),
       boost::bind(async_write_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1133,7 +1142,8 @@ void test_5_arg_async_write_at()
   s.reset();
   s.next_write_length(1);
   called = false;
-  asio::async_write_at(s, 1234, buffers, asio::transfer_at_least(42),
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_at_least(42),
       boost::bind(async_write_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1146,7 +1156,8 @@ void test_5_arg_async_write_at()
   s.reset();
   s.next_write_length(10);
   called = false;
-  asio::async_write_at(s, 0, buffers, asio::transfer_at_least(42),
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_at_least(42),
       boost::bind(async_write_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
@@ -1159,7 +1170,8 @@ void test_5_arg_async_write_at()
   s.reset();
   s.next_write_length(10);
   called = false;
-  asio::async_write_at(s, 1234, buffers, asio::transfer_at_least(42),
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_at_least(42),
       boost::bind(async_write_handler,
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
