@@ -92,7 +92,7 @@ sub update_readme
     elsif ($line =~ /^Released/)
     {
       my @time = localtime;
-      $line = "Released " . strftime("%A, %d %B %Y", @time);
+      $line = "Released " . strftime("%A, %d %B %Y", @time) . ".";
     }
     print($output "$line\n");
   }
