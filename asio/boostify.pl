@@ -3,28 +3,7 @@
 use strict;
 use File::Path;
 
-my $boost_dir;
-
-sub determine_boost_dir
-{
-  # Parse the configure.ac to determine the asio version.
-  my $asio_version = "unknown";
-  open(my $input, "<configure.ac") or die("Can't read configure.ac");
-  while (my $line = <$input>)
-  {
-    chomp($line);
-    if ($line =~ /AC_INIT\(asio, \[([^\]]*)\]\)/)
-    {
-      $asio_version = $1;
-      $asio_version =~ s/\./_/g;
-    }
-  }
-  close($input);
-
-  # Create the boost directory name.
-  our $boost_dir;
-  $boost_dir = "boost_asio_$asio_version";
-}
+our $boost_dir = "boostified";
 
 sub print_line
 {
@@ -662,7 +641,6 @@ sub copy_examples
   }
 }
 
-determine_boost_dir();
 copy_include_files();
 create_lib_directory();
 copy_unit_tests();
