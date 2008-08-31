@@ -202,6 +202,17 @@ inline int listen(socket_type s, int backlog, asio::error_code& ec)
   return result;
 }
 
+inline void init_buf_iov_base(void*& base, void* addr)
+{
+  base = addr;
+}
+
+template <typename T>
+inline void init_buf_iov_base(T& base, void* addr)
+{
+  base = static_cast<T>(addr);
+}
+
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 typedef WSABUF buf;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -214,7 +225,7 @@ inline void init_buf(buf& b, void* data, size_t size)
   b.buf = static_cast<char*>(data);
   b.len = static_cast<u_long>(size);
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  b.iov_base = data;
+  init_buf_iov_base(b.iov_base, data);
   b.iov_len = size;
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
@@ -225,7 +236,7 @@ inline void init_buf(buf& b, const void* data, size_t size)
   b.buf = static_cast<char*>(const_cast<void*>(data));
   b.len = static_cast<u_long>(size);
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  b.iov_base = const_cast<void*>(data);
+  init_buf_iov_base(b.iov_base, const_cast<void*>(data));
   b.iov_len = size;
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
