@@ -83,6 +83,7 @@ inline std::string error_code::message() const
   if (category() != error::get_system_category())
     return "asio error";
 #if defined(__sun) || defined(__QNX__)
+  using namespace std;
   return strerror(value_);
 #elif defined(__MACH__) && defined(__APPLE__) \
 || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__) \
