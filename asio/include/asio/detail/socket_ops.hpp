@@ -701,6 +701,32 @@ inline int poll_write(socket_type s, asio::error_code& ec)
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
+inline int poll_connect(socket_type s, asio::error_code& ec)
+{
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  FD_SET write_fds;
+  FD_ZERO(&write_fds);
+  FD_SET(s, &write_fds);
+  FD_SET except_fds;
+  FD_ZERO(&except_fds);
+  FD_SET(s, &except_fds);
+  clear_error(ec);
+  int result = error_wrapper(::select(s, 0, &write_fds, &except_fds, 0), ec);
+# if defined(UNDER_CE)
+  if (result >= 0)
+    clear_error(ec);
+# endif
+  return result;
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  pollfd fds;
+  fds.fd = s;
+  fds.events = POLLOUT;
+  fds.revents = 0;
+  clear_error(ec);
+  return error_wrapper(::poll(&fds, 1, -1), ec);
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+}
+
 inline const char* inet_ntop(int af, const void* src, char* dest, size_t length,
     unsigned long scope_id, asio::error_code& ec)
 {
