@@ -58,17 +58,28 @@ inline int close(int d, asio::error_code& ec)
   return error_wrapper(::close(d), ec);
 }
 
+inline void init_buf_iov_base(void*& base, void* addr)
+{
+  base = addr;
+}
+
+template <typename T>
+inline void init_buf_iov_base(T& base, void* addr)
+{
+  base = static_cast<T>(addr);
+}
+
 typedef iovec buf;
 
 inline void init_buf(buf& b, void* data, size_t size)
 {
-  b.iov_base = data;
+  init_buf_iov_base(b.iov_base, data);
   b.iov_len = size;
 }
 
 inline void init_buf(buf& b, const void* data, size_t size)
 {
-  b.iov_base = const_cast<void*>(data);
+  init_buf_iov_base(b.iov_base, const_cast<void*>(data));
   b.iov_len = size;
 }
 
