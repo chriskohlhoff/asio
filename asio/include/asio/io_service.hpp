@@ -134,6 +134,7 @@ private:
   // The type of the platform-specific implementation.
 #if defined(ASIO_HAS_IOCP)
   typedef detail::win_iocp_io_service impl_type;
+  friend class detail::win_iocp_overlapped_ptr;
 #elif defined(ASIO_HAS_EPOLL)
   typedef detail::task_io_service<detail::epoll_reactor<false> > impl_type;
 #elif defined(ASIO_HAS_KQUEUE)

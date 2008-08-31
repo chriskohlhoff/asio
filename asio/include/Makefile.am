@@ -97,6 +97,7 @@ nobase_include_HEADERS = \
 	asio/detail/win_iocp_io_service.hpp \
 	asio/detail/win_iocp_io_service_fwd.hpp \
 	asio/detail/win_iocp_handle_service.hpp \
+	asio/detail/win_iocp_overlapped_ptr.hpp \
 	asio/detail/win_iocp_serial_port_service.hpp \
 	asio/detail/win_iocp_socket_service.hpp \
 	asio/detail/win_mutex.hpp \
@@ -181,6 +182,7 @@ nobase_include_HEADERS = \
 	asio/windows/basic_handle.hpp \
 	asio/windows/basic_random_access_handle.hpp \
 	asio/windows/basic_stream_handle.hpp \
+	asio/windows/overlapped_ptr.hpp \
 	asio/windows/random_access_handle.hpp \
 	asio/windows/random_access_handle_service.hpp \
 	asio/windows/stream_handle.hpp \

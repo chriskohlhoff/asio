@@ -62,6 +62,7 @@ noinst_PROGRAMS = \
 	tests/unit/windows/basic_handle \
 	tests/unit/windows/basic_random_access_handle \
 	tests/unit/windows/basic_stream_handle \
+	tests/unit/windows/overlapped_ptr \
 	tests/unit/windows/random_access_handle \
 	tests/unit/windows/random_access_handle_service \
 	tests/unit/windows/stream_handle \
@@ -116,6 +117,11 @@ noinst_PROGRAMS += \
 	examples/local/connect_pair \
 	examples/local/stream_server \
 	examples/local/stream_client
+endif
+
+if WINDOWS_TARGET
+noinst_PROGRAMS += \
+	examples/windows/transmit_file
 endif
 
 if HAVE_OPENSSL
@@ -193,6 +199,7 @@ TESTS = \
 	tests/unit/windows/basic_handle \
 	tests/unit/windows/basic_random_access_handle \
 	tests/unit/windows/basic_stream_handle \
+	tests/unit/windows/overlapped_ptr \
 	tests/unit/windows/random_access_handle \
 	tests/unit/windows/random_access_handle_service \
 	tests/unit/windows/stream_handle \
@@ -284,6 +291,7 @@ tests_unit_time_traits_SOURCES = tests/unit/time_traits.cpp
 tests_unit_windows_basic_handle_SOURCES = tests/unit/windows/basic_handle.cpp
 tests_unit_windows_basic_random_access_handle_SOURCES = tests/unit/windows/basic_random_access_handle.cpp
 tests_unit_windows_basic_stream_handle_SOURCES = tests/unit/windows/basic_stream_handle.cpp
+tests_unit_windows_overlapped_ptr_SOURCES = tests/unit/windows/overlapped_ptr.cpp
 tests_unit_windows_random_access_handle_SOURCES = tests/unit/windows/random_access_handle.cpp
 tests_unit_windows_random_access_handle_service_SOURCES = tests/unit/windows/random_access_handle_service.cpp
 tests_unit_windows_stream_handle_SOURCES = tests/unit/windows/stream_handle.cpp
@@ -380,6 +388,10 @@ if !WINDOWS_TARGET
 examples_local_connect_pair_SOURCES = examples/local/connect_pair.cpp
 examples_local_stream_server_SOURCES = examples/local/stream_server.cpp
 examples_local_stream_client_SOURCES = examples/local/stream_client.cpp
+endif
+
+if WINDOWS_TARGET
+examples_windows_transmit_file_SOURCES = examples/windows/transmit_file.cpp
 endif
 
 if HAVE_OPENSSL

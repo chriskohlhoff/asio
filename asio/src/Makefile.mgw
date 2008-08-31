@@ -62,6 +62,7 @@ UNIT_TEST_EXES = \
 	tests/unit/windows/basic_handle.exe \
 	tests/unit/windows/basic_random_access_handle.exe \
 	tests/unit/windows/basic_stream_handle.exe \
+	tests/unit/windows/overlapped_ptr.exe \
 	tests/unit/windows/random_access_handle.exe \
 	tests/unit/windows/random_access_handle_service.exe \
 	tests/unit/windows/stream_handle.exe \
@@ -105,7 +106,8 @@ EXAMPLE_EXES = \
 	examples/tutorial/daytime4/client.exe \
 	examples/tutorial/daytime5/server.exe \
 	examples/tutorial/daytime6/server.exe \
-	examples/tutorial/daytime7/server.exe
+	examples/tutorial/daytime7/server.exe \
+	examples/windows/transmit_file.exe
 
 OTHER_EXAMPLE_EXES = \
 	examples/http/server/http_server.exe \
