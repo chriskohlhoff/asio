@@ -39,6 +39,7 @@ void read_some_handler(const asio::error_code&, std::size_t)
 
 void test()
 {
+#if defined(ASIO_HAS_SERIAL_PORT)
   using namespace asio;
 
   try
@@ -111,6 +112,7 @@ void test()
   catch (std::exception&)
   {
   }
+#endif // defined(ASIO_HAS_SERIAL_PORT)
 }
 
 } // namespace serial_port_compile
