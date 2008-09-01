@@ -8,6 +8,7 @@
 basic_handle
 basic_random_access_handle
 basic_stream_handle
+overlapped_ptr
 random_access_handle
 random_access_handle_service
 stream_handle
