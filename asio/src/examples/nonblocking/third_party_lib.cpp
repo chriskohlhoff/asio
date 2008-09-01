@@ -150,7 +150,7 @@ private:
 
     // Otherwise, an error occurred. Closing the socket cancels any outstanding
     // asynchronous read or write operations. The connection object will be
-    // destroyed once automatically once those outstanding operations complete.
+    // destroyed automatically once those outstanding operations complete.
     else
       socket_.close();
   }
@@ -170,7 +170,7 @@ private:
 
     // Otherwise, an error occurred. Closing the socket cancels any outstanding
     // asynchronous read or write operations. The connection object will be
-    // destroyed once automatically once those outstanding operations complete.
+    // destroyed automatically once those outstanding operations complete.
     else
       socket_.close();
   }
