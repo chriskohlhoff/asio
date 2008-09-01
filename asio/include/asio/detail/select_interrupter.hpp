@@ -21,6 +21,7 @@
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/detail/eventfd_select_interrupter.hpp"
 #include "asio/detail/pipe_select_interrupter.hpp"
 #include "asio/detail/socket_select_interrupter.hpp"
 
@@ -29,6 +30,8 @@ namespace detail {
 
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 typedef socket_select_interrupter select_interrupter;
+#elif defined(ASIO_HAS_EVENTFD)
+typedef eventfd_select_interrupter select_interrupter;
 #else
 typedef pipe_select_interrupter select_interrupter;
 #endif

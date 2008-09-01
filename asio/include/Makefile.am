@@ -34,6 +34,7 @@ nobase_include_HEADERS = \
 	asio/detail/dev_poll_reactor_fwd.hpp \
 	asio/detail/epoll_reactor.hpp \
 	asio/detail/epoll_reactor_fwd.hpp \
+	asio/detail/eventfd_select_interrupter.hpp \
 	asio/detail/event.hpp \
 	asio/detail/fd_set_adapter.hpp \
 	asio/detail/handler_alloc_helpers.hpp \
