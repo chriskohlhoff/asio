@@ -4425,13 +4425,21 @@ An object that represents the local endpoint of the socket. Returns a default-co
 
 [endsect]
 
-
 [section:lowest_layer basic_datagram_socket::lowest_layer]
+
+[indexterm2 lowest_layer..basic_datagram_socket] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link asio.reference.basic_datagram_socket.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link asio.reference.basic_datagram_socket.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 basic_datagram_socket::lowest_layer (1 of 2 overloads)]
 
 
 ['Inherited from basic_socket.]
 
-[indexterm2 lowest_layer..basic_datagram_socket] Get a reference to the lowest layer. 
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -4447,6 +4455,31 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 basic_datagram_socket::lowest_layer (2 of 2 overloads)]
+
+
+['Inherited from basic_socket.]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_socket cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type basic_datagram_socket::lowest_layer_type]
@@ -9816,13 +9849,21 @@ An object that represents the local endpoint of the socket. Returns a default-co
 
 [endsect]
 
-
 [section:lowest_layer basic_raw_socket::lowest_layer]
+
+[indexterm2 lowest_layer..basic_raw_socket] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link asio.reference.basic_raw_socket.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link asio.reference.basic_raw_socket.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 basic_raw_socket::lowest_layer (1 of 2 overloads)]
 
 
 ['Inherited from basic_socket.]
 
-[indexterm2 lowest_layer..basic_raw_socket] Get a reference to the lowest layer. 
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -9838,6 +9879,31 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 basic_raw_socket::lowest_layer (2 of 2 overloads)]
+
+
+['Inherited from basic_socket.]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_socket cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type basic_raw_socket::lowest_layer_type]
@@ -12487,10 +12553,18 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 [endsect]
 
 
-
 [section:lowest_layer basic_serial_port::lowest_layer]
 
 [indexterm2 lowest_layer..basic_serial_port] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link asio.reference.basic_serial_port.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link asio.reference.basic_serial_port.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 basic_serial_port::lowest_layer (1 of 2 overloads)]
+
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -12506,6 +12580,28 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 basic_serial_port::lowest_layer (2 of 2 overloads)]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_serial_port cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type basic_serial_port::lowest_layer_type]
@@ -15052,10 +15148,18 @@ An object that represents the local endpoint of the socket. Returns a default-co
 
 [endsect]
 
-
 [section:lowest_layer basic_socket::lowest_layer]
 
 [indexterm2 lowest_layer..basic_socket] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link asio.reference.basic_socket.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link asio.reference.basic_socket.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 basic_socket::lowest_layer (1 of 2 overloads)]
+
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -15071,6 +15175,28 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 basic_socket::lowest_layer (2 of 2 overloads)]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_socket cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type basic_socket::lowest_layer_type]
@@ -20657,13 +20783,21 @@ An object that represents the local endpoint of the socket. Returns a default-co
 
 [endsect]
 
-
 [section:lowest_layer basic_socket_streambuf::lowest_layer]
+
+[indexterm2 lowest_layer..basic_socket_streambuf] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link asio.reference.basic_socket_streambuf.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link asio.reference.basic_socket_streambuf.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 basic_socket_streambuf::lowest_layer (1 of 2 overloads)]
 
 
 ['Inherited from basic_socket.]
 
-[indexterm2 lowest_layer..basic_socket_streambuf] Get a reference to the lowest layer. 
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -20679,6 +20813,31 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 basic_socket_streambuf::lowest_layer (2 of 2 overloads)]
+
+
+['Inherited from basic_socket.]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_socket cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type basic_socket_streambuf::lowest_layer_type]
@@ -24282,13 +24441,21 @@ An object that represents the local endpoint of the socket. Returns a default-co
 
 [endsect]
 
-
 [section:lowest_layer basic_stream_socket::lowest_layer]
+
+[indexterm2 lowest_layer..basic_stream_socket] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link asio.reference.basic_stream_socket.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link asio.reference.basic_stream_socket.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 basic_stream_socket::lowest_layer (1 of 2 overloads)]
 
 
 ['Inherited from basic_socket.]
 
-[indexterm2 lowest_layer..basic_stream_socket] Get a reference to the lowest layer. 
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -24304,6 +24471,31 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 basic_stream_socket::lowest_layer (2 of 2 overloads)]
+
+
+['Inherited from basic_socket.]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_socket cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type basic_stream_socket::lowest_layer_type]
@@ -27617,10 +27809,18 @@ Determine the amount of data that may be read without blocking.
 [endsect]
 
 
-
 [section:lowest_layer buffered_read_stream::lowest_layer]
 
 [indexterm2 lowest_layer..buffered_read_stream] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link asio.reference.buffered_read_stream.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link asio.reference.buffered_read_stream.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 buffered_read_stream::lowest_layer (1 of 2 overloads)]
+
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -27628,6 +27828,20 @@ Determine the amount of data that may be read without blocking.
 
 [endsect]
 
+
+
+[section:overload2 buffered_read_stream::lowest_layer (2 of 2 overloads)]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type buffered_read_stream::lowest_layer_type]
@@ -28222,10 +28436,18 @@ Determine the amount of data that may be read without blocking.
 [endsect]
 
 
-
 [section:lowest_layer buffered_stream::lowest_layer]
 
 [indexterm2 lowest_layer..buffered_stream] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link asio.reference.buffered_stream.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link asio.reference.buffered_stream.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 buffered_stream::lowest_layer (1 of 2 overloads)]
+
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -28233,6 +28455,20 @@ Determine the amount of data that may be read without blocking.
 
 [endsect]
 
+
+
+[section:overload2 buffered_stream::lowest_layer (2 of 2 overloads)]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type buffered_stream::lowest_layer_type]
@@ -28787,10 +29023,18 @@ Determine the amount of data that may be read without blocking.
 [endsect]
 
 
-
 [section:lowest_layer buffered_write_stream::lowest_layer]
 
 [indexterm2 lowest_layer..buffered_write_stream] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link asio.reference.buffered_write_stream.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link asio.reference.buffered_write_stream.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 buffered_write_stream::lowest_layer (1 of 2 overloads)]
+
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -28798,6 +29042,20 @@ Determine the amount of data that may be read without blocking.
 
 [endsect]
 
+
+
+[section:overload2 buffered_write_stream::lowest_layer (2 of 2 overloads)]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type buffered_write_stream::lowest_layer_type]
@@ -44215,10 +44473,18 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 [endsect]
 
 
-
 [section:lowest_layer posix::basic_descriptor::lowest_layer]
 
 [indexterm2 lowest_layer..posix::basic_descriptor] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link asio.reference.posix__basic_descriptor.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link asio.reference.posix__basic_descriptor.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 posix::basic_descriptor::lowest_layer (1 of 2 overloads)]
+
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -44234,6 +44500,28 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 posix::basic_descriptor::lowest_layer (2 of 2 overloads)]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_descriptor cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type posix::basic_descriptor::lowest_layer_type]
@@ -45262,13 +45550,21 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 [endsect]
 
 
-
 [section:lowest_layer posix::basic_stream_descriptor::lowest_layer]
+
+[indexterm2 lowest_layer..posix::basic_stream_descriptor] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link asio.reference.posix__basic_stream_descriptor.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link asio.reference.posix__basic_stream_descriptor.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 posix::basic_stream_descriptor::lowest_layer (1 of 2 overloads)]
 
 
 ['Inherited from posix::basic_descriptor.]
 
-[indexterm2 lowest_layer..posix::basic_stream_descriptor] Get a reference to the lowest layer. 
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -45284,6 +45580,31 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 posix::basic_stream_descriptor::lowest_layer (2 of 2 overloads)]
+
+
+['Inherited from posix::basic_descriptor.]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_descriptor cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type posix::basic_stream_descriptor::lowest_layer_type]
@@ -54325,10 +54646,18 @@ A reference to the io_service object that stream will use to dispatch handlers. 
 [endsect]
 
 
-
 [section:lowest_layer ssl::stream::lowest_layer]
 
 [indexterm2 lowest_layer..ssl::stream] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link asio.reference.ssl__stream.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link asio.reference.ssl__stream.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 ssl::stream::lowest_layer (1 of 2 overloads)]
+
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -54344,6 +54673,28 @@ A reference to the lowest layer in the stack of stream layers. Ownership is not 
 
 [endsect]
 
+
+
+[section:overload2 ssl::stream::lowest_layer (2 of 2 overloads)]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of stream layers.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of stream layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type ssl::stream::lowest_layer_type]
@@ -57144,10 +57495,18 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 [endsect]
 
 
-
 [section:lowest_layer windows::basic_handle::lowest_layer]
 
 [indexterm2 lowest_layer..windows::basic_handle] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link asio.reference.windows__basic_handle.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link asio.reference.windows__basic_handle.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 windows::basic_handle::lowest_layer (1 of 2 overloads)]
+
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -57163,6 +57522,28 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 windows::basic_handle::lowest_layer (2 of 2 overloads)]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_handle cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type windows::basic_handle::lowest_layer_type]
@@ -57980,13 +58361,21 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 [endsect]
 
 
-
 [section:lowest_layer windows::basic_random_access_handle::lowest_layer]
+
+[indexterm2 lowest_layer..windows::basic_random_access_handle] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link asio.reference.windows__basic_random_access_handle.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link asio.reference.windows__basic_random_access_handle.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 windows::basic_random_access_handle::lowest_layer (1 of 2 overloads)]
 
 
 ['Inherited from windows::basic_handle.]
 
-[indexterm2 lowest_layer..windows::basic_random_access_handle] Get a reference to the lowest layer. 
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -58002,6 +58391,31 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 windows::basic_random_access_handle::lowest_layer (2 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_handle cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type windows::basic_random_access_handle::lowest_layer_type]
@@ -59051,13 +59465,21 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 [endsect]
 
 
-
 [section:lowest_layer windows::basic_stream_handle::lowest_layer]
+
+[indexterm2 lowest_layer..windows::basic_stream_handle] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link asio.reference.windows__basic_stream_handle.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link asio.reference.windows__basic_stream_handle.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 windows::basic_stream_handle::lowest_layer (1 of 2 overloads)]
 
 
 ['Inherited from windows::basic_handle.]
 
-[indexterm2 lowest_layer..windows::basic_stream_handle] Get a reference to the lowest layer. 
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -59073,6 +59495,31 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 windows::basic_stream_handle::lowest_layer (2 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_handle cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type windows::basic_stream_handle::lowest_layer_type]
@@ -59500,6 +59947,219 @@ The write\_some operation may not transmit all of the data to the peer. Consider
 
 
 [endsect]
+
+
+[endsect]
+
+[section:windows__overlapped_ptr windows::overlapped_ptr]
+
+Wraps a handler to create an OVERLAPPED object for use with overlapped I/O. 
+
+  class overlapped_ptr :
+    noncopyable
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__overlapped_ptr.complete [*complete]]]
+    [Post completion notification for overlapped operation. Releases ownership. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__overlapped_ptr.get [*get]]]
+    [Get the contained OVERLAPPED object. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__overlapped_ptr.overlapped_ptr [*overlapped_ptr]]]
+    [Construct an empty overlapped_ptr. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__overlapped_ptr.release [*release]]]
+    [Release ownership of the OVERLAPPED object. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__overlapped_ptr.reset [*reset]]]
+    [Reset to empty. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__overlapped_ptr._overlapped_ptr [*~overlapped_ptr]]]
+    [Destructor automatically frees the OVERLAPPED object unless released. ]
+  ]
+  
+]
+
+A special-purpose smart pointer used to wrap an application handler so that it can be passed as the LPOVERLAPPED argument to overlapped I/O functions.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
+
+
+[section:complete windows::overlapped_ptr::complete]
+
+[indexterm2 complete..windows::overlapped_ptr] Post completion notification for overlapped operation. Releases ownership. 
+
+  void complete(
+      const asio::error_code & ec,
+      std::size_t bytes_transferred);
+
+
+
+[endsect]
+
+
+[section:get windows::overlapped_ptr::get]
+
+[indexterm2 get..windows::overlapped_ptr] Get the contained OVERLAPPED object. 
+
+  OVERLAPPED * ``[link asio.reference.windows__overlapped_ptr.get.overload1 get]``();
+
+  const OVERLAPPED * ``[link asio.reference.windows__overlapped_ptr.get.overload2 get]``() const;
+
+
+[section:overload1 windows::overlapped_ptr::get (1 of 2 overloads)]
+
+Get the contained OVERLAPPED object. 
+
+  OVERLAPPED * get();
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::overlapped_ptr::get (2 of 2 overloads)]
+
+Get the contained OVERLAPPED object. 
+
+  const OVERLAPPED * get() const;
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:overlapped_ptr windows::overlapped_ptr::overlapped_ptr]
+
+[indexterm2 overlapped_ptr..windows::overlapped_ptr] Construct an empty overlapped_ptr. 
+
+  ``[link asio.reference.windows__overlapped_ptr.overlapped_ptr.overload1 overlapped_ptr]``();
+
+  template<
+      typename ``[link asio.reference.Handler Handler]``>
+  ``[link asio.reference.windows__overlapped_ptr.overlapped_ptr.overload2 overlapped_ptr]``(
+      asio::io_service & io_service,
+      Handler handler);
+
+
+[section:overload1 windows::overlapped_ptr::overlapped_ptr (1 of 2 overloads)]
+
+Construct an empty overlapped_ptr. 
+
+  overlapped_ptr();
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::overlapped_ptr::overlapped_ptr (2 of 2 overloads)]
+
+Construct an overlapped_ptr to contain the specified handler. 
+
+  template<
+      typename ``[link asio.reference.Handler Handler]``>
+  overlapped_ptr(
+      asio::io_service & io_service,
+      Handler handler);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:release windows::overlapped_ptr::release]
+
+[indexterm2 release..windows::overlapped_ptr] Release ownership of the OVERLAPPED object. 
+
+  OVERLAPPED * release();
+
+
+
+[endsect]
+
+
+[section:reset windows::overlapped_ptr::reset]
+
+[indexterm2 reset..windows::overlapped_ptr] Reset to empty. 
+
+  void ``[link asio.reference.windows__overlapped_ptr.reset.overload1 reset]``();
+
+  template<
+      typename ``[link asio.reference.Handler Handler]``>
+  void ``[link asio.reference.windows__overlapped_ptr.reset.overload2 reset]``(
+      asio::io_service & io_service,
+      Handler handler);
+
+
+[section:overload1 windows::overlapped_ptr::reset (1 of 2 overloads)]
+
+Reset to empty. 
+
+  void reset();
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::overlapped_ptr::reset (2 of 2 overloads)]
+
+Reset to contain the specified handler, freeing any current OVERLAPPED object. 
+
+  template<
+      typename ``[link asio.reference.Handler Handler]``>
+  void reset(
+      asio::io_service & io_service,
+      Handler handler);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:_overlapped_ptr windows::overlapped_ptr::~overlapped_ptr]
+
+[indexterm2 ~overlapped_ptr..windows::overlapped_ptr] Destructor automatically frees the OVERLAPPED object unless released. 
+
+  ~overlapped_ptr();
+
+
+
+[endsect]
+
 
 
 [endsect]
