@@ -146,7 +146,7 @@ private:
     overlapped_operation(const overlapped_operation&);
     void operator=(const overlapped_operation&);
     
-    static void do_completion_impl(operation* op,
+    static void do_completion_impl(win_iocp_io_service::operation* op,
         DWORD last_error, size_t bytes_transferred)
     {
       // Take ownership of the operation object.
@@ -171,7 +171,7 @@ private:
           bind_handler(handler, ec, bytes_transferred), &handler);
     }
 
-    static void destroy_impl(operation* op)
+    static void destroy_impl(win_iocp_io_service::operation* op)
     {
       // Take ownership of the operation object.
       typedef overlapped_operation<Handler> op_type;
