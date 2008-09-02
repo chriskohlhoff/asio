@@ -149,6 +149,19 @@ public:
     return next_layer_.lowest_layer();
   }
 
+  /// Get a const reference to the lowest layer.
+  /**
+   * This function returns a const reference to the lowest layer in a stack of
+   * stream layers.
+   *
+   * @return A const reference to the lowest layer in the stack of stream
+   * layers. Ownership is not transferred to the caller.
+   */
+  const lowest_layer_type& lowest_layer() const
+  {
+    return next_layer_.lowest_layer();
+  }
+
   /// Get the underlying implementation in the native type.
   /**
    * This function may be used to obtain the underlying implementation of the

@@ -77,6 +77,11 @@ void test()
     ip::udp::socket::lowest_layer_type& lowest_layer = socket1.lowest_layer();
     (void)lowest_layer;
 
+    const ip::udp::socket& socket7 = socket1;
+    const ip::udp::socket::lowest_layer_type& lowest_layer2
+      = socket7.lowest_layer();
+    (void)lowest_layer2;
+
     socket1.open(ip::udp::v4());
     socket1.open(ip::udp::v6());
     socket1.open(ip::udp::v4(), ec);

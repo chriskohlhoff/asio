@@ -172,6 +172,11 @@ void test()
     ip::tcp::socket::lowest_layer_type& lowest_layer = socket1.lowest_layer();
     (void)lowest_layer;
 
+    const ip::tcp::socket& socket7 = socket1;
+    const ip::tcp::socket::lowest_layer_type& lowest_layer2
+      = socket7.lowest_layer();
+    (void)lowest_layer2;
+
     socket1.open(ip::tcp::v4());
     socket1.open(ip::tcp::v6());
     socket1.open(ip::tcp::v4(), ec);

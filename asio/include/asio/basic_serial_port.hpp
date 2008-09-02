@@ -142,6 +142,20 @@ public:
     return *this;
   }
 
+  /// Get a const reference to the lowest layer.
+  /**
+   * This function returns a const reference to the lowest layer in a stack of
+   * layers. Since a basic_serial_port cannot contain any further layers, it
+   * simply returns a reference to itself.
+   *
+   * @return A const reference to the lowest layer in the stack of layers.
+   * Ownership is not transferred to the caller.
+   */
+  const lowest_layer_type& lowest_layer() const
+  {
+    return *this;
+  }
+
   /// Open the serial port using the specified device name.
   /**
    * This function opens the serial port for the specified device name.

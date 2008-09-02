@@ -93,6 +93,12 @@ public:
     return next_layer_.lowest_layer();
   }
 
+  /// Get a const reference to the lowest layer.
+  const lowest_layer_type& lowest_layer() const
+  {
+    return next_layer_.lowest_layer();
+  }
+
   /// (Deprecated: use get_io_service().) Get the io_service associated with
   /// the object.
   asio::io_service& io_service()

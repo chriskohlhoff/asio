@@ -67,6 +67,10 @@ void test()
     serial_port::lowest_layer_type& lowest_layer = port1.lowest_layer();
     (void)lowest_layer;
 
+    const serial_port& port4 = port1;
+    const serial_port::lowest_layer_type& lowest_layer2 = port4.lowest_layer();
+    (void)lowest_layer2;
+
     port1.open("null");
     port1.open("null", ec);
 

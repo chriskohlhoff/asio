@@ -75,6 +75,11 @@ void test()
       = stream1.lowest_layer();
     (void)lowest_layer;
 
+    const ssl::stream<ip::tcp::socket>& stream3 = stream1;
+    const ssl::stream<ip::tcp::socket>::lowest_layer_type& lowest_layer2
+      = stream3.lowest_layer();
+    (void)lowest_layer2;
+
     stream1.handshake(ssl::stream_base::client);
     stream1.handshake(ssl::stream_base::server);
     stream1.handshake(ssl::stream_base::client, ec);

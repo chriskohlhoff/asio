@@ -94,6 +94,20 @@ public:
     return *this;
   }
 
+  /// Get a const reference to the lowest layer.
+  /**
+   * This function returns a const reference to the lowest layer in a stack of
+   * layers. Since a basic_handle cannot contain any further layers, it simply
+   * returns a reference to itself.
+   *
+   * @return A const reference to the lowest layer in the stack of layers.
+   * Ownership is not transferred to the caller.
+   */
+  const lowest_layer_type& lowest_layer() const
+  {
+    return *this;
+  }
+
   /// Assign an existing native handle to the handle.
   /*
    * This function opens the handle to hold an existing native handle.

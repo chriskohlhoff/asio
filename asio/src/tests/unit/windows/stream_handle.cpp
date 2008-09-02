@@ -67,6 +67,11 @@ void test()
       = handle1.lowest_layer();
     (void)lowest_layer;
 
+    const win::stream_handle& handle3 = handle1;
+    const win::stream_handle::lowest_layer_type& lowest_layer2
+      = handle3.lowest_layer();
+    (void)lowest_layer2;
+
     HANDLE native_handle2 = INVALID_HANDLE_VALUE;
     handle1.assign(native_handle2);
 

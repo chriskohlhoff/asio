@@ -68,6 +68,11 @@ void test()
       = descriptor1.lowest_layer();
     (void)lowest_layer;
 
+    const posix::stream_descriptor& descriptor3 = descriptor1;
+    const posix::stream_descriptor::lowest_layer_type& lowest_layer2
+      = descriptor3.lowest_layer();
+    (void)lowest_layer2;
+
     int native_descriptor2 = -1;
     descriptor1.assign(native_descriptor2);
 
