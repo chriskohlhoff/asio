@@ -175,6 +175,13 @@ Asio.
     ]
   ]
   [
+    [`ASIO_DISABLE_EVENTFD`]
+    [
+      Explicitly disables `eventfd` support on Linux, forcing the use of a
+      pipe to interrupt blocked epoll/select system calls.
+    ]
+  ]
+  [
     [`ASIO_DISABLE_KQUEUE`]
     [
       Explicitly disables `kqueue` support on Mac OS X and BSD variants,
