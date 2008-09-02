@@ -291,7 +291,7 @@ This function is used to asynchronously read a certain number of bytes of data f
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the stream's async\_read\_some function.
+This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function.
 
 
 [heading Parameters]
@@ -382,15 +382,15 @@ This function is used to asynchronously read a certain number of bytes of data f
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const asio::error_code& error, // Result of latest read_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest async_read_some operation.
+     const asio::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the stream's async\_read\_some function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the stream's async\_read\_some function.]]
 
 [[handler][The handler to be called when the read operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
@@ -447,7 +447,7 @@ This function is used to asynchronously read a certain number of bytes of data f
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the stream's async\_read\_some function.
+This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function.
 
 
 [heading Parameters]
@@ -514,7 +514,7 @@ This function is used to asynchronously read a certain number of bytes of data f
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's async\_read\_some function.
+This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function.
 
 
 [heading Parameters]
@@ -528,15 +528,15 @@ This operation is implemented in terms of one or more calls to the stream's asyn
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const asio::error_code& error, // Result of latest read_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest async_read_some operation.
+     const asio::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the stream's async\_read\_some function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the stream's async\_read\_some function.]]
 
 [[handler][The handler to be called when the read operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
@@ -632,7 +632,7 @@ This function is used to asynchronously read a certain number of bytes of data f
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the device's async\_read\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's async\_read\_some\_at function.
 
 
 [heading Parameters]
@@ -728,15 +728,15 @@ This function is used to asynchronously read a certain number of bytes of data f
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     // Result of latest read_some_at operation.
+   std::size_t completion_condition(
+     // Result of latest async_read_some_at operation.
      const asio::error_code& error,
 
      // Number of bytes transferred so far.
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the device's async\_read\_some\_at function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the device's async\_read\_some\_at function.]]
 
 [[handler][The handler to be called when the read operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
@@ -794,7 +794,7 @@ This function is used to asynchronously read a certain number of bytes of data f
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the device's async\_read\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's async\_read\_some\_at function.
 
 
 [heading Parameters]
@@ -864,7 +864,7 @@ This function is used to asynchronously read a certain number of bytes of data f
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's async\_read\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's async\_read\_some\_at function.
 
 
 [heading Parameters]
@@ -880,15 +880,15 @@ This operation is implemented in terms of one or more calls to the device's asyn
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     // Result of latest read_some_at operation.
+   std::size_t completion_condition(
+     // Result of latest async_read_some_at operation.
      const asio::error_code& error,
 
      // Number of bytes transferred so far.
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the device's async\_read\_some\_at function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the device's async\_read\_some\_at function.]]
 
 [[handler][The handler to be called when the read operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
@@ -1413,7 +1413,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the stream's async\_write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's async\_write\_some function.
 
 
 [heading Parameters]
@@ -1480,7 +1480,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's async\_write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's async\_write\_some function.
 
 
 [heading Parameters]
@@ -1494,15 +1494,15 @@ This operation is implemented in terms of one or more calls to the stream's asyn
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const asio::error_code& error, // Result of latest write_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest async_write_some operation.
+     const asio::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the stream's async\_write\_some function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the stream's async\_write\_some function.]]
 
 [[handler][The handler to be called when the write operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
@@ -1560,7 +1560,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the stream's async\_write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's async\_write\_some function.
 
 
 [heading Parameters]
@@ -1616,7 +1616,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's async\_write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's async\_write\_some function.
 
 
 [heading Parameters]
@@ -1630,15 +1630,15 @@ This operation is implemented in terms of one or more calls to the stream's asyn
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const asio::error_code& error, // Result of latest write_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest async_write_some operation.
+     const asio::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the stream's async\_write\_some function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the stream's async\_write\_some function.]]
 
 [[handler][The handler to be called when the write operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
@@ -1733,7 +1733,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the device's async\_write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's async\_write\_some\_at function.
 
 
 [heading Parameters]
@@ -1803,7 +1803,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's async\_write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's async\_write\_some\_at function.
 
 
 [heading Parameters]
@@ -1819,15 +1819,15 @@ This operation is implemented in terms of one or more calls to the device's asyn
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     // Result of latest write_some_at operation.
+   std::size_t completion_condition(
+     // Result of latest async_write_some_at operation.
      const asio::error_code& error,
 
      // Number of bytes transferred so far.
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the device's async\_write\_some\_at function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the device's async\_write\_some\_at function.]]
 
 [[handler][The handler to be called when the write operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
@@ -1886,7 +1886,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the device's async\_write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's async\_write\_some\_at function.
 
 
 [heading Parameters]
@@ -1945,7 +1945,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's async\_write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's async\_write\_some\_at function.
 
 
 [heading Parameters]
@@ -1961,7 +1961,7 @@ This operation is implemented in terms of one or more calls to the device's asyn
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
+   std::size_t completion_condition(
      // Result of latest async_write_some_at operation.
      const asio::error_code& error,
 
@@ -1969,7 +1969,7 @@ This operation is implemented in terms of one or more calls to the device's asyn
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the device's async\_write\_some\_at function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the device's async\_write\_some\_at function.]]
 
 [[handler][The handler to be called when the write operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
@@ -47611,7 +47611,7 @@ This function is used to read a certain number of bytes of data from a stream. T
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the stream's read\_some function.
+This operation is implemented in terms of zero or more calls to the stream's read\_some function.
 
 
 [heading Parameters]
@@ -47687,7 +47687,7 @@ This function is used to read a certain number of bytes of data from a stream. T
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's read\_some function.
+This operation is implemented in terms of zero or more calls to the stream's read\_some function.
 
 
 [heading Parameters]
@@ -47701,15 +47701,15 @@ This operation is implemented in terms of one or more calls to the stream's read
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const asio::error_code& error, // Result of latest read_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest read_some operation.
+     const asio::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the stream's read\_some function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the stream's read\_some function.]]
 
 ]
 
@@ -47766,7 +47766,7 @@ This function is used to read a certain number of bytes of data from a stream. T
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's read\_some function.
+This operation is implemented in terms of zero or more calls to the stream's read\_some function.
 
 
 [heading Parameters]
@@ -47780,15 +47780,15 @@ This operation is implemented in terms of one or more calls to the stream's read
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const asio::error_code& error, // Result of latest read_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest read_some operation.
+     const asio::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the stream's read\_some function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the stream's read\_some function.]]
 
 [[ec][Set to indicate what error occurred, if any.]]
 
@@ -47821,7 +47821,7 @@ This function is used to read a certain number of bytes of data from a stream. T
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the stream's read\_some function.
+This operation is implemented in terms of zero or more calls to the stream's read\_some function.
 
 
 [heading Parameters]
@@ -47884,7 +47884,7 @@ This function is used to read a certain number of bytes of data from a stream. T
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's read\_some function.
+This operation is implemented in terms of zero or more calls to the stream's read\_some function.
 
 
 [heading Parameters]
@@ -47898,15 +47898,15 @@ This operation is implemented in terms of one or more calls to the stream's read
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const asio::error_code& error, // Result of latest read_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest read_some operation.
+     const asio::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the stream's read\_some function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the stream's read\_some function.]]
 
 ]
 
@@ -47949,7 +47949,7 @@ This function is used to read a certain number of bytes of data from a stream. T
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's read\_some function.
+This operation is implemented in terms of zero or more calls to the stream's read\_some function.
 
 
 [heading Parameters]
@@ -47963,15 +47963,15 @@ This operation is implemented in terms of one or more calls to the stream's read
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const asio::error_code& error, // Result of latest read_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest read_some operation.
+     const asio::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the stream's read\_some function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the stream's read\_some function.]]
 
 [[ec][Set to indicate what error occurred, if any.]]
 
@@ -48071,7 +48071,7 @@ This function is used to read a certain number of bytes of data from a random ac
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the device's read\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's read\_some\_at function.
 
 
 [heading Parameters]
@@ -48150,7 +48150,7 @@ This function is used to read a certain number of bytes of data from a random ac
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's read\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's read\_some\_at function.
 
 
 [heading Parameters]
@@ -48166,7 +48166,7 @@ This operation is implemented in terms of one or more calls to the device's read
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
+   std::size_t completion_condition(
      // Result of latest read_some_at operation.
      const asio::error_code& error,
 
@@ -48174,7 +48174,7 @@ This operation is implemented in terms of one or more calls to the device's read
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the device's read\_some\_at function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the device's read\_some\_at function.]]
 
 ]
 
@@ -48232,7 +48232,7 @@ This function is used to read a certain number of bytes of data from a random ac
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's read\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's read\_some\_at function.
 
 
 [heading Parameters]
@@ -48248,15 +48248,15 @@ This operation is implemented in terms of one or more calls to the device's read
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const asio::error_code& error, // Result of latest read_some_at
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest read_some_at operation.
+     const asio::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the device's read\_some\_at function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the device's read\_some\_at function.]]
 
 [[ec][Set to indicate what error occurred, if any.]]
 
@@ -48290,7 +48290,7 @@ This function is used to read a certain number of bytes of data from a random ac
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the device's read\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's read\_some\_at function.
 
 
 [heading Parameters]
@@ -48356,7 +48356,7 @@ This function is used to read a certain number of bytes of data from a random ac
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's read\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's read\_some\_at function.
 
 
 [heading Parameters]
@@ -48372,7 +48372,7 @@ This operation is implemented in terms of one or more calls to the device's read
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
+   std::size_t completion_condition(
      // Result of latest read_some_at operation.
      const asio::error_code& error,
 
@@ -48380,7 +48380,7 @@ This operation is implemented in terms of one or more calls to the device's read
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the device's read\_some\_at function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the device's read\_some\_at function.]]
 
 ]
 
@@ -48424,7 +48424,7 @@ This function is used to read a certain number of bytes of data from a random ac
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's read\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's read\_some\_at function.
 
 
 [heading Parameters]
@@ -48440,7 +48440,7 @@ This operation is implemented in terms of one or more calls to the device's read
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
+   std::size_t completion_condition(
      // Result of latest read_some_at operation.
      const asio::error_code& error,
 
@@ -48448,7 +48448,7 @@ This operation is implemented in terms of one or more calls to the device's read
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the device's read\_some\_at function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the device's read\_some\_at function.]]
 
 [[ec][Set to indicate what error occurred, if any.]]
 
@@ -61294,7 +61294,7 @@ This function is used to write a certain number of bytes of data to a stream. Th
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the stream's write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's write\_some function.
 
 
 [heading Parameters]
@@ -61370,7 +61370,7 @@ This function is used to write a certain number of bytes of data to a stream. Th
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's write\_some function.
 
 
 [heading Parameters]
@@ -61384,15 +61384,15 @@ This operation is implemented in terms of one or more calls to the stream's writ
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const asio::error_code& error, // Result of latest write_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest write_some operation.
+     const asio::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the stream's write\_some function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the stream's write\_some function.]]
 
 ]
 
@@ -61449,7 +61449,7 @@ This function is used to write a certain number of bytes of data to a stream. Th
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's write\_some function.
 
 
 [heading Parameters]
@@ -61463,15 +61463,15 @@ This operation is implemented in terms of one or more calls to the stream's writ
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const asio::error_code& error, // Result of latest write_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest write_some operation.
+     const asio::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the stream's write\_some function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the stream's write\_some function.]]
 
 [[ec][Set to indicate what error occurred, if any.]]
 
@@ -61506,7 +61506,7 @@ This function is used to write a certain number of bytes of data to a stream. Th
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the stream's write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's write\_some function.
 
 
 [heading Parameters]
@@ -61571,7 +61571,7 @@ This function is used to write a certain number of bytes of data to a stream. Th
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's write\_some function.
 
 
 [heading Parameters]
@@ -61585,15 +61585,15 @@ This operation is implemented in terms of one or more calls to the stream's writ
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const asio::error_code& error, // Result of latest write_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest write_some operation.
+     const asio::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the stream's write\_some function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the stream's write\_some function.]]
 
 ]
 
@@ -61638,7 +61638,7 @@ This function is used to write a certain number of bytes of data to a stream. Th
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's write\_some function.
 
 
 [heading Parameters]
@@ -61652,15 +61652,15 @@ This operation is implemented in terms of one or more calls to the stream's writ
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const asio::error_code& error, // Result of latest write_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest write_some operation.
+     const asio::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the stream's write\_some function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the stream's write\_some function.]]
 
 [[ec][Set to indicate what error occurred, if any.]]
 
@@ -61760,7 +61760,7 @@ This function is used to write a certain number of bytes of data to a random acc
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the device's write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's write\_some\_at function.
 
 
 [heading Parameters]
@@ -61839,7 +61839,7 @@ This function is used to write a certain number of bytes of data to a random acc
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's write\_some\_at function.
 
 
 [heading Parameters]
@@ -61855,7 +61855,7 @@ This operation is implemented in terms of one or more calls to the device's writ
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
+   std::size_t completion_condition(
      // Result of latest write_some_at operation.
      const asio::error_code& error,
 
@@ -61863,7 +61863,7 @@ This operation is implemented in terms of one or more calls to the device's writ
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the device's write\_some\_at function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the device's write\_some\_at function.]]
 
 ]
 
@@ -61921,7 +61921,7 @@ This function is used to write a certain number of bytes of data to a random acc
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's write\_some\_at function.
 
 
 [heading Parameters]
@@ -61937,7 +61937,7 @@ This operation is implemented in terms of one or more calls to the device's writ
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
+   std::size_t completion_condition(
      // Result of latest write_some_at operation.
      const asio::error_code& error,
 
@@ -61945,7 +61945,7 @@ This operation is implemented in terms of one or more calls to the device's writ
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the device's write\_some\_at function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the device's write\_some\_at function.]]
 
 [[ec][Set to indicate what error occurred, if any.]]
 
@@ -61981,7 +61981,7 @@ This function is used to write a certain number of bytes of data to a random acc
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the device's write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's write\_some\_at function.
 
 
 [heading Parameters]
@@ -62049,7 +62049,7 @@ This function is used to write a certain number of bytes of data to a random acc
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's write\_some\_at function.
 
 
 [heading Parameters]
@@ -62065,7 +62065,7 @@ This operation is implemented in terms of one or more calls to the device's writ
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
+   std::size_t completion_condition(
      // Result of latest write_some_at operation.
      const asio::error_code& error,
 
@@ -62073,7 +62073,7 @@ This operation is implemented in terms of one or more calls to the device's writ
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the device's write\_some\_at function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the device's write\_some\_at function.]]
 
 ]
 
@@ -62119,7 +62119,7 @@ This function is used to write a certain number of bytes of data to a random acc
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's write\_some\_at function.
 
 
 [heading Parameters]
@@ -62135,7 +62135,7 @@ This operation is implemented in terms of one or more calls to the device's writ
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
+   std::size_t completion_condition(
      // Result of latest write_some_at operation.
      const asio::error_code& error,
 
@@ -62143,7 +62143,7 @@ This operation is implemented in terms of one or more calls to the device's writ
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the device's write\_some\_at function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the device's write\_some\_at function.]]
 
 [[ec][Set to indicate what error occurred, if any.]]
 
