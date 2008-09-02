@@ -245,4 +245,12 @@ Examples showing how to use UNIX domain (local) sockets.
 * [@../src/examples/local/stream_client.cpp]
 
 
+[heading Windows]
+
+An example showing how to use the Windows-specific function `TransmitFile`
+with Asio.
+
+* [@../src/examples/windows/transmit_file.cpp]
+
+
 [endsect]
