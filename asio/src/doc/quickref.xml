@@ -396,6 +396,7 @@
         <entry valign="top" namest="c" nameend="d">
           <bridgehead renderas="sect3">Classes</bridgehead>
           <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.windows__overlapped_ptr">windows::overlapped_ptr</link></member>
             <member><link linkend="asio.reference.windows__random_access_handle">windows::random_access_handle</link></member>
             <member><link linkend="asio.reference.windows__stream_handle">windows::stream_handle</link></member>
           </simplelist>
