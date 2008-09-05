@@ -19,4 +19,4 @@ chdir("xml");
 system("xsltproc combine.xslt index.xml > all.xml");
 chdir("..");
 system("xsltproc tutorial.xsl xml/all.xml > tutorial.qbk");
-system("rm -rf xml");
+system("rm -rf xml reference.tags");
