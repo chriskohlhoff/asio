@@ -158,6 +158,10 @@ public:
           0;        
     int sys_error_code = ERR_get_error();
 
+    if (error_code == SSL_ERROR_SSL)
+      return handler_(asio::error_code(
+            error_code, asio::error::get_ssl_category()), rc);
+
     bool is_read_needed = (error_code == SSL_ERROR_WANT_READ);
     bool is_write_needed = (error_code == SSL_ERROR_WANT_WRITE ||
                               ::BIO_ctrl_pending( ssl_bio_ ));
