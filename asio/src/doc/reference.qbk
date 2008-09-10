@@ -35767,7 +35767,7 @@ Provides endpoint resolution functionality.
 
   [
     [[link asio.reference.ip__basic_resolver.async_resolve [*async_resolve]]]
-    [Asynchronously resolve a query to a list of entries. ]
+    [Asynchronously perform forward resolution of a query to a list of entries. ]
   ]
   
   [
@@ -35792,7 +35792,7 @@ Provides endpoint resolution functionality.
   
   [
     [[link asio.reference.ip__basic_resolver.resolve [*resolve]]]
-    [Resolve a query to a list of entries. ]
+    [Perform forward resolution of a query to a list of entries. ]
   ]
   
 ]
@@ -35825,7 +35825,7 @@ The basic_resolver class template provides the ability to resolve a query to a l
 
 [section:async_resolve ip::basic_resolver::async_resolve]
 
-[indexterm2 async_resolve..ip::basic_resolver] Asynchronously resolve a query to a list of entries. 
+[indexterm2 async_resolve..ip::basic_resolver] Asynchronously perform forward resolution of a query to a list of entries. 
 
   template<
       typename ``[link asio.reference.ResolveHandler ResolveHandler]``>
@@ -35842,7 +35842,7 @@ The basic_resolver class template provides the ability to resolve a query to a l
 
 [section:overload1 ip::basic_resolver::async_resolve (1 of 2 overloads)]
 
-Asynchronously resolve a query to a list of entries. 
+Asynchronously perform forward resolution of a query to a list of entries. 
 
   template<
       typename ``[link asio.reference.ResolveHandler ResolveHandler]``>
@@ -35887,7 +35887,7 @@ A successful resolve operation is guaranteed to pass at least one entry to the h
 
 [section:overload2 ip::basic_resolver::async_resolve (2 of 2 overloads)]
 
-Asynchronously resolve an endpoint to a list of entries. 
+Asynchronously perform reverse resolution of an endpoint to a list of entries. 
 
   template<
       typename ``[link asio.reference.ResolveHandler ResolveHandler]``>
@@ -36102,7 +36102,7 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 
 [section:resolve ip::basic_resolver::resolve]
 
-[indexterm2 resolve..ip::basic_resolver] Resolve a query to a list of entries. 
+[indexterm2 resolve..ip::basic_resolver] Perform forward resolution of a query to a list of entries. 
 
   iterator ``[link asio.reference.ip__basic_resolver.resolve.overload1 resolve]``(
       const query & q);
@@ -36121,7 +36121,7 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 
 [section:overload1 ip::basic_resolver::resolve (1 of 4 overloads)]
 
-Resolve a query to a list of entries. 
+Perform forward resolution of a query to a list of entries. 
 
   iterator resolve(
       const query & q);
@@ -36165,7 +36165,7 @@ A successful call to this function is guaranteed to return at least one entry.
 
 [section:overload2 ip::basic_resolver::resolve (2 of 4 overloads)]
 
-Resolve a query to a list of entries. 
+Perform forward resolution of a query to a list of entries. 
 
   iterator resolve(
       const query & q,
@@ -36203,7 +36203,7 @@ A successful call to this function is guaranteed to return at least one entry.
 
 [section:overload3 ip::basic_resolver::resolve (3 of 4 overloads)]
 
-Resolve an endpoint to a list of entries. 
+Perform reverse resolution of an endpoint to a list of entries. 
 
   iterator resolve(
       const endpoint_type & e);
@@ -36247,7 +36247,7 @@ A successful call to this function is guaranteed to return at least one entry.
 
 [section:overload4 ip::basic_resolver::resolve (4 of 4 overloads)]
 
-Resolve an endpoint to a list of entries. 
+Perform reverse resolution of an endpoint to a list of entries. 
 
   iterator resolve(
       const endpoint_type & e,
@@ -37337,7 +37337,7 @@ The
 
   [
     [[link asio.reference.ip__basic_resolver.async_resolve [*async_resolve]]]
-    [Asynchronously resolve a query to a list of entries. ]
+    [Asynchronously perform forward resolution of a query to a list of entries. ]
   ]
   
   [
@@ -37362,7 +37362,7 @@ The
   
   [
     [[link asio.reference.ip__basic_resolver.resolve [*resolve]]]
-    [Resolve a query to a list of entries. ]
+    [Perform forward resolution of a query to a list of entries. ]
   ]
   
 ]
@@ -39433,7 +39433,7 @@ Getting the current option value:
 
   [
     [[link asio.reference.ip__basic_resolver.async_resolve [*async_resolve]]]
-    [Asynchronously resolve a query to a list of entries. ]
+    [Asynchronously perform forward resolution of a query to a list of entries. ]
   ]
   
   [
@@ -39458,7 +39458,7 @@ Getting the current option value:
   
   [
     [[link asio.reference.ip__basic_resolver.resolve [*resolve]]]
-    [Resolve a query to a list of entries. ]
+    [Perform forward resolution of a query to a list of entries. ]
   ]
   
 ]
@@ -40400,7 +40400,7 @@ The
 
   [
     [[link asio.reference.ip__basic_resolver.async_resolve [*async_resolve]]]
-    [Asynchronously resolve a query to a list of entries. ]
+    [Asynchronously perform forward resolution of a query to a list of entries. ]
   ]
   
   [
@@ -40425,7 +40425,7 @@ The
   
   [
     [[link asio.reference.ip__basic_resolver.resolve [*resolve]]]
-    [Resolve a query to a list of entries. ]
+    [Perform forward resolution of a query to a list of entries. ]
   ]
   
 ]
