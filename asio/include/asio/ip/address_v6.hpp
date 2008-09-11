@@ -62,6 +62,17 @@ public:
   explicit address_v6(const bytes_type& bytes, unsigned long scope_id = 0)
     : scope_id_(scope_id)
   {
+#if UCHAR_MAX > 0xFF
+    for (std::size_t i = 0; i < bytes.size(); ++i)
+    {
+      if (bytes[i] > 0xFF)
+      {
+        std::out_of_range ex("address_v6 from bytes_type");
+        boost::throw_exception(ex);
+      }
+    }
+#endif // UCHAR_MAX > 0xFF
+
     using namespace std; // For memcpy.
     memcpy(addr_.s6_addr, bytes.elems, 16);
   }
@@ -165,7 +176,11 @@ public:
   address_v4 to_v4() const
   {
     if (!is_v4_mapped() && !is_v4_compatible())
-      throw std::bad_cast();
+    {
+      std::bad_cast ex;
+      boost::throw_exception(ex);
+    }
+
     address_v4::bytes_type v4_bytes = { { addr_.s6_addr[12],
       addr_.s6_addr[13], addr_.s6_addr[14], addr_.s6_addr[15] } };
     return address_v4(v4_bytes);
