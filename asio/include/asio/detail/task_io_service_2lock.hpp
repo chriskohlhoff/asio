@@ -57,7 +57,6 @@ public:
       back_first_idle_thread_(0),
       back_task_thread_(0)
   {
-    handler_queue_.push(&task_handler_);
   }
 
   void init(size_t /*concurrency_hint*/)
@@ -76,8 +75,20 @@ public:
       if (h != &task_handler_)
         h->destroy();
 
-    // Reset handler queue to initial state.
-    handler_queue_.push(&task_handler_);
+    // Reset to initial state.
+    task_ = 0;
+  }
+
+  // Initialise the task, if required.
+  void init_task()
+  {
+    asio::detail::mutex::scoped_lock back_lock(back_mutex_);
+    if (!back_shutdown_ && !task_)
+    {
+      task_ = &use_service<Task>(get_io_service());
+      handler_queue_.push(&task_handler_);
+      interrupt_one_idle_thread(back_lock);
+    }
   }
 
   // Run the event loop until interrupted or no more work.
@@ -286,7 +297,7 @@ private:
           // queue is empty and we're not polling, otherwise we want to return
           // as soon as possible.
           task_has_run = true;
-          task_.run(!more_handlers && !polling);
+          task_->run(!more_handlers && !polling);
         }
         else
         {
@@ -341,10 +352,10 @@ private:
       idle_thread->next = 0;
       idle_thread->wakeup_event.signal(back_lock);
     }
-    else if (back_task_thread_)
+    else if (back_task_thread_ && task_)
     {
       back_task_thread_ = 0;
-      task_.interrupt();
+      task_->interrupt();
     }
   }
 
@@ -360,10 +371,10 @@ private:
       idle_thread->wakeup_event.signal(back_lock);
     }
 
-    if (back_task_thread_)
+    if (back_task_thread_ && task_)
     {
       back_task_thread_ = 0;
-      task_.interrupt();
+      task_->interrupt();
     }
   }
 
@@ -414,7 +425,7 @@ private:
   asio::detail::mutex back_mutex_;
 
   // The task to be run by this service.
-  Task& task_;
+  Task* task_;
 
   // Handler object to represent the position of the task in the queue.
   class task_handler

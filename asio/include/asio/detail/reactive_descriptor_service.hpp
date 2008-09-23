@@ -81,6 +81,7 @@ public:
         reactive_descriptor_service<Reactor> >(io_service),
       reactor_(asio::use_service<Reactor>(io_service))
   {
+    reactor_.init_task();
   }
 
   // Destroy all user-defined handler objects owned by the service.

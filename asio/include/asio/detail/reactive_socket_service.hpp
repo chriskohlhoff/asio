@@ -109,6 +109,7 @@ public:
         reactive_socket_service<Protocol, Reactor> >(io_service),
       reactor_(asio::use_service<Reactor>(io_service))
   {
+    reactor_.init_task();
   }
 
   // Destroy all user-defined handler objects owned by the service.

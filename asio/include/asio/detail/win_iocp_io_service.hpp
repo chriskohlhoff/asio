@@ -148,6 +148,11 @@ public:
     timer_queues_.clear();
   }
 
+  // Initialise the task. Nothing to do here.
+  void init_task()
+  {
+  }
+
   // Register a handle with the IO completion port.
   asio::error_code register_handle(
       HANDLE handle, asio::error_code& ec)
