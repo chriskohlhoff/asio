@@ -95,6 +95,7 @@ public:
     if (pptr() + n > epptr())
       n = epptr() - pptr();
     pbump(static_cast<int>(n));
+    setg(eback(), gptr(), pptr());
   }
 
   /// Move the start of the get area by the specified number of characters.
@@ -150,7 +151,6 @@ protected:
   {
     // Get current stream positions as offsets.
     std::size_t gnext = gptr() - &buffer_[0];
-    std::size_t gend = egptr() - &buffer_[0];
     std::size_t pnext = pptr() - &buffer_[0];
     std::size_t pend = epptr() - &buffer_[0];
 
@@ -163,9 +163,8 @@ protected:
     // Shift existing contents of get area to start of buffer.
     if (gnext > 0)
     {
-      std::rotate(&buffer_[0], &buffer_[0] + gnext, &buffer_[0] + pend);
-      gend -= gnext;
       pnext -= gnext;
+      std::memmove(&buffer_[0], &buffer_[0] + gnext, pnext);
     }
 
     // Ensure buffer is large enough to hold at least the specified size.
@@ -173,7 +172,8 @@ protected:
     {
       if (n <= max_size_ && pnext <= max_size_ - n)
       {
-        buffer_.resize((std::max<std::size_t>)(pnext + n, 1));
+        pend = pnext + n;
+        buffer_.resize((std::max<std::size_t>)(pend, 1));
       }
       else
       {
@@ -182,8 +182,8 @@ protected:
     }
 
     // Update stream positions.
-    setg(&buffer_[0], &buffer_[0], &buffer_[0] + gend);
-    setp(&buffer_[0] + pnext, &buffer_[0] + pnext + n);
+    setg(&buffer_[0], &buffer_[0], &buffer_[0] + pnext);
+    setp(&buffer_[0] + pnext, &buffer_[0] + pend);
   }
 
 private:
