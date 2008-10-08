@@ -247,7 +247,8 @@ private:
       setp(put_buffer_.begin(), put_buffer_.end());
   }
 
-  void resolve_and_connect(const typename Protocol::resolver_query& query,
+  template <typename ResolverQuery>
+  void resolve_and_connect(const ResolverQuery& query,
       asio::error_code& ec)
   {
     typedef typename Protocol::resolver resolver_type;
