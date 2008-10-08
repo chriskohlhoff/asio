@@ -619,7 +619,8 @@ sub copy_examples
       "src/examples/tutorial/timer2",
       "src/examples/tutorial/timer3",
       "src/examples/tutorial/timer4",
-      "src/examples/tutorial/timer5");
+      "src/examples/tutorial/timer5",
+      "src/examples/windows");
 
   our $boost_dir;
   foreach my $dir (@dirs)
