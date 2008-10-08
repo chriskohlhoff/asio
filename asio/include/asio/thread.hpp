@@ -58,7 +58,7 @@ public:
    */
   template <typename Function>
   explicit thread(Function f)
-    : impl_(f, asio::detail::thread::external)
+    : impl_(f)
   {
   }
 
