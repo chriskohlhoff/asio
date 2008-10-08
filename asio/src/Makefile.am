@@ -115,6 +115,7 @@ noinst_PROGRAMS = \
 if !WINDOWS_TARGET
 noinst_PROGRAMS += \
 	examples/local/connect_pair \
+	examples/local/iostream_client \
 	examples/local/stream_server \
 	examples/local/stream_client
 endif
@@ -386,6 +387,7 @@ examples_tutorial_daytime7_server_SOURCES = examples/tutorial/daytime7/server.cp
 
 if !WINDOWS_TARGET
 examples_local_connect_pair_SOURCES = examples/local/connect_pair.cpp
+examples_local_iostream_client_SOURCES = examples/local/iostream_client.cpp
 examples_local_stream_server_SOURCES = examples/local/stream_server.cpp
 examples_local_stream_client_SOURCES = examples/local/stream_client.cpp
 endif
