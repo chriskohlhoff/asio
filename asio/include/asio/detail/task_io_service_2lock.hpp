@@ -49,7 +49,7 @@ public:
     : asio::detail::service_base<task_io_service<Task> >(io_service),
       front_mutex_(),
       back_mutex_(),
-      task_(use_service<Task>(io_service)),
+      task_(&use_service<Task>(io_service)),
       outstanding_work_(0),
       front_stopped_(false),
       back_stopped_(false),
@@ -85,7 +85,7 @@ public:
     asio::detail::mutex::scoped_lock back_lock(back_mutex_);
     if (!back_shutdown_ && !task_)
     {
-      task_ = &use_service<Task>(get_io_service());
+      task_ = &use_service<Task>(this->get_io_service());
       handler_queue_.push(&task_handler_);
       interrupt_one_idle_thread(back_lock);
     }
