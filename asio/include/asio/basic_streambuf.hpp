@@ -19,6 +19,7 @@
 
 #include "asio/detail/push_options.hpp"
 #include <algorithm>
+#include <cstring>
 #include <limits>
 #include <memory>
 #include <stdexcept>
