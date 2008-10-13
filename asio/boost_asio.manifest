@@ -295,6 +295,7 @@
 /doc/html/boost_asio/example/iostreams/daytime_server.cpp
 /doc/html/boost_asio/example/local/
 /doc/html/boost_asio/example/local/connect_pair.cpp
+/doc/html/boost_asio/example/local/iostream_client.cpp
 /doc/html/boost_asio/example/local/stream_client.cpp
 /doc/html/boost_asio/example/local/stream_server.cpp
 /doc/html/boost_asio/example/multicast/
@@ -2956,6 +2957,7 @@
 /libs/asio/example/iostreams/Jamfile.v2
 /libs/asio/example/local/
 /libs/asio/example/local/connect_pair.cpp
+/libs/asio/example/local/iostream_client.cpp
 /libs/asio/example/local/Jamfile
 /libs/asio/example/local/Jamfile.v2
 /libs/asio/example/local/stream_client.cpp
@@ -3151,5 +3153,10 @@
 /libs/system/test/header_only_test.cpp
 /libs/system/test/initialization_test.cpp
 /libs/system/test/Jamfile.v2
+/libs/system/test/msvc_system/
+/libs/system/test/msvc_system/common.vsprops
+/libs/system/test/msvc_system/error_code_test/
+/libs/system/test/msvc_system/error_code_test/error_code_test.vcproj
+/libs/system/test/msvc_system/msvc_system.sln
 /libs/system/test/system_error_test.cpp
 /README.txt

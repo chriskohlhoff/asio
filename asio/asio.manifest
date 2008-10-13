@@ -2761,6 +2761,7 @@
 /src/examples/iostreams/daytime_server.cpp
 /src/examples/local/
 /src/examples/local/connect_pair.cpp
+/src/examples/local/iostream_client.cpp
 /src/examples/local/stream_client.cpp
 /src/examples/local/stream_server.cpp
 /src/examples/multicast/
