@@ -100,7 +100,7 @@ result of the operation, translates it into an `error_code`, and then passes it
 to [*your completion handler].
 
 This is a simplified picture of how Asio operates. You will want to delve
-further into the documentation if you needs are more advanced, such as
+further into the documentation if your needs are more advanced, such as
 extending Asio to perform other types of asynchronous operations.
 
 [endsect]
