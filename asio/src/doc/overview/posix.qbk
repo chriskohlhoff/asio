@@ -92,7 +92,8 @@ asio.reference.async_read_until async_read_until()] free functions.
 
 [link asio.reference.posix__stream_descriptor posix::stream_descriptor],
 [link asio.reference.posix__basic_stream_descriptor posix::basic_stream_descriptor],
-[link asio.reference.posix__stream_descriptor_service posix::stream_descriptor_service].
+[link asio.reference.posix__stream_descriptor_service posix::stream_descriptor_service],
+[link asio.examples.chat Chat example].
 
 [heading Notes]
 

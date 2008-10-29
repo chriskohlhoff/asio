@@ -114,6 +114,7 @@ noinst_PROGRAMS = \
 
 if !WINDOWS_TARGET
 noinst_PROGRAMS += \
+	examples/chat/posix_chat_client \
 	examples/local/connect_pair \
 	examples/local/iostream_client \
 	examples/local/stream_server \
@@ -386,6 +387,7 @@ examples_tutorial_daytime6_server_SOURCES = examples/tutorial/daytime6/server.cp
 examples_tutorial_daytime7_server_SOURCES = examples/tutorial/daytime7/server.cpp
 
 if !WINDOWS_TARGET
+examples_chat_posix_chat_client_SOURCES = examples/chat/posix_chat_client.cpp
 examples_local_connect_pair_SOURCES = examples/local/connect_pair.cpp
 examples_local_iostream_client_SOURCES = examples/local/iostream_client.cpp
 examples_local_stream_server_SOURCES = examples/local/stream_server.cpp

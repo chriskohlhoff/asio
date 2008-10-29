@@ -33,6 +33,12 @@ protocol with a fixed length message header and variable length message body.
 * [@../src/examples/chat/chat_client.cpp]
 * [@../src/examples/chat/chat_server.cpp]
 
+The following POSIX-specific chat client demonstrates how to use the
+[link asio.reference.posix.stream_descriptor posix::stream_descriptor] class to
+perform console input and output.
+
+* [@../src/examples/chat/posix_chat_client.cpp]
+
 
 [heading Echo]
 
