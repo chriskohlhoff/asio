@@ -329,7 +329,7 @@ private:
   void start_work_thread()
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
-    if (work_thread_ == 0)
+    if (!work_thread_)
     {
       work_thread_.reset(new asio::detail::thread(
             work_io_service_runner(*work_io_service_)));
