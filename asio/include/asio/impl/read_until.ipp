@@ -277,19 +277,16 @@ std::size_t read_until(SyncReadStream& s,
 
     // Look for a match.
     std::pair<iterator, bool> result = match_condition(start, end);
-    if (result.first != end)
+    if (result.second)
     {
-      if (result.second)
-      {
-        // Full match. We're done.
-        ec = asio::error_code();
-        return result.first - begin;
-      }
-      else
-      {
-        // Partial match. Next search needs to start from beginning of match.
-        next_search_start = result.first - begin;
-      }
+      // Full match. We're done.
+      ec = asio::error_code();
+      return result.first - begin;
+    }
+    else if (result.first != end)
+    {
+      // Partial match. Next search needs to start from beginning of match.
+      next_search_start = result.first - begin;
     }
     else
     {
@@ -857,20 +854,17 @@ namespace detail
 
       // Look for a match.
       std::pair<iterator, bool> result = match_condition_(start, end);
-      if (result.first != end)
+      if (result.second)
       {
-        if (result.second)
-        {
-          // Full match. We're done.
-          std::size_t bytes = result.first - begin;
-          handler_(ec, bytes);
-          return;
-        }
-        else
-        {
-          // Partial match. Next search needs to start from beginning of match.
-          next_search_start_ = result.first - begin;
-        }
+        // Full match. We're done.
+        std::size_t bytes = result.first - begin;
+        handler_(ec, bytes);
+        return;
+      }
+      else if (result.first != end)
+      {
+        // Partial match. Next search needs to start from beginning of match.
+        next_search_start_ = result.first - begin;
       }
       else
       {
@@ -950,21 +944,18 @@ void async_read_until(AsyncReadStream& s,
   // Look for a match.
   std::size_t next_search_start;
   std::pair<iterator, bool> result = match_condition(begin, end);
-  if (result.first != end)
+  if (result.second)
   {
-    if (result.second)
-    {
-      // Full match. We're done.
-      asio::error_code ec;
-      std::size_t bytes = result.first - begin;
-      s.get_io_service().post(detail::bind_handler(handler, ec, bytes));
-      return;
-    }
-    else
-    {
-      // Partial match. Next search needs to start from beginning of match.
-      next_search_start = result.first - begin;
-    }
+    // Full match. We're done.
+    asio::error_code ec;
+    std::size_t bytes = result.first - begin;
+    s.get_io_service().post(detail::bind_handler(handler, ec, bytes));
+    return;
+  }
+  else if (result.first != end)
+  {
+    // Partial match. Next search needs to start from beginning of match.
+    next_search_start = result.first - begin;
   }
   else
   {
