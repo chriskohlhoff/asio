@@ -102,7 +102,8 @@ public:
   {
     if (ptr_)
     {
-      ptr_->io_service_.post_completion(ptr_, 0, 0);
+      ptr_->ec_ = ec;
+      ptr_->io_service_.post_completion(ptr_, 0, bytes_transferred);
       ptr_ = 0;
     }
   }
