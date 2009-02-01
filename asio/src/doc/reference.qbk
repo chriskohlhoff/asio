@@ -26321,14 +26321,14 @@ Automatically resizable buffer class based on std::streambuf.
   [
 
     [[link asio.reference.basic_streambuf.const_buffers_type [*const_buffers_type]]]
-    [The type used to represent the get area as a list of buffers. ]
+    [The type used to represent the input sequence as a list of buffers. ]
   
   ]
 
   [
 
     [[link asio.reference.basic_streambuf.mutable_buffers_type [*mutable_buffers_type]]]
-    [The type used to represent the put area as a list of buffers. ]
+    [The type used to represent the output sequence as a list of buffers. ]
   
   ]
 
@@ -26340,37 +26340,37 @@ Automatically resizable buffer class based on std::streambuf.
 
   [
     [[link asio.reference.basic_streambuf.basic_streambuf [*basic_streambuf]]]
-    [Construct a buffer with a specified maximum size. ]
+    [Construct a basic_streambuf object. ]
   ]
   
   [
     [[link asio.reference.basic_streambuf.commit [*commit]]]
-    [Move the start of the put area by the specified number of characters. ]
+    [Move characters from the output sequence to the input sequence. ]
   ]
   
   [
     [[link asio.reference.basic_streambuf.consume [*consume]]]
-    [Move the start of the get area by the specified number of characters. ]
+    [Remove characters from the input sequence. ]
   ]
   
   [
     [[link asio.reference.basic_streambuf.data [*data]]]
-    [Get a list of buffers that represents the get area. ]
+    [Get a list of buffers that represents the input sequence. ]
   ]
   
   [
     [[link asio.reference.basic_streambuf.max_size [*max_size]]]
-    [Return the maximum size of the buffer. ]
+    [Get the maximum size of the basic_streambuf. ]
   ]
   
   [
     [[link asio.reference.basic_streambuf.prepare [*prepare]]]
-    [Get a list of buffers that represents the put area, with the given size. ]
+    [Get a list of buffers that represents the output sequence, with the given size. ]
   ]
   
   [
     [[link asio.reference.basic_streambuf.size [*size]]]
-    [Return the size of the get area in characters. ]
+    [Get the size of the input sequence. ]
   ]
   
 ]
@@ -26381,7 +26381,7 @@ Automatically resizable buffer class based on std::streambuf.
 
   [
     [[link asio.reference.basic_streambuf.overflow [*overflow]]]
-    []
+    [Override std::streambuf behaviour. ]
   ]
   
   [
@@ -26391,20 +26391,78 @@ Automatically resizable buffer class based on std::streambuf.
   
   [
     [[link asio.reference.basic_streambuf.underflow [*underflow]]]
-    []
+    [Override std::streambuf behaviour. ]
   ]
   
 ]
 
+The `basic_streambuf` class is derived from `std::streambuf` to associate the streambuf's input and output sequences with one or more character arrays. These character arrays are internal to the `basic_streambuf` object, but direct access to the array elements is provided to permit them to be used efficiently with I/O operations. Characters written to the output sequence of a `basic_streambuf` object are appended to the input sequence of the same object.
+
+The `basic_streambuf` class's public interface is intended to permit the following implementation strategies:
+
+
+* A single contiguous character array, which is reallocated as necessary to accommodate changes in the size of the character sequence. This is the implementation approach currently used in Asio.
+
+* A sequence of one or more character arrays, where each array is of the same size. Additional character array objects are appended to the sequence to accommodate changes in the size of the character sequence.
+
+* A sequence of one or more character arrays of varying sizes. Additional character array objects are appended to the sequence to accommodate changes in the size of the character sequence.
+
+The constructor for basic_streambuf accepts a `size_t` argument specifying the maximum of the sum of the sizes of the input sequence and output sequence. During the lifetime of the `basic_streambuf` object, the following invariant holds: 
+
+   size() <= max_size()
+
+
+Any member function that would, if successful, cause the invariant to be violated shall throw an exception of class `std::length_error`.
+
+The constructor for `basic_streambuf` takes an Allocator argument. A copy of this argument is used for any memory allocation performed, by the constructor and by all member functions, during the lifetime of each `basic_streambuf` object.
+
+
+[heading Examples]
+  
+Writing directly from an streambuf to a socket: 
+
+   asio::streambuf b;
+   std::ostream os(&b);
+   os << "Hello, World!\n";
+
+   // try sending some data in input sequence
+   size_t n = sock.send(b.data());
+
+   b.consume(n); // sent data is removed from input sequence
+
+
+
+
+Reading from a socket directly into a streambuf: 
+
+   asio::streambuf b;
+
+   // reserve 512 bytes in output sequence
+   asio::streambuf::const_buffers_type bufs = b.prepare(512);
+
+   size_t n = sock.receive(bufs);
+
+   // received data is "committed" from output sequence to input sequence
+   b.commit(n);
+
+   std::istream is(&b);
+   std::string s;
+   is >> s;
+
+
+
+
 
 [section:basic_streambuf basic_streambuf::basic_streambuf]
 
-[indexterm2 basic_streambuf..basic_streambuf] Construct a buffer with a specified maximum size. 
+[indexterm2 basic_streambuf..basic_streambuf] Construct a basic_streambuf object. 
 
   basic_streambuf(
       std::size_t max_size = (std::numeric_limits< std::size_t >::max)(),
       const Allocator & allocator = Allocator());
 
+
+Constructs a streambuf with the specified maximum size. The initial size of the streambuf's input sequence is 0. 
 
 
 [endsect]
@@ -26413,10 +26471,25 @@ Automatically resizable buffer class based on std::streambuf.
 
 [section:commit basic_streambuf::commit]
 
-[indexterm2 commit..basic_streambuf] Move the start of the put area by the specified number of characters. 
+[indexterm2 commit..basic_streambuf] Move characters from the output sequence to the input sequence. 
 
   void commit(
       std::size_t n);
+
+
+Appends `n` characters from the start of the output sequence to the input sequence. The beginning of the output sequence is advanced by `n` characters.
+
+Requires a preceding call `prepare(x)` where `x >= n`, and no intervening operations that modify the input or output sequence.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[std::length_error][If `n` is greater than the size of the output sequence. ]]
+
+]
 
 
 
@@ -26426,7 +26499,7 @@ Automatically resizable buffer class based on std::streambuf.
 
 [section:const_buffers_type basic_streambuf::const_buffers_type]
 
-[indexterm2 const_buffers_type..basic_streambuf] The type used to represent the get area as a list of buffers. 
+[indexterm2 const_buffers_type..basic_streambuf] The type used to represent the input sequence as a list of buffers. 
 
   typedef implementation_defined const_buffers_type;
 
@@ -26439,10 +26512,23 @@ Automatically resizable buffer class based on std::streambuf.
 
 [section:consume basic_streambuf::consume]
 
-[indexterm2 consume..basic_streambuf] Move the start of the get area by the specified number of characters. 
+[indexterm2 consume..basic_streambuf] Remove characters from the input sequence. 
 
   void consume(
       std::size_t n);
+
+
+Removes `n` characters from the beginning of the input sequence.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[std::length_error][If `n > size()`. ]]
+
+]
 
 
 
@@ -26452,9 +26538,19 @@ Automatically resizable buffer class based on std::streambuf.
 
 [section:data basic_streambuf::data]
 
-[indexterm2 data..basic_streambuf] Get a list of buffers that represents the get area. 
+[indexterm2 data..basic_streambuf] Get a list of buffers that represents the input sequence. 
 
   const_buffers_type data() const;
+
+
+
+[heading Return Value]
+      
+An object of type `const_buffers_type` that satisfies ConstBufferSequence requirements, representing all character arrays in the input sequence.
+
+[heading Remarks]
+      
+The returned object is invalidated by any `basic_streambuf` member function that modifies the input sequence or output sequence. 
 
 
 
@@ -26464,9 +26560,15 @@ Automatically resizable buffer class based on std::streambuf.
 
 [section:max_size basic_streambuf::max_size]
 
-[indexterm2 max_size..basic_streambuf] Return the maximum size of the buffer. 
+[indexterm2 max_size..basic_streambuf] Get the maximum size of the basic_streambuf. 
 
   std::size_t max_size() const;
+
+
+
+[heading Return Value]
+      
+The allowed maximum of the sum of the sizes of the input sequence and output sequence. 
 
 
 
@@ -26476,7 +26578,7 @@ Automatically resizable buffer class based on std::streambuf.
 
 [section:mutable_buffers_type basic_streambuf::mutable_buffers_type]
 
-[indexterm2 mutable_buffers_type..basic_streambuf] The type used to represent the put area as a list of buffers. 
+[indexterm2 mutable_buffers_type..basic_streambuf] The type used to represent the output sequence as a list of buffers. 
 
   typedef implementation_defined mutable_buffers_type;
 
@@ -26489,11 +26591,13 @@ Automatically resizable buffer class based on std::streambuf.
 
 [section:overflow basic_streambuf::overflow]
 
-[indexterm2 overflow..basic_streambuf] 
+[indexterm2 overflow..basic_streambuf] Override std::streambuf behaviour. 
 
   int_type overflow(
       int_type c);
 
+
+Behaves according to the specification of `std::streambuf::overflow()`, with the specialisation that `std::length_error` is thrown if appending the character to the input sequence would require the condition `size() > max_size()` to be true. 
 
 
 [endsect]
@@ -26502,10 +26606,31 @@ Automatically resizable buffer class based on std::streambuf.
 
 [section:prepare basic_streambuf::prepare]
 
-[indexterm2 prepare..basic_streambuf] Get a list of buffers that represents the put area, with the given size. 
+[indexterm2 prepare..basic_streambuf] Get a list of buffers that represents the output sequence, with the given size. 
 
   mutable_buffers_type prepare(
-      std::size_t size);
+      std::size_t n);
+
+
+Ensures that the output sequence can accommodate `n` characters, reallocating character array objects as necessary.
+
+
+[heading Return Value]
+      
+An object of type `mutable_buffers_type` that satisfies MutableBufferSequence requirements, representing character array objects at the start of the output sequence such that the sum of the buffer sizes is `n`.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[std::length_error][If `size() + n > max_size()`.]]
+
+]
+
+[heading Remarks]
+      
+The returned object is invalidated by any `basic_streambuf` member function that modifies the input sequence or output sequence. 
 
 
 
@@ -26528,9 +26653,27 @@ Automatically resizable buffer class based on std::streambuf.
 
 [section:size basic_streambuf::size]
 
-[indexterm2 size..basic_streambuf] Return the size of the get area in characters. 
+[indexterm2 size..basic_streambuf] Get the size of the input sequence. 
 
   std::size_t size() const;
+
+
+
+[heading Return Value]
+      
+The size of the input sequence. The value is equal to that calculated for `s` in the following code: 
+
+   size_t s = 0;
+   const_buffers_type bufs = data();
+   const_buffers_type::const_iterator i = bufs.begin();
+   while (i != bufs.end())
+   {
+     const_buffer buf(*i++);
+     s += buffer_size(buf);
+   }
+
+
+
 
 
 
@@ -26540,10 +26683,12 @@ Automatically resizable buffer class based on std::streambuf.
 
 [section:underflow basic_streambuf::underflow]
 
-[indexterm2 underflow..basic_streambuf] 
+[indexterm2 underflow..basic_streambuf] Override std::streambuf behaviour. 
 
   int_type underflow();
 
+
+Behaves according to the specification of `std::streambuf::underflow()`. 
 
 
 [endsect]
@@ -56425,14 +56570,14 @@ Default service implementation for a stream socket.
   [
 
     [[link asio.reference.basic_streambuf.const_buffers_type [*const_buffers_type]]]
-    [The type used to represent the get area as a list of buffers. ]
+    [The type used to represent the input sequence as a list of buffers. ]
   
   ]
 
   [
 
     [[link asio.reference.basic_streambuf.mutable_buffers_type [*mutable_buffers_type]]]
-    [The type used to represent the put area as a list of buffers. ]
+    [The type used to represent the output sequence as a list of buffers. ]
   
   ]
 
@@ -56444,37 +56589,37 @@ Default service implementation for a stream socket.
 
   [
     [[link asio.reference.basic_streambuf.basic_streambuf [*basic_streambuf]]]
-    [Construct a buffer with a specified maximum size. ]
+    [Construct a basic_streambuf object. ]
   ]
   
   [
     [[link asio.reference.basic_streambuf.commit [*commit]]]
-    [Move the start of the put area by the specified number of characters. ]
+    [Move characters from the output sequence to the input sequence. ]
   ]
   
   [
     [[link asio.reference.basic_streambuf.consume [*consume]]]
-    [Move the start of the get area by the specified number of characters. ]
+    [Remove characters from the input sequence. ]
   ]
   
   [
     [[link asio.reference.basic_streambuf.data [*data]]]
-    [Get a list of buffers that represents the get area. ]
+    [Get a list of buffers that represents the input sequence. ]
   ]
   
   [
     [[link asio.reference.basic_streambuf.max_size [*max_size]]]
-    [Return the maximum size of the buffer. ]
+    [Get the maximum size of the basic_streambuf. ]
   ]
   
   [
     [[link asio.reference.basic_streambuf.prepare [*prepare]]]
-    [Get a list of buffers that represents the put area, with the given size. ]
+    [Get a list of buffers that represents the output sequence, with the given size. ]
   ]
   
   [
     [[link asio.reference.basic_streambuf.size [*size]]]
-    [Return the size of the get area in characters. ]
+    [Get the size of the input sequence. ]
   ]
   
 ]
@@ -56485,7 +56630,7 @@ Default service implementation for a stream socket.
 
   [
     [[link asio.reference.basic_streambuf.overflow [*overflow]]]
-    []
+    [Override std::streambuf behaviour. ]
   ]
   
   [
@@ -56495,10 +56640,66 @@ Default service implementation for a stream socket.
   
   [
     [[link asio.reference.basic_streambuf.underflow [*underflow]]]
-    []
+    [Override std::streambuf behaviour. ]
   ]
   
 ]
+
+The `basic_streambuf` class is derived from `std::streambuf` to associate the streambuf's input and output sequences with one or more character arrays. These character arrays are internal to the `basic_streambuf` object, but direct access to the array elements is provided to permit them to be used efficiently with I/O operations. Characters written to the output sequence of a `basic_streambuf` object are appended to the input sequence of the same object.
+
+The `basic_streambuf` class's public interface is intended to permit the following implementation strategies:
+
+
+* A single contiguous character array, which is reallocated as necessary to accommodate changes in the size of the character sequence. This is the implementation approach currently used in Asio.
+
+* A sequence of one or more character arrays, where each array is of the same size. Additional character array objects are appended to the sequence to accommodate changes in the size of the character sequence.
+
+* A sequence of one or more character arrays of varying sizes. Additional character array objects are appended to the sequence to accommodate changes in the size of the character sequence.
+
+The constructor for basic_streambuf accepts a `size_t` argument specifying the maximum of the sum of the sizes of the input sequence and output sequence. During the lifetime of the `basic_streambuf` object, the following invariant holds: 
+
+   size() <= max_size()
+
+
+Any member function that would, if successful, cause the invariant to be violated shall throw an exception of class `std::length_error`.
+
+The constructor for `basic_streambuf` takes an Allocator argument. A copy of this argument is used for any memory allocation performed, by the constructor and by all member functions, during the lifetime of each `basic_streambuf` object.
+
+
+[heading Examples]
+  
+Writing directly from an streambuf to a socket: 
+
+   asio::streambuf b;
+   std::ostream os(&b);
+   os << "Hello, World!\n";
+
+   // try sending some data in input sequence
+   size_t n = sock.send(b.data());
+
+   b.consume(n); // sent data is removed from input sequence
+
+
+
+
+Reading from a socket directly into a streambuf: 
+
+   asio::streambuf b;
+
+   // reserve 512 bytes in output sequence
+   asio::streambuf::const_buffers_type bufs = b.prepare(512);
+
+   size_t n = sock.receive(bufs);
+
+   // received data is "committed" from output sequence to input sequence
+   b.commit(n);
+
+   std::istream is(&b);
+   std::string s;
+   is >> s;
+
+
+
 
 
 
