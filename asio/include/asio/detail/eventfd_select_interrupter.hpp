@@ -85,7 +85,8 @@ public:
   void interrupt()
   {
     uint64_t counter(1UL);
-    ::write(read_descriptor_, &counter, sizeof(uint64_t));
+    int result = ::write(read_descriptor_, &counter, sizeof(uint64_t));
+    (void)result;
   }
 
   // Reset the select interrupt. Returns true if the call was interrupted.
