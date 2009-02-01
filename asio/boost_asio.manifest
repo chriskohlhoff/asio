@@ -222,6 +222,7 @@
 /doc/html/boost_asio/example/chat/chat_client.cpp
 /doc/html/boost_asio/example/chat/chat_message.hpp
 /doc/html/boost_asio/example/chat/chat_server.cpp
+/doc/html/boost_asio/example/chat/posix_chat_client.cpp
 /doc/html/boost_asio/example/echo/
 /doc/html/boost_asio/example/echo/async_tcp_echo_server.cpp
 /doc/html/boost_asio/example/echo/async_udp_echo_server.cpp
@@ -2758,6 +2759,7 @@
 /doc/html/boost_asio/using.html
 /libs/
 /libs/asio/
+/libs/asio/CMakeLists.txt
 /libs/asio/doc/
 /libs/asio/doc/asio.qbk
 /libs/asio/doc/doxy2qbk.pl
@@ -2865,6 +2867,7 @@
 /libs/asio/example/chat/chat_server.cpp
 /libs/asio/example/chat/Jamfile
 /libs/asio/example/chat/Jamfile.v2
+/libs/asio/example/chat/posix_chat_client.cpp
 /libs/asio/example/echo/
 /libs/asio/example/echo/async_tcp_echo_server.cpp
 /libs/asio/example/echo/async_udp_echo_server.cpp
@@ -3054,6 +3057,7 @@
 /libs/asio/example/windows/Jamfile.v2
 /libs/asio/example/windows/transmit_file.cpp
 /libs/asio/index.html
+/libs/asio/module.cmake
 /libs/asio/test/
 /libs/asio/test/basic_datagram_socket.cpp
 /libs/asio/test/basic_deadline_timer.cpp
@@ -3065,6 +3069,7 @@
 /libs/asio/test/buffered_stream.cpp
 /libs/asio/test/buffered_write_stream.cpp
 /libs/asio/test/buffers_iterator.cpp
+/libs/asio/test/CMakeLists.txt
 /libs/asio/test/completion_condition.cpp
 /libs/asio/test/datagram_socket_service.cpp
 /libs/asio/test/deadline_timer.cpp
@@ -3141,11 +3146,14 @@
 /libs/system/build/
 /libs/system/build/Jamfile
 /libs/system/build/Jamfile.v2
+/libs/system/CMakeLists.txt
 /libs/system/doc/
 /libs/system/doc/index.html
 /libs/system/doc/reference.html
 /libs/system/index.html
+/libs/system/module.cmake
 /libs/system/src/
+/libs/system/src/CMakeLists.txt
 /libs/system/src/error_code.cpp
 /libs/system/test/
 /libs/system/test/error_code_test.cpp
@@ -3153,10 +3161,10 @@
 /libs/system/test/header_only_test.cpp
 /libs/system/test/initialization_test.cpp
 /libs/system/test/Jamfile.v2
-/libs/system/test/msvc_system/
-/libs/system/test/msvc_system/common.vsprops
-/libs/system/test/msvc_system/error_code_test/
-/libs/system/test/msvc_system/error_code_test/error_code_test.vcproj
-/libs/system/test/msvc_system/msvc_system.sln
 /libs/system/test/system_error_test.cpp
+/libs/system/test/system_msvc/
+/libs/system/test/system_msvc/common.vsprops
+/libs/system/test/system_msvc/error_code_test/
+/libs/system/test/system_msvc/error_code_test/error_code_test.vcproj
+/libs/system/test/system_msvc/system_msvc.sln
 /README.txt

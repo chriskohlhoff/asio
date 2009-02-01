@@ -2688,6 +2688,7 @@
 /src/examples/chat/chat_client.cpp
 /src/examples/chat/chat_message.hpp
 /src/examples/chat/chat_server.cpp
+/src/examples/chat/posix_chat_client.cpp
 /src/examples/echo/
 /src/examples/echo/async_tcp_echo_server.cpp
 /src/examples/echo/async_udp_echo_server.cpp
