@@ -42,7 +42,7 @@ reference to the stream type:
 SSL handshaking must be performed prior to transmitting or receiving data over
 an encrypted connection. This is accomplished using the `ssl::stream`
 template's [link asio.reference.ssl__stream.handshake handshake()] or [link
-asio.reference.ssl_stream.async_handshake async_handshake()] member functions.
+asio.reference.ssl__stream.async_handshake async_handshake()] member functions.
 
 Once connected, SSL stream objects are used as synchronous or asynchronous read
 and write streams. This means the objects can be used with any of the [link
