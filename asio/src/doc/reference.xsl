@@ -613,6 +613,9 @@
   <xsl:variable name="doxygen-id">
     <xsl:value-of select="@id"/>
   </xsl:variable>
+  <xsl:variable name="overload-count">
+    <xsl:value-of select="count(../memberdef[name = $name])"/>
+  </xsl:variable>
   <xsl:variable name="overload-position">
     <xsl:for-each select="../memberdef[name = $name]">
       <xsl:if test="@id = $doxygen-id">
@@ -623,9 +626,19 @@
   <xsl:if test="$overload-position = 1">
   [
     [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="$id"/>
-      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/>]]]
-    [<xsl:value-of select="briefdescription"/>]
+      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/><xsl:text>]]]
+    [</xsl:text><xsl:value-of select="briefdescription"/>
+  </xsl:if>
+  <xsl:if test="not($overload-position = 1) and not(briefdescription = preceding-sibling::*/briefdescription)">
+    <xsl:value-of select="$newline"/>
+    <xsl:value-of select="$newline"/>
+    <xsl:text>     </xsl:text>
+    <xsl:value-of select="briefdescription"/>
+  </xsl:if>
+  <xsl:if test="$overload-position = $overload-count">
+  <xsl:text>]
   ]
+  </xsl:text>
   </xsl:if>
 </xsl:for-each>
 ]
@@ -648,6 +661,9 @@
   <xsl:variable name="doxygen-id">
     <xsl:value-of select="@id"/>
   </xsl:variable>
+  <xsl:variable name="overload-count">
+    <xsl:value-of select="count(../memberdef[name = $name])"/>
+  </xsl:variable>
   <xsl:variable name="overload-position">
     <xsl:for-each select="../memberdef[name = $name]">
       <xsl:if test="@id = $doxygen-id">
@@ -658,9 +674,19 @@
   <xsl:if test="$overload-position = 1">
   [
     [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="$id"/>
-      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/>]]]
-    [<xsl:value-of select="briefdescription"/>]
+      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/><xsl:text>]]]
+    [</xsl:text><xsl:value-of select="briefdescription"/>
+  </xsl:if>
+  <xsl:if test="not($overload-position = 1) and not(briefdescription = preceding-sibling::*/briefdescription)">
+    <xsl:value-of select="$newline"/>
+    <xsl:value-of select="$newline"/>
+    <xsl:text>     </xsl:text>
+    <xsl:value-of select="briefdescription"/>
+  </xsl:if>
+  <xsl:if test="$overload-position = $overload-count">
+  <xsl:text>]
   ]
+  </xsl:text>
   </xsl:if>
 </xsl:for-each>
 ]
@@ -713,6 +739,9 @@
   <xsl:variable name="doxygen-id">
     <xsl:value-of select="@id"/>
   </xsl:variable>
+  <xsl:variable name="overload-count">
+    <xsl:value-of select="count(../memberdef[name = $name])"/>
+  </xsl:variable>
   <xsl:variable name="overload-position">
     <xsl:for-each select="../memberdef[name = $name]">
       <xsl:if test="@id = $doxygen-id">
@@ -723,9 +752,19 @@
   <xsl:if test="$overload-position = 1">
   [
     [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="$id"/>
-      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/>]]]
-    [<xsl:value-of select="briefdescription"/>]
+      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/><xsl:text>]]]
+    [</xsl:text><xsl:value-of select="briefdescription"/>
+  </xsl:if>
+  <xsl:if test="not($overload-position = 1) and not(briefdescription = preceding-sibling::*/briefdescription)">
+    <xsl:value-of select="$newline"/>
+    <xsl:value-of select="$newline"/>
+    <xsl:text>     </xsl:text>
+    <xsl:value-of select="briefdescription"/>
+  </xsl:if>
+  <xsl:if test="$overload-position = $overload-count">
+  <xsl:text>]
   ]
+  </xsl:text>
   </xsl:if>
 </xsl:for-each>
 ]
@@ -748,6 +787,9 @@
   <xsl:variable name="doxygen-id">
     <xsl:value-of select="@id"/>
   </xsl:variable>
+  <xsl:variable name="overload-count">
+    <xsl:value-of select="count(../memberdef[name = $name])"/>
+  </xsl:variable>
   <xsl:variable name="overload-position">
     <xsl:for-each select="../memberdef[name = $name]">
       <xsl:if test="@id = $doxygen-id">
@@ -758,9 +800,19 @@
   <xsl:if test="$overload-position = 1">
   [
     [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="$id"/>
-      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/>]]]
-    [<xsl:value-of select="briefdescription"/>]
+      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/><xsl:text>]]]
+    [</xsl:text><xsl:value-of select="briefdescription"/>
+  </xsl:if>
+  <xsl:if test="not($overload-position = 1) and not(briefdescription = preceding-sibling::*/briefdescription)">
+    <xsl:value-of select="$newline"/>
+    <xsl:value-of select="$newline"/>
+    <xsl:text>     </xsl:text>
+    <xsl:value-of select="briefdescription"/>
+  </xsl:if>
+  <xsl:if test="$overload-position = $overload-count">
+  <xsl:text>]
   ]
+  </xsl:text>
   </xsl:if>
 </xsl:for-each>
 ]
@@ -821,6 +873,11 @@
 </xsl:text>
 
 <xsl:for-each select="../memberdef[name = $name]">
+<xsl:if test="position() &gt; 1 and not(briefdescription = preceding-sibling::*/briefdescription)">
+  <xsl:value-of select="$newline"/>
+  <xsl:value-of select="briefdescription"/>
+  <xsl:value-of select="$newline"/>
+</xsl:if>
 <xsl:text>
 </xsl:text><xsl:apply-templates select="templateparamlist" mode="class-detail"/>
 <xsl:text>  </xsl:text><xsl:if test="@static='yes'">static </xsl:if><xsl:if
