@@ -10,6 +10,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <iostream>
 #include <boost/array.hpp>
 #include <boost/bind.hpp>
 #include "asio.hpp"
