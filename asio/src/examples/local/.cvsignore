@@ -2,6 +2,7 @@
 .dirstamp
 *.exe
 connect_pair
+iostream_client
 stream_server
 stream_client
 *.ilk
