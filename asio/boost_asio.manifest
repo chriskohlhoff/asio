@@ -3161,10 +3161,10 @@
 /libs/system/test/header_only_test.cpp
 /libs/system/test/initialization_test.cpp
 /libs/system/test/Jamfile.v2
+/libs/system/test/msvc_system/
+/libs/system/test/msvc_system/common.vsprops
+/libs/system/test/msvc_system/error_code_test/
+/libs/system/test/msvc_system/error_code_test/error_code_test.vcproj
+/libs/system/test/msvc_system/msvc_system.sln
 /libs/system/test/system_error_test.cpp
-/libs/system/test/system_msvc/
-/libs/system/test/system_msvc/common.vsprops
-/libs/system/test/system_msvc/error_code_test/
-/libs/system/test/system_msvc/error_code_test/error_code_test.vcproj
-/libs/system/test/system_msvc/system_msvc.sln
 /README.txt

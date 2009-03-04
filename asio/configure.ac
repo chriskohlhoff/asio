@@ -1,4 +1,4 @@
-AC_INIT(asio, [1.4.0])
+AC_INIT(asio, [1.4.1])
 AC_CONFIG_SRCDIR(include/asio.hpp)
 AM_MAINTAINER_MODE
 AM_INIT_AUTOMAKE([tar-ustar])
@@ -17,29 +17,39 @@ AC_ARG_WITH(boost,
   CPPFLAGS="$CPPFLAGS -I${withval}"
 ],
 [
-  BOOSTDIR="`pwd`/../boost_1_36_0"
+  BOOSTDIR="`pwd`/../boost_1_38_0"
   if test -d "${BOOSTDIR}"; then
     CPPFLAGS="$CPPFLAGS -I${BOOSTDIR}"
   else
-    BOOSTDIR="`pwd`/../boost_1_35_0"
+    BOOSTDIR="`pwd`/../boost_1_37_0"
     if test -d "${BOOSTDIR}"; then
       CPPFLAGS="$CPPFLAGS -I${BOOSTDIR}"
     else
-      BOOSTDIR="`pwd`/../boost_1_34_1"
+      BOOSTDIR="`pwd`/../boost_1_36_0"
       if test -d "${BOOSTDIR}"; then
         CPPFLAGS="$CPPFLAGS -I${BOOSTDIR}"
       else
-        BOOSTDIR="`pwd`/../boost_1_34_0"
+        BOOSTDIR="`pwd`/../boost_1_35_0"
         if test -d "${BOOSTDIR}"; then
           CPPFLAGS="$CPPFLAGS -I${BOOSTDIR}"
         else
-          BOOSTDIR="`pwd`/../boost_1_33_1"
+          BOOSTDIR="`pwd`/../boost_1_34_1"
           if test -d "${BOOSTDIR}"; then
             CPPFLAGS="$CPPFLAGS -I${BOOSTDIR}"
           else
-            BOOSTDIR="`pwd`/../boost_1_33_0"
+            BOOSTDIR="`pwd`/../boost_1_34_0"
             if test -d "${BOOSTDIR}"; then
               CPPFLAGS="$CPPFLAGS -I${BOOSTDIR}"
+            else
+              BOOSTDIR="`pwd`/../boost_1_33_1"
+              if test -d "${BOOSTDIR}"; then
+                CPPFLAGS="$CPPFLAGS -I${BOOSTDIR}"
+              else
+                BOOSTDIR="`pwd`/../boost_1_33_0"
+                if test -d "${BOOSTDIR}"; then
+                  CPPFLAGS="$CPPFLAGS -I${BOOSTDIR}"
+                fi
+              fi
             fi
           fi
         fi
