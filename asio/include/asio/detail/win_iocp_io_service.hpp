@@ -435,12 +435,15 @@ private:
         try
         {
           asio::detail::mutex::scoped_lock lock(timer_mutex_);
-          timer_queues_copy_ = timer_queues_;
-          for (std::size_t i = 0; i < timer_queues_copy_.size(); ++i)
+          if (!timer_queues_.empty())
           {
-            timer_queues_copy_[i]->dispatch_timers();
-            timer_queues_copy_[i]->dispatch_cancellations();
-            timer_queues_copy_[i]->complete_timers();
+            timer_queues_copy_ = timer_queues_;
+            for (std::size_t i = 0; i < timer_queues_copy_.size(); ++i)
+            {
+              timer_queues_copy_[i]->dispatch_timers();
+              timer_queues_copy_[i]->dispatch_cancellations();
+              timer_queues_copy_[i]->complete_timers();
+            }
           }
         }
         catch (...)
