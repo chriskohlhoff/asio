@@ -21,6 +21,7 @@
 #include <cassert>
 #include <list>
 #include <utility>
+#include <vector>
 #include <boost/functional/hash.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -60,10 +61,9 @@ public:
 
   // Constructor.
   hash_map()
+    : size_(0)
   {
-    // Initialise all buckets to empty.
-    for (size_t i = 0; i < num_buckets; ++i)
-      buckets_[i].first = buckets_[i].last = values_.end();
+    rehash(hash_size(0));
   }
 
   // Get an iterator for the beginning of the map.
@@ -99,7 +99,7 @@ public:
   // Find an entry in the map.
   iterator find(const K& k)
   {
-    size_t bucket = calculate_hash_value(k) % num_buckets;
+    size_t bucket = calculate_hash_value(k) % buckets_.size();
     iterator it = buckets_[bucket].first;
     if (it == values_.end())
       return values_.end();
@@ -117,7 +117,7 @@ public:
   // Find an entry in the map.
   const_iterator find(const K& k) const
   {
-    size_t bucket = calculate_hash_value(k) % num_buckets;
+    size_t bucket = calculate_hash_value(k) % buckets_.size();
     const_iterator it = buckets_[bucket].first;
     if (it == values_.end())
       return it;
@@ -135,12 +135,15 @@ public:
   // Insert a new entry into the map.
   std::pair<iterator, bool> insert(const value_type& v)
   {
-    size_t bucket = calculate_hash_value(v.first) % num_buckets;
+    if (size_ + 1 >= buckets_.size())
+      rehash(hash_size(size_ + 1));
+    size_t bucket = calculate_hash_value(v.first) % buckets_.size();
     iterator it = buckets_[bucket].first;
     if (it == values_.end())
     {
       buckets_[bucket].first = buckets_[bucket].last =
         values_insert(values_.end(), v);
+      ++size_;
       return std::pair<iterator, bool>(buckets_[bucket].last, true);
     }
     iterator end = buckets_[bucket].last;
@@ -152,6 +155,7 @@ public:
       ++it;
     }
     buckets_[bucket].last = values_insert(end, v);
+    ++size_;
     return std::pair<iterator, bool>(buckets_[bucket].last, true);
   }
 
@@ -160,7 +164,7 @@ public:
   {
     assert(it != values_.end());
 
-    size_t bucket = calculate_hash_value(it->first) % num_buckets;
+    size_t bucket = calculate_hash_value(it->first) % buckets_.size();
     bool is_first = (it == buckets_[bucket].first);
     bool is_last = (it == buckets_[bucket].last);
     if (is_first && is_last)
@@ -171,6 +175,7 @@ public:
       --buckets_[bucket].last;
 
     values_erase(it);
+    --size_;
   }
 
   // Remove all entries from the map.
@@ -178,13 +183,61 @@ public:
   {
     // Clear the values.
     values_.clear();
+    size_ = 0;
 
     // Initialise all buckets to empty.
-    for (size_t i = 0; i < num_buckets; ++i)
+    for (size_t i = 0; i < buckets_.size(); ++i)
       buckets_[i].first = buckets_[i].last = values_.end();
   }
 
 private:
+  // Calculate the hash size for the specified number of elements.
+  static std::size_t hash_size(std::size_t num_elems)
+  {
+    static std::size_t sizes[] =
+    {
+#if defined(ASIO_HASH_MAP_BUCKETS)
+      ASIO_HASH_MAP_BUCKETS
+#else // ASIO_HASH_MAP_BUCKETS
+      3, 13, 23, 53, 97, 193, 389, 769, 1543, 3079, 6151, 12289, 24593,
+      49157, 98317, 196613, 393241, 786433, 1572869, 3145739, 6291469,
+      12582917, 25165843
+#endif // ASIO_HASH_MAP_BUCKETS
+    };
+    const std::size_t nth_size = sizeof(sizes) / sizeof(std::size_t) - 1;
+    for (std::size_t i = 0; i < nth_size; ++i)
+      if (num_elems < sizes[i])
+        return sizes[i];
+    return sizes[nth_size];
+  }
+
+  // Re-initialise the hash from the values already contained in the list.
+  void rehash(std::size_t num_buckets)
+  {
+    iterator end = values_.end();
+
+    // Update number of buckets and initialise all buckets to empty.
+    buckets_.resize(num_buckets);
+    for (std::size_t i = 0; i < buckets_.size(); ++i)
+      buckets_[i].first = buckets_[i].last = end;
+
+    // Put all values back into the hash.
+    iterator iter = values_.begin();
+    while (iter != end)
+    {
+      std::size_t bucket = calculate_hash_value(iter->first) % buckets_.size();
+      if (buckets_[bucket].last == end)
+      {
+        buckets_[bucket].first = buckets_[bucket].last = iter++;
+      }
+      else
+      {
+        values_.splice(++buckets_[bucket].last, values_, iter++);
+        --buckets_[bucket].last;
+      }
+    }
+  }
+
   // Insert an element into the values list by splicing from the spares list,
   // if a spare is available, and otherwise by inserting a new element.
   iterator values_insert(iterator it, const value_type& v)
@@ -208,6 +261,9 @@ private:
     spares_.splice(spares_.begin(), values_, it);
   }
 
+  // The number of elements in the hash.
+  std::size_t size_;
+
   // The list of all values in the hash map.
   std::list<value_type> values_;
 
@@ -222,11 +278,8 @@ private:
     iterator last;
   };
 
-  // The number of buckets in the hash.
-  enum { num_buckets = 1021 };
-
   // The buckets in the hash.
-  bucket_type buckets_[num_buckets];
+  std::vector<bucket_type> buckets_;
 };
 
 } // namespace detail

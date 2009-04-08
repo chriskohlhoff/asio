@@ -269,6 +269,26 @@ Asio.
       `BOOST_NO_TYPEID` is defined.
     ]
   ]
+  [
+    [`ASIO_HASH_MAP_BUCKETS`]
+    [
+      Determines the number of buckets in asio's internal `hash_map` objects.
+      The value should be a comma separated list of prime numbers, in ascending
+      order. The `hash_map` implementation will automatically increase the
+      number of buckets as the number of elements in the map increases.
+
+      Some examples:
+
+      * Defining `ASIO_HASH_MAP_BUCKETS` to `1021` means that the `hash_map`
+        objects will always contain 1021 buckets, irrespective of the number of
+        elements in the map.
+
+      * Defining `ASIO_HASH_MAP_BUCKETS` to `53,389,1543` means that the
+        `hash_map` objects will initially contain 53 buckets. The number of
+        buckets will be increased to 389 and then 1543 as elements are added to
+        the map.
+    ]
+  ]
 ]
 
 [heading Mailing List]
