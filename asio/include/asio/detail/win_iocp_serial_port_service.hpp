@@ -236,7 +236,7 @@ public:
   }
 
   // Send a break sequence to the serial port.
-  asio::error_code send_break(implementation_type& impl,
+  asio::error_code send_break(implementation_type&,
       asio::error_code& ec)
   {
     ec = asio::error::operation_not_supported;

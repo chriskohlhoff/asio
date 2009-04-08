@@ -2191,6 +2191,8 @@ public:
     bool perform(asio::error_code& ec,
         std::size_t& bytes_transferred)
     {
+      bytes_transferred = 0;
+
       // Check whether the operation was successful.
       if (ec)
         return true;

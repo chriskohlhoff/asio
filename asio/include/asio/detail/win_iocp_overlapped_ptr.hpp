@@ -103,7 +103,8 @@ public:
     if (ptr_)
     {
       ptr_->ec_ = ec;
-      ptr_->io_service_.post_completion(ptr_, 0, bytes_transferred);
+      ptr_->io_service_.post_completion(ptr_, 0,
+          static_cast<DWORD>(bytes_transferred));
       ptr_ = 0;
     }
   }
