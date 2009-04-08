@@ -460,7 +460,8 @@ EXTRA_DIST = \
 	examples/ssl/server.pem \
 	examples/ssl/dh512.pem \
 	examples/timers/tick_count_timer.cpp \
-	tests/performance/handler_allocator.hpp
+	tests/performance/handler_allocator.hpp \
+	tests/unit/archetypes/io_control_command.hpp
 
 MAINTAINERCLEANFILES = \
 	$(srcdir)/Makefile.in

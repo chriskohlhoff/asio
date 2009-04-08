@@ -447,7 +447,7 @@ public:
       // Flags are manipulated in a temporary variable so that the socket
       // implementation is not updated unless the ioctl operation succeeds.
       unsigned char new_flags = impl.flags_;
-      if (command.get())
+      if (*static_cast<ioctl_arg_type*>(command.data()))
         new_flags |= implementation_type::user_set_non_blocking;
       else
         new_flags &= ~implementation_type::user_set_non_blocking;

@@ -20,6 +20,7 @@
 #include <cstring>
 #include "asio.hpp"
 #include "../unit_test.hpp"
+#include "../archetypes/io_control_command.hpp"
 
 //------------------------------------------------------------------------------
 
@@ -149,7 +150,7 @@ void test()
     const char const_char_buffer[128] = "";
     socket_base::message_flags in_flags = 0;
     socket_base::keep_alive socket_option;
-    socket_base::bytes_readable io_control_command;
+    archetypes::io_control_command io_control_command;
     asio::error_code ec;
 
     // basic_stream_socket constructors.
