@@ -90,7 +90,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  * @li The supplied buffers are full. That is, the bytes transferred is equal to
  * the sum of the buffer sizes.
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * read_some_at function.
@@ -146,7 +146,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  * @li The supplied buffers are full. That is, the bytes transferred is equal to
  * the sum of the buffer sizes.
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * read_some_at function.
@@ -224,7 +224,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  * random access device at the specified offset. The call will block until one
  * of the following conditions is true:
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * read_some_at function.
@@ -267,7 +267,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  * random access device at the specified offset. The call will block until one
  * of the following conditions is true:
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * read_some_at function.
@@ -388,7 +388,7 @@ void async_read_at(AsyncRandomAccessReadDevice& d, boost::uint64_t offset,
  * @li The supplied buffers are full. That is, the bytes transferred is equal to
  * the sum of the buffer sizes.
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * @param d The device from which the data is to be read. The type must support
  * the AsyncRandomAccessReadDevice concept.
@@ -506,7 +506,7 @@ void async_read_at(AsyncRandomAccessReadDevice& d, boost::uint64_t offset,
  * always returns immediately. The asynchronous operation will continue until
  * one of the following conditions is true:
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * async_read_some_at function.

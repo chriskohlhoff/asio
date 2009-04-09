@@ -87,7 +87,7 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d,
  * @li All of the data in the supplied buffers has been written. That is, the
  * bytes transferred is equal to the sum of the buffer sizes.
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * write_some_at function.
@@ -142,7 +142,7 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d,
  * @li All of the data in the supplied buffers has been written. That is, the
  * bytes transferred is equal to the sum of the buffer sizes.
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * write_some_at function.
@@ -222,7 +222,7 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d,
  *
  * @li All of the data in the supplied basic_streambuf has been written.
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * write_some_at function.
@@ -265,7 +265,7 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d, boost::uint64_t offset,
  *
  * @li All of the data in the supplied basic_streambuf has been written.
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * write_some_at function.
@@ -378,7 +378,7 @@ void async_write_at(AsyncRandomAccessWriteDevice& d, boost::uint64_t offset,
  * @li All of the data in the supplied buffers has been written. That is, the
  * bytes transferred is equal to the sum of the buffer sizes.
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * async_write_some_at function.
@@ -494,7 +494,7 @@ void async_write_at(AsyncRandomAccessWriteDevice& d, boost::uint64_t offset,
  *
  * @li All of the data in the supplied basic_streambuf has been written.
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the device's
  * async_write_some_at function.

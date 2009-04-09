@@ -82,7 +82,7 @@ std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers);
  * @li The supplied buffers are full. That is, the bytes transferred is equal to
  * the sum of the buffer sizes.
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function.
@@ -133,7 +133,7 @@ std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
  * @li The supplied buffers are full. That is, the bytes transferred is equal to
  * the sum of the buffer sizes.
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function.
@@ -201,7 +201,7 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b);
  * This function is used to read a certain number of bytes of data from a
  * stream. The call will block until one of the following conditions is true:
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function.
@@ -239,7 +239,7 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
  * This function is used to read a certain number of bytes of data from a
  * stream. The call will block until one of the following conditions is true:
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function.
@@ -355,7 +355,7 @@ void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  * @li The supplied buffers are full. That is, the bytes transferred is equal to
  * the sum of the buffer sizes.
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * @param s The stream from which the data is to be read. The type must support
  * the AsyncReadStream concept.
@@ -467,7 +467,7 @@ void async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
  * asynchronous operation will continue until one of the following conditions is
  * true:
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * async_read_some function.
