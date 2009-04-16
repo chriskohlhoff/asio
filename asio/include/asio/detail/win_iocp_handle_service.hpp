@@ -572,7 +572,7 @@ public:
     if (!ok) 
     {
       DWORD last_error = ::GetLastError();
-      if (last_error != ERROR_IO_PENDING)
+      if (last_error != ERROR_IO_PENDING && last_error != ERROR_MORE_DATA)
       {
         if (last_error == ERROR_HANDLE_EOF)
         {
