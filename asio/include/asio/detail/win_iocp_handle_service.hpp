@@ -762,7 +762,7 @@ public:
         static_cast<DWORD>(asio::buffer_size(buffer)),
         &bytes_transferred, ptr.get());
     DWORD last_error = ::GetLastError();
-    if (!ok && last_error != ERROR_IO_PENDING)
+    if (!ok && last_error != ERROR_IO_PENDING && last_error != ERROR_MORE_DATA)
     {
       asio::io_service::work work(this->get_io_service());
       ptr.reset();
