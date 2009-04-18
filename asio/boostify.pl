@@ -559,6 +559,7 @@ sub copy_unit_tests
 {
   my @dirs = (
       "src/tests/unit",
+      "src/tests/unit/archetypes",
       "src/tests/unit/ip",
       "src/tests/unit/local",
       "src/tests/unit/posix",
