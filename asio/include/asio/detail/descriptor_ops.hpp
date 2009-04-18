@@ -49,13 +49,19 @@ inline ReturnType error_wrapper(ReturnType return_value,
 inline int open(const char* path, int flags, asio::error_code& ec)
 {
   clear_error(ec);
-  return error_wrapper(::open(path, flags), ec);
+  int result = error_wrapper(::open(path, flags), ec);
+  if (result >= 0)
+    clear_error(ec);
+  return result;
 }
 
 inline int close(int d, asio::error_code& ec)
 {
   clear_error(ec);
-  return error_wrapper(::close(d), ec);
+  int result = error_wrapper(::close(d), ec);
+  if (result == 0)
+    clear_error(ec);
+  return result;
 }
 
 inline void init_buf_iov_base(void*& base, void* addr)
@@ -87,33 +93,48 @@ inline int scatter_read(int d, buf* bufs, size_t count,
     asio::error_code& ec)
 {
   clear_error(ec);
-  return error_wrapper(::readv(d, bufs, static_cast<int>(count)), ec);
+  int result = error_wrapper(::readv(d, bufs, static_cast<int>(count)), ec);
+  if (result >= 0)
+    clear_error(ec);
+  return result;
 }
 
 inline int gather_write(int d, const buf* bufs, size_t count,
     asio::error_code& ec)
 {
   clear_error(ec);
-  return error_wrapper(::writev(d, bufs, static_cast<int>(count)), ec);
+  int result = error_wrapper(::writev(d, bufs, static_cast<int>(count)), ec);
+  if (result >= 0)
+    clear_error(ec);
+  return result;
 }
 
 inline int ioctl(int d, long cmd, ioctl_arg_type* arg,
     asio::error_code& ec)
 {
   clear_error(ec);
-  return error_wrapper(::ioctl(d, cmd, arg), ec);
+  int result = error_wrapper(::ioctl(d, cmd, arg), ec);
+  if (result >= 0)
+    clear_error(ec);
+  return result;
 }
 
 inline int fcntl(int d, long cmd, asio::error_code& ec)
 {
   clear_error(ec);
-  return error_wrapper(::fcntl(d, cmd), ec);
+  int result = error_wrapper(::fcntl(d, cmd), ec);
+  if (result != -1)
+    clear_error(ec);
+  return result;
 }
 
 inline int fcntl(int d, long cmd, long arg, asio::error_code& ec)
 {
   clear_error(ec);
-  return error_wrapper(::fcntl(d, cmd, arg), ec);
+  int result = error_wrapper(::fcntl(d, cmd, arg), ec);
+  if (result != -1)
+    clear_error(ec);
+  return result;
 }
 
 inline int poll_read(int d, asio::error_code& ec)
@@ -124,7 +145,10 @@ inline int poll_read(int d, asio::error_code& ec)
   fds.events = POLLIN;
   fds.revents = 0;
   clear_error(ec);
-  return error_wrapper(::poll(&fds, 1, -1), ec);
+  int result = error_wrapper(::poll(&fds, 1, -1), ec);
+  if (result >= 0)
+    clear_error(ec);
+  return result;
 }
 
 inline int poll_write(int d, asio::error_code& ec)
@@ -135,7 +159,10 @@ inline int poll_write(int d, asio::error_code& ec)
   fds.events = POLLOUT;
   fds.revents = 0;
   clear_error(ec);
-  return error_wrapper(::poll(&fds, 1, -1), ec);
+  int result = error_wrapper(::poll(&fds, 1, -1), ec);
+  if (result >= 0)
+    clear_error(ec);
+  return result;
 }
 
 } // namespace descriptor_ops
