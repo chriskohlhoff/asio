@@ -23,11 +23,10 @@
 #include <string>
 #include "asio/detail/pop_options.hpp"
 
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#include "asio/serial_port_base.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <termios.h>
-#include "asio/detail/pop_options.hpp"
+#if defined(ASIO_HAS_SERIAL_PORT) \
+  && !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
@@ -261,7 +260,8 @@ private:
 } // namespace detail
 } // namespace asio
 
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#endif // defined(ASIO_HAS_SERIAL_PORT)
+       //   && !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 #include "asio/detail/pop_options.hpp"
 

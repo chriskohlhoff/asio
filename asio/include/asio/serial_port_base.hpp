@@ -22,10 +22,23 @@
 #include <stdexcept>
 #include <boost/config.hpp>
 #include <boost/detail/workaround.hpp>
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-# include <termios.h>
-#endif
 #include "asio/detail/pop_options.hpp"
+
+#if !defined(ASIO_DISABLE_SERIAL_PORT)
+# if defined(ASIO_HAS_IOCP) \
+    || !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#  define ASIO_HAS_SERIAL_PORT 1
+# endif // defined(ASIO_HAS_IOCP)
+#endif // !defined(ASIO_DISABLE_STREAM_HANDLE)
+
+#if defined(ASIO_HAS_SERIAL_PORT) \
+  || defined(GENERATING_DOCUMENTATION)
+
+#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+# include "asio/detail/push_options.hpp"
+# include <termios.h>
+# include "asio/detail/pop_options.hpp"
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 #include "asio/error_code.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -151,6 +164,9 @@ private:
 #include "asio/impl/serial_port_base.ipp"
 
 #undef ASIO_OPTION_STORAGE
+
+#endif // defined(ASIO_HAS_SERIAL_PORT)
+       //   || defined(GENERATING_DOCUMENTATION)
 
 #include "asio/detail/pop_options.hpp"
 

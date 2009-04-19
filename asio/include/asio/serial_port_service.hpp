@@ -25,16 +25,10 @@
 
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
+#include "asio/serial_port_base.hpp"
 #include "asio/detail/service_base.hpp"
 #include "asio/detail/reactive_serial_port_service.hpp"
 #include "asio/detail/win_iocp_serial_port_service.hpp"
-
-#if !defined(ASIO_DISABLE_SERIAL_PORT)
-# if defined(ASIO_HAS_IOCP) \
-    || !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-#  define ASIO_HAS_SERIAL_PORT 1
-# endif // defined(ASIO_HAS_IOCP)
-#endif // !defined(ASIO_DISABLE_STREAM_HANDLE)
 
 #if defined(ASIO_HAS_SERIAL_PORT) \
   || defined(GENERATING_DOCUMENTATION)
