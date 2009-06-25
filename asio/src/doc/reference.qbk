@@ -369,7 +369,7 @@ This function is used to asynchronously read a certain number of bytes of data f
 
 * The supplied buffers are full. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 [heading Parameters]
     
@@ -512,7 +512,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
 This function is used to asynchronously read a certain number of bytes of data from a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
 
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function.
 
@@ -713,7 +713,7 @@ This function is used to asynchronously read a certain number of bytes of data f
 
 * The supplied buffers are full. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 [heading Parameters]
     
@@ -862,7 +862,7 @@ Start an asynchronous operation to read a certain amount of data at the specifie
 This function is used to asynchronously read a certain number of bytes of data from a random access device at the specified offset. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
 
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's async\_read\_some\_at function.
 
@@ -1478,7 +1478,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * All of the data in the supplied buffers has been written. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's async\_write\_some function.
 
@@ -1614,7 +1614,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * All of the data in the supplied basic_streambuf has been written.
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's async\_write\_some function.
 
@@ -1801,7 +1801,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * All of the data in the supplied buffers has been written. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's async\_write\_some\_at function.
 
@@ -1943,7 +1943,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * All of the data in the supplied basic_streambuf has been written.
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's async\_write\_some\_at function.
 
@@ -48406,7 +48406,7 @@ This function is used to read a certain number of bytes of data from a stream. T
 
 * The supplied buffers are full. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's read\_some function.
 
@@ -48485,7 +48485,7 @@ This function is used to read a certain number of bytes of data from a stream. T
 
 * The supplied buffers are full. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's read\_some function.
 
@@ -48603,7 +48603,7 @@ Attempt to read a certain amount of data from a stream before returning.
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
 
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's read\_some function.
 
@@ -48668,7 +48668,7 @@ Attempt to read a certain amount of data from a stream before returning.
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
 
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's read\_some function.
 
@@ -48869,7 +48869,7 @@ This function is used to read a certain number of bytes of data from a random ac
 
 * The supplied buffers are full. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's read\_some\_at function.
 
@@ -48951,7 +48951,7 @@ This function is used to read a certain number of bytes of data from a random ac
 
 * The supplied buffers are full. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's read\_some\_at function.
 
@@ -49075,7 +49075,7 @@ Attempt to read a certain amount of data at the specified offset before returnin
 This function is used to read a certain number of bytes of data from a random access device at the specified offset. The call will block until one of the following conditions is true:
 
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's read\_some\_at function.
 
@@ -49143,7 +49143,7 @@ Attempt to read a certain amount of data at the specified offset before returnin
 This function is used to read a certain number of bytes of data from a random access device at the specified offset. The call will block until one of the following conditions is true:
 
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's read\_some\_at function.
 
@@ -62215,7 +62215,7 @@ This function is used to write a certain number of bytes of data to a stream. Th
 
 * All of the data in the supplied buffers has been written. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's write\_some function.
 
@@ -62294,7 +62294,7 @@ This function is used to write a certain number of bytes of data to a stream. Th
 
 * All of the data in the supplied buffers has been written. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's write\_some function.
 
@@ -62416,7 +62416,7 @@ This function is used to write a certain number of bytes of data to a stream. Th
 
 * All of the data in the supplied basic_streambuf has been written.
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's write\_some function.
 
@@ -62483,7 +62483,7 @@ This function is used to write a certain number of bytes of data to a stream. Th
 
 * All of the data in the supplied basic_streambuf has been written.
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's write\_some function.
 
@@ -62684,7 +62684,7 @@ This function is used to write a certain number of bytes of data to a random acc
 
 * All of the data in the supplied buffers has been written. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's write\_some\_at function.
 
@@ -62766,7 +62766,7 @@ This function is used to write a certain number of bytes of data to a random acc
 
 * All of the data in the supplied buffers has been written. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's write\_some\_at function.
 
@@ -62894,7 +62894,7 @@ This function is used to write a certain number of bytes of data to a random acc
 
 * All of the data in the supplied basic_streambuf has been written.
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's write\_some\_at function.
 
@@ -62964,7 +62964,7 @@ This function is used to write a certain number of bytes of data to a random acc
 
 * All of the data in the supplied basic_streambuf has been written.
 
-* The completion_condition function object returns true.
+* The completion_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's write\_some\_at function.
 
