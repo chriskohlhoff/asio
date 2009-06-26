@@ -179,9 +179,34 @@ void deadline_timer_test()
   BOOST_CHECK(expected_end < end || expected_end == end);
 }
 
+void timer_handler(const asio::error_code&)
+{
+}
+
+void deadline_timer_cancel_test()
+{
+  static asio::io_service io_service;
+  struct timer
+  {
+    asio::deadline_timer t;
+    timer() : t(io_service) { t.expires_at(boost::posix_time::pos_infin); }
+  } timers[50];
+
+  timers[2].t.async_wait(timer_handler);
+  timers[41].t.async_wait(timer_handler);
+  for (int i = 10; i < 20; ++i)
+    timers[i].t.async_wait(timer_handler);
+
+  BOOST_CHECK(timers[2].t.cancel() == 1);
+  BOOST_CHECK(timers[41].t.cancel() == 1);
+  for (int i = 10; i < 20; ++i)
+    BOOST_CHECK(timers[i].t.cancel() == 1);
+}
+
 test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("deadline_timer");
   test->add(BOOST_TEST_CASE(&deadline_timer_test));
+  test->add(BOOST_TEST_CASE(&deadline_timer_cancel_test));
   return test;
 }
