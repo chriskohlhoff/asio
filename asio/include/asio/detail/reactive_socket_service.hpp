@@ -1453,7 +1453,6 @@ public:
     for (;;)
     {
       // Try to complete the operation without blocking.
-      asio::error_code ec;
       socket_holder new_socket;
       std::size_t addr_len = 0;
       if (peer_endpoint)
