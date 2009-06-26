@@ -1109,9 +1109,23 @@
 
 <xsl:template match="param" mode="class-detail">
 <xsl:text>
-      </xsl:text><xsl:value-of select="type"/><xsl:text> </xsl:text><xsl:value-of
-        select="declname"/><xsl:if test="count(defval) > 0"> = <xsl:value-of
-        select="defval"/></xsl:if><xsl:if test="not(position() = last())">,</xsl:if>
+      </xsl:text>
+  <xsl:choose>
+    <xsl:when test="string-length(array) &gt; 0">
+      <xsl:value-of select="substring-before(type, '&amp;')"/>
+      <xsl:text>(&amp;</xsl:text>
+      <xsl:value-of select="declname"/>
+      <xsl:text>)</xsl:text>
+      <xsl:value-of select="array"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:value-of select="type"/>
+      <xsl:text> </xsl:text>
+      <xsl:value-of select="declname"/>
+    </xsl:otherwise>
+  </xsl:choose>
+  <xsl:if test="count(defval) > 0"> = <xsl:value-of select="defval"/></xsl:if>
+  <xsl:if test="not(position() = last())">,</xsl:if>
 </xsl:template>
 
 

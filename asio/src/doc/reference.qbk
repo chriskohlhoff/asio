@@ -26901,26 +26901,26 @@ Behaves according to the specification of `std::streambuf::underflow()`.
       typename PodType,
       std::size_t N>
   mutable_buffers_1 ``[link asio.reference.buffer.overload7 buffer]``(
-      PodType & data);
+      PodType (&data)[N]);
 
   template<
       typename PodType,
       std::size_t N>
   mutable_buffers_1 ``[link asio.reference.buffer.overload8 buffer]``(
-      PodType & data,
+      PodType (&data)[N],
       std::size_t max_size_in_bytes);
 
   template<
       typename PodType,
       std::size_t N>
   const_buffers_1 ``[link asio.reference.buffer.overload9 buffer]``(
-      const PodType & data);
+      const PodType (&data)[N]);
 
   template<
       typename PodType,
       std::size_t N>
   const_buffers_1 ``[link asio.reference.buffer.overload10 buffer]``(
-      const PodType & data,
+      const PodType (&data)[N],
       std::size_t max_size_in_bytes);
 
   template<
@@ -27284,7 +27284,7 @@ Create a new modifiable buffer that represents the given POD array.
       typename PodType,
       std::size_t N>
   mutable_buffers_1 buffer(
-      PodType & data);
+      PodType (&data)[N]);
 
 
 
@@ -27313,7 +27313,7 @@ Create a new modifiable buffer that represents the given POD array.
       typename PodType,
       std::size_t N>
   mutable_buffers_1 buffer(
-      PodType & data,
+      PodType (&data)[N],
       std::size_t max_size_in_bytes);
 
 
@@ -27343,7 +27343,7 @@ Create a new non-modifiable buffer that represents the given POD array.
       typename PodType,
       std::size_t N>
   const_buffers_1 buffer(
-      const PodType & data);
+      const PodType (&data)[N]);
 
 
 
@@ -27372,7 +27372,7 @@ Create a new non-modifiable buffer that represents the given POD array.
       typename PodType,
       std::size_t N>
   const_buffers_1 buffer(
-      const PodType & data,
+      const PodType (&data)[N],
       std::size_t max_size_in_bytes);
 
 
