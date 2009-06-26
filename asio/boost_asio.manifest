@@ -3059,6 +3059,8 @@
 /libs/asio/index.html
 /libs/asio/module.cmake
 /libs/asio/test/
+/libs/asio/test/archetypes/
+/libs/asio/test/archetypes/io_control_command.hpp
 /libs/asio/test/basic_datagram_socket.cpp
 /libs/asio/test/basic_deadline_timer.cpp
 /libs/asio/test/basic_serial_port.cpp

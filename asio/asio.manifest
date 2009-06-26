@@ -2842,6 +2842,8 @@
 /src/tests/performance/handler_allocator.hpp
 /src/tests/performance/server.cpp
 /src/tests/unit/
+/src/tests/unit/archetypes/
+/src/tests/unit/archetypes/io_control_command.hpp
 /src/tests/unit/basic_datagram_socket.cpp
 /src/tests/unit/basic_deadline_timer.cpp
 /src/tests/unit/basic_serial_port.cpp
