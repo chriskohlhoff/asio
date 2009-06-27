@@ -34,7 +34,8 @@ public:
     timer_.async_wait(boost::bind(&datagram_handler::close, this));
   }
 
-  void handle_receive_from(const asio::error_code& err, size_t length)
+  void handle_receive_from(const asio::error_code& err,
+      size_t /*length*/)
   {
     if (err)
     {

@@ -19,6 +19,7 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <cstring>
 #include <vector>
 #include <boost/assert.hpp>
 #include <boost/config.hpp>
@@ -99,7 +100,7 @@ private:
     }
 
     static void openssl_locking_func(int mode, int n, 
-      const char *file, int line)
+      const char* /*file*/, int /*line*/)
     {
       if (mode & CRYPTO_LOCK)
         instance()->mutexes_[n]->lock();
@@ -121,7 +122,11 @@ public:
   openssl_init()
     : ref_(do_init::instance())
   {
-    while (&instance_ == 0); // Ensure openssl_init::instance_ is linked in.
+    using namespace std; // For memmove.
+
+    // Ensure openssl_init::instance_ is linked in.
+    openssl_init* tmp = &instance_;
+    memmove(&tmp, &tmp, sizeof(openssl_init*));
   }
 
   // Destructor.

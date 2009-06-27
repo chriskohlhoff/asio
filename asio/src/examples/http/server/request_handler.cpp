@@ -89,7 +89,7 @@ bool request_handler::url_decode(const std::string& in, std::string& out)
     {
       if (i + 3 <= in.size())
       {
-        int value;
+        int value = 0;
         std::istringstream is(in.substr(i + 1, 2));
         if (is >> std::hex >> value)
         {

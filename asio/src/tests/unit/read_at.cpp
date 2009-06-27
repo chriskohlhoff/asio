@@ -188,13 +188,13 @@ void test_3_arg_read_at()
 }
 
 bool old_style_transfer_all(const asio::error_code& ec,
-    size_t bytes_transferred)
+    size_t /*bytes_transferred*/)
 {
   return !!ec;
 }
 
 size_t short_transfer(const asio::error_code& ec,
-    size_t bytes_transferred)
+    size_t /*bytes_transferred*/)
 {
   return !!ec ? 0 : 3;
 }

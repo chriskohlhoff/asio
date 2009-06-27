@@ -94,7 +94,7 @@ void run(asio::io_service* io_service)
   }
 }
 
-int main(int argc, char* argv[])
+int main()
 {
   try
   {

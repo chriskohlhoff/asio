@@ -82,7 +82,7 @@ public:
   }
 
   void handle_control_request_timer(tcp_socket_ptr socket,
-      control_request_ptr request, timer_ptr delay_timer)
+      control_request_ptr request, timer_ptr /*delay_timer*/)
   {
     // Determine what address this client is connected from, since
     // subscriptions must be stored on the server as a complete endpoint, not

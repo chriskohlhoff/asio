@@ -50,7 +50,8 @@ public:
     }
   }
 
-  void handle_send_to(const asio::error_code& error, size_t bytes_sent)
+  void handle_send_to(const asio::error_code& /*error*/,
+      size_t /*bytes_sent*/)
   {
     socket_.async_receive_from(
         asio::buffer(data_, max_length), sender_endpoint_,
