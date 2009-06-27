@@ -886,6 +886,12 @@
  select="$id"/>.overload<xsl:value-of select="position()"/><xsl:text> </xsl:text><xsl:value-of
  select="name"/>]``(<xsl:apply-templates select="param"
  mode="class-detail"/>)<xsl:if test="@const='yes'"> const</xsl:if>;
+<xsl:text>  ``  [''''&amp;raquo;'''</xsl:text>
+<xsl:text> [link asio.reference.</xsl:text>
+<xsl:value-of select="$class-id"/>.<xsl:value-of
+ select="$id"/>.overload<xsl:value-of select="position()"/>
+<xsl:text> more...]]``
+</xsl:text>
 </xsl:for-each>
 </xsl:if>
 
@@ -1191,6 +1197,11 @@
  select="type"/><xsl:text> </xsl:text></xsl:if>``[link asio.reference.<xsl:value-of
  select="$id"/>.overload<xsl:value-of select="position()"/><xsl:text> </xsl:text>
 <xsl:value-of select="name"/>]``(<xsl:apply-templates select="param" mode="class-detail"/>);
+<xsl:text>  ``  [''''&amp;raquo;'''</xsl:text>
+<xsl:text> [link asio.reference.</xsl:text>
+<xsl:value-of select="$id"/>.overload<xsl:value-of select="position()"/>
+<xsl:text> more...]]``
+</xsl:text>
 </xsl:for-each>
 
 <xsl:for-each select="/doxygen/compounddef[@kind='group' and compoundname=$name]">
