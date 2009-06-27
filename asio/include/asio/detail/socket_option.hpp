@@ -21,6 +21,7 @@
 #include <cstddef>
 #include <stdexcept>
 #include <boost/config.hpp>
+#include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/detail/socket_types.hpp"
@@ -121,7 +122,10 @@ public:
     case sizeof(value_):
       break;
     default:
-      throw std::length_error("boolean socket option resize");
+      {
+        std::length_error ex("boolean socket option resize");
+        boost::throw_exception(ex);
+      }
     }
   }
 
@@ -199,7 +203,10 @@ public:
   void resize(const Protocol&, std::size_t s)
   {
     if (s != sizeof(value_))
-      throw std::length_error("integer socket option resize");
+    {
+      std::length_error ex("integer socket option resize");
+      boost::throw_exception(ex);
+    }
   }
 
 private:
@@ -293,7 +300,10 @@ public:
   void resize(const Protocol&, std::size_t s)
   {
     if (s != sizeof(value_))
-      throw std::length_error("linger socket option resize");
+    {
+      std::length_error ex("linger socket option resize");
+      boost::throw_exception(ex);
+    }
   }
 
 private:

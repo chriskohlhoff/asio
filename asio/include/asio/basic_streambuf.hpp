@@ -25,6 +25,7 @@
 #include <stdexcept>
 #include <streambuf>
 #include <vector>
+#include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/buffer.hpp"
@@ -317,7 +318,8 @@ protected:
       }
       else
       {
-        throw std::length_error("asio::streambuf too long");
+        std::length_error ex("asio::streambuf too long");
+        boost::throw_exception(ex);
       }
     }
 
