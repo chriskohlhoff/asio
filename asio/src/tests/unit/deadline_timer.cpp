@@ -203,10 +203,63 @@ void deadline_timer_cancel_test()
     BOOST_CHECK(timers[i].t.cancel() == 1);
 }
 
+struct custom_allocation_timer_handler
+{
+  custom_allocation_timer_handler(int* count) : count_(count) {}
+  void operator()(const asio::error_code&) {}
+  int* count_;
+};
+
+void* asio_handler_allocate(std::size_t size,
+    custom_allocation_timer_handler* handler)
+{
+  ++(*handler->count_);
+  return ::operator new(size);
+}
+
+void asio_handler_deallocate(void* pointer, std::size_t,
+    custom_allocation_timer_handler* handler)
+{
+  --(*handler->count_);
+  ::operator delete(pointer);
+}
+
+void deadline_timer_custom_allocation_test()
+{
+  static asio::io_service io_service;
+  struct timer
+  {
+    asio::deadline_timer t;
+    timer() : t(io_service) {}
+  } timers[100];
+
+  int allocation_count = 0;
+
+  for (int i = 0; i < 50; ++i)
+  {
+    timers[i].t.expires_at(boost::posix_time::pos_infin);
+    timers[i].t.async_wait(custom_allocation_timer_handler(&allocation_count));
+  }
+
+  for (int i = 50; i < 100; ++i)
+  {
+    timers[i].t.expires_at(boost::posix_time::neg_infin);
+    timers[i].t.async_wait(custom_allocation_timer_handler(&allocation_count));
+  }
+
+  for (int i = 0; i < 50; ++i)
+    timers[i].t.cancel();
+
+  io_service.run();
+
+  BOOST_CHECK(allocation_count == 0);
+}
+
 test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("deadline_timer");
   test->add(BOOST_TEST_CASE(&deadline_timer_test));
   test->add(BOOST_TEST_CASE(&deadline_timer_cancel_test));
+  test->add(BOOST_TEST_CASE(&deadline_timer_custom_allocation_test));
   return test;
 }

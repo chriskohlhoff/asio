@@ -66,8 +66,10 @@ public:
     heap_.reserve(heap_.size() + 1);
 
     // Create a new timer object.
-    std::auto_ptr<timer<Handler> > new_timer(
-        new timer<Handler>(time, handler, token));
+    typedef timer<Handler> timer_type;
+    typedef handler_alloc_traits<Handler, timer_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
+    handler_ptr<alloc_traits> new_timer(raw_ptr, time, handler, token); 
 
     // Insert the new timer into the hash.
     typedef typename hash_map<void*, timer_base*>::iterator iterator;
@@ -77,12 +79,12 @@ public:
     if (!result.second)
     {
       result.first->second->prev_ = new_timer.get();
-      new_timer->next_ = result.first->second;
+      new_timer.get()->next_ = result.first->second;
       result.first->second = new_timer.get();
     }
 
     // Put the timer at the correct position in the heap.
-    new_timer->heap_index_ = heap_.size();
+    new_timer.get()->heap_index_ = heap_.size();
     heap_.push_back(new_timer.get());
     up_heap(heap_.size() - 1);
     bool is_first = (heap_[0] == new_timer.get());
