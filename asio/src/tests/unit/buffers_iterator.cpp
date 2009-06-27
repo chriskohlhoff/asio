@@ -63,18 +63,30 @@ void test()
     buffers_iterator<vector<const_buffer>, char> bi11;
     buffers_iterator<vector<const_buffer>, const char> bi12;
 
-    buffers_iterator<mutable_buffers_1, char> bi13(bi1);
-    buffers_iterator<mutable_buffers_1, const char> bi14(bi2);
-    buffers_iterator<array<mutable_buffer, 2>, char> bi15(bi3);
-    buffers_iterator<array<mutable_buffer, 2>, const char> bi16(bi4);
-    buffers_iterator<vector<mutable_buffer>, char> bi17(bi5);
-    buffers_iterator<vector<mutable_buffer>, const char> bi18(bi6);
-    buffers_iterator<const_buffers_1, char> bi19(bi7);
-    buffers_iterator<const_buffers_1, const char> bi20(bi8);
-    buffers_iterator<array<const_buffer, 2>, char> bi21(bi9);
-    buffers_iterator<array<const_buffer, 2>, const char> bi22(bi10);
-    buffers_iterator<vector<const_buffer>, char> bi23(bi11);
-    buffers_iterator<vector<const_buffer>, const char> bi24(bi12);
+    buffers_iterator<mutable_buffers_1, char> bi13(
+        buffers_iterator<mutable_buffers_1, char>::begin(mb1));
+    buffers_iterator<mutable_buffers_1, const char> bi14(
+        buffers_iterator<mutable_buffers_1, const char>::begin(mb1));
+    buffers_iterator<array<mutable_buffer, 2>, char> bi15(
+        buffers_iterator<array<mutable_buffer, 2>, char>::begin(mb2));
+    buffers_iterator<array<mutable_buffer, 2>, const char> bi16(
+        buffers_iterator<array<mutable_buffer, 2>, const char>::begin(mb2));
+    buffers_iterator<vector<mutable_buffer>, char> bi17(
+        buffers_iterator<vector<mutable_buffer>, char>::begin(mb3));
+    buffers_iterator<vector<mutable_buffer>, const char> bi18(
+        buffers_iterator<vector<mutable_buffer>, const char>::begin(mb3));
+    buffers_iterator<const_buffers_1, char> bi19(
+        buffers_iterator<const_buffers_1, char>::begin(cb1));
+    buffers_iterator<const_buffers_1, const char> bi20(
+        buffers_iterator<const_buffers_1, const char>::begin(cb1));
+    buffers_iterator<array<const_buffer, 2>, char> bi21(
+        buffers_iterator<array<const_buffer, 2>, char>::begin(cb2));
+    buffers_iterator<array<const_buffer, 2>, const char> bi22(
+        buffers_iterator<array<const_buffer, 2>, const char>::begin(cb2));
+    buffers_iterator<vector<const_buffer>, char> bi23(
+        buffers_iterator<vector<const_buffer>, char>::begin(cb3));
+    buffers_iterator<vector<const_buffer>, const char> bi24(
+        buffers_iterator<vector<const_buffer>, const char>::begin(cb3));
 
     // buffers_iterator member functions.
 

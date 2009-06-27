@@ -278,6 +278,8 @@ private:
   // The type for a bucket in the hash table.
   struct bucket_type
   {
+    bucket_type() {}
+    bucket_type(const bucket_type&) { /* noop */ }
     iterator first;
     iterator last;
   };
