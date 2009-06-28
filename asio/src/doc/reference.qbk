@@ -98,6 +98,12 @@ This function is used to add a service to the io_service.
 ]
 
 
+[heading Requirements]
+
+[*Header: ][^asio/io_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -149,6 +155,12 @@ All temporary objects associated with a handler will be deallocated before the u
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/handler_alloc_hook.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -174,6 +186,12 @@ This default implementation is simply:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/handler_alloc_hook.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -220,6 +238,12 @@ This default implementation is simply:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/handler_invoke_hook.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -272,6 +296,12 @@ This default implementation is simply:
       CompletionCondition completion_condition,
       ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_read.overload4 more...]]``
+
+[heading Requirements]
+
+[*Header: ][^asio/read.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:overload1 async_read (1 of 4 overloads)]
@@ -616,6 +646,12 @@ Regardless of whether the asynchronous operation completes immediately or not, t
       CompletionCondition completion_condition,
       ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_read_at.overload4 more...]]``
+
+[heading Requirements]
+
+[*Header: ][^asio/read_at.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:overload1 async_read_at (1 of 4 overloads)]
@@ -970,6 +1006,12 @@ Regardless of whether the asynchronous operation completes immediately or not, t
       ReadHandler handler,
       typename boost::enable_if< is_match_condition< MatchCondition > >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.async_read_until.overload4 more...]]``
+
+[heading Requirements]
+
+[*Header: ][^asio/read_until.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:overload1 async_read_until (1 of 4 overloads)]
@@ -1407,6 +1449,12 @@ To asynchronously read data into a streambuf until a matching character is found
       WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_write.overload4 more...]]``
 
+[heading Requirements]
+
+[*Header: ][^asio/write.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:overload1 async_write (1 of 4 overloads)]
 
@@ -1729,6 +1777,12 @@ Regardless of whether the asynchronous operation completes immediately or not, t
       CompletionCondition completion_condition,
       WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_write_at.overload4 more...]]``
+
+[heading Requirements]
+
+[*Header: ][^asio/write_at.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:overload1 async_write_at (1 of 4 overloads)]
@@ -2387,6 +2441,12 @@ The basic_datagram_socket class template provides asynchronous and blocking data
 
 [*Shared] [*objects:]  Unsafe. 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_datagram_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 [section:assign basic_datagram_socket::assign]
 
@@ -3482,6 +3542,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_datagram_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -3514,6 +3580,12 @@ Implements the FIONREAD IO control command.
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_datagram_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -3872,6 +3944,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_datagram_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -3914,6 +3992,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_datagram_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -3958,6 +4042,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_datagram_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -3970,6 +4060,12 @@ Getting the current option value:
   typedef Protocol::endpoint endpoint_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_datagram_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -4140,6 +4236,12 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
   typedef service_type::implementation_type implementation_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_datagram_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -4338,6 +4440,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_datagram_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -4381,6 +4489,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_datagram_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -4898,6 +5012,12 @@ The basic_socket class template provides functionality that is common to both st
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_datagram_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -4943,6 +5063,12 @@ The basic_socket class template provides functionality that is common to both st
   typedef int message_flags;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_datagram_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -5004,6 +5130,12 @@ This function may be used to obtain the underlying representation of the socket.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_datagram_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -5035,6 +5167,12 @@ Implements the FIONBIO IO control command.
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_datagram_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -5158,6 +5296,12 @@ This function opens the socket so that it will use the specified protocol.
   typedef Protocol protocol_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_datagram_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -5374,6 +5518,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_datagram_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -5593,6 +5743,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_datagram_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -5740,6 +5896,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_datagram_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -5957,6 +6119,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_datagram_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -5999,6 +6167,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_datagram_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -6205,6 +6379,12 @@ The number of bytes sent.
   typedef DatagramSocketService service_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_datagram_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -6684,6 +6864,12 @@ Changing the expiry time of a timer while there are pending asynchronous waits c
 * If a wait handler is cancelled, the asio::error_code passed to it contains the value asio::error::operation_aborted. 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_deadline_timer.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:async_wait basic_deadline_timer::async_wait]
 
@@ -6916,6 +7102,12 @@ The number of asynchronous operations that were cancelled.
   typedef traits_type::duration_type duration_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_deadline_timer.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -7183,6 +7375,12 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_deadline_timer.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -7237,6 +7435,12 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_deadline_timer.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -7250,6 +7454,12 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_deadline_timer.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -7262,6 +7472,12 @@ A reference to the io_service object that the I/O object will use to dispatch ha
   typedef TimeTraits traits_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_deadline_timer.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -7412,6 +7628,12 @@ Base class for all I/O objects.
 
 ]
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_io_object.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:basic_io_object basic_io_object::basic_io_object]
 
@@ -7473,6 +7695,12 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_io_object.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -7517,6 +7745,12 @@ A reference to the io_service object that the I/O object will use to dispatch ha
   typedef IoObjectService service_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_io_object.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -7918,6 +8152,12 @@ The basic_raw_socket class template provides asynchronous and blocking raw-orien
 
 [*Shared] [*objects:]  Unsafe. 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_raw_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 [section:assign basic_raw_socket::assign]
 
@@ -9013,6 +9253,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_raw_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -9045,6 +9291,12 @@ Implements the FIONREAD IO control command.
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_raw_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -9403,6 +9655,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_raw_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -9445,6 +9703,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_raw_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -9489,6 +9753,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_raw_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -9501,6 +9771,12 @@ Getting the current option value:
   typedef Protocol::endpoint endpoint_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_raw_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -9671,6 +9947,12 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
   typedef service_type::implementation_type implementation_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_raw_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -9869,6 +10151,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_raw_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -9912,6 +10200,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_raw_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -10429,6 +10723,12 @@ The basic_socket class template provides functionality that is common to both st
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_raw_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -10474,6 +10774,12 @@ The basic_socket class template provides functionality that is common to both st
   typedef int message_flags;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_raw_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -10535,6 +10841,12 @@ This function may be used to obtain the underlying representation of the socket.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_raw_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -10566,6 +10878,12 @@ Implements the FIONBIO IO control command.
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_raw_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -10689,6 +11007,12 @@ This function opens the socket so that it will use the specified protocol.
   typedef Protocol protocol_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_raw_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -10905,6 +11229,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_raw_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -11124,6 +11454,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_raw_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -11271,6 +11607,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_raw_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -11488,6 +11830,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_raw_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -11530,6 +11878,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_raw_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -11736,6 +12090,12 @@ The number of bytes sent.
   typedef RawSocketService service_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_raw_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -12172,6 +12532,12 @@ The basic_serial_port class template provides functionality that is common to al
 
 [*Shared] [*objects:]  Unsafe. 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_serial_port.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 [section:assign basic_serial_port::assign]
 
@@ -12741,6 +13107,12 @@ This function is used to get the current value of an option on the serial port.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_serial_port.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -13000,6 +13372,12 @@ The basic_serial_port class template provides functionality that is common to al
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_serial_port.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -13026,6 +13404,12 @@ This function may be used to obtain the underlying representation of the serial 
   typedef SerialPortService::native_type native_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_serial_port.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -13316,6 +13700,12 @@ This function causes a break sequence of platform-specific duration to be sent o
   typedef SerialPortService service_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_serial_port.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -13873,6 +14263,12 @@ The basic_socket class template provides functionality that is common to both st
 
 [*Shared] [*objects:]  Unsafe. 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 [section:assign basic_socket::assign]
 
@@ -14447,6 +14843,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -14479,6 +14881,12 @@ Implements the FIONREAD IO control command.
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -14819,6 +15227,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -14861,6 +15275,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -14905,6 +15325,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -14917,6 +15343,12 @@ Getting the current option value:
   typedef Protocol::endpoint endpoint_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -15089,6 +15521,12 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
   typedef service_type::implementation_type implementation_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -15286,6 +15724,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -15329,6 +15773,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -15831,6 +16281,12 @@ The basic_socket class template provides functionality that is common to both st
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -15876,6 +16332,12 @@ The basic_socket class template provides functionality that is common to both st
   typedef int message_flags;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -15934,6 +16396,12 @@ This function may be used to obtain the underlying representation of the socket.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -15965,6 +16433,12 @@ Implements the FIONBIO IO control command.
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -16083,6 +16557,12 @@ This function opens the socket so that it will use the specified protocol.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -16126,6 +16606,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -16168,6 +16654,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -16311,6 +16803,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -16353,6 +16851,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -16397,6 +16901,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -16427,6 +16937,12 @@ Getting the current option value:
   typedef SocketService service_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -17021,6 +17537,12 @@ Opening a socket acceptor with the SO\_REUSEADDR option enabled:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_acceptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 [section:accept basic_socket_acceptor::accept]
 
@@ -17768,6 +18290,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_acceptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -17800,6 +18328,12 @@ Implements the FIONREAD IO control command.
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_acceptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -17992,6 +18526,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_acceptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -18034,6 +18574,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_acceptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -18078,6 +18624,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_acceptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -18090,6 +18642,12 @@ Getting the current option value:
   typedef Protocol::endpoint endpoint_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_acceptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -18263,6 +18821,12 @@ Getting the value of the SOL\_SOCKET/SO\_REUSEADDR option:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_acceptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -18341,6 +18905,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_acceptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -18384,6 +18954,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_acceptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -18625,6 +19201,12 @@ An object that represents the local endpoint of the acceptor. Returns a default-
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_acceptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -18682,6 +19264,12 @@ This function may be used to obtain the underlying representation of the accepto
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_acceptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -18713,6 +19301,12 @@ Implements the FIONBIO IO control command.
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_acceptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -18831,6 +19425,12 @@ This function opens the socket acceptor so that it will use the specified protoc
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_acceptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -18873,6 +19473,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_acceptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -18917,6 +19523,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_acceptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -18959,6 +19571,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_acceptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -19003,6 +19621,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_acceptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -19046,6 +19670,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_acceptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -19076,6 +19706,12 @@ Getting the current option value:
   typedef SocketAcceptorService service_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_acceptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -19272,6 +19908,12 @@ Iostream interface for a socket.
   ]
   
 ]
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_iostream.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 [section:basic_socket_iostream basic_socket_iostream::basic_socket_iostream]
 
@@ -19729,6 +20371,12 @@ Iostream streambuf for a socket.
 
 ]
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 [section:assign basic_socket_streambuf::assign]
 
 [indexterm2 assign..basic_socket_streambuf] Assign an existing native socket to the socket. 
@@ -20164,6 +20812,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -20196,6 +20850,12 @@ Implements the FIONREAD IO control command.
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -20550,6 +21210,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -20592,6 +21258,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -20636,6 +21308,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -20648,6 +21326,12 @@ Getting the current option value:
   typedef Protocol::endpoint endpoint_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -20818,6 +21502,12 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
   typedef service_type::implementation_type implementation_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -21016,6 +21706,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -21059,6 +21755,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -21576,6 +22278,12 @@ The basic_socket class template provides functionality that is common to both st
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -21621,6 +22329,12 @@ The basic_socket class template provides functionality that is common to both st
   typedef int message_flags;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -21685,6 +22399,12 @@ This function may be used to obtain the underlying representation of the socket.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -21716,6 +22436,12 @@ Implements the FIONBIO IO control command.
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -21856,6 +22582,12 @@ This function opens the socket so that it will use the specified protocol.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -21899,6 +22631,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -21941,6 +22679,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -22090,6 +22834,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -22132,6 +22882,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -22176,6 +22932,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -22206,6 +22968,12 @@ Getting the current option value:
   typedef StreamSocketService service_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_socket_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -22901,6 +23669,12 @@ The basic_stream_socket class template provides asynchronous and blocking stream
 
 [*Shared] [*objects:]  Unsafe.
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_stream_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 [section:assign basic_stream_socket::assign]
 
@@ -23882,6 +24656,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_stream_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -23914,6 +24694,12 @@ Implements the FIONREAD IO control command.
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_stream_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -24272,6 +25058,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_stream_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -24314,6 +25106,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_stream_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -24358,6 +25156,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_stream_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -24370,6 +25174,12 @@ Getting the current option value:
   typedef Protocol::endpoint endpoint_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_stream_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -24540,6 +25350,12 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
   typedef service_type::implementation_type implementation_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_stream_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -24738,6 +25554,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_stream_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -24781,6 +25603,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_stream_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -25298,6 +26126,12 @@ The basic_socket class template provides functionality that is common to both st
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_stream_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -25343,6 +26177,12 @@ The basic_socket class template provides functionality that is common to both st
   typedef int message_flags;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_stream_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -25404,6 +26244,12 @@ This function may be used to obtain the underlying representation of the socket.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_stream_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -25435,6 +26281,12 @@ Implements the FIONBIO IO control command.
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_stream_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -25558,6 +26410,12 @@ This function opens the socket so that it will use the specified protocol.
   typedef Protocol protocol_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_stream_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -25907,6 +26765,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_stream_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -25949,6 +26813,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_stream_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -26097,6 +26967,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_stream_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -26328,6 +27204,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_stream_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -26371,6 +27253,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_stream_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -26401,6 +27289,12 @@ Getting the current option value:
   typedef StreamSocketService service_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_stream_socket.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -26934,6 +27828,12 @@ Reading from a socket directly into a streambuf:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/basic_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:basic_streambuf basic_streambuf::basic_streambuf]
 
@@ -26986,6 +27886,12 @@ Requires a preceding call `prepare(x)` where `x >= n`, and no intervening operat
   typedef implementation_defined const_buffers_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -27065,6 +27971,12 @@ The allowed maximum of the sum of the sizes of the input sequence and output seq
   typedef implementation_defined mutable_buffers_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -27472,6 +28384,12 @@ To read or write using multiple buffers (i.e. scatter-gather I/O), multiple buff
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/buffer.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:overload1 buffer (1 of 22 overloads)]
@@ -28227,6 +29145,12 @@ The buffered_read_stream class template can be used to add buffering to the sync
 [*Shared] [*objects:]  Unsafe.
 
 
+[heading Requirements]
+
+[*Header: ][^asio/buffered_read_stream.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:async_fill buffered_read_stream::async_fill]
 
@@ -28525,6 +29449,12 @@ Get a const reference to the lowest layer.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/buffered_read_stream.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -28549,6 +29479,12 @@ Get a const reference to the lowest layer.
   typedef boost::remove_reference< Stream >::type next_layer_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/buffered_read_stream.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -28850,6 +29786,12 @@ The buffered_stream class template can be used to add buffering to the synchrono
 
 [*Shared] [*objects:]  Unsafe.
 
+
+[heading Requirements]
+
+[*Header: ][^asio/buffered_stream.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:async_fill buffered_stream::async_fill]
@@ -29194,6 +30136,12 @@ Get a const reference to the lowest layer.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/buffered_stream.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -29218,6 +30166,12 @@ Get a const reference to the lowest layer.
   typedef boost::remove_reference< Stream >::type next_layer_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/buffered_stream.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -29519,6 +30473,12 @@ The buffered_write_stream class template can be used to add buffering to the syn
 [*Shared] [*objects:]  Unsafe.
 
 
+[heading Requirements]
+
+[*Header: ][^asio/buffered_write_stream.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:async_flush buffered_write_stream::async_flush]
 
@@ -29817,6 +30777,12 @@ Get a const reference to the lowest layer.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/buffered_write_stream.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -29841,6 +30807,12 @@ Get a const reference to the lowest layer.
   typedef boost::remove_reference< Stream >::type next_layer_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/buffered_write_stream.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -30016,6 +30988,12 @@ Write the given data to the stream. Returns the number of bytes written, or 0 if
       const BufferSequence & buffers);
 
 
+[heading Requirements]
+
+[*Header: ][^asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -30030,6 +31008,12 @@ Write the given data to the stream. Returns the number of bytes written, or 0 if
   buffers_iterator< BufferSequence > buffers_end(
       const BufferSequence & buffers);
 
+
+[heading Requirements]
+
+[*Header: ][^asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -30065,6 +31049,12 @@ A random access iterator over the bytes in a buffer sequence.
   ]
   
 ]
+
+[heading Requirements]
+
+[*Header: ][^asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:begin buffers_iterator::begin]
@@ -30151,6 +31141,12 @@ Holds a buffer that cannot be modified.
 ]
 
 The const_buffer class provides a safe representation of a buffer that cannot be modified. It does not own the underlying data, and so is cheap to copy or assign. 
+
+[heading Requirements]
+
+[*Header: ][^asio/buffer.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:buffer_cast const_buffer::buffer_cast]
@@ -30360,6 +31356,12 @@ Adapts a single non-modifiable buffer so that it meets the requirements of the C
   
 ]
 
+[heading Requirements]
+
+[*Header: ][^asio/buffer.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:begin const_buffers_1::begin]
 
@@ -30458,6 +31460,12 @@ Construct to represent a single non-modifiable buffer.
   typedef const const_buffer * const_iterator;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/buffer.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -30571,6 +31579,12 @@ Create a new non-modifiable buffer that is offset from the start of another.
 
 The const_buffer class provides a safe representation of a buffer that cannot be modified. It does not own the underlying data, and so is cheap to copy or assign. 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/buffer.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -30794,6 +31808,12 @@ Default service implementation for a datagram socket.
   ]
 
 ]
+
+[heading Requirements]
+
+[*Header: ][^asio/datagram_socket_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:assign datagram_socket_service::assign]
@@ -31040,6 +32060,12 @@ Default service implementation for a datagram socket.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/datagram_socket_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -31096,6 +32122,12 @@ Default service implementation for a datagram socket.
   typedef implementation_defined implementation_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/datagram_socket_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -31182,6 +32214,12 @@ Default service implementation for a datagram socket.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/datagram_socket_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -31209,6 +32247,12 @@ Default service implementation for a datagram socket.
   typedef Protocol protocol_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/datagram_socket_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -31556,6 +32600,12 @@ Changing the expiry time of a timer while there are pending asynchronous waits c
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/deadline_timer.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -31681,6 +32731,12 @@ Default service implementation for a timer.
 
 ]
 
+[heading Requirements]
+
+[*Header: ][^asio/deadline_timer_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:async_wait deadline_timer_service::async_wait]
 
@@ -31758,6 +32814,12 @@ Default service implementation for a timer.
   typedef traits_type::duration_type duration_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/deadline_timer_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -31891,6 +32953,12 @@ Set the expiry time for the timer relative to now.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/deadline_timer_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -31931,6 +32999,12 @@ Set the expiry time for the timer relative to now.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/deadline_timer_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -31943,6 +33017,12 @@ Set the expiry time for the timer relative to now.
   typedef TimeTraits traits_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/deadline_timer_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -31987,6 +33067,12 @@ Set the expiry time for the timer relative to now.
 
 ]
 
+
+[heading Requirements]
+
+[*Header: ][^asio/error.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -32170,6 +33256,12 @@ Set the expiry time for the timer relative to now.
 ]
 
 
+[heading Requirements]
+
+[*Header: ][^asio/error.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -32212,6 +33304,12 @@ Set the expiry time for the timer relative to now.
 ]
 
 
+[heading Requirements]
+
+[*Header: ][^asio/error_code.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -32223,6 +33321,12 @@ Set the expiry time for the timer relative to now.
 
   error_category get_addrinfo_category();
 
+
+[heading Requirements]
+
+[*Header: ][^asio/error_code.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -32236,6 +33340,12 @@ Set the expiry time for the timer relative to now.
   error_category get_misc_category();
 
 
+[heading Requirements]
+
+[*Header: ][^asio/error_code.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -32247,6 +33357,12 @@ Set the expiry time for the timer relative to now.
 
   error_category get_netdb_category();
 
+
+[heading Requirements]
+
+[*Header: ][^asio/error_code.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -32260,6 +33376,12 @@ Set the expiry time for the timer relative to now.
   error_category get_ssl_category();
 
 
+[heading Requirements]
+
+[*Header: ][^asio/error_code.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -32271,6 +33393,12 @@ Set the expiry time for the timer relative to now.
 
   error_category get_system_category();
 
+
+[heading Requirements]
+
+[*Header: ][^asio/error_code.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -32299,6 +33427,12 @@ Set the expiry time for the timer relative to now.
   asio::error_code ``[link asio.reference.error__make_error_code.overload5 make_error_code]``(
       ssl_errors e);
   ``  [''''&raquo;''' [link asio.reference.error__make_error_code.overload5 more...]]``
+
+[heading Requirements]
+
+[*Header: ][^asio/error.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:overload1 error::make_error_code (1 of 5 overloads)]
@@ -32400,6 +33534,12 @@ Set the expiry time for the timer relative to now.
 ]
 
 
+[heading Requirements]
+
+[*Header: ][^asio/error.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -32437,6 +33577,12 @@ Set the expiry time for the timer relative to now.
 ]
 
 
+[heading Requirements]
+
+[*Header: ][^asio/error.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -32448,6 +33594,12 @@ Set the expiry time for the timer relative to now.
 
   enum ssl_errors
 
+
+[heading Requirements]
+
+[*Header: ][^asio/error.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -32461,6 +33613,12 @@ Set the expiry time for the timer relative to now.
   typedef asio::error::error_category error_category;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/error_code.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -32560,6 +33718,12 @@ Class to represent an error code value.
   ]
   
 ]
+
+[heading Requirements]
+
+[*Header: ][^asio/error_code.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:category error_code::category]
@@ -32684,6 +33848,12 @@ Construct from an error code enum.
       const error_code & e2);
 
 
+[heading Requirements]
+
+[*Header: ][^asio/error_code.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -32697,6 +33867,12 @@ Construct from an error code enum.
       const error_code & e1,
       const error_code & e2);
 
+
+[heading Requirements]
+
+[*Header: ][^asio/error_code.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -32724,6 +33900,12 @@ Construct from an error code enum.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/error_code.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -32749,6 +33931,12 @@ Construct from an error code enum.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/error_code.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -32762,6 +33950,12 @@ Construct from an error code enum.
 
   struct unspecified_bool_type_t
 
+
+[heading Requirements]
+
+[*Header: ][^asio/error_code.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -32794,6 +33988,12 @@ This function is used to determine whether the io_service contains a service obj
 A boolean indicating whether the io_service contains the service. 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/io_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -32815,6 +34015,12 @@ Exception thrown when trying to add a service object to an io_service where the 
   ]
   
 ]
+
+[heading Requirements]
+
+[*Header: ][^asio/io_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:invalid_service_owner invalid_service_owner::invalid_service_owner]
@@ -33037,6 +34243,12 @@ Alternatively, if the application requires that all operations and handlers be a
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/io_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:add_service io_service::add_service]
 
@@ -33078,6 +34290,12 @@ This function is used to add a service to the io_service.
 
 ]
 
+
+[heading Requirements]
+
+[*Header: ][^asio/io_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -33144,6 +34362,12 @@ This function is used to determine whether the io_service contains a service obj
       
 A boolean indicating whether the io_service contains the service. 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/io_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -33596,6 +34820,12 @@ This function is used to locate a service object that corresponds to the given s
 The service interface implementing the specified service type. Ownership of the service interface is not transferred to the caller. 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/io_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -33690,6 +34920,12 @@ Class used to uniquely identify a service.
   
 ]
 
+[heading Requirements]
+
+[*Header: ][^asio/io_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:id io_service::id::id]
 
@@ -33744,6 +34980,12 @@ Base class for all io_service services.
   ]
   
 ]
+
+[heading Requirements]
+
+[*Header: ][^asio/io_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:get_io_service io_service::service::get_io_service]
@@ -33865,6 +35107,12 @@ The io_service::strand class provides the ability to post and dispatch handlers 
 
 [*Shared] [*objects:]  Safe.
 
+
+[heading Requirements]
+
+[*Header: ][^asio/strand.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:dispatch io_service::strand::dispatch]
@@ -34116,6 +35364,12 @@ The work class is used to inform the io_service when work starts and finishes. T
 
 The work class is copy-constructible so that it may be used as a data member in a handler class. It is not assignable. 
 
+[heading Requirements]
+
+[*Header: ][^asio/io_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:get_io_service io_service::work::get_io_service]
 
@@ -34309,6 +35563,12 @@ The
 [*Shared] [*objects:]  Unsafe. 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/address.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 [section:address ip::address::address]
 
 [indexterm2 address..ip::address] Default constructor. 
@@ -34499,6 +35759,12 @@ Create an address from an IPv4 address string in dotted decimal form, or from an
       const address & a2);
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/address.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -34512,6 +35778,12 @@ Create an address from an IPv4 address string in dotted decimal form, or from an
       const address & a1,
       const address & a2);
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/address.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -34623,6 +35895,12 @@ Assign from an IPv6 address.
       const address & a1,
       const address & a2);
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/address.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -34855,6 +36133,12 @@ The
 [*Shared] [*objects:]  Unsafe. 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/address_v4.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 [section:address_v4 ip::address_v4::address_v4]
 
 [indexterm2 address_v4..ip::address_v4] Default constructor. 
@@ -34995,6 +36279,12 @@ Obtain an address object that represents the broadcast address that corresponds 
   typedef boost::array< unsigned char, 4 > bytes_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/address_v4.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -35161,6 +36451,12 @@ Create an address from an IP address string in dotted decimal form.
       const address_v4 & a2);
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/address_v4.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -35174,6 +36470,12 @@ Create an address from an IP address string in dotted decimal form.
       const address_v4 & a1,
       const address_v4 & a2);
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/address_v4.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -35225,6 +36527,12 @@ The output stream.
       const address_v4 & a2);
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/address_v4.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -35252,6 +36560,12 @@ The output stream.
       const address_v4 & a2);
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/address_v4.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -35266,6 +36580,12 @@ The output stream.
       const address_v4 & a2);
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/address_v4.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -35279,6 +36599,12 @@ The output stream.
       const address_v4 & a1,
       const address_v4 & a2);
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/address_v4.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -35552,6 +36878,12 @@ The
 [*Shared] [*objects:]  Unsafe. 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/address_v6.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 [section:address_v6 ip::address_v6::address_v6]
 
 [indexterm2 address_v6..ip::address_v6] Default constructor. 
@@ -35633,6 +36965,12 @@ Copy constructor.
   typedef boost::array< unsigned char, 16 > bytes_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/address_v6.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -35882,6 +37220,12 @@ Create an address from an IP address string.
       const address_v6 & a2);
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/address_v6.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -35895,6 +37239,12 @@ Create an address from an IP address string.
       const address_v6 & a1,
       const address_v6 & a2);
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/address_v6.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -35946,6 +37296,12 @@ The output stream.
       const address_v6 & a2);
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/address_v6.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -35973,6 +37329,12 @@ The output stream.
       const address_v6 & a2);
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/address_v6.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -35987,6 +37349,12 @@ The output stream.
       const address_v6 & a2);
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/address_v6.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -36000,6 +37368,12 @@ The output stream.
       const address_v6 & a1,
       const address_v6 & a2);
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/address_v6.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -36271,6 +37645,12 @@ The
 [*Shared] [*objects:]  Unsafe.
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_endpoint.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 [section:address ip::basic_endpoint::address]
 
 [indexterm2 address..ip::basic_endpoint] Get the IP address associated with the endpoint. 
@@ -36467,6 +37847,12 @@ Get the underlying endpoint in the native type.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_endpoint.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -36481,6 +37867,12 @@ Get the underlying endpoint in the native type.
       const basic_endpoint< InternetProtocol > & e2);
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_endpoint.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -36494,6 +37886,12 @@ Get the underlying endpoint in the native type.
       const basic_endpoint< InternetProtocol > & e1,
       const basic_endpoint< InternetProtocol > & e2);
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_endpoint.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -36554,6 +37952,12 @@ The output stream.
       const basic_endpoint< InternetProtocol > & e1,
       const basic_endpoint< InternetProtocol > & e2);
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_endpoint.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -36619,6 +38023,12 @@ Set the port associated with the endpoint. The port number is always in the host
   typedef InternetProtocol protocol_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_endpoint.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -36776,6 +38186,12 @@ The basic_resolver class template provides the ability to resolve a query to a l
 
 [*Shared] [*objects:]  Unsafe. 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_resolver.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 [section:async_resolve ip::basic_resolver::async_resolve]
 
@@ -36938,6 +38354,12 @@ This function forces the completion of any pending asynchronous operations on th
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_resolver.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -36992,6 +38414,12 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_resolver.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -37028,6 +38456,12 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_resolver.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -37041,6 +38475,12 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_resolver.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -37053,6 +38493,12 @@ A reference to the io_service object that the I/O object will use to dispatch ha
   typedef InternetProtocol::resolver_query query;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_resolver.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -37275,6 +38721,12 @@ A successful call to this function is guaranteed to return at least one entry.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_resolver.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -37355,6 +38807,12 @@ The
 [*Shared] [*objects:]  Unsafe. 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_resolver_entry.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 [section:basic_resolver_entry ip::basic_resolver_entry::basic_resolver_entry]
 
 [indexterm2 basic_resolver_entry..ip::basic_resolver_entry] Default constructor. 
@@ -37420,6 +38878,12 @@ Construct with specified endpoint, host name and service name.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_resolver_entry.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -37456,6 +38920,12 @@ Construct with specified endpoint, host name and service name.
   typedef InternetProtocol protocol_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_resolver_entry.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -37520,6 +38990,12 @@ The iterator's value\_type, obtained when the iterator is dereferenced, is:
 
 [*Shared] [*objects:]  Unsafe. 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_resolver_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:basic_resolver_iterator ip::basic_resolver_iterator::basic_resolver_iterator]
@@ -37692,6 +39168,12 @@ The
 
 [*Shared] [*objects:]  Unsafe. 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_resolver_query.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:address_configured ip::basic_resolver_query::address_configured]
@@ -37912,6 +39394,12 @@ Construct with specified host name and service name for a given protocol.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_resolver_query.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -37956,6 +39444,12 @@ Construct with specified host name and service name for a given protocol.
   std::string ``[link asio.reference.ip__host_name.overload2 host_name]``(
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.ip__host_name.overload2 more...]]``
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/host_name.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:overload1 ip::host_name (1 of 2 overloads)]
@@ -38090,6 +39584,12 @@ The
 [*Shared] [*objects:]  Safe.
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/icmp.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:endpoint ip::icmp::endpoint]
 
@@ -38223,6 +39723,12 @@ The
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/icmp.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -38249,6 +39755,12 @@ The
       const icmp & p2);
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/icmp.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -38262,6 +39774,12 @@ The
       const icmp & p1,
       const icmp & p2);
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/icmp.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -38402,6 +39920,12 @@ The basic_resolver class template provides the ability to resolve a query to a l
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/icmp.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -38450,6 +39974,12 @@ The iterator's value\_type, obtained when the iterator is dereferenced, is:
 [*Shared] [*objects:]  Unsafe. 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/icmp.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -38560,6 +40090,12 @@ The
 [*Shared] [*objects:]  Unsafe. 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/icmp.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -38938,6 +40474,12 @@ The basic_raw_socket class template provides asynchronous and blocking raw-orien
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/icmp.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -39017,6 +40559,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/multicast.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -39057,6 +40605,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/multicast.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -39087,6 +40641,12 @@ Setting the option to join a multicast group:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/multicast.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -39119,6 +40679,12 @@ Setting the option to leave a multicast group:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/multicast.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -39149,6 +40715,12 @@ Setting the option:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/multicast.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -39212,6 +40784,12 @@ The resolver_query_base class is used as a base for the basic_resolver_query cla
   ]
 
 ]
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/resolver_query_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:address_configured ip::resolver_query_base::address_configured]
@@ -39429,6 +41007,12 @@ Default service implementation for a resolver.
 
 ]
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/resolver_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 [section:async_resolve ip::resolver_service::async_resolve]
 
 [indexterm2 async_resolve..ip::resolver_service] Asynchronously resolve a query to a list of entries. 
@@ -39535,6 +41119,12 @@ Asynchronously resolve an endpoint to a list of entries.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/resolver_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -39575,6 +41165,12 @@ Asynchronously resolve an endpoint to a list of entries.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/resolver_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -39603,6 +41199,12 @@ Asynchronously resolve an endpoint to a list of entries.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/resolver_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -39616,6 +41218,12 @@ Asynchronously resolve an endpoint to a list of entries.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/resolver_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -39628,6 +41236,12 @@ Asynchronously resolve an endpoint to a list of entries.
   typedef InternetProtocol::resolver_query query_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/resolver_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -39837,6 +41451,12 @@ The
 
 [*Shared] [*objects:]  Safe.
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/tcp.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:acceptor ip::tcp::acceptor]
@@ -40153,6 +41773,12 @@ Opening a socket acceptor with the SO\_REUSEADDR option enabled:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/tcp.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -40290,6 +41916,12 @@ The
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/tcp.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -40343,6 +41975,12 @@ The
 ]
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/tcp.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -40383,6 +42021,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/tcp.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -40397,6 +42041,12 @@ Getting the current option value:
       const tcp & p2);
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/tcp.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -40410,6 +42060,12 @@ Getting the current option value:
       const tcp & p1,
       const tcp & p2);
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/tcp.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -40550,6 +42206,12 @@ The basic_resolver class template provides the ability to resolve a query to a l
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/tcp.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -40598,6 +42260,12 @@ The iterator's value\_type, obtained when the iterator is dereferenced, is:
 [*Shared] [*objects:]  Unsafe. 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/tcp.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -40708,6 +42376,12 @@ The
 [*Shared] [*objects:]  Unsafe. 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/tcp.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -41088,6 +42762,12 @@ The basic_stream_socket class template provides asynchronous and blocking stream
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/tcp.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -41237,6 +42917,12 @@ The
 [*Shared] [*objects:]  Safe.
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/udp.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:endpoint ip::udp::endpoint]
 
@@ -41370,6 +43056,12 @@ The
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/udp.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -41396,6 +43088,12 @@ The
       const udp & p2);
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/udp.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -41409,6 +43107,12 @@ The
       const udp & p1,
       const udp & p2);
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/udp.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -41549,6 +43253,12 @@ The basic_resolver class template provides the ability to resolve a query to a l
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/udp.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -41597,6 +43307,12 @@ The iterator's value\_type, obtained when the iterator is dereferenced, is:
 [*Shared] [*objects:]  Unsafe. 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/udp.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -41707,6 +43423,12 @@ The
 [*Shared] [*objects:]  Unsafe. 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/udp.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -42085,6 +43807,12 @@ The basic_datagram_socket class template provides asynchronous and blocking data
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/udp.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -42164,6 +43892,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/unicast.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -42204,6 +43938,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ip/v6_only.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -42227,6 +43967,12 @@ Type trait used to determine whether a type can be used as a match condition fun
   ]
 
 ]
+
+[heading Requirements]
+
+[*Header: ][^asio/read_until.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:value is_match_condition::value]
@@ -42263,6 +44009,12 @@ The is_read_buffered class is a traits class that may be used to determine wheth
 
 ]
 
+[heading Requirements]
+
+[*Header: ][^asio/is_read_buffered.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:value is_read_buffered::value]
 
@@ -42297,6 +44049,12 @@ The is_write_buffered class is a traits class that may be used to determine whet
   ]
 
 ]
+
+[heading Requirements]
+
+[*Header: ][^asio/is_write_buffered.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:value is_write_buffered::value]
@@ -42437,6 +44195,12 @@ The
 [*Shared] [*objects:]  Unsafe.
 
 
+[heading Requirements]
+
+[*Header: ][^asio/local/basic_endpoint.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 [section:basic_endpoint local::basic_endpoint::basic_endpoint]
 
 [indexterm2 basic_endpoint..local::basic_endpoint] Default constructor. 
@@ -42570,6 +44334,12 @@ Get the underlying endpoint in the native type.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/local/basic_endpoint.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -42584,6 +44354,12 @@ Get the underlying endpoint in the native type.
       const basic_endpoint< Protocol > & e2);
 
 
+[heading Requirements]
+
+[*Header: ][^asio/local/basic_endpoint.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -42597,6 +44373,12 @@ Get the underlying endpoint in the native type.
       const basic_endpoint< Protocol > & e1,
       const basic_endpoint< Protocol > & e2);
 
+
+[heading Requirements]
+
+[*Header: ][^asio/local/basic_endpoint.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -42657,6 +44439,12 @@ The output stream.
       const basic_endpoint< Protocol > & e1,
       const basic_endpoint< Protocol > & e2);
 
+
+[heading Requirements]
+
+[*Header: ][^asio/local/basic_endpoint.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -42740,6 +44528,12 @@ Set the path associated with the endpoint.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/local/basic_endpoint.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -42794,6 +44588,12 @@ Set the path associated with the endpoint.
       basic_socket< Protocol, SocketService2 > & socket2,
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.local__connect_pair.overload2 more...]]``
+
+[heading Requirements]
+
+[*Header: ][^asio/local/connect_pair.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:overload1 local::connect_pair (1 of 2 overloads)]
@@ -42892,6 +44692,12 @@ The
 
 [*Shared] [*objects:]  Safe.
 
+
+[heading Requirements]
+
+[*Header: ][^asio/local/datagram_protocol.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:endpoint local::datagram_protocol::endpoint]
@@ -43016,6 +44822,12 @@ The
 [*Shared] [*objects:]  Unsafe.
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/local/datagram_protocol.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -43418,6 +45230,12 @@ The basic_datagram_socket class template provides asynchronous and blocking data
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/local/datagram_protocol.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -43509,6 +45327,12 @@ The
 
 [*Shared] [*objects:]  Safe.
 
+
+[heading Requirements]
+
+[*Header: ][^asio/local/stream_protocol.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:acceptor local::stream_protocol::acceptor]
@@ -43825,6 +45649,12 @@ Opening a socket acceptor with the SO\_REUSEADDR option enabled:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/local/stream_protocol.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -43953,6 +45783,12 @@ The
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/local/stream_protocol.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -44005,6 +45841,12 @@ The
   
 ]
 
+
+[heading Requirements]
+
+[*Header: ][^asio/local/stream_protocol.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -44397,6 +46239,12 @@ The basic_stream_socket class template provides asynchronous and blocking stream
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/local/stream_protocol.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -44458,6 +46306,12 @@ Holds a buffer that can be modified.
 ]
 
 The mutable_buffer class provides a safe representation of a buffer that can be modified. It does not own the underlying data, and so is cheap to copy or assign. 
+
+[heading Requirements]
+
+[*Header: ][^asio/buffer.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:buffer_cast mutable_buffer::buffer_cast]
@@ -44648,6 +46502,12 @@ Adapts a single modifiable buffer so that it meets the requirements of the Mutab
   
 ]
 
+[heading Requirements]
+
+[*Header: ][^asio/buffer.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:begin mutable_buffers_1::begin]
 
@@ -44702,6 +46562,12 @@ Adapts a single modifiable buffer so that it meets the requirements of the Mutab
   typedef const mutable_buffer * const_iterator;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/buffer.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -44858,6 +46724,12 @@ Create a new modifiable buffer that is offset from the start of another.
 The mutable_buffer class provides a safe representation of a buffer that can be modified. It does not own the underlying data, and so is cheap to copy or assign. 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/buffer.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -44908,6 +46780,12 @@ An implementation of both the ConstBufferSequence and MutableBufferSequence conc
   
 ]
 
+[heading Requirements]
+
+[*Header: ][^asio/buffer.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:begin null_buffers::begin]
 
@@ -44928,6 +46806,12 @@ An implementation of both the ConstBufferSequence and MutableBufferSequence conc
   typedef const mutable_buffer * const_iterator;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/buffer.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -44990,6 +46874,12 @@ An implementation of both the ConstBufferSequence and MutableBufferSequence conc
 The mutable_buffer class provides a safe representation of a buffer that can be modified. It does not own the underlying data, and so is cheap to copy or assign. 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/buffer.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -45005,6 +46895,12 @@ The mutable_buffer class provides a safe representation of a buffer that can be 
   unspecified bytes_transferred;
 
 
+[heading Requirements]
+
+[*Header: ][^asio/placeholders.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -45017,6 +46913,12 @@ The mutable_buffer class provides a safe representation of a buffer that can be 
   unspecified error;
 
 
+[heading Requirements]
+
+[*Header: ][^asio/placeholders.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -45028,6 +46930,12 @@ The mutable_buffer class provides a safe representation of a buffer that can be 
 
   unspecified iterator;
 
+
+[heading Requirements]
+
+[*Header: ][^asio/placeholders.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -45189,6 +47097,12 @@ The posix::basic_descriptor class template provides the ability to wrap a POSIX 
 [*Shared] [*objects:]  Unsafe. 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/posix/basic_descriptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 [section:assign posix::basic_descriptor::assign]
 
 [indexterm2 assign..posix::basic_descriptor] Assign an existing native descriptor to the descriptor. 
@@ -45340,6 +47254,12 @@ Implements the FIONREAD IO control command.
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/posix/basic_descriptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -45522,6 +47442,12 @@ A reference to the io_service object that the I/O object will use to dispatch ha
   typedef service_type::implementation_type implementation_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/posix/basic_descriptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -45888,6 +47814,12 @@ The posix::basic_descriptor class template provides the ability to wrap a POSIX 
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/posix/basic_descriptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -45914,6 +47846,12 @@ This function may be used to obtain the underlying representation of the descrip
   typedef DescriptorService::native_type native_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/posix/basic_descriptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -45947,6 +47885,12 @@ Implements the FIONBIO IO control command.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/posix/basic_descriptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -45977,6 +47921,12 @@ Implements the FIONBIO IO control command.
   typedef DescriptorService service_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/posix/basic_descriptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -46160,6 +48110,12 @@ The posix::basic_stream_descriptor class template provides asynchronous and bloc
 
 [*Shared] [*objects:]  Unsafe.
 
+
+[heading Requirements]
+
+[*Header: ][^asio/posix/basic_stream_descriptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 [section:assign posix::basic_stream_descriptor::assign]
 
@@ -46429,6 +48385,12 @@ Implements the FIONREAD IO control command.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/posix/basic_stream_descriptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -46622,6 +48584,12 @@ A reference to the io_service object that the I/O object will use to dispatch ha
   typedef service_type::implementation_type implementation_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/posix/basic_stream_descriptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -46998,6 +48966,12 @@ The posix::basic_descriptor class template provides the ability to wrap a POSIX 
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/posix/basic_stream_descriptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -47027,6 +49001,12 @@ This function may be used to obtain the underlying representation of the descrip
   typedef StreamDescriptorService::native_type native_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/posix/basic_stream_descriptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -47059,6 +49039,12 @@ Implements the FIONBIO IO control command.
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/posix/basic_stream_descriptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -47206,6 +49192,12 @@ The read\_some operation may not read all of the requested number of bytes. Cons
   typedef StreamDescriptorService service_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/posix/basic_stream_descriptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -47368,6 +49360,12 @@ The descriptor_base class is used as a base for the basic_stream_descriptor clas
   
 ]
 
+[heading Requirements]
+
+[*Header: ][^asio/posix/descriptor_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:bytes_readable posix::descriptor_base::bytes_readable]
 
@@ -47393,6 +49391,12 @@ Implements the FIONREAD IO control command.
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/posix/descriptor_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -47422,6 +49426,12 @@ Implements the FIONBIO IO control command.
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/posix/descriptor_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -47605,6 +49615,12 @@ The posix::basic_stream_descriptor class template provides asynchronous and bloc
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/posix/stream_descriptor.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -47733,6 +49749,12 @@ Default service implementation for a stream descriptor.
   ]
 
 ]
+
+[heading Requirements]
+
+[*Header: ][^asio/posix/stream_descriptor_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:assign posix::stream_descriptor_service::assign]
@@ -47875,6 +49897,12 @@ Default service implementation for a stream descriptor.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/posix/stream_descriptor_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -47945,6 +49973,12 @@ Default service implementation for a stream descriptor.
   typedef implementation_defined native_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/posix/stream_descriptor_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -48228,6 +50262,12 @@ Default service implementation for a raw socket.
 
 ]
 
+[heading Requirements]
+
+[*Header: ][^asio/raw_socket_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:assign raw_socket_service::assign]
 
@@ -48460,6 +50500,12 @@ Default service implementation for a raw socket.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/raw_socket_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -48516,6 +50562,12 @@ Default service implementation for a raw socket.
   typedef implementation_defined implementation_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/raw_socket_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -48602,6 +50654,12 @@ Default service implementation for a raw socket.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/raw_socket_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -48629,6 +50687,12 @@ Default service implementation for a raw socket.
   typedef Protocol protocol_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/raw_socket_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -48843,6 +50907,12 @@ Default service implementation for a raw socket.
       CompletionCondition completion_condition,
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.read.overload6 more...]]``
+
+[heading Requirements]
+
+[*Header: ][^asio/read.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:overload1 read (1 of 6 overloads)]
@@ -49308,6 +51378,12 @@ The number of bytes read. If an error occurs, returns the total number of bytes 
       CompletionCondition completion_condition,
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.read_at.overload6 more...]]``
+
+[heading Requirements]
+
+[*Header: ][^asio/read_at.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:overload1 read_at (1 of 6 overloads)]
@@ -49807,6 +51883,12 @@ The number of bytes read. If an error occurs, returns the total number of bytes 
       asio::error_code & ec,
       typename boost::enable_if< is_match_condition< MatchCondition > >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.read_until.overload8 more...]]``
+
+[heading Requirements]
+
+[*Header: ][^asio/read_until.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:overload1 read_until (1 of 8 overloads)]
@@ -50542,6 +52624,12 @@ The basic_serial_port class template provides functionality that is common to al
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/serial_port.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -50605,6 +52693,12 @@ The serial_port_base class is used as a base for the basic_serial_port class tem
   
 ]
 
+[heading Requirements]
+
+[*Header: ][^asio/serial_port_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:_serial_port_base serial_port_base::~serial_port_base]
 
@@ -50654,6 +52748,12 @@ Serial port option to permit changing the baud rate.
 ]
 
 Implements changing the baud rate for a given serial port. 
+
+[heading Requirements]
+
+[*Header: ][^asio/serial_port_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:baud_rate serial_port_base::baud_rate::baud_rate]
@@ -50745,6 +52845,12 @@ Serial port option to permit changing the character size.
 ]
 
 Implements changing the character size for a given serial port. 
+
+[heading Requirements]
+
+[*Header: ][^asio/serial_port_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:character_size serial_port_base::character_size::character_size]
@@ -50849,6 +52955,12 @@ Serial port option to permit changing the flow control.
 ]
 
 Implements changing the flow control for a given serial port. 
+
+[heading Requirements]
+
+[*Header: ][^asio/serial_port_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:flow_control serial_port_base::flow_control::flow_control]
@@ -50986,6 +53098,12 @@ Serial port option to permit changing the parity.
 
 Implements changing the parity for a given serial port. 
 
+[heading Requirements]
+
+[*Header: ][^asio/serial_port_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:load serial_port_base::parity::load]
 
@@ -51121,6 +53239,12 @@ Serial port option to permit changing the number of stop bits.
 ]
 
 Implements changing the number of stop bits for a given serial port. 
+
+[heading Requirements]
+
+[*Header: ][^asio/serial_port_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:load serial_port_base::stop_bits::load]
@@ -51350,6 +53474,12 @@ Default service implementation for a serial port.
 
 ]
 
+[heading Requirements]
+
+[*Header: ][^asio/serial_port_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:assign serial_port_service::assign]
 
@@ -51508,6 +53638,12 @@ Default service implementation for a serial port.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/serial_port_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -51561,6 +53697,12 @@ Default service implementation for a serial port.
   typedef implementation_defined native_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/serial_port_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -51691,6 +53833,12 @@ Exception thrown when trying to add a duplicate service to an io_service.
   ]
   
 ]
+
+[heading Requirements]
+
+[*Header: ][^asio/io_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:service_already_exists service_already_exists::service_already_exists]
@@ -51868,6 +54016,12 @@ Default service implementation for a socket acceptor.
 
 ]
 
+[heading Requirements]
+
+[*Header: ][^asio/socket_acceptor_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:accept socket_acceptor_service::accept]
 
@@ -51999,6 +54153,12 @@ Default service implementation for a socket acceptor.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/socket_acceptor_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -52055,6 +54215,12 @@ Default service implementation for a socket acceptor.
   typedef implementation_defined implementation_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/socket_acceptor_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -52156,6 +54322,12 @@ Default service implementation for a socket acceptor.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/socket_acceptor_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -52183,6 +54355,12 @@ Default service implementation for a socket acceptor.
   typedef Protocol protocol_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/socket_acceptor_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -52388,6 +54566,12 @@ The socket_base class is used as a base for the basic_stream_socket and basic_da
 
 ]
 
+[heading Requirements]
+
+[*Header: ][^asio/socket_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:broadcast socket_base::broadcast]
 
@@ -52424,6 +54608,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/socket_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -52453,6 +54643,12 @@ Implements the FIONREAD IO control command.
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/socket_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -52494,6 +54690,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/socket_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -52533,6 +54735,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/socket_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -52574,6 +54782,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/socket_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -52613,6 +54827,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/socket_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -52655,6 +54875,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/socket_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -52691,6 +54917,12 @@ Getting the current option value:
   typedef int message_flags;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/socket_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -52745,6 +54977,12 @@ Implements the FIONBIO IO control command.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/socket_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -52784,6 +55022,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/socket_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -52825,6 +55069,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/socket_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -52864,6 +55114,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/socket_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -52905,6 +55161,12 @@ Getting the current option value:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/socket_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -52944,6 +55206,12 @@ Getting the current option value:
 
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/socket_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -53183,6 +55451,12 @@ SSL context.
 
 ]
 
+[heading Requirements]
+
+[*Header: ][^asio/ssl/basic_context.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
 [section:add_verify_path ssl::basic_context::add_verify_path]
 
 [indexterm2 add_verify_path..ssl::basic_context] Add a directory containing certificate authority files to be used for performing verification. 
@@ -53343,6 +55617,12 @@ This function may be used to obtain the underlying implementation of the context
   typedef service_type::impl_type impl_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ssl/basic_context.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
 
 
 [endsect]
@@ -53564,6 +55844,12 @@ This function is used to load the certificates for one or more trusted certifica
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ssl/basic_context.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
 
 [endsect]
 
@@ -53606,6 +55892,12 @@ This function is used to load the certificates for one or more trusted certifica
   typedef Service service_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ssl/basic_context.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
 
 
 [endsect]
@@ -54346,6 +56638,12 @@ This function is used to load Diffie-Hellman parameters into the context from a 
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ssl/basic_context.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
 
 [endsect]
 
@@ -54581,6 +56879,12 @@ This function is used to load Diffie-Hellman parameters into the context from a 
 ]
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ssl/context.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
 
 [endsect]
 
@@ -54694,6 +56998,12 @@ The context_base class is used as a base for the basic_context class template so
   ]
 
 ]
+
+[heading Requirements]
+
+[*Header: ][^asio/ssl/context_base.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
 
 
 [section:default_workarounds ssl::context_base::default_workarounds]
@@ -54856,6 +57166,12 @@ The context_base class is used as a base for the basic_context class template so
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ssl/context_base.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
 
 [endsect]
 
@@ -54931,6 +57247,12 @@ The context_base class is used as a base for the basic_context class template so
   typedef int verify_mode;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ssl/context_base.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
 
 
 [endsect]
@@ -55098,6 +57420,12 @@ Default service implementation for a context.
 
 ]
 
+[heading Requirements]
+
+[*Header: ][^asio/ssl/context_service.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
 
 [section:add_verify_path ssl::context_service::add_verify_path]
 
@@ -55188,6 +57516,12 @@ Default service implementation for a context.
   typedef implementation_defined impl_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ssl/context_service.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
 
 
 [endsect]
@@ -55541,6 +57875,12 @@ To use the SSL stream template with an ip::tcp::socket, you would write:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ssl/stream.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
 
 [section:async_handshake ssl::stream::async_handshake]
 
@@ -55849,6 +58189,12 @@ This function may be used to obtain the underlying implementation of the context
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ssl/stream.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
 
 [endsect]
 
@@ -56008,6 +58354,12 @@ A const reference to the lowest layer in the stack of stream layers. Ownership i
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/ssl/stream.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
 
 [endsect]
 
@@ -56040,6 +58392,12 @@ A reference to the next layer in the stack of stream layers. Ownership is not tr
   typedef boost::remove_reference< Stream >::type next_layer_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ssl/stream.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
 
 
 [endsect]
@@ -56253,6 +58611,12 @@ The read\_some operation may not read all of the requested number of bytes. Cons
   typedef Service service_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ssl/stream.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
 
 
 [endsect]
@@ -56505,6 +58869,12 @@ The stream_base class is used as a base for the asio::ssl::stream class template
   
 ]
 
+[heading Requirements]
+
+[*Header: ][^asio/ssl/stream_base.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
 
 [section:handshake_type ssl::stream_base::handshake_type]
 
@@ -56670,6 +59040,12 @@ Default service implementation for an SSL stream.
 
 ]
 
+[heading Requirements]
+
+[*Header: ][^asio/ssl/stream_service.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
 
 [section:async_handshake ssl::stream_service::async_handshake]
 
@@ -56834,6 +59210,12 @@ Default service implementation for an SSL stream.
   typedef implementation_defined impl_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/ssl/stream_service.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
 
 
 [endsect]
@@ -57045,6 +59427,12 @@ The io_service::strand class provides the ability to post and dispatch handlers 
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/strand.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -57245,6 +59633,12 @@ Default service implementation for a stream socket.
 
 ]
 
+[heading Requirements]
+
+[*Header: ][^asio/stream_socket_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:assign stream_socket_service::assign]
 
@@ -57437,6 +59831,12 @@ Default service implementation for a stream socket.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/stream_socket_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -57493,6 +59893,12 @@ Default service implementation for a stream socket.
   typedef implementation_defined implementation_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/stream_socket_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -57579,6 +59985,12 @@ Default service implementation for a stream socket.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/stream_socket_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -57606,6 +60018,12 @@ Default service implementation for a stream socket.
   typedef Protocol protocol_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/stream_socket_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -57868,6 +60286,12 @@ Reading from a socket directly into a streambuf:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/streambuf.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -57914,6 +60338,12 @@ The system_error class is used to represent system conditions that prevent the l
   ]
   
 ]
+
+[heading Requirements]
+
+[*Header: ][^asio/system_error.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:code system_error::code]
@@ -58086,6 +60516,12 @@ A typical use of
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/thread.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:join thread::join]
 
@@ -58208,6 +60644,12 @@ Time traits specialised for posix_time.
   
 ]
 
+[heading Requirements]
+
+[*Header: ][^asio/time_traits.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [section:add time_traits< boost::posix_time::ptime >::add]
 
@@ -58230,6 +60672,12 @@ Time traits specialised for posix_time.
   typedef boost::posix_time::time_duration duration_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/time_traits.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -58284,6 +60732,12 @@ Time traits specialised for posix_time.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/time_traits.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -58337,6 +60791,12 @@ Reading until a buffer is full:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/completion_condition.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -58375,6 +60835,12 @@ Reading until a buffer is full or contains at least 64 bytes:
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/completion_condition.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -58406,6 +60872,12 @@ This function is used to locate a service object that corresponds to the given s
       
 The service interface implementing the specified service type. Ownership of the service interface is not transferred to the caller. 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/io_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -58546,6 +61018,12 @@ The windows::basic_handle class template provides the ability to wrap a Windows 
 
 [*Shared] [*objects:]  Unsafe. 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/basic_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 [section:assign windows::basic_handle::assign]
 
@@ -58848,6 +61326,12 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/windows/basic_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -59076,6 +61560,12 @@ The windows::basic_handle class template provides the ability to wrap a Windows 
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/windows/basic_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -59102,6 +61592,12 @@ This function may be used to obtain the underlying representation of the handle.
   typedef HandleService::native_type native_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/basic_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -59133,6 +61629,12 @@ This function may be used to obtain the underlying representation of the handle.
   typedef HandleService service_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/basic_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -59297,6 +61799,12 @@ The windows::basic_random_access_handle class template provides asynchronous and
 
 [*Shared] [*objects:]  Unsafe. 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/basic_random_access_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 [section:assign windows::basic_random_access_handle::assign]
 
@@ -59733,6 +62241,12 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/windows/basic_random_access_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -59973,6 +62487,12 @@ The windows::basic_handle class template provides the ability to wrap a Windows 
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/windows/basic_random_access_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -60002,6 +62522,12 @@ This function may be used to obtain the underlying representation of the handle.
   typedef RandomAccessHandleService::native_type native_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/basic_random_access_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -60157,6 +62683,12 @@ The read\_some operation may not read all of the requested number of bytes. Cons
   typedef RandomAccessHandleService service_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/basic_random_access_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -60433,6 +62965,12 @@ The windows::basic_stream_handle class template provides asynchronous and blocki
 
 [*Shared] [*objects:]  Unsafe.
 
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/basic_stream_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 [section:assign windows::basic_stream_handle::assign]
 
@@ -60863,6 +63401,12 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/windows/basic_stream_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -61103,6 +63647,12 @@ The windows::basic_handle class template provides the ability to wrap a Windows 
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/windows/basic_stream_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -61132,6 +63682,12 @@ This function may be used to obtain the underlying representation of the handle.
   typedef StreamHandleService::native_type native_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/basic_stream_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -61279,6 +63835,12 @@ The read\_some operation may not read all of the requested number of bytes. Cons
   typedef StreamHandleService service_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/basic_stream_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -61460,6 +64022,12 @@ A special-purpose smart pointer used to wrap an application handler so that it c
 
 [*Shared] [*objects:]  Unsafe. 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/overlapped_ptr.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:complete windows::overlapped_ptr::complete]
@@ -61774,6 +64342,12 @@ The windows::basic_random_access_handle class template provides asynchronous and
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/windows/random_access_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -61897,6 +64471,12 @@ Default service implementation for a random-access handle.
   ]
 
 ]
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/random_access_handle_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:assign windows::random_access_handle_service::assign]
@@ -62041,6 +64621,12 @@ Default service implementation for a random-access handle.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/windows/random_access_handle_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -62094,6 +64680,12 @@ Default service implementation for a random-access handle.
   typedef implementation_defined native_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/random_access_handle_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -62307,6 +64899,12 @@ The windows::basic_stream_handle class template provides asynchronous and blocki
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/windows/stream_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -62430,6 +65028,12 @@ Default service implementation for a stream handle.
   ]
 
 ]
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/stream_handle_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:assign windows::stream_handle_service::assign]
@@ -62572,6 +65176,12 @@ Default service implementation for a stream handle.
 
 
 
+[heading Requirements]
+
+[*Header: ][^asio/windows/stream_handle_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
 
 [endsect]
 
@@ -62625,6 +65235,12 @@ Default service implementation for a stream handle.
   typedef implementation_defined native_type;
 
 
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/stream_handle_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -62753,6 +65369,12 @@ Default service implementation for a stream handle.
       CompletionCondition completion_condition,
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.write.overload6 more...]]``
+
+[heading Requirements]
+
+[*Header: ][^asio/write.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:overload1 write (1 of 6 overloads)]
@@ -63224,6 +65846,12 @@ The number of bytes written. If an error occurs, returns the total number of byt
       CompletionCondition completion_condition,
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.write_at.overload6 more...]]``
+
+[heading Requirements]
+
+[*Header: ][^asio/write_at.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [section:overload1 write_at (1 of 6 overloads)]

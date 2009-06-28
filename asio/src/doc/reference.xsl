@@ -498,6 +498,31 @@
 </xsl:template>
 
 
+<xsl:template name="header-requirements">
+  <xsl:param name="file"/>
+  <xsl:value-of select="$newline"/>
+  <xsl:text>[heading Requirements]</xsl:text>
+  <xsl:value-of select="$newline"/>
+  <xsl:value-of select="$newline"/>
+  <xsl:text>[*Header: ]</xsl:text>
+  <xsl:text>[^asio/</xsl:text>
+  <xsl:value-of select="substring-after($file, 'include/asio/')"/>
+  <xsl:text>]</xsl:text>
+  <xsl:value-of select="$newline"/>
+  <xsl:value-of select="$newline"/>
+  <xsl:text>[*Convenience header: ]</xsl:text>
+  <xsl:choose>
+    <xsl:when test="contains($file, 'include/asio/ssl')">
+      <xsl:text>[^asio/ssl.hpp]</xsl:text>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:text>[^asio.hpp]</xsl:text>
+    </xsl:otherwise>
+  </xsl:choose>
+  <xsl:value-of select="$newline"/>
+</xsl:template>
+
+
 <!--========== Class ==========-->
 
 <xsl:template name="class">
@@ -516,6 +541,7 @@
       <xsl:with-param name="name" select="$class-name"/>
     </xsl:call-template>
   </xsl:variable>
+  <xsl:variable name="class-file" select="location/@file"/>
 [section:<xsl:value-of select="$class-id"/><xsl:text> </xsl:text><xsl:value-of select="$class-name"/>]
 
 <xsl:value-of select="briefdescription"/><xsl:text>
@@ -539,9 +565,14 @@
 
 <xsl:apply-templates select="detaileddescription" mode="markup"/>
 
+<xsl:call-template name="header-requirements">
+  <xsl:with-param name="file" select="$class-file"/>
+</xsl:call-template>
+
 <xsl:call-template name="class-members">
   <xsl:with-param name="class-name" select="$class-name"/>
   <xsl:with-param name="class-id" select="$class-id"/>
+  <xsl:with-param name="class-file" select="$class-file"/>
 </xsl:call-template>
 
 [endsect]
@@ -824,10 +855,12 @@
 <xsl:template name="class-members">
 <xsl:param name="class-name"/>
 <xsl:param name="class-id"/>
+<xsl:param name="class-file"/>
 <xsl:apply-templates select="sectiondef[@kind='public-type' or @kind='public-func' or @kind='public-static-func' or @kind='public-attrib' or @kind='public-static-attrib' or @kind='protected-func' or @kind='protected-static-func' or @kind='protected-attrib' or @kind='protected-static-attrib' or @kind='friend' or @kind='related']/memberdef[not(type = 'friend class') and not(contains(name, '_helper'))]" mode="class-detail">
   <xsl:sort select="name"/>
   <xsl:with-param name="class-name" select="$class-name"/>
   <xsl:with-param name="class-id" select="$class-id"/>
+  <xsl:with-param name="class-file" select="$class-file"/>
 </xsl:apply-templates>
 </xsl:template>
 
@@ -837,6 +870,7 @@
 <xsl:template match="memberdef" mode="class-detail">
   <xsl:param name="class-name"/>
   <xsl:param name="class-id"/>
+  <xsl:param name="class-file"/>
   <xsl:variable name="name">
     <xsl:value-of select="name"/>
   </xsl:variable>
@@ -943,6 +977,12 @@
 
 <xsl:text>
 </xsl:text><xsl:apply-templates select="detaileddescription" mode="markup"/>
+
+<xsl:if test="@kind='typedef' or @kind='friend'">
+  <xsl:call-template name="header-requirements">
+    <xsl:with-param name="file" select="$class-file"/>
+  </xsl:call-template>
+</xsl:if>
 
 [endsect]
 
@@ -1208,6 +1248,10 @@
   <xsl:apply-templates select="detaileddescription" mode="markup"/>
 </xsl:for-each>
 
+<xsl:call-template name="header-requirements">
+  <xsl:with-param name="file" select="location/@file"/>
+</xsl:call-template>
+
 </xsl:if>
 
 [section:<xsl:if test="$overload-count = 1"><xsl:value-of select="$id"/></xsl:if>
@@ -1244,6 +1288,12 @@
 
 <xsl:text>
 </xsl:text><xsl:apply-templates select="detaileddescription" mode="markup"/>
+
+<xsl:if test="$overload-count = 1">
+  <xsl:call-template name="header-requirements">
+    <xsl:with-param name="file" select="location/@file"/>
+  </xsl:call-template>
+</xsl:if>
 
 [endsect]
 
