@@ -39,7 +39,7 @@ namespace detail {
 
 unsigned int __stdcall win_thread_function(void* arg);
 
-#if (WINVER < 0x0500)
+#if defined(WINVER) && (WINVER < 0x0500)
 void __stdcall apc_function(ULONG data);
 #else
 void __stdcall apc_function(ULONG_PTR data);
@@ -155,7 +155,7 @@ public:
 private:
   friend unsigned int __stdcall win_thread_function(void* arg);
 
-#if (WINVER < 0x0500)
+#if defined(WINVER) && (WINVER < 0x0500)
   friend void __stdcall apc_function(ULONG);
 #else
   friend void __stdcall apc_function(ULONG_PTR);
@@ -216,7 +216,7 @@ inline unsigned int __stdcall win_thread_function(void* arg)
   return 0;
 }
 
-#if (WINVER < 0x0500)
+#if defined(WINVER) && (WINVER < 0x0500)
 inline void __stdcall apc_function(ULONG) {}
 #else
 inline void __stdcall apc_function(ULONG_PTR) {}
