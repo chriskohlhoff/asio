@@ -6626,6 +6626,10 @@ Shutting down the send side of the socket:
 
   enum shutdown_type
 
+[indexterm2 shutdown_receive..basic_datagram_socket]
+[indexterm2 shutdown_send..basic_datagram_socket]
+[indexterm2 shutdown_both..basic_datagram_socket]
+
 [heading Values]
 [variablelist
 
@@ -12337,6 +12341,10 @@ Shutting down the send side of the socket:
 
   enum shutdown_type
 
+[indexterm2 shutdown_receive..basic_raw_socket]
+[indexterm2 shutdown_send..basic_raw_socket]
+[indexterm2 shutdown_both..basic_raw_socket]
+
 [heading Values]
 [variablelist
 
@@ -17180,6 +17188,10 @@ Shutting down the send side of the socket:
 
   enum shutdown_type
 
+[indexterm2 shutdown_receive..basic_socket]
+[indexterm2 shutdown_send..basic_socket]
+[indexterm2 shutdown_both..basic_socket]
+
 [heading Values]
 [variablelist
 
@@ -19842,6 +19854,10 @@ Setting the SOL\_SOCKET/SO\_REUSEADDR option:
 [indexterm2 shutdown_type..basic_socket_acceptor] Different ways a socket may be shutdown. 
 
   enum shutdown_type
+
+[indexterm2 shutdown_receive..basic_socket_acceptor]
+[indexterm2 shutdown_send..basic_socket_acceptor]
+[indexterm2 shutdown_both..basic_socket_acceptor]
 
 [heading Values]
 [variablelist
@@ -23228,6 +23244,10 @@ Shutting down the send side of the socket:
 [indexterm2 shutdown_type..basic_socket_streambuf] Different ways a socket may be shutdown. 
 
   enum shutdown_type
+
+[indexterm2 shutdown_receive..basic_socket_streambuf]
+[indexterm2 shutdown_send..basic_socket_streambuf]
+[indexterm2 shutdown_both..basic_socket_streambuf]
 
 [heading Values]
 [variablelist
@@ -27535,6 +27555,10 @@ Shutting down the send side of the socket:
 [indexterm2 shutdown_type..basic_stream_socket] Different ways a socket may be shutdown. 
 
   enum shutdown_type
+
+[indexterm2 shutdown_receive..basic_stream_socket]
+[indexterm2 shutdown_send..basic_stream_socket]
+[indexterm2 shutdown_both..basic_stream_socket]
 
 [heading Values]
 [variablelist
@@ -33052,6 +33076,9 @@ Set the expiry time for the timer relative to now.
 
   enum addrinfo_errors
 
+[indexterm2 service_not_found..error::addrinfo_errors]
+[indexterm2 socket_type_not_supported..error::addrinfo_errors]
+
 [heading Values]
 [variablelist
 
@@ -33084,6 +33111,40 @@ Set the expiry time for the timer relative to now.
 [indexterm1 error::basic_errors] 
 
   enum basic_errors
+
+[indexterm2 access_denied..error::basic_errors]
+[indexterm2 address_family_not_supported..error::basic_errors]
+[indexterm2 address_in_use..error::basic_errors]
+[indexterm2 already_connected..error::basic_errors]
+[indexterm2 already_started..error::basic_errors]
+[indexterm2 broken_pipe..error::basic_errors]
+[indexterm2 connection_aborted..error::basic_errors]
+[indexterm2 connection_refused..error::basic_errors]
+[indexterm2 connection_reset..error::basic_errors]
+[indexterm2 bad_descriptor..error::basic_errors]
+[indexterm2 fault..error::basic_errors]
+[indexterm2 host_unreachable..error::basic_errors]
+[indexterm2 in_progress..error::basic_errors]
+[indexterm2 interrupted..error::basic_errors]
+[indexterm2 invalid_argument..error::basic_errors]
+[indexterm2 message_size..error::basic_errors]
+[indexterm2 name_too_long..error::basic_errors]
+[indexterm2 network_down..error::basic_errors]
+[indexterm2 network_reset..error::basic_errors]
+[indexterm2 network_unreachable..error::basic_errors]
+[indexterm2 no_descriptors..error::basic_errors]
+[indexterm2 no_buffer_space..error::basic_errors]
+[indexterm2 no_memory..error::basic_errors]
+[indexterm2 no_permission..error::basic_errors]
+[indexterm2 no_protocol_option..error::basic_errors]
+[indexterm2 not_connected..error::basic_errors]
+[indexterm2 not_socket..error::basic_errors]
+[indexterm2 operation_aborted..error::basic_errors]
+[indexterm2 operation_not_supported..error::basic_errors]
+[indexterm2 shut_down..error::basic_errors]
+[indexterm2 timed_out..error::basic_errors]
+[indexterm2 try_again..error::basic_errors]
+[indexterm2 would_block..error::basic_errors]
 
 [heading Values]
 [variablelist
@@ -33272,6 +33333,12 @@ Set the expiry time for the timer relative to now.
 [indexterm1 error::error_category] Available error code categories. 
 
   enum error_category
+
+[indexterm2 system_category..error::error_category]
+[indexterm2 netdb_category..error::error_category]
+[indexterm2 addrinfo_category..error::error_category]
+[indexterm2 misc_category..error::error_category]
+[indexterm2 ssl_category..error::error_category]
 
 [heading Values]
 [variablelist
@@ -33508,6 +33575,11 @@ Set the expiry time for the timer relative to now.
 
   enum misc_errors
 
+[indexterm2 already_open..error::misc_errors]
+[indexterm2 eof..error::misc_errors]
+[indexterm2 not_found..error::misc_errors]
+[indexterm2 fd_set_failure..error::misc_errors]
+
 [heading Values]
 [variablelist
 
@@ -33550,6 +33622,11 @@ Set the expiry time for the timer relative to now.
 [indexterm1 error::netdb_errors] 
 
   enum netdb_errors
+
+[indexterm2 host_not_found..error::netdb_errors]
+[indexterm2 host_not_found_try_again..error::netdb_errors]
+[indexterm2 no_data..error::netdb_errors]
+[indexterm2 no_recovery..error::netdb_errors]
 
 [heading Values]
 [variablelist
@@ -53010,6 +53087,10 @@ Implements changing the flow control for a given serial port.
 
   enum type
 
+[indexterm2 none..serial_port_base::flow_control]
+[indexterm2 software..serial_port_base::flow_control]
+[indexterm2 hardware..serial_port_base::flow_control]
+
 [heading Values]
 [variablelist
 
@@ -53152,6 +53233,10 @@ Implements changing the parity for a given serial port.
 
   enum type
 
+[indexterm2 none..serial_port_base::parity]
+[indexterm2 odd..serial_port_base::parity]
+[indexterm2 even..serial_port_base::parity]
+
 [heading Values]
 [variablelist
 
@@ -53293,6 +53378,10 @@ Implements changing the number of stop bits for a given serial port.
 [indexterm2 type..serial_port_base::stop_bits] 
 
   enum type
+
+[indexterm2 one..serial_port_base::stop_bits]
+[indexterm2 onepointfive..serial_port_base::stop_bits]
+[indexterm2 two..serial_port_base::stop_bits]
 
 [heading Values]
 [variablelist
@@ -55224,6 +55313,10 @@ Getting the current option value:
 
   enum shutdown_type
 
+[indexterm2 shutdown_receive..socket_base]
+[indexterm2 shutdown_send..socket_base]
+[indexterm2 shutdown_both..socket_base]
+
 [heading Values]
 [variablelist
 
@@ -55575,6 +55668,9 @@ This function is used to specify the name of a directory containing certificatio
 
   enum file_format
 
+[indexterm2 asn1..ssl::basic_context]
+[indexterm2 pem..ssl::basic_context]
+
 [heading Values]
 [variablelist
 
@@ -55716,6 +55812,19 @@ This function is used to load the certificates for one or more trusted certifica
 [indexterm2 method..ssl::basic_context] Different methods supported by a context. 
 
   enum method
+
+[indexterm2 sslv2..ssl::basic_context]
+[indexterm2 sslv2_client..ssl::basic_context]
+[indexterm2 sslv2_server..ssl::basic_context]
+[indexterm2 sslv3..ssl::basic_context]
+[indexterm2 sslv3_client..ssl::basic_context]
+[indexterm2 sslv3_server..ssl::basic_context]
+[indexterm2 tlsv1..ssl::basic_context]
+[indexterm2 tlsv1_client..ssl::basic_context]
+[indexterm2 tlsv1_server..ssl::basic_context]
+[indexterm2 sslv23..ssl::basic_context]
+[indexterm2 sslv23_client..ssl::basic_context]
+[indexterm2 sslv23_server..ssl::basic_context]
 
 [heading Values]
 [variablelist
@@ -55863,6 +55972,9 @@ This function is used to load the certificates for one or more trusted certifica
 [indexterm2 password_purpose..ssl::basic_context] Purpose of PEM password. 
 
   enum password_purpose
+
+[indexterm2 for_reading..ssl::basic_context]
+[indexterm2 for_writing..ssl::basic_context]
 
 [heading Values]
 [variablelist
@@ -57024,6 +57136,9 @@ The context_base class is used as a base for the basic_context class template so
 
   enum file_format
 
+[indexterm2 asn1..ssl::context_base]
+[indexterm2 pem..ssl::context_base]
+
 [heading Values]
 [variablelist
 
@@ -57050,6 +57165,19 @@ The context_base class is used as a base for the basic_context class template so
 [indexterm2 method..ssl::context_base] Different methods supported by a context. 
 
   enum method
+
+[indexterm2 sslv2..ssl::context_base]
+[indexterm2 sslv2_client..ssl::context_base]
+[indexterm2 sslv2_server..ssl::context_base]
+[indexterm2 sslv3..ssl::context_base]
+[indexterm2 sslv3_client..ssl::context_base]
+[indexterm2 sslv3_server..ssl::context_base]
+[indexterm2 tlsv1..ssl::context_base]
+[indexterm2 tlsv1_client..ssl::context_base]
+[indexterm2 tlsv1_server..ssl::context_base]
+[indexterm2 sslv23..ssl::context_base]
+[indexterm2 sslv23_client..ssl::context_base]
+[indexterm2 sslv23_server..ssl::context_base]
 
 [heading Values]
 [variablelist
@@ -57182,6 +57310,9 @@ The context_base class is used as a base for the basic_context class template so
 [indexterm2 password_purpose..ssl::context_base] Purpose of PEM password. 
 
   enum password_purpose
+
+[indexterm2 for_reading..ssl::context_base]
+[indexterm2 for_writing..ssl::context_base]
 
 [heading Values]
 [variablelist
@@ -58146,6 +58277,9 @@ This function is used to perform SSL handshaking on the stream. The function cal
 
   enum handshake_type
 
+[indexterm2 client..ssl::stream]
+[indexterm2 server..ssl::stream]
+
 [heading Values]
 [variablelist
 
@@ -58881,6 +59015,9 @@ The stream_base class is used as a base for the asio::ssl::stream class template
 [indexterm2 handshake_type..ssl::stream_base] Different handshake types. 
 
   enum handshake_type
+
+[indexterm2 client..ssl::stream_base]
+[indexterm2 server..ssl::stream_base]
 
 [heading Values]
 [variablelist

@@ -965,7 +965,9 @@
       <xsl:call-template name="variable" mode="class-detail"/>
     </xsl:when>
     <xsl:when test="@kind='enum'">
-      <xsl:call-template name="enum" mode="class-detail"/>
+      <xsl:call-template name="enum" mode="class-detail">
+        <xsl:with-param name="enum-name" select="$class-name"/>
+      </xsl:call-template>
     </xsl:when>
     <xsl:when test="@kind='function'">
       <xsl:call-template name="function" mode="class-detail"/>
@@ -1036,8 +1038,18 @@
 
 
 <xsl:template name="enum">
+<xsl:param name="enum-name"/>
   enum <xsl:value-of select="name"/><xsl:text>
 </xsl:text><xsl:if test="count(enumvalue) &gt; 0">
+<xsl:value-of select="$newline"/>
+<xsl:for-each select="enumvalue">
+  <xsl:text>[indexterm2 </xsl:text>
+  <xsl:value-of select="name"/>
+  <xsl:text>..</xsl:text>
+  <xsl:value-of select="$enum-name"/>
+  <xsl:text>]</xsl:text>
+  <xsl:value-of select="$newline"/>
+</xsl:for-each>
 [heading Values]
 [variablelist
 <xsl:for-each select="enumvalue">
@@ -1279,7 +1291,9 @@
       <xsl:call-template name="variable"/>
     </xsl:when>
     <xsl:when test="@kind='enum'">
-      <xsl:call-template name="enum"/>
+      <xsl:call-template name="enum">
+        <xsl:with-param name="enum-name" select="$name"/>
+      </xsl:call-template>
     </xsl:when>
     <xsl:when test="@kind='function'">
       <xsl:call-template name="function"/>
