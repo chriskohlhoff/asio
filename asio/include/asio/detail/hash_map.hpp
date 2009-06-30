@@ -214,6 +214,9 @@ private:
   // Re-initialise the hash from the values already contained in the list.
   void rehash(std::size_t num_buckets)
   {
+    if (num_buckets == buckets_.size())
+      return;
+
     iterator end = values_.end();
 
     // Update number of buckets and initialise all buckets to empty.
