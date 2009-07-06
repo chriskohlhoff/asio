@@ -596,6 +596,7 @@ sub copy_examples
       "src/examples/http/server",
       "src/examples/http/server2",
       "src/examples/http/server3",
+      "src/examples/icmp",
       "src/examples/invocation",
       "src/examples/iostreams",
       "src/examples/local",

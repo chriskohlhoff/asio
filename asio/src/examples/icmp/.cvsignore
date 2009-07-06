@@ -1,0 +1,8 @@
+.deps
+.dirstamp
+*.exe
+ping
+*.ilk
+*.manifest
+*.pdb
+*.tds

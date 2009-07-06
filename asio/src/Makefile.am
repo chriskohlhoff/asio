@@ -84,6 +84,7 @@ noinst_PROGRAMS = \
 	examples/http/server/http_server \
 	examples/http/server2/http_server \
 	examples/http/server3/http_server \
+	examples/icmp/ping \
 	examples/invocation/prioritised_handlers \
 	examples/iostreams/daytime_client \
 	examples/iostreams/daytime_server \
@@ -356,6 +357,7 @@ else
 examples_http_server3_http_server_SOURCES += \
 	examples/http/server3/posix_main.cpp
 endif
+examples_icmp_ping_SOURCES = examples/icmp/ping.cpp
 examples_invocation_prioritised_handlers_SOURCES = examples/invocation/prioritised_handlers.cpp
 examples_iostreams_daytime_client_SOURCES = examples/iostreams/daytime_client.cpp
 examples_iostreams_daytime_server_SOURCES = examples/iostreams/daytime_server.cpp
@@ -445,6 +447,8 @@ EXTRA_DIST = \
 	examples/http/server3/request_parser.hpp \
 	examples/http/server3/server.hpp \
 	examples/http/server3/win_main.cpp \
+	examples/icmp/icmp_header.hpp \
+	examples/icmp/ipv4_header.hpp \
 	examples/porthopper/protocol.hpp \
 	examples/serialization/client.cpp \
 	examples/serialization/server.cpp \
