@@ -135,6 +135,15 @@ An HTTP server using a single io_service and a thread pool calling `io_service::
 * [@../src/examples/http/server3/win_main.cpp]
 
 
+[heading ICMP]
+
+This example shows how to use raw sockets with ICMP to ping a remote host.
+
+* [@../src/examples/icmp/ping.cpp]
+* [@../src/examples/icmp/ipv4_header.hpp]
+* [@../src/examples/icmp/icmp_header.hpp]
+
+
 [heading Invocation]
 
 This example shows how to customise handler invocation. Completion handlers are
