@@ -365,23 +365,26 @@ private:
 
     // Write the pending event registration changes to the /dev/poll descriptor.
     std::size_t events_size = sizeof(::pollfd) * pending_event_changes_.size();
-    errno = 0;
-    int result = ::write(dev_poll_fd_,
-        &pending_event_changes_[0], events_size);
-    if (result != static_cast<int>(events_size))
+    if (events_size > 0)
     {
-      for (std::size_t i = 0; i < pending_event_changes_.size(); ++i)
+      errno = 0;
+      int result = ::write(dev_poll_fd_,
+          &pending_event_changes_[0], events_size);
+      if (result != static_cast<int>(events_size))
       {
-        int descriptor = pending_event_changes_[i].fd;
-        asio::error_code ec = asio::error_code(
-            errno, asio::error::get_system_category());
-        read_op_queue_.perform_all_operations(descriptor, ec);
-        write_op_queue_.perform_all_operations(descriptor, ec);
-        except_op_queue_.perform_all_operations(descriptor, ec);
+        for (std::size_t i = 0; i < pending_event_changes_.size(); ++i)
+        {
+          int descriptor = pending_event_changes_[i].fd;
+          asio::error_code ec = asio::error_code(
+              errno, asio::error::get_system_category());
+          read_op_queue_.perform_all_operations(descriptor, ec);
+          write_op_queue_.perform_all_operations(descriptor, ec);
+          except_op_queue_.perform_all_operations(descriptor, ec);
+        }
       }
+      pending_event_changes_.clear();
+      pending_event_change_index_.clear();
     }
-    pending_event_changes_.clear();
-    pending_event_change_index_.clear();
 
     int timeout = block ? get_timeout() : 0;
     wait_in_progress_ = true;
