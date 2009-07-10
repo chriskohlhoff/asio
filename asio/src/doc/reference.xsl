@@ -319,8 +319,11 @@
 
 
 <xsl:template match="listitem" mode="markup">
-* <xsl:value-of select="."/><xsl:text>
-</xsl:text>
+* <xsl:call-template name="strip-leading-whitespace">
+  <xsl:with-param name="text">
+    <xsl:apply-templates mode="markup"/>
+  </xsl:with-param>
+</xsl:call-template>
 </xsl:template>
 
 
