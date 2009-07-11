@@ -66,49 +66,48 @@ public:
   // Create a new context implementation.
   void create(impl_type& impl, context_base::method m)
   {
-    ::SSL_METHOD* ssl_method = 0;
     switch (m)
     {
     case context_base::sslv2:
-      ssl_method = ::SSLv2_method();
+      impl = ::SSL_CTX_new(::SSLv2_method());
       break;
     case context_base::sslv2_client:
-      ssl_method = ::SSLv2_client_method();
+      impl = ::SSL_CTX_new(::SSLv2_client_method());
       break;
     case context_base::sslv2_server:
-      ssl_method = ::SSLv2_server_method();
+      impl = ::SSL_CTX_new(::SSLv2_server_method());
       break;
     case context_base::sslv3:
-      ssl_method = ::SSLv3_method();
+      impl = ::SSL_CTX_new(::SSLv3_method());
       break;
     case context_base::sslv3_client:
-      ssl_method = ::SSLv3_client_method();
+      impl = ::SSL_CTX_new(::SSLv3_client_method());
       break;
     case context_base::sslv3_server:
-      ssl_method = ::SSLv3_server_method();
+      impl = ::SSL_CTX_new(::SSLv3_server_method());
       break;
     case context_base::tlsv1:
-      ssl_method = ::TLSv1_method();
+      impl = ::SSL_CTX_new(::TLSv1_method());
       break;
     case context_base::tlsv1_client:
-      ssl_method = ::TLSv1_client_method();
+      impl = ::SSL_CTX_new(::TLSv1_client_method());
       break;
     case context_base::tlsv1_server:
-      ssl_method = ::TLSv1_server_method();
+      impl = ::SSL_CTX_new(::TLSv1_server_method());
       break;
     case context_base::sslv23:
-      ssl_method = ::SSLv23_method();
+      impl = ::SSL_CTX_new(::SSLv23_method());
       break;
     case context_base::sslv23_client:
-      ssl_method = ::SSLv23_client_method();
+      impl = ::SSL_CTX_new(::SSLv23_client_method());
       break;
     case context_base::sslv23_server:
-      ssl_method = ::SSLv23_server_method();
+      impl = ::SSL_CTX_new(::SSLv23_server_method());
       break;
     default:
+      impl = ::SSL_CTX_new(0);
       break;
     }
-    impl = ::SSL_CTX_new(ssl_method);
   }
 
   // Destroy a context implementation.
