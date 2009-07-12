@@ -10,6 +10,7 @@
 
 <xsl:output method="text"/>
 <xsl:strip-space elements="*"/>
+<xsl:preserve-space elements="para"/>
 
 
 <xsl:variable name="newline">
@@ -233,11 +234,6 @@
 </xsl:template>
 
 
-<xsl:template match="ref" mode="markup">
-<xsl:apply-templates mode="markup-nested"/>
-</xsl:template>
-
-
 <xsl:template match="title" mode="markup">
   <xsl:variable name="title">
     <xsl:value-of select="."/>
@@ -327,7 +323,7 @@
 </xsl:template>
 
 
-<xsl:template match="emphasis" mode="markup">[*<xsl:value-of select="."/>] </xsl:template>
+<xsl:template match="emphasis" mode="markup">[*<xsl:value-of select="."/>]</xsl:template>
 
 
 <xsl:template match="parameterlist" mode="markup">
@@ -483,10 +479,12 @@
     <xsl:value-of select="."/>
   </xsl:variable>
   <xsl:choose>
-    <xsl:when test="contains($name, 'asio::')">
+    <xsl:when test="contains(@refid, 'asio') or contains($name, 'asio::')">
+      <xsl:variable name="dox-ref-id" select="@refid"/>
       <xsl:variable name="ref-name">
         <xsl:call-template name="strip-asio-ns">
-          <xsl:with-param name="name" select="$name"/>
+          <xsl:with-param name="name"
+            select="(/doxygen//compounddef[@id=$dox-ref-id])[1]/compoundname"/>
         </xsl:call-template>
       </xsl:variable>
       <xsl:variable name="ref-id">
@@ -494,10 +492,65 @@
           <xsl:with-param name="name" select="$ref-name"/>
         </xsl:call-template>
       </xsl:variable>
-[link asio.reference.<xsl:value-of select="$ref-id"/><xsl:text> </xsl:text><xsl:value-of
- select="$ref-name"/>]</xsl:when>
-    <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+      <xsl:text>[link asio.reference.</xsl:text>
+      <xsl:value-of select="$ref-id"/>
+      <xsl:text> `</xsl:text>
+      <xsl:value-of name="text" select="$ref-name"/>
+      <xsl:text>`]</xsl:text>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:text>`</xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>`</xsl:text>
+    </xsl:otherwise>
   </xsl:choose>
+</xsl:template>
+
+
+<xsl:template match="ref[@kindref='compound']" mode="markup-nested">
+  <xsl:variable name="name">
+    <xsl:value-of select="."/>
+  </xsl:variable>
+  <xsl:choose>
+    <xsl:when test="contains(@refid, 'asio') or contains($name, 'asio::')">
+      <xsl:variable name="dox-ref-id" select="@refid"/>
+      <xsl:variable name="ref-name">
+        <xsl:call-template name="strip-asio-ns">
+          <xsl:with-param name="name"
+            select="(/doxygen//compounddef[@id=$dox-ref-id])[1]/compoundname"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:variable name="ref-id">
+        <xsl:call-template name="make-id">
+          <xsl:with-param name="name" select="$ref-name"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:text>[link asio.reference.</xsl:text>
+      <xsl:value-of select="$ref-id"/>
+      <xsl:text> `</xsl:text>
+      <xsl:value-of name="text" select="$ref-name"/>
+      <xsl:text>`]</xsl:text>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:text>`</xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>`</xsl:text>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+
+<xsl:template match="ref[@kindref='member']" mode="markup">
+  <xsl:text>`</xsl:text>
+  <xsl:value-of select="."/>
+  <xsl:text>`</xsl:text>
+</xsl:template>
+
+
+<xsl:template match="ref[@kindref='member']" mode="markup-nested">
+  <xsl:text>`</xsl:text>
+  <xsl:value-of select="."/>
+  <xsl:text>`</xsl:text>
 </xsl:template>
 
 
@@ -547,7 +600,7 @@
   <xsl:variable name="class-file" select="location/@file"/>
 [section:<xsl:value-of select="$class-id"/><xsl:text> </xsl:text><xsl:value-of select="$class-name"/>]
 
-<xsl:value-of select="briefdescription"/><xsl:text>
+<xsl:apply-templates select="briefdescription" mode="markup"/><xsl:text>
 
 </xsl:text>
 
@@ -906,19 +959,22 @@
 <xsl:value-of select="$class-name"/>
 <xsl:text>] </xsl:text>
 
-<xsl:value-of select="briefdescription"/><xsl:text>
+<xsl:apply-templates select="briefdescription" mode="markup"/><xsl:text>
 </xsl:text>
 
 <xsl:for-each select="../memberdef[name = $name]">
 <xsl:if test="position() &gt; 1 and not(briefdescription = preceding-sibling::*/briefdescription)">
   <xsl:value-of select="$newline"/>
-  <xsl:value-of select="briefdescription"/>
+  <xsl:apply-templates select="briefdescription" mode="markup"/>
   <xsl:value-of select="$newline"/>
 </xsl:if>
 <xsl:text>
 </xsl:text><xsl:apply-templates select="templateparamlist" mode="class-detail"/>
-<xsl:text>  </xsl:text><xsl:if test="@static='yes'">static </xsl:if><xsl:if
- test="string-length(type) > 0"><xsl:value-of select="type"/><xsl:text> </xsl:text>
+<xsl:text>  </xsl:text>
+ <xsl:if test="@explicit='yes'">explicit </xsl:if>
+ <xsl:if test="@static='yes'">static </xsl:if>
+ <xsl:if test="string-length(type) > 0">
+ <xsl:value-of select="type"/><xsl:text> </xsl:text>
 </xsl:if>``[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of
  select="$id"/>.overload<xsl:value-of select="position()"/><xsl:text> </xsl:text><xsl:value-of
  select="name"/>]``(<xsl:apply-templates select="param"
@@ -955,7 +1011,7 @@
   <xsl:text>] </xsl:text>
 </xsl:if>
 
-<xsl:value-of select="briefdescription"/><xsl:text>
+<xsl:apply-templates select="briefdescription" mode="markup"/><xsl:text>
 </xsl:text>
 
   <xsl:choose>
@@ -1235,12 +1291,12 @@
 <xsl:choose>
   <xsl:when test="count(/doxygen/compounddef[@kind='group' and compoundname=$name]) &gt; 0">
     <xsl:for-each select="/doxygen/compounddef[@kind='group' and compoundname=$name]">
-      <xsl:value-of select="briefdescription"/><xsl:text>
+      <xsl:apply-templates select="briefdescription" mode="markup"/><xsl:text>
       </xsl:text>
     </xsl:for-each>
   </xsl:when>
   <xsl:otherwise>
-    <xsl:value-of select="briefdescription"/><xsl:text>
+    <xsl:apply-templates select="briefdescription" mode="markup"/><xsl:text>
     </xsl:text>
   </xsl:otherwise>
 </xsl:choose>
@@ -1281,7 +1337,7 @@
   <xsl:text>] </xsl:text>
 </xsl:if>
 
-<xsl:value-of select="briefdescription"/><xsl:text>
+<xsl:apply-templates select="briefdescription" mode="markup"/><xsl:text>
 </xsl:text>
 
   <xsl:choose>
