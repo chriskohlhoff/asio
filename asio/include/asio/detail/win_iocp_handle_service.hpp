@@ -356,6 +356,7 @@ public:
       DWORD last_error = ::GetLastError();
       ec = asio::error_code(last_error,
           asio::error::get_system_category());
+      return 0;
     }
 
     ec = asio::error_code();
@@ -603,6 +604,7 @@ public:
         ec = asio::error_code(last_error,
             asio::error::get_system_category());
       }
+      return 0;
     }
 
     ec = asio::error_code();
