@@ -27,7 +27,7 @@
 
 namespace asio {
 
-/// Typedef for the typical usage of timer.
+/// Typedef for the typical usage of timer. Uses a UTC clock.
 typedef basic_deadline_timer<boost::posix_time::ptime> deadline_timer;
 
 } // namespace asio

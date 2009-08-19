@@ -35354,7 +35354,7 @@ Destroy all user-defined handler objects owned by the service.
 [section:deadline_timer deadline_timer]
 
 [indexterm1 deadline_timer] 
-Typedef for the typical usage of timer. 
+Typedef for the typical usage of timer. Uses a UTC clock. 
 
 
   typedef basic_deadline_timer< boost::posix_time::ptime > deadline_timer;
