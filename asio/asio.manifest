@@ -2755,6 +2755,10 @@
 /src/examples/http/server/server.cpp
 /src/examples/http/server/server.hpp
 /src/examples/http/server/win_main.cpp
+/src/examples/icmp/
+/src/examples/icmp/icmp_header.hpp
+/src/examples/icmp/ipv4_header.hpp
+/src/examples/icmp/ping.cpp
 /src/examples/invocation/
 /src/examples/invocation/prioritised_handlers.cpp
 /src/examples/iostreams/
