@@ -25,11 +25,19 @@
 #include "asio/io_service.hpp"
 #include "asio/time_traits.hpp"
 #include "asio/detail/deadline_timer_service.hpp"
-#include "asio/detail/epoll_reactor.hpp"
-#include "asio/detail/kqueue_reactor.hpp"
-#include "asio/detail/select_reactor.hpp"
 #include "asio/detail/service_base.hpp"
-#include "asio/detail/win_iocp_io_service.hpp"
+
+#if defined(ASIO_HAS_IOCP)
+# include "asio/detail/win_iocp_io_service.hpp"
+#elif defined(ASIO_HAS_EPOLL)
+# include "asio/detail/epoll_reactor.hpp"
+#elif defined(ASIO_HAS_KQUEUE)
+# include "asio/detail/kqueue_reactor.hpp"
+#elif defined(ASIO_HAS_DEV_POLL)
+# include "asio/detail/dev_poll_reactor.hpp"
+#else
+# include "asio/detail/select_reactor.hpp"
+#endif
 
 namespace asio {
 
