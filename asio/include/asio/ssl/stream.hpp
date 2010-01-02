@@ -22,7 +22,7 @@
 #include <cstddef>
 #include <boost/config.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/type_traits.hpp>
+#include <boost/type_traits/remove_reference.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
