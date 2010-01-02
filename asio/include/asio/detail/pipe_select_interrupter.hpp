@@ -78,12 +78,17 @@ public:
   // Reset the select interrupt. Returns true if the call was interrupted.
   bool reset()
   {
-    char data[1024];
-    int bytes_read = ::read(read_descriptor_, data, sizeof(data));
-    bool was_interrupted = (bytes_read > 0);
-    while (bytes_read == sizeof(data))
-      bytes_read = ::read(read_descriptor_, data, sizeof(data));
-    return was_interrupted;
+    for (;;)
+    {
+      char data[1024];
+      int bytes_read = ::read(read_descriptor_, data, sizeof(data));
+      if (bytes_read < 0 && errno == EINTR)
+        continue;
+      bool was_interrupted = (bytes_read > 0);
+      while (bytes_read == sizeof(data))
+        bytes_read = ::read(read_descriptor_, data, sizeof(data));
+      return was_interrupted;
+    }
   }
 
   // Get the read descriptor to be passed to select.

@@ -347,16 +347,23 @@ public:
             asio::buffer_size(buffer));
       }
 
-      // Write the data.
-      int bytes = descriptor_ops::gather_write(descriptor_, bufs, i, ec);
+      for (;;)
+      {
+        // Write the data.
+        int bytes = descriptor_ops::gather_write(descriptor_, bufs, i, ec);
 
-      // Check if we need to run the operation again.
-      if (ec == asio::error::would_block
-          || ec == asio::error::try_again)
-        return false;
+        // Retry operation if interrupted by signal.
+        if (ec == asio::error::interrupted)
+          continue;
 
-      bytes_transferred = (bytes < 0 ? 0 : bytes);
-      return true;
+        // Check if we need to run the operation again.
+        if (ec == asio::error::would_block
+            || ec == asio::error::try_again)
+          return false;
+
+        bytes_transferred = (bytes < 0 ? 0 : bytes);
+        return true;
+      }
     }
 
     void complete(const asio::error_code& ec,
@@ -599,18 +606,25 @@ public:
             asio::buffer_size(buffer));
       }
 
-      // Read some data.
-      int bytes = descriptor_ops::scatter_read(descriptor_, bufs, i, ec);
-      if (bytes == 0)
-        ec = asio::error::eof;
+      for (;;)
+      {
+        // Read some data.
+        int bytes = descriptor_ops::scatter_read(descriptor_, bufs, i, ec);
+        if (bytes == 0)
+          ec = asio::error::eof;
 
-      // Check if we need to run the operation again.
-      if (ec == asio::error::would_block
-          || ec == asio::error::try_again)
-        return false;
+        // Retry operation if interrupted by signal.
+        if (ec == asio::error::interrupted)
+          continue;
 
-      bytes_transferred = (bytes < 0 ? 0 : bytes);
-      return true;
+        // Check if we need to run the operation again.
+        if (ec == asio::error::would_block
+            || ec == asio::error::try_again)
+          return false;
+
+        bytes_transferred = (bytes < 0 ? 0 : bytes);
+        return true;
+      }
     }
 
     void complete(const asio::error_code& ec,

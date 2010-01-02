@@ -441,9 +441,6 @@ private:
     lock.lock();
     wait_in_progress_ = false;
 
-    // Block signals while performing operations.
-    asio::detail::signal_blocker sb;
-
     // Dispatch the waiting events.
     for (int i = 0; i < num_events; ++i)
     {
