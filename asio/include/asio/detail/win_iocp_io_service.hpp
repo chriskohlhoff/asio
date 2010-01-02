@@ -318,7 +318,7 @@ public:
   void dispatch(Handler handler)
   {
     if (call_stack<win_iocp_io_service>::contains(this))
-      asio_handler_invoke_helpers::invoke(handler, &handler);
+      asio_handler_invoke_helpers::invoke(handler, handler);
     else
       post(handler);
   }
@@ -683,7 +683,7 @@ private:
       ptr.reset();
 
       // Make the upcall.
-      asio_handler_invoke_helpers::invoke(handler, &handler);
+      asio_handler_invoke_helpers::invoke(handler, handler);
     }
 
     static void destroy_impl(operation* op)

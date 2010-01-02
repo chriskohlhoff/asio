@@ -143,6 +143,8 @@ EXAMPLE_EXES = \
 	examples\iostreams\daytime_server.exe \
 	examples\multicast\receiver.exe \
 	examples\multicast\sender.exe \
+	examples\porthopper\client.exe \
+	examples\porthopper\server.exe \
 	examples\services\daytime_client.exe \
 	examples\socks4\sync_client.exe \
 	examples\timeouts\accept_timeout.exe \
@@ -230,6 +232,9 @@ check: $(UNIT_TEST_EXES)
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
 
 {examples\multicast}.cpp{examples\multicast}.exe:
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+
+{examples\porthopper}.cpp{examples\porthopper}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
 
 {examples\socks4}.cpp{examples\socks4}.exe:

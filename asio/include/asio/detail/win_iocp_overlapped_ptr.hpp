@@ -172,7 +172,7 @@ private:
 
       // Make the upcall.
       asio_handler_invoke_helpers::invoke(
-          bind_handler(handler, ec, bytes_transferred), &handler);
+          bind_handler(handler, ec, bytes_transferred), handler);
     }
 
     static void destroy_impl(win_iocp_io_service::operation* op)

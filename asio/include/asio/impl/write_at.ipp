@@ -166,7 +166,7 @@ namespace detail
         CompletionCondition, WriteHandler>* this_handler)
   {
     return asio_handler_alloc_helpers::allocate(
-        size, &this_handler->handler_);
+        size, this_handler->handler_);
   }
 
   template <typename AsyncRandomAccessWriteDevice, typename ConstBufferSequence,
@@ -176,7 +176,7 @@ namespace detail
         CompletionCondition, WriteHandler>* this_handler)
   {
     asio_handler_alloc_helpers::deallocate(
-        pointer, size, &this_handler->handler_);
+        pointer, size, this_handler->handler_);
   }
 
   template <typename Function, typename AsyncRandomAccessWriteDevice,
@@ -187,7 +187,7 @@ namespace detail
         CompletionCondition, WriteHandler>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
-        function, &this_handler->handler_);
+        function, this_handler->handler_);
   }
 } // namespace detail
 
@@ -260,7 +260,7 @@ namespace detail
         Allocator, WriteHandler>* this_handler)
   {
     return asio_handler_alloc_helpers::allocate(
-        size, &this_handler->handler_);
+        size, this_handler->handler_);
   }
 
   template <typename AsyncRandomAccessWriteDevice, typename Allocator,
@@ -270,7 +270,7 @@ namespace detail
         Allocator, WriteHandler>* this_handler)
   {
     asio_handler_alloc_helpers::deallocate(
-        pointer, size, &this_handler->handler_);
+        pointer, size, this_handler->handler_);
   }
 
   template <typename Function, typename AsyncRandomAccessWriteDevice,
@@ -280,7 +280,7 @@ namespace detail
         Allocator, WriteHandler>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
-        function, &this_handler->handler_);
+        function, this_handler->handler_);
   }
 } // namespace detail
 

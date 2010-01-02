@@ -53,7 +53,7 @@ inline void* asio_handler_allocate(std::size_t size,
     binder1<Handler, Arg1>* this_handler)
 {
   return asio_handler_alloc_helpers::allocate(
-      size, &this_handler->handler_);
+      size, this_handler->handler_);
 }
 
 template <typename Handler, typename Arg1>
@@ -61,7 +61,7 @@ inline void asio_handler_deallocate(void* pointer, std::size_t size,
     binder1<Handler, Arg1>* this_handler)
 {
   asio_handler_alloc_helpers::deallocate(
-      pointer, size, &this_handler->handler_);
+      pointer, size, this_handler->handler_);
 }
 
 template <typename Function, typename Handler, typename Arg1>
@@ -69,7 +69,7 @@ inline void asio_handler_invoke(const Function& function,
     binder1<Handler, Arg1>* this_handler)
 {
   asio_handler_invoke_helpers::invoke(
-      function, &this_handler->handler_);
+      function, this_handler->handler_);
 }
 
 template <typename Handler, typename Arg1>
@@ -111,7 +111,7 @@ inline void* asio_handler_allocate(std::size_t size,
     binder2<Handler, Arg1, Arg2>* this_handler)
 {
   return asio_handler_alloc_helpers::allocate(
-      size, &this_handler->handler_);
+      size, this_handler->handler_);
 }
 
 template <typename Handler, typename Arg1, typename Arg2>
@@ -119,7 +119,7 @@ inline void asio_handler_deallocate(void* pointer, std::size_t size,
     binder2<Handler, Arg1, Arg2>* this_handler)
 {
   asio_handler_alloc_helpers::deallocate(
-      pointer, size, &this_handler->handler_);
+      pointer, size, this_handler->handler_);
 }
 
 template <typename Function, typename Handler, typename Arg1, typename Arg2>
@@ -127,7 +127,7 @@ inline void asio_handler_invoke(const Function& function,
     binder2<Handler, Arg1, Arg2>* this_handler)
 {
   asio_handler_invoke_helpers::invoke(
-      function, &this_handler->handler_);
+      function, this_handler->handler_);
 }
 
 template <typename Handler, typename Arg1, typename Arg2>
@@ -172,7 +172,7 @@ inline void* asio_handler_allocate(std::size_t size,
     binder3<Handler, Arg1, Arg2, Arg3>* this_handler)
 {
   return asio_handler_alloc_helpers::allocate(
-      size, &this_handler->handler_);
+      size, this_handler->handler_);
 }
 
 template <typename Handler, typename Arg1, typename Arg2, typename Arg3>
@@ -180,7 +180,7 @@ inline void asio_handler_deallocate(void* pointer, std::size_t size,
     binder3<Handler, Arg1, Arg2, Arg3>* this_handler)
 {
   asio_handler_alloc_helpers::deallocate(
-      pointer, size, &this_handler->handler_);
+      pointer, size, this_handler->handler_);
 }
 
 template <typename Function, typename Handler, typename Arg1, typename Arg2,
@@ -189,7 +189,7 @@ inline void asio_handler_invoke(const Function& function,
     binder3<Handler, Arg1, Arg2, Arg3>* this_handler)
 {
   asio_handler_invoke_helpers::invoke(
-      function, &this_handler->handler_);
+      function, this_handler->handler_);
 }
 
 template <typename Handler, typename Arg1, typename Arg2, typename Arg3>
@@ -238,7 +238,7 @@ inline void* asio_handler_allocate(std::size_t size,
     binder4<Handler, Arg1, Arg2, Arg3, Arg4>* this_handler)
 {
   return asio_handler_alloc_helpers::allocate(
-      size, &this_handler->handler_);
+      size, this_handler->handler_);
 }
 
 template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
@@ -247,7 +247,7 @@ inline void asio_handler_deallocate(void* pointer, std::size_t size,
     binder4<Handler, Arg1, Arg2, Arg3, Arg4>* this_handler)
 {
   asio_handler_alloc_helpers::deallocate(
-      pointer, size, &this_handler->handler_);
+      pointer, size, this_handler->handler_);
 }
 
 template <typename Function, typename Handler, typename Arg1, typename Arg2,
@@ -256,7 +256,7 @@ inline void asio_handler_invoke(const Function& function,
     binder4<Handler, Arg1, Arg2, Arg3, Arg4>* this_handler)
 {
   asio_handler_invoke_helpers::invoke(
-      function, &this_handler->handler_);
+      function, this_handler->handler_);
 }
 
 template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
@@ -310,7 +310,7 @@ inline void* asio_handler_allocate(std::size_t size,
     binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>* this_handler)
 {
   return asio_handler_alloc_helpers::allocate(
-      size, &this_handler->handler_);
+      size, this_handler->handler_);
 }
 
 template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
@@ -319,7 +319,7 @@ inline void asio_handler_deallocate(void* pointer, std::size_t size,
     binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>* this_handler)
 {
   asio_handler_alloc_helpers::deallocate(
-      pointer, size, &this_handler->handler_);
+      pointer, size, this_handler->handler_);
 }
 
 template <typename Function, typename Handler, typename Arg1, typename Arg2,
@@ -328,7 +328,7 @@ inline void asio_handler_invoke(const Function& function,
     binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>* this_handler)
 {
   asio_handler_invoke_helpers::invoke(
-      function, &this_handler->handler_);
+      function, this_handler->handler_);
 }
 
 template <typename Handler, typename Arg1, typename Arg2, typename Arg3,

@@ -788,7 +788,7 @@ public:
 
       // Call the handler.
       asio_handler_invoke_helpers::invoke(
-          detail::bind_handler(handler, ec, bytes_transferred), &handler);
+          detail::bind_handler(handler, ec, bytes_transferred), handler);
     }
 
     static void destroy_impl(operation* op)
@@ -1063,7 +1063,7 @@ public:
 
       // Call the handler.
       asio_handler_invoke_helpers::invoke(
-          detail::bind_handler(handler, ec, bytes_transferred), &handler);
+          detail::bind_handler(handler, ec, bytes_transferred), handler);
     }
 
     static void destroy_impl(operation* op)
@@ -1332,7 +1332,7 @@ public:
 
       // Call the handler.
       asio_handler_invoke_helpers::invoke(
-          detail::bind_handler(handler, ec, bytes_transferred), &handler);
+          detail::bind_handler(handler, ec, bytes_transferred), handler);
     }
 
     static void destroy_impl(operation* op)
@@ -1659,7 +1659,7 @@ public:
 
       // Call the handler.
       asio_handler_invoke_helpers::invoke(
-          detail::bind_handler(handler, ec, bytes_transferred), &handler);
+          detail::bind_handler(handler, ec, bytes_transferred), handler);
     }
 
     static void destroy_impl(operation* op)
@@ -2020,7 +2020,7 @@ public:
       asio::error_code ec(last_error,
           asio::error::get_system_category());
       asio_handler_invoke_helpers::invoke(
-          detail::bind_handler(handler, ec), &handler);
+          detail::bind_handler(handler, ec), handler);
     }
 
     static void destroy_impl(operation* op)

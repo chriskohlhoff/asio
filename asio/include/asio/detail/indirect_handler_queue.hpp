@@ -235,7 +235,7 @@ private:
       ptr.reset();
 
       // Make the upcall.
-      asio_handler_invoke_helpers::invoke(handler, &handler);
+      asio_handler_invoke_helpers::invoke(handler, handler);
     }
 
     static void do_destroy(handler* base)
