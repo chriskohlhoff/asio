@@ -17,7 +17,8 @@
 // Test that header file is self-contained.
 #include "asio/serial_port_base.hpp"
 
-#include "asio.hpp"
+#include "asio/io_service.hpp"
+#include "asio/serial_port.hpp"
 #include "unit_test.hpp"
 
 //------------------------------------------------------------------------------

@@ -16,7 +16,6 @@
 // Test that header file is self-contained.
 #include "asio/posix/stream_descriptor_service.hpp"
 
-#include "asio.hpp"
 #include "../unit_test.hpp"
 
 test_suite* init_unit_test_suite(int, char*[])

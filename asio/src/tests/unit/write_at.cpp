@@ -19,7 +19,8 @@
 #include <boost/bind.hpp>
 #include <boost/noncopyable.hpp>
 #include <cstring>
-#include "asio.hpp"
+#include "asio/io_service.hpp"
+#include "asio/placeholders.hpp"
 #include "unit_test.hpp"
 
 using namespace std; // For memcmp, memcpy and memset.

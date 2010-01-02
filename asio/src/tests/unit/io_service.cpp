@@ -18,7 +18,8 @@
 
 #include <sstream>
 #include <boost/bind.hpp>
-#include "asio.hpp"
+#include "asio/deadline_timer.hpp"
+#include "asio/thread.hpp"
 #include "unit_test.hpp"
 
 using namespace asio;

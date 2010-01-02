@@ -16,7 +16,7 @@
 // Test that header file is self-contained.
 #include "asio/buffers_iterator.hpp"
 
-#include "asio.hpp"
+#include "asio/buffer.hpp"
 #include "unit_test.hpp"
 
 //------------------------------------------------------------------------------

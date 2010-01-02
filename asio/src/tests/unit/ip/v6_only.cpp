@@ -16,7 +16,9 @@
 // Test that header file is self-contained.
 #include "asio/ip/v6_only.hpp"
 
-#include "asio.hpp"
+#include "asio/io_service.hpp"
+#include "asio/ip/tcp.hpp"
+#include "asio/ip/udp.hpp"
 #include "../unit_test.hpp"
 
 //------------------------------------------------------------------------------

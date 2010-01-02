@@ -16,7 +16,8 @@
 // Test that header file is self-contained.
 #include "asio/ip/multicast.hpp"
 
-#include "asio.hpp"
+#include "asio/io_service.hpp"
+#include "asio/ip/udp.hpp"
 #include "../unit_test.hpp"
 
 //------------------------------------------------------------------------------

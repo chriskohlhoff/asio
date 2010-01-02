@@ -16,7 +16,9 @@
 // Test that header file is self-contained.
 #include "asio/local/connect_pair.hpp"
 
-#include "asio.hpp"
+#include "asio/io_service.hpp"
+#include "asio/local/datagram_protocol.hpp"
+#include "asio/local/stream_protocol.hpp"
 #include "../unit_test.hpp"
 
 //------------------------------------------------------------------------------

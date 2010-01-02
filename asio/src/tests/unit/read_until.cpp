@@ -19,7 +19,9 @@
 #include <boost/bind.hpp>
 #include <boost/noncopyable.hpp>
 #include <cstring>
-#include "asio.hpp"
+#include "asio/io_service.hpp"
+#include "asio/placeholders.hpp"
+#include "asio/streambuf.hpp"
 #include "unit_test.hpp"
 
 class test_stream

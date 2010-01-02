@@ -16,7 +16,7 @@
 // Test that header file is self-contained.
 #include "asio/windows/overlapped_ptr.hpp"
 
-#include "asio.hpp"
+#include "asio/io_service.hpp"
 #include "../unit_test.hpp"
 
 //------------------------------------------------------------------------------

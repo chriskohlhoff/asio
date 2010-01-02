@@ -16,7 +16,7 @@
 // Test that header file is self-contained.
 #include "asio/windows/stream_handle.hpp"
 
-#include "asio.hpp"
+#include "asio/io_service.hpp"
 #include "../unit_test.hpp"
 
 //------------------------------------------------------------------------------
