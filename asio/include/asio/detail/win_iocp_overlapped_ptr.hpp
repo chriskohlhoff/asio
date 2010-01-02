@@ -91,6 +91,9 @@ public:
   // Release ownership of the OVERLAPPED object.
   OVERLAPPED* release()
   {
+    if (ptr_)
+      ptr_->on_pending();
+
     OVERLAPPED* tmp = ptr_;
     ptr_ = 0;
     return tmp;
@@ -103,8 +106,7 @@ public:
     if (ptr_)
     {
       ptr_->ec_ = ec;
-      ptr_->io_service_.post_completion(ptr_, 0,
-          static_cast<DWORD>(bytes_transferred));
+      ptr_->on_immediate_completion(0, static_cast<DWORD>(bytes_transferred));
       ptr_ = 0;
     }
   }

@@ -822,13 +822,6 @@ public:
   void async_send(implementation_type& impl, const ConstBufferSequence& buffers,
       socket_base::message_flags flags, Handler handler)
   {
-    if (!is_open(impl))
-    {
-      this->get_io_service().post(bind_handler(handler,
-            asio::error::bad_descriptor, 0));
-      return;
-    }
-
 #if defined(ASIO_ENABLE_CANCELIO)
     // Update the ID of the thread from which cancellation is safe.
     if (impl.safe_cancellation_thread_id_ == 0)
@@ -843,6 +836,13 @@ public:
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr, iocp_service_,
         impl.cancel_token_, buffers, handler);
+
+    if (!is_open(impl))
+    {
+      ptr.get()->on_immediate_completion(WSAEBADF, 0);
+      ptr.release();
+      return;
+    }
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -862,10 +862,8 @@ public:
     // A request to receive 0 bytes on a stream socket is a no-op.
     if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
     {
-      asio::io_service::work work(this->get_io_service());
-      ptr.reset();
-      asio::error_code error;
-      iocp_service_.post(bind_handler(handler, error, 0));
+      ptr.get()->on_immediate_completion(0, 0);
+      ptr.release();
       return;
     }
 
@@ -878,14 +876,12 @@ public:
     // Check if the operation completed immediately.
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
-      asio::io_service::work work(this->get_io_service());
-      ptr.reset();
-      asio::error_code ec(last_error,
-          asio::error::get_system_category());
-      iocp_service_.post(bind_handler(handler, ec, bytes_transferred));
+      ptr.get()->on_immediate_completion(last_error, bytes_transferred);
+      ptr.release();
     }
     else
     {
+      ptr.get()->on_pending();
       ptr.release();
     }
   }
@@ -1101,13 +1097,6 @@ public:
       const ConstBufferSequence& buffers, const endpoint_type& destination,
       socket_base::message_flags flags, Handler handler)
   {
-    if (!is_open(impl))
-    {
-      this->get_io_service().post(bind_handler(handler,
-            asio::error::bad_descriptor, 0));
-      return;
-    }
-
 #if defined(ASIO_ENABLE_CANCELIO)
     // Update the ID of the thread from which cancellation is safe.
     if (impl.safe_cancellation_thread_id_ == 0)
@@ -1121,6 +1110,13 @@ public:
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr, iocp_service_, buffers, handler);
+
+    if (!is_open(impl))
+    {
+      ptr.get()->on_immediate_completion(WSAEBADF, 0);
+      ptr.release();
+      return;
+    }
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -1144,14 +1140,12 @@ public:
     // Check if the operation completed immediately.
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
-      asio::io_service::work work(this->get_io_service());
-      ptr.reset();
-      asio::error_code ec(last_error,
-          asio::error::get_system_category());
-      iocp_service_.post(bind_handler(handler, ec, bytes_transferred));
+      ptr.get()->on_immediate_completion(last_error, bytes_transferred);
+      ptr.release();
     }
     else
     {
+      ptr.get()->on_pending();
       ptr.release();
     }
   }
@@ -1374,13 +1368,6 @@ public:
       const MutableBufferSequence& buffers,
       socket_base::message_flags flags, Handler handler)
   {
-    if (!is_open(impl))
-    {
-      this->get_io_service().post(bind_handler(handler,
-            asio::error::bad_descriptor, 0));
-      return;
-    }
-
 #if defined(ASIO_ENABLE_CANCELIO)
     // Update the ID of the thread from which cancellation is safe.
     if (impl.safe_cancellation_thread_id_ == 0)
@@ -1396,6 +1383,13 @@ public:
     int protocol_type = impl.protocol_.type();
     handler_ptr<alloc_traits> ptr(raw_ptr, protocol_type,
         iocp_service_, impl.cancel_token_, buffers, handler);
+
+    if (!is_open(impl))
+    {
+      ptr.get()->on_immediate_completion(WSAEBADF, 0);
+      ptr.release();
+      return;
+    }
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -1414,10 +1408,8 @@ public:
     // A request to receive 0 bytes on a stream socket is a no-op.
     if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
     {
-      asio::io_service::work work(this->get_io_service());
-      ptr.reset();
-      asio::error_code error;
-      iocp_service_.post(bind_handler(handler, error, 0));
+      ptr.get()->on_immediate_completion(0, 0);
+      ptr.release();
       return;
     }
 
@@ -1429,14 +1421,12 @@ public:
     DWORD last_error = ::WSAGetLastError();
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
-      asio::io_service::work work(this->get_io_service());
-      ptr.reset();
-      asio::error_code ec(last_error,
-          asio::error::get_system_category());
-      iocp_service_.post(bind_handler(handler, ec, bytes_transferred));
+      ptr.get()->on_immediate_completion(last_error, bytes_transferred);
+      ptr.release();
     }
     else
     {
+      ptr.get()->on_pending();
       ptr.release();
     }
   }
@@ -1481,14 +1471,12 @@ public:
       DWORD last_error = ::WSAGetLastError();
       if (result != 0 && last_error != WSA_IO_PENDING)
       {
-        asio::io_service::work work(this->get_io_service());
-        ptr.reset();
-        asio::error_code ec(last_error,
-            asio::error::get_system_category());
-        iocp_service_.post(bind_handler(handler, ec, bytes_transferred));
+        ptr.get()->on_immediate_completion(last_error, bytes_transferred);
+        ptr.release();
       }
       else
       {
+        ptr.get()->on_pending();
         ptr.release();
       }
     }
@@ -1709,13 +1697,6 @@ public:
       const MutableBufferSequence& buffers, endpoint_type& sender_endp,
       socket_base::message_flags flags, Handler handler)
   {
-    if (!is_open(impl))
-    {
-      this->get_io_service().post(bind_handler(handler,
-            asio::error::bad_descriptor, 0));
-      return;
-    }
-
 #if defined(ASIO_ENABLE_CANCELIO)
     // Update the ID of the thread from which cancellation is safe.
     if (impl.safe_cancellation_thread_id_ == 0)
@@ -1731,6 +1712,13 @@ public:
     int protocol_type = impl.protocol_.type();
     handler_ptr<alloc_traits> ptr(raw_ptr, protocol_type,
         iocp_service_, sender_endp, buffers, handler);
+
+    if (!is_open(impl))
+    {
+      ptr.get()->on_immediate_completion(WSAEBADF, 0);
+      ptr.release();
+      return;
+    }
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -1753,14 +1741,12 @@ public:
     DWORD last_error = ::WSAGetLastError();
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
-      asio::io_service::work work(this->get_io_service());
-      ptr.reset();
-      asio::error_code ec(last_error,
-          asio::error::get_system_category());
-      iocp_service_.post(bind_handler(handler, ec, bytes_transferred));
+      ptr.get()->on_immediate_completion(last_error, bytes_transferred);
+      ptr.release();
     }
     else
     {
+      ptr.get()->on_pending();
       ptr.release();
     }
   }
@@ -1924,11 +1910,7 @@ public:
           && !ptr.get()->enable_connection_aborted_)
       {
         // Reset OVERLAPPED structure.
-        ptr.get()->Internal = 0;
-        ptr.get()->InternalHigh = 0;
-        ptr.get()->Offset = 0;
-        ptr.get()->OffsetHigh = 0;
-        ptr.get()->hEvent = 0;
+        ptr.get()->reset();
 
         // Create a new socket for the next connection, since the AcceptEx call
         // fails with WSAEINVAL if we try to reuse the same socket.
@@ -1953,7 +1935,7 @@ public:
                 || last_error == WSAECONNABORTED)
             {
               // Post this handler so that operation will be restarted again.
-              ptr.get()->io_service_.post_completion(ptr.get(), last_error, 0);
+              ptr.get()->on_immediate_completion(last_error, 0);
               ptr.release();
               return;
             }
@@ -1965,6 +1947,7 @@ public:
           else
           {
             // Asynchronous operation has been successfully restarted.
+            ptr.get()->on_pending();
             ptr.release();
             return;
           }
@@ -2140,7 +2123,7 @@ public:
         // Post handler so that operation will be restarted again. We do not
         // perform the AcceptEx again here to avoid the possibility of starving
         // other handlers.
-        iocp_service_.post_completion(ptr.get(), last_error, 0);
+        ptr.get()->on_immediate_completion(last_error, 0);
         ptr.release();
       }
       else
@@ -2154,6 +2137,7 @@ public:
     }
     else
     {
+      ptr.get()->on_pending();
       ptr.release();
     }
   }
