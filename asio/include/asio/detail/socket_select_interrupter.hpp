@@ -71,6 +71,11 @@ public:
       boost::throw_exception(e);
     }
 
+    // Some broken firewalls on Windows will intermittently cause getsockname to
+    // return 0.0.0.0 when the socket is actually bound to 127.0.0.1. We
+    // explicitly specify the target address here to work around this problem.
+    addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+
     if (socket_ops::listen(acceptor.get(),
           SOMAXCONN, ec) == socket_error_retval)
     {
