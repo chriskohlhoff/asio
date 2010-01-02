@@ -1387,8 +1387,9 @@ inline int gai_echeck(const char* host, const char* service,
     break;
   case AF_INET:
   case AF_INET6:
-    if (socktype != 0 && socktype != SOCK_STREAM && socktype != SOCK_DGRAM)
-      return EAI_SOCKTYPE;
+    if (service != 0 && service[0] != '\0')
+      if (socktype != 0 && socktype != SOCK_STREAM && socktype != SOCK_DGRAM)
+        return EAI_SOCKTYPE;
     break;
   default:
     return EAI_FAMILY;
