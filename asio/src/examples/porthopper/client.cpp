@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
     control_socket.connect(remote_endpoint);
 
     // Create a datagram socket to receive data from the server.
-    shared_ptr<udp::socket> data_socket(
+    boost::shared_ptr<udp::socket> data_socket(
         new udp::socket(io_service, udp::endpoint(udp::v4(), 0)));
 
     // Determine what port we will receive data on.
@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
       std::cout << " Starting renegotiation";
 
       // Create the new data socket.
-      shared_ptr<udp::socket> new_data_socket(
+      boost::shared_ptr<udp::socket> new_data_socket(
           new udp::socket(io_service, udp::endpoint(udp::v4(), 0)));
 
       // Determine the new port we will use to receive data.
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
               // We have successfully received a frame on the new data socket,
               // so we can close the old data socket. This will cancel any
               // outstanding receive operation on the old data socket.
-              lambda::var(data_socket) = shared_ptr<udp::socket>()
+              lambda::var(data_socket) = boost::shared_ptr<udp::socket>()
             ]
           ));
 
