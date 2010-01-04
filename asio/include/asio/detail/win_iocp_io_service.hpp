@@ -94,13 +94,13 @@ public:
         iocp_service_.post_completion(this, last_error_, bytes_transferred_);
     }
 
-    void on_immediate_completion(DWORD last_error, size_t bytes_transferred)
+    void on_immediate_completion(DWORD last_error, DWORD bytes_transferred)
     {
       ready_ = 1;
       iocp_service_.post_completion(this, last_error, bytes_transferred);
     }
 
-    bool on_completion(DWORD last_error, size_t bytes_transferred)
+    bool on_completion(DWORD last_error, DWORD bytes_transferred)
     {
       if (last_error_ == ~DWORD(0))
       {
@@ -133,7 +133,7 @@ public:
     win_iocp_io_service& iocp_service_;
     long ready_;
     DWORD last_error_;
-    std::size_t bytes_transferred_;
+    DWORD bytes_transferred_;
     invoke_func_type invoke_func_;
     destroy_func_type destroy_func_;
   };
