@@ -22,7 +22,7 @@
 #if defined(ASIO_HAS_IOCP)
 
 #include "asio/detail/push_options.hpp"
-#include <limits>
+#include <boost/limits.hpp>
 #include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 

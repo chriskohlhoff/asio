@@ -18,8 +18,8 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
-#include <limits>
 #include <boost/config.hpp>
+#include <boost/limits.hpp>
 #include "asio/detail/pop_options.hpp"
 
 namespace asio {

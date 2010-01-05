@@ -20,11 +20,11 @@
 #include "asio/detail/push_options.hpp"
 #include <algorithm>
 #include <cstring>
-#include <limits>
 #include <memory>
 #include <stdexcept>
 #include <streambuf>
 #include <vector>
+#include <boost/limits.hpp>
 #include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 
