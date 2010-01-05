@@ -59,7 +59,11 @@ void cancel_timer(asio::deadline_timer* t)
 
 ptime now()
 {
+#if defined(BOOST_DATE_TIME_HAS_HIGH_PRECISION_CLOCK)
   return microsec_clock::universal_time();
+#else // defined(BOOST_DATE_TIME_HAS_HIGH_PRECISION_CLOCK)
+  return second_clock::universal_time();
+#endif // defined(BOOST_DATE_TIME_HAS_HIGH_PRECISION_CLOCK)
 }
 
 void deadline_timer_test()

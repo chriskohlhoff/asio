@@ -42,7 +42,11 @@ struct time_traits<boost::posix_time::ptime>
   /// Get the current time.
   static time_type now()
   {
+#if defined(BOOST_DATE_TIME_HAS_HIGH_PRECISION_CLOCK)
     return boost::posix_time::microsec_clock::universal_time();
+#else // defined(BOOST_DATE_TIME_HAS_HIGH_PRECISION_CLOCK)
+    return boost::posix_time::second_clock::universal_time();
+#endif // defined(BOOST_DATE_TIME_HAS_HIGH_PRECISION_CLOCK)
   }
 
   /// Add a duration to a time.
