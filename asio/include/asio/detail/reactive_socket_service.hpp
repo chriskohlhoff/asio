@@ -274,12 +274,21 @@ public:
       return false;
     }
 
+#if defined(SIOCATMARK)
     asio::detail::ioctl_arg_type value = 0;
     socket_ops::ioctl(impl.socket_, SIOCATMARK, &value, ec);
-#if defined(ENOTTY)
+# if defined(ENOTTY)
     if (ec.value() == ENOTTY)
       ec = asio::error::not_socket;
-#endif // defined(ENOTTY)
+# endif // defined(ENOTTY)
+#else // defined(SIOCATMARK)
+    int value = sockatmark(impl.socket_);
+    if (value == -1)
+      ec = asio::error_code(errno,
+          asio::error::get_system_category());
+    else
+      ec = asio::error_code();
+#endif // defined(SIOCATMARK)
     return ec ? false : value != 0;
   }
 
