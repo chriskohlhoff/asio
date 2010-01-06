@@ -71,8 +71,10 @@ public:
   /// The UNIX domain acceptor type.
   typedef basic_socket_acceptor<stream_protocol> acceptor;
 
+#if !defined(BOOST_NO_IOSTREAM)
   /// The UNIX domain iostream type.
   typedef basic_socket_iostream<stream_protocol> iostream;
+#endif // !defined(BOOST_NO_IOSTREAM)
 };
 
 } // namespace local

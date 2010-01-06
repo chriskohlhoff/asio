@@ -169,6 +169,8 @@ template <typename SyncReadStream, typename MutableBufferSequence,
 std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition, asio::error_code& ec);
 
+#if !defined(BOOST_NO_IOSTREAM)
+
 /// Attempt to read a certain amount of data from a stream before returning.
 /**
  * This function is used to read a certain number of bytes of data from a
@@ -272,6 +274,8 @@ template <typename SyncReadStream, typename Allocator,
     typename CompletionCondition>
 std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition, asio::error_code& ec);
+
+#endif // !defined(BOOST_NO_IOSTREAM)
 
 /*@}*/
 /**
@@ -412,6 +416,8 @@ template <typename AsyncReadStream, typename MutableBufferSequence,
 void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition, ReadHandler handler);
 
+#if !defined(BOOST_NO_IOSTREAM)
+
 /// Start an asynchronous operation to read a certain amount of data from a
 /// stream.
 /**
@@ -514,6 +520,8 @@ template <typename AsyncReadStream, typename Allocator,
     typename CompletionCondition, typename ReadHandler>
 void async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition, ReadHandler handler);
+
+#endif // !defined(BOOST_NO_IOSTREAM)
 
 /*@}*/
 

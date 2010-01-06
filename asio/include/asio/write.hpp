@@ -168,6 +168,8 @@ template <typename SyncWriteStream, typename ConstBufferSequence,
 std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition, asio::error_code& ec);
 
+#if !defined(BOOST_NO_IOSTREAM)
+
 /// Write all of the supplied data to a stream before returning.
 /**
  * This function is used to write a certain number of bytes of data to a stream.
@@ -277,6 +279,8 @@ template <typename SyncWriteStream, typename Allocator,
     typename CompletionCondition>
 std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition, asio::error_code& ec);
+
+#endif // !defined(BOOST_NO_IOSTREAM)
 
 /*@}*/
 /**
@@ -410,6 +414,8 @@ template <typename AsyncWriteStream, typename ConstBufferSequence,
 void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition, WriteHandler handler);
 
+#if !defined(BOOST_NO_IOSTREAM)
+
 /// Start an asynchronous operation to write all of the supplied data to a
 /// stream.
 /**
@@ -508,6 +514,8 @@ template <typename AsyncWriteStream, typename Allocator,
     typename CompletionCondition, typename WriteHandler>
 void async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition, WriteHandler handler);
+
+#endif // !defined(BOOST_NO_IOSTREAM)
 
 /*@}*/
 

@@ -92,8 +92,10 @@ public:
   /// The TCP resolver type.
   typedef basic_resolver<tcp> resolver;
 
+#if !defined(BOOST_NO_IOSTREAM)
   /// The TCP iostream type.
   typedef basic_socket_iostream<tcp> iostream;
+#endif // !defined(BOOST_NO_IOSTREAM)
 
   /// Socket option for disabling the Nagle algorithm.
   /**

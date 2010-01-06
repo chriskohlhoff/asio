@@ -18,6 +18,10 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <boost/config.hpp>
+#if !defined(BOOST_NO_IOSTREAM)
+# include <iosfwd>
+#endif // !defined(BOOST_NO_IOSTREAM)
 #include <climits>
 #include <string>
 #include <stdexcept>
@@ -268,6 +272,8 @@ private:
   asio::detail::in4_addr_type addr_;
 };
 
+#if !defined(BOOST_NO_IOSTREAM)
+
 /// Output an address as a string.
 /**
  * Used to output a human-readable string for a specified address.
@@ -298,6 +304,8 @@ std::basic_ostream<Elem, Traits>& operator<<(
       os << os.widen(*i);
   return os;
 }
+
+#endif // !defined(BOOST_NO_IOSTREAM)
 
 } // namespace ip
 } // namespace asio

@@ -18,7 +18,10 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
-#include <iosfwd>
+#include <boost/config.hpp>
+#if !defined(BOOST_NO_IOSTREAM)
+# include <iosfwd>
+#endif // !defined(BOOST_NO_IOSTREAM)
 #include <string>
 #include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
@@ -249,6 +252,8 @@ private:
   asio::ip::address_v6 ipv6_address_;
 };
 
+#if !defined(BOOST_NO_IOSTREAM)
+
 /// Output an address as a string.
 /**
  * Used to output a human-readable string for a specified address.
@@ -268,6 +273,8 @@ std::basic_ostream<Elem, Traits>& operator<<(
   os << addr.to_string();
   return os;
 }
+
+#endif // !defined(BOOST_NO_IOSTREAM)
 
 } // namespace ip
 } // namespace asio

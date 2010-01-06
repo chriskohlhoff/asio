@@ -18,13 +18,16 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
+#include <boost/config.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/detail/workaround.hpp>
 #include <cstring>
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
-# include <ostream>
-#endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
-#include <sstream>
+#if !defined(BOOST_NO_IOSTREAM)
+# if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+#  include <ostream>
+# endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+# include <sstream>
+#endif // !defined(BOOST_NO_IOSTREAM)
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
@@ -296,6 +299,8 @@ private:
   } data_;
 };
 
+#if !defined(BOOST_NO_IOSTREAM)
+
 /// Output an endpoint as a string.
 /**
  * Used to output a human-readable string for a specified endpoint.
@@ -366,6 +371,8 @@ std::basic_ostream<Elem, Traits>& operator<<(
   return os;
 }
 #endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+
+#endif // !defined(BOOST_NO_IOSTREAM)
 
 } // namespace ip
 } // namespace asio
