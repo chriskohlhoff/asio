@@ -431,14 +431,12 @@ public:
 
   ~buffer_debug_check()
   {
-#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) \
-    && BOOST_WORKAROUND(BOOST_MSVC, < 1600)
-    // MSVC's string iterator checking may crash in a std::string::iterator
+#if BOOST_WORKAROUND(BOOST_MSVC, == 1400)
+    // MSVC 8's string iterator checking may crash in a std::string::iterator
     // object's destructor when the iterator points to an already-destroyed
     // std::string object, unless the iterator is cleared first.
     iter_ = Iterator();
-#endif // BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
-       // && BOOST_WORKAROUND(BOOST_MSVC, < 1600)
+#endif // BOOST_WORKAROUND(BOOST_MSVC, == 1400)
   }
 
   void operator()()
