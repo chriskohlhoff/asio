@@ -434,7 +434,6 @@ private:
           more_writes = write_op_queue_.has_operation(descriptor);
 
         if ((events[i].events & (POLLERR | POLLHUP)) != 0
-              && (events[i].events & ~(POLLERR | POLLHUP)) == 0
               && !more_except && !more_reads && !more_writes)
         {
           // If we have an event and no operations associated with the
