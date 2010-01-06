@@ -33,7 +33,8 @@ namespace asio_handler_alloc_helpers {
 template <typename Handler>
 inline void* allocate(std::size_t s, Handler& h)
 {
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564)) \
+  || BOOST_WORKAROUND(__GNUC__, < 3)
   return ::operator new(s);
 #else
   using namespace asio;
@@ -44,7 +45,8 @@ inline void* allocate(std::size_t s, Handler& h)
 template <typename Handler>
 inline void deallocate(void* p, std::size_t s, Handler& h)
 {
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564)) \
+  || BOOST_WORKAROUND(__GNUC__, < 3)
   ::operator delete(p);
 #else
   using namespace asio;

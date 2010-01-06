@@ -32,7 +32,8 @@ namespace asio_handler_invoke_helpers {
 template <typename Function, typename Context>
 inline void invoke(const Function& function, Context& context)
 {
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564)) \
+  || BOOST_WORKAROUND(__GNUC__, < 3)
   Function tmp(function);
   tmp();
 #else
