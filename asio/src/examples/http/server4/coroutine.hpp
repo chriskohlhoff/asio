@@ -36,7 +36,7 @@ private:
 
 #define CORO_REENTER(c) \
   switch (coroutine_ref _coro_value = c) \
-    if (_coro_value) \
+    case -1: if (_coro_value) \
     { \
       goto bail_out_of_coroutine; \
       bail_out_of_coroutine: \
@@ -54,7 +54,7 @@ private:
     else \
       switch (_coro_value ? 0 : 1) \
         for (;;) \
-          if (_coro_value) \
+          case 1: if (_coro_value) \
             goto bail_out_of_coroutine; \
           else case 0:
 

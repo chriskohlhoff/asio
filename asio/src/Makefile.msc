@@ -137,6 +137,7 @@ EXAMPLE_EXES = \
 	examples\http\server\http_server.exe \
 	examples\http\server2\http_server.exe \
 	examples\http\server3\http_server.exe \
+	examples\http\server4\http_server.exe \
 	examples\icmp\ping.exe \
 	examples\invocation\prioritised_handlers.exe \
 	examples\iostreams\daytime_client.exe \
@@ -319,6 +320,15 @@ examples\http\server3\http_server.exe: \
 		examples\http\server3\server.cpp \
 		examples\http\server3\win_main.cpp
 	cl -Fe$@ -Foexamples\http\server3\ $(CXXFLAGS) $(DEFINES) $** -link -opt:ref
+
+examples\http\server4\http_server.exe: \
+		examples\http\server4\file_handler.cpp \
+		examples\http\server4\mime_types.cpp \
+		examples\http\server4\reply.cpp \
+		examples\http\server4\request_parser.cpp \
+		examples\http\server4\server.cpp \
+		examples\http\server4\win_main.cpp
+	cl -Fe$@ -Foexamples\http\server4\ $(CXXFLAGS) $(DEFINES) $** -link -opt:ref
 
 examples\services\daytime_client.exe: \
 		examples\services\daytime_client.cpp \
