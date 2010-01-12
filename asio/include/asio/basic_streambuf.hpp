@@ -95,7 +95,7 @@ namespace asio {
  * asio::streambuf b;
  *
  * // reserve 512 bytes in output sequence
- * asio::streambuf::const_buffers_type bufs = b.prepare(512);
+ * asio::streambuf::mutable_buffers_type bufs = b.prepare(512);
  *
  * size_t n = sock.receive(bufs);
  *
