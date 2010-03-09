@@ -19,6 +19,7 @@
 
 #include "asio/buffer.hpp"
 #include "asio/completion_condition.hpp"
+#include "asio/detail/base_from_completion_cond.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/consuming_buffers.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
@@ -36,14 +37,14 @@ std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
   asio::detail::consuming_buffers<
     const_buffer, ConstBufferSequence> tmp(buffers);
   std::size_t total_transferred = 0;
-  tmp.set_max_size(detail::adapt_completion_condition_result(
+  tmp.prepare(detail::adapt_completion_condition_result(
         completion_condition(ec, total_transferred)));
   while (tmp.begin() != tmp.end())
   {
     std::size_t bytes_transferred = s.write_some(tmp, ec);
     tmp.consume(bytes_transferred);
     total_transferred += bytes_transferred;
-    tmp.set_max_size(detail::adapt_completion_condition_result(
+    tmp.prepare(detail::adapt_completion_condition_result(
           completion_condition(ec, total_transferred)));
   }
   return total_transferred;
@@ -110,51 +111,164 @@ namespace detail
 {
   template <typename AsyncWriteStream, typename ConstBufferSequence,
       typename CompletionCondition, typename WriteHandler>
-  class write_handler
+  class write_op
+    : detail::base_from_completion_cond<CompletionCondition>
   {
   public:
-    typedef asio::detail::consuming_buffers<
-      const_buffer, ConstBufferSequence> buffers_type;
-
-    write_handler(AsyncWriteStream& stream, const buffers_type& buffers,
+    write_op(AsyncWriteStream& stream, const ConstBufferSequence& buffers,
         CompletionCondition completion_condition, WriteHandler handler)
-      : stream_(stream),
+      : detail::base_from_completion_cond<
+          CompletionCondition>(completion_condition),
+        stream_(stream),
         buffers_(buffers),
         total_transferred_(0),
-        completion_condition_(completion_condition),
-        handler_(handler)
+        handler_(handler),
+        start_(true)
     {
     }
 
     void operator()(const asio::error_code& ec,
         std::size_t bytes_transferred)
     {
-      total_transferred_ += bytes_transferred;
-      buffers_.consume(bytes_transferred);
-      buffers_.set_max_size(detail::adapt_completion_condition_result(
-            completion_condition_(ec, total_transferred_)));
-      if (buffers_.begin() == buffers_.end())
+      switch (start_)
       {
+        case true: start_ = false;
+        buffers_.prepare(this->check(ec, total_transferred_));
+        for (;;)
+        {
+          stream_.async_write_some(buffers_, *this);
+          return; default:
+          total_transferred_ += bytes_transferred;
+          buffers_.consume(bytes_transferred);
+          buffers_.prepare(this->check(ec, total_transferred_));
+          if ((!ec && bytes_transferred == 0)
+              || buffers_.begin() == buffers_.end())
+            break;
+        }
+
         handler_(ec, total_transferred_);
-      }
-      else
-      {
-        stream_.async_write_some(buffers_, *this);
       }
     }
 
   //private:
     AsyncWriteStream& stream_;
-    buffers_type buffers_;
+    asio::detail::consuming_buffers<
+      const_buffer, ConstBufferSequence> buffers_;
     std::size_t total_transferred_;
-    CompletionCondition completion_condition_;
     WriteHandler handler_;
+    bool start_;
+  };
+
+  template <typename AsyncWriteStream,
+      typename CompletionCondition, typename WriteHandler>
+  class write_op<AsyncWriteStream, asio::mutable_buffers_1,
+      CompletionCondition, WriteHandler>
+    : detail::base_from_completion_cond<CompletionCondition>
+  {
+  public:
+    write_op(AsyncWriteStream& stream,
+        const asio::mutable_buffers_1& buffers,
+        CompletionCondition completion_condition,
+        WriteHandler handler)
+      : detail::base_from_completion_cond<
+          CompletionCondition>(completion_condition),
+        stream_(stream),
+        buffer_(buffers),
+        total_transferred_(0),
+        handler_(handler),
+        start_(true)
+    {
+    }
+
+    void operator()(const asio::error_code& ec,
+        std::size_t bytes_transferred)
+    {
+      std::size_t n = 0;
+      switch (start_)
+      {
+        case true: start_ = false;
+        n = this->check(ec, total_transferred_);
+        for (;;)
+        {
+          stream_.async_write_some(asio::buffer(
+                buffer_ + total_transferred_, n), *this);
+          return; default:
+          total_transferred_ += bytes_transferred;
+          if ((!ec && bytes_transferred == 0)
+              || (n = this->check(ec, total_transferred_)) == 0
+              || total_transferred_ == asio::buffer_size(buffer_))
+            break;
+        }
+
+        handler_(ec, total_transferred_);
+      }
+    }
+
+  //private:
+    AsyncWriteStream& stream_;
+    asio::mutable_buffer buffer_;
+    std::size_t total_transferred_;
+    WriteHandler handler_;
+    bool start_;
+  };
+
+  template <typename AsyncWriteStream,
+      typename CompletionCondition, typename WriteHandler>
+  class write_op<AsyncWriteStream, asio::const_buffers_1,
+      CompletionCondition, WriteHandler>
+    : detail::base_from_completion_cond<CompletionCondition>
+  {
+  public:
+    write_op(AsyncWriteStream& stream,
+        const asio::const_buffers_1& buffers,
+        CompletionCondition completion_condition,
+        WriteHandler handler)
+      : detail::base_from_completion_cond<
+          CompletionCondition>(completion_condition),
+        stream_(stream),
+        buffer_(buffers),
+        total_transferred_(0),
+        handler_(handler),
+        start_(true)
+    {
+    }
+
+    void operator()(const asio::error_code& ec,
+        std::size_t bytes_transferred)
+    {
+      std::size_t n = 0;
+      switch (start_)
+      {
+        case true: start_ = false;
+        n = this->check(ec, total_transferred_);
+        for (;;)
+        {
+          stream_.async_write_some(asio::buffer(
+                buffer_ + total_transferred_, n), *this);
+          return; default:
+          total_transferred_ += bytes_transferred;
+          if ((!ec && bytes_transferred == 0)
+              || (n = this->check(ec, total_transferred_)) == 0
+              || total_transferred_ == asio::buffer_size(buffer_))
+            break;
+        }
+
+        handler_(ec, total_transferred_);
+      }
+    }
+
+  //private:
+    AsyncWriteStream& stream_;
+    asio::const_buffer buffer_;
+    std::size_t total_transferred_;
+    WriteHandler handler_;
+    bool start_;
   };
 
   template <typename AsyncWriteStream, typename ConstBufferSequence,
       typename CompletionCondition, typename WriteHandler>
   inline void* asio_handler_allocate(std::size_t size,
-      write_handler<AsyncWriteStream, ConstBufferSequence,
+      write_op<AsyncWriteStream, ConstBufferSequence,
         CompletionCondition, WriteHandler>* this_handler)
   {
     return asio_handler_alloc_helpers::allocate(
@@ -164,7 +278,7 @@ namespace detail
   template <typename AsyncWriteStream, typename ConstBufferSequence,
       typename CompletionCondition, typename WriteHandler>
   inline void asio_handler_deallocate(void* pointer, std::size_t size,
-      write_handler<AsyncWriteStream, ConstBufferSequence,
+      write_op<AsyncWriteStream, ConstBufferSequence,
         CompletionCondition, WriteHandler>* this_handler)
   {
     asio_handler_alloc_helpers::deallocate(
@@ -175,7 +289,7 @@ namespace detail
       typename ConstBufferSequence, typename CompletionCondition,
       typename WriteHandler>
   inline void asio_handler_invoke(const Function& function,
-      write_handler<AsyncWriteStream, ConstBufferSequence,
+      write_op<AsyncWriteStream, ConstBufferSequence,
         CompletionCondition, WriteHandler>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
@@ -188,24 +302,10 @@ template <typename AsyncWriteStream, typename ConstBufferSequence,
 inline void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition, WriteHandler handler)
 {
-  asio::detail::consuming_buffers<
-    const_buffer, ConstBufferSequence> tmp(buffers);
-
-  asio::error_code ec;
-  std::size_t total_transferred = 0;
-  tmp.set_max_size(detail::adapt_completion_condition_result(
-        completion_condition(ec, total_transferred)));
-  if (tmp.begin() == tmp.end())
-  {
-    s.get_io_service().post(detail::bind_handler(
-          handler, ec, total_transferred));
-    return;
-  }
-
-  s.async_write_some(tmp,
-      detail::write_handler<AsyncWriteStream, ConstBufferSequence,
-        CompletionCondition, WriteHandler>(
-          s, tmp, completion_condition, handler));
+  detail::write_op<AsyncWriteStream, ConstBufferSequence,
+    CompletionCondition, WriteHandler>(
+      s, buffers, completion_condition, handler)(
+        asio::error_code(), 0);
 }
 
 template <typename AsyncWriteStream, typename ConstBufferSequence,

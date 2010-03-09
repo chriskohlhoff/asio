@@ -37,7 +37,7 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d,
   asio::detail::consuming_buffers<
     const_buffer, ConstBufferSequence> tmp(buffers);
   std::size_t total_transferred = 0;
-  tmp.set_max_size(detail::adapt_completion_condition_result(
+  tmp.prepare(detail::adapt_completion_condition_result(
         completion_condition(ec, total_transferred)));
   while (tmp.begin() != tmp.end())
   {
@@ -45,7 +45,7 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d,
         offset + total_transferred, tmp, ec);
     tmp.consume(bytes_transferred);
     total_transferred += bytes_transferred;
-    tmp.set_max_size(detail::adapt_completion_condition_result(
+    tmp.prepare(detail::adapt_completion_condition_result(
           completion_condition(ec, total_transferred)));
   }
   return total_transferred;
@@ -141,7 +141,7 @@ namespace detail
     {
       total_transferred_ += bytes_transferred;
       buffers_.consume(bytes_transferred);
-      buffers_.set_max_size(detail::adapt_completion_condition_result(
+      buffers_.prepare(detail::adapt_completion_condition_result(
             completion_condition_(ec, total_transferred_)));
       if (buffers_.begin() == buffers_.end())
       {
@@ -206,7 +206,7 @@ inline void async_write_at(AsyncRandomAccessWriteDevice& d,
 
   asio::error_code ec;
   std::size_t total_transferred = 0;
-  tmp.set_max_size(detail::adapt_completion_condition_result(
+  tmp.prepare(detail::adapt_completion_condition_result(
         completion_condition(ec, total_transferred)));
   if (tmp.begin() == tmp.end())
   {

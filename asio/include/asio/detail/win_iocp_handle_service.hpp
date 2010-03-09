@@ -26,25 +26,22 @@
 #include <boost/cstdint.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/buffer.hpp"
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/detail/bind_handler.hpp"
+#include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/mutex.hpp"
+#include "asio/detail/operation.hpp"
 #include "asio/detail/win_iocp_io_service.hpp"
 
 namespace asio {
 namespace detail {
 
 class win_iocp_handle_service
-  : public asio::detail::service_base<win_iocp_handle_service>
 {
 public:
-  // Base class for all operations.
-  typedef win_iocp_io_service::operation operation;
-
   // The native type of a stream handle.
   typedef HANDLE native_type;
 
@@ -80,8 +77,7 @@ public:
   };
 
   win_iocp_handle_service(asio::io_service& io_service)
-    : asio::detail::service_base<win_iocp_handle_service>(io_service),
-      iocp_service_(asio::use_service<win_iocp_io_service>(io_service)),
+    : iocp_service_(asio::use_service<win_iocp_io_service>(io_service)),
       mutex_(),
       impl_list_(0)
   {
@@ -306,16 +302,9 @@ public:
       return 0;
     }
 
-    // Find first buffer of non-zero length.
-    asio::const_buffer buffer;
-    typename ConstBufferSequence::const_iterator iter = buffers.begin();
-    typename ConstBufferSequence::const_iterator end = buffers.end();
-    for (DWORD i = 0; iter != end; ++iter, ++i)
-    {
-      buffer = asio::const_buffer(*iter);
-      if (asio::buffer_size(buffer) != 0)
-        break;
-    }
+    asio::const_buffer buffer =
+      buffer_sequence_adapter<asio::const_buffer,
+        ConstBufferSequence>::first(buffers);
 
     // A request to write 0 bytes on a handle is a no-op.
     if (asio::buffer_size(buffer) == 0)
@@ -364,79 +353,48 @@ public:
   }
 
   template <typename ConstBufferSequence, typename Handler>
-  class write_operation
-    : public operation
+  class write_op : public operation
   {
   public:
-    write_operation(win_iocp_io_service& io_service,
-        const ConstBufferSequence& buffers, Handler handler)
-      : operation(io_service,
-          &write_operation<ConstBufferSequence, Handler>::do_completion_impl,
-          &write_operation<ConstBufferSequence, Handler>::destroy_impl),
-        work_(io_service.get_io_service()),
+    write_op(const ConstBufferSequence& buffers, Handler handler)
+      : operation(&write_op::do_complete),
         buffers_(buffers),
         handler_(handler)
     {
     }
 
-  private:
-    static void do_completion_impl(operation* op,
-        DWORD last_error, size_t bytes_transferred)
+    static void do_complete(io_service_impl* owner, operation* base,
+        asio::error_code ec, std::size_t bytes_transferred)
     {
       // Take ownership of the operation object.
-      typedef write_operation<ConstBufferSequence, Handler> op_type;
-      op_type* handler_op(static_cast<op_type*>(op));
-      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
-      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
+      write_op* o(static_cast<write_op*>(base));
+      typedef handler_alloc_traits<Handler, write_op> alloc_traits;
+      handler_ptr<alloc_traits> ptr(o->handler_, o);
 
-#if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
-      // Check whether buffers are still valid.
-      typename ConstBufferSequence::const_iterator iter
-        = handler_op->buffers_.begin();
-      typename ConstBufferSequence::const_iterator end
-        = handler_op->buffers_.end();
-      while (iter != end)
+      // Make the upcall if required.
+      if (owner)
       {
-        asio::const_buffer buffer(*iter);
-        asio::buffer_cast<const char*>(buffer);
-        ++iter;
-      }
+#if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
+        // Check whether buffers are still valid.
+        buffer_sequence_adapter<asio::const_buffer,
+            ConstBufferSequence>::validate(o->buffers_);
 #endif // defined(ASIO_ENABLE_BUFFER_DEBUGGING)
 
-      // Make a copy of the handler so that the memory can be deallocated before
-      // the upcall is made.
-      Handler handler(handler_op->handler_);
-
-      // Free the memory associated with the handler.
-      ptr.reset();
-
-      // Call the handler.
-      asio::error_code ec(last_error,
-          asio::error::get_system_category());
-      asio_handler_invoke_helpers::invoke(
-          bind_handler(handler, ec, bytes_transferred), handler);
+        // Make a copy of the handler so that the memory can be deallocated
+        // before the upcall is made. Even if we're not about to make an
+        // upcall, a sub-object of the handler may be the true owner of the
+        // memory associated with the handler. Consequently, a local copy of
+        // the handler is required to ensure that any owning sub-object remains
+        // valid until after we have deallocated the memory here.
+        detail::binder2<Handler, asio::error_code, std::size_t>
+          handler(o->handler_, ec, bytes_transferred);
+        ptr.reset();
+        asio::detail::fenced_block b;
+        asio_handler_invoke_helpers::invoke(handler, handler);
+      }
     }
 
-    static void destroy_impl(operation* op)
-    {
-      // Take ownership of the operation object.
-      typedef write_operation<ConstBufferSequence, Handler> op_type;
-      op_type* handler_op(static_cast<op_type*>(op));
-      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
-      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
-
-      // A sub-object of the handler may be the true owner of the memory
-      // associated with the handler. Consequently, a local copy of the handler
-      // is required to ensure that any owning sub-object remains valid until
-      // after we have deallocated the memory here.
-      Handler handler(handler_op->handler_);
-      (void)handler;
-
-      // Free the memory associated with the handler.
-      ptr.reset();
-    }
-
-    asio::io_service::work work_;
+  private:
     ConstBufferSequence buffers_;
     Handler handler_;
   };
@@ -456,65 +414,16 @@ public:
   void async_write_some_at(implementation_type& impl, boost::uint64_t offset,
       const ConstBufferSequence& buffers, Handler handler)
   {
-    // Update the ID of the thread from which cancellation is safe.
-    if (impl.safe_cancellation_thread_id_ == 0)
-      impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
-    else if (impl.safe_cancellation_thread_id_ != ::GetCurrentThreadId())
-      impl.safe_cancellation_thread_id_ = ~DWORD(0);
-
     // Allocate and construct an operation to wrap the handler.
-    typedef write_operation<ConstBufferSequence, Handler> value_type;
+    typedef write_op<ConstBufferSequence, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr, iocp_service_, buffers, handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr, buffers, handler);
 
-    if (!is_open(impl))
-    {
-      ptr.get()->on_immediate_completion(WSAEBADF, 0);
-      ptr.release();
-      return;
-    }
-
-    // Find first buffer of non-zero length.
-    asio::const_buffer buffer;
-    typename ConstBufferSequence::const_iterator iter = buffers.begin();
-    typename ConstBufferSequence::const_iterator end = buffers.end();
-    for (DWORD i = 0; iter != end; ++iter, ++i)
-    {
-      buffer = asio::const_buffer(*iter);
-      if (asio::buffer_size(buffer) != 0)
-        break;
-    }
-
-    // A request to write 0 bytes on a handle is a no-op.
-    if (asio::buffer_size(buffer) == 0)
-    {
-      ptr.get()->on_immediate_completion(0, 0);
-      ptr.release();
-      return;
-    }
-
-    // Write the data.
-    DWORD bytes_transferred = 0;
-    ptr.get()->Offset = offset & 0xFFFFFFFF;
-    ptr.get()->OffsetHigh = (offset >> 32) & 0xFFFFFFFF;
-    BOOL ok = ::WriteFile(impl.handle_,
-        asio::buffer_cast<LPCVOID>(buffer),
-        static_cast<DWORD>(asio::buffer_size(buffer)),
-        &bytes_transferred, ptr.get());
-    DWORD last_error = ::GetLastError();
-
-    // Check if the operation completed immediately.
-    if (!ok && last_error != ERROR_IO_PENDING)
-    {
-      ptr.get()->on_immediate_completion(last_error, bytes_transferred);
-      ptr.release();
-    }
-    else
-    {
-      ptr.get()->on_pending();
-      ptr.release();
-    }
+    start_write_op(impl, offset,
+        buffer_sequence_adapter<asio::const_buffer,
+          ConstBufferSequence>::first(buffers), ptr.get());
+    ptr.release();
   }
 
   // Read some data. Returns the number of bytes received.
@@ -536,16 +445,9 @@ public:
       return 0;
     }
     
-    // Find first buffer of non-zero length.
-    asio::mutable_buffer buffer;
-    typename MutableBufferSequence::const_iterator iter = buffers.begin();
-    typename MutableBufferSequence::const_iterator end = buffers.end();
-    for (DWORD i = 0; iter != end; ++iter, ++i)
-    {
-      buffer = asio::mutable_buffer(*iter);
-      if (asio::buffer_size(buffer) != 0)
-        break;
-    }
+    asio::mutable_buffer buffer =
+      buffer_sequence_adapter<asio::mutable_buffer,
+        MutableBufferSequence>::first(buffers);
 
     // A request to read 0 bytes on a stream handle is a no-op.
     if (asio::buffer_size(buffer) == 0)
@@ -608,89 +510,54 @@ public:
   }
 
   template <typename MutableBufferSequence, typename Handler>
-  class read_operation
-    : public operation
+  class read_op : public operation
   {
   public:
-    read_operation(win_iocp_io_service& io_service,
-        const MutableBufferSequence& buffers, Handler handler)
-      : operation(io_service,
-          &read_operation<
-            MutableBufferSequence, Handler>::do_completion_impl,
-          &read_operation<
-            MutableBufferSequence, Handler>::destroy_impl),
-        work_(io_service.get_io_service()),
+    read_op(const MutableBufferSequence& buffers, Handler handler)
+      : operation(&read_op::do_complete),
         buffers_(buffers),
         handler_(handler)
     {
     }
 
-  private:
-    static void do_completion_impl(operation* op,
-        DWORD last_error, size_t bytes_transferred)
+    static void do_complete(io_service_impl* owner, operation* base,
+        asio::error_code ec, std::size_t bytes_transferred)
     {
       // Take ownership of the operation object.
-      typedef read_operation<MutableBufferSequence, Handler> op_type;
-      op_type* handler_op(static_cast<op_type*>(op));
-      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
-      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
+      read_op* o(static_cast<read_op*>(base));
+      typedef handler_alloc_traits<Handler, read_op> alloc_traits;
+      handler_ptr<alloc_traits> ptr(o->handler_, o);
 
-#if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
-      // Check whether buffers are still valid.
-      typename MutableBufferSequence::const_iterator iter
-        = handler_op->buffers_.begin();
-      typename MutableBufferSequence::const_iterator end
-        = handler_op->buffers_.end();
-      while (iter != end)
+      // Make the upcall if required.
+      if (owner)
       {
-        asio::mutable_buffer buffer(*iter);
-        asio::buffer_cast<char*>(buffer);
-        ++iter;
-      }
+#if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
+        // Check whether buffers are still valid.
+        buffer_sequence_adapter<asio::mutable_buffer,
+            MutableBufferSequence>::validate(o->buffers_);
 #endif // defined(ASIO_ENABLE_BUFFER_DEBUGGING)
 
-      // Check for the end-of-file condition.
-      asio::error_code ec(last_error,
-          asio::error::get_system_category());
-      if (!ec && bytes_transferred == 0 || last_error == ERROR_HANDLE_EOF)
-      {
-        ec = asio::error::eof;
+        // Map non-portable errors to their portable counterparts.
+        if (ec.value() == ERROR_HANDLE_EOF)
+        {
+          ec = asio::error::eof;
+        }
+
+        // Make a copy of the handler so that the memory can be deallocated
+        // before the upcall is made. Even if we're not about to make an
+        // upcall, a sub-object of the handler may be the true owner of the
+        // memory associated with the handler. Consequently, a local copy of
+        // the handler is required to ensure that any owning sub-object remains
+        // valid until after we have deallocated the memory here.
+        detail::binder2<Handler, asio::error_code, std::size_t>
+          handler(o->handler_, ec, bytes_transferred);
+        ptr.reset();
+        asio::detail::fenced_block b;
+        asio_handler_invoke_helpers::invoke(handler, handler);
       }
-
-      // Make a copy of the handler so that the memory can be deallocated before
-      // the upcall is made.
-      Handler handler(handler_op->handler_);
-
-      // Free the memory associated with the handler.
-      ptr.reset();
-
-      // Call the handler.
-      asio_handler_invoke_helpers::invoke(
-        bind_handler(handler, ec, bytes_transferred), handler);
     }
 
-    static void destroy_impl(operation* op)
-    {
-      // Take ownership of the operation object.
-      typedef read_operation<MutableBufferSequence, Handler> op_type;
-      op_type* handler_op(static_cast<op_type*>(op));
-      typedef asio::detail::handler_alloc_traits<
-        Handler, op_type> alloc_traits;
-      asio::detail::handler_ptr<alloc_traits> ptr(
-        handler_op->handler_, handler_op);
-
-      // A sub-object of the handler may be the true owner of the memory
-      // associated with the handler. Consequently, a local copy of the handler
-      // is required to ensure that any owning sub-object remains valid until
-      // after we have deallocated the memory here.
-      Handler handler(handler_op->handler_);
-      (void)handler;
-
-      // Free the memory associated with the handler.
-      ptr.reset();
-    }
-
-    asio::io_service::work work_;
+  private:
     MutableBufferSequence buffers_;
     Handler handler_;
   };
@@ -711,63 +578,16 @@ public:
   void async_read_some_at(implementation_type& impl, boost::uint64_t offset,
       const MutableBufferSequence& buffers, Handler handler)
   {
-    // Update the ID of the thread from which cancellation is safe.
-    if (impl.safe_cancellation_thread_id_ == 0)
-      impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
-    else if (impl.safe_cancellation_thread_id_ != ::GetCurrentThreadId())
-      impl.safe_cancellation_thread_id_ = ~DWORD(0);
-
     // Allocate and construct an operation to wrap the handler.
-    typedef read_operation<MutableBufferSequence, Handler> value_type;
+    typedef read_op<MutableBufferSequence, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr, iocp_service_, buffers, handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr, buffers, handler);
 
-    if (!is_open(impl))
-    {
-      ptr.get()->on_immediate_completion(WSAEBADF, 0);
-      ptr.release();
-      return;
-    }
-
-    // Find first buffer of non-zero length.
-    asio::mutable_buffer buffer;
-    typename MutableBufferSequence::const_iterator iter = buffers.begin();
-    typename MutableBufferSequence::const_iterator end = buffers.end();
-    for (DWORD i = 0; iter != end; ++iter, ++i)
-    {
-      buffer = asio::mutable_buffer(*iter);
-      if (asio::buffer_size(buffer) != 0)
-        break;
-    }
-
-    // A request to receive 0 bytes on a stream handle is a no-op.
-    if (asio::buffer_size(buffer) == 0)
-    {
-      ptr.get()->on_immediate_completion(0, 0);
-      ptr.release();
-      return;
-    }
-
-    // Read some data.
-    DWORD bytes_transferred = 0;
-    ptr.get()->Offset = offset & 0xFFFFFFFF;
-    ptr.get()->OffsetHigh = (offset >> 32) & 0xFFFFFFFF;
-    BOOL ok = ::ReadFile(impl.handle_,
-        asio::buffer_cast<LPVOID>(buffer),
-        static_cast<DWORD>(asio::buffer_size(buffer)),
-        &bytes_transferred, ptr.get());
-    DWORD last_error = ::GetLastError();
-    if (!ok && last_error != ERROR_IO_PENDING && last_error != ERROR_MORE_DATA)
-    {
-      ptr.get()->on_immediate_completion(last_error, bytes_transferred);
-      ptr.release();
-    }
-    else
-    {
-      ptr.get()->on_pending();
-      ptr.release();
-    }
+    start_read_op(impl, offset,
+        buffer_sequence_adapter<asio::mutable_buffer,
+          MutableBufferSequence>::first(buffers), ptr.get());
+    ptr.release();
   }
 
 private:
@@ -792,6 +612,93 @@ private:
   template <typename Handler>
   void async_read_some_at(implementation_type& impl, boost::uint64_t offset,
       const null_buffers& buffers, Handler handler);
+
+  // Helper function to start a write operation.
+  void start_write_op(implementation_type& impl, boost::uint64_t offset,
+      const asio::const_buffer& buffer, operation* op)
+  {
+    update_cancellation_thread_id();
+    iocp_service_.work_started();
+
+    if (!is_open(impl))
+    {
+      iocp_service_.on_completion(op, asio::error::bad_descriptor);
+    }
+    else if (asio::buffer_size(buffer) == 0)
+    {
+      // A request to write 0 bytes on a handle is a no-op.
+      iocp_service_.on_completion(op);
+    }
+    else
+    {
+      DWORD bytes_transferred = 0;
+      op->Offset = offset & 0xFFFFFFFF;
+      op->OffsetHigh = (offset >> 32) & 0xFFFFFFFF;
+      BOOL ok = ::WriteFile(impl.handle_,
+          asio::buffer_cast<LPCVOID>(buffer),
+          static_cast<DWORD>(asio::buffer_size(buffer)),
+          &bytes_transferred, op);
+      DWORD last_error = ::GetLastError();
+      if (!ok && last_error != ERROR_IO_PENDING
+          && last_error != ERROR_MORE_DATA)
+      {
+        iocp_service_.on_completion(op, last_error, bytes_transferred);
+      }
+      else
+      {
+        iocp_service_.on_pending(op);
+      }
+    }
+  }
+
+  // Helper function to start a read operation.
+  void start_read_op(implementation_type& impl, boost::uint64_t offset,
+      const asio::mutable_buffer& buffer, operation* op)
+  {
+    update_cancellation_thread_id();
+    iocp_service_.work_started();
+
+    if (!is_open(impl))
+    {
+      iocp_service_.on_completion(op, asio::error::bad_descriptor);
+    }
+    else if (asio::buffer_size(buffer) == 0)
+    {
+      // A request to read 0 bytes on a handle is a no-op.
+      iocp_service_.on_completion(op);
+    }
+    else
+    {
+      DWORD bytes_transferred = 0;
+      op->Offset = offset & 0xFFFFFFFF;
+      op->OffsetHigh = (offset >> 32) & 0xFFFFFFFF;
+      BOOL ok = ::ReadFile(impl.handle_,
+          asio::buffer_cast<LPVOID>(buffer),
+          static_cast<DWORD>(asio::buffer_size(buffer)),
+          &bytes_transferred, op);
+      DWORD last_error = ::GetLastError();
+      if (!ok && last_error != ERROR_IO_PENDING
+          && last_error != ERROR_MORE_DATA)
+      {
+        iocp_service_.on_completion(op, last_error, bytes_transferred);
+      }
+      else
+      {
+        iocp_service_.on_pending(op);
+      }
+    }
+  }
+
+  // Update the ID of the thread from which cancellation is safe.
+  void update_cancellation_thread_id()
+  {
+#if defined(ASIO_ENABLE_CANCELIO)
+    if (impl.safe_cancellation_thread_id_ == 0)
+      impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
+    else if (impl.safe_cancellation_thread_id_ != ::GetCurrentThreadId())
+      impl.safe_cancellation_thread_id_ = ~DWORD(0);
+#endif // defined(ASIO_ENABLE_CANCELIO)
+  }
 
   // Helper function to close a handle when the associated object is being
   // destroyed.

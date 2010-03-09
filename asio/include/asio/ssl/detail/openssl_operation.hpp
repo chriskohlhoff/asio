@@ -172,7 +172,8 @@ public:
       ((::SSL_get_shutdown( session_ ) & SSL_SENT_SHUTDOWN) ==
             SSL_SENT_SHUTDOWN);
 
-    if (is_shut_down_sent && is_shut_down_received && is_operation_done && !is_write_needed)
+    if (is_shut_down_sent && is_shut_down_received
+        && is_operation_done && !is_write_needed)
       // SSL connection is shut down cleanly
       return handler_(asio::error_code(), 1);
 

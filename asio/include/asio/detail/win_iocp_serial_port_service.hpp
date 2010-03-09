@@ -36,7 +36,6 @@ namespace detail {
 
 // Extend win_iocp_handle_service to provide serial port support.
 class win_iocp_serial_port_service
-  : public asio::detail::service_base<win_iocp_serial_port_service>
 {
 public:
   // The native type of a stream handle.
@@ -46,10 +45,7 @@ public:
   typedef win_iocp_handle_service::implementation_type implementation_type;
 
   win_iocp_serial_port_service(asio::io_service& io_service)
-    : asio::detail::service_base<
-        win_iocp_serial_port_service>(io_service),
-      handle_service_(
-          asio::use_service<win_iocp_handle_service>(io_service))
+    : handle_service_(io_service)
   {
   }
 
@@ -278,8 +274,8 @@ public:
   }
 
 private:
-  // The handle service used for initiating asynchronous operations.
-  win_iocp_handle_service& handle_service_;
+  // The implementation used for initiating asynchronous operations.
+  win_iocp_handle_service handle_service_;
 };
 
 } // namespace detail

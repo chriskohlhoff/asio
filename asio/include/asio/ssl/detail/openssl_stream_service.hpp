@@ -31,6 +31,7 @@
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/strand.hpp"
+#include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/service_base.hpp"
 #include "asio/ssl/basic_context.hpp"
 #include "asio/ssl/stream_base.hpp"
@@ -332,13 +333,22 @@ public:
     size_t bytes_transferred = 0;
     try
     {
-      std::size_t buffer_size = asio::buffer_size(*buffers.begin());
+      asio::const_buffer buffer =
+        asio::detail::buffer_sequence_adapter<
+          asio::const_buffer, Const_Buffers>::first(buffers);
+
+      std::size_t buffer_size = asio::buffer_size(buffer);
       if (buffer_size > max_buffer_size)
         buffer_size = max_buffer_size;
+      else if (buffer_size == 0)
+      {
+        ec = asio::error_code();
+        return 0;
+      }
 
       boost::function<int (SSL*)> send_func =
         boost::bind(boost::type<int>(), &::SSL_write, boost::arg<1>(),  
-            asio::buffer_cast<const void*>(*buffers.begin()),
+            asio::buffer_cast<const void*>(buffer),
             static_cast<int>(buffer_size));
       openssl_operation<Stream> op(
         send_func,
@@ -366,15 +376,25 @@ public:
   {
     typedef io_handler<Stream, Handler> send_handler;
 
-    send_handler* local_handler = new send_handler(handler, get_io_service());
+    asio::const_buffer buffer =
+      asio::detail::buffer_sequence_adapter<
+        asio::const_buffer, Const_Buffers>::first(buffers);
 
-    std::size_t buffer_size = asio::buffer_size(*buffers.begin());
+    std::size_t buffer_size = asio::buffer_size(buffer);
     if (buffer_size > max_buffer_size)
       buffer_size = max_buffer_size;
+    else if (buffer_size == 0)
+    {
+      get_io_service().post(asio::detail::bind_handler(
+            handler, asio::error_code(), 0));
+      return;
+    }
+
+    send_handler* local_handler = new send_handler(handler, get_io_service());
 
     boost::function<int (SSL*)> send_func =
       boost::bind(boost::type<int>(), &::SSL_write, boost::arg<1>(),
-          asio::buffer_cast<const void*>(*buffers.begin()),
+          asio::buffer_cast<const void*>(buffer),
           static_cast<int>(buffer_size));
 
     openssl_operation<Stream>* op = new openssl_operation<Stream>
@@ -406,13 +426,22 @@ public:
     size_t bytes_transferred = 0;
     try
     {
-      std::size_t buffer_size = asio::buffer_size(*buffers.begin());
+      asio::mutable_buffer buffer =
+        asio::detail::buffer_sequence_adapter<
+          asio::mutable_buffer, Mutable_Buffers>::first(buffers);
+
+      std::size_t buffer_size = asio::buffer_size(buffer);
       if (buffer_size > max_buffer_size)
         buffer_size = max_buffer_size;
+      else if (buffer_size == 0)
+      {
+        ec = asio::error_code();
+        return 0;
+      }
 
       boost::function<int (SSL*)> recv_func =
         boost::bind(boost::type<int>(), &::SSL_read, boost::arg<1>(),
-            asio::buffer_cast<void*>(*buffers.begin()),
+            asio::buffer_cast<void*>(buffer),
             static_cast<int>(buffer_size));
       openssl_operation<Stream> op(recv_func,
         next_layer,
@@ -440,15 +469,25 @@ public:
   {
     typedef io_handler<Stream, Handler> recv_handler;
 
-    recv_handler* local_handler = new recv_handler(handler, get_io_service());
+    asio::mutable_buffer buffer =
+      asio::detail::buffer_sequence_adapter<
+        asio::mutable_buffer, Mutable_Buffers>::first(buffers);
 
-    std::size_t buffer_size = asio::buffer_size(*buffers.begin());
+    std::size_t buffer_size = asio::buffer_size(buffer);
     if (buffer_size > max_buffer_size)
       buffer_size = max_buffer_size;
+    else if (buffer_size == 0)
+    {
+      get_io_service().post(asio::detail::bind_handler(
+            handler, asio::error_code(), 0));
+      return;
+    }
+
+    recv_handler* local_handler = new recv_handler(handler, get_io_service());
 
     boost::function<int (SSL*)> recv_func =
       boost::bind(boost::type<int>(), &::SSL_read, boost::arg<1>(),
-          asio::buffer_cast<void*>(*buffers.begin()),
+          asio::buffer_cast<void*>(buffer),
           static_cast<int>(buffer_size));
 
     openssl_operation<Stream>* op = new openssl_operation<Stream>

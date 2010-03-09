@@ -26,11 +26,8 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error_code.hpp"
-#include "asio/detail/dev_poll_reactor_fwd.hpp"
-#include "asio/detail/epoll_reactor_fwd.hpp"
-#include "asio/detail/kqueue_reactor_fwd.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/select_reactor_fwd.hpp"
+#include "asio/detail/reactor_fwd.hpp"
 #include "asio/detail/service_registry_fwd.hpp"
 #include "asio/detail/signal_init.hpp"
 #include "asio/detail/task_io_service_fwd.hpp"
@@ -44,6 +41,12 @@ class io_service;
 template <typename Service> Service& use_service(io_service& ios);
 template <typename Service> void add_service(io_service& ios, Service* svc);
 template <typename Service> bool has_service(io_service& ios);
+
+#if defined(ASIO_HAS_IOCP)
+namespace detail { typedef win_iocp_io_service io_service_impl; }
+#else
+namespace detail { typedef task_io_service<reactor> io_service_impl; }
+#endif
 
 /// Provides core I/O functionality.
 /**
@@ -177,18 +180,9 @@ class io_service
   : private noncopyable
 {
 private:
-  // The type of the platform-specific implementation.
+  typedef detail::io_service_impl impl_type;
 #if defined(ASIO_HAS_IOCP)
-  typedef detail::win_iocp_io_service impl_type;
   friend class detail::win_iocp_overlapped_ptr;
-#elif defined(ASIO_HAS_EPOLL)
-  typedef detail::task_io_service<detail::epoll_reactor<false> > impl_type;
-#elif defined(ASIO_HAS_KQUEUE)
-  typedef detail::task_io_service<detail::kqueue_reactor<false> > impl_type;
-#elif defined(ASIO_HAS_DEV_POLL)
-  typedef detail::task_io_service<detail::dev_poll_reactor<false> > impl_type;
-#else
-  typedef detail::task_io_service<detail::select_reactor<false> > impl_type;
 #endif
 
 public:
@@ -605,9 +599,14 @@ private:
   virtual void shutdown_service() = 0;
 
   friend class asio::detail::service_registry;
+  struct key
+  {
+    key() : type_info_(0), id_(0) {}
+    const std::type_info* type_info_;
+    const asio::io_service::id* id_;
+  } key_;
+
   asio::io_service& owner_;
-  const std::type_info* type_info_;
-  const asio::io_service::id* id_;
   service* next_;
 };
 

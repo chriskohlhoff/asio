@@ -48,6 +48,12 @@ public:
   {
   }
 
+  // Signal the event and unlock the mutex.
+  template <typename Lock>
+  void signal_and_unlock(Lock&)
+  {
+  }
+
   // Reset the event.
   template <typename Lock>
   void clear(Lock&)

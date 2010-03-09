@@ -75,13 +75,14 @@ public:
   /// Construct a new stream handle service for the specified io_service.
   explicit stream_handle_service(asio::io_service& io_service)
     : asio::detail::service_base<stream_handle_service>(io_service),
-      service_impl_(asio::use_service<service_impl_type>(io_service))
+      service_impl_(io_service)
   {
   }
 
   /// Destroy all user-defined handler objects owned by the service.
   void shutdown_service()
   {
+    service_impl_.shutdown_service();
   }
 
   /// Construct a new stream handle implementation.
@@ -162,8 +163,8 @@ public:
   }
 
 private:
-  // The service that provides the platform-specific implementation.
-  service_impl_type& service_impl_;
+  // The platform-specific implementation.
+  service_impl_type service_impl_;
 };
 
 } // namespace windows

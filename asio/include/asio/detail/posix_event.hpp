@@ -71,6 +71,16 @@ public:
     ::pthread_cond_signal(&cond_); // Ignore EINVAL.
   }
 
+  // Signal the event and unlock the mutex.
+  template <typename Lock>
+  void signal_and_unlock(Lock& lock)
+  {
+    BOOST_ASSERT(lock.locked());
+    signalled_ = true;
+    lock.unlock();
+    ::pthread_cond_signal(&cond_); // Ignore EINVAL.
+  }
+
   // Reset the event.
   template <typename Lock>
   void clear(Lock& lock)

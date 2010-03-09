@@ -26,18 +26,9 @@
 
 #if defined(ASIO_HAS_IOCP)
 # include "asio/detail/win_iocp_io_service.hpp"
-#elif defined(ASIO_HAS_EPOLL)
-# include "asio/detail/epoll_reactor.hpp"
-# include "asio/detail/task_io_service.hpp"
-#elif defined(ASIO_HAS_KQUEUE)
-# include "asio/detail/kqueue_reactor.hpp"
-# include "asio/detail/task_io_service.hpp"
-#elif defined(ASIO_HAS_DEV_POLL)
-# include "asio/detail/dev_poll_reactor.hpp"
-# include "asio/detail/task_io_service.hpp"
 #else
-# include "asio/detail/select_reactor.hpp"
 # include "asio/detail/task_io_service.hpp"
+# include "asio/detail/reactor.hpp"
 #endif
 
 namespace asio {
@@ -175,7 +166,6 @@ inline asio::io_service& io_service::work::get_io_service()
 
 inline io_service::service::service(asio::io_service& owner)
   : owner_(owner),
-    type_info_(0),
     next_(0)
 {
 }

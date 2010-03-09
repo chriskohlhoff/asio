@@ -21,8 +21,10 @@
 
 #if defined(ASIO_HAS_IOCP)
 
+#include "asio/detail/fenced_block.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/win_iocp_io_service.hpp"
+#include "asio/detail/win_iocp_operation.hpp"
 
 namespace asio {
 namespace detail {
@@ -34,7 +36,8 @@ class win_iocp_overlapped_ptr
 public:
   // Construct an empty win_iocp_overlapped_ptr.
   win_iocp_overlapped_ptr()
-    : ptr_(0)
+    : ptr_(0),
+      iocp_service_(0)
   {
   }
 
@@ -42,7 +45,8 @@ public:
   template <typename Handler>
   explicit win_iocp_overlapped_ptr(
       asio::io_service& io_service, Handler handler)
-    : ptr_(0)
+    : ptr_(0),
+      iocp_service_(0)
   {
     this->reset(io_service, handler);
   }
@@ -60,6 +64,8 @@ public:
     {
       ptr_->destroy();
       ptr_ = 0;
+      iocp_service_->work_finished();
+      iocp_service_ = 0;
     }
   }
 
@@ -68,12 +74,14 @@ public:
   template <typename Handler>
   void reset(asio::io_service& io_service, Handler handler)
   {
-    typedef overlapped_operation<Handler> value_type;
+    typedef overlapped_op<Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr, io_service.impl_, handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr, handler);
+    io_service.impl_.work_started();
     reset();
     ptr_ = ptr.release();
+    iocp_service_ = &io_service.impl_;
   }
 
   // Get the contained OVERLAPPED object.
@@ -92,10 +100,11 @@ public:
   OVERLAPPED* release()
   {
     if (ptr_)
-      ptr_->on_pending();
+      iocp_service_->on_pending(ptr_);
 
     OVERLAPPED* tmp = ptr_;
     ptr_ = 0;
+    iocp_service_ = 0;
     return tmp;
   }
 
@@ -105,99 +114,54 @@ public:
   {
     if (ptr_)
     {
-      ptr_->ec_ = ec;
-      ptr_->on_immediate_completion(0, static_cast<DWORD>(bytes_transferred));
+      iocp_service_->on_completion(ptr_, ec,
+          static_cast<DWORD>(bytes_transferred));
       ptr_ = 0;
+      iocp_service_ = 0;
     }
   }
 
 private:
-  struct overlapped_operation_base
-    : public win_iocp_io_service::operation
-  {
-    overlapped_operation_base(win_iocp_io_service& io_service,
-        invoke_func_type invoke_func, destroy_func_type destroy_func)
-      : win_iocp_io_service::operation(io_service, invoke_func, destroy_func),
-        io_service_(io_service)
-    {
-      io_service_.work_started();
-    }
-
-    ~overlapped_operation_base()
-    {
-      io_service_.work_finished();
-    }
-
-    win_iocp_io_service& io_service_;
-    asio::error_code ec_;
-  };
-
   template <typename Handler>
-  struct overlapped_operation
-    : public overlapped_operation_base
+  struct overlapped_op : public win_iocp_operation
   {
-    overlapped_operation(win_iocp_io_service& io_service,
-        Handler handler)
-      : overlapped_operation_base(io_service,
-          &overlapped_operation<Handler>::do_completion_impl,
-          &overlapped_operation<Handler>::destroy_impl),
+    overlapped_op(Handler handler)
+      : win_iocp_operation(&overlapped_op::do_complete),
         handler_(handler)
     {
     }
 
+    static void do_complete(io_service_impl* owner, operation* base,
+        asio::error_code ec, std::size_t bytes_transferred)
+    {
+      // Take ownership of the operation object.
+      overlapped_op* o(static_cast<overlapped_op*>(base));
+      typedef handler_alloc_traits<Handler, overlapped_op> alloc_traits;
+      handler_ptr<alloc_traits> ptr(o->handler_, o);
+
+      // Make the upcall if required.
+      if (owner)
+      {
+        // Make a copy of the handler so that the memory can be deallocated
+        // before the upcall is made. Even if we're not about to make an
+        // upcall, a sub-object of the handler may be the true owner of the
+        // memory associated with the handler. Consequently, a local copy of
+        // the handler is required to ensure that any owning sub-object remains
+        // valid until after we have deallocated the memory here.
+        detail::binder2<Handler, asio::error_code, std::size_t>
+          handler(o->handler_, ec, bytes_transferred);
+        ptr.reset();
+        asio::detail::fenced_block b;
+        asio_handler_invoke_helpers::invoke(handler, handler);
+      }
+    }
+
   private:
-    // Prevent copying and assignment.
-    overlapped_operation(const overlapped_operation&);
-    void operator=(const overlapped_operation&);
-    
-    static void do_completion_impl(win_iocp_io_service::operation* op,
-        DWORD last_error, size_t bytes_transferred)
-    {
-      // Take ownership of the operation object.
-      typedef overlapped_operation<Handler> op_type;
-      op_type* handler_op(static_cast<op_type*>(op));
-      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
-      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
-
-      // Make a copy of the handler and error_code so that the memory can be
-      // deallocated before the upcall is made.
-      Handler handler(handler_op->handler_);
-      asio::error_code ec(handler_op->ec_);
-      if (last_error)
-        ec = asio::error_code(last_error,
-            asio::error::get_system_category());
-
-      // Free the memory associated with the handler.
-      ptr.reset();
-
-      // Make the upcall.
-      asio_handler_invoke_helpers::invoke(
-          bind_handler(handler, ec, bytes_transferred), handler);
-    }
-
-    static void destroy_impl(win_iocp_io_service::operation* op)
-    {
-      // Take ownership of the operation object.
-      typedef overlapped_operation<Handler> op_type;
-      op_type* handler_op(static_cast<op_type*>(op));
-      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
-      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
-
-      // A sub-object of the handler may be the true owner of the memory
-      // associated with the handler. Consequently, a local copy of the handler
-      // is required to ensure that any owning sub-object remains valid until
-      // after we have deallocated the memory here.
-      Handler handler(handler_op->handler_);
-      (void)handler;
-
-      // Free the memory associated with the handler.
-      ptr.reset();
-    }
-
     Handler handler_;
   };
 
-  overlapped_operation_base* ptr_;
+  win_iocp_operation* ptr_;
+  win_iocp_io_service* iocp_service_;
 };
 
 } // namespace detail

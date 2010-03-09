@@ -24,28 +24,27 @@
 
 #include "asio/detail/push_options.hpp"
 #include <cstddef>
-#include <vector>
 #include <sys/types.h>
 #include <sys/event.h>
 #include <sys/time.h>
 #include <boost/config.hpp>
-#include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/system_error.hpp"
-#include "asio/detail/bind_handler.hpp"
 #include "asio/detail/mutex.hpp"
-#include "asio/detail/task_io_service.hpp"
-#include "asio/detail/thread.hpp"
+#include "asio/detail/op_queue.hpp"
+#include "asio/detail/reactor_op.hpp"
 #include "asio/detail/reactor_op_queue.hpp"
 #include "asio/detail/select_interrupter.hpp"
 #include "asio/detail/service_base.hpp"
-#include "asio/detail/signal_blocker.hpp"
 #include "asio/detail/socket_types.hpp"
-#include "asio/detail/timer_queue.hpp"
+#include "asio/detail/timer_op.hpp"
+#include "asio/detail/timer_queue_base.hpp"
+#include "asio/detail/timer_queue_fwd.hpp"
+#include "asio/detail/timer_queue_set.hpp"
 
 // Older versions of Mac OS X may not define EV_OOBAND.
 #if !defined(EV_OOBAND)
@@ -55,43 +54,29 @@
 namespace asio {
 namespace detail {
 
-template <bool Own_Thread>
 class kqueue_reactor
-  : public asio::detail::service_base<kqueue_reactor<Own_Thread> >
+  : public asio::detail::service_base<kqueue_reactor>
 {
 public:
+  enum { read_op = 0, write_op = 1,
+    connect_op = 1, except_op = 2, max_ops = 3 };
+
   // Per-descriptor data.
   struct per_descriptor_data
   {
-    bool allow_speculative_read;
-    bool allow_speculative_write;
+    bool allow_speculative[max_ops];
   };
 
   // Constructor.
   kqueue_reactor(asio::io_service& io_service)
-    : asio::detail::service_base<
-        kqueue_reactor<Own_Thread> >(io_service),
+    : asio::detail::service_base<kqueue_reactor>(io_service),
+      io_service_(use_service<io_service_impl>(io_service)),
       mutex_(),
       kqueue_fd_(do_kqueue_create()),
-      wait_in_progress_(false),
       interrupter_(),
-      read_op_queue_(),
-      write_op_queue_(),
-      except_op_queue_(),
-      pending_cancellations_(),
-      stop_thread_(false),
-      thread_(0),
       shutdown_(false),
       need_kqueue_wait_(true)
   {
-    // Start the reactor's internal thread only if needed.
-    if (Own_Thread)
-    {
-      asio::detail::signal_blocker sb;
-      thread_ = new asio::detail::thread(
-          bind_handler(&kqueue_reactor::call_run_thread, this));
-    }
-
     // Add the interrupter's descriptor to the kqueue.
     struct kevent event;
     EV_SET(&event, interrupter_.read_descriptor(),
@@ -111,65 +96,49 @@ public:
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
     shutdown_ = true;
-    stop_thread_ = true;
     lock.unlock();
 
-    if (thread_)
-    {
-      interrupter_.interrupt();
-      thread_->join();
-      delete thread_;
-      thread_ = 0;
-    }
+    op_queue<operation> ops;
 
-    read_op_queue_.destroy_operations();
-    write_op_queue_.destroy_operations();
-    except_op_queue_.destroy_operations();
+    for (int i = 0; i < max_ops; ++i)
+      op_queue_[i].get_all_operations(ops);
 
-    for (std::size_t i = 0; i < timer_queues_.size(); ++i)
-      timer_queues_[i]->destroy_timers();
-    timer_queues_.clear();
+    timer_queues_.get_all_timers(ops);
   }
 
-  // Initialise the task, but only if the reactor is not in its own thread.
+  // Initialise the task.
   void init_task()
   {
-    if (!Own_Thread)
-    {
-      typedef task_io_service<kqueue_reactor<Own_Thread> > task_io_service_type;
-      use_service<task_io_service_type>(this->get_io_service()).init_task();
-    }
+    io_service_.init_task();
   }
 
   // Register a socket with the reactor. Returns 0 on success, system error
   // code on failure.
   int register_descriptor(socket_type, per_descriptor_data& descriptor_data)
   {
-    descriptor_data.allow_speculative_read = true;
-    descriptor_data.allow_speculative_write = true;
+    descriptor_data.allow_speculative[read_op] = true;
+    descriptor_data.allow_speculative[write_op] = true;
+    descriptor_data.allow_speculative[except_op] = true;
 
     return 0;
   }
 
-  // Start a new read operation. The handler object will be invoked when the
-  // given descriptor is ready to be read, or an error has occurred.
-  template <typename Handler>
-  void start_read_op(socket_type descriptor,
-      per_descriptor_data& descriptor_data, Handler handler,
-      bool allow_speculative_read = true)
+  // Start a new operation. The reactor operation will be performed when the
+  // given descriptor is flagged as ready, or an error has occurred.
+  void start_op(int op_type, socket_type descriptor,
+      per_descriptor_data& descriptor_data,
+      reactor_op* op, bool allow_speculative)
   {
-    if (allow_speculative_read && descriptor_data.allow_speculative_read)
+    if (allow_speculative && descriptor_data.allow_speculative[op_type])
     {
-      asio::error_code ec;
-      std::size_t bytes_transferred = 0;
-      if (handler.perform(ec, bytes_transferred))
+      if (op->perform())
       {
-        handler.complete(ec, bytes_transferred);
+        io_service_.post_immediate_completion(op);
         return;
       }
 
       // We only get one shot at a speculative read in this function.
-      allow_speculative_read = false;
+      allow_speculative = false;
     }
 
     asio::detail::mutex::scoped_lock lock(mutex_);
@@ -177,146 +146,49 @@ public:
     if (shutdown_)
       return;
 
-    if (!allow_speculative_read)
+    if (!allow_speculative)
       need_kqueue_wait_ = true;
-    else if (!read_op_queue_.has_operation(descriptor))
+    else if (!op_queue_[op_type].has_operation(descriptor))
     {
       // Speculative reads are ok as there are no queued read operations.
-      descriptor_data.allow_speculative_read = true;
+      descriptor_data.allow_speculative[op_type] = true;
 
-      asio::error_code ec;
-      std::size_t bytes_transferred = 0;
-      if (handler.perform(ec, bytes_transferred))
+      if (op->perform())
       {
-        handler.complete(ec, bytes_transferred);
+        lock.unlock();
+        io_service_.post_immediate_completion(op);
         return;
       }
     }
 
     // Speculative reads are not ok as there will be queued read operations.
-    descriptor_data.allow_speculative_read = false;
+    descriptor_data.allow_speculative[op_type] = false;
 
-    if (read_op_queue_.enqueue_operation(descriptor, handler))
+    bool first = op_queue_[op_type].enqueue_operation(descriptor, op);
+    io_service_.work_started();
+    if (first)
     {
       struct kevent event;
-      EV_SET(&event, descriptor, EVFILT_READ, EV_ADD, 0, 0, 0);
-      if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
+      switch (op_type)
       {
-        asio::error_code ec(errno,
-            asio::error::get_system_category());
-        read_op_queue_.perform_all_operations(descriptor, ec);
-      }
-    }
-  }
-
-  // Start a new write operation. The handler object will be invoked when the
-  // given descriptor is ready to be written, or an error has occurred.
-  template <typename Handler>
-  void start_write_op(socket_type descriptor,
-      per_descriptor_data& descriptor_data, Handler handler,
-      bool allow_speculative_write = true)
-  {
-    if (allow_speculative_write && descriptor_data.allow_speculative_write)
-    {
-      asio::error_code ec;
-      std::size_t bytes_transferred = 0;
-      if (handler.perform(ec, bytes_transferred))
-      {
-        handler.complete(ec, bytes_transferred);
-        return;
-      }
-
-      // We only get one shot at a speculative write in this function.
-      allow_speculative_write = false;
-    }
-
-    asio::detail::mutex::scoped_lock lock(mutex_);
-
-    if (shutdown_)
-      return;
-
-    if (!allow_speculative_write)
-      need_kqueue_wait_ = true;
-    else if (!write_op_queue_.has_operation(descriptor))
-    {
-      // Speculative writes are ok as there are no queued write operations.
-      descriptor_data.allow_speculative_write = true;
-
-      asio::error_code ec;
-      std::size_t bytes_transferred = 0;
-      if (handler.perform(ec, bytes_transferred))
-      {
-        handler.complete(ec, bytes_transferred);
-        return;
-      }
-    }
-
-    // Speculative writes are not ok as there will be queued write operations.
-    descriptor_data.allow_speculative_write = false;
-
-    if (write_op_queue_.enqueue_operation(descriptor, handler))
-    {
-      struct kevent event;
-      EV_SET(&event, descriptor, EVFILT_WRITE, EV_ADD, 0, 0, 0);
-      if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
-      {
-        asio::error_code ec(errno,
-            asio::error::get_system_category());
-        write_op_queue_.perform_all_operations(descriptor, ec);
-      }
-    }
-  }
-
-  // Start a new exception operation. The handler object will be invoked when
-  // the given descriptor has exception information, or an error has occurred.
-  template <typename Handler>
-  void start_except_op(socket_type descriptor,
-      per_descriptor_data&, Handler handler)
-  {
-    asio::detail::mutex::scoped_lock lock(mutex_);
-
-    if (shutdown_)
-      return;
-
-    if (except_op_queue_.enqueue_operation(descriptor, handler))
-    {
-      struct kevent event;
-      if (read_op_queue_.has_operation(descriptor))
+      case read_op:
         EV_SET(&event, descriptor, EVFILT_READ, EV_ADD, 0, 0, 0);
-      else
-        EV_SET(&event, descriptor, EVFILT_READ, EV_ADD, EV_OOBAND, 0, 0);
-      if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
-      {
-        asio::error_code ec(errno,
-            asio::error::get_system_category());
-        except_op_queue_.perform_all_operations(descriptor, ec);
+        break;
+      case write_op:
+        EV_SET(&event, descriptor, EVFILT_WRITE, EV_ADD, 0, 0, 0);
+        break;
+      case except_op:
+        if (op_queue_[read_op].has_operation(descriptor))
+          EV_SET(&event, descriptor, EVFILT_READ, EV_ADD, 0, 0, 0);
+        else
+          EV_SET(&event, descriptor, EVFILT_WRITE, EV_ADD, EV_OOBAND, 0, 0);
+        break;
       }
-    }
-  }
-
-  // Start a new write operation. The handler object will be invoked when the
-  // given descriptor is ready to be written, or an error has occurred.
-  template <typename Handler>
-  void start_connect_op(socket_type descriptor,
-      per_descriptor_data& descriptor_data, Handler handler)
-  {
-    asio::detail::mutex::scoped_lock lock(mutex_);
-
-    if (shutdown_)
-      return;
-
-    // Speculative writes are not ok as there will be queued write operations.
-    descriptor_data.allow_speculative_write = false;
-
-    if (write_op_queue_.enqueue_operation(descriptor, handler))
-    {
-      struct kevent event;
-      EV_SET(&event, descriptor, EVFILT_WRITE, EV_ADD, 0, 0, 0);
       if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
       {
         asio::error_code ec(errno,
             asio::error::get_system_category());
-        write_op_queue_.perform_all_operations(descriptor, ec);
+        cancel_ops_unlocked(descriptor, ec);
       }
     }
   }
@@ -327,7 +199,7 @@ public:
   void cancel_ops(socket_type descriptor, per_descriptor_data&)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
-    cancel_ops_unlocked(descriptor);
+    cancel_ops_unlocked(descriptor, asio::error::operation_aborted);
   }
 
   // Cancel any operations that are running against the descriptor and remove
@@ -343,7 +215,7 @@ public:
     ::kevent(kqueue_fd_, event, 2, 0, 0, 0);
     
     // Cancel any outstanding operations associated with the descriptor.
-    cancel_ops_unlocked(descriptor);
+    cancel_ops_unlocked(descriptor, asio::error::operation_aborted);
   }
 
   // Add a new timer queue to the reactor.
@@ -351,7 +223,7 @@ public:
   void add_timer_queue(timer_queue<Time_Traits>& timer_queue)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
-    timer_queues_.push_back(&timer_queue);
+    timer_queues_.insert(&timer_queue);
   }
 
   // Remove a timer queue from the reactor.
@@ -359,77 +231,53 @@ public:
   void remove_timer_queue(timer_queue<Time_Traits>& timer_queue)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
-    for (std::size_t i = 0; i < timer_queues_.size(); ++i)
-    {
-      if (timer_queues_[i] == &timer_queue)
-      {
-        timer_queues_.erase(timer_queues_.begin() + i);
-        return;
-      }
-    }
+    timer_queues_.erase(&timer_queue);
   }
 
-  // Schedule a timer in the given timer queue to expire at the specified
-  // absolute time. The handler object will be invoked when the timer expires.
-  template <typename Time_Traits, typename Handler>
+  // Schedule a new operation in the given timer queue to expire at the
+  // specified absolute time.
+  template <typename Time_Traits>
   void schedule_timer(timer_queue<Time_Traits>& timer_queue,
-      const typename Time_Traits::time_type& time, Handler handler, void* token)
+      const typename Time_Traits::time_type& time, timer_op* op, void* token)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
     if (!shutdown_)
-      if (timer_queue.enqueue_timer(time, handler, token))
+    {
+      bool earliest = timer_queue.enqueue_timer(time, op, token);
+      io_service_.work_started();
+      if (earliest)
         interrupter_.interrupt();
+    }
   }
 
-  // Cancel the timer associated with the given token. Returns the number of
-  // handlers that have been posted or dispatched.
+  // Cancel the timer operations associated with the given token. Returns the
+  // number of operations that have been posted or dispatched.
   template <typename Time_Traits>
   std::size_t cancel_timer(timer_queue<Time_Traits>& timer_queue, void* token)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
-    std::size_t n = timer_queue.cancel_timer(token);
-    if (n > 0)
-      interrupter_.interrupt();
+    op_queue<operation> ops;
+    std::size_t n = timer_queue.cancel_timer(token, ops);
+    lock.unlock();
+    io_service_.post_deferred_completions(ops);
     return n;
   }
 
-private:
-  friend class task_io_service<kqueue_reactor<Own_Thread> >;
-
   // Run the kqueue loop.
-  void run(bool block)
+  void run(bool block, op_queue<operation>& ops)
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
-    // Dispatch any operation cancellations that were made while the select
-    // loop was not running.
-    read_op_queue_.perform_cancellations();
-    write_op_queue_.perform_cancellations();
-    except_op_queue_.perform_cancellations();
-    for (std::size_t i = 0; i < timer_queues_.size(); ++i)
-      timer_queues_[i]->dispatch_cancellations();
-
-    // Check if the thread is supposed to stop.
-    if (stop_thread_)
-    {
-      complete_operations_and_timers(lock);
-      return;
-    }
-
     // We can return immediately if there's no work to do and the reactor is
     // not supposed to block.
-    if (!block && read_op_queue_.empty() && write_op_queue_.empty()
-        && except_op_queue_.empty() && all_timer_queues_are_empty())
-    {
-      complete_operations_and_timers(lock);
+    if (!block && op_queue_[read_op].empty() && op_queue_[write_op].empty()
+        && op_queue_[except_op].empty() && timer_queues_.all_empty())
       return;
-    }
 
     // Determine how long to block while waiting for events.
     timespec timeout_buf = { 0, 0 };
     timespec* timeout = block ? get_timeout(timeout_buf) : &timeout_buf;
 
-    wait_in_progress_ = true;
     lock.unlock();
 
     // Block on the kqueue descriptor.
@@ -439,7 +287,6 @@ private:
       : 0;
 
     lock.lock();
-    wait_in_progress_ = false;
 
     // Dispatch the waiting events.
     for (int i = 0; i < num_events; ++i)
@@ -458,23 +305,22 @@ private:
         {
           asio::error_code error(
               events[i].data, asio::error::get_system_category());
-          except_op_queue_.perform_all_operations(descriptor, error);
-          read_op_queue_.perform_all_operations(descriptor, error);
+          op_queue_[except_op].perform_operations(descriptor, ops);
+          op_queue_[read_op].perform_operations(descriptor, ops);
         }
         else if (events[i].flags & EV_OOBAND)
         {
-          asio::error_code error;
-          more_except = except_op_queue_.perform_operation(descriptor, error);
+          more_except
+            = op_queue_[except_op].perform_operations(descriptor, ops);
           if (events[i].data > 0)
-            more_reads = read_op_queue_.perform_operation(descriptor, error);
+            more_reads = op_queue_[read_op].perform_operations(descriptor, ops);
           else
-            more_reads = read_op_queue_.has_operation(descriptor);
+            more_reads = op_queue_[read_op].has_operation(descriptor);
         }
         else
         {
-          asio::error_code error;
-          more_reads = read_op_queue_.perform_operation(descriptor, error);
-          more_except = except_op_queue_.has_operation(descriptor);
+          more_reads = op_queue_[read_op].perform_operations(descriptor, ops);
+          more_except = op_queue_[except_op].has_operation(descriptor);
         }
 
         // Update the descriptor in the kqueue.
@@ -489,8 +335,8 @@ private:
         {
           asio::error_code error(errno,
               asio::error::get_system_category());
-          except_op_queue_.perform_all_operations(descriptor, error);
-          read_op_queue_.perform_all_operations(descriptor, error);
+          op_queue_[except_op].cancel_operations(descriptor, ops, error);
+          op_queue_[read_op].cancel_operations(descriptor, ops, error);
         }
       }
       else if (events[i].filter == EVFILT_WRITE)
@@ -501,12 +347,11 @@ private:
         {
           asio::error_code error(
               events[i].data, asio::error::get_system_category());
-          write_op_queue_.perform_all_operations(descriptor, error);
+          op_queue_[write_op].cancel_operations(descriptor, ops, error);
         }
         else
         {
-          asio::error_code error;
-          more_writes = write_op_queue_.perform_operation(descriptor, error);
+          more_writes = op_queue_[write_op].perform_operations(descriptor, ops);
         }
 
         // Update the descriptor in the kqueue.
@@ -519,48 +364,15 @@ private:
         {
           asio::error_code error(errno,
               asio::error::get_system_category());
-          write_op_queue_.perform_all_operations(descriptor, error);
+          op_queue_[write_op].cancel_operations(descriptor, ops, error);
         }
       }
     }
-
-    read_op_queue_.perform_cancellations();
-    write_op_queue_.perform_cancellations();
-    except_op_queue_.perform_cancellations();
-    for (std::size_t i = 0; i < timer_queues_.size(); ++i)
-    {
-      timer_queues_[i]->dispatch_timers();
-      timer_queues_[i]->dispatch_cancellations();
-    }
-
-    // Issue any pending cancellations.
-    for (std::size_t i = 0; i < pending_cancellations_.size(); ++i)
-      cancel_ops_unlocked(pending_cancellations_[i]);
-    pending_cancellations_.clear();
+    timer_queues_.get_ready_timers(ops);
 
     // Determine whether kqueue needs to be called next time the reactor is run.
-    need_kqueue_wait_ = !read_op_queue_.empty()
-      || !write_op_queue_.empty() || !except_op_queue_.empty();
-
-    complete_operations_and_timers(lock);
-  }
-
-  // Run the select loop in the thread.
-  void run_thread()
-  {
-    asio::detail::mutex::scoped_lock lock(mutex_);
-    while (!stop_thread_)
-    {
-      lock.unlock();
-      run(true);
-      lock.lock();
-    }
-  }
-
-  // Entry point for the select loop thread.
-  static void call_run_thread(kqueue_reactor* reactor)
-  {
-    reactor->run_thread();
+    need_kqueue_wait_ = !op_queue_[read_op].empty()
+      || !op_queue_[write_op].empty() || !op_queue_[except_op].empty();
   }
 
   // Interrupt the select loop.
@@ -569,6 +381,7 @@ private:
     interrupter_.interrupt();
   }
 
+private:
   // Create the kqueue file descriptor. Throws an exception if the descriptor
   // cannot be created.
   static int do_kqueue_create()
@@ -585,75 +398,30 @@ private:
     return fd;
   }
 
-  // Check if all timer queues are empty.
-  bool all_timer_queues_are_empty() const
-  {
-    for (std::size_t i = 0; i < timer_queues_.size(); ++i)
-      if (!timer_queues_[i]->empty())
-        return false;
-    return true;
-  }
-
   // Get the timeout value for the kevent call.
   timespec* get_timeout(timespec& ts)
   {
-    if (all_timer_queues_are_empty())
-      return 0;
-
     // By default we will wait no longer than 5 minutes. This will ensure that
     // any changes to the system clock are detected after no longer than this.
-    boost::posix_time::time_duration minimum_wait_duration
-      = boost::posix_time::minutes(5);
-
-    for (std::size_t i = 0; i < timer_queues_.size(); ++i)
-    {
-      boost::posix_time::time_duration wait_duration
-        = timer_queues_[i]->wait_duration();
-      if (wait_duration < minimum_wait_duration)
-        minimum_wait_duration = wait_duration;
-    }
-
-    if (minimum_wait_duration > boost::posix_time::time_duration())
-    {
-      ts.tv_sec = minimum_wait_duration.total_seconds();
-      ts.tv_nsec = minimum_wait_duration.total_nanoseconds() % 1000000000;
-    }
-    else
-    {
-      ts.tv_sec = 0;
-      ts.tv_nsec = 0;
-    }
-
+    long usec = timer_queues_.wait_duration_usec(5 * 60 * 1000 * 1000);
+    ts.tv_sec = usec / 1000000;
+    ts.tv_nsec = (usec % 1000000) * 1000;
     return &ts;
   }
 
-  // Cancel all operations associated with the given descriptor. The do_cancel
-  // function of the handler objects will be invoked. This function does not
-  // acquire the kqueue_reactor's mutex.
-  void cancel_ops_unlocked(socket_type descriptor)
+  // Cancel all operations associated with the given descriptor. This function
+  // does not acquire the kqueue_reactor's mutex.
+  void cancel_ops_unlocked(socket_type descriptor,
+      const asio::error_code& ec)
   {
-    bool interrupt = read_op_queue_.cancel_operations(descriptor);
-    interrupt = write_op_queue_.cancel_operations(descriptor) || interrupt;
-    interrupt = except_op_queue_.cancel_operations(descriptor) || interrupt;
-    if (interrupt)
-      interrupter_.interrupt();
+    op_queue<operation> ops;
+    for (int i = 0; i < max_ops; ++i)
+      op_queue_[i].cancel_operations(descriptor, ops, ec);
+    io_service_.post_deferred_completions(ops);
   }
 
-  // Clean up operations and timers. We must not hold the lock since the
-  // destructors may make calls back into this reactor. We make a copy of the
-  // vector of timer queues since the original may be modified while the lock
-  // is not held.
-  void complete_operations_and_timers(
-      asio::detail::mutex::scoped_lock& lock)
-  {
-    timer_queues_for_cleanup_ = timer_queues_;
-    lock.unlock();
-    read_op_queue_.complete_operations();
-    write_op_queue_.complete_operations();
-    except_op_queue_.complete_operations();
-    for (std::size_t i = 0; i < timer_queues_for_cleanup_.size(); ++i)
-      timer_queues_for_cleanup_[i]->complete_timers();
-  }
+  // The io_service implementation used to post completions.
+  io_service_impl& io_service_;
 
   // Mutex to protect access to internal data.
   asio::detail::mutex mutex_;
@@ -661,36 +429,14 @@ private:
   // The kqueue file descriptor.
   int kqueue_fd_;
 
-  // Whether the kqueue wait call is currently in progress
-  bool wait_in_progress_;
-
   // The interrupter is used to break a blocking kevent call.
   select_interrupter interrupter_;
 
-  // The queue of read operations.
-  reactor_op_queue<socket_type> read_op_queue_;
-
-  // The queue of write operations.
-  reactor_op_queue<socket_type> write_op_queue_;
-
-  // The queue of except operations.
-  reactor_op_queue<socket_type> except_op_queue_;
+  // The queues of read, write and except operations.
+  reactor_op_queue<socket_type> op_queue_[max_ops];
 
   // The timer queues.
-  std::vector<timer_queue_base*> timer_queues_;
-
-  // A copy of the timer queues, used when cleaning up timers. The copy is
-  // stored as a class data member to avoid unnecessary memory allocation.
-  std::vector<timer_queue_base*> timer_queues_for_cleanup_;
-
-  // The descriptors that are pending cancellation.
-  std::vector<socket_type> pending_cancellations_;
-
-  // Does the reactor loop thread need to stop.
-  bool stop_thread_;
-
-  // The thread that is running the reactor loop.
-  asio::detail::thread* thread_;
+  timer_queue_set timer_queues_;
 
   // Whether the service has been shut down.
   bool shutdown_;

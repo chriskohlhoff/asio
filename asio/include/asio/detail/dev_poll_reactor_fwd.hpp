@@ -26,7 +26,6 @@
 namespace asio {
 namespace detail {
 
-template <bool Own_Thread>
 class dev_poll_reactor;
 
 } // namespace detail

@@ -27,18 +27,6 @@
 #include "asio/detail/deadline_timer_service.hpp"
 #include "asio/detail/service_base.hpp"
 
-#if defined(ASIO_HAS_IOCP)
-# include "asio/detail/win_iocp_io_service.hpp"
-#elif defined(ASIO_HAS_EPOLL)
-# include "asio/detail/epoll_reactor.hpp"
-#elif defined(ASIO_HAS_KQUEUE)
-# include "asio/detail/kqueue_reactor.hpp"
-#elif defined(ASIO_HAS_DEV_POLL)
-# include "asio/detail/dev_poll_reactor.hpp"
-#else
-# include "asio/detail/select_reactor.hpp"
-#endif
-
 namespace asio {
 
 /// Default service implementation for a timer.
@@ -69,22 +57,7 @@ public:
 
 private:
   // The type of the platform-specific implementation.
-#if defined(ASIO_HAS_IOCP)
-  typedef detail::deadline_timer_service<
-    traits_type, detail::win_iocp_io_service> service_impl_type;
-#elif defined(ASIO_HAS_EPOLL)
-  typedef detail::deadline_timer_service<
-    traits_type, detail::epoll_reactor<false> > service_impl_type;
-#elif defined(ASIO_HAS_KQUEUE)
-  typedef detail::deadline_timer_service<
-    traits_type, detail::kqueue_reactor<false> > service_impl_type;
-#elif defined(ASIO_HAS_DEV_POLL)
-  typedef detail::deadline_timer_service<
-    traits_type, detail::dev_poll_reactor<false> > service_impl_type;
-#else
-  typedef detail::deadline_timer_service<
-    traits_type, detail::select_reactor<false> > service_impl_type;
-#endif
+  typedef detail::deadline_timer_service<traits_type> service_impl_type;
 
 public:
   /// The implementation type of the deadline timer.
@@ -98,13 +71,14 @@ public:
   explicit deadline_timer_service(asio::io_service& io_service)
     : asio::detail::service_base<
         deadline_timer_service<TimeType, TimeTraits> >(io_service),
-      service_impl_(asio::use_service<service_impl_type>(io_service))
+      service_impl_(io_service)
   {
   }
 
   /// Destroy all user-defined handler objects owned by the service.
   void shutdown_service()
   {
+    service_impl_.shutdown_service();
   }
 
   /// Construct a new timer implementation.
@@ -165,8 +139,8 @@ public:
   }
 
 private:
-  // The service that provides the platform-specific implementation.
-  service_impl_type& service_impl_;
+  // The platform-specific implementation.
+  service_impl_type service_impl_;
 };
 
 } // namespace asio

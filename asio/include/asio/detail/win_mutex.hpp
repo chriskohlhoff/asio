@@ -65,15 +65,7 @@ public:
   // Lock the mutex.
   void lock()
   {
-    int error = do_lock();
-    if (error != 0)
-    {
-      asio::system_error e(
-          asio::error_code(error,
-            asio::error::get_system_category()),
-          "mutex");
-      boost::throw_exception(e);
-    }
+    ::EnterCriticalSection(&crit_section_);
   }
 
   // Unlock the mutex.
@@ -91,45 +83,17 @@ private:
 #if defined(__MINGW32__)
     // Not sure if MinGW supports structured exception handling, so for now
     // we'll just call the Windows API and hope.
-    ::InitializeCriticalSection(&crit_section_);
+    ::InitializeCriticalSectionAndSpinCount(&crit_section_, 0x80000000);
     return 0;
 #else
     __try
     {
-      ::InitializeCriticalSection(&crit_section_);
+      ::InitializeCriticalSectionAndSpinCount(&crit_section_, 0x80000000);
     }
     __except(GetExceptionCode() == STATUS_NO_MEMORY
         ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH)
     {
       return ERROR_OUTOFMEMORY;
-    }
-
-    return 0;
-#endif
-  }
-
-  // Locking must be performed in a separate function to lock() since the
-  // compiler does not support the use of structured exceptions and C++
-  // exceptions in the same function.
-  int do_lock()
-  {
-#if defined(__MINGW32__)
-    // Not sure if MinGW supports structured exception handling, so for now
-    // we'll just call the Windows API and hope.
-    ::EnterCriticalSection(&crit_section_);
-    return 0;
-#else
-    __try
-    {
-      ::EnterCriticalSection(&crit_section_);
-    }
-    __except(GetExceptionCode() == STATUS_INVALID_HANDLE
-        || GetExceptionCode() == STATUS_NO_MEMORY
-        ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH)
-    {
-      if (GetExceptionCode() == STATUS_NO_MEMORY)
-        return ERROR_OUTOFMEMORY;
-      return ERROR_INVALID_HANDLE;
     }
 
     return 0;

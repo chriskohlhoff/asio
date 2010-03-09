@@ -21,20 +21,20 @@
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/detail/bind_handler.hpp"
-#include "asio/detail/handler_base_from_member.hpp"
-#include "asio/detail/noncopyable.hpp"
-#include "asio/detail/service_base.hpp"
+#include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/descriptor_ops.hpp"
+#include "asio/detail/fenced_block.hpp"
+#include "asio/detail/noncopyable.hpp"
+#include "asio/detail/null_buffers_op.hpp"
+#include "asio/detail/reactor.hpp"
+#include "asio/detail/reactor_op.hpp"
 
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 namespace asio {
 namespace detail {
 
-template <typename Reactor>
 class reactive_descriptor_service
-  : public asio::detail::service_base<
-      reactive_descriptor_service<Reactor> >
 {
 public:
   // The native type of a descriptor.
@@ -54,22 +54,28 @@ public:
 
   private:
     // Only this service will have access to the internal values.
-    friend class reactive_descriptor_service<Reactor>;
+    friend class reactive_descriptor_service;
 
     // The native descriptor representation.
     int descriptor_;
 
     enum
     {
-      user_set_non_blocking = 1, // The user wants a non-blocking descriptor.
-      internal_non_blocking = 2  // The descriptor has been set non-blocking.
+      // The user wants a non-blocking descriptor.
+      user_set_non_blocking = 1,
+
+      // The descriptor has been set non-blocking.
+      internal_non_blocking = 2,
+
+      // Helper "flag" used to determine whether the socket is non-blocking.
+      non_blocking = user_set_non_blocking | internal_non_blocking
     };
 
     // Flags indicating the current state of the descriptor.
     unsigned char flags_;
 
     // Per-descriptor data used by the reactor.
-    typename Reactor::per_descriptor_data reactor_data_;
+    reactor::per_descriptor_data reactor_data_;
   };
 
   // The maximum number of buffers to support in a single operation.
@@ -77,9 +83,8 @@ public:
 
   // Constructor.
   reactive_descriptor_service(asio::io_service& io_service)
-    : asio::detail::service_base<
-        reactive_descriptor_service<Reactor> >(io_service),
-      reactor_(asio::use_service<Reactor>(io_service))
+    : io_service_impl_(asio::use_service<io_service_impl>(io_service)),
+      reactor_(asio::use_service<reactor>(io_service))
   {
     reactor_.init_task();
   }
@@ -235,39 +240,14 @@ public:
       return 0;
     }
 
-    // Copy buffers into array.
-    descriptor_ops::buf bufs[max_buffers];
-    typename ConstBufferSequence::const_iterator iter = buffers.begin();
-    typename ConstBufferSequence::const_iterator end = buffers.end();
-    size_t i = 0;
-    size_t total_buffer_size = 0;
-    for (; iter != end && i < max_buffers; ++iter, ++i)
-    {
-      asio::const_buffer buffer(*iter);
-      descriptor_ops::init_buf(bufs[i],
-          asio::buffer_cast<const void*>(buffer),
-          asio::buffer_size(buffer));
-      total_buffer_size += asio::buffer_size(buffer);
-    }
+    buffer_sequence_adapter<asio::const_buffer,
+        ConstBufferSequence> bufs(buffers);
 
     // A request to read_some 0 bytes on a stream is a no-op.
-    if (total_buffer_size == 0)
+    if (bufs.all_empty())
     {
       ec = asio::error_code();
       return 0;
-    }
-
-    // Make descriptor non-blocking if user wants non-blocking.
-    if (impl.flags_ & implementation_type::user_set_non_blocking)
-    {
-      if (!(impl.flags_ & implementation_type::internal_non_blocking))
-      {
-        ioctl_arg_type non_blocking = 1;
-        if (descriptor_ops::ioctl(impl.descriptor_,
-              FIONBIO, &non_blocking, ec))
-          return 0;
-        impl.flags_ |= implementation_type::internal_non_blocking;
-      }
     }
 
     // Send the data.
@@ -275,7 +255,7 @@ public:
     {
       // Try to complete the operation without blocking.
       int bytes_sent = descriptor_ops::gather_write(
-          impl.descriptor_, bufs, i, ec);
+          impl.descriptor_, bufs.buffers(), bufs.count(), ec);
 
       // Check if operation succeeded.
       if (bytes_sent >= 0)
@@ -309,48 +289,31 @@ public:
     return 0;
   }
 
-  template <typename ConstBufferSequence, typename Handler>
-  class write_operation :
-    public handler_base_from_member<Handler>
+  template <typename ConstBufferSequence>
+  class write_op_base : public reactor_op
   {
   public:
-    write_operation(int descriptor, asio::io_service& io_service,
-        const ConstBufferSequence& buffers, Handler handler)
-      : handler_base_from_member<Handler>(handler),
+    write_op_base(int descriptor,
+        const ConstBufferSequence& buffers, func_type complete_func)
+      : reactor_op(&write_op_base::do_perform, complete_func),
         descriptor_(descriptor),
-        io_service_(io_service),
-        work_(io_service),
         buffers_(buffers)
     {
     }
 
-    bool perform(asio::error_code& ec,
-        std::size_t& bytes_transferred)
+    static bool do_perform(reactor_op* base)
     {
-      // Check whether the operation was successful.
-      if (ec)
-      {
-        bytes_transferred = 0;
-        return true;
-      }
+      write_op_base* o(static_cast<write_op_base*>(base));
 
-      // Copy buffers into array.
-      descriptor_ops::buf bufs[max_buffers];
-      typename ConstBufferSequence::const_iterator iter = buffers_.begin();
-      typename ConstBufferSequence::const_iterator end = buffers_.end();
-      size_t i = 0;
-      for (; iter != end && i < max_buffers; ++iter, ++i)
-      {
-        asio::const_buffer buffer(*iter);
-        descriptor_ops::init_buf(bufs[i],
-            asio::buffer_cast<const void*>(buffer),
-            asio::buffer_size(buffer));
-      }
+      buffer_sequence_adapter<asio::const_buffer,
+          ConstBufferSequence> bufs(o->buffers_);
 
       for (;;)
       {
         // Write the data.
-        int bytes = descriptor_ops::gather_write(descriptor_, bufs, i, ec);
+        asio::error_code ec;
+        int bytes = descriptor_ops::gather_write(
+            o->descriptor_, bufs.buffers(), bufs.count(), ec);
 
         // Retry operation if interrupted by signal.
         if (ec == asio::error::interrupted)
@@ -361,22 +324,56 @@ public:
             || ec == asio::error::try_again)
           return false;
 
-        bytes_transferred = (bytes < 0 ? 0 : bytes);
+        o->ec_ = ec;
+        o->bytes_transferred_ = (bytes < 0 ? 0 : bytes);
         return true;
       }
     }
 
-    void complete(const asio::error_code& ec,
-        std::size_t bytes_transferred)
+  private:
+    int descriptor_;
+    ConstBufferSequence buffers_;
+  };
+
+  template <typename ConstBufferSequence, typename Handler>
+  class write_op : public write_op_base<ConstBufferSequence>
+  {
+  public:
+    write_op(int descriptor,
+        const ConstBufferSequence& buffers, Handler handler)
+      : write_op_base<ConstBufferSequence>(
+          descriptor, buffers, &write_op::do_complete),
+        handler_(handler)
     {
-      io_service_.post(bind_handler(this->handler_, ec, bytes_transferred));
+    }
+
+    static void do_complete(io_service_impl* owner, operation* base,
+        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
+    {
+      // Take ownership of the handler object.
+      write_op* o(static_cast<write_op*>(base));
+      typedef handler_alloc_traits<Handler, write_op> alloc_traits;
+      handler_ptr<alloc_traits> ptr(o->handler_, o);
+
+      // Make the upcall if required.
+      if (owner)
+      {
+        // Make a copy of the handler so that the memory can be deallocated
+        // before the upcall is made. Even if we're not about to make an
+        // upcall, a sub-object of the handler may be the true owner of the
+        // memory associated with the handler. Consequently, a local copy of
+        // the handler is required to ensure that any owning sub-object remains
+        // valid until after we have deallocated the memory here.
+        detail::binder2<Handler, asio::error_code, std::size_t>
+          handler(o->handler_, o->ec_, o->bytes_transferred_);
+        ptr.reset();
+        asio::detail::fenced_block b;
+        asio_handler_invoke_helpers::invoke(handler, handler);
+      }
     }
 
   private:
-    int descriptor_;
-    asio::io_service& io_service_;
-    asio::io_service::work work_;
-    ConstBufferSequence buffers_;
+    Handler handler_;
   };
 
   // Start an asynchronous write. The data being sent must be valid for the
@@ -385,96 +382,31 @@ public:
   void async_write_some(implementation_type& impl,
       const ConstBufferSequence& buffers, Handler handler)
   {
-    if (!is_open(impl))
-    {
-      this->get_io_service().post(bind_handler(handler,
-            asio::error::bad_descriptor, 0));
-    }
-    else
-    {
-      // Determine total size of buffers.
-      typename ConstBufferSequence::const_iterator iter = buffers.begin();
-      typename ConstBufferSequence::const_iterator end = buffers.end();
-      size_t i = 0;
-      size_t total_buffer_size = 0;
-      for (; iter != end && i < max_buffers; ++iter, ++i)
-      {
-        asio::const_buffer buffer(*iter);
-        total_buffer_size += asio::buffer_size(buffer);
-      }
+    // Allocate and construct an operation to wrap the handler.
+    typedef write_op<ConstBufferSequence, Handler> value_type;
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr, impl.descriptor_, buffers, handler);
 
-      // A request to read_some 0 bytes on a stream is a no-op.
-      if (total_buffer_size == 0)
-      {
-        this->get_io_service().post(bind_handler(handler,
-              asio::error_code(), 0));
-        return;
-      }
-
-      // Make descriptor non-blocking.
-      if (!(impl.flags_ & implementation_type::internal_non_blocking))
-      {
-        ioctl_arg_type non_blocking = 1;
-        asio::error_code ec;
-        if (descriptor_ops::ioctl(impl.descriptor_, FIONBIO, &non_blocking, ec))
-        {
-          this->get_io_service().post(bind_handler(handler, ec, 0));
-          return;
-        }
-        impl.flags_ |= implementation_type::internal_non_blocking;
-      }
-
-      reactor_.start_write_op(impl.descriptor_, impl.reactor_data_,
-          write_operation<ConstBufferSequence, Handler>(
-            impl.descriptor_, this->get_io_service(), buffers, handler));
-    }
+    start_op(impl, reactor::write_op, ptr.get(), true,
+        buffer_sequence_adapter<asio::const_buffer,
+          ConstBufferSequence>::all_empty(buffers));
+    ptr.release();
   }
-
-  template <typename Handler>
-  class null_buffers_operation :
-    public handler_base_from_member<Handler>
-  {
-  public:
-    null_buffers_operation(asio::io_service& io_service, Handler handler)
-      : handler_base_from_member<Handler>(handler),
-        work_(io_service)
-    {
-    }
-
-    bool perform(asio::error_code&,
-        std::size_t& bytes_transferred)
-    {
-      bytes_transferred = 0;
-      return true;
-    }
-
-    void complete(const asio::error_code& ec,
-        std::size_t bytes_transferred)
-    {
-      work_.get_io_service().post(bind_handler(
-            this->handler_, ec, bytes_transferred));
-    }
-
-  private:
-    asio::io_service::work work_;
-  };
 
   // Start an asynchronous wait until data can be written without blocking.
   template <typename Handler>
   void async_write_some(implementation_type& impl,
       const null_buffers&, Handler handler)
   {
-    if (!is_open(impl))
-    {
-      this->get_io_service().post(bind_handler(handler,
-            asio::error::bad_descriptor, 0));
-    }
-    else
-    {
-      reactor_.start_write_op(impl.descriptor_, impl.reactor_data_,
-          null_buffers_operation<Handler>(this->get_io_service(), handler),
-          false);
-    }
+    // Allocate and construct an operation to wrap the handler.
+    typedef null_buffers_op<Handler> value_type;
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr, handler);
+
+    start_op(impl, reactor::write_op, ptr.get(), false, false);
+    ptr.release();
   }
 
   // Read some data from the stream. Returns the number of bytes read.
@@ -488,38 +420,14 @@ public:
       return 0;
     }
 
-    // Copy buffers into array.
-    descriptor_ops::buf bufs[max_buffers];
-    typename MutableBufferSequence::const_iterator iter = buffers.begin();
-    typename MutableBufferSequence::const_iterator end = buffers.end();
-    size_t i = 0;
-    size_t total_buffer_size = 0;
-    for (; iter != end && i < max_buffers; ++iter, ++i)
-    {
-      asio::mutable_buffer buffer(*iter);
-      descriptor_ops::init_buf(bufs[i],
-          asio::buffer_cast<void*>(buffer),
-          asio::buffer_size(buffer));
-      total_buffer_size += asio::buffer_size(buffer);
-    }
+    buffer_sequence_adapter<asio::mutable_buffer,
+        MutableBufferSequence> bufs(buffers);
 
     // A request to read_some 0 bytes on a stream is a no-op.
-    if (total_buffer_size == 0)
+    if (bufs.all_empty())
     {
       ec = asio::error_code();
       return 0;
-    }
-
-    // Make descriptor non-blocking if user wants non-blocking.
-    if (impl.flags_ & implementation_type::user_set_non_blocking)
-    {
-      if (!(impl.flags_ & implementation_type::internal_non_blocking))
-      {
-        ioctl_arg_type non_blocking = 1;
-        if (descriptor_ops::ioctl(impl.descriptor_, FIONBIO, &non_blocking, ec))
-          return 0;
-        impl.flags_ |= implementation_type::internal_non_blocking;
-      }
     }
 
     // Read some data.
@@ -527,7 +435,7 @@ public:
     {
       // Try to complete the operation without blocking.
       int bytes_read = descriptor_ops::scatter_read(
-          impl.descriptor_, bufs, i, ec);
+          impl.descriptor_, bufs.buffers(), bufs.count(), ec);
 
       // Check if operation succeeded.
       if (bytes_read > 0)
@@ -568,48 +476,31 @@ public:
     return 0;
   }
 
-  template <typename MutableBufferSequence, typename Handler>
-  class read_operation :
-    public handler_base_from_member<Handler>
+  template <typename MutableBufferSequence>
+  class read_op_base : public reactor_op
   {
   public:
-    read_operation(int descriptor, asio::io_service& io_service,
-        const MutableBufferSequence& buffers, Handler handler)
-      : handler_base_from_member<Handler>(handler),
+    read_op_base(int descriptor,
+        const MutableBufferSequence& buffers, func_type complete_func)
+      : reactor_op(&read_op_base::do_perform, complete_func),
         descriptor_(descriptor),
-        io_service_(io_service),
-        work_(io_service),
         buffers_(buffers)
     {
     }
 
-    bool perform(asio::error_code& ec,
-        std::size_t& bytes_transferred)
+    static bool do_perform(reactor_op* base)
     {
-      // Check whether the operation was successful.
-      if (ec)
-      {
-        bytes_transferred = 0;
-        return true;
-      }
+      read_op_base* o(static_cast<read_op_base*>(base));
 
-      // Copy buffers into array.
-      descriptor_ops::buf bufs[max_buffers];
-      typename MutableBufferSequence::const_iterator iter = buffers_.begin();
-      typename MutableBufferSequence::const_iterator end = buffers_.end();
-      size_t i = 0;
-      for (; iter != end && i < max_buffers; ++iter, ++i)
-      {
-        asio::mutable_buffer buffer(*iter);
-        descriptor_ops::init_buf(bufs[i],
-            asio::buffer_cast<void*>(buffer),
-            asio::buffer_size(buffer));
-      }
+      buffer_sequence_adapter<asio::mutable_buffer,
+          MutableBufferSequence> bufs(o->buffers_);
 
       for (;;)
       {
         // Read some data.
-        int bytes = descriptor_ops::scatter_read(descriptor_, bufs, i, ec);
+        asio::error_code ec;
+        int bytes = descriptor_ops::scatter_read(
+            o->descriptor_, bufs.buffers(), bufs.count(), ec);
         if (bytes == 0)
           ec = asio::error::eof;
 
@@ -622,22 +513,56 @@ public:
             || ec == asio::error::try_again)
           return false;
 
-        bytes_transferred = (bytes < 0 ? 0 : bytes);
+        o->ec_ = ec;
+        o->bytes_transferred_ = (bytes < 0 ? 0 : bytes);
         return true;
       }
     }
 
-    void complete(const asio::error_code& ec,
-        std::size_t bytes_transferred)
+  private:
+    int descriptor_;
+    MutableBufferSequence buffers_;
+  };
+
+  template <typename MutableBufferSequence, typename Handler>
+  class read_op : public read_op_base<MutableBufferSequence>
+  {
+  public:
+    read_op(int descriptor,
+        const MutableBufferSequence& buffers, Handler handler)
+      : read_op_base<MutableBufferSequence>(
+          descriptor, buffers, &read_op::do_complete),
+        handler_(handler)
     {
-      io_service_.post(bind_handler(this->handler_, ec, bytes_transferred));
+    }
+
+    static void do_complete(io_service_impl* owner, operation* base,
+        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
+    {
+      // Take ownership of the handler object.
+      read_op* o(static_cast<read_op*>(base));
+      typedef handler_alloc_traits<Handler, read_op> alloc_traits;
+      handler_ptr<alloc_traits> ptr(o->handler_, o);
+
+      // Make the upcall if required.
+      if (owner)
+      {
+        // Make a copy of the handler so that the memory can be deallocated
+        // before the upcall is made. Even if we're not about to make an
+        // upcall, a sub-object of the handler may be the true owner of the
+        // memory associated with the handler. Consequently, a local copy of
+        // the handler is required to ensure that any owning sub-object remains
+        // valid until after we have deallocated the memory here.
+        detail::binder2<Handler, asio::error_code, std::size_t>
+          handler(o->handler_, o->ec_, o->bytes_transferred_);
+        ptr.reset();
+        asio::detail::fenced_block b;
+        asio_handler_invoke_helpers::invoke(handler, handler);
+      }
     }
 
   private:
-    int descriptor_;
-    asio::io_service& io_service_;
-    asio::io_service::work work_;
-    MutableBufferSequence buffers_;
+    Handler handler_;
   };
 
   // Start an asynchronous read. The buffer for the data being read must be
@@ -646,49 +571,17 @@ public:
   void async_read_some(implementation_type& impl,
       const MutableBufferSequence& buffers, Handler handler)
   {
-    if (!is_open(impl))
-    {
-      this->get_io_service().post(bind_handler(handler,
-            asio::error::bad_descriptor, 0));
-    }
-    else
-    {
-      // Determine total size of buffers.
-      typename MutableBufferSequence::const_iterator iter = buffers.begin();
-      typename MutableBufferSequence::const_iterator end = buffers.end();
-      size_t i = 0;
-      size_t total_buffer_size = 0;
-      for (; iter != end && i < max_buffers; ++iter, ++i)
-      {
-        asio::mutable_buffer buffer(*iter);
-        total_buffer_size += asio::buffer_size(buffer);
-      }
+    // Allocate and construct an operation to wrap the handler.
+    typedef read_op<MutableBufferSequence, Handler> value_type;
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr,
+        impl.descriptor_, buffers, handler);
 
-      // A request to read_some 0 bytes on a stream is a no-op.
-      if (total_buffer_size == 0)
-      {
-        this->get_io_service().post(bind_handler(handler,
-              asio::error_code(), 0));
-        return;
-      }
-
-      // Make descriptor non-blocking.
-      if (!(impl.flags_ & implementation_type::internal_non_blocking))
-      {
-        ioctl_arg_type non_blocking = 1;
-        asio::error_code ec;
-        if (descriptor_ops::ioctl(impl.descriptor_, FIONBIO, &non_blocking, ec))
-        {
-          this->get_io_service().post(bind_handler(handler, ec, 0));
-          return;
-        }
-        impl.flags_ |= implementation_type::internal_non_blocking;
-      }
-
-      reactor_.start_read_op(impl.descriptor_, impl.reactor_data_,
-          read_operation<MutableBufferSequence, Handler>(
-            impl.descriptor_, this->get_io_service(), buffers, handler));
-    }
+    start_op(impl, reactor::read_op, ptr.get(), true,
+        buffer_sequence_adapter<asio::mutable_buffer,
+          MutableBufferSequence>::all_empty(buffers));
+    ptr.release();
   }
 
   // Wait until data can be read without blocking.
@@ -696,22 +589,61 @@ public:
   void async_read_some(implementation_type& impl,
       const null_buffers&, Handler handler)
   {
-    if (!is_open(impl))
-    {
-      this->get_io_service().post(bind_handler(handler,
-            asio::error::bad_descriptor, 0));
-    }
-    else
-    {
-      reactor_.start_read_op(impl.descriptor_, impl.reactor_data_,
-          null_buffers_operation<Handler>(this->get_io_service(), handler),
-          false);
-    }
+    // Allocate and construct an operation to wrap the handler.
+    typedef null_buffers_op<Handler> value_type;
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr, handler);
+
+    start_op(impl, reactor::read_op, ptr.get(), false, false);
+    ptr.release();
   }
 
 private:
+  // Start the asynchronous operation.
+  void start_op(implementation_type& impl, int op_type,
+      reactor_op* op, bool non_blocking, bool noop)
+  {
+    if (!noop)
+    {
+      if (is_open(impl))
+      {
+        if (is_non_blocking(impl) || set_non_blocking(impl, op->ec_))
+        {
+          reactor_.start_op(op_type, impl.descriptor_,
+              impl.reactor_data_, op, non_blocking);
+          return;
+        }
+      }
+      else
+        op->ec_ = asio::error::bad_descriptor;
+    }
+
+    io_service_impl_.post_immediate_completion(op);
+  }
+
+  // Determine whether the descriptor has been set non-blocking.
+  bool is_non_blocking(implementation_type& impl) const
+  {
+    return (impl.flags_ & implementation_type::non_blocking);
+  }
+
+  // Set the internal non-blocking flag.
+  bool set_non_blocking(implementation_type& impl,
+      asio::error_code& ec)
+  {
+    ioctl_arg_type non_blocking = 1;
+    if (descriptor_ops::ioctl(impl.descriptor_, FIONBIO, &non_blocking, ec))
+      return false;
+    impl.flags_ |= implementation_type::internal_non_blocking;
+    return true;
+  }
+
+  // The io_service implementation used to post completions.
+  io_service_impl& io_service_impl_;
+
   // The selector that performs event demultiplexing for the service.
-  Reactor& reactor_;
+  reactor& reactor_;
 };
 
 } // namespace detail

@@ -22,7 +22,7 @@
 #include <boost/assert.hpp>
 #include <boost/config.hpp>
 #include <boost/detail/workaround.hpp>
-#include <boost/iterator/iterator_facade.hpp>
+#include <boost/iterator.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/add_const.hpp>
 #include "asio/detail/pop_options.hpp"
@@ -75,11 +75,10 @@ namespace detail
 /// A random access iterator over the bytes in a buffer sequence.
 template <typename BufferSequence, typename ByteType = char>
 class buffers_iterator
-  : public boost::iterator_facade<
-        buffers_iterator<BufferSequence, ByteType>,
-        typename detail::buffers_iterator_types<
-          BufferSequence, ByteType>::byte_type,
-        boost::random_access_traversal_tag>
+  : public boost::iterator<
+      std::random_access_iterator_tag,
+      typename detail::buffers_iterator_types<
+        BufferSequence, ByteType>::byte_type>
 {
 private:
   typedef typename detail::buffers_iterator_types<
@@ -138,9 +137,132 @@ public:
     return new_iter;
   }
 
-private:
-  friend class boost::iterator_core_access;
+  /// Dereference an iterator.
+  byte_type& operator*() const
+  {
+    return dereference();
+  }
 
+  /// Dereference an iterator.
+  byte_type* operator->() const
+  {
+    return &dereference();
+  }
+
+  /// Access an individual element.
+  byte_type& operator[](std::ptrdiff_t difference) const
+  {
+    buffers_iterator tmp(*this);
+    tmp.advance(difference);
+    return *tmp;
+  }
+
+  /// Increment operator (prefix).
+  buffers_iterator& operator++()
+  {
+    increment();
+    return *this;
+  }
+
+  /// Increment operator (postfix).
+  buffers_iterator operator++(int)
+  {
+    buffers_iterator tmp(*this);
+    ++*this;
+    return tmp;
+  }
+
+  /// Decrement operator (prefix).
+  buffers_iterator& operator--()
+  {
+    decrement();
+    return *this;
+  }
+
+  /// Decrement operator (postfix).
+  buffers_iterator operator--(int)
+  {
+    buffers_iterator tmp(*this);
+    --*this;
+    return tmp;
+  }
+
+  /// Addition operator.
+  buffers_iterator& operator+=(std::ptrdiff_t difference)
+  {
+    advance(difference);
+    return *this;
+  }
+
+  /// Subtraction operator.
+  buffers_iterator& operator-=(std::ptrdiff_t difference)
+  {
+    advance(-difference);
+    return *this;
+  }
+
+  /// Addition operator.
+  friend buffers_iterator operator+(const buffers_iterator& iter,
+      std::ptrdiff_t difference)
+  {
+    buffers_iterator tmp(iter);
+    tmp.advance(difference);
+    return tmp;
+  }
+
+  /// Subtraction operator.
+  friend buffers_iterator operator-(const buffers_iterator& iter,
+      std::ptrdiff_t difference)
+  {
+    buffers_iterator tmp(iter);
+    tmp.advance(-difference);
+    return tmp;
+  }
+
+  /// Subtraction operator.
+  friend std::ptrdiff_t operator-(const buffers_iterator& a,
+      const buffers_iterator& b)
+  {
+    return b.distance_to(a);
+  }
+
+  /// Test two iterators for equality.
+  friend bool operator==(const buffers_iterator& a, const buffers_iterator& b)
+  {
+    return a.equal(b);
+  }
+
+  /// Test two iterators for inequality.
+  friend bool operator!=(const buffers_iterator& a, const buffers_iterator& b)
+  {
+    return !a.equal(b);
+  }
+
+  /// Compare two iterators.
+  friend bool operator<(const buffers_iterator& a, const buffers_iterator& b)
+  {
+    return a.distance_to(b) > 0;
+  }
+
+  /// Compare two iterators.
+  friend bool operator<=(const buffers_iterator& a, const buffers_iterator& b)
+  {
+    return !(b < a);
+  }
+
+  /// Compare two iterators.
+  friend bool operator>(const buffers_iterator& a, const buffers_iterator& b)
+  {
+    return b < a;
+  }
+
+  /// Compare two iterators.
+  friend bool operator>=(const buffers_iterator& a, const buffers_iterator& b)
+  {
+    return !(a < b);
+  }
+
+private:
   // Dereference the iterator.
   byte_type& dereference() const
   {

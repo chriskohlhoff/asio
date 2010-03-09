@@ -18,8 +18,7 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
-#include <boost/iterator/iterator_facade.hpp>
-#include <boost/optional.hpp>
+#include <boost/iterator.hpp>
 #include <boost/shared_ptr.hpp>
 #include <cstring>
 #include <string>
@@ -47,14 +46,18 @@ namespace ip {
  */
 template <typename InternetProtocol>
 class basic_resolver_iterator
-  : public boost::iterator_facade<
-        basic_resolver_iterator<InternetProtocol>,
-        const basic_resolver_entry<InternetProtocol>,
-        boost::forward_traversal_tag>
+#if defined(GENERATING_DOCUMENTATION)
+  : public std::iterator<
+#else // defined(GENERATING_DOCUMENTATION)
+  : public boost::iterator<
+#endif // defined(GENERATING_DOCUMENTATION)
+      std::forward_iterator_tag,
+      const basic_resolver_entry<InternetProtocol> >
 {
 public:
   /// Default constructor creates an end iterator.
   basic_resolver_iterator()
+    : index_(0)
   {
   }
 
@@ -90,11 +93,6 @@ public:
       address_info = address_info->ai_next;
     }
 
-    if (iter.values_->size())
-      iter.iter_ = iter.values_->begin();
-    else
-      iter.values_.reset();
-
     return iter;
   }
 
@@ -108,21 +106,58 @@ public:
     iter.values_->push_back(
         basic_resolver_entry<InternetProtocol>(
           endpoint, host_name, service_name));
-    iter.iter_ = iter.values_->begin();
     return iter;
   }
 
-private:
-  friend class boost::iterator_core_access;
+  /// Dereference an iterator.
+  const basic_resolver_entry<InternetProtocol>& operator*() const
+  {
+    return dereference();
+  }
 
+  /// Dereference an iterator.
+  const basic_resolver_entry<InternetProtocol>* operator->() const
+  {
+    return &dereference();
+  }
+
+  /// Increment operator (prefix).
+  basic_resolver_iterator& operator++()
+  {
+    increment();
+    return *this;
+  }
+
+  /// Increment operator (postfix).
+  basic_resolver_iterator operator++(int)
+  {
+    basic_resolver_iterator tmp(*this);
+    ++*this;
+    return tmp;
+  }
+
+  /// Test two iterators for equality.
+  friend bool operator==(const basic_resolver_iterator& a,
+      const basic_resolver_iterator& b)
+  {
+    return a.equal(b);
+  }
+
+  /// Test two iterators for inequality.
+  friend bool operator!=(const basic_resolver_iterator& a,
+      const basic_resolver_iterator& b)
+  {
+    return !a.equal(b);
+  }
+
+private:
   void increment()
   {
-    if (++*iter_ == values_->end())
+    if (++index_ == values_->size())
     {
       // Reset state to match a default constructed end iterator.
       values_.reset();
-      typedef typename values_type::const_iterator values_iterator_type;
-      iter_.reset();
+      index_ = 0;
     }
   }
 
@@ -132,18 +167,17 @@ private:
       return true;
     if (values_ != other.values_)
       return false;
-    return *iter_ == *other.iter_;
+    return index_ == other.index_;
   }
 
   const basic_resolver_entry<InternetProtocol>& dereference() const
   {
-    return **iter_;
+    return (*values_)[index_];
   }
 
   typedef std::vector<basic_resolver_entry<InternetProtocol> > values_type;
-  typedef typename values_type::const_iterator values_iter_type;
   boost::shared_ptr<values_type> values_;
-  boost::optional<values_iter_type> iter_;
+  std::size_t index_;
 };
 
 } // namespace ip

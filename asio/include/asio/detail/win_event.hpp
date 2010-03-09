@@ -70,6 +70,15 @@ public:
     ::SetEvent(event_);
   }
 
+  // Signal the event and unlock the mutex.
+  template <typename Lock>
+  void signal_and_unlock(Lock& lock)
+  {
+    BOOST_ASSERT(lock.locked());
+    lock.unlock();
+    ::SetEvent(event_);
+  }
+
   // Reset the event.
   template <typename Lock>
   void clear(Lock& lock)

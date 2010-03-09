@@ -22,12 +22,14 @@ nobase_include_HEADERS = \
 	asio/datagram_socket_service.hpp \
 	asio/deadline_timer.hpp \
 	asio/deadline_timer_service.hpp \
+	asio/detail/base_from_completion_cond.hpp \
 	asio/detail/bind_handler.hpp \
 	asio/detail/buffer_resize_guard.hpp \
+	asio/detail/buffer_sequence_adapter.hpp \
 	asio/detail/buffered_stream_storage.hpp \
 	asio/detail/call_stack.hpp \
+	asio/detail/completion_handler.hpp \
 	asio/detail/consuming_buffers.hpp \
-	asio/detail/const_buffers_iterator.hpp \
 	asio/detail/deadline_timer_service.hpp \
 	asio/detail/descriptor_ops.hpp \
 	asio/detail/dev_poll_reactor.hpp \
@@ -37,24 +39,29 @@ nobase_include_HEADERS = \
 	asio/detail/eventfd_select_interrupter.hpp \
 	asio/detail/event.hpp \
 	asio/detail/fd_set_adapter.hpp \
+	asio/detail/fenced_block.hpp \
+	asio/detail/gcc_fenced_block.hpp \
+	asio/detail/gcc_x86_fenced_block.hpp \
 	asio/detail/handler_alloc_helpers.hpp \
-	asio/detail/handler_base_from_member.hpp \
 	asio/detail/handler_invoke_helpers.hpp \
-	asio/detail/handler_queue.hpp \
 	asio/detail/hash_map.hpp \
-	asio/detail/indirect_handler_queue.hpp \
 	asio/detail/io_control.hpp \
 	asio/detail/kqueue_reactor.hpp \
 	asio/detail/kqueue_reactor_fwd.hpp \
 	asio/detail/local_free_on_block_exit.hpp \
+	asio/detail/macos_fenced_block.hpp \
 	asio/detail/mutex.hpp \
 	asio/detail/noncopyable.hpp \
+	asio/detail/null_buffers_op.hpp \
 	asio/detail/null_event.hpp \
+	asio/detail/null_fenced_block.hpp \
 	asio/detail/null_mutex.hpp \
 	asio/detail/null_signal_blocker.hpp \
 	asio/detail/null_thread.hpp \
 	asio/detail/null_tss_ptr.hpp \
 	asio/detail/old_win_sdk_compat.hpp \
+	asio/detail/op_queue.hpp \
+	asio/detail/operation.hpp \
 	asio/detail/pipe_select_interrupter.hpp \
 	asio/detail/pop_options.hpp \
 	asio/detail/posix_event.hpp \
@@ -67,6 +74,9 @@ nobase_include_HEADERS = \
 	asio/detail/reactive_socket_service.hpp \
 	asio/detail/reactive_descriptor_service.hpp \
 	asio/detail/reactive_serial_port_service.hpp \
+	asio/detail/reactor.hpp \
+	asio/detail/reactor_fwd.hpp \
+	asio/detail/reactor_op.hpp \
 	asio/detail/reactor_op_queue.hpp \
 	asio/detail/resolver_service.hpp \
 	asio/detail/scoped_lock.hpp \
@@ -84,20 +94,28 @@ nobase_include_HEADERS = \
 	asio/detail/socket_option.hpp \
 	asio/detail/socket_select_interrupter.hpp \
 	asio/detail/socket_types.hpp \
+	asio/detail/solaris_fenced_block.hpp \
 	asio/detail/strand_service.hpp \
 	asio/detail/task_io_service.hpp \
-	asio/detail/task_io_service_2lock.hpp \
 	asio/detail/task_io_service_fwd.hpp \
+	asio/detail/task_io_service_operation.hpp \
 	asio/detail/thread.hpp \
 	asio/detail/throw_error.hpp \
+	asio/detail/timer_op.hpp \
 	asio/detail/timer_queue.hpp \
 	asio/detail/timer_queue_base.hpp \
+	asio/detail/timer_queue_fwd.hpp \
+	asio/detail/timer_queue_set.hpp \
+	asio/detail/timer_scheduler.hpp \
+	asio/detail/timer_scheduler_fwd.hpp \
 	asio/detail/tss_ptr.hpp \
 	asio/detail/win_event.hpp \
 	asio/detail/win_fd_set_adapter.hpp \
+	asio/detail/win_fenced_block.hpp \
 	asio/detail/win_iocp_io_service.hpp \
 	asio/detail/win_iocp_io_service_fwd.hpp \
 	asio/detail/win_iocp_handle_service.hpp \
+	asio/detail/win_iocp_operation.hpp \
 	asio/detail/win_iocp_overlapped_ptr.hpp \
 	asio/detail/win_iocp_serial_port_service.hpp \
 	asio/detail/win_iocp_socket_service.hpp \
@@ -194,4 +212,3 @@ nobase_include_HEADERS = \
 
 MAINTAINERCLEANFILES = \
 	$(srcdir)/Makefile.in
-

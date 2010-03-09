@@ -110,7 +110,7 @@ case $host in
     ;;
   *-*-solaris*)
     if test "$GXX" = yes; then
-      CXXFLAGS="$CXXFLAGS"
+      CXXFLAGS="$CXXFLAGS -D_PTHREADS"
     else
       # We'll assume Sun's CC.
       CXXFLAGS="$CXXFLAGS -mt"

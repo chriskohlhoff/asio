@@ -437,6 +437,29 @@ sub copy_source_file
     {
       print_line($output, $1 . "<boost/" . $2 . ">" . $3, $from, $lineno);
     }
+    elsif ($line =~ /( *)op->Internal = asio::error::get_system_category\(\);/)
+    {
+      my $indent = $1;
+      $line =~ s/asio.*$/reinterpret_cast<ulong_ptr_t>(/g;
+      print_line($output, $line, $from, $lineno);
+      $line = $indent . "    &boost::asio::error::get_system_category());";
+      print_line($output, $line, $from, $lineno);
+    }
+    elsif ($line =~ /op->Internal = ec\.category\(\);/)
+    {
+      $line =~ s/ec.*$/reinterpret_cast<ulong_ptr_t>(&ec.category());/g;
+      print_line($output, $line, $from, $lineno);
+    }
+    elsif ($line =~ /static_cast<asio::error_category>\(op->Internal\)\);/)
+    {
+      $line =~ s/static_cast<asio::error_category>/*reinterpret_cast<boost::system::error_category*>/g;
+      print_line($output, $line, $from, $lineno);
+    }
+    elsif ($line =~ /op->Internal = result_ec\.category\(\);/)
+    {
+      $line =~ s/res.*$/reinterpret_cast<ulong_ptr_t>(&result_ec.category());/g;
+      print_line($output, $line, $from, $lineno);
+    }
     elsif ($line =~ /ASIO_/ && !($line =~ /BOOST_ASIO_/))
     {
       $line =~ s/ASIO_/BOOST_ASIO_/g;

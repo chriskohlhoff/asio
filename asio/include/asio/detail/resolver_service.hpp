@@ -27,8 +27,10 @@
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/detail/bind_handler.hpp"
+#include "asio/detail/fenced_block.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
+#include "asio/detail/operation.hpp"
 #include "asio/detail/service_base.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -88,7 +90,10 @@ public:
     : asio::detail::service_base<
         resolver_service<Protocol> >(io_service),
       mutex_(),
+      io_service_impl_(asio::use_service<io_service_impl>(io_service)),
       work_io_service_(new asio::io_service),
+      work_io_service_impl_(asio::use_service<
+          io_service_impl>(*work_io_service_)),
       work_(new asio::io_service::work(*work_io_service_)),
       work_thread_(0)
   {
@@ -142,7 +147,7 @@ public:
     std::string service_name = query.service_name();
     asio::detail::addrinfo_type hints = query.hints();
 
-    socket_ops::getaddrinfo(host_name.length() ? host_name.c_str() : 0,
+    socket_ops::getaddrinfo(!host_name.empty() ? host_name.c_str() : 0,
         service_name.c_str(), &hints, &address_info, ec);
     auto_addrinfo auto_address_info(address_info);
 
@@ -153,54 +158,84 @@ public:
   }
 
   template <typename Handler>
-  class resolve_query_handler
+  class resolve_op
+    : public operation
   {
   public:
-    resolve_query_handler(implementation_type impl, const query_type& query,
-        asio::io_service& io_service, Handler handler)
-      : impl_(impl),
+    resolve_op(implementation_type impl, const query_type& query,
+        io_service_impl& io_service_impl, Handler handler)
+      : operation(&resolve_op::do_complete),
+        impl_(impl),
         query_(query),
-        io_service_(io_service),
-        work_(io_service),
+        io_service_impl_(io_service_impl),
         handler_(handler)
     {
     }
 
-    void operator()()
+    static void do_complete(io_service_impl* owner, operation* base,
+        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
     {
-      // Check if the operation has been cancelled.
-      if (impl_.expired())
+      // Take ownership of the operation object.
+      resolve_op* o(static_cast<resolve_op*>(base));
+      typedef handler_alloc_traits<Handler, resolve_op> alloc_traits;
+      handler_ptr<alloc_traits> ptr(o->handler_, o);
+
+      if (owner)
       {
-        iterator_type iterator;
-        io_service_.post(asio::detail::bind_handler(handler_,
-              asio::error::operation_aborted, iterator));
-        return;
+        if (owner != &o->io_service_impl_)
+        {
+          // The operation is being run on the worker io_service. Time to
+          // perform the resolver operation.
+        
+          if (o->impl_.expired())
+          {
+            // THe operation has been cancelled.
+            o->ec_ = asio::error::operation_aborted;
+          }
+          else
+          {
+            // Perform the blocking host resolution operation.
+            asio::detail::addrinfo_type* address_info = 0;
+            std::string host_name = o->query_.host_name();
+            std::string service_name = o->query_.service_name();
+            asio::detail::addrinfo_type hints = o->query_.hints();
+            socket_ops::getaddrinfo(!host_name.empty() ? host_name.c_str() : 0,
+                service_name.c_str(), &hints, &address_info, o->ec_);
+            auto_addrinfo auto_address_info(address_info);
+            o->iter_ = iterator_type::create(
+              address_info, host_name, service_name);
+          }
+
+          o->io_service_impl_.post_deferred_completion(o);
+          ptr.release();
+        }
+        else
+        {
+          // The operation has been returned to the main io_serice. The
+          // completion handler is ready to be delivered.
+
+          // Make a copy of the handler so that the memory can be deallocated
+          // before the upcall is made. Even if we're not about to make an
+          // upcall, a sub-object of the handler may be the true owner of the
+          // memory associated with the handler. Consequently, a local copy of
+          // the handler is required to ensure that any owning sub-object
+          // remains valid until after we have deallocated the memory here.
+          detail::binder2<Handler, asio::error_code, iterator_type>
+            handler(o->handler_, o->ec_, o->iter_);
+          ptr.reset();
+          asio::detail::fenced_block b;
+          asio_handler_invoke_helpers::invoke(handler, handler);
+        }
       }
-
-      // Perform the blocking host resolution operation.
-      asio::detail::addrinfo_type* address_info = 0;
-      std::string host_name = query_.host_name();
-      std::string service_name = query_.service_name();
-      asio::detail::addrinfo_type hints = query_.hints();
-      asio::error_code ec;
-      socket_ops::getaddrinfo(host_name.length() ? host_name.c_str() : 0,
-          service_name.c_str(), &hints, &address_info, ec);
-      auto_addrinfo auto_address_info(address_info);
-
-      // Invoke the handler and pass the result.
-      iterator_type iterator;
-      if (!ec)
-        iterator = iterator_type::create(address_info, host_name, service_name);
-      io_service_.post(asio::detail::bind_handler(
-            handler_, ec, iterator));
     }
 
   private:
     boost::weak_ptr<void> impl_;
     query_type query_;
-    asio::io_service& io_service_;
-    asio::io_service::work work_;
+    io_service_impl& io_service_impl_;
     Handler handler_;
+    asio::error_code ec_;
+    iterator_type iter_;
   };
 
   // Asynchronously resolve a query to a list of entries.
@@ -208,12 +243,19 @@ public:
   void async_resolve(implementation_type& impl, const query_type& query,
       Handler handler)
   {
+    // Allocate and construct an operation to wrap the handler.
+    typedef resolve_op<Handler> value_type;
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr,
+        impl, query, io_service_impl_, handler);
+
     if (work_io_service_)
     {
       start_work_thread();
-      work_io_service_->post(
-          resolve_query_handler<Handler>(
-            impl, query, this->get_io_service(), handler));
+      io_service_impl_.work_started();
+      work_io_service_impl_.post_immediate_completion(ptr.get());
+      ptr.release();
     }
   }
 
@@ -242,61 +284,89 @@ public:
   }
 
   template <typename Handler>
-  class resolve_endpoint_handler
+  class resolve_endpoint_op
+    : public operation
   {
   public:
-    resolve_endpoint_handler(implementation_type impl,
-        const endpoint_type& endpoint, asio::io_service& io_service,
-        Handler handler)
-      : impl_(impl),
-        endpoint_(endpoint),
-        io_service_(io_service),
-        work_(io_service),
+    resolve_endpoint_op(implementation_type impl, const endpoint_type& ep,
+        io_service_impl& io_service_impl, Handler handler)
+      : operation(&resolve_endpoint_op::do_complete),
+        impl_(impl),
+        ep_(ep),
+        io_service_impl_(io_service_impl),
         handler_(handler)
     {
     }
 
-    void operator()()
+    static void do_complete(io_service_impl* owner, operation* base,
+        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
     {
-      // Check if the operation has been cancelled.
-      if (impl_.expired())
+      // Take ownership of the operation object.
+      resolve_endpoint_op* o(static_cast<resolve_endpoint_op*>(base));
+      typedef handler_alloc_traits<Handler, resolve_endpoint_op> alloc_traits;
+      handler_ptr<alloc_traits> ptr(o->handler_, o);
+
+      if (owner)
       {
-        iterator_type iterator;
-        io_service_.post(asio::detail::bind_handler(handler_,
-              asio::error::operation_aborted, iterator));
-        return;
+        if (owner != &o->io_service_impl_)
+        {
+          // The operation is being run on the worker io_service. Time to
+          // perform the resolver operation.
+        
+          if (o->impl_.expired())
+          {
+            // THe operation has been cancelled.
+            o->ec_ = asio::error::operation_aborted;
+          }
+          else
+          {
+            // Perform the blocking endoint resolution operation.
+            char host_name[NI_MAXHOST];
+            char service_name[NI_MAXSERV];
+            int flags = o->ep_.protocol().type() == SOCK_DGRAM ? NI_DGRAM : 0;
+            socket_ops::getnameinfo(o->ep_.data(), o->ep_.size(),
+                host_name, NI_MAXHOST, service_name,
+                NI_MAXSERV, flags, o->ec_);
+            if (o->ec_)
+            {
+              flags |= NI_NUMERICSERV;
+              socket_ops::getnameinfo(o->ep_.data(), o->ep_.size(),
+                  host_name, NI_MAXHOST, service_name,
+                  NI_MAXSERV, flags, o->ec_);
+            }
+            o->iter_ = iterator_type::create(o->ep_, host_name, service_name);
+          }
+
+          o->io_service_impl_.post_deferred_completion(o);
+          ptr.release();
+        }
+        else
+        {
+          // The operation has been returned to the main io_serice. The
+          // completion handler is ready to be delivered.
+
+          // Make a copy of the handler so that the memory can be deallocated
+          // before the upcall is made. Even if we're not about to make an
+          // upcall, a sub-object of the handler may be the true owner of the
+          // memory associated with the handler. Consequently, a local copy of
+          // the handler is required to ensure that any owning sub-object
+          // remains valid until after we have deallocated the memory here.
+          detail::binder2<Handler, asio::error_code, iterator_type>
+            handler(o->handler_, o->ec_, o->iter_);
+          ptr.reset();
+          asio::detail::fenced_block b;
+          asio_handler_invoke_helpers::invoke(handler, handler);
+        }
       }
-
-
-      // First try resolving with the service name. If that fails try resolving
-      // but allow the service to be returned as a number.
-      char host_name[NI_MAXHOST];
-      char service_name[NI_MAXSERV];
-      int flags = endpoint_.protocol().type() == SOCK_DGRAM ? NI_DGRAM : 0;
-      asio::error_code ec;
-      socket_ops::getnameinfo(endpoint_.data(), endpoint_.size(),
-          host_name, NI_MAXHOST, service_name, NI_MAXSERV, flags, ec);
-      if (ec)
-      {
-        flags |= NI_NUMERICSERV;
-        socket_ops::getnameinfo(endpoint_.data(), endpoint_.size(),
-            host_name, NI_MAXHOST, service_name, NI_MAXSERV, flags, ec);
-      }
-
-      // Invoke the handler and pass the result.
-      iterator_type iterator;
-      if (!ec)
-        iterator = iterator_type::create(endpoint_, host_name, service_name);
-      io_service_.post(asio::detail::bind_handler(
-            handler_, ec, iterator));
     }
 
   private:
     boost::weak_ptr<void> impl_;
-    endpoint_type endpoint_;
-    asio::io_service& io_service_;
-    asio::io_service::work work_;
+    endpoint_type ep_;
+    io_service_impl& io_service_impl_;
     Handler handler_;
+    asio::error_code ec_;
+    iterator_type iter_;
   };
 
   // Asynchronously resolve an endpoint to a list of entries.
@@ -304,12 +374,19 @@ public:
   void async_resolve(implementation_type& impl, const endpoint_type& endpoint,
       Handler handler)
   {
+    // Allocate and construct an operation to wrap the handler.
+    typedef resolve_endpoint_op<Handler> value_type;
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr,
+        impl, endpoint, io_service_impl_, handler);
+
     if (work_io_service_)
     {
       start_work_thread();
-      work_io_service_->post(
-          resolve_endpoint_handler<Handler>(
-            impl, endpoint, this->get_io_service(), handler));
+      io_service_impl_.work_started();
+      work_io_service_impl_.post_immediate_completion(ptr.get());
+      ptr.release();
     }
   }
 
@@ -339,8 +416,14 @@ private:
   // Mutex to protect access to internal data.
   asio::detail::mutex mutex_;
 
+  // The io_service implementation used to post completions.
+  io_service_impl& io_service_impl_;
+
   // Private io_service used for performing asynchronous host resolution.
   boost::scoped_ptr<asio::io_service> work_io_service_;
+
+  // The work io_service implementation used to post completions.
+  io_service_impl& work_io_service_impl_;
 
   // Work for the private io_service to perform.
   boost::scoped_ptr<asio::io_service::work> work_;

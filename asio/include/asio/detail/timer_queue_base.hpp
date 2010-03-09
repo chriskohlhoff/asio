@@ -17,13 +17,9 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/socket_types.hpp" // Must come before posix_time.
-
-#include "asio/detail/push_options.hpp"
-#include <boost/date_time/posix_time/posix_time_types.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/detail/noncopyable.hpp"
+#include "asio/detail/op_queue.hpp"
+#include "asio/detail/operation.hpp"
 
 namespace asio {
 namespace detail {
@@ -32,6 +28,9 @@ class timer_queue_base
   : private noncopyable
 {
 public:
+  // Constructor.
+  timer_queue_base() : next_(0) {}
+
   // Destructor.
   virtual ~timer_queue_base() {}
 
@@ -39,19 +38,22 @@ public:
   virtual bool empty() const = 0;
 
   // Get the time to wait until the next timer.
-  virtual boost::posix_time::time_duration wait_duration() const = 0;
+  virtual long wait_duration_msec(long max_duration) const = 0;
 
-  // Dispatch all ready timers.
-  virtual void dispatch_timers() = 0;
+  // Get the time to wait until the next timer.
+  virtual long wait_duration_usec(long max_duration) const = 0;
 
-  // Dispatch any pending cancels for timers.
-  virtual void dispatch_cancellations() = 0;
+  // Dequeue all ready timers.
+  virtual void get_ready_timers(op_queue<operation>& ops) = 0;
 
-  // Complete all timers that are waiting to be completed.
-  virtual void complete_timers() = 0;
+  // Dequeue all timers.
+  virtual void get_all_timers(op_queue<operation>& ops) = 0;
 
-  // Destroy all timers.
-  virtual void destroy_timers() = 0;
+private:
+  friend class timer_queue_set;
+
+  // Next timer queue in the set.
+  timer_queue_base* next_;
 };
 
 } // namespace detail

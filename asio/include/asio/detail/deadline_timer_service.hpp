@@ -26,20 +26,19 @@
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/detail/bind_handler.hpp"
-#include "asio/detail/handler_base_from_member.hpp"
+#include "asio/detail/fenced_block.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/service_base.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/timer_op.hpp"
 #include "asio/detail/timer_queue.hpp"
+#include "asio/detail/timer_scheduler.hpp"
 
 namespace asio {
 namespace detail {
 
-template <typename Time_Traits, typename Timer_Scheduler>
+template <typename Time_Traits>
 class deadline_timer_service
-  : public asio::detail::service_base<
-      deadline_timer_service<Time_Traits, Timer_Scheduler> >
 {
 public:
   // The time type.
@@ -59,9 +58,7 @@ public:
 
   // Constructor.
   deadline_timer_service(asio::io_service& io_service)
-    : asio::detail::service_base<
-        deadline_timer_service<Time_Traits, Timer_Scheduler> >(io_service),
-      scheduler_(asio::use_service<Timer_Scheduler>(io_service))
+    : scheduler_(asio::use_service<timer_scheduler>(io_service))
   {
     scheduler_.init_task();
     scheduler_.add_timer_queue(timer_queue_);
@@ -155,34 +152,58 @@ public:
   }
 
   template <typename Handler>
-  class wait_handler : 
-    public handler_base_from_member<Handler>
+  class wait_handler : public timer_op
   {
   public:
-    wait_handler(asio::io_service& io_service, Handler handler)
-      : handler_base_from_member<Handler>(handler),
-        io_service_(io_service),
-        work_(io_service)
+    wait_handler(Handler handler)
+      : timer_op(&wait_handler::do_complete),
+        handler_(handler)
     {
     }
 
-    void operator()(const asio::error_code& result)
+    static void do_complete(io_service_impl* owner, operation* base,
+        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
     {
-      io_service_.post(detail::bind_handler(this->handler_, result));
+      // Take ownership of the handler object.
+      wait_handler* h(static_cast<wait_handler*>(base));
+      typedef handler_alloc_traits<Handler, wait_handler> alloc_traits;
+      handler_ptr<alloc_traits> ptr(h->handler_, h);
+
+      // Make the upcall if required.
+      if (owner)
+      {
+        // Make a copy of the handler so that the memory can be deallocated
+        // before the upcall is made. Even if we're not about to make an
+        // upcall, a sub-object of the handler may be the true owner of the
+        // memory associated with the handler. Consequently, a local copy of
+        // the handler is required to ensure that any owning sub-object remains
+        // valid until after we have deallocated the memory here.
+        detail::binder1<Handler, asio::error_code>
+          handler(h->handler_, h->ec_);
+        ptr.reset();
+        asio::detail::fenced_block b;
+        asio_handler_invoke_helpers::invoke(handler, handler);
+      }
     }
 
   private:
-    asio::io_service& io_service_;
-    asio::io_service::work work_;
+    Handler handler_;
   };
 
   // Start an asynchronous wait on the timer.
   template <typename Handler>
   void async_wait(implementation_type& impl, Handler handler)
   {
+    // Allocate and construct an operation to wrap the handler.
+    typedef wait_handler<Handler> value_type;
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr, handler);
+
     impl.might_have_pending_waits = true;
-    scheduler_.schedule_timer(timer_queue_, impl.expiry,
-        wait_handler<Handler>(this->get_io_service(), handler), &impl);
+
+    scheduler_.schedule_timer(timer_queue_, impl.expiry, ptr.get(), &impl);
+    ptr.release();
   }
 
 private:
@@ -190,7 +211,7 @@ private:
   timer_queue<Time_Traits> timer_queue_;
 
   // The object that schedules and executes timers. Usually a reactor.
-  Timer_Scheduler& scheduler_;
+  timer_scheduler& scheduler_;
 };
 
 } // namespace detail

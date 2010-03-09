@@ -17,18 +17,17 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/shared_ptr.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/buffer.hpp"
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/socket_base.hpp"
 #include "asio/detail/bind_handler.hpp"
-#include "asio/detail/handler_base_from_member.hpp"
+#include "asio/detail/buffer_sequence_adapter.hpp"
+#include "asio/detail/fenced_block.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/service_base.hpp"
+#include "asio/detail/null_buffers_op.hpp"
+#include "asio/detail/reactor.hpp"
+#include "asio/detail/reactor_op.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -36,10 +35,8 @@
 namespace asio {
 namespace detail {
 
-template <typename Protocol, typename Reactor>
+template <typename Protocol>
 class reactive_socket_service
-  : public asio::detail::service_base<
-      reactive_socket_service<Protocol, Reactor> >
 {
 public:
   // The protocol type.
@@ -66,7 +63,7 @@ public:
 
   private:
     // Only this service will have access to the internal values.
-    friend class reactive_socket_service<Protocol, Reactor>;
+    friend class reactive_socket_service<Protocol>;
 
     // The native socket representation.
     socket_type socket_;
@@ -86,7 +83,7 @@ public:
       // User wants connection_aborted errors, which are disabled by default.
       enable_connection_aborted = 4,
 
-      // The user set the linger option. Needs to be checked when closing. 
+      // The user set the linger option. Needs to be checked when closing.
       user_set_linger = 8
     };
 
@@ -97,17 +94,13 @@ public:
     protocol_type protocol_;
 
     // Per-descriptor data used by the reactor.
-    typename Reactor::per_descriptor_data reactor_data_;
+    reactor::per_descriptor_data reactor_data_;
   };
-
-  // The maximum number of buffers to support in a single operation.
-  enum { max_buffers = 64 < max_iov_len ? 64 : max_iov_len };
 
   // Constructor.
   reactive_socket_service(asio::io_service& io_service)
-    : asio::detail::service_base<
-        reactive_socket_service<Protocol, Reactor> >(io_service),
-      reactor_(asio::use_service<Reactor>(io_service))
+    : io_service_impl_(use_service<io_service_impl>(io_service)),
+      reactor_(use_service<reactor>(io_service))
   {
     reactor_.init_task();
   }
@@ -552,23 +545,11 @@ public:
       return 0;
     }
 
-    // Copy buffers into array.
-    socket_ops::buf bufs[max_buffers];
-    typename ConstBufferSequence::const_iterator iter = buffers.begin();
-    typename ConstBufferSequence::const_iterator end = buffers.end();
-    size_t i = 0;
-    size_t total_buffer_size = 0;
-    for (; iter != end && i < max_buffers; ++iter, ++i)
-    {
-      asio::const_buffer buffer(*iter);
-      socket_ops::init_buf(bufs[i],
-          asio::buffer_cast<const void*>(buffer),
-          asio::buffer_size(buffer));
-      total_buffer_size += asio::buffer_size(buffer);
-    }
+    buffer_sequence_adapter<asio::const_buffer,
+        ConstBufferSequence> bufs(buffers);
 
     // A request to receive 0 bytes on a stream socket is a no-op.
-    if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
+    if (impl.protocol_.type() == SOCK_STREAM && bufs.all_empty())
     {
       ec = asio::error_code();
       return 0;
@@ -578,7 +559,8 @@ public:
     for (;;)
     {
       // Try to complete the operation without blocking.
-      int bytes_sent = socket_ops::send(impl.socket_, bufs, i, flags, ec);
+      int bytes_sent = socket_ops::send(impl.socket_,
+          bufs.buffers(), bufs.count(), flags, ec);
 
       // Check if operation succeeded.
       if (bytes_sent >= 0)
@@ -612,50 +594,32 @@ public:
     return 0;
   }
 
-  template <typename ConstBufferSequence, typename Handler>
-  class send_operation :
-    public handler_base_from_member<Handler>
+  template <typename ConstBufferSequence>
+  class send_op_base : public reactor_op
   {
   public:
-    send_operation(socket_type socket, asio::io_service& io_service,
-        const ConstBufferSequence& buffers, socket_base::message_flags flags,
-        Handler handler)
-      : handler_base_from_member<Handler>(handler),
+    send_op_base(socket_type socket, const ConstBufferSequence& buffers,
+        socket_base::message_flags flags, func_type complete_func)
+      : reactor_op(&send_op_base::do_perform, complete_func),
         socket_(socket),
-        io_service_(io_service),
-        work_(io_service),
         buffers_(buffers),
         flags_(flags)
     {
     }
 
-    bool perform(asio::error_code& ec,
-        std::size_t& bytes_transferred)
+    static bool do_perform(reactor_op* base)
     {
-      // Check whether the operation was successful.
-      if (ec)
-      {
-        bytes_transferred = 0;
-        return true;
-      }
+      send_op_base* o(static_cast<send_op_base*>(base));
 
-      // Copy buffers into array.
-      socket_ops::buf bufs[max_buffers];
-      typename ConstBufferSequence::const_iterator iter = buffers_.begin();
-      typename ConstBufferSequence::const_iterator end = buffers_.end();
-      size_t i = 0;
-      for (; iter != end && i < max_buffers; ++iter, ++i)
-      {
-        asio::const_buffer buffer(*iter);
-        socket_ops::init_buf(bufs[i],
-            asio::buffer_cast<const void*>(buffer),
-            asio::buffer_size(buffer));
-      }
+      buffer_sequence_adapter<asio::const_buffer,
+          ConstBufferSequence> bufs(o->buffers_);
 
       for (;;)
       {
         // Send the data.
-        int bytes = socket_ops::send(socket_, bufs, i, flags_, ec);
+        asio::error_code ec;
+        int bytes = socket_ops::send(o->socket_,
+            bufs.buffers(), bufs.count(), o->flags_, ec);
 
         // Retry operation if interrupted by signal.
         if (ec == asio::error::interrupted)
@@ -666,23 +630,57 @@ public:
             || ec == asio::error::try_again)
           return false;
 
-        bytes_transferred = (bytes < 0 ? 0 : bytes);
+        o->ec_ = ec;
+        o->bytes_transferred_ = (bytes < 0 ? 0 : bytes);
         return true;
       }
     }
 
-    void complete(const asio::error_code& ec,
-        std::size_t bytes_transferred)
+  private:
+    socket_type socket_;
+    ConstBufferSequence buffers_;
+    socket_base::message_flags flags_;
+  };
+
+  template <typename ConstBufferSequence, typename Handler>
+  class send_op : public send_op_base<ConstBufferSequence>
+  {
+  public:
+    send_op(socket_type socket, const ConstBufferSequence& buffers,
+        socket_base::message_flags flags, Handler handler)
+      : send_op_base<ConstBufferSequence>(socket,
+          buffers, flags, &send_op::do_complete),
+        handler_(handler)
     {
-      io_service_.post(bind_handler(this->handler_, ec, bytes_transferred));
+    }
+
+    static void do_complete(io_service_impl* owner, operation* base,
+        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
+    {
+      // Take ownership of the handler object.
+      send_op* o(static_cast<send_op*>(base));
+      typedef handler_alloc_traits<Handler, send_op> alloc_traits;
+      handler_ptr<alloc_traits> ptr(o->handler_, o);
+
+      // Make the upcall if required.
+      if (owner)
+      {
+        // Make a copy of the handler so that the memory can be deallocated
+        // before the upcall is made. Even if we're not about to make an
+        // upcall, a sub-object of the handler may be the true owner of the
+        // memory associated with the handler. Consequently, a local copy of
+        // the handler is required to ensure that any owning sub-object remains
+        // valid until after we have deallocated the memory here.
+        detail::binder2<Handler, asio::error_code, std::size_t>
+          handler(o->handler_, o->ec_, o->bytes_transferred_);
+        ptr.reset();
+        asio::detail::fenced_block b;
+        asio_handler_invoke_helpers::invoke(handler, handler);
+      }
     }
 
   private:
-    socket_type socket_;
-    asio::io_service& io_service_;
-    asio::io_service::work work_;
-    ConstBufferSequence buffers_;
-    socket_base::message_flags flags_;
+    Handler handler_;
   };
 
   // Start an asynchronous send. The data being sent must be valid for the
@@ -691,102 +689,33 @@ public:
   void async_send(implementation_type& impl, const ConstBufferSequence& buffers,
       socket_base::message_flags flags, Handler handler)
   {
-    if (!is_open(impl))
-    {
-      this->get_io_service().post(bind_handler(handler,
-            asio::error::bad_descriptor, 0));
-    }
-    else
-    {
-      if (impl.protocol_.type() == SOCK_STREAM)
-      {
-        // Determine total size of buffers.
-        typename ConstBufferSequence::const_iterator iter = buffers.begin();
-        typename ConstBufferSequence::const_iterator end = buffers.end();
-        size_t i = 0;
-        size_t total_buffer_size = 0;
-        for (; iter != end && i < max_buffers; ++iter, ++i)
-        {
-          asio::const_buffer buffer(*iter);
-          total_buffer_size += asio::buffer_size(buffer);
-        }
+    // Allocate and construct an operation to wrap the handler.
+    typedef send_op<ConstBufferSequence, Handler> value_type;
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr,
+        impl.socket_, buffers, flags, handler);
 
-        // A request to receive 0 bytes on a stream socket is a no-op.
-        if (total_buffer_size == 0)
-        {
-          this->get_io_service().post(bind_handler(handler,
-                asio::error_code(), 0));
-          return;
-        }
-      }
-
-      // Make socket non-blocking.
-      if (!(impl.flags_ & implementation_type::internal_non_blocking))
-      {
-        if (!(impl.flags_ & implementation_type::non_blocking))
-        {
-          ioctl_arg_type non_blocking = 1;
-          asio::error_code ec;
-          if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
-          {
-            this->get_io_service().post(bind_handler(handler, ec, 0));
-            return;
-          }
-        }
-        impl.flags_ |= implementation_type::internal_non_blocking;
-      }
-
-      reactor_.start_write_op(impl.socket_, impl.reactor_data_,
-          send_operation<ConstBufferSequence, Handler>(
-            impl.socket_, this->get_io_service(), buffers, flags, handler));
-    }
+    start_op(impl, reactor::write_op, ptr.get(), true,
+        (impl.protocol_.type() == SOCK_STREAM
+          && buffer_sequence_adapter<asio::const_buffer,
+            ConstBufferSequence>::all_empty(buffers)));
+    ptr.release();
   }
-
-  template <typename Handler>
-  class null_buffers_operation :
-    public handler_base_from_member<Handler>
-  {
-  public:
-    null_buffers_operation(asio::io_service& io_service, Handler handler)
-      : handler_base_from_member<Handler>(handler),
-        work_(io_service)
-    {
-    }
-
-    bool perform(asio::error_code&,
-        std::size_t& bytes_transferred)
-    {
-      bytes_transferred = 0;
-      return true;
-    }
-
-    void complete(const asio::error_code& ec,
-        std::size_t bytes_transferred)
-    {
-      work_.get_io_service().post(bind_handler(
-            this->handler_, ec, bytes_transferred));
-    }
-
-  private:
-    asio::io_service::work work_;
-  };
 
   // Start an asynchronous wait until data can be sent without blocking.
   template <typename Handler>
   void async_send(implementation_type& impl, const null_buffers&,
       socket_base::message_flags, Handler handler)
   {
-    if (!is_open(impl))
-    {
-      this->get_io_service().post(bind_handler(handler,
-            asio::error::bad_descriptor, 0));
-    }
-    else
-    {
-      reactor_.start_write_op(impl.socket_, impl.reactor_data_,
-          null_buffers_operation<Handler>(this->get_io_service(), handler),
-          false);
-    }
+    // Allocate and construct an operation to wrap the handler.
+    typedef null_buffers_op<Handler> value_type;
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr, handler);
+
+    start_op(impl, reactor::write_op, ptr.get(), false, false);
+    ptr.release();
   }
 
   // Send a datagram to the specified endpoint. Returns the number of bytes
@@ -802,25 +731,15 @@ public:
       return 0;
     }
 
-    // Copy buffers into array.
-    socket_ops::buf bufs[max_buffers];
-    typename ConstBufferSequence::const_iterator iter = buffers.begin();
-    typename ConstBufferSequence::const_iterator end = buffers.end();
-    size_t i = 0;
-    for (; iter != end && i < max_buffers; ++iter, ++i)
-    {
-      asio::const_buffer buffer(*iter);
-      socket_ops::init_buf(bufs[i],
-          asio::buffer_cast<const void*>(buffer),
-          asio::buffer_size(buffer));
-    }
+    buffer_sequence_adapter<asio::const_buffer,
+        ConstBufferSequence> bufs(buffers);
 
     // Send the data.
     for (;;)
     {
       // Try to complete the operation without blocking.
-      int bytes_sent = socket_ops::sendto(impl.socket_, bufs, i, flags,
-          destination.data(), destination.size(), ec);
+      int bytes_sent = socket_ops::sendto(impl.socket_, bufs.buffers(),
+          bufs.count(), flags, destination.data(), destination.size(), ec);
 
       // Check if operation succeeded.
       if (bytes_sent >= 0)
@@ -855,52 +774,34 @@ public:
     return 0;
   }
 
-  template <typename ConstBufferSequence, typename Handler>
-  class send_to_operation :
-    public handler_base_from_member<Handler>
+  template <typename ConstBufferSequence>
+  class send_to_op_base : public reactor_op
   {
   public:
-    send_to_operation(socket_type socket, asio::io_service& io_service,
-        const ConstBufferSequence& buffers, const endpoint_type& endpoint,
-        socket_base::message_flags flags, Handler handler)
-      : handler_base_from_member<Handler>(handler),
+    send_to_op_base(socket_type socket, const ConstBufferSequence& buffers,
+        const endpoint_type& endpoint, socket_base::message_flags flags,
+        func_type complete_func)
+      : reactor_op(&send_to_op_base::do_perform, complete_func),
         socket_(socket),
-        io_service_(io_service),
-        work_(io_service),
         buffers_(buffers),
         destination_(endpoint),
         flags_(flags)
     {
     }
 
-    bool perform(asio::error_code& ec,
-        std::size_t& bytes_transferred)
+    static bool do_perform(reactor_op* base)
     {
-      // Check whether the operation was successful.
-      if (ec)
-      {
-        bytes_transferred = 0;
-        return true;
-      }
+      send_to_op_base* o(static_cast<send_to_op_base*>(base));
 
-      // Copy buffers into array.
-      socket_ops::buf bufs[max_buffers];
-      typename ConstBufferSequence::const_iterator iter = buffers_.begin();
-      typename ConstBufferSequence::const_iterator end = buffers_.end();
-      size_t i = 0;
-      for (; iter != end && i < max_buffers; ++iter, ++i)
-      {
-        asio::const_buffer buffer(*iter);
-        socket_ops::init_buf(bufs[i],
-            asio::buffer_cast<const void*>(buffer),
-            asio::buffer_size(buffer));
-      }
+      buffer_sequence_adapter<asio::const_buffer,
+          ConstBufferSequence> bufs(o->buffers_);
 
       for (;;)
       {
         // Send the data.
-        int bytes = socket_ops::sendto(socket_, bufs, i, flags_,
-            destination_.data(), destination_.size(), ec);
+        asio::error_code ec;
+        int bytes = socket_ops::sendto(o->socket_, bufs.buffers(), bufs.count(),
+            o->flags_, o->destination_.data(), o->destination_.size(), ec);
 
         // Retry operation if interrupted by signal.
         if (ec == asio::error::interrupted)
@@ -911,24 +812,59 @@ public:
             || ec == asio::error::try_again)
           return false;
 
-        bytes_transferred = (bytes < 0 ? 0 : bytes);
+        o->ec_ = ec;
+        o->bytes_transferred_ = (bytes < 0 ? 0 : bytes);
         return true;
       }
     }
 
-    void complete(const asio::error_code& ec,
-        std::size_t bytes_transferred)
-    {
-      io_service_.post(bind_handler(this->handler_, ec, bytes_transferred));
-    }
-
   private:
     socket_type socket_;
-    asio::io_service& io_service_;
-    asio::io_service::work work_;
     ConstBufferSequence buffers_;
     endpoint_type destination_;
     socket_base::message_flags flags_;
+  };
+
+  template <typename ConstBufferSequence, typename Handler>
+  class send_to_op : public send_to_op_base<ConstBufferSequence>
+  {
+  public:
+    send_to_op(socket_type socket, const ConstBufferSequence& buffers,
+        const endpoint_type& endpoint, socket_base::message_flags flags,
+        Handler handler)
+      : send_to_op_base<ConstBufferSequence>(socket,
+          buffers, endpoint, flags, &send_to_op::do_complete),
+        handler_(handler)
+    {
+    }
+
+    static void do_complete(io_service_impl* owner, operation* base,
+        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
+    {
+      // Take ownership of the handler object.
+      send_to_op* o(static_cast<send_to_op*>(base));
+      typedef handler_alloc_traits<Handler, send_to_op> alloc_traits;
+      handler_ptr<alloc_traits> ptr(o->handler_, o);
+
+      // Make the upcall if required.
+      if (owner)
+      {
+        // Make a copy of the handler so that the memory can be deallocated
+        // before the upcall is made. Even if we're not about to make an
+        // upcall, a sub-object of the handler may be the true owner of the
+        // memory associated with the handler. Consequently, a local copy of
+        // the handler is required to ensure that any owning sub-object remains
+        // valid until after we have deallocated the memory here.
+        detail::binder2<Handler, asio::error_code, std::size_t>
+          handler(o->handler_, o->ec_, o->bytes_transferred_);
+        ptr.reset();
+        asio::detail::fenced_block b;
+        asio_handler_invoke_helpers::invoke(handler, handler);
+      }
+    }
+
+  private:
+    Handler handler_;
   };
 
   // Start an asynchronous send. The data being sent must be valid for the
@@ -939,34 +875,15 @@ public:
       const endpoint_type& destination, socket_base::message_flags flags,
       Handler handler)
   {
-    if (!is_open(impl))
-    {
-      this->get_io_service().post(bind_handler(handler,
-            asio::error::bad_descriptor, 0));
-    }
-    else
-    {
-      // Make socket non-blocking.
-      if (!(impl.flags_ & implementation_type::internal_non_blocking))
-      {
-        if (!(impl.flags_ & implementation_type::non_blocking))
-        {
-          ioctl_arg_type non_blocking = 1;
-          asio::error_code ec;
-          if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
-          {
-            this->get_io_service().post(bind_handler(handler, ec, 0));
-            return;
-          }
-        }
-        impl.flags_ |= implementation_type::internal_non_blocking;
-      }
+    // Allocate and construct an operation to wrap the handler.
+    typedef send_to_op<ConstBufferSequence, Handler> value_type;
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr, impl.socket_,
+        buffers, destination, flags, handler);
 
-      reactor_.start_write_op(impl.socket_, impl.reactor_data_,
-          send_to_operation<ConstBufferSequence, Handler>(
-            impl.socket_, this->get_io_service(), buffers,
-            destination, flags, handler));
-    }
+    start_op(impl, reactor::write_op, ptr.get(), true, false);
+    ptr.release();
   }
 
   // Start an asynchronous wait until data can be sent without blocking.
@@ -974,17 +891,14 @@ public:
   void async_send_to(implementation_type& impl, const null_buffers&,
       socket_base::message_flags, const endpoint_type&, Handler handler)
   {
-    if (!is_open(impl))
-    {
-      this->get_io_service().post(bind_handler(handler,
-            asio::error::bad_descriptor, 0));
-    }
-    else
-    {
-      reactor_.start_write_op(impl.socket_, impl.reactor_data_,
-          null_buffers_operation<Handler>(this->get_io_service(), handler),
-          false);
-    }
+    // Allocate and construct an operation to wrap the handler.
+    typedef null_buffers_op<Handler> value_type;
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr, handler);
+
+    start_op(impl, reactor::write_op, ptr.get(), false, false);
+    ptr.release();
   }
 
   // Receive some data from the peer. Returns the number of bytes received.
@@ -999,23 +913,11 @@ public:
       return 0;
     }
 
-    // Copy buffers into array.
-    socket_ops::buf bufs[max_buffers];
-    typename MutableBufferSequence::const_iterator iter = buffers.begin();
-    typename MutableBufferSequence::const_iterator end = buffers.end();
-    size_t i = 0;
-    size_t total_buffer_size = 0;
-    for (; iter != end && i < max_buffers; ++iter, ++i)
-    {
-      asio::mutable_buffer buffer(*iter);
-      socket_ops::init_buf(bufs[i],
-          asio::buffer_cast<void*>(buffer),
-          asio::buffer_size(buffer));
-      total_buffer_size += asio::buffer_size(buffer);
-    }
+    buffer_sequence_adapter<asio::mutable_buffer,
+        MutableBufferSequence> bufs(buffers);
 
     // A request to receive 0 bytes on a stream socket is a no-op.
-    if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
+    if (impl.protocol_.type() == SOCK_STREAM && bufs.all_empty())
     {
       ec = asio::error_code();
       return 0;
@@ -1025,7 +927,8 @@ public:
     for (;;)
     {
       // Try to complete the operation without blocking.
-      int bytes_recvd = socket_ops::recv(impl.socket_, bufs, i, flags, ec);
+      int bytes_recvd = socket_ops::recv(impl.socket_,
+          bufs.buffers(), bufs.count(), flags, ec);
 
       // Check if operation succeeded.
       if (bytes_recvd > 0)
@@ -1066,53 +969,35 @@ public:
     return 0;
   }
 
-  template <typename MutableBufferSequence, typename Handler>
-  class receive_operation :
-    public handler_base_from_member<Handler>
+  template <typename MutableBufferSequence>
+  class receive_op_base : public reactor_op
   {
   public:
-    receive_operation(socket_type socket, int protocol_type,
-        asio::io_service& io_service,
+    receive_op_base(socket_type socket, int protocol_type,
         const MutableBufferSequence& buffers,
-        socket_base::message_flags flags, Handler handler)
-      : handler_base_from_member<Handler>(handler),
+        socket_base::message_flags flags, func_type complete_func)
+      : reactor_op(&receive_op_base::do_perform, complete_func),
         socket_(socket),
         protocol_type_(protocol_type),
-        io_service_(io_service),
-        work_(io_service),
         buffers_(buffers),
         flags_(flags)
     {
     }
 
-    bool perform(asio::error_code& ec,
-        std::size_t& bytes_transferred)
+    static bool do_perform(reactor_op* base)
     {
-      // Check whether the operation was successful.
-      if (ec)
-      {
-        bytes_transferred = 0;
-        return true;
-      }
+      receive_op_base* o(static_cast<receive_op_base*>(base));
 
-      // Copy buffers into array.
-      socket_ops::buf bufs[max_buffers];
-      typename MutableBufferSequence::const_iterator iter = buffers_.begin();
-      typename MutableBufferSequence::const_iterator end = buffers_.end();
-      size_t i = 0;
-      for (; iter != end && i < max_buffers; ++iter, ++i)
-      {
-        asio::mutable_buffer buffer(*iter);
-        socket_ops::init_buf(bufs[i],
-            asio::buffer_cast<void*>(buffer),
-            asio::buffer_size(buffer));
-      }
+      buffer_sequence_adapter<asio::mutable_buffer,
+          MutableBufferSequence> bufs(o->buffers_);
 
       for (;;)
       {
         // Receive some data.
-        int bytes = socket_ops::recv(socket_, bufs, i, flags_, ec);
-        if (bytes == 0 && protocol_type_ == SOCK_STREAM)
+        asio::error_code ec;
+        int bytes = socket_ops::recv(o->socket_,
+            bufs.buffers(), bufs.count(), o->flags_, ec);
+        if (bytes == 0 && o->protocol_type_ == SOCK_STREAM)
           ec = asio::error::eof;
 
         // Retry operation if interrupted by signal.
@@ -1124,24 +1009,59 @@ public:
             || ec == asio::error::try_again)
           return false;
 
-        bytes_transferred = (bytes < 0 ? 0 : bytes);
+        o->ec_ = ec;
+        o->bytes_transferred_ = (bytes < 0 ? 0 : bytes);
         return true;
       }
-    }
-
-    void complete(const asio::error_code& ec,
-        std::size_t bytes_transferred)
-    {
-      io_service_.post(bind_handler(this->handler_, ec, bytes_transferred));
     }
 
   private:
     socket_type socket_;
     int protocol_type_;
-    asio::io_service& io_service_;
-    asio::io_service::work work_;
     MutableBufferSequence buffers_;
     socket_base::message_flags flags_;
+  };
+
+  template <typename MutableBufferSequence, typename Handler>
+  class receive_op : public receive_op_base<MutableBufferSequence>
+  {
+  public:
+    receive_op(socket_type socket, int protocol_type,
+        const MutableBufferSequence& buffers,
+        socket_base::message_flags flags, Handler handler)
+      : receive_op_base<MutableBufferSequence>(socket,
+          protocol_type, buffers, flags, &receive_op::do_complete),
+        handler_(handler)
+    {
+    }
+
+    static void do_complete(io_service_impl* owner, operation* base,
+        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
+    {
+      // Take ownership of the handler object.
+      receive_op* o(static_cast<receive_op*>(base));
+      typedef handler_alloc_traits<Handler, receive_op> alloc_traits;
+      handler_ptr<alloc_traits> ptr(o->handler_, o);
+
+      // Make the upcall if required.
+      if (owner)
+      {
+        // Make a copy of the handler so that the memory can be deallocated
+        // before the upcall is made. Even if we're not about to make an
+        // upcall, a sub-object of the handler may be the true owner of the
+        // memory associated with the handler. Consequently, a local copy of
+        // the handler is required to ensure that any owning sub-object remains
+        // valid until after we have deallocated the memory here.
+        detail::binder2<Handler, asio::error_code, std::size_t>
+          handler(o->handler_, o->ec_, o->bytes_transferred_);
+        ptr.reset();
+        asio::detail::fenced_block b;
+        asio_handler_invoke_helpers::invoke(handler, handler);
+      }
+    }
+
+  private:
+    Handler handler_;
   };
 
   // Start an asynchronous receive. The buffer for the data being received
@@ -1151,66 +1071,22 @@ public:
       const MutableBufferSequence& buffers,
       socket_base::message_flags flags, Handler handler)
   {
-    if (!is_open(impl))
-    {
-      this->get_io_service().post(bind_handler(handler,
-            asio::error::bad_descriptor, 0));
-    }
-    else
-    {
-      if (impl.protocol_.type() == SOCK_STREAM)
-      {
-        // Determine total size of buffers.
-        typename MutableBufferSequence::const_iterator iter = buffers.begin();
-        typename MutableBufferSequence::const_iterator end = buffers.end();
-        size_t i = 0;
-        size_t total_buffer_size = 0;
-        for (; iter != end && i < max_buffers; ++iter, ++i)
-        {
-          asio::mutable_buffer buffer(*iter);
-          total_buffer_size += asio::buffer_size(buffer);
-        }
+    // Allocate and construct an operation to wrap the handler.
+    typedef receive_op<MutableBufferSequence, Handler> value_type;
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
+    int protocol_type = impl.protocol_.type();
+    handler_ptr<alloc_traits> ptr(raw_ptr, impl.socket_,
+        protocol_type, buffers, flags, handler);
 
-        // A request to receive 0 bytes on a stream socket is a no-op.
-        if (total_buffer_size == 0)
-        {
-          this->get_io_service().post(bind_handler(handler,
-                asio::error_code(), 0));
-          return;
-        }
-      }
-
-      // Make socket non-blocking.
-      if (!(impl.flags_ & implementation_type::internal_non_blocking))
-      {
-        if (!(impl.flags_ & implementation_type::non_blocking))
-        {
-          ioctl_arg_type non_blocking = 1;
-          asio::error_code ec;
-          if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
-          {
-            this->get_io_service().post(bind_handler(handler, ec, 0));
-            return;
-          }
-        }
-        impl.flags_ |= implementation_type::internal_non_blocking;
-      }
-
-      if (flags & socket_base::message_out_of_band)
-      {
-        reactor_.start_except_op(impl.socket_, impl.reactor_data_,
-            receive_operation<MutableBufferSequence, Handler>(
-              impl.socket_, impl.protocol_.type(),
-              this->get_io_service(), buffers, flags, handler));
-      }
-      else
-      {
-        reactor_.start_read_op(impl.socket_, impl.reactor_data_,
-            receive_operation<MutableBufferSequence, Handler>(
-              impl.socket_, impl.protocol_.type(),
-              this->get_io_service(), buffers, flags, handler));
-      }
-    }
+    start_op(impl,
+        (flags & socket_base::message_out_of_band)
+          ? reactor::except_op : reactor::read_op,
+        ptr.get(), true,
+        (impl.protocol_.type() == SOCK_STREAM
+          && buffer_sequence_adapter<asio::mutable_buffer,
+            MutableBufferSequence>::all_empty(buffers)));
+    ptr.release();
   }
 
   // Wait until data can be received without blocking.
@@ -1218,22 +1094,17 @@ public:
   void async_receive(implementation_type& impl, const null_buffers&,
       socket_base::message_flags flags, Handler handler)
   {
-    if (!is_open(impl))
-    {
-      this->get_io_service().post(bind_handler(handler,
-            asio::error::bad_descriptor, 0));
-    }
-    else if (flags & socket_base::message_out_of_band)
-    {
-      reactor_.start_except_op(impl.socket_, impl.reactor_data_,
-          null_buffers_operation<Handler>(this->get_io_service(), handler));
-    }
-    else
-    {
-      reactor_.start_read_op(impl.socket_, impl.reactor_data_,
-          null_buffers_operation<Handler>(this->get_io_service(), handler),
-          false);
-    }
+    // Allocate and construct an operation to wrap the handler.
+    typedef null_buffers_op<Handler> value_type;
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr, handler);
+
+    start_op(impl,
+        (flags & socket_base::message_out_of_band)
+          ? reactor::except_op : reactor::read_op,
+        ptr.get(), false, false);
+    ptr.release();
   }
 
   // Receive a datagram with the endpoint of the sender. Returns the number of
@@ -1250,26 +1121,16 @@ public:
       return 0;
     }
 
-    // Copy buffers into array.
-    socket_ops::buf bufs[max_buffers];
-    typename MutableBufferSequence::const_iterator iter = buffers.begin();
-    typename MutableBufferSequence::const_iterator end = buffers.end();
-    size_t i = 0;
-    for (; iter != end && i < max_buffers; ++iter, ++i)
-    {
-      asio::mutable_buffer buffer(*iter);
-      socket_ops::init_buf(bufs[i],
-          asio::buffer_cast<void*>(buffer),
-          asio::buffer_size(buffer));
-    }
+    buffer_sequence_adapter<asio::mutable_buffer,
+        MutableBufferSequence> bufs(buffers);
 
     // Receive some data.
     for (;;)
     {
       // Try to complete the operation without blocking.
       std::size_t addr_len = sender_endpoint.capacity();
-      int bytes_recvd = socket_ops::recvfrom(impl.socket_, bufs, i, flags,
-          sender_endpoint.data(), &addr_len, ec);
+      int bytes_recvd = socket_ops::recvfrom(impl.socket_, bufs.buffers(),
+          bufs.count(), flags, sender_endpoint.data(), &addr_len, ec);
 
       // Check if operation succeeded.
       if (bytes_recvd > 0)
@@ -1317,56 +1178,37 @@ public:
     return 0;
   }
 
-  template <typename MutableBufferSequence, typename Handler>
-  class receive_from_operation :
-    public handler_base_from_member<Handler>
+  template <typename MutableBufferSequence>
+  class receive_from_op_base : public reactor_op
   {
   public:
-    receive_from_operation(socket_type socket, int protocol_type,
-        asio::io_service& io_service,
+    receive_from_op_base(socket_type socket, int protocol_type,
         const MutableBufferSequence& buffers, endpoint_type& endpoint,
-        socket_base::message_flags flags, Handler handler)
-      : handler_base_from_member<Handler>(handler),
+        socket_base::message_flags flags, func_type complete_func)
+      : reactor_op(&receive_from_op_base::do_perform, complete_func),
         socket_(socket),
         protocol_type_(protocol_type),
-        io_service_(io_service),
-        work_(io_service),
         buffers_(buffers),
         sender_endpoint_(endpoint),
         flags_(flags)
     {
     }
 
-    bool perform(asio::error_code& ec,
-        std::size_t& bytes_transferred)
+    static bool do_perform(reactor_op* base)
     {
-      // Check whether the operation was successful.
-      if (ec)
-      {
-        bytes_transferred = 0;
-        return true;
-      }
+      receive_from_op_base* o(static_cast<receive_from_op_base*>(base));
 
-      // Copy buffers into array.
-      socket_ops::buf bufs[max_buffers];
-      typename MutableBufferSequence::const_iterator iter = buffers_.begin();
-      typename MutableBufferSequence::const_iterator end = buffers_.end();
-      size_t i = 0;
-      for (; iter != end && i < max_buffers; ++iter, ++i)
-      {
-        asio::mutable_buffer buffer(*iter);
-        socket_ops::init_buf(bufs[i],
-            asio::buffer_cast<void*>(buffer),
-            asio::buffer_size(buffer));
-      }
+      buffer_sequence_adapter<asio::mutable_buffer,
+          MutableBufferSequence> bufs(o->buffers_);
 
       for (;;)
       {
         // Receive some data.
-        std::size_t addr_len = sender_endpoint_.capacity();
-        int bytes = socket_ops::recvfrom(socket_, bufs, i, flags_,
-            sender_endpoint_.data(), &addr_len, ec);
-        if (bytes == 0 && protocol_type_ == SOCK_STREAM)
+        asio::error_code ec;
+        std::size_t addr_len = o->sender_endpoint_.capacity();
+        int bytes = socket_ops::recvfrom(o->socket_, bufs.buffers(),
+            bufs.count(), o->flags_, o->sender_endpoint_.data(), &addr_len, ec);
+        if (bytes == 0 && o->protocol_type_ == SOCK_STREAM)
           ec = asio::error::eof;
 
         // Retry operation if interrupted by signal.
@@ -1378,26 +1220,61 @@ public:
             || ec == asio::error::try_again)
           return false;
 
-        sender_endpoint_.resize(addr_len);
-        bytes_transferred = (bytes < 0 ? 0 : bytes);
+        o->sender_endpoint_.resize(addr_len);
+        o->ec_ = ec;
+        o->bytes_transferred_ = (bytes < 0 ? 0 : bytes);
         return true;
       }
-    }
-
-    void complete(const asio::error_code& ec,
-        std::size_t bytes_transferred)
-    {
-      io_service_.post(bind_handler(this->handler_, ec, bytes_transferred));
     }
 
   private:
     socket_type socket_;
     int protocol_type_;
-    asio::io_service& io_service_;
-    asio::io_service::work work_;
     MutableBufferSequence buffers_;
     endpoint_type& sender_endpoint_;
     socket_base::message_flags flags_;
+  };
+
+  template <typename MutableBufferSequence, typename Handler>
+  class receive_from_op : public receive_from_op_base<MutableBufferSequence>
+  {
+  public:
+    receive_from_op(socket_type socket, int protocol_type,
+        const MutableBufferSequence& buffers, endpoint_type& endpoint,
+        socket_base::message_flags flags, Handler handler)
+      : receive_from_op_base<MutableBufferSequence>(socket, protocol_type,
+          buffers, endpoint, flags, &receive_from_op::do_complete),
+        handler_(handler)
+    {
+    }
+
+    static void do_complete(io_service_impl* owner, operation* base,
+        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
+    {
+      // Take ownership of the handler object.
+      receive_from_op* o(static_cast<receive_from_op*>(base));
+      typedef handler_alloc_traits<Handler, receive_from_op> alloc_traits;
+      handler_ptr<alloc_traits> ptr(o->handler_, o);
+
+      // Make the upcall if required.
+      if (owner)
+      {
+        // Make a copy of the handler so that the memory can be deallocated
+        // before the upcall is made. Even if we're not about to make an
+        // upcall, a sub-object of the handler may be the true owner of the
+        // memory associated with the handler. Consequently, a local copy of
+        // the handler is required to ensure that any owning sub-object remains
+        // valid until after we have deallocated the memory here.
+        detail::binder2<Handler, asio::error_code, std::size_t>
+          handler(o->handler_, o->ec_, o->bytes_transferred_);
+        ptr.reset();
+        asio::detail::fenced_block b;
+        asio_handler_invoke_helpers::invoke(handler, handler);
+      }
+    }
+
+  private:
+    Handler handler_;
   };
 
   // Start an asynchronous receive. The buffer for the data being received and
@@ -1408,34 +1285,19 @@ public:
       const MutableBufferSequence& buffers, endpoint_type& sender_endpoint,
       socket_base::message_flags flags, Handler handler)
   {
-    if (!is_open(impl))
-    {
-      this->get_io_service().post(bind_handler(handler,
-            asio::error::bad_descriptor, 0));
-    }
-    else
-    {
-      // Make socket non-blocking.
-      if (!(impl.flags_ & implementation_type::internal_non_blocking))
-      {
-        if (!(impl.flags_ & implementation_type::non_blocking))
-        {
-          ioctl_arg_type non_blocking = 1;
-          asio::error_code ec;
-          if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
-          {
-            this->get_io_service().post(bind_handler(handler, ec, 0));
-            return;
-          }
-        }
-        impl.flags_ |= implementation_type::internal_non_blocking;
-      }
+    // Allocate and construct an operation to wrap the handler.
+    typedef receive_from_op<MutableBufferSequence, Handler> value_type;
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
+    int protocol_type = impl.protocol_.type();
+    handler_ptr<alloc_traits> ptr(raw_ptr, impl.socket_,
+        protocol_type, buffers, sender_endpoint, flags, handler);
 
-      reactor_.start_read_op(impl.socket_, impl.reactor_data_,
-          receive_from_operation<MutableBufferSequence, Handler>(
-            impl.socket_, impl.protocol_.type(), this->get_io_service(),
-            buffers, sender_endpoint, flags, handler));
-    }
+    start_op(impl,
+        (flags & socket_base::message_out_of_band)
+          ? reactor::except_op : reactor::read_op,
+        ptr.get(), true, false);
+    ptr.release();
   }
 
   // Wait until data can be received without blocking.
@@ -1444,28 +1306,20 @@ public:
       const null_buffers&, endpoint_type& sender_endpoint,
       socket_base::message_flags flags, Handler handler)
   {
-    if (!is_open(impl))
-    {
-      this->get_io_service().post(bind_handler(handler,
-            asio::error::bad_descriptor, 0));
-    }
-    else
-    {
-      // Reset endpoint since it can be given no sensible value at this time.
-      sender_endpoint = endpoint_type();
+    // Allocate and construct an operation to wrap the handler.
+    typedef null_buffers_op<Handler> value_type;
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr, handler);
 
-      if (flags & socket_base::message_out_of_band)
-      {
-        reactor_.start_except_op(impl.socket_, impl.reactor_data_,
-            null_buffers_operation<Handler>(this->get_io_service(), handler));
-      }
-      else
-      {
-        reactor_.start_read_op(impl.socket_, impl.reactor_data_,
-            null_buffers_operation<Handler>(this->get_io_service(), handler),
-            false);
-      }
-    }
+    // Reset endpoint since it can be given no sensible value at this time.
+    sender_endpoint = endpoint_type();
+
+    start_op(impl,
+        (flags & socket_base::message_out_of_band)
+          ? reactor::except_op : reactor::read_op,
+        ptr.get(), false, false);
+    ptr.release();
   }
 
   // Accept a new connection.
@@ -1545,19 +1399,15 @@ public:
     }
   }
 
-  template <typename Socket, typename Handler>
-  class accept_operation :
-    public handler_base_from_member<Handler>
+  template <typename Socket>
+  class accept_op_base : public reactor_op
   {
   public:
-    accept_operation(socket_type socket, asio::io_service& io_service,
-        Socket& peer, const protocol_type& protocol,
-        endpoint_type* peer_endpoint, bool enable_connection_aborted,
-        Handler handler)
-      : handler_base_from_member<Handler>(handler),
+    accept_op_base(socket_type socket, Socket& peer,
+        const protocol_type& protocol, endpoint_type* peer_endpoint,
+        bool enable_connection_aborted, func_type complete_func)
+      : reactor_op(&accept_op_base::do_perform, complete_func),
         socket_(socket),
-        io_service_(io_service),
-        work_(io_service),
         peer_(peer),
         protocol_(protocol),
         peer_endpoint_(peer_endpoint),
@@ -1565,27 +1415,25 @@ public:
     {
     }
 
-    bool perform(asio::error_code& ec, std::size_t&)
+    static bool do_perform(reactor_op* base)
     {
-      // Check whether the operation was successful.
-      if (ec)
-        return true;
+      accept_op_base* o(static_cast<accept_op_base*>(base));
 
       for (;;)
       {
         // Accept the waiting connection.
+        asio::error_code ec;
         socket_holder new_socket;
         std::size_t addr_len = 0;
-        if (peer_endpoint_)
+        std::size_t* addr_len_p = 0;
+        socket_addr_type* addr = 0;
+        if (o->peer_endpoint_)
         {
-          addr_len = peer_endpoint_->capacity();
-          new_socket.reset(socket_ops::accept(socket_,
-                peer_endpoint_->data(), &addr_len, ec));
+          addr_len = o->peer_endpoint_->capacity();
+          addr_len_p = &addr_len;
+          addr = o->peer_endpoint_->data();
         }
-        else
-        {
-          new_socket.reset(socket_ops::accept(socket_, 0, 0, ec));
-        }
+        new_socket.reset(socket_ops::accept(o->socket_, addr, addr_len_p, ec));
 
         // Retry operation if interrupted by signal.
         if (ec == asio::error::interrupted)
@@ -1596,40 +1444,76 @@ public:
             || ec == asio::error::try_again)
           return false;
         if (ec == asio::error::connection_aborted
-            && !enable_connection_aborted_)
+            && !o->enable_connection_aborted_)
           return false;
 #if defined(EPROTO)
-        if (ec.value() == EPROTO && !enable_connection_aborted_)
+        if (ec.value() == EPROTO && !o->enable_connection_aborted_)
           return false;
 #endif // defined(EPROTO)
 
         // Transfer ownership of the new socket to the peer object.
         if (!ec)
         {
-          if (peer_endpoint_)
-            peer_endpoint_->resize(addr_len);
-          peer_.assign(protocol_, new_socket.get(), ec);
+          if (o->peer_endpoint_)
+            o->peer_endpoint_->resize(addr_len);
+          o->peer_.assign(o->protocol_, new_socket.get(), ec);
           if (!ec)
             new_socket.release();
         }
 
+        o->ec_ = ec;
         return true;
       }
     }
 
-    void complete(const asio::error_code& ec, std::size_t)
-    {
-      io_service_.post(bind_handler(this->handler_, ec));
-    }
-
   private:
     socket_type socket_;
-    asio::io_service& io_service_;
-    asio::io_service::work work_;
     Socket& peer_;
     protocol_type protocol_;
     endpoint_type* peer_endpoint_;
     bool enable_connection_aborted_;
+  };
+
+  template <typename Socket, typename Handler>
+  class accept_op : public accept_op_base<Socket>
+  {
+  public:
+    accept_op(socket_type socket, Socket& peer, const protocol_type& protocol,
+        endpoint_type* peer_endpoint, bool enable_connection_aborted,
+        Handler handler)
+      : accept_op_base<Socket>(socket, peer, protocol, peer_endpoint,
+          enable_connection_aborted, &accept_op::do_complete),
+        handler_(handler)
+    {
+    }
+
+    static void do_complete(io_service_impl* owner, operation* base,
+        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
+    {
+      // Take ownership of the handler object.
+      accept_op* o(static_cast<accept_op*>(base));
+      typedef handler_alloc_traits<Handler, accept_op> alloc_traits;
+      handler_ptr<alloc_traits> ptr(o->handler_, o);
+
+      // Make the upcall if required.
+      if (owner)
+      {
+        // Make a copy of the handler so that the memory can be deallocated
+        // before the upcall is made. Even if we're not about to make an
+        // upcall, a sub-object of the handler may be the true owner of the
+        // memory associated with the handler. Consequently, a local copy of
+        // the handler is required to ensure that any owning sub-object remains
+        // valid until after we have deallocated the memory here.
+        detail::binder1<Handler, asio::error_code>
+          handler(o->handler_, o->ec_);
+        ptr.reset();
+        asio::detail::fenced_block b;
+        asio_handler_invoke_helpers::invoke(handler, handler);
+      }
+    }
+
+  private:
+    Handler handler_;
   };
 
   // Start an asynchronous accept. The peer and peer_endpoint objects
@@ -1638,41 +1522,17 @@ public:
   void async_accept(implementation_type& impl, Socket& peer,
       endpoint_type* peer_endpoint, Handler handler)
   {
-    if (!is_open(impl))
-    {
-      this->get_io_service().post(bind_handler(handler,
-            asio::error::bad_descriptor));
-    }
-    else if (peer.is_open())
-    {
-      this->get_io_service().post(bind_handler(handler,
-            asio::error::already_open));
-    }
-    else
-    {
-      // Make socket non-blocking.
-      if (!(impl.flags_ & implementation_type::internal_non_blocking))
-      {
-        if (!(impl.flags_ & implementation_type::non_blocking))
-        {
-          ioctl_arg_type non_blocking = 1;
-          asio::error_code ec;
-          if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
-          {
-            this->get_io_service().post(bind_handler(handler, ec));
-            return;
-          }
-        }
-        impl.flags_ |= implementation_type::internal_non_blocking;
-      }
+    // Allocate and construct an operation to wrap the handler.
+    typedef accept_op<Socket, Handler> value_type;
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
+    bool enable_connection_aborted =
+      (impl.flags_ & implementation_type::enable_connection_aborted) != 0;
+    handler_ptr<alloc_traits> ptr(raw_ptr, impl.socket_, peer,
+        impl.protocol_, peer_endpoint, enable_connection_aborted, handler);
 
-      reactor_.start_read_op(impl.socket_, impl.reactor_data_,
-          accept_operation<Socket, Handler>(
-            impl.socket_, this->get_io_service(),
-            peer, impl.protocol_, peer_endpoint,
-            (impl.flags_ & implementation_type::enable_connection_aborted) != 0,
-            handler));
-    }
+    start_accept_op(impl, ptr.get(), peer.is_open());
+    ptr.release();
   }
 
   // Connect the socket to the specified endpoint.
@@ -1712,53 +1572,77 @@ public:
     return ec;
   }
 
-  template <typename Handler>
-  class connect_operation :
-    public handler_base_from_member<Handler>
+  class connect_op_base : public reactor_op
   {
   public:
-    connect_operation(socket_type socket,
-        asio::io_service& io_service, Handler handler)
-      : handler_base_from_member<Handler>(handler),
-        socket_(socket),
-        io_service_(io_service),
-        work_(io_service)
+    connect_op_base(socket_type socket, func_type complete_func)
+      : reactor_op(&connect_op_base::do_perform, complete_func),
+        socket_(socket)
     {
     }
 
-    bool perform(asio::error_code& ec, std::size_t&)
+    static bool do_perform(reactor_op* base)
     {
-      // Check whether the operation was successful.
-      if (ec)
-        return true;
+      connect_op_base* o(static_cast<connect_op_base*>(base));
 
       // Get the error code from the connect operation.
       int connect_error = 0;
       size_t connect_error_len = sizeof(connect_error);
-      if (socket_ops::getsockopt(socket_, SOL_SOCKET, SO_ERROR,
-            &connect_error, &connect_error_len, ec) == socket_error_retval)
+      if (socket_ops::getsockopt(o->socket_, SOL_SOCKET, SO_ERROR,
+            &connect_error, &connect_error_len, o->ec_) == socket_error_retval)
         return true;
 
       // The connection failed so the handler will be posted with an error code.
       if (connect_error)
       {
-        ec = asio::error_code(connect_error,
+        o->ec_ = asio::error_code(connect_error,
             asio::error::get_system_category());
-        return true;
       }
 
       return true;
     }
 
-    void complete(const asio::error_code& ec, std::size_t)
+  private:
+    socket_type socket_;
+  };
+
+  template <typename Handler>
+  class connect_op : public connect_op_base
+  {
+  public:
+    connect_op(socket_type socket, Handler handler)
+      : connect_op_base(socket, &connect_op::do_complete),
+        handler_(handler)
     {
-      io_service_.post(bind_handler(this->handler_, ec));
+    }
+
+    static void do_complete(io_service_impl* owner, operation* base,
+        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
+    {
+      // Take ownership of the handler object.
+      connect_op* o(static_cast<connect_op*>(base));
+      typedef handler_alloc_traits<Handler, connect_op> alloc_traits;
+      handler_ptr<alloc_traits> ptr(o->handler_, o);
+
+      // Make the upcall if required.
+      if (owner)
+      {
+        // Make a copy of the handler so that the memory can be deallocated
+        // before the upcall is made. Even if we're not about to make an
+        // upcall, a sub-object of the handler may be the true owner of the
+        // memory associated with the handler. Consequently, a local copy of
+        // the handler is required to ensure that any owning sub-object remains
+        // valid until after we have deallocated the memory here.
+        detail::binder1<Handler, asio::error_code>
+          handler(o->handler_, o->ec_);
+        ptr.reset();
+        asio::detail::fenced_block b;
+        asio_handler_invoke_helpers::invoke(handler, handler);
+      }
     }
 
   private:
-    socket_type socket_;
-    asio::io_service& io_service_;
-    asio::io_service::work work_;
+    Handler handler_;
   };
 
   // Start an asynchronous connect.
@@ -1766,59 +1650,103 @@ public:
   void async_connect(implementation_type& impl,
       const endpoint_type& peer_endpoint, Handler handler)
   {
-    if (!is_open(impl))
-    {
-      this->get_io_service().post(bind_handler(handler,
-            asio::error::bad_descriptor));
-      return;
-    }
+    // Allocate and construct an operation to wrap the handler.
+    typedef connect_op<Handler> value_type;
+    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+    raw_handler_ptr<alloc_traits> raw_ptr(handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr, impl.socket_, handler);
 
-    // Make socket non-blocking.
-    if (!(impl.flags_ & implementation_type::internal_non_blocking))
-    {
-      if (!(impl.flags_ & implementation_type::non_blocking))
-      {
-        ioctl_arg_type non_blocking = 1;
-        asio::error_code ec;
-        if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
-        {
-          this->get_io_service().post(bind_handler(handler, ec));
-          return;
-        }
-      }
-      impl.flags_ |= implementation_type::internal_non_blocking;
-    }
-
-    // Start the connect operation. The socket is already marked as non-blocking
-    // so the connection will take place asynchronously.
-    asio::error_code ec;
-    if (socket_ops::connect(impl.socket_, peer_endpoint.data(),
-          peer_endpoint.size(), ec) == 0)
-    {
-      // The connect operation has finished successfully so we need to post the
-      // handler immediately.
-      this->get_io_service().post(bind_handler(handler,
-            asio::error_code()));
-    }
-    else if (ec == asio::error::in_progress
-        || ec == asio::error::would_block)
-    {
-      // The connection is happening in the background, and we need to wait
-      // until the socket becomes writeable.
-      reactor_.start_connect_op(impl.socket_, impl.reactor_data_,
-          connect_operation<Handler>(impl.socket_,
-            this->get_io_service(), handler));
-    }
-    else
-    {
-      // The connect operation has failed, so post the handler immediately.
-      this->get_io_service().post(bind_handler(handler, ec));
-    }
+    start_connect_op(impl, ptr.get(), peer_endpoint);
+    ptr.release();
   }
 
 private:
+  // Start the asynchronous read or write operation.
+  void start_op(implementation_type& impl, int op_type,
+      reactor_op* op, bool non_blocking, bool noop)
+  {
+    if (!noop)
+    {
+      if (is_open(impl))
+      {
+        if (!non_blocking || is_non_blocking(impl)
+            || set_non_blocking(impl, op->ec_))
+        {
+          reactor_.start_op(op_type, impl.socket_,
+              impl.reactor_data_, op, non_blocking);
+          return;
+        }
+      }
+      else
+        op->ec_ = asio::error::bad_descriptor;
+    }
+
+    io_service_impl_.post_immediate_completion(op);
+  }
+
+  // Start the asynchronous accept operation.
+  void start_accept_op(implementation_type& impl,
+      reactor_op* op, bool peer_is_open)
+  {
+    if (!peer_is_open)
+      start_op(impl, reactor::read_op, op, true, false);
+    else
+    {
+      op->ec_ = asio::error::already_open;
+      io_service_impl_.post_immediate_completion(op);
+    }
+  }
+
+  // Start the asynchronous connect operation.
+  void start_connect_op(implementation_type& impl,
+      reactor_op* op, const endpoint_type& peer_endpoint)
+  {
+    if (is_open(impl))
+    {
+      if (is_non_blocking(impl) || set_non_blocking(impl, op->ec_))
+      {
+        if (socket_ops::connect(impl.socket_, peer_endpoint.data(),
+              peer_endpoint.size(), op->ec_) != 0)
+        {
+          if (op->ec_ == asio::error::in_progress
+              || op->ec_ == asio::error::would_block)
+          {
+            op->ec_ = asio::error_code();
+            reactor_.start_op(reactor::connect_op,
+                impl.socket_, impl.reactor_data_, op, true);
+            return;
+          }
+        }
+      }
+    }
+    else
+      op->ec_ = asio::error::bad_descriptor;
+
+    io_service_impl_.post_immediate_completion(op);
+  }
+
+  // Determine whether the socket has been set non-blocking.
+  bool is_non_blocking(implementation_type& impl) const
+  {
+    return (impl.flags_ & implementation_type::non_blocking);
+  }
+
+  // Set the internal non-blocking flag.
+  bool set_non_blocking(implementation_type& impl,
+      asio::error_code& ec)
+  {
+    ioctl_arg_type non_blocking = 1;
+    if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
+      return false;
+    impl.flags_ |= implementation_type::internal_non_blocking;
+    return true;
+  }
+
+  // The io_service implementation used to post completions.
+  io_service_impl& io_service_impl_;
+
   // The selector that performs event demultiplexing for the service.
-  Reactor& reactor_;
+  reactor& reactor_;
 };
 
 } // namespace detail
