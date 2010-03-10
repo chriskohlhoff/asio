@@ -68,13 +68,15 @@
 #   define WIN32_LEAN_AND_MEAN
 #  endif // !defined(WIN32_LEAN_AND_MEAN)
 # endif // !defined(ASIO_NO_WIN32_LEAN_AND_MEAN)
+# if !defined(ASIO_NO_NOMINMAX)
+#  if !defined(NOMINMAX)
+#   define NOMINMAX 1
+#  endif // !defined(NOMINMAX)
+# endif // !defined(ASIO_NO_NOMINMAX)
 # if defined(__CYGWIN__)
 #  if !defined(__USE_W32_SOCKETS)
 #   error You must add -D__USE_W32_SOCKETS to your compiler options.
 #  endif // !defined(__USE_W32_SOCKETS)
-#  if !defined(NOMINMAX)
-#   define NOMINMAX 1
-#  endif // !defined(NOMINMAX)
 # endif // defined(__CYGWIN__)
 # include <winsock2.h>
 # include <ws2tcpip.h>

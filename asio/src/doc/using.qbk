@@ -206,6 +206,15 @@ Asio.
     ]
   ]
   [
+    [`ASIO_NO_NOMINMAX`]
+    [
+      By default, Asio will automatically define `NOMINMAX` when compiling for
+      Windows, to suppress the definition of the `min()` and `max()` macros.
+      The presence of `ASIO_NO_NOMINMAX` prevents `NOMINMAX` from being
+      defined.
+    ]
+  ]
+  [
     [`ASIO_NO_DEFAULT_LINKED_LIBS`]
     [
       When compiling for Windows using Microsoft Visual C++ or Borland C++, Asio
