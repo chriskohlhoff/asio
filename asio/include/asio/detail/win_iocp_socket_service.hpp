@@ -1058,6 +1058,8 @@ public:
         // Check for connection closed.
         else if (!ec && bytes_transferred == 0
             && o->protocol_type_ == SOCK_STREAM
+            && !buffer_sequence_adapter<asio::mutable_buffer,
+                MutableBufferSequence>::all_empty(o->buffers_)
             && !boost::is_same<MutableBufferSequence, null_buffers>::value)
         {
           ec = asio::error::eof;
