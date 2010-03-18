@@ -47,13 +47,13 @@ public:
 
   /// Construct with specified service name for any protocol.
   basic_resolver_query(const std::string& service_name,
-      int flags = passive | address_configured)
+      resolver_query_base::flags resolve_flags = passive | address_configured)
     : hints_(),
       host_name_(),
       service_name_(service_name)
   {
     typename InternetProtocol::endpoint endpoint;
-    hints_.ai_flags = flags;
+    hints_.ai_flags = static_cast<int>(resolve_flags);
     hints_.ai_family = PF_UNSPEC;
     hints_.ai_socktype = endpoint.protocol().type();
     hints_.ai_protocol = endpoint.protocol().protocol();
@@ -66,12 +66,12 @@ public:
   /// Construct with specified service name for a given protocol.
   basic_resolver_query(const protocol_type& protocol,
       const std::string& service_name,
-      int flags = passive | address_configured)
+      resolver_query_base::flags resolve_flags = passive | address_configured)
     : hints_(),
       host_name_(),
       service_name_(service_name)
   {
-    hints_.ai_flags = flags;
+    hints_.ai_flags = static_cast<int>(resolve_flags);
     hints_.ai_family = protocol.family();
     hints_.ai_socktype = protocol.type();
     hints_.ai_protocol = protocol.protocol();
@@ -83,13 +83,14 @@ public:
 
   /// Construct with specified host name and service name for any protocol.
   basic_resolver_query(const std::string& host_name,
-      const std::string& service_name, int flags = address_configured)
+      const std::string& service_name,
+      resolver_query_base::flags resolve_flags = address_configured)
     : hints_(),
       host_name_(host_name),
       service_name_(service_name)
   {
     typename InternetProtocol::endpoint endpoint;
-    hints_.ai_flags = flags;
+    hints_.ai_flags = static_cast<int>(resolve_flags);
     hints_.ai_family = PF_UNSPEC;
     hints_.ai_socktype = endpoint.protocol().type();
     hints_.ai_protocol = endpoint.protocol().protocol();
@@ -102,12 +103,12 @@ public:
   /// Construct with specified host name and service name for a given protocol.
   basic_resolver_query(const protocol_type& protocol,
       const std::string& host_name, const std::string& service_name,
-      int flags = address_configured)
+      resolver_query_base::flags resolve_flags = address_configured)
     : hints_(),
       host_name_(host_name),
       service_name_(service_name)
   {
-    hints_.ai_flags = flags;
+    hints_.ai_flags = static_cast<int>(resolve_flags);
     hints_.ai_family = protocol.family();
     hints_.ai_socktype = protocol.type();
     hints_.ai_protocol = protocol.protocol();
