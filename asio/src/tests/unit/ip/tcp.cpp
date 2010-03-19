@@ -344,6 +344,14 @@ void handle_write(const asio::error_code& err,
   BOOST_CHECK(bytes_transferred == sizeof(write_data));
 }
 
+void handle_read_cancel(const asio::error_code& err,
+    size_t bytes_transferred, bool* called)
+{
+  *called = true;
+  BOOST_CHECK(err == asio::error::operation_aborted);
+  BOOST_CHECK(bytes_transferred == 0);
+}
+
 void handle_read_eof(const asio::error_code& err,
     size_t bytes_transferred, bool* called)
 {
@@ -422,6 +430,26 @@ void test()
   BOOST_CHECK(write_completed);
   BOOST_CHECK(memcmp(read_buffer, write_data, sizeof(write_data)) == 0);
 
+  // Cancelled read.
+
+  bool read_cancel_completed = false;
+  asio::async_read(server_side_socket,
+      asio::buffer(read_buffer),
+      boost::bind(handle_read_cancel,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        &read_cancel_completed));
+
+  ios.reset();
+  ios.poll();
+  BOOST_CHECK(!read_cancel_completed);
+
+  server_side_socket.close();
+
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(read_cancel_completed);
+
   // A read when the peer closes socket should fail with eof.
 
   bool read_eof_completed = false;
@@ -431,8 +459,6 @@ void test()
         asio::placeholders::error,
         asio::placeholders::bytes_transferred,
         &read_eof_completed));
-
-  server_side_socket.close();
 
   ios.reset();
   ios.run();

@@ -211,7 +211,14 @@ public:
 
     op_queue<operation> ops;
     for (int i = 0; i < max_ops; ++i)
-      ops.push(descriptor_data->op_queue_[i]);
+    {
+      while (reactor_op* op = descriptor_data->op_queue_[i].front())
+      {
+        op->ec_ = asio::error::operation_aborted;
+        descriptor_data->op_queue_[i].pop();
+        ops.push(op);
+      }
+    }
 
     descriptor_lock.unlock();
 
@@ -232,7 +239,14 @@ public:
 
     op_queue<operation> ops;
     for (int i = 0; i < max_ops; ++i)
-      ops.push(descriptor_data->op_queue_[i]);
+    {
+      while (reactor_op* op = descriptor_data->op_queue_[i].front())
+      {
+        op->ec_ = asio::error::operation_aborted;
+        descriptor_data->op_queue_[i].pop();
+        ops.push(op);
+      }
+    }
 
     descriptor_lock.unlock();
 
