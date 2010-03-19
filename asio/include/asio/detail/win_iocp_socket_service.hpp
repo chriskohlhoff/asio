@@ -1692,7 +1692,7 @@ private:
       std::size_t buffer_count, socket_base::message_flags flags,
       bool noop, operation* op)
   {
-    update_cancellation_thread_id();
+    update_cancellation_thread_id(impl);
     iocp_service_.work_started();
 
     if (noop)
@@ -1719,7 +1719,7 @@ private:
       std::size_t buffer_count, const endpoint_type& destination,
       socket_base::message_flags flags, operation* op)
   {
-    update_cancellation_thread_id();
+    update_cancellation_thread_id(impl);
     iocp_service_.work_started();
 
     if (!is_open(impl))
@@ -1745,7 +1745,7 @@ private:
       std::size_t buffer_count, socket_base::message_flags flags,
       bool noop, operation* op)
   {
-    update_cancellation_thread_id();
+    update_cancellation_thread_id(impl);
     iocp_service_.work_started();
 
     if (noop)
@@ -1775,7 +1775,7 @@ private:
       std::size_t buffer_count, endpoint_type& sender_endpoint,
       socket_base::message_flags flags, int* endpoint_size, operation* op)
   {
-    update_cancellation_thread_id();
+    update_cancellation_thread_id(impl);
     iocp_service_.work_started();
 
     if (!is_open(impl))
@@ -1802,7 +1802,7 @@ private:
       bool peer_is_open, socket_holder& new_socket,
       void* output_buffer, DWORD address_length, operation* op)
   {
-    update_cancellation_thread_id();
+    update_cancellation_thread_id(impl);
     iocp_service_.work_started();
 
     if (!is_open(impl))
@@ -1834,7 +1834,7 @@ private:
   void start_reactor_op(implementation_type& impl, int op_type, reactor_op* op)
   {
     reactor& r = get_reactor();
-    update_cancellation_thread_id();
+    update_cancellation_thread_id(impl);
 
     if (is_open(impl))
     {
@@ -1852,7 +1852,7 @@ private:
       reactor_op* op, const endpoint_type& peer_endpoint)
   {
     reactor& r = get_reactor();
-    update_cancellation_thread_id();
+    update_cancellation_thread_id(impl);
 
     if (is_open(impl))
     {
@@ -1926,7 +1926,7 @@ private:
   }
 
   // Update the ID of the thread from which cancellation is safe.
-  void update_cancellation_thread_id()
+  void update_cancellation_thread_id(implementation_type& impl)
   {
 #if defined(ASIO_ENABLE_CANCELIO)
     if (impl.safe_cancellation_thread_id_ == 0)
