@@ -83,12 +83,20 @@ private:
 #if defined(__MINGW32__)
     // Not sure if MinGW supports structured exception handling, so for now
     // we'll just call the Windows API and hope.
+# if defined(UNDER_CE)
+    ::InitializeCriticalSection(&crit_section_);
+# else
     ::InitializeCriticalSectionAndSpinCount(&crit_section_, 0x80000000);
+# endif
     return 0;
 #else
     __try
     {
+# if defined(UNDER_CE)
+      ::InitializeCriticalSection(&crit_section_);
+# else
       ::InitializeCriticalSectionAndSpinCount(&crit_section_, 0x80000000);
+# endif
     }
     __except(GetExceptionCode() == STATUS_NO_MEMORY
         ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH)
