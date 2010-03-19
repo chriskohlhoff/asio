@@ -144,6 +144,7 @@ EXAMPLE_EXES = \
 	examples\iostreams\daytime_server.exe \
 	examples\multicast\receiver.exe \
 	examples\multicast\sender.exe \
+	examples\nonblocking\third_party_lib.exe \
 	examples\porthopper\client.exe \
 	examples\porthopper\server.exe \
 	examples\services\daytime_client.exe \
@@ -233,6 +234,9 @@ check: $(UNIT_TEST_EXES)
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
 
 {examples\multicast}.cpp{examples\multicast}.exe:
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+
+{examples\nonblocking}.cpp{examples\nonblocking}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
 
 {examples\porthopper}.cpp{examples\porthopper}.exe:
