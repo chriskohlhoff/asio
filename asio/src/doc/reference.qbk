@@ -33877,6 +33877,91 @@ A random access iterator over the bytes in a buffer sequence.
     [Construct an iterator representing the end of the buffers' data. ]
   ]
   
+  [
+    [[link asio.reference.buffers_iterator.operator__star_ [*operator *]]]
+    [Dereference an iterator. ]
+  ]
+  
+  [
+    [[link asio.reference.buffers_iterator.operator_plus__plus_ [*operator++]]]
+    [Increment operator (prefix). 
+
+     Increment operator (postfix). ]
+  ]
+  
+  [
+    [[link asio.reference.buffers_iterator.operator_plus__eq_ [*operator+=]]]
+    [Addition operator. ]
+  ]
+  
+  [
+    [[link asio.reference.buffers_iterator.operator_minus__minus_ [*operator--]]]
+    [Decrement operator (prefix). 
+
+     Decrement operator (postfix). ]
+  ]
+  
+  [
+    [[link asio.reference.buffers_iterator.operator_minus__eq_ [*operator-=]]]
+    [Subtraction operator. ]
+  ]
+  
+  [
+    [[link asio.reference.buffers_iterator.operator_arrow_ [*operator->]]]
+    [Dereference an iterator. ]
+  ]
+  
+  [
+    [[link asio.reference.buffers_iterator.operator_lb__rb_ [*operator\[\]]]]
+    [Access an individual element. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.buffers_iterator.operator_not__eq_ [*operator!=]]]
+    [Test two iterators for inequality. ]
+  ]
+  
+  [
+    [[link asio.reference.buffers_iterator.operator_plus_ [*operator+]]]
+    [Addition operator. ]
+  ]
+  
+  [
+    [[link asio.reference.buffers_iterator.operator_minus_ [*operator-]]]
+    [Subtraction operator. ]
+  ]
+  
+  [
+    [[link asio.reference.buffers_iterator.operator_lt_ [*operator<]]]
+    [Compare two iterators. ]
+  ]
+  
+  [
+    [[link asio.reference.buffers_iterator.operator_lt__eq_ [*operator<=]]]
+    [Compare two iterators. ]
+  ]
+  
+  [
+    [[link asio.reference.buffers_iterator.operator_eq__eq_ [*operator==]]]
+    [Test two iterators for equality. ]
+  ]
+  
+  [
+    [[link asio.reference.buffers_iterator.operator_gt_ [*operator>]]]
+    [Compare two iterators. ]
+  ]
+  
+  [
+    [[link asio.reference.buffers_iterator.operator_gt__eq_ [*operator>=]]]
+    [Compare two iterators. ]
+  ]
+  
 ]
 
 [heading Requirements]
@@ -33923,6 +34008,391 @@ Construct an iterator representing the end of the buffers' data.
 
   static buffers_iterator end(
       const BufferSequence & buffers);
+
+
+
+[endsect]
+
+
+
+[section:operator__star_ buffers_iterator::operator *]
+
+[indexterm2 operator *..buffers_iterator] 
+Dereference an iterator. 
+
+
+  byte_type & operator *() const;
+
+
+
+[endsect]
+
+
+
+[section:operator_not__eq_ buffers_iterator::operator!=]
+
+[indexterm2 operator!=..buffers_iterator] 
+Test two iterators for inequality. 
+
+
+  friend bool operator!=(
+      const buffers_iterator & a,
+      const buffers_iterator & b);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_plus_ buffers_iterator::operator+]
+
+[indexterm2 operator+..buffers_iterator] 
+Addition operator. 
+
+
+  friend buffers_iterator operator+(
+      const buffers_iterator & iter,
+      std::ptrdiff_t difference);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[section:operator_plus__plus_ buffers_iterator::operator++]
+
+[indexterm2 operator++..buffers_iterator] 
+Increment operator (prefix). 
+
+
+  buffers_iterator & ``[link asio.reference.buffers_iterator.operator_plus__plus_.overload1 operator++]``();
+  ``  [''''&raquo;''' [link asio.reference.buffers_iterator.operator_plus__plus_.overload1 more...]]``
+
+
+Increment operator (postfix). 
+
+
+  buffers_iterator ``[link asio.reference.buffers_iterator.operator_plus__plus_.overload2 operator++]``(
+      int );
+  ``  [''''&raquo;''' [link asio.reference.buffers_iterator.operator_plus__plus_.overload2 more...]]``
+
+
+[section:overload1 buffers_iterator::operator++ (1 of 2 overloads)]
+
+
+Increment operator (prefix). 
+
+
+  buffers_iterator & operator++();
+
+
+
+[endsect]
+
+
+
+[section:overload2 buffers_iterator::operator++ (2 of 2 overloads)]
+
+
+Increment operator (postfix). 
+
+
+  buffers_iterator operator++(
+      int );
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:operator_plus__eq_ buffers_iterator::operator+=]
+
+[indexterm2 operator+=..buffers_iterator] 
+Addition operator. 
+
+
+  buffers_iterator & operator+=(
+      std::ptrdiff_t difference);
+
+
+
+[endsect]
+
+
+[section:operator_minus_ buffers_iterator::operator-]
+
+[indexterm2 operator-..buffers_iterator] 
+Subtraction operator. 
+
+
+  friend buffers_iterator ``[link asio.reference.buffers_iterator.operator_minus_.overload1 operator-]``(
+      const buffers_iterator & iter,
+      std::ptrdiff_t difference);
+  ``  [''''&raquo;''' [link asio.reference.buffers_iterator.operator_minus_.overload1 more...]]``
+
+  friend std::ptrdiff_t ``[link asio.reference.buffers_iterator.operator_minus_.overload2 operator-]``(
+      const buffers_iterator & a,
+      const buffers_iterator & b);
+  ``  [''''&raquo;''' [link asio.reference.buffers_iterator.operator_minus_.overload2 more...]]``
+
+
+[section:overload1 buffers_iterator::operator- (1 of 2 overloads)]
+
+
+Subtraction operator. 
+
+
+  friend buffers_iterator operator-(
+      const buffers_iterator & iter,
+      std::ptrdiff_t difference);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:overload2 buffers_iterator::operator- (2 of 2 overloads)]
+
+
+Subtraction operator. 
+
+
+  friend std::ptrdiff_t operator-(
+      const buffers_iterator & a,
+      const buffers_iterator & b);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[endsect]
+
+[section:operator_minus__minus_ buffers_iterator::operator--]
+
+[indexterm2 operator--..buffers_iterator] 
+Decrement operator (prefix). 
+
+
+  buffers_iterator & ``[link asio.reference.buffers_iterator.operator_minus__minus_.overload1 operator--]``();
+  ``  [''''&raquo;''' [link asio.reference.buffers_iterator.operator_minus__minus_.overload1 more...]]``
+
+
+Decrement operator (postfix). 
+
+
+  buffers_iterator ``[link asio.reference.buffers_iterator.operator_minus__minus_.overload2 operator--]``(
+      int );
+  ``  [''''&raquo;''' [link asio.reference.buffers_iterator.operator_minus__minus_.overload2 more...]]``
+
+
+[section:overload1 buffers_iterator::operator-- (1 of 2 overloads)]
+
+
+Decrement operator (prefix). 
+
+
+  buffers_iterator & operator--();
+
+
+
+[endsect]
+
+
+
+[section:overload2 buffers_iterator::operator-- (2 of 2 overloads)]
+
+
+Decrement operator (postfix). 
+
+
+  buffers_iterator operator--(
+      int );
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:operator_minus__eq_ buffers_iterator::operator-=]
+
+[indexterm2 operator-=..buffers_iterator] 
+Subtraction operator. 
+
+
+  buffers_iterator & operator-=(
+      std::ptrdiff_t difference);
+
+
+
+[endsect]
+
+
+
+[section:operator_arrow_ buffers_iterator::operator->]
+
+[indexterm2 operator->..buffers_iterator] 
+Dereference an iterator. 
+
+
+  byte_type * operator->() const;
+
+
+
+[endsect]
+
+
+
+[section:operator_lt_ buffers_iterator::operator<]
+
+[indexterm2 operator<..buffers_iterator] 
+Compare two iterators. 
+
+
+  friend bool operator<(
+      const buffers_iterator & a,
+      const buffers_iterator & b);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_lt__eq_ buffers_iterator::operator<=]
+
+[indexterm2 operator<=..buffers_iterator] 
+Compare two iterators. 
+
+
+  friend bool operator<=(
+      const buffers_iterator & a,
+      const buffers_iterator & b);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_eq__eq_ buffers_iterator::operator==]
+
+[indexterm2 operator==..buffers_iterator] 
+Test two iterators for equality. 
+
+
+  friend bool operator==(
+      const buffers_iterator & a,
+      const buffers_iterator & b);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_gt_ buffers_iterator::operator>]
+
+[indexterm2 operator>..buffers_iterator] 
+Compare two iterators. 
+
+
+  friend bool operator>(
+      const buffers_iterator & a,
+      const buffers_iterator & b);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_gt__eq_ buffers_iterator::operator>=]
+
+[indexterm2 operator>=..buffers_iterator] 
+Compare two iterators. 
+
+
+  friend bool operator>=(
+      const buffers_iterator & a,
+      const buffers_iterator & b);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_lb__rb_ buffers_iterator::operator\[\]]
+
+[indexterm2 operator\[\]..buffers_iterator] 
+Access an individual element. 
+
+
+  byte_type & operator[](
+      std::ptrdiff_t difference) const;
 
 
 
@@ -39455,7 +39925,7 @@ Implements IP version 4 style addresses.
   
   [
     [[link asio.reference.ip__address_v4.to_bytes [*to_bytes]]]
-    [Get the address in bytes. ]
+    [Get the address in bytes, in network byte order. ]
   ]
   
   [
@@ -40077,7 +40547,7 @@ Compare addresses for ordering.
 [section:to_bytes ip::address_v4::to_bytes]
 
 [indexterm2 to_bytes..ip::address_v4] 
-Get the address in bytes. 
+Get the address in bytes, in network byte order. 
 
 
   bytes_type to_bytes() const;
@@ -40270,7 +40740,7 @@ Implements IP version 6 style addresses.
   
   [
     [[link asio.reference.ip__address_v6.to_bytes [*to_bytes]]]
-    [Get the address in bytes. ]
+    [Get the address in bytes, in network byte order. ]
   ]
   
   [
@@ -40976,7 +41446,7 @@ Modifies the scope ID associated with the IPv6 address.
 [section:to_bytes ip::address_v6::to_bytes]
 
 [indexterm2 to_bytes..ip::address_v6] 
-Get the address in bytes. 
+Get the address in bytes, in network byte order. 
 
 
   bytes_type to_bytes() const;
@@ -42687,6 +43157,39 @@ An iterator over the entries produced by a resolver.
      Create an iterator from an endpoint, host name and service name. ]
   ]
   
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator__star_ [*operator *]]]
+    [Dereference an iterator. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_plus__plus_ [*operator++]]]
+    [Increment operator (prefix). 
+
+     Increment operator (postfix). ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_arrow_ [*operator->]]]
+    [Dereference an iterator. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_not__eq_ [*operator!=]]]
+    [Test two iterators for inequality. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_eq__eq_ [*operator==]]]
+    [Test two iterators for equality. ]
+  ]
+  
 ]
 
 The [link asio.reference.ip__basic_resolver_iterator `ip::basic_resolver_iterator`] class template is used to define iterators over the results returned by a resolver.
@@ -42786,6 +43289,126 @@ Create an iterator from an endpoint, host name and service name.
 [endsect]
 
 
+[section:operator__star_ ip::basic_resolver_iterator::operator *]
+
+[indexterm2 operator *..ip::basic_resolver_iterator] 
+Dereference an iterator. 
+
+
+  const basic_resolver_entry< InternetProtocol > & operator *() const;
+
+
+
+[endsect]
+
+
+
+[section:operator_not__eq_ ip::basic_resolver_iterator::operator!=]
+
+[indexterm2 operator!=..ip::basic_resolver_iterator] 
+Test two iterators for inequality. 
+
+
+  friend bool operator!=(
+      const basic_resolver_iterator & a,
+      const basic_resolver_iterator & b);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_resolver_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[section:operator_plus__plus_ ip::basic_resolver_iterator::operator++]
+
+[indexterm2 operator++..ip::basic_resolver_iterator] 
+Increment operator (prefix). 
+
+
+  basic_resolver_iterator & ``[link asio.reference.ip__basic_resolver_iterator.operator_plus__plus_.overload1 operator++]``();
+  ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver_iterator.operator_plus__plus_.overload1 more...]]``
+
+
+Increment operator (postfix). 
+
+
+  basic_resolver_iterator ``[link asio.reference.ip__basic_resolver_iterator.operator_plus__plus_.overload2 operator++]``(
+      int );
+  ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver_iterator.operator_plus__plus_.overload2 more...]]``
+
+
+[section:overload1 ip::basic_resolver_iterator::operator++ (1 of 2 overloads)]
+
+
+Increment operator (prefix). 
+
+
+  basic_resolver_iterator & operator++();
+
+
+
+[endsect]
+
+
+
+[section:overload2 ip::basic_resolver_iterator::operator++ (2 of 2 overloads)]
+
+
+Increment operator (postfix). 
+
+
+  basic_resolver_iterator operator++(
+      int );
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:operator_arrow_ ip::basic_resolver_iterator::operator->]
+
+[indexterm2 operator->..ip::basic_resolver_iterator] 
+Dereference an iterator. 
+
+
+  const basic_resolver_entry< InternetProtocol > * operator->() const;
+
+
+
+[endsect]
+
+
+
+[section:operator_eq__eq_ ip::basic_resolver_iterator::operator==]
+
+[indexterm2 operator==..ip::basic_resolver_iterator] 
+Test two iterators for equality. 
+
+
+  friend bool operator==(
+      const basic_resolver_iterator & a,
+      const basic_resolver_iterator & b);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_resolver_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
 [endsect]
 
 [section:ip__basic_resolver_query ip::basic_resolver_query]
@@ -42803,6 +43426,13 @@ An query to be passed to a resolver.
 [heading Types]
 [table
   [[Name][Description]]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_query.flags [*flags]]]
+    [A bitmask type (C++ Std \[lib.bitmask.types\]). ]
+  
+  ]
 
   [
 
@@ -42913,7 +43543,7 @@ The [link asio.reference.ip__basic_resolver_query `ip::basic_resolver_query`] cl
 Only return IPv4 addresses if a non-loopback IPv4 address is configured for the system. Only return IPv6 addresses if a non-loopback IPv6 address is configured for the system. 
 
 
-  static const int address_configured = implementation_defined;
+  static const flags address_configured = implementation_defined;
 
 
 
@@ -42930,7 +43560,7 @@ Only return IPv4 addresses if a non-loopback IPv4 address is configured for the 
 If used with v4\_mapped, return all matching IPv6 and IPv4 addresses. 
 
 
-  static const int all_matching = implementation_defined;
+  static const flags all_matching = implementation_defined;
 
 
 
@@ -42945,7 +43575,7 @@ Construct with specified service name for any protocol.
 
   ``[link asio.reference.ip__basic_resolver_query.basic_resolver_query.overload1 basic_resolver_query]``(
       const std::string & service_name,
-      int flags = passive|address_configured);
+      resolver_query_base::flags resolve_flags = passive|address_configured);
   ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver_query.basic_resolver_query.overload1 more...]]``
 
 
@@ -42955,7 +43585,7 @@ Construct with specified service name for a given protocol.
   ``[link asio.reference.ip__basic_resolver_query.basic_resolver_query.overload2 basic_resolver_query]``(
       const protocol_type & protocol,
       const std::string & service_name,
-      int flags = passive|address_configured);
+      resolver_query_base::flags resolve_flags = passive|address_configured);
   ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver_query.basic_resolver_query.overload2 more...]]``
 
 
@@ -42965,7 +43595,7 @@ Construct with specified host name and service name for any protocol.
   ``[link asio.reference.ip__basic_resolver_query.basic_resolver_query.overload3 basic_resolver_query]``(
       const std::string & host_name,
       const std::string & service_name,
-      int flags = address_configured);
+      resolver_query_base::flags resolve_flags = address_configured);
   ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver_query.basic_resolver_query.overload3 more...]]``
 
 
@@ -42976,7 +43606,7 @@ Construct with specified host name and service name for a given protocol.
       const protocol_type & protocol,
       const std::string & host_name,
       const std::string & service_name,
-      int flags = address_configured);
+      resolver_query_base::flags resolve_flags = address_configured);
   ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver_query.basic_resolver_query.overload4 more...]]``
 
 
@@ -42988,7 +43618,7 @@ Construct with specified service name for any protocol.
 
   basic_resolver_query(
       const std::string & service_name,
-      int flags = passive|address_configured);
+      resolver_query_base::flags resolve_flags = passive|address_configured);
 
 
 
@@ -43005,7 +43635,7 @@ Construct with specified service name for a given protocol.
   basic_resolver_query(
       const protocol_type & protocol,
       const std::string & service_name,
-      int flags = passive|address_configured);
+      resolver_query_base::flags resolve_flags = passive|address_configured);
 
 
 
@@ -43022,7 +43652,7 @@ Construct with specified host name and service name for any protocol.
   basic_resolver_query(
       const std::string & host_name,
       const std::string & service_name,
-      int flags = address_configured);
+      resolver_query_base::flags resolve_flags = address_configured);
 
 
 
@@ -43040,7 +43670,7 @@ Construct with specified host name and service name for a given protocol.
       const protocol_type & protocol,
       const std::string & host_name,
       const std::string & service_name,
-      int flags = address_configured);
+      resolver_query_base::flags resolve_flags = address_configured);
 
 
 
@@ -43059,8 +43689,32 @@ Construct with specified host name and service name for a given protocol.
 Determine the canonical name of the host specified in the query. 
 
 
-  static const int canonical_name = implementation_defined;
+  static const flags canonical_name = implementation_defined;
 
+
+
+[endsect]
+
+
+
+[section:flags ip::basic_resolver_query::flags]
+
+
+['Inherited from ip::resolver_query_base.]
+
+[indexterm2 flags..ip::basic_resolver_query] 
+A bitmask type (C++ Std [lib.bitmask.types]). 
+
+
+  typedef unspecified flags;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_resolver_query.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -43104,7 +43758,7 @@ Get the host name associated with the query.
 Host name should be treated as a numeric string defining an IPv4 or IPv6 address and no name resolution should be attempted. 
 
 
-  static const int numeric_host = implementation_defined;
+  static const flags numeric_host = implementation_defined;
 
 
 
@@ -43121,7 +43775,7 @@ Host name should be treated as a numeric string defining an IPv4 or IPv6 address
 Service name should be treated as a numeric string defining a port number and no name resolution should be attempted. 
 
 
-  static const int numeric_service = implementation_defined;
+  static const flags numeric_service = implementation_defined;
 
 
 
@@ -43138,7 +43792,7 @@ Service name should be treated as a numeric string defining a port number and no
 Indicate that returned endpoint is intended for use as a locally bound socket endpoint. 
 
 
-  static const int passive = implementation_defined;
+  static const flags passive = implementation_defined;
 
 
 
@@ -43190,7 +43844,7 @@ Get the service name associated with the query.
 If the query protocol family is specified as IPv6, return IPv4-mapped IPv6 addresses on finding no IPv6 addresses. 
 
 
-  static const int v4_mapped = implementation_defined;
+  static const flags v4_mapped = implementation_defined;
 
 
 
@@ -43745,6 +44399,39 @@ The type of a resolver iterator.
      Create an iterator from an endpoint, host name and service name. ]
   ]
   
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator__star_ [*operator *]]]
+    [Dereference an iterator. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_plus__plus_ [*operator++]]]
+    [Increment operator (prefix). 
+
+     Increment operator (postfix). ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_arrow_ [*operator->]]]
+    [Dereference an iterator. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_not__eq_ [*operator!=]]]
+    [Test two iterators for inequality. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_eq__eq_ [*operator==]]]
+    [Test two iterators for equality. ]
+  ]
+  
 ]
 
 The [link asio.reference.ip__basic_resolver_iterator `ip::basic_resolver_iterator`] class template is used to define iterators over the results returned by a resolver.
@@ -43789,6 +44476,13 @@ The type of a resolver query.
 [heading Types]
 [table
   [[Name][Description]]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_query.flags [*flags]]]
+    [A bitmask type (C++ Std \[lib.bitmask.types\]). ]
+  
+  ]
 
   [
 
@@ -44559,6 +45253,19 @@ The [link asio.reference.ip__resolver_query_base `ip::resolver_query_base`] clas
   class resolver_query_base
 
 
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.ip__resolver_query_base.flags [*flags]]]
+    [A bitmask type (C++ Std \[lib.bitmask.types\]). ]
+  
+  ]
+
+]
+
 [heading Protected Member Functions]
 [table
   [[Name][Description]]
@@ -44624,7 +45331,7 @@ The [link asio.reference.ip__resolver_query_base `ip::resolver_query_base`] clas
 Only return IPv4 addresses if a non-loopback IPv4 address is configured for the system. Only return IPv6 addresses if a non-loopback IPv6 address is configured for the system. 
 
 
-  static const int address_configured = implementation_defined;
+  static const flags address_configured = implementation_defined;
 
 
 
@@ -44638,7 +45345,7 @@ Only return IPv4 addresses if a non-loopback IPv4 address is configured for the 
 If used with v4\_mapped, return all matching IPv6 and IPv4 addresses. 
 
 
-  static const int all_matching = implementation_defined;
+  static const flags all_matching = implementation_defined;
 
 
 
@@ -44652,8 +45359,29 @@ If used with v4\_mapped, return all matching IPv6 and IPv4 addresses.
 Determine the canonical name of the host specified in the query. 
 
 
-  static const int canonical_name = implementation_defined;
+  static const flags canonical_name = implementation_defined;
 
+
+
+[endsect]
+
+
+
+[section:flags ip::resolver_query_base::flags]
+
+[indexterm2 flags..ip::resolver_query_base] 
+A bitmask type (C++ Std [lib.bitmask.types]). 
+
+
+  typedef unspecified flags;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/resolver_query_base.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -44666,7 +45394,7 @@ Determine the canonical name of the host specified in the query.
 Host name should be treated as a numeric string defining an IPv4 or IPv6 address and no name resolution should be attempted. 
 
 
-  static const int numeric_host = implementation_defined;
+  static const flags numeric_host = implementation_defined;
 
 
 
@@ -44680,7 +45408,7 @@ Host name should be treated as a numeric string defining an IPv4 or IPv6 address
 Service name should be treated as a numeric string defining a port number and no name resolution should be attempted. 
 
 
-  static const int numeric_service = implementation_defined;
+  static const flags numeric_service = implementation_defined;
 
 
 
@@ -44694,7 +45422,7 @@ Service name should be treated as a numeric string defining a port number and no
 Indicate that returned endpoint is intended for use as a locally bound socket endpoint. 
 
 
-  static const int passive = implementation_defined;
+  static const flags passive = implementation_defined;
 
 
 
@@ -44708,7 +45436,7 @@ Indicate that returned endpoint is intended for use as a locally bound socket en
 If the query protocol family is specified as IPv6, return IPv4-mapped IPv6 addresses on finding no IPv6 addresses. 
 
 
-  static const int v4_mapped = implementation_defined;
+  static const flags v4_mapped = implementation_defined;
 
 
 
@@ -46156,6 +46884,39 @@ The type of a resolver iterator.
      Create an iterator from an endpoint, host name and service name. ]
   ]
   
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator__star_ [*operator *]]]
+    [Dereference an iterator. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_plus__plus_ [*operator++]]]
+    [Increment operator (prefix). 
+
+     Increment operator (postfix). ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_arrow_ [*operator->]]]
+    [Dereference an iterator. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_not__eq_ [*operator!=]]]
+    [Test two iterators for inequality. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_eq__eq_ [*operator==]]]
+    [Test two iterators for equality. ]
+  ]
+  
 ]
 
 The [link asio.reference.ip__basic_resolver_iterator `ip::basic_resolver_iterator`] class template is used to define iterators over the results returned by a resolver.
@@ -46200,6 +46961,13 @@ The type of a resolver query.
 [heading Types]
 [table
   [[Name][Description]]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_query.flags [*flags]]]
+    [A bitmask type (C++ Std \[lib.bitmask.types\]). ]
+  
+  ]
 
   [
 
@@ -47234,6 +48002,39 @@ The type of a resolver iterator.
      Create an iterator from an endpoint, host name and service name. ]
   ]
   
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator__star_ [*operator *]]]
+    [Dereference an iterator. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_plus__plus_ [*operator++]]]
+    [Increment operator (prefix). 
+
+     Increment operator (postfix). ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_arrow_ [*operator->]]]
+    [Dereference an iterator. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_not__eq_ [*operator!=]]]
+    [Test two iterators for inequality. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_eq__eq_ [*operator==]]]
+    [Test two iterators for equality. ]
+  ]
+  
 ]
 
 The [link asio.reference.ip__basic_resolver_iterator `ip::basic_resolver_iterator`] class template is used to define iterators over the results returned by a resolver.
@@ -47278,6 +48079,13 @@ The type of a resolver query.
 [heading Types]
 [table
   [[Name][Description]]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_query.flags [*flags]]]
+    [A bitmask type (C++ Std \[lib.bitmask.types\]). ]
+  
+  ]
 
   [
 
