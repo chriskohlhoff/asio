@@ -94,6 +94,7 @@
         <xsl:if test="
             contains(compoundname, 'asio::') and
             not(contains(compoundname, '::detail')) and
+            not(contains(compoundname, '::service::key')) and
             not(contains(compoundname, '_handler'))">
           <xsl:call-template name="class"/>
         </xsl:if>
@@ -101,6 +102,7 @@
       <xsl:otherwise>
         <xsl:if test="
             not(contains(ancestor::*/compoundname, '::detail')) and
+            not(contains(ancestor::*/compoundname, '::service::key')) and
             not(contains(ancestor::*/compoundname, '_helper'))">
           <xsl:call-template name="namespace-memberdef"/>
         </xsl:if>
@@ -177,6 +179,12 @@
          select="concat(substring-before($name, '!'), '_not_', substring-after($name, '!'))"/>
       </xsl:call-template>
     </xsl:when>
+    <xsl:when test="contains($name, '-&gt;')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '-&gt;'), '_arrow_', substring-after($name, '-&gt;'))"/>
+      </xsl:call-template>
+    </xsl:when>
     <xsl:when test="contains($name, '&lt;')">
       <xsl:call-template name="make-id">
         <xsl:with-param name="name"
@@ -189,10 +197,34 @@
          select="concat(substring-before($name, '&gt;'), '_gt_', substring-after($name, '&gt;'))"/>
       </xsl:call-template>
     </xsl:when>
+    <xsl:when test="contains($name, '[')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '['), '_lb_', substring-after($name, '['))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, ']')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, ']'), '_rb_', substring-after($name, ']'))"/>
+      </xsl:call-template>
+    </xsl:when>
     <xsl:when test="contains($name, '+')">
       <xsl:call-template name="make-id">
         <xsl:with-param name="name"
          select="concat(substring-before($name, '+'), '_plus_', substring-after($name, '+'))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, '-')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '-'), '_minus_', substring-after($name, '-'))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, '*')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '*'), '_star_', substring-after($name, '*'))"/>
       </xsl:call-template>
     </xsl:when>
     <xsl:when test="contains($name, '~')">
@@ -474,6 +506,30 @@
 </xsl:template>
 
 
+<xsl:template name="escape-name">
+  <xsl:param name="text"/>
+  <xsl:choose>
+    <xsl:when test="contains($text, '[')">
+      <xsl:value-of select="substring-before($text, '[')"/>
+      <xsl:text>\[</xsl:text>
+      <xsl:call-template name="escape-name">
+        <xsl:with-param name="text" select="substring-after($text, '[')"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($text, ']')">
+      <xsl:value-of select="substring-before($text, ']')"/>
+      <xsl:text>\]</xsl:text>
+      <xsl:call-template name="escape-name">
+        <xsl:with-param name="text" select="substring-after($text, ']')"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:value-of select="$text"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+
 <xsl:template match="ref[@kindref='compound']" mode="markup">
   <xsl:variable name="name">
     <xsl:value-of select="."/>
@@ -654,7 +710,7 @@
   <xsl:when test="count(name) &gt; 0">
     [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="name"/>
       <xsl:text> </xsl:text>[*<xsl:value-of select="name"/>]]]
-    [<xsl:value-of select="briefdescription"/>]
+    [<xsl:call-template name="escape-name"><xsl:with-param name="text" select="briefdescription"/></xsl:call-template>]
   </xsl:when>
   <xsl:otherwise>
     <xsl:variable name="type-name">
@@ -692,6 +748,11 @@
   <xsl:variable name="name">
     <xsl:value-of select="name"/>
   </xsl:variable>
+  <xsl:variable name="escaped-name">
+    <xsl:call-template name="escape-name">
+      <xsl:with-param name="text" select="$name"/>
+    </xsl:call-template>
+  </xsl:variable>
   <xsl:variable name="id">
     <xsl:call-template name="make-id">
       <xsl:with-param name="name" select="$name"/>
@@ -713,7 +774,7 @@
   <xsl:if test="$overload-position = 1">
   [
     [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="$id"/>
-      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/><xsl:text>]]]
+      <xsl:text> </xsl:text>[*<xsl:value-of select="$escaped-name"/><xsl:text>]]]
     [</xsl:text><xsl:value-of select="briefdescription"/>
   </xsl:if>
   <xsl:if test="not($overload-position = 1) and not(briefdescription = preceding-sibling::*/briefdescription)">
@@ -930,6 +991,11 @@
   <xsl:variable name="name">
     <xsl:value-of select="name"/>
   </xsl:variable>
+  <xsl:variable name="escaped-name">
+    <xsl:call-template name="escape-name">
+      <xsl:with-param name="text" select="$name"/>
+    </xsl:call-template>
+  </xsl:variable>
   <xsl:variable name="id">
     <xsl:call-template name="make-id">
       <xsl:with-param name="name" select="$name"/>
@@ -951,10 +1017,10 @@
 
 <xsl:if test="$overload-count &gt; 1 and $overload-position = 1">
 [section:<xsl:value-of select="$id"/><xsl:text> </xsl:text>
-<xsl:value-of select="$class-name"/>::<xsl:value-of select="$name"/>]
+<xsl:value-of select="$class-name"/>::<xsl:value-of select="$escaped-name"/>]
 
 <xsl:text>[indexterm2 </xsl:text>
-<xsl:value-of select="$name"/>
+<xsl:value-of select="$escaped-name"/>
 <xsl:text>..</xsl:text>
 <xsl:value-of select="$class-name"/>
 <xsl:text>] </xsl:text>
@@ -990,7 +1056,7 @@
 
 [section:<xsl:if test="$overload-count = 1"><xsl:value-of select="$id"/></xsl:if>
 <xsl:if test="$overload-count &gt; 1">overload<xsl:value-of select="$overload-position"/></xsl:if>
-<xsl:text> </xsl:text><xsl:value-of select="$class-name"/>::<xsl:value-of select="$name"/>
+<xsl:text> </xsl:text><xsl:value-of select="$class-name"/>::<xsl:value-of select="$escaped-name"/>
 <xsl:if test="$overload-count &gt; 1"> (<xsl:value-of
  select="$overload-position"/> of <xsl:value-of select="$overload-count"/> overloads)</xsl:if>]
 
@@ -1005,7 +1071,7 @@
 
 <xsl:if test="$overload-count = 1">
   <xsl:text>[indexterm2 </xsl:text>
-  <xsl:value-of select="$name"/>
+  <xsl:value-of select="$escaped-name"/>
   <xsl:text>..</xsl:text>
   <xsl:value-of select="$class-name"/>
   <xsl:text>] </xsl:text>
