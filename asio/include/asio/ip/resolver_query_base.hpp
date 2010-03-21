@@ -57,12 +57,12 @@ public:
   static const flags v4_mapped = implementation_defined;
 
   /// If used with v4_mapped, return all matching IPv6 and IPv4 addresses.
-  static const flags xll_matching = implementation_defined;
+  static const flags all_matching = implementation_defined;
 
   /// Only return IPv4 addresses if a non-loopback IPv4 address is configured
   /// for the system. Only return IPv6 addresses if a non-loopback IPv6 address
   /// is configured for the system.
-  static const flags xddress_configured = implementation_defined;
+  static const flags address_configured = implementation_defined;
 #else
   enum flags
   {
