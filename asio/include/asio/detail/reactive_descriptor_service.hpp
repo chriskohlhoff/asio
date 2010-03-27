@@ -67,7 +67,7 @@ public:
       // The descriptor has been set non-blocking.
       internal_non_blocking = 2,
 
-      // Helper "flag" used to determine whether the socket is non-blocking.
+      // Helper "flag" used to determine whether the descriptor is non-blocking.
       non_blocking = user_set_non_blocking | internal_non_blocking
     };
 
@@ -213,19 +213,31 @@ public:
       return ec;
     }
 
-    if (command.name() == static_cast<int>(FIONBIO))
+    descriptor_ops::ioctl(impl.descriptor_, command.name(),
+        static_cast<ioctl_arg_type*>(command.data()), ec);
+
+    // When updating the non-blocking mode we always perform the ioctl syscall,
+    // even if the flags would otherwise indicate that the descriptor is
+    // already in the correct state. This ensures that the underlying
+    // descriptor is put into the state that has been requested by the user. If
+    // the ioctl syscall was successful then we need to update the flags to
+    // match.
+    if (!ec && command.name() == static_cast<int>(FIONBIO))
     {
-      if (command.get())
+      if (*static_cast<ioctl_arg_type*>(command.data()))
+      {
         impl.flags_ |= implementation_type::user_set_non_blocking;
+      }
       else
-        impl.flags_ &= ~implementation_type::user_set_non_blocking;
-      ec = asio::error_code();
+      {
+        // Clearing the non-blocking mode always overrides any internally-set
+        // non-blocking flag. Any subsequent asynchronous operations will need
+        // to re-enable non-blocking I/O.
+        impl.flags_ &= ~(implementation_type::user_set_non_blocking
+            | implementation_type::internal_non_blocking);
+      }
     }
-    else
-    {
-      descriptor_ops::ioctl(impl.descriptor_, command.name(),
-          static_cast<ioctl_arg_type*>(command.data()), ec);
-    }
+
     return ec;
   }
 

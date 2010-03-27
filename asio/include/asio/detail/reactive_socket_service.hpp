@@ -444,43 +444,30 @@ public:
       return ec;
     }
 
-    if (command.name() == static_cast<int>(FIONBIO))
+    socket_ops::ioctl(impl.socket_, command.name(),
+        static_cast<ioctl_arg_type*>(command.data()), ec);
+
+    // When updating the non-blocking mode we always perform the ioctl
+    // syscall, even if the flags would otherwise indicate that the socket is
+    // already in the correct state. This ensures that the underlying socket
+    // is put into the state that has been requested by the user. If the ioctl
+    // syscall was successful then we need to update the flags to match.
+    if (!ec && command.name() == static_cast<int>(FIONBIO))
     {
-      // Flags are manipulated in a temporary variable so that the socket
-      // implementation is not updated unless the ioctl operation succeeds.
-      unsigned char new_flags = impl.flags_;
       if (*static_cast<ioctl_arg_type*>(command.data()))
-        new_flags |= implementation_type::user_set_non_blocking;
-      else
-        new_flags &= ~implementation_type::user_set_non_blocking;
-
-      // Perform ioctl on socket if the non-blocking state has changed.
-      if (!(impl.flags_ & implementation_type::non_blocking)
-          && (new_flags & implementation_type::non_blocking))
       {
-        ioctl_arg_type non_blocking = 1;
-        socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec);
-      }
-      else if ((impl.flags_ & implementation_type::non_blocking)
-          && !(new_flags & implementation_type::non_blocking))
-      {
-        ioctl_arg_type non_blocking = 0;
-        socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec);
+        impl.flags_ |= implementation_type::user_set_non_blocking;
       }
       else
       {
-        ec = asio::error_code();
+        // Clearing the non-blocking mode always overrides any internally-set
+        // non-blocking flag. Any subsequent asynchronous operations will need
+        // to re-enable non-blocking I/O.
+        impl.flags_ &= ~(implementation_type::user_set_non_blocking
+            | implementation_type::internal_non_blocking);
       }
+    }
 
-      // Update socket implementation's flags only if successful.
-      if (!ec)
-        impl.flags_ = new_flags;
-    }
-    else
-    {
-      socket_ops::ioctl(impl.socket_, command.name(),
-          static_cast<ioctl_arg_type*>(command.data()), ec);
-    }
     return ec;
   }
 
