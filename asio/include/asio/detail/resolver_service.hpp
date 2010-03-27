@@ -26,6 +26,8 @@
 
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
+#include "asio/ip/basic_resolver_iterator.hpp"
+#include "asio/ip/basic_resolver_query.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/mutex.hpp"
@@ -80,10 +82,10 @@ public:
   typedef typename Protocol::endpoint endpoint_type;
 
   // The query type.
-  typedef typename Protocol::resolver_query query_type;
+  typedef asio::ip::basic_resolver_query<Protocol> query_type;
 
   // The iterator type.
-  typedef typename Protocol::resolver_iterator iterator_type;
+  typedef asio::ip::basic_resolver_iterator<Protocol> iterator_type;
 
   // Constructor.
   resolver_service(asio::io_service& io_service)

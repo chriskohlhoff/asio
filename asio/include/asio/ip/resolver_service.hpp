@@ -19,6 +19,8 @@
 
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
+#include "asio/ip/basic_resolver_iterator.hpp"
+#include "asio/ip/basic_resolver_query.hpp"
 #include "asio/detail/resolver_service.hpp"
 #include "asio/detail/service_base.hpp"
 
@@ -48,10 +50,10 @@ public:
   typedef typename InternetProtocol::endpoint endpoint_type;
 
   /// The query type.
-  typedef typename InternetProtocol::resolver_query query_type;
+  typedef basic_resolver_query<InternetProtocol> query_type;
 
   /// The iterator type.
-  typedef typename InternetProtocol::resolver_iterator iterator_type;
+  typedef basic_resolver_iterator<InternetProtocol> iterator_type;
 
 private:
   // The type of the platform-specific implementation.

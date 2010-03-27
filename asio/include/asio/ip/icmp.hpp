@@ -44,10 +44,10 @@ public:
   /// The type of a ICMP endpoint.
   typedef basic_endpoint<icmp> endpoint;
 
-  /// The type of a resolver query.
+  /// (Deprecated: use resolver::query.) The type of a resolver query.
   typedef basic_resolver_query<icmp> resolver_query;
 
-  /// The type of a resolver iterator.
+  /// (Deprecated: use resolver::iterator.) The type of a resolver iterator.
   typedef basic_resolver_iterator<icmp> resolver_iterator;
 
   /// Construct to represent the IPv4 ICMP protocol.

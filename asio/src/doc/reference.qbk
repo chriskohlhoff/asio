@@ -42584,7 +42584,76 @@ A reference to the [link asio.reference.io_service `io_service`] object that the
 The iterator type. 
 
 
-  typedef InternetProtocol::resolver_iterator iterator;
+  typedef basic_resolver_iterator< InternetProtocol > iterator;
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.basic_resolver_iterator [*basic_resolver_iterator]]]
+    [Default constructor creates an end iterator. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.create [*create]]]
+    [Create an iterator from an addrinfo list returned by getaddrinfo. 
+
+     Create an iterator from an endpoint, host name and service name. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator__star_ [*operator *]]]
+    [Dereference an iterator. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_plus__plus_ [*operator++]]]
+    [Increment operator (prefix). 
+
+     Increment operator (postfix). ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_arrow_ [*operator->]]]
+    [Dereference an iterator. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_not__eq_ [*operator!=]]]
+    [Test two iterators for inequality. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_eq__eq_ [*operator==]]]
+    [Test two iterators for equality. ]
+  ]
+  
+]
+
+The [link asio.reference.ip__basic_resolver_iterator `ip::basic_resolver_iterator`] class template is used to define iterators over the results returned by a resolver.
+
+The iterator's value\_type, obtained when the iterator is dereferenced, is: 
+
+   const basic_resolver_entry<InternetProtocol> 
+
+
+
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:] Safe.
+
+[*Shared] [*objects:] Unsafe. 
+
 
 
 
@@ -42626,7 +42695,111 @@ The protocol type.
 The query type. 
 
 
-  typedef InternetProtocol::resolver_query query;
+  typedef basic_resolver_query< InternetProtocol > query;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_query.flags [*flags]]]
+    [A bitmask type (C++ Std \[lib.bitmask.types\]). ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_query.protocol_type [*protocol_type]]]
+    [The protocol type associated with the endpoint query. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__basic_resolver_query.basic_resolver_query [*basic_resolver_query]]]
+    [Construct with specified service name for any protocol. 
+
+     Construct with specified service name for a given protocol. 
+
+     Construct with specified host name and service name for any protocol. 
+
+     Construct with specified host name and service name for a given protocol. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_query.hints [*hints]]]
+    [Get the hints associated with the query. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_query.host_name [*host_name]]]
+    [Get the host name associated with the query. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_query.service_name [*service_name]]]
+    [Get the service name associated with the query. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__basic_resolver_query.address_configured [*address_configured]]]
+    [Only return IPv4 addresses if a non-loopback IPv4 address is configured for the system. Only return IPv6 addresses if a non-loopback IPv6 address is configured for the system. ]
+  ]
+
+  [
+    [[link asio.reference.ip__basic_resolver_query.all_matching [*all_matching]]]
+    [If used with v4_mapped, return all matching IPv6 and IPv4 addresses. ]
+  ]
+
+  [
+    [[link asio.reference.ip__basic_resolver_query.canonical_name [*canonical_name]]]
+    [Determine the canonical name of the host specified in the query. ]
+  ]
+
+  [
+    [[link asio.reference.ip__basic_resolver_query.numeric_host [*numeric_host]]]
+    [Host name should be treated as a numeric string defining an IPv4 or IPv6 address and no name resolution should be attempted. ]
+  ]
+
+  [
+    [[link asio.reference.ip__basic_resolver_query.numeric_service [*numeric_service]]]
+    [Service name should be treated as a numeric string defining a port number and no name resolution should be attempted. ]
+  ]
+
+  [
+    [[link asio.reference.ip__basic_resolver_query.passive [*passive]]]
+    [Indicate that returned endpoint is intended for use as a locally bound socket endpoint. ]
+  ]
+
+  [
+    [[link asio.reference.ip__basic_resolver_query.v4_mapped [*v4_mapped]]]
+    [If the query protocol family is specified as IPv6, return IPv4-mapped IPv6 addresses on finding no IPv6 addresses. ]
+  ]
+
+]
+
+The [link asio.reference.ip__basic_resolver_query `ip::basic_resolver_query`] class template describes a query that can be passed to a resolver.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:] Safe.
+
+[*Shared] [*objects:] Unsafe. 
+
 
 
 
@@ -43934,14 +44107,14 @@ Encapsulates the flags needed for ICMP.
   [
 
     [[link asio.reference.ip__icmp.resolver_iterator [*resolver_iterator]]]
-    [The type of a resolver iterator. ]
+    [(Deprecated: use resolver::iterator.) The type of a resolver iterator. ]
   
   ]
 
   [
 
     [[link asio.reference.ip__icmp.resolver_query [*resolver_query]]]
-    [The type of a resolver query. ]
+    [(Deprecated: use resolver::query.) The type of a resolver query. ]
   
   ]
 
@@ -44377,7 +44550,7 @@ The [link asio.reference.ip__basic_resolver `ip::basic_resolver`] class template
 [section:resolver_iterator ip::icmp::resolver_iterator]
 
 [indexterm2 resolver_iterator..ip::icmp] 
-The type of a resolver iterator. 
+(Deprecated: use `resolver::iterator`.) The type of a resolver iterator. 
 
 
   typedef basic_resolver_iterator< icmp > resolver_iterator;
@@ -44467,7 +44640,7 @@ The iterator's value\_type, obtained when the iterator is dereferenced, is:
 [section:resolver_query ip::icmp::resolver_query]
 
 [indexterm2 resolver_query..ip::icmp] 
-The type of a resolver query. 
+(Deprecated: use `resolver::query`.) The type of a resolver query. 
 
 
   typedef basic_resolver_query< icmp > resolver_query;
@@ -45793,7 +45966,76 @@ The type of a resolver implementation.
 The iterator type. 
 
 
-  typedef InternetProtocol::resolver_iterator iterator_type;
+  typedef basic_resolver_iterator< InternetProtocol > iterator_type;
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.basic_resolver_iterator [*basic_resolver_iterator]]]
+    [Default constructor creates an end iterator. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.create [*create]]]
+    [Create an iterator from an addrinfo list returned by getaddrinfo. 
+
+     Create an iterator from an endpoint, host name and service name. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator__star_ [*operator *]]]
+    [Dereference an iterator. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_plus__plus_ [*operator++]]]
+    [Increment operator (prefix). 
+
+     Increment operator (postfix). ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_arrow_ [*operator->]]]
+    [Dereference an iterator. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_not__eq_ [*operator!=]]]
+    [Test two iterators for inequality. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_iterator.operator_eq__eq_ [*operator==]]]
+    [Test two iterators for equality. ]
+  ]
+  
+]
+
+The [link asio.reference.ip__basic_resolver_iterator `ip::basic_resolver_iterator`] class template is used to define iterators over the results returned by a resolver.
+
+The iterator's value\_type, obtained when the iterator is dereferenced, is: 
+
+   const basic_resolver_entry<InternetProtocol> 
+
+
+
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:] Safe.
+
+[*Shared] [*objects:] Unsafe. 
+
 
 
 
@@ -45835,7 +46077,111 @@ The protocol type.
 The query type. 
 
 
-  typedef InternetProtocol::resolver_query query_type;
+  typedef basic_resolver_query< InternetProtocol > query_type;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_query.flags [*flags]]]
+    [A bitmask type (C++ Std \[lib.bitmask.types\]). ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_query.protocol_type [*protocol_type]]]
+    [The protocol type associated with the endpoint query. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__basic_resolver_query.basic_resolver_query [*basic_resolver_query]]]
+    [Construct with specified service name for any protocol. 
+
+     Construct with specified service name for a given protocol. 
+
+     Construct with specified host name and service name for any protocol. 
+
+     Construct with specified host name and service name for a given protocol. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_query.hints [*hints]]]
+    [Get the hints associated with the query. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_query.host_name [*host_name]]]
+    [Get the host name associated with the query. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_query.service_name [*service_name]]]
+    [Get the service name associated with the query. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__basic_resolver_query.address_configured [*address_configured]]]
+    [Only return IPv4 addresses if a non-loopback IPv4 address is configured for the system. Only return IPv6 addresses if a non-loopback IPv6 address is configured for the system. ]
+  ]
+
+  [
+    [[link asio.reference.ip__basic_resolver_query.all_matching [*all_matching]]]
+    [If used with v4_mapped, return all matching IPv6 and IPv4 addresses. ]
+  ]
+
+  [
+    [[link asio.reference.ip__basic_resolver_query.canonical_name [*canonical_name]]]
+    [Determine the canonical name of the host specified in the query. ]
+  ]
+
+  [
+    [[link asio.reference.ip__basic_resolver_query.numeric_host [*numeric_host]]]
+    [Host name should be treated as a numeric string defining an IPv4 or IPv6 address and no name resolution should be attempted. ]
+  ]
+
+  [
+    [[link asio.reference.ip__basic_resolver_query.numeric_service [*numeric_service]]]
+    [Service name should be treated as a numeric string defining a port number and no name resolution should be attempted. ]
+  ]
+
+  [
+    [[link asio.reference.ip__basic_resolver_query.passive [*passive]]]
+    [Indicate that returned endpoint is intended for use as a locally bound socket endpoint. ]
+  ]
+
+  [
+    [[link asio.reference.ip__basic_resolver_query.v4_mapped [*v4_mapped]]]
+    [If the query protocol family is specified as IPv6, return IPv4-mapped IPv6 addresses on finding no IPv6 addresses. ]
+  ]
+
+]
+
+The [link asio.reference.ip__basic_resolver_query `ip::basic_resolver_query`] class template describes a query that can be passed to a resolver.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:] Safe.
+
+[*Shared] [*objects:] Unsafe. 
+
 
 
 
@@ -45990,14 +46336,14 @@ Encapsulates the flags needed for TCP.
   [
 
     [[link asio.reference.ip__tcp.resolver_iterator [*resolver_iterator]]]
-    [The type of a resolver iterator. ]
+    [(Deprecated: use resolver::iterator.) The type of a resolver iterator. ]
   
   ]
 
   [
 
     [[link asio.reference.ip__tcp.resolver_query [*resolver_query]]]
-    [The type of a resolver query. ]
+    [(Deprecated: use resolver::query.) The type of a resolver query. ]
   
   ]
 
@@ -46862,7 +47208,7 @@ The [link asio.reference.ip__basic_resolver `ip::basic_resolver`] class template
 [section:resolver_iterator ip::tcp::resolver_iterator]
 
 [indexterm2 resolver_iterator..ip::tcp] 
-The type of a resolver iterator. 
+(Deprecated: use `resolver::iterator`.) The type of a resolver iterator. 
 
 
   typedef basic_resolver_iterator< tcp > resolver_iterator;
@@ -46952,7 +47298,7 @@ The iterator's value\_type, obtained when the iterator is dereferenced, is:
 [section:resolver_query ip::tcp::resolver_query]
 
 [indexterm2 resolver_query..ip::tcp] 
-The type of a resolver query. 
+(Deprecated: use `resolver::query`.) The type of a resolver query. 
 
 
   typedef basic_resolver_query< tcp > resolver_query;
@@ -47537,14 +47883,14 @@ Encapsulates the flags needed for UDP.
   [
 
     [[link asio.reference.ip__udp.resolver_iterator [*resolver_iterator]]]
-    [The type of a resolver iterator. ]
+    [(Deprecated: use resolver::iterator.) The type of a resolver iterator. ]
   
   ]
 
   [
 
     [[link asio.reference.ip__udp.resolver_query [*resolver_query]]]
-    [The type of a resolver query. ]
+    [(Deprecated: use resolver::query.) The type of a resolver query. ]
   
   ]
 
@@ -47980,7 +48326,7 @@ The [link asio.reference.ip__basic_resolver `ip::basic_resolver`] class template
 [section:resolver_iterator ip::udp::resolver_iterator]
 
 [indexterm2 resolver_iterator..ip::udp] 
-The type of a resolver iterator. 
+(Deprecated: use `resolver::iterator`.) The type of a resolver iterator. 
 
 
   typedef basic_resolver_iterator< udp > resolver_iterator;
@@ -48070,7 +48416,7 @@ The iterator's value\_type, obtained when the iterator is dereferenced, is:
 [section:resolver_query ip::udp::resolver_query]
 
 [indexterm2 resolver_query..ip::udp] 
-The type of a resolver query. 
+(Deprecated: use `resolver::query`.) The type of a resolver query. 
 
 
   typedef basic_resolver_query< udp > resolver_query;

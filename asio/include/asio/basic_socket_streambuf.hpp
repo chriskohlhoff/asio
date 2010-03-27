@@ -50,7 +50,8 @@
 //     init_buffers();
 //     asio::error_code ec;
 //     this->basic_socket<Protocol, StreamSocketService>::close(ec);
-//     typedef typename Protocol::resolver_query resolver_query;
+//     typedef typename Protocol::resolver resolver_type;
+//     typedef typename resolver_type::query resolver_query;
 //     resolver_query query(x1, ..., xn);
 //     resolve_and_connect(query, ec);
 //     return !ec ? this : 0;
@@ -65,7 +66,8 @@
     init_buffers(); \
     asio::error_code ec; \
     this->basic_socket<Protocol, StreamSocketService>::close(ec); \
-    typedef typename Protocol::resolver_query resolver_query; \
+    typedef typename Protocol::resolver resolver_type; \
+    typedef typename resolver_type::query resolver_query; \
     resolver_query query(BOOST_PP_ENUM_PARAMS(n, x)); \
     resolve_and_connect(query, ec); \
     return !ec ? this : 0; \
@@ -258,7 +260,7 @@ private:
       asio::error_code& ec)
   {
     typedef typename Protocol::resolver resolver_type;
-    typedef typename Protocol::resolver_iterator iterator_type;
+    typedef typename resolver_type::iterator iterator_type;
     resolver_type resolver(
         boost::base_from_member<asio::io_service>::member);
     iterator_type i = resolver.resolve(query, ec);

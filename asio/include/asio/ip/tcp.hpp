@@ -47,10 +47,10 @@ public:
   /// The type of a TCP endpoint.
   typedef basic_endpoint<tcp> endpoint;
 
-  /// The type of a resolver query.
+  /// (Deprecated: use resolver::query.) The type of a resolver query.
   typedef basic_resolver_query<tcp> resolver_query;
 
-  /// The type of a resolver iterator.
+  /// (Deprecated: use resolver::iterator.) The type of a resolver iterator.
   typedef basic_resolver_iterator<tcp> resolver_iterator;
 
   /// Construct to represent the IPv4 TCP protocol.
