@@ -35,16 +35,6 @@ these threads must be invisible to the library user. In particular, the threads:
 
 * must block all signals.
 
-[note The implementation currently violates the first of these rules for the
-following functions:
-
-[mdash] `ip::basic_resolver::async_resolve()` on all platforms.
-
-[mdash] `basic_socket::async_connect()` on Windows.
-
-[mdash] Any operation involving `null_buffers()` on Windows, other than an
-asynchronous read performed on a stream-oriented socket.]
-
 This approach is complemented by the following guarantee:
 
 * Asynchronous completion handlers will only be called from threads that are
