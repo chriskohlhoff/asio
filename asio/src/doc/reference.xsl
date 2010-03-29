@@ -1190,7 +1190,18 @@
 
 <xsl:template name="function">
 <xsl:text>
-</xsl:text><xsl:apply-templates select="templateparamlist" mode="class-detail"/>
+</xsl:text>
+<xsl:variable name="doxygen-id">
+  <xsl:value-of select="@id"/>
+</xsl:variable>
+<xsl:choose>
+  <xsl:when test="count(/doxygen//memberdef[@id=$doxygen-id]/templateparamlist) = 1">
+    <xsl:apply-templates select="/doxygen//memberdef[@id=$doxygen-id]/templateparamlist" mode="class-detail"/>
+  </xsl:when>
+  <xsl:otherwise>
+    <xsl:apply-templates select="templateparamlist" mode="class-detail"/>
+  </xsl:otherwise>
+</xsl:choose>
 <xsl:text>  </xsl:text><xsl:if test="@static='yes'">static </xsl:if><xsl:if
  test="string-length(type) > 0"><xsl:value-of select="type"/><xsl:text> </xsl:text></xsl:if>
 <xsl:value-of select="name"/>(<xsl:apply-templates select="param"
