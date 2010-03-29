@@ -2622,6 +2622,8 @@ Assign an existing native socket to the socket.
 Start an asynchronous connect. 
 
 
+  template<
+      typename ``[link asio.reference.ConnectHandler ConnectHandler]``>
   void async_connect(
       const endpoint_type & peer_endpoint,
       ConnectHandler handler);
@@ -4386,6 +4388,8 @@ Get an option from the socket.
 Get an option from the socket. 
 
 
+  template<
+      typename ``[link asio.reference.GettableSocketOption GettableSocketOption]``>
   void get_option(
       GettableSocketOption & option) const;
 
@@ -4443,6 +4447,8 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
 Get an option from the socket. 
 
 
+  template<
+      typename ``[link asio.reference.GettableSocketOption GettableSocketOption]``>
   asio::error_code get_option(
       GettableSocketOption & option,
       asio::error_code & ec) const;
@@ -4556,6 +4562,8 @@ Perform an IO control command on the socket.
 Perform an IO control command on the socket. 
 
 
+  template<
+      typename ``[link asio.reference.IoControlCommand IoControlCommand]``>
   void io_control(
       IoControlCommand & command);
 
@@ -4613,6 +4621,8 @@ Getting the number of bytes ready to read:
 Perform an IO control command on the socket. 
 
 
+  template<
+      typename ``[link asio.reference.IoControlCommand IoControlCommand]``>
   asio::error_code io_control(
       IoControlCommand & command,
       asio::error_code & ec);
@@ -6890,6 +6900,8 @@ Set an option on the socket.
 Set an option on the socket. 
 
 
+  template<
+      typename ``[link asio.reference.SettableSocketOption SettableSocketOption]``>
   void set_option(
       const SettableSocketOption & option);
 
@@ -6946,6 +6958,8 @@ Setting the IPPROTO\_TCP/TCP\_NODELAY option:
 Set an option on the socket. 
 
 
+  template<
+      typename ``[link asio.reference.SettableSocketOption SettableSocketOption]``>
   asio::error_code set_option(
       const SettableSocketOption & option,
       asio::error_code & ec);
@@ -8918,6 +8932,8 @@ Assign an existing native socket to the socket.
 Start an asynchronous connect. 
 
 
+  template<
+      typename ``[link asio.reference.ConnectHandler ConnectHandler]``>
   void async_connect(
       const endpoint_type & peer_endpoint,
       ConnectHandler handler);
@@ -10682,6 +10698,8 @@ Get an option from the socket.
 Get an option from the socket. 
 
 
+  template<
+      typename ``[link asio.reference.GettableSocketOption GettableSocketOption]``>
   void get_option(
       GettableSocketOption & option) const;
 
@@ -10739,6 +10757,8 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
 Get an option from the socket. 
 
 
+  template<
+      typename ``[link asio.reference.GettableSocketOption GettableSocketOption]``>
   asio::error_code get_option(
       GettableSocketOption & option,
       asio::error_code & ec) const;
@@ -10852,6 +10872,8 @@ Perform an IO control command on the socket.
 Perform an IO control command on the socket. 
 
 
+  template<
+      typename ``[link asio.reference.IoControlCommand IoControlCommand]``>
   void io_control(
       IoControlCommand & command);
 
@@ -10909,6 +10931,8 @@ Getting the number of bytes ready to read:
 Perform an IO control command on the socket. 
 
 
+  template<
+      typename ``[link asio.reference.IoControlCommand IoControlCommand]``>
   asio::error_code io_control(
       IoControlCommand & command,
       asio::error_code & ec);
@@ -13186,6 +13210,8 @@ Set an option on the socket.
 Set an option on the socket. 
 
 
+  template<
+      typename ``[link asio.reference.SettableSocketOption SettableSocketOption]``>
   void set_option(
       const SettableSocketOption & option);
 
@@ -13242,6 +13268,8 @@ Setting the IPPROTO\_TCP/TCP\_NODELAY option:
 Set an option on the socket. 
 
 
+  template<
+      typename ``[link asio.reference.SettableSocketOption SettableSocketOption]``>
   asio::error_code set_option(
       const SettableSocketOption & option,
       asio::error_code & ec);
@@ -22254,6 +22282,8 @@ Assign an existing native socket to the socket.
 Start an asynchronous connect. 
 
 
+  template<
+      typename ``[link asio.reference.ConnectHandler ConnectHandler]``>
   void async_connect(
       const endpoint_type & peer_endpoint,
       ConnectHandler handler);
@@ -23306,6 +23336,8 @@ Get an option from the socket.
 Get an option from the socket. 
 
 
+  template<
+      typename ``[link asio.reference.GettableSocketOption GettableSocketOption]``>
   void get_option(
       GettableSocketOption & option) const;
 
@@ -23363,6 +23395,8 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
 Get an option from the socket. 
 
 
+  template<
+      typename ``[link asio.reference.GettableSocketOption GettableSocketOption]``>
   asio::error_code get_option(
       GettableSocketOption & option,
       asio::error_code & ec) const;
@@ -23476,6 +23510,8 @@ Perform an IO control command on the socket.
 Perform an IO control command on the socket. 
 
 
+  template<
+      typename ``[link asio.reference.IoControlCommand IoControlCommand]``>
   void io_control(
       IoControlCommand & command);
 
@@ -23533,6 +23569,8 @@ Getting the number of bytes ready to read:
 Perform an IO control command on the socket. 
 
 
+  template<
+      typename ``[link asio.reference.IoControlCommand IoControlCommand]``>
   asio::error_code io_control(
       IoControlCommand & command,
       asio::error_code & ec);
@@ -25067,6 +25105,8 @@ Set an option on the socket.
 Set an option on the socket. 
 
 
+  template<
+      typename ``[link asio.reference.SettableSocketOption SettableSocketOption]``>
   void set_option(
       const SettableSocketOption & option);
 
@@ -25123,6 +25163,8 @@ Setting the IPPROTO\_TCP/TCP\_NODELAY option:
 Set an option on the socket. 
 
 
+  template<
+      typename ``[link asio.reference.SettableSocketOption SettableSocketOption]``>
   asio::error_code set_option(
       const SettableSocketOption & option,
       asio::error_code & ec);
@@ -25843,6 +25885,8 @@ Assign an existing native socket to the socket.
 Start an asynchronous connect. 
 
 
+  template<
+      typename ``[link asio.reference.ConnectHandler ConnectHandler]``>
   void async_connect(
       const endpoint_type & peer_endpoint,
       ConnectHandler handler);
@@ -27477,6 +27521,8 @@ Get an option from the socket.
 Get an option from the socket. 
 
 
+  template<
+      typename ``[link asio.reference.GettableSocketOption GettableSocketOption]``>
   void get_option(
       GettableSocketOption & option) const;
 
@@ -27534,6 +27580,8 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
 Get an option from the socket. 
 
 
+  template<
+      typename ``[link asio.reference.GettableSocketOption GettableSocketOption]``>
   asio::error_code get_option(
       GettableSocketOption & option,
       asio::error_code & ec) const;
@@ -27647,6 +27695,8 @@ Perform an IO control command on the socket.
 Perform an IO control command on the socket. 
 
 
+  template<
+      typename ``[link asio.reference.IoControlCommand IoControlCommand]``>
   void io_control(
       IoControlCommand & command);
 
@@ -27704,6 +27754,8 @@ Getting the number of bytes ready to read:
 Perform an IO control command on the socket. 
 
 
+  template<
+      typename ``[link asio.reference.IoControlCommand IoControlCommand]``>
   asio::error_code io_control(
       IoControlCommand & command,
       asio::error_code & ec);
@@ -29751,6 +29803,8 @@ Set an option on the socket.
 Set an option on the socket. 
 
 
+  template<
+      typename ``[link asio.reference.SettableSocketOption SettableSocketOption]``>
   void set_option(
       const SettableSocketOption & option);
 
@@ -29807,6 +29861,8 @@ Setting the IPPROTO\_TCP/TCP\_NODELAY option:
 Set an option on the socket. 
 
 
+  template<
+      typename ``[link asio.reference.SettableSocketOption SettableSocketOption]``>
   asio::error_code set_option(
       const SettableSocketOption & option,
       asio::error_code & ec);
@@ -43794,6 +43850,27 @@ Construct with specified service name for any protocol.
       resolver_query_base::flags resolve_flags = passive|address_configured);
 
 
+This constructor is typically used to perform name resolution for local service binding.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[service_name][A string identifying the requested service. This may be a descriptive name or a numeric string corresponding to a port number.]]
+
+[[resolve_flags][A set of flags that determine how name resolution should be performed. The default flags are suitable for local service binding.]]
+
+]
+
+
+[heading Remarks]
+      
+On POSIX systems, service names are typically defined in the file `/etc/services`. On Windows, service names may be found in the file `c:\windows\system32\drivers\etc\services`. Operating systems may use additional locations when resolving service names. 
+
+
+
 
 [endsect]
 
@@ -43809,6 +43886,29 @@ Construct with specified service name for a given protocol.
       const protocol_type & protocol,
       const std::string & service_name,
       resolver_query_base::flags resolve_flags = passive|address_configured);
+
+
+This constructor is typically used to perform name resolution for local service binding with a specific protocol version.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[protocol][A protocol object, normally representing either the IPv4 or IPv6 version of an internet protocol.]]
+
+[[service_name][A string identifying the requested service. This may be a descriptive name or a numeric string corresponding to a port number.]]
+
+[[resolve_flags][A set of flags that determine how name resolution should be performed. The default flags are suitable for local service binding.]]
+
+]
+
+
+[heading Remarks]
+      
+On POSIX systems, service names are typically defined in the file `/etc/services`. On Windows, service names may be found in the file `c:\windows\system32\drivers\etc\services`. Operating systems may use additional locations when resolving service names. 
+
 
 
 
@@ -43828,6 +43928,29 @@ Construct with specified host name and service name for any protocol.
       resolver_query_base::flags resolve_flags = address_configured);
 
 
+This constructor is typically used to perform name resolution for communication with remote hosts.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[host_name][A string identifying a location. May be a descriptive name or a numeric address string. If an empty string and the passive flag has been specified, the resolved endpoints are suitable for local service binding. If an empty string and passive is not specified, the resolved endpoints will use the loopback address.]]
+
+[[service_name][A string identifying the requested service. This may be a descriptive name or a numeric string corresponding to a port number. May be an empty string, in which case all resolved endpoints will have a port number of 0.]]
+
+[[resolve_flags][A set of flags that determine how name resolution should be performed. The default flags are suitable for communication with remote hosts.]]
+
+]
+
+
+[heading Remarks]
+      
+On POSIX systems, host names may be locally defined in the file `/etc/hosts`. On Windows, host names may be defined in the file `c:\windows\system32\drivers\etc\hosts`. Remote host name resolution is performed using DNS. Operating systems may use additional locations when resolving host names (such as NETBIOS names on Windows).
+
+On POSIX systems, service names are typically defined in the file `/etc/services`. On Windows, service names may be found in the file `c:\windows\system32\drivers\etc\services`. Operating systems may use additional locations when resolving service names. 
+
 
 [endsect]
 
@@ -43845,6 +43968,31 @@ Construct with specified host name and service name for a given protocol.
       const std::string & service_name,
       resolver_query_base::flags resolve_flags = address_configured);
 
+
+This constructor is typically used to perform name resolution for communication with remote hosts.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[protocol][A protocol object, normally representing either the IPv4 or IPv6 version of an internet protocol.]]
+
+[[host_name][A string identifying a location. May be a descriptive name or a numeric address string. If an empty string and the passive flag has been specified, the resolved endpoints are suitable for local service binding. If an empty string and passive is not specified, the resolved endpoints will use the loopback address.]]
+
+[[service_name][A string identifying the requested service. This may be a descriptive name or a numeric string corresponding to a port number. May be an empty string, in which case all resolved endpoints will have a port number of 0.]]
+
+[[resolve_flags][A set of flags that determine how name resolution should be performed. The default flags are suitable for communication with remote hosts.]]
+
+]
+
+
+[heading Remarks]
+      
+On POSIX systems, host names may be locally defined in the file `/etc/hosts`. On Windows, host names may be defined in the file `c:\windows\system32\drivers\etc\hosts`. Remote host name resolution is performed using DNS. Operating systems may use additional locations when resolving host names (such as NETBIOS names on Windows).
+
+On POSIX systems, service names are typically defined in the file `/etc/services`. On Windows, service names may be found in the file `c:\windows\system32\drivers\etc\services`. Operating systems may use additional locations when resolving service names. 
 
 
 [endsect]
@@ -54062,6 +54210,8 @@ Perform an IO control command on the descriptor.
 Perform an IO control command on the descriptor. 
 
 
+  template<
+      typename ``[link asio.reference.IoControlCommand IoControlCommand]``>
   void io_control(
       IoControlCommand & command);
 
@@ -54119,6 +54269,8 @@ Getting the number of bytes ready to read:
 Perform an IO control command on the descriptor. 
 
 
+  template<
+      typename ``[link asio.reference.IoControlCommand IoControlCommand]``>
   asio::error_code io_control(
       IoControlCommand & command,
       asio::error_code & ec);
