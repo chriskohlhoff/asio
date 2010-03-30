@@ -1069,7 +1069,7 @@ public:
     start_op(impl,
         (flags & socket_base::message_out_of_band)
           ? reactor::except_op : reactor::read_op,
-        ptr.get(), true,
+        ptr.get(), (flags & socket_base::message_out_of_band) == 0,
         (impl.protocol_.type() == SOCK_STREAM
           && buffer_sequence_adapter<asio::mutable_buffer,
             MutableBufferSequence>::all_empty(buffers)));
