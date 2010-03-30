@@ -179,7 +179,9 @@ public:
 
     if (descriptor_data->op_queue_[op_type].empty())
     {
-      if (allow_speculative)
+      if (allow_speculative
+          && (op_type != read_op
+            || descriptor_data->op_queue_[except_op].empty()))
       {
         if (op->perform())
         {

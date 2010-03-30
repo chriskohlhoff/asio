@@ -125,17 +125,19 @@ public:
 
     if (allow_speculative)
     {
-      if (!op_queue_[op_type].has_operation(descriptor))
+      if (op_type != read_op || !op_queue_[except_op].has_operation(descriptor))
       {
-        if (op->perform())
+        if (!op_queue_[op_type].has_operation(descriptor))
         {
-          lock.unlock();
-          io_service_.post_immediate_completion(op);
-          return;
+          if (op->perform())
+          {
+            lock.unlock();
+            io_service_.post_immediate_completion(op);
+            return;
+          }
         }
       }
     }
-
 
     bool first = op_queue_[op_type].enqueue_operation(descriptor, op);
     io_service_.work_started();
