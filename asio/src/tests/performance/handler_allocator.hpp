@@ -34,10 +34,8 @@ public:
       in_use_ = true;
       return storage_.address();
     }
-    else
-    {
-      return ::operator new(size);
-    }
+
+    return ::operator new(size);
   }
 
   void deallocate(void* pointer)
