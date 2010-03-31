@@ -289,9 +289,7 @@ private:
           }
           task_has_run = true;
 
-          if (more_handlers)
-            wake_one_idle_thread_and_unlock(lock);
-          else
+          if (!more_handlers || !wake_one_idle_thread_and_unlock(lock))
             lock.unlock();
 
           op_queue<operation> completed_ops;
