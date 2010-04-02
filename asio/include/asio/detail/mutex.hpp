@@ -21,7 +21,7 @@
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#if !defined(BOOST_HAS_THREADS)
+#if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
 # include "asio/detail/null_mutex.hpp"
 #elif defined(BOOST_WINDOWS)
 # include "asio/detail/win_mutex.hpp"
@@ -34,7 +34,7 @@
 namespace asio {
 namespace detail {
 
-#if !defined(BOOST_HAS_THREADS)
+#if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
 typedef null_mutex mutex;
 #elif defined(BOOST_WINDOWS)
 typedef win_mutex mutex;

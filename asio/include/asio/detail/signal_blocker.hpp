@@ -21,7 +21,7 @@
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#if !defined(BOOST_HAS_THREADS)
+#if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
 # include "asio/detail/null_signal_blocker.hpp"
 #elif defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 # include "asio/detail/win_signal_blocker.hpp"
@@ -34,7 +34,7 @@
 namespace asio {
 namespace detail {
 
-#if !defined(BOOST_HAS_THREADS)
+#if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
 typedef null_signal_blocker signal_blocker;
 #elif defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 typedef win_signal_blocker signal_blocker;
