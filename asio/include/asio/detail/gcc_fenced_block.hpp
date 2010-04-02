@@ -22,7 +22,9 @@
 #include "asio/detail/pop_options.hpp"
 
 #if defined(__GNUC__) \
-  && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4))
+  && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)) \
+  && !defined(__INTEL_COMPILER) && !defined(__ICL) \
+  && !defined(__ICC) && !defined(__ECC)
 
 namespace asio {
 namespace detail {
@@ -53,6 +55,8 @@ private:
 
 #endif // defined(__GNUC__)
        // && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4))
+       // && !defined(__INTEL_COMPILER) && !defined(__ICL)
+       // && !defined(__ICC) && !defined(__ECC)
 
 #include "asio/detail/pop_options.hpp"
 
