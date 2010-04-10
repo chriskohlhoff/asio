@@ -30,7 +30,7 @@
 #elif defined(__GNUC__) \
   && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)) \
   && !defined(__INTEL_COMPILER) && !defined(__ICL) \
-  && !defined(__ICC) && !defined(__ECC)
+  && !defined(__ICC) && !defined(__ECC) && !defined(__PATHSCALE__)
 # include "asio/detail/gcc_fenced_block.hpp"
 #elif defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 # include "asio/detail/gcc_x86_fenced_block.hpp"
@@ -52,7 +52,7 @@ typedef solaris_fenced_block fenced_block;
 #elif defined(__GNUC__) \
   && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)) \
   && !defined(__INTEL_COMPILER) && !defined(__ICL) \
-  && !defined(__ICC) && !defined(__ECC)
+  && !defined(__ICC) && !defined(__ECC) && !defined(__PATHSCALE__)
 typedef gcc_fenced_block fenced_block;
 #elif defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 typedef gcc_x86_fenced_block fenced_block;
