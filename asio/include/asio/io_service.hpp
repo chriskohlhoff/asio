@@ -399,6 +399,14 @@ public:
    * @param handler The handler to be called. The io_service will make
    * a copy of the handler object as required. The function signature of the
    * handler must be: @code void handler(); @endcode
+   *
+   * @note This function throws an exception only if:
+   *
+   * @li the handler's @c asio_handler_allocate function; or
+   *
+   * @li the handler's copy constructor
+   *
+   * throws an exception.
    */
   template <typename CompletionHandler>
   void dispatch(CompletionHandler handler);
@@ -416,6 +424,14 @@ public:
    * @param handler The handler to be called. The io_service will make
    * a copy of the handler object as required. The function signature of the
    * handler must be: @code void handler(); @endcode
+   *
+   * @note This function throws an exception only if:
+   *
+   * @li the handler's @c asio_handler_allocate function; or
+   *
+   * @li the handler's copy constructor
+   *
+   * throws an exception.
    */
   template <typename CompletionHandler>
   void post(CompletionHandler handler);

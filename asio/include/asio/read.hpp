@@ -300,7 +300,10 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
  * @li An error occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
- * async_read_some function.
+ * async_read_some function, and is known as a <em>composed operation</em>. The
+ * program must ensure that the stream performs no other read operations (such
+ * as async_read, the stream's async_read_some function, or any other composed
+ * operations that perform reads) until this operation completes.
  *
  * @param s The stream from which the data is to be read. The type must support
  * the AsyncReadStream concept.
@@ -429,7 +432,10 @@ void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  * @li An error occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
- * async_read_some function.
+ * async_read_some function, and is known as a <em>composed operation</em>. The
+ * program must ensure that the stream performs no other read operations (such
+ * as async_read, the stream's async_read_some function, or any other composed
+ * operations that perform reads) until this operation completes.
  *
  * @param s The stream from which the data is to be read. The type must support
  * the AsyncReadStream concept.
@@ -476,7 +482,10 @@ void async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
  * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
- * async_read_some function.
+ * async_read_some function, and is known as a <em>composed operation</em>. The
+ * program must ensure that the stream performs no other read operations (such
+ * as async_read, the stream's async_read_some function, or any other composed
+ * operations that perform reads) until this operation completes.
  *
  * @param s The stream from which the data is to be read. The type must support
  * the AsyncReadStream concept.

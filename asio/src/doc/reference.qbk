@@ -342,7 +342,7 @@ This function is used to asynchronously read a certain number of bytes of data f
 
 * An error occurred.
 
-This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function.
+This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function, and is known as a [*composed operation]. The program must ensure that the stream performs no other read operations (such as async\_read, the stream's async\_read\_some function, or any other composed operations that perform reads) until this operation completes.
 
 
 [heading Parameters]
@@ -505,7 +505,7 @@ This function is used to asynchronously read a certain number of bytes of data f
 
 * An error occurred.
 
-This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function.
+This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function, and is known as a [*composed operation]. The program must ensure that the stream performs no other read operations (such as async\_read, the stream's async\_read\_some function, or any other composed operations that perform reads) until this operation completes.
 
 
 [heading Parameters]
@@ -576,7 +576,7 @@ This function is used to asynchronously read a certain number of bytes of data f
 
 * The completion\_condition function object returns 0.
 
-This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function.
+This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function, and is known as a [*composed operation]. The program must ensure that the stream performs no other read operations (such as async\_read, the stream's async\_read\_some function, or any other composed operations that perform reads) until this operation completes.
 
 
 [heading Parameters]
@@ -1087,7 +1087,7 @@ This function is used to asynchronously read data into the specified streambuf u
 
 * An error occurred.
 
-This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function. If the streambuf's get area already contains the delimiter, the asynchronous operation completes immediately.
+This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function, and is known as a [*composed operation]. If the streambuf's get area already contains the delimiter, this asynchronous operation completes immediately. The program must ensure that the stream performs no other read operations (such as async\_read, async\_read\_until, the stream's async\_read\_some function, or any other composed operations that perform reads) until this operation completes.
 
 
 [heading Parameters]
@@ -1143,7 +1143,22 @@ To asynchronously read data into a streambuf until a newline is encountered:
    asio::async_read_until(s, b, '\n', handler); 
 
 
+After the `async_read_until` operation completes successfully, the buffer `b` contains the delimiter: 
 
+   { 'a', 'b', ..., 'c', '\n', 'd', 'e', ... } 
+
+
+The call to `std::getline` then extracts the data up to and including the delimiter, so that the string `line` contains: 
+
+   { 'a', 'b', ..., 'c', '\n' } 
+
+
+The remaining data is left in the buffer `b` as follows: 
+
+   { 'd', 'e', ... } 
+
+
+This data may be the start of a new line, to be extracted by a subsequent `async_read_until` operation. 
 
 
 
@@ -1177,7 +1192,7 @@ This function is used to asynchronously read data into the specified streambuf u
 
 * An error occurred.
 
-This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function. If the streambuf's get area already contains the delimiter, the asynchronous operation completes immediately.
+This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function, and is known as a [*composed operation]. If the streambuf's get area already contains the delimiter, this asynchronous operation completes immediately. The program must ensure that the stream performs no other read operations (such as async\_read, async\_read\_until, the stream's async\_read\_some function, or any other composed operations that perform reads) until this operation completes.
 
 
 [heading Parameters]
@@ -1233,7 +1248,22 @@ To asynchronously read data into a streambuf until a newline is encountered:
    asio::async_read_until(s, b, "\r\n", handler); 
 
 
+After the `async_read_until` operation completes successfully, the buffer `b` contains the delimiter: 
 
+   { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } 
+
+
+The call to `std::getline` then extracts the data up to and including the delimiter, so that the string `line` contains: 
+
+   { 'a', 'b', ..., 'c', '\r', '\n' } 
+
+
+The remaining data is left in the buffer `b` as follows: 
+
+   { 'd', 'e', ... } 
+
+
+This data may be the start of a new line, to be extracted by a subsequent `async_read_until` operation. 
 
 
 
@@ -1267,7 +1297,7 @@ This function is used to asynchronously read data into the specified streambuf u
 
 * An error occurred.
 
-This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function. If the streambuf's get area already contains data that matches the regular expression, the function returns immediately.
+This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function, and is known as a [*composed operation]. If the streambuf's get area already contains data that matches the regular expression, this asynchronous operation completes immediately. The program must ensure that the stream performs no other read operations (such as async\_read, async\_read\_until, the stream's async\_read\_some function, or any other composed operations that perform reads) until this operation completes.
 
 
 [heading Parameters]
@@ -1324,7 +1354,22 @@ To asynchronously read data into a streambuf until a CR-LF sequence is encounter
    asio::async_read_until(s, b, boost::regex("\r\n"), handler); 
 
 
+After the `async_read_until` operation completes successfully, the buffer `b` contains the data which matched the regular expression: 
 
+   { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } 
+
+
+The call to `std::getline` then extracts the data up to and including the match, so that the string `line` contains: 
+
+   { 'a', 'b', ..., 'c', '\r', '\n' } 
+
+
+The remaining data is left in the buffer `b` as follows: 
+
+   { 'd', 'e', ... } 
+
+
+This data may be the start of a new line, to be extracted by a subsequent `async_read_until` operation. 
 
 
 
@@ -1360,7 +1405,7 @@ This function is used to asynchronously read data into the specified streambuf u
 
 * An error occurred.
 
-This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function. If the match condition function object already indicates a match, the operation completes immediately.
+This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function, and is known as a [*composed operation]. If the match condition function object already indicates a match, this asynchronous operation completes immediately. The program must ensure that the stream performs no other read operations (such as async\_read, async\_read\_until, the stream's async\_read\_some function, or any other composed operations that perform reads) until this operation completes.
 
 
 [heading Parameters]
@@ -1553,7 +1598,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * An error occurred.
 
-This operation is implemented in terms of zero or more calls to the stream's async\_write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's async\_write\_some function, and is known as a [*composed operation]. The program must ensure that the stream performs no other write operations (such as async\_write, the stream's async\_write\_some function, or any other composed operations that perform writes) until this operation completes.
 
 
 [heading Parameters]
@@ -1623,7 +1668,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * The completion\_condition function object returns 0.
 
-This operation is implemented in terms of zero or more calls to the stream's async\_write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's async\_write\_some function, and is known as a [*composed operation]. The program must ensure that the stream performs no other write operations (such as async\_write, the stream's async\_write\_some function, or any other composed operations that perform writes) until this operation completes.
 
 
 [heading Parameters]
@@ -1706,7 +1751,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * An error occurred.
 
-This operation is implemented in terms of zero or more calls to the stream's async\_write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's async\_write\_some function, and is known as a [*composed operation]. The program must ensure that the stream performs no other write operations (such as async\_write, the stream's async\_write\_some function, or any other composed operations that perform writes) until this operation completes.
 
 
 [heading Parameters]
@@ -1766,7 +1811,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * The completion\_condition function object returns 0.
 
-This operation is implemented in terms of zero or more calls to the stream's async\_write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's async\_write\_some function, and is known as a [*composed operation]. The program must ensure that the stream performs no other write operations (such as async\_write, the stream's async\_write\_some function, or any other composed operations that perform writes) until this operation completes.
 
 
 [heading Parameters]
@@ -37991,6 +38036,17 @@ The [link asio.reference.io_service `io_service`] guarantees that the handler wi
 ]
 
 
+[heading Remarks]
+      
+This function throws an exception only if:
+
+
+* the handler's `asio_handler_allocate` function; or
+
+
+* the handler's copy constructor
+
+throws an exception. 
 
 
 [endsect]
@@ -38292,6 +38348,17 @@ The [link asio.reference.io_service `io_service`] guarantees that the handler wi
 ]
 
 
+[heading Remarks]
+      
+This function throws an exception only if:
+
+
+* the handler's `asio_handler_allocate` function; or
+
+
+* the handler's copy constructor
+
+throws an exception. 
 
 
 [endsect]
@@ -57813,7 +57880,22 @@ To read data into a streambuf until a newline is encountered:
    std::getline(is, line); 
 
 
+After the `read_until` operation completes successfully, the buffer `b` contains the delimiter: 
 
+   { 'a', 'b', ..., 'c', '\n', 'd', 'e', ... } 
+
+
+The call to `std::getline` then extracts the data up to and including the delimiter, so that the string `line` contains: 
+
+   { 'a', 'b', ..., 'c', '\n' } 
+
+
+The remaining data is left in the buffer `b` as follows: 
+
+   { 'd', 'e', ... } 
+
+
+This data may be the start of a new line, to be extracted by a subsequent `read_until` operation. 
 
 
 
@@ -57952,7 +58034,22 @@ To read data into a streambuf until a newline is encountered:
    std::getline(is, line); 
 
 
+After the `read_until` operation completes successfully, the buffer `b` contains the delimiter: 
 
+   { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } 
+
+
+The call to `std::getline` then extracts the data up to and including the delimiter, so that the string `line` contains: 
+
+   { 'a', 'b', ..., 'c', '\r', '\n' } 
+
+
+The remaining data is left in the buffer `b` as follows: 
+
+   { 'd', 'e', ... } 
+
+
+This data may be the start of a new line, to be extracted by a subsequent `read_until` operation. 
 
 
 
@@ -58091,7 +58188,22 @@ To read data into a streambuf until a CR-LF sequence is encountered:
    std::getline(is, line); 
 
 
+After the `read_until` operation completes successfully, the buffer `b` contains the data which matched the regular expression: 
 
+   { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } 
+
+
+The call to `std::getline` then extracts the data up to and including the match, so that the string `line` contains: 
+
+   { 'a', 'b', ..., 'c', '\r', '\n' } 
+
+
+The remaining data is left in the buffer `b` as follows: 
+
+   { 'd', 'e', ... } 
+
+
+This data may be the start of a new line, to be extracted by a subsequent `read_until` operation. 
 
 
 

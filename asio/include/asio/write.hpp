@@ -305,7 +305,10 @@ std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b,
  * @li An error occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
- * async_write_some function.
+ * async_write_some function, and is known as a <em>composed operation</em>. The
+ * program must ensure that the stream performs no other write operations (such
+ * as async_write, the stream's async_write_some function, or any other composed
+ * operations that perform writes) until this operation completes.
  *
  * @param s The stream to which the data is to be written. The type must support
  * the AsyncWriteStream concept.
@@ -359,7 +362,10 @@ void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
  * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
- * async_write_some function.
+ * async_write_some function, and is known as a <em>composed operation</em>. The
+ * program must ensure that the stream performs no other write operations (such
+ * as async_write, the stream's async_write_some function, or any other composed
+ * operations that perform writes) until this operation completes.
  *
  * @param s The stream to which the data is to be written. The type must support
  * the AsyncWriteStream concept.
@@ -429,7 +435,10 @@ void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
  * @li An error occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
- * async_write_some function.
+ * async_write_some function, and is known as a <em>composed operation</em>. The
+ * program must ensure that the stream performs no other write operations (such
+ * as async_write, the stream's async_write_some function, or any other composed
+ * operations that perform writes) until this operation completes.
  *
  * @param s The stream to which the data is to be written. The type must support
  * the AsyncWriteStream concept.
@@ -471,7 +480,10 @@ void async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
  * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
- * async_write_some function.
+ * async_write_some function, and is known as a <em>composed operation</em>. The
+ * program must ensure that the stream performs no other write operations (such
+ * as async_write, the stream's async_write_some function, or any other composed
+ * operations that perform writes) until this operation completes.
  *
  * @param s The stream to which the data is to be written. The type must support
  * the AsyncWriteStream concept.
