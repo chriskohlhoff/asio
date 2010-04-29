@@ -196,6 +196,13 @@ Asio.
     ]
   ]
   [
+    [`ASIO_DISABLE_THREADS`]
+    [
+      Explicitly disables Asio's threading support, independent of whether or
+      not Boost supports threads.
+    ]
+  ]
+  [
     [`ASIO_NO_WIN32_LEAN_AND_MEAN`]
     [
       By default, Asio will automatically define `WIN32_LEAN_AND_MEAN` when
