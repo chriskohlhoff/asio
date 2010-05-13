@@ -28,10 +28,13 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
-
     stream_protocol::endpoint ep(argv[1]);
     stream_protocol::iostream s(ep);
+    if (!s)
+    {
+      std::cerr << "Unable to connect\n";
+      return 1;
+    }
 
     using namespace std; // For strlen.
     std::cout << "Enter message: ";
