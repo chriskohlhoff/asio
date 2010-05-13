@@ -1,6 +1,6 @@
 //
-// task_io_service_fwd.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~
+// detail/task_io_service_fwd.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -20,7 +20,6 @@
 namespace asio {
 namespace detail {
 
-template <typename Task>
 class task_io_service;
 
 } // namespace detail

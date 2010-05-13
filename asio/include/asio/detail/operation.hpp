@@ -22,7 +22,6 @@
 #if defined(ASIO_HAS_IOCP)
 # include "asio/detail/win_iocp_operation.hpp"
 #else
-# include "asio/detail/reactor_fwd.hpp"
 # include "asio/detail/task_io_service_operation.hpp"
 #endif
 
@@ -32,7 +31,7 @@ namespace detail {
 #if defined(ASIO_HAS_IOCP)
 typedef win_iocp_operation operation;
 #else
-typedef task_io_service_operation<reactor> operation;
+typedef task_io_service_operation operation;
 #endif
 
 } // namespace detail

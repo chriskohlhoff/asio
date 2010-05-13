@@ -26,11 +26,10 @@ namespace detail {
 
 // Base class for all operations. A function pointer is used instead of virtual
 // functions to avoid the associated overhead.
-template <typename Task>
 class task_io_service_operation
 {
 public:
-  void complete(task_io_service<Task>& owner)
+  void complete(task_io_service& owner)
   {
     func_(&owner, this, asio::error_code(), 0);
   }
@@ -41,8 +40,9 @@ public:
   }
 
 protected:
-  typedef void (*func_type)(task_io_service<Task>*,
-      task_io_service_operation*, asio::error_code, std::size_t);
+  typedef void (*func_type)(task_io_service*,
+      task_io_service_operation*,
+      asio::error_code, std::size_t);
 
   task_io_service_operation(func_type func)
     : next_(0),
