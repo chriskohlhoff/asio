@@ -74,6 +74,20 @@
   </xsl:element>
 </xsl:template>
 
+<xsl:template match="programlisting/phrase">
+  <xsl:apply-templates/>
+</xsl:template>
+
+<xsl:template match="programlisting/link">
+  <xsl:apply-templates/>
+</xsl:template>
+
+<xsl:template match="programlisting/emphasis">
+  <xsl:if test="not(contains(., 'more...'))">
+    <emphasis><xsl:apply-templates/></emphasis>
+  </xsl:if>
+</xsl:template>
+
 <xsl:template match="section[@id='asio.index']"></xsl:template>
 
 </xsl:stylesheet>
