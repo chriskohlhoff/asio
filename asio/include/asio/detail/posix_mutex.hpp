@@ -1,6 +1,6 @@
 //
-// posix_mutex.hpp
-// ~~~~~~~~~~~~~~~
+// detail/posix_mutex.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -17,19 +17,14 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
+#include "asio/detail/config.hpp"
 
 #if defined(BOOST_HAS_PTHREADS)
 
 #include "asio/detail/push_options.hpp"
-#include <boost/throw_exception.hpp>
 #include <pthread.h>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/error.hpp"
-#include "asio/system_error.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/scoped_lock.hpp"
 
@@ -45,36 +40,16 @@ public:
   typedef asio::detail::scoped_lock<posix_mutex> scoped_lock;
 
   // Constructor.
-  posix_mutex()
-  {
-    int error = ::pthread_mutex_init(&mutex_, 0);
-    if (error != 0)
-    {
-      asio::system_error e(
-          asio::error_code(error,
-            asio::error::get_system_category()),
-          "mutex");
-      boost::throw_exception(e);
-    }
-  }
+  ASIO_DECL posix_mutex();
 
   // Destructor.
-  ~posix_mutex()
-  {
-    ::pthread_mutex_destroy(&mutex_); // Ignore EBUSY.
-  }
+  ~posix_mutex();
 
   // Lock the mutex.
-  void lock()
-  {
-    (void)::pthread_mutex_lock(&mutex_); // Ignore EINVAL.
-  }
+  void lock();
 
   // Unlock the mutex.
-  void unlock()
-  {
-    (void)::pthread_mutex_unlock(&mutex_); // Ignore EINVAL.
-  }
+  void unlock();
 
 private:
   friend class posix_event;
@@ -87,5 +62,10 @@ private:
 #endif // defined(BOOST_HAS_PTHREADS)
 
 #include "asio/detail/pop_options.hpp"
+
+#include "asio/detail/impl/posix_mutex.hpp"
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/detail/impl/posix_mutex.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_DETAIL_POSIX_MUTEX_HPP

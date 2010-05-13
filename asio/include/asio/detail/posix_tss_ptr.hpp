@@ -17,19 +17,14 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
+#include "asio/detail/config.hpp"
 
 #if defined(BOOST_HAS_PTHREADS)
 
 #include "asio/detail/push_options.hpp"
-#include <boost/throw_exception.hpp>
 #include <pthread.h>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/error.hpp"
-#include "asio/system_error.hpp"
 #include "asio/detail/noncopyable.hpp"
 
 namespace asio {
@@ -41,42 +36,26 @@ class posix_tss_ptr
 {
 public:
   // Constructor.
-  posix_tss_ptr()
-  {
-    int error = ::pthread_key_create(&tss_key_, 0);
-    if (error != 0)
-    {
-      asio::system_error e(
-          asio::error_code(error,
-            asio::error::get_system_category()),
-          "tss");
-      boost::throw_exception(e);
-    }
-  }
+  posix_tss_ptr();
 
   // Destructor.
-  ~posix_tss_ptr()
-  {
-    ::pthread_key_delete(tss_key_);
-  }
+  ~posix_tss_ptr();
 
   // Get the value.
-  operator T*() const
-  {
-    return static_cast<T*>(::pthread_getspecific(tss_key_));
-  }
+  operator T*() const;
 
   // Set the value.
-  void operator=(T* value)
-  {
-    ::pthread_setspecific(tss_key_, value);
-  }
+  void operator=(T* value);
 
 private:
   // Thread-specific storage to allow unlocked access to determine whether a
   // thread is a member of the pool.
   pthread_key_t tss_key_;
+
 };
+
+// Helper function to create thread-specific storage.
+ASIO_DECL void posix_tss_ptr_create(pthread_key_t& key);
 
 } // namespace detail
 } // namespace asio
@@ -84,5 +63,10 @@ private:
 #endif // defined(BOOST_HAS_PTHREADS)
 
 #include "asio/detail/pop_options.hpp"
+
+#include "asio/detail/impl/posix_tss_ptr.hpp"
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/detail/impl/posix_tss_ptr.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_DETAIL_POSIX_TSS_PTR_HPP
