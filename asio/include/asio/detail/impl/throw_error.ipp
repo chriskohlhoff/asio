@@ -1,6 +1,6 @@
 //
-// detail/throw_error.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~
+// detail/impl/throw_error.ipp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_THROW_ERROR_HPP
-#define ASIO_DETAIL_THROW_ERROR_HPP
+#ifndef ASIO_DETAIL_IMPL_THROW_ERROR_IPP
+#define ASIO_DETAIL_IMPL_THROW_ERROR_IPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -17,23 +17,25 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/config.hpp"
-#include "asio/error_code.hpp"
+#include "asio/detail/push_options.hpp"
+#include <boost/throw_exception.hpp>
+#include "asio/detail/pop_options.hpp"
+
+#include "asio/detail/throw_error.hpp"
+#include "asio/system_error.hpp"
 
 namespace asio {
 namespace detail {
 
-void throw_error(const asio::error_code& err);
-ASIO_DECL void do_throw_error(const asio::error_code& err);
+void do_throw_error(const asio::error_code& err)
+{
+  asio::system_error e(err);
+  boost::throw_exception(e);
+}
 
 } // namespace detail
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/detail/impl/throw_error.hpp"
-#if defined(ASIO_HEADER_ONLY)
-# include "asio/detail/impl/throw_error.ipp"
-#endif // defined(ASIO_HEADER_ONLY)
-
-#endif // ASIO_DETAIL_THROW_ERROR_HPP
+#endif // ASIO_DETAIL_IMPL_THROW_ERROR_IPP
