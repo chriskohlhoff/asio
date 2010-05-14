@@ -1,6 +1,6 @@
 //
-// serial_port_base.ipp
-// ~~~~~~~~~~~~~~~~~~~~
+// impl/serial_port_base.ipp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2008 Rep Invariant Systems, Inc. (info@repinvariant.com)
@@ -9,8 +9,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_SERIAL_PORT_BASE_IPP
-#define ASIO_SERIAL_PORT_BASE_IPP
+#ifndef ASIO_IMPL_SERIAL_PORT_BASE_IPP
+#define ASIO_IMPL_SERIAL_PORT_BASE_IPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -18,23 +18,24 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/serial_port_base.hpp"
+
 #include "asio/detail/push_options.hpp"
+#include <stdexcept>
 #include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#if defined(GENERATING_DOCUMENTATION)
+# define ASIO_OPTION_STORAGE implementation_defined
+#elif defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# define ASIO_OPTION_STORAGE DCB
+#else
+# define ASIO_OPTION_STORAGE termios
+#endif
+
 namespace asio {
 
-inline serial_port_base::baud_rate::baud_rate(unsigned int rate)
-  : value_(rate)
-{
-}
-
-inline unsigned int serial_port_base::baud_rate::value() const
-{
-  return value_;
-}
-
-inline asio::error_code serial_port_base::baud_rate::store(
+asio::error_code serial_port_base::baud_rate::store(
     ASIO_OPTION_STORAGE& storage, asio::error_code& ec) const
 {
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -122,7 +123,7 @@ inline asio::error_code serial_port_base::baud_rate::store(
   return ec;
 }
 
-inline asio::error_code serial_port_base::baud_rate::load(
+asio::error_code serial_port_base::baud_rate::load(
     const ASIO_OPTION_STORAGE& storage, asio::error_code& ec)
 {
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -204,7 +205,7 @@ inline asio::error_code serial_port_base::baud_rate::load(
   return ec;
 }
 
-inline serial_port_base::flow_control::flow_control(
+serial_port_base::flow_control::flow_control(
     serial_port_base::flow_control::type t)
   : value_(t)
 {
@@ -215,13 +216,7 @@ inline serial_port_base::flow_control::flow_control(
   }
 }
 
-inline serial_port_base::flow_control::type
-serial_port_base::flow_control::value() const
-{
-  return value_;
-}
-
-inline asio::error_code serial_port_base::flow_control::store(
+asio::error_code serial_port_base::flow_control::store(
     ASIO_OPTION_STORAGE& storage, asio::error_code& ec) const
 {
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -280,7 +275,7 @@ inline asio::error_code serial_port_base::flow_control::store(
   return ec;
 }
 
-inline asio::error_code serial_port_base::flow_control::load(
+asio::error_code serial_port_base::flow_control::load(
     const ASIO_OPTION_STORAGE& storage, asio::error_code& ec)
 {
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -316,7 +311,7 @@ inline asio::error_code serial_port_base::flow_control::load(
   return ec;
 }
 
-inline serial_port_base::parity::parity(serial_port_base::parity::type t)
+serial_port_base::parity::parity(serial_port_base::parity::type t)
   : value_(t)
 {
   if (t != none && t != odd && t != even)
@@ -326,12 +321,7 @@ inline serial_port_base::parity::parity(serial_port_base::parity::type t)
   }
 }
 
-inline serial_port_base::parity::type serial_port_base::parity::value() const
-{
-  return value_;
-}
-
-inline asio::error_code serial_port_base::parity::store(
+asio::error_code serial_port_base::parity::store(
     ASIO_OPTION_STORAGE& storage, asio::error_code& ec) const
 {
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -378,7 +368,7 @@ inline asio::error_code serial_port_base::parity::store(
   return ec;
 }
 
-inline asio::error_code serial_port_base::parity::load(
+asio::error_code serial_port_base::parity::load(
     const ASIO_OPTION_STORAGE& storage, asio::error_code& ec)
 {
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -415,7 +405,7 @@ inline asio::error_code serial_port_base::parity::load(
   return ec;
 }
 
-inline serial_port_base::stop_bits::stop_bits(
+serial_port_base::stop_bits::stop_bits(
     serial_port_base::stop_bits::type t)
   : value_(t)
 {
@@ -426,13 +416,7 @@ inline serial_port_base::stop_bits::stop_bits(
   }
 }
 
-inline serial_port_base::stop_bits::type
-serial_port_base::stop_bits::value() const
-{
-  return value_;
-}
-
-inline asio::error_code serial_port_base::stop_bits::store(
+asio::error_code serial_port_base::stop_bits::store(
     ASIO_OPTION_STORAGE& storage, asio::error_code& ec) const
 {
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -468,7 +452,7 @@ inline asio::error_code serial_port_base::stop_bits::store(
   return ec;
 }
 
-inline asio::error_code serial_port_base::stop_bits::load(
+asio::error_code serial_port_base::stop_bits::load(
     const ASIO_OPTION_STORAGE& storage, asio::error_code& ec)
 {
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -495,7 +479,7 @@ inline asio::error_code serial_port_base::stop_bits::load(
   return ec;
 }
 
-inline serial_port_base::character_size::character_size(unsigned int t)
+serial_port_base::character_size::character_size(unsigned int t)
   : value_(t)
 {
   if (t < 5 || t > 8)
@@ -505,12 +489,7 @@ inline serial_port_base::character_size::character_size(unsigned int t)
   }
 }
 
-inline unsigned int serial_port_base::character_size::value() const
-{
-  return value_;
-}
-
-inline asio::error_code serial_port_base::character_size::store(
+asio::error_code serial_port_base::character_size::store(
     ASIO_OPTION_STORAGE& storage, asio::error_code& ec) const
 {
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -530,7 +509,7 @@ inline asio::error_code serial_port_base::character_size::store(
   return ec;
 }
 
-inline asio::error_code serial_port_base::character_size::load(
+asio::error_code serial_port_base::character_size::load(
     const ASIO_OPTION_STORAGE& storage, asio::error_code& ec)
 {
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -552,6 +531,8 @@ inline asio::error_code serial_port_base::character_size::load(
 
 } // namespace asio
 
+#undef ASIO_OPTION_STORAGE
+
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_SERIAL_PORT_BASE_IPP
+#endif // ASIO_IMPL_SERIAL_PORT_BASE_IPP

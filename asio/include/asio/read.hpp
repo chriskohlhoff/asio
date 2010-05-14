@@ -536,7 +536,7 @@ void async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
 
 } // namespace asio
 
-#include "asio/impl/read.ipp"
+#include "asio/impl/read.hpp"
 
 #include "asio/detail/pop_options.hpp"
 

@@ -18,9 +18,9 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/config.hpp"
+
 #include "asio/detail/push_options.hpp"
-#include <stdexcept>
-#include <boost/config.hpp>
 #include <boost/detail/workaround.hpp>
 #include "asio/detail/pop_options.hpp"
 
@@ -67,9 +67,11 @@ public:
   public:
     explicit baud_rate(unsigned int rate = 0);
     unsigned int value() const;
-    asio::error_code store(ASIO_OPTION_STORAGE& storage,
+    ASIO_DECL asio::error_code store(
+        ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec) const;
-    asio::error_code load(const ASIO_OPTION_STORAGE& storage,
+    ASIO_DECL asio::error_code load(
+        const ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec);
   private:
     unsigned int value_;
@@ -83,11 +85,13 @@ public:
   {
   public:
     enum type { none, software, hardware };
-    explicit flow_control(type t = none);
+    ASIO_DECL explicit flow_control(type t = none);
     type value() const;
-    asio::error_code store(ASIO_OPTION_STORAGE& storage,
+    ASIO_DECL asio::error_code store(
+        ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec) const;
-    asio::error_code load(const ASIO_OPTION_STORAGE& storage,
+    ASIO_DECL asio::error_code load(
+        const ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec);
   private:
     type value_;
@@ -101,11 +105,13 @@ public:
   {
   public:
     enum type { none, odd, even };
-    explicit parity(type t = none);
+    ASIO_DECL explicit parity(type t = none);
     type value() const;
-    asio::error_code store(ASIO_OPTION_STORAGE& storage,
+    ASIO_DECL asio::error_code store(
+        ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec) const;
-    asio::error_code load(const ASIO_OPTION_STORAGE& storage,
+    ASIO_DECL asio::error_code load(
+        const ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec);
   private:
     type value_;
@@ -119,11 +125,13 @@ public:
   {
   public:
     enum type { one, onepointfive, two };
-    explicit stop_bits(type t = one);
+    ASIO_DECL explicit stop_bits(type t = one);
     type value() const;
-    asio::error_code store(ASIO_OPTION_STORAGE& storage,
+    ASIO_DECL asio::error_code store(
+        ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec) const;
-    asio::error_code load(const ASIO_OPTION_STORAGE& storage,
+    ASIO_DECL asio::error_code load(
+        const ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec);
   private:
     type value_;
@@ -136,11 +144,13 @@ public:
   class character_size
   {
   public:
-    explicit character_size(unsigned int t = 8);
+    ASIO_DECL explicit character_size(unsigned int t = 8);
     unsigned int value() const;
-    asio::error_code store(ASIO_OPTION_STORAGE& storage,
+    ASIO_DECL asio::error_code store(
+        ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec) const;
-    asio::error_code load(const ASIO_OPTION_STORAGE& storage,
+    ASIO_DECL asio::error_code load(
+        const ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec);
   private:
     unsigned int value_;
@@ -161,9 +171,12 @@ private:
 
 } // namespace asio
 
-#include "asio/impl/serial_port_base.ipp"
-
 #undef ASIO_OPTION_STORAGE
+
+#include "asio/impl/serial_port_base.hpp"
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/impl/serial_port_base.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // defined(ASIO_HAS_SERIAL_PORT)
        //   || defined(GENERATING_DOCUMENTATION)

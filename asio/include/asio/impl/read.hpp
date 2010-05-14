@@ -1,6 +1,6 @@
 //
-// read.ipp
-// ~~~~~~~~
+// impl/read.hpp
+// ~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_READ_IPP
-#define ASIO_READ_IPP
+#ifndef ASIO_IMPL_READ_HPP
+#define ASIO_IMPL_READ_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -398,4 +398,4 @@ inline void async_read(AsyncReadStream& s,
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_READ_IPP
+#endif // ASIO_IMPL_READ_HPP

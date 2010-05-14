@@ -1,6 +1,6 @@
 //
-// write_at.ipp
-// ~~~~~~~~~~~~
+// impl/write_at.hpp
+// ~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_WRITE_AT_IPP
-#define ASIO_WRITE_AT_IPP
+#ifndef ASIO_IMPL_WRITE_AT_HPP
+#define ASIO_IMPL_WRITE_AT_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -316,4 +316,4 @@ inline void async_write_at(AsyncRandomAccessWriteDevice& d,
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_WRITE_AT_IPP
+#endif // ASIO_IMPL_WRITE_AT_HPP

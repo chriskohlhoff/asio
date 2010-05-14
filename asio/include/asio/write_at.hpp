@@ -556,7 +556,7 @@ void async_write_at(AsyncRandomAccessWriteDevice& d, boost::uint64_t offset,
 
 } // namespace asio
 
-#include "asio/impl/write_at.ipp"
+#include "asio/impl/write_at.hpp"
 
 #include "asio/detail/pop_options.hpp"
 

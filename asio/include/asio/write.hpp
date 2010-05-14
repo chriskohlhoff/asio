@@ -533,7 +533,7 @@ void async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
 
 } // namespace asio
 
-#include "asio/impl/write.ipp"
+#include "asio/impl/write.hpp"
 
 #include "asio/detail/pop_options.hpp"
 

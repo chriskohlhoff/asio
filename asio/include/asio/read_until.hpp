@@ -914,7 +914,7 @@ void async_read_until(AsyncReadStream& s,
 
 } // namespace asio
 
-#include "asio/impl/read_until.ipp"
+#include "asio/impl/read_until.hpp"
 
 #endif // !defined(BOOST_NO_IOSTREAM)
 
