@@ -124,8 +124,6 @@ private:
 
 #undef ASIO_WIN_OR_POSIX
 
-#include "asio/error.hpp"
-
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/impl/error_code.hpp"
