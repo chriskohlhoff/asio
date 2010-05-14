@@ -17,12 +17,16 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <cerrno>
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
+#include "asio/detail/config.hpp"
 
-#include "asio/detail/socket_types.hpp"
+#include "asio/detail/push_options.hpp"
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# include <WinError.h>
+#else
+# include <cerrno>
+# include <netdb.h>
+#endif
+#include "asio/detail/pop_options.hpp"
 
 #if defined(GENERATING_DOCUMENTATION)
 /// INTERNAL ONLY.
