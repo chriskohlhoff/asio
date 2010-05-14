@@ -98,6 +98,8 @@
 # include <sys/ioctl.h>
 # include <sys/poll.h>
 # include <sys/types.h>
+# include <sys/stat.h>
+# include <fcntl.h>
 # if defined(__hpux) && !defined(__HP_aCC)
 #  include <sys/time.h>
 # else
