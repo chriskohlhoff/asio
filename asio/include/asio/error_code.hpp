@@ -17,8 +17,9 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/config.hpp"
+
 #include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
 #include <string>
 #include "asio/detail/pop_options.hpp"
 
@@ -73,40 +74,23 @@ public:
   typedef int value_type;
 
   /// Default constructor.
-  error_code()
-    : value_(0),
-      category_(error::system_category)
-  {
-  }
+  error_code();
 
   /// Construct with specific error code and category.
-  error_code(value_type v, error_category c)
-    : value_(v),
-      category_(c)
-  {
-  }
+  error_code(value_type v, error_category c);
 
   /// Construct from an error code enum.
   template <typename ErrorEnum>
-  error_code(ErrorEnum e)
-  {
-    *this = make_error_code(e);
-  }
+  error_code(ErrorEnum e);
 
   /// Get the error value.
-  value_type value() const
-  {
-    return value_;
-  }
+  value_type value() const;
 
   /// Get the error category.
-  error_category category() const
-  {
-    return category_;
-  }
+  error_category category() const;
 
   /// Get the message associated with the error.
-  std::string message() const;
+  ASIO_DECL std::string message() const;
 
   struct unspecified_bool_type_t
   {
@@ -114,36 +98,19 @@ public:
 
   typedef void (*unspecified_bool_type)(unspecified_bool_type_t);
 
-  static void unspecified_bool_true(unspecified_bool_type_t)
-  {
-  }
+  static void unspecified_bool_true(unspecified_bool_type_t);
 
   /// Operator returns non-null if there is a non-success error code.
-  operator unspecified_bool_type() const
-  {
-    if (value_ == 0)
-      return 0;
-    else
-      return &error_code::unspecified_bool_true;
-  }
+  operator unspecified_bool_type() const;
 
   /// Operator to test if the error represents success.
-  bool operator!() const
-  {
-    return value_ == 0;
-  }
+  bool operator!() const;
 
   /// Equality operator to compare two error objects.
-  friend bool operator==(const error_code& e1, const error_code& e2)
-  {
-    return e1.value_ == e2.value_ && e1.category_ == e2.category_;
-  }
+  friend bool operator==(const error_code& e1, const error_code& e2);
 
   /// Inequality operator to compare two error objects.
-  friend bool operator!=(const error_code& e1, const error_code& e2)
-  {
-    return e1.value_ != e2.value_ || e1.category_ != e2.category_;
-  }
+  friend bool operator!=(const error_code& e1, const error_code& e2);
 
 private:
   // The value associated with the error code.
@@ -160,5 +127,10 @@ private:
 #include "asio/error.hpp"
 
 #include "asio/detail/pop_options.hpp"
+
+#include "asio/impl/error_code.hpp"
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/impl/error_code.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_ERROR_CODE_HPP

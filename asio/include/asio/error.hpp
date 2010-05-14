@@ -22,7 +22,6 @@
 #include <boost/config.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/error_code.hpp"
 #include "asio/detail/socket_types.hpp"
 
 #if defined(GENERATING_DOCUMENTATION)
@@ -214,35 +213,19 @@ enum ssl_errors
 
 // boostify: error category definitions go here.
 
-inline asio::error_code make_error_code(basic_errors e)
-{
-  return asio::error_code(
-      static_cast<int>(e), get_system_category());
-}
+} // namespace error
+} // namespace asio
 
-inline asio::error_code make_error_code(netdb_errors e)
-{
-  return asio::error_code(
-      static_cast<int>(e), get_netdb_category());
-}
+#include "asio/error_code.hpp"
 
-inline asio::error_code make_error_code(addrinfo_errors e)
-{
-  return asio::error_code(
-      static_cast<int>(e), get_addrinfo_category());
-}
+namespace asio {
+namespace error {
 
-inline asio::error_code make_error_code(misc_errors e)
-{
-  return asio::error_code(
-      static_cast<int>(e), get_misc_category());
-}
-
-inline asio::error_code make_error_code(ssl_errors e)
-{
-  return asio::error_code(
-      static_cast<int>(e), get_ssl_category());
-}
+asio::error_code make_error_code(basic_errors e);
+asio::error_code make_error_code(netdb_errors e);
+asio::error_code make_error_code(addrinfo_errors e);
+asio::error_code make_error_code(misc_errors e);
+asio::error_code make_error_code(ssl_errors e);
 
 } // namespace error
 } // namespace asio
@@ -253,8 +236,8 @@ inline asio::error_code make_error_code(ssl_errors e)
 #undef ASIO_GETADDRINFO_ERROR
 #undef ASIO_WIN_OR_POSIX
 
-#include "asio/impl/error_code.ipp"
-
 #include "asio/detail/pop_options.hpp"
+
+#include "asio/impl/error.hpp"
 
 #endif // ASIO_ERROR_HPP
