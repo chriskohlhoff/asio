@@ -27,6 +27,17 @@
 namespace asio {
 namespace detail {
 
+inline void task_io_service::work_started()
+{
+  ++outstanding_work_;
+}
+
+inline void task_io_service::work_finished()
+{
+  if (--outstanding_work_ == 0)
+    stop();
+}
+
 template <typename Handler>
 void task_io_service::dispatch(Handler handler)
 {

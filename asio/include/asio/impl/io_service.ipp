@@ -114,33 +114,6 @@ void io_service::reset()
   impl_.reset();
 }
 
-io_service::work::work(asio::io_service& io_service)
-  : io_service_(io_service)
-{
-  io_service_.impl_.work_started();
-}
-
-io_service::work::work(const work& other)
-  : io_service_(other.io_service_)
-{
-  io_service_.impl_.work_started();
-}
-
-io_service::work::~work()
-{
-  io_service_.impl_.work_finished();
-}
-
-asio::io_service& io_service::work::io_service()
-{
-  return io_service_;
-}
-
-asio::io_service& io_service::work::get_io_service()
-{
-  return io_service_;
-}
-
 io_service::service::service(asio::io_service& owner)
   : owner_(owner),
     next_(0)
@@ -149,16 +122,6 @@ io_service::service::service(asio::io_service& owner)
 
 io_service::service::~service()
 {
-}
-
-asio::io_service& io_service::service::io_service()
-{
-  return owner_;
-}
-
-asio::io_service& io_service::service::get_io_service()
-{
-  return owner_;
 }
 
 service_already_exists::service_already_exists()

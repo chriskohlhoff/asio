@@ -194,17 +194,6 @@ void task_io_service::reset()
   stopped_ = false;
 }
 
-void task_io_service::work_started()
-{
-  ++outstanding_work_;
-}
-
-void task_io_service::work_finished()
-{
-  if (--outstanding_work_ == 0)
-    stop();
-}
-
 void task_io_service::post_immediate_completion(task_io_service::operation* op)
 {
   work_started();

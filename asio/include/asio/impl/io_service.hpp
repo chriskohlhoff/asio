@@ -50,6 +50,43 @@ io_service::wrap(Handler handler)
   return detail::wrapped_handler<io_service&, Handler>(*this, handler);
 }
 
+inline io_service::work::work(asio::io_service& io_service)
+  : io_service_(io_service)
+{
+  io_service_.impl_.work_started();
+}
+
+inline io_service::work::work(const work& other)
+  : io_service_(other.io_service_)
+{
+  io_service_.impl_.work_started();
+}
+
+inline io_service::work::~work()
+{
+  io_service_.impl_.work_finished();
+}
+
+inline asio::io_service& io_service::work::io_service()
+{
+  return io_service_;
+}
+
+inline asio::io_service& io_service::work::get_io_service()
+{
+  return io_service_;
+}
+
+inline asio::io_service& io_service::service::io_service()
+{
+  return owner_;
+}
+
+inline asio::io_service& io_service::service::get_io_service()
+{
+  return owner_;
+}
+
 template <typename Service>
 inline Service& use_service(io_service& ios)
 {

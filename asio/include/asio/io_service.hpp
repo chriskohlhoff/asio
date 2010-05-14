@@ -550,7 +550,7 @@ public:
    * This ensures that the io_service object's run() function will not exit
    * while the work is underway.
    */
-  ASIO_DECL explicit work(asio::io_service& io_service);
+  explicit work(asio::io_service& io_service);
 
   /// Copy constructor notifies the io_service that work is starting.
   /**
@@ -558,7 +558,7 @@ public:
    * This ensures that the io_service object's run() function will not exit
    * while the work is underway.
    */
-  ASIO_DECL work(const work& other);
+  work(const work& other);
 
   /// Destructor notifies the io_service that the work is complete.
   /**
@@ -566,14 +566,14 @@ public:
    * finished. Once the count of unfinished work reaches zero, the io_service
    * object's run() function is permitted to exit.
    */
-  ASIO_DECL ~work();
+  ~work();
 
   /// (Deprecated: use get_io_service().) Get the io_service associated with the
   /// work.
-  ASIO_DECL asio::io_service& io_service();
+  asio::io_service& io_service();
 
   /// Get the io_service associated with the work.
-  ASIO_DECL asio::io_service& get_io_service();
+  asio::io_service& get_io_service();
 
 private:
   // Prevent assignment.
@@ -599,10 +599,10 @@ class io_service::service
 public:
   /// (Deprecated: use get_io_service().) Get the io_service object that owns
   /// the service.
-  ASIO_DECL asio::io_service& io_service();
+  asio::io_service& io_service();
 
   /// Get the io_service object that owns the service.
-  ASIO_DECL asio::io_service& get_io_service();
+  asio::io_service& get_io_service();
 
 protected:
   /// Constructor.
