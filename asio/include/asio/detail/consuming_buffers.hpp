@@ -18,7 +18,6 @@
 #include "asio/detail/push_options.hpp"
 
 #include "asio/detail/push_options.hpp"
-#include <algorithm>
 #include <cstddef>
 #include <boost/config.hpp>
 #include <boost/iterator.hpp>
