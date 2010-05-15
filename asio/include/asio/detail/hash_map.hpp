@@ -17,31 +17,40 @@
 
 #include "asio/detail/push_options.hpp"
 
+#include "asio/detail/config.hpp"
+
 #include "asio/detail/push_options.hpp"
 #include <cassert>
 #include <list>
 #include <utility>
-#include <boost/functional/hash.hpp>
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/socket_types.hpp"
+
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# include "asio/detail/socket_types.hpp"
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
 namespace asio {
 namespace detail {
 
-template <typename T>
-inline std::size_t calculate_hash_value(const T& t)
+inline std::size_t calculate_hash_value(int i)
 {
-  return boost::hash_value(t);
+  return static_cast<std::size_t>(i);
 }
 
-#if defined(_WIN64)
+inline std::size_t calculate_hash_value(void* p)
+{
+  return reinterpret_cast<std::size_t>(p)
+    + (reinterpret_cast<std::size_t>(p) >> 3);
+}
+
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 inline std::size_t calculate_hash_value(SOCKET s)
 {
   return static_cast<std::size_t>(s);
 }
-#endif // defined(_WIN64)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
 // Note: assumes K and V are POD types.
 template <typename K, typename V>
