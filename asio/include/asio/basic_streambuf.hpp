@@ -17,16 +17,13 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
+#include "asio/detail/config.hpp"
 
 #if !defined(BOOST_NO_IOSTREAM)
 
 #include "asio/detail/push_options.hpp"
 #include <algorithm>
 #include <cstring>
-#include <memory>
 #include <stdexcept>
 #include <streambuf>
 #include <vector>
@@ -34,6 +31,7 @@
 #include <boost/throw_exception.hpp>
 #include "asio/detail/pop_options.hpp"
 
+#include "asio/basic_streambuf_fwd.hpp"
 #include "asio/buffer.hpp"
 #include "asio/detail/noncopyable.hpp"
 
@@ -107,7 +105,7 @@ namespace asio {
  * is >> s;
  * @endcode
  */
-template <typename Allocator = std::allocator<char> >
+template <typename Allocator>
 class basic_streambuf
   : public std::streambuf,
     private noncopyable

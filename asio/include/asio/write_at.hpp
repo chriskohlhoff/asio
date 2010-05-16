@@ -23,7 +23,7 @@
 #include <boost/cstdint.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/basic_streambuf.hpp"
+#include "asio/basic_streambuf_fwd.hpp"
 #include "asio/error.hpp"
 
 namespace asio {
