@@ -27,6 +27,7 @@
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/error.hpp"
+#include "asio/system_error.hpp"
 #include "asio/ip/address_v4.hpp"
 #include "asio/ip/address_v6.hpp"
 #include "asio/detail/throw_error.hpp"
