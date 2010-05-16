@@ -1,6 +1,6 @@
 //
-// eventfd_select_interrupter.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/eventfd_select_interrupter.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2008 Roelof Naude (roelof.naude at gmail dot com)
@@ -18,10 +18,7 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
-#include <boost/throw_exception.hpp>
-#include "asio/detail/pop_options.hpp"
+#include "asio/detail/config.hpp"
 
 #if defined(__linux__)
 # if !defined(ASIO_DISABLE_EVENTFD)
@@ -34,19 +31,6 @@
 
 #if defined(ASIO_HAS_EVENTFD)
 
-#include "asio/detail/push_options.hpp"
-#include <fcntl.h>
-#if __GLIBC__ == 2 && __GLIBC_MINOR__ < 8
-# include <asm/unistd.h>
-#else // __GLIBC__ == 2 && __GLIBC_MINOR__ < 8
-# include <sys/eventfd.h>
-#endif // __GLIBC__ == 2 && __GLIBC_MINOR__ < 8
-#include "asio/detail/pop_options.hpp"
-
-#include "asio/error.hpp"
-#include "asio/system_error.hpp"
-#include "asio/detail/socket_types.hpp"
-
 namespace asio {
 namespace detail {
 
@@ -54,93 +38,19 @@ class eventfd_select_interrupter
 {
 public:
   // Constructor.
-  eventfd_select_interrupter()
-  {
-#if __GLIBC__ == 2 && __GLIBC_MINOR__ < 8
-    write_descriptor_ = read_descriptor_ = syscall(__NR_eventfd, 0);
-#else // __GLIBC__ == 2 && __GLIBC_MINOR__ < 8
-    write_descriptor_ = read_descriptor_ = ::eventfd(0, 0);
-#endif // __GLIBC__ == 2 && __GLIBC_MINOR__ < 8
-    if (read_descriptor_ != -1)
-    {
-      ::fcntl(read_descriptor_, F_SETFL, O_NONBLOCK);
-    }
-    else
-    {
-      int pipe_fds[2];
-      if (pipe(pipe_fds) == 0)
-      {
-        read_descriptor_ = pipe_fds[0];
-        ::fcntl(read_descriptor_, F_SETFL, O_NONBLOCK);
-        write_descriptor_ = pipe_fds[1];
-        ::fcntl(write_descriptor_, F_SETFL, O_NONBLOCK);
-      }
-      else
-      {
-        asio::error_code ec(errno,
-            asio::error::get_system_category());
-        asio::system_error e(ec, "eventfd_select_interrupter");
-        boost::throw_exception(e);
-      }
-    }
-  }
+  ASIO_DECL eventfd_select_interrupter();
 
   // Destructor.
-  ~eventfd_select_interrupter()
-  {
-    if (write_descriptor_ != -1 && write_descriptor_ != read_descriptor_)
-      ::close(write_descriptor_);
-    if (read_descriptor_ != -1)
-      ::close(read_descriptor_);
-  }
+  ASIO_DECL ~eventfd_select_interrupter();
 
   // Interrupt the select call.
-  void interrupt()
-  {
-    uint64_t counter(1UL);
-    int result = ::write(write_descriptor_, &counter, sizeof(uint64_t));
-    (void)result;
-  }
+  ASIO_DECL void interrupt();
 
   // Reset the select interrupt. Returns true if the call was interrupted.
-  bool reset()
-  {
-    if (write_descriptor_ == read_descriptor_)
-    {
-      for (;;)
-      {
-        // Only perform one read. The kernel maintains an atomic counter.
-        uint64_t counter(0);
-        errno = 0;
-        int bytes_read = ::read(read_descriptor_, &counter, sizeof(uint64_t));
-        if (bytes_read < 0 && errno == EINTR)
-          continue;
-        bool was_interrupted = (bytes_read > 0);
-        return was_interrupted;
-      }
-    }
-    else
-    {
-      for (;;)
-      {
-        // Clear all data from the pipe.
-        char data[1024];
-        int bytes_read = ::read(read_descriptor_, data, sizeof(data));
-        if (bytes_read < 0 && errno == EINTR)
-          continue;
-        bool was_interrupted = (bytes_read > 0);
-        while (bytes_read == sizeof(data))
-          bytes_read = ::read(read_descriptor_, data, sizeof(data));
-        return was_interrupted;
-      }
-    }
-  }
+  ASIO_DECL bool reset();
 
   // Get the read descriptor to be passed to select.
-  int read_descriptor() const
-  {
-    return read_descriptor_;
-  }
+  int read_descriptor() const;
 
 private:
   // The read end of a connection used to interrupt the select call. This file
@@ -162,5 +72,10 @@ private:
 #endif // defined(ASIO_HAS_EVENTFD)
 
 #include "asio/detail/pop_options.hpp"
+
+#include "asio/detail/impl/eventfd_select_interrupter.hpp"
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/detail/impl/eventfd_select_interrupter.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_DETAIL_EVENTFD_SELECT_INTERRUPTER_HPP
