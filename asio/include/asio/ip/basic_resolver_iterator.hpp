@@ -1,6 +1,6 @@
 //
-// basic_resolver_iterator.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ip/basic_resolver_iterator.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //

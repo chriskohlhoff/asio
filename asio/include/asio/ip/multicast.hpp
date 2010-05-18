@@ -1,6 +1,6 @@
 //
-// multicast.hpp
-// ~~~~~~~~~~~~~
+// ip/multicast.hpp
+// ~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //

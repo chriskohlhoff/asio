@@ -1,6 +1,6 @@
 //
-// resolver_query_base.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~
+// ip/resolver_query_base.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //

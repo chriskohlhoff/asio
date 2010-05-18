@@ -1,6 +1,6 @@
 //
-// resolver_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~
+// ip/resolver_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
