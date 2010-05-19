@@ -67,10 +67,16 @@ public:
   ASIO_DECL address& operator=(const asio::ip::address_v6& ipv6_address);
 
   /// Get whether the address is an IP version 4 address.
-  bool is_v4() const;
+  bool is_v4() const
+  {
+    return type_ == ipv4;
+  }
 
   /// Get whether the address is an IP version 6 address.
-  bool is_v6() const;
+  bool is_v6() const
+  {
+    return type_ == ipv6;
+  }
 
   /// Get the address as an IP version 4 address.
   ASIO_DECL asio::ip::address_v4 to_v4() const;
@@ -106,19 +112,31 @@ public:
   ASIO_DECL friend bool operator==(const address& a1, const address& a2);
 
   /// Compare two addresses for inequality.
-  friend bool operator!=(const address& a1, const address& a2);
+  friend bool operator!=(const address& a1, const address& a2)
+  {
+    return !(a1 == a2);
+  }
 
   /// Compare addresses for ordering.
   ASIO_DECL friend bool operator<(const address& a1, const address& a2);
 
   /// Compare addresses for ordering.
-  friend bool operator>(const address& a1, const address& a2);
+  friend bool operator>(const address& a1, const address& a2)
+  {
+    return a2 < a1;
+  }
 
   /// Compare addresses for ordering.
-  friend bool operator<=(const address& a1, const address& a2);
+  friend bool operator<=(const address& a1, const address& a2)
+  {
+    return !(a2 < a1);
+  }
 
   /// Compare addresses for ordering.
-  friend bool operator>=(const address& a1, const address& a2);
+  friend bool operator>=(const address& a1, const address& a2)
+  {
+    return !(a1 < a2);
+  }
 
 private:
   // The type of the address.

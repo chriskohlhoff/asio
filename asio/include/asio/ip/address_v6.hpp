@@ -66,13 +66,19 @@ public:
   /**
    * Returns the scope ID associated with the IPv6 address.
    */
-  unsigned long scope_id() const;
+  unsigned long scope_id() const
+  {
+    return scope_id_;
+  }
 
   /// The scope ID of the address.
   /**
    * Modifies the scope ID associated with the IPv6 address.
    */
-  void scope_id(unsigned long id);
+  void scope_id(unsigned long id)
+  {
+    scope_id_ = id;
+  }
 
   /// Get the address in bytes, in network byte order.
   ASIO_DECL bytes_type to_bytes() const;
@@ -141,22 +147,37 @@ public:
       const address_v6& a1, const address_v6& a2);
 
   /// Compare two addresses for inequality.
-  friend bool operator!=(const address_v6& a1, const address_v6& a2);
+  friend bool operator!=(const address_v6& a1, const address_v6& a2)
+  {
+    return !(a1 == a2);
+  }
 
   /// Compare addresses for ordering.
   ASIO_DECL friend bool operator<(const address_v6& a1, const address_v6& a2);
 
   /// Compare addresses for ordering.
-  friend bool operator>(const address_v6& a1, const address_v6& a2);
+  friend bool operator>(const address_v6& a1, const address_v6& a2)
+  {
+    return a2 < a1;
+  }
 
   /// Compare addresses for ordering.
-  friend bool operator<=(const address_v6& a1, const address_v6& a2);
+  friend bool operator<=(const address_v6& a1, const address_v6& a2)
+  {
+    return !(a2 < a1);
+  }
 
   /// Compare addresses for ordering.
-  friend bool operator>=(const address_v6& a1, const address_v6& a2);
+  friend bool operator>=(const address_v6& a1, const address_v6& a2)
+  {
+    return !(a1 < a2);
+  }
 
   /// Obtain an address object that represents any address.
-  ASIO_DECL static address_v6 any();
+  static address_v6 any()
+  {
+    return address_v6();
+  }
 
   /// Obtain an address object that represents the loopback address.
   ASIO_DECL static address_v6 loopback();

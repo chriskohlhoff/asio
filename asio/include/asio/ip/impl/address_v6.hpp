@@ -29,41 +29,6 @@
 namespace asio {
 namespace ip {
 
-inline unsigned long address_v6::scope_id() const
-{
-  return scope_id_;
-}
-
-inline void address_v6::scope_id(unsigned long id)
-{
-  scope_id_ = id;
-}
-
-inline bool operator!=(const address_v6& a1, const address_v6& a2)
-{
-  return !(a1 == a2);
-}
-
-inline bool operator>(const address_v6& a1, const address_v6& a2)
-{
-  return a2 < a1;
-}
-
-inline bool operator<=(const address_v6& a1, const address_v6& a2)
-{
-  return !(a2 < a1);
-}
-
-inline bool operator>=(const address_v6& a1, const address_v6& a2)
-{
-  return !(a1 < a2);
-}
-
-inline address_v6 address_v6::any()
-{
-  return address_v6();
-}
-
 #if !defined(BOOST_NO_IOSTREAM)
 
 template <typename Elem, typename Traits>

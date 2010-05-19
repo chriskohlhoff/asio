@@ -49,7 +49,10 @@ public:
   typedef boost::array<unsigned char, 4> bytes_type;
 
   /// Default constructor.
-  address_v4();
+  address_v4()
+  {
+    addr_.s_addr = 0;
+  }
 
   /// Construct an address from raw bytes.
   ASIO_DECL explicit address_v4(const bytes_type& bytes);
@@ -58,10 +61,17 @@ public:
   ASIO_DECL explicit address_v4(unsigned long addr);
 
   /// Copy constructor.
-  address_v4(const address_v4& other);
+  address_v4(const address_v4& other)
+    : addr_(other.addr_)
+  {
+  }
 
   /// Assign from another address.
-  address_v4& operator=(const address_v4& other);
+  address_v4& operator=(const address_v4& other)
+  {
+    addr_ = other.addr_;
+    return *this;
+  }
 
   /// Get the address in bytes, in network byte order.
   ASIO_DECL bytes_type to_bytes() const;
@@ -102,31 +112,58 @@ public:
   ASIO_DECL bool is_multicast() const;
 
   /// Compare two addresses for equality.
-  friend bool operator==(const address_v4& a1, const address_v4& a2);
+  friend bool operator==(const address_v4& a1, const address_v4& a2)
+  {
+    return a1.addr_.s_addr == a2.addr_.s_addr;
+  }
 
   /// Compare two addresses for inequality.
-  friend bool operator!=(const address_v4& a1, const address_v4& a2);
+  friend bool operator!=(const address_v4& a1, const address_v4& a2)
+  {
+    return a1.addr_.s_addr != a2.addr_.s_addr;
+  }
 
   /// Compare addresses for ordering.
-  friend bool operator<(const address_v4& a1, const address_v4& a2);
+  friend bool operator<(const address_v4& a1, const address_v4& a2)
+  {
+    return a1.to_ulong() < a2.to_ulong();
+  }
 
   /// Compare addresses for ordering.
-  friend bool operator>(const address_v4& a1, const address_v4& a2);
+  friend bool operator>(const address_v4& a1, const address_v4& a2)
+  {
+    return a1.to_ulong() > a2.to_ulong();
+  }
 
   /// Compare addresses for ordering.
-  friend bool operator<=(const address_v4& a1, const address_v4& a2);
+  friend bool operator<=(const address_v4& a1, const address_v4& a2)
+  {
+    return a1.to_ulong() <= a2.to_ulong();
+  }
 
   /// Compare addresses for ordering.
-  friend bool operator>=(const address_v4& a1, const address_v4& a2);
+  friend bool operator>=(const address_v4& a1, const address_v4& a2)
+  {
+    return a1.to_ulong() >= a2.to_ulong();
+  }
 
   /// Obtain an address object that represents any address.
-  static address_v4 any();
+  static address_v4 any()
+  {
+    return address_v4(static_cast<unsigned long>(INADDR_ANY));
+  }
 
   /// Obtain an address object that represents the loopback address.
-  static address_v4 loopback();
+  static address_v4 loopback()
+  {
+    return address_v4(static_cast<unsigned long>(INADDR_LOOPBACK));
+  }
 
   /// Obtain an address object that represents the broadcast address.
-  static address_v4 broadcast();
+  static address_v4 broadcast()
+  {
+    return address_v4(static_cast<unsigned long>(INADDR_BROADCAST));
+  }
 
   /// Obtain an address object that represents the broadcast address that
   /// corresponds to the specified address and netmask.

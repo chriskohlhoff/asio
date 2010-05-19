@@ -29,67 +29,6 @@
 namespace asio {
 namespace ip {
 
-inline address_v4::address_v4()
-{
-  addr_.s_addr = 0;
-}
-
-inline address_v4::address_v4(const address_v4& other)
-  : addr_(other.addr_)
-{
-}
-
-inline address_v4& address_v4::operator=(const address_v4& other)
-{
-  addr_ = other.addr_;
-  return *this;
-}
-
-inline bool operator==(const address_v4& a1, const address_v4& a2)
-{
-  return a1.addr_.s_addr == a2.addr_.s_addr;
-}
-
-inline bool operator!=(const address_v4& a1, const address_v4& a2)
-{
-  return a1.addr_.s_addr != a2.addr_.s_addr;
-}
-
-inline bool operator<(const address_v4& a1, const address_v4& a2)
-{
-  return a1.to_ulong() < a2.to_ulong();
-}
-
-inline bool operator>(const address_v4& a1, const address_v4& a2)
-{
-  return a1.to_ulong() > a2.to_ulong();
-}
-
-inline bool operator<=(const address_v4& a1, const address_v4& a2)
-{
-  return a1.to_ulong() <= a2.to_ulong();
-}
-
-inline bool operator>=(const address_v4& a1, const address_v4& a2)
-{
-  return a1.to_ulong() >= a2.to_ulong();
-}
-
-inline address_v4 address_v4::any()
-{
-  return address_v4(static_cast<unsigned long>(INADDR_ANY));
-}
-
-inline address_v4 address_v4::loopback()
-{
-  return address_v4(static_cast<unsigned long>(INADDR_LOOPBACK));
-}
-
-inline address_v4 address_v4::broadcast()
-{
-  return address_v4(static_cast<unsigned long>(INADDR_BROADCAST));
-}
-
 #if !defined(BOOST_NO_IOSTREAM)
 
 template <typename Elem, typename Traits>

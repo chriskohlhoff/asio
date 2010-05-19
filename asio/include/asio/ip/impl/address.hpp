@@ -22,36 +22,6 @@
 namespace asio {
 namespace ip {
 
-inline bool address::is_v4() const
-{
-  return type_ == ipv4;
-}
-
-inline bool address::is_v6() const
-{
-  return type_ == ipv6;
-}
-
-inline bool operator!=(const address& a1, const address& a2)
-{
-  return !(a1 == a2);
-}
-
-inline bool operator>(const address& a1, const address& a2)
-{
-  return a2 < a1;
-}
-
-inline bool operator<=(const address& a1, const address& a2)
-{
-  return !(a2 < a1);
-}
-
-inline bool operator>=(const address& a1, const address& a2)
-{
-  return !(a1 < a2);
-}
-
 #if !defined(BOOST_NO_IOSTREAM)
 
 template <typename Elem, typename Traits>
