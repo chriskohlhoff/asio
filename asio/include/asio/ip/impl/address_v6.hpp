@@ -20,9 +20,6 @@
 #include "asio/ip/address_v6.hpp"
 
 #if !defined(BOOST_NO_IOSTREAM)
-# include "asio/detail/push_options.hpp"
-# include <ios>
-# include "asio/detail/pop_options.hpp"
 # include "asio/detail/throw_error.hpp"
 #endif // !defined(BOOST_NO_IOSTREAM)
 
@@ -39,10 +36,10 @@ std::basic_ostream<Elem, Traits>& operator<<(
   std::string s = addr.to_string(ec);
   if (ec)
   {
-    if (os.exceptions() & std::ios::failbit)
+    if (os.exceptions() & std::basic_ostream<Elem, Traits>::failbit)
       asio::detail::throw_error(ec);
     else
-      os.setstate(std::ios_base::failbit);
+      os.setstate(std::basic_ostream<Elem, Traits>::failbit);
   }
   else
     for (std::string::iterator i = s.begin(); i != s.end(); ++i)
