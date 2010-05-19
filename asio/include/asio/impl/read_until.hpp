@@ -20,6 +20,7 @@
 #include "asio/detail/push_options.hpp"
 #include <algorithm>
 #include <string>
+#include <vector>
 #include <utility>
 #include <boost/limits.hpp>
 #include "asio/detail/pop_options.hpp"
@@ -219,8 +220,10 @@ std::size_t read_until(SyncReadStream& s,
     iterator end = iterator::end(buffers);
 
     // Look for a match.
-    boost::match_results<iterator> match_results;
-    if (boost::regex_search(start, end, match_results, expr,
+    boost::match_results<iterator,
+      typename std::vector<boost::sub_match<iterator> >::allocator_type>
+        match_results;
+    if (regex_search(start, end, match_results, expr,
           boost::match_default | boost::match_partial))
     {
       if (match_results[0].matched)
@@ -640,7 +643,8 @@ void async_read_until(AsyncReadStream& s,
 
 namespace detail
 {
-  template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
+  template <typename AsyncReadStream, typename Allocator,
+      typename RegEx, typename ReadHandler>
   class read_until_expr_handler
   {
   public:
@@ -680,8 +684,10 @@ namespace detail
       iterator end = iterator::end(buffers);
 
       // Look for a match.
-      boost::match_results<iterator> match_results;
-      if (boost::regex_search(start, end, match_results, expr_,
+      boost::match_results<iterator,
+        typename std::vector<boost::sub_match<iterator> >::allocator_type>
+          match_results;
+      if (regex_search(start, end, match_results, expr_,
             boost::match_default | boost::match_partial))
       {
         if (match_results[0].matched)
@@ -721,34 +727,36 @@ namespace detail
   //private:
     AsyncReadStream& stream_;
     asio::basic_streambuf<Allocator>& streambuf_;
-    boost::regex expr_;
+    RegEx expr_;
     std::size_t next_search_start_;
     ReadHandler handler_;
   };
 
-  template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
+  template <typename AsyncReadStream, typename Allocator,
+      typename RegEx, typename ReadHandler>
   inline void* asio_handler_allocate(std::size_t size,
       read_until_expr_handler<AsyncReadStream,
-        Allocator, ReadHandler>* this_handler)
+        Allocator, RegEx, ReadHandler>* this_handler)
   {
     return asio_handler_alloc_helpers::allocate(
         size, this_handler->handler_);
   }
 
-  template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
+  template <typename AsyncReadStream, typename Allocator,
+      typename RegEx, typename ReadHandler>
   inline void asio_handler_deallocate(void* pointer, std::size_t size,
       read_until_expr_handler<AsyncReadStream,
-        Allocator, ReadHandler>* this_handler)
+        Allocator, RegEx, ReadHandler>* this_handler)
   {
     asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
   }
 
   template <typename Function, typename AsyncReadStream, typename Allocator,
-      typename ReadHandler>
+      typename RegEx, typename ReadHandler>
   inline void asio_handler_invoke(const Function& function,
       read_until_expr_handler<AsyncReadStream,
-        Allocator, ReadHandler>* this_handler)
+        Allocator, RegEx, ReadHandler>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
@@ -770,8 +778,10 @@ void async_read_until(AsyncReadStream& s,
 
   // Look for a match.
   std::size_t next_search_start;
-  boost::match_results<iterator> match_results;
-  if (boost::regex_search(begin, end, match_results, expr,
+  boost::match_results<iterator,
+    typename std::vector<boost::sub_match<iterator> >::allocator_type>
+      match_results;
+  if (regex_search(begin, end, match_results, expr,
         boost::match_default | boost::match_partial))
   {
     if (match_results[0].matched)
@@ -806,8 +816,9 @@ void async_read_until(AsyncReadStream& s,
   std::size_t bytes_available =
     std::min<std::size_t>(512, b.max_size() - b.size());
   s.async_read_some(b.prepare(bytes_available),
-      detail::read_until_expr_handler<AsyncReadStream, Allocator, ReadHandler>(
-        s, b, expr, next_search_start, handler));
+      detail::read_until_expr_handler<AsyncReadStream,
+        Allocator, boost::regex, ReadHandler>(
+          s, b, expr, next_search_start, handler));
 }
 
 namespace detail

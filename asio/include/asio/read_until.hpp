@@ -25,7 +25,6 @@
 
 #include "asio/detail/push_options.hpp"
 #include <cstddef>
-#include <boost/regex.hpp>
 #include <boost/type_traits/is_function.hpp>
 #include <boost/type_traits/remove_pointer.hpp>
 #include <boost/utility/enable_if.hpp>
@@ -35,6 +34,7 @@
 
 #include "asio/basic_streambuf.hpp"
 #include "asio/error.hpp"
+#include "asio/detail/regex_fwd.hpp"
 
 namespace asio {
 
