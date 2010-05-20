@@ -15,18 +15,14 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/ip/address_v4.hpp"
-
 #if !defined(BOOST_NO_IOSTREAM)
-# include "asio/detail/throw_error.hpp"
-#endif // !defined(BOOST_NO_IOSTREAM)
+
+#include "asio/detail/throw_error.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ip {
-
-#if !defined(BOOST_NO_IOSTREAM)
 
 template <typename Elem, typename Traits>
 std::basic_ostream<Elem, Traits>& operator<<(
@@ -47,11 +43,11 @@ std::basic_ostream<Elem, Traits>& operator<<(
   return os;
 }
 
-#endif // !defined(BOOST_NO_IOSTREAM)
-
 } // namespace ip
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#endif // !defined(BOOST_NO_IOSTREAM)
 
 #endif // ASIO_IP_IMPL_ADDRESS_V4_HPP

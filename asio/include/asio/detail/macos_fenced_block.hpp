@@ -1,6 +1,6 @@
 //
-// macos_fenced_block.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~
+// detail/macos_fenced_block.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,17 +15,13 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
+#include "asio/detail/config.hpp"
 
 #if defined(__MACH__) && defined(__APPLE__)
 
-#include "asio/detail/push_options.hpp"
 #include <libkern/OSAtomic.h>
-#include "asio/detail/pop_options.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -50,8 +46,8 @@ public:
 } // namespace detail
 } // namespace asio
 
-#endif // defined(__MACH__) && defined(__APPLE__)
-
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(__MACH__) && defined(__APPLE__)
 
 #endif // ASIO_DETAIL_MACOS_FENCED_BLOCK_HPP

@@ -16,11 +16,9 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/eventfd_select_interrupter.hpp"
-
 #if defined(ASIO_HAS_EVENTFD)
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -33,8 +31,8 @@ inline int eventfd_select_interrupter::read_descriptor() const
 } // namespace detail
 } // namespace asio
 
-#endif // defined(ASIO_HAS_EVENTFD)
-
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(ASIO_HAS_EVENTFD)
 
 #endif // ASIO_DETAIL_IMPL_EVENTFD_SELECT_INTERRUPTER_HPP

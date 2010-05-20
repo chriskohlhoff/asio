@@ -1,6 +1,6 @@
 //
-// reactor_fwd.hpp
-// ~~~~~~~~~~~~~~~
+// detail/reactor_fwd.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,8 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
+#include "asio/detail/config.hpp"
 #include "asio/detail/dev_poll_reactor_fwd.hpp"
 #include "asio/detail/epoll_reactor_fwd.hpp"
 #include "asio/detail/kqueue_reactor_fwd.hpp"
@@ -40,7 +39,5 @@ typedef select_reactor<false> reactor;
 
 } // namespace detail
 } // namespace asio
-
-#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_REACTOR_FWD_HPP

@@ -15,16 +15,13 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
 #include <cstddef>
-#include <boost/config.hpp>
 #include <boost/cstdint.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/basic_streambuf_fwd.hpp"
 #include "asio/error.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 
@@ -556,8 +553,8 @@ void async_write_at(AsyncRandomAccessWriteDevice& d, boost::uint64_t offset,
 
 } // namespace asio
 
-#include "asio/impl/write_at.hpp"
-
 #include "asio/detail/pop_options.hpp"
+
+#include "asio/impl/write_at.hpp"
 
 #endif // ASIO_WRITE_AT_HPP

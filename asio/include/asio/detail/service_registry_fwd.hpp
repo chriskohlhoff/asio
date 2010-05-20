@@ -1,6 +1,6 @@
 //
-// service_registry_fwd.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/service_registry_fwd.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,8 +15,6 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
 namespace asio {
 namespace detail {
 
@@ -24,7 +22,5 @@ class service_registry;
 
 } // namespace detail
 } // namespace asio
-
-#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_SERVICE_REGISTRY_FWD_HPP

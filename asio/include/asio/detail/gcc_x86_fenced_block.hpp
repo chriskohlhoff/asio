@@ -1,6 +1,6 @@
 //
-// gcc_x86_fenced_block.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/gcc_x86_fenced_block.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,13 +15,11 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
+#include "asio/detail/config.hpp"
 
 #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -54,8 +52,8 @@ private:
 } // namespace detail
 } // namespace asio
 
-#endif // defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 
 #endif // ASIO_DETAIL_GCC_X86_FENCED_BLOCK_HPP

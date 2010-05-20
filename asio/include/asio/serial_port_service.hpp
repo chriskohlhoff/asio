@@ -15,23 +15,19 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
 #include <cstddef>
-#include <boost/config.hpp>
 #include <string>
-#include "asio/detail/pop_options.hpp"
-
+#include "asio/detail/reactive_serial_port_service.hpp"
+#include "asio/detail/win_iocp_serial_port_service.hpp"
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/serial_port_base.hpp"
-#include "asio/detail/service_base.hpp"
-#include "asio/detail/reactive_serial_port_service.hpp"
-#include "asio/detail/win_iocp_serial_port_service.hpp"
 
 #if defined(ASIO_HAS_SERIAL_PORT) \
   || defined(GENERATING_DOCUMENTATION)
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 
@@ -199,9 +195,9 @@ private:
 
 } // namespace asio
 
+#include "asio/detail/pop_options.hpp"
+
 #endif // defined(ASIO_HAS_SERIAL_PORT)
        //   || defined(GENERATING_DOCUMENTATION)
-
-#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_SERIAL_PORT_SERVICE_HPP

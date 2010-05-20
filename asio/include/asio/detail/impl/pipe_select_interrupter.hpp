@@ -15,11 +15,9 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/pipe_select_interrupter.hpp"
-
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -32,8 +30,8 @@ inline int pipe_select_interrupter::read_descriptor() const
 } // namespace detail
 } // namespace asio
 
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-
 #include "asio/detail/pop_options.hpp"
+
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 #endif // ASIO_DETAIL_IMPL_PIPE_SELECT_INTERRUPTER_HPP

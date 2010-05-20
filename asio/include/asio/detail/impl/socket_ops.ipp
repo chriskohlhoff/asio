@@ -15,21 +15,18 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/socket_ops.hpp"
-
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
 #include <boost/assert.hpp>
+#include <boost/detail/workaround.hpp>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <cerrno>
-#include <boost/detail/workaround.hpp>
 #include <new>
-#include "asio/detail/pop_options.hpp"
-
+#include "asio/detail/socket_ops.hpp"
 #include "asio/error.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {

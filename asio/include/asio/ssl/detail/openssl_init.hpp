@@ -1,6 +1,6 @@
 //
-// openssl_init.hpp
-// ~~~~~~~~~~~~~~~~
+// ssl/detail/openssl_init.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2005 Voipster / Indrek dot Juhani at voipster dot com
 // Copyright (c) 2005-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -16,19 +16,16 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
 #include <cstring>
 #include <vector>
 #include <boost/assert.hpp>
-#include <boost/config.hpp>
 #include <boost/shared_ptr.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/tss_ptr.hpp"
 #include "asio/ssl/detail/openssl_types.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ssl {

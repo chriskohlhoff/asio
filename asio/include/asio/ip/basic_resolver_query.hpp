@@ -15,15 +15,12 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
+#include "asio/detail/config.hpp"
 #include <string>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/detail/socket_ops.hpp"
 #include "asio/ip/resolver_query_base.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ip {

@@ -1,6 +1,6 @@
 //
-// win_iocp_io_service_fwd.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/win_iocp_io_service_fwd.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,13 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
-
-#include "asio/detail/socket_types.hpp"
+#include "asio/detail/config.hpp"
 
 // This service is only supported on Win32 (NT4 and later).
 #if !defined(ASIO_DISABLE_IOCP)
@@ -45,7 +39,5 @@ class win_iocp_overlapped_ptr;
 #endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 #endif // !defined(ASIO_DISABLE_IOCP)
-
-#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_WIN_IOCP_IO_SERVICE_FWD_HPP

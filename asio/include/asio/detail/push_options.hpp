@@ -1,6 +1,6 @@
 //
-// push_options.hpp
-// ~~~~~~~~~~~~~~~~
+// detail/push_options.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -9,6 +9,12 @@
 //
 
 // No header guard
+
+#if defined(OOPS)
+#error oops
+#else
+#define OOPS
+#endif
 
 #if defined(__COMO__)
 

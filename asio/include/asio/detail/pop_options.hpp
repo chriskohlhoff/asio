@@ -1,6 +1,6 @@
 //
-// pop_options.hpp
-// ~~~~~~~~~~~~~~~
+// detail/pop_options.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -9,6 +9,12 @@
 //
 
 // No header guard
+
+#if !defined(OOPS)
+#error oops pop
+#else
+#undef OOPS
+#endif
 
 #if defined(__COMO__)
 

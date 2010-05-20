@@ -11,9 +11,7 @@
 #ifndef ASIO_DETAIL_CONFIG_HPP
 #define ASIO_DETAIL_CONFIG_HPP
 
-#include "asio/detail/push_options.hpp"
 #include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
 
 // Default to a header-only implementation. The user must specifically request
 // separate compilation by defining ASIO_SEPARATE_COMPILATION.

@@ -1,6 +1,6 @@
 //
-// overlapped_ptr.hpp
-// ~~~~~~~~~~~~~~~~~~
+// windows/overlapped_ptr.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,11 +15,10 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/io_service.hpp"
+#include "asio/detail/config.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/win_iocp_overlapped_ptr.hpp"
+#include "asio/io_service.hpp"
 
 #if !defined(ASIO_DISABLE_WINDOWS_OVERLAPPED_PTR)
 # if defined(ASIO_HAS_IOCP)
@@ -29,6 +28,8 @@
 
 #if defined(ASIO_HAS_WINDOWS_OVERLAPPED_PTR) \
   || defined(GENERATING_DOCUMENTATION)
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace windows {
@@ -110,9 +111,9 @@ private:
 } // namespace windows
 } // namespace asio
 
+#include "asio/detail/pop_options.hpp"
+
 #endif // defined(ASIO_HAS_WINDOWS_OVERLAPPED_PTR)
        //   || defined(GENERATING_DOCUMENTATION)
-
-#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_WINDOWS_OVERLAPPED_PTR_HPP

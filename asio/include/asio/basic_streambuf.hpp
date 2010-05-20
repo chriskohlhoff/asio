@@ -15,13 +15,10 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
 #include "asio/detail/config.hpp"
 
 #if !defined(BOOST_NO_IOSTREAM)
 
-#include "asio/detail/push_options.hpp"
 #include <algorithm>
 #include <cstring>
 #include <stdexcept>
@@ -29,11 +26,11 @@
 #include <vector>
 #include <boost/limits.hpp>
 #include <boost/throw_exception.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/basic_streambuf_fwd.hpp"
 #include "asio/buffer.hpp"
 #include "asio/detail/noncopyable.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 

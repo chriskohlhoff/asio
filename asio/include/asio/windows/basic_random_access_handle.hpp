@@ -1,6 +1,6 @@
 //
-// basic_random_access_handle.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// windows/basic_random_access_handle.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,20 +15,17 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
 #include <cstddef>
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
-
+#include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 #include "asio/windows/basic_handle.hpp"
 #include "asio/windows/random_access_handle_service.hpp"
-#include "asio/detail/throw_error.hpp"
 
 #if defined(ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE) \
   || defined(GENERATING_DOCUMENTATION)
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace windows {
@@ -312,9 +309,9 @@ public:
 } // namespace windows
 } // namespace asio
 
+#include "asio/detail/pop_options.hpp"
+
 #endif // defined(ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE)
        //   || defined(GENERATING_DOCUMENTATION)
-
-#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_WINDOWS_BASIC_RANDOM_ACCESS_HANDLE_HPP

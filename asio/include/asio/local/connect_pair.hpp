@@ -1,6 +1,6 @@
 //
-// connect_pair.hpp
-// ~~~~~~~~~~~~~~~~
+// local/connect_pair.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,16 +15,17 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
+#include "asio/detail/config.hpp"
 #include "asio/basic_socket.hpp"
-#include "asio/error.hpp"
-#include "asio/local/basic_endpoint.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/throw_error.hpp"
+#include "asio/error.hpp"
+#include "asio/local/basic_endpoint.hpp"
 
 #if defined(ASIO_HAS_LOCAL_SOCKETS) \
   || defined(GENERATING_DOCUMENTATION)
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace local {
@@ -92,9 +93,9 @@ inline asio::error_code connect_pair(
 } // namespace local
 } // namespace asio
 
+#include "asio/detail/pop_options.hpp"
+
 #endif // defined(ASIO_HAS_LOCAL_SOCKETS)
        //   || defined(GENERATING_DOCUMENTATION)
-
-#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_LOCAL_CONNECT_PAIR_HPP

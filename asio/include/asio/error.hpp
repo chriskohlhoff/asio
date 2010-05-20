@@ -15,18 +15,13 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
 #include "asio/detail/config.hpp"
-
-#include "asio/detail/push_options.hpp"
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 # include <WinError.h>
 #else
 # include <cerrno>
 # include <netdb.h>
 #endif
-#include "asio/detail/pop_options.hpp"
 
 #if defined(GENERATING_DOCUMENTATION)
 /// INTERNAL ONLY.
@@ -52,6 +47,8 @@
 # define ASIO_GETADDRINFO_ERROR(e) e
 # define ASIO_WIN_OR_POSIX(e_win, e_posix) e_posix
 #endif
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace error {
@@ -220,7 +217,11 @@ enum ssl_errors
 } // namespace error
 } // namespace asio
 
+#include "asio/detail/pop_options.hpp"
+
 #include "asio/error_code.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace error {
@@ -234,13 +235,13 @@ asio::error_code make_error_code(ssl_errors e);
 } // namespace error
 } // namespace asio
 
+#include "asio/detail/pop_options.hpp"
+
 #undef ASIO_NATIVE_ERROR
 #undef ASIO_SOCKET_ERROR
 #undef ASIO_NETDB_ERROR
 #undef ASIO_GETADDRINFO_ERROR
 #undef ASIO_WIN_OR_POSIX
-
-#include "asio/detail/pop_options.hpp"
 
 #include "asio/impl/error.hpp"
 

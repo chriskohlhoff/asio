@@ -17,8 +17,6 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/throw_error.hpp"
-
 namespace asio {
 namespace detail {
 

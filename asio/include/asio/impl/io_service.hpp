@@ -15,8 +15,6 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
 #include "asio/detail/service_registry.hpp"
 
 #if defined(ASIO_HAS_IOCP)
@@ -24,6 +22,8 @@
 #else
 # include "asio/detail/task_io_service.hpp"
 #endif
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 

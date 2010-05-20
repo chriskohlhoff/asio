@@ -15,15 +15,11 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
 #include "asio/detail/config.hpp"
 
 #if !defined(BOOST_NO_IOSTREAM)
 
-#include "asio/detail/push_options.hpp"
 #include <memory>
-#include "asio/detail/pop_options.hpp"
 
 namespace asio {
 
@@ -31,8 +27,6 @@ template <typename Allocator = std::allocator<char> >
 class basic_streambuf;
 
 } // namespace asio
-
-#include "asio/detail/pop_options.hpp"
 
 #endif // !defined(BOOST_NO_IOSTREAM)
 

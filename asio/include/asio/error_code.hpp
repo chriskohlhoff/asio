@@ -15,13 +15,8 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
 #include "asio/detail/config.hpp"
-
-#include "asio/detail/push_options.hpp"
 #include <string>
-#include "asio/detail/pop_options.hpp"
 
 #if defined(GENERATING_DOCUMENTATION)
 # define ASIO_WIN_OR_POSIX(e_win, e_posix) implementation_defined
@@ -30,6 +25,8 @@
 #else
 # define ASIO_WIN_OR_POSIX(e_win, e_posix) e_posix
 #endif
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 
@@ -122,9 +119,9 @@ private:
 
 } // namespace asio
 
-#undef ASIO_WIN_OR_POSIX
-
 #include "asio/detail/pop_options.hpp"
+
+#undef ASIO_WIN_OR_POSIX
 
 #include "asio/impl/error_code.hpp"
 #if defined(ASIO_HEADER_ONLY)

@@ -15,11 +15,9 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/epoll_reactor.hpp"
-
 #if defined(ASIO_HAS_EPOLL)
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -73,8 +71,8 @@ std::size_t epoll_reactor::cancel_timer(
 } // namespace detail
 } // namespace asio
 
-#endif // defined(ASIO_HAS_EPOLL)
-
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(ASIO_HAS_EPOLL)
 
 #endif // ASIO_DETAIL_IMPL_EPOLL_REACTOR_HPP

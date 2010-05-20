@@ -1,6 +1,6 @@
 //
-// task_io_service_operation.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/task_io_service_operation.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,11 +15,11 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
 #include "asio/error_code.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/task_io_service_fwd.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {

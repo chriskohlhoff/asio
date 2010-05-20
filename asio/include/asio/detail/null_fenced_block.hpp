@@ -1,6 +1,6 @@
 //
-// null_fenced_block.hpp
-// ~~~~~~~~~~~~~~~~~~~~~
+// detail/null_fenced_block.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //

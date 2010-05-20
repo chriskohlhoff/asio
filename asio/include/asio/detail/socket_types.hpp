@@ -1,6 +1,6 @@
 //
-// socket_types.hpp
-// ~~~~~~~~~~~~~~~~
+// detail/socket_types.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,13 +15,8 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
-
-#include "asio/detail/push_options.hpp"
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 # if defined(_WINSOCKAPI_) && !defined(_WINSOCK2API_)
 #  error WinSock.h has already been included
@@ -119,7 +114,8 @@
 #  include <sys/sockio.h>
 # endif
 #endif
-#include "asio/detail/pop_options.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {

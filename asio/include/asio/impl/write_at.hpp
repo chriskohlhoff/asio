@@ -15,8 +15,6 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
 #include "asio/buffer.hpp"
 #include "asio/completion_condition.hpp"
 #include "asio/detail/bind_handler.hpp"
@@ -24,6 +22,8 @@
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/throw_error.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 

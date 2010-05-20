@@ -1,6 +1,6 @@
 //
-// stream_service.hpp
-// ~~~~~~~~~~~~~~~~~~
+// ssl/detail/stream_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2005 Voipster / Indrek dot Juhani at voipster dot com
 // Copyright (c) 2005-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -16,9 +16,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
 #include <cstddef>
 #include <climits>
 #include <memory>
@@ -26,17 +24,16 @@
 #include <boost/noncopyable.hpp>
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
-#include "asio/detail/pop_options.hpp"
-
+#include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
-#include "asio/strand.hpp"
-#include "asio/detail/buffer_sequence_adapter.hpp"
-#include "asio/detail/service_base.hpp"
 #include "asio/ssl/basic_context.hpp"
 #include "asio/ssl/stream_base.hpp"
 #include "asio/ssl/detail/openssl_operation.hpp"
 #include "asio/ssl/detail/openssl_types.hpp"
+#include "asio/strand.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ssl {

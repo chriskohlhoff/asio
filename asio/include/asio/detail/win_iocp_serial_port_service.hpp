@@ -1,6 +1,6 @@
 //
-// win_iocp_serial_port_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/win_iocp_serial_port_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2008 Rep Invariant Systems, Inc. (info@repinvariant.com)
@@ -16,20 +16,18 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
-#include <cstring>
-#include <string>
-#include "asio/detail/pop_options.hpp"
-
+#include "asio/detail/config.hpp"
 #include "asio/detail/win_iocp_io_service_fwd.hpp"
 
 #if defined(ASIO_HAS_IOCP)
 
+#include <cstring>
+#include <string>
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/detail/win_iocp_handle_service.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -281,8 +279,8 @@ private:
 } // namespace detail
 } // namespace asio
 
-#endif // defined(ASIO_HAS_IOCP)
-
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(ASIO_HAS_IOCP)
 
 #endif // ASIO_DETAIL_WIN_IOCP_SERIAL_PORT_SERVICE_HPP

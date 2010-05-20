@@ -1,6 +1,6 @@
 //
-// kqueue_reactor_fwd.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~
+// detail/kqueue_reactor_fwd.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2005 Stefan Arentz (stefan at soze dot com)
@@ -15,8 +15,6 @@
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
-
-#include "asio/detail/push_options.hpp"
 
 #if !defined(ASIO_DISABLE_KQUEUE)
 
@@ -38,7 +36,5 @@ class kqueue_reactor;
        // || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__)
 
 #endif // !defined(ASIO_DISABLE_KQUEUE)
-
-#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_KQUEUE_REACTOR_FWD_HPP

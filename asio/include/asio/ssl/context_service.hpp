@@ -1,6 +1,6 @@
 //
-// context_service.hpp
-// ~~~~~~~~~~~~~~~~~~~
+// ssl/context_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2005 Voipster / Indrek dot Juhani at voipster dot com
 // Copyright (c) 2005-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -16,18 +16,15 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
 #include <string>
 #include <boost/noncopyable.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
-#include "asio/detail/service_base.hpp"
 #include "asio/ssl/context_base.hpp"
 #include "asio/ssl/detail/openssl_context_service.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ssl {

@@ -1,6 +1,6 @@
 //
-// kqueue_reactor.hpp
-// ~~~~~~~~~~~~~~~~~~
+// detail/kqueue_reactor.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2005 Stefan Arentz (stefan at soze dot com)
@@ -16,40 +16,36 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
+#include "asio/detail/config.hpp"
 #include "asio/detail/kqueue_reactor_fwd.hpp"
 
 #if defined(ASIO_HAS_KQUEUE)
 
-#include "asio/detail/push_options.hpp"
 #include <cstddef>
 #include <sys/types.h>
 #include <sys/event.h>
 #include <sys/time.h>
-#include <boost/config.hpp>
 #include <boost/throw_exception.hpp>
-#include "asio/detail/pop_options.hpp"
-
-#include "asio/error.hpp"
-#include "asio/io_service.hpp"
-#include "asio/system_error.hpp"
 #include "asio/detail/hash_map.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/reactor_op.hpp"
 #include "asio/detail/select_interrupter.hpp"
-#include "asio/detail/service_base.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/timer_op.hpp"
 #include "asio/detail/timer_queue_base.hpp"
 #include "asio/detail/timer_queue_fwd.hpp"
 #include "asio/detail/timer_queue_set.hpp"
+#include "asio/error.hpp"
+#include "asio/io_service.hpp"
+#include "asio/system_error.hpp"
 
 // Older versions of Mac OS X may not define EV_OOBAND.
 #if !defined(EV_OOBAND)
 # define EV_OOBAND EV_FLAG1
 #endif // !defined(EV_OOBAND)
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -478,8 +474,8 @@ private:
 } // namespace detail
 } // namespace asio
 
-#endif // defined(ASIO_HAS_KQUEUE)
-
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(ASIO_HAS_KQUEUE)
 
 #endif // ASIO_DETAIL_KQUEUE_REACTOR_HPP

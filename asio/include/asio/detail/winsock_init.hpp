@@ -1,6 +1,6 @@
 //
-// winsock_init.hpp
-// ~~~~~~~~~~~~~~~~
+// detail/winsock_init.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,23 +15,18 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
+#include "asio/detail/config.hpp"
 
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
-#include "asio/detail/push_options.hpp"
 #include <boost/shared_ptr.hpp>
 #include <boost/throw_exception.hpp>
-#include "asio/detail/pop_options.hpp"
-
-#include "asio/error.hpp"
-#include "asio/system_error.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/error.hpp"
+#include "asio/system_error.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -113,8 +108,8 @@ winsock_init<Major, Minor> winsock_init<Major, Minor>::instance_;
 } // namespace detail
 } // namespace asio
 
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
 #endif // ASIO_DETAIL_WINSOCK_INIT_HPP

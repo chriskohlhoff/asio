@@ -15,20 +15,17 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
 #include "asio/detail/config.hpp"
+#include <string>
+#include <boost/array.hpp>
+#include "asio/detail/socket_types.hpp"
+#include "asio/error_code.hpp"
 
-#include "asio/detail/push_options.hpp"
 #if !defined(BOOST_NO_IOSTREAM)
 # include <iosfwd>
 #endif // !defined(BOOST_NO_IOSTREAM)
-#include <string>
-#include <boost/array.hpp>
-#include "asio/detail/pop_options.hpp"
 
-#include "asio/error_code.hpp"
-#include "asio/detail/socket_types.hpp"
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ip {

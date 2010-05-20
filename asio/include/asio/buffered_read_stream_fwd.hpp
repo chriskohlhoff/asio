@@ -15,15 +15,11 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
 namespace asio {
 
 template <typename Stream>
 class buffered_read_stream;
 
 } // namespace asio
-
-#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_BUFFERED_READ_STREAM_FWD_HPP

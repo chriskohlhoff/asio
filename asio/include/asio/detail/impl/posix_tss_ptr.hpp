@@ -15,11 +15,9 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/posix_tss_ptr.hpp"
-
 #if defined(BOOST_HAS_PTHREADS)
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -51,8 +49,8 @@ inline void posix_tss_ptr<T>::operator=(T* value)
 } // namespace detail
 } // namespace asio
 
-#endif // defined(BOOST_HAS_PTHREADS)
-
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(BOOST_HAS_PTHREADS)
 
 #endif // ASIO_DETAIL_IMPL_POSIX_TSS_PTR_HPP

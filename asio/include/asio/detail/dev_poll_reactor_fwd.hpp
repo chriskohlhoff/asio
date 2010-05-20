@@ -1,6 +1,6 @@
 //
-// dev_poll_reactor_fwd.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/dev_poll_reactor_fwd.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -14,8 +14,6 @@
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
-
-#include "asio/detail/push_options.hpp"
 
 #if !defined(ASIO_DISABLE_DEV_POLL)
 #if defined(__sun) // This service is only supported on Solaris.
@@ -33,7 +31,5 @@ class dev_poll_reactor;
 
 #endif // defined(__sun)
 #endif // !defined(ASIO_DISABLE_DEV_POLL)
-
-#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_DEV_POLL_REACTOR_FWD_HPP

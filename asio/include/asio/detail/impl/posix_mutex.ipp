@@ -15,18 +15,16 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
+#include "asio/detail/config.hpp"
 #include "asio/detail/posix_mutex.hpp"
 
 #if defined(BOOST_HAS_PTHREADS)
 
-#include "asio/detail/push_options.hpp"
 #include <boost/throw_exception.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/error.hpp"
 #include "asio/system_error.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -47,8 +45,8 @@ posix_mutex::posix_mutex()
 } // namespace detail
 } // namespace asio
 
-#endif // defined(BOOST_HAS_PTHREADS)
-
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(BOOST_HAS_PTHREADS)
 
 #endif // ASIO_DETAIL_IMPL_POSIX_MUTEX_IPP

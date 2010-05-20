@@ -15,14 +15,11 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
-
+#include "asio/detail/config.hpp"
 #include "asio/buffered_stream_fwd.hpp"
 #include "asio/buffered_write_stream_fwd.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 

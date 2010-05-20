@@ -1,6 +1,6 @@
 //
-// descriptor_ops.hpp
-// ~~~~~~~~~~~~~~~~~~
+// detail/descriptor_ops.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,17 +15,14 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
+#include "asio/detail/config.hpp"
 #include <cerrno>
-#include "asio/detail/pop_options.hpp"
-
-#include "asio/error.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/error.hpp"
 
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -169,8 +166,8 @@ inline int poll_write(int d, asio::error_code& ec)
 } // namespace detail
 } // namespace asio
 
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-
 #include "asio/detail/pop_options.hpp"
+
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 #endif // ASIO_DETAIL_DESCRIPTOR_OPS_HPP

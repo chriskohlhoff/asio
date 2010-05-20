@@ -1,6 +1,6 @@
 //
-// posix_tss_ptr.hpp
-// ~~~~~~~~~~~~~~~~~
+// detail/posix_tss_ptr.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,17 +15,14 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
 #include "asio/detail/config.hpp"
 
 #if defined(BOOST_HAS_PTHREADS)
 
-#include "asio/detail/push_options.hpp"
 #include <pthread.h>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/detail/noncopyable.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -60,9 +57,9 @@ ASIO_DECL void posix_tss_ptr_create(pthread_key_t& key);
 } // namespace detail
 } // namespace asio
 
-#endif // defined(BOOST_HAS_PTHREADS)
-
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(BOOST_HAS_PTHREADS)
 
 #include "asio/detail/impl/posix_tss_ptr.hpp"
 #if defined(ASIO_HEADER_ONLY)

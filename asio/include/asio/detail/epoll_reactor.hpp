@@ -15,8 +15,6 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
 #include "asio/detail/config.hpp"
 #include "asio/detail/epoll_reactor_fwd.hpp"
 
@@ -28,7 +26,6 @@
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/reactor_op.hpp"
 #include "asio/detail/select_interrupter.hpp"
-#include "asio/detail/service_base.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/timer_op.hpp"
 #include "asio/detail/timer_queue_base.hpp"
@@ -38,6 +35,8 @@
 #if (__GLIBC__ > 2) || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 8)
 # define ASIO_HAS_TIMERFD 1
 #endif // (__GLIBC__ > 2) || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 8)
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -183,9 +182,9 @@ private:
 } // namespace detail
 } // namespace asio
 
-#endif // defined(ASIO_HAS_EPOLL)
-
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(ASIO_HAS_EPOLL)
 
 #include "asio/detail/impl/epoll_reactor.hpp"
 #if defined(ASIO_HEADER_ONLY)

@@ -1,6 +1,6 @@
 //
-// stream_handle.hpp
-// ~~~~~~~~~~~~~~~~~~
+// windows/stream_handle.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,8 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
+#include "asio/detail/config.hpp"
 #include "asio/windows/basic_stream_handle.hpp"
 
 #if defined(ASIO_HAS_WINDOWS_STREAM_HANDLE) \
@@ -33,7 +32,5 @@ typedef basic_stream_handle<> stream_handle;
 
 #endif // defined(ASIO_HAS_WINDOWS_STREAM_HANDLE)
        //   || defined(GENERATING_DOCUMENTATION)
-
-#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_WINDOWS_STREAM_HANDLE_HPP

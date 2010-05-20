@@ -1,6 +1,6 @@
 //
-// reactor.hpp
-// ~~~~~~~~~~~
+// detail/reactor.hpp
+// ~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,8 +15,6 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
 #include "asio/detail/reactor_fwd.hpp"
 
 #if defined(ASIO_HAS_EPOLL)
@@ -28,7 +26,5 @@
 #else
 # include "asio/detail/select_reactor.hpp"
 #endif
-
-#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_REACTOR_HPP

@@ -16,13 +16,8 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
 #include "asio/detail/config.hpp"
-
-#include "asio/detail/push_options.hpp"
 #include <boost/detail/workaround.hpp>
-#include "asio/detail/pop_options.hpp"
 
 #if !defined(ASIO_DISABLE_SERIAL_PORT)
 # if defined(ASIO_HAS_IOCP) \
@@ -35,13 +30,11 @@
   || defined(GENERATING_DOCUMENTATION)
 
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-# include "asio/detail/push_options.hpp"
 # include <termios.h>
-# include "asio/detail/pop_options.hpp"
 #endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
-#include "asio/error_code.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/error_code.hpp"
 
 #if defined(GENERATING_DOCUMENTATION)
 # define ASIO_OPTION_STORAGE implementation_defined
@@ -50,6 +43,8 @@
 #else
 # define ASIO_OPTION_STORAGE termios
 #endif
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 
@@ -171,6 +166,8 @@ private:
 
 } // namespace asio
 
+#include "asio/detail/pop_options.hpp"
+
 #undef ASIO_OPTION_STORAGE
 
 #include "asio/impl/serial_port_base.hpp"
@@ -180,7 +177,5 @@ private:
 
 #endif // defined(ASIO_HAS_SERIAL_PORT)
        //   || defined(GENERATING_DOCUMENTATION)
-
-#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_SERIAL_PORT_BASE_HPP

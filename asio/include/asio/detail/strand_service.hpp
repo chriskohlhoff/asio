@@ -15,19 +15,14 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
 #include "asio/detail/config.hpp"
-
-#include "asio/detail/push_options.hpp"
 #include <boost/scoped_ptr.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/io_service.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/operation.hpp"
-#include "asio/detail/service_base.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {

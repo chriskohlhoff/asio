@@ -15,22 +15,16 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
 #include "asio/detail/config.hpp"
-
-#include "asio/detail/push_options.hpp"
 #include <cstddef>
 #include <stdexcept>
 #include <typeinfo>
-#include "asio/detail/pop_options.hpp"
-
-#include "asio/error_code.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/service_registry_fwd.hpp"
 #include "asio/detail/task_io_service_fwd.hpp"
 #include "asio/detail/win_iocp_io_service_fwd.hpp"
 #include "asio/detail/wrapped_handler.hpp"
+#include "asio/error_code.hpp"
 
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 # include "asio/detail/winsock_init.hpp"
@@ -38,6 +32,8 @@
   || defined(__osf__)
 # include "asio/detail/signal_init.hpp"
 #endif
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 
@@ -647,6 +643,34 @@ public:
   ASIO_DECL invalid_service_owner();
 };
 
+namespace detail {
+
+// Special derived service id type to keep classes header-file only.
+template <typename Type>
+class service_id
+  : public asio::io_service::id
+{
+};
+
+// Special service base class to keep classes header-file only.
+template <typename Type>
+class service_base
+  : public asio::io_service::service
+{
+public:
+  static asio::detail::service_id<Type> id;
+
+  // Constructor.
+  service_base(asio::io_service& io_service)
+    : asio::io_service::service(io_service)
+  {
+  }
+};
+
+template <typename Type>
+asio::detail::service_id<Type> service_base<Type>::id;
+
+} // namespace detail
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

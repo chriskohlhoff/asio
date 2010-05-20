@@ -1,6 +1,6 @@
 //
-// thread.hpp
-// ~~~~~~~~~~
+// detail/thread.hpp
+// ~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,11 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
+#include "asio/detail/config.hpp"
 
 #if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
 # include "asio/detail/null_thread.hpp"
@@ -52,7 +48,5 @@ typedef posix_thread thread;
 
 } // namespace detail
 } // namespace asio
-
-#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_THREAD_HPP

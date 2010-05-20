@@ -17,8 +17,6 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/error_code.hpp"
-
 namespace asio {
 
 inline error_code::error_code()

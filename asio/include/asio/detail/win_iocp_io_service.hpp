@@ -1,6 +1,6 @@
 //
-// win_iocp_io_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~
+// detail/win_iocp_io_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,17 +15,13 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
+#include "asio/detail/config.hpp"
 #include "asio/detail/win_iocp_io_service_fwd.hpp"
 
 #if defined(ASIO_HAS_IOCP)
 
-#include "asio/detail/push_options.hpp"
 #include <boost/limits.hpp>
 #include <boost/throw_exception.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/io_service.hpp"
 #include "asio/system_error.hpp"
 #include "asio/detail/call_stack.hpp"
@@ -35,13 +31,14 @@
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/op_queue.hpp"
-#include "asio/detail/service_base.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/timer_op.hpp"
 #include "asio/detail/timer_queue_base.hpp"
 #include "asio/detail/timer_queue_fwd.hpp"
 #include "asio/detail/timer_queue_set.hpp"
 #include "asio/detail/win_iocp_operation.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -679,8 +676,8 @@ private:
 } // namespace detail
 } // namespace asio
 
-#endif // defined(ASIO_HAS_IOCP)
-
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(ASIO_HAS_IOCP)
 
 #endif // ASIO_DETAIL_WIN_IOCP_IO_SERVICE_HPP

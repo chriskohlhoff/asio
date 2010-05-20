@@ -15,24 +15,19 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
 #include "asio/detail/config.hpp"
-
-#include "asio/detail/push_options.hpp"
 #include <typeinfo>
-#include "asio/detail/pop_options.hpp"
-
-#include "asio/io_service.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/service_id.hpp"
+#include "asio/io_service.hpp"
 
 #if defined(BOOST_NO_TYPEID)
 # if !defined(ASIO_NO_TYPEID)
 #  define ASIO_NO_TYPEID
 # endif // !defined(ASIO_NO_TYPEID)
 #endif // defined(BOOST_NO_TYPEID)
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {

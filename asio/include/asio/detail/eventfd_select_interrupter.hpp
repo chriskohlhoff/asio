@@ -16,8 +16,6 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
 #include "asio/detail/config.hpp"
 
 #if defined(__linux__)
@@ -30,6 +28,8 @@
 #endif // defined(__linux__)
 
 #if defined(ASIO_HAS_EVENTFD)
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -69,9 +69,9 @@ private:
 } // namespace detail
 } // namespace asio
 
-#endif // defined(ASIO_HAS_EVENTFD)
-
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(ASIO_HAS_EVENTFD)
 
 #include "asio/detail/impl/eventfd_select_interrupter.hpp"
 #if defined(ASIO_HEADER_ONLY)

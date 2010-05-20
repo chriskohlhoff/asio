@@ -1,6 +1,6 @@
 //
-// timer_queue.hpp
-// ~~~~~~~~~~~~~~~
+// detail/timer_queue.hpp
+// ~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,21 +15,19 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
 #include <cstddef>
 #include <memory>
 #include <vector>
 #include <boost/config.hpp>
 #include <boost/limits.hpp>
-#include "asio/detail/pop_options.hpp"
-
-#include "asio/error.hpp"
 #include "asio/detail/hash_map.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/timer_op.hpp"
 #include "asio/detail/timer_queue_base.hpp"
+#include "asio/error.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {

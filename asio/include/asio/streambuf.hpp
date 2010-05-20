@@ -15,11 +15,11 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/basic_streambuf.hpp"
+#include "asio/detail/config.hpp"
 
 #if !defined(BOOST_NO_IOSTREAM)
+
+#include "asio/basic_streambuf.hpp"
 
 namespace asio {
 
@@ -29,7 +29,5 @@ typedef basic_streambuf<> streambuf;
 } // namespace asio
 
 #endif // !defined(BOOST_NO_IOSTREAM)
-
-#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_STREAMBUF_HPP

@@ -9,6 +9,7 @@ nobase_include_HEADERS = \
 	asio/basic_socket.hpp \
 	asio/basic_socket_iostream.hpp \
 	asio/basic_socket_streambuf.hpp \
+	asio/basic_streambuf_fwd.hpp \
 	asio/basic_streambuf.hpp \
 	asio/basic_stream_socket.hpp \
 	asio/buffered_read_stream_fwd.hpp \
@@ -49,16 +50,25 @@ nobase_include_HEADERS = \
 	asio/detail/hash_map.hpp \
 	asio/detail/impl/epoll_reactor.hpp \
 	asio/detail/impl/epoll_reactor.ipp \
+	asio/detail/impl/eventfd_select_interrupter.hpp \
+	asio/detail/impl/eventfd_select_interrupter.ipp \
+	asio/detail/impl/pipe_select_interrupter.hpp \
+	asio/detail/impl/pipe_select_interrupter.ipp \
 	asio/detail/impl/posix_mutex.hpp \
 	asio/detail/impl/posix_mutex.ipp \
+	asio/detail/impl/posix_thread.hpp \
+	asio/detail/impl/posix_thread.ipp \
 	asio/detail/impl/posix_tss_ptr.hpp \
 	asio/detail/impl/posix_tss_ptr.ipp \
-	asio/detail/impl/reactive_socket_service.hpp \
 	asio/detail/impl/service_registry.hpp \
 	asio/detail/impl/service_registry.ipp \
 	asio/detail/impl/socket_ops.ipp \
+	asio/detail/impl/strand_service.hpp \
+	asio/detail/impl/strand_service.ipp \
 	asio/detail/impl/task_io_service.hpp \
 	asio/detail/impl/task_io_service.ipp \
+	asio/detail/impl/throw_error.hpp \
+	asio/detail/impl/throw_error.ipp \
 	asio/detail/io_control.hpp \
 	asio/detail/kqueue_reactor_fwd.hpp \
 	asio/detail/kqueue_reactor.hpp \
@@ -92,13 +102,12 @@ nobase_include_HEADERS = \
 	asio/detail/reactor.hpp \
 	asio/detail/reactor_op.hpp \
 	asio/detail/reactor_op_queue.hpp \
+	asio/detail/regex_fwd.hpp \
 	asio/detail/resolver_service.hpp \
 	asio/detail/scoped_lock.hpp \
 	asio/detail/select_interrupter.hpp \
 	asio/detail/select_reactor_fwd.hpp \
 	asio/detail/select_reactor.hpp \
-	asio/detail/service_base.hpp \
-	asio/detail/service_id.hpp \
 	asio/detail/service_registry_fwd.hpp \
 	asio/detail/service_registry.hpp \
 	asio/detail/signal_blocker.hpp \
@@ -166,9 +175,20 @@ nobase_include_HEADERS = \
 	asio/ip/basic_resolver.hpp \
 	asio/ip/basic_resolver_iterator.hpp \
 	asio/ip/basic_resolver_query.hpp \
+	asio/ip/detail/endpoint.hpp \
+	asio/ip/detail/impl/endpoint.hpp \
+	asio/ip/detail/impl/endpoint.ipp \
 	asio/ip/detail/socket_option.hpp \
 	asio/ip/host_name.hpp \
 	asio/ip/icmp.hpp \
+	asio/ip/impl/address.hpp \
+	asio/ip/impl/address.ipp \
+	asio/ip/impl/address_v4.hpp \
+	asio/ip/impl/address_v4.ipp \
+	asio/ip/impl/address_v6.hpp \
+	asio/ip/impl/address_v6.ipp \
+	asio/ip/impl/basic_endpoint.hpp \
+	asio/ip/impl/host_name.ipp \
 	asio/ip/multicast.hpp \
 	asio/ip/resolver_query_base.hpp \
 	asio/ip/resolver_service.hpp \

@@ -15,18 +15,15 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
 #include "asio/detail/config.hpp"
+#include "asio/ip/address.hpp"
+#include "asio/ip/detail/endpoint.hpp"
 
-#include "asio/detail/push_options.hpp"
 #if !defined(BOOST_NO_IOSTREAM)
 # include <iosfwd>
 #endif // !defined(BOOST_NO_IOSTREAM)
-#include "asio/detail/pop_options.hpp"
 
-#include "asio/ip/address.hpp"
-#include "asio/ip/detail/endpoint.hpp"
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ip {

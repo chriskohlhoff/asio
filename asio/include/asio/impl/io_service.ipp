@@ -15,12 +15,8 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
 #include <boost/limits.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/io_service.hpp"
 #include "asio/detail/service_registry.hpp"
 #include "asio/detail/throw_error.hpp"
@@ -30,6 +26,8 @@
 #else
 # include "asio/detail/task_io_service.hpp"
 #endif
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 

@@ -1,6 +1,6 @@
 //
-// basic_stream_descriptor.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// posix/basic_stream_descriptor.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,20 +15,17 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
 #include <cstddef>
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
-
+#include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 #include "asio/posix/basic_descriptor.hpp"
 #include "asio/posix/stream_descriptor_service.hpp"
-#include "asio/detail/throw_error.hpp"
 
 #if defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR) \
   || defined(GENERATING_DOCUMENTATION)
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace posix {
@@ -296,9 +293,9 @@ public:
 } // namespace posix
 } // namespace asio
 
+#include "asio/detail/pop_options.hpp"
+
 #endif // defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
        //   || defined(GENERATING_DOCUMENTATION)
-
-#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_POSIX_BASIC_STREAM_DESCRIPTOR_HPP

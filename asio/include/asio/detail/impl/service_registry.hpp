@@ -17,8 +17,6 @@
 
 #include "asio/detail/push_options.hpp"
 
-#include "asio/detail/service_registry.hpp"
-
 namespace asio {
 namespace detail {
 

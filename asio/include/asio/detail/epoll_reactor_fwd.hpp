@@ -15,14 +15,10 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
 #if !defined(ASIO_DISABLE_EPOLL)
 #if defined(__linux__) // This service is only supported on Linux.
 
-#include "asio/detail/push_options.hpp"
 #include <linux/version.h>
-#include "asio/detail/pop_options.hpp"
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION (2,5,45) // Only kernels >= 2.5.45.
 
@@ -40,7 +36,5 @@ class epoll_reactor;
 #endif // LINUX_VERSION_CODE >= KERNEL_VERSION (2,5,45)
 #endif // defined(__linux__)
 #endif // !defined(ASIO_DISABLE_EPOLL)
-
-#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_EPOLL_REACTOR_FWD_HPP

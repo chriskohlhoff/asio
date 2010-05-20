@@ -1,6 +1,6 @@
 //
-// reactive_socket_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/reactive_socket_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,8 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
+#include "asio/detail/config.hpp"
 #include "asio/buffer.hpp"
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
@@ -31,6 +30,8 @@
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {

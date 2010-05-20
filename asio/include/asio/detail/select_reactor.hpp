@@ -1,6 +1,6 @@
 //
-// select_reactor.hpp
-// ~~~~~~~~~~~~~~~~~~
+// detail/select_reactor.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,16 +15,9 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/socket_types.hpp" // Must come before posix_time.
-
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
 #include <cstddef>
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
-
-#include "asio/io_service.hpp"
+#include "asio/detail/socket_types.hpp" // Must come before posix_time.
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/fd_set_adapter.hpp"
 #include "asio/detail/mutex.hpp"
@@ -34,7 +27,6 @@
 #include "asio/detail/reactor_op_queue.hpp"
 #include "asio/detail/select_interrupter.hpp"
 #include "asio/detail/select_reactor_fwd.hpp"
-#include "asio/detail/service_base.hpp"
 #include "asio/detail/signal_blocker.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -43,6 +35,9 @@
 #include "asio/detail/timer_queue_base.hpp"
 #include "asio/detail/timer_queue_fwd.hpp"
 #include "asio/detail/timer_queue_set.hpp"
+#include "asio/io_service.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
