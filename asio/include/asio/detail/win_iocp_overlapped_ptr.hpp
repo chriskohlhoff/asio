@@ -20,6 +20,7 @@
 
 #if defined(ASIO_HAS_IOCP)
 
+#include "asio/io_service.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/win_iocp_io_service.hpp"
