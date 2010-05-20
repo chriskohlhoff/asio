@@ -94,7 +94,7 @@ public:
   
     // Set up default serial port options.
     termios ios;
-    descriptor_ops::clear_error(ec);
+    errno = 0;
     s = descriptor_ops::error_wrapper(::tcgetattr(fd, &ios), ec);
     if (s >= 0)
     {
@@ -110,7 +110,7 @@ public:
 #endif
       ios.c_iflag |= IGNPAR;
       ios.c_cflag |= CREAD | CLOCAL;
-      descriptor_ops::clear_error(ec);
+      errno = 0;
       s = descriptor_ops::error_wrapper(::tcsetattr(fd, TCSANOW, &ios), ec);
     }
     if (s < 0)
@@ -169,7 +169,7 @@ public:
       const SettableSerialPortOption& option, asio::error_code& ec)
   {
     termios ios;
-    descriptor_ops::clear_error(ec);
+    errno = 0;
     descriptor_ops::error_wrapper(::tcgetattr(
           descriptor_service_.native(impl), &ios), ec);
     if (ec)
@@ -178,7 +178,7 @@ public:
     if (option.store(ios, ec))
       return ec;
 
-    descriptor_ops::clear_error(ec);
+    errno = 0;
     descriptor_ops::error_wrapper(::tcsetattr(
           descriptor_service_.native(impl), TCSANOW, &ios), ec);
     return ec;
@@ -190,7 +190,7 @@ public:
       GettableSerialPortOption& option, asio::error_code& ec) const
   {
     termios ios;
-    descriptor_ops::clear_error(ec);
+    errno = 0;
     descriptor_ops::error_wrapper(::tcgetattr(
           descriptor_service_.native(impl), &ios), ec);
     if (ec)
@@ -203,7 +203,7 @@ public:
   asio::error_code send_break(implementation_type& impl,
       asio::error_code& ec)
   {
-    descriptor_ops::clear_error(ec);
+    errno = 0;
     descriptor_ops::error_wrapper(::tcsendbreak(
           descriptor_service_.native(impl), 0), ec);
     return ec;

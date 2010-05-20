@@ -16,11 +16,12 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <cerrno>
-#include "asio/detail/socket_types.hpp"
-#include "asio/error.hpp"
 
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
+#include <cstddef>
+#include "asio/error_code.hpp"
+#include "asio/detail/socket_types.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -28,139 +29,34 @@ namespace asio {
 namespace detail {
 namespace descriptor_ops {
 
-inline void clear_error(asio::error_code& ec)
-{
-  errno = 0;
-  ec = asio::error_code();
-}
+ASIO_DECL int open(const char* path, int flags, asio::error_code& ec);
 
-template <typename ReturnType>
-inline ReturnType error_wrapper(ReturnType return_value,
-    asio::error_code& ec)
-{
-  ec = asio::error_code(errno,
-      asio::error::get_system_category());
-  return return_value;
-}
-
-inline int open(const char* path, int flags, asio::error_code& ec)
-{
-  clear_error(ec);
-  int result = error_wrapper(::open(path, flags), ec);
-  if (result >= 0)
-    clear_error(ec);
-  return result;
-}
-
-inline int close(int d, asio::error_code& ec)
-{
-  clear_error(ec);
-  int result = error_wrapper(::close(d), ec);
-  if (result == 0)
-    clear_error(ec);
-  return result;
-}
-
-inline void init_buf_iov_base(void*& base, void* addr)
-{
-  base = addr;
-}
-
-template <typename T>
-inline void init_buf_iov_base(T& base, void* addr)
-{
-  base = static_cast<T>(addr);
-}
+ASIO_DECL int close(int d, asio::error_code& ec);
 
 typedef iovec buf;
 
-inline void init_buf(buf& b, void* data, size_t size)
-{
-  init_buf_iov_base(b.iov_base, data);
-  b.iov_len = size;
-}
+ASIO_DECL std::size_t sync_read(int d, buf* bufs, std::size_t count,
+    bool all_empty, bool non_blocking, asio::error_code& ec);
 
-inline void init_buf(buf& b, const void* data, size_t size)
-{
-  init_buf_iov_base(b.iov_base, const_cast<void*>(data));
-  b.iov_len = size;
-}
+ASIO_DECL bool non_blocking_read(int d, buf* bufs, size_t count,
+    asio::error_code& ec, std::size_t& bytes_transferred);
 
-inline int scatter_read(int d, buf* bufs, size_t count,
-    asio::error_code& ec)
-{
-  clear_error(ec);
-  int result = error_wrapper(::readv(d, bufs, static_cast<int>(count)), ec);
-  if (result >= 0)
-    clear_error(ec);
-  return result;
-}
+ASIO_DECL std::size_t sync_write(int d, const buf* bufs, std::size_t count,
+    bool all_empty, bool non_blocking, asio::error_code& ec);
 
-inline int gather_write(int d, const buf* bufs, size_t count,
-    asio::error_code& ec)
-{
-  clear_error(ec);
-  int result = error_wrapper(::writev(d, bufs, static_cast<int>(count)), ec);
-  if (result >= 0)
-    clear_error(ec);
-  return result;
-}
+ASIO_DECL bool non_blocking_write(int d, const buf* bufs, size_t count,
+    asio::error_code& ec, std::size_t& bytes_transferred);
 
-inline int ioctl(int d, long cmd, ioctl_arg_type* arg,
-    asio::error_code& ec)
-{
-  clear_error(ec);
-  int result = error_wrapper(::ioctl(d, cmd, arg), ec);
-  if (result >= 0)
-    clear_error(ec);
-  return result;
-}
+ASIO_DECL int ioctl(int d, long cmd, ioctl_arg_type* arg,
+    asio::error_code& ec);
 
-inline int fcntl(int d, long cmd, asio::error_code& ec)
-{
-  clear_error(ec);
-  int result = error_wrapper(::fcntl(d, cmd), ec);
-  if (result != -1)
-    clear_error(ec);
-  return result;
-}
+ASIO_DECL int fcntl(int d, long cmd, asio::error_code& ec);
 
-inline int fcntl(int d, long cmd, long arg, asio::error_code& ec)
-{
-  clear_error(ec);
-  int result = error_wrapper(::fcntl(d, cmd, arg), ec);
-  if (result != -1)
-    clear_error(ec);
-  return result;
-}
+ASIO_DECL int fcntl(int d, long cmd, long arg, asio::error_code& ec);
 
-inline int poll_read(int d, asio::error_code& ec)
-{
-  clear_error(ec);
-  pollfd fds;
-  fds.fd = d;
-  fds.events = POLLIN;
-  fds.revents = 0;
-  clear_error(ec);
-  int result = error_wrapper(::poll(&fds, 1, -1), ec);
-  if (result >= 0)
-    clear_error(ec);
-  return result;
-}
+ASIO_DECL int poll_read(int d, asio::error_code& ec);
 
-inline int poll_write(int d, asio::error_code& ec)
-{
-  clear_error(ec);
-  pollfd fds;
-  fds.fd = d;
-  fds.events = POLLOUT;
-  fds.revents = 0;
-  clear_error(ec);
-  int result = error_wrapper(::poll(&fds, 1, -1), ec);
-  if (result >= 0)
-    clear_error(ec);
-  return result;
-}
+ASIO_DECL int poll_write(int d, asio::error_code& ec);
 
 } // namespace descriptor_ops
 } // namespace detail
@@ -169,5 +65,9 @@ inline int poll_write(int d, asio::error_code& ec)
 #include "asio/detail/pop_options.hpp"
 
 #endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/detail/impl/descriptor_ops.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_DETAIL_DESCRIPTOR_OPS_HPP

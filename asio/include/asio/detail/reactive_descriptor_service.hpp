@@ -80,9 +80,6 @@ public:
     reactor::per_descriptor_data reactor_data_;
   };
 
-  // The maximum number of buffers to support in a single operation.
-  enum { max_buffers = 64 < max_iov_len ? 64 : max_iov_len };
-
   // Constructor.
   reactive_descriptor_service(asio::io_service& io_service)
     : io_service_impl_(asio::use_service<io_service_impl>(io_service)),
@@ -209,12 +206,6 @@ public:
   asio::error_code io_control(implementation_type& impl,
       IO_Control_Command& command, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return ec;
-    }
-
     descriptor_ops::ioctl(impl.descriptor_, command.name(),
         static_cast<ioctl_arg_type*>(command.data()), ec);
 
@@ -248,55 +239,18 @@ public:
   size_t write_some(implementation_type& impl,
       const ConstBufferSequence& buffers, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return 0;
-    }
-
     buffer_sequence_adapter<asio::const_buffer,
         ConstBufferSequence> bufs(buffers);
 
-    // A request to read_some 0 bytes on a stream is a no-op.
-    if (bufs.all_empty())
-    {
-      ec = asio::error_code();
-      return 0;
-    }
-
-    // Send the data.
-    for (;;)
-    {
-      // Try to complete the operation without blocking.
-      int bytes_sent = descriptor_ops::gather_write(
-          impl.descriptor_, bufs.buffers(), bufs.count(), ec);
-
-      // Check if operation succeeded.
-      if (bytes_sent >= 0)
-        return bytes_sent;
-
-      // Operation failed.
-      if ((impl.flags_ & implementation_type::user_set_non_blocking)
-          || (ec != asio::error::would_block
-            && ec != asio::error::try_again))
-        return 0;
-
-      // Wait for descriptor to become ready.
-      if (descriptor_ops::poll_write(impl.descriptor_, ec) < 0)
-        return 0;
-    }
+    return descriptor_ops::sync_write(impl.descriptor_,
+        bufs.buffers(), bufs.count(), bufs.all_empty(),
+        impl.flags_ & implementation_type::user_set_non_blocking, ec);
   }
 
   // Wait until data can be written without blocking.
   size_t write_some(implementation_type& impl,
       const null_buffers&, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return 0;
-    }
-
     // Wait for descriptor to become ready.
     descriptor_ops::poll_write(impl.descriptor_, ec);
 
@@ -322,26 +276,8 @@ public:
       buffer_sequence_adapter<asio::const_buffer,
           ConstBufferSequence> bufs(o->buffers_);
 
-      for (;;)
-      {
-        // Write the data.
-        asio::error_code ec;
-        int bytes = descriptor_ops::gather_write(
-            o->descriptor_, bufs.buffers(), bufs.count(), ec);
-
-        // Retry operation if interrupted by signal.
-        if (ec == asio::error::interrupted)
-          continue;
-
-        // Check if we need to run the operation again.
-        if (ec == asio::error::would_block
-            || ec == asio::error::try_again)
-          return false;
-
-        o->ec_ = ec;
-        o->bytes_transferred_ = (bytes < 0 ? 0 : bytes);
-        return true;
-      }
+      return descriptor_ops::non_blocking_write(o->descriptor_,
+          bufs.buffers(), bufs.count(), o->ec_, o->bytes_transferred_);
     }
 
   private:
@@ -382,7 +318,7 @@ public:
           handler(o->handler_, o->ec_, o->bytes_transferred_);
         ptr.reset();
         asio::detail::fenced_block b;
-        asio_handler_invoke_helpers::invoke(handler, handler);
+        asio_handler_invoke_helpers::invoke(handler, handler.handler_);
       }
     }
 
@@ -428,62 +364,18 @@ public:
   size_t read_some(implementation_type& impl,
       const MutableBufferSequence& buffers, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return 0;
-    }
-
     buffer_sequence_adapter<asio::mutable_buffer,
         MutableBufferSequence> bufs(buffers);
 
-    // A request to read_some 0 bytes on a stream is a no-op.
-    if (bufs.all_empty())
-    {
-      ec = asio::error_code();
-      return 0;
-    }
-
-    // Read some data.
-    for (;;)
-    {
-      // Try to complete the operation without blocking.
-      int bytes_read = descriptor_ops::scatter_read(
-          impl.descriptor_, bufs.buffers(), bufs.count(), ec);
-
-      // Check if operation succeeded.
-      if (bytes_read > 0)
-        return bytes_read;
-
-      // Check for EOF.
-      if (bytes_read == 0)
-      {
-        ec = asio::error::eof;
-        return 0;
-      }
-
-      // Operation failed.
-      if ((impl.flags_ & implementation_type::user_set_non_blocking)
-          || (ec != asio::error::would_block
-            && ec != asio::error::try_again))
-        return 0;
-
-      // Wait for descriptor to become ready.
-      if (descriptor_ops::poll_read(impl.descriptor_, ec) < 0)
-        return 0;
-    }
+    return descriptor_ops::sync_read(impl.descriptor_,
+        bufs.buffers(), bufs.count(), bufs.all_empty(),
+        impl.flags_ & implementation_type::user_set_non_blocking, ec);
   }
 
   // Wait until data can be read without blocking.
   size_t read_some(implementation_type& impl,
       const null_buffers&, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return 0;
-    }
-
     // Wait for descriptor to become ready.
     descriptor_ops::poll_read(impl.descriptor_, ec);
 
@@ -509,28 +401,8 @@ public:
       buffer_sequence_adapter<asio::mutable_buffer,
           MutableBufferSequence> bufs(o->buffers_);
 
-      for (;;)
-      {
-        // Read some data.
-        asio::error_code ec;
-        int bytes = descriptor_ops::scatter_read(
-            o->descriptor_, bufs.buffers(), bufs.count(), ec);
-        if (bytes == 0)
-          ec = asio::error::eof;
-
-        // Retry operation if interrupted by signal.
-        if (ec == asio::error::interrupted)
-          continue;
-
-        // Check if we need to run the operation again.
-        if (ec == asio::error::would_block
-            || ec == asio::error::try_again)
-          return false;
-
-        o->ec_ = ec;
-        o->bytes_transferred_ = (bytes < 0 ? 0 : bytes);
-        return true;
-      }
+      return descriptor_ops::non_blocking_read(o->descriptor_,
+          bufs.buffers(), bufs.count(), o->ec_, o->bytes_transferred_);
     }
 
   private:
@@ -571,7 +443,7 @@ public:
           handler(o->handler_, o->ec_, o->bytes_transferred_);
         ptr.reset();
         asio::detail::fenced_block b;
-        asio_handler_invoke_helpers::invoke(handler, handler);
+        asio_handler_invoke_helpers::invoke(handler, handler.handler_);
       }
     }
 
