@@ -122,17 +122,16 @@ namespace detail
         stream_(stream),
         buffers_(buffers),
         total_transferred_(0),
-        handler_(handler),
-        start_(true)
+        handler_(handler)
     {
     }
 
     void operator()(const asio::error_code& ec,
-        std::size_t bytes_transferred)
+        std::size_t bytes_transferred, bool start = false)
     {
-      switch (start_)
+      switch (start)
       {
-        case true: start_ = false;
+        case true:
         buffers_.prepare(this->check(ec, total_transferred_));
         for (;;)
         {
@@ -156,7 +155,6 @@ namespace detail
       const_buffer, ConstBufferSequence> buffers_;
     std::size_t total_transferred_;
     WriteHandler handler_;
-    bool start_;
   };
 
   template <typename AsyncWriteStream,
@@ -175,18 +173,17 @@ namespace detail
         stream_(stream),
         buffer_(buffers),
         total_transferred_(0),
-        handler_(handler),
-        start_(true)
+        handler_(handler)
     {
     }
 
     void operator()(const asio::error_code& ec,
-        std::size_t bytes_transferred)
+        std::size_t bytes_transferred, bool start = false)
     {
       std::size_t n = 0;
-      switch (start_)
+      switch (start)
       {
-        case true: start_ = false;
+        case true:
         n = this->check(ec, total_transferred_);
         for (;;)
         {
@@ -209,7 +206,6 @@ namespace detail
     asio::mutable_buffer buffer_;
     std::size_t total_transferred_;
     WriteHandler handler_;
-    bool start_;
   };
 
   template <typename AsyncWriteStream,
@@ -228,18 +224,17 @@ namespace detail
         stream_(stream),
         buffer_(buffers),
         total_transferred_(0),
-        handler_(handler),
-        start_(true)
+        handler_(handler)
     {
     }
 
     void operator()(const asio::error_code& ec,
-        std::size_t bytes_transferred)
+        std::size_t bytes_transferred, bool start = false)
     {
       std::size_t n = 0;
-      switch (start_)
+      switch (start)
       {
-        case true: start_ = false;
+        case true:
         n = this->check(ec, total_transferred_);
         for (;;)
         {
@@ -262,7 +257,6 @@ namespace detail
     asio::const_buffer buffer_;
     std::size_t total_transferred_;
     WriteHandler handler_;
-    bool start_;
   };
 
   template <typename AsyncWriteStream, typename ConstBufferSequence,
@@ -305,7 +299,7 @@ inline void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
   detail::write_op<AsyncWriteStream, ConstBufferSequence,
     CompletionCondition, WriteHandler>(
       s, buffers, completion_condition, handler)(
-        asio::error_code(), 0);
+        asio::error_code(), 0, true);
 }
 
 template <typename AsyncWriteStream, typename ConstBufferSequence,
