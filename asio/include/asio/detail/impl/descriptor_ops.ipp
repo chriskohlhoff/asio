@@ -46,17 +46,52 @@ int open(const char* path, int flags, asio::error_code& ec)
   return result;
 }
 
-int close(int d, asio::error_code& ec)
+int close(int d, state_type& state, asio::error_code& ec)
 {
-  errno = 0;
-  int result = (d != -1) ? error_wrapper(::close(d), ec) : 0;
+  int result = 0;
+  if (d != -1)
+  {
+    if (state & internal_non_blocking)
+    {
+      ioctl_arg_type arg = 0;
+      ::ioctl(d, FIONBIO, &arg);
+      state &= ~internal_non_blocking;
+    }
+
+    errno = 0;
+    result = error_wrapper(::close(d), ec);
+  }
+
   if (result == 0)
     ec = asio::error_code();
   return result;
 }
 
-std::size_t sync_read(int d, buf* bufs, std::size_t count,
-    bool all_empty, bool non_blocking, asio::error_code& ec)
+bool set_internal_non_blocking(int d,
+    state_type& state, asio::error_code& ec)
+{
+  if (d == -1)
+  {
+    ec = asio::error::bad_descriptor;
+    return 0;
+  }
+
+  errno = 0;
+  ioctl_arg_type arg = 1;
+  int result = error_wrapper(::ioctl(d, FIONBIO, &arg), ec);
+
+  if (result >= 0)
+  {
+    ec = asio::error_code();
+    state |= internal_non_blocking;
+    return true;
+  }
+
+  return false;
+}
+
+std::size_t sync_read(int d, state_type state, buf* bufs,
+    std::size_t count, bool all_empty, asio::error_code& ec)
 {
   if (d == -1)
   {
@@ -90,7 +125,7 @@ std::size_t sync_read(int d, buf* bufs, std::size_t count,
     }
 
     // Operation failed.
-    if (non_blocking
+    if ((state & user_set_non_blocking)
         || (ec != asio::error::would_block
           && ec != asio::error::try_again))
       return 0;
@@ -101,7 +136,7 @@ std::size_t sync_read(int d, buf* bufs, std::size_t count,
   }
 }
 
-bool non_blocking_read(int d, buf* bufs, size_t count,
+bool non_blocking_read(int d, buf* bufs, std::size_t count,
     asio::error_code& ec, std::size_t& bytes_transferred)
 {
   for (;;)
@@ -139,8 +174,8 @@ bool non_blocking_read(int d, buf* bufs, size_t count,
   }
 }
 
-std::size_t sync_write(int d, const buf* bufs, std::size_t count,
-    bool all_empty, bool non_blocking, asio::error_code& ec)
+std::size_t sync_write(int d, state_type state, const buf* bufs,
+    std::size_t count, bool all_empty, asio::error_code& ec)
 {
   if (d == -1)
   {
@@ -167,7 +202,7 @@ std::size_t sync_write(int d, const buf* bufs, std::size_t count,
       return bytes;
 
     // Operation failed.
-    if (non_blocking
+    if ((state & user_set_non_blocking)
         || (ec != asio::error::would_block
           && ec != asio::error::try_again))
       return 0;
@@ -178,7 +213,7 @@ std::size_t sync_write(int d, const buf* bufs, std::size_t count,
   }
 }
 
-bool non_blocking_write(int d, const buf* bufs, size_t count,
+bool non_blocking_write(int d, const buf* bufs, std::size_t count,
     asio::error_code& ec, std::size_t& bytes_transferred)
 {
   for (;;)
@@ -209,8 +244,8 @@ bool non_blocking_write(int d, const buf* bufs, size_t count,
   }
 }
 
-int ioctl(int d, long cmd, ioctl_arg_type* arg,
-    asio::error_code& ec)
+int ioctl(int d, state_type& state, long cmd,
+    ioctl_arg_type* arg, asio::error_code& ec)
 {
   if (d == -1)
   {
@@ -220,8 +255,33 @@ int ioctl(int d, long cmd, ioctl_arg_type* arg,
 
   errno = 0;
   int result = error_wrapper(::ioctl(d, cmd, arg), ec);
+
   if (result >= 0)
+  {
     ec = asio::error_code();
+
+    // When updating the non-blocking mode we always perform the ioctl syscall,
+    // even if the flags would otherwise indicate that the descriptor is
+    // already in the correct state. This ensures that the underlying
+    // descriptor is put into the state that has been requested by the user. If
+    // the ioctl syscall was successful then we need to update the flags to
+    // match.
+    if (cmd == FIONBIO)
+    {
+      if (*arg)
+      {
+        state |= user_set_non_blocking;
+      }
+      else
+      {
+        // Clearing the non-blocking mode always overrides any internally-set
+        // non-blocking flag. Any subsequent asynchronous operations will need
+        // to re-enable non-blocking I/O.
+        state &= ~(user_set_non_blocking | internal_non_blocking);
+      }
+    }
+  }
+
   return result;
 }
 

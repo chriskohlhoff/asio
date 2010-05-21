@@ -50,7 +50,7 @@ public:
     // Default constructor.
     implementation_type()
       : descriptor_(-1),
-        flags_(0)
+        state_(0)
     {
     }
 
@@ -61,20 +61,8 @@ public:
     // The native descriptor representation.
     int descriptor_;
 
-    enum
-    {
-      // The user wants a non-blocking descriptor.
-      user_set_non_blocking = 1,
-
-      // The descriptor has been set non-blocking.
-      internal_non_blocking = 2,
-
-      // Helper "flag" used to determine whether the descriptor is non-blocking.
-      non_blocking = user_set_non_blocking | internal_non_blocking
-    };
-
-    // Flags indicating the current state of the descriptor.
-    unsigned char flags_;
+    // The current state of the descriptor.
+    descriptor_ops::state_type state_;
 
     // Per-descriptor data used by the reactor.
     reactor::per_descriptor_data reactor_data_;
@@ -97,30 +85,17 @@ public:
   void construct(implementation_type& impl)
   {
     impl.descriptor_ = -1;
-    impl.flags_ = 0;
+    impl.state_ = 0;
   }
 
   // Destroy a descriptor implementation.
   void destroy(implementation_type& impl)
   {
-    if (impl.descriptor_ != -1)
-    {
+    if (is_open(impl))
       reactor_.close_descriptor(impl.descriptor_, impl.reactor_data_);
 
-      if (impl.flags_ & implementation_type::internal_non_blocking)
-      {
-        ioctl_arg_type non_blocking = 0;
-        asio::error_code ignored_ec;
-        descriptor_ops::ioctl(impl.descriptor_,
-            FIONBIO, &non_blocking, ignored_ec);
-        impl.flags_ &= ~implementation_type::internal_non_blocking;
-      }
-
-      asio::error_code ignored_ec;
-      descriptor_ops::close(impl.descriptor_, ignored_ec);
-
-      impl.descriptor_ = -1;
-    }
+    asio::error_code ignored_ec;
+    descriptor_ops::close(impl.descriptor_, impl.state_, ignored_ec);
   }
 
   // Assign a native descriptor to a descriptor implementation.
@@ -142,7 +117,7 @@ public:
     }
 
     impl.descriptor_ = native_descriptor;
-    impl.flags_ = 0;
+    impl.state_ = 0;
     ec = asio::error_code();
     return ec;
   }
@@ -158,25 +133,11 @@ public:
       asio::error_code& ec)
   {
     if (is_open(impl))
-    {
       reactor_.close_descriptor(impl.descriptor_, impl.reactor_data_);
 
-      if (impl.flags_ & implementation_type::internal_non_blocking)
-      {
-        ioctl_arg_type non_blocking = 0;
-        asio::error_code ignored_ec;
-        descriptor_ops::ioctl(impl.descriptor_,
-            FIONBIO, &non_blocking, ignored_ec);
-        impl.flags_ &= ~implementation_type::internal_non_blocking;
-      }
+    if (descriptor_ops::close(impl.descriptor_, impl.state_, ec) == 0)
+      construct(impl);
 
-      if (descriptor_ops::close(impl.descriptor_, ec) == -1)
-        return ec;
-
-      impl.descriptor_ = -1;
-    }
-
-    ec = asio::error_code();
     return ec;
   }
 
@@ -206,31 +167,8 @@ public:
   asio::error_code io_control(implementation_type& impl,
       IO_Control_Command& command, asio::error_code& ec)
   {
-    descriptor_ops::ioctl(impl.descriptor_, command.name(),
-        static_cast<ioctl_arg_type*>(command.data()), ec);
-
-    // When updating the non-blocking mode we always perform the ioctl syscall,
-    // even if the flags would otherwise indicate that the descriptor is
-    // already in the correct state. This ensures that the underlying
-    // descriptor is put into the state that has been requested by the user. If
-    // the ioctl syscall was successful then we need to update the flags to
-    // match.
-    if (!ec && command.name() == static_cast<int>(FIONBIO))
-    {
-      if (*static_cast<ioctl_arg_type*>(command.data()))
-      {
-        impl.flags_ |= implementation_type::user_set_non_blocking;
-      }
-      else
-      {
-        // Clearing the non-blocking mode always overrides any internally-set
-        // non-blocking flag. Any subsequent asynchronous operations will need
-        // to re-enable non-blocking I/O.
-        impl.flags_ &= ~(implementation_type::user_set_non_blocking
-            | implementation_type::internal_non_blocking);
-      }
-    }
-
+    descriptor_ops::ioctl(impl.descriptor_, impl.state_,
+        command.name(), static_cast<ioctl_arg_type*>(command.data()), ec);
     return ec;
   }
 
@@ -242,9 +180,8 @@ public:
     buffer_sequence_adapter<asio::const_buffer,
         ConstBufferSequence> bufs(buffers);
 
-    return descriptor_ops::sync_write(impl.descriptor_,
-        bufs.buffers(), bufs.count(), bufs.all_empty(),
-        impl.flags_ & implementation_type::user_set_non_blocking, ec);
+    return descriptor_ops::sync_write(impl.descriptor_, impl.state_,
+        bufs.buffers(), bufs.count(), bufs.all_empty(), ec);
   }
 
   // Wait until data can be written without blocking.
@@ -367,9 +304,8 @@ public:
     buffer_sequence_adapter<asio::mutable_buffer,
         MutableBufferSequence> bufs(buffers);
 
-    return descriptor_ops::sync_read(impl.descriptor_,
-        bufs.buffers(), bufs.count(), bufs.all_empty(),
-        impl.flags_ & implementation_type::user_set_non_blocking, ec);
+    return descriptor_ops::sync_read(impl.descriptor_, impl.state_,
+        bufs.buffers(), bufs.count(), bufs.all_empty(), ec);
   }
 
   // Wait until data can be read without blocking.
@@ -492,37 +428,17 @@ private:
   {
     if (!noop)
     {
-      if (is_open(impl))
+      if ((impl.state_ & descriptor_ops::non_blocking) ||
+          descriptor_ops::set_internal_non_blocking(
+            impl.descriptor_, impl.state_, op->ec_))
       {
-        if (is_non_blocking(impl) || set_non_blocking(impl, op->ec_))
-        {
-          reactor_.start_op(op_type, impl.descriptor_,
-              impl.reactor_data_, op, non_blocking);
-          return;
-        }
+        reactor_.start_op(op_type, impl.descriptor_,
+            impl.reactor_data_, op, non_blocking);
+        return;
       }
-      else
-        op->ec_ = asio::error::bad_descriptor;
     }
 
     io_service_impl_.post_immediate_completion(op);
-  }
-
-  // Determine whether the descriptor has been set non-blocking.
-  bool is_non_blocking(implementation_type& impl) const
-  {
-    return (impl.flags_ & implementation_type::non_blocking);
-  }
-
-  // Set the internal non-blocking flag.
-  bool set_non_blocking(implementation_type& impl,
-      asio::error_code& ec)
-  {
-    ioctl_arg_type non_blocking = 1;
-    if (descriptor_ops::ioctl(impl.descriptor_, FIONBIO, &non_blocking, ec))
-      return false;
-    impl.flags_ |= implementation_type::internal_non_blocking;
-    return true;
   }
 
   // The io_service implementation used to post completions.

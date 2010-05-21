@@ -77,6 +77,7 @@ public:
       return ec;
     }
 
+    descriptor_ops::state_type state = 0;
     int fd = descriptor_ops::open(device.c_str(),
         O_RDWR | O_NONBLOCK | O_NOCTTY, ec);
     if (fd < 0)
@@ -88,7 +89,7 @@ public:
     if (s < 0)
     {
       asio::error_code ignored_ec;
-      descriptor_ops::close(fd, ignored_ec);
+      descriptor_ops::close(fd, state, ignored_ec);
       return ec;
     }
   
@@ -116,7 +117,7 @@ public:
     if (s < 0)
     {
       asio::error_code ignored_ec;
-      descriptor_ops::close(fd, ignored_ec);
+      descriptor_ops::close(fd, state, ignored_ec);
       return ec;
     }
   
@@ -124,7 +125,7 @@ public:
     if (descriptor_service_.assign(impl, fd, ec))
     {
       asio::error_code ignored_ec;
-      descriptor_ops::close(fd, ignored_ec);
+      descriptor_ops::close(fd, state, ignored_ec);
     }
 
     return ec;

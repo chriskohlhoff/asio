@@ -29,26 +29,44 @@ namespace asio {
 namespace detail {
 namespace descriptor_ops {
 
+// Descriptor state bits.
+enum
+{
+  // The user wants a non-blocking descriptor.
+  user_set_non_blocking = 1,
+
+  // The descriptor has been set non-blocking.
+  internal_non_blocking = 2,
+
+  // Helper "state" used to determine whether the descriptor is non-blocking.
+  non_blocking = user_set_non_blocking | internal_non_blocking
+};
+
+typedef unsigned char state_type;
+
 ASIO_DECL int open(const char* path, int flags, asio::error_code& ec);
 
-ASIO_DECL int close(int d, asio::error_code& ec);
+ASIO_DECL int close(int d, state_type& state, asio::error_code& ec);
+
+ASIO_DECL bool set_internal_non_blocking(int d,
+    state_type& state, asio::error_code& ec);
 
 typedef iovec buf;
 
-ASIO_DECL std::size_t sync_read(int d, buf* bufs, std::size_t count,
-    bool all_empty, bool non_blocking, asio::error_code& ec);
+ASIO_DECL std::size_t sync_read(int d, state_type state, buf* bufs,
+    std::size_t count, bool all_empty, asio::error_code& ec);
 
-ASIO_DECL bool non_blocking_read(int d, buf* bufs, size_t count,
+ASIO_DECL bool non_blocking_read(int d, buf* bufs, std::size_t count,
     asio::error_code& ec, std::size_t& bytes_transferred);
 
-ASIO_DECL std::size_t sync_write(int d, const buf* bufs, std::size_t count,
-    bool all_empty, bool non_blocking, asio::error_code& ec);
+ASIO_DECL std::size_t sync_write(int d, state_type state, const buf* bufs,
+    std::size_t count, bool all_empty, asio::error_code& ec);
 
-ASIO_DECL bool non_blocking_write(int d, const buf* bufs, size_t count,
+ASIO_DECL bool non_blocking_write(int d, const buf* bufs, std::size_t count,
     asio::error_code& ec, std::size_t& bytes_transferred);
 
-ASIO_DECL int ioctl(int d, long cmd, ioctl_arg_type* arg,
-    asio::error_code& ec);
+ASIO_DECL int ioctl(int d, state_type& state, long cmd,
+    ioctl_arg_type* arg, asio::error_code& ec);
 
 ASIO_DECL int fcntl(int d, long cmd, asio::error_code& ec);
 
