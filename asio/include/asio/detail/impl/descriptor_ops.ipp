@@ -155,7 +155,7 @@ std::size_t sync_write(int d, const buf* bufs, std::size_t count,
     return 0;
   }
 
-  // Read some data.
+  // Write some data.
   for (;;)
   {
     // Try to complete the operation without blocking.
@@ -183,7 +183,7 @@ bool non_blocking_write(int d, const buf* bufs, size_t count,
 {
   for (;;)
   {
-    // Read some data.
+    // Write some data.
     errno = 0;
     int bytes = error_wrapper(::writev(d, bufs, static_cast<int>(count)), ec);
 
@@ -215,7 +215,7 @@ int ioctl(int d, long cmd, ioctl_arg_type* arg,
   if (d == -1)
   {
     ec = asio::error::bad_descriptor;
-    return 0;
+    return -1;
   }
 
   errno = 0;
@@ -230,7 +230,7 @@ int fcntl(int d, long cmd, asio::error_code& ec)
   if (d == -1)
   {
     ec = asio::error::bad_descriptor;
-    return 0;
+    return -1;
   }
 
   errno = 0;
@@ -245,7 +245,7 @@ int fcntl(int d, long cmd, long arg, asio::error_code& ec)
   if (d == -1)
   {
     ec = asio::error::bad_descriptor;
-    return 0;
+    return -1;
   }
 
   errno = 0;
@@ -260,7 +260,7 @@ int poll_read(int d, asio::error_code& ec)
   if (d == -1)
   {
     ec = asio::error::bad_descriptor;
-    return 0;
+    return -1;
   }
 
   pollfd fds;
@@ -279,7 +279,7 @@ int poll_write(int d, asio::error_code& ec)
   if (d == -1)
   {
     ec = asio::error::bad_descriptor;
-    return 0;
+    return -1;
   }
 
   pollfd fds;
