@@ -15,7 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#if defined(BOOST_HAS_PTHREADS)
+#if defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
 
 #include "asio/detail/push_options.hpp"
 
@@ -51,6 +51,6 @@ inline void posix_tss_ptr<T>::operator=(T* value)
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // defined(BOOST_HAS_PTHREADS)
+#endif // defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
 
 #endif // ASIO_DETAIL_IMPL_POSIX_TSS_PTR_HPP

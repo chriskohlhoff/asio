@@ -18,7 +18,7 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/posix_mutex.hpp"
 
-#if defined(BOOST_HAS_PTHREADS)
+#if defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
 
 #include <boost/throw_exception.hpp>
 #include "asio/error.hpp"
@@ -47,6 +47,6 @@ posix_mutex::posix_mutex()
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // defined(BOOST_HAS_PTHREADS)
+#endif // defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
 
 #endif // ASIO_DETAIL_IMPL_POSIX_MUTEX_IPP

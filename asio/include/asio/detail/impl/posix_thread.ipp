@@ -18,7 +18,7 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/posix_thread.hpp"
 
-#if defined(BOOST_HAS_PTHREADS)
+#if defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
 
 #include <boost/throw_exception.hpp>
 #include "asio/detail/throw_error.hpp"
@@ -72,6 +72,6 @@ void* asio_detail_posix_thread_function(void* arg)
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // defined(BOOST_HAS_PTHREADS)
+#endif // defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
 
 #endif // ASIO_DETAIL_IMPL_POSIX_THREAD_IPP

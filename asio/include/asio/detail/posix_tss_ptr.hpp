@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(BOOST_HAS_PTHREADS)
+#if defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
 
 #include <pthread.h>
 #include "asio/detail/noncopyable.hpp"
@@ -59,7 +59,7 @@ ASIO_DECL void posix_tss_ptr_create(pthread_key_t& key);
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // defined(BOOST_HAS_PTHREADS)
+#endif // defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
 
 #include "asio/detail/impl/posix_tss_ptr.hpp"
 #if defined(ASIO_HEADER_ONLY)

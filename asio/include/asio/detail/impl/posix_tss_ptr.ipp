@@ -18,7 +18,7 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/posix_tss_ptr.hpp"
 
-#if defined(BOOST_HAS_PTHREADS)
+#if defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
 
 #include <boost/throw_exception.hpp>
 #include "asio/error.hpp"
@@ -45,8 +45,8 @@ void posix_tss_ptr_create(pthread_key_t& key)
 } // namespace detail
 } // namespace asio
 
-#endif // defined(BOOST_HAS_PTHREADS)
-
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
 
 #endif // ASIO_DETAIL_IMPL_POSIX_TSS_PTR_IPP
