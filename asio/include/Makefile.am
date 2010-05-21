@@ -35,6 +35,8 @@ nobase_include_HEADERS = \
 	asio/detail/consuming_buffers.hpp \
 	asio/detail/deadline_timer_service.hpp \
 	asio/detail/descriptor_ops.hpp \
+	asio/detail/descriptor_read_op.hpp \
+	asio/detail/descriptor_write_op.hpp \
 	asio/detail/dev_poll_reactor_fwd.hpp \
 	asio/detail/dev_poll_reactor.hpp \
 	asio/detail/epoll_reactor_fwd.hpp \

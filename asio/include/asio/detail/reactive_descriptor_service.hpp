@@ -24,11 +24,12 @@
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/descriptor_ops.hpp"
+#include "asio/detail/descriptor_read_op.hpp"
+#include "asio/detail/descriptor_write_op.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/null_buffers_op.hpp"
 #include "asio/detail/reactor.hpp"
-#include "asio/detail/reactor_op.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -135,75 +136,6 @@ public:
     return 0;
   }
 
-  template <typename ConstBufferSequence>
-  class write_op_base : public reactor_op
-  {
-  public:
-    write_op_base(int descriptor,
-        const ConstBufferSequence& buffers, func_type complete_func)
-      : reactor_op(&write_op_base::do_perform, complete_func),
-        descriptor_(descriptor),
-        buffers_(buffers)
-    {
-    }
-
-    static bool do_perform(reactor_op* base)
-    {
-      write_op_base* o(static_cast<write_op_base*>(base));
-
-      buffer_sequence_adapter<asio::const_buffer,
-          ConstBufferSequence> bufs(o->buffers_);
-
-      return descriptor_ops::non_blocking_write(o->descriptor_,
-          bufs.buffers(), bufs.count(), o->ec_, o->bytes_transferred_);
-    }
-
-  private:
-    int descriptor_;
-    ConstBufferSequence buffers_;
-  };
-
-  template <typename ConstBufferSequence, typename Handler>
-  class write_op : public write_op_base<ConstBufferSequence>
-  {
-  public:
-    write_op(int descriptor,
-        const ConstBufferSequence& buffers, Handler handler)
-      : write_op_base<ConstBufferSequence>(
-          descriptor, buffers, &write_op::do_complete),
-        handler_(handler)
-    {
-    }
-
-    static void do_complete(io_service_impl* owner, operation* base,
-        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
-    {
-      // Take ownership of the handler object.
-      write_op* o(static_cast<write_op*>(base));
-      typedef handler_alloc_traits<Handler, write_op> alloc_traits;
-      handler_ptr<alloc_traits> ptr(o->handler_, o);
-
-      // Make the upcall if required.
-      if (owner)
-      {
-        // Make a copy of the handler so that the memory can be deallocated
-        // before the upcall is made. Even if we're not about to make an
-        // upcall, a sub-object of the handler may be the true owner of the
-        // memory associated with the handler. Consequently, a local copy of
-        // the handler is required to ensure that any owning sub-object remains
-        // valid until after we have deallocated the memory here.
-        detail::binder2<Handler, asio::error_code, std::size_t>
-          handler(o->handler_, o->ec_, o->bytes_transferred_);
-        ptr.reset();
-        asio::detail::fenced_block b;
-        asio_handler_invoke_helpers::invoke(handler, handler.handler_);
-      }
-    }
-
-  private:
-    Handler handler_;
-  };
-
   // Start an asynchronous write. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
   template <typename ConstBufferSequence, typename Handler>
@@ -211,7 +143,7 @@ public:
       const ConstBufferSequence& buffers, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef write_op<ConstBufferSequence, Handler> value_type;
+    typedef descriptor_write_op<ConstBufferSequence, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr, impl.descriptor_, buffers, handler);
@@ -259,75 +191,6 @@ public:
     return 0;
   }
 
-  template <typename MutableBufferSequence>
-  class read_op_base : public reactor_op
-  {
-  public:
-    read_op_base(int descriptor,
-        const MutableBufferSequence& buffers, func_type complete_func)
-      : reactor_op(&read_op_base::do_perform, complete_func),
-        descriptor_(descriptor),
-        buffers_(buffers)
-    {
-    }
-
-    static bool do_perform(reactor_op* base)
-    {
-      read_op_base* o(static_cast<read_op_base*>(base));
-
-      buffer_sequence_adapter<asio::mutable_buffer,
-          MutableBufferSequence> bufs(o->buffers_);
-
-      return descriptor_ops::non_blocking_read(o->descriptor_,
-          bufs.buffers(), bufs.count(), o->ec_, o->bytes_transferred_);
-    }
-
-  private:
-    int descriptor_;
-    MutableBufferSequence buffers_;
-  };
-
-  template <typename MutableBufferSequence, typename Handler>
-  class read_op : public read_op_base<MutableBufferSequence>
-  {
-  public:
-    read_op(int descriptor,
-        const MutableBufferSequence& buffers, Handler handler)
-      : read_op_base<MutableBufferSequence>(
-          descriptor, buffers, &read_op::do_complete),
-        handler_(handler)
-    {
-    }
-
-    static void do_complete(io_service_impl* owner, operation* base,
-        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
-    {
-      // Take ownership of the handler object.
-      read_op* o(static_cast<read_op*>(base));
-      typedef handler_alloc_traits<Handler, read_op> alloc_traits;
-      handler_ptr<alloc_traits> ptr(o->handler_, o);
-
-      // Make the upcall if required.
-      if (owner)
-      {
-        // Make a copy of the handler so that the memory can be deallocated
-        // before the upcall is made. Even if we're not about to make an
-        // upcall, a sub-object of the handler may be the true owner of the
-        // memory associated with the handler. Consequently, a local copy of
-        // the handler is required to ensure that any owning sub-object remains
-        // valid until after we have deallocated the memory here.
-        detail::binder2<Handler, asio::error_code, std::size_t>
-          handler(o->handler_, o->ec_, o->bytes_transferred_);
-        ptr.reset();
-        asio::detail::fenced_block b;
-        asio_handler_invoke_helpers::invoke(handler, handler.handler_);
-      }
-    }
-
-  private:
-    Handler handler_;
-  };
-
   // Start an asynchronous read. The buffer for the data being read must be
   // valid for the lifetime of the asynchronous operation.
   template <typename MutableBufferSequence, typename Handler>
@@ -335,7 +198,7 @@ public:
       const MutableBufferSequence& buffers, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef read_op<MutableBufferSequence, Handler> value_type;
+    typedef descriptor_read_op<MutableBufferSequence, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr,
