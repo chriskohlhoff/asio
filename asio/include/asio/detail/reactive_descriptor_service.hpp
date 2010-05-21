@@ -20,7 +20,6 @@
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 #include "asio/buffer.hpp"
-#include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
@@ -69,58 +68,20 @@ public:
   };
 
   // Constructor.
-  reactive_descriptor_service(asio::io_service& io_service)
-    : io_service_impl_(asio::use_service<io_service_impl>(io_service)),
-      reactor_(asio::use_service<reactor>(io_service))
-  {
-    reactor_.init_task();
-  }
+  ASIO_DECL reactive_descriptor_service(asio::io_service& io_service);
 
   // Destroy all user-defined handler objects owned by the service.
-  void shutdown_service()
-  {
-  }
+  ASIO_DECL void shutdown_service();
 
   // Construct a new descriptor implementation.
-  void construct(implementation_type& impl)
-  {
-    impl.descriptor_ = -1;
-    impl.state_ = 0;
-  }
+  ASIO_DECL void construct(implementation_type& impl);
 
   // Destroy a descriptor implementation.
-  void destroy(implementation_type& impl)
-  {
-    if (is_open(impl))
-      reactor_.close_descriptor(impl.descriptor_, impl.reactor_data_);
-
-    asio::error_code ignored_ec;
-    descriptor_ops::close(impl.descriptor_, impl.state_, ignored_ec);
-  }
+  ASIO_DECL void destroy(implementation_type& impl);
 
   // Assign a native descriptor to a descriptor implementation.
-  asio::error_code assign(implementation_type& impl,
-      const native_type& native_descriptor, asio::error_code& ec)
-  {
-    if (is_open(impl))
-    {
-      ec = asio::error::already_open;
-      return ec;
-    }
-
-    if (int err = reactor_.register_descriptor(
-          native_descriptor, impl.reactor_data_))
-    {
-      ec = asio::error_code(err,
-          asio::error::get_system_category());
-      return ec;
-    }
-
-    impl.descriptor_ = native_descriptor;
-    impl.state_ = 0;
-    ec = asio::error_code();
-    return ec;
-  }
+  ASIO_DECL asio::error_code assign(implementation_type& impl,
+      const native_type& native_descriptor, asio::error_code& ec);
 
   // Determine whether the descriptor is open.
   bool is_open(const implementation_type& impl) const
@@ -129,17 +90,8 @@ public:
   }
 
   // Destroy a descriptor implementation.
-  asio::error_code close(implementation_type& impl,
-      asio::error_code& ec)
-  {
-    if (is_open(impl))
-      reactor_.close_descriptor(impl.descriptor_, impl.reactor_data_);
-
-    if (descriptor_ops::close(impl.descriptor_, impl.state_, ec) == 0)
-      construct(impl);
-
-    return ec;
-  }
+  ASIO_DECL asio::error_code close(implementation_type& impl,
+      asio::error_code& ec);
 
   // Get the native descriptor representation.
   native_type native(const implementation_type& impl) const
@@ -148,19 +100,8 @@ public:
   }
 
   // Cancel all operations associated with the descriptor.
-  asio::error_code cancel(implementation_type& impl,
-      asio::error_code& ec)
-  {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return ec;
-    }
-
-    reactor_.cancel_ops(impl.descriptor_, impl.reactor_data_);
-    ec = asio::error_code();
-    return ec;
-  }
+  ASIO_DECL asio::error_code cancel(implementation_type& impl,
+      asio::error_code& ec);
 
   // Perform an IO control command on the descriptor.
   template <typename IO_Control_Command>
@@ -423,23 +364,8 @@ public:
 
 private:
   // Start the asynchronous operation.
-  void start_op(implementation_type& impl, int op_type,
-      reactor_op* op, bool non_blocking, bool noop)
-  {
-    if (!noop)
-    {
-      if ((impl.state_ & descriptor_ops::non_blocking) ||
-          descriptor_ops::set_internal_non_blocking(
-            impl.descriptor_, impl.state_, op->ec_))
-      {
-        reactor_.start_op(op_type, impl.descriptor_,
-            impl.reactor_data_, op, non_blocking);
-        return;
-      }
-    }
-
-    io_service_impl_.post_immediate_completion(op);
-  }
+  ASIO_DECL void start_op(implementation_type& impl, int op_type,
+      reactor_op* op, bool non_blocking, bool noop);
 
   // The io_service implementation used to post completions.
   io_service_impl& io_service_impl_;
@@ -454,5 +380,9 @@ private:
 #include "asio/detail/pop_options.hpp"
 
 #endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/detail/impl/reactive_descriptor_service.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_DETAIL_REACTIVE_DESCRIPTOR_SERVICE_HPP
