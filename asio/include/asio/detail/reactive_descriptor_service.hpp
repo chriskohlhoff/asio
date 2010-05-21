@@ -143,15 +143,16 @@ public:
       const ConstBufferSequence& buffers, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef descriptor_write_op<ConstBufferSequence, Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr, impl.descriptor_, buffers, handler);
+    typedef descriptor_write_op<ConstBufferSequence, Handler> op;
+    typename op::ptr p = { &handler,
+      asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(impl.descriptor_, buffers, handler);
 
-    start_op(impl, reactor::write_op, ptr.get(), true,
+    start_op(impl, reactor::write_op, p.p, true,
         buffer_sequence_adapter<asio::const_buffer,
           ConstBufferSequence>::all_empty(buffers));
-    ptr.release();
+    p.v = p.p = 0;
   }
 
   // Start an asynchronous wait until data can be written without blocking.
@@ -198,16 +199,16 @@ public:
       const MutableBufferSequence& buffers, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef descriptor_read_op<MutableBufferSequence, Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr,
-        impl.descriptor_, buffers, handler);
+    typedef descriptor_read_op<MutableBufferSequence, Handler> op;
+    typename op::ptr p = { &handler,
+      asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(impl.descriptor_, buffers, handler);
 
-    start_op(impl, reactor::read_op, ptr.get(), true,
+    start_op(impl, reactor::read_op, p.p, true,
         buffer_sequence_adapter<asio::mutable_buffer,
           MutableBufferSequence>::all_empty(buffers));
-    ptr.release();
+    p.v = p.p = 0;
   }
 
   // Wait until data can be read without blocking.

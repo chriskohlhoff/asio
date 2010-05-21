@@ -54,6 +54,32 @@ inline void deallocate(void* p, std::size_t s, Handler& h)
 
 } // namespace asio_handler_alloc_helpers
 
+#define ASIO_DEFINE_HANDLER_PTR(op) \
+  struct ptr \
+  { \
+    Handler* h; \
+    void* v; \
+    op* p; \
+    ~ptr() \
+    { \
+      reset(); \
+    } \
+    void reset() \
+    { \
+      if (p) \
+      { \
+        p->~op(); \
+        p = 0; \
+      } \
+      if (v) \
+      { \
+        asio_handler_alloc_helpers::deallocate(v, sizeof(op), *h); \
+        v = 0; \
+      } \
+    } \
+  } \
+  /**/
+
 namespace asio {
 namespace detail {
 

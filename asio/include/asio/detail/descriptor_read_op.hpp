@@ -63,6 +63,8 @@ class descriptor_read_op
   : public descriptor_read_op_base<MutableBufferSequence>
 {
 public:
+  ASIO_DEFINE_HANDLER_PTR(descriptor_read_op);
+
   descriptor_read_op(int descriptor,
       const MutableBufferSequence& buffers, Handler handler)
     : descriptor_read_op_base<MutableBufferSequence>(
@@ -76,21 +78,22 @@ public:
   {
     // Take ownership of the handler object.
     descriptor_read_op* o(static_cast<descriptor_read_op*>(base));
-    typedef handler_alloc_traits<Handler, descriptor_read_op> alloc_traits;
-    handler_ptr<alloc_traits> ptr(o->handler_, o);
+    ptr p = { &o->handler_, o, o };
+
+    // Make a copy of the handler so that the memory can be deallocated before
+    // the upcall is made. Even if we're not about to make an upcall, a
+    // sub-object of the handler may be the true owner of the memory associated
+    // with the handler. Consequently, a local copy of the handler is required
+    // to ensure that any owning sub-object remains valid until after we have
+    // deallocated the memory here.
+    detail::binder2<Handler, asio::error_code, std::size_t>
+      handler(o->handler_, o->ec_, o->bytes_transferred_);
+    p.h = &handler.handler_;
+    p.reset();
 
     // Make the upcall if required.
     if (owner)
     {
-      // Make a copy of the handler so that the memory can be deallocated
-      // before the upcall is made. Even if we're not about to make an
-      // upcall, a sub-object of the handler may be the true owner of the
-      // memory associated with the handler. Consequently, a local copy of
-      // the handler is required to ensure that any owning sub-object remains
-      // valid until after we have deallocated the memory here.
-      detail::binder2<Handler, asio::error_code, std::size_t>
-        handler(o->handler_, o->ec_, o->bytes_transferred_);
-      ptr.reset();
       asio::detail::fenced_block b;
       asio_handler_invoke_helpers::invoke(handler, handler.handler_);
     }
