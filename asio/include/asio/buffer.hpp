@@ -17,10 +17,10 @@
 
 #include "asio/detail/config.hpp"
 #include <cstddef>
-#include <boost/array.hpp>
 #include <boost/type_traits/is_const.hpp>
 #include <string>
 #include <vector>
+#include "asio/detail/array_fwd.hpp"
 
 #if defined(BOOST_MSVC)
 # if defined(_HAS_ITERATOR_DEBUGGING) && (_HAS_ITERATOR_DEBUGGING != 0)

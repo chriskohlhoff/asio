@@ -16,6 +16,7 @@
 // Test that header file is self-contained.
 #include "asio/buffer.hpp"
 
+#include <boost/array.hpp>
 #include "unit_test.hpp"
 
 //------------------------------------------------------------------------------

@@ -16,6 +16,7 @@
 // Test that header file is self-contained.
 #include "asio/read.hpp"
 
+#include <boost/array.hpp>
 #include <boost/bind.hpp>
 #include <boost/noncopyable.hpp>
 #include <cstring>
