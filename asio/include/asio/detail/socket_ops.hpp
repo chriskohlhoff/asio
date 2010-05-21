@@ -57,16 +57,50 @@ ASIO_DECL void init_buf(buf& b, const void* data, size_t size);
 ASIO_DECL int recv(socket_type s, buf* bufs, size_t count, int flags,
     asio::error_code& ec);
 
+ASIO_DECL size_t sync_recv(socket_type s, buf* bufs, size_t count,
+    int flags, bool all_empty, bool is_stream, bool non_blocking,
+    asio::error_code& ec);
+
+ASIO_DECL bool non_blocking_recv(socket_type s,
+    buf* bufs, size_t count, int flags, bool is_stream,
+    asio::error_code& ec, size_t& bytes_transferred);
+
 ASIO_DECL int recvfrom(socket_type s, buf* bufs, size_t count, int flags,
     socket_addr_type* addr, std::size_t* addrlen,
     asio::error_code& ec);
 
+ASIO_DECL size_t sync_recvfrom(socket_type s, buf* bufs, size_t count,
+    int flags, socket_addr_type* addr, std::size_t* addrlen,
+    bool non_blocking, asio::error_code& ec);
+
+ASIO_DECL bool non_blocking_recvfrom(socket_type s,
+    buf* bufs, size_t count, int flags,
+    socket_addr_type* addr, std::size_t* addrlen,
+    asio::error_code& ec, size_t& bytes_transferred);
+
 ASIO_DECL int send(socket_type s, const buf* bufs, size_t count, int flags,
     asio::error_code& ec);
+
+ASIO_DECL size_t sync_send(socket_type s, const buf* bufs, size_t count,
+    int flags, bool all_empty, bool is_stream, bool non_blocking,
+    asio::error_code& ec);
+
+ASIO_DECL bool non_blocking_send(socket_type s,
+    const buf* bufs, size_t count, int flags,
+    asio::error_code& ec, size_t& bytes_transferred);
 
 ASIO_DECL int sendto(socket_type s, const buf* bufs, size_t count, int flags,
     const socket_addr_type* addr, std::size_t addrlen,
     asio::error_code& ec);
+
+ASIO_DECL size_t sync_sendto(socket_type s, const buf* bufs, size_t count,
+    int flags, const socket_addr_type* addr, std::size_t addrlen,
+    bool non_blocking, asio::error_code& ec);
+
+ASIO_DECL bool non_blocking_sendto(socket_type s,
+    const buf* bufs, size_t count, int flags,
+    const socket_addr_type* addr, std::size_t addrlen,
+    asio::error_code& ec, size_t& bytes_transferred);
 
 ASIO_DECL socket_type socket(int af, int type, int protocol,
     asio::error_code& ec);

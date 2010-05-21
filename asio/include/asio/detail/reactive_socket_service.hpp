@@ -512,12 +512,6 @@ public:
   asio::error_code shutdown(implementation_type& impl,
       socket_base::shutdown_type what, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return ec;
-    }
-
     socket_ops::shutdown(impl.socket_, what, ec);
     return ec;
   }
@@ -527,55 +521,18 @@ public:
   size_t send(implementation_type& impl, const ConstBufferSequence& buffers,
       socket_base::message_flags flags, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return 0;
-    }
-
     buffer_sequence_adapter<asio::const_buffer,
         ConstBufferSequence> bufs(buffers);
 
-    // A request to receive 0 bytes on a stream socket is a no-op.
-    if (impl.protocol_.type() == SOCK_STREAM && bufs.all_empty())
-    {
-      ec = asio::error_code();
-      return 0;
-    }
-
-    // Send the data.
-    for (;;)
-    {
-      // Try to complete the operation without blocking.
-      int bytes_sent = socket_ops::send(impl.socket_,
-          bufs.buffers(), bufs.count(), flags, ec);
-
-      // Check if operation succeeded.
-      if (bytes_sent >= 0)
-        return bytes_sent;
-
-      // Operation failed.
-      if ((impl.flags_ & implementation_type::user_set_non_blocking)
-          || (ec != asio::error::would_block
-            && ec != asio::error::try_again))
-        return 0;
-
-      // Wait for socket to become ready.
-      if (socket_ops::poll_write(impl.socket_, ec) < 0)
-        return 0;
-    }
+    return socket_ops::sync_send(impl.socket_, bufs.buffers(), bufs.count(),
+        flags, bufs.all_empty(), impl.protocol_.type() == SOCK_STREAM,
+        impl.flags_ & implementation_type::user_set_non_blocking, ec);
   }
 
   // Wait until data can be sent without blocking.
   size_t send(implementation_type& impl, const null_buffers&,
       socket_base::message_flags, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return 0;
-    }
-
     // Wait for socket to become ready.
     socket_ops::poll_write(impl.socket_, ec);
 
@@ -602,26 +559,9 @@ public:
       buffer_sequence_adapter<asio::const_buffer,
           ConstBufferSequence> bufs(o->buffers_);
 
-      for (;;)
-      {
-        // Send the data.
-        asio::error_code ec;
-        int bytes = socket_ops::send(o->socket_,
-            bufs.buffers(), bufs.count(), o->flags_, ec);
-
-        // Retry operation if interrupted by signal.
-        if (ec == asio::error::interrupted)
-          continue;
-
-        // Check if we need to run the operation again.
-        if (ec == asio::error::would_block
-            || ec == asio::error::try_again)
-          return false;
-
-        o->ec_ = ec;
-        o->bytes_transferred_ = (bytes < 0 ? 0 : bytes);
-        return true;
-      }
+      return socket_ops::non_blocking_send(o->socket_,
+            bufs.buffers(), bufs.count(), o->flags_,
+            o->ec_, o->bytes_transferred_);
     }
 
   private:
@@ -713,36 +653,12 @@ public:
       const endpoint_type& destination, socket_base::message_flags flags,
       asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return 0;
-    }
-
     buffer_sequence_adapter<asio::const_buffer,
         ConstBufferSequence> bufs(buffers);
 
-    // Send the data.
-    for (;;)
-    {
-      // Try to complete the operation without blocking.
-      int bytes_sent = socket_ops::sendto(impl.socket_, bufs.buffers(),
-          bufs.count(), flags, destination.data(), destination.size(), ec);
-
-      // Check if operation succeeded.
-      if (bytes_sent >= 0)
-        return bytes_sent;
-
-      // Operation failed.
-      if ((impl.flags_ & implementation_type::user_set_non_blocking)
-          || (ec != asio::error::would_block
-            && ec != asio::error::try_again))
-        return 0;
-
-      // Wait for socket to become ready.
-      if (socket_ops::poll_write(impl.socket_, ec) < 0)
-        return 0;
-    }
+    return socket_ops::sync_sendto(impl.socket_, bufs.buffers(), bufs.count(),
+        flags, destination.data(), destination.size(),
+        impl.flags_ & implementation_type::user_set_non_blocking, ec);
   }
 
   // Wait until data can be sent without blocking.
@@ -750,12 +666,6 @@ public:
       socket_base::message_flags, const endpoint_type&,
       asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return 0;
-    }
-
     // Wait for socket to become ready.
     socket_ops::poll_write(impl.socket_, ec);
 
@@ -784,26 +694,10 @@ public:
       buffer_sequence_adapter<asio::const_buffer,
           ConstBufferSequence> bufs(o->buffers_);
 
-      for (;;)
-      {
-        // Send the data.
-        asio::error_code ec;
-        int bytes = socket_ops::sendto(o->socket_, bufs.buffers(), bufs.count(),
-            o->flags_, o->destination_.data(), o->destination_.size(), ec);
-
-        // Retry operation if interrupted by signal.
-        if (ec == asio::error::interrupted)
-          continue;
-
-        // Check if we need to run the operation again.
-        if (ec == asio::error::would_block
-            || ec == asio::error::try_again)
-          return false;
-
-        o->ec_ = ec;
-        o->bytes_transferred_ = (bytes < 0 ? 0 : bytes);
-        return true;
-      }
+      return socket_ops::non_blocking_sendto(o->socket_,
+            bufs.buffers(), bufs.count(), o->flags_,
+            o->destination_.data(), o->destination_.size(),
+            o->ec_, o->bytes_transferred_);
     }
 
   private:
@@ -895,62 +789,18 @@ public:
       const MutableBufferSequence& buffers,
       socket_base::message_flags flags, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return 0;
-    }
-
     buffer_sequence_adapter<asio::mutable_buffer,
         MutableBufferSequence> bufs(buffers);
 
-    // A request to receive 0 bytes on a stream socket is a no-op.
-    if (impl.protocol_.type() == SOCK_STREAM && bufs.all_empty())
-    {
-      ec = asio::error_code();
-      return 0;
-    }
-
-    // Receive some data.
-    for (;;)
-    {
-      // Try to complete the operation without blocking.
-      int bytes_recvd = socket_ops::recv(impl.socket_,
-          bufs.buffers(), bufs.count(), flags, ec);
-
-      // Check if operation succeeded.
-      if (bytes_recvd > 0)
-        return bytes_recvd;
-
-      // Check for EOF.
-      if (bytes_recvd == 0 && impl.protocol_.type() == SOCK_STREAM)
-      {
-        ec = asio::error::eof;
-        return 0;
-      }
-
-      // Operation failed.
-      if ((impl.flags_ & implementation_type::user_set_non_blocking)
-          || (ec != asio::error::would_block
-            && ec != asio::error::try_again))
-        return 0;
-
-      // Wait for socket to become ready.
-      if (socket_ops::poll_read(impl.socket_, ec) < 0)
-        return 0;
-    }
+    return socket_ops::sync_recv(impl.socket_, bufs.buffers(), bufs.count(),
+        flags, bufs.all_empty(), impl.protocol_.type() == SOCK_STREAM,
+        impl.flags_ & implementation_type::user_set_non_blocking, ec);
   }
 
   // Wait until data can be received without blocking.
   size_t receive(implementation_type& impl, const null_buffers&,
       socket_base::message_flags, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return 0;
-    }
-
     // Wait for socket to become ready.
     socket_ops::poll_read(impl.socket_, ec);
 
@@ -979,28 +829,10 @@ public:
       buffer_sequence_adapter<asio::mutable_buffer,
           MutableBufferSequence> bufs(o->buffers_);
 
-      for (;;)
-      {
-        // Receive some data.
-        asio::error_code ec;
-        int bytes = socket_ops::recv(o->socket_,
-            bufs.buffers(), bufs.count(), o->flags_, ec);
-        if (bytes == 0 && o->protocol_type_ == SOCK_STREAM)
-          ec = asio::error::eof;
-
-        // Retry operation if interrupted by signal.
-        if (ec == asio::error::interrupted)
-          continue;
-
-        // Check if we need to run the operation again.
-        if (ec == asio::error::would_block
-            || ec == asio::error::try_again)
-          return false;
-
-        o->ec_ = ec;
-        o->bytes_transferred_ = (bytes < 0 ? 0 : bytes);
-        return true;
-      }
+      return socket_ops::non_blocking_recv(o->socket_,
+          bufs.buffers(), bufs.count(), o->flags_,
+          o->protocol_type_ == SOCK_STREAM,
+          o->ec_, o->bytes_transferred_);
     }
 
   private:
@@ -1103,47 +935,18 @@ public:
       endpoint_type& sender_endpoint, socket_base::message_flags flags,
       asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return 0;
-    }
-
     buffer_sequence_adapter<asio::mutable_buffer,
         MutableBufferSequence> bufs(buffers);
 
-    // Receive some data.
-    for (;;)
-    {
-      // Try to complete the operation without blocking.
-      std::size_t addr_len = sender_endpoint.capacity();
-      int bytes_recvd = socket_ops::recvfrom(impl.socket_, bufs.buffers(),
-          bufs.count(), flags, sender_endpoint.data(), &addr_len, ec);
+    std::size_t addr_len = sender_endpoint.capacity();
+    std::size_t bytes_recvd = socket_ops::sync_recvfrom(impl.socket_,
+        bufs.buffers(), bufs.count(), flags, sender_endpoint.data(), &addr_len,
+        impl.flags_ & implementation_type::user_set_non_blocking, ec);
 
-      // Check if operation succeeded.
-      if (bytes_recvd > 0)
-      {
-        sender_endpoint.resize(addr_len);
-        return bytes_recvd;
-      }
+    if (!ec)
+      sender_endpoint.resize(addr_len);
 
-      // Check for EOF.
-      if (bytes_recvd == 0 && impl.protocol_.type() == SOCK_STREAM)
-      {
-        ec = asio::error::eof;
-        return 0;
-      }
-
-      // Operation failed.
-      if ((impl.flags_ & implementation_type::user_set_non_blocking)
-          || (ec != asio::error::would_block
-            && ec != asio::error::try_again))
-        return 0;
-
-      // Wait for socket to become ready.
-      if (socket_ops::poll_read(impl.socket_, ec) < 0)
-        return 0;
-    }
+    return bytes_recvd;
   }
 
   // Wait until data can be received without blocking.
@@ -1151,12 +954,6 @@ public:
       endpoint_type& sender_endpoint, socket_base::message_flags,
       asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return 0;
-    }
-
     // Wait for socket to become ready.
     socket_ops::poll_read(impl.socket_, ec);
 
@@ -1189,30 +986,16 @@ public:
       buffer_sequence_adapter<asio::mutable_buffer,
           MutableBufferSequence> bufs(o->buffers_);
 
-      for (;;)
-      {
-        // Receive some data.
-        asio::error_code ec;
-        std::size_t addr_len = o->sender_endpoint_.capacity();
-        int bytes = socket_ops::recvfrom(o->socket_, bufs.buffers(),
-            bufs.count(), o->flags_, o->sender_endpoint_.data(), &addr_len, ec);
-        if (bytes == 0 && o->protocol_type_ == SOCK_STREAM)
-          ec = asio::error::eof;
+      std::size_t addr_len = o->sender_endpoint_.capacity();
+      bool result = socket_ops::non_blocking_recvfrom(o->socket_,
+          bufs.buffers(), bufs.count(), o->flags_,
+          o->sender_endpoint_.data(), &addr_len,
+          o->ec_, o->bytes_transferred_);
 
-        // Retry operation if interrupted by signal.
-        if (ec == asio::error::interrupted)
-          continue;
-
-        // Check if we need to run the operation again.
-        if (ec == asio::error::would_block
-            || ec == asio::error::try_again)
-          return false;
-
+      if (result && !o->ec_)
         o->sender_endpoint_.resize(addr_len);
-        o->ec_ = ec;
-        o->bytes_transferred_ = (bytes < 0 ? 0 : bytes);
-        return true;
-      }
+
+      return result;
     }
 
   private:

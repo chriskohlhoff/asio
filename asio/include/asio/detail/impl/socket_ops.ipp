@@ -136,6 +136,12 @@ int close(socket_type s, asio::error_code& ec)
 
 int shutdown(socket_type s, int what, asio::error_code& ec)
 {
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return -1;
+  }
+
   clear_error(ec);
   int result = error_wrapper(::shutdown(s, what), ec);
   if (result == 0)
@@ -276,6 +282,90 @@ int recv(socket_type s, buf* bufs, size_t count, int flags,
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
+size_t sync_recv(socket_type s, buf* bufs, size_t count,
+    int flags, bool all_empty, bool is_stream, bool non_blocking,
+    asio::error_code& ec)
+{
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return 0;
+  }
+
+  // A request to read 0 bytes on a stream is a no-op.
+  if (all_empty && is_stream)
+  {
+    ec = asio::error_code();
+    return 0;
+  }
+
+  // Read some data.
+  for (;;)
+  {
+    // Try to complete the operation without blocking.
+    int bytes = socket_ops::recv(s, bufs, count, flags, ec);
+
+    // Check if operation succeeded.
+    if (bytes > 0)
+      return bytes;
+
+    // Check for EOF.
+    if (is_stream && bytes == 0)
+    {
+      ec = asio::error::eof;
+      return 0;
+    }
+
+    // Operation failed.
+    if (non_blocking
+        || (ec != asio::error::would_block
+          && ec != asio::error::try_again))
+      return 0;
+
+    // Wait for socket to become ready.
+    if (socket_ops::poll_read(s, ec) < 0)
+      return 0;
+  }
+}
+
+bool non_blocking_recv(socket_type s,
+    buf* bufs, size_t count, int flags, bool is_stream,
+    asio::error_code& ec, size_t& bytes_transferred)
+{
+  for (;;)
+  {
+    // Read some data.
+    int bytes = socket_ops::recv(s, bufs, count, flags, ec);
+
+    // Check for end of stream.
+    if (is_stream && bytes == 0)
+    {
+      ec = asio::error::eof;
+      return true;
+    }
+
+    // Retry operation if interrupted by signal.
+    if (ec == asio::error::interrupted)
+      continue;
+
+    // Check if we need to run the operation again.
+    if (ec == asio::error::would_block
+        || ec == asio::error::try_again)
+      return false;
+
+    // Operation is complete.
+    if (bytes >= 0)
+    {
+      ec = asio::error_code();
+      bytes_transferred = bytes;
+    }
+    else
+      bytes_transferred = 0;
+
+    return true;
+  }
+}
+
 int recvfrom(socket_type s, buf* bufs, size_t count, int flags,
     socket_addr_type* addr, std::size_t* addrlen,
     asio::error_code& ec)
@@ -308,6 +398,70 @@ int recvfrom(socket_type s, buf* bufs, size_t count, int flags,
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
+size_t sync_recvfrom(socket_type s, buf* bufs, size_t count,
+    int flags, socket_addr_type* addr, std::size_t* addrlen,
+    bool non_blocking, asio::error_code& ec)
+{
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return 0;
+  }
+
+  // Read some data.
+  for (;;)
+  {
+    // Try to complete the operation without blocking.
+    int bytes = socket_ops::recvfrom(s, bufs, count, flags, addr, addrlen, ec);
+
+    // Check if operation succeeded.
+    if (bytes >= 0)
+      return bytes;
+
+    // Operation failed.
+    if (non_blocking
+        || (ec != asio::error::would_block
+          && ec != asio::error::try_again))
+      return 0;
+
+    // Wait for socket to become ready.
+    if (socket_ops::poll_read(s, ec) < 0)
+      return 0;
+  }
+}
+
+bool non_blocking_recvfrom(socket_type s,
+    buf* bufs, size_t count, int flags,
+    socket_addr_type* addr, std::size_t* addrlen,
+    asio::error_code& ec, size_t& bytes_transferred)
+{
+  for (;;)
+  {
+    // Read some data.
+    int bytes = socket_ops::recvfrom(s, bufs, count, flags, addr, addrlen, ec);
+
+    // Retry operation if interrupted by signal.
+    if (ec == asio::error::interrupted)
+      continue;
+
+    // Check if we need to run the operation again.
+    if (ec == asio::error::would_block
+        || ec == asio::error::try_again)
+      return false;
+
+    // Operation is complete.
+    if (bytes >= 0)
+    {
+      ec = asio::error_code();
+      bytes_transferred = bytes;
+    }
+    else
+      bytes_transferred = 0;
+
+    return true;
+  }
+}
+
 int send(socket_type s, const buf* bufs, size_t count, int flags,
     asio::error_code& ec)
 {
@@ -335,6 +489,76 @@ int send(socket_type s, const buf* bufs, size_t count, int flags,
     clear_error(ec);
   return result;
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+}
+
+size_t sync_send(socket_type s, const buf* bufs, size_t count,
+    int flags, bool all_empty, bool is_stream, bool non_blocking,
+    asio::error_code& ec)
+{
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return 0;
+  }
+
+  // A request to write 0 bytes to a stream is a no-op.
+  if (all_empty && is_stream)
+  {
+    ec = asio::error_code();
+    return 0;
+  }
+
+  // Read some data.
+  for (;;)
+  {
+    // Try to complete the operation without blocking.
+    int bytes = socket_ops::send(s, bufs, count, flags, ec);
+
+    // Check if operation succeeded.
+    if (bytes >= 0)
+      return bytes;
+
+    // Operation failed.
+    if (non_blocking
+        || (ec != asio::error::would_block
+          && ec != asio::error::try_again))
+      return 0;
+
+    // Wait for socket to become ready.
+    if (socket_ops::poll_write(s, ec) < 0)
+      return 0;
+  }
+}
+
+bool non_blocking_send(socket_type s,
+    const buf* bufs, size_t count, int flags,
+    asio::error_code& ec, size_t& bytes_transferred)
+{
+  for (;;)
+  {
+    // Write some data.
+    int bytes = socket_ops::send(s, bufs, count, flags, ec);
+
+    // Retry operation if interrupted by signal.
+    if (ec == asio::error::interrupted)
+      continue;
+
+    // Check if we need to run the operation again.
+    if (ec == asio::error::would_block
+        || ec == asio::error::try_again)
+      return false;
+
+    // Operation is complete.
+    if (bytes >= 0)
+    {
+      ec = asio::error_code();
+      bytes_transferred = bytes;
+    }
+    else
+      bytes_transferred = 0;
+
+    return true;
+  }
 }
 
 int sendto(socket_type s, const buf* bufs, size_t count, int flags,
@@ -367,6 +591,70 @@ int sendto(socket_type s, const buf* bufs, size_t count, int flags,
     clear_error(ec);
   return result;
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+}
+
+size_t sync_sendto(socket_type s, const buf* bufs, size_t count,
+    int flags, const socket_addr_type* addr, std::size_t addrlen,
+    bool non_blocking, asio::error_code& ec)
+{
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return 0;
+  }
+
+  // Write some data.
+  for (;;)
+  {
+    // Try to complete the operation without blocking.
+    int bytes = socket_ops::sendto(s, bufs, count, flags, addr, addrlen, ec);
+
+    // Check if operation succeeded.
+    if (bytes >= 0)
+      return bytes;
+
+    // Operation failed.
+    if (non_blocking
+        || (ec != asio::error::would_block
+          && ec != asio::error::try_again))
+      return 0;
+
+    // Wait for socket to become ready.
+    if (socket_ops::poll_write(s, ec) < 0)
+      return 0;
+  }
+}
+
+bool non_blocking_sendto(socket_type s,
+    const buf* bufs, size_t count, int flags,
+    const socket_addr_type* addr, std::size_t addrlen,
+    asio::error_code& ec, size_t& bytes_transferred)
+{
+  for (;;)
+  {
+    // Write some data.
+    int bytes = socket_ops::sendto(s, bufs, count, flags, addr, addrlen, ec);
+
+    // Retry operation if interrupted by signal.
+    if (ec == asio::error::interrupted)
+      continue;
+
+    // Check if we need to run the operation again.
+    if (ec == asio::error::would_block
+        || ec == asio::error::try_again)
+      return false;
+
+    // Operation is complete.
+    if (bytes >= 0)
+    {
+      ec = asio::error_code();
+      bytes_transferred = bytes;
+    }
+    else
+      bytes_transferred = 0;
+
+    return true;
+  }
 }
 
 socket_type socket(int af, int type, int protocol,
@@ -649,6 +937,12 @@ int select(int nfds, fd_set* readfds, fd_set* writefds,
 
 int poll_read(socket_type s, asio::error_code& ec)
 {
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return -1;
+  }
+
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   FD_SET fds;
   FD_ZERO(&fds);
@@ -673,6 +967,12 @@ int poll_read(socket_type s, asio::error_code& ec)
 
 int poll_write(socket_type s, asio::error_code& ec)
 {
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return -1;
+  }
+
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   FD_SET fds;
   FD_ZERO(&fds);
@@ -697,6 +997,12 @@ int poll_write(socket_type s, asio::error_code& ec)
 
 int poll_connect(socket_type s, asio::error_code& ec)
 {
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return -1;
+  }
+
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   FD_SET write_fds;
   FD_ZERO(&write_fds);
