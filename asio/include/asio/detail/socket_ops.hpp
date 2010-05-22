@@ -56,6 +56,10 @@ typedef unsigned char state_type;
 ASIO_DECL socket_type accept(socket_type s, socket_addr_type* addr,
     std::size_t* addrlen, asio::error_code& ec);
 
+ASIO_DECL socket_type sync_accept(socket_type s,
+    state_type state, socket_addr_type* addr,
+    std::size_t* addrlen, asio::error_code& ec);
+
 ASIO_DECL int bind(socket_type s, const socket_addr_type* addr,
     std::size_t addrlen, asio::error_code& ec);
 

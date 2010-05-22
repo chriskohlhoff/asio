@@ -596,12 +596,6 @@ public:
   asio::error_code accept(implementation_type& impl,
       Socket& peer, endpoint_type* peer_endpoint, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return ec;
-    }
-
     // We cannot accept a socket that is already open.
     if (peer.is_open())
     {
@@ -609,63 +603,21 @@ public:
       return ec;
     }
 
-    // Accept a socket.
-    for (;;)
+    std::size_t addr_len = peer_endpoint ? peer_endpoint->capacity() : 0;
+    socket_holder new_socket(socket_ops::sync_accept(impl.socket_,
+          impl.state_, peer_endpoint ? peer_endpoint->data() : 0,
+          peer_endpoint ? &addr_len : 0, ec));
+
+    // On success, assign new connection to peer socket object.
+    if (new_socket.get() >= 0)
     {
-      // Try to complete the operation without blocking.
-      socket_holder new_socket;
-      std::size_t addr_len = 0;
       if (peer_endpoint)
-      {
-        addr_len = peer_endpoint->capacity();
-        new_socket.reset(socket_ops::accept(impl.socket_,
-              peer_endpoint->data(), &addr_len, ec));
-      }
-      else
-      {
-        new_socket.reset(socket_ops::accept(impl.socket_, 0, 0, ec));
-      }
-
-      // Check if operation succeeded.
-      if (new_socket.get() >= 0)
-      {
-        if (peer_endpoint)
-          peer_endpoint->resize(addr_len);
-        peer.assign(impl.protocol_, new_socket.get(), ec);
-        if (!ec)
-          new_socket.release();
-        return ec;
-      }
-
-      // Operation failed.
-      if (ec == asio::error::would_block
-          || ec == asio::error::try_again)
-      {
-        if (impl.state_ & socket_ops::user_set_non_blocking)
-          return ec;
-        // Fall through to retry operation.
-      }
-      else if (ec == asio::error::connection_aborted)
-      {
-        if (impl.state_ & socket_ops::enable_connection_aborted)
-          return ec;
-        // Fall through to retry operation.
-      }
-#if defined(EPROTO)
-      else if (ec.value() == EPROTO)
-      {
-        if (impl.state_ & socket_ops::enable_connection_aborted)
-          return ec;
-        // Fall through to retry operation.
-      }
-#endif // defined(EPROTO)
-      else
-        return ec;
-
-      // Wait for socket to become ready.
-      if (socket_ops::poll_read(impl.socket_, ec) < 0)
-        return ec;
+        peer_endpoint->resize(addr_len);
+      if (!peer.assign(impl.protocol_, new_socket.get(), ec))
+        new_socket.release();
     }
+
+    return ec;
   }
 
   // Start an asynchronous accept. The peer and peer_endpoint objects
