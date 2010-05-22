@@ -47,7 +47,8 @@ public:
     if (socket_ != invalid_socket)
     {
       asio::error_code ec;
-      socket_ops::close(socket_, ec);
+      socket_ops::state_type state = 0;
+      socket_ops::close(socket_, state, true, ec);
     }
   }
 
@@ -63,7 +64,8 @@ public:
     if (socket_ != invalid_socket)
     {
       asio::error_code ec;
-      socket_ops::close(socket_, ec);
+      socket_ops::state_type state = 0;
+      socket_ops::close(socket_, state, true, ec);
       socket_ = invalid_socket;
     }
   }

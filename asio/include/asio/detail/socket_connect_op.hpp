@@ -44,7 +44,7 @@ public:
     // Get the error code from the connect operation.
     int connect_error = 0;
     size_t connect_error_len = sizeof(connect_error);
-    if (socket_ops::getsockopt(o->socket_, SOL_SOCKET, SO_ERROR,
+    if (socket_ops::getsockopt(o->socket_, 0, SOL_SOCKET, SO_ERROR,
           &connect_error, &connect_error_len, o->ec_) == socket_error_retval)
       return true;
 

@@ -26,13 +26,44 @@ namespace asio {
 namespace detail {
 namespace socket_ops {
 
+// Socket state bits.
+enum
+{
+  // The user wants a non-blocking socket.
+  user_set_non_blocking = 1,
+
+  // The socket has been set non-blocking.
+  internal_non_blocking = 2,
+
+  // Helper "state" used to determine whether the socket is non-blocking.
+  non_blocking = user_set_non_blocking | internal_non_blocking,
+
+  // User wants connection_aborted errors, which are disabled by default.
+  enable_connection_aborted = 4,
+
+  // The user set the linger option. Needs to be checked when closing.
+  user_set_linger = 8,
+
+  // The socket is stream-oriented.
+  stream_oriented = 16,
+
+  // The socket is datagram-oriented.
+  datagram_oriented = 32
+};
+
+typedef unsigned char state_type;
+
 ASIO_DECL socket_type accept(socket_type s, socket_addr_type* addr,
     std::size_t* addrlen, asio::error_code& ec);
 
 ASIO_DECL int bind(socket_type s, const socket_addr_type* addr,
     std::size_t addrlen, asio::error_code& ec);
 
-ASIO_DECL int close(socket_type s, asio::error_code& ec);
+ASIO_DECL int close(socket_type s, state_type& state,
+    bool destruction, asio::error_code& ec);
+
+ASIO_DECL bool set_internal_non_blocking(socket_type s,
+    state_type& state, asio::error_code& ec);
 
 ASIO_DECL int shutdown(socket_type s, int what, asio::error_code& ec);
 
@@ -41,6 +72,10 @@ ASIO_DECL int connect(socket_type s, const socket_addr_type* addr,
 
 ASIO_DECL int socketpair(int af, int type, int protocol,
     socket_type sv[2], asio::error_code& ec);
+
+ASIO_DECL bool sockatmark(socket_type s, asio::error_code& ec);
+
+ASIO_DECL size_t available(socket_type s, asio::error_code& ec);
 
 ASIO_DECL int listen(socket_type s, int backlog, asio::error_code& ec);
 
@@ -105,10 +140,12 @@ ASIO_DECL bool non_blocking_sendto(socket_type s,
 ASIO_DECL socket_type socket(int af, int type, int protocol,
     asio::error_code& ec);
 
-ASIO_DECL int setsockopt(socket_type s, int level, int optname,
-    const void* optval, std::size_t optlen, asio::error_code& ec);
+ASIO_DECL int setsockopt(socket_type s, state_type& state,
+    int level, int optname, const void* optval,
+    std::size_t optlen, asio::error_code& ec);
 
-ASIO_DECL int getsockopt(socket_type s, int level, int optname, void* optval,
+ASIO_DECL int getsockopt(socket_type s, state_type state,
+    int level, int optname, void* optval,
     size_t* optlen, asio::error_code& ec);
 
 ASIO_DECL int getpeername(socket_type s, socket_addr_type* addr,
@@ -117,8 +154,8 @@ ASIO_DECL int getpeername(socket_type s, socket_addr_type* addr,
 ASIO_DECL int getsockname(socket_type s, socket_addr_type* addr,
     std::size_t* addrlen, asio::error_code& ec);
 
-ASIO_DECL int ioctl(socket_type s, long cmd, ioctl_arg_type* arg,
-    asio::error_code& ec);
+ASIO_DECL int ioctl(socket_type s, state_type& state,
+    long cmd, ioctl_arg_type* arg, asio::error_code& ec);
 
 ASIO_DECL int select(int nfds, fd_set* readfds, fd_set* writefds,
     fd_set* exceptfds, timeval* timeout, asio::error_code& ec);

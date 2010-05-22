@@ -81,6 +81,12 @@ inline socket_type call_accept(SockLenType msghdr::*,
 socket_type accept(socket_type s, socket_addr_type* addr,
     std::size_t* addrlen, asio::error_code& ec)
 {
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return invalid_socket;
+  }
+
   clear_error(ec);
 
   socket_type new_s = error_wrapper(call_accept(
@@ -113,6 +119,12 @@ inline int call_bind(SockLenType msghdr::*,
 int bind(socket_type s, const socket_addr_type* addr,
     std::size_t addrlen, asio::error_code& ec)
 {
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return socket_error_retval;
+  }
+
   clear_error(ec);
   int result = error_wrapper(call_bind(
         &msghdr::msg_namelen, s, addr, addrlen), ec);
@@ -121,17 +133,71 @@ int bind(socket_type s, const socket_addr_type* addr,
   return result;
 }
 
-int close(socket_type s, asio::error_code& ec)
+int close(socket_type s, state_type& state,
+    bool destruction, asio::error_code& ec)
 {
-  clear_error(ec);
+  int result = 0;
+  if (s != invalid_socket)
+  {
+    if (state & non_blocking)
+    {
+      ioctl_arg_type arg = 0;
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  int result = error_wrapper(::closesocket(s), ec);
+      ::ioctlsocket(s, FIONBIO, &arg);
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  int result = error_wrapper(::close(s), ec);
+      ::ioctl(s, FIONBIO, &arg);
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  if (result == 0)
+      state &= ~non_blocking;
+    }
+
+    if (destruction && (state & user_set_linger))
+    {
+      ::linger opt;
+      opt.l_onoff = 0;
+      opt.l_linger = 0;
+      asio::error_code ignored_ec;
+      socket_ops::setsockopt(s, state, SOL_SOCKET,
+          SO_LINGER, &opt, sizeof(opt), ignored_ec);
+    }
+
     clear_error(ec);
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+    int result = error_wrapper(::closesocket(s), ec);
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+    int result = error_wrapper(::close(s), ec);
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+    if (result == 0)
+      clear_error(ec);
+  }
+
   return result;
+}
+
+bool set_internal_non_blocking(socket_type s,
+    state_type& state, asio::error_code& ec)
+{
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return false;
+  }
+
+  clear_error(ec);
+  ioctl_arg_type arg = 1;
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  int result = error_wrapper(::ioctlsocket(s, FIONBIO, &arg), ec);
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  int result = error_wrapper(::ioctl(s, FIONBIO, &arg), ec);
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+
+  if (result >= 0)
+  {
+    ec = asio::error_code();
+    state |= internal_non_blocking;
+    return true;
+  }
+
+  return false;
 }
 
 int shutdown(socket_type s, int what, asio::error_code& ec)
@@ -139,7 +205,7 @@ int shutdown(socket_type s, int what, asio::error_code& ec)
   if (s == invalid_socket)
   {
     ec = asio::error::bad_descriptor;
-    return -1;
+    return socket_error_retval;
   }
 
   clear_error(ec);
@@ -159,6 +225,12 @@ inline int call_connect(SockLenType msghdr::*,
 int connect(socket_type s, const socket_addr_type* addr,
     std::size_t addrlen, asio::error_code& ec)
 {
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return socket_error_retval;
+  }
+
   clear_error(ec);
   int result = error_wrapper(call_connect(
         &msghdr::msg_namelen, s, addr, addrlen), ec);
@@ -176,7 +248,7 @@ int socketpair(int af, int type, int protocol,
   (void)(protocol);
   (void)(sv);
   ec = asio::error::operation_not_supported;
-  return -1;
+  return socket_error_retval;
 #else
   clear_error(ec);
   int result = error_wrapper(::socketpair(af, type, protocol, sv), ec);
@@ -186,8 +258,68 @@ int socketpair(int af, int type, int protocol,
 #endif
 }
 
+bool sockatmark(socket_type s, asio::error_code& ec)
+{
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return false;
+  }
+
+#if defined(SIOCATMARK)
+  ioctl_arg_type value = 0;
+# if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  int result = error_wrapper(::ioctlsocket(s, SIOCATMARK, &value), ec);
+# else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  int result = error_wrapper(::ioctl(s, SIOCATMARK, &value), ec);
+# endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  if (result == 0)
+    ec = asio::error_code();
+# if defined(ENOTTY)
+  if (ec.value() == ENOTTY)
+    ec = asio::error::not_socket;
+# endif // defined(ENOTTY)
+#else // defined(SIOCATMARK)
+  int value = error_wrapper(::sockatmark(s), ec);
+  if (value != -1)
+    ec = asio::error_code();
+#endif // defined(SIOCATMARK)
+
+  return ec ? false : value != 0;
+}
+
+size_t available(socket_type s, asio::error_code& ec)
+{
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return 0;
+  }
+
+  ioctl_arg_type value = 0;
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  int result = error_wrapper(::ioctlsocket(s, FIONREAD, &value), ec);
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  int result = error_wrapper(::ioctl(s, FIONREAD, &value), ec);
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  if (result == 0)
+    ec = asio::error_code();
+#if defined(ENOTTY)
+  if (ec.value() == ENOTTY)
+    ec = asio::error::not_socket;
+#endif // defined(ENOTTY)
+
+  return ec ? static_cast<size_t>(0) : static_cast<size_t>(value);
+}
+
 int listen(socket_type s, int backlog, asio::error_code& ec)
 {
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return socket_error_retval;
+  }
+
   clear_error(ec);
   int result = error_wrapper(::listen(s, backlog), ec);
   if (result == 0)
@@ -268,7 +400,7 @@ int recv(socket_type s, buf* bufs, size_t count, int flags,
   int result = error_wrapper(::WSARecv(s, bufs,
         recv_buf_count, &bytes_transferred, &recv_flags, 0, 0), ec);
   if (result != 0)
-    return -1;
+    return socket_error_retval;
   clear_error(ec);
   return bytes_transferred;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -381,7 +513,7 @@ int recvfrom(socket_type s, buf* bufs, size_t count, int flags,
         &bytes_transferred, &recv_flags, addr, &tmp_addrlen, 0, 0), ec);
   *addrlen = (std::size_t)tmp_addrlen;
   if (result != 0)
-    return -1;
+    return socket_error_retval;
   clear_error(ec);
   return bytes_transferred;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -474,7 +606,7 @@ int send(socket_type s, const buf* bufs, size_t count, int flags,
   int result = error_wrapper(::WSASend(s, const_cast<buf*>(bufs),
         send_buf_count, &bytes_transferred, send_flags, 0, 0), ec);
   if (result != 0)
-    return -1;
+    return socket_error_retval;
   clear_error(ec);
   return bytes_transferred;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -574,7 +706,7 @@ int sendto(socket_type s, const buf* bufs, size_t count, int flags,
         send_buf_count, &bytes_transferred, flags, addr,
         static_cast<int>(addrlen), 0, 0), ec);
   if (result != 0)
-    return -1;
+    return socket_error_retval;
   clear_error(ec);
   return bytes_transferred;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -712,14 +844,40 @@ inline int call_setsockopt(SockLenType msghdr::*,
       (const char*)optval, (SockLenType)optlen);
 }
 
-int setsockopt(socket_type s, int level, int optname,
+int setsockopt(socket_type s, state_type& state, int level, int optname,
     const void* optval, std::size_t optlen, asio::error_code& ec)
 {
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return socket_error_retval;
+  }
+
   if (level == custom_socket_option_level && optname == always_fail_option)
   {
     ec = asio::error::invalid_argument;
-    return -1;
+    return socket_error_retval;
   }
+
+  if (level == custom_socket_option_level
+      && optname == enable_connection_aborted_option)
+  {
+    if (optlen != sizeof(int))
+    {
+      ec = asio::error::invalid_argument;
+      return socket_error_retval;
+    }
+
+    if (*static_cast<const int*>(optval))
+      state |= enable_connection_aborted;
+    else
+      state &= ~enable_connection_aborted;
+    ec = asio::error_code();
+    return 0;
+  }
+
+  if (level == SOL_SOCKET && optname == SO_LINGER)
+    state |= user_set_linger;
 
 #if defined(__BORLANDC__)
   // Mysteriously, using the getsockopt and setsockopt functions directly with
@@ -737,13 +895,28 @@ int setsockopt(socket_type s, int level, int optname,
     }
   }
   ec = asio::error::fault;
-  return -1;
+  return socket_error_retval;
 #else // defined(__BORLANDC__)
   clear_error(ec);
   int result = error_wrapper(call_setsockopt(&msghdr::msg_namelen,
         s, level, optname, optval, optlen), ec);
   if (result == 0)
+  {
     clear_error(ec);
+
+#if defined(__MACH__) && defined(__APPLE__) \
+  || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__)
+    // To implement portable behaviour for SO_REUSEADDR with UDP sockets we
+    // need to also set SO_REUSEPORT on BSD-based platforms.
+    if ((state & datagram_oriented)
+        && level == SOL_SOCKET && optname == SO_REUSEADDR)
+    {
+      call_setsockopt(&msghdr::msg_namelen, s,
+          SOL_SOCKET, SO_REUSEPORT, optval, optlen);
+    }
+#endif
+  }
+
   return result;
 #endif // defined(__BORLANDC__)
 }
@@ -759,13 +932,33 @@ inline int call_getsockopt(SockLenType msghdr::*,
   return result;
 }
 
-int getsockopt(socket_type s, int level, int optname, void* optval,
-    size_t* optlen, asio::error_code& ec)
+int getsockopt(socket_type s, state_type state, int level, int optname,
+    void* optval, size_t* optlen, asio::error_code& ec)
 {
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return socket_error_retval;
+  }
+
   if (level == custom_socket_option_level && optname == always_fail_option)
   {
     ec = asio::error::invalid_argument;
-    return -1;
+    return socket_error_retval;
+  }
+
+  if (level == custom_socket_option_level
+      && optname == enable_connection_aborted_option)
+  {
+    if (*optlen != sizeof(int))
+    {
+      ec = asio::error::invalid_argument;
+      return socket_error_retval;
+    }
+
+    *static_cast<int*>(optval) = (state & enable_connection_aborted) ? 1 : 0;
+    ec = asio::error_code();
+    return 0;
   }
 
 #if defined(__BORLANDC__)
@@ -797,7 +990,7 @@ int getsockopt(socket_type s, int level, int optname, void* optval,
     }
   }
   ec = asio::error::fault;
-  return -1;
+  return socket_error_retval;
 #elif defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   clear_error(ec);
   int result = error_wrapper(call_getsockopt(&msghdr::msg_namelen,
@@ -851,6 +1044,12 @@ inline int call_getpeername(SockLenType msghdr::*,
 int getpeername(socket_type s, socket_addr_type* addr,
     std::size_t* addrlen, asio::error_code& ec)
 {
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return socket_error_retval;
+  }
+
   clear_error(ec);
   int result = error_wrapper(call_getpeername(
         &msghdr::msg_namelen, s, addr, addrlen), ec);
@@ -872,6 +1071,12 @@ inline int call_getsockname(SockLenType msghdr::*,
 int getsockname(socket_type s, socket_addr_type* addr,
     std::size_t* addrlen, asio::error_code& ec)
 {
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return socket_error_retval;
+  }
+
   clear_error(ec);
   int result = error_wrapper(call_getsockname(
         &msghdr::msg_namelen, s, addr, addrlen), ec);
@@ -880,9 +1085,15 @@ int getsockname(socket_type s, socket_addr_type* addr,
   return result;
 }
 
-int ioctl(socket_type s, long cmd, ioctl_arg_type* arg,
-    asio::error_code& ec)
+int ioctl(socket_type s, state_type& state, long cmd,
+    ioctl_arg_type* arg, asio::error_code& ec)
 {
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return socket_error_retval;
+  }
+
   clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   int result = error_wrapper(::ioctlsocket(s, cmd, arg), ec);
@@ -890,7 +1101,30 @@ int ioctl(socket_type s, long cmd, ioctl_arg_type* arg,
   int result = error_wrapper(::ioctl(s, cmd, arg), ec);
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   if (result >= 0)
+  {
     clear_error(ec);
+
+    // When updating the non-blocking mode we always perform the ioctl syscall,
+    // even if the flags would otherwise indicate that the socket is already in
+    // the correct state. This ensures that the underlying socket is put into
+    // the state that has been requested by the user. If the ioctl syscall was
+    // successful then we need to update the flags to match.
+    if (cmd == FIONBIO)
+    {
+      if (*arg)
+      {
+        state |= user_set_non_blocking;
+      }
+      else
+      {
+        // Clearing the non-blocking mode always overrides any internally-set
+        // non-blocking flag. Any subsequent asynchronous operations will need
+        // to re-enable non-blocking I/O.
+        state &= ~(user_set_non_blocking | internal_non_blocking);
+      }
+    }
+  }
+
   return result;
 }
 
@@ -940,7 +1174,7 @@ int poll_read(socket_type s, asio::error_code& ec)
   if (s == invalid_socket)
   {
     ec = asio::error::bad_descriptor;
-    return -1;
+    return socket_error_retval;
   }
 
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -970,7 +1204,7 @@ int poll_write(socket_type s, asio::error_code& ec)
   if (s == invalid_socket)
   {
     ec = asio::error::bad_descriptor;
-    return -1;
+    return socket_error_retval;
   }
 
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -1000,7 +1234,7 @@ int poll_connect(socket_type s, asio::error_code& ec)
   if (s == invalid_socket)
   {
     ec = asio::error::bad_descriptor;
-    return -1;
+    return socket_error_retval;
   }
 
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)

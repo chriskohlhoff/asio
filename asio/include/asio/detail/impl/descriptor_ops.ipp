@@ -73,7 +73,7 @@ bool set_internal_non_blocking(int d,
   if (d == -1)
   {
     ec = asio::error::bad_descriptor;
-    return 0;
+    return false;
   }
 
   errno = 0;

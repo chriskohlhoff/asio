@@ -44,7 +44,8 @@ public:
     }
 
     int opt = 1;
-    socket_ops::setsockopt(acceptor.get(),
+    socket_ops::state_type acceptor_state = 0;
+    socket_ops::setsockopt(acceptor.get(), acceptor_state,
         SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt), ec);
 
     using namespace std; // For memset.
@@ -103,25 +104,29 @@ public:
     }
     
     ioctl_arg_type non_blocking = 1;
-    if (socket_ops::ioctl(client.get(), FIONBIO, &non_blocking, ec))
+    socket_ops::state_type client_state = 0;
+    if (socket_ops::ioctl(client.get(), client_state,
+          FIONBIO, &non_blocking, ec))
     {
       asio::system_error e(ec, "socket_select_interrupter");
       boost::throw_exception(e);
     }
 
     opt = 1;
-    socket_ops::setsockopt(client.get(),
+    socket_ops::setsockopt(client.get(), client_state,
         IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt), ec);
 
     non_blocking = 1;
-    if (socket_ops::ioctl(server.get(), FIONBIO, &non_blocking, ec))
+    socket_ops::state_type server_state = 0;
+    if (socket_ops::ioctl(server.get(), server_state,
+          FIONBIO, &non_blocking, ec))
     {
       asio::system_error e(ec, "socket_select_interrupter");
       boost::throw_exception(e);
     }
 
     opt = 1;
-    socket_ops::setsockopt(server.get(),
+    socket_ops::setsockopt(server.get(), server_state,
         IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt), ec);
 
     read_descriptor_ = server.release();
@@ -132,10 +137,11 @@ public:
   ~socket_select_interrupter()
   {
     asio::error_code ec;
+    socket_ops::state_type state = socket_ops::internal_non_blocking;
     if (read_descriptor_ != invalid_socket)
-      socket_ops::close(read_descriptor_, ec);
+      socket_ops::close(read_descriptor_, state, true, ec);
     if (write_descriptor_ != invalid_socket)
-      socket_ops::close(write_descriptor_, ec);
+      socket_ops::close(write_descriptor_, state, true, ec);
   }
 
   // Interrupt the select call.

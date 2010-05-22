@@ -74,8 +74,9 @@ inline asio::error_code connect_pair(
   if (socket1.assign(protocol, sv[0], ec))
   {
     asio::error_code temp_ec;
-    asio::detail::socket_ops::close(sv[0], temp_ec);
-    asio::detail::socket_ops::close(sv[1], temp_ec);
+    asio::detail::socket_ops::state_type state[2] = { 0, 0 };
+    asio::detail::socket_ops::close(sv[0], state[0], true, temp_ec);
+    asio::detail::socket_ops::close(sv[1], state[1], true, temp_ec);
     return ec;
   }
 
@@ -83,7 +84,8 @@ inline asio::error_code connect_pair(
   {
     asio::error_code temp_ec;
     socket1.close(temp_ec);
-    asio::detail::socket_ops::close(sv[1], temp_ec);
+    asio::detail::socket_ops::state_type state = 0;
+    asio::detail::socket_ops::close(sv[1], state, true, temp_ec);
     return ec;
   }
 
