@@ -23,6 +23,7 @@
 #include <cstring>
 #include <boost/shared_ptr.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/utility/addressof.hpp>
 #include <boost/weak_ptr.hpp>
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
@@ -792,7 +793,7 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef null_buffers_op<Handler> op;
-    typename op::ptr p = { &handler,
+    typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);
@@ -938,7 +939,7 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef null_buffers_op<Handler> op;
-    typename op::ptr p = { &handler,
+    typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);
@@ -1135,7 +1136,7 @@ public:
     {
       // Allocate and construct an operation to wrap the handler.
       typedef null_buffers_op<Handler> op;
-      typename op::ptr p = { &handler,
+      typename op::ptr p = { boost::addressof(handler),
         asio_handler_alloc_helpers::allocate(
           sizeof(op), handler), 0 };
       p.p = new (p.v) op(handler);
@@ -1314,7 +1315,7 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef null_buffers_op<Handler> op;
-    typename op::ptr p = { &handler,
+    typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);

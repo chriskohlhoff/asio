@@ -19,6 +19,7 @@
 
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
+#include <boost/utility/addressof.hpp>
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/descriptor_ops.hpp"
@@ -78,7 +79,7 @@ public:
   {
     // Take ownership of the handler object.
     descriptor_write_op* o(static_cast<descriptor_write_op*>(base));
-    ptr p = { &o->handler_, o, o };
+    ptr p = { boost::addressof(o->handler_), o, o };
 
     // Make a copy of the handler so that the memory can be deallocated before
     // the upcall is made. Even if we're not about to make an upcall, a
@@ -88,7 +89,7 @@ public:
     // deallocated the memory here.
     detail::binder2<Handler, asio::error_code, std::size_t>
       handler(o->handler_, o->ec_, o->bytes_transferred_);
-    p.h = &handler.handler_;
+    p.h = boost::addressof(handler.handler_);
     p.reset();
 
     // Make the upcall if required.

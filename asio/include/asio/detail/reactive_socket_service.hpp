@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include <boost/utility/addressof.hpp>
 #include "asio/buffer.hpp"
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
@@ -29,6 +30,8 @@
 #include "asio/detail/reactor_op.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
+#include "asio/detail/socket_recv_op.hpp"
+#include "asio/detail/socket_send_op.hpp"
 #include "asio/detail/socket_types.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -539,78 +542,6 @@ public:
     return 0;
   }
 
-  template <typename ConstBufferSequence>
-  class send_op_base : public reactor_op
-  {
-  public:
-    send_op_base(socket_type socket, const ConstBufferSequence& buffers,
-        socket_base::message_flags flags, func_type complete_func)
-      : reactor_op(&send_op_base::do_perform, complete_func),
-        socket_(socket),
-        buffers_(buffers),
-        flags_(flags)
-    {
-    }
-
-    static bool do_perform(reactor_op* base)
-    {
-      send_op_base* o(static_cast<send_op_base*>(base));
-
-      buffer_sequence_adapter<asio::const_buffer,
-          ConstBufferSequence> bufs(o->buffers_);
-
-      return socket_ops::non_blocking_send(o->socket_,
-            bufs.buffers(), bufs.count(), o->flags_,
-            o->ec_, o->bytes_transferred_);
-    }
-
-  private:
-    socket_type socket_;
-    ConstBufferSequence buffers_;
-    socket_base::message_flags flags_;
-  };
-
-  template <typename ConstBufferSequence, typename Handler>
-  class send_op : public send_op_base<ConstBufferSequence>
-  {
-  public:
-    send_op(socket_type socket, const ConstBufferSequence& buffers,
-        socket_base::message_flags flags, Handler handler)
-      : send_op_base<ConstBufferSequence>(socket,
-          buffers, flags, &send_op::do_complete),
-        handler_(handler)
-    {
-    }
-
-    static void do_complete(io_service_impl* owner, operation* base,
-        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
-    {
-      // Take ownership of the handler object.
-      send_op* o(static_cast<send_op*>(base));
-      typedef handler_alloc_traits<Handler, send_op> alloc_traits;
-      handler_ptr<alloc_traits> ptr(o->handler_, o);
-
-      // Make the upcall if required.
-      if (owner)
-      {
-        // Make a copy of the handler so that the memory can be deallocated
-        // before the upcall is made. Even if we're not about to make an
-        // upcall, a sub-object of the handler may be the true owner of the
-        // memory associated with the handler. Consequently, a local copy of
-        // the handler is required to ensure that any owning sub-object remains
-        // valid until after we have deallocated the memory here.
-        detail::binder2<Handler, asio::error_code, std::size_t>
-          handler(o->handler_, o->ec_, o->bytes_transferred_);
-        ptr.reset();
-        asio::detail::fenced_block b;
-        asio_handler_invoke_helpers::invoke(handler, handler);
-      }
-    }
-
-  private:
-    Handler handler_;
-  };
-
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
   template <typename ConstBufferSequence, typename Handler>
@@ -618,17 +549,17 @@ public:
       socket_base::message_flags flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef send_op<ConstBufferSequence, Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr,
-        impl.socket_, buffers, flags, handler);
+    typedef socket_send_op<ConstBufferSequence, Handler> op;
+    typename op::ptr p = { boost::addressof(handler),
+      asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(impl.socket_, buffers, flags, handler);
 
-    start_op(impl, reactor::write_op, ptr.get(), true,
+    start_op(impl, reactor::write_op, p.p, true,
         (impl.protocol_.type() == SOCK_STREAM
           && buffer_sequence_adapter<asio::const_buffer,
             ConstBufferSequence>::all_empty(buffers)));
-    ptr.release();
+    p.v = p.p = 0;
   }
 
   // Start an asynchronous wait until data can be sent without blocking.
@@ -638,7 +569,7 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef null_buffers_op<Handler> op;
-    typename op::ptr p = { &handler,
+    typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);
@@ -776,7 +707,7 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef null_buffers_op<Handler> op;
-    typename op::ptr p = { &handler,
+    typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);
@@ -809,83 +740,6 @@ public:
     return 0;
   }
 
-  template <typename MutableBufferSequence>
-  class receive_op_base : public reactor_op
-  {
-  public:
-    receive_op_base(socket_type socket, int protocol_type,
-        const MutableBufferSequence& buffers,
-        socket_base::message_flags flags, func_type complete_func)
-      : reactor_op(&receive_op_base::do_perform, complete_func),
-        socket_(socket),
-        protocol_type_(protocol_type),
-        buffers_(buffers),
-        flags_(flags)
-    {
-    }
-
-    static bool do_perform(reactor_op* base)
-    {
-      receive_op_base* o(static_cast<receive_op_base*>(base));
-
-      buffer_sequence_adapter<asio::mutable_buffer,
-          MutableBufferSequence> bufs(o->buffers_);
-
-      return socket_ops::non_blocking_recv(o->socket_,
-          bufs.buffers(), bufs.count(), o->flags_,
-          o->protocol_type_ == SOCK_STREAM,
-          o->ec_, o->bytes_transferred_);
-    }
-
-  private:
-    socket_type socket_;
-    int protocol_type_;
-    MutableBufferSequence buffers_;
-    socket_base::message_flags flags_;
-  };
-
-  template <typename MutableBufferSequence, typename Handler>
-  class receive_op : public receive_op_base<MutableBufferSequence>
-  {
-  public:
-    receive_op(socket_type socket, int protocol_type,
-        const MutableBufferSequence& buffers,
-        socket_base::message_flags flags, Handler handler)
-      : receive_op_base<MutableBufferSequence>(socket,
-          protocol_type, buffers, flags, &receive_op::do_complete),
-        handler_(handler)
-    {
-    }
-
-    static void do_complete(io_service_impl* owner, operation* base,
-        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
-    {
-      // Take ownership of the handler object.
-      receive_op* o(static_cast<receive_op*>(base));
-      typedef handler_alloc_traits<Handler, receive_op> alloc_traits;
-      handler_ptr<alloc_traits> ptr(o->handler_, o);
-
-      // Make the upcall if required.
-      if (owner)
-      {
-        // Make a copy of the handler so that the memory can be deallocated
-        // before the upcall is made. Even if we're not about to make an
-        // upcall, a sub-object of the handler may be the true owner of the
-        // memory associated with the handler. Consequently, a local copy of
-        // the handler is required to ensure that any owning sub-object remains
-        // valid until after we have deallocated the memory here.
-        detail::binder2<Handler, asio::error_code, std::size_t>
-          handler(o->handler_, o->ec_, o->bytes_transferred_);
-        ptr.reset();
-        asio::detail::fenced_block b;
-        asio_handler_invoke_helpers::invoke(handler, handler);
-      }
-    }
-
-  private:
-    Handler handler_;
-  };
-
   // Start an asynchronous receive. The buffer for the data being received
   // must be valid for the lifetime of the asynchronous operation.
   template <typename MutableBufferSequence, typename Handler>
@@ -894,21 +748,21 @@ public:
       socket_base::message_flags flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef receive_op<MutableBufferSequence, Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler);
+    typedef socket_recv_op<MutableBufferSequence, Handler> op;
+    typename op::ptr p = { boost::addressof(handler),
+      asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
     int protocol_type = impl.protocol_.type();
-    handler_ptr<alloc_traits> ptr(raw_ptr, impl.socket_,
-        protocol_type, buffers, flags, handler);
+    p.p = new (p.v) op(impl.socket_, protocol_type, buffers, flags, handler);
 
     start_op(impl,
         (flags & socket_base::message_out_of_band)
           ? reactor::except_op : reactor::read_op,
-        ptr.get(), (flags & socket_base::message_out_of_band) == 0,
+        p.p, (flags & socket_base::message_out_of_band) == 0,
         (impl.protocol_.type() == SOCK_STREAM
           && buffer_sequence_adapter<asio::mutable_buffer,
             MutableBufferSequence>::all_empty(buffers)));
-    ptr.release();
+    p.v = p.p = 0;
   }
 
   // Wait until data can be received without blocking.
@@ -918,7 +772,7 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef null_buffers_op<Handler> op;
-    typename op::ptr p = { &handler,
+    typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);
@@ -1082,7 +936,7 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef null_buffers_op<Handler> op;
-    typename op::ptr p = { &handler,
+    typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);
