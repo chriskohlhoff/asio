@@ -311,6 +311,26 @@ void sync_connect(socket_type s, const socket_addr_type* addr,
       asio::error::get_system_category());
 }
 
+bool non_blocking_connect(socket_type s, asio::error_code& ec)
+{
+  // Get the error code from the connect operation.
+  int connect_error = 0;
+  size_t connect_error_len = sizeof(connect_error);
+  if (socket_ops::getsockopt(s, 0, SOL_SOCKET, SO_ERROR,
+        &connect_error, &connect_error_len, ec) == 0)
+  {
+    if (connect_error)
+    {
+      ec = asio::error_code(connect_error,
+          asio::error::get_system_category());
+    }
+    else
+      ec = asio::error_code();
+  }
+
+  return true;
+}
+
 int socketpair(int af, int type, int protocol,
     socket_type sv[2], asio::error_code& ec)
 {

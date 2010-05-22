@@ -40,22 +40,7 @@ public:
   static bool do_perform(reactor_op* base)
   {
     socket_connect_op_base* o(static_cast<socket_connect_op_base*>(base));
-
-    // Get the error code from the connect operation.
-    int connect_error = 0;
-    size_t connect_error_len = sizeof(connect_error);
-    if (socket_ops::getsockopt(o->socket_, 0, SOL_SOCKET, SO_ERROR,
-          &connect_error, &connect_error_len, o->ec_) == socket_error_retval)
-      return true;
-
-    // The connection failed so the handler will be posted with an error code.
-    if (connect_error)
-    {
-      o->ec_ = asio::error_code(connect_error,
-          asio::error::get_system_category());
-    }
-
-    return true;
+    return socket_ops::non_blocking_connect(o->socket_, o->ec_);
   }
 
 private:
