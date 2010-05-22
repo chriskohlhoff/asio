@@ -76,7 +76,7 @@ void test()
     ip::multicast::hops hops2;
     sock.get_option(hops2);
     hops1 = 1;
-    static_cast<int>(hops1.value());
+    (void)static_cast<int>(hops1.value());
 
     // enable_loopback class.
 
@@ -85,9 +85,9 @@ void test()
     ip::multicast::enable_loopback enable_loopback2;
     sock.get_option(enable_loopback2);
     enable_loopback1 = true;
-    static_cast<bool>(enable_loopback1);
-    static_cast<bool>(!enable_loopback1);
-    static_cast<bool>(enable_loopback1.value());
+    (void)static_cast<bool>(enable_loopback1);
+    (void)static_cast<bool>(!enable_loopback1);
+    (void)static_cast<bool>(enable_loopback1.value());
   }
   catch (std::exception&)
   {

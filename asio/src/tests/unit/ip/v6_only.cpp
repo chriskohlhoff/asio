@@ -47,9 +47,9 @@ void test()
     ip::v6_only v6_only2;
     sock.get_option(v6_only2);
     v6_only1 = true;
-    static_cast<bool>(v6_only1);
-    static_cast<bool>(!v6_only1);
-    static_cast<bool>(v6_only1.value());
+    (void)static_cast<bool>(v6_only1);
+    (void)static_cast<bool>(!v6_only1);
+    (void)static_cast<bool>(v6_only1.value());
   }
   catch (std::exception&)
   {

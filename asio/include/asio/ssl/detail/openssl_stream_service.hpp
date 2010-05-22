@@ -89,7 +89,7 @@ private:
       : base_handler<Stream>(io_service)
       , handler_(handler)
     {
-      set_func(boost::bind(
+      this->set_func(boost::bind(
         &io_handler<Stream, Handler>::handler_impl, 
         this, boost::arg<1>(), boost::arg<2>() ));
     }
@@ -113,7 +113,7 @@ private:
       : base_handler<Stream>(io_service)
       , handler_(handler)
     {
-      set_func(boost::bind(
+      this->set_func(boost::bind(
         &handshake_handler<Stream, Handler>::handler_impl, 
         this, boost::arg<1>(), boost::arg<2>() ));
     }
@@ -138,7 +138,7 @@ private:
       : base_handler<Stream>(io_service),
         handler_(handler)
     { 
-      set_func(boost::bind(
+      this->set_func(boost::bind(
         &shutdown_handler<Stream, Handler>::handler_impl, 
         this, boost::arg<1>(), boost::arg<2>() ));
     }

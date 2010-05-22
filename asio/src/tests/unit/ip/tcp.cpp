@@ -54,9 +54,9 @@ void test()
     ip::tcp::no_delay no_delay2;
     sock.get_option(no_delay2);
     no_delay1 = true;
-    static_cast<bool>(no_delay1);
-    static_cast<bool>(!no_delay1);
-    static_cast<bool>(no_delay1.value());
+    (void)static_cast<bool>(no_delay1);
+    (void)static_cast<bool>(!no_delay1);
+    (void)static_cast<bool>(no_delay1.value());
   }
   catch (std::exception&)
   {
