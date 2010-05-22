@@ -32,7 +32,8 @@ protected:
   {
   }
 
-  std::size_t check(const asio::error_code& ec,
+  std::size_t check_for_completion(
+      const asio::error_code& ec,
       std::size_t total_transferred)
   {
     return detail::adapt_completion_condition_result(
@@ -51,7 +52,8 @@ protected:
   {
   }
 
-  static std::size_t check(const asio::error_code& ec,
+  static std::size_t check_for_completion(
+      const asio::error_code& ec,
       std::size_t total_transferred)
   {
     return transfer_all_t()(ec, total_transferred);

@@ -148,14 +148,14 @@ namespace detail
       switch (start)
       {
         case 1:
-        buffers_.prepare(this->check(ec, total_transferred_));
+        buffers_.prepare(this->check_for_completion(ec, total_transferred_));
         for (;;)
         {
           stream_.async_read_some(buffers_, *this);
           return; default:
           total_transferred_ += bytes_transferred;
           buffers_.consume(bytes_transferred);
-          buffers_.prepare(this->check(ec, total_transferred_));
+          buffers_.prepare(this->check_for_completion(ec, total_transferred_));
           if ((!ec && bytes_transferred == 0)
               || buffers_.begin() == buffers_.end())
             break;
@@ -200,7 +200,7 @@ namespace detail
       switch (start)
       {
         case 1:
-        n = this->check(ec, total_transferred_);
+        n = this->check_for_completion(ec, total_transferred_);
         for (;;)
         {
           stream_.async_read_some(asio::buffer(
@@ -208,7 +208,7 @@ namespace detail
           return; default:
           total_transferred_ += bytes_transferred;
           if ((!ec && bytes_transferred == 0)
-              || (n = this->check(ec, total_transferred_)) == 0
+              || (n = this->check_for_completion(ec, total_transferred_)) == 0
               || total_transferred_ == asio::buffer_size(buffer_))
             break;
         }
@@ -304,7 +304,7 @@ namespace detail
       switch (start)
       {
         case 1:
-        max_size = this->check(ec, total_transferred_);
+        max_size = this->check_for_completion(ec, total_transferred_);
         bytes_available = std::min<std::size_t>(512,
             std::min<std::size_t>(max_size,
               streambuf_.max_size() - streambuf_.size()));
@@ -314,7 +314,7 @@ namespace detail
           return; default:
           total_transferred_ += bytes_transferred;
           streambuf_.commit(bytes_transferred);
-          max_size = this->check(ec, total_transferred_);
+          max_size = this->check_for_completion(ec, total_transferred_);
           bytes_available = std::min<std::size_t>(512,
               std::min<std::size_t>(max_size,
                 streambuf_.max_size() - streambuf_.size()));
