@@ -161,13 +161,14 @@ public:
       const null_buffers&, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef null_buffers_op<Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr, handler);
+    typedef null_buffers_op<Handler> op;
+    typename op::ptr p = { &handler,
+      asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(handler);
 
-    start_op(impl, reactor::write_op, ptr.get(), false, false);
-    ptr.release();
+    start_op(impl, reactor::write_op, p.p, false, false);
+    p.v = p.p = 0;
   }
 
   // Read some data from the stream. Returns the number of bytes read.
@@ -217,13 +218,14 @@ public:
       const null_buffers&, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef null_buffers_op<Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr, handler);
+    typedef null_buffers_op<Handler> op;
+    typename op::ptr p = { &handler,
+      asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(handler);
 
-    start_op(impl, reactor::read_op, ptr.get(), false, false);
-    ptr.release();
+    start_op(impl, reactor::read_op, p.p, false, false);
+    p.v = p.p = 0;
   }
 
 private:
