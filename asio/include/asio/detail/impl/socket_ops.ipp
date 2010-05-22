@@ -239,6 +239,34 @@ int connect(socket_type s, const socket_addr_type* addr,
   return result;
 }
 
+void sync_connect(socket_type s, const socket_addr_type* addr,
+    std::size_t addrlen, asio::error_code& ec)
+{
+  // Perform the connect operation.
+  socket_ops::connect(s, addr, addrlen, ec);
+  if (ec != asio::error::in_progress
+      && ec != asio::error::would_block)
+  {
+    // The connect operation finished immediately.
+    return;
+  }
+
+  // Wait for socket to become ready.
+  if (socket_ops::poll_connect(s, ec) < 0)
+    return;
+
+  // Get the error code from the connect operation.
+  int connect_error = 0;
+  size_t connect_error_len = sizeof(connect_error);
+  if (socket_ops::getsockopt(s, 0, SOL_SOCKET, SO_ERROR,
+        &connect_error, &connect_error_len, ec) == socket_error_retval)
+    return;
+
+  // Return the result of the connect operation.
+  ec = asio::error_code(connect_error,
+      asio::error::get_system_category());
+}
+
 int socketpair(int af, int type, int protocol,
     socket_type sv[2], asio::error_code& ec)
 {

@@ -692,36 +692,8 @@ public:
   asio::error_code connect(implementation_type& impl,
       const endpoint_type& peer_endpoint, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return ec;
-    }
-
-    // Perform the connect operation.
-    socket_ops::connect(impl.socket_,
+    socket_ops::sync_connect(impl.socket_,
         peer_endpoint.data(), peer_endpoint.size(), ec);
-    if (ec != asio::error::in_progress
-        && ec != asio::error::would_block)
-    {
-      // The connect operation finished immediately.
-      return ec;
-    }
-
-    // Wait for socket to become ready.
-    if (socket_ops::poll_connect(impl.socket_, ec) < 0)
-      return ec;
-
-    // Get the error code from the connect operation.
-    int connect_error = 0;
-    size_t connect_error_len = sizeof(connect_error);
-    if (socket_ops::getsockopt(impl.socket_, impl.state_, SOL_SOCKET, SO_ERROR,
-          &connect_error, &connect_error_len, ec) == socket_error_retval)
-      return ec;
-
-    // Return the result of the connect operation.
-    ec = asio::error_code(connect_error,
-        asio::error::get_system_category());
     return ec;
   }
 
