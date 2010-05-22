@@ -414,9 +414,8 @@ int recv(socket_type s, buf* bufs, size_t count, int flags,
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
-size_t sync_recv(socket_type s, buf* bufs, size_t count,
-    int flags, bool all_empty, bool is_stream, bool non_blocking,
-    asio::error_code& ec)
+size_t sync_recv(socket_type s, state_type state, buf* bufs,
+    size_t count, int flags, bool all_empty, asio::error_code& ec)
 {
   if (s == invalid_socket)
   {
@@ -425,7 +424,7 @@ size_t sync_recv(socket_type s, buf* bufs, size_t count,
   }
 
   // A request to read 0 bytes on a stream is a no-op.
-  if (all_empty && is_stream)
+  if (all_empty && (state & stream_oriented))
   {
     ec = asio::error_code();
     return 0;
@@ -442,14 +441,14 @@ size_t sync_recv(socket_type s, buf* bufs, size_t count,
       return bytes;
 
     // Check for EOF.
-    if (is_stream && bytes == 0)
+    if ((state & stream_oriented) && bytes == 0)
     {
       ec = asio::error::eof;
       return 0;
     }
 
     // Operation failed.
-    if (non_blocking
+    if ((state & user_set_non_blocking)
         || (ec != asio::error::would_block
           && ec != asio::error::try_again))
       return 0;
@@ -530,9 +529,9 @@ int recvfrom(socket_type s, buf* bufs, size_t count, int flags,
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
-size_t sync_recvfrom(socket_type s, buf* bufs, size_t count,
-    int flags, socket_addr_type* addr, std::size_t* addrlen,
-    bool non_blocking, asio::error_code& ec)
+size_t sync_recvfrom(socket_type s, state_type state, buf* bufs,
+    size_t count, int flags, socket_addr_type* addr,
+    std::size_t* addrlen, asio::error_code& ec)
 {
   if (s == invalid_socket)
   {
@@ -551,7 +550,7 @@ size_t sync_recvfrom(socket_type s, buf* bufs, size_t count,
       return bytes;
 
     // Operation failed.
-    if (non_blocking
+    if ((state & user_set_non_blocking)
         || (ec != asio::error::would_block
           && ec != asio::error::try_again))
       return 0;
@@ -623,9 +622,8 @@ int send(socket_type s, const buf* bufs, size_t count, int flags,
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
-size_t sync_send(socket_type s, const buf* bufs, size_t count,
-    int flags, bool all_empty, bool is_stream, bool non_blocking,
-    asio::error_code& ec)
+size_t sync_send(socket_type s, state_type state, const buf* bufs,
+    size_t count, int flags, bool all_empty, asio::error_code& ec)
 {
   if (s == invalid_socket)
   {
@@ -634,7 +632,7 @@ size_t sync_send(socket_type s, const buf* bufs, size_t count,
   }
 
   // A request to write 0 bytes to a stream is a no-op.
-  if (all_empty && is_stream)
+  if (all_empty && (state & stream_oriented))
   {
     ec = asio::error_code();
     return 0;
@@ -651,7 +649,7 @@ size_t sync_send(socket_type s, const buf* bufs, size_t count,
       return bytes;
 
     // Operation failed.
-    if (non_blocking
+    if ((state & user_set_non_blocking)
         || (ec != asio::error::would_block
           && ec != asio::error::try_again))
       return 0;
@@ -725,9 +723,9 @@ int sendto(socket_type s, const buf* bufs, size_t count, int flags,
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
 
-size_t sync_sendto(socket_type s, const buf* bufs, size_t count,
-    int flags, const socket_addr_type* addr, std::size_t addrlen,
-    bool non_blocking, asio::error_code& ec)
+size_t sync_sendto(socket_type s, state_type state, const buf* bufs,
+    size_t count, int flags, const socket_addr_type* addr,
+    std::size_t addrlen, asio::error_code& ec)
 {
   if (s == invalid_socket)
   {
@@ -746,7 +744,7 @@ size_t sync_sendto(socket_type s, const buf* bufs, size_t count,
       return bytes;
 
     // Operation failed.
-    if (non_blocking
+    if ((state & user_set_non_blocking)
         || (ec != asio::error::would_block
           && ec != asio::error::try_again))
       return 0;

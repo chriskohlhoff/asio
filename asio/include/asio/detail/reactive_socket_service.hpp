@@ -328,9 +328,8 @@ public:
     buffer_sequence_adapter<asio::const_buffer,
         ConstBufferSequence> bufs(buffers);
 
-    return socket_ops::sync_send(impl.socket_, bufs.buffers(), bufs.count(),
-        flags, bufs.all_empty(), impl.protocol_.type() == SOCK_STREAM,
-        impl.state_ & socket_ops::user_set_non_blocking, ec);
+    return socket_ops::sync_send(impl.socket_, impl.state_,
+        bufs.buffers(), bufs.count(), flags, bufs.all_empty(), ec);
   }
 
   // Wait until data can be sent without blocking.
@@ -389,9 +388,9 @@ public:
     buffer_sequence_adapter<asio::const_buffer,
         ConstBufferSequence> bufs(buffers);
 
-    return socket_ops::sync_sendto(impl.socket_, bufs.buffers(), bufs.count(),
-        flags, destination.data(), destination.size(),
-        impl.state_ & socket_ops::user_set_non_blocking, ec);
+    return socket_ops::sync_sendto(impl.socket_, impl.state_,
+        bufs.buffers(), bufs.count(), flags,
+        destination.data(), destination.size(), ec);
   }
 
   // Wait until data can be sent without blocking.
@@ -450,9 +449,8 @@ public:
     buffer_sequence_adapter<asio::mutable_buffer,
         MutableBufferSequence> bufs(buffers);
 
-    return socket_ops::sync_recv(impl.socket_, bufs.buffers(), bufs.count(),
-        flags, bufs.all_empty(), impl.protocol_.type() == SOCK_STREAM,
-        impl.state_ & socket_ops::user_set_non_blocking, ec);
+    return socket_ops::sync_recv(impl.socket_, impl.state_,
+        bufs.buffers(), bufs.count(), flags, bufs.all_empty(), ec);
   }
 
   // Wait until data can be received without blocking.
@@ -521,9 +519,9 @@ public:
         MutableBufferSequence> bufs(buffers);
 
     std::size_t addr_len = sender_endpoint.capacity();
-    std::size_t bytes_recvd = socket_ops::sync_recvfrom(impl.socket_,
-        bufs.buffers(), bufs.count(), flags, sender_endpoint.data(), &addr_len,
-        impl.state_ & socket_ops::user_set_non_blocking, ec);
+    std::size_t bytes_recvd = socket_ops::sync_recvfrom(
+        impl.socket_, impl.state_, bufs.buffers(), bufs.count(),
+        flags, sender_endpoint.data(), &addr_len, ec);
 
     if (!ec)
       sender_endpoint.resize(addr_len);
