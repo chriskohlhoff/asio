@@ -17,7 +17,6 @@
 
 #include "asio/detail/config.hpp"
 #include <cstddef>
-#include <boost/date_time/posix_time/posix_time_types.hpp>
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/detail/bind_handler.hpp"
@@ -28,6 +27,10 @@
 #include "asio/detail/timer_op.hpp"
 #include "asio/detail/timer_queue.hpp"
 #include "asio/detail/timer_scheduler.hpp"
+
+#include "asio/detail/push_options.hpp"
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include "asio/detail/pop_options.hpp"
 
 #include "asio/detail/push_options.hpp"
 
