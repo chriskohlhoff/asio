@@ -28,6 +28,7 @@
 #include "asio/detail/null_buffers_op.hpp"
 #include "asio/detail/reactor.hpp"
 #include "asio/detail/reactor_op.hpp"
+#include "asio/detail/socket_accept_op.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_recv_op.hpp"
@@ -871,123 +872,6 @@ public:
     }
   }
 
-  template <typename Socket>
-  class accept_op_base : public reactor_op
-  {
-  public:
-    accept_op_base(socket_type socket, Socket& peer,
-        const protocol_type& protocol, endpoint_type* peer_endpoint,
-        bool enable_connection_aborted, func_type complete_func)
-      : reactor_op(&accept_op_base::do_perform, complete_func),
-        socket_(socket),
-        peer_(peer),
-        protocol_(protocol),
-        peer_endpoint_(peer_endpoint),
-        enable_connection_aborted_(enable_connection_aborted)
-    {
-    }
-
-    static bool do_perform(reactor_op* base)
-    {
-      accept_op_base* o(static_cast<accept_op_base*>(base));
-
-      for (;;)
-      {
-        // Accept the waiting connection.
-        asio::error_code ec;
-        socket_holder new_socket;
-        std::size_t addr_len = 0;
-        std::size_t* addr_len_p = 0;
-        socket_addr_type* addr = 0;
-        if (o->peer_endpoint_)
-        {
-          addr_len = o->peer_endpoint_->capacity();
-          addr_len_p = &addr_len;
-          addr = o->peer_endpoint_->data();
-        }
-        new_socket.reset(socket_ops::accept(o->socket_, addr, addr_len_p, ec));
-
-        // Retry operation if interrupted by signal.
-        if (ec == asio::error::interrupted)
-          continue;
-
-        // Check if we need to run the operation again.
-        if (ec == asio::error::would_block
-            || ec == asio::error::try_again)
-          return false;
-        if (ec == asio::error::connection_aborted
-            && !o->enable_connection_aborted_)
-          return false;
-#if defined(EPROTO)
-        if (ec.value() == EPROTO && !o->enable_connection_aborted_)
-          return false;
-#endif // defined(EPROTO)
-
-        // Transfer ownership of the new socket to the peer object.
-        if (!ec)
-        {
-          if (o->peer_endpoint_)
-            o->peer_endpoint_->resize(addr_len);
-          o->peer_.assign(o->protocol_, new_socket.get(), ec);
-          if (!ec)
-            new_socket.release();
-        }
-
-        o->ec_ = ec;
-        return true;
-      }
-    }
-
-  private:
-    socket_type socket_;
-    Socket& peer_;
-    protocol_type protocol_;
-    endpoint_type* peer_endpoint_;
-    bool enable_connection_aborted_;
-  };
-
-  template <typename Socket, typename Handler>
-  class accept_op : public accept_op_base<Socket>
-  {
-  public:
-    accept_op(socket_type socket, Socket& peer, const protocol_type& protocol,
-        endpoint_type* peer_endpoint, bool enable_connection_aborted,
-        Handler handler)
-      : accept_op_base<Socket>(socket, peer, protocol, peer_endpoint,
-          enable_connection_aborted, &accept_op::do_complete),
-        handler_(handler)
-    {
-    }
-
-    static void do_complete(io_service_impl* owner, operation* base,
-        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
-    {
-      // Take ownership of the handler object.
-      accept_op* o(static_cast<accept_op*>(base));
-      typedef handler_alloc_traits<Handler, accept_op> alloc_traits;
-      handler_ptr<alloc_traits> ptr(o->handler_, o);
-
-      // Make the upcall if required.
-      if (owner)
-      {
-        // Make a copy of the handler so that the memory can be deallocated
-        // before the upcall is made. Even if we're not about to make an
-        // upcall, a sub-object of the handler may be the true owner of the
-        // memory associated with the handler. Consequently, a local copy of
-        // the handler is required to ensure that any owning sub-object remains
-        // valid until after we have deallocated the memory here.
-        detail::binder1<Handler, asio::error_code>
-          handler(o->handler_, o->ec_);
-        ptr.reset();
-        asio::detail::fenced_block b;
-        asio_handler_invoke_helpers::invoke(handler, handler);
-      }
-    }
-
-  private:
-    Handler handler_;
-  };
-
   // Start an asynchronous accept. The peer and peer_endpoint objects
   // must be valid until the accept's handler is invoked.
   template <typename Socket, typename Handler>
@@ -995,16 +879,17 @@ public:
       endpoint_type* peer_endpoint, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef accept_op<Socket, Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler);
+    typedef socket_accept_op<Socket, Protocol, Handler> op;
+    typename op::ptr p = { boost::addressof(handler),
+      asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
     bool enable_connection_aborted =
       (impl.flags_ & implementation_type::enable_connection_aborted) != 0;
-    handler_ptr<alloc_traits> ptr(raw_ptr, impl.socket_, peer,
-        impl.protocol_, peer_endpoint, enable_connection_aborted, handler);
+    p.p = new (p.v) op(impl.socket_, peer, impl.protocol_,
+        peer_endpoint, enable_connection_aborted, handler);
 
-    start_accept_op(impl, ptr.get(), peer.is_open());
-    ptr.release();
+    start_accept_op(impl, p.p, peer.is_open());
+    p.v = p.p = 0;
   }
 
   // Connect the socket to the specified endpoint.
