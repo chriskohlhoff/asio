@@ -29,6 +29,7 @@
 #include "asio/detail/reactor.hpp"
 #include "asio/detail/reactor_op.hpp"
 #include "asio/detail/socket_accept_op.hpp"
+#include "asio/detail/socket_connect_op.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_recv_op.hpp"
@@ -929,92 +930,20 @@ public:
     return ec;
   }
 
-  class connect_op_base : public reactor_op
-  {
-  public:
-    connect_op_base(socket_type socket, func_type complete_func)
-      : reactor_op(&connect_op_base::do_perform, complete_func),
-        socket_(socket)
-    {
-    }
-
-    static bool do_perform(reactor_op* base)
-    {
-      connect_op_base* o(static_cast<connect_op_base*>(base));
-
-      // Get the error code from the connect operation.
-      int connect_error = 0;
-      size_t connect_error_len = sizeof(connect_error);
-      if (socket_ops::getsockopt(o->socket_, SOL_SOCKET, SO_ERROR,
-            &connect_error, &connect_error_len, o->ec_) == socket_error_retval)
-        return true;
-
-      // The connection failed so the handler will be posted with an error code.
-      if (connect_error)
-      {
-        o->ec_ = asio::error_code(connect_error,
-            asio::error::get_system_category());
-      }
-
-      return true;
-    }
-
-  private:
-    socket_type socket_;
-  };
-
-  template <typename Handler>
-  class connect_op : public connect_op_base
-  {
-  public:
-    connect_op(socket_type socket, Handler handler)
-      : connect_op_base(socket, &connect_op::do_complete),
-        handler_(handler)
-    {
-    }
-
-    static void do_complete(io_service_impl* owner, operation* base,
-        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
-    {
-      // Take ownership of the handler object.
-      connect_op* o(static_cast<connect_op*>(base));
-      typedef handler_alloc_traits<Handler, connect_op> alloc_traits;
-      handler_ptr<alloc_traits> ptr(o->handler_, o);
-
-      // Make the upcall if required.
-      if (owner)
-      {
-        // Make a copy of the handler so that the memory can be deallocated
-        // before the upcall is made. Even if we're not about to make an
-        // upcall, a sub-object of the handler may be the true owner of the
-        // memory associated with the handler. Consequently, a local copy of
-        // the handler is required to ensure that any owning sub-object remains
-        // valid until after we have deallocated the memory here.
-        detail::binder1<Handler, asio::error_code>
-          handler(o->handler_, o->ec_);
-        ptr.reset();
-        asio::detail::fenced_block b;
-        asio_handler_invoke_helpers::invoke(handler, handler);
-      }
-    }
-
-  private:
-    Handler handler_;
-  };
-
   // Start an asynchronous connect.
   template <typename Handler>
   void async_connect(implementation_type& impl,
       const endpoint_type& peer_endpoint, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef connect_op<Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr, impl.socket_, handler);
+    typedef socket_connect_op<Handler> op;
+    typename op::ptr p = { boost::addressof(handler),
+      asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(impl.socket_, handler);
 
-    start_connect_op(impl, ptr.get(), peer_endpoint);
-    ptr.release();
+    start_connect_op(impl, p.p, peer_endpoint);
+    p.v = p.p = 0;
   }
 
 private:
