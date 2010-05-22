@@ -127,11 +127,11 @@ namespace detail
     }
 
     void operator()(const asio::error_code& ec,
-        std::size_t bytes_transferred, bool start = false)
+        std::size_t bytes_transferred, int start = 0)
     {
       switch (start)
       {
-        case true:
+        case 1:
         buffers_.prepare(this->check(ec, total_transferred_));
         for (;;)
         {
@@ -178,12 +178,12 @@ namespace detail
     }
 
     void operator()(const asio::error_code& ec,
-        std::size_t bytes_transferred, bool start = false)
+        std::size_t bytes_transferred, int start = 0)
     {
       std::size_t n = 0;
       switch (start)
       {
-        case true:
+        case 1:
         n = this->check(ec, total_transferred_);
         for (;;)
         {
@@ -229,12 +229,12 @@ namespace detail
     }
 
     void operator()(const asio::error_code& ec,
-        std::size_t bytes_transferred, bool start = false)
+        std::size_t bytes_transferred, int start = 0)
     {
       std::size_t n = 0;
       switch (start)
       {
-        case true:
+        case 1:
         n = this->check(ec, total_transferred_);
         for (;;)
         {
@@ -299,7 +299,7 @@ inline void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
   detail::write_op<AsyncWriteStream, ConstBufferSequence,
     CompletionCondition, WriteHandler>(
       s, buffers, completion_condition, handler)(
-        asio::error_code(), 0, true);
+        asio::error_code(), 0, 1);
 }
 
 template <typename AsyncWriteStream, typename ConstBufferSequence,

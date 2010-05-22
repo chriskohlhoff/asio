@@ -143,12 +143,11 @@ namespace detail
     }
 
     void operator()(const asio::error_code& ec,
-        std::size_t bytes_transferred,
-        bool start = false)
+        std::size_t bytes_transferred, int start = 0)
     {
       switch (start)
       {
-        case true:
+        case 1:
         buffers_.prepare(this->check(ec, total_transferred_));
         for (;;)
         {
@@ -195,13 +194,12 @@ namespace detail
     }
 
     void operator()(const asio::error_code& ec,
-        std::size_t bytes_transferred,
-        bool start = false)
+        std::size_t bytes_transferred, int start = 0)
     {
       std::size_t n = 0;
       switch (start)
       {
-        case true:
+        case 1:
         n = this->check(ec, total_transferred_);
         for (;;)
         {
@@ -266,7 +264,7 @@ inline void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
   detail::read_op<AsyncReadStream, MutableBufferSequence,
     CompletionCondition, ReadHandler>(
       s, buffers, completion_condition, handler)(
-        asio::error_code(), 0, true);
+        asio::error_code(), 0, 1);
 }
 
 template <typename AsyncReadStream, typename MutableBufferSequence,
@@ -300,12 +298,12 @@ namespace detail
     }
 
     void operator()(const asio::error_code& ec,
-        std::size_t bytes_transferred, bool start = false)
+        std::size_t bytes_transferred, int start = 0)
     {
       std::size_t max_size, bytes_available;
       switch (start)
       {
-        case true:
+        case 1:
         max_size = this->check(ec, total_transferred_);
         bytes_available = std::min<std::size_t>(512,
             std::min<std::size_t>(max_size,
@@ -375,7 +373,7 @@ inline void async_read(AsyncReadStream& s,
   detail::read_streambuf_op<AsyncReadStream,
     Allocator, CompletionCondition, ReadHandler>(
       s, b, completion_condition, handler)(
-        asio::error_code(), 0, true);
+        asio::error_code(), 0, 1);
 }
 
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
