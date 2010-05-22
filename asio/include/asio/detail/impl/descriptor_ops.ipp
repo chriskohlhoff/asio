@@ -28,15 +28,6 @@ namespace asio {
 namespace detail {
 namespace descriptor_ops {
 
-template <typename ReturnType>
-inline ReturnType error_wrapper(ReturnType return_value,
-    asio::error_code& ec)
-{
-  ec = asio::error_code(errno,
-      asio::error::get_system_category());
-  return return_value;
-}
-
 int open(const char* path, int flags, asio::error_code& ec)
 {
   errno = 0;

@@ -44,6 +44,15 @@ enum
 
 typedef unsigned char state_type;
 
+template <typename ReturnType>
+inline ReturnType error_wrapper(ReturnType return_value,
+    asio::error_code& ec)
+{
+  ec = asio::error_code(errno,
+      asio::error::get_system_category());
+  return return_value;
+}
+
 ASIO_DECL int open(const char* path, int flags, asio::error_code& ec);
 
 ASIO_DECL int close(int d, state_type& state, asio::error_code& ec);
