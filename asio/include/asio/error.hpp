@@ -212,7 +212,7 @@ enum ssl_errors
 {
 };
 
-// boostify: error category definitions go here.
+// boostify: error category definitions start here.
 
 } // namespace error
 } // namespace asio
@@ -225,6 +225,8 @@ enum ssl_errors
 
 namespace asio {
 namespace error {
+
+// boostify: error category definitions end here.
 
 asio::error_code make_error_code(basic_errors e);
 asio::error_code make_error_code(netdb_errors e);

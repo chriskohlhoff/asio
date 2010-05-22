@@ -150,7 +150,8 @@ public:
   }
 
   /// Compare addresses for ordering.
-  ASIO_DECL friend bool operator<(const address_v6& a1, const address_v6& a2);
+  ASIO_DECL friend bool operator<(
+      const address_v6& a1, const address_v6& a2);
 
   /// Compare addresses for ordering.
   friend bool operator>(const address_v6& a1, const address_v6& a2)

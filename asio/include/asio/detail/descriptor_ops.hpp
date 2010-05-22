@@ -53,9 +53,11 @@ inline ReturnType error_wrapper(ReturnType return_value,
   return return_value;
 }
 
-ASIO_DECL int open(const char* path, int flags, asio::error_code& ec);
+ASIO_DECL int open(const char* path, int flags,
+    asio::error_code& ec);
 
-ASIO_DECL int close(int d, state_type& state, asio::error_code& ec);
+ASIO_DECL int close(int d, state_type& state,
+    asio::error_code& ec);
 
 ASIO_DECL bool set_internal_non_blocking(int d,
     state_type& state, asio::error_code& ec);
@@ -68,10 +70,12 @@ ASIO_DECL std::size_t sync_read(int d, state_type state, buf* bufs,
 ASIO_DECL bool non_blocking_read(int d, buf* bufs, std::size_t count,
     asio::error_code& ec, std::size_t& bytes_transferred);
 
-ASIO_DECL std::size_t sync_write(int d, state_type state, const buf* bufs,
-    std::size_t count, bool all_empty, asio::error_code& ec);
+ASIO_DECL std::size_t sync_write(int d, state_type state,
+    const buf* bufs, std::size_t count, bool all_empty,
+    asio::error_code& ec);
 
-ASIO_DECL bool non_blocking_write(int d, const buf* bufs, std::size_t count,
+ASIO_DECL bool non_blocking_write(int d,
+    const buf* bufs, std::size_t count,
     asio::error_code& ec, std::size_t& bytes_transferred);
 
 ASIO_DECL int ioctl(int d, state_type& state, long cmd,
@@ -79,7 +83,8 @@ ASIO_DECL int ioctl(int d, state_type& state, long cmd,
 
 ASIO_DECL int fcntl(int d, long cmd, asio::error_code& ec);
 
-ASIO_DECL int fcntl(int d, long cmd, long arg, asio::error_code& ec);
+ASIO_DECL int fcntl(int d, long cmd,
+    long arg, asio::error_code& ec);
 
 ASIO_DECL int poll_read(int d, asio::error_code& ec);
 

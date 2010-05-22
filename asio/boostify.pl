@@ -71,50 +71,6 @@ sub source_contains_asio_include
   return 0;
 }
 
-sub source_contains_asio_error_code_include
-{
-  my ($from) = @_;
-
-  # Open the input file.
-  open(my $input, "<$from") or die("Can't open $from for reading");
-
-  # Check file for inclusion of asio/error_code.hpp.
-  while (my $line = <$input>)
-  {
-    chomp($line);
-    if ($line =~ /# *include [<"]asio\/error_code\.hpp[>"]/)
-    {
-      close($input);
-      return 1;
-    }
-  }
-
-  close($input);
-  return 0;
-}
-
-sub source_contains_asio_system_error_include
-{
-  my ($from) = @_;
-
-  # Open the input file.
-  open(my $input, "<$from") or die("Can't open $from for reading");
-
-  # Check file for inclusion of asio/system_error.hpp.
-  while (my $line = <$input>)
-  {
-    chomp($line);
-    if ($line =~ /# *include [<"]asio\/system_error\.hpp[>"]/)
-    {
-      close($input);
-      return 1;
-    }
-  }
-
-  close($input);
-  return 0;
-}
-
 sub source_contains_boostify_error_categories
 {
   my ($from) = @_;
@@ -336,8 +292,6 @@ sub copy_source_file
   my $includes_asio = source_contains_asio_include($from);
 
   # Check whether the file includes error handling header files.
-  my $includes_error_code = source_contains_asio_error_code_include($from);
-  my $includes_system_error = source_contains_asio_system_error_include($from);
   my $includes_boostify_ecats = source_contains_boostify_error_categories($from);
 
   # Open the files.
@@ -356,6 +310,10 @@ sub copy_source_file
     {
       $line =~ s/[\\@]ref async_read/boost::asio::async_read()/g;
       $line =~ s/[\\@]ref async_write/boost::asio::async_write()/g;
+    }
+    if ($line =~ /asio_detail_posix_thread_function/)
+    {
+      $line =~ s/asio_detail_posix_thread_function/boost_asio_detail_posix_thread_function/g;
     }
 
     # Conditional replacements.
@@ -387,24 +345,15 @@ sub copy_source_file
       }
       print_line($output, $line, $from, $lineno);
     }
-    elsif ($line =~ /^(# *include )[<"](asio\/detail\/pop_options\.hpp)[>"]$/)
+    elsif ($line =~ /^(# *include )[<"](asio\/detail\/config\.hpp)[>"]$/)
     {
+      print_line($output, $1 . "<boost/" . $2 . ">", $from, $lineno);
       if ($includes_boostify_ecats)
       {
         $includes_boostify_ecats = 0;
         print_line($output, $1 . "<boost/cerrno.hpp>", $from, $lineno);
-      }
-      if ($includes_error_code)
-      {
-        $includes_error_code = 0;
         print_line($output, $1 . "<boost/system/error_code.hpp>", $from, $lineno);
       }
-      if ($includes_system_error)
-      {
-        $includes_system_error = 0;
-        print_line($output, $1 . "<boost/system/system_error.hpp>", $from, $lineno);
-      }
-      print_line($output, $1 . "<boost/" . $2 . ">", $from, $lineno);
     }
     elsif ($line =~ /# *include <cerrno>/)
     {
@@ -421,17 +370,17 @@ sub copy_source_file
     {
       # Line is removed.
     }
-    elsif ($line =~ /# *include [<"]asio\/error_code\.hpp[>"]/)
+    elsif ($line =~ /(# *include )[<"]asio\/error_code\.hpp[>"]/)
     {
-      # Line is removed.
+      print_line($output, $1 . "<boost/system/error_code.hpp>", $from, $lineno);
     }
     elsif ($line =~ /# *include [<"]asio\/impl\/error_code\.ipp[>"]/)
     {
       # Line is removed.
     }
-    elsif ($line =~ /# *include [<"]asio\/system_error\.hpp[>"]/)
+    elsif ($line =~ /(# *include )[<"]asio\/system_error\.hpp[>"]/)
     {
-      # Line is removed.
+      print_line($output, $1 . "<boost/system/system_error.hpp>", $from, $lineno);
     }
     elsif ($line =~ /^(# *include )[<"](asio\/.*)[>"](.*)$/)
     {
@@ -486,9 +435,13 @@ sub copy_source_file
       }
       print_line($output, $1 . "boost::thread" . $2, $from, $lineno);
     }
-    elsif ($line =~ /boostify: error category definitions go here/)
+    elsif ($line =~ /boostify: error category definitions start here/)
     {
       print($output $error_cat_defns);
+      while ($line = <$input>)
+      {
+        last if $line =~ /boostify: error category definitions end here/;
+      }
     }
     elsif ($line =~ /asio::/ && !($line =~ /boost::asio::/))
     {
@@ -510,11 +463,6 @@ sub copy_source_file
     elsif ($line =~ /asio_handler_invoke_helpers/)
     {
       $line =~ s/asio_handler_invoke_helpers/boost_asio_handler_invoke_helpers/g;
-      print_line($output, $line, $from, $lineno);
-    }
-    elsif ($line =~ /asio_detail_posix_thread_function/)
-    {
-      $line =~ s/asio_detail_posix_thread_function/boost_asio_detail_posix_thread_function/g;
       print_line($output, $line, $from, $lineno);
     }
     elsif ($line =~ /[\\@]ref boost_bind/)
@@ -540,9 +488,12 @@ sub copy_include_files
       "include",
       "include/asio",
       "include/asio/detail",
+      "include/asio/detail/impl",
       "include/asio/impl",
       "include/asio/ip",
+      "include/asio/ip/impl",
       "include/asio/ip/detail",
+      "include/asio/ip/detail/impl",
       "include/asio/local",
       "include/asio/posix",
       "include/asio/ssl",

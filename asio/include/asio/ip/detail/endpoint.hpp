@@ -38,7 +38,8 @@ public:
   ASIO_DECL endpoint(int family, unsigned short port_num);
 
   // Construct an endpoint using an address and port number.
-  ASIO_DECL endpoint(const asio::ip::address& addr, unsigned short port_num);
+  ASIO_DECL endpoint(const asio::ip::address& addr,
+      unsigned short port_num);
 
   // Copy constructor.
   endpoint(const endpoint& other);
@@ -74,10 +75,12 @@ public:
   ASIO_DECL void address(const asio::ip::address& addr);
 
   // Compare two endpoints for equality.
-  ASIO_DECL friend bool operator==(const endpoint& e1, const endpoint& e2);
+  ASIO_DECL friend bool operator==(
+      const endpoint& e1, const endpoint& e2);
 
   // Compare endpoints for ordering.
-  ASIO_DECL friend bool operator<(const endpoint& e1, const endpoint& e2);
+  ASIO_DECL friend bool operator<(
+      const endpoint& e1, const endpoint& e2);
 
   // Determine whether the endpoint is IPv4.
   bool is_v4() const;

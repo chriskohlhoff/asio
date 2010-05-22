@@ -65,9 +65,13 @@ ASIO_DECL int close(socket_type s, state_type& state,
 ASIO_DECL bool set_internal_non_blocking(socket_type s,
     state_type& state, asio::error_code& ec);
 
-ASIO_DECL int shutdown(socket_type s, int what, asio::error_code& ec);
+ASIO_DECL int shutdown(socket_type s,
+    int what, asio::error_code& ec);
 
 ASIO_DECL int connect(socket_type s, const socket_addr_type* addr,
+    std::size_t addrlen, asio::error_code& ec);
+
+ASIO_DECL void sync_connect(socket_type s, const socket_addr_type* addr,
     std::size_t addrlen, asio::error_code& ec);
 
 ASIO_DECL int socketpair(int af, int type, int protocol,
@@ -77,7 +81,8 @@ ASIO_DECL bool sockatmark(socket_type s, asio::error_code& ec);
 
 ASIO_DECL size_t available(socket_type s, asio::error_code& ec);
 
-ASIO_DECL int listen(socket_type s, int backlog, asio::error_code& ec);
+ASIO_DECL int listen(socket_type s,
+    int backlog, asio::error_code& ec);
 
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 typedef WSABUF buf;
@@ -112,18 +117,19 @@ ASIO_DECL bool non_blocking_recvfrom(socket_type s,
     socket_addr_type* addr, std::size_t* addrlen,
     asio::error_code& ec, size_t& bytes_transferred);
 
-ASIO_DECL int send(socket_type s, const buf* bufs, size_t count, int flags,
-    asio::error_code& ec);
+ASIO_DECL int send(socket_type s, const buf* bufs,
+    size_t count, int flags, asio::error_code& ec);
 
-ASIO_DECL size_t sync_send(socket_type s, state_type state, const buf* bufs,
-    size_t count, int flags, bool all_empty, asio::error_code& ec);
+ASIO_DECL size_t sync_send(socket_type s, state_type state,
+    const buf* bufs, size_t count, int flags,
+    bool all_empty, asio::error_code& ec);
 
 ASIO_DECL bool non_blocking_send(socket_type s,
     const buf* bufs, size_t count, int flags,
     asio::error_code& ec, size_t& bytes_transferred);
 
-ASIO_DECL int sendto(socket_type s, const buf* bufs, size_t count, int flags,
-    const socket_addr_type* addr, std::size_t addrlen,
+ASIO_DECL int sendto(socket_type s, const buf* bufs, size_t count,
+    int flags, const socket_addr_type* addr, std::size_t addrlen,
     asio::error_code& ec);
 
 ASIO_DECL size_t sync_sendto(socket_type s, state_type state,
@@ -170,17 +176,19 @@ ASIO_DECL const char* inet_ntop(int af, const void* src, char* dest,
 ASIO_DECL int inet_pton(int af, const char* src, void* dest,
     unsigned long* scope_id, asio::error_code& ec);
 
-ASIO_DECL int gethostname(char* name, int namelen, asio::error_code& ec);
+ASIO_DECL int gethostname(char* name,
+    int namelen, asio::error_code& ec);
 
 ASIO_DECL asio::error_code getaddrinfo(const char* host,
-    const char* service, const addrinfo_type* hints, addrinfo_type** result,
-    asio::error_code& ec);
+    const char* service, const addrinfo_type* hints,
+    addrinfo_type** result, asio::error_code& ec);
 
 ASIO_DECL void freeaddrinfo(addrinfo_type* ai);
 
-ASIO_DECL asio::error_code getnameinfo(const socket_addr_type* addr,
-    std::size_t addrlen, char* host, std::size_t hostlen,
-    char* serv, std::size_t servlen, int flags, asio::error_code& ec);
+ASIO_DECL asio::error_code getnameinfo(
+    const socket_addr_type* addr, std::size_t addrlen,
+    char* host, std::size_t hostlen, char* serv,
+    std::size_t servlen, int flags, asio::error_code& ec);
 
 ASIO_DECL u_long_type network_to_host_long(u_long_type value);
 

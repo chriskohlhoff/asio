@@ -105,10 +105,12 @@ private:
   // Wakes a single idle thread and unlocks the mutex. Returns true if an idle
   // thread was found. If there is no idle thread, returns false and leaves the
   // mutex locked.
-  ASIO_DECL bool wake_one_idle_thread_and_unlock(mutex::scoped_lock& lock);
+  ASIO_DECL bool wake_one_idle_thread_and_unlock(
+      mutex::scoped_lock& lock);
 
   // Wake a single idle thread, or the task, and always unlock the mutex.
-  ASIO_DECL void wake_one_thread_and_unlock(mutex::scoped_lock& lock);
+  ASIO_DECL void wake_one_thread_and_unlock(
+      mutex::scoped_lock& lock);
 
   // Helper class to perform task-related operations on block exit.
   struct task_cleanup;
