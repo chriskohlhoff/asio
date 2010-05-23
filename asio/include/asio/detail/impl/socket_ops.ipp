@@ -229,16 +229,21 @@ int close(socket_type s, state_type& state,
   int result = 0;
   if (s != invalid_socket)
   {
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+    if ((state & non_blocking) && (state & user_set_linger))
+    {
+      ioctl_arg_type arg = 0;
+      ::ioctlsocket(s, FIONBIO, &arg);
+      state &= ~non_blocking;
+    }
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
     if (state & non_blocking)
     {
       ioctl_arg_type arg = 0;
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-      ::ioctlsocket(s, FIONBIO, &arg);
-#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
       ::ioctl(s, FIONBIO, &arg);
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
       state &= ~non_blocking;
     }
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
     if (destruction && (state & user_set_linger))
     {
@@ -537,6 +542,10 @@ int recv(socket_type s, buf* bufs, size_t count, int flags,
   DWORD recv_flags = flags;
   int result = error_wrapper(::WSARecv(s, bufs,
         recv_buf_count, &bytes_transferred, &recv_flags, 0, 0), ec);
+  if (ec.value() == ERROR_NETNAME_DELETED)
+    ec = asio::error::connection_reset;
+  else if (ec.value() == ERROR_PORT_UNREACHABLE)
+    ec = asio::error::connection_refused;
   if (result != 0)
     return socket_error_retval;
   clear_error(ec);
@@ -649,6 +658,10 @@ int recvfrom(socket_type s, buf* bufs, size_t count, int flags,
   int result = error_wrapper(::WSARecvFrom(s, bufs, recv_buf_count,
         &bytes_transferred, &recv_flags, addr, &tmp_addrlen, 0, 0), ec);
   *addrlen = (std::size_t)tmp_addrlen;
+  if (ec.value() == ERROR_NETNAME_DELETED)
+    ec = asio::error::connection_reset;
+  else if (ec.value() == ERROR_PORT_UNREACHABLE)
+    ec = asio::error::connection_refused;
   if (result != 0)
     return socket_error_retval;
   clear_error(ec);
@@ -742,6 +755,10 @@ int send(socket_type s, const buf* bufs, size_t count, int flags,
   DWORD send_flags = flags;
   int result = error_wrapper(::WSASend(s, const_cast<buf*>(bufs),
         send_buf_count, &bytes_transferred, send_flags, 0, 0), ec);
+  if (ec.value() == ERROR_NETNAME_DELETED)
+    ec = asio::error::connection_reset;
+  else if (ec.value() == ERROR_PORT_UNREACHABLE)
+    ec = asio::error::connection_refused;
   if (result != 0)
     return socket_error_retval;
   clear_error(ec);
@@ -841,6 +858,10 @@ int sendto(socket_type s, const buf* bufs, size_t count, int flags,
   int result = error_wrapper(::WSASendTo(s, const_cast<buf*>(bufs),
         send_buf_count, &bytes_transferred, flags, addr,
         static_cast<int>(addrlen), 0, 0), ec);
+  if (ec.value() == ERROR_NETNAME_DELETED)
+    ec = asio::error::connection_reset;
+  else if (ec.value() == ERROR_PORT_UNREACHABLE)
+    ec = asio::error::connection_refused;
   if (result != 0)
     return socket_error_retval;
   clear_error(ec);

@@ -38,6 +38,7 @@
 #include "asio/detail/operation.hpp"
 #include "asio/detail/reactor.hpp"
 #include "asio/detail/reactor_op.hpp"
+#include "asio/detail/socket_connect_op.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -119,7 +120,7 @@ public:
     // Default constructor.
     implementation_type()
       : socket_(invalid_socket),
-        flags_(0),
+        state_(0),
         cancel_token_(),
         protocol_(endpoint_type().protocol()),
         next_(0),
@@ -134,15 +135,8 @@ public:
     // The native socket representation.
     native_type socket_;
 
-    enum
-    {
-      enable_connection_aborted = 1, // User wants connection_aborted errors.
-      close_might_block = 2, // User set linger option for blocking close.
-      user_set_non_blocking = 4 // The user wants a non-blocking socket.
-    };
-
-    // Flags indicating the current state of the socket.
-    unsigned char flags_;
+    // The current state of the socket.
+    socket_ops::state_type state_;
 
     // We use a shared pointer as a cancellation token here to work around the
     // broken Windows support for cancellation. MSDN says that when you call
@@ -199,7 +193,7 @@ public:
   void construct(implementation_type& impl)
   {
     impl.socket_ = invalid_socket;
-    impl.flags_ = 0;
+    impl.state_ = 0;
     impl.cancel_token_.reset();
 #if defined(ASIO_ENABLE_CANCELIO)
     impl.safe_cancellation_thread_id_ = 0;
@@ -251,7 +245,12 @@ public:
       return ec;
 
     impl.socket_ = sock.release();
-    impl.flags_ = 0;
+    switch (protocol.type())
+    {
+    case SOCK_STREAM: impl.state_ = socket_ops::stream_oriented; break;
+    case SOCK_DGRAM: impl.state_ = socket_ops::datagram_oriented; break;
+    default: impl.state_ = 0; break;
+    }
     impl.cancel_token_.reset(static_cast<void*>(0), noop_deleter());
     impl.protocol_ = protocol;
     ec = asio::error_code();
@@ -273,7 +272,12 @@ public:
       return ec;
 
     impl.socket_ = native_socket;
-    impl.flags_ = 0;
+    switch (protocol.type())
+    {
+    case SOCK_STREAM: impl.state_ = socket_ops::stream_oriented; break;
+    case SOCK_DGRAM: impl.state_ = socket_ops::datagram_oriented; break;
+    default: impl.state_ = 0; break;
+    }
     impl.cancel_token_.reset(static_cast<void*>(0), noop_deleter());
     impl.protocol_ = protocol;
     ec = asio::error_code();
@@ -300,19 +304,18 @@ public:
               reinterpret_cast<void**>(&reactor_), 0, 0));
       if (r)
         r->close_descriptor(impl.socket_, impl.reactor_data_);
+    }
 
-      if (socket_ops::close(impl.socket_, ec) == socket_error_retval)
-        return ec;
-
+    if (socket_ops::close(impl.socket_, impl.state_, false, ec) == 0)
+    {
       impl.socket_ = invalid_socket;
-      impl.flags_ = 0;
+      impl.state_ = 0;
       impl.cancel_token_.reset();
 #if defined(ASIO_ENABLE_CANCELIO)
       impl.safe_cancellation_thread_id_ = 0;
 #endif // defined(ASIO_ENABLE_CANCELIO)
     }
 
-    ec = asio::error_code();
     return ec;
   }
 
@@ -404,42 +407,20 @@ public:
   bool at_mark(const implementation_type& impl,
       asio::error_code& ec) const
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return false;
-    }
-
-    asio::detail::ioctl_arg_type value = 0;
-    socket_ops::ioctl(impl.socket_, SIOCATMARK, &value, ec);
-    return ec ? false : value != 0;
+    return socket_ops::sockatmark(impl.socket_, ec);
   }
 
   // Determine the number of bytes available for reading.
   std::size_t available(const implementation_type& impl,
       asio::error_code& ec) const
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return 0;
-    }
-
-    asio::detail::ioctl_arg_type value = 0;
-    socket_ops::ioctl(impl.socket_, FIONREAD, &value, ec);
-    return ec ? static_cast<std::size_t>(0) : static_cast<std::size_t>(value);
+    return socket_ops::available(impl.socket_, ec);
   }
 
   // Bind the socket to the specified local endpoint.
   asio::error_code bind(implementation_type& impl,
       const endpoint_type& endpoint, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return ec;
-    }
-
     socket_ops::bind(impl.socket_, endpoint.data(), endpoint.size(), ec);
     return ec;
   }
@@ -448,12 +429,6 @@ public:
   asio::error_code listen(implementation_type& impl, int backlog,
       asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return ec;
-    }
-
     socket_ops::listen(impl.socket_, backlog, ec);
     return ec;
   }
@@ -463,47 +438,10 @@ public:
   asio::error_code set_option(implementation_type& impl,
       const Option& option, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return ec;
-    }
-
-    if (option.level(impl.protocol_) == custom_socket_option_level
-        && option.name(impl.protocol_) == enable_connection_aborted_option)
-    {
-      if (option.size(impl.protocol_) != sizeof(int))
-      {
-        ec = asio::error::invalid_argument;
-      }
-      else
-      {
-        if (*reinterpret_cast<const int*>(option.data(impl.protocol_)))
-          impl.flags_ |= implementation_type::enable_connection_aborted;
-        else
-          impl.flags_ &= ~implementation_type::enable_connection_aborted;
-        ec = asio::error_code();
-      }
-      return ec;
-    }
-    else
-    {
-      if (option.level(impl.protocol_) == SOL_SOCKET
-          && option.name(impl.protocol_) == SO_LINGER)
-      {
-        const ::linger* linger_option =
-          reinterpret_cast<const ::linger*>(option.data(impl.protocol_));
-        if (linger_option->l_onoff != 0 && linger_option->l_linger != 0)
-          impl.flags_ |= implementation_type::close_might_block;
-        else
-          impl.flags_ &= ~implementation_type::close_might_block;
-      }
-
-      socket_ops::setsockopt(impl.socket_,
-          option.level(impl.protocol_), option.name(impl.protocol_),
-          option.data(impl.protocol_), option.size(impl.protocol_), ec);
-      return ec;
-    }
+    socket_ops::setsockopt(impl.socket_, impl.state_,
+        option.level(impl.protocol_), option.name(impl.protocol_),
+        option.data(impl.protocol_), option.size(impl.protocol_), ec);
+    return ec;
   }
 
   // Set a socket option.
@@ -511,41 +449,13 @@ public:
   asio::error_code get_option(const implementation_type& impl,
       Option& option, asio::error_code& ec) const
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return ec;
-    }
-
-    if (option.level(impl.protocol_) == custom_socket_option_level
-        && option.name(impl.protocol_) == enable_connection_aborted_option)
-    {
-      if (option.size(impl.protocol_) != sizeof(int))
-      {
-        ec = asio::error::invalid_argument;
-      }
-      else
-      {
-        int* target = reinterpret_cast<int*>(option.data(impl.protocol_));
-        if (impl.flags_ & implementation_type::enable_connection_aborted)
-          *target = 1;
-        else
-          *target = 0;
-        option.resize(impl.protocol_, sizeof(int));
-        ec = asio::error_code();
-      }
-      return ec;
-    }
-    else
-    {
-      size_t size = option.size(impl.protocol_);
-      socket_ops::getsockopt(impl.socket_,
-          option.level(impl.protocol_), option.name(impl.protocol_),
-          option.data(impl.protocol_), &size, ec);
-      if (!ec)
-        option.resize(impl.protocol_, size);
-      return ec;
-    }
+    std::size_t size = option.size(impl.protocol_);
+    socket_ops::getsockopt(impl.socket_, impl.state_,
+        option.level(impl.protocol_), option.name(impl.protocol_),
+        option.data(impl.protocol_), &size, ec);
+    if (!ec)
+      option.resize(impl.protocol_, size);
+    return ec;
   }
 
   // Perform an IO control command on the socket.
@@ -553,23 +463,8 @@ public:
   asio::error_code io_control(implementation_type& impl,
       IO_Control_Command& command, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return ec;
-    }
-
-    socket_ops::ioctl(impl.socket_, command.name(),
+    socket_ops::ioctl(impl.socket_, impl.state_, command.name(),
         static_cast<ioctl_arg_type*>(command.data()), ec);
-
-    if (!ec && command.name() == static_cast<int>(FIONBIO))
-    {
-      if (*static_cast<ioctl_arg_type*>(command.data()))
-        impl.flags_ |= implementation_type::user_set_non_blocking;
-      else
-        impl.flags_ &= ~implementation_type::user_set_non_blocking;
-    }
-
     return ec;
   }
 
@@ -577,12 +472,6 @@ public:
   endpoint_type local_endpoint(const implementation_type& impl,
       asio::error_code& ec) const
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return endpoint_type();
-    }
-
     endpoint_type endpoint;
     std::size_t addr_len = endpoint.capacity();
     if (socket_ops::getsockname(impl.socket_, endpoint.data(), &addr_len, ec))
@@ -606,8 +495,9 @@ public:
       // Check if socket is still connected.
       DWORD connect_time = 0;
       size_t connect_time_len = sizeof(connect_time);
-      if (socket_ops::getsockopt(impl.socket_, SOL_SOCKET, SO_CONNECT_TIME,
-            &connect_time, &connect_time_len, ec) == socket_error_retval)
+      if (socket_ops::getsockopt(impl.socket_, impl.state_,
+            SOL_SOCKET, SO_CONNECT_TIME, &connect_time,
+            &connect_time_len, ec) == socket_error_retval)
       {
         return endpoint_type();
       }
@@ -635,12 +525,6 @@ public:
   asio::error_code shutdown(implementation_type& impl,
       socket_base::shutdown_type what, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return ec;
-    }
-
     socket_ops::shutdown(impl.socket_, what, ec);
     return ec;
   }
@@ -650,52 +534,17 @@ public:
   size_t send(implementation_type& impl, const ConstBufferSequence& buffers,
       socket_base::message_flags flags, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return 0;
-    }
-
     buffer_sequence_adapter<asio::const_buffer,
         ConstBufferSequence> bufs(buffers);
 
-    // A request to receive 0 bytes on a stream socket is a no-op.
-    if (impl.protocol_.type() == SOCK_STREAM && bufs.all_empty())
-    {
-      ec = asio::error_code();
-      return 0;
-    }
-
-    // Send the data.
-    DWORD bytes_transferred = 0;
-    int result = ::WSASend(impl.socket_, bufs.buffers(),
-        bufs.count(), &bytes_transferred, flags, 0, 0);
-    if (result != 0)
-    {
-      DWORD last_error = ::WSAGetLastError();
-      if (last_error == ERROR_NETNAME_DELETED)
-        last_error = WSAECONNRESET;
-      else if (last_error == ERROR_PORT_UNREACHABLE)
-        last_error = WSAECONNREFUSED;
-      ec = asio::error_code(last_error,
-          asio::error::get_system_category());
-      return 0;
-    }
-
-    ec = asio::error_code();
-    return bytes_transferred;
+    return socket_ops::sync_send(impl.socket_, impl.state_,
+        bufs.buffers(), bufs.count(), flags, bufs.all_empty(), ec);
   }
 
   // Wait until data can be sent without blocking.
   size_t send(implementation_type& impl, const null_buffers&,
       socket_base::message_flags, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return 0;
-    }
-
     // Wait for socket to become ready.
     socket_ops::poll_write(impl.socket_, ec);
 
@@ -809,32 +658,12 @@ public:
       const endpoint_type& destination, socket_base::message_flags flags,
       asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return 0;
-    }
-
     buffer_sequence_adapter<asio::const_buffer,
         ConstBufferSequence> bufs(buffers);
 
-    // Send the data.
-    DWORD bytes_transferred = 0;
-    int result = ::WSASendTo(impl.socket_, bufs.buffers(), bufs.count(),
-        &bytes_transferred, flags, destination.data(),
-        static_cast<int>(destination.size()), 0, 0);
-    if (result != 0)
-    {
-      DWORD last_error = ::WSAGetLastError();
-      if (last_error == ERROR_PORT_UNREACHABLE)
-        last_error = WSAECONNREFUSED;
-      ec = asio::error_code(last_error,
-          asio::error::get_system_category());
-      return 0;
-    }
-
-    ec = asio::error_code();
-    return bytes_transferred;
+    return socket_ops::sync_sendto(impl.socket_, impl.state_,
+        bufs.buffers(), bufs.count(), flags,
+        destination.data(), destination.size(), ec);
   }
 
   // Wait until data can be sent without blocking.
@@ -842,12 +671,6 @@ public:
       socket_base::message_flags, const endpoint_type&,
       asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return 0;
-    }
-
     // Wait for socket to become ready.
     socket_ops::poll_write(impl.socket_, ec);
 
@@ -954,58 +777,17 @@ public:
       const MutableBufferSequence& buffers,
       socket_base::message_flags flags, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return 0;
-    }
-
     buffer_sequence_adapter<asio::mutable_buffer,
         MutableBufferSequence> bufs(buffers);
 
-    // A request to receive 0 bytes on a stream socket is a no-op.
-    if (impl.protocol_.type() == SOCK_STREAM && bufs.all_empty())
-    {
-      ec = asio::error_code();
-      return 0;
-    }
-
-    // Receive some data.
-    DWORD bytes_transferred = 0;
-    DWORD recv_flags = flags;
-    int result = ::WSARecv(impl.socket_, bufs.buffers(),
-        bufs.count(), &bytes_transferred, &recv_flags, 0, 0);
-    if (result != 0)
-    {
-      DWORD last_error = ::WSAGetLastError();
-      if (last_error == ERROR_NETNAME_DELETED)
-        last_error = WSAECONNRESET;
-      else if (last_error == ERROR_PORT_UNREACHABLE)
-        last_error = WSAECONNREFUSED;
-      ec = asio::error_code(last_error,
-          asio::error::get_system_category());
-      return 0;
-    }
-    if (bytes_transferred == 0 && impl.protocol_.type() == SOCK_STREAM)
-    {
-      ec = asio::error::eof;
-      return 0;
-    }
-
-    ec = asio::error_code();
-    return bytes_transferred;
+    return socket_ops::sync_recv(impl.socket_, impl.state_,
+        bufs.buffers(), bufs.count(), flags, bufs.all_empty(), ec);
   }
 
   // Wait until data can be received without blocking.
   size_t receive(implementation_type& impl, const null_buffers&,
       socket_base::message_flags, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return 0;
-    }
-
     // Wait for socket to become ready.
     socket_ops::poll_read(impl.socket_, ec);
 
@@ -1157,41 +939,18 @@ public:
       endpoint_type& sender_endpoint, socket_base::message_flags flags,
       asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return 0;
-    }
-
     buffer_sequence_adapter<asio::mutable_buffer,
         MutableBufferSequence> bufs(buffers);
 
-    // Receive some data.
-    DWORD bytes_transferred = 0;
-    DWORD recv_flags = flags;
-    int endpoint_size = static_cast<int>(sender_endpoint.capacity());
-    int result = ::WSARecvFrom(impl.socket_, bufs.buffers(),
-        bufs.count(), &bytes_transferred, &recv_flags,
-        sender_endpoint.data(), &endpoint_size, 0, 0);
-    if (result != 0)
-    {
-      DWORD last_error = ::WSAGetLastError();
-      if (last_error == ERROR_PORT_UNREACHABLE)
-        last_error = WSAECONNREFUSED;
-      ec = asio::error_code(last_error,
-          asio::error::get_system_category());
-      return 0;
-    }
-    if (bytes_transferred == 0 && impl.protocol_.type() == SOCK_STREAM)
-    {
-      ec = asio::error::eof;
-      return 0;
-    }
+    std::size_t addr_len = sender_endpoint.capacity();
+    std::size_t bytes_recvd = socket_ops::sync_recvfrom(
+        impl.socket_, impl.state_, bufs.buffers(), bufs.count(),
+        flags, sender_endpoint.data(), &addr_len, ec);
 
-    sender_endpoint.resize(static_cast<std::size_t>(endpoint_size));
+    if (!ec)
+      sender_endpoint.resize(addr_len);
 
-    ec = asio::error_code();
-    return bytes_transferred;
+    return bytes_recvd;
   }
 
   // Wait until data can be received without blocking.
@@ -1199,12 +958,6 @@ public:
       const null_buffers&, endpoint_type& sender_endpoint,
       socket_base::message_flags, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return 0;
-    }
-
     // Wait for socket to become ready.
     socket_ops::poll_read(impl.socket_, ec);
 
@@ -1335,12 +1088,6 @@ public:
   asio::error_code accept(implementation_type& impl, Socket& peer,
       endpoint_type* peer_endpoint, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return ec;
-    }
-
     // We cannot accept a socket that is already open.
     if (peer.is_open())
     {
@@ -1348,43 +1095,21 @@ public:
       return ec;
     }
 
-    for (;;)
+    std::size_t addr_len = peer_endpoint ? peer_endpoint->capacity() : 0;
+    socket_holder new_socket(socket_ops::sync_accept(impl.socket_,
+          impl.state_, peer_endpoint ? peer_endpoint->data() : 0,
+          peer_endpoint ? &addr_len : 0, ec));
+
+    // On success, assign new connection to peer socket object.
+    if (new_socket.get() >= 0)
     {
-      socket_holder new_socket;
-      std::size_t addr_len = 0;
-      if (peer_endpoint)
-      {
-        addr_len = peer_endpoint->capacity();
-        new_socket.reset(socket_ops::accept(impl.socket_,
-              peer_endpoint->data(), &addr_len, ec));
-      }
-      else
-      {
-        new_socket.reset(socket_ops::accept(impl.socket_, 0, 0, ec));
-      }
-
-      if (ec)
-      {
-        if (ec == asio::error::connection_aborted
-            && !(impl.flags_ & implementation_type::enable_connection_aborted))
-        {
-          // Retry accept operation.
-          continue;
-        }
-        else
-        {
-          return ec;
-        }
-      }
-
       if (peer_endpoint)
         peer_endpoint->resize(addr_len);
-
-      peer.assign(impl.protocol_, new_socket.get(), ec);
-      if (!ec)
+      if (!peer.assign(impl.protocol_, new_socket.get(), ec))
         new_socket.release();
-      return ec;
     }
+
+    return ec;
   }
 
   template <typename Socket, typename Handler>
@@ -1520,7 +1245,8 @@ public:
         if (!ec)
         {
           SOCKET update_ctx_param = o->socket_;
-          socket_ops::setsockopt(o->new_socket_.get(),
+          socket_ops::state_type state = 0;
+          socket_ops::setsockopt(o->new_socket_.get(), state,
                 SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT,
                 &update_ctx_param, sizeof(SOCKET), ec);
         }
@@ -1576,7 +1302,7 @@ public:
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     bool enable_connection_aborted =
-      (impl.flags_ & implementation_type::enable_connection_aborted);
+      (impl.state_ & socket_ops::enable_connection_aborted);
     handler_ptr<alloc_traits> ptr(raw_ptr, iocp_service_, impl.socket_, peer,
         impl.protocol_, peer_endpoint, enable_connection_aborted, handler);
 
@@ -1589,90 +1315,10 @@ public:
   asio::error_code connect(implementation_type& impl,
       const endpoint_type& peer_endpoint, asio::error_code& ec)
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return ec;
-    }
-
-    // Perform the connect operation.
-    socket_ops::connect(impl.socket_,
+    socket_ops::sync_connect(impl.socket_,
         peer_endpoint.data(), peer_endpoint.size(), ec);
     return ec;
   }
-
-  class connect_op_base : public reactor_op
-  {
-  public:
-    connect_op_base(socket_type socket, func_type complete_func)
-      : reactor_op(&connect_op_base::do_perform, complete_func),
-        socket_(socket)
-    {
-    }
-
-    static bool do_perform(reactor_op* base)
-    {
-      connect_op_base* o(static_cast<connect_op_base*>(base));
-
-      // Get the error code from the connect operation.
-      int connect_error = 0;
-      size_t connect_error_len = sizeof(connect_error);
-      if (socket_ops::getsockopt(o->socket_, SOL_SOCKET, SO_ERROR,
-            &connect_error, &connect_error_len, o->ec_) == socket_error_retval)
-        return true;
-
-      // The connection failed so the handler will be posted with an error code.
-      if (connect_error)
-      {
-        o->ec_ = asio::error_code(connect_error,
-            asio::error::get_system_category());
-      }
-
-      return true;
-    }
-
-  private:
-    socket_type socket_;
-  };
-
-  template <typename Handler>
-  class connect_op : public connect_op_base
-  {
-  public:
-    connect_op(socket_type socket, Handler handler)
-      : connect_op_base(socket, &connect_op::do_complete),
-        handler_(handler)
-    {
-    }
-
-    static void do_complete(io_service_impl* owner, operation* base,
-        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
-    {
-      // Take ownership of the handler object.
-      connect_op* o(static_cast<connect_op*>(base));
-      typedef handler_alloc_traits<Handler, connect_op> alloc_traits;
-      handler_ptr<alloc_traits> ptr(o->handler_, o);
-
-      // Make the upcall if required.
-      if (owner)
-      {
-        // Make a copy of the handler so that the memory can be deallocated
-        // before the upcall is made. Even if we're not about to make an
-        // upcall, a sub-object of the handler may be the true owner of the
-        // memory associated with the handler. Consequently, a local copy of
-        // the handler is required to ensure that any owning sub-object remains
-        // valid until after we have deallocated the memory here.
-        detail::binder1<Handler, asio::error_code>
-          handler(o->handler_, o->ec_);
-        ptr.reset();
-        asio::detail::fenced_block b;
-        asio_handler_invoke_helpers::invoke(handler, handler);
-      }
-    }
-
-  private:
-    Handler handler_;
-  };
 
   // Start an asynchronous connect.
   template <typename Handler>
@@ -1680,13 +1326,14 @@ public:
       const endpoint_type& peer_endpoint, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef connect_op<Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr, impl.socket_, handler);
+    typedef socket_connect_op<Handler> op;
+    typename op::ptr p = { boost::addressof(handler),
+      asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(impl.socket_, handler);
 
-    start_connect_op(impl, ptr.get(), peer_endpoint);
-    ptr.release();
+    start_connect_op(impl, p.p, peer_endpoint);
+    p.v = p.p = 0;
   }
 
 private:
@@ -1857,36 +1504,25 @@ private:
     reactor& r = get_reactor();
     update_cancellation_thread_id(impl);
 
-    if (is_open(impl))
+    if ((impl.state_ & socket_ops::non_blocking)
+        || socket_ops::set_internal_non_blocking(
+          impl.socket_, impl.state_, op->ec_))
     {
-      ioctl_arg_type non_blocking = 1;
-      if (!socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, op->ec_))
+      if (socket_ops::connect(impl.socket_, peer_endpoint.data(),
+            peer_endpoint.size(), op->ec_) != 0)
       {
-        if (socket_ops::connect(impl.socket_, peer_endpoint.data(),
-              peer_endpoint.size(), op->ec_) != 0)
+        if (op->ec_ == asio::error::in_progress
+            || op->ec_ == asio::error::would_block)
         {
-          if (!op->ec_
-              && !(impl.flags_ & implementation_type::user_set_non_blocking))
-          {
-            non_blocking = 0;
-            socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, op->ec_);
-          }
-
-          if (op->ec_ == asio::error::in_progress
-              || op->ec_ == asio::error::would_block)
-          {
-            op->ec_ = asio::error_code();
-            r.start_op(reactor::connect_op, impl.socket_,
-                impl.reactor_data_, op, true);
-            return;
-          }
+          op->ec_ = asio::error_code();
+          r.start_op(reactor::connect_op, impl.socket_,
+              impl.reactor_data_, op, false);
+          return;
         }
       }
     }
-    else
-      op->ec_ = asio::error::bad_descriptor;
 
-    iocp_service_.post_immediate_completion(op);
+    r.post_immediate_completion(op);
   }
 
   // Helper function to close a socket when the associated object is being
@@ -1903,29 +1539,16 @@ private:
               reinterpret_cast<void**>(&reactor_), 0, 0));
       if (r)
         r->close_descriptor(impl.socket_, impl.reactor_data_);
-
-      // The socket destructor must not block. If the user has changed the
-      // linger option to block in the foreground, we will change it back to the
-      // default so that the closure is performed in the background.
-      if (impl.flags_ & implementation_type::close_might_block)
-      {
-        ::linger opt;
-        opt.l_onoff = 0;
-        opt.l_linger = 0;
-        asio::error_code ignored_ec;
-        socket_ops::setsockopt(impl.socket_,
-            SOL_SOCKET, SO_LINGER, &opt, sizeof(opt), ignored_ec);
-      }
-
-      asio::error_code ignored_ec;
-      socket_ops::close(impl.socket_, ignored_ec);
-      impl.socket_ = invalid_socket;
-      impl.flags_ = 0;
-      impl.cancel_token_.reset();
-#if defined(ASIO_ENABLE_CANCELIO)
-      impl.safe_cancellation_thread_id_ = 0;
-#endif // defined(ASIO_ENABLE_CANCELIO)
     }
+
+    asio::error_code ignored_ec;
+    socket_ops::close(impl.socket_, impl.state_, true, ignored_ec);
+    impl.socket_ = invalid_socket;
+    impl.state_ = 0;
+    impl.cancel_token_.reset();
+#if defined(ASIO_ENABLE_CANCELIO)
+    impl.safe_cancellation_thread_id_ = 0;
+#endif // defined(ASIO_ENABLE_CANCELIO)
   }
 
   // Update the ID of the thread from which cancellation is safe.
