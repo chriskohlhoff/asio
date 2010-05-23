@@ -153,6 +153,52 @@ socket_type sync_accept(socket_type s, state_type state,
   }
 }
 
+socket_type non_blocking_accept(socket_type s,
+    state_type state, socket_addr_type* addr, std::size_t* addrlen,
+    asio::error_code& ec, socket_type& new_socket)
+{
+  for (;;)
+  {
+    // Accept the waiting connection.
+    new_socket = socket_ops::accept(s, addr, addrlen, ec);
+
+    // Check if operation succeeded.
+    if (new_socket >= 0)
+      return true;
+
+    // Retry operation if interrupted by signal.
+    if (ec == asio::error::interrupted)
+      continue;
+
+    // Operation failed.
+    if (ec == asio::error::would_block
+        || ec == asio::error::try_again)
+    {
+      if (state & user_set_non_blocking)
+        return true;
+      // Fall through to retry operation.
+    }
+    else if (ec == asio::error::connection_aborted)
+    {
+      if (state & enable_connection_aborted)
+        return true;
+      // Fall through to retry operation.
+    }
+#if defined(EPROTO)
+    else if (ec.value() == EPROTO)
+    {
+      if (state & enable_connection_aborted)
+        return true;
+      // Fall through to retry operation.
+    }
+#endif // defined(EPROTO)
+    else
+      return true;
+
+    return false;
+  }
+}
+
 template <typename SockLenType>
 inline int call_bind(SockLenType msghdr::*,
     socket_type s, const socket_addr_type* addr, std::size_t addrlen)

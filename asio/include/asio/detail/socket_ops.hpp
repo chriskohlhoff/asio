@@ -60,6 +60,10 @@ ASIO_DECL socket_type sync_accept(socket_type s,
     state_type state, socket_addr_type* addr,
     std::size_t* addrlen, asio::error_code& ec);
 
+ASIO_DECL socket_type non_blocking_accept(socket_type s,
+    state_type state, socket_addr_type* addr, std::size_t* addrlen,
+    asio::error_code& ec, socket_type& new_socket);
+
 ASIO_DECL int bind(socket_type s, const socket_addr_type* addr,
     std::size_t addrlen, asio::error_code& ec);
 

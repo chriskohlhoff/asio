@@ -631,10 +631,8 @@ public:
     typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
-    bool enable_connection_aborted =
-      (impl.state_ & socket_ops::enable_connection_aborted) != 0;
-    p.p = new (p.v) op(impl.socket_, peer, impl.protocol_,
-        peer_endpoint, enable_connection_aborted, handler);
+    p.p = new (p.v) op(impl.socket_, impl.state_, peer,
+        impl.protocol_, peer_endpoint, handler);
 
     start_accept_op(impl, p.p, peer.is_open());
     p.v = p.p = 0;
