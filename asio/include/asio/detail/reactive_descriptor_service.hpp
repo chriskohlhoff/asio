@@ -234,9 +234,6 @@ private:
   ASIO_DECL void start_op(implementation_type& impl, int op_type,
       reactor_op* op, bool non_blocking, bool noop);
 
-  // The io_service implementation used to post completions.
-  io_service_impl& io_service_impl_;
-
   // The selector that performs event demultiplexing for the service.
   reactor& reactor_;
 };

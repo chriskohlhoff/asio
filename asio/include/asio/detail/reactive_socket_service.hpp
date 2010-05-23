@@ -88,8 +88,7 @@ public:
 
   // Constructor.
   reactive_socket_service(asio::io_service& io_service)
-    : io_service_impl_(use_service<io_service_impl>(io_service)),
-      reactor_(use_service<reactor>(io_service))
+    : reactor_(use_service<reactor>(io_service))
   {
     reactor_.init_task();
   }
@@ -680,7 +679,7 @@ private:
       }
     }
 
-    io_service_impl_.post_immediate_completion(op);
+    reactor_.post_immediate_completion(op);
   }
 
   // Start the asynchronous accept operation.
@@ -692,7 +691,7 @@ private:
     else
     {
       op->ec_ = asio::error::already_open;
-      io_service_impl_.post_immediate_completion(op);
+      reactor_.post_immediate_completion(op);
     }
   }
 
@@ -718,11 +717,8 @@ private:
       }
     }
 
-    io_service_impl_.post_immediate_completion(op);
+    reactor_.post_immediate_completion(op);
   }
-
-  // The io_service implementation used to post completions.
-  io_service_impl& io_service_impl_;
 
   // The selector that performs event demultiplexing for the service.
   reactor& reactor_;

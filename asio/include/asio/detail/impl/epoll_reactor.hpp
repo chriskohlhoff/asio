@@ -22,7 +22,11 @@
 namespace asio {
 namespace detail {
 
-// Add a new timer queue to the reactor.
+inline void epoll_reactor::post_immediate_completion(reactor_op* op)
+{
+  io_service_.post_immediate_completion(op);
+}
+
 template <typename Time_Traits>
 void epoll_reactor::add_timer_queue(timer_queue<Time_Traits>& timer_queue)
 {
@@ -30,7 +34,6 @@ void epoll_reactor::add_timer_queue(timer_queue<Time_Traits>& timer_queue)
   timer_queues_.insert(&timer_queue);
 }
 
-// Remove a timer queue from the reactor.
 template <typename Time_Traits>
 void epoll_reactor::remove_timer_queue(timer_queue<Time_Traits>& timer_queue)
 {
@@ -38,8 +41,6 @@ void epoll_reactor::remove_timer_queue(timer_queue<Time_Traits>& timer_queue)
   timer_queues_.erase(&timer_queue);
 }
 
-// Schedule a new operation in the given timer queue to expire at the
-// specified absolute time.
 template <typename Time_Traits>
 void epoll_reactor::schedule_timer(timer_queue<Time_Traits>& timer_queue,
     const typename Time_Traits::time_type& time, timer_op* op, void* token)
@@ -54,8 +55,6 @@ void epoll_reactor::schedule_timer(timer_queue<Time_Traits>& timer_queue,
   }
 }
 
-// Cancel the timer operations associated with the given token. Returns the
-// number of operations that have been posted or dispatched.
 template <typename Time_Traits>
 std::size_t epoll_reactor::cancel_timer(
     timer_queue<Time_Traits>& timer_queue, void* token)

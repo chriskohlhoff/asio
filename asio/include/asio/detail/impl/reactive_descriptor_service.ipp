@@ -29,8 +29,7 @@ namespace detail {
 
 reactive_descriptor_service::reactive_descriptor_service(
     asio::io_service& io_service)
-  : io_service_impl_(asio::use_service<io_service_impl>(io_service)),
-    reactor_(asio::use_service<reactor>(io_service))
+  : reactor_(asio::use_service<reactor>(io_service))
 {
   reactor_.init_task();
 }
@@ -124,7 +123,7 @@ void reactive_descriptor_service::start_op(
     }
   }
 
-  io_service_impl_.post_immediate_completion(op);
+  reactor_.post_immediate_completion(op);
 }
 
 } // namespace detail
