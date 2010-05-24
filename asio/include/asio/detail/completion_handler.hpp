@@ -30,6 +30,8 @@ template <typename Handler>
 class completion_handler : public operation
 {
 public:
+  ASIO_DEFINE_HANDLER_PTR(completion_handler);
+
   completion_handler(Handler h)
     : operation(&completion_handler::do_complete),
       handler_(h)
@@ -41,20 +43,21 @@ public:
   {
     // Take ownership of the handler object.
     completion_handler* h(static_cast<completion_handler*>(base));
-    typedef handler_alloc_traits<Handler, completion_handler> alloc_traits;
-    handler_ptr<alloc_traits> ptr(h->handler_, h);
+    ptr p = { boost::addressof(h->handler_), h, h };
+
+    // Make a copy of the handler so that the memory can be deallocated before
+    // the upcall is made. Even if we're not about to make an upcall, a
+    // sub-object of the handler may be the true owner of the memory associated
+    // with the handler. Consequently, a local copy of the handler is required
+    // to ensure that any owning sub-object remains valid until after we have
+    // deallocated the memory here.
+    Handler handler(h->handler_);
+    p.h = boost::addressof(handler);
+    p.reset();
 
     // Make the upcall if required.
     if (owner)
     {
-      // Make a copy of the handler so that the memory can be deallocated
-      // before the upcall is made. Even if we're not about to make an
-      // upcall, a sub-object of the handler may be the true owner of the
-      // memory associated with the handler. Consequently, a local copy of
-      // the handler is required to ensure that any owning sub-object remains
-      // valid until after we have deallocated the memory here.
-      Handler handler(h->handler_);
-      ptr.reset();
       asio::detail::fenced_block b;
       asio_handler_invoke_helpers::invoke(handler, handler);
     }
