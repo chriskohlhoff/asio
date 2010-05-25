@@ -24,6 +24,7 @@ nobase_include_HEADERS = \
 	asio/datagram_socket_service.hpp \
 	asio/deadline_timer.hpp \
 	asio/deadline_timer_service.hpp \
+	asio/detail/array_fwd.hpp \
 	asio/detail/base_from_completion_cond.hpp \
 	asio/detail/bind_handler.hpp \
 	asio/detail/buffered_stream_storage.hpp \
@@ -50,6 +51,7 @@ nobase_include_HEADERS = \
 	asio/detail/handler_alloc_helpers.hpp \
 	asio/detail/handler_invoke_helpers.hpp \
 	asio/detail/hash_map.hpp \
+	asio/detail/impl/descriptor_ops.ipp \
 	asio/detail/impl/epoll_reactor.hpp \
 	asio/detail/impl/epoll_reactor.ipp \
 	asio/detail/impl/eventfd_select_interrupter.hpp \
@@ -62,6 +64,7 @@ nobase_include_HEADERS = \
 	asio/detail/impl/posix_thread.ipp \
 	asio/detail/impl/posix_tss_ptr.hpp \
 	asio/detail/impl/posix_tss_ptr.ipp \
+	asio/detail/impl/reactive_descriptor_service.ipp \
 	asio/detail/impl/service_registry.hpp \
 	asio/detail/impl/service_registry.ipp \
 	asio/detail/impl/socket_ops.ipp \
@@ -99,6 +102,7 @@ nobase_include_HEADERS = \
 	asio/detail/push_options.hpp \
 	asio/detail/reactive_descriptor_service.hpp \
 	asio/detail/reactive_serial_port_service.hpp \
+	asio/detail/reactive_socket_service_base.hpp \
 	asio/detail/reactive_socket_service.hpp \
 	asio/detail/reactor_fwd.hpp \
 	asio/detail/reactor.hpp \
@@ -114,10 +118,16 @@ nobase_include_HEADERS = \
 	asio/detail/service_registry.hpp \
 	asio/detail/signal_blocker.hpp \
 	asio/detail/signal_init.hpp \
+	asio/detail/socket_accept_op.hpp \
+	asio/detail/socket_connect_op.hpp \
 	asio/detail/socket_holder.hpp \
 	asio/detail/socket_ops.hpp \
 	asio/detail/socket_option.hpp \
+	asio/detail/socket_recvfrom_op.hpp \
+	asio/detail/socket_recv_op.hpp \
 	asio/detail/socket_select_interrupter.hpp \
+	asio/detail/socket_send_op.hpp \
+	asio/detail/socket_sendto_op.hpp \
 	asio/detail/socket_types.hpp \
 	asio/detail/solaris_fenced_block.hpp \
 	asio/detail/strand_service.hpp \
