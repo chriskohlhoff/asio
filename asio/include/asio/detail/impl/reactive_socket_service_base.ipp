@@ -81,7 +81,7 @@ asio::error_code reactive_socket_service_base::cancel(
   return ec;
 }
 
-asio::error_code reactive_socket_service_base::open_base(
+asio::error_code reactive_socket_service_base::do_open(
     reactive_socket_service_base::base_implementation_type& impl,
     int af, int type, int protocol, asio::error_code& ec)
 {
@@ -113,7 +113,7 @@ asio::error_code reactive_socket_service_base::open_base(
   return ec;
 }
 
-asio::error_code reactive_socket_service_base::assign_base(
+asio::error_code reactive_socket_service_base::do_assign(
     reactive_socket_service_base::base_implementation_type& impl, int type,
     const reactive_socket_service_base::native_type& native_socket,
     asio::error_code& ec)

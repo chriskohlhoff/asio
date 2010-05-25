@@ -78,7 +78,7 @@ public:
   asio::error_code open(implementation_type& impl,
       const protocol_type& protocol, asio::error_code& ec)
   {
-    if (!open_base(impl, protocol.family(),
+    if (!do_open(impl, protocol.family(),
           protocol.type(), protocol.protocol(), ec))
       impl.protocol_ = protocol;
     return ec;
@@ -89,7 +89,7 @@ public:
       const protocol_type& protocol, const native_type& native_socket,
       asio::error_code& ec)
   {
-    if (!assign_base(impl, protocol.type(), native_socket, ec))
+    if (!do_assign(impl, protocol.type(), native_socket, ec))
       impl.protocol_ = protocol;
     return ec;
   }

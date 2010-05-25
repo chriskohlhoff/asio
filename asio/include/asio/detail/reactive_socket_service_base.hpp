@@ -255,12 +255,12 @@ public:
 
 protected:
   // Open a new socket implementation.
-  ASIO_DECL asio::error_code open_base(
+  ASIO_DECL asio::error_code do_open(
       base_implementation_type& impl, int af,
       int type, int protocol, asio::error_code& ec);
 
   // Assign a native socket to a socket implementation.
-  ASIO_DECL asio::error_code assign_base(
+  ASIO_DECL asio::error_code do_assign(
       base_implementation_type& impl, int type,
       const native_type& native_socket, asio::error_code& ec);
 
