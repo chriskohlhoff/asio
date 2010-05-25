@@ -32,12 +32,12 @@ template <typename MutableBufferSequence>
 class socket_recv_op_base : public reactor_op
 {
 public:
-  socket_recv_op_base(socket_type socket, int protocol_type,
+  socket_recv_op_base(socket_type socket, socket_ops::state_type state,
       const MutableBufferSequence& buffers,
       socket_base::message_flags flags, func_type complete_func)
     : reactor_op(&socket_recv_op_base::do_perform, complete_func),
       socket_(socket),
-      protocol_type_(protocol_type),
+      state_(state),
       buffers_(buffers),
       flags_(flags)
   {
@@ -52,13 +52,13 @@ public:
 
     return socket_ops::non_blocking_recv(o->socket_,
         bufs.buffers(), bufs.count(), o->flags_,
-        o->protocol_type_ == SOCK_STREAM,
+        (o->state_ & socket_ops::stream_oriented),
         o->ec_, o->bytes_transferred_);
   }
 
 private:
   socket_type socket_;
-  int protocol_type_;
+  socket_ops::state_type state_;
   MutableBufferSequence buffers_;
   socket_base::message_flags flags_;
 };
@@ -69,11 +69,11 @@ class socket_recv_op : public socket_recv_op_base<MutableBufferSequence>
 public:
   ASIO_DEFINE_HANDLER_PTR(socket_recv_op);
 
-  socket_recv_op(socket_type socket, int protocol_type,
+  socket_recv_op(socket_type socket, socket_ops::state_type state,
       const MutableBufferSequence& buffers,
       socket_base::message_flags flags, Handler handler)
-    : socket_recv_op_base<MutableBufferSequence>(socket,
-        protocol_type, buffers, flags, &socket_recv_op::do_complete),
+    : socket_recv_op_base<MutableBufferSequence>(socket, state,
+        buffers, flags, &socket_recv_op::do_complete),
       handler_(handler)
   {
   }
