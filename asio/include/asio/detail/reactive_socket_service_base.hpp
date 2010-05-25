@@ -1,4 +1,4 @@
-//
+ //
 // detail/reactive_socket_service_base.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
@@ -254,6 +254,16 @@ public:
   }
 
 protected:
+  // Open a new socket implementation.
+  ASIO_DECL asio::error_code open_base(
+      base_implementation_type& impl, int af,
+      int type, int protocol, asio::error_code& ec);
+
+  // Assign a native socket to a socket implementation.
+  ASIO_DECL asio::error_code assign_base(
+      base_implementation_type& impl, int type,
+      const native_type& native_socket, asio::error_code& ec);
+
   // Start the asynchronous read or write operation.
   ASIO_DECL void start_op(base_implementation_type& impl, int op_type,
       reactor_op* op, bool non_blocking, bool noop);
@@ -261,6 +271,10 @@ protected:
   // Start the asynchronous accept operation.
   ASIO_DECL void start_accept_op(base_implementation_type& impl,
       reactor_op* op, bool peer_is_open);
+
+  // Start the asynchronous connect operation.
+  ASIO_DECL void start_connect_op(base_implementation_type& impl,
+      reactor_op* op, const socket_addr_type* addr, size_t addrlen);
 
   // The selector that performs event demultiplexing for the service.
   reactor& reactor_;

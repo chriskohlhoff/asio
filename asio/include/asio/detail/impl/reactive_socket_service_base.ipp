@@ -81,6 +81,68 @@ asio::error_code reactive_socket_service_base::cancel(
   return ec;
 }
 
+asio::error_code reactive_socket_service_base::open_base(
+    reactive_socket_service_base::base_implementation_type& impl,
+    int af, int type, int protocol, asio::error_code& ec)
+{
+  if (is_open(impl))
+  {
+    ec = asio::error::already_open;
+    return ec;
+  }
+
+  socket_holder sock(socket_ops::socket(af, type, protocol, ec));
+  if (sock.get() == invalid_socket)
+    return ec;
+
+  if (int err = reactor_.register_descriptor(sock.get(), impl.reactor_data_))
+  {
+    ec = asio::error_code(err,
+        asio::error::get_system_category());
+    return ec;
+  }
+
+  impl.socket_ = sock.release();
+  switch (type)
+  {
+  case SOCK_STREAM: impl.state_ = socket_ops::stream_oriented; break;
+  case SOCK_DGRAM: impl.state_ = socket_ops::datagram_oriented; break;
+  default: impl.state_ = 0; break;
+  }
+  ec = asio::error_code();
+  return ec;
+}
+
+asio::error_code reactive_socket_service_base::assign_base(
+    reactive_socket_service_base::base_implementation_type& impl, int type,
+    const reactive_socket_service_base::native_type& native_socket,
+    asio::error_code& ec)
+{
+  if (is_open(impl))
+  {
+    ec = asio::error::already_open;
+    return ec;
+  }
+
+  if (int err = reactor_.register_descriptor(
+        native_socket, impl.reactor_data_))
+  {
+    ec = asio::error_code(err,
+        asio::error::get_system_category());
+    return ec;
+  }
+
+  impl.socket_ = native_socket;
+  switch (type)
+  {
+  case SOCK_STREAM: impl.state_ = socket_ops::stream_oriented; break;
+  case SOCK_DGRAM: impl.state_ = socket_ops::datagram_oriented; break;
+  default: impl.state_ = 0; break;
+  }
+  ec = asio::error_code();
+  return ec;
+}
+
 void reactive_socket_service_base::start_op(
     reactive_socket_service_base::base_implementation_type& impl,
     int op_type, reactor_op* op, bool non_blocking, bool noop)
@@ -111,6 +173,30 @@ void reactive_socket_service_base::start_accept_op(
     op->ec_ = asio::error::already_open;
     reactor_.post_immediate_completion(op);
   }
+}
+
+void reactive_socket_service_base::start_connect_op(
+    reactive_socket_service_base::base_implementation_type& impl,
+    reactor_op* op, const socket_addr_type* addr, size_t addrlen)
+{
+  if ((impl.state_ & socket_ops::non_blocking)
+      || socket_ops::set_internal_non_blocking(
+        impl.socket_, impl.state_, op->ec_))
+  {
+    if (socket_ops::connect(impl.socket_, addr, addrlen, op->ec_) != 0)
+    {
+      if (op->ec_ == asio::error::in_progress
+          || op->ec_ == asio::error::would_block)
+      {
+        op->ec_ = asio::error_code();
+        reactor_.start_op(reactor::connect_op,
+            impl.socket_, impl.reactor_data_, op, false);
+        return;
+      }
+    }
+  }
+
+  reactor_.post_immediate_completion(op);
 }
 
 } // namespace detail

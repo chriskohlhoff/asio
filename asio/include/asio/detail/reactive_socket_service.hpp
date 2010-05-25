@@ -78,33 +78,9 @@ public:
   asio::error_code open(implementation_type& impl,
       const protocol_type& protocol, asio::error_code& ec)
   {
-    if (is_open(impl))
-    {
-      ec = asio::error::already_open;
-      return ec;
-    }
-
-    socket_holder sock(socket_ops::socket(protocol.family(),
-          protocol.type(), protocol.protocol(), ec));
-    if (sock.get() == invalid_socket)
-      return ec;
-
-    if (int err = reactor_.register_descriptor(sock.get(), impl.reactor_data_))
-    {
-      ec = asio::error_code(err,
-          asio::error::get_system_category());
-      return ec;
-    }
-
-    impl.socket_ = sock.release();
-    switch (protocol.type())
-    {
-    case SOCK_STREAM: impl.state_ = socket_ops::stream_oriented; break;
-    case SOCK_DGRAM: impl.state_ = socket_ops::datagram_oriented; break;
-    default: impl.state_ = 0; break;
-    }
-    impl.protocol_ = protocol;
-    ec = asio::error_code();
+    if (!open_base(impl, protocol.family(),
+          protocol.type(), protocol.protocol(), ec))
+      impl.protocol_ = protocol;
     return ec;
   }
 
@@ -113,29 +89,8 @@ public:
       const protocol_type& protocol, const native_type& native_socket,
       asio::error_code& ec)
   {
-    if (is_open(impl))
-    {
-      ec = asio::error::already_open;
-      return ec;
-    }
-
-    if (int err = reactor_.register_descriptor(
-          native_socket, impl.reactor_data_))
-    {
-      ec = asio::error_code(err,
-          asio::error::get_system_category());
-      return ec;
-    }
-
-    impl.socket_ = native_socket;
-    switch (protocol.type())
-    {
-    case SOCK_STREAM: impl.state_ = socket_ops::stream_oriented; break;
-    case SOCK_DGRAM: impl.state_ = socket_ops::datagram_oriented; break;
-    default: impl.state_ = 0; break;
-    }
-    impl.protocol_ = protocol;
-    ec = asio::error_code();
+    if (!assign_base(impl, protocol.type(), native_socket, ec))
+      impl.protocol_ = protocol;
     return ec;
   }
 
@@ -416,36 +371,9 @@ public:
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.socket_, handler);
 
-    start_connect_op(impl, p.p, peer_endpoint);
+    start_connect_op(impl, p.p, peer_endpoint.data(), peer_endpoint.size());
     p.v = p.p = 0;
   }
-
-private:
-  // Start the asynchronous connect operation.
-  void start_connect_op(base_implementation_type& impl,
-      reactor_op* op, const endpoint_type& peer_endpoint)
-  {
-    if ((impl.state_ & socket_ops::non_blocking)
-        || socket_ops::set_internal_non_blocking(
-          impl.socket_, impl.state_, op->ec_))
-    {
-      if (socket_ops::connect(impl.socket_, peer_endpoint.data(),
-            peer_endpoint.size(), op->ec_) != 0)
-      {
-        if (op->ec_ == asio::error::in_progress
-            || op->ec_ == asio::error::would_block)
-        {
-          op->ec_ = asio::error_code();
-          reactor_.start_op(reactor::connect_op,
-              impl.socket_, impl.reactor_data_, op, false);
-          return;
-        }
-      }
-    }
-
-    reactor_.post_immediate_completion(op);
-  }
-
 };
 
 } // namespace detail
