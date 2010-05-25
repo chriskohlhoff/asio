@@ -56,35 +56,16 @@ public:
   };
 
   // Constructor.
-  reactive_socket_service_base(asio::io_service& io_service)
-    : reactor_(use_service<reactor>(io_service))
-  {
-    reactor_.init_task();
-  }
+  ASIO_DECL reactive_socket_service_base(asio::io_service& io_service);
 
   // Destroy all user-defined handler objects owned by the service.
-  void shutdown_service()
-  {
-  }
+  ASIO_DECL void shutdown_service();
 
   // Construct a new socket implementation.
-  void construct(base_implementation_type& impl)
-  {
-    impl.socket_ = invalid_socket;
-    impl.state_ = 0;
-  }
+  ASIO_DECL void construct(base_implementation_type& impl);
 
   // Destroy a socket implementation.
-  void destroy(base_implementation_type& impl)
-  {
-    if (impl.socket_ != invalid_socket)
-    {
-      reactor_.close_descriptor(impl.socket_, impl.reactor_data_);
-
-      asio::error_code ignored_ec;
-      socket_ops::close(impl.socket_, impl.state_, true, ignored_ec);
-    }
-  }
+  ASIO_DECL void destroy(base_implementation_type& impl);
 
   // Determine whether the socket is open.
   bool is_open(const base_implementation_type& impl) const
@@ -93,17 +74,8 @@ public:
   }
 
   // Destroy a socket implementation.
-  asio::error_code close(base_implementation_type& impl,
-      asio::error_code& ec)
-  {
-    if (is_open(impl))
-      reactor_.close_descriptor(impl.socket_, impl.reactor_data_);
-
-    if (socket_ops::close(impl.socket_, impl.state_, true, ec) == 0)
-      construct(impl);
-
-    return ec;
-  }
+  ASIO_DECL asio::error_code close(base_implementation_type& impl,
+      asio::error_code& ec);
 
   // Get the native socket representation.
   native_type native(base_implementation_type& impl)
@@ -112,19 +84,8 @@ public:
   }
 
   // Cancel all operations associated with the socket.
-  asio::error_code cancel(base_implementation_type& impl,
-      asio::error_code& ec)
-  {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
-      return ec;
-    }
-
-    reactor_.cancel_ops(impl.socket_, impl.reactor_data_);
-    ec = asio::error_code();
-    return ec;
-  }
+  ASIO_DECL asio::error_code cancel(base_implementation_type& impl,
+      asio::error_code& ec);
 
   // Determine whether the socket is at the out-of-band data mark.
   bool at_mark(const base_implementation_type& impl,
@@ -294,36 +255,12 @@ public:
 
 protected:
   // Start the asynchronous read or write operation.
-  void start_op(base_implementation_type& impl, int op_type,
-      reactor_op* op, bool non_blocking, bool noop)
-  {
-    if (!noop)
-    {
-      if ((impl.state_ & socket_ops::non_blocking)
-          || socket_ops::set_internal_non_blocking(
-            impl.socket_, impl.state_, op->ec_))
-      {
-        reactor_.start_op(op_type, impl.socket_,
-            impl.reactor_data_, op, non_blocking);
-        return;
-      }
-    }
-
-    reactor_.post_immediate_completion(op);
-  }
+  ASIO_DECL void start_op(base_implementation_type& impl, int op_type,
+      reactor_op* op, bool non_blocking, bool noop);
 
   // Start the asynchronous accept operation.
-  void start_accept_op(base_implementation_type& impl,
-      reactor_op* op, bool peer_is_open)
-  {
-    if (!peer_is_open)
-      start_op(impl, reactor::read_op, op, true, false);
-    else
-    {
-      op->ec_ = asio::error::already_open;
-      reactor_.post_immediate_completion(op);
-    }
-  }
+  ASIO_DECL void start_accept_op(base_implementation_type& impl,
+      reactor_op* op, bool peer_is_open);
 
   // The selector that performs event demultiplexing for the service.
   reactor& reactor_;
@@ -333,5 +270,9 @@ protected:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/detail/impl/reactive_socket_service_base.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_DETAIL_REACTIVE_SOCKET_SERVICE_BASE_HPP
