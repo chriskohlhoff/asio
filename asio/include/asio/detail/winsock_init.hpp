@@ -19,10 +19,9 @@
 
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
-#include <boost/shared_ptr.hpp>
-#include <boost/throw_exception.hpp>
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 #include "asio/system_error.hpp"
 
@@ -35,75 +34,70 @@ template <int Major = 2, int Minor = 0>
 class winsock_init
   : private noncopyable
 {
-private:
-  // Structure to perform the actual initialisation.
-  struct do_init
+public:
+  winsock_init(bool allow_throw = true)
   {
-    do_init()
+    init();
+    if (allow_throw)
+      throw_on_error();
+  }
+
+  winsock_init(const winsock_init&)
+  {
+    init();
+    throw_on_error();
+  }
+
+  ~winsock_init()
+  {
+    cleanup();
+  }
+
+private:
+  void init()
+  {
+    if (::InterlockedIncrement(&data_.init_count_) == 1)
     {
       WSADATA wsa_data;
-      result_ = ::WSAStartup(MAKEWORD(Major, Minor), &wsa_data);
+      long result = ::WSAStartup(MAKEWORD(Major, Minor), &wsa_data);
+      ::InterlockedExchange(&data_.result_, result);
     }
+  }
 
-    ~do_init()
+  void cleanup()
+  {
+    if (::InterlockedDecrement(&data_.init_count_) == 0)
     {
       ::WSACleanup();
     }
+  }
 
-    int result() const
-    {
-      return result_;
-    }
-
-    // Helper function to manage a do_init singleton. The static instance of the
-    // winsock_init object ensures that this function is always called before
-    // main, and therefore before any other threads can get started. The do_init
-    // instance must be static in this function to ensure that it gets
-    // initialised before any other global objects try to use it.
-    static boost::shared_ptr<do_init> instance()
-    {
-      static boost::shared_ptr<do_init> init(new do_init);
-      return init;
-    }
-
-  private:
-    int result_;
-  };
-
-public:
-  // Constructor.
-  winsock_init()
-    : ref_(do_init::instance())
+  void throw_on_error()
   {
-    // Check whether winsock was successfully initialised. This check is not
-    // performed for the global instance since there will be nobody around to
-    // catch the exception.
-    if (this != &instance_ && ref_->result() != 0)
+    long result = ::InterlockedExchangeAdd(&data_.result_, 0);
+    if (result != 0)
     {
-      asio::system_error e(
-          asio::error_code(ref_->result(),
-            asio::error::get_system_category()),
-          "winsock");
-      boost::throw_exception(e);
+      asio::error_code ec(result,
+          asio::error::get_system_category());
+      asio::detail::throw_error(ec, "winsock");
     }
   }
 
-  // Destructor.
-  ~winsock_init()
+  // Structure to track result of initialisation and number of uses. POD is used
+  // to ensure that the values are zero-initialised prior to any code being run.
+  static struct data
   {
-  }
-
-private:
-  // Instance to force initialisation of winsock at global scope.
-  static winsock_init instance_;
-
-  // Reference to singleton do_init object to ensure that winsock does not get
-  // cleaned up until the last user has finished with it.
-  boost::shared_ptr<do_init> ref_;
+    long init_count_;
+    long result_;
+  } data_;
 };
 
 template <int Major, int Minor>
-winsock_init<Major, Minor> winsock_init<Major, Minor>::instance_;
+typename winsock_init<Major, Minor>::data winsock_init<Major, Minor>::data_;
+
+// Static variable to ensure that winsock is initialised before main, and
+// therefore before any other threads can get started.
+static const winsock_init<>& winsock_init_instance = winsock_init<>(false);
 
 } // namespace detail
 } // namespace asio

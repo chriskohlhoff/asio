@@ -26,6 +26,13 @@ inline void throw_error(const asio::error_code& err)
     do_throw_error(err);
 }
 
+inline void throw_error(const asio::error_code& err,
+    const char* location)
+{
+  if (err)
+    do_throw_error(err, location);
+}
+
 } // namespace detail
 } // namespace asio
 

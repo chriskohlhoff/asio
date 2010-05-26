@@ -19,6 +19,7 @@
 #include <string>
 #include <boost/array.hpp>
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/winsock_init.hpp"
 #include "asio/error_code.hpp"
 #include "asio/ip/address_v4.hpp"
 

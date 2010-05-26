@@ -24,7 +24,13 @@ namespace asio {
 namespace detail {
 
 void throw_error(const asio::error_code& err);
+
+void throw_error(const asio::error_code& err, const char* location);
+
 ASIO_DECL void do_throw_error(const asio::error_code& err);
+
+ASIO_DECL void do_throw_error(const asio::error_code& err,
+    const char* location);
 
 } // namespace detail
 } // namespace asio

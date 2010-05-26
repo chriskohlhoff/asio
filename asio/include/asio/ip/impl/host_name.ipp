@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/throw_error.hpp"
+#include "asio/detail/winsock_init.hpp"
 #include "asio/ip/host_name.hpp"
 
 #include "asio/detail/push_options.hpp"

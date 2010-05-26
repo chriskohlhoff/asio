@@ -31,6 +31,12 @@ void do_throw_error(const asio::error_code& err)
   boost::throw_exception(e);
 }
 
+void do_throw_error(const asio::error_code& err, const char* location)
+{
+  asio::system_error e(err, location);
+  boost::throw_exception(e);
+}
+
 } // namespace detail
 } // namespace asio
 
