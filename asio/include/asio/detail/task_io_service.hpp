@@ -16,6 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if !defined(ASIO_HAS_IOCP)
+
 #include <boost/detail/atomic_count.hpp>
 #include "asio/error_code.hpp"
 #include "asio/io_service.hpp"
@@ -162,5 +165,7 @@ private:
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/task_io_service.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
+
+#endif // !defined(ASIO_HAS_IOCP)
 
 #endif // ASIO_DETAIL_TASK_IO_SERVICE_HPP
