@@ -96,6 +96,7 @@ public:
   ASIO_DECL void post_deferred_completions(op_queue<operation>& ops);
 
 private:
+  // Structure containing information about an idle thread.
   struct idle_thread_info;
 
   // Run at most one operation. Blocks only if this_idle_thread is non-null.
@@ -148,9 +149,6 @@ private:
 
   // Flag to indicate that the dispatcher has been shut down.
   bool shutdown_;
-
-  // Structure containing information about an idle thread.
-  struct idle_thread_info;
 
   // The threads that are currently idle.
   idle_thread_info* first_idle_thread_;
