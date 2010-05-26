@@ -65,6 +65,7 @@ nobase_include_HEADERS = \
 	asio/detail/impl/posix_tss_ptr.hpp \
 	asio/detail/impl/posix_tss_ptr.ipp \
 	asio/detail/impl/reactive_descriptor_service.ipp \
+	asio/detail/impl/reactive_socket_service_base.ipp \
 	asio/detail/impl/service_registry.hpp \
 	asio/detail/impl/service_registry.ipp \
 	asio/detail/impl/socket_ops.ipp \
@@ -176,6 +177,7 @@ nobase_include_HEADERS = \
 	asio/impl/read_until.hpp \
 	asio/impl/serial_port_base.hpp \
 	asio/impl/serial_port_base.ipp \
+	asio/impl/src.cpp \
 	asio/impl/write_at.hpp \
 	asio/impl/write.hpp \
 	asio/io_service.hpp \
