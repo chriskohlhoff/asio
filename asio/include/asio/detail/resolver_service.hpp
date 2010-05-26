@@ -18,8 +18,6 @@
 #include "asio/detail/config.hpp"
 #include <cstring>
 #include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/ip/basic_resolver_iterator.hpp"
@@ -29,9 +27,11 @@
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/operation.hpp"
+#include "asio/detail/shared_ptr.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/thread.hpp"
+#include "asio/detail/weak_ptr.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -72,7 +72,7 @@ public:
   // The implementation type of the resolver. The shared pointer is used as a
   // cancellation token to indicate to the background thread that the operation
   // has been cancelled.
-  typedef boost::shared_ptr<void> implementation_type;
+  typedef shared_ptr<void> implementation_type;
   struct noop_deleter { void operator()(void*) {} };
 
   // The endpoint type.
@@ -229,7 +229,7 @@ public:
     }
 
   private:
-    boost::weak_ptr<void> impl_;
+    weak_ptr<void> impl_;
     query_type query_;
     io_service_impl& io_service_impl_;
     Handler handler_;
@@ -360,7 +360,7 @@ public:
     }
 
   private:
-    boost::weak_ptr<void> impl_;
+    weak_ptr<void> impl_;
     endpoint_type ep_;
     io_service_impl& io_service_impl_;
     Handler handler_;

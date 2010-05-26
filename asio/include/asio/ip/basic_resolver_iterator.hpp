@@ -17,10 +17,10 @@
 
 #include "asio/detail/config.hpp"
 #include <boost/iterator.hpp>
-#include <boost/shared_ptr.hpp>
 #include <cstring>
 #include <string>
 #include <vector>
+#include "asio/detail/shared_ptr.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/ip/basic_resolver_entry.hpp"
@@ -174,7 +174,7 @@ private:
   }
 
   typedef std::vector<basic_resolver_entry<InternetProtocol> > values_type;
-  boost::shared_ptr<values_type> values_;
+  asio::detail::shared_ptr<values_type> values_;
   std::size_t index_;
 };
 

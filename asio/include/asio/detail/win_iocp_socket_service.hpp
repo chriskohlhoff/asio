@@ -20,10 +20,8 @@
 #if defined(ASIO_HAS_IOCP)
 
 #include <cstring>
-#include <boost/shared_ptr.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/addressof.hpp>
-#include <boost/weak_ptr.hpp>
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/socket_base.hpp"
@@ -37,10 +35,12 @@
 #include "asio/detail/operation.hpp"
 #include "asio/detail/reactor.hpp"
 #include "asio/detail/reactor_op.hpp"
+#include "asio/detail/shared_ptr.hpp"
 #include "asio/detail/socket_connect_op.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/weak_ptr.hpp"
 #include "asio/detail/win_iocp_io_service.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -59,8 +59,8 @@ public:
   typedef typename Protocol::endpoint endpoint_type;
 
   struct noop_deleter { void operator()(void*) {} };
-  typedef boost::shared_ptr<void> shared_cancel_token_type;
-  typedef boost::weak_ptr<void> weak_cancel_token_type;
+  typedef shared_ptr<void> shared_cancel_token_type;
+  typedef weak_ptr<void> weak_cancel_token_type;
 
   // The native type of a socket.
   class native_type
