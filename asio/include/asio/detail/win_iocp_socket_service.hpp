@@ -1301,7 +1301,7 @@ public:
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     bool enable_connection_aborted =
-      (impl.state_ & socket_ops::enable_connection_aborted);
+      (impl.state_ & socket_ops::enable_connection_aborted) != 0;
     handler_ptr<alloc_traits> ptr(raw_ptr, iocp_service_, impl.socket_, peer,
         impl.protocol_, peer_endpoint, enable_connection_aborted, handler);
 
@@ -1503,7 +1503,7 @@ private:
     reactor& r = get_reactor();
     update_cancellation_thread_id(impl);
 
-    if ((impl.state_ & socket_ops::non_blocking)
+    if ((impl.state_ & socket_ops::non_blocking) != 0
         || socket_ops::set_internal_non_blocking(
           impl.socket_, impl.state_, op->ec_))
     {
