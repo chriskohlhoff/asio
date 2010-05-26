@@ -16,19 +16,13 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <cstddef>
-#include "asio/error.hpp"
-#include "asio/io_service.hpp"
-
-#if !defined(ASIO_DISABLE_POSIX_STREAM_DESCRIPTOR)
-# if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-#  define ASIO_HAS_POSIX_STREAM_DESCRIPTOR 1
-# endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-#endif // !defined(ASIO_DISABLE_POSIX_STREAM_DESCRIPTOR)
 
 #if defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR) \
   || defined(GENERATING_DOCUMENTATION)
 
+#include <cstddef>
+#include "asio/error.hpp"
+#include "asio/io_service.hpp"
 #include "asio/detail/reactive_descriptor_service.hpp"
 
 #include "asio/detail/push_options.hpp"

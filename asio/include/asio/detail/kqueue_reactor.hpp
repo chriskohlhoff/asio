@@ -17,7 +17,6 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/kqueue_reactor_fwd.hpp"
 
 #if defined(ASIO_HAS_KQUEUE)
 
@@ -27,6 +26,7 @@
 #include <sys/time.h>
 #include <boost/throw_exception.hpp>
 #include "asio/detail/hash_map.hpp"
+#include "asio/detail/kqueue_reactor_fwd.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/reactor_op.hpp"

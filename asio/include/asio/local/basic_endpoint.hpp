@@ -17,6 +17,10 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if defined(ASIO_HAS_LOCAL_SOCKETS) \
+  || defined(GENERATING_DOCUMENTATION)
+
 #include <boost/throw_exception.hpp>
 #include <cstddef>
 #include <cstring>
@@ -26,15 +30,6 @@
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 #include "asio/system_error.hpp"
-
-#if !defined(ASIO_DISABLE_LOCAL_SOCKETS)
-# if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-#  define ASIO_HAS_LOCAL_SOCKETS 1
-# endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-#endif // !defined(ASIO_DISABLE_LOCAL_SOCKETS)
-
-#if defined(ASIO_HAS_LOCAL_SOCKETS) \
-  || defined(GENERATING_DOCUMENTATION)
 
 #include "asio/detail/push_options.hpp"
 

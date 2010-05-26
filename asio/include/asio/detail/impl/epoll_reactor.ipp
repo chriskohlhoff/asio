@@ -16,14 +16,13 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/epoll_reactor.hpp"
 
 #if defined(ASIO_HAS_EPOLL)
 
-#include "asio/detail/config.hpp"
 #include <cstddef>
 #include <sys/epoll.h>
 #include <boost/throw_exception.hpp>
+#include "asio/detail/epoll_reactor.hpp"
 #include "asio/error.hpp"
 #include "asio/system_error.hpp"
 

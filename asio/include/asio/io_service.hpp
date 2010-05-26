@@ -21,10 +21,14 @@
 #include <typeinfo>
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/service_registry_fwd.hpp"
-#include "asio/detail/task_io_service_fwd.hpp"
-#include "asio/detail/win_iocp_io_service_fwd.hpp"
 #include "asio/detail/wrapped_handler.hpp"
 #include "asio/error_code.hpp"
+
+#if defined(ASIO_HAS_IOCP)
+# include "asio/detail/win_iocp_io_service_fwd.hpp"
+#else
+# include "asio/detail/task_io_service_fwd.hpp"
+#endif
 
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 # include "asio/detail/winsock_init.hpp"

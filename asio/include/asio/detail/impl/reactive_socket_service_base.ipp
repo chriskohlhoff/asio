@@ -16,6 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if !defined(ASIO_HAS_IOCP)
+
 #include "asio/detail/reactive_socket_service_base.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -203,5 +206,7 @@ void reactive_socket_service_base::start_connect_op(
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#endif // !defined(ASIO_HAS_IOCP)
 
 #endif // ASIO_DETAIL_IMPL_REACTIVE_SOCKET_SERVICE_BASE_IPP

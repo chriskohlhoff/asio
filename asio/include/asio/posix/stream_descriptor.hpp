@@ -16,10 +16,11 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/posix/basic_stream_descriptor.hpp"
 
 #if defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR) \
   || defined(GENERATING_DOCUMENTATION)
+
+#include "asio/posix/basic_stream_descriptor.hpp"
 
 namespace asio {
 namespace posix {

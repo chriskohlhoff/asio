@@ -15,11 +15,9 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#if !defined(ASIO_DISABLE_DEV_POLL)
-#if defined(__sun) // This service is only supported on Solaris.
+#include "asio/detail/config.hpp"
 
-// Define this to indicate that /dev/poll is supported on the target platform.
-#define ASIO_HAS_DEV_POLL 1
+#if defined(ASIO_HAS_DEV_POLL)
 
 namespace asio {
 namespace detail {
@@ -29,7 +27,6 @@ class dev_poll_reactor;
 } // namespace detail
 } // namespace asio
 
-#endif // defined(__sun)
-#endif // !defined(ASIO_DISABLE_DEV_POLL)
+#endif // defined(ASIO_HAS_DEV_POLL)
 
 #endif // ASIO_DETAIL_DEV_POLL_REACTOR_FWD_HPP

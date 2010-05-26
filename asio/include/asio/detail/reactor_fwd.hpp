@@ -16,11 +16,18 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/dev_poll_reactor_fwd.hpp"
-#include "asio/detail/epoll_reactor_fwd.hpp"
-#include "asio/detail/kqueue_reactor_fwd.hpp"
-#include "asio/detail/select_reactor_fwd.hpp"
-#include "asio/detail/win_iocp_io_service_fwd.hpp"
+
+#if defined(ASIO_HAS_IOCP)
+# include "asio/detail/select_reactor_fwd.hpp"
+#elif defined(ASIO_HAS_EPOLL)
+# include "asio/detail/epoll_reactor_fwd.hpp"
+#elif defined(ASIO_HAS_KQUEUE)
+# include "asio/detail/kqueue_reactor_fwd.hpp"
+#elif defined(ASIO_HAS_DEV_POLL)
+# include "asio/detail/dev_poll_reactor_fwd.hpp"
+#else
+# include "asio/detail/select_reactor_fwd.hpp"
+#endif
 
 namespace asio {
 namespace detail {

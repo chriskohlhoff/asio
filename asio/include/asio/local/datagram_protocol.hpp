@@ -16,12 +16,13 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/basic_datagram_socket.hpp"
-#include "asio/detail/socket_types.hpp"
-#include "asio/local/basic_endpoint.hpp"
 
 #if defined(ASIO_HAS_LOCAL_SOCKETS) \
   || defined(GENERATING_DOCUMENTATION)
+
+#include "asio/basic_datagram_socket.hpp"
+#include "asio/detail/socket_types.hpp"
+#include "asio/local/basic_endpoint.hpp"
 
 #include "asio/detail/push_options.hpp"
 

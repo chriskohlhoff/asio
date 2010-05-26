@@ -17,6 +17,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if defined(ASIO_HAS_SERIAL_PORT)
+
 #include <stdexcept>
 #include <boost/throw_exception.hpp>
 #include "asio/serial_port_base.hpp"
@@ -532,5 +535,7 @@ asio::error_code serial_port_base::character_size::load(
 #include "asio/detail/pop_options.hpp"
 
 #undef ASIO_OPTION_STORAGE
+
+#endif // defined(ASIO_HAS_SERIAL_PORT)
 
 #endif // ASIO_IMPL_SERIAL_PORT_BASE_IPP

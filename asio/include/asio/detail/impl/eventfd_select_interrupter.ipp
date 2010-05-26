@@ -17,7 +17,6 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/eventfd_select_interrupter.hpp"
 
 #if defined(ASIO_HAS_EVENTFD)
 
@@ -30,6 +29,7 @@
 # include <sys/eventfd.h>
 #endif // __GLIBC__ == 2 && __GLIBC_MINOR__ < 8
 #include <boost/throw_exception.hpp>
+#include "asio/detail/eventfd_select_interrupter.hpp"
 #include "asio/error.hpp"
 #include "asio/system_error.hpp"
 

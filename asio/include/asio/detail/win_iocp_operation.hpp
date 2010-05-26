@@ -16,11 +16,11 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/win_iocp_io_service_fwd.hpp"
 
 #if defined(ASIO_HAS_IOCP)
 
 #include "asio/detail/op_queue.hpp"
+#include "asio/detail/win_iocp_io_service_fwd.hpp"
 #include "asio/error_code.hpp"
 
 #include "asio/detail/push_options.hpp"

@@ -18,15 +18,6 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(__linux__)
-# if !defined(ASIO_DISABLE_EVENTFD)
-#  include <linux/version.h>
-#  if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
-#   define ASIO_HAS_EVENTFD
-#  endif // LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
-# endif // !defined(ASIO_DISABLE_EVENTFD)
-#endif // defined(__linux__)
-
 #if defined(ASIO_HAS_EVENTFD)
 
 #include "asio/detail/push_options.hpp"

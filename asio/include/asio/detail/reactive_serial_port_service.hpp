@@ -17,15 +17,15 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/serial_port_base.hpp"
 
-#if defined(ASIO_HAS_SERIAL_PORT) \
-  && !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#if defined(ASIO_HAS_SERIAL_PORT)
+#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 #include <cstring>
 #include <string>
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
+#include "asio/serial_port_base.hpp"
 #include "asio/detail/descriptor_ops.hpp"
 #include "asio/detail/reactive_descriptor_service.hpp"
 
@@ -254,7 +254,7 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 #endif // defined(ASIO_HAS_SERIAL_PORT)
-       //   && !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 #endif // ASIO_DETAIL_REACTIVE_SERIAL_PORT_SERVICE_HPP

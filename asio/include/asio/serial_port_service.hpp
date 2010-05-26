@@ -16,6 +16,10 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if defined(ASIO_HAS_SERIAL_PORT) \
+  || defined(GENERATING_DOCUMENTATION)
+
 #include <cstddef>
 #include <string>
 #include "asio/detail/reactive_serial_port_service.hpp"
@@ -23,9 +27,6 @@
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/serial_port_base.hpp"
-
-#if defined(ASIO_HAS_SERIAL_PORT) \
-  || defined(GENERATING_DOCUMENTATION)
 
 #include "asio/detail/push_options.hpp"
 

@@ -17,14 +17,6 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <boost/detail/workaround.hpp>
-
-#if !defined(ASIO_DISABLE_SERIAL_PORT)
-# if defined(ASIO_HAS_IOCP) \
-    || !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-#  define ASIO_HAS_SERIAL_PORT 1
-# endif // defined(ASIO_HAS_IOCP)
-#endif // !defined(ASIO_DISABLE_STREAM_HANDLE)
 
 #if defined(ASIO_HAS_SERIAL_PORT) \
   || defined(GENERATING_DOCUMENTATION)
@@ -33,6 +25,7 @@
 # include <termios.h>
 #endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
+#include <boost/detail/workaround.hpp>
 #include "asio/detail/socket_types.hpp"
 #include "asio/error_code.hpp"
 

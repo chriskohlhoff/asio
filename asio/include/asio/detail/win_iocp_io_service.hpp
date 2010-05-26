@@ -16,7 +16,6 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/win_iocp_io_service_fwd.hpp"
 
 #if defined(ASIO_HAS_IOCP)
 
@@ -36,6 +35,7 @@
 #include "asio/detail/timer_queue_base.hpp"
 #include "asio/detail/timer_queue_fwd.hpp"
 #include "asio/detail/timer_queue_set.hpp"
+#include "asio/detail/win_iocp_io_service_fwd.hpp"
 #include "asio/detail/win_iocp_operation.hpp"
 
 #include "asio/detail/push_options.hpp"

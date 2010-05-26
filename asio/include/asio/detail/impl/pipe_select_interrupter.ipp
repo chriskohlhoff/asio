@@ -16,15 +16,16 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/pipe_select_interrupter.hpp"
 
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_HAS_EVENTFD)
 
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <boost/throw_exception.hpp>
+#include "asio/detail/pipe_select_interrupter.hpp"
 #include "asio/error.hpp"
 #include "asio/system_error.hpp"
 
@@ -87,6 +88,7 @@ bool pipe_select_interrupter::reset()
 
 #include "asio/detail/pop_options.hpp"
 
+#endif // !defined(ASIO_HAS_EVENTFD)
 #endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 #endif // ASIO_DETAIL_IMPL_PIPE_SELECT_INTERRUPTER_IPP

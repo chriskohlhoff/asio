@@ -16,21 +16,16 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if defined(ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE) \
+  || defined(GENERATING_DOCUMENTATION)
+
 #include <cstddef>
 #include <boost/config.hpp>
 #include <boost/cstdint.hpp>
 #include "asio/detail/win_iocp_handle_service.hpp"
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
-
-#if !defined(ASIO_DISABLE_WINDOWS_RANDOM_ACCESS_HANDLE)
-# if defined(ASIO_HAS_IOCP)
-#  define ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE 1
-# endif // defined(ASIO_HAS_IOCP)
-#endif // !defined(ASIO_DISABLE_WINDOWS_RANDOM_ACCESS_HANDLE)
-
-#if defined(ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE) \
-  || defined(GENERATING_DOCUMENTATION)
 
 #include "asio/detail/push_options.hpp"
 

@@ -16,14 +16,15 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR) \
+  || defined(GENERATING_DOCUMENTATION)
+
 #include <cstddef>
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 #include "asio/posix/basic_descriptor.hpp"
 #include "asio/posix/stream_descriptor_service.hpp"
-
-#if defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR) \
-  || defined(GENERATING_DOCUMENTATION)
 
 #include "asio/detail/push_options.hpp"
 

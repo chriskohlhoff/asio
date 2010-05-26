@@ -16,18 +16,13 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/noncopyable.hpp"
-#include "asio/detail/win_iocp_overlapped_ptr.hpp"
-#include "asio/io_service.hpp"
-
-#if !defined(ASIO_DISABLE_WINDOWS_OVERLAPPED_PTR)
-# if defined(ASIO_HAS_IOCP)
-#  define ASIO_HAS_WINDOWS_OVERLAPPED_PTR 1
-# endif // defined(ASIO_HAS_IOCP)
-#endif // !defined(ASIO_DISABLE_WINDOWS_OVERLAPPED_PTR)
 
 #if defined(ASIO_HAS_WINDOWS_OVERLAPPED_PTR) \
   || defined(GENERATING_DOCUMENTATION)
+
+#include "asio/detail/noncopyable.hpp"
+#include "asio/detail/win_iocp_overlapped_ptr.hpp"
+#include "asio/io_service.hpp"
 
 #include "asio/detail/push_options.hpp"
 

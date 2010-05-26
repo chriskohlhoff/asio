@@ -16,13 +16,9 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#if !defined(ASIO_DISABLE_KQUEUE)
+#include "asio/detail/config.hpp"
 
-#if (defined(__MACH__) && defined(__APPLE__)) \
-  || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__)
-
-// Define this to indicate that kqueue is supported on the target platform.
-#define ASIO_HAS_KQUEUE 1
+#if defined(ASIO_HAS_KQUEUE)
 
 namespace asio {
 namespace detail {
@@ -32,9 +28,6 @@ class kqueue_reactor;
 } // namespace detail
 } // namespace asio
 
-#endif // (defined(__MACH__) && defined(__APPLE__))
-       // || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__)
-
-#endif // !defined(ASIO_DISABLE_KQUEUE)
+#endif // defined(ASIO_HAS_KQUEUE)
 
 #endif // ASIO_DETAIL_KQUEUE_REACTOR_FWD_HPP

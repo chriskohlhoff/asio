@@ -17,9 +17,8 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/win_iocp_io_service_fwd.hpp"
 
-#if defined(ASIO_HAS_IOCP)
+#if defined(ASIO_HAS_IOCP) && defined(ASIO_HAS_SERIAL_PORT)
 
 #include <cstring>
 #include <string>
@@ -281,6 +280,6 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // defined(ASIO_HAS_IOCP)
+#endif // defined(ASIO_HAS_IOCP) && defined(ASIO_HAS_SERIAL_PORT)
 
 #endif // ASIO_DETAIL_WIN_IOCP_SERIAL_PORT_SERVICE_HPP

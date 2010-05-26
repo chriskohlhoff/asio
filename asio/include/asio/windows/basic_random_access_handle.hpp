@@ -16,14 +16,15 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if defined(ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE) \
+  || defined(GENERATING_DOCUMENTATION)
+
 #include <cstddef>
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 #include "asio/windows/basic_handle.hpp"
 #include "asio/windows/random_access_handle_service.hpp"
-
-#if defined(ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE) \
-  || defined(GENERATING_DOCUMENTATION)
 
 #include "asio/detail/push_options.hpp"
 

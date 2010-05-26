@@ -15,15 +15,9 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#if !defined(ASIO_DISABLE_EPOLL)
-#if defined(__linux__) // This service is only supported on Linux.
+#include "asio/detail/config.hpp"
 
-#include <linux/version.h>
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION (2,5,45) // Only kernels >= 2.5.45.
-
-// Define this to indicate that epoll is supported on the target platform.
-#define ASIO_HAS_EPOLL 1
+#if defined(ASIO_HAS_EPOLL)
 
 namespace asio {
 namespace detail {
@@ -33,8 +27,6 @@ class epoll_reactor;
 } // namespace detail
 } // namespace asio
 
-#endif // LINUX_VERSION_CODE >= KERNEL_VERSION (2,5,45)
-#endif // defined(__linux__)
-#endif // !defined(ASIO_DISABLE_EPOLL)
+#endif // defined(ASIO_HAS_EPOLL)
 
 #endif // ASIO_DETAIL_EPOLL_REACTOR_FWD_HPP

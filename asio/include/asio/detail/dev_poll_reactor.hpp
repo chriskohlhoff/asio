@@ -16,7 +16,6 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/dev_poll_reactor_fwd.hpp"
 
 #if defined(ASIO_HAS_DEV_POLL)
 
@@ -25,6 +24,7 @@
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/throw_exception.hpp>
 #include <sys/devpoll.h>
+#include "asio/detail/dev_poll_reactor_fwd.hpp"
 #include "asio/detail/hash_map.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/op_queue.hpp"

@@ -16,11 +16,11 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/posix_mutex.hpp"
 
 #if defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
 
 #include <boost/throw_exception.hpp>
+#include "asio/detail/posix_mutex.hpp"
 #include "asio/error.hpp"
 #include "asio/system_error.hpp"
 

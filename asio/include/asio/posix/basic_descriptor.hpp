@@ -16,6 +16,10 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR) \
+  || defined(GENERATING_DOCUMENTATION)
+
 #include "asio/basic_io_object.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
@@ -287,5 +291,8 @@ protected:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
+       //   || defined(GENERATING_DOCUMENTATION)
 
 #endif // ASIO_POSIX_BASIC_DESCRIPTOR_HPP
