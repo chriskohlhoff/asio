@@ -96,10 +96,10 @@ ASIO_DECL int poll_write(int d, asio::error_code& ec);
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/descriptor_ops.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
+
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 #endif // ASIO_DETAIL_DESCRIPTOR_OPS_HPP

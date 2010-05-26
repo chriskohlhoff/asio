@@ -62,11 +62,11 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // defined(ASIO_HAS_EVENTFD)
-
 #include "asio/detail/impl/eventfd_select_interrupter.hpp"
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/eventfd_select_interrupter.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
+
+#endif // defined(ASIO_HAS_EVENTFD)
 
 #endif // ASIO_DETAIL_EVENTFD_SELECT_INTERRUPTER_HPP

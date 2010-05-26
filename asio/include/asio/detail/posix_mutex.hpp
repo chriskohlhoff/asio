@@ -58,11 +58,11 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
-
 #include "asio/detail/impl/posix_mutex.hpp"
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/posix_mutex.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
+
+#endif // defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
 
 #endif // ASIO_DETAIL_POSIX_MUTEX_HPP

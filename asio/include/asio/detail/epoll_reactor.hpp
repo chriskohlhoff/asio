@@ -183,11 +183,11 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // defined(ASIO_HAS_EPOLL)
-
 #include "asio/detail/impl/epoll_reactor.hpp"
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/epoll_reactor.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
+
+#endif // defined(ASIO_HAS_EPOLL)
 
 #endif // ASIO_DETAIL_EPOLL_REACTOR_HPP

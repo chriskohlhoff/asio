@@ -16,6 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if !defined(ASIO_HAS_IOCP)
+
 #include <boost/utility/addressof.hpp>
 #include "asio/buffer.hpp"
 #include "asio/error.hpp"
@@ -288,5 +291,7 @@ protected:
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/reactive_socket_service_base.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
+
+#endif // !defined(ASIO_HAS_IOCP)
 
 #endif // ASIO_DETAIL_REACTIVE_SOCKET_SERVICE_BASE_HPP

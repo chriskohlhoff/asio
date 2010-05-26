@@ -243,10 +243,10 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/reactive_descriptor_service.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
+
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 #endif // ASIO_DETAIL_REACTIVE_DESCRIPTOR_SERVICE_HPP

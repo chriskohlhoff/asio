@@ -60,11 +60,11 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-
 #include "asio/detail/impl/pipe_select_interrupter.hpp"
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/pipe_select_interrupter.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
+
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 #endif // ASIO_DETAIL_PIPE_SELECT_INTERRUPTER_HPP
