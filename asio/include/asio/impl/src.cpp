@@ -8,13 +8,13 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#define ASIO_SOURCE
+
 #include "asio/detail/config.hpp"
 
 #if defined(ASIO_HEADER_ONLY)
 # error Do not compile Asio library source with ASIO_HEADER_ONLY defined
 #endif
-
-#define ASIO_SOURCE
 
 #include "asio/impl/error_code.ipp"
 #include "asio/impl/io_service.ipp"
@@ -33,6 +33,7 @@
 #include "asio/detail/impl/strand_service.ipp"
 #include "asio/detail/impl/task_io_service.ipp"
 #include "asio/detail/impl/throw_error.ipp"
+#include "asio/detail/impl/win_iocp_io_service.ipp"
 #include "asio/ip/impl/address.ipp"
 #include "asio/ip/impl/address_v4.ipp"
 #include "asio/ip/impl/address_v6.ipp"
