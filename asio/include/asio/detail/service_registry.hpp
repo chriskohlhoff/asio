@@ -95,7 +95,7 @@ private:
 
   // Factory function for creating a service instance.
   template <typename Service>
-  ASIO_DECL static asio::io_service::service* create(
+  static asio::io_service::service* create(
       asio::io_service& owner);
 
   // Destroy a service instance.
