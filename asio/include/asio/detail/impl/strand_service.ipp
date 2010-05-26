@@ -16,7 +16,6 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <boost/functional/hash.hpp>
 #include "asio/detail/call_stack.hpp"
 #include "asio/detail/strand_service.hpp"
 
@@ -62,8 +61,10 @@ void strand_service::shutdown_service()
 
 void strand_service::construct(strand_service::implementation_type& impl)
 {
-  std::size_t index = boost::hash_value(&impl);
-  boost::hash_combine(index, salt_++);
+  std::size_t salt = salt_++;
+  std::size_t index = reinterpret_cast<std::size_t>(&impl);
+  index += (reinterpret_cast<std::size_t>(&impl) >> 3);
+  index ^= salt + 0x9e3779b9 + (index << 6) + (index >> 2);
   index = index % num_implementations;
 
   asio::detail::mutex::scoped_lock lock(mutex_);
