@@ -33,6 +33,7 @@
 #include "asio/detail/impl/strand_service.ipp"
 #include "asio/detail/impl/task_io_service.ipp"
 #include "asio/detail/impl/throw_error.ipp"
+#include "asio/detail/impl/win_iocp_handle_service.ipp"
 #include "asio/detail/impl/win_iocp_io_service.ipp"
 #include "asio/detail/impl/win_iocp_socket_service_base.ipp"
 #include "asio/detail/impl/winsock_init.ipp"
