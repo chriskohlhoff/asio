@@ -27,6 +27,43 @@
 namespace asio {
 namespace detail {
 
+class win_iocp_handle_service::overlapped_wrapper
+  : public OVERLAPPED
+{
+public:
+  explicit overlapped_wrapper(asio::error_code& ec)
+  {
+    Internal = 0;
+    InternalHigh = 0;
+    Offset = 0;
+    OffsetHigh = 0;
+
+    // Create a non-signalled manual-reset event, for GetOverlappedResult.
+    hEvent = ::CreateEvent(0, TRUE, FALSE, 0);
+    if (hEvent)
+    {
+      // As documented in GetQueuedCompletionStatus, setting the low order
+      // bit of this event prevents our synchronous writes from being treated
+      // as completion port events.
+      *reinterpret_cast<DWORD_PTR*>(&hEvent) |= 1;
+    }
+    else
+    {
+      DWORD last_error = ::GetLastError();
+      ec = asio::error_code(last_error,
+          asio::error::get_system_category());
+    }
+  }
+
+  ~overlapped_wrapper()
+  {
+    if (hEvent)
+    {
+      ::CloseHandle(hEvent);
+    }
+  }
+};
+
 win_iocp_handle_service::win_iocp_handle_service(
     asio::io_service& io_service)
   : iocp_service_(asio::use_service<win_iocp_io_service>(io_service)),
@@ -184,6 +221,62 @@ asio::error_code win_iocp_handle_service::cancel(
   return ec;
 }
 
+size_t win_iocp_handle_service::do_write(
+    win_iocp_handle_service::implementation_type& impl, boost::uint64_t offset,
+    const asio::const_buffer& buffer, asio::error_code& ec)
+{
+  if (!is_open(impl))
+  {
+    ec = asio::error::bad_descriptor;
+    return 0;
+  }
+
+  // A request to write 0 bytes on a handle is a no-op.
+  if (asio::buffer_size(buffer) == 0)
+  {
+    ec = asio::error_code();
+    return 0;
+  }
+
+  overlapped_wrapper overlapped(ec);
+  if (ec)
+  {
+    return 0;
+  }
+
+  // Write the data. 
+  overlapped.Offset = offset & 0xFFFFFFFF;
+  overlapped.OffsetHigh = (offset >> 32) & 0xFFFFFFFF;
+  BOOL ok = ::WriteFile(impl.handle_,
+      asio::buffer_cast<LPCVOID>(buffer),
+      static_cast<DWORD>(asio::buffer_size(buffer)), 0, &overlapped);
+  if (!ok) 
+  {
+    DWORD last_error = ::GetLastError();
+    if (last_error != ERROR_IO_PENDING)
+    {
+      ec = asio::error_code(last_error,
+          asio::error::get_system_category());
+      return 0;
+    }
+  }
+
+  // Wait for the operation to complete.
+  DWORD bytes_transferred = 0;
+  ok = ::GetOverlappedResult(impl.handle_,
+      &overlapped, &bytes_transferred, TRUE);
+  if (!ok)
+  {
+    DWORD last_error = ::GetLastError();
+    ec = asio::error_code(last_error,
+        asio::error::get_system_category());
+    return 0;
+  }
+
+  ec = asio::error_code();
+  return bytes_transferred;
+}
+
 void win_iocp_handle_service::start_write_op(
     win_iocp_handle_service::implementation_type& impl, boost::uint64_t offset,
     const asio::const_buffer& buffer, operation* op)
@@ -220,6 +313,76 @@ void win_iocp_handle_service::start_write_op(
       iocp_service_.on_pending(op);
     }
   }
+}
+
+size_t win_iocp_handle_service::do_read(
+    win_iocp_handle_service::implementation_type& impl, boost::uint64_t offset,
+    const asio::mutable_buffer& buffer, asio::error_code& ec)
+{
+  if (!is_open(impl))
+  {
+    ec = asio::error::bad_descriptor;
+    return 0;
+  }
+  
+  // A request to read 0 bytes on a stream handle is a no-op.
+  if (asio::buffer_size(buffer) == 0)
+  {
+    ec = asio::error_code();
+    return 0;
+  }
+
+  overlapped_wrapper overlapped(ec);
+  if (ec)
+  {
+    return 0;
+  }
+
+  // Read some data.
+  overlapped.Offset = offset & 0xFFFFFFFF;
+  overlapped.OffsetHigh = (offset >> 32) & 0xFFFFFFFF;
+  BOOL ok = ::ReadFile(impl.handle_,
+      asio::buffer_cast<LPVOID>(buffer),
+      static_cast<DWORD>(asio::buffer_size(buffer)), 0, &overlapped);
+  if (!ok) 
+  {
+    DWORD last_error = ::GetLastError();
+    if (last_error != ERROR_IO_PENDING && last_error != ERROR_MORE_DATA)
+    {
+      if (last_error == ERROR_HANDLE_EOF)
+      {
+        ec = asio::error::eof;
+      }
+      else
+      {
+        ec = asio::error_code(last_error,
+            asio::error::get_system_category());
+      }
+      return 0;
+    }
+  }
+
+  // Wait for the operation to complete.
+  DWORD bytes_transferred = 0;
+  ok = ::GetOverlappedResult(impl.handle_,
+      &overlapped, &bytes_transferred, TRUE);
+  if (!ok)
+  {
+    DWORD last_error = ::GetLastError();
+    if (last_error == ERROR_HANDLE_EOF)
+    {
+      ec = asio::error::eof;
+    }
+    else
+    {
+      ec = asio::error_code(last_error,
+          asio::error::get_system_category());
+    }
+    return 0;
+  }
+
+  ec = asio::error_code();
+  return bytes_transferred;
 }
 
 void win_iocp_handle_service::start_read_op(
