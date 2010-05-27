@@ -19,77 +19,54 @@
 
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
-#include "asio/detail/noncopyable.hpp"
-#include "asio/detail/socket_types.hpp"
-#include "asio/detail/throw_error.hpp"
-#include "asio/error.hpp"
-#include "asio/system_error.hpp"
-
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
 
+class winsock_init_base
+{
+protected:
+  // Structure to track result of initialisation and number of uses. POD is used
+  // to ensure that the values are zero-initialised prior to any code being run.
+  struct data
+  {
+    long init_count_;
+    long result_;
+  };
+
+  ASIO_DECL static void startup(data& d,
+      unsigned char major, unsigned char minor);
+
+  ASIO_DECL static void cleanup(data& d);
+
+  ASIO_DECL static void throw_on_error(data& d);
+};
+
 template <int Major = 2, int Minor = 0>
-class winsock_init
-  : private noncopyable
+class winsock_init : private winsock_init_base
 {
 public:
   winsock_init(bool allow_throw = true)
   {
-    init();
+    startup(data_, Major, Minor);
     if (allow_throw)
-      throw_on_error();
+      throw_on_error(data_);
   }
 
   winsock_init(const winsock_init&)
   {
-    init();
-    throw_on_error();
+    startup(data_, Major, Minor);
+    throw_on_error(data_);
   }
 
   ~winsock_init()
   {
-    cleanup();
+    cleanup(data_);
   }
 
 private:
-  void init()
-  {
-    if (::InterlockedIncrement(&data_.init_count_) == 1)
-    {
-      WSADATA wsa_data;
-      long result = ::WSAStartup(MAKEWORD(Major, Minor), &wsa_data);
-      ::InterlockedExchange(&data_.result_, result);
-    }
-  }
-
-  void cleanup()
-  {
-    if (::InterlockedDecrement(&data_.init_count_) == 0)
-    {
-      ::WSACleanup();
-    }
-  }
-
-  void throw_on_error()
-  {
-    long result = ::InterlockedExchangeAdd(&data_.result_, 0);
-    if (result != 0)
-    {
-      asio::error_code ec(result,
-          asio::error::get_system_category());
-      asio::detail::throw_error(ec, "winsock");
-    }
-  }
-
-  // Structure to track result of initialisation and number of uses. POD is used
-  // to ensure that the values are zero-initialised prior to any code being run.
-  static struct data
-  {
-    long init_count_;
-    long result_;
-  } data_;
+  static data data_;
 };
 
 template <int Major, int Minor>
@@ -103,6 +80,10 @@ static const winsock_init<>& winsock_init_instance = winsock_init<>(false);
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/detail/impl/winsock_init.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
