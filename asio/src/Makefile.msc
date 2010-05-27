@@ -41,11 +41,19 @@ DEFINES = \
 	-DBOOST_ALL_NO_LIB
 !endif
 
+!ifdef SEPARATE_COMPILATION
+LIBS = asio.lib
+SEPARATE_COMPILATION_CXXFLAGS = \
+	-DASIO_SEPARATE_COMPILATION \
+	-DASIO_ENABLE_CANCELIO
+!endif
+
 CXXFLAGS = \
 	$(COMMON_CXXFLAGS) \
 	$(WARNINGS_CXXFLAGS) \
 	$(DEBUG_CXXFLAGS) \
-	$(UNICODE_CXXFLAGS)
+	$(UNICODE_CXXFLAGS) \
+  $(SEPARATE_COMPILATION_CXXFLAGS)
 
 !ifndef SSLDIR
 SSLDIR = ../../openssl-0.9.8g
@@ -182,6 +190,13 @@ SSL_EXAMPLE_EXES = \
 	examples\ssl\client.exe \
 	examples\ssl\server.exe
 
+!ifdef SEPARATE_COMPILATION
+all: asio.lib
+asio.lib: ../include/asio/impl/src.cpp
+	cl -Fe$@ -Foasio.obj $(CXXFLAGS) $(DEFINES) -c ../include/asio/impl/src.cpp
+  lib -name:asio.lib asio.obj
+!endif
+
 all: \
 	$(PERFORMANCE_TEST_EXES) \
 	$(UNIT_TEST_EXES) \
@@ -195,103 +210,103 @@ check: $(UNIT_TEST_EXES)
 	!@echo === Running $** === && $** && echo.
 
 {tests\performance}.cpp{tests\performance}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {tests\unit}.cpp{tests\unit}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {tests\unit\ip}.cpp{tests\unit\ip}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {tests\unit\ssl}.cpp{tests\unit\ssl}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(SSL_CXXFLAGS) $(DEFINES) $< $(SSL_LIBS) -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(SSL_CXXFLAGS) $(DEFINES) $< $(SSL_LIBS) $(LIBS) -link -opt:ref
 
 {tests\unit\windows}.cpp{tests\unit\windows}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\allocation}.cpp{examples\allocation}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\buffers}.cpp{examples\buffers}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\chat}.cpp{examples\chat}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\echo}.cpp{examples\echo}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\http\client}.cpp{examples\http\client}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\icmp}.cpp{examples\icmp}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\invocation}.cpp{examples\invocation}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\iostreams}.cpp{examples\iostreams}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\multicast}.cpp{examples\multicast}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\nonblocking}.cpp{examples\nonblocking}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\porthopper}.cpp{examples\porthopper}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\socks4}.cpp{examples\socks4}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\ssl}.cpp{examples\ssl}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(SSL_CXXFLAGS) $(DEFINES) $< $(SSL_LIBS) -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(SSL_CXXFLAGS) $(DEFINES) $< $(SSL_LIBS) $(LIBS) -link -opt:ref
 
 {examples\timeouts}.cpp{examples\timeouts}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\timers}.cpp{examples\timers}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\tutorial\timer1}.cpp{examples\tutorial\timer1}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\tutorial\timer2}.cpp{examples\tutorial\timer2}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\tutorial\timer3}.cpp{examples\tutorial\timer3}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\tutorial\timer4}.cpp{examples\tutorial\timer4}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\tutorial\timer5}.cpp{examples\tutorial\timer5}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\tutorial\daytime1}.cpp{examples\tutorial\daytime1}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\tutorial\daytime2}.cpp{examples\tutorial\daytime2}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\tutorial\daytime3}.cpp{examples\tutorial\daytime3}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\tutorial\daytime4}.cpp{examples\tutorial\daytime4}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\tutorial\daytime5}.cpp{examples\tutorial\daytime5}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\tutorial\daytime6}.cpp{examples\tutorial\daytime6}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\tutorial\daytime7}.cpp{examples\tutorial\daytime7}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\windows}.cpp{examples\windows}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 examples\http\server\http_server.exe: \
 		examples\http\server\connection.cpp \
@@ -302,7 +317,7 @@ examples\http\server\http_server.exe: \
 		examples\http\server\request_parser.cpp \
 		examples\http\server\server.cpp \
 		examples\http\server\win_main.cpp
-	cl -Fe$@ -Foexamples\http\server\ $(CXXFLAGS) $(DEFINES) $** -link -opt:ref
+	cl -Fe$@ -Foexamples\http\server\ $(CXXFLAGS) $(DEFINES) $** $(LIBS) -link -opt:ref
 
 examples\http\server2\http_server.exe: \
 		examples\http\server2\connection.cpp \
@@ -313,7 +328,7 @@ examples\http\server2\http_server.exe: \
 		examples\http\server2\request_parser.cpp \
 		examples\http\server2\server.cpp \
 		examples\http\server2\win_main.cpp
-	cl -Fe$@ -Foexamples\http\server2\ $(CXXFLAGS) $(DEFINES) $** -link -opt:ref
+	cl -Fe$@ -Foexamples\http\server2\ $(CXXFLAGS) $(DEFINES) $** $(LIBS) -link -opt:ref
 
 examples\http\server3\http_server.exe: \
 		examples\http\server3\connection.cpp \
@@ -323,7 +338,7 @@ examples\http\server3\http_server.exe: \
 		examples\http\server3\request_parser.cpp \
 		examples\http\server3\server.cpp \
 		examples\http\server3\win_main.cpp
-	cl -Fe$@ -Foexamples\http\server3\ $(CXXFLAGS) $(DEFINES) $** -link -opt:ref
+	cl -Fe$@ -Foexamples\http\server3\ $(CXXFLAGS) $(DEFINES) $** $(LIBS) -link -opt:ref
 
 examples\http\server4\http_server.exe: \
 		examples\http\server4\file_handler.cpp \
@@ -332,14 +347,16 @@ examples\http\server4\http_server.exe: \
 		examples\http\server4\request_parser.cpp \
 		examples\http\server4\server.cpp \
 		examples\http\server4\win_main.cpp
-	cl -Fe$@ -Foexamples\http\server4\ $(CXXFLAGS) $(DEFINES) $** -link -opt:ref
+	cl -Fe$@ -Foexamples\http\server4\ $(CXXFLAGS) $(DEFINES) $** $(LIBS) -link -opt:ref
 
 examples\services\daytime_client.exe: \
 		examples\services\daytime_client.cpp \
 		examples\services\logger_service.cpp
-	cl -Fe$@ -Foexamples\services\ $(CXXFLAGS) $(DEFINES) $** -link -opt:ref
+	cl -Fe$@ -Foexamples\services\ $(CXXFLAGS) $(DEFINES) $** $(LIBS) -link -opt:ref
 
 clean:
+	-del /q /s asio.lib
+	-del /q /s asio.obj
 	-del /q /s tests\*.exe
 	-del /q /s tests\*.exe.manifest
 	-del /q /s tests\*.exp
