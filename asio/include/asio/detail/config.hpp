@@ -14,10 +14,13 @@
 #include <boost/config.hpp>
 
 // Default to a header-only implementation. The user must specifically request
-// separate compilation by defining ASIO_SEPARATE_COMPILATION.
+// separate compilation by defining either ASIO_SEPARATE_COMPILATION or
+// ASIO_DYN_LINK (as a DLL/shared library implies separate compilation).
 #if !defined(ASIO_HEADER_ONLY)
 # if !defined(ASIO_SEPARATE_COMPILATION)
-#  define ASIO_HEADER_ONLY
+#  if !defined(ASIO_DYN_LINK)
+#   define ASIO_HEADER_ONLY
+#  endif // !defined(ASIO_DYN_LINK)
 # endif // !defined(ASIO_SEPARATE_COMPILATION)
 #endif // !defined(ASIO_HEADER_ONLY)
 
