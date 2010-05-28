@@ -40,13 +40,22 @@ public:
   ASIO_DECL posix_mutex();
 
   // Destructor.
-  ~posix_mutex();
+  ~posix_mutex()
+  {
+    ::pthread_mutex_destroy(&mutex_); // Ignore EBUSY.
+  }
 
   // Lock the mutex.
-  void lock();
+  void lock()
+  {
+    (void)::pthread_mutex_lock(&mutex_); // Ignore EINVAL.
+  }
 
   // Unlock the mutex.
-  void unlock();
+  void unlock()
+  {
+    (void)::pthread_mutex_unlock(&mutex_); // Ignore EINVAL.
+  }
 
 private:
   friend class posix_event;
@@ -58,7 +67,6 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/detail/impl/posix_mutex.hpp"
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/posix_mutex.ipp"
 #endif // defined(ASIO_HEADER_ONLY)

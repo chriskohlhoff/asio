@@ -23,21 +23,29 @@
 namespace asio {
 namespace detail {
 
-void throw_error(const asio::error_code& err);
-
-void throw_error(const asio::error_code& err, const char* location);
-
 ASIO_DECL void do_throw_error(const asio::error_code& err);
 
 ASIO_DECL void do_throw_error(const asio::error_code& err,
     const char* location);
+
+inline void throw_error(const asio::error_code& err)
+{
+  if (err)
+    do_throw_error(err);
+}
+
+inline void throw_error(const asio::error_code& err,
+    const char* location)
+{
+  if (err)
+    do_throw_error(err, location);
+}
 
 } // namespace detail
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/detail/impl/throw_error.hpp"
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/throw_error.ipp"
 #endif // defined(ASIO_HEADER_ONLY)

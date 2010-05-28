@@ -54,17 +54,13 @@ nobase_include_HEADERS = \
 	asio/detail/impl/descriptor_ops.ipp \
 	asio/detail/impl/epoll_reactor.hpp \
 	asio/detail/impl/epoll_reactor.ipp \
-	asio/detail/impl/eventfd_select_interrupter.hpp \
 	asio/detail/impl/eventfd_select_interrupter.ipp \
-	asio/detail/impl/pipe_select_interrupter.hpp \
 	asio/detail/impl/pipe_select_interrupter.ipp \
-	asio/detail/impl/posix_mutex.hpp \
 	asio/detail/impl/posix_mutex.ipp \
-	asio/detail/impl/posix_thread.hpp \
 	asio/detail/impl/posix_thread.ipp \
-	asio/detail/impl/posix_tss_ptr.hpp \
 	asio/detail/impl/posix_tss_ptr.ipp \
 	asio/detail/impl/reactive_descriptor_service.ipp \
+	asio/detail/impl/reactive_serial_port_service.ipp \
 	asio/detail/impl/reactive_socket_service_base.ipp \
 	asio/detail/impl/service_registry.hpp \
 	asio/detail/impl/service_registry.ipp \
@@ -73,8 +69,13 @@ nobase_include_HEADERS = \
 	asio/detail/impl/strand_service.ipp \
 	asio/detail/impl/task_io_service.hpp \
 	asio/detail/impl/task_io_service.ipp \
-	asio/detail/impl/throw_error.hpp \
 	asio/detail/impl/throw_error.ipp \
+	asio/detail/impl/win_iocp_handle_service.ipp \
+	asio/detail/impl/win_iocp_io_service.hpp \
+	asio/detail/impl/win_iocp_io_service.ipp \
+	asio/detail/impl/win_iocp_serial_port_service.ipp \
+	asio/detail/impl/win_iocp_socket_service_base.ipp \
+	asio/detail/impl/winsock_init.ipp \
 	asio/detail/io_control.hpp \
 	asio/detail/kqueue_reactor_fwd.hpp \
 	asio/detail/kqueue_reactor.hpp \
@@ -117,6 +118,7 @@ nobase_include_HEADERS = \
 	asio/detail/select_reactor.hpp \
 	asio/detail/service_registry_fwd.hpp \
 	asio/detail/service_registry.hpp \
+	asio/detail/shared_ptr.hpp \
 	asio/detail/signal_blocker.hpp \
 	asio/detail/signal_init.hpp \
 	asio/detail/socket_accept_op.hpp \
@@ -145,16 +147,20 @@ nobase_include_HEADERS = \
 	asio/detail/timer_scheduler_fwd.hpp \
 	asio/detail/timer_scheduler.hpp \
 	asio/detail/tss_ptr.hpp \
+	asio/detail/weak_ptr.hpp \
 	asio/detail/wince_thread.hpp \
 	asio/detail/win_event.hpp \
 	asio/detail/win_fd_set_adapter.hpp \
 	asio/detail/win_fenced_block.hpp \
+	asio/detail/win_iocp_handle_read_op.hpp \
 	asio/detail/win_iocp_handle_service.hpp \
+	asio/detail/win_iocp_handle_write_op.hpp \
 	asio/detail/win_iocp_io_service_fwd.hpp \
 	asio/detail/win_iocp_io_service.hpp \
 	asio/detail/win_iocp_operation.hpp \
 	asio/detail/win_iocp_overlapped_ptr.hpp \
 	asio/detail/win_iocp_serial_port_service.hpp \
+	asio/detail/win_iocp_socket_service_base.hpp \
 	asio/detail/win_iocp_socket_service.hpp \
 	asio/detail/win_mutex.hpp \
 	asio/detail/win_signal_blocker.hpp \

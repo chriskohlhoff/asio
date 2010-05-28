@@ -38,7 +38,11 @@ class posix_thread
 public:
   // Constructor.
   template <typename Function>
-  posix_thread(Function f);
+  posix_thread(Function f)
+    : joined_(false)
+  {
+    start_thread(new func<Function>(f));
+  }
 
   // Destructor.
   ASIO_DECL ~posix_thread();
@@ -92,7 +96,6 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/detail/impl/posix_thread.hpp"
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/posix_thread.ipp"
 #endif // defined(ASIO_HEADER_ONLY)

@@ -40,7 +40,10 @@ public:
   ASIO_DECL bool reset();
 
   // Get the read descriptor to be passed to select.
-  int read_descriptor() const;
+  int read_descriptor() const
+  {
+    return read_descriptor_;
+  }
 
 private:
   // The read end of a connection used to interrupt the select call. This file
@@ -60,7 +63,6 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/detail/impl/pipe_select_interrupter.hpp"
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/pipe_select_interrupter.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
