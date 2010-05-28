@@ -32,6 +32,7 @@
 #include "asio/detail/impl/reactive_socket_service_base.ipp"
 #include "asio/detail/impl/service_registry.ipp"
 #include "asio/detail/impl/socket_ops.ipp"
+#include "asio/detail/impl/socket_select_interrupter.ipp"
 #include "asio/detail/impl/strand_service.ipp"
 #include "asio/detail/impl/task_io_service.ipp"
 #include "asio/detail/impl/throw_error.ipp"
