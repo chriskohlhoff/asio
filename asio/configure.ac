@@ -78,6 +78,12 @@ AC_ARG_WITH(boost,
   fi
 ])
 
+AC_ARG_ENABLE(separate-compilation,
+[  --enable-separate-compilation  separate compilation of asio source],
+[
+  SEPARATE_COMPILATION=yes
+])
+
 AC_CHECK_HEADER([boost/noncopyable.hpp],,
 [
   echo "Can't find boost headers. Please check the location of the boost"
@@ -141,6 +147,12 @@ esac
 if test "$GXX" = yes; then
   CXXFLAGS="$CXXFLAGS -ftemplate-depth-256"
 fi
+
+if test "$SEPARATE_COMPILATION" = yes; then
+  CPPFLAGS="$CPPFLAGS -DASIO_SEPARATE_COMPILATION"
+fi
+
+AM_CONDITIONAL(SEPARATE_COMPILATION,test x$SEPARATE_COMPILATION = xyes)
 
 AM_CONDITIONAL(WINDOWS_TARGET,test x$WINDOWS != xno)
 

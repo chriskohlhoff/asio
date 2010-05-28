@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/buffer.hpp"
+#include "asio/detail/socket_types.hpp"
 
 #include "asio/detail/push_options.hpp"
 

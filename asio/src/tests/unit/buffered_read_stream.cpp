@@ -22,6 +22,7 @@
 #include "asio/io_service.hpp"
 #include "asio/ip/tcp.hpp"
 #include "asio/placeholders.hpp"
+#include "asio/system_error.hpp"
 #include "unit_test.hpp"
 
 typedef asio::buffered_read_stream<

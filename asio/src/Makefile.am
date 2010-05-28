@@ -1,5 +1,15 @@
 AUTOMAKE_OPTIONS = subdir-objects
 
+if SEPARATE_COMPILATION
+
+noinst_LIBRARIES = libasio.a
+
+libasio_a_SOURCES = ../include/asio/impl/src.cpp
+
+LDADD = libasio.a
+
+endif
+
 noinst_PROGRAMS = \
 	tests/performance/client \
 	tests/performance/server \

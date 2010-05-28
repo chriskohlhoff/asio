@@ -32,6 +32,7 @@
 #include "asio/ssl/detail/openssl_operation.hpp"
 #include "asio/ssl/detail/openssl_types.hpp"
 #include "asio/strand.hpp"
+#include "asio/system_error.hpp"
 
 #include "asio/detail/push_options.hpp"
 
