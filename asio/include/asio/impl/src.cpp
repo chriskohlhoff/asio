@@ -27,6 +27,7 @@
 #include "asio/detail/impl/posix_thread.ipp"
 #include "asio/detail/impl/posix_tss_ptr.ipp"
 #include "asio/detail/impl/reactive_descriptor_service.ipp"
+#include "asio/detail/impl/reactive_serial_port_service.ipp"
 #include "asio/detail/impl/reactive_socket_service_base.ipp"
 #include "asio/detail/impl/service_registry.ipp"
 #include "asio/detail/impl/socket_ops.ipp"
