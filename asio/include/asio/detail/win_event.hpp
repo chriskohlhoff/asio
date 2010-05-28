@@ -22,7 +22,6 @@
 #include <boost/assert.hpp>
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_types.hpp"
-#include "asio/error.hpp"
 
 #include "asio/detail/push_options.hpp"
 
