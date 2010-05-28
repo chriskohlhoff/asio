@@ -28,10 +28,9 @@
 #else // __GLIBC__ == 2 && __GLIBC_MINOR__ < 8
 # include <sys/eventfd.h>
 #endif // __GLIBC__ == 2 && __GLIBC_MINOR__ < 8
-#include <boost/throw_exception.hpp>
 #include "asio/detail/eventfd_select_interrupter.hpp"
+#include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
-#include "asio/system_error.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -63,8 +62,7 @@ eventfd_select_interrupter::eventfd_select_interrupter()
     {
       asio::error_code ec(errno,
           asio::error::get_system_category());
-      asio::system_error e(ec, "eventfd_select_interrupter");
-      boost::throw_exception(e);
+      asio::detail::throw_error(ec, "eventfd_select_interrupter");
     }
   }
 }

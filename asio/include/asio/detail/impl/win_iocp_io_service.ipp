@@ -20,11 +20,11 @@
 #if defined(ASIO_HAS_IOCP)
 
 #include <boost/limits.hpp>
-#include <boost/throw_exception.hpp>
+#include "asio/error.hpp"
 #include "asio/io_service.hpp"
-#include "asio/system_error.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
+#include "asio/detail/throw_error.hpp"
 #include "asio/detail/win_iocp_io_service.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -60,11 +60,9 @@ void win_iocp_io_service::init(size_t concurrency_hint)
   if (!iocp_.handle)
   {
     DWORD last_error = ::GetLastError();
-    asio::system_error e(
-        asio::error_code(last_error,
-          asio::error::get_system_category()),
-        "iocp");
-    boost::throw_exception(e);
+    asio::error_code ec(last_error,
+        asio::error::get_system_category());
+    asio::detail::throw_error(ec, "iocp");
   }
 }
 
@@ -189,11 +187,9 @@ void win_iocp_io_service::stop()
     if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, 0))
     {
       DWORD last_error = ::GetLastError();
-      asio::system_error e(
-          asio::error_code(last_error,
-            asio::error::get_system_category()),
-          "pqcs");
-      boost::throw_exception(e);
+      asio::error_code ec(last_error,
+          asio::error::get_system_category());
+      asio::detail::throw_error(ec, "pqcs");
     }
   }
 }

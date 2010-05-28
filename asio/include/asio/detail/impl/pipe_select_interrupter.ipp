@@ -24,10 +24,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <boost/throw_exception.hpp>
 #include "asio/detail/pipe_select_interrupter.hpp"
+#include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
-#include "asio/system_error.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -48,8 +47,7 @@ pipe_select_interrupter::pipe_select_interrupter()
   {
     asio::error_code ec(errno,
         asio::error::get_system_category());
-    asio::system_error e(ec, "pipe_select_interrupter");
-    boost::throw_exception(e);
+    asio::detail::throw_error(ec, "pipe_select_interrupter");
   }
 }
 

@@ -19,10 +19,9 @@
 
 #if defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
 
-#include <boost/throw_exception.hpp>
 #include "asio/detail/posix_thread.hpp"
 #include "asio/detail/throw_error.hpp"
-#include "asio/error_code.hpp"
+#include "asio/error.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -51,11 +50,9 @@ void posix_thread::start_thread(func_base* arg)
   if (error != 0)
   {
     delete arg;
-    asio::system_error e(
-        asio::error_code(error,
-          asio::error::get_system_category()),
-        "thread");
-    boost::throw_exception(e);
+    asio::error_code ec(error,
+        asio::error::get_system_category());
+    asio::detail::throw_error(ec, "thread");
   }
 }
 

@@ -21,10 +21,9 @@
 
 #include <cstddef>
 #include <sys/epoll.h>
-#include <boost/throw_exception.hpp>
 #include "asio/detail/epoll_reactor.hpp"
+#include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
-#include "asio/system_error.hpp"
 
 #if defined(ASIO_HAS_TIMERFD)
 # include <sys/timerfd.h>
@@ -307,11 +306,9 @@ int epoll_reactor::do_epoll_create()
   int fd = epoll_create(epoll_size);
   if (fd == -1)
   {
-    boost::throw_exception(
-        asio::system_error(
-          asio::error_code(errno,
-            asio::error::get_system_category()),
-          "epoll"));
+    asio::error_code ec(errno,
+        asio::error::get_system_category());
+    asio::detail::throw_error(ec, "epoll");
   }
   return fd;
 }

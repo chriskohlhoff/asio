@@ -19,10 +19,9 @@
 
 #if defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
 
-#include <boost/throw_exception.hpp>
 #include "asio/detail/posix_mutex.hpp"
+#include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
-#include "asio/system_error.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -32,14 +31,9 @@ namespace detail {
 posix_mutex::posix_mutex()
 {
   int error = ::pthread_mutex_init(&mutex_, 0);
-  if (error != 0)
-  {
-    asio::system_error e(
-        asio::error_code(error,
-          asio::error::get_system_category()),
-        "mutex");
-    boost::throw_exception(e);
-  }
+  asio::error_code ec(error,
+      asio::error::get_system_category());
+  asio::detail::throw_error(ec, "mutex");
 }
 
 } // namespace detail
