@@ -64,7 +64,7 @@ asio::error_code win_iocp_serial_port_service::open(
   }
 
   // Determine the initial serial port parameters.
-  using namespace std; // For memcpy.
+  using namespace std; // For memset.
   ::DCB dcb;
   memset(&dcb, 0, sizeof(DCB));
   dcb.DCBlength = sizeof(DCB);
@@ -154,7 +154,7 @@ asio::error_code win_iocp_serial_port_service::do_get_option(
     win_iocp_serial_port_service::load_function_type load,
     void* option, asio::error_code& ec) const
 {
-  using namespace std; // For memcpy.
+  using namespace std; // For memset.
 
   ::DCB dcb;
   memset(&dcb, 0, sizeof(DCB));

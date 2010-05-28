@@ -34,10 +34,10 @@ namespace detail {
 class win_iocp_serial_port_service
 {
 public:
-  // The native type of a stream handle.
+  // The native type of a serial port.
   typedef win_iocp_handle_service::native_type native_type;
 
-  // The implementation type of the stream handle.
+  // The implementation type of the serial port.
   typedef win_iocp_handle_service::implementation_type implementation_type;
 
   ASIO_DECL win_iocp_serial_port_service(asio::io_service& io_service);
@@ -45,13 +45,13 @@ public:
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown_service();
 
-  // Construct a new handle implementation.
+  // Construct a new serial port implementation.
   void construct(implementation_type& impl)
   {
     handle_service_.construct(impl);
   }
 
-  // Destroy a handle implementation.
+  // Destroy a serial port implementation.
   void destroy(implementation_type& impl)
   {
     handle_service_.destroy(impl);
@@ -61,27 +61,27 @@ public:
   ASIO_DECL asio::error_code open(implementation_type& impl,
       const std::string& device, asio::error_code& ec);
 
-  // Assign a native handle to a handle implementation.
+  // Assign a native handle to a serial port implementation.
   asio::error_code assign(implementation_type& impl,
       const native_type& native_handle, asio::error_code& ec)
   {
     return handle_service_.assign(impl, native_handle, ec);
   }
 
-  // Determine whether the handle is open.
+  // Determine whether the serial port is open.
   bool is_open(const implementation_type& impl) const
   {
     return handle_service_.is_open(impl);
   }
 
-  // Destroy a handle implementation.
+  // Destroy a serial port implementation.
   asio::error_code close(implementation_type& impl,
       asio::error_code& ec)
   {
     return handle_service_.close(impl, ec);
   }
 
-  // Get the native handle representation.
+  // Get the native serial port representation.
   native_type native(implementation_type& impl)
   {
     return handle_service_.native(impl);
