@@ -35,6 +35,7 @@
 #include "asio/detail/impl/throw_error.ipp"
 #include "asio/detail/impl/win_iocp_handle_service.ipp"
 #include "asio/detail/impl/win_iocp_io_service.ipp"
+#include "asio/detail/impl/win_iocp_serial_port_service.ipp"
 #include "asio/detail/impl/win_iocp_socket_service_base.ipp"
 #include "asio/detail/impl/winsock_init.ipp"
 #include "asio/ip/impl/address.ipp"
