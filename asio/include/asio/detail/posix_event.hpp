@@ -20,11 +20,8 @@
 #if defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
 
 #include <boost/assert.hpp>
-#include <boost/throw_exception.hpp>
 #include <pthread.h>
 #include "asio/detail/noncopyable.hpp"
-#include "asio/error.hpp"
-#include "asio/system_error.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -36,19 +33,7 @@ class posix_event
 {
 public:
   // Constructor.
-  posix_event()
-    : signalled_(false)
-  {
-    int error = ::pthread_cond_init(&cond_, 0);
-    if (error != 0)
-    {
-      asio::system_error e(
-          asio::error_code(error,
-            asio::error::get_system_category()),
-          "event");
-      boost::throw_exception(e);
-    }
-  }
+  ASIO_DECL posix_event();
 
   // Destructor.
   ~posix_event()
@@ -103,6 +88,10 @@ private:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/detail/impl/posix_event.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
 
