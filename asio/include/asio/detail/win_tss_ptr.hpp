@@ -19,41 +19,26 @@
 
 #if defined(BOOST_WINDOWS)
 
-#include <boost/throw_exception.hpp>
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_types.hpp"
-#include "asio/error.hpp"
-#include "asio/system_error.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
 
+// Helper function to create thread-specific storage.
+ASIO_DECL DWORD win_tss_ptr_create();
+
 template <typename T>
 class win_tss_ptr
   : private noncopyable
 {
 public:
-#if defined(UNDER_CE)
-  enum { out_of_indexes = 0xFFFFFFFF };
-#else
-  enum { out_of_indexes = TLS_OUT_OF_INDEXES };
-#endif
-
   // Constructor.
   win_tss_ptr()
+    : tss_key_(win_tss_ptr_create())
   {
-    tss_key_ = ::TlsAlloc();
-    if (tss_key_ == out_of_indexes)
-    {
-      DWORD last_error = ::GetLastError();
-      asio::system_error e(
-          asio::error_code(last_error,
-            asio::error::get_system_category()),
-          "tss");
-      boost::throw_exception(e);
-    }
   }
 
   // Destructor.
@@ -84,6 +69,10 @@ private:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/detail/impl/win_tss_ptr.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // defined(BOOST_WINDOWS)
 

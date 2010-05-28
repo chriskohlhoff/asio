@@ -41,6 +41,7 @@
 #include "asio/detail/impl/win_iocp_socket_service_base.ipp"
 #include "asio/detail/impl/win_event.ipp"
 #include "asio/detail/impl/win_mutex.ipp"
+#include "asio/detail/impl/win_tss_ptr.ipp"
 #include "asio/detail/impl/winsock_init.ipp"
 #include "asio/ip/impl/address.ipp"
 #include "asio/ip/impl/address_v4.ipp"
