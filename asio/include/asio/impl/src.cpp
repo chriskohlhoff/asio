@@ -39,6 +39,7 @@
 #include "asio/detail/impl/win_iocp_io_service.ipp"
 #include "asio/detail/impl/win_iocp_serial_port_service.ipp"
 #include "asio/detail/impl/win_iocp_socket_service_base.ipp"
+#include "asio/detail/impl/win_mutex.ipp"
 #include "asio/detail/impl/winsock_init.ipp"
 #include "asio/ip/impl/address.ipp"
 #include "asio/ip/impl/address_v4.ipp"

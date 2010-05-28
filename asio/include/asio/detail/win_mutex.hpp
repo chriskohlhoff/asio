@@ -19,12 +19,9 @@
 
 #if defined(BOOST_WINDOWS)
 
-#include <boost/throw_exception.hpp>
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/scoped_lock.hpp"
 #include "asio/detail/socket_types.hpp"
-#include "asio/error.hpp"
-#include "asio/system_error.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -38,18 +35,7 @@ public:
   typedef asio::detail::scoped_lock<win_mutex> scoped_lock;
 
   // Constructor.
-  win_mutex()
-  {
-    int error = do_init();
-    if (error != 0)
-    {
-      asio::system_error e(
-          asio::error_code(error,
-            asio::error::get_system_category()),
-          "mutex");
-      boost::throw_exception(e);
-    }
-  }
+  ASIO_DECL win_mutex();
 
   // Destructor.
   ~win_mutex()
@@ -73,35 +59,7 @@ private:
   // Initialisation must be performed in a separate function to the constructor
   // since the compiler does not support the use of structured exceptions and
   // C++ exceptions in the same function.
-  int do_init()
-  {
-#if defined(__MINGW32__)
-    // Not sure if MinGW supports structured exception handling, so for now
-    // we'll just call the Windows API and hope.
-# if defined(UNDER_CE)
-    ::InitializeCriticalSection(&crit_section_);
-# else
-    ::InitializeCriticalSectionAndSpinCount(&crit_section_, 0x80000000);
-# endif
-    return 0;
-#else
-    __try
-    {
-# if defined(UNDER_CE)
-      ::InitializeCriticalSection(&crit_section_);
-# else
-      ::InitializeCriticalSectionAndSpinCount(&crit_section_, 0x80000000);
-# endif
-    }
-    __except(GetExceptionCode() == STATUS_NO_MEMORY
-        ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH)
-    {
-      return ERROR_OUTOFMEMORY;
-    }
-
-    return 0;
-#endif
-  }
+  ASIO_DECL int do_init();
 
   ::CRITICAL_SECTION crit_section_;
 };
@@ -110,6 +68,10 @@ private:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/detail/impl/win_mutex.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // defined(BOOST_WINDOWS)
 
