@@ -20,11 +20,9 @@
 #if defined(BOOST_WINDOWS)
 
 #include <boost/assert.hpp>
-#include <boost/throw_exception.hpp>
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/error.hpp"
-#include "asio/system_error.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -36,19 +34,7 @@ class win_event
 {
 public:
   // Constructor.
-  win_event()
-    : event_(::CreateEvent(0, true, false, 0))
-  {
-    if (!event_)
-    {
-      DWORD last_error = ::GetLastError();
-      asio::system_error e(
-          asio::error_code(last_error,
-            asio::error::get_system_category()),
-          "event");
-      boost::throw_exception(e);
-    }
-  }
+  ASIO_DECL win_event();
 
   // Destructor.
   ~win_event()
@@ -101,6 +87,10 @@ private:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/detail/impl/win_event.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // defined(BOOST_WINDOWS)
 
