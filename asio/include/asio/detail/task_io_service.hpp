@@ -70,10 +70,17 @@ public:
   ASIO_DECL void reset();
 
   // Notify that some work has started.
-  void work_started();
+  void work_started()
+  {
+    ++outstanding_work_;
+  }
 
   // Notify that some work has finished.
-  void work_finished();
+  void work_finished()
+  {
+    if (--outstanding_work_ == 0)
+      stop();
+  }
 
   // Request invocation of the given handler.
   template <typename Handler>
