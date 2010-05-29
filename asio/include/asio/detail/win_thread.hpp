@@ -77,12 +77,12 @@ public:
   ASIO_DECL void join();
 
 private:
-  friend unsigned int __stdcall win_thread_function(void* arg);
+  friend ASIO_DECL unsigned int __stdcall win_thread_function(void* arg);
 
 #if defined(WINVER) && (WINVER < 0x0500)
-  friend void __stdcall apc_function(ULONG);
+  friend ASIO_DECL void __stdcall apc_function(ULONG);
 #else
-  friend void __stdcall apc_function(ULONG_PTR);
+  friend ASIO_DECL void __stdcall apc_function(ULONG_PTR);
 #endif
 
   class func_base
