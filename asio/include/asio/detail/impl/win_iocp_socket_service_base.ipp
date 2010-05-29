@@ -331,6 +331,26 @@ void win_iocp_socket_service_base::start_receive_op(
   }
 }
 
+void win_iocp_socket_service_base::start_null_buffers_receive_op(
+    win_iocp_socket_service_base::base_implementation_type& impl,
+    socket_base::message_flags flags, reactor_op* op)
+{
+  if ((impl.state_ & socket_ops::stream_oriented) != 0)
+  {
+    // For stream sockets on Windows, we may issue a 0-byte overlapped
+    // WSARecv to wait until there is data available on the socket.
+    ::WSABUF buf = { 0, 0 };
+    start_receive_op(impl, &buf, 1, flags, false, op);
+  }
+  else
+  {
+    start_reactor_op(impl,
+        (flags & socket_base::message_out_of_band)
+          ? reactor::except_op : reactor::read_op,
+        op);
+  }
+}
+
 void win_iocp_socket_service_base::start_receive_from_op(
     win_iocp_socket_service_base::base_implementation_type& impl,
     WSABUF* buffers, std::size_t buffer_count, socket_addr_type* addr,

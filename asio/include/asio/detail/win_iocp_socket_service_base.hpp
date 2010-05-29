@@ -30,7 +30,6 @@
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/mutex.hpp"
-#include "asio/detail/null_buffers_op.hpp"
 #include "asio/detail/operation.hpp"
 #include "asio/detail/reactor.hpp"
 #include "asio/detail/reactor_op.hpp"
@@ -41,6 +40,7 @@
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/weak_ptr.hpp"
 #include "asio/detail/win_iocp_io_service.hpp"
+#include "asio/detail/win_iocp_null_buffers_op.hpp"
 #include "asio/detail/win_iocp_socket_send_op.hpp"
 #include "asio/detail/win_iocp_socket_recv_op.hpp"
 
@@ -208,11 +208,11 @@ public:
       socket_base::message_flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef null_buffers_op<Handler> op;
+    typedef win_iocp_null_buffers_op<Handler> op;
     typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
-    p.p = new (p.v) op(handler);
+    p.p = new (p.v) op(impl.cancel_token_, handler);
 
     start_reactor_op(impl, reactor::write_op, p.p);
     p.v = p.p = 0;
@@ -266,41 +266,18 @@ public:
 
   // Wait until data can be received without blocking.
   template <typename Handler>
-  void async_receive(base_implementation_type& impl,
-      const null_buffers& buffers,
+  void async_receive(base_implementation_type& impl, const null_buffers&,
       socket_base::message_flags flags, Handler handler)
   {
-    if ((impl.state_ & socket_ops::stream_oriented) != 0)
-    {
-      // For stream sockets on Windows, we may issue a 0-byte overlapped
-      // WSARecv to wait until there is data available on the socket.
+    // Allocate and construct an operation to wrap the handler.
+    typedef win_iocp_null_buffers_op<Handler> op;
+    typename op::ptr p = { boost::addressof(handler),
+      asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(impl.cancel_token_, handler);
 
-      // Allocate and construct an operation to wrap the handler.
-      typedef receive_op<null_buffers, Handler> value_type;
-      typedef handler_alloc_traits<Handler, value_type> alloc_traits;
-      raw_handler_ptr<alloc_traits> raw_ptr(handler);
-      handler_ptr<alloc_traits> ptr(raw_ptr, impl.state_,
-          impl.cancel_token_, buffers, handler);
-
-      ::WSABUF buf = { 0, 0 };
-      start_receive_op(impl, &buf, 1, flags, false, ptr.get());
-      ptr.release();
-    }
-    else
-    {
-      // Allocate and construct an operation to wrap the handler.
-      typedef null_buffers_op<Handler> op;
-      typename op::ptr p = { boost::addressof(handler),
-        asio_handler_alloc_helpers::allocate(
-          sizeof(op), handler), 0 };
-      p.p = new (p.v) op(handler);
-
-      start_reactor_op(impl,
-          (flags & socket_base::message_out_of_band)
-            ? reactor::except_op : reactor::read_op,
-          p.p);
-      p.v = p.p = 0;
-    }
+    start_null_buffers_receive_op(impl, flags, p.p);
+    p.v = p.p = 0;
   }
 
 protected:
@@ -327,6 +304,11 @@ protected:
   ASIO_DECL void start_receive_op(base_implementation_type& impl,
       WSABUF* buffers, std::size_t buffer_count,
       socket_base::message_flags flags, bool noop, operation* op);
+
+  // Helper function to start an asynchronous null_buffers receive operation.
+  ASIO_DECL void start_null_buffers_receive_op(
+      base_implementation_type& impl,
+      socket_base::message_flags flags, reactor_op* op);
 
   // Helper function to start an asynchronous receive_from operation.
   ASIO_DECL void start_receive_from_op(base_implementation_type& impl,

@@ -1,6 +1,6 @@
 //
-// detail/win_iocp_socket_recv_op.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/win_iocp_null_buffers_op.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_WIN_IOCP_SOCKET_RECV_OP_HPP
-#define ASIO_DETAIL_WIN_IOCP_SOCKET_RECV_OP_HPP
+#ifndef ASIO_DETAIL_WIN_IOCP_NULL_BUFFERS_OP_HPP
+#define ASIO_DETAIL_WIN_IOCP_NULL_BUFFERS_OP_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -25,7 +25,7 @@
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
-#include "asio/detail/operation.hpp"
+#include "asio/detail/reactor_op.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/weak_ptr.hpp"
 #include "asio/error.hpp"
@@ -35,40 +35,37 @@
 namespace asio {
 namespace detail {
 
-template <typename MutableBufferSequence, typename Handler>
-class win_iocp_socket_recv_op : public operation
+template <typename Handler>
+class win_iocp_null_buffers_op : public reactor_op
 {
 public:
-  ASIO_DEFINE_HANDLER_PTR(win_iocp_socket_recv_op);
+  ASIO_DEFINE_HANDLER_PTR(win_iocp_null_buffers_op);
 
   typedef weak_ptr<void> weak_cancel_token_type;
 
-  win_iocp_socket_recv_op(socket_ops::state_type state,
-      weak_cancel_token_type cancel_token,
-      const MutableBufferSequence& buffers, Handler handler)
-    : operation(&win_iocp_socket_recv_op::do_complete),
-      state_(state),
+  win_iocp_null_buffers_op(weak_cancel_token_type cancel_token, Handler handler)
+    : reactor_op(&win_iocp_null_buffers_op::do_perform,
+        &win_iocp_null_buffers_op::do_complete),
       cancel_token_(cancel_token),
-      buffers_(buffers),
       handler_(handler)
   {
+  }
+
+  static bool do_perform(reactor_op*)
+  {
+    return true;
   }
 
   static void do_complete(io_service_impl* owner, operation* base,
       asio::error_code ec, std::size_t bytes_transferred)
   {
     // Take ownership of the operation object.
-    win_iocp_socket_recv_op* o(static_cast<win_iocp_socket_recv_op*>(base));
+    win_iocp_null_buffers_op* o(static_cast<win_iocp_null_buffers_op*>(base));
     ptr p = { boost::addressof(o->handler_), o, o };
 
-#if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
-    // Check whether buffers are still valid.
-    if (owner)
-    {
-      buffer_sequence_adapter<asio::mutable_buffer,
-          MutableBufferSequence>::validate(o->buffers_);
-    }
-#endif // defined(ASIO_ENABLE_BUFFER_DEBUGGING)
+    // The reactor may have stored a result in the operation object.
+    if (o->ec_)
+      ec = o->ec_;
 
     // Map non-portable errors to their portable counterparts.
     if (ec.value() == ERROR_NETNAME_DELETED)
@@ -81,15 +78,6 @@ public:
     else if (ec.value() == ERROR_PORT_UNREACHABLE)
     {
       ec = asio::error::connection_refused;
-    }
-
-    // Check for connection closed.
-    else if (!ec && bytes_transferred == 0
-        && (o->state_ & socket_ops::stream_oriented) != 0
-        && !buffer_sequence_adapter<asio::mutable_buffer,
-            MutableBufferSequence>::all_empty(o->buffers_))
-    {
-      ec = asio::error::eof;
     }
 
     // Make a copy of the handler so that the memory can be deallocated before
@@ -112,9 +100,7 @@ public:
   }
 
 private:
-  socket_ops::state_type state_;
   weak_cancel_token_type cancel_token_;
-  MutableBufferSequence buffers_;
   Handler handler_;
 };
 
@@ -125,4 +111,4 @@ private:
 
 #endif // defined(ASIO_HAS_IOCP)
 
-#endif // ASIO_DETAIL_WIN_IOCP_SOCKET_RECV_OP_HPP
+#endif // ASIO_DETAIL_WIN_IOCP_NULL_BUFFERS_OP_HPP
