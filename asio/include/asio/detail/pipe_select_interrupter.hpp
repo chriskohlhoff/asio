@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_HAS_EVENTFD)
 
 #include "asio/detail/push_options.hpp"
 
@@ -67,6 +68,7 @@ private:
 # include "asio/detail/impl/pipe_select_interrupter.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
+#endif // !defined(ASIO_HAS_EVENTFD)
 #endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 #endif // ASIO_DETAIL_PIPE_SELECT_INTERRUPTER_HPP

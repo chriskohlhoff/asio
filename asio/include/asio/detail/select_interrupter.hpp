@@ -19,8 +19,9 @@
 
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 # include "asio/detail/socket_select_interrupter.hpp"
-#else
+#elif defined(ASIO_HAS_EVENTFD)
 # include "asio/detail/eventfd_select_interrupter.hpp"
+#else
 # include "asio/detail/pipe_select_interrupter.hpp"
 #endif
 
