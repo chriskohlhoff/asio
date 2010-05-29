@@ -41,6 +41,7 @@
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/weak_ptr.hpp"
 #include "asio/detail/win_iocp_io_service.hpp"
+#include "asio/detail/win_iocp_socket_send_op.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -177,69 +178,6 @@ public:
     return 0;
   }
 
-  template <typename ConstBufferSequence, typename Handler>
-  class send_op : public operation
-  {
-  public:
-    send_op(weak_cancel_token_type cancel_token,
-        const ConstBufferSequence& buffers, Handler handler)
-      : operation(&send_op::do_complete),
-        cancel_token_(cancel_token),
-        buffers_(buffers),
-        handler_(handler)
-    {
-    }
-
-    static void do_complete(io_service_impl* owner, operation* base,
-        asio::error_code ec, std::size_t bytes_transferred)
-    {
-      // Take ownership of the operation object.
-      send_op* o(static_cast<send_op*>(base));
-      typedef handler_alloc_traits<Handler, send_op> alloc_traits;
-      handler_ptr<alloc_traits> ptr(o->handler_, o);
-
-      // Make the upcall if required.
-      if (owner)
-      {
-#if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
-        // Check whether buffers are still valid.
-        buffer_sequence_adapter<asio::const_buffer,
-            ConstBufferSequence>::validate(o->buffers_);
-#endif // defined(ASIO_ENABLE_BUFFER_DEBUGGING)
-
-        // Map non-portable errors to their portable counterparts.
-        if (ec.value() == ERROR_NETNAME_DELETED)
-        {
-          if (o->cancel_token_.expired())
-            ec = asio::error::operation_aborted;
-          else
-            ec = asio::error::connection_reset;
-        }
-        else if (ec.value() == ERROR_PORT_UNREACHABLE)
-        {
-          ec = asio::error::connection_refused;
-        }
-
-        // Make a copy of the handler so that the memory can be deallocated
-        // before the upcall is made. Even if we're not about to make an
-        // upcall, a sub-object of the handler may be the true owner of the
-        // memory associated with the handler. Consequently, a local copy of
-        // the handler is required to ensure that any owning sub-object remains
-        // valid until after we have deallocated the memory here.
-        detail::binder2<Handler, asio::error_code, std::size_t>
-          handler(o->handler_, ec, bytes_transferred);
-        ptr.reset();
-        asio::detail::fenced_block b;
-        asio_handler_invoke_helpers::invoke(handler, handler);
-      }
-    }
-
-  private:
-    weak_cancel_token_type cancel_token_;
-    ConstBufferSequence buffers_;
-    Handler handler_;
-  };
-
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
   template <typename ConstBufferSequence, typename Handler>
@@ -248,19 +186,19 @@ public:
       socket_base::message_flags flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef send_op<ConstBufferSequence, Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr,
-        impl.cancel_token_, buffers, handler);
+    typedef win_iocp_socket_send_op<ConstBufferSequence, Handler> op;
+    typename op::ptr p = { boost::addressof(handler),
+      asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(impl.cancel_token_, buffers, handler);
 
     buffer_sequence_adapter<asio::const_buffer,
         ConstBufferSequence> bufs(buffers);
 
     start_send_op(impl, bufs.buffers(), bufs.count(), flags,
         (impl.state_ & socket_ops::stream_oriented) != 0 && bufs.all_empty(),
-        ptr.get());
-    ptr.release();
+        p.p);
+    p.v = p.p = 0;
   }
 
   // Start an asynchronous wait until data can be sent without blocking.
