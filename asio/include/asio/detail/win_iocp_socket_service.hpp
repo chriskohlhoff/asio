@@ -41,6 +41,7 @@
 #include "asio/detail/weak_ptr.hpp"
 #include "asio/detail/win_iocp_io_service.hpp"
 #include "asio/detail/win_iocp_null_buffers_op.hpp"
+#include "asio/detail/win_iocp_socket_recvfrom_op.hpp"
 #include "asio/detail/win_iocp_socket_send_op.hpp"
 #include "asio/detail/win_iocp_socket_service_base.hpp"
 
@@ -359,75 +360,6 @@ public:
     return 0;
   }
 
-  template <typename MutableBufferSequence, typename Handler>
-  class receive_from_op : public operation
-  {
-  public:
-    receive_from_op(int protocol_type, endpoint_type& endpoint,
-        const MutableBufferSequence& buffers, Handler handler)
-      : operation(&receive_from_op::do_complete),
-        protocol_type_(protocol_type),
-        endpoint_(endpoint),
-        endpoint_size_(static_cast<int>(endpoint.capacity())),
-        buffers_(buffers),
-        handler_(handler)
-    {
-    }
-
-    int& endpoint_size()
-    {
-      return endpoint_size_;
-    }
-
-    static void do_complete(io_service_impl* owner, operation* base,
-        asio::error_code ec, std::size_t bytes_transferred)
-    {
-      // Take ownership of the operation object.
-      receive_from_op* o(static_cast<receive_from_op*>(base));
-      typedef handler_alloc_traits<Handler, receive_from_op> alloc_traits;
-      handler_ptr<alloc_traits> ptr(o->handler_, o);
-
-      // Make the upcall if required.
-      if (owner)
-      {
-#if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
-        // Check whether buffers are still valid.
-        buffer_sequence_adapter<asio::mutable_buffer,
-            MutableBufferSequence>::validate(o->buffers_);
-#endif // defined(ASIO_ENABLE_BUFFER_DEBUGGING)
-
-        // Map non-portable errors to their portable counterparts.
-        if (ec.value() == ERROR_PORT_UNREACHABLE)
-        {
-          ec = asio::error::connection_refused;
-        }
-
-        // Record the size of the endpoint returned by the operation.
-        o->endpoint_.resize(o->endpoint_size_);
-
-        // Make a copy of the handler so that the memory can be deallocated
-        // before the upcall is made. Even if we're not about to make an
-        // upcall, a sub-object of the handler may be the true owner of the
-        // memory associated with the handler. Consequently, a local copy of
-        // the handler is required to ensure that any owning sub-object remains
-        // valid until after we have deallocated the memory here.
-        detail::binder2<Handler, asio::error_code, std::size_t>
-          handler(o->handler_, ec, bytes_transferred);
-        ptr.reset();
-        asio::detail::fenced_block b;
-        asio_handler_invoke_helpers::invoke(handler, handler);
-      }
-    }
-
-  private:
-    int protocol_type_;
-    endpoint_type& endpoint_;
-    int endpoint_size_;
-    weak_cancel_token_type cancel_token_;
-    MutableBufferSequence buffers_;
-    Handler handler_;
-  };
-
   // Start an asynchronous receive. The buffer for the data being received and
   // the sender_endpoint object must both be valid for the lifetime of the
   // asynchronous operation.
@@ -437,19 +369,19 @@ public:
       socket_base::message_flags flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef receive_from_op<MutableBufferSequence, Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    int protocol_type = impl.protocol_.type();
-    handler_ptr<alloc_traits> ptr(raw_ptr,
-        protocol_type, sender_endp, buffers, handler);
+    typedef win_iocp_socket_recvfrom_op<
+      MutableBufferSequence, endpoint_type, Handler> op;
+    typename op::ptr p = { boost::addressof(handler),
+      asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(sender_endp, impl.cancel_token_, buffers, handler);
 
     buffer_sequence_adapter<asio::mutable_buffer,
         MutableBufferSequence> bufs(buffers);
 
     start_receive_from_op(impl, bufs.buffers(), bufs.count(),
-        sender_endp.data(), flags, &ptr.get()->endpoint_size(), ptr.get());
-    ptr.release();
+        sender_endp.data(), flags, &p.p->endpoint_size(), p.p);
+    p.v = p.p = 0;
   }
 
   // Wait until data can be received without blocking.
