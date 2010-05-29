@@ -49,7 +49,9 @@ public:
   ASIO_DECL void shutdown_service();
 
   // Initialise the task. Nothing to do here.
-  void init_task();
+  void init_task()
+  {
+  }
 
   // Register a handle with the IO completion port.
   ASIO_DECL asio::error_code register_handle(
@@ -71,13 +73,23 @@ public:
   ASIO_DECL void stop();
 
   // Reset in preparation for a subsequent run invocation.
-  void reset();
+  void reset()
+  {
+    ::InterlockedExchange(&stopped_, 0);
+  }
 
   // Notify that some work has started.
-  void work_started();
+  void work_started()
+  {
+    ::InterlockedIncrement(&outstanding_work_);
+  }
 
   // Notify that some work has finished.
-  void work_finished();
+  void work_finished()
+  {
+    if (::InterlockedDecrement(&outstanding_work_) == 0)
+      stop();
+  }
 
   // Request invocation of the given handler.
   template <typename Handler>
@@ -89,7 +101,11 @@ public:
 
   // Request invocation of the given operation and return immediately. Assumes
   // that work_started() has not yet been called for the operation.
-  void post_immediate_completion(win_iocp_operation* op);
+  void post_immediate_completion(win_iocp_operation* op)
+  {
+    work_started();
+    post_deferred_completion(op);
+  }
 
   // Request invocation of the given operation and return immediately. Assumes
   // that work_started() was previously called for the operation.

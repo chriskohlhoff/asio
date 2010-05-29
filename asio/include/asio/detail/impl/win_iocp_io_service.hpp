@@ -30,26 +30,6 @@
 namespace asio {
 namespace detail {
 
-inline void win_iocp_io_service::init_task()
-{
-}
-
-inline void win_iocp_io_service::reset()
-{
-  ::InterlockedExchange(&stopped_, 0);
-}
-
-inline void win_iocp_io_service::work_started()
-{
-  ::InterlockedIncrement(&outstanding_work_);
-}
-
-inline void win_iocp_io_service::work_finished()
-{
-  if (::InterlockedDecrement(&outstanding_work_) == 0)
-    stop();
-}
-
 template <typename Handler>
 void win_iocp_io_service::dispatch(Handler handler)
 {
@@ -74,13 +54,6 @@ void win_iocp_io_service::post(Handler handler)
 
   post_immediate_completion(p.p);
   p.v = p.p = 0;
-}
-
-inline void win_iocp_io_service::post_immediate_completion(
-    win_iocp_operation* op)
-{
-  work_started();
-  post_deferred_completion(op);
 }
 
 template <typename Time_Traits>
