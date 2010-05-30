@@ -53,7 +53,7 @@ CXXFLAGS = \
 	$(WARNINGS_CXXFLAGS) \
 	$(DEBUG_CXXFLAGS) \
 	$(UNICODE_CXXFLAGS) \
-  $(SEPARATE_COMPILATION_CXXFLAGS)
+	$(SEPARATE_COMPILATION_CXXFLAGS)
 
 !ifndef SSLDIR
 SSLDIR = ../../openssl-0.9.8g
@@ -194,7 +194,7 @@ SSL_EXAMPLE_EXES = \
 all: asio.lib
 asio.lib: ../include/asio/impl/src.cpp
 	cl -Fe$@ -Foasio.obj $(CXXFLAGS) $(DEFINES) -c ../include/asio/impl/src.cpp
-  lib -name:asio.lib asio.obj
+	lib -name:asio.lib asio.obj
 !endif
 
 all: \
