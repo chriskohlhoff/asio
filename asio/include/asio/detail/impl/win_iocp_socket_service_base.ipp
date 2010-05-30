@@ -217,7 +217,7 @@ asio::error_code win_iocp_socket_service_base::do_open(
   case SOCK_DGRAM: impl.state_ = socket_ops::datagram_oriented; break;
   default: impl.state_ = 0; break;
   }
-  impl.cancel_token_.reset(static_cast<void*>(0), noop_deleter());
+  impl.cancel_token_.reset(static_cast<void*>(0), socket_ops::noop_deleter());
   ec = asio::error_code();
   return ec;
 }
@@ -243,7 +243,7 @@ asio::error_code win_iocp_socket_service_base::do_assign(
   case SOCK_DGRAM: impl.state_ = socket_ops::datagram_oriented; break;
   default: impl.state_ = 0; break;
   }
-  impl.cancel_token_.reset(static_cast<void*>(0), noop_deleter());
+  impl.cancel_token_.reset(static_cast<void*>(0), socket_ops::noop_deleter());
   ec = asio::error_code();
   return ec;
 }

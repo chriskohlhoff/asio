@@ -61,10 +61,6 @@ public:
   // The endpoint type.
   typedef typename Protocol::endpoint endpoint_type;
 
-  struct noop_deleter { void operator()(void*) {} };
-  typedef shared_ptr<void> shared_cancel_token_type;
-  typedef weak_ptr<void> weak_cancel_token_type;
-
   // The native type of a socket.
   class native_type
   {

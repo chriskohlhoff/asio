@@ -27,7 +27,6 @@
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/operation.hpp"
 #include "asio/detail/socket_ops.hpp"
-#include "asio/detail/weak_ptr.hpp"
 #include "asio/error.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -41,10 +40,8 @@ class win_iocp_socket_recv_op : public operation
 public:
   ASIO_DEFINE_HANDLER_PTR(win_iocp_socket_recv_op);
 
-  typedef weak_ptr<void> weak_cancel_token_type;
-
   win_iocp_socket_recv_op(socket_ops::state_type state,
-      weak_cancel_token_type cancel_token,
+      socket_ops::weak_cancel_token_type cancel_token,
       const MutableBufferSequence& buffers, Handler handler)
     : operation(&win_iocp_socket_recv_op::do_complete),
       state_(state),
@@ -70,27 +67,10 @@ public:
     }
 #endif // defined(ASIO_ENABLE_BUFFER_DEBUGGING)
 
-    // Map non-portable errors to their portable counterparts.
-    if (ec.value() == ERROR_NETNAME_DELETED)
-    {
-      if (o->cancel_token_.expired())
-        ec = asio::error::operation_aborted;
-      else
-        ec = asio::error::connection_reset;
-    }
-    else if (ec.value() == ERROR_PORT_UNREACHABLE)
-    {
-      ec = asio::error::connection_refused;
-    }
-
-    // Check for connection closed.
-    else if (!ec && bytes_transferred == 0
-        && (o->state_ & socket_ops::stream_oriented) != 0
-        && !buffer_sequence_adapter<asio::mutable_buffer,
-            MutableBufferSequence>::all_empty(o->buffers_))
-    {
-      ec = asio::error::eof;
-    }
+    socket_ops::complete_iocp_recv(o->state_, o->cancel_token_,
+        buffer_sequence_adapter<asio::mutable_buffer,
+          MutableBufferSequence>::all_empty(o->buffers_),
+        ec, bytes_transferred);
 
     // Make a copy of the handler so that the memory can be deallocated before
     // the upcall is made. Even if we're not about to make an upcall, a
@@ -113,7 +93,7 @@ public:
 
 private:
   socket_ops::state_type state_;
-  weak_cancel_token_type cancel_token_;
+  socket_ops::weak_cancel_token_type cancel_token_;
   MutableBufferSequence buffers_;
   Handler handler_;
 };

@@ -52,10 +52,6 @@ namespace detail {
 class win_iocp_socket_service_base
 {
 public:
-  struct noop_deleter { void operator()(void*) {} };
-  typedef shared_ptr<void> shared_cancel_token_type;
-  typedef weak_ptr<void> weak_cancel_token_type;
-
   // The implementation type of the socket.
   struct base_implementation_type
   {
@@ -71,7 +67,7 @@ public:
     // with the error ERROR_OPERATION_ABORTED. In practice they complete with
     // ERROR_NETNAME_DELETED, which means you can't tell the difference between
     // a local cancellation and the socket being hard-closed by the peer.
-    shared_cancel_token_type cancel_token_;
+    socket_ops::shared_cancel_token_type cancel_token_;
 
     // Per-descriptor data used by the reactor.
     reactor::per_descriptor_data reactor_data_;

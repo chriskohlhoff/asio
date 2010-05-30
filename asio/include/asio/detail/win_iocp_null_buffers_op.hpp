@@ -27,7 +27,6 @@
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/reactor_op.hpp"
 #include "asio/detail/socket_ops.hpp"
-#include "asio/detail/weak_ptr.hpp"
 #include "asio/error.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -41,9 +40,8 @@ class win_iocp_null_buffers_op : public reactor_op
 public:
   ASIO_DEFINE_HANDLER_PTR(win_iocp_null_buffers_op);
 
-  typedef weak_ptr<void> weak_cancel_token_type;
-
-  win_iocp_null_buffers_op(weak_cancel_token_type cancel_token, Handler handler)
+  win_iocp_null_buffers_op(socket_ops::weak_cancel_token_type cancel_token,
+      Handler handler)
     : reactor_op(&win_iocp_null_buffers_op::do_perform,
         &win_iocp_null_buffers_op::do_complete),
       cancel_token_(cancel_token),
@@ -100,7 +98,7 @@ public:
   }
 
 private:
-  weak_cancel_token_type cancel_token_;
+  socket_ops::weak_cancel_token_type cancel_token_;
   Handler handler_;
 };
 

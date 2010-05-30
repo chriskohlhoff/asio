@@ -153,7 +153,9 @@ socket_type sync_accept(socket_type s, state_type state,
   }
 }
 
-socket_type non_blocking_accept(socket_type s,
+#if !defined(ASIO_HAS_IOCP)
+
+bool non_blocking_accept(socket_type s,
     state_type state, socket_addr_type* addr, std::size_t* addrlen,
     asio::error_code& ec, socket_type& new_socket)
 {
@@ -198,6 +200,8 @@ socket_type non_blocking_accept(socket_type s,
     return false;
   }
 }
+
+#endif // !defined(ASIO_HAS_IOCP)
 
 template <typename SockLenType>
 inline int call_bind(SockLenType msghdr::*,
@@ -606,6 +610,36 @@ size_t sync_recv(socket_type s, state_type state, buf* bufs,
   }
 }
 
+#if defined(ASIO_HAS_IOCP)
+
+void complete_iocp_recv(state_type state,
+    const weak_cancel_token_type& cancel_token, bool all_empty,
+    asio::error_code& ec, size_t bytes_transferred)
+{
+  // Map non-portable errors to their portable counterparts.
+  if (ec.value() == ERROR_NETNAME_DELETED)
+  {
+    if (cancel_token.expired())
+      ec = asio::error::operation_aborted;
+    else
+      ec = asio::error::connection_reset;
+  }
+  else if (ec.value() == ERROR_PORT_UNREACHABLE)
+  {
+    ec = asio::error::connection_refused;
+  }
+
+  // Check for connection closed.
+  else if (!ec && bytes_transferred == 0
+      && (state & stream_oriented) != 0
+      && !all_empty)
+  {
+    ec = asio::error::eof;
+  }
+}
+
+#else // defined(ASIO_HAS_IOCP)
+
 bool non_blocking_recv(socket_type s,
     buf* bufs, size_t count, int flags, bool is_stream,
     asio::error_code& ec, size_t& bytes_transferred)
@@ -643,6 +677,8 @@ bool non_blocking_recv(socket_type s,
     return true;
   }
 }
+
+#endif // defined(ASIO_HAS_IOCP)
 
 int recvfrom(socket_type s, buf* bufs, size_t count, int flags,
     socket_addr_type* addr, std::size_t* addrlen,
@@ -712,6 +748,28 @@ size_t sync_recvfrom(socket_type s, state_type state, buf* bufs,
   }
 }
 
+#if defined(ASIO_HAS_IOCP)
+
+void complete_iocp_recvfrom(
+    const weak_cancel_token_type& cancel_token,
+    asio::error_code& ec)
+{
+  // Map non-portable errors to their portable counterparts.
+  if (ec.value() == ERROR_NETNAME_DELETED)
+  {
+    if (cancel_token.expired())
+      ec = asio::error::operation_aborted;
+    else
+      ec = asio::error::connection_reset;
+  }
+  else if (ec.value() == ERROR_PORT_UNREACHABLE)
+  {
+    ec = asio::error::connection_refused;
+  }
+}
+
+#else // defined(ASIO_HAS_IOCP)
+
 bool non_blocking_recvfrom(socket_type s,
     buf* bufs, size_t count, int flags,
     socket_addr_type* addr, std::size_t* addrlen,
@@ -743,6 +801,8 @@ bool non_blocking_recvfrom(socket_type s,
     return true;
   }
 }
+
+#endif // defined(ASIO_HAS_IOCP)
 
 int send(socket_type s, const buf* bufs, size_t count, int flags,
     asio::error_code& ec)
@@ -815,6 +875,28 @@ size_t sync_send(socket_type s, state_type state, const buf* bufs,
   }
 }
 
+#if defined(ASIO_HAS_IOCP)
+
+void complete_iocp_send(
+    const weak_cancel_token_type& cancel_token,
+    asio::error_code& ec)
+{
+  // Map non-portable errors to their portable counterparts.
+  if (ec.value() == ERROR_NETNAME_DELETED)
+  {
+    if (cancel_token.expired())
+      ec = asio::error::operation_aborted;
+    else
+      ec = asio::error::connection_reset;
+  }
+  else if (ec.value() == ERROR_PORT_UNREACHABLE)
+  {
+    ec = asio::error::connection_refused;
+  }
+}
+
+#else // defined(ASIO_HAS_IOCP)
+
 bool non_blocking_send(socket_type s,
     const buf* bufs, size_t count, int flags,
     asio::error_code& ec, size_t& bytes_transferred)
@@ -845,6 +927,8 @@ bool non_blocking_send(socket_type s,
     return true;
   }
 }
+
+#endif // defined(ASIO_HAS_IOCP)
 
 int sendto(socket_type s, const buf* bufs, size_t count, int flags,
     const socket_addr_type* addr, std::size_t addrlen,
@@ -914,6 +998,8 @@ size_t sync_sendto(socket_type s, state_type state, const buf* bufs,
   }
 }
 
+#if !defined(ASIO_HAS_IOCP)
+
 bool non_blocking_sendto(socket_type s,
     const buf* bufs, size_t count, int flags,
     const socket_addr_type* addr, std::size_t addrlen,
@@ -945,6 +1031,8 @@ bool non_blocking_sendto(socket_type s,
     return true;
   }
 }
+
+#endif // !defined(ASIO_HAS_IOCP)
 
 socket_type socket(int af, int type, int protocol,
     asio::error_code& ec)
