@@ -27,6 +27,7 @@
 #include "asio/detail/timer_op.hpp"
 #include "asio/detail/timer_queue.hpp"
 #include "asio/detail/timer_scheduler.hpp"
+#include "asio/detail/wait_handler.hpp"
 
 #include "asio/detail/push_options.hpp"
 #include <boost/date_time/posix_time/posix_time_types.hpp>
@@ -151,59 +152,21 @@ public:
     ec = asio::error_code();
   }
 
-  template <typename Handler>
-  class wait_handler : public timer_op
-  {
-  public:
-    wait_handler(Handler handler)
-      : timer_op(&wait_handler::do_complete),
-        handler_(handler)
-    {
-    }
-
-    static void do_complete(io_service_impl* owner, operation* base,
-        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
-    {
-      // Take ownership of the handler object.
-      wait_handler* h(static_cast<wait_handler*>(base));
-      typedef handler_alloc_traits<Handler, wait_handler> alloc_traits;
-      handler_ptr<alloc_traits> ptr(h->handler_, h);
-
-      // Make the upcall if required.
-      if (owner)
-      {
-        // Make a copy of the handler so that the memory can be deallocated
-        // before the upcall is made. Even if we're not about to make an
-        // upcall, a sub-object of the handler may be the true owner of the
-        // memory associated with the handler. Consequently, a local copy of
-        // the handler is required to ensure that any owning sub-object remains
-        // valid until after we have deallocated the memory here.
-        detail::binder1<Handler, asio::error_code>
-          handler(h->handler_, h->ec_);
-        ptr.reset();
-        asio::detail::fenced_block b;
-        asio_handler_invoke_helpers::invoke(handler, handler);
-      }
-    }
-
-  private:
-    Handler handler_;
-  };
-
   // Start an asynchronous wait on the timer.
   template <typename Handler>
   void async_wait(implementation_type& impl, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef wait_handler<Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr, handler);
+    typedef wait_handler<Handler> op;
+    typename op::ptr p = { boost::addressof(handler),
+      asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(handler);
 
     impl.might_have_pending_waits = true;
 
-    scheduler_.schedule_timer(timer_queue_, impl.expiry, ptr.get(), &impl);
-    ptr.release();
+    scheduler_.schedule_timer(timer_queue_, impl.expiry, p.p, &impl);
+    p.v = p.p = 0;
   }
 
 private:
