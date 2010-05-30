@@ -15,7 +15,6 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/type_traits/add_reference.hpp>
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
@@ -31,9 +30,7 @@ class wrapped_handler
 public:
   typedef void result_type;
 
-  wrapped_handler(
-      typename boost::add_reference<Dispatcher>::type dispatcher,
-      Handler handler)
+  wrapped_handler(Dispatcher dispatcher, Handler handler)
     : dispatcher_(dispatcher),
       handler_(handler)
   {
