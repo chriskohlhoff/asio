@@ -41,6 +41,7 @@
 #include "asio/detail/weak_ptr.hpp"
 #include "asio/detail/win_iocp_io_service.hpp"
 #include "asio/detail/win_iocp_null_buffers_op.hpp"
+#include "asio/detail/win_iocp_socket_accept_op.hpp"
 #include "asio/detail/win_iocp_socket_recvfrom_op.hpp"
 #include "asio/detail/win_iocp_socket_send_op.hpp"
 #include "asio/detail/win_iocp_socket_service_base.hpp"
@@ -433,185 +434,6 @@ public:
     return ec;
   }
 
-  template <typename Socket, typename Handler>
-  class accept_op : public operation
-  {
-  public:
-    accept_op(win_iocp_io_service& iocp_service, socket_type socket,
-        Socket& peer, const protocol_type& protocol,
-        endpoint_type* peer_endpoint, bool enable_connection_aborted,
-        Handler handler)
-      : operation(&accept_op::do_complete),
-        iocp_service_(iocp_service),
-        socket_(socket),
-        peer_(peer),
-        protocol_(protocol),
-        peer_endpoint_(peer_endpoint),
-        enable_connection_aborted_(enable_connection_aborted),
-        handler_(handler)
-    {
-    }
-
-    socket_holder& new_socket()
-    {
-      return new_socket_;
-    }
-
-    void* output_buffer()
-    {
-      return output_buffer_;
-    }
-
-    DWORD address_length()
-    {
-      return sizeof(sockaddr_storage_type) + 16;
-    }
-
-    static void do_complete(io_service_impl* owner, operation* base,
-        asio::error_code ec, std::size_t /*bytes_transferred*/)
-    {
-      // Take ownership of the handler object.
-      accept_op* o(static_cast<accept_op*>(base));
-      typedef handler_alloc_traits<Handler, accept_op> alloc_traits;
-      handler_ptr<alloc_traits> ptr(o->handler_, o);
-
-      // Make the upcall if required.
-      if (owner)
-      {
-        // Map Windows error ERROR_NETNAME_DELETED to connection_aborted.
-        if (ec.value() == ERROR_NETNAME_DELETED)
-        {
-          ec = asio::error::connection_aborted;
-        }
-
-        // Restart the accept operation if we got the connection_aborted error
-        // and the enable_connection_aborted socket option is not set.
-        if (ec == asio::error::connection_aborted
-            && !o->enable_connection_aborted_)
-        {
-          // Reset OVERLAPPED structure.
-          o->reset();
-
-          // Create a new socket for the next connection, since the AcceptEx
-          // call fails with WSAEINVAL if we try to reuse the same socket.
-          o->new_socket_.reset();
-          o->new_socket_.reset(socket_ops::socket(o->protocol_.family(),
-                o->protocol_.type(), o->protocol_.protocol(), ec));
-          if (o->new_socket_.get() != invalid_socket)
-          {
-            // Accept a connection.
-            DWORD bytes_read = 0;
-            BOOL result = ::AcceptEx(o->socket_, o->new_socket_.get(),
-                o->output_buffer(), 0, o->address_length(),
-                o->address_length(), &bytes_read, o);
-            DWORD last_error = ::WSAGetLastError();
-            ec = asio::error_code(last_error,
-                asio::error::get_system_category());
-
-            // Check if the operation completed immediately.
-            if (!result && last_error != WSA_IO_PENDING)
-            {
-              if (last_error == ERROR_NETNAME_DELETED
-                  || last_error == WSAECONNABORTED)
-              {
-                // Post this handler so that operation will be restarted again.
-                o->iocp_service_.work_started();
-                o->iocp_service_.on_completion(o, ec);
-                ptr.release();
-                return;
-              }
-              else
-              {
-                // Operation already complete. Continue with rest of this
-                // handler.
-              }
-            }
-            else
-            {
-              // Asynchronous operation has been successfully restarted.
-              o->iocp_service_.work_started();
-              o->iocp_service_.on_pending(o);
-              ptr.release();
-              return;
-            }
-          }
-        }
-
-        // Get the address of the peer.
-        endpoint_type peer_endpoint;
-        if (!ec)
-        {
-          LPSOCKADDR local_addr = 0;
-          int local_addr_length = 0;
-          LPSOCKADDR remote_addr = 0;
-          int remote_addr_length = 0;
-          GetAcceptExSockaddrs(o->output_buffer(), 0, o->address_length(),
-              o->address_length(), &local_addr, &local_addr_length,
-              &remote_addr, &remote_addr_length);
-          if (static_cast<std::size_t>(remote_addr_length)
-              > peer_endpoint.capacity())
-          {
-            ec = asio::error::invalid_argument;
-          }
-          else
-          {
-            using namespace std; // For memcpy.
-            memcpy(peer_endpoint.data(), remote_addr, remote_addr_length);
-            peer_endpoint.resize(static_cast<std::size_t>(remote_addr_length));
-          }
-        }
-
-        // Need to set the SO_UPDATE_ACCEPT_CONTEXT option so that getsockname
-        // and getpeername will work on the accepted socket.
-        if (!ec)
-        {
-          SOCKET update_ctx_param = o->socket_;
-          socket_ops::state_type state = 0;
-          socket_ops::setsockopt(o->new_socket_.get(), state,
-                SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT,
-                &update_ctx_param, sizeof(SOCKET), ec);
-        }
-
-        // If the socket was successfully accepted, transfer ownership of the
-        // socket to the peer object.
-        if (!ec)
-        {
-          o->peer_.assign(o->protocol_,
-              native_type(o->new_socket_.get(), peer_endpoint), ec);
-          if (!ec)
-            o->new_socket_.release();
-        }
-
-        // Pass endpoint back to caller.
-        if (o->peer_endpoint_)
-          *o->peer_endpoint_ = peer_endpoint;
-
-        // Make a copy of the handler so that the memory can be deallocated
-        // before the upcall is made. Even if we're not about to make an
-        // upcall, a sub-object of the handler may be the true owner of the
-        // memory associated with the handler. Consequently, a local copy of
-        // the handler is required to ensure that any owning sub-object remains
-        // valid until after we have deallocated the memory here.
-        detail::binder1<Handler, asio::error_code>
-          handler(o->handler_, ec);
-        ptr.reset();
-        asio::detail::fenced_block b;
-        asio_handler_invoke_helpers::invoke(handler, handler);
-      }
-    }
-
-  private:
-    win_iocp_io_service& iocp_service_;
-    socket_type socket_;
-    socket_holder new_socket_;
-    Socket& peer_;
-    protocol_type protocol_;
-    endpoint_type* peer_endpoint_;
-    unsigned char output_buffer_[(sizeof(sockaddr_storage_type) + 16) * 2];
-    bool enable_connection_aborted_;
-    Handler handler_;
-  };
-
   // Start an asynchronous accept. The peer and peer_endpoint objects
   // must be valid until the accept's handler is invoked.
   template <typename Socket, typename Handler>
@@ -619,19 +441,20 @@ public:
       endpoint_type* peer_endpoint, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef accept_op<Socket, Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler);
+    typedef win_iocp_socket_accept_op<Socket, protocol_type, Handler> op;
+    typename op::ptr p = { boost::addressof(handler),
+      asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
     bool enable_connection_aborted =
       (impl.state_ & socket_ops::enable_connection_aborted) != 0;
-    handler_ptr<alloc_traits> ptr(raw_ptr, iocp_service_, impl.socket_, peer,
-        impl.protocol_, peer_endpoint, enable_connection_aborted, handler);
+    p.p = new (p.v) op(iocp_service_, impl.socket_, peer, impl.protocol_,
+        peer_endpoint, enable_connection_aborted, handler);
 
-    start_accept_op(impl, peer.is_open(), ptr.get()->new_socket(),
+    start_accept_op(impl, peer.is_open(), p.p->new_socket(),
         impl.protocol_.family(), impl.protocol_.type(),
-        impl.protocol_.protocol(), ptr.get()->output_buffer(),
-        ptr.get()->address_length(), ptr.get());
-    ptr.release();
+        impl.protocol_.protocol(), p.p->output_buffer(),
+        p.p->address_length(), p.p);
+    p.v = p.p = 0;
   }
 
   // Connect the socket to the specified endpoint.
