@@ -1286,13 +1286,36 @@ inline int call_getpeername(SockLenType msghdr::*,
 }
 
 int getpeername(socket_type s, socket_addr_type* addr,
-    std::size_t* addrlen, asio::error_code& ec)
+    std::size_t* addrlen, bool cached, asio::error_code& ec)
 {
   if (s == invalid_socket)
   {
     ec = asio::error::bad_descriptor;
     return socket_error_retval;
   }
+
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  if (cached)
+  {
+    // Check if socket is still connected.
+    DWORD connect_time = 0;
+    size_t connect_time_len = sizeof(connect_time);
+    if (socket_ops::getsockopt(s, 0, SOL_SOCKET, SO_CONNECT_TIME,
+          &connect_time, &connect_time_len, ec) == socket_error_retval)
+    {
+      return socket_error_retval;
+    }
+    if (connect_time == 0xFFFFFFFF)
+    {
+      ec = asio::error::not_connected;
+      return socket_error_retval;
+    }
+
+    // The cached value is still valid.
+    ec = asio::error_code();
+    return 0;
+  }
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
   clear_last_error();
   int result = error_wrapper(call_getpeername(

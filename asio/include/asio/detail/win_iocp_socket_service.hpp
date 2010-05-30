@@ -219,41 +219,13 @@ public:
   endpoint_type remote_endpoint(const implementation_type& impl,
       asio::error_code& ec) const
   {
-    if (!is_open(impl))
-    {
-      ec = asio::error::bad_descriptor;
+    endpoint_type endpoint = impl.remote_endpoint_;
+    std::size_t addr_len = endpoint.capacity();
+    if (socket_ops::getpeername(impl.socket_, endpoint.data(),
+          &addr_len, impl.have_remote_endpoint_, ec))
       return endpoint_type();
-    }
-
-    if (impl.have_remote_endpoint_)
-    {
-      // Check if socket is still connected.
-      DWORD connect_time = 0;
-      size_t connect_time_len = sizeof(connect_time);
-      if (socket_ops::getsockopt(impl.socket_, impl.state_,
-            SOL_SOCKET, SO_CONNECT_TIME, &connect_time,
-            &connect_time_len, ec) == socket_error_retval)
-      {
-        return endpoint_type();
-      }
-      if (connect_time == 0xFFFFFFFF)
-      {
-        ec = asio::error::not_connected;
-        return endpoint_type();
-      }
-
-      ec = asio::error_code();
-      return impl.remote_endpoint_;
-    }
-    else
-    {
-      endpoint_type endpoint;
-      std::size_t addr_len = endpoint.capacity();
-      if (socket_ops::getpeername(impl.socket_, endpoint.data(), &addr_len, ec))
-        return endpoint_type();
-      endpoint.resize(addr_len);
-      return endpoint;
-    }
+    endpoint.resize(addr_len);
+    return endpoint;
   }
 
   // Send a datagram to the specified endpoint. Returns the number of bytes

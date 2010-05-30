@@ -154,7 +154,8 @@ public:
   {
     endpoint_type endpoint;
     std::size_t addr_len = endpoint.capacity();
-    if (socket_ops::getpeername(impl.socket_, endpoint.data(), &addr_len, ec))
+    if (socket_ops::getpeername(impl.socket_,
+          endpoint.data(), &addr_len, false, ec))
       return endpoint_type();
     endpoint.resize(addr_len);
     return endpoint;

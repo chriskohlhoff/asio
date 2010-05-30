@@ -213,7 +213,7 @@ ASIO_DECL int getsockopt(socket_type s, state_type state,
     size_t* optlen, asio::error_code& ec);
 
 ASIO_DECL int getpeername(socket_type s, socket_addr_type* addr,
-    std::size_t* addrlen, asio::error_code& ec);
+    std::size_t* addrlen, bool cached, asio::error_code& ec);
 
 ASIO_DECL int getsockname(socket_type s, socket_addr_type* addr,
     std::size_t* addrlen, asio::error_code& ec);
