@@ -77,7 +77,10 @@ public:
       per_descriptor_data& descriptor_data);
 
   // Post a reactor operation for immediate completion.
-  void post_immediate_completion(reactor_op* op);
+  void post_immediate_completion(reactor_op* op)
+  {
+    io_service_.post_immediate_completion(op);
+  }
 
   // Start a new operation. The reactor operation will be performed when the
   // given descriptor is flagged as ready, or an error has occurred.

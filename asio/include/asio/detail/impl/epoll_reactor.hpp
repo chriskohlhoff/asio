@@ -22,11 +22,6 @@
 namespace asio {
 namespace detail {
 
-inline void epoll_reactor::post_immediate_completion(reactor_op* op)
-{
-  io_service_.post_immediate_completion(op);
-}
-
 template <typename Time_Traits>
 void epoll_reactor::add_timer_queue(timer_queue<Time_Traits>& timer_queue)
 {
