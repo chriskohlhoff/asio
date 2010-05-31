@@ -49,7 +49,7 @@ struct win_iocp_io_service::timer_thread_function
     while (::InterlockedExchangeAdd(&io_service_->shutdown_, 0) == 0)
     {
       if (::WaitForSingleObject(io_service_->waitable_timer_.handle,
-            1000) == WAIT_OBJECT_0)
+            INFINITE) == WAIT_OBJECT_0)
       {
         ::InterlockedExchange(&io_service_->dispatch_required_, 1);
         ::PostQueuedCompletionStatus(io_service_->iocp_.handle,
