@@ -80,11 +80,12 @@ public:
 
     if (owner)
     {
-      // Map Windows error ERROR_NETNAME_DELETED to connection_aborted.
-      if (ec.value() == ERROR_NETNAME_DELETED)
-      {
-        ec = asio::error::connection_aborted;
-      }
+      typename Protocol::endpoint peer_endpoint;
+      std::size_t addr_len = peer_endpoint.capacity();
+      socket_ops::complete_iocp_accept(o->socket_,
+          o->output_buffer(), o->address_length(),
+          peer_endpoint.data(), &addr_len,
+          o->new_socket_.get(), ec);
 
       // Restart the accept operation if we got the connection_aborted error
       // and the enable_connection_aborted socket option is not set.
@@ -126,6 +127,11 @@ public:
             {
               // Operation already complete. Continue with rest of this
               // handler.
+              std::size_t addr_len = peer_endpoint.capacity();
+              socket_ops::complete_iocp_accept(o->socket_,
+                  o->output_buffer(), o->address_length(),
+                  peer_endpoint.data(), &addr_len,
+                  o->new_socket_.get(), ec);
             }
           }
           else
@@ -137,41 +143,6 @@ public:
             return;
           }
         }
-      }
-
-      // Get the address of the peer.
-      typename Protocol::endpoint peer_endpoint;
-      if (!ec)
-      {
-        LPSOCKADDR local_addr = 0;
-        int local_addr_length = 0;
-        LPSOCKADDR remote_addr = 0;
-        int remote_addr_length = 0;
-        GetAcceptExSockaddrs(o->output_buffer(), 0, o->address_length(),
-            o->address_length(), &local_addr, &local_addr_length,
-            &remote_addr, &remote_addr_length);
-        if (static_cast<std::size_t>(remote_addr_length)
-            > peer_endpoint.capacity())
-        {
-          ec = asio::error::invalid_argument;
-        }
-        else
-        {
-          using namespace std; // For memcpy.
-          memcpy(peer_endpoint.data(), remote_addr, remote_addr_length);
-          peer_endpoint.resize(static_cast<std::size_t>(remote_addr_length));
-        }
-      }
-
-      // Need to set the SO_UPDATE_ACCEPT_CONTEXT option so that getsockname
-      // and getpeername will work on the accepted socket.
-      if (!ec)
-      {
-        SOCKET update_ctx_param = o->socket_;
-        socket_ops::state_type state = 0;
-        socket_ops::setsockopt(o->new_socket_.get(), state,
-              SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT,
-              &update_ctx_param, sizeof(SOCKET), ec);
       }
 
       // If the socket was successfully accepted, transfer ownership of the

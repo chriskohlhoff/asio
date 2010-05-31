@@ -152,7 +152,52 @@ socket_type sync_accept(socket_type s, state_type state,
   }
 }
 
-#if !defined(ASIO_HAS_IOCP)
+#if defined(ASIO_HAS_IOCP)
+
+void complete_iocp_accept(socket_type s,
+    void* output_buffer, DWORD address_length,
+    socket_addr_type* addr, std::size_t* addrlen,
+    socket_type new_socket, asio::error_code& ec)
+{
+  // Map non-portable errors to their portable counterparts.
+  if (ec.value() == ERROR_NETNAME_DELETED)
+    ec = asio::error::connection_aborted;
+
+  if (!ec)
+  {
+    // Get the address of the peer.
+    if (addr && addrlen)
+    {
+      LPSOCKADDR local_addr = 0;
+      int local_addr_length = 0;
+      LPSOCKADDR remote_addr = 0;
+      int remote_addr_length = 0;
+      GetAcceptExSockaddrs(output_buffer, 0, address_length,
+          address_length, &local_addr, &local_addr_length,
+          &remote_addr, &remote_addr_length);
+      if (static_cast<std::size_t>(remote_addr_length) > *addrlen)
+      {
+        ec = asio::error::invalid_argument;
+      }
+      else
+      {
+        using namespace std; // For memcpy.
+        memcpy(addr, remote_addr, remote_addr_length);
+        *addrlen = static_cast<std::size_t>(remote_addr_length);
+      }
+    }
+
+    // Need to set the SO_UPDATE_ACCEPT_CONTEXT option so that getsockname
+    // and getpeername will work on the accepted socket.
+    SOCKET update_ctx_param = s;
+    socket_ops::state_type state = 0;
+    socket_ops::setsockopt(new_socket, state,
+          SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT,
+          &update_ctx_param, sizeof(SOCKET), ec);
+  }
+}
+
+#else defined(ASIO_HAS_IOCP)
 
 bool non_blocking_accept(socket_type s,
     state_type state, socket_addr_type* addr, std::size_t* addrlen,
@@ -200,7 +245,7 @@ bool non_blocking_accept(socket_type s,
   }
 }
 
-#endif // !defined(ASIO_HAS_IOCP)
+#endif // defined(ASIO_HAS_IOCP)
 
 template <typename SockLenType>
 inline int call_bind(SockLenType msghdr::*,
