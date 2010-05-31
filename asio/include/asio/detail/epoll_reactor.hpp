@@ -132,6 +132,12 @@ private:
   // cannot be created.
   ASIO_DECL static int do_epoll_create();
 
+  // Helper function to add a new timer queue.
+  ASIO_DECL void do_add_timer_queue(timer_queue_base& queue);
+
+  // Helper function to remove a timer queue.
+  ASIO_DECL void do_remove_timer_queue(timer_queue_base& queue);
+
   // Called to recalculate and update the timeout.
   ASIO_DECL void update_timeout();
 

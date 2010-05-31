@@ -23,27 +23,25 @@ namespace asio {
 namespace detail {
 
 template <typename Time_Traits>
-void epoll_reactor::add_timer_queue(timer_queue<Time_Traits>& timer_queue)
+void epoll_reactor::add_timer_queue(timer_queue<Time_Traits>& queue)
 {
-  mutex::scoped_lock lock(mutex_);
-  timer_queues_.insert(&timer_queue);
+  do_add_timer_queue(queue);
 }
 
 template <typename Time_Traits>
-void epoll_reactor::remove_timer_queue(timer_queue<Time_Traits>& timer_queue)
+void epoll_reactor::remove_timer_queue(timer_queue<Time_Traits>& queue)
 {
-  mutex::scoped_lock lock(mutex_);
-  timer_queues_.erase(&timer_queue);
+  do_remove_timer_queue(queue);
 }
 
 template <typename Time_Traits>
-void epoll_reactor::schedule_timer(timer_queue<Time_Traits>& timer_queue,
+void epoll_reactor::schedule_timer(timer_queue<Time_Traits>& queue,
     const typename Time_Traits::time_type& time, timer_op* op, void* token)
 {
   mutex::scoped_lock lock(mutex_);
   if (!shutdown_)
   {
-    bool earliest = timer_queue.enqueue_timer(time, op, token);
+    bool earliest = queue.enqueue_timer(time, op, token);
     io_service_.work_started();
     if (earliest)
       update_timeout();
@@ -52,11 +50,11 @@ void epoll_reactor::schedule_timer(timer_queue<Time_Traits>& timer_queue,
 
 template <typename Time_Traits>
 std::size_t epoll_reactor::cancel_timer(
-    timer_queue<Time_Traits>& timer_queue, void* token)
+    timer_queue<Time_Traits>& queue, void* token)
 {
   mutex::scoped_lock lock(mutex_);
   op_queue<operation> ops;
-  std::size_t n = timer_queue.cancel_timer(token, ops);
+  std::size_t n = queue.cancel_timer(token, ops);
   lock.unlock();
   io_service_.post_deferred_completions(ops);
   return n;

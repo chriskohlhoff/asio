@@ -313,6 +313,18 @@ int epoll_reactor::do_epoll_create()
   return fd;
 }
 
+void epoll_reactor::do_add_timer_queue(timer_queue_base& queue)
+{
+  mutex::scoped_lock lock(mutex_);
+  timer_queues_.insert(&queue);
+}
+
+void epoll_reactor::do_remove_timer_queue(timer_queue_base& queue)
+{
+  mutex::scoped_lock lock(mutex_);
+  timer_queues_.erase(&queue);
+}
+
 void epoll_reactor::update_timeout()
 {
 #if defined(ASIO_HAS_TIMERFD)
