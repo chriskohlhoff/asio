@@ -39,7 +39,8 @@ win_thread::~win_thread()
 
 void win_thread::join()
 {
-  ::WaitForSingleObject(exit_event_, INFINITE);
+  HANDLE handles[2] = { exit_event_, thread_ };
+  ::WaitForMultipleObjects(2, handles, FALSE, INFINITE);
   ::CloseHandle(exit_event_);
   if (terminate_threads())
   {
