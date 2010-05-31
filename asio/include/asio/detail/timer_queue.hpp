@@ -99,8 +99,10 @@ public:
 
     if (duration > boost::posix_time::milliseconds(max_duration))
       duration = boost::posix_time::milliseconds(max_duration);
-    else if (duration < boost::posix_time::milliseconds(0))
+    else if (duration <= boost::posix_time::milliseconds(0))
       duration = boost::posix_time::milliseconds(0);
+    else if (duration < boost::posix_time::milliseconds(1))
+      duration = boost::posix_time::milliseconds(1);
 
     return duration.total_milliseconds();
   }
@@ -116,8 +118,10 @@ public:
 
     if (duration > boost::posix_time::microseconds(max_duration))
       duration = boost::posix_time::microseconds(max_duration);
-    else if (duration < boost::posix_time::microseconds(0))
+    else if (duration <= boost::posix_time::microseconds(0))
       duration = boost::posix_time::microseconds(0);
+    else if (duration < boost::posix_time::microseconds(1))
+      duration = boost::posix_time::microseconds(1);
 
     return duration.total_microseconds();
   }
