@@ -52,7 +52,7 @@ void win_thread::join()
   }
 }
 
-void win_thread::start_thread(func_base* arg)
+void win_thread::start_thread(func_base* arg, unsigned int stack_size)
 {
   ::HANDLE entry_event = 0;
   arg->entry_event_ = entry_event = ::CreateEvent(0, true, false, 0);
@@ -76,8 +76,8 @@ void win_thread::start_thread(func_base* arg)
   }
 
   unsigned int thread_id = 0;
-  thread_ = reinterpret_cast<HANDLE>(::_beginthreadex(0, 0,
-        win_thread_function, arg, 0, &thread_id));
+  thread_ = reinterpret_cast<HANDLE>(::_beginthreadex(0,
+        stack_size, win_thread_function, arg, 0, &thread_id));
   if (!thread_)
   {
     DWORD last_error = ::GetLastError();

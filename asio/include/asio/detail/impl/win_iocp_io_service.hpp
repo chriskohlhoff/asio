@@ -58,59 +58,46 @@ void win_iocp_io_service::post(Handler handler)
 
 template <typename Time_Traits>
 void win_iocp_io_service::add_timer_queue(
-    timer_queue<Time_Traits>& timer_queue)
+    timer_queue<Time_Traits>& queue)
 {
-  asio::detail::mutex::scoped_lock lock(timer_mutex_);
-  timer_queues_.insert(&timer_queue);
+  do_add_timer_queue(queue);
 }
 
 template <typename Time_Traits>
 void win_iocp_io_service::remove_timer_queue(
-    timer_queue<Time_Traits>& timer_queue)
+    timer_queue<Time_Traits>& queue)
 {
-  asio::detail::mutex::scoped_lock lock(timer_mutex_);
-  timer_queues_.erase(&timer_queue);
+  do_remove_timer_queue(queue);
 }
 
 template <typename Time_Traits>
-void win_iocp_io_service::schedule_timer(timer_queue<Time_Traits>& timer_queue,
+void win_iocp_io_service::schedule_timer(timer_queue<Time_Traits>& queue,
     const typename Time_Traits::time_type& time, timer_op* op, void* token)
 {
   // If the service has been shut down we silently discard the timer.
   if (::InterlockedExchangeAdd(&shutdown_, 0) != 0)
     return;
 
-  asio::detail::mutex::scoped_lock lock(timer_mutex_);
-  bool interrupt = timer_queue.enqueue_timer(time, op, token);
+  mutex::scoped_lock lock(dispatch_mutex_);
+
+  bool interrupt = queue.enqueue_timer(time, op, token);
   work_started();
-  if (interrupt && !timer_interrupt_issued_)
-  {
-    timer_interrupt_issued_ = true;
-    lock.unlock();
-    ::PostQueuedCompletionStatus(iocp_.handle,
-        0, steal_timer_dispatching, 0);
-  }
+  if (interrupt)
+    update_timeout();
 }
 
 template <typename Time_Traits>
 std::size_t win_iocp_io_service::cancel_timer(
-    timer_queue<Time_Traits>& timer_queue, void* token)
+    timer_queue<Time_Traits>& queue, void* token)
 {
   // If the service has been shut down we silently ignore the cancellation.
   if (::InterlockedExchangeAdd(&shutdown_, 0) != 0)
     return 0;
 
-  asio::detail::mutex::scoped_lock lock(timer_mutex_);
+  mutex::scoped_lock lock(dispatch_mutex_);
   op_queue<win_iocp_operation> ops;
-  std::size_t n = timer_queue.cancel_timer(token, ops);
+  std::size_t n = queue.cancel_timer(token, ops);
   post_deferred_completions(ops);
-  if (n > 0 && !timer_interrupt_issued_)
-  {
-    timer_interrupt_issued_ = true;
-    lock.unlock();
-    ::PostQueuedCompletionStatus(iocp_.handle,
-        0, steal_timer_dispatching, 0);
-  }
   return n;
 }
 

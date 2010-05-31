@@ -63,11 +63,11 @@ class win_thread
 public:
   // Constructor.
   template <typename Function>
-  win_thread(Function f)
+  win_thread(Function f, unsigned int stack_size = 0)
     : thread_(0),
       exit_event_(0)
   {
-    start_thread(new func<Function>(f));
+    start_thread(new func<Function>(f), stack_size);
   }
 
   // Destructor.
@@ -119,7 +119,7 @@ private:
     Function f_;
   };
 
-  ASIO_DECL void start_thread(func_base* arg);
+  ASIO_DECL void start_thread(func_base* arg, unsigned int stack_size);
 
   ::HANDLE thread_;
   ::HANDLE exit_event_;

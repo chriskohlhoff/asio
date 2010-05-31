@@ -19,15 +19,18 @@
 
 #if defined(ASIO_HAS_IOCP)
 
+#include <boost/scoped_ptr.hpp>
 #include "asio/io_service.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/timer_op.hpp"
+#include "asio/detail/timer_queue_base.hpp"
 #include "asio/detail/timer_queue_fwd.hpp"
 #include "asio/detail/timer_queue_set.hpp"
 #include "asio/detail/win_iocp_io_service_fwd.hpp"
 #include "asio/detail/win_iocp_operation.hpp"
+#include "asio/detail/thread.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -166,16 +169,28 @@ private:
   // either 0 or 1).
   ASIO_DECL size_t do_one(bool block, asio::error_code& ec);
 
+  // Helper function to add a new timer queue.
+  ASIO_DECL void do_add_timer_queue(timer_queue_base& queue);
+
+  // Helper function to remove a timer queue.
+  ASIO_DECL void do_remove_timer_queue(timer_queue_base& queue);
+
+  // Called to recalculate and update the timeout.
+  ASIO_DECL void update_timeout();
+
   // Helper class to call work_finished() on block exit.
   struct work_finished_on_block_exit;
 
-  // The IO completion port used for queueing operations.
-  struct iocp_holder
+  // Helper class for managing a HANDLE.
+  struct auto_handle
   {
     HANDLE handle;
-    iocp_holder() : handle(0) {}
-    ~iocp_holder() { if (handle) ::CloseHandle(handle); }
-  } iocp_;
+    auto_handle() : handle(0) {}
+    ~auto_handle() { if (handle) ::CloseHandle(handle); }
+  };
+
+  // The IO completion port used for queueing operations.
+  auto_handle iocp_;
 
   // The count of unfinished work.
   long outstanding_work_;
@@ -188,31 +203,40 @@ private:
 
   enum
   {
-    // Maximum GetQueuedCompletionStatus timeout, in milliseconds.
-    max_timeout = 500,
+    // Timeout to use with GetQueuedCompletionStatus. Some versions of windows
+    // have a "bug" where a call to GetQueuedCompletionStatus can appear stuck
+    // even though there are events waiting on the queue. Using a timeout helps
+    // to work around the issue.
+    gqcs_timeout = 500,
 
-    // Completion key value to indicate that responsibility for dispatching
-    // timers is being cooperatively transferred from one thread to another.
-    transfer_timer_dispatching = 1,
+    // Maximum waitable timer timeout, in milliseconds.
+    max_timeout = 5 * 60 * 1000,
 
-    // Completion key value to indicate that responsibility for dispatching
-    // timers should be stolen from another thread.
-    steal_timer_dispatching = 2,
+    // Completion key value used to wake up a thread to dispatch timers or
+    // completed operations.
+    wake_for_dispatch = 1,
 
     // Completion key value to indicate that an operation has posted with the
     // original last_error and bytes_transferred values stored in the fields of
     // the OVERLAPPED structure.
-    overlapped_contains_result = 3
+    overlapped_contains_result = 2
   };
 
-  // The thread that's currently in charge of dispatching timers.
-  long timer_thread_;
+  // Function object for processing timeouts in a background thread.
+  struct timer_thread_function;
+  friend struct timer_thread_function;
 
-  // Mutex for protecting access to the timer queues.
-  mutex timer_mutex_;
+  // Background thread used for processing timeouts.
+  boost::scoped_ptr<thread> timer_thread_;
 
-  // Whether a thread has been interrupted to process a new timeout.
-  bool timer_interrupt_issued_;
+  // A waitable timer object used for waiting for timeouts.
+  auto_handle waitable_timer_;
+
+  // Non-zero if timers or completed operations need to be dispatched.
+  long dispatch_required_;
+
+  // Mutex for protecting access to the timer queues and completed operations.
+  mutex dispatch_mutex_;
 
   // The timer queues.
   timer_queue_set timer_queues_;

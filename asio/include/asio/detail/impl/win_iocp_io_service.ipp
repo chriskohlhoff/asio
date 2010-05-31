@@ -42,14 +42,32 @@ struct win_iocp_io_service::work_finished_on_block_exit
   win_iocp_io_service* io_service_;
 };
 
+struct win_iocp_io_service::timer_thread_function
+{
+  void operator()()
+  {
+    while (::InterlockedExchangeAdd(&io_service_->shutdown_, 0) == 0)
+    {
+      if (::WaitForSingleObject(io_service_->waitable_timer_.handle,
+            INFINITE) == WAIT_OBJECT_0)
+      {
+        ::InterlockedExchange(&io_service_->dispatch_required_, 1);
+        ::PostQueuedCompletionStatus(io_service_->iocp_.handle,
+            0, wake_for_dispatch, 0);
+      }
+    }
+  }
+
+  win_iocp_io_service* io_service_;
+};
+
 win_iocp_io_service::win_iocp_io_service(asio::io_service& io_service)
   : asio::detail::service_base<win_iocp_io_service>(io_service),
     iocp_(),
     outstanding_work_(0),
     stopped_(0),
     shutdown_(0),
-    timer_thread_(0),
-    timer_interrupt_issued_(false)
+    dispatch_required_(0)
 {
 }
 
@@ -69,6 +87,13 @@ void win_iocp_io_service::init(size_t concurrency_hint)
 void win_iocp_io_service::shutdown_service()
 {
   ::InterlockedExchange(&shutdown_, 1);
+
+  if (timer_thread_)
+  {
+    LARGE_INTEGER timeout;
+    timeout.QuadPart = 1;
+    ::SetWaitableTimer(waitable_timer_.handle, &timeout, 1, 0, 0, FALSE);
+  }
 
   while (::InterlockedExchangeAdd(&outstanding_work_, 0) > 0)
   {
@@ -90,7 +115,7 @@ void win_iocp_io_service::shutdown_service()
       dword_ptr_t completion_key = 0;
       LPOVERLAPPED overlapped = 0;
       ::GetQueuedCompletionStatus(iocp_.handle, &bytes_transferred,
-          &completion_key, &overlapped, max_timeout);
+          &completion_key, &overlapped, gqcs_timeout);
       if (overlapped)
       {
         ::InterlockedDecrement(&outstanding_work_);
@@ -98,6 +123,9 @@ void win_iocp_io_service::shutdown_service()
       }
     }
   }
+
+  if (timer_thread_)
+    timer_thread_->join();
 }
 
 asio::error_code win_iocp_io_service::register_handle(
@@ -204,8 +232,9 @@ void win_iocp_io_service::post_deferred_completion(win_iocp_operation* op)
         0, overlapped_contains_result, op))
   {
     // Out of resources. Put on completed queue instead.
-    asio::detail::mutex::scoped_lock lock(timer_mutex_);
+    mutex::scoped_lock lock(dispatch_mutex_);
     completed_ops_.push(op);
+    ::InterlockedExchange(&dispatch_required_, 1);
   }
 }
 
@@ -224,9 +253,10 @@ void win_iocp_io_service::post_deferred_completions(
           0, overlapped_contains_result, op))
     {
       // Out of resources. Put on completed queue instead.
-      asio::detail::mutex::scoped_lock lock(timer_mutex_);
+      mutex::scoped_lock lock(dispatch_mutex_);
       completed_ops_.push(op);
       completed_ops_.push(ops);
+      ::InterlockedExchange(&dispatch_required_, 1);
     }
   }
 }
@@ -240,8 +270,9 @@ void win_iocp_io_service::on_pending(win_iocp_operation* op)
           0, overlapped_contains_result, op))
     {
       // Out of resources. Put on completed queue instead.
-      asio::detail::mutex::scoped_lock lock(timer_mutex_);
+      mutex::scoped_lock lock(dispatch_mutex_);
       completed_ops_.push(op);
+      ::InterlockedExchange(&dispatch_required_, 1);
     }
   }
 }
@@ -262,8 +293,9 @@ void win_iocp_io_service::on_completion(win_iocp_operation* op,
         0, overlapped_contains_result, op))
   {
     // Out of resources. Put on completed queue instead.
-    asio::detail::mutex::scoped_lock lock(timer_mutex_);
+    mutex::scoped_lock lock(dispatch_mutex_);
     completed_ops_.push(op);
+    ::InterlockedExchange(&dispatch_required_, 1);
   }
 }
 
@@ -283,28 +315,27 @@ void win_iocp_io_service::on_completion(win_iocp_operation* op,
         0, overlapped_contains_result, op))
   {
     // Out of resources. Put on completed queue instead.
-    asio::detail::mutex::scoped_lock lock(timer_mutex_);
+    mutex::scoped_lock lock(dispatch_mutex_);
     completed_ops_.push(op);
+    ::InterlockedExchange(&dispatch_required_, 1);
   }
 }
 
 size_t win_iocp_io_service::do_one(bool block, asio::error_code& ec)
 {
-  long this_thread_id = static_cast<long>(::GetCurrentThreadId());
-
   for (;;)
   {
-    // Try to acquire responsibility for dispatching timers.
-    bool dispatching_timers = (::InterlockedCompareExchange(
-          &timer_thread_, this_thread_id, 0) == 0);
-
-    // Calculate timeout for GetQueuedCompletionStatus call.
-    DWORD timeout = max_timeout;
-    if (dispatching_timers)
+    // Try to acquire responsibility for dispatching timers and completed ops.
+    if (::InterlockedCompareExchange(&dispatch_required_, 0, 1) == 1)
     {
-      asio::detail::mutex::scoped_lock lock(timer_mutex_);
-      timer_interrupt_issued_ = false;
-      timeout = timer_queues_.wait_duration_msec(max_timeout);
+      mutex::scoped_lock lock(dispatch_mutex_);
+
+      // Dispatch pending timers and operations.
+      op_queue<win_iocp_operation> ops;
+      ops.push(completed_ops_);
+      timer_queues_.get_ready_timers(ops);
+      post_deferred_completions(ops);
+      update_timeout();
     }
 
     // Get the next operation from the queue.
@@ -313,56 +344,14 @@ size_t win_iocp_io_service::do_one(bool block, asio::error_code& ec)
     LPOVERLAPPED overlapped = 0;
     ::SetLastError(0);
     BOOL ok = ::GetQueuedCompletionStatus(iocp_.handle, &bytes_transferred,
-        &completion_key, &overlapped, block ? timeout : 0);
+        &completion_key, &overlapped, block ? gqcs_timeout : 0);
     DWORD last_error = ::GetLastError();
 
-    // Dispatch any pending timers.
-    if (dispatching_timers)
-    {
-      asio::detail::mutex::scoped_lock lock(timer_mutex_);
-      op_queue<win_iocp_operation> ops;
-      ops.push(completed_ops_);
-      timer_queues_.get_ready_timers(ops);
-      post_deferred_completions(ops);
-    }
-
-    if (!ok && overlapped == 0)
-    {
-      if (block && last_error == WAIT_TIMEOUT)
-      {
-        // Relinquish responsibility for dispatching timers.
-        if (dispatching_timers)
-        {
-          ::InterlockedCompareExchange(&timer_thread_, 0, this_thread_id);
-        }
-
-        continue;
-      }
-
-      // Transfer responsibility for dispatching timers to another thread.
-      if (dispatching_timers && ::InterlockedCompareExchange(
-            &timer_thread_, 0, this_thread_id) == this_thread_id)
-      {
-        ::PostQueuedCompletionStatus(iocp_.handle,
-            0, transfer_timer_dispatching, 0);
-      }
-
-      ec = asio::error_code();
-      return 0;
-    }
-    else if (overlapped)
+    if (overlapped)
     {
       win_iocp_operation* op = static_cast<win_iocp_operation*>(overlapped);
       asio::error_code result_ec(last_error,
           asio::error::get_system_category());
-
-      // Transfer responsibility for dispatching timers to another thread.
-      if (dispatching_timers && ::InterlockedCompareExchange(
-            &timer_thread_, 0, this_thread_id) == this_thread_id)
-      {
-        ::PostQueuedCompletionStatus(iocp_.handle,
-            0, transfer_timer_dispatching, 0);
-      }
 
       // We may have been passed the last_error and bytes_transferred in the
       // OVERLAPPED structure itself.
@@ -397,26 +386,29 @@ size_t win_iocp_io_service::do_one(bool block, asio::error_code& ec)
         return 1;
       }
     }
-    else if (completion_key == transfer_timer_dispatching)
+    else if (!ok)
     {
-      // Woken up to try to acquire responsibility for dispatching timers.
-      ::InterlockedCompareExchange(&timer_thread_, 0, this_thread_id);
+      if (last_error != WAIT_TIMEOUT)
+      {
+        ec = asio::error_code(last_error,
+            asio::error::get_system_category());
+        return 0;
+      }
+
+      // If we're not polling we need to keep going until we get a real handler.
+      if (block)
+        continue;
+
+      ec = asio::error_code();
+      return 0;
     }
-    else if (completion_key == steal_timer_dispatching)
+    else if (completion_key == wake_for_dispatch)
     {
-      // Woken up to steal responsibility for dispatching timers.
-      ::InterlockedExchange(&timer_thread_, 0);
+      // We have been woken up to try to acquire responsibility for dispatching
+      // timers and completed operations.
     }
     else
     {
-      // Relinquish responsibility for dispatching timers. If the io_service
-      // is not being stopped then the thread will get an opportunity to
-      // reacquire timer responsibility on the next loop iteration.
-      if (dispatching_timers)
-      {
-        ::InterlockedCompareExchange(&timer_thread_, 0, this_thread_id);
-      }
-
       // The stopped_ flag is always checked to ensure that any leftover
       // interrupts from a previous run invocation are ignored.
       if (::InterlockedExchangeAdd(&stopped_, 0) != 0)
@@ -433,6 +425,57 @@ size_t win_iocp_io_service::do_one(bool block, asio::error_code& ec)
         ec = asio::error_code();
         return 0;
       }
+    }
+  }
+}
+
+void win_iocp_io_service::do_add_timer_queue(timer_queue_base& queue)
+{
+  mutex::scoped_lock lock(dispatch_mutex_);
+
+  timer_queues_.insert(&queue);
+
+  if (!waitable_timer_.handle)
+  {
+    waitable_timer_.handle = ::CreateWaitableTimer(0, FALSE, 0);
+    if (waitable_timer_.handle == 0)
+    {
+      DWORD last_error = ::GetLastError();
+      asio::error_code ec(last_error,
+          asio::error::get_system_category());
+      asio::detail::throw_error(ec, "timer");
+    }
+  }
+
+  if (!timer_thread_)
+  {
+    timer_thread_function thread_function = { this };
+    timer_thread_.reset(new thread(thread_function, 65536));
+  }
+}
+
+void win_iocp_io_service::do_remove_timer_queue(timer_queue_base& queue)
+{
+  mutex::scoped_lock lock(dispatch_mutex_);
+
+  timer_queues_.erase(&queue);
+}
+
+void win_iocp_io_service::update_timeout()
+{
+  if (timer_thread_)
+  {
+    // There's no point updating the waitable timer if the new timeout period
+    // exceeds max_timeout. In that case, we might as well wait for the existing
+    // period of the timer to expire.
+    long timeout_msec = timer_queues_.wait_duration_msec(max_timeout);
+    if (timeout_msec < max_timeout)
+    {
+      LARGE_INTEGER timeout;
+      timeout.QuadPart = -timer_queues_.wait_duration_msec(max_timeout);
+      timeout.QuadPart *= 10000;
+      ::SetWaitableTimer(waitable_timer_.handle,
+          &timeout, max_timeout, 0, 0, FALSE);
     }
   }
 }
