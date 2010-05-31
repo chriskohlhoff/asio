@@ -167,7 +167,8 @@ public:
     // with the handler. Consequently, a local copy of the handler is required
     // to ensure that any owning sub-object remains valid until after we have
     // deallocated the memory here.
-    detail::binder1<Handler, asio::error_code> handler(o->handler_, ec);
+    detail::binder1<Handler, asio::error_code>
+      handler(o->handler_, ec);
     p.h = boost::addressof(handler.handler_);
     p.reset();
 

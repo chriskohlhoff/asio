@@ -105,12 +105,12 @@ public:
   }
 
   // Destroy a socket implementation.
-  ASIO_DECL asio::error_code close(base_implementation_type& impl,
-      asio::error_code& ec);
+  ASIO_DECL asio::error_code close(
+      base_implementation_type& impl, asio::error_code& ec);
 
   // Cancel all operations associated with the socket.
-  ASIO_DECL asio::error_code cancel(base_implementation_type& impl,
-      asio::error_code& ec);
+  ASIO_DECL asio::error_code cancel(
+      base_implementation_type& impl, asio::error_code& ec);
 
   // Determine whether the socket is at the out-of-band data mark.
   bool at_mark(const base_implementation_type& impl,
@@ -278,12 +278,14 @@ public:
 
 protected:
   // Open a new socket implementation.
-  ASIO_DECL asio::error_code do_open(base_implementation_type& impl,
-      int family, int type, int protocol, asio::error_code& ec);
+  ASIO_DECL asio::error_code do_open(
+      base_implementation_type& impl, int family, int type,
+      int protocol, asio::error_code& ec);
 
   // Assign a native socket to a socket implementation.
-  ASIO_DECL asio::error_code do_assign(base_implementation_type& impl,
-      int type, socket_type native_socket, asio::error_code& ec);
+  ASIO_DECL asio::error_code do_assign(
+      base_implementation_type& impl, int type,
+      socket_type native_socket, asio::error_code& ec);
 
   // Helper function to start an asynchronous send operation.
   ASIO_DECL void start_send_op(base_implementation_type& impl,

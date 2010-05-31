@@ -77,8 +77,8 @@ public:
   }
 
   // Destroy a socket implementation.
-  ASIO_DECL asio::error_code close(base_implementation_type& impl,
-      asio::error_code& ec);
+  ASIO_DECL asio::error_code close(
+      base_implementation_type& impl, asio::error_code& ec);
 
   // Get the native socket representation.
   native_type native(base_implementation_type& impl)
@@ -87,8 +87,8 @@ public:
   }
 
   // Cancel all operations associated with the socket.
-  ASIO_DECL asio::error_code cancel(base_implementation_type& impl,
-      asio::error_code& ec);
+  ASIO_DECL asio::error_code cancel(
+      base_implementation_type& impl, asio::error_code& ec);
 
   // Determine whether the socket is at the out-of-band data mark.
   bool at_mark(const base_implementation_type& impl,
