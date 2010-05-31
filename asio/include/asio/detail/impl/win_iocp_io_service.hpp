@@ -80,9 +80,9 @@ void win_iocp_io_service::schedule_timer(timer_queue<Time_Traits>& queue,
 
   mutex::scoped_lock lock(dispatch_mutex_);
 
-  bool interrupt = queue.enqueue_timer(time, op, token);
+  bool earliest = queue.enqueue_timer(time, op, token);
   work_started();
-  if (interrupt)
+  if (earliest)
     update_timeout();
 }
 
