@@ -197,7 +197,7 @@ void complete_iocp_accept(socket_type s,
   }
 }
 
-#else defined(ASIO_HAS_IOCP)
+#else // defined(ASIO_HAS_IOCP)
 
 bool non_blocking_accept(socket_type s,
     state_type state, socket_addr_type* addr, std::size_t* addrlen,
