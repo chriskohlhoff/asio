@@ -49,7 +49,7 @@ struct win_iocp_io_service::timer_thread_function
     while (::InterlockedExchangeAdd(&io_service_->shutdown_, 0) == 0)
     {
       if (::WaitForSingleObject(io_service_->waitable_timer_.handle,
-            INFINITE) == WAIT_OBJECT_0)
+            1000) == WAIT_OBJECT_0)
       {
         ::InterlockedExchange(&io_service_->dispatch_required_, 1);
         ::PostQueuedCompletionStatus(io_service_->iocp_.handle,
@@ -466,16 +466,16 @@ void win_iocp_io_service::update_timeout()
   if (timer_thread_)
   {
     // There's no point updating the waitable timer if the new timeout period
-    // exceeds max_timeout. In that case, we might as well wait for the existing
-    // period of the timer to expire.
-    long timeout_msec = timer_queues_.wait_duration_msec(max_timeout);
-    if (timeout_msec < max_timeout)
+    // exceeds the maximum timeout. In that case, we might as well wait for the
+    // existing period of the timer to expire.
+    long timeout_usec = timer_queues_.wait_duration_usec(max_timeout_usec);
+    if (timeout_usec < max_timeout_usec)
     {
       LARGE_INTEGER timeout;
-      timeout.QuadPart = -timer_queues_.wait_duration_msec(max_timeout);
-      timeout.QuadPart *= 10000;
+      timeout.QuadPart = -timeout_usec;
+      timeout.QuadPart *= 10;
       ::SetWaitableTimer(waitable_timer_.handle,
-          &timeout, max_timeout, 0, 0, FALSE);
+          &timeout, max_timeout_msec, 0, 0, FALSE);
     }
   }
 }

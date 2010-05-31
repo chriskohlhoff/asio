@@ -210,7 +210,10 @@ private:
     gqcs_timeout = 500,
 
     // Maximum waitable timer timeout, in milliseconds.
-    max_timeout = 5 * 60 * 1000,
+    max_timeout_msec = 5 * 60 * 1000,
+
+    // Maximum waitable timer timeout, in microseconds.
+    max_timeout_usec = max_timeout_msec * 1000,
 
     // Completion key value used to wake up a thread to dispatch timers or
     // completed operations.
