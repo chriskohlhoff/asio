@@ -572,7 +572,7 @@ void test()
   {
     io_service ios;
     asio::error_code ec;
-    ip::tcp::resolver::query q(ip::udp::v4(), "localhost", "0");
+    ip::tcp::resolver::query q(ip::tcp::v4(), "localhost", "0");
     ip::tcp::endpoint e(ip::address_v4::loopback(), 0);
 
     // basic_resolver constructors.
