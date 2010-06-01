@@ -56,6 +56,7 @@ nobase_include_HEADERS = \
 	asio/detail/impl/epoll_reactor.ipp \
 	asio/detail/impl/eventfd_select_interrupter.ipp \
 	asio/detail/impl/pipe_select_interrupter.ipp \
+	asio/detail/impl/posix_event.ipp \
 	asio/detail/impl/posix_mutex.ipp \
 	asio/detail/impl/posix_thread.ipp \
 	asio/detail/impl/posix_tss_ptr.ipp \
@@ -65,17 +66,23 @@ nobase_include_HEADERS = \
 	asio/detail/impl/service_registry.hpp \
 	asio/detail/impl/service_registry.ipp \
 	asio/detail/impl/socket_ops.ipp \
+	asio/detail/impl/socket_select_interrupter.ipp \
 	asio/detail/impl/strand_service.hpp \
 	asio/detail/impl/strand_service.ipp \
 	asio/detail/impl/task_io_service.hpp \
 	asio/detail/impl/task_io_service.ipp \
 	asio/detail/impl/throw_error.ipp \
+	asio/detail/impl/timer_queue_set.ipp \
+	asio/detail/impl/win_event.ipp \
 	asio/detail/impl/win_iocp_handle_service.ipp \
 	asio/detail/impl/win_iocp_io_service.hpp \
 	asio/detail/impl/win_iocp_io_service.ipp \
 	asio/detail/impl/win_iocp_serial_port_service.ipp \
 	asio/detail/impl/win_iocp_socket_service_base.ipp \
+	asio/detail/impl/win_mutex.ipp \
 	asio/detail/impl/winsock_init.ipp \
+	asio/detail/impl/win_thread.ipp \
+	asio/detail/impl/win_tss_ptr.ipp \
 	asio/detail/io_control.hpp \
 	asio/detail/kqueue_reactor_fwd.hpp \
 	asio/detail/kqueue_reactor.hpp \
@@ -83,7 +90,6 @@ nobase_include_HEADERS = \
 	asio/detail/macos_fenced_block.hpp \
 	asio/detail/mutex.hpp \
 	asio/detail/noncopyable.hpp \
-	asio/detail/null_buffers_op.hpp \
 	asio/detail/null_event.hpp \
 	asio/detail/null_fenced_block.hpp \
 	asio/detail/null_mutex.hpp \
@@ -103,7 +109,14 @@ nobase_include_HEADERS = \
 	asio/detail/posix_tss_ptr.hpp \
 	asio/detail/push_options.hpp \
 	asio/detail/reactive_descriptor_service.hpp \
+	asio/detail/reactive_null_buffers_op.hpp \
 	asio/detail/reactive_serial_port_service.hpp \
+	asio/detail/reactive_socket_accept_op.hpp \
+	asio/detail/reactive_socket_connect_op.hpp \
+	asio/detail/reactive_socket_recvfrom_op.hpp \
+	asio/detail/reactive_socket_recv_op.hpp \
+	asio/detail/reactive_socket_send_op.hpp \
+	asio/detail/reactive_socket_sendto_op.hpp \
 	asio/detail/reactive_socket_service_base.hpp \
 	asio/detail/reactive_socket_service.hpp \
 	asio/detail/reactor_fwd.hpp \
@@ -121,16 +134,10 @@ nobase_include_HEADERS = \
 	asio/detail/shared_ptr.hpp \
 	asio/detail/signal_blocker.hpp \
 	asio/detail/signal_init.hpp \
-	asio/detail/socket_accept_op.hpp \
-	asio/detail/socket_connect_op.hpp \
 	asio/detail/socket_holder.hpp \
 	asio/detail/socket_ops.hpp \
 	asio/detail/socket_option.hpp \
-	asio/detail/socket_recvfrom_op.hpp \
-	asio/detail/socket_recv_op.hpp \
 	asio/detail/socket_select_interrupter.hpp \
-	asio/detail/socket_send_op.hpp \
-	asio/detail/socket_sendto_op.hpp \
 	asio/detail/socket_types.hpp \
 	asio/detail/solaris_fenced_block.hpp \
 	asio/detail/strand_service.hpp \
@@ -147,6 +154,7 @@ nobase_include_HEADERS = \
 	asio/detail/timer_scheduler_fwd.hpp \
 	asio/detail/timer_scheduler.hpp \
 	asio/detail/tss_ptr.hpp \
+	asio/detail/wait_handler.hpp \
 	asio/detail/weak_ptr.hpp \
 	asio/detail/wince_thread.hpp \
 	asio/detail/win_event.hpp \
@@ -157,9 +165,15 @@ nobase_include_HEADERS = \
 	asio/detail/win_iocp_handle_write_op.hpp \
 	asio/detail/win_iocp_io_service_fwd.hpp \
 	asio/detail/win_iocp_io_service.hpp \
+	asio/detail/win_iocp_null_buffers_op.hpp \
 	asio/detail/win_iocp_operation.hpp \
+	asio/detail/win_iocp_overlapped_op.hpp \
 	asio/detail/win_iocp_overlapped_ptr.hpp \
 	asio/detail/win_iocp_serial_port_service.hpp \
+	asio/detail/win_iocp_socket_accept_op.hpp \
+	asio/detail/win_iocp_socket_recvfrom_op.hpp \
+	asio/detail/win_iocp_socket_recv_op.hpp \
+	asio/detail/win_iocp_socket_send_op.hpp \
 	asio/detail/win_iocp_socket_service_base.hpp \
 	asio/detail/win_iocp_socket_service.hpp \
 	asio/detail/win_mutex.hpp \

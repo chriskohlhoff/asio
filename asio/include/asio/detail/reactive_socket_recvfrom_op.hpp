@@ -1,6 +1,6 @@
 //
-// detail/socket_recvfrom_op.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/reactive_socket_recvfrom_op.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_SOCKET_RECVFROM_OP_HPP
-#define ASIO_DETAIL_SOCKET_RECVFROM_OP_HPP
+#ifndef ASIO_DETAIL_REACTIVE_SOCKET_RECVFROM_OP_HPP
+#define ASIO_DETAIL_REACTIVE_SOCKET_RECVFROM_OP_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -29,13 +29,13 @@ namespace asio {
 namespace detail {
 
 template <typename MutableBufferSequence, typename Endpoint>
-class socket_recvfrom_op_base : public reactor_op
+class reactive_socket_recvfrom_op_base : public reactor_op
 {
 public:
-  socket_recvfrom_op_base(socket_type socket, int protocol_type,
+  reactive_socket_recvfrom_op_base(socket_type socket, int protocol_type,
       const MutableBufferSequence& buffers, Endpoint& endpoint,
       socket_base::message_flags flags, func_type complete_func)
-    : reactor_op(&socket_recvfrom_op_base::do_perform, complete_func),
+    : reactor_op(&reactive_socket_recvfrom_op_base::do_perform, complete_func),
       socket_(socket),
       protocol_type_(protocol_type),
       buffers_(buffers),
@@ -46,7 +46,8 @@ public:
 
   static bool do_perform(reactor_op* base)
   {
-    socket_recvfrom_op_base* o(static_cast<socket_recvfrom_op_base*>(base));
+    reactive_socket_recvfrom_op_base* o(
+        static_cast<reactive_socket_recvfrom_op_base*>(base));
 
     buffer_sequence_adapter<asio::mutable_buffer,
         MutableBufferSequence> bufs(o->buffers_);
@@ -72,18 +73,18 @@ private:
 };
 
 template <typename MutableBufferSequence, typename Endpoint, typename Handler>
-class socket_recvfrom_op :
-  public socket_recvfrom_op_base<MutableBufferSequence, Endpoint>
+class reactive_socket_recvfrom_op :
+  public reactive_socket_recvfrom_op_base<MutableBufferSequence, Endpoint>
 {
 public:
-  ASIO_DEFINE_HANDLER_PTR(socket_recvfrom_op);
+  ASIO_DEFINE_HANDLER_PTR(reactive_socket_recvfrom_op);
 
-  socket_recvfrom_op(socket_type socket, int protocol_type,
+  reactive_socket_recvfrom_op(socket_type socket, int protocol_type,
       const MutableBufferSequence& buffers, Endpoint& endpoint,
       socket_base::message_flags flags, Handler handler)
-    : socket_recvfrom_op_base<MutableBufferSequence, Endpoint>(
+    : reactive_socket_recvfrom_op_base<MutableBufferSequence, Endpoint>(
         socket, protocol_type, buffers, endpoint, flags,
-        &socket_recvfrom_op::do_complete),
+        &reactive_socket_recvfrom_op::do_complete),
       handler_(handler)
   {
   }
@@ -92,7 +93,8 @@ public:
       asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
   {
     // Take ownership of the handler object.
-    socket_recvfrom_op* o(static_cast<socket_recvfrom_op*>(base));
+    reactive_socket_recvfrom_op* o(
+        static_cast<reactive_socket_recvfrom_op*>(base));
     ptr p = { boost::addressof(o->handler_), o, o };
 
     // Make a copy of the handler so that the memory can be deallocated before
@@ -123,4 +125,4 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_SOCKET_RECVFROM_OP_HPP
+#endif // ASIO_DETAIL_REACTIVE_SOCKET_RECVFROM_OP_HPP

@@ -1,6 +1,6 @@
 //
-// detail/socket_accept_op.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/reactive_socket_accept_op.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_SOCKET_ACCEPT_OP_HPP
-#define ASIO_DETAIL_SOCKET_ACCEPT_OP_HPP
+#ifndef ASIO_DETAIL_REACTIVE_SOCKET_ACCEPT_OP_HPP
+#define ASIO_DETAIL_REACTIVE_SOCKET_ACCEPT_OP_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -30,13 +30,13 @@ namespace asio {
 namespace detail {
 
 template <typename Socket, typename Protocol>
-class socket_accept_op_base : public reactor_op
+class reactive_socket_accept_op_base : public reactor_op
 {
 public:
-  socket_accept_op_base(socket_type socket, socket_ops::state_type state,
-      Socket& peer, const Protocol& protocol,
+  reactive_socket_accept_op_base(socket_type socket,
+      socket_ops::state_type state, Socket& peer, const Protocol& protocol,
       typename Protocol::endpoint* peer_endpoint, func_type complete_func)
-    : reactor_op(&socket_accept_op_base::do_perform, complete_func),
+    : reactor_op(&reactive_socket_accept_op_base::do_perform, complete_func),
       socket_(socket),
       state_(state),
       peer_(peer),
@@ -47,7 +47,8 @@ public:
 
   static bool do_perform(reactor_op* base)
   {
-    socket_accept_op_base* o(static_cast<socket_accept_op_base*>(base));
+    reactive_socket_accept_op_base* o(
+        static_cast<reactive_socket_accept_op_base*>(base));
 
     std::size_t addrlen = o->peer_endpoint_ ? o->peer_endpoint_->capacity() : 0;
     socket_type new_socket = invalid_socket;
@@ -77,16 +78,17 @@ private:
 };
 
 template <typename Socket, typename Protocol, typename Handler>
-class socket_accept_op : public socket_accept_op_base<Socket, Protocol>
+class reactive_socket_accept_op :
+  public reactive_socket_accept_op_base<Socket, Protocol>
 {
 public:
-  ASIO_DEFINE_HANDLER_PTR(socket_accept_op);
+  ASIO_DEFINE_HANDLER_PTR(reactive_socket_accept_op);
 
-  socket_accept_op(socket_type socket, socket_ops::state_type state,
-      Socket& peer, const Protocol& protocol,
+  reactive_socket_accept_op(socket_type socket,
+      socket_ops::state_type state, Socket& peer, const Protocol& protocol,
       typename Protocol::endpoint* peer_endpoint, Handler handler)
-    : socket_accept_op_base<Socket, Protocol>(socket, state, peer,
-        protocol, peer_endpoint, &socket_accept_op::do_complete),
+    : reactive_socket_accept_op_base<Socket, Protocol>(socket, state, peer,
+        protocol, peer_endpoint, &reactive_socket_accept_op::do_complete),
       handler_(handler)
   {
   }
@@ -95,7 +97,7 @@ public:
       asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
   {
     // Take ownership of the handler object.
-    socket_accept_op* o(static_cast<socket_accept_op*>(base));
+    reactive_socket_accept_op* o(static_cast<reactive_socket_accept_op*>(base));
     ptr p = { boost::addressof(o->handler_), o, o };
 
     // Make a copy of the handler so that the memory can be deallocated before
@@ -126,4 +128,4 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_SOCKET_ACCEPT_OP_HPP
+#endif // ASIO_DETAIL_REACTIVE_SOCKET_ACCEPT_OP_HPP

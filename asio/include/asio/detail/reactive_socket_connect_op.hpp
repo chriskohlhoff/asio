@@ -1,6 +1,6 @@
 //
-// detail/socket_connect_op.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/reactive_socket_connect_op.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_SOCKET_CONNECT_OP_HPP
-#define ASIO_DETAIL_SOCKET_CONNECT_OP_HPP
+#ifndef ASIO_DETAIL_REACTIVE_SOCKET_CONNECT_OP_HPP
+#define ASIO_DETAIL_REACTIVE_SOCKET_CONNECT_OP_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -28,18 +28,20 @@
 namespace asio {
 namespace detail {
 
-class socket_connect_op_base : public reactor_op
+class reactive_socket_connect_op_base : public reactor_op
 {
 public:
-  socket_connect_op_base(socket_type socket, func_type complete_func)
-    : reactor_op(&socket_connect_op_base::do_perform, complete_func),
+  reactive_socket_connect_op_base(socket_type socket, func_type complete_func)
+    : reactor_op(&reactive_socket_connect_op_base::do_perform, complete_func),
       socket_(socket)
   {
   }
 
   static bool do_perform(reactor_op* base)
   {
-    socket_connect_op_base* o(static_cast<socket_connect_op_base*>(base));
+    reactive_socket_connect_op_base* o(
+        static_cast<reactive_socket_connect_op_base*>(base));
+
     return socket_ops::non_blocking_connect(o->socket_, o->ec_);
   }
 
@@ -48,13 +50,14 @@ private:
 };
 
 template <typename Handler>
-class socket_connect_op : public socket_connect_op_base
+class reactive_socket_connect_op : public reactive_socket_connect_op_base
 {
 public:
-  ASIO_DEFINE_HANDLER_PTR(socket_connect_op);
+  ASIO_DEFINE_HANDLER_PTR(reactive_socket_connect_op);
 
-  socket_connect_op(socket_type socket, Handler handler)
-    : socket_connect_op_base(socket, &socket_connect_op::do_complete),
+  reactive_socket_connect_op(socket_type socket, Handler handler)
+    : reactive_socket_connect_op_base(socket,
+        &reactive_socket_connect_op::do_complete),
       handler_(handler)
   {
   }
@@ -63,7 +66,8 @@ public:
       asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
   {
     // Take ownership of the handler object.
-    socket_connect_op* o(static_cast<socket_connect_op*>(base));
+    reactive_socket_connect_op* o
+      (static_cast<reactive_socket_connect_op*>(base));
     ptr p = { boost::addressof(o->handler_), o, o };
 
     // Make a copy of the handler so that the memory can be deallocated before
@@ -94,4 +98,4 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_SOCKET_CONNECT_OP_HPP
+#endif // ASIO_DETAIL_REACTIVE_SOCKET_CONNECT_OP_HPP

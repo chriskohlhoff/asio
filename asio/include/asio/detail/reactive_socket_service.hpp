@@ -26,16 +26,16 @@
 #include "asio/socket_base.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/null_buffers_op.hpp"
+#include "asio/detail/reactive_null_buffers_op.hpp"
+#include "asio/detail/reactive_socket_accept_op.hpp"
+#include "asio/detail/reactive_socket_connect_op.hpp"
+#include "asio/detail/reactive_socket_recvfrom_op.hpp"
+#include "asio/detail/reactive_socket_sendto_op.hpp"
 #include "asio/detail/reactive_socket_service_base.hpp"
 #include "asio/detail/reactor.hpp"
 #include "asio/detail/reactor_op.hpp"
-#include "asio/detail/socket_accept_op.hpp"
-#include "asio/detail/socket_connect_op.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
-#include "asio/detail/socket_recvfrom_op.hpp"
-#include "asio/detail/socket_sendto_op.hpp"
 #include "asio/detail/socket_types.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -196,7 +196,7 @@ public:
       Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef socket_sendto_op<ConstBufferSequence,
+    typedef reactive_socket_sendto_op<ConstBufferSequence,
         endpoint_type, Handler> op;
     typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
@@ -213,7 +213,7 @@ public:
       socket_base::message_flags, const endpoint_type&, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef null_buffers_op<Handler> op;
+    typedef reactive_null_buffers_op<Handler> op;
     typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
@@ -268,7 +268,7 @@ public:
       socket_base::message_flags flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef socket_recvfrom_op<MutableBufferSequence,
+    typedef reactive_socket_recvfrom_op<MutableBufferSequence,
         endpoint_type, Handler> op;
     typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
@@ -291,7 +291,7 @@ public:
       socket_base::message_flags flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef null_buffers_op<Handler> op;
+    typedef reactive_null_buffers_op<Handler> op;
     typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
@@ -343,7 +343,7 @@ public:
       endpoint_type* peer_endpoint, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef socket_accept_op<Socket, Protocol, Handler> op;
+    typedef reactive_socket_accept_op<Socket, Protocol, Handler> op;
     typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
@@ -369,7 +369,7 @@ public:
       const endpoint_type& peer_endpoint, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef socket_connect_op<Handler> op;
+    typedef reactive_socket_connect_op<Handler> op;
     typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };

@@ -31,10 +31,10 @@
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/operation.hpp"
+#include "asio/detail/reactive_socket_connect_op.hpp"
 #include "asio/detail/reactor.hpp"
 #include "asio/detail/reactor_op.hpp"
 #include "asio/detail/shared_ptr.hpp"
-#include "asio/detail/socket_connect_op.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -440,7 +440,7 @@ public:
       const endpoint_type& peer_endpoint, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef socket_connect_op<Handler> op;
+    typedef reactive_socket_connect_op<Handler> op;
     typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };

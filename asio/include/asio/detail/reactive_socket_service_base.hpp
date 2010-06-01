@@ -25,13 +25,13 @@
 #include "asio/io_service.hpp"
 #include "asio/socket_base.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
-#include "asio/detail/null_buffers_op.hpp"
+#include "asio/detail/reactive_null_buffers_op.hpp"
+#include "asio/detail/reactive_socket_recv_op.hpp"
+#include "asio/detail/reactive_socket_send_op.hpp"
 #include "asio/detail/reactor.hpp"
 #include "asio/detail/reactor_op.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
-#include "asio/detail/socket_recv_op.hpp"
-#include "asio/detail/socket_send_op.hpp"
 #include "asio/detail/socket_types.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -161,7 +161,7 @@ public:
       socket_base::message_flags flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef socket_send_op<ConstBufferSequence, Handler> op;
+    typedef reactive_socket_send_op<ConstBufferSequence, Handler> op;
     typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
@@ -180,7 +180,7 @@ public:
       socket_base::message_flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef null_buffers_op<Handler> op;
+    typedef reactive_null_buffers_op<Handler> op;
     typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
@@ -221,7 +221,7 @@ public:
       socket_base::message_flags flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef socket_recv_op<MutableBufferSequence, Handler> op;
+    typedef reactive_socket_recv_op<MutableBufferSequence, Handler> op;
     typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
@@ -243,7 +243,7 @@ public:
       socket_base::message_flags flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef null_buffers_op<Handler> op;
+    typedef reactive_null_buffers_op<Handler> op;
     typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };

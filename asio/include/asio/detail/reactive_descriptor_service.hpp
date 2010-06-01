@@ -29,7 +29,7 @@
 #include "asio/detail/descriptor_write_op.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/null_buffers_op.hpp"
+#include "asio/detail/reactive_null_buffers_op.hpp"
 #include "asio/detail/reactor.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -162,7 +162,7 @@ public:
       const null_buffers&, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef null_buffers_op<Handler> op;
+    typedef reactive_null_buffers_op<Handler> op;
     typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
@@ -219,7 +219,7 @@ public:
       const null_buffers&, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef null_buffers_op<Handler> op;
+    typedef reactive_null_buffers_op<Handler> op;
     typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
