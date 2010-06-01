@@ -16,19 +16,11 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <boost/scoped_ptr.hpp>
-#include "asio/error.hpp"
-#include "asio/io_service.hpp"
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
-#include "asio/detail/mutex.hpp"
-#include "asio/detail/noncopyable.hpp"
-#include "asio/detail/operation.hpp"
 #include "asio/detail/resolve_endpoint_op.hpp"
 #include "asio/detail/resolve_op.hpp"
-#include "asio/detail/socket_ops.hpp"
-#include "asio/detail/socket_types.hpp"
-#include "asio/detail/thread.hpp"
+#include "asio/detail/resolver_service_base.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -36,34 +28,8 @@ namespace asio {
 namespace detail {
 
 template <typename Protocol>
-class resolver_service
+class resolver_service : public resolver_service_base
 {
-private:
-  // Helper class to perform exception-safe cleanup of addrinfo objects.
-  class auto_addrinfo
-    : private asio::detail::noncopyable
-  {
-  public:
-    explicit auto_addrinfo(asio::detail::addrinfo_type* ai)
-      : ai_(ai)
-    {
-    }
-
-    ~auto_addrinfo()
-    {
-      if (ai_)
-        socket_ops::freeaddrinfo(ai_);
-    }
-
-    operator asio::detail::addrinfo_type*()
-    {
-      return ai_;
-    }
-
-  private:
-    asio::detail::addrinfo_type* ai_;
-  };
-
 public:
   // The implementation type of the resolver. A cancellation token is used to
   // indicate to the background thread that the operation has been cancelled.
@@ -80,53 +46,8 @@ public:
 
   // Constructor.
   resolver_service(asio::io_service& io_service)
-    : mutex_(),
-      io_service_impl_(asio::use_service<io_service_impl>(io_service)),
-      work_io_service_(new asio::io_service),
-      work_io_service_impl_(asio::use_service<
-          io_service_impl>(*work_io_service_)),
-      work_(new asio::io_service::work(*work_io_service_)),
-      work_thread_(0)
+    : resolver_service_base(io_service)
   {
-  }
-
-  // Destructor.
-  ~resolver_service()
-  {
-    shutdown_service();
-  }
-
-  // Destroy all user-defined handler objects owned by the service.
-  void shutdown_service()
-  {
-    work_.reset();
-    if (work_io_service_)
-    {
-      work_io_service_->stop();
-      if (work_thread_)
-      {
-        work_thread_->join();
-        work_thread_.reset();
-      }
-      work_io_service_.reset();
-    }
-  }
-
-  // Construct a new resolver implementation.
-  void construct(implementation_type& impl)
-  {
-    impl.reset(static_cast<void*>(0), socket_ops::noop_deleter());
-  }
-
-  // Destroy a resolver implementation.
-  void destroy(implementation_type&)
-  {
-  }
-
-  // Cancel pending asynchronous operations.
-  void cancel(implementation_type& impl)
-  {
-    impl.reset(static_cast<void*>(0), socket_ops::noop_deleter());
   }
 
   // Resolve a query to a list of entries.
@@ -155,13 +76,8 @@ public:
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl, query, io_service_impl_, handler);
 
-    if (work_io_service_)
-    {
-      start_work_thread();
-      io_service_impl_.work_started();
-      work_io_service_impl_.post_immediate_completion(p.p);
-      p.v = p.p = 0;
-    }
+    start_resolve_op(p.p);
+    p.v = p.p = 0;
   }
 
   // Resolve an endpoint to a list of entries.
@@ -190,55 +106,9 @@ public:
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl, endpoint, io_service_impl_, handler);
 
-    if (work_io_service_)
-    {
-      start_work_thread();
-      io_service_impl_.work_started();
-      work_io_service_impl_.post_immediate_completion(p.p);
-      p.v = p.p = 0;
-    }
+    start_resolve_op(p.p);
+    p.v = p.p = 0;
   }
-
-private:
-  // Helper class to run the work io_service in a thread.
-  class work_io_service_runner
-  {
-  public:
-    work_io_service_runner(asio::io_service& io_service)
-      : io_service_(io_service) {}
-    void operator()() { io_service_.run(); }
-  private:
-    asio::io_service& io_service_;
-  };
-
-  // Start the work thread if it's not already running.
-  void start_work_thread()
-  {
-    asio::detail::mutex::scoped_lock lock(mutex_);
-    if (!work_thread_)
-    {
-      work_thread_.reset(new asio::detail::thread(
-            work_io_service_runner(*work_io_service_)));
-    }
-  }
-
-  // Mutex to protect access to internal data.
-  asio::detail::mutex mutex_;
-
-  // The io_service implementation used to post completions.
-  io_service_impl& io_service_impl_;
-
-  // Private io_service used for performing asynchronous host resolution.
-  boost::scoped_ptr<asio::io_service> work_io_service_;
-
-  // The work io_service implementation used to post completions.
-  io_service_impl& work_io_service_impl_;
-
-  // Work for the private io_service to perform.
-  boost::scoped_ptr<asio::io_service::work> work_;
-
-  // Thread used for running the work io_service's run loop.
-  boost::scoped_ptr<asio::detail::thread> work_thread_;
 };
 
 } // namespace detail
