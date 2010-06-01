@@ -69,7 +69,7 @@ public:
       char service_name[NI_MAXSERV];
       socket_ops::background_getnameinfo(o->cancel_token_, o->endpoint_.data(),
           o->endpoint_.size(), host_name, NI_MAXHOST, service_name, NI_MAXSERV,
-          o->protocol().type(), o->ec_);
+          o->endpoint_.protocol().type(), o->ec_);
       o->iter_ = iterator_type::create(o->endpoint_, host_name, service_name);
 
       // Pass operation back to main io_service for completion.
