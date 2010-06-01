@@ -257,6 +257,17 @@ ASIO_DECL asio::error_code getnameinfo(
     char* host, std::size_t hostlen, char* serv,
     std::size_t servlen, int flags, asio::error_code& ec);
 
+ASIO_DECL asio::error_code sync_getnameinfo(
+    const socket_addr_type* addr, std::size_t addrlen,
+    char* host, std::size_t hostlen, char* serv,
+    std::size_t servlen, int sock_type, asio::error_code& ec);
+
+ASIO_DECL asio::error_code background_getnameinfo(
+    const weak_cancel_token_type& cancel_token,
+    const socket_addr_type* addr, std::size_t addrlen,
+    char* host, std::size_t hostlen, char* serv,
+    std::size_t servlen, int sock_type, asio::error_code& ec);
+
 ASIO_DECL u_long_type network_to_host_long(u_long_type value);
 
 ASIO_DECL u_long_type host_to_network_long(u_long_type value);

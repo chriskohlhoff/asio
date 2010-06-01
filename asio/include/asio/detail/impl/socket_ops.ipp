@@ -2749,6 +2749,52 @@ asio::error_code getnameinfo(const socket_addr_type* addr,
 #endif
 }
 
+asio::error_code sync_getnameinfo(
+    const socket_addr_type* addr, std::size_t addrlen,
+    char* host, std::size_t hostlen, char* serv,
+    std::size_t servlen, int sock_type, asio::error_code& ec)
+{
+  // First try resolving with the service name. If that fails try resolving
+  // but allow the service to be returned as a number.
+  int flags = (sock_type == SOCK_DGRAM) ? NI_DGRAM : 0;
+  socket_ops::getnameinfo(addr, addrlen, host,
+      hostlen, serv, servlen, flags, ec);
+  if (ec)
+  {
+    socket_ops::getnameinfo(addr, addrlen, host, hostlen,
+        serv, servlen, flags | NI_NUMERICSERV, ec);
+  }
+
+  return ec;
+}
+
+asio::error_code background_getnameinfo(
+    const weak_cancel_token_type& cancel_token,
+    const socket_addr_type* addr, std::size_t addrlen,
+    char* host, std::size_t hostlen, char* serv,
+    std::size_t servlen, int sock_type, asio::error_code& ec)
+{
+  if (cancel_token.expired())
+  {
+    ec = asio::error::operation_aborted;
+  }
+  else
+  {
+    // First try resolving with the service name. If that fails try resolving
+    // but allow the service to be returned as a number.
+    int flags = (sock_type == SOCK_DGRAM) ? NI_DGRAM : 0;
+    socket_ops::getnameinfo(addr, addrlen, host,
+        hostlen, serv, servlen, flags, ec);
+    if (ec)
+    {
+      socket_ops::getnameinfo(addr, addrlen, host, hostlen,
+          serv, servlen, flags | NI_NUMERICSERV, ec);
+    }
+  }
+
+  return ec;
+}
+
 u_long_type network_to_host_long(u_long_type value)
 {
   return ntohl(value);
