@@ -18,12 +18,9 @@
 #include "asio/detail/config.hpp"
 
 #include "asio/error_code.hpp"
+#include "asio/detail/shared_ptr.hpp"
 #include "asio/detail/socket_types.hpp"
-
-#if defined(ASIO_HAS_IOCP)
-# include "asio/detail/shared_ptr.hpp"
-# include "asio/detail/weak_ptr.hpp"
-#endif // defined(ASIO_HAS_IOCP)
+#include "asio/detail/weak_ptr.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -58,11 +55,9 @@ enum
 
 typedef unsigned char state_type;
 
-#if defined(ASIO_HAS_IOCP)
 struct noop_deleter { void operator()(void*) {} };
 typedef shared_ptr<void> shared_cancel_token_type;
 typedef weak_ptr<void> weak_cancel_token_type;
-#endif // defined(ASIO_HAS_IOCP)
 
 ASIO_DECL socket_type accept(socket_type s, socket_addr_type* addr,
     std::size_t* addrlen, asio::error_code& ec);
@@ -247,7 +242,12 @@ ASIO_DECL int gethostname(char* name,
     int namelen, asio::error_code& ec);
 
 ASIO_DECL asio::error_code getaddrinfo(const char* host,
-    const char* service, const addrinfo_type* hints,
+    const char* service, const addrinfo_type& hints,
+    addrinfo_type** result, asio::error_code& ec);
+
+ASIO_DECL asio::error_code background_getaddrinfo(
+    const weak_cancel_token_type& cancel_token, const char* host,
+    const char* service, const addrinfo_type& hints,
     addrinfo_type** result, asio::error_code& ec);
 
 ASIO_DECL void freeaddrinfo(addrinfo_type* ai);

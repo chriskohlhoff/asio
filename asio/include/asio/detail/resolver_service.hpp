@@ -27,6 +27,7 @@
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/operation.hpp"
+#include "asio/detail/resolve_op.hpp"
 #include "asio/detail/shared_ptr.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -69,11 +70,9 @@ private:
   };
 
 public:
-  // The implementation type of the resolver. The shared pointer is used as a
-  // cancellation token to indicate to the background thread that the operation
-  // has been cancelled.
-  typedef shared_ptr<void> implementation_type;
-  struct noop_deleter { void operator()(void*) {} };
+  // The implementation type of the resolver. A cancellation token is used to
+  // indicate to the background thread that the operation has been cancelled.
+  typedef socket_ops::shared_cancel_token_type implementation_type;
 
   // The endpoint type.
   typedef typename Protocol::endpoint endpoint_type;
@@ -123,7 +122,7 @@ public:
   // Construct a new resolver implementation.
   void construct(implementation_type& impl)
   {
-    impl.reset(static_cast<void*>(0), noop_deleter());
+    impl.reset(static_cast<void*>(0), socket_ops::noop_deleter());
   }
 
   // Destroy a resolver implementation.
@@ -134,7 +133,7 @@ public:
   // Cancel pending asynchronous operations.
   void cancel(implementation_type& impl)
   {
-    impl.reset(static_cast<void*>(0), noop_deleter());
+    impl.reset(static_cast<void*>(0), socket_ops::noop_deleter());
   }
 
   // Resolve a query to a list of entries.
@@ -142,100 +141,14 @@ public:
       asio::error_code& ec)
   {
     asio::detail::addrinfo_type* address_info = 0;
-    std::string host_name = query.host_name();
-    std::string service_name = query.service_name();
-    asio::detail::addrinfo_type hints = query.hints();
 
-    socket_ops::getaddrinfo(!host_name.empty() ? host_name.c_str() : 0,
-        service_name.c_str(), &hints, &address_info, ec);
+    socket_ops::getaddrinfo(query.host_name().c_str(),
+        query.service_name().c_str(), query.hints(), &address_info, ec);
     auto_addrinfo auto_address_info(address_info);
 
-    if (ec)
-      return iterator_type();
-
-    return iterator_type::create(address_info, host_name, service_name);
+    return ec ? iterator_type() : iterator_type::create(
+        address_info, query.host_name(), query.service_name());
   }
-
-  template <typename Handler>
-  class resolve_op
-    : public operation
-  {
-  public:
-    resolve_op(implementation_type impl, const query_type& query,
-        io_service_impl& io_service_impl, Handler handler)
-      : operation(&resolve_op::do_complete),
-        impl_(impl),
-        query_(query),
-        io_service_impl_(io_service_impl),
-        handler_(handler)
-    {
-    }
-
-    static void do_complete(io_service_impl* owner, operation* base,
-        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
-    {
-      // Take ownership of the operation object.
-      resolve_op* o(static_cast<resolve_op*>(base));
-      typedef handler_alloc_traits<Handler, resolve_op> alloc_traits;
-      handler_ptr<alloc_traits> ptr(o->handler_, o);
-
-      if (owner)
-      {
-        if (owner != &o->io_service_impl_)
-        {
-          // The operation is being run on the worker io_service. Time to
-          // perform the resolver operation.
-        
-          if (o->impl_.expired())
-          {
-            // THe operation has been cancelled.
-            o->ec_ = asio::error::operation_aborted;
-          }
-          else
-          {
-            // Perform the blocking host resolution operation.
-            asio::detail::addrinfo_type* address_info = 0;
-            std::string host_name = o->query_.host_name();
-            std::string service_name = o->query_.service_name();
-            asio::detail::addrinfo_type hints = o->query_.hints();
-            socket_ops::getaddrinfo(!host_name.empty() ? host_name.c_str() : 0,
-                service_name.c_str(), &hints, &address_info, o->ec_);
-            auto_addrinfo auto_address_info(address_info);
-            o->iter_ = iterator_type::create(
-              address_info, host_name, service_name);
-          }
-
-          o->io_service_impl_.post_deferred_completion(o);
-          ptr.release();
-        }
-        else
-        {
-          // The operation has been returned to the main io_serice. The
-          // completion handler is ready to be delivered.
-
-          // Make a copy of the handler so that the memory can be deallocated
-          // before the upcall is made. Even if we're not about to make an
-          // upcall, a sub-object of the handler may be the true owner of the
-          // memory associated with the handler. Consequently, a local copy of
-          // the handler is required to ensure that any owning sub-object
-          // remains valid until after we have deallocated the memory here.
-          detail::binder2<Handler, asio::error_code, iterator_type>
-            handler(o->handler_, o->ec_, o->iter_);
-          ptr.reset();
-          asio::detail::fenced_block b;
-          asio_handler_invoke_helpers::invoke(handler, handler);
-        }
-      }
-    }
-
-  private:
-    weak_ptr<void> impl_;
-    query_type query_;
-    io_service_impl& io_service_impl_;
-    Handler handler_;
-    asio::error_code ec_;
-    iterator_type iter_;
-  };
 
   // Asynchronously resolve a query to a list of entries.
   template <typename Handler>
@@ -243,18 +156,18 @@ public:
       Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef resolve_op<Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr,
-        impl, query, io_service_impl_, handler);
+    typedef resolve_op<Protocol, Handler> op;
+    typename op::ptr p = { boost::addressof(handler),
+      asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(impl, query, io_service_impl_, handler);
 
     if (work_io_service_)
     {
       start_work_thread();
       io_service_impl_.work_started();
-      work_io_service_impl_.post_immediate_completion(ptr.get());
-      ptr.release();
+      work_io_service_impl_.post_immediate_completion(p.p);
+      p.v = p.p = 0;
     }
   }
 

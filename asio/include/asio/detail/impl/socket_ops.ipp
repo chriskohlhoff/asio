@@ -2630,14 +2630,15 @@ inline asio::error_code translate_addrinfo_error(int error)
 }
 
 asio::error_code getaddrinfo(const char* host,
-    const char* service, const addrinfo_type* hints,
+    const char* service, const addrinfo_type& hints,
     addrinfo_type** result, asio::error_code& ec)
 {
+  host = (host && *host) ? host : 0;
   clear_last_error();
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 # if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501) || defined(UNDER_CE)
   // Building for Windows XP, Windows Server 2003, or later.
-  int error = ::getaddrinfo(host, service, hints, result);
+  int error = ::getaddrinfo(host, service, &hints, result);
   return ec = translate_addrinfo_error(error);
 # else
   // Building for Windows 2000 or earlier.
@@ -2647,20 +2648,32 @@ asio::error_code getaddrinfo(const char* host,
   {
     if (gai_t gai = (gai_t)::GetProcAddress(winsock_module, "getaddrinfo"))
     {
-      int error = gai(host, service, hints, result);
+      int error = gai(host, service, &hints, result);
       return ec = translate_addrinfo_error(error);
     }
   }
-  int error = getaddrinfo_emulation(host, service, hints, result);
+  int error = getaddrinfo_emulation(host, service, &hints, result);
   return ec = translate_addrinfo_error(error);
 # endif
 #elif defined(__MACH__) && defined(__APPLE__)
-  int error = getaddrinfo_emulation(host, service, hints, result);
+  int error = getaddrinfo_emulation(host, service, &hints, result);
   return ec = translate_addrinfo_error(error);
 #else
-  int error = ::getaddrinfo(host, service, hints, result);
+  int error = ::getaddrinfo(host, service, &hints, result);
   return ec = translate_addrinfo_error(error);
 #endif
+}
+
+asio::error_code background_getaddrinfo(
+    const weak_cancel_token_type& cancel_token, const char* host,
+    const char* service, const addrinfo_type& hints,
+    addrinfo_type** result, asio::error_code& ec)
+{
+  if (cancel_token.expired())
+    ec = asio::error::operation_aborted;
+  else
+    socket_ops::getaddrinfo(host, service, hints, result, ec);
+  return ec;
 }
 
 void freeaddrinfo(addrinfo_type* ai)
