@@ -22,6 +22,7 @@
 
 #include <stdexcept>
 #include <boost/throw_exception.hpp>
+#include "asio/error.hpp"
 #include "asio/serial_port_base.hpp"
 
 #if defined(GENERATING_DOCUMENTATION)

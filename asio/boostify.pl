@@ -374,7 +374,7 @@ sub copy_source_file
     {
       print_line($output, $1 . "<boost/system/error_code.hpp>", $from, $lineno);
     }
-    elsif ($line =~ /# *include [<"]asio\/impl\/error_code\.ipp[>"]/)
+    elsif ($line =~ /# *include [<"]asio\/impl\/error_code\.[hi]pp[>"]/)
     {
       # Line is removed.
     }
@@ -503,12 +503,13 @@ sub copy_include_files
   foreach my $dir (@dirs)
   {
     our $boost_dir;
-    my @files = ( glob("$dir/*.hpp"), glob("$dir/*.ipp") );
+    my @files = ( glob("$dir/*.hpp"), glob("$dir/*.ipp"), glob("$dir/*cpp") );
     foreach my $file (@files)
     {
       if ($file ne "include/asio/thread.hpp"
           and $file ne "include/asio/error_code.hpp"
           and $file ne "include/asio/system_error.hpp"
+          and $file ne "include/asio/impl/error_code.hpp"
           and $file ne "include/asio/impl/error_code.ipp")
       {
         my $from = $file;
