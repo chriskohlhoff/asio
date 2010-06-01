@@ -65,11 +65,12 @@ void strand_service::dispatch(strand_service::implementation_type& impl,
     return;
   }
 
-  // Allocate and construct an object to wrap the handler.
-  typedef completion_handler<Handler> value_type;
-  typedef handler_alloc_traits<Handler, value_type> alloc_traits;
-  raw_handler_ptr<alloc_traits> raw_ptr(handler);
-  handler_ptr<alloc_traits> ptr(raw_ptr, handler);
+  // Allocate and construct an operation to wrap the handler.
+  typedef completion_handler<Handler> op;
+  typename op::ptr p = { boost::addressof(handler),
+    asio_handler_alloc_helpers::allocate(
+      sizeof(op), handler), 0 };
+  p.p = new (p.v) op(handler);
 
   // If we are running inside the io_service, and no other handler is queued
   // or running, then the handler can run immediately.
@@ -82,7 +83,7 @@ void strand_service::dispatch(strand_service::implementation_type& impl,
     impl->mutex_.unlock();
 
     // Memory must be releaesed before any upcall is made.
-    ptr.reset();
+    p.reset();
 
     // Indicate that this strand is executing on the current thread.
     call_stack<strand_impl>::context ctx(impl);
@@ -97,9 +98,9 @@ void strand_service::dispatch(strand_service::implementation_type& impl,
   }
 
   // Immediate invocation is not allowed, so enqueue for later.
-  impl->queue_.push(ptr.get());
+  impl->queue_.push(p.p);
   impl->mutex_.unlock();
-  ptr.release();
+  p.v = p.p = 0;
 
   // The first handler to be enqueued is responsible for scheduling the
   // strand.
@@ -112,18 +113,19 @@ template <typename Handler>
 void strand_service::post(strand_service::implementation_type& impl,
     Handler handler)
 {
-  // Allocate and construct an object to wrap the handler.
-  typedef completion_handler<Handler> value_type;
-  typedef handler_alloc_traits<Handler, value_type> alloc_traits;
-  raw_handler_ptr<alloc_traits> raw_ptr(handler);
-  handler_ptr<alloc_traits> ptr(raw_ptr, handler);
+  // Allocate and construct an operation to wrap the handler.
+  typedef completion_handler<Handler> op;
+  typename op::ptr p = { boost::addressof(handler),
+    asio_handler_alloc_helpers::allocate(
+      sizeof(op), handler), 0 };
+  p.p = new (p.v) op(handler);
 
   // Add the handler to the queue.
   impl->mutex_.lock();
   bool first = (++impl->count_ == 1);
-  impl->queue_.push(ptr.get());
+  impl->queue_.push(p.p);
   impl->mutex_.unlock();
-  ptr.release();
+  p.v = p.p = 0;
 
   // The first handler to be enqueue is responsible for scheduling the strand.
   if (first)
