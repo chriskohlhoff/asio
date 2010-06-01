@@ -72,13 +72,14 @@ public:
   explicit resolver_service(asio::io_service& io_service)
     : asio::detail::service_base<
         resolver_service<InternetProtocol> >(io_service),
-      service_impl_(asio::use_service<service_impl_type>(io_service))
+      service_impl_(io_service)
   {
   }
 
   /// Destroy all user-defined handler objects owned by the service.
   void shutdown_service()
   {
+    service_impl_.shutdown_service();
   }
 
   /// Construct a new resolver implementation.
@@ -130,8 +131,8 @@ public:
   }
 
 private:
-  // The service that provides the platform-specific implementation.
-  service_impl_type& service_impl_;
+  // The platform-specific implementation.
+  service_impl_type service_impl_;
 };
 
 } // namespace ip

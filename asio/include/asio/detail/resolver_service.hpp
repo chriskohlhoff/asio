@@ -37,7 +37,6 @@ namespace detail {
 
 template <typename Protocol>
 class resolver_service
-  : public asio::detail::service_base<resolver_service<Protocol> >
 {
 private:
   // Helper class to perform exception-safe cleanup of addrinfo objects.
@@ -81,9 +80,7 @@ public:
 
   // Constructor.
   resolver_service(asio::io_service& io_service)
-    : asio::detail::service_base<
-        resolver_service<Protocol> >(io_service),
-      mutex_(),
+    : mutex_(),
       io_service_impl_(asio::use_service<io_service_impl>(io_service)),
       work_io_service_(new asio::io_service),
       work_io_service_impl_(asio::use_service<
