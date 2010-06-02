@@ -154,7 +154,7 @@ public:
   friend bool operator!=(const basic_endpoint<Protocol>& e1,
       const basic_endpoint<Protocol>& e2)
   {
-    return e1.impl_ != e2.impl_;
+    return !(e1.impl_ == e2.impl_);
   }
 
   /// Compare endpoints for ordering.

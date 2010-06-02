@@ -21,11 +21,8 @@
 #if defined(ASIO_HAS_LOCAL_SOCKETS)
 
 #include <cstddef>
-#include <cstring>
-#include "asio/detail/socket_ops.hpp"
+#include <string>
 #include "asio/detail/socket_types.hpp"
-#include "asio/detail/throw_error.hpp"
-#include "asio/error.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -38,23 +35,13 @@ class endpoint
 {
 public:
   // Default constructor.
-  endpoint()
-  {
-    init("", 0);
-  }
+  ASIO_DECL endpoint();
 
   // Construct an endpoint using the specified path name.
-  endpoint(const char* path)
-  {
-    using namespace std; // For strlen.
-    init(path, strlen(path));
-  }
+  ASIO_DECL endpoint(const char* path);
 
   // Construct an endpoint using the specified path name.
-  endpoint(const std::string& path)
-  {
-    init(path.data(), path.length());
-  }
+  ASIO_DECL endpoint(const std::string& path);
 
   // Copy constructor.
   endpoint(const endpoint& other)
@@ -91,27 +78,7 @@ public:
   }
 
   // Set the underlying size of the endpoint in the native type.
-  void resize(std::size_t size)
-  {
-    if (size > sizeof(asio::detail::sockaddr_un_type))
-    {
-      asio::error_code ec(asio::error::invalid_argument);
-      asio::detail::throw_error(ec);
-    }
-    else if (size == 0)
-    {
-      path_length_ = 0;
-    }
-    else
-    {
-      path_length_ = size
-        - offsetof(asio::detail::sockaddr_un_type, sun_path);
-
-      // The path returned by the operating system may be NUL-terminated.
-      if (path_length_ > 0 && data_.local.sun_path[path_length_ - 1] == 0)
-        --path_length_;
-    }
-  }
+  ASIO_DECL void resize(std::size_t size);
 
   // Get the capacity of the endpoint in the native type.
   std::size_t capacity() const
@@ -120,41 +87,21 @@ public:
   }
 
   // Get the path associated with the endpoint.
-  std::string path() const
-  {
-    return std::string(data_.local.sun_path, path_length_);
-  }
+  ASIO_DECL std::string path() const;
 
   // Set the path associated with the endpoint.
-  void path(const char* p)
-  {
-    using namespace std; // For strlen.
-    init(p, strlen(p));
-  }
+  ASIO_DECL void path(const char* p);
 
   // Set the path associated with the endpoint.
-  void path(const std::string& p)
-  {
-    init(p.data(), p.length());
-  }
+  ASIO_DECL void path(const std::string& p);
 
   // Compare two endpoints for equality.
-  friend bool operator==(const endpoint& e1, const endpoint& e2)
-  {
-    return e1.path() == e2.path();
-  }
-
-  // Compare two endpoints for inequality.
-  friend bool operator!=(const endpoint& e1, const endpoint& e2)
-  {
-    return e1.path() != e2.path();
-  }
+  ASIO_DECL friend bool operator==(
+      const endpoint& e1, const endpoint& e2);
 
   // Compare endpoints for ordering.
-  friend bool operator<(const endpoint& e1, const endpoint& e2)
-  {
-    return e1.path() < e2.path();
-  }
+  ASIO_DECL friend bool operator<(
+      const endpoint& e1, const endpoint& e2);
 
 private:
   // The underlying UNIX socket address.
@@ -168,26 +115,7 @@ private:
   std::size_t path_length_;
 
   // Initialise with a specified path.
-  void init(const char* path, std::size_t path_length)
-  {
-    if (path_length > sizeof(data_.local.sun_path) - 1)
-    {
-      // The buffer is not large enough to store this address.
-      asio::error_code ec(asio::error::name_too_long);
-      asio::detail::throw_error(ec);
-    }
-
-    using namespace std; // For memcpy.
-    data_.local = asio::detail::sockaddr_un_type();
-    data_.local.sun_family = AF_UNIX;
-    memcpy(data_.local.sun_path, path, path_length);
-    path_length_ = path_length;
-
-    // NUL-terminate normal path names. Names that start with a NUL are in the
-    // UNIX domain protocol's "abstract namespace" and are not NUL-terminated.
-    if (path_length > 0 && data_.local.sun_path[0] == 0)
-      data_.local.sun_path[path_length] = 0;
-  }
+  ASIO_DECL void init(const char* path, std::size_t path_length);
 };
 
 } // namespace detail
@@ -195,6 +123,10 @@ private:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/local/detail/impl/endpoint.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // defined(ASIO_HAS_LOCAL_SOCKETS)
 
