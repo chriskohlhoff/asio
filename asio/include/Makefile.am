@@ -214,7 +214,6 @@ nobase_include_HEADERS = \
 	asio/ip/basic_resolver_iterator.hpp \
 	asio/ip/basic_resolver_query.hpp \
 	asio/ip/detail/endpoint.hpp \
-	asio/ip/detail/impl/endpoint.hpp \
 	asio/ip/detail/impl/endpoint.ipp \
 	asio/ip/detail/socket_option.hpp \
 	asio/ip/host_name.hpp \

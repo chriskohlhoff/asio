@@ -43,25 +43,47 @@ public:
       unsigned short port_num);
 
   // Copy constructor.
-  endpoint(const endpoint& other);
+  endpoint(const endpoint& other)
+    : data_(other.data_)
+  {
+  }
 
   // Assign from another endpoint.
-  endpoint& operator=(const endpoint& other);
+  endpoint& operator=(const endpoint& other)
+  {
+    data_ = other.data_;
+    return *this;
+  }
 
   // Get the underlying endpoint in the native type.
-  asio::detail::socket_addr_type* data();
+  asio::detail::socket_addr_type* data()
+  {
+    return &data_.base;
+  }
 
   // Get the underlying endpoint in the native type.
-  const asio::detail::socket_addr_type* data() const;
+  const asio::detail::socket_addr_type* data() const
+  {
+    return &data_.base;
+  }
 
   // Get the underlying size of the endpoint in the native type.
-  std::size_t size() const;
+  std::size_t size() const
+  {
+    if (is_v4())
+      return sizeof(asio::detail::sockaddr_in4_type);
+    else
+      return sizeof(asio::detail::sockaddr_in6_type);
+  }
 
   // Set the underlying size of the endpoint in the native type.
   ASIO_DECL void resize(std::size_t size);
 
   // Get the capacity of the endpoint in the native type.
-  std::size_t capacity() const;
+  std::size_t capacity() const
+  {
+    return sizeof(asio::detail::sockaddr_storage_type);
+  }
 
   // Get the port associated with the endpoint.
   ASIO_DECL unsigned short port() const;
@@ -84,7 +106,10 @@ public:
       const endpoint& e1, const endpoint& e2);
 
   // Determine whether the endpoint is IPv4.
-  bool is_v4() const;
+  bool is_v4() const
+  {
+    return data_.base.sa_family == AF_INET;
+  }
 
 #if !defined(BOOST_NO_IOSTREAM)
   // Convert to a string.
@@ -108,7 +133,6 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/ip/detail/impl/endpoint.hpp"
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/ip/detail/impl/endpoint.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
