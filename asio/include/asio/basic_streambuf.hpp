@@ -102,7 +102,11 @@ namespace asio {
  * is >> s;
  * @endcode
  */
+#if defined(GENERATING_DOCUMENTATION)
+template <typename Allocator = std::allocator<char> >
+#else
 template <typename Allocator>
+#endif
 class basic_streambuf
   : public std::streambuf,
     private noncopyable
