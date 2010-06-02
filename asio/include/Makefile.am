@@ -63,6 +63,7 @@ nobase_include_HEADERS = \
 	asio/detail/impl/reactive_descriptor_service.ipp \
 	asio/detail/impl/reactive_serial_port_service.ipp \
 	asio/detail/impl/reactive_socket_service_base.ipp \
+	asio/detail/impl/resolver_service_base.ipp \
 	asio/detail/impl/service_registry.hpp \
 	asio/detail/impl/service_registry.ipp \
 	asio/detail/impl/socket_ops.ipp \
@@ -124,6 +125,9 @@ nobase_include_HEADERS = \
 	asio/detail/reactor_op.hpp \
 	asio/detail/reactor_op_queue.hpp \
 	asio/detail/regex_fwd.hpp \
+	asio/detail/resolve_endpoint_op.hpp \
+	asio/detail/resolve_op.hpp \
+	asio/detail/resolver_service_base.hpp \
 	asio/detail/resolver_service.hpp \
 	asio/detail/scoped_lock.hpp \
 	asio/detail/select_interrupter.hpp \
