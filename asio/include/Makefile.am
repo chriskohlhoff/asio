@@ -73,6 +73,7 @@ nobase_include_HEADERS = \
 	asio/detail/impl/task_io_service.hpp \
 	asio/detail/impl/task_io_service.ipp \
 	asio/detail/impl/throw_error.ipp \
+	asio/detail/impl/timer_queue.ipp \
 	asio/detail/impl/timer_queue_set.ipp \
 	asio/detail/impl/win_event.ipp \
 	asio/detail/impl/win_iocp_handle_service.ipp \
@@ -238,6 +239,8 @@ nobase_include_HEADERS = \
 	asio/local/basic_endpoint.hpp \
 	asio/local/connect_pair.hpp \
 	asio/local/datagram_protocol.hpp \
+	asio/local/detail/endpoint.hpp \
+	asio/local/detail/impl/endpoint.ipp \
 	asio/local/stream_protocol.hpp \
 	asio/placeholders.hpp \
 	asio/posix/basic_descriptor.hpp \
