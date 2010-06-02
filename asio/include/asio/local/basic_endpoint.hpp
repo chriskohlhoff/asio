@@ -24,12 +24,15 @@
 #include <boost/throw_exception.hpp>
 #include <cstddef>
 #include <cstring>
-#include <ostream>
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 #include "asio/system_error.hpp"
+
+#if !defined(BOOST_NO_IOSTREAM)
+# include <iosfwd>
+#endif // !defined(BOOST_NO_IOSTREAM)
 
 #include "asio/detail/push_options.hpp"
 
