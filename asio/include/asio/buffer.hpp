@@ -17,7 +17,6 @@
 
 #include "asio/detail/config.hpp"
 #include <cstddef>
-#include <boost/type_traits/is_const.hpp>
 #include <string>
 #include <vector>
 #include "asio/detail/array_fwd.hpp"
@@ -41,6 +40,12 @@
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
 # include <boost/function.hpp>
 #endif // ASIO_ENABLE_BUFFER_DEBUGGING
+
+#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x582)) \
+  || BOOST_WORKAROUND(__SUNPRO_CC, BOOST_TESTED_AT(0x590))
+# include <boost/type_traits/is_const.hpp>
+#endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x582))
+       // || BOOST_WORKAROUND(__SUNPRO_CC, BOOST_TESTED_AT(0x590))
 
 #include "asio/detail/push_options.hpp"
 
