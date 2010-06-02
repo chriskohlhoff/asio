@@ -19,6 +19,7 @@
 #include <cstddef>
 #include <string>
 #include <vector>
+#include <boost/detail/workaround.hpp>
 #include "asio/detail/array_fwd.hpp"
 
 #if defined(BOOST_MSVC)
