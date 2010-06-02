@@ -275,6 +275,11 @@ public:
     p.v = p.p = 0;
   }
 
+  // Helper function to restart an asynchronous accept operation.
+  ASIO_DECL void restart_accept_op(socket_type s,
+      socket_holder& new_socket, int family, int type, int protocol,
+      void* output_buffer, DWORD address_length, operation* op);
+
 protected:
   // Open a new socket implementation.
   ASIO_DECL asio::error_code do_open(
@@ -312,7 +317,7 @@ protected:
       WSABUF* buffers, std::size_t buffer_count, socket_addr_type* addr,
       socket_base::message_flags flags, int* addrlen, operation* op);
 
-  // Helper function to start an asynchronous receive_from operation.
+  // Helper function to start an asynchronous accept operation.
   ASIO_DECL void start_accept_op(base_implementation_type& impl,
       bool peer_is_open, socket_holder& new_socket, int family, int type,
       int protocol, void* output_buffer, DWORD address_length, operation* op);

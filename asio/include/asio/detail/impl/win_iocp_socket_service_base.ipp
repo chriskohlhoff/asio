@@ -409,6 +409,30 @@ void win_iocp_socket_service_base::start_accept_op(
   }
 }
 
+void win_iocp_socket_service_base::restart_accept_op(
+    socket_type s, socket_holder& new_socket, int family, int type,
+    int protocol, void* output_buffer, DWORD address_length, operation* op)
+{
+  new_socket.reset();
+  iocp_service_.work_started();
+
+  asio::error_code ec;
+  new_socket.reset(socket_ops::socket(family, type, protocol, ec));
+  if (new_socket.get() == invalid_socket)
+    iocp_service_.on_completion(op, ec);
+  else
+  {
+    DWORD bytes_read = 0;
+    BOOL result = ::AcceptEx(s, new_socket.get(), output_buffer,
+        0, address_length, address_length, &bytes_read, op);
+    DWORD last_error = ::WSAGetLastError();
+    if (!result && last_error != WSA_IO_PENDING)
+      iocp_service_.on_completion(op, last_error);
+    else
+      iocp_service_.on_pending(op);
+  }
+}
+
 void win_iocp_socket_service_base::start_reactor_op(
     win_iocp_socket_service_base::base_implementation_type& impl,
     int op_type, reactor_op* op)

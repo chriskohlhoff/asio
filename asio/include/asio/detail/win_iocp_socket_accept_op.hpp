@@ -41,12 +41,12 @@ class win_iocp_socket_accept_op : public operation
 public:
   ASIO_DEFINE_HANDLER_PTR(win_iocp_socket_accept_op);
 
-  win_iocp_socket_accept_op(win_iocp_io_service& iocp_service,
+  win_iocp_socket_accept_op(win_iocp_socket_service_base& socket_service,
       socket_type socket, Socket& peer, const Protocol& protocol,
       typename Protocol::endpoint* peer_endpoint,
       bool enable_connection_aborted, Handler handler)
     : operation(&win_iocp_socket_accept_op::do_complete),
-      iocp_service_(iocp_service),
+      socket_service_(socket_service),
       socket_(socket),
       peer_(peer),
       protocol_(protocol),
@@ -92,57 +92,13 @@ public:
       if (ec == asio::error::connection_aborted
           && !o->enable_connection_aborted_)
       {
-        // Reset OVERLAPPED structure.
         o->reset();
-
-        // Create a new socket for the next connection, since the AcceptEx
-        // call fails with WSAEINVAL if we try to reuse the same socket.
-        o->new_socket_.reset();
-        o->new_socket_.reset(socket_ops::socket(o->protocol_.family(),
-              o->protocol_.type(), o->protocol_.protocol(), ec));
-        if (o->new_socket_.get() != invalid_socket)
-        {
-          // Accept a connection.
-          DWORD bytes_read = 0;
-          BOOL result = ::AcceptEx(o->socket_, o->new_socket_.get(),
-              o->output_buffer(), 0, o->address_length(),
-              o->address_length(), &bytes_read, o);
-          DWORD last_error = ::WSAGetLastError();
-          ec = asio::error_code(last_error,
-              asio::error::get_system_category());
-
-          // Check if the operation completed immediately.
-          if (!result && last_error != WSA_IO_PENDING)
-          {
-            if (last_error == ERROR_NETNAME_DELETED
-                || last_error == WSAECONNABORTED)
-            {
-              // Post this handler so that operation will be restarted again.
-              o->iocp_service_.work_started();
-              o->iocp_service_.on_completion(o, ec);
-              p.v = p.p = 0;
-              return;
-            }
-            else
-            {
-              // Operation already complete. Continue with rest of this
-              // handler.
-              std::size_t addr_len = peer_endpoint.capacity();
-              socket_ops::complete_iocp_accept(o->socket_,
-                  o->output_buffer(), o->address_length(),
-                  peer_endpoint.data(), &addr_len,
-                  o->new_socket_.get(), ec);
-            }
-          }
-          else
-          {
-            // Asynchronous operation has been successfully restarted.
-            o->iocp_service_.work_started();
-            o->iocp_service_.on_pending(o);
-            p.v = p.p = 0;
-            return;
-          }
-        }
+        o->socket_service_.restart_accept_op(o->socket_,
+            o->new_socket_, o->protocol_.family(),
+            o->protocol_.type(), o->protocol_.protocol(),
+            o->output_buffer(), o->address_length(), o);
+        p.v = p.p = 0;
+        return;
       }
 
       // If the socket was successfully accepted, transfer ownership of the
@@ -181,7 +137,7 @@ public:
   }
 
 private:
-  win_iocp_io_service& iocp_service_;
+  win_iocp_socket_service_base& socket_service_;
   socket_type socket_;
   socket_holder new_socket_;
   Socket& peer_;

@@ -415,7 +415,7 @@ public:
         sizeof(op), handler), 0 };
     bool enable_connection_aborted =
       (impl.state_ & socket_ops::enable_connection_aborted) != 0;
-    p.p = new (p.v) op(iocp_service_, impl.socket_, peer, impl.protocol_,
+    p.p = new (p.v) op(*this, impl.socket_, peer, impl.protocol_,
         peer_endpoint, enable_connection_aborted, handler);
 
     start_accept_op(impl, peer.is_open(), p.p->new_socket(),
