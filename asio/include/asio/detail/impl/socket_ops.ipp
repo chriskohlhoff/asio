@@ -1421,7 +1421,7 @@ int ioctl(socket_type s, state_type& state, long cmd,
     // the correct state. This ensures that the underlying socket is put into
     // the state that has been requested by the user. If the ioctl syscall was
     // successful then we need to update the flags to match.
-    if (cmd == FIONBIO)
+    if (cmd == static_cast<long>(FIONBIO))
     {
       if (*arg)
       {

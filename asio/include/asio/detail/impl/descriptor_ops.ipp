@@ -257,7 +257,7 @@ int ioctl(int d, state_type& state, long cmd,
     // descriptor is put into the state that has been requested by the user. If
     // the ioctl syscall was successful then we need to update the flags to
     // match.
-    if (cmd == FIONBIO)
+    if (cmd == static_cast<long>(FIONBIO))
     {
       if (*arg)
       {
