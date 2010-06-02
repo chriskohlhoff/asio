@@ -158,6 +158,23 @@
 </xsl:template>
 
 
+<xsl:template name="cleanup-type">
+  <xsl:param name="name"/>
+  <xsl:choose>
+    <xsl:when test="contains($name, 'ASIO_DECL ')">
+      <xsl:value-of select="substring-after($name, 'ASIO_DECL ')"/>
+    </xsl:when>
+    <xsl:when test="contains($name, 'ASIO_DECL')">
+      <xsl:value-of select="substring-after($name, 'ASIO_DECL')"/>
+    </xsl:when>
+    <xsl:when test="$name = 'virtual'"></xsl:when>
+    <xsl:otherwise>
+      <xsl:value-of select="$name"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+
 <xsl:template name="make-id">
   <xsl:param name="name"/>
   <xsl:choose>
@@ -1039,8 +1056,14 @@
 <xsl:text>  </xsl:text>
  <xsl:if test="@explicit='yes'">explicit </xsl:if>
  <xsl:if test="@static='yes'">static </xsl:if>
- <xsl:if test="string-length(type) > 0">
- <xsl:value-of select="type"/><xsl:text> </xsl:text>
+ <xsl:if test="@virt='virtual'">virtual </xsl:if>
+ <xsl:variable name="stripped-type">
+  <xsl:call-template name="cleanup-type">
+    <xsl:with-param name="name" select="type"/>
+  </xsl:call-template>
+ </xsl:variable>
+ <xsl:if test="string-length($stripped-type) &gt; 0">
+ <xsl:value-of select="$stripped-type"/><xsl:text> </xsl:text>
 </xsl:if>``[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of
  select="$id"/>.overload<xsl:value-of select="position()"/><xsl:text> </xsl:text><xsl:value-of
  select="name"/>]``(<xsl:apply-templates select="param"
@@ -1202,8 +1225,14 @@
     <xsl:apply-templates select="templateparamlist" mode="class-detail"/>
   </xsl:otherwise>
 </xsl:choose>
-<xsl:text>  </xsl:text><xsl:if test="@static='yes'">static </xsl:if><xsl:if
- test="string-length(type) > 0"><xsl:value-of select="type"/><xsl:text> </xsl:text></xsl:if>
+<xsl:variable name="stripped-type">
+ <xsl:call-template name="cleanup-type">
+   <xsl:with-param name="name" select="type"/>
+ </xsl:call-template>
+</xsl:variable>
+<xsl:text>  </xsl:text><xsl:if test="@static='yes'">static </xsl:if><xsl:if 
+ test="@virt='virtual'">virtual </xsl:if><xsl:if
+ test="string-length($stripped-type) &gt; 0"><xsl:value-of select="$stripped-type"/><xsl:text> </xsl:text></xsl:if>
 <xsl:value-of select="name"/>(<xsl:apply-templates select="param"
  mode="class-detail"/>)<xsl:if test="@const='yes'"> const</xsl:if>;
 </xsl:template>
@@ -1379,10 +1408,15 @@
 </xsl:choose>
 
 <xsl:for-each select="../memberdef[name = $unqualified-name]">
+<xsl:variable name="stripped-type">
+ <xsl:call-template name="cleanup-type">
+   <xsl:with-param name="name" select="type"/>
+ </xsl:call-template>
+</xsl:variable>
 <xsl:text>
 </xsl:text><xsl:apply-templates select="templateparamlist" mode="class-detail"/>
-<xsl:text>  </xsl:text><xsl:if test="string-length(type) > 0"><xsl:value-of
- select="type"/><xsl:text> </xsl:text></xsl:if>``[link asio.reference.<xsl:value-of
+<xsl:text>  </xsl:text><xsl:if test="string-length($stripped-type) &gt; 0"><xsl:value-of
+ select="$stripped-type"/><xsl:text> </xsl:text></xsl:if>``[link asio.reference.<xsl:value-of
  select="$id"/>.overload<xsl:value-of select="position()"/><xsl:text> </xsl:text>
 <xsl:value-of select="name"/>]``(<xsl:apply-templates select="param" mode="class-detail"/>);
 <xsl:text>  ``  [''''&amp;raquo;'''</xsl:text>

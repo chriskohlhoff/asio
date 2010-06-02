@@ -35911,7 +35911,7 @@ Disable sends or receives on the socket.
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -36558,7 +36558,7 @@ The implementation type of the deadline timer.
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -39459,8 +39459,23 @@ Implements version-independent IP addresses.
   ]
   
   [
+    [[link asio.reference.ip__address.operator_lt__eq_ [*operator<=]]]
+    [Compare addresses for ordering. ]
+  ]
+  
+  [
     [[link asio.reference.ip__address.operator_eq__eq_ [*operator==]]]
     [Compare two addresses for equality. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__address.operator_gt_ [*operator>]]]
+    [Compare addresses for ordering. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__address.operator_gt__eq_ [*operator>=]]]
+    [Compare addresses for ordering. ]
   ]
   
 ]
@@ -39787,6 +39802,28 @@ The output stream.
 [endsect]
 
 
+
+[section:operator_lt__eq_ ip::address::operator<=]
+
+[indexterm2 operator<=..ip::address] 
+Compare addresses for ordering. 
+
+
+  friend bool operator<=(
+      const address & a1,
+      const address & a2);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/address.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
 [section:operator_eq_ ip::address::operator=]
 
 [indexterm2 operator=..ip::address] 
@@ -39868,6 +39905,50 @@ Compare two addresses for equality.
 
 
   friend bool operator==(
+      const address & a1,
+      const address & a2);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/address.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_gt_ ip::address::operator>]
+
+[indexterm2 operator>..ip::address] 
+Compare addresses for ordering. 
+
+
+  friend bool operator>(
+      const address & a1,
+      const address & a2);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/address.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_gt__eq_ ip::address::operator>=]
+
+[indexterm2 operator>=..ip::address] 
+Compare addresses for ordering. 
+
+
+  friend bool operator>=(
       const address & a1,
       const address & a2);
 
@@ -41777,8 +41858,23 @@ Describes an endpoint for a version-independent IP socket.
   ]
   
   [
+    [[link asio.reference.ip__basic_endpoint.operator_lt__eq_ [*operator<=]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
     [[link asio.reference.ip__basic_endpoint.operator_eq__eq_ [*operator==]]]
     [Compare two endpoints for equality. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_endpoint.operator_gt_ [*operator>]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_endpoint.operator_gt__eq_ [*operator>=]]]
+    [Compare endpoints for ordering. ]
   ]
   
 ]
@@ -42134,6 +42230,28 @@ The output stream.
 
 
 
+[section:operator_lt__eq_ ip::basic_endpoint::operator<=]
+
+[indexterm2 operator<=..ip::basic_endpoint] 
+Compare endpoints for ordering. 
+
+
+  friend bool operator<=(
+      const basic_endpoint< InternetProtocol > & e1,
+      const basic_endpoint< InternetProtocol > & e2);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_endpoint.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
 [section:operator_eq_ ip::basic_endpoint::operator=]
 
 [indexterm2 operator=..ip::basic_endpoint] 
@@ -42156,6 +42274,50 @@ Compare two endpoints for equality.
 
 
   friend bool operator==(
+      const basic_endpoint< InternetProtocol > & e1,
+      const basic_endpoint< InternetProtocol > & e2);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_endpoint.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_gt_ ip::basic_endpoint::operator>]
+
+[indexterm2 operator>..ip::basic_endpoint] 
+Compare endpoints for ordering. 
+
+
+  friend bool operator>(
+      const basic_endpoint< InternetProtocol > & e1,
+      const basic_endpoint< InternetProtocol > & e2);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_endpoint.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_gt__eq_ ip::basic_endpoint::operator>=]
+
+[indexterm2 operator>=..ip::basic_endpoint] 
+Compare endpoints for ordering. 
+
+
+  friend bool operator>=(
       const basic_endpoint< InternetProtocol > & e1,
       const basic_endpoint< InternetProtocol > & e2);
 
@@ -44513,8 +44675,23 @@ The type of a ICMP endpoint.
   ]
   
   [
+    [[link asio.reference.ip__basic_endpoint.operator_lt__eq_ [*operator<=]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
     [[link asio.reference.ip__basic_endpoint.operator_eq__eq_ [*operator==]]]
     [Compare two endpoints for equality. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_endpoint.operator_gt_ [*operator>]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_endpoint.operator_gt__eq_ [*operator>=]]]
+    [Compare endpoints for ordering. ]
   ]
   
 ]
@@ -46490,7 +46667,7 @@ Construct a new resolver service for the specified [link asio.reference.io_servi
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -47071,8 +47248,23 @@ The type of a TCP endpoint.
   ]
   
   [
+    [[link asio.reference.ip__basic_endpoint.operator_lt__eq_ [*operator<=]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
     [[link asio.reference.ip__basic_endpoint.operator_eq__eq_ [*operator==]]]
     [Compare two endpoints for equality. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_endpoint.operator_gt_ [*operator>]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_endpoint.operator_gt__eq_ [*operator>=]]]
+    [Compare endpoints for ordering. ]
   ]
   
 ]
@@ -48289,8 +48481,23 @@ The type of a UDP endpoint.
   ]
   
   [
+    [[link asio.reference.ip__basic_endpoint.operator_lt__eq_ [*operator<=]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
     [[link asio.reference.ip__basic_endpoint.operator_eq__eq_ [*operator==]]]
     [Compare two endpoints for equality. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_endpoint.operator_gt_ [*operator>]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_endpoint.operator_gt__eq_ [*operator>=]]]
+    [Compare endpoints for ordering. ]
   ]
   
 ]
@@ -52395,6 +52602,46 @@ The [link asio.reference.mutable_buffer `mutable_buffer`] class provides a safe 
 [endsect]
 
 
+[section:operator_not__eq_ operator!=]
+
+[indexterm1 operator!=] 
+
+  bool operator!=(
+      const error_code & e1,
+      const error_code & e2);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/impl/error_code.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_eq__eq_ operator==]
+
+[indexterm1 operator==] 
+
+  bool operator==(
+      const error_code & e1,
+      const error_code & e2);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/impl/error_code.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
 [section:placeholders__bytes_transferred placeholders::bytes_transferred]
 
 [indexterm1 placeholders::bytes_transferred] 
@@ -55782,7 +56029,7 @@ Read some data from the stream.
 Destroy all user-defined descriptorr objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -56686,7 +56933,7 @@ Disable sends or receives on the socket.
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -59880,7 +60127,7 @@ Set a serial port option.
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -60533,7 +60780,7 @@ Set a socket option.
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -64083,7 +64330,7 @@ Set peer verification mode.
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -65958,7 +66205,7 @@ Shut down SSL on the stream.
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -66865,7 +67112,7 @@ Disable sends or receives on the socket.
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -67213,7 +67460,7 @@ Copy constructor.
 Get a string representation of the exception. 
 
 
-  const char * what() const;
+  virtual const char * what() const;
 
 
 
@@ -71866,7 +72113,7 @@ Read some data from the specified offset.
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -72447,7 +72694,7 @@ Read some data from the stream.
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
