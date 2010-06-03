@@ -90,8 +90,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
   std::size_t total_transferred = 0;
   std::size_t max_size = detail::adapt_completion_condition_result(
         completion_condition(ec, total_transferred));
-  std::size_t bytes_available = std::min<std::size_t>(512,
-      std::min<std::size_t>(max_size, b.max_size() - b.size()));
+  std::size_t bytes_available = read_size_helper(b, max_size);
   while (bytes_available > 0)
   {
     std::size_t bytes_transferred = d.read_some_at(
@@ -100,8 +99,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
     total_transferred += bytes_transferred;
     max_size = detail::adapt_completion_condition_result(
           completion_condition(ec, total_transferred));
-    bytes_available = std::min<std::size_t>(512,
-        std::min<std::size_t>(max_size, b.max_size() - b.size()));
+    bytes_available = read_size_helper(b, max_size);
   }
   return total_transferred;
 }
@@ -325,9 +323,7 @@ namespace detail
       {
         case 1:
         max_size = this->check_for_completion(ec, total_transferred_);
-        bytes_available = std::min<std::size_t>(512,
-            std::min<std::size_t>(max_size,
-              streambuf_.max_size() - streambuf_.size()));
+        bytes_available = read_size_helper(streambuf_, max_size);
         for (;;)
         {
           device_.async_read_some_at(offset_ + total_transferred_,
@@ -336,9 +332,7 @@ namespace detail
           total_transferred_ += bytes_transferred;
           streambuf_.commit(bytes_transferred);
           max_size = this->check_for_completion(ec, total_transferred_);
-          bytes_available = std::min<std::size_t>(512,
-              std::min<std::size_t>(max_size,
-                streambuf_.max_size() - streambuf_.size()));
+          bytes_available = read_size_helper(streambuf_, max_size);
           if ((!ec && bytes_transferred == 0) || bytes_available == 0)
             break;
         }

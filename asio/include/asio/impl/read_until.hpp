@@ -80,8 +80,7 @@ std::size_t read_until(SyncReadStream& s,
     }
 
     // Need more data.
-    std::size_t bytes_to_read =
-      std::min<std::size_t>(512, b.max_size() - b.size());
+    std::size_t bytes_to_read = read_size_helper(b, 65536);
     b.commit(s.read_some(b.prepare(bytes_to_read), ec));
     if (ec)
       return 0;
@@ -181,8 +180,7 @@ std::size_t read_until(SyncReadStream& s,
     }
 
     // Need more data.
-    std::size_t bytes_to_read =
-      std::min<std::size_t>(512, b.max_size() - b.size());
+    std::size_t bytes_to_read = read_size_helper(b, 65536);
     b.commit(s.read_some(b.prepare(bytes_to_read), ec));
     if (ec)
       return 0;
@@ -249,8 +247,7 @@ std::size_t read_until(SyncReadStream& s,
     }
 
     // Need more data.
-    std::size_t bytes_to_read =
-      std::min<std::size_t>(512, b.max_size() - b.size());
+    std::size_t bytes_to_read = read_size_helper(b, 65536);
     b.commit(s.read_some(b.prepare(bytes_to_read), ec));
     if (ec)
       return 0;
@@ -302,8 +299,7 @@ std::size_t read_until(SyncReadStream& s,
     }
 
     // Need more data.
-    std::size_t bytes_to_read =
-      std::min<std::size_t>(512, b.max_size() - b.size());
+    std::size_t bytes_to_read = read_size_helper(b, 65536);
     b.commit(s.read_some(b.prepare(bytes_to_read), ec));
     if (ec)
       return 0;
@@ -379,8 +375,7 @@ namespace detail
             {
               // Next search can start with the new data.
               search_position_ = end - begin;
-              bytes_to_read = std::min<std::size_t>(
-                  512, streambuf_.max_size() - streambuf_.size());
+              bytes_to_read = read_size_helper(streambuf_, 65536);
             }
           }
 
@@ -517,8 +512,7 @@ namespace detail
                 search_position_ = end - begin;
               }
 
-              bytes_to_read = std::min<std::size_t>(
-                  512, streambuf_.max_size() - streambuf_.size());
+              bytes_to_read = read_size_helper(streambuf_, 65536);
             }
           }
 
@@ -660,8 +654,7 @@ namespace detail
                 search_position_ = end - begin;
               }
 
-              bytes_to_read = std::min<std::size_t>(
-                  512, streambuf_.max_size() - streambuf_.size());
+              bytes_to_read = read_size_helper(streambuf_, 65536);
             }
           }
 
@@ -801,8 +794,7 @@ namespace detail
                 search_position_ = end - begin;
               }
 
-              bytes_to_read = std::min<std::size_t>(
-                  512, streambuf_.max_size() - streambuf_.size());
+              bytes_to_read = read_size_helper(streambuf_, 65536);
             }
           }
 

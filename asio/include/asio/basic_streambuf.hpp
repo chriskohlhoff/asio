@@ -336,7 +336,26 @@ protected:
 private:
   std::size_t max_size_;
   std::vector<char_type, Allocator> buffer_;
+
+  // Helper function to get the preferred size for reading data.
+  friend std::size_t read_size_helper(
+      basic_streambuf& sb, std::size_t max_size)
+  {
+    return std::min<std::size_t>(
+        std::max<std::size_t>(512, sb.buffer_.capacity() - sb.size()),
+        std::min<std::size_t>(max_size, sb.max_size() - sb.size()));
+  }
 };
+
+// Helper function to get the preferred size for reading data. Used for any
+// user-provided specialisations of basic_streambuf.
+template <typename Allocator>
+inline std::size_t read_size_helper(
+    basic_streambuf<Allocator>& sb, std::size_t max_size)
+{
+  return std::min<std::size_t>(512,
+      std::min<std::size_t>(max_size, sb.max_size() - sb.size()));
+}
 
 } // namespace asio
 
