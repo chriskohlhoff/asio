@@ -46,7 +46,7 @@ std::size_t read_until(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, char delim,
     asio::error_code& ec)
 {
-  std::size_t next_search_start = 0;
+  std::size_t search_position = 0;
   for (;;)
   {
     // Determine the range of the data to be searched.
@@ -55,7 +55,7 @@ std::size_t read_until(SyncReadStream& s,
     typedef asio::buffers_iterator<const_buffers_type> iterator;
     const_buffers_type buffers = b.data();
     iterator begin = iterator::begin(buffers);
-    iterator start = begin + next_search_start;
+    iterator start = begin + search_position;
     iterator end = iterator::end(buffers);
 
     // Look for a match.
@@ -69,7 +69,7 @@ std::size_t read_until(SyncReadStream& s,
     else
     {
       // No match. Next search can start with the new data.
-      next_search_start = end - begin;
+      search_position = end - begin;
     }
 
     // Check if buffer is full.
@@ -80,9 +80,9 @@ std::size_t read_until(SyncReadStream& s,
     }
 
     // Need more data.
-    std::size_t bytes_available =
+    std::size_t bytes_to_read =
       std::min<std::size_t>(512, b.max_size() - b.size());
-    b.commit(s.read_some(b.prepare(bytes_available), ec));
+    b.commit(s.read_some(b.prepare(bytes_to_read), ec));
     if (ec)
       return 0;
   }
@@ -138,7 +138,7 @@ std::size_t read_until(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, const std::string& delim,
     asio::error_code& ec)
 {
-  std::size_t next_search_start = 0;
+  std::size_t search_position = 0;
   for (;;)
   {
     // Determine the range of the data to be searched.
@@ -147,11 +147,11 @@ std::size_t read_until(SyncReadStream& s,
     typedef asio::buffers_iterator<const_buffers_type> iterator;
     const_buffers_type buffers = b.data();
     iterator begin = iterator::begin(buffers);
-    iterator start = begin + next_search_start;
+    iterator start = begin + search_position;
     iterator end = iterator::end(buffers);
 
     // Look for a match.
-    std::pair<iterator, bool> result = asio::detail::partial_search(
+    std::pair<iterator, bool> result = detail::partial_search(
         start, end, delim.begin(), delim.end());
     if (result.first != end)
     {
@@ -164,13 +164,13 @@ std::size_t read_until(SyncReadStream& s,
       else
       {
         // Partial match. Next search needs to start from beginning of match.
-        next_search_start = result.first - begin;
+        search_position = result.first - begin;
       }
     }
     else
     {
       // No match. Next search can start with the new data.
-      next_search_start = end - begin;
+      search_position = end - begin;
     }
 
     // Check if buffer is full.
@@ -181,9 +181,9 @@ std::size_t read_until(SyncReadStream& s,
     }
 
     // Need more data.
-    std::size_t bytes_available =
+    std::size_t bytes_to_read =
       std::min<std::size_t>(512, b.max_size() - b.size());
-    b.commit(s.read_some(b.prepare(bytes_available), ec));
+    b.commit(s.read_some(b.prepare(bytes_to_read), ec));
     if (ec)
       return 0;
   }
@@ -204,7 +204,7 @@ std::size_t read_until(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, const boost::regex& expr,
     asio::error_code& ec)
 {
-  std::size_t next_search_start = 0;
+  std::size_t search_position = 0;
   for (;;)
   {
     // Determine the range of the data to be searched.
@@ -213,7 +213,7 @@ std::size_t read_until(SyncReadStream& s,
     typedef asio::buffers_iterator<const_buffers_type> iterator;
     const_buffers_type buffers = b.data();
     iterator begin = iterator::begin(buffers);
-    iterator start = begin + next_search_start;
+    iterator start = begin + search_position;
     iterator end = iterator::end(buffers);
 
     // Look for a match.
@@ -232,13 +232,13 @@ std::size_t read_until(SyncReadStream& s,
       else
       {
         // Partial match. Next search needs to start from beginning of match.
-        next_search_start = match_results[0].first - begin;
+        search_position = match_results[0].first - begin;
       }
     }
     else
     {
       // No match. Next search can start with the new data.
-      next_search_start = end - begin;
+      search_position = end - begin;
     }
 
     // Check if buffer is full.
@@ -249,9 +249,9 @@ std::size_t read_until(SyncReadStream& s,
     }
 
     // Need more data.
-    std::size_t bytes_available =
+    std::size_t bytes_to_read =
       std::min<std::size_t>(512, b.max_size() - b.size());
-    b.commit(s.read_some(b.prepare(bytes_available), ec));
+    b.commit(s.read_some(b.prepare(bytes_to_read), ec));
     if (ec)
       return 0;
   }
@@ -263,7 +263,7 @@ std::size_t read_until(SyncReadStream& s,
     MatchCondition match_condition, asio::error_code& ec,
     typename boost::enable_if<is_match_condition<MatchCondition> >::type*)
 {
-  std::size_t next_search_start = 0;
+  std::size_t search_position = 0;
   for (;;)
   {
     // Determine the range of the data to be searched.
@@ -272,7 +272,7 @@ std::size_t read_until(SyncReadStream& s,
     typedef asio::buffers_iterator<const_buffers_type> iterator;
     const_buffers_type buffers = b.data();
     iterator begin = iterator::begin(buffers);
-    iterator start = begin + next_search_start;
+    iterator start = begin + search_position;
     iterator end = iterator::end(buffers);
 
     // Look for a match.
@@ -286,12 +286,12 @@ std::size_t read_until(SyncReadStream& s,
     else if (result.first != end)
     {
       // Partial match. Next search needs to start from beginning of match.
-      next_search_start = result.first - begin;
+      search_position = result.first - begin;
     }
     else
     {
       // No match. Next search can start with the new data.
-      next_search_start = end - begin;
+      search_position = end - begin;
     }
 
     // Check if buffer is full.
@@ -302,9 +302,9 @@ std::size_t read_until(SyncReadStream& s,
     }
 
     // Need more data.
-    std::size_t bytes_available =
+    std::size_t bytes_to_read =
       std::min<std::size_t>(512, b.max_size() - b.size());
-    b.commit(s.read_some(b.prepare(bytes_available), ec));
+    b.commit(s.read_some(b.prepare(bytes_to_read), ec));
     if (ec)
       return 0;
   }
@@ -324,82 +324,94 @@ inline std::size_t read_until(SyncReadStream& s,
 namespace detail
 {
   template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
-  class read_until_delim_handler
+  class read_until_delim_op
   {
   public:
-    read_until_delim_handler(AsyncReadStream& stream,
-        asio::basic_streambuf<Allocator>& streambuf, char delim,
-        std::size_t next_search_start, ReadHandler handler)
+    read_until_delim_op(AsyncReadStream& stream,
+        asio::basic_streambuf<Allocator>& streambuf,
+        char delim, ReadHandler handler)
       : stream_(stream),
         streambuf_(streambuf),
         delim_(delim),
-        next_search_start_(next_search_start),
+        search_position_(0),
         handler_(handler)
     {
     }
 
     void operator()(const asio::error_code& ec,
-        std::size_t bytes_transferred)
+        std::size_t bytes_transferred, int start = 0)
     {
-      // Check for errors.
-      if (ec)
+      const std::size_t not_found = (std::numeric_limits<std::size_t>::max)();
+      std::size_t bytes_to_read;
+      switch (start)
       {
-        std::size_t bytes = 0;
-        handler_(ec, bytes);
-        return;
+      case 1:
+        for (;;)
+        {
+          {
+            // Determine the range of the data to be searched.
+            typedef typename asio::basic_streambuf<
+              Allocator>::const_buffers_type const_buffers_type;
+            typedef asio::buffers_iterator<const_buffers_type> iterator;
+            const_buffers_type buffers = streambuf_.data();
+            iterator begin = iterator::begin(buffers);
+            iterator start = begin + search_position_;
+            iterator end = iterator::end(buffers);
+
+            // Look for a match.
+            iterator iter = std::find(start, end, delim_);
+            if (iter != end)
+            {
+              // Found a match. We're done.
+              search_position_ = iter - begin + 1;
+              bytes_to_read = 0;
+            }
+
+            // No match yet. Check if buffer is full.
+            else if (streambuf_.size() == streambuf_.max_size())
+            {
+              search_position_ = not_found;
+              bytes_to_read = 0;
+            }
+
+            // Need to read some more data.
+            else
+            {
+              // Next search can start with the new data.
+              search_position_ = end - begin;
+              bytes_to_read = std::min<std::size_t>(
+                  512, streambuf_.max_size() - streambuf_.size());
+            }
+          }
+
+          // Check if we're done.
+          if (!start && bytes_to_read == 0)
+            break;
+
+          // Start a new asynchronous read operation to obtain more data.
+          stream_.async_read_some(streambuf_.prepare(bytes_to_read), *this);
+          return; default:
+          streambuf_.commit(bytes_transferred);
+          if (ec || bytes_transferred == 0)
+            break;
+        }
+
+        handler_(search_position_ == not_found ? error::not_found : ec,
+            ec || search_position_ == not_found ? 0 : search_position_);
       }
-
-      // Commit received data to streambuf's get area.
-      streambuf_.commit(bytes_transferred);
-
-      // Determine the range of the data to be searched.
-      typedef typename asio::basic_streambuf<
-        Allocator>::const_buffers_type const_buffers_type;
-      typedef asio::buffers_iterator<const_buffers_type> iterator;
-      const_buffers_type buffers = streambuf_.data();
-      iterator begin = iterator::begin(buffers);
-      iterator start = begin + next_search_start_;
-      iterator end = iterator::end(buffers);
-
-      // Look for a match.
-      iterator iter = std::find(start, end, delim_);
-      if (iter != end)
-      {
-        // Found a match. We're done.
-        std::size_t bytes = iter - begin + 1;
-        handler_(ec, bytes);
-        return;
-      }
-
-      // No match. Check if buffer is full.
-      if (streambuf_.size() == streambuf_.max_size())
-      {
-        std::size_t bytes = 0;
-        asio::error_code ec(error::not_found);
-        handler_(ec, bytes);
-        return;
-      }
-
-      // Next search can start with the new data.
-      next_search_start_ = end - begin;
-
-      // Start a new asynchronous read operation to obtain more data.
-      std::size_t bytes_available =
-        std::min<std::size_t>(512, streambuf_.max_size() - streambuf_.size());
-      stream_.async_read_some(streambuf_.prepare(bytes_available), *this);
     }
 
   //private:
     AsyncReadStream& stream_;
     asio::basic_streambuf<Allocator>& streambuf_;
     char delim_;
-    std::size_t next_search_start_;
+    std::size_t search_position_;
     ReadHandler handler_;
   };
 
   template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
   inline void* asio_handler_allocate(std::size_t size,
-      read_until_delim_handler<AsyncReadStream,
+      read_until_delim_op<AsyncReadStream,
         Allocator, ReadHandler>* this_handler)
   {
     return asio_handler_alloc_helpers::allocate(
@@ -408,7 +420,7 @@ namespace detail
 
   template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
   inline void asio_handler_deallocate(void* pointer, std::size_t size,
-      read_until_delim_handler<AsyncReadStream,
+      read_until_delim_op<AsyncReadStream,
         Allocator, ReadHandler>* this_handler)
   {
     asio_handler_alloc_helpers::deallocate(
@@ -418,7 +430,7 @@ namespace detail
   template <typename Function, typename AsyncReadStream, typename Allocator,
       typename ReadHandler>
   inline void asio_handler_invoke(const Function& function,
-      read_until_delim_handler<AsyncReadStream,
+      read_until_delim_op<AsyncReadStream,
         Allocator, ReadHandler>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
@@ -430,132 +442,114 @@ template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
 void async_read_until(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, char delim, ReadHandler handler)
 {
-  // Determine the range of the data to be searched.
-  typedef typename asio::basic_streambuf<
-    Allocator>::const_buffers_type const_buffers_type;
-  typedef asio::buffers_iterator<const_buffers_type> iterator;
-  const_buffers_type buffers = b.data();
-  iterator begin = iterator::begin(buffers);
-  iterator end = iterator::end(buffers);
-
-  // Look for a match.
-  iterator iter = std::find(begin, end, delim);
-  if (iter != end)
-  {
-    // Found a match. We're done.
-    asio::error_code ec;
-    std::size_t bytes = iter - begin + 1;
-    s.get_io_service().post(detail::bind_handler(handler, ec, bytes));
-    return;
-  }
-
-  // No match. Check if buffer is full.
-  if (b.size() == b.max_size())
-  {
-    asio::error_code ec(error::not_found);
-    s.get_io_service().post(detail::bind_handler(handler, ec, 0));
-    return;
-  }
-
-  // Start a new asynchronous read operation to obtain more data.
-  std::size_t bytes_available =
-    std::min<std::size_t>(512, b.max_size() - b.size());
-  s.async_read_some(b.prepare(bytes_available),
-      detail::read_until_delim_handler<AsyncReadStream, Allocator, ReadHandler>(
-        s, b, delim, end - begin, handler));
+  detail::read_until_delim_op<
+    AsyncReadStream, Allocator, ReadHandler>(
+      s, b, delim, handler)(
+        asio::error_code(), 0, 1);
 }
 
 namespace detail
 {
   template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
-  class read_until_delim_string_handler
+  class read_until_delim_string_op
   {
   public:
-    read_until_delim_string_handler(AsyncReadStream& stream,
+    read_until_delim_string_op(AsyncReadStream& stream,
         asio::basic_streambuf<Allocator>& streambuf,
-        const std::string& delim, std::size_t next_search_start,
-        ReadHandler handler)
+        const std::string& delim, ReadHandler handler)
       : stream_(stream),
         streambuf_(streambuf),
         delim_(delim),
-        next_search_start_(next_search_start),
+        search_position_(0),
         handler_(handler)
     {
     }
 
     void operator()(const asio::error_code& ec,
-        std::size_t bytes_transferred)
+        std::size_t bytes_transferred, int start = 0)
     {
-      // Check for errors.
-      if (ec)
+      const std::size_t not_found = (std::numeric_limits<std::size_t>::max)();
+      std::size_t bytes_to_read;
+      switch (start)
       {
-        std::size_t bytes = 0;
-        handler_(ec, bytes);
-        return;
-      }
-
-      // Commit received data to streambuf's get area.
-      streambuf_.commit(bytes_transferred);
-
-      // Determine the range of the data to be searched.
-      typedef typename asio::basic_streambuf<
-        Allocator>::const_buffers_type const_buffers_type;
-      typedef asio::buffers_iterator<const_buffers_type> iterator;
-      const_buffers_type buffers = streambuf_.data();
-      iterator begin = iterator::begin(buffers);
-      iterator start = begin + next_search_start_;
-      iterator end = iterator::end(buffers);
-
-      // Look for a match.
-      std::pair<iterator, bool> result = asio::detail::partial_search(
-          start, end, delim_.begin(), delim_.end());
-      if (result.first != end)
-      {
-        if (result.second)
+      case 1:
+        for (;;)
         {
-          // Full match. We're done.
-          std::size_t bytes = result.first - begin + delim_.length();
-          handler_(ec, bytes);
-          return;
-        }
-        else
-        {
-          // Partial match. Next search needs to start from beginning of match.
-          next_search_start_ = result.first - begin;
-        }
-      }
-      else
-      {
-        // No match. Next search can start with the new data.
-        next_search_start_ = end - begin;
-      }
+          {
+            // Determine the range of the data to be searched.
+            typedef typename asio::basic_streambuf<
+              Allocator>::const_buffers_type const_buffers_type;
+            typedef asio::buffers_iterator<const_buffers_type> iterator;
+            const_buffers_type buffers = streambuf_.data();
+            iterator begin = iterator::begin(buffers);
+            iterator start = begin + search_position_;
+            iterator end = iterator::end(buffers);
 
-      // Check if buffer is full.
-      if (streambuf_.size() == streambuf_.max_size())
-      {
-        std::size_t bytes = 0;
-        asio::error_code ec2(error::not_found);
-        handler_(ec2, bytes);
-        return;
-      }
+            // Look for a match.
+            std::pair<iterator, bool> result = detail::partial_search(
+                start, end, delim_.begin(), delim_.end());
+            if (result.first != end && result.second)
+            {
+              // Full match. We're done.
+              search_position_ = result.first - begin + delim_.length();
+              bytes_to_read = 0;
+            }
 
-      // Start a new asynchronous read operation to obtain more data.
-      std::size_t bytes_available =
-        std::min<std::size_t>(512, streambuf_.max_size() - streambuf_.size());
-      stream_.async_read_some(streambuf_.prepare(bytes_available), *this);
+            // No match yet. Check if buffer is full.
+            else if (streambuf_.size() == streambuf_.max_size())
+            {
+              search_position_ = not_found;
+              bytes_to_read = 0;
+            }
+
+            // Need to read some more data.
+            else
+            {
+              if (result.first != end)
+              {
+                // Partial match. Next search needs to start from beginning of
+                // match.
+                search_position_ = result.first - begin;
+              }
+              else
+              {
+                // Next search can start with the new data.
+                search_position_ = end - begin;
+              }
+
+              bytes_to_read = std::min<std::size_t>(
+                  512, streambuf_.max_size() - streambuf_.size());
+            }
+          }
+
+          // Check if we're done.
+          if (!start && bytes_to_read == 0)
+            break;
+
+          // Start a new asynchronous read operation to obtain more data.
+          stream_.async_read_some(streambuf_.prepare(bytes_to_read), *this);
+          return; default:
+          streambuf_.commit(bytes_transferred);
+          if (ec || bytes_transferred == 0)
+            break;
+        }
+
+        handler_(search_position_ == not_found ? error::not_found : ec,
+            ec || search_position_ == not_found ? 0 : search_position_);
+      }
     }
 
   //private:
     AsyncReadStream& stream_;
     asio::basic_streambuf<Allocator>& streambuf_;
     std::string delim_;
-    std::size_t next_search_start_;
+    std::size_t search_position_;
     ReadHandler handler_;
   };
 
   template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
   inline void* asio_handler_allocate(std::size_t size,
-      read_until_delim_string_handler<AsyncReadStream,
+      read_until_delim_string_op<AsyncReadStream,
         Allocator, ReadHandler>* this_handler)
   {
     return asio_handler_alloc_helpers::allocate(
@@ -564,7 +558,7 @@ namespace detail
 
   template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
   inline void asio_handler_deallocate(void* pointer, std::size_t size,
-      read_until_delim_string_handler<AsyncReadStream,
+      read_until_delim_string_op<AsyncReadStream,
         Allocator, ReadHandler>* this_handler)
   {
     asio_handler_alloc_helpers::deallocate(
@@ -574,7 +568,7 @@ namespace detail
   template <typename Function, typename AsyncReadStream,
       typename Allocator, typename ReadHandler>
   inline void asio_handler_invoke(const Function& function,
-      read_until_delim_string_handler<AsyncReadStream,
+      read_until_delim_string_op<AsyncReadStream,
         Allocator, ReadHandler>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
@@ -587,152 +581,119 @@ void async_read_until(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, const std::string& delim,
     ReadHandler handler)
 {
-  // Determine the range of the data to be searched.
-  typedef typename asio::basic_streambuf<
-    Allocator>::const_buffers_type const_buffers_type;
-  typedef asio::buffers_iterator<const_buffers_type> iterator;
-  const_buffers_type buffers = b.data();
-  iterator begin = iterator::begin(buffers);
-  iterator end = iterator::end(buffers);
-
-  // Look for a match.
-  std::size_t next_search_start;
-  std::pair<iterator, bool> result = asio::detail::partial_search(
-      begin, end, delim.begin(), delim.end());
-  if (result.first != end)
-  {
-    if (result.second)
-    {
-      // Full match. We're done.
-      asio::error_code ec;
-      std::size_t bytes = result.first - begin + delim.length();
-      s.get_io_service().post(detail::bind_handler(handler, ec, bytes));
-      return;
-    }
-    else
-    {
-      // Partial match. Next search needs to start from beginning of match.
-      next_search_start = result.first - begin;
-    }
-  }
-  else
-  {
-    // No match. Next search can start with the new data.
-    next_search_start = end - begin;
-  }
-
-  // Check if buffer is full.
-  if (b.size() == b.max_size())
-  {
-    asio::error_code ec(error::not_found);
-    s.get_io_service().post(detail::bind_handler(handler, ec, 0));
-    return;
-  }
-
-  // Start a new asynchronous read operation to obtain more data.
-  std::size_t bytes_available =
-    std::min<std::size_t>(512, b.max_size() - b.size());
-  s.async_read_some(b.prepare(bytes_available),
-      detail::read_until_delim_string_handler<
-        AsyncReadStream, Allocator, ReadHandler>(
-          s, b, delim, next_search_start, handler));
+  detail::read_until_delim_string_op<
+    AsyncReadStream, Allocator, ReadHandler>(
+      s, b, delim, handler)(
+        asio::error_code(), 0, 1);
 }
 
 namespace detail
 {
   template <typename AsyncReadStream, typename Allocator,
       typename RegEx, typename ReadHandler>
-  class read_until_expr_handler
+  class read_until_expr_op
   {
   public:
-    read_until_expr_handler(AsyncReadStream& stream,
+    read_until_expr_op(AsyncReadStream& stream,
         asio::basic_streambuf<Allocator>& streambuf,
-        const boost::regex& expr, std::size_t next_search_start,
-        ReadHandler handler)
+        const boost::regex& expr, ReadHandler handler)
       : stream_(stream),
         streambuf_(streambuf),
         expr_(expr),
-        next_search_start_(next_search_start),
+        search_position_(0),
         handler_(handler)
     {
     }
 
     void operator()(const asio::error_code& ec,
-        std::size_t bytes_transferred)
+        std::size_t bytes_transferred, int start = 0)
     {
-      // Check for errors.
-      if (ec)
+      const std::size_t not_found = (std::numeric_limits<std::size_t>::max)();
+      std::size_t bytes_to_read;
+      switch (start)
       {
-        std::size_t bytes = 0;
-        handler_(ec, bytes);
-        return;
-      }
-
-      // Commit received data to streambuf's get area.
-      streambuf_.commit(bytes_transferred);
-
-      // Determine the range of the data to be searched.
-      typedef typename asio::basic_streambuf<
-        Allocator>::const_buffers_type const_buffers_type;
-      typedef asio::buffers_iterator<const_buffers_type> iterator;
-      const_buffers_type buffers = streambuf_.data();
-      iterator begin = iterator::begin(buffers);
-      iterator start = begin + next_search_start_;
-      iterator end = iterator::end(buffers);
-
-      // Look for a match.
-      boost::match_results<iterator,
-        typename std::vector<boost::sub_match<iterator> >::allocator_type>
-          match_results;
-      if (regex_search(start, end, match_results, expr_,
-            boost::match_default | boost::match_partial))
-      {
-        if (match_results[0].matched)
+      case 1:
+        for (;;)
         {
-          // Full match. We're done.
-          std::size_t bytes = match_results[0].second - begin;
-          handler_(ec, bytes);
-          return;
-        }
-        else
-        {
-          // Partial match. Next search needs to start from beginning of match.
-          next_search_start_ = match_results[0].first - begin;
-        }
-      }
-      else
-      {
-        // No match. Next search can start with the new data.
-        next_search_start_ = end - begin;
-      }
+          {
+            // Determine the range of the data to be searched.
+            typedef typename asio::basic_streambuf<
+              Allocator>::const_buffers_type const_buffers_type;
+            typedef asio::buffers_iterator<const_buffers_type> iterator;
+            const_buffers_type buffers = streambuf_.data();
+            iterator begin = iterator::begin(buffers);
+            iterator start = begin + search_position_;
+            iterator end = iterator::end(buffers);
 
-      // Check if buffer is full.
-      if (streambuf_.size() == streambuf_.max_size())
-      {
-        std::size_t bytes = 0;
-        asio::error_code ec(error::not_found);
-        handler_(ec, bytes);
-        return;
-      }
+            // Look for a match.
+            boost::match_results<iterator,
+              typename std::vector<boost::sub_match<iterator> >::allocator_type>
+                match_results;
+            bool match = regex_search(start, end, match_results, expr_,
+                boost::match_default | boost::match_partial);
+            if (match && match_results[0].matched)
+            {
+              // Full match. We're done.
+              search_position_ = match_results[0].second - begin;
+              bytes_to_read = 0;
+            }
 
-      // Start a new asynchronous read operation to obtain more data.
-      std::size_t bytes_available =
-        std::min<std::size_t>(512, streambuf_.max_size() - streambuf_.size());
-      stream_.async_read_some(streambuf_.prepare(bytes_available), *this);
+            // No match yet. Check if buffer is full.
+            else if (streambuf_.size() == streambuf_.max_size())
+            {
+              search_position_ = not_found;
+              bytes_to_read = 0;
+            }
+
+            // Need to read some more data.
+            else
+            {
+              if (match)
+              {
+                // Partial match. Next search needs to start from beginning of
+                // match.
+                search_position_ = match_results[0].first - begin;
+              }
+              else
+              {
+                // Next search can start with the new data.
+                search_position_ = end - begin;
+              }
+
+              bytes_to_read = std::min<std::size_t>(
+                  512, streambuf_.max_size() - streambuf_.size());
+            }
+          }
+
+          // Check if we're done.
+          if (!start && bytes_to_read == 0)
+            break;
+
+          // Start a new asynchronous read operation to obtain more data.
+          stream_.async_read_some(streambuf_.prepare(bytes_to_read), *this);
+          return; default:
+          streambuf_.commit(bytes_transferred);
+          if (ec || bytes_transferred == 0)
+            break;
+        }
+
+        handler_(search_position_ == not_found ? error::not_found : ec,
+            ec || search_position_ == not_found ? 0 : search_position_);
+      }
     }
 
   //private:
     AsyncReadStream& stream_;
     asio::basic_streambuf<Allocator>& streambuf_;
     RegEx expr_;
-    std::size_t next_search_start_;
+    std::size_t search_position_;
     ReadHandler handler_;
   };
 
   template <typename AsyncReadStream, typename Allocator,
       typename RegEx, typename ReadHandler>
   inline void* asio_handler_allocate(std::size_t size,
-      read_until_expr_handler<AsyncReadStream,
+      read_until_expr_op<AsyncReadStream,
         Allocator, RegEx, ReadHandler>* this_handler)
   {
     return asio_handler_alloc_helpers::allocate(
@@ -742,7 +703,7 @@ namespace detail
   template <typename AsyncReadStream, typename Allocator,
       typename RegEx, typename ReadHandler>
   inline void asio_handler_deallocate(void* pointer, std::size_t size,
-      read_until_expr_handler<AsyncReadStream,
+      read_until_expr_op<AsyncReadStream,
         Allocator, RegEx, ReadHandler>* this_handler)
   {
     asio_handler_alloc_helpers::deallocate(
@@ -752,7 +713,7 @@ namespace detail
   template <typename Function, typename AsyncReadStream, typename Allocator,
       typename RegEx, typename ReadHandler>
   inline void asio_handler_invoke(const Function& function,
-      read_until_expr_handler<AsyncReadStream,
+      read_until_expr_op<AsyncReadStream,
         Allocator, RegEx, ReadHandler>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
@@ -765,148 +726,115 @@ void async_read_until(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, const boost::regex& expr,
     ReadHandler handler)
 {
-  // Determine the range of the data to be searched.
-  typedef typename asio::basic_streambuf<
-    Allocator>::const_buffers_type const_buffers_type;
-  typedef asio::buffers_iterator<const_buffers_type> iterator;
-  const_buffers_type buffers = b.data();
-  iterator begin = iterator::begin(buffers);
-  iterator end = iterator::end(buffers);
-
-  // Look for a match.
-  std::size_t next_search_start;
-  boost::match_results<iterator,
-    typename std::vector<boost::sub_match<iterator> >::allocator_type>
-      match_results;
-  if (regex_search(begin, end, match_results, expr,
-        boost::match_default | boost::match_partial))
-  {
-    if (match_results[0].matched)
-    {
-      // Full match. We're done.
-      asio::error_code ec;
-      std::size_t bytes = match_results[0].second - begin;
-      s.get_io_service().post(detail::bind_handler(handler, ec, bytes));
-      return;
-    }
-    else
-    {
-      // Partial match. Next search needs to start from beginning of match.
-      next_search_start = match_results[0].first - begin;
-    }
-  }
-  else
-  {
-    // No match. Next search can start with the new data.
-    next_search_start = end - begin;
-  }
-
-  // Check if buffer is full.
-  if (b.size() == b.max_size())
-  {
-    asio::error_code ec(error::not_found);
-    s.get_io_service().post(detail::bind_handler(handler, ec, 0));
-    return;
-  }
-
-  // Start a new asynchronous read operation to obtain more data.
-  std::size_t bytes_available =
-    std::min<std::size_t>(512, b.max_size() - b.size());
-  s.async_read_some(b.prepare(bytes_available),
-      detail::read_until_expr_handler<AsyncReadStream,
-        Allocator, boost::regex, ReadHandler>(
-          s, b, expr, next_search_start, handler));
+  detail::read_until_expr_op<AsyncReadStream,
+    Allocator, boost::regex, ReadHandler>(
+      s, b, expr, handler)(
+        asio::error_code(), 0, 1);
 }
 
 namespace detail
 {
   template <typename AsyncReadStream, typename Allocator,
       typename MatchCondition, typename ReadHandler>
-  class read_until_match_handler
+  class read_until_match_op
   {
   public:
-    read_until_match_handler(AsyncReadStream& stream,
+    read_until_match_op(AsyncReadStream& stream,
         asio::basic_streambuf<Allocator>& streambuf,
-        MatchCondition match_condition, std::size_t next_search_start,
-        ReadHandler handler)
+        MatchCondition match_condition, ReadHandler handler)
       : stream_(stream),
         streambuf_(streambuf),
         match_condition_(match_condition),
-        next_search_start_(next_search_start),
+        search_position_(0),
         handler_(handler)
     {
     }
 
     void operator()(const asio::error_code& ec,
-        std::size_t bytes_transferred)
+        std::size_t bytes_transferred, int start = 0)
     {
-      // Check for errors.
-      if (ec)
+      const std::size_t not_found = (std::numeric_limits<std::size_t>::max)();
+      std::size_t bytes_to_read;
+      switch (start)
       {
-        std::size_t bytes = 0;
-        handler_(ec, bytes);
-        return;
-      }
+      case 1:
+        for (;;)
+        {
+          {
+            // Determine the range of the data to be searched.
+            typedef typename asio::basic_streambuf<
+              Allocator>::const_buffers_type const_buffers_type;
+            typedef asio::buffers_iterator<const_buffers_type> iterator;
+            const_buffers_type buffers = streambuf_.data();
+            iterator begin = iterator::begin(buffers);
+            iterator start = begin + search_position_;
+            iterator end = iterator::end(buffers);
 
-      // Commit received data to streambuf's get area.
-      streambuf_.commit(bytes_transferred);
+            // Look for a match.
+            std::pair<iterator, bool> result = match_condition_(start, end);
+            if (result.second)
+            {
+              // Full match. We're done.
+              search_position_ = result.first - begin;
+              bytes_to_read = 0;
+            }
 
-      // Determine the range of the data to be searched.
-      typedef typename asio::basic_streambuf<
-        Allocator>::const_buffers_type const_buffers_type;
-      typedef asio::buffers_iterator<const_buffers_type> iterator;
-      const_buffers_type buffers = streambuf_.data();
-      iterator begin = iterator::begin(buffers);
-      iterator start = begin + next_search_start_;
-      iterator end = iterator::end(buffers);
+            // No match yet. Check if buffer is full.
+            else if (streambuf_.size() == streambuf_.max_size())
+            {
+              search_position_ = not_found;
+              bytes_to_read = 0;
+            }
 
-      // Look for a match.
-      std::pair<iterator, bool> result = match_condition_(start, end);
-      if (result.second)
-      {
-        // Full match. We're done.
-        std::size_t bytes = result.first - begin;
-        handler_(ec, bytes);
-        return;
-      }
-      else if (result.first != end)
-      {
-        // Partial match. Next search needs to start from beginning of match.
-        next_search_start_ = result.first - begin;
-      }
-      else
-      {
-        // No match. Next search can start with the new data.
-        next_search_start_ = end - begin;
-      }
+            // Need to read some more data.
+            else
+            {
+              if (result.first != end)
+              {
+                // Partial match. Next search needs to start from beginning of
+                // match.
+                search_position_ = result.first - begin;
+              }
+              else
+              {
+                // Next search can start with the new data.
+                search_position_ = end - begin;
+              }
 
-      // Check if buffer is full.
-      if (streambuf_.size() == streambuf_.max_size())
-      {
-        std::size_t bytes = 0;
-        asio::error_code ec(error::not_found);
-        handler_(ec, bytes);
-        return;
-      }
+              bytes_to_read = std::min<std::size_t>(
+                  512, streambuf_.max_size() - streambuf_.size());
+            }
+          }
 
-      // Start a new asynchronous read operation to obtain more data.
-      std::size_t bytes_available =
-        std::min<std::size_t>(512, streambuf_.max_size() - streambuf_.size());
-      stream_.async_read_some(streambuf_.prepare(bytes_available), *this);
+          // Check if we're done.
+          if (!start && bytes_to_read == 0)
+            break;
+
+          // Start a new asynchronous read operation to obtain more data.
+          stream_.async_read_some(streambuf_.prepare(bytes_to_read), *this);
+          return; default:
+          streambuf_.commit(bytes_transferred);
+          if (ec || bytes_transferred == 0)
+            break;
+        }
+
+        handler_(search_position_ == not_found ? error::not_found : ec,
+            ec || search_position_ == not_found ? 0 : search_position_);
+      }
     }
 
   //private:
     AsyncReadStream& stream_;
     asio::basic_streambuf<Allocator>& streambuf_;
     MatchCondition match_condition_;
-    std::size_t next_search_start_;
+    std::size_t search_position_;
     ReadHandler handler_;
   };
 
   template <typename AsyncReadStream, typename Allocator,
       typename MatchCondition, typename ReadHandler>
   inline void* asio_handler_allocate(std::size_t size,
-      read_until_match_handler<AsyncReadStream,
+      read_until_match_op<AsyncReadStream,
         Allocator, MatchCondition, ReadHandler>* this_handler)
   {
     return asio_handler_alloc_helpers::allocate(
@@ -916,7 +844,7 @@ namespace detail
   template <typename AsyncReadStream, typename Allocator,
       typename MatchCondition, typename ReadHandler>
   inline void asio_handler_deallocate(void* pointer, std::size_t size,
-      read_until_match_handler<AsyncReadStream,
+      read_until_match_op<AsyncReadStream,
         Allocator, MatchCondition, ReadHandler>* this_handler)
   {
     asio_handler_alloc_helpers::deallocate(
@@ -926,7 +854,7 @@ namespace detail
   template <typename Function, typename AsyncReadStream, typename Allocator,
       typename MatchCondition, typename ReadHandler>
   inline void asio_handler_invoke(const Function& function,
-      read_until_match_handler<AsyncReadStream,
+      read_until_match_op<AsyncReadStream,
         Allocator, MatchCondition, ReadHandler>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
@@ -941,51 +869,10 @@ void async_read_until(AsyncReadStream& s,
     MatchCondition match_condition, ReadHandler handler,
     typename boost::enable_if<is_match_condition<MatchCondition> >::type*)
 {
-  // Determine the range of the data to be searched.
-  typedef typename asio::basic_streambuf<
-    Allocator>::const_buffers_type const_buffers_type;
-  typedef asio::buffers_iterator<const_buffers_type> iterator;
-  const_buffers_type buffers = b.data();
-  iterator begin = iterator::begin(buffers);
-  iterator end = iterator::end(buffers);
-
-  // Look for a match.
-  std::size_t next_search_start;
-  std::pair<iterator, bool> result = match_condition(begin, end);
-  if (result.second)
-  {
-    // Full match. We're done.
-    asio::error_code ec;
-    std::size_t bytes = result.first - begin;
-    s.get_io_service().post(detail::bind_handler(handler, ec, bytes));
-    return;
-  }
-  else if (result.first != end)
-  {
-    // Partial match. Next search needs to start from beginning of match.
-    next_search_start = result.first - begin;
-  }
-  else
-  {
-    // No match. Next search can start with the new data.
-    next_search_start = end - begin;
-  }
-
-  // Check if buffer is full.
-  if (b.size() == b.max_size())
-  {
-    asio::error_code ec(error::not_found);
-    s.get_io_service().post(detail::bind_handler(handler, ec, 0));
-    return;
-  }
-
-  // Start a new asynchronous read operation to obtain more data.
-  std::size_t bytes_available =
-    std::min<std::size_t>(512, b.max_size() - b.size());
-  s.async_read_some(b.prepare(bytes_available),
-      detail::read_until_match_handler<
-        AsyncReadStream, Allocator, MatchCondition, ReadHandler>(
-          s, b, match_condition, next_search_start, handler));
+  detail::read_until_match_op<
+    AsyncReadStream, Allocator, MatchCondition, ReadHandler>(
+      s, b, match_condition, handler)(
+        asio::error_code(), 0, 1);
 }
 
 } // namespace asio
