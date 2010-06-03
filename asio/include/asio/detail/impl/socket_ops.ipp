@@ -1360,6 +1360,8 @@ int getpeername(socket_type s, socket_addr_type* addr,
     ec = asio::error_code();
     return 0;
   }
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  (void)cached;
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
   clear_last_error();

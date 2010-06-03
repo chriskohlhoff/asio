@@ -152,8 +152,7 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
   io_service_.work_started();
 }
 
-void epoll_reactor::cancel_ops(socket_type descriptor,
-    per_descriptor_data& descriptor_data)
+void epoll_reactor::cancel_ops(socket_type, per_descriptor_data& descriptor_data)
 {
   mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
 
