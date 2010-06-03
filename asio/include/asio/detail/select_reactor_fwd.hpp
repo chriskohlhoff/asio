@@ -18,7 +18,6 @@
 namespace asio {
 namespace detail {
 
-template <bool Own_Thread>
 class select_reactor;
 
 } // namespace detail

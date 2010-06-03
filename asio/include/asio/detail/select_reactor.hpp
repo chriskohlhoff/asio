@@ -30,21 +30,23 @@
 #include "asio/detail/signal_blocker.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
-#include "asio/detail/thread.hpp"
 #include "asio/detail/timer_op.hpp"
 #include "asio/detail/timer_queue_base.hpp"
 #include "asio/detail/timer_queue_fwd.hpp"
 #include "asio/detail/timer_queue_set.hpp"
 #include "asio/io_service.hpp"
 
+#if defined(ASIO_HAS_IOCP)
+# include "asio/detail/thread.hpp"
+#endif // defined(ASIO_HAS_IOCP)
+
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
 
-template <bool Own_Thread>
 class select_reactor
-  : public asio::detail::service_base<select_reactor<Own_Thread> >
+  : public asio::detail::service_base<select_reactor>
 {
 public:
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -62,21 +64,21 @@ public:
 
   // Constructor.
   select_reactor(asio::io_service& io_service)
-    : asio::detail::service_base<
-        select_reactor<Own_Thread> >(io_service),
+    : asio::detail::service_base<select_reactor>(io_service),
       io_service_(use_service<io_service_impl>(io_service)),
       mutex_(),
       interrupter_(),
+#if defined(ASIO_HAS_IOCP)
       stop_thread_(false),
       thread_(0),
+#endif // defined(ASIO_HAS_IOCP)
       shutdown_(false)
   {
-    if (Own_Thread)
-    {
-      asio::detail::signal_blocker sb;
-      thread_ = new asio::detail::thread(
-          bind_handler(&select_reactor::call_run_thread, this));
-    }
+#if defined(ASIO_HAS_IOCP)
+    asio::detail::signal_blocker sb;
+    thread_ = new asio::detail::thread(
+        bind_handler(&select_reactor::call_run_thread, this));
+#endif // defined(ASIO_HAS_IOCP)
   }
 
   // Destructor.
@@ -90,19 +92,20 @@ public:
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
     shutdown_ = true;
+#if defined(ASIO_HAS_IOCP)
     stop_thread_ = true;
+#endif // defined(ASIO_HAS_IOCP)
     lock.unlock();
 
-    if (Own_Thread)
+#if defined(ASIO_HAS_IOCP)
+    if (thread_)
     {
-      if (thread_)
-      {
-        interrupter_.interrupt();
-        thread_->join();
-        delete thread_;
-        thread_ = 0;
-      }
+      interrupter_.interrupt();
+      thread_->join();
+      delete thread_;
+      thread_ = 0;
     }
+#endif // defined(ASIO_HAS_IOCP)
 
     op_queue<operation> ops;
 
@@ -213,10 +216,11 @@ public:
   {
     asio::detail::mutex::scoped_lock lock(mutex_);
 
+#if defined(ASIO_HAS_IOCP)
     // Check if the thread is supposed to stop.
-    if (Own_Thread)
-      if (stop_thread_)
-        return;
+    if (stop_thread_)
+      return;
+#endif // defined(ASIO_HAS_IOCP)
 
     // Set up the descriptor sets.
     fd_set_adapter fds[max_select_ops];
@@ -290,31 +294,27 @@ public:
   }
 
 private:
+#if defined(ASIO_HAS_IOCP)
   // Run the select loop in the thread.
   void run_thread()
   {
-    if (Own_Thread)
+    asio::detail::mutex::scoped_lock lock(mutex_);
+    while (!stop_thread_)
     {
-      asio::detail::mutex::scoped_lock lock(mutex_);
-      while (!stop_thread_)
-      {
-        lock.unlock();
-        op_queue<operation> ops;
-        run(true, ops);
-        io_service_.post_deferred_completions(ops);
-        lock.lock();
-      }
+      lock.unlock();
+      op_queue<operation> ops;
+      run(true, ops);
+      io_service_.post_deferred_completions(ops);
+      lock.lock();
     }
   }
 
   // Entry point for the select loop thread.
   static void call_run_thread(select_reactor* reactor)
   {
-    if (Own_Thread)
-    {
-      reactor->run_thread();
-    }
+    reactor->run_thread();
   }
+#endif // defined(ASIO_HAS_IOCP)
 
   // Get the timeout value for the select call.
   timeval* get_timeout(timeval& tv)
@@ -357,11 +357,13 @@ private:
   // The timer queues.
   timer_queue_set timer_queues_;
 
+#if defined(ASIO_HAS_IOCP)
   // Does the reactor loop thread need to stop.
   bool stop_thread_;
 
   // The thread that is running the reactor loop.
   asio::detail::thread* thread_;
+#endif // defined(ASIO_HAS_IOCP)
 
   // Whether the service has been shut down.
   bool shutdown_;

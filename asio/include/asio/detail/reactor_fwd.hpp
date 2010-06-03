@@ -33,7 +33,7 @@ namespace asio {
 namespace detail {
 
 #if defined(ASIO_HAS_IOCP)
-typedef select_reactor<true> reactor;
+typedef select_reactor reactor;
 #elif defined(ASIO_HAS_EPOLL)
 typedef epoll_reactor reactor;
 #elif defined(ASIO_HAS_KQUEUE)
@@ -41,7 +41,7 @@ typedef kqueue_reactor reactor;
 #elif defined(ASIO_HAS_DEV_POLL)
 typedef dev_poll_reactor reactor;
 #else
-typedef select_reactor<false> reactor;
+typedef select_reactor reactor;
 #endif
 
 } // namespace detail

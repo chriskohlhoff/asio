@@ -41,7 +41,7 @@ typedef kqueue_reactor timer_scheduler;
 #elif defined(ASIO_HAS_DEV_POLL)
 typedef dev_poll_reactor timer_scheduler;
 #else
-typedef select_reactor<false> timer_scheduler;
+typedef select_reactor timer_scheduler;
 #endif
 
 } // namespace detail
