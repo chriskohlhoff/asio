@@ -171,8 +171,8 @@ namespace detail
 
   template <typename AsyncRandomAccessWriteDevice,
       typename CompletionCondition, typename WriteHandler>
-  class write_at_op<AsyncRandomAccessWriteDevice, asio::mutable_buffers_1,
-      CompletionCondition, WriteHandler>
+  class write_at_op<AsyncRandomAccessWriteDevice,
+      asio::mutable_buffers_1, CompletionCondition, WriteHandler>
     : detail::base_from_completion_cond<CompletionCondition>
   {
   public:
