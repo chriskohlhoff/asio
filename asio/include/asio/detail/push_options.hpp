@@ -10,12 +10,6 @@
 
 // No header guard
 
-#if defined(OOPS)
-#error oops
-#else
-#define OOPS
-#endif
-
 #if defined(__COMO__)
 
 // Comeau C++
