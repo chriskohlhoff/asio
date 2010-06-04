@@ -75,7 +75,7 @@ void kqueue_reactor::init_task()
 }
 
 int kqueue_reactor::register_descriptor(socket_type descriptor,
-    per_descriptor_data& descriptor_data)
+    kqueue_reactor::per_descriptor_data& descriptor_data)
 {
   mutex::scoped_lock lock(registered_descriptors_mutex_);
 
@@ -89,7 +89,7 @@ int kqueue_reactor::register_descriptor(socket_type descriptor,
 }
 
 void kqueue_reactor::start_op(int op_type, socket_type descriptor,
-    per_descriptor_data& descriptor_data,
+    kqueue_reactor::per_descriptor_data& descriptor_data,
     reactor_op* op, bool allow_speculative)
 {
   mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
@@ -148,7 +148,7 @@ void kqueue_reactor::start_op(int op_type, socket_type descriptor,
 }
 
 void kqueue_reactor::cancel_ops(socket_type,
-    per_descriptor_data& descriptor_data)
+    kqueue_reactor::per_descriptor_data& descriptor_data)
 {
   mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
 
@@ -169,7 +169,7 @@ void kqueue_reactor::cancel_ops(socket_type,
 }
 
 void kqueue_reactor::close_descriptor(socket_type descriptor,
-    per_descriptor_data& descriptor_data)
+    kqueue_reactor::per_descriptor_data& descriptor_data)
 {
   mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
   mutex::scoped_lock descriptors_lock(registered_descriptors_mutex_);

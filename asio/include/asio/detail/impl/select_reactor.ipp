@@ -88,13 +88,14 @@ void select_reactor::init_task()
   io_service_.init_task();
 }
 
-int select_reactor::register_descriptor(socket_type, per_descriptor_data&)
+int select_reactor::register_descriptor(socket_type,
+    select_reactor::per_descriptor_data&)
 {
   return 0;
 }
 
 void select_reactor::start_op(int op_type, socket_type descriptor,
-    per_descriptor_data&, reactor_op* op, bool)
+    select_reactor::per_descriptor_data&, reactor_op* op, bool)
 {
   asio::detail::mutex::scoped_lock lock(mutex_);
   if (!shutdown_)
@@ -106,14 +107,15 @@ void select_reactor::start_op(int op_type, socket_type descriptor,
   }
 }
 
-void select_reactor::cancel_ops(socket_type descriptor, per_descriptor_data&)
+void select_reactor::cancel_ops(socket_type descriptor,
+    select_reactor::per_descriptor_data&)
 {
   asio::detail::mutex::scoped_lock lock(mutex_);
   cancel_ops_unlocked(descriptor, asio::error::operation_aborted);
 }
 
-void select_reactor::close_descriptor(
-    socket_type descriptor, per_descriptor_data&)
+void select_reactor::close_descriptor(socket_type descriptor,
+    select_reactor::per_descriptor_data&)
 {
   asio::detail::mutex::scoped_lock lock(mutex_);
   cancel_ops_unlocked(descriptor, asio::error::operation_aborted);
