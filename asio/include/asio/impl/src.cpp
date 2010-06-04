@@ -31,6 +31,7 @@
 #include "asio/detail/impl/reactive_serial_port_service.ipp"
 #include "asio/detail/impl/reactive_socket_service_base.ipp"
 #include "asio/detail/impl/resolver_service_base.ipp"
+#include "asio/detail/impl/select_reactor.ipp"
 #include "asio/detail/impl/service_registry.ipp"
 #include "asio/detail/impl/socket_ops.ipp"
 #include "asio/detail/impl/socket_select_interrupter.ipp"
