@@ -1,5 +1,5 @@
 //
-// detail/impl/kqueue_reactor.hpp
+// detail/impl/kqueue_reactor.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)

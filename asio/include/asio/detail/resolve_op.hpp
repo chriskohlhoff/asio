@@ -27,7 +27,6 @@
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/operation.hpp"
 #include "asio/detail/socket_ops.hpp"
-#include "asio/detail/weak_ptr.hpp"
 
 #include "asio/detail/push_options.hpp"
 
