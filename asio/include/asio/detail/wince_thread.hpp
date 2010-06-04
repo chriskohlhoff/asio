@@ -19,12 +19,11 @@
 
 #if defined(BOOST_WINDOWS) && defined(UNDER_CE)
 
-#include <boost/throw_exception.hpp>
 #include <memory>
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
-#include "asio/system_error.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -48,11 +47,9 @@ public:
     if (!thread_)
     {
       DWORD last_error = ::GetLastError();
-      asio::system_error e(
-          asio::error_code(last_error,
-            asio::error::get_system_category()),
-          "thread");
-      boost::throw_exception(e);
+      asio::error_code ec(last_error,
+          asio::error::get_system_category());
+      asio::detail::throw_error(ec, "thread");
     }
     arg.release();
   }
