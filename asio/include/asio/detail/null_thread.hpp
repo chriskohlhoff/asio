@@ -19,10 +19,9 @@
 
 #if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
 
-#include <boost/throw_exception.hpp>
 #include "asio/detail/noncopyable.hpp"
+#include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
-#include "asio/system_error.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -35,11 +34,10 @@ class null_thread
 public:
   // Constructor.
   template <typename Function>
-  null_thread(Function f)
+  null_thread(Function)
   {
-    asio::system_error e(
+    asio::detail::throw_error(
         asio::error::operation_not_supported, "thread");
-    boost::throw_exception(e);
   }
 
   // Destructor.
