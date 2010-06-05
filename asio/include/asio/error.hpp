@@ -228,11 +228,35 @@ namespace error {
 
 // boostify: error category definitions end here.
 
-asio::error_code make_error_code(basic_errors e);
-asio::error_code make_error_code(netdb_errors e);
-asio::error_code make_error_code(addrinfo_errors e);
-asio::error_code make_error_code(misc_errors e);
-asio::error_code make_error_code(ssl_errors e);
+inline asio::error_code make_error_code(basic_errors e)
+{
+  return asio::error_code(
+      static_cast<int>(e), get_system_category());
+}
+
+inline asio::error_code make_error_code(netdb_errors e)
+{
+  return asio::error_code(
+      static_cast<int>(e), get_netdb_category());
+}
+
+inline asio::error_code make_error_code(addrinfo_errors e)
+{
+  return asio::error_code(
+      static_cast<int>(e), get_addrinfo_category());
+}
+
+inline asio::error_code make_error_code(misc_errors e)
+{
+  return asio::error_code(
+      static_cast<int>(e), get_misc_category());
+}
+
+inline asio::error_code make_error_code(ssl_errors e)
+{
+  return asio::error_code(
+      static_cast<int>(e), get_ssl_category());
+}
 
 } // namespace error
 } // namespace asio
@@ -245,7 +269,6 @@ asio::error_code make_error_code(ssl_errors e);
 #undef ASIO_GETADDRINFO_ERROR
 #undef ASIO_WIN_OR_POSIX
 
-#include "asio/impl/error.hpp"
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/impl/error.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
