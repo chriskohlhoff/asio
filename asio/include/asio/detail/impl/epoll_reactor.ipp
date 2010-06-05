@@ -97,7 +97,7 @@ void epoll_reactor::init_task()
 }
 
 int epoll_reactor::register_descriptor(socket_type descriptor,
-    per_descriptor_data& descriptor_data)
+    epoll_reactor::per_descriptor_data& descriptor_data)
 {
   mutex::scoped_lock lock(registered_descriptors_mutex_);
 
@@ -118,7 +118,7 @@ int epoll_reactor::register_descriptor(socket_type descriptor,
 }
 
 void epoll_reactor::start_op(int op_type, socket_type descriptor,
-    per_descriptor_data& descriptor_data,
+    epoll_reactor::per_descriptor_data& descriptor_data,
     reactor_op* op, bool allow_speculative)
 {
   mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
@@ -152,7 +152,8 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
   io_service_.work_started();
 }
 
-void epoll_reactor::cancel_ops(socket_type, per_descriptor_data& descriptor_data)
+void epoll_reactor::cancel_ops(socket_type,
+    epoll_reactor::per_descriptor_data& descriptor_data)
 {
   mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
 
@@ -173,7 +174,7 @@ void epoll_reactor::cancel_ops(socket_type, per_descriptor_data& descriptor_data
 }
 
 void epoll_reactor::close_descriptor(socket_type descriptor,
-    per_descriptor_data& descriptor_data)
+    epoll_reactor::per_descriptor_data& descriptor_data)
 {
   mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
   mutex::scoped_lock descriptors_lock(registered_descriptors_mutex_);
