@@ -16,6 +16,7 @@
 # error Do not compile Asio library source with ASIO_HEADER_ONLY defined
 #endif
 
+#include "asio/impl/error.ipp"
 #include "asio/impl/error_code.ipp"
 #include "asio/impl/io_service.ipp"
 #include "asio/impl/serial_port_base.ipp"

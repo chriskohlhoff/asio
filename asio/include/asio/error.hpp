@@ -246,5 +246,8 @@ asio::error_code make_error_code(ssl_errors e);
 #undef ASIO_WIN_OR_POSIX
 
 #include "asio/impl/error.hpp"
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/impl/error.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_ERROR_HPP

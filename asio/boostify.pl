@@ -101,65 +101,8 @@ inline const boost::system::error_category& get_system_category()
 
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
-namespace detail {
-
-class netdb_category : public boost::system::error_category
-{
-public:
-  const char* name() const
-  {
-    return "asio.netdb";
-  }
-
-  std::string message(int value) const
-  {
-    if (value == error::host_not_found)
-      return "Host not found (authoritative)";
-    if (value == error::host_not_found_try_again)
-      return "Host not found (non-authoritative), try again later";
-    if (value == error::no_data)
-      return "The query is valid, but it does not have associated data";
-    if (value == error::no_recovery)
-      return "A non-recoverable error occurred during database lookup";
-    return "asio.netdb error";
-  }
-};
-
-} // namespace detail
-
-inline const boost::system::error_category& get_netdb_category()
-{
-  static detail::netdb_category instance;
-  return instance;
-}
-
-namespace detail {
-
-class addrinfo_category : public boost::system::error_category
-{
-public:
-  const char* name() const
-  {
-    return "asio.addrinfo";
-  }
-
-  std::string message(int value) const
-  {
-    if (value == error::service_not_found)
-      return "Service not found";
-    if (value == error::socket_type_not_supported)
-      return "Socket type not supported";
-    return "asio.addrinfo error";
-  }
-};
-
-} // namespace detail
-
-inline const boost::system::error_category& get_addrinfo_category()
-{
-  static detail::addrinfo_category instance;
-  return instance;
-}
+BOOST_ASIO_DECL const boost::system::error_category& get_netdb_category();
+BOOST_ASIO_DECL const boost::system::error_category& get_addrinfo_category();
 
 #else // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
@@ -175,61 +118,8 @@ inline const boost::system::error_category& get_addrinfo_category()
 
 #endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
-namespace detail {
-
-class misc_category : public boost::system::error_category
-{
-public:
-  const char* name() const
-  {
-    return "asio.misc";
-  }
-
-  std::string message(int value) const
-  {
-    if (value == error::already_open)
-      return "Already open";
-    if (value == error::eof)
-      return "End of file";
-    if (value == error::not_found)
-      return "Element not found";
-    if (value == error::fd_set_failure)
-      return "The descriptor does not fit into the select call's fd_set";
-    return "asio.misc error";
-  }
-};
-
-} // namespace detail
-
-inline const boost::system::error_category& get_misc_category()
-{
-  static detail::misc_category instance;
-  return instance;
-}
-
-namespace detail {
-
-class ssl_category : public boost::system::error_category
-{
-public:
-  const char* name() const
-  {
-    return "asio.ssl";
-  }
-
-  std::string message(int) const
-  {
-    return "asio.ssl error";
-  }
-};
-
-} // namespace detail
-
-inline const boost::system::error_category& get_ssl_category()
-{
-  static detail::ssl_category instance;
-  return instance;
-}
+BOOST_ASIO_DECL const boost::system::error_category& get_misc_category();
+BOOST_ASIO_DECL const boost::system::error_category& get_ssl_category();
 
 static const boost::system::error_category& system_category
   = boost::asio::error::get_system_category();
@@ -276,6 +166,128 @@ template<> struct is_error_code_enum<boost::asio::error::ssl_errors>
 
 namespace asio {
 namespace error {
+EOF
+
+my $error_cat_func_defns = <<"EOF";
+#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
+namespace detail {
+
+class netdb_category : public boost::system::error_category
+{
+public:
+  const char* name() const
+  {
+    return "asio.netdb";
+  }
+
+  std::string message(int value) const
+  {
+    if (value == error::host_not_found)
+      return "Host not found (authoritative)";
+    if (value == error::host_not_found_try_again)
+      return "Host not found (non-authoritative), try again later";
+    if (value == error::no_data)
+      return "The query is valid, but it does not have associated data";
+    if (value == error::no_recovery)
+      return "A non-recoverable error occurred during database lookup";
+    return "asio.netdb error";
+  }
+};
+
+} // namespace detail
+
+const boost::system::error_category& get_netdb_category()
+{
+  static detail::netdb_category instance;
+  return instance;
+}
+
+namespace detail {
+
+class addrinfo_category : public boost::system::error_category
+{
+public:
+  const char* name() const
+  {
+    return "asio.addrinfo";
+  }
+
+  std::string message(int value) const
+  {
+    if (value == error::service_not_found)
+      return "Service not found";
+    if (value == error::socket_type_not_supported)
+      return "Socket type not supported";
+    return "asio.addrinfo error";
+  }
+};
+
+} // namespace detail
+
+const boost::system::error_category& get_addrinfo_category()
+{
+  static detail::addrinfo_category instance;
+  return instance;
+}
+
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
+namespace detail {
+
+class misc_category : public boost::system::error_category
+{
+public:
+  const char* name() const
+  {
+    return "asio.misc";
+  }
+
+  std::string message(int value) const
+  {
+    if (value == error::already_open)
+      return "Already open";
+    if (value == error::eof)
+      return "End of file";
+    if (value == error::not_found)
+      return "Element not found";
+    if (value == error::fd_set_failure)
+      return "The descriptor does not fit into the select call's fd_set";
+    return "asio.misc error";
+  }
+};
+
+} // namespace detail
+
+const boost::system::error_category& get_misc_category()
+{
+  static detail::misc_category instance;
+  return instance;
+}
+
+namespace detail {
+
+class ssl_category : public boost::system::error_category
+{
+public:
+  const char* name() const
+  {
+    return "asio.ssl";
+  }
+
+  std::string message(int) const
+  {
+    return "asio.ssl error";
+  }
+};
+
+} // namespace detail
+
+const boost::system::error_category& get_ssl_category()
+{
+  static detail::ssl_category instance;
+  return instance;
+}
 EOF
 
 sub copy_source_file
@@ -443,6 +455,10 @@ sub copy_source_file
         last if $line =~ /boostify: error category definitions end here/;
       }
     }
+    elsif ($line =~ /boostify: error category function definitions go here/)
+    {
+      print($output $error_cat_func_defns);
+    }
     elsif ($line =~ /asio::/ && !($line =~ /boost::asio::/))
     {
       $line =~ s/asio::error_code/boost::system::error_code/g;
@@ -495,6 +511,8 @@ sub copy_include_files
       "include/asio/ip/detail",
       "include/asio/ip/detail/impl",
       "include/asio/local",
+      "include/asio/local/detail",
+      "include/asio/local/detail/impl",
       "include/asio/posix",
       "include/asio/ssl",
       "include/asio/ssl/detail",
