@@ -52,9 +52,13 @@ nobase_include_HEADERS = \
 	asio/detail/handler_invoke_helpers.hpp \
 	asio/detail/hash_map.hpp \
 	asio/detail/impl/descriptor_ops.ipp \
+	asio/detail/impl/dev_poll_reactor.hpp \
+	asio/detail/impl/dev_poll_reactor.ipp \
 	asio/detail/impl/epoll_reactor.hpp \
 	asio/detail/impl/epoll_reactor.ipp \
 	asio/detail/impl/eventfd_select_interrupter.ipp \
+	asio/detail/impl/kqueue_reactor.hpp \
+	asio/detail/impl/kqueue_reactor.ipp \
 	asio/detail/impl/pipe_select_interrupter.ipp \
 	asio/detail/impl/posix_event.ipp \
 	asio/detail/impl/posix_mutex.ipp \
@@ -64,6 +68,8 @@ nobase_include_HEADERS = \
 	asio/detail/impl/reactive_serial_port_service.ipp \
 	asio/detail/impl/reactive_socket_service_base.ipp \
 	asio/detail/impl/resolver_service_base.ipp \
+	asio/detail/impl/select_reactor.hpp \
+	asio/detail/impl/select_reactor.ipp \
 	asio/detail/impl/service_registry.hpp \
 	asio/detail/impl/service_registry.ipp \
 	asio/detail/impl/socket_ops.ipp \
@@ -194,7 +200,7 @@ nobase_include_HEADERS = \
 	asio.hpp \
 	asio/impl/error_code.hpp \
 	asio/impl/error_code.ipp \
-	asio/impl/error.hpp \
+	asio/impl/error.ipp \
 	asio/impl/io_service.hpp \
 	asio/impl/io_service.ipp \
 	asio/impl/read_at.hpp \
