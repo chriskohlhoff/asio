@@ -101,8 +101,11 @@ inline const boost::system::error_category& get_system_category()
 
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
-BOOST_ASIO_DECL const boost::system::error_category& get_netdb_category();
-BOOST_ASIO_DECL const boost::system::error_category& get_addrinfo_category();
+extern BOOST_ASIO_DECL
+const boost::system::error_category& get_netdb_category();
+
+extern BOOST_ASIO_DECL
+const boost::system::error_category& get_addrinfo_category();
 
 #else // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
@@ -118,8 +121,11 @@ inline const boost::system::error_category& get_addrinfo_category()
 
 #endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
-BOOST_ASIO_DECL const boost::system::error_category& get_misc_category();
-BOOST_ASIO_DECL const boost::system::error_category& get_ssl_category();
+extern BOOST_ASIO_DECL
+const boost::system::error_category& get_misc_category();
+
+extern BOOST_ASIO_DECL
+const boost::system::error_category& get_ssl_category();
 
 static const boost::system::error_category& system_category
   = boost::asio::error::get_system_category();
