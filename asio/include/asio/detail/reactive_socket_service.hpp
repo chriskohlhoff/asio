@@ -178,7 +178,7 @@ public:
 
   // Wait until data can be sent without blocking.
   size_t send_to(implementation_type& impl, const null_buffers&,
-      socket_base::message_flags, const endpoint_type&,
+      const endpoint_type&, socket_base::message_flags,
       asio::error_code& ec)
   {
     // Wait for socket to become ready.
@@ -210,7 +210,7 @@ public:
   // Start an asynchronous wait until data can be sent without blocking.
   template <typename Handler>
   void async_send_to(implementation_type& impl, const null_buffers&,
-      socket_base::message_flags, const endpoint_type&, Handler handler)
+      const endpoint_type&, socket_base::message_flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler> op;
