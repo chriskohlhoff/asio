@@ -105,14 +105,16 @@ int epoll_reactor::register_descriptor(socket_type descriptor,
         std::make_pair(descriptor, descriptor_state())).first;
   descriptor_data = &new_entry->second;
 
+  descriptor_data->shutdown_ = false;
+
+  lock.unlock();
+
   epoll_event ev = { 0, { 0 } };
   ev.events = EPOLLIN | EPOLLERR | EPOLLHUP | EPOLLOUT | EPOLLPRI | EPOLLET;
   ev.data.ptr = descriptor_data;
   int result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
   if (result != 0)
     return errno;
-
-  descriptor_data->shutdown_ = false;
 
   return 0;
 }
