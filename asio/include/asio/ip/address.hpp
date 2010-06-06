@@ -58,10 +58,12 @@ public:
   ASIO_DECL address& operator=(const address& other);
 
   /// Assign from an IPv4 address.
-  ASIO_DECL address& operator=(const asio::ip::address_v4& ipv4_address);
+  ASIO_DECL address& operator=(
+      const asio::ip::address_v4& ipv4_address);
 
   /// Assign from an IPv6 address.
-  ASIO_DECL address& operator=(const asio::ip::address_v6& ipv6_address);
+  ASIO_DECL address& operator=(
+      const asio::ip::address_v6& ipv6_address);
 
   /// Get whether the address is an IP version 4 address.
   bool is_v4() const
