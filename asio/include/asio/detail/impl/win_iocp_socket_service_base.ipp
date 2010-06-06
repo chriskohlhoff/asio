@@ -264,7 +264,7 @@ void win_iocp_socket_service_base::start_send_op(
   {
     DWORD bytes_transferred = 0;
     int result = ::WSASend(impl.socket_, buffers,
-        buffer_count, &bytes_transferred, flags, op, 0);
+        static_cast<DWORD>(buffer_count), &bytes_transferred, flags, op, 0);
     DWORD last_error = ::WSAGetLastError();
     if (last_error == ERROR_PORT_UNREACHABLE)
       last_error = WSAECONNREFUSED;
@@ -289,7 +289,8 @@ void win_iocp_socket_service_base::start_send_to_op(
   else
   {
     DWORD bytes_transferred = 0;
-    int result = ::WSASendTo(impl.socket_, buffers, buffer_count,
+    int result = ::WSASendTo(impl.socket_, buffers,
+        static_cast<DWORD>(buffer_count),
         &bytes_transferred, flags, addr, addrlen, op, 0);
     DWORD last_error = ::WSAGetLastError();
     if (last_error == ERROR_PORT_UNREACHABLE)
@@ -317,7 +318,8 @@ void win_iocp_socket_service_base::start_receive_op(
   {
     DWORD bytes_transferred = 0;
     DWORD recv_flags = flags;
-    int result = ::WSARecv(impl.socket_, buffers, buffer_count,
+    int result = ::WSARecv(impl.socket_, buffers,
+        static_cast<DWORD>(buffer_count),
         &bytes_transferred, &recv_flags, op, 0);
     DWORD last_error = ::WSAGetLastError();
     if (last_error == ERROR_NETNAME_DELETED)
@@ -365,7 +367,8 @@ void win_iocp_socket_service_base::start_receive_from_op(
   {
     DWORD bytes_transferred = 0;
     DWORD recv_flags = flags;
-    int result = ::WSARecvFrom(impl.socket_, buffers, buffer_count,
+    int result = ::WSARecvFrom(impl.socket_, buffers,
+        static_cast<DWORD>(buffer_count),
         &bytes_transferred, &recv_flags, addr, addrlen, op, 0);
     DWORD last_error = ::WSAGetLastError();
     if (last_error == ERROR_PORT_UNREACHABLE)

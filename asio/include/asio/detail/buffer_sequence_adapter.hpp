@@ -34,14 +34,14 @@ protected:
       const asio::mutable_buffer& buffer)
   {
     buf.buf = asio::buffer_cast<char*>(buffer);
-    buf.len = asio::buffer_size(buffer);
+    buf.len = static_cast<ULONG>(asio::buffer_size(buffer));
   }
 
   static void init_native_buffer(WSABUF& buf,
       const asio::const_buffer& buffer)
   {
     buf.buf = const_cast<char*>(asio::buffer_cast<const char*>(buffer));
-    buf.len = asio::buffer_size(buffer);
+    buf.len = static_cast<ULONG>(asio::buffer_size(buffer));
   }
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   typedef iovec native_buffer_type;
