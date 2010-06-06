@@ -103,7 +103,8 @@
         <xsl:if test="
             not(contains(ancestor::*/compoundname, '::detail')) and
             not(contains(ancestor::*/compoundname, '::service::key')) and
-            not(contains(ancestor::*/compoundname, '_helper'))">
+            not(contains(ancestor::*/compoundname, '_helper')) and
+            not(contains(name, '_helper'))">
           <xsl:call-template name="namespace-memberdef"/>
         </xsl:if>
       </xsl:otherwise>

@@ -49725,8 +49725,23 @@ Describes an endpoint for a UNIX socket.
   ]
   
   [
+    [[link asio.reference.local__basic_endpoint.operator_lt__eq_ [*operator<=]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
     [[link asio.reference.local__basic_endpoint.operator_eq__eq_ [*operator==]]]
     [Compare two endpoints for equality. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.operator_gt_ [*operator>]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.operator_gt__eq_ [*operator>=]]]
+    [Compare endpoints for ordering. ]
   ]
   
 ]
@@ -50009,6 +50024,28 @@ The output stream.
 
 
 
+[section:operator_lt__eq_ local::basic_endpoint::operator<=]
+
+[indexterm2 operator<=..local::basic_endpoint] 
+Compare endpoints for ordering. 
+
+
+  friend bool operator<=(
+      const basic_endpoint< Protocol > & e1,
+      const basic_endpoint< Protocol > & e2);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/local/basic_endpoint.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
 [section:operator_eq_ local::basic_endpoint::operator=]
 
 [indexterm2 operator=..local::basic_endpoint] 
@@ -50031,6 +50068,50 @@ Compare two endpoints for equality.
 
 
   friend bool operator==(
+      const basic_endpoint< Protocol > & e1,
+      const basic_endpoint< Protocol > & e2);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/local/basic_endpoint.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_gt_ local::basic_endpoint::operator>]
+
+[indexterm2 operator>..local::basic_endpoint] 
+Compare endpoints for ordering. 
+
+
+  friend bool operator>(
+      const basic_endpoint< Protocol > & e1,
+      const basic_endpoint< Protocol > & e2);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/local/basic_endpoint.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_gt__eq_ local::basic_endpoint::operator>=]
+
+[indexterm2 operator>=..local::basic_endpoint] 
+Compare endpoints for ordering. 
+
+
+  friend bool operator>=(
       const basic_endpoint< Protocol > & e1,
       const basic_endpoint< Protocol > & e2);
 
@@ -50418,8 +50499,23 @@ The type of a UNIX domain endpoint.
   ]
   
   [
+    [[link asio.reference.local__basic_endpoint.operator_lt__eq_ [*operator<=]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
     [[link asio.reference.local__basic_endpoint.operator_eq__eq_ [*operator==]]]
     [Compare two endpoints for equality. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.operator_gt_ [*operator>]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.operator_gt__eq_ [*operator>=]]]
+    [Compare endpoints for ordering. ]
   ]
   
 ]
@@ -51397,8 +51493,23 @@ The type of a UNIX domain endpoint.
   ]
   
   [
+    [[link asio.reference.local__basic_endpoint.operator_lt__eq_ [*operator<=]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
     [[link asio.reference.local__basic_endpoint.operator_eq__eq_ [*operator==]]]
     [Compare two endpoints for equality. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.operator_gt_ [*operator>]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
+    [[link asio.reference.local__basic_endpoint.operator_gt__eq_ [*operator>=]]]
+    [Compare endpoints for ordering. ]
   ]
   
 ]
