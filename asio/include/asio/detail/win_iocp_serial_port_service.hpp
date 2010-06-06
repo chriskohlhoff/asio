@@ -40,7 +40,9 @@ public:
   // The implementation type of the serial port.
   typedef win_iocp_handle_service::implementation_type implementation_type;
 
-  ASIO_DECL win_iocp_serial_port_service(asio::io_service& io_service);
+  // Constructor.
+  ASIO_DECL win_iocp_serial_port_service(
+      asio::io_service& io_service);
 
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown_service();

@@ -333,6 +333,10 @@ sub copy_source_file
     {
       $line =~ s/asio_detail_posix_thread_function/boost_asio_detail_posix_thread_function/g;
     }
+    if ($line =~ /ASIO_/ && !($line =~ /BOOST_ASIO_/))
+    {
+      $line =~ s/ASIO_/BOOST_ASIO_/g;
+    }
 
     # Conditional replacements.
     if ($line =~ /^namespace asio {/)
@@ -425,15 +429,6 @@ sub copy_source_file
     elsif ($line =~ /op->Internal = result_ec\.category\(\);/)
     {
       $line =~ s/res.*$/reinterpret_cast<ulong_ptr_t>(&result_ec.category());/g;
-      print_line($output, $line, $from, $lineno);
-    }
-    elsif ($line =~ /ASIO_/ && !($line =~ /BOOST_ASIO_/))
-    {
-      $line =~ s/ASIO_/BOOST_ASIO_/g;
-      if ($line =~ /asio::error_code/)
-      {
-        $line =~ s/asio::error_code/boost::system::error_code/g;
-      }
       print_line($output, $line, $from, $lineno);
     }
     elsif ($line =~ /asio::thread/)

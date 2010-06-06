@@ -99,7 +99,8 @@ private:
       asio::io_service& owner);
 
   // Destroy a service instance.
-  ASIO_DECL static void destroy(asio::io_service::service* service);
+  ASIO_DECL static void destroy(
+      asio::io_service::service* service);
 
   // Helper class to manage service pointers.
   struct auto_service_ptr

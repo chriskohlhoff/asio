@@ -70,7 +70,8 @@ public:
   };
 
   // Constructor.
-  ASIO_DECL reactive_descriptor_service(asio::io_service& io_service);
+  ASIO_DECL reactive_descriptor_service(
+      asio::io_service& io_service);
 
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown_service();

@@ -43,7 +43,8 @@ public:
   // The implementation type of the serial port.
   typedef reactive_descriptor_service::implementation_type implementation_type;
 
-  ASIO_DECL reactive_serial_port_service(asio::io_service& io_service);
+  ASIO_DECL reactive_serial_port_service(
+      asio::io_service& io_service);
 
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown_service();
