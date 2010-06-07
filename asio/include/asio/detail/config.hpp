@@ -159,9 +159,11 @@
 // Serial ports.
 #if defined(ASIO_HAS_IOCP) \
    || !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-# if !defined(ASIO_DISABLE_SERIAL_PORT)
-#  define ASIO_HAS_SERIAL_PORT 1
-# endif // !defined(ASIO_DISABLE_SERIAL_PORT)
+# if !defined(__SYMBIAN32__)
+#  if !defined(ASIO_DISABLE_SERIAL_PORT)
+#   define ASIO_HAS_SERIAL_PORT 1
+#  endif // !defined(ASIO_DISABLE_SERIAL_PORT)
+# endif // !defined(__SYMBIAN32__)
 #endif // defined(ASIO_HAS_IOCP)
        //   || !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
