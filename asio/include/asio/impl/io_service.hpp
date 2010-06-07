@@ -17,6 +17,44 @@
 
 #include "asio/detail/service_registry.hpp"
 
+#include "asio/detail/push_options.hpp"
+
+namespace asio {
+
+template <typename Service>
+inline Service& use_service(io_service& ios)
+{
+  // Check that Service meets the necessary type requirements.
+  (void)static_cast<io_service::service*>(static_cast<Service*>(0));
+  (void)static_cast<const io_service::id*>(&Service::id);
+
+  return ios.service_registry_->template use_service<Service>();
+}
+
+template <typename Service>
+inline void add_service(io_service& ios, Service* svc)
+{
+  // Check that Service meets the necessary type requirements.
+  (void)static_cast<io_service::service*>(static_cast<Service*>(0));
+  (void)static_cast<const io_service::id*>(&Service::id);
+
+  ios.service_registry_->template add_service<Service>(svc);
+}
+
+template <typename Service>
+inline bool has_service(io_service& ios)
+{
+  // Check that Service meets the necessary type requirements.
+  (void)static_cast<io_service::service*>(static_cast<Service*>(0));
+  (void)static_cast<const io_service::id*>(&Service::id);
+
+  return ios.service_registry_->template has_service<Service>();
+}
+
+} // namespace asio
+
+#include "asio/detail/pop_options.hpp"
+
 #if defined(ASIO_HAS_IOCP)
 # include "asio/detail/win_iocp_io_service.hpp"
 #else
@@ -85,36 +123,6 @@ inline asio::io_service& io_service::service::io_service()
 inline asio::io_service& io_service::service::get_io_service()
 {
   return owner_;
-}
-
-template <typename Service>
-inline Service& use_service(io_service& ios)
-{
-  // Check that Service meets the necessary type requirements.
-  (void)static_cast<io_service::service*>(static_cast<Service*>(0));
-  (void)static_cast<const io_service::id*>(&Service::id);
-
-  return ios.service_registry_->template use_service<Service>();
-}
-
-template <typename Service>
-inline void add_service(io_service& ios, Service* svc)
-{
-  // Check that Service meets the necessary type requirements.
-  (void)static_cast<io_service::service*>(static_cast<Service*>(0));
-  (void)static_cast<const io_service::id*>(&Service::id);
-
-  ios.service_registry_->template add_service<Service>(svc);
-}
-
-template <typename Service>
-inline bool has_service(io_service& ios)
-{
-  // Check that Service meets the necessary type requirements.
-  (void)static_cast<io_service::service*>(static_cast<Service*>(0));
-  (void)static_cast<const io_service::id*>(&Service::id);
-
-  return ios.service_registry_->template has_service<Service>();
 }
 
 } // namespace asio
