@@ -46,7 +46,9 @@
 # include "asio/detail/old_win_sdk_compat.hpp"
 #else
 # include <sys/ioctl.h>
-# include <sys/poll.h>
+# if !defined(__SYMBIAN32__)
+#  include <sys/poll.h>
+# endif
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <fcntl.h>
@@ -59,7 +61,9 @@
 # include <sys/uio.h>
 # include <sys/un.h>
 # include <netinet/in.h>
-# include <netinet/tcp.h>
+# if !defined(__SYMBIAN32__)
+#  include <netinet/tcp.h>
+# endif
 # include <arpa/inet.h>
 # include <netdb.h>
 # include <net/if.h>
