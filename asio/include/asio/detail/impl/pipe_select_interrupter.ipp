@@ -17,7 +17,9 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(BOOST_WINDOWS)
+#if !defined(__CYGWIN__)
+#if !defined(__SYMBIAN32__)
 #if !defined(ASIO_HAS_EVENTFD)
 
 #include <fcntl.h>
@@ -87,6 +89,8 @@ bool pipe_select_interrupter::reset()
 #include "asio/detail/pop_options.hpp"
 
 #endif // !defined(ASIO_HAS_EVENTFD)
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(__SYMBIAN32__)
+#endif // !defined(__CYGWIN__)
+#endif // !defined(BOOST_WINDOWS)
 
 #endif // ASIO_DETAIL_IMPL_PIPE_SELECT_INTERRUPTER_IPP
