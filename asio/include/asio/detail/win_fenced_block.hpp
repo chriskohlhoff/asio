@@ -61,6 +61,14 @@ public:
     MemoryBarrier();
 #endif // defined(BOOST_MSVC) && (BOOST_MSVC < 1400)
   }
+
+#if defined(__BORLANDC__)
+  static void MemoryBarrier()
+  {
+    LONG barrier = 0;
+    ::InterlockedExchange(&barrier, 1);
+  }
+#endif // defined(__BORLANDC__)
 };
 
 } // namespace detail
