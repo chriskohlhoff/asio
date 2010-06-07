@@ -1491,8 +1491,10 @@ int poll_read(socket_type s, asio::error_code& ec)
     return socket_error_retval;
   }
 
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  FD_SET fds;
+#if defined(BOOST_WINDOWS) \
+  || defined(__CYGWIN__) \
+  || defined(__SYMBIAN32__)
+  fd_set fds;
   FD_ZERO(&fds);
   FD_SET(s, &fds);
   clear_last_error();
@@ -1500,7 +1502,9 @@ int poll_read(socket_type s, asio::error_code& ec)
   if (result >= 0)
     ec = asio::error_code();
   return result;
-#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#else // defined(BOOST_WINDOWS)
+      // || defined(__CYGWIN__)
+      // || defined(__SYMBIAN32__)
   pollfd fds;
   fds.fd = s;
   fds.events = POLLIN;
@@ -1510,7 +1514,9 @@ int poll_read(socket_type s, asio::error_code& ec)
   if (result >= 0)
     ec = asio::error_code();
   return result;
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(BOOST_WINDOWS)
+       // || defined(__CYGWIN__)
+       // || defined(__SYMBIAN32__)
 }
 
 int poll_write(socket_type s, asio::error_code& ec)
@@ -1521,8 +1527,10 @@ int poll_write(socket_type s, asio::error_code& ec)
     return socket_error_retval;
   }
 
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  FD_SET fds;
+#if defined(BOOST_WINDOWS) \
+  || defined(__CYGWIN__) \
+  || defined(__SYMBIAN32__)
+  fd_set fds;
   FD_ZERO(&fds);
   FD_SET(s, &fds);
   clear_last_error();
@@ -1530,7 +1538,9 @@ int poll_write(socket_type s, asio::error_code& ec)
   if (result >= 0)
     ec = asio::error_code();
   return result;
-#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#else // defined(BOOST_WINDOWS)
+      // || defined(__CYGWIN__)
+      // || defined(__SYMBIAN32__)
   pollfd fds;
   fds.fd = s;
   fds.events = POLLOUT;
@@ -1540,7 +1550,9 @@ int poll_write(socket_type s, asio::error_code& ec)
   if (result >= 0)
     ec = asio::error_code();
   return result;
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(BOOST_WINDOWS)
+       // || defined(__CYGWIN__)
+       // || defined(__SYMBIAN32__)
 }
 
 int poll_connect(socket_type s, asio::error_code& ec)
@@ -1551,11 +1563,13 @@ int poll_connect(socket_type s, asio::error_code& ec)
     return socket_error_retval;
   }
 
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  FD_SET write_fds;
+#if defined(BOOST_WINDOWS) \
+  || defined(__CYGWIN__) \
+  || defined(__SYMBIAN32__)
+  fd_set write_fds;
   FD_ZERO(&write_fds);
   FD_SET(s, &write_fds);
-  FD_SET except_fds;
+  fd_set except_fds;
   FD_ZERO(&except_fds);
   FD_SET(s, &except_fds);
   clear_last_error();
@@ -1563,7 +1577,9 @@ int poll_connect(socket_type s, asio::error_code& ec)
   if (result >= 0)
     ec = asio::error_code();
   return result;
-#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#else // defined(BOOST_WINDOWS)
+      // || defined(__CYGWIN__)
+      // || defined(__SYMBIAN32__)
   pollfd fds;
   fds.fd = s;
   fds.events = POLLOUT;
@@ -1573,7 +1589,9 @@ int poll_connect(socket_type s, asio::error_code& ec)
   if (result >= 0)
     ec = asio::error_code();
   return result;
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(BOOST_WINDOWS)
+       // || defined(__CYGWIN__)
+       // || defined(__SYMBIAN32__)
 }
 
 const char* inet_ntop(int af, const void* src, char* dest, size_t length,
