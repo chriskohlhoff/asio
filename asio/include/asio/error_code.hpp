@@ -71,20 +71,37 @@ public:
   typedef int value_type;
 
   /// Default constructor.
-  error_code();
+  error_code()
+    : value_(0),
+      category_(error::system_category)
+  {
+  }
 
   /// Construct with specific error code and category.
-  error_code(value_type v, error_category c);
+  error_code(value_type v, error_category c)
+    : value_(v),
+      category_(c)
+  {
+  }
 
   /// Construct from an error code enum.
   template <typename ErrorEnum>
-  error_code(ErrorEnum e);
+  error_code(ErrorEnum e)
+  {
+    *this = make_error_code(e);
+  }
 
   /// Get the error value.
-  value_type value() const;
+  value_type value() const
+  {
+    return value_;
+  }
 
   /// Get the error category.
-  error_category category() const;
+  error_category category() const
+  {
+    return category_;
+  }
 
   /// Get the message associated with the error.
   ASIO_DECL std::string message() const;
@@ -95,19 +112,34 @@ public:
 
   typedef void (*unspecified_bool_type)(unspecified_bool_type_t);
 
-  static void unspecified_bool_true(unspecified_bool_type_t);
+  static void unspecified_bool_true(unspecified_bool_type_t) {}
 
   /// Operator returns non-null if there is a non-success error code.
-  operator unspecified_bool_type() const;
+  operator unspecified_bool_type() const
+  {
+    if (value_ == 0)
+      return 0;
+    else
+      return &error_code::unspecified_bool_true;
+  }
 
   /// Operator to test if the error represents success.
-  bool operator!() const;
+  bool operator!() const
+  {
+    return value_ == 0;
+  }
 
   /// Equality operator to compare two error objects.
-  friend bool operator==(const error_code& e1, const error_code& e2);
+  friend bool operator==(const error_code& e1, const error_code& e2)
+  {
+    return e1.value_ == e2.value_ && e1.category_ == e2.category_;
+  }
 
   /// Inequality operator to compare two error objects.
-  friend bool operator!=(const error_code& e1, const error_code& e2);
+  friend bool operator!=(const error_code& e1, const error_code& e2)
+  {
+    return e1.value_ != e2.value_ || e1.category_ != e2.category_;
+  }
 
 private:
   // The value associated with the error code.
@@ -123,7 +155,6 @@ private:
 
 #undef ASIO_WIN_OR_POSIX
 
-#include "asio/impl/error_code.hpp"
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/impl/error_code.ipp"
 #endif // defined(ASIO_HEADER_ONLY)

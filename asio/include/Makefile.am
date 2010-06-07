@@ -197,7 +197,6 @@ nobase_include_HEADERS = \
 	asio/handler_alloc_hook.hpp \
 	asio/handler_invoke_hook.hpp \
 	asio.hpp \
-	asio/impl/error_code.hpp \
 	asio/impl/error_code.ipp \
 	asio/impl/error.ipp \
 	asio/impl/io_service.hpp \
