@@ -188,7 +188,6 @@ nobase_include_HEADERS = \
 	asio/detail/win_iocp_socket_service_base.hpp \
 	asio/detail/win_iocp_socket_service.hpp \
 	asio/detail/win_mutex.hpp \
-	asio/detail/win_signal_blocker.hpp \
 	asio/detail/winsock_init.hpp \
 	asio/detail/win_thread.hpp \
 	asio/detail/win_tss_ptr.hpp \
