@@ -103,6 +103,8 @@ private:
       asio::io_service::service* service);
 
   // Helper class to manage service pointers.
+  struct auto_service_ptr;
+  friend struct auto_service_ptr;
   struct auto_service_ptr
   {
     asio::io_service::service* ptr_;
