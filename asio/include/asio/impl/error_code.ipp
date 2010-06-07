@@ -89,7 +89,7 @@ std::string error_code::message() const
   if (value_ == error::operation_aborted)
     return "Operation aborted.";
 #endif // !defined(__sun)
-#if defined(__sun) || defined(__QNX__)
+#if defined(__sun) || defined(__QNX__) || defined(__SYMBIAN32__)
   using namespace std;
   return strerror(value_);
 #elif defined(__MACH__) && defined(__APPLE__) \
