@@ -46,7 +46,7 @@ int close(int d, state_type& state, asio::error_code& ec)
     {
 #if defined(__SYMBIAN32__)
       int flags = ::fcntl(d, F_GETFL, 0);
-      if (result >= 0)
+      if (flags >= 0)
         ::fcntl(d, F_SETFL, flags & ~O_NONBLOCK);
 #else // defined(__SYMBIAN32__)
       ioctl_arg_type arg = 0;
@@ -79,7 +79,7 @@ bool set_internal_non_blocking(int d,
   if (result >= 0)
   {
     errno = 0;
-    result = error_wrapper(::fcntl(d, F_SETFL, flags | O_NONBLOCK), ec);
+    result = error_wrapper(::fcntl(d, F_SETFL, result | O_NONBLOCK), ec);
   }
 #else // defined(__SYMBIAN32__)
   ioctl_arg_type arg = 1;

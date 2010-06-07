@@ -288,9 +288,9 @@ int close(socket_type s, state_type& state,
     if (state & non_blocking)
     {
 #if defined(__SYMBIAN32__)
-      int flags = ::fcntl(d, F_GETFL, 0);
-      if (result >= 0)
-        ::fcntl(d, F_SETFL, flags & ~O_NONBLOCK);
+      int flags = ::fcntl(s, F_GETFL, 0);
+      if (flags >= 0)
+        ::fcntl(s, F_SETFL, flags & ~O_NONBLOCK);
 #else // defined(__SYMBIAN32__)
       ioctl_arg_type arg = 0;
       ::ioctl(s, FIONBIO, &arg);
@@ -336,11 +336,11 @@ bool set_internal_non_blocking(socket_type s,
   ioctl_arg_type arg = 1;
   int result = error_wrapper(::ioctlsocket(s, FIONBIO, &arg), ec);
 #elif defined(__SYMBIAN32__)
-  int result = error_wrapper(::fcntl(d, F_GETFL, 0), ec);
+  int result = error_wrapper(::fcntl(s, F_GETFL, 0), ec);
   if (result >= 0)
   {
     clear_last_error();
-    result = error_wrapper(::fcntl(d, F_SETFL, flags | O_NONBLOCK), ec);
+    result = error_wrapper(::fcntl(s, F_SETFL, result | O_NONBLOCK), ec);
   }
 #else
   ioctl_arg_type arg = 1;
