@@ -287,8 +287,14 @@ int close(socket_type s, state_type& state,
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
     if (state & non_blocking)
     {
+#if defined(__SYMBIAN32__)
+      int flags = ::fcntl(d, F_GETFL, 0);
+      if (result >= 0)
+        ::fcntl(d, F_SETFL, flags & ~O_NONBLOCK);
+#else // defined(__SYMBIAN32__)
       ioctl_arg_type arg = 0;
       ::ioctl(s, FIONBIO, &arg);
+#endif // defined(__SYMBIAN32__)
       state &= ~non_blocking;
     }
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -326,12 +332,20 @@ bool set_internal_non_blocking(socket_type s,
   }
 
   clear_last_error();
-  ioctl_arg_type arg = 1;
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  ioctl_arg_type arg = 1;
   int result = error_wrapper(::ioctlsocket(s, FIONBIO, &arg), ec);
-#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#elif defined(__SYMBIAN32__)
+  int result = error_wrapper(::fcntl(d, F_GETFL, 0), ec);
+  if (result >= 0)
+  {
+    clear_last_error();
+    result = error_wrapper(::fcntl(d, F_SETFL, flags | O_NONBLOCK), ec);
+  }
+#else
+  ioctl_arg_type arg = 1;
   int result = error_wrapper(::ioctl(s, FIONBIO, &arg), ec);
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif
 
   if (result >= 0)
   {
