@@ -20,6 +20,7 @@
 #include <boost/bind.hpp>
 #include <boost/noncopyable.hpp>
 #include <cstring>
+#include <vector>
 #include "asio/io_service.hpp"
 #include "asio/placeholders.hpp"
 #include "unit_test.hpp"
