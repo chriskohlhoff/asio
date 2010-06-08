@@ -21,7 +21,7 @@ header file.
 
 \until asio.hpp
 
-Since this example users timers, we need to include the appropriate
+Since this example uses timers, we need to include the appropriate
 Boost.Date_Time header file for manipulating times.
 
 \until posix_time.hpp
