@@ -152,12 +152,14 @@ public:
   consuming_buffers(const Buffers& buffers)
     : buffers_(buffers),
       at_end_(buffers_.begin() == buffers_.end()),
-      first_(*buffers_.begin()),
       begin_remainder_(buffers_.begin()),
       max_size_((std::numeric_limits<std::size_t>::max)())
   {
     if (!at_end_)
+    {
+      first_ = *buffers_.begin();
       ++begin_remainder_;
+    }
   }
 
   // Copy constructor.

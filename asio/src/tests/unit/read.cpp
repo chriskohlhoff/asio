@@ -20,6 +20,7 @@
 #include <boost/bind.hpp>
 #include <boost/noncopyable.hpp>
 #include <cstring>
+#include <vector>
 #include "asio/io_service.hpp"
 #include "asio/placeholders.hpp"
 #include "asio/streambuf.hpp"
@@ -135,6 +136,16 @@ private:
 
 static const char read_data[]
   = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+void test_2_arg_zero_buffers_read()
+{
+  asio::io_service ios;
+  test_stream s(ios);
+  std::vector<asio::mutable_buffer> buffers;
+
+  size_t bytes_transferred = asio::read(s, buffers);
+  BOOST_CHECK(bytes_transferred == 0);
+}
 
 void test_2_arg_mutable_buffers_1_read()
 {
@@ -2173,6 +2184,7 @@ void test_4_arg_streambuf_async_read()
 test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("read");
+  test->add(BOOST_TEST_CASE(&test_2_arg_zero_buffers_read));
   test->add(BOOST_TEST_CASE(&test_2_arg_mutable_buffers_1_read));
   test->add(BOOST_TEST_CASE(&test_2_arg_multi_buffers_read));
   test->add(BOOST_TEST_CASE(&test_2_arg_streambuf_read));
