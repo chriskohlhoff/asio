@@ -50,11 +50,11 @@ private:
     } \
     else case 0:
 
-#define CORO_YIELD \
-  for (_coro_value = __LINE__;;) \
+#define CORO_YIELD_IMPL(n) \
+  for (_coro_value = (n);;) \
     if (_coro_value == 0) \
     { \
-      case __LINE__: ; \
+      case (n): ; \
       break; \
     } \
     else \
@@ -67,13 +67,21 @@ private:
               goto bail_out_of_coroutine; \
             else case 0:
 
-#define CORO_FORK \
-  for (_coro_value = -__LINE__;; _coro_value = __LINE__) \
-    if (_coro_value == __LINE__) \
+#define CORO_FORK_IMPL(n) \
+  for (_coro_value = -(n);; _coro_value = (n)) \
+    if (_coro_value == (n)) \
     { \
-      case -__LINE__: ; \
+      case -(n): ; \
       break; \
     } \
     else
+
+#if defined(_MSC_VER)
+# define CORO_YIELD CORO_YIELD_IMPL(__COUNTER__ + 1)
+# define CORO_FORK CORO_FORK_IMPL(__COUNTER__ + 1)
+#else // defined(_MSC_VER)
+# define CORO_YIELD CORO_YIELD_IMPL(__LINE__)
+# define CORO_FORK CORO_FORK_IMPL(__LINE__)
+#endif // defined(_MSC_VER)
 
 #endif // COROUTINE_HPP
