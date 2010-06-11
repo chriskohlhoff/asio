@@ -55,9 +55,7 @@ void win_iocp_socket_service_base::construct(
   impl.socket_ = invalid_socket;
   impl.state_ = 0;
   impl.cancel_token_.reset();
-#if defined(ASIO_ENABLE_CANCELIO)
   impl.safe_cancellation_thread_id_ = 0;
-#endif // defined(ASIO_ENABLE_CANCELIO)
 
   // Insert implementation into linked list of all implementations.
   asio::detail::mutex::scoped_lock lock(mutex_);
@@ -106,9 +104,7 @@ asio::error_code win_iocp_socket_service_base::close(
     impl.socket_ = invalid_socket;
     impl.state_ = 0;
     impl.cancel_token_.reset();
-#if defined(ASIO_ENABLE_CANCELIO)
     impl.safe_cancellation_thread_id_ = 0;
-#endif // defined(ASIO_ENABLE_CANCELIO)
   }
 
   return ec;
@@ -152,12 +148,12 @@ asio::error_code win_iocp_socket_service_base::cancel(
       ec = asio::error_code();
     }
   }
-#if defined(ASIO_ENABLE_CANCELIO)
   else if (impl.safe_cancellation_thread_id_ == 0)
   {
     // No operations have been started, so there's nothing to cancel.
     ec = asio::error_code();
   }
+#if defined(ASIO_ENABLE_CANCELIO)
   else if (impl.safe_cancellation_thread_id_ == ::GetCurrentThreadId())
   {
     // Asynchronous operations have been started from the current thread only,
@@ -188,6 +184,16 @@ asio::error_code win_iocp_socket_service_base::cancel(
     ec = asio::error::operation_not_supported;
   }
 #endif // defined(ASIO_ENABLE_CANCELIO)
+
+  // Cancel any operations started via the reactor.
+  if (!ec)
+  {
+    reactor* r = static_cast<reactor*>(
+          interlocked_compare_exchange_pointer(
+            reinterpret_cast<void**>(&reactor_), 0, 0));
+    if (r)
+      r->cancel_ops(impl.socket_, impl.reactor_data_);
+  }
 
   return ec;
 }
@@ -441,7 +447,6 @@ void win_iocp_socket_service_base::start_reactor_op(
     int op_type, reactor_op* op)
 {
   reactor& r = get_reactor();
-  update_cancellation_thread_id(impl);
 
   if (is_open(impl))
   {
@@ -459,7 +464,6 @@ void win_iocp_socket_service_base::start_connect_op(
     reactor_op* op, const socket_addr_type* addr, std::size_t addrlen)
 {
   reactor& r = get_reactor();
-  update_cancellation_thread_id(impl);
 
   if ((impl.state_ & socket_ops::non_blocking) != 0
       || socket_ops::set_internal_non_blocking(
@@ -501,22 +505,16 @@ void win_iocp_socket_service_base::close_for_destruction(
   impl.socket_ = invalid_socket;
   impl.state_ = 0;
   impl.cancel_token_.reset();
-#if defined(ASIO_ENABLE_CANCELIO)
   impl.safe_cancellation_thread_id_ = 0;
-#endif // defined(ASIO_ENABLE_CANCELIO)
 }
 
 void win_iocp_socket_service_base::update_cancellation_thread_id(
     win_iocp_socket_service_base::base_implementation_type& impl)
 {
-#if defined(ASIO_ENABLE_CANCELIO)
   if (impl.safe_cancellation_thread_id_ == 0)
     impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
   else if (impl.safe_cancellation_thread_id_ != ::GetCurrentThreadId())
     impl.safe_cancellation_thread_id_ = ~DWORD(0);
-#else // defined(ASIO_ENABLE_CANCELIO)
-  (void)impl;
-#endif // defined(ASIO_ENABLE_CANCELIO)
 }
 
 reactor& win_iocp_socket_service_base::get_reactor()
