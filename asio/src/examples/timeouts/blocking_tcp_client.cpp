@@ -26,6 +26,8 @@ using boost::lambda::bind;
 using boost::lambda::var;
 using boost::lambda::_1;
 
+//----------------------------------------------------------------------
+
 class client
 {
 public:
@@ -125,6 +127,8 @@ private:
   asio::deadline_timer timer_;
   asio::streambuf input_buffer_;
 };
+
+//----------------------------------------------------------------------
 
 int response_code(const std::string& line)
 {

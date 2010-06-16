@@ -10,27 +10,23 @@
 
 #include "asio/deadline_timer.hpp"
 #include "asio/io_service.hpp"
-#include "asio/ip/multicast.hpp"
 #include "asio/ip/udp.hpp"
+#include <cstdlib>
 #include <boost/bind.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <iostream>
 
 using asio::ip::udp;
-using asio::ip::multicast::join_group;
 
-const short multicast_port = 30001;
+//----------------------------------------------------------------------
 
 class client
 {
 public:
-  client(const asio::ip::address& listen_address,
-      const asio::ip::address& multicast_address)
-    : socket_(io_service_, udp::endpoint(listen_address, multicast_port)),
+  client(const udp::endpoint& listen_endpoint)
+    : socket_(io_service_, listen_endpoint),
       timer_(io_service_)
   {
-    socket_.set_option(join_group(multicast_address));
-
     timer_.async_wait(boost::bind(&client::handle_timeout, this));
   }
 
@@ -45,7 +41,7 @@ public:
     socket_.async_receive(asio::buffer(buffer),
         boost::bind(&client::handle_receive, _1, _2, &ec, &length));
 
-    do io_service_.run_one() while (ec == asio::error::would_block);
+    do io_service_.run_one(); while (ec == asio::error::would_block);
 
     return length;
   }
@@ -76,22 +72,25 @@ private:
   asio::deadline_timer timer_;
 };
 
+//----------------------------------------------------------------------
+
 int main(int argc, char* argv[])
 {
   try
   {
+    using namespace std; // For atoi.
+
     if (argc != 3)
     {
-      std::cerr << "Usage: blocking_udp_timeout <listen_addr> <mcast_addr>\n";
-      std::cerr << "  For IPv4, try:\n";
-      std::cerr << "    blocking_udp_client 0.0.0.0 239.255.0.1\n";
-      std::cerr << "  For IPv6, try:\n";
-      std::cerr << "    blocking_udp_client 0::0 ff31::8000:1234\n";
+      std::cerr << "Usage: blocking_udp_timeout <listen_addr> <listen_port>\n";
       return 1;
     }
 
-    client c(asio::ip::address::from_string(argv[1]),
-        asio::ip::address::from_string(argv[2]));
+    udp::endpoint listen_endpoint(
+        asio::ip::address::from_string(argv[1]),
+        std::atoi(argv[2]));
+
+    client c(listen_endpoint);
 
     for (;;)
     {

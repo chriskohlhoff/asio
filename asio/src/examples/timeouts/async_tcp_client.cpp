@@ -13,6 +13,7 @@
 #include "asio/ip/tcp.hpp"
 #include "asio/read_until.hpp"
 #include "asio/streambuf.hpp"
+#include "asio/write.hpp"
 #include <boost/bind.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <iostream>
@@ -21,7 +22,7 @@ using namespace asio;
 using asio::ip::tcp;
 
 //
-// This class consists of two asynchronous "actors":
+// This class consists of three asynchronous "actors":
 //
 //        Protocol Actor                      Timeout Actor
 //        ~~~~~~~~~~~~~~                      ~~~~~~~~~~~~~
@@ -38,20 +39,20 @@ using asio::ip::tcp;
 //              |                |
 //              +----------------+
 //                      |
-//         +------------+
-//         |
-//         V
-//  +------------+
-//  |            |
-//  | start_read |<----+
-//  |            |     |
-//  +------------+     |
-//         |           |
-//         |    +-------------+
-//         |    |             |
-//         +--->| handle_read |
-//              |             |
-//              +-------------+
+//         +------------+------+            Heartbeat Actor
+//         |                   |            ~~~~~~~~~~~~~~~
+//         V                   |
+//  +------------+             |     +-------------+
+//  |            |             |     |             |
+//  | start_read |<----+       +---->| start_write |<----+
+//  |            |     |             |             |     |
+//  +------------+     |             +-------------+     |
+//         |           |                    |            |
+//         |    +-------------+             |     +--------------+
+//         |    |             |             |     |              |
+//         +--->| handle_read |             +---->| handle_write |
+//              |             |                   |              |
+//              +-------------+                   +--------------+
 //
 // The protocol actor manages all socket operations, such as connection
 // establishment.
@@ -65,8 +66,9 @@ class client
 public:
   client(io_service& i)
     : stopped_(false),
-      timer_(i),
-      socket_(i)
+      socket_(i),
+      input_timer_(i),
+      heartbeat_timer_(i)
   {
   }
 
@@ -80,7 +82,7 @@ public:
     // Start the timeout actor. You will note that we're not setting any
     // particular timeout here. Instead, the protocol actor will update the
     // timeout prior to each asynchronous operation.
-    timer_.async_wait(boost::bind(&client::handle_timeout, this));
+    input_timer_.async_wait(boost::bind(&client::handle_timeout, this));
   }
 
   // This function terminates the two actors to shut down the connection. It
@@ -90,7 +92,8 @@ public:
   {
     stopped_ = true;
     socket_.close();
-    timer_.cancel();
+    input_timer_.cancel();
+    heartbeat_timer_.cancel();
   }
 
 private:
@@ -101,7 +104,7 @@ private:
       std::cout << "Trying " << endpoint_iter->endpoint() << "...\n";
 
       // Set a timeout for the connect operation.
-      timer_.expires_from_now(boost::posix_time::seconds(2));
+      input_timer_.expires_from_now(boost::posix_time::seconds(2));
 
       // Start the asynchronous connect operation.
       socket_.async_connect(endpoint_iter->endpoint(),
@@ -152,13 +155,16 @@ private:
 
       // Start receiving messages from the server.
       start_read();
+
+      // Start the heartbeat actor.
+      start_write();
     }
   }
 
   void start_read()
   {
     // Set a timeout for the read operation.
-    timer_.expires_from_now(boost::posix_time::seconds(30));
+    input_timer_.expires_from_now(boost::posix_time::seconds(30));
 
     asio::async_read_until(socket_, input_buffer_, '\n',
         boost::bind(&client::handle_read, this, _1));
@@ -175,13 +181,43 @@ private:
       std::istream is(&input_buffer_);
       std::getline(is, line);
 
-      std::cout << "Received: " << line << "\n";
+      if (!line.empty())
+      {
+        std::cout << "Received: " << line << "\n";
+      }
 
       start_read();
     }
     else
     {
-      std::cout << "Error: " << ec.message() << "\n";
+      std::cout << "Error on receive: " << ec.message() << "\n";
+
+      stop();
+    }
+  }
+
+  void start_write()
+  {
+    if (stopped_)
+      return;
+
+    asio::async_write(socket_, asio::buffer("\n", 1),
+        boost::bind(&client::handle_write, this, _1));
+  }
+
+  void handle_write(const asio::error_code& ec)
+  {
+    if (stopped_)
+      return;
+
+    if (!ec)
+    {
+      heartbeat_timer_.expires_from_now(boost::posix_time::seconds(10));
+      heartbeat_timer_.async_wait(boost::bind(&client::start_write, this));
+    }
+    else
+    {
+      std::cout << "Error on heartbeat: " << ec.message() << "\n";
 
       stop();
     }
@@ -196,25 +232,26 @@ private:
     // the current expiry time will be in the future. We can use this
     // information to determine whether to close the socket and so cancel the
     // pending asynchronous protocol operations.
-    if (timer_.expires_from_now() <= boost::posix_time::seconds(0))
+    if (input_timer_.expires_from_now() <= boost::posix_time::seconds(0))
     {
       // The timer has truly expired.
       socket_.close();
 
       // The timeout actor will enter an indefinite sleep, awaiting further
       // modifications to the expiry time by the protocol actor.
-      timer_.expires_at(boost::posix_time::pos_infin);
+      input_timer_.expires_at(boost::posix_time::pos_infin);
     }
 
     // Put the timeout actor back to sleep.
-    timer_.async_wait(boost::bind(&client::handle_timeout, this));
+    input_timer_.async_wait(boost::bind(&client::handle_timeout, this));
   }
 
 private:
   bool stopped_;
-  deadline_timer timer_;
   tcp::socket socket_;
   asio::streambuf input_buffer_;
+  deadline_timer input_timer_;
+  deadline_timer heartbeat_timer_;
 };
 
 int main(int argc, char* argv[])
