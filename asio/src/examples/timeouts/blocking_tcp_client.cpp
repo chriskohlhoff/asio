@@ -115,13 +115,6 @@ private:
     timer_.async_wait(bind(&client::handle_timeout, this));
   }
 
-  static void handle_io(const asio::error_code& ec,
-      asio::error_code* out_ec)
-  {
-    *out_ec = ec;
-  }
-
-private:
   asio::io_service io_service_;
   tcp::socket socket_;
   asio::deadline_timer timer_;
@@ -130,31 +123,38 @@ private:
 
 //----------------------------------------------------------------------
 
-int response_code(const std::string& line)
-{
-  using namespace std; // For atoi.
-  return atoi(line.c_str());
-}
-
-int more_response(const std::string& line)
-{
-  return line.length() >= 4 && line[3] == '-';
-}
-
 int main(int argc, char* argv[])
 {
   try
   {
-    if (argc != 2)
+    if (argc != 4)
     {
-      std::cerr << "Usage: blocking_tcp <host> <port>\n";
+      std::cerr << "Usage: blocking_tcp <host> <port> <message>\n";
       return 1;
     }
 
-    client client;
-    client.connect(argv[1], argv[2], boost::posix_time::seconds(10));
+    client c;
+    c.connect(argv[1], argv[2], boost::posix_time::seconds(10));
 
-    std::string line = client.read_line(boost::posix_time::seconds(10));
+    boost::posix_time::ptime time_sent =
+      boost::posix_time::microsec_clock::universal_time();
+
+    c.write_line(argv[3], boost::posix_time::seconds(10));
+
+    for (;;)
+    {
+      std::string line = c.read_line(boost::posix_time::seconds(10));
+
+      if (line == argv[3])
+        break;
+    }
+
+    boost::posix_time::ptime time_received =
+      boost::posix_time::microsec_clock::universal_time();
+
+    std::cout << "Round trip time: ";
+    std::cout << (time_received - time_sent).total_microseconds();
+    std::cout << " microseconds\n";
   }
   catch (std::exception& e)
   {
