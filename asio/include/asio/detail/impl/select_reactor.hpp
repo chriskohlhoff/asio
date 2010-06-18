@@ -42,12 +42,13 @@ void select_reactor::remove_timer_queue(timer_queue<Time_Traits>& queue)
 
 template <typename Time_Traits>
 void select_reactor::schedule_timer(timer_queue<Time_Traits>& queue,
-    const typename Time_Traits::time_type& time, timer_op* op, void* token)
+    const typename Time_Traits::time_type& time,
+    typename timer_queue<Time_Traits>::per_timer_data& timer, timer_op* op)
 {
   asio::detail::mutex::scoped_lock lock(mutex_);
   if (!shutdown_)
   {
-    bool earliest = queue.enqueue_timer(time, op, token);
+    bool earliest = queue.enqueue_timer(time, timer, op);
     io_service_.work_started();
     if (earliest)
       interrupter_.interrupt();
@@ -55,12 +56,12 @@ void select_reactor::schedule_timer(timer_queue<Time_Traits>& queue,
 }
 
 template <typename Time_Traits>
-std::size_t select_reactor::cancel_timer(
-    timer_queue<Time_Traits>& queue, void* token)
+std::size_t select_reactor::cancel_timer(timer_queue<Time_Traits>& queue,
+    typename timer_queue<Time_Traits>::per_timer_data& timer)
 {
   asio::detail::mutex::scoped_lock lock(mutex_);
   op_queue<operation> ops;
-  std::size_t n = queue.cancel_timer(token, ops);
+  std::size_t n = queue.cancel_timer(timer, ops);
   lock.unlock();
   io_service_.post_deferred_completions(ops);
   return n;

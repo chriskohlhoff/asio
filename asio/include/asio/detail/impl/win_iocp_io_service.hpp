@@ -72,7 +72,8 @@ void win_iocp_io_service::remove_timer_queue(
 
 template <typename Time_Traits>
 void win_iocp_io_service::schedule_timer(timer_queue<Time_Traits>& queue,
-    const typename Time_Traits::time_type& time, timer_op* op, void* token)
+    const typename Time_Traits::time_type& time,
+    typename timer_queue<Time_Traits>::per_timer_data& timer, timer_op* op)
 {
   // If the service has been shut down we silently discard the timer.
   if (::InterlockedExchangeAdd(&shutdown_, 0) != 0)
@@ -80,15 +81,15 @@ void win_iocp_io_service::schedule_timer(timer_queue<Time_Traits>& queue,
 
   mutex::scoped_lock lock(dispatch_mutex_);
 
-  bool earliest = queue.enqueue_timer(time, op, token);
+  bool earliest = queue.enqueue_timer(time, timer, op);
   work_started();
   if (earliest)
     update_timeout();
 }
 
 template <typename Time_Traits>
-std::size_t win_iocp_io_service::cancel_timer(
-    timer_queue<Time_Traits>& queue, void* token)
+std::size_t win_iocp_io_service::cancel_timer(timer_queue<Time_Traits>& queue,
+    typename timer_queue<Time_Traits>::per_timer_data& timer)
 {
   // If the service has been shut down we silently ignore the cancellation.
   if (::InterlockedExchangeAdd(&shutdown_, 0) != 0)
@@ -96,7 +97,7 @@ std::size_t win_iocp_io_service::cancel_timer(
 
   mutex::scoped_lock lock(dispatch_mutex_);
   op_queue<win_iocp_operation> ops;
-  std::size_t n = queue.cancel_timer(token, ops);
+  std::size_t n = queue.cancel_timer(timer, ops);
   post_deferred_completions(ops);
   return n;
 }

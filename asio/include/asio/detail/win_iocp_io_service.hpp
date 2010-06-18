@@ -147,13 +147,15 @@ public:
   // Schedule a new operation in the given timer queue to expire at the
   // specified absolute time.
   template <typename Time_Traits>
-  void schedule_timer(timer_queue<Time_Traits>& timer_queue,
-      const typename Time_Traits::time_type& time, timer_op* op, void* token);
+  void schedule_timer(timer_queue<Time_Traits>& queue,
+      const typename Time_Traits::time_type& time,
+      typename timer_queue<Time_Traits>::per_timer_data& timer, timer_op* op);
 
   // Cancel the timer associated with the given token. Returns the number of
   // handlers that have been posted or dispatched.
   template <typename Time_Traits>
-  std::size_t cancel_timer(timer_queue<Time_Traits>& timer_queue, void* token);
+  std::size_t cancel_timer(timer_queue<Time_Traits>& queue,
+      typename timer_queue<Time_Traits>::per_timer_data& timer);
 
 private:
 #if defined(WINVER) && (WINVER < 0x0500)
