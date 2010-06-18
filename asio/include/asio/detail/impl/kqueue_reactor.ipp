@@ -93,8 +93,12 @@ void kqueue_reactor::start_op(int op_type, socket_type descriptor,
     reactor_op* op, bool allow_speculative)
 {
   mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
+
   if (descriptor_data->shutdown_)
+  {
+    post_immediate_completion(op);
     return;
+  }
 
   bool first = descriptor_data->op_queue_[op_type].empty();
   if (first)

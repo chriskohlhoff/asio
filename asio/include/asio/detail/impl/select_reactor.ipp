@@ -98,13 +98,17 @@ void select_reactor::start_op(int op_type, socket_type descriptor,
     select_reactor::per_descriptor_data&, reactor_op* op, bool)
 {
   asio::detail::mutex::scoped_lock lock(mutex_);
-  if (!shutdown_)
+
+  if (shutdown_)
   {
-    bool first = op_queue_[op_type].enqueue_operation(descriptor, op);
-    io_service_.work_started();
-    if (first)
-      interrupter_.interrupt();
+    post_immediate_completion(op);
+    return;
   }
+
+  bool first = op_queue_[op_type].enqueue_operation(descriptor, op);
+  io_service_.work_started();
+  if (first)
+    interrupter_.interrupt();
 }
 
 void select_reactor::cancel_ops(socket_type descriptor,

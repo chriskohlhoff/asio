@@ -77,7 +77,10 @@ void win_iocp_io_service::schedule_timer(timer_queue<Time_Traits>& queue,
 {
   // If the service has been shut down we silently discard the timer.
   if (::InterlockedExchangeAdd(&shutdown_, 0) != 0)
+  {
+    post_immediate_completion(op);
     return;
+  }
 
   mutex::scoped_lock lock(dispatch_mutex_);
 

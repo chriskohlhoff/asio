@@ -40,13 +40,17 @@ void epoll_reactor::schedule_timer(timer_queue<Time_Traits>& queue,
     typename timer_queue<Time_Traits>::per_timer_data& timer, timer_op* op)
 {
   mutex::scoped_lock lock(mutex_);
-  if (!shutdown_)
+
+  if (shutdown_)
   {
-    bool earliest = queue.enqueue_timer(time, timer, op);
-    io_service_.work_started();
-    if (earliest)
-      update_timeout();
+    io_service_.post_immediate_completion(op);
+    return;
   }
+
+  bool earliest = queue.enqueue_timer(time, timer, op);
+  io_service_.work_started();
+  if (earliest)
+    update_timeout();
 }
 
 template <typename Time_Traits>
