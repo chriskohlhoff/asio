@@ -74,10 +74,19 @@ public:
     {
       // Put the new timer at the correct position in the heap.
       result.first->second.time_ = time;
-      result.first->second.heap_index_ = heap_.size();
       result.first->second.token_ = token;
-      heap_.push_back(&result.first->second);
-      up_heap(heap_.size() - 1);
+      if (this->is_positive_infinity(time))
+      {
+        result.first->second.heap_index_ =
+          (std::numeric_limits<std::size_t>::max)();
+        return false; // No need to interrupt reactor as timer never expires.
+      }
+      else
+      {
+        result.first->second.heap_index_ = heap_.size();
+        heap_.push_back(&result.first->second);
+        up_heap(heap_.size() - 1);
+      }
     }
 
     return (heap_[0] == &result.first->second);
@@ -86,7 +95,7 @@ public:
   // Whether there are no timers in the queue.
   virtual bool empty() const
   {
-    return heap_.empty();
+    return timers_.empty();
   }
 
   // Get the time for the timer that is earliest in the queue.
@@ -190,16 +199,16 @@ private:
     op_queue<timer_op> op_queue_;
 
     // The index of the timer in the heap.
-    size_t heap_index_;
+    std::size_t heap_index_;
 
     // The token associated with the timer.
     void* token_;
   };
 
   // Move the item at the given index up the heap to its correct position.
-  void up_heap(size_t index)
+  void up_heap(std::size_t index)
   {
-    size_t parent = (index - 1) / 2;
+    std::size_t parent = (index - 1) / 2;
     while (index > 0
         && Time_Traits::less_than(heap_[index]->time_, heap_[parent]->time_))
     {
@@ -210,12 +219,12 @@ private:
   }
 
   // Move the item at the given index down the heap to its correct position.
-  void down_heap(size_t index)
+  void down_heap(std::size_t index)
   {
-    size_t child = index * 2 + 1;
+    std::size_t child = index * 2 + 1;
     while (child < heap_.size())
     {
-      size_t min_child = (child + 1 == heap_.size()
+      std::size_t min_child = (child + 1 == heap_.size()
           || Time_Traits::less_than(
             heap_[child]->time_, heap_[child + 1]->time_))
         ? child : child + 1;
@@ -228,7 +237,7 @@ private:
   }
 
   // Swap two entries in the heap.
-  void swap_heap(size_t index1, size_t index2)
+  void swap_heap(std::size_t index1, std::size_t index2)
   {
     timer* tmp = heap_[index1];
     heap_[index1] = heap_[index2];
@@ -241,7 +250,7 @@ private:
   void remove_timer(timer* t)
   {
     // Remove the timer from the heap.
-    size_t index = t->heap_index_;
+    std::size_t index = t->heap_index_;
     if (!heap_.empty() && index < heap_.size())
     {
       if (index == heap_.size() - 1)
@@ -252,7 +261,7 @@ private:
       {
         swap_heap(index, heap_.size() - 1);
         heap_.pop_back();
-        size_t parent = (index - 1) / 2;
+        std::size_t parent = (index - 1) / 2;
         if (index > 0 && Time_Traits::less_than(
               heap_[index]->time_, heap_[parent]->time_))
           up_heap(index);
@@ -266,6 +275,19 @@ private:
     iterator it = timers_.find(t->token_);
     if (it != timers_.end())
       timers_.erase(it);
+  }
+
+  // Determine if the specified absolute time is positive infinity.
+  template <typename Time_Type>
+  static bool is_positive_infinity(const Time_Type& time)
+  {
+    return false;
+  }
+
+  // Determine if the specified absolute time is positive infinity.
+  static bool is_positive_infinity(const boost::posix_time::ptime& time)
+  {
+    return time == boost::posix_time::pos_infin;
   }
 
   // A hash of timer token to linked lists of timers.
