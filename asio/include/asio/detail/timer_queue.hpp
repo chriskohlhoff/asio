@@ -17,7 +17,6 @@
 
 #include "asio/detail/config.hpp"
 #include <cstddef>
-#include <memory>
 #include <vector>
 #include <boost/config.hpp>
 #include <boost/limits.hpp>
