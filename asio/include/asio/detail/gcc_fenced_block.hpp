@@ -20,7 +20,9 @@
 #if defined(__GNUC__) \
   && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)) \
   && !defined(__INTEL_COMPILER) && !defined(__ICL) \
-  && !defined(__ICC) && !defined(__ECC) && !defined(__PATHSCALE__)
+  && !defined(__ICC) && !defined(__ECC) && !defined(__PATHSCALE__) \
+  && (!defined(__arm__) || (defined(__arm__) && \
+        (__GNUC__ == 4 && __GNUC_MINOR__ >= 4) || (__GNUC__ > 4)))
 
 #include "asio/detail/push_options.hpp"
 
@@ -57,5 +59,7 @@ private:
        // && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4))
        // && !defined(__INTEL_COMPILER) && !defined(__ICL)
        // && !defined(__ICC) && !defined(__ECC) && !defined(__PATHSCALE__)
+       // && (!defined(__arm__) || (defined(__arm__) &&
+       //       (__GNUC__ == 4 && __GNUC_MINOR__ >= 4) || (__GNUC__ > 4)))
 
 #endif // ASIO_DETAIL_GCC_FENCED_BLOCK_HPP
