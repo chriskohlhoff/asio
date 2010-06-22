@@ -21,8 +21,8 @@
 
 #include "asio/io_service.hpp"
 #include "asio/detail/epoll_reactor_fwd.hpp"
-#include "asio/detail/hash_map.hpp"
 #include "asio/detail/mutex.hpp"
+#include "asio/detail/object_pool.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/reactor_op.hpp"
 #include "asio/detail/select_interrupter.hpp"
@@ -45,15 +45,15 @@ public:
     connect_op = 1, except_op = 2, max_ops = 3 };
 
   // Per-descriptor queues.
-  struct descriptor_state
+  class descriptor_state
   {
-    descriptor_state() {}
-    descriptor_state(const descriptor_state&) {}
-    void operator=(const descriptor_state&) {}
-
+    friend class epoll_reactor;
+    friend class object_pool_access;
     mutex mutex_;
     op_queue<reactor_op> op_queue_[max_ops];
     bool shutdown_;
+    descriptor_state* next_;
+    descriptor_state* prev_;
   };
 
   // Per-descriptor data.
@@ -178,15 +178,8 @@ private:
   // Mutex to protect access to the registered descriptors.
   mutex registered_descriptors_mutex_;
 
-  // Keep track of all registered descriptors. This code relies on the fact that
-  // the hash_map implementation pools deleted nodes, meaning that we can assume
-  // our descriptor_state pointer remains valid even after the entry is removed.
-  // Technically this is not true for C++98, as that standard says that spliced
-  // elements in a list are invalidated. However, C++0x fixes this shortcoming
-  // so we'll just assume that C++98 std::list implementations will do the right
-  // thing anyway.
-  typedef detail::hash_map<socket_type, descriptor_state> descriptor_map;
-  descriptor_map registered_descriptors_;
+  // Keep track of all registered descriptors.
+  object_pool<descriptor_state> registered_descriptors_;
 };
 
 } // namespace detail

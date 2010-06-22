@@ -104,6 +104,7 @@ nobase_include_HEADERS = \
 	asio/detail/null_signal_blocker.hpp \
 	asio/detail/null_thread.hpp \
 	asio/detail/null_tss_ptr.hpp \
+	asio/detail/object_pool.hpp \
 	asio/detail/old_win_sdk_compat.hpp \
 	asio/detail/operation.hpp \
 	asio/detail/op_queue.hpp \

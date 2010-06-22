@@ -78,14 +78,12 @@ void epoll_reactor::shutdown_service()
 
   op_queue<operation> ops;
 
-  descriptor_map::iterator iter = registered_descriptors_.begin();
-  descriptor_map::iterator end = registered_descriptors_.end();
-  while (iter != end)
+  while (descriptor_state* state = registered_descriptors_.first())
   {
     for (int i = 0; i < max_ops; ++i)
-      ops.push(iter->second.op_queue_[i]);
-    iter->second.shutdown_ = true;
-    ++iter;
+      ops.push(state->op_queue_[i]);
+    state->shutdown_ = true;
+    registered_descriptors_.free(state);
   }
 
   timer_queues_.get_all_timers(ops);
@@ -101,10 +99,7 @@ int epoll_reactor::register_descriptor(socket_type descriptor,
 {
   mutex::scoped_lock lock(registered_descriptors_mutex_);
 
-  descriptor_map::iterator new_entry = registered_descriptors_.insert(
-        std::make_pair(descriptor, descriptor_state())).first;
-  descriptor_data = &new_entry->second;
-
+  descriptor_data = registered_descriptors_.alloc();
   descriptor_data->shutdown_ = false;
 
   lock.unlock();
@@ -123,6 +118,13 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
     epoll_reactor::per_descriptor_data& descriptor_data,
     reactor_op* op, bool allow_speculative)
 {
+  if (!descriptor_data)
+  {
+    op->ec_ = asio::error::bad_descriptor;
+    post_immediate_completion(op);
+    return;
+  }
+
   mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
 
   if (descriptor_data->shutdown_)
@@ -161,6 +163,9 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
 void epoll_reactor::cancel_ops(socket_type,
     epoll_reactor::per_descriptor_data& descriptor_data)
 {
+  if (!descriptor_data)
+    return;
+
   mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
 
   op_queue<operation> ops;
@@ -182,31 +187,39 @@ void epoll_reactor::cancel_ops(socket_type,
 void epoll_reactor::close_descriptor(socket_type descriptor,
     epoll_reactor::per_descriptor_data& descriptor_data)
 {
+  if (!descriptor_data)
+    return;
+
   mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
   mutex::scoped_lock descriptors_lock(registered_descriptors_mutex_);
 
-  // Remove the descriptor from the set of known descriptors. The descriptor
-  // will be automatically removed from the epoll set when it is closed.
-  descriptor_data->shutdown_ = true;
-
-  op_queue<operation> ops;
-  for (int i = 0; i < max_ops; ++i)
+  if (!descriptor_data->shutdown_)
   {
-    while (reactor_op* op = descriptor_data->op_queue_[i].front())
+    // Remove the descriptor from the set of known descriptors. The descriptor
+    // will be automatically removed from the epoll set when it is closed.
+
+    op_queue<operation> ops;
+    for (int i = 0; i < max_ops; ++i)
     {
-      op->ec_ = asio::error::operation_aborted;
-      descriptor_data->op_queue_[i].pop();
-      ops.push(op);
+      while (reactor_op* op = descriptor_data->op_queue_[i].front())
+      {
+        op->ec_ = asio::error::operation_aborted;
+        descriptor_data->op_queue_[i].pop();
+        ops.push(op);
+      }
     }
+
+    descriptor_data->shutdown_ = true;
+
+    descriptor_lock.unlock();
+
+    registered_descriptors_.free(descriptor_data);
+    descriptor_data = 0;
+
+    descriptors_lock.unlock();
+
+    io_service_.post_deferred_completions(ops);
   }
-
-  descriptor_lock.unlock();
-
-  registered_descriptors_.erase(descriptor);
-
-  descriptors_lock.unlock();
-
-  io_service_.post_deferred_completions(ops);
 }
 
 void epoll_reactor::run(bool block, op_queue<operation>& ops)
