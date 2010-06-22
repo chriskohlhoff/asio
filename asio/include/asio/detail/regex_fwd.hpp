@@ -21,7 +21,7 @@
 namespace boost {
 
 template <class BidiIterator>
-class sub_match;
+struct sub_match;
 
 template <class BidiIterator, class Allocator>
 class match_results;
