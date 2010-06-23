@@ -93,10 +93,10 @@ EXAMPLE_EXES = \
 	examples\multicast\sender.exe \
 	examples\services\daytime_client.exe \
 	examples\socks4\sync_client.exe \
-	examples\timeouts\accept_timeout.exe \
-	examples\timeouts\connect_timeout.exe \
-	examples\timeouts\datagram_receive_timeout.exe \
-	examples\timeouts\stream_receive_timeout.exe \
+	examples\timeouts\async_tcp_client.exe \
+	examples\timeouts\blocking_tcp_client.exe \
+	examples\timeouts\blocking_udp_client.exe \
+	examples\timeouts\server.exe \
 	examples\timers\tick_count_timer.exe \
 	examples\timers\time_t_timer.exe \
 	examples\tutorial\timer1\timer.exe \

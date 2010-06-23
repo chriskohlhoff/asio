@@ -106,10 +106,10 @@ noinst_PROGRAMS = \
 	examples/porthopper/server \
 	examples/services/daytime_client \
 	examples/socks4/sync_client \
-	examples/timeouts/accept_timeout \
-	examples/timeouts/connect_timeout \
-	examples/timeouts/datagram_receive_timeout \
-	examples/timeouts/stream_receive_timeout \
+	examples/timeouts/async_tcp_client \
+	examples/timeouts/blocking_tcp_client \
+	examples/timeouts/blocking_udp_client \
+	examples/timeouts/server \
 	examples/timers/time_t_timer \
 	examples/tutorial/timer1/timer \
 	examples/tutorial/timer2/timer \
@@ -394,10 +394,10 @@ examples_services_daytime_client_SOURCES = \
 	examples/services/daytime_client.cpp \
 	examples/services/logger_service.cpp
 examples_socks4_sync_client_SOURCES = examples/socks4/sync_client.cpp
-examples_timeouts_accept_timeout_SOURCES = examples/timeouts/accept_timeout.cpp
-examples_timeouts_connect_timeout_SOURCES = examples/timeouts/connect_timeout.cpp
-examples_timeouts_datagram_receive_timeout_SOURCES = examples/timeouts/datagram_receive_timeout.cpp
-examples_timeouts_stream_receive_timeout_SOURCES = examples/timeouts/stream_receive_timeout.cpp
+examples_timeouts_async_tcp_client_SOURCES = examples/timeouts/async_tcp_client.cpp
+examples_timeouts_blocking_tcp_client_SOURCES = examples/timeouts/blocking_tcp_client.cpp
+examples_timeouts_blocking_udp_client_SOURCES = examples/timeouts/blocking_udp_client.cpp
+examples_timeouts_server_SOURCES = examples/timeouts/server.cpp
 examples_timers_time_t_timer_SOURCES = examples/timers/time_t_timer.cpp
 examples_tutorial_timer1_timer_SOURCES = examples/tutorial/timer1/timer.cpp
 examples_tutorial_timer2_timer_SOURCES = examples/tutorial/timer2/timer.cpp

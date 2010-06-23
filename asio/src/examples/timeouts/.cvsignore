@@ -1,7 +1,8 @@
 .deps
 .dirstamp
 *.exe
-*_timeout
+*_client
+server
 *.ilk
 *.manifest
 *.pdb
