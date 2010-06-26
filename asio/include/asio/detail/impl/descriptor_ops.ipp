@@ -155,7 +155,7 @@ bool non_blocking_read(int d, buf* bufs, std::size_t count,
     if (bytes == 0)
     {
       ec = asio::error::eof;
-      return 0;
+      return true;
     }
 
     // Retry operation if interrupted by signal.
@@ -168,7 +168,7 @@ bool non_blocking_read(int d, buf* bufs, std::size_t count,
       return false;
 
     // Operation is complete.
-    if (bytes >= 0)
+    if (bytes > 0)
     {
       ec = asio::error_code();
       bytes_transferred = bytes;
