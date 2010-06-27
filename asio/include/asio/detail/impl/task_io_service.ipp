@@ -27,6 +27,10 @@
 
 #include "asio/detail/push_options.hpp"
 
+#if !defined(ASIO_GENERATIONAL_BIAS)
+# define ASIO_GENERATIONAL_BIAS 1
+#endif // !defined(ASIO_GENERATIONAL_BIAS)
+
 namespace asio {
 namespace detail {
 
@@ -38,6 +42,7 @@ struct task_io_service::task_cleanup
     // the operation queue.
     lock_->lock();
     task_io_service_->task_interrupted_ = true;
+    ops_->push(task_io_service_->op_queue_);
     task_io_service_->op_queue_.push(*ops_);
     task_io_service_->op_queue_.push(&task_io_service_->task_operation_);
   }
@@ -68,6 +73,7 @@ task_io_service::task_io_service(asio::io_service& io_service)
     mutex_(),
     task_(0),
     task_interrupted_(true),
+    task_count_down_(0),
     outstanding_work_(0),
     stopped_(false),
     shutdown_(false),
@@ -239,28 +245,39 @@ std::size_t task_io_service::do_one(mutex::scoped_lock& lock,
 
       if (o == &task_operation_)
       {
-        task_interrupted_ = more_handlers || polling;
-
-        // If the task has already run and we're polling then we're done.
-        if (task_has_run && polling)
+        if (more_handlers && task_count_down_ > 0)
         {
-          task_interrupted_ = true;
-          op_queue_.push(&task_operation_);
-          return 0;
+          // Let's give another generation of handlers an opportunity to
+          // execute before running the task again.
+          --task_count_down_;
+          op_queue_.push(o);
         }
-        task_has_run = true;
+        else
+        {
+          task_interrupted_ = more_handlers || polling;
+          task_count_down_ = ASIO_GENERATIONAL_BIAS;
 
-        if (!more_handlers || !wake_one_idle_thread_and_unlock(lock))
-          lock.unlock();
+          // If the task has already run and we're polling then we're done.
+          if (task_has_run && polling)
+          {
+            task_interrupted_ = true;
+            op_queue_.push(&task_operation_);
+            return 0;
+          }
+          task_has_run = true;
 
-        op_queue<operation> completed_ops;
-        task_cleanup c = { this, &lock, &completed_ops };
-        (void)c;
+          if (!more_handlers || !wake_one_idle_thread_and_unlock(lock))
+            lock.unlock();
 
-        // Run the task. May throw an exception. Only block if the operation
-        // queue is empty and we're not polling, otherwise we want to return
-        // as soon as possible.
-        task_->run(!more_handlers && !polling, completed_ops);
+          op_queue<operation> completed_ops;
+          task_cleanup c = { this, &lock, &completed_ops };
+          (void)c;
+
+          // Run the task. May throw an exception. Only block if the operation
+          // queue is empty and we're not polling, otherwise we want to return
+          // as soon as possible.
+          task_->run(!more_handlers && !polling, completed_ops);
+        }
       }
       else
       {

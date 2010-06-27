@@ -145,6 +145,9 @@ private:
   // Whether the task has been interrupted.
   bool task_interrupted_;
 
+  // Count down until the task runs again.
+  std::size_t task_count_down_;
+
   // The count of unfinished work.
   boost::detail::atomic_count outstanding_work_;
 
