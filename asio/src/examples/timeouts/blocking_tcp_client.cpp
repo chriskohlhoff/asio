@@ -112,7 +112,8 @@ public:
         return;
     }
 
-    throw asio::system_error(ec ? ec : asio::error::host_not_found);
+    throw asio::system_error(
+        ec ? ec : asio::error::host_not_found);
   }
 
   std::string read_line(boost::posix_time::time_duration timeout)

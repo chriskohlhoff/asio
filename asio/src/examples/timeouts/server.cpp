@@ -193,7 +193,8 @@ private:
     // Set a timeout for the write operation.
     output_timer_.expires_from_now(boost::posix_time::seconds(30));
 
-    asio::async_write(socket_, asio::buffer(output_queue_.front()),
+    asio::async_write(socket_,
+        asio::buffer(output_queue_.front()),
         boost::bind(&tcp_session::handle_write, shared_from_this(), _1));
   }
 
