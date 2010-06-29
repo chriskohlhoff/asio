@@ -13,6 +13,7 @@
 #include "asio/ip/tcp.hpp"
 #include "asio/read_until.hpp"
 #include "asio/streambuf.hpp"
+#include "asio/system_error.hpp"
 #include "asio/write.hpp"
 #include "asio/thread.hpp"
 #include <cstdlib>
