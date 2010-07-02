@@ -15,59 +15,70 @@
 #include "asio/streambuf.hpp"
 #include "asio/write.hpp"
 #include <boost/bind.hpp>
-#include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <iostream>
 
+using asio::deadline_timer;
 using asio::ip::tcp;
 
 //
-// This class consists of four asynchronous "actors":
+// This class manages socket timeouts by applying the concept of a deadline.
+// Each asynchronous operation is given a deadline by which it must complete.
+// Deadlines are enforced by an "actor" that persists for the lifetime of the
+// client object:
 //
-//        Connect Actor                      Timeout Actor
-//        ~~~~~~~~~~~~~                      ~~~~~~~~~~~~~
+//  +----------------+
+//  |                |     
+//  | check_deadline |<---+
+//  |                |    |
+//  +----------------+    | async_wait()
+//              |         |
+//              +---------+
 //
-// +---------------+
-// |               |
-// | start_connect |<---+                  +----------------+
-// |               |    |                  |                |     
-// +---------------+    |                  | handle_timeout |<---+
-//         |            |                  |                |    |
-//         |    +----------------+         +----------------+    |
-//         |    |                |                      |        |
-//         +--->| handle_connect |                      +--------+
-//              |                |
-//              +----------------+
-//                         :
-//     Input Actor         :                Heartbeat Actor
-//     ~~~~~~~~~~~         :                ~~~~~~~~~~~~~~~
-//                         :    
-//  +------------+         :         +-------------+
-//  |            |<- - - - + - - - ->|             |
-//  | start_read |                   | start_write |<----+
-//  |            |<----+             |             |     |
-//  +------------+     |             +-------------+     |
-//         |           |                    |            |
-//         |    +-------------+             |     +--------------+
-//         |    |             |             |     |              |
-//         +--->| handle_read |             +---->| handle_write |
-//              |             |                   |              |
-//              +-------------+                   +--------------+
+// If the deadline actor determines that the deadline has expired, the socket
+// is closed and any outstanding operations are consequently cancelled.
 //
-// The Connect Actor performs connection establishment. It tries each endpoint
-// in turn until a connection is established, or the available endpoints are
-// exhausted. If a connection is successfully established, the Connect Actor
-// forks into two new actors: the Input Actor and the Heartbeat Actor.
+// Connection establishment involves trying each endpoint in turn until a
+// connection is successful, or the available endpoints are exhausted. If the
+// deadline actor closes the socket, the connect actor is woken up and moves to
+// the next endpoint.
 //
-// The Input Actor reads messages from the socket. Messages are delimited by
-// the newline character. The timeout for receiving a complete message is 30
-// seconds.
+//  +---------------+                
+//  |               |
+//  | start_connect |<---+
+//  |               |    |
+//  +---------------+    |
+//           |           |
+//  async_-  |    +----------------+
+// connect() |    |                |
+//           +--->| handle_connect |
+//                |                |
+//                +----------------+
+//                          :
+// Once a connection is     :
+// made, the connect        :
+// actor forks in two -     :
+//                          :
+// an actor for reading     :       and an actor for
+// inbound messages:        :       sending heartbeats:
+//                          :    
+//  +------------+          :          +-------------+
+//  |            |<- - - - -+- - - - ->|             |
+//  | start_read |                     | start_write |<---+
+//  |            |<---+                |             |    |
+//  +------------+    |                +-------------+    | async_wait()
+//          |         |                        |          |
+//  async_- |    +-------------+       async_- |    +--------------+
+//   read_- |    |             |       write() |    |              |
+//  until() +--->| handle_read |               +--->| handle_write |
+//               |             |                    |              |
+//               +-------------+                    +--------------+
 //
-// The Heartbeat Actor sends a heartbeat (a message that consists of a single
-// newline character) every 10 seconds.
+// The input actor reads messages from the socket, where messages are delimited
+// by the newline character. The deadline for a complete message is 30 seconds.
 //
-// The Timeout Actor is responsible for managing timeouts. When a timeout
-// occurs it will close the socket. This will cause any pending asynchronous
-// operations to complete with the operation_aborted error.
+// The heartbeat actor sends a heartbeat (a message that consists of a single
+// newline character) every 10 seconds. In this example, no deadline is applied
+// message sending.
 //
 class client
 {
@@ -75,7 +86,7 @@ public:
   client(asio::io_service& io_service)
     : stopped_(false),
       socket_(io_service),
-      timeout_timer_(io_service),
+      deadline_(io_service),
       heartbeat_timer_(io_service)
   {
   }
@@ -87,10 +98,10 @@ public:
     // Start the connect actor.
     start_connect(endpoint_iter);
 
-    // Start the timeout actor. You will note that we're not setting any
-    // particular timeout here. Instead, the connect and input actors will
-    // update the timeout prior to each asynchronous operation.
-    timeout_timer_.async_wait(boost::bind(&client::handle_timeout, this));
+    // Start the deadline actor. You will note that we're not setting any
+    // particular deadline here. Instead, the connect and input actors will
+    // update the deadline prior to each asynchronous operation.
+    deadline_.async_wait(boost::bind(&client::check_deadline, this));
   }
 
   // This function terminates all the actors to shut down the connection. It
@@ -100,7 +111,7 @@ public:
   {
     stopped_ = true;
     socket_.close();
-    timeout_timer_.cancel();
+    deadline_.cancel();
     heartbeat_timer_.cancel();
   }
 
@@ -111,8 +122,8 @@ private:
     {
       std::cout << "Trying " << endpoint_iter->endpoint() << "...\n";
 
-      // Set a timeout for the connect operation.
-      timeout_timer_.expires_from_now(boost::posix_time::seconds(2));
+      // Set a deadline for the connect operation.
+      deadline_.expires_from_now(boost::posix_time::seconds(60));
 
       // Start the asynchronous connect operation.
       socket_.async_connect(endpoint_iter->endpoint(),
@@ -143,7 +154,7 @@ private:
       start_connect(++endpoint_iter);
     }
 
-    // Check if the connect operation failed before the timeout period elapsed.
+    // Check if the connect operation failed before the deadline expired.
     else if (ec)
     {
       std::cout << "Connect error: " << ec.message() << "\n";
@@ -171,9 +182,10 @@ private:
 
   void start_read()
   {
-    // Set a timeout for the read operation.
-    timeout_timer_.expires_from_now(boost::posix_time::seconds(30));
+    // Set a deadline for the read operation.
+    deadline_.expires_from_now(boost::posix_time::seconds(30));
 
+    // Start an asynchronous operation to read a newline-delimited message.
     asio::async_read_until(socket_, input_buffer_, '\n',
         boost::bind(&client::handle_read, this, _1));
   }
@@ -185,10 +197,12 @@ private:
 
     if (!ec)
     {
+      // Extract the newline-delimited message from the buffer.
       std::string line;
       std::istream is(&input_buffer_);
       std::getline(is, line);
 
+      // Empty messages are heartbeats and so ignored.
       if (!line.empty())
       {
         std::cout << "Received: " << line << "\n";
@@ -209,6 +223,7 @@ private:
     if (stopped_)
       return;
 
+    // Start an asynchronous operation to send a heartbeat message.
     asio::async_write(socket_, asio::buffer("\n", 1),
         boost::bind(&client::handle_write, this, _1));
   }
@@ -220,6 +235,7 @@ private:
 
     if (!ec)
     {
+      // Wait 10 seconds before sending the next heartbeat.
       heartbeat_timer_.expires_from_now(boost::posix_time::seconds(10));
       heartbeat_timer_.async_wait(boost::bind(&client::start_write, this));
     }
@@ -231,35 +247,35 @@ private:
     }
   }
 
-  void handle_timeout()
+  void check_deadline()
   {
     if (stopped_)
       return;
 
-    // If the timeout actor is being woken up due to timer modification, then
-    // the current expiry time will be in the future. We can use this
-    // information to determine whether to close the socket and so cancel the
-    // pending asynchronous protocol operations.
-    if (timeout_timer_.expires_from_now() <= boost::posix_time::seconds(0))
+    // Check whether the deadline has passed. We compare the deadline against
+    // the current time since a new asynchronous operation may have moved the
+    // deadline before this actor had a chance to run.
+    if (deadline_.expires_at() <= deadline_timer::traits_type::now())
     {
-      // The timer has truly expired.
+      // The deadline has passed. The socket is closed so that any outstanding
+      // asynchronous operations are cancelled.
       socket_.close();
 
-      // The timeout actor will enter an indefinite sleep, awaiting further
-      // modifications to the expiry time by the connect or input actors.
-      timeout_timer_.expires_at(boost::posix_time::pos_infin);
+      // There is no longer an active deadline. The expiry is set to positive
+      // infinity so that the actor takes no action until a new deadline is set.
+      deadline_.expires_at(boost::posix_time::pos_infin);
     }
 
-    // Put the timeout actor back to sleep.
-    timeout_timer_.async_wait(boost::bind(&client::handle_timeout, this));
+    // Put the actor back to sleep.
+    deadline_.async_wait(boost::bind(&client::check_deadline, this));
   }
 
 private:
   bool stopped_;
   tcp::socket socket_;
   asio::streambuf input_buffer_;
-  asio::deadline_timer timeout_timer_;
-  asio::deadline_timer heartbeat_timer_;
+  deadline_timer deadline_;
+  deadline_timer heartbeat_timer_;
 };
 
 int main(int argc, char* argv[])
