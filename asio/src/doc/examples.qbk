@@ -242,10 +242,10 @@ asio.reference.ssl__stream ssl::stream<>] template with asynchronous operations.
 A collection of examples showing how to cancel long running asynchronous
 operations after a period of time.
 
-* [@../src/examples/timeouts/accept_timeout.cpp]
-* [@../src/examples/timeouts/connect_timeout.cpp]
-* [@../src/examples/timeouts/datagram_receive_timeout.cpp]
-* [@../src/examples/timeouts/stream_receive_timeout.cpp]
+* [@../src/examples/timeouts/async_tcp_client.cpp]
+* [@../src/examples/timeouts/blocking_tcp_client.cpp]
+* [@../src/examples/timeouts/blocking_udp_client.cpp]
+* [@../src/examples/timeouts/server.cpp]
 
 
 [heading Timers]
