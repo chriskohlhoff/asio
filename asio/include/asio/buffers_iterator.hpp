@@ -207,6 +207,15 @@ public:
     return tmp;
   }
 
+  /// Addition operator.
+  friend buffers_iterator operator+(std::ptrdiff_t difference,
+      const buffers_iterator& iter)
+  {
+    buffers_iterator tmp(iter);
+    tmp.advance(difference);
+    return tmp;
+  }
+
   /// Subtraction operator.
   friend buffers_iterator operator-(const buffers_iterator& iter,
       std::ptrdiff_t difference)

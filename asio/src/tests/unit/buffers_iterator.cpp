@@ -213,6 +213,32 @@ void test()
     bi11 += 1;
     bi12 += 1;
 
+    bi1 = bi1 - 1;
+    bi2 = bi2 - 1;
+    bi3 = bi3 - 1;
+    bi4 = bi4 - 1;
+    bi5 = bi5 - 1;
+    bi6 = bi6 - 1;
+    bi7 = bi7 - 1;
+    bi8 = bi8 - 1;
+    bi9 = bi9 - 1;
+    bi10 = bi10 - 1;
+    bi11 = bi11 - 1;
+    bi12 = bi12 - 1;
+
+    bi1 = 1 + bi1;
+    bi2 = 1 + bi2;
+    bi3 = 1 + bi3;
+    bi4 = 1 + bi4;
+    bi5 = 1 + bi5;
+    bi6 = 1 + bi6;
+    bi7 = 1 + bi7;
+    bi8 = 1 + bi8;
+    bi9 = 1 + bi9;
+    bi10 = 1 + bi10;
+    bi11 = 1 + bi11;
+    bi12 = 1 + bi12;
+
     (void)static_cast<std::ptrdiff_t>(bi13 - bi1);
     (void)static_cast<std::ptrdiff_t>(bi14 - bi2);
     (void)static_cast<std::ptrdiff_t>(bi15 - bi3);
