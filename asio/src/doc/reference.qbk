@@ -34151,10 +34151,26 @@ Test two iterators for inequality.
 [endsect]
 
 
-
 [section:operator_plus_ buffers_iterator::operator+]
 
 [indexterm2 operator+..buffers_iterator] 
+Addition operator. 
+
+
+  friend buffers_iterator ``[link asio.reference.buffers_iterator.operator_plus_.overload1 operator+]``(
+      const buffers_iterator & iter,
+      std::ptrdiff_t difference);
+  ``  [''''&raquo;''' [link asio.reference.buffers_iterator.operator_plus_.overload1 more...]]``
+
+  friend buffers_iterator ``[link asio.reference.buffers_iterator.operator_plus_.overload2 operator+]``(
+      std::ptrdiff_t difference,
+      const buffers_iterator & iter);
+  ``  [''''&raquo;''' [link asio.reference.buffers_iterator.operator_plus_.overload2 more...]]``
+
+
+[section:overload1 buffers_iterator::operator+ (1 of 2 overloads)]
+
+
 Addition operator. 
 
 
@@ -34172,6 +34188,30 @@ Addition operator.
 
 [endsect]
 
+
+
+[section:overload2 buffers_iterator::operator+ (2 of 2 overloads)]
+
+
+Addition operator. 
+
+
+  friend buffers_iterator operator+(
+      std::ptrdiff_t difference,
+      const buffers_iterator & iter);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[endsect]
 
 [section:operator_plus__plus_ buffers_iterator::operator++]
 
@@ -52711,46 +52751,6 @@ The [link asio.reference.mutable_buffer `mutable_buffer`] class provides a safe 
 
 
 [endsect]
-
-
-[section:operator_not__eq_ operator!=]
-
-[indexterm1 operator!=] 
-
-  bool operator!=(
-      const error_code & e1,
-      const error_code & e2);
-
-
-[heading Requirements]
-
-[*Header: ][^asio/impl/error_code.hpp]
-
-[*Convenience header: ][^asio.hpp]
-
-
-[endsect]
-
-
-
-[section:operator_eq__eq_ operator==]
-
-[indexterm1 operator==] 
-
-  bool operator==(
-      const error_code & e1,
-      const error_code & e2);
-
-
-[heading Requirements]
-
-[*Header: ][^asio/impl/error_code.hpp]
-
-[*Convenience header: ][^asio.hpp]
-
-
-[endsect]
-
 
 
 [section:placeholders__bytes_transferred placeholders::bytes_transferred]

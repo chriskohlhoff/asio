@@ -81,7 +81,7 @@ All of the asio classes can be used by simply including the `"asio.hpp"` header 
 
 
 
-Since this example users timers, we need to include the appropriate Boost.Date\_Time header file for manipulating times.
+Since this example uses timers, we need to include the appropriate Boost.Date\_Time header file for manipulating times.
 
 
   ``''''''``#include <boost/date_time/posix_time/posix_time.hpp>
