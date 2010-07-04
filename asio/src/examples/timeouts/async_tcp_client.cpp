@@ -22,12 +22,12 @@ using asio::ip::tcp;
 
 //
 // This class manages socket timeouts by applying the concept of a deadline.
-// Each asynchronous operation is given a deadline by which it must complete.
+// Some asynchronous operations are given deadlines by which they must complete.
 // Deadlines are enforced by an "actor" that persists for the lifetime of the
 // client object:
 //
 //  +----------------+
-//  |                |     
+//  |                |
 //  | check_deadline |<---+
 //  |                |    |
 //  +----------------+    | async_wait()
@@ -42,7 +42,7 @@ using asio::ip::tcp;
 // deadline actor closes the socket, the connect actor is woken up and moves to
 // the next endpoint.
 //
-//  +---------------+                
+//  +---------------+
 //  |               |
 //  | start_connect |<---+
 //  |               |    |
@@ -60,7 +60,7 @@ using asio::ip::tcp;
 //                          :
 // an actor for reading     :       and an actor for
 // inbound messages:        :       sending heartbeats:
-//                          :    
+//                          :
 //  +------------+          :          +-------------+
 //  |            |<- - - - -+- - - - ->|             |
 //  | start_read |                     | start_write |<---+
