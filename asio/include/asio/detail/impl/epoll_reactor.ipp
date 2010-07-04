@@ -184,7 +184,7 @@ void epoll_reactor::cancel_ops(socket_type,
   io_service_.post_deferred_completions(ops);
 }
 
-void epoll_reactor::close_descriptor(socket_type descriptor,
+void epoll_reactor::close_descriptor(socket_type,
     epoll_reactor::per_descriptor_data& descriptor_data)
 {
   if (!descriptor_data)

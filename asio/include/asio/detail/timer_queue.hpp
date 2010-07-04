@@ -278,7 +278,7 @@ private:
 
   // Determine if the specified absolute time is positive infinity.
   template <typename Time_Type>
-  static bool is_positive_infinity(const Time_Type& time)
+  static bool is_positive_infinity(const Time_Type&)
   {
     return false;
   }
