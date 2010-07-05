@@ -56,7 +56,7 @@ void dev_poll_reactor::schedule_timer(timer_queue<Time_Traits>& queue,
 }
 
 template <typename Time_Traits>
-std::size_t dev_poll_reactor::cancel_timer(
+std::size_t dev_poll_reactor::cancel_timer(timer_queue<Time_Traits>& queue,
     typename timer_queue<Time_Traits>::per_timer_data& timer)
 {
   asio::detail::mutex::scoped_lock lock(mutex_);
