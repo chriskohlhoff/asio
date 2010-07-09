@@ -47,7 +47,8 @@ nobase_include_HEADERS = \
 	asio/detail/fd_set_adapter.hpp \
 	asio/detail/fenced_block.hpp \
 	asio/detail/gcc_arm_fenced_block.hpp \
-	asio/detail/gcc_fenced_block.hpp \
+	asio/detail/gcc_hppa_fenced_block.hpp \
+	asio/detail/gcc_sync_fenced_block.hpp \
 	asio/detail/gcc_x86_fenced_block.hpp \
 	asio/detail/handler_alloc_helpers.hpp \
 	asio/detail/handler_invoke_helpers.hpp \

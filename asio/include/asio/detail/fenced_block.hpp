@@ -23,17 +23,17 @@
 # include "asio/detail/macos_fenced_block.hpp"
 #elif defined(__sun)
 # include "asio/detail/solaris_fenced_block.hpp"
+#elif defined(__GNUC__) && defined(__arm__)
+# include "asio/detail/gcc_arm_fenced_block.hpp"
+#elif defined(__GNUC__) && (defined(__hppa) || defined(__hppa__))
+# include "asio/detail/gcc_hppa_fenced_block.hpp"
 #elif defined(__GNUC__) \
   && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)) \
   && !defined(__INTEL_COMPILER) && !defined(__ICL) \
-  && !defined(__ICC) && !defined(__ECC) && !defined(__PATHSCALE__) \
-  && (!defined(__arm__) || (defined(__arm__) && \
-        (__GNUC__ == 4 && __GNUC_MINOR__ >= 4) || (__GNUC__ > 4)))
-# include "asio/detail/gcc_fenced_block.hpp"
+  && !defined(__ICC) && !defined(__ECC) && !defined(__PATHSCALE__)
+# include "asio/detail/gcc_sync_fenced_block.hpp"
 #elif defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 # include "asio/detail/gcc_x86_fenced_block.hpp"
-#elif defined(__GNUC__) && defined(__arm__)
-# include "asio/detail/gcc_arm_fenced_block.hpp"
 #elif defined(BOOST_WINDOWS) && !defined(UNDER_CE)
 # include "asio/detail/win_fenced_block.hpp"
 #else
@@ -49,17 +49,17 @@ typedef null_fenced_block fenced_block;
 typedef macos_fenced_block fenced_block;
 #elif defined(__sun)
 typedef solaris_fenced_block fenced_block;
+#elif defined(__GNUC__) && defined(__arm__)
+typedef gcc_arm_fenced_block fenced_block;
+#elif defined(__GNUC__) && (defined(__hppa) || defined(__hppa__))
+typedef gcc_hppa_fenced_block fenced_block;
 #elif defined(__GNUC__) \
   && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)) \
   && !defined(__INTEL_COMPILER) && !defined(__ICL) \
-  && !defined(__ICC) && !defined(__ECC) && !defined(__PATHSCALE__) \
-  && (!defined(__arm__) || (defined(__arm__) && \
-        (__GNUC__ == 4 && __GNUC_MINOR__ >= 4) || (__GNUC__ > 4)))
-typedef gcc_fenced_block fenced_block;
+  && !defined(__ICC) && !defined(__ECC) && !defined(__PATHSCALE__)
+typedef gcc_sync_fenced_block fenced_block;
 #elif defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 typedef gcc_x86_fenced_block fenced_block;
-#elif defined(__GNUC__) && defined(__arm__)
-typedef gcc_arm_fenced_block fenced_block;
 #elif defined(BOOST_WINDOWS) && !defined(UNDER_CE)
 typedef win_fenced_block fenced_block;
 #else
