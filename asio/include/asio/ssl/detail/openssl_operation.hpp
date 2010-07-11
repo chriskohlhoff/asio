@@ -160,7 +160,7 @@ public:
 
     if (error_code == SSL_ERROR_SSL)
       return handler_(asio::error_code(
-            error_code, asio::error::get_ssl_category()), rc);
+            sys_error_code, asio::error::get_ssl_category()), rc);
 
     bool is_read_needed = (error_code == SSL_ERROR_WANT_READ);
     bool is_write_needed = (error_code == SSL_ERROR_WANT_WRITE ||
@@ -195,7 +195,7 @@ public:
       else
       {
         return handler_(asio::error_code(
-              error_code, asio::error::get_ssl_category()), rc); 
+              sys_error_code, asio::error::get_ssl_category()), rc); 
       }
     }
 
