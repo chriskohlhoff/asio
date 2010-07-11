@@ -17,7 +17,9 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
+#if !defined(BOOST_HAS_THREADS) \
+  || defined(ASIO_DISABLE_THREADS) \
+  || defined(ASIO_DISABLE_FENCED_BLOCK)
 # include "asio/detail/null_fenced_block.hpp"
 #elif defined(__MACH__) && defined(__APPLE__)
 # include "asio/detail/macos_fenced_block.hpp"
@@ -43,7 +45,9 @@
 namespace asio {
 namespace detail {
 
-#if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
+#if !defined(BOOST_HAS_THREADS) \
+  || defined(ASIO_DISABLE_THREADS) \
+  || defined(ASIO_DISABLE_FENCED_BLOCK)
 typedef null_fenced_block fenced_block;
 #elif defined(__MACH__) && defined(__APPLE__)
 typedef macos_fenced_block fenced_block;
