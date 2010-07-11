@@ -43,6 +43,7 @@ public:
 private:
   static void barrier()
   {
+    // This is just a placeholder and almost certainly not sufficient.
     __asm__ __volatile__ ("" : : : "memory");
   }
 };
