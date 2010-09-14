@@ -68,8 +68,9 @@ specify this directory when running configure:
 When specifying the boost directory in this way you should ensure that you use
 an absolute path.
 
-To build, simply run `make` in the root directory of the asio source kit. To
-test that asio is working correctly, run `make check` after a successful build.
+To build the examples, simply run `make` in the root directory of the asio
+source kit. To also build and run the unit tests, to confirm that asio is
+working correctly, run `make check`.
 
 [heading Building the tests and examples with MSVC]
 
