@@ -10,7 +10,7 @@ LDADD = libasio.a
 
 endif
 
-noinst_PROGRAMS = \
+check_PROGRAMS = \
 	tests/performance/client \
 	tests/performance/server \
 	tests/unit/basic_datagram_socket \
@@ -78,7 +78,9 @@ noinst_PROGRAMS = \
 	tests/unit/windows/stream_handle \
 	tests/unit/windows/stream_handle_service \
 	tests/unit/write \
-	tests/unit/write_at \
+	tests/unit/write_at
+
+noinst_PROGRAMS = \
 	examples/allocation/server \
 	examples/buffers/reference_counted \
 	examples/chat/chat_client \
@@ -140,14 +142,16 @@ endif
 
 if HAVE_OPENSSL
 
-noinst_PROGRAMS += \
+check_PROGRAMS += \
 	tests/unit/ssl/basic_context \
 	tests/unit/ssl/context_base \
 	tests/unit/ssl/context_service \
 	tests/unit/ssl/context \
 	tests/unit/ssl/stream_base \
 	tests/unit/ssl/stream_service \
-	tests/unit/ssl/stream \
+	tests/unit/ssl/stream
+
+noinst_PROGRAMS += \
 	examples/ssl/client \
 	examples/ssl/server
 
