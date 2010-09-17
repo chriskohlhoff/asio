@@ -11,8 +11,6 @@ LDADD = libasio.a
 endif
 
 check_PROGRAMS = \
-	tests/performance/client \
-	tests/performance/server \
 	tests/unit/basic_datagram_socket \
 	tests/unit/basic_deadline_timer \
 	tests/unit/basic_serial_port \
@@ -81,6 +79,12 @@ check_PROGRAMS = \
 	tests/unit/write_at
 
 noinst_PROGRAMS = \
+	tests/latency/tcp_client \
+	tests/latency/tcp_server \
+	tests/latency/udp_client \
+	tests/latency/udp_server \
+	tests/performance/client \
+	tests/performance/server \
 	examples/allocation/server \
 	examples/buffers/reference_counted \
 	examples/chat/chat_client \
@@ -239,6 +243,10 @@ TESTS += \
 endif
 
 noinst_HEADERS = \
+	tests/latency/coroutine.hpp \
+	tests/latency/high_res_clock.hpp \
+	tests/latency/unyield.hpp \
+	tests/latency/yield.hpp \
 	tests/unit/unit_test.hpp \
 	examples/chat/chat_message.hpp \
 	examples/services/basic_logger.hpp \
@@ -248,6 +256,10 @@ noinst_HEADERS = \
 
 AM_CXXFLAGS = -I$(srcdir)/../include
 
+tests_latency_tcp_client_SOURCES = tests/latency/tcp_client.cpp
+tests_latency_tcp_server_SOURCES = tests/latency/tcp_server.cpp
+tests_latency_udp_client_SOURCES = tests/latency/udp_client.cpp
+tests_latency_udp_server_SOURCES = tests/latency/udp_server.cpp
 tests_performance_client_SOURCES = tests/performance/client.cpp
 tests_performance_server_SOURCES = tests/performance/server.cpp
 tests_unit_basic_datagram_socket_SOURCES = tests/unit/basic_datagram_socket.cpp
