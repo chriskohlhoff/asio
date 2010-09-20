@@ -11,9 +11,19 @@
 #ifndef HIGH_RES_CLOCK_HPP
 #define HIGH_RES_CLOCK_HPP
 
+#include <boost/config.hpp>
 #include <boost/cstdint.hpp>
 
-#if defined(__GNUC__) && defined(__x86_64__)
+#if defined(BOOST_WINDOWS)
+
+inline boost::uint64_t high_res_clock()
+{
+  LARGE_INTEGER i;
+  QueryPerformanceCounter(&i);
+  return i.QuadPart;
+}
+
+#elif defined(__GNUC__) && defined(__x86_64__)
 
 inline boost::uint64_t high_res_clock()
 {

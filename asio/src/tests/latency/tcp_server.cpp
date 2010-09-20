@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
   }
 
   asio::io_service io_service;
-  int port = std::atoi(argv[1]);
+  unsigned short port = static_cast<unsigned short>(std::atoi(argv[1]));
   tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), port));
   std::vector<boost::shared_ptr<tcp_server> > servers;
 

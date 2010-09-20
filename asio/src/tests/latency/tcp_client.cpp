@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
   std::vector<boost::shared_ptr<tcp::socket> > sockets;
 
   const char* ip = argv[1];
-  int port = std::atoi(argv[2]);
+  unsigned short port = static_cast<unsigned short>(std::atoi(argv[2]));
   tcp::endpoint target(asio::ip::address::from_string(ip), port);
 
   int num_connections = std::atoi(argv[3]);
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
   ptime start = microsec_clock::universal_time();
   boost::uint64_t start_hr = high_res_clock();
 
-  int samples[num_samples];
+  boost::uint64_t samples[num_samples];
   for (int i = 0; i < num_samples; ++i)
   {
     tcp::socket& socket = *sockets[i % num_connections];

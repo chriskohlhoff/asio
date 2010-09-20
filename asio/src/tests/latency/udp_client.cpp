@@ -35,8 +35,9 @@ int main(int argc, char* argv[])
   udp::socket::non_blocking_io nbio(true);
   socket.io_control(nbio);
 
-  unsigned short first_port = std::atoi(argv[2]);
-  unsigned short last_port = first_port + std::atoi(argv[3]) - 1;
+  unsigned short first_port = static_cast<unsigned short>(std::atoi(argv[2]));
+  unsigned short num_ports = static_cast<unsigned short>(std::atoi(argv[3]));
+  unsigned short last_port = first_port + num_ports - 1;
   udp::endpoint target(asio::ip::address::from_string(argv[1]), first_port);
 
   std::vector<unsigned char> write_buf(std::atoi(argv[4]));
@@ -45,7 +46,7 @@ int main(int argc, char* argv[])
   ptime start = microsec_clock::universal_time();
   boost::uint64_t start_hr = high_res_clock();
 
-  int samples[num_samples];
+  boost::uint64_t samples[num_samples];
   for (int i = 0; i < num_samples; ++i)
   {
     boost::uint64_t t = high_res_clock();

@@ -66,6 +66,12 @@ SSL_LIBS = \
 	$(SSLDIR)/out32/ssleay32.lib \
 	user32.lib advapi32.lib gdi32.lib
 
+LATENCY_TEST_EXES = \
+	tests\latency\tcp_client.exe \
+	tests\latency\tcp_server.exe \
+	tests\latency\udp_client.exe \
+	tests\latency\udp_server.exe
+
 PERFORMANCE_TEST_EXES = \
 	tests\performance\client.exe \
 	tests\performance\server.exe
@@ -198,6 +204,7 @@ asio.lib: ../include/asio/impl/src.cpp
 !endif
 
 all: \
+	$(LATENCY_TEST_EXES) \
 	$(PERFORMANCE_TEST_EXES) \
 	$(UNIT_TEST_EXES) \
 	$(EXAMPLE_EXES)
@@ -208,6 +215,9 @@ ssl: \
 
 check: $(UNIT_TEST_EXES)
 	!@echo === Running $** === && $** && echo.
+
+{tests\latency}.cpp{tests\latency}.exe:
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {tests\performance}.cpp{tests\performance}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref

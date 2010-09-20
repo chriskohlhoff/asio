@@ -71,11 +71,12 @@ int main(int argc, char* argv[])
   asio::io_service io_service;
   std::vector<boost::shared_ptr<udp_server> > servers;
 
-  int first_port = std::atoi(argv[1]);
-  int last_port = first_port + std::atoi(argv[2]) - 1;
+  unsigned short first_port = static_cast<unsigned short>(std::atoi(argv[1]));
+  unsigned short num_ports = static_cast<unsigned short>(std::atoi(argv[3]));
   std::size_t bufsize = std::atoi(argv[3]);
-  for (int port = first_port; port <= last_port; ++port)
+  for (unsigned short i = 0; i < num_ports; ++i)
   {
+    unsigned short port = first_port + i;
     boost::shared_ptr<udp_server> s(new udp_server(io_service, port, bufsize));
     servers.push_back(s);
     (*s)(asio::error_code());
