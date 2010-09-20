@@ -15,6 +15,7 @@
 #include <boost/shared_ptr.hpp>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <vector>
 
 using asio::ip::tcp;
@@ -24,10 +25,10 @@ using asio::ip::tcp;
 class tcp_server : coroutine
 {
 public:
-  tcp_server(tcp::acceptor& acceptor, std::size_t bufsize) :
+  tcp_server(tcp::acceptor& acceptor, std::size_t buf_size) :
     acceptor_(acceptor),
     socket_(acceptor_.get_io_service()),
-    buffer_(bufsize)
+    buffer_(buf_size)
   {
   }
 
@@ -73,25 +74,32 @@ private:
 
 int main(int argc, char* argv[])
 {
-  if (argc != 4)
+  if (argc != 5)
   {
-    std::fprintf(stderr, "Usage: tcp_server <port> <nconns> <bufsize>\n");
+    std::fprintf(stderr,
+        "Usage: tcp_server <port> <nconns> "
+        "<bufsize> {spin|block}\n");
     return 1;
   }
 
-  asio::io_service io_service;
   unsigned short port = static_cast<unsigned short>(std::atoi(argv[1]));
+  int max_connections = std::atoi(argv[2]);
+  std::size_t buf_size = std::atoi(argv[3]);
+  bool spin = (std::strcmp(argv[4], "spin") == 0);
+
+  asio::io_service io_service;
   tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), port));
   std::vector<boost::shared_ptr<tcp_server> > servers;
 
-  int max_connections = std::atoi(argv[2]);
-  std::size_t bufsize = std::atoi(argv[3]);
   for (int i = 0; i < max_connections; ++i)
   {
-    boost::shared_ptr<tcp_server> s(new tcp_server(acceptor, bufsize));
+    boost::shared_ptr<tcp_server> s(new tcp_server(acceptor, buf_size));
     servers.push_back(s);
     (*s)(asio::error_code());
   }
 
-  for (;;) io_service.poll();
+  if (spin)
+    for (;;) io_service.poll();
+  else
+    io_service.run();
 }

@@ -13,6 +13,7 @@
 #include <boost/shared_ptr.hpp>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <vector>
 
 using asio::ip::udp;
@@ -23,9 +24,9 @@ class udp_server : coroutine
 {
 public:
   udp_server(asio::io_service& io_service,
-      unsigned short port, std::size_t bufsize) :
+      unsigned short port, std::size_t buf_size) :
     socket_(io_service, udp::endpoint(udp::v4(), port)),
-    buffer_(bufsize)
+    buffer_(buf_size)
   {
   }
 
@@ -62,25 +63,32 @@ private:
 
 int main(int argc, char* argv[])
 {
-  if (argc != 4)
+  if (argc != 5)
   {
-    std::fprintf(stderr, "Usage: udp_server <port1> <nports> <bufsize>\n");
+    std::fprintf(stderr,
+        "Usage: udp_server <port1> <nports> "
+        "<bufsize> {spin|block}\n");
     return 1;
   }
+
+  unsigned short first_port = static_cast<unsigned short>(std::atoi(argv[1]));
+  unsigned short num_ports = static_cast<unsigned short>(std::atoi(argv[2]));
+  std::size_t buf_size = std::atoi(argv[3]);
+  bool spin = (std::strcmp(argv[4], "spin") == 0);
 
   asio::io_service io_service;
   std::vector<boost::shared_ptr<udp_server> > servers;
 
-  unsigned short first_port = static_cast<unsigned short>(std::atoi(argv[1]));
-  unsigned short num_ports = static_cast<unsigned short>(std::atoi(argv[3]));
-  std::size_t bufsize = std::atoi(argv[3]);
   for (unsigned short i = 0; i < num_ports; ++i)
   {
     unsigned short port = first_port + i;
-    boost::shared_ptr<udp_server> s(new udp_server(io_service, port, bufsize));
+    boost::shared_ptr<udp_server> s(new udp_server(io_service, port, buf_size));
     servers.push_back(s);
     (*s)(asio::error_code());
   }
 
-  for (;;) io_service.poll();
+  if (spin)
+    for (;;) io_service.poll();
+  else
+    io_service.run();
 }

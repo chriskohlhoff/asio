@@ -12,6 +12,8 @@
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <algorithm>
 #include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <vector>
 #include "high_res_clock.hpp"
 
@@ -23,25 +25,34 @@ const int num_samples = 100000;
 
 int main(int argc, char* argv[])
 {
-  if (argc != 5)
+  if (argc != 6)
   {
-    std::fprintf(stderr, "Usage: udp_client <ip> <port1> <nports> <bufsize>\n");
+    std::fprintf(stderr,
+        "Usage: udp_client <ip> <port1> "
+        "<nports> <bufsize> {spin|block}\n");
     return 1;
   }
+
+  const char* ip = argv[1];
+  unsigned short first_port = static_cast<unsigned short>(std::atoi(argv[2]));
+  unsigned short num_ports = static_cast<unsigned short>(std::atoi(argv[3]));
+  std::size_t buf_size = static_cast<std::size_t>(std::atoi(argv[4]));
+  bool spin = (std::strcmp(argv[5], "spin") == 0);
 
   asio::io_service io_service;
 
   udp::socket socket(io_service, udp::endpoint(udp::v4(), 0));
-  udp::socket::non_blocking_io nbio(true);
-  socket.io_control(nbio);
 
-  unsigned short first_port = static_cast<unsigned short>(std::atoi(argv[2]));
-  unsigned short num_ports = static_cast<unsigned short>(std::atoi(argv[3]));
+  if (spin)
+  {
+    udp::socket::non_blocking_io nbio(true);
+    socket.io_control(nbio);
+  }
+
+  udp::endpoint target(asio::ip::address::from_string(ip), first_port);
   unsigned short last_port = first_port + num_ports - 1;
-  udp::endpoint target(asio::ip::address::from_string(argv[1]), first_port);
-
-  std::vector<unsigned char> write_buf(std::atoi(argv[4]));
-  std::vector<unsigned char> read_buf(std::atoi(argv[4]));
+  std::vector<unsigned char> write_buf(buf_size);
+  std::vector<unsigned char> read_buf(buf_size);
 
   ptime start = microsec_clock::universal_time();
   boost::uint64_t start_hr = high_res_clock();

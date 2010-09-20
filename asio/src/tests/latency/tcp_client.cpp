@@ -14,6 +14,8 @@
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/shared_ptr.hpp>
 #include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <vector>
 #include "high_res_clock.hpp"
 
@@ -34,32 +36,43 @@ struct transfer_all
 
 int main(int argc, char* argv[])
 {
-  if (argc != 5)
+  if (argc != 6)
   {
-    std::fprintf(stderr, "Usage: tcp_client <ip> <port> <nconns> <bufsize>\n");
+    std::fprintf(stderr,
+        "Usage: tcp_client <ip> <port> "
+        "<nconns> <bufsize> {spin|block}\n");
     return 1;
   }
+
+  const char* ip = argv[1];
+  unsigned short port = static_cast<unsigned short>(std::atoi(argv[2]));
+  int num_connections = std::atoi(argv[3]);
+  std::size_t buf_size = static_cast<std::size_t>(std::atoi(argv[4]));
+  bool spin = (std::strcmp(argv[5], "spin") == 0);
 
   asio::io_service io_service;
   std::vector<boost::shared_ptr<tcp::socket> > sockets;
 
-  const char* ip = argv[1];
-  unsigned short port = static_cast<unsigned short>(std::atoi(argv[2]));
-  tcp::endpoint target(asio::ip::address::from_string(ip), port);
-
-  int num_connections = std::atoi(argv[3]);
   for (int i = 0; i < num_connections; ++i)
   {
     boost::shared_ptr<tcp::socket> s(new tcp::socket(io_service));
+
+    tcp::endpoint target(asio::ip::address::from_string(ip), port);
     s->connect(target);
+
     s->set_option(tcp::no_delay(true));
-    tcp::socket::non_blocking_io nbio(true);
-    s->io_control(nbio);
+
+    if (spin)
+    {
+      tcp::socket::non_blocking_io nbio(true);
+      s->io_control(nbio);
+    }
+
     sockets.push_back(s);
   }
 
-  std::vector<unsigned char> write_buf(std::atoi(argv[4]));
-  std::vector<unsigned char> read_buf(std::atoi(argv[4]));
+  std::vector<unsigned char> write_buf(buf_size);
+  std::vector<unsigned char> read_buf(buf_size);
 
   ptime start = microsec_clock::universal_time();
   boost::uint64_t start_hr = high_res_clock();
