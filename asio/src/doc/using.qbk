@@ -12,7 +12,6 @@
 The following platforms and compilers have been tested:
 
 * Win32 and Win64 using Visual C++ 7.1 and Visual C++ 8.0.
-* Win32 using Borland C++Builder 6 patch 4.
 * Win32 using MinGW.
 * Win32 using Cygwin. (`__USE_W32_SOCKETS` must be defined.)
 * Linux (2.4 or 2.6 kernels) using g++ 3.3 or later.
@@ -88,24 +87,6 @@ following steps in a Command Prompt window:
 * Execute the command `nmake -f Makefile.msc`.
 
 * Execute the command `nmake -f Makefile.msc check` to run a suite of tests to
-  confirm that asio is working correctly.
-
-[heading Building the test and examples with Borland C++]
-
-To build using the Borland C++ Builder command line compiler, perform the
-following steps in a Command Prompt window:
-
-* If you are using a version of boost other than 1.34.1, or if the boost
-  directory (i.e. the directory called `boost_1_34_1`) is not in the same
-  directory as the asio source kit, then specify the location of boost by
-  running a command similar to [^set BOOSTDIR=['path_to_boost]]. Ensure that
-  you specify an absolute path.
-
-* Change to the asio `src` directory.
-
-* Execute the command `make -f Makefile.bor`.
-
-* Execute the command `make -f Makefile.bor check` to run a suite of tests to
   confirm that asio is working correctly.
 
 [heading Building the tests and examples with MinGW]
