@@ -1482,7 +1482,7 @@ int select(int nfds, fd_set* readfds, fd_set* writefds,
     timeout->tv_usec = 1000;
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
-#if defined(__hpux) && defined(__HP_aCC)
+#if defined(__hpux) && defined(__SELECT)
   timespec ts;
   ts.tv_sec = timeout ? timeout->tv_sec : 0;
   ts.tv_nsec = timeout ? timeout->tv_usec * 1000 : 0;
