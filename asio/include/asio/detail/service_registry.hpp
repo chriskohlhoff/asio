@@ -74,13 +74,14 @@ public:
 
 private:
   // Initialise a service's key based on its id.
-  ASIO_DECL void init_key(asio::io_service::service::key& key,
+  ASIO_DECL static void init_key(
+      asio::io_service::service::key& key,
       const asio::io_service::id& id);
 
 #if !defined(ASIO_NO_TYPEID)
   // Initialise a service's key based on its id.
   template <typename Service>
-  void init_key(asio::io_service::service::key& key,
+  static void init_key(asio::io_service::service::key& key,
       const asio::detail::service_id<Service>& /*id*/);
 #endif // !defined(ASIO_NO_TYPEID)
 
