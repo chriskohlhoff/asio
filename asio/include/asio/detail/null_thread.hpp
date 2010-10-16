@@ -34,7 +34,7 @@ class null_thread
 public:
   // Constructor.
   template <typename Function>
-  null_thread(Function)
+  null_thread(Function, unsigned int = 0)
   {
     asio::detail::throw_error(
         asio::error::operation_not_supported, "thread");
