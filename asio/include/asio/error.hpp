@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-# include <WinError.h>
+# include <winerror.h>
 #else
 # include <cerrno>
 # include <netdb.h>
