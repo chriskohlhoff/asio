@@ -572,7 +572,8 @@ sub copy_unit_tests
     foreach my $file (@files)
     {
       if ($file ne "src/tests/unit/thread.cpp"
-          and $file ne "src/tests/unit/error_handler.cpp")
+          and $file ne "src/tests/unit/error_handler.cpp"
+          and $file ne "src/tests/unit/unit_test.cpp")
       {
         my $from = $file;
         my $to = $file;
