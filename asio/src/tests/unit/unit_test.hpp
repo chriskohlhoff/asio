@@ -35,7 +35,6 @@
 #endif // defined(BOOST_MSVC)
 
 #include <boost/test/unit_test.hpp>
-#include <boost/test/included/unit_test_framework.hpp>
 using boost::unit_test::test_suite;
 
 #if defined(BOOST_MSVC)
