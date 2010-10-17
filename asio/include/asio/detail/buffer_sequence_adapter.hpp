@@ -160,7 +160,7 @@ public:
   explicit buffer_sequence_adapter(
       const asio::mutable_buffers_1& buffers)
   {
-    init_native_buffer(buffer_, buffers);
+    init_native_buffer(buffer_, Buffer(buffers));
     total_buffer_size_ = asio::buffer_size(buffers);
   }
 
@@ -207,7 +207,7 @@ public:
   explicit buffer_sequence_adapter(
       const asio::const_buffers_1& buffers)
   {
-    init_native_buffer(buffer_, buffers);
+    init_native_buffer(buffer_, Buffer(buffers));
     total_buffer_size_ = asio::buffer_size(buffers);
   }
 
