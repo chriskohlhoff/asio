@@ -72,7 +72,7 @@ void kqueue_reactor::init_task()
   io_service_.init_task();
 }
 
-int kqueue_reactor::register_descriptor(socket_type descriptor,
+int kqueue_reactor::register_descriptor(socket_type,
     kqueue_reactor::per_descriptor_data& descriptor_data)
 {
   mutex::scoped_lock lock(registered_descriptors_mutex_);
@@ -177,7 +177,7 @@ void kqueue_reactor::cancel_ops(socket_type,
   io_service_.post_deferred_completions(ops);
 }
 
-void kqueue_reactor::close_descriptor(socket_type descriptor,
+void kqueue_reactor::close_descriptor(socket_type,
     kqueue_reactor::per_descriptor_data& descriptor_data)
 {
   if (!descriptor_data)
