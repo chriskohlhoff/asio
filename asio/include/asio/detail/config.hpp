@@ -12,7 +12,6 @@
 #define ASIO_DETAIL_CONFIG_HPP
 
 #include <boost/config.hpp>
-#include <boost/version.hpp>
 
 // Default to a header-only implementation. The user must specifically request
 // separate compilation by defining either ASIO_SEPARATE_COMPILATION or
