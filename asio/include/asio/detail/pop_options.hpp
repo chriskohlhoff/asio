@@ -31,6 +31,11 @@
 #  pragma pack (pop)
 # endif
 
+# if defined(__OBJC__)
+#  pragma pop_macro("Protocol")
+#  pragma pop_macro("id")
+# endif
+
 #elif defined(__KCC)
 
 // Kai C++

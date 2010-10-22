@@ -31,6 +31,13 @@
 #  pragma pack (push, 8)
 # endif
 
+# if defined(__OBJC__)
+#  pragma push_macro("Protocol")
+#  define Protocol cpp_Protocol
+#  pragma push_macro("id")
+#  define id cpp_id
+# endif
+
 #elif defined(__KCC)
 
 // Kai C++
