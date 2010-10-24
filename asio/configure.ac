@@ -152,6 +152,10 @@ case $host in
     CXXFLAGS="$CXXFLAGS -pthread"
     LDFLAGS="$LDFLAGS -pthread"
     ;;
+  *-*-netbsd*)
+    CXXFLAGS="$CXXFLAGS -pthread"
+    LDFLAGS="$LDFLAGS -pthread"
+    ;;
 esac
 
 if test "$GXX" = yes; then
