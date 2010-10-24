@@ -26,6 +26,15 @@
 
 #include "asio/detail/push_options.hpp"
 
+#if defined(__NetBSD__)
+# define ASIO_KQUEUE_EV_SET(ev, ident, filt, flags, fflags, data, udata) \
+    EV_SET(ev, ident, filt, flags, fflags, \
+      data, reinterpret_cast<intptr_t>(udata))
+#else
+# define ASIO_KQUEUE_EV_SET(ev, ident, filt, flags, fflags, data, udata) \
+    EV_SET(ev, ident, filt, flags, fflags, data, udata)
+#endif
+
 namespace asio {
 namespace detail {
 
@@ -128,17 +137,17 @@ void kqueue_reactor::start_op(int op_type, socket_type descriptor,
     switch (op_type)
     {
     case read_op:
-      EV_SET(&event, descriptor, EVFILT_READ,
+      ASIO_KQUEUE_EV_SET(&event, descriptor, EVFILT_READ,
           EV_ADD | EV_ONESHOT, 0, 0, descriptor_data);
       break;
     case write_op:
-      EV_SET(&event, descriptor, EVFILT_WRITE,
+      ASIO_KQUEUE_EV_SET(&event, descriptor, EVFILT_WRITE,
           EV_ADD | EV_ONESHOT, 0, 0, descriptor_data);
       break;
     case except_op:
       if (!descriptor_data->op_queue_[read_op].empty())
         return; // Already registered for read events.
-      EV_SET(&event, descriptor, EVFILT_READ,
+      ASIO_KQUEUE_EV_SET(&event, descriptor, EVFILT_READ,
           EV_ADD | EV_ONESHOT, EV_OOBAND, 0, descriptor_data);
       break;
     }
@@ -233,7 +242,7 @@ void kqueue_reactor::run(bool block, op_queue<operation>& ops)
   for (int i = 0; i < num_events; ++i)
   {
     int descriptor = events[i].ident;
-    void* ptr = events[i].udata;
+    void* ptr = reinterpret_cast<void*>(events[i].udata);
     if (ptr == &interrupter_)
     {
       // No need to reset the interrupter since we're leaving the descriptor
@@ -246,7 +255,11 @@ void kqueue_reactor::run(bool block, op_queue<operation>& ops)
 
       // Exception operations must be processed first to ensure that any
       // out-of-band data is read before normal data.
+#if defined(__NetBSD__)
+      static const unsigned int filter[max_ops] =
+#else
       static const int filter[max_ops] =
+#endif
         { EVFILT_READ, EVFILT_WRITE, EVFILT_READ };
       for (int j = max_ops - 1; j >= 0; --j)
       {
@@ -281,16 +294,16 @@ void kqueue_reactor::run(bool block, op_queue<operation>& ops)
       {
       case EVFILT_READ:
         if (!descriptor_data->op_queue_[read_op].empty())
-          EV_SET(&event, descriptor, EVFILT_READ,
+          ASIO_KQUEUE_EV_SET(&event, descriptor, EVFILT_READ,
               EV_ADD | EV_ONESHOT, 0, 0, descriptor_data);
         else if (!descriptor_data->op_queue_[except_op].empty())
-          EV_SET(&event, descriptor, EVFILT_READ,
+          ASIO_KQUEUE_EV_SET(&event, descriptor, EVFILT_READ,
               EV_ADD | EV_ONESHOT, EV_OOBAND, 0, descriptor_data);
         else
           continue;
       case EVFILT_WRITE:
         if (!descriptor_data->op_queue_[write_op].empty())
-          EV_SET(&event, descriptor, EVFILT_WRITE,
+          ASIO_KQUEUE_EV_SET(&event, descriptor, EVFILT_WRITE,
               EV_ADD | EV_ONESHOT, 0, 0, descriptor_data);
         else
           continue;
@@ -321,7 +334,7 @@ void kqueue_reactor::run(bool block, op_queue<operation>& ops)
 void kqueue_reactor::interrupt()
 {
   struct kevent event;
-  EV_SET(&event, interrupter_.read_descriptor(),
+  ASIO_KQUEUE_EV_SET(&event, interrupter_.read_descriptor(),
       EVFILT_READ, EV_ADD | EV_ONESHOT, 0, 0, &interrupter_);
   ::kevent(kqueue_fd_, &event, 1, 0, 0, 0);
 }
@@ -362,6 +375,8 @@ timespec* kqueue_reactor::get_timeout(timespec& ts)
 
 } // namespace detail
 } // namespace asio
+
+#undef ASIO_KQUEUE_EV_SET
 
 #include "asio/detail/pop_options.hpp"
 
