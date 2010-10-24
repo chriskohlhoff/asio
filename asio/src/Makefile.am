@@ -455,7 +455,6 @@ examples_ssl_server_SOURCES = examples/ssl/server.cpp
 endif
 
 EXTRA_DIST = \
-	Makefile.bor \
 	Makefile.mgw \
 	Makefile.msc \
 	examples/http/server/connection.hpp \
