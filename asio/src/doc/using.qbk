@@ -47,6 +47,15 @@ and `-DBOOST_REGEX_NO_LIB` to your project settings to disable autolinking of
 the Boost.Date_Time and Boost.Regex libraries respectively. Alternatively, you
 may choose to build these libraries and link to them.]
 
+[heading Optional separate compilation]
+
+By default, Asio is a header-only library. However, some developers may prefer
+to build Asio using separately compiled source code. To do this, add `#include
+<boost/asio/impl/src.hpp>` to one (and only one) source file in a program, then
+build the program with `ASIO_SEPARATE_COMPILATION` defined in the
+project\/compiler settings. Alternatively, `ASIO_DYN_LINK` may be defined to
+build a separately-compiled Asio as part of a shared library.
+
 [heading Building the tests and examples on Linux or UNIX]
 
 If the boost directory (e.g. the directory called `boost_1_34_1`) is in the

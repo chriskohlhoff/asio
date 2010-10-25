@@ -200,8 +200,8 @@ SSL_EXAMPLE_EXES = \
 
 !ifdef SEPARATE_COMPILATION
 all: asio.lib
-asio.lib: ../include/asio/impl/src.cpp
-	cl -Fe$@ -Foasio.obj $(CXXFLAGS) $(DEFINES) -c ../include/asio/impl/src.cpp
+asio.lib: asio.cpp
+	cl -Fe$@ -Foasio.obj $(CXXFLAGS) $(DEFINES) -c asio.cpp
 	lib -name:asio.lib asio.obj
 !endif
 

@@ -210,6 +210,7 @@ nobase_include_HEADERS = \
 	asio/impl/serial_port_base.hpp \
 	asio/impl/serial_port_base.ipp \
 	asio/impl/src.cpp \
+	asio/impl/src.hpp \
 	asio/impl/write_at.hpp \
 	asio/impl/write.hpp \
 	asio/io_service.hpp \

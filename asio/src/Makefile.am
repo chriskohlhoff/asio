@@ -4,7 +4,7 @@ if SEPARATE_COMPILATION
 
 noinst_LIBRARIES = libasio.a
 
-libasio_a_SOURCES = ../include/asio/impl/src.cpp
+libasio_a_SOURCES = asio.cpp
 
 LDADD = libasio.a
 
