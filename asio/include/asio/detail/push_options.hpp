@@ -32,15 +32,12 @@
 # endif
 
 # if defined(__OBJC__) && !defined(__APPLE_CC__)
-#  if (__GNUC__ == 4 && __GNUC_MINOR__ >= 4) || (__GNUC__ > 4)
-#   pragma push_macro("Protocol")
-#   define Protocol cpp_Protocol
-#   pragma push_macro("id")
-#   define id cpp_id
-#  elif !defined(Protocol) && !defined(id)
-#   define Protocol cpp_Protocol
-#   define id cpp_id
-#   define ASIO_OBJC_WORKAROUND
+#  if !defined(ASIO_DISABLE_OBJC_WORKAROUND)
+#   if !defined(Protocol) && !defined(id)
+#    define Protocol cpp_Protocol
+#    define id cpp_id
+#    define ASIO_OBJC_WORKAROUND
+#   endif
 #  endif
 # endif
 

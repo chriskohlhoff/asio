@@ -32,10 +32,7 @@
 # endif
 
 # if defined(__OBJC__) && !defined(__APPLE_CC__)
-#  if (__GNUC__ == 4 && __GNUC_MINOR__ >= 4) || (__GNUC__ > 4)
-#   pragma pop_macro("Protocol")
-#   pragma pop_macro("id")
-#  elif defined(ASIO_OBJC_WORKAROUND)
+#  if defined(ASIO_OBJC_WORKAROUND)
 #   undef Protocol
 #   undef id
 #   undef ASIO_OBJC_WORKAROUND
