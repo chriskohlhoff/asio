@@ -118,7 +118,7 @@ socket_type sync_accept(socket_type s, state_type state,
     socket_type new_socket = socket_ops::accept(s, addr, addrlen, ec);
 
     // Check if operation succeeded.
-    if (new_socket >= 0)
+    if (new_socket != invalid_socket)
       return new_socket;
 
     // Operation failed.
@@ -209,7 +209,7 @@ bool non_blocking_accept(socket_type s,
     new_socket = socket_ops::accept(s, addr, addrlen, ec);
 
     // Check if operation succeeded.
-    if (new_socket >= 0)
+    if (new_socket != invalid_socket)
       return true;
 
     // Retry operation if interrupted by signal.
