@@ -212,6 +212,7 @@
 /boost/asio/impl/serial_port_base.hpp
 /boost/asio/impl/serial_port_base.ipp
 /boost/asio/impl/src.cpp
+/boost/asio/impl/src.hpp
 /boost/asio/impl/write_at.hpp
 /boost/asio/impl/write.hpp
 /boost/asio/io_service.hpp

@@ -2727,6 +2727,7 @@
 /include/asio/impl/serial_port_base.hpp
 /include/asio/impl/serial_port_base.ipp
 /include/asio/impl/src.cpp
+/include/asio/impl/src.hpp
 /include/asio/impl/write_at.hpp
 /include/asio/impl/write.hpp
 /include/asio/io_service.hpp
@@ -2832,6 +2833,7 @@
 /missing
 /README
 /src/
+/src/asio.cpp
 /src/examples/
 /src/examples/allocation/
 /src/examples/allocation/server.cpp
@@ -3007,7 +3009,6 @@
 /src/examples/windows/
 /src/examples/windows/transmit_file.cpp
 /src/Makefile.am
-/src/Makefile.bor
 /src/Makefile.in
 /src/Makefile.mgw
 /src/Makefile.msc
@@ -3095,6 +3096,7 @@
 /src/tests/unit/stream_socket_service.cpp
 /src/tests/unit/thread.cpp
 /src/tests/unit/time_traits.cpp
+/src/tests/unit/unit_test.cpp
 /src/tests/unit/unit_test.hpp
 /src/tests/unit/windows/
 /src/tests/unit/windows/basic_handle.cpp
