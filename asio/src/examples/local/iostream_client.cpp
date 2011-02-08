@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
     stream_protocol::iostream s(ep);
     if (!s)
     {
-      std::cerr << "Unable to connect\n";
+      std::cerr << "Unable to connect: " << s.error().message() << std::endl;
       return 1;
     }
 

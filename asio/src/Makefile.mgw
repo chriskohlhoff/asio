@@ -89,6 +89,7 @@ EXAMPLE_EXES = \
 	examples/invocation/prioritised_handlers.exe \
 	examples/iostreams/daytime_client.exe \
 	examples/iostreams/daytime_server.exe \
+	examples/iostreams/http_client.exe \
 	examples/multicast/receiver.exe \
 	examples/multicast/sender.exe \
 	examples/socks4/sync_client.exe \

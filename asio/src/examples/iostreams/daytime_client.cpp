@@ -25,6 +25,12 @@ int main(int argc, char* argv[])
     }
 
     tcp::iostream s(argv[1], "daytime");
+    if (!s)
+    {
+      std::cout << "Unable to connect: " << s.error().message() << std::endl;
+      return 1;
+    }
+
     std::string line;
     std::getline(s, line);
     std::cout << line << std::endl;

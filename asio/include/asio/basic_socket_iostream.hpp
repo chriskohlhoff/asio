@@ -35,7 +35,8 @@
 //   template <typename T1, ..., typename Tn>
 //   explicit basic_socket_iostream(T1 x1, ..., Tn xn)
 //     : basic_iostream<char>(&this->boost::base_from_member<
-//         basic_socket_streambuf<Protocol, StreamSocketService> >::member)
+//         basic_socket_streambuf<Protocol, StreamSocketService,
+//           Time, TimeTraits, TimerService> >::member)
 //   {
 //     if (rdbuf()->connect(x1, ..., xn) == 0)
 //       this->setstate(std::ios_base::failbit);
@@ -46,7 +47,8 @@
   template <BOOST_PP_ENUM_PARAMS(n, typename T)> \
   explicit basic_socket_iostream(BOOST_PP_ENUM_BINARY_PARAMS(n, T, x)) \
     : std::basic_iostream<char>(&this->boost::base_from_member< \
-        basic_socket_streambuf<Protocol, StreamSocketService> >::member) \
+        basic_socket_streambuf<Protocol, StreamSocketService, \
+          Time, TimeTraits, TimerService> >::member) \
   { \
     tie(this); \
     if (rdbuf()->connect(BOOST_PP_ENUM_PARAMS(n, x)) == 0) \
@@ -78,17 +80,31 @@ namespace asio {
 
 /// Iostream interface for a socket.
 template <typename Protocol,
-    typename StreamSocketService = stream_socket_service<Protocol> >
+    typename StreamSocketService = stream_socket_service<Protocol>,
+    typename Time = boost::posix_time::ptime,
+    typename TimeTraits = asio::time_traits<Time>,
+    typename TimerService = deadline_timer_service<Time, TimeTraits> >
 class basic_socket_iostream
   : public boost::base_from_member<
-      basic_socket_streambuf<Protocol, StreamSocketService> >,
+      basic_socket_streambuf<Protocol, StreamSocketService,
+        Time, TimeTraits, TimerService> >,
     public std::basic_iostream<char>
 {
 public:
+  /// The endpoint type.
+  typedef typename Protocol::endpoint endpoint_type;
+
+  /// The time type.
+  typedef typename TimeTraits::time_type time_type;
+
+  /// The duration type.
+  typedef typename TimeTraits::duration_type duration_type;
+
   /// Construct a basic_socket_iostream without establishing a connection.
   basic_socket_iostream()
     : std::basic_iostream<char>(&this->boost::base_from_member<
-        basic_socket_streambuf<Protocol, StreamSocketService> >::member)
+        basic_socket_streambuf<Protocol, StreamSocketService,
+          Time, TimeTraits, TimerService> >::member)
   {
     tie(this);
   }
@@ -131,11 +147,77 @@ public:
   }
 
   /// Return a pointer to the underlying streambuf.
-  basic_socket_streambuf<Protocol, StreamSocketService>* rdbuf() const
+  basic_socket_streambuf<Protocol, StreamSocketService,
+    Time, TimeTraits, TimerService>* rdbuf() const
   {
-    return const_cast<basic_socket_streambuf<Protocol, StreamSocketService>*>(
+    return const_cast<basic_socket_streambuf<Protocol, StreamSocketService,
+      Time, TimeTraits, TimerService>*>(
         &this->boost::base_from_member<
-          basic_socket_streambuf<Protocol, StreamSocketService> >::member);
+          basic_socket_streambuf<Protocol, StreamSocketService,
+            Time, TimeTraits, TimerService> >::member);
+  }
+
+  /// Get the last error associated with the stream.
+  /**
+   * @return An \c error_code corresponding to the last error from the stream.
+   *
+   * @par Example
+   * To print the error associated with a failure to establish a connection:
+   * @code tcp::iostream s("www.boost.org", "http");
+   * if (!s)
+   * {
+   *   std::cout << "Error: " << s.error().message() << std::endl;
+   * } @endcode
+   */
+  const asio::error_code& error() const
+  {
+    return rdbuf()->puberror();
+  }
+
+  /// Get the stream's expiry time as an absolute time.
+  /**
+   * @return An absolute time value representing the stream's expiry time.
+   */
+  time_type expires_at() const
+  {
+    return rdbuf()->expires_at();
+  }
+
+  /// Set the stream's expiry time as an absolute time.
+  /**
+   * This function sets the expiry time associated with the stream. Stream
+   * operations performed after this time (where the operations cannot be
+   * completed using the internal buffers) will fail with the error
+   * asio::error::operation_aborted.
+   *
+   * @param expiry_time The expiry time to be used for the stream.
+   */
+  void expires_at(const time_type& expiry_time)
+  {
+    rdbuf()->expires_at(expiry_time);
+  }
+
+  /// Get the timer's expiry time relative to now.
+  /**
+   * @return A relative time value representing the stream's expiry time.
+   */
+  duration_type expires_from_now() const
+  {
+    return rdbuf()->expires_from_now();
+  }
+
+  /// Set the stream's expiry time relative to now.
+  /**
+   * This function sets the expiry time associated with the stream. Stream
+   * operations performed after this time (where the operations cannot be
+   * completed using the internal buffers) will fail with the error
+   * asio::error::operation_aborted.
+   *
+   * @param expiry_time The expiry time to be used for the timer.
+   */
+  void expires_from_now(const duration_type& expiry_time)
+  {
+    rdbuf()->expires_from_now(expiry_time);
   }
 };
 
