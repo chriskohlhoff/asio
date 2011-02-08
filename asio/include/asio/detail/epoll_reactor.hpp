@@ -97,8 +97,8 @@ public:
 
   // Cancel any operations that are running against the descriptor and remove
   // its registration from the reactor.
-  ASIO_DECL void close_descriptor(socket_type descriptor,
-      per_descriptor_data& descriptor_data);
+  ASIO_DECL void deregister_descriptor(socket_type descriptor,
+      per_descriptor_data& descriptor_data, bool closing);
 
   // Add a new timer queue to the reactor.
   template <typename Time_Traits>

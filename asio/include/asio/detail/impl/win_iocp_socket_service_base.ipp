@@ -98,7 +98,7 @@ asio::error_code win_iocp_socket_service_base::close(
           interlocked_compare_exchange_pointer(
             reinterpret_cast<void**>(&reactor_), 0, 0));
     if (r)
-      r->close_descriptor(impl.socket_, impl.reactor_data_);
+      r->deregister_descriptor(impl.socket_, impl.reactor_data_, true);
   }
 
   if (socket_ops::close(impl.socket_, impl.state_, false, ec) == 0)
@@ -503,7 +503,7 @@ void win_iocp_socket_service_base::close_for_destruction(
           interlocked_compare_exchange_pointer(
             reinterpret_cast<void**>(&reactor_), 0, 0));
     if (r)
-      r->close_descriptor(impl.socket_, impl.reactor_data_);
+      r->deregister_descriptor(impl.socket_, impl.reactor_data_, true);
   }
 
   asio::error_code ignored_ec;

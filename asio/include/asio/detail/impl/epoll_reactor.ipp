@@ -184,8 +184,8 @@ void epoll_reactor::cancel_ops(socket_type,
   io_service_.post_deferred_completions(ops);
 }
 
-void epoll_reactor::close_descriptor(socket_type,
-    epoll_reactor::per_descriptor_data& descriptor_data)
+void epoll_reactor::deregister_descriptor(socket_type descriptor,
+    epoll_reactor::per_descriptor_data& descriptor_data, bool closing)
 {
   if (!descriptor_data)
     return;
@@ -195,8 +195,16 @@ void epoll_reactor::close_descriptor(socket_type,
 
   if (!descriptor_data->shutdown_)
   {
-    // Remove the descriptor from the set of known descriptors. The descriptor
-    // will be automatically removed from the epoll set when it is closed.
+    if (closing)
+    {
+      // The descriptor will be automatically removed from the epoll set when
+      // it is closed.
+    }
+    else
+    {
+      epoll_event ev = { 0, { 0 } };
+      epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, descriptor, &ev);
+    }
 
     op_queue<operation> ops;
     for (int i = 0; i < max_ops; ++i)

@@ -129,6 +129,12 @@ public:
     return service_impl_.native_handle(impl);
   }
 
+  /// Release ownership of the native descriptor implementation.
+  native_handle_type release(implementation_type& impl)
+  {
+    return service_impl_.release(impl);
+  }
+
   /// Cancel all asynchronous operations associated with the descriptor.
   asio::error_code cancel(implementation_type& impl,
       asio::error_code& ec)

@@ -186,8 +186,8 @@ void kqueue_reactor::cancel_ops(socket_type,
   io_service_.post_deferred_completions(ops);
 }
 
-void kqueue_reactor::close_descriptor(socket_type,
-    kqueue_reactor::per_descriptor_data& descriptor_data)
+void kqueue_reactor::deregister_descriptor(socket_type descriptor,
+    kqueue_reactor::per_descriptor_data& descriptor_data, bool closing)
 {
   if (!descriptor_data)
     return;
@@ -197,8 +197,20 @@ void kqueue_reactor::close_descriptor(socket_type,
 
   if (!descriptor_data->shutdown_)
   {
-    // Remove the descriptor from the set of known descriptors. The descriptor
-    // will be automatically removed from the kqueue set when it is closed.
+    if (closing)
+    {
+      // The descriptor will be automatically removed from the kqueue when it
+      // is closed.
+    }
+    else
+    {
+      struct kevent events[2];
+      ASIO_KQUEUE_EV_SET(&events[0], descriptor,
+          EVFILT_READ, EV_DELETE, 0, 0, 0);
+      ASIO_KQUEUE_EV_SET(&events[1], descriptor,
+          EVFILT_WRITE, EV_DELETE, 0, 0, 0);
+      ::kevent(kqueue_fd_, events, 2, 0, 0, 0);
+    }
 
     op_queue<operation> ops;
     for (int i = 0; i < max_ops; ++i)

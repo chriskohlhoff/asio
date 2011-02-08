@@ -49,7 +49,7 @@ void reactive_socket_service_base::destroy(
 {
   if (impl.socket_ != invalid_socket)
   {
-    reactor_.close_descriptor(impl.socket_, impl.reactor_data_);
+    reactor_.deregister_descriptor(impl.socket_, impl.reactor_data_, true);
 
     asio::error_code ignored_ec;
     socket_ops::close(impl.socket_, impl.state_, true, ignored_ec);
@@ -61,7 +61,7 @@ asio::error_code reactive_socket_service_base::close(
     asio::error_code& ec)
 {
   if (is_open(impl))
-    reactor_.close_descriptor(impl.socket_, impl.reactor_data_);
+    reactor_.deregister_descriptor(impl.socket_, impl.reactor_data_, true);
 
   if (socket_ops::close(impl.socket_, impl.state_, true, ec) == 0)
     construct(impl);

@@ -49,7 +49,7 @@ void reactive_descriptor_service::destroy(
     reactive_descriptor_service::implementation_type& impl)
 {
   if (is_open(impl))
-    reactor_.close_descriptor(impl.descriptor_, impl.reactor_data_);
+    reactor_.deregister_descriptor(impl.descriptor_, impl.reactor_data_, true);
 
   asio::error_code ignored_ec;
   descriptor_ops::close(impl.descriptor_, impl.state_, ignored_ec);
@@ -84,12 +84,27 @@ asio::error_code reactive_descriptor_service::close(
     asio::error_code& ec)
 {
   if (is_open(impl))
-    reactor_.close_descriptor(impl.descriptor_, impl.reactor_data_);
+    reactor_.deregister_descriptor(impl.descriptor_, impl.reactor_data_, true);
 
   if (descriptor_ops::close(impl.descriptor_, impl.state_, ec) == 0)
     construct(impl);
 
   return ec;
+}
+
+reactive_descriptor_service::native_handle_type
+reactive_descriptor_service::release(
+    reactive_descriptor_service::implementation_type& impl)
+{
+  native_handle_type descriptor = impl.descriptor_;
+
+  if (is_open(impl))
+  {
+    reactor_.deregister_descriptor(impl.descriptor_, impl.reactor_data_, false);
+    construct(impl);
+  }
+
+  return descriptor;
 }
 
 asio::error_code reactive_descriptor_service::cancel(

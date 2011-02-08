@@ -204,6 +204,21 @@ public:
     return this->service.native_handle(this->implementation);
   }
 
+  /// Release ownership of the native descriptor implementation.
+  /**
+   * This function may be used to obtain the underlying representation of the
+   * descriptor. After calling this function, @c is_open() returns false. The
+   * caller is responsible for closing the descriptor.
+   *
+   * All outstanding asynchronous read or write operations will finish
+   * immediately, and the handlers for cancelled operations will be passed the
+   * asio::error::operation_aborted error.
+   */
+  native_handle_type release()
+  {
+    return this->service.release(this->implementation);
+  }
+
   /// Cancel all asynchronous operations associated with the descriptor.
   /**
    * This function causes all outstanding asynchronous read or write operations

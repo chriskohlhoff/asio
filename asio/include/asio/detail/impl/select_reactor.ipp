@@ -118,8 +118,8 @@ void select_reactor::cancel_ops(socket_type descriptor,
   cancel_ops_unlocked(descriptor, asio::error::operation_aborted);
 }
 
-void select_reactor::close_descriptor(socket_type descriptor,
-    select_reactor::per_descriptor_data&)
+void select_reactor::deregister_descriptor(socket_type descriptor,
+    select_reactor::per_descriptor_data&, bool)
 {
   asio::detail::mutex::scoped_lock lock(mutex_);
   cancel_ops_unlocked(descriptor, asio::error::operation_aborted);
