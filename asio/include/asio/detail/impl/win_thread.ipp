@@ -115,7 +115,8 @@ unsigned int __stdcall win_thread_function(void* arg)
   // call will be interrupted using QueueUserAPC and the thread will shut down
   // cleanly.
   HANDLE exit_event = func.ptr->exit_event_;
-  func.reset();
+  delete func.ptr;
+  func.ptr = 0;
   ::SetEvent(exit_event);
   ::SleepEx(INFINITE, TRUE);
 
