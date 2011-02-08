@@ -141,7 +141,7 @@ public:
     return ec;
   }
 
-  /// Disable sends or receives on the socket.
+  // Disable sends or receives on the socket.
   asio::error_code shutdown(base_implementation_type& impl,
       socket_base::shutdown_type what, asio::error_code& ec)
   {
