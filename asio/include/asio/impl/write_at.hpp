@@ -64,6 +64,14 @@ inline std::size_t write_at(SyncRandomAccessWriteDevice& d,
   return bytes_transferred;
 }
 
+template <typename SyncRandomAccessWriteDevice, typename ConstBufferSequence>
+inline std::size_t write_at(SyncRandomAccessWriteDevice& d,
+    boost::uint64_t offset, const ConstBufferSequence& buffers,
+    asio::error_code& ec)
+{
+  return write_at(d, offset, buffers, transfer_all(), ec);
+}
+
 template <typename SyncRandomAccessWriteDevice, typename ConstBufferSequence,
     typename CompletionCondition>
 inline std::size_t write_at(SyncRandomAccessWriteDevice& d,
@@ -99,6 +107,14 @@ inline std::size_t write_at(SyncRandomAccessWriteDevice& d,
   std::size_t bytes_transferred = write_at(d, offset, b, transfer_all(), ec);
   asio::detail::throw_error(ec);
   return bytes_transferred;
+}
+
+template <typename SyncRandomAccessWriteDevice, typename Allocator>
+inline std::size_t write_at(SyncRandomAccessWriteDevice& d,
+    boost::uint64_t offset, asio::basic_streambuf<Allocator>& b,
+    asio::error_code& ec)
+{
+  return write_at(d, offset, b, transfer_all(), ec);
 }
 
 template <typename SyncRandomAccessWriteDevice, typename Allocator,

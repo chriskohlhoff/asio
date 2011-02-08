@@ -38,8 +38,7 @@ int main()
       std::string message = make_daytime_string();
 
       asio::error_code ignored_error;
-      asio::write(socket, asio::buffer(message),
-          asio::transfer_all(), ignored_error);
+      asio::write(socket, asio::buffer(message), ignored_error);
     }
   }
   catch (std::exception& e)

@@ -62,6 +62,13 @@ inline std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers)
   return bytes_transferred;
 }
 
+template <typename SyncReadStream, typename MutableBufferSequence>
+inline std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
+    asio::error_code& ec)
+{
+  return read(s, buffers, transfer_all(), ec);
+}
+
 template <typename SyncReadStream, typename MutableBufferSequence,
     typename CompletionCondition>
 inline std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
@@ -106,6 +113,14 @@ inline std::size_t read(SyncReadStream& s,
   std::size_t bytes_transferred = read(s, b, transfer_all(), ec);
   asio::detail::throw_error(ec);
   return bytes_transferred;
+}
+
+template <typename SyncReadStream, typename Allocator>
+inline std::size_t read(SyncReadStream& s,
+    asio::basic_streambuf<Allocator>& b,
+    asio::error_code& ec)
+{
+  return read(s, b, transfer_all(), ec);
 }
 
 template <typename SyncReadStream, typename Allocator,

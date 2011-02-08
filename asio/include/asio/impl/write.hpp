@@ -60,6 +60,13 @@ inline std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers)
   return bytes_transferred;
 }
 
+template <typename SyncWriteStream, typename ConstBufferSequence>
+inline std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
+    asio::error_code& ec)
+{
+  return write(s, buffers, transfer_all(), ec);
+}
+
 template <typename SyncWriteStream, typename ConstBufferSequence,
     typename CompletionCondition>
 inline std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
@@ -92,6 +99,14 @@ inline std::size_t write(SyncWriteStream& s,
   std::size_t bytes_transferred = write(s, b, transfer_all(), ec);
   asio::detail::throw_error(ec);
   return bytes_transferred;
+}
+
+template <typename SyncWriteStream, typename Allocator>
+inline std::size_t write(SyncWriteStream& s,
+    asio::basic_streambuf<Allocator>& b,
+    asio::error_code& ec)
+{
+  return write(s, b, transfer_all(), ec);
 }
 
 template <typename SyncWriteStream, typename Allocator,

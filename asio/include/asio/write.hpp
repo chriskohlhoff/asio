@@ -70,6 +70,46 @@ namespace asio {
 template <typename SyncWriteStream, typename ConstBufferSequence>
 std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers);
 
+/// Write all of the supplied data to a stream before returning.
+/**
+ * This function is used to write a certain number of bytes of data to a stream.
+ * The call will block until one of the following conditions is true:
+ *
+ * @li All of the data in the supplied buffers has been written. That is, the
+ * bytes transferred is equal to the sum of the buffer sizes.
+ *
+ * @li An error occurred.
+ *
+ * This operation is implemented in terms of zero or more calls to the stream's
+ * write_some function.
+ *
+ * @param s The stream to which the data is to be written. The type must support
+ * the SyncWriteStream concept.
+ *
+ * @param buffers One or more buffers containing the data to be written. The sum
+ * of the buffer sizes indicates the maximum number of bytes to write to the
+ * stream.
+ *
+ * @param ec Set to indicate what error occurred, if any.
+ *
+ * @returns The number of bytes transferred.
+ *
+ * @par Example
+ * To write a single data buffer use the @ref buffer function as follows:
+ * @code asio::write(s, asio::buffer(data, size), ec); @endcode
+ * See the @ref buffer documentation for information on writing multiple
+ * buffers in one go, and how to use it with arrays, boost::array or
+ * std::vector.
+ *
+ * @note This overload is equivalent to calling:
+ * @code asio::write(
+ *     s, buffers,
+ *     asio::transfer_all(), ec); @endcode
+ */
+template <typename SyncWriteStream, typename ConstBufferSequence>
+std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
+    asio::error_code& ec);
+
 /// Write a certain amount of data to a stream before returning.
 /**
  * This function is used to write a certain number of bytes of data to a stream.
@@ -195,6 +235,36 @@ std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
  */
 template <typename SyncWriteStream, typename Allocator>
 std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b);
+
+/// Write all of the supplied data to a stream before returning.
+/**
+ * This function is used to write a certain number of bytes of data to a stream.
+ * The call will block until one of the following conditions is true:
+ *
+ * @li All of the data in the supplied basic_streambuf has been written.
+ *
+ * @li An error occurred.
+ *
+ * This operation is implemented in terms of zero or more calls to the stream's
+ * write_some function.
+ *
+ * @param s The stream to which the data is to be written. The type must support
+ * the SyncWriteStream concept.
+ *
+ * @param b The basic_streambuf object from which data will be written.
+ *
+ * @param ec Set to indicate what error occurred, if any.
+ *
+ * @returns The number of bytes transferred.
+ *
+ * @note This overload is equivalent to calling:
+ * @code asio::write(
+ *     s, b,
+ *     asio::transfer_all(), ec); @endcode
+ */
+template <typename SyncWriteStream, typename Allocator>
+std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b,
+    asio::error_code& ec);
 
 /// Write a certain amount of data to a stream before returning.
 /**

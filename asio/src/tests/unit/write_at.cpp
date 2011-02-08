@@ -245,6 +245,154 @@ void test_3_arg_multi_buffers_write_at()
   BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(write_data)));
 }
 
+void test_4_arg_nothrow_const_buffers_1_write_at()
+{
+  asio::io_service ios;
+  test_random_access_device s(ios);
+  asio::const_buffers_1 buffers
+    = asio::buffer(write_data, sizeof(write_data));
+
+  s.reset();
+  asio::error_code error;
+  size_t bytes_transferred = asio::write_at(s, 0, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(0, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  bytes_transferred = asio::write_at(s, 1234, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 0, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(0, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 1234, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 0, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(0, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 1234, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+}
+
+void test_4_arg_nothrow_mutable_buffers_1_write_at()
+{
+  asio::io_service ios;
+  test_random_access_device s(ios);
+  asio::mutable_buffers_1 buffers
+    = asio::buffer(mutable_write_data, sizeof(mutable_write_data));
+
+  s.reset();
+  asio::error_code error;
+  size_t bytes_transferred = asio::write_at(s, 0, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(mutable_write_data));
+  BOOST_CHECK(s.check_buffers(0, buffers, sizeof(mutable_write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  bytes_transferred = asio::write_at(s, 1234, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(mutable_write_data));
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(mutable_write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 0, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(mutable_write_data));
+  BOOST_CHECK(s.check_buffers(0, buffers, sizeof(mutable_write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 1234, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(mutable_write_data));
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(mutable_write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 0, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(mutable_write_data));
+  BOOST_CHECK(s.check_buffers(0, buffers, sizeof(mutable_write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 1234, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(mutable_write_data));
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(mutable_write_data)));
+  BOOST_CHECK(!error);
+}
+
+void test_4_arg_nothrow_multi_buffers_write_at()
+{
+  asio::io_service ios;
+  test_random_access_device s(ios);
+  boost::array<asio::const_buffer, 2> buffers = { {
+    asio::buffer(write_data, 32),
+    asio::buffer(write_data) + 32 } };
+
+  s.reset();
+  asio::error_code error;
+  size_t bytes_transferred = asio::write_at(s, 0, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(0, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  bytes_transferred = asio::write_at(s, 1234, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 0, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(0, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 1234, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 0, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(0, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 1234, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+}
+
 bool old_style_transfer_all(const asio::error_code& ec,
     size_t /*bytes_transferred*/)
 {
@@ -5264,6 +5412,9 @@ test_suite* init_unit_test_suite(int, char*[])
   test->add(BOOST_TEST_CASE(&test_3_arg_const_buffers_1_write_at));
   test->add(BOOST_TEST_CASE(&test_3_arg_mutable_buffers_1_write_at));
   test->add(BOOST_TEST_CASE(&test_3_arg_multi_buffers_write_at));
+  test->add(BOOST_TEST_CASE(&test_4_arg_nothrow_const_buffers_1_write_at));
+  test->add(BOOST_TEST_CASE(&test_4_arg_nothrow_mutable_buffers_1_write_at));
+  test->add(BOOST_TEST_CASE(&test_4_arg_nothrow_multi_buffers_write_at));
   test->add(BOOST_TEST_CASE(&test_4_arg_const_buffers_1_write_at));
   test->add(BOOST_TEST_CASE(&test_4_arg_mutable_buffers_1_write_at));
   test->add(BOOST_TEST_CASE(&test_4_arg_multi_buffers_write_at));

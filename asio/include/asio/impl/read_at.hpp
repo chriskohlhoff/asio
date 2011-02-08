@@ -66,6 +66,14 @@ inline std::size_t read_at(SyncRandomAccessReadDevice& d,
   return bytes_transferred;
 }
 
+template <typename SyncRandomAccessReadDevice, typename MutableBufferSequence>
+inline std::size_t read_at(SyncRandomAccessReadDevice& d,
+    boost::uint64_t offset, const MutableBufferSequence& buffers,
+    asio::error_code& ec)
+{
+  return read_at(d, offset, buffers, transfer_all(), ec);
+}
+
 template <typename SyncRandomAccessReadDevice, typename MutableBufferSequence,
     typename CompletionCondition>
 inline std::size_t read_at(SyncRandomAccessReadDevice& d,
@@ -114,6 +122,14 @@ inline std::size_t read_at(SyncRandomAccessReadDevice& d,
       d, offset, b, transfer_all(), ec);
   asio::detail::throw_error(ec);
   return bytes_transferred;
+}
+
+template <typename SyncRandomAccessReadDevice, typename Allocator>
+inline std::size_t read_at(SyncRandomAccessReadDevice& d,
+    boost::uint64_t offset, asio::basic_streambuf<Allocator>& b,
+    asio::error_code& ec)
+{
+  return read_at(d, offset, b, transfer_all(), ec);
 }
 
 template <typename SyncRandomAccessReadDevice, typename Allocator,
