@@ -101,12 +101,12 @@ void win_thread::start_thread(func_base* arg, unsigned int stack_size)
 
 unsigned int __stdcall win_thread_function(void* arg)
 {
-  std::auto_ptr<win_thread::func_base> func(
-      static_cast<win_thread::func_base*>(arg));
+  win_thread::auto_func_base_ptr func = {
+      static_cast<win_thread::func_base*>(arg) };
 
-  ::SetEvent(func->entry_event_);
+  ::SetEvent(func.ptr->entry_event_);
 
-  func->run();
+  func.ptr->run();
 
   // Signal that the thread has finished its work, but rather than returning go
   // to sleep to put the thread into a well known state. If the thread is being
@@ -114,7 +114,7 @@ unsigned int __stdcall win_thread_function(void* arg)
   // TerminateThread (to avoid a deadlock in DllMain). Otherwise, the SleepEx
   // call will be interrupted using QueueUserAPC and the thread will shut down
   // cleanly.
-  HANDLE exit_event = func->exit_event_;
+  HANDLE exit_event = func.ptr->exit_event_;
   func.reset();
   ::SetEvent(exit_event);
   ::SleepEx(INFINITE, TRUE);
