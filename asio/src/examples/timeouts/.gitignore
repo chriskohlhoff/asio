@@ -3,7 +3,8 @@
 *.o
 *.obj
 *.exe
-*_timeout
+*_client
+server
 *.ilk
 *.manifest
 *.pdb

@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -12,7 +12,6 @@
 The following platforms and compilers have been tested:
 
 * Win32 and Win64 using Visual C++ 7.1 and Visual C++ 8.0.
-* Win32 using Borland C++Builder 6 patch 4.
 * Win32 using MinGW.
 * Win32 using Cygwin. (`__USE_W32_SOCKETS` must be defined.)
 * Linux (2.4 or 2.6 kernels) using g++ 3.3 or later.
@@ -48,6 +47,15 @@ and `-DBOOST_REGEX_NO_LIB` to your project settings to disable autolinking of
 the Boost.Date_Time and Boost.Regex libraries respectively. Alternatively, you
 may choose to build these libraries and link to them.]
 
+[heading Optional separate compilation]
+
+By default, Asio is a header-only library. However, some developers may prefer
+to build Asio using separately compiled source code. To do this, add `#include
+<asio/impl/src.hpp>` to one (and only one) source file in a program, then build
+the program with `ASIO_SEPARATE_COMPILATION` defined in the project\/compiler
+settings. Alternatively, `ASIO_DYN_LINK` may be defined to build a
+separately-compiled Asio as part of a shared library.
+
 [heading Building the tests and examples on Linux or UNIX]
 
 If the boost directory (e.g. the directory called `boost_1_34_1`) is in the
@@ -68,8 +76,9 @@ specify this directory when running configure:
 When specifying the boost directory in this way you should ensure that you use
 an absolute path.
 
-To build, simply run `make` in the root directory of the asio source kit. To
-test that asio is working correctly, run `make check` after a successful build.
+To build the examples, simply run `make` in the root directory of the asio
+source kit. To also build and run the unit tests, to confirm that asio is
+working correctly, run `make check`.
 
 [heading Building the tests and examples with MSVC]
 
@@ -87,24 +96,6 @@ following steps in a Command Prompt window:
 * Execute the command `nmake -f Makefile.msc`.
 
 * Execute the command `nmake -f Makefile.msc check` to run a suite of tests to
-  confirm that asio is working correctly.
-
-[heading Building the test and examples with Borland C++]
-
-To build using the Borland C++ Builder command line compiler, perform the
-following steps in a Command Prompt window:
-
-* If you are using a version of boost other than 1.34.1, or if the boost
-  directory (i.e. the directory called `boost_1_34_1`) is not in the same
-  directory as the asio source kit, then specify the location of boost by
-  running a command similar to [^set BOOSTDIR=['path_to_boost]]. Ensure that
-  you specify an absolute path.
-
-* Change to the asio `src` directory.
-
-* Execute the command `make -f Makefile.bor`.
-
-* Execute the command `make -f Makefile.bor check` to run a suite of tests to
   confirm that asio is working correctly.
 
 [heading Building the tests and examples with MinGW]
@@ -196,6 +187,13 @@ Asio.
     ]
   ]
   [
+    [`ASIO_DISABLE_THREADS`]
+    [
+      Explicitly disables Asio's threading support, independent of whether or
+      not Boost supports threads.
+    ]
+  ]
+  [
     [`ASIO_NO_WIN32_LEAN_AND_MEAN`]
     [
       By default, Asio will automatically define `WIN32_LEAN_AND_MEAN` when
@@ -203,6 +201,15 @@ Asio.
       and features that are included. The presence of
       `ASIO_NO_WIN32_LEAN_AND_MEAN` prevents `WIN32_LEAN_AND_MEAN` from
       being defined.
+    ]
+  ]
+  [
+    [`ASIO_NO_NOMINMAX`]
+    [
+      By default, Asio will automatically define `NOMINMAX` when compiling for
+      Windows, to suppress the definition of the `min()` and `max()` macros.
+      The presence of `ASIO_NO_NOMINMAX` prevents `NOMINMAX` from being
+      defined.
     ]
   ]
   [
@@ -269,6 +276,26 @@ Asio.
       `BOOST_NO_TYPEID` is defined.
     ]
   ]
+  [
+    [`ASIO_HASH_MAP_BUCKETS`]
+    [
+      Determines the number of buckets in asio's internal `hash_map` objects.
+      The value should be a comma separated list of prime numbers, in ascending
+      order. The `hash_map` implementation will automatically increase the
+      number of buckets as the number of elements in the map increases.
+
+      Some examples:
+
+      * Defining `ASIO_HASH_MAP_BUCKETS` to `1021` means that the `hash_map`
+        objects will always contain 1021 buckets, irrespective of the number of
+        elements in the map.
+
+      * Defining `ASIO_HASH_MAP_BUCKETS` to `53,389,1543` means that the
+        `hash_map` objects will initially contain 53 buckets. The number of
+        buckets will be increased to 389 and then 1543 as elements are added to
+        the map.
+    ]
+  ]
 ]
 
 [heading Mailing List]
@@ -277,5 +304,10 @@ A mailing list specifically for Asio may be found on
 [@http://sourceforge.net/mail/?group_id=122478 SourceForge.net]. Newsgroup
 access is provided via [@http://dir.gmane.org/gmane.comp.lib.boost.asio.user
 Gmane].
+
+[heading Wiki]
+
+Users are encouraged to share examples, tips and FAQs on the Asio wiki,
+which is located at [@http://think-async.com/Asio/].
 
 [endsect]

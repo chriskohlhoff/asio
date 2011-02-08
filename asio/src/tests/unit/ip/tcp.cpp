@@ -2,7 +2,7 @@
 // tcp.cpp
 // ~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -13,13 +13,20 @@
 #define BOOST_ALL_NO_LIB 1
 #endif // !defined(BOOST_ALL_NO_LIB)
 
+// Enable cancel() support on Windows.
+#define ASIO_ENABLE_CANCELIO 1
+
 // Test that header file is self-contained.
 #include "asio/ip/tcp.hpp"
 
 #include <boost/bind.hpp>
 #include <cstring>
-#include "asio.hpp"
+#include "asio/io_service.hpp"
+#include "asio/placeholders.hpp"
+#include "asio/read.hpp"
+#include "asio/write.hpp"
 #include "../unit_test.hpp"
+#include "../archetypes/io_control_command.hpp"
 
 //------------------------------------------------------------------------------
 
@@ -47,9 +54,9 @@ void test()
     ip::tcp::no_delay no_delay2;
     sock.get_option(no_delay2);
     no_delay1 = true;
-    static_cast<bool>(no_delay1);
-    static_cast<bool>(!no_delay1);
-    static_cast<bool>(no_delay1.value());
+    (void)static_cast<bool>(no_delay1);
+    (void)static_cast<bool>(!no_delay1);
+    (void)static_cast<bool>(no_delay1.value());
   }
   catch (std::exception&)
   {
@@ -149,7 +156,7 @@ void test()
     const char const_char_buffer[128] = "";
     socket_base::message_flags in_flags = 0;
     socket_base::keep_alive socket_option;
-    socket_base::bytes_readable io_control_command;
+    archetypes::io_control_command io_control_command;
     asio::error_code ec;
 
     // basic_stream_socket constructors.
@@ -299,6 +306,174 @@ void test()
 
 //------------------------------------------------------------------------------
 
+// ip_tcp_socket_runtime test
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~
+// The following test checks the runtime operation of the ip::tcp::socket class.
+
+namespace ip_tcp_socket_runtime {
+
+static const char write_data[]
+  = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+void handle_read_noop(const asio::error_code& err,
+    size_t bytes_transferred, bool* called)
+{
+  *called = true;
+  BOOST_CHECK(!err);
+  BOOST_CHECK(bytes_transferred == 0);
+}
+
+void handle_write_noop(const asio::error_code& err,
+    size_t bytes_transferred, bool* called)
+{
+  *called = true;
+  BOOST_CHECK(!err);
+  BOOST_CHECK(bytes_transferred == 0);
+}
+
+void handle_read(const asio::error_code& err,
+    size_t bytes_transferred, bool* called)
+{
+  *called = true;
+  BOOST_CHECK(!err);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+}
+
+void handle_write(const asio::error_code& err,
+    size_t bytes_transferred, bool* called)
+{
+  *called = true;
+  BOOST_CHECK(!err);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+}
+
+void handle_read_cancel(const asio::error_code& err,
+    size_t bytes_transferred, bool* called)
+{
+  *called = true;
+  BOOST_CHECK(err == asio::error::operation_aborted);
+  BOOST_CHECK(bytes_transferred == 0);
+}
+
+void handle_read_eof(const asio::error_code& err,
+    size_t bytes_transferred, bool* called)
+{
+  *called = true;
+  BOOST_CHECK(err == asio::error::eof);
+  BOOST_CHECK(bytes_transferred == 0);
+}
+
+void test()
+{
+  using namespace std; // For memcmp.
+  using namespace asio;
+  namespace ip = asio::ip;
+
+  io_service ios;
+
+  ip::tcp::acceptor acceptor(ios, ip::tcp::endpoint(ip::tcp::v4(), 0));
+  ip::tcp::endpoint server_endpoint = acceptor.local_endpoint();
+  server_endpoint.address(ip::address_v4::loopback());
+
+  ip::tcp::socket client_side_socket(ios);
+  ip::tcp::socket server_side_socket(ios);
+
+  client_side_socket.connect(server_endpoint);
+  acceptor.accept(server_side_socket);
+
+  // No-op read.
+
+  bool read_noop_completed = false;
+  client_side_socket.async_read_some(
+      asio::mutable_buffers_1(0, 0),
+      boost::bind(handle_read_noop,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        &read_noop_completed));
+
+  ios.run();
+  BOOST_CHECK(read_noop_completed);
+
+  // No-op write.
+
+  bool write_noop_completed = false;
+  client_side_socket.async_write_some(
+      asio::const_buffers_1(0, 0),
+      boost::bind(handle_write_noop,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        &write_noop_completed));
+
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(write_noop_completed);
+
+  // Read and write to transfer data.
+
+  char read_buffer[sizeof(write_data)];
+  bool read_completed = false;
+  asio::async_read(client_side_socket,
+      asio::buffer(read_buffer),
+      boost::bind(handle_read,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        &read_completed));
+
+  bool write_completed = false;
+  asio::async_write(server_side_socket,
+      asio::buffer(write_data),
+      boost::bind(handle_write,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        &write_completed));
+
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(read_completed);
+  BOOST_CHECK(write_completed);
+  BOOST_CHECK(memcmp(read_buffer, write_data, sizeof(write_data)) == 0);
+
+  // Cancelled read.
+
+  bool read_cancel_completed = false;
+  asio::async_read(server_side_socket,
+      asio::buffer(read_buffer),
+      boost::bind(handle_read_cancel,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        &read_cancel_completed));
+
+  ios.reset();
+  ios.poll();
+  BOOST_CHECK(!read_cancel_completed);
+
+  server_side_socket.cancel();
+
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(read_cancel_completed);
+
+  // A read when the peer closes socket should fail with eof.
+
+  bool read_eof_completed = false;
+  asio::async_read(client_side_socket,
+      asio::buffer(read_buffer),
+      boost::bind(handle_read_eof,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        &read_eof_completed));
+
+  server_side_socket.close();
+
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(read_eof_completed);
+}
+
+} // namespace ip_tcp_socket_runtime
+
+//------------------------------------------------------------------------------
+
 // ip_tcp_acceptor_runtime test
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // The following test checks the runtime operation of the ip::tcp::acceptor
@@ -376,12 +551,76 @@ void test()
 
 //------------------------------------------------------------------------------
 
+// ip_tcp_resolver_compile test
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// The following test checks that all public member functions on the class
+// ip::tcp::resolver compile and link correctly. Runtime failures are ignored.
+
+namespace ip_tcp_resolver_compile {
+
+void resolve_handler(const asio::error_code&,
+    asio::ip::tcp::resolver::iterator)
+{
+}
+
+void test()
+{
+  using namespace asio;
+  namespace ip = asio::ip;
+
+  try
+  {
+    io_service ios;
+    asio::error_code ec;
+    ip::tcp::resolver::query q(ip::tcp::v4(), "localhost", "0");
+    ip::tcp::endpoint e(ip::address_v4::loopback(), 0);
+
+    // basic_resolver constructors.
+
+    ip::tcp::resolver resolver(ios);
+
+    // basic_io_object functions.
+
+    io_service& ios_ref = resolver.io_service();
+    (void)ios_ref;
+
+    // basic_resolver functions.
+
+    resolver.cancel();
+
+    ip::tcp::resolver::iterator iter1 = resolver.resolve(q);
+    (void)iter1;
+
+    ip::tcp::resolver::iterator iter2 = resolver.resolve(q, ec);
+    (void)iter2;
+
+    ip::tcp::resolver::iterator iter3 = resolver.resolve(e);
+    (void)iter3;
+
+    ip::tcp::resolver::iterator iter4 = resolver.resolve(e, ec);
+    (void)iter4;
+
+    resolver.async_resolve(q, resolve_handler);
+
+    resolver.async_resolve(e, resolve_handler);
+  }
+  catch (std::exception&)
+  {
+  }
+}
+
+} // namespace ip_tcp_resolver_compile
+
+//------------------------------------------------------------------------------
+
 test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("ip/tcp");
   test->add(BOOST_TEST_CASE(&ip_tcp_compile::test));
   test->add(BOOST_TEST_CASE(&ip_tcp_runtime::test));
   test->add(BOOST_TEST_CASE(&ip_tcp_socket_compile::test));
+  test->add(BOOST_TEST_CASE(&ip_tcp_socket_runtime::test));
   test->add(BOOST_TEST_CASE(&ip_tcp_acceptor_runtime::test));
+  test->add(BOOST_TEST_CASE(&ip_tcp_resolver_compile::test));
   return test;
 }

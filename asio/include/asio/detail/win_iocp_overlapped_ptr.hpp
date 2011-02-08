@@ -1,8 +1,8 @@
 //
-// win_iocp_overlapped_ptr.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/win_iocp_overlapped_ptr.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,14 +15,18 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/win_iocp_io_service_fwd.hpp"
+#include "asio/detail/config.hpp"
 
 #if defined(ASIO_HAS_IOCP)
 
+#include <boost/utility/addressof.hpp>
+#include "asio/io_service.hpp"
+#include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/noncopyable.hpp"
+#include "asio/detail/win_iocp_overlapped_op.hpp"
 #include "asio/detail/win_iocp_io_service.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -34,7 +38,8 @@ class win_iocp_overlapped_ptr
 public:
   // Construct an empty win_iocp_overlapped_ptr.
   win_iocp_overlapped_ptr()
-    : ptr_(0)
+    : ptr_(0),
+      iocp_service_(0)
   {
   }
 
@@ -42,7 +47,8 @@ public:
   template <typename Handler>
   explicit win_iocp_overlapped_ptr(
       asio::io_service& io_service, Handler handler)
-    : ptr_(0)
+    : ptr_(0),
+      iocp_service_(0)
   {
     this->reset(io_service, handler);
   }
@@ -60,6 +66,8 @@ public:
     {
       ptr_->destroy();
       ptr_ = 0;
+      iocp_service_->work_finished();
+      iocp_service_ = 0;
     }
   }
 
@@ -68,12 +76,16 @@ public:
   template <typename Handler>
   void reset(asio::io_service& io_service, Handler handler)
   {
-    typedef overlapped_operation<Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr, io_service.impl_, handler);
+    typedef win_iocp_overlapped_op<Handler> op;
+    typename op::ptr p = { boost::addressof(handler),
+      asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(handler);
+    io_service.impl_.work_started();
     reset();
-    ptr_ = ptr.release();
+    ptr_ = p.p;
+    p.v = p.p = 0;
+    iocp_service_ = &io_service.impl_;
   }
 
   // Get the contained OVERLAPPED object.
@@ -91,8 +103,12 @@ public:
   // Release ownership of the OVERLAPPED object.
   OVERLAPPED* release()
   {
+    if (ptr_)
+      iocp_service_->on_pending(ptr_);
+
     OVERLAPPED* tmp = ptr_;
     ptr_ = 0;
+    iocp_service_ = 0;
     return tmp;
   }
 
@@ -102,105 +118,23 @@ public:
   {
     if (ptr_)
     {
-      ptr_->io_service_.post_completion(ptr_, 0, 0);
+      iocp_service_->on_completion(ptr_, ec,
+          static_cast<DWORD>(bytes_transferred));
       ptr_ = 0;
+      iocp_service_ = 0;
     }
   }
 
 private:
-  struct overlapped_operation_base
-    : public win_iocp_io_service::operation
-  {
-    overlapped_operation_base(win_iocp_io_service& io_service,
-        invoke_func_type invoke_func, destroy_func_type destroy_func)
-      : win_iocp_io_service::operation(io_service, invoke_func, destroy_func),
-        io_service_(io_service)
-    {
-      io_service_.work_started();
-    }
-
-    ~overlapped_operation_base()
-    {
-      io_service_.work_finished();
-    }
-
-    win_iocp_io_service& io_service_;
-    asio::error_code ec_;
-  };
-
-  template <typename Handler>
-  struct overlapped_operation
-    : public overlapped_operation_base
-  {
-    overlapped_operation(win_iocp_io_service& io_service,
-        Handler handler)
-      : overlapped_operation_base(io_service,
-          &overlapped_operation<Handler>::do_completion_impl,
-          &overlapped_operation<Handler>::destroy_impl),
-        handler_(handler)
-    {
-    }
-
-  private:
-    // Prevent copying and assignment.
-    overlapped_operation(const overlapped_operation&);
-    void operator=(const overlapped_operation&);
-    
-    static void do_completion_impl(win_iocp_io_service::operation* op,
-        DWORD last_error, size_t bytes_transferred)
-    {
-      // Take ownership of the operation object.
-      typedef overlapped_operation<Handler> op_type;
-      op_type* handler_op(static_cast<op_type*>(op));
-      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
-      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
-
-      // Make a copy of the handler and error_code so that the memory can be
-      // deallocated before the upcall is made.
-      Handler handler(handler_op->handler_);
-      asio::error_code ec(handler_op->ec_);
-      if (last_error)
-        ec = asio::error_code(last_error,
-            asio::error::get_system_category());
-
-      // Free the memory associated with the handler.
-      ptr.reset();
-
-      // Make the upcall.
-      asio_handler_invoke_helpers::invoke(
-          bind_handler(handler, ec, bytes_transferred), &handler);
-    }
-
-    static void destroy_impl(win_iocp_io_service::operation* op)
-    {
-      // Take ownership of the operation object.
-      typedef overlapped_operation<Handler> op_type;
-      op_type* handler_op(static_cast<op_type*>(op));
-      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
-      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
-
-      // A sub-object of the handler may be the true owner of the memory
-      // associated with the handler. Consequently, a local copy of the handler
-      // is required to ensure that any owning sub-object remains valid until
-      // after we have deallocated the memory here.
-      Handler handler(handler_op->handler_);
-      (void)handler;
-
-      // Free the memory associated with the handler.
-      ptr.reset();
-    }
-
-    Handler handler_;
-  };
-
-  overlapped_operation_base* ptr_;
+  win_iocp_operation* ptr_;
+  win_iocp_io_service* iocp_service_;
 };
 
 } // namespace detail
 } // namespace asio
 
-#endif // defined(ASIO_HAS_IOCP)
-
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(ASIO_HAS_IOCP)
 
 #endif // ASIO_DETAIL_WIN_IOCP_OVERLAPPED_PTR_HPP

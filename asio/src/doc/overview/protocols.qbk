@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -89,7 +89,7 @@ asio.reference.basic_datagram_socket.async_send async_send()] member functions.
 As with TCP and UDP, ICMP hostname resolution is performed using a resolver:
 
   ip::icmp::resolver resolver(my_io_service);
-  ip::icmp::resolver::query query("localhost", "daytime");
+  ip::icmp::resolver::query query("localhost", "");
   ip::icmp::resolver::iterator iter = resolver.resolve(query);
   ...
 
@@ -106,11 +106,7 @@ asio.reference.basic_raw_socket.receive_from receive_from()], [link
 asio.reference.basic_raw_socket.async_receive_from async_receive_from()],
 [link asio.reference.basic_raw_socket.send_to send_to()] or [link
 asio.reference.basic_raw_socket.async_send_to async_send_to()] member
-functions. For a connected ICMP socket, use the [link
-asio.reference.basic_raw_socket.receive receive()], [link
-asio.reference.basic_raw_socket.async_receive async_receive()], [link
-asio.reference.basic_raw_socket.send send()] or [link
-asio.reference.basic_raw_socket.async_send async_send()] member functions.
+functions.
 
 [heading Other Protocols]
 
@@ -123,6 +119,7 @@ requirements.
 [link asio.reference.ip__tcp ip::tcp],
 [link asio.reference.ip__udp ip::udp],
 [link asio.reference.ip__icmp ip::icmp],
-[link asio.tutorial.tutdaytime1 daytime protocol tutorials].
+[link asio.tutorial.tutdaytime1 daytime protocol tutorials],
+[link asio.examples.icmp ICMP ping example].
 
 [endsect]

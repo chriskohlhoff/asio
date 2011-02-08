@@ -2,7 +2,7 @@
 // serial_port_base.hpp
 // ~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2008 Rep Invariant Systems, Inc. (info@repinvariant.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -16,19 +16,18 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <stdexcept>
-#include <boost/config.hpp>
-#include <boost/detail/workaround.hpp>
+#if defined(ASIO_HAS_SERIAL_PORT) \
+  || defined(GENERATING_DOCUMENTATION)
+
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 # include <termios.h>
-#endif
-#include "asio/detail/pop_options.hpp"
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
-#include "asio/error_code.hpp"
+#include <boost/detail/workaround.hpp>
 #include "asio/detail/socket_types.hpp"
+#include "asio/error_code.hpp"
 
 #if defined(GENERATING_DOCUMENTATION)
 # define ASIO_OPTION_STORAGE implementation_defined
@@ -37,6 +36,8 @@
 #else
 # define ASIO_OPTION_STORAGE termios
 #endif
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 
@@ -54,9 +55,11 @@ public:
   public:
     explicit baud_rate(unsigned int rate = 0);
     unsigned int value() const;
-    asio::error_code store(ASIO_OPTION_STORAGE& storage,
+    ASIO_DECL asio::error_code store(
+        ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec) const;
-    asio::error_code load(const ASIO_OPTION_STORAGE& storage,
+    ASIO_DECL asio::error_code load(
+        const ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec);
   private:
     unsigned int value_;
@@ -70,11 +73,13 @@ public:
   {
   public:
     enum type { none, software, hardware };
-    explicit flow_control(type t = none);
+    ASIO_DECL explicit flow_control(type t = none);
     type value() const;
-    asio::error_code store(ASIO_OPTION_STORAGE& storage,
+    ASIO_DECL asio::error_code store(
+        ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec) const;
-    asio::error_code load(const ASIO_OPTION_STORAGE& storage,
+    ASIO_DECL asio::error_code load(
+        const ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec);
   private:
     type value_;
@@ -88,11 +93,13 @@ public:
   {
   public:
     enum type { none, odd, even };
-    explicit parity(type t = none);
+    ASIO_DECL explicit parity(type t = none);
     type value() const;
-    asio::error_code store(ASIO_OPTION_STORAGE& storage,
+    ASIO_DECL asio::error_code store(
+        ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec) const;
-    asio::error_code load(const ASIO_OPTION_STORAGE& storage,
+    ASIO_DECL asio::error_code load(
+        const ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec);
   private:
     type value_;
@@ -106,11 +113,13 @@ public:
   {
   public:
     enum type { one, onepointfive, two };
-    explicit stop_bits(type t = one);
+    ASIO_DECL explicit stop_bits(type t = one);
     type value() const;
-    asio::error_code store(ASIO_OPTION_STORAGE& storage,
+    ASIO_DECL asio::error_code store(
+        ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec) const;
-    asio::error_code load(const ASIO_OPTION_STORAGE& storage,
+    ASIO_DECL asio::error_code load(
+        const ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec);
   private:
     type value_;
@@ -123,11 +132,13 @@ public:
   class character_size
   {
   public:
-    explicit character_size(unsigned int t = 8);
+    ASIO_DECL explicit character_size(unsigned int t = 8);
     unsigned int value() const;
-    asio::error_code store(ASIO_OPTION_STORAGE& storage,
+    ASIO_DECL asio::error_code store(
+        ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec) const;
-    asio::error_code load(const ASIO_OPTION_STORAGE& storage,
+    ASIO_DECL asio::error_code load(
+        const ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec);
   private:
     unsigned int value_;
@@ -148,10 +159,16 @@ private:
 
 } // namespace asio
 
-#include "asio/impl/serial_port_base.ipp"
+#include "asio/detail/pop_options.hpp"
 
 #undef ASIO_OPTION_STORAGE
 
-#include "asio/detail/pop_options.hpp"
+#include "asio/impl/serial_port_base.hpp"
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/impl/serial_port_base.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
+
+#endif // defined(ASIO_HAS_SERIAL_PORT)
+       //   || defined(GENERATING_DOCUMENTATION)
 
 #endif // ASIO_SERIAL_PORT_BASE_HPP

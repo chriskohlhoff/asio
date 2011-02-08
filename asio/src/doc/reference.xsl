@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
 <!--
-  Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 
   Distributed under the Boost Software License, Version 1.0. (See accompanying
   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -10,6 +10,7 @@
 
 <xsl:output method="text"/>
 <xsl:strip-space elements="*"/>
+<xsl:preserve-space elements="para"/>
 
 
 <xsl:variable name="newline">
@@ -25,7 +26,7 @@
 -->
 <xsl:template match="/doxygen">
 <xsl:text>[/
- / Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -93,6 +94,7 @@
         <xsl:if test="
             contains(compoundname, 'asio::') and
             not(contains(compoundname, '::detail')) and
+            not(contains(compoundname, '::service::key')) and
             not(contains(compoundname, '_handler'))">
           <xsl:call-template name="class"/>
         </xsl:if>
@@ -100,7 +102,9 @@
       <xsl:otherwise>
         <xsl:if test="
             not(contains(ancestor::*/compoundname, '::detail')) and
-            not(contains(ancestor::*/compoundname, '_helper'))">
+            not(contains(ancestor::*/compoundname, '::service::key')) and
+            not(contains(ancestor::*/compoundname, '_helper')) and
+            not(contains(name, '_helper'))">
           <xsl:call-template name="namespace-memberdef"/>
         </xsl:if>
       </xsl:otherwise>
@@ -155,6 +159,23 @@
 </xsl:template>
 
 
+<xsl:template name="cleanup-type">
+  <xsl:param name="name"/>
+  <xsl:choose>
+    <xsl:when test="contains($name, 'ASIO_DECL ')">
+      <xsl:value-of select="substring-after($name, 'ASIO_DECL ')"/>
+    </xsl:when>
+    <xsl:when test="contains($name, 'ASIO_DECL')">
+      <xsl:value-of select="substring-after($name, 'ASIO_DECL')"/>
+    </xsl:when>
+    <xsl:when test="$name = 'virtual'"></xsl:when>
+    <xsl:otherwise>
+      <xsl:value-of select="$name"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+
 <xsl:template name="make-id">
   <xsl:param name="name"/>
   <xsl:choose>
@@ -176,6 +197,12 @@
          select="concat(substring-before($name, '!'), '_not_', substring-after($name, '!'))"/>
       </xsl:call-template>
     </xsl:when>
+    <xsl:when test="contains($name, '-&gt;')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '-&gt;'), '_arrow_', substring-after($name, '-&gt;'))"/>
+      </xsl:call-template>
+    </xsl:when>
     <xsl:when test="contains($name, '&lt;')">
       <xsl:call-template name="make-id">
         <xsl:with-param name="name"
@@ -188,10 +215,34 @@
          select="concat(substring-before($name, '&gt;'), '_gt_', substring-after($name, '&gt;'))"/>
       </xsl:call-template>
     </xsl:when>
+    <xsl:when test="contains($name, '[')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '['), '_lb_', substring-after($name, '['))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, ']')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, ']'), '_rb_', substring-after($name, ']'))"/>
+      </xsl:call-template>
+    </xsl:when>
     <xsl:when test="contains($name, '+')">
       <xsl:call-template name="make-id">
         <xsl:with-param name="name"
          select="concat(substring-before($name, '+'), '_plus_', substring-after($name, '+'))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, '-')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '-'), '_minus_', substring-after($name, '-'))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, '*')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '*'), '_star_', substring-after($name, '*'))"/>
       </xsl:call-template>
     </xsl:when>
     <xsl:when test="contains($name, '~')">
@@ -229,11 +280,6 @@
 
 
 <xsl:template match="para" mode="markup-nested">
-<xsl:apply-templates mode="markup-nested"/>
-</xsl:template>
-
-
-<xsl:template match="ref" mode="markup">
 <xsl:apply-templates mode="markup-nested"/>
 </xsl:template>
 
@@ -319,12 +365,15 @@
 
 
 <xsl:template match="listitem" mode="markup">
-* <xsl:value-of select="."/><xsl:text>
-</xsl:text>
+* <xsl:call-template name="strip-leading-whitespace">
+  <xsl:with-param name="text">
+    <xsl:apply-templates mode="markup"/>
+  </xsl:with-param>
+</xsl:call-template>
 </xsl:template>
 
 
-<xsl:template match="emphasis" mode="markup">[*<xsl:value-of select="."/>] </xsl:template>
+<xsl:template match="emphasis" mode="markup">[*<xsl:value-of select="."/>]</xsl:template>
 
 
 <xsl:template match="parameterlist" mode="markup">
@@ -475,15 +524,41 @@
 </xsl:template>
 
 
+<xsl:template name="escape-name">
+  <xsl:param name="text"/>
+  <xsl:choose>
+    <xsl:when test="contains($text, '[')">
+      <xsl:value-of select="substring-before($text, '[')"/>
+      <xsl:text>\[</xsl:text>
+      <xsl:call-template name="escape-name">
+        <xsl:with-param name="text" select="substring-after($text, '[')"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($text, ']')">
+      <xsl:value-of select="substring-before($text, ']')"/>
+      <xsl:text>\]</xsl:text>
+      <xsl:call-template name="escape-name">
+        <xsl:with-param name="text" select="substring-after($text, ']')"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:value-of select="$text"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+
 <xsl:template match="ref[@kindref='compound']" mode="markup">
   <xsl:variable name="name">
     <xsl:value-of select="."/>
   </xsl:variable>
   <xsl:choose>
-    <xsl:when test="contains($name, 'asio::')">
+    <xsl:when test="contains(@refid, 'asio') or contains($name, 'asio::')">
+      <xsl:variable name="dox-ref-id" select="@refid"/>
       <xsl:variable name="ref-name">
         <xsl:call-template name="strip-asio-ns">
-          <xsl:with-param name="name" select="$name"/>
+          <xsl:with-param name="name"
+            select="(/doxygen//compounddef[@id=$dox-ref-id])[1]/compoundname"/>
         </xsl:call-template>
       </xsl:variable>
       <xsl:variable name="ref-id">
@@ -491,10 +566,90 @@
           <xsl:with-param name="name" select="$ref-name"/>
         </xsl:call-template>
       </xsl:variable>
-[link asio.reference.<xsl:value-of select="$ref-id"/><xsl:text> </xsl:text><xsl:value-of
- select="$ref-name"/>]</xsl:when>
-    <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+      <xsl:text>[link asio.reference.</xsl:text>
+      <xsl:value-of select="$ref-id"/>
+      <xsl:text> `</xsl:text>
+      <xsl:value-of name="text" select="$ref-name"/>
+      <xsl:text>`]</xsl:text>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:text>`</xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>`</xsl:text>
+    </xsl:otherwise>
   </xsl:choose>
+</xsl:template>
+
+
+<xsl:template match="ref[@kindref='compound']" mode="markup-nested">
+  <xsl:variable name="name">
+    <xsl:value-of select="."/>
+  </xsl:variable>
+  <xsl:choose>
+    <xsl:when test="contains(@refid, 'asio') or contains($name, 'asio::')">
+      <xsl:variable name="dox-ref-id" select="@refid"/>
+      <xsl:variable name="ref-name">
+        <xsl:call-template name="strip-asio-ns">
+          <xsl:with-param name="name"
+            select="(/doxygen//compounddef[@id=$dox-ref-id])[1]/compoundname"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:variable name="ref-id">
+        <xsl:call-template name="make-id">
+          <xsl:with-param name="name" select="$ref-name"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:text>[link asio.reference.</xsl:text>
+      <xsl:value-of select="$ref-id"/>
+      <xsl:text> `</xsl:text>
+      <xsl:value-of name="text" select="$ref-name"/>
+      <xsl:text>`]</xsl:text>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:text>`</xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>`</xsl:text>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+
+<xsl:template match="ref[@kindref='member']" mode="markup">
+  <xsl:text>`</xsl:text>
+  <xsl:value-of select="."/>
+  <xsl:text>`</xsl:text>
+</xsl:template>
+
+
+<xsl:template match="ref[@kindref='member']" mode="markup-nested">
+  <xsl:text>`</xsl:text>
+  <xsl:value-of select="."/>
+  <xsl:text>`</xsl:text>
+</xsl:template>
+
+
+<xsl:template name="header-requirements">
+  <xsl:param name="file"/>
+  <xsl:value-of select="$newline"/>
+  <xsl:text>[heading Requirements]</xsl:text>
+  <xsl:value-of select="$newline"/>
+  <xsl:value-of select="$newline"/>
+  <xsl:text>[*Header: ]</xsl:text>
+  <xsl:text>[^asio/</xsl:text>
+  <xsl:value-of select="substring-after($file, 'include/asio/')"/>
+  <xsl:text>]</xsl:text>
+  <xsl:value-of select="$newline"/>
+  <xsl:value-of select="$newline"/>
+  <xsl:text>[*Convenience header: ]</xsl:text>
+  <xsl:choose>
+    <xsl:when test="contains($file, 'include/asio/ssl')">
+      <xsl:text>[^asio/ssl.hpp]</xsl:text>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:text>[^asio.hpp]</xsl:text>
+    </xsl:otherwise>
+  </xsl:choose>
+  <xsl:value-of select="$newline"/>
 </xsl:template>
 
 
@@ -516,9 +671,10 @@
       <xsl:with-param name="name" select="$class-name"/>
     </xsl:call-template>
   </xsl:variable>
+  <xsl:variable name="class-file" select="location/@file"/>
 [section:<xsl:value-of select="$class-id"/><xsl:text> </xsl:text><xsl:value-of select="$class-name"/>]
 
-<xsl:value-of select="briefdescription"/><xsl:text>
+<xsl:apply-templates select="briefdescription" mode="markup"/><xsl:text>
 
 </xsl:text>
 
@@ -539,9 +695,14 @@
 
 <xsl:apply-templates select="detaileddescription" mode="markup"/>
 
+<xsl:call-template name="header-requirements">
+  <xsl:with-param name="file" select="$class-file"/>
+</xsl:call-template>
+
 <xsl:call-template name="class-members">
   <xsl:with-param name="class-name" select="$class-name"/>
   <xsl:with-param name="class-id" select="$class-id"/>
+  <xsl:with-param name="class-file" select="$class-file"/>
 </xsl:call-template>
 
 [endsect]
@@ -567,7 +728,7 @@
   <xsl:when test="count(name) &gt; 0">
     [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="name"/>
       <xsl:text> </xsl:text>[*<xsl:value-of select="name"/>]]]
-    [<xsl:value-of select="briefdescription"/>]
+    [<xsl:call-template name="escape-name"><xsl:with-param name="text" select="briefdescription"/></xsl:call-template>]
   </xsl:when>
   <xsl:otherwise>
     <xsl:variable name="type-name">
@@ -605,6 +766,11 @@
   <xsl:variable name="name">
     <xsl:value-of select="name"/>
   </xsl:variable>
+  <xsl:variable name="escaped-name">
+    <xsl:call-template name="escape-name">
+      <xsl:with-param name="text" select="$name"/>
+    </xsl:call-template>
+  </xsl:variable>
   <xsl:variable name="id">
     <xsl:call-template name="make-id">
       <xsl:with-param name="name" select="$name"/>
@@ -612,6 +778,9 @@
   </xsl:variable>
   <xsl:variable name="doxygen-id">
     <xsl:value-of select="@id"/>
+  </xsl:variable>
+  <xsl:variable name="overload-count">
+    <xsl:value-of select="count(../memberdef[name = $name])"/>
   </xsl:variable>
   <xsl:variable name="overload-position">
     <xsl:for-each select="../memberdef[name = $name]">
@@ -623,9 +792,19 @@
   <xsl:if test="$overload-position = 1">
   [
     [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="$id"/>
-      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/>]]]
-    [<xsl:value-of select="briefdescription"/>]
+      <xsl:text> </xsl:text>[*<xsl:value-of select="$escaped-name"/><xsl:text>]]]
+    [</xsl:text><xsl:value-of select="briefdescription"/>
+  </xsl:if>
+  <xsl:if test="not($overload-position = 1) and not(briefdescription = preceding-sibling::*/briefdescription)">
+    <xsl:value-of select="$newline"/>
+    <xsl:value-of select="$newline"/>
+    <xsl:text>     </xsl:text>
+    <xsl:value-of select="briefdescription"/>
+  </xsl:if>
+  <xsl:if test="$overload-position = $overload-count">
+  <xsl:text>]
   ]
+  </xsl:text>
   </xsl:if>
 </xsl:for-each>
 ]
@@ -648,6 +827,9 @@
   <xsl:variable name="doxygen-id">
     <xsl:value-of select="@id"/>
   </xsl:variable>
+  <xsl:variable name="overload-count">
+    <xsl:value-of select="count(../memberdef[name = $name])"/>
+  </xsl:variable>
   <xsl:variable name="overload-position">
     <xsl:for-each select="../memberdef[name = $name]">
       <xsl:if test="@id = $doxygen-id">
@@ -658,9 +840,19 @@
   <xsl:if test="$overload-position = 1">
   [
     [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="$id"/>
-      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/>]]]
-    [<xsl:value-of select="briefdescription"/>]
+      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/><xsl:text>]]]
+    [</xsl:text><xsl:value-of select="briefdescription"/>
+  </xsl:if>
+  <xsl:if test="not($overload-position = 1) and not(briefdescription = preceding-sibling::*/briefdescription)">
+    <xsl:value-of select="$newline"/>
+    <xsl:value-of select="$newline"/>
+    <xsl:text>     </xsl:text>
+    <xsl:value-of select="briefdescription"/>
+  </xsl:if>
+  <xsl:if test="$overload-position = $overload-count">
+  <xsl:text>]
   ]
+  </xsl:text>
   </xsl:if>
 </xsl:for-each>
 ]
@@ -713,6 +905,9 @@
   <xsl:variable name="doxygen-id">
     <xsl:value-of select="@id"/>
   </xsl:variable>
+  <xsl:variable name="overload-count">
+    <xsl:value-of select="count(../memberdef[name = $name])"/>
+  </xsl:variable>
   <xsl:variable name="overload-position">
     <xsl:for-each select="../memberdef[name = $name]">
       <xsl:if test="@id = $doxygen-id">
@@ -723,9 +918,19 @@
   <xsl:if test="$overload-position = 1">
   [
     [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="$id"/>
-      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/>]]]
-    [<xsl:value-of select="briefdescription"/>]
+      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/><xsl:text>]]]
+    [</xsl:text><xsl:value-of select="briefdescription"/>
+  </xsl:if>
+  <xsl:if test="not($overload-position = 1) and not(briefdescription = preceding-sibling::*/briefdescription)">
+    <xsl:value-of select="$newline"/>
+    <xsl:value-of select="$newline"/>
+    <xsl:text>     </xsl:text>
+    <xsl:value-of select="briefdescription"/>
+  </xsl:if>
+  <xsl:if test="$overload-position = $overload-count">
+  <xsl:text>]
   ]
+  </xsl:text>
   </xsl:if>
 </xsl:for-each>
 ]
@@ -748,6 +953,9 @@
   <xsl:variable name="doxygen-id">
     <xsl:value-of select="@id"/>
   </xsl:variable>
+  <xsl:variable name="overload-count">
+    <xsl:value-of select="count(../memberdef[name = $name])"/>
+  </xsl:variable>
   <xsl:variable name="overload-position">
     <xsl:for-each select="../memberdef[name = $name]">
       <xsl:if test="@id = $doxygen-id">
@@ -758,9 +966,19 @@
   <xsl:if test="$overload-position = 1">
   [
     [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="$id"/>
-      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/>]]]
-    [<xsl:value-of select="briefdescription"/>]
+      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/><xsl:text>]]]
+    [</xsl:text><xsl:value-of select="briefdescription"/>
+  </xsl:if>
+  <xsl:if test="not($overload-position = 1) and not(briefdescription = preceding-sibling::*/briefdescription)">
+    <xsl:value-of select="$newline"/>
+    <xsl:value-of select="$newline"/>
+    <xsl:text>     </xsl:text>
+    <xsl:value-of select="briefdescription"/>
+  </xsl:if>
+  <xsl:if test="$overload-position = $overload-count">
+  <xsl:text>]
   ]
+  </xsl:text>
   </xsl:if>
 </xsl:for-each>
 ]
@@ -772,10 +990,12 @@
 <xsl:template name="class-members">
 <xsl:param name="class-name"/>
 <xsl:param name="class-id"/>
+<xsl:param name="class-file"/>
 <xsl:apply-templates select="sectiondef[@kind='public-type' or @kind='public-func' or @kind='public-static-func' or @kind='public-attrib' or @kind='public-static-attrib' or @kind='protected-func' or @kind='protected-static-func' or @kind='protected-attrib' or @kind='protected-static-attrib' or @kind='friend' or @kind='related']/memberdef[not(type = 'friend class') and not(contains(name, '_helper'))]" mode="class-detail">
   <xsl:sort select="name"/>
   <xsl:with-param name="class-name" select="$class-name"/>
   <xsl:with-param name="class-id" select="$class-id"/>
+  <xsl:with-param name="class-file" select="$class-file"/>
 </xsl:apply-templates>
 </xsl:template>
 
@@ -785,8 +1005,14 @@
 <xsl:template match="memberdef" mode="class-detail">
   <xsl:param name="class-name"/>
   <xsl:param name="class-id"/>
+  <xsl:param name="class-file"/>
   <xsl:variable name="name">
     <xsl:value-of select="name"/>
+  </xsl:variable>
+  <xsl:variable name="escaped-name">
+    <xsl:call-template name="escape-name">
+      <xsl:with-param name="text" select="$name"/>
+    </xsl:call-template>
   </xsl:variable>
   <xsl:variable name="id">
     <xsl:call-template name="make-id">
@@ -809,32 +1035,52 @@
 
 <xsl:if test="$overload-count &gt; 1 and $overload-position = 1">
 [section:<xsl:value-of select="$id"/><xsl:text> </xsl:text>
-<xsl:value-of select="$class-name"/>::<xsl:value-of select="$name"/>]
+<xsl:value-of select="$class-name"/>::<xsl:value-of select="$escaped-name"/>]
 
 <xsl:text>[indexterm2 </xsl:text>
-<xsl:value-of select="$name"/>
+<xsl:value-of select="$escaped-name"/>
 <xsl:text>..</xsl:text>
 <xsl:value-of select="$class-name"/>
 <xsl:text>] </xsl:text>
 
-<xsl:value-of select="briefdescription"/><xsl:text>
+<xsl:apply-templates select="briefdescription" mode="markup"/><xsl:text>
 </xsl:text>
 
 <xsl:for-each select="../memberdef[name = $name]">
+<xsl:if test="position() &gt; 1 and not(briefdescription = preceding-sibling::*/briefdescription)">
+  <xsl:value-of select="$newline"/>
+  <xsl:apply-templates select="briefdescription" mode="markup"/>
+  <xsl:value-of select="$newline"/>
+</xsl:if>
 <xsl:text>
 </xsl:text><xsl:apply-templates select="templateparamlist" mode="class-detail"/>
-<xsl:text>  </xsl:text><xsl:if test="@static='yes'">static </xsl:if><xsl:if
- test="string-length(type) > 0"><xsl:value-of select="type"/><xsl:text> </xsl:text>
+<xsl:text>  </xsl:text>
+ <xsl:if test="@explicit='yes'">explicit </xsl:if>
+ <xsl:if test="@static='yes'">static </xsl:if>
+ <xsl:if test="@virt='virtual'">virtual </xsl:if>
+ <xsl:variable name="stripped-type">
+  <xsl:call-template name="cleanup-type">
+    <xsl:with-param name="name" select="type"/>
+  </xsl:call-template>
+ </xsl:variable>
+ <xsl:if test="string-length($stripped-type) &gt; 0">
+ <xsl:value-of select="$stripped-type"/><xsl:text> </xsl:text>
 </xsl:if>``[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of
  select="$id"/>.overload<xsl:value-of select="position()"/><xsl:text> </xsl:text><xsl:value-of
  select="name"/>]``(<xsl:apply-templates select="param"
  mode="class-detail"/>)<xsl:if test="@const='yes'"> const</xsl:if>;
+<xsl:text>  ``  [''''&amp;raquo;'''</xsl:text>
+<xsl:text> [link asio.reference.</xsl:text>
+<xsl:value-of select="$class-id"/>.<xsl:value-of
+ select="$id"/>.overload<xsl:value-of select="position()"/>
+<xsl:text> more...]]``
+</xsl:text>
 </xsl:for-each>
 </xsl:if>
 
 [section:<xsl:if test="$overload-count = 1"><xsl:value-of select="$id"/></xsl:if>
 <xsl:if test="$overload-count &gt; 1">overload<xsl:value-of select="$overload-position"/></xsl:if>
-<xsl:text> </xsl:text><xsl:value-of select="$class-name"/>::<xsl:value-of select="$name"/>
+<xsl:text> </xsl:text><xsl:value-of select="$class-name"/>::<xsl:value-of select="$escaped-name"/>
 <xsl:if test="$overload-count &gt; 1"> (<xsl:value-of
  select="$overload-position"/> of <xsl:value-of select="$overload-count"/> overloads)</xsl:if>]
 
@@ -849,13 +1095,13 @@
 
 <xsl:if test="$overload-count = 1">
   <xsl:text>[indexterm2 </xsl:text>
-  <xsl:value-of select="$name"/>
+  <xsl:value-of select="$escaped-name"/>
   <xsl:text>..</xsl:text>
   <xsl:value-of select="$class-name"/>
   <xsl:text>] </xsl:text>
 </xsl:if>
 
-<xsl:value-of select="briefdescription"/><xsl:text>
+<xsl:apply-templates select="briefdescription" mode="markup"/><xsl:text>
 </xsl:text>
 
   <xsl:choose>
@@ -868,7 +1114,9 @@
       <xsl:call-template name="variable" mode="class-detail"/>
     </xsl:when>
     <xsl:when test="@kind='enum'">
-      <xsl:call-template name="enum" mode="class-detail"/>
+      <xsl:call-template name="enum" mode="class-detail">
+        <xsl:with-param name="enum-name" select="$class-name"/>
+      </xsl:call-template>
     </xsl:when>
     <xsl:when test="@kind='function'">
       <xsl:call-template name="function" mode="class-detail"/>
@@ -880,6 +1128,12 @@
 
 <xsl:text>
 </xsl:text><xsl:apply-templates select="detaileddescription" mode="markup"/>
+
+<xsl:if test="@kind='typedef' or @kind='friend'">
+  <xsl:call-template name="header-requirements">
+    <xsl:with-param name="file" select="$class-file"/>
+  </xsl:call-template>
+</xsl:if>
 
 [endsect]
 
@@ -933,8 +1187,18 @@
 
 
 <xsl:template name="enum">
+<xsl:param name="enum-name"/>
   enum <xsl:value-of select="name"/><xsl:text>
 </xsl:text><xsl:if test="count(enumvalue) &gt; 0">
+<xsl:value-of select="$newline"/>
+<xsl:for-each select="enumvalue">
+  <xsl:text>[indexterm2 </xsl:text>
+  <xsl:value-of select="name"/>
+  <xsl:text>..</xsl:text>
+  <xsl:value-of select="$enum-name"/>
+  <xsl:text>]</xsl:text>
+  <xsl:value-of select="$newline"/>
+</xsl:for-each>
 [heading Values]
 [variablelist
 <xsl:for-each select="enumvalue">
@@ -950,9 +1214,26 @@
 
 <xsl:template name="function">
 <xsl:text>
-</xsl:text><xsl:apply-templates select="templateparamlist" mode="class-detail"/>
-<xsl:text>  </xsl:text><xsl:if test="@static='yes'">static </xsl:if><xsl:if
- test="string-length(type) > 0"><xsl:value-of select="type"/><xsl:text> </xsl:text></xsl:if>
+</xsl:text>
+<xsl:variable name="doxygen-id">
+  <xsl:value-of select="@id"/>
+</xsl:variable>
+<xsl:choose>
+  <xsl:when test="count(/doxygen//memberdef[@id=$doxygen-id]/templateparamlist) = 1">
+    <xsl:apply-templates select="/doxygen//memberdef[@id=$doxygen-id]/templateparamlist" mode="class-detail"/>
+  </xsl:when>
+  <xsl:otherwise>
+    <xsl:apply-templates select="templateparamlist" mode="class-detail"/>
+  </xsl:otherwise>
+</xsl:choose>
+<xsl:variable name="stripped-type">
+ <xsl:call-template name="cleanup-type">
+   <xsl:with-param name="name" select="type"/>
+ </xsl:call-template>
+</xsl:variable>
+<xsl:text>  </xsl:text><xsl:if test="@static='yes'">static </xsl:if><xsl:if 
+ test="@virt='virtual'">virtual </xsl:if><xsl:if
+ test="string-length($stripped-type) &gt; 0"><xsl:value-of select="$stripped-type"/><xsl:text> </xsl:text></xsl:if>
 <xsl:value-of select="name"/>(<xsl:apply-templates select="param"
  mode="class-detail"/>)<xsl:if test="@const='yes'"> const</xsl:if>;
 </xsl:template>
@@ -1052,9 +1333,23 @@
 
 <xsl:template match="param" mode="class-detail">
 <xsl:text>
-      </xsl:text><xsl:value-of select="type"/><xsl:text> </xsl:text><xsl:value-of
-        select="declname"/><xsl:if test="count(defval) > 0"> = <xsl:value-of
-        select="defval"/></xsl:if><xsl:if test="not(position() = last())">,</xsl:if>
+      </xsl:text>
+  <xsl:choose>
+    <xsl:when test="string-length(array) &gt; 0">
+      <xsl:value-of select="substring-before(type, '&amp;')"/>
+      <xsl:text>(&amp;</xsl:text>
+      <xsl:value-of select="declname"/>
+      <xsl:text>)</xsl:text>
+      <xsl:value-of select="array"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:value-of select="type"/>
+      <xsl:text> </xsl:text>
+      <xsl:value-of select="declname"/>
+    </xsl:otherwise>
+  </xsl:choose>
+  <xsl:if test="count(defval) > 0"> = <xsl:value-of select="defval"/></xsl:if>
+  <xsl:if test="not(position() = last())">,</xsl:if>
 </xsl:template>
 
 
@@ -1103,28 +1398,42 @@
 <xsl:choose>
   <xsl:when test="count(/doxygen/compounddef[@kind='group' and compoundname=$name]) &gt; 0">
     <xsl:for-each select="/doxygen/compounddef[@kind='group' and compoundname=$name]">
-      <xsl:value-of select="briefdescription"/><xsl:text>
+      <xsl:apply-templates select="briefdescription" mode="markup"/><xsl:text>
       </xsl:text>
     </xsl:for-each>
   </xsl:when>
   <xsl:otherwise>
-    <xsl:value-of select="briefdescription"/><xsl:text>
+    <xsl:apply-templates select="briefdescription" mode="markup"/><xsl:text>
     </xsl:text>
   </xsl:otherwise>
 </xsl:choose>
 
 <xsl:for-each select="../memberdef[name = $unqualified-name]">
+<xsl:variable name="stripped-type">
+ <xsl:call-template name="cleanup-type">
+   <xsl:with-param name="name" select="type"/>
+ </xsl:call-template>
+</xsl:variable>
 <xsl:text>
 </xsl:text><xsl:apply-templates select="templateparamlist" mode="class-detail"/>
-<xsl:text>  </xsl:text><xsl:if test="string-length(type) > 0"><xsl:value-of
- select="type"/><xsl:text> </xsl:text></xsl:if>``[link asio.reference.<xsl:value-of
+<xsl:text>  </xsl:text><xsl:if test="string-length($stripped-type) &gt; 0"><xsl:value-of
+ select="$stripped-type"/><xsl:text> </xsl:text></xsl:if>``[link asio.reference.<xsl:value-of
  select="$id"/>.overload<xsl:value-of select="position()"/><xsl:text> </xsl:text>
 <xsl:value-of select="name"/>]``(<xsl:apply-templates select="param" mode="class-detail"/>);
+<xsl:text>  ``  [''''&amp;raquo;'''</xsl:text>
+<xsl:text> [link asio.reference.</xsl:text>
+<xsl:value-of select="$id"/>.overload<xsl:value-of select="position()"/>
+<xsl:text> more...]]``
+</xsl:text>
 </xsl:for-each>
 
 <xsl:for-each select="/doxygen/compounddef[@kind='group' and compoundname=$name]">
   <xsl:apply-templates select="detaileddescription" mode="markup"/>
 </xsl:for-each>
+
+<xsl:call-template name="header-requirements">
+  <xsl:with-param name="file" select="location/@file"/>
+</xsl:call-template>
 
 </xsl:if>
 
@@ -1140,7 +1449,7 @@
   <xsl:text>] </xsl:text>
 </xsl:if>
 
-<xsl:value-of select="briefdescription"/><xsl:text>
+<xsl:apply-templates select="briefdescription" mode="markup"/><xsl:text>
 </xsl:text>
 
   <xsl:choose>
@@ -1153,7 +1462,9 @@
       <xsl:call-template name="variable"/>
     </xsl:when>
     <xsl:when test="@kind='enum'">
-      <xsl:call-template name="enum"/>
+      <xsl:call-template name="enum">
+        <xsl:with-param name="enum-name" select="$name"/>
+      </xsl:call-template>
     </xsl:when>
     <xsl:when test="@kind='function'">
       <xsl:call-template name="function"/>
@@ -1162,6 +1473,12 @@
 
 <xsl:text>
 </xsl:text><xsl:apply-templates select="detaileddescription" mode="markup"/>
+
+<xsl:if test="$overload-count = 1">
+  <xsl:call-template name="header-requirements">
+    <xsl:with-param name="file" select="location/@file"/>
+  </xsl:call-template>
+</xsl:if>
 
 [endsect]
 

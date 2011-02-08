@@ -2,7 +2,7 @@
 // strand.cpp
 // ~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -18,7 +18,9 @@
 
 #include <sstream>
 #include <boost/bind.hpp>
-#include "asio.hpp"
+#include "asio/deadline_timer.hpp"
+#include "asio/io_service.hpp"
+#include "asio/thread.hpp"
 #include "unit_test.hpp"
 
 using namespace asio;

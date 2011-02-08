@@ -2,7 +2,7 @@
 // deadline_timer.cpp
 // ~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -17,7 +17,9 @@
 #include "asio/deadline_timer.hpp"
 
 #include <boost/bind.hpp>
-#include "asio.hpp"
+#include "asio/io_service.hpp"
+#include "asio/placeholders.hpp"
+#include "asio/thread.hpp"
 #include "unit_test.hpp"
 
 using namespace boost::posix_time;
@@ -58,7 +60,11 @@ void cancel_timer(asio::deadline_timer* t)
 
 ptime now()
 {
+#if defined(BOOST_DATE_TIME_HAS_HIGH_PRECISION_CLOCK)
   return microsec_clock::universal_time();
+#else // defined(BOOST_DATE_TIME_HAS_HIGH_PRECISION_CLOCK)
+  return second_clock::universal_time();
+#endif // defined(BOOST_DATE_TIME_HAS_HIGH_PRECISION_CLOCK)
 }
 
 void deadline_timer_test()
@@ -179,9 +185,118 @@ void deadline_timer_test()
   BOOST_CHECK(expected_end < end || expected_end == end);
 }
 
+void timer_handler(const asio::error_code&)
+{
+}
+
+void deadline_timer_cancel_test()
+{
+  static asio::io_service io_service;
+  struct timer
+  {
+    asio::deadline_timer t;
+    timer() : t(io_service) { t.expires_at(boost::posix_time::pos_infin); }
+  } timers[50];
+
+  timers[2].t.async_wait(timer_handler);
+  timers[41].t.async_wait(timer_handler);
+  for (int i = 10; i < 20; ++i)
+    timers[i].t.async_wait(timer_handler);
+
+  BOOST_CHECK(timers[2].t.cancel() == 1);
+  BOOST_CHECK(timers[41].t.cancel() == 1);
+  for (int i = 10; i < 20; ++i)
+    BOOST_CHECK(timers[i].t.cancel() == 1);
+}
+
+struct custom_allocation_timer_handler
+{
+  custom_allocation_timer_handler(int* count) : count_(count) {}
+  void operator()(const asio::error_code&) {}
+  int* count_;
+};
+
+void* asio_handler_allocate(std::size_t size,
+    custom_allocation_timer_handler* handler)
+{
+  ++(*handler->count_);
+  return ::operator new(size);
+}
+
+void asio_handler_deallocate(void* pointer, std::size_t,
+    custom_allocation_timer_handler* handler)
+{
+  --(*handler->count_);
+  ::operator delete(pointer);
+}
+
+void deadline_timer_custom_allocation_test()
+{
+  static asio::io_service io_service;
+  struct timer
+  {
+    asio::deadline_timer t;
+    timer() : t(io_service) {}
+  } timers[100];
+
+  int allocation_count = 0;
+
+  for (int i = 0; i < 50; ++i)
+  {
+    timers[i].t.expires_at(boost::posix_time::pos_infin);
+    timers[i].t.async_wait(custom_allocation_timer_handler(&allocation_count));
+  }
+
+  for (int i = 50; i < 100; ++i)
+  {
+    timers[i].t.expires_at(boost::posix_time::neg_infin);
+    timers[i].t.async_wait(custom_allocation_timer_handler(&allocation_count));
+  }
+
+  for (int i = 0; i < 50; ++i)
+    timers[i].t.cancel();
+
+  io_service.run();
+
+  BOOST_CHECK(allocation_count == 0);
+}
+
+void io_service_run(asio::io_service* ios)
+{
+  ios->run();
+}
+
+void deadline_timer_thread_test()
+{
+  asio::io_service ios;
+  asio::io_service::work w(ios);
+  asio::deadline_timer t1(ios);
+  asio::deadline_timer t2(ios);
+  int count = 0;
+
+  asio::thread th(boost::bind(io_service_run, &ios));
+
+  t2.expires_from_now(boost::posix_time::seconds(2));
+  t2.wait();
+
+  t1.expires_from_now(boost::posix_time::seconds(2));
+  t1.async_wait(boost::bind(increment, &count));
+
+  t2.expires_from_now(boost::posix_time::seconds(4));
+  t2.wait();
+
+  ios.stop();
+  th.join();
+
+  BOOST_CHECK(count == 1);
+}
+
 test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("deadline_timer");
   test->add(BOOST_TEST_CASE(&deadline_timer_test));
+  test->add(BOOST_TEST_CASE(&deadline_timer_cancel_test));
+  test->add(BOOST_TEST_CASE(&deadline_timer_custom_allocation_test));
+  test->add(BOOST_TEST_CASE(&deadline_timer_thread_test));
   return test;
 }

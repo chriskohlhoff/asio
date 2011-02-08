@@ -2,7 +2,7 @@
 // sync_client.cpp
 // ~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -60,7 +60,9 @@ int main(int argc, char* argv[])
     // Send the request.
     asio::write(socket, request);
 
-    // Read the response status line.
+    // Read the response status line. The response streambuf will automatically
+    // grow to accommodate the entire line. The growth may be limited by passing
+    // a maximum size to the streambuf constructor.
     asio::streambuf response;
     asio::read_until(socket, response, "\r\n");
 

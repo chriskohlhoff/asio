@@ -2,7 +2,7 @@
 // read.hpp
 // ~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,15 +15,12 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
 #include <cstddef>
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
-
-#include "asio/basic_streambuf.hpp"
+#include "asio/basic_streambuf_fwd.hpp"
 #include "asio/error.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 
@@ -82,7 +79,7 @@ std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers);
  * @li The supplied buffers are full. That is, the bytes transferred is equal to
  * the sum of the buffer sizes.
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function.
@@ -133,7 +130,7 @@ std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
  * @li The supplied buffers are full. That is, the bytes transferred is equal to
  * the sum of the buffer sizes.
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function.
@@ -169,6 +166,8 @@ template <typename SyncReadStream, typename MutableBufferSequence,
 std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition, asio::error_code& ec);
 
+#if !defined(BOOST_NO_IOSTREAM)
+
 /// Attempt to read a certain amount of data from a stream before returning.
 /**
  * This function is used to read a certain number of bytes of data from a
@@ -201,7 +200,7 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b);
  * This function is used to read a certain number of bytes of data from a
  * stream. The call will block until one of the following conditions is true:
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function.
@@ -239,7 +238,7 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
  * This function is used to read a certain number of bytes of data from a
  * stream. The call will block until one of the following conditions is true:
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * read_some function.
@@ -273,6 +272,8 @@ template <typename SyncReadStream, typename Allocator,
 std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition, asio::error_code& ec);
 
+#endif // !defined(BOOST_NO_IOSTREAM)
+
 /*@}*/
 /**
  * @defgroup async_read asio::async_read
@@ -296,7 +297,10 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
  * @li An error occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
- * async_read_some function.
+ * async_read_some function, and is known as a <em>composed operation</em>. The
+ * program must ensure that the stream performs no other read operations (such
+ * as async_read, the stream's async_read_some function, or any other composed
+ * operations that perform reads) until this operation completes.
  *
  * @param s The stream from which the data is to be read. The type must support
  * the AsyncReadStream concept.
@@ -355,7 +359,7 @@ void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  * @li The supplied buffers are full. That is, the bytes transferred is equal to
  * the sum of the buffer sizes.
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * @param s The stream from which the data is to be read. The type must support
  * the AsyncReadStream concept.
@@ -412,6 +416,8 @@ template <typename AsyncReadStream, typename MutableBufferSequence,
 void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition, ReadHandler handler);
 
+#if !defined(BOOST_NO_IOSTREAM)
+
 /// Start an asynchronous operation to read a certain amount of data from a
 /// stream.
 /**
@@ -423,7 +429,10 @@ void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  * @li An error occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
- * async_read_some function.
+ * async_read_some function, and is known as a <em>composed operation</em>. The
+ * program must ensure that the stream performs no other read operations (such
+ * as async_read, the stream's async_read_some function, or any other composed
+ * operations that perform reads) until this operation completes.
  *
  * @param s The stream from which the data is to be read. The type must support
  * the AsyncReadStream concept.
@@ -467,10 +476,13 @@ void async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
  * asynchronous operation will continue until one of the following conditions is
  * true:
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
- * async_read_some function.
+ * async_read_some function, and is known as a <em>composed operation</em>. The
+ * program must ensure that the stream performs no other read operations (such
+ * as async_read, the stream's async_read_some function, or any other composed
+ * operations that perform reads) until this operation completes.
  *
  * @param s The stream from which the data is to be read. The type must support
  * the AsyncReadStream concept.
@@ -515,12 +527,14 @@ template <typename AsyncReadStream, typename Allocator,
 void async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition, ReadHandler handler);
 
+#endif // !defined(BOOST_NO_IOSTREAM)
+
 /*@}*/
 
 } // namespace asio
 
-#include "asio/impl/read.ipp"
-
 #include "asio/detail/pop_options.hpp"
+
+#include "asio/impl/read.hpp"
 
 #endif // ASIO_READ_HPP

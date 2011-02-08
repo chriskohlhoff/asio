@@ -1,8 +1,8 @@
 //
-// stream_base.hpp
-// ~~~~~~~~~~~~~~~
+// ssl/stream_base.hpp
+// ~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2005-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2005-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,11 +15,10 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
+#include <boost/detail/workaround.hpp>
 
 #include "asio/detail/push_options.hpp"
-#include <boost/detail/workaround.hpp>
-#include "asio/detail/pop_options.hpp"
 
 namespace asio {
 namespace ssl {

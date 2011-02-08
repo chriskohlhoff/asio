@@ -2,7 +2,7 @@
 // basic_socket_streambuf.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,9 +15,10 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
 
-#include "asio/detail/push_options.hpp"
+#if !defined(BOOST_NO_IOSTREAM)
+
 #include <streambuf>
 #include <boost/array.hpp>
 #include <boost/preprocessor/arithmetic/inc.hpp>
@@ -25,12 +26,10 @@
 #include <boost/preprocessor/repetition/enum_params.hpp>
 #include <boost/preprocessor/repetition/repeat_from_to.hpp>
 #include <boost/utility/base_from_member.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/basic_socket.hpp"
+#include "asio/detail/throw_error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/stream_socket_service.hpp"
-#include "asio/detail/throw_error.hpp"
 
 #if !defined(ASIO_SOCKET_STREAMBUF_MAX_ARITY)
 #define ASIO_SOCKET_STREAMBUF_MAX_ARITY 5
@@ -44,7 +43,8 @@
 //     init_buffers();
 //     asio::error_code ec;
 //     this->basic_socket<Protocol, StreamSocketService>::close(ec);
-//     typedef typename Protocol::resolver_query resolver_query;
+//     typedef typename Protocol::resolver resolver_type;
+//     typedef typename resolver_type::query resolver_query;
 //     resolver_query query(x1, ..., xn);
 //     resolve_and_connect(query, ec);
 //     return !ec ? this : 0;
@@ -59,12 +59,15 @@
     init_buffers(); \
     asio::error_code ec; \
     this->basic_socket<Protocol, StreamSocketService>::close(ec); \
-    typedef typename Protocol::resolver_query resolver_query; \
+    typedef typename Protocol::resolver resolver_type; \
+    typedef typename resolver_type::query resolver_query; \
     resolver_query query(BOOST_PP_ENUM_PARAMS(n, x)); \
     resolve_and_connect(query, ec); \
     return !ec ? this : 0; \
   } \
   /**/
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 
@@ -252,7 +255,7 @@ private:
       asio::error_code& ec)
   {
     typedef typename Protocol::resolver resolver_type;
-    typedef typename Protocol::resolver_iterator iterator_type;
+    typedef typename resolver_type::iterator iterator_type;
     resolver_type resolver(
         boost::base_from_member<asio::io_service>::member);
     iterator_type i = resolver.resolve(query, ec);
@@ -278,8 +281,10 @@ private:
 
 } // namespace asio
 
+#include "asio/detail/pop_options.hpp"
+
 #undef ASIO_PRIVATE_CONNECT_DEF
 
-#include "asio/detail/pop_options.hpp"
+#endif // !defined(BOOST_NO_IOSTREAM)
 
 #endif // ASIO_BASIC_SOCKET_STREAMBUF_HPP

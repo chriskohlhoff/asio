@@ -2,7 +2,7 @@
 // error_code.hpp
 // ~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,12 +15,8 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
+#include "asio/detail/config.hpp"
 #include <string>
-#include "asio/detail/pop_options.hpp"
 
 #if defined(GENERATING_DOCUMENTATION)
 # define ASIO_WIN_OR_POSIX(e_win, e_posix) implementation_defined
@@ -29,6 +25,8 @@
 #else
 # define ASIO_WIN_OR_POSIX(e_win, e_posix) e_posix
 #endif
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 
@@ -106,7 +104,7 @@ public:
   }
 
   /// Get the message associated with the error.
-  std::string message() const;
+  ASIO_DECL std::string message() const;
 
   struct unspecified_bool_type_t
   {
@@ -114,9 +112,7 @@ public:
 
   typedef void (*unspecified_bool_type)(unspecified_bool_type_t);
 
-  static void unspecified_bool_true(unspecified_bool_type_t)
-  {
-  }
+  static void unspecified_bool_true(unspecified_bool_type_t) {}
 
   /// Operator returns non-null if there is a non-success error code.
   operator unspecified_bool_type() const
@@ -155,10 +151,12 @@ private:
 
 } // namespace asio
 
+#include "asio/detail/pop_options.hpp"
+
 #undef ASIO_WIN_OR_POSIX
 
-#include "asio/error.hpp"
-
-#include "asio/detail/pop_options.hpp"
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/impl/error_code.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_ERROR_CODE_HPP

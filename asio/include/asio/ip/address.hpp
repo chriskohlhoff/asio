@@ -1,8 +1,8 @@
 //
-// address.hpp
-// ~~~~~~~~~~~
+// ip/address.hpp
+// ~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,18 +15,17 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
-#include <iosfwd>
+#include "asio/detail/config.hpp"
 #include <string>
-#include <boost/throw_exception.hpp>
-#include "asio/detail/pop_options.hpp"
-
-#include "asio/error.hpp"
+#include "asio/error_code.hpp"
 #include "asio/ip/address_v4.hpp"
 #include "asio/ip/address_v6.hpp"
-#include "asio/detail/throw_error.hpp"
+
+#if !defined(BOOST_NO_IOSTREAM)
+# include <iosfwd>
+#endif // !defined(BOOST_NO_IOSTREAM)
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ip {
@@ -44,63 +43,27 @@ class address
 {
 public:
   /// Default constructor.
-  address()
-    : type_(ipv4),
-      ipv4_address_(),
-      ipv6_address_()
-  {
-  }
+  ASIO_DECL address();
 
   /// Construct an address from an IPv4 address.
-  address(const asio::ip::address_v4& ipv4_address)
-    : type_(ipv4),
-      ipv4_address_(ipv4_address),
-      ipv6_address_()
-  {
-  }
+  ASIO_DECL address(const asio::ip::address_v4& ipv4_address);
 
   /// Construct an address from an IPv6 address.
-  address(const asio::ip::address_v6& ipv6_address)
-    : type_(ipv6),
-      ipv4_address_(),
-      ipv6_address_(ipv6_address)
-  {
-  }
+  ASIO_DECL address(const asio::ip::address_v6& ipv6_address);
 
   /// Copy constructor.
-  address(const address& other)
-    : type_(other.type_),
-      ipv4_address_(other.ipv4_address_),
-      ipv6_address_(other.ipv6_address_)
-  {
-  }
+  ASIO_DECL address(const address& other);
 
   /// Assign from another address.
-  address& operator=(const address& other)
-  {
-    type_ = other.type_;
-    ipv4_address_ = other.ipv4_address_;
-    ipv6_address_ = other.ipv6_address_;
-    return *this;
-  }
+  ASIO_DECL address& operator=(const address& other);
 
   /// Assign from an IPv4 address.
-  address& operator=(const asio::ip::address_v4& ipv4_address)
-  {
-    type_ = ipv4;
-    ipv4_address_ = ipv4_address;
-    ipv6_address_ = asio::ip::address_v6();
-    return *this;
-  }
+  ASIO_DECL address& operator=(
+      const asio::ip::address_v4& ipv4_address);
 
   /// Assign from an IPv6 address.
-  address& operator=(const asio::ip::address_v6& ipv6_address)
-  {
-    type_ = ipv6;
-    ipv4_address_ = asio::ip::address_v4();
-    ipv6_address_ = ipv6_address;
-    return *this;
-  }
+  ASIO_DECL address& operator=(
+      const asio::ip::address_v6& ipv6_address);
 
   /// Get whether the address is an IP version 4 address.
   bool is_v4() const
@@ -115,127 +78,63 @@ public:
   }
 
   /// Get the address as an IP version 4 address.
-  asio::ip::address_v4 to_v4() const
-  {
-    if (type_ != ipv4)
-    {
-      asio::system_error e(
-          asio::error::address_family_not_supported);
-      boost::throw_exception(e);
-    }
-    return ipv4_address_;
-  }
+  ASIO_DECL asio::ip::address_v4 to_v4() const;
 
   /// Get the address as an IP version 6 address.
-  asio::ip::address_v6 to_v6() const
-  {
-    if (type_ != ipv6)
-    {
-      asio::system_error e(
-          asio::error::address_family_not_supported);
-      boost::throw_exception(e);
-    }
-    return ipv6_address_;
-  }
+  ASIO_DECL asio::ip::address_v6 to_v6() const;
 
   /// Get the address as a string in dotted decimal format.
-  std::string to_string() const
-  {
-    if (type_ == ipv6)
-      return ipv6_address_.to_string();
-    return ipv4_address_.to_string();
-  }
+  ASIO_DECL std::string to_string() const;
 
   /// Get the address as a string in dotted decimal format.
-  std::string to_string(asio::error_code& ec) const
-  {
-    if (type_ == ipv6)
-      return ipv6_address_.to_string(ec);
-    return ipv4_address_.to_string(ec);
-  }
+  ASIO_DECL std::string to_string(asio::error_code& ec) const;
 
   /// Create an address from an IPv4 address string in dotted decimal form,
   /// or from an IPv6 address in hexadecimal notation.
-  static address from_string(const char* str)
-  {
-    asio::error_code ec;
-    address addr = from_string(str, ec);
-    asio::detail::throw_error(ec);
-    return addr;
-  }
+  ASIO_DECL static address from_string(const char* str);
 
   /// Create an address from an IPv4 address string in dotted decimal form,
   /// or from an IPv6 address in hexadecimal notation.
-  static address from_string(const char* str, asio::error_code& ec)
-  {
-    asio::ip::address_v6 ipv6_address =
-      asio::ip::address_v6::from_string(str, ec);
-    if (!ec)
-    {
-      address tmp;
-      tmp.type_ = ipv6;
-      tmp.ipv6_address_ = ipv6_address;
-      return tmp;
-    }
-
-    asio::ip::address_v4 ipv4_address =
-      asio::ip::address_v4::from_string(str, ec);
-    if (!ec)
-    {
-      address tmp;
-      tmp.type_ = ipv4;
-      tmp.ipv4_address_ = ipv4_address;
-      return tmp;
-    }
-
-    return address();
-  }
+  ASIO_DECL static address from_string(
+      const char* str, asio::error_code& ec);
 
   /// Create an address from an IPv4 address string in dotted decimal form,
   /// or from an IPv6 address in hexadecimal notation.
-  static address from_string(const std::string& str)
-  {
-    return from_string(str.c_str());
-  }
+  ASIO_DECL static address from_string(const std::string& str);
 
   /// Create an address from an IPv4 address string in dotted decimal form,
   /// or from an IPv6 address in hexadecimal notation.
-  static address from_string(const std::string& str,
-      asio::error_code& ec)
-  {
-    return from_string(str.c_str(), ec);
-  }
+  ASIO_DECL static address from_string(
+      const std::string& str, asio::error_code& ec);
 
   /// Compare two addresses for equality.
-  friend bool operator==(const address& a1, const address& a2)
-  {
-    if (a1.type_ != a2.type_)
-      return false;
-    if (a1.type_ == ipv6)
-      return a1.ipv6_address_ == a2.ipv6_address_;
-    return a1.ipv4_address_ == a2.ipv4_address_;
-  }
+  ASIO_DECL friend bool operator==(const address& a1, const address& a2);
 
   /// Compare two addresses for inequality.
   friend bool operator!=(const address& a1, const address& a2)
   {
-    if (a1.type_ != a2.type_)
-      return true;
-    if (a1.type_ == ipv6)
-      return a1.ipv6_address_ != a2.ipv6_address_;
-    return a1.ipv4_address_ != a2.ipv4_address_;
+    return !(a1 == a2);
   }
 
   /// Compare addresses for ordering.
-  friend bool operator<(const address& a1, const address& a2)
+  ASIO_DECL friend bool operator<(const address& a1, const address& a2);
+
+  /// Compare addresses for ordering.
+  friend bool operator>(const address& a1, const address& a2)
   {
-    if (a1.type_ < a2.type_)
-      return true;
-    if (a1.type_ > a2.type_)
-      return false;
-    if (a1.type_ == ipv6)
-      return a1.ipv6_address_ < a2.ipv6_address_;
-    return a1.ipv4_address_ < a2.ipv4_address_;
+    return a2 < a1;
+  }
+
+  /// Compare addresses for ordering.
+  friend bool operator<=(const address& a1, const address& a2)
+  {
+    return !(a2 < a1);
+  }
+
+  /// Compare addresses for ordering.
+  friend bool operator>=(const address& a1, const address& a2)
+  {
+    return !(a1 < a2);
   }
 
 private:
@@ -248,6 +147,8 @@ private:
   // The underlying IPv6 address.
   asio::ip::address_v6 ipv6_address_;
 };
+
+#if !defined(BOOST_NO_IOSTREAM)
 
 /// Output an address as a string.
 /**
@@ -263,15 +164,18 @@ private:
  */
 template <typename Elem, typename Traits>
 std::basic_ostream<Elem, Traits>& operator<<(
-    std::basic_ostream<Elem, Traits>& os, const address& addr)
-{
-  os << addr.to_string();
-  return os;
-}
+    std::basic_ostream<Elem, Traits>& os, const address& addr);
+
+#endif // !defined(BOOST_NO_IOSTREAM)
 
 } // namespace ip
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#include "asio/ip/impl/address.hpp"
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/ip/impl/address.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_IP_ADDRESS_HPP

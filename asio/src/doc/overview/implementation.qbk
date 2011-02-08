@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -240,6 +240,10 @@ Threads:
 * Demultiplexing using I/O completion ports is performed in all threads that call
 `io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
 `io_service::poll_one()`.
+
+* An additional thread per `io_service` is used to trigger timers. This thread
+is created on construction of the first `deadline_timer` or
+`deadline_timer_service` objects.
 
 * An additional thread per `io_service` is used for the `select`
 demultiplexing. This thread is created on the first call to `async_connect()`.

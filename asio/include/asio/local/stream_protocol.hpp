@@ -1,8 +1,8 @@
 //
-// stream_protocol.hpp
-// ~~~~~~~~~~~~~~~~~~~
+// local/stream_protocol.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,16 +15,18 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
+
+#if defined(ASIO_HAS_LOCAL_SOCKETS) \
+  || defined(GENERATING_DOCUMENTATION)
 
 #include "asio/basic_socket_acceptor.hpp"
 #include "asio/basic_socket_iostream.hpp"
 #include "asio/basic_stream_socket.hpp"
-#include "asio/local/basic_endpoint.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/local/basic_endpoint.hpp"
 
-#if defined(ASIO_HAS_LOCAL_SOCKETS) \
-  || defined(GENERATING_DOCUMENTATION)
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace local {
@@ -71,16 +73,18 @@ public:
   /// The UNIX domain acceptor type.
   typedef basic_socket_acceptor<stream_protocol> acceptor;
 
+#if !defined(BOOST_NO_IOSTREAM)
   /// The UNIX domain iostream type.
   typedef basic_socket_iostream<stream_protocol> iostream;
+#endif // !defined(BOOST_NO_IOSTREAM)
 };
 
 } // namespace local
 } // namespace asio
 
+#include "asio/detail/pop_options.hpp"
+
 #endif // defined(ASIO_HAS_LOCAL_SOCKETS)
        //   || defined(GENERATING_DOCUMENTATION)
-
-#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_LOCAL_STREAM_PROTOCOL_HPP

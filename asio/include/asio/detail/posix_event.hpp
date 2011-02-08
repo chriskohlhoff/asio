@@ -1,8 +1,8 @@
 //
-// posix_event.hpp
-// ~~~~~~~~~~~~~~~
+// detail/posix_event.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,23 +15,15 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
+#if defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
 
-#if defined(BOOST_HAS_PTHREADS)
-
-#include "asio/detail/push_options.hpp"
 #include <boost/assert.hpp>
-#include <boost/throw_exception.hpp>
 #include <pthread.h>
-#include "asio/detail/pop_options.hpp"
-
-#include "asio/error.hpp"
-#include "asio/system_error.hpp"
 #include "asio/detail/noncopyable.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -41,19 +33,7 @@ class posix_event
 {
 public:
   // Constructor.
-  posix_event()
-    : signalled_(false)
-  {
-    int error = ::pthread_cond_init(&cond_, 0);
-    if (error != 0)
-    {
-      asio::system_error e(
-          asio::error_code(error,
-            asio::error::get_system_category()),
-          "event");
-      boost::throw_exception(e);
-    }
-  }
+  ASIO_DECL posix_event();
 
   // Destructor.
   ~posix_event()
@@ -68,6 +48,16 @@ public:
     BOOST_ASSERT(lock.locked());
     (void)lock;
     signalled_ = true;
+    ::pthread_cond_signal(&cond_); // Ignore EINVAL.
+  }
+
+  // Signal the event and unlock the mutex.
+  template <typename Lock>
+  void signal_and_unlock(Lock& lock)
+  {
+    BOOST_ASSERT(lock.locked());
+    signalled_ = true;
+    lock.unlock();
     ::pthread_cond_signal(&cond_); // Ignore EINVAL.
   }
 
@@ -97,8 +87,12 @@ private:
 } // namespace detail
 } // namespace asio
 
-#endif // defined(BOOST_HAS_PTHREADS)
-
 #include "asio/detail/pop_options.hpp"
+
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/detail/impl/posix_event.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
+
+#endif // defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
 
 #endif // ASIO_DETAIL_POSIX_EVENT_HPP

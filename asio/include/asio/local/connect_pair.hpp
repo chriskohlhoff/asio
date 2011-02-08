@@ -1,8 +1,8 @@
 //
-// connect_pair.hpp
-// ~~~~~~~~~~~~~~~~
+// local/connect_pair.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,16 +15,18 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/basic_socket.hpp"
-#include "asio/error.hpp"
-#include "asio/local/basic_endpoint.hpp"
-#include "asio/detail/socket_ops.hpp"
-#include "asio/detail/throw_error.hpp"
+#include "asio/detail/config.hpp"
 
 #if defined(ASIO_HAS_LOCAL_SOCKETS) \
   || defined(GENERATING_DOCUMENTATION)
+
+#include "asio/basic_socket.hpp"
+#include "asio/detail/socket_ops.hpp"
+#include "asio/detail/throw_error.hpp"
+#include "asio/error.hpp"
+#include "asio/local/basic_endpoint.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace local {
@@ -73,8 +75,9 @@ inline asio::error_code connect_pair(
   if (socket1.assign(protocol, sv[0], ec))
   {
     asio::error_code temp_ec;
-    asio::detail::socket_ops::close(sv[0], temp_ec);
-    asio::detail::socket_ops::close(sv[1], temp_ec);
+    asio::detail::socket_ops::state_type state[2] = { 0, 0 };
+    asio::detail::socket_ops::close(sv[0], state[0], true, temp_ec);
+    asio::detail::socket_ops::close(sv[1], state[1], true, temp_ec);
     return ec;
   }
 
@@ -82,7 +85,8 @@ inline asio::error_code connect_pair(
   {
     asio::error_code temp_ec;
     socket1.close(temp_ec);
-    asio::detail::socket_ops::close(sv[1], temp_ec);
+    asio::detail::socket_ops::state_type state = 0;
+    asio::detail::socket_ops::close(sv[1], state, true, temp_ec);
     return ec;
   }
 
@@ -92,9 +96,9 @@ inline asio::error_code connect_pair(
 } // namespace local
 } // namespace asio
 
+#include "asio/detail/pop_options.hpp"
+
 #endif // defined(ASIO_HAS_LOCAL_SOCKETS)
        //   || defined(GENERATING_DOCUMENTATION)
-
-#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_LOCAL_CONNECT_PAIR_HPP

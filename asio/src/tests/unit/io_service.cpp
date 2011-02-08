@@ -2,7 +2,7 @@
 // io_service.cpp
 // ~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -18,7 +18,8 @@
 
 #include <sstream>
 #include <boost/bind.hpp>
-#include "asio.hpp"
+#include "asio/deadline_timer.hpp"
+#include "asio/thread.hpp"
 #include "unit_test.hpp"
 
 using namespace asio;
@@ -233,9 +234,80 @@ void io_service_test()
   BOOST_CHECK(exception_count == 2);
 }
 
+class test_service : public asio::io_service::service
+{
+public:
+  static asio::io_service::id id;
+  test_service(asio::io_service& s)
+    : asio::io_service::service(s) {}
+private:
+  virtual void shutdown_service() {}
+};
+
+asio::io_service::id test_service::id;
+
+void io_service_service_test()
+{
+  asio::io_service ios1;
+  asio::io_service ios2;
+  asio::io_service ios3;
+
+  // Implicit service registration.
+
+  asio::use_service<test_service>(ios1);
+
+  BOOST_CHECK(asio::has_service<test_service>(ios1));
+
+  test_service* svc1 = new test_service(ios1);
+  try
+  {
+    asio::add_service(ios1, svc1);
+    BOOST_ERROR("add_service did not throw");
+  }
+  catch (asio::service_already_exists&)
+  {
+  }
+  delete svc1;
+
+  // Explicit service registration.
+
+  test_service* svc2 = new test_service(ios2);
+  asio::add_service(ios2, svc2);
+
+  BOOST_CHECK(asio::has_service<test_service>(ios2));
+  BOOST_CHECK(&asio::use_service<test_service>(ios2) == svc2);
+
+  test_service* svc3 = new test_service(ios2);
+  try
+  {
+    asio::add_service(ios2, svc3);
+    BOOST_ERROR("add_service did not throw");
+  }
+  catch (asio::service_already_exists&)
+  {
+  }
+  delete svc3;
+
+  // Explicit registration with invalid owner.
+
+  test_service* svc4 = new test_service(ios2);
+  try
+  {
+    asio::add_service(ios3, svc4);
+    BOOST_ERROR("add_service did not throw");
+  }
+  catch (asio::invalid_service_owner&)
+  {
+  }
+  delete svc4;
+
+  BOOST_CHECK(!asio::has_service<test_service>(ios3));
+}
+
 test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("io_service");
   test->add(BOOST_TEST_CASE(&io_service_test));
+  test->add(BOOST_TEST_CASE(&io_service_service_test));
   return test;
 }

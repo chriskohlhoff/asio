@@ -11,6 +11,8 @@ PERFORMANCE_TEST_EXES = \
 	tests/performance/client.exe \
 	tests/performance/server.exe
 
+UNIT_TEST_OBJ = tests/unit/unit_test.o
+
 UNIT_TEST_EXES = \
 	tests/unit/basic_datagram_socket.exe \
 	tests/unit/basic_deadline_timer.exe \
@@ -83,16 +85,17 @@ EXAMPLE_EXES = \
 	examples/echo/blocking_udp_echo_server.exe \
 	examples/http/client/async_client.exe \
 	examples/http/client/sync_client.exe \
+	examples/icmp/ping.exe \
 	examples/invocation/prioritised_handlers.exe \
 	examples/iostreams/daytime_client.exe \
 	examples/iostreams/daytime_server.exe \
 	examples/multicast/receiver.exe \
 	examples/multicast/sender.exe \
 	examples/socks4/sync_client.exe \
-	examples/timeouts/accept_timeout.exe \
-	examples/timeouts/connect_timeout.exe \
-	examples/timeouts/datagram_receive_timeout.exe \
-	examples/timeouts/stream_receive_timeout.exe \
+	examples/timeouts/async_tcp_client.exe \
+	examples/timeouts/blocking_tcp_client.exe \
+	examples/timeouts/blocking_udp_client.exe \
+	examples/timeouts/server.exe \
 	examples/timers/tick_count_timer.exe \
 	examples/timers/time_t_timer.exe \
 	examples/tutorial/timer1/timer.exe \
@@ -117,11 +120,12 @@ OTHER_EXAMPLE_EXES = \
 
 all: \
 	$(PERFORMANCE_TEST_EXES) \
+	$(UNIT_TEST_OBJ) \
 	$(UNIT_TEST_EXES) \
 	$(EXAMPLE_EXES) \
 	$(OTHER_EXAMPLE_EXES)
 
-check: $(UNIT_TEST_EXES) $(addprefix run.,$(UNIT_TEST_EXES))
+check: $(UNIT_TEST_OBJ) $(UNIT_TEST_EXES) $(addprefix run.,$(UNIT_TEST_EXES))
 
 $(addprefix run.,$(UNIT_TEST_EXES))::
 	@echo === Running $(@:run.%=%) ===
@@ -131,6 +135,7 @@ $(addprefix run.,$(UNIT_TEST_EXES))::
 clean:
 	-rm -f $(PERFORMANCE_TEST_EXES)
 	-rm -f $(PERFORMANCE_TEST_EXES:.exe=.o)
+	-rm -f $(UNIT_TEST_OBJ)
 	-rm -f $(UNIT_TEST_EXES)
 	-rm -f $(UNIT_TEST_EXES:.exe=.o)
 	-rm -f $(EXAMPLE_EXES)
@@ -138,7 +143,10 @@ clean:
 	-rm -f $(OTHER_EXAMPLE_EXES)
 	-rm -f $(OTHER_EXAMPLE_EXES:.exe=.o)
 
-$(PERFORMANCE_TEST_EXES) $(UNIT_TEST_EXES) $(EXAMPLE_EXES): %.exe: %.o
+$(UNIT_TEST_EXES): %.exe: %.o
+	g++ -o$@ $(LDFLAGS) $< $(UNIT_TEST_OBJ) $(LIBS)
+
+$(PERFORMANCE_TEST_EXES) $(EXAMPLE_EXES): %.exe: %.o
 	g++ -o$@ $(LDFLAGS) $< $(LIBS)
 
 examples/http/server/http_server.exe: \

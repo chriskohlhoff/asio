@@ -2,7 +2,7 @@
 // udp.cpp
 // ~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -18,8 +18,10 @@
 
 #include <boost/bind.hpp>
 #include <cstring>
-#include "asio.hpp"
+#include "asio/io_service.hpp"
+#include "asio/placeholders.hpp"
 #include "../unit_test.hpp"
+#include "../archetypes/io_control_command.hpp"
 
 //------------------------------------------------------------------------------
 
@@ -54,7 +56,7 @@ void test()
     const char const_char_buffer[128] = "";
     socket_base::message_flags in_flags = 0;
     socket_base::keep_alive socket_option;
-    socket_base::bytes_readable io_control_command;
+    archetypes::io_control_command io_control_command;
     asio::error_code ec;
 
     // basic_datagram_socket constructors.
@@ -332,10 +334,73 @@ void test()
 
 //------------------------------------------------------------------------------
 
+// ip_udp_resolver_compile test
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// The following test checks that all public member functions on the class
+// ip::udp::resolver compile and link correctly. Runtime failures are ignored.
+
+namespace ip_udp_resolver_compile {
+
+void resolve_handler(const asio::error_code&,
+    asio::ip::udp::resolver::iterator)
+{
+}
+
+void test()
+{
+  using namespace asio;
+  namespace ip = asio::ip;
+
+  try
+  {
+    io_service ios;
+    asio::error_code ec;
+    ip::udp::resolver::query q(ip::udp::v4(), "localhost", "0");
+    ip::udp::endpoint e(ip::address_v4::loopback(), 0);
+
+    // basic_resolver constructors.
+
+    ip::udp::resolver resolver(ios);
+
+    // basic_io_object functions.
+
+    io_service& ios_ref = resolver.io_service();
+    (void)ios_ref;
+
+    // basic_resolver functions.
+
+    resolver.cancel();
+
+    ip::udp::resolver::iterator iter1 = resolver.resolve(q);
+    (void)iter1;
+
+    ip::udp::resolver::iterator iter2 = resolver.resolve(q, ec);
+    (void)iter2;
+
+    ip::udp::resolver::iterator iter3 = resolver.resolve(e);
+    (void)iter3;
+
+    ip::udp::resolver::iterator iter4 = resolver.resolve(e, ec);
+    (void)iter4;
+
+    resolver.async_resolve(q, resolve_handler);
+
+    resolver.async_resolve(e, resolve_handler);
+  }
+  catch (std::exception&)
+  {
+  }
+}
+
+} // namespace ip_udp_resolver_compile
+
+//------------------------------------------------------------------------------
+
 test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("ip/udp");
   test->add(BOOST_TEST_CASE(&ip_udp_socket_compile::test));
   test->add(BOOST_TEST_CASE(&ip_udp_socket_runtime::test));
+  test->add(BOOST_TEST_CASE(&ip_udp_resolver_compile::test));
   return test;
 }

@@ -2,7 +2,7 @@
 // server.cpp
 // ~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -82,7 +82,7 @@ public:
   }
 
   void handle_control_request_timer(tcp_socket_ptr socket,
-      control_request_ptr request, timer_ptr delay_timer)
+      control_request_ptr request, timer_ptr /*delay_timer*/)
   {
     // Determine what address this client is connected from, since
     // subscriptions must be stored on the server as a complete endpoint, not

@@ -1,8 +1,8 @@
 //
-// posix_tss_ptr.hpp
-// ~~~~~~~~~~~~~~~~~
+// detail/posix_tss_ptr.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,25 +15,20 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
+#if defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
 
-#if defined(BOOST_HAS_PTHREADS)
-
-#include "asio/detail/push_options.hpp"
-#include <boost/throw_exception.hpp>
 #include <pthread.h>
-#include "asio/detail/pop_options.hpp"
-
-#include "asio/error.hpp"
-#include "asio/system_error.hpp"
 #include "asio/detail/noncopyable.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
+
+// Helper function to create thread-specific storage.
+ASIO_DECL void posix_tss_ptr_create(pthread_key_t& key);
 
 template <typename T>
 class posix_tss_ptr
@@ -43,15 +38,7 @@ public:
   // Constructor.
   posix_tss_ptr()
   {
-    int error = ::pthread_key_create(&tss_key_, 0);
-    if (error != 0)
-    {
-      asio::system_error e(
-          asio::error_code(error,
-            asio::error::get_system_category()),
-          "tss");
-      boost::throw_exception(e);
-    }
+    posix_tss_ptr_create(tss_key_);
   }
 
   // Destructor.
@@ -76,13 +63,18 @@ private:
   // Thread-specific storage to allow unlocked access to determine whether a
   // thread is a member of the pool.
   pthread_key_t tss_key_;
+
 };
 
 } // namespace detail
 } // namespace asio
 
-#endif // defined(BOOST_HAS_PTHREADS)
-
 #include "asio/detail/pop_options.hpp"
+
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/detail/impl/posix_tss_ptr.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
+
+#endif // defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
 
 #endif // ASIO_DETAIL_POSIX_TSS_PTR_HPP

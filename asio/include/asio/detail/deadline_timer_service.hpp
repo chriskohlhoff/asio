@@ -1,8 +1,8 @@
 //
-// deadline_timer_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/deadline_timer_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,31 +15,31 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
 #include <cstddef>
-#include <boost/config.hpp>
-#include <boost/date_time/posix_time/posix_time_types.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/detail/bind_handler.hpp"
-#include "asio/detail/handler_base_from_member.hpp"
+#include "asio/detail/fenced_block.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/service_base.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/timer_op.hpp"
 #include "asio/detail/timer_queue.hpp"
+#include "asio/detail/timer_scheduler.hpp"
+#include "asio/detail/wait_handler.hpp"
+
+#include "asio/detail/push_options.hpp"
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include "asio/detail/pop_options.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
 
-template <typename Time_Traits, typename Timer_Scheduler>
+template <typename Time_Traits>
 class deadline_timer_service
-  : public asio::detail::service_base<
-      deadline_timer_service<Time_Traits, Timer_Scheduler> >
 {
 public:
   // The time type.
@@ -55,13 +55,12 @@ public:
   {
     time_type expiry;
     bool might_have_pending_waits;
+    typename timer_queue<Time_Traits>::per_timer_data timer_data;
   };
 
   // Constructor.
   deadline_timer_service(asio::io_service& io_service)
-    : asio::detail::service_base<
-        deadline_timer_service<Time_Traits, Timer_Scheduler> >(io_service),
-      scheduler_(asio::use_service<Timer_Scheduler>(io_service))
+    : scheduler_(asio::use_service<timer_scheduler>(io_service))
   {
     scheduler_.init_task();
     scheduler_.add_timer_queue(timer_queue_);
@@ -100,7 +99,7 @@ public:
       ec = asio::error_code();
       return 0;
     }
-    std::size_t count = scheduler_.cancel_timer(timer_queue_, &impl);
+    std::size_t count = scheduler_.cancel_timer(timer_queue_, impl.timer_data);
     impl.might_have_pending_waits = false;
     ec = asio::error_code();
     return count;
@@ -154,35 +153,21 @@ public:
     ec = asio::error_code();
   }
 
-  template <typename Handler>
-  class wait_handler : 
-    public handler_base_from_member<Handler>
-  {
-  public:
-    wait_handler(asio::io_service& io_service, Handler handler)
-      : handler_base_from_member<Handler>(handler),
-        io_service_(io_service),
-        work_(io_service)
-    {
-    }
-
-    void operator()(const asio::error_code& result)
-    {
-      io_service_.post(detail::bind_handler(this->handler_, result));
-    }
-
-  private:
-    asio::io_service& io_service_;
-    asio::io_service::work work_;
-  };
-
   // Start an asynchronous wait on the timer.
   template <typename Handler>
   void async_wait(implementation_type& impl, Handler handler)
   {
+    // Allocate and construct an operation to wrap the handler.
+    typedef wait_handler<Handler> op;
+    typename op::ptr p = { boost::addressof(handler),
+      asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(handler);
+
     impl.might_have_pending_waits = true;
-    scheduler_.schedule_timer(timer_queue_, impl.expiry,
-        wait_handler<Handler>(this->get_io_service(), handler), &impl);
+
+    scheduler_.schedule_timer(timer_queue_, impl.expiry, impl.timer_data, p.p);
+    p.v = p.p = 0;
   }
 
 private:
@@ -190,7 +175,7 @@ private:
   timer_queue<Time_Traits> timer_queue_;
 
   // The object that schedules and executes timers. Usually a reactor.
-  Timer_Scheduler& scheduler_;
+  timer_scheduler& scheduler_;
 };
 
 } // namespace detail

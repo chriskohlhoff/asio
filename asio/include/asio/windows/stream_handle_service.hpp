@@ -1,8 +1,8 @@
 //
-// stream_handle_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~
+// windows/stream_handle_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,26 +15,17 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
-#include <cstddef>
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
-
-#include "asio/error.hpp"
-#include "asio/io_service.hpp"
-#include "asio/detail/service_base.hpp"
-#include "asio/detail/win_iocp_handle_service.hpp"
-
-#if !defined(ASIO_DISABLE_WINDOWS_STREAM_HANDLE)
-# if defined(ASIO_HAS_IOCP)
-#  define ASIO_HAS_WINDOWS_STREAM_HANDLE 1
-# endif // defined(ASIO_HAS_IOCP)
-#endif // !defined(ASIO_DISABLE_WINDOWS_STREAM_HANDLE)
+#include "asio/detail/config.hpp"
 
 #if defined(ASIO_HAS_WINDOWS_STREAM_HANDLE) \
   || defined(GENERATING_DOCUMENTATION)
+
+#include <cstddef>
+#include "asio/detail/win_iocp_handle_service.hpp"
+#include "asio/error.hpp"
+#include "asio/io_service.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace windows {
@@ -75,13 +66,14 @@ public:
   /// Construct a new stream handle service for the specified io_service.
   explicit stream_handle_service(asio::io_service& io_service)
     : asio::detail::service_base<stream_handle_service>(io_service),
-      service_impl_(asio::use_service<service_impl_type>(io_service))
+      service_impl_(io_service)
   {
   }
 
   /// Destroy all user-defined handler objects owned by the service.
   void shutdown_service()
   {
+    service_impl_.shutdown_service();
   }
 
   /// Construct a new stream handle implementation.
@@ -162,16 +154,16 @@ public:
   }
 
 private:
-  // The service that provides the platform-specific implementation.
-  service_impl_type& service_impl_;
+  // The platform-specific implementation.
+  service_impl_type service_impl_;
 };
 
 } // namespace windows
 } // namespace asio
 
+#include "asio/detail/pop_options.hpp"
+
 #endif // defined(ASIO_HAS_WINDOWS_STREAM_HANDLE)
        //   || defined(GENERATING_DOCUMENTATION)
-
-#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_WINDOWS_STREAM_HANDLE_SERVICE_HPP

@@ -2,7 +2,7 @@
 // multicast.cpp
 // ~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -16,7 +16,8 @@
 // Test that header file is self-contained.
 #include "asio/ip/multicast.hpp"
 
-#include "asio.hpp"
+#include "asio/io_service.hpp"
+#include "asio/ip/udp.hpp"
 #include "../unit_test.hpp"
 
 //------------------------------------------------------------------------------
@@ -75,7 +76,7 @@ void test()
     ip::multicast::hops hops2;
     sock.get_option(hops2);
     hops1 = 1;
-    static_cast<int>(hops1.value());
+    (void)static_cast<int>(hops1.value());
 
     // enable_loopback class.
 
@@ -84,9 +85,9 @@ void test()
     ip::multicast::enable_loopback enable_loopback2;
     sock.get_option(enable_loopback2);
     enable_loopback1 = true;
-    static_cast<bool>(enable_loopback1);
-    static_cast<bool>(!enable_loopback1);
-    static_cast<bool>(enable_loopback1.value());
+    (void)static_cast<bool>(enable_loopback1);
+    (void)static_cast<bool>(!enable_loopback1);
+    (void)static_cast<bool>(enable_loopback1.value());
   }
   catch (std::exception&)
   {

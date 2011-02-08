@@ -1,8 +1,8 @@
 //
-// tcp.hpp
-// ~~~~~~~
+// ip/tcp.hpp
+// ~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,17 +15,18 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
+#include "asio/detail/config.hpp"
 #include "asio/basic_socket_acceptor.hpp"
 #include "asio/basic_socket_iostream.hpp"
 #include "asio/basic_stream_socket.hpp"
+#include "asio/detail/socket_option.hpp"
+#include "asio/detail/socket_types.hpp"
 #include "asio/ip/basic_endpoint.hpp"
 #include "asio/ip/basic_resolver.hpp"
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
-#include "asio/detail/socket_option.hpp"
-#include "asio/detail/socket_types.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ip {
@@ -47,10 +48,10 @@ public:
   /// The type of a TCP endpoint.
   typedef basic_endpoint<tcp> endpoint;
 
-  /// The type of a resolver query.
+  /// (Deprecated: use resolver::query.) The type of a resolver query.
   typedef basic_resolver_query<tcp> resolver_query;
 
-  /// The type of a resolver iterator.
+  /// (Deprecated: use resolver::iterator.) The type of a resolver iterator.
   typedef basic_resolver_iterator<tcp> resolver_iterator;
 
   /// Construct to represent the IPv4 TCP protocol.
@@ -92,8 +93,10 @@ public:
   /// The TCP resolver type.
   typedef basic_resolver<tcp> resolver;
 
+#if !defined(BOOST_NO_IOSTREAM)
   /// The TCP iostream type.
   typedef basic_socket_iostream<tcp> iostream;
+#endif // !defined(BOOST_NO_IOSTREAM)
 
   /// Socket option for disabling the Nagle algorithm.
   /**

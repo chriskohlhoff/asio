@@ -1,8 +1,8 @@
 //
-// push_options.hpp
-// ~~~~~~~~~~~~~~~~
+// detail/push_options.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -29,6 +29,18 @@
 
 # if defined(__MINGW32__) || defined(__CYGWIN__)
 #  pragma pack (push, 8)
+# endif
+
+# if defined(__OBJC__)
+#  if !defined(__APPLE_CC__) || (__APPLE_CC__ <= 1)
+#   if !defined(ASIO_DISABLE_OBJC_WORKAROUND)
+#    if !defined(Protocol) && !defined(id)
+#     define Protocol cpp_Protocol
+#     define id cpp_id
+#     define ASIO_OBJC_WORKAROUND
+#    endif
+#   endif
+#  endif
 # endif
 
 #elif defined(__KCC)

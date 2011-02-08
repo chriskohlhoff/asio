@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -34,16 +34,6 @@ these threads must be invisible to the library user. In particular, the threads:
 * must not call the user's code directly; and
 
 * must block all signals.
-
-[note The implementation currently violates the first of these rules for the
-following functions:
-
-[mdash] `ip::basic_resolver::async_resolve()` on all platforms.
-
-[mdash] `basic_socket::async_connect()` on Windows.
-
-[mdash] Any operation involving `null_buffers()` on Windows, other than an
-asynchronous read performed on a stream-oriented socket.]
 
 This approach is complemented by the following guarantee:
 

@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -16,7 +16,7 @@ context object. This object is used to set SSL options such as verification
 mode, certificate files, and so on. As an illustration, client-side
 initialisation may look something like:
 
-  ssl::context ctx(io_service, ssl::context::sslv23);
+  ssl::context ctx(my_io_service, ssl::context::sslv23);
   ctx.set_verify_mode(ssl::context::verify_peer);
   ctx.load_verify_file("ca.pem");
 
@@ -29,7 +29,7 @@ connection or accepting an incoming one, the underlying socket must first be
 obtained using the `ssl::stream` template's [link
 asio.reference.ssl__stream.lowest_layer `lowest_layer()`] member function:
 
-  ip::tcp::socket& sock = ssl_sock.lowest_layer();
+  ip::tcp::socket::lowest_layer_type& sock = ssl_sock.lowest_layer();
   sock.connect(my_endpoint);
 
 In some use cases the underlying stream object will need to have a longer
@@ -38,6 +38,11 @@ reference to the stream type:
 
   ip::tcp::socket sock(my_io_service);
   ssl::stream<ip::tcp::socket&> ssl_sock(sock, ctx);
+
+SSL handshaking must be performed prior to transmitting or receiving data over
+an encrypted connection. This is accomplished using the `ssl::stream`
+template's [link asio.reference.ssl__stream.handshake handshake()] or [link
+asio.reference.ssl__stream.async_handshake async_handshake()] member functions.
 
 Once connected, SSL stream objects are used as synchronous or asynchronous read
 and write streams. This means the objects can be used with any of the [link

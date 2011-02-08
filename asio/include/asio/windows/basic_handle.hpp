@@ -1,8 +1,8 @@
 //
-// basic_handle.hpp
-// ~~~~~~~~~~~~~~~~
+// windows/basic_handle.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,15 +15,17 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
-#include "asio/detail/pop_options.hpp"
+#if defined(ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE) \
+  || defined(ASIO_HAS_WINDOWS_STREAM_HANDLE) \
+  || defined(GENERATING_DOCUMENTATION)
 
 #include "asio/basic_io_object.hpp"
-#include "asio/error.hpp"
 #include "asio/detail/throw_error.hpp"
+#include "asio/error.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace windows {
@@ -221,5 +223,9 @@ protected:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE)
+       //   || defined(ASIO_HAS_WINDOWS_STREAM_HANDLE)
+       //   || defined(GENERATING_DOCUMENTATION)
 
 #endif // ASIO_WINDOWS_BASIC_HANDLE_HPP

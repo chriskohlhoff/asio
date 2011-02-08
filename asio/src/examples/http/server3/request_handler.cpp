@@ -2,7 +2,7 @@
 // request_handler.cpp
 // ~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -89,7 +89,7 @@ bool request_handler::url_decode(const std::string& in, std::string& out)
     {
       if (i + 3 <= in.size())
       {
-        int value;
+        int value = 0;
         std::istringstream is(in.substr(i + 1, 2));
         if (is >> std::hex >> value)
         {

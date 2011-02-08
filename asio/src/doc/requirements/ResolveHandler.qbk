@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -14,5 +14,44 @@ lvalue of type `const error_code` and `i` is an lvalue of type `const
 ip::basic_resolver_iterator<InternetProtocol>`. `InternetProtocol` is the
 template parameter of the [link asio.reference.ip__resolver_service
 `resolver_service`] which is used to initiate the asynchronous operation.
+
+[heading Examples]
+
+A free function as a resolve handler:
+
+  void resolve_handler(
+      const asio::error_code& ec,
+      asio::ip::tcp::resolver::iterator iterator)
+  {
+    ...
+  }
+
+A resolve handler function object:
+
+  struct resolve_handler
+  {
+    ...
+    void operator()(
+        const asio::error_code& ec,
+        asio::ip::tcp::resolver::iterator iterator)
+    {
+      ...
+    }
+    ...
+  };
+
+A non-static class member function adapted to a resolve handler using `bind()`:
+
+  void my_class::resolve_handler(
+      const asio::error_code& ec,
+      asio::ip::tcp::resolver::iterator iterator)
+  {
+    ...
+  }
+  ...
+  resolver.async_resolve(...,
+      boost::bind(&my_class::resolve_handler,
+        this, asio::placeholders::error,
+        asio::placeholders::iterator));
 
 [endsect]

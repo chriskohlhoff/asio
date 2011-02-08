@@ -2,7 +2,7 @@
 // client.cpp
 // ~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
     control_socket.connect(remote_endpoint);
 
     // Create a datagram socket to receive data from the server.
-    shared_ptr<udp::socket> data_socket(
+    boost::shared_ptr<udp::socket> data_socket(
         new udp::socket(io_service, udp::endpoint(udp::v4(), 0)));
 
     // Determine what port we will receive data on.
@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
       std::cout << " Starting renegotiation";
 
       // Create the new data socket.
-      shared_ptr<udp::socket> new_data_socket(
+      boost::shared_ptr<udp::socket> new_data_socket(
           new udp::socket(io_service, udp::endpoint(udp::v4(), 0)));
 
       // Determine the new port we will use to receive data.
@@ -92,9 +92,9 @@ int main(int argc, char* argv[])
           data_endpoint.port(), new_data_endpoint.port());
       asio::error_code control_result;
       asio::async_write(control_socket, change.to_buffers(),
-          lambda::unlambda((
+          (
             lambda::var(control_result) = lambda::_1
-          )));
+          ));
 
       // Try to receive a frame from the server on the new data socket. If we
       // successfully receive a frame on this new data socket we can consider
@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
       frame f1;
       asio::error_code new_data_socket_result;
       new_data_socket->async_receive(f1.to_buffers(),
-          lambda::unlambda((
+          (
             // Note: lambda::_1 is the first argument to the callback handler,
             // which in this case is the error code for the operation.
             lambda::var(new_data_socket_result) = lambda::_1,
@@ -113,9 +113,9 @@ int main(int argc, char* argv[])
               // We have successfully received a frame on the new data socket,
               // so we can close the old data socket. This will cancel any
               // outstanding receive operation on the old data socket.
-              lambda::var(data_socket) = shared_ptr<udp::socket>()
+              lambda::var(data_socket) = boost::shared_ptr<udp::socket>()
             ]
-          )));
+          ));
 
       // This loop will continue until we have successfully completed the
       // renegotiation (i.e. received a frame on the new data socket), or some
@@ -134,7 +134,7 @@ int main(int argc, char* argv[])
         if (data_socket) // Might have been closed by new_data_socket's handler.
         {
           data_socket->async_receive(f2.to_buffers(), 0,
-              lambda::unlambda((
+              (
                 lambda::if_(!lambda::_1)
                 [
                   // We have successfully received a frame on the old data
@@ -142,7 +142,7 @@ int main(int argc, char* argv[])
                   lambda::bind(&asio::io_service::stop, &io_service),
                   lambda::var(done) = false
                 ]
-              )));
+              ));
         }
 
         // Run the operations in parallel. This will block until all operations

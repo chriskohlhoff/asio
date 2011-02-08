@@ -2,7 +2,7 @@
 // logger_service.hpp
 // ~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -88,7 +88,7 @@ public:
   /// output file for all logger instances, and so the impl parameter is not
   /// actually needed. It is retained here to illustrate how service functions
   /// are typically defined.
-  void use_file(impl_type& impl, const std::string& file)
+  void use_file(impl_type& /*impl*/, const std::string& file)
   {
     // Pass the work of opening the file to the background thread.
     work_io_service_.post(boost::bind(

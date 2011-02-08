@@ -2,7 +2,7 @@
 // serial_port.cpp
 // ~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2008 Rep Invariant Systems, Inc. (info@repinvariant.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -17,7 +17,7 @@
 // Test that header file is self-contained.
 #include "asio/serial_port.hpp"
 
-#include "asio.hpp"
+#include "asio/io_service.hpp"
 #include "unit_test.hpp"
 
 //------------------------------------------------------------------------------

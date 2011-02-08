@@ -2,7 +2,7 @@
 // serial_port_base.cpp
 // ~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2008 Rep Invariant Systems, Inc. (info@repinvariant.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -17,7 +17,8 @@
 // Test that header file is self-contained.
 #include "asio/serial_port_base.hpp"
 
-#include "asio.hpp"
+#include "asio/io_service.hpp"
+#include "asio/serial_port.hpp"
 #include "unit_test.hpp"
 
 //------------------------------------------------------------------------------
@@ -45,7 +46,7 @@ void test()
     port.set_option(baud_rate1);
     serial_port_base::baud_rate baud_rate2;
     port.get_option(baud_rate2);
-    static_cast<unsigned int>(baud_rate2.value());
+    (void)static_cast<unsigned int>(baud_rate2.value());
 
     // flow_control class.
 
@@ -54,7 +55,8 @@ void test()
     port.set_option(flow_control1);
     serial_port_base::flow_control flow_control2;
     port.get_option(flow_control2);
-    static_cast<serial_port_base::flow_control::type>(flow_control2.value());
+    (void)static_cast<serial_port_base::flow_control::type>(
+        flow_control2.value());
 
     // parity class.
 
@@ -62,7 +64,7 @@ void test()
     port.set_option(parity1);
     serial_port_base::parity parity2;
     port.get_option(parity2);
-    static_cast<serial_port_base::parity::type>(parity2.value());
+    (void)static_cast<serial_port_base::parity::type>(parity2.value());
 
     // stop_bits class.
 
@@ -70,7 +72,7 @@ void test()
     port.set_option(stop_bits1);
     serial_port_base::stop_bits stop_bits2;
     port.get_option(stop_bits2);
-    static_cast<serial_port_base::stop_bits::type>(stop_bits2.value());
+    (void)static_cast<serial_port_base::stop_bits::type>(stop_bits2.value());
 
     // character_size class.
 
@@ -78,7 +80,7 @@ void test()
     port.set_option(character_size1);
     serial_port_base::character_size character_size2;
     port.get_option(character_size2);
-    static_cast<unsigned int>(character_size2.value());
+    (void)static_cast<unsigned int>(character_size2.value());
   }
   catch (std::exception&)
   {

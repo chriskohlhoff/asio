@@ -1,6 +1,6 @@
 //
-// openssl_operation.hpp
-// ~~~~~~~~~~~~~~~~~~~~~
+// ssl/detail/openssl_operation.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2005 Voipster / Indrek dot Juhani at voipster dot com
 //
@@ -15,19 +15,19 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
 #include <boost/function.hpp>
 #include <boost/assert.hpp>
 #include <boost/bind.hpp>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/buffer.hpp"
-#include "asio/placeholders.hpp"
-#include "asio/write.hpp"
 #include "asio/detail/socket_ops.hpp"
+#include "asio/placeholders.hpp"
 #include "asio/ssl/detail/openssl_types.hpp"
+#include "asio/strand.hpp"
+#include "asio/system_error.hpp"
+#include "asio/write.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ssl {
@@ -160,7 +160,7 @@ public:
 
     if (error_code == SSL_ERROR_SSL)
       return handler_(asio::error_code(
-            error_code, asio::error::get_ssl_category()), rc);
+            sys_error_code, asio::error::get_ssl_category()), rc);
 
     bool is_read_needed = (error_code == SSL_ERROR_WANT_READ);
     bool is_write_needed = (error_code == SSL_ERROR_WANT_WRITE ||
@@ -172,7 +172,8 @@ public:
       ((::SSL_get_shutdown( session_ ) & SSL_SENT_SHUTDOWN) ==
             SSL_SENT_SHUTDOWN);
 
-    if (is_shut_down_sent && is_shut_down_received && is_operation_done && !is_write_needed)
+    if (is_shut_down_sent && is_shut_down_received
+        && is_operation_done && !is_write_needed)
       // SSL connection is shut down cleanly
       return handler_(asio::error_code(), 1);
 
@@ -194,7 +195,7 @@ public:
       else
       {
         return handler_(asio::error_code(
-              error_code, asio::error::get_ssl_category()), rc); 
+              sys_error_code, asio::error::get_ssl_category()), rc); 
       }
     }
 

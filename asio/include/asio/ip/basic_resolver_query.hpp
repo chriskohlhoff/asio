@@ -1,8 +1,8 @@
 //
-// basic_resolver_query.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+// ip/basic_resolver_query.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,15 +15,12 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
-
-#include "asio/detail/push_options.hpp"
-#include <boost/config.hpp>
+#include "asio/detail/config.hpp"
 #include <string>
-#include "asio/detail/pop_options.hpp"
-
 #include "asio/detail/socket_ops.hpp"
 #include "asio/ip/resolver_query_base.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ip {
@@ -46,14 +43,30 @@ public:
   typedef InternetProtocol protocol_type;
 
   /// Construct with specified service name for any protocol.
+  /**
+   * This constructor is typically used to perform name resolution for local
+   * service binding.
+   *
+   * @param service_name A string identifying the requested service. This may
+   * be a descriptive name or a numeric string corresponding to a port number.
+   *
+   * @param resolve_flags A set of flags that determine how name resolution
+   * should be performed. The default flags are suitable for local service
+   * binding.
+   *
+   * @note On POSIX systems, service names are typically defined in the file
+   * <tt>/etc/services</tt>. On Windows, service names may be found in the file
+   * <tt>c:\\windows\\system32\\drivers\\etc\\services</tt>. Operating systems
+   * may use additional locations when resolving service names.
+   */
   basic_resolver_query(const std::string& service_name,
-      int flags = passive | address_configured)
+      resolver_query_base::flags resolve_flags = passive | address_configured)
     : hints_(),
       host_name_(),
       service_name_(service_name)
   {
     typename InternetProtocol::endpoint endpoint;
-    hints_.ai_flags = flags;
+    hints_.ai_flags = static_cast<int>(resolve_flags);
     hints_.ai_family = PF_UNSPEC;
     hints_.ai_socktype = endpoint.protocol().type();
     hints_.ai_protocol = endpoint.protocol().protocol();
@@ -64,14 +77,33 @@ public:
   }
 
   /// Construct with specified service name for a given protocol.
+  /**
+   * This constructor is typically used to perform name resolution for local
+   * service binding with a specific protocol version.
+   *
+   * @param protocol A protocol object, normally representing either the IPv4 or
+   * IPv6 version of an internet protocol.
+   *
+   * @param service_name A string identifying the requested service. This may
+   * be a descriptive name or a numeric string corresponding to a port number.
+   *
+   * @param resolve_flags A set of flags that determine how name resolution
+   * should be performed. The default flags are suitable for local service
+   * binding.
+   *
+   * @note On POSIX systems, service names are typically defined in the file
+   * <tt>/etc/services</tt>. On Windows, service names may be found in the file
+   * <tt>c:\\windows\\system32\\drivers\\etc\\services</tt>. Operating systems
+   * may use additional locations when resolving service names.
+   */
   basic_resolver_query(const protocol_type& protocol,
       const std::string& service_name,
-      int flags = passive | address_configured)
+      resolver_query_base::flags resolve_flags = passive | address_configured)
     : hints_(),
       host_name_(),
       service_name_(service_name)
   {
-    hints_.ai_flags = flags;
+    hints_.ai_flags = static_cast<int>(resolve_flags);
     hints_.ai_family = protocol.family();
     hints_.ai_socktype = protocol.type();
     hints_.ai_protocol = protocol.protocol();
@@ -82,14 +114,45 @@ public:
   }
 
   /// Construct with specified host name and service name for any protocol.
+  /**
+   * This constructor is typically used to perform name resolution for
+   * communication with remote hosts.
+   *
+   * @param host_name A string identifying a location. May be a descriptive name
+   * or a numeric address string. If an empty string and the passive flag has
+   * been specified, the resolved endpoints are suitable for local service
+   * binding. If an empty string and passive is not specified, the resolved
+   * endpoints will use the loopback address.
+   *
+   * @param service_name A string identifying the requested service. This may
+   * be a descriptive name or a numeric string corresponding to a port number.
+   * May be an empty string, in which case all resolved endpoints will have a
+   * port number of 0.
+   *
+   * @param resolve_flags A set of flags that determine how name resolution
+   * should be performed. The default flags are suitable for communication with
+   * remote hosts.
+   *
+   * @note On POSIX systems, host names may be locally defined in the file
+   * <tt>/etc/hosts</tt>. On Windows, host names may be defined in the file
+   * <tt>c:\\windows\\system32\\drivers\\etc\\hosts</tt>. Remote host name
+   * resolution is performed using DNS. Operating systems may use additional
+   * locations when resolving host names (such as NETBIOS names on Windows).
+   *
+   * On POSIX systems, service names are typically defined in the file
+   * <tt>/etc/services</tt>. On Windows, service names may be found in the file
+   * <tt>c:\\windows\\system32\\drivers\\etc\\services</tt>. Operating systems
+   * may use additional locations when resolving service names.
+   */
   basic_resolver_query(const std::string& host_name,
-      const std::string& service_name, int flags = address_configured)
+      const std::string& service_name,
+      resolver_query_base::flags resolve_flags = address_configured)
     : hints_(),
       host_name_(host_name),
       service_name_(service_name)
   {
     typename InternetProtocol::endpoint endpoint;
-    hints_.ai_flags = flags;
+    hints_.ai_flags = static_cast<int>(resolve_flags);
     hints_.ai_family = PF_UNSPEC;
     hints_.ai_socktype = endpoint.protocol().type();
     hints_.ai_protocol = endpoint.protocol().protocol();
@@ -100,14 +163,47 @@ public:
   }
 
   /// Construct with specified host name and service name for a given protocol.
+  /**
+   * This constructor is typically used to perform name resolution for
+   * communication with remote hosts.
+   *
+   * @param protocol A protocol object, normally representing either the IPv4 or
+   * IPv6 version of an internet protocol.
+   *
+   * @param host_name A string identifying a location. May be a descriptive name
+   * or a numeric address string. If an empty string and the passive flag has
+   * been specified, the resolved endpoints are suitable for local service
+   * binding. If an empty string and passive is not specified, the resolved
+   * endpoints will use the loopback address.
+   *
+   * @param service_name A string identifying the requested service. This may
+   * be a descriptive name or a numeric string corresponding to a port number.
+   * May be an empty string, in which case all resolved endpoints will have a
+   * port number of 0.
+   *
+   * @param resolve_flags A set of flags that determine how name resolution
+   * should be performed. The default flags are suitable for communication with
+   * remote hosts.
+   *
+   * @note On POSIX systems, host names may be locally defined in the file
+   * <tt>/etc/hosts</tt>. On Windows, host names may be defined in the file
+   * <tt>c:\\windows\\system32\\drivers\\etc\\hosts</tt>. Remote host name
+   * resolution is performed using DNS. Operating systems may use additional
+   * locations when resolving host names (such as NETBIOS names on Windows).
+   *
+   * On POSIX systems, service names are typically defined in the file
+   * <tt>/etc/services</tt>. On Windows, service names may be found in the file
+   * <tt>c:\\windows\\system32\\drivers\\etc\\services</tt>. Operating systems
+   * may use additional locations when resolving service names.
+   */
   basic_resolver_query(const protocol_type& protocol,
       const std::string& host_name, const std::string& service_name,
-      int flags = address_configured)
+      resolver_query_base::flags resolve_flags = address_configured)
     : hints_(),
       host_name_(host_name),
       service_name_(service_name)
   {
-    hints_.ai_flags = flags;
+    hints_.ai_flags = static_cast<int>(resolve_flags);
     hints_.ai_family = protocol.family();
     hints_.ai_socktype = protocol.type();
     hints_.ai_protocol = protocol.protocol();

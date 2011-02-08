@@ -1,8 +1,8 @@
 //
-// win_iocp_serial_port_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/win_iocp_serial_port_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2008 Rep Invariant Systems, Inc. (info@repinvariant.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -16,159 +16,74 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/push_options.hpp"
+#include "asio/detail/config.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <cstring>
+#if defined(ASIO_HAS_IOCP) && defined(ASIO_HAS_SERIAL_PORT)
+
 #include <string>
-#include "asio/detail/pop_options.hpp"
-
-#include "asio/detail/win_iocp_io_service_fwd.hpp"
-
-#if defined(ASIO_HAS_IOCP)
-
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/detail/win_iocp_handle_service.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
 
 // Extend win_iocp_handle_service to provide serial port support.
 class win_iocp_serial_port_service
-  : public asio::detail::service_base<win_iocp_serial_port_service>
 {
 public:
-  // The native type of a stream handle.
+  // The native type of a serial port.
   typedef win_iocp_handle_service::native_type native_type;
 
-  // The implementation type of the stream handle.
+  // The implementation type of the serial port.
   typedef win_iocp_handle_service::implementation_type implementation_type;
 
-  win_iocp_serial_port_service(asio::io_service& io_service)
-    : asio::detail::service_base<
-        win_iocp_serial_port_service>(io_service),
-      handle_service_(
-          asio::use_service<win_iocp_handle_service>(io_service))
-  {
-  }
+  // Constructor.
+  ASIO_DECL win_iocp_serial_port_service(
+      asio::io_service& io_service);
 
   // Destroy all user-defined handler objects owned by the service.
-  void shutdown_service()
-  {
-  }
+  ASIO_DECL void shutdown_service();
 
-  // Construct a new handle implementation.
+  // Construct a new serial port implementation.
   void construct(implementation_type& impl)
   {
     handle_service_.construct(impl);
   }
 
-  // Destroy a handle implementation.
+  // Destroy a serial port implementation.
   void destroy(implementation_type& impl)
   {
     handle_service_.destroy(impl);
   }
 
   // Open the serial port using the specified device name.
-  asio::error_code open(implementation_type& impl,
-      const std::string& device, asio::error_code& ec)
-  {
-    if (is_open(impl))
-    {
-      ec = asio::error::already_open;
-      return ec;
-    }
+  ASIO_DECL asio::error_code open(implementation_type& impl,
+      const std::string& device, asio::error_code& ec);
 
-    // For convenience, add a leading \\.\ sequence if not already present.
-    std::string name = (device[0] == '\\') ? device : "\\\\.\\" + device;
-
-    // Open a handle to the serial port.
-    ::HANDLE handle = ::CreateFileA(name.c_str(),
-        GENERIC_READ | GENERIC_WRITE, 0, 0,
-        OPEN_EXISTING, FILE_FLAG_OVERLAPPED, 0);
-    if (handle == INVALID_HANDLE_VALUE)
-    {
-      DWORD last_error = ::GetLastError();
-      ec = asio::error_code(last_error,
-          asio::error::get_system_category());
-      return ec;
-    }
-
-    // Determine the initial serial port parameters.
-    using namespace std; // For memcpy.
-    ::DCB dcb;
-    memset(&dcb, 0, sizeof(DCB));
-    dcb.DCBlength = sizeof(DCB);
-    if (!::GetCommState(handle, &dcb))
-    {
-      DWORD last_error = ::GetLastError();
-      ::CloseHandle(handle);
-      ec = asio::error_code(last_error,
-          asio::error::get_system_category());
-      return ec;
-    }
-
-    // Set some default serial port parameters. This implementation does not
-    // support changing these, so they might as well be in a known state.
-    dcb.fBinary = TRUE; // Win32 only supports binary mode.
-    dcb.fDsrSensitivity = FALSE;
-    dcb.fNull = FALSE; // Do not ignore NULL characters.
-    dcb.fAbortOnError = FALSE; // Ignore serial framing errors.
-    if (!::SetCommState(handle, &dcb))
-    {
-      DWORD last_error = ::GetLastError();
-      ::CloseHandle(handle);
-      ec = asio::error_code(last_error,
-          asio::error::get_system_category());
-      return ec;
-    }
-
-    // Set up timeouts so that the serial port will behave similarly to a
-    // network socket. Reads wait for at least one byte, then return with
-    // whatever they have. Writes return once everything is out the door.
-    ::COMMTIMEOUTS timeouts;
-    timeouts.ReadIntervalTimeout = 1;
-    timeouts.ReadTotalTimeoutMultiplier = 0;
-    timeouts.ReadTotalTimeoutConstant = 0;
-    timeouts.WriteTotalTimeoutMultiplier = 0;
-    timeouts.WriteTotalTimeoutConstant = 0;
-    if (!::SetCommTimeouts(handle, &timeouts))
-    {
-      DWORD last_error = ::GetLastError();
-      ::CloseHandle(handle);
-      ec = asio::error_code(last_error,
-          asio::error::get_system_category());
-      return ec;
-    }
-
-    // We're done. Take ownership of the serial port handle.
-    if (handle_service_.assign(impl, handle, ec))
-      ::CloseHandle(handle);
-    return ec;
-  }
-
-  // Assign a native handle to a handle implementation.
+  // Assign a native handle to a serial port implementation.
   asio::error_code assign(implementation_type& impl,
       const native_type& native_handle, asio::error_code& ec)
   {
     return handle_service_.assign(impl, native_handle, ec);
   }
 
-  // Determine whether the handle is open.
+  // Determine whether the serial port is open.
   bool is_open(const implementation_type& impl) const
   {
     return handle_service_.is_open(impl);
   }
 
-  // Destroy a handle implementation.
+  // Destroy a serial port implementation.
   asio::error_code close(implementation_type& impl,
       asio::error_code& ec)
   {
     return handle_service_.close(impl, ec);
   }
 
-  // Get the native handle representation.
+  // Get the native serial port representation.
   native_type native(implementation_type& impl)
   {
     return handle_service_.native(impl);
@@ -186,32 +101,9 @@ public:
   asio::error_code set_option(implementation_type& impl,
       const SettableSerialPortOption& option, asio::error_code& ec)
   {
-    using namespace std; // For memcpy.
-
-    ::DCB dcb;
-    memset(&dcb, 0, sizeof(DCB));
-    dcb.DCBlength = sizeof(DCB);
-    if (!::GetCommState(handle_service_.native(impl), &dcb))
-    {
-      DWORD last_error = ::GetLastError();
-      ec = asio::error_code(last_error,
-          asio::error::get_system_category());
-      return ec;
-    }
-
-    if (option.store(dcb, ec))
-      return ec;
-
-    if (!::SetCommState(handle_service_.native(impl), &dcb))
-    {
-      DWORD last_error = ::GetLastError();
-      ec = asio::error_code(last_error,
-          asio::error::get_system_category());
-      return ec;
-    }
-
-    ec = asio::error_code();
-    return ec;
+    return do_set_option(impl,
+        &win_iocp_serial_port_service::store_option<SettableSerialPortOption>,
+        &option, ec);
   }
 
   // Get an option from the serial port.
@@ -219,24 +111,13 @@ public:
   asio::error_code get_option(const implementation_type& impl,
       GettableSerialPortOption& option, asio::error_code& ec) const
   {
-    using namespace std; // For memcpy.
-
-    ::DCB dcb;
-    memset(&dcb, 0, sizeof(DCB));
-    dcb.DCBlength = sizeof(DCB);
-    if (!::GetCommState(handle_service_.native(impl), &dcb))
-    {
-      DWORD last_error = ::GetLastError();
-      ec = asio::error_code(last_error,
-          asio::error::get_system_category());
-      return ec;
-    }
-
-    return option.load(dcb, ec);
+    return do_get_option(impl,
+        &win_iocp_serial_port_service::load_option<GettableSerialPortOption>,
+        &option, ec);
   }
 
   // Send a break sequence to the serial port.
-  asio::error_code send_break(implementation_type& impl,
+  asio::error_code send_break(implementation_type&,
       asio::error_code& ec)
   {
     ec = asio::error::operation_not_supported;
@@ -278,15 +159,54 @@ public:
   }
 
 private:
-  // The handle service used for initiating asynchronous operations.
-  win_iocp_handle_service& handle_service_;
+  // Function pointer type for storing a serial port option.
+  typedef asio::error_code (*store_function_type)(
+      const void*, ::DCB&, asio::error_code&);
+
+  // Helper function template to store a serial port option.
+  template <typename SettableSerialPortOption>
+  static asio::error_code store_option(const void* option,
+      ::DCB& storage, asio::error_code& ec)
+  {
+    return static_cast<const SettableSerialPortOption*>(option)->store(
+        storage, ec);
+  }
+
+  // Helper function to set a serial port option.
+  ASIO_DECL asio::error_code do_set_option(
+      implementation_type& impl, store_function_type store,
+      const void* option, asio::error_code& ec);
+
+  // Function pointer type for loading a serial port option.
+  typedef asio::error_code (*load_function_type)(
+      void*, const ::DCB&, asio::error_code&);
+
+  // Helper function template to load a serial port option.
+  template <typename GettableSerialPortOption>
+  static asio::error_code load_option(void* option,
+      const ::DCB& storage, asio::error_code& ec)
+  {
+    return static_cast<GettableSerialPortOption*>(option)->load(storage, ec);
+  }
+
+  // Helper function to get a serial port option.
+  ASIO_DECL asio::error_code do_get_option(
+      const implementation_type& impl, load_function_type load,
+      void* option, asio::error_code& ec) const;
+
+  // The implementation used for initiating asynchronous operations.
+  win_iocp_handle_service handle_service_;
 };
 
 } // namespace detail
 } // namespace asio
 
-#endif // defined(ASIO_HAS_IOCP)
-
 #include "asio/detail/pop_options.hpp"
+
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/detail/impl/win_iocp_serial_port_service.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
+
+#endif // defined(ASIO_HAS_IOCP) && defined(ASIO_HAS_SERIAL_PORT)
 
 #endif // ASIO_DETAIL_WIN_IOCP_SERIAL_PORT_SERVICE_HPP

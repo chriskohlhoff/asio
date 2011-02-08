@@ -2,7 +2,7 @@
 // buffers_iterator.cpp
 // ~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -16,7 +16,8 @@
 // Test that header file is self-contained.
 #include "asio/buffers_iterator.hpp"
 
-#include "asio.hpp"
+#include <boost/array.hpp>
+#include "asio/buffer.hpp"
 #include "unit_test.hpp"
 
 //------------------------------------------------------------------------------
@@ -63,18 +64,30 @@ void test()
     buffers_iterator<vector<const_buffer>, char> bi11;
     buffers_iterator<vector<const_buffer>, const char> bi12;
 
-    buffers_iterator<mutable_buffers_1, char> bi13(bi1);
-    buffers_iterator<mutable_buffers_1, const char> bi14(bi2);
-    buffers_iterator<array<mutable_buffer, 2>, char> bi15(bi3);
-    buffers_iterator<array<mutable_buffer, 2>, const char> bi16(bi4);
-    buffers_iterator<vector<mutable_buffer>, char> bi17(bi5);
-    buffers_iterator<vector<mutable_buffer>, const char> bi18(bi6);
-    buffers_iterator<const_buffers_1, char> bi19(bi7);
-    buffers_iterator<const_buffers_1, const char> bi20(bi8);
-    buffers_iterator<array<const_buffer, 2>, char> bi21(bi9);
-    buffers_iterator<array<const_buffer, 2>, const char> bi22(bi10);
-    buffers_iterator<vector<const_buffer>, char> bi23(bi11);
-    buffers_iterator<vector<const_buffer>, const char> bi24(bi12);
+    buffers_iterator<mutable_buffers_1, char> bi13(
+        buffers_iterator<mutable_buffers_1, char>::begin(mb1));
+    buffers_iterator<mutable_buffers_1, const char> bi14(
+        buffers_iterator<mutable_buffers_1, const char>::begin(mb1));
+    buffers_iterator<array<mutable_buffer, 2>, char> bi15(
+        buffers_iterator<array<mutable_buffer, 2>, char>::begin(mb2));
+    buffers_iterator<array<mutable_buffer, 2>, const char> bi16(
+        buffers_iterator<array<mutable_buffer, 2>, const char>::begin(mb2));
+    buffers_iterator<vector<mutable_buffer>, char> bi17(
+        buffers_iterator<vector<mutable_buffer>, char>::begin(mb3));
+    buffers_iterator<vector<mutable_buffer>, const char> bi18(
+        buffers_iterator<vector<mutable_buffer>, const char>::begin(mb3));
+    buffers_iterator<const_buffers_1, char> bi19(
+        buffers_iterator<const_buffers_1, char>::begin(cb1));
+    buffers_iterator<const_buffers_1, const char> bi20(
+        buffers_iterator<const_buffers_1, const char>::begin(cb1));
+    buffers_iterator<array<const_buffer, 2>, char> bi21(
+        buffers_iterator<array<const_buffer, 2>, char>::begin(cb2));
+    buffers_iterator<array<const_buffer, 2>, const char> bi22(
+        buffers_iterator<array<const_buffer, 2>, const char>::begin(cb2));
+    buffers_iterator<vector<const_buffer>, char> bi23(
+        buffers_iterator<vector<const_buffer>, char>::begin(cb3));
+    buffers_iterator<vector<const_buffer>, const char> bi24(
+        buffers_iterator<vector<const_buffer>, const char>::begin(cb3));
 
     // buffers_iterator member functions.
 
@@ -200,18 +213,57 @@ void test()
     bi11 += 1;
     bi12 += 1;
 
-    static_cast<std::ptrdiff_t>(bi13 - bi1);
-    static_cast<std::ptrdiff_t>(bi14 - bi2);
-    static_cast<std::ptrdiff_t>(bi15 - bi3);
-    static_cast<std::ptrdiff_t>(bi16 - bi4);
-    static_cast<std::ptrdiff_t>(bi17 - bi5);
-    static_cast<std::ptrdiff_t>(bi18 - bi6);
-    static_cast<std::ptrdiff_t>(bi19 - bi7);
-    static_cast<std::ptrdiff_t>(bi20 - bi8);
-    static_cast<std::ptrdiff_t>(bi21 - bi9);
-    static_cast<std::ptrdiff_t>(bi22 - bi10);
-    static_cast<std::ptrdiff_t>(bi23 - bi11);
-    static_cast<std::ptrdiff_t>(bi24 - bi12);
+    bi1 = bi1 - 1;
+    bi2 = bi2 - 1;
+    bi3 = bi3 - 1;
+    bi4 = bi4 - 1;
+    bi5 = bi5 - 1;
+    bi6 = bi6 - 1;
+    bi7 = bi7 - 1;
+    bi8 = bi8 - 1;
+    bi9 = bi9 - 1;
+    bi10 = bi10 - 1;
+    bi11 = bi11 - 1;
+    bi12 = bi12 - 1;
+
+    bi1 = bi1 + 1;
+    bi2 = bi2 + 1;
+    bi3 = bi3 + 1;
+    bi4 = bi4 + 1;
+    bi5 = bi5 + 1;
+    bi6 = bi6 + 1;
+    bi7 = bi7 + 1;
+    bi8 = bi8 + 1;
+    bi9 = bi9 + 1;
+    bi10 = bi10 + 1;
+    bi11 = bi11 + 1;
+    bi12 = bi12 + 1;
+
+    bi1 = (-1) + bi1;
+    bi2 = (-1) + bi2;
+    bi3 = (-1) + bi3;
+    bi4 = (-1) + bi4;
+    bi5 = (-1) + bi5;
+    bi6 = (-1) + bi6;
+    bi7 = (-1) + bi7;
+    bi8 = (-1) + bi8;
+    bi9 = (-1) + bi9;
+    bi10 = (-1) + bi10;
+    bi11 = (-1) + bi11;
+    bi12 = (-1) + bi12;
+
+    (void)static_cast<std::ptrdiff_t>(bi13 - bi1);
+    (void)static_cast<std::ptrdiff_t>(bi14 - bi2);
+    (void)static_cast<std::ptrdiff_t>(bi15 - bi3);
+    (void)static_cast<std::ptrdiff_t>(bi16 - bi4);
+    (void)static_cast<std::ptrdiff_t>(bi17 - bi5);
+    (void)static_cast<std::ptrdiff_t>(bi18 - bi6);
+    (void)static_cast<std::ptrdiff_t>(bi19 - bi7);
+    (void)static_cast<std::ptrdiff_t>(bi20 - bi8);
+    (void)static_cast<std::ptrdiff_t>(bi21 - bi9);
+    (void)static_cast<std::ptrdiff_t>(bi22 - bi10);
+    (void)static_cast<std::ptrdiff_t>(bi23 - bi11);
+    (void)static_cast<std::ptrdiff_t>(bi24 - bi12);
   }
   catch (std::exception&)
   {

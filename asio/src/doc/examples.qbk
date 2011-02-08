@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -135,6 +135,38 @@ An HTTP server using a single io_service and a thread pool calling `io_service::
 * [@../src/examples/http/server3/win_main.cpp]
 
 
+[heading HTTP Server 4]
+
+A single-threaded HTTP server implemented using stackless coroutines.
+
+* [@../src/examples/http/server4/coroutine.hpp]
+* [@../src/examples/http/server4/file_handler.cpp]
+* [@../src/examples/http/server4/file_handler.hpp]
+* [@../src/examples/http/server4/header.hpp]
+* [@../src/examples/http/server4/mime_types.cpp]
+* [@../src/examples/http/server4/mime_types.hpp]
+* [@../src/examples/http/server4/posix_main.cpp]
+* [@../src/examples/http/server4/reply.cpp]
+* [@../src/examples/http/server4/reply.hpp]
+* [@../src/examples/http/server4/request.hpp]
+* [@../src/examples/http/server4/request_parser.cpp]
+* [@../src/examples/http/server4/request_parser.hpp]
+* [@../src/examples/http/server4/server.cpp]
+* [@../src/examples/http/server4/server.hpp]
+* [@../src/examples/http/server4/unyield.hpp]
+* [@../src/examples/http/server4/win_main.cpp]
+* [@../src/examples/http/server4/yield.hpp]
+
+
+[heading ICMP]
+
+This example shows how to use raw sockets with ICMP to ping a remote host.
+
+* [@../src/examples/icmp/ping.cpp]
+* [@../src/examples/icmp/ipv4_header.hpp]
+* [@../src/examples/icmp/icmp_header.hpp]
+
+
 [heading Invocation]
 
 This example shows how to customise handler invocation. Completion handlers are
@@ -210,10 +242,10 @@ asio.reference.ssl__stream ssl::stream<>] template with asynchronous operations.
 A collection of examples showing how to cancel long running asynchronous
 operations after a period of time.
 
-* [@../src/examples/timeouts/accept_timeout.cpp]
-* [@../src/examples/timeouts/connect_timeout.cpp]
-* [@../src/examples/timeouts/datagram_receive_timeout.cpp]
-* [@../src/examples/timeouts/stream_receive_timeout.cpp]
+* [@../src/examples/timeouts/async_tcp_client.cpp]
+* [@../src/examples/timeouts/blocking_tcp_client.cpp]
+* [@../src/examples/timeouts/blocking_udp_client.cpp]
+* [@../src/examples/timeouts/server.cpp]
 
 
 [heading Timers]
