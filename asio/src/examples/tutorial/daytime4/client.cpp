@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     udp::socket socket(io_service);
     socket.open(udp::v4());
 
-    boost::array<char, 1> send_buf  = { 0 };
+    boost::array<char, 1> send_buf  = {{ 0 }};
     socket.send_to(asio::buffer(send_buf), receiver_endpoint);
 
     boost::array<char, 128> recv_buf;
