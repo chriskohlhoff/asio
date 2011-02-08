@@ -443,6 +443,126 @@ void test_4_arg_const_buffers_1_write_at()
 
   s.reset();
   bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  bytes_transferred = asio::write_at(s, 0, buffers,
       old_style_transfer_all);
   BOOST_CHECK(bytes_transferred == sizeof(write_data));
   BOOST_CHECK(s.check_buffers(0, buffers, sizeof(write_data)));
@@ -682,6 +802,126 @@ void test_4_arg_mutable_buffers_1_write_at()
       asio::transfer_at_least(42));
   BOOST_CHECK(bytes_transferred == 50);
   BOOST_CHECK(s.check_buffers(1234, buffers, 50));
+
+  s.reset();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
 
   s.reset();
   bytes_transferred = asio::write_at(s, 0, buffers,
@@ -925,6 +1165,126 @@ void test_4_arg_multi_buffers_write_at()
       asio::transfer_at_least(42));
   BOOST_CHECK(bytes_transferred == 50);
   BOOST_CHECK(s.check_buffers(1234, buffers, 50));
+
+  s.reset();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
 
   s.reset();
   bytes_transferred = asio::write_at(s, 0, buffers,
@@ -1213,6 +1573,162 @@ void test_5_arg_const_buffers_1_write_at()
       asio::transfer_at_least(42), error);
   BOOST_CHECK(bytes_transferred == 50);
   BOOST_CHECK(s.check_buffers(1234, buffers, 50));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
   BOOST_CHECK(!error);
 
   s.reset();
@@ -1531,6 +2047,162 @@ void test_5_arg_mutable_buffers_1_write_at()
   BOOST_CHECK(!error);
 
   s.reset();
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
   bytes_transferred = asio::write_at(s, 0, buffers,
       old_style_transfer_all, error);
   BOOST_CHECK(bytes_transferred == sizeof(mutable_write_data));
@@ -1844,6 +2516,162 @@ void test_5_arg_multi_buffers_write_at()
       asio::transfer_at_least(42), error);
   BOOST_CHECK(bytes_transferred == 50);
   BOOST_CHECK(s.check_buffers(1234, buffers, 50));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 0, buffers,
+      asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = asio::error_code();
+  bytes_transferred = asio::write_at(s, 1234, buffers,
+      asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
   BOOST_CHECK(!error);
 
   s.reset();
@@ -2581,6 +3409,252 @@ void test_5_arg_const_buffers_1_async_write_at()
 
   s.reset();
   called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  called = false;
   asio::async_write_at(s, 0, buffers, old_style_transfer_all,
       boost::bind(async_write_handler,
         asio::placeholders::error,
@@ -3066,6 +4140,252 @@ void test_5_arg_mutable_buffers_1_async_write_at()
   ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check_buffers(1234, buffers, 50));
+
+  s.reset();
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
 
   s.reset();
   called = false;
@@ -3555,6 +4875,252 @@ void test_5_arg_multi_buffers_async_write_at()
   ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check_buffers(1234, buffers, 50));
+
+  s.reset();
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  asio::async_write_at(s, 0, buffers,
+      asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  asio::async_write_at(s, 1234, buffers,
+      asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
 
   s.reset();
   called = false;
