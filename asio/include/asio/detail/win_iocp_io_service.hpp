@@ -19,6 +19,7 @@
 
 #if defined(ASIO_HAS_IOCP)
 
+#include <boost/limits.hpp>
 #include <boost/scoped_ptr.hpp>
 #include "asio/io_service.hpp"
 #include "asio/detail/mutex.hpp"
@@ -155,7 +156,8 @@ public:
   // handlers that have been posted or dispatched.
   template <typename Time_Traits>
   std::size_t cancel_timer(timer_queue<Time_Traits>& queue,
-      typename timer_queue<Time_Traits>::per_timer_data& timer);
+      typename timer_queue<Time_Traits>::per_timer_data& timer,
+      std::size_t max_cancelled = (std::numeric_limits<std::size_t>::max)());
 
 private:
 #if defined(WINVER) && (WINVER < 0x0500)
