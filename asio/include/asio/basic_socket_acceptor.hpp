@@ -564,6 +564,66 @@ public:
     return this->service.get_option(this->implementation, option, ec);
   }
 
+  /// Perform an IO control command on the acceptor.
+  /**
+   * This function is used to execute an IO control command on the acceptor.
+   *
+   * @param command The IO control command to be performed on the acceptor.
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @sa IoControlCommand @n
+   * asio::socket_base::non_blocking_io
+   *
+   * @par Example
+   * Getting the number of bytes ready to read:
+   * @code
+   * asio::ip::tcp::acceptor acceptor(io_service);
+   * ...
+   * asio::ip::tcp::acceptor::non_blocking_io command(true);
+   * socket.io_control(command);
+   * @endcode
+   */
+  template <typename IoControlCommand>
+  void io_control(IoControlCommand& command)
+  {
+    asio::error_code ec;
+    this->service.io_control(this->implementation, command, ec);
+    asio::detail::throw_error(ec);
+  }
+
+  /// Perform an IO control command on the acceptor.
+  /**
+   * This function is used to execute an IO control command on the acceptor.
+   *
+   * @param command The IO control command to be performed on the acceptor.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @sa IoControlCommand @n
+   * asio::socket_base::non_blocking_io
+   *
+   * @par Example
+   * Getting the number of bytes ready to read:
+   * @code
+   * asio::ip::tcp::acceptor acceptor(io_service);
+   * ...
+   * asio::ip::tcp::acceptor::non_blocking_io command(true);
+   * asio::error_code ec;
+   * socket.io_control(command, ec);
+   * if (ec)
+   * {
+   *   // An error occurred.
+   * }
+   * @endcode
+   */
+  template <typename IoControlCommand>
+  asio::error_code io_control(IoControlCommand& command,
+      asio::error_code& ec)
+  {
+    return this->service.io_control(this->implementation, command, ec);
+  }
+
   /// Get the local endpoint of the acceptor.
   /**
    * This function is used to obtain the locally bound endpoint of the acceptor.

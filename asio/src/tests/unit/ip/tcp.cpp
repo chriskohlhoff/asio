@@ -515,6 +515,9 @@ void test()
   ip::tcp::endpoint client_endpoint;
   acceptor.accept(server_side_socket, client_endpoint);
 
+  ip::tcp::acceptor::non_blocking_io command(false);
+  acceptor.io_control(command);
+
   ip::tcp::endpoint client_side_local_endpoint
     = client_side_socket.local_endpoint();
   BOOST_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
