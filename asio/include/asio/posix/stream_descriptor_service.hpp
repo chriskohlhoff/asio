@@ -70,7 +70,7 @@ public:
   {
   }
 
-  /// Destroy all user-defined descriptorr objects owned by the service.
+  /// Destroy all user-defined handler objects owned by the service.
   void shutdown_service()
   {
     service_impl_.shutdown_service();
@@ -140,9 +140,9 @@ public:
   /// Start an asynchronous write.
   template <typename ConstBufferSequence, typename WriteHandler>
   void async_write_some(implementation_type& impl,
-      const ConstBufferSequence& buffers, WriteHandler descriptorr)
+      const ConstBufferSequence& buffers, WriteHandler handler)
   {
-    service_impl_.async_write_some(impl, buffers, descriptorr);
+    service_impl_.async_write_some(impl, buffers, handler);
   }
 
   /// Read some data from the stream.
@@ -156,9 +156,9 @@ public:
   /// Start an asynchronous read.
   template <typename MutableBufferSequence, typename ReadHandler>
   void async_read_some(implementation_type& impl,
-      const MutableBufferSequence& buffers, ReadHandler descriptorr)
+      const MutableBufferSequence& buffers, ReadHandler handler)
   {
-    service_impl_.async_read_some(impl, buffers, descriptorr);
+    service_impl_.async_read_some(impl, buffers, handler);
   }
 
 private:
