@@ -29,17 +29,9 @@ int main(int argc, char* argv[])
     tcp::resolver resolver(io_service);
     tcp::resolver::query query(argv[1], "daytime");
     tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
-    tcp::resolver::iterator end;
 
     tcp::socket socket(io_service);
-    asio::error_code error = asio::error::host_not_found;
-    while (error && endpoint_iterator != end)
-    {
-      socket.close();
-      socket.connect(*endpoint_iterator++, error);
-    }
-    if (error)
-      throw asio::system_error(error);
+    asio::connect(socket, endpoint_iterator);
 
     for (;;)
     {

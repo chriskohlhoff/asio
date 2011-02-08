@@ -25,6 +25,7 @@ UNIT_TEST_EXES = \
 	tests/unit/buffer.exe \
 	tests/unit/buffers_iterator.exe \
 	tests/unit/completion_condition.exe \
+	tests/unit/connect.exe \
 	tests/unit/datagram_socket_service.exe \
 	tests/unit/deadline_timer_service.exe \
 	tests/unit/deadline_timer.exe \

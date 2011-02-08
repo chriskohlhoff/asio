@@ -37,19 +37,11 @@ int main(int argc, char* argv[])
     tcp::resolver resolver(io_service);
     tcp::resolver::query socks_query(argv[1], argv[2]);
     tcp::resolver::iterator endpoint_iterator = resolver.resolve(socks_query);
-    tcp::resolver::iterator end;
 
     // Try each endpoint until we successfully establish a connection to the
     // SOCKS 4 server.
     tcp::socket socket(io_service);
-    asio::error_code error = asio::error::host_not_found;
-    while (error && endpoint_iterator != end)
-    {
-      socket.close();
-      socket.connect(*endpoint_iterator++, error);
-    }
-    if (error)
-      throw asio::system_error(error);
+    asio::connect(socket, endpoint_iterator);
 
     // Get an endpoint for the Boost website. This will be passed to the SOCKS
     // 4 server. Explicitly specify IPv4 since SOCKS 4 does not support IPv6.
@@ -87,6 +79,7 @@ int main(int argc, char* argv[])
 
     // Read until EOF, writing data to output as we go.
     boost::array<char, 512> response;
+    asio::error_code error;
     while (std::size_t s = socket.read_some(
           asio::buffer(response), error))
       std::cout.write(response.data(), s);

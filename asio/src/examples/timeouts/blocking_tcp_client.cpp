@@ -8,6 +8,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#include "asio/connect.hpp"
 #include "asio/deadline_timer.hpp"
 #include "asio/io_service.hpp"
 #include "asio/ip/tcp.hpp"
@@ -73,47 +74,36 @@ public:
     tcp::resolver::query query(host, service);
     tcp::resolver::iterator iter = tcp::resolver(io_service_).resolve(query);
 
-    // Set a deadline for the asynchronous operation. The host name may resolve
-    // to multiple endpoints, and this function tries to connect to each one in
-    // turn. Setting the deadline here means it applies to the entire sequence.
+    // Set a deadline for the asynchronous operation. As a host name may
+    // resolve to multiple endpoints, this function uses the composed operation
+    // async_connect. The deadline applies to the entire operation, rather than
+    // individual connection attempts.
     deadline_.expires_from_now(timeout);
 
-    asio::error_code ec;
+    // Set up the variable that receives the result of the asynchronous
+    // operation. The error code is set to would_block to signal that the
+    // operation is incomplete. Asio guarantees that its asynchronous
+    // operations will never fail with would_block, so any other value in
+    // ec indicates completion.
+    asio::error_code ec = asio::error::would_block;
 
-    for (; iter != tcp::resolver::iterator(); ++iter)
-    {
-      // We may have an open socket from a previous connection attempt. This
-      // socket cannot be reused, so we must close it before trying to connect
-      // again.
-      socket_.close();
+    // Start the asynchronous operation itself. The boost::lambda function
+    // object is used as a callback and will update the ec variable when the
+    // operation completes. The blocking_udp_client.cpp example shows how you
+    // can use boost::bind rather than boost::lambda.
+    asio::async_connect(socket_, iter, var(ec) = _1);
 
-      // Set up the variable that receives the result of the asynchronous
-      // operation. The error code is set to would_block to signal that the
-      // operation is incomplete. Asio guarantees that its asynchronous
-      // operations will never fail with would_block, so any other value in
-      // ec indicates completion.
-      ec = asio::error::would_block;
+    // Block until the asynchronous operation has completed.
+    do io_service_.run_one(); while (ec == asio::error::would_block);
 
-      // Start the asynchronous operation itself. The boost::lambda function
-      // object is used as a callback and will update the ec variable when the
-      // operation completes. The blocking_udp_client.cpp example shows how you
-      // can use boost::bind rather than boost::lambda.
-      socket_.async_connect(iter->endpoint(), var(ec) = _1);
-
-      // Block until the asynchronous operation has completed.
-      do io_service_.run_one(); while (ec == asio::error::would_block);
-
-      // Determine whether a connection was successfully established. The
-      // deadline actor may have had a chance to run and close our socket, even
-      // though the connect operation notionally succeeded. Therefore we must
-      // check whether the socket is still open before deciding that the we
-      // were successful.
-      if (!ec && socket_.is_open())
-        return;
-    }
-
-    throw asio::system_error(
-        ec ? ec : asio::error::host_not_found);
+    // Determine whether a connection was successfully established. The
+    // deadline actor may have had a chance to run and close our socket, even
+    // though the connect operation notionally succeeded. Therefore we must
+    // check whether the socket is still open before deciding if we succeeded
+    // or failed.
+    if (ec || !socket_.is_open())
+      throw asio::system_error(
+          ec ? ec : asio::error::operation_aborted);
   }
 
   std::string read_line(boost::posix_time::time_duration timeout)

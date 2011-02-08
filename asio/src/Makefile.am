@@ -22,6 +22,7 @@ check_PROGRAMS = \
 	tests/unit/buffer \
 	tests/unit/buffers_iterator \
 	tests/unit/completion_condition \
+	tests/unit/connect \
 	tests/unit/datagram_socket_service \
 	tests/unit/deadline_timer_service \
 	tests/unit/deadline_timer \
@@ -174,6 +175,7 @@ TESTS = \
 	tests/unit/buffer \
 	tests/unit/buffers_iterator \
 	tests/unit/completion_condition \
+	tests/unit/connect \
 	tests/unit/datagram_socket_service \
 	tests/unit/deadline_timer_service \
 	tests/unit/deadline_timer \
@@ -274,6 +276,7 @@ tests_unit_buffered_read_stream_SOURCES = tests/unit/buffered_read_stream.cpp te
 tests_unit_buffered_stream_SOURCES = tests/unit/buffered_stream.cpp tests/unit/unit_test.cpp
 tests_unit_buffered_write_stream_SOURCES = tests/unit/buffered_write_stream.cpp tests/unit/unit_test.cpp
 tests_unit_completion_condition_SOURCES = tests/unit/completion_condition.cpp tests/unit/unit_test.cpp
+tests_unit_connect_SOURCES = tests/unit/connect.cpp tests/unit/unit_test.cpp
 tests_unit_datagram_socket_service_SOURCES = tests/unit/datagram_socket_service.cpp tests/unit/unit_test.cpp
 tests_unit_deadline_timer_service_SOURCES = tests/unit/deadline_timer_service.cpp tests/unit/unit_test.cpp
 tests_unit_deadline_timer_SOURCES = tests/unit/deadline_timer.cpp tests/unit/unit_test.cpp

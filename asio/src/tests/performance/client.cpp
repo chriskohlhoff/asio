@@ -76,10 +76,9 @@ public:
 
   void start(asio::ip::tcp::resolver::iterator endpoint_iterator)
   {
-    asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
-    socket_.async_connect(endpoint,
+    asio::async_connect(socket_, endpoint_iterator,
         strand_.wrap(boost::bind(&session::handle_connect, this,
-            asio::placeholders::error, ++endpoint_iterator)));
+            asio::placeholders::error)));
   }
 
   void stop()
@@ -88,8 +87,7 @@ public:
   }
 
 private:
-  void handle_connect(const asio::error_code& err,
-      asio::ip::tcp::resolver::iterator endpoint_iterator)
+  void handle_connect(const asio::error_code& err)
   {
     if (!err)
     {
@@ -112,14 +110,6 @@ private:
                   asio::placeholders::error,
                   asio::placeholders::bytes_transferred))));
       }
-    }
-    else if (endpoint_iterator != asio::ip::tcp::resolver::iterator())
-    {
-      socket_.close();
-      asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
-      socket_.async_connect(endpoint,
-          strand_.wrap(boost::bind(&session::handle_connect, this,
-              asio::placeholders::error, ++endpoint_iterator)));
     }
   }
 

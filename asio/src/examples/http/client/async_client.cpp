@@ -49,12 +49,11 @@ private:
   {
     if (!err)
     {
-      // Attempt a connection to the first endpoint in the list. Each endpoint
-      // will be tried until we successfully establish a connection.
-      tcp::endpoint endpoint = *endpoint_iterator;
-      socket_.async_connect(endpoint,
+      // Attempt a connection to each endpoint in the list until we
+      // successfully establish a connection.
+      asio::async_connect(socket_, endpoint_iterator,
           boost::bind(&client::handle_connect, this,
-            asio::placeholders::error, ++endpoint_iterator));
+            asio::placeholders::error));
     }
     else
     {
@@ -62,8 +61,7 @@ private:
     }
   }
 
-  void handle_connect(const asio::error_code& err,
-      tcp::resolver::iterator endpoint_iterator)
+  void handle_connect(const asio::error_code& err)
   {
     if (!err)
     {
@@ -71,15 +69,6 @@ private:
       asio::async_write(socket_, request_,
           boost::bind(&client::handle_write_request, this,
             asio::placeholders::error));
-    }
-    else if (endpoint_iterator != tcp::resolver::iterator())
-    {
-      // The connection failed. Try the next endpoint in the list.
-      socket_.close();
-      tcp::endpoint endpoint = *endpoint_iterator;
-      socket_.async_connect(endpoint,
-          boost::bind(&client::handle_connect, this,
-            asio::placeholders::error, ++endpoint_iterator));
     }
     else
     {

@@ -23,28 +23,18 @@ public:
       asio::ip::tcp::resolver::iterator endpoint_iterator)
     : socket_(io_service, context)
   {
-    asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
-    socket_.lowest_layer().async_connect(endpoint,
+    asio::async_connect(socket_.lowest_layer(), endpoint_iterator,
         boost::bind(&client::handle_connect, this,
-          asio::placeholders::error, ++endpoint_iterator));
+          asio::placeholders::error));
   }
 
-  void handle_connect(const asio::error_code& error,
-      asio::ip::tcp::resolver::iterator endpoint_iterator)
+  void handle_connect(const asio::error_code& error)
   {
     if (!error)
     {
       socket_.async_handshake(asio::ssl::stream_base::client,
           boost::bind(&client::handle_handshake, this,
             asio::placeholders::error));
-    }
-    else if (endpoint_iterator != asio::ip::tcp::resolver::iterator())
-    {
-      socket_.lowest_layer().close();
-      asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
-      socket_.lowest_layer().async_connect(endpoint,
-          boost::bind(&client::handle_connect, this,
-            asio::placeholders::error, ++endpoint_iterator));
     }
     else
     {

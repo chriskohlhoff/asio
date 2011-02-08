@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
     tcp::resolver::iterator iterator = resolver.resolve(query);
 
     tcp::socket s(io_service);
-    s.connect(*iterator);
+    asio::connect(s, iterator);
 
     using namespace std; // For strlen.
     std::cout << "Enter message: ";

@@ -34,18 +34,10 @@ int main(int argc, char* argv[])
     tcp::resolver resolver(io_service);
     tcp::resolver::query query(argv[1], "http");
     tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
-    tcp::resolver::iterator end;
 
     // Try each endpoint until we successfully establish a connection.
     tcp::socket socket(io_service);
-    asio::error_code error = asio::error::host_not_found;
-    while (error && endpoint_iterator != end)
-    {
-      socket.close();
-      socket.connect(*endpoint_iterator++, error);
-    }
-    if (error)
-      throw asio::system_error(error);
+    asio::connect(socket, endpoint_iterator);
 
     // Form the request. We specify the "Connection: close" header so that the
     // server will close the socket after transmitting the response. This will
@@ -99,6 +91,7 @@ int main(int argc, char* argv[])
       std::cout << &response;
 
     // Read until EOF, writing data to output as we go.
+    asio::error_code error;
     while (asio::read(socket, response,
           asio::transfer_at_least(1), error))
       std::cout << &response;

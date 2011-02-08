@@ -21,6 +21,7 @@ nobase_include_HEADERS = \
 	asio/buffer.hpp \
 	asio/buffers_iterator.hpp \
 	asio/completion_condition.hpp \
+	asio/connect.hpp \
 	asio/datagram_socket_service.hpp \
 	asio/deadline_timer.hpp \
 	asio/deadline_timer_service.hpp \
@@ -200,6 +201,7 @@ nobase_include_HEADERS = \
 	asio/handler_alloc_hook.hpp \
 	asio/handler_invoke_hook.hpp \
 	asio.hpp \
+	asio/impl/connect.hpp \
 	asio/impl/error_code.ipp \
 	asio/impl/error.ipp \
 	asio/impl/io_service.hpp \

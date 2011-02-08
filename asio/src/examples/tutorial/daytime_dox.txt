@@ -41,17 +41,17 @@ and the name of the service, in this case <tt>"daytime"</tt>.
 \until tcp::resolver::query
 
 The list of endpoints is returned using an iterator of type
-asio::ip::tcp::resolver::iterator. A default constructed
-asio::ip::tcp::resolver::iterator object is used as the end iterator.
+asio::ip::tcp::resolver::iterator. (Note that a default constructed
+asio::ip::tcp::resolver::iterator object can be used as an end iterator.)
 
-\until tcp::resolver::iterator end;
+\until tcp::resolver::iterator
 
 Now we create and connect the socket. The list of endpoints obtained above may
 contain both IPv4 and IPv6 endpoints, so we need to try each of them until we
 find one that works. This keeps the client program independent of a specific IP
-version.
+version. The asio::connect() function does this for us automatically.
 
-\until throw
+\until asio::connect
 
 The connection is open. All we need to do now is read the response from the
 daytime service.

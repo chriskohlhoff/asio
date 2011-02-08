@@ -32,22 +32,13 @@ void read_handler(const asio::error_code& e,
   }
 }
 
-void connect_handler(const asio::error_code& e, debug_stream_socket* s,
-    asio::ip::tcp::resolver::iterator endpoint_iterator)
+void connect_handler(const asio::error_code& e, debug_stream_socket* s)
 {
   if (!e)
   {
     s->async_read_some(asio::buffer(read_buffer),
         boost::bind(read_handler, asio::placeholders::error,
           asio::placeholders::bytes_transferred, s));
-  }
-  else if (endpoint_iterator != asio::ip::tcp::resolver::iterator())
-  {
-    s->close();
-    asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
-    s->async_connect(endpoint,
-        boost::bind(connect_handler,
-          asio::placeholders::error, s, ++endpoint_iterator));
   }
   else
   {
@@ -75,13 +66,12 @@ int main(int argc, char* argv[])
     asio::ip::tcp::resolver resolver(io_service);
     asio::ip::tcp::resolver::query query(argv[1], "daytime");
     asio::ip::tcp::resolver::iterator iterator = resolver.resolve(query);
-    asio::ip::tcp::endpoint endpoint = *iterator;
 
     // Start an asynchronous connect.
     debug_stream_socket socket(io_service);
-    socket.async_connect(endpoint,
+    asio::async_connect(socket, iterator,
         boost::bind(connect_handler,
-          asio::placeholders::error, &socket, ++iterator));
+          asio::placeholders::error, &socket));
 
     // Run the io_service until all operations have finished.
     io_service.run();
