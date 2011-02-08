@@ -16,7 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <cassert>
+#include <boost/assert.hpp>
 #include <list>
 #include <utility>
 #include "asio/detail/noncopyable.hpp"
@@ -179,7 +179,7 @@ public:
   // Erase an entry from the map.
   void erase(iterator it)
   {
-    assert(it != values_.end());
+    BOOST_ASSERT(it != values_.end());
 
     size_t bucket = calculate_hash_value(it->first) % num_buckets_;
     bool is_first = (it == buckets_[bucket].first);
