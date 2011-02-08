@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/error_code.hpp"
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 # include <winerror.h>
 #else
@@ -212,21 +213,86 @@ enum ssl_errors
 {
 };
 
-// boostify: error category definitions start here.
+inline const asio::error_category& get_system_category()
+{
+  return asio::system_category();
+}
+
+#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
+extern ASIO_DECL
+const asio::error_category& get_netdb_category();
+
+extern ASIO_DECL
+const asio::error_category& get_addrinfo_category();
+
+#else // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
+inline const asio::error_category& get_netdb_category()
+{
+  return get_system_category();
+}
+
+inline const asio::error_category& get_addrinfo_category()
+{
+  return get_system_category();
+}
+
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
+extern ASIO_DECL
+const asio::error_category& get_misc_category();
+
+extern ASIO_DECL
+const asio::error_category& get_ssl_category();
+
+static const asio::error_category& system_category
+  = asio::error::get_system_category();
+static const asio::error_category& netdb_category
+  = asio::error::get_netdb_category();
+static const asio::error_category& addrinfo_category
+  = asio::error::get_addrinfo_category();
+static const asio::error_category& misc_category
+  = asio::error::get_misc_category();
+static const asio::error_category& ssl_category
+  = asio::error::get_ssl_category();
 
 } // namespace error
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#if defined(ASIO_HAS_STD_SYSTEM_ERROR)
+namespace std {
 
-#include "asio/error_code.hpp"
+template<> struct is_error_code_enum<asio::error::basic_errors>
+{
+  static const bool value = true;
+};
 
-#include "asio/detail/push_options.hpp"
+template<> struct is_error_code_enum<asio::error::netdb_errors>
+{
+  static const bool value = true;
+};
+
+template<> struct is_error_code_enum<asio::error::addrinfo_errors>
+{
+  static const bool value = true;
+};
+
+template<> struct is_error_code_enum<asio::error::misc_errors>
+{
+  static const bool value = true;
+};
+
+template<> struct is_error_code_enum<asio::error::ssl_errors>
+{
+  static const bool value = true;
+};
+
+} // namespace std
+#endif // defined(ASIO_HAS_STD_SYSTEM_ERROR)
 
 namespace asio {
 namespace error {
-
-// boostify: error category definitions end here.
 
 inline asio::error_code make_error_code(basic_errors e)
 {

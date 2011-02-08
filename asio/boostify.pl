@@ -71,231 +71,6 @@ sub source_contains_asio_include
   return 0;
 }
 
-sub source_contains_boostify_error_categories
-{
-  my ($from) = @_;
-
-  # Open the input file.
-  open(my $input, "<$from") or die("Can't open $from for reading");
-
-  # Check file for boostify error category directive.
-  while (my $line = <$input>)
-  {
-    chomp($line);
-    if ($line =~ /boostify: error category/)
-    {
-      close($input);
-      return 1;
-    }
-  }
-
-  close($input);
-  return 0;
-}
-
-my $error_cat_defns = <<"EOF";
-inline const boost::system::error_category& get_system_category()
-{
-  return boost::system::system_category();
-}
-
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-
-extern BOOST_ASIO_DECL
-const boost::system::error_category& get_netdb_category();
-
-extern BOOST_ASIO_DECL
-const boost::system::error_category& get_addrinfo_category();
-
-#else // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-
-inline const boost::system::error_category& get_netdb_category()
-{
-  return get_system_category();
-}
-
-inline const boost::system::error_category& get_addrinfo_category()
-{
-  return get_system_category();
-}
-
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-
-extern BOOST_ASIO_DECL
-const boost::system::error_category& get_misc_category();
-
-extern BOOST_ASIO_DECL
-const boost::system::error_category& get_ssl_category();
-
-static const boost::system::error_category& system_category
-  = boost::asio::error::get_system_category();
-static const boost::system::error_category& netdb_category
-  = boost::asio::error::get_netdb_category();
-static const boost::system::error_category& addrinfo_category
-  = boost::asio::error::get_addrinfo_category();
-static const boost::system::error_category& misc_category
-  = boost::asio::error::get_misc_category();
-static const boost::system::error_category& ssl_category
-  = boost::asio::error::get_ssl_category();
-
-} // namespace error
-} // namespace asio
-
-namespace system {
-
-template<> struct is_error_code_enum<boost::asio::error::basic_errors>
-{
-  static const bool value = true;
-};
-
-template<> struct is_error_code_enum<boost::asio::error::netdb_errors>
-{
-  static const bool value = true;
-};
-
-template<> struct is_error_code_enum<boost::asio::error::addrinfo_errors>
-{
-  static const bool value = true;
-};
-
-template<> struct is_error_code_enum<boost::asio::error::misc_errors>
-{
-  static const bool value = true;
-};
-
-template<> struct is_error_code_enum<boost::asio::error::ssl_errors>
-{
-  static const bool value = true;
-};
-
-} // namespace system
-
-namespace asio {
-namespace error {
-EOF
-
-my $error_cat_func_defns = <<"EOF";
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-
-namespace detail {
-
-class netdb_category : public boost::system::error_category
-{
-public:
-  const char* name() const
-  {
-    return "asio.netdb";
-  }
-
-  std::string message(int value) const
-  {
-    if (value == error::host_not_found)
-      return "Host not found (authoritative)";
-    if (value == error::host_not_found_try_again)
-      return "Host not found (non-authoritative), try again later";
-    if (value == error::no_data)
-      return "The query is valid, but it does not have associated data";
-    if (value == error::no_recovery)
-      return "A non-recoverable error occurred during database lookup";
-    return "asio.netdb error";
-  }
-};
-
-} // namespace detail
-
-const boost::system::error_category& get_netdb_category()
-{
-  static detail::netdb_category instance;
-  return instance;
-}
-
-namespace detail {
-
-class addrinfo_category : public boost::system::error_category
-{
-public:
-  const char* name() const
-  {
-    return "asio.addrinfo";
-  }
-
-  std::string message(int value) const
-  {
-    if (value == error::service_not_found)
-      return "Service not found";
-    if (value == error::socket_type_not_supported)
-      return "Socket type not supported";
-    return "asio.addrinfo error";
-  }
-};
-
-} // namespace detail
-
-const boost::system::error_category& get_addrinfo_category()
-{
-  static detail::addrinfo_category instance;
-  return instance;
-}
-
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-
-namespace detail {
-
-class misc_category : public boost::system::error_category
-{
-public:
-  const char* name() const
-  {
-    return "asio.misc";
-  }
-
-  std::string message(int value) const
-  {
-    if (value == error::already_open)
-      return "Already open";
-    if (value == error::eof)
-      return "End of file";
-    if (value == error::not_found)
-      return "Element not found";
-    if (value == error::fd_set_failure)
-      return "The descriptor does not fit into the select call's fd_set";
-    return "asio.misc error";
-  }
-};
-
-} // namespace detail
-
-const boost::system::error_category& get_misc_category()
-{
-  static detail::misc_category instance;
-  return instance;
-}
-
-namespace detail {
-
-class ssl_category : public boost::system::error_category
-{
-public:
-  const char* name() const
-  {
-    return "asio.ssl";
-  }
-
-  std::string message(int) const
-  {
-    return "asio.ssl error";
-  }
-};
-
-} // namespace detail
-
-const boost::system::error_category& get_ssl_category()
-{
-  static detail::ssl_category instance;
-  return instance;
-}
-EOF
-
 sub copy_source_file
 {
   my ($from, $to) = @_;
@@ -307,10 +82,11 @@ sub copy_source_file
 
   # First determine whether the file makes any use of asio::thread.
   my $uses_asio_thread = source_contains_asio_thread_usage($from);
+
   my $includes_asio = source_contains_asio_include($from);
 
-  # Check whether the file includes error handling header files.
-  my $includes_boostify_ecats = source_contains_boostify_error_categories($from);
+  my $is_error_hpp = 0;
+  $is_error_hpp = 1 if ($from =~ /asio\/error\.hpp/);
 
   # Open the files.
   open(my $input, "<$from") or die("Can't open $from for reading");
@@ -367,33 +143,13 @@ sub copy_source_file
       }
       print_line($output, $line, $from, $lineno);
     }
-    elsif ($line =~ /^(# *include )[<"](asio\/detail\/config\.hpp)[>"]$/)
-    {
-      print_line($output, $1 . "<boost/" . $2 . ">", $from, $lineno);
-      if ($includes_boostify_ecats)
-      {
-        $includes_boostify_ecats = 0;
-        print_line($output, $1 . "<boost/cerrno.hpp>", $from, $lineno);
-        print_line($output, $1 . "<boost/system/error_code.hpp>", $from, $lineno);
-      }
-    }
-    elsif ($line =~ /# *include <cerrno>/)
-    {
-      if ($includes_boostify_ecats)
-      {
-        # Line is removed.
-      }
-      else
-      {
-        print_line($output, $line, $from, $lineno);
-      }
-    }
     elsif ($line =~ /# *include [<"]asio\/thread\.hpp[>"]/)
     {
       # Line is removed.
     }
     elsif ($line =~ /(# *include )[<"]asio\/error_code\.hpp[>"]/)
     {
+      print_line($output, $1 . "<boost/cerrno.hpp>", $from, $lineno) if ($is_error_hpp);
       print_line($output, $1 . "<boost/system/error_code.hpp>", $from, $lineno);
     }
     elsif ($line =~ /# *include [<"]asio\/impl\/error_code\.[hi]pp[>"]/)
@@ -408,28 +164,9 @@ sub copy_source_file
     {
       print_line($output, $1 . "<boost/" . $2 . ">" . $3, $from, $lineno);
     }
-    elsif ($line =~ /( *)op->Internal = asio::error::get_system_category\(\);/)
+    elsif ($line =~ /#.*defined\(.*ASIO_HAS_STD_SYSTEM_ERROR\)$/)
     {
-      my $indent = $1;
-      $line =~ s/asio.*$/reinterpret_cast<ulong_ptr_t>(/g;
-      print_line($output, $line, $from, $lineno);
-      $line = $indent . "    &boost::asio::error::get_system_category());";
-      print_line($output, $line, $from, $lineno);
-    }
-    elsif ($line =~ /op->Internal = ec\.category\(\);/)
-    {
-      $line =~ s/ec.*$/reinterpret_cast<ulong_ptr_t>(&ec.category());/g;
-      print_line($output, $line, $from, $lineno);
-    }
-    elsif ($line =~ /static_cast<asio::error_category>\(op->Internal\)\);/)
-    {
-      $line =~ s/static_cast<asio::error_category>/*reinterpret_cast<boost::system::error_category*>/g;
-      print_line($output, $line, $from, $lineno);
-    }
-    elsif ($line =~ /op->Internal = result_ec\.category\(\);/)
-    {
-      $line =~ s/res.*$/reinterpret_cast<ulong_ptr_t>(&result_ec.category());/g;
-      print_line($output, $line, $from, $lineno);
+      # Line is removed.
     }
     elsif ($line =~ /asio::thread/)
     {
@@ -448,21 +185,21 @@ sub copy_source_file
       }
       print_line($output, $1 . "boost::thread" . $2, $from, $lineno);
     }
-    elsif ($line =~ /boostify: error category definitions start here/)
+    elsif ($line =~ /namespace std {/)
     {
-      print($output $error_cat_defns);
-      while ($line = <$input>)
-      {
-        last if $line =~ /boostify: error category definitions end here/;
-      }
+      print_line($output, "namespace boost {", $from, $lineno);
+      print_line($output, "namespace system {", $from, $lineno);
     }
-    elsif ($line =~ /boostify: error category function definitions go here/)
+    elsif ($line =~ /} \/\/ namespace std/)
     {
-      print($output $error_cat_func_defns);
+      print_line($output, "} // namespace system", $from, $lineno);
+      print_line($output, "} // namespace boost", $from, $lineno);
     }
     elsif ($line =~ /asio::/ && !($line =~ /boost::asio::/))
     {
       $line =~ s/asio::error_code/boost::system::error_code/g;
+      $line =~ s/asio::error_category/boost::system::error_category/g;
+      $line =~ s/asio::system_category/boost::system::system_category/g;
       $line =~ s/asio::system_error/boost::system::system_error/g;
       $line =~ s/asio::/boost::asio::/g;
       print_line($output, $line, $from, $lineno);

@@ -16,71 +16,81 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <string>
 
-#if defined(GENERATING_DOCUMENTATION)
-# define ASIO_WIN_OR_POSIX(e_win, e_posix) implementation_defined
-#elif defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-# define ASIO_WIN_OR_POSIX(e_win, e_posix) e_win
-#else
-# define ASIO_WIN_OR_POSIX(e_win, e_posix) e_posix
-#endif
+#if defined(ASIO_HAS_STD_SYSTEM_ERROR)
+# include <system_error>
+#else // defined(ASIO_HAS_STD_SYSTEM_ERROR)
+# include <string>
+# include "asio/detail/noncopyable.hpp"
+# if !defined(BOOST_NO_IOSTREAM)
+#  include <iosfwd>
+# endif // !defined(BOOST_NO_IOSTREAM)
+#endif // defined(ASIO_HAS_STD_SYSTEM_ERROR)
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 
-namespace error
+#if defined(ASIO_HAS_STD_SYSTEM_ERROR)
+
+typedef std::error_category error_category;
+
+#else // defined(ASIO_HAS_STD_SYSTEM_ERROR)
+
+/// Base class for all error categories.
+class error_category : private noncopyable
 {
-  /// Available error code categories.
-  enum error_category
+public:
+  /// Destructor.
+  virtual ~error_category()
   {
-    /// System error codes.
-    system_category = ASIO_WIN_OR_POSIX(0, 0),
+  }
 
-    /// Error codes from NetDB functions.
-    netdb_category = ASIO_WIN_OR_POSIX(system_category, 1),
+  /// Returns a string naming the error gategory.
+  virtual const char* name() const = 0;
 
-    /// Error codes from getaddrinfo.
-    addrinfo_category = ASIO_WIN_OR_POSIX(system_category, 2),
+  /// Returns a string describing the error denoted by @c value.
+  virtual std::string message(int value) const = 0;
 
-    /// Miscellaneous error codes.
-    misc_category = ASIO_WIN_OR_POSIX(3, 3),
+  /// Equality operator to compare two error categories.
+  bool operator==(const error_category& rhs) const
+  {
+    return this == &rhs;
+  }
 
-    /// SSL error codes.
-    ssl_category = ASIO_WIN_OR_POSIX(4, 4)
-  };
+  /// Inequality operator to compare two error categories.
+  bool operator!=(const error_category& rhs) const
+  {
+    return !(*this == rhs);
+  }
+};
 
-  // Category getters.
-  inline error_category get_system_category() { return system_category; }
-  inline error_category get_netdb_category() { return netdb_category; }
-  inline error_category get_addrinfo_category() { return addrinfo_category; }
-  inline error_category get_misc_category() { return misc_category; }
-  inline error_category get_ssl_category() { return ssl_category; }
+#endif // defined(ASIO_HAS_STD_SYSTEM_ERROR)
 
-} // namespace error
+/// Returns the error category used for the system errors produced by asio.
+extern ASIO_DECL const error_category& system_category();
 
-/// Bring error category type into the asio namespace.
-typedef asio::error::error_category error_category;
+#if defined(ASIO_HAS_STD_SYSTEM_ERROR)
+
+typedef std::error_code error_code;
+
+#else // defined(ASIO_HAS_STD_SYSTEM_ERROR)
 
 /// Class to represent an error code value.
 class error_code
 {
 public:
-  /// The underlying representation of an error code.
-  typedef int value_type;
-
   /// Default constructor.
   error_code()
     : value_(0),
-      category_(error::system_category)
+      category_(&system_category())
   {
   }
 
   /// Construct with specific error code and category.
-  error_code(value_type v, error_category c)
+  error_code(int v, const error_category& c)
     : value_(v),
-      category_(c)
+      category_(&c)
   {
   }
 
@@ -92,19 +102,22 @@ public:
   }
 
   /// Get the error value.
-  value_type value() const
+  int value() const
   {
     return value_;
   }
 
   /// Get the error category.
-  error_category category() const
+  const error_category& category() const
   {
-    return category_;
+    return *category_;
   }
 
   /// Get the message associated with the error.
-  ASIO_DECL std::string message() const;
+  std::string message() const
+  {
+    return category_->message(value_);
+  }
 
   struct unspecified_bool_type_t
   {
@@ -143,17 +156,30 @@ public:
 
 private:
   // The value associated with the error code.
-  value_type value_;
+  int value_;
 
   // The category associated with the error code.
-  error_category category_;
+  const error_category* category_;
 };
+
+# if !defined(BOOST_NO_IOSTREAM)
+
+/// Output an error code.
+template <typename Elem, typename Traits>
+std::basic_ostream<Elem, Traits>& operator<<(
+    std::basic_ostream<Elem, Traits>& os, const error_code& ec)
+{
+  os << ec.category().name() << ':' << ec.value();
+  return os;
+}
+
+# endif // !defined(BOOST_NO_IOSTREAM)
+
+#endif // defined(ASIO_HAS_STD_SYSTEM_ERROR)
 
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
-
-#undef ASIO_WIN_OR_POSIX
 
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/impl/error_code.ipp"

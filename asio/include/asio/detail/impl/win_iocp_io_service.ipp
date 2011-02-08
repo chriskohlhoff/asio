@@ -284,7 +284,8 @@ void win_iocp_io_service::on_completion(win_iocp_operation* op,
   op->ready_ = 1;
 
   // Store results in the OVERLAPPED structure.
-  op->Internal = asio::error::get_system_category();
+  op->Internal = reinterpret_cast<ulong_ptr_t>(
+      &asio::error::get_system_category());
   op->Offset = last_error;
   op->OffsetHigh = bytes_transferred;
 
@@ -306,7 +307,7 @@ void win_iocp_io_service::on_completion(win_iocp_operation* op,
   op->ready_ = 1;
 
   // Store results in the OVERLAPPED structure.
-  op->Internal = ec.category();
+  op->Internal = reinterpret_cast<ulong_ptr_t>(&ec.category());
   op->Offset = ec.value();
   op->OffsetHigh = bytes_transferred;
 
@@ -358,7 +359,7 @@ size_t win_iocp_io_service::do_one(bool block, asio::error_code& ec)
       if (completion_key == overlapped_contains_result)
       {
         result_ec = asio::error_code(static_cast<int>(op->Offset),
-            static_cast<asio::error_category>(op->Internal));
+            *reinterpret_cast<asio::error_category*>(op->Internal));
         bytes_transferred = op->OffsetHigh;
       }
 
@@ -366,7 +367,7 @@ size_t win_iocp_io_service::do_one(bool block, asio::error_code& ec)
       // structure.
       else
       {
-        op->Internal = result_ec.category();
+        op->Internal = reinterpret_cast<ulong_ptr_t>(&result_ec.category());
         op->Offset = result_ec.value();
         op->OffsetHigh = bytes_transferred;
       }

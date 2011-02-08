@@ -2,7 +2,7 @@
 // system_error.hpp
 // ~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2011 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -16,15 +16,26 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <boost/scoped_ptr.hpp>
-#include <cerrno>
-#include <exception>
-#include <string>
-#include "asio/error_code.hpp"
+
+#if defined(ASIO_HAS_STD_SYSTEM_ERROR)
+# include <system_error>
+#else // defined(ASIO_HAS_STD_SYSTEM_ERROR)
+# include <boost/scoped_ptr.hpp>
+# include <cerrno>
+# include <exception>
+# include <string>
+# include "asio/error_code.hpp"
+#endif // defined(ASIO_HAS_STD_SYSTEM_ERROR)
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+
+#if defined(ASIO_HAS_STD_SYSTEM_ERROR)
+
+typedef std::system_error system_error;
+
+#else // defined(ASIO_HAS_STD_SYSTEM_ERROR)
 
 /// The system_error class is used to represent system conditions that
 /// prevent the library from operating correctly.
@@ -110,6 +121,8 @@ private:
   // The string representation of the error.
   mutable boost::scoped_ptr<std::string> what_;
 };
+
+#endif // defined(ASIO_HAS_STD_SYSTEM_ERROR)
 
 } // namespace asio
 
