@@ -298,7 +298,7 @@ protected:
 
   // Start the asynchronous read or write operation.
   ASIO_DECL void start_op(base_implementation_type& impl, int op_type,
-      reactor_op* op, bool non_blocking, bool noop);
+      reactor_op* op, bool is_non_blocking, bool noop);
 
   // Start the asynchronous accept operation.
   ASIO_DECL void start_accept_op(base_implementation_type& impl,

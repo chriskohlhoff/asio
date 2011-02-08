@@ -95,9 +95,9 @@ endpoint::endpoint(const asio::ip::address& addr,
   }
 }
 
-void endpoint::resize(std::size_t size)
+void endpoint::resize(std::size_t new_size)
 {
-  if (size > sizeof(asio::detail::sockaddr_storage_type))
+  if (new_size > sizeof(asio::detail::sockaddr_storage_type))
   {
     asio::error_code ec(asio::error::invalid_argument);
     asio::detail::throw_error(ec);

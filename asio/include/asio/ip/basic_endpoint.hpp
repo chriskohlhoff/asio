@@ -77,8 +77,9 @@ public:
    * asio::ip::udp::endpoint ep(asio::ip::udp::v6(), 9876);
    * @endcode
    */
-  basic_endpoint(const InternetProtocol& protocol, unsigned short port_num)
-    : impl_(protocol.family(), port_num)
+  basic_endpoint(const InternetProtocol& internet_protocol,
+      unsigned short port_num)
+    : impl_(internet_protocol.family(), port_num)
   {
   }
 
@@ -130,9 +131,9 @@ public:
   }
 
   /// Set the underlying size of the endpoint in the native type.
-  void resize(std::size_t size)
+  void resize(std::size_t new_size)
   {
-    impl_.resize(size);
+    impl_.resize(new_size);
   }
 
   /// Get the capacity of the endpoint in the native type.

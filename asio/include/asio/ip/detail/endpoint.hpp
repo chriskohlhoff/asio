@@ -77,7 +77,7 @@ public:
   }
 
   // Set the underlying size of the endpoint in the native type.
-  ASIO_DECL void resize(std::size_t size);
+  ASIO_DECL void resize(std::size_t new_size);
 
   // Get the capacity of the endpoint in the native type.
   std::size_t capacity() const

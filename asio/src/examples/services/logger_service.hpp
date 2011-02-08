@@ -33,7 +33,7 @@ public:
   /// The backend implementation of a logger.
   struct logger_impl
   {
-    explicit logger_impl(const std::string& id) : identifier(id) {}
+    explicit logger_impl(const std::string& ident) : identifier(ident) {}
     std::string identifier;
   };
 

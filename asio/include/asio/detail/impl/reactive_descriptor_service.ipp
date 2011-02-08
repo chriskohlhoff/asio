@@ -124,7 +124,7 @@ asio::error_code reactive_descriptor_service::cancel(
 
 void reactive_descriptor_service::start_op(
     reactive_descriptor_service::implementation_type& impl,
-    int op_type, reactor_op* op, bool non_blocking, bool noop)
+    int op_type, reactor_op* op, bool is_non_blocking, bool noop)
 {
   if (!noop)
   {
@@ -133,7 +133,7 @@ void reactive_descriptor_service::start_op(
           impl.descriptor_, impl.state_, true, op->ec_))
     {
       reactor_.start_op(op_type, impl.descriptor_,
-          impl.reactor_data_, op, non_blocking);
+          impl.reactor_data_, op, is_non_blocking);
       return;
     }
   }

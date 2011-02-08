@@ -37,31 +37,31 @@ endpoint::endpoint()
   init("", 0);
 }
 
-endpoint::endpoint(const char* path)
+endpoint::endpoint(const char* path_name)
 {
   using namespace std; // For strlen.
-  init(path, strlen(path));
+  init(path_name, strlen(path_name));
 }
 
-endpoint::endpoint(const std::string& path)
+endpoint::endpoint(const std::string& path_name)
 {
-  init(path.data(), path.length());
+  init(path_name.data(), path_name.length());
 }
 
-void endpoint::resize(std::size_t size)
+void endpoint::resize(std::size_t new_size)
 {
-  if (size > sizeof(asio::detail::sockaddr_un_type))
+  if (new_size > sizeof(asio::detail::sockaddr_un_type))
   {
     asio::error_code ec(asio::error::invalid_argument);
     asio::detail::throw_error(ec);
   }
-  else if (size == 0)
+  else if (new_size == 0)
   {
     path_length_ = 0;
   }
   else
   {
-    path_length_ = size
+    path_length_ = new_size
       - offsetof(asio::detail::sockaddr_un_type, sun_path);
 
     // The path returned by the operating system may be NUL-terminated.
@@ -96,7 +96,7 @@ bool operator<(const endpoint& e1, const endpoint& e2)
   return e1.path() < e2.path();
 }
 
-void endpoint::init(const char* path, std::size_t path_length)
+void endpoint::init(const char* path_name, std::size_t path_length)
 {
   if (path_length > sizeof(data_.local.sun_path) - 1)
   {
@@ -108,7 +108,7 @@ void endpoint::init(const char* path, std::size_t path_length)
   using namespace std; // For memcpy.
   data_.local = asio::detail::sockaddr_un_type();
   data_.local.sun_family = AF_UNIX;
-  memcpy(data_.local.sun_path, path, path_length);
+  memcpy(data_.local.sun_path, path_name, path_length);
   path_length_ = path_length;
 
   // NUL-terminate normal path names. Names that start with a NUL are in the

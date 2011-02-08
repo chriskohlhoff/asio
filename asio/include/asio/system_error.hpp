@@ -44,15 +44,15 @@ class system_error
 {
 public:
   /// Construct with an error code.
-  system_error(const error_code& code)
-    : code_(code),
+  system_error(const error_code& ec)
+    : code_(ec),
       context_()
   {
   }
 
   /// Construct with an error code and context.
-  system_error(const error_code& code, const std::string& context)
-    : code_(code),
+  system_error(const error_code& ec, const std::string& context)
+    : code_(ec),
       context_(context)
   {
   }

@@ -65,14 +65,14 @@ public:
   }
 
   /// Construct an endpoint using the specified path name.
-  basic_endpoint(const char* path)
-    : impl_(path)
+  basic_endpoint(const char* path_name)
+    : impl_(path_name)
   {
   }
 
   /// Construct an endpoint using the specified path name.
-  basic_endpoint(const std::string& path)
-    : impl_(path)
+  basic_endpoint(const std::string& path_name)
+    : impl_(path_name)
   {
   }
 
@@ -114,9 +114,9 @@ public:
   }
 
   /// Set the underlying size of the endpoint in the native type.
-  void resize(std::size_t size)
+  void resize(std::size_t new_size)
   {
-    impl_.resize(size);
+    impl_.resize(new_size);
   }
 
   /// Get the capacity of the endpoint in the native type.

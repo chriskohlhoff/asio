@@ -148,7 +148,7 @@ asio::error_code reactive_socket_service_base::do_assign(
 
 void reactive_socket_service_base::start_op(
     reactive_socket_service_base::base_implementation_type& impl,
-    int op_type, reactor_op* op, bool non_blocking, bool noop)
+    int op_type, reactor_op* op, bool is_non_blocking, bool noop)
 {
   if (!noop)
   {
@@ -157,7 +157,7 @@ void reactive_socket_service_base::start_op(
           impl.socket_, impl.state_, true, op->ec_))
     {
       reactor_.start_op(op_type, impl.socket_,
-          impl.reactor_data_, op, non_blocking);
+          impl.reactor_data_, op, is_non_blocking);
       return;
     }
   }

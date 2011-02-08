@@ -158,18 +158,17 @@ public:
   void wait(implementation_type& impl, asio::error_code& ec)
   {
     time_type now = Time_Traits::now();
-    while (Time_Traits::less_than(now, impl.expiry))
+    ec = asio::error_code();
+    while (Time_Traits::less_than(now, impl.expiry) && !ec)
     {
       boost::posix_time::time_duration timeout =
         Time_Traits::to_posix_duration(Time_Traits::subtract(impl.expiry, now));
       ::timeval tv;
       tv.tv_sec = timeout.total_seconds();
       tv.tv_usec = timeout.total_microseconds() % 1000000;
-      asio::error_code ec;
       socket_ops::select(0, 0, 0, 0, &tv, ec);
       now = Time_Traits::now();
     }
-    ec = asio::error_code();
   }
 
   // Start an asynchronous wait on the timer.

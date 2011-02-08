@@ -95,9 +95,9 @@ public:
 
 private:
   // Construct with a specific family.
-  explicit icmp(int protocol, int family)
-    : protocol_(protocol),
-      family_(family)
+  explicit icmp(int protocol_id, int protocol_family)
+    : protocol_(protocol_id),
+      family_(protocol_family)
   {
   }
 

@@ -56,11 +56,11 @@ std::size_t read_until(SyncReadStream& s,
     typedef asio::buffers_iterator<const_buffers_type> iterator;
     const_buffers_type buffers = b.data();
     iterator begin = iterator::begin(buffers);
-    iterator start = begin + search_position;
+    iterator start_pos = begin + search_position;
     iterator end = iterator::end(buffers);
 
     // Look for a match.
-    iterator iter = std::find(start, end, delim);
+    iterator iter = std::find(start_pos, end, delim);
     if (iter != end)
     {
       // Found a match. We're done.
@@ -147,12 +147,12 @@ std::size_t read_until(SyncReadStream& s,
     typedef asio::buffers_iterator<const_buffers_type> iterator;
     const_buffers_type buffers = b.data();
     iterator begin = iterator::begin(buffers);
-    iterator start = begin + search_position;
+    iterator start_pos = begin + search_position;
     iterator end = iterator::end(buffers);
 
     // Look for a match.
     std::pair<iterator, bool> result = detail::partial_search(
-        start, end, delim.begin(), delim.end());
+        start_pos, end, delim.begin(), delim.end());
     if (result.first != end)
     {
       if (result.second)
@@ -212,14 +212,14 @@ std::size_t read_until(SyncReadStream& s,
     typedef asio::buffers_iterator<const_buffers_type> iterator;
     const_buffers_type buffers = b.data();
     iterator begin = iterator::begin(buffers);
-    iterator start = begin + search_position;
+    iterator start_pos = begin + search_position;
     iterator end = iterator::end(buffers);
 
     // Look for a match.
     boost::match_results<iterator,
       typename std::vector<boost::sub_match<iterator> >::allocator_type>
         match_results;
-    if (regex_search(start, end, match_results, expr,
+    if (regex_search(start_pos, end, match_results, expr,
           boost::match_default | boost::match_partial))
     {
       if (match_results[0].matched)
@@ -270,11 +270,11 @@ std::size_t read_until(SyncReadStream& s,
     typedef asio::buffers_iterator<const_buffers_type> iterator;
     const_buffers_type buffers = b.data();
     iterator begin = iterator::begin(buffers);
-    iterator start = begin + search_position;
+    iterator start_pos = begin + search_position;
     iterator end = iterator::end(buffers);
 
     // Look for a match.
-    std::pair<iterator, bool> result = match_condition(start, end);
+    std::pair<iterator, bool> result = match_condition(start_pos, end);
     if (result.second)
     {
       // Full match. We're done.
@@ -352,11 +352,11 @@ namespace detail
             typedef asio::buffers_iterator<const_buffers_type> iterator;
             const_buffers_type buffers = streambuf_.data();
             iterator begin = iterator::begin(buffers);
-            iterator start = begin + search_position_;
+            iterator start_pos = begin + search_position_;
             iterator end = iterator::end(buffers);
 
             // Look for a match.
-            iterator iter = std::find(start, end, delim_);
+            iterator iter = std::find(start_pos, end, delim_);
             if (iter != end)
             {
               // Found a match. We're done.
@@ -489,12 +489,12 @@ namespace detail
             typedef asio::buffers_iterator<const_buffers_type> iterator;
             const_buffers_type buffers = streambuf_.data();
             iterator begin = iterator::begin(buffers);
-            iterator start = begin + search_position_;
+            iterator start_pos = begin + search_position_;
             iterator end = iterator::end(buffers);
 
             // Look for a match.
             std::pair<iterator, bool> result = detail::partial_search(
-                start, end, delim_.begin(), delim_.end());
+                start_pos, end, delim_.begin(), delim_.end());
             if (result.first != end && result.second)
             {
               // Full match. We're done.
@@ -639,14 +639,14 @@ namespace detail
             typedef asio::buffers_iterator<const_buffers_type> iterator;
             const_buffers_type buffers = streambuf_.data();
             iterator begin = iterator::begin(buffers);
-            iterator start = begin + search_position_;
+            iterator start_pos = begin + search_position_;
             iterator end = iterator::end(buffers);
 
             // Look for a match.
             boost::match_results<iterator,
               typename std::vector<boost::sub_match<iterator> >::allocator_type>
                 match_results;
-            bool match = regex_search(start, end, match_results, expr_,
+            bool match = regex_search(start_pos, end, match_results, expr_,
                 boost::match_default | boost::match_partial);
             if (match && match_results[0].matched)
             {
@@ -794,11 +794,11 @@ namespace detail
             typedef asio::buffers_iterator<const_buffers_type> iterator;
             const_buffers_type buffers = streambuf_.data();
             iterator begin = iterator::begin(buffers);
-            iterator start = begin + search_position_;
+            iterator start_pos = begin + search_position_;
             iterator end = iterator::end(buffers);
 
             // Look for a match.
-            std::pair<iterator, bool> result = match_condition_(start, end);
+            std::pair<iterator, bool> result = match_condition_(start_pos, end);
             if (result.second)
             {
               // Full match. We're done.

@@ -273,8 +273,8 @@ public:
     typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
-    int protocol_type = impl.protocol_.type();
-    p.p = new (p.v) op(impl.socket_, protocol_type,
+    int protocol = impl.protocol_.type();
+    p.p = new (p.v) op(impl.socket_, protocol,
         buffers, sender_endpoint, flags, handler);
 
     start_op(impl,

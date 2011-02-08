@@ -267,7 +267,7 @@ public:
 private:
   // Start the asynchronous operation.
   ASIO_DECL void start_op(implementation_type& impl, int op_type,
-      reactor_op* op, bool non_blocking, bool noop);
+      reactor_op* op, bool is_non_blocking, bool noop);
 
   // The selector that performs event demultiplexing for the service.
   reactor& reactor_;

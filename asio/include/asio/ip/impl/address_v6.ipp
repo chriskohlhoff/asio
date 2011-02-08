@@ -37,8 +37,8 @@ address_v6::address_v6()
 }
 
 address_v6::address_v6(const address_v6::bytes_type& bytes,
-    unsigned long scope_id)
-  : scope_id_(scope_id)
+    unsigned long scope)
+  : scope_id_(scope)
 {
 #if UCHAR_MAX > 0xFF
   for (std::size_t i = 0; i < bytes.size(); ++i)

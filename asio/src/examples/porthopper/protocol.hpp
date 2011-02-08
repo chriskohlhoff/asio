@@ -78,11 +78,12 @@ public:
 
 private:
   // Construct with specified old and new ports.
-  control_request(unsigned short old_port, unsigned short new_port)
+  control_request(unsigned short old_port_number,
+      unsigned short new_port_number)
   {
     std::ostrstream os(data_, control_request_size);
-    os << std::setw(encoded_port_size) << std::hex << old_port;
-    os << std::setw(encoded_port_size) << std::hex << new_port;
+    os << std::setw(encoded_port_size) << std::hex << old_port_number;
+    os << std::setw(encoded_port_size) << std::hex << new_port_number;
   }
 
   // The length in bytes of a control_request and its components.
@@ -109,21 +110,21 @@ public:
   }
 
   // Construct a frame with specified frame number and payload.
-  frame(unsigned long number, const std::string& payload)
+  frame(unsigned long frame_number, const std::string& payload_data)
   {
     std::ostrstream os(data_, frame_size);
-    os << std::setw(encoded_number_size) << std::hex << number;
+    os << std::setw(encoded_number_size) << std::hex << frame_number;
     os << std::setw(payload_size)
-      << std::setfill(' ') << payload.substr(0, payload_size);
+      << std::setfill(' ') << payload_data.substr(0, payload_size);
   }
 
   // Get the frame number.
   unsigned long number() const
   {
     std::istrstream is(data_, encoded_number_size);
-    unsigned long number = 0;
-    is >> std::setw(encoded_number_size) >> std::hex >> number;
-    return number;
+    unsigned long frame_number = 0;
+    is >> std::setw(encoded_number_size) >> std::hex >> frame_number;
+    return frame_number;
   }
 
   // Get the payload data.

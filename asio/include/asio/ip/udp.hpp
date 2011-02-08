@@ -95,8 +95,8 @@ public:
 
 private:
   // Construct with a specific family.
-  explicit udp(int family)
-    : family_(family)
+  explicit udp(int protocol_family)
+    : family_(protocol_family)
   {
   }
 

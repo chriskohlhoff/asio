@@ -56,9 +56,9 @@ public:
     return body_length_;
   }
 
-  void body_length(size_t length)
+  void body_length(size_t new_length)
   {
-    body_length_ = length;
+    body_length_ = new_length;
     if (body_length_ > max_body_length)
       body_length_ = max_body_length;
   }

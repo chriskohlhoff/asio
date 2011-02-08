@@ -139,8 +139,8 @@ public:
 
 private:
   // Construct with a specific family.
-  explicit tcp(int family)
-    : family_(family)
+  explicit tcp(int protocol_family)
+    : family_(protocol_family)
   {
   }
 

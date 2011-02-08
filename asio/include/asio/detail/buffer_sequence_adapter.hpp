@@ -80,11 +80,11 @@ class buffer_sequence_adapter
   : buffer_sequence_adapter_base
 {
 public:
-  explicit buffer_sequence_adapter(const Buffers& buffers)
+  explicit buffer_sequence_adapter(const Buffers& buffer_sequence)
     : count_(0), total_buffer_size_(0)
   {
-    typename Buffers::const_iterator iter = buffers.begin();
-    typename Buffers::const_iterator end = buffers.end();
+    typename Buffers::const_iterator iter = buffer_sequence.begin();
+    typename Buffers::const_iterator end = buffer_sequence.end();
     for (; iter != end && count_ < max_buffers; ++iter, ++count_)
     {
       Buffer buffer(*iter);
@@ -108,10 +108,10 @@ public:
     return total_buffer_size_ == 0;
   }
 
-  static bool all_empty(const Buffers& buffers)
+  static bool all_empty(const Buffers& buffer_sequence)
   {
-    typename Buffers::const_iterator iter = buffers.begin();
-    typename Buffers::const_iterator end = buffers.end();
+    typename Buffers::const_iterator iter = buffer_sequence.begin();
+    typename Buffers::const_iterator end = buffer_sequence.end();
     std::size_t i = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
       if (asio::buffer_size(Buffer(*iter)) > 0)
@@ -119,10 +119,10 @@ public:
     return true;
   }
 
-  static void validate(const Buffers& buffers)
+  static void validate(const Buffers& buffer_sequence)
   {
-    typename Buffers::const_iterator iter = buffers.begin();
-    typename Buffers::const_iterator end = buffers.end();
+    typename Buffers::const_iterator iter = buffer_sequence.begin();
+    typename Buffers::const_iterator end = buffer_sequence.end();
     for (; iter != end; ++iter)
     {
       Buffer buffer(*iter);
@@ -130,10 +130,10 @@ public:
     }
   }
 
-  static Buffer first(const Buffers& buffers)
+  static Buffer first(const Buffers& buffer_sequence)
   {
-    typename Buffers::const_iterator iter = buffers.begin();
-    typename Buffers::const_iterator end = buffers.end();
+    typename Buffers::const_iterator iter = buffer_sequence.begin();
+    typename Buffers::const_iterator end = buffer_sequence.end();
     for (; iter != end; ++iter)
     {
       Buffer buffer(*iter);
@@ -158,10 +158,10 @@ class buffer_sequence_adapter<Buffer, asio::mutable_buffers_1>
 {
 public:
   explicit buffer_sequence_adapter(
-      const asio::mutable_buffers_1& buffers)
+      const asio::mutable_buffers_1& buffer_sequence)
   {
-    init_native_buffer(buffer_, Buffer(buffers));
-    total_buffer_size_ = asio::buffer_size(buffers);
+    init_native_buffer(buffer_, Buffer(buffer_sequence));
+    total_buffer_size_ = asio::buffer_size(buffer_sequence);
   }
 
   native_buffer_type* buffers()
@@ -179,19 +179,19 @@ public:
     return total_buffer_size_ == 0;
   }
 
-  static bool all_empty(const asio::mutable_buffers_1& buffers)
+  static bool all_empty(const asio::mutable_buffers_1& buffer_sequence)
   {
-    return asio::buffer_size(buffers) == 0;
+    return asio::buffer_size(buffer_sequence) == 0;
   }
 
-  static void validate(const asio::mutable_buffers_1& buffers)
+  static void validate(const asio::mutable_buffers_1& buffer_sequence)
   {
-    asio::buffer_cast<const void*>(buffers);
+    asio::buffer_cast<const void*>(buffer_sequence);
   }
 
-  static Buffer first(const asio::mutable_buffers_1& buffers)
+  static Buffer first(const asio::mutable_buffers_1& buffer_sequence)
   {
-    return Buffer(buffers);
+    return Buffer(buffer_sequence);
   }
 
 private:
@@ -205,10 +205,10 @@ class buffer_sequence_adapter<Buffer, asio::const_buffers_1>
 {
 public:
   explicit buffer_sequence_adapter(
-      const asio::const_buffers_1& buffers)
+      const asio::const_buffers_1& buffer_sequence)
   {
-    init_native_buffer(buffer_, Buffer(buffers));
-    total_buffer_size_ = asio::buffer_size(buffers);
+    init_native_buffer(buffer_, Buffer(buffer_sequence));
+    total_buffer_size_ = asio::buffer_size(buffer_sequence);
   }
 
   native_buffer_type* buffers()
@@ -226,19 +226,19 @@ public:
     return total_buffer_size_ == 0;
   }
 
-  static bool all_empty(const asio::const_buffers_1& buffers)
+  static bool all_empty(const asio::const_buffers_1& buffer_sequence)
   {
-    return asio::buffer_size(buffers) == 0;
+    return asio::buffer_size(buffer_sequence) == 0;
   }
 
-  static void validate(const asio::const_buffers_1& buffers)
+  static void validate(const asio::const_buffers_1& buffer_sequence)
   {
-    asio::buffer_cast<const void*>(buffers);
+    asio::buffer_cast<const void*>(buffer_sequence);
   }
 
-  static Buffer first(const asio::const_buffers_1& buffers)
+  static Buffer first(const asio::const_buffers_1& buffer_sequence)
   {
-    return Buffer(buffers);
+    return Buffer(buffer_sequence);
   }
 
 private:

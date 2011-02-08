@@ -37,10 +37,10 @@ public:
   typedef std::size_t size_type;
 
   // Constructor.
-  explicit buffered_stream_storage(std::size_t capacity)
+  explicit buffered_stream_storage(std::size_t buffer_capacity)
     : begin_offset_(0),
       end_offset_(0),
-      buffer_(capacity)
+      buffer_(buffer_capacity)
   {
   }
 

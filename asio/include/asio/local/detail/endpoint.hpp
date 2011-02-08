@@ -38,10 +38,10 @@ public:
   ASIO_DECL endpoint();
 
   // Construct an endpoint using the specified path name.
-  ASIO_DECL endpoint(const char* path);
+  ASIO_DECL endpoint(const char* path_name);
 
   // Construct an endpoint using the specified path name.
-  ASIO_DECL endpoint(const std::string& path);
+  ASIO_DECL endpoint(const std::string& path_name);
 
   // Copy constructor.
   endpoint(const endpoint& other)
