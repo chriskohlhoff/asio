@@ -130,13 +130,13 @@ namespace detail
   {
   public:
     read_op(AsyncReadStream& stream, const MutableBufferSequence& buffers,
-        CompletionCondition completion_condition, ReadHandler handler)
+        CompletionCondition completion_condition, ReadHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         stream_(stream),
         buffers_(buffers),
         total_transferred_(0),
-        handler_(handler)
+        handler_(ASIO_MOVE_CAST(ReadHandler)(handler))
     {
     }
 
@@ -181,13 +181,13 @@ namespace detail
     read_op(AsyncReadStream& stream,
         const asio::mutable_buffers_1& buffers,
         CompletionCondition completion_condition,
-        ReadHandler handler)
+        ReadHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         stream_(stream),
         buffer_(buffers),
         total_transferred_(0),
-        handler_(handler)
+        handler_(ASIO_MOVE_CAST(ReadHandler)(handler))
     {
     }
 
@@ -270,7 +270,10 @@ template <typename AsyncReadStream, typename MutableBufferSequence,
 inline void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
     ReadHandler handler)
 {
-  async_read(s, buffers, transfer_all(), handler);
+  detail::read_op<AsyncReadStream, MutableBufferSequence,
+    detail::transfer_all_t, ReadHandler>(
+      s, buffers, transfer_all(), handler)(
+        asio::error_code(), 0, 1);
 }
 
 #if !defined(BOOST_NO_IOSTREAM)
@@ -285,13 +288,13 @@ namespace detail
   public:
     read_streambuf_op(AsyncReadStream& stream,
         basic_streambuf<Allocator>& streambuf,
-        CompletionCondition completion_condition, ReadHandler handler)
+        CompletionCondition completion_condition, ReadHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         stream_(stream),
         streambuf_(streambuf),
         total_transferred_(0),
-        handler_(handler)
+        handler_(ASIO_MOVE_CAST(ReadHandler)(handler))
     {
     }
 
@@ -374,7 +377,10 @@ template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
 inline void async_read(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, ReadHandler handler)
 {
-  async_read(s, b, transfer_all(), handler);
+  detail::read_streambuf_op<AsyncReadStream,
+    Allocator, detail::transfer_all_t, ReadHandler>(
+      s, b, transfer_all(), handler)(
+        asio::error_code(), 0, 1);
 }
 
 #endif // !defined(BOOST_NO_IOSTREAM)

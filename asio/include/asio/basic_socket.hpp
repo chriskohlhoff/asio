@@ -651,7 +651,8 @@ public:
       }
     }
 
-    this->service.async_connect(this->implementation, peer_endpoint, handler);
+    this->service.async_connect(this->implementation, peer_endpoint,
+        ASIO_MOVE_CAST(ConnectHandler)(handler));
   }
 
   /// Set an option on the socket.

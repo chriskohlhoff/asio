@@ -138,8 +138,8 @@ public:
    * handler object as required. The function signature of the handler must be:
    * @code void handler(); @endcode
    */
-  template <typename Handler>
-  void dispatch(Handler handler)
+  template <typename CompletionHandler>
+  void dispatch(CompletionHandler handler)
   {
     service_.dispatch(impl_, handler);
   }
@@ -160,8 +160,8 @@ public:
    * handler object as required. The function signature of the handler must be:
    * @code void handler(); @endcode
    */
-  template <typename Handler>
-  void post(Handler handler)
+  template <typename CompletionHandler>
+  void post(CompletionHandler handler)
   {
     service_.post(impl_, handler);
   }

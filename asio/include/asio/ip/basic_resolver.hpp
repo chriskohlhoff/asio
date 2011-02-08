@@ -153,7 +153,8 @@ public:
   template <typename ResolveHandler>
   void async_resolve(const query& q, ResolveHandler handler)
   {
-    return this->service.async_resolve(this->implementation, q, handler);
+    return this->service.async_resolve(this->implementation, q,
+        ASIO_MOVE_CAST(ResolveHandler)(handler));
   }
 
   /// Perform reverse resolution of an endpoint to a list of entries.
@@ -237,7 +238,8 @@ public:
   template <typename ResolveHandler>
   void async_resolve(const endpoint_type& e, ResolveHandler handler)
   {
-    return this->service.async_resolve(this->implementation, e, handler);
+    return this->service.async_resolve(this->implementation, e,
+        ASIO_MOVE_CAST(ResolveHandler)(handler));
   }
 };
 

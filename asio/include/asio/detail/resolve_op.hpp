@@ -43,12 +43,12 @@ public:
   typedef asio::ip::basic_resolver_iterator<Protocol> iterator_type;
 
   resolve_op(socket_ops::weak_cancel_token_type cancel_token,
-      const query_type& query, io_service_impl& ios, Handler handler)
+      const query_type& query, io_service_impl& ios, Handler& handler)
     : operation(&resolve_op::do_complete),
       cancel_token_(cancel_token),
       query_(query),
       io_service_impl_(ios),
-      handler_(handler),
+      handler_(ASIO_MOVE_CAST(Handler)(handler)),
       addrinfo_(0)
   {
   }

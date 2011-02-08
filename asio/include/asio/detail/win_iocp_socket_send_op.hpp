@@ -41,11 +41,11 @@ public:
   ASIO_DEFINE_HANDLER_PTR(win_iocp_socket_send_op);
 
   win_iocp_socket_send_op(socket_ops::weak_cancel_token_type cancel_token,
-      const ConstBufferSequence& buffers, Handler handler)
+      const ConstBufferSequence& buffers, Handler& handler)
     : operation(&win_iocp_socket_send_op::do_complete),
       cancel_token_(cancel_token),
       buffers_(buffers),
-      handler_(handler)
+      handler_(ASIO_MOVE_CAST(Handler)(handler))
   {
   }
 

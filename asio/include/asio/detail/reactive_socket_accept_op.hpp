@@ -86,10 +86,10 @@ public:
 
   reactive_socket_accept_op(socket_type socket,
       socket_ops::state_type state, Socket& peer, const Protocol& protocol,
-      typename Protocol::endpoint* peer_endpoint, Handler handler)
+      typename Protocol::endpoint* peer_endpoint, Handler& handler)
     : reactive_socket_accept_op_base<Socket, Protocol>(socket, state, peer,
         protocol, peer_endpoint, &reactive_socket_accept_op::do_complete),
-      handler_(handler)
+      handler_(ASIO_MOVE_CAST(Handler)(handler))
   {
   }
 

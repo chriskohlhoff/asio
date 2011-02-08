@@ -70,10 +70,10 @@ public:
 
   reactive_socket_send_op(socket_type socket,
       const ConstBufferSequence& buffers,
-      socket_base::message_flags flags, Handler handler)
+      socket_base::message_flags flags, Handler& handler)
     : reactive_socket_send_op_base<ConstBufferSequence>(socket,
         buffers, flags, &reactive_socket_send_op::do_complete),
-      handler_(handler)
+      handler_(ASIO_MOVE_CAST(Handler)(handler))
   {
   }
 

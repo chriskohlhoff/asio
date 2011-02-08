@@ -73,10 +73,10 @@ public:
 
   reactive_socket_sendto_op(socket_type socket,
       const ConstBufferSequence& buffers, const Endpoint& endpoint,
-      socket_base::message_flags flags, Handler handler)
+      socket_base::message_flags flags, Handler& handler)
     : reactive_socket_sendto_op_base<ConstBufferSequence, Endpoint>(socket,
         buffers, endpoint, flags, &reactive_socket_sendto_op::do_complete),
-      handler_(handler)
+      handler_(ASIO_MOVE_CAST(Handler)(handler))
   {
   }
 

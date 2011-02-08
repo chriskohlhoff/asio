@@ -325,12 +325,12 @@ namespace detail
   public:
     read_until_delim_op(AsyncReadStream& stream,
         asio::basic_streambuf<Allocator>& streambuf,
-        char delim, ReadHandler handler)
+        char delim, ReadHandler& handler)
       : stream_(stream),
         streambuf_(streambuf),
         delim_(delim),
         search_position_(0),
-        handler_(handler)
+        handler_(ASIO_MOVE_CAST(ReadHandler)(handler))
     {
     }
 
@@ -458,12 +458,12 @@ namespace detail
   public:
     read_until_delim_string_op(AsyncReadStream& stream,
         asio::basic_streambuf<Allocator>& streambuf,
-        const std::string& delim, ReadHandler handler)
+        const std::string& delim, ReadHandler& handler)
       : stream_(stream),
         streambuf_(streambuf),
         delim_(delim),
         search_position_(0),
-        handler_(handler)
+        handler_(ASIO_MOVE_CAST(ReadHandler)(handler))
     {
     }
 
@@ -604,12 +604,12 @@ namespace detail
   public:
     read_until_expr_op(AsyncReadStream& stream,
         asio::basic_streambuf<Allocator>& streambuf,
-        const boost::regex& expr, ReadHandler handler)
+        const boost::regex& expr, ReadHandler& handler)
       : stream_(stream),
         streambuf_(streambuf),
         expr_(expr),
         search_position_(0),
-        handler_(handler)
+        handler_(ASIO_MOVE_CAST(ReadHandler)(handler))
     {
     }
 
@@ -755,12 +755,12 @@ namespace detail
   public:
     read_until_match_op(AsyncReadStream& stream,
         asio::basic_streambuf<Allocator>& streambuf,
-        MatchCondition match_condition, ReadHandler handler)
+        MatchCondition match_condition, ReadHandler& handler)
       : stream_(stream),
         streambuf_(streambuf),
         match_condition_(match_condition),
         search_position_(0),
-        handler_(handler)
+        handler_(ASIO_MOVE_CAST(ReadHandler)(handler))
     {
     }
 

@@ -188,8 +188,8 @@ public:
   void async_write_some_at(boost::uint64_t offset,
       const ConstBufferSequence& buffers, WriteHandler handler)
   {
-    this->service.async_write_some_at(
-        this->implementation, offset, buffers, handler);
+    this->service.async_write_some_at(this->implementation,
+        offset, buffers, ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Read some data from the handle at the specified offset.
@@ -302,8 +302,8 @@ public:
   void async_read_some_at(boost::uint64_t offset,
       const MutableBufferSequence& buffers, ReadHandler handler)
   {
-    this->service.async_read_some_at(
-        this->implementation, offset, buffers, handler);
+    this->service.async_read_some_at(this->implementation,
+        offset, buffers, ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 };
 

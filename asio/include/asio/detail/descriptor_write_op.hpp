@@ -67,10 +67,10 @@ public:
   ASIO_DEFINE_HANDLER_PTR(descriptor_write_op);
 
   descriptor_write_op(int descriptor,
-      const ConstBufferSequence& buffers, Handler handler)
+      const ConstBufferSequence& buffers, Handler& handler)
     : descriptor_write_op_base<ConstBufferSequence>(
         descriptor, buffers, &descriptor_write_op::do_complete),
-      handler_(handler)
+      handler_(ASIO_MOVE_CAST(Handler)(handler))
   {
   }
 

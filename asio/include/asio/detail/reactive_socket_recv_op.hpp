@@ -73,10 +73,10 @@ public:
 
   reactive_socket_recv_op(socket_type socket,
       socket_ops::state_type state, const MutableBufferSequence& buffers,
-      socket_base::message_flags flags, Handler handler)
+      socket_base::message_flags flags, Handler& handler)
     : reactive_socket_recv_op_base<MutableBufferSequence>(socket, state,
         buffers, flags, &reactive_socket_recv_op::do_complete),
-      handler_(handler)
+      handler_(ASIO_MOVE_CAST(Handler)(handler))
   {
   }
 

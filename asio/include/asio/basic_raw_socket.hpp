@@ -244,7 +244,8 @@ public:
   template <typename ConstBufferSequence, typename WriteHandler>
   void async_send(const ConstBufferSequence& buffers, WriteHandler handler)
   {
-    this->service.async_send(this->implementation, buffers, 0, handler);
+    this->service.async_send(this->implementation, buffers, 0,
+        ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Start an asynchronous send on a connected socket.
@@ -279,7 +280,8 @@ public:
   void async_send(const ConstBufferSequence& buffers,
       socket_base::message_flags flags, WriteHandler handler)
   {
-    this->service.async_send(this->implementation, buffers, flags, handler);
+    this->service.async_send(this->implementation, buffers, flags,
+        ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Send raw data to the specified endpoint.
@@ -412,7 +414,7 @@ public:
       const endpoint_type& destination, WriteHandler handler)
   {
     this->service.async_send_to(this->implementation, buffers, destination, 0,
-        handler);
+        ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Start an asynchronous send.
@@ -448,7 +450,7 @@ public:
       WriteHandler handler)
   {
     this->service.async_send_to(this->implementation, buffers, destination,
-        flags, handler);
+        flags, ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Receive some data on a connected socket.
@@ -578,7 +580,8 @@ public:
   template <typename MutableBufferSequence, typename ReadHandler>
   void async_receive(const MutableBufferSequence& buffers, ReadHandler handler)
   {
-    this->service.async_receive(this->implementation, buffers, 0, handler);
+    this->service.async_receive(this->implementation, buffers, 0,
+        ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 
   /// Start an asynchronous receive on a connected socket.
@@ -613,7 +616,8 @@ public:
   void async_receive(const MutableBufferSequence& buffers,
       socket_base::message_flags flags, ReadHandler handler)
   {
-    this->service.async_receive(this->implementation, buffers, flags, handler);
+    this->service.async_receive(this->implementation, buffers, flags,
+        ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 
   /// Receive raw data with the endpoint of the sender.
@@ -746,7 +750,7 @@ public:
       endpoint_type& sender_endpoint, ReadHandler handler)
   {
     this->service.async_receive_from(this->implementation, buffers,
-        sender_endpoint, 0, handler);
+        sender_endpoint, 0, ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 
   /// Start an asynchronous receive.
@@ -784,7 +788,7 @@ public:
       ReadHandler handler)
   {
     this->service.async_receive_from(this->implementation, buffers,
-        sender_endpoint, flags, handler);
+        sender_endpoint, flags, ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 };
 

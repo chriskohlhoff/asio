@@ -30,7 +30,7 @@ class wrapped_handler
 public:
   typedef void result_type;
 
-  wrapped_handler(Dispatcher dispatcher, Handler handler)
+  wrapped_handler(Dispatcher dispatcher, const Handler& handler)
     : dispatcher_(dispatcher),
       handler_(handler)
   {

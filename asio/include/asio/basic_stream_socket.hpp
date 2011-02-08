@@ -263,7 +263,8 @@ public:
   template <typename ConstBufferSequence, typename WriteHandler>
   void async_send(const ConstBufferSequence& buffers, WriteHandler handler)
   {
-    this->service.async_send(this->implementation, buffers, 0, handler);
+    this->service.async_send(this->implementation, buffers, 0,
+        ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Start an asynchronous send.
@@ -307,7 +308,8 @@ public:
   void async_send(const ConstBufferSequence& buffers,
       socket_base::message_flags flags, WriteHandler handler)
   {
-    this->service.async_send(this->implementation, buffers, flags, handler);
+    this->service.async_send(this->implementation, buffers, flags,
+        ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Receive some data on the socket.
@@ -453,7 +455,8 @@ public:
   template <typename MutableBufferSequence, typename ReadHandler>
   void async_receive(const MutableBufferSequence& buffers, ReadHandler handler)
   {
-    this->service.async_receive(this->implementation, buffers, 0, handler);
+    this->service.async_receive(this->implementation, buffers, 0,
+        ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 
   /// Start an asynchronous receive.
@@ -499,7 +502,8 @@ public:
   void async_receive(const MutableBufferSequence& buffers,
       socket_base::message_flags flags, ReadHandler handler)
   {
-    this->service.async_receive(this->implementation, buffers, flags, handler);
+    this->service.async_receive(this->implementation, buffers, flags,
+        ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 
   /// Write some data to the socket.
@@ -600,7 +604,8 @@ public:
   void async_write_some(const ConstBufferSequence& buffers,
       WriteHandler handler)
   {
-    this->service.async_send(this->implementation, buffers, 0, handler);
+    this->service.async_send(this->implementation, buffers, 0,
+        ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Read some data from the socket.
@@ -704,7 +709,8 @@ public:
   void async_read_some(const MutableBufferSequence& buffers,
       ReadHandler handler)
   {
-    this->service.async_receive(this->implementation, buffers, 0, handler);
+    this->service.async_receive(this->implementation, buffers, 0,
+        ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 };
 

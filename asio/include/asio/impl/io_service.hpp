@@ -65,14 +65,14 @@ inline bool has_service(io_service& ios)
 
 namespace asio {
 
-template <typename Handler>
-inline void io_service::dispatch(Handler handler)
+template <typename CompletionHandler>
+inline void io_service::dispatch(CompletionHandler handler)
 {
   impl_.dispatch(handler);
 }
 
-template <typename Handler>
-inline void io_service::post(Handler handler)
+template <typename CompletionHandler>
+inline void io_service::post(CompletionHandler handler)
 {
   impl_.post(handler);
 }

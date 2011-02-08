@@ -116,13 +116,13 @@ namespace detail
   {
   public:
     write_op(AsyncWriteStream& stream, const ConstBufferSequence& buffers,
-        CompletionCondition completion_condition, WriteHandler handler)
+        CompletionCondition completion_condition, WriteHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         stream_(stream),
         buffers_(buffers),
         total_transferred_(0),
-        handler_(handler)
+        handler_(ASIO_MOVE_CAST(WriteHandler)(handler))
     {
     }
 
@@ -167,13 +167,13 @@ namespace detail
     write_op(AsyncWriteStream& stream,
         const asio::mutable_buffers_1& buffers,
         CompletionCondition completion_condition,
-        WriteHandler handler)
+        WriteHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         stream_(stream),
         buffer_(buffers),
         total_transferred_(0),
-        handler_(handler)
+        handler_(ASIO_MOVE_CAST(WriteHandler)(handler))
     {
     }
 
@@ -218,13 +218,13 @@ namespace detail
     write_op(AsyncWriteStream& stream,
         const asio::const_buffers_1& buffers,
         CompletionCondition completion_condition,
-        WriteHandler handler)
+        WriteHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         stream_(stream),
         buffer_(buffers),
         total_transferred_(0),
-        handler_(handler)
+        handler_(ASIO_MOVE_CAST(WriteHandler)(handler))
     {
     }
 
@@ -307,7 +307,10 @@ template <typename AsyncWriteStream, typename ConstBufferSequence,
 inline void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     WriteHandler handler)
 {
-  async_write(s, buffers, transfer_all(), handler);
+  detail::write_op<AsyncWriteStream, ConstBufferSequence,
+    detail::transfer_all_t, WriteHandler>(
+      s, buffers, transfer_all(), handler)(
+        asio::error_code(), 0, 1);
 }
 
 #if !defined(BOOST_NO_IOSTREAM)
@@ -320,9 +323,9 @@ namespace detail
   {
   public:
     write_streambuf_handler(asio::basic_streambuf<Allocator>& streambuf,
-        WriteHandler handler)
+        WriteHandler& handler)
       : streambuf_(streambuf),
-        handler_(handler)
+        handler_(ASIO_MOVE_CAST(WriteHandler)(handler))
     {
     }
 
@@ -384,7 +387,9 @@ template <typename AsyncWriteStream, typename Allocator, typename WriteHandler>
 inline void async_write(AsyncWriteStream& s,
     asio::basic_streambuf<Allocator>& b, WriteHandler handler)
 {
-  async_write(s, b, transfer_all(), handler);
+  async_write(s, b.data(), transfer_all(),
+      detail::write_streambuf_handler<
+        AsyncWriteStream, Allocator, WriteHandler>(b, handler));
 }
 
 #endif // !defined(BOOST_NO_IOSTREAM)

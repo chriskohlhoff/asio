@@ -40,10 +40,10 @@ class win_iocp_handle_write_op : public operation
 public:
   ASIO_DEFINE_HANDLER_PTR(win_iocp_handle_write_op);
 
-  win_iocp_handle_write_op(const ConstBufferSequence& buffers, Handler handler)
+  win_iocp_handle_write_op(const ConstBufferSequence& buffers, Handler& handler)
     : operation(&win_iocp_handle_write_op::do_complete),
       buffers_(buffers),
-      handler_(handler)
+      handler_(ASIO_MOVE_CAST(Handler)(handler))
   {
   }
 

@@ -44,7 +44,7 @@ public:
   win_iocp_socket_accept_op(win_iocp_socket_service_base& socket_service,
       socket_type socket, Socket& peer, const Protocol& protocol,
       typename Protocol::endpoint* peer_endpoint,
-      bool enable_connection_aborted, Handler handler)
+      bool enable_connection_aborted, Handler& handler)
     : operation(&win_iocp_socket_accept_op::do_complete),
       socket_service_(socket_service),
       socket_(socket),
@@ -52,7 +52,7 @@ public:
       protocol_(protocol),
       peer_endpoint_(peer_endpoint),
       enable_connection_aborted_(enable_connection_aborted),
-      handler_(handler)
+      handler_(ASIO_MOVE_CAST(Handler)(handler))
   {
   }
 

@@ -181,7 +181,8 @@ public:
   void async_write_some(const ConstBufferSequence& buffers,
       WriteHandler handler)
   {
-    this->service.async_write_some(this->implementation, buffers, handler);
+    this->service.async_write_some(this->implementation, buffers,
+        ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Read some data from the handle.
@@ -285,7 +286,8 @@ public:
   void async_read_some(const MutableBufferSequence& buffers,
       ReadHandler handler)
   {
-    this->service.async_read_some(this->implementation, buffers, handler);
+    this->service.async_read_some(this->implementation, buffers,
+        ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 };
 

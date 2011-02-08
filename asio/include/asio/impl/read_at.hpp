@@ -141,14 +141,14 @@ namespace detail
   public:
     read_at_op(AsyncRandomAccessReadDevice& device,
         boost::uint64_t offset, const MutableBufferSequence& buffers,
-        CompletionCondition completion_condition, ReadHandler handler)
+        CompletionCondition completion_condition, ReadHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         device_(device),
         offset_(offset),
         buffers_(buffers),
         total_transferred_(0),
-        handler_(handler)
+        handler_(ASIO_MOVE_CAST(ReadHandler)(handler))
     {
     }
 
@@ -194,14 +194,14 @@ namespace detail
   public:
     read_at_op(AsyncRandomAccessReadDevice& device,
         boost::uint64_t offset, const asio::mutable_buffers_1& buffers,
-        CompletionCondition completion_condition, ReadHandler handler)
+        CompletionCondition completion_condition, ReadHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         device_(device),
         offset_(offset),
         buffer_(buffers),
         total_transferred_(0),
-        handler_(handler)
+        handler_(ASIO_MOVE_CAST(ReadHandler)(handler))
     {
     }
 
@@ -289,7 +289,10 @@ inline void async_read_at(AsyncRandomAccessReadDevice& d,
     boost::uint64_t offset, const MutableBufferSequence& buffers,
     ReadHandler handler)
 {
-  async_read_at(d, offset, buffers, transfer_all(), handler);
+  detail::read_at_op<AsyncRandomAccessReadDevice,
+    MutableBufferSequence, detail::transfer_all_t, ReadHandler>(
+      d, offset, buffers, transfer_all(), handler)(
+        asio::error_code(), 0, 1);
 }
 
 #if !defined(BOOST_NO_IOSTREAM)
@@ -304,14 +307,14 @@ namespace detail
   public:
     read_at_streambuf_op(AsyncRandomAccessReadDevice& device,
         boost::uint64_t offset, basic_streambuf<Allocator>& streambuf,
-        CompletionCondition completion_condition, ReadHandler handler)
+        CompletionCondition completion_condition, ReadHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         device_(device),
         offset_(offset),
         streambuf_(streambuf),
         total_transferred_(0),
-        handler_(handler)
+        handler_(ASIO_MOVE_CAST(ReadHandler)(handler))
     {
     }
 
@@ -398,7 +401,10 @@ inline void async_read_at(AsyncRandomAccessReadDevice& d,
     boost::uint64_t offset, asio::basic_streambuf<Allocator>& b,
     ReadHandler handler)
 {
-  async_read_at(d, offset, b, transfer_all(), handler);
+  detail::read_at_streambuf_op<AsyncRandomAccessReadDevice,
+    Allocator, detail::transfer_all_t, ReadHandler>(
+      d, offset, b, transfer_all(), handler)(
+        asio::error_code(), 0, 1);
 }
 
 #endif // !defined(BOOST_NO_IOSTREAM)

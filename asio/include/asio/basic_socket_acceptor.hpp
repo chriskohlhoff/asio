@@ -712,7 +712,8 @@ public:
   void async_accept(basic_socket<protocol_type, SocketService>& peer,
       AcceptHandler handler)
   {
-    this->service.async_accept(this->implementation, peer, 0, handler);
+    this->service.async_accept(this->implementation, peer, 0,
+        ASIO_MOVE_CAST(AcceptHandler)(handler));
   }
 
   /// Accept a new connection and obtain the endpoint of the peer
@@ -813,8 +814,8 @@ public:
   void async_accept(basic_socket<protocol_type, SocketService>& peer,
       endpoint_type& peer_endpoint, AcceptHandler handler)
   {
-    this->service.async_accept(this->implementation,
-        peer, &peer_endpoint, handler);
+    this->service.async_accept(this->implementation, peer,
+        &peer_endpoint, ASIO_MOVE_CAST(AcceptHandler)(handler));
   }
 };
 

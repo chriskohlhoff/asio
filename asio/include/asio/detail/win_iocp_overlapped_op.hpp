@@ -38,9 +38,9 @@ class win_iocp_overlapped_op : public operation
 public:
   ASIO_DEFINE_HANDLER_PTR(win_iocp_overlapped_op);
 
-  win_iocp_overlapped_op(Handler handler)
+  win_iocp_overlapped_op(Handler& handler)
     : operation(&win_iocp_overlapped_op::do_complete),
-      handler_(handler)
+      handler_(ASIO_MOVE_CAST(Handler)(handler))
   {
   }
 

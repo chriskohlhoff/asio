@@ -42,12 +42,12 @@ public:
 
   win_iocp_socket_recv_op(socket_ops::state_type state,
       socket_ops::weak_cancel_token_type cancel_token,
-      const MutableBufferSequence& buffers, Handler handler)
+      const MutableBufferSequence& buffers, Handler& handler)
     : operation(&win_iocp_socket_recv_op::do_complete),
       state_(state),
       cancel_token_(cancel_token),
       buffers_(buffers),
-      handler_(handler)
+      handler_(ASIO_MOVE_CAST(Handler)(handler))
   {
   }
 

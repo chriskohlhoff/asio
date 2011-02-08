@@ -492,7 +492,8 @@ public:
   template <typename WaitHandler>
   void async_wait(WaitHandler handler)
   {
-    this->service.async_wait(this->implementation, handler);
+    this->service.async_wait(this->implementation,
+        ASIO_MOVE_CAST(WaitHandler)(handler));
   }
 };
 

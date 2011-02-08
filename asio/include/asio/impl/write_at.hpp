@@ -125,14 +125,14 @@ namespace detail
   public:
     write_at_op(AsyncRandomAccessWriteDevice& device,
         boost::uint64_t offset, const ConstBufferSequence& buffers,
-        CompletionCondition completion_condition, WriteHandler handler)
+        CompletionCondition completion_condition, WriteHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         device_(device),
         offset_(offset),
         buffers_(buffers),
         total_transferred_(0),
-        handler_(handler)
+        handler_(ASIO_MOVE_CAST(WriteHandler)(handler))
     {
     }
 
@@ -179,14 +179,14 @@ namespace detail
     write_at_op(AsyncRandomAccessWriteDevice& device,
         boost::uint64_t offset, const asio::mutable_buffers_1& buffers,
         CompletionCondition completion_condition,
-        WriteHandler handler)
+        WriteHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         device_(device),
         offset_(offset),
         buffer_(buffers),
         total_transferred_(0),
-        handler_(handler)
+        handler_(ASIO_MOVE_CAST(WriteHandler)(handler))
     {
     }
 
@@ -232,14 +232,14 @@ namespace detail
     write_at_op(AsyncRandomAccessWriteDevice& device,
         boost::uint64_t offset, const asio::const_buffers_1& buffers,
         CompletionCondition completion_condition,
-        WriteHandler handler)
+        WriteHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         device_(device),
         offset_(offset),
         buffer_(buffers),
         total_transferred_(0),
-        handler_(handler)
+        handler_(ASIO_MOVE_CAST(WriteHandler)(handler))
     {
     }
 
@@ -325,7 +325,10 @@ inline void async_write_at(AsyncRandomAccessWriteDevice& d,
     boost::uint64_t offset, const ConstBufferSequence& buffers,
     WriteHandler handler)
 {
-  async_write_at(d, offset, buffers, transfer_all(), handler);
+  detail::write_at_op<AsyncRandomAccessWriteDevice,
+    ConstBufferSequence, detail::transfer_all_t, WriteHandler>(
+      d, offset, buffers, transfer_all(), handler)(
+        asio::error_code(), 0, 1);
 }
 
 #if !defined(BOOST_NO_IOSTREAM)
@@ -339,9 +342,9 @@ namespace detail
   public:
     write_at_streambuf_op(
         asio::basic_streambuf<Allocator>& streambuf,
-        WriteHandler handler)
+        WriteHandler& handler)
       : streambuf_(streambuf),
-        handler_(handler)
+        handler_(ASIO_MOVE_CAST(WriteHandler)(handler))
     {
     }
 
@@ -405,7 +408,9 @@ inline void async_write_at(AsyncRandomAccessWriteDevice& d,
     boost::uint64_t offset, asio::basic_streambuf<Allocator>& b,
     WriteHandler handler)
 {
-  async_write_at(d, offset, b, transfer_all(), handler);
+  async_write_at(d, offset, b.data(), transfer_all(),
+      detail::write_at_streambuf_op<
+        AsyncRandomAccessWriteDevice, Allocator, WriteHandler>(b, handler));
 }
 
 #endif // !defined(BOOST_NO_IOSTREAM)
