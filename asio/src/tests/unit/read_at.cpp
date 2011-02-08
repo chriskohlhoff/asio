@@ -91,26 +91,9 @@ public:
   template <typename Mutable_Buffers>
   size_t read_some_at(boost::uint64_t offset, const Mutable_Buffers& buffers)
   {
-    size_t total_length = 0;
-
-    typename Mutable_Buffers::const_iterator iter = buffers.begin();
-    typename Mutable_Buffers::const_iterator end = buffers.end();
-    for (; iter != end && total_length < next_read_length_; ++iter)
-    {
-      size_t length = asio::buffer_size(*iter);
-      if (length > length_ - offset)
-        length = length_ - offset;
-
-      if (length > next_read_length_ - total_length)
-        length = next_read_length_ - total_length;
-
-      memcpy(asio::buffer_cast<void*>(*iter),
-          data_ + offset, length);
-      offset += length;
-      total_length += length;
-    }
-
-    return total_length;
+    return asio::buffer_copy(buffers,
+        asio::buffer(data_, length_) + offset,
+        next_read_length_);
   }
 
   template <typename Mutable_Buffers>

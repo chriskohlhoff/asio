@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/buffer.hpp"
 #include <boost/assert.hpp>
 #include <cstddef>
 #include <cstring>
@@ -51,15 +52,15 @@ public:
   }
 
   // Return a pointer to the beginning of the unread data.
-  byte_type* data()
+  mutable_buffer data()
   {
-    return &buffer_[0] + begin_offset_;
+    return asio::buffer(buffer_) + begin_offset_;
   }
 
   // Return a pointer to the beginning of the unread data.
-  const byte_type* data() const
+  const_buffer data() const
   {
-    return &buffer_[0] + begin_offset_;
+    return asio::buffer(buffer_) + begin_offset_;
   }
 
   // Is there no unread data in the buffer.

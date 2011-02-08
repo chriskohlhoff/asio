@@ -83,26 +83,9 @@ public:
   template <typename Const_Buffers>
   size_t write_some_at(boost::uint64_t offset, const Const_Buffers& buffers)
   {
-    size_t total_length = 0;
-
-    typename Const_Buffers::const_iterator iter = buffers.begin();
-    typename Const_Buffers::const_iterator end = buffers.end();
-    for (; iter != end && total_length < next_write_length_; ++iter)
-    {
-      size_t length = asio::buffer_size(*iter);
-      if (length > length_ - offset)
-        length = length_ - offset;
-
-      if (length > next_write_length_ - total_length)
-        length = next_write_length_ - total_length;
-
-      memcpy(data_ + offset,
-          asio::buffer_cast<const void*>(*iter), length);
-      offset += length;
-      total_length += length;
-    }
-
-    return total_length;
+    return asio::buffer_copy(
+        asio::buffer(data_, length_) + offset,
+        buffers, next_write_length_);
   }
 
   template <typename Const_Buffers>
