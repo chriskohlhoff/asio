@@ -16,6 +16,7 @@ UNIT_TEST_OBJ = tests/unit/unit_test.o
 UNIT_TEST_EXES = \
 	tests/unit/basic_datagram_socket.exe \
 	tests/unit/basic_deadline_timer.exe \
+	tests/unit/basic_raw_socket.exe \
 	tests/unit/basic_serial_port.exe \
 	tests/unit/basic_socket_acceptor.exe \
 	tests/unit/basic_stream_socket.exe \
@@ -50,6 +51,7 @@ UNIT_TEST_EXES = \
 	tests/unit/is_read_buffered.exe \
 	tests/unit/is_write_buffered.exe \
 	tests/unit/placeholders.exe \
+	tests/unit/raw_socket_service.exe \
 	tests/unit/read.exe \
 	tests/unit/read_at.exe \
 	tests/unit/read_until.exe \

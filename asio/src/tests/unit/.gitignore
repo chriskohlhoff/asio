@@ -9,6 +9,7 @@
 *.tds
 basic_datagram_socket
 basic_deadline_timer
+basic_raw_socket
 basic_serial_port
 basic_socket_acceptor
 basic_stream_socket
@@ -28,6 +29,7 @@ io_service
 is_read_buffered
 is_write_buffered
 placeholders
+raw_socket_service
 read
 read_at
 read_until
