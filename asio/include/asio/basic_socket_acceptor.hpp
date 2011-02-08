@@ -55,8 +55,12 @@ class basic_socket_acceptor
     public socket_base
 {
 public:
+  /// (Deprecated: Use native_handle_type.) The native representation of an
+  /// acceptor.
+  typedef typename SocketAcceptorService::native_handle_type native_type;
+
   /// The native representation of an acceptor.
-  typedef typename SocketAcceptorService::native_type native_type;
+  typedef typename SocketAcceptorService::native_handle_type native_handle_type;
 
   /// The protocol type.
   typedef Protocol protocol_type;
@@ -163,7 +167,7 @@ public:
    * @throws asio::system_error Thrown on failure.
    */
   basic_socket_acceptor(asio::io_service& io_service,
-      const protocol_type& protocol, const native_type& native_acceptor)
+      const protocol_type& protocol, const native_handle_type& native_acceptor)
     : basic_io_object<SocketAcceptorService>(io_service)
   {
     asio::error_code ec;
@@ -229,7 +233,8 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    */
-  void assign(const protocol_type& protocol, const native_type& native_acceptor)
+  void assign(const protocol_type& protocol,
+      const native_handle_type& native_acceptor)
   {
     asio::error_code ec;
     this->service.assign(this->implementation, protocol, native_acceptor, ec);
@@ -247,7 +252,7 @@ public:
    * @param ec Set to indicate what error occurred, if any.
    */
   asio::error_code assign(const protocol_type& protocol,
-      const native_type& native_acceptor, asio::error_code& ec)
+      const native_handle_type& native_acceptor, asio::error_code& ec)
   {
     return this->service.assign(this->implementation,
         protocol, native_acceptor, ec);
@@ -399,7 +404,7 @@ public:
     return this->service.close(this->implementation, ec);
   }
 
-  /// Get the native acceptor representation.
+  /// (Deprecated: Use native_handle().) Get the native acceptor representation.
   /**
    * This function may be used to obtain the underlying representation of the
    * acceptor. This is intended to allow access to native acceptor functionality
@@ -407,7 +412,18 @@ public:
    */
   native_type native()
   {
-    return this->service.native(this->implementation);
+    return this->service.native_handle(this->implementation);
+  }
+
+  /// Get the native acceptor representation.
+  /**
+   * This function may be used to obtain the underlying representation of the
+   * acceptor. This is intended to allow access to native acceptor functionality
+   * that is not otherwise provided.
+   */
+  native_handle_type native_handle()
+  {
+    return this->service.native_handle(this->implementation);
   }
 
   /// Cancel all asynchronous operations associated with the acceptor.

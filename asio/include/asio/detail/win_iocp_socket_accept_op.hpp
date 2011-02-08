@@ -106,7 +106,7 @@ public:
       if (!ec)
       {
         o->peer_.assign(o->protocol_,
-            typename Socket::native_type(
+            typename Socket::native_handle_type(
               o->new_socket_.get(), peer_endpoint), ec);
         if (!ec)
           o->new_socket_.release();

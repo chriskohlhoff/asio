@@ -35,7 +35,7 @@ class win_iocp_serial_port_service
 {
 public:
   // The native type of a serial port.
-  typedef win_iocp_handle_service::native_type native_type;
+  typedef win_iocp_handle_service::native_handle_type native_handle_type;
 
   // The implementation type of the serial port.
   typedef win_iocp_handle_service::implementation_type implementation_type;
@@ -65,9 +65,9 @@ public:
 
   // Assign a native handle to a serial port implementation.
   asio::error_code assign(implementation_type& impl,
-      const native_type& native_handle, asio::error_code& ec)
+      const native_handle_type& handle, asio::error_code& ec)
   {
-    return handle_service_.assign(impl, native_handle, ec);
+    return handle_service_.assign(impl, handle, ec);
   }
 
   // Determine whether the serial port is open.
@@ -84,9 +84,9 @@ public:
   }
 
   // Get the native serial port representation.
-  native_type native(implementation_type& impl)
+  native_handle_type native_handle(implementation_type& impl)
   {
-    return handle_service_.native(impl);
+    return handle_service_.native_handle(impl);
   }
 
   // Cancel all operations associated with the handle.

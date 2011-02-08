@@ -42,8 +42,12 @@ class basic_raw_socket
   : public basic_socket<Protocol, RawSocketService>
 {
 public:
+  /// (Deprecated: Use native_handle_type.) The native representation of a
+  /// socket.
+  typedef typename RawSocketService::native_handle_type native_type;
+
   /// The native representation of a socket.
-  typedef typename RawSocketService::native_type native_type;
+  typedef typename RawSocketService::native_handle_type native_handle_type;
 
   /// The protocol type.
   typedef Protocol protocol_type;
@@ -121,7 +125,7 @@ public:
    * @throws asio::system_error Thrown on failure.
    */
   basic_raw_socket(asio::io_service& io_service,
-      const protocol_type& protocol, const native_type& native_socket)
+      const protocol_type& protocol, const native_handle_type& native_socket)
     : basic_socket<Protocol, RawSocketService>(
         io_service, protocol, native_socket)
   {

@@ -56,11 +56,18 @@ public:
   typedef service_impl_type::implementation_type implementation_type;
 #endif
 
-  /// The native handle type.
+  /// (Deprecated: Use native_handle_type.) The native handle type.
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined native_type;
 #else
-  typedef service_impl_type::native_type native_type;
+  typedef service_impl_type::native_handle_type native_type;
+#endif
+
+  /// The native handle type.
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined native_handle_type;
+#else
+  typedef service_impl_type::native_handle_type native_handle_type;
 #endif
 
   /// Construct a new stream handle service for the specified io_service.
@@ -90,9 +97,9 @@ public:
 
   /// Assign an existing native handle to a stream handle.
   asio::error_code assign(implementation_type& impl,
-      const native_type& native_handle, asio::error_code& ec)
+      const native_handle_type& handle, asio::error_code& ec)
   {
-    return service_impl_.assign(impl, native_handle, ec);
+    return service_impl_.assign(impl, handle, ec);
   }
 
   /// Determine whether the handle is open.
@@ -108,10 +115,16 @@ public:
     return service_impl_.close(impl, ec);
   }
 
-  /// Get the native handle implementation.
+  /// (Deprecated: Use native_handle().) Get the native handle implementation.
   native_type native(implementation_type& impl)
   {
-    return service_impl_.native(impl);
+    return service_impl_.native_handle(impl);
+  }
+
+  /// Get the native handle implementation.
+  native_handle_type native_handle(implementation_type& impl)
+  {
+    return service_impl_.native_handle(impl);
   }
 
   /// Cancel all asynchronous operations associated with the handle.

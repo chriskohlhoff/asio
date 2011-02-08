@@ -118,7 +118,7 @@ asio::error_code reactive_socket_service_base::do_open(
 
 asio::error_code reactive_socket_service_base::do_assign(
     reactive_socket_service_base::base_implementation_type& impl, int type,
-    const reactive_socket_service_base::native_type& native_socket,
+    const reactive_socket_service_base::native_handle_type& native_socket,
     asio::error_code& ec)
 {
   if (is_open(impl))

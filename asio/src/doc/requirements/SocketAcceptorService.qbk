@@ -14,12 +14,12 @@ additional requirements listed below.
 In the table below, `X` denotes a socket acceptor service class for protocol
 [link asio.reference.Protocol `Protocol`], `a` denotes a value of type
 `X`, `b` denotes a value of type `X::implementation_type`, `p` denotes a value
-of type `Protocol`, `n` denotes a value of type `X::native_type`, `e` denotes a
-value of type `Protocol::endpoint`, `ec` denotes a value of type `error_code`,
-`s` denotes a value meeting [link asio.reference.SettableSocketOption
-`SettableSocketOption`] requirements, `g` denotes a value meeting [link
-asio.reference.GettableSocketOption `GettableSocketOption`]
-requirements, `i` denotes a value meeting [link
+of type `Protocol`, `n` denotes a value of type `X::native_handle_type`, `e`
+denotes a value of type `Protocol::endpoint`, `ec` denotes a value of type
+`error_code`, `s` denotes a value meeting [link
+asio.reference.SettableSocketOption `SettableSocketOption`] requirements, `g`
+denotes a value meeting [link asio.reference.GettableSocketOption
+`GettableSocketOption`] requirements, `i` denotes a value meeting [link
 asio.reference.IoControlCommand `IoControlCommand`] requirements, `k`
 denotes a value of type `basic_socket<Protocol, SocketService>` where
 `SocketService` is a type meeting [link asio.reference.SocketService
@@ -30,7 +30,7 @@ and `v` denote identifiers.
 [table SocketAcceptorService requirements
   [[expression] [return type] [assertion/note\npre/post-condition]]
   [
-    [`X::native_type`]
+    [`X::native_handle_type`]
     []
     [
       The implementation-defined native representation of a socket acceptor.
@@ -108,9 +108,9 @@ and `v` denote identifiers.
   ]
   [
     [``
-      a.native(b);
+      a.native_handle(b);
     ``]
-    [`X::native_type`]
+    [`X::native_handle_type`]
     [
     ]
   ]

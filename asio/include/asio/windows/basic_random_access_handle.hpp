@@ -46,8 +46,13 @@ class basic_random_access_handle
   : public basic_handle<RandomAccessHandleService>
 {
 public:
+  /// (Deprecated: Use native_handle_type.) The native representation of a
+  /// handle.
+  typedef typename RandomAccessHandleService::native_handle_type native_type;
+
   /// The native representation of a handle.
-  typedef typename RandomAccessHandleService::native_type native_type;
+  typedef typename RandomAccessHandleService::native_handle_type
+    native_handle_type;
 
   /// Construct a basic_random_access_handle without opening it.
   /**
@@ -72,13 +77,13 @@ public:
    * use to dispatch handlers for any asynchronous operations performed on the
    * handle.
    *
-   * @param native_handle The new underlying handle implementation.
+   * @param handle The new underlying handle implementation.
    *
    * @throws asio::system_error Thrown on failure.
    */
   basic_random_access_handle(asio::io_service& io_service,
-      const native_type& native_handle)
-    : basic_handle<RandomAccessHandleService>(io_service, native_handle)
+      const native_handle_type& handle)
+    : basic_handle<RandomAccessHandleService>(io_service, handle)
   {
   }
 

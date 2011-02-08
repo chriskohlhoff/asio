@@ -13,13 +13,13 @@ additional requirements listed below.
 
 In the table below, `X` denotes a handle service class, `a` denotes a value of
 type `X`, `b` denotes a value of type `X::implementation_type`, `n` denotes a
-value of type `X::native_type`, `ec` denotes a value of type `error_code`, and
-`u` and `v` denote identifiers.
+value of type `X::native_handle_type`, `ec` denotes a value of type
+`error_code`, and `u` and `v` denote identifiers.
 
 [table HandleService requirements
   [[expression] [return type] [assertion/note\npre/post-condition]]
   [
-    [`X::native_type`]
+    [`X::native_handle_type`]
     []
     [
       The implementation-defined native representation of a handle. Must
@@ -87,9 +87,9 @@ value of type `X::native_type`, `ec` denotes a value of type `error_code`, and
   ]
   [
     [``
-      a.native(b);
+      a.native_handle(b);
     ``]
-    [`X::native_type`]
+    [`X::native_handle_type`]
     [
     ]
   ]

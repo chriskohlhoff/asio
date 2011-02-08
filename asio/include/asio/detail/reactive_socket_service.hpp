@@ -55,7 +55,7 @@ public:
   typedef typename Protocol::endpoint endpoint_type;
 
   // The native type of a socket.
-  typedef socket_type native_type;
+  typedef socket_type native_handle_type;
 
   // The implementation type of the socket.
   struct implementation_type :
@@ -89,7 +89,7 @@ public:
 
   // Assign a native socket to a socket implementation.
   asio::error_code assign(implementation_type& impl,
-      const protocol_type& protocol, const native_type& native_socket,
+      const protocol_type& protocol, const native_handle_type& native_socket,
       asio::error_code& ec)
   {
     if (!do_assign(impl, protocol.type(), native_socket, ec))
@@ -98,7 +98,7 @@ public:
   }
 
   // Get the native socket representation.
-  native_type native(implementation_type& impl)
+  native_handle_type native_handle(implementation_type& impl)
   {
     return impl.socket_;
   }

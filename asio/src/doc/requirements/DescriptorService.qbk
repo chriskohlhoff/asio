@@ -13,14 +13,14 @@ additional requirements listed below.
 
 In the table below, `X` denotes a descriptor service class, `a` denotes a value
 of type `X`, `b` denotes a value of type `X::implementation_type`, `n` denotes
-a value of type `X::native_type`, `ec` denotes a value of type `error_code`,
-`i` denotes a value meeting [link asio.reference.IoControlCommand
+a value of type `X::native_handle_type`, `ec` denotes a value of type
+`error_code`, `i` denotes a value meeting [link asio.reference.IoControlCommand
 `IoControlCommand`] requirements, and `u` and `v` denote identifiers.
 
 [table DescriptorService requirements
   [[expression] [return type] [assertion/note\npre/post-condition]]
   [
-    [`X::native_type`]
+    [`X::native_handle_type`]
     []
     [
       The implementation-defined native representation of a descriptor. Must
@@ -88,9 +88,9 @@ a value of type `X::native_type`, `ec` denotes a value of type `error_code`,
   ]
   [
     [``
-      a.native(b);
+      a.native_handle(b);
     ``]
-    [`X::native_type`]
+    [`X::native_handle_type`]
     [
     ]
   ]

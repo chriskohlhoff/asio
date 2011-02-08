@@ -41,7 +41,7 @@ public:
   typedef typename service_impl_type::implementation_type implementation_type;
 
   /// The native type of a stream socket.
-  typedef typename service_impl_type::native_type native_type;
+  typedef typename service_impl_type::native_handle_type native_handle_type;
 
   /// Construct a new stream socket service for the specified io_service.
   explicit stream_socket_service(asio::io_service& io_service)
@@ -78,7 +78,7 @@ public:
 
   /// Open a stream socket from an existing native socket.
   asio::error_code assign(implementation_type& impl,
-      const protocol_type& protocol, const native_type& native_socket,
+      const protocol_type& protocol, const native_handle_type& native_socket,
       asio::error_code& ec)
   {
     logger_.log("Assigning from a native socket");

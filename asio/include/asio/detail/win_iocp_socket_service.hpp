@@ -60,16 +60,16 @@ public:
   typedef typename Protocol::endpoint endpoint_type;
 
   // The native type of a socket.
-  class native_type
+  class native_handle_type
   {
   public:
-    native_type(socket_type s)
+    native_handle_type(socket_type s)
       : socket_(s),
         have_remote_endpoint_(false)
     {
     }
 
-    native_type(socket_type s, const endpoint_type& ep)
+    native_handle_type(socket_type s, const endpoint_type& ep)
       : socket_(s),
         have_remote_endpoint_(true),
         remote_endpoint_(ep)
@@ -148,7 +148,7 @@ public:
 
   // Assign a native socket to a socket implementation.
   asio::error_code assign(implementation_type& impl,
-      const protocol_type& protocol, const native_type& native_socket,
+      const protocol_type& protocol, const native_handle_type& native_socket,
       asio::error_code& ec)
   {
     if (!do_assign(impl, protocol.type(), native_socket, ec))
@@ -161,11 +161,11 @@ public:
   }
 
   // Get the native socket representation.
-  native_type native(implementation_type& impl)
+  native_handle_type native_handle(implementation_type& impl)
   {
     if (impl.have_remote_endpoint_)
-      return native_type(impl.socket_, impl.remote_endpoint_);
-    return native_type(impl.socket_);
+      return native_handle_type(impl.socket_, impl.remote_endpoint_);
+    return native_handle_type(impl.socket_);
   }
 
   // Bind the socket to the specified local endpoint.

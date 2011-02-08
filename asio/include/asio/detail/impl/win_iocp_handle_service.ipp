@@ -118,7 +118,7 @@ void win_iocp_handle_service::destroy(
 
 asio::error_code win_iocp_handle_service::assign(
     win_iocp_handle_service::implementation_type& impl,
-    const native_type& native_handle, asio::error_code& ec)
+    const native_handle_type& handle, asio::error_code& ec)
 {
   if (is_open(impl))
   {
@@ -126,10 +126,10 @@ asio::error_code win_iocp_handle_service::assign(
     return ec;
   }
 
-  if (iocp_service_.register_handle(native_handle, ec))
+  if (iocp_service_.register_handle(handle, ec))
     return ec;
 
-  impl.handle_ = native_handle;
+  impl.handle_ = handle;
   ec = asio::error_code();
   return ec;
 }

@@ -112,7 +112,7 @@ asio::error_code reactive_serial_port_service::do_set_option(
   termios ios;
   errno = 0;
   descriptor_ops::error_wrapper(::tcgetattr(
-        descriptor_service_.native(impl), &ios), ec);
+        descriptor_service_.native_handle(impl), &ios), ec);
   if (ec)
     return ec;
 
@@ -121,7 +121,7 @@ asio::error_code reactive_serial_port_service::do_set_option(
 
   errno = 0;
   descriptor_ops::error_wrapper(::tcsetattr(
-        descriptor_service_.native(impl), TCSANOW, &ios), ec);
+        descriptor_service_.native_handle(impl), TCSANOW, &ios), ec);
   return ec;
 }
 
@@ -133,7 +133,7 @@ asio::error_code reactive_serial_port_service::do_get_option(
   termios ios;
   errno = 0;
   descriptor_ops::error_wrapper(::tcgetattr(
-        descriptor_service_.native(impl), &ios), ec);
+        descriptor_service_.native_handle(impl), &ios), ec);
   if (ec)
     return ec;
 

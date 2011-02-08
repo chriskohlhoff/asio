@@ -49,8 +49,13 @@ class basic_stream_descriptor
   : public basic_descriptor<StreamDescriptorService>
 {
 public:
+  /// (Deprecated: Use native_handle_type.) The native representation of a
+  /// descriptor.
+  typedef typename StreamDescriptorService::native_handle_type native_type;
+
   /// The native representation of a descriptor.
-  typedef typename StreamDescriptorService::native_type native_type;
+  typedef typename StreamDescriptorService::native_handle_type
+    native_handle_type;
 
   /// Construct a basic_stream_descriptor without opening it.
   /**
@@ -81,7 +86,7 @@ public:
    * @throws asio::system_error Thrown on failure.
    */
   basic_stream_descriptor(asio::io_service& io_service,
-      const native_type& native_descriptor)
+      const native_handle_type& native_descriptor)
     : basic_descriptor<StreamDescriptorService>(io_service, native_descriptor)
   {
   }

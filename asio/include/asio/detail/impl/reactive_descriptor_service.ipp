@@ -57,7 +57,7 @@ void reactive_descriptor_service::destroy(
 
 asio::error_code reactive_descriptor_service::assign(
     reactive_descriptor_service::implementation_type& impl,
-    const native_type& native_descriptor, asio::error_code& ec)
+    const native_handle_type& native_descriptor, asio::error_code& ec)
 {
   if (is_open(impl))
   {

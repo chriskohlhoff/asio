@@ -56,11 +56,18 @@ public:
   typedef service_impl_type::implementation_type implementation_type;
 #endif
 
-  /// The native descriptor type.
+  /// (Deprecated: Use native_handle_type.) The native descriptor type.
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined native_type;
 #else
-  typedef service_impl_type::native_type native_type;
+  typedef service_impl_type::native_handle_type native_type;
+#endif
+
+  /// The native descriptor type.
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined native_handle_type;
+#else
+  typedef service_impl_type::native_handle_type native_handle_type;
 #endif
 
   /// Construct a new stream descriptor service for the specified io_service.
@@ -90,7 +97,8 @@ public:
 
   /// Assign an existing native descriptor to a stream descriptor.
   asio::error_code assign(implementation_type& impl,
-      const native_type& native_descriptor, asio::error_code& ec)
+      const native_handle_type& native_descriptor,
+      asio::error_code& ec)
   {
     return service_impl_.assign(impl, native_descriptor, ec);
   }
@@ -108,10 +116,17 @@ public:
     return service_impl_.close(impl, ec);
   }
 
-  /// Get the native descriptor implementation.
+  /// (Deprecated: Use native_handle().) Get the native descriptor
+  /// implementation.
   native_type native(implementation_type& impl)
   {
-    return service_impl_.native(impl);
+    return service_impl_.native_handle(impl);
+  }
+
+  /// Get the native descriptor implementation.
+  native_handle_type native_handle(implementation_type& impl)
+  {
+    return service_impl_.native_handle(impl);
   }
 
   /// Cancel all asynchronous operations associated with the descriptor.

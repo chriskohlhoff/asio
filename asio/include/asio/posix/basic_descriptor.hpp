@@ -45,8 +45,12 @@ class basic_descriptor
     public descriptor_base
 {
 public:
+  /// (Deprecated: Use native_handle_type.) The native representation of a
+  /// descriptor.
+  typedef typename DescriptorService::native_handle_type native_type;
+
   /// The native representation of a descriptor.
-  typedef typename DescriptorService::native_type native_type;
+  typedef typename DescriptorService::native_handle_type native_handle_type;
 
   /// A basic_descriptor is always the lowest layer.
   typedef basic_descriptor<DescriptorService> lowest_layer_type;
@@ -78,7 +82,7 @@ public:
    * @throws asio::system_error Thrown on failure.
    */
   basic_descriptor(asio::io_service& io_service,
-      const native_type& native_descriptor)
+      const native_handle_type& native_descriptor)
     : basic_io_object<DescriptorService>(io_service)
   {
     asio::error_code ec;
@@ -122,7 +126,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    */
-  void assign(const native_type& native_descriptor)
+  void assign(const native_handle_type& native_descriptor)
   {
     asio::error_code ec;
     this->service.assign(this->implementation, native_descriptor, ec);
@@ -137,7 +141,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    */
-  asio::error_code assign(const native_type& native_descriptor,
+  asio::error_code assign(const native_handle_type& native_descriptor,
       asio::error_code& ec)
   {
     return this->service.assign(this->implementation, native_descriptor, ec);
@@ -177,7 +181,8 @@ public:
     return this->service.close(this->implementation, ec);
   }
 
-  /// Get the native descriptor representation.
+  /// (Deprecated: Use native_handle().) Get the native descriptor
+  /// representation.
   /**
    * This function may be used to obtain the underlying representation of the
    * descriptor. This is intended to allow access to native descriptor
@@ -185,7 +190,18 @@ public:
    */
   native_type native()
   {
-    return this->service.native(this->implementation);
+    return this->service.native_handle(this->implementation);
+  }
+
+  /// Get the native descriptor representation.
+  /**
+   * This function may be used to obtain the underlying representation of the
+   * descriptor. This is intended to allow access to native descriptor
+   * functionality that is not otherwise provided.
+   */
+  native_handle_type native_handle()
+  {
+    return this->service.native_handle(this->implementation);
   }
 
   /// Cancel all asynchronous operations associated with the descriptor.

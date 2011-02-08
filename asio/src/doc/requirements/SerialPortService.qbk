@@ -14,8 +14,8 @@ additional requirements listed below.
 In the table below, `X` denotes a serial port service class, `a` denotes a
 value of type `X`, `d` denotes a serial port device name of type `std::string`,
 `b` denotes a value of type `X::implementation_type`, `n` denotes a value of
-type `X::native_type`, `ec` denotes a value of type `error_code`, `s` denotes a
-value meeting [link asio.reference.SettableSerialPortOption
+type `X::native_handle_type`, `ec` denotes a value of type `error_code`, `s`
+denotes a value meeting [link asio.reference.SettableSerialPortOption
 `SettableSerialPortOption`] requirements, `g` denotes a value meeting [link
 asio.reference.GettableSerialPortOption `GettableSerialPortOption`]
 requirements, `mb` denotes a value satisfying [link
@@ -29,7 +29,7 @@ requirements. and `u` and `v` denote identifiers.
 [table SerialPortService requirements
   [[expression] [return type] [assertion/note\npre/post-condition]]
   [
-    [`X::native_type`]
+    [`X::native_handle_type`]
     []
     [
       The implementation-defined native representation of a serial port. Must
@@ -108,9 +108,9 @@ requirements. and `u` and `v` denote identifiers.
   ]
   [
     [``
-      a.native(b);
+      a.native_handle(b);
     ``]
-    [`X::native_type`]
+    [`X::native_handle_type`]
     [
     ]
   ]

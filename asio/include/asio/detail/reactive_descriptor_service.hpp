@@ -41,7 +41,7 @@ class reactive_descriptor_service
 {
 public:
   // The native type of a descriptor.
-  typedef int native_type;
+  typedef int native_handle_type;
 
   // The implementation type of the descriptor.
   class implementation_type
@@ -84,7 +84,8 @@ public:
 
   // Assign a native descriptor to a descriptor implementation.
   ASIO_DECL asio::error_code assign(implementation_type& impl,
-      const native_type& native_descriptor, asio::error_code& ec);
+      const native_handle_type& native_descriptor,
+      asio::error_code& ec);
 
   // Determine whether the descriptor is open.
   bool is_open(const implementation_type& impl) const
@@ -97,7 +98,7 @@ public:
       asio::error_code& ec);
 
   // Get the native descriptor representation.
-  native_type native(const implementation_type& impl) const
+  native_handle_type native_handle(const implementation_type& impl) const
   {
     return impl.descriptor_;
   }

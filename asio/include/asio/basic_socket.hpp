@@ -41,8 +41,12 @@ class basic_socket
     public socket_base
 {
 public:
+  /// (Deprecated: Use native_handle_type.) The native representation of a
+  /// socket.
+  typedef typename SocketService::native_handle_type native_type;
+
   /// The native representation of a socket.
-  typedef typename SocketService::native_type native_type;
+  typedef typename SocketService::native_handle_type native_handle_type;
 
   /// The protocol type.
   typedef Protocol protocol_type;
@@ -125,7 +129,7 @@ public:
    * @throws asio::system_error Thrown on failure.
    */
   basic_socket(asio::io_service& io_service,
-      const protocol_type& protocol, const native_type& native_socket)
+      const protocol_type& protocol, const native_handle_type& native_socket)
     : basic_io_object<SocketService>(io_service)
   {
     asio::error_code ec;
@@ -217,7 +221,8 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    */
-  void assign(const protocol_type& protocol, const native_type& native_socket)
+  void assign(const protocol_type& protocol,
+      const native_handle_type& native_socket)
   {
     asio::error_code ec;
     this->service.assign(this->implementation, protocol, native_socket, ec);
@@ -235,7 +240,7 @@ public:
    * @param ec Set to indicate what error occurred, if any.
    */
   asio::error_code assign(const protocol_type& protocol,
-      const native_type& native_socket, asio::error_code& ec)
+      const native_handle_type& native_socket, asio::error_code& ec)
   {
     return this->service.assign(this->implementation,
         protocol, native_socket, ec);
@@ -293,7 +298,7 @@ public:
     return this->service.close(this->implementation, ec);
   }
 
-  /// Get the native socket representation.
+  /// (Deprecated: Use native_handle().) Get the native socket representation.
   /**
    * This function may be used to obtain the underlying representation of the
    * socket. This is intended to allow access to native socket functionality
@@ -301,7 +306,18 @@ public:
    */
   native_type native()
   {
-    return this->service.native(this->implementation);
+    return this->service.native_handle(this->implementation);
+  }
+
+  /// Get the native socket representation.
+  /**
+   * This function may be used to obtain the underlying representation of the
+   * socket. This is intended to allow access to native socket functionality
+   * that is not otherwise provided.
+   */
+  native_handle_type native_handle()
+  {
+    return this->service.native_handle(this->implementation);
   }
 
   /// Cancel all asynchronous operations associated with the socket.

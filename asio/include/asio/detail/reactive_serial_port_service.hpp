@@ -38,7 +38,7 @@ class reactive_serial_port_service
 {
 public:
   // The native type of a serial port.
-  typedef reactive_descriptor_service::native_type native_type;
+  typedef reactive_descriptor_service::native_handle_type native_handle_type;
 
   // The implementation type of the serial port.
   typedef reactive_descriptor_service::implementation_type implementation_type;
@@ -67,7 +67,8 @@ public:
 
   // Assign a native descriptor to a serial port implementation.
   asio::error_code assign(implementation_type& impl,
-      const native_type& native_descriptor, asio::error_code& ec)
+      const native_handle_type& native_descriptor,
+      asio::error_code& ec)
   {
     return descriptor_service_.assign(impl, native_descriptor, ec);
   }
@@ -86,9 +87,9 @@ public:
   }
 
   // Get the native serial port representation.
-  native_type native(implementation_type& impl)
+  native_handle_type native_handle(implementation_type& impl)
   {
-    return descriptor_service_.native(impl);
+    return descriptor_service_.native_handle(impl);
   }
 
   // Cancel all operations associated with the serial port.
@@ -124,7 +125,7 @@ public:
   {
     errno = 0;
     descriptor_ops::error_wrapper(::tcsendbreak(
-          descriptor_service_.native(impl), 0), ec);
+          descriptor_service_.native_handle(impl), 0), ec);
     return ec;
   }
 

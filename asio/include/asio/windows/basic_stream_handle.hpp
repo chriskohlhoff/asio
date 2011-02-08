@@ -49,8 +49,12 @@ class basic_stream_handle
   : public basic_handle<StreamHandleService>
 {
 public:
+  /// (Deprecated: Use native_handle_type.) The native representation of a
+  /// handle.
+  typedef typename StreamHandleService::native_handle_type native_type;
+
   /// The native representation of a handle.
-  typedef typename StreamHandleService::native_type native_type;
+  typedef typename StreamHandleService::native_handle_type native_handle_type;
 
   /// Construct a basic_stream_handle without opening it.
   /**
@@ -74,13 +78,13 @@ public:
    * @param io_service The io_service object that the stream handle will use to
    * dispatch handlers for any asynchronous operations performed on the handle.
    *
-   * @param native_handle The new underlying handle implementation.
+   * @param handle The new underlying handle implementation.
    *
    * @throws asio::system_error Thrown on failure.
    */
   basic_stream_handle(asio::io_service& io_service,
-      const native_type& native_handle)
-    : basic_handle<StreamHandleService>(io_service, native_handle)
+      const native_handle_type& handle)
+    : basic_handle<StreamHandleService>(io_service, handle)
   {
   }
 

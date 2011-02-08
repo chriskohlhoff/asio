@@ -43,7 +43,7 @@ class reactive_socket_service_base
 {
 public:
   // The native type of a socket.
-  typedef socket_type native_type;
+  typedef socket_type native_handle_type;
 
   // The implementation type of the socket.
   struct base_implementation_type
@@ -82,7 +82,7 @@ public:
       base_implementation_type& impl, asio::error_code& ec);
 
   // Get the native socket representation.
-  native_type native(base_implementation_type& impl)
+  native_handle_type native_handle(base_implementation_type& impl)
   {
     return impl.socket_;
   }
@@ -123,7 +123,7 @@ public:
     return ec;
   }
 
-  /// Disable sends or receives on the socket.
+  // Disable sends or receives on the socket.
   asio::error_code shutdown(base_implementation_type& impl,
       socket_base::shutdown_type what, asio::error_code& ec)
   {
@@ -266,7 +266,7 @@ protected:
   // Assign a native socket to a socket implementation.
   ASIO_DECL asio::error_code do_assign(
       base_implementation_type& impl, int type,
-      const native_type& native_socket, asio::error_code& ec);
+      const native_handle_type& native_socket, asio::error_code& ec);
 
   // Start the asynchronous read or write operation.
   ASIO_DECL void start_op(base_implementation_type& impl, int op_type,

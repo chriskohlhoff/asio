@@ -126,7 +126,7 @@ asio::error_code win_iocp_serial_port_service::do_set_option(
   ::DCB dcb;
   memset(&dcb, 0, sizeof(DCB));
   dcb.DCBlength = sizeof(DCB);
-  if (!::GetCommState(handle_service_.native(impl), &dcb))
+  if (!::GetCommState(handle_service_.native_handle(impl), &dcb))
   {
     DWORD last_error = ::GetLastError();
     ec = asio::error_code(last_error,
@@ -137,7 +137,7 @@ asio::error_code win_iocp_serial_port_service::do_set_option(
   if (store(option, dcb, ec))
     return ec;
 
-  if (!::SetCommState(handle_service_.native(impl), &dcb))
+  if (!::SetCommState(handle_service_.native_handle(impl), &dcb))
   {
     DWORD last_error = ::GetLastError();
     ec = asio::error_code(last_error,
@@ -159,7 +159,7 @@ asio::error_code win_iocp_serial_port_service::do_get_option(
   ::DCB dcb;
   memset(&dcb, 0, sizeof(DCB));
   dcb.DCBlength = sizeof(DCB);
-  if (!::GetCommState(handle_service_.native(impl), &dcb))
+  if (!::GetCommState(handle_service_.native_handle(impl), &dcb))
   {
     DWORD last_error = ::GetLastError();
     ec = asio::error_code(last_error,

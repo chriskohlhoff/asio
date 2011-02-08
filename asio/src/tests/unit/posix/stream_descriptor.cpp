@@ -86,6 +86,10 @@ void test()
       = descriptor1.native();
     (void)native_descriptor3;
 
+    posix::stream_descriptor::native_handle_type native_descriptor4
+      = descriptor1.native_handle();
+    (void)native_descriptor4;
+
     descriptor1.cancel();
     descriptor1.cancel(ec);
 

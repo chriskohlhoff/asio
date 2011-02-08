@@ -67,11 +67,18 @@ public:
   typedef typename service_impl_type::implementation_type implementation_type;
 #endif
 
-  /// The native socket type.
+  /// (Deprecated: Use native_handle_type.) The native socket type.
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined native_type;
 #else
-  typedef typename service_impl_type::native_type native_type;
+  typedef typename service_impl_type::native_handle_type native_type;
+#endif
+
+  /// The native socket type.
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined native_handle_type;
+#else
+  typedef typename service_impl_type::native_handle_type native_handle_type;
 #endif
 
   /// Construct a new datagram socket service for the specified io_service.
@@ -113,7 +120,7 @@ public:
 
   /// Assign an existing native socket to a datagram socket.
   asio::error_code assign(implementation_type& impl,
-      const protocol_type& protocol, const native_type& native_socket,
+      const protocol_type& protocol, const native_handle_type& native_socket,
       asio::error_code& ec)
   {
     return service_impl_.assign(impl, protocol, native_socket, ec);
@@ -132,10 +139,16 @@ public:
     return service_impl_.close(impl, ec);
   }
 
-  /// Get the native socket implementation.
+  /// (Deprecated: Use native_handle().) Get the native socket implementation.
   native_type native(implementation_type& impl)
   {
-    return service_impl_.native(impl);
+    return service_impl_.native_handle(impl);
+  }
+
+  /// Get the native socket implementation.
+  native_handle_type native_handle(implementation_type& impl)
+  {
+    return service_impl_.native_handle(impl);
   }
 
   /// Cancel all asynchronous operations associated with the socket.

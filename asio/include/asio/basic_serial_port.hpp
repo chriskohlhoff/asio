@@ -48,8 +48,12 @@ class basic_serial_port
     public serial_port_base
 {
 public:
+  /// (Deprecated: Use native_handle_type.) The native representation of a
+  /// serial port.
+  typedef typename SerialPortService::native_handle_type native_type;
+
   /// The native representation of a serial port.
-  typedef typename SerialPortService::native_type native_type;
+  typedef typename SerialPortService::native_handle_type native_handle_type;
 
   /// A basic_serial_port is always the lowest layer.
   typedef basic_serial_port<SerialPortService> lowest_layer_type;
@@ -119,7 +123,7 @@ public:
    * @throws asio::system_error Thrown on failure.
    */
   basic_serial_port(asio::io_service& io_service,
-      const native_type& native_serial_port)
+      const native_handle_type& native_serial_port)
     : basic_io_object<SerialPortService>(io_service)
   {
     asio::error_code ec;
@@ -193,7 +197,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    */
-  void assign(const native_type& native_serial_port)
+  void assign(const native_handle_type& native_serial_port)
   {
     asio::error_code ec;
     this->service.assign(this->implementation, native_serial_port, ec);
@@ -208,7 +212,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    */
-  asio::error_code assign(const native_type& native_serial_port,
+  asio::error_code assign(const native_handle_type& native_serial_port,
       asio::error_code& ec)
   {
     return this->service.assign(this->implementation, native_serial_port, ec);
@@ -248,7 +252,8 @@ public:
     return this->service.close(this->implementation, ec);
   }
 
-  /// Get the native serial port representation.
+  /// (Deprecated: Use native_handle().) Get the native serial port
+  /// representation.
   /**
    * This function may be used to obtain the underlying representation of the
    * serial port. This is intended to allow access to native serial port
@@ -256,7 +261,18 @@ public:
    */
   native_type native()
   {
-    return this->service.native(this->implementation);
+    return this->service.native_handle(this->implementation);
+  }
+
+  /// Get the native serial port representation.
+  /**
+   * This function may be used to obtain the underlying representation of the
+   * serial port. This is intended to allow access to native serial port
+   * functionality that is not otherwise provided.
+   */
+  native_handle_type native_handle()
+  {
+    return this->service.native_handle(this->implementation);
   }
 
   /// Cancel all asynchronous operations associated with the serial port.

@@ -45,8 +45,12 @@ class basic_stream_socket
   : public basic_socket<Protocol, StreamSocketService>
 {
 public:
+  /// (Deprecated: Use native_handle_type.) The native representation of a
+  /// socket.
+  typedef typename StreamSocketService::native_handle_type native_type;
+
   /// The native representation of a socket.
-  typedef typename StreamSocketService::native_type native_type;
+  typedef typename StreamSocketService::native_handle_type native_handle_type;
 
   /// The protocol type.
   typedef Protocol protocol_type;
@@ -122,7 +126,7 @@ public:
    * @throws asio::system_error Thrown on failure.
    */
   basic_stream_socket(asio::io_service& io_service,
-      const protocol_type& protocol, const native_type& native_socket)
+      const protocol_type& protocol, const native_handle_type& native_socket)
     : basic_socket<Protocol, StreamSocketService>(
         io_service, protocol, native_socket)
   {

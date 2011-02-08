@@ -40,7 +40,7 @@ class win_iocp_handle_service
 {
 public:
   // The native type of a stream handle.
-  typedef HANDLE native_type;
+  typedef HANDLE native_handle_type;
 
   // The implementation type of the stream handle.
   class implementation_type
@@ -60,7 +60,7 @@ public:
     friend class win_iocp_handle_service;
 
     // The native stream handle representation.
-    native_type handle_;
+    native_handle_type handle_;
 
     // The ID of the thread from which it is safe to cancel asynchronous
     // operations. 0 means no asynchronous operations have been started yet.
@@ -86,7 +86,7 @@ public:
 
   // Assign a native handle to a handle implementation.
   ASIO_DECL asio::error_code assign(implementation_type& impl,
-      const native_type& native_handle, asio::error_code& ec);
+      const native_handle_type& handle, asio::error_code& ec);
 
   // Determine whether the handle is open.
   bool is_open(const implementation_type& impl) const
@@ -99,7 +99,7 @@ public:
       asio::error_code& ec);
 
   // Get the native handle representation.
-  native_type native(const implementation_type& impl) const
+  native_handle_type native_handle(const implementation_type& impl) const
   {
     return impl.handle_;
   }

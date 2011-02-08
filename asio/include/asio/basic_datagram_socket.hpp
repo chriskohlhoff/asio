@@ -42,8 +42,12 @@ class basic_datagram_socket
   : public basic_socket<Protocol, DatagramSocketService>
 {
 public:
+  /// (Deprecated: Use native_handle_type.) The native representation of a
+  /// socket.
+  typedef typename DatagramSocketService::native_handle_type native_type;
+
   /// The native representation of a socket.
-  typedef typename DatagramSocketService::native_type native_type;
+  typedef typename DatagramSocketService::native_handle_type native_handle_type;
 
   /// The protocol type.
   typedef Protocol protocol_type;
@@ -121,7 +125,7 @@ public:
    * @throws asio::system_error Thrown on failure.
    */
   basic_datagram_socket(asio::io_service& io_service,
-      const protocol_type& protocol, const native_type& native_socket)
+      const protocol_type& protocol, const native_handle_type& native_socket)
     : basic_socket<Protocol, DatagramSocketService>(
         io_service, protocol, native_socket)
   {
