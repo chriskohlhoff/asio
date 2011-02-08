@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/basic_io_object.hpp"
+#include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 #include "asio/ip/basic_resolver_iterator.hpp"
@@ -153,6 +154,11 @@ public:
   template <typename ResolveHandler>
   void async_resolve(const query& q, ResolveHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a ResolveHandler.
+    ASIO_RESOLVE_HANDLER_CHECK(
+        ResolveHandler, handler, iterator) type_check;
+
     return this->service.async_resolve(this->implementation, q,
         ASIO_MOVE_CAST(ResolveHandler)(handler));
   }
@@ -238,6 +244,11 @@ public:
   template <typename ResolveHandler>
   void async_resolve(const endpoint_type& e, ResolveHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a ResolveHandler.
+    ASIO_RESOLVE_HANDLER_CHECK(
+        ResolveHandler, handler, iterator) type_check;
+
     return this->service.async_resolve(this->implementation, e,
         ASIO_MOVE_CAST(ResolveHandler)(handler));
   }

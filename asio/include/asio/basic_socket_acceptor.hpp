@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include "asio/basic_io_object.hpp"
 #include "asio/basic_socket.hpp"
+#include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 #include "asio/socket_acceptor_service.hpp"
@@ -712,6 +713,10 @@ public:
   void async_accept(basic_socket<protocol_type, SocketService>& peer,
       AcceptHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a AcceptHandler.
+    ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
+
     this->service.async_accept(this->implementation, peer, 0,
         ASIO_MOVE_CAST(AcceptHandler)(handler));
   }
@@ -814,6 +819,10 @@ public:
   void async_accept(basic_socket<protocol_type, SocketService>& peer,
       endpoint_type& peer_endpoint, AcceptHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a AcceptHandler.
+    ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
+
     this->service.async_accept(this->implementation, peer,
         &peer_endpoint, ASIO_MOVE_CAST(AcceptHandler)(handler));
   }

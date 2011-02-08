@@ -53,6 +53,7 @@ nobase_include_HEADERS = \
 	asio/detail/gcc_x86_fenced_block.hpp \
 	asio/detail/handler_alloc_helpers.hpp \
 	asio/detail/handler_invoke_helpers.hpp \
+	asio/detail/handler_type_requirements.hpp \
 	asio/detail/hash_map.hpp \
 	asio/detail/impl/descriptor_ops.ipp \
 	asio/detail/impl/dev_poll_reactor.hpp \

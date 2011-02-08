@@ -21,6 +21,7 @@
   || defined(GENERATING_DOCUMENTATION)
 
 #include <cstddef>
+#include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 #include "asio/posix/basic_descriptor.hpp"
@@ -183,6 +184,10 @@ public:
   void async_write_some(const ConstBufferSequence& buffers,
       WriteHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a WriteHandler.
+    ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
     this->service.async_write_some(this->implementation, buffers,
         ASIO_MOVE_CAST(WriteHandler)(handler));
   }
@@ -288,6 +293,10 @@ public:
   void async_read_some(const MutableBufferSequence& buffers,
       ReadHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a ReadHandler.
+    ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
     this->service.async_read_some(this->implementation, buffers,
         ASIO_MOVE_CAST(ReadHandler)(handler));
   }

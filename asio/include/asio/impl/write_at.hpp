@@ -22,6 +22,7 @@
 #include "asio/detail/consuming_buffers.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
+#include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -313,6 +314,10 @@ inline void async_write_at(AsyncRandomAccessWriteDevice& d,
     boost::uint64_t offset, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition, WriteHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a WriteHandler.
+  ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
   detail::write_at_op<AsyncRandomAccessWriteDevice,
     ConstBufferSequence, CompletionCondition, WriteHandler>(
       d, offset, buffers, completion_condition, handler)(
@@ -325,6 +330,10 @@ inline void async_write_at(AsyncRandomAccessWriteDevice& d,
     boost::uint64_t offset, const ConstBufferSequence& buffers,
     WriteHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a WriteHandler.
+  ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
   detail::write_at_op<AsyncRandomAccessWriteDevice,
     ConstBufferSequence, detail::transfer_all_t, WriteHandler>(
       d, offset, buffers, transfer_all(), handler)(
@@ -397,6 +406,10 @@ inline void async_write_at(AsyncRandomAccessWriteDevice& d,
     boost::uint64_t offset, asio::basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition, WriteHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a WriteHandler.
+  ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
   async_write_at(d, offset, b.data(), completion_condition,
       detail::write_at_streambuf_op<
         AsyncRandomAccessWriteDevice, Allocator, WriteHandler>(b, handler));
@@ -408,6 +421,10 @@ inline void async_write_at(AsyncRandomAccessWriteDevice& d,
     boost::uint64_t offset, asio::basic_streambuf<Allocator>& b,
     WriteHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a WriteHandler.
+  ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
   async_write_at(d, offset, b.data(), transfer_all(),
       detail::write_at_streambuf_op<
         AsyncRandomAccessWriteDevice, Allocator, WriteHandler>(b, handler));

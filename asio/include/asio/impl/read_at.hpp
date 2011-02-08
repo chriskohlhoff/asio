@@ -23,6 +23,7 @@
 #include "asio/detail/consuming_buffers.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
+#include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 
@@ -277,6 +278,10 @@ inline void async_read_at(AsyncRandomAccessReadDevice& d,
     boost::uint64_t offset, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition, ReadHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a ReadHandler.
+  ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
   detail::read_at_op<AsyncRandomAccessReadDevice,
     MutableBufferSequence, CompletionCondition, ReadHandler>(
       d, offset, buffers, completion_condition, handler)(
@@ -289,6 +294,10 @@ inline void async_read_at(AsyncRandomAccessReadDevice& d,
     boost::uint64_t offset, const MutableBufferSequence& buffers,
     ReadHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a ReadHandler.
+  ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
   detail::read_at_op<AsyncRandomAccessReadDevice,
     MutableBufferSequence, detail::transfer_all_t, ReadHandler>(
       d, offset, buffers, transfer_all(), handler)(
@@ -389,6 +398,10 @@ inline void async_read_at(AsyncRandomAccessReadDevice& d,
     boost::uint64_t offset, asio::basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition, ReadHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a ReadHandler.
+  ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
   detail::read_at_streambuf_op<AsyncRandomAccessReadDevice,
     Allocator, CompletionCondition, ReadHandler>(
       d, offset, b, completion_condition, handler)(
@@ -401,6 +414,10 @@ inline void async_read_at(AsyncRandomAccessReadDevice& d,
     boost::uint64_t offset, asio::basic_streambuf<Allocator>& b,
     ReadHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a ReadHandler.
+  ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
   detail::read_at_streambuf_op<AsyncRandomAccessReadDevice,
     Allocator, detail::transfer_all_t, ReadHandler>(
       d, offset, b, transfer_all(), handler)(

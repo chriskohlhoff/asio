@@ -23,6 +23,7 @@
 #include "asio/detail/consuming_buffers.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
+#include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 
@@ -259,6 +260,10 @@ template <typename AsyncReadStream, typename MutableBufferSequence,
 inline void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition, ReadHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a ReadHandler.
+  ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
   detail::read_op<AsyncReadStream, MutableBufferSequence,
     CompletionCondition, ReadHandler>(
       s, buffers, completion_condition, handler)(
@@ -270,6 +275,10 @@ template <typename AsyncReadStream, typename MutableBufferSequence,
 inline void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
     ReadHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a ReadHandler.
+  ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
   detail::read_op<AsyncReadStream, MutableBufferSequence,
     detail::transfer_all_t, ReadHandler>(
       s, buffers, transfer_all(), handler)(
@@ -367,6 +376,10 @@ inline void async_read(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition, ReadHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a ReadHandler.
+  ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
   detail::read_streambuf_op<AsyncReadStream,
     Allocator, CompletionCondition, ReadHandler>(
       s, b, completion_condition, handler)(
@@ -377,6 +390,10 @@ template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
 inline void async_read(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, ReadHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a ReadHandler.
+  ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
   detail::read_streambuf_op<AsyncReadStream,
     Allocator, detail::transfer_all_t, ReadHandler>(
       s, b, transfer_all(), handler)(

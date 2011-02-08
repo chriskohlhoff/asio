@@ -22,6 +22,7 @@
 #include "asio/detail/consuming_buffers.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
+#include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -296,6 +297,10 @@ template <typename AsyncWriteStream, typename ConstBufferSequence,
 inline void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition, WriteHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a WriteHandler.
+  ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
   detail::write_op<AsyncWriteStream, ConstBufferSequence,
     CompletionCondition, WriteHandler>(
       s, buffers, completion_condition, handler)(
@@ -307,6 +312,10 @@ template <typename AsyncWriteStream, typename ConstBufferSequence,
 inline void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     WriteHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a WriteHandler.
+  ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
   detail::write_op<AsyncWriteStream, ConstBufferSequence,
     detail::transfer_all_t, WriteHandler>(
       s, buffers, transfer_all(), handler)(
@@ -378,6 +387,10 @@ inline void async_write(AsyncWriteStream& s,
     asio::basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition, WriteHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a WriteHandler.
+  ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
   async_write(s, b.data(), completion_condition,
       detail::write_streambuf_handler<
         AsyncWriteStream, Allocator, WriteHandler>(b, handler));
@@ -387,6 +400,10 @@ template <typename AsyncWriteStream, typename Allocator, typename WriteHandler>
 inline void async_write(AsyncWriteStream& s,
     asio::basic_streambuf<Allocator>& b, WriteHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a WriteHandler.
+  ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
   async_write(s, b.data(), transfer_all(),
       detail::write_streambuf_handler<
         AsyncWriteStream, Allocator, WriteHandler>(b, handler));

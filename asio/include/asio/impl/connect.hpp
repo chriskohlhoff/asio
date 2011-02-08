@@ -19,6 +19,7 @@
 #include "asio/detail/consuming_buffers.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
+#include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 
@@ -266,6 +267,11 @@ template <typename Socket, typename Iterator, typename ComposedConnectHandler>
 inline void async_connect(Socket& s, Iterator begin,
     ComposedConnectHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a ComposedConnectHandler.
+  ASIO_COMPOSED_CONNECT_HANDLER_CHECK(
+      ComposedConnectHandler, handler, Iterator) type_check;
+
   detail::connect_op<Socket, Iterator,
     detail::default_connect_condition, ComposedConnectHandler>(
       s, begin, Iterator(), detail::default_connect_condition(), handler)(
@@ -276,6 +282,11 @@ template <typename Socket, typename Iterator, typename ComposedConnectHandler>
 inline void async_connect(Socket& s, Iterator begin, Iterator end,
     ComposedConnectHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a ComposedConnectHandler.
+  ASIO_COMPOSED_CONNECT_HANDLER_CHECK(
+      ComposedConnectHandler, handler, Iterator) type_check;
+
   detail::connect_op<Socket, Iterator,
     detail::default_connect_condition, ComposedConnectHandler>(
       s, begin, end, detail::default_connect_condition(), handler)(
@@ -287,6 +298,11 @@ template <typename Socket, typename Iterator,
 inline void async_connect(Socket& s, Iterator begin,
     ConnectCondition connect_condition, ComposedConnectHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a ComposedConnectHandler.
+  ASIO_COMPOSED_CONNECT_HANDLER_CHECK(
+      ComposedConnectHandler, handler, Iterator) type_check;
+
   detail::connect_op<Socket, Iterator,
     ConnectCondition, ComposedConnectHandler>(
       s, begin, Iterator(), connect_condition, handler)(
@@ -298,6 +314,11 @@ template <typename Socket, typename Iterator,
 void async_connect(Socket& s, Iterator begin, Iterator end,
     ConnectCondition connect_condition, ComposedConnectHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a ComposedConnectHandler.
+  ASIO_COMPOSED_CONNECT_HANDLER_CHECK(
+      ComposedConnectHandler, handler, Iterator) type_check;
+
   detail::connect_op<Socket, Iterator,
     ConnectCondition, ComposedConnectHandler>(
       s, begin, end, connect_condition, handler)(

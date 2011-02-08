@@ -19,6 +19,7 @@
 #include <cstddef>
 #include "asio/basic_io_object.hpp"
 #include "asio/deadline_timer_service.hpp"
+#include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 
@@ -492,6 +493,10 @@ public:
   template <typename WaitHandler>
   void async_wait(WaitHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a WaitHandler.
+    ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
+
     this->service.async_wait(this->implementation,
         ASIO_MOVE_CAST(WaitHandler)(handler));
   }

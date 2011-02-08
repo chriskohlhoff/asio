@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/basic_io_object.hpp"
+#include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 #include "asio/socket_base.hpp"
@@ -639,6 +640,10 @@ public:
   template <typename ConnectHandler>
   void async_connect(const endpoint_type& peer_endpoint, ConnectHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a ConnectHandler.
+    ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
+
     if (!is_open())
     {
       asio::error_code ec;

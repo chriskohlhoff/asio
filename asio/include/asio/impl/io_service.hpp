@@ -15,6 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/service_registry.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -68,12 +69,20 @@ namespace asio {
 template <typename CompletionHandler>
 inline void io_service::dispatch(CompletionHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a CompletionHandler.
+  ASIO_COMPLETION_HANDLER_CHECK(CompletionHandler, handler) type_check;
+
   impl_.dispatch(handler);
 }
 
 template <typename CompletionHandler>
 inline void io_service::post(CompletionHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a CompletionHandler.
+  ASIO_COMPLETION_HANDLER_CHECK(CompletionHandler, handler) type_check;
+
   impl_.post(handler);
 }
 

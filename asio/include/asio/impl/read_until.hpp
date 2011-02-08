@@ -25,6 +25,7 @@
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
+#include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -444,6 +445,10 @@ template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
 void async_read_until(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, char delim, ReadHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a ReadHandler.
+  ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
   detail::read_until_delim_op<
     AsyncReadStream, Allocator, ReadHandler>(
       s, b, delim, handler)(
@@ -589,6 +594,10 @@ void async_read_until(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, const std::string& delim,
     ReadHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a ReadHandler.
+  ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
   detail::read_until_delim_string_op<
     AsyncReadStream, Allocator, ReadHandler>(
       s, b, delim, handler)(
@@ -740,6 +749,10 @@ void async_read_until(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, const boost::regex& expr,
     ReadHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a ReadHandler.
+  ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
   detail::read_until_expr_op<AsyncReadStream,
     Allocator, boost::regex, ReadHandler>(
       s, b, expr, handler)(
@@ -889,6 +902,10 @@ void async_read_until(AsyncReadStream& s,
     MatchCondition match_condition, ReadHandler handler,
     typename boost::enable_if<is_match_condition<MatchCondition> >::type*)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a ReadHandler.
+  ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
   detail::read_until_match_op<
     AsyncReadStream, Allocator, MatchCondition, ReadHandler>(
       s, b, match_condition, handler)(

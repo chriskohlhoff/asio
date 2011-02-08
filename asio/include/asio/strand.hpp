@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/strand_service.hpp"
 #include "asio/detail/wrapped_handler.hpp"
 #include "asio/io_service.hpp"
@@ -141,6 +142,10 @@ public:
   template <typename CompletionHandler>
   void dispatch(CompletionHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a CompletionHandler.
+    ASIO_COMPLETION_HANDLER_CHECK(CompletionHandler, handler) type_check;
+
     service_.dispatch(impl_, handler);
   }
 
@@ -163,6 +168,10 @@ public:
   template <typename CompletionHandler>
   void post(CompletionHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a CompletionHandler.
+    ASIO_COMPLETION_HANDLER_CHECK(CompletionHandler, handler) type_check;
+
     service_.post(impl_, handler);
   }
 

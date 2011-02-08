@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include <cstddef>
 #include "asio/basic_socket.hpp"
+#include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 #include "asio/raw_socket_service.hpp"
@@ -244,6 +245,10 @@ public:
   template <typename ConstBufferSequence, typename WriteHandler>
   void async_send(const ConstBufferSequence& buffers, WriteHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a WriteHandler.
+    ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
     this->service.async_send(this->implementation, buffers, 0,
         ASIO_MOVE_CAST(WriteHandler)(handler));
   }
@@ -280,6 +285,10 @@ public:
   void async_send(const ConstBufferSequence& buffers,
       socket_base::message_flags flags, WriteHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a WriteHandler.
+    ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
     this->service.async_send(this->implementation, buffers, flags,
         ASIO_MOVE_CAST(WriteHandler)(handler));
   }
@@ -413,6 +422,10 @@ public:
   void async_send_to(const ConstBufferSequence& buffers,
       const endpoint_type& destination, WriteHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a WriteHandler.
+    ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
     this->service.async_send_to(this->implementation, buffers, destination, 0,
         ASIO_MOVE_CAST(WriteHandler)(handler));
   }
@@ -449,6 +462,10 @@ public:
       const endpoint_type& destination, socket_base::message_flags flags,
       WriteHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a WriteHandler.
+    ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
     this->service.async_send_to(this->implementation, buffers, destination,
         flags, ASIO_MOVE_CAST(WriteHandler)(handler));
   }
@@ -580,6 +597,10 @@ public:
   template <typename MutableBufferSequence, typename ReadHandler>
   void async_receive(const MutableBufferSequence& buffers, ReadHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a ReadHandler.
+    ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
     this->service.async_receive(this->implementation, buffers, 0,
         ASIO_MOVE_CAST(ReadHandler)(handler));
   }
@@ -616,6 +637,10 @@ public:
   void async_receive(const MutableBufferSequence& buffers,
       socket_base::message_flags flags, ReadHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a ReadHandler.
+    ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
     this->service.async_receive(this->implementation, buffers, flags,
         ASIO_MOVE_CAST(ReadHandler)(handler));
   }
@@ -749,6 +774,10 @@ public:
   void async_receive_from(const MutableBufferSequence& buffers,
       endpoint_type& sender_endpoint, ReadHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a ReadHandler.
+    ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
     this->service.async_receive_from(this->implementation, buffers,
         sender_endpoint, 0, ASIO_MOVE_CAST(ReadHandler)(handler));
   }
@@ -787,6 +816,10 @@ public:
       endpoint_type& sender_endpoint, socket_base::message_flags flags,
       ReadHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a ReadHandler.
+    ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
     this->service.async_receive_from(this->implementation, buffers,
         sender_endpoint, flags, ASIO_MOVE_CAST(ReadHandler)(handler));
   }
