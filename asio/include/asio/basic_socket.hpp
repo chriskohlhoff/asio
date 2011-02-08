@@ -1015,7 +1015,7 @@ public:
    *       {
    *         // Try the system call.
    *         errno = 0;
-   *         int n = ::sendfile(sock_.native_handle(), fd_, 0, 0);
+   *         int n = ::sendfile(sock_.native_handle(), fd_, ...);
    *         ec = asio::error_code(
    *             n < 0 ? errno : 0,
    *             asio::error::system_category());
@@ -1099,7 +1099,7 @@ public:
    *       {
    *         // Try the system call.
    *         errno = 0;
-   *         int n = ::sendfile(sock_.native_handle(), fd_, 0, 0);
+   *         int n = ::sendfile(sock_.native_handle(), fd_, ...);
    *         ec = asio::error_code(
    *             n < 0 ? errno : 0,
    *             asio::error::system_category());
@@ -1185,7 +1185,7 @@ public:
    *       {
    *         // Try the system call.
    *         errno = 0;
-   *         int n = ::sendfile(sock_.native_handle(), fd_, 0, 0);
+   *         int n = ::sendfile(sock_.native_handle(), fd_, ...);
    *         ec = asio::error_code(
    *             n < 0 ? errno : 0,
    *             asio::error::system_category());
