@@ -441,7 +441,8 @@ public:
     enable_connection_aborted;
 #endif
 
-  /// IO control command to set the blocking mode of the socket.
+  /// (Deprecated: Use non_blocking().) IO control command to
+  /// set the blocking mode of the socket.
   /**
    * Implements the FIONBIO IO control command.
    *

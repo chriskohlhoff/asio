@@ -96,8 +96,7 @@ public:
   void start()
   {
     // Put the socket into non-blocking mode.
-    tcp::socket::non_blocking_io non_blocking_io(true);
-    socket_.io_control(non_blocking_io);
+    socket_.non_blocking(true);
 
     start_operations();
   }

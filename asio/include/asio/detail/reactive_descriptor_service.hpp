@@ -120,6 +120,36 @@ public:
     return ec;
   }
 
+  // Gets the non-blocking mode of the descriptor.
+  bool non_blocking(const implementation_type& impl) const
+  {
+    return (impl.state_ & descriptor_ops::user_set_non_blocking) != 0;
+  }
+
+  // Sets the non-blocking mode of the descriptor.
+  asio::error_code non_blocking(implementation_type& impl,
+      bool mode, asio::error_code& ec)
+  {
+    descriptor_ops::set_user_non_blocking(
+        impl.descriptor_, impl.state_, mode, ec);
+    return ec;
+  }
+
+  // Gets the non-blocking mode of the native descriptor implementation.
+  bool native_non_blocking(const implementation_type& impl) const
+  {
+    return (impl.state_ & descriptor_ops::internal_non_blocking) != 0;
+  }
+
+  // Sets the non-blocking mode of the native descriptor implementation.
+  asio::error_code native_non_blocking(implementation_type& impl,
+      bool mode, asio::error_code& ec)
+  {
+    descriptor_ops::set_internal_non_blocking(
+        impl.descriptor_, impl.state_, mode, ec);
+    return ec;
+  }
+
   // Write some data to the descriptor.
   template <typename ConstBufferSequence>
   size_t write_some(implementation_type& impl,

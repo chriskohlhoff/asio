@@ -141,6 +141,34 @@ public:
     return ec;
   }
 
+  // Gets the non-blocking mode of the socket.
+  bool non_blocking(const base_implementation_type& impl) const
+  {
+    return (impl.state_ & socket_ops::user_set_non_blocking) != 0;
+  }
+
+  // Sets the non-blocking mode of the socket.
+  asio::error_code non_blocking(base_implementation_type& impl,
+      bool mode, asio::error_code& ec)
+  {
+    socket_ops::set_user_non_blocking(impl.socket_, impl.state_, mode, ec);
+    return ec;
+  }
+
+  // Gets the non-blocking mode of the native socket implementation.
+  bool native_non_blocking(const base_implementation_type& impl) const
+  {
+    return (impl.state_ & socket_ops::internal_non_blocking) != 0;
+  }
+
+  // Sets the non-blocking mode of the native socket implementation.
+  asio::error_code native_non_blocking(base_implementation_type& impl,
+      bool mode, asio::error_code& ec)
+  {
+    socket_ops::set_internal_non_blocking(impl.socket_, impl.state_, mode, ec);
+    return ec;
+  }
+
   // Disable sends or receives on the socket.
   asio::error_code shutdown(base_implementation_type& impl,
       socket_base::shutdown_type what, asio::error_code& ec)

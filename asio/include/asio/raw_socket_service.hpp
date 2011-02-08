@@ -218,6 +218,32 @@ public:
     return service_impl_.io_control(impl, command, ec);
   }
 
+  /// Gets the non-blocking mode of the socket.
+  bool non_blocking(const implementation_type& impl) const
+  {
+    return service_impl_.non_blocking(impl);
+  }
+
+  /// Sets the non-blocking mode of the socket.
+  asio::error_code non_blocking(implementation_type& impl,
+      bool mode, asio::error_code& ec)
+  {
+    return service_impl_.non_blocking(impl, mode, ec);
+  }
+
+  /// Gets the non-blocking mode of the native socket implementation.
+  bool native_non_blocking(const implementation_type& impl) const
+  {
+    return service_impl_.native_non_blocking(impl);
+  }
+
+  /// Sets the non-blocking mode of the native socket implementation.
+  asio::error_code native_non_blocking(implementation_type& impl,
+      bool mode, asio::error_code& ec)
+  {
+    return service_impl_.native_non_blocking(impl, mode, ec);
+  }
+
   /// Get the local endpoint.
   endpoint_type local_endpoint(const implementation_type& impl,
       asio::error_code& ec) const

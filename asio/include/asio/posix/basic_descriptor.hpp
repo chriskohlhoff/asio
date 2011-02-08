@@ -311,6 +311,123 @@ public:
     return this->service.io_control(this->implementation, command, ec);
   }
 
+  /// Gets the non-blocking mode of the descriptor.
+  /**
+   * @returns @c true if the descriptor's synchronous operations will fail with
+   * asio::error::would_block if they are unable to perform the requested
+   * operation immediately. If @c false, synchronous operations will block
+   * until complete.
+   *
+   * @note The non-blocking mode has no effect on the behaviour of asynchronous
+   * operations. Asynchronous operations will never fail with the error
+   * asio::error::would_block.
+   */
+  bool non_blocking() const
+  {
+    return this->service.non_blocking(this->implementation);
+  }
+
+  /// Sets the non-blocking mode of the descriptor.
+  /**
+   * @param mode If @c true, the descriptor's synchronous operations will fail
+   * with asio::error::would_block if they are unable to perform the
+   * requested operation immediately. If @c false, synchronous operations will
+   * block until complete.
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note The non-blocking mode has no effect on the behaviour of asynchronous
+   * operations. Asynchronous operations will never fail with the error
+   * asio::error::would_block.
+   */
+  void non_blocking(bool mode)
+  {
+    asio::error_code ec;
+    this->service.non_blocking(this->implementation, mode, ec);
+    asio::detail::throw_error(ec);
+  }
+
+  /// Sets the non-blocking mode of the descriptor.
+  /**
+   * @param mode If @c true, the descriptor's synchronous operations will fail
+   * with asio::error::would_block if they are unable to perform the
+   * requested operation immediately. If @c false, synchronous operations will
+   * block until complete.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note The non-blocking mode has no effect on the behaviour of asynchronous
+   * operations. Asynchronous operations will never fail with the error
+   * asio::error::would_block.
+   */
+  asio::error_code non_blocking(
+      bool mode, asio::error_code& ec)
+  {
+    return this->service.non_blocking(this->implementation, mode, ec);
+  }
+
+  /// Gets the non-blocking mode of the native descriptor implementation.
+  /**
+   * This function is used to retrieve the non-blocking mode of the underlying
+   * native descriptor. This mode has no effect on the behaviour of the
+   * descriptor object's synchronous operations.
+   *
+   * @returns @c true if the underlying descriptor is in non-blocking mode and
+   * direct system calls may fail with asio::error::would_block (or the
+   * equivalent system error).
+   *
+   * @note The current non-blocking mode is cached by the descriptor object.
+   * Consequently, the return value may be incorrect if the non-blocking mode
+   * was set directly on the native descriptor.
+   */
+  bool native_non_blocking() const
+  {
+    return this->service.native_non_blocking(this->implementation);
+  }
+
+  /// Sets the non-blocking mode of the native descriptor implementation.
+  /**
+   * This function is used to modify the non-blocking mode of the underlying
+   * native descriptor. It has no effect on the behaviour of the descriptor
+   * object's synchronous operations.
+   *
+   * @param mode If @c true, the underlying descriptor is put into non-blocking
+   * mode and direct system calls may fail with asio::error::would_block
+   * (or the equivalent system error).
+   *
+   * @throws asio::system_error Thrown on failure. If the @c mode is
+   * @c false, but the current value of @c non_blocking() is @c true, this
+   * function fails with asio::error::invalid_argument, as the
+   * combination does not make sense.
+   */
+  void native_non_blocking(bool mode)
+  {
+    asio::error_code ec;
+    this->service.native_non_blocking(this->implementation, mode, ec);
+    asio::detail::throw_error(ec);
+  }
+
+  /// Sets the non-blocking mode of the native descriptor implementation.
+  /**
+   * This function is used to modify the non-blocking mode of the underlying
+   * native descriptor. It has no effect on the behaviour of the descriptor
+   * object's synchronous operations.
+   *
+   * @param mode If @c true, the underlying descriptor is put into non-blocking
+   * mode and direct system calls may fail with asio::error::would_block
+   * (or the equivalent system error).
+   *
+   * @param ec Set to indicate what error occurred, if any. If the @c mode is
+   * @c false, but the current value of @c non_blocking() is @c true, this
+   * function fails with asio::error::invalid_argument, as the
+   * combination does not make sense.
+   */
+  asio::error_code native_non_blocking(
+      bool mode, asio::error_code& ec)
+  {
+    return this->service.native_non_blocking(this->implementation, mode, ec);
+  }
+
 protected:
   /// Protected destructor to prevent deletion through this type.
   ~basic_descriptor()

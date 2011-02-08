@@ -100,6 +100,16 @@ void test()
     descriptor1.io_control(io_control_command);
     descriptor1.io_control(io_control_command, ec);
 
+    bool non_blocking1 = descriptor1.non_blocking();
+    (void)non_blocking1;
+    descriptor1.non_blocking(true);
+    descriptor1.non_blocking(false, ec);
+
+    bool non_blocking2 = descriptor1.native_non_blocking();
+    (void)non_blocking2;
+    descriptor1.native_non_blocking(true);
+    descriptor1.native_non_blocking(false, ec);
+
     // basic_stream_descriptor functions.
 
     descriptor1.write_some(buffer(mutable_char_buffer));

@@ -64,8 +64,8 @@ int close(int d, state_type& state, asio::error_code& ec)
   return result;
 }
 
-bool set_internal_non_blocking(int d,
-    state_type& state, asio::error_code& ec)
+bool set_user_non_blocking(int d, state_type& state,
+    bool value, asio::error_code& ec)
 {
   if (d == -1)
   {
@@ -79,17 +79,71 @@ bool set_internal_non_blocking(int d,
   if (result >= 0)
   {
     errno = 0;
-    result = error_wrapper(::fcntl(d, F_SETFL, result | O_NONBLOCK), ec);
+    int flag = (value ? (result | O_NONBLOCK) : (result & ~O_NONBLOCK));
+    result = error_wrapper(::fcntl(d, F_SETFL, flag), ec);
   }
 #else // defined(__SYMBIAN32__)
-  ioctl_arg_type arg = 1;
+  ioctl_arg_type arg = (value ? 1 : 0);
   int result = error_wrapper(::ioctl(d, FIONBIO, &arg), ec);
 #endif // defined(__SYMBIAN32__)
 
   if (result >= 0)
   {
     ec = asio::error_code();
-    state |= internal_non_blocking;
+    if (value)
+      state |= user_set_non_blocking;
+    else
+    {
+      // Clearing the user-set non-blocking mode always overrides any
+      // internally-set non-blocking flag. Any subsequent asynchronous
+      // operations will need to re-enable non-blocking I/O.
+      state &= ~(user_set_non_blocking | internal_non_blocking);
+    }
+    return true;
+  }
+
+  return false;
+}
+
+bool set_internal_non_blocking(int d, state_type& state,
+    bool value, asio::error_code& ec)
+{
+  if (d == -1)
+  {
+    ec = asio::error::bad_descriptor;
+    return false;
+  }
+
+  if (!value && (state & user_set_non_blocking))
+  {
+    // It does not make sense to clear the internal non-blocking flag if the
+    // user still wants non-blocking behaviour. Return an error and let the
+    // caller figure out whether to update the user-set non-blocking flag.
+    ec = asio::error::invalid_argument;
+    return false;
+  }
+
+  errno = 0;
+#if defined(__SYMBIAN32__)
+  int result = error_wrapper(::fcntl(d, F_GETFL, 0), ec);
+  if (result >= 0)
+  {
+    errno = 0;
+    int flag = (value ? (result | O_NONBLOCK) : (result & ~O_NONBLOCK));
+    result = error_wrapper(::fcntl(d, F_SETFL, flag), ec);
+  }
+#else // defined(__SYMBIAN32__)
+  ioctl_arg_type arg = (value ? 1 : 0);
+  int result = error_wrapper(::ioctl(d, FIONBIO, &arg), ec);
+#endif // defined(__SYMBIAN32__)
+
+  if (result >= 0)
+  {
+    ec = asio::error_code();
+    if (value)
+      state |= internal_non_blocking;
+    else
+      state &= ~internal_non_blocking;
     return true;
   }
 

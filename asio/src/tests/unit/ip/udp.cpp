@@ -142,6 +142,16 @@ void test()
     socket1.io_control(io_control_command);
     socket1.io_control(io_control_command, ec);
 
+    bool non_blocking1 = socket1.non_blocking();
+    (void)non_blocking1;
+    socket1.non_blocking(true);
+    socket1.non_blocking(false, ec);
+
+    bool non_blocking2 = socket1.native_non_blocking();
+    (void)non_blocking2;
+    socket1.native_non_blocking(true);
+    socket1.native_non_blocking(false, ec);
+
     ip::udp::endpoint endpoint1 = socket1.local_endpoint();
     ip::udp::endpoint endpoint2 = socket1.local_endpoint(ec);
 

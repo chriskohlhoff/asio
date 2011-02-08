@@ -130,7 +130,7 @@ void reactive_descriptor_service::start_op(
   {
     if ((impl.state_ & descriptor_ops::non_blocking) ||
         descriptor_ops::set_internal_non_blocking(
-          impl.descriptor_, impl.state_, op->ec_))
+          impl.descriptor_, impl.state_, true, op->ec_))
     {
       reactor_.start_op(op_type, impl.descriptor_,
           impl.reactor_data_, op, non_blocking);

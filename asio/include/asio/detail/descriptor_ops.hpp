@@ -59,8 +59,11 @@ ASIO_DECL int open(const char* path, int flags,
 ASIO_DECL int close(int d, state_type& state,
     asio::error_code& ec);
 
+ASIO_DECL bool set_user_non_blocking(int d,
+    state_type& state, bool value, asio::error_code& ec);
+
 ASIO_DECL bool set_internal_non_blocking(int d,
-    state_type& state, asio::error_code& ec);
+    state_type& state, bool value, asio::error_code& ec);
 
 typedef iovec buf;
 

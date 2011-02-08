@@ -150,6 +150,32 @@ public:
     return service_impl_.io_control(impl, command, ec);
   }
 
+  /// Gets the non-blocking mode of the descriptor.
+  bool non_blocking(const implementation_type& impl) const
+  {
+    return service_impl_.non_blocking(impl);
+  }
+
+  /// Sets the non-blocking mode of the descriptor.
+  asio::error_code non_blocking(implementation_type& impl,
+      bool mode, asio::error_code& ec)
+  {
+    return service_impl_.non_blocking(impl, mode, ec);
+  }
+
+  /// Gets the non-blocking mode of the native descriptor implementation.
+  bool native_non_blocking(const implementation_type& impl) const
+  {
+    return service_impl_.native_non_blocking(impl);
+  }
+
+  /// Sets the non-blocking mode of the native descriptor implementation.
+  asio::error_code native_non_blocking(implementation_type& impl,
+      bool mode, asio::error_code& ec)
+  {
+    return service_impl_.native_non_blocking(impl, mode, ec);
+  }
+
   /// Write the given data to the stream.
   template <typename ConstBufferSequence>
   std::size_t write_some(implementation_type& impl,

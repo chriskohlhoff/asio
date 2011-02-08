@@ -87,8 +87,11 @@ ASIO_DECL int bind(socket_type s, const socket_addr_type* addr,
 ASIO_DECL int close(socket_type s, state_type& state,
     bool destruction, asio::error_code& ec);
 
+ASIO_DECL bool set_user_non_blocking(socket_type s,
+    state_type& state, bool value, asio::error_code& ec);
+
 ASIO_DECL bool set_internal_non_blocking(socket_type s,
-    state_type& state, asio::error_code& ec);
+    state_type& state, bool value, asio::error_code& ec);
 
 ASIO_DECL int shutdown(socket_type s,
     int what, asio::error_code& ec);

@@ -34,7 +34,8 @@ namespace posix {
 class descriptor_base
 {
 public:
-  /// IO control command to set the blocking mode of the descriptor.
+  /// (Deprecated: Use non_blocking().) IO control command to set the blocking
+  /// mode of the descriptor.
   /**
    * Implements the FIONBIO IO control command.
    *

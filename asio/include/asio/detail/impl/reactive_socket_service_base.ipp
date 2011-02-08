@@ -154,7 +154,7 @@ void reactive_socket_service_base::start_op(
   {
     if ((impl.state_ & socket_ops::non_blocking)
         || socket_ops::set_internal_non_blocking(
-          impl.socket_, impl.state_, op->ec_))
+          impl.socket_, impl.state_, true, op->ec_))
     {
       reactor_.start_op(op_type, impl.socket_,
           impl.reactor_data_, op, non_blocking);
@@ -184,7 +184,7 @@ void reactive_socket_service_base::start_connect_op(
 {
   if ((impl.state_ & socket_ops::non_blocking)
       || socket_ops::set_internal_non_blocking(
-        impl.socket_, impl.state_, op->ec_))
+        impl.socket_, impl.state_, true, op->ec_))
   {
     if (socket_ops::connect(impl.socket_, addr, addrlen, op->ec_) != 0)
     {
