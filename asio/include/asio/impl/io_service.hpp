@@ -105,19 +105,9 @@ inline io_service::work::~work()
   io_service_.impl_.work_finished();
 }
 
-inline asio::io_service& io_service::work::io_service()
-{
-  return io_service_;
-}
-
 inline asio::io_service& io_service::work::get_io_service()
 {
   return io_service_;
-}
-
-inline asio::io_service& io_service::service::io_service()
-{
-  return owner_;
 }
 
 inline asio::io_service& io_service::service::get_io_service()

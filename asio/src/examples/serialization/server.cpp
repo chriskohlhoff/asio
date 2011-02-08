@@ -55,7 +55,7 @@ public:
     stocks_.push_back(s);
 
     // Start an accept operation for a new connection.
-    connection_ptr new_conn(new connection(acceptor_.io_service()));
+    connection_ptr new_conn(new connection(acceptor_.get_io_service()));
     acceptor_.async_accept(new_conn->socket(),
         boost::bind(&server::handle_accept, this,
           asio::placeholders::error, new_conn));
@@ -74,7 +74,7 @@ public:
             asio::placeholders::error, conn));
 
       // Start an accept operation for a new connection.
-      connection_ptr new_conn(new connection(acceptor_.io_service()));
+      connection_ptr new_conn(new connection(acceptor_.get_io_service()));
       acceptor_.async_accept(new_conn->socket(),
           boost::bind(&server::handle_accept, this,
             asio::placeholders::error, new_conn));

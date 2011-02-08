@@ -120,7 +120,7 @@ void service_registry::do_add_service(
     const asio::io_service::service::key& key,
     asio::io_service::service* new_service)
 {
-  if (&owner_ != &new_service->io_service())
+  if (&owner_ != &new_service->get_io_service())
     boost::throw_exception(invalid_service_owner());
 
   asio::detail::mutex::scoped_lock lock(mutex_);

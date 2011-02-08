@@ -59,7 +59,7 @@ void test()
 
     // basic_io_object functions.
 
-    io_service& ios_ref = descriptor1.io_service();
+    io_service& ios_ref = descriptor1.get_io_service();
     (void)ios_ref;
 
     // basic_descriptor functions.

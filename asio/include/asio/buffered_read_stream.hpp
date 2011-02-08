@@ -96,13 +96,6 @@ public:
     return next_layer_.lowest_layer();
   }
 
-  /// (Deprecated: use get_io_service().) Get the io_service associated with
-  /// the object.
-  asio::io_service& io_service()
-  {
-    return next_layer_.get_io_service();
-  }
-
   /// Get the io_service associated with the object.
   asio::io_service& get_io_service()
   {

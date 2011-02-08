@@ -65,7 +65,7 @@ public:
     {
       // Something went wrong, inform the caller.
       asio::error_code error(asio::error::invalid_argument);
-      socket_.io_service().post(boost::bind(handler, error));
+      socket_.get_io_service().post(boost::bind(handler, error));
       return;
     }
     outbound_header_ = header_stream.str();

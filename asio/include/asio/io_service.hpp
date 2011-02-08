@@ -568,10 +568,6 @@ public:
    */
   ~work();
 
-  /// (Deprecated: use get_io_service().) Get the io_service associated with the
-  /// work.
-  asio::io_service& io_service();
-
   /// Get the io_service associated with the work.
   asio::io_service& get_io_service();
 
@@ -597,10 +593,6 @@ class io_service::service
   : private noncopyable
 {
 public:
-  /// (Deprecated: use get_io_service().) Get the io_service object that owns
-  /// the service.
-  asio::io_service& io_service();
-
   /// Get the io_service object that owns the service.
   asio::io_service& get_io_service();
 

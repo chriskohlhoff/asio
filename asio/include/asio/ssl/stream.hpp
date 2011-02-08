@@ -93,20 +93,6 @@ public:
     service_.destroy(impl_, next_layer_);
   }
 
-  /// (Deprecated: use get_io_service().) Get the io_service associated with
-  /// the object.
-  /**
-   * This function may be used to obtain the io_service object that the stream
-   * uses to dispatch handlers for asynchronous operations.
-   *
-   * @return A reference to the io_service object that stream will use to
-   * dispatch handlers. Ownership is not transferred to the caller.
-   */
-  asio::io_service& io_service()
-  {
-    return next_layer_.get_io_service();
-  }
-
   /// Get the io_service associated with the object.
   /**
    * This function may be used to obtain the io_service object that the stream
