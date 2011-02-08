@@ -107,6 +107,15 @@ public:
   ASIO_DECL static address from_string(
       const std::string& str, asio::error_code& ec);
 
+  /// Determine whether the address is a loopback address.
+  ASIO_DECL bool is_loopback() const;
+
+  /// Determine whether the address is unspecified.
+  ASIO_DECL bool is_unspecified() const;
+
+  /// Determine whether the address is a multicast address.
+  ASIO_DECL bool is_multicast() const;
+
   /// Compare two addresses for equality.
   ASIO_DECL friend bool operator==(const address& a1, const address& a2);
 

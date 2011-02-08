@@ -118,24 +118,34 @@ address_v4 address_v4::from_string(
   return from_string(str.c_str(), ec);
 }
 
+bool address_v4::is_loopback() const
+{
+  return (to_ulong() & 0xFF000000) == 0x7F000000;
+}
+
+bool address_v4::is_unspecified() const
+{
+  return to_ulong() == 0;
+}
+
 bool address_v4::is_class_a() const
 {
-  return IN_CLASSA(to_ulong());
+  return (to_ulong() & 0x80000000) == 0;
 }
 
 bool address_v4::is_class_b() const
 {
-  return IN_CLASSB(to_ulong());
+  return (to_ulong() & 0xC0000000) == 0x80000000;
 }
 
 bool address_v4::is_class_c() const
 {
-  return IN_CLASSC(to_ulong());
+  return (to_ulong() & 0xE0000000) == 0xC0000000;
 }
 
 bool address_v4::is_multicast() const
 {
-  return IN_MULTICAST(to_ulong());
+  return (to_ulong() & 0xF0000000) == 0xE0000000;
 }
 
 address_v4 address_v4::broadcast(const address_v4& addr, const address_v4& mask)

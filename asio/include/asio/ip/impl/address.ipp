@@ -158,6 +158,27 @@ address address::from_string(const std::string& str,
   return from_string(str.c_str(), ec);
 }
 
+bool address::is_loopback() const
+{
+  return (type_ == ipv4)
+    ? ipv4_address_.is_loopback()
+    : ipv6_address_.is_loopback();
+}
+
+bool address::is_unspecified() const
+{
+  return (type_ == ipv4)
+    ? ipv4_address_.is_unspecified()
+    : ipv6_address_.is_unspecified();
+}
+
+bool address::is_multicast() const
+{
+  return (type_ == ipv4)
+    ? ipv4_address_.is_multicast()
+    : ipv6_address_.is_multicast();
+}
+
 bool operator==(const address& a1, const address& a2)
 {
   if (a1.type_ != a2.type_)
