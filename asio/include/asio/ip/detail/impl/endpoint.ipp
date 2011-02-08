@@ -56,8 +56,14 @@ endpoint::endpoint(int family, unsigned short port_num)
     data_.v6.sin6_port =
       asio::detail::socket_ops::host_to_network_short(port_num);
     data_.v6.sin6_flowinfo = 0;
-    asio::detail::in6_addr_type tmp_addr = IN6ADDR_ANY_INIT;
-    data_.v6.sin6_addr = tmp_addr;
+    data_.v6.sin6_addr.s6_addr[0] = 0; data_.v6.sin6_addr.s6_addr[1] = 0;
+    data_.v6.sin6_addr.s6_addr[2] = 0, data_.v6.sin6_addr.s6_addr[3] = 0;
+    data_.v6.sin6_addr.s6_addr[4] = 0, data_.v6.sin6_addr.s6_addr[5] = 0;
+    data_.v6.sin6_addr.s6_addr[6] = 0, data_.v6.sin6_addr.s6_addr[7] = 0;
+    data_.v6.sin6_addr.s6_addr[8] = 0, data_.v6.sin6_addr.s6_addr[9] = 0;
+    data_.v6.sin6_addr.s6_addr[10] = 0, data_.v6.sin6_addr.s6_addr[11] = 0;
+    data_.v6.sin6_addr.s6_addr[12] = 0, data_.v6.sin6_addr.s6_addr[13] = 0;
+    data_.v6.sin6_addr.s6_addr[14] = 0, data_.v6.sin6_addr.s6_addr[15] = 0;
     data_.v6.sin6_scope_id = 0;
   }
 }
