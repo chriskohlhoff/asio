@@ -82,7 +82,7 @@ public:
   // Get the capacity of the endpoint in the native type.
   std::size_t capacity() const
   {
-    return sizeof(asio::detail::sockaddr_storage_type);
+    return sizeof(data_);
   }
 
   // Get the port associated with the endpoint.
@@ -121,7 +121,6 @@ private:
   union data_union
   {
     asio::detail::socket_addr_type base;
-    asio::detail::sockaddr_storage_type storage;
     asio::detail::sockaddr_in4_type v4;
     asio::detail::sockaddr_in6_type v6;
   } data_;
