@@ -95,6 +95,13 @@ public:
     return service_impl_.cancel(impl, ec);
   }
 
+  /// Cancels one asynchronous wait operation associated with the timer.
+  std::size_t cancel_one(implementation_type& impl,
+      asio::error_code& ec)
+  {
+    return service_impl_.cancel_one(impl, ec);
+  }
+
   /// Get the expiry time for the timer as an absolute time.
   time_type expires_at(const implementation_type& impl) const
   {

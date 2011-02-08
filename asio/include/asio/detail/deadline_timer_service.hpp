@@ -99,8 +99,27 @@ public:
       ec = asio::error_code();
       return 0;
     }
+
     std::size_t count = scheduler_.cancel_timer(timer_queue_, impl.timer_data);
     impl.might_have_pending_waits = false;
+    ec = asio::error_code();
+    return count;
+  }
+
+  // Cancels one asynchronous wait operation associated with the timer.
+  std::size_t cancel_one(implementation_type& impl,
+      asio::error_code& ec)
+  {
+    if (!impl.might_have_pending_waits)
+    {
+      ec = asio::error_code();
+      return 0;
+    }
+
+    std::size_t count = scheduler_.cancel_timer(
+        timer_queue_, impl.timer_data, 1);
+    if (count == 0)
+      impl.might_have_pending_waits = false;
     ec = asio::error_code();
     return count;
   }

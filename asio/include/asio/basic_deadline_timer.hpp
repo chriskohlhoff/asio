@@ -239,6 +239,67 @@ public:
     return this->service.cancel(this->implementation, ec);
   }
 
+  /// Cancels one asynchronous operation that is waiting on the timer.
+  /**
+   * This function forces the completion of one pending asynchronous wait
+   * operation against the timer. Handlers are cancelled in FIFO order. The
+   * handler for the cancelled operation will be invoked with the
+   * asio::error::operation_aborted error code.
+   *
+   * Cancelling the timer does not change the expiry time.
+   *
+   * @return The number of asynchronous operations that were cancelled. That is,
+   * either 0 or 1.
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note If the timer has already expired when cancel_one() is called, then
+   * the handlers for asynchronous wait operations will:
+   *
+   * @li have already been invoked; or
+   *
+   * @li have been queued for invocation in the near future.
+   *
+   * These handlers can no longer be cancelled, and therefore are passed an
+   * error code that indicates the successful completion of the wait operation.
+   */
+  std::size_t cancel_one()
+  {
+    asio::error_code ec;
+    std::size_t s = this->service.cancel_one(this->implementation, ec);
+    asio::detail::throw_error(ec);
+    return s;
+  }
+
+  /// Cancels one asynchronous operation that is waiting on the timer.
+  /**
+   * This function forces the completion of one pending asynchronous wait
+   * operation against the timer. Handlers are cancelled in FIFO order. The
+   * handler for the cancelled operation will be invoked with the
+   * asio::error::operation_aborted error code.
+   *
+   * Cancelling the timer does not change the expiry time.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @return The number of asynchronous operations that were cancelled. That is,
+   * either 0 or 1.
+   *
+   * @note If the timer has already expired when cancel_one() is called, then
+   * the handlers for asynchronous wait operations will:
+   *
+   * @li have already been invoked; or
+   *
+   * @li have been queued for invocation in the near future.
+   *
+   * These handlers can no longer be cancelled, and therefore are passed an
+   * error code that indicates the successful completion of the wait operation.
+   */
+  std::size_t cancel_one(asio::error_code& ec)
+  {
+    return this->service.cancel_one(this->implementation, ec);
+  }
+
   /// Get the timer's expiry time as an absolute time.
   /**
    * This function may be used to obtain the timer's current expiry time.

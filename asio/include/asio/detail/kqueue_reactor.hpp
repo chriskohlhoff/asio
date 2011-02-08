@@ -20,6 +20,7 @@
 
 #if defined(ASIO_HAS_KQUEUE)
 
+#include <boost/limits.hpp>
 #include <cstddef>
 #include <sys/types.h>
 #include <sys/event.h>
@@ -129,7 +130,8 @@ public:
   // number of operations that have been posted or dispatched.
   template <typename Time_Traits>
   std::size_t cancel_timer(timer_queue<Time_Traits>& queue,
-      typename timer_queue<Time_Traits>::per_timer_data& timer);
+      typename timer_queue<Time_Traits>::per_timer_data& timer,
+      std::size_t max_cancelled = (std::numeric_limits<std::size_t>::max)());
 
   // Run the kqueue loop.
   ASIO_DECL void run(bool block, op_queue<operation>& ops);

@@ -58,6 +58,12 @@ void cancel_timer(asio::deadline_timer* t)
   BOOST_CHECK(num_cancelled == 1);
 }
 
+void cancel_one_timer(asio::deadline_timer* t)
+{
+  std::size_t num_cancelled = t->cancel_one();
+  BOOST_CHECK(num_cancelled == 1);
+}
+
 ptime now()
 {
 #if defined(BOOST_DATE_TIME_HAS_HIGH_PRECISION_CLOCK)
@@ -182,6 +188,31 @@ void deadline_timer_test()
   BOOST_CHECK(count == 1);
   end = now();
   expected_end = start + seconds(10);
+  BOOST_CHECK(expected_end < end || expected_end == end);
+
+  count = 0;
+  start = now();
+
+  // Start two waits on a timer, one of which will be cancelled. The one
+  // which is not cancelled should still run to completion and increment the
+  // counter.
+  asio::deadline_timer t7(ios, seconds(3));
+  t7.async_wait(boost::bind(increment_if_not_cancelled, &count,
+        asio::placeholders::error));
+  t7.async_wait(boost::bind(increment_if_not_cancelled, &count,
+        asio::placeholders::error));
+  asio::deadline_timer t8(ios, seconds(1));
+  t8.async_wait(boost::bind(cancel_one_timer, &t7));
+
+  ios.reset();
+  ios.run();
+
+  // One of the waits should not have been cancelled, so count should have
+  // changed. The total time since the timer was created should be more than 3
+  // seconds.
+  BOOST_CHECK(count == 1);
+  end = now();
+  expected_end = start + seconds(3);
   BOOST_CHECK(expected_end < end || expected_end == end);
 }
 

@@ -19,6 +19,7 @@
 
 #if defined(ASIO_HAS_DEV_POLL)
 
+#include <boost/limits.hpp>
 #include <cstddef>
 #include <vector>
 #include <sys/devpoll.h>
@@ -109,7 +110,8 @@ public:
   // number of operations that have been posted or dispatched.
   template <typename Time_Traits>
   std::size_t cancel_timer(timer_queue<Time_Traits>& queue,
-      typename timer_queue<Time_Traits>::per_timer_data& timer);
+      typename timer_queue<Time_Traits>::per_timer_data& timer,
+      std::size_t max_cancelled = (std::numeric_limits<std::size_t>::max)());
 
   // Run /dev/poll once until interrupted or events are ready to be dispatched.
   ASIO_DECL void run(bool block, op_queue<operation>& ops);
