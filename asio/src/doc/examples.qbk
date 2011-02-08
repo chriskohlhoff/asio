@@ -182,6 +182,7 @@ ip::tcp::iostream].
 
 * [@../src/examples/iostreams/daytime_client.cpp]
 * [@../src/examples/iostreams/daytime_server.cpp]
+* [@../src/examples/iostreams/http_client.cpp]
 
 
 [heading Multicast]
