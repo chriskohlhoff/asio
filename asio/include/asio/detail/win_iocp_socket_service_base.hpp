@@ -40,6 +40,7 @@
 #include "asio/detail/win_iocp_null_buffers_op.hpp"
 #include "asio/detail/win_iocp_socket_send_op.hpp"
 #include "asio/detail/win_iocp_socket_recv_op.hpp"
+#include "asio/detail/win_iocp_socket_recvmsg_op.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -298,6 +299,77 @@ public:
     p.p = new (p.v) op(impl.cancel_token_, handler);
 
     start_null_buffers_receive_op(impl, flags, p.p);
+    p.v = p.p = 0;
+  }
+
+  // Receive some data with associated flags. Returns the number of bytes
+  // received.
+  template <typename MutableBufferSequence>
+  size_t receive_with_flags(base_implementation_type& impl,
+      const MutableBufferSequence& buffers,
+      socket_base::message_flags in_flags,
+      socket_base::message_flags& out_flags, asio::error_code& ec)
+  {
+    buffer_sequence_adapter<asio::mutable_buffer,
+        MutableBufferSequence> bufs(buffers);
+
+    return socket_ops::sync_recvmsg(impl.socket_, impl.state_,
+        bufs.buffers(), bufs.count(), in_flags, out_flags, ec);
+  }
+
+  // Wait until data can be received without blocking.
+  size_t receive_with_flags(base_implementation_type& impl,
+      const null_buffers&, socket_base::message_flags,
+      socket_base::message_flags& out_flags, asio::error_code& ec)
+  {
+    // Wait for socket to become ready.
+    socket_ops::poll_read(impl.socket_, ec);
+
+    // Clear out_flags, since we cannot give it any other sensible value when
+    // performing a null_buffers operation.
+    out_flags = 0;
+
+    return 0;
+  }
+
+  // Start an asynchronous receive. The buffer for the data being received
+  // must be valid for the lifetime of the asynchronous operation.
+  template <typename MutableBufferSequence, typename Handler>
+  void async_receive_with_flags(base_implementation_type& impl,
+      const MutableBufferSequence& buffers, socket_base::message_flags in_flags,
+      socket_base::message_flags& out_flags, Handler& handler)
+  {
+    // Allocate and construct an operation to wrap the handler.
+    typedef win_iocp_socket_recvmsg_op<MutableBufferSequence, Handler> op;
+    typename op::ptr p = { boost::addressof(handler),
+      asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(impl.cancel_token_, buffers, out_flags, handler);
+
+    buffer_sequence_adapter<asio::mutable_buffer,
+        MutableBufferSequence> bufs(buffers);
+
+    start_receive_op(impl, bufs.buffers(), bufs.count(), in_flags, false, p.p);
+    p.v = p.p = 0;
+  }
+
+  // Wait until data can be received without blocking.
+  template <typename Handler>
+  void async_receive_with_flags(base_implementation_type& impl,
+      const null_buffers&, socket_base::message_flags in_flags,
+      socket_base::message_flags& out_flags, Handler& handler)
+  {
+    // Allocate and construct an operation to wrap the handler.
+    typedef win_iocp_null_buffers_op<Handler> op;
+    typename op::ptr p = { boost::addressof(handler),
+      asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(impl.cancel_token_, handler);
+
+    // Reset out_flags since it can be given no sensible value at this time.
+    out_flags = 0;
+
+    start_null_buffers_receive_op(impl, in_flags, p.p);
     p.v = p.p = 0;
   }
 

@@ -168,6 +168,27 @@ ASIO_DECL bool non_blocking_recvfrom(socket_type s,
 
 #endif // defined(ASIO_HAS_IOCP)
 
+ASIO_DECL int recvmsg(socket_type s, buf* bufs, size_t count,
+    int in_flags, int& out_flags, asio::error_code& ec);
+
+ASIO_DECL size_t sync_recvmsg(socket_type s, state_type state,
+    buf* bufs, size_t count, int in_flags, int& out_flags,
+    asio::error_code& ec);
+
+#if defined(ASIO_HAS_IOCP)
+
+ASIO_DECL void complete_iocp_recvmsg(
+    const weak_cancel_token_type& cancel_token,
+    asio::error_code& ec);
+
+#else // defined(ASIO_HAS_IOCP)
+
+ASIO_DECL bool non_blocking_recvmsg(socket_type s,
+    buf* bufs, size_t count, int in_flags, int& out_flags,
+    asio::error_code& ec, size_t& bytes_transferred);
+
+#endif // defined(ASIO_HAS_IOCP)
+
 ASIO_DECL int send(socket_type s, const buf* bufs,
     size_t count, int flags, asio::error_code& ec);
 

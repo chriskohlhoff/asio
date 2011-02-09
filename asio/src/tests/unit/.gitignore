@@ -10,6 +10,7 @@
 basic_datagram_socket
 basic_deadline_timer
 basic_raw_socket
+basic_seq_packet_socket
 basic_serial_port
 basic_socket_acceptor
 basic_stream_socket
@@ -33,6 +34,7 @@ raw_socket_service
 read
 read_at
 read_until
+seq_packet_socket_service
 serial_port
 serial_port_base
 serial_port_service

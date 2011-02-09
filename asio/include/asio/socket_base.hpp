@@ -62,6 +62,9 @@ public:
 
   /// Specify that the data should not be subject to routing.
   static const int message_do_not_route = implementation_defined;
+
+  /// Specifies that the data marks the end of a record.
+  static const int message_end_of_record = implementation_defined;
 #else
   BOOST_STATIC_CONSTANT(int,
       message_peek = asio::detail::message_peek);
@@ -69,6 +72,8 @@ public:
       message_out_of_band = asio::detail::message_out_of_band);
   BOOST_STATIC_CONSTANT(int,
       message_do_not_route = asio::detail::message_do_not_route);
+  BOOST_STATIC_CONSTANT(int,
+      message_end_of_record = asio::detail::message_end_of_record);
 #endif
 
   /// Socket option to permit sending of broadcast messages.

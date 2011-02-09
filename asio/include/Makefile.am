@@ -4,6 +4,7 @@ nobase_include_HEADERS = \
 	asio/basic_deadline_timer.hpp \
 	asio/basic_io_object.hpp \
 	asio/basic_raw_socket.hpp \
+	asio/basic_seq_packet_socket.hpp \
 	asio/basic_serial_port.hpp \
 	asio/basic_socket_acceptor.hpp \
 	asio/basic_socket.hpp \
@@ -128,6 +129,7 @@ nobase_include_HEADERS = \
 	asio/detail/reactive_socket_connect_op.hpp \
 	asio/detail/reactive_socket_recvfrom_op.hpp \
 	asio/detail/reactive_socket_recv_op.hpp \
+	asio/detail/reactive_socket_recvmsg_op.hpp \
 	asio/detail/reactive_socket_send_op.hpp \
 	asio/detail/reactive_socket_sendto_op.hpp \
 	asio/detail/reactive_socket_service_base.hpp \
@@ -188,6 +190,7 @@ nobase_include_HEADERS = \
 	asio/detail/win_iocp_serial_port_service.hpp \
 	asio/detail/win_iocp_socket_accept_op.hpp \
 	asio/detail/win_iocp_socket_recvfrom_op.hpp \
+	asio/detail/win_iocp_socket_recvmsg_op.hpp \
 	asio/detail/win_iocp_socket_recv_op.hpp \
 	asio/detail/win_iocp_socket_send_op.hpp \
 	asio/detail/win_iocp_socket_service_base.hpp \
@@ -263,6 +266,7 @@ nobase_include_HEADERS = \
 	asio/read_at.hpp \
 	asio/read.hpp \
 	asio/read_until.hpp \
+	asio/seq_packet_socket_service.hpp \
 	asio/serial_port_base.hpp \
 	asio/serial_port.hpp \
 	asio/serial_port_service.hpp \

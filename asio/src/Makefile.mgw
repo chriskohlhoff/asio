@@ -17,6 +17,7 @@ UNIT_TEST_EXES = \
 	tests/unit/basic_datagram_socket.exe \
 	tests/unit/basic_deadline_timer.exe \
 	tests/unit/basic_raw_socket.exe \
+	tests/unit/basic_seq_packet_socket.exe \
 	tests/unit/basic_serial_port.exe \
 	tests/unit/basic_socket_acceptor.exe \
 	tests/unit/basic_stream_socket.exe \
@@ -55,6 +56,7 @@ UNIT_TEST_EXES = \
 	tests/unit/read.exe \
 	tests/unit/read_at.exe \
 	tests/unit/read_until.exe \
+	tests/unit/seq_packet_socket_service.exe \
 	tests/unit/serial_port.exe \
 	tests/unit/serial_port_base.exe \
 	tests/unit/serial_port_service.exe \

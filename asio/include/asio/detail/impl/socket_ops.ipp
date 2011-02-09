@@ -919,6 +919,116 @@ bool non_blocking_recvfrom(socket_type s,
 
 #endif // defined(ASIO_HAS_IOCP)
 
+int recvmsg(socket_type s, buf* bufs, size_t count,
+    int in_flags, int& out_flags, asio::error_code& ec)
+{
+  clear_last_error();
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  out_flags = 0;
+  return socket_ops::recv(s, bufs, count, in_flags, ec);
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  msghdr msg = msghdr();
+  msg.msg_iov = bufs;
+  msg.msg_iovlen = count;
+  int result = error_wrapper(::recvmsg(s, &msg, in_flags), ec);
+  if (result >= 0)
+  {
+    ec = asio::error_code();
+    out_flags = msg.msg_flags;
+  }
+  else
+    out_flags = 0;
+  return result;
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+}
+
+size_t sync_recvmsg(socket_type s, state_type state,
+    buf* bufs, size_t count, int in_flags, int& out_flags,
+    asio::error_code& ec)
+{
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return 0;
+  }
+
+  // Read some data.
+  for (;;)
+  {
+    // Try to complete the operation without blocking.
+    int bytes = socket_ops::recvmsg(s, bufs, count, in_flags, out_flags, ec);
+
+    // Check if operation succeeded.
+    if (bytes >= 0)
+      return bytes;
+
+    // Operation failed.
+    if ((state & user_set_non_blocking)
+        || (ec != asio::error::would_block
+          && ec != asio::error::try_again))
+      return 0;
+
+    // Wait for socket to become ready.
+    if (socket_ops::poll_read(s, ec) < 0)
+      return 0;
+  }
+}
+
+#if defined(ASIO_HAS_IOCP)
+
+void complete_iocp_recvmsg(
+    const weak_cancel_token_type& cancel_token,
+    asio::error_code& ec)
+{
+  // Map non-portable errors to their portable counterparts.
+  if (ec.value() == ERROR_NETNAME_DELETED)
+  {
+    if (cancel_token.expired())
+      ec = asio::error::operation_aborted;
+    else
+      ec = asio::error::connection_reset;
+  }
+  else if (ec.value() == ERROR_PORT_UNREACHABLE)
+  {
+    ec = asio::error::connection_refused;
+  }
+}
+
+#else // defined(ASIO_HAS_IOCP)
+
+bool non_blocking_recvmsg(socket_type s,
+    buf* bufs, size_t count, int in_flags, int& out_flags,
+    asio::error_code& ec, size_t& bytes_transferred)
+{
+  for (;;)
+  {
+    // Read some data.
+    int bytes = socket_ops::recvmsg(s, bufs, count, in_flags, out_flags, ec);
+
+    // Retry operation if interrupted by signal.
+    if (ec == asio::error::interrupted)
+      continue;
+
+    // Check if we need to run the operation again.
+    if (ec == asio::error::would_block
+        || ec == asio::error::try_again)
+      return false;
+
+    // Operation is complete.
+    if (bytes >= 0)
+    {
+      ec = asio::error_code();
+      bytes_transferred = bytes;
+    }
+    else
+      bytes_transferred = 0;
+
+    return true;
+  }
+}
+
+#endif // defined(ASIO_HAS_IOCP)
+
 int send(socket_type s, const buf* bufs, size_t count, int flags,
     asio::error_code& ec)
 {
