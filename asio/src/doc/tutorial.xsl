@@ -75,6 +75,9 @@
 <xsl:template name="strip-asio-ns">
   <xsl:param name="name"/>
   <xsl:choose>
+    <xsl:when test="contains($name, 'boost::system::is_error_code_enum')">
+      <xsl:value-of select="$name"/>
+    </xsl:when>
     <xsl:when test="contains($name, 'asio::')">
       <xsl:value-of select="substring-after($name, 'asio::')"/>
     </xsl:when>

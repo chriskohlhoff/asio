@@ -86,6 +86,14 @@ C++ approach.
   ]
   [
     [
+      [link asio.history Revision History]
+    ]
+    [
+      Log of Asio changes made in each release.
+    ]
+  ]
+  [
+    [
       [link asio.index Index]
     ]
     [
@@ -99,4 +107,5 @@ C++ approach.
 [include tutorial.qbk]
 [include examples.qbk]
 [include reference.qbk]
+[include history.qbk]
 [xinclude index.xml]

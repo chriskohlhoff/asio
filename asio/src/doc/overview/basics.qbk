@@ -44,11 +44,11 @@ operation.
 [*io_service].
 
 5. The [*io_service] translates any error resulting from the operation into an
-`error_code`. An `error_code` may be compared with specific values, or tested
-as a boolean (where a `false` result means that no error occurred). The result
-is then forwarded back up to the [*I/O object].
+object of type `asio::error_code`. An `error_code` may be compared with
+specific values, or tested as a boolean (where a `false` result means that no
+error occurred). The result is then forwarded back up to the [*I/O object].
 
-6. The [*I/O object] throws an exception of type `system_error` if the
+6. The [*I/O object] throws an exception of type `asio::system_error` if the
 operation failed. If the code to initiate the operation had instead been
 written as:
 

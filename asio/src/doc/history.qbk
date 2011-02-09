@@ -1,0 +1,351 @@
+[/
+ / Copyright (c) 2003-2011 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:history Revision History]
+
+[heading Asio 1.4.8]
+
+* Fixed an integer overflow problem that occurs when `ip::address_v4::netmask()`
+  is used on 64-bit platforms.
+
+* Fixed a problem on older Linux kernels (where epoll is used without `timerfd`
+  support) that prevents timely delivery of `deadline_timer` handlers, after the
+  program has been running for some time.
+
+[heading Asio 1.4.7]
+
+* Fixed a problem on kqueue-based platforms where a `deadline_timer` may
+  never fire if the `io_service` is running in a background thread.
+
+* Fixed a const-correctness issue that prevented valid uses of
+  `has_service<>` from compiling.
+
+* Fixed MinGW cross-compilation.
+
+* Removed dependency on deprecated Boost.System functions (Boost.Asio only).
+
+* Ensured `close()`/`closesocket()` failures are correctly propagated.
+
+* Added a check for errors returned by `InitializeCriticalSectionAndSpinCount`.
+
+* Added support for hardware flow control on QNX.
+
+* Always use `pselect()` on HP-UX, if it is available.
+
+* Ensured handler arguments are passed as lvalues.
+
+* Fixed Windows build when thread support is disabled.
+
+* Fixed a Windows-specific problem where `deadline_timer` objects with expiry
+  times set more than 5 minutes in the future may never expire.
+
+* Fixed the resolver backend on BSD platforms so that an empty service name
+  resolves to port number `0`, as per the documentation.
+
+* Fixed read operations so that they do not accept buffer sequences of type
+  `const_buffers_1`.
+
+* Redefined `Protocol` and `id` to avoid clashing with Objective-C++ keywords.
+
+* Fixed a `vector` reallocation performance issue that can occur when there are
+  many active `deadline_timer` objects.
+
+* Fixed the kqueue backend so that it compiles on NetBSD.
+
+* Fixed the socket `io_control()` implementation on 64-bit Mac OS X and BSD
+  platforms.
+
+* Fixed a Windows-specific problem where failures from `accept()` are
+  incorrectly treated as successes.
+
+* Deprecated the separate compilation header `asio/impl/src.cpp` in
+  favour of `asio/impl/src.hpp`.
+
+[heading Asio 1.4.6]
+
+* Reduced compile times. (Note that some programs may need to add additional
+  `#include`s, e.g. if the program uses boost::array but does not explicitly
+  include `<boost/array.hpp>`.)
+
+* Reduced the size of generated code.
+
+* Refactored `deadline_timer` implementation to improve performance.
+
+* Improved multiprocessor scalability on Windows by using a dedicated hidden
+  thread to wait for timers.
+
+* Improved performance of `asio::streambuf` with `async_read()` and 
+  `async_read_until()`. These read operations now use the existing capacity of
+  the `streambuf` when reading, rather than limiting the read to 512 bytes.
+
+* Added optional separate compilation. To enable, include
+  `asio/impl/src.cpp` in one source file in a program, then
+  build the program with `(BOOST_)ASIO_SEPARATE_COMPILATION` defined in the
+  project\/compiler settings. Alternatively, `(BOOST_)ASIO_DYN_LINK` may be
+  defined to build a separately-compiled Asio as part of a shared library.
+
+* Added new macro `(BOOST_)ASIO_DISABLE_FENCED_BLOCK` to permit the disabling of
+  memory fences around completion handlers, even if thread support is enabled.
+
+* Reworked timeout examples to better illustrate typical use cases.
+
+* Ensured that handler arguments are passed as const types.
+
+* Fixed incorrect parameter order in `null_buffers` variant of `async_send_to`.
+
+* Ensured unsigned char is used with `isdigit` in `getaddrinfo` emulation.
+
+* Fixed handling of very small but non-zero timeouts.
+
+* Fixed crash that occurred when an empty buffer sequence was passed to a
+  composed read or write operation.
+
+* Added missing operator+ overload in `buffers_iterator`.
+  
+* Implemented cancellation of `null_buffers` operations on Windows.
+
+[heading Asio 1.4.5]
+
+* Improved performance.
+
+* Reduced compile times.
+
+* Reduced the size of generated code.
+
+* Extended the guarantee that background threads don't call user code to
+  all asynchronous operations.
+
+* Changed to use edge-triggered epoll on Linux.
+
+* Changed to use `timerfd` for dispatching timers on Linux, when
+  available.
+
+* Changed to use one-shot notifications with kqueue on Mac OS X and BSD
+  platforms.
+
+* Added a bitmask type `ip::resolver_query_base::flags` as per the TR2
+  proposal. This type prevents implicit conversion from `int` to
+  `flags`, allowing the compiler to catch cases where users incorrectly
+  pass a numeric port number as the service name.
+
+* Added `#define NOMINMAX` for all Windows compilers. Users can define
+  `(BOOST_)ASIO_NO_NOMINMAX` to suppress this definition.
+
+* Fixed a bug where 0-byte asynchronous reads were incorrectly passing
+  an `error::eof` result to the completion handler.
+
+* Changed the `io_control()` member functions to always call `ioctl` on
+  the underlying descriptor when modifying blocking mode.
+
+* Changed the resolver implementation so that it no longer requires the
+  typedefs `InternetProtocol::resolver_query` and
+  `InternetProtocol::resolver_iterator`, as neither typedef is part of
+  the documented `InternetProtocol` requirements. The corresponding
+  typedefs in the `ip::tcp`, `ip::udp` and `ip::icmp` classes have been
+  deprecated.
+
+* Fixed out-of-band handling for reactors not based on `select()`.
+
+* Added new `(BOOST_)ASIO_DISABLE_THREADS` macro that allows Asio's
+  threading support to be independently disabled.
+
+* Minor documentation improvements.
+
+[heading Asio 1.4.4]
+
+* Added a new HTTP Server 4 example illustrating the use of stackless
+  coroutines with Asio.
+
+* Changed handler allocation and invocation to use `boost::addressof` to
+  get the address of handler objects, rather than applying `operator&`
+  directly.
+
+* Restricted MSVC buffer debugging workaround to 2008, as it causes a
+  crash with 2010 beta 2.
+
+* Fixed a problem with the lifetime of handler memory, where Windows
+  needs the `OVERLAPPED` structure to be valid until both the initiating
+  function call has returned and the completion packet has been
+  delivered.
+
+* Don't block signals while performing system calls, but instead restart
+  the calls if they are interrupted.
+
+* Documented the guarantee made by strand objects with respect to order
+  of handler invocation.
+
+* Changed strands to use a pool of implementations, to make copying of
+  strands cheaper.
+
+* Ensured that kqueue support is enabled for BSD platforms.
+
+* Added a `boost_` prefix to the `extern "C"` thread entry point
+  function.
+
+* In `getaddrinfo` emulation, only check the socket type (`SOCK_STREAM`
+  or `SOCK_DGRAM`) if a service name has been specified. This should
+  allow the emulation to work with raw sockets.
+
+* Added a workaround for some broken Windows firewalls that make a
+  socket appear bound to 0.0.0.0 when it is in fact bound to 127.0.0.1.
+
+* Applied a fix for reported excessive CPU usage under Solaris.
+
+* Added some support for platforms that use older compilers such as g++
+  2.95.
+
+[heading Asio 1.4.3]
+
+* Added a new ping example to illustrate the use of ICMP sockets.
+
+* Changed the `buffered*_stream<>` templates to treat 0-byte reads and
+  writes as no-ops, to comply with the documented type requirements for
+  `SyncReadStream`, `AsyncReadStream`, `SyncWriteStream` and
+  `AsyncWriteStream`.
+
+* Changed some instances of the `throw` keyword to
+  `boost::throw_exception()` to allow Asio to be used when exception
+  support is disabled. Note that the SSL wrappers still require
+  exception support.
+
+* Made Asio compatible with the OpenSSL 1.0 beta.
+
+* Eliminated a redundant system call in the Solaris /dev/poll backend.
+
+* Fixed a bug in resizing of the bucket array in the internal hash maps.
+
+* Ensured correct propagation of the error code when a synchronous
+  accept fails.
+
+* Ensured correct propagation of the error code when a synchronous read
+  or write on a Windows `HANDLE` fails.
+
+* Fixed failures reported when `_GLIBCXX_DEBUG` is defined.
+
+* Fixed custom memory allocation support for timers.
+
+* Tidied up various warnings reported by g++.
+
+* Various documentation improvements, including more obvious hyperlinks
+  to function overloads, header file information, examples for the
+  handler type requirements, and adding enum values to the index.
+
+[heading Asio 1.4.2]
+
+* Implement automatic resizing of the bucket array in the internal hash
+  maps. This is to improve performance for very large numbers of
+  asynchronous operations and also to reduce memory usage for very small
+  numbers. A new macro `(BOOST_)ASIO_HASH_MAP_BUCKETS` may be used to
+  tweak the sizes used for the bucket arrays. (N.B. this feature
+  introduced a bug which was fixed in Asio 1.4.3 / Boost 1.40.)
+
+* Add performance optimisation for the Windows IOCP backend for when no
+  timers are used.
+
+* Prevent locale settings from affecting formatting of TCP and UDP
+  endpoints.
+
+* Fix a memory leak that occurred when an asynchronous SSL operation's
+  completion handler threw an exception.
+
+* Fix the implementation of `io_control()` so that it adheres to the
+  documented type requirements for IoControlCommand.
+
+* Fix incompatibility between Asio and ncurses.h.
+
+* On Windows, specifically handle the case when an overlapped `ReadFile`
+  call fails with `ERROR_MORE_DATA`. This enables a hack where a
+  `windows::stream_handle` can be used with a message-oriented named
+  pipe.
+
+* Fix system call wrappers to always clear the error on success, as
+  POSIX allows successful system calls to modify errno.
+
+* Don't include termios.h if `(BOOST_)ASIO_DISABLE_SERIAL_PORT` is
+  defined.
+
+* Cleaned up some more MSVC level 4 warnings.
+
+* Various documentation fixes.
+
+[heading Asio 1.4.1]
+
+* Improved compatibility with some Windows firewall software.
+
+* Ensured arguments to `windows::overlapped_ptr::complete()` are correctly
+  passed to the completion handler.
+
+* Fixed a link problem and multicast failure on QNX.
+
+* Fixed a compile error in SSL support on MinGW / g++ 3.4.5.
+
+* Drop back to using a pipe for notification if eventfd is not available
+  at runtime on Linux.
+
+* Various minor bug and documentation fixes.
+
+[heading Asio 1.4.0]
+
+* Enhanced CompletionCondition concept with the signature
+  `size_t CompletionCondition(error_code ec, size_t total)`, where the return
+  value indicates the maximum number of bytes to be transferred on the next
+  read or write operation. (The old CompletionCondition signature is still
+  supported for backwards compatibility).
+
+* New `windows::overlapped_ptr` class to allow arbitrary overlapped I/O
+  functions (such as `TransmitFile`) to be used with Asio.
+
+* On recent versions of Linux, an `eventfd` descriptor is now used (rather than
+  a pipe) to interrupt a blocked select/epoll reactor.
+
+* Added const overloads of `lowest_layer()`.
+
+* Synchronous read, write, accept and connect operations are now thread safe
+  (meaning that it is now permitted to perform concurrent synchronous
+  operations on an individual socket, if supported by the OS).
+
+* Reactor-based `io_service` implementations now use lazy initialisation to
+  reduce the memory usage of an `io_service` object used only as a message
+  queue.
+
+[heading Asio 1.2.0]
+
+* Added support for serial ports.
+
+* Added support for UNIX domain sockets.
+
+* Added support for raw sockets and ICMP.
+
+* Added wrappers for POSIX stream-oriented file descriptors (excluding regular
+  files).
+
+* Added wrappers for Windows stream-oriented `HANDLE`s such as named pipes
+  (requires `HANDLE`s that work with I/O completion ports).
+
+* Added wrappers for Windows random-access `HANDLE`s such as files (requires
+  `HANDLE`s that work with I/O completion ports).
+
+* Added support for reactor-style operations (i.e. they report readiness but
+  perform no I/O) using a new `null_buffers` type.
+
+* Added an iterator type for bytewise traversal of buffer sequences.
+
+* Added new `read_until()` and `async_read_until()` overloads that take a
+  user-defined function object for locating message boundaries.
+
+* Added an experimental two-lock queue (enabled by defining
+  `(BOOST_)ASIO_ENABLE_TWO_LOCK_QUEUE`) that may provide better `io_service`
+  scalability across many processors.
+
+* Various fixes, performance improvements, and more complete coverage of the
+  custom memory allocation support.
+
+[heading Asio 1.0.0]
+
+First stable release of Asio.
+
+[endsect]

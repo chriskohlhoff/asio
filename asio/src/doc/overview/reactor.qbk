@@ -23,7 +23,7 @@ following may be used:
   ...
   socket.async_read_some(null_buffers(), read_handler);
   ...
-  void read_handler(error_code ec)
+  void read_handler(asio::error_code ec)
   {
     if (!ec)
     {

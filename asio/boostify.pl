@@ -88,6 +88,12 @@ sub copy_source_file
   my $is_error_hpp = 0;
   $is_error_hpp = 1 if ($from =~ /asio\/error\.hpp/);
 
+  my $is_qbk = 0;
+  $is_qbk = 1 if ($from =~ /.qbk$/);
+
+  my $is_xsl = 0;
+  $is_xsl = 1 if ($from =~ /.xsl$/);
+
   # Open the files.
   open(my $input, "<$from") or die("Can't open $from for reading");
   open(my $output, ">$to") or die("Can't open $to for writing");
@@ -114,16 +120,48 @@ sub copy_source_file
       $line =~ s/ASIO_/BOOST_ASIO_/g;
     }
 
-    # Conditional replacements.
-    if ($line =~ /^namespace asio {/)
+    # Extra replacements for quickbook and XSL source only.
+    if ($is_qbk || $is_xsl)
     {
-      print_line($output, "namespace boost {", $from, $lineno);
-      print_line($output, $line, $from, $lineno);
+      $line =~ s/asio\.examples/boost_asio.examples/g;
+      $line =~ s/asio\.history/boost_asio.history/g;
+      $line =~ s/asio\.index/boost_asio.index/g;
+      $line =~ s/asio\.overview/boost_asio.overview/g;
+      $line =~ s/asio\.reference/boost_asio.reference/g;
+      $line =~ s/asio\.tutorial/boost_asio.tutorial/g;
+      $line =~ s/asio\.using/boost_asio.using/g;
+      $line =~ s/Asio/Boost.Asio/g;
+      $line =~ s/changes made in each release/changes made in each Boost release/g;
+      $line =~ s/\[\$/[\$boost_asio\//g;
+      $line =~ s/\[@\.\.\/src\/examples/[\@boost_asio\/example/g;
+      $line =~ s/include\/asio/boost\/asio/g;
+      $line =~ s/\^asio/^boost\/asio/g;
     }
-    elsif ($line =~ /^} \/\/ namespace asio$/)
+
+    # Conditional replacements.
+    if ($line =~ /^( *)namespace asio {/)
     {
-      print_line($output, $line, $from, $lineno);
-      print_line($output, "} // namespace boost", $from, $lineno);
+      if ($is_qbk)
+      {
+        print_line($output, $1 . "namespace boost { namespace asio {", $from, $lineno);
+      }
+      else
+      {
+        print_line($output, $1 . "namespace boost {", $from, $lineno);
+        print_line($output, $line, $from, $lineno);
+      }
+    }
+    elsif ($line =~ /^( *)} \/\/ namespace asio$/)
+    {
+      if ($is_qbk)
+      {
+        print_line($output, $1 . "} } // namespace boost::asio", $from, $lineno);
+      }
+      else
+      {
+        print_line($output, $line, $from, $lineno);
+        print_line($output, $1 . "} // namespace boost", $from, $lineno);
+      }
     }
     elsif ($line =~ /^(# *include )[<"](asio\.hpp)[>"]$/)
     {
@@ -177,7 +215,7 @@ sub copy_source_file
       }
       print_line($output, $line, $from, $lineno);
     }
-    elsif ($line =~ /^( *)thread( .*)$/)
+    elsif ($line =~ /^( *)thread( .*)$/ && !$is_qbk)
     {
       if (!($line =~ /boost::asio::/))
       {
@@ -201,7 +239,7 @@ sub copy_source_file
       $line =~ s/asio::error_category/boost::system::error_category/g;
       $line =~ s/asio::system_category/boost::system::system_category/g;
       $line =~ s/asio::system_error/boost::system::system_error/g;
-      $line =~ s/asio::/boost::asio::/g;
+      $line =~ s/asio::/boost::asio::/g if !$is_xsl;
       print_line($output, $line, $from, $lineno);
     }
     elsif ($line =~ /using namespace asio/)
@@ -222,6 +260,11 @@ sub copy_source_file
     elsif ($line =~ /[\\@]ref boost_bind/)
     {
       $line =~ s/[\\@]ref boost_bind/boost::bind()/g;
+      print_line($output, $line, $from, $lineno);
+    }
+    elsif ($line =~ /( *)\[category template\]/)
+    {
+      print_line($output, $1 . "[authors [Kohlhoff, Christopher]]", $from, $lineno);
       print_line($output, $line, $from, $lineno);
     }
     else
@@ -382,7 +425,27 @@ sub copy_examples
   }
 }
 
+sub copy_doc
+{
+  our $boost_dir;
+  my @files = (
+      "src/doc/asio.qbk",
+      "src/doc/examples.qbk",
+      "src/doc/reference.xsl",
+      "src/doc/tutorial.xsl",
+      glob("src/doc/overview/*.qbk"),
+      glob("src/doc/requirements/*.qbk"));
+  foreach my $file (@files)
+  {
+    my $from = $file;
+    my $to = $file;
+    $to =~ s/^src\/doc\//$boost_dir\/libs\/asio\/doc\//;
+    copy_source_file($from, $to);
+  }
+}
+
 copy_include_files();
 create_lib_directory();
 copy_unit_tests();
 copy_examples();
+copy_doc();

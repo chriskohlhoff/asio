@@ -23,7 +23,7 @@ relative time one may write:
 More commonly, a program will perform an asynchronous wait operation on a
 timer:
 
-  void handler(error_code ec) { ... }
+  void handler(asio::error_code ec) { ... }
   ...
   io_service i;
   ...
@@ -33,7 +33,7 @@ timer:
   ...
   i.run();
 
-The deadline associated with a timer may be also be obtained as a relative time:
+The deadline associated with a timer may also be obtained as a relative time:
 
   boost::posix_time::time_duration time_until_expiry
     = t.expires_from_now();
