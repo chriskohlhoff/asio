@@ -93,11 +93,13 @@ void io_service_test()
   ios.post(boost::bind(increment, &count));
 
   // No handlers can be called until run() is called.
+  BOOST_CHECK(!ios.stopped());
   BOOST_CHECK(count == 0);
 
   ios.run();
 
   // The run() call will not return until all work has finished.
+  BOOST_CHECK(ios.stopped());
   BOOST_CHECK(count == 1);
 
   count = 0;
@@ -109,20 +111,24 @@ void io_service_test()
   ios.post(boost::bind(increment, &count));
 
   // No handlers can be called until run() is called.
+  BOOST_CHECK(!ios.stopped());
   BOOST_CHECK(count == 0);
 
   ios.run();
 
   // The run() call will not return until all work has finished.
+  BOOST_CHECK(ios.stopped());
   BOOST_CHECK(count == 5);
 
   count = 0;
   ios.reset();
   io_service::work* w = new io_service::work(ios);
   ios.post(boost::bind(&io_service::stop, &ios));
+  BOOST_CHECK(!ios.stopped());
   ios.run();
 
   // The only operation executed should have been to stop run().
+  BOOST_CHECK(ios.stopped());
   BOOST_CHECK(count == 0);
 
   ios.reset();
@@ -130,11 +136,13 @@ void io_service_test()
   delete w;
 
   // No handlers can be called until run() is called.
+  BOOST_CHECK(!ios.stopped());
   BOOST_CHECK(count == 0);
 
   ios.run();
 
   // The run() call will not return until all work has finished.
+  BOOST_CHECK(ios.stopped());
   BOOST_CHECK(count == 1);
 
   count = 10;
@@ -142,11 +150,13 @@ void io_service_test()
   ios.post(boost::bind(decrement_to_zero, &ios, &count));
 
   // No handlers can be called until run() is called.
+  BOOST_CHECK(!ios.stopped());
   BOOST_CHECK(count == 10);
 
   ios.run();
 
   // The run() call will not return until all work has finished.
+  BOOST_CHECK(ios.stopped());
   BOOST_CHECK(count == 0);
 
   count = 10;
@@ -154,11 +164,13 @@ void io_service_test()
   ios.post(boost::bind(nested_decrement_to_zero, &ios, &count));
 
   // No handlers can be called until run() is called.
+  BOOST_CHECK(!ios.stopped());
   BOOST_CHECK(count == 10);
 
   ios.run();
 
   // The run() call will not return until all work has finished.
+  BOOST_CHECK(ios.stopped());
   BOOST_CHECK(count == 0);
 
   count = 10;
@@ -167,16 +179,19 @@ void io_service_test()
 
   // No handlers can be called until run() is called, even though nested
   // delivery was specifically allowed in the previous call.
+  BOOST_CHECK(!ios.stopped());
   BOOST_CHECK(count == 10);
 
   ios.run();
 
   // The run() call will not return until all work has finished.
+  BOOST_CHECK(ios.stopped());
   BOOST_CHECK(count == 0);
 
   count = 0;
   int count2 = 0;
   ios.reset();
+  BOOST_CHECK(!ios.stopped());
   ios.post(boost::bind(start_sleep_increments, &ios, &count));
   ios.post(boost::bind(start_sleep_increments, &ios, &count2));
   thread thread1(boost::bind(io_service_run, &ios));
@@ -185,6 +200,7 @@ void io_service_test()
   thread2.join();
 
   // The run() calls will not return until all work has finished.
+  BOOST_CHECK(ios.stopped());
   BOOST_CHECK(count == 3);
   BOOST_CHECK(count2 == 3);
 
@@ -192,10 +208,12 @@ void io_service_test()
   io_service ios2;
   ios.dispatch(ios2.wrap(boost::bind(decrement_to_zero, &ios2, &count)));
   ios.reset();
+  BOOST_CHECK(!ios.stopped());
   ios.run();
 
   // No decrement_to_zero handlers can be called until run() is called on the
   // second io_service object.
+  BOOST_CHECK(ios.stopped());
   BOOST_CHECK(count == 10);
 
   ios2.run();
@@ -213,6 +231,7 @@ void io_service_test()
   ios.post(boost::bind(increment, &count));
 
   // No handlers can be called until run() is called.
+  BOOST_CHECK(!ios.stopped());
   BOOST_CHECK(count == 0);
   BOOST_CHECK(exception_count == 0);
 
@@ -230,6 +249,7 @@ void io_service_test()
   }
 
   // The run() calls will not return until all work has finished.
+  BOOST_CHECK(ios.stopped());
   BOOST_CHECK(count == 3);
   BOOST_CHECK(exception_count == 2);
 }

@@ -193,6 +193,12 @@ void task_io_service::stop()
   stop_all_threads(lock);
 }
 
+bool task_io_service::stopped() const
+{
+  mutex::scoped_lock lock(mutex_);
+  return stopped_;
+}
+
 void task_io_service::reset()
 {
   mutex::scoped_lock lock(mutex_);

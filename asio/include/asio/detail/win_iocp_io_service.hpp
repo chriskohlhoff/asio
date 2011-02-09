@@ -76,6 +76,12 @@ public:
   // Stop the event processing loop.
   ASIO_DECL void stop();
 
+  // Determine whether the io_service is stopped.
+  bool stopped() const
+  {
+    return ::InterlockedExchangeAdd(&stopped_, 0) != 0;
+  }
+
   // Reset in preparation for a subsequent run invocation.
   void reset()
   {
@@ -200,7 +206,7 @@ private:
   long outstanding_work_;
 
   // Flag to indicate whether the event loop has been stopped.
-  long stopped_;
+  mutable long stopped_;
 
   // Flag to indicate whether the service has been shut down.
   long shutdown_;

@@ -255,8 +255,10 @@ public:
    * waiting in the pool are equivalent and the io_service may choose any one
    * of them to invoke a handler.
    *
-   * The run() function may be safely called again once it has completed only
-   * after a call to reset().
+   * A normal exit from the run() function implies that the io_service object
+   * is stopped (the stopped() function returns @c true). Subsequent calls to
+   * run(), run_one(), poll() or poll_one() will return immediately unless there
+   * is a prior call to reset().
    *
    * @return The number of handlers that were executed.
    *
@@ -281,8 +283,10 @@ public:
    * waiting in the pool are equivalent and the io_service may choose any one
    * of them to invoke a handler.
    *
-   * The run() function may be safely called again once it has completed only
-   * after a call to reset().
+   * A normal exit from the run() function implies that the io_service object
+   * is stopped (the stopped() function returns @c true). Subsequent calls to
+   * run(), run_one(), poll() or poll_one() will return immediately unless there
+   * is a prior call to reset().
    *
    * @param ec Set to indicate what error occurred, if any.
    *
@@ -303,7 +307,11 @@ public:
    * The run_one() function blocks until one handler has been dispatched, or
    * until the io_service has been stopped.
    *
-   * @return The number of handlers that were executed.
+   * @return The number of handlers that were executed. A zero return value
+   * implies that the io_service object is stopped (the stopped() function
+   * returns @c true). Subsequent calls to run(), run_one(), poll() or
+   * poll_one() will return immediately unless there is a prior call to
+   * reset().
    *
    * @throws asio::system_error Thrown on failure.
    */
@@ -315,7 +323,11 @@ public:
    * The run_one() function blocks until one handler has been dispatched, or
    * until the io_service has been stopped.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @return The number of handlers that were executed. A zero return value
+   * implies that the io_service object is stopped (the stopped() function
+   * returns @c true). Subsequent calls to run(), run_one(), poll() or
+   * poll_one() will return immediately unless there is a prior call to
+   * reset().
    *
    * @return The number of handlers that were executed.
    */
@@ -378,13 +390,25 @@ public:
    */
   ASIO_DECL void stop();
 
+  /// Determine whether the io_service object has been stopped.
+  /**
+   * This function is used to determine whether an io_service object has been
+   * stopped, either through an explicit call to stop(), or due to running out
+   * of work. When an io_service object is stopped, calls to run(), run_one(),
+   * poll() or poll_one() will return immediately without invoking any
+   * handlers.
+   *
+   * @return @c true if the io_service object is stopped, otherwise @c false.
+   */
+  ASIO_DECL bool stopped() const;
+
   /// Reset the io_service in preparation for a subsequent run() invocation.
   /**
    * This function must be called prior to any second or later set of
    * invocations of the run(), run_one(), poll() or poll_one() functions when a
    * previous invocation of these functions returned due to the io_service
-   * being stopped or running out of work. This function allows the io_service
-   * to reset any internal state, such as a "stopped" flag.
+   * being stopped or running out of work. After a call to reset(), the
+   * io_service object's stopped() function will return @c false.
    *
    * This function must not be called while there are any unfinished calls to
    * the run(), run_one(), poll() or poll_one() functions.

@@ -66,6 +66,9 @@ public:
   // Interrupt the event processing loop.
   ASIO_DECL void stop();
 
+  // Determine whether the io_service is stopped.
+  ASIO_DECL bool stopped() const;
+
   // Reset in preparation for a subsequent run invocation.
   ASIO_DECL void reset();
 
@@ -131,7 +134,7 @@ private:
   struct work_finished_on_block_exit;
 
   // Mutex to protect access to internal data.
-  mutex mutex_;
+  mutable mutex mutex_;
 
   // The task to be run by this service.
   reactor* task_;
