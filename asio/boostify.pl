@@ -85,6 +85,12 @@ sub copy_source_file
 
   my $includes_asio = source_contains_asio_include($from);
 
+  my $is_asio_hpp = 0;
+  $is_asio_hpp = 1 if ($from =~ /asio\.hpp/);
+
+  my $needs_doc_link = 0;
+  $needs_doc_link = 1 if ($is_asio_hpp);
+
   my $is_error_hpp = 0;
   $is_error_hpp = 1 if ($from =~ /asio\/error\.hpp/);
 
@@ -187,8 +193,15 @@ sub copy_source_file
     }
     elsif ($line =~ /(# *include )[<"]asio\/error_code\.hpp[>"]/)
     {
-      print_line($output, $1 . "<boost/cerrno.hpp>", $from, $lineno) if ($is_error_hpp);
-      print_line($output, $1 . "<boost/system/error_code.hpp>", $from, $lineno);
+      if ($is_asio_hpp)
+      {
+        # Line is removed.
+      }
+      else
+      {
+        print_line($output, $1 . "<boost/cerrno.hpp>", $from, $lineno) if ($is_error_hpp);
+        print_line($output, $1 . "<boost/system/error_code.hpp>", $from, $lineno);
+      }
     }
     elsif ($line =~ /# *include [<"]asio\/impl\/error_code\.[hi]pp[>"]/)
     {
@@ -196,7 +209,14 @@ sub copy_source_file
     }
     elsif ($line =~ /(# *include )[<"]asio\/system_error\.hpp[>"]/)
     {
-      print_line($output, $1 . "<boost/system/system_error.hpp>", $from, $lineno);
+      if ($is_asio_hpp)
+      {
+        # Line is removed.
+      }
+      else
+      {
+        print_line($output, $1 . "<boost/system/system_error.hpp>", $from, $lineno);
+      }
     }
     elsif ($line =~ /(^.*# *include )[<"](asio\/.*)[>"](.*)$/)
     {
@@ -265,6 +285,13 @@ sub copy_source_file
     elsif ($line =~ /( *)\[category template\]/)
     {
       print_line($output, $1 . "[authors [Kohlhoff, Christopher]]", $from, $lineno);
+      print_line($output, $line, $from, $lineno);
+    }
+    elsif ($line =~ /^$/ && $needs_doc_link)
+    {
+      $needs_doc_link = 0;
+      print_line($output, "//  See www.boost.org/libs/asio for documentation.", $from, $lineno);
+      print_line($output, "//", $from, $lineno);
       print_line($output, $line, $from, $lineno);
     }
     else
