@@ -991,18 +991,19 @@ public:
    * This function is intended to allow the encapsulation of arbitrary
    * non-blocking system calls as asynchronous operations, in a way that is
    * transparent to the user of the socket object. The following example
-   * illustrates how a @c sendfile system call might be encapsulated:
+   * illustrates how Linux's @c sendfile system call might be encapsulated:
    * @code template <typename Handler>
    * struct sendfile_op
    * {
    *   tcp::socket& sock_;
    *   int fd_;
    *   Handler handler_;
+   *   off_t offset_;
+   *   std::size_t total_bytes_transferred_;
    *
    *   // Function call operator meeting WriteHandler requirements.
    *   // Used as the handler for the async_write_some operation.
-   *   void operator()(asio::error_code ec,
-   *       std::size_t bytes_transferred)
+   *   void operator()(asio::error_code ec, std::size_t)
    *   {
    *     // Put the underlying socket into non-blocking mode.
    *     if (!ec)
@@ -1015,10 +1016,10 @@ public:
    *       {
    *         // Try the system call.
    *         errno = 0;
-   *         int n = ::sendfile(sock_.native_handle(), fd_, ...);
-   *         ec = asio::error_code(
-   *             n < 0 ? errno : 0,
-   *             asio::error::system_category());
+   *         int n = ::sendfile(sock_.native_handle(), fd_, &offset_, 65536);
+   *         ec = asio::error_code(n < 0 ? errno : 0,
+   *             asio::error::get_system_category());
+   *         total_bytes_transferred_ += ec ? 0 : n;
    *
    *         // Retry operation immediately if interrupted by signal.
    *         if (ec == asio::error::interrupted)
@@ -1033,21 +1034,26 @@ public:
    *           return;
    *         }
    *
-   *         // The operation is done. Exit loop so we can call the handler.
-   *         bytes_transferred = ec ? 0 : n;
-   *         break;
+   *         if (ec || n == 0)
+   *         {
+   *           // An error occurred, or we have reached the end of the file.
+   *           // Either way we must exit the loop so we can call the handler.
+   *           break;
+   *         }
+   *
+   *         // Loop around to try calling sendfile again.
    *       }
    *     }
    *
    *     // Pass result back to user's handler.
-   *     handler_(ec, bytes_transferred);
+   *     handler_(ec, total_bytes_transferred_);
    *   }
    * };
    *
    * template <typename Handler>
    * void async_sendfile(tcp::socket& sock, int fd, Handler h)
    * {
-   *   sendfile_op op = { sock, fd, h };
+   *   sendfile_op<Handler> op = { sock, fd, h, 0, 0 };
    *   sock.async_write_some(asio::null_buffers(), op);
    * } @endcode
    */
@@ -1075,18 +1081,19 @@ public:
    * This function is intended to allow the encapsulation of arbitrary
    * non-blocking system calls as asynchronous operations, in a way that is
    * transparent to the user of the socket object. The following example
-   * illustrates how a @c sendfile system call might be encapsulated:
+   * illustrates how Linux's @c sendfile system call might be encapsulated:
    * @code template <typename Handler>
    * struct sendfile_op
    * {
    *   tcp::socket& sock_;
    *   int fd_;
    *   Handler handler_;
+   *   off_t offset_;
+   *   std::size_t total_bytes_transferred_;
    *
    *   // Function call operator meeting WriteHandler requirements.
    *   // Used as the handler for the async_write_some operation.
-   *   void operator()(asio::error_code ec,
-   *       std::size_t bytes_transferred)
+   *   void operator()(asio::error_code ec, std::size_t)
    *   {
    *     // Put the underlying socket into non-blocking mode.
    *     if (!ec)
@@ -1099,10 +1106,10 @@ public:
    *       {
    *         // Try the system call.
    *         errno = 0;
-   *         int n = ::sendfile(sock_.native_handle(), fd_, ...);
-   *         ec = asio::error_code(
-   *             n < 0 ? errno : 0,
-   *             asio::error::system_category());
+   *         int n = ::sendfile(sock_.native_handle(), fd_, &offset_, 65536);
+   *         ec = asio::error_code(n < 0 ? errno : 0,
+   *             asio::error::get_system_category());
+   *         total_bytes_transferred_ += ec ? 0 : n;
    *
    *         // Retry operation immediately if interrupted by signal.
    *         if (ec == asio::error::interrupted)
@@ -1117,21 +1124,26 @@ public:
    *           return;
    *         }
    *
-   *         // The operation is done. Exit loop so we can call the handler.
-   *         bytes_transferred = ec ? 0 : n;
-   *         break;
+   *         if (ec || n == 0)
+   *         {
+   *           // An error occurred, or we have reached the end of the file.
+   *           // Either way we must exit the loop so we can call the handler.
+   *           break;
+   *         }
+   *
+   *         // Loop around to try calling sendfile again.
    *       }
    *     }
    *
    *     // Pass result back to user's handler.
-   *     handler_(ec, bytes_transferred);
+   *     handler_(ec, total_bytes_transferred_);
    *   }
    * };
    *
    * template <typename Handler>
    * void async_sendfile(tcp::socket& sock, int fd, Handler h)
    * {
-   *   sendfile_op op = { sock, fd, h };
+   *   sendfile_op<Handler> op = { sock, fd, h, 0, 0 };
    *   sock.async_write_some(asio::null_buffers(), op);
    * } @endcode
    */
@@ -1161,18 +1173,19 @@ public:
    * This function is intended to allow the encapsulation of arbitrary
    * non-blocking system calls as asynchronous operations, in a way that is
    * transparent to the user of the socket object. The following example
-   * illustrates how a @c sendfile system call might be encapsulated:
+   * illustrates how Linux's @c sendfile system call might be encapsulated:
    * @code template <typename Handler>
    * struct sendfile_op
    * {
    *   tcp::socket& sock_;
    *   int fd_;
    *   Handler handler_;
+   *   off_t offset_;
+   *   std::size_t total_bytes_transferred_;
    *
    *   // Function call operator meeting WriteHandler requirements.
    *   // Used as the handler for the async_write_some operation.
-   *   void operator()(asio::error_code ec,
-   *       std::size_t bytes_transferred)
+   *   void operator()(asio::error_code ec, std::size_t)
    *   {
    *     // Put the underlying socket into non-blocking mode.
    *     if (!ec)
@@ -1185,10 +1198,10 @@ public:
    *       {
    *         // Try the system call.
    *         errno = 0;
-   *         int n = ::sendfile(sock_.native_handle(), fd_, ...);
-   *         ec = asio::error_code(
-   *             n < 0 ? errno : 0,
-   *             asio::error::system_category());
+   *         int n = ::sendfile(sock_.native_handle(), fd_, &offset_, 65536);
+   *         ec = asio::error_code(n < 0 ? errno : 0,
+   *             asio::error::get_system_category());
+   *         total_bytes_transferred_ += ec ? 0 : n;
    *
    *         // Retry operation immediately if interrupted by signal.
    *         if (ec == asio::error::interrupted)
@@ -1203,21 +1216,26 @@ public:
    *           return;
    *         }
    *
-   *         // The operation is done. Exit loop so we can call the handler.
-   *         bytes_transferred = ec ? 0 : n;
-   *         break;
+   *         if (ec || n == 0)
+   *         {
+   *           // An error occurred, or we have reached the end of the file.
+   *           // Either way we must exit the loop so we can call the handler.
+   *           break;
+   *         }
+   *
+   *         // Loop around to try calling sendfile again.
    *       }
    *     }
    *
    *     // Pass result back to user's handler.
-   *     handler_(ec, bytes_transferred);
+   *     handler_(ec, total_bytes_transferred_);
    *   }
    * };
    *
    * template <typename Handler>
    * void async_sendfile(tcp::socket& sock, int fd, Handler h)
    * {
-   *   sendfile_op op = { sock, fd, h };
+   *   sendfile_op<Handler> op = { sock, fd, h, 0, 0 };
    *   sock.async_write_some(asio::null_buffers(), op);
    * } @endcode
    */
