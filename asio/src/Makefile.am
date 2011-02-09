@@ -6,6 +6,12 @@ noinst_LIBRARIES = libasio.a
 
 libasio_a_SOURCES = asio.cpp
 
+if HAVE_OPENSSL
+
+libasio_a_SOURCES += asio_ssl.cpp
+
+endif
+
 LDADD = libasio.a
 
 endif

@@ -209,10 +209,6 @@ enum misc_errors
   fd_set_failure
 };
 
-enum ssl_errors
-{
-};
-
 inline const asio::error_category& get_system_category()
 {
   return asio::system_category();
@@ -243,9 +239,6 @@ inline const asio::error_category& get_addrinfo_category()
 extern ASIO_DECL
 const asio::error_category& get_misc_category();
 
-extern ASIO_DECL
-const asio::error_category& get_ssl_category();
-
 static const asio::error_category& system_category
   = asio::error::get_system_category();
 static const asio::error_category& netdb_category
@@ -254,8 +247,6 @@ static const asio::error_category& addrinfo_category
   = asio::error::get_addrinfo_category();
 static const asio::error_category& misc_category
   = asio::error::get_misc_category();
-static const asio::error_category& ssl_category
-  = asio::error::get_ssl_category();
 
 } // namespace error
 } // namespace asio
@@ -279,11 +270,6 @@ template<> struct is_error_code_enum<asio::error::addrinfo_errors>
 };
 
 template<> struct is_error_code_enum<asio::error::misc_errors>
-{
-  static const bool value = true;
-};
-
-template<> struct is_error_code_enum<asio::error::ssl_errors>
 {
   static const bool value = true;
 };
@@ -316,12 +302,6 @@ inline asio::error_code make_error_code(misc_errors e)
 {
   return asio::error_code(
       static_cast<int>(e), get_misc_category());
-}
-
-inline asio::error_code make_error_code(ssl_errors e)
-{
-  return asio::error_code(
-      static_cast<int>(e), get_ssl_category());
 }
 
 } // namespace error

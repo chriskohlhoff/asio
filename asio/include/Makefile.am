@@ -281,6 +281,9 @@ nobase_include_HEADERS = \
 	asio/ssl/detail/openssl_operation.hpp \
 	asio/ssl/detail/openssl_stream_service.hpp \
 	asio/ssl/detail/openssl_types.hpp \
+	asio/ssl/error.hpp \
+	asio/ssl/impl/error.ipp \
+	asio/ssl/impl/src.hpp \
 	asio/ssl.hpp \
 	asio/ssl/stream_base.hpp \
 	asio/ssl/stream.hpp \
