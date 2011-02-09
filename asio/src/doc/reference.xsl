@@ -64,6 +64,7 @@
 [include requirements/ReadHandler.qbk]
 [include requirements/ResolveHandler.qbk]
 [include requirements/ResolverService.qbk]
+[include requirements/SeqPacketSocketService.qbk]
 [include requirements/SerialPortService.qbk]
 [include requirements/Service.qbk]
 [include requirements/SettableSerialPortOption.qbk]

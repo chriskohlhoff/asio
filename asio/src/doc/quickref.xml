@@ -238,6 +238,7 @@
             <member><link linkend="asio.reference.RawSocketService">RawSocketService</link></member>
             <member><link linkend="asio.reference.ResolveHandler">ResolveHandler</link></member>
             <member><link linkend="asio.reference.ResolverService">ResolverService</link></member>
+            <member><link linkend="asio.reference.SeqPacketSocketService">SeqPacketSocketService</link></member>
             <member><link linkend="asio.reference.SettableSocketOption">SettableSocketOption</link></member>
             <member><link linkend="asio.reference.SocketAcceptorService">SocketAcceptorService</link></member>
             <member><link linkend="asio.reference.SocketService">SocketService</link></member>
