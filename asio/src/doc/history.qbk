@@ -7,6 +7,116 @@
 
 [section:history Revision History]
 
+[heading Asio 1.5.0]
+
+* Added support for timeouts on socket iostreams, such as `ip::tcp::iostream`.
+  A timeout is set by calling `expires_at()` or `expires_from_now()` to
+  establish a deadline. Any socket operations which occur past the deadline
+  will put the iostream into a bad state.
+
+* Added a new `error()` member function to socket iostreams, for retrieving the
+  error code from the most recent system call.
+
+* Added a new `basic_deadline_timer::cancel_one()` function. This function lets
+  you cancel a single waiting handler on a timer. Handlers are cancelled in
+  FIFO order.
+
+* Added a new `transfer_exactly()` completion condition. This can be used to
+  send or receive a specified number of bytes even if the total size of the
+  buffer (or buffer sequence) is larger.
+
+* Added new free functions `connect()` and `async_connect()`. These operations
+  try each endpoint in a list until the socket is successfully connected.
+
+* Extended the `buffer_size()` function so that it works for buffer sequences
+  in addition to individual buffers.
+
+* Added a new `buffer_copy()` function that can be used to copy the raw bytes
+  between individual buffers and buffer sequences.
+
+* Added new non-throwing overloads of `read()`, `read_at()`, `write()` and
+  `write_at()` that do not require a completion condition.
+
+* Added friendlier compiler errors for when a completion handler does not meet
+  the necessary type requirements. When C++0x is available (currently supported
+  for g++ 4.5 or later, and MSVC 10), `static_assert` is also used to generate
+  an informative error message. This checking may be disabled by defining
+  `(BOOST_)ASIO_DISABLE_HANDLER_TYPE_REQUIREMENTS`.
+
+* Added support for using `std::error_code` and `std::system_error`, when
+  available. The support is automatically enabled when compiling in
+  [^-std=c++0x] mode on g++ 4.5 or higher, or when using MSVC 10. The support
+  may be explicitly enabled by defining `ASIO_HAS_STD_SYSTEM_ERROR`, or
+  disabled by defining `ASIO_DISABLE_STD_SYSTEM_ERROR`. (Available in non-Boost
+  version of Asio only.)
+
+* Made the `is_loopback()`, `is_unspecified()` and `is_multicast()` functions
+  consistently available across the `ip::address`, `ip::address_v4` and
+  `ip::address_v6` classes.
+
+* Added new `non_blocking()` functions for managing the non-blocking behaviour
+  of a socket or descriptor. The `io_control()` commands named `non_blocking_io`
+  are now deprecated in favour of these new functions.
+
+* Added new `native_non_blocking()` functions for managing the non-blocking
+  mode of the underlying socket or descriptor. These functions are intended to
+  allow the encapsulation of arbitrary non-blocking system calls as
+  asynchronous operations, in a way that is transparent to the user of the
+  socket object. The functions have no effect on the behaviour of the
+  synchronous operations of the socket or descriptor.
+
+* Added the `io_control()` member function for socket acceptors.
+
+* For consistency with the C++0x standard library, deprecated the `native_type`
+  typedefs in favour of `native_handle_type`, and the `native()` member
+  functions in favour of `native_handle()`.
+
+* Added a `release()` member function to posix descriptors. This function
+  releases ownership of the underlying native descriptor to the caller.
+
+* Added support for sequenced packet sockets (`SOCK_SEQPACKET`).
+
+* Added a new `io_service::stopped()` function that can be used to determine
+  whether the `io_service` has stopped (i.e. a `reset()` call is needed prior
+  to any further calls to `run()`, `run_one()`, `poll()` or `poll_one()`).
+
+* Reduced the copying of handler function objects.
+
+* Added support for C++0x move construction to further reduce copying of
+  handler objects. Move support is enabled when compiling in [^-std=c++0x] mode
+  on g++ 4.5 or higher, or when using MSVC10.
+
+* Removed the dependency on OS-provided macros for the well-known IPv4 and IPv6
+  addresses. This should eliminate the annoying "missing braces around
+  initializer" warnings.
+
+* Reduced the size of `ip::basic_endpoint<>` objects (such as
+  `ip::tcp::endpoint` and `ip::udp::endpoint`).
+
+* Changed the reactor backends to assume that any descriptors or sockets added
+  using `assign()` may have been `dup()`-ed, and so require explicit
+  deregistration from the reactor.
+
+* Changed the SSL error category to return error strings from the OpenSSL
+  library.
+
+* Changed the separate compilation support such that, to use Asio's SSL
+  capabilities, you should also include 'asio/ssl/impl/src.hpp` in one source
+  file in your program.
+
+* Removed the deprecated member functions named `io_service()`. The
+  `get_io_service()` member functions should be used instead.
+
+* Removed the deprecated typedefs `resolver_query` and `resolver_iterator` from
+  the `ip::tcp`, `ip::udp` and `ip::icmp` classes.
+
+* Fixed a compile error on some versions of g++ due to anonymous enums.
+
+* Added an explicit cast to the `FIONBIO` constant to int to suppress a compiler
+  warning on some platforms.
+
+* Fixed warnings reported by g++'s [^-Wshadow] compiler option.
+
 [heading Asio 1.4.8]
 
 * Fixed an integer overflow problem that occurs when `ip::address_v4::netmask()`
