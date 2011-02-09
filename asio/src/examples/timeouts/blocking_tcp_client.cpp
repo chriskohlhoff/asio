@@ -27,7 +27,7 @@ using asio::deadline_timer;
 using asio::ip::tcp;
 using boost::lambda::bind;
 using boost::lambda::var;
-using boost::lambda::_1;
+namespace arg { using boost::lambda::_1; }
 
 //----------------------------------------------------------------------
 
@@ -91,7 +91,7 @@ public:
     // object is used as a callback and will update the ec variable when the
     // operation completes. The blocking_udp_client.cpp example shows how you
     // can use boost::bind rather than boost::lambda.
-    asio::async_connect(socket_, iter, var(ec) = _1);
+    asio::async_connect(socket_, iter, var(ec) = arg::_1);
 
     // Block until the asynchronous operation has completed.
     do io_service_.run_one(); while (ec == asio::error::would_block);
@@ -124,7 +124,7 @@ public:
     // object is used as a callback and will update the ec variable when the
     // operation completes. The blocking_udp_client.cpp example shows how you
     // can use boost::bind rather than boost::lambda.
-    asio::async_read_until(socket_, input_buffer_, '\n', var(ec) = _1);
+    asio::async_read_until(socket_, input_buffer_, '\n', var(ec) = arg::_1);
 
     // Block until the asynchronous operation has completed.
     do io_service_.run_one(); while (ec == asio::error::would_block);
@@ -159,7 +159,7 @@ public:
     // object is used as a callback and will update the ec variable when the
     // operation completes. The blocking_udp_client.cpp example shows how you
     // can use boost::bind rather than boost::lambda.
-    asio::async_write(socket_, asio::buffer(data), var(ec) = _1);
+    asio::async_write(socket_, asio::buffer(data), var(ec) = arg::_1);
 
     // Block until the asynchronous operation has completed.
     do io_service_.run_one(); while (ec == asio::error::would_block);
