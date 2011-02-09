@@ -56,6 +56,9 @@ the program with `ASIO_SEPARATE_COMPILATION` defined in the project\/compiler
 settings. Alternatively, `ASIO_DYN_LINK` may be defined to build a
 separately-compiled Asio as part of a shared library.
 
+If using Asio's SSL support, you will also need to add `#include
+<asio/ssl/impl/src.hpp>`.
+
 [heading Building the tests and examples on Linux or UNIX]
 
 If the boost directory (e.g. the directory called `boost_1_34_1`) is in the
