@@ -43,6 +43,7 @@
 [include requirements/AsyncReadStream.qbk]
 [include requirements/AsyncWriteStream.qbk]
 [include requirements/CompletionHandler.qbk]
+[include requirements/ComposedConnectHandler.qbk]
 [include requirements/ConnectHandler.qbk]
 [include requirements/ConstBufferSequence.qbk]
 [include requirements/ConvertibleToConstBuffer.qbk]
@@ -1264,6 +1265,9 @@
         <xsl:when test="declname = 'CompletionCondition'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'ConnectCondition'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'Context_Service'">
           <xsl:value-of select="declname"/>
         </xsl:when>
@@ -1277,6 +1281,9 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'HandshakeHandler'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Iterator'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'MatchCondition'">

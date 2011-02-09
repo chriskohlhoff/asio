@@ -66,6 +66,9 @@
             <member><link linkend="asio.reference.async_write">async_write</link></member>
             <member><link linkend="asio.reference.async_write_at">async_write_at</link></member>
             <member><link linkend="asio.reference.buffer">buffer</link></member>
+            <member><link linkend="asio.reference.buffer_cast">buffer_cast</link></member>
+            <member><link linkend="asio.reference.buffer_copy">buffer_copy</link></member>
+            <member><link linkend="asio.reference.buffer_size">buffer_size</link></member>
             <member><link linkend="asio.reference.buffers_begin">buffers_begin</link></member>
             <member><link linkend="asio.reference.buffers_end">buffers_end</link></member>
             <member><link linkend="asio.reference.has_service">has_service</link></member>
@@ -74,6 +77,7 @@
             <member><link linkend="asio.reference.read_until">read_until</link></member>
             <member><link linkend="asio.reference.transfer_all">transfer_all</link></member>
             <member><link linkend="asio.reference.transfer_at_least">transfer_at_least</link></member>
+            <member><link linkend="asio.reference.transfer_exactly">transfer_exactly</link></member>
             <member><link linkend="asio.reference.use_service">use_service</link></member>
             <member><link linkend="asio.reference.write">write</link></member>
             <member><link linkend="asio.reference.write_at">write_at</link></member>
@@ -166,6 +170,8 @@
           </simplelist>
           <bridgehead renderas="sect3">Free Functions</bridgehead>
           <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.async_connect">async_connect</link></member>
+            <member><link linkend="asio.reference.connect">connect</link></member>
             <member><link linkend="asio.reference.ip__host_name">ip::host_name</link></member>
           </simplelist>
         </entry>
@@ -174,8 +180,9 @@
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.basic_datagram_socket">basic_datagram_socket</link></member>
             <member><link linkend="asio.reference.basic_deadline_timer">basic_deadline_timer</link></member>
-            <member><link linkend="asio.reference.basic_socket">basic_socket</link></member>
             <member><link linkend="asio.reference.basic_raw_socket">basic_raw_socket</link></member>
+            <member><link linkend="asio.reference.basic_seq_packet_socket">basic_seq_packet_socket</link></member>
+            <member><link linkend="asio.reference.basic_socket">basic_socket</link></member>
             <member><link linkend="asio.reference.basic_socket_acceptor">basic_socket_acceptor</link></member>
             <member><link linkend="asio.reference.basic_socket_iostream">basic_socket_iostream</link></member>
             <member><link linkend="asio.reference.basic_socket_streambuf">basic_socket_streambuf</link></member>
@@ -191,6 +198,7 @@
             <member><link linkend="asio.reference.datagram_socket_service">datagram_socket_service</link></member>
             <member><link linkend="asio.reference.ip__resolver_service">ip::resolver_service</link></member>
             <member><link linkend="asio.reference.raw_socket_service">raw_socket_service</link></member>
+            <member><link linkend="asio.reference.seq_packet_socket_service">seq_packet_socket_service</link></member>
             <member><link linkend="asio.reference.socket_acceptor_service">socket_acceptor_service</link></member>
             <member><link linkend="asio.reference.stream_socket_service">stream_socket_service</link></member>
           </simplelist>

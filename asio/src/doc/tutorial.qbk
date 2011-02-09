@@ -887,27 +887,19 @@ A resolver takes a query object and turns it into a list of endpoints. We constr
 
 
 
-The list of endpoints is returned using an iterator of type [link asio.reference.ip__basic_resolver.iterator ip::tcp::resolver::iterator]. A default constructed [link asio.reference.ip__basic_resolver.iterator ip::tcp::resolver::iterator] object is used as the end iterator.
+The list of endpoints is returned using an iterator of type [link asio.reference.ip__basic_resolver.iterator ip::tcp::resolver::iterator]. (Note that a default constructed [link asio.reference.ip__basic_resolver.iterator ip::tcp::resolver::iterator] object can be used as an end iterator.)
 
 
   ``''''''``    tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
-  ``''''''``    tcp::resolver::iterator end;
 
 
 
-Now we create and connect the socket. The list of endpoints obtained above may contain both IPv4 and IPv6 endpoints, so we need to try each of them until we find one that works. This keeps the client program independent of a specific IP version.
+Now we create and connect the socket. The list of endpoints obtained above may contain both IPv4 and IPv6 endpoints, so we need to try each of them until we find one that works. This keeps the client program independent of a specific IP version. The asio::connect() function does this for us automatically.
 
 
 
   ``''''''``    tcp::socket socket(io_service);
-  ``''''''``    asio::error_code error = asio::error::host_not_found;
-  ``''''''``    while (error && endpoint_iterator != end)
-  ``''''''``    {
-  ``''''''``      socket.close();
-  ``''''''``      socket.connect(*endpoint_iterator++, error);
-  ``''''''``    }
-  ``''''''``    if (error)
-  ``''''''``      throw asio::system_error(error);
+  ``''''''``    asio::connect(socket, endpoint_iterator);
 
 
 
@@ -993,17 +985,9 @@ Next: [link asio.tutorial.tutdaytime2 Daytime.2 - A synchronous TCP daytime serv
   ``''''''``    tcp::resolver resolver(io_service);
   ``''''''``    tcp::resolver::query query(argv[1], "daytime");
   ``''''''``    tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
-  ``''''''``    tcp::resolver::iterator end;
 
   ``''''''``    tcp::socket socket(io_service);
-  ``''''''``    asio::error_code error = asio::error::host_not_found;
-  ``''''''``    while (error && endpoint_iterator != end)
-  ``''''''``    {
-  ``''''''``      socket.close();
-  ``''''''``      socket.connect(*endpoint_iterator++, error);
-  ``''''''``    }
-  ``''''''``    if (error)
-  ``''''''``      throw asio::system_error(error);
+  ``''''''``    asio::connect(socket, endpoint_iterator);
 
   ``''''''``    for (;;)
   ``''''''``    {
@@ -1097,8 +1081,7 @@ A client is accessing our service. Determine the current time and transfer this 
   ``''''''``      std::string message = make_daytime_string();
 
   ``''''''``      asio::error_code ignored_error;
-  ``''''''``      asio::write(socket, asio::buffer(message),
-  ``''''''``          asio::transfer_all(), ignored_error);
+  ``''''''``      asio::write(socket, asio::buffer(message), ignored_error);
   ``''''''``    }
   ``''''''``  }
 
@@ -1170,8 +1153,7 @@ Next: [link asio.tutorial.tutdaytime3 Daytime.3 - An asynchronous TCP daytime se
   ``''''''``      std::string message = make_daytime_string();
 
   ``''''''``      asio::error_code ignored_error;
-  ``''''''``      asio::write(socket, asio::buffer(message),
-  ``''''''``          asio::transfer_all(), ignored_error);
+  ``''''''``      asio::write(socket, asio::buffer(message), ignored_error);
   ``''''''``    }
   ``''''''``  }
   ``''''''``  catch (std::exception& e)
@@ -1253,7 +1235,7 @@ The function `start_accept()` creates a socket and initiates an asynchronous acc
   ``''''''``  void start_accept()
   ``''''''``  {
   ``''''''``    tcp_connection::pointer new_connection =
-  ``''''''``      tcp_connection::create(acceptor_.io_service());
+  ``''''''``      tcp_connection::create(acceptor_.get_io_service());
 
   ``''''''``    acceptor_.async_accept(new_connection->socket(),
   ``''''''``        boost::bind(&tcp_server::handle_accept, this, new_connection,
@@ -1463,7 +1445,7 @@ Next: [link asio.tutorial.tutdaytime4 Daytime.4 - A synchronous UDP daytime clie
   ``''''''``  void start_accept()
   ``''''''``  {
   ``''''''``    tcp_connection::pointer new_connection =
-  ``''''''``      tcp_connection::create(acceptor_.io_service());
+  ``''''''``      tcp_connection::create(acceptor_.get_io_service());
 
   ``''''''``    acceptor_.async_accept(new_connection->socket(),
   ``''''''``        boost::bind(&tcp_server::handle_accept, this, new_connection,
@@ -1559,7 +1541,7 @@ Since UDP is datagram-oriented, we will not be using a stream socket. Create an 
   ``''''''``    udp::socket socket(io_service);
   ``''''''``    socket.open(udp::v4());
 
-  ``''''''``    boost::array<char, 1> send_buf  = { 0 };
+  ``''''''``    boost::array<char, 1> send_buf  = {{ 0 }};
   ``''''''``    socket.send_to(asio::buffer(send_buf), receiver_endpoint);
 
 
@@ -1637,7 +1619,7 @@ Next: [link asio.tutorial.tutdaytime5 Daytime.5 - A synchronous UDP daytime serv
   ``''''''``    udp::socket socket(io_service);
   ``''''''``    socket.open(udp::v4());
 
-  ``''''''``    boost::array<char, 1> send_buf  = { 0 };
+  ``''''''``    boost::array<char, 1> send_buf  = {{ 0 }};
   ``''''''``    socket.send_to(asio::buffer(send_buf), receiver_endpoint);
 
   ``''''''``    boost::array<char, 128> recv_buf;
@@ -2161,7 +2143,7 @@ The following two classes are taken from [link asio.tutorial.tutdaytime3 Daytime
   ``''''''``  void start_accept()
   ``''''''``  {
   ``''''''``    tcp_connection::pointer new_connection =
-  ``''''''``      tcp_connection::create(acceptor_.io_service());
+  ``''''''``      tcp_connection::create(acceptor_.get_io_service());
 
   ``''''''``    acceptor_.async_accept(new_connection->socket(),
   ``''''''``        boost::bind(&tcp_server::handle_accept, this, new_connection,
@@ -2322,7 +2304,7 @@ Previous: [link asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP daytim
   ``''''''``  void start_accept()
   ``''''''``  {
   ``''''''``    tcp_connection::pointer new_connection =
-  ``''''''``      tcp_connection::create(acceptor_.io_service());
+  ``''''''``      tcp_connection::create(acceptor_.get_io_service());
 
   ``''''''``    acceptor_.async_accept(new_connection->socket(),
   ``''''''``        boost::bind(&tcp_server::handle_accept, this, new_connection,
