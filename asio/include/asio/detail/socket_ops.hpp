@@ -50,7 +50,10 @@ enum
   stream_oriented = 16,
 
   // The socket is datagram-oriented.
-  datagram_oriented = 32
+  datagram_oriented = 32,
+
+  // The socket may have been dup()-ed.
+  possible_dup = 64
 };
 
 typedef unsigned char state_type;

@@ -39,7 +39,10 @@ enum
   internal_non_blocking = 2,
 
   // Helper "state" used to determine whether the descriptor is non-blocking.
-  non_blocking = user_set_non_blocking | internal_non_blocking
+  non_blocking = user_set_non_blocking | internal_non_blocking,
+
+  // The descriptor may have been dup()-ed.
+  possible_dup = 4
 };
 
 typedef unsigned char state_type;

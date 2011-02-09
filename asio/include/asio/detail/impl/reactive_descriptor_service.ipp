@@ -49,7 +49,10 @@ void reactive_descriptor_service::destroy(
     reactive_descriptor_service::implementation_type& impl)
 {
   if (is_open(impl))
-    reactor_.deregister_descriptor(impl.descriptor_, impl.reactor_data_, true);
+  {
+    reactor_.deregister_descriptor(impl.descriptor_, impl.reactor_data_,
+        (impl.state_ & descriptor_ops::possible_dup) == 0);
+  }
 
   asio::error_code ignored_ec;
   descriptor_ops::close(impl.descriptor_, impl.state_, ignored_ec);
@@ -74,7 +77,7 @@ asio::error_code reactive_descriptor_service::assign(
   }
 
   impl.descriptor_ = native_descriptor;
-  impl.state_ = 0;
+  impl.state_ = descriptor_ops::possible_dup;
   ec = asio::error_code();
   return ec;
 }
@@ -84,7 +87,10 @@ asio::error_code reactive_descriptor_service::close(
     asio::error_code& ec)
 {
   if (is_open(impl))
-    reactor_.deregister_descriptor(impl.descriptor_, impl.reactor_data_, true);
+  {
+    reactor_.deregister_descriptor(impl.descriptor_, impl.reactor_data_,
+        (impl.state_ & descriptor_ops::possible_dup) == 0);
+  }
 
   if (descriptor_ops::close(impl.descriptor_, impl.state_, ec) == 0)
     construct(impl);
