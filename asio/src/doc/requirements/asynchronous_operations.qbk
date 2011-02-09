@@ -38,9 +38,9 @@ fail with any error condition associated with non-blocking operations
 
 All asynchronous operations have an associated `io_service` object. Where the
 initiating function is a member function, the associated `io_service` is that
-returned by the `io_service()` member function on the same object. Where the
+returned by the `get_io_service()` member function on the same object. Where the
 initiating function is not a member function, the associated `io_service` is
-that returned by the `io_service()` member function of the first argument to
+that returned by the `get_io_service()` member function of the first argument to
 the initiating function.
 
 Arguments to initiating functions will be treated as follows:
@@ -71,11 +71,11 @@ argument is the associated `io_service` object.
 
 [mdash] The thread is executing any member function, constructor or destructor
 of an object of a class defined in this clause, where the object's
-`io_service()` member function returns the associated `io_service` object.
+`get_io_service()` member function returns the associated `io_service` object.
 
 [mdash] The thread is executing any function defined in this clause, where any
-argument to the function has an `io_service()` member function that returns the
-associated `io_service` object.
+argument to the function has an `get_io_service()` member function that returns
+the associated `io_service` object.
 
 [blurb Asio may use one or more hidden threads to emulate asynchronous
 functionality. The above requirements are intended to prevent these hidden

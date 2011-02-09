@@ -91,7 +91,7 @@ asio.reference.WaitHandler `WaitHandler`] requirements.
     []
     [
       Initiates an asynchronous wait operation that is performed via the
-      `io_service` object `a.io_service()` and behaves according to [link
+      `io_service` object `a.get_io_service()` and behaves according to [link
       asio.reference.asynchronous_operations asynchronous operation]
       requirements.\n
       \n

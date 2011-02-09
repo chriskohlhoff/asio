@@ -222,7 +222,7 @@ and `v` denote identifiers.
     [
       pre: `a.is_open(b) && !k.is_open()`.\n
       Initiates an asynchronous accept operation that is performed via the
-      `io_service` object `a.io_service()` and behaves according to [link
+      `io_service` object `a.get_io_service()` and behaves according to [link
       asio.reference.asynchronous_operations asynchronous operation]
       requirements.\n\n
       The program must ensure the objects `k` and `e` are valid until the
@@ -237,7 +237,7 @@ and `v` denote identifiers.
     [
       pre: `a.is_open(b) && !k.is_open()`.\n
       Initiates an asynchronous accept operation that is performed via the
-      `io_service` object `a.io_service()` and behaves according to [link
+      `io_service` object `a.get_io_service()` and behaves according to [link
       asio.reference.asynchronous_operations asynchronous operation]
       requirements.\n\n
       The program must ensure the object `k` is valid until the handler for the
