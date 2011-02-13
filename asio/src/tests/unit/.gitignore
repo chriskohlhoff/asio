@@ -14,6 +14,7 @@ basic_seq_packet_socket
 basic_serial_port
 basic_socket_acceptor
 basic_stream_socket
+basic_streambuf
 buffer
 buffered_read_stream
 buffered_stream
@@ -42,6 +43,7 @@ socket_acceptor_service
 socket_base
 strand
 stream_socket_service
+streambuf
 thread
 time_traits
 write

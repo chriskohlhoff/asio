@@ -24,6 +24,7 @@ check_PROGRAMS = \
 	tests/unit/basic_serial_port \
 	tests/unit/basic_socket_acceptor \
 	tests/unit/basic_stream_socket \
+	tests/unit/basic_streambuf \
 	tests/unit/buffered_read_stream \
 	tests/unit/buffered_stream \
 	tests/unit/buffered_write_stream \
@@ -76,6 +77,7 @@ check_PROGRAMS = \
 	tests/unit/socket_base \
 	tests/unit/strand \
 	tests/unit/stream_socket_service \
+	tests/unit/streambuf \
 	tests/unit/thread \
 	tests/unit/time_traits \
 	tests/unit/windows/basic_handle \
@@ -181,6 +183,7 @@ TESTS = \
 	tests/unit/basic_serial_port \
 	tests/unit/basic_socket_acceptor \
 	tests/unit/basic_stream_socket \
+	tests/unit/basic_streambuf \
 	tests/unit/buffered_read_stream \
 	tests/unit/buffered_stream \
 	tests/unit/buffered_write_stream \
@@ -233,6 +236,7 @@ TESTS = \
 	tests/unit/socket_base \
 	tests/unit/strand \
 	tests/unit/stream_socket_service \
+	tests/unit/streambuf \
 	tests/unit/thread \
 	tests/unit/time_traits \
 	tests/unit/windows/basic_handle \
@@ -286,6 +290,7 @@ tests_unit_basic_seq_packet_socket_SOURCES = tests/unit/basic_seq_packet_socket.
 tests_unit_basic_serial_port_SOURCES = tests/unit/basic_serial_port.cpp tests/unit/unit_test.cpp
 tests_unit_basic_socket_acceptor_SOURCES = tests/unit/basic_socket_acceptor.cpp tests/unit/unit_test.cpp
 tests_unit_basic_stream_socket_SOURCES = tests/unit/basic_stream_socket.cpp tests/unit/unit_test.cpp
+tests_unit_basic_streambuf_SOURCES = tests/unit/basic_streambuf.cpp tests/unit/unit_test.cpp
 tests_unit_buffer_SOURCES = tests/unit/buffer.cpp tests/unit/unit_test.cpp
 tests_unit_buffers_iterator_SOURCES = tests/unit/buffers_iterator.cpp tests/unit/unit_test.cpp
 tests_unit_buffered_read_stream_SOURCES = tests/unit/buffered_read_stream.cpp tests/unit/unit_test.cpp
@@ -338,6 +343,7 @@ tests_unit_socket_acceptor_service_SOURCES = tests/unit/socket_acceptor_service.
 tests_unit_socket_base_SOURCES = tests/unit/socket_base.cpp tests/unit/unit_test.cpp
 tests_unit_strand_SOURCES = tests/unit/strand.cpp tests/unit/unit_test.cpp
 tests_unit_stream_socket_service_SOURCES = tests/unit/stream_socket_service.cpp tests/unit/unit_test.cpp
+tests_unit_streambuf_SOURCES = tests/unit/streambuf.cpp tests/unit/unit_test.cpp
 tests_unit_thread_SOURCES = tests/unit/thread.cpp tests/unit/unit_test.cpp
 tests_unit_time_traits_SOURCES = tests/unit/time_traits.cpp tests/unit/unit_test.cpp
 tests_unit_windows_basic_handle_SOURCES = tests/unit/windows/basic_handle.cpp tests/unit/unit_test.cpp

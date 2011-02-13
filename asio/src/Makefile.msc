@@ -86,6 +86,7 @@ UNIT_TEST_EXES = \
 	tests\unit\basic_serial_port.exe \
 	tests\unit\basic_socket_acceptor.exe \
 	tests\unit\basic_stream_socket.exe \
+	tests\unit\basic_streambuf.exe \
 	tests\unit\buffered_read_stream.exe \
 	tests\unit\buffered_stream.exe \
 	tests\unit\buffered_write_stream.exe \
@@ -129,6 +130,7 @@ UNIT_TEST_EXES = \
 	tests\unit\socket_base.exe \
 	tests\unit\strand.exe \
 	tests\unit\stream_socket_service.exe \
+	tests\unit\streambuf.exe \
 	tests\unit\thread.exe \
 	tests\unit\time_traits.exe \
 	tests\unit\windows\basic_handle.exe \
