@@ -270,8 +270,11 @@
         <entry valign="center" namest="b" nameend="b">
           <bridgehead renderas="sect2">SSL</bridgehead>
         </entry>
-        <entry valign="center" namest="c" nameend="d">
+        <entry valign="center" namest="c" nameend="c">
           <bridgehead renderas="sect2">Serial Ports</bridgehead>
+        </entry>
+        <entry valign="center" namest="d" nameend="d">
+          <bridgehead renderas="sect2">Signal Handling</bridgehead>
         </entry>
       </row>
     </thead>
@@ -330,8 +333,6 @@
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.serial_port_service">serial_port_service</link></member>
           </simplelist>
-        </entry>
-        <entry valign="top">
           <bridgehead renderas="sect3">Serial Port Options</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.serial_port_base__baud_rate">serial_port_base::baud_rate</link></member>
@@ -345,6 +346,25 @@
             <member><link linkend="asio.reference.GettableSerialPortOption">GettableSerialPortOption</link></member>
             <member><link linkend="asio.reference.SerialPortService">SerialPortService</link></member>
             <member><link linkend="asio.reference.SettableSerialPortOption">SettableSerialPortOption</link></member>
+          </simplelist>
+        </entry>
+        <entry valign="top">
+          <bridgehead renderas="sect3">Classes</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.signal_set">signal_set</link></member>
+          </simplelist>
+          <bridgehead renderas="sect3">Class Templates</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.basic_signal_set">basic_signal_set</link></member>
+          </simplelist>
+          <bridgehead renderas="sect3">Services</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.signal_set_service">signal_set_service</link></member>
+          </simplelist>
+          <bridgehead renderas="sect3">Type Requirements</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.SignalSetService">SignalSetService</link></member>
+            <member><link linkend="asio.reference.SignalHandler">SignalHandler</link></member>
           </simplelist>
         </entry>
       </row>
