@@ -39,11 +39,7 @@ epoll_reactor::epoll_reactor(asio::io_service& io_service)
     io_service_(use_service<io_service_impl>(io_service)),
     mutex_(),
     epoll_fd_(do_epoll_create()),
-#if defined(ASIO_HAS_TIMERFD)
-    timer_fd_(timerfd_create(CLOCK_MONOTONIC, 0)),
-#else // defined(ASIO_HAS_TIMERFD)
-    timer_fd_(-1),
-#endif // defined(ASIO_HAS_TIMERFD)
+    timer_fd_(do_timerfd_create()),
     interrupter_(),
     shutdown_(false)
 {
@@ -106,6 +102,35 @@ int epoll_reactor::register_descriptor(socket_type descriptor,
 
   epoll_event ev = { 0, { 0 } };
   ev.events = EPOLLIN | EPOLLERR | EPOLLHUP | EPOLLOUT | EPOLLPRI | EPOLLET;
+  ev.data.ptr = descriptor_data;
+  int result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
+  if (result != 0)
+    return errno;
+
+  return 0;
+}
+
+int epoll_reactor::register_internal_descriptor(
+    int op_type, socket_type descriptor,
+    epoll_reactor::per_descriptor_data& descriptor_data, reactor_op* op)
+{
+  mutex::scoped_lock lock(registered_descriptors_mutex_);
+
+  descriptor_data = registered_descriptors_.alloc();
+  descriptor_data->shutdown_ = false;
+  descriptor_data->op_queue_[op_type].push(op);
+
+  lock.unlock();
+
+  epoll_event ev = { 0, { 0 } };
+  ev.events = EPOLLERR | EPOLLHUP | EPOLLET;
+  switch (op_type)
+  {
+  case read_op: ev.events |= EPOLLIN; break;
+  case write_op: ev.events |= EPOLLOUT; break;
+  case except_op: ev.events |= EPOLLPRI; break;
+  default: break;
+  };
   ev.data.ptr = descriptor_data;
   int result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
   if (result != 0)
@@ -330,14 +355,51 @@ void epoll_reactor::interrupt()
 
 int epoll_reactor::do_epoll_create()
 {
-  int fd = epoll_create(epoll_size);
+#if defined(EPOLL_CLOEXEC)
+  int fd = epoll_create1(EPOLL_CLOEXEC);
+#else // defined(EPOLL_CLOEXEC)
+  int fd = -1;
+  errno = EINVAL;
+#endif // defined(EPOLL_CLOEXEC)
+
+  if (fd == -1 && errno == EINVAL)
+  {
+    fd = epoll_create(epoll_size);
+    if (fd != -1)
+      ::fcntl(fd, F_SETFD, FD_CLOEXEC);
+  }
+
   if (fd == -1)
   {
     asio::error_code ec(errno,
         asio::error::get_system_category());
     asio::detail::throw_error(ec, "epoll");
   }
+
   return fd;
+}
+
+int epoll_reactor::do_timerfd_create()
+{
+#if defined(ASIO_HAS_TIMERFD)
+# if defined(TFD_CLOEXEC)
+  int fd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC);
+# else // defined(TFD_CLOEXEC)
+  int fd = -1;
+  errno = EINVAL;
+# endif // defined(TFD_CLOEXEC)
+
+  if (fd == -1 && errno == EINVAL)
+  {
+    fd = timerfd_create(CLOCK_MONOTONIC, 0);
+    if (fd != -1)
+      ::fcntl(fd, F_SETFD, FD_CLOEXEC);
+  }
+
+  return fd;
+#else // defined(ASIO_HAS_TIMERFD)
+  return -1;
+#endif // defined(ASIO_HAS_TIMERFD)
 }
 
 void epoll_reactor::do_add_timer_queue(timer_queue_base& queue)

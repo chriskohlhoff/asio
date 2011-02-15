@@ -88,6 +88,12 @@ public:
   ASIO_DECL int register_descriptor(socket_type descriptor,
       per_descriptor_data& descriptor_data);
 
+  // Register a descriptor with an associated single operation. Returns 0 on
+  // success, system error code on failure.
+  ASIO_DECL int register_internal_descriptor(
+      int op_type, socket_type descriptor,
+      per_descriptor_data& descriptor_data, reactor_op* op);
+
   // Post a reactor operation for immediate completion.
   void post_immediate_completion(reactor_op* op)
   {

@@ -22,6 +22,7 @@ check_PROGRAMS = \
 	tests/unit/basic_raw_socket \
 	tests/unit/basic_seq_packet_socket \
 	tests/unit/basic_serial_port \
+	tests/unit/basic_signal_set \
 	tests/unit/basic_socket_acceptor \
 	tests/unit/basic_stream_socket \
 	tests/unit/basic_streambuf \
@@ -73,6 +74,8 @@ check_PROGRAMS = \
 	tests/unit/serial_port \
 	tests/unit/serial_port_base \
 	tests/unit/serial_port_service \
+	tests/unit/signal_set \
+	tests/unit/signal_set_service \
 	tests/unit/socket_acceptor_service \
 	tests/unit/socket_base \
 	tests/unit/strand \
@@ -181,6 +184,7 @@ TESTS = \
 	tests/unit/basic_raw_socket \
 	tests/unit/basic_seq_packet_socket \
 	tests/unit/basic_serial_port \
+	tests/unit/basic_signal_set \
 	tests/unit/basic_socket_acceptor \
 	tests/unit/basic_stream_socket \
 	tests/unit/basic_streambuf \
@@ -232,6 +236,8 @@ TESTS = \
 	tests/unit/serial_port \
 	tests/unit/serial_port_base \
 	tests/unit/serial_port_service \
+	tests/unit/signal_set \
+	tests/unit/signal_set_service \
 	tests/unit/socket_acceptor_service \
 	tests/unit/socket_base \
 	tests/unit/strand \
@@ -288,6 +294,7 @@ tests_unit_basic_deadline_timer_SOURCES = tests/unit/basic_deadline_timer.cpp te
 tests_unit_basic_raw_socket_SOURCES = tests/unit/basic_raw_socket.cpp tests/unit/unit_test.cpp
 tests_unit_basic_seq_packet_socket_SOURCES = tests/unit/basic_seq_packet_socket.cpp tests/unit/unit_test.cpp
 tests_unit_basic_serial_port_SOURCES = tests/unit/basic_serial_port.cpp tests/unit/unit_test.cpp
+tests_unit_basic_signal_set_SOURCES = tests/unit/basic_signal_set.cpp tests/unit/unit_test.cpp
 tests_unit_basic_socket_acceptor_SOURCES = tests/unit/basic_socket_acceptor.cpp tests/unit/unit_test.cpp
 tests_unit_basic_stream_socket_SOURCES = tests/unit/basic_stream_socket.cpp tests/unit/unit_test.cpp
 tests_unit_basic_streambuf_SOURCES = tests/unit/basic_streambuf.cpp tests/unit/unit_test.cpp
@@ -339,6 +346,8 @@ tests_unit_seq_packet_socket_service_SOURCES = tests/unit/seq_packet_socket_serv
 tests_unit_serial_port_SOURCES = tests/unit/serial_port.cpp tests/unit/unit_test.cpp
 tests_unit_serial_port_base_SOURCES = tests/unit/serial_port_base.cpp tests/unit/unit_test.cpp
 tests_unit_serial_port_service_SOURCES = tests/unit/serial_port_service.cpp tests/unit/unit_test.cpp
+tests_unit_signal_set_SOURCES = tests/unit/signal_set.cpp tests/unit/unit_test.cpp
+tests_unit_signal_set_service_SOURCES = tests/unit/signal_set_service.cpp tests/unit/unit_test.cpp
 tests_unit_socket_acceptor_service_SOURCES = tests/unit/socket_acceptor_service.cpp tests/unit/unit_test.cpp
 tests_unit_socket_base_SOURCES = tests/unit/socket_base.cpp tests/unit/unit_test.cpp
 tests_unit_strand_SOURCES = tests/unit/strand.cpp tests/unit/unit_test.cpp
@@ -371,60 +380,36 @@ examples_http_client_sync_client_SOURCES = examples/http/client/sync_client.cpp
 examples_http_server_http_server_SOURCES = \
 	examples/http/server/connection.cpp \
 	examples/http/server/connection_manager.cpp \
+	examples/http/server/main.cpp \
 	examples/http/server/mime_types.cpp \
 	examples/http/server/reply.cpp \
 	examples/http/server/request_handler.cpp \
 	examples/http/server/request_parser.cpp \
 	examples/http/server/server.cpp
-if WINDOWS_TARGET
-examples_http_server_http_server_SOURCES += \
-	examples/http/server/win_main.cpp
-else
-examples_http_server_http_server_SOURCES += \
-	examples/http/server/posix_main.cpp
-endif
 examples_http_server2_http_server_SOURCES = \
 	examples/http/server2/connection.cpp \
 	examples/http/server2/io_service_pool.cpp \
+	examples/http/server2/main.cpp \
 	examples/http/server2/mime_types.cpp \
 	examples/http/server2/reply.cpp \
 	examples/http/server2/request_handler.cpp \
 	examples/http/server2/request_parser.cpp \
 	examples/http/server2/server.cpp
-if WINDOWS_TARGET
-examples_http_server2_http_server_SOURCES += \
-	examples/http/server2/win_main.cpp
-else
-examples_http_server2_http_server_SOURCES += \
-	examples/http/server2/posix_main.cpp
-endif
 examples_http_server3_http_server_SOURCES = \
 	examples/http/server3/connection.cpp \
+	examples/http/server3/main.cpp \
 	examples/http/server3/mime_types.cpp \
 	examples/http/server3/reply.cpp \
 	examples/http/server3/request_handler.cpp \
 	examples/http/server3/request_parser.cpp \
 	examples/http/server3/server.cpp
-if WINDOWS_TARGET
-examples_http_server3_http_server_SOURCES += \
-	examples/http/server3/win_main.cpp
-else
-examples_http_server3_http_server_SOURCES += \
-	examples/http/server3/posix_main.cpp
-endif
 examples_http_server4_http_server_SOURCES = \
 	examples/http/server4/file_handler.cpp \
+	examples/http/server4/main.cpp \
 	examples/http/server4/mime_types.cpp \
 	examples/http/server4/reply.cpp \
 	examples/http/server4/request_parser.cpp \
 	examples/http/server4/server.cpp
-if WINDOWS_TARGET
-examples_http_server4_http_server_SOURCES += \
-	examples/http/server4/win_main.cpp
-else
-examples_http_server4_http_server_SOURCES += \
-	examples/http/server4/posix_main.cpp
-endif
 examples_icmp_ping_SOURCES = examples/icmp/ping.cpp
 examples_invocation_prioritised_handlers_SOURCES = examples/invocation/prioritised_handlers.cpp
 examples_iostreams_daytime_client_SOURCES = examples/iostreams/daytime_client.cpp

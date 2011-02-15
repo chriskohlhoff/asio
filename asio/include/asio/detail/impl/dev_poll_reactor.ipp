@@ -74,6 +74,26 @@ int dev_poll_reactor::register_descriptor(socket_type, per_descriptor_data&)
   return 0;
 }
 
+int dev_poll_reactor::register_internal_descriptor(int op_type,
+    socket_type descriptor, per_descriptor_data&, reactor_op* op)
+{
+  asio::detail::mutex::scoped_lock lock(mutex_);
+
+  op_queue_[op_type].enqueue_operation(descriptor, op);
+  ::pollfd& ev = add_pending_event_change(descriptor);
+  ev.events = POLLERR | POLLHUP;
+  switch (op_type)
+  {
+  case read_op: ev.events |= POLLIN; break;
+  case write_op: ev.events |= POLLOUT; break;
+  case except_op: ev.events |= POLLPRI; break;
+  default: break;
+  }
+  interrupter_.interrupt();
+
+  return 0;
+}
+
 void dev_poll_reactor::start_op(int op_type, socket_type descriptor,
     dev_poll_reactor::per_descriptor_data&,
     reactor_op* op, bool allow_speculative)

@@ -70,6 +70,8 @@
 [include requirements/Service.qbk]
 [include requirements/SettableSerialPortOption.qbk]
 [include requirements/SettableSocketOption.qbk]
+[include requirements/SignalHandler.qbk]
+[include requirements/SignalSetService.qbk]
 [include requirements/SocketAcceptorService.qbk]
 [include requirements/SocketService.qbk]
 [include requirements/StreamDescriptorService.qbk]

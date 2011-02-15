@@ -94,6 +94,18 @@ int select_reactor::register_descriptor(socket_type,
   return 0;
 }
 
+int select_reactor::register_internal_descriptor(
+    int op_type, socket_type descriptor,
+    select_reactor::per_descriptor_data&, reactor_op* op)
+{
+  asio::detail::mutex::scoped_lock lock(mutex_);
+
+  op_queue_[op_type].enqueue_operation(descriptor, op);
+  interrupter_.interrupt();
+
+  return 0;
+}
+
 void select_reactor::start_op(int op_type, socket_type descriptor,
     select_reactor::per_descriptor_data&, reactor_op* op, bool)
 {

@@ -19,6 +19,7 @@ UNIT_TEST_EXES = \
 	tests/unit/basic_raw_socket.exe \
 	tests/unit/basic_seq_packet_socket.exe \
 	tests/unit/basic_serial_port.exe \
+	tests/unit/basic_signal_set.exe \
 	tests/unit/basic_socket_acceptor.exe \
 	tests/unit/basic_stream_socket.exe \
 	tests/unit/basic_streambuf.exe \
@@ -61,6 +62,8 @@ UNIT_TEST_EXES = \
 	tests/unit/serial_port.exe \
 	tests/unit/serial_port_base.exe \
 	tests/unit/serial_port_service.exe \
+	tests/unit/signal_set.exe \
+	tests/unit/signal_set_service.exe \
 	tests/unit/socket_acceptor_service.exe \
 	tests/unit/socket_base.exe \
 	tests/unit/strand.exe \
@@ -160,33 +163,33 @@ $(PERFORMANCE_TEST_EXES) $(EXAMPLE_EXES): %.exe: %.o
 examples/http/server/http_server.exe: \
 		examples/http/server/connection.o \
 		examples/http/server/connection_manager.o \
+		examples/http/server/main.o \
 		examples/http/server/mime_types.o \
 		examples/http/server/reply.o \
 		examples/http/server/request_handler.o \
 		examples/http/server/request_parser.o \
-		examples/http/server/server.o \
-		examples/http/server/win_main.o
+		examples/http/server/server.o
 	g++ -o$@ $(LDFLAGS) $^ $(LIBS)
 
 examples/http/server2/http_server.exe: \
 		examples/http/server2/connection.o \
 		examples/http/server2/io_service_pool.o \
+		examples/http/server2/main.o \
 		examples/http/server2/mime_types.o \
 		examples/http/server2/reply.o \
 		examples/http/server2/request_handler.o \
 		examples/http/server2/request_parser.o \
-		examples/http/server2/server.o \
-		examples/http/server2/win_main.o
+		examples/http/server2/server.o
 	g++ -o$@ $(LDFLAGS) $^ $(LIBS)
 
 examples/http/server3/http_server.exe: \
 		examples/http/server3/connection.o \
+		examples/http/server3/main.o \
 		examples/http/server3/mime_types.o \
 		examples/http/server3/reply.o \
 		examples/http/server3/request_handler.o \
 		examples/http/server3/request_parser.o \
-		examples/http/server3/server.o \
-		examples/http/server3/win_main.o
+		examples/http/server3/server.o
 	g++ -o$@ $(LDFLAGS) $^ $(LIBS)
 
 examples/services/daytime_client.exe: \

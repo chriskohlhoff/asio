@@ -92,6 +92,37 @@ int kqueue_reactor::register_descriptor(socket_type,
   return 0;
 }
 
+int kqueue_reactor::register_internal_descriptor(
+    int op_type, socket_type descriptor,
+    kqueue_reactor::per_descriptor_data& descriptor_data, reactor_op* op)
+{
+  mutex::scoped_lock lock(registered_descriptors_mutex_);
+
+  descriptor_data = registered_descriptors_.alloc();
+  descriptor_data->shutdown_ = false;
+  descriptor_data->op_queue_[op_type].push(op);
+
+  struct kevent event;
+  switch (op_type)
+  {
+  case read_op:
+    ASIO_KQUEUE_EV_SET(&event, descriptor, EVFILT_READ,
+        EV_ADD | EV_ONESHOT, 0, 0, descriptor_data);
+    break;
+  case write_op:
+    ASIO_KQUEUE_EV_SET(&event, descriptor, EVFILT_WRITE,
+        EV_ADD | EV_ONESHOT, 0, 0, descriptor_data);
+    break;
+  case except_op:
+    ASIO_KQUEUE_EV_SET(&event, descriptor, EVFILT_READ,
+        EV_ADD | EV_ONESHOT, EV_OOBAND, 0, descriptor_data);
+    break;
+  }
+  ::kevent(kqueue_fd_, &event, 1, 0, 0, 0);
+
+  return 0;
+}
+
 void kqueue_reactor::start_op(int op_type, socket_type descriptor,
     kqueue_reactor::per_descriptor_data& descriptor_data,
     reactor_op* op, bool allow_speculative)

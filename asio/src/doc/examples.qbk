@@ -74,9 +74,9 @@ cancelling all outstanding asynchronous operations.
 * [@../src/examples/http/server/connection_manager.cpp]
 * [@../src/examples/http/server/connection_manager.hpp]
 * [@../src/examples/http/server/header.hpp]
+* [@../src/examples/http/server/main.cpp]
 * [@../src/examples/http/server/mime_types.cpp]
 * [@../src/examples/http/server/mime_types.hpp]
-* [@../src/examples/http/server/posix_main.cpp]
 * [@../src/examples/http/server/reply.cpp]
 * [@../src/examples/http/server/reply.hpp]
 * [@../src/examples/http/server/request.hpp]
@@ -86,7 +86,6 @@ cancelling all outstanding asynchronous operations.
 * [@../src/examples/http/server/request_parser.hpp]
 * [@../src/examples/http/server/server.cpp]
 * [@../src/examples/http/server/server.hpp]
-* [@../src/examples/http/server/win_main.cpp]
 
 
 [heading HTTP Server 2]
@@ -98,9 +97,9 @@ An HTTP server using an io_service-per-CPU design.
 * [@../src/examples/http/server2/header.hpp]
 * [@../src/examples/http/server2/io_service_pool.cpp]
 * [@../src/examples/http/server2/io_service_pool.hpp]
+* [@../src/examples/http/server2/main.cpp]
 * [@../src/examples/http/server2/mime_types.cpp]
 * [@../src/examples/http/server2/mime_types.hpp]
-* [@../src/examples/http/server2/posix_main.cpp]
 * [@../src/examples/http/server2/reply.cpp]
 * [@../src/examples/http/server2/reply.hpp]
 * [@../src/examples/http/server2/request.hpp]
@@ -110,7 +109,6 @@ An HTTP server using an io_service-per-CPU design.
 * [@../src/examples/http/server2/request_parser.hpp]
 * [@../src/examples/http/server2/server.cpp]
 * [@../src/examples/http/server2/server.hpp]
-* [@../src/examples/http/server2/win_main.cpp]
 
 
 [heading HTTP Server 3]
@@ -120,9 +118,9 @@ An HTTP server using a single io_service and a thread pool calling `io_service::
 * [@../src/examples/http/server3/connection.cpp]
 * [@../src/examples/http/server3/connection.hpp]
 * [@../src/examples/http/server3/header.hpp]
+* [@../src/examples/http/server3/main.cpp]
 * [@../src/examples/http/server3/mime_types.cpp]
 * [@../src/examples/http/server3/mime_types.hpp]
-* [@../src/examples/http/server3/posix_main.cpp]
 * [@../src/examples/http/server3/reply.cpp]
 * [@../src/examples/http/server3/reply.hpp]
 * [@../src/examples/http/server3/request.hpp]
@@ -132,7 +130,6 @@ An HTTP server using a single io_service and a thread pool calling `io_service::
 * [@../src/examples/http/server3/request_parser.hpp]
 * [@../src/examples/http/server3/server.cpp]
 * [@../src/examples/http/server3/server.hpp]
-* [@../src/examples/http/server3/win_main.cpp]
 
 
 [heading HTTP Server 4]
@@ -143,9 +140,9 @@ A single-threaded HTTP server implemented using stackless coroutines.
 * [@../src/examples/http/server4/file_handler.cpp]
 * [@../src/examples/http/server4/file_handler.hpp]
 * [@../src/examples/http/server4/header.hpp]
+* [@../src/examples/http/server4/main.cpp]
 * [@../src/examples/http/server4/mime_types.cpp]
 * [@../src/examples/http/server4/mime_types.hpp]
-* [@../src/examples/http/server4/posix_main.cpp]
 * [@../src/examples/http/server4/reply.cpp]
 * [@../src/examples/http/server4/reply.hpp]
 * [@../src/examples/http/server4/request.hpp]
@@ -154,7 +151,6 @@ A single-threaded HTTP server implemented using stackless coroutines.
 * [@../src/examples/http/server4/server.cpp]
 * [@../src/examples/http/server4/server.hpp]
 * [@../src/examples/http/server4/unyield.hpp]
-* [@../src/examples/http/server4/win_main.cpp]
 * [@../src/examples/http/server4/yield.hpp]
 
 

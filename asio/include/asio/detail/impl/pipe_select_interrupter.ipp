@@ -44,6 +44,11 @@ pipe_select_interrupter::pipe_select_interrupter()
     ::fcntl(read_descriptor_, F_SETFL, O_NONBLOCK);
     write_descriptor_ = pipe_fds[1];
     ::fcntl(write_descriptor_, F_SETFL, O_NONBLOCK);
+
+#if defined(FD_CLOEXEC)
+    ::fcntl(read_descriptor_, F_SETFD, FD_CLOEXEC);
+    ::fcntl(write_descriptor_, F_SETFD, FD_CLOEXEC);
+#endif // defined(FD_CLOEXEC)
   }
   else
   {

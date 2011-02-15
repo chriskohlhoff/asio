@@ -77,6 +77,12 @@ public:
   ASIO_DECL int register_descriptor(socket_type descriptor,
       per_descriptor_data& descriptor_data);
 
+  // Register a descriptor with an associated single operation. Returns 0 on
+  // success, system error code on failure.
+  ASIO_DECL int register_internal_descriptor(
+      int op_type, socket_type descriptor,
+      per_descriptor_data& descriptor_data, reactor_op* op);
+
   // Post a reactor operation for immediate completion.
   void post_immediate_completion(reactor_op* op)
   {
@@ -86,8 +92,8 @@ public:
   // Start a new operation. The reactor operation will be performed when the
   // given descriptor is flagged as ready, or an error has occurred.
   ASIO_DECL void start_op(int op_type, socket_type descriptor,
-      per_descriptor_data& descriptor_data,
-      reactor_op* op, bool allow_speculative);
+      per_descriptor_data& descriptor_data, reactor_op* op,
+      bool allow_speculative);
 
   // Cancel all operations associated with the given descriptor. The
   // handlers associated with the descriptor will be invoked with the
@@ -135,6 +141,9 @@ private:
   // Create the epoll file descriptor. Throws an exception if the descriptor
   // cannot be created.
   ASIO_DECL static int do_epoll_create();
+
+  // Create the timerfd file descriptor. Does not throw.
+  ASIO_DECL static int do_timerfd_create();
 
   // Helper function to add a new timer queue.
   ASIO_DECL void do_add_timer_queue(timer_queue_base& queue);

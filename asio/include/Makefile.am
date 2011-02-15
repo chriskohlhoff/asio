@@ -6,6 +6,7 @@ nobase_include_HEADERS = \
 	asio/basic_raw_socket.hpp \
 	asio/basic_seq_packet_socket.hpp \
 	asio/basic_serial_port.hpp \
+	asio/basic_signal_set.hpp \
 	asio/basic_socket_acceptor.hpp \
 	asio/basic_socket.hpp \
 	asio/basic_socket_iostream.hpp \
@@ -77,6 +78,7 @@ nobase_include_HEADERS = \
 	asio/detail/impl/select_reactor.ipp \
 	asio/detail/impl/service_registry.hpp \
 	asio/detail/impl/service_registry.ipp \
+	asio/detail/impl/signal_set_service.ipp \
 	asio/detail/impl/socket_ops.ipp \
 	asio/detail/impl/socket_select_interrupter.ipp \
 	asio/detail/impl/strand_service.hpp \
@@ -94,6 +96,7 @@ nobase_include_HEADERS = \
 	asio/detail/impl/win_iocp_socket_service_base.ipp \
 	asio/detail/impl/win_mutex.ipp \
 	asio/detail/impl/winsock_init.ipp \
+	asio/detail/impl/win_static_mutex.ipp \
 	asio/detail/impl/win_thread.ipp \
 	asio/detail/impl/win_tss_ptr.ipp \
 	asio/detail/io_control.hpp \
@@ -107,6 +110,7 @@ nobase_include_HEADERS = \
 	asio/detail/null_fenced_block.hpp \
 	asio/detail/null_mutex.hpp \
 	asio/detail/null_signal_blocker.hpp \
+	asio/detail/null_static_mutex.hpp \
 	asio/detail/null_thread.hpp \
 	asio/detail/null_tss_ptr.hpp \
 	asio/detail/object_pool.hpp \
@@ -119,6 +123,7 @@ nobase_include_HEADERS = \
 	asio/detail/posix_fd_set_adapter.hpp \
 	asio/detail/posix_mutex.hpp \
 	asio/detail/posix_signal_blocker.hpp \
+	asio/detail/posix_static_mutex.hpp \
 	asio/detail/posix_thread.hpp \
 	asio/detail/posix_tss_ptr.hpp \
 	asio/detail/push_options.hpp \
@@ -128,8 +133,8 @@ nobase_include_HEADERS = \
 	asio/detail/reactive_socket_accept_op.hpp \
 	asio/detail/reactive_socket_connect_op.hpp \
 	asio/detail/reactive_socket_recvfrom_op.hpp \
-	asio/detail/reactive_socket_recv_op.hpp \
 	asio/detail/reactive_socket_recvmsg_op.hpp \
+	asio/detail/reactive_socket_recv_op.hpp \
 	asio/detail/reactive_socket_send_op.hpp \
 	asio/detail/reactive_socket_sendto_op.hpp \
 	asio/detail/reactive_socket_service_base.hpp \
@@ -151,13 +156,17 @@ nobase_include_HEADERS = \
 	asio/detail/service_registry.hpp \
 	asio/detail/shared_ptr.hpp \
 	asio/detail/signal_blocker.hpp \
+	asio/detail/signal_handler.hpp \
 	asio/detail/signal_init.hpp \
+	asio/detail/signal_op.hpp \
+	asio/detail/signal_set_service.hpp \
 	asio/detail/socket_holder.hpp \
 	asio/detail/socket_ops.hpp \
 	asio/detail/socket_option.hpp \
 	asio/detail/socket_select_interrupter.hpp \
 	asio/detail/socket_types.hpp \
 	asio/detail/solaris_fenced_block.hpp \
+	asio/detail/static_mutex.hpp \
 	asio/detail/strand_service.hpp \
 	asio/detail/task_io_service_fwd.hpp \
 	asio/detail/task_io_service.hpp \
@@ -197,6 +206,7 @@ nobase_include_HEADERS = \
 	asio/detail/win_iocp_socket_service.hpp \
 	asio/detail/win_mutex.hpp \
 	asio/detail/winsock_init.hpp \
+	asio/detail/win_static_mutex.hpp \
 	asio/detail/win_thread.hpp \
 	asio/detail/win_tss_ptr.hpp \
 	asio/detail/wrapped_handler.hpp \
@@ -270,6 +280,8 @@ nobase_include_HEADERS = \
 	asio/serial_port_base.hpp \
 	asio/serial_port.hpp \
 	asio/serial_port_service.hpp \
+	asio/signal_set.hpp \
+	asio/signal_set_service.hpp \
 	asio/socket_acceptor_service.hpp \
 	asio/socket_base.hpp \
 	asio/ssl/basic_context.hpp \
@@ -282,9 +294,9 @@ nobase_include_HEADERS = \
 	asio/ssl/detail/openssl_stream_service.hpp \
 	asio/ssl/detail/openssl_types.hpp \
 	asio/ssl/error.hpp \
+	asio/ssl.hpp \
 	asio/ssl/impl/error.ipp \
 	asio/ssl/impl/src.hpp \
-	asio/ssl.hpp \
 	asio/ssl/stream_base.hpp \
 	asio/ssl/stream.hpp \
 	asio/ssl/stream_service.hpp \

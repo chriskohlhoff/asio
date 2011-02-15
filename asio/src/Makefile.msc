@@ -84,6 +84,7 @@ UNIT_TEST_EXES = \
 	tests\unit\basic_raw_socket.exe \
 	tests\unit\basic_seq_packet_socket.exe \
 	tests\unit\basic_serial_port.exe \
+	tests\unit\basic_signal_set.exe \
 	tests\unit\basic_socket_acceptor.exe \
 	tests\unit\basic_stream_socket.exe \
 	tests\unit\basic_streambuf.exe \
@@ -126,6 +127,8 @@ UNIT_TEST_EXES = \
 	tests\unit\serial_port.exe \
 	tests\unit\serial_port_base.exe \
 	tests\unit\serial_port_service.exe \
+	tests\unit\signal_set.exe \
+	tests\unit\signal_set_service.exe \
 	tests\unit\socket_acceptor_service.exe \
 	tests\unit\socket_base.exe \
 	tests\unit\strand.exe \
@@ -338,42 +341,42 @@ tests\unit\unit_test.obj: tests\unit\unit_test.cpp
 examples\http\server\http_server.exe: \
 		examples\http\server\connection.cpp \
 		examples\http\server\connection_manager.cpp \
+		examples\http\server\main.cpp \
 		examples\http\server\mime_types.cpp \
 		examples\http\server\reply.cpp \
 		examples\http\server\request_handler.cpp \
 		examples\http\server\request_parser.cpp \
-		examples\http\server\server.cpp \
-		examples\http\server\win_main.cpp
+		examples\http\server\server.cpp
 	cl -Fe$@ -Foexamples\http\server\ $(CXXFLAGS) $(DEFINES) $** $(LIBS) -link -opt:ref
 
 examples\http\server2\http_server.exe: \
 		examples\http\server2\connection.cpp \
 		examples\http\server2\io_service_pool.cpp \
+		examples\http\server2\main.cpp \
 		examples\http\server2\mime_types.cpp \
 		examples\http\server2\reply.cpp \
 		examples\http\server2\request_handler.cpp \
 		examples\http\server2\request_parser.cpp \
-		examples\http\server2\server.cpp \
-		examples\http\server2\win_main.cpp
+		examples\http\server2\server.cpp
 	cl -Fe$@ -Foexamples\http\server2\ $(CXXFLAGS) $(DEFINES) $** $(LIBS) -link -opt:ref
 
 examples\http\server3\http_server.exe: \
 		examples\http\server3\connection.cpp \
+		examples\http\server3\main.cpp \
 		examples\http\server3\mime_types.cpp \
 		examples\http\server3\reply.cpp \
 		examples\http\server3\request_handler.cpp \
 		examples\http\server3\request_parser.cpp \
-		examples\http\server3\server.cpp \
-		examples\http\server3\win_main.cpp
+		examples\http\server3\server.cpp
 	cl -Fe$@ -Foexamples\http\server3\ $(CXXFLAGS) $(DEFINES) $** $(LIBS) -link -opt:ref
 
 examples\http\server4\http_server.exe: \
 		examples\http\server4\file_handler.cpp \
+		examples\http\server4\main.cpp \
 		examples\http\server4\mime_types.cpp \
 		examples\http\server4\reply.cpp \
 		examples\http\server4\request_parser.cpp \
-		examples\http\server4\server.cpp \
-		examples\http\server4\win_main.cpp
+		examples\http\server4\server.cpp
 	cl -Fe$@ -Foexamples\http\server4\ $(CXXFLAGS) $(DEFINES) $** $(LIBS) -link -opt:ref
 
 examples\services\daytime_client.exe: \

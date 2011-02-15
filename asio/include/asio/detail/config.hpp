@@ -237,4 +237,11 @@
 # endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 #endif // !defined(ASIO_DISABLE_LOCAL_SOCKETS)
 
+// Can use sigaction() instead of signal().
+#if !defined(ASIO_DISABLE_SIGACTION)
+# if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#  define ASIO_HAS_SIGACTION 1
+# endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(ASIO_DISABLE_SIGACTION)
+
 #endif // ASIO_DETAIL_CONFIG_HPP
