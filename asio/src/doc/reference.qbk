@@ -43,6 +43,8 @@
 [include requirements/Service.qbk]
 [include requirements/SettableSerialPortOption.qbk]
 [include requirements/SettableSocketOption.qbk]
+[include requirements/SignalHandler.qbk]
+[include requirements/SignalSetService.qbk]
 [include requirements/SocketAcceptorService.qbk]
 [include requirements/SocketService.qbk]
 [include requirements/StreamDescriptorService.qbk]
@@ -21752,6 +21754,525 @@ The write\_some operation may not transmit all of the data to the peer. Consider
 
 
 [endsect]
+
+
+[endsect]
+
+[section:basic_signal_set basic_signal_set]
+
+
+Provides signal functionality. 
+
+
+  template<
+      typename ``[link asio.reference.SignalSetService SignalSetService]`` = signal_set_service>
+  class basic_signal_set :
+    public basic_io_object< SignalSetService >
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.basic_signal_set.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_signal_set.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_signal_set.add [*add]]]
+    [Add a signal to a signal_set. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_signal_set.async_wait [*async_wait]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.basic_signal_set.basic_signal_set [*basic_signal_set]]]
+    [Construct a signal set without adding any signals. 
+
+     Construct a signal set and add one signal. 
+
+     Construct a signal set and add two signals. 
+
+     Construct a signal set and add three signals. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_signal_set.cancel [*cancel]]]
+    [Cancel all operations associated with the signal set. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_signal_set.clear [*clear]]]
+    [Remove all signals from a signal_set. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_signal_set.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_signal_set.remove [*remove]]]
+    [Remove a signal to a signal_set. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_signal_set.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_signal_set.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_signal_set.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+[section:add basic_signal_set::add]
+
+[indexterm2 add..basic_signal_set] 
+Add a signal to a signal\_set. 
+
+
+  void ``[link asio.reference.basic_signal_set.add.overload1 add]``(
+      int signal_number);
+  ``  [''''&raquo;''' [link asio.reference.basic_signal_set.add.overload1 more...]]``
+
+  asio::error_code ``[link asio.reference.basic_signal_set.add.overload2 add]``(
+      int signal_number,
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.basic_signal_set.add.overload2 more...]]``
+
+
+[section:overload1 basic_signal_set::add (1 of 2 overloads)]
+
+
+Add a signal to a signal\_set. 
+
+
+  void add(
+      int signal_number);
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_signal_set::add (2 of 2 overloads)]
+
+
+Add a signal to a signal\_set. 
+
+
+  asio::error_code add(
+      int signal_number,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:async_wait basic_signal_set::async_wait]
+
+[indexterm2 async_wait..basic_signal_set] 
+
+  template<
+      typename ``[link asio.reference.SignalHandler SignalHandler]``>
+  void async_wait(
+      SignalHandler handler);
+
+
+
+[endsect]
+
+
+[section:basic_signal_set basic_signal_set::basic_signal_set]
+
+[indexterm2 basic_signal_set..basic_signal_set] 
+Construct a signal set without adding any signals. 
+
+
+  explicit ``[link asio.reference.basic_signal_set.basic_signal_set.overload1 basic_signal_set]``(
+      asio::io_service & io_service);
+  ``  [''''&raquo;''' [link asio.reference.basic_signal_set.basic_signal_set.overload1 more...]]``
+
+
+Construct a signal set and add one signal. 
+
+
+  ``[link asio.reference.basic_signal_set.basic_signal_set.overload2 basic_signal_set]``(
+      asio::io_service & io_service,
+      int signal_number_1);
+  ``  [''''&raquo;''' [link asio.reference.basic_signal_set.basic_signal_set.overload2 more...]]``
+
+
+Construct a signal set and add two signals. 
+
+
+  ``[link asio.reference.basic_signal_set.basic_signal_set.overload3 basic_signal_set]``(
+      asio::io_service & io_service,
+      int signal_number_1,
+      int signal_number_2);
+  ``  [''''&raquo;''' [link asio.reference.basic_signal_set.basic_signal_set.overload3 more...]]``
+
+
+Construct a signal set and add three signals. 
+
+
+  ``[link asio.reference.basic_signal_set.basic_signal_set.overload4 basic_signal_set]``(
+      asio::io_service & io_service,
+      int signal_number_1,
+      int signal_number_2,
+      int signal_number_3);
+  ``  [''''&raquo;''' [link asio.reference.basic_signal_set.basic_signal_set.overload4 more...]]``
+
+
+[section:overload1 basic_signal_set::basic_signal_set (1 of 4 overloads)]
+
+
+Construct a signal set without adding any signals. 
+
+
+  basic_signal_set(
+      asio::io_service & io_service);
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_signal_set::basic_signal_set (2 of 4 overloads)]
+
+
+Construct a signal set and add one signal. 
+
+
+  basic_signal_set(
+      asio::io_service & io_service,
+      int signal_number_1);
+
+
+
+[endsect]
+
+
+
+[section:overload3 basic_signal_set::basic_signal_set (3 of 4 overloads)]
+
+
+Construct a signal set and add two signals. 
+
+
+  basic_signal_set(
+      asio::io_service & io_service,
+      int signal_number_1,
+      int signal_number_2);
+
+
+
+[endsect]
+
+
+
+[section:overload4 basic_signal_set::basic_signal_set (4 of 4 overloads)]
+
+
+Construct a signal set and add three signals. 
+
+
+  basic_signal_set(
+      asio::io_service & io_service,
+      int signal_number_1,
+      int signal_number_2,
+      int signal_number_3);
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:cancel basic_signal_set::cancel]
+
+[indexterm2 cancel..basic_signal_set] 
+Cancel all operations associated with the signal set. 
+
+
+  void ``[link asio.reference.basic_signal_set.cancel.overload1 cancel]``();
+  ``  [''''&raquo;''' [link asio.reference.basic_signal_set.cancel.overload1 more...]]``
+
+  asio::error_code ``[link asio.reference.basic_signal_set.cancel.overload2 cancel]``(
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.basic_signal_set.cancel.overload2 more...]]``
+
+
+[section:overload1 basic_signal_set::cancel (1 of 2 overloads)]
+
+
+Cancel all operations associated with the signal set. 
+
+
+  void cancel();
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_signal_set::cancel (2 of 2 overloads)]
+
+
+Cancel all operations associated with the signal set. 
+
+
+  asio::error_code cancel(
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:clear basic_signal_set::clear]
+
+[indexterm2 clear..basic_signal_set] 
+Remove all signals from a signal\_set. 
+
+
+  void ``[link asio.reference.basic_signal_set.clear.overload1 clear]``();
+  ``  [''''&raquo;''' [link asio.reference.basic_signal_set.clear.overload1 more...]]``
+
+  asio::error_code ``[link asio.reference.basic_signal_set.clear.overload2 clear]``(
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.basic_signal_set.clear.overload2 more...]]``
+
+
+[section:overload1 basic_signal_set::clear (1 of 2 overloads)]
+
+
+Remove all signals from a signal\_set. 
+
+
+  void clear();
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_signal_set::clear (2 of 2 overloads)]
+
+
+Remove all signals from a signal\_set. 
+
+
+  asio::error_code clear(
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:get_io_service basic_signal_set::get_io_service]
+
+
+['Inherited from basic_io_object.]
+
+[indexterm2 get_io_service..basic_signal_set] 
+Get the [link asio.reference.io_service `io_service`] associated with the object. 
+
+
+  asio::io_service & get_io_service();
+
+
+This function may be used to obtain the [link asio.reference.io_service `io_service`] object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the [link asio.reference.io_service `io_service`] object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+
+[endsect]
+
+
+
+[section:implementation basic_signal_set::implementation]
+
+
+['Inherited from basic_io_object.]
+
+[indexterm2 implementation..basic_signal_set] 
+The underlying implementation of the I/O object. 
+
+
+  implementation_type implementation;
+
+
+
+[endsect]
+
+
+
+[section:implementation_type basic_signal_set::implementation_type]
+
+
+['Inherited from basic_io_object.]
+
+[indexterm2 implementation_type..basic_signal_set] 
+The underlying implementation type of I/O object. 
+
+
+  typedef service_type::implementation_type implementation_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_signal_set.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[section:remove basic_signal_set::remove]
+
+[indexterm2 remove..basic_signal_set] 
+Remove a signal to a signal\_set. 
+
+
+  void ``[link asio.reference.basic_signal_set.remove.overload1 remove]``(
+      int signal_number);
+  ``  [''''&raquo;''' [link asio.reference.basic_signal_set.remove.overload1 more...]]``
+
+  asio::error_code ``[link asio.reference.basic_signal_set.remove.overload2 remove]``(
+      int signal_number,
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.basic_signal_set.remove.overload2 more...]]``
+
+
+[section:overload1 basic_signal_set::remove (1 of 2 overloads)]
+
+
+Remove a signal to a signal\_set. 
+
+
+  void remove(
+      int signal_number);
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_signal_set::remove (2 of 2 overloads)]
+
+
+Remove a signal to a signal\_set. 
+
+
+  asio::error_code remove(
+      int signal_number,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:service basic_signal_set::service]
+
+
+['Inherited from basic_io_object.]
+
+[indexterm2 service..basic_signal_set] 
+The service associated with the I/O object. 
+
+
+  service_type & service;
+
+
+
+[endsect]
+
+
+
+[section:service_type basic_signal_set::service_type]
+
+
+['Inherited from basic_io_object.]
+
+[indexterm2 service_type..basic_signal_set] 
+The type of the service that will be used to provide I/O operations. 
+
+
+  typedef SignalSetService service_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_signal_set.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
 
 
 [endsect]
@@ -64445,10 +64966,30 @@ An argument placeholder, for use with boost::bind(), that corresponds to the err
 [section:placeholders__iterator placeholders::iterator]
 
 [indexterm1 placeholders::iterator] 
-An argument placeholder, for use with boost::bind(), that corresponds to the iterator argument of a handler for asynchronous functions such as asio::basic\_resolver::resolve. 
+An argument placeholder, for use with boost::bind(), that corresponds to the iterator argument of a handler for asynchronous functions such as asio::basic\_resolver::async\_resolve. 
 
 
   unspecified iterator;
+
+
+[heading Requirements]
+
+[*Header: ][^asio/placeholders.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:placeholders__signal_number placeholders::signal_number]
+
+[indexterm1 placeholders::signal_number] 
+An argument placeholder, for use with boost::bind(), that corresponds to the signal\_number argument of a handler for asynchronous functions such as `asio::signal_set::async_wait`. 
+
+
+  unspecified signal_number;
 
 
 [heading Requirements]
@@ -74238,6 +74779,402 @@ Exception thrown when trying to add a duplicate service to an [link asio.referen
 [indexterm2 service_already_exists..service_already_exists] 
 
   service_already_exists();
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+
+[section:signal_set signal_set]
+
+[indexterm1 signal_set] 
+Typedef for the typical usage of a signal set. 
+
+
+  typedef basic_signal_set signal_set;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.basic_signal_set.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_signal_set.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_signal_set.add [*add]]]
+    [Add a signal to a signal_set. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_signal_set.async_wait [*async_wait]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.basic_signal_set.basic_signal_set [*basic_signal_set]]]
+    [Construct a signal set without adding any signals. 
+
+     Construct a signal set and add one signal. 
+
+     Construct a signal set and add two signals. 
+
+     Construct a signal set and add three signals. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_signal_set.cancel [*cancel]]]
+    [Cancel all operations associated with the signal set. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_signal_set.clear [*clear]]]
+    [Remove all signals from a signal_set. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_signal_set.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_signal_set.remove [*remove]]]
+    [Remove a signal to a signal_set. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_signal_set.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_signal_set.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+
+[heading Requirements]
+
+[*Header: ][^asio/signal_set.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[section:signal_set_service signal_set_service]
+
+
+Default service implementation for a signal set. 
+
+
+  class signal_set_service :
+    public io_service::service
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.signal_set_service.implementation_type [*implementation_type]]]
+    [The type of a signal set implementation. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.signal_set_service.add [*add]]]
+    [Add a signal to a signal_set. ]
+  ]
+  
+  [
+    [[link asio.reference.signal_set_service.async_wait [*async_wait]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.signal_set_service.cancel [*cancel]]]
+    [Cancel all operations associated with the signal set. ]
+  ]
+  
+  [
+    [[link asio.reference.signal_set_service.clear [*clear]]]
+    [Remove all signals from a signal_set. ]
+  ]
+  
+  [
+    [[link asio.reference.signal_set_service.construct [*construct]]]
+    [Construct a new signal set implementation. ]
+  ]
+  
+  [
+    [[link asio.reference.signal_set_service.destroy [*destroy]]]
+    [Destroy a signal set implementation. ]
+  ]
+  
+  [
+    [[link asio.reference.signal_set_service.get_io_service [*get_io_service]]]
+    [Get the io_service object that owns the service. ]
+  ]
+  
+  [
+    [[link asio.reference.signal_set_service.remove [*remove]]]
+    [Remove a signal to a signal_set. ]
+  ]
+  
+  [
+    [[link asio.reference.signal_set_service.shutdown_service [*shutdown_service]]]
+    [Destroy all user-defined handler objects owned by the service. ]
+  ]
+  
+  [
+    [[link asio.reference.signal_set_service.signal_set_service [*signal_set_service]]]
+    [Construct a new signal set service for the specified io_service. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.signal_set_service.id [*id]]]
+    [The unique service identifier. ]
+  ]
+
+]
+
+[heading Requirements]
+
+[*Header: ][^asio/signal_set_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[section:add signal_set_service::add]
+
+[indexterm2 add..signal_set_service] 
+Add a signal to a signal\_set. 
+
+
+  asio::error_code add(
+      implementation_type & impl,
+      int signal_number,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:async_wait signal_set_service::async_wait]
+
+[indexterm2 async_wait..signal_set_service] 
+
+  template<
+      typename ``[link asio.reference.SignalHandler SignalHandler]``>
+  void async_wait(
+      implementation_type & impl,
+      SignalHandler handler);
+
+
+
+[endsect]
+
+
+
+[section:cancel signal_set_service::cancel]
+
+[indexterm2 cancel..signal_set_service] 
+Cancel all operations associated with the signal set. 
+
+
+  asio::error_code cancel(
+      implementation_type & impl,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:clear signal_set_service::clear]
+
+[indexterm2 clear..signal_set_service] 
+Remove all signals from a signal\_set. 
+
+
+  asio::error_code clear(
+      implementation_type & impl,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:construct signal_set_service::construct]
+
+[indexterm2 construct..signal_set_service] 
+Construct a new signal set implementation. 
+
+
+  void construct(
+      implementation_type & impl);
+
+
+
+[endsect]
+
+
+
+[section:destroy signal_set_service::destroy]
+
+[indexterm2 destroy..signal_set_service] 
+Destroy a signal set implementation. 
+
+
+  void destroy(
+      implementation_type & impl);
+
+
+
+[endsect]
+
+
+
+[section:get_io_service signal_set_service::get_io_service]
+
+
+['Inherited from io_service.]
+
+[indexterm2 get_io_service..signal_set_service] 
+Get the [link asio.reference.io_service `io_service`] object that owns the service. 
+
+
+  asio::io_service & get_io_service();
+
+
+
+[endsect]
+
+
+
+[section:id signal_set_service::id]
+
+[indexterm2 id..signal_set_service] 
+The unique service identifier. 
+
+
+  static asio::io_service::id id;
+
+
+
+[endsect]
+
+
+
+[section:implementation_type signal_set_service::implementation_type]
+
+[indexterm2 implementation_type..signal_set_service] 
+The type of a signal set implementation. 
+
+
+  typedef implementation_defined implementation_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/signal_set_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:remove signal_set_service::remove]
+
+[indexterm2 remove..signal_set_service] 
+Remove a signal to a signal\_set. 
+
+
+  asio::error_code remove(
+      implementation_type & impl,
+      int signal_number,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:shutdown_service signal_set_service::shutdown_service]
+
+[indexterm2 shutdown_service..signal_set_service] 
+Destroy all user-defined handler objects owned by the service. 
+
+
+  virtual void shutdown_service();
+
+
+
+[endsect]
+
+
+
+[section:signal_set_service signal_set_service::signal_set_service]
+
+[indexterm2 signal_set_service..signal_set_service] 
+Construct a new signal set service for the specified [link asio.reference.io_service `io_service`]. 
+
+
+  signal_set_service(
+      asio::io_service & io_service);
 
 
 
