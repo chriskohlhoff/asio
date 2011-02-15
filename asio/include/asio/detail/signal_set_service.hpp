@@ -27,7 +27,7 @@
 #include "asio/detail/socket_types.hpp"
 
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-# include "asio/detail/reactor_fwd.hpp"
+# include "asio/detail/reactor.hpp"
 #endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 #include "asio/detail/push_options.hpp"
