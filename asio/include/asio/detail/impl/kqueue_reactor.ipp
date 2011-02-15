@@ -313,12 +313,14 @@ void kqueue_reactor::run(bool block, op_queue<operation>& ops)
               EV_ADD | EV_ONESHOT, EV_OOBAND, 0, descriptor_data);
         else
           continue;
+        break;
       case EVFILT_WRITE:
         if (!descriptor_data->op_queue_[write_op].empty())
           ASIO_KQUEUE_EV_SET(&event, descriptor, EVFILT_WRITE,
               EV_ADD | EV_ONESHOT, 0, 0, descriptor_data);
         else
           continue;
+        break;
       default:
         break;
       }
