@@ -154,14 +154,14 @@ public:
   }
 
   // Deliver notification that a particular signal occurred.
-  static ASIO_DECL void deliver_signal(int signal_number);
+  ASIO_DECL static void deliver_signal(int signal_number);
 
 private:
   // Helper function to add a service to the global signal state.
-  static ASIO_DECL void add_service(signal_set_service* service);
+  ASIO_DECL static void add_service(signal_set_service* service);
 
   // Helper function to remove a service from the global signal state.
-  static ASIO_DECL void remove_service(signal_set_service* service);
+  ASIO_DECL static void remove_service(signal_set_service* service);
 
   // Helper function to start a wait operation.
   ASIO_DECL void start_wait_op(implementation_type& impl, signal_op* op);
