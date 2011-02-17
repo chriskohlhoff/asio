@@ -65,7 +65,8 @@ public:
     return strerror(value);
 #elif defined(__MACH__) && defined(__APPLE__) \
   || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__) \
-  || defined(_AIX) || defined(__hpux) || defined(__osf__)
+  || defined(_AIX) || defined(__hpux) || defined(__osf__) \
+  || defined(__ANDROID__)
     char buf[256] = "";
     strerror_r(value, buf, sizeof(buf));
     return buf;
