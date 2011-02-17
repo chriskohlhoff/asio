@@ -40,16 +40,16 @@ void win_static_mutex::init()
 int win_static_mutex::do_init()
 {
   using namespace std; // For sprintf.
-  char mutex_name[128];
+  wchar_t mutex_name[128];
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
-  sprintf_s(mutex_name, sizeof(mutex_name),
+  swprintf_s(mutex_name, sizeof(mutex_name),
 #else // BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
-  sprintf(mutex_name,
+  swprintf(mutex_name,
 #endif // BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
-      "asio-58CCDC44-6264-4842-90C2-F3C545CB8AA7-%u-%p",
+      L"asio-58CCDC44-6264-4842-90C2-F3C545CB8AA7-%u-%p",
       static_cast<unsigned int>(::GetCurrentProcessId()), this);
 
-  HANDLE mutex = ::CreateMutexA(0, TRUE, mutex_name);
+  HANDLE mutex = ::CreateMutexW(0, TRUE, mutex_name);
   DWORD last_error = ::GetLastError();
   if (mutex == 0)
     return ::GetLastError();
