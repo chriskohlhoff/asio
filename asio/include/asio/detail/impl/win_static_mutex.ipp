@@ -42,7 +42,7 @@ int win_static_mutex::do_init()
   using namespace std; // For sprintf.
   wchar_t mutex_name[128];
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
-  swprintf_s(mutex_name, sizeof(mutex_name),
+  swprintf_s(mutex_name, 128,
 #else // BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
   swprintf(mutex_name,
 #endif // BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
