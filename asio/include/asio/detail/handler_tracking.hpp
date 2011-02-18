@@ -34,12 +34,15 @@ namespace detail {
 class handler_tracking
 {
 public:
+  class completion;
+
   // Base class for objects containing tracked handlers.
   class tracked_handler
   {
   private:
     // Only the handler_tracking class will have access to the id.
     friend class handler_tracking;
+    friend class completion;
     boost::uint64_t id_;
 
   protected:
