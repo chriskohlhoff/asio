@@ -49,6 +49,8 @@ void reactive_socket_service_base::destroy(
 {
   if (impl.socket_ != invalid_socket)
   {
+    ASIO_HANDLER_OPERATION(("socket", &impl, "close"));
+
     reactor_.deregister_descriptor(impl.socket_, impl.reactor_data_,
         (impl.state_ & socket_ops::possible_dup) == 0);
 
@@ -63,6 +65,8 @@ asio::error_code reactive_socket_service_base::close(
 {
   if (is_open(impl))
   {
+    ASIO_HANDLER_OPERATION(("socket", &impl, "close"));
+
     reactor_.deregister_descriptor(impl.socket_, impl.reactor_data_,
         (impl.state_ & socket_ops::possible_dup) == 0);
   }
@@ -82,6 +86,8 @@ asio::error_code reactive_socket_service_base::cancel(
     ec = asio::error::bad_descriptor;
     return ec;
   }
+
+  ASIO_HANDLER_OPERATION(("socket", &impl, "cancel"));
 
   reactor_.cancel_ops(impl.socket_, impl.reactor_data_);
   ec = asio::error_code();

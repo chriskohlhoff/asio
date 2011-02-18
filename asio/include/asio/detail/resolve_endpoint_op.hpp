@@ -80,6 +80,8 @@ public:
       // The operation has been returned to the main io_service. The completion
       // handler is ready to be delivered.
 
+      ASIO_HANDLER_COMPLETION((o));
+
       // Make a copy of the handler so that the memory can be deallocated
       // before the upcall is made. Even if we're not about to make an upcall,
       // a sub-object of the handler may be the true owner of the memory
@@ -94,7 +96,9 @@ public:
       if (owner)
       {
         asio::detail::fenced_block b;
+        ASIO_HANDLER_INVOCATION_BEGIN((handler.arg1_, "..."));
         asio_handler_invoke_helpers::invoke(handler, handler.handler_);
+        ASIO_HANDLER_INVOCATION_END;
       }
     }
   }

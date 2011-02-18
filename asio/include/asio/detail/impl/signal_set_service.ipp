@@ -319,6 +319,8 @@ asio::error_code signal_set_service::cancel(
     signal_set_service::implementation_type& impl,
     asio::error_code& ec)
 {
+  ASIO_HANDLER_OPERATION(("signal_set", &impl, "cancel"));
+
   op_queue<operation> ops;
   while (signal_op* op = impl.queue_.front())
   {

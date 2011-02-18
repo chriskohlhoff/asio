@@ -71,13 +71,18 @@ void resolver_service_base::construct(
 }
 
 void resolver_service_base::destroy(
-    resolver_service_base::implementation_type&)
+    resolver_service_base::implementation_type& impl)
 {
+  ASIO_HANDLER_OPERATION(("resolver", &impl, "cancel"));
+
+  impl.reset();
 }
 
 void resolver_service_base::cancel(
     resolver_service_base::implementation_type& impl)
 {
+  ASIO_HANDLER_OPERATION(("resolver", &impl, "cancel"));
+
   impl.reset(static_cast<void*>(0), socket_ops::noop_deleter());
 }
 

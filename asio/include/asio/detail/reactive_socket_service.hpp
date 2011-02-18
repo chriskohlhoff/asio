@@ -203,6 +203,8 @@ public:
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.socket_, buffers, destination, flags, handler);
 
+    ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_send_to"));
+
     start_op(impl, reactor::write_op, p.p, true, false);
     p.v = p.p = 0;
   }
@@ -218,6 +220,9 @@ public:
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);
+
+    ASIO_HANDLER_CREATION((p.p, "socket",
+          &impl, "async_send_to(null_buffers)"));
 
     start_op(impl, reactor::write_op, p.p, false, false);
     p.v = p.p = 0;
@@ -277,6 +282,9 @@ public:
     p.p = new (p.v) op(impl.socket_, protocol,
         buffers, sender_endpoint, flags, handler);
 
+    ASIO_HANDLER_CREATION((p.p, "socket",
+          &impl, "async_receive_from"));
+
     start_op(impl,
         (flags & socket_base::message_out_of_band)
           ? reactor::except_op : reactor::read_op,
@@ -299,6 +307,9 @@ public:
 
     // Reset endpoint since it can be given no sensible value at this time.
     sender_endpoint = endpoint_type();
+
+    ASIO_HANDLER_CREATION((p.p, "socket",
+          &impl, "async_receive_from(null_buffers)"));
 
     start_op(impl,
         (flags & socket_base::message_out_of_band)
@@ -350,6 +361,8 @@ public:
     p.p = new (p.v) op(impl.socket_, impl.state_, peer,
         impl.protocol_, peer_endpoint, handler);
 
+    ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_accept"));
+
     start_accept_op(impl, p.p, peer.is_open());
     p.v = p.p = 0;
   }
@@ -374,6 +387,8 @@ public:
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.socket_, handler);
+
+    ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_connect"));
 
     start_connect_op(impl, p.p, peer_endpoint.data(), peer_endpoint.size());
     p.v = p.p = 0;

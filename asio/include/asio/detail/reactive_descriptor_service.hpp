@@ -185,6 +185,8 @@ public:
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.descriptor_, buffers, handler);
 
+    ASIO_HANDLER_CREATION((p.p, "descriptor", &impl, "async_write_some"));
+
     start_op(impl, reactor::write_op, p.p, true,
         buffer_sequence_adapter<asio::const_buffer,
           ConstBufferSequence>::all_empty(buffers));
@@ -202,6 +204,9 @@ public:
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);
+
+    ASIO_HANDLER_CREATION((p.p, "descriptor",
+          &impl, "async_write_some(null_buffers)"));
 
     start_op(impl, reactor::write_op, p.p, false, false);
     p.v = p.p = 0;
@@ -242,6 +247,8 @@ public:
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.descriptor_, buffers, handler);
 
+    ASIO_HANDLER_CREATION((p.p, "descriptor", &impl, "async_read_some"));
+
     start_op(impl, reactor::read_op, p.p, true,
         buffer_sequence_adapter<asio::mutable_buffer,
           MutableBufferSequence>::all_empty(buffers));
@@ -259,6 +266,9 @@ public:
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);
+
+    ASIO_HANDLER_CREATION((p.p, "descriptor",
+          &impl, "async_read_some(null_buffers)"));
 
     start_op(impl, reactor::read_op, p.p, false, false);
     p.v = p.p = 0;

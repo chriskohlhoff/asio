@@ -73,6 +73,7 @@ task_io_service::task_io_service(asio::io_service& io_service)
     shutdown_(false),
     first_idle_thread_(0)
 {
+  ASIO_HANDLER_TRACKING_INIT;
 }
 
 void task_io_service::init(std::size_t /*concurrency_hint*/)

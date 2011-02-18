@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/error_code.hpp"
+#include "asio/detail/handler_tracking.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/task_io_service_fwd.hpp"
 
@@ -26,7 +27,7 @@ namespace detail {
 
 // Base class for all operations. A function pointer is used instead of virtual
 // functions to avoid the associated overhead.
-class task_io_service_operation
+class task_io_service_operation ASIO_TRACKED_HANDLER
 {
 public:
   void complete(task_io_service& owner)

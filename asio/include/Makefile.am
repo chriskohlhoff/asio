@@ -55,6 +55,7 @@ nobase_include_HEADERS = \
 	asio/detail/gcc_x86_fenced_block.hpp \
 	asio/detail/handler_alloc_helpers.hpp \
 	asio/detail/handler_invoke_helpers.hpp \
+	asio/detail/handler_tracking.hpp \
 	asio/detail/handler_type_requirements.hpp \
 	asio/detail/hash_map.hpp \
 	asio/detail/impl/descriptor_ops.ipp \
@@ -63,6 +64,7 @@ nobase_include_HEADERS = \
 	asio/detail/impl/epoll_reactor.hpp \
 	asio/detail/impl/epoll_reactor.ipp \
 	asio/detail/impl/eventfd_select_interrupter.ipp \
+	asio/detail/impl/handler_tracking.ipp \
 	asio/detail/impl/kqueue_reactor.hpp \
 	asio/detail/impl/kqueue_reactor.ipp \
 	asio/detail/impl/pipe_select_interrupter.ipp \

@@ -27,6 +27,7 @@
 #include "asio/detail/impl/dev_poll_reactor.ipp"
 #include "asio/detail/impl/epoll_reactor.ipp"
 #include "asio/detail/impl/eventfd_select_interrupter.ipp"
+#include "asio/detail/impl/handler_tracking.ipp"
 #include "asio/detail/impl/kqueue_reactor.ipp"
 #include "asio/detail/impl/pipe_select_interrupter.ipp"
 #include "asio/detail/impl/posix_event.ipp"
