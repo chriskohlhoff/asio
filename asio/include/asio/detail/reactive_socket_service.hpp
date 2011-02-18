@@ -305,11 +305,11 @@ public:
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);
 
-    // Reset endpoint since it can be given no sensible value at this time.
-    sender_endpoint = endpoint_type();
-
     ASIO_HANDLER_CREATION((p.p, "socket",
           &impl, "async_receive_from(null_buffers)"));
+
+    // Reset endpoint since it can be given no sensible value at this time.
+    sender_endpoint = endpoint_type();
 
     start_op(impl,
         (flags & socket_base::message_out_of_band)

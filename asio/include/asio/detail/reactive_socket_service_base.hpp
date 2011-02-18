@@ -363,12 +363,12 @@ public:
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);
 
+    ASIO_HANDLER_CREATION((p.p, "socket", &impl,
+          "async_receive_with_flags(null_buffers)"));
+
     // Clear out_flags, since we cannot give it any other sensible value when
     // performing a null_buffers operation.
     out_flags = 0;
-
-    ASIO_HANDLER_CREATION((p.p, "socket", &impl,
-          "async_receive_with_flags(null_buffers)"));
 
     start_op(impl,
         (in_flags & socket_base::message_out_of_band)
