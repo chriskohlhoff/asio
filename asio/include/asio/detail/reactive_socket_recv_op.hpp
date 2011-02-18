@@ -53,7 +53,7 @@ public:
 
     return socket_ops::non_blocking_recv(o->socket_,
         bufs.buffers(), bufs.count(), o->flags_,
-        (o->state_ & socket_ops::stream_oriented),
+        (o->state_ & socket_ops::stream_oriented) != 0,
         o->ec_, o->bytes_transferred_);
   }
 
