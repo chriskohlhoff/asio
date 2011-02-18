@@ -78,9 +78,11 @@ void handler_tracking::creation(handler_tracking::tracked_handler* h,
   char line[256] = "";
   int line_length = sprintf(line,
       "@asio|%llu.%06llu|%llu*%llu|%.20s@%p.%.20s\n",
-      static_cast<boost::uint64_t>(now.total_seconds()),
-      static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
-      current_id, h->id_, object_type, object, op_name);
+      static_cast<unsigned long long>(now.total_seconds()),
+      static_cast<unsigned long long>(now.total_microseconds() % 1000000),
+      static_cast<unsigned long long>(current_id),
+      static_cast<unsigned long long>(h->id_),
+      object_type, object, op_name);
 
   ::write(STDERR_FILENO, line, line_length);
 }
@@ -105,9 +107,9 @@ handler_tracking::completion::~completion()
 
     char line[256] = "";
     int line_length = sprintf(line, "@asio|%llu.%06llu|%c%llu|\n",
-        static_cast<boost::uint64_t>(now.total_seconds()),
-        static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
-        invoked_ ? '!' : '~', id_);
+        static_cast<unsigned long long>(now.total_seconds()),
+        static_cast<unsigned long long>(now.total_microseconds() % 1000000),
+        invoked_ ? '!' : '~', static_cast<unsigned long long>(id_));
 
     ::write(STDERR_FILENO, line, line_length);
   }
@@ -125,8 +127,9 @@ void handler_tracking::completion::invocation_begin()
 
   char line[256] = "";
   int line_length = sprintf(line, "@asio|%llu.%06llu|>%llu|\n",
-      static_cast<boost::uint64_t>(now.total_seconds()),
-      static_cast<boost::uint64_t>(now.total_microseconds() % 1000000), id_);
+      static_cast<unsigned long long>(now.total_seconds()),
+      static_cast<unsigned long long>(now.total_microseconds() % 1000000),
+      static_cast<unsigned long long>(id_));
 
   ::write(STDERR_FILENO, line, line_length);
 
@@ -144,9 +147,10 @@ void handler_tracking::completion::invocation_begin(
 
   char line[256] = "";
   int line_length = sprintf(line, "@asio|%llu.%06llu|>%llu|ec=%.20s:%d\n",
-      static_cast<boost::uint64_t>(now.total_seconds()),
-      static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
-      id_, ec.category().name(), ec.value());
+      static_cast<unsigned long long>(now.total_seconds()),
+      static_cast<unsigned long long>(now.total_microseconds() % 1000000),
+      static_cast<unsigned long long>(id_),
+      ec.category().name(), ec.value());
 
   ::write(STDERR_FILENO, line, line_length);
 
@@ -165,10 +169,11 @@ void handler_tracking::completion::invocation_begin(
   char line[256] = "";
   int line_length = sprintf(line,
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d,bytes_transferred=%llu\n",
-      static_cast<boost::uint64_t>(now.total_seconds()),
-      static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
-      id_, ec.category().name(), ec.value(),
-      static_cast<boost::uint64_t>(bytes_transferred));
+      static_cast<unsigned long long>(now.total_seconds()),
+      static_cast<unsigned long long>(now.total_microseconds() % 1000000),
+      static_cast<unsigned long long>(id_),
+      ec.category().name(), ec.value(),
+      static_cast<unsigned long long>(bytes_transferred));
 
   ::write(STDERR_FILENO, line, line_length);
 
@@ -187,9 +192,10 @@ void handler_tracking::completion::invocation_begin(
   char line[256] = "";
   int line_length = sprintf(line,
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d,signal_number=%d\n",
-      static_cast<boost::uint64_t>(now.total_seconds()),
-      static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
-      id_, ec.category().name(), ec.value(), signal_number);
+      static_cast<unsigned long long>(now.total_seconds()),
+      static_cast<unsigned long long>(now.total_microseconds() % 1000000),
+      static_cast<unsigned long long>(id_),
+      ec.category().name(), ec.value(), signal_number);
 
   ::write(STDERR_FILENO, line, line_length);
 
@@ -208,9 +214,10 @@ void handler_tracking::completion::invocation_begin(
   char line[256] = "";
   int line_length = sprintf(line,
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d,%.20s\n",
-      static_cast<boost::uint64_t>(now.total_seconds()),
-      static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
-      id_, ec.category().name(), ec.value(), arg);
+      static_cast<unsigned long long>(now.total_seconds()),
+      static_cast<unsigned long long>(now.total_microseconds() % 1000000),
+      static_cast<unsigned long long>(id_),
+      ec.category().name(), ec.value(), arg);
 
   ::write(STDERR_FILENO, line, line_length);
 
@@ -229,8 +236,9 @@ void handler_tracking::completion::invocation_end()
 
     char line[256] = "";
     int line_length = sprintf(line, "@asio|%llu.%06llu|<%llu|\n",
-        static_cast<boost::uint64_t>(now.total_seconds()),
-        static_cast<boost::uint64_t>(now.total_microseconds() % 1000000), id_);
+        static_cast<unsigned long long>(now.total_seconds()),
+        static_cast<unsigned long long>(now.total_microseconds() % 1000000),
+        static_cast<unsigned long long>(id_));
 
     ::write(STDERR_FILENO, line, line_length);
 
@@ -249,16 +257,17 @@ void handler_tracking::operation(const char* object_type,
   boost::posix_time::time_duration now =
     boost::posix_time::microsec_clock::universal_time() - epoch;
 
-  boost::uint64_t current_id = 0;
+  unsigned long long current_id = 0;
   if (completion* current_completion = *state->current_completion_)
     current_id = current_completion->id_;
 
   char line[256] = "";
   int line_length = sprintf(line,
       "@asio|%llu.%06llu|%llu|%.20s@%p.%.20s\n",
-      static_cast<boost::uint64_t>(now.total_seconds()),
-      static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
-      current_id, object_type, object, op_name);
+      static_cast<unsigned long long>(now.total_seconds()),
+      static_cast<unsigned long long>(now.total_microseconds() % 1000000),
+      static_cast<unsigned long long>(current_id),
+      object_type, object, op_name);
 
   ::write(STDERR_FILENO, line, line_length);
 }
