@@ -7,6 +7,36 @@
 
 [section:history Revision History]
 
+[heading Asio 1.5.1]
+
+* Added support for signal handling, using a new class called `signal_set`.
+  Programs may add one or more signals to the set, and then perform an
+  `async_wait()` operation. The specified handler will be called when one of
+  the signals occurs. The same signal number may registered with multiple
+  `signal_set` objects, however the signal number must be used only with Asio.
+
+* Added handler tracking, a new debugging aid. When enabled by defining
+  `(BOOST_)ASIO_ENABLE_HANDLER_TRACKING`, Asio writes debugging output to the
+  standard error stream. The output records asynchronous operations and the
+  relationships between their handlers. It may be post-processed using the
+  included [^handlerviz.pl] tool to create a visual representation of the
+  handlers (requires GraphViz).
+
+* Fixed a bug in `asio::streambuf` where the `consume()` function did not
+  always update the internal buffer pointers correctly. The problem may occur
+  when the `asio::streambuf` is filled with data using the standard C++ member
+  functions such as `sputn()`. (Note: the problem does not manifest when the
+  streambuf is populated by the Asio free functions `read()`,
+  `async_read()`, `read_until()` or `async_read_until()`.)
+
+* Fixed a bug on kqueue-based platforms, where reactor read operations that
+  return false from their perform() function are not correctly re-registered
+  with kqueue.
+
+* Support for `std::error_code` and `std::system_error` is no longer enabled by
+  default for MSVC10, as that compiler's standard library does not implement
+  `std::system_error::what()` correctly.
+
 [heading Asio 1.5.0]
 
 * Added support for timeouts on socket iostreams, such as `ip::tcp::iostream`.
