@@ -81,14 +81,15 @@ public:
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);
+
+    ASIO_HANDLER_CREATION((p.p, "io_service",
+          &io_service.impl_, "overlapped"));
+
     io_service.impl_.work_started();
     reset();
     ptr_ = p.p;
     p.v = p.p = 0;
     iocp_service_ = &io_service.impl_;
-
-    ASIO_HANDLER_CREATION((p.p, "io_service",
-          iocp_service_, "overlapped"));
   }
 
   // Get the contained OVERLAPPED object.
