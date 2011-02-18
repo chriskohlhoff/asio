@@ -266,6 +266,8 @@ public:
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.cancel_token_, buffers, handler);
 
+    ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_send_to"));
+
     buffer_sequence_adapter<asio::const_buffer,
         ConstBufferSequence> bufs(buffers);
 
@@ -286,6 +288,9 @@ public:
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.cancel_token_, handler);
+
+    ASIO_HANDLER_CREATION((p.p, "socket",
+          &impl, "async_send_to(null_buffers)"));
 
     start_reactor_op(impl, reactor::write_op, p.p);
     p.v = p.p = 0;
@@ -343,6 +348,8 @@ public:
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(sender_endp, impl.cancel_token_, buffers, handler);
 
+    ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_receive_from"));
+
     buffer_sequence_adapter<asio::mutable_buffer,
         MutableBufferSequence> bufs(buffers);
 
@@ -363,6 +370,9 @@ public:
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.cancel_token_, handler);
+
+    ASIO_HANDLER_CREATION((p.p, "socket", &impl,
+          "async_receive_from(null_buffers)"));
 
     // Reset endpoint since it can be given no sensible value at this time.
     sender_endpoint = endpoint_type();
@@ -416,6 +426,8 @@ public:
     p.p = new (p.v) op(*this, impl.socket_, peer, impl.protocol_,
         peer_endpoint, enable_connection_aborted, handler);
 
+    ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_accept"));
+
     start_accept_op(impl, peer.is_open(), p.p->new_socket(),
         impl.protocol_.family(), impl.protocol_.type(),
         impl.protocol_.protocol(), p.p->output_buffer(),
@@ -443,6 +455,8 @@ public:
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.socket_, handler);
+
+    ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_connect"));
 
     start_connect_op(impl, p.p, peer_endpoint.data(),
         static_cast<int>(peer_endpoint.size()));

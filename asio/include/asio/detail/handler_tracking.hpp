@@ -99,13 +99,19 @@ public:
   ASIO_DECL static void operation(const char* object_type,
       void* object, const char* op_name);
 
+  // Write a line of output.
+  ASIO_DECL static void write_line(const char* format, ...);
+
 private:
   struct tracking_state;
   ASIO_DECL static tracking_state* get_state();
 };
 
-# define ASIO_TRACKED_HANDLER \
+# define ASIO_INHERIT_TRACKED_HANDLER \
   : public asio::detail::handler_tracking::tracked_handler
+
+# define ASIO_ALSO_INHERIT_TRACKED_HANDLER \
+  , public asio::detail::handler_tracking::tracked_handler
 
 # define ASIO_HANDLER_TRACKING_INIT \
   asio::detail::handler_tracking::init()
@@ -127,7 +133,8 @@ private:
 
 #else // defined(ASIO_ENABLE_HANDLER_TRACKING)
 
-# define ASIO_TRACKED_HANDLER
+# define ASIO_INHERIT_TRACKED_HANDLER
+# define ASIO_ALSO_INHERIT_TRACKED_HANDLER
 # define ASIO_HANDLER_TRACKING_INIT (void)0
 # define ASIO_HANDLER_CREATION(args) (void)0
 # define ASIO_HANDLER_COMPLETION(args) (void)0

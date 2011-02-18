@@ -69,6 +69,7 @@ win_iocp_io_service::win_iocp_io_service(asio::io_service& io_service)
     shutdown_(0),
     dispatch_required_(0)
 {
+  ASIO_HANDLER_TRACKING_INIT;
 }
 
 void win_iocp_io_service::init(size_t concurrency_hint)

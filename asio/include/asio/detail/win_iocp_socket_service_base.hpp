@@ -215,6 +215,8 @@ public:
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.cancel_token_, buffers, handler);
 
+    ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_send"));
+
     buffer_sequence_adapter<asio::const_buffer,
         ConstBufferSequence> bufs(buffers);
 
@@ -235,6 +237,9 @@ public:
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.cancel_token_, handler);
+
+    ASIO_HANDLER_CREATION((p.p, "socket",
+          &impl, "async_send(null_buffers)"));
 
     start_reactor_op(impl, reactor::write_op, p.p);
     p.v = p.p = 0;
@@ -277,6 +282,8 @@ public:
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.state_, impl.cancel_token_, buffers, handler);
 
+    ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_receive"));
+
     buffer_sequence_adapter<asio::mutable_buffer,
         MutableBufferSequence> bufs(buffers);
 
@@ -297,6 +304,9 @@ public:
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.cancel_token_, handler);
+
+    ASIO_HANDLER_CREATION((p.p, "socket",
+          &impl, "async_receive(null_buffers)"));
 
     start_null_buffers_receive_op(impl, flags, p.p);
     p.v = p.p = 0;
@@ -346,6 +356,9 @@ public:
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.cancel_token_, buffers, out_flags, handler);
 
+    ASIO_HANDLER_CREATION((p.p, "socket",
+          &impl, "async_receive_with_flags"));
+
     buffer_sequence_adapter<asio::mutable_buffer,
         MutableBufferSequence> bufs(buffers);
 
@@ -365,6 +378,9 @@ public:
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.cancel_token_, handler);
+
+    ASIO_HANDLER_CREATION((p.p, "socket", &impl,
+          "async_receive_with_flags(null_buffers)"));
 
     // Reset out_flags since it can be given no sensible value at this time.
     out_flags = 0;

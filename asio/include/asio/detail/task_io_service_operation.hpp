@@ -27,7 +27,7 @@ namespace detail {
 
 // Base class for all operations. A function pointer is used instead of virtual
 // functions to avoid the associated overhead.
-class task_io_service_operation ASIO_TRACKED_HANDLER
+class task_io_service_operation ASIO_INHERIT_TRACKED_HANDLER
 {
 public:
   void complete(task_io_service& owner)

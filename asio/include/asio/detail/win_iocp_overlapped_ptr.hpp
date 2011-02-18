@@ -86,6 +86,9 @@ public:
     ptr_ = p.p;
     p.v = p.p = 0;
     iocp_service_ = &io_service.impl_;
+
+    ASIO_HANDLER_CREATION((p.p, "io_service",
+          iocp_service_, "overlapped"));
   }
 
   // Get the contained OVERLAPPED object.

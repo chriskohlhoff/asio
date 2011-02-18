@@ -140,6 +140,8 @@ asio::error_code win_iocp_handle_service::close(
 {
   if (is_open(impl))
   {
+    ASIO_HANDLER_OPERATION(("handle", &impl, "close"));
+
     if (!::CloseHandle(impl.handle_))
     {
       DWORD last_error = ::GetLastError();
@@ -163,8 +165,12 @@ asio::error_code win_iocp_handle_service::cancel(
   if (!is_open(impl))
   {
     ec = asio::error::bad_descriptor;
+    return ec;
   }
-  else if (FARPROC cancel_io_ex_ptr = ::GetProcAddress(
+
+  ASIO_HANDLER_OPERATION(("handle", &impl, "cancel"));
+
+  if (FARPROC cancel_io_ex_ptr = ::GetProcAddress(
         ::GetModuleHandleA("KERNEL32"), "CancelIoEx"))
   {
     // The version of Windows supports cancellation from any thread.
@@ -436,6 +442,8 @@ void win_iocp_handle_service::close_for_destruction(implementation_type& impl)
 {
   if (is_open(impl))
   {
+    ASIO_HANDLER_OPERATION(("handle", &impl, "close"));
+
     ::CloseHandle(impl.handle_);
     impl.handle_ = INVALID_HANDLE_VALUE;
     impl.safe_cancellation_thread_id_ = 0;

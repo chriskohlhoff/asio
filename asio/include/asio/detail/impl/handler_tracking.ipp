@@ -19,13 +19,17 @@
 
 #if defined(ASIO_ENABLE_HANDLER_TRACKING)
 
+#include <cstdarg>
 #include <cstdio>
-#include <unistd.h>
 #include "asio/detail/handler_tracking.hpp"
 
 #include "asio/detail/push_options.hpp"
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include "asio/detail/pop_options.hpp"
+
+#if !defined(BOOST_WINDOWS)
+# include <unistd.h>
+#endif // !defined(BOOST_WINDOWS)
 
 #include "asio/detail/push_options.hpp"
 
@@ -75,16 +79,15 @@ void handler_tracking::creation(handler_tracking::tracked_handler* h,
   if (completion* current_completion = *state->current_completion_)
     current_id = current_completion->id_;
 
-  char line[256] = "";
-  int line_length = sprintf(line,
+  write_line(
+#if defined(BOOST_WINDOWS)
+      "@asio|%I64u.%06I64u|%I64u*%I64u|%.20s@%p.%.20s\n",
+#else // defined(BOOST_WINDOWS)
       "@asio|%llu.%06llu|%llu*%llu|%.20s@%p.%.20s\n",
-      static_cast<unsigned long long>(now.total_seconds()),
-      static_cast<unsigned long long>(now.total_microseconds() % 1000000),
-      static_cast<unsigned long long>(current_id),
-      static_cast<unsigned long long>(h->id_),
-      object_type, object, op_name);
-
-  ::write(STDERR_FILENO, line, line_length);
+#endif // defined(BOOST_WINDOWS)
+      static_cast<boost::uint64_t>(now.total_seconds()),
+      static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
+      current_id, h->id_, object_type, object, op_name);
 }
 
 handler_tracking::completion::completion(handler_tracking::tracked_handler* h)
@@ -105,13 +108,15 @@ handler_tracking::completion::~completion()
     boost::posix_time::time_duration now =
       boost::posix_time::microsec_clock::universal_time() - epoch;
 
-    char line[256] = "";
-    int line_length = sprintf(line, "@asio|%llu.%06llu|%c%llu|\n",
-        static_cast<unsigned long long>(now.total_seconds()),
-        static_cast<unsigned long long>(now.total_microseconds() % 1000000),
-        invoked_ ? '!' : '~', static_cast<unsigned long long>(id_));
-
-    ::write(STDERR_FILENO, line, line_length);
+    write_line(
+#if defined(BOOST_WINDOWS)
+        "@asio|%I64u.%06I64u|%c%I64u|\n",
+#else // defined(BOOST_WINDOWS)
+        "@asio|%llu.%06llu|%c%llu|\n",
+#endif // defined(BOOST_WINDOWS)
+        static_cast<boost::uint64_t>(now.total_seconds()),
+        static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
+        invoked_ ? '!' : '~', id_);
   }
 
   *get_state()->current_completion_ = next_;
@@ -125,13 +130,14 @@ void handler_tracking::completion::invocation_begin()
   boost::posix_time::time_duration now =
     boost::posix_time::microsec_clock::universal_time() - epoch;
 
-  char line[256] = "";
-  int line_length = sprintf(line, "@asio|%llu.%06llu|>%llu|\n",
-      static_cast<unsigned long long>(now.total_seconds()),
-      static_cast<unsigned long long>(now.total_microseconds() % 1000000),
-      static_cast<unsigned long long>(id_));
-
-  ::write(STDERR_FILENO, line, line_length);
+  write_line(
+#if defined(BOOST_WINDOWS)
+      "@asio|%I64u.%06I64u|>%I64u|\n",
+#else // defined(BOOST_WINDOWS)
+      "@asio|%llu.%06llu|>%llu|\n",
+#endif // defined(BOOST_WINDOWS)
+      static_cast<boost::uint64_t>(now.total_seconds()),
+      static_cast<boost::uint64_t>(now.total_microseconds() % 1000000), id_);
 
   invoked_ = true;
 }
@@ -145,14 +151,15 @@ void handler_tracking::completion::invocation_begin(
   boost::posix_time::time_duration now =
     boost::posix_time::microsec_clock::universal_time() - epoch;
 
-  char line[256] = "";
-  int line_length = sprintf(line, "@asio|%llu.%06llu|>%llu|ec=%.20s:%d\n",
-      static_cast<unsigned long long>(now.total_seconds()),
-      static_cast<unsigned long long>(now.total_microseconds() % 1000000),
-      static_cast<unsigned long long>(id_),
-      ec.category().name(), ec.value());
-
-  ::write(STDERR_FILENO, line, line_length);
+  write_line(
+#if defined(BOOST_WINDOWS)
+      "@asio|%I64u.%06I64u|>%I64u|ec=%.20s:%d\n",
+#else // defined(BOOST_WINDOWS)
+      "@asio|%llu.%06llu|>%llu|ec=%.20s:%d\n",
+#endif // defined(BOOST_WINDOWS)
+      static_cast<boost::uint64_t>(now.total_seconds()),
+      static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
+      id_, ec.category().name(), ec.value());
 
   invoked_ = true;
 }
@@ -166,16 +173,16 @@ void handler_tracking::completion::invocation_begin(
   boost::posix_time::time_duration now =
     boost::posix_time::microsec_clock::universal_time() - epoch;
 
-  char line[256] = "";
-  int line_length = sprintf(line,
+  write_line(
+#if defined(BOOST_WINDOWS)
+      "@asio|%I64u.%06I64u|>%I64u|ec=%.20s:%d,bytes_transferred=%I64u\n",
+#else // defined(BOOST_WINDOWS)
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d,bytes_transferred=%llu\n",
-      static_cast<unsigned long long>(now.total_seconds()),
-      static_cast<unsigned long long>(now.total_microseconds() % 1000000),
-      static_cast<unsigned long long>(id_),
-      ec.category().name(), ec.value(),
-      static_cast<unsigned long long>(bytes_transferred));
-
-  ::write(STDERR_FILENO, line, line_length);
+#endif // defined(BOOST_WINDOWS)
+      static_cast<boost::uint64_t>(now.total_seconds()),
+      static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
+      id_, ec.category().name(), ec.value(),
+      static_cast<boost::uint64_t>(bytes_transferred));
 
   invoked_ = true;
 }
@@ -189,15 +196,15 @@ void handler_tracking::completion::invocation_begin(
   boost::posix_time::time_duration now =
     boost::posix_time::microsec_clock::universal_time() - epoch;
 
-  char line[256] = "";
-  int line_length = sprintf(line,
+  write_line(
+#if defined(BOOST_WINDOWS)
+      "@asio|%I64u.%06I64u|>%I64u|ec=%.20s:%d,signal_number=%d\n",
+#else // defined(BOOST_WINDOWS)
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d,signal_number=%d\n",
-      static_cast<unsigned long long>(now.total_seconds()),
-      static_cast<unsigned long long>(now.total_microseconds() % 1000000),
-      static_cast<unsigned long long>(id_),
-      ec.category().name(), ec.value(), signal_number);
-
-  ::write(STDERR_FILENO, line, line_length);
+#endif // defined(BOOST_WINDOWS)
+      static_cast<boost::uint64_t>(now.total_seconds()),
+      static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
+      id_, ec.category().name(), ec.value(), signal_number);
 
   invoked_ = true;
 }
@@ -211,15 +218,15 @@ void handler_tracking::completion::invocation_begin(
   boost::posix_time::time_duration now =
     boost::posix_time::microsec_clock::universal_time() - epoch;
 
-  char line[256] = "";
-  int line_length = sprintf(line,
+  write_line(
+#if defined(BOOST_WINDOWS)
+      "@asio|%I64u.%06I64u|>%I64u|ec=%.20s:%d,%.20s\n",
+#else // defined(BOOST_WINDOWS)
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d,%.20s\n",
-      static_cast<unsigned long long>(now.total_seconds()),
-      static_cast<unsigned long long>(now.total_microseconds() % 1000000),
-      static_cast<unsigned long long>(id_),
-      ec.category().name(), ec.value(), arg);
-
-  ::write(STDERR_FILENO, line, line_length);
+#endif // defined(BOOST_WINDOWS)
+      static_cast<boost::uint64_t>(now.total_seconds()),
+      static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
+      id_, ec.category().name(), ec.value(), arg);
 
   invoked_ = true;
 }
@@ -234,13 +241,14 @@ void handler_tracking::completion::invocation_end()
     boost::posix_time::time_duration now =
       boost::posix_time::microsec_clock::universal_time() - epoch;
 
-    char line[256] = "";
-    int line_length = sprintf(line, "@asio|%llu.%06llu|<%llu|\n",
-        static_cast<unsigned long long>(now.total_seconds()),
-        static_cast<unsigned long long>(now.total_microseconds() % 1000000),
-        static_cast<unsigned long long>(id_));
-
-    ::write(STDERR_FILENO, line, line_length);
+    write_line(
+#if defined(BOOST_WINDOWS)
+        "@asio|%I64u.%06I64u|<%I64u|\n",
+#else // defined(BOOST_WINDOWS)
+        "@asio|%llu.%06llu|<%llu|\n",
+#endif // defined(BOOST_WINDOWS)
+        static_cast<boost::uint64_t>(now.total_seconds()),
+        static_cast<boost::uint64_t>(now.total_microseconds() % 1000000), id_);
 
     id_ = 0;
   }
@@ -261,15 +269,38 @@ void handler_tracking::operation(const char* object_type,
   if (completion* current_completion = *state->current_completion_)
     current_id = current_completion->id_;
 
-  char line[256] = "";
-  int line_length = sprintf(line,
+  write_line(
+#if defined(BOOST_WINDOWS)
+      "@asio|%I64u.%06I64u|%I64u|%.20s@%p.%.20s\n",
+#else // defined(BOOST_WINDOWS)
       "@asio|%llu.%06llu|%llu|%.20s@%p.%.20s\n",
-      static_cast<unsigned long long>(now.total_seconds()),
-      static_cast<unsigned long long>(now.total_microseconds() % 1000000),
-      static_cast<unsigned long long>(current_id),
-      object_type, object, op_name);
+#endif // defined(BOOST_WINDOWS)
+      static_cast<boost::uint64_t>(now.total_seconds()),
+      static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
+      current_id, object_type, object, op_name);
+}
 
-  ::write(STDERR_FILENO, line, line_length);
+void handler_tracking::write_line(const char* format, ...)
+{
+  va_list args;
+  va_start(args, format);
+
+  char line[256] = "";
+#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
+  int length = vsprintf_s(line, sizeof(line), format, args);
+#else // BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
+  int length = vsprintf(line, format, args);
+#endif // BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
+
+  va_end(args);
+
+#if defined(BOOST_WINDOWS)
+  HANDLE stderr_handle = ::GetStdHandle(STD_ERROR_HANDLE);
+  DWORD bytes_written = 0;
+  ::WriteFile(stderr_handle, line, length, &bytes_written, 0);
+#else // defined(BOOST_WINDOWS)
+  ::write(STDERR_FILENO, line, length);
+#endif // defined(BOOST_WINDOWS)
 }
 
 } // namespace detail

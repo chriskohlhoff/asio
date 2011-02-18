@@ -58,6 +58,8 @@ public:
     win_iocp_socket_recv_op* o(static_cast<win_iocp_socket_recv_op*>(base));
     ptr p = { boost::addressof(o->handler_), o, o };
 
+    ASIO_HANDLER_COMPLETION((o));
+
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
     // Check whether buffers are still valid.
     if (owner)
@@ -87,7 +89,9 @@ public:
     if (owner)
     {
       asio::detail::fenced_block b;
+      ASIO_HANDLER_INVOCATION_BEGIN((handler.arg1_, handler.arg2_));
       asio_handler_invoke_helpers::invoke(handler, handler.handler_);
+      ASIO_HANDLER_INVOCATION_END;
     }
   }
 

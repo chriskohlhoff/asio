@@ -19,6 +19,7 @@
 
 #if defined(ASIO_HAS_IOCP)
 
+#include "asio/detail/handler_tracking.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/win_iocp_io_service_fwd.hpp"
 #include "asio/error_code.hpp"
@@ -32,6 +33,7 @@ namespace detail {
 // functions to avoid the associated overhead.
 class win_iocp_operation
   : public OVERLAPPED
+    ASIO_ALSO_INHERIT_TRACKED_HANDLER
 {
 public:
   void complete(win_iocp_io_service& owner,
