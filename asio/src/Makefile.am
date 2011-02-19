@@ -480,7 +480,6 @@ EXTRA_DIST = \
 	examples/http/server/request_handler.hpp \
 	examples/http/server/request_parser.hpp \
 	examples/http/server/server.hpp \
-	examples/http/server/win_main.cpp \
 	examples/http/server2/connection.hpp \
 	examples/http/server2/io_service_pool.hpp \
 	examples/http/server2/header.hpp \
@@ -490,7 +489,6 @@ EXTRA_DIST = \
 	examples/http/server2/request_handler.hpp \
 	examples/http/server2/request_parser.hpp \
 	examples/http/server2/server.hpp \
-	examples/http/server2/win_main.cpp \
 	examples/http/server3/connection.hpp \
 	examples/http/server3/header.hpp \
 	examples/http/server3/mime_types.hpp \
@@ -499,7 +497,6 @@ EXTRA_DIST = \
 	examples/http/server3/request_handler.hpp \
 	examples/http/server3/request_parser.hpp \
 	examples/http/server3/server.hpp \
-	examples/http/server3/win_main.cpp \
 	examples/http/server4/coroutine.hpp \
 	examples/http/server4/file_handler.hpp \
 	examples/http/server4/header.hpp \
@@ -509,7 +506,6 @@ EXTRA_DIST = \
 	examples/http/server4/request_parser.hpp \
 	examples/http/server4/server.hpp \
 	examples/http/server4/unyield.hpp \
-	examples/http/server4/win_main.cpp \
 	examples/http/server4/yield.hpp \
 	examples/icmp/icmp_header.hpp \
 	examples/icmp/ipv4_header.hpp \
