@@ -37,6 +37,9 @@
   default for MSVC10, as that compiler's standard library does not implement
   `std::system_error::what()` correctly.
 
+* Modified the `buffers_iterator<>` and `ip::basic_resolver_iterator` classes
+  so that the value_type typedefs are non-const byte types. 
+
 [heading Asio 1.5.0]
 
 * Added support for timeouts on socket iostreams, such as `ip::tcp::iostream`.
