@@ -21832,7 +21832,7 @@ Provides signal functionality.
   
   [
     [[link asio.reference.basic_signal_set.remove [*remove]]]
-    [Remove a signal to a signal_set. ]
+    [Remove a signal from a signal_set. ]
   ]
   
 ]
@@ -21852,6 +21852,68 @@ Provides signal functionality.
   ]
 
 ]
+
+The [link asio.reference.basic_signal_set `basic_signal_set`] class template provides the ability to perform an asynchronous wait for one or more signals to occur.
+
+Most applications will use the `asio::signal_set` typedef.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:] Safe.
+
+[*Shared] [*objects:] Unsafe.
+
+
+[heading Example]
+  
+Performing an asynchronous wait: 
+
+   void handler(
+       const asio::error_code& error,
+       int signal_number)
+   {
+     if (!error)
+     {
+       // A signal occurred.
+     }
+   }
+
+   ...
+
+   // Construct a signal set registered for process termination.
+   asio::signal_set signals(io_service, SIGINT, SIGTERM);
+
+   // Start an asynchronous wait for one of the signals to occur.
+   signals.async_wait(handler);
+
+
+
+
+
+[heading Queueing of signal notifications]
+  
+
+
+If a signal is registered with a signal\_set, and the signal occurs when there are no waiting handlers, then the signal notification is queued. The next async\_wait operation on that signal\_set will dequeue the notification. If multiple notifications are queued, subsequent async\_wait operations dequeue them one at a time. Signal notifications are dequeued in order of ascending signal number.
+
+If a signal number is removed from a signal\_set (using the `remove` or `erase` member functions) then any queued notifications for that signal are discarded.
+
+
+[heading Multiple registration of signals]
+  
+
+
+The same signal number may be registered with different signal\_set objects. When the signal occurs, one handler is called for each signal\_set object.
+
+Note that multiple registration only works for signals that are registered using Asio. The application must not also register a signal handler using functions such as `signal()` or `sigaction()`.
+
+
+[heading Signal masking on POSIX platforms]
+  
+
+
+POSIX allows signals to be blocked using functions such as `sigprocmask()` and `pthread_sigmask()`. For signals to be delivered, programs must ensure that any signals registered using signal\_set objects are unblocked in at least one thread. 
 
 [heading Requirements]
 
@@ -21885,6 +21947,30 @@ Add a signal to a signal\_set.
       int signal_number);
 
 
+This function adds the specified signal to the set. It has no effect if the signal is already in the set.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[signal_number][The signal to be added to the set.]]
+
+]
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
 
 [endsect]
 
@@ -21899,6 +21985,22 @@ Add a signal to a signal\_set.
   asio::error_code add(
       int signal_number,
       asio::error_code & ec);
+
+
+This function adds the specified signal to the set. It has no effect if the signal is already in the set.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[signal_number][The signal to be added to the set.]]
+
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
 
 
 
@@ -21916,6 +22018,35 @@ Add a signal to a signal\_set.
       typename ``[link asio.reference.SignalHandler SignalHandler]``>
   void async_wait(
       SignalHandler handler);
+
+
+This function may be used to initiate an asynchronous wait against the signal set. It always returns immediately.
+
+For each call to `async_wait()`, the supplied handler will be called exactly once. The handler will be called when:
+
+
+* One of the registered signals in the signal set occurs; or
+
+
+* The signal set was cancelled, in which case the handler is passed the error code `asio::error::operation_aborted`.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[handler][The handler to be called when the signal occurs. Copies will be made of the handler as required. The function signature of the handler must be: 
+``
+   void handler(
+     const asio::error_code& error, // Result of operation.
+     int signal_number // Indicates which signal occurred.
+   ); 
+``
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using `asio::io_service::post()`. ]]
+
+]
+
 
 
 
@@ -21973,6 +22104,20 @@ Construct a signal set without adding any signals.
       asio::io_service & io_service);
 
 
+This constructor creates a signal set without registering for any signals.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The [link asio.reference.io_service `io_service`] object that the signal set will use to dispatch handlers for any asynchronous operations performed on the set. ]]
+
+]
+
+
+
 
 [endsect]
 
@@ -21987,6 +22132,33 @@ Construct a signal set and add one signal.
   basic_signal_set(
       asio::io_service & io_service,
       int signal_number_1);
+
+
+This constructor creates a signal set and registers for one signal.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The [link asio.reference.io_service `io_service`] object that the signal set will use to dispatch handlers for any asynchronous operations performed on the set.]]
+
+[[signal_number_1][The signal number to be added.]]
+
+]
+
+
+[heading Remarks]
+      
+This constructor is equivalent to performing: 
+
+   asio::signal_set signals(io_service);
+   signals.add(signal_number_1); 
+
+
+
+
 
 
 
@@ -22006,6 +22178,36 @@ Construct a signal set and add two signals.
       int signal_number_2);
 
 
+This constructor creates a signal set and registers for two signals.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The [link asio.reference.io_service `io_service`] object that the signal set will use to dispatch handlers for any asynchronous operations performed on the set.]]
+
+[[signal_number_1][The first signal number to be added.]]
+
+[[signal_number_2][The second signal number to be added.]]
+
+]
+
+
+[heading Remarks]
+      
+This constructor is equivalent to performing: 
+
+   asio::signal_set signals(io_service);
+   signals.add(signal_number_1);
+   signals.add(signal_number_2); 
+
+
+
+
+
+
 
 [endsect]
 
@@ -22022,6 +22224,39 @@ Construct a signal set and add three signals.
       int signal_number_1,
       int signal_number_2,
       int signal_number_3);
+
+
+This constructor creates a signal set and registers for three signals.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The [link asio.reference.io_service `io_service`] object that the signal set will use to dispatch handlers for any asynchronous operations performed on the set.]]
+
+[[signal_number_1][The first signal number to be added.]]
+
+[[signal_number_2][The second signal number to be added.]]
+
+[[signal_number_3][The third signal number to be added.]]
+
+]
+
+
+[heading Remarks]
+      
+This constructor is equivalent to performing: 
+
+   asio::signal_set signals(io_service);
+   signals.add(signal_number_1);
+   signals.add(signal_number_2);
+   signals.add(signal_number_3); 
+
+
+
+
 
 
 
@@ -22053,6 +22288,33 @@ Cancel all operations associated with the signal set.
   void cancel();
 
 
+This function forces the completion of any pending asynchronous wait operations against the signal set. The handler for each cancelled operation will be invoked with the `asio::error::operation_aborted` error code.
+
+Cancellation does not alter the set of registered signals.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+If a registered signal occurred before `cancel()` is called, then the handlers for asynchronous wait operations will:
+
+
+* have already been invoked; or
+
+
+* have been queued for invocation in the near future.
+
+These handlers can no longer be cancelled, and therefore are passed an error code that indicates the successful completion of the wait operation. 
+
 
 [endsect]
 
@@ -22067,6 +22329,33 @@ Cancel all operations associated with the signal set.
   asio::error_code cancel(
       asio::error_code & ec);
 
+
+This function forces the completion of any pending asynchronous wait operations against the signal set. The handler for each cancelled operation will be invoked with the `asio::error::operation_aborted` error code.
+
+Cancellation does not alter the set of registered signals.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Remarks]
+      
+If a registered signal occurred before `cancel()` is called, then the handlers for asynchronous wait operations will:
+
+
+* have already been invoked; or
+
+
+* have been queued for invocation in the near future.
+
+These handlers can no longer be cancelled, and therefore are passed an error code that indicates the successful completion of the wait operation. 
 
 
 [endsect]
@@ -22097,6 +22386,25 @@ Remove all signals from a signal\_set.
   void clear();
 
 
+This function removes all signals from the set. It has no effect if the set is already empty.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+Removes all queued notifications. 
+
+
+
 
 [endsect]
 
@@ -22110,6 +22418,25 @@ Remove all signals from a signal\_set.
 
   asio::error_code clear(
       asio::error_code & ec);
+
+
+This function removes all signals from the set. It has no effect if the set is already empty.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Remarks]
+      
+Removes all queued notifications. 
+
 
 
 
@@ -22188,7 +22515,7 @@ The underlying implementation type of I/O object.
 [section:remove basic_signal_set::remove]
 
 [indexterm2 remove..basic_signal_set] 
-Remove a signal to a signal\_set. 
+Remove a signal from a signal\_set. 
 
 
   void ``[link asio.reference.basic_signal_set.remove.overload1 remove]``(
@@ -22204,11 +22531,40 @@ Remove a signal to a signal\_set.
 [section:overload1 basic_signal_set::remove (1 of 2 overloads)]
 
 
-Remove a signal to a signal\_set. 
+Remove a signal from a signal\_set. 
 
 
   void remove(
       int signal_number);
+
+
+This function removes the specified signal from the set. It has no effect if the signal is not in the set.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[signal_number][The signal to be removed from the set.]]
+
+]
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+Removes any notifications that have been queued for the specified signal number. 
+
 
 
 
@@ -22219,12 +22575,33 @@ Remove a signal to a signal\_set.
 [section:overload2 basic_signal_set::remove (2 of 2 overloads)]
 
 
-Remove a signal to a signal\_set. 
+Remove a signal from a signal\_set. 
 
 
   asio::error_code remove(
       int signal_number,
       asio::error_code & ec);
+
+
+This function removes the specified signal from the set. It has no effect if the signal is not in the set.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[signal_number][The signal to be removed from the set.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Remarks]
+      
+Removes any notifications that have been queued for the specified signal number. 
+
 
 
 
@@ -45633,6 +46010,47 @@ A random access iterator over the bytes in a buffer sequence.
   class buffers_iterator
 
 
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.buffers_iterator.difference_type [*difference_type]]]
+    [The type used for the distance between two iterators. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.buffers_iterator.iterator_category [*iterator_category]]]
+    [The iterator category. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.buffers_iterator.pointer [*pointer]]]
+    [The type of the result of applying operator->() to the iterator. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.buffers_iterator.reference [*reference]]]
+    [The type of the result of applying operator*() to the iterator. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.buffers_iterator.value_type [*value_type]]]
+    [The type of the value pointed to by the iterator. ]
+  
+  ]
+
+]
+
 [heading Member Functions]
 [table
   [[Name][Description]]
@@ -45775,6 +46193,27 @@ Default constructor. Creates an iterator in an undefined state.
 
 
 
+[section:difference_type buffers_iterator::difference_type]
+
+[indexterm2 difference_type..buffers_iterator] 
+The type used for the distance between two iterators. 
+
+
+  typedef std::ptrdiff_t difference_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
 [section:end buffers_iterator::end]
 
 [indexterm2 end..buffers_iterator] 
@@ -45790,13 +46229,34 @@ Construct an iterator representing the end of the buffers' data.
 
 
 
+[section:iterator_category buffers_iterator::iterator_category]
+
+[indexterm2 iterator_category..buffers_iterator] 
+The iterator category. 
+
+
+  typedef std::random_access_iterator_tag iterator_category;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
 [section:operator__star_ buffers_iterator::operator *]
 
 [indexterm2 operator *..buffers_iterator] 
 Dereference an iterator. 
 
 
-  byte_type & operator *() const;
+  reference operator *() const;
 
 
 
@@ -46082,7 +46542,7 @@ Subtraction operator.
 Dereference an iterator. 
 
 
-  byte_type * operator->() const;
+  pointer operator->() const;
 
 
 
@@ -46206,9 +46666,76 @@ Compare two iterators.
 Access an individual element. 
 
 
-  byte_type & operator[](
+  reference operator[](
       std::ptrdiff_t difference) const;
 
+
+
+[endsect]
+
+
+
+[section:pointer buffers_iterator::pointer]
+
+[indexterm2 pointer..buffers_iterator] 
+The type of the result of applying `operator->()` to the iterator. 
+
+
+  typedef const_or_non_const_ByteType * pointer;
+
+
+
+If the buffer sequence stores buffer objects that are convertible to [link asio.reference.mutable_buffer `mutable_buffer`], this is a pointer to a non-const ByteType. Otherwise, a pointer to a const ByteType. 
+
+[heading Requirements]
+
+[*Header: ][^asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:reference buffers_iterator::reference]
+
+[indexterm2 reference..buffers_iterator] 
+The type of the result of applying `operator*()` to the iterator. 
+
+
+  typedef const_or_non_const_ByteType & reference;
+
+
+
+If the buffer sequence stores buffer objects that are convertible to [link asio.reference.mutable_buffer `mutable_buffer`], this is a reference to a non-const ByteType. Otherwise, a reference to a const ByteType. 
+
+[heading Requirements]
+
+[*Header: ][^asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:value_type buffers_iterator::value_type]
+
+[indexterm2 value_type..buffers_iterator] 
+The type of the value pointed to by the iterator. 
+
+
+  typedef ByteType value_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -55553,6 +56080,47 @@ The iterator type.
   typedef basic_resolver_iterator< InternetProtocol > iterator;
 
 
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_iterator.difference_type [*difference_type]]]
+    [The type used for the distance between two iterators. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_iterator.iterator_category [*iterator_category]]]
+    [The iterator category. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_iterator.pointer [*pointer]]]
+    [The type of the result of applying operator->() to the iterator. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_iterator.reference [*reference]]]
+    [The type of the result of applying operator*() to the iterator. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_iterator.value_type [*value_type]]]
+    [The type of the value pointed to by the iterator. ]
+  
+  ]
+
+]
+
 [heading Member Functions]
 [table
   [[Name][Description]]
@@ -56280,6 +56848,47 @@ An iterator over the entries produced by a resolver.
   class basic_resolver_iterator
 
 
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_iterator.difference_type [*difference_type]]]
+    [The type used for the distance between two iterators. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_iterator.iterator_category [*iterator_category]]]
+    [The iterator category. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_iterator.pointer [*pointer]]]
+    [The type of the result of applying operator->() to the iterator. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_iterator.reference [*reference]]]
+    [The type of the result of applying operator*() to the iterator. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_iterator.value_type [*value_type]]]
+    [The type of the value pointed to by the iterator. ]
+  
+  ]
+
+]
+
 [heading Member Functions]
 [table
   [[Name][Description]]
@@ -56428,6 +57037,48 @@ Create an iterator from an endpoint, host name and service name.
 [endsect]
 
 
+[section:difference_type ip::basic_resolver_iterator::difference_type]
+
+[indexterm2 difference_type..ip::basic_resolver_iterator] 
+The type used for the distance between two iterators. 
+
+
+  typedef std::ptrdiff_t difference_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_resolver_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:iterator_category ip::basic_resolver_iterator::iterator_category]
+
+[indexterm2 iterator_category..ip::basic_resolver_iterator] 
+The iterator category. 
+
+
+  typedef std::forward_iterator_tag iterator_category;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_resolver_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
 [section:operator__star_ ip::basic_resolver_iterator::operator *]
 
 [indexterm2 operator *..ip::basic_resolver_iterator] 
@@ -56535,6 +57186,197 @@ Test two iterators for equality.
   friend bool operator==(
       const basic_resolver_iterator & a,
       const basic_resolver_iterator & b);
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_resolver_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:pointer ip::basic_resolver_iterator::pointer]
+
+[indexterm2 pointer..ip::basic_resolver_iterator] 
+The type of the result of applying `operator->()` to the iterator. 
+
+
+  typedef const basic_resolver_entry< InternetProtocol > * pointer;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_resolver_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:reference ip::basic_resolver_iterator::reference]
+
+[indexterm2 reference..ip::basic_resolver_iterator] 
+The type of the result of applying `operator*()` to the iterator. 
+
+
+  typedef const basic_resolver_entry< InternetProtocol > & reference;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_entry.endpoint_type [*endpoint_type]]]
+    [The endpoint type associated with the endpoint entry. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_entry.protocol_type [*protocol_type]]]
+    [The protocol type associated with the endpoint entry. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]]]
+    [Default constructor. 
+
+     Construct with specified endpoint, host name and service name. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_entry.endpoint [*endpoint]]]
+    [Get the endpoint associated with the entry. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_entry.host_name [*host_name]]]
+    [Get the host name associated with the entry. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_entry.operator_endpoint_type [*operator endpoint_type]]]
+    [Convert to the endpoint associated with the entry. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_entry.service_name [*service_name]]]
+    [Get the service name associated with the entry. ]
+  ]
+  
+]
+
+The [link asio.reference.ip__basic_resolver_entry `ip::basic_resolver_entry`] class template describes an entry as returned by a resolver.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:] Safe.
+
+[*Shared] [*objects:] Unsafe. 
+
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ip/basic_resolver_iterator.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:value_type ip::basic_resolver_iterator::value_type]
+
+[indexterm2 value_type..ip::basic_resolver_iterator] 
+The type of the value pointed to by the iterator. 
+
+
+  typedef basic_resolver_entry< InternetProtocol > value_type;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_entry.endpoint_type [*endpoint_type]]]
+    [The endpoint type associated with the endpoint entry. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_entry.protocol_type [*protocol_type]]]
+    [The protocol type associated with the endpoint entry. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]]]
+    [Default constructor. 
+
+     Construct with specified endpoint, host name and service name. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_entry.endpoint [*endpoint]]]
+    [Get the endpoint associated with the entry. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_entry.host_name [*host_name]]]
+    [Get the host name associated with the entry. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_entry.operator_endpoint_type [*operator endpoint_type]]]
+    [Convert to the endpoint associated with the entry. ]
+  ]
+  
+  [
+    [[link asio.reference.ip__basic_resolver_entry.service_name [*service_name]]]
+    [Get the service name associated with the entry. ]
+  ]
+  
+]
+
+The [link asio.reference.ip__basic_resolver_entry `ip::basic_resolver_entry`] class template describes an entry as returned by a resolver.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:] Safe.
+
+[*Shared] [*objects:] Unsafe. 
+
+
 
 
 [heading Requirements]
@@ -58811,6 +59653,47 @@ The iterator type.
 
   typedef basic_resolver_iterator< InternetProtocol > iterator_type;
 
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_iterator.difference_type [*difference_type]]]
+    [The type used for the distance between two iterators. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_iterator.iterator_category [*iterator_category]]]
+    [The iterator category. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_iterator.pointer [*pointer]]]
+    [The type of the result of applying operator->() to the iterator. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_iterator.reference [*reference]]]
+    [The type of the result of applying operator*() to the iterator. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_resolver_iterator.value_type [*value_type]]]
+    [The type of the value pointed to by the iterator. ]
+  
+  ]
+
+]
 
 [heading Member Functions]
 [table
@@ -74860,7 +75743,7 @@ Typedef for the typical usage of a signal set.
   
   [
     [[link asio.reference.basic_signal_set.remove [*remove]]]
-    [Remove a signal to a signal_set. ]
+    [Remove a signal from a signal_set. ]
   ]
   
 ]
@@ -74880,6 +75763,68 @@ Typedef for the typical usage of a signal set.
   ]
 
 ]
+
+The [link asio.reference.basic_signal_set `basic_signal_set`] class template provides the ability to perform an asynchronous wait for one or more signals to occur.
+
+Most applications will use the `asio::signal_set` typedef.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:] Safe.
+
+[*Shared] [*objects:] Unsafe.
+
+
+[heading Example]
+  
+Performing an asynchronous wait: 
+
+   void handler(
+       const asio::error_code& error,
+       int signal_number)
+   {
+     if (!error)
+     {
+       // A signal occurred.
+     }
+   }
+
+   ...
+
+   // Construct a signal set registered for process termination.
+   asio::signal_set signals(io_service, SIGINT, SIGTERM);
+
+   // Start an asynchronous wait for one of the signals to occur.
+   signals.async_wait(handler);
+
+
+
+
+
+[heading Queueing of signal notifications]
+  
+
+
+If a signal is registered with a signal\_set, and the signal occurs when there are no waiting handlers, then the signal notification is queued. The next async\_wait operation on that signal\_set will dequeue the notification. If multiple notifications are queued, subsequent async\_wait operations dequeue them one at a time. Signal notifications are dequeued in order of ascending signal number.
+
+If a signal number is removed from a signal\_set (using the `remove` or `erase` member functions) then any queued notifications for that signal are discarded.
+
+
+[heading Multiple registration of signals]
+  
+
+
+The same signal number may be registered with different signal\_set objects. When the signal occurs, one handler is called for each signal\_set object.
+
+Note that multiple registration only works for signals that are registered using Asio. The application must not also register a signal handler using functions such as `signal()` or `sigaction()`.
+
+
+[heading Signal masking on POSIX platforms]
+  
+
+
+POSIX allows signals to be blocked using functions such as `sigprocmask()` and `pthread_sigmask()`. For signals to be delivered, programs must ensure that any signals registered using signal\_set objects are unblocked in at least one thread. 
 
 
 [heading Requirements]
