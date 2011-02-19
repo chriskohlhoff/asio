@@ -380,7 +380,7 @@ public:
   {
   }
 
-  static bool do_perform(reactor_op* base)
+  static bool do_perform(reactor_op*)
   {
     signal_state* state = get_signal_state();
 
