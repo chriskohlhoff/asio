@@ -89,6 +89,7 @@
             <member><link linkend="asio.reference.placeholders__bytes_transferred">placeholders::bytes_transferred</link></member>
             <member><link linkend="asio.reference.placeholders__error">placeholders::error</link></member>
             <member><link linkend="asio.reference.placeholders__iterator">placeholders::iterator</link></member>
+            <member><link linkend="asio.reference.placeholders__signal_number">placeholders::signal_number</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Error Codes</bridgehead>
           <simplelist type="vert" columns="1">
