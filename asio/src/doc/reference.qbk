@@ -21801,7 +21801,7 @@ Provides signal functionality.
   
   [
     [[link asio.reference.basic_signal_set.async_wait [*async_wait]]]
-    []
+    [Start an asynchronous operation to wait for a signal to be delivered. ]
   ]
   
   [
@@ -22013,6 +22013,8 @@ This function adds the specified signal to the set. It has no effect if the sign
 [section:async_wait basic_signal_set::async_wait]
 
 [indexterm2 async_wait..basic_signal_set] 
+Start an asynchronous operation to wait for a signal to be delivered. 
+
 
   template<
       typename ``[link asio.reference.SignalHandler SignalHandler]``>
@@ -75712,7 +75714,7 @@ Typedef for the typical usage of a signal set.
   
   [
     [[link asio.reference.basic_signal_set.async_wait [*async_wait]]]
-    []
+    [Start an asynchronous operation to wait for a signal to be delivered. ]
   ]
   
   [

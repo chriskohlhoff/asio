@@ -338,7 +338,7 @@ public:
     return this->service.cancel(this->implementation, ec);
   }
 
-  // Start an asynchronous operation to wait for a signal to be delivered.
+  /// Start an asynchronous operation to wait for a signal to be delivered.
   /**
    * This function may be used to initiate an asynchronous wait against the
    * signal set. It always returns immediately.
