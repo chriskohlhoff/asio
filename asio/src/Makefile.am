@@ -525,7 +525,8 @@ EXTRA_DIST = \
 	examples/ssl/dh512.pem \
 	examples/timers/tick_count_timer.cpp \
 	tests/performance/handler_allocator.hpp \
-	tests/unit/archetypes/io_control_command.hpp
+	tests/unit/archetypes/io_control_command.hpp \
+	tools/handlerviz.pl
 
 MAINTAINERCLEANFILES = \
 	$(srcdir)/Makefile.in
