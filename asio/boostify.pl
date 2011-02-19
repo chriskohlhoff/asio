@@ -472,8 +472,23 @@ sub copy_doc
   }
 }
 
+sub copy_tools
+{
+  our $boost_dir;
+  my @files = (
+      glob("src/tools/*.pl"));
+  foreach my $file (@files)
+  {
+    my $from = $file;
+    my $to = $file;
+    $to =~ s/^src\/tools\//$boost_dir\/libs\/asio\/tools\//;
+    copy_source_file($from, $to);
+  }
+}
+
 copy_include_files();
 create_lib_directory();
 copy_unit_tests();
 copy_examples();
 copy_doc();
+copy_tools();
