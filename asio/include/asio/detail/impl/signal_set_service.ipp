@@ -158,7 +158,7 @@ asio::error_code signal_set_service::add(
     {
 #if defined(ASIO_HAS_SIGACTION)
       using namespace std; // For memset.
-      struct ::sigaction sa;
+      struct sigaction sa;
       memset(&sa, 0, sizeof(sa));
       sa.sa_handler = asio_signal_handler;
       sigfillset(&sa.sa_mask);
@@ -227,7 +227,7 @@ asio::error_code signal_set_service::remove(
     {
 #if defined(ASIO_HAS_SIGACTION)
       using namespace std; // For memset.
-      struct ::sigaction sa;
+      struct sigaction sa;
       memset(&sa, 0, sizeof(sa));
       sa.sa_handler = SIG_DFL;
       if (::sigaction(signal_number, &sa, 0) == -1)
@@ -279,7 +279,7 @@ asio::error_code signal_set_service::clear(
     {
 #if defined(ASIO_HAS_SIGACTION)
       using namespace std; // For memset.
-      struct ::sigaction sa;
+      struct sigaction sa;
       memset(&sa, 0, sizeof(sa));
       sa.sa_handler = SIG_DFL;
       if (::sigaction(reg->signal_number_, &sa, 0) == -1)
