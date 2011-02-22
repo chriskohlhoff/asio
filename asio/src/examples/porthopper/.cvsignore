@@ -1,9 +1,0 @@
-.deps
-.dirstamp
-*.exe
-client
-server
-*.ilk
-*.manifest
-*.pdb
-*.tds
