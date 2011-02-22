@@ -17,13 +17,6 @@ if [ ! -f autogen.sh ]; then
   exit 1
 fi
 
-# Clueless user check.
-if test ! -d CVS -a -f configure; then
-  echo "You only need to run './autogen.sh' when you checked out this project using CVS."
-  echo "Just run ./configure [--help]."
-  exit 0
-fi
-
 AUTOMAKE=${AUTOMAKE:-automake}
 ACLOCAL=${ACLOCAL:-aclocal}
 AUTOCONF=${AUTOCONF:-autoconf}
