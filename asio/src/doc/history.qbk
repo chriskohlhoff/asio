@@ -30,7 +30,7 @@
   `async_read()`, `read_until()` or `async_read_until()`.)
 
 * Fixed a bug on kqueue-based platforms, where reactor read operations that
-  return false from their perform() function are not correctly re-registered
+  return false from their `perform()` function are not correctly re-registered
   with kqueue.
 
 * Support for `std::error_code` and `std::system_error` is no longer enabled by
@@ -152,8 +152,8 @@
 
 [heading Asio 1.4.8]
 
-* Fixed an integer overflow problem that occurs when `ip::address_v4::netmask()`
-  is used on 64-bit platforms.
+* Fixed an integer overflow problem that occurs when
+  `ip::address_v4::broadcast()` is used on 64-bit platforms.
 
 * Fixed a problem on older Linux kernels (where epoll is used without `timerfd`
   support) that prevents timely delivery of `deadline_timer` handlers, after the
