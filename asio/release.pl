@@ -168,7 +168,7 @@ sub build_asio_doc
 {
   $ENV{BOOST_ROOT} = abs_path("../boost");
   system("rm -rf doc");
-  my $bjam = abs_path(glob("../boost/tools/jam/src/bin.*/bjam"));
+  my $bjam = abs_path(glob("../boost/bjam"));
   chdir("src/doc");
   system("$bjam clean");
   system("rm -rf html");
@@ -188,7 +188,7 @@ sub make_asio_packages
 sub build_boost_asio_doc
 {
   my $cwd = getcwd();
-  my $bjam = abs_path(glob("../boost/tools/jam/src/bin.*/bjam"));
+  my $bjam = abs_path(glob("../boost/bjam"));
   chdir("../boost/doc");
   system("$bjam clean");
   system("rm -rf html/boost_asio");
@@ -197,8 +197,8 @@ sub build_boost_asio_doc
 }
 
 our $boost_asio_readme = <<"EOF";
-Copy the `boost', `doc' and `libs' directories into an existing boost 1.33.0,
-1.33.1, 1.34, 1.34.1, 1.35 or 1.36 distribution.
+Copy the `boost', `doc' and `libs' directories into an existing boost
+distribution (1.33.0 or later).
 
 Before using Boost.Asio, the Boost.System library needs to be built. This can
 be done by running bjam in the libs/system/build directory. Consult the Boost
