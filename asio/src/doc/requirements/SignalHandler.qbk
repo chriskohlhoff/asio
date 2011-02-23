@@ -46,7 +46,7 @@ A non-static class member function adapted to a signal handler using `bind()`:
     ...
   }
   ...
-  socket.async_wait(...,
+  my_signal_set.async_wait(
       boost::bind(&my_class::signal_handler,
         this, asio::placeholders::error,
         asio::placeholders::signal_number));
