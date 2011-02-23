@@ -46,9 +46,9 @@ kqueue_reactor::kqueue_reactor(asio::io_service& io_service)
     interrupter_(),
     shutdown_(false)
 {
-  // The interrupter is put into a permanently readable state. Whenever we
-  // want to interrupt the blocked kevent call we register a one-shot read
-  // operation against the descriptor.
+  // The interrupter is put into a permanently readable state. Whenever we want
+  // to interrupt the blocked kevent call we register a read operation against
+  // the descriptor.
   interrupter_.interrupt();
 }
 
@@ -107,15 +107,15 @@ int kqueue_reactor::register_internal_descriptor(
   {
   case read_op:
     ASIO_KQUEUE_EV_SET(&event, descriptor, EVFILT_READ,
-        EV_ADD | EV_ONESHOT, 0, 0, descriptor_data);
+        EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
     break;
   case write_op:
     ASIO_KQUEUE_EV_SET(&event, descriptor, EVFILT_WRITE,
-        EV_ADD | EV_ONESHOT, 0, 0, descriptor_data);
+        EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
     break;
   case except_op:
     ASIO_KQUEUE_EV_SET(&event, descriptor, EVFILT_READ,
-        EV_ADD | EV_ONESHOT, EV_OOBAND, 0, descriptor_data);
+        EV_ADD | EV_CLEAR, EV_OOBAND, 0, descriptor_data);
     break;
   }
   ::kevent(kqueue_fd_, &event, 1, 0, 0, 0);
@@ -169,17 +169,17 @@ void kqueue_reactor::start_op(int op_type, socket_type descriptor,
     {
     case read_op:
       ASIO_KQUEUE_EV_SET(&event, descriptor, EVFILT_READ,
-          EV_ADD | EV_ONESHOT, 0, 0, descriptor_data);
+          EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
       break;
     case write_op:
       ASIO_KQUEUE_EV_SET(&event, descriptor, EVFILT_WRITE,
-          EV_ADD | EV_ONESHOT, 0, 0, descriptor_data);
+          EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
       break;
     case except_op:
       if (!descriptor_data->op_queue_[read_op].empty())
         return; // Already registered for read events.
       ASIO_KQUEUE_EV_SET(&event, descriptor, EVFILT_READ,
-          EV_ADD | EV_ONESHOT, EV_OOBAND, 0, descriptor_data);
+          EV_ADD | EV_CLEAR, EV_OOBAND, 0, descriptor_data);
       break;
     }
 
@@ -289,7 +289,7 @@ void kqueue_reactor::run(bool block, op_queue<operation>& ops)
     if (ptr == &interrupter_)
     {
       // No need to reset the interrupter since we're leaving the descriptor
-      // in a ready-to-read state and relying on one-shot notifications.
+      // in a ready-to-read state and relying on edge-triggered notifications.
     }
     else
     {
@@ -338,17 +338,17 @@ void kqueue_reactor::run(bool block, op_queue<operation>& ops)
       case EVFILT_READ:
         if (!descriptor_data->op_queue_[read_op].empty())
           ASIO_KQUEUE_EV_SET(&event, descriptor, EVFILT_READ,
-              EV_ADD | EV_ONESHOT, 0, 0, descriptor_data);
+              EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
         else if (!descriptor_data->op_queue_[except_op].empty())
           ASIO_KQUEUE_EV_SET(&event, descriptor, EVFILT_READ,
-              EV_ADD | EV_ONESHOT, EV_OOBAND, 0, descriptor_data);
+              EV_ADD | EV_CLEAR, EV_OOBAND, 0, descriptor_data);
         else
           continue;
         break;
       case EVFILT_WRITE:
         if (!descriptor_data->op_queue_[write_op].empty())
           ASIO_KQUEUE_EV_SET(&event, descriptor, EVFILT_WRITE,
-              EV_ADD | EV_ONESHOT, 0, 0, descriptor_data);
+              EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
         else
           continue;
         break;
@@ -380,7 +380,7 @@ void kqueue_reactor::interrupt()
 {
   struct kevent event;
   ASIO_KQUEUE_EV_SET(&event, interrupter_.read_descriptor(),
-      EVFILT_READ, EV_ADD | EV_ONESHOT, 0, 0, &interrupter_);
+      EVFILT_READ, EV_ADD | EV_CLEAR, 0, 0, &interrupter_);
   ::kevent(kqueue_fd_, &event, 1, 0, 0, 0);
 }
 
