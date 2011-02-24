@@ -17,7 +17,6 @@
 
 #include "asio/detail/config.hpp"
 
-#include <signal.h>
 #include <cstring>
 #include "asio/detail/reactor.hpp"
 #include "asio/detail/signal_set_service.hpp"
