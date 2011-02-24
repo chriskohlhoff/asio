@@ -174,7 +174,7 @@ sub copy_source_file
       print_line($output, $1 . "<boost/" . $2 . ">", $from, $lineno);
       if ($uses_asio_thread)
       {
-        print_line($output, $1 . "<boost/thread.hpp>", $from, $lineno);
+        print_line($output, $1 . "<boost/thread/thread.hpp>", $from, $lineno);
         $uses_asio_thread = 0;
       }
     }
@@ -182,7 +182,7 @@ sub copy_source_file
     {
       if (!$includes_asio && $uses_asio_thread)
       {
-        print_line($output, $1 . "<boost/thread.hpp>", $from, $lineno);
+        print_line($output, $1 . "<boost/thread/thread.hpp>", $from, $lineno);
         $uses_asio_thread = 0;
       }
       print_line($output, $line, $from, $lineno);
