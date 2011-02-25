@@ -522,8 +522,9 @@ public:
    *
    * @param event A fork-related event.
    *
-   * @throws asio::system_error Thrown on failure. If the notification fails
-   * the io_service object should no longer be used and should be destroyed.
+   * @throws asio::system_error Thrown on failure. If the notification
+   * fails the io_service object should no longer be used and should be
+   * destroyed.
    *
    * @par Example
    * The following code illustrates how to incorporate the notify_fork()
