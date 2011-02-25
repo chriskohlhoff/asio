@@ -67,9 +67,12 @@ namespace detail { typedef task_io_service io_service_impl; }
  *
  * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
- * @e Shared @e objects: Safe, with the exception that calling reset() while
- * there are unfinished run(), run_one(), poll() or poll_one() calls results in
- * undefined behaviour.
+ * @e Shared @e objects: Safe, with the specific exceptions of the reset() and
+ * notify_fork() functions. Calling reset() while there are unfinished run(),
+ * run_one(), poll() or poll_one() calls results in undefined behaviour. The
+ * notify_fork() function should not be called at the same time as any
+ * io_service function, or any function on an I/O object that is associated
+ * with the io_service.
  *
  * @par Concepts:
  * Dispatcher.
@@ -494,6 +497,57 @@ public:
 #endif
   wrap(Handler handler);
 
+  /// Fork-related event notifications.
+  enum fork_event
+  {
+    /// Notify the io_service that the process is about to fork.
+    fork_prepare,
+
+    /// Notify the io_service that the process has forked and is the parent.
+    fork_parent,
+
+    /// Notify the io_service that the process has forked and is the child.
+    fork_child
+  };
+
+  /// Notify the io_service of a fork-related event.
+  /**
+   * This function is used to inform the io_service that the process is about
+   * to fork, or has just forked. This allows the io_service, and the services
+   * it contains, to perform any necessary housekeeping to ensure correct
+   * operation following a fork.
+   *
+   * This function must not be called at the same time as any other io_service
+   * function, or any function on an I/O object associated with the io_service.
+   *
+   * @param event A fork-related event.
+   *
+   * @throws asio::system_error Thrown on failure. If the notification fails
+   * the io_service object should no longer be used and should be destroyed.
+   *
+   * @par Example
+   * The following code illustrates how to incorporate the notify_fork()
+   * function:
+   * @code my_io_service.notify_fork(asio::io_service::fork_prepare);
+   * if (fork() == 0)
+   * {
+   *   // This is the child process.
+   *   my_io_service.notify_fork(asio::io_service::fork_child);
+   * }
+   * else
+   * {
+   *   // This is the parent process.
+   *   my_io_service.notify_fork(asio::io_service::fork_parent);
+   * } @endcode
+   *
+   * @note For each service object @c svc in the io_service set, performs
+   * <tt>svc->fork_service();</tt>. When processing the fork_prepare event,
+   * services are visited in reverse order of the beginning of service object
+   * lifetime. Otherwise, services are visited in order of the beginning of
+   * service object lifetime.
+   */
+  ASIO_DECL void notify_fork(asio::io_service::fork_event event);
+
   /// Obtain the service object corresponding to the given type.
   /**
    * This function is used to locate a service object that corresponds to
@@ -633,6 +687,15 @@ protected:
 private:
   /// Destroy all user-defined handler objects owned by the service.
   virtual void shutdown_service() = 0;
+
+  /// Handle notification of a fork-related event to perform any necessary
+  /// housekeeping.
+  /**
+   * This function is not a pure virtual so that services only have to
+   * implement it if necessary. The default implementation does nothing.
+   */
+  ASIO_DECL virtual void fork_service(
+      asio::io_service::fork_event event);
 
   friend class asio::detail::service_registry;
   struct key

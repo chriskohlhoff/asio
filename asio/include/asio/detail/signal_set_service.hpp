@@ -117,6 +117,9 @@ public:
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown_service();
 
+  // Perform fork-related housekeeping.
+  ASIO_DECL void fork_service(asio::io_service::fork_event event);
+
   // Construct a new signal_set implementation.
   ASIO_DECL void construct(implementation_type& impl);
 
@@ -165,6 +168,12 @@ private:
 
   // Helper function to remove a service from the global signal state.
   ASIO_DECL static void remove_service(signal_set_service* service);
+
+  // Helper function to create the pipe descriptors.
+  ASIO_DECL static void open_descriptors();
+
+  // Helper function to close the pipe descriptors.
+  ASIO_DECL static void close_descriptors();
 
   // Helper function to start a wait operation.
   ASIO_DECL void start_wait_op(implementation_type& impl, signal_op* op);

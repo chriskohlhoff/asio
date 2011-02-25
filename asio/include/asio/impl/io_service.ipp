@@ -117,6 +117,11 @@ void io_service::reset()
   impl_.reset();
 }
 
+void io_service::notify_fork(asio::io_service::fork_event event)
+{
+  service_registry_->notify_fork(event);
+}
+
 io_service::service::service(asio::io_service& owner)
   : owner_(owner),
     next_(0)
@@ -124,6 +129,10 @@ io_service::service::service(asio::io_service& owner)
 }
 
 io_service::service::~service()
+{
+}
+
+void io_service::service::fork_service(asio::io_service::fork_event)
 {
 }
 

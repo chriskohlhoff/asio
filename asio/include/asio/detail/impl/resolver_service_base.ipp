@@ -64,6 +64,25 @@ void resolver_service_base::shutdown_service()
   }
 }
 
+void resolver_service_base::fork_service(
+    asio::io_service::fork_event event)
+{
+  if (work_thread_)
+  {
+    if (event == asio::io_service::fork_prepare)
+    {
+      work_io_service_->stop();
+      work_thread_->join();
+    }
+    else
+    {
+      work_io_service_->reset();
+      work_thread_.reset(new asio::detail::thread(
+            work_io_service_runner(*work_io_service_)));
+    }
+  }
+}
+
 void resolver_service_base::construct(
     resolver_service_base::implementation_type& impl)
 {

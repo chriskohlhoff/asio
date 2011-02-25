@@ -61,7 +61,8 @@ epoll_reactor::epoll_reactor(asio::io_service& io_service)
 
 epoll_reactor::~epoll_reactor()
 {
-  close(epoll_fd_);
+  if (epoll_fd_ != -1)
+    close(epoll_fd_);
   if (timer_fd_ != -1)
     close(timer_fd_);
 }
@@ -85,6 +86,57 @@ void epoll_reactor::shutdown_service()
   timer_queues_.get_all_timers(ops);
 }
 
+void epoll_reactor::fork_service(asio::io_service::fork_event event)
+{
+  if (event == asio::io_service::fork_child)
+  {
+    if (epoll_fd_ != -1)
+      ::close(epoll_fd_);
+    epoll_fd_ = -1;
+    epoll_fd_ = do_epoll_create();
+
+    if (timer_fd_ != -1)
+      ::close(timer_fd_);
+    timer_fd_ = -1;
+    timer_fd_ = do_timerfd_create();
+
+    interrupter_.recreate();
+
+    // Add the interrupter's descriptor to epoll.
+    epoll_event ev = { 0, { 0 } };
+    ev.events = EPOLLIN | EPOLLERR | EPOLLET;
+    ev.data.ptr = &interrupter_;
+    epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, interrupter_.read_descriptor(), &ev);
+    interrupter_.interrupt();
+
+    // Add the timer descriptor to epoll.
+    if (timer_fd_ != -1)
+    {
+      ev.events = EPOLLIN | EPOLLERR;
+      ev.data.ptr = &timer_fd_;
+      epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, timer_fd_, &ev);
+    }
+
+    update_timeout();
+
+    // Re-register all descriptors with epoll.
+    mutex::scoped_lock descriptors_lock(registered_descriptors_mutex_);
+    for (descriptor_state* state = registered_descriptors_.first();
+        state != 0; state = state->next_)
+    {
+      ev.events = EPOLLIN | EPOLLERR | EPOLLHUP | EPOLLOUT | EPOLLPRI | EPOLLET;
+      ev.data.ptr = state;
+      int result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, state->descriptor_, &ev);
+      if (result != 0)
+      {
+        asio::error_code ec(errno,
+            asio::error::get_system_category());
+        asio::detail::throw_error(ec, "epoll re-registration");
+      }
+    }
+  }
+}
+
 void epoll_reactor::init_task()
 {
   io_service_.init_task();
@@ -96,6 +148,7 @@ int epoll_reactor::register_descriptor(socket_type descriptor,
   mutex::scoped_lock lock(registered_descriptors_mutex_);
 
   descriptor_data = registered_descriptors_.alloc();
+  descriptor_data->descriptor_ = descriptor;
   descriptor_data->shutdown_ = false;
 
   lock.unlock();
@@ -117,20 +170,14 @@ int epoll_reactor::register_internal_descriptor(
   mutex::scoped_lock lock(registered_descriptors_mutex_);
 
   descriptor_data = registered_descriptors_.alloc();
+  descriptor_data->descriptor_ = descriptor;
   descriptor_data->shutdown_ = false;
   descriptor_data->op_queue_[op_type].push(op);
 
   lock.unlock();
 
   epoll_event ev = { 0, { 0 } };
-  ev.events = EPOLLERR | EPOLLHUP | EPOLLET;
-  switch (op_type)
-  {
-  case read_op: ev.events |= EPOLLIN; break;
-  case write_op: ev.events |= EPOLLOUT; break;
-  case except_op: ev.events |= EPOLLPRI; break;
-  default: break;
-  };
+  ev.events = EPOLLIN | EPOLLERR | EPOLLHUP | EPOLLOUT | EPOLLPRI | EPOLLET;
   ev.data.ptr = descriptor_data;
   int result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
   if (result != 0)
@@ -242,6 +289,7 @@ void epoll_reactor::deregister_descriptor(socket_type descriptor,
       }
     }
 
+    descriptor_data->descriptor_ = -1;
     descriptor_data->shutdown_ = true;
 
     descriptor_lock.unlock();
@@ -252,6 +300,36 @@ void epoll_reactor::deregister_descriptor(socket_type descriptor,
     descriptors_lock.unlock();
 
     io_service_.post_deferred_completions(ops);
+  }
+}
+
+void epoll_reactor::deregister_internal_descriptor(socket_type descriptor,
+    epoll_reactor::per_descriptor_data& descriptor_data)
+{
+  if (!descriptor_data)
+    return;
+
+  mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
+  mutex::scoped_lock descriptors_lock(registered_descriptors_mutex_);
+
+  if (!descriptor_data->shutdown_)
+  {
+    epoll_event ev = { 0, { 0 } };
+    epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, descriptor, &ev);
+
+    op_queue<operation> ops;
+    for (int i = 0; i < max_ops; ++i)
+      ops.push(descriptor_data->op_queue_[i]);
+
+    descriptor_data->descriptor_ = -1;
+    descriptor_data->shutdown_ = true;
+
+    descriptor_lock.unlock();
+
+    registered_descriptors_.free(descriptor_data);
+    descriptor_data = 0;
+
+    descriptors_lock.unlock();
   }
 }
 

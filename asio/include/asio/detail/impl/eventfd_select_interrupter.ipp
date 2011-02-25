@@ -39,6 +39,11 @@ namespace detail {
 
 eventfd_select_interrupter::eventfd_select_interrupter()
 {
+  open_descriptors();
+}
+
+void eventfd_select_interrupter::open_descriptors()
+{
 #if __GLIBC__ == 2 && __GLIBC_MINOR__ < 8
   write_descriptor_ = read_descriptor_ = syscall(__NR_eventfd, 0);
   if (read_descriptor_ != -1)
@@ -88,10 +93,25 @@ eventfd_select_interrupter::eventfd_select_interrupter()
 
 eventfd_select_interrupter::~eventfd_select_interrupter()
 {
+  close_descriptors();
+}
+
+void eventfd_select_interrupter::close_descriptors()
+{
   if (write_descriptor_ != -1 && write_descriptor_ != read_descriptor_)
     ::close(write_descriptor_);
   if (read_descriptor_ != -1)
     ::close(read_descriptor_);
+}
+
+void eventfd_select_interrupter::recreate()
+{
+  close_descriptors();
+
+  write_descriptor_ = -1;
+  read_descriptor_ = -1;
+
+  open_descriptors();
 }
 
 void eventfd_select_interrupter::interrupt()

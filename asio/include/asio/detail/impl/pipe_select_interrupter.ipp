@@ -37,6 +37,11 @@ namespace detail {
 
 pipe_select_interrupter::pipe_select_interrupter()
 {
+  open_descriptors();
+}
+
+void pipe_select_interrupter::open_descriptors()
+{
   int pipe_fds[2];
   if (pipe(pipe_fds) == 0)
   {
@@ -60,10 +65,25 @@ pipe_select_interrupter::pipe_select_interrupter()
 
 pipe_select_interrupter::~pipe_select_interrupter()
 {
+  close_descriptors();
+}
+
+void pipe_select_interrupter::close_descriptors()
+{
   if (read_descriptor_ != -1)
     ::close(read_descriptor_);
   if (write_descriptor_ != -1)
     ::close(write_descriptor_);
+}
+
+void pipe_select_interrupter::recreate()
+{
+  close_descriptors();
+
+  write_descriptor_ = -1;
+  read_descriptor_ = -1;
+
+  open_descriptors();
 }
 
 void pipe_select_interrupter::interrupt()

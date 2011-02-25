@@ -72,6 +72,10 @@ public:
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown_service();
 
+  // Recreate internal descriptors following a fork.
+  ASIO_DECL void fork_service(
+      asio::io_service::fork_event event);
+
   // Initialise the task, but only if the reactor is not in its own thread.
   ASIO_DECL void init_task();
 
@@ -105,6 +109,10 @@ public:
   // its registration from the reactor.
   ASIO_DECL void deregister_descriptor(socket_type descriptor,
       per_descriptor_data&, bool closing);
+
+  // Remote the descriptor's registration from the reactor.
+  ASIO_DECL void deregister_internal_descriptor(
+      socket_type descriptor, per_descriptor_data& descriptor_data);
 
   // Add a new timer queue to the reactor.
   template <typename Time_Traits>

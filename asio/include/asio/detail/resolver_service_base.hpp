@@ -47,6 +47,9 @@ public:
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown_service();
 
+  // Perform any fork-related housekeeping.
+  ASIO_DECL void fork_service(asio::io_service::fork_event event);
+
   // Construct a new resolver implementation.
   ASIO_DECL void construct(implementation_type& impl);
 

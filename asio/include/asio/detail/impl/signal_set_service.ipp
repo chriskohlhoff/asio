@@ -19,6 +19,7 @@
 
 #include <cstring>
 #include "asio/detail/reactor.hpp"
+#include "asio/detail/signal_blocker.hpp"
 #include "asio/detail/signal_set_service.hpp"
 #include "asio/detail/static_mutex.hpp"
 
@@ -38,6 +39,9 @@ struct signal_state
   // The write end of the pipe used for signal notifications.
   int write_descriptor_;
 
+  // Whether the signal state has been prepared for a fork.
+  bool fork_prepared_;
+
   // The head of a linked list of all signal_set_service instances.
   class signal_set_service* service_list_;
 
@@ -48,7 +52,7 @@ struct signal_state
 signal_state* get_signal_state()
 {
   static signal_state state = {
-    ASIO_STATIC_MUTEX_INIT, -1, -1, 0, { 0 } };
+    ASIO_STATIC_MUTEX_INIT, -1, -1, false, 0, { 0 } };
   return &state;
 }
 
@@ -66,6 +70,37 @@ void asio_signal_handler(int signal_number)
   signal(signal_number, asio_signal_handler);
 #endif // !defined(ASIO_HAS_SIGACTION)
 }
+
+#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+class signal_set_service::pipe_read_op : public reactor_op
+{
+public:
+  pipe_read_op()
+    : reactor_op(&pipe_read_op::do_perform, pipe_read_op::do_complete)
+  {
+  }
+
+  static bool do_perform(reactor_op*)
+  {
+    signal_state* state = get_signal_state();
+
+    int fd = state->read_descriptor_;
+    int signal_number = 0;
+    while (::read(fd, &signal_number, sizeof(int)) == sizeof(int))
+      if (signal_number >= 0 && signal_number < max_signal_number)
+        signal_set_service::deliver_signal(signal_number);
+
+    return false;
+  }
+
+  static void do_complete(io_service_impl* /*owner*/, operation* base,
+      asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
+  {
+    pipe_read_op* o(static_cast<pipe_read_op*>(base));
+    delete o;
+  }
+};
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 signal_set_service::signal_set_service(
     asio::io_service& io_service)
@@ -108,6 +143,43 @@ void signal_set_service::shutdown_service()
       reg = reg->next_in_table_;
     }
   }
+}
+
+void signal_set_service::fork_service(asio::io_service::fork_event event)
+{
+#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+  signal_state* state = get_signal_state();
+  static_mutex::scoped_lock lock(state->mutex_);
+
+  switch (event)
+  {
+  case asio::io_service::fork_prepare:
+    reactor_.deregister_internal_descriptor(
+        state->read_descriptor_, reactor_data_);
+    state->fork_prepared_ = true;
+    break;
+  case asio::io_service::fork_parent:
+    state->fork_prepared_ = false;
+    reactor_.register_internal_descriptor(reactor::read_op,
+        state->read_descriptor_, reactor_data_, new pipe_read_op);
+    break;
+  case asio::io_service::fork_child:
+    if (state->fork_prepared_)
+    {
+      asio::detail::signal_blocker blocker;
+      close_descriptors();
+      open_descriptors();
+      state->fork_prepared_ = false;
+    }
+    reactor_.register_internal_descriptor(reactor::read_op,
+        state->read_descriptor_, reactor_data_, new pipe_read_op);
+    break;
+  default:
+    break;
+  }
+#else // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+  (void)event;
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 }
 
 void signal_set_service::construct(
@@ -370,37 +442,6 @@ void signal_set_service::deliver_signal(int signal_number)
   }
 }
 
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-class signal_set_service::pipe_read_op : public reactor_op
-{
-public:
-  pipe_read_op()
-    : reactor_op(&pipe_read_op::do_perform, pipe_read_op::do_complete)
-  {
-  }
-
-  static bool do_perform(reactor_op*)
-  {
-    signal_state* state = get_signal_state();
-
-    int fd = state->read_descriptor_;
-    int signal_number = 0;
-    while (::read(fd, &signal_number, sizeof(int)) == sizeof(int))
-      if (signal_number >= 0 && signal_number < max_signal_number)
-        signal_set_service::deliver_signal(signal_number);
-
-    return false;
-  }
-
-  static void do_complete(io_service_impl* /*owner*/, operation* base,
-      asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
-  {
-    pipe_read_op* o(static_cast<pipe_read_op*>(base));
-    delete o;
-  }
-};
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-
 void signal_set_service::add_service(signal_set_service* service)
 {
   signal_state* state = get_signal_state();
@@ -409,28 +450,7 @@ void signal_set_service::add_service(signal_set_service* service)
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
   // If this is the first service to be created, open a new pipe.
   if (state->service_list_ == 0)
-  {
-    int pipe_fds[2];
-    if (::pipe(pipe_fds) == 0)
-    {
-      state->read_descriptor_ = pipe_fds[0];
-      ::fcntl(state->read_descriptor_, F_SETFL, O_NONBLOCK);
-
-      state->write_descriptor_ = pipe_fds[1];
-      ::fcntl(state->write_descriptor_, F_SETFL, O_NONBLOCK);
-
-#if defined(FD_CLOEXEC)
-      ::fcntl(state->read_descriptor_, F_SETFD, FD_CLOEXEC);
-      ::fcntl(state->write_descriptor_, F_SETFD, FD_CLOEXEC);
-#endif // defined(FD_CLOEXEC)
-    }
-    else
-    {
-      asio::error_code ec(errno,
-          asio::error::get_system_category());
-      asio::detail::throw_error(ec, "signal_set_service pipe");
-    }
-  }
+    open_descriptors();
 #endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
   // Insert service into linked list of all services.
@@ -473,14 +493,52 @@ void signal_set_service::remove_service(signal_set_service* service)
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
     // If this is the last service to be removed, close the pipe.
     if (state->service_list_ == 0)
-    {
-      ::close(state->read_descriptor_);
-      state->read_descriptor_ = -1;
-      ::close(state->write_descriptor_);
-      state->write_descriptor_ = -1;
-    }
+      close_descriptors();
 #endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
   }
+}
+
+void signal_set_service::open_descriptors()
+{
+#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+  signal_state* state = get_signal_state();
+
+  int pipe_fds[2];
+  if (::pipe(pipe_fds) == 0)
+  {
+    state->read_descriptor_ = pipe_fds[0];
+    ::fcntl(state->read_descriptor_, F_SETFL, O_NONBLOCK);
+
+    state->write_descriptor_ = pipe_fds[1];
+    ::fcntl(state->write_descriptor_, F_SETFL, O_NONBLOCK);
+
+#if defined(FD_CLOEXEC)
+    ::fcntl(state->read_descriptor_, F_SETFD, FD_CLOEXEC);
+    ::fcntl(state->write_descriptor_, F_SETFD, FD_CLOEXEC);
+#endif // defined(FD_CLOEXEC)
+  }
+  else
+  {
+    asio::error_code ec(errno,
+        asio::error::get_system_category());
+    asio::detail::throw_error(ec, "signal_set_service pipe");
+  }
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+}
+
+void signal_set_service::close_descriptors()
+{
+#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+  signal_state* state = get_signal_state();
+
+  if (state->read_descriptor_ != -1)
+    ::close(state->read_descriptor_);
+  state->read_descriptor_ = -1;
+
+  if (state->write_descriptor_ != -1)
+    ::close(state->write_descriptor_);
+  state->write_descriptor_ = -1;
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 }
 
 void signal_set_service::start_wait_op(

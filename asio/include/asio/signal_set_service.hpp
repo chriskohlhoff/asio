@@ -107,6 +107,12 @@ public:
   }
 
 private:
+  // Perform any fork-related housekeeping.
+  void fork_service(asio::io_service::fork_event event)
+  {
+    service_impl_.fork_service(event);
+  }
+
   // The platform-specific implementation.
   detail::signal_set_service service_impl_;
 };

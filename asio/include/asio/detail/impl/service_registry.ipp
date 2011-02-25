@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include <boost/throw_exception.hpp>
+#include <vector>
 #include "asio/detail/service_registry.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -49,6 +50,35 @@ service_registry::~service_registry()
     destroy(first_service_);
     first_service_ = next_service;
   }
+}
+
+void service_registry::notify_fork(asio::io_service::fork_event event)
+{
+  // Make a copy of all of the services while holding the lock. We don't want
+  // to hold the lock while calling into each service, as it may try to call
+  // back into this class.
+  std::vector<asio::io_service::service*> services;
+  {
+    asio::detail::mutex::scoped_lock lock(mutex_);
+    asio::io_service::service* service = first_service_;
+    while (service)
+    {
+      services.push_back(service);
+      service = service->next_;
+    }
+  }
+
+  // If processing the fork_prepare event, we want to go in reverse order of
+  // service registration, which happens to be the existing order of the
+  // services in the vector. For the other events we want to go in the other
+  // direction.
+  std::size_t num_services = services.size();
+  if (event == asio::io_service::fork_prepare)
+    for (std::size_t i = 0; i < num_services; ++i)
+      services[i]->fork_service(event);
+  else
+    for (std::size_t i = num_services; i > 0; --i)
+      services[i - 1]->fork_service(event);
 }
 
 void service_registry::init_key(asio::io_service::service::key& key,
