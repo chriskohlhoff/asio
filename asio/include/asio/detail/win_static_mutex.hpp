@@ -54,7 +54,7 @@ struct win_static_mutex
   ::CRITICAL_SECTION crit_section_;
 };
 
-#define ASIO_WIN_STATIC_MUTEX_INIT { false, { 0 } }
+#define ASIO_WIN_STATIC_MUTEX_INIT { false, { 0, 0, 0, 0, 0, 0 } }
 
 } // namespace detail
 } // namespace asio
