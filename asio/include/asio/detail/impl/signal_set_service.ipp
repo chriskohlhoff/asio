@@ -393,11 +393,16 @@ asio::error_code signal_set_service::cancel(
   ASIO_HANDLER_OPERATION(("signal_set", &impl, "cancel"));
 
   op_queue<operation> ops;
-  while (signal_op* op = impl.queue_.front())
   {
-    op->ec_ = asio::error::operation_aborted;
-    impl.queue_.pop();
-    ops.push(op);
+    signal_state* state = get_signal_state();
+    static_mutex::scoped_lock lock(state->mutex_);
+
+    while (signal_op* op = impl.queue_.front())
+    {
+      op->ec_ = asio::error::operation_aborted;
+      impl.queue_.pop();
+      ops.push(op);
+    }
   }
 
   io_service_.post_deferred_completions(ops);
