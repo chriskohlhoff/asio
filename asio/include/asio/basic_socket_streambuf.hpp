@@ -222,7 +222,7 @@ public:
 
     asio::error_code ec;
     timer_service_->expires_at(timer_implementation_, expiry_time, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "expires_at");
 
     start_timer();
   }
@@ -251,7 +251,7 @@ public:
 
     asio::error_code ec;
     timer_service_->expires_from_now(timer_implementation_, expiry_time, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "expires_from_now");
 
     start_timer();
   }

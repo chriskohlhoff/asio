@@ -83,7 +83,7 @@ public:
   {
     asio::error_code ec;
     this->service.assign(this->implementation, handle, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "assign");
   }
 
   /// Get a reference to the lowest layer.
@@ -126,7 +126,7 @@ public:
   {
     asio::error_code ec;
     this->service.assign(this->implementation, handle, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "assign");
   }
 
   /// Assign an existing native handle to the handle.
@@ -161,7 +161,7 @@ public:
   {
     asio::error_code ec;
     this->service.close(this->implementation, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "close");
   }
 
   /// Close the handle.
@@ -211,7 +211,7 @@ public:
   {
     asio::error_code ec;
     this->service.cancel(this->implementation, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "cancel");
   }
 
   /// Cancel all asynchronous operations associated with the handle.

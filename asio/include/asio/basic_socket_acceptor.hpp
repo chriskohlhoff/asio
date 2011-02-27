@@ -101,7 +101,7 @@ public:
   {
     asio::error_code ec;
     this->service.open(this->implementation, protocol, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "open");
   }
 
   /// Construct an acceptor opened on the given endpoint.
@@ -137,18 +137,18 @@ public:
   {
     asio::error_code ec;
     this->service.open(this->implementation, endpoint.protocol(), ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "open");
     if (reuse_addr)
     {
       this->service.set_option(this->implementation,
           socket_base::reuse_address(true), ec);
-      asio::detail::throw_error(ec);
+      asio::detail::throw_error(ec, "set_option");
     }
     this->service.bind(this->implementation, endpoint, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "bind");
     this->service.listen(this->implementation,
         socket_base::max_connections, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "listen");
   }
 
   /// Construct a basic_socket_acceptor on an existing native acceptor.
@@ -172,7 +172,7 @@ public:
   {
     asio::error_code ec;
     this->service.assign(this->implementation, protocol, native_acceptor, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "assign");
   }
 
   /// Open the acceptor using the specified protocol.
@@ -194,7 +194,7 @@ public:
   {
     asio::error_code ec;
     this->service.open(this->implementation, protocol, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "open");
   }
 
   /// Open the acceptor using the specified protocol.
@@ -238,7 +238,7 @@ public:
   {
     asio::error_code ec;
     this->service.assign(this->implementation, protocol, native_acceptor, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "assign");
   }
 
   /// Assigns an existing native acceptor to the acceptor.
@@ -285,7 +285,7 @@ public:
   {
     asio::error_code ec;
     this->service.bind(this->implementation, endpoint, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "bind");
   }
 
   /// Bind the acceptor to the given local endpoint.
@@ -330,7 +330,7 @@ public:
   {
     asio::error_code ec;
     this->service.listen(this->implementation, backlog, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "listen");
   }
 
   /// Place the acceptor into the state where it will listen for new
@@ -374,7 +374,7 @@ public:
   {
     asio::error_code ec;
     this->service.close(this->implementation, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "close");
   }
 
   /// Close the acceptor.
@@ -438,7 +438,7 @@ public:
   {
     asio::error_code ec;
     this->service.cancel(this->implementation, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "cancel");
   }
 
   /// Cancel all asynchronous operations associated with the acceptor.
@@ -480,7 +480,7 @@ public:
   {
     asio::error_code ec;
     this->service.set_option(this->implementation, option, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "set_option");
   }
 
   /// Set an option on the acceptor.
@@ -543,7 +543,7 @@ public:
   {
     asio::error_code ec;
     this->service.get_option(this->implementation, option, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "get_option");
   }
 
   /// Get an option from the acceptor.
@@ -605,7 +605,7 @@ public:
   {
     asio::error_code ec;
     this->service.io_control(this->implementation, command, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "io_control");
   }
 
   /// Perform an IO control command on the acceptor.
@@ -673,7 +673,7 @@ public:
   {
     asio::error_code ec;
     this->service.non_blocking(this->implementation, mode, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "non_blocking");
   }
 
   /// Sets the non-blocking mode of the acceptor.
@@ -733,7 +733,7 @@ public:
   {
     asio::error_code ec;
     this->service.native_non_blocking(this->implementation, mode, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "native_non_blocking");
   }
 
   /// Sets the non-blocking mode of the native acceptor implementation.
@@ -776,7 +776,7 @@ public:
   {
     asio::error_code ec;
     endpoint_type ep = this->service.local_endpoint(this->implementation, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "local_endpoint");
     return ep;
   }
 
@@ -830,7 +830,7 @@ public:
   {
     asio::error_code ec;
     this->service.accept(this->implementation, peer, 0, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "accept");
   }
 
   /// Accept a new connection.
@@ -943,7 +943,7 @@ public:
   {
     asio::error_code ec;
     this->service.accept(this->implementation, peer, &peer_endpoint, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "accept");
   }
 
   /// Accept a new connection and obtain the endpoint of the peer

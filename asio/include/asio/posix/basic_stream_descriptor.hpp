@@ -123,7 +123,7 @@ public:
   {
     asio::error_code ec;
     std::size_t s = this->service.write_some(this->implementation, buffers, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "write_some");
     return s;
   }
 
@@ -230,7 +230,7 @@ public:
   {
     asio::error_code ec;
     std::size_t s = this->service.read_some(this->implementation, buffers, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "read_some");
     return s;
   }
 

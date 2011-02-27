@@ -161,7 +161,7 @@ public:
   {
     asio::error_code ec;
     this->service.expires_at(this->implementation, expiry_time, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "expires_at");
   }
 
   /// Constructor to set a particular expiry time relative to now.
@@ -180,7 +180,7 @@ public:
   {
     asio::error_code ec;
     this->service.expires_from_now(this->implementation, expiry_time, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "expires_from_now");
   }
 
   /// Cancel any asynchronous operations that are waiting on the timer.
@@ -209,7 +209,7 @@ public:
   {
     asio::error_code ec;
     std::size_t s = this->service.cancel(this->implementation, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "cancel");
     return s;
   }
 
@@ -268,7 +268,7 @@ public:
   {
     asio::error_code ec;
     std::size_t s = this->service.cancel_one(this->implementation, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "cancel_one");
     return s;
   }
 
@@ -338,7 +338,7 @@ public:
     asio::error_code ec;
     std::size_t s = this->service.expires_at(
         this->implementation, expiry_time, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "expires_at");
     return s;
   }
 
@@ -407,7 +407,7 @@ public:
     asio::error_code ec;
     std::size_t s = this->service.expires_from_now(
         this->implementation, expiry_time, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "expires_from_now");
     return s;
   }
 
@@ -451,7 +451,7 @@ public:
   {
     asio::error_code ec;
     this->service.wait(this->implementation, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "wait");
   }
 
   /// Perform a blocking wait on the timer.

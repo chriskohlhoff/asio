@@ -58,7 +58,7 @@ inline std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers)
 {
   asio::error_code ec;
   std::size_t bytes_transferred = read(s, buffers, transfer_all(), ec);
-  asio::detail::throw_error(ec);
+  asio::detail::throw_error(ec, "read");
   return bytes_transferred;
 }
 
@@ -76,7 +76,7 @@ inline std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
 {
   asio::error_code ec;
   std::size_t bytes_transferred = read(s, buffers, completion_condition, ec);
-  asio::detail::throw_error(ec);
+  asio::detail::throw_error(ec, "read");
   return bytes_transferred;
 }
 
@@ -111,7 +111,7 @@ inline std::size_t read(SyncReadStream& s,
 {
   asio::error_code ec;
   std::size_t bytes_transferred = read(s, b, transfer_all(), ec);
-  asio::detail::throw_error(ec);
+  asio::detail::throw_error(ec, "read");
   return bytes_transferred;
 }
 
@@ -131,7 +131,7 @@ inline std::size_t read(SyncReadStream& s,
 {
   asio::error_code ec;
   std::size_t bytes_transferred = read(s, b, completion_condition, ec);
-  asio::detail::throw_error(ec);
+  asio::detail::throw_error(ec, "read");
   return bytes_transferred;
 }
 

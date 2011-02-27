@@ -56,7 +56,7 @@ inline std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers)
 {
   asio::error_code ec;
   std::size_t bytes_transferred = write(s, buffers, transfer_all(), ec);
-  asio::detail::throw_error(ec);
+  asio::detail::throw_error(ec, "write");
   return bytes_transferred;
 }
 
@@ -74,7 +74,7 @@ inline std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
 {
   asio::error_code ec;
   std::size_t bytes_transferred = write(s, buffers, completion_condition, ec);
-  asio::detail::throw_error(ec);
+  asio::detail::throw_error(ec, "write");
   return bytes_transferred;
 }
 
@@ -97,7 +97,7 @@ inline std::size_t write(SyncWriteStream& s,
 {
   asio::error_code ec;
   std::size_t bytes_transferred = write(s, b, transfer_all(), ec);
-  asio::detail::throw_error(ec);
+  asio::detail::throw_error(ec, "write");
   return bytes_transferred;
 }
 
@@ -117,7 +117,7 @@ inline std::size_t write(SyncWriteStream& s,
 {
   asio::error_code ec;
   std::size_t bytes_transferred = write(s, b, completion_condition, ec);
-  asio::detail::throw_error(ec);
+  asio::detail::throw_error(ec, "write");
   return bytes_transferred;
 }
 

@@ -158,7 +158,7 @@ public:
   {
     asio::error_code ec;
     std::size_t s = this->service.send(this->implementation, buffers, 0, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "send");
     return s;
   }
 
@@ -186,7 +186,7 @@ public:
     asio::error_code ec;
     std::size_t s = this->service.send(
         this->implementation, buffers, flags, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "send");
     return s;
   }
 
@@ -334,7 +334,7 @@ public:
     asio::error_code ec;
     std::size_t s = this->service.send_to(
         this->implementation, buffers, destination, 0, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "send_to");
     return s;
   }
 
@@ -361,7 +361,7 @@ public:
     asio::error_code ec;
     std::size_t s = this->service.send_to(
         this->implementation, buffers, destination, flags, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "send_to");
     return s;
   }
 
@@ -509,7 +509,7 @@ public:
     asio::error_code ec;
     std::size_t s = this->service.receive(
         this->implementation, buffers, 0, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "receive");
     return s;
   }
 
@@ -538,7 +538,7 @@ public:
     asio::error_code ec;
     std::size_t s = this->service.receive(
         this->implementation, buffers, flags, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "receive");
     return s;
   }
 
@@ -687,7 +687,7 @@ public:
     asio::error_code ec;
     std::size_t s = this->service.receive_from(
         this->implementation, buffers, sender_endpoint, 0, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "receive_from");
     return s;
   }
   
@@ -714,7 +714,7 @@ public:
     asio::error_code ec;
     std::size_t s = this->service.receive_from(
         this->implementation, buffers, sender_endpoint, flags, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "receive_from");
     return s;
   }
   

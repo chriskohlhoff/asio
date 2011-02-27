@@ -99,7 +99,7 @@ public:
   {
     asio::error_code ec;
     iterator i = this->service.resolve(this->implementation, q, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "resolve");
     return i;
   }
 
@@ -185,7 +185,7 @@ public:
   {
     asio::error_code ec;
     iterator i = this->service.resolve(this->implementation, e, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "resolve");
     return i;
   }
 

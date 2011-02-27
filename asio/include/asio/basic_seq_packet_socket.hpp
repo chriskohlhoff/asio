@@ -165,7 +165,7 @@ public:
     asio::error_code ec;
     std::size_t s = this->service.send(
         this->implementation, buffers, flags, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "send");
     return s;
   }
 
@@ -275,7 +275,7 @@ public:
     asio::error_code ec;
     std::size_t s = this->service.receive(
         this->implementation, buffers, 0, out_flags, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "receive");
     return s;
   }
 
@@ -322,7 +322,7 @@ public:
     asio::error_code ec;
     std::size_t s = this->service.receive(
         this->implementation, buffers, in_flags, out_flags, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "receive");
     return s;
   }
 

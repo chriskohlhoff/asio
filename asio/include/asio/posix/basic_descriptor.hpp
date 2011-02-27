@@ -87,7 +87,7 @@ public:
   {
     asio::error_code ec;
     this->service.assign(this->implementation, native_descriptor, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "assign");
   }
 
   /// Get a reference to the lowest layer.
@@ -130,7 +130,7 @@ public:
   {
     asio::error_code ec;
     this->service.assign(this->implementation, native_descriptor, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "assign");
   }
 
   /// Assign an existing native descriptor to the descriptor.
@@ -165,7 +165,7 @@ public:
   {
     asio::error_code ec;
     this->service.close(this->implementation, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "close");
   }
 
   /// Close the descriptor.
@@ -231,7 +231,7 @@ public:
   {
     asio::error_code ec;
     this->service.cancel(this->implementation, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "cancel");
   }
 
   /// Cancel all asynchronous operations associated with the descriptor.
@@ -274,7 +274,7 @@ public:
   {
     asio::error_code ec;
     this->service.io_control(this->implementation, command, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "io_control");
   }
 
   /// Perform an IO control command on the descriptor.
@@ -344,7 +344,7 @@ public:
   {
     asio::error_code ec;
     this->service.non_blocking(this->implementation, mode, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "non_blocking");
   }
 
   /// Sets the non-blocking mode of the descriptor.
@@ -404,7 +404,7 @@ public:
   {
     asio::error_code ec;
     this->service.native_non_blocking(this->implementation, mode, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "native_non_blocking");
   }
 
   /// Sets the non-blocking mode of the native descriptor implementation.

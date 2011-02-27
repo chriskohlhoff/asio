@@ -38,7 +38,7 @@ inline std::size_t read_until(SyncReadStream& s,
 {
   asio::error_code ec;
   std::size_t bytes_transferred = read_until(s, b, delim, ec);
-  asio::detail::throw_error(ec);
+  asio::detail::throw_error(ec, "read_until");
   return bytes_transferred;
 }
 
@@ -94,7 +94,7 @@ inline std::size_t read_until(SyncReadStream& s,
 {
   asio::error_code ec;
   std::size_t bytes_transferred = read_until(s, b, delim, ec);
-  asio::detail::throw_error(ec);
+  asio::detail::throw_error(ec, "read_until");
   return bytes_transferred;
 }
 
@@ -194,7 +194,7 @@ inline std::size_t read_until(SyncReadStream& s,
 {
   asio::error_code ec;
   std::size_t bytes_transferred = read_until(s, b, expr, ec);
-  asio::detail::throw_error(ec);
+  asio::detail::throw_error(ec, "read_until");
   return bytes_transferred;
 }
 
@@ -314,7 +314,7 @@ inline std::size_t read_until(SyncReadStream& s,
 {
   asio::error_code ec;
   std::size_t bytes_transferred = read_until(s, b, match_condition, ec);
-  asio::detail::throw_error(ec);
+  asio::detail::throw_error(ec, "read_until");
   return bytes_transferred;
 }
 

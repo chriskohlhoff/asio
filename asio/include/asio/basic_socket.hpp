@@ -86,7 +86,7 @@ public:
   {
     asio::error_code ec;
     this->service.open(this->implementation, protocol, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "open");
   }
 
   /// Construct a basic_socket, opening it and binding it to the given local
@@ -110,9 +110,9 @@ public:
   {
     asio::error_code ec;
     this->service.open(this->implementation, endpoint.protocol(), ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "open");
     this->service.bind(this->implementation, endpoint, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "bind");
   }
 
   /// Construct a basic_socket on an existing native socket.
@@ -134,7 +134,7 @@ public:
   {
     asio::error_code ec;
     this->service.assign(this->implementation, protocol, native_socket, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "assign");
   }
 
   /// Get a reference to the lowest layer.
@@ -183,7 +183,7 @@ public:
   {
     asio::error_code ec;
     this->service.open(this->implementation, protocol, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "open");
   }
 
   /// Open the socket using the specified protocol.
@@ -226,7 +226,7 @@ public:
   {
     asio::error_code ec;
     this->service.assign(this->implementation, protocol, native_socket, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "assign");
   }
 
   /// Assign an existing native socket to the socket.
@@ -267,7 +267,7 @@ public:
   {
     asio::error_code ec;
     this->service.close(this->implementation, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "close");
   }
 
   /// Close the socket.
@@ -365,7 +365,7 @@ public:
   {
     asio::error_code ec;
     this->service.cancel(this->implementation, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "cancel");
   }
 
   /// Cancel all asynchronous operations associated with the socket.
@@ -428,7 +428,7 @@ public:
   {
     asio::error_code ec;
     bool b = this->service.at_mark(this->implementation, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "at_mark");
     return b;
   }
 
@@ -461,7 +461,7 @@ public:
   {
     asio::error_code ec;
     std::size_t s = this->service.available(this->implementation, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "available");
     return s;
   }
 
@@ -502,7 +502,7 @@ public:
   {
     asio::error_code ec;
     this->service.bind(this->implementation, endpoint, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "bind");
   }
 
   /// Bind the socket to the given local endpoint.
@@ -563,10 +563,10 @@ public:
     if (!is_open())
     {
       this->service.open(this->implementation, peer_endpoint.protocol(), ec);
-      asio::detail::throw_error(ec);
+      asio::detail::throw_error(ec, "connect");
     }
     this->service.connect(this->implementation, peer_endpoint, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "connect");
   }
 
   /// Connect the socket to the specified endpoint.
@@ -715,7 +715,7 @@ public:
   {
     asio::error_code ec;
     this->service.set_option(this->implementation, option, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "set_option");
   }
 
   /// Set an option on the socket.
@@ -804,7 +804,7 @@ public:
   {
     asio::error_code ec;
     this->service.get_option(this->implementation, option, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "get_option");
   }
 
   /// Get an option from the socket.
@@ -881,7 +881,7 @@ public:
   {
     asio::error_code ec;
     this->service.io_control(this->implementation, command, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "io_control");
   }
 
   /// Perform an IO control command on the socket.
@@ -951,7 +951,7 @@ public:
   {
     asio::error_code ec;
     this->service.non_blocking(this->implementation, mode, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "non_blocking");
   }
 
   /// Sets the non-blocking mode of the socket.
@@ -1151,7 +1151,7 @@ public:
   {
     asio::error_code ec;
     this->service.native_non_blocking(this->implementation, mode, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "native_non_blocking");
   }
 
   /// Sets the non-blocking mode of the native socket implementation.
@@ -1264,7 +1264,7 @@ public:
   {
     asio::error_code ec;
     endpoint_type ep = this->service.local_endpoint(this->implementation, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "local_endpoint");
     return ep;
   }
 
@@ -1313,7 +1313,7 @@ public:
   {
     asio::error_code ec;
     endpoint_type ep = this->service.remote_endpoint(this->implementation, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "remote_endpoint");
     return ep;
   }
 
@@ -1364,7 +1364,7 @@ public:
   {
     asio::error_code ec;
     this->service.shutdown(this->implementation, what, ec);
-    asio::detail::throw_error(ec);
+    asio::detail::throw_error(ec, "shutdown");
   }
 
   /// Disable sends or receives on the socket.
