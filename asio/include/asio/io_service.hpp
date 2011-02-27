@@ -70,9 +70,9 @@ namespace detail { typedef task_io_service io_service_impl; }
  * @e Shared @e objects: Safe, with the specific exceptions of the reset() and
  * notify_fork() functions. Calling reset() while there are unfinished run(),
  * run_one(), poll() or poll_one() calls results in undefined behaviour. The
- * notify_fork() function should not be called at the same time as any
- * io_service function, or any function on an I/O object that is associated
- * with the io_service.
+ * notify_fork() function should not be called while any io_service function,
+ * or any function on an I/O object that is associated with the io_service, is
+ * being called in another thread.
  *
  * @par Concepts:
  * Dispatcher.
@@ -517,8 +517,11 @@ public:
    * it contains, to perform any necessary housekeeping to ensure correct
    * operation following a fork.
    *
-   * This function must not be called at the same time as any other io_service
-   * function, or any function on an I/O object associated with the io_service.
+   * This function must not be called while any other io_service function, or
+   * any function on an I/O object associated with the io_service, is being
+   * called in another thread. It is, however, safe to call this function from
+   * within a completion handler, provided no other thread is accessing the
+   * io_service.
    *
    * @param event A fork-related event.
    *
