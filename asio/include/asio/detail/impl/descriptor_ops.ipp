@@ -42,8 +42,19 @@ int close(int d, state_type& state, asio::error_code& ec)
   int result = 0;
   if (d != -1)
   {
-    if (state & internal_non_blocking)
+    errno = 0;
+    result = error_wrapper(::close(d), ec);
+
+    if (result != 0
+        && (ec == asio::error::would_block
+          || ec == asio::error::try_again))
     {
+      // According to UNIX Network Programming Vol. 1, it is possible for
+      // close() to fail with EWOULDBLOCK under certain circumstances. What
+      // isn't clear is the state of the descriptor after this error. The one
+      // current OS where this behaviour is seen, Windows, says that the socket
+      // remains open. Therefore we'll put the descriptor back into blocking
+      // mode and have another attempt at closing it.
 #if defined(__SYMBIAN32__)
       int flags = ::fcntl(d, F_GETFL, 0);
       if (flags >= 0)
@@ -52,11 +63,11 @@ int close(int d, state_type& state, asio::error_code& ec)
       ioctl_arg_type arg = 0;
       ::ioctl(d, FIONBIO, &arg);
 #endif // defined(__SYMBIAN32__)
-      state &= ~internal_non_blocking;
-    }
+      state &= ~non_blocking;
 
-    errno = 0;
-    result = error_wrapper(::close(d), ec);
+      errno = 0;
+      result = error_wrapper(::close(d), ec);
+    }
   }
 
   if (result == 0)

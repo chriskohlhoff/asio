@@ -71,8 +71,17 @@ asio::error_code reactive_socket_service_base::close(
         (impl.state_ & socket_ops::possible_dup) == 0);
   }
 
-  if (socket_ops::close(impl.socket_, impl.state_, true, ec) == 0)
-    construct(impl);
+  socket_ops::close(impl.socket_, impl.state_, false, ec);
+
+  // The descriptor is closed by the OS even if close() returns an error.
+  //
+  // (Actually, POSIX says the state of the descriptor is unspecified. On
+  // Linux the descriptor is apparently closed anyway; e.g. see
+  //   http://lkml.org/lkml/2005/9/10/129
+  // We'll just have to assume that other OSes follow the same behaviour. The
+  // known exception is when Windows's closesocket() function fails with
+  // WSAEWOULDBLOCK, but this case is handled inside socket_ops::close().
+  construct(impl);
 
   return ec;
 }

@@ -277,28 +277,9 @@ int close(socket_type s, state_type& state,
   int result = 0;
   if (s != invalid_socket)
   {
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-    if ((state & non_blocking) && (state & user_set_linger))
-    {
-      ioctl_arg_type arg = 0;
-      ::ioctlsocket(s, FIONBIO, &arg);
-      state &= ~non_blocking;
-    }
-#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-    if (state & non_blocking)
-    {
-#if defined(__SYMBIAN32__)
-      int flags = ::fcntl(s, F_GETFL, 0);
-      if (flags >= 0)
-        ::fcntl(s, F_SETFL, flags & ~O_NONBLOCK);
-#else // defined(__SYMBIAN32__)
-      ioctl_arg_type arg = 0;
-      ::ioctl(s, FIONBIO, &arg);
-#endif // defined(__SYMBIAN32__)
-      state &= ~non_blocking;
-    }
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-
+    // We don't want the destructor to block, so set the socket to linger in
+    // the background. If the user doesn't like this behaviour then they need
+    // to explicitly close the socket.
     if (destruction && (state & user_set_linger))
     {
       ::linger opt;
@@ -315,6 +296,32 @@ int close(socket_type s, state_type& state,
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
     result = error_wrapper(::close(s), ec);
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+
+    if (result != 0
+        && (ec == asio::error::would_block
+          || ec == asio::error::try_again))
+    {
+      // According to UNIX Network Programming Vol. 1, it is possible for
+      // close() to fail with EWOULDBLOCK under certain circumstances. What
+      // isn't clear is the state of the descriptor after this error. The one
+      // current OS where this behaviour is seen, Windows, says that the socket
+      // remains open. Therefore we'll put the descriptor back into blocking
+      // mode and have another attempt at closing it.
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+      ioctl_arg_type arg = 0;
+      ::ioctlsocket(s, FIONBIO, &arg);
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# if defined(__SYMBIAN32__)
+      int flags = ::fcntl(s, F_GETFL, 0);
+      if (flags >= 0)
+        ::fcntl(s, F_SETFL, flags & ~O_NONBLOCK);
+# else // defined(__SYMBIAN32__)
+      ioctl_arg_type arg = 0;
+      ::ioctl(s, FIONBIO, &arg);
+# endif // defined(__SYMBIAN32__)
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+      state &= ~non_blocking;
+    }
   }
 
   if (result == 0)

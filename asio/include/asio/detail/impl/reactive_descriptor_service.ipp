@@ -96,8 +96,15 @@ asio::error_code reactive_descriptor_service::close(
         (impl.state_ & descriptor_ops::possible_dup) == 0);
   }
 
-  if (descriptor_ops::close(impl.descriptor_, impl.state_, ec) == 0)
-    construct(impl);
+  descriptor_ops::close(impl.descriptor_, impl.state_, ec);
+
+  // The descriptor is closed by the OS even if close() returns an error.
+  //
+  // (Actually, POSIX says the state of the descriptor is unspecified. On
+  // Linux the descriptor is apparently closed anyway; e.g. see
+  //   http://lkml.org/lkml/2005/9/10/129
+  // We'll just have to assume that other OSes follow the same behaviour.)
+  construct(impl);
 
   return ec;
 }

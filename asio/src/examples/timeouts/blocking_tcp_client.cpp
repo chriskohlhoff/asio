@@ -179,7 +179,8 @@ private:
       // The deadline has passed. The socket is closed so that any outstanding
       // asynchronous operations are cancelled. This allows the blocked
       // connect(), read_line() or write_line() functions to return.
-      socket_.close();
+      asio::error_code ignored_ec;
+      socket_.close(ignored_ec);
 
       // There is no longer an active deadline. The expiry is set to positive
       // infinity so that the actor takes no action until a new deadline is set.

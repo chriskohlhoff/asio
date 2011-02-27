@@ -159,7 +159,8 @@ public:
    * write operations will be cancelled immediately, and will complete with the
    * asio::error::operation_aborted error.
    *
-   * @throws asio::system_error Thrown on failure.
+   * @throws asio::system_error Thrown on failure. Note that, even if
+   * the function indicates an error, the underlying descriptor is closed.
    */
   void close()
   {
@@ -174,7 +175,8 @@ public:
    * write operations will be cancelled immediately, and will complete with the
    * asio::error::operation_aborted error.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what error occurred, if any. Note that, even if
+   * the function indicates an error, the underlying descriptor is closed.
    */
   asio::error_code close(asio::error_code& ec)
   {

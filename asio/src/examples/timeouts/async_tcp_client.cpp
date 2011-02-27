@@ -110,7 +110,8 @@ public:
   void stop()
   {
     stopped_ = true;
-    socket_.close();
+    asio::error_code ignored_ec;
+    socket_.close(ignored_ec);
     deadline_.cancel();
     heartbeat_timer_.cancel();
   }

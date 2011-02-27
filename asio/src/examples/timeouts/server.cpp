@@ -177,7 +177,8 @@ private:
   {
     channel_.leave(shared_from_this());
 
-    socket_.close();
+    asio::error_code ignored_ec;
+    socket_.close(ignored_ec);
     input_deadline_.cancel();
     non_empty_output_queue_.cancel();
     output_deadline_.cancel();
