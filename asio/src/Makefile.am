@@ -111,7 +111,6 @@ noinst_PROGRAMS = \
 	examples/echo/blocking_tcp_echo_server \
 	examples/echo/blocking_udp_echo_client \
 	examples/echo/blocking_udp_echo_server \
-	examples/fork/daemon \
 	examples/http/client/async_client \
 	examples/http/client/sync_client \
 	examples/http/server/http_server \
@@ -151,6 +150,7 @@ noinst_PROGRAMS = \
 if !WINDOWS_TARGET
 noinst_PROGRAMS += \
 	examples/chat/posix_chat_client \
+	examples/fork/daemon \
 	examples/local/connect_pair \
 	examples/local/iostream_client \
 	examples/local/stream_server \
@@ -376,7 +376,6 @@ examples_echo_blocking_tcp_echo_client_SOURCES = examples/echo/blocking_tcp_echo
 examples_echo_blocking_tcp_echo_server_SOURCES = examples/echo/blocking_tcp_echo_server.cpp
 examples_echo_blocking_udp_echo_client_SOURCES = examples/echo/blocking_udp_echo_client.cpp
 examples_echo_blocking_udp_echo_server_SOURCES = examples/echo/blocking_udp_echo_server.cpp
-examples_fork_daemon_SOURCES = examples/fork/daemon.cpp
 examples_http_client_async_client_SOURCES = examples/http/client/async_client.cpp
 examples_http_client_sync_client_SOURCES = examples/http/client/sync_client.cpp
 examples_http_server_http_server_SOURCES = \
@@ -446,6 +445,7 @@ examples_tutorial_daytime7_server_SOURCES = examples/tutorial/daytime7/server.cp
 
 if !WINDOWS_TARGET
 examples_chat_posix_chat_client_SOURCES = examples/chat/posix_chat_client.cpp
+examples_fork_daemon_SOURCES = examples/fork/daemon.cpp
 examples_local_connect_pair_SOURCES = examples/local/connect_pair.cpp
 examples_local_iostream_client_SOURCES = examples/local/iostream_client.cpp
 examples_local_stream_server_SOURCES = examples/local/stream_server.cpp
