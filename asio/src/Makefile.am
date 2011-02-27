@@ -111,6 +111,7 @@ noinst_PROGRAMS = \
 	examples/echo/blocking_tcp_echo_server \
 	examples/echo/blocking_udp_echo_client \
 	examples/echo/blocking_udp_echo_server \
+	examples/fork/daemon \
 	examples/http/client/async_client \
 	examples/http/client/sync_client \
 	examples/http/server/http_server \
@@ -375,6 +376,7 @@ examples_echo_blocking_tcp_echo_client_SOURCES = examples/echo/blocking_tcp_echo
 examples_echo_blocking_tcp_echo_server_SOURCES = examples/echo/blocking_tcp_echo_server.cpp
 examples_echo_blocking_udp_echo_client_SOURCES = examples/echo/blocking_udp_echo_client.cpp
 examples_echo_blocking_udp_echo_server_SOURCES = examples/echo/blocking_udp_echo_server.cpp
+examples_fork_daemon_SOURCES = examples/fork/daemon.cpp
 examples_http_client_async_client_SOURCES = examples/http/client/async_client.cpp
 examples_http_client_sync_client_SOURCES = examples/http/client/sync_client.cpp
 examples_http_server_http_server_SOURCES = \

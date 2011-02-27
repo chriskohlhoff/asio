@@ -399,6 +399,7 @@ sub copy_examples
       "src/examples/buffers",
       "src/examples/chat",
       "src/examples/echo",
+      "src/examples/fork",
       "src/examples/http/client",
       "src/examples/http/doc_root",
       "src/examples/http/server",
