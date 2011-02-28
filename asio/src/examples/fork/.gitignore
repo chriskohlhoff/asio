@@ -8,3 +8,4 @@
 *.pdb
 *.tds
 daemon
+process_per_connection

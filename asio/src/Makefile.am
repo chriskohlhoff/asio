@@ -151,6 +151,7 @@ if !WINDOWS_TARGET
 noinst_PROGRAMS += \
 	examples/chat/posix_chat_client \
 	examples/fork/daemon \
+	examples/fork/process_per_connection \
 	examples/local/connect_pair \
 	examples/local/iostream_client \
 	examples/local/stream_server \
@@ -446,6 +447,7 @@ examples_tutorial_daytime7_server_SOURCES = examples/tutorial/daytime7/server.cp
 if !WINDOWS_TARGET
 examples_chat_posix_chat_client_SOURCES = examples/chat/posix_chat_client.cpp
 examples_fork_daemon_SOURCES = examples/fork/daemon.cpp
+examples_fork_process_per_connection_SOURCES = examples/fork/process_per_connection.cpp
 examples_local_connect_pair_SOURCES = examples/local/connect_pair.cpp
 examples_local_iostream_client_SOURCES = examples/local/iostream_client.cpp
 examples_local_stream_server_SOURCES = examples/local/stream_server.cpp
