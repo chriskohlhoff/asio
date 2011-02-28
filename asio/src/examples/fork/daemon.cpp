@@ -73,7 +73,8 @@ int main()
     // also want to register for other signals, such as SIGHUP to trigger a
     // re-read of a configuration file.
     asio::signal_set signals(io_service, SIGINT, SIGTERM);
-    signals.async_wait(boost::bind(&asio::io_service::stop, &io_service));
+    signals.async_wait(
+        boost::bind(&asio::io_service::stop, &io_service));
 
     // Inform the io_service that we are about to become a daemon. The
     // io_service cleans up any internal resources, such as threads, that may
