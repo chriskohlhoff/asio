@@ -63,6 +63,10 @@ public:
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown_service();
 
+  // Recreate internal descriptors following a fork.
+  ASIO_DECL void fork_service(
+      asio::io_service::fork_event event);
+
   // Initialise the task.
   ASIO_DECL void init_task();
 
@@ -96,6 +100,11 @@ public:
   // its registration from the reactor.
   ASIO_DECL void deregister_descriptor(socket_type descriptor,
       per_descriptor_data&, bool closing);
+
+  // Cancel any operations that are running against the descriptor and remove
+  // its registration from the reactor.
+  ASIO_DECL void deregister_internal_descriptor(
+      socket_type descriptor, per_descriptor_data&);
 
   // Add a new timer queue to the reactor.
   template <typename Time_Traits>
@@ -146,6 +155,10 @@ private:
   // acquire the dev_poll_reactor's mutex.
   ASIO_DECL void cancel_ops_unlocked(socket_type descriptor,
       const asio::error_code& ec);
+
+  // Helper class used to reregister descriptors after a fork.
+  class fork_helper;
+  friend class fork_helper;
 
   // Add a pending event entry for the given descriptor.
   ASIO_DECL ::pollfd& add_pending_event_change(int descriptor);
