@@ -529,7 +529,9 @@ EXTRA_DIST = \
 	examples/ssl/dh512.pem \
 	examples/timers/tick_count_timer.cpp \
 	tests/performance/handler_allocator.hpp \
+	tests/unit/archetypes/gettable_socket_option.hpp \
 	tests/unit/archetypes/io_control_command.hpp \
+	tests/unit/archetypes/settable_socket_option.hpp \
 	tools/handlerviz.pl
 
 MAINTAINERCLEANFILES = \

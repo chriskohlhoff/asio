@@ -21,7 +21,9 @@
 #include "asio/io_service.hpp"
 #include "asio/placeholders.hpp"
 #include "../unit_test.hpp"
+#include "../archetypes/gettable_socket_option.hpp"
 #include "../archetypes/io_control_command.hpp"
+#include "../archetypes/settable_socket_option.hpp"
 
 //------------------------------------------------------------------------------
 
@@ -55,7 +57,12 @@ void test()
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     socket_base::message_flags in_flags = 0;
-    socket_base::keep_alive socket_option;
+    archetypes::settable_socket_option<void> settable_socket_option1;
+    archetypes::settable_socket_option<int> settable_socket_option2;
+    archetypes::settable_socket_option<double> settable_socket_option3;
+    archetypes::gettable_socket_option<void> gettable_socket_option1;
+    archetypes::gettable_socket_option<int> gettable_socket_option2;
+    archetypes::gettable_socket_option<double> gettable_socket_option3;
     archetypes::io_control_command io_control_command;
     asio::error_code ec;
 
@@ -133,11 +140,19 @@ void test()
     socket1.async_connect(ip::udp::endpoint(ip::udp::v4(), 0), connect_handler);
     socket1.async_connect(ip::udp::endpoint(ip::udp::v6(), 0), connect_handler);
 
-    socket1.set_option(socket_option);
-    socket1.set_option(socket_option, ec);
+    socket1.set_option(settable_socket_option1);
+    socket1.set_option(settable_socket_option1, ec);
+    socket1.set_option(settable_socket_option2);
+    socket1.set_option(settable_socket_option2, ec);
+    socket1.set_option(settable_socket_option3);
+    socket1.set_option(settable_socket_option3, ec);
 
-    socket1.get_option(socket_option);
-    socket1.get_option(socket_option, ec);
+    socket1.get_option(gettable_socket_option1);
+    socket1.get_option(gettable_socket_option1, ec);
+    socket1.get_option(gettable_socket_option2);
+    socket1.get_option(gettable_socket_option2, ec);
+    socket1.get_option(gettable_socket_option3);
+    socket1.get_option(gettable_socket_option3, ec);
 
     socket1.io_control(io_control_command);
     socket1.io_control(io_control_command, ec);
