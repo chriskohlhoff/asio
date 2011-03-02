@@ -53,6 +53,20 @@ and asynchronous operations.
 * [@../src/examples/echo/blocking_udp_echo_server.cpp]
 
 
+[heading Fork]
+
+These POSIX-specific examples show how to use Asio in conjunction with the
+`fork()` system call. The first example illustrates the steps required to start
+a daemon process:
+
+* [@../src/examples/fork/daemon.cpp]
+
+The second example demonstrates how it is possible to fork a process from
+within a completion handler.
+
+* [@../src/examples/fork/process_per_connection.cpp]
+
+
 [heading HTTP Client]
 
 Example programs implementing simple HTTP 1.0 clients. These examples show how
