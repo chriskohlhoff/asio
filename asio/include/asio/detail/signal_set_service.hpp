@@ -38,8 +38,6 @@ namespace detail {
 
 #if defined(NSIG) && (NSIG > 0)
 enum { max_signal_number = NSIG };
-#elif defined(SIGRTMAX)
-enum { max_signal_number = SIGRTMAX + 1 };
 #else
 enum { max_signal_number = 128 };
 #endif
