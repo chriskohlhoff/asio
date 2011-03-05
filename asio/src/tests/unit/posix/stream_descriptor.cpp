@@ -57,6 +57,18 @@ void test()
     int native_descriptor1 = -1;
     posix::stream_descriptor descriptor2(ios, native_descriptor1);
 
+#if defined(ASIO_HAS_MOVE)
+    posix::stream_descriptor descriptor3(posix_stream_descriptor(ios));
+    posix::stream_descriptor descriptor4(std::move(descriptor3));
+#endif // defined(ASIO_HAS_MOVE)
+
+    // basic_stream_descriptor operators.
+
+#if defined(ASIO_HAS_MOVE)
+    descriptor3 = posix_stream_descriptor(ios);
+    descriptor4 = std::move(descriptor3);
+#endif // defined(ASIO_HAS_MOVE)
+
     // basic_io_object functions.
 
     io_service& ios_ref = descriptor1.get_io_service();

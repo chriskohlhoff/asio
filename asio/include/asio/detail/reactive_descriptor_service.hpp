@@ -79,6 +79,15 @@ public:
   // Construct a new descriptor implementation.
   ASIO_DECL void construct(implementation_type& impl);
 
+  // Move-construct a new descriptor implementation.
+  ASIO_DECL void move_construct(implementation_type& impl,
+      implementation_type& other_impl);
+
+  // Move-assign from another descriptor implementation.
+  ASIO_DECL void move_assign(implementation_type& impl,
+      reactive_descriptor_service& other_service,
+      implementation_type& other_impl);
+
   // Destroy a descriptor implementation.
   ASIO_DECL void destroy(implementation_type& impl);
 

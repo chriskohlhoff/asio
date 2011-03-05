@@ -45,6 +45,37 @@ void reactive_descriptor_service::construct(
   impl.state_ = 0;
 }
 
+void reactive_descriptor_service::move_construct(
+    reactive_descriptor_service::implementation_type& impl,
+    reactive_descriptor_service::implementation_type& other_impl)
+{
+  impl.descriptor_ = other_impl.descriptor_;
+  other_impl.descriptor_ = -1;
+
+  impl.state_ = other_impl.state_;
+  other_impl.state_ = 0;
+
+  reactor_.move_descriptor(impl.descriptor_,
+      impl.reactor_data_, other_impl.reactor_data_);
+}
+
+void reactive_descriptor_service::move_assign(
+    reactive_descriptor_service::implementation_type& impl,
+    reactive_descriptor_service& other_service,
+    reactive_descriptor_service::implementation_type& other_impl)
+{
+  destroy(impl);
+
+  impl.descriptor_ = other_impl.descriptor_;
+  other_impl.descriptor_ = -1;
+
+  impl.state_ = other_impl.state_;
+  other_impl.state_ = 0;
+
+  other_service.reactor_.move_descriptor(impl.descriptor_,
+      impl.reactor_data_, other_impl.reactor_data_);
+}
+
 void reactive_descriptor_service::destroy(
     reactive_descriptor_service::implementation_type& impl)
 {

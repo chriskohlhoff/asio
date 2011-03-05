@@ -16,17 +16,39 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/noncopyable.hpp"
 #include "asio/io_service.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 
+#if defined(ASIO_HAS_MOVE)
+namespace detail
+{
+  // Type trait used to determine whether a service supports move.
+  template <typename IoObjectService>
+  class service_has_move
+  {
+  public:
+    static const bool value =
+      sizeof(service_has_move::eval(static_cast<IoObjectService*>(0))) == 1;
+
+  private:
+    template <typename T>
+    static auto eval(T*) -> decltype(&T::move_construct, char(0));
+    static char (&eval(...))[2];
+  };
+}
+#endif // defined(ASIO_HAS_MOVE)
+
 /// Base class for all I/O objects.
+#if !defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 template <typename IoObjectService>
+#else
+template <typename IoObjectService,
+    bool Movable = detail::service_has_move<IoObjectService>::value>
+#endif
 class basic_io_object
-  : private noncopyable
 {
 public:
   /// The type of the service that will be used to provide I/O operations.
@@ -52,7 +74,7 @@ protected:
   /// Construct a basic_io_object.
   /**
    * Performs:
-   * @code service.construct(implementation); @endcode
+   * @code get_service().construct(get_implementation()); @endcode
    */
   explicit basic_io_object(asio::io_service& io_service)
     : service(asio::use_service<IoObjectService>(io_service))
@@ -60,22 +82,153 @@ protected:
     service.construct(implementation);
   }
 
+#if defined(GENERATING_DOCUMENTATION)
+  /// Move-construct a basic_io_object.
+  /**
+   * Performs:
+   * @code get_service().move_construct(
+   *     get_implementation(), other.get_implementation()); @endcode
+   *
+   * @note Available only for services that support movability,
+   */
+  basic_io_object(basic_io_object&& other);
+
+  /// Move-assign a basic_io_object.
+  /**
+   * Performs:
+   * @code get_service().move_assign(get_implementation(),
+   *     other.get_service(), other.get_implementation()); @endcode
+   *
+   * @note Available only for services that support movability,
+   */
+  basic_io_object& operator=(basic_io_object&& other);
+
+  /// Copy construction is not supported.
+  basic_io_object(const basic_io_object&) = delete;
+
+  /// Copy assignment is not supported.
+  basic_io_object& operator=(const basic_io_object&) = delete;
+#endif // defined(GENERATING_DOCUMENTATION)
+
   /// Protected destructor to prevent deletion through this type.
   /**
    * Performs:
-   * @code service.destroy(implementation); @endcode
+   * @code get_service().destroy(get_implementation()); @endcode
    */
   ~basic_io_object()
   {
     service.destroy(implementation);
   }
 
-  /// The service associated with the I/O object.
+  /// Get the service associated with the I/O object.
+  service_type& get_service()
+  {
+    return service;
+  }
+
+  /// Get the service associated with the I/O object.
+  const service_type& get_service() const
+  {
+    return service;
+  }
+
+  /// (Deprecated: Use get_service().) The service associated with the I/O
+  /// object.
+  /**
+   * @note Available only for services that do not support movability.
+   */
   service_type& service;
 
-  /// The underlying implementation of the I/O object.
+  /// Get the underlying implementation of the I/O object.
+  implementation_type& get_implementation()
+  {
+    return implementation;
+  }
+
+  /// Get the underlying implementation of the I/O object.
+  const implementation_type& get_implementation() const
+  {
+    return implementation;
+  }
+
+  /// (Deprecated: Use get_implementation().) The underlying implementation of
+  /// the I/O object.
   implementation_type implementation;
+
+private:
+  basic_io_object(const basic_io_object&);
+  basic_io_object& operator=(const basic_io_object&);
 };
+
+#if defined(ASIO_HAS_MOVE)
+// Specialisation for movable objects.
+template <typename IoObjectService>
+class basic_io_object<IoObjectService, true>
+{
+public:
+  typedef IoObjectService service_type;
+  typedef typename service_type::implementation_type implementation_type;
+
+  asio::io_service& get_io_service()
+  {
+    return service_->get_io_service();
+  }
+
+protected:
+  explicit basic_io_object(asio::io_service& io_service)
+    : service_(&asio::use_service<IoObjectService>(io_service))
+  {
+    service_->construct(implementation);
+  }
+
+  basic_io_object(basic_io_object&& other)
+    : service_(&other.get_service())
+  {
+    service_->move_construct(implementation, other.implementation);
+  }
+
+  ~basic_io_object()
+  {
+    service_->destroy(implementation);
+  }
+
+  basic_io_object& operator=(basic_io_object&& other)
+  {
+    service_->move_assign(implementation,
+        *other.service_, other.implementation);
+    service_ = other.service_;
+    return *this;
+  }
+
+  service_type& get_service()
+  {
+    return *service_;
+  }
+
+  const service_type& get_service() const
+  {
+    return *service_;
+  }
+
+  implementation_type& get_implementation()
+  {
+    return implementation;
+  }
+
+  const implementation_type& get_implementation() const
+  {
+    return implementation;
+  }
+
+  implementation_type implementation;
+
+private:
+  basic_io_object(const basic_io_object&);
+  void operator=(const basic_io_object&);
+
+  IoObjectService* service_;
+};
+#endif // defined(ASIO_HAS_MOVE)
 
 } // namespace asio
 

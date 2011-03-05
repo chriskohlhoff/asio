@@ -86,9 +86,47 @@ public:
     : basic_io_object<DescriptorService>(io_service)
   {
     asio::error_code ec;
-    this->service.assign(this->implementation, native_descriptor, ec);
+    this->get_service().assign(this->get_implementation(),
+        native_descriptor, ec);
     asio::detail::throw_error(ec, "assign");
   }
+
+#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  /// Move-construct a basic_descriptor from another.
+  /**
+   * This constructor moves a stream descriptor from one object to another.
+   *
+   * @param other The other basic_descriptor object from which the move will
+   * occur.
+   *
+   * @note Following the move, the valid operations for the other object are:
+   * @li Using it as the target of a move assignment.
+   * @li Destruction.
+   */
+  basic_descriptor(basic_descriptor&& other)
+    : basic_io_object<DescriptorService>(
+        ASIO_MOVE_CAST(basic_descriptor)(other))
+  {
+  }
+
+  /// Move-assign a basic_descriptor from another.
+  /**
+   * This constructor moves a descriptor from one object to another.
+   *
+   * @param other The other basic_descriptor object from which the move will
+   * occur.
+   *
+   * @note Following the move, the valid operations for the other object are:
+   * @li Using it as the target of a move assignment.
+   * @li Destruction.
+   */
+  basic_descriptor& operator=(basic_descriptor&& other)
+  {
+    basic_io_object<DescriptorService>::operator=(
+        ASIO_MOVE_CAST(basic_descriptor)(other));
+    return *this;
+  }
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Get a reference to the lowest layer.
   /**
@@ -129,7 +167,8 @@ public:
   void assign(const native_handle_type& native_descriptor)
   {
     asio::error_code ec;
-    this->service.assign(this->implementation, native_descriptor, ec);
+    this->get_service().assign(this->get_implementation(),
+        native_descriptor, ec);
     asio::detail::throw_error(ec, "assign");
   }
 
@@ -144,13 +183,14 @@ public:
   asio::error_code assign(const native_handle_type& native_descriptor,
       asio::error_code& ec)
   {
-    return this->service.assign(this->implementation, native_descriptor, ec);
+    return this->get_service().assign(
+        this->get_implementation(), native_descriptor, ec);
   }
 
   /// Determine whether the descriptor is open.
   bool is_open() const
   {
-    return this->service.is_open(this->implementation);
+    return this->get_service().is_open(this->implementation);
   }
 
   /// Close the descriptor.
@@ -165,7 +205,7 @@ public:
   void close()
   {
     asio::error_code ec;
-    this->service.close(this->implementation, ec);
+    this->get_service().close(this->get_implementation(), ec);
     asio::detail::throw_error(ec, "close");
   }
 
@@ -180,7 +220,7 @@ public:
    */
   asio::error_code close(asio::error_code& ec)
   {
-    return this->service.close(this->implementation, ec);
+    return this->get_service().close(this->get_implementation(), ec);
   }
 
   /// (Deprecated: Use native_handle().) Get the native descriptor
@@ -192,7 +232,7 @@ public:
    */
   native_type native()
   {
-    return this->service.native_handle(this->implementation);
+    return this->get_service().native_handle(this->implementation);
   }
 
   /// Get the native descriptor representation.
@@ -203,7 +243,7 @@ public:
    */
   native_handle_type native_handle()
   {
-    return this->service.native_handle(this->implementation);
+    return this->get_service().native_handle(this->implementation);
   }
 
   /// Release ownership of the native descriptor implementation.
@@ -218,7 +258,7 @@ public:
    */
   native_handle_type release()
   {
-    return this->service.release(this->implementation);
+    return this->get_service().release(this->implementation);
   }
 
   /// Cancel all asynchronous operations associated with the descriptor.
@@ -232,7 +272,7 @@ public:
   void cancel()
   {
     asio::error_code ec;
-    this->service.cancel(this->implementation, ec);
+    this->get_service().cancel(this->get_implementation(), ec);
     asio::detail::throw_error(ec, "cancel");
   }
 
@@ -246,7 +286,7 @@ public:
    */
   asio::error_code cancel(asio::error_code& ec)
   {
-    return this->service.cancel(this->implementation, ec);
+    return this->get_service().cancel(this->get_implementation(), ec);
   }
 
   /// Perform an IO control command on the descriptor.
@@ -275,7 +315,7 @@ public:
   void io_control(IoControlCommand& command)
   {
     asio::error_code ec;
-    this->service.io_control(this->implementation, command, ec);
+    this->get_service().io_control(this->get_implementation(), command, ec);
     asio::detail::throw_error(ec, "io_control");
   }
 
@@ -310,7 +350,8 @@ public:
   asio::error_code io_control(IoControlCommand& command,
       asio::error_code& ec)
   {
-    return this->service.io_control(this->implementation, command, ec);
+    return this->get_service().io_control(
+        this->get_implementation(), command, ec);
   }
 
   /// Gets the non-blocking mode of the descriptor.
@@ -326,7 +367,7 @@ public:
    */
   bool non_blocking() const
   {
-    return this->service.non_blocking(this->implementation);
+    return this->get_service().non_blocking(this->implementation);
   }
 
   /// Sets the non-blocking mode of the descriptor.
@@ -345,7 +386,7 @@ public:
   void non_blocking(bool mode)
   {
     asio::error_code ec;
-    this->service.non_blocking(this->implementation, mode, ec);
+    this->get_service().non_blocking(this->get_implementation(), mode, ec);
     asio::detail::throw_error(ec, "non_blocking");
   }
 
@@ -365,7 +406,8 @@ public:
   asio::error_code non_blocking(
       bool mode, asio::error_code& ec)
   {
-    return this->service.non_blocking(this->implementation, mode, ec);
+    return this->get_service().non_blocking(
+        this->get_implementation(), mode, ec);
   }
 
   /// Gets the non-blocking mode of the native descriptor implementation.
@@ -384,7 +426,7 @@ public:
    */
   bool native_non_blocking() const
   {
-    return this->service.native_non_blocking(this->implementation);
+    return this->get_service().native_non_blocking(this->implementation);
   }
 
   /// Sets the non-blocking mode of the native descriptor implementation.
@@ -405,7 +447,8 @@ public:
   void native_non_blocking(bool mode)
   {
     asio::error_code ec;
-    this->service.native_non_blocking(this->implementation, mode, ec);
+    this->get_service().native_non_blocking(
+        this->get_implementation(), mode, ec);
     asio::detail::throw_error(ec, "native_non_blocking");
   }
 
@@ -427,7 +470,8 @@ public:
   asio::error_code native_non_blocking(
       bool mode, asio::error_code& ec)
   {
-    return this->service.native_non_blocking(this->implementation, mode, ec);
+    return this->get_service().native_non_blocking(
+        this->get_implementation(), mode, ec);
   }
 
 protected:

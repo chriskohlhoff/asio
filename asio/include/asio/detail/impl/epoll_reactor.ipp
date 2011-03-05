@@ -186,6 +186,14 @@ int epoll_reactor::register_internal_descriptor(
   return 0;
 }
 
+void epoll_reactor::move_descriptor(socket_type,
+    epoll_reactor::per_descriptor_data& target_descriptor_data,
+    epoll_reactor::per_descriptor_data& source_descriptor_data)
+{
+  target_descriptor_data = source_descriptor_data;
+  source_descriptor_data = 0;
+}
+
 void epoll_reactor::start_op(int op_type, socket_type descriptor,
     epoll_reactor::per_descriptor_data& descriptor_data,
     reactor_op* op, bool allow_speculative)

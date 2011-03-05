@@ -91,6 +91,43 @@ public:
   {
   }
 
+#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  /// Move-construct a basic_stream_descriptor from another.
+  /**
+   * This constructor moves a stream descriptor from one object to another.
+   *
+   * @param other The other basic_stream_descriptor object from which the move
+   * will occur.
+   *
+   * @note Following the move, the valid operations for the other object are:
+   * @li Using it as the target of a move assignment.
+   * @li Destruction.
+   */
+  basic_stream_descriptor(basic_stream_descriptor&& other)
+    : basic_descriptor<StreamDescriptorService>(
+        ASIO_MOVE_CAST(basic_stream_descriptor)(other))
+  {
+  }
+
+  /// Move-assign a basic_descriptor from another.
+  /**
+   * This constructor moves a stream descriptor from one object to another.
+   *
+   * @param other The other basic_stream_descriptor object from which the move
+   * will occur.
+   *
+   * @note Following the move, the valid operations for the other object are:
+   * @li Using it as the target of a move assignment.
+   * @li Destruction.
+   */
+  basic_stream_descriptor& operator=(basic_stream_descriptor&& other)
+  {
+    basic_descriptor<StreamDescriptorService>::operator=(
+        ASIO_MOVE_CAST(basic_stream_descriptor)(other));
+    return *this;
+  }
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
   /// Write some data to the descriptor.
   /**
    * This function is used to write data to the stream descriptor. The function
@@ -122,7 +159,8 @@ public:
   std::size_t write_some(const ConstBufferSequence& buffers)
   {
     asio::error_code ec;
-    std::size_t s = this->service.write_some(this->implementation, buffers, ec);
+    std::size_t s = this->get_service().write_some(
+        this->get_implementation(), buffers, ec);
     asio::detail::throw_error(ec, "write_some");
     return s;
   }
@@ -147,7 +185,8 @@ public:
   std::size_t write_some(const ConstBufferSequence& buffers,
       asio::error_code& ec)
   {
-    return this->service.write_some(this->implementation, buffers, ec);
+    return this->get_service().write_some(
+        this->get_implementation(), buffers, ec);
   }
 
   /// Start an asynchronous write.
@@ -193,8 +232,8 @@ public:
     // not meet the documented type requirements for a WriteHandler.
     ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-    this->service.async_write_some(this->implementation, buffers,
-        ASIO_MOVE_CAST(WriteHandler)(handler));
+    this->get_service().async_write_some(this->get_implementation(),
+        buffers, ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Read some data from the descriptor.
@@ -229,7 +268,8 @@ public:
   std::size_t read_some(const MutableBufferSequence& buffers)
   {
     asio::error_code ec;
-    std::size_t s = this->service.read_some(this->implementation, buffers, ec);
+    std::size_t s = this->get_service().read_some(
+        this->get_implementation(), buffers, ec);
     asio::detail::throw_error(ec, "read_some");
     return s;
   }
@@ -255,7 +295,8 @@ public:
   std::size_t read_some(const MutableBufferSequence& buffers,
       asio::error_code& ec)
   {
-    return this->service.read_some(this->implementation, buffers, ec);
+    return this->get_service().read_some(
+        this->get_implementation(), buffers, ec);
   }
 
   /// Start an asynchronous read.
@@ -302,8 +343,8 @@ public:
     // not meet the documented type requirements for a ReadHandler.
     ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-    this->service.async_read_some(this->implementation, buffers,
-        ASIO_MOVE_CAST(ReadHandler)(handler));
+    this->get_service().async_read_some(this->get_implementation(),
+        buffers, ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 };
 
