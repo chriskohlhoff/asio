@@ -69,6 +69,15 @@ public:
   // Construct a new socket implementation.
   ASIO_DECL void construct(base_implementation_type& impl);
 
+  // Move-construct a new socket implementation.
+  ASIO_DECL void move_construct(base_implementation_type& impl,
+      base_implementation_type& other_impl);
+
+  // Move-assign from another socket implementation.
+  ASIO_DECL void move_assign(base_implementation_type& impl,
+      reactive_socket_service_base& other_service,
+      base_implementation_type& other_impl);
+
   // Destroy a socket implementation.
   ASIO_DECL void destroy(base_implementation_type& impl);
 

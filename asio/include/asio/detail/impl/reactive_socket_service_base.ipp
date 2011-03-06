@@ -44,6 +44,37 @@ void reactive_socket_service_base::construct(
   impl.state_ = 0;
 }
 
+void reactive_socket_service_base::move_construct(
+    reactive_socket_service_base::base_implementation_type& impl,
+    reactive_socket_service_base::base_implementation_type& other_impl)
+{
+  impl.socket_ = other_impl.socket_;
+  other_impl.socket_ = invalid_socket;
+
+  impl.state_ = other_impl.state_;
+  other_impl.state_ = 0;
+
+  reactor_.move_descriptor(impl.socket_,
+      impl.reactor_data_, other_impl.reactor_data_);
+}
+
+void reactive_socket_service_base::move_assign(
+    reactive_socket_service_base::base_implementation_type& impl,
+    reactive_socket_service_base& other_service,
+    reactive_socket_service_base::base_implementation_type& other_impl)
+{
+  destroy(impl);
+
+  impl.socket_ = other_impl.socket_;
+  other_impl.socket_ = invalid_socket;
+
+  impl.state_ = other_impl.state_;
+  other_impl.state_ = 0;
+
+  other_service.reactor_.move_descriptor(impl.socket_,
+      impl.reactor_data_, other_impl.reactor_data_);
+}
+
 void reactive_socket_service_base::destroy(
     reactive_socket_service_base::base_implementation_type& impl)
 {

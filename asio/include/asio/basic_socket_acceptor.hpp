@@ -100,7 +100,7 @@ public:
     : basic_io_object<SocketAcceptorService>(io_service)
   {
     asio::error_code ec;
-    this->service.open(this->implementation, protocol, ec);
+    this->get_service().open(this->get_implementation(), protocol, ec);
     asio::detail::throw_error(ec, "open");
   }
 
@@ -136,17 +136,18 @@ public:
     : basic_io_object<SocketAcceptorService>(io_service)
   {
     asio::error_code ec;
-    this->service.open(this->implementation, endpoint.protocol(), ec);
+    const protocol_type protocol = endpoint.protocol();
+    this->get_service().open(this->get_implementation(), protocol, ec);
     asio::detail::throw_error(ec, "open");
     if (reuse_addr)
     {
-      this->service.set_option(this->implementation,
+      this->get_service().set_option(this->get_implementation(),
           socket_base::reuse_address(true), ec);
       asio::detail::throw_error(ec, "set_option");
     }
-    this->service.bind(this->implementation, endpoint, ec);
+    this->get_service().bind(this->get_implementation(), endpoint, ec);
     asio::detail::throw_error(ec, "bind");
-    this->service.listen(this->implementation,
+    this->get_service().listen(this->get_implementation(),
         socket_base::max_connections, ec);
     asio::detail::throw_error(ec, "listen");
   }
@@ -171,9 +172,47 @@ public:
     : basic_io_object<SocketAcceptorService>(io_service)
   {
     asio::error_code ec;
-    this->service.assign(this->implementation, protocol, native_acceptor, ec);
+    this->get_service().assign(this->get_implementation(),
+        protocol, native_acceptor, ec);
     asio::detail::throw_error(ec, "assign");
   }
+
+#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  /// Move-construct a basic_socket_acceptor from another.
+  /**
+   * This constructor moves an acceptor from one object to another.
+   *
+   * @param other The other basic_socket_acceptor object from which the move
+   * will occur.
+   *
+   * @note Following the move, the valid operations for the other object are:
+   * @li Using it as the target of a move assignment.
+   * @li Destruction.
+   */
+  basic_socket_acceptor(basic_socket_acceptor&& other)
+    : basic_io_object<SocketAcceptorService>(
+        ASIO_MOVE_CAST(basic_socket_acceptor)(other))
+  {
+  }
+
+  /// Move-assign a basic_socket_acceptor from another.
+  /**
+   * This assignment operator moves an acceptor from one object to another.
+   *
+   * @param other The other basic_socket_acceptor object from which the move
+   * will occur.
+   *
+   * @note Following the move, the valid operations for the other object are:
+   * @li Using it as the target of a move assignment.
+   * @li Destruction.
+   */
+  basic_socket_acceptor& operator=(basic_socket_acceptor&& other)
+  {
+    basic_io_object<SocketAcceptorService>::operator=(
+        ASIO_MOVE_CAST(basic_socket_acceptor)(other));
+    return *this;
+  }
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Open the acceptor using the specified protocol.
   /**
@@ -193,7 +232,7 @@ public:
   void open(const protocol_type& protocol = protocol_type())
   {
     asio::error_code ec;
-    this->service.open(this->implementation, protocol, ec);
+    this->get_service().open(this->get_implementation(), protocol, ec);
     asio::detail::throw_error(ec, "open");
   }
 
@@ -220,7 +259,7 @@ public:
   asio::error_code open(const protocol_type& protocol,
       asio::error_code& ec)
   {
-    return this->service.open(this->implementation, protocol, ec);
+    return this->get_service().open(this->get_implementation(), protocol, ec);
   }
 
   /// Assigns an existing native acceptor to the acceptor.
@@ -237,7 +276,8 @@ public:
       const native_handle_type& native_acceptor)
   {
     asio::error_code ec;
-    this->service.assign(this->implementation, protocol, native_acceptor, ec);
+    this->get_service().assign(this->get_implementation(),
+        protocol, native_acceptor, ec);
     asio::detail::throw_error(ec, "assign");
   }
 
@@ -254,14 +294,14 @@ public:
   asio::error_code assign(const protocol_type& protocol,
       const native_handle_type& native_acceptor, asio::error_code& ec)
   {
-    return this->service.assign(this->implementation,
+    return this->get_service().assign(this->get_implementation(),
         protocol, native_acceptor, ec);
   }
 
   /// Determine whether the acceptor is open.
   bool is_open() const
   {
-    return this->service.is_open(this->implementation);
+    return this->get_service().is_open(this->get_implementation());
   }
 
   /// Bind the acceptor to the given local endpoint.
@@ -284,7 +324,7 @@ public:
   void bind(const endpoint_type& endpoint)
   {
     asio::error_code ec;
-    this->service.bind(this->implementation, endpoint, ec);
+    this->get_service().bind(this->get_implementation(), endpoint, ec);
     asio::detail::throw_error(ec, "bind");
   }
 
@@ -313,7 +353,7 @@ public:
   asio::error_code bind(const endpoint_type& endpoint,
       asio::error_code& ec)
   {
-    return this->service.bind(this->implementation, endpoint, ec);
+    return this->get_service().bind(this->get_implementation(), endpoint, ec);
   }
 
   /// Place the acceptor into the state where it will listen for new
@@ -329,7 +369,7 @@ public:
   void listen(int backlog = socket_base::max_connections)
   {
     asio::error_code ec;
-    this->service.listen(this->implementation, backlog, ec);
+    this->get_service().listen(this->get_implementation(), backlog, ec);
     asio::detail::throw_error(ec, "listen");
   }
 
@@ -357,7 +397,7 @@ public:
    */
   asio::error_code listen(int backlog, asio::error_code& ec)
   {
-    return this->service.listen(this->implementation, backlog, ec);
+    return this->get_service().listen(this->get_implementation(), backlog, ec);
   }
 
   /// Close the acceptor.
@@ -373,7 +413,7 @@ public:
   void close()
   {
     asio::error_code ec;
-    this->service.close(this->implementation, ec);
+    this->get_service().close(this->get_implementation(), ec);
     asio::detail::throw_error(ec, "close");
   }
 
@@ -401,7 +441,7 @@ public:
    */
   asio::error_code close(asio::error_code& ec)
   {
-    return this->service.close(this->implementation, ec);
+    return this->get_service().close(this->get_implementation(), ec);
   }
 
   /// (Deprecated: Use native_handle().) Get the native acceptor representation.
@@ -412,7 +452,7 @@ public:
    */
   native_type native()
   {
-    return this->service.native_handle(this->implementation);
+    return this->get_service().native_handle(this->get_implementation());
   }
 
   /// Get the native acceptor representation.
@@ -423,7 +463,7 @@ public:
    */
   native_handle_type native_handle()
   {
-    return this->service.native_handle(this->implementation);
+    return this->get_service().native_handle(this->get_implementation());
   }
 
   /// Cancel all asynchronous operations associated with the acceptor.
@@ -437,7 +477,7 @@ public:
   void cancel()
   {
     asio::error_code ec;
-    this->service.cancel(this->implementation, ec);
+    this->get_service().cancel(this->get_implementation(), ec);
     asio::detail::throw_error(ec, "cancel");
   }
 
@@ -451,7 +491,7 @@ public:
    */
   asio::error_code cancel(asio::error_code& ec)
   {
-    return this->service.cancel(this->implementation, ec);
+    return this->get_service().cancel(this->get_implementation(), ec);
   }
 
   /// Set an option on the acceptor.
@@ -479,7 +519,7 @@ public:
   void set_option(const SettableSocketOption& option)
   {
     asio::error_code ec;
-    this->service.set_option(this->implementation, option, ec);
+    this->get_service().set_option(this->get_implementation(), option, ec);
     asio::detail::throw_error(ec, "set_option");
   }
 
@@ -513,7 +553,8 @@ public:
   asio::error_code set_option(const SettableSocketOption& option,
       asio::error_code& ec)
   {
-    return this->service.set_option(this->implementation, option, ec);
+    return this->get_service().set_option(
+        this->get_implementation(), option, ec);
   }
 
   /// Get an option from the acceptor.
@@ -542,7 +583,7 @@ public:
   void get_option(GettableSocketOption& option)
   {
     asio::error_code ec;
-    this->service.get_option(this->implementation, option, ec);
+    this->get_service().get_option(this->get_implementation(), option, ec);
     asio::detail::throw_error(ec, "get_option");
   }
 
@@ -577,7 +618,8 @@ public:
   asio::error_code get_option(GettableSocketOption& option,
       asio::error_code& ec)
   {
-    return this->service.get_option(this->implementation, option, ec);
+    return this->get_service().get_option(
+        this->get_implementation(), option, ec);
   }
 
   /// Perform an IO control command on the acceptor.
@@ -604,7 +646,7 @@ public:
   void io_control(IoControlCommand& command)
   {
     asio::error_code ec;
-    this->service.io_control(this->implementation, command, ec);
+    this->get_service().io_control(this->get_implementation(), command, ec);
     asio::detail::throw_error(ec, "io_control");
   }
 
@@ -637,7 +679,8 @@ public:
   asio::error_code io_control(IoControlCommand& command,
       asio::error_code& ec)
   {
-    return this->service.io_control(this->implementation, command, ec);
+    return this->get_service().io_control(
+        this->get_implementation(), command, ec);
   }
 
   /// Gets the non-blocking mode of the acceptor.
@@ -653,7 +696,7 @@ public:
    */
   bool non_blocking() const
   {
-    return this->service.non_blocking(this->implementation);
+    return this->get_service().non_blocking(this->get_implementation());
   }
 
   /// Sets the non-blocking mode of the acceptor.
@@ -672,7 +715,7 @@ public:
   void non_blocking(bool mode)
   {
     asio::error_code ec;
-    this->service.non_blocking(this->implementation, mode, ec);
+    this->get_service().non_blocking(this->get_implementation(), mode, ec);
     asio::detail::throw_error(ec, "non_blocking");
   }
 
@@ -692,7 +735,8 @@ public:
   asio::error_code non_blocking(
       bool mode, asio::error_code& ec)
   {
-    return this->service.non_blocking(this->implementation, mode, ec);
+    return this->get_service().non_blocking(
+        this->get_implementation(), mode, ec);
   }
 
   /// Gets the non-blocking mode of the native acceptor implementation.
@@ -711,7 +755,7 @@ public:
    */
   bool native_non_blocking() const
   {
-    return this->service.native_non_blocking(this->implementation);
+    return this->get_service().native_non_blocking(this->get_implementation());
   }
 
   /// Sets the non-blocking mode of the native acceptor implementation.
@@ -732,7 +776,8 @@ public:
   void native_non_blocking(bool mode)
   {
     asio::error_code ec;
-    this->service.native_non_blocking(this->implementation, mode, ec);
+    this->get_service().native_non_blocking(
+        this->get_implementation(), mode, ec);
     asio::detail::throw_error(ec, "native_non_blocking");
   }
 
@@ -754,7 +799,8 @@ public:
   asio::error_code native_non_blocking(
       bool mode, asio::error_code& ec)
   {
-    return this->service.native_non_blocking(this->implementation, mode, ec);
+    return this->get_service().native_non_blocking(
+        this->get_implementation(), mode, ec);
   }
 
   /// Get the local endpoint of the acceptor.
@@ -775,7 +821,8 @@ public:
   endpoint_type local_endpoint() const
   {
     asio::error_code ec;
-    endpoint_type ep = this->service.local_endpoint(this->implementation, ec);
+    endpoint_type ep = this->get_service().local_endpoint(
+        this->get_implementation(), ec);
     asio::detail::throw_error(ec, "local_endpoint");
     return ep;
   }
@@ -804,7 +851,7 @@ public:
    */
   endpoint_type local_endpoint(asio::error_code& ec) const
   {
-    return this->service.local_endpoint(this->implementation, ec);
+    return this->get_service().local_endpoint(this->get_implementation(), ec);
   }
 
   /// Accept a new connection.
@@ -829,7 +876,7 @@ public:
   void accept(basic_socket<protocol_type, SocketService>& peer)
   {
     asio::error_code ec;
-    this->service.accept(this->implementation, peer, 0, ec);
+    this->get_service().accept(this->get_implementation(), peer, 0, ec);
     asio::detail::throw_error(ec, "accept");
   }
 
@@ -861,7 +908,7 @@ public:
       basic_socket<protocol_type, SocketService>& peer,
       asio::error_code& ec)
   {
-    return this->service.accept(this->implementation, peer, 0, ec);
+    return this->get_service().accept(this->get_implementation(), peer, 0, ec);
   }
 
   /// Start an asynchronous accept.
@@ -910,8 +957,8 @@ public:
     // not meet the documented type requirements for a AcceptHandler.
     ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
 
-    this->service.async_accept(this->implementation, peer, 0,
-        ASIO_MOVE_CAST(AcceptHandler)(handler));
+    this->get_service().async_accept(this->get_implementation(),
+        peer, 0, ASIO_MOVE_CAST(AcceptHandler)(handler));
   }
 
   /// Accept a new connection and obtain the endpoint of the peer
@@ -942,7 +989,8 @@ public:
       endpoint_type& peer_endpoint)
   {
     asio::error_code ec;
-    this->service.accept(this->implementation, peer, &peer_endpoint, ec);
+    this->get_service().accept(this->get_implementation(),
+        peer, &peer_endpoint, ec);
     asio::detail::throw_error(ec, "accept");
   }
 
@@ -979,7 +1027,8 @@ public:
       basic_socket<protocol_type, SocketService>& peer,
       endpoint_type& peer_endpoint, asio::error_code& ec)
   {
-    return this->service.accept(this->implementation, peer, &peer_endpoint, ec);
+    return this->get_service().accept(
+        this->get_implementation(), peer, &peer_endpoint, ec);
   }
 
   /// Start an asynchronous accept.
@@ -1016,7 +1065,7 @@ public:
     // not meet the documented type requirements for a AcceptHandler.
     ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
 
-    this->service.async_accept(this->implementation, peer,
+    this->get_service().async_accept(this->get_implementation(), peer,
         &peer_endpoint, ASIO_MOVE_CAST(AcceptHandler)(handler));
   }
 };

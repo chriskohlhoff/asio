@@ -76,6 +76,17 @@ void test()
     int native_socket1 = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     ip::udp::socket socket6(ios, ip::udp::v4(), native_socket1);
 
+#if defined(ASIO_HAS_MOVE)
+    ip::udp::socket socket7(std::move(socket6));
+#endif // defined(ASIO_HAS_MOVE)
+
+    // basic_datagram_socket operators.
+
+#if defined(ASIO_HAS_MOVE)
+    socket1 = ip::udp::socket(ios);
+    socket1 = std::move(socket2);
+#endif // defined(ASIO_HAS_MOVE)
+
     // basic_io_object functions.
 
     io_service& ios_ref = socket1.get_io_service();
@@ -86,9 +97,9 @@ void test()
     ip::udp::socket::lowest_layer_type& lowest_layer = socket1.lowest_layer();
     (void)lowest_layer;
 
-    const ip::udp::socket& socket7 = socket1;
+    const ip::udp::socket& socket8 = socket1;
     const ip::udp::socket::lowest_layer_type& lowest_layer2
-      = socket7.lowest_layer();
+      = socket8.lowest_layer();
     (void)lowest_layer2;
 
     socket1.open(ip::udp::v4());

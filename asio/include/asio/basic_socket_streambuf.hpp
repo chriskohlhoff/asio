@@ -144,8 +144,8 @@ public:
         endpoint, handler);
 
     ec_ = asio::error::would_block;
-    this->service.get_io_service().reset();
-    do this->service.get_io_service().run_one();
+    this->get_service().get_io_service().reset();
+    do this->get_service().get_io_service().run_one();
     while (ec_ == asio::error::would_block);
 
     return !ec_ ? this : 0;
@@ -268,13 +268,13 @@ protected:
       }
 
       io_handler handler = { this };
-      this->service.async_receive(this->implementation,
+      this->get_service().async_receive(this->get_implementation(),
           asio::buffer(asio::buffer(get_buffer_) + putback_max),
           0, handler);
 
       ec_ = asio::error::would_block;
-      this->service.get_io_service().reset();
-      do this->service.get_io_service().run_one();
+      this->get_service().get_io_service().reset();
+      do this->get_service().get_io_service().run_one();
       while (ec_ == asio::error::would_block);
       if (ec_)
         return traits_type::eof();
@@ -309,12 +309,12 @@ protected:
         // Send the single character immediately.
         char_type ch = traits_type::to_char_type(c);
         io_handler handler = { this };
-        this->service.async_send(this->implementation,
+        this->get_service().async_send(this->get_implementation(),
             asio::buffer(&ch, sizeof(char_type)), 0, handler);
 
         ec_ = asio::error::would_block;
-        this->service.get_io_service().reset();
-        do this->service.get_io_service().run_one();
+        this->get_service().get_io_service().reset();
+        do this->get_service().get_io_service().run_one();
         while (ec_ == asio::error::would_block);
         if (ec_)
           return traits_type::eof();
@@ -336,12 +336,12 @@ protected:
         }
 
         io_handler handler = { this };
-        this->service.async_send(this->implementation,
+        this->get_service().async_send(this->get_implementation(),
             asio::buffer(buffer), 0, handler);
 
         ec_ = asio::error::would_block;
-        this->service.get_io_service().reset();
-        do this->service.get_io_service().run_one();
+        this->get_service().get_io_service().reset();
+        do this->get_service().get_io_service().run_one();
         while (ec_ == asio::error::would_block);
         if (ec_)
           return traits_type::eof();
@@ -427,8 +427,8 @@ private:
             *i, handler);
 
         ec_ = asio::error::would_block;
-        this->service.get_io_service().reset();
-        do this->service.get_io_service().run_one();
+        this->get_service().get_io_service().reset();
+        do this->get_service().get_io_service().run_one();
         while (ec_ == asio::error::would_block);
 
         ++i;
