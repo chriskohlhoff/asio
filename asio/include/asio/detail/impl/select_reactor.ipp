@@ -152,6 +152,12 @@ void select_reactor::deregister_internal_descriptor(
     op_queue_[i].cancel_operations(descriptor, ops);
 }
 
+void select_reactor::move_descriptor(socket_type,
+    select_reactor::per_descriptor_data&,
+    select_reactor::per_descriptor_data&)
+{
+}
+
 void select_reactor::run(bool block, op_queue<operation>& ops)
 {
   asio::detail::mutex::scoped_lock lock(mutex_);
