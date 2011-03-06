@@ -111,7 +111,7 @@ public:
 
   /// Move-assign a basic_descriptor from another.
   /**
-   * This constructor moves a descriptor from one object to another.
+   * This assignment operator moves a descriptor from one object to another.
    *
    * @param other The other basic_descriptor object from which the move will
    * occur.

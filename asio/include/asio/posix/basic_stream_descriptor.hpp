@@ -109,9 +109,10 @@ public:
   {
   }
 
-  /// Move-assign a basic_descriptor from another.
+  /// Move-assign a basic_stream_descriptor  from another.
   /**
-   * This constructor moves a stream descriptor from one object to another.
+   * This assignment operator moves a stream descriptor from one object to
+   * another.
    *
    * @param other The other basic_stream_descriptor object from which the move
    * will occur.
