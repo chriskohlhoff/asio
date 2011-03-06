@@ -94,7 +94,7 @@ public:
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Move-construct a basic_descriptor from another.
   /**
-   * This constructor moves a stream descriptor from one object to another.
+   * This constructor moves a descriptor from one object to another.
    *
    * @param other The other basic_descriptor object from which the move will
    * occur.
