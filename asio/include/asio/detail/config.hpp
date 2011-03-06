@@ -46,40 +46,28 @@
 # define ASIO_DECL
 #endif // !defined(ASIO_DECL)
 
-// Support move construction as an optimisation on compilers known to allow it.
-#if defined(__GNUC__)
-# if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
-#  if defined(__GXX_EXPERIMENTAL_CXX0X__)
-#   define ASIO_MOVE_CAST(type) static_cast<type&&>
-#  endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
-# endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
-#endif // defined(__GNUC__)
-#if defined(BOOST_MSVC)
-# if (_MSC_VER >= 1600)
-#  define ASIO_MOVE_CAST(type) static_cast<type&&>
-# endif // (_MSC_VER >= 1600)
-#endif // defined(BOOST_MSVC)
-
-// If ASIO_MOVE_CAST isn't defined yet use a C++03 compatible version.
-#if !defined(ASIO_MOVE_CAST)
-# define ASIO_MOVE_CAST(type) static_cast<const type&>
-#endif // !defined_ASIO_MOVE_CAST
-
-// Move construction and assignment in the API.
+// Support move construction and assignment on compilers known to allow it.
 #if !defined(ASIO_DISABLE_MOVE)
 # if defined(__GNUC__)
 #  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 #   if defined(__GXX_EXPERIMENTAL_CXX0X__)
 #    define ASIO_HAS_MOVE
+#    define ASIO_MOVE_CAST(type) static_cast<type&&>
 #   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 # endif // defined(__GNUC__)
 # if defined(BOOST_MSVC)
 #  if (_MSC_VER >= 1600)
 #   define ASIO_HAS_MOVE
+#   define ASIO_MOVE_CAST(type) static_cast<type&&>
 #  endif // (_MSC_VER >= 1600)
 # endif // defined(BOOST_MSVC)
 #endif // !defined(ASIO_DISABLE_MOVE)
+
+// If ASIO_MOVE_CAST isn't defined yet use a C++03 compatible version.
+#if !defined(ASIO_MOVE_CAST)
+# define ASIO_MOVE_CAST(type) static_cast<const type&>
+#endif // !defined_ASIO_MOVE_CAST
 
 // Standard library support for system errors.
 #if !defined(ASIO_DISABLE_STD_SYSTEM_ERROR)
