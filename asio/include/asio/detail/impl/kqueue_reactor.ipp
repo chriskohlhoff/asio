@@ -164,6 +164,14 @@ int kqueue_reactor::register_internal_descriptor(
   return 0;
 }
 
+void kqueue_reactor::move_descriptor(socket_type,
+    kqueue_reactor::per_descriptor_data& target_descriptor_data,
+    kqueue_reactor::per_descriptor_data& source_descriptor_data)
+{
+  target_descriptor_data = source_descriptor_data;
+  source_descriptor_data = 0;
+}
+
 void kqueue_reactor::start_op(int op_type, socket_type descriptor,
     kqueue_reactor::per_descriptor_data& descriptor_data,
     reactor_op* op, bool allow_speculative)
