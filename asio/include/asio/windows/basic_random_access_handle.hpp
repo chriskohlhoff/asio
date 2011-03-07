@@ -87,6 +87,44 @@ public:
   {
   }
 
+#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  /// Move-construct a basic_random_access_handle from another.
+  /**
+   * This constructor moves a random-access handle from one object to another.
+   *
+   * @param other The other basic_random_access_handle object from which the
+   * move will occur.
+   *
+   * @note Following the move, the valid operations for the other object are:
+   * @li Using it as the target of a move assignment.
+   * @li Destruction.
+   */
+  basic_random_access_handle(basic_random_access_handle&& other)
+    : basic_handle<RandomAccessHandleService>(
+        ASIO_MOVE_CAST(basic_random_access_handle)(other))
+  {
+  }
+
+  /// Move-assign a basic_random_access_handle from another.
+  /**
+   * This assignment operator moves a random-access handle from one object to
+   * another.
+   *
+   * @param other The other basic_random_access_handle object from which the
+   * move will occur.
+   *
+   * @note Following the move, the valid operations for the other object are:
+   * @li Using it as the target of a move assignment.
+   * @li Destruction.
+   */
+  basic_random_access_handle& operator=(basic_random_access_handle&& other)
+  {
+    basic_handle<RandomAccessHandleService>::operator=(
+        ASIO_MOVE_CAST(basic_random_access_handle)(other));
+    return *this;
+  }
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
   /// Write some data to the handle at the specified offset.
   /**
    * This function is used to write data to the random-access handle. The
@@ -121,8 +159,8 @@ public:
       const ConstBufferSequence& buffers)
   {
     asio::error_code ec;
-    std::size_t s = this->service.write_some_at(
-        this->implementation, offset, buffers, ec);
+    std::size_t s = this->get_service().write_some_at(
+        this->get_implementation(), offset, buffers, ec);
     asio::detail::throw_error(ec, "write_some_at");
     return s;
   }
@@ -149,8 +187,8 @@ public:
   std::size_t write_some_at(boost::uint64_t offset,
       const ConstBufferSequence& buffers, asio::error_code& ec)
   {
-    return this->service.write_some_at(
-        this->implementation, offset, buffers, ec);
+    return this->get_service().write_some_at(
+        this->get_implementation(), offset, buffers, ec);
   }
 
   /// Start an asynchronous write at the specified offset.
@@ -198,7 +236,7 @@ public:
     // not meet the documented type requirements for a WriteHandler.
     ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-    this->service.async_write_some_at(this->implementation,
+    this->get_service().async_write_some_at(this->get_implementation(),
         offset, buffers, ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
@@ -237,8 +275,8 @@ public:
       const MutableBufferSequence& buffers)
   {
     asio::error_code ec;
-    std::size_t s = this->service.read_some_at(
-        this->implementation, offset, buffers, ec);
+    std::size_t s = this->get_service().read_some_at(
+        this->get_implementation(), offset, buffers, ec);
     asio::detail::throw_error(ec, "read_some_at");
     return s;
   }
@@ -266,8 +304,8 @@ public:
   std::size_t read_some_at(boost::uint64_t offset,
       const MutableBufferSequence& buffers, asio::error_code& ec)
   {
-    return this->service.read_some_at(
-        this->implementation, offset, buffers, ec);
+    return this->get_service().read_some_at(
+        this->get_implementation(), offset, buffers, ec);
   }
 
   /// Start an asynchronous read at the specified offset.
@@ -316,7 +354,7 @@ public:
     // not meet the documented type requirements for a ReadHandler.
     ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-    this->service.async_read_some_at(this->implementation,
+    this->get_service().async_read_some_at(this->get_implementation(),
         offset, buffers, ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 };

@@ -109,7 +109,7 @@ public:
   {
   }
 
-  /// Move-assign a basic_stream_descriptor  from another.
+  /// Move-assign a basic_stream_descriptor from another.
   /**
    * This assignment operator moves a stream descriptor from one object to
    * another.

@@ -56,6 +56,17 @@ void test()
     HANDLE native_handle1 = INVALID_HANDLE_VALUE;
     win::stream_handle handle2(ios, native_handle1);
 
+#if defined(ASIO_HAS_MOVE)
+    win::stream_handle handle3(std::move(handle2));
+#endif // defined(ASIO_HAS_MOVE)
+
+    // basic_stream_handle operators.
+
+#if defined(ASIO_HAS_MOVE)
+    handle1 = win::stream_handle(ios);
+    handle1 = std::move(handle2);
+#endif // defined(ASIO_HAS_MOVE)
+
     // basic_io_object functions.
 
     io_service& ios_ref = handle1.get_io_service();
@@ -67,9 +78,9 @@ void test()
       = handle1.lowest_layer();
     (void)lowest_layer;
 
-    const win::stream_handle& handle3 = handle1;
+    const win::stream_handle& handle4 = handle1;
     const win::stream_handle::lowest_layer_type& lowest_layer2
-      = handle3.lowest_layer();
+      = handle4.lowest_layer();
     (void)lowest_layer2;
 
     HANDLE native_handle2 = INVALID_HANDLE_VALUE;
