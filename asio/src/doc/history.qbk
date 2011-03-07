@@ -7,6 +7,47 @@
 
 [section:history Revision History]
 
+[heading Asio 1.5.2]
+
+* Added support for C++0x move construction and assignment to sockets, serial
+  ports, POSIX descriptors and Windows handles.
+
+* Added support for the `fork()` system call. Programs that use `fork()` must
+  call `io_service.notify_fork()` at the appropriate times. Two new examples
+  have been added showing how to use this feature.
+
+* Cleaned up the handling of errors reported by the `close()` system call. In
+  particular, assume that most operating systems won't have `close()` fail with
+  `EWOULDBLOCK`, but if it does then set the blocking mode and restart the call.
+  If any other error occurs, assume the descriptor is closed.
+
+* The kqueue flag `EV_ONESHOT` seems to cause problems on some versions of Mac
+  OS X, with the `io_service` destructor getting stuck inside the `close()`
+  system call. Changed the kqueue backend to use `EV_CLEAR` instead.
+
+* Changed exception reporting to include the function name in exception `what()`
+  messages.
+
+* Fixed an insufficient initialisers warning with MinGW.
+
+* Changed the `shutdown_service()` member functions to be private.
+
+* Added archetypes for testing socket option functions.
+
+* Added a missing lock in `signal_set_service::cancel()`.
+
+* Fixed a copy/paste error in `SignalHandler` example.
+
+* Added the inclusion of the signal header to `signal_set_service.hpp` so that
+  constants like `NSIG` may be used.
+
+* Changed the `signal_set_service` implementation so that it doesn't assume
+  that `SIGRTMAX` is a compile-time constant.
+
+* Changed the Boost.Asio examples so that they don't use Boost.Thread's
+  convenience header. Use the header file that is specifically for the
+  boost::thread class instead.
+
 [heading Asio 1.5.1]
 
 * Added support for signal handling, using a new class called `signal_set`.
