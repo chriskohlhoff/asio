@@ -57,6 +57,17 @@ void test()
     serial_port::native_handle_type native_port1 = port1.native_handle();
     serial_port port3(ios, native_port1);
 
+#if defined(ASIO_HAS_MOVE)
+    serial_port port4(std::move(port3));
+#endif // defined(ASIO_HAS_MOVE)
+
+    // basic_serial_port operators.
+
+#if defined(ASIO_HAS_MOVE)
+    port1 = serial_port(ios);
+    port1 = std::move(port2);
+#endif // defined(ASIO_HAS_MOVE)
+
     // basic_io_object functions.
 
     io_service& ios_ref = port1.get_io_service();
@@ -67,8 +78,8 @@ void test()
     serial_port::lowest_layer_type& lowest_layer = port1.lowest_layer();
     (void)lowest_layer;
 
-    const serial_port& port4 = port1;
-    const serial_port::lowest_layer_type& lowest_layer2 = port4.lowest_layer();
+    const serial_port& port5 = port1;
+    const serial_port::lowest_layer_type& lowest_layer2 = port5.lowest_layer();
     (void)lowest_layer2;
 
     port1.open("null");
