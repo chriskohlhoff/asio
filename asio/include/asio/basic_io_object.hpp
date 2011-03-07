@@ -47,6 +47,10 @@ namespace detail
 #endif // defined(ASIO_HAS_MOVE)
 
 /// Base class for all I/O objects.
+/**
+ * @note All I/O objects are non-copyable. However, when using C++0x, certain
+ * I/O objects do support move construction and move assignment.
+ */
 #if !defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 template <typename IoObjectService>
 #else
@@ -107,12 +111,6 @@ protected:
    * @note Available only for services that support movability,
    */
   basic_io_object& operator=(basic_io_object&& other);
-
-  /// Copy construction is not supported.
-  basic_io_object(const basic_io_object&) = delete;
-
-  /// Copy assignment is not supported.
-  basic_io_object& operator=(const basic_io_object&) = delete;
 #endif // defined(GENERATING_DOCUMENTATION)
 
   /// Protected destructor to prevent deletion through this type.
