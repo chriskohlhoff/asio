@@ -11,9 +11,9 @@ An I/O object service must meet the requirements for a [link
 asio.reference.Service service], as well as the requirements listed
 below.
 
-In the table below, `X` denotes an I/O object service class, `a` denotes a
-value of type `X`, `b` denotes a value of type `X::implementation_type`, and
-`u` denotes an identifier.
+In the table below, `X` denotes an I/O object service class, `a` and `ao` denote
+values of type `X`, `b` and `c` denote values of type `X::implementation_type`,
+and `u` denotes an identifier.
 
 [table IoObjectService requirements
   [[expression] [return type] [assertion/note\npre/post-condition]]
@@ -41,7 +41,21 @@ value of type `X`, `b` denotes a value of type `X::implementation_type`, and
     ``]
     []
     [note: `destroy()` will only be called on a value that has previously been
-     initialised with `construct()`.]
+     initialised with `construct()` or `move_construct()`.]
+  ]
+  [
+    [``
+      a.move_construct(b, c);
+    ``]
+    []
+    [note: only required for I/O objects that support movability.]
+  ]
+  [
+    [``
+      a.move_assign(b, ao, c);
+    ``]
+    []
+    [note: only required for I/O objects that support movability.]
   ]
 ]
 

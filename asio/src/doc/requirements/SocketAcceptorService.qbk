@@ -12,20 +12,19 @@ asio.reference.IoObjectService I/O object service], as well as the
 additional requirements listed below.
 
 In the table below, `X` denotes a socket acceptor service class for protocol
-[link asio.reference.Protocol `Protocol`], `a` denotes a value of type
-`X`, `b` denotes a value of type `X::implementation_type`, `p` denotes a value
-of type `Protocol`, `n` denotes a value of type `X::native_handle_type`, `e`
-denotes a value of type `Protocol::endpoint`, `ec` denotes a value of type
+[link asio.reference.Protocol `Protocol`], `a` and `ao` denote values of type
+`X`, `b` and `c` denote values of type `X::implementation_type`, `p` denotes a
+value of type `Protocol`, `n` denotes a value of type `X::native_handle_type`,
+`e` denotes a value of type `Protocol::endpoint`, `ec` denotes a value of type
 `error_code`, `s` denotes a value meeting [link
 asio.reference.SettableSocketOption `SettableSocketOption`] requirements, `g`
 denotes a value meeting [link asio.reference.GettableSocketOption
 `GettableSocketOption`] requirements, `i` denotes a value meeting [link
-asio.reference.IoControlCommand `IoControlCommand`] requirements, `k`
-denotes a value of type `basic_socket<Protocol, SocketService>` where
-`SocketService` is a type meeting [link asio.reference.SocketService
-socket service] requirements, `ah` denotes a value meeting [link
-asio.reference.AcceptHandler `AcceptHandler`] requirements, and `u`
-and `v` denote identifiers.
+asio.reference.IoControlCommand `IoControlCommand`] requirements, `k` denotes a
+value of type `basic_socket<Protocol, SocketService>` where `SocketService` is
+a type meeting [link asio.reference.SocketService socket service] requirements,
+`ah` denotes a value meeting [link asio.reference.AcceptHandler
+`AcceptHandler`] requirements, and `u` and `v` denote identifiers.
 
 [table SocketAcceptorService requirements
   [[expression] [return type] [assertion/note\npre/post-condition]]
@@ -54,6 +53,28 @@ and `v` denote identifiers.
       From [link asio.reference.IoObjectService IoObjectService]
       requirements. Implicitly cancels asynchronous operations, as if by calling
       `a.close(b, ec)`.
+    ]
+  ]
+  [
+    [``
+      a.move_construct(b, c);
+    ``]
+    []
+    [
+      From [link asio.reference.IoObjectService IoObjectService] requirements.
+      The underlying native representation is moved from `c` to `b`.
+    ]
+  ]
+  [
+    [``
+      a.move_assign(b, ao, c);
+    ``]
+    []
+    [
+      From [link asio.reference.IoObjectService IoObjectService] requirements.
+      Implicitly cancels asynchronous operations associated with `b`, as if by
+      calling `a.close(b, ec)`. Then the underlying native representation is
+      moved from `c` to `b`.
     ]
   ]
   [

@@ -8,13 +8,13 @@
 [section:HandleService Handle service requirements]
 
 A handle service must meet the requirements for an [link
-asio.reference.IoObjectService I/O object service], as well as the
-additional requirements listed below.
+asio.reference.IoObjectService I/O object service] with support for movability,
+as well as the additional requirements listed below.
 
-In the table below, `X` denotes a handle service class, `a` denotes a value of
-type `X`, `b` denotes a value of type `X::implementation_type`, `n` denotes a
-value of type `X::native_handle_type`, `ec` denotes a value of type
-`error_code`, and `u` and `v` denote identifiers.
+In the table below, `X` denotes a handle service class, `a` and `ao` denote
+values of type `X`, `b` and `c` denote values of type `X::implementation_type`,
+`n` denotes a value of type `X::native_handle_type`, `ec` denotes a value of
+type `error_code`, and `u` and `v` denote identifiers.
 
 [table HandleService requirements
   [[expression] [return type] [assertion/note\npre/post-condition]]
@@ -43,6 +43,28 @@ value of type `X::native_handle_type`, `ec` denotes a value of type
       From [link asio.reference.IoObjectService IoObjectService]
       requirements. Implicitly cancels asynchronous operations, as if by calling
       `a.close(b, ec)`.
+    ]
+  ]
+  [
+    [``
+      a.move_construct(b, c);
+    ``]
+    []
+    [
+      From [link asio.reference.IoObjectService IoObjectService] requirements.
+      The underlying native representation is moved from `c` to `b`.
+    ]
+  ]
+  [
+    [``
+      a.move_assign(b, ao, c);
+    ``]
+    []
+    [
+      From [link asio.reference.IoObjectService IoObjectService] requirements.
+      Implicitly cancels asynchronous operations associated with `b`, as if by
+      calling `a.close(b, ec)`. Then the underlying native representation is
+      moved from `c` to `b`.
     ]
   ]
   [
