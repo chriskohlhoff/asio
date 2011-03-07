@@ -321,6 +321,13 @@ int close(socket_type s, state_type& state,
 # endif // defined(__SYMBIAN32__)
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
       state &= ~non_blocking;
+
+      clear_last_error();
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+      result = error_wrapper(::closesocket(s), ec);
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+      result = error_wrapper(::close(s), ec);
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
     }
   }
 
