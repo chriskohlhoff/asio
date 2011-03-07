@@ -44,7 +44,7 @@ void reactive_socket_service_base::construct(
   impl.state_ = 0;
 }
 
-void reactive_socket_service_base::move_construct(
+void reactive_socket_service_base::base_move_construct(
     reactive_socket_service_base::base_implementation_type& impl,
     reactive_socket_service_base::base_implementation_type& other_impl)
 {
@@ -58,7 +58,7 @@ void reactive_socket_service_base::move_construct(
       impl.reactor_data_, other_impl.reactor_data_);
 }
 
-void reactive_socket_service_base::move_assign(
+void reactive_socket_service_base::base_move_assign(
     reactive_socket_service_base::base_implementation_type& impl,
     reactive_socket_service_base& other_service,
     reactive_socket_service_base::base_implementation_type& other_impl)
