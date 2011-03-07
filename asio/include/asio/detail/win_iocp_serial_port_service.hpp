@@ -62,7 +62,7 @@ public:
 
   // Move-assign from another serial port implementation.
   void move_assign(implementation_type& impl,
-      reactive_serial_port_service& other_service,
+      win_iocp_serial_port_service& other_service,
       implementation_type& other_impl)
   {
     handle_service_.move_assign(impl,
