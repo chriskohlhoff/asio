@@ -68,6 +68,80 @@ void win_iocp_socket_service_base::construct(
   impl_list_ = &impl;
 }
 
+void win_iocp_socket_service_base::base_move_construct(
+    win_iocp_socket_service_base::base_implementation_type& impl,
+    win_iocp_socket_service_base::base_implementation_type& other_impl)
+{
+  impl.socket_ = other_impl.socket_;
+  other_impl.socket_ = invalid_socket;
+
+  impl.state_ = other_impl.state_;
+  other_impl.state_ = 0;
+
+  impl.cancel_token_ = other_impl.cancel_token_;
+  other_impl.cancel_token_.reset();
+
+#if defined(ASIO_ENABLE_CANCELIO)
+  impl.safe_cancellation_thread_id_ = other_impl.safe_cancellation_thread_id_;
+  other_impl.safe_cancellation_thread_id_ = 0;
+#endif // defined(ASIO_ENABLE_CANCELIO)
+
+  // Insert implementation into linked list of all implementations.
+  asio::detail::mutex::scoped_lock lock(mutex_);
+  impl.next_ = impl_list_;
+  impl.prev_ = 0;
+  if (impl_list_)
+    impl_list_->prev_ = &impl;
+  impl_list_ = &impl;
+}
+
+void win_iocp_socket_service_base::base_move_assign(
+    win_iocp_socket_service_base::base_implementation_type& impl,
+    win_iocp_socket_service_base& other_service,
+    win_iocp_socket_service_base::base_implementation_type& other_impl)
+{
+  close_for_destruction(impl);
+
+  if (this != &other_service)
+  {
+    // Remove implementation from linked list of all implementations.
+    asio::detail::mutex::scoped_lock lock(mutex_);
+    if (impl_list_ == &impl)
+      impl_list_ = impl.next_;
+    if (impl.prev_)
+      impl.prev_->next_ = impl.next_;
+    if (impl.next_)
+      impl.next_->prev_= impl.prev_;
+    impl.next_ = 0;
+    impl.prev_ = 0;
+  }
+
+  impl.socket_ = other_impl.socket_;
+  other_impl.socket_ = invalid_socket;
+
+  impl.state_ = other_impl.state_;
+  other_impl.state_ = 0;
+
+  impl.cancel_token_ = other_impl.cancel_token_;
+  other_impl.cancel_token_.reset();
+
+#if defined(ASIO_ENABLE_CANCELIO)
+  impl.safe_cancellation_thread_id_ = other_impl.safe_cancellation_thread_id_;
+  other_impl.safe_cancellation_thread_id_ = 0;
+#endif // defined(ASIO_ENABLE_CANCELIO)
+
+  if (this != &other_service)
+  {
+    // Insert implementation into linked list of all implementations.
+    asio::detail::mutex::scoped_lock lock(other_service.mutex_);
+    impl.next_ = other_service.impl_list_;
+    impl.prev_ = 0;
+    if (other_service.impl_list_)
+      other_service.impl_list_->prev_ = &impl;
+    other_service.impl_list_ = &impl;
+  }
+}
+
 void win_iocp_socket_service_base::destroy(
     win_iocp_socket_service_base::base_implementation_type& impl)
 {

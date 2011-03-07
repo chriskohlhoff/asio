@@ -132,6 +132,39 @@ public:
   {
   }
 
+  // Move-construct a new socket implementation.
+  void move_construct(implementation_type& impl,
+      implementation_type& other_impl)
+  {
+    this->base_move_construct(impl, other_impl);
+
+    impl.protocol_ = other_impl.protocol_;
+    other_impl.protocol_ = endpoint_type().protocol();
+
+    impl.have_remote_endpoint_ = other_impl.have_remote_endpoint_;
+    other_impl.have_remote_endpoint_ = false;
+
+    impl.remote_endpoint_ = other_impl.remote_endpoint_;
+    other_impl.remote_endpoint_ = endpoint_type();
+  }
+
+  // Move-assign from another socket implementation.
+  void move_assign(implementation_type& impl,
+      win_iocp_socket_service_base& other_service,
+      implementation_type& other_impl)
+  {
+    this->base_move_assign(impl, other_service, other_impl);
+
+    impl.protocol_ = other_impl.protocol_;
+    other_impl.protocol_ = endpoint_type().protocol();
+
+    impl.have_remote_endpoint_ = other_impl.have_remote_endpoint_;
+    other_impl.have_remote_endpoint_ = false;
+
+    impl.remote_endpoint_ = other_impl.remote_endpoint_;
+    other_impl.remote_endpoint_ = endpoint_type();
+  }
+
   // Open a new socket implementation.
   asio::error_code open(implementation_type& impl,
       const protocol_type& protocol, asio::error_code& ec)

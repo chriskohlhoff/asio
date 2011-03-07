@@ -29,14 +29,19 @@ namespace detail
   template <typename IoObjectService>
   class service_has_move
   {
+  private:
+    typedef IoObjectService service_type;
+    typedef typename service_type::implementation_type implementation_type;
+
+    template <typename T, typename U>
+    static auto eval(T* t, U* u) -> decltype(t->move_construct(*u, *u), char());
+    static char (&eval(...))[2];
+
   public:
     static const bool value =
-      sizeof(service_has_move::eval(static_cast<IoObjectService*>(0))) == 1;
-
-  private:
-    template <typename T>
-    static auto eval(T*) -> decltype(&T::move_construct, char(0));
-    static char (&eval(...))[2];
+      sizeof(service_has_move::eval(
+        static_cast<service_type*>(0),
+        static_cast<implementation_type*>(0))) == 1;
   };
 }
 #endif // defined(ASIO_HAS_MOVE)
