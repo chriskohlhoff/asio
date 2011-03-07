@@ -205,14 +205,20 @@ asio::error_code win_iocp_handle_service::close(
       DWORD last_error = ::GetLastError();
       ec = asio::error_code(last_error,
           asio::error::get_system_category());
-      return ec;
+    }
+    else
+    {
+      ec = asio::error_code();
     }
 
     impl.handle_ = INVALID_HANDLE_VALUE;
     impl.safe_cancellation_thread_id_ = 0;
   }
+  else
+  {
+    ec = asio::error_code();
+  }
 
-  ec = asio::error_code();
   return ec;
 }
 

@@ -177,15 +177,14 @@ asio::error_code win_iocp_socket_service_base::close(
       r->deregister_descriptor(impl.socket_, impl.reactor_data_, true);
   }
 
-  if (socket_ops::close(impl.socket_, impl.state_, false, ec) == 0)
-  {
-    impl.socket_ = invalid_socket;
-    impl.state_ = 0;
-    impl.cancel_token_.reset();
+  socket_ops::close(impl.socket_, impl.state_, false, ec);
+
+  impl.socket_ = invalid_socket;
+  impl.state_ = 0;
+  impl.cancel_token_.reset();
 #if defined(ASIO_ENABLE_CANCELIO)
-    impl.safe_cancellation_thread_id_ = 0;
+  impl.safe_cancellation_thread_id_ = 0;
 #endif // defined(ASIO_ENABLE_CANCELIO)
-  }
 
   return ec;
 }
