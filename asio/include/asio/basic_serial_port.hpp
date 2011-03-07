@@ -140,9 +140,8 @@ public:
    * @param other The other basic_serial_port object from which the move will
    * occur.
    *
-   * @note Following the move, the valid operations for the other object are:
-   * @li Using it as the target of a move assignment.
-   * @li Destruction.
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_serial_port(io_service&) constructor.
    */
   basic_serial_port(basic_serial_port&& other)
     : basic_io_object<SerialPortService>(
@@ -157,9 +156,8 @@ public:
    * @param other The other basic_serial_port object from which the move will
    * occur.
    *
-   * @note Following the move, the valid operations for the other object are:
-   * @li Using it as the target of a move assignment.
-   * @li Destruction.
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_serial_port(io_service&) constructor.
    */
   basic_serial_port& operator=(basic_serial_port&& other)
   {

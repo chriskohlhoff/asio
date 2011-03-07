@@ -139,9 +139,8 @@ public:
    * @param other The other basic_datagram_socket object from which the move
    * will occur.
    *
-   * @note Following the move, the valid operations for the other object are:
-   * @li Using it as the target of a move assignment.
-   * @li Destruction.
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_datagram_socket(io_service&) constructor.
    */
   basic_datagram_socket(basic_datagram_socket&& other)
     : basic_socket<Protocol, DatagramSocketService>(
@@ -157,9 +156,8 @@ public:
    * @param other The other basic_datagram_socket object from which the move
    * will occur.
    *
-   * @note Following the move, the valid operations for the other object are:
-   * @li Using it as the target of a move assignment.
-   * @li Destruction.
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_datagram_socket(io_service&) constructor.
    */
   basic_datagram_socket& operator=(basic_datagram_socket&& other)
   {

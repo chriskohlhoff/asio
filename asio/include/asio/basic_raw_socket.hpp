@@ -139,9 +139,8 @@ public:
    * @param other The other basic_raw_socket object from which the move
    * will occur.
    *
-   * @note Following the move, the valid operations for the other object are:
-   * @li Using it as the target of a move assignment.
-   * @li Destruction.
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_raw_socket(io_service&) constructor.
    */
   basic_raw_socket(basic_raw_socket&& other)
     : basic_socket<Protocol, RawSocketService>(
@@ -156,9 +155,8 @@ public:
    * @param other The other basic_raw_socket object from which the move
    * will occur.
    *
-   * @note Following the move, the valid operations for the other object are:
-   * @li Using it as the target of a move assignment.
-   * @li Destruction.
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_raw_socket(io_service&) constructor.
    */
   basic_raw_socket& operator=(basic_raw_socket&& other)
   {

@@ -93,9 +93,8 @@ public:
    *
    * @param other The other basic_handle object from which the move will occur.
    *
-   * @note Following the move, the valid operations for the other object are:
-   * @li Using it as the target of a move assignment.
-   * @li Destruction.
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_handle(io_service&) constructor.
    */
   basic_handle(basic_handle&& other)
     : basic_io_object<HandleService>(
@@ -109,9 +108,8 @@ public:
    *
    * @param other The other basic_handle object from which the move will occur.
    *
-   * @note Following the move, the valid operations for the other object are:
-   * @li Using it as the target of a move assignment.
-   * @li Destruction.
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_handle(io_service&) constructor.
    */
   basic_handle& operator=(basic_handle&& other)
   {

@@ -99,9 +99,8 @@ public:
    * @param other The other basic_descriptor object from which the move will
    * occur.
    *
-   * @note Following the move, the valid operations for the other object are:
-   * @li Using it as the target of a move assignment.
-   * @li Destruction.
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_descriptor(io_service&) constructor.
    */
   basic_descriptor(basic_descriptor&& other)
     : basic_io_object<DescriptorService>(
@@ -116,9 +115,8 @@ public:
    * @param other The other basic_descriptor object from which the move will
    * occur.
    *
-   * @note Following the move, the valid operations for the other object are:
-   * @li Using it as the target of a move assignment.
-   * @li Destruction.
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_descriptor(io_service&) constructor.
    */
   basic_descriptor& operator=(basic_descriptor&& other)
   {

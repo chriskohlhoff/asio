@@ -95,9 +95,9 @@ public:
    * @param other The other basic_random_access_handle object from which the
    * move will occur.
    *
-   * @note Following the move, the valid operations for the other object are:
-   * @li Using it as the target of a move assignment.
-   * @li Destruction.
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_random_access_handle(io_service&)
+   * constructor.
    */
   basic_random_access_handle(basic_random_access_handle&& other)
     : basic_handle<RandomAccessHandleService>(
@@ -113,9 +113,9 @@ public:
    * @param other The other basic_random_access_handle object from which the
    * move will occur.
    *
-   * @note Following the move, the valid operations for the other object are:
-   * @li Using it as the target of a move assignment.
-   * @li Destruction.
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_random_access_handle(io_service&)
+   * constructor.
    */
   basic_random_access_handle& operator=(basic_random_access_handle&& other)
   {

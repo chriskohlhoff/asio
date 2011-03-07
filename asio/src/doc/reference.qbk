@@ -4224,12 +4224,7 @@ This constructor moves a datagram socket from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_datagram_socket(io_service&) constructor`. 
 
 
 
@@ -7004,12 +6999,7 @@ This assignment operator moves a datagram socket from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_datagram_socket(io_service&) constructor`. 
 
 
 
@@ -11700,12 +11690,7 @@ This constructor moves a raw socket from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_raw_socket(io_service&) constructor`. 
 
 
 
@@ -14480,12 +14465,7 @@ This assignment operator moves a raw socket from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_raw_socket(io_service&) constructor`. 
 
 
 
@@ -17153,12 +17133,7 @@ This constructor moves a sequenced packet socket from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_seq_packet_socket(io_service&) constructor`. 
 
 
 
@@ -19933,12 +19908,7 @@ This assignment operator moves a sequenced packet socket from one object to anot
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_seq_packet_socket(io_service&) constructor`. 
 
 
 
@@ -21612,12 +21582,7 @@ This constructor moves a serial port from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_serial_port(io_service&) constructor`. 
 
 
 
@@ -22507,12 +22472,7 @@ This assignment operator moves a serial port from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_serial_port(io_service&) constructor`. 
 
 
 
@@ -24920,12 +24880,7 @@ This constructor moves a socket from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_socket(io_service&) constructor`. 
 
 
 
@@ -27624,12 +27579,7 @@ This assignment operator moves a socket from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_socket(io_service&) constructor`. 
 
 
 
@@ -29467,12 +29417,7 @@ This constructor moves an acceptor from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_socket_acceptor(io_service&) constructor`. 
 
 
 
@@ -31422,12 +31367,7 @@ This assignment operator moves an acceptor from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_socket_acceptor(io_service&) constructor`. 
 
 
 
@@ -38356,12 +38296,7 @@ This constructor moves a stream socket from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_stream_socket(io_service&) constructor`. 
 
 
 
@@ -41136,12 +41071,7 @@ This assignment operator moves a stream socket from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_stream_socket(io_service&) constructor`. 
 
 
 
@@ -68861,12 +68791,7 @@ This constructor moves a descriptor from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_descriptor(io_service&) constructor`. 
 
 
 
@@ -70037,12 +69962,7 @@ This assignment operator moves a descriptor from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_descriptor(io_service&) constructor`. 
 
 
 
@@ -70648,12 +70568,7 @@ This constructor moves a stream descriptor from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_stream_descriptor(io_service&) constructor`. 
 
 
 
@@ -71874,12 +71789,7 @@ This assignment operator moves a stream descriptor from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_stream_descriptor(io_service&) constructor`. 
 
 
 
@@ -87716,12 +87626,7 @@ This constructor moves a handle from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_handle(io_service&) constructor`. 
 
 
 
@@ -88388,12 +88293,7 @@ This assignment operator moves a handle from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_handle(io_service&) constructor`. 
 
 
 
@@ -88948,12 +88848,7 @@ This constructor moves a random-access handle from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_random_access_handle(io_service&)` constructor. 
 
 
 
@@ -89650,12 +89545,7 @@ This assignment operator moves a random-access handle from one object to another
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_random_access_handle(io_service&)` constructor. 
 
 
 
@@ -90459,12 +90349,7 @@ This constructor moves a stream handle from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_stream_handle(io_service&) constructor`. 
 
 
 
@@ -91161,12 +91046,7 @@ This assignment operator moves a stream handle from one object to another.
 
 [heading Remarks]
       
-Following the move, the valid operations for the other object are: 
-* Using it as the target of a move assignment. 
-
-* Destruction. 
-
-
+Following the move, the moved-from object is in the same state as if constructed using the `basic_stream_handle(io_service&) constructor`. 
 
 
 
