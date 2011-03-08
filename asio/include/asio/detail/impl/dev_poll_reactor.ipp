@@ -153,6 +153,12 @@ int dev_poll_reactor::register_internal_descriptor(int op_type,
   return 0;
 }
 
+void dev_poll_reactor::move_descriptor(socket_type,
+    dev_poll_reactor::per_descriptor_data&,
+    dev_poll_reactor::per_descriptor_data&)
+{
+}
+
 void dev_poll_reactor::start_op(int op_type, socket_type descriptor,
     dev_poll_reactor::per_descriptor_data&,
     reactor_op* op, bool allow_speculative)

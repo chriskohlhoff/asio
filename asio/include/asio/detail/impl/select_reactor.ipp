@@ -112,6 +112,12 @@ int select_reactor::register_internal_descriptor(
   return 0;
 }
 
+void select_reactor::move_descriptor(socket_type,
+    select_reactor::per_descriptor_data&,
+    select_reactor::per_descriptor_data&)
+{
+}
+
 void select_reactor::start_op(int op_type, socket_type descriptor,
     select_reactor::per_descriptor_data&, reactor_op* op, bool)
 {
@@ -150,12 +156,6 @@ void select_reactor::deregister_internal_descriptor(
   op_queue<operation> ops;
   for (int i = 0; i < max_ops; ++i)
     op_queue_[i].cancel_operations(descriptor, ops);
-}
-
-void select_reactor::move_descriptor(socket_type,
-    select_reactor::per_descriptor_data&,
-    select_reactor::per_descriptor_data&)
-{
 }
 
 void select_reactor::run(bool block, op_queue<operation>& ops)
