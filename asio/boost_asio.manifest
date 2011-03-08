@@ -364,6 +364,9 @@
 /doc/html/boost_asio/example/echo/blocking_tcp_echo_server.cpp
 /doc/html/boost_asio/example/echo/blocking_udp_echo_client.cpp
 /doc/html/boost_asio/example/echo/blocking_udp_echo_server.cpp
+/doc/html/boost_asio/example/fork/
+/doc/html/boost_asio/example/fork/daemon.cpp
+/doc/html/boost_asio/example/fork/process_per_connection.cpp
 /doc/html/boost_asio/example/http/
 /doc/html/boost_asio/example/http/client/
 /doc/html/boost_asio/example/http/client/async_client.cpp
@@ -3541,6 +3544,11 @@
 /libs/asio/example/echo/blocking_udp_echo_server.cpp
 /libs/asio/example/echo/Jamfile
 /libs/asio/example/echo/Jamfile.v2
+/libs/asio/example/fork/
+/libs/asio/example/fork/daemon.cpp
+/libs/asio/example/fork/Jamfile
+/libs/asio/example/fork/Jamfile.v2
+/libs/asio/example/fork/process_per_connection.cpp
 /libs/asio/example/http/
 /libs/asio/example/http/client/
 /libs/asio/example/http/client/async_client.cpp
@@ -3746,7 +3754,9 @@
 /libs/asio/index.html
 /libs/asio/test/
 /libs/asio/test/archetypes/
+/libs/asio/test/archetypes/gettable_socket_option.hpp
 /libs/asio/test/archetypes/io_control_command.hpp
+/libs/asio/test/archetypes/settable_socket_option.hpp
 /libs/asio/test/basic_datagram_socket.cpp
 /libs/asio/test/basic_deadline_timer.cpp
 /libs/asio/test/basic_raw_socket.cpp
