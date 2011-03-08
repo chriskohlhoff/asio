@@ -168,7 +168,7 @@ sub build_asio_doc
 {
   $ENV{BOOST_ROOT} = abs_path("../boost");
   system("rm -rf doc");
-  my $bjam = abs_path(glob("../boost/tools/jam/src/bin.*/bjam"));
+  my $bjam = abs_path(glob("../boost/bjam"));
   chdir("src/doc");
   system("$bjam clean");
   system("rm -rf html");
@@ -188,7 +188,7 @@ sub make_asio_packages
 sub build_boost_asio_doc
 {
   my $cwd = getcwd();
-  my $bjam = abs_path(glob("../boost/tools/jam/src/bin.*/bjam"));
+  my $bjam = abs_path(glob("../boost/bjam"));
   chdir("../boost/doc");
   system("$bjam clean");
   system("rm -rf html/boost_asio");
