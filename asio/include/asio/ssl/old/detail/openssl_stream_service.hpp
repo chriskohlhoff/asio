@@ -1,6 +1,6 @@
 //
-// ssl/detail/stream_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ssl/old/detail/stream_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2005 Voipster / Indrek dot Juhani at voipster dot com
 // Copyright (c) 2005-2011 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -9,8 +9,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_SSL_DETAIL_OPENSSL_STREAM_SERVICE_HPP
-#define ASIO_SSL_DETAIL_OPENSSL_STREAM_SERVICE_HPP
+#ifndef ASIO_SSL_OLD_DETAIL_OPENSSL_STREAM_SERVICE_HPP
+#define ASIO_SSL_OLD_DETAIL_OPENSSL_STREAM_SERVICE_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -29,7 +29,7 @@
 #include "asio/io_service.hpp"
 #include "asio/ssl/basic_context.hpp"
 #include "asio/ssl/stream_base.hpp"
-#include "asio/ssl/detail/openssl_operation.hpp"
+#include "asio/ssl/old/detail/openssl_operation.hpp"
 #include "asio/ssl/detail/openssl_types.hpp"
 #include "asio/strand.hpp"
 #include "asio/system_error.hpp"
@@ -38,6 +38,7 @@
 
 namespace asio {
 namespace ssl {
+namespace old {
 namespace detail {
 
 class openssl_stream_service
@@ -561,9 +562,10 @@ template<typename Mutex>
 Mutex openssl_stream_service::ssl_wrap<Mutex>::ssl_mutex_;
 
 } // namespace detail
+} // namespace old
 } // namespace ssl
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_SSL_DETAIL_OPENSSL_STREAM_SERVICE_HPP
+#endif // ASIO_SSL_OLD_DETAIL_OPENSSL_STREAM_SERVICE_HPP

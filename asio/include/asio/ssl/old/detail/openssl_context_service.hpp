@@ -1,6 +1,6 @@
 //
-// ssl/detail/openssl_context_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ssl/old/detail/openssl_context_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2005 Voipster / Indrek dot Juhani at voipster dot com
 // Copyright (c) 2005-2011 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -9,8 +9,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_SSL_DETAIL_OPENSSL_CONTEXT_SERVICE_HPP
-#define ASIO_SSL_DETAIL_OPENSSL_CONTEXT_SERVICE_HPP
+#ifndef ASIO_SSL_OLD_DETAIL_OPENSSL_CONTEXT_SERVICE_HPP
+#define ASIO_SSL_OLD_DETAIL_OPENSSL_CONTEXT_SERVICE_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -30,6 +30,7 @@
 
 namespace asio {
 namespace ssl {
+namespace old {
 namespace detail {
 
 class openssl_context_service
@@ -363,13 +364,14 @@ public:
 
 private:
   // Ensure openssl is initialised.
-  openssl_init<> init_;
+  asio::ssl::detail::openssl_init<> init_;
 };
 
 } // namespace detail
+} // namespace old
 } // namespace ssl
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_SSL_DETAIL_OPENSSL_CONTEXT_SERVICE_HPP
+#endif // ASIO_SSL_OLD_DETAIL_OPENSSL_CONTEXT_SERVICE_HPP

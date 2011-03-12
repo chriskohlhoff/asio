@@ -290,15 +290,19 @@ nobase_include_HEADERS = \
 	asio/ssl/context_base.hpp \
 	asio/ssl/context.hpp \
 	asio/ssl/context_service.hpp \
-	asio/ssl/detail/openssl_context_service.hpp \
 	asio/ssl/detail/openssl_init.hpp \
-	asio/ssl/detail/openssl_operation.hpp \
-	asio/ssl/detail/openssl_stream_service.hpp \
 	asio/ssl/detail/openssl_types.hpp \
 	asio/ssl/error.hpp \
 	asio/ssl.hpp \
 	asio/ssl/impl/error.ipp \
 	asio/ssl/impl/src.hpp \
+	asio/ssl/old/basic_context.hpp \
+	asio/ssl/old/context_service.hpp \
+	asio/ssl/old/detail/openssl_context_service.hpp \
+	asio/ssl/old/detail/openssl_operation.hpp \
+	asio/ssl/old/detail/openssl_stream_service.hpp \
+	asio/ssl/old/stream.hpp \
+	asio/ssl/old/stream_service.hpp \
 	asio/ssl/stream_base.hpp \
 	asio/ssl/stream.hpp \
 	asio/ssl/stream_service.hpp \
