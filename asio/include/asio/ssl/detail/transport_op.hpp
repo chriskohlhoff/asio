@@ -84,7 +84,7 @@ public:
         break;
 
       default:
-        // The SSL operation as done, but there might be some data to be
+        // The SSL operation is done, but there might be some data to be
         // written to the output. If there isn't anything to write then we can
         // invoke the handler, but we have to keep in mind that this function
         // might be being called from the async operation's initiating
