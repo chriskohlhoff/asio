@@ -21,6 +21,7 @@
 # include "asio/ssl/old/stream.hpp"
 #else // defined(ASIO_ENABLE_OLD_SSL)
 # include "asio/detail/buffer_sequence_adapter.hpp"
+# include "asio/detail/noncopyable.hpp"
 # include "asio/ssl/context.hpp"
 # include "asio/ssl/detail/buffer_space.hpp"
 # include "asio/ssl/detail/engine.hpp"
@@ -67,7 +68,9 @@ using asio::ssl::old::stream;
  * AsyncReadStream, AsyncWriteStream, Stream, SyncReadStream, SyncWriteStream.
  */
 template <typename Stream>
-class stream : public stream_base
+class stream :
+  public stream_base,
+  private noncopyable
 {
 public:
   /// The native handle type of the SSL stream.
