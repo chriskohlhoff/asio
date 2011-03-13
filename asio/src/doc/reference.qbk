@@ -80961,16 +80961,13 @@ Protected destructor to prevent deletion through this type.
 
 [endsect]
 
-[section:ssl__basic_context ssl::basic_context]
+[section:ssl__context ssl::context]
 
 
-SSL context. 
 
-
-  template<
-      typename ``[link asio.reference.Service Service]``>
-  class basic_context :
-    public ssl::context_base
+  class context :
+    public ssl::context_base,
+    noncopyable
 
 
 [heading Types]
@@ -80979,49 +80976,42 @@ SSL context.
 
   [
 
-    [[link asio.reference.ssl__basic_context.file_format [*file_format]]]
+    [[link asio.reference.ssl__context.file_format [*file_format]]]
     [File format types. ]
   
   ]
 
   [
 
-    [[link asio.reference.ssl__basic_context.impl_type [*impl_type]]]
-    [The native implementation type of the locking dispatcher. ]
-  
-  ]
-
-  [
-
-    [[link asio.reference.ssl__basic_context.method [*method]]]
+    [[link asio.reference.ssl__context.method [*method]]]
     [Different methods supported by a context. ]
   
   ]
 
   [
 
-    [[link asio.reference.ssl__basic_context.options [*options]]]
+    [[link asio.reference.ssl__context.native_handle_type [*native_handle_type]]]
+    [The native handle type of the SSL context. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ssl__context.options [*options]]]
     [Bitmask type for SSL options. ]
   
   ]
 
   [
 
-    [[link asio.reference.ssl__basic_context.password_purpose [*password_purpose]]]
+    [[link asio.reference.ssl__context.password_purpose [*password_purpose]]]
     [Purpose of PEM password. ]
   
   ]
 
   [
 
-    [[link asio.reference.ssl__basic_context.service_type [*service_type]]]
-    [The type of the service that will be used to provide context operations. ]
-  
-  ]
-
-  [
-
-    [[link asio.reference.ssl__basic_context.verify_mode [*verify_mode]]]
+    [[link asio.reference.ssl__context.verify_mode [*verify_mode]]]
     [Bitmask type for peer verification. ]
   
   ]
@@ -81033,67 +81023,76 @@ SSL context.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ssl__basic_context.add_verify_path [*add_verify_path]]]
+    [[link asio.reference.ssl__context.add_verify_path [*add_verify_path]]]
     [Add a directory containing certificate authority files to be used for performing verification. ]
   ]
   
   [
-    [[link asio.reference.ssl__basic_context.basic_context [*basic_context]]]
-    [Constructor. ]
+    [[link asio.reference.ssl__context.context [*context]]]
+    [Constructor. 
+
+     Deprecated constructor taking a reference to an io_service object. 
+
+     Move-construct a context from another. ]
   ]
   
   [
-    [[link asio.reference.ssl__basic_context.impl [*impl]]]
-    [Get the underlying implementation in the native type. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__basic_context.load_verify_file [*load_verify_file]]]
+    [[link asio.reference.ssl__context.load_verify_file [*load_verify_file]]]
     [Load a certification authority file for performing verification. ]
   ]
   
   [
-    [[link asio.reference.ssl__basic_context.set_options [*set_options]]]
+    [[link asio.reference.ssl__context.native_handle [*native_handle]]]
+    [Get the underlying implementation in the native type. ]
+  ]
+  
+  [
+    [[link asio.reference.ssl__context.operator_eq_ [*operator=]]]
+    [Move-assign a context from another. ]
+  ]
+  
+  [
+    [[link asio.reference.ssl__context.set_options [*set_options]]]
     [Set options on the context. ]
   ]
   
   [
-    [[link asio.reference.ssl__basic_context.set_password_callback [*set_password_callback]]]
+    [[link asio.reference.ssl__context.set_password_callback [*set_password_callback]]]
     [Set the password callback. ]
   ]
   
   [
-    [[link asio.reference.ssl__basic_context.set_verify_mode [*set_verify_mode]]]
+    [[link asio.reference.ssl__context.set_verify_mode [*set_verify_mode]]]
     [Set the peer verification mode. ]
   ]
   
   [
-    [[link asio.reference.ssl__basic_context.use_certificate_chain_file [*use_certificate_chain_file]]]
+    [[link asio.reference.ssl__context.use_certificate_chain_file [*use_certificate_chain_file]]]
     [Use a certificate chain from a file. ]
   ]
   
   [
-    [[link asio.reference.ssl__basic_context.use_certificate_file [*use_certificate_file]]]
+    [[link asio.reference.ssl__context.use_certificate_file [*use_certificate_file]]]
     [Use a certificate from a file. ]
   ]
   
   [
-    [[link asio.reference.ssl__basic_context.use_private_key_file [*use_private_key_file]]]
+    [[link asio.reference.ssl__context.use_private_key_file [*use_private_key_file]]]
     [Use a private key from a file. ]
   ]
   
   [
-    [[link asio.reference.ssl__basic_context.use_rsa_private_key_file [*use_rsa_private_key_file]]]
+    [[link asio.reference.ssl__context.use_rsa_private_key_file [*use_rsa_private_key_file]]]
     [Use an RSA private key from a file. ]
   ]
   
   [
-    [[link asio.reference.ssl__basic_context.use_tmp_dh_file [*use_tmp_dh_file]]]
+    [[link asio.reference.ssl__context.use_tmp_dh_file [*use_tmp_dh_file]]]
     [Use the specified file to obtain the temporary Diffie-Hellman parameters. ]
   ]
   
   [
-    [[link asio.reference.ssl__basic_context._basic_context [*~basic_context]]]
+    [[link asio.reference.ssl__context._context [*~context]]]
     [Destructor. ]
   ]
   
@@ -81104,47 +81103,47 @@ SSL context.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ssl__basic_context.default_workarounds [*default_workarounds]]]
+    [[link asio.reference.ssl__context.default_workarounds [*default_workarounds]]]
     [Implement various bug workarounds. ]
   ]
 
   [
-    [[link asio.reference.ssl__basic_context.no_sslv2 [*no_sslv2]]]
+    [[link asio.reference.ssl__context.no_sslv2 [*no_sslv2]]]
     [Disable SSL v2. ]
   ]
 
   [
-    [[link asio.reference.ssl__basic_context.no_sslv3 [*no_sslv3]]]
+    [[link asio.reference.ssl__context.no_sslv3 [*no_sslv3]]]
     [Disable SSL v3. ]
   ]
 
   [
-    [[link asio.reference.ssl__basic_context.no_tlsv1 [*no_tlsv1]]]
+    [[link asio.reference.ssl__context.no_tlsv1 [*no_tlsv1]]]
     [Disable TLS v1. ]
   ]
 
   [
-    [[link asio.reference.ssl__basic_context.single_dh_use [*single_dh_use]]]
+    [[link asio.reference.ssl__context.single_dh_use [*single_dh_use]]]
     [Always create a new key when using tmp_dh parameters. ]
   ]
 
   [
-    [[link asio.reference.ssl__basic_context.verify_client_once [*verify_client_once]]]
+    [[link asio.reference.ssl__context.verify_client_once [*verify_client_once]]]
     [Do not request client certificate on renegotiation. Ignored unless verify_peer is set. ]
   ]
 
   [
-    [[link asio.reference.ssl__basic_context.verify_fail_if_no_peer_cert [*verify_fail_if_no_peer_cert]]]
+    [[link asio.reference.ssl__context.verify_fail_if_no_peer_cert [*verify_fail_if_no_peer_cert]]]
     [Fail verification if the peer has no certificate. Ignored unless verify_peer is set. ]
   ]
 
   [
-    [[link asio.reference.ssl__basic_context.verify_none [*verify_none]]]
+    [[link asio.reference.ssl__context.verify_none [*verify_none]]]
     [No verification. ]
   ]
 
   [
-    [[link asio.reference.ssl__basic_context.verify_peer [*verify_peer]]]
+    [[link asio.reference.ssl__context.verify_peer [*verify_peer]]]
     [Verify the peer. ]
   ]
 
@@ -81152,27 +81151,27 @@ SSL context.
 
 [heading Requirements]
 
-[*Header: ][^asio/ssl/basic_context.hpp]
+[*Header: ][^asio/ssl/context.hpp]
 
 [*Convenience header: ][^asio/ssl.hpp]
 
-[section:add_verify_path ssl::basic_context::add_verify_path]
+[section:add_verify_path ssl::context::add_verify_path]
 
-[indexterm2 add_verify_path..ssl::basic_context] 
+[indexterm2 add_verify_path..ssl::context] 
 Add a directory containing certificate authority files to be used for performing verification. 
 
 
-  void ``[link asio.reference.ssl__basic_context.add_verify_path.overload1 add_verify_path]``(
+  void ``[link asio.reference.ssl__context.add_verify_path.overload1 add_verify_path]``(
       const std::string & path);
-  ``  [''''&raquo;''' [link asio.reference.ssl__basic_context.add_verify_path.overload1 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.add_verify_path.overload1 more...]]``
 
-  asio::error_code ``[link asio.reference.ssl__basic_context.add_verify_path.overload2 add_verify_path]``(
+  asio::error_code ``[link asio.reference.ssl__context.add_verify_path.overload2 add_verify_path]``(
       const std::string & path,
       asio::error_code & ec);
-  ``  [''''&raquo;''' [link asio.reference.ssl__basic_context.add_verify_path.overload2 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.add_verify_path.overload2 more...]]``
 
 
-[section:overload1 ssl::basic_context::add_verify_path (1 of 2 overloads)]
+[section:overload1 ssl::context::add_verify_path (1 of 2 overloads)]
 
 
 Add a directory containing certificate authority files to be used for performing verification. 
@@ -81211,7 +81210,7 @@ This function is used to specify the name of a directory containing certificatio
 
 
 
-[section:overload2 ssl::basic_context::add_verify_path (2 of 2 overloads)]
+[section:overload2 ssl::context::add_verify_path (2 of 2 overloads)]
 
 
 Add a directory containing certificate authority files to be used for performing verification. 
@@ -81244,15 +81243,41 @@ This function is used to specify the name of a directory containing certificatio
 
 [endsect]
 
+[section:context ssl::context::context]
 
-[section:basic_context ssl::basic_context::basic_context]
-
-[indexterm2 basic_context..ssl::basic_context] 
+[indexterm2 context..ssl::context] 
 Constructor. 
 
 
-  basic_context(
-      asio::io_service & io_service,
+  explicit ``[link asio.reference.ssl__context.context.overload1 context]``(
+      method m);
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.context.overload1 more...]]``
+
+
+Deprecated constructor taking a reference to an [link asio.reference.io_service `io_service`] object. 
+
+
+  ``[link asio.reference.ssl__context.context.overload2 context]``(
+      asio::io_service & ,
+      method m);
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.context.overload2 more...]]``
+
+
+Move-construct a context from another. 
+
+
+  ``[link asio.reference.ssl__context.context.overload3 context]``(
+      context && other);
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.context.overload3 more...]]``
+
+
+[section:overload1 ssl::context::context (1 of 3 overloads)]
+
+
+Constructor. 
+
+
+  context(
       method m);
 
 
@@ -81261,12 +81286,66 @@ Constructor.
 
 
 
-[section:default_workarounds ssl::basic_context::default_workarounds]
+[section:overload2 ssl::context::context (2 of 3 overloads)]
 
 
-['Inherited from ssl::context_base.]
+Deprecated constructor taking a reference to an [link asio.reference.io_service `io_service`] object. 
 
-[indexterm2 default_workarounds..ssl::basic_context] 
+
+  context(
+      asio::io_service & ,
+      method m);
+
+
+
+[endsect]
+
+
+
+[section:overload3 ssl::context::context (3 of 3 overloads)]
+
+
+Move-construct a context from another. 
+
+
+  context(
+      context && other);
+
+
+This constructor moves an SSL context from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other context object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the following operations only are valid for the moved-from object: 
+* Destruction. 
+
+* As a target for move-assignment. 
+
+
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:default_workarounds ssl::context::default_workarounds]
+
+[indexterm2 default_workarounds..ssl::context] 
 Implement various bug workarounds. 
 
 
@@ -81278,19 +81357,16 @@ Implement various bug workarounds.
 
 
 
-[section:file_format ssl::basic_context::file_format]
+[section:file_format ssl::context::file_format]
 
-
-['Inherited from ssl::context_base.]
-
-[indexterm2 file_format..ssl::basic_context] 
+[indexterm2 file_format..ssl::context] 
 File format types. 
 
 
   enum file_format
 
-[indexterm2 asn1..ssl::basic_context]
-[indexterm2 pem..ssl::basic_context]
+[indexterm2 asn1..ssl::context]
+[indexterm2 pem..ssl::context]
 
 [heading Values]
 [variablelist
@@ -81312,60 +81388,23 @@ File format types.
 [endsect]
 
 
+[section:load_verify_file ssl::context::load_verify_file]
 
-[section:impl ssl::basic_context::impl]
-
-[indexterm2 impl..ssl::basic_context] 
-Get the underlying implementation in the native type. 
-
-
-  impl_type impl();
-
-
-This function may be used to obtain the underlying implementation of the context. This is intended to allow access to context functionality that is not otherwise provided. 
-
-
-[endsect]
-
-
-
-[section:impl_type ssl::basic_context::impl_type]
-
-[indexterm2 impl_type..ssl::basic_context] 
-The native implementation type of the locking dispatcher. 
-
-
-  typedef service_type::impl_type impl_type;
-
-
-
-[heading Requirements]
-
-[*Header: ][^asio/ssl/basic_context.hpp]
-
-[*Convenience header: ][^asio/ssl.hpp]
-
-
-[endsect]
-
-
-[section:load_verify_file ssl::basic_context::load_verify_file]
-
-[indexterm2 load_verify_file..ssl::basic_context] 
+[indexterm2 load_verify_file..ssl::context] 
 Load a certification authority file for performing verification. 
 
 
-  void ``[link asio.reference.ssl__basic_context.load_verify_file.overload1 load_verify_file]``(
+  void ``[link asio.reference.ssl__context.load_verify_file.overload1 load_verify_file]``(
       const std::string & filename);
-  ``  [''''&raquo;''' [link asio.reference.ssl__basic_context.load_verify_file.overload1 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.load_verify_file.overload1 more...]]``
 
-  asio::error_code ``[link asio.reference.ssl__basic_context.load_verify_file.overload2 load_verify_file]``(
+  asio::error_code ``[link asio.reference.ssl__context.load_verify_file.overload2 load_verify_file]``(
       const std::string & filename,
       asio::error_code & ec);
-  ``  [''''&raquo;''' [link asio.reference.ssl__basic_context.load_verify_file.overload2 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.load_verify_file.overload2 more...]]``
 
 
-[section:overload1 ssl::basic_context::load_verify_file (1 of 2 overloads)]
+[section:overload1 ssl::context::load_verify_file (1 of 2 overloads)]
 
 
 Load a certification authority file for performing verification. 
@@ -81404,7 +81443,7 @@ This function is used to load one or more trusted certification authorities from
 
 
 
-[section:overload2 ssl::basic_context::load_verify_file (2 of 2 overloads)]
+[section:overload2 ssl::context::load_verify_file (2 of 2 overloads)]
 
 
 Load a certification authority file for performing verification. 
@@ -81438,29 +81477,26 @@ This function is used to load the certificates for one or more trusted certifica
 [endsect]
 
 
-[section:method ssl::basic_context::method]
+[section:method ssl::context::method]
 
-
-['Inherited from ssl::context_base.]
-
-[indexterm2 method..ssl::basic_context] 
+[indexterm2 method..ssl::context] 
 Different methods supported by a context. 
 
 
   enum method
 
-[indexterm2 sslv2..ssl::basic_context]
-[indexterm2 sslv2_client..ssl::basic_context]
-[indexterm2 sslv2_server..ssl::basic_context]
-[indexterm2 sslv3..ssl::basic_context]
-[indexterm2 sslv3_client..ssl::basic_context]
-[indexterm2 sslv3_server..ssl::basic_context]
-[indexterm2 tlsv1..ssl::basic_context]
-[indexterm2 tlsv1_client..ssl::basic_context]
-[indexterm2 tlsv1_server..ssl::basic_context]
-[indexterm2 sslv23..ssl::basic_context]
-[indexterm2 sslv23_client..ssl::basic_context]
-[indexterm2 sslv23_server..ssl::basic_context]
+[indexterm2 sslv2..ssl::context]
+[indexterm2 sslv2_client..ssl::context]
+[indexterm2 sslv2_server..ssl::context]
+[indexterm2 sslv3..ssl::context]
+[indexterm2 sslv3_client..ssl::context]
+[indexterm2 sslv3_server..ssl::context]
+[indexterm2 tlsv1..ssl::context]
+[indexterm2 tlsv1_client..ssl::context]
+[indexterm2 tlsv1_server..ssl::context]
+[indexterm2 sslv23..ssl::context]
+[indexterm2 sslv23_client..ssl::context]
+[indexterm2 sslv23_server..ssl::context]
 
 [heading Values]
 [variablelist
@@ -81533,12 +81569,46 @@ Different methods supported by a context.
 
 
 
-[section:no_sslv2 ssl::basic_context::no_sslv2]
+[section:native_handle ssl::context::native_handle]
+
+[indexterm2 native_handle..ssl::context] 
+Get the underlying implementation in the native type. 
 
 
-['Inherited from ssl::context_base.]
+  native_handle_type native_handle();
 
-[indexterm2 no_sslv2..ssl::basic_context] 
+
+This function may be used to obtain the underlying implementation of the context. This is intended to allow access to context functionality that is not otherwise provided. 
+
+
+[endsect]
+
+
+
+[section:native_handle_type ssl::context::native_handle_type]
+
+[indexterm2 native_handle_type..ssl::context] 
+The native handle type of the SSL context. 
+
+
+  typedef SSL_CTX * native_handle_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ssl/context.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
+
+[endsect]
+
+
+
+[section:no_sslv2 ssl::context::no_sslv2]
+
+[indexterm2 no_sslv2..ssl::context] 
 Disable SSL v2. 
 
 
@@ -81550,12 +81620,9 @@ Disable SSL v2.
 
 
 
-[section:no_sslv3 ssl::basic_context::no_sslv3]
+[section:no_sslv3 ssl::context::no_sslv3]
 
-
-['Inherited from ssl::context_base.]
-
-[indexterm2 no_sslv3..ssl::basic_context] 
+[indexterm2 no_sslv3..ssl::context] 
 Disable SSL v3. 
 
 
@@ -81567,12 +81634,9 @@ Disable SSL v3.
 
 
 
-[section:no_tlsv1 ssl::basic_context::no_tlsv1]
+[section:no_tlsv1 ssl::context::no_tlsv1]
 
-
-['Inherited from ssl::context_base.]
-
-[indexterm2 no_tlsv1..ssl::basic_context] 
+[indexterm2 no_tlsv1..ssl::context] 
 Disable TLS v1. 
 
 
@@ -81584,12 +81648,48 @@ Disable TLS v1.
 
 
 
-[section:options ssl::basic_context::options]
+[section:operator_eq_ ssl::context::operator=]
+
+[indexterm2 operator=..ssl::context] 
+Move-assign a context from another. 
 
 
-['Inherited from ssl::context_base.]
+  context & operator=(
+      context && other);
 
-[indexterm2 options..ssl::basic_context] 
+
+This assignment operator moves an SSL context from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other context object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the following operations only are valid for the moved-from object: 
+* Destruction. 
+
+* As a target for move-assignment. 
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:options ssl::context::options]
+
+[indexterm2 options..ssl::context] 
 Bitmask type for SSL options. 
 
 
@@ -81599,7 +81699,7 @@ Bitmask type for SSL options.
 
 [heading Requirements]
 
-[*Header: ][^asio/ssl/basic_context.hpp]
+[*Header: ][^asio/ssl/context.hpp]
 
 [*Convenience header: ][^asio/ssl.hpp]
 
@@ -81608,19 +81708,16 @@ Bitmask type for SSL options.
 
 
 
-[section:password_purpose ssl::basic_context::password_purpose]
+[section:password_purpose ssl::context::password_purpose]
 
-
-['Inherited from ssl::context_base.]
-
-[indexterm2 password_purpose..ssl::basic_context] 
+[indexterm2 password_purpose..ssl::context] 
 Purpose of PEM password. 
 
 
   enum password_purpose
 
-[indexterm2 for_reading..ssl::basic_context]
-[indexterm2 for_writing..ssl::basic_context]
+[indexterm2 for_reading..ssl::context]
+[indexterm2 for_writing..ssl::context]
 
 [heading Values]
 [variablelist
@@ -81642,44 +81739,23 @@ Purpose of PEM password.
 [endsect]
 
 
+[section:set_options ssl::context::set_options]
 
-[section:service_type ssl::basic_context::service_type]
-
-[indexterm2 service_type..ssl::basic_context] 
-The type of the service that will be used to provide context operations. 
-
-
-  typedef Service service_type;
-
-
-
-[heading Requirements]
-
-[*Header: ][^asio/ssl/basic_context.hpp]
-
-[*Convenience header: ][^asio/ssl.hpp]
-
-
-[endsect]
-
-
-[section:set_options ssl::basic_context::set_options]
-
-[indexterm2 set_options..ssl::basic_context] 
+[indexterm2 set_options..ssl::context] 
 Set options on the context. 
 
 
-  void ``[link asio.reference.ssl__basic_context.set_options.overload1 set_options]``(
+  void ``[link asio.reference.ssl__context.set_options.overload1 set_options]``(
       options o);
-  ``  [''''&raquo;''' [link asio.reference.ssl__basic_context.set_options.overload1 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.set_options.overload1 more...]]``
 
-  asio::error_code ``[link asio.reference.ssl__basic_context.set_options.overload2 set_options]``(
+  asio::error_code ``[link asio.reference.ssl__context.set_options.overload2 set_options]``(
       options o,
       asio::error_code & ec);
-  ``  [''''&raquo;''' [link asio.reference.ssl__basic_context.set_options.overload2 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.set_options.overload2 more...]]``
 
 
-[section:overload1 ssl::basic_context::set_options (1 of 2 overloads)]
+[section:overload1 ssl::context::set_options (1 of 2 overloads)]
 
 
 Set options on the context. 
@@ -81718,7 +81794,7 @@ This function may be used to configure the SSL options used by the context.
 
 
 
-[section:overload2 ssl::basic_context::set_options (2 of 2 overloads)]
+[section:overload2 ssl::context::set_options (2 of 2 overloads)]
 
 
 Set options on the context. 
@@ -81751,27 +81827,27 @@ This function may be used to configure the SSL options used by the context.
 
 [endsect]
 
-[section:set_password_callback ssl::basic_context::set_password_callback]
+[section:set_password_callback ssl::context::set_password_callback]
 
-[indexterm2 set_password_callback..ssl::basic_context] 
+[indexterm2 set_password_callback..ssl::context] 
 Set the password callback. 
 
 
   template<
       typename PasswordCallback>
-  void ``[link asio.reference.ssl__basic_context.set_password_callback.overload1 set_password_callback]``(
+  void ``[link asio.reference.ssl__context.set_password_callback.overload1 set_password_callback]``(
       PasswordCallback callback);
-  ``  [''''&raquo;''' [link asio.reference.ssl__basic_context.set_password_callback.overload1 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.set_password_callback.overload1 more...]]``
 
   template<
       typename PasswordCallback>
-  asio::error_code ``[link asio.reference.ssl__basic_context.set_password_callback.overload2 set_password_callback]``(
+  asio::error_code ``[link asio.reference.ssl__context.set_password_callback.overload2 set_password_callback]``(
       PasswordCallback callback,
       asio::error_code & ec);
-  ``  [''''&raquo;''' [link asio.reference.ssl__basic_context.set_password_callback.overload2 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.set_password_callback.overload2 more...]]``
 
 
-[section:overload1 ssl::basic_context::set_password_callback (1 of 2 overloads)]
+[section:overload1 ssl::context::set_password_callback (1 of 2 overloads)]
 
 
 Set the password callback. 
@@ -81819,7 +81895,7 @@ The return value of the callback is a string containing the password.]]
 
 
 
-[section:overload2 ssl::basic_context::set_password_callback (2 of 2 overloads)]
+[section:overload2 ssl::context::set_password_callback (2 of 2 overloads)]
 
 
 Set the password callback. 
@@ -81861,23 +81937,23 @@ The return value of the callback is a string containing the password.]]
 
 [endsect]
 
-[section:set_verify_mode ssl::basic_context::set_verify_mode]
+[section:set_verify_mode ssl::context::set_verify_mode]
 
-[indexterm2 set_verify_mode..ssl::basic_context] 
+[indexterm2 set_verify_mode..ssl::context] 
 Set the peer verification mode. 
 
 
-  void ``[link asio.reference.ssl__basic_context.set_verify_mode.overload1 set_verify_mode]``(
+  void ``[link asio.reference.ssl__context.set_verify_mode.overload1 set_verify_mode]``(
       verify_mode v);
-  ``  [''''&raquo;''' [link asio.reference.ssl__basic_context.set_verify_mode.overload1 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.set_verify_mode.overload1 more...]]``
 
-  asio::error_code ``[link asio.reference.ssl__basic_context.set_verify_mode.overload2 set_verify_mode]``(
+  asio::error_code ``[link asio.reference.ssl__context.set_verify_mode.overload2 set_verify_mode]``(
       verify_mode v,
       asio::error_code & ec);
-  ``  [''''&raquo;''' [link asio.reference.ssl__basic_context.set_verify_mode.overload2 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.set_verify_mode.overload2 more...]]``
 
 
-[section:overload1 ssl::basic_context::set_verify_mode (1 of 2 overloads)]
+[section:overload1 ssl::context::set_verify_mode (1 of 2 overloads)]
 
 
 Set the peer verification mode. 
@@ -81916,7 +81992,7 @@ This function may be used to configure the peer verification mode used by the co
 
 
 
-[section:overload2 ssl::basic_context::set_verify_mode (2 of 2 overloads)]
+[section:overload2 ssl::context::set_verify_mode (2 of 2 overloads)]
 
 
 Set the peer verification mode. 
@@ -81950,12 +82026,9 @@ This function may be used to configure the peer verification mode used by the co
 [endsect]
 
 
-[section:single_dh_use ssl::basic_context::single_dh_use]
+[section:single_dh_use ssl::context::single_dh_use]
 
-
-['Inherited from ssl::context_base.]
-
-[indexterm2 single_dh_use..ssl::basic_context] 
+[indexterm2 single_dh_use..ssl::context] 
 Always create a new key when using tmp\_dh parameters. 
 
 
@@ -81966,23 +82039,23 @@ Always create a new key when using tmp\_dh parameters.
 [endsect]
 
 
-[section:use_certificate_chain_file ssl::basic_context::use_certificate_chain_file]
+[section:use_certificate_chain_file ssl::context::use_certificate_chain_file]
 
-[indexterm2 use_certificate_chain_file..ssl::basic_context] 
+[indexterm2 use_certificate_chain_file..ssl::context] 
 Use a certificate chain from a file. 
 
 
-  void ``[link asio.reference.ssl__basic_context.use_certificate_chain_file.overload1 use_certificate_chain_file]``(
+  void ``[link asio.reference.ssl__context.use_certificate_chain_file.overload1 use_certificate_chain_file]``(
       const std::string & filename);
-  ``  [''''&raquo;''' [link asio.reference.ssl__basic_context.use_certificate_chain_file.overload1 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.use_certificate_chain_file.overload1 more...]]``
 
-  asio::error_code ``[link asio.reference.ssl__basic_context.use_certificate_chain_file.overload2 use_certificate_chain_file]``(
+  asio::error_code ``[link asio.reference.ssl__context.use_certificate_chain_file.overload2 use_certificate_chain_file]``(
       const std::string & filename,
       asio::error_code & ec);
-  ``  [''''&raquo;''' [link asio.reference.ssl__basic_context.use_certificate_chain_file.overload2 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.use_certificate_chain_file.overload2 more...]]``
 
 
-[section:overload1 ssl::basic_context::use_certificate_chain_file (1 of 2 overloads)]
+[section:overload1 ssl::context::use_certificate_chain_file (1 of 2 overloads)]
 
 
 Use a certificate chain from a file. 
@@ -82021,7 +82094,7 @@ This function is used to load a certificate chain into the context from a file.
 
 
 
-[section:overload2 ssl::basic_context::use_certificate_chain_file (2 of 2 overloads)]
+[section:overload2 ssl::context::use_certificate_chain_file (2 of 2 overloads)]
 
 
 Use a certificate chain from a file. 
@@ -82054,25 +82127,25 @@ This function is used to load a certificate chain into the context from a file.
 
 [endsect]
 
-[section:use_certificate_file ssl::basic_context::use_certificate_file]
+[section:use_certificate_file ssl::context::use_certificate_file]
 
-[indexterm2 use_certificate_file..ssl::basic_context] 
+[indexterm2 use_certificate_file..ssl::context] 
 Use a certificate from a file. 
 
 
-  void ``[link asio.reference.ssl__basic_context.use_certificate_file.overload1 use_certificate_file]``(
+  void ``[link asio.reference.ssl__context.use_certificate_file.overload1 use_certificate_file]``(
       const std::string & filename,
       file_format format);
-  ``  [''''&raquo;''' [link asio.reference.ssl__basic_context.use_certificate_file.overload1 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.use_certificate_file.overload1 more...]]``
 
-  asio::error_code ``[link asio.reference.ssl__basic_context.use_certificate_file.overload2 use_certificate_file]``(
+  asio::error_code ``[link asio.reference.ssl__context.use_certificate_file.overload2 use_certificate_file]``(
       const std::string & filename,
       file_format format,
       asio::error_code & ec);
-  ``  [''''&raquo;''' [link asio.reference.ssl__basic_context.use_certificate_file.overload2 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.use_certificate_file.overload2 more...]]``
 
 
-[section:overload1 ssl::basic_context::use_certificate_file (1 of 2 overloads)]
+[section:overload1 ssl::context::use_certificate_file (1 of 2 overloads)]
 
 
 Use a certificate from a file. 
@@ -82114,7 +82187,7 @@ This function is used to load a certificate into the context from a file.
 
 
 
-[section:overload2 ssl::basic_context::use_certificate_file (2 of 2 overloads)]
+[section:overload2 ssl::context::use_certificate_file (2 of 2 overloads)]
 
 
 Use a certificate from a file. 
@@ -82150,25 +82223,25 @@ This function is used to load a certificate into the context from a file.
 
 [endsect]
 
-[section:use_private_key_file ssl::basic_context::use_private_key_file]
+[section:use_private_key_file ssl::context::use_private_key_file]
 
-[indexterm2 use_private_key_file..ssl::basic_context] 
+[indexterm2 use_private_key_file..ssl::context] 
 Use a private key from a file. 
 
 
-  void ``[link asio.reference.ssl__basic_context.use_private_key_file.overload1 use_private_key_file]``(
+  void ``[link asio.reference.ssl__context.use_private_key_file.overload1 use_private_key_file]``(
       const std::string & filename,
       file_format format);
-  ``  [''''&raquo;''' [link asio.reference.ssl__basic_context.use_private_key_file.overload1 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.use_private_key_file.overload1 more...]]``
 
-  asio::error_code ``[link asio.reference.ssl__basic_context.use_private_key_file.overload2 use_private_key_file]``(
+  asio::error_code ``[link asio.reference.ssl__context.use_private_key_file.overload2 use_private_key_file]``(
       const std::string & filename,
       file_format format,
       asio::error_code & ec);
-  ``  [''''&raquo;''' [link asio.reference.ssl__basic_context.use_private_key_file.overload2 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.use_private_key_file.overload2 more...]]``
 
 
-[section:overload1 ssl::basic_context::use_private_key_file (1 of 2 overloads)]
+[section:overload1 ssl::context::use_private_key_file (1 of 2 overloads)]
 
 
 Use a private key from a file. 
@@ -82210,7 +82283,7 @@ This function is used to load a private key into the context from a file.
 
 
 
-[section:overload2 ssl::basic_context::use_private_key_file (2 of 2 overloads)]
+[section:overload2 ssl::context::use_private_key_file (2 of 2 overloads)]
 
 
 Use a private key from a file. 
@@ -82246,25 +82319,25 @@ This function is used to load a private key into the context from a file.
 
 [endsect]
 
-[section:use_rsa_private_key_file ssl::basic_context::use_rsa_private_key_file]
+[section:use_rsa_private_key_file ssl::context::use_rsa_private_key_file]
 
-[indexterm2 use_rsa_private_key_file..ssl::basic_context] 
+[indexterm2 use_rsa_private_key_file..ssl::context] 
 Use an RSA private key from a file. 
 
 
-  void ``[link asio.reference.ssl__basic_context.use_rsa_private_key_file.overload1 use_rsa_private_key_file]``(
+  void ``[link asio.reference.ssl__context.use_rsa_private_key_file.overload1 use_rsa_private_key_file]``(
       const std::string & filename,
       file_format format);
-  ``  [''''&raquo;''' [link asio.reference.ssl__basic_context.use_rsa_private_key_file.overload1 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.use_rsa_private_key_file.overload1 more...]]``
 
-  asio::error_code ``[link asio.reference.ssl__basic_context.use_rsa_private_key_file.overload2 use_rsa_private_key_file]``(
+  asio::error_code ``[link asio.reference.ssl__context.use_rsa_private_key_file.overload2 use_rsa_private_key_file]``(
       const std::string & filename,
       file_format format,
       asio::error_code & ec);
-  ``  [''''&raquo;''' [link asio.reference.ssl__basic_context.use_rsa_private_key_file.overload2 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.use_rsa_private_key_file.overload2 more...]]``
 
 
-[section:overload1 ssl::basic_context::use_rsa_private_key_file (1 of 2 overloads)]
+[section:overload1 ssl::context::use_rsa_private_key_file (1 of 2 overloads)]
 
 
 Use an RSA private key from a file. 
@@ -82306,7 +82379,7 @@ This function is used to load an RSA private key into the context from a file.
 
 
 
-[section:overload2 ssl::basic_context::use_rsa_private_key_file (2 of 2 overloads)]
+[section:overload2 ssl::context::use_rsa_private_key_file (2 of 2 overloads)]
 
 
 Use an RSA private key from a file. 
@@ -82342,23 +82415,23 @@ This function is used to load an RSA private key into the context from a file.
 
 [endsect]
 
-[section:use_tmp_dh_file ssl::basic_context::use_tmp_dh_file]
+[section:use_tmp_dh_file ssl::context::use_tmp_dh_file]
 
-[indexterm2 use_tmp_dh_file..ssl::basic_context] 
+[indexterm2 use_tmp_dh_file..ssl::context] 
 Use the specified file to obtain the temporary Diffie-Hellman parameters. 
 
 
-  void ``[link asio.reference.ssl__basic_context.use_tmp_dh_file.overload1 use_tmp_dh_file]``(
+  void ``[link asio.reference.ssl__context.use_tmp_dh_file.overload1 use_tmp_dh_file]``(
       const std::string & filename);
-  ``  [''''&raquo;''' [link asio.reference.ssl__basic_context.use_tmp_dh_file.overload1 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.use_tmp_dh_file.overload1 more...]]``
 
-  asio::error_code ``[link asio.reference.ssl__basic_context.use_tmp_dh_file.overload2 use_tmp_dh_file]``(
+  asio::error_code ``[link asio.reference.ssl__context.use_tmp_dh_file.overload2 use_tmp_dh_file]``(
       const std::string & filename,
       asio::error_code & ec);
-  ``  [''''&raquo;''' [link asio.reference.ssl__basic_context.use_tmp_dh_file.overload2 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.use_tmp_dh_file.overload2 more...]]``
 
 
-[section:overload1 ssl::basic_context::use_tmp_dh_file (1 of 2 overloads)]
+[section:overload1 ssl::context::use_tmp_dh_file (1 of 2 overloads)]
 
 
 Use the specified file to obtain the temporary Diffie-Hellman parameters. 
@@ -82397,7 +82470,7 @@ This function is used to load Diffie-Hellman parameters into the context from a 
 
 
 
-[section:overload2 ssl::basic_context::use_tmp_dh_file (2 of 2 overloads)]
+[section:overload2 ssl::context::use_tmp_dh_file (2 of 2 overloads)]
 
 
 Use the specified file to obtain the temporary Diffie-Hellman parameters. 
@@ -82431,12 +82504,9 @@ This function is used to load Diffie-Hellman parameters into the context from a 
 [endsect]
 
 
-[section:verify_client_once ssl::basic_context::verify_client_once]
+[section:verify_client_once ssl::context::verify_client_once]
 
-
-['Inherited from ssl::context_base.]
-
-[indexterm2 verify_client_once..ssl::basic_context] 
+[indexterm2 verify_client_once..ssl::context] 
 Do not request client certificate on renegotiation. Ignored unless verify\_peer is set. 
 
 
@@ -82448,12 +82518,9 @@ Do not request client certificate on renegotiation. Ignored unless verify\_peer 
 
 
 
-[section:verify_fail_if_no_peer_cert ssl::basic_context::verify_fail_if_no_peer_cert]
+[section:verify_fail_if_no_peer_cert ssl::context::verify_fail_if_no_peer_cert]
 
-
-['Inherited from ssl::context_base.]
-
-[indexterm2 verify_fail_if_no_peer_cert..ssl::basic_context] 
+[indexterm2 verify_fail_if_no_peer_cert..ssl::context] 
 Fail verification if the peer has no certificate. Ignored unless verify\_peer is set. 
 
 
@@ -82465,266 +82532,14 @@ Fail verification if the peer has no certificate. Ignored unless verify\_peer is
 
 
 
-[section:verify_mode ssl::basic_context::verify_mode]
+[section:verify_mode ssl::context::verify_mode]
 
-
-['Inherited from ssl::context_base.]
-
-[indexterm2 verify_mode..ssl::basic_context] 
+[indexterm2 verify_mode..ssl::context] 
 Bitmask type for peer verification. 
 
 
   typedef int verify_mode;
 
-
-
-[heading Requirements]
-
-[*Header: ][^asio/ssl/basic_context.hpp]
-
-[*Convenience header: ][^asio/ssl.hpp]
-
-
-[endsect]
-
-
-
-[section:verify_none ssl::basic_context::verify_none]
-
-
-['Inherited from ssl::context_base.]
-
-[indexterm2 verify_none..ssl::basic_context] 
-No verification. 
-
-
-  static const int verify_none = implementation_defined;
-
-
-
-[endsect]
-
-
-
-[section:verify_peer ssl::basic_context::verify_peer]
-
-
-['Inherited from ssl::context_base.]
-
-[indexterm2 verify_peer..ssl::basic_context] 
-Verify the peer. 
-
-
-  static const int verify_peer = implementation_defined;
-
-
-
-[endsect]
-
-
-
-[section:_basic_context ssl::basic_context::~basic_context]
-
-[indexterm2 ~basic_context..ssl::basic_context] 
-Destructor. 
-
-
-  ~basic_context();
-
-
-
-[endsect]
-
-
-
-[endsect]
-
-
-[section:ssl__context ssl::context]
-
-[indexterm1 ssl::context] 
-Typedef for the typical usage of context. 
-
-
-  typedef basic_context< context_service > context;
-
-
-[heading Types]
-[table
-  [[Name][Description]]
-
-  [
-
-    [[link asio.reference.ssl__basic_context.file_format [*file_format]]]
-    [File format types. ]
-  
-  ]
-
-  [
-
-    [[link asio.reference.ssl__basic_context.impl_type [*impl_type]]]
-    [The native implementation type of the locking dispatcher. ]
-  
-  ]
-
-  [
-
-    [[link asio.reference.ssl__basic_context.method [*method]]]
-    [Different methods supported by a context. ]
-  
-  ]
-
-  [
-
-    [[link asio.reference.ssl__basic_context.options [*options]]]
-    [Bitmask type for SSL options. ]
-  
-  ]
-
-  [
-
-    [[link asio.reference.ssl__basic_context.password_purpose [*password_purpose]]]
-    [Purpose of PEM password. ]
-  
-  ]
-
-  [
-
-    [[link asio.reference.ssl__basic_context.service_type [*service_type]]]
-    [The type of the service that will be used to provide context operations. ]
-  
-  ]
-
-  [
-
-    [[link asio.reference.ssl__basic_context.verify_mode [*verify_mode]]]
-    [Bitmask type for peer verification. ]
-  
-  ]
-
-]
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.ssl__basic_context.add_verify_path [*add_verify_path]]]
-    [Add a directory containing certificate authority files to be used for performing verification. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__basic_context.basic_context [*basic_context]]]
-    [Constructor. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__basic_context.impl [*impl]]]
-    [Get the underlying implementation in the native type. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__basic_context.load_verify_file [*load_verify_file]]]
-    [Load a certification authority file for performing verification. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__basic_context.set_options [*set_options]]]
-    [Set options on the context. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__basic_context.set_password_callback [*set_password_callback]]]
-    [Set the password callback. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__basic_context.set_verify_mode [*set_verify_mode]]]
-    [Set the peer verification mode. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__basic_context.use_certificate_chain_file [*use_certificate_chain_file]]]
-    [Use a certificate chain from a file. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__basic_context.use_certificate_file [*use_certificate_file]]]
-    [Use a certificate from a file. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__basic_context.use_private_key_file [*use_private_key_file]]]
-    [Use a private key from a file. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__basic_context.use_rsa_private_key_file [*use_rsa_private_key_file]]]
-    [Use an RSA private key from a file. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__basic_context.use_tmp_dh_file [*use_tmp_dh_file]]]
-    [Use the specified file to obtain the temporary Diffie-Hellman parameters. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__basic_context._basic_context [*~basic_context]]]
-    [Destructor. ]
-  ]
-  
-]
-
-[heading Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.ssl__basic_context.default_workarounds [*default_workarounds]]]
-    [Implement various bug workarounds. ]
-  ]
-
-  [
-    [[link asio.reference.ssl__basic_context.no_sslv2 [*no_sslv2]]]
-    [Disable SSL v2. ]
-  ]
-
-  [
-    [[link asio.reference.ssl__basic_context.no_sslv3 [*no_sslv3]]]
-    [Disable SSL v3. ]
-  ]
-
-  [
-    [[link asio.reference.ssl__basic_context.no_tlsv1 [*no_tlsv1]]]
-    [Disable TLS v1. ]
-  ]
-
-  [
-    [[link asio.reference.ssl__basic_context.single_dh_use [*single_dh_use]]]
-    [Always create a new key when using tmp_dh parameters. ]
-  ]
-
-  [
-    [[link asio.reference.ssl__basic_context.verify_client_once [*verify_client_once]]]
-    [Do not request client certificate on renegotiation. Ignored unless verify_peer is set. ]
-  ]
-
-  [
-    [[link asio.reference.ssl__basic_context.verify_fail_if_no_peer_cert [*verify_fail_if_no_peer_cert]]]
-    [Fail verification if the peer has no certificate. Ignored unless verify_peer is set. ]
-  ]
-
-  [
-    [[link asio.reference.ssl__basic_context.verify_none [*verify_none]]]
-    [No verification. ]
-  ]
-
-  [
-    [[link asio.reference.ssl__basic_context.verify_peer [*verify_peer]]]
-    [Verify the peer. ]
-  ]
-
-]
 
 
 [heading Requirements]
@@ -82737,10 +82552,55 @@ Typedef for the typical usage of context.
 [endsect]
 
 
+
+[section:verify_none ssl::context::verify_none]
+
+[indexterm2 verify_none..ssl::context] 
+No verification. 
+
+
+  static const int verify_none = implementation_defined;
+
+
+
+[endsect]
+
+
+
+[section:verify_peer ssl::context::verify_peer]
+
+[indexterm2 verify_peer..ssl::context] 
+Verify the peer. 
+
+
+  static const int verify_peer = implementation_defined;
+
+
+
+[endsect]
+
+
+
+[section:_context ssl::context::~context]
+
+[indexterm2 ~context..ssl::context] 
+Destructor. 
+
+
+  ~context();
+
+
+
+[endsect]
+
+
+
+[endsect]
+
 [section:ssl__context_base ssl::context_base]
 
 
-The [link asio.reference.ssl__context_base `ssl::context_base`] class is used as a base for the [link asio.reference.ssl__basic_context `ssl::basic_context`] class template so that we have a common place to define various enums. 
+The [link asio.reference.ssl__context_base `ssl::context_base`] class is used as a base for the basic\_context class template so that we have a common place to define various enums. 
 
 
   class context_base
@@ -83196,417 +83056,6 @@ Protected destructor to prevent deletion through this type.
 
 [endsect]
 
-[section:ssl__context_service ssl::context_service]
-
-
-Default service implementation for a context. 
-
-
-  class context_service :
-    public io_service::service
-
-
-[heading Types]
-[table
-  [[Name][Description]]
-
-  [
-
-    [[link asio.reference.ssl__context_service.impl_type [*impl_type]]]
-    [The type of the context. ]
-  
-  ]
-
-]
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.ssl__context_service.add_verify_path [*add_verify_path]]]
-    [Add a directory containing certification authority files to be used for performing verification. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__context_service.context_service [*context_service]]]
-    [Constructor. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__context_service.create [*create]]]
-    [Create a new context implementation. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__context_service.destroy [*destroy]]]
-    [Destroy a context implementation. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__context_service.get_io_service [*get_io_service]]]
-    [Get the io_service object that owns the service. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__context_service.load_verify_file [*load_verify_file]]]
-    [Load a certification authority file for performing verification. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__context_service.null [*null]]]
-    [Return a null context implementation. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__context_service.set_options [*set_options]]]
-    [Set options on the context. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__context_service.set_password_callback [*set_password_callback]]]
-    [Set the password callback. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__context_service.set_verify_mode [*set_verify_mode]]]
-    [Set peer verification mode. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__context_service.use_certificate_chain_file [*use_certificate_chain_file]]]
-    [Use a certificate chain from a file. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__context_service.use_certificate_file [*use_certificate_file]]]
-    [Use a certificate from a file. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__context_service.use_private_key_file [*use_private_key_file]]]
-    [Use a private key from a file. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__context_service.use_rsa_private_key_file [*use_rsa_private_key_file]]]
-    [Use an RSA private key from a file. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__context_service.use_tmp_dh_file [*use_tmp_dh_file]]]
-    [Use the specified file to obtain the temporary Diffie-Hellman parameters. ]
-  ]
-  
-]
-
-[heading Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.ssl__context_service.id [*id]]]
-    [The unique service identifier. ]
-  ]
-
-]
-
-[heading Requirements]
-
-[*Header: ][^asio/ssl/context_service.hpp]
-
-[*Convenience header: ][^asio/ssl.hpp]
-
-
-[section:add_verify_path ssl::context_service::add_verify_path]
-
-[indexterm2 add_verify_path..ssl::context_service] 
-Add a directory containing certification authority files to be used for performing verification. 
-
-
-  asio::error_code add_verify_path(
-      impl_type & impl,
-      const std::string & path,
-      asio::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:context_service ssl::context_service::context_service]
-
-[indexterm2 context_service..ssl::context_service] 
-Constructor. 
-
-
-  context_service(
-      asio::io_service & io_service);
-
-
-
-[endsect]
-
-
-
-[section:create ssl::context_service::create]
-
-[indexterm2 create..ssl::context_service] 
-Create a new context implementation. 
-
-
-  void create(
-      impl_type & impl,
-      context_base::method m);
-
-
-
-[endsect]
-
-
-
-[section:destroy ssl::context_service::destroy]
-
-[indexterm2 destroy..ssl::context_service] 
-Destroy a context implementation. 
-
-
-  void destroy(
-      impl_type & impl);
-
-
-
-[endsect]
-
-
-
-[section:get_io_service ssl::context_service::get_io_service]
-
-
-['Inherited from io_service.]
-
-[indexterm2 get_io_service..ssl::context_service] 
-Get the [link asio.reference.io_service `io_service`] object that owns the service. 
-
-
-  asio::io_service & get_io_service();
-
-
-
-[endsect]
-
-
-
-[section:id ssl::context_service::id]
-
-[indexterm2 id..ssl::context_service] 
-The unique service identifier. 
-
-
-  static asio::io_service::id id;
-
-
-
-[endsect]
-
-
-
-[section:impl_type ssl::context_service::impl_type]
-
-[indexterm2 impl_type..ssl::context_service] 
-The type of the context. 
-
-
-  typedef implementation_defined impl_type;
-
-
-
-[heading Requirements]
-
-[*Header: ][^asio/ssl/context_service.hpp]
-
-[*Convenience header: ][^asio/ssl.hpp]
-
-
-[endsect]
-
-
-
-[section:load_verify_file ssl::context_service::load_verify_file]
-
-[indexterm2 load_verify_file..ssl::context_service] 
-Load a certification authority file for performing verification. 
-
-
-  asio::error_code load_verify_file(
-      impl_type & impl,
-      const std::string & filename,
-      asio::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:null ssl::context_service::null]
-
-[indexterm2 null..ssl::context_service] 
-Return a null context implementation. 
-
-
-  impl_type null() const;
-
-
-
-[endsect]
-
-
-
-[section:set_options ssl::context_service::set_options]
-
-[indexterm2 set_options..ssl::context_service] 
-Set options on the context. 
-
-
-  asio::error_code set_options(
-      impl_type & impl,
-      context_base::options o,
-      asio::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:set_password_callback ssl::context_service::set_password_callback]
-
-[indexterm2 set_password_callback..ssl::context_service] 
-Set the password callback. 
-
-
-  template<
-      typename PasswordCallback>
-  asio::error_code set_password_callback(
-      impl_type & impl,
-      PasswordCallback callback,
-      asio::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:set_verify_mode ssl::context_service::set_verify_mode]
-
-[indexterm2 set_verify_mode..ssl::context_service] 
-Set peer verification mode. 
-
-
-  asio::error_code set_verify_mode(
-      impl_type & impl,
-      context_base::verify_mode v,
-      asio::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:use_certificate_chain_file ssl::context_service::use_certificate_chain_file]
-
-[indexterm2 use_certificate_chain_file..ssl::context_service] 
-Use a certificate chain from a file. 
-
-
-  asio::error_code use_certificate_chain_file(
-      impl_type & impl,
-      const std::string & filename,
-      asio::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:use_certificate_file ssl::context_service::use_certificate_file]
-
-[indexterm2 use_certificate_file..ssl::context_service] 
-Use a certificate from a file. 
-
-
-  asio::error_code use_certificate_file(
-      impl_type & impl,
-      const std::string & filename,
-      context_base::file_format format,
-      asio::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:use_private_key_file ssl::context_service::use_private_key_file]
-
-[indexterm2 use_private_key_file..ssl::context_service] 
-Use a private key from a file. 
-
-
-  asio::error_code use_private_key_file(
-      impl_type & impl,
-      const std::string & filename,
-      context_base::file_format format,
-      asio::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:use_rsa_private_key_file ssl::context_service::use_rsa_private_key_file]
-
-[indexterm2 use_rsa_private_key_file..ssl::context_service] 
-Use an RSA private key from a file. 
-
-
-  asio::error_code use_rsa_private_key_file(
-      impl_type & impl,
-      const std::string & filename,
-      context_base::file_format format,
-      asio::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:use_tmp_dh_file ssl::context_service::use_tmp_dh_file]
-
-[indexterm2 use_tmp_dh_file..ssl::context_service] 
-Use the specified file to obtain the temporary Diffie-Hellman parameters. 
-
-
-  asio::error_code use_tmp_dh_file(
-      impl_type & impl,
-      const std::string & filename,
-      asio::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[endsect]
-
 [section:ssl__stream ssl::stream]
 
 
@@ -83614,10 +83063,10 @@ Provides stream-oriented functionality using SSL.
 
 
   template<
-      typename Stream,
-      typename ``[link asio.reference.Service Service]`` = stream_service>
+      typename Stream>
   class stream :
-    public ssl::stream_base
+    public ssl::stream_base,
+    noncopyable
 
 
 [heading Types]
@@ -83633,13 +83082,6 @@ Provides stream-oriented functionality using SSL.
 
   [
 
-    [[link asio.reference.ssl__stream.impl_type [*impl_type]]]
-    [The native implementation type of the stream. ]
-  
-  ]
-
-  [
-
     [[link asio.reference.ssl__stream.lowest_layer_type [*lowest_layer_type]]]
     [The type of the lowest layer. ]
   
@@ -83647,15 +83089,15 @@ Provides stream-oriented functionality using SSL.
 
   [
 
-    [[link asio.reference.ssl__stream.next_layer_type [*next_layer_type]]]
-    [The type of the next layer. ]
+    [[link asio.reference.ssl__stream.native_handle_type [*native_handle_type]]]
+    [The native handle type of the SSL stream. ]
   
   ]
 
   [
 
-    [[link asio.reference.ssl__stream.service_type [*service_type]]]
-    [The type of the service that will be used to provide stream operations. ]
+    [[link asio.reference.ssl__stream.next_layer_type [*next_layer_type]]]
+    [The type of the next layer. ]
   
   ]
 
@@ -83696,30 +83138,18 @@ Provides stream-oriented functionality using SSL.
   ]
   
   [
-    [[link asio.reference.ssl__stream.impl [*impl]]]
-    [Get the underlying implementation in the native type. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__stream.in_avail [*in_avail]]]
-    [Determine the amount of data that may be read without blocking. ]
-  ]
-  
-  [
     [[link asio.reference.ssl__stream.lowest_layer [*lowest_layer]]]
-    [Get a reference to the lowest layer. 
-
-     Get a const reference to the lowest layer. ]
+    [Get a reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link asio.reference.ssl__stream.native_handle [*native_handle]]]
+    [Get the underlying implementation in the native type. ]
   ]
   
   [
     [[link asio.reference.ssl__stream.next_layer [*next_layer]]]
     [Get a reference to the next layer. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__stream.peek [*peek]]]
-    [Peek at the incoming data on the stream. ]
   ]
   
   [
@@ -83756,7 +83186,7 @@ The stream class template provides asynchronous and blocking stream-oriented fun
   
 [*Distinct] [*objects:] Safe.
 
-[*Shared] [*objects:] Unsafe.
+[*Shared] [*objects:] Unsafe. The application must also ensure that all asynchronous operations are performed within the same implicit or explicit strand.
 
 
 [heading Example]
@@ -84093,125 +83523,6 @@ Different handshake types.
 [endsect]
 
 
-
-[section:impl ssl::stream::impl]
-
-[indexterm2 impl..ssl::stream] 
-Get the underlying implementation in the native type. 
-
-
-  impl_type impl();
-
-
-This function may be used to obtain the underlying implementation of the context. This is intended to allow access to stream functionality that is not otherwise provided. 
-
-
-[endsect]
-
-
-
-[section:impl_type ssl::stream::impl_type]
-
-[indexterm2 impl_type..ssl::stream] 
-The native implementation type of the stream. 
-
-
-  typedef service_type::impl_type impl_type;
-
-
-
-[heading Requirements]
-
-[*Header: ][^asio/ssl/stream.hpp]
-
-[*Convenience header: ][^asio/ssl.hpp]
-
-
-[endsect]
-
-
-[section:in_avail ssl::stream::in_avail]
-
-[indexterm2 in_avail..ssl::stream] 
-Determine the amount of data that may be read without blocking. 
-
-
-  std::size_t ``[link asio.reference.ssl__stream.in_avail.overload1 in_avail]``();
-  ``  [''''&raquo;''' [link asio.reference.ssl__stream.in_avail.overload1 more...]]``
-
-  std::size_t ``[link asio.reference.ssl__stream.in_avail.overload2 in_avail]``(
-      asio::error_code & ec);
-  ``  [''''&raquo;''' [link asio.reference.ssl__stream.in_avail.overload2 more...]]``
-
-
-[section:overload1 ssl::stream::in_avail (1 of 2 overloads)]
-
-
-Determine the amount of data that may be read without blocking. 
-
-
-  std::size_t in_avail();
-
-
-This function is used to determine the amount of data, in bytes, that may be read from the stream without blocking.
-
-
-[heading Return Value]
-      
-The number of bytes of data that can be read without blocking.
-
-
-[heading Exceptions]
-    
-
-[variablelist
-  
-[[asio::system_error][Thrown on failure. ]]
-
-]
-
-
-
-
-[endsect]
-
-
-
-[section:overload2 ssl::stream::in_avail (2 of 2 overloads)]
-
-
-Determine the amount of data that may be read without blocking. 
-
-
-  std::size_t in_avail(
-      asio::error_code & ec);
-
-
-This function is used to determine the amount of data, in bytes, that may be read from the stream without blocking.
-
-
-[heading Parameters]
-    
-
-[variablelist
-  
-[[ec][Set to indicate what error occurred, if any.]]
-
-]
-
-
-[heading Return Value]
-      
-The number of bytes of data that can be read without blocking. 
-
-
-
-
-[endsect]
-
-
-[endsect]
-
 [section:lowest_layer ssl::stream::lowest_layer]
 
 [indexterm2 lowest_layer..ssl::stream] 
@@ -84220,10 +83531,6 @@ Get a reference to the lowest layer.
 
   lowest_layer_type & ``[link asio.reference.ssl__stream.lowest_layer.overload1 lowest_layer]``();
   ``  [''''&raquo;''' [link asio.reference.ssl__stream.lowest_layer.overload1 more...]]``
-
-
-Get a const reference to the lowest layer. 
-
 
   const lowest_layer_type & ``[link asio.reference.ssl__stream.lowest_layer.overload2 lowest_layer]``() const;
   ``  [''''&raquo;''' [link asio.reference.ssl__stream.lowest_layer.overload2 more...]]``
@@ -84255,18 +83562,18 @@ A reference to the lowest layer in the stack of stream layers. Ownership is not 
 [section:overload2 ssl::stream::lowest_layer (2 of 2 overloads)]
 
 
-Get a const reference to the lowest layer. 
+Get a reference to the lowest layer. 
 
 
   const lowest_layer_type & lowest_layer() const;
 
 
-This function returns a const reference to the lowest layer in a stack of stream layers.
+This function returns a reference to the lowest layer in a stack of stream layers.
 
 
 [heading Return Value]
       
-A const reference to the lowest layer in the stack of stream layers. Ownership is not transferred to the caller. 
+A reference to the lowest layer in the stack of stream layers. Ownership is not transferred to the caller. 
 
 
 
@@ -84298,9 +83605,81 @@ The type of the lowest layer.
 
 
 
+[section:native_handle ssl::stream::native_handle]
+
+[indexterm2 native_handle..ssl::stream] 
+Get the underlying implementation in the native type. 
+
+
+  native_handle_type native_handle();
+
+
+This function may be used to obtain the underlying implementation of the context. This is intended to allow access to context functionality that is not otherwise provided. 
+
+
+[endsect]
+
+
+
+[section:native_handle_type ssl::stream::native_handle_type]
+
+[indexterm2 native_handle_type..ssl::stream] 
+The native handle type of the SSL stream. 
+
+
+  typedef SSL * native_handle_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ssl/stream.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
+
+[endsect]
+
+
 [section:next_layer ssl::stream::next_layer]
 
 [indexterm2 next_layer..ssl::stream] 
+Get a reference to the next layer. 
+
+
+  const next_layer_type & ``[link asio.reference.ssl__stream.next_layer.overload1 next_layer]``() const;
+  ``  [''''&raquo;''' [link asio.reference.ssl__stream.next_layer.overload1 more...]]``
+
+  next_layer_type & ``[link asio.reference.ssl__stream.next_layer.overload2 next_layer]``();
+  ``  [''''&raquo;''' [link asio.reference.ssl__stream.next_layer.overload2 more...]]``
+
+
+[section:overload1 ssl::stream::next_layer (1 of 2 overloads)]
+
+
+Get a reference to the next layer. 
+
+
+  const next_layer_type & next_layer() const;
+
+
+This function returns a reference to the next layer in a stack of stream layers.
+
+
+[heading Return Value]
+      
+A reference to the next layer in the stack of stream layers. Ownership is not transferred to the caller. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 ssl::stream::next_layer (2 of 2 overloads)]
+
+
 Get a reference to the next layer. 
 
 
@@ -84319,6 +83698,8 @@ A reference to the next layer in the stack of stream layers. Ownership is not tr
 
 [endsect]
 
+
+[endsect]
 
 
 [section:next_layer_type ssl::stream::next_layer_type]
@@ -84340,112 +83721,6 @@ The type of the next layer.
 
 [endsect]
 
-
-[section:peek ssl::stream::peek]
-
-[indexterm2 peek..ssl::stream] 
-Peek at the incoming data on the stream. 
-
-
-  template<
-      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
-  std::size_t ``[link asio.reference.ssl__stream.peek.overload1 peek]``(
-      const MutableBufferSequence & buffers);
-  ``  [''''&raquo;''' [link asio.reference.ssl__stream.peek.overload1 more...]]``
-
-  template<
-      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
-  std::size_t ``[link asio.reference.ssl__stream.peek.overload2 peek]``(
-      const MutableBufferSequence & buffers,
-      asio::error_code & ec);
-  ``  [''''&raquo;''' [link asio.reference.ssl__stream.peek.overload2 more...]]``
-
-
-[section:overload1 ssl::stream::peek (1 of 2 overloads)]
-
-
-Peek at the incoming data on the stream. 
-
-
-  template<
-      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
-  std::size_t peek(
-      const MutableBufferSequence & buffers);
-
-
-This function is used to peek at the incoming data on the stream, without removing it from the input queue. The function call will block until data has been read successfully or an error occurs.
-
-
-[heading Parameters]
-    
-
-[variablelist
-  
-[[buffers][The buffers into which the data will be read.]]
-
-]
-
-
-[heading Return Value]
-      
-The number of bytes read.
-
-
-[heading Exceptions]
-    
-
-[variablelist
-  
-[[asio::system_error][Thrown on failure. ]]
-
-]
-
-
-
-
-[endsect]
-
-
-
-[section:overload2 ssl::stream::peek (2 of 2 overloads)]
-
-
-Peek at the incoming data on the stream. 
-
-
-  template<
-      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
-  std::size_t peek(
-      const MutableBufferSequence & buffers,
-      asio::error_code & ec);
-
-
-This function is used to peek at the incoming data on the stream, withoutxi removing it from the input queue. The function call will block until data has been read successfully or an error occurs.
-
-
-[heading Parameters]
-    
-
-[variablelist
-  
-[[buffers][The buffers into which the data will be read.]]
-
-[[ec][Set to indicate what error occurred, if any.]]
-
-]
-
-
-[heading Return Value]
-      
-The number of bytes read. Returns 0 if an error occurred. 
-
-
-
-
-[endsect]
-
-
-[endsect]
 
 [section:read_some ssl::stream::read_some]
 
@@ -84563,27 +83838,6 @@ The read\_some operation may not read all of the requested number of bytes. Cons
 
 [endsect]
 
-
-[section:service_type ssl::stream::service_type]
-
-[indexterm2 service_type..ssl::stream] 
-The type of the service that will be used to provide stream operations. 
-
-
-  typedef Service service_type;
-
-
-
-[heading Requirements]
-
-[*Header: ][^asio/ssl/stream.hpp]
-
-[*Convenience header: ][^asio/ssl.hpp]
-
-
-[endsect]
-
-
 [section:shutdown ssl::stream::shutdown]
 
 [indexterm2 shutdown..ssl::stream] 
@@ -84664,11 +83918,10 @@ Construct a stream.
 
 
   template<
-      typename Arg,
-      typename Context_Service>
+      typename Arg>
   stream(
       Arg & arg,
-      basic_context< Context_Service > & context);
+      context & ctx);
 
 
 This constructor creates a stream and initialises the underlying stream object.
@@ -84903,455 +84156,6 @@ Protected destructor to prevent deletion through this type.
 
 
   ~stream_base();
-
-
-
-[endsect]
-
-
-
-[endsect]
-
-[section:ssl__stream_service ssl::stream_service]
-
-
-Default service implementation for an SSL stream. 
-
-
-  class stream_service :
-    public io_service::service
-
-
-[heading Types]
-[table
-  [[Name][Description]]
-
-  [
-
-    [[link asio.reference.ssl__stream_service.impl_type [*impl_type]]]
-    [The type of a stream implementation. ]
-  
-  ]
-
-]
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.ssl__stream_service.async_handshake [*async_handshake]]]
-    [Start an asynchronous SSL handshake. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__stream_service.async_read_some [*async_read_some]]]
-    [Start an asynchronous read. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__stream_service.async_shutdown [*async_shutdown]]]
-    [Asynchronously shut down SSL on the stream. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__stream_service.async_write_some [*async_write_some]]]
-    [Start an asynchronous write. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__stream_service.create [*create]]]
-    [Create a new stream implementation. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__stream_service.destroy [*destroy]]]
-    [Destroy a stream implementation. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__stream_service.get_io_service [*get_io_service]]]
-    [Get the io_service object that owns the service. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__stream_service.handshake [*handshake]]]
-    [Perform SSL handshaking. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__stream_service.in_avail [*in_avail]]]
-    [Determine the amount of data that may be read without blocking. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__stream_service.null [*null]]]
-    [Return a null stream implementation. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__stream_service.peek [*peek]]]
-    [Peek at the incoming data on the stream. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__stream_service.read_some [*read_some]]]
-    [Read some data from the stream. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__stream_service.shutdown [*shutdown]]]
-    [Shut down SSL on the stream. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__stream_service.stream_service [*stream_service]]]
-    [Construct a new stream service for the specified io_service. ]
-  ]
-  
-  [
-    [[link asio.reference.ssl__stream_service.write_some [*write_some]]]
-    [Write some data to the stream. ]
-  ]
-  
-]
-
-[heading Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.ssl__stream_service.id [*id]]]
-    [The unique service identifier. ]
-  ]
-
-]
-
-[heading Requirements]
-
-[*Header: ][^asio/ssl/stream_service.hpp]
-
-[*Convenience header: ][^asio/ssl.hpp]
-
-
-[section:async_handshake ssl::stream_service::async_handshake]
-
-[indexterm2 async_handshake..ssl::stream_service] 
-Start an asynchronous SSL handshake. 
-
-
-  template<
-      typename Stream,
-      typename HandshakeHandler>
-  void async_handshake(
-      impl_type & impl,
-      Stream & next_layer,
-      stream_base::handshake_type type,
-      HandshakeHandler handler);
-
-
-
-[endsect]
-
-
-
-[section:async_read_some ssl::stream_service::async_read_some]
-
-[indexterm2 async_read_some..ssl::stream_service] 
-Start an asynchronous read. 
-
-
-  template<
-      typename Stream,
-      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``,
-      typename ``[link asio.reference.ReadHandler ReadHandler]``>
-  void async_read_some(
-      impl_type & impl,
-      Stream & next_layer,
-      const MutableBufferSequence & buffers,
-      ReadHandler handler);
-
-
-
-[endsect]
-
-
-
-[section:async_shutdown ssl::stream_service::async_shutdown]
-
-[indexterm2 async_shutdown..ssl::stream_service] 
-Asynchronously shut down SSL on the stream. 
-
-
-  template<
-      typename Stream,
-      typename ShutdownHandler>
-  void async_shutdown(
-      impl_type & impl,
-      Stream & next_layer,
-      ShutdownHandler handler);
-
-
-
-[endsect]
-
-
-
-[section:async_write_some ssl::stream_service::async_write_some]
-
-[indexterm2 async_write_some..ssl::stream_service] 
-Start an asynchronous write. 
-
-
-  template<
-      typename Stream,
-      typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``,
-      typename ``[link asio.reference.WriteHandler WriteHandler]``>
-  void async_write_some(
-      impl_type & impl,
-      Stream & next_layer,
-      const ConstBufferSequence & buffers,
-      WriteHandler handler);
-
-
-
-[endsect]
-
-
-
-[section:create ssl::stream_service::create]
-
-[indexterm2 create..ssl::stream_service] 
-Create a new stream implementation. 
-
-
-  template<
-      typename Stream,
-      typename Context_Service>
-  void create(
-      impl_type & impl,
-      Stream & next_layer,
-      basic_context< Context_Service > & context);
-
-
-
-[endsect]
-
-
-
-[section:destroy ssl::stream_service::destroy]
-
-[indexterm2 destroy..ssl::stream_service] 
-Destroy a stream implementation. 
-
-
-  template<
-      typename Stream>
-  void destroy(
-      impl_type & impl,
-      Stream & next_layer);
-
-
-
-[endsect]
-
-
-
-[section:get_io_service ssl::stream_service::get_io_service]
-
-
-['Inherited from io_service.]
-
-[indexterm2 get_io_service..ssl::stream_service] 
-Get the [link asio.reference.io_service `io_service`] object that owns the service. 
-
-
-  asio::io_service & get_io_service();
-
-
-
-[endsect]
-
-
-
-[section:handshake ssl::stream_service::handshake]
-
-[indexterm2 handshake..ssl::stream_service] 
-Perform SSL handshaking. 
-
-
-  template<
-      typename Stream>
-  asio::error_code handshake(
-      impl_type & impl,
-      Stream & next_layer,
-      stream_base::handshake_type type,
-      asio::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:id ssl::stream_service::id]
-
-[indexterm2 id..ssl::stream_service] 
-The unique service identifier. 
-
-
-  static asio::io_service::id id;
-
-
-
-[endsect]
-
-
-
-[section:impl_type ssl::stream_service::impl_type]
-
-[indexterm2 impl_type..ssl::stream_service] 
-The type of a stream implementation. 
-
-
-  typedef implementation_defined impl_type;
-
-
-
-[heading Requirements]
-
-[*Header: ][^asio/ssl/stream_service.hpp]
-
-[*Convenience header: ][^asio/ssl.hpp]
-
-
-[endsect]
-
-
-
-[section:in_avail ssl::stream_service::in_avail]
-
-[indexterm2 in_avail..ssl::stream_service] 
-Determine the amount of data that may be read without blocking. 
-
-
-  template<
-      typename Stream>
-  std::size_t in_avail(
-      impl_type & impl,
-      Stream & next_layer,
-      asio::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:null ssl::stream_service::null]
-
-[indexterm2 null..ssl::stream_service] 
-Return a null stream implementation. 
-
-
-  impl_type null() const;
-
-
-
-[endsect]
-
-
-
-[section:peek ssl::stream_service::peek]
-
-[indexterm2 peek..ssl::stream_service] 
-Peek at the incoming data on the stream. 
-
-
-  template<
-      typename Stream,
-      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
-  std::size_t peek(
-      impl_type & impl,
-      Stream & next_layer,
-      const MutableBufferSequence & buffers,
-      asio::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:read_some ssl::stream_service::read_some]
-
-[indexterm2 read_some..ssl::stream_service] 
-Read some data from the stream. 
-
-
-  template<
-      typename Stream,
-      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
-  std::size_t read_some(
-      impl_type & impl,
-      Stream & next_layer,
-      const MutableBufferSequence & buffers,
-      asio::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:shutdown ssl::stream_service::shutdown]
-
-[indexterm2 shutdown..ssl::stream_service] 
-Shut down SSL on the stream. 
-
-
-  template<
-      typename Stream>
-  asio::error_code shutdown(
-      impl_type & impl,
-      Stream & next_layer,
-      asio::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:stream_service ssl::stream_service::stream_service]
-
-[indexterm2 stream_service..ssl::stream_service] 
-Construct a new stream service for the specified [link asio.reference.io_service `io_service`]. 
-
-
-  stream_service(
-      asio::io_service & io_service);
-
-
-
-[endsect]
-
-
-
-[section:write_some ssl::stream_service::write_some]
-
-[indexterm2 write_some..ssl::stream_service] 
-Write some data to the stream. 
-
-
-  template<
-      typename Stream,
-      typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
-  std::size_t write_some(
-      impl_type & impl,
-      Stream & next_layer,
-      const ConstBufferSequence & buffers,
-      asio::error_code & ec);
 
 
 
