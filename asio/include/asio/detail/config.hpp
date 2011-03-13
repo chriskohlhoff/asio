@@ -72,7 +72,7 @@
 // Standard library support for system errors.
 #if !defined(ASIO_DISABLE_STD_SYSTEM_ERROR)
 # if defined(__GNUC__)
-#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
 #   if defined(__GXX_EXPERIMENTAL_CXX0X__)
 #    define ASIO_HAS_STD_SYSTEM_ERROR
 #   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
