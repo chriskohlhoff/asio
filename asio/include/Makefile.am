@@ -290,10 +290,22 @@ nobase_include_HEADERS = \
 	asio/ssl/context_base.hpp \
 	asio/ssl/context.hpp \
 	asio/ssl/context_service.hpp \
+	asio/ssl/detail/buffer_space.hpp \
+	asio/ssl/detail/engine.hpp \
+	asio/ssl/detail/handshake_op.hpp \
+	asio/ssl/detail/impl/engine.ipp \
 	asio/ssl/detail/openssl_init.hpp \
 	asio/ssl/detail/openssl_types.hpp \
+	asio/ssl/detail/password_callback.hpp \
+	asio/ssl/detail/read_op.hpp \
+	asio/ssl/detail/shutdown_op.hpp \
+	asio/ssl/detail/transport.hpp \
+	asio/ssl/detail/transport_op.hpp \
+	asio/ssl/detail/write_op.hpp \
 	asio/ssl/error.hpp \
 	asio/ssl.hpp \
+	asio/ssl/impl/context.hpp \
+	asio/ssl/impl/context.ipp \
 	asio/ssl/impl/error.ipp \
 	asio/ssl/impl/src.hpp \
 	asio/ssl/old/basic_context.hpp \
