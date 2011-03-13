@@ -19,6 +19,8 @@
 # error Do not compile Asio library source with ASIO_HEADER_ONLY defined
 #endif
 
+#include "asio/ssl/impl/context.ipp"
 #include "asio/ssl/impl/error.ipp"
+#include "asio/ssl/detail/impl/engine.ipp"
 
 #endif // ASIO_IMPL_SRC_HPP

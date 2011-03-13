@@ -106,6 +106,7 @@ void test()
 
     stream1.async_read_some(buffer(mutable_char_buffer), read_some_handler);
 
+#if defined(ASIO_ENABLE_OLD_SSL)
     stream1.peek(buffer(mutable_char_buffer));
     stream1.peek(buffer(mutable_char_buffer), ec);
 
@@ -113,6 +114,7 @@ void test()
     (void)in_avail1;
     std::size_t in_avail2 = stream1.in_avail(ec);
     (void)in_avail2;
+#endif // defined(ASIO_ENABLE_OLD_SSL)
   }
   catch (std::exception&)
   {
