@@ -23,12 +23,11 @@
 # include "asio/detail/buffer_sequence_adapter.hpp"
 # include "asio/detail/noncopyable.hpp"
 # include "asio/ssl/context.hpp"
-# include "asio/ssl/detail/buffer_space.hpp"
-# include "asio/ssl/detail/engine.hpp"
 # include "asio/ssl/detail/handshake_op.hpp"
+# include "asio/ssl/detail/io.hpp"
 # include "asio/ssl/detail/read_op.hpp"
 # include "asio/ssl/detail/shutdown_op.hpp"
-# include "asio/ssl/detail/transport.hpp"
+# include "asio/ssl/detail/stream_core.hpp"
 # include "asio/ssl/detail/write_op.hpp"
 # include "asio/ssl/stream_base.hpp"
 # include <boost/type_traits/remove_reference.hpp>
@@ -93,8 +92,8 @@ public:
    */
   template <typename Arg>
   stream(Arg& arg, context& ctx)
-    : engine_(ctx.native_handle()),
-      transport_(arg)
+    : next_layer_(arg),
+      core_(ctx.native_handle(), next_layer_.lowest_layer().get_io_service())
   {
   }
 
@@ -113,7 +112,7 @@ public:
    */
   asio::io_service& get_io_service()
   {
-    return transport_.get_io_service();
+    return next_layer_.lowest_layer().get_io_service();
   }
 
   /// Get the underlying implementation in the native type.
@@ -124,7 +123,7 @@ public:
    */
   native_handle_type native_handle()
   {
-    return engine_.native_handle();
+    return core_.engine_.native_handle();
   }
 
   /// Get a reference to the next layer.
@@ -137,7 +136,7 @@ public:
    */
   const next_layer_type& next_layer() const
   {
-    return transport_.next_layer();
+    return next_layer_;
   }
 
   /// Get a reference to the next layer.
@@ -150,7 +149,7 @@ public:
    */
   next_layer_type& next_layer()
   {
-    return transport_.next_layer();
+    return next_layer_;
   }
 
   /// Get a reference to the lowest layer.
@@ -163,7 +162,7 @@ public:
    */
   lowest_layer_type& lowest_layer()
   {
-    return transport_.lowest_layer();
+    return next_layer_.lowest_layer();
   }
 
   /// Get a reference to the lowest layer.
@@ -176,7 +175,7 @@ public:
    */
   const lowest_layer_type& lowest_layer() const
   {
-    return transport_.lowest_layer();
+    return next_layer_.lowest_layer();
   }
 
   /// Perform SSL handshaking.
@@ -209,13 +208,8 @@ public:
   asio::error_code handshake(handshake_type type,
       asio::error_code& ec)
   {
-    for (;;)
-    {
-      int result = engine_.handshake(type, space_, ec);
-      result = transport_.sync(result, space_, ec);
-      if (result >= 0)
-        return engine_.map_error_code(ec);
-    }
+    detail::io(next_layer_, core_, detail::handshake_op(type), ec);
+    return ec;
   }
 
   /// Start an asynchronous SSL handshake.
@@ -237,9 +231,7 @@ public:
   void async_handshake(handshake_type type,
       HandshakeHandler handler)
   {
-    detail::handshake_op<Stream, HandshakeHandler>(
-      engine_, transport_, space_, type, handler)(
-        asio::error_code(), 0, 1);
+    detail::async_io(next_layer_, core_, detail::handshake_op(type), handler);
   }
 
   /// Shut down SSL on the stream.
@@ -265,13 +257,8 @@ public:
    */
   asio::error_code shutdown(asio::error_code& ec)
   {
-    for (;;)
-    {
-      int result = engine_.shutdown(space_, ec);
-      result = transport_.sync(result, space_, ec);
-      if (result >= 0)
-        return engine_.map_error_code(ec);
-    }
+    detail::io(next_layer_, core_, detail::shutdown_op(), ec);
+    return ec;
   }
 
   /// Asynchronously shut down SSL on the stream.
@@ -289,9 +276,7 @@ public:
   template <typename ShutdownHandler>
   void async_shutdown(ShutdownHandler handler)
   {
-    detail::shutdown_op<Stream, ShutdownHandler>(
-      engine_, transport_, space_, handler)(
-        asio::error_code(), 0, 1);
+    detail::async_io(next_layer_, core_, detail::shutdown_op(), handler);
   }
 
   /// Write some data to the stream.
@@ -339,20 +324,8 @@ public:
   std::size_t write_some(const ConstBufferSequence& buffers,
       asio::error_code& ec)
   {
-    asio::const_buffer buffer =
-      asio::detail::buffer_sequence_adapter<asio::const_buffer,
-        ConstBufferSequence>::first(buffers);
-
-    for (;;)
-    {
-      int result = engine_.write(buffer, space_, ec);
-      result = transport_.sync(result, space_, ec);
-      if (result >= 0)
-      {
-        engine_.map_error_code(ec);
-        return static_cast<std::size_t>(result);
-      }
-    }
+    return detail::io(next_layer_, core_,
+        detail::write_op<ConstBufferSequence>(buffers), ec);
   }
 
   /// Start an asynchronous write.
@@ -381,9 +354,8 @@ public:
   void async_write_some(const ConstBufferSequence& buffers,
       WriteHandler handler)
   {
-    detail::write_op<Stream, ConstBufferSequence, WriteHandler>(
-      engine_, transport_, space_, buffers, handler)(
-        asio::error_code(), 0, 1);
+    detail::async_io(next_layer_, core_,
+        detail::write_op<ConstBufferSequence>(buffers), handler);
   }
 
   /// Read some data from the stream.
@@ -431,20 +403,8 @@ public:
   std::size_t read_some(const MutableBufferSequence& buffers,
       asio::error_code& ec)
   {
-    asio::mutable_buffer buffer =
-      asio::detail::buffer_sequence_adapter<asio::mutable_buffer,
-        MutableBufferSequence>::first(buffers);
-
-    for (;;)
-    {
-      int result = engine_.read(buffer, space_, ec);
-      result = transport_.sync(result, space_, ec);
-      if (result >= 0)
-      {
-        engine_.map_error_code(ec);
-        return static_cast<std::size_t>(result);
-      }
-    }
+    return detail::io(next_layer_, core_,
+        detail::read_op<MutableBufferSequence>(buffers), ec);
   }
 
   /// Start an asynchronous read.
@@ -474,15 +434,13 @@ public:
   void async_read_some(const MutableBufferSequence& buffers,
       ReadHandler handler)
   {
-    detail::read_op<Stream, MutableBufferSequence, ReadHandler>(
-      engine_, transport_, space_, buffers, handler)(
-        asio::error_code(), 0, 1);
+    detail::async_io(next_layer_, core_,
+        detail::read_op<MutableBufferSequence>(buffers), handler);
   }
 
 private:
-  detail::engine engine_;
-  detail::transport<Stream> transport_;
-  detail::buffer_space space_;
+  Stream next_layer_;
+  detail::stream_core core_;
 };
 
 #endif // defined(ASIO_ENABLE_OLD_SSL)

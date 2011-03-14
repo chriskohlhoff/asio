@@ -52,32 +52,54 @@ SSL* engine::native_handle()
   return ssl_;
 }
 
-int engine::handshake(stream_base::handshake_type type,
-    buffer_space& space, asio::error_code& ec)
+engine::want engine::handshake(
+    stream_base::handshake_type type, asio::error_code& ec)
 {
   return perform((type == asio::ssl::stream_base::client)
-      ? &engine::do_connect : &engine::do_accept, 0, 0, space, ec);
+      ? &engine::do_connect : &engine::do_accept, 0, 0, ec, 0);
 }
 
-int engine::shutdown(buffer_space& space, asio::error_code& ec)
+engine::want engine::shutdown(asio::error_code& ec)
 {
-  return perform(&engine::do_shutdown, 0, 0, space, ec);
+  return perform(&engine::do_shutdown, 0, 0, ec, 0);
 }
 
-int engine::write(const asio::const_buffer& data,
-    buffer_space& space, asio::error_code& ec)
+engine::want engine::write(const asio::const_buffer& data,
+    asio::error_code& ec, std::size_t& bytes_transferred)
 {
   return perform(&engine::do_write,
       const_cast<void*>(asio::buffer_cast<const void*>(data)),
-      asio::buffer_size(data), space, ec);
+      asio::buffer_size(data), ec, &bytes_transferred);
 }
 
-int engine::read(const asio::mutable_buffer& data,
-    buffer_space& space, asio::error_code& ec)
+engine::want engine::read(const asio::mutable_buffer& data,
+    asio::error_code& ec, std::size_t& bytes_transferred)
 {
   return perform(&engine::do_read,
       asio::buffer_cast<void*>(data),
-      asio::buffer_size(data), space, ec);
+      asio::buffer_size(data), ec, &bytes_transferred);
+}
+
+asio::mutable_buffers_1 engine::get_output(
+    const asio::mutable_buffer& data)
+{
+  int length = ::BIO_read(ext_bio_,
+      asio::buffer_cast<void*>(data),
+      asio::buffer_size(data));
+
+  return asio::buffer(data,
+      length > 0 ? static_cast<std::size_t>(length) : 0);
+}
+
+asio::const_buffer engine::put_input(
+    const asio::const_buffer& data)
+{
+  int length = ::BIO_write(ext_bio_,
+      asio::buffer_cast<const void*>(data),
+      asio::buffer_size(data));
+
+  return asio::buffer(data +
+      (length > 0 ? static_cast<std::size_t>(length) : 0));
 }
 
 const asio::error_code& engine::map_error_code(
@@ -114,68 +136,57 @@ asio::detail::static_mutex& engine::accept_mutex()
   return mutex;
 }
 
-int engine::perform(int (engine::* op)(void*, std::size_t),
-    void* data, std::size_t length,
-    buffer_space& space, asio::error_code& ec)
+engine::want engine::perform(int (engine::* op)(void*, std::size_t),
+    void* data, std::size_t length, asio::error_code& ec,
+    std::size_t* bytes_transferred)
 {
-  for (;;)
+  std::size_t pending_output_before = ::BIO_ctrl_pending(ext_bio_);
+  int result = (this->*op)(data, length);
+  int ssl_error = ::SSL_get_error(ssl_, result);
+  int sys_error = ::ERR_get_error();
+  std::size_t pending_output_after = ::BIO_ctrl_pending(ext_bio_);
+
+  if (ssl_error == SSL_ERROR_SSL)
   {
-    std::size_t pending_output_before = ::BIO_ctrl_pending(ext_bio_);
-    int result = (this->*op)(data, length);
-    int ssl_error = ::SSL_get_error(ssl_, result);
-    int sys_error = ::ERR_get_error();
-    std::size_t pending_output_after = ::BIO_ctrl_pending(ext_bio_);
+    ec = asio::error_code(sys_error,
+        asio::error::get_ssl_category());
+    return want_nothing;
+  }
 
-    if (ssl_error == SSL_ERROR_SSL)
-    {
-      ec = asio::error_code(sys_error,
-          asio::error::get_ssl_category());
-      return 0;
-    }
+  if (ssl_error == SSL_ERROR_SYSCALL)
+  {
+    ec = asio::error_code(sys_error,
+        asio::error::get_system_category());
+    return want_nothing;
+  }
 
-    if (ssl_error == SSL_ERROR_SYSCALL)
-    {
-      ec = asio::error_code(sys_error,
-          asio::error::get_system_category());
-      return 0;
-    }
+  if (result > 0 && bytes_transferred)
+    *bytes_transferred = static_cast<std::size_t>(result);
 
-    if (pending_output_after > 0 && asio::buffer_size(space.output) == 0)
-    {
-      int length = ::BIO_read(ext_bio_, &space.output_buffer[0], 16384); 
-      space.output = asio::buffer(space.output_buffer, length);
-    }
-
-    if (result > 0)
-    {
-      ec = asio::error_code();
-      return result;
-    }
-
-    if (ssl_error == SSL_ERROR_WANT_WRITE
-        || pending_output_after > pending_output_before)
-    {
-      ec = asio::error_code();
-      return buffer_space::want_output;
-    }
-    else if (ssl_error == SSL_ERROR_WANT_READ)
-    {
-      if (asio::buffer_size(space.input) == 0)
-      {
-        ec = asio::error_code();
-        return buffer_space::want_input;
-      }
-
-      int length = ::BIO_write(ext_bio_,
-          asio::buffer_cast<const void*>(space.input),
-          static_cast<int>(asio::buffer_size(space.input)));
-      space.input = space.input + length;
-    }
-    else if (::SSL_get_shutdown(ssl_) & SSL_RECEIVED_SHUTDOWN)
-    {
-      ec = asio::error::eof;
-      return 0;
-    }
+  if (ssl_error == SSL_ERROR_WANT_WRITE)
+  {
+    ec = asio::error_code();
+    return want_output_and_retry;
+  }
+  else if (pending_output_after > pending_output_before)
+  {
+    ec = asio::error_code();
+    return result > 0 ? want_output : want_output_and_retry;
+  }
+  else if (ssl_error == SSL_ERROR_WANT_READ)
+  {
+    ec = asio::error_code();
+    return want_input_and_retry;
+  }
+  else if (::SSL_get_shutdown(ssl_) & SSL_RECEIVED_SHUTDOWN)
+  {
+    ec = asio::error::eof;
+    return want_nothing;
+  }
+  else
+  {
+    ec = asio::error_code();
+    return want_nothing;
   }
 }
 

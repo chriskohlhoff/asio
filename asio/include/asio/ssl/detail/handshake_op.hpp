@@ -18,11 +18,7 @@
 #include "asio/detail/config.hpp"
 
 #if !defined(ASIO_ENABLE_OLD_SSL)
-# include "asio/detail/handler_alloc_helpers.hpp"
-# include "asio/detail/handler_invoke_helpers.hpp"
-# include "asio/ssl/detail/buffer_space.hpp"
 # include "asio/ssl/detail/engine.hpp"
-# include "asio/ssl/detail/transport.hpp"
 #endif // !defined(ASIO_ENABLE_OLD_SSL)
 
 #include "asio/detail/push_options.hpp"
@@ -33,68 +29,33 @@ namespace detail {
 
 #if !defined(ASIO_ENABLE_OLD_SSL)
 
-template <typename Stream, typename HandshakeHandler>
 class handshake_op
 {
 public:
-  handshake_op(detail::engine& engine, detail::transport<Stream>& transport,
-      detail::buffer_space& space, stream_base::handshake_type type,
-      HandshakeHandler& handler)
-    : engine_(engine),
-      transport_(transport),
-      space_(space),
-      type_(type),
-      handler_(ASIO_MOVE_CAST(HandshakeHandler)(handler))
+  handshake_op(stream_base::handshake_type type)
+    : type_(type)
   {
   }
 
-  void operator()(asio::error_code ec, int result, int start = 0)
+  engine::want operator()(engine& eng,
+      asio::error_code& ec,
+      std::size_t& bytes_transferred) const
   {
-    switch (start)
-    {
-    case 1:
-      do
-      {
-        result = engine_.handshake(type_, space_, ec);
-        transport_.async(result, space_, ec, start, *this);
-        return; default:;
-      } while (result < 0);
-
-      handler_(engine_.map_error_code(ec));
-    }
+    bytes_transferred = 0;
+    return eng.handshake(type_, ec);
   }
 
-//private:
-  detail::engine& engine_;
-  detail::transport<Stream>& transport_;
-  detail::buffer_space& space_;
+  template <typename Handler>
+  void call_handler(Handler& handler,
+      const asio::error_code& ec,
+      const std::size_t&) const
+  {
+    handler(ec);
+  }
+
+private:
   stream_base::handshake_type type_;
-  HandshakeHandler handler_;
 };
-
-template <typename Stream, typename HandshakeHandler>
-inline void* asio_handler_allocate(std::size_t size,
-    handshake_op<Stream, HandshakeHandler>* this_handler)
-{
-  return asio_handler_alloc_helpers::allocate(
-      size, this_handler->handler_);
-}
-
-template <typename Stream, typename HandshakeHandler>
-inline void asio_handler_deallocate(void* pointer, std::size_t size,
-    handshake_op<Stream, HandshakeHandler>* this_handler)
-{
-  asio_handler_alloc_helpers::deallocate(
-      pointer, size, this_handler->handler_);
-}
-
-template <typename Function, typename Stream, typename HandshakeHandler>
-inline void asio_handler_invoke(const Function& function,
-    handshake_op<Stream, HandshakeHandler>* this_handler)
-{
-  asio_handler_invoke_helpers::invoke(
-      function, this_handler->handler_);
-}
 
 #endif // !defined(ASIO_ENABLE_OLD_SSL)
 

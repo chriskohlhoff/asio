@@ -18,11 +18,7 @@
 #include "asio/detail/config.hpp"
 
 #if !defined(ASIO_ENABLE_OLD_SSL)
-# include "asio/detail/handler_alloc_helpers.hpp"
-# include "asio/detail/handler_invoke_helpers.hpp"
-# include "asio/ssl/detail/buffer_space.hpp"
 # include "asio/ssl/detail/engine.hpp"
-# include "asio/ssl/detail/transport.hpp"
 #endif // !defined(ASIO_ENABLE_OLD_SSL)
 
 #include "asio/detail/push_options.hpp"
@@ -33,65 +29,25 @@ namespace detail {
 
 #if !defined(ASIO_ENABLE_OLD_SSL)
 
-template <typename Stream, typename ShutdownHandler>
 class shutdown_op
 {
 public:
-  shutdown_op(detail::engine& engine, detail::transport<Stream>& transport,
-      detail::buffer_space& space, ShutdownHandler& handler)
-    : engine_(engine),
-      transport_(transport),
-      space_(space),
-      handler_(ASIO_MOVE_CAST(ShutdownHandler)(handler))
+  engine::want operator()(engine& eng,
+      asio::error_code& ec,
+      std::size_t& bytes_transferred) const
   {
+    bytes_transferred = 0;
+    return eng.shutdown(ec);
   }
 
-  void operator()(asio::error_code ec, int result, int start = 0)
+  template <typename Handler>
+  void call_handler(Handler& handler,
+      const asio::error_code& ec,
+      const std::size_t&) const
   {
-    switch (start)
-    {
-    case 1:
-      do
-      {
-        result = engine_.shutdown(space_, ec);
-        transport_.async(result, space_, ec, start, *this);
-        return; default:;
-      } while (result < 0);
-
-      handler_(engine_.map_error_code(ec));
-    }
+    handler(ec);
   }
-
-//private:
-  detail::engine& engine_;
-  detail::transport<Stream>& transport_;
-  detail::buffer_space& space_;
-  ShutdownHandler handler_;
 };
-
-template <typename Stream, typename ShutdownHandler>
-inline void* asio_handler_allocate(std::size_t size,
-    shutdown_op<Stream, ShutdownHandler>* this_handler)
-{
-  return asio_handler_alloc_helpers::allocate(
-      size, this_handler->handler_);
-}
-
-template <typename Stream, typename ShutdownHandler>
-inline void asio_handler_deallocate(void* pointer, std::size_t size,
-    shutdown_op<Stream, ShutdownHandler>* this_handler)
-{
-  asio_handler_alloc_helpers::deallocate(
-      pointer, size, this_handler->handler_);
-}
-
-template <typename Function, typename Stream, typename ShutdownHandler>
-inline void asio_handler_invoke(const Function& function,
-    shutdown_op<Stream, ShutdownHandler>* this_handler)
-{
-  asio_handler_invoke_helpers::invoke(
-      function, this_handler->handler_);
-}
 
 #endif // !defined(ASIO_ENABLE_OLD_SSL)
 
