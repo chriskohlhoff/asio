@@ -36,7 +36,7 @@ std::size_t io(Stream& next_layer, stream_core& core,
     const Operation& op, asio::error_code& ec)
 {
   std::size_t bytes_transferred = 0;
-  for (;;) switch (op(core.engine_, ec, bytes_transferred))
+  do switch (op(core.engine_, ec, bytes_transferred))
   {
   case engine::want_input_and_retry:
 
@@ -78,7 +78,12 @@ std::size_t io(Stream& next_layer, stream_core& core,
     // Operation is complete. Return result to caller.
     core.engine_.map_error_code(ec);
     return bytes_transferred;
-  }
+
+  } while (!ec);
+
+  // Operation failed. Return result to caller.
+  core.engine_.map_error_code(ec);
+  return 0;
 }
 
 template <typename Stream, typename Operation, typename Handler>
@@ -101,7 +106,7 @@ public:
     switch (start)
     {
     case 1: // Called after at least one async operation.
-      for (;;)
+      do
       {
         switch (want_ = op_(core_.engine_, ec_, bytes_transferred_))
         {
@@ -230,7 +235,10 @@ public:
           // Our work here is done.
           return;
         }
-      }
+      } while (!ec_);
+
+      // Operation failed. Pass the result to the handler.
+      op_.call_handler(handler_, core_.engine_.map_error_code(ec_), 0);
     }
   }
 
