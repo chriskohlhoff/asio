@@ -21,6 +21,7 @@
 # include "asio/ssl/old/stream.hpp"
 #else // defined(ASIO_ENABLE_OLD_SSL)
 # include "asio/detail/buffer_sequence_adapter.hpp"
+# include "asio/detail/handler_type_requirements.hpp"
 # include "asio/detail/noncopyable.hpp"
 # include "asio/ssl/context.hpp"
 # include "asio/ssl/detail/handshake_op.hpp"
@@ -231,6 +232,10 @@ public:
   void async_handshake(handshake_type type,
       HandshakeHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a HandshakeHandler.
+    ASIO_HANDSHAKE_HANDLER_CHECK(HandshakeHandler, handler) type_check;
+
     detail::async_io(next_layer_, core_, detail::handshake_op(type), handler);
   }
 
@@ -276,6 +281,10 @@ public:
   template <typename ShutdownHandler>
   void async_shutdown(ShutdownHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a ShutdownHandler.
+    ASIO_SHUTDOWN_HANDLER_CHECK(ShutdownHandler, handler) type_check;
+
     detail::async_io(next_layer_, core_, detail::shutdown_op(), handler);
   }
 
@@ -354,6 +363,10 @@ public:
   void async_write_some(const ConstBufferSequence& buffers,
       WriteHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a WriteHandler.
+    ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
     detail::async_io(next_layer_, core_,
         detail::write_op<ConstBufferSequence>(buffers), handler);
   }
@@ -434,6 +447,10 @@ public:
   void async_read_some(const MutableBufferSequence& buffers,
       ReadHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a ReadHandler.
+    ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
     detail::async_io(next_layer_, core_,
         detail::read_op<MutableBufferSequence>(buffers), handler);
   }

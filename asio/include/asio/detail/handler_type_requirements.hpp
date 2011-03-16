@@ -264,6 +264,42 @@ struct handler_type_requirements
           asio::detail::lvref<const int>()), \
         char(0))>
 
+#define ASIO_HANDSHAKE_HANDLER_CHECK( \
+    handler_type, handler) \
+  \
+  ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
+      sizeof(asio::detail::one_arg_handler_test( \
+          static_cast<handler_type*>(0), \
+          static_cast<const asio::error_code*>(0))) == 1, \
+      "HandshakeHandler type requirements not met") \
+  \
+  typedef asio::detail::handler_type_requirements< \
+      sizeof( \
+        handler_type( \
+          static_cast<const handler_type&>(handler))) + \
+      sizeof( \
+        handler( \
+          asio::detail::lvref<const asio::error_code>()), \
+        char(0))>
+
+#define ASIO_SHUTDOWN_HANDLER_CHECK( \
+    handler_type, handler) \
+  \
+  ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
+      sizeof(asio::detail::one_arg_handler_test( \
+          static_cast<handler_type*>(0), \
+          static_cast<const asio::error_code*>(0))) == 1, \
+      "ShutdownHandler type requirements not met") \
+  \
+  typedef asio::detail::handler_type_requirements< \
+      sizeof( \
+        handler_type( \
+          static_cast<const handler_type&>(handler))) + \
+      sizeof( \
+        handler( \
+          asio::detail::lvref<const asio::error_code>()), \
+        char(0))>
+
 #else // !defined(ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS)
 
 #define ASIO_COMPLETION_HANDLER_CHECK( \
@@ -299,6 +335,14 @@ struct handler_type_requirements
   typedef int
 
 #define ASIO_SIGNAL_HANDLER_CHECK( \
+    handler_type, handler) \
+  typedef int
+
+#define ASIO_HANDSHAKE_HANDLER_CHECK( \
+    handler_type, handler) \
+  typedef int
+
+#define ASIO_SHUTDOWN_HANDLER_CHECK( \
     handler_type, handler) \
   typedef int
 
