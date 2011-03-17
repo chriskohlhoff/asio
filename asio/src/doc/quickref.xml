@@ -313,6 +313,11 @@
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.ssl__stream">ssl::stream</link></member>
           </simplelist>
+          <bridgehead renderas="sect3">Type Requirements</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.HandshakeHandler">HandshakeHandler</link></member>
+            <member><link linkend="asio.reference.ShutdownHandler">ShutdownHandler</link></member>
+          </simplelist>
         </entry>
         <entry valign="top">
           <bridgehead renderas="sect3">Classes</bridgehead>

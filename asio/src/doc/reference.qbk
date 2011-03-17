@@ -83219,7 +83219,7 @@ Start an asynchronous SSL handshake.
 
 
   template<
-      typename HandshakeHandler>
+      typename ``[link asio.reference.HandshakeHandler HandshakeHandler]``>
   void async_handshake(
       handshake_type type,
       HandshakeHandler handler);
@@ -83306,7 +83306,7 @@ Asynchronously shut down SSL on the stream.
 
 
   template<
-      typename ShutdownHandler>
+      typename ``[link asio.reference.ShutdownHandler ShutdownHandler]``>
   void async_shutdown(
       ShutdownHandler handler);
 

@@ -1302,9 +1302,6 @@
         <xsl:when test="declname = 'Function'">
           <xsl:value-of select="declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'HandshakeHandler'">
-          <xsl:value-of select="declname"/>
-        </xsl:when>
         <xsl:when test="declname = 'Iterator'">
           <xsl:value-of select="declname"/>
         </xsl:when>
@@ -1321,9 +1318,6 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'PointerToPodType'">
-          <xsl:value-of select="declname"/>
-        </xsl:when>
-        <xsl:when test="declname = 'ShutdownHandler'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'SocketService1' or declname = 'SocketService2'">
