@@ -22,5 +22,6 @@
 #include "asio/ssl/impl/context.ipp"
 #include "asio/ssl/impl/error.ipp"
 #include "asio/ssl/detail/impl/engine.ipp"
+#include "asio/ssl/detail/impl/openssl_init.ipp"
 
 #endif // ASIO_IMPL_SRC_HPP

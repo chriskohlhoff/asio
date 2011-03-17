@@ -2,8 +2,7 @@
 // ssl/detail/openssl_init.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2005 Voipster / Indrek dot Juhani at voipster dot com
-// Copyright (c) 2005-2011 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2011 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -18,13 +17,8 @@
 
 #include "asio/detail/config.hpp"
 #include <cstring>
-#include <vector>
-#include <boost/assert.hpp>
-#include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/shared_ptr.hpp"
-#include "asio/detail/tss_ptr.hpp"
-#include "asio/ssl/detail/openssl_types.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -36,78 +30,15 @@ class openssl_init_base
   : private noncopyable
 {
 protected:
-  // Structure to perform the actual initialisation.
-  class do_init
-  {
-  public:
-    do_init()
-    {
-      ::SSL_library_init();
-      ::SSL_load_error_strings();        
-      ::OpenSSL_add_ssl_algorithms();
-
-      mutexes_.resize(::CRYPTO_num_locks());
-      for (size_t i = 0; i < mutexes_.size(); ++i)
-        mutexes_[i].reset(new asio::detail::mutex);
-      ::CRYPTO_set_locking_callback(&do_init::openssl_locking_func);
-      ::CRYPTO_set_id_callback(&do_init::openssl_id_func);
-    }
-
-    ~do_init()
-    {
-      ::CRYPTO_set_id_callback(0);
-      ::CRYPTO_set_locking_callback(0);
-      ::ERR_free_strings();
-      ::ERR_remove_state(0);
-      ::EVP_cleanup();
-      ::CRYPTO_cleanup_all_ex_data();
-      ::CONF_modules_unload(1);
-      ::ENGINE_cleanup();
-    }
-
-  private:
-    static unsigned long openssl_id_func()
-    {
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-      return ::GetCurrentThreadId();
-#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-      void* id = instance()->thread_id_;
-      if (id == 0)
-        instance()->thread_id_ = id = &id; // Ugh.
-      BOOST_ASSERT(sizeof(unsigned long) >= sizeof(void*));
-      return reinterpret_cast<unsigned long>(id);
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-    }
-
-    static void openssl_locking_func(int mode, int n, 
-      const char* /*file*/, int /*line*/)
-    {
-      if (mode & CRYPTO_LOCK)
-        instance()->mutexes_[n]->lock();
-      else
-        instance()->mutexes_[n]->unlock();
-    }
-
-    // Mutexes to be used in locking callbacks.
-    std::vector<asio::detail::shared_ptr<
-          asio::detail::mutex> > mutexes_;
-
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-    // The thread identifiers to be used by openssl.
-    asio::detail::tss_ptr<void> thread_id_;
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-  };
+  // Class that performs the actual initialisation.
+  class do_init;
 
   // Helper function to manage a do_init singleton. The static instance of the
   // openssl_init object ensures that this function is always called before
   // main, and therefore before any other threads can get started. The do_init
   // instance must be static in this function to ensure that it gets
   // initialised before any other global objects try to use it.
-  static asio::detail::shared_ptr<do_init> instance()
-  {
-    static asio::detail::shared_ptr<do_init> init(new do_init);
-    return init;
-  }
+  ASIO_DECL static asio::detail::shared_ptr<do_init> instance();
 };
 
 template <bool Do_Init = true>
@@ -147,5 +78,9 @@ openssl_init<Do_Init> openssl_init<Do_Init>::instance_;
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/ssl/detail/impl/openssl_init.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_SSL_DETAIL_OPENSSL_INIT_HPP
