@@ -60,8 +60,8 @@ using asio::ssl::old::stream;
  * To use the SSL stream template with an ip::tcp::socket, you would write:
  * @code
  * asio::io_service io_service;
- * asio::ssl::context context(io_service, asio::ssl::context::sslv23);
- * asio::ssl::stream<asio::ip::tcp::socket> sock(io_service, context);
+ * asio::ssl::context ctx(asio::ssl::context::sslv23);
+ * asio::ssl::stream<asio:ip::tcp::socket> sock(io_service, ctx);
  * @endcode
  *
  * @par Concepts:

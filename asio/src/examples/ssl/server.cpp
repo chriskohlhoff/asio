@@ -19,7 +19,8 @@ typedef asio::ssl::stream<asio::ip::tcp::socket> ssl_socket;
 class session
 {
 public:
-  session(asio::io_service& io_service, asio::ssl::context& context)
+  session(asio::io_service& io_service,
+      asio::ssl::context& context)
     : socket_(io_service, context)
   {
   }
@@ -95,7 +96,7 @@ public:
     : io_service_(io_service),
       acceptor_(io_service,
           asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port)),
-      context_(io_service, asio::ssl::context::sslv23)
+      context_(asio::ssl::context::sslv23)
   {
     context_.set_options(
         asio::ssl::context::default_workarounds

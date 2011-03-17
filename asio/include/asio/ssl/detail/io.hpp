@@ -120,10 +120,10 @@ public:
             continue;
           }
 
-          // The engine wants more data to be read from input. However, we cannot
-          // allow more than one read operation at a time on the underlying
-          // transport. The pending_read_ timer's expiry is set to pos_infin if a
-          // read is in progress, and neg_infin otherwise.
+          // The engine wants more data to be read from input. However, we
+          // cannot allow more than one read operation at a time on the
+          // underlying transport. The pending_read_ timer's expiry is set to
+          // pos_infin if a read is in progress, and neg_infin otherwise.
           if (core_.pending_read_.expires_at() == boost::posix_time::neg_infin)
           {
             // Prevent other read operations from being started.
@@ -171,9 +171,9 @@ public:
 
         default:
 
-          // The SSL operation is done and we can invoke the handler, but we have
-          // to keep in mind that this function might be being called from the
-          // async operation's initiating function. In this case we're not
+          // The SSL operation is done and we can invoke the handler, but we
+          // have to keep in mind that this function might be being called from
+          // the async operation's initiating function. In this case we're not
           // allowed to call the handler directly. Instead, issue a zero-sized
           // read so the handler runs "as-if" posted using io_service::post().
           if (start)
@@ -201,7 +201,8 @@ public:
         case engine::want_input_and_retry:
 
           // Add received data to the engine's input.
-          core_.input_ = asio::buffer(core_.input_buffer_, bytes_transferred);
+          core_.input_ = asio::buffer(
+              core_.input_buffer_, bytes_transferred);
           core_.input_ = core_.engine_.put_input(core_.input_);
 
           // Release any waiting read operations.

@@ -19,7 +19,8 @@ enum { max_length = 1024 };
 class client
 {
 public:
-  client(asio::io_service& io_service, asio::ssl::context& context,
+  client(asio::io_service& io_service,
+      asio::ssl::context& context,
       asio::ip::tcp::resolver::iterator endpoint_iterator)
     : socket_(io_service, context)
   {
@@ -116,7 +117,7 @@ int main(int argc, char* argv[])
     asio::ip::tcp::resolver::query query(argv[1], argv[2]);
     asio::ip::tcp::resolver::iterator iterator = resolver.resolve(query);
 
-    asio::ssl::context ctx(io_service, asio::ssl::context::sslv23);
+    asio::ssl::context ctx(asio::ssl::context::sslv23);
     ctx.set_verify_mode(asio::ssl::context::verify_peer);
     ctx.load_verify_file("ca.pem");
 
