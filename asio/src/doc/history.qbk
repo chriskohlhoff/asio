@@ -7,6 +7,24 @@
 
 [section:history Revision History]
 
+[heading Asio 1.5.3]
+
+* Added a new, completely rewritten SSL implementation. The new implementation
+  compiles faster, shows substantially improved performance, and supports
+  custom memory allocation and handler invocation. The new implementation is
+  source-compatible with the old for most uses. However, if necessary, the old
+  implementation may still be used by defining `(BOOST_)ASIO_ENABLE_OLD_SSL`.
+
+* Added new `asio::buffer()` overloads for `std::array`, when available. The
+  support is automatically enabled when compiling in [^-std=c++0x] mode on g++
+  4.3 or higher, or when using MSVC 10. The support may be explicitly enabled
+  by defining `(BOOST_)ASIO_HAS_STD_ARRAY`, or disabled by defining
+  `(BOOST_)ASIO_DISABLE_STD_ARRAY`.
+
+* Support for `std::error_code` and `std::system_error` is no longer enabled by
+  default for g++ 4.5, as that compiler's standard library does not implement
+  `std::system_error::what()` correctly.
+
 [heading Asio 1.5.2]
 
 * Added support for C++0x move construction and assignment to sockets, serial
