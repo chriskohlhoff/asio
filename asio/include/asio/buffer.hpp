@@ -556,9 +556,9 @@ private:
  * passed to the socket's write function. A buffer created for modifiable
  * memory also meets the requirements of the MutableBufferSequence concept.
  *
- * An individual buffer may be created from a builtin array, std::vector or
- * boost::array of POD elements. This helps prevent buffer overruns by
- * automatically determining the size of the buffer:
+ * An individual buffer may be created from a builtin array, std::vector,
+ * std::array or boost::array of POD elements. This helps prevent buffer
+ * overruns by automatically determining the size of the buffer:
  *
  * @code char d1[128];
  * size_t bytes_transferred = sock.receive(asio::buffer(d1));
@@ -566,8 +566,11 @@ private:
  * std::vector<char> d2(128);
  * bytes_transferred = sock.receive(asio::buffer(d2));
  *
- * boost::array<char, 128> d3;
- * bytes_transferred = sock.receive(asio::buffer(d3)); @endcode
+ * std::array<char, 128> d3;
+ * bytes_transferred = sock.receive(asio::buffer(d3));
+ *
+ * boost::array<char, 128> d4;
+ * bytes_transferred = sock.receive(asio::buffer(d4)); @endcode
  *
  * In all three cases above, the buffers created are exactly 128 bytes long.
  * Note that a vector is @e never automatically resized when creating or using
@@ -972,6 +975,103 @@ inline const_buffers_1 buffer(const boost::array<PodType, N>& data,
         data.size() * sizeof(PodType) < max_size_in_bytes
         ? data.size() * sizeof(PodType) : max_size_in_bytes));
 }
+
+#if defined(ASIO_HAS_STD_ARRAY)
+
+/// Create a new modifiable buffer that represents the given POD array.
+/**
+ * @returns A mutable_buffers_1 value equivalent to:
+ * @code mutable_buffers_1(
+ *     data.data(),
+ *     data.size() * sizeof(PodType)); @endcode
+ */
+template <typename PodType, std::size_t N>
+inline mutable_buffers_1 buffer(std::array<PodType, N>& data)
+{
+  return mutable_buffers_1(
+      mutable_buffer(data.data(), data.size() * sizeof(PodType)));
+}
+
+/// Create a new modifiable buffer that represents the given POD array.
+/**
+ * @returns A mutable_buffers_1 value equivalent to:
+ * @code mutable_buffers_1(
+ *     data.data(),
+ *     min(data.size() * sizeof(PodType), max_size_in_bytes)); @endcode
+ */
+template <typename PodType, std::size_t N>
+inline mutable_buffers_1 buffer(std::array<PodType, N>& data,
+    std::size_t max_size_in_bytes)
+{
+  return mutable_buffers_1(
+      mutable_buffer(data.data(),
+        data.size() * sizeof(PodType) < max_size_in_bytes
+        ? data.size() * sizeof(PodType) : max_size_in_bytes));
+}
+
+/// Create a new non-modifiable buffer that represents the given POD array.
+/**
+ * @returns A const_buffers_1 value equivalent to:
+ * @code const_buffers_1(
+ *     data.data(),
+ *     data.size() * sizeof(PodType)); @endcode
+ */
+template <typename PodType, std::size_t N>
+inline const_buffers_1 buffer(std::array<const PodType, N>& data)
+{
+  return const_buffers_1(
+      const_buffer(data.data(), data.size() * sizeof(PodType)));
+}
+
+/// Create a new non-modifiable buffer that represents the given POD array.
+/**
+ * @returns A const_buffers_1 value equivalent to:
+ * @code const_buffers_1(
+ *     data.data(),
+ *     min(data.size() * sizeof(PodType), max_size_in_bytes)); @endcode
+ */
+template <typename PodType, std::size_t N>
+inline const_buffers_1 buffer(std::array<const PodType, N>& data,
+    std::size_t max_size_in_bytes)
+{
+  return const_buffers_1(
+      const_buffer(data.data(),
+        data.size() * sizeof(PodType) < max_size_in_bytes
+        ? data.size() * sizeof(PodType) : max_size_in_bytes));
+}
+
+/// Create a new non-modifiable buffer that represents the given POD array.
+/**
+ * @returns A const_buffers_1 value equivalent to:
+ * @code const_buffers_1(
+ *     data.data(),
+ *     data.size() * sizeof(PodType)); @endcode
+ */
+template <typename PodType, std::size_t N>
+inline const_buffers_1 buffer(const std::array<PodType, N>& data)
+{
+  return const_buffers_1(
+      const_buffer(data.data(), data.size() * sizeof(PodType)));
+}
+
+/// Create a new non-modifiable buffer that represents the given POD array.
+/**
+ * @returns A const_buffers_1 value equivalent to:
+ * @code const_buffers_1(
+ *     data.data(),
+ *     min(data.size() * sizeof(PodType), max_size_in_bytes)); @endcode
+ */
+template <typename PodType, std::size_t N>
+inline const_buffers_1 buffer(const std::array<PodType, N>& data,
+    std::size_t max_size_in_bytes)
+{
+  return const_buffers_1(
+      const_buffer(data.data(),
+        data.size() * sizeof(PodType) < max_size_in_bytes
+        ? data.size() * sizeof(PodType) : max_size_in_bytes));
+}
+
+#endif // defined(ASIO_HAS_STD_ARRAY)
 
 /// Create a new modifiable buffer that represents the given POD vector.
 /**

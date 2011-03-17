@@ -76,9 +76,25 @@
 #   if defined(__GXX_EXPERIMENTAL_CXX0X__)
 #    define ASIO_HAS_STD_SYSTEM_ERROR
 #   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
-#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
 # endif // defined(__GNUC__)
 #endif // !defined(ASIO_DISABLE_STD_SYSTEM_ERROR)
+
+// Standard library support for arrays.
+#if !defined(ASIO_DISABLE_STD_ARRAY)
+# if defined(__GNUC__)
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
+#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#    define ASIO_HAS_STD_ARRAY
+#   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
+# endif // defined(__GNUC__)
+# if defined(BOOST_MSVC)
+#  if (_MSC_VER >= 1600)
+#   define ASIO_HAS_STD_ARRAY
+#  endif // (_MSC_VER >= 1600)
+# endif // defined(BOOST_MSVC)
+#endif // !defined(ASIO_DISABLE_STD_ARRAY)
 
 // Windows: target OS version.
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
