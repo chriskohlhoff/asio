@@ -20,8 +20,9 @@
 #include <cstring>
 #include <vector>
 #include <boost/assert.hpp>
-#include <boost/shared_ptr.hpp>
 #include "asio/detail/mutex.hpp"
+#include "asio/detail/noncopyable.hpp"
+#include "asio/detail/shared_ptr.hpp"
 #include "asio/detail/tss_ptr.hpp"
 #include "asio/ssl/detail/openssl_types.hpp"
 
@@ -31,44 +32,37 @@ namespace asio {
 namespace ssl {
 namespace detail {
 
-template <bool Do_Init = true>
-class openssl_init
-  : private boost::noncopyable
+class openssl_init_base
+  : private noncopyable
 {
-private:
+protected:
   // Structure to perform the actual initialisation.
   class do_init
   {
   public:
     do_init()
     {
-      if (Do_Init)
-      {
-        ::SSL_library_init();
-        ::SSL_load_error_strings();        
-        ::OpenSSL_add_ssl_algorithms();
+      ::SSL_library_init();
+      ::SSL_load_error_strings();        
+      ::OpenSSL_add_ssl_algorithms();
 
-        mutexes_.resize(::CRYPTO_num_locks());
-        for (size_t i = 0; i < mutexes_.size(); ++i)
-          mutexes_[i].reset(new asio::detail::mutex);
-        ::CRYPTO_set_locking_callback(&do_init::openssl_locking_func);
-        ::CRYPTO_set_id_callback(&do_init::openssl_id_func);
-      }
+      mutexes_.resize(::CRYPTO_num_locks());
+      for (size_t i = 0; i < mutexes_.size(); ++i)
+        mutexes_[i].reset(new asio::detail::mutex);
+      ::CRYPTO_set_locking_callback(&do_init::openssl_locking_func);
+      ::CRYPTO_set_id_callback(&do_init::openssl_id_func);
     }
 
     ~do_init()
     {
-      if (Do_Init)
-      {
-        ::CRYPTO_set_id_callback(0);
-        ::CRYPTO_set_locking_callback(0);
-        ::ERR_free_strings();
-        ::ERR_remove_state(0);
-        ::EVP_cleanup();
-        ::CRYPTO_cleanup_all_ex_data();
-        ::CONF_modules_unload(1);
-        ::ENGINE_cleanup();
-      }
+      ::CRYPTO_set_id_callback(0);
+      ::CRYPTO_set_locking_callback(0);
+      ::ERR_free_strings();
+      ::ERR_remove_state(0);
+      ::EVP_cleanup();
+      ::CRYPTO_cleanup_all_ex_data();
+      ::CONF_modules_unload(1);
+      ::ENGINE_cleanup();
     }
 
     // Helper function to manage a do_init singleton. The static instance of the
@@ -76,9 +70,9 @@ private:
     // main, and therefore before any other threads can get started. The do_init
     // instance must be static in this function to ensure that it gets
     // initialised before any other global objects try to use it.
-    static boost::shared_ptr<do_init> instance()
+    static asio::detail::shared_ptr<do_init> instance()
     {
-      static boost::shared_ptr<do_init> init(new do_init);
+      static asio::detail::shared_ptr<do_init> init(new do_init);
       return init;
     }
 
@@ -106,14 +100,19 @@ private:
     }
 
     // Mutexes to be used in locking callbacks.
-    std::vector<boost::shared_ptr<asio::detail::mutex> > mutexes_;
+    std::vector<asio::detail::shared_ptr<
+          asio::detail::mutex> > mutexes_;
 
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
     // The thread identifiers to be used by openssl.
     asio::detail::tss_ptr<void> thread_id_;
 #endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
   };
+};
 
+template <bool Do_Init = true>
+class openssl_init : private openssl_init_base
+{
 public:
   // Constructor.
   openssl_init()
@@ -137,7 +136,7 @@ private:
 
   // Reference to singleton do_init object to ensure that openssl does not get
   // cleaned up until the last user has finished with it.
-  boost::shared_ptr<do_init> ref_;
+  asio::detail::shared_ptr<do_init> ref_;
 };
 
 template <bool Do_Init>
