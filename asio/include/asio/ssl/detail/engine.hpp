@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 
 #if !defined(ASIO_ENABLE_OLD_SSL)
+# include "asio/buffer.hpp"
 # include "asio/detail/static_mutex.hpp"
 # include "asio/ssl/detail/openssl_types.hpp"
 # include "asio/ssl/stream_base.hpp"
