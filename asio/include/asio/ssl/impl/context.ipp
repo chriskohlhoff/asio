@@ -115,14 +115,14 @@ context::~context()
 {
   if (handle_)
   {
-    /*if (handle_->default_passwd_callback_userdata)
+    if (handle_->default_passwd_callback_userdata)
     {
-      password_callback_type* callback =
-        static_cast<password_callback_type*>(
+      detail::password_callback_base* callback =
+        static_cast<detail::password_callback_base*>(
             handle_->default_passwd_callback_userdata);
       delete callback;
       handle_->default_passwd_callback_userdata = 0;
-    }*/
+    }
 
     ::SSL_CTX_free(handle_);
   }
