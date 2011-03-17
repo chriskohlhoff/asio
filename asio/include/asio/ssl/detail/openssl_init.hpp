@@ -65,17 +65,6 @@ protected:
       ::ENGINE_cleanup();
     }
 
-    // Helper function to manage a do_init singleton. The static instance of the
-    // openssl_init object ensures that this function is always called before
-    // main, and therefore before any other threads can get started. The do_init
-    // instance must be static in this function to ensure that it gets
-    // initialised before any other global objects try to use it.
-    static asio::detail::shared_ptr<do_init> instance()
-    {
-      static asio::detail::shared_ptr<do_init> init(new do_init);
-      return init;
-    }
-
   private:
     static unsigned long openssl_id_func()
     {
@@ -108,6 +97,17 @@ protected:
     asio::detail::tss_ptr<void> thread_id_;
 #endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
   };
+
+  // Helper function to manage a do_init singleton. The static instance of the
+  // openssl_init object ensures that this function is always called before
+  // main, and therefore before any other threads can get started. The do_init
+  // instance must be static in this function to ensure that it gets
+  // initialised before any other global objects try to use it.
+  static asio::detail::shared_ptr<do_init> instance()
+  {
+    static asio::detail::shared_ptr<do_init> init(new do_init);
+    return init;
+  }
 };
 
 template <bool Do_Init = true>
@@ -116,7 +116,7 @@ class openssl_init : private openssl_init_base
 public:
   // Constructor.
   openssl_init()
-    : ref_(do_init::instance())
+    : ref_(instance())
   {
     using namespace std; // For memmove.
 
