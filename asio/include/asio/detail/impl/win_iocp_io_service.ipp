@@ -89,7 +89,7 @@ void win_iocp_io_service::shutdown_service()
 {
   ::InterlockedExchange(&shutdown_, 1);
 
-  if (timer_thread_)
+  if (timer_thread_.get())
   {
     LARGE_INTEGER timeout;
     timeout.QuadPart = 1;
@@ -125,7 +125,7 @@ void win_iocp_io_service::shutdown_service()
     }
   }
 
-  if (timer_thread_)
+  if (timer_thread_.get())
     timer_thread_->join();
 }
 
@@ -455,7 +455,7 @@ void win_iocp_io_service::do_add_timer_queue(timer_queue_base& queue)
         &timeout, max_timeout_msec, 0, 0, FALSE);
   }
 
-  if (!timer_thread_)
+  if (!timer_thread_.get())
   {
     timer_thread_function thread_function = { this };
     timer_thread_.reset(new thread(thread_function, 65536));
@@ -471,7 +471,7 @@ void win_iocp_io_service::do_remove_timer_queue(timer_queue_base& queue)
 
 void win_iocp_io_service::update_timeout()
 {
-  if (timer_thread_)
+  if (timer_thread_.get())
   {
     // There's no point updating the waitable timer if the new timeout period
     // exceeds the maximum timeout. In that case, we might as well wait for the

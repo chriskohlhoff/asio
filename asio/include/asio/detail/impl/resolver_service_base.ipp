@@ -52,10 +52,10 @@ resolver_service_base::~resolver_service_base()
 void resolver_service_base::shutdown_service()
 {
   work_.reset();
-  if (work_io_service_)
+  if (work_io_service_.get())
   {
     work_io_service_->stop();
-    if (work_thread_)
+    if (work_thread_.get())
     {
       work_thread_->join();
       work_thread_.reset();
@@ -67,7 +67,7 @@ void resolver_service_base::shutdown_service()
 void resolver_service_base::fork_service(
     asio::io_service::fork_event event)
 {
-  if (work_thread_)
+  if (work_thread_.get())
   {
     if (event == asio::io_service::fork_prepare)
     {
@@ -115,7 +115,7 @@ void resolver_service_base::start_resolve_op(operation* op)
 void resolver_service_base::start_work_thread()
 {
   asio::detail::mutex::scoped_lock lock(mutex_);
-  if (!work_thread_)
+  if (!work_thread_.get())
   {
     work_thread_.reset(new asio::detail::thread(
           work_io_service_runner(*work_io_service_)));

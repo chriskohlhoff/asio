@@ -16,11 +16,11 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <boost/scoped_ptr.hpp>
 #include "asio/io_service.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/operation.hpp"
+#include "asio/detail/scoped_ptr.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -99,8 +99,8 @@ private:
   // Number of implementations shared between all strand objects.
   enum { num_implementations = 193 };
 
-  // The head of a linked list of all implementations.
-  boost::scoped_ptr<strand_impl> implementations_[num_implementations];
+  // Pool of implementations.
+  scoped_ptr<strand_impl> implementations_[num_implementations];
 
   // Extra value used when hashing to prevent recycled memory locations from
   // getting the same strand implementation.

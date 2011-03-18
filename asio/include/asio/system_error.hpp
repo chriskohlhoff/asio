@@ -20,11 +20,11 @@
 #if defined(ASIO_HAS_STD_SYSTEM_ERROR)
 # include <system_error>
 #else // defined(ASIO_HAS_STD_SYSTEM_ERROR)
-# include <boost/scoped_ptr.hpp>
 # include <cerrno>
 # include <exception>
 # include <string>
 # include "asio/error_code.hpp"
+# include "asio/detail/scoped_ptr.hpp"
 #endif // defined(ASIO_HAS_STD_SYSTEM_ERROR)
 
 #include "asio/detail/push_options.hpp"
@@ -87,7 +87,7 @@ public:
     try
 #endif // !defined(BOOST_NO_EXCEPTIONS)
     {
-      if (!what_)
+      if (!what_.get())
       {
         std::string tmp(context_);
         if (tmp.length())
@@ -119,7 +119,7 @@ private:
   std::string context_;
 
   // The string representation of the error.
-  mutable boost::scoped_ptr<std::string> what_;
+  mutable asio::detail::scoped_ptr<std::string> what_;
 };
 
 #endif // defined(ASIO_HAS_STD_SYSTEM_ERROR)

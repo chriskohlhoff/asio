@@ -16,7 +16,6 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <boost/scoped_ptr.hpp>
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/detail/mutex.hpp"
@@ -24,6 +23,7 @@
 #include "asio/detail/operation.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/scoped_ptr.hpp"
 #include "asio/detail/thread.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -102,16 +102,16 @@ private:
   asio::detail::mutex mutex_;
 
   // Private io_service used for performing asynchronous host resolution.
-  boost::scoped_ptr<asio::io_service> work_io_service_;
+  asio::detail::scoped_ptr<asio::io_service> work_io_service_;
 
   // The work io_service implementation used to post completions.
   io_service_impl& work_io_service_impl_;
 
   // Work for the private io_service to perform.
-  boost::scoped_ptr<asio::io_service::work> work_;
+  asio::detail::scoped_ptr<asio::io_service::work> work_;
 
   // Thread used for running the work io_service's run loop.
-  boost::scoped_ptr<asio::detail::thread> work_thread_;
+  asio::detail::scoped_ptr<asio::detail::thread> work_thread_;
 };
 
 } // namespace detail
