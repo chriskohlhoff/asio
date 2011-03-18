@@ -55806,7 +55806,14 @@ Obtain an address object that represents the broadcast address that corresponds 
 The type used to represent an address as an array of bytes. 
 
 
-  typedef boost::array< unsigned char, 4 > bytes_type;
+  typedef array< unsigned char, 4 > bytes_type;
+
+
+
+
+[heading Remarks]
+      
+This type is defined in terms of the C++0x template `std::array` when it is available. Otherwise, it uses `boost:array`. 
 
 
 
@@ -56588,7 +56595,14 @@ Obtain an address object that represents any address.
 The type used to represent an address as an array of bytes. 
 
 
-  typedef boost::array< unsigned char, 16 > bytes_type;
+  typedef array< unsigned char, 16 > bytes_type;
+
+
+
+
+[heading Remarks]
+      
+This type is defined in terms of the C++0x template `std::array` when it is available. Otherwise, it uses `boost:array`. 
 
 
 

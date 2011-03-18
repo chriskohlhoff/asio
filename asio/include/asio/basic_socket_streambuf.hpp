@@ -20,7 +20,6 @@
 #if !defined(BOOST_NO_IOSTREAM)
 
 #include <streambuf>
-#include <boost/array.hpp>
 #include <boost/preprocessor/arithmetic/inc.hpp>
 #include <boost/preprocessor/repetition/enum_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_params.hpp>
@@ -28,6 +27,7 @@
 #include <boost/utility/base_from_member.hpp>
 #include "asio/basic_socket.hpp"
 #include "asio/deadline_timer_service.hpp"
+#include "asio/detail/array.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/stream_socket_service.hpp"
@@ -505,8 +505,8 @@ private:
 
   enum { putback_max = 8 };
   enum { buffer_size = 512 };
-  boost::array<char, buffer_size> get_buffer_;
-  boost::array<char, buffer_size> put_buffer_;
+  asio::detail::array<char, buffer_size> get_buffer_;
+  asio::detail::array<char, buffer_size> put_buffer_;
   bool unbuffered_;
   asio::error_code ec_;
   std::size_t bytes_transferred_;

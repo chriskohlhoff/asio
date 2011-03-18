@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include <string>
-#include <boost/array.hpp>
+#include "asio/detail/array.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/winsock_init.hpp"
 #include "asio/error_code.hpp"
@@ -44,7 +44,15 @@ class address_v4
 {
 public:
   /// The type used to represent an address as an array of bytes.
-  typedef boost::array<unsigned char, 4> bytes_type;
+  /**
+   * @note This type is defined in terms of the C++0x template @c std::array
+   * when it is available. Otherwise, it uses @c boost:array.
+   */
+#if defined(GENERATING_DOCUMENTATION)
+  typedef array<unsigned char, 4> bytes_type;
+#else
+  typedef asio::detail::array<unsigned char, 4> bytes_type;
+#endif
 
   /// Default constructor.
   address_v4()

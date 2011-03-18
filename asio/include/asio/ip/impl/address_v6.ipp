@@ -52,7 +52,7 @@ address_v6::address_v6(const address_v6::bytes_type& bytes,
 #endif // UCHAR_MAX > 0xFF
 
   using namespace std; // For memcpy.
-  memcpy(addr_.s6_addr, bytes.elems, 16);
+  memcpy(addr_.s6_addr, bytes.data(), 16);
 }
 
 address_v6::address_v6(const address_v6& other)
@@ -72,7 +72,11 @@ address_v6::bytes_type address_v6::to_bytes() const
 {
   using namespace std; // For memcpy.
   bytes_type bytes;
+#if defined(ASIO_HAS_STD_ARRAY)
+  memcpy(bytes.data(), addr_.s6_addr, 16);
+#else // defined(ASIO_HAS_STD_ARRAY)
   memcpy(bytes.elems, addr_.s6_addr, 16);
+#endif // defined(ASIO_HAS_STD_ARRAY)
   return bytes;
 }
 
