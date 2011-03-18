@@ -43108,7 +43108,7 @@ The simplest use case involves reading or writing a single buffer of a specified
 
 In the above example, the return value of `asio::buffer` meets the requirements of the ConstBufferSequence concept so that it may be directly passed to the socket's write function. A buffer created for modifiable memory also meets the requirements of the MutableBufferSequence concept.
 
-An individual buffer may be created from a builtin array, std::vector or boost::array of POD elements. This helps prevent buffer overruns by automatically determining the size of the buffer:
+An individual buffer may be created from a builtin array, std::vector, std::array or boost::array of POD elements. This helps prevent buffer overruns by automatically determining the size of the buffer:
 
 
 
@@ -43118,8 +43118,11 @@ An individual buffer may be created from a builtin array, std::vector or boost::
    std::vector<char> d2(128);
    bytes_transferred = sock.receive(asio::buffer(d2));
 
-   boost::array<char, 128> d3;
-   bytes_transferred = sock.receive(asio::buffer(d3)); 
+   std::array<char, 128> d3;
+   bytes_transferred = sock.receive(asio::buffer(d3));
+
+   boost::array<char, 128> d4;
+   bytes_transferred = sock.receive(asio::buffer(d4)); 
 
 
 
@@ -83196,8 +83199,8 @@ The stream class template provides asynchronous and blocking stream-oriented fun
 To use the SSL stream template with an `ip::tcp::socket`, you would write: 
 
    asio::io_service io_service;
-   asio::ssl::context context(io_service, asio::ssl::context::sslv23);
-   asio::ssl::stream<asio::ip::tcp::socket> sock(io_service, context);
+   asio::ssl::context ctx(asio::ssl::context::sslv23);
+   asio::ssl::stream<asio:ip::tcp::socket> sock(io_service, ctx);
 
 
 
@@ -83936,7 +83939,7 @@ This constructor creates a stream and initialises the underlying stream object.
   
 [[arg][The argument to be passed to initialise the underlying stream.]]
 
-[[context][The SSL context to be used for the stream. ]]
+[[ctx][The SSL context to be used for the stream. ]]
 
 ]
 
