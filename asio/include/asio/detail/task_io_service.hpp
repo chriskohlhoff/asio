@@ -19,9 +19,9 @@
 
 #if !defined(ASIO_HAS_IOCP)
 
-#include <boost/detail/atomic_count.hpp>
 #include "asio/error_code.hpp"
 #include "asio/io_service.hpp"
+#include "asio/detail/atomic_count.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/reactor_fwd.hpp"
@@ -149,7 +149,7 @@ private:
   bool task_interrupted_;
 
   // The count of unfinished work.
-  boost::detail::atomic_count outstanding_work_;
+  atomic_count outstanding_work_;
 
   // The queue of handlers that are ready to be delivered.
   op_queue<operation> op_queue_;
