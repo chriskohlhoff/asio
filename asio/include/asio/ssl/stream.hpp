@@ -89,7 +89,7 @@ public:
    *
    * @param arg The argument to be passed to initialise the underlying stream.
    *
-   * @param context The SSL context to be used for the stream.
+   * @param ctx The SSL context to be used for the stream.
    */
   template <typename Arg>
   stream(Arg& arg, context& ctx)
