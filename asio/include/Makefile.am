@@ -28,6 +28,8 @@ nobase_include_HEADERS = \
 	asio/deadline_timer.hpp \
 	asio/deadline_timer_service.hpp \
 	asio/detail/array_fwd.hpp \
+	asio/detail/array.hpp \
+	asio/detail/atomic_count.hpp \
 	asio/detail/base_from_completion_cond.hpp \
 	asio/detail/bind_handler.hpp \
 	asio/detail/buffered_stream_storage.hpp \
@@ -151,6 +153,7 @@ nobase_include_HEADERS = \
 	asio/detail/resolver_service_base.hpp \
 	asio/detail/resolver_service.hpp \
 	asio/detail/scoped_lock.hpp \
+	asio/detail/scoped_ptr.hpp \
 	asio/detail/select_interrupter.hpp \
 	asio/detail/select_reactor_fwd.hpp \
 	asio/detail/select_reactor.hpp \
@@ -293,6 +296,7 @@ nobase_include_HEADERS = \
 	asio/ssl/detail/engine.hpp \
 	asio/ssl/detail/handshake_op.hpp \
 	asio/ssl/detail/impl/engine.ipp \
+	asio/ssl/detail/impl/openssl_init.ipp \
 	asio/ssl/detail/io.hpp \
 	asio/ssl/detail/openssl_init.hpp \
 	asio/ssl/detail/openssl_types.hpp \
