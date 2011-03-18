@@ -17,6 +17,8 @@
 
 #include "asio/detail/config.hpp"
 
+#include "asio/detail/push_options.hpp"
+
 namespace asio {
 namespace detail {
 
@@ -71,5 +73,7 @@ private:
 
 } // namespace detail
 } // namespace asio
+
+#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_SCOPED_PTR_HPP
