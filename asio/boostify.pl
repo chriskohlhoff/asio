@@ -324,7 +324,10 @@ sub copy_include_files
       "include/asio/posix",
       "include/asio/ssl",
       "include/asio/ssl/detail",
+      "include/asio/ssl/detail/impl",
       "include/asio/ssl/impl",
+      "include/asio/ssl/old",
+      "include/asio/ssl/old/detail",
       "include/asio/windows");
 
   foreach my $dir (@dirs)
