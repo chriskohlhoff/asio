@@ -96,6 +96,22 @@
 # endif // defined(BOOST_MSVC)
 #endif // !defined(ASIO_DISABLE_STD_ARRAY)
 
+// Standard library support for shared_ptr and weak_ptr.
+#if !defined(ASIO_DISABLE_STD_SHARED_PTR)
+# if defined(__GNUC__)
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
+#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#    define ASIO_HAS_STD_SHARED_PTR
+#   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
+# endif // defined(__GNUC__)
+# if defined(BOOST_MSVC)
+#  if (_MSC_VER >= 1600)
+#   define ASIO_HAS_STD_SHARED_PTR
+#  endif // (_MSC_VER >= 1600)
+# endif // defined(BOOST_MSVC)
+#endif // !defined(ASIO_DISABLE_STD_SHARED_PTR)
+
 // Windows: target OS version.
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 # if !defined(_WIN32_WINNT) && !defined(_WIN32_WINDOWS)
