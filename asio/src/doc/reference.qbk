@@ -81002,6 +81002,13 @@ Protected destructor to prevent deletion through this type.
 
   [
 
+    [[link asio.reference.ssl__context.impl_type [*impl_type]]]
+    [(Deprecated: Use native_handle_type.) The native type of the SSL context. ]
+  
+  ]
+
+  [
+
     [[link asio.reference.ssl__context.method [*method]]]
     [Different methods supported by a context. ]
   
@@ -81056,6 +81063,11 @@ Protected destructor to prevent deletion through this type.
   ]
   
   [
+    [[link asio.reference.ssl__context.impl [*impl]]]
+    [(Deprecated: Use native_handle().) Get the underlying implementation in the native type. ]
+  ]
+  
+  [
     [[link asio.reference.ssl__context.load_verify_file [*load_verify_file]]]
     [Load a certification authority file for performing verification. ]
   ]
@@ -81068,6 +81080,11 @@ Protected destructor to prevent deletion through this type.
   [
     [[link asio.reference.ssl__context.operator_eq_ [*operator=]]]
     [Move-assign a context from another. ]
+  ]
+  
+  [
+    [[link asio.reference.ssl__context.set_default_verify_paths [*set_default_verify_paths]]]
+    [Configures the context to use the default directories for finding certification authority certificates. ]
   ]
   
   [
@@ -81218,9 +81235,14 @@ This function is used to specify the name of a directory containing certificatio
 
 [variablelist
   
-[[asio::system_error][Thrown on failure. ]]
+[[asio::system_error][Thrown on failure.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_load_verify_locations`. 
 
 
 
@@ -81250,9 +81272,14 @@ This function is used to specify the name of a directory containing certificatio
   
 [[path][The name of a directory containing the certificates.]]
 
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_load_verify_locations`. 
 
 
 
@@ -81407,6 +81434,43 @@ File format types.
 [endsect]
 
 
+
+[section:impl ssl::context::impl]
+
+[indexterm2 impl..ssl::context] 
+(Deprecated: Use `native_handle()`.) Get the underlying implementation in the native type. 
+
+
+  impl_type impl();
+
+
+This function may be used to obtain the underlying implementation of the context. This is intended to allow access to context functionality that is not otherwise provided. 
+
+
+[endsect]
+
+
+
+[section:impl_type ssl::context::impl_type]
+
+[indexterm2 impl_type..ssl::context] 
+(Deprecated: Use native\_handle\_type.) The native type of the SSL context. 
+
+
+  typedef SSL_CTX * impl_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ssl/context.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
+
+[endsect]
+
+
 [section:load_verify_file ssl::context::load_verify_file]
 
 [indexterm2 load_verify_file..ssl::context] 
@@ -81451,9 +81515,14 @@ This function is used to load one or more trusted certification authorities from
 
 [variablelist
   
-[[asio::system_error][Thrown on failure. ]]
+[[asio::system_error][Thrown on failure.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_load_verify_locations`. 
 
 
 
@@ -81483,9 +81552,14 @@ This function is used to load the certificates for one or more trusted certifica
   
 [[filename][The name of a file containing certification authority certificates in PEM format.]]
 
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_load_verify_locations`. 
 
 
 
@@ -81758,6 +81832,88 @@ Purpose of PEM password.
 [endsect]
 
 
+[section:set_default_verify_paths ssl::context::set_default_verify_paths]
+
+[indexterm2 set_default_verify_paths..ssl::context] 
+Configures the context to use the default directories for finding certification authority certificates. 
+
+
+  void ``[link asio.reference.ssl__context.set_default_verify_paths.overload1 set_default_verify_paths]``();
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.set_default_verify_paths.overload1 more...]]``
+
+  asio::error_code ``[link asio.reference.ssl__context.set_default_verify_paths.overload2 set_default_verify_paths]``(
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.set_default_verify_paths.overload2 more...]]``
+
+
+[section:overload1 ssl::context::set_default_verify_paths (1 of 2 overloads)]
+
+
+Configures the context to use the default directories for finding certification authority certificates. 
+
+
+  void set_default_verify_paths();
+
+
+This function specifies that the context should use the default, system-dependent directories for locating certification authority certificates.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_default_verify_paths`. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 ssl::context::set_default_verify_paths (2 of 2 overloads)]
+
+
+Configures the context to use the default directories for finding certification authority certificates. 
+
+
+  asio::error_code set_default_verify_paths(
+      asio::error_code & ec);
+
+
+This function specifies that the context should use the default, system-dependent directories for locating certification authority certificates.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_default_verify_paths`. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
 [section:set_options ssl::context::set_options]
 
 [indexterm2 set_options..ssl::context] 
@@ -81802,9 +81958,14 @@ This function may be used to configure the SSL options used by the context.
 
 [variablelist
   
-[[asio::system_error][Thrown on failure. ]]
+[[asio::system_error][Thrown on failure.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_options`. 
 
 
 
@@ -81834,9 +81995,14 @@ This function may be used to configure the SSL options used by the context.
   
 [[o][A bitmask of options. The available option values are defined in the [link asio.reference.ssl__context_base `ssl::context_base`] class. The options are bitwise-ored with any existing value for the options.]]
 
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_options`. 
 
 
 
@@ -81903,9 +82069,14 @@ The return value of the callback is a string containing the password.]]
 
 [variablelist
   
-[[asio::system_error][Thrown on failure. ]]
+[[asio::system_error][Thrown on failure.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_default_passwd_cb`. 
 
 
 
@@ -81944,9 +82115,14 @@ This function is used to specify a callback function to obtain password informat
 ``
 The return value of the callback is a string containing the password.]]
 
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_default_passwd_cb`. 
 
 
 
@@ -82000,9 +82176,14 @@ This function may be used to configure the peer verification mode used by the co
 
 [variablelist
   
-[[asio::system_error][Thrown on failure. ]]
+[[asio::system_error][Thrown on failure.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_verify`. 
 
 
 
@@ -82032,9 +82213,14 @@ This function may be used to configure the peer verification mode used by the co
   
 [[v][A bitmask of peer verification modes. The available verify\_mode values are defined in the [link asio.reference.ssl__context_base `ssl::context_base`] class.]]
 
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_verify`. 
 
 
 
@@ -82102,9 +82288,14 @@ This function is used to load a certificate chain into the context from a file.
 
 [variablelist
   
-[[asio::system_error][Thrown on failure. ]]
+[[asio::system_error][Thrown on failure.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_use_certificate_chain_file`. 
 
 
 
@@ -82134,9 +82325,14 @@ This function is used to load a certificate chain into the context from a file.
   
 [[filename][The name of the file containing the certificate. The file must use the PEM format.]]
 
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_use_certificate_chain_file`. 
 
 
 
@@ -82195,9 +82391,14 @@ This function is used to load a certificate into the context from a file.
 
 [variablelist
   
-[[asio::system_error][Thrown on failure. ]]
+[[asio::system_error][Thrown on failure.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_use_certificate_file`. 
 
 
 
@@ -82230,9 +82431,14 @@ This function is used to load a certificate into the context from a file.
 
 [[format][The file format (ASN.1 or PEM).]]
 
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_use_certificate_file`. 
 
 
 
@@ -82291,9 +82497,14 @@ This function is used to load a private key into the context from a file.
 
 [variablelist
   
-[[asio::system_error][Thrown on failure. ]]
+[[asio::system_error][Thrown on failure.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_use_PrivateKey_file`. 
 
 
 
@@ -82326,9 +82537,14 @@ This function is used to load a private key into the context from a file.
 
 [[format][The file format (ASN.1 or PEM).]]
 
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_use_PrivateKey_file`. 
 
 
 
@@ -82387,9 +82603,14 @@ This function is used to load an RSA private key into the context from a file.
 
 [variablelist
   
-[[asio::system_error][Thrown on failure. ]]
+[[asio::system_error][Thrown on failure.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_use_RSAPrivateKey_file`. 
 
 
 
@@ -82422,9 +82643,14 @@ This function is used to load an RSA private key into the context from a file.
 
 [[format][The file format (ASN.1 or PEM).]]
 
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_use_RSAPrivateKey_file`. 
 
 
 
@@ -82478,9 +82704,14 @@ This function is used to load Diffie-Hellman parameters into the context from a 
 
 [variablelist
   
-[[asio::system_error][Thrown on failure. ]]
+[[asio::system_error][Thrown on failure.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_tmp_dh`. 
 
 
 
@@ -82510,9 +82741,14 @@ This function is used to load Diffie-Hellman parameters into the context from a 
   
 [[filename][The name of the file containing the Diffie-Hellman parameters. The file must use the PEM format.]]
 
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_tmp_dh`. 
 
 
 
@@ -83094,8 +83330,22 @@ Provides stream-oriented functionality using SSL.
 
   [
 
+    [[link asio.reference.ssl__stream__impl_struct [*impl_struct]]]
+    [Structure for use with deprecated impl_type. ]
+  
+  ]
+
+  [
+
     [[link asio.reference.ssl__stream.handshake_type [*handshake_type]]]
     [Different handshake types. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ssl__stream.impl_type [*impl_type]]]
+    [(Deprecated: Use native_handle_type.) The underlying implementation type. ]
   
   ]
 
@@ -83154,6 +83404,11 @@ Provides stream-oriented functionality using SSL.
   [
     [[link asio.reference.ssl__stream.handshake [*handshake]]]
     [Perform SSL handshaking. ]
+  ]
+  
+  [
+    [[link asio.reference.ssl__stream.impl [*impl]]]
+    [(Deprecated: Use native_handle().) Get the underlying implementation in the native type. ]
   ]
   
   [
@@ -83542,6 +83797,43 @@ Different handshake types.
 [endsect]
 
 
+
+[section:impl ssl::stream::impl]
+
+[indexterm2 impl..ssl::stream] 
+(Deprecated: Use `native_handle()`.) Get the underlying implementation in the native type. 
+
+
+  impl_type impl();
+
+
+This function may be used to obtain the underlying implementation of the context. This is intended to allow access to stream functionality that is not otherwise provided. 
+
+
+[endsect]
+
+
+
+[section:impl_type ssl::stream::impl_type]
+
+[indexterm2 impl_type..ssl::stream] 
+(Deprecated: Use native\_handle\_type.) The underlying implementation type. 
+
+
+  typedef impl_struct * impl_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ssl/stream.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
+
+[endsect]
+
+
 [section:lowest_layer ssl::stream::lowest_layer]
 
 [indexterm2 lowest_layer..ssl::stream] 
@@ -83633,7 +83925,27 @@ Get the underlying implementation in the native type.
   native_handle_type native_handle();
 
 
-This function may be used to obtain the underlying implementation of the context. This is intended to allow access to context functionality that is not otherwise provided. 
+This function may be used to obtain the underlying implementation of the context. This is intended to allow access to context functionality that is not otherwise provided.
+
+
+[heading Example]
+  
+The `native_handle()` function returns a pointer of type `SSL*` that is suitable for passing to functions such as `SSL_get_verify_result` and `SSL_get_peer_certificate:` 
+
+   asio::ssl::stream<asio:ip::tcp::socket> sock(io_service, ctx);
+
+   // ... establish connection and perform handshake ...
+
+   if (SSL_get_verify_result(sock.native_handle()) == X509_V_OK)
+   {
+     X509* cert = SSL_get_peer_certificate(sock.native_handle());
+     // ...
+   }
+
+
+
+
+
 
 
 [endsect]
@@ -84087,6 +84399,47 @@ Destructor.
 
 
   ~stream();
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:ssl__stream__impl_struct ssl::stream::impl_struct]
+
+
+Structure for use with deprecated impl\_type. 
+
+
+  struct impl_struct
+
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ssl__stream__impl_struct.ssl [*ssl]]]
+    []
+  ]
+
+]
+
+[heading Requirements]
+
+[*Header: ][^asio/ssl/stream.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
+
+[section:ssl ssl::stream::impl_struct::ssl]
+
+[indexterm2 ssl..ssl::stream::impl_struct] 
+
+  SSL * ssl;
 
 
 
