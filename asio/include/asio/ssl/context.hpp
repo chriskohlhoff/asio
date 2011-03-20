@@ -167,6 +167,29 @@ public:
   ASIO_DECL asio::error_code load_verify_file(
       const std::string& filename, asio::error_code& ec);
 
+  /// Configures the context to use the default directories for finding
+  /// certification authority certificates.
+  /**
+   * This function specifies that the context should use the default,
+   * system-dependent directories for locating certification authority
+   * certificates.
+   *
+   * @throws asio::system_error Thrown on failure.
+   */
+  ASIO_DECL void set_default_verify_paths();
+
+  /// Configures the context to use the default directories for finding
+  /// certification authority certificates.
+  /**
+   * This function specifies that the context should use the default,
+   * system-dependent directories for locating certification authority
+   * certificates.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   */
+  ASIO_DECL asio::error_code set_default_verify_paths(
+      asio::error_code& ec);
+
   /// Add a directory containing certificate authority files to be used for
   /// performing verification.
   /**

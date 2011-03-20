@@ -186,6 +186,27 @@ asio::error_code context::load_verify_file(
   return ec;
 }
 
+void context::set_default_verify_paths()
+{
+  asio::error_code ec;
+  set_default_verify_paths(ec);
+  asio::detail::throw_error(ec, "set_default_verify_paths");
+}
+
+asio::error_code context::set_default_verify_paths(
+    asio::error_code& ec)
+{
+  if (::SSL_CTX_set_default_verify_paths(handle_) != 1)
+  {
+    ec = asio::error_code(::ERR_get_error(),
+        asio::error::get_ssl_category());
+    return ec;
+  }
+
+  ec = asio::error_code();
+  return ec;
+}
+
 void context::add_verify_path(const std::string& path)
 {
   asio::error_code ec;
