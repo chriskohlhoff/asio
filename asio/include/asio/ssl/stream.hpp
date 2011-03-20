@@ -141,10 +141,12 @@ public:
    *
    * // ... establish connection and perform handshake ...
    *
-   * if (SSL_get_verify_result(sock.native_handle()) == X509_V_OK)
+   * if (X509* cert = SSL_get_peer_certificate(sock.native_handle()))
    * {
-   *   X509* cert = SSL_get_peer_certificate(sock.native_handle());
-   *   // ...
+   *   if (SSL_get_verify_result(sock.native_handle()) == X509_V_OK)
+   *   {
+   *     // ...
+   *   }
    * }
    * @endcode
    */
