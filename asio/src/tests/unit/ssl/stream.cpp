@@ -71,6 +71,14 @@ void test()
 
     // ssl::stream functions.
 
+#if !defined(ASIO_ENABLE_OLD_SSL)
+    SSL* ssl1 = stream1.native_handle();
+    (void)ssl1;
+#endif // !defined(ASIO_ENABLE_OLD_SSL)
+
+    SSL* ssl2 = stream1.impl()->ssl;
+    (void)ssl2;
+
     ssl::stream<ip::tcp::socket>::lowest_layer_type& lowest_layer
       = stream1.lowest_layer();
     (void)lowest_layer;

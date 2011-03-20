@@ -133,6 +133,11 @@ context::native_handle_type context::native_handle()
   return handle_;
 }
 
+context::impl_type context::impl()
+{
+  return handle_;
+}
+
 void context::set_options(context::options o)
 {
   asio::error_code ec;

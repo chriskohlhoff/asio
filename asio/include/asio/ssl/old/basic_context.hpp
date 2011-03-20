@@ -40,7 +40,7 @@ public:
   /// The type of the service that will be used to provide context operations.
   typedef Service service_type;
 
-  /// The native implementation type of the locking dispatcher.
+  /// The native implementation type of the SSL context.
   typedef typename service_type::impl_type impl_type;
 
   /// Constructor.

@@ -47,6 +47,9 @@ public:
   /// The native handle type of the SSL context.
   typedef SSL_CTX* native_handle_type;
 
+  /// (Deprecated: Use native_handle_type.) The native type of the SSL context.
+  typedef SSL_CTX* impl_type;
+
   /// Constructor.
   ASIO_DECL explicit context(method m);
 
@@ -91,6 +94,15 @@ public:
    * not otherwise provided.
    */
   ASIO_DECL native_handle_type native_handle();
+
+  /// (Deprecated: Use native_handle().) Get the underlying implementation in
+  /// the native type.
+  /**
+   * This function may be used to obtain the underlying implementation of the
+   * context. This is intended to allow access to context functionality that is
+   * not otherwise provided.
+   */
+  ASIO_DECL impl_type impl();
 
   /// Set options on the context.
   /**

@@ -76,6 +76,15 @@ public:
   /// The native handle type of the SSL stream.
   typedef SSL* native_handle_type;
 
+  /// Structure for use with deprecated impl_type.
+  struct impl_struct
+  {
+    SSL* ssl;
+  };
+
+  /// (Deprecated: Use native_handle_type.) The underlying implementation type.
+  typedef impl_struct* impl_type;
+
   /// The type of the next layer.
   typedef typename boost::remove_reference<Stream>::type next_layer_type;
 
@@ -96,6 +105,7 @@ public:
     : next_layer_(arg),
       core_(ctx.native_handle(), next_layer_.lowest_layer().get_io_service())
   {
+    backwards_compatible_impl_.ssl = core_.engine_.native_handle();
   }
 
   /// Destructor.
@@ -121,10 +131,38 @@ public:
    * This function may be used to obtain the underlying implementation of the
    * context. This is intended to allow access to context functionality that is
    * not otherwise provided.
+   *
+   * @par Example
+   * The native_handle() function returns a pointer of type @c SSL* that is
+   * suitable for passing to functions such as @c SSL_get_verify_result and
+   * @c SSL_get_peer_certificate:
+   * @code
+   * asio::ssl::stream<asio:ip::tcp::socket> sock(io_service, ctx);
+   *
+   * // ... establish connection and perform handshake ...
+   *
+   * if (SSL_get_verify_result(sock.native_handle()) == X509_V_OK)
+   * {
+   *   X509* cert = SSL_get_peer_certificate(sock.native_handle());
+   *   // ...
+   * }
+   * @endcode
    */
   native_handle_type native_handle()
   {
     return core_.engine_.native_handle();
+  }
+
+  /// (Deprecated: Use native_handle().) Get the underlying implementation in
+  /// the native type.
+  /**
+   * This function may be used to obtain the underlying implementation of the
+   * context. This is intended to allow access to stream functionality that is
+   * not otherwise provided.
+   */
+  impl_type impl()
+  {
+    return &backwards_compatible_impl_;
   }
 
   /// Get a reference to the next layer.
@@ -458,6 +496,7 @@ public:
 private:
   Stream next_layer_;
   detail::stream_core core_;
+  impl_struct backwards_compatible_impl_;
 };
 
 #endif // defined(ASIO_ENABLE_OLD_SSL)
