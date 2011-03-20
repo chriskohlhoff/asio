@@ -101,6 +101,8 @@ public:
    * value for the options.
    *
    * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_set_options.
    */
   ASIO_DECL void set_options(options o);
 
@@ -113,6 +115,8 @@ public:
    * value for the options.
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_set_options.
    */
   ASIO_DECL asio::error_code set_options(options o,
       asio::error_code& ec);
@@ -126,6 +130,8 @@ public:
    * values are defined in the context_base class.
    *
    * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_set_verify.
    */
   ASIO_DECL void set_verify_mode(verify_mode v);
 
@@ -138,6 +144,8 @@ public:
    * values are defined in the context_base class.
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_set_verify.
    */
   ASIO_DECL asio::error_code set_verify_mode(
       verify_mode v, asio::error_code& ec);
@@ -151,6 +159,8 @@ public:
    * certificates in PEM format.
    *
    * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_load_verify_locations.
    */
   ASIO_DECL void load_verify_file(const std::string& filename);
 
@@ -163,6 +173,8 @@ public:
    * certificates in PEM format.
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_load_verify_locations.
    */
   ASIO_DECL asio::error_code load_verify_file(
       const std::string& filename, asio::error_code& ec);
@@ -175,6 +187,8 @@ public:
    * certificates.
    *
    * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_set_default_verify_paths.
    */
   ASIO_DECL void set_default_verify_paths();
 
@@ -186,6 +200,8 @@ public:
    * certificates.
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_set_default_verify_paths.
    */
   ASIO_DECL asio::error_code set_default_verify_paths(
       asio::error_code& ec);
@@ -201,6 +217,8 @@ public:
    * @param path The name of a directory containing the certificates.
    *
    * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_load_verify_locations.
    */
   ASIO_DECL void add_verify_path(const std::string& path);
 
@@ -215,6 +233,8 @@ public:
    * @param path The name of a directory containing the certificates.
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_load_verify_locations.
    */
   ASIO_DECL asio::error_code add_verify_path(
       const std::string& path, asio::error_code& ec);
@@ -228,6 +248,8 @@ public:
    * @param format The file format (ASN.1 or PEM).
    *
    * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_use_certificate_file.
    */
   ASIO_DECL void use_certificate_file(
       const std::string& filename, file_format format);
@@ -241,6 +263,8 @@ public:
    * @param format The file format (ASN.1 or PEM).
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_use_certificate_file.
    */
   ASIO_DECL asio::error_code use_certificate_file(
       const std::string& filename, file_format format,
@@ -255,6 +279,8 @@ public:
    * must use the PEM format.
    *
    * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_use_certificate_chain_file.
    */
   ASIO_DECL void use_certificate_chain_file(const std::string& filename);
 
@@ -267,6 +293,8 @@ public:
    * must use the PEM format.
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_use_certificate_chain_file.
    */
   ASIO_DECL asio::error_code use_certificate_chain_file(
       const std::string& filename, asio::error_code& ec);
@@ -280,6 +308,8 @@ public:
    * @param format The file format (ASN.1 or PEM).
    *
    * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_use_PrivateKey_file.
    */
   ASIO_DECL void use_private_key_file(
       const std::string& filename, file_format format);
@@ -293,6 +323,8 @@ public:
    * @param format The file format (ASN.1 or PEM).
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_use_PrivateKey_file.
    */
   ASIO_DECL asio::error_code use_private_key_file(
       const std::string& filename, file_format format,
@@ -308,6 +340,8 @@ public:
    * @param format The file format (ASN.1 or PEM).
    *
    * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_use_RSAPrivateKey_file.
    */
   ASIO_DECL void use_rsa_private_key_file(
       const std::string& filename, file_format format);
@@ -322,6 +356,8 @@ public:
    * @param format The file format (ASN.1 or PEM).
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_use_RSAPrivateKey_file.
    */
   ASIO_DECL asio::error_code use_rsa_private_key_file(
       const std::string& filename, file_format format,
@@ -336,6 +372,8 @@ public:
    * parameters. The file must use the PEM format.
    *
    * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_set_tmp_dh.
    */
   ASIO_DECL void use_tmp_dh_file(const std::string& filename);
 
@@ -348,6 +386,8 @@ public:
    * parameters. The file must use the PEM format.
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_set_tmp_dh.
    */
   ASIO_DECL asio::error_code use_tmp_dh_file(
       const std::string& filename, asio::error_code& ec);
@@ -366,6 +406,8 @@ public:
    * The return value of the callback is a string containing the password.
    *
    * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_set_default_passwd_cb.
    */
   template <typename PasswordCallback>
   void set_password_callback(PasswordCallback callback);
@@ -384,6 +426,8 @@ public:
    * The return value of the callback is a string containing the password.
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_set_default_passwd_cb.
    */
   template <typename PasswordCallback>
   asio::error_code set_password_callback(PasswordCallback callback,
