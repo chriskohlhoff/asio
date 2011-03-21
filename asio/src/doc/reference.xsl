@@ -251,6 +251,18 @@
          select="concat(substring-before($name, ']'), '_rb_', substring-after($name, ']'))"/>
       </xsl:call-template>
     </xsl:when>
+    <xsl:when test="contains($name, '(')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '('), '_lp_', substring-after($name, '('))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, ')')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, ')'), '_rp_', substring-after($name, ')'))"/>
+      </xsl:call-template>
+    </xsl:when>
     <xsl:when test="contains($name, '+')">
       <xsl:call-template name="make-id">
         <xsl:with-param name="name"
@@ -1392,6 +1404,9 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'Traits'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'VerifyCallback'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="count(declname) = 0">

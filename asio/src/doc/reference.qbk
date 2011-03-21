@@ -82117,13 +82117,13 @@ Set the callback used to verify peer certificates.
 
 
   template<
-      typename ``[link asio.reference.VerifyCallback VerifyCallback]``>
+      typename VerifyCallback>
   void ``[link asio.reference.ssl__context.set_verify_callback.overload1 set_verify_callback]``(
       VerifyCallback callback);
   ``  [''''&raquo;''' [link asio.reference.ssl__context.set_verify_callback.overload1 more...]]``
 
   template<
-      typename ``[link asio.reference.VerifyCallback VerifyCallback]``>
+      typename VerifyCallback>
   asio::error_code ``[link asio.reference.ssl__context.set_verify_callback.overload2 set_verify_callback]``(
       VerifyCallback callback,
       asio::error_code & ec);
@@ -82137,7 +82137,7 @@ Set the callback used to verify peer certificates.
 
 
   template<
-      typename ``[link asio.reference.VerifyCallback VerifyCallback]``>
+      typename VerifyCallback>
   void set_verify_callback(
       VerifyCallback callback);
 
@@ -82190,7 +82190,7 @@ Set the callback used to verify peer certificates.
 
 
   template<
-      typename ``[link asio.reference.VerifyCallback VerifyCallback]``>
+      typename VerifyCallback>
   asio::error_code set_verify_callback(
       VerifyCallback callback,
       asio::error_code & ec);
@@ -83255,7 +83255,7 @@ Verifies a certificate against a hostname according to the rules described in RF
   [[Name][Description]]
 
   [
-    [[link asio.reference.ssl__rfc2818_verification.operator() [*operator()]]]
+    [[link asio.reference.ssl__rfc2818_verification.operator_lp__rp_ [*operator()]]]
     [Perform certificate verification. ]
   ]
   
@@ -83305,7 +83305,7 @@ The following example shows how to synchronously open a secure connection to a g
 [*Convenience header: ][^asio/ssl.hpp]
 
 
-[section:operator() ssl::rfc2818_verification::operator()]
+[section:operator_lp__rp_ ssl::rfc2818_verification::operator()]
 
 [indexterm2 operator()..ssl::rfc2818_verification] 
 Perform certificate verification. 
@@ -84236,13 +84236,13 @@ Set the callback used to verify peer certificates.
 
 
   template<
-      typename ``[link asio.reference.VerifyCallback VerifyCallback]``>
+      typename VerifyCallback>
   void ``[link asio.reference.ssl__stream.set_verify_callback.overload1 set_verify_callback]``(
       VerifyCallback callback);
   ``  [''''&raquo;''' [link asio.reference.ssl__stream.set_verify_callback.overload1 more...]]``
 
   template<
-      typename ``[link asio.reference.VerifyCallback VerifyCallback]``>
+      typename VerifyCallback>
   asio::error_code ``[link asio.reference.ssl__stream.set_verify_callback.overload2 set_verify_callback]``(
       VerifyCallback callback,
       asio::error_code & ec);
@@ -84256,7 +84256,7 @@ Set the callback used to verify peer certificates.
 
 
   template<
-      typename ``[link asio.reference.VerifyCallback VerifyCallback]``>
+      typename VerifyCallback>
   void set_verify_callback(
       VerifyCallback callback);
 
@@ -84309,7 +84309,7 @@ Set the callback used to verify peer certificates.
 
 
   template<
-      typename ``[link asio.reference.VerifyCallback VerifyCallback]``>
+      typename VerifyCallback>
   asio::error_code set_verify_callback(
       VerifyCallback callback,
       asio::error_code & ec);
