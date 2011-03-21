@@ -31,6 +31,8 @@
 # include "asio/ssl/verify_mode.hpp"
 #endif // defined(ASIO_ENABLE_OLD_SSL)
 
+#include "asio/detail/push_options.hpp"
+
 namespace asio {
 namespace ssl {
 

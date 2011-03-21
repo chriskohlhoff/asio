@@ -23,6 +23,8 @@
 # include "asio/ssl/verify_context.hpp"
 #endif // !defined(ASIO_ENABLE_OLD_SSL)
 
+#include "asio/detail/push_options.hpp"
+
 namespace asio {
 namespace ssl {
 
