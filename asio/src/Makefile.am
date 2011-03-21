@@ -170,6 +170,7 @@ check_PROGRAMS += \
 	tests/unit/ssl/context_base \
 	tests/unit/ssl/context_service \
 	tests/unit/ssl/context \
+	tests/unit/ssl/rfc2818_verification \
 	tests/unit/ssl/stream_base \
 	tests/unit/ssl/stream_service \
 	tests/unit/ssl/stream
@@ -265,6 +266,7 @@ TESTS += \
 	tests/unit/ssl/context_base \
 	tests/unit/ssl/context_service \
 	tests/unit/ssl/context \
+	tests/unit/ssl/rfc2818_verification \
 	tests/unit/ssl/stream_base \
 	tests/unit/ssl/stream_service \
 	tests/unit/ssl/stream
@@ -465,6 +467,7 @@ tests_unit_ssl_context_base_SOURCES = tests/unit/ssl/context_base.cpp tests/unit
 tests_unit_ssl_context_service_SOURCES = tests/unit/ssl/context_service.cpp tests/unit/unit_test.cpp
 tests_unit_ssl_context_SOURCES = tests/unit/ssl/context.cpp tests/unit/unit_test.cpp
 tests_unit_ssl_stream_base_SOURCES = tests/unit/ssl/stream_base.cpp tests/unit/unit_test.cpp
+tests_unit_ssl_rfc2818_verification_SOURCES = tests/unit/ssl/rfc2818_verification.cpp tests/unit/unit_test.cpp
 tests_unit_ssl_stream_service_SOURCES = tests/unit/ssl/stream_service.cpp tests/unit/unit_test.cpp
 tests_unit_ssl_stream_SOURCES = tests/unit/ssl/stream.cpp tests/unit/unit_test.cpp
 examples_ssl_client_SOURCES = examples/ssl/client.cpp

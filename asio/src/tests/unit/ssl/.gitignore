@@ -11,6 +11,7 @@ basic_context
 context
 context_base
 context_service
+rfc2818_verification
 stream
 stream_base
 stream_service

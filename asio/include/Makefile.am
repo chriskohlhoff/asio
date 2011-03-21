@@ -311,6 +311,7 @@ nobase_include_HEADERS = \
 	asio/ssl/impl/context.hpp \
 	asio/ssl/impl/context.ipp \
 	asio/ssl/impl/error.ipp \
+	asio/ssl/impl/rfc2818_verification.ipp \
 	asio/ssl/impl/src.hpp \
 	asio/ssl/old/basic_context.hpp \
 	asio/ssl/old/context_service.hpp \
@@ -319,6 +320,7 @@ nobase_include_HEADERS = \
 	asio/ssl/old/detail/openssl_stream_service.hpp \
 	asio/ssl/old/stream.hpp \
 	asio/ssl/old/stream_service.hpp \
+	asio/ssl/rfc2818_verification.hpp \
 	asio/ssl/stream_base.hpp \
 	asio/ssl/stream.hpp \
 	asio/ssl/stream_service.hpp \

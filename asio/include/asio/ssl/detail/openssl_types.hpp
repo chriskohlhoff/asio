@@ -20,6 +20,7 @@
 #include <openssl/ssl.h>
 #include <openssl/engine.h>
 #include <openssl/err.h>
+#include <openssl/x509v3.h>
 #include "asio/detail/socket_types.hpp"
 
 #endif // ASIO_SSL_DETAIL_OPENSSL_TYPES_HPP
