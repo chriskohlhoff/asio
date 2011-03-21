@@ -51,6 +51,7 @@ namespace ssl {
  * tcp::resolver resolver(io_service);
  * tcp::resolver::query query("host.name", "https");
  * asio::connect(sock.lowest_layer(), resolver.resolve(query));
+ * sock.lowest_layer().set_option(tcp::no_delay(true));
  *
  * // Perform SSL handshake and verify the remote host's certificate.
  * sock.set_verify_mode(ssl::verify_peer);
