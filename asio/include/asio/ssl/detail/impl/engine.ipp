@@ -246,7 +246,7 @@ engine::want engine::perform(int (engine::* op)(void*, std::size_t),
 
 int engine::do_accept(void*, std::size_t)
 {
-  asio::detail::static_mutex lock(accept_mutex());
+  asio::detail::static_mutex::scoped_lock lock(accept_mutex());
   return ::SSL_accept(ssl_);
 }
 
