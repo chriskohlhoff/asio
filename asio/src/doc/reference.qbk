@@ -43050,50 +43050,95 @@ The `asio::buffer` function is used to create a buffer object to represent raw m
 
   template<
       typename PodType,
-      typename Allocator>
+      std::size_t N>
   mutable_buffers_1 ``[link asio.reference.buffer.overload17 buffer]``(
-      std::vector< PodType, Allocator > & data);
+      std::array< PodType, N > & data);
   ``  [''''&raquo;''' [link asio.reference.buffer.overload17 more...]]``
 
   template<
       typename PodType,
-      typename Allocator>
+      std::size_t N>
   mutable_buffers_1 ``[link asio.reference.buffer.overload18 buffer]``(
-      std::vector< PodType, Allocator > & data,
+      std::array< PodType, N > & data,
       std::size_t max_size_in_bytes);
   ``  [''''&raquo;''' [link asio.reference.buffer.overload18 more...]]``
 
   template<
       typename PodType,
-      typename Allocator>
+      std::size_t N>
   const_buffers_1 ``[link asio.reference.buffer.overload19 buffer]``(
-      const std::vector< PodType, Allocator > & data);
+      std::array< const PodType, N > & data);
   ``  [''''&raquo;''' [link asio.reference.buffer.overload19 more...]]``
 
   template<
       typename PodType,
-      typename Allocator>
+      std::size_t N>
   const_buffers_1 ``[link asio.reference.buffer.overload20 buffer]``(
-      const std::vector< PodType, Allocator > & data,
+      std::array< const PodType, N > & data,
       std::size_t max_size_in_bytes);
   ``  [''''&raquo;''' [link asio.reference.buffer.overload20 more...]]``
 
   template<
-      typename Elem,
-      typename Traits,
-      typename Allocator>
+      typename PodType,
+      std::size_t N>
   const_buffers_1 ``[link asio.reference.buffer.overload21 buffer]``(
-      const std::basic_string< Elem, Traits, Allocator > & data);
+      const std::array< PodType, N > & data);
   ``  [''''&raquo;''' [link asio.reference.buffer.overload21 more...]]``
+
+  template<
+      typename PodType,
+      std::size_t N>
+  const_buffers_1 ``[link asio.reference.buffer.overload22 buffer]``(
+      const std::array< PodType, N > & data,
+      std::size_t max_size_in_bytes);
+  ``  [''''&raquo;''' [link asio.reference.buffer.overload22 more...]]``
+
+  template<
+      typename PodType,
+      typename Allocator>
+  mutable_buffers_1 ``[link asio.reference.buffer.overload23 buffer]``(
+      std::vector< PodType, Allocator > & data);
+  ``  [''''&raquo;''' [link asio.reference.buffer.overload23 more...]]``
+
+  template<
+      typename PodType,
+      typename Allocator>
+  mutable_buffers_1 ``[link asio.reference.buffer.overload24 buffer]``(
+      std::vector< PodType, Allocator > & data,
+      std::size_t max_size_in_bytes);
+  ``  [''''&raquo;''' [link asio.reference.buffer.overload24 more...]]``
+
+  template<
+      typename PodType,
+      typename Allocator>
+  const_buffers_1 ``[link asio.reference.buffer.overload25 buffer]``(
+      const std::vector< PodType, Allocator > & data);
+  ``  [''''&raquo;''' [link asio.reference.buffer.overload25 more...]]``
+
+  template<
+      typename PodType,
+      typename Allocator>
+  const_buffers_1 ``[link asio.reference.buffer.overload26 buffer]``(
+      const std::vector< PodType, Allocator > & data,
+      std::size_t max_size_in_bytes);
+  ``  [''''&raquo;''' [link asio.reference.buffer.overload26 more...]]``
 
   template<
       typename Elem,
       typename Traits,
       typename Allocator>
-  const_buffers_1 ``[link asio.reference.buffer.overload22 buffer]``(
+  const_buffers_1 ``[link asio.reference.buffer.overload27 buffer]``(
+      const std::basic_string< Elem, Traits, Allocator > & data);
+  ``  [''''&raquo;''' [link asio.reference.buffer.overload27 more...]]``
+
+  template<
+      typename Elem,
+      typename Traits,
+      typename Allocator>
+  const_buffers_1 ``[link asio.reference.buffer.overload28 buffer]``(
       const std::basic_string< Elem, Traits, Allocator > & data,
       std::size_t max_size_in_bytes);
-  ``  [''''&raquo;''' [link asio.reference.buffer.overload22 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.buffer.overload28 more...]]``
 
 A buffer object represents a contiguous region of memory as a 2-tuple consisting of a pointer and size in bytes. A tuple of the form `{void*, size_t}` specifies a mutable (modifiable) region of memory. Similarly, a tuple of the form `{const void*, size_t}` specifies a const (non-modifiable) region of memory. These two forms correspond to the classes [link asio.reference.mutable_buffer `mutable_buffer`] and [link asio.reference.const_buffer `const_buffer`], respectively. To mirror C++'s conversion rules, a [link asio.reference.mutable_buffer `mutable_buffer`] is implicitly convertible to a [link asio.reference.const_buffer `const_buffer`], and the opposite conversion is not permitted.
 
@@ -43253,7 +43298,7 @@ To read or write using multiple buffers (i.e. scatter-gather I/O), multiple buff
 [*Convenience header: ][^asio.hpp]
 
 
-[section:overload1 buffer (1 of 22 overloads)]
+[section:overload1 buffer (1 of 28 overloads)]
 
 
 Create a new modifiable buffer from an existing buffer. 
@@ -43275,7 +43320,7 @@ Create a new modifiable buffer from an existing buffer.
 
 
 
-[section:overload2 buffer (2 of 22 overloads)]
+[section:overload2 buffer (2 of 28 overloads)]
 
 
 Create a new modifiable buffer from an existing buffer. 
@@ -43305,7 +43350,7 @@ A [link asio.reference.mutable_buffers_1 `mutable_buffers_1`] value equivalent t
 
 
 
-[section:overload3 buffer (3 of 22 overloads)]
+[section:overload3 buffer (3 of 28 overloads)]
 
 
 Create a new non-modifiable buffer from an existing buffer. 
@@ -43327,7 +43372,7 @@ Create a new non-modifiable buffer from an existing buffer.
 
 
 
-[section:overload4 buffer (4 of 22 overloads)]
+[section:overload4 buffer (4 of 28 overloads)]
 
 
 Create a new non-modifiable buffer from an existing buffer. 
@@ -43357,7 +43402,7 @@ A [link asio.reference.const_buffers_1 `const_buffers_1`] value equivalent to:
 
 
 
-[section:overload5 buffer (5 of 22 overloads)]
+[section:overload5 buffer (5 of 28 overloads)]
 
 
 Create a new modifiable buffer that represents the given memory range. 
@@ -43380,7 +43425,7 @@ Create a new modifiable buffer that represents the given memory range.
 
 
 
-[section:overload6 buffer (6 of 22 overloads)]
+[section:overload6 buffer (6 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given memory range. 
@@ -43403,7 +43448,7 @@ Create a new non-modifiable buffer that represents the given memory range.
 
 
 
-[section:overload7 buffer (7 of 22 overloads)]
+[section:overload7 buffer (7 of 28 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -43435,7 +43480,7 @@ A [link asio.reference.mutable_buffers_1 `mutable_buffers_1`] value equivalent t
 
 
 
-[section:overload8 buffer (8 of 22 overloads)]
+[section:overload8 buffer (8 of 28 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -43468,7 +43513,7 @@ A [link asio.reference.mutable_buffers_1 `mutable_buffers_1`] value equivalent t
 
 
 
-[section:overload9 buffer (9 of 22 overloads)]
+[section:overload9 buffer (9 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -43500,7 +43545,7 @@ A [link asio.reference.const_buffers_1 `const_buffers_1`] value equivalent to:
 
 
 
-[section:overload10 buffer (10 of 22 overloads)]
+[section:overload10 buffer (10 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -43533,7 +43578,7 @@ A [link asio.reference.const_buffers_1 `const_buffers_1`] value equivalent to:
 
 
 
-[section:overload11 buffer (11 of 22 overloads)]
+[section:overload11 buffer (11 of 28 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -43565,7 +43610,7 @@ A [link asio.reference.mutable_buffers_1 `mutable_buffers_1`] value equivalent t
 
 
 
-[section:overload12 buffer (12 of 22 overloads)]
+[section:overload12 buffer (12 of 28 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -43598,7 +43643,7 @@ A [link asio.reference.mutable_buffers_1 `mutable_buffers_1`] value equivalent t
 
 
 
-[section:overload13 buffer (13 of 22 overloads)]
+[section:overload13 buffer (13 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -43630,7 +43675,7 @@ A [link asio.reference.const_buffers_1 `const_buffers_1`] value equivalent to:
 
 
 
-[section:overload14 buffer (14 of 22 overloads)]
+[section:overload14 buffer (14 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -43663,7 +43708,7 @@ A [link asio.reference.const_buffers_1 `const_buffers_1`] value equivalent to:
 
 
 
-[section:overload15 buffer (15 of 22 overloads)]
+[section:overload15 buffer (15 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -43695,7 +43740,7 @@ A [link asio.reference.const_buffers_1 `const_buffers_1`] value equivalent to:
 
 
 
-[section:overload16 buffer (16 of 22 overloads)]
+[section:overload16 buffer (16 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -43728,7 +43773,202 @@ A [link asio.reference.const_buffers_1 `const_buffers_1`] value equivalent to:
 
 
 
-[section:overload17 buffer (17 of 22 overloads)]
+[section:overload17 buffer (17 of 28 overloads)]
+
+
+Create a new modifiable buffer that represents the given POD array. 
+
+
+  template<
+      typename PodType,
+      std::size_t N>
+  mutable_buffers_1 buffer(
+      std::array< PodType, N > & data);
+
+
+
+[heading Return Value]
+      
+A [link asio.reference.mutable_buffers_1 `mutable_buffers_1`] value equivalent to: 
+
+   mutable_buffers_1(
+       data.data(),
+       data.size() * sizeof(PodType)); 
+
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload18 buffer (18 of 28 overloads)]
+
+
+Create a new modifiable buffer that represents the given POD array. 
+
+
+  template<
+      typename PodType,
+      std::size_t N>
+  mutable_buffers_1 buffer(
+      std::array< PodType, N > & data,
+      std::size_t max_size_in_bytes);
+
+
+
+[heading Return Value]
+      
+A [link asio.reference.mutable_buffers_1 `mutable_buffers_1`] value equivalent to: 
+
+   mutable_buffers_1(
+       data.data(),
+       min(data.size() * sizeof(PodType), max_size_in_bytes)); 
+
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload19 buffer (19 of 28 overloads)]
+
+
+Create a new non-modifiable buffer that represents the given POD array. 
+
+
+  template<
+      typename PodType,
+      std::size_t N>
+  const_buffers_1 buffer(
+      std::array< const PodType, N > & data);
+
+
+
+[heading Return Value]
+      
+A [link asio.reference.const_buffers_1 `const_buffers_1`] value equivalent to: 
+
+   const_buffers_1(
+       data.data(),
+       data.size() * sizeof(PodType)); 
+
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload20 buffer (20 of 28 overloads)]
+
+
+Create a new non-modifiable buffer that represents the given POD array. 
+
+
+  template<
+      typename PodType,
+      std::size_t N>
+  const_buffers_1 buffer(
+      std::array< const PodType, N > & data,
+      std::size_t max_size_in_bytes);
+
+
+
+[heading Return Value]
+      
+A [link asio.reference.const_buffers_1 `const_buffers_1`] value equivalent to: 
+
+   const_buffers_1(
+       data.data(),
+       min(data.size() * sizeof(PodType), max_size_in_bytes)); 
+
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload21 buffer (21 of 28 overloads)]
+
+
+Create a new non-modifiable buffer that represents the given POD array. 
+
+
+  template<
+      typename PodType,
+      std::size_t N>
+  const_buffers_1 buffer(
+      const std::array< PodType, N > & data);
+
+
+
+[heading Return Value]
+      
+A [link asio.reference.const_buffers_1 `const_buffers_1`] value equivalent to: 
+
+   const_buffers_1(
+       data.data(),
+       data.size() * sizeof(PodType)); 
+
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload22 buffer (22 of 28 overloads)]
+
+
+Create a new non-modifiable buffer that represents the given POD array. 
+
+
+  template<
+      typename PodType,
+      std::size_t N>
+  const_buffers_1 buffer(
+      const std::array< PodType, N > & data,
+      std::size_t max_size_in_bytes);
+
+
+
+[heading Return Value]
+      
+A [link asio.reference.const_buffers_1 `const_buffers_1`] value equivalent to: 
+
+   const_buffers_1(
+       data.data(),
+       min(data.size() * sizeof(PodType), max_size_in_bytes)); 
+
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload23 buffer (23 of 28 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD vector. 
@@ -43765,7 +44005,7 @@ The buffer is invalidated by any vector operation that would also invalidate ite
 
 
 
-[section:overload18 buffer (18 of 22 overloads)]
+[section:overload24 buffer (24 of 28 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD vector. 
@@ -43803,7 +44043,7 @@ The buffer is invalidated by any vector operation that would also invalidate ite
 
 
 
-[section:overload19 buffer (19 of 22 overloads)]
+[section:overload25 buffer (25 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD vector. 
@@ -43840,7 +44080,7 @@ The buffer is invalidated by any vector operation that would also invalidate ite
 
 
 
-[section:overload20 buffer (20 of 22 overloads)]
+[section:overload26 buffer (26 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD vector. 
@@ -43878,7 +44118,7 @@ The buffer is invalidated by any vector operation that would also invalidate ite
 
 
 
-[section:overload21 buffer (21 of 22 overloads)]
+[section:overload27 buffer (27 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given string. 
@@ -43909,7 +44149,7 @@ The buffer is invalidated by any non-const operation called on the given string 
 
 
 
-[section:overload22 buffer (22 of 22 overloads)]
+[section:overload28 buffer (28 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given string. 
