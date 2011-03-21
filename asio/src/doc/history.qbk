@@ -11,9 +11,11 @@
 
 * Added a new, completely rewritten SSL implementation. The new implementation
   compiles faster, shows substantially improved performance, and supports
-  custom memory allocation and handler invocation. The new implementation is
-  source-compatible with the old for most uses. However, if necessary, the old
-  implementation may still be used by defining `(BOOST_)ASIO_ENABLE_OLD_SSL`.
+  custom memory allocation and handler invocation. It includes new API features
+  such as certificate verification callbacks and has improved error reporting.
+  The new implementation is source-compatible with the old for most uses.
+  However, if necessary, the old implementation may still be used by defining
+  `(BOOST_)ASIO_ENABLE_OLD_SSL`.
 
 * Added new `asio::buffer()` overloads for `std::array`, when available. The
   support is automatically enabled when compiling in [^-std=c++0x] mode on g++
