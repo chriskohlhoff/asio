@@ -52,7 +52,7 @@ service_registry::~service_registry()
   }
 }
 
-void service_registry::notify_fork(asio::io_service::fork_event event)
+void service_registry::notify_fork(asio::io_service::fork_event fork_ev)
 {
   // Make a copy of all of the services while holding the lock. We don't want
   // to hold the lock while calling into each service, as it may try to call
@@ -73,12 +73,12 @@ void service_registry::notify_fork(asio::io_service::fork_event event)
   // services in the vector. For the other events we want to go in the other
   // direction.
   std::size_t num_services = services.size();
-  if (event == asio::io_service::fork_prepare)
+  if (fork_ev == asio::io_service::fork_prepare)
     for (std::size_t i = 0; i < num_services; ++i)
-      services[i]->fork_service(event);
+      services[i]->fork_service(fork_ev);
   else
     for (std::size_t i = num_services; i > 0; --i)
-      services[i - 1]->fork_service(event);
+      services[i - 1]->fork_service(fork_ev);
 }
 
 void service_registry::init_key(asio::io_service::service::key& key,

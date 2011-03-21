@@ -76,9 +76,9 @@ void kqueue_reactor::shutdown_service()
   timer_queues_.get_all_timers(ops);
 }
 
-void kqueue_reactor::fork_service(asio::io_service::fork_event event)
+void kqueue_reactor::fork_service(asio::io_service::fork_event fork_ev)
 {
-  if (event == asio::io_service::fork_child)
+  if (fork_ev == asio::io_service::fork_child)
   {
     // The kqueue descriptor is automatically closed in the child.
     kqueue_fd_ = -1;

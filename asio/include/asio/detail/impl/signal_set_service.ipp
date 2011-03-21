@@ -145,13 +145,14 @@ void signal_set_service::shutdown_service()
   }
 }
 
-void signal_set_service::fork_service(asio::io_service::fork_event event)
+void signal_set_service::fork_service(
+    asio::io_service::fork_event fork_ev)
 {
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
   signal_state* state = get_signal_state();
   static_mutex::scoped_lock lock(state->mutex_);
 
-  switch (event)
+  switch (fork_ev)
   {
   case asio::io_service::fork_prepare:
     reactor_.deregister_internal_descriptor(
@@ -178,7 +179,7 @@ void signal_set_service::fork_service(asio::io_service::fork_event event)
     break;
   }
 #else // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-  (void)event;
+  (void)fork_ev;
 #endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 }
 

@@ -83,7 +83,7 @@ public:
 
   // Recreate internal descriptors following a fork.
   ASIO_DECL void fork_service(
-      asio::io_service::fork_event event);
+      asio::io_service::fork_event fork_ev);
 
   // Initialise the task.
   ASIO_DECL void init_task();

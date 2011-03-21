@@ -65,11 +65,11 @@ void resolver_service_base::shutdown_service()
 }
 
 void resolver_service_base::fork_service(
-    asio::io_service::fork_event event)
+    asio::io_service::fork_event fork_ev)
 {
   if (work_thread_.get())
   {
-    if (event == asio::io_service::fork_prepare)
+    if (fork_ev == asio::io_service::fork_prepare)
     {
       work_io_service_->stop();
       work_thread_->join();

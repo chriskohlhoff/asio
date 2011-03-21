@@ -83,9 +83,9 @@ void select_reactor::shutdown_service()
   timer_queues_.get_all_timers(ops);
 }
 
-void select_reactor::fork_service(asio::io_service::fork_event event)
+void select_reactor::fork_service(asio::io_service::fork_event fork_ev)
 {
-  if (event == asio::io_service::fork_child)
+  if (fork_ev == asio::io_service::fork_child)
     interrupter_.recreate();
 }
 

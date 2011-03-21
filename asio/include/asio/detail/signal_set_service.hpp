@@ -116,7 +116,8 @@ public:
   ASIO_DECL void shutdown_service();
 
   // Perform fork-related housekeeping.
-  ASIO_DECL void fork_service(asio::io_service::fork_event event);
+  ASIO_DECL void fork_service(
+      asio::io_service::fork_event fork_ev);
 
   // Construct a new signal_set implementation.
   ASIO_DECL void construct(implementation_type& impl);
