@@ -307,6 +307,7 @@
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.ssl__context">ssl::context</link></member>
             <member><link linkend="asio.reference.ssl__context_base">ssl::context_base</link></member>
+            <member><link linkend="asio.reference.ssl__rfc2818_verification">ssl::rfc2818_verification</link></member>
             <member><link linkend="asio.reference.ssl__stream_base">ssl::stream_base</link></member>
             <member><link linkend="asio.reference.ssl__verify_context">ssl::verify_context</link></member>
           </simplelist>
