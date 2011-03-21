@@ -304,6 +304,7 @@ nobase_include_HEADERS = \
 	asio/ssl/detail/read_op.hpp \
 	asio/ssl/detail/shutdown_op.hpp \
 	asio/ssl/detail/stream_core.hpp \
+	asio/ssl/detail/verify_callback.hpp \
 	asio/ssl/detail/write_op.hpp \
 	asio/ssl/error.hpp \
 	asio/ssl.hpp \
@@ -321,6 +322,8 @@ nobase_include_HEADERS = \
 	asio/ssl/stream_base.hpp \
 	asio/ssl/stream.hpp \
 	asio/ssl/stream_service.hpp \
+	asio/ssl/verify_context.hpp \
+	asio/ssl/verify_mode.hpp \
 	asio/strand.hpp \
 	asio/streambuf.hpp \
 	asio/stream_socket_service.hpp \

@@ -24,9 +24,32 @@ public:
       asio::ip::tcp::resolver::iterator endpoint_iterator)
     : socket_(io_service, context)
   {
+    socket_.set_verify_mode(asio::ssl::verify_peer);
+    socket_.set_verify_callback(
+        boost::bind(&client::verify_certificate, this, _1, _2));
+
     asio::async_connect(socket_.lowest_layer(), endpoint_iterator,
         boost::bind(&client::handle_connect, this,
           asio::placeholders::error));
+  }
+
+  bool verify_certificate(bool preverified,
+      asio::ssl::verify_context& ctx)
+  {
+    // The verify callback can be used to check whether the certificate that is
+    // being presented is valid for the peer. For example, RFC 2818 describes the
+    // steps involved in doing this for HTTPS. Consult the OpenSSL documentation
+    // for more details. Note that the callback is called once for each
+    // certificate in the certificate chain, starting from the root certificate
+    // authority.
+
+    // In this example we will simply print the certificate's subject name.
+    char subject_name[256];
+    X509* cert = X509_STORE_CTX_get_current_cert(ctx.native_handle());
+    X509_NAME_oneline(X509_get_subject_name(cert), subject_name, 256);
+    std::cout << "Verifying " << subject_name << "\n";
+
+    return preverified;
   }
 
   void handle_connect(const asio::error_code& error)
@@ -39,7 +62,7 @@ public:
     }
     else
     {
-      std::cout << "Connect failed: " << error << "\n";
+      std::cout << "Connect failed: " << error.message() << "\n";
     }
   }
 
@@ -59,7 +82,7 @@ public:
     }
     else
     {
-      std::cout << "Handshake failed: " << error << "\n";
+      std::cout << "Handshake failed: " << error.message() << "\n";
     }
   }
 
@@ -76,7 +99,7 @@ public:
     }
     else
     {
-      std::cout << "Write failed: " << error << "\n";
+      std::cout << "Write failed: " << error.message() << "\n";
     }
   }
 
@@ -91,7 +114,7 @@ public:
     }
     else
     {
-      std::cout << "Read failed: " << error << "\n";
+      std::cout << "Read failed: " << error.message() << "\n";
     }
   }
 
@@ -118,7 +141,6 @@ int main(int argc, char* argv[])
     asio::ip::tcp::resolver::iterator iterator = resolver.resolve(query);
 
     asio::ssl::context ctx(asio::ssl::context::sslv23);
-    ctx.set_verify_mode(asio::ssl::context::verify_peer);
     ctx.load_verify_file("ca.pem");
 
     client c(io_service, ctx, iterator);

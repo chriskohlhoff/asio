@@ -8670,7 +8670,7 @@ The [link asio.reference.basic_deadline_timer `basic_deadline_timer`] class temp
 
 A deadline timer is always in one of two states: "expired" or "not expired". If the `wait()` or `async_wait()` function is called on an expired timer, the wait operation will complete immediately.
 
-Most applications will use the `asio::deadline_timer` typedef.
+Most applications will use the [link asio.reference.deadline_timer `deadline_timer`] typedef.
 
 
 [heading Thread Safety]
@@ -23068,7 +23068,7 @@ Provides signal functionality.
 
 The [link asio.reference.basic_signal_set `basic_signal_set`] class template provides the ability to perform an asynchronous wait for one or more signals to occur.
 
-Most applications will use the `asio::signal_set` typedef.
+Most applications will use the [link asio.reference.signal_set `signal_set`] typedef.
 
 
 [heading Thread Safety]
@@ -51254,7 +51254,7 @@ The [link asio.reference.basic_deadline_timer `basic_deadline_timer`] class temp
 
 A deadline timer is always in one of two states: "expired" or "not expired". If the `wait()` or `async_wait()` function is called on an expired timer, the wait operation will complete immediately.
 
-Most applications will use the `asio::deadline_timer` typedef.
+Most applications will use the [link asio.reference.deadline_timer `deadline_timer`] typedef.
 
 
 [heading Thread Safety]
@@ -53155,7 +53155,7 @@ The [link asio.reference.io_service `io_service`] class provides the core I/O fu
 
 * `asio::ip::udp::socket` 
 
-* `asio::deadline_timer`.
+* [link asio.reference.deadline_timer `deadline_timer`].
 
 The [link asio.reference.io_service `io_service`] class also includes facilities intended for developers of custom asynchronous services.
 
@@ -78901,7 +78901,7 @@ Typedef for the typical usage of a signal set.
 
 The [link asio.reference.basic_signal_set `basic_signal_set`] class template provides the ability to perform an asynchronous wait for one or more signals to occur.
 
-Most applications will use the `asio::signal_set` typedef.
+Most applications will use the [link asio.reference.signal_set `signal_set`] typedef.
 
 
 [heading Thread Safety]
@@ -81035,13 +81035,6 @@ Protected destructor to prevent deletion through this type.
   
   ]
 
-  [
-
-    [[link asio.reference.ssl__context.verify_mode [*verify_mode]]]
-    [Bitmask type for peer verification. ]
-  
-  ]
-
 ]
 
 [heading Member Functions]
@@ -81095,6 +81088,11 @@ Protected destructor to prevent deletion through this type.
   [
     [[link asio.reference.ssl__context.set_password_callback [*set_password_callback]]]
     [Set the password callback. ]
+  ]
+  
+  [
+    [[link asio.reference.ssl__context.set_verify_callback [*set_verify_callback]]]
+    [Set the callback used to verify peer certificates. ]
   ]
   
   [
@@ -81161,26 +81159,6 @@ Protected destructor to prevent deletion through this type.
   [
     [[link asio.reference.ssl__context.single_dh_use [*single_dh_use]]]
     [Always create a new key when using tmp_dh parameters. ]
-  ]
-
-  [
-    [[link asio.reference.ssl__context.verify_client_once [*verify_client_once]]]
-    [Do not request client certificate on renegotiation. Ignored unless verify_peer is set. ]
-  ]
-
-  [
-    [[link asio.reference.ssl__context.verify_fail_if_no_peer_cert [*verify_fail_if_no_peer_cert]]]
-    [Fail verification if the peer has no certificate. Ignored unless verify_peer is set. ]
-  ]
-
-  [
-    [[link asio.reference.ssl__context.verify_none [*verify_none]]]
-    [No verification. ]
-  ]
-
-  [
-    [[link asio.reference.ssl__context.verify_peer [*verify_peer]]]
-    [Verify the peer. ]
   ]
 
 ]
@@ -82132,6 +82110,126 @@ Calls `SSL_CTX_set_default_passwd_cb`.
 
 [endsect]
 
+[section:set_verify_callback ssl::context::set_verify_callback]
+
+[indexterm2 set_verify_callback..ssl::context] 
+Set the callback used to verify peer certificates. 
+
+
+  template<
+      typename ``[link asio.reference.VerifyCallback VerifyCallback]``>
+  void ``[link asio.reference.ssl__context.set_verify_callback.overload1 set_verify_callback]``(
+      VerifyCallback callback);
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.set_verify_callback.overload1 more...]]``
+
+  template<
+      typename ``[link asio.reference.VerifyCallback VerifyCallback]``>
+  asio::error_code ``[link asio.reference.ssl__context.set_verify_callback.overload2 set_verify_callback]``(
+      VerifyCallback callback,
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.ssl__context.set_verify_callback.overload2 more...]]``
+
+
+[section:overload1 ssl::context::set_verify_callback (1 of 2 overloads)]
+
+
+Set the callback used to verify peer certificates. 
+
+
+  template<
+      typename ``[link asio.reference.VerifyCallback VerifyCallback]``>
+  void set_verify_callback(
+      VerifyCallback callback);
+
+
+This function is used to specify a callback function that will be called by the implementation when it needs to verify a peer certificate.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[callback][The function object to be used for verifying a certificate. The function signature of the handler must be: 
+``
+   bool verify_callback(
+     bool preverified, // True if the certificate passed pre-verification.
+     verify_context& ctx // The peer certificate and other context.
+   ); 
+``
+The return value of the callback is true if the certificate has passed verification, false otherwise.]]
+
+]
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_verify`. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 ssl::context::set_verify_callback (2 of 2 overloads)]
+
+
+Set the callback used to verify peer certificates. 
+
+
+  template<
+      typename ``[link asio.reference.VerifyCallback VerifyCallback]``>
+  asio::error_code set_verify_callback(
+      VerifyCallback callback,
+      asio::error_code & ec);
+
+
+This function is used to specify a callback function that will be called by the implementation when it needs to verify a peer certificate.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[callback][The function object to be used for verifying a certificate. The function signature of the handler must be: 
+``
+   bool verify_callback(
+     bool preverified, // True if the certificate passed pre-verification.
+     verify_context& ctx // The peer certificate and other context.
+   ); 
+``
+The return value of the callback is true if the certificate has passed verification, false otherwise.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_verify`. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
 [section:set_verify_mode ssl::context::set_verify_mode]
 
 [indexterm2 set_verify_mode..ssl::context] 
@@ -82166,7 +82264,7 @@ This function may be used to configure the peer verification mode used by the co
 
 [variablelist
   
-[[v][A bitmask of peer verification modes. The available verify\_mode values are defined in the [link asio.reference.ssl__context_base `ssl::context_base`] class.]]
+[[v][A bitmask of peer verification modes. See [link asio.reference.ssl__verify_mode `ssl::verify_mode`]  for available values.]]
 
 ]
 
@@ -82211,7 +82309,7 @@ This function may be used to configure the peer verification mode used by the co
 
 [variablelist
   
-[[v][A bitmask of peer verification modes. The available verify\_mode values are defined in the [link asio.reference.ssl__context_base `ssl::context_base`] class.]]
+[[v][A bitmask of peer verification modes. See [link asio.reference.ssl__verify_mode `ssl::verify_mode`]  for available values.]]
 
 [[ec][Set to indicate what error occurred, if any.]]
 
@@ -82759,83 +82857,6 @@ Calls `SSL_CTX_set_tmp_dh`.
 [endsect]
 
 
-[section:verify_client_once ssl::context::verify_client_once]
-
-[indexterm2 verify_client_once..ssl::context] 
-Do not request client certificate on renegotiation. Ignored unless verify\_peer is set. 
-
-
-  static const int verify_client_once = implementation_defined;
-
-
-
-[endsect]
-
-
-
-[section:verify_fail_if_no_peer_cert ssl::context::verify_fail_if_no_peer_cert]
-
-[indexterm2 verify_fail_if_no_peer_cert..ssl::context] 
-Fail verification if the peer has no certificate. Ignored unless verify\_peer is set. 
-
-
-  static const int verify_fail_if_no_peer_cert = implementation_defined;
-
-
-
-[endsect]
-
-
-
-[section:verify_mode ssl::context::verify_mode]
-
-[indexterm2 verify_mode..ssl::context] 
-Bitmask type for peer verification. 
-
-
-  typedef int verify_mode;
-
-
-
-[heading Requirements]
-
-[*Header: ][^asio/ssl/context.hpp]
-
-[*Convenience header: ][^asio/ssl.hpp]
-
-
-[endsect]
-
-
-
-[section:verify_none ssl::context::verify_none]
-
-[indexterm2 verify_none..ssl::context] 
-No verification. 
-
-
-  static const int verify_none = implementation_defined;
-
-
-
-[endsect]
-
-
-
-[section:verify_peer ssl::context::verify_peer]
-
-[indexterm2 verify_peer..ssl::context] 
-Verify the peer. 
-
-
-  static const int verify_peer = implementation_defined;
-
-
-
-[endsect]
-
-
-
 [section:_context ssl::context::~context]
 
 [indexterm2 ~context..ssl::context] 
@@ -82893,13 +82914,6 @@ The [link asio.reference.ssl__context_base `ssl::context_base`] class is used as
   
   ]
 
-  [
-
-    [[link asio.reference.ssl__context_base.verify_mode [*verify_mode]]]
-    [Bitmask type for peer verification. ]
-  
-  ]
-
 ]
 
 [heading Protected Member Functions]
@@ -82940,26 +82954,6 @@ The [link asio.reference.ssl__context_base `ssl::context_base`] class is used as
   [
     [[link asio.reference.ssl__context_base.single_dh_use [*single_dh_use]]]
     [Always create a new key when using tmp_dh parameters. ]
-  ]
-
-  [
-    [[link asio.reference.ssl__context_base.verify_client_once [*verify_client_once]]]
-    [Do not request client certificate on renegotiation. Ignored unless verify_peer is set. ]
-  ]
-
-  [
-    [[link asio.reference.ssl__context_base.verify_fail_if_no_peer_cert [*verify_fail_if_no_peer_cert]]]
-    [Fail verification if the peer has no certificate. Ignored unless verify_peer is set. ]
-  ]
-
-  [
-    [[link asio.reference.ssl__context_base.verify_none [*verify_none]]]
-    [No verification. ]
-  ]
-
-  [
-    [[link asio.reference.ssl__context_base.verify_peer [*verify_peer]]]
-    [Verify the peer. ]
   ]
 
 ]
@@ -83218,83 +83212,6 @@ Always create a new key when using tmp\_dh parameters.
 
 
 
-[section:verify_client_once ssl::context_base::verify_client_once]
-
-[indexterm2 verify_client_once..ssl::context_base] 
-Do not request client certificate on renegotiation. Ignored unless verify\_peer is set. 
-
-
-  static const int verify_client_once = implementation_defined;
-
-
-
-[endsect]
-
-
-
-[section:verify_fail_if_no_peer_cert ssl::context_base::verify_fail_if_no_peer_cert]
-
-[indexterm2 verify_fail_if_no_peer_cert..ssl::context_base] 
-Fail verification if the peer has no certificate. Ignored unless verify\_peer is set. 
-
-
-  static const int verify_fail_if_no_peer_cert = implementation_defined;
-
-
-
-[endsect]
-
-
-
-[section:verify_mode ssl::context_base::verify_mode]
-
-[indexterm2 verify_mode..ssl::context_base] 
-Bitmask type for peer verification. 
-
-
-  typedef int verify_mode;
-
-
-
-[heading Requirements]
-
-[*Header: ][^asio/ssl/context_base.hpp]
-
-[*Convenience header: ][^asio/ssl.hpp]
-
-
-[endsect]
-
-
-
-[section:verify_none ssl::context_base::verify_none]
-
-[indexterm2 verify_none..ssl::context_base] 
-No verification. 
-
-
-  static const int verify_none = implementation_defined;
-
-
-
-[endsect]
-
-
-
-[section:verify_peer ssl::context_base::verify_peer]
-
-[indexterm2 verify_peer..ssl::context_base] 
-Verify the peer. 
-
-
-  static const int verify_peer = implementation_defined;
-
-
-
-[endsect]
-
-
-
 [section:_context_base ssl::context_base::~context_base]
 
 [indexterm2 ~context_base..ssl::context_base] 
@@ -83429,6 +83346,16 @@ Provides stream-oriented functionality using SSL.
   [
     [[link asio.reference.ssl__stream.read_some [*read_some]]]
     [Read some data from the stream. ]
+  ]
+  
+  [
+    [[link asio.reference.ssl__stream.set_verify_callback [*set_verify_callback]]]
+    [Set the callback used to verify peer certificates. ]
+  ]
+  
+  [
+    [[link asio.reference.ssl__stream.set_verify_mode [*set_verify_mode]]]
+    [Set the peer verification mode. ]
   ]
   
   [
@@ -84171,6 +84098,224 @@ The read\_some operation may not read all of the requested number of bytes. Cons
 
 [endsect]
 
+[section:set_verify_callback ssl::stream::set_verify_callback]
+
+[indexterm2 set_verify_callback..ssl::stream] 
+Set the callback used to verify peer certificates. 
+
+
+  template<
+      typename ``[link asio.reference.VerifyCallback VerifyCallback]``>
+  void ``[link asio.reference.ssl__stream.set_verify_callback.overload1 set_verify_callback]``(
+      VerifyCallback callback);
+  ``  [''''&raquo;''' [link asio.reference.ssl__stream.set_verify_callback.overload1 more...]]``
+
+  template<
+      typename ``[link asio.reference.VerifyCallback VerifyCallback]``>
+  asio::error_code ``[link asio.reference.ssl__stream.set_verify_callback.overload2 set_verify_callback]``(
+      VerifyCallback callback,
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.ssl__stream.set_verify_callback.overload2 more...]]``
+
+
+[section:overload1 ssl::stream::set_verify_callback (1 of 2 overloads)]
+
+
+Set the callback used to verify peer certificates. 
+
+
+  template<
+      typename ``[link asio.reference.VerifyCallback VerifyCallback]``>
+  void set_verify_callback(
+      VerifyCallback callback);
+
+
+This function is used to specify a callback function that will be called by the implementation when it needs to verify a peer certificate.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[callback][The function object to be used for verifying a certificate. The function signature of the handler must be: 
+``
+   bool verify_callback(
+     bool preverified, // True if the certificate passed pre-verification.
+     verify_context& ctx // The peer certificate and other context.
+   ); 
+``
+The return value of the callback is true if the certificate has passed verification, false otherwise.]]
+
+]
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+Calls `SSL_set_verify`. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 ssl::stream::set_verify_callback (2 of 2 overloads)]
+
+
+Set the callback used to verify peer certificates. 
+
+
+  template<
+      typename ``[link asio.reference.VerifyCallback VerifyCallback]``>
+  asio::error_code set_verify_callback(
+      VerifyCallback callback,
+      asio::error_code & ec);
+
+
+This function is used to specify a callback function that will be called by the implementation when it needs to verify a peer certificate.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[callback][The function object to be used for verifying a certificate. The function signature of the handler must be: 
+``
+   bool verify_callback(
+     bool preverified, // True if the certificate passed pre-verification.
+     verify_context& ctx // The peer certificate and other context.
+   ); 
+``
+The return value of the callback is true if the certificate has passed verification, false otherwise.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Remarks]
+      
+Calls `SSL_set_verify`. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:set_verify_mode ssl::stream::set_verify_mode]
+
+[indexterm2 set_verify_mode..ssl::stream] 
+Set the peer verification mode. 
+
+
+  void ``[link asio.reference.ssl__stream.set_verify_mode.overload1 set_verify_mode]``(
+      verify_mode v);
+  ``  [''''&raquo;''' [link asio.reference.ssl__stream.set_verify_mode.overload1 more...]]``
+
+  asio::error_code ``[link asio.reference.ssl__stream.set_verify_mode.overload2 set_verify_mode]``(
+      verify_mode v,
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.ssl__stream.set_verify_mode.overload2 more...]]``
+
+
+[section:overload1 ssl::stream::set_verify_mode (1 of 2 overloads)]
+
+
+Set the peer verification mode. 
+
+
+  void set_verify_mode(
+      verify_mode v);
+
+
+This function may be used to configure the peer verification mode used by the stream. The new mode will override the mode inherited from the context.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[v][A bitmask of peer verification modes. See [link asio.reference.ssl__verify_mode `ssl::verify_mode`]  for available values.]]
+
+]
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+Calls `SSL_set_verify`. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 ssl::stream::set_verify_mode (2 of 2 overloads)]
+
+
+Set the peer verification mode. 
+
+
+  asio::error_code set_verify_mode(
+      verify_mode v,
+      asio::error_code & ec);
+
+
+This function may be used to configure the peer verification mode used by the stream. The new mode will override the mode inherited from the context.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[v][A bitmask of peer verification modes. See [link asio.reference.ssl__verify_mode `ssl::verify_mode`]  for available values.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Remarks]
+      
+Calls `SSL_set_verify`. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
 [section:shutdown ssl::stream::shutdown]
 
 [indexterm2 shutdown..ssl::stream] 
@@ -84538,6 +84683,225 @@ Protected destructor to prevent deletion through this type.
 
 
 [endsect]
+
+
+[section:ssl__verify_client_once ssl::verify_client_once]
+
+[indexterm1 ssl::verify_client_once] 
+Do not request client certificate on renegotiation. Ignored unless [link asio.reference.ssl__verify_peer `ssl::verify_peer`]  is set. 
+
+
+  const int verify_client_once = implementation_defined;
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ssl/verify_mode.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
+
+[endsect]
+
+
+[section:ssl__verify_context ssl::verify_context]
+
+
+A simple wrapper around the X509\_STORE\_CTX type, used during verification of a peer certificate. 
+
+
+  class verify_context :
+    noncopyable
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.ssl__verify_context.native_handle_type [*native_handle_type]]]
+    [The native handle type of the verification context. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.ssl__verify_context.native_handle [*native_handle]]]
+    [Get the underlying implementation in the native type. ]
+  ]
+  
+  [
+    [[link asio.reference.ssl__verify_context.verify_context [*verify_context]]]
+    [Constructor. ]
+  ]
+  
+]
+
+
+[heading Remarks]
+      
+The [link asio.reference.ssl__verify_context `ssl::verify_context`] does not own the underlying X509\_STORE\_CTX object. 
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ssl/verify_context.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
+
+[section:native_handle ssl::verify_context::native_handle]
+
+[indexterm2 native_handle..ssl::verify_context] 
+Get the underlying implementation in the native type. 
+
+
+  native_handle_type native_handle();
+
+
+This function may be used to obtain the underlying implementation of the context. This is intended to allow access to context functionality that is not otherwise provided. 
+
+
+[endsect]
+
+
+
+[section:native_handle_type ssl::verify_context::native_handle_type]
+
+[indexterm2 native_handle_type..ssl::verify_context] 
+The native handle type of the verification context. 
+
+
+  typedef X509_STORE_CTX * native_handle_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ssl/verify_context.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
+
+[endsect]
+
+
+
+[section:verify_context ssl::verify_context::verify_context]
+
+[indexterm2 verify_context..ssl::verify_context] 
+Constructor. 
+
+
+  verify_context(
+      native_handle_type handle);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+
+[section:ssl__verify_fail_if_no_peer_cert ssl::verify_fail_if_no_peer_cert]
+
+[indexterm1 ssl::verify_fail_if_no_peer_cert] 
+Fail verification if the peer has no certificate. Ignored unless [link asio.reference.ssl__verify_peer `ssl::verify_peer`]  is set. 
+
+
+  const int verify_fail_if_no_peer_cert = implementation_defined;
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ssl/verify_mode.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
+
+[endsect]
+
+
+
+[section:ssl__verify_mode ssl::verify_mode]
+
+[indexterm1 ssl::verify_mode] 
+Bitmask type for peer verification. 
+
+
+  typedef int verify_mode;
+
+
+
+Possible values are: 
+* [link asio.reference.ssl__verify_none `ssl::verify_none`]  
+
+* [link asio.reference.ssl__verify_peer `ssl::verify_peer`]  
+
+* [link asio.reference.ssl__verify_fail_if_no_peer_cert `ssl::verify_fail_if_no_peer_cert`]  
+
+* [link asio.reference.ssl__verify_client_once `ssl::verify_client_once`]  
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ssl/verify_mode.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
+
+[endsect]
+
+
+
+[section:ssl__verify_none ssl::verify_none]
+
+[indexterm1 ssl::verify_none] 
+No verification. 
+
+
+  const int verify_none = implementation_defined;
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ssl/verify_mode.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
+
+[endsect]
+
+
+
+[section:ssl__verify_peer ssl::verify_peer]
+
+[indexterm1 ssl::verify_peer] 
+Verify the peer. 
+
+
+  const int verify_peer = implementation_defined;
+
+
+[heading Requirements]
+
+[*Header: ][^asio/ssl/verify_mode.hpp]
+
+[*Convenience header: ][^asio/ssl.hpp]
+
+
+[endsect]
+
 
 
 [section:strand strand]

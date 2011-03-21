@@ -29,6 +29,13 @@
 
 namespace ssl_stream_compile {
 
+#if !defined(ASIO_ENABLE_OLD_SSL)
+bool verify_callback(bool, asio::ssl::verify_context&)
+{
+  return false;
+}
+#endif // !defined(ASIO_ENABLE_OLD_SSL)
+
 void handshake_handler(const asio::error_code&)
 {
 }
@@ -87,6 +94,14 @@ void test()
     const ssl::stream<ip::tcp::socket>::lowest_layer_type& lowest_layer2
       = stream3.lowest_layer();
     (void)lowest_layer2;
+
+#if !defined(ASIO_ENABLE_OLD_SSL)
+    stream1.set_verify_mode(ssl::verify_none);
+    stream1.set_verify_mode(ssl::verify_none, ec);
+
+    stream1.set_verify_callback(verify_callback);
+    stream1.set_verify_callback(verify_callback, ec);
+#endif // !defined(ASIO_ENABLE_OLD_SSL)
 
     stream1.handshake(ssl::stream_base::client);
     stream1.handshake(ssl::stream_base::server);

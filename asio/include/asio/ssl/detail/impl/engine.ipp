@@ -19,6 +19,7 @@
 
 #if !defined(ASIO_ENABLE_OLD_SSL)
 # include "asio/ssl/detail/engine.hpp"
+# include "asio/ssl/verify_context.hpp"
 #endif // !defined(ASIO_ENABLE_OLD_SSL)
 
 #include "asio/detail/push_options.hpp"
@@ -43,6 +44,12 @@ engine::engine(SSL_CTX* context)
 
 engine::~engine()
 {
+  if (SSL_get_app_data(ssl_))
+  {
+    delete static_cast<verify_callback_base*>(SSL_get_app_data(ssl_));
+    SSL_set_app_data(ssl_, 0);
+  }
+
   ::BIO_free(ext_bio_);
   ::SSL_free(ssl_);
 }
@@ -50,6 +57,53 @@ engine::~engine()
 SSL* engine::native_handle()
 {
   return ssl_;
+}
+
+asio::error_code engine::set_verify_mode(
+    verify_mode v, asio::error_code& ec)
+{
+  ::SSL_set_verify(ssl_, v, ::SSL_get_verify_callback(ssl_));
+
+  ec = asio::error_code();
+  return ec;
+}
+
+asio::error_code engine::set_verify_callback(
+    verify_callback_base* callback, asio::error_code& ec)
+{
+  if (SSL_get_app_data(ssl_))
+    delete static_cast<verify_callback_base*>(SSL_get_app_data(ssl_));
+
+  SSL_set_app_data(ssl_, callback);
+
+  ::SSL_set_verify(ssl_, ::SSL_get_verify_mode(ssl_),
+      &engine::verify_callback_function);
+
+  ec = asio::error_code();
+  return ec;
+}
+
+int engine::verify_callback_function(int preverified, X509_STORE_CTX* ctx)
+{
+  if (ctx)
+  {
+    if (SSL* ssl = static_cast<SSL*>(
+          ::X509_STORE_CTX_get_ex_data(
+            ctx, ::SSL_get_ex_data_X509_STORE_CTX_idx())))
+    {
+      if (SSL_get_app_data(ssl))
+      {
+        verify_callback_base* callback =
+          static_cast<verify_callback_base*>(
+              SSL_get_app_data(ssl));
+
+        verify_context verify_ctx(ctx);
+        return callback->call(preverified != 0, verify_ctx) ? 1 : 0;
+      }
+    }
+  }
+
+  return 0;
 }
 
 engine::want engine::handshake(

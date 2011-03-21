@@ -27,6 +27,8 @@
 # include "asio/ssl/detail/openssl_types.hpp"
 # include "asio/ssl/detail/openssl_init.hpp"
 # include "asio/ssl/detail/password_callback.hpp"
+# include "asio/ssl/detail/verify_callback.hpp"
+# include "asio/ssl/verify_mode.hpp"
 #endif // defined(ASIO_ENABLE_OLD_SSL)
 
 namespace asio {
@@ -138,8 +140,8 @@ public:
    * This function may be used to configure the peer verification mode used by
    * the context.
    *
-   * @param v A bitmask of peer verification modes. The available verify_mode
-   * values are defined in the context_base class.
+   * @param v A bitmask of peer verification modes. See @ref verify_mode for
+   * available values.
    *
    * @throws asio::system_error Thrown on failure.
    *
@@ -152,8 +154,8 @@ public:
    * This function may be used to configure the peer verification mode used by
    * the context.
    *
-   * @param v A bitmask of peer verification modes. The available verify_mode
-   * values are defined in the context_base class.
+   * @param v A bitmask of peer verification modes. See @ref verify_mode for
+   * available values.
    *
    * @param ec Set to indicate what error occurred, if any.
    *
@@ -161,6 +163,49 @@ public:
    */
   ASIO_DECL asio::error_code set_verify_mode(
       verify_mode v, asio::error_code& ec);
+
+  /// Set the callback used to verify peer certificates.
+  /**
+   * This function is used to specify a callback function that will be called
+   * by the implementation when it needs to verify a peer certificate.
+   *
+   * @param callback The function object to be used for verifying a certificate.
+   * The function signature of the handler must be:
+   * @code bool verify_callback(
+   *   bool preverified, // True if the certificate passed pre-verification.
+   *   verify_context& ctx // The peer certificate and other context.
+   * ); @endcode
+   * The return value of the callback is true if the certificate has passed
+   * verification, false otherwise.
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_set_verify.
+   */
+  template <typename VerifyCallback>
+  void set_verify_callback(VerifyCallback callback);
+
+  /// Set the callback used to verify peer certificates.
+  /**
+   * This function is used to specify a callback function that will be called
+   * by the implementation when it needs to verify a peer certificate.
+   *
+   * @param callback The function object to be used for verifying a certificate.
+   * The function signature of the handler must be:
+   * @code bool verify_callback(
+   *   bool preverified, // True if the certificate passed pre-verification.
+   *   verify_context& ctx // The peer certificate and other context.
+   * ); @endcode
+   * The return value of the callback is true if the certificate has passed
+   * verification, false otherwise.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_set_verify.
+   */
+  template <typename VerifyCallback>
+  asio::error_code set_verify_callback(VerifyCallback callback,
+      asio::error_code& ec);
 
   /// Load a certification authority file for performing verification.
   /**
@@ -446,6 +491,14 @@ public:
       asio::error_code& ec);
 
 private:
+  // Helper function used to set a peer certificate verification callback.
+  ASIO_DECL asio::error_code do_set_verify_callback(
+      detail::verify_callback_base* callback, asio::error_code& ec);
+
+  // Callback used when the SSL implementation wants to verify a certificate.
+  ASIO_DECL static int verify_callback_function(
+      int preverified, X509_STORE_CTX* ctx);
+
   // Helper function used to set a password callback.
   ASIO_DECL asio::error_code do_set_password_callback(
       detail::password_callback_base* callback, asio::error_code& ec);

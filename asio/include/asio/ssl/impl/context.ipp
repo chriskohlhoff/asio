@@ -124,6 +124,15 @@ context::~context()
       handle_->default_passwd_callback_userdata = 0;
     }
 
+    if (SSL_CTX_get_app_data(handle_))
+    {
+      detail::verify_callback_base* callback =
+        static_cast<detail::verify_callback_base*>(
+            SSL_CTX_get_app_data(handle_));
+      delete callback;
+      SSL_CTX_set_app_data(handle_, 0);
+    }
+
     ::SSL_CTX_free(handle_);
   }
 }
@@ -154,7 +163,7 @@ asio::error_code context::set_options(
   return ec;
 }
 
-void context::set_verify_mode(context::verify_mode v)
+void context::set_verify_mode(verify_mode v)
 {
   asio::error_code ec;
   set_verify_mode(v, ec);
@@ -162,9 +171,9 @@ void context::set_verify_mode(context::verify_mode v)
 }
 
 asio::error_code context::set_verify_mode(
-    context::verify_mode v, asio::error_code& ec)
+    verify_mode v, asio::error_code& ec)
 {
-  ::SSL_CTX_set_verify(handle_, v, 0);
+  ::SSL_CTX_set_verify(handle_, v, ::SSL_CTX_get_verify_callback(handle_));
 
   ec = asio::error_code();
   return ec;
@@ -409,6 +418,51 @@ asio::error_code context::use_tmp_dh_file(
 
   ec = asio::error_code();
   return ec;
+}
+
+asio::error_code context::do_set_verify_callback(
+    detail::verify_callback_base* callback, asio::error_code& ec)
+{
+  if (SSL_CTX_get_app_data(handle_))
+  {
+    delete static_cast<detail::verify_callback_base*>(
+        SSL_CTX_get_app_data(handle_));
+  }
+
+  SSL_CTX_set_app_data(handle_, callback);
+
+  ::SSL_CTX_set_verify(handle_,
+      ::SSL_CTX_get_verify_mode(handle_),
+      &context::verify_callback_function);
+
+  ec = asio::error_code();
+  return ec;
+}
+
+int context::verify_callback_function(int preverified, X509_STORE_CTX* ctx)
+{
+  if (ctx)
+  {
+    if (SSL* ssl = static_cast<SSL*>(
+          ::X509_STORE_CTX_get_ex_data(
+            ctx, ::SSL_get_ex_data_X509_STORE_CTX_idx())))
+    {
+      if (SSL_CTX* handle = ::SSL_get_SSL_CTX(ssl))
+      {
+        if (SSL_CTX_get_app_data(handle))
+        {
+          detail::verify_callback_base* callback =
+            static_cast<detail::verify_callback_base*>(
+                SSL_CTX_get_app_data(handle));
+
+          verify_context verify_ctx(ctx);
+          return callback->call(preverified != 0, verify_ctx) ? 1 : 0;
+        }
+      }
+    }
+  }
+
+  return 0;
 }
 
 asio::error_code context::do_set_password_callback(
