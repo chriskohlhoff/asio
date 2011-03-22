@@ -48,11 +48,6 @@ The implementation will insert appropriate memory barriers to ensure correct
 memory visibility should allocation functions need to be called from different
 threads.
 
-Custom memory allocation support is currently implemented for all asynchronous
-operations with the following exceptions:
-
-* Asynchronous SSL operations.
-
 [heading See Also]
 
 [link asio.reference.asio_handler_allocate asio_handler_allocate],
