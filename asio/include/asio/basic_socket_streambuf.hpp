@@ -279,8 +279,8 @@ protected:
       if (ec_)
         return traits_type::eof();
 
-      setg(get_buffer_.begin(), get_buffer_.begin() + putback_max,
-          get_buffer_.begin() + putback_max + bytes_transferred_);
+      setg(&get_buffer_[0], &get_buffer_[0] + putback_max,
+          &get_buffer_[0] + putback_max + bytes_transferred_);
       return traits_type::to_int_type(*gptr());
     }
     else
@@ -348,7 +348,7 @@ protected:
 
         buffer = buffer + bytes_transferred_;
       }
-      setp(put_buffer_.begin(), put_buffer_.end());
+      setp(&put_buffer_[0], &put_buffer_[0] + put_buffer_.size());
 
       // If the new character is eof then our work here is done.
       if (traits_type::eq_int_type(c, traits_type::eof()))
@@ -391,13 +391,13 @@ protected:
 private:
   void init_buffers()
   {
-    setg(get_buffer_.begin(),
-        get_buffer_.begin() + putback_max,
-        get_buffer_.begin() + putback_max);
+    setg(&get_buffer_[0],
+        &get_buffer_[0] + putback_max,
+        &get_buffer_[0] + putback_max);
     if (unbuffered_)
       setp(0, 0);
     else
-      setp(put_buffer_.begin(), put_buffer_.end());
+      setp(&put_buffer_[0], &put_buffer_[0] + put_buffer_.size());
   }
 
   template <typename ResolverQuery>
