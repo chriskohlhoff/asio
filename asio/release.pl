@@ -287,9 +287,43 @@ sub create_boost_asio_content
   system("cp -vR ../boost/libs/asio $boost_asio_name/libs");
   system("cp -vR ../boost/libs/system $boost_asio_name/libs");
 
-  # Create readme.
-  my $to = "$boost_asio_name/README.txt";
+  # Add dummy definitions of BOOST_SYMBOL* to boost/system/config.hpp.
+  my $from = "$boost_asio_name/boost/system/config.hpp";
+  my $to = "$boost_asio_name/boost/system/config.hpp.new";
+  open(my $input, "<$from") or die("Can't open $from for reading");
   open(my $output, ">$to") or die("Can't open $to for writing");
+  while (my $line = <$input>)
+  {
+    print($output $line);
+    if ($line =~ /<boost\/config\.hpp>/)
+    {
+      print($output "\n// These #defines added by the separate Boost.Asio package.\n");
+      print($output "#if !defined(BOOST_SYMBOL_IMPORT)\n");
+      print($output "# if defined(BOOST_HAS_DECLSPEC)\n");
+      print($output "#  define BOOST_SYMBOL_IMPORT __declspec(dllimport)\n");
+      print($output "# else // defined(BOOST_HAS_DECLSPEC)\n");
+      print($output "#  define BOOST_SYMBOL_IMPORT\n");
+      print($output "# endif // defined(BOOST_HAS_DECLSPEC)\n");
+      print($output "#endif // !defined(BOOST_SYMBOL_IMPORT)\n");
+      print($output "#if !defined(BOOST_SYMBOL_EXPORT)\n");
+      print($output "# if defined(BOOST_HAS_DECLSPEC)\n");
+      print($output "#  define BOOST_SYMBOL_EXPORT __declspec(dllexport)\n");
+      print($output "# else // defined(BOOST_HAS_DECLSPEC)\n");
+      print($output "#  define BOOST_SYMBOL_EXPORT\n");
+      print($output "# endif // defined(BOOST_HAS_DECLSPEC)\n");
+      print($output "#endif // !defined(BOOST_SYMBOL_EXPORT)\n");
+      print($output "#if !defined(BOOST_SYMBOL_VISIBLE)\n");
+      print($output "# define BOOST_SYMBOL_VISIBLE\n");
+      print($output "#endif // !defined(BOOST_SYMBOL_VISIBLE)\n\n");
+    }
+  }
+  close($input);
+  close($output);
+  system("mv $to $from");
+
+  # Create readme.
+  $to = "$boost_asio_name/README.txt";
+  open($output, ">$to") or die("Can't open $to for writing");
   print($output $boost_asio_readme);
   close($output);
 
