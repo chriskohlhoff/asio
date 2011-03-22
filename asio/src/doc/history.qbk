@@ -23,6 +23,10 @@
   by defining `(BOOST_)ASIO_HAS_STD_ARRAY`, or disabled by defining
   `(BOOST_)ASIO_DISABLE_STD_ARRAY`.
 
+* Changed to use the C++0x standard library templates `array`, `shared_ptr`,
+  `weak_ptr` and `atomic` when they are available, rather than the Boost
+  equivalents.
+
 * Support for `std::error_code` and `std::system_error` is no longer enabled by
   default for g++ 4.5, as that compiler's standard library does not implement
   `std::system_error::what()` correctly.
