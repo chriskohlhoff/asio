@@ -201,7 +201,7 @@ inline detail::transfer_at_least_t transfer_at_least(std::size_t minimum)
  * @endcode
  */
 #if defined(GENERATING_DOCUMENTATION)
-unspecified transfer_exactly(std::size_t minimum);
+unspecified transfer_exactly(std::size_t size);
 #else
 inline detail::transfer_exactly_t transfer_exactly(std::size_t size)
 {
