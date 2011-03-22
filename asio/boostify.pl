@@ -142,6 +142,7 @@ sub copy_source_file
       $line =~ s/\[@\.\.\/src\/examples/[\@boost_asio\/example/g;
       $line =~ s/include\/asio/boost\/asio/g;
       $line =~ s/\^asio/^boost\/asio/g;
+      $line =~ s/namespaceasio/namespaceboost_1_1asio/g;
     }
 
     # Conditional replacements.
