@@ -63,8 +63,9 @@ void asio_signal_handler(int signal_number)
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   int saved_errno = errno;
   signal_state* state = get_signal_state();
-  (void)::write(state->write_descriptor_,
+  int result = ::write(state->write_descriptor_,
       &signal_number, sizeof(signal_number));
+  (void)result;
   errno = saved_errno;
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
