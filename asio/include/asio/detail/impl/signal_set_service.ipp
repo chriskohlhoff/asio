@@ -145,6 +145,8 @@ void signal_set_service::shutdown_service()
       reg = reg->next_in_table_;
     }
   }
+
+  io_service_.abandon_operations(ops);
 }
 
 void signal_set_service::fork_service(

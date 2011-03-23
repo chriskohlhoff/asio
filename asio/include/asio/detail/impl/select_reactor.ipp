@@ -81,6 +81,8 @@ void select_reactor::shutdown_service()
     op_queue_[i].get_all_operations(ops);
 
   timer_queues_.get_all_timers(ops);
+
+  io_service_.abandon_operations(ops);
 }
 
 void select_reactor::fork_service(asio::io_service::fork_event fork_ev)

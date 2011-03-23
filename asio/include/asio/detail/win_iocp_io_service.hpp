@@ -126,6 +126,10 @@ public:
   ASIO_DECL void post_deferred_completions(
       op_queue<win_iocp_operation>& ops);
 
+  // Enqueue unfinished operation as part of a shutdown_service operation.
+  // Assumes that work_started() was previously called for the operations.
+  ASIO_DECL void abandon_operations(op_queue<operation>& ops);
+
   // Called after starting an overlapped I/O operation that did not complete
   // immediately. The caller must have already called work_started() prior to
   // starting the operation.

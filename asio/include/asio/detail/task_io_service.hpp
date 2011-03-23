@@ -105,6 +105,10 @@ public:
   // that work_started() was previously called for each operation.
   ASIO_DECL void post_deferred_completions(op_queue<operation>& ops);
 
+  // Process unfinished operations as part of a shutdown_service operation.
+  // Assumes that work_started() was previously called for the operations.
+  ASIO_DECL void abandon_operations(op_queue<operation>& ops);
+
 private:
   // Structure containing information about an idle thread.
   struct idle_thread_info;

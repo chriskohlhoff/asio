@@ -63,6 +63,8 @@ void dev_poll_reactor::shutdown_service()
     op_queue_[i].get_all_operations(ops);
 
   timer_queues_.get_all_timers(ops);
+
+  io_service_.abandon_operations(ops);
 } 
 
 // Helper class to re-register all descriptors with /dev/poll.

@@ -230,6 +230,13 @@ void task_io_service::post_deferred_completions(
   }
 }
 
+void task_io_service::abandon_operations(
+    op_queue<task_io_service::operation>& ops)
+{
+  op_queue<task_io_service::operation> ops2;
+  ops2.push(ops);
+}
+
 std::size_t task_io_service::do_one(mutex::scoped_lock& lock,
     task_io_service::idle_thread_info* this_idle_thread)
 {

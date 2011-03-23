@@ -262,6 +262,17 @@ void win_iocp_io_service::post_deferred_completions(
   }
 }
 
+void win_iocp_io_service::abandon_operations(
+    op_queue<win_iocp_operation>& ops)
+{
+  while (win_iocp_operation* op = ops.front())
+  {
+    ops.pop();
+    ::InterlockedDecrement(&outstanding_work_);
+    op->destroy();
+  }
+}
+
 void win_iocp_io_service::on_pending(win_iocp_operation* op)
 {
   if (::InterlockedCompareExchange(&op->ready_, 1, 0) == 1)
