@@ -69,6 +69,17 @@
 # define ASIO_MOVE_CAST(type) static_cast<const type&>
 #endif // !defined_ASIO_MOVE_CAST
 
+// Support variadic templates on compilers known to allow it.
+#if !defined(ASIO_DISABLE_VARIADIC_TEMPLATES)
+# if defined(__GNUC__)
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
+#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#    define ASIO_HAS_VARIADIC_TEMPLATES
+#   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
+# endif // defined(__GNUC__)
+#endif // !defined(ASIO_DISABLE_VARIADIC_TEMPLATES)
+
 // Standard library support for system errors.
 #if !defined(ASIO_DISABLE_STD_SYSTEM_ERROR)
 # if defined(__GNUC__)

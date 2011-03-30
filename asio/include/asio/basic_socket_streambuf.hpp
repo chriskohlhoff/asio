@@ -20,10 +20,6 @@
 #if !defined(BOOST_NO_IOSTREAM)
 
 #include <streambuf>
-#include <boost/preprocessor/arithmetic/inc.hpp>
-#include <boost/preprocessor/repetition/enum_binary_params.hpp>
-#include <boost/preprocessor/repetition/enum_params.hpp>
-#include <boost/preprocessor/repetition/repeat_from_to.hpp>
 #include <boost/utility/base_from_member.hpp>
 #include "asio/basic_socket.hpp"
 #include "asio/deadline_timer_service.hpp"
@@ -37,9 +33,16 @@
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#if !defined(ASIO_SOCKET_STREAMBUF_MAX_ARITY)
-#define ASIO_SOCKET_STREAMBUF_MAX_ARITY 5
-#endif // !defined(ASIO_SOCKET_STREAMBUF_MAX_ARITY)
+#if !defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
+# include <boost/preprocessor/arithmetic/inc.hpp>
+# include <boost/preprocessor/repetition/enum_binary_params.hpp>
+# include <boost/preprocessor/repetition/enum_params.hpp>
+# include <boost/preprocessor/repetition/repeat_from_to.hpp>
+
+# if !defined(ASIO_SOCKET_STREAMBUF_MAX_ARITY)
+#  define ASIO_SOCKET_STREAMBUF_MAX_ARITY 5
+# endif // !defined(ASIO_SOCKET_STREAMBUF_MAX_ARITY)
 
 // A macro that should expand to:
 //   template <typename T1, ..., typename Tn>
@@ -57,7 +60,7 @@
 //   }
 // This macro should only persist within this file.
 
-#define ASIO_PRIVATE_CONNECT_DEF( z, n, data ) \
+# define ASIO_PRIVATE_CONNECT_DEF( z, n, data ) \
   template <BOOST_PP_ENUM_PARAMS(n, typename T)> \
   basic_socket_streambuf<Protocol, StreamSocketService, \
     Time, TimeTraits, TimerService>* connect( \
@@ -72,6 +75,8 @@
     return !ec_ ? this : 0; \
   } \
   /**/
+
+#endif // !defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 #include "asio/detail/push_options.hpp"
 
@@ -164,6 +169,19 @@ public:
   template <typename T1, ..., typename TN>
   basic_socket_streambuf<Protocol, StreamSocketService>* connect(
       T1 t1, ..., TN tn);
+#elif defined(ASIO_HAS_VARIADIC_TEMPLATES)
+  template <typename... T>
+  basic_socket_streambuf<Protocol, StreamSocketService,
+    Time, TimeTraits, TimerService>* connect(T... x)
+  {
+    init_buffers();
+    this->basic_socket<Protocol, StreamSocketService>::close(ec_);
+    typedef typename Protocol::resolver resolver_type;
+    typedef typename resolver_type::query resolver_query;
+    resolver_query query(x...);
+    resolve_and_connect(query);
+    return !ec_ ? this : 0;
+  }
 #else
   BOOST_PP_REPEAT_FROM_TO(
       1, BOOST_PP_INC(ASIO_SOCKET_STREAMBUF_MAX_ARITY),
@@ -519,7 +537,9 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#undef ASIO_PRIVATE_CONNECT_DEF
+#if !defined(ASIO_HAS_VARIADIC_TEMPLATES)
+# undef ASIO_PRIVATE_CONNECT_DEF
+#endif // !defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 #endif // !defined(BOOST_NO_IOSTREAM)
 

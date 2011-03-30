@@ -19,17 +19,20 @@
 
 #if !defined(BOOST_NO_IOSTREAM)
 
-#include <boost/preprocessor/arithmetic/inc.hpp>
-#include <boost/preprocessor/repetition/enum_binary_params.hpp>
-#include <boost/preprocessor/repetition/enum_params.hpp>
-#include <boost/preprocessor/repetition/repeat_from_to.hpp>
 #include <boost/utility/base_from_member.hpp>
 #include "asio/basic_socket_streambuf.hpp"
 #include "asio/stream_socket_service.hpp"
 
-#if !defined(ASIO_SOCKET_IOSTREAM_MAX_ARITY)
-#define ASIO_SOCKET_IOSTREAM_MAX_ARITY 5
-#endif // !defined(ASIO_SOCKET_IOSTREAM_MAX_ARITY)
+#if !defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
+# include <boost/preprocessor/arithmetic/inc.hpp>
+# include <boost/preprocessor/repetition/enum_binary_params.hpp>
+# include <boost/preprocessor/repetition/enum_params.hpp>
+# include <boost/preprocessor/repetition/repeat_from_to.hpp>
+
+# if !defined(ASIO_SOCKET_IOSTREAM_MAX_ARITY)
+#  define ASIO_SOCKET_IOSTREAM_MAX_ARITY 5
+# endif // !defined(ASIO_SOCKET_IOSTREAM_MAX_ARITY)
 
 // A macro that should expand to:
 //   template <typename T1, ..., typename Tn>
@@ -43,7 +46,7 @@
 //   }
 // This macro should only persist within this file.
 
-#define ASIO_PRIVATE_CTR_DEF(z, n, data) \
+# define ASIO_PRIVATE_CTR_DEF(z, n, data) \
   template <BOOST_PP_ENUM_PARAMS(n, typename T)> \
   explicit basic_socket_iostream(BOOST_PP_ENUM_BINARY_PARAMS(n, T, x)) \
     : std::basic_iostream<char>(&this->boost::base_from_member< \
@@ -65,7 +68,7 @@
 //   }
 // This macro should only persist within this file.
 
-#define ASIO_PRIVATE_CONNECT_DEF(z, n, data) \
+# define ASIO_PRIVATE_CONNECT_DEF(z, n, data) \
   template <BOOST_PP_ENUM_PARAMS(n, typename T)> \
   void connect(BOOST_PP_ENUM_BINARY_PARAMS(n, T, x)) \
   { \
@@ -73,6 +76,8 @@
       this->setstate(std::ios_base::failbit); \
   } \
   /**/
+
+#endif // !defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 #include "asio/detail/push_options.hpp"
 
@@ -118,6 +123,17 @@ public:
    */
   template <typename T1, ..., typename TN>
   explicit basic_socket_iostream(T1 t1, ..., TN tn);
+#elif defined(ASIO_HAS_VARIADIC_TEMPLATES)
+  template <typename... T>
+  explicit basic_socket_iostream(T... x)
+    : std::basic_iostream<char>(&this->boost::base_from_member<
+        basic_socket_streambuf<Protocol, StreamSocketService,
+          Time, TimeTraits, TimerService> >::member)
+  {
+    tie(this);
+    if (rdbuf()->connect(x...) == 0)
+      this->setstate(std::ios_base::failbit);
+  }
 #else
   BOOST_PP_REPEAT_FROM_TO(
       1, BOOST_PP_INC(ASIO_SOCKET_IOSTREAM_MAX_ARITY),
@@ -133,6 +149,13 @@ public:
    */
   template <typename T1, ..., typename TN>
   void connect(T1 t1, ..., TN tn);
+#elif defined(ASIO_HAS_VARIADIC_TEMPLATES)
+  template <typename... T>
+  void connect(T... x)
+  {
+    if (rdbuf()->connect(x...) == 0)
+      this->setstate(std::ios_base::failbit);
+  }
 #else
   BOOST_PP_REPEAT_FROM_TO(
       1, BOOST_PP_INC(ASIO_SOCKET_IOSTREAM_MAX_ARITY),
@@ -225,8 +248,10 @@ public:
 
 #include "asio/detail/pop_options.hpp"
 
-#undef ASIO_PRIVATE_CTR_DEF
-#undef ASIO_PRIVATE_CONNECT_DEF
+#if !defined(ASIO_HAS_VARIADIC_TEMPLATES)
+# undef ASIO_PRIVATE_CTR_DEF
+# undef ASIO_PRIVATE_CONNECT_DEF
+#endif // !defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 #endif // defined(BOOST_NO_IOSTREAM)
 
