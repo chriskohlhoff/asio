@@ -19,7 +19,7 @@ object taking no arguments.
   [[expression] [return type] [assertion/note\npre/post-conditions]]
   [
     [``
-      using namespace asio;
+      using asio::asio_handler_allocate;
       asio_handler_allocate(s, &h);
     ``]
     [`void*`]
@@ -34,7 +34,7 @@ object taking no arguments.
   ]
   [
     [``
-      using namespace asio;
+      using asio::asio_handler_deallocate;
       asio_handler_deallocate(p, s, &h);
     ``]
     []
@@ -48,7 +48,7 @@ object taking no arguments.
   ]
   [
     [``
-      using namespace asio;
+      using asio::asio_handler_invoke;
       asio_handler_invoke(f, &h);
     ``]
     []

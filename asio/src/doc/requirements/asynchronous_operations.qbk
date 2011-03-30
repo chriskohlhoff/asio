@@ -137,7 +137,7 @@ as follows:
   void* asio_handler_allocate(size_t size,
                               bound_read_handler<ReadHandler>* this_handler)
   {
-    using namespace asio;
+    using asio::asio_handler_allocate;
     return asio_handler_allocate(size, &this_handler->handler_);
   }
 
@@ -145,7 +145,7 @@ as follows:
   void asio_handler_deallocate(void* pointer, std::size_t size,
                                bound_read_handler<ReadHandler>* this_handler)
   {
-    using namespace asio;
+    using asio::asio_handler_deallocate;
     asio_handler_deallocate(pointer, size, &this_handler->handler_);
   }
 
@@ -153,7 +153,7 @@ as follows:
   void asio_handler_invoke(const F& f,
                            bound_read_handler<ReadHandler>* this_handler)
   {
-    using namespace asio;
+    using asio::asio_handler_invoke;
     asio_handler_invoke(f, &this_handler->handler_);
   }
 
