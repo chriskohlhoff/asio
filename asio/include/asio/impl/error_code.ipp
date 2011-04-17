@@ -20,6 +20,7 @@
 # include <winerror.h>
 #else
 # include <cerrno>
+# include <cstring>
 #endif
 #include "asio/detail/local_free_on_block_exit.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -68,6 +69,7 @@ public:
   || defined(_AIX) || defined(__hpux) || defined(__osf__) \
   || defined(__ANDROID__)
     char buf[256] = "";
+    using namespace std;
     strerror_r(value, buf, sizeof(buf));
     return buf;
 #else
