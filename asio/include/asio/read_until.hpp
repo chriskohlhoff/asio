@@ -35,30 +35,16 @@ namespace asio {
 
 namespace detail
 {
-#if BOOST_WORKAROUND(__CODEGEARC__, BOOST_TESTED_AT(0x610))
+  char (&has_result_type_helper(...))[2];
+
+  template <typename T>
+  char has_result_type_helper(T*, typename T::result_type* = 0);
+
   template <typename T>
   struct has_result_type
   {
-    template <typename U> struct inner
-    {
-        struct big { char a[100]; };
-        static big helper(U, ...);
-        static char helper(U, typename U::result_type* = 0);
-    };
-    static const T& ref();
-    enum { value = (sizeof((inner<const T&>::helper)((ref)())) == 1) };
+    enum { value = (sizeof((has_result_type_helper)((T*)(0))) == 1) };
   };
-#else // BOOST_WORKAROUND(__CODEGEARC__, BOOST_TESTED_AT(0x610))
-  template <typename T>
-  struct has_result_type
-  {
-    struct big { char a[100]; };
-    template <typename U> static big helper(U, ...);
-    template <typename U> static char helper(U, typename U::result_type* = 0);
-    static const T& ref();
-    enum { value = (sizeof((helper)((ref)())) == 1) };
-  };
-#endif // BOOST_WORKAROUND(__CODEGEARC__, BOOST_TESTED_AT(0x610))
 } // namespace detail
 
 /// Type trait used to determine whether a type can be used as a match condition
