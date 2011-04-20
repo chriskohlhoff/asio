@@ -52,6 +52,7 @@
 #  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 #   if defined(__GXX_EXPERIMENTAL_CXX0X__)
 #    define ASIO_HAS_MOVE
+#    define ASIO_MOVE_ARG(type) type&&
 #    define ASIO_MOVE_CAST(type) static_cast<type&&>
 #   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
@@ -59,6 +60,7 @@
 # if defined(BOOST_MSVC)
 #  if (_MSC_VER >= 1600)
 #   define ASIO_HAS_MOVE
+#   define ASIO_MOVE_ARG(type) type&&
 #   define ASIO_MOVE_CAST(type) static_cast<type&&>
 #  endif // (_MSC_VER >= 1600)
 # endif // defined(BOOST_MSVC)
@@ -66,6 +68,7 @@
 
 // If ASIO_MOVE_CAST isn't defined yet use a C++03 compatible version.
 #if !defined(ASIO_MOVE_CAST)
+# define ASIO_MOVE_ARG(type) const type&
 # define ASIO_MOVE_CAST(type) static_cast<const type&>
 #endif // !defined_ASIO_MOVE_CAST
 
