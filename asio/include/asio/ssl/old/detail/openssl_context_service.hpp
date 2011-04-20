@@ -20,6 +20,7 @@
 #include <cstring>
 #include <string>
 #include <boost/function.hpp>
+#include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/ssl/context_base.hpp"
@@ -66,6 +67,13 @@ public:
   {
     switch (m)
     {
+#if defined(OPENSSL_NO_SSL2)
+    case context_base::sslv2:
+    case context_base::sslv2_client:
+    case context_base::sslv2_server:
+      asio::detail::throw_error(asio::error::invalid_argument);
+      break;
+#else // defined(OPENSSL_NO_SSL2)
     case context_base::sslv2:
       impl = ::SSL_CTX_new(::SSLv2_method());
       break;
@@ -75,6 +83,7 @@ public:
     case context_base::sslv2_server:
       impl = ::SSL_CTX_new(::SSLv2_server_method());
       break;
+#endif // defined(OPENSSL_NO_SSL2)
     case context_base::sslv3:
       impl = ::SSL_CTX_new(::SSLv3_method());
       break;

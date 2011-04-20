@@ -38,6 +38,14 @@ context::context(context::method m)
 {
   switch (m)
   {
+#if defined(OPENSSL_NO_SSL2)
+  case context::sslv2:
+  case context::sslv2_client:
+  case context::sslv2_server:
+    asio::detail::throw_error(
+        asio::error::invalid_argument, "context");
+    break;
+#else // defined(OPENSSL_NO_SSL2)
   case context::sslv2:
     handle_ = ::SSL_CTX_new(::SSLv2_method());
     break;
@@ -47,6 +55,7 @@ context::context(context::method m)
   case context::sslv2_server:
     handle_ = ::SSL_CTX_new(::SSLv2_server_method());
     break;
+#endif // defined(OPENSSL_NO_SSL2)
   case context::sslv3:
     handle_ = ::SSL_CTX_new(::SSLv3_method());
     break;
