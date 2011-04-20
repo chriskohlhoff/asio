@@ -182,8 +182,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef wait_handler<Handler> op;
     typename op::ptr p = { boost::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(handler);
 
     impl.might_have_pending_waits = true;

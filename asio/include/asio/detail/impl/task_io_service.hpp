@@ -18,8 +18,7 @@
 #include "asio/detail/call_stack.hpp"
 #include "asio/detail/completion_handler.hpp"
 #include "asio/detail/fenced_block.hpp"
-#include "asio/detail/handler_alloc_helpers.hpp"
-#include "asio/detail/handler_invoke_helpers.hpp"
+#include "asio/detail/handler_traits.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -39,8 +38,7 @@ void task_io_service::dispatch(Handler& handler)
     // Allocate and construct an operation to wrap the handler.
     typedef completion_handler<Handler> op;
     typename op::ptr p = { boost::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(handler);
 
     ASIO_HANDLER_CREATION((p.p, "io_service", this, "dispatch"));
@@ -56,8 +54,7 @@ void task_io_service::post(Handler& handler)
   // Allocate and construct an operation to wrap the handler.
   typedef completion_handler<Handler> op;
   typename op::ptr p = { boost::addressof(handler),
-    asio_handler_alloc_helpers::allocate(
-      sizeof(op), handler), 0 };
+    op::ptr::allocate(handler), 0 };
   p.p = new (p.v) op(handler);
 
   ASIO_HANDLER_CREATION((p.p, "io_service", this, "post"));

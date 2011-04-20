@@ -42,6 +42,32 @@ inline void invoke(const Function& function, Context& context)
 
 } // namespace asio_handler_invoke_helpers
 
+namespace asio {
+namespace detail {
+
+// The default invoker simply forwards to the old-style invocation hook.
+template <typename Context>
+class default_handler_invoker
+{
+public:
+  explicit default_handler_invoker(Context* context)
+    : context_(context)
+  {
+  }
+
+  template <typename Function>
+  void invoke(Function function)
+  {
+    asio_handler_invoke_helpers::invoke(function, *context_);
+  }
+
+private:
+  Context* context_;
+};
+
+} // namespace detail
+} // namespace asio
+
 #include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_HANDLER_INVOKE_HELPERS_HPP

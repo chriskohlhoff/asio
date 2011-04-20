@@ -17,9 +17,8 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/fenced_block.hpp"
-#include "asio/detail/handler_alloc_helpers.hpp"
-#include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/operation.hpp"
+#include "asio/handler_traits.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -62,7 +61,8 @@ public:
     {
       asio::detail::fenced_block b;
       ASIO_HANDLER_INVOCATION_BEGIN(());
-      asio_handler_invoke_helpers::invoke(handler, handler);
+      ptr::traits_type::get_invoker(handler).invoke(
+          ASIO_MOVE_CAST(Handler)(handler));
       ASIO_HANDLER_INVOCATION_END;
     }
   }

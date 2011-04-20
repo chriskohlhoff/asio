@@ -44,6 +44,7 @@
 #include "asio/error_code.hpp"
 #include "asio/handler_alloc_hook.hpp"
 #include "asio/handler_invoke_hook.hpp"
+#include "asio/handler_traits.hpp"
 #include "asio/io_service.hpp"
 #include "asio/ip/address.hpp"
 #include "asio/ip/address_v4.hpp"

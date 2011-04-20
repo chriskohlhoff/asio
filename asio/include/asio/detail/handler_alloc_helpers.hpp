@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include <boost/detail/workaround.hpp>
+#include <boost/limits.hpp>
 #include <boost/utility/addressof.hpp>
 #include "asio/detail/noncopyable.hpp"
 #include "asio/handler_alloc_hook.hpp"
@@ -54,31 +55,131 @@ inline void deallocate(void* p, std::size_t s, Handler& h)
 
 } // namespace asio_handler_alloc_helpers
 
-#define ASIO_DEFINE_HANDLER_PTR(op) \
-  struct ptr \
-  { \
-    Handler* h; \
-    void* v; \
-    op* p; \
-    ~ptr() \
-    { \
-      reset(); \
-    } \
-    void reset() \
-    { \
-      if (p) \
-      { \
-        p->~op(); \
-        p = 0; \
-      } \
-      if (v) \
-      { \
-        asio_handler_alloc_helpers::deallocate(v, sizeof(op), *h); \
-        v = 0; \
-      } \
-    } \
-  } \
-  /**/
+namespace asio {
+namespace detail {
+
+// The default allocator simply forwards to the old-style allocation hook.
+template <typename T, typename Context>
+class default_handler_allocator
+{
+public:
+  typedef T value_type;
+  typedef value_type* pointer;
+  typedef const value_type* const_pointer;
+  typedef value_type& reference;
+  typedef const value_type& const_reference;
+  typedef std::size_t size_type;
+  typedef std::ptrdiff_t difference_type;
+
+  template <typename U>
+  struct rebind
+  {
+    typedef default_handler_allocator<U, Context> other;
+  };
+
+  explicit default_handler_allocator(Context* context)
+    : context_(context)
+  {
+  }
+
+  template <typename U>
+  default_handler_allocator(const default_handler_allocator<U, Context>& other)
+    : context_(other.context_)
+  {
+  }
+
+  static pointer address(reference r)
+  {
+    return &r;
+  }
+
+  static const_pointer address(const_reference r)
+  {
+    return &r;
+  }
+
+  static size_type max_size()
+  {
+    return (std::numeric_limits<size_type>::max)();
+  }
+
+  static void construct(const pointer p, const value_type& v)
+  {
+    new (p) T(v);
+  }
+
+  static void destroy(const pointer p)
+  {
+    p->~T();
+  }
+
+  bool operator==(const default_handler_allocator& other) const
+  {
+    return context_ == other.context_;
+  }
+
+  bool operator!=(const default_handler_allocator& other) const
+  {
+    return context_ != other.context_;
+  }
+
+  pointer allocate(size_type n, const void* = 0)
+  {
+    return static_cast<pointer>(
+        asio_handler_alloc_helpers::allocate(n * sizeof(T), *context_));
+  }
+
+  void deallocate(pointer p, size_type n)
+  {
+    return asio_handler_alloc_helpers::deallocate(p, n * sizeof(T), *context_);
+  }
+
+//private:
+  Context* context_;
+};
+
+// The default allocator specialised for void.
+template <typename Context>
+class default_handler_allocator<void, Context>
+{
+public:
+  typedef void value_type;
+  typedef void* pointer;
+  typedef const void* const_pointer;
+
+  template <typename U>
+  struct rebind
+  {
+    typedef default_handler_allocator<U, Context> other;
+  };
+
+  explicit default_handler_allocator(Context* context)
+    : context_(context)
+  {
+  }
+
+  template <typename U>
+  default_handler_allocator(const default_handler_allocator<U, Context>& other)
+    : context_(other.context_)
+  {
+  }
+
+  bool operator==(const default_handler_allocator& other) const
+  {
+    return context_ == other.context_;
+  }
+
+  bool operator!=(const default_handler_allocator& other) const
+  {
+    return context_ != other.context_;
+  }
+
+//private:
+  Context* context_;
+};
+
+} // namespace detail
+} // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 

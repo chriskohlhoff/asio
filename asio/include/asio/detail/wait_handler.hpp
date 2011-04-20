@@ -32,9 +32,9 @@ class wait_handler : public timer_op
 public:
   ASIO_DEFINE_HANDLER_PTR(wait_handler);
 
-  wait_handler(Handler h)
+  wait_handler(Handler& h)
     : timer_op(&wait_handler::do_complete),
-      handler_(h)
+      handler_(ASIO_MOVE_CAST(Handler)(h))
   {
   }
 
@@ -53,8 +53,8 @@ public:
     // with the handler. Consequently, a local copy of the handler is required
     // to ensure that any owning sub-object remains valid until after we have
     // deallocated the memory here.
-    detail::binder1<Handler, asio::error_code>
-      handler(h->handler_, h->ec_);
+    typedef detail::binder1<Handler, asio::error_code> binder;
+    binder handler(h->handler_, h->ec_);
     p.h = boost::addressof(handler.handler_);
     p.reset();
 
@@ -63,7 +63,8 @@ public:
     {
       asio::detail::fenced_block b;
       ASIO_HANDLER_INVOCATION_BEGIN((handler.arg1_));
-      asio_handler_invoke_helpers::invoke(handler, handler.handler_);
+      ptr::traits_type::get_invoker(handler.handler_).invoke(
+          ASIO_MOVE_CAST(binder)(handler));
       ASIO_HANDLER_INVOCATION_END;
     }
   }

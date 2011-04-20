@@ -58,6 +58,7 @@ nobase_include_HEADERS = \
 	asio/detail/handler_alloc_helpers.hpp \
 	asio/detail/handler_invoke_helpers.hpp \
 	asio/detail/handler_tracking.hpp \
+	asio/detail/handler_traits.hpp \
 	asio/detail/handler_type_requirements.hpp \
 	asio/detail/hash_map.hpp \
 	asio/detail/impl/descriptor_ops.ipp \
@@ -219,6 +220,7 @@ nobase_include_HEADERS = \
 	asio/error.hpp \
 	asio/handler_alloc_hook.hpp \
 	asio/handler_invoke_hook.hpp \
+	asio/handler_traits.hpp \
 	asio.hpp \
 	asio/impl/connect.hpp \
 	asio/impl/error_code.ipp \
