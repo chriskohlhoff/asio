@@ -142,6 +142,26 @@ namespace detail
     {
     }
 
+#if defined(ASIO_HAS_MOVE)
+    write_op(const write_op& other)
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        stream_(other.stream_),
+        buffers_(other.buffers_),
+        total_transferred_(other.total_transferred_),
+        handler_(other.handler_)
+    {
+    }
+
+    write_op(write_op&& other)
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        stream_(other.stream_),
+        buffers_(other.buffers_),
+        total_transferred_(other.total_transferred_),
+        handler_(ASIO_MOVE_CAST(WriteHandler)(other.handler_))
+    {
+    }
+#endif // defined(ASIO_HAS_MOVE)
+
     void operator()(const asio::error_code& ec,
         std::size_t bytes_transferred, int start = 0)
     {
@@ -151,7 +171,7 @@ namespace detail
         buffers_.prepare(this->check_for_completion(ec, total_transferred_));
         for (;;)
         {
-          stream_.async_write_some(buffers_, *this);
+          stream_.async_write_some(buffers_, ASIO_MOVE_CAST(write_op)(*this));
           return; default:
           total_transferred_ += bytes_transferred;
           buffers_.consume(bytes_transferred);
@@ -193,6 +213,26 @@ namespace detail
     {
     }
 
+#if defined(ASIO_HAS_MOVE)
+    write_op(const write_op& other)
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        stream_(other.stream_),
+        buffer_(other.buffer_),
+        total_transferred_(other.total_transferred_),
+        handler_(other.handler_)
+    {
+    }
+
+    write_op(write_op&& other)
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        stream_(other.stream_),
+        buffer_(other.buffer_),
+        total_transferred_(other.total_transferred_),
+        handler_(ASIO_MOVE_CAST(WriteHandler)(other.handler_))
+    {
+    }
+#endif // defined(ASIO_HAS_MOVE)
+
     void operator()(const asio::error_code& ec,
         std::size_t bytes_transferred, int start = 0)
     {
@@ -203,8 +243,9 @@ namespace detail
         n = this->check_for_completion(ec, total_transferred_);
         for (;;)
         {
-          stream_.async_write_some(asio::buffer(
-                buffer_ + total_transferred_, n), *this);
+          stream_.async_write_some(
+              asio::buffer(buffer_ + total_transferred_, n),
+              ASIO_MOVE_CAST(write_op)(*this));
           return; default:
           total_transferred_ += bytes_transferred;
           if ((!ec && bytes_transferred == 0)
@@ -244,6 +285,26 @@ namespace detail
     {
     }
 
+#if defined(ASIO_HAS_MOVE)
+    write_op(const write_op& other)
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        stream_(other.stream_),
+        buffer_(other.buffer_),
+        total_transferred_(other.total_transferred_),
+        handler_(other.handler_)
+    {
+    }
+
+    write_op(write_op&& other)
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        stream_(other.stream_),
+        buffer_(other.buffer_),
+        total_transferred_(other.total_transferred_),
+        handler_(ASIO_MOVE_CAST(WriteHandler)(other.handler_))
+    {
+    }
+#endif // defined(ASIO_HAS_MOVE)
+
     void operator()(const asio::error_code& ec,
         std::size_t bytes_transferred, int start = 0)
     {
@@ -254,8 +315,9 @@ namespace detail
         n = this->check_for_completion(ec, total_transferred_);
         for (;;)
         {
-          stream_.async_write_some(asio::buffer(
-                buffer_ + total_transferred_, n), *this);
+          stream_.async_write_some(
+              asio::buffer(buffer_ + total_transferred_, n),
+              ASIO_MOVE_CAST(write_op)(*this));
           return; default:
           total_transferred_ += bytes_transferred;
           if ((!ec && bytes_transferred == 0)
@@ -363,6 +425,20 @@ namespace detail
         handler_(ASIO_MOVE_CAST(WriteHandler)(handler))
     {
     }
+
+#if defined(ASIO_HAS_MOVE)
+    write_streambuf_handler(const write_streambuf_handler& other)
+      : streambuf_(other.streambuf_),
+        handler_(other.handler_)
+    {
+    }
+
+    write_streambuf_handler(write_streambuf_handler&& other)
+      : streambuf_(other.streambuf_),
+        handler_(ASIO_MOVE_CAST(WriteHandler)(other.handler_))
+    {
+    }
+#endif // defined(ASIO_HAS_MOVE)
 
     void operator()(const asio::error_code& ec,
         const std::size_t bytes_transferred)
