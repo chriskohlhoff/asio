@@ -171,7 +171,8 @@ namespace detail
         buffers_.prepare(this->check_for_completion(ec, total_transferred_));
         for (;;)
         {
-          stream_.async_write_some(buffers_, ASIO_MOVE_CAST(write_op)(*this));
+          stream_.async_write_some(buffers_,
+              ASIO_MOVE_CAST(write_op)(*this));
           return; default:
           total_transferred_ += bytes_transferred;
           buffers_.consume(bytes_transferred);
