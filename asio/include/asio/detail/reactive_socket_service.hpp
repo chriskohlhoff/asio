@@ -19,6 +19,7 @@
 
 #if !defined(ASIO_HAS_IOCP)
 
+#include <boost/type_traits/remove_reference.hpp>
 #include <boost/utility/addressof.hpp>
 #include "asio/buffer.hpp"
 #include "asio/error.hpp"
@@ -372,15 +373,16 @@ public:
   // must be valid until the accept's handler is invoked.
   template <typename Socket, typename Handler>
   void async_accept(implementation_type& impl, Socket& peer,
-      endpoint_type* peer_endpoint, Handler& handler)
+      endpoint_type* peer_endpoint, ASIO_MOVE_ARG(Handler) handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef reactive_socket_accept_op<Socket, Protocol, Handler> op;
+    typedef reactive_socket_accept_op<Socket, Protocol,
+        typename boost::remove_reference<Handler>::type> op;
     typename op::ptr p = { boost::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
-    p.p = new (p.v) op(impl.socket_, impl.state_, peer,
-        impl.protocol_, peer_endpoint, handler);
+    p.p = new (p.v) op(impl.socket_, impl.state_, peer, impl.protocol_,
+        peer_endpoint, ASIO_MOVE_CAST(Handler)(handler));
 
     ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_accept"));
 

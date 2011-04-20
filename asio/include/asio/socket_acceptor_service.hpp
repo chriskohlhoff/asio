@@ -250,9 +250,10 @@ public:
   template <typename SocketService, typename AcceptHandler>
   void async_accept(implementation_type& impl,
       basic_socket<protocol_type, SocketService>& peer,
-      endpoint_type* peer_endpoint, AcceptHandler handler)
+      endpoint_type* peer_endpoint, ASIO_MOVE_ARG(AcceptHandler) handler)
   {
-    service_impl_.async_accept(impl, peer, peer_endpoint, handler);
+    service_impl_.async_accept(impl, peer, peer_endpoint,
+        ASIO_MOVE_CAST(AcceptHandler)(handler));
   }
 
 private:
