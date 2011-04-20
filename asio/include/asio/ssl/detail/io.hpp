@@ -271,6 +271,15 @@ inline void asio_handler_deallocate(void* pointer, std::size_t size,
 
 template <typename Function, typename Stream,
     typename Operation, typename Handler>
+inline void asio_handler_invoke(Function& function,
+    io_op<Stream, Operation, Handler>* this_handler)
+{
+  asio_handler_invoke_helpers::invoke(
+      function, this_handler->handler_);
+}
+
+template <typename Function, typename Stream,
+    typename Operation, typename Handler>
 inline void asio_handler_invoke(const Function& function,
     io_op<Stream, Operation, Handler>* this_handler)
 {

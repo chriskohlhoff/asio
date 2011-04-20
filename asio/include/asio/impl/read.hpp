@@ -261,6 +261,17 @@ namespace detail
   template <typename Function, typename AsyncReadStream,
       typename MutableBufferSequence, typename CompletionCondition,
       typename ReadHandler>
+  inline void asio_handler_invoke(Function& function,
+      read_op<AsyncReadStream, MutableBufferSequence,
+        CompletionCondition, ReadHandler>* this_handler)
+  {
+    asio_handler_invoke_helpers::invoke(
+        function, this_handler->handler_);
+  }
+
+  template <typename Function, typename AsyncReadStream,
+      typename MutableBufferSequence, typename CompletionCondition,
+      typename ReadHandler>
   inline void asio_handler_invoke(const Function& function,
       read_op<AsyncReadStream, MutableBufferSequence,
         CompletionCondition, ReadHandler>* this_handler)
@@ -372,6 +383,16 @@ namespace detail
   {
     asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+  }
+
+  template <typename Function, typename AsyncReadStream,
+      typename Allocator, typename CompletionCondition, typename ReadHandler>
+  inline void asio_handler_invoke(Function& function,
+      read_streambuf_op<AsyncReadStream, Allocator,
+        CompletionCondition, ReadHandler>* this_handler)
+  {
+    asio_handler_invoke_helpers::invoke(
+        function, this_handler->handler_);
   }
 
   template <typename Function, typename AsyncReadStream,

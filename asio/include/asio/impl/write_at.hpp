@@ -315,6 +315,17 @@ namespace detail
   template <typename Function, typename AsyncRandomAccessWriteDevice,
       typename ConstBufferSequence, typename CompletionCondition,
       typename WriteHandler>
+  inline void asio_handler_invoke(Function& function,
+      write_at_op<AsyncRandomAccessWriteDevice, ConstBufferSequence,
+        CompletionCondition, WriteHandler>* this_handler)
+  {
+    asio_handler_invoke_helpers::invoke(
+        function, this_handler->handler_);
+  }
+
+  template <typename Function, typename AsyncRandomAccessWriteDevice,
+      typename ConstBufferSequence, typename CompletionCondition,
+      typename WriteHandler>
   inline void asio_handler_invoke(const Function& function,
       write_at_op<AsyncRandomAccessWriteDevice, ConstBufferSequence,
         CompletionCondition, WriteHandler>* this_handler)
@@ -403,6 +414,16 @@ namespace detail
   {
     asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+  }
+
+  template <typename Function, typename AsyncRandomAccessWriteDevice,
+      typename Allocator, typename WriteHandler>
+  inline void asio_handler_invoke(Function& function,
+      write_at_streambuf_op<AsyncRandomAccessWriteDevice,
+        Allocator, WriteHandler>* this_handler)
+  {
+    asio_handler_invoke_helpers::invoke(
+        function, this_handler->handler_);
   }
 
   template <typename Function, typename AsyncRandomAccessWriteDevice,

@@ -262,6 +262,17 @@ namespace detail
   template <typename Function, typename Protocol,
       typename SocketService, typename Iterator,
       typename ConnectCondition, typename ComposedConnectHandler>
+  inline void asio_handler_invoke(Function& function,
+      connect_op<Protocol, SocketService, Iterator,
+        ConnectCondition, ComposedConnectHandler>* this_handler)
+  {
+    asio_handler_invoke_helpers::invoke(
+        function, this_handler->handler_);
+  }
+
+  template <typename Function, typename Protocol,
+      typename SocketService, typename Iterator,
+      typename ConnectCondition, typename ComposedConnectHandler>
   inline void asio_handler_invoke(const Function& function,
       connect_op<Protocol, SocketService, Iterator,
         ConnectCondition, ComposedConnectHandler>* this_handler)

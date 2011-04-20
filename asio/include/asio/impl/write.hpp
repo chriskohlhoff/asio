@@ -298,6 +298,17 @@ namespace detail
   template <typename Function, typename AsyncWriteStream,
       typename ConstBufferSequence, typename CompletionCondition,
       typename WriteHandler>
+  inline void asio_handler_invoke(Function& function,
+      write_op<AsyncWriteStream, ConstBufferSequence,
+        CompletionCondition, WriteHandler>* this_handler)
+  {
+    asio_handler_invoke_helpers::invoke(
+        function, this_handler->handler_);
+  }
+
+  template <typename Function, typename AsyncWriteStream,
+      typename ConstBufferSequence, typename CompletionCondition,
+      typename WriteHandler>
   inline void asio_handler_invoke(const Function& function,
       write_op<AsyncWriteStream, ConstBufferSequence,
         CompletionCondition, WriteHandler>* this_handler)
@@ -383,6 +394,16 @@ namespace detail
   {
     asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+  }
+
+  template <typename Function, typename AsyncWriteStream, typename Allocator,
+      typename WriteHandler>
+  inline void asio_handler_invoke(Function& function,
+      write_streambuf_handler<AsyncWriteStream,
+        Allocator, WriteHandler>* this_handler)
+  {
+    asio_handler_invoke_helpers::invoke(
+        function, this_handler->handler_);
   }
 
   template <typename Function, typename AsyncWriteStream, typename Allocator,

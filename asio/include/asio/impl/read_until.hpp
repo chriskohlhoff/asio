@@ -432,6 +432,16 @@ namespace detail
 
   template <typename Function, typename AsyncReadStream, typename Allocator,
       typename ReadHandler>
+  inline void asio_handler_invoke(Function& function,
+      read_until_delim_op<AsyncReadStream,
+        Allocator, ReadHandler>* this_handler)
+  {
+    asio_handler_invoke_helpers::invoke(
+        function, this_handler->handler_);
+  }
+
+  template <typename Function, typename AsyncReadStream, typename Allocator,
+      typename ReadHandler>
   inline void asio_handler_invoke(const Function& function,
       read_until_delim_op<AsyncReadStream,
         Allocator, ReadHandler>* this_handler)
@@ -576,6 +586,16 @@ namespace detail
   {
     asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+  }
+
+  template <typename Function, typename AsyncReadStream,
+      typename Allocator, typename ReadHandler>
+  inline void asio_handler_invoke(Function& function,
+      read_until_delim_string_op<AsyncReadStream,
+        Allocator, ReadHandler>* this_handler)
+  {
+    asio_handler_invoke_helpers::invoke(
+        function, this_handler->handler_);
   }
 
   template <typename Function, typename AsyncReadStream,
@@ -735,6 +755,16 @@ namespace detail
 
   template <typename Function, typename AsyncReadStream, typename Allocator,
       typename RegEx, typename ReadHandler>
+  inline void asio_handler_invoke(Function& function,
+      read_until_expr_op<AsyncReadStream,
+        Allocator, RegEx, ReadHandler>* this_handler)
+  {
+    asio_handler_invoke_helpers::invoke(
+        function, this_handler->handler_);
+  }
+
+  template <typename Function, typename AsyncReadStream, typename Allocator,
+      typename RegEx, typename ReadHandler>
   inline void asio_handler_invoke(const Function& function,
       read_until_expr_op<AsyncReadStream,
         Allocator, RegEx, ReadHandler>* this_handler)
@@ -882,6 +912,16 @@ namespace detail
   {
     asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+  }
+
+  template <typename Function, typename AsyncReadStream, typename Allocator,
+      typename MatchCondition, typename ReadHandler>
+  inline void asio_handler_invoke(Function& function,
+      read_until_match_op<AsyncReadStream,
+        Allocator, MatchCondition, ReadHandler>* this_handler)
+  {
+    asio_handler_invoke_helpers::invoke(
+        function, this_handler->handler_);
   }
 
   template <typename Function, typename AsyncReadStream, typename Allocator,
