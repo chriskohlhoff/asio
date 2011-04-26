@@ -491,7 +491,7 @@ public:
    * asio::io_service::post().
    */
   template <typename WaitHandler>
-  void async_wait(WaitHandler handler)
+  void async_wait(ASIO_MOVE_ARG(WaitHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a WaitHandler.
