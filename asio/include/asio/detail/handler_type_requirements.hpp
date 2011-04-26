@@ -92,6 +92,7 @@ char (&two_arg_handler_test(...))[2];
 # endif // defined(ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS_ASSERT)
 
 template <typename T> T& lvref();
+template <typename T> char argbyv(T);
 
 template <int>
 struct handler_type_requirements
@@ -111,10 +112,10 @@ struct handler_type_requirements
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        handler_value_type( \
-          static_cast<const handler_value_type&>(handler))) + \
+        asio::detail::argbyv<handler_value_type>( \
+          asio::detail::lvref<const handler_value_type>())) + \
       sizeof( \
-        handler(), \
+        asio::detail::lvref<handler_value_type>()(), \
         char(0))>
 
 #define ASIO_READ_HANDLER_CHECK( \
@@ -132,10 +133,10 @@ struct handler_type_requirements
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        handler_value_type( \
-          static_cast<const handler_value_type&>(handler))) + \
+        asio::detail::argbyv<handler_value_type>( \
+          asio::detail::lvref<const handler_value_type>())) + \
       sizeof( \
-        handler( \
+        asio::detail::lvref<handler_value_type>()( \
           asio::detail::lvref<const asio::error_code>(), \
           asio::detail::lvref<const std::size_t>()), \
         char(0))>
@@ -155,10 +156,10 @@ struct handler_type_requirements
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        handler_value_type( \
-          static_cast<const handler_value_type&>(handler))) + \
+        asio::detail::argbyv<handler_value_type>( \
+          asio::detail::lvref<const handler_value_type>())) + \
       sizeof( \
-        handler( \
+        asio::detail::lvref<handler_value_type>()( \
           asio::detail::lvref<const asio::error_code>(), \
           asio::detail::lvref<const std::size_t>()), \
         char(0))>
@@ -177,10 +178,10 @@ struct handler_type_requirements
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        handler_value_type( \
-          static_cast<const handler_value_type&>(handler))) + \
+        asio::detail::argbyv<handler_value_type>( \
+          asio::detail::lvref<const handler_value_type>())) + \
       sizeof( \
-        asio::detail::lvref<handler_arg_type>()( \
+        asio::detail::lvref<handler_value_type>()( \
           asio::detail::lvref<const asio::error_code>()), \
         char(0))>
 
@@ -198,10 +199,10 @@ struct handler_type_requirements
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        handler_value_type( \
-          static_cast<const handler_value_type&>(handler))) + \
+        asio::detail::argbyv<handler_value_type>( \
+          asio::detail::lvref<const handler_value_type>())) + \
       sizeof( \
-        handler( \
+        asio::detail::lvref<handler_value_type>()( \
           asio::detail::lvref<const asio::error_code>()), \
         char(0))>
 
@@ -220,10 +221,10 @@ struct handler_type_requirements
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        handler_value_type( \
-          static_cast<const handler_value_type&>(handler))) + \
+        asio::detail::argbyv<handler_value_type>( \
+          asio::detail::lvref<const handler_value_type>())) + \
       sizeof( \
-        handler( \
+        asio::detail::lvref<handler_value_type>()( \
           asio::detail::lvref<const asio::error_code>(), \
           asio::detail::lvref<const iter_type>()), \
         char(0))>
@@ -243,10 +244,10 @@ struct handler_type_requirements
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        handler_value_type( \
-          static_cast<const handler_value_type&>(handler))) + \
+        asio::detail::argbyv<handler_value_type>( \
+          asio::detail::lvref<const handler_value_type>())) + \
       sizeof( \
-        handler( \
+        asio::detail::lvref<handler_value_type>()( \
           asio::detail::lvref<const asio::error_code>(), \
           asio::detail::lvref<const iter_type>()), \
         char(0))>
@@ -265,10 +266,10 @@ struct handler_type_requirements
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        handler_value_type( \
-          static_cast<const handler_value_type&>(handler))) + \
+        asio::detail::argbyv<handler_value_type>( \
+          asio::detail::lvref<handler_value_type>())) + \
       sizeof( \
-        handler( \
+        asio::detail::lvref<handler_value_type>()( \
           asio::detail::lvref<const asio::error_code>()), \
         char(0))>
 
@@ -287,10 +288,10 @@ struct handler_type_requirements
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        handler_value_type( \
-          static_cast<const handler_value_type&>(handler))) + \
+        asio::detail::argbyv<handler_value_type>( \
+          asio::detail::lvref<const handler_value_type>())) + \
       sizeof( \
-        handler( \
+        asio::detail::lvref<handler_value_type>()( \
           asio::detail::lvref<const asio::error_code>(), \
           asio::detail::lvref<const int>()), \
         char(0))>
@@ -309,10 +310,10 @@ struct handler_type_requirements
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        handler_value_type( \
-          static_cast<const handler_value_type&>(handler))) + \
+        asio::detail::argbyv<handler_value_type>( \
+          asio::detail::lvref<const handler_value_type>())) + \
       sizeof( \
-        handler( \
+        asio::detail::lvref<handler_value_type>()( \
           asio::detail::lvref<const asio::error_code>()), \
         char(0))>
 
@@ -330,10 +331,10 @@ struct handler_type_requirements
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        handler_value_type( \
-          static_cast<const handler_value_type&>(handler))) + \
+        asio::detail::argbyv<handler_value_type>( \
+          asio::detail::lvref<const handler_value_type>())) + \
       sizeof( \
-        handler( \
+        asio::detail::lvref<handler_value_type>()( \
           asio::detail::lvref<const asio::error_code>()), \
         char(0))>
 

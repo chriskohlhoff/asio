@@ -29,6 +29,12 @@ struct handler_type
 };
 
 template <typename Handler>
+struct handler_type<const Handler>
+{
+  typedef Handler type;
+};
+
+template <typename Handler>
 struct handler_type<Handler&>
 {
   typedef Handler type;
