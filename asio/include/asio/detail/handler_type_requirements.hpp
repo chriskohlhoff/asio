@@ -45,7 +45,7 @@
 #endif // !defined(ASIO_DISABLE_HANDLER_TYPE_REQUIREMENTS)
 
 #if defined(ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS)
-# include <boost/type_traits/remove_reference.hpp>
+# include "asio/detail/handler_type.hpp"
 #endif // defined(ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS)
 
 namespace asio {
@@ -99,39 +99,41 @@ struct handler_type_requirements
 };
 
 #define ASIO_COMPLETION_HANDLER_CHECK( \
-    handler_type, handler) \
+    handler_arg_type, handler) \
   \
-  typedef typename boost::remove_reference<handler_type>::type h_type; \
+  typedef typename asio::detail::handler_type< \
+      handler_arg_type>::type handler_value_type; \
   \
   ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
       sizeof(asio::detail::zero_arg_handler_test( \
-          static_cast<h_type*>(0))) == 1, \
+          static_cast<handler_value_type*>(0))) == 1, \
       "CompletionHandler type requirements not met") \
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        h_type( \
-          static_cast<const h_type&>(handler))) + \
+        handler_value_type( \
+          static_cast<const handler_value_type&>(handler))) + \
       sizeof( \
         handler(), \
         char(0))>
 
 #define ASIO_READ_HANDLER_CHECK( \
-    handler_type, handler) \
+    handler_arg_type, handler) \
   \
-  typedef typename boost::remove_reference<handler_type>::type h_type; \
+  typedef typename asio::detail::handler_type< \
+      handler_arg_type>::type handler_value_type; \
   \
   ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
       sizeof(asio::detail::two_arg_handler_test( \
-          static_cast<h_type*>(0), \
+          static_cast<handler_value_type*>(0), \
           static_cast<const asio::error_code*>(0), \
           static_cast<const std::size_t*>(0))) == 1, \
       "ReadHandler type requirements not met") \
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        h_type( \
-          static_cast<const h_type&>(handler))) + \
+        handler_value_type( \
+          static_cast<const handler_value_type&>(handler))) + \
       sizeof( \
         handler( \
           asio::detail::lvref<const asio::error_code>(), \
@@ -139,21 +141,22 @@ struct handler_type_requirements
         char(0))>
 
 #define ASIO_WRITE_HANDLER_CHECK( \
-    handler_type, handler) \
+    handler_arg_type, handler) \
   \
-  typedef typename boost::remove_reference<handler_type>::type h_type; \
+  typedef typename asio::detail::handler_type< \
+      handler_arg_type>::type handler_value_type; \
   \
   ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
       sizeof(asio::detail::two_arg_handler_test( \
-          static_cast<h_type*>(0), \
+          static_cast<handler_value_type*>(0), \
           static_cast<const asio::error_code*>(0), \
           static_cast<const std::size_t*>(0))) == 1, \
       "WriteHandler type requirements not met") \
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        h_type( \
-          static_cast<const h_type&>(handler))) + \
+        handler_value_type( \
+          static_cast<const handler_value_type&>(handler))) + \
       sizeof( \
         handler( \
           asio::detail::lvref<const asio::error_code>(), \
@@ -161,61 +164,64 @@ struct handler_type_requirements
         char(0))>
 
 #define ASIO_ACCEPT_HANDLER_CHECK( \
-    handler_type, handler) \
+    handler_arg_type, handler) \
   \
-  typedef typename boost::remove_reference<handler_type>::type h_type; \
+  typedef typename asio::detail::handler_type< \
+      handler_arg_type>::type handler_value_type; \
   \
   ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
       sizeof(asio::detail::one_arg_handler_test( \
-          static_cast<h_type*>(0), \
+          static_cast<handler_value_type*>(0), \
           static_cast<const asio::error_code*>(0))) == 1, \
       "AcceptHandler type requirements not met") \
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        h_type( \
-          static_cast<const h_type&>(handler))) + \
+        handler_value_type( \
+          static_cast<const handler_value_type&>(handler))) + \
       sizeof( \
-        handler( \
+        asio::detail::lvref<handler_arg_type>()( \
           asio::detail::lvref<const asio::error_code>()), \
         char(0))>
 
 #define ASIO_CONNECT_HANDLER_CHECK( \
-    handler_type, handler) \
+    handler_arg_type, handler) \
   \
-  typedef typename boost::remove_reference<handler_type>::type h_type; \
+  typedef typename asio::detail::handler_type< \
+      handler_arg_type>::type handler_value_type; \
   \
   ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
       sizeof(asio::detail::one_arg_handler_test( \
-          static_cast<h_type*>(0), \
+          static_cast<handler_value_type*>(0), \
           static_cast<const asio::error_code*>(0))) == 1, \
       "ConnectHandler type requirements not met") \
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        h_type( \
-          static_cast<const h_type&>(handler))) + \
+        handler_value_type( \
+          static_cast<const handler_value_type&>(handler))) + \
       sizeof( \
         handler( \
           asio::detail::lvref<const asio::error_code>()), \
         char(0))>
 
 #define ASIO_COMPOSED_CONNECT_HANDLER_CHECK( \
-    handler_type, handler, iter_type) \
+    handler_arg_type, handler, iter_type) \
   \
-  typedef typename boost::remove_reference<handler_type>::type h_type; \
+  typedef typename asio::detail::handler_type< \
+      handler_arg_type>::type handler_value_type; \
   \
   ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
       sizeof(asio::detail::two_arg_handler_test( \
-          static_cast<h_type*>(0), \
+          static_cast<handler_value_type*>(0), \
           static_cast<const asio::error_code*>(0), \
           static_cast<const iter_type*>(0))) == 1, \
       "ComposedConnectHandler type requirements not met") \
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        h_type( \
-          static_cast<const h_type&>(handler))) + \
+        handler_value_type( \
+          static_cast<const handler_value_type&>(handler))) + \
       sizeof( \
         handler( \
           asio::detail::lvref<const asio::error_code>(), \
@@ -223,21 +229,22 @@ struct handler_type_requirements
         char(0))>
 
 #define ASIO_RESOLVE_HANDLER_CHECK( \
-    handler_type, handler, iter_type) \
+    handler_arg_type, handler, iter_type) \
   \
-  typedef typename boost::remove_reference<handler_type>::type h_type; \
+  typedef typename asio::detail::handler_type< \
+      handler_arg_type>::type handler_value_type; \
   \
   ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
       sizeof(asio::detail::two_arg_handler_test( \
-          static_cast<h_type*>(0), \
+          static_cast<handler_value_type*>(0), \
           static_cast<const asio::error_code*>(0), \
           static_cast<const iter_type*>(0))) == 1, \
       "ResolveHandler type requirements not met") \
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        h_type( \
-          static_cast<const h_type&>(handler))) + \
+        handler_value_type( \
+          static_cast<const handler_value_type&>(handler))) + \
       sizeof( \
         handler( \
           asio::detail::lvref<const asio::error_code>(), \
@@ -245,41 +252,43 @@ struct handler_type_requirements
         char(0))>
 
 #define ASIO_WAIT_HANDLER_CHECK( \
-    handler_type, handler) \
+    handler_arg_type, handler) \
   \
-  typedef typename boost::remove_reference<handler_type>::type h_type; \
+  typedef typename asio::detail::handler_type< \
+      handler_arg_type>::type handler_value_type; \
   \
   ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
       sizeof(asio::detail::one_arg_handler_test( \
-          static_cast<h_type*>(0), \
+          static_cast<handler_value_type*>(0), \
           static_cast<const asio::error_code*>(0))) == 1, \
       "WaitHandler type requirements not met") \
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        h_type( \
-          static_cast<const h_type&>(handler))) + \
+        handler_value_type( \
+          static_cast<const handler_value_type&>(handler))) + \
       sizeof( \
         handler( \
           asio::detail::lvref<const asio::error_code>()), \
         char(0))>
 
 #define ASIO_SIGNAL_HANDLER_CHECK( \
-    handler_type, handler) \
+    handler_arg_type, handler) \
   \
-  typedef typename boost::remove_reference<handler_type>::type h_type; \
+  typedef typename asio::detail::handler_type< \
+      handler_arg_type>::type handler_value_type; \
   \
   ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
       sizeof(asio::detail::two_arg_handler_test( \
-          static_cast<h_type*>(0), \
+          static_cast<handler_value_type*>(0), \
           static_cast<const asio::error_code*>(0), \
           static_cast<const int*>(0))) == 1, \
       "SignalHandler type requirements not met") \
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        h_type( \
-          static_cast<const h_type&>(handler))) + \
+        handler_value_type( \
+          static_cast<const handler_value_type&>(handler))) + \
       sizeof( \
         handler( \
           asio::detail::lvref<const asio::error_code>(), \
@@ -287,40 +296,42 @@ struct handler_type_requirements
         char(0))>
 
 #define ASIO_HANDSHAKE_HANDLER_CHECK( \
-    handler_type, handler) \
+    handler_arg_type, handler) \
   \
-  typedef typename boost::remove_reference<handler_type>::type h_type; \
+  typedef typename asio::detail::handler_type< \
+      handler_arg_type>::type handler_value_type; \
   \
   ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
       sizeof(asio::detail::one_arg_handler_test( \
-          static_cast<h_type*>(0), \
+          static_cast<handler_value_type*>(0), \
           static_cast<const asio::error_code*>(0))) == 1, \
       "HandshakeHandler type requirements not met") \
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        h_type( \
-          static_cast<const h_type&>(handler))) + \
+        handler_value_type( \
+          static_cast<const handler_value_type&>(handler))) + \
       sizeof( \
         handler( \
           asio::detail::lvref<const asio::error_code>()), \
         char(0))>
 
 #define ASIO_SHUTDOWN_HANDLER_CHECK( \
-    handler_type, handler) \
+    handler_arg_type, handler) \
   \
-  typedef typename boost::remove_reference<handler_type>::type h_type; \
+  typedef typename asio::detail::handler_type< \
+      handler_arg_type>::type handler_value_type; \
   \
   ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
       sizeof(asio::detail::one_arg_handler_test( \
-          static_cast<h_type*>(0), \
+          static_cast<handler_value_type*>(0), \
           static_cast<const asio::error_code*>(0))) == 1, \
       "ShutdownHandler type requirements not met") \
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
-        h_type( \
-          static_cast<const h_type&>(handler))) + \
+        handler_value_type( \
+          static_cast<const handler_value_type&>(handler))) + \
       sizeof( \
         handler( \
           asio::detail::lvref<const asio::error_code>()), \
@@ -329,47 +340,47 @@ struct handler_type_requirements
 #else // !defined(ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS)
 
 #define ASIO_COMPLETION_HANDLER_CHECK( \
-    handler_type, handler) \
+    handler_arg_type, handler) \
   typedef int
 
 #define ASIO_READ_HANDLER_CHECK( \
-    handler_type, handler) \
+    handler_arg_type, handler) \
   typedef int
 
 #define ASIO_WRITE_HANDLER_CHECK( \
-    handler_type, handler) \
+    handler_arg_type, handler) \
   typedef int
 
 #define ASIO_ACCEPT_HANDLER_CHECK( \
-    handler_type, handler) \
+    handler_arg_type, handler) \
   typedef int
 
 #define ASIO_CONNECT_HANDLER_CHECK( \
-    handler_type, handler) \
+    handler_arg_type, handler) \
   typedef int
 
 #define ASIO_COMPOSED_CONNECT_HANDLER_CHECK( \
-    handler_type, handler, iter_type) \
+    handler_arg_type, handler, iter_type) \
   typedef int
 
 #define ASIO_RESOLVE_HANDLER_CHECK( \
-    handler_type, handler, iter_type) \
+    handler_arg_type, handler, iter_type) \
   typedef int
 
 #define ASIO_WAIT_HANDLER_CHECK( \
-    handler_type, handler) \
+    handler_arg_type, handler) \
   typedef int
 
 #define ASIO_SIGNAL_HANDLER_CHECK( \
-    handler_type, handler) \
+    handler_arg_type, handler) \
   typedef int
 
 #define ASIO_HANDSHAKE_HANDLER_CHECK( \
-    handler_type, handler) \
+    handler_arg_type, handler) \
   typedef int
 
 #define ASIO_SHUTDOWN_HANDLER_CHECK( \
-    handler_type, handler) \
+    handler_arg_type, handler) \
   typedef int
 
 #endif // !defined(ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS)

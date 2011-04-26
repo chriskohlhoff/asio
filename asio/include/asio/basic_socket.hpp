@@ -697,7 +697,8 @@ public:
    * @endcode
    */
   template <typename ConnectHandler>
-  void async_connect(const endpoint_type& peer_endpoint, ConnectHandler handler)
+  void async_connect(const endpoint_type& peer_endpoint,
+      ASIO_MOVE_ARG(ConnectHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ConnectHandler.

@@ -79,11 +79,11 @@ public:
 
   // Request the io_service to invoke the given handler.
   template <typename Handler>
-  void dispatch(implementation_type& impl, Handler& handler);
+  void dispatch(implementation_type& impl, Handler handler);
 
   // Request the io_service to invoke the given handler and return immediately.
   template <typename Handler>
-  void post(implementation_type& impl, Handler& handler);
+  void post(implementation_type& impl, Handler handler);
 
 private:
   ASIO_DECL static void do_complete(io_service_impl* owner,

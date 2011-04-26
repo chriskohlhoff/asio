@@ -67,7 +67,7 @@ public:
   // Asynchronously resolve a query to a list of entries.
   template <typename Handler>
   void async_resolve(implementation_type& impl,
-      const query_type& query, Handler& handler)
+      const query_type& query, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef resolve_op<Protocol, Handler> op;
@@ -99,7 +99,7 @@ public:
   // Asynchronously resolve an endpoint to a list of entries.
   template <typename Handler>
   void async_resolve(implementation_type& impl,
-      const endpoint_type& endpoint, Handler& handler)
+      const endpoint_type& endpoint, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef resolve_endpoint_op<Protocol, Handler> op;

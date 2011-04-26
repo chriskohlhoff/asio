@@ -87,11 +87,11 @@ public:
 
   // Request invocation of the given handler.
   template <typename Handler>
-  void dispatch(Handler& handler);
+  void dispatch(Handler handler);
 
   // Request invocation of the given handler and return immediately.
   template <typename Handler>
-  void post(Handler& handler);
+  void post(Handler handler);
 
   // Request invocation of the given operation and return immediately. Assumes
   // that work_started() has not yet been called for the operation.

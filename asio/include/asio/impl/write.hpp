@@ -23,6 +23,7 @@
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
+#include "asio/detail/handler_type.hpp"
 #include "asio/detail/throw_error.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -132,7 +133,7 @@ namespace detail
   {
   public:
     write_op(AsyncWriteStream& stream, const ConstBufferSequence& buffers,
-        CompletionCondition completion_condition, WriteHandler& handler)
+        CompletionCondition completion_condition, WriteHandler handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         stream_(stream),
@@ -204,7 +205,7 @@ namespace detail
     write_op(AsyncWriteStream& stream,
         const asio::mutable_buffers_1& buffers,
         CompletionCondition completion_condition,
-        WriteHandler& handler)
+        WriteHandler handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         stream_(stream),
@@ -276,7 +277,7 @@ namespace detail
     write_op(AsyncWriteStream& stream,
         const asio::const_buffers_1& buffers,
         CompletionCondition completion_condition,
-        WriteHandler& handler)
+        WriteHandler handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         stream_(stream),
@@ -384,30 +385,31 @@ namespace detail
 template <typename AsyncWriteStream, typename ConstBufferSequence,
   typename CompletionCondition, typename WriteHandler>
 inline void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
-    CompletionCondition completion_condition, WriteHandler handler)
+    CompletionCondition completion_condition,
+    ASIO_MOVE_ARG(WriteHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a WriteHandler.
   ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
   detail::write_op<AsyncWriteStream, ConstBufferSequence,
-    CompletionCondition, WriteHandler>(
-      s, buffers, completion_condition, handler)(
+    CompletionCondition, typename detail::handler_type<WriteHandler>::type>(
+      s, buffers, completion_condition, ASIO_MOVE_CAST(WriteHandler)(handler))(
         asio::error_code(), 0, 1);
 }
 
 template <typename AsyncWriteStream, typename ConstBufferSequence,
     typename WriteHandler>
 inline void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
-    WriteHandler handler)
+    ASIO_MOVE_ARG(WriteHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a WriteHandler.
   ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
   detail::write_op<AsyncWriteStream, ConstBufferSequence,
-    detail::transfer_all_t, WriteHandler>(
-      s, buffers, transfer_all(), handler)(
+    detail::transfer_all_t, typename detail::handler_type<WriteHandler>::type>(
+      s, buffers, transfer_all(), ASIO_MOVE_CAST(WriteHandler)(handler))(
         asio::error_code(), 0, 1);
 }
 
@@ -421,7 +423,7 @@ namespace detail
   {
   public:
     write_streambuf_handler(asio::basic_streambuf<Allocator>& streambuf,
-        WriteHandler& handler)
+        WriteHandler handler)
       : streambuf_(streambuf),
         handler_(ASIO_MOVE_CAST(WriteHandler)(handler))
     {
@@ -498,28 +500,28 @@ template <typename AsyncWriteStream, typename Allocator,
     typename CompletionCondition, typename WriteHandler>
 inline void async_write(AsyncWriteStream& s,
     asio::basic_streambuf<Allocator>& b,
-    CompletionCondition completion_condition, WriteHandler handler)
+    CompletionCondition completion_condition, ASIO_MOVE_ARG(WriteHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a WriteHandler.
   ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
   async_write(s, b.data(), completion_condition,
-      detail::write_streambuf_handler<
-        AsyncWriteStream, Allocator, WriteHandler>(b, handler));
+      detail::write_streambuf_handler<AsyncWriteStream, Allocator,
+        typename detail::handler_type<WriteHandler>::type>(b, handler));
 }
 
 template <typename AsyncWriteStream, typename Allocator, typename WriteHandler>
 inline void async_write(AsyncWriteStream& s,
-    asio::basic_streambuf<Allocator>& b, WriteHandler handler)
+    asio::basic_streambuf<Allocator>& b, ASIO_MOVE_ARG(WriteHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a WriteHandler.
   ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
   async_write(s, b.data(), transfer_all(),
-      detail::write_streambuf_handler<
-        AsyncWriteStream, Allocator, WriteHandler>(b, handler));
+      detail::write_streambuf_handler<AsyncWriteStream, Allocator,
+        typename detail::handler_type<WriteHandler>::type>(b, handler));
 }
 
 #endif // !defined(BOOST_NO_IOSTREAM)

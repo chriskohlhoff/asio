@@ -27,7 +27,7 @@ namespace asio {
 namespace detail {
 
 template <typename Handler>
-void task_io_service::dispatch(Handler& handler)
+void task_io_service::dispatch(Handler handler)
 {
   if (call_stack<task_io_service>::contains(this))
   {
@@ -51,7 +51,7 @@ void task_io_service::dispatch(Handler& handler)
 }
 
 template <typename Handler>
-void task_io_service::post(Handler& handler)
+void task_io_service::post(Handler handler)
 {
   // Allocate and construct an operation to wrap the handler.
   typedef completion_handler<Handler> op;

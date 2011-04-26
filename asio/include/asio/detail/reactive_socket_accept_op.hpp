@@ -84,14 +84,12 @@ class reactive_socket_accept_op :
 public:
   ASIO_DEFINE_HANDLER_PTR(reactive_socket_accept_op);
 
-  template <typename Handler2>
   reactive_socket_accept_op(socket_type socket,
       socket_ops::state_type state, Socket& peer, const Protocol& protocol,
-      typename Protocol::endpoint* peer_endpoint,
-      ASIO_MOVE_ARG(Handler2) handler)
+      typename Protocol::endpoint* peer_endpoint, Handler& handler)
     : reactive_socket_accept_op_base<Socket, Protocol>(socket, state, peer,
         protocol, peer_endpoint, &reactive_socket_accept_op::do_complete),
-      handler_(ASIO_MOVE_CAST(Handler2)(handler))
+      handler_(ASIO_MOVE_CAST(Handler)(handler))
   {
   }
 
