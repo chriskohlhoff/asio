@@ -88,7 +88,7 @@ inline void asio_handler_invoke(const Function& function,
 }
 
 template <typename Handler, typename Arg1>
-inline binder1<Handler, Arg1> bind_handler(const Handler& handler,
+inline binder1<Handler, Arg1> bind_handler(Handler handler,
     const Arg1& arg1)
 {
   return binder1<Handler, Arg1>(handler, arg1);
@@ -162,7 +162,7 @@ inline void asio_handler_invoke(const Function& function,
 }
 
 template <typename Handler, typename Arg1, typename Arg2>
-inline binder2<Handler, Arg1, Arg2> bind_handler(const Handler& handler,
+inline binder2<Handler, Arg1, Arg2> bind_handler(Handler handler,
     const Arg1& arg1, const Arg2& arg2)
 {
   return binder2<Handler, Arg1, Arg2>(handler, arg1, arg2);
@@ -244,7 +244,7 @@ inline void asio_handler_invoke(const Function& function,
 }
 
 template <typename Handler, typename Arg1, typename Arg2, typename Arg3>
-inline binder3<Handler, Arg1, Arg2, Arg3> bind_handler(const Handler& handler,
+inline binder3<Handler, Arg1, Arg2, Arg3> bind_handler(Handler handler,
     const Arg1& arg1, const Arg2& arg2, const Arg3& arg3)
 {
   return binder3<Handler, Arg1, Arg2, Arg3>(handler, arg1, arg2, arg3);
@@ -335,7 +335,7 @@ inline void asio_handler_invoke(const Function& function,
 template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
     typename Arg4>
 inline binder4<Handler, Arg1, Arg2, Arg3, Arg4> bind_handler(
-    const Handler& handler, const Arg1& arg1, const Arg2& arg2,
+    Handler handler, const Arg1& arg1, const Arg2& arg2,
     const Arg3& arg3, const Arg4& arg4)
 {
   return binder4<Handler, Arg1, Arg2, Arg3, Arg4>(handler, arg1, arg2, arg3,
@@ -431,7 +431,7 @@ inline void asio_handler_invoke(const Function& function,
 template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
     typename Arg4, typename Arg5>
 inline binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5> bind_handler(
-    const Handler& handler, const Arg1& arg1, const Arg2& arg2,
+    Handler handler, const Arg1& arg1, const Arg2& arg2,
     const Arg3& arg3, const Arg4& arg4, const Arg5& arg5)
 {
   return binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>(handler, arg1, arg2,
