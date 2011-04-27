@@ -67,23 +67,24 @@ inline bool has_service(io_service& ios)
 namespace asio {
 
 template <typename CompletionHandler>
-inline void io_service::dispatch(CompletionHandler handler)
+inline void io_service::dispatch(
+    ASIO_MOVE_ARG(CompletionHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a CompletionHandler.
   ASIO_COMPLETION_HANDLER_CHECK(CompletionHandler, handler) type_check;
 
-  impl_.dispatch(handler);
+  impl_.dispatch(ASIO_MOVE_CAST(CompletionHandler)(handler));
 }
 
 template <typename CompletionHandler>
-inline void io_service::post(CompletionHandler handler)
+inline void io_service::post(ASIO_MOVE_ARG(CompletionHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a CompletionHandler.
   ASIO_COMPLETION_HANDLER_CHECK(CompletionHandler, handler) type_check;
 
-  impl_.post(handler);
+  impl_.post(ASIO_MOVE_CAST(CompletionHandler)(handler));
 }
 
 template <typename Handler>

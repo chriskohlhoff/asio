@@ -440,7 +440,7 @@ public:
    * throws an exception.
    */
   template <typename CompletionHandler>
-  void dispatch(CompletionHandler handler);
+  void dispatch(ASIO_MOVE_ARG(CompletionHandler) handler);
 
   /// Request the io_service to invoke the given handler and return immediately.
   /**
@@ -465,7 +465,7 @@ public:
    * throws an exception.
    */
   template <typename CompletionHandler>
-  void post(CompletionHandler handler);
+  void post(ASIO_MOVE_ARG(CompletionHandler) handler);
 
   /// Create a new handler that automatically dispatches the wrapped handler
   /// on the io_service.
