@@ -364,7 +364,7 @@ public:
    * asio::io_service::post().
    */
   template <typename SignalHandler>
-  void async_wait(SignalHandler handler)
+  void async_wait(ASIO_MOVE_ARG(SignalHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a SignalHandler.
