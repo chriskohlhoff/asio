@@ -711,7 +711,8 @@ public:
       if (this->get_service().open(this->get_implementation(), protocol, ec))
       {
         this->get_io_service().post(
-            asio::detail::bind_handler(handler, ec));
+            asio::detail::bind_handler(
+              ASIO_MOVE_CAST(ConnectHandler)(handler), ec));
         return;
       }
     }
