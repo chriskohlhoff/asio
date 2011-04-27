@@ -158,10 +158,12 @@ public:
 
   /// Start an asynchronous write at the specified offset.
   template <typename ConstBufferSequence, typename WriteHandler>
-  void async_write_some_at(implementation_type& impl, boost::uint64_t offset,
-      const ConstBufferSequence& buffers, WriteHandler handler)
+  void async_write_some_at(implementation_type& impl,
+      boost::uint64_t offset, const ConstBufferSequence& buffers,
+      ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    service_impl_.async_write_some_at(impl, offset, buffers, handler);
+    service_impl_.async_write_some_at(impl, offset, buffers,
+        ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Read some data from the specified offset.
@@ -174,10 +176,12 @@ public:
 
   /// Start an asynchronous read at the specified offset.
   template <typename MutableBufferSequence, typename ReadHandler>
-  void async_read_some_at(implementation_type& impl, boost::uint64_t offset,
-      const MutableBufferSequence& buffers, ReadHandler handler)
+  void async_read_some_at(implementation_type& impl,
+      boost::uint64_t offset, const MutableBufferSequence& buffers,
+      ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    service_impl_.async_read_some_at(impl, offset, buffers, handler);
+    service_impl_.async_read_some_at(impl, offset, buffers,
+        ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 
 private:

@@ -156,9 +156,11 @@ public:
   /// Start an asynchronous write.
   template <typename ConstBufferSequence, typename WriteHandler>
   void async_write_some(implementation_type& impl,
-      const ConstBufferSequence& buffers, WriteHandler handler)
+      const ConstBufferSequence& buffers,
+      ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    service_impl_.async_write_some(impl, buffers, handler);
+    service_impl_.async_write_some(impl, buffers,
+        ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Read some data from the stream.
@@ -172,9 +174,11 @@ public:
   /// Start an asynchronous read.
   template <typename MutableBufferSequence, typename ReadHandler>
   void async_read_some(implementation_type& impl,
-      const MutableBufferSequence& buffers, ReadHandler handler)
+      const MutableBufferSequence& buffers,
+      ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    service_impl_.async_read_some(impl, buffers, handler);
+    service_impl_.async_read_some(impl, buffers,
+        ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 
 private:

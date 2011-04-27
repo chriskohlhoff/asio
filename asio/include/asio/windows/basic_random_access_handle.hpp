@@ -230,7 +230,8 @@ public:
    */
   template <typename ConstBufferSequence, typename WriteHandler>
   void async_write_some_at(boost::uint64_t offset,
-      const ConstBufferSequence& buffers, WriteHandler handler)
+      const ConstBufferSequence& buffers,
+      ASIO_MOVE_ARG(WriteHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a WriteHandler.
@@ -348,7 +349,8 @@ public:
    */
   template <typename MutableBufferSequence, typename ReadHandler>
   void async_read_some_at(boost::uint64_t offset,
-      const MutableBufferSequence& buffers, ReadHandler handler)
+      const MutableBufferSequence& buffers,
+      ASIO_MOVE_ARG(ReadHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ReadHandler.
