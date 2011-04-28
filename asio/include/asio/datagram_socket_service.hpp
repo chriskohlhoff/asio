@@ -200,9 +200,11 @@ public:
   /// Start an asynchronous connect.
   template <typename ConnectHandler>
   void async_connect(implementation_type& impl,
-      const endpoint_type& peer_endpoint, ConnectHandler handler)
+      const endpoint_type& peer_endpoint,
+      ASIO_MOVE_ARG(ConnectHandler) handler)
   {
-    service_impl_.async_connect(impl, peer_endpoint, handler);
+    service_impl_.async_connect(impl, peer_endpoint,
+        ASIO_MOVE_CAST(ConnectHandler)(handler));
   }
 
   /// Set a socket option.
@@ -288,9 +290,11 @@ public:
   /// Start an asynchronous send.
   template <typename ConstBufferSequence, typename WriteHandler>
   void async_send(implementation_type& impl, const ConstBufferSequence& buffers,
-      socket_base::message_flags flags, WriteHandler handler)
+      socket_base::message_flags flags,
+      ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    service_impl_.async_send(impl, buffers, flags, handler);
+    service_impl_.async_send(impl, buffers, flags,
+        ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Send a datagram to the specified endpoint.
@@ -306,9 +310,11 @@ public:
   template <typename ConstBufferSequence, typename WriteHandler>
   void async_send_to(implementation_type& impl,
       const ConstBufferSequence& buffers, const endpoint_type& destination,
-      socket_base::message_flags flags, WriteHandler handler)
+      socket_base::message_flags flags,
+      ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    service_impl_.async_send_to(impl, buffers, destination, flags, handler);
+    service_impl_.async_send_to(impl, buffers, destination, flags,
+        ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Receive some data from the peer.
@@ -324,9 +330,11 @@ public:
   template <typename MutableBufferSequence, typename ReadHandler>
   void async_receive(implementation_type& impl,
       const MutableBufferSequence& buffers,
-      socket_base::message_flags flags, ReadHandler handler)
+      socket_base::message_flags flags,
+      ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    service_impl_.async_receive(impl, buffers, flags, handler);
+    service_impl_.async_receive(impl, buffers, flags,
+        ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 
   /// Receive a datagram with the endpoint of the sender.
@@ -343,10 +351,11 @@ public:
   template <typename MutableBufferSequence, typename ReadHandler>
   void async_receive_from(implementation_type& impl,
       const MutableBufferSequence& buffers, endpoint_type& sender_endpoint,
-      socket_base::message_flags flags, ReadHandler handler)
+      socket_base::message_flags flags,
+      ASIO_MOVE_ARG(ReadHandler) handler)
   {
     service_impl_.async_receive_from(impl, buffers, sender_endpoint, flags,
-        handler);
+        ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 
 private:

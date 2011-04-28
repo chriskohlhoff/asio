@@ -267,7 +267,8 @@ public:
    */
   template <typename ConstBufferSequence, typename WriteHandler>
   void async_send(const ConstBufferSequence& buffers,
-      socket_base::message_flags flags, WriteHandler handler)
+      socket_base::message_flags flags,
+      ASIO_MOVE_ARG(WriteHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a WriteHandler.
@@ -436,7 +437,8 @@ public:
    */
   template <typename MutableBufferSequence, typename ReadHandler>
   void async_receive(const MutableBufferSequence& buffers,
-      socket_base::message_flags& out_flags, ReadHandler handler)
+      socket_base::message_flags& out_flags,
+      ASIO_MOVE_ARG(ReadHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ReadHandler.
@@ -491,7 +493,8 @@ public:
   template <typename MutableBufferSequence, typename ReadHandler>
   void async_receive(const MutableBufferSequence& buffers,
       socket_base::message_flags in_flags,
-      socket_base::message_flags& out_flags, ReadHandler handler)
+      socket_base::message_flags& out_flags,
+      ASIO_MOVE_ARG(ReadHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ReadHandler.

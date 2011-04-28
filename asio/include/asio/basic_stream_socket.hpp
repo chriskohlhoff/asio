@@ -666,7 +666,7 @@ public:
    */
   template <typename ConstBufferSequence, typename WriteHandler>
   void async_write_some(const ConstBufferSequence& buffers,
-      WriteHandler handler)
+      ASIO_MOVE_ARG(WriteHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a WriteHandler.
