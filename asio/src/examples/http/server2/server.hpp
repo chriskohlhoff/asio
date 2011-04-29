@@ -36,15 +36,18 @@ public:
   /// Run the server's io_service loop.
   void run();
 
-  /// Stop the server.
-  void stop();
-
 private:
   /// Handle completion of an asynchronous accept operation.
   void handle_accept(const asio::error_code& e);
 
+  /// Handle a request to stop the server.
+  void handle_stop();
+
   /// The pool of io_service objects used to perform asynchronous operations.
   io_service_pool io_service_pool_;
+
+  /// The signal_set is used to register for process termination notifications.
+  asio::signal_set signals_;
 
   /// Acceptor used to listen for incoming connections.
   asio::ip::tcp::acceptor acceptor_;
