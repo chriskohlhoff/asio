@@ -24,7 +24,6 @@
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
-#include "asio/detail/handler_type.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 
@@ -159,7 +158,7 @@ namespace detail
   public:
     read_at_op(AsyncRandomAccessReadDevice& device,
         boost::uint64_t offset, const MutableBufferSequence& buffers,
-        CompletionCondition completion_condition, ReadHandler handler)
+        CompletionCondition completion_condition, ReadHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         device_(device),
@@ -234,7 +233,7 @@ namespace detail
   public:
     read_at_op(AsyncRandomAccessReadDevice& device,
         boost::uint64_t offset, const asio::mutable_buffers_1& buffers,
-        CompletionCondition completion_condition, ReadHandler handler)
+        CompletionCondition completion_condition, ReadHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         device_(device),
@@ -343,6 +342,20 @@ namespace detail
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
+
+  template <typename AsyncRandomAccessReadDevice,
+      typename MutableBufferSequence, typename CompletionCondition,
+      typename ReadHandler>
+  inline read_at_op<AsyncRandomAccessReadDevice,
+      MutableBufferSequence, CompletionCondition, ReadHandler>
+  make_read_at_op(AsyncRandomAccessReadDevice& d,
+      boost::uint64_t offset, const MutableBufferSequence& buffers,
+      CompletionCondition completion_condition, ReadHandler handler)
+  {
+    return read_at_op<AsyncRandomAccessReadDevice,
+      MutableBufferSequence, CompletionCondition, ReadHandler>(
+        d, offset, buffers, completion_condition, handler);
+  }
 } // namespace detail
 
 template <typename AsyncRandomAccessReadDevice, typename MutableBufferSequence,
@@ -356,11 +369,10 @@ inline void async_read_at(AsyncRandomAccessReadDevice& d,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::read_at_op<AsyncRandomAccessReadDevice, MutableBufferSequence,
-    CompletionCondition, typename detail::handler_type<ReadHandler>::type>(
-      d, offset, buffers, completion_condition,
-        ASIO_MOVE_CAST(ReadHandler)(handler))(
-          asio::error_code(), 0, 1);
+  detail::make_read_at_op(
+    d, offset, buffers, completion_condition,
+      ASIO_MOVE_CAST(ReadHandler)(handler))(
+        asio::error_code(), 0, 1);
 }
 
 template <typename AsyncRandomAccessReadDevice, typename MutableBufferSequence,
@@ -373,11 +385,10 @@ inline void async_read_at(AsyncRandomAccessReadDevice& d,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::read_at_op<AsyncRandomAccessReadDevice, MutableBufferSequence,
-    detail::transfer_all_t, typename detail::handler_type<ReadHandler>::type>(
-      d, offset, buffers, transfer_all(),
-        ASIO_MOVE_CAST(ReadHandler)(handler))(
-          asio::error_code(), 0, 1);
+  detail::make_read_at_op(
+    d, offset, buffers, transfer_all(),
+      ASIO_MOVE_CAST(ReadHandler)(handler))(
+        asio::error_code(), 0, 1);
 }
 
 #if !defined(BOOST_NO_IOSTREAM)
@@ -392,7 +403,7 @@ namespace detail
   public:
     read_at_streambuf_op(AsyncRandomAccessReadDevice& device,
         boost::uint64_t offset, basic_streambuf<Allocator>& streambuf,
-        CompletionCondition completion_condition, ReadHandler handler)
+        CompletionCondition completion_condition, ReadHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         device_(device),
@@ -499,6 +510,19 @@ namespace detail
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
+
+  template <typename AsyncRandomAccessReadDevice, typename Allocator,
+      typename CompletionCondition, typename ReadHandler>
+  inline read_at_streambuf_op<AsyncRandomAccessReadDevice,
+      Allocator, CompletionCondition, ReadHandler>
+  make_read_at_streambuf_op(AsyncRandomAccessReadDevice& d,
+      boost::uint64_t offset, asio::basic_streambuf<Allocator>& b,
+      CompletionCondition completion_condition, ReadHandler handler)
+  {
+    return read_at_streambuf_op<AsyncRandomAccessReadDevice,
+      Allocator, CompletionCondition, ReadHandler>(
+        d, offset, b, completion_condition, handler);
+  }
 } // namespace detail
 
 template <typename AsyncRandomAccessReadDevice, typename Allocator,
@@ -512,11 +536,10 @@ inline void async_read_at(AsyncRandomAccessReadDevice& d,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::read_at_streambuf_op<AsyncRandomAccessReadDevice, Allocator,
-    CompletionCondition, typename detail::handler_type<ReadHandler>::type>(
-      d, offset, b, completion_condition,
-        ASIO_MOVE_CAST(ReadHandler)(handler))(
-          asio::error_code(), 0, 1);
+  detail::make_read_at_streambuf_op(
+    d, offset, b, completion_condition,
+      ASIO_MOVE_CAST(ReadHandler)(handler))(
+        asio::error_code(), 0, 1);
 }
 
 template <typename AsyncRandomAccessReadDevice, typename Allocator,
@@ -529,11 +552,10 @@ inline void async_read_at(AsyncRandomAccessReadDevice& d,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::read_at_streambuf_op<AsyncRandomAccessReadDevice, Allocator,
-    detail::transfer_all_t, typename detail::handler_type<ReadHandler>::type>(
-      d, offset, b, transfer_all(),
-        ASIO_MOVE_CAST(ReadHandler)(handler))(
-          asio::error_code(), 0, 1);
+  detail::make_read_at_streambuf_op(
+    d, offset, b, transfer_all(),
+      ASIO_MOVE_CAST(ReadHandler)(handler))(
+        asio::error_code(), 0, 1);
 }
 
 #endif // !defined(BOOST_NO_IOSTREAM)
