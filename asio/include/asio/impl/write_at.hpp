@@ -155,9 +155,9 @@ namespace detail
 
 #if defined(ASIO_HAS_MOVE)
     write_at_op(const write_at_op& other)
-      : detail::base_form_completion_cond<CompletionCondition>(other),
-        device_(other.device),
-        offset_(other.offset),
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        device_(other.device_),
+        offset_(other.offset_),
         buffers_(other.buffers_),
         total_transferred_(other.total_transferred_),
         handler_(other.handler_)
@@ -165,9 +165,9 @@ namespace detail
     }
 
     write_at_op(write_at_op&& other)
-      : detail::base_form_completion_cond<CompletionCondition>(other),
-        device_(other.device),
-        offset_(other.offset),
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        device_(other.device_),
+        offset_(other.offset_),
         buffers_(other.buffers_),
         total_transferred_(other.total_transferred_),
         handler_(ASIO_MOVE_CAST(WriteHandler)(other.handler_))
@@ -232,9 +232,9 @@ namespace detail
 
 #if defined(ASIO_HAS_MOVE)
     write_at_op(const write_at_op& other)
-      : detail::base_form_completion_cond<CompletionCondition>(other),
-        device_(other.device),
-        offset_(other.offset),
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        device_(other.device_),
+        offset_(other.offset_),
         buffer_(other.buffer_),
         total_transferred_(other.total_transferred_),
         handler_(other.handler_)
@@ -242,9 +242,9 @@ namespace detail
     }
 
     write_at_op(write_at_op&& other)
-      : detail::base_form_completion_cond<CompletionCondition>(other),
-        device_(other.device),
-        offset_(other.offset),
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        device_(other.device_),
+        offset_(other.offset_),
         buffer_(other.buffer_),
         total_transferred_(other.total_transferred_),
         handler_(ASIO_MOVE_CAST(WriteHandler)(other.handler_))
@@ -308,9 +308,9 @@ namespace detail
 
 #if defined(ASIO_HAS_MOVE)
     write_at_op(const write_at_op& other)
-      : detail::base_form_completion_cond<CompletionCondition>(other),
-        device_(other.device),
-        offset_(other.offset),
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        device_(other.device_),
+        offset_(other.offset_),
         buffer_(other.buffer_),
         total_transferred_(other.total_transferred_),
         handler_(other.handler_)
@@ -318,9 +318,9 @@ namespace detail
     }
 
     write_at_op(write_at_op&& other)
-      : detail::base_form_completion_cond<CompletionCondition>(other),
-        device_(other.device),
-        offset_(other.offset),
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        device_(other.device_),
+        offset_(other.offset_),
         buffer_(other.buffer_),
         total_transferred_(other.total_transferred_),
         handler_(ASIO_MOVE_CAST(WriteHandler)(other.handler_))
