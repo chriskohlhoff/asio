@@ -67,7 +67,7 @@ void test()
     set1.cancel();
     set1.cancel(ec);
 
-    set1.async_wait(signal_handler);
+    set1.async_wait(&signal_handler);
   }
   catch (std::exception&)
   {

@@ -224,10 +224,10 @@ void io_service_test()
   count = 0;
   int exception_count = 0;
   ios.reset();
-  ios.post(throw_exception);
+  ios.post(&throw_exception);
   ios.post(boost::bind(increment, &count));
   ios.post(boost::bind(increment, &count));
-  ios.post(throw_exception);
+  ios.post(&throw_exception);
   ios.post(boost::bind(increment, &count));
 
   // No handlers can be called until run() is called.

@@ -111,15 +111,15 @@ void test()
     handle1.write_some_at(offset, buffer(const_char_buffer), ec);
 
     handle1.async_write_some_at(offset,
-        buffer(mutable_char_buffer), write_some_handler);
+        buffer(mutable_char_buffer), &write_some_handler);
     handle1.async_write_some_at(offset,
-        buffer(const_char_buffer), write_some_handler);
+        buffer(const_char_buffer), &write_some_handler);
 
     handle1.read_some_at(offset, buffer(mutable_char_buffer));
     handle1.read_some_at(offset, buffer(mutable_char_buffer), ec);
 
     handle1.async_read_some_at(offset,
-        buffer(mutable_char_buffer), read_some_handler);
+        buffer(mutable_char_buffer), &read_some_handler);
   }
   catch (std::exception&)
   {

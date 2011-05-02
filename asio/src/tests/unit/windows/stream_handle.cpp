@@ -109,13 +109,13 @@ void test()
     handle1.write_some(buffer(mutable_char_buffer), ec);
     handle1.write_some(buffer(const_char_buffer), ec);
 
-    handle1.async_write_some(buffer(mutable_char_buffer), write_some_handler);
-    handle1.async_write_some(buffer(const_char_buffer), write_some_handler);
+    handle1.async_write_some(buffer(mutable_char_buffer), &write_some_handler);
+    handle1.async_write_some(buffer(const_char_buffer), &write_some_handler);
 
     handle1.read_some(buffer(mutable_char_buffer));
     handle1.read_some(buffer(mutable_char_buffer), ec);
 
-    handle1.async_read_some(buffer(mutable_char_buffer), read_some_handler);
+    handle1.async_read_some(buffer(mutable_char_buffer), &read_some_handler);
   }
   catch (std::exception&)
   {

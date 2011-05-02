@@ -229,10 +229,10 @@ void deadline_timer_cancel_test()
     timer() : t(io_service) { t.expires_at(boost::posix_time::pos_infin); }
   } timers[50];
 
-  timers[2].t.async_wait(timer_handler);
-  timers[41].t.async_wait(timer_handler);
+  timers[2].t.async_wait(&timer_handler);
+  timers[41].t.async_wait(&timer_handler);
   for (int i = 10; i < 20; ++i)
-    timers[i].t.async_wait(timer_handler);
+    timers[i].t.async_wait(&timer_handler);
 
   BOOST_CHECK(timers[2].t.cancel() == 1);
   BOOST_CHECK(timers[41].t.cancel() == 1);

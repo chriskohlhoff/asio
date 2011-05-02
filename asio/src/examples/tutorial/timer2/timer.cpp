@@ -22,7 +22,7 @@ int main()
   asio::io_service io;
 
   asio::deadline_timer t(io, boost::posix_time::seconds(5));
-  t.async_wait(print);
+  t.async_wait(&print);
 
   io.run();
 

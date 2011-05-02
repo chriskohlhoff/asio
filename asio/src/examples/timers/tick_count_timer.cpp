@@ -103,7 +103,7 @@ int main()
 
     timer.expires_from_now(5000);
     std::cout << "Starting asynchronous wait\n";
-    timer.async_wait(handle_timeout);
+    timer.async_wait(&handle_timeout);
     io_service.run();
     std::cout << "Finished asynchronous wait\n";
   }

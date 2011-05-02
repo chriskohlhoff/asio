@@ -146,7 +146,7 @@ void test_async_operations()
   client_socket.lowest_layer().connect(server_endpoint);
 
   stream_type server_socket(io_service);
-  acceptor.async_accept(server_socket.lowest_layer(), handle_accept);
+  acceptor.async_accept(server_socket.lowest_layer(), &handle_accept);
   io_service.run();
   io_service.reset();
 

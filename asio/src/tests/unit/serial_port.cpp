@@ -119,13 +119,13 @@ void test()
     port1.write_some(buffer(mutable_char_buffer), ec);
     port1.write_some(buffer(const_char_buffer), ec);
 
-    port1.async_write_some(buffer(mutable_char_buffer), write_some_handler);
-    port1.async_write_some(buffer(const_char_buffer), write_some_handler);
+    port1.async_write_some(buffer(mutable_char_buffer), &write_some_handler);
+    port1.async_write_some(buffer(const_char_buffer), &write_some_handler);
 
     port1.read_some(buffer(mutable_char_buffer));
     port1.read_some(buffer(mutable_char_buffer), ec);
 
-    port1.async_read_some(buffer(mutable_char_buffer), read_some_handler);
+    port1.async_read_some(buffer(mutable_char_buffer), &read_some_handler);
   }
   catch (std::exception&)
   {
