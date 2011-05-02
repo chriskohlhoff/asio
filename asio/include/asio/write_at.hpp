@@ -445,7 +445,8 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d, boost::uint64_t offset,
 template <typename AsyncRandomAccessWriteDevice, typename ConstBufferSequence,
     typename WriteHandler>
 void async_write_at(AsyncRandomAccessWriteDevice& d, boost::uint64_t offset,
-    const ConstBufferSequence& buffers, WriteHandler handler);
+    const ConstBufferSequence& buffers,
+    ASIO_MOVE_ARG(WriteHandler) handler);
 
 /// Start an asynchronous operation to write a certain amount of data at the
 /// specified offset.
@@ -517,7 +518,8 @@ template <typename AsyncRandomAccessWriteDevice, typename ConstBufferSequence,
     typename CompletionCondition, typename WriteHandler>
 void async_write_at(AsyncRandomAccessWriteDevice& d,
     boost::uint64_t offset, const ConstBufferSequence& buffers,
-    CompletionCondition completion_condition, WriteHandler handler);
+    CompletionCondition completion_condition,
+    ASIO_MOVE_ARG(WriteHandler) handler);
 
 #if !defined(BOOST_NO_IOSTREAM)
 
@@ -564,7 +566,7 @@ void async_write_at(AsyncRandomAccessWriteDevice& d,
 template <typename AsyncRandomAccessWriteDevice, typename Allocator,
     typename WriteHandler>
 void async_write_at(AsyncRandomAccessWriteDevice& d, boost::uint64_t offset,
-    basic_streambuf<Allocator>& b, WriteHandler handler);
+    basic_streambuf<Allocator>& b, ASIO_MOVE_ARG(WriteHandler) handler);
 
 /// Start an asynchronous operation to write a certain amount of data at the
 /// specified offset.
@@ -624,7 +626,7 @@ template <typename AsyncRandomAccessWriteDevice, typename Allocator,
     typename CompletionCondition, typename WriteHandler>
 void async_write_at(AsyncRandomAccessWriteDevice& d, boost::uint64_t offset,
     basic_streambuf<Allocator>& b, CompletionCondition completion_condition,
-    WriteHandler handler);
+    ASIO_MOVE_ARG(WriteHandler) handler);
 
 #endif // !defined(BOOST_NO_IOSTREAM)
 
