@@ -59,9 +59,26 @@
 # endif // defined(__GNUC__)
 #endif // !defined(ASIO_DISABLE_MOVE)
 
-// If ASIO_MOVE_CAST isn't defined yet use a C++03 compatible version.
+// If ASIO_MOVE_CAST isn't defined yet use a C++03 compatible version. Note
+// that older g++ and MSVC versions don't like it when you pass a non-member
+// function through a const reference, so for most compilers we'll play it safe
+// and stick with the old approach of passing the handler by value.
 #if !defined(ASIO_MOVE_CAST)
-# define ASIO_MOVE_ARG(type) const type&
+# if defined(__GNUC__)
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 1)) || (__GNUC__ > 4)
+#   define ASIO_MOVE_ARG(type) const type&
+#  else // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 1)) || (__GNUC__ > 4)
+#   define ASIO_MOVE_ARG(type) type
+#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 1)) || (__GNUC__ > 4)
+# elif defined(BOOST_MSVC)
+#  if (_MSC_VER >= 1400)
+#   define ASIO_MOVE_ARG(type) const type&
+#  else // (_MSC_VER >= 1400)
+#   define ASIO_MOVE_ARG(type) type
+#  endif // (_MSC_VER >= 1400)
+# else
+#  define ASIO_MOVE_ARG(type) type
+# endif
 # define ASIO_MOVE_CAST(type) static_cast<const type&>
 #endif // !defined_ASIO_MOVE_CAST
 
