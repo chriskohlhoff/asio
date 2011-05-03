@@ -59,10 +59,11 @@
 # endif // defined(__GNUC__)
 #endif // !defined(ASIO_DISABLE_MOVE)
 
-// If ASIO_MOVE_CAST isn't defined yet use a C++03 compatible version. Note
-// that older g++ and MSVC versions don't like it when you pass a non-member
-// function through a const reference, so for most compilers we'll play it safe
-// and stick with the old approach of passing the handler by value.
+// If ASIO_MOVE_CAST isn't defined yet use a C++03 compatible version.
+// Note that older g++ and MSVC versions don't like it when you pass a
+// non-member function through a const reference, so for most compilers we'll
+// play it safe and stick with the old approach of passing the handler by
+// value.
 #if !defined(ASIO_MOVE_CAST)
 # if defined(__GNUC__)
 #  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 1)) || (__GNUC__ > 4)
