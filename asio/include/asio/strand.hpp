@@ -140,13 +140,13 @@ public:
    * @code void handler(); @endcode
    */
   template <typename CompletionHandler>
-  void dispatch(CompletionHandler handler)
+  void dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a CompletionHandler.
     ASIO_COMPLETION_HANDLER_CHECK(CompletionHandler, handler) type_check;
 
-    service_.dispatch(impl_, handler);
+    service_.dispatch(impl_, ASIO_MOVE_CAST(CompletionHandler)(handler));
   }
 
   /// Request the strand to invoke the given handler and return
@@ -166,13 +166,13 @@ public:
    * @code void handler(); @endcode
    */
   template <typename CompletionHandler>
-  void post(CompletionHandler handler)
+  void post(ASIO_MOVE_ARG(CompletionHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a CompletionHandler.
     ASIO_COMPLETION_HANDLER_CHECK(CompletionHandler, handler) type_check;
 
-    service_.post(impl_, handler);
+    service_.post(impl_, ASIO_MOVE_CAST(CompletionHandler)(handler));
   }
 
   /// Create a new handler that automatically dispatches the wrapped handler
