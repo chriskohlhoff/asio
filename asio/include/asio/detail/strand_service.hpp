@@ -86,6 +86,13 @@ public:
   void post(implementation_type& impl, Handler handler);
 
 private:
+  // Helper function to dispatch a handler. Returns true if the handler should
+  // be dispatched immediately.
+  ASIO_DECL bool do_dispatch(implementation_type& impl, operation* op);
+
+  // Helper fiunction to post a handler.
+  ASIO_DECL void do_post(implementation_type& impl, operation* op);
+
   ASIO_DECL static void do_complete(io_service_impl* owner,
       operation* base, asio::error_code ec,
       std::size_t bytes_transferred);

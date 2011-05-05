@@ -72,19 +72,14 @@ void strand_service::dispatch(strand_service::implementation_type& impl,
       sizeof(op), handler), 0 };
   p.p = new (p.v) op(handler);
 
-  // If we are running inside the io_service, and no other handler is queued
-  // or running, then the handler can run immediately.
-  bool can_dispatch = call_stack<io_service_impl>::contains(&io_service_);
-  impl->mutex_.lock();
-  bool first = (++impl->count_ == 1);
-  if (can_dispatch && first)
+  ASIO_HANDLER_CREATION((p.p, "strand", impl, "dispatch"));
+
+  bool dispatch_immediately = do_dispatch(impl, p.p);
+  operation* o = p.p;
+  p.v = p.p = 0;
+
+  if (dispatch_immediately)
   {
-    // Immediate invocation is allowed.
-    impl->mutex_.unlock();
-
-    // Memory must be releaesed before any upcall is made.
-    p.reset();
-
     // Indicate that this strand is executing on the current thread.
     call_stack<strand_impl>::context ctx(impl);
 
@@ -92,22 +87,9 @@ void strand_service::dispatch(strand_service::implementation_type& impl,
     on_dispatch_exit on_exit = { &io_service_, impl };
     (void)on_exit;
 
-    asio::detail::fenced_block b;
-    asio_handler_invoke_helpers::invoke(handler, handler);
-    return;
+    completion_handler<Handler>::do_complete(
+        &io_service_, o, asio::error_code(), 0);
   }
-
-  ASIO_HANDLER_CREATION((p.p, "strand", impl, "dispatch"));
-
-  // Immediate invocation is not allowed, so enqueue for later.
-  impl->queue_.push(p.p);
-  impl->mutex_.unlock();
-  p.v = p.p = 0;
-
-  // The first handler to be enqueued is responsible for scheduling the
-  // strand.
-  if (first)
-    io_service_.post_immediate_completion(impl);
 }
 
 // Request the io_service to invoke the given handler and return immediately.
@@ -124,16 +106,8 @@ void strand_service::post(strand_service::implementation_type& impl,
 
   ASIO_HANDLER_CREATION((p.p, "strand", impl, "post"));
 
-  // Add the handler to the queue.
-  impl->mutex_.lock();
-  bool first = (++impl->count_ == 1);
-  impl->queue_.push(p.p);
-  impl->mutex_.unlock();
+  do_post(impl, p.p);
   p.v = p.p = 0;
-
-  // The first handler to be enqueue is responsible for scheduling the strand.
-  if (first)
-    io_service_.post_immediate_completion(impl);
 }
 
 } // namespace detail
