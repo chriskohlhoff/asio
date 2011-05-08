@@ -35,7 +35,7 @@ inline void invoke(Function& function, Context& context)
   Function tmp(function);
   tmp();
 #else
-  using namespace asio;
+  using asio::asio_handler_invoke;
   asio_handler_invoke(function, boost::addressof(context));
 #endif
 }
@@ -48,7 +48,7 @@ inline void invoke(const Function& function, Context& context)
   Function tmp(function);
   tmp();
 #else
-  using namespace asio;
+  using asio::asio_handler_invoke;
   asio_handler_invoke(function, boost::addressof(context));
 #endif
 }
