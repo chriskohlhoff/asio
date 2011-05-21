@@ -63,8 +63,6 @@ void handler_tracking::init()
 void handler_tracking::creation(handler_tracking::tracked_handler* h,
     const char* object_type, void* object, const char* op_name)
 {
-  using namespace std; // For sprintf (or equivalent).
-
   static tracking_state* state = get_state();
 
   static_mutex::scoped_lock lock(state->mutex_);
@@ -102,8 +100,6 @@ handler_tracking::completion::~completion()
 {
   if (id_)
   {
-    using namespace std; // For sprintf (or equivalent).
-
     boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
     boost::posix_time::time_duration now =
       boost::posix_time::microsec_clock::universal_time() - epoch;
@@ -124,8 +120,6 @@ handler_tracking::completion::~completion()
 
 void handler_tracking::completion::invocation_begin()
 {
-  using namespace std; // For sprintf (or equivalent).
-
   boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
   boost::posix_time::time_duration now =
     boost::posix_time::microsec_clock::universal_time() - epoch;
@@ -145,8 +139,6 @@ void handler_tracking::completion::invocation_begin()
 void handler_tracking::completion::invocation_begin(
     const asio::error_code& ec)
 {
-  using namespace std; // For sprintf (or equivalent).
-
   boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
   boost::posix_time::time_duration now =
     boost::posix_time::microsec_clock::universal_time() - epoch;
@@ -167,8 +159,6 @@ void handler_tracking::completion::invocation_begin(
 void handler_tracking::completion::invocation_begin(
     const asio::error_code& ec, std::size_t bytes_transferred)
 {
-  using namespace std; // For sprintf (or equivalent).
-
   boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
   boost::posix_time::time_duration now =
     boost::posix_time::microsec_clock::universal_time() - epoch;
@@ -190,8 +180,6 @@ void handler_tracking::completion::invocation_begin(
 void handler_tracking::completion::invocation_begin(
     const asio::error_code& ec, int signal_number)
 {
-  using namespace std; // For sprintf (or equivalent).
-
   boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
   boost::posix_time::time_duration now =
     boost::posix_time::microsec_clock::universal_time() - epoch;
@@ -212,8 +200,6 @@ void handler_tracking::completion::invocation_begin(
 void handler_tracking::completion::invocation_begin(
     const asio::error_code& ec, const char* arg)
 {
-  using namespace std; // For sprintf (or equivalent).
-
   boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
   boost::posix_time::time_duration now =
     boost::posix_time::microsec_clock::universal_time() - epoch;
@@ -235,8 +221,6 @@ void handler_tracking::completion::invocation_end()
 {
   if (id_)
   {
-    using namespace std; // For sprintf (or equivalent).
-
     boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
     boost::posix_time::time_duration now =
       boost::posix_time::microsec_clock::universal_time() - epoch;
@@ -257,8 +241,6 @@ void handler_tracking::completion::invocation_end()
 void handler_tracking::operation(const char* object_type,
     void* object, const char* op_name)
 {
-  using namespace std; // For sprintf (or equivalent).
-
   static tracking_state* state = get_state();
 
   boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
@@ -282,6 +264,8 @@ void handler_tracking::operation(const char* object_type,
 
 void handler_tracking::write_line(const char* format, ...)
 {
+  using namespace std; // For sprintf (or equivalent).
+
   va_list args;
   va_start(args, format);
 
