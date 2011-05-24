@@ -79,9 +79,9 @@ void handler_tracking::creation(handler_tracking::tracked_handler* h,
 
   write_line(
 #if defined(BOOST_WINDOWS)
-      "@asio|%I64u.%06I64u|%I64u*%I64u|%.20s@%p.%.20s\n",
+      "@asio|%I64u.%06I64u|%I64u*%I64u|%.20s@%p.%.50s\n",
 #else // defined(BOOST_WINDOWS)
-      "@asio|%llu.%06llu|%llu*%llu|%.20s@%p.%.20s\n",
+      "@asio|%llu.%06llu|%llu*%llu|%.20s@%p.%.50s\n",
 #endif // defined(BOOST_WINDOWS)
       static_cast<boost::uint64_t>(now.total_seconds()),
       static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
@@ -206,9 +206,9 @@ void handler_tracking::completion::invocation_begin(
 
   write_line(
 #if defined(BOOST_WINDOWS)
-      "@asio|%I64u.%06I64u|>%I64u|ec=%.20s:%d,%.20s\n",
+      "@asio|%I64u.%06I64u|>%I64u|ec=%.20s:%d,%.50s\n",
 #else // defined(BOOST_WINDOWS)
-      "@asio|%llu.%06llu|>%llu|ec=%.20s:%d,%.20s\n",
+      "@asio|%llu.%06llu|>%llu|ec=%.20s:%d,%.50s\n",
 #endif // defined(BOOST_WINDOWS)
       static_cast<boost::uint64_t>(now.total_seconds()),
       static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
@@ -253,9 +253,9 @@ void handler_tracking::operation(const char* object_type,
 
   write_line(
 #if defined(BOOST_WINDOWS)
-      "@asio|%I64u.%06I64u|%I64u|%.20s@%p.%.20s\n",
+      "@asio|%I64u.%06I64u|%I64u|%.20s@%p.%.50s\n",
 #else // defined(BOOST_WINDOWS)
-      "@asio|%llu.%06llu|%llu|%.20s@%p.%.20s\n",
+      "@asio|%llu.%06llu|%llu|%.20s@%p.%.50s\n",
 #endif // defined(BOOST_WINDOWS)
       static_cast<boost::uint64_t>(now.total_seconds()),
       static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
