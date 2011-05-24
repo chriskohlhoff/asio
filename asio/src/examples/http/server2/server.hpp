@@ -37,6 +37,9 @@ public:
   void run();
 
 private:
+  /// Initiate an asynchronous accept operation.
+  void start_accept();
+
   /// Handle completion of an asynchronous accept operation.
   void handle_accept(const asio::error_code& e);
 

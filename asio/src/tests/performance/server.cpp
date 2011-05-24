@@ -155,6 +155,11 @@ public:
     acceptor_.bind(endpoint);
     acceptor_.listen();
 
+    start_accept();
+  }
+
+  void start_accept()
+  {
     session* new_session = new session(io_service_, block_size_);
     acceptor_.async_accept(new_session->socket(),
         boost::bind(&server::handle_accept, this, new_session,
@@ -166,15 +171,13 @@ public:
     if (!err)
     {
       new_session->start();
-      new_session = new session(io_service_, block_size_);
-      acceptor_.async_accept(new_session->socket(),
-          boost::bind(&server::handle_accept, this, new_session,
-            asio::placeholders::error));
     }
     else
     {
       delete new_session;
     }
+
+    start_accept();
   }
 
 private:

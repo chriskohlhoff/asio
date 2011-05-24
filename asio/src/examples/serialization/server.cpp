@@ -72,20 +72,13 @@ public:
       conn->async_write(stocks_,
           boost::bind(&server::handle_write, this,
             asio::placeholders::error, conn));
+    }
 
-      // Start an accept operation for a new connection.
-      connection_ptr new_conn(new connection(acceptor_.get_io_service()));
-      acceptor_.async_accept(new_conn->socket(),
-          boost::bind(&server::handle_accept, this,
-            asio::placeholders::error, new_conn));
-    }
-    else
-    {
-      // An error occurred. Log it and return. Since we are not starting a new
-      // accept operation the io_service will run out of work to do and the
-      // server will exit.
-      std::cerr << e.message() << std::endl;
-    }
+    // Start an accept operation for a new connection.
+    connection_ptr new_conn(new connection(acceptor_.get_io_service()));
+    acceptor_.async_accept(new_conn->socket(),
+        boost::bind(&server::handle_accept, this,
+          asio::placeholders::error, new_conn));
   }
 
   /// Handle completion of a write operation.

@@ -107,15 +107,20 @@ public:
     context_.use_private_key_file("server.pem", asio::ssl::context::pem);
     context_.use_tmp_dh_file("dh512.pem");
 
-    session* new_session = new session(io_service_, context_);
-    acceptor_.async_accept(new_session->socket(),
-        boost::bind(&server::handle_accept, this, new_session,
-          asio::placeholders::error));
+    start_accept();
   }
 
   std::string get_password() const
   {
     return "test";
+  }
+
+  void start_accept()
+  {
+    session* new_session = new session(io_service_, context_);
+    acceptor_.async_accept(new_session->socket(),
+        boost::bind(&server::handle_accept, this, new_session,
+          asio::placeholders::error));
   }
 
   void handle_accept(session* new_session,
@@ -124,15 +129,13 @@ public:
     if (!error)
     {
       new_session->start();
-      new_session = new session(io_service_, context_);
-      acceptor_.async_accept(new_session->socket(),
-          boost::bind(&server::handle_accept, this, new_session,
-            asio::placeholders::error));
     }
     else
     {
       delete new_session;
     }
+
+    start_accept();
   }
 
 private:

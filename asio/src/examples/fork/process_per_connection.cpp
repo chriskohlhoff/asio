@@ -43,11 +43,16 @@ private:
 
   void handle_signal_wait()
   {
-    // Reap completed child processes so that we don't end up with zombies.
-    int status = 0;
-    while (waitpid(-1, &status, WNOHANG) > 0) {}
+    // Only the parent process should check for this signal. We can determine
+    // whether we are in the parent by checking if the acceptor is still open.
+    if (acceptor_.is_open())
+    {
+      // Reap completed child processes so that we don't end up with zombies.
+      int status = 0;
+      while (waitpid(-1, &status, WNOHANG) > 0) {}
 
-    start_signal_wait();
+      start_signal_wait();
+    }
   }
 
   void start_accept()
@@ -76,6 +81,9 @@ private:
         // acceptor. It remains open in the parent.
         acceptor_.close();
 
+        // The child process is not interested in processing the SIGCHLD signal.
+        signal_.cancel();
+
         start_read();
       }
       else
@@ -93,6 +101,7 @@ private:
     else
     {
       std::cerr << "Accept error: " << ec.message() << std::endl;
+      start_accept();
     }
   }
 

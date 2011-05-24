@@ -21,7 +21,7 @@ server::server(const std::string& address, const std::string& port,
   : thread_pool_size_(thread_pool_size),
     signals_(io_service_),
     acceptor_(io_service_),
-    new_connection_(new connection(io_service_, request_handler_)),
+    new_connection_(),
     request_handler_(doc_root)
 {
   // Register to handle the signals that indicate when the server should exit.
@@ -42,9 +42,8 @@ server::server(const std::string& address, const std::string& port,
   acceptor_.set_option(asio::ip::tcp::acceptor::reuse_address(true));
   acceptor_.bind(endpoint);
   acceptor_.listen();
-  acceptor_.async_accept(new_connection_->socket(),
-      boost::bind(&server::handle_accept, this,
-        asio::placeholders::error));
+
+  start_accept();
 }
 
 void server::run()
@@ -63,16 +62,22 @@ void server::run()
     threads[i]->join();
 }
 
+void server::start_accept()
+{
+  new_connection_.reset(new connection(io_service_, request_handler_));
+  acceptor_.async_accept(new_connection_->socket(),
+      boost::bind(&server::handle_accept, this,
+        asio::placeholders::error));
+}
+
 void server::handle_accept(const asio::error_code& e)
 {
   if (!e)
   {
     new_connection_->start();
-    new_connection_.reset(new connection(io_service_, request_handler_));
-    acceptor_.async_accept(new_connection_->socket(),
-        boost::bind(&server::handle_accept, this,
-          asio::placeholders::error));
   }
+
+  start_accept();
 }
 
 void server::handle_stop()

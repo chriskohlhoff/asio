@@ -208,8 +208,9 @@ private:
     if (!error)
     {
       new_connection->start();
-      start_accept();
     }
+
+    start_accept();
   }
 
   tcp::acceptor acceptor_;

@@ -365,6 +365,11 @@ public:
     subscriber_ptr bc(new udp_broadcaster(io_service_, broadcast_endpoint));
     channel_.join(bc);
 
+    start_accept();
+  }
+
+  void start_accept()
+  {
     tcp_session_ptr new_session(new tcp_session(io_service_, channel_));
 
     acceptor_.async_accept(new_session->socket(),
@@ -377,12 +382,9 @@ public:
     if (!ec)
     {
       session->start();
-
-      tcp_session_ptr new_session(new tcp_session(io_service_, channel_));
-
-      acceptor_.async_accept(new_session->socket(),
-          boost::bind(&server::handle_accept, this, new_session, _1));
     }
+
+    start_accept();
   }
 
 private:

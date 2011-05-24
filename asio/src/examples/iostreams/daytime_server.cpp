@@ -34,8 +34,12 @@ int main()
     for (;;)
     {
       tcp::iostream stream;
-      acceptor.accept(*stream.rdbuf());
-      stream << make_daytime_string();
+      asio::error_code ec;
+      acceptor.accept(*stream.rdbuf(), ec);
+      if (!ec)
+      {
+        stream << make_daytime_string();
+      }
     }
   }
   catch (std::exception& e)

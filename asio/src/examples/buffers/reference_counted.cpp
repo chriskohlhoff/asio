@@ -92,11 +92,12 @@ public:
     if (!error)
     {
       new_session->start();
-      new_session.reset(new session(io_service_));
-      acceptor_.async_accept(new_session->socket(),
-          boost::bind(&server::handle_accept, this, new_session,
-            asio::placeholders::error));
     }
+
+    new_session.reset(new session(io_service_));
+    acceptor_.async_accept(new_session->socket(),
+        boost::bind(&server::handle_accept, this, new_session,
+          asio::placeholders::error));
   }
 
 private:

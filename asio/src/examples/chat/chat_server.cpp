@@ -182,6 +182,11 @@ public:
     : io_service_(io_service),
       acceptor_(io_service, endpoint)
   {
+    start_accept();
+  }
+
+  void start_accept()
+  {
     chat_session_ptr new_session(new chat_session(io_service_, room_));
     acceptor_.async_accept(new_session->socket(),
         boost::bind(&chat_server::handle_accept, this, new_session,
@@ -194,11 +199,9 @@ public:
     if (!error)
     {
       session->start();
-      chat_session_ptr new_session(new chat_session(io_service_, room_));
-      acceptor_.async_accept(new_session->socket(),
-          boost::bind(&chat_server::handle_accept, this, new_session,
-            asio::placeholders::error));
     }
+
+    start_accept();
   }
 
 private:
