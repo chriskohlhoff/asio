@@ -103,4 +103,41 @@ target operating system. A program may test for the macro
 
 [endsect]
 
+[section:fork Fork]
+
+Asio supports programs that utilise the `fork()` system call. Provided the
+program calls `io_service.notify_fork()` at the appropriate times, Asio will
+recreate any internal file descriptors (such as the "self-pipe trick"
+descriptor used for waking up a reactor). The notification is usually performed
+as follows:
+
+  io_service_.notify_fork(asio::io_service::fork_prepare);
+  if (fork() == 0)
+  {
+    io_service_.notify_fork(asio::io_service::fork_child);
+    ...
+  }
+  else
+  {
+    io_service_.notify_fork(asio::io_service::fork_parent);
+    ...
+  }
+
+User-defined services can also be made fork-aware by overriding the
+`io_service::service::fork_service()` virtual function.
+
+Note that any file descriptors accessible via Asio's public API (e.g. the
+descriptors underlying `basic_socket<>`, `posix::stream_descriptor`, etc.) are
+not altered during a fork. It is the program's responsibility to manage these
+as required.
+
+[heading See Also]
+
+[link asio.reference.io_service.notify_fork io_service::notify_fork()],
+[link asio.reference.io_service.fork_event io_service::fork_event],
+[link asio.reference.io_service__service.fork_service io_service::service::fork_service()],
+[link asio.examples.fork Fork examples].
+
+[endsect]
+
 [endsect]
