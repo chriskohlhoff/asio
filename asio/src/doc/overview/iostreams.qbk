@@ -32,6 +32,24 @@ simple servers. For example:
     ...
   }
 
+Timeouts may be set by calling `expires_at()` or `expires_from_now()` to
+establish a deadline. Any socket operations that occur past the deadline will
+put the iostream into a "bad" state.
+
+For example, a simple client program like this:
+
+  ip::tcp::iostream stream;
+  stream.expires_from_now(boost::posix_time::seconds(60));
+  stream.connect("www.boost.org", "http");
+  stream << "GET /LICENSE_1_0.txt HTTP/1.0\r\n";
+  stream << "Host: www.boost.org\r\n";
+  stream << "Accept: */*\r\n";
+  stream << "Connection: close\r\n\r\n";
+  stream.flush();
+  std::cout << stream.rdbuf();
+
+will fail if all the socket operations combined take longer than 60 seconds.
+
 [heading See Also]
 
 [link asio.reference.ip__tcp.iostream ip::tcp::iostream],
