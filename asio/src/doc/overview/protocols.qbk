@@ -26,10 +26,40 @@ are looked up and converted into one or more endpoints:
   }
 
 The list of endpoints obtained above could contain both IPv4 and IPv6 endpoints,
-so a program may try each of them until it finds one that works. This keeps the
+so a program should try each of them until it finds one that works. This keeps the
 client program independent of a specific IP version.
 
-When an endpoint is available, a socket can be created and connected:
+To simplify the development of protocol-independent programs, TCP clients may
+establish connections using the free functions [link asio.reference.connect
+connect()] and [link asio.reference.async_connect async_connect()]. These
+operations try each endpoint in a list until the socket is successfully
+connected. For example, a single call:
+
+  ip::tcp::socket socket(my_io_service);
+  asio::connect(socket, resolver.resolve(query));
+
+will synchronously try all endpoints until one is successfully connected.
+Similarly, an asynchronous connect may be performed by writing:
+
+  asio::async_connect(socket_, iter,
+      boost::bind(&client::handle_connect, this,
+        asio::placeholders::error));
+
+  // ...
+
+  void handle_connect(const error_code& error)
+  {
+    if (!error)
+    {
+      // Start read or write operations.
+    }
+    else
+    {
+      // Handle error.
+    }
+  }
+
+When a specific endpoint is available, a socket can be created and connected:
 
   ip::tcp::socket socket(my_io_service);
   socket.connect(endpoint);
