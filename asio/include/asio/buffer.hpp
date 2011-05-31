@@ -593,6 +593,24 @@ private:
  * The asio::buffer_cast function permits violations of type safety, so
  * uses of it in application code should be carefully considered.
  *
+ * For convenience, the @ref buffer_size function also works on buffer
+ * sequences (that is, types meeting the ConstBufferSequence or
+ * MutableBufferSequence type requirements). In this case, the function returns
+ * the total size of all buffers in the sequence.
+ *
+ * @par Buffer Copying
+ *
+ * The @ref buffer_copy function may be used to copy raw bytes between
+ * individual buffers and buffer sequences.
+ *
+ * In particular, when used with the @ref buffer_size, the @ref buffer_copy
+ * function can be used to linearise a sequence of buffers. For example:
+ *
+ * @code vector<const_buffer> buffers = ...;
+ *
+ * vector<unsigned char> data(asio::buffer_size(buffers));
+ * asio::buffer_copy(asio::buffer(data), buffers); @endcode
+ *
  * @par Buffer Invalidation
  *
  * A buffer object does not have any ownership of the memory it refers to. It
