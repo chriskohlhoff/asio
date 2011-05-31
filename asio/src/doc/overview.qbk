@@ -24,6 +24,7 @@
   * [link asio.overview.networking.bsd_sockets The BSD Socket API and Asio]
 * [link asio.overview.timers Timers]
 * [link asio.overview.serial_ports Serial Ports]
+* [link asio.overview.signals Signal Handling]
 * [link asio.overview.posix POSIX-Specific Functionality]
   * [link asio.overview.posix.local UNIX Domain Sockets]
   * [link asio.overview.posix.stream_descriptor Stream-Oriented File Descriptors]
