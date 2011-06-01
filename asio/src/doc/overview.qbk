@@ -18,6 +18,7 @@
   * [link asio.overview.core.reactor Reactor-Style Operations]
   * [link asio.overview.core.line_based Line-Based Operations]
   * [link asio.overview.core.allocation Custom Memory Allocation]
+  * [link asio.overview.core.handler_tracking Handler Tracking]
 * [link asio.overview.networking Networking]
   * [link asio.overview.networking.protocols TCP, UDP and ICMP]
   * [link asio.overview.networking.iostreams Socket Iostreams]
@@ -47,6 +48,7 @@
 * [link asio.overview.core.reactor Reactor-Style Operations]
 * [link asio.overview.core.line_based Line-Based Operations]
 * [link asio.overview.core.allocation Custom Memory Allocation]
+* [link asio.overview.core.handler_tracking Handler Tracking]
 
 [include overview/basics.qbk]
 [include overview/async.qbk]
@@ -57,6 +59,7 @@
 [include overview/reactor.qbk]
 [include overview/line_based.qbk]
 [include overview/allocation.qbk]
+[include overview/handler_tracking.qbk]
 
 [endsect]
 
@@ -74,6 +77,7 @@
 
 [include overview/timers.qbk]
 [include overview/serial_ports.qbk]
+[include overview/signals.qbk]
 [include overview/posix.qbk]
 [include overview/windows.qbk]
 [include overview/ssl.qbk]
