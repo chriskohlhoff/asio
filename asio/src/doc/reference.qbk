@@ -281,7 +281,7 @@ Asynchronously establishes a socket connection by trying each endpoint in a sequ
   void ``[link asio.reference.async_connect.overload1 async_connect]``(
       basic_socket< Protocol, SocketService > & s,
       Iterator begin,
-      const ComposedConnectHandler & handler);
+      ComposedConnectHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_connect.overload1 more...]]``
 
   template<
@@ -293,7 +293,7 @@ Asynchronously establishes a socket connection by trying each endpoint in a sequ
       basic_socket< Protocol, SocketService > & s,
       Iterator begin,
       Iterator end,
-      const ComposedConnectHandler & handler);
+      ComposedConnectHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_connect.overload2 more...]]``
 
   template<
@@ -306,7 +306,7 @@ Asynchronously establishes a socket connection by trying each endpoint in a sequ
       basic_socket< Protocol, SocketService > & s,
       Iterator begin,
       ConnectCondition connect_condition,
-      const ComposedConnectHandler & handler);
+      ComposedConnectHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_connect.overload3 more...]]``
 
   template<
@@ -320,7 +320,7 @@ Asynchronously establishes a socket connection by trying each endpoint in a sequ
       Iterator begin,
       Iterator end,
       ConnectCondition connect_condition,
-      const ComposedConnectHandler & handler);
+      ComposedConnectHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_connect.overload4 more...]]``
 
 [heading Requirements]
@@ -344,7 +344,7 @@ Asynchronously establishes a socket connection by trying each endpoint in a sequ
   void async_connect(
       basic_socket< Protocol, SocketService > & s,
       Iterator begin,
-      const ComposedConnectHandler & handler);
+      ComposedConnectHandler handler);
 
 
 This function attempts to connect a socket to one of a sequence of endpoints. It does this by repeated calls to the socket's `async_connect` member function, once for each endpoint in the sequence, until a connection is successfully established.
@@ -440,7 +440,7 @@ Asynchronously establishes a socket connection by trying each endpoint in a sequ
       basic_socket< Protocol, SocketService > & s,
       Iterator begin,
       Iterator end,
-      const ComposedConnectHandler & handler);
+      ComposedConnectHandler handler);
 
 
 This function attempts to connect a socket to one of a sequence of endpoints. It does this by repeated calls to the socket's `async_connect` member function, once for each endpoint in the sequence, until a connection is successfully established.
@@ -535,7 +535,7 @@ Asynchronously establishes a socket connection by trying each endpoint in a sequ
       basic_socket< Protocol, SocketService > & s,
       Iterator begin,
       ConnectCondition connect_condition,
-      const ComposedConnectHandler & handler);
+      ComposedConnectHandler handler);
 
 
 This function attempts to connect a socket to one of a sequence of endpoints. It does this by repeated calls to the socket's `async_connect` member function, once for each endpoint in the sequence, until a connection is successfully established.
@@ -666,7 +666,7 @@ Asynchronously establishes a socket connection by trying each endpoint in a sequ
       Iterator begin,
       Iterator end,
       ConnectCondition connect_condition,
-      const ComposedConnectHandler & handler);
+      ComposedConnectHandler handler);
 
 
 This function attempts to connect a socket to one of a sequence of endpoints. It does this by repeated calls to the socket's `async_connect` member function, once for each endpoint in the sequence, until a connection is successfully established.
@@ -792,7 +792,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
   void ``[link asio.reference.async_read.overload1 async_read]``(
       AsyncReadStream & s,
       const MutableBufferSequence & buffers,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_read.overload1 more...]]``
 
   template<
@@ -804,7 +804,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
       AsyncReadStream & s,
       const MutableBufferSequence & buffers,
       CompletionCondition completion_condition,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_read.overload2 more...]]``
 
   template<
@@ -814,7 +814,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
   void ``[link asio.reference.async_read.overload3 async_read]``(
       AsyncReadStream & s,
       basic_streambuf< Allocator > & b,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_read.overload3 more...]]``
 
   template<
@@ -826,7 +826,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
       AsyncReadStream & s,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_read.overload4 more...]]``
 
 [heading Requirements]
@@ -849,7 +849,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
   void async_read(
       AsyncReadStream & s,
       const MutableBufferSequence & buffers,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously read a certain number of bytes of data from a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -933,7 +933,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
       AsyncReadStream & s,
       const MutableBufferSequence & buffers,
       CompletionCondition completion_condition,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously read a certain number of bytes of data from a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -1015,7 +1015,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
   void async_read(
       AsyncReadStream & s,
       basic_streambuf< Allocator > & b,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously read a certain number of bytes of data from a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -1086,7 +1086,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
       AsyncReadStream & s,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously read a certain number of bytes of data from a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -1156,7 +1156,7 @@ Start an asynchronous operation to read a certain amount of data at the specifie
       AsyncRandomAccessReadDevice & d,
       boost::uint64_t offset,
       const MutableBufferSequence & buffers,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_read_at.overload1 more...]]``
 
   template<
@@ -1169,7 +1169,7 @@ Start an asynchronous operation to read a certain amount of data at the specifie
       boost::uint64_t offset,
       const MutableBufferSequence & buffers,
       CompletionCondition completion_condition,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_read_at.overload2 more...]]``
 
   template<
@@ -1180,7 +1180,7 @@ Start an asynchronous operation to read a certain amount of data at the specifie
       AsyncRandomAccessReadDevice & d,
       boost::uint64_t offset,
       basic_streambuf< Allocator > & b,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_read_at.overload3 more...]]``
 
   template<
@@ -1193,7 +1193,7 @@ Start an asynchronous operation to read a certain amount of data at the specifie
       boost::uint64_t offset,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_read_at.overload4 more...]]``
 
 [heading Requirements]
@@ -1217,7 +1217,7 @@ Start an asynchronous operation to read a certain amount of data at the specifie
       AsyncRandomAccessReadDevice & d,
       boost::uint64_t offset,
       const MutableBufferSequence & buffers,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously read a certain number of bytes of data from a random access device at the specified offset. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -1304,7 +1304,7 @@ Start an asynchronous operation to read a certain amount of data at the specifie
       boost::uint64_t offset,
       const MutableBufferSequence & buffers,
       CompletionCondition completion_condition,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously read a certain number of bytes of data from a random access device at the specified offset. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -1389,7 +1389,7 @@ Start an asynchronous operation to read a certain amount of data at the specifie
       AsyncRandomAccessReadDevice & d,
       boost::uint64_t offset,
       basic_streambuf< Allocator > & b,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously read a certain number of bytes of data from a random access device at the specified offset. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -1463,7 +1463,7 @@ Start an asynchronous operation to read a certain amount of data at the specifie
       boost::uint64_t offset,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously read a certain number of bytes of data from a random access device at the specified offset. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -1535,7 +1535,7 @@ Start an asynchronous operation to read data into a streambuf until it contains 
       AsyncReadStream & s,
       asio::basic_streambuf< Allocator > & b,
       char delim,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_read_until.overload1 more...]]``
 
   template<
@@ -1546,7 +1546,7 @@ Start an asynchronous operation to read data into a streambuf until it contains 
       AsyncReadStream & s,
       asio::basic_streambuf< Allocator > & b,
       const std::string & delim,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_read_until.overload2 more...]]``
 
   template<
@@ -1557,7 +1557,7 @@ Start an asynchronous operation to read data into a streambuf until it contains 
       AsyncReadStream & s,
       asio::basic_streambuf< Allocator > & b,
       const boost::regex & expr,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_read_until.overload3 more...]]``
 
   template<
@@ -1569,7 +1569,7 @@ Start an asynchronous operation to read data into a streambuf until it contains 
       AsyncReadStream & s,
       asio::basic_streambuf< Allocator > & b,
       MatchCondition match_condition,
-      const ReadHandler & handler,
+      ReadHandler handler,
       typename boost::enable_if< is_match_condition< MatchCondition > >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.async_read_until.overload4 more...]]``
 
@@ -1594,7 +1594,7 @@ Start an asynchronous operation to read data into a streambuf until it contains 
       AsyncReadStream & s,
       asio::basic_streambuf< Allocator > & b,
       char delim,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously read data into the specified streambuf until the streambuf's get area contains the specified delimiter. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -1699,7 +1699,7 @@ Start an asynchronous operation to read data into a streambuf until it contains 
       AsyncReadStream & s,
       asio::basic_streambuf< Allocator > & b,
       const std::string & delim,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously read data into the specified streambuf until the streambuf's get area contains the specified delimiter. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -1804,7 +1804,7 @@ Start an asynchronous operation to read data into a streambuf until some part of
       AsyncReadStream & s,
       asio::basic_streambuf< Allocator > & b,
       const boost::regex & expr,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously read data into the specified streambuf until the streambuf's get area contains some data that matches a regular expression. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -1911,7 +1911,7 @@ Start an asynchronous operation to read data into a streambuf until a function o
       AsyncReadStream & s,
       asio::basic_streambuf< Allocator > & b,
       MatchCondition match_condition,
-      const ReadHandler & handler,
+      ReadHandler handler,
       typename boost::enable_if< is_match_condition< MatchCondition > >::type *  = 0);
 
 
@@ -2048,7 +2048,7 @@ Start an asynchronous operation to write a certain amount of data to a stream.
   void ``[link asio.reference.async_write.overload1 async_write]``(
       AsyncWriteStream & s,
       const ConstBufferSequence & buffers,
-      const WriteHandler & handler);
+      WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_write.overload1 more...]]``
 
   template<
@@ -2060,7 +2060,7 @@ Start an asynchronous operation to write a certain amount of data to a stream.
       AsyncWriteStream & s,
       const ConstBufferSequence & buffers,
       CompletionCondition completion_condition,
-      const WriteHandler & handler);
+      WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_write.overload2 more...]]``
 
   template<
@@ -2070,7 +2070,7 @@ Start an asynchronous operation to write a certain amount of data to a stream.
   void ``[link asio.reference.async_write.overload3 async_write]``(
       AsyncWriteStream & s,
       basic_streambuf< Allocator > & b,
-      const WriteHandler & handler);
+      WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_write.overload3 more...]]``
 
   template<
@@ -2082,7 +2082,7 @@ Start an asynchronous operation to write a certain amount of data to a stream.
       AsyncWriteStream & s,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition,
-      const WriteHandler & handler);
+      WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_write.overload4 more...]]``
 
 [heading Requirements]
@@ -2105,7 +2105,7 @@ Start an asynchronous operation to write all of the supplied data to a stream.
   void async_write(
       AsyncWriteStream & s,
       const ConstBufferSequence & buffers,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to asynchronously write a certain number of bytes of data to a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -2175,7 +2175,7 @@ Start an asynchronous operation to write a certain amount of data to a stream.
       AsyncWriteStream & s,
       const ConstBufferSequence & buffers,
       CompletionCondition completion_condition,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to asynchronously write a certain number of bytes of data to a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -2258,7 +2258,7 @@ Start an asynchronous operation to write all of the supplied data to a stream.
   void async_write(
       AsyncWriteStream & s,
       basic_streambuf< Allocator > & b,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to asynchronously write a certain number of bytes of data to a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -2318,7 +2318,7 @@ Start an asynchronous operation to write a certain amount of data to a stream.
       AsyncWriteStream & s,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to asynchronously write a certain number of bytes of data to a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -2390,7 +2390,7 @@ Start an asynchronous operation to write a certain amount of data at the specifi
       AsyncRandomAccessWriteDevice & d,
       boost::uint64_t offset,
       const ConstBufferSequence & buffers,
-      const WriteHandler & handler);
+      WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_write_at.overload1 more...]]``
 
   template<
@@ -2403,7 +2403,7 @@ Start an asynchronous operation to write a certain amount of data at the specifi
       boost::uint64_t offset,
       const ConstBufferSequence & buffers,
       CompletionCondition completion_condition,
-      const WriteHandler & handler);
+      WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_write_at.overload2 more...]]``
 
   template<
@@ -2414,7 +2414,7 @@ Start an asynchronous operation to write a certain amount of data at the specifi
       AsyncRandomAccessWriteDevice & d,
       boost::uint64_t offset,
       basic_streambuf< Allocator > & b,
-      const WriteHandler & handler);
+      WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_write_at.overload3 more...]]``
 
   template<
@@ -2427,7 +2427,7 @@ Start an asynchronous operation to write a certain amount of data at the specifi
       boost::uint64_t offset,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition,
-      const WriteHandler & handler);
+      WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_write_at.overload4 more...]]``
 
 [heading Requirements]
@@ -2451,7 +2451,7 @@ Start an asynchronous operation to write all of the supplied data at the specifi
       AsyncRandomAccessWriteDevice & d,
       boost::uint64_t offset,
       const ConstBufferSequence & buffers,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to asynchronously write a certain number of bytes of data to a random access device at a specified offset. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -2524,7 +2524,7 @@ Start an asynchronous operation to write a certain amount of data at the specifi
       boost::uint64_t offset,
       const ConstBufferSequence & buffers,
       CompletionCondition completion_condition,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to asynchronously write a certain number of bytes of data to a random access device at a specified offset. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -2610,7 +2610,7 @@ Start an asynchronous operation to write all of the supplied data at the specifi
       AsyncRandomAccessWriteDevice & d,
       boost::uint64_t offset,
       basic_streambuf< Allocator > & b,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to asynchronously write a certain number of bytes of data to a random access device at a specified offset. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -2673,7 +2673,7 @@ Start an asynchronous operation to write a certain amount of data at the specifi
       boost::uint64_t offset,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to asynchronously write a certain number of bytes of data to a random access device at a specified offset. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -3238,7 +3238,7 @@ Start an asynchronous connect.
       typename ``[link asio.reference.ConnectHandler ConnectHandler]``>
   void async_connect(
       const endpoint_type & peer_endpoint,
-      const ConnectHandler & handler);
+      ConnectHandler handler);
 
 
 This function is used to asynchronously connect a socket to the specified remote endpoint. The function call always returns immediately.
@@ -3303,7 +3303,7 @@ Start an asynchronous receive on a connected socket.
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   void ``[link asio.reference.basic_datagram_socket.async_receive.overload1 async_receive]``(
       const MutableBufferSequence & buffers,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.async_receive.overload1 more...]]``
 
   template<
@@ -3312,7 +3312,7 @@ Start an asynchronous receive on a connected socket.
   void ``[link asio.reference.basic_datagram_socket.async_receive.overload2 async_receive]``(
       const MutableBufferSequence & buffers,
       socket_base::message_flags flags,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.async_receive.overload2 more...]]``
 
 
@@ -3327,7 +3327,7 @@ Start an asynchronous receive on a connected socket.
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   void async_receive(
       const MutableBufferSequence & buffers,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously receive data from the datagram socket. The function call always returns immediately.
@@ -3385,7 +3385,7 @@ Start an asynchronous receive on a connected socket.
   void async_receive(
       const MutableBufferSequence & buffers,
       socket_base::message_flags flags,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously receive data from the datagram socket. The function call always returns immediately.
@@ -3436,7 +3436,7 @@ Start an asynchronous receive.
   void ``[link asio.reference.basic_datagram_socket.async_receive_from.overload1 async_receive_from]``(
       const MutableBufferSequence & buffers,
       endpoint_type & sender_endpoint,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.async_receive_from.overload1 more...]]``
 
   template<
@@ -3446,7 +3446,7 @@ Start an asynchronous receive.
       const MutableBufferSequence & buffers,
       endpoint_type & sender_endpoint,
       socket_base::message_flags flags,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.async_receive_from.overload2 more...]]``
 
 
@@ -3462,7 +3462,7 @@ Start an asynchronous receive.
   void async_receive_from(
       const MutableBufferSequence & buffers,
       endpoint_type & sender_endpoint,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously receive a datagram. The function call always returns immediately.
@@ -3519,7 +3519,7 @@ Start an asynchronous receive.
       const MutableBufferSequence & buffers,
       endpoint_type & sender_endpoint,
       socket_base::message_flags flags,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously receive a datagram. The function call always returns immediately.
@@ -3566,7 +3566,7 @@ Start an asynchronous send on a connected socket.
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   void ``[link asio.reference.basic_datagram_socket.async_send.overload1 async_send]``(
       const ConstBufferSequence & buffers,
-      const WriteHandler & handler);
+      WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.async_send.overload1 more...]]``
 
   template<
@@ -3575,7 +3575,7 @@ Start an asynchronous send on a connected socket.
   void ``[link asio.reference.basic_datagram_socket.async_send.overload2 async_send]``(
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags,
-      const WriteHandler & handler);
+      WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.async_send.overload2 more...]]``
 
 
@@ -3590,7 +3590,7 @@ Start an asynchronous send on a connected socket.
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   void async_send(
       const ConstBufferSequence & buffers,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to send data on the datagram socket. The function call will block until the data has been sent successfully or an error occurs.
@@ -3648,7 +3648,7 @@ Start an asynchronous send on a connected socket.
   void async_send(
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to send data on the datagram socket. The function call will block until the data has been sent successfully or an error occurs.
@@ -3699,7 +3699,7 @@ Start an asynchronous send.
   void ``[link asio.reference.basic_datagram_socket.async_send_to.overload1 async_send_to]``(
       const ConstBufferSequence & buffers,
       const endpoint_type & destination,
-      const WriteHandler & handler);
+      WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.async_send_to.overload1 more...]]``
 
   template<
@@ -3709,7 +3709,7 @@ Start an asynchronous send.
       const ConstBufferSequence & buffers,
       const endpoint_type & destination,
       socket_base::message_flags flags,
-      const WriteHandler & handler);
+      WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.async_send_to.overload2 more...]]``
 
 
@@ -3725,7 +3725,7 @@ Start an asynchronous send.
   void async_send_to(
       const ConstBufferSequence & buffers,
       const endpoint_type & destination,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to asynchronously send a datagram to the specified remote endpoint. The function call always returns immediately.
@@ -3784,7 +3784,7 @@ Start an asynchronous send.
       const ConstBufferSequence & buffers,
       const endpoint_type & destination,
       socket_base::message_flags flags,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to asynchronously send a datagram to the specified remote endpoint. The function call always returns immediately.
@@ -8776,7 +8776,7 @@ Start an asynchronous wait on the timer.
   template<
       typename ``[link asio.reference.WaitHandler WaitHandler]``>
   void async_wait(
-      const WaitHandler & handler);
+      WaitHandler handler);
 
 
 This function may be used to initiate an asynchronous wait against the timer. It always returns immediately.
@@ -10704,7 +10704,7 @@ Start an asynchronous connect.
       typename ``[link asio.reference.ConnectHandler ConnectHandler]``>
   void async_connect(
       const endpoint_type & peer_endpoint,
-      const ConnectHandler & handler);
+      ConnectHandler handler);
 
 
 This function is used to asynchronously connect a socket to the specified remote endpoint. The function call always returns immediately.
@@ -10769,7 +10769,7 @@ Start an asynchronous receive on a connected socket.
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   void ``[link asio.reference.basic_raw_socket.async_receive.overload1 async_receive]``(
       const MutableBufferSequence & buffers,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_raw_socket.async_receive.overload1 more...]]``
 
   template<
@@ -10778,7 +10778,7 @@ Start an asynchronous receive on a connected socket.
   void ``[link asio.reference.basic_raw_socket.async_receive.overload2 async_receive]``(
       const MutableBufferSequence & buffers,
       socket_base::message_flags flags,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_raw_socket.async_receive.overload2 more...]]``
 
 
@@ -10793,7 +10793,7 @@ Start an asynchronous receive on a connected socket.
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   void async_receive(
       const MutableBufferSequence & buffers,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously receive data from the raw socket. The function call always returns immediately.
@@ -10851,7 +10851,7 @@ Start an asynchronous receive on a connected socket.
   void async_receive(
       const MutableBufferSequence & buffers,
       socket_base::message_flags flags,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously receive data from the raw socket. The function call always returns immediately.
@@ -10902,7 +10902,7 @@ Start an asynchronous receive.
   void ``[link asio.reference.basic_raw_socket.async_receive_from.overload1 async_receive_from]``(
       const MutableBufferSequence & buffers,
       endpoint_type & sender_endpoint,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_raw_socket.async_receive_from.overload1 more...]]``
 
   template<
@@ -10912,7 +10912,7 @@ Start an asynchronous receive.
       const MutableBufferSequence & buffers,
       endpoint_type & sender_endpoint,
       socket_base::message_flags flags,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_raw_socket.async_receive_from.overload2 more...]]``
 
 
@@ -10928,7 +10928,7 @@ Start an asynchronous receive.
   void async_receive_from(
       const MutableBufferSequence & buffers,
       endpoint_type & sender_endpoint,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously receive raw data. The function call always returns immediately.
@@ -10985,7 +10985,7 @@ Start an asynchronous receive.
       const MutableBufferSequence & buffers,
       endpoint_type & sender_endpoint,
       socket_base::message_flags flags,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously receive raw data. The function call always returns immediately.
@@ -11032,7 +11032,7 @@ Start an asynchronous send on a connected socket.
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   void ``[link asio.reference.basic_raw_socket.async_send.overload1 async_send]``(
       const ConstBufferSequence & buffers,
-      const WriteHandler & handler);
+      WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_raw_socket.async_send.overload1 more...]]``
 
   template<
@@ -11041,7 +11041,7 @@ Start an asynchronous send on a connected socket.
   void ``[link asio.reference.basic_raw_socket.async_send.overload2 async_send]``(
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags,
-      const WriteHandler & handler);
+      WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_raw_socket.async_send.overload2 more...]]``
 
 
@@ -11056,7 +11056,7 @@ Start an asynchronous send on a connected socket.
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   void async_send(
       const ConstBufferSequence & buffers,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to send data on the raw socket. The function call will block until the data has been sent successfully or an error occurs.
@@ -11114,7 +11114,7 @@ Start an asynchronous send on a connected socket.
   void async_send(
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to send data on the raw socket. The function call will block until the data has been sent successfully or an error occurs.
@@ -11165,7 +11165,7 @@ Start an asynchronous send.
   void ``[link asio.reference.basic_raw_socket.async_send_to.overload1 async_send_to]``(
       const ConstBufferSequence & buffers,
       const endpoint_type & destination,
-      const WriteHandler & handler);
+      WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_raw_socket.async_send_to.overload1 more...]]``
 
   template<
@@ -11175,7 +11175,7 @@ Start an asynchronous send.
       const ConstBufferSequence & buffers,
       const endpoint_type & destination,
       socket_base::message_flags flags,
-      const WriteHandler & handler);
+      WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_raw_socket.async_send_to.overload2 more...]]``
 
 
@@ -11191,7 +11191,7 @@ Start an asynchronous send.
   void async_send_to(
       const ConstBufferSequence & buffers,
       const endpoint_type & destination,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to asynchronously send raw data to the specified remote endpoint. The function call always returns immediately.
@@ -11250,7 +11250,7 @@ Start an asynchronous send.
       const ConstBufferSequence & buffers,
       const endpoint_type & destination,
       socket_base::message_flags flags,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to asynchronously send raw data to the specified remote endpoint. The function call always returns immediately.
@@ -16478,7 +16478,7 @@ Start an asynchronous connect.
       typename ``[link asio.reference.ConnectHandler ConnectHandler]``>
   void async_connect(
       const endpoint_type & peer_endpoint,
-      const ConnectHandler & handler);
+      ConnectHandler handler);
 
 
 This function is used to asynchronously connect a socket to the specified remote endpoint. The function call always returns immediately.
@@ -16544,7 +16544,7 @@ Start an asynchronous receive.
   void ``[link asio.reference.basic_seq_packet_socket.async_receive.overload1 async_receive]``(
       const MutableBufferSequence & buffers,
       socket_base::message_flags & out_flags,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_seq_packet_socket.async_receive.overload1 more...]]``
 
   template<
@@ -16554,7 +16554,7 @@ Start an asynchronous receive.
       const MutableBufferSequence & buffers,
       socket_base::message_flags in_flags,
       socket_base::message_flags & out_flags,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_seq_packet_socket.async_receive.overload2 more...]]``
 
 
@@ -16570,7 +16570,7 @@ Start an asynchronous receive.
   void async_receive(
       const MutableBufferSequence & buffers,
       socket_base::message_flags & out_flags,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously receive data from the sequenced packet socket. The function call always returns immediately.
@@ -16626,7 +16626,7 @@ Start an asynchronous receive.
       const MutableBufferSequence & buffers,
       socket_base::message_flags in_flags,
       socket_base::message_flags & out_flags,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously receive data from the sequenced data socket. The function call always returns immediately.
@@ -16687,7 +16687,7 @@ Start an asynchronous send.
   void async_send(
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to asynchronously send data on the sequenced packet socket. The function call always returns immediately.
@@ -21280,7 +21280,7 @@ Start an asynchronous read.
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   void async_read_some(
       const MutableBufferSequence & buffers,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously read data from the serial port. The function call always returns immediately.
@@ -21337,7 +21337,7 @@ Start an asynchronous write.
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   void async_write_some(
       const ConstBufferSequence & buffers,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to asynchronously write data to the serial port. The function call always returns immediately.
@@ -23232,7 +23232,7 @@ Start an asynchronous operation to wait for a signal to be delivered.
   template<
       typename ``[link asio.reference.SignalHandler SignalHandler]``>
   void async_wait(
-      const SignalHandler & handler);
+      SignalHandler handler);
 
 
 This function may be used to initiate an asynchronous wait against the signal set. It always returns immediately.
@@ -24434,7 +24434,7 @@ Start an asynchronous connect.
       typename ``[link asio.reference.ConnectHandler ConnectHandler]``>
   void async_connect(
       const endpoint_type & peer_endpoint,
-      const ConnectHandler & handler);
+      ConnectHandler handler);
 
 
 This function is used to asynchronously connect a socket to the specified remote endpoint. The function call always returns immediately.
@@ -29048,7 +29048,7 @@ Start an asynchronous accept.
       typename ``[link asio.reference.AcceptHandler AcceptHandler]``>
   void ``[link asio.reference.basic_socket_acceptor.async_accept.overload1 async_accept]``(
       basic_socket< protocol_type, SocketService > & peer,
-      const AcceptHandler & handler);
+      AcceptHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_socket_acceptor.async_accept.overload1 more...]]``
 
   template<
@@ -29057,7 +29057,7 @@ Start an asynchronous accept.
   void ``[link asio.reference.basic_socket_acceptor.async_accept.overload2 async_accept]``(
       basic_socket< protocol_type, SocketService > & peer,
       endpoint_type & peer_endpoint,
-      const AcceptHandler & handler);
+      AcceptHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_socket_acceptor.async_accept.overload2 more...]]``
 
 
@@ -29072,7 +29072,7 @@ Start an asynchronous accept.
       typename ``[link asio.reference.AcceptHandler AcceptHandler]``>
   void async_accept(
       basic_socket< protocol_type, SocketService > & peer,
-      const AcceptHandler & handler);
+      AcceptHandler handler);
 
 
 This function is used to asynchronously accept a new connection into a socket. The function call always returns immediately.
@@ -29137,7 +29137,7 @@ Start an asynchronous accept.
   void async_accept(
       basic_socket< protocol_type, SocketService > & peer,
       endpoint_type & peer_endpoint,
-      const AcceptHandler & handler);
+      AcceptHandler handler);
 
 
 This function is used to asynchronously accept a new connection into a socket, and additionally obtain the endpoint of the remote peer. The function call always returns immediately.
@@ -32863,7 +32863,7 @@ Start an asynchronous connect.
       typename ``[link asio.reference.ConnectHandler ConnectHandler]``>
   void async_connect(
       const endpoint_type & peer_endpoint,
-      const ConnectHandler & handler);
+      ConnectHandler handler);
 
 
 This function is used to asynchronously connect a socket to the specified remote endpoint. The function call always returns immediately.
@@ -37440,7 +37440,7 @@ Start an asynchronous connect.
       typename ``[link asio.reference.ConnectHandler ConnectHandler]``>
   void async_connect(
       const endpoint_type & peer_endpoint,
-      const ConnectHandler & handler);
+      ConnectHandler handler);
 
 
 This function is used to asynchronously connect a socket to the specified remote endpoint. The function call always returns immediately.
@@ -37506,7 +37506,7 @@ Start an asynchronous read.
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   void async_read_some(
       const MutableBufferSequence & buffers,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously read data from the stream socket. The function call always returns immediately.
@@ -37562,7 +37562,7 @@ Start an asynchronous receive.
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   void ``[link asio.reference.basic_stream_socket.async_receive.overload1 async_receive]``(
       const MutableBufferSequence & buffers,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_stream_socket.async_receive.overload1 more...]]``
 
   template<
@@ -37571,7 +37571,7 @@ Start an asynchronous receive.
   void ``[link asio.reference.basic_stream_socket.async_receive.overload2 async_receive]``(
       const MutableBufferSequence & buffers,
       socket_base::message_flags flags,
-      const ReadHandler & handler);
+      ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_stream_socket.async_receive.overload2 more...]]``
 
 
@@ -37586,7 +37586,7 @@ Start an asynchronous receive.
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   void async_receive(
       const MutableBufferSequence & buffers,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously receive data from the stream socket. The function call always returns immediately.
@@ -37644,7 +37644,7 @@ Start an asynchronous receive.
   void async_receive(
       const MutableBufferSequence & buffers,
       socket_base::message_flags flags,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously receive data from the stream socket. The function call always returns immediately.
@@ -37704,7 +37704,7 @@ Start an asynchronous send.
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   void ``[link asio.reference.basic_stream_socket.async_send.overload1 async_send]``(
       const ConstBufferSequence & buffers,
-      const WriteHandler & handler);
+      WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_stream_socket.async_send.overload1 more...]]``
 
   template<
@@ -37713,7 +37713,7 @@ Start an asynchronous send.
   void ``[link asio.reference.basic_stream_socket.async_send.overload2 async_send]``(
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags,
-      const WriteHandler & handler);
+      WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.basic_stream_socket.async_send.overload2 more...]]``
 
 
@@ -37728,7 +37728,7 @@ Start an asynchronous send.
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   void async_send(
       const ConstBufferSequence & buffers,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to asynchronously send data on the stream socket. The function call always returns immediately.
@@ -37786,7 +37786,7 @@ Start an asynchronous send.
   void async_send(
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to asynchronously send data on the stream socket. The function call always returns immediately.
@@ -37847,7 +37847,7 @@ Start an asynchronous write.
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   void async_write_some(
       const ConstBufferSequence & buffers,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to asynchronously write data to the stream socket. The function call always returns immediately.
@@ -50612,7 +50612,7 @@ Start an asynchronous connect.
   void async_connect(
       implementation_type & impl,
       const endpoint_type & peer_endpoint,
-      const ConnectHandler & handler);
+      ConnectHandler handler);
 
 
 
@@ -50633,7 +50633,7 @@ Start an asynchronous receive.
       implementation_type & impl,
       const MutableBufferSequence & buffers,
       socket_base::message_flags flags,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 
@@ -50655,7 +50655,7 @@ Start an asynchronous receive that will get the endpoint of the sender.
       const MutableBufferSequence & buffers,
       endpoint_type & sender_endpoint,
       socket_base::message_flags flags,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 
@@ -50676,7 +50676,7 @@ Start an asynchronous send.
       implementation_type & impl,
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 
@@ -50698,7 +50698,7 @@ Start an asynchronous send.
       const ConstBufferSequence & buffers,
       const endpoint_type & destination,
       socket_base::message_flags flags,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 
@@ -51749,7 +51749,7 @@ Default service implementation for a timer.
       typename ``[link asio.reference.WaitHandler WaitHandler]``>
   void async_wait(
       implementation_type & impl,
-      const WaitHandler & handler);
+      WaitHandler handler);
 
 
 
@@ -53588,7 +53588,7 @@ Request the [link asio.reference.io_service `io_service`] to invoke the given ha
   template<
       typename ``[link asio.reference.CompletionHandler CompletionHandler]``>
   void dispatch(
-      const CompletionHandler & handler);
+      CompletionHandler handler);
 
 
 This function is used to ask the [link asio.reference.io_service `io_service`] to execute the given handler.
@@ -54004,7 +54004,7 @@ Request the [link asio.reference.io_service `io_service`] to invoke the given ha
   template<
       typename ``[link asio.reference.CompletionHandler CompletionHandler]``>
   void post(
-      const CompletionHandler & handler);
+      CompletionHandler handler);
 
 
 This function is used to ask the [link asio.reference.io_service `io_service`] to execute the given handler, but without allowing the [link asio.reference.io_service `io_service`] to call the handler from inside this function.
@@ -54678,7 +54678,7 @@ Request the strand to invoke the given handler.
   template<
       typename ``[link asio.reference.CompletionHandler CompletionHandler]``>
   void dispatch(
-      const CompletionHandler & handler);
+      CompletionHandler handler);
 
 
 This function is used to ask the strand to execute the given handler.
@@ -54740,7 +54740,7 @@ Request the strand to invoke the given handler and return immediately.
   template<
       typename ``[link asio.reference.CompletionHandler CompletionHandler]``>
   void post(
-      const CompletionHandler & handler);
+      CompletionHandler handler);
 
 
 This function is used to ask the strand to execute the given handler, but without allowing the strand to call the handler from inside this function.
@@ -58338,7 +58338,7 @@ Asynchronously perform forward resolution of a query to a list of entries.
       typename ``[link asio.reference.ResolveHandler ResolveHandler]``>
   void ``[link asio.reference.ip__basic_resolver.async_resolve.overload1 async_resolve]``(
       const query & q,
-      const ResolveHandler & handler);
+      ResolveHandler handler);
   ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver.async_resolve.overload1 more...]]``
 
 
@@ -58349,7 +58349,7 @@ Asynchronously perform reverse resolution of an endpoint to a list of entries.
       typename ``[link asio.reference.ResolveHandler ResolveHandler]``>
   void ``[link asio.reference.ip__basic_resolver.async_resolve.overload2 async_resolve]``(
       const endpoint_type & e,
-      const ResolveHandler & handler);
+      ResolveHandler handler);
   ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver.async_resolve.overload2 more...]]``
 
 
@@ -58363,7 +58363,7 @@ Asynchronously perform forward resolution of a query to a list of entries.
       typename ``[link asio.reference.ResolveHandler ResolveHandler]``>
   void async_resolve(
       const query & q,
-      const ResolveHandler & handler);
+      ResolveHandler handler);
 
 
 This function is used to asynchronously resolve a query into a list of endpoint entries.
@@ -58411,7 +58411,7 @@ Asynchronously perform reverse resolution of an endpoint to a list of entries.
       typename ``[link asio.reference.ResolveHandler ResolveHandler]``>
   void async_resolve(
       const endpoint_type & e,
-      const ResolveHandler & handler);
+      ResolveHandler handler);
 
 
 This function is used to asynchronously resolve an endpoint into a list of endpoint entries.
@@ -62121,7 +62121,7 @@ Asynchronously resolve a query to a list of entries.
   void ``[link asio.reference.ip__resolver_service.async_resolve.overload1 async_resolve]``(
       implementation_type & impl,
       const query_type & query,
-      const ResolveHandler & handler);
+      ResolveHandler handler);
   ``  [''''&raquo;''' [link asio.reference.ip__resolver_service.async_resolve.overload1 more...]]``
 
 
@@ -62133,7 +62133,7 @@ Asynchronously resolve an endpoint to a list of entries.
   void ``[link asio.reference.ip__resolver_service.async_resolve.overload2 async_resolve]``(
       implementation_type & impl,
       const endpoint_type & endpoint,
-      const ResolveHandler & handler);
+      ResolveHandler handler);
   ``  [''''&raquo;''' [link asio.reference.ip__resolver_service.async_resolve.overload2 more...]]``
 
 
@@ -62148,7 +62148,7 @@ Asynchronously resolve a query to a list of entries.
   void async_resolve(
       implementation_type & impl,
       const query_type & query,
-      const ResolveHandler & handler);
+      ResolveHandler handler);
 
 
 
@@ -62167,7 +62167,7 @@ Asynchronously resolve an endpoint to a list of entries.
   void async_resolve(
       implementation_type & impl,
       const endpoint_type & endpoint,
-      const ResolveHandler & handler);
+      ResolveHandler handler);
 
 
 
@@ -70622,7 +70622,7 @@ Start an asynchronous read.
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   void async_read_some(
       const MutableBufferSequence & buffers,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously read data from the stream descriptor. The function call always returns immediately.
@@ -70679,7 +70679,7 @@ Start an asynchronous write.
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   void async_write_some(
       const ConstBufferSequence & buffers,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to asynchronously write data to the stream descriptor. The function call always returns immediately.
@@ -72963,7 +72963,7 @@ Start an asynchronous read.
   void async_read_some(
       implementation_type & impl,
       const MutableBufferSequence & buffers,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 
@@ -72983,7 +72983,7 @@ Start an asynchronous write.
   void async_write_some(
       implementation_type & impl,
       const ConstBufferSequence & buffers,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 
@@ -73702,7 +73702,7 @@ Start an asynchronous connect.
   void async_connect(
       implementation_type & impl,
       const endpoint_type & peer_endpoint,
-      const ConnectHandler & handler);
+      ConnectHandler handler);
 
 
 
@@ -73723,7 +73723,7 @@ Start an asynchronous receive.
       implementation_type & impl,
       const MutableBufferSequence & buffers,
       socket_base::message_flags flags,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 
@@ -73745,7 +73745,7 @@ Start an asynchronous receive that will get the endpoint of the sender.
       const MutableBufferSequence & buffers,
       endpoint_type & sender_endpoint,
       socket_base::message_flags flags,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 
@@ -73766,7 +73766,7 @@ Start an asynchronous send.
       implementation_type & impl,
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 
@@ -73788,7 +73788,7 @@ Start an asynchronous send.
       const ConstBufferSequence & buffers,
       const endpoint_type & destination,
       socket_base::message_flags flags,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 
@@ -76815,7 +76815,7 @@ Start an asynchronous connect.
   void async_connect(
       implementation_type & impl,
       const endpoint_type & peer_endpoint,
-      const ConnectHandler & handler);
+      ConnectHandler handler);
 
 
 
@@ -76837,7 +76837,7 @@ Start an asynchronous receive.
       const MutableBufferSequence & buffers,
       socket_base::message_flags in_flags,
       socket_base::message_flags & out_flags,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 
@@ -76858,7 +76858,7 @@ Start an asynchronous send.
       implementation_type & impl,
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 
@@ -78622,7 +78622,7 @@ Start an asynchronous read.
   void async_read_some(
       implementation_type & impl,
       const MutableBufferSequence & buffers,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 
@@ -78642,7 +78642,7 @@ Start an asynchronous write.
   void async_write_some(
       implementation_type & impl,
       const ConstBufferSequence & buffers,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 
@@ -79350,7 +79350,7 @@ Add a signal to a signal\_set.
       typename ``[link asio.reference.SignalHandler SignalHandler]``>
   void async_wait(
       implementation_type & impl,
-      const SignalHandler & handler);
+      SignalHandler handler);
 
 
 
@@ -79753,7 +79753,7 @@ Start an asynchronous accept.
       implementation_type & impl,
       basic_socket< protocol_type, SocketService > & peer,
       endpoint_type * peer_endpoint,
-      const AcceptHandler & handler);
+      AcceptHandler handler);
 
 
 
@@ -83814,7 +83814,7 @@ Start an asynchronous SSL handshake.
       typename ``[link asio.reference.HandshakeHandler HandshakeHandler]``>
   void async_handshake(
       handshake_type type,
-      const HandshakeHandler & handler);
+      HandshakeHandler handler);
 
 
 This function is used to asynchronously perform an SSL handshake on the stream. This function call always returns immediately.
@@ -83855,7 +83855,7 @@ Start an asynchronous read.
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   void async_read_some(
       const MutableBufferSequence & buffers,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously read one or more bytes of data from the stream. The function call always returns immediately.
@@ -83900,7 +83900,7 @@ Asynchronously shut down SSL on the stream.
   template<
       typename ``[link asio.reference.ShutdownHandler ShutdownHandler]``>
   void async_shutdown(
-      const ShutdownHandler & handler);
+      ShutdownHandler handler);
 
 
 This function is used to asynchronously shut down SSL on the stream. This function call always returns immediately.
@@ -83939,7 +83939,7 @@ Start an asynchronous write.
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   void async_write_some(
       const ConstBufferSequence & buffers,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to asynchronously write one or more bytes of data to the stream. The function call always returns immediately.
@@ -85671,7 +85671,7 @@ Start an asynchronous connect.
   void async_connect(
       implementation_type & impl,
       const endpoint_type & peer_endpoint,
-      const ConnectHandler & handler);
+      ConnectHandler handler);
 
 
 
@@ -85692,7 +85692,7 @@ Start an asynchronous receive.
       implementation_type & impl,
       const MutableBufferSequence & buffers,
       socket_base::message_flags flags,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 
@@ -85713,7 +85713,7 @@ Start an asynchronous send.
       implementation_type & impl,
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 
@@ -88554,7 +88554,7 @@ Start an asynchronous read at the specified offset.
   void async_read_some_at(
       boost::uint64_t offset,
       const MutableBufferSequence & buffers,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously read data from the random-access handle. The function call always returns immediately.
@@ -88614,7 +88614,7 @@ Start an asynchronous write at the specified offset.
   void async_write_some_at(
       boost::uint64_t offset,
       const ConstBufferSequence & buffers,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to asynchronously write data to the random-access handle. The function call always returns immediately.
@@ -90060,7 +90060,7 @@ Start an asynchronous read.
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   void async_read_some(
       const MutableBufferSequence & buffers,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 This function is used to asynchronously read data from the stream handle. The function call always returns immediately.
@@ -90117,7 +90117,7 @@ Start an asynchronous write.
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   void async_write_some(
       const ConstBufferSequence & buffers,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 This function is used to asynchronously write data to the stream handle. The function call always returns immediately.
@@ -91436,7 +91436,7 @@ Construct an [link asio.reference.windows__overlapped_ptr `windows::overlapped_p
       typename ``[link asio.reference.Handler Handler]``>
   explicit ``[link asio.reference.windows__overlapped_ptr.overlapped_ptr.overload2 overlapped_ptr]``(
       asio::io_service & io_service,
-      const Handler & handler);
+      Handler handler);
   ``  [''''&raquo;''' [link asio.reference.windows__overlapped_ptr.overlapped_ptr.overload2 more...]]``
 
 
@@ -91464,7 +91464,7 @@ Construct an [link asio.reference.windows__overlapped_ptr `windows::overlapped_p
       typename ``[link asio.reference.Handler Handler]``>
   overlapped_ptr(
       asio::io_service & io_service,
-      const Handler & handler);
+      Handler handler);
 
 
 
@@ -91504,7 +91504,7 @@ Reset to contain the specified handler, freeing any current OVERLAPPED object.
       typename ``[link asio.reference.Handler Handler]``>
   void ``[link asio.reference.windows__overlapped_ptr.reset.overload2 reset]``(
       asio::io_service & io_service,
-      const Handler & handler);
+      Handler handler);
   ``  [''''&raquo;''' [link asio.reference.windows__overlapped_ptr.reset.overload2 more...]]``
 
 
@@ -91532,7 +91532,7 @@ Reset to contain the specified handler, freeing any current OVERLAPPED object.
       typename ``[link asio.reference.Handler Handler]``>
   void reset(
       asio::io_service & io_service,
-      const Handler & handler);
+      Handler handler);
 
 
 
@@ -91916,7 +91916,7 @@ Start an asynchronous read at the specified offset.
       implementation_type & impl,
       boost::uint64_t offset,
       const MutableBufferSequence & buffers,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 
@@ -91937,7 +91937,7 @@ Start an asynchronous write at the specified offset.
       implementation_type & impl,
       boost::uint64_t offset,
       const ConstBufferSequence & buffers,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 
@@ -92594,7 +92594,7 @@ Start an asynchronous read.
   void async_read_some(
       implementation_type & impl,
       const MutableBufferSequence & buffers,
-      const ReadHandler & handler);
+      ReadHandler handler);
 
 
 
@@ -92614,7 +92614,7 @@ Start an asynchronous write.
   void async_write_some(
       implementation_type & impl,
       const ConstBufferSequence & buffers,
-      const WriteHandler & handler);
+      WriteHandler handler);
 
 
 
