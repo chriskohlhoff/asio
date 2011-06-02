@@ -51,6 +51,60 @@ asio.reference.read read()], [link asio.reference.async_read async_read()],
 async_write()], [link asio.reference.read_until read_until()] or [link
 asio.reference.async_read_until async_read_until()] free functions.
 
+[heading Certificate Verification]
+
+Asio provides various methods for configuring the way SSL certificates are
+verified:
+
+  * [link asio.reference.ssl__context.set_default_verify_paths ssl::context::set_default_verify_paths()]
+  * [link asio.reference.ssl__context.set_verify_mode ssl::context::set_verify_mode()]
+  * [link asio.reference.ssl__context.set_verify_callback ssl::context::set_verify_callback()]
+  * [link asio.reference.ssl__context.load_verify_file ssl::context::load_verify_file()]
+  * [link asio.reference.ssl__stream.set_verify_mode ssl::stream::set_verify_mode()]
+  * [link asio.reference.ssl__stream.set_verify_callback ssl::stream::set_verify_callback()]
+
+To simplify use cases where certificates are verified according to the rules in
+RFC 2818 (certificate verification for HTTPS), Asio provides a reusable
+verification callback as a function object:
+
+  * [link asio.reference.ssl__rfc2818_verification ssl::rfc2818_verification]
+
+The following example shows verification of a remote host's certificate
+according to the rules used by HTTPS:
+
+  using asio::ip::tcp;
+  namespace ssl = asio::ssl;
+  typedef ssl::stream<tcp::socket> ssl_socket;
+
+  // Create a context that uses the default paths for
+  // finding CA certificates.
+  ssl::context ctx(ssl::context::sslv23);
+  ctx.set_default_verify_paths();
+
+  // Open a socket and connect it to the remote host.
+  asio::io_service io_service;
+  ssl_socket sock(io_service, ctx);
+  tcp::resolver resolver(io_service);
+  tcp::resolver::query query("host.name", "https");
+  asio::connect(sock.lowest_layer(), resolver.resolve(query));
+  sock.lowest_layer().set_option(tcp::no_delay(true));
+
+  // Perform SSL handshake and verify the remote host's
+  // certificate.
+  sock.set_verify_mode(ssl::verify_peer);
+  sock.set_verify_callback(ssl::rfc2818_verification("host.name"));
+  sock.handshake(ssl_socket::client);
+
+  // ... read and write as normal ...
+
+[heading SSL and Threads]
+
+SSL stream objects perform no locking of their own. Therefore, it is essential
+that all asynchronous SSL operations are performed in an implicit or explicit
+[link asio.overview.core.strands strand]. Note that this means that no
+synchronisation is required (and so no locking overhead is incurred) in single
+threaded programs.
+ 
 [heading See Also]
 
 [link asio.reference.ssl__context ssl::context],
