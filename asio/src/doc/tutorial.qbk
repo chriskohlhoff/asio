@@ -205,7 +205,7 @@ Using asio's asynchronous functionality means having a callback function that wi
 Next, instead of doing a blocking wait as in tutorial Timer.1, we call the [link asio.reference.basic_deadline_timer.async_wait deadline_timer::async_wait()] function to perform an asynchronous wait. When calling this function we pass the `print` callback handler that was defined above.
 
 
-  ``''''''``  t.async_wait(print);
+  ``''''''``  t.async_wait(&print);
 
 
 
@@ -262,7 +262,7 @@ Next: [link asio.tutorial.tuttimer3 Timer.3 - Binding arguments to a handler]
   ``''''''``  asio::io_service io;
 
   ``''''''``  asio::deadline_timer t(io, boost::posix_time::seconds(5));
-  ``''''''``  t.async_wait(print);
+  ``''''''``  t.async_wait(&print);
 
   ``''''''``  io.run();
 
@@ -1254,8 +1254,9 @@ The function `handle_accept()` is called when the asynchronous accept operation 
   ``''''''``    if (!error)
   ``''''''``    {
   ``''''''``      new_connection->start();
-  ``''''''``      start_accept();
   ``''''''``    }
+
+  ``''''''``    start_accept();
   ``''''''``  }
 
 
@@ -1458,8 +1459,9 @@ Next: [link asio.tutorial.tutdaytime4 Daytime.4 - A synchronous UDP daytime clie
   ``''''''``    if (!error)
   ``''''''``    {
   ``''''''``      new_connection->start();
-  ``''''''``      start_accept();
   ``''''''``    }
+
+  ``''''''``    start_accept();
   ``''''''``  }
 
   ``''''''``  tcp::acceptor acceptor_;
@@ -2156,8 +2158,9 @@ The following two classes are taken from [link asio.tutorial.tutdaytime3 Daytime
   ``''''''``    if (!error)
   ``''''''``    {
   ``''''''``      new_connection->start();
-  ``''''''``      start_accept();
   ``''''''``    }
+
+  ``''''''``    start_accept();
   ``''''''``  }
 
   ``''''''``  tcp::acceptor acceptor_;
@@ -2317,8 +2320,9 @@ Previous: [link asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP daytim
   ``''''''``    if (!error)
   ``''''''``    {
   ``''''''``      new_connection->start();
-  ``''''''``      start_accept();
   ``''''''``    }
+
+  ``''''''``    start_accept();
   ``''''''``  }
 
   ``''''''``  tcp::acceptor acceptor_;
