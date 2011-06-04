@@ -288,6 +288,13 @@ sub copy_source_file
       print_line($output, $1 . "[authors [Kohlhoff, Christopher]]", $from, $lineno);
       print_line($output, $line, $from, $lineno);
     }
+    elsif ($line =~ /boostify: non-boost docs start here/)
+    { 
+      while ($line = <$input>)
+      {
+        last if $line =~ /boostify: non-boost docs end here/;
+      }
+    }
     elsif ($line =~ /^$/ && $needs_doc_link)
     {
       $needs_doc_link = 0;
