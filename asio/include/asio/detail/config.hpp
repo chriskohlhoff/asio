@@ -58,14 +58,14 @@
 #endif // !defined(ASIO_DISABLE_MOVE)
 
 // If ASIO_MOVE_CAST isn't defined, and move support is available, define
-// ASIO_MOVE_ARG and ASIO_MOVE_CAST to take advantage of rvalue references and
-// perfect forwarding.
+// ASIO_MOVE_ARG and ASIO_MOVE_CAST to take advantage of rvalue
+// references and perfect forwarding.
 #if defined(ASIO_HAS_MOVE) && !defined(ASIO_MOVE_CAST)
 # define ASIO_MOVE_ARG(type) type&&
 # define ASIO_MOVE_CAST(type) static_cast<type&&>
 #endif // defined(ASIO_HAS_MOVE) && !defined(ASIO_MOVE_CAST)
 
-// If ASIO_MOVE_CAST still isn't defined then default to a C++03-compatible
+// If ASIO_MOVE_CAST still isn't defined, default to a C++03-compatible
 // implementation. Note that older g++ and MSVC versions don't like it when you
 // pass a non-member function through a const reference, so for most compilers
 // we'll play it safe and stick with the old approach of passing the handler by
