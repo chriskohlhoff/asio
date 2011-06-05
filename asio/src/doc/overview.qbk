@@ -33,6 +33,7 @@
   * [link asio.overview.windows.stream_handle Stream-Oriented HANDLEs]
   * [link asio.overview.windows.random_access_handle Random-Access HANDLEs]
 * [link asio.overview.ssl SSL]
+* [link asio.overview.cpp2011 C++ 2011 Support]
 * [link asio.overview.implementation Platform-Specific Implementation Notes]
 
 [include overview/rationale.qbk]
