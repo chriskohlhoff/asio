@@ -31,15 +31,17 @@ struct tick_count_traits
     DWORD ticks_;
   };
 
-  // The duration type.
+  // The duration type. According to the TimeTraits requirements, the duration
+  // must be a signed type. This means we can't handle durations larger than
+  // 2^31.
   class duration_type
   {
   public:
     duration_type() : ticks_(0) {}
-    duration_type(DWORD ticks) : ticks_(ticks) {}
+    duration_type(LONG ticks) : ticks_(ticks) {}
   private:
     friend struct tick_count_traits;
-    DWORD ticks_;
+    LONG ticks_;
   };
 
   // Get the current time.
@@ -61,7 +63,12 @@ struct tick_count_traits
   // Subtract one time from another.
   static duration_type subtract(const time_type& t1, const time_type& t2)
   {
-    return duration_type(t1.ticks_ - t2.ticks_);
+    // DWORD tick count values can wrap (see less_than() below). We'll convert
+    // to a duration by taking the absolute difference and adding the sign
+    // based on which is the "lesser" absolute time.
+    return duration_type(less_than(t1, t2)
+        ? -static_cast<LONG>(t2.ticks_ - t1.ticks_)
+        : static_cast<LONG>(t1.ticks_ - t2.ticks_));
   }
 
   // Test whether one time is less than another.
