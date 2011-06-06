@@ -944,6 +944,56 @@
 ]
 </xsl:if>
 
+<xsl:if test="$class-name = 'io_service::service'">
+<xsl:if test="count(sectiondef[@kind='private-func']) > 0">
+[heading Private Member Functions]
+[table
+  [[Name][Description]]
+<xsl:for-each select="sectiondef[@kind='private-func']/memberdef" mode="class-table">
+  <xsl:sort select="name"/>
+  <xsl:variable name="name">
+    <xsl:value-of select="name"/>
+  </xsl:variable>
+  <xsl:variable name="id">
+    <xsl:call-template name="make-id">
+      <xsl:with-param name="name" select="$name"/>
+    </xsl:call-template>
+  </xsl:variable>
+  <xsl:variable name="doxygen-id">
+    <xsl:value-of select="@id"/>
+  </xsl:variable>
+  <xsl:variable name="overload-count">
+    <xsl:value-of select="count(../memberdef[name = $name])"/>
+  </xsl:variable>
+  <xsl:variable name="overload-position">
+    <xsl:for-each select="../memberdef[name = $name]">
+      <xsl:if test="@id = $doxygen-id">
+        <xsl:value-of select="position()"/>
+      </xsl:if>
+    </xsl:for-each>
+  </xsl:variable>
+  <xsl:if test="$overload-position = 1">
+  [
+    [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="$id"/>
+      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/><xsl:text>]]]
+    [</xsl:text><xsl:value-of select="briefdescription"/>
+  </xsl:if>
+  <xsl:if test="not($overload-position = 1) and not(briefdescription = preceding-sibling::*/briefdescription)">
+    <xsl:value-of select="$newline"/>
+    <xsl:value-of select="$newline"/>
+    <xsl:text>     </xsl:text>
+    <xsl:value-of select="briefdescription"/>
+  </xsl:if>
+  <xsl:if test="$overload-position = $overload-count">
+  <xsl:text>]
+  ]
+  </xsl:text>
+  </xsl:if>
+</xsl:for-each>
+]
+</xsl:if>
+</xsl:if>
+
 <xsl:if test="count(sectiondef[@kind='public-attrib' or @kind='public-static-attrib']) > 0">
 [heading Data Members]
 [table
@@ -1083,6 +1133,14 @@
   <xsl:with-param name="class-id" select="$class-id"/>
   <xsl:with-param name="class-file" select="$class-file"/>
 </xsl:apply-templates>
+<xsl:if test="$class-name = 'io_service::service'">
+  <xsl:apply-templates select="sectiondef[@kind='private-func']/memberdef[not(type = 'friend class') and not(contains(name, '_helper'))]" mode="class-detail">
+    <xsl:sort select="name"/>
+    <xsl:with-param name="class-name" select="$class-name"/>
+    <xsl:with-param name="class-id" select="$class-id"/>
+    <xsl:with-param name="class-file" select="$class-file"/>
+  </xsl:apply-templates>
+</xsl:if>
 </xsl:template>
 
 
