@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_IMPL_SRC_HPP
-#define ASIO_IMPL_SRC_HPP
+#ifndef ASIO_SSL_IMPL_SRC_HPP
+#define ASIO_SSL_IMPL_SRC_HPP
 
 #define ASIO_SOURCE
 
@@ -25,4 +25,4 @@
 #include "asio/ssl/detail/impl/openssl_init.ipp"
 #include "asio/ssl/impl/rfc2818_verification.ipp"
 
-#endif // ASIO_IMPL_SRC_HPP
+#endif // ASIO_SSL_IMPL_SRC_HPP
