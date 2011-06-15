@@ -12,6 +12,7 @@ tracking. When enabled by defining `ASIO_ENABLE_HANDLER_TRACKING`, Asio
 writes debugging output to the standard error stream. The output records
 asynchronous operations and the relationships between their handlers.
 
+[teletype]
 This feature is useful when debugging and you need to know how your
 asynchronous operations are chained together, or what the pending asynchronous
 operations are. As an illustration, here is the output when you run the HTTP
@@ -96,5 +97,6 @@ was performed outside of any handler.
 The handler tracking output may be post-processed using the included
 [^handlerviz.pl] tool to create a visual representation of the handlers
 (requires the GraphViz tool [^dot]).
+[c++]
 
 [endsect]
