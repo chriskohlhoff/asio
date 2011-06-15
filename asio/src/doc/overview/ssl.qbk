@@ -56,18 +56,18 @@ asio.reference.async_read_until async_read_until()] free functions.
 Asio provides various methods for configuring the way SSL certificates are
 verified:
 
-  * [link asio.reference.ssl__context.set_default_verify_paths ssl::context::set_default_verify_paths()]
-  * [link asio.reference.ssl__context.set_verify_mode ssl::context::set_verify_mode()]
-  * [link asio.reference.ssl__context.set_verify_callback ssl::context::set_verify_callback()]
-  * [link asio.reference.ssl__context.load_verify_file ssl::context::load_verify_file()]
-  * [link asio.reference.ssl__stream.set_verify_mode ssl::stream::set_verify_mode()]
-  * [link asio.reference.ssl__stream.set_verify_callback ssl::stream::set_verify_callback()]
+* [link asio.reference.ssl__context.set_default_verify_paths ssl::context::set_default_verify_paths()]
+* [link asio.reference.ssl__context.set_verify_mode ssl::context::set_verify_mode()]
+* [link asio.reference.ssl__context.set_verify_callback ssl::context::set_verify_callback()]
+* [link asio.reference.ssl__context.load_verify_file ssl::context::load_verify_file()]
+* [link asio.reference.ssl__stream.set_verify_mode ssl::stream::set_verify_mode()]
+* [link asio.reference.ssl__stream.set_verify_callback ssl::stream::set_verify_callback()]
 
 To simplify use cases where certificates are verified according to the rules in
 RFC 2818 (certificate verification for HTTPS), Asio provides a reusable
 verification callback as a function object:
 
-  * [link asio.reference.ssl__rfc2818_verification ssl::rfc2818_verification]
+* [link asio.reference.ssl__rfc2818_verification ssl::rfc2818_verification]
 
 The following example shows verification of a remote host's certificate
 according to the rules used by HTTPS:
