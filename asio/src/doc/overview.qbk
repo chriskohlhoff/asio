@@ -82,6 +82,7 @@
 [include overview/posix.qbk]
 [include overview/windows.qbk]
 [include overview/ssl.qbk]
+[include overview/cpp2011.qbk]
 [include overview/implementation.qbk]
 
 [endsect]
