@@ -7,6 +7,36 @@
 
 [section:history Revision History]
 
+[heading Asio 1.6.0]
+
+* Improved support for C++0x move construction to further reduce copying of
+  handler objects. In certain designs it is possible to eliminate virtually all
+  copies. Move support is now enabled when compiling in [^-std=c++0x] mode on
+  g++ 4.5 or higher.
+
+* Added build support for platforms that don't provide either of `signal()` or
+  `sigaction()`.
+
+* Changed to use C++0x variadic templates when they are available, rather than
+  generating function overloads using the Boost.Preprocessor library.
+
+* Ensured the value of `errno` is preserved across the implementation's signal
+  handler.
+
+* On Windows, ensured the count of outstanding work is decremented for
+  abandoned operations (i.e. operations that are being cleaned up within the
+  `io_service` destructor).
+
+* Fixed behaviour of zero-length reads and writes in the new SSL implementation.
+
+* Added support for building with OpenSSL 1.0 when `OPENSSL_NO_SSL2` is defined.
+
+* Changed most examples to treat a failure by an accept operation as non-fatal.
+
+* Fixed an error in the [^tick_count_timer] example by making the duration type
+  signed. Previously, a wait on an already-passed deadline would not return for
+  a very long time.
+
 [heading Asio 1.5.3]
 
 * Added a new, completely rewritten SSL implementation. The new implementation
