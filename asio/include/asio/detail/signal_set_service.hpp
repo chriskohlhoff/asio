@@ -17,8 +17,8 @@
 
 #include "asio/detail/config.hpp"
 
-#include <csignal>
 #include <cstddef>
+#include <signal.h>
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"

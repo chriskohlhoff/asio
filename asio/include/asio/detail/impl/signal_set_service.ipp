@@ -70,7 +70,7 @@ void asio_signal_handler(int signal_number)
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
 #if defined(ASIO_HAS_SIGNAL) && !defined(ASIO_HAS_SIGACTION)
-  signal(signal_number, asio_signal_handler);
+  ::signal(signal_number, asio_signal_handler);
 #endif // defined(ASIO_HAS_SIGNAL) && !defined(ASIO_HAS_SIGACTION)
 }
 
