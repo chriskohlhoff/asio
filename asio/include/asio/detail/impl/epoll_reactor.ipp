@@ -429,21 +429,13 @@ void epoll_reactor::run(bool block, op_queue<operation>& ops)
 #endif // defined(ASIO_HAS_TIMERFD)
     else
     {
+      // The descriptor operation doesn't count as work in and of itself, so we
+      // don't call work_started() here. This still allows the io_service to
+      // stop if the only remaining operations are descriptor operations.
       descriptor_state* descriptor_data = static_cast<descriptor_state*>(ptr);
-      const int ready_events = descriptor_data->ready_events_ = events[i].events;
-      if (((ready_events & (EPOLLIN | EPOLLERR | EPOLLHUP))
-            && !descriptor_data->op_queue_[read_op].empty())
-          || ((ready_events & (EPOLLOUT | EPOLLERR | EPOLLHUP))
-            && !descriptor_data->op_queue_[write_op].empty())
-          || ((ready_events & (EPOLLPRI | EPOLLERR | EPOLLHUP))
-            && !descriptor_data->op_queue_[except_op].empty()))
-      {
-        // The descriptor operation doesn't count as work in and of itself, so
-        // we don't call work_started() here. This still allows the io_service
-        // to stop if the only remaining operations are descriptor operations.
-        ops.push(descriptor_data);
-        ++pending_descriptor_io_count;
-      }
+      descriptor_data->ready_events_ = events[i].events;
+      ops.push(descriptor_data);
+      ++pending_descriptor_io_count;
     }
   }
 
