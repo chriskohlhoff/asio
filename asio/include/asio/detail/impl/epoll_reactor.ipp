@@ -153,6 +153,10 @@ int epoll_reactor::register_descriptor(socket_type descriptor,
   descriptor_data->descriptor_ = descriptor;
   descriptor_data->shutdown_ = false;
 
+  for (int i = 0; i < max_ops; ++i)
+    descriptor_data->op_queue_is_empty_[i] =
+      descriptor_data->op_queue_[i].empty();
+
   lock.unlock();
 
   epoll_event ev = { 0, { 0 } };
@@ -175,6 +179,10 @@ int epoll_reactor::register_internal_descriptor(
   descriptor_data->descriptor_ = descriptor;
   descriptor_data->shutdown_ = false;
   descriptor_data->op_queue_[op_type].push(op);
+
+  for (int i = 0; i < max_ops; ++i)
+    descriptor_data->op_queue_is_empty_[i] =
+      descriptor_data->op_queue_[i].empty();
 
   lock.unlock();
 
@@ -207,6 +215,22 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
     return;
   }
 
+  bool perform_speculative = allow_speculative;
+  if (perform_speculative)
+  {
+    if (descriptor_data->op_queue_is_empty_[op_type]
+        && (op_type != read_op
+          || descriptor_data->op_queue_is_empty_[except_op]))
+    {
+      if (op->perform())
+      {
+        io_service_.post_immediate_completion(op);
+        return;
+      }
+      perform_speculative = false;
+    }
+  }
+
   mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
 
   if (descriptor_data->shutdown_)
@@ -215,17 +239,24 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
     return;
   }
 
-  if (descriptor_data->op_queue_[op_type].empty())
+  for (int i = 0; i < max_ops; ++i)
+    descriptor_data->op_queue_is_empty_[i] =
+      descriptor_data->op_queue_[i].empty();
+
+  if (descriptor_data->op_queue_is_empty_[op_type])
   {
-    if (allow_speculative
-        && (op_type != read_op
-          || descriptor_data->op_queue_[except_op].empty()))
+    if (allow_speculative)
     {
-      if (op->perform())
+      if (perform_speculative
+          && (op_type != read_op
+            || descriptor_data->op_queue_is_empty_[except_op]))
       {
-        descriptor_lock.unlock();
-        io_service_.post_immediate_completion(op);
-        return;
+        if (op->perform())
+        {
+          descriptor_lock.unlock();
+          io_service_.post_immediate_completion(op);
+          return;
+        }
       }
     }
     else
@@ -239,6 +270,7 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
   }
 
   descriptor_data->op_queue_[op_type].push(op);
+  descriptor_data->op_queue_is_empty_[op_type] = false;
   io_service_.work_started();
 }
 
