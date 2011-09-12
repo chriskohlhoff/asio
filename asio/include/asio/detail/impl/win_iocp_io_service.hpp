@@ -19,7 +19,6 @@
 
 #if defined(ASIO_HAS_IOCP)
 
-#include "asio/detail/call_stack.hpp"
 #include "asio/detail/completion_handler.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"

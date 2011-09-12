@@ -78,7 +78,7 @@ bool strand_service::do_dispatch(implementation_type& impl, operation* op)
 {
   // If we are running inside the io_service, and no other handler is queued
   // or running, then the handler can run immediately.
-  bool can_dispatch = call_stack<io_service_impl>::contains(&io_service_);
+  bool can_dispatch = io_service_.can_dispatch();
   impl->mutex_.lock();
   bool first = (++impl->count_ == 1);
   if (can_dispatch && first)

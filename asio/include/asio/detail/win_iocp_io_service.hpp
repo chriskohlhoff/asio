@@ -21,6 +21,7 @@
 
 #include <boost/limits.hpp>
 #include "asio/io_service.hpp"
+#include "asio/detail/call_stack.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/scoped_ptr.hpp"
@@ -99,6 +100,12 @@ public:
   {
     if (::InterlockedDecrement(&outstanding_work_) == 0)
       stop();
+  }
+
+  // Return whether a handler can be dispatched immediately.
+  bool can_dispatch()
+  {
+    return call_stack<win_iocp_io_service>::contains(this);
   }
 
   // Request invocation of the given handler.

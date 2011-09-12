@@ -20,7 +20,6 @@
 #if !defined(ASIO_HAS_IOCP)
 
 #include <boost/limits.hpp>
-#include "asio/detail/call_stack.hpp"
 #include "asio/detail/event.hpp"
 #include "asio/detail/reactor.hpp"
 #include "asio/detail/task_io_service.hpp"
@@ -47,25 +46,35 @@ struct task_io_service::task_cleanup
   op_queue<operation>* ops_;
 };
 
-struct task_io_service::work_finished_on_block_exit
+struct task_io_service::work_cleanup
 {
-  ~work_finished_on_block_exit()
+  ~work_cleanup()
   {
     task_io_service_->work_finished();
+
+    if (ops_ && !ops_->empty())
+    {
+      lock_->lock();
+      task_io_service_->op_queue_.push(*ops_);
+    }
   }
 
   task_io_service* task_io_service_;
+  mutex::scoped_lock* lock_;
+  op_queue<operation>* ops_;
 };
 
-struct task_io_service::idle_thread_info
+struct task_io_service::thread_info
 {
-  event wakeup_event;
-  idle_thread_info* next;
+  event* wakeup_event;
+  op_queue<operation>* private_op_queue;
+  thread_info* next;
 };
 
 task_io_service::task_io_service(asio::io_service& io_service)
   : asio::detail::service_base<task_io_service>(io_service),
     mutex_(),
+    one_thread_(false),
     task_(0),
     task_interrupted_(true),
     outstanding_work_(0),
@@ -76,8 +85,9 @@ task_io_service::task_io_service(asio::io_service& io_service)
   ASIO_HANDLER_TRACKING_INIT;
 }
 
-void task_io_service::init(std::size_t /*concurrency_hint*/)
+void task_io_service::init(std::size_t concurrency_hint)
 {
+  one_thread_ = (concurrency_hint == 1);
 }
 
 void task_io_service::shutdown_service()
@@ -119,15 +129,18 @@ std::size_t task_io_service::run(asio::error_code& ec)
     return 0;
   }
 
-  call_stack<task_io_service>::context ctx(this);
-
-  idle_thread_info this_idle_thread;
-  this_idle_thread.next = 0;
+  thread_info this_thread;
+  event wakeup_event;
+  this_thread.wakeup_event = &wakeup_event;
+  op_queue<operation> private_op_queue;
+  this_thread.private_op_queue = one_thread_ == 1 ? &private_op_queue : 0;
+  this_thread.next = 0;
+  thread_call_stack::context ctx(this, this_thread);
 
   mutex::scoped_lock lock(mutex_);
 
   std::size_t n = 0;
-  for (; do_one(lock, &this_idle_thread); lock.lock())
+  for (; do_one(lock, this_thread); lock.lock())
     if (n != (std::numeric_limits<std::size_t>::max)())
       ++n;
   return n;
@@ -142,14 +155,16 @@ std::size_t task_io_service::run_one(asio::error_code& ec)
     return 0;
   }
 
-  call_stack<task_io_service>::context ctx(this);
-
-  idle_thread_info this_idle_thread;
-  this_idle_thread.next = 0;
+  thread_info this_thread;
+  event wakeup_event;
+  this_thread.wakeup_event = &wakeup_event;
+  this_thread.private_op_queue = 0;
+  this_thread.next = 0;
+  thread_call_stack::context ctx(this, this_thread);
 
   mutex::scoped_lock lock(mutex_);
 
-  return do_one(lock, &this_idle_thread);
+  return do_one(lock, this_thread);
 }
 
 std::size_t task_io_service::poll(asio::error_code& ec)
@@ -161,12 +176,17 @@ std::size_t task_io_service::poll(asio::error_code& ec)
     return 0;
   }
 
-  call_stack<task_io_service>::context ctx(this);
+  thread_info this_thread;
+  this_thread.wakeup_event = 0;
+  op_queue<operation> private_op_queue;
+  this_thread.private_op_queue = one_thread_ == 1 ? &private_op_queue : 0;
+  this_thread.next = 0;
+  thread_call_stack::context ctx(this, this_thread);
 
   mutex::scoped_lock lock(mutex_);
 
   std::size_t n = 0;
-  for (; do_one(lock, 0); lock.lock())
+  for (; do_one(lock, this_thread); lock.lock())
     if (n != (std::numeric_limits<std::size_t>::max)())
       ++n;
   return n;
@@ -181,11 +201,15 @@ std::size_t task_io_service::poll_one(asio::error_code& ec)
     return 0;
   }
 
-  call_stack<task_io_service>::context ctx(this);
+  thread_info this_thread;
+  this_thread.wakeup_event = 0;
+  this_thread.private_op_queue = 0;
+  this_thread.next = 0;
+  thread_call_stack::context ctx(this, this_thread);
 
   mutex::scoped_lock lock(mutex_);
 
-  return do_one(lock, 0);
+  return do_one(lock, this_thread);
 }
 
 void task_io_service::stop()
@@ -214,6 +238,18 @@ void task_io_service::post_immediate_completion(task_io_service::operation* op)
 
 void task_io_service::post_deferred_completion(task_io_service::operation* op)
 {
+  if (one_thread_)
+  {
+    if (thread_info* this_thread = thread_call_stack::contains(this))
+    {
+      if (this_thread->private_op_queue)
+      {
+        this_thread->private_op_queue->push(op);
+        return;
+      }
+    }
+  }
+
   mutex::scoped_lock lock(mutex_);
   op_queue_.push(op);
   wake_one_thread_and_unlock(lock);
@@ -224,6 +260,18 @@ void task_io_service::post_deferred_completions(
 {
   if (!ops.empty())
   {
+    if (one_thread_)
+    {
+      if (thread_info* this_thread = thread_call_stack::contains(this))
+      {
+        if (this_thread->private_op_queue)
+        {
+          this_thread->private_op_queue->push(ops);
+          return;
+        }
+      }
+    }
+
     mutex::scoped_lock lock(mutex_);
     op_queue_.push(ops);
     wake_one_thread_and_unlock(lock);
@@ -238,9 +286,9 @@ void task_io_service::abandon_operations(
 }
 
 std::size_t task_io_service::do_one(mutex::scoped_lock& lock,
-    task_io_service::idle_thread_info* this_idle_thread)
+    task_io_service::thread_info& this_thread)
 {
-  bool polling = !this_idle_thread;
+  bool polling = !this_thread.wakeup_event;
   bool task_has_run = false;
   while (!stopped_)
   {
@@ -278,13 +326,13 @@ std::size_t task_io_service::do_one(mutex::scoped_lock& lock,
       }
       else
       {
-        if (more_handlers)
+        if (more_handlers && !one_thread_)
           wake_one_thread_and_unlock(lock);
         else
           lock.unlock();
 
         // Ensure the count of outstanding work is decremented on block exit.
-        work_finished_on_block_exit on_exit = { this };
+        work_cleanup on_exit = { this, &lock, this_thread.private_op_queue };
         (void)on_exit;
 
         // Complete the operation. May throw an exception.
@@ -293,13 +341,13 @@ std::size_t task_io_service::do_one(mutex::scoped_lock& lock,
         return 1;
       }
     }
-    else if (this_idle_thread)
+    else if (this_thread.wakeup_event)
     {
       // Nothing to run right now, so just wait for work to do.
-      this_idle_thread->next = first_idle_thread_;
-      first_idle_thread_ = this_idle_thread;
-      this_idle_thread->wakeup_event.clear(lock);
-      this_idle_thread->wakeup_event.wait(lock);
+      this_thread.next = first_idle_thread_;
+      first_idle_thread_ = &this_thread;
+      this_thread.wakeup_event->clear(lock);
+      this_thread.wakeup_event->wait(lock);
     }
     else
     {
@@ -317,10 +365,10 @@ void task_io_service::stop_all_threads(
 
   while (first_idle_thread_)
   {
-    idle_thread_info* idle_thread = first_idle_thread_;
+    thread_info* idle_thread = first_idle_thread_;
     first_idle_thread_ = idle_thread->next;
     idle_thread->next = 0;
-    idle_thread->wakeup_event.signal(lock);
+    idle_thread->wakeup_event->signal(lock);
   }
 
   if (!task_interrupted_ && task_)
@@ -335,10 +383,10 @@ bool task_io_service::wake_one_idle_thread_and_unlock(
 {
   if (first_idle_thread_)
   {
-    idle_thread_info* idle_thread = first_idle_thread_;
+    thread_info* idle_thread = first_idle_thread_;
     first_idle_thread_ = idle_thread->next;
     idle_thread->next = 0;
-    idle_thread->wakeup_event.signal_and_unlock(lock);
+    idle_thread->wakeup_event->signal_and_unlock(lock);
     return true;
   }
   return false;

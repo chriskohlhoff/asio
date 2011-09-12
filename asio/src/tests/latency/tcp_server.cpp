@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
   std::size_t buf_size = std::atoi(argv[3]);
   bool spin = (std::strcmp(argv[4], "spin") == 0);
 
-  asio::io_service io_service;
+  asio::io_service io_service(1);
   tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), port));
   std::vector<boost::shared_ptr<tcp_server> > servers;
 

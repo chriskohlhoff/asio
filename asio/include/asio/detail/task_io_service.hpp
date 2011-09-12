@@ -22,6 +22,7 @@
 #include "asio/error_code.hpp"
 #include "asio/io_service.hpp"
 #include "asio/detail/atomic_count.hpp"
+#include "asio/detail/call_stack.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/reactor_fwd.hpp"
@@ -85,6 +86,12 @@ public:
       stop();
   }
 
+  // Return whether a handler can be dispatched immediately.
+  bool can_dispatch()
+  {
+    return thread_call_stack::contains(this);
+  }
+
   // Request invocation of the given handler.
   template <typename Handler>
   void dispatch(Handler handler);
@@ -111,11 +118,11 @@ public:
 
 private:
   // Structure containing information about an idle thread.
-  struct idle_thread_info;
+  struct thread_info;
 
   // Run at most one operation. Blocks only if this_idle_thread is non-null.
   ASIO_DECL std::size_t do_one(mutex::scoped_lock& lock,
-      idle_thread_info* this_idle_thread);
+      thread_info& this_thread);
 
   // Stop the task and all idle threads.
   ASIO_DECL void stop_all_threads(mutex::scoped_lock& lock);
@@ -134,11 +141,15 @@ private:
   struct task_cleanup;
   friend struct task_cleanup;
 
-  // Helper class to call work_finished() on block exit.
-  struct work_finished_on_block_exit;
+  // Helper class to call work-related operations on block exit.
+  struct work_cleanup;
+  friend struct work_cleanup;
 
   // Mutex to protect access to internal data.
   mutable mutex mutex_;
+
+  // Whether to optimise for single-threaded use cases.
+  bool one_thread_;
 
   // The task to be run by this service.
   reactor* task_;
@@ -164,8 +175,11 @@ private:
   // Flag to indicate that the dispatcher has been shut down.
   bool shutdown_;
 
+  // Per-thread call stack to track the state of each thread in the io_service.
+  typedef call_stack<task_io_service, thread_info> thread_call_stack;
+
   // The threads that are currently idle.
-  idle_thread_info* first_idle_thread_;
+  thread_info* first_idle_thread_;
 };
 
 } // namespace detail
