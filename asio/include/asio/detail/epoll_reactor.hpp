@@ -21,6 +21,7 @@
 
 #include <boost/limits.hpp>
 #include "asio/io_service.hpp"
+#include "asio/detail/atomic_count.hpp"
 #include "asio/detail/epoll_reactor_fwd.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/object_pool.hpp"
@@ -46,7 +47,7 @@ public:
     connect_op = 1, except_op = 2, max_ops = 3 };
 
   // Per-descriptor queues.
-  class descriptor_state
+  class descriptor_state : operation
   {
     friend class epoll_reactor;
     friend class object_pool_access;
@@ -54,12 +55,21 @@ public:
     descriptor_state* next_;
     descriptor_state* prev_;
 
+    epoll_reactor* reactor_;
+    uint32_t ready_events_;
+
     bool op_queue_is_empty_[max_ops];
 
     mutex mutex_;
     int descriptor_;
     op_queue<reactor_op> op_queue_[max_ops];
     bool shutdown_;
+
+    ASIO_DECL descriptor_state();
+    ASIO_DECL operation* perform_io();
+    ASIO_DECL static void do_complete(
+        io_service_impl* owner, operation* base,
+        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/);
   };
 
   // Per-descriptor data.
@@ -209,6 +219,13 @@ private:
 
   // Keep track of all registered descriptors.
   object_pool<descriptor_state> registered_descriptors_;
+
+  // The number of descriptor's waiting to have their I/O processed.
+  atomic_count pending_descriptor_io_count_;
+
+  // Helper class to do post-perform_io cleanup.
+  struct perform_io_cleanup_on_block_exit;
+  friend struct perform_io_cleanup_on_block_exit;
 };
 
 } // namespace detail

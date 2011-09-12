@@ -41,7 +41,8 @@ epoll_reactor::epoll_reactor(asio::io_service& io_service)
     epoll_fd_(do_epoll_create()),
     timer_fd_(do_timerfd_create()),
     interrupter_(),
-    shutdown_(false)
+    shutdown_(false),
+    pending_descriptor_io_count_(0)
 {
   // Add the interrupter's descriptor to epoll.
   epoll_event ev = { 0, { 0 } };
@@ -150,6 +151,7 @@ int epoll_reactor::register_descriptor(socket_type descriptor,
   mutex::scoped_lock lock(registered_descriptors_mutex_);
 
   descriptor_data = registered_descriptors_.alloc();
+  descriptor_data->reactor_ = this;
   descriptor_data->descriptor_ = descriptor;
   descriptor_data->shutdown_ = false;
 
@@ -176,6 +178,7 @@ int epoll_reactor::register_internal_descriptor(
   mutex::scoped_lock lock(registered_descriptors_mutex_);
 
   descriptor_data = registered_descriptors_.alloc();
+  descriptor_data->reactor_ = this;
   descriptor_data->descriptor_ = descriptor;
   descriptor_data->shutdown_ = false;
   descriptor_data->op_queue_[op_type].push(op);
@@ -389,13 +392,16 @@ void epoll_reactor::run(bool block, op_queue<operation>& ops)
 
   // Block on the epoll descriptor.
   epoll_event events[128];
-  int num_events = epoll_wait(epoll_fd_, events, 128, timeout);
+  int num_events = (pending_descriptor_io_count_ != 0)
+    ? 0 : epoll_wait(epoll_fd_, events, 128, timeout);
 
 #if defined(ASIO_HAS_TIMERFD)
   bool check_timers = (timer_fd_ == -1);
 #else // defined(ASIO_HAS_TIMERFD)
   bool check_timers = true;
 #endif // defined(ASIO_HAS_TIMERFD)
+
+  long pending_descriptor_io_count = 0;
 
   // Dispatch the waiting events.
   for (int i = 0; i < num_events; ++i)
@@ -424,29 +430,28 @@ void epoll_reactor::run(bool block, op_queue<operation>& ops)
     else
     {
       descriptor_state* descriptor_data = static_cast<descriptor_state*>(ptr);
-      mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
-
-      // Exception operations must be processed first to ensure that any
-      // out-of-band data is read before normal data.
-      static const int flag[max_ops] = { EPOLLIN, EPOLLOUT, EPOLLPRI };
-      for (int j = max_ops - 1; j >= 0; --j)
+      const int ready_events = descriptor_data->ready_events_ = events[i].events;
+      if (((ready_events & (EPOLLIN | EPOLLERR | EPOLLHUP))
+            && !descriptor_data->op_queue_[read_op].empty())
+          || ((ready_events & (EPOLLOUT | EPOLLERR | EPOLLHUP))
+            && !descriptor_data->op_queue_[write_op].empty())
+          || ((ready_events & (EPOLLPRI | EPOLLERR | EPOLLHUP))
+            && !descriptor_data->op_queue_[except_op].empty()))
       {
-        if (events[i].events & (flag[j] | EPOLLERR | EPOLLHUP))
-        {
-          while (reactor_op* op = descriptor_data->op_queue_[j].front())
-          {
-            if (op->perform())
-            {
-              descriptor_data->op_queue_[j].pop();
-              ops.push(op);
-            }
-            else
-              break;
-          }
-        }
+        // The descriptor operation doesn't count as work in and of itself, so
+        // we don't call work_started() here. This still allows the io_service
+        // to stop if the only remaining operations are descriptor operations.
+        ops.push(descriptor_data);
+        ++pending_descriptor_io_count;
       }
     }
   }
+
+  // Ugly. Sadly, the boost atomic_count class doesn't support assignment.
+  // However, at this point there can be no other threads that are modifying
+  // the pending count, and it's more efficient to update this value in one go.
+  pending_descriptor_io_count_.~atomic_count();
+  new (&pending_descriptor_io_count_) atomic_count(pending_descriptor_io_count);
 
   if (check_timers)
   {
@@ -569,6 +574,94 @@ int epoll_reactor::get_timeout(itimerspec& ts)
   return usec ? 0 : TFD_TIMER_ABSTIME;
 }
 #endif // defined(ASIO_HAS_TIMERFD)
+
+struct epoll_reactor::perform_io_cleanup_on_block_exit
+{
+  explicit perform_io_cleanup_on_block_exit(epoll_reactor* r)
+    : reactor_(r), first_op_(0)
+  {
+  }
+
+  ~perform_io_cleanup_on_block_exit()
+  {
+    // Post the remaining completed operations for invocation.
+    if (!ops_.empty())
+      reactor_->io_service_.post_deferred_completions(ops_);
+
+    // Let the reactor know that this I/O has finished.
+    --reactor_->pending_descriptor_io_count_;
+
+    if (first_op_)
+    {
+      // A user-initiated operation has completed, but there's no need to
+      // explicitly call work_finished() here. Instead, we'll take advantage of
+      // the fact that the task_io_service will call work_finished() once we
+      // return.
+    }
+    else
+    {
+      // No user-initiated operations have completed, so we need to compensate
+      // for the work_finished() call that the task_io_service will make once
+      // this operation returns.
+      reactor_->io_service_.work_started();
+    }
+  }
+
+  epoll_reactor* reactor_;
+  op_queue<operation> ops_;
+  operation* first_op_;
+};
+
+epoll_reactor::descriptor_state::descriptor_state()
+  : operation(&epoll_reactor::descriptor_state::do_complete)
+{
+}
+
+operation* epoll_reactor::descriptor_state::perform_io()
+{
+  perform_io_cleanup_on_block_exit io_cleanup(reactor_);
+  mutex::scoped_lock lock(mutex_);
+
+  // Exception operations must be processed first to ensure that any
+  // out-of-band data is read before normal data.
+  static const int flag[max_ops] = { EPOLLIN, EPOLLOUT, EPOLLPRI };
+  for (int j = max_ops - 1; j >= 0; --j)
+  {
+    if (ready_events_ & (flag[j] | EPOLLERR | EPOLLHUP))
+    {
+      while (reactor_op* op = op_queue_[j].front())
+      {
+        if (op->perform())
+        {
+          op_queue_[j].pop();
+          io_cleanup.ops_.push(op);
+        }
+        else
+          break;
+      }
+    }
+  }
+
+  // The first operation will be returned for completion now. The others will
+  // be posted for later by the io_cleanup object's destructor.
+  io_cleanup.first_op_ = io_cleanup.ops_.front();
+  io_cleanup.ops_.pop();
+  return io_cleanup.first_op_;
+}
+
+void epoll_reactor::descriptor_state::do_complete(
+    io_service_impl* owner, operation* base,
+    asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
+{
+  if (owner)
+  {
+    descriptor_state* descriptor_data = static_cast<descriptor_state*>(base);
+    if (operation* op = descriptor_data->perform_io())
+    {
+      op->complete(*owner);
+    }
+  }
+}
 
 } // namespace detail
 } // namespace asio
