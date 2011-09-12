@@ -31,21 +31,34 @@ public:
   // Constructor.
   gcc_x86_fenced_block()
   {
-    barrier();
+    barrier1();
   }
 
   // Destructor.
   ~gcc_x86_fenced_block()
   {
-    barrier();
+    barrier2();
   }
 
 private:
-  static int barrier()
+  static int barrier1()
   {
-    int r = 0;
-    __asm__ __volatile__ ("xchgl %%eax, %0" : "=m" (r) : : "memory", "cc");
+    int r = 0, m = 1;
+    __asm__ __volatile__ (
+        "xchgl %0, %1" :
+        "=r"(r), "=m"(m) :
+        "0"(1), "m"(m) :
+        "memory", "cc");
     return r;
+  }
+
+  static void barrier2()
+  {
+#if defined(__SSE2__)
+    __asm__ __volatile__ ("mfence" ::: "memory");
+#else // defined(__SSE2__)
+    barrier1();
+#endif // defined(__SSE2__)
   }
 };
 
