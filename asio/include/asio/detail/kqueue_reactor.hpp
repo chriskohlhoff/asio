@@ -61,12 +61,16 @@ public:
   {
     friend class kqueue_reactor;
     friend class object_pool_access;
+
+    descriptor_state* next_;
+    descriptor_state* prev_;
+
+    bool op_queue_is_empty_[max_ops];
+
     mutex mutex_;
     int descriptor_;
     op_queue<reactor_op> op_queue_[max_ops];
     bool shutdown_;
-    descriptor_state* next_;
-    descriptor_state* prev_;
   };
 
   // Per-descriptor data.
