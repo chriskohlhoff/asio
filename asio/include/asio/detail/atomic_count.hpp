@@ -17,7 +17,9 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_HAS_STD_ATOMIC)
+#if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
+// Nothing to include.
+#elif defined(ASIO_HAS_STD_ATOMIC)
 # include <atomic>
 #else // defined(ASIO_HAS_STD_ATOMIC)
 # include <boost/detail/atomic_count.hpp>
@@ -26,7 +28,9 @@
 namespace asio {
 namespace detail {
 
-#if defined(ASIO_HAS_STD_ATOMIC)
+#if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
+typedef long atomic_count;
+#elif defined(ASIO_HAS_STD_ATOMIC)
 typedef std::atomic<long> atomic_count;
 #else // defined(ASIO_HAS_STD_ATOMIC)
 typedef boost::detail::atomic_count atomic_count;
