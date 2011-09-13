@@ -86,7 +86,7 @@ public:
     // Make the upcall if required.
     if (owner)
     {
-      asio::detail::fenced_block b;
+      fenced_block b(fenced_block::half);
       ASIO_HANDLER_INVOCATION_BEGIN((handler.arg1_));
       asio_handler_invoke_helpers::invoke(handler, handler);
       ASIO_HANDLER_INVOCATION_END;

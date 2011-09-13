@@ -30,7 +30,7 @@ void task_io_service::dispatch(Handler handler)
 {
   if (thread_call_stack::contains(this))
   {
-    asio::detail::fenced_block b;
+    fenced_block b(fenced_block::full);
     asio_handler_invoke_helpers::invoke(handler, handler);
   }
   else
