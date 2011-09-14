@@ -202,7 +202,7 @@ std::size_t sync_read(int d, state_type state, buf* bufs,
       return 0;
 
     // Wait for descriptor to become ready.
-    if (descriptor_ops::poll_read(d, ec) < 0)
+    if (descriptor_ops::poll_read(d, 0, ec) < 0)
       return 0;
   }
 }
@@ -279,7 +279,7 @@ std::size_t sync_write(int d, state_type state, const buf* bufs,
       return 0;
 
     // Wait for descriptor to become ready.
-    if (descriptor_ops::poll_write(d, ec) < 0)
+    if (descriptor_ops::poll_write(d, 0, ec) < 0)
       return 0;
   }
 }
@@ -386,7 +386,7 @@ int fcntl(int d, long cmd, long arg, asio::error_code& ec)
   return result;
 }
 
-int poll_read(int d, asio::error_code& ec)
+int poll_read(int d, state_type state, asio::error_code& ec)
 {
   if (d == -1)
   {
@@ -398,14 +398,18 @@ int poll_read(int d, asio::error_code& ec)
   fds.fd = d;
   fds.events = POLLIN;
   fds.revents = 0;
+  int timeout = (state & user_set_non_blocking) ? 0 : -1;
   errno = 0;
-  int result = error_wrapper(::poll(&fds, 1, -1), ec);
-  if (result >= 0)
+  int result = error_wrapper(::poll(&fds, 1, timeout), ec);
+  if (result == 0)
+    ec = (state & user_set_non_blocking)
+      ? asio::error::would_block : asio::error_code();
+  else if (result > 0)
     ec = asio::error_code();
   return result;
 }
 
-int poll_write(int d, asio::error_code& ec)
+int poll_write(int d, state_type state, asio::error_code& ec)
 {
   if (d == -1)
   {
@@ -417,9 +421,13 @@ int poll_write(int d, asio::error_code& ec)
   fds.fd = d;
   fds.events = POLLOUT;
   fds.revents = 0;
+  int timeout = (state & user_set_non_blocking) ? 0 : -1;
   errno = 0;
-  int result = error_wrapper(::poll(&fds, 1, -1), ec);
-  if (result >= 0)
+  int result = error_wrapper(::poll(&fds, 1, timeout), ec);
+  if (result == 0)
+    ec = (state & user_set_non_blocking)
+      ? asio::error::would_block : asio::error_code();
+  else if (result > 0)
     ec = asio::error_code();
   return result;
 }

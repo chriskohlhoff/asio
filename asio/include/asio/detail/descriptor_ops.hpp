@@ -92,9 +92,11 @@ ASIO_DECL int fcntl(int d, long cmd, asio::error_code& ec);
 ASIO_DECL int fcntl(int d, long cmd,
     long arg, asio::error_code& ec);
 
-ASIO_DECL int poll_read(int d, asio::error_code& ec);
+ASIO_DECL int poll_read(int d,
+    state_type state, asio::error_code& ec);
 
-ASIO_DECL int poll_write(int d, asio::error_code& ec);
+ASIO_DECL int poll_write(int d,
+    state_type state, asio::error_code& ec);
 
 } // namespace descriptor_ops
 } // namespace detail
