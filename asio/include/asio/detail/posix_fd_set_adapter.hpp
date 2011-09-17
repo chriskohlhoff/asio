@@ -20,6 +20,7 @@
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 #include <cstring>
+#include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_types.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -28,11 +29,17 @@ namespace asio {
 namespace detail {
 
 // Adapts the FD_SET type to meet the Descriptor_Set concept's requirements.
-class posix_fd_set_adapter
+class posix_fd_set_adapter : noncopyable
 {
 public:
   posix_fd_set_adapter()
     : max_descriptor_(invalid_socket)
+  {
+    using namespace std; // Needed for memset on Solaris.
+    FD_ZERO(&fd_set_);
+  }
+
+  void reset()
   {
     using namespace std; // Needed for memset on Solaris.
     FD_ZERO(&fd_set_);
