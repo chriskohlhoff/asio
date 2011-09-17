@@ -105,7 +105,7 @@ public:
   // Return whether a handler can be dispatched immediately.
   bool can_dispatch()
   {
-    return call_stack<win_iocp_io_service>::contains(this);
+    return call_stack<win_iocp_io_service>::contains(this) != 0;
   }
 
   // Request invocation of the given handler.
