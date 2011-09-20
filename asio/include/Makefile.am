@@ -40,6 +40,7 @@ nobase_include_HEADERS = \
 	asio/detail/config.hpp \
 	asio/detail/consuming_buffers.hpp \
 	asio/detail/deadline_timer_service.hpp \
+	asio/detail/dependent_type.hpp \
 	asio/detail/descriptor_ops.hpp \
 	asio/detail/descriptor_read_op.hpp \
 	asio/detail/descriptor_write_op.hpp \
