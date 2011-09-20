@@ -16,6 +16,9 @@
 // Test that header file is self-contained.
 #include "asio/read.hpp"
 
+#if defined(ASIO_HAS_STD_ARRAY)
+# include <array>
+#endif // defined(ASIO_HAS_STD_ARRAY)
 #include <boost/array.hpp>
 #include <boost/bind.hpp>
 #include <boost/noncopyable.hpp>
@@ -162,14 +165,14 @@ void test_2_arg_mutable_buffers_1_read()
   BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
 }
 
-void test_2_arg_multi_buffers_read()
+void test_2_arg_vector_buffers_read()
 {
   asio::io_service ios;
   test_stream s(ios);
   char read_buf[sizeof(read_data)];
-  boost::array<asio::mutable_buffer, 2> buffers = { {
-    asio::buffer(read_buf, 32),
-    asio::buffer(read_buf) + 32 } };
+  std::vector<asio::mutable_buffer> buffers;
+  buffers.push_back(asio::buffer(read_buf, 32));
+  buffers.push_back(asio::buffer(read_buf) + 32);
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
@@ -267,14 +270,14 @@ void test_3_arg_nothrow_mutable_buffers_1_read()
   BOOST_CHECK(!error);
 }
 
-void test_3_arg_nothrow_multi_buffers_read()
+void test_3_arg_nothrow_vector_buffers_read()
 {
   asio::io_service ios;
   test_stream s(ios);
   char read_buf[sizeof(read_data)];
-  boost::array<asio::mutable_buffer, 2> buffers = { {
-    asio::buffer(read_buf, 32),
-    asio::buffer(read_buf) + 32 } };
+  std::vector<asio::mutable_buffer> buffers;
+  buffers.push_back(asio::buffer(read_buf, 32));
+  buffers.push_back(asio::buffer(read_buf) + 32);
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
@@ -557,14 +560,14 @@ void test_3_arg_mutable_buffers_1_read()
   BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
 }
 
-void test_3_arg_multi_buffers_read()
+void test_3_arg_vector_buffers_read()
 {
   asio::io_service ios;
   test_stream s(ios);
   char read_buf[sizeof(read_data)];
-  boost::array<asio::mutable_buffer, 2> buffers = { {
-    asio::buffer(read_buf, 32),
-    asio::buffer(read_buf) + 32 } };
+  std::vector<asio::mutable_buffer> buffers;
+  buffers.push_back(asio::buffer(read_buf, 32));
+  buffers.push_back(asio::buffer(read_buf) + 32);
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
@@ -1268,14 +1271,14 @@ void test_4_arg_mutable_buffers_1_read()
   BOOST_CHECK(!error);
 }
 
-void test_4_arg_multi_buffers_read()
+void test_4_arg_vector_buffers_read()
 {
   asio::io_service ios;
   test_stream s(ios);
   char read_buf[sizeof(read_data)];
-  boost::array<asio::mutable_buffer, 2> buffers = { {
-    asio::buffer(read_buf, 32),
-    asio::buffer(read_buf) + 32 } };
+  std::vector<asio::mutable_buffer> buffers;
+  buffers.push_back(asio::buffer(read_buf, 32));
+  buffers.push_back(asio::buffer(read_buf) + 32);
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
@@ -1882,7 +1885,7 @@ void test_3_arg_mutable_buffers_1_async_read()
   BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
 }
 
-void test_3_arg_multi_buffers_async_read()
+void test_3_arg_boost_array_buffers_async_read()
 {
   asio::io_service ios;
   test_stream s(ios);
@@ -1890,6 +1893,110 @@ void test_3_arg_multi_buffers_async_read()
   boost::array<asio::mutable_buffer, 2> buffers = { {
     asio::buffer(read_buf, 32),
     asio::buffer(read_buf) + 32 } };
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  bool called = false;
+  asio::async_read(s, buffers,
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers,
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers,
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+}
+
+void test_3_arg_std_array_buffers_async_read()
+{
+#if defined(ASIO_HAS_STD_ARRAY)
+  asio::io_service ios;
+  test_stream s(ios);
+  char read_buf[sizeof(read_data)];
+  std::array<asio::mutable_buffer, 2> buffers = { {
+    asio::buffer(read_buf, 32),
+    asio::buffer(read_buf) + 32 } };
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  bool called = false;
+  asio::async_read(s, buffers,
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers,
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers,
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+#endif // defined(ASIO_HAS_STD_ARRAY)
+}
+
+void test_3_arg_vector_buffers_async_read()
+{
+  asio::io_service ios;
+  test_stream s(ios);
+  char read_buf[sizeof(read_data)];
+  std::vector<asio::mutable_buffer> buffers;
+  buffers.push_back(asio::buffer(read_buf, 32));
+  buffers.push_back(asio::buffer(read_buf) + 32);
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
@@ -2362,7 +2469,7 @@ void test_4_arg_mutable_buffers_1_async_read()
   BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
 }
 
-void test_4_arg_multi_buffers_async_read()
+void test_4_arg_boost_array_buffers_async_read()
 {
   asio::io_service ios;
   test_stream s(ios);
@@ -2370,6 +2477,766 @@ void test_4_arg_multi_buffers_async_read()
   boost::array<asio::mutable_buffer, 2> buffers = { {
     asio::buffer(read_buf, 32),
     asio::buffer(read_buf) + 32 } };
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  bool called = false;
+  asio::async_read(s, buffers, asio::transfer_all(),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_all(),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_all(),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_at_least(1),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_at_least(1),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 1));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_at_least(1),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 10));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_at_least(10),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_at_least(10),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 10));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_at_least(10),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 10));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_at_least(42),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_at_least(42),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 42));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_at_least(42),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        50, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 50));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_exactly(1),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 1));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_exactly(1),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 1));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_exactly(1),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 1));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_exactly(10),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 10));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_exactly(10),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 10));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_exactly(10),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 10));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_exactly(42),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 42));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_exactly(42),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 42));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_exactly(42),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 42));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, old_style_transfer_all,
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, old_style_transfer_all,
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, old_style_transfer_all,
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, short_transfer,
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, short_transfer,
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, short_transfer,
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+}
+
+void test_4_arg_std_array_buffers_async_read()
+{
+#if defined(ASIO_HAS_STD_ARRAY)
+  asio::io_service ios;
+  test_stream s(ios);
+  char read_buf[sizeof(read_data)];
+  std::array<asio::mutable_buffer, 2> buffers = { {
+    asio::buffer(read_buf, 32),
+    asio::buffer(read_buf) + 32 } };
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  bool called = false;
+  asio::async_read(s, buffers, asio::transfer_all(),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_all(),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_all(),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_at_least(1),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_at_least(1),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 1));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_at_least(1),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 10));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_at_least(10),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_at_least(10),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 10));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_at_least(10),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 10));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_at_least(42),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_at_least(42),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 42));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_at_least(42),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        50, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 50));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_exactly(1),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 1));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_exactly(1),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 1));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_exactly(1),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 1));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_exactly(10),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 10));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_exactly(10),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 10));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_exactly(10),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 10));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_exactly(42),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 42));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_exactly(42),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 42));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, asio::transfer_exactly(42),
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, 42));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, old_style_transfer_all,
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, old_style_transfer_all,
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, old_style_transfer_all,
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, short_transfer,
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, short_transfer,
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  memset(read_buf, 0, sizeof(read_buf));
+  called = false;
+  asio::async_read(s, buffers, short_transfer,
+      boost::bind(async_read_handler,
+        asio::placeholders::error,
+        asio::placeholders::bytes_transferred,
+        sizeof(read_data), &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(buffers, sizeof(read_data)));
+#endif // defined(ASIO_HAS_STD_ARRAY)
+}
+
+void test_4_arg_vector_buffers_async_read()
+{
+  asio::io_service ios;
+  test_stream s(ios);
+  char read_buf[sizeof(read_data)];
+  std::vector<asio::mutable_buffer> buffers;
+  buffers.push_back(asio::buffer(read_buf, 32));
+  buffers.push_back(asio::buffer(read_buf) + 32);
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
@@ -3149,23 +4016,27 @@ test_suite* init_unit_test_suite(int, char*[])
   test_suite* test = BOOST_TEST_SUITE("read");
   test->add(BOOST_TEST_CASE(&test_2_arg_zero_buffers_read));
   test->add(BOOST_TEST_CASE(&test_2_arg_mutable_buffers_1_read));
-  test->add(BOOST_TEST_CASE(&test_2_arg_multi_buffers_read));
+  test->add(BOOST_TEST_CASE(&test_2_arg_vector_buffers_read));
   test->add(BOOST_TEST_CASE(&test_2_arg_streambuf_read));
   test->add(BOOST_TEST_CASE(&test_3_arg_nothrow_zero_buffers_read));
   test->add(BOOST_TEST_CASE(&test_3_arg_nothrow_mutable_buffers_1_read));
-  test->add(BOOST_TEST_CASE(&test_3_arg_nothrow_multi_buffers_read));
+  test->add(BOOST_TEST_CASE(&test_3_arg_nothrow_vector_buffers_read));
   test->add(BOOST_TEST_CASE(&test_3_arg_nothrow_streambuf_read));
   test->add(BOOST_TEST_CASE(&test_3_arg_mutable_buffers_1_read));
-  test->add(BOOST_TEST_CASE(&test_3_arg_multi_buffers_read));
+  test->add(BOOST_TEST_CASE(&test_3_arg_vector_buffers_read));
   test->add(BOOST_TEST_CASE(&test_3_arg_streambuf_read));
   test->add(BOOST_TEST_CASE(&test_4_arg_mutable_buffers_1_read));
-  test->add(BOOST_TEST_CASE(&test_4_arg_multi_buffers_read));
+  test->add(BOOST_TEST_CASE(&test_4_arg_vector_buffers_read));
   test->add(BOOST_TEST_CASE(&test_4_arg_streambuf_read));
   test->add(BOOST_TEST_CASE(&test_3_arg_mutable_buffers_1_async_read));
-  test->add(BOOST_TEST_CASE(&test_3_arg_multi_buffers_async_read));
+  test->add(BOOST_TEST_CASE(&test_3_arg_boost_array_buffers_async_read));
+  test->add(BOOST_TEST_CASE(&test_3_arg_std_array_buffers_async_read));
+  test->add(BOOST_TEST_CASE(&test_3_arg_vector_buffers_async_read));
   test->add(BOOST_TEST_CASE(&test_3_arg_streambuf_async_read));
   test->add(BOOST_TEST_CASE(&test_4_arg_mutable_buffers_1_async_read));
-  test->add(BOOST_TEST_CASE(&test_4_arg_multi_buffers_async_read));
+  test->add(BOOST_TEST_CASE(&test_4_arg_vector_buffers_async_read));
+  test->add(BOOST_TEST_CASE(&test_4_arg_boost_array_buffers_async_read));
+  test->add(BOOST_TEST_CASE(&test_4_arg_std_array_buffers_async_read));
   test->add(BOOST_TEST_CASE(&test_4_arg_streambuf_async_read));
   return test;
 }
