@@ -18,9 +18,11 @@
 #include <algorithm>
 #include "asio/buffer.hpp"
 #include "asio/completion_condition.hpp"
+#include "asio/detail/array_fwd.hpp"
 #include "asio/detail/base_from_completion_cond.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/consuming_buffers.hpp"
+#include "asio/detail/dependent_type.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
@@ -298,6 +300,180 @@ namespace detail
     std::size_t total_transferred_;
     ReadHandler handler_;
   };
+
+  template <typename AsyncRandomAccessReadDevice, typename Elem,
+      typename CompletionCondition, typename ReadHandler>
+  class read_at_op<AsyncRandomAccessReadDevice, boost::array<Elem, 2>,
+      CompletionCondition, ReadHandler>
+    : detail::base_from_completion_cond<CompletionCondition>
+  {
+  public:
+    read_at_op(AsyncRandomAccessReadDevice& device,
+        boost::uint64_t offset, const boost::array<Elem, 2>& buffers,
+        CompletionCondition completion_condition, ReadHandler& handler)
+      : detail::base_from_completion_cond<
+          CompletionCondition>(completion_condition),
+        device_(device),
+        offset_(offset),
+        buffers_(buffers),
+        total_transferred_(0),
+        handler_(ASIO_MOVE_CAST(ReadHandler)(handler))
+    {
+    }
+
+#if defined(ASIO_HAS_MOVE)
+    read_at_op(const read_at_op& other)
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        device_(other.device_),
+        offset_(other.offset_),
+        buffers_(other.buffers_),
+        total_transferred_(other.total_transferred_),
+        handler_(other.handler_)
+    {
+    }
+
+    read_at_op(read_at_op&& other)
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        device_(other.device_),
+        offset_(other.offset_),
+        buffers_(other.buffers_),
+        total_transferred_(other.total_transferred_),
+        handler_(ASIO_MOVE_CAST(ReadHandler)(other.handler_))
+    {
+    }
+#endif // defined(ASIO_HAS_MOVE)
+
+    void operator()(const asio::error_code& ec,
+        std::size_t bytes_transferred, int start = 0)
+    {
+      typename asio::detail::dependent_type<Elem,
+          boost::array<asio::mutable_buffer, 2> >::type bufs = {{
+        asio::mutable_buffer(buffers_[0]),
+        asio::mutable_buffer(buffers_[1]) }};
+      std::size_t buffer_size0 = asio::buffer_size(bufs[0]);
+      std::size_t buffer_size1 = asio::buffer_size(bufs[1]);
+      std::size_t n = 0;
+      switch (start)
+      {
+        case 1:
+        n = this->check_for_completion(ec, total_transferred_);
+        for (;;)
+        {
+          bufs[0] = asio::buffer(bufs[0] + total_transferred_, n);
+          bufs[1] = asio::buffer(
+              bufs[1] + (total_transferred_ < buffer_size0
+                ? 0 : total_transferred_ - buffer_size0),
+              n - asio::buffer_size(bufs[0]));
+          device_.async_read_some_at(offset_ + total_transferred_,
+              bufs, ASIO_MOVE_CAST(read_at_op)(*this));
+          return; default:
+          total_transferred_ += bytes_transferred;
+          if ((!ec && bytes_transferred == 0)
+              || (n = this->check_for_completion(ec, total_transferred_)) == 0
+              || total_transferred_ == buffer_size0 + buffer_size1)
+            break;
+        }
+
+        handler_(ec, static_cast<const std::size_t&>(total_transferred_));
+      }
+    }
+
+  //private:
+    AsyncRandomAccessReadDevice& device_;
+    boost::uint64_t offset_;
+    boost::array<Elem, 2> buffers_;
+    std::size_t total_transferred_;
+    ReadHandler handler_;
+  };
+
+#if defined(ASIO_HAS_STD_ARRAY)
+
+  template <typename AsyncRandomAccessReadDevice, typename Elem,
+      typename CompletionCondition, typename ReadHandler>
+  class read_at_op<AsyncRandomAccessReadDevice, std::array<Elem, 2>,
+      CompletionCondition, ReadHandler>
+    : detail::base_from_completion_cond<CompletionCondition>
+  {
+  public:
+    read_at_op(AsyncRandomAccessReadDevice& device,
+        boost::uint64_t offset, const std::array<Elem, 2>& buffers,
+        CompletionCondition completion_condition, ReadHandler& handler)
+      : detail::base_from_completion_cond<
+          CompletionCondition>(completion_condition),
+        device_(device),
+        offset_(offset),
+        buffers_(buffers),
+        total_transferred_(0),
+        handler_(ASIO_MOVE_CAST(ReadHandler)(handler))
+    {
+    }
+
+#if defined(ASIO_HAS_MOVE)
+    read_at_op(const read_at_op& other)
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        device_(other.device_),
+        offset_(other.offset_),
+        buffers_(other.buffers_),
+        total_transferred_(other.total_transferred_),
+        handler_(other.handler_)
+    {
+    }
+
+    read_at_op(read_at_op&& other)
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        device_(other.device_),
+        offset_(other.offset_),
+        buffers_(other.buffers_),
+        total_transferred_(other.total_transferred_),
+        handler_(ASIO_MOVE_CAST(ReadHandler)(other.handler_))
+    {
+    }
+#endif // defined(ASIO_HAS_MOVE)
+
+    void operator()(const asio::error_code& ec,
+        std::size_t bytes_transferred, int start = 0)
+    {
+      typename asio::detail::dependent_type<Elem,
+          std::array<asio::mutable_buffer, 2> >::type bufs = {{
+        asio::mutable_buffer(buffers_[0]),
+        asio::mutable_buffer(buffers_[1]) }};
+      std::size_t buffer_size0 = asio::buffer_size(bufs[0]);
+      std::size_t buffer_size1 = asio::buffer_size(bufs[1]);
+      std::size_t n = 0;
+      switch (start)
+      {
+        case 1:
+        n = this->check_for_completion(ec, total_transferred_);
+        for (;;)
+        {
+          bufs[0] = asio::buffer(bufs[0] + total_transferred_, n);
+          bufs[1] = asio::buffer(
+              bufs[1] + (total_transferred_ < buffer_size0
+                ? 0 : total_transferred_ - buffer_size0),
+              n - asio::buffer_size(bufs[0]));
+          device_.async_read_some_at(offset_ + total_transferred_,
+              bufs, ASIO_MOVE_CAST(read_at_op)(*this));
+          return; default:
+          total_transferred_ += bytes_transferred;
+          if ((!ec && bytes_transferred == 0)
+              || (n = this->check_for_completion(ec, total_transferred_)) == 0
+              || total_transferred_ == buffer_size0 + buffer_size1)
+            break;
+        }
+
+        handler_(ec, static_cast<const std::size_t&>(total_transferred_));
+      }
+    }
+
+  //private:
+    AsyncRandomAccessReadDevice& device_;
+    boost::uint64_t offset_;
+    std::array<Elem, 2> buffers_;
+    std::size_t total_transferred_;
+    ReadHandler handler_;
+  };
+
+#endif // defined(ASIO_HAS_STD_ARRAY)
 
   template <typename AsyncRandomAccessReadDevice,
       typename MutableBufferSequence, typename CompletionCondition,
