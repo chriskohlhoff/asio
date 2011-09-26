@@ -439,11 +439,15 @@ void epoll_reactor::run(bool block, op_queue<operation>& ops)
     }
   }
 
-  // Ugly. Sadly, the boost atomic_count class doesn't support assignment.
-  // However, at this point there can be no other threads that are modifying
-  // the pending count, and it's more efficient to update this value in one go.
-  pending_descriptor_io_count_.~atomic_count();
-  new (&pending_descriptor_io_count_) atomic_count(pending_descriptor_io_count);
+  if (pending_descriptor_io_count > 0)
+  {
+    // Ugly. Sadly, the boost atomic_count class doesn't support assignment.
+    // However, at this point there can be no other threads that are modifying
+    // the pending count, and it's more efficient to update the value in one go.
+    pending_descriptor_io_count_.~atomic_count();
+    new (&pending_descriptor_io_count_)
+      atomic_count(pending_descriptor_io_count);
+  }
 
   if (check_timers)
   {
@@ -576,15 +580,15 @@ struct epoll_reactor::perform_io_cleanup_on_block_exit
 
   ~perform_io_cleanup_on_block_exit()
   {
-    // Post the remaining completed operations for invocation.
-    if (!ops_.empty())
-      reactor_->io_service_.post_deferred_completions(ops_);
-
     // Let the reactor know that this I/O has finished.
     --reactor_->pending_descriptor_io_count_;
 
     if (first_op_)
     {
+      // Post the remaining completed operations for invocation.
+      if (!ops_.empty())
+        reactor_->io_service_.post_deferred_completions(ops_);
+
       // A user-initiated operation has completed, but there's no need to
       // explicitly call work_finished() here. Instead, we'll take advantage of
       // the fact that the task_io_service will call work_finished() once we
