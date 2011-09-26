@@ -15,6 +15,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <vector>
+#include "allocator.hpp"
 
 using asio::ip::udp;
 
@@ -46,17 +47,38 @@ public:
     }
   }
 
+  friend void* asio_handler_allocate(std::size_t n, udp_server* s)
+  {
+    return s->allocator_.allocate(n);
+  }
+
+  friend void asio_handler_deallocate(void* p, std::size_t, udp_server* s)
+  {
+    s->allocator_.deallocate(p);
+  }
+
   struct ref
   {
     explicit ref(udp_server* p) : p_(p) {}
     void operator()(asio::error_code ec, std::size_t n = 0) { (*p_)(ec, n); }
     private: udp_server* p_;
+
+    friend void* asio_handler_allocate(std::size_t n, ref* r)
+    {
+      return asio_handler_allocate(n, r->p_);
+    }
+
+    friend void asio_handler_deallocate(void* p, std::size_t n, ref* r)
+    {
+      asio_handler_deallocate(p, n, r->p_);
+    }
   };
 
 private:
   udp::socket socket_;
   std::vector<unsigned char> buffer_;
   udp::endpoint sender_;
+  allocator allocator_;
 };
 
 #include "unyield.hpp"
