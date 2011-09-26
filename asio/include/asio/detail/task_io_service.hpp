@@ -121,8 +121,12 @@ private:
   struct thread_info;
 
   // Run at most one operation. Blocks only if this_idle_thread is non-null.
-  ASIO_DECL std::size_t do_one(mutex::scoped_lock& lock,
+  ASIO_DECL std::size_t do_run_one(mutex::scoped_lock& lock,
       thread_info& this_thread);
+
+  // Poll for at most one operation.
+  ASIO_DECL std::size_t do_poll_one(mutex::scoped_lock& lock,
+      op_queue<operation>* private_op_queue);
 
   // Stop the task and all idle threads.
   ASIO_DECL void stop_all_threads(mutex::scoped_lock& lock);
