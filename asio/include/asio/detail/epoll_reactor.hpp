@@ -172,6 +172,12 @@ private:
   // Create the timerfd file descriptor. Does not throw.
   ASIO_DECL static int do_timerfd_create();
 
+  // Allocate a new descriptor state object.
+  ASIO_DECL descriptor_state* allocate_descriptor_state();
+
+  // Free an existing descriptor state object.
+  ASIO_DECL void free_descriptor_state(descriptor_state* s);
+
   // Helper function to add a new timer queue.
   ASIO_DECL void do_add_timer_queue(timer_queue_base& queue);
 
