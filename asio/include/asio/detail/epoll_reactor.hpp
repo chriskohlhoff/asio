@@ -55,18 +55,17 @@ public:
     descriptor_state* next_;
     descriptor_state* prev_;
 
-    epoll_reactor* reactor_;
-    uint32_t ready_events_;
-
     bool op_queue_is_empty_[max_ops];
 
     mutex mutex_;
+    epoll_reactor* reactor_;
     int descriptor_;
     op_queue<reactor_op> op_queue_[max_ops];
     bool shutdown_;
 
     ASIO_DECL descriptor_state();
-    ASIO_DECL operation* perform_io();
+    void set_ready_events(uint32_t events) { task_result_ = events; }
+    ASIO_DECL operation* perform_io(uint32_t events);
     ASIO_DECL static void do_complete(
         io_service_impl* owner, operation* base,
         asio::error_code /*ec*/, std::size_t /*bytes_transferred*/);
@@ -219,9 +218,6 @@ private:
 
   // Keep track of all registered descriptors.
   object_pool<descriptor_state> registered_descriptors_;
-
-  // The number of descriptor's waiting to have their I/O processed.
-  atomic_count pending_descriptor_io_count_;
 
   // Helper class to do post-perform_io cleanup.
   struct perform_io_cleanup_on_block_exit;

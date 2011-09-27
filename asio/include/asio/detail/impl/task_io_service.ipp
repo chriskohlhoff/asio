@@ -175,10 +175,10 @@ std::size_t task_io_service::run_one(asio::error_code& ec)
 
 std::size_t task_io_service::poll(asio::error_code& ec)
 {
+  ec = asio::error_code();
   if (outstanding_work_ == 0)
   {
     stop();
-    ec = asio::error_code();
     return 0;
   }
 
@@ -331,6 +331,8 @@ std::size_t task_io_service::do_run_one(mutex::scoped_lock& lock,
       }
       else
       {
+        std::size_t task_result = o->task_result_;
+
         if (more_handlers && !one_thread_)
           wake_one_thread_and_unlock(lock);
         else
@@ -340,8 +342,8 @@ std::size_t task_io_service::do_run_one(mutex::scoped_lock& lock,
         work_cleanup on_exit = { this, &lock, this_thread.private_op_queue };
         (void)on_exit;
 
-        // Complete the operation. May throw an exception.
-        o->complete(*this); // deletes the operation object
+        // Complete the operation. May throw an exception. Deletes the object.
+        o->complete(*this, default_error_code_, task_result);
 
         return 1;
       }
@@ -393,6 +395,8 @@ std::size_t task_io_service::do_poll_one(mutex::scoped_lock& lock,
   op_queue_.pop();
   bool more_handlers = (!op_queue_.empty());
 
+  std::size_t task_result = o->task_result_;
+
   if (more_handlers && !one_thread_)
     wake_one_thread_and_unlock(lock);
   else
@@ -402,8 +406,8 @@ std::size_t task_io_service::do_poll_one(mutex::scoped_lock& lock,
   work_cleanup on_exit = { this, &lock, private_op_queue };
   (void)on_exit;
 
-  // Complete the operation. May throw an exception.
-  o->complete(*this); // deletes the operation object
+  // Complete the operation. May throw an exception. Deletes the object.
+  o->complete(*this, default_error_code_, task_result);
 
   return 1;
 }

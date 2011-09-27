@@ -184,6 +184,9 @@ private:
 
   // The threads that are currently idle.
   thread_info* first_idle_thread_;
+
+  // The default error code to pass to completion handlers.
+  const asio::error_code default_error_code_;
 };
 
 } // namespace detail

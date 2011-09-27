@@ -30,9 +30,11 @@ namespace detail {
 class task_io_service_operation ASIO_INHERIT_TRACKED_HANDLER
 {
 public:
-  void complete(task_io_service& owner)
+  void complete(task_io_service& owner,
+      const asio::error_code& ec = asio::error_code(),
+      std::size_t bytes_transferred = 0)
   {
-    func_(&owner, this, asio::error_code(), 0);
+    func_(&owner, this, ec, bytes_transferred);
   }
 
   void destroy()
@@ -47,7 +49,8 @@ protected:
 
   task_io_service_operation(func_type func)
     : next_(0),
-      func_(func)
+      func_(func),
+      task_result_(0)
   {
   }
 
@@ -60,6 +63,9 @@ private:
   friend class op_queue_access;
   task_io_service_operation* next_;
   func_type func_;
+protected:
+  friend class task_io_service;
+  unsigned int task_result_; // Passed into bytes transferred.
 };
 
 } // namespace detail
