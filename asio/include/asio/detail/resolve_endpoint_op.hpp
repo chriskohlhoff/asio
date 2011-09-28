@@ -52,7 +52,8 @@ public:
   }
 
   static void do_complete(io_service_impl* owner, operation* base,
-      asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
+      const asio::error_code& /*ec*/,
+      std::size_t /*bytes_transferred*/)
   {
     // Take ownership of the operation object.
     resolve_endpoint_op* o(static_cast<resolve_endpoint_op*>(base));

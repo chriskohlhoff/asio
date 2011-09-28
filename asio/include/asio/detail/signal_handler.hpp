@@ -39,7 +39,8 @@ public:
   }
 
   static void do_complete(io_service_impl* owner, operation* base,
-      asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
+      const asio::error_code& /*ec*/,
+      std::size_t /*bytes_transferred*/)
   {
     // Take ownership of the handler object.
     signal_handler* h(static_cast<signal_handler*>(base));

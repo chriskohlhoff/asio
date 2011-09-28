@@ -97,7 +97,8 @@ public:
   }
 
   static void do_complete(io_service_impl* /*owner*/, operation* base,
-      asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
+      const asio::error_code& /*ec*/,
+      std::size_t /*bytes_transferred*/)
   {
     pipe_read_op* o(static_cast<pipe_read_op*>(base));
     delete o;

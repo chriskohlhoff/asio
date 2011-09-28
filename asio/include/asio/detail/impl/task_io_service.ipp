@@ -146,7 +146,7 @@ std::size_t task_io_service::run(asio::error_code& ec)
   mutex::scoped_lock lock(mutex_);
 
   std::size_t n = 0;
-  for (; do_run_one(lock, this_thread); lock.lock())
+  for (; do_run_one(lock, this_thread, ec); lock.lock())
     if (n != (std::numeric_limits<std::size_t>::max)())
       ++n;
   return n;
@@ -170,7 +170,7 @@ std::size_t task_io_service::run_one(asio::error_code& ec)
 
   mutex::scoped_lock lock(mutex_);
 
-  return do_run_one(lock, this_thread);
+  return do_run_one(lock, this_thread, ec);
 }
 
 std::size_t task_io_service::poll(asio::error_code& ec)
@@ -196,7 +196,7 @@ std::size_t task_io_service::poll(asio::error_code& ec)
   mutex::scoped_lock lock(mutex_);
 
   std::size_t n = 0;
-  for (; do_poll_one(lock, this_thread.private_op_queue); lock.lock())
+  for (; do_poll_one(lock, this_thread.private_op_queue, ec); lock.lock())
     if (n != (std::numeric_limits<std::size_t>::max)())
       ++n;
   return n;
@@ -219,7 +219,7 @@ std::size_t task_io_service::poll_one(asio::error_code& ec)
 
   mutex::scoped_lock lock(mutex_);
 
-  return do_poll_one(lock, 0);
+  return do_poll_one(lock, 0, ec);
 }
 
 void task_io_service::stop()
@@ -300,7 +300,8 @@ void task_io_service::abandon_operations(
 }
 
 std::size_t task_io_service::do_run_one(mutex::scoped_lock& lock,
-    task_io_service::thread_info& this_thread)
+    task_io_service::thread_info& this_thread,
+    const asio::error_code& ec)
 {
   while (!stopped_)
   {
@@ -343,7 +344,7 @@ std::size_t task_io_service::do_run_one(mutex::scoped_lock& lock,
         (void)on_exit;
 
         // Complete the operation. May throw an exception. Deletes the object.
-        o->complete(*this, default_error_code_, task_result);
+        o->complete(*this, ec, task_result);
 
         return 1;
       }
@@ -362,7 +363,7 @@ std::size_t task_io_service::do_run_one(mutex::scoped_lock& lock,
 }
 
 std::size_t task_io_service::do_poll_one(mutex::scoped_lock& lock,
-    op_queue<operation>* private_op_queue)
+    op_queue<operation>* private_op_queue, const asio::error_code& ec)
 {
   if (stopped_)
     return 0;
@@ -407,7 +408,7 @@ std::size_t task_io_service::do_poll_one(mutex::scoped_lock& lock,
   (void)on_exit;
 
   // Complete the operation. May throw an exception. Deletes the object.
-  o->complete(*this, default_error_code_, task_result);
+  o->complete(*this, ec, task_result);
 
   return 1;
 }

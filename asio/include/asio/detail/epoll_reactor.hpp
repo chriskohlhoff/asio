@@ -68,7 +68,7 @@ public:
     ASIO_DECL operation* perform_io(uint32_t events);
     ASIO_DECL static void do_complete(
         io_service_impl* owner, operation* base,
-        asio::error_code /*ec*/, std::size_t /*bytes_transferred*/);
+        const asio::error_code& ec, std::size_t bytes_transferred);
   };
 
   // Per-descriptor data.

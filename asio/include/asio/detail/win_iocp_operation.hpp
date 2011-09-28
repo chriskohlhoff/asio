@@ -37,8 +37,8 @@ class win_iocp_operation
 {
 public:
   void complete(win_iocp_io_service& owner,
-      const asio::error_code& ec = asio::error_code(),
-      std::size_t bytes_transferred = 0)
+      const asio::error_code& ec,
+      std::size_t bytes_transferred)
   {
     func_(&owner, this, ec, bytes_transferred);
   }
@@ -49,8 +49,9 @@ public:
   }
 
 protected:
-  typedef void (*func_type)(win_iocp_io_service*,
-      win_iocp_operation*, asio::error_code, std::size_t);
+  typedef void (*func_type)(
+      win_iocp_io_service*, win_iocp_operation*,
+      const asio::error_code&, std::size_t);
 
   win_iocp_operation(func_type func)
     : next_(0),

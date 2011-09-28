@@ -114,7 +114,7 @@ void strand_service::do_post(implementation_type& impl, operation* op)
 }
 
 void strand_service::do_complete(io_service_impl* owner, operation* base,
-    asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
+    const asio::error_code& ec, std::size_t /*bytes_transferred*/)
 {
   if (owner)
   {
@@ -133,7 +133,7 @@ void strand_service::do_complete(io_service_impl* owner, operation* base,
     on_do_complete_exit on_exit = { owner, impl };
     (void)on_exit;
 
-    o->complete(*owner);
+    o->complete(*owner, ec, 0);
   }
 }
 

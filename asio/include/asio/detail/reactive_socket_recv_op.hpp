@@ -81,7 +81,8 @@ public:
   }
 
   static void do_complete(io_service_impl* owner, operation* base,
-      asio::error_code /*ec*/, std::size_t /*bytes_transferred*/)
+      const asio::error_code& /*ec*/,
+      std::size_t /*bytes_transferred*/)
   {
     // Take ownership of the handler object.
     reactive_socket_recv_op* o(static_cast<reactive_socket_recv_op*>(base));

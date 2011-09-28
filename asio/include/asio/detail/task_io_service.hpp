@@ -122,11 +122,12 @@ private:
 
   // Run at most one operation. Blocks only if this_idle_thread is non-null.
   ASIO_DECL std::size_t do_run_one(mutex::scoped_lock& lock,
-      thread_info& this_thread);
+      thread_info& this_thread, const asio::error_code& ec);
 
   // Poll for at most one operation.
   ASIO_DECL std::size_t do_poll_one(mutex::scoped_lock& lock,
-      op_queue<operation>* private_op_queue);
+      op_queue<operation>* private_op_queue,
+      const asio::error_code& ec);
 
   // Stop the task and all idle threads.
   ASIO_DECL void stop_all_threads(mutex::scoped_lock& lock);
@@ -184,9 +185,6 @@ private:
 
   // The threads that are currently idle.
   thread_info* first_idle_thread_;
-
-  // The default error code to pass to completion handlers.
-  const asio::error_code default_error_code_;
 };
 
 } // namespace detail

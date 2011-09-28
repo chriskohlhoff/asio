@@ -31,8 +31,7 @@ class task_io_service_operation ASIO_INHERIT_TRACKED_HANDLER
 {
 public:
   void complete(task_io_service& owner,
-      const asio::error_code& ec = asio::error_code(),
-      std::size_t bytes_transferred = 0)
+      const asio::error_code& ec, std::size_t bytes_transferred)
   {
     func_(&owner, this, ec, bytes_transferred);
   }
@@ -45,7 +44,7 @@ public:
 protected:
   typedef void (*func_type)(task_io_service*,
       task_io_service_operation*,
-      asio::error_code, std::size_t);
+      const asio::error_code&, std::size_t);
 
   task_io_service_operation(func_type func)
     : next_(0),
