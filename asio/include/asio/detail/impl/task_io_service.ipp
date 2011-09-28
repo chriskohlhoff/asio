@@ -53,7 +53,7 @@ struct task_io_service::work_cleanup
     task_io_service_->work_finished();
 
 #if defined(BOOST_HAS_THREADS) && !defined(ASIO_DISABLE_THREADS) 
-    if (ops_ && !ops_->empty())
+    if (!ops_->empty())
     {
       lock_->lock();
       task_io_service_->op_queue_.push(*ops_);
@@ -134,8 +134,8 @@ std::size_t task_io_service::run(asio::error_code& ec)
   thread_info this_thread;
   event wakeup_event;
   this_thread.wakeup_event = &wakeup_event;
-#if defined(BOOST_HAS_THREADS) && !defined(ASIO_DISABLE_THREADS) 
   op_queue<operation> private_op_queue;
+#if defined(BOOST_HAS_THREADS) && !defined(ASIO_DISABLE_THREADS) 
   this_thread.private_op_queue = one_thread_ == 1 ? &private_op_queue : 0;
 #else // defined(BOOST_HAS_THREADS) && !defined(ASIO_DISABLE_THREADS)
   this_thread.private_op_queue = 0;
@@ -146,7 +146,7 @@ std::size_t task_io_service::run(asio::error_code& ec)
   mutex::scoped_lock lock(mutex_);
 
   std::size_t n = 0;
-  for (; do_run_one(lock, this_thread, ec); lock.lock())
+  for (; do_run_one(lock, this_thread, private_op_queue, ec); lock.lock())
     if (n != (std::numeric_limits<std::size_t>::max)())
       ++n;
   return n;
@@ -164,13 +164,14 @@ std::size_t task_io_service::run_one(asio::error_code& ec)
   thread_info this_thread;
   event wakeup_event;
   this_thread.wakeup_event = &wakeup_event;
+  op_queue<operation> private_op_queue;
   this_thread.private_op_queue = 0;
   this_thread.next = 0;
   thread_call_stack::context ctx(this, this_thread);
 
   mutex::scoped_lock lock(mutex_);
 
-  return do_run_one(lock, this_thread, ec);
+  return do_run_one(lock, this_thread, private_op_queue, ec);
 }
 
 std::size_t task_io_service::poll(asio::error_code& ec)
@@ -184,8 +185,8 @@ std::size_t task_io_service::poll(asio::error_code& ec)
 
   thread_info this_thread;
   this_thread.wakeup_event = 0;
-#if defined(BOOST_HAS_THREADS) && !defined(ASIO_DISABLE_THREADS) 
   op_queue<operation> private_op_queue;
+#if defined(BOOST_HAS_THREADS) && !defined(ASIO_DISABLE_THREADS) 
   this_thread.private_op_queue = one_thread_ == 1 ? &private_op_queue : 0;
 #else // defined(BOOST_HAS_THREADS) && !defined(ASIO_DISABLE_THREADS)
   this_thread.private_op_queue = 0;
@@ -196,7 +197,7 @@ std::size_t task_io_service::poll(asio::error_code& ec)
   mutex::scoped_lock lock(mutex_);
 
   std::size_t n = 0;
-  for (; do_poll_one(lock, this_thread.private_op_queue, ec); lock.lock())
+  for (; do_poll_one(lock, private_op_queue, ec); lock.lock())
     if (n != (std::numeric_limits<std::size_t>::max)())
       ++n;
   return n;
@@ -213,13 +214,14 @@ std::size_t task_io_service::poll_one(asio::error_code& ec)
 
   thread_info this_thread;
   this_thread.wakeup_event = 0;
+  op_queue<operation> private_op_queue;
   this_thread.private_op_queue = 0;
   this_thread.next = 0;
   thread_call_stack::context ctx(this, this_thread);
 
   mutex::scoped_lock lock(mutex_);
 
-  return do_poll_one(lock, 0, ec);
+  return do_poll_one(lock, private_op_queue, ec);
 }
 
 void task_io_service::stop()
@@ -301,7 +303,7 @@ void task_io_service::abandon_operations(
 
 std::size_t task_io_service::do_run_one(mutex::scoped_lock& lock,
     task_io_service::thread_info& this_thread,
-    const asio::error_code& ec)
+    op_queue<operation>& private_op_queue, const asio::error_code& ec)
 {
   while (!stopped_)
   {
@@ -340,7 +342,7 @@ std::size_t task_io_service::do_run_one(mutex::scoped_lock& lock,
           lock.unlock();
 
         // Ensure the count of outstanding work is decremented on block exit.
-        work_cleanup on_exit = { this, &lock, this_thread.private_op_queue };
+        work_cleanup on_exit = { this, &lock, &private_op_queue };
         (void)on_exit;
 
         // Complete the operation. May throw an exception. Deletes the object.
@@ -363,7 +365,7 @@ std::size_t task_io_service::do_run_one(mutex::scoped_lock& lock,
 }
 
 std::size_t task_io_service::do_poll_one(mutex::scoped_lock& lock,
-    op_queue<operation>* private_op_queue, const asio::error_code& ec)
+    op_queue<operation>& private_op_queue, const asio::error_code& ec)
 {
   if (stopped_)
     return 0;
@@ -404,7 +406,7 @@ std::size_t task_io_service::do_poll_one(mutex::scoped_lock& lock,
     lock.unlock();
 
   // Ensure the count of outstanding work is decremented on block exit.
-  work_cleanup on_exit = { this, &lock, private_op_queue };
+  work_cleanup on_exit = { this, &lock, &private_op_queue };
   (void)on_exit;
 
   // Complete the operation. May throw an exception. Deletes the object.
