@@ -166,6 +166,35 @@ public:
   ASIO_DECL asio::error_code set_verify_mode(
       verify_mode v, asio::error_code& ec);
 
+  /// Set the peer verification depth.
+  /**
+   * This function may be used to configure the peer verification mode used by
+   * the context.
+   *
+   * @param depth Depth for the certificate chain verification that shall be
+   * allowed.
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_set_verify_depth.
+   */
+  ASIO_DECL void set_verify_depth(int depth);
+
+  /// Set the peer verification depth.
+  /**
+   * This function may be used to configure the peer verification mode used by
+   * the context.
+   *
+   * @param depth Depth for the certificate chain verification that shall be
+   * allowed.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_set_verify_depth.
+   */
+  ASIO_DECL asio::error_code set_verify_depth(
+      int depth, asio::error_code& ec);
+
   /// Set the callback used to verify peer certificates.
   /**
    * This function is used to specify a callback function that will be called
@@ -237,6 +266,35 @@ public:
    */
   ASIO_DECL asio::error_code load_verify_file(
       const std::string& filename, asio::error_code& ec);
+
+  /// Add certification authority for performing verification.
+  /**
+   * This function is used to add one trusted certification authority
+   * by string.
+   *
+   * @param ca The string containing certification authority certificate
+   * in PEM format.
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c X509_STORE_add_cert.
+   */
+  ASIO_DECL void add_certificate_authority(const std::string& ca);
+
+  /// Add certification authority for performing verification.
+  /**
+   * This function is used to add one trusted certification authority
+   * by string.
+   *
+   * @param ca The string containing certification authority certificate
+   * in PEM format.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c X509_STORE_add_cert.
+   */
+  ASIO_DECL asio::error_code add_certificate_authority(
+      const std::string& ca, asio::error_code& ec);
 
   /// Configures the context to use the default directories for finding
   /// certification authority certificates.
@@ -329,6 +387,39 @@ public:
       const std::string& filename, file_format format,
       asio::error_code& ec);
 
+  /// Use a certificate from a string.
+  /**
+   * This function is used to load a certificate into the context from a
+   * string.
+   *
+   * @param certificate The string containing the certificate.
+   *
+   * @param format The file format (ASN.1 or PEM).
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_use_certificate or SSL_CTX_use_certificate_ASN1.
+   */
+  ASIO_DECL void use_certificate(
+      const std::string& certificate, file_format format);
+
+  /// Use a certificate from a string.
+  /**
+   * This function is used to load a certificate into the context from a
+   * string.
+   *
+   * @param certificate The string containing the certificate.
+   *
+   * @param format The file format (ASN.1 or PEM).
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_use_certificate or SSL_CTX_use_certificate_ASN1.
+   */
+  ASIO_DECL asio::error_code use_certificate(
+      const std::string& certificate, file_format format,
+      asio::error_code& ec);
+
   /// Use a certificate chain from a file.
   /**
    * This function is used to load a certificate chain into the context from a
@@ -357,6 +448,35 @@ public:
    */
   ASIO_DECL asio::error_code use_certificate_chain_file(
       const std::string& filename, asio::error_code& ec);
+
+  /// Use a certificate chain from a string.
+  /**
+   * This function is used to load a certificate chain into the context from a
+   * string.
+   *
+   * @param chain The string containing the certificate chain. The string
+   * must use the PEM format.
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_use_certificate and SSL_CTX_add_extra_chain_cert.
+   */
+  ASIO_DECL void use_certificate_chain(const std::string& chain);
+
+  /// Use a certificate chain from a string.
+  /**
+   * This function is used to load a certificate chain into the context from a
+   * string.
+   *
+   * @param chain The string containing the certificate chain. The string
+   * must use the PEM format.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_use_certificate and SSL_CTX_add_extra_chain_cert.
+   */
+  ASIO_DECL asio::error_code use_certificate_chain(
+      const std::string& chain, asio::error_code& ec);
 
   /// Use a private key from a file.
   /**
@@ -387,6 +507,39 @@ public:
    */
   ASIO_DECL asio::error_code use_private_key_file(
       const std::string& filename, file_format format,
+      asio::error_code& ec);
+
+  /// Use a private key from a string.
+  /**
+   * This function is used to load a private key into the context from a
+   * string.
+   *
+   * @param private_key The string containing the private key.
+   *
+   * @param format The file format (ASN.1 or PEM).
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_use_PrivateKey or SSL_CTX_use_PrivateKey_ASN1.
+   */
+  ASIO_DECL void use_private_key(
+      const std::string& private_key, file_format format);
+
+  /// Use a private key from a string.
+  /**
+   * This function is used to load a private key into the context from a
+   * string.
+   *
+   * @param private_key The string containing the private key.
+   *
+   * @param format The string format (ASN.1 or PEM).
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_use_PrivateKey or SSL_CTX_use_PrivateKey_ASN1.
+   */
+  ASIO_DECL asio::error_code use_private_key(
+      const std::string& private_key, file_format format,
       asio::error_code& ec);
 
   /// Use an RSA private key from a file.
@@ -422,6 +575,39 @@ public:
       const std::string& filename, file_format format,
       asio::error_code& ec);
 
+  /// Use an RSA private key from a string.
+  /**
+   * This function is used to load an RSA private key into the context from a
+   * string.
+   *
+   * @param private_key The string containing the RSA private key.
+   *
+   * @param format The string format (ASN.1 or PEM).
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_use_RSAPrivateKey or SSL_CTX_use_RSAPrivateKey_ASN1.
+   */
+  ASIO_DECL void use_rsa_private_key(
+      const std::string& private_key, file_format format);
+
+  /// Use an RSA private key from a string.
+  /**
+   * This function is used to load an RSA private key into the context from a
+   * string.
+   *
+   * @param private_key The string containing the RSA private key.
+   *
+   * @param format The string format (ASN.1 or PEM).
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_use_RSAPrivateKey or SSL_CTX_use_RSAPrivateKey_ASN1.
+   */
+  ASIO_DECL asio::error_code use_rsa_private_key(
+      const std::string& private_key, file_format format,
+      asio::error_code& ec);
+
   /// Use the specified file to obtain the temporary Diffie-Hellman parameters.
   /**
    * This function is used to load Diffie-Hellman parameters into the context
@@ -450,6 +636,35 @@ public:
    */
   ASIO_DECL asio::error_code use_tmp_dh_file(
       const std::string& filename, asio::error_code& ec);
+
+  /// Use the specified string to obtain the temporary Diffie-Hellman parameters.
+  /**
+   * This function is used to load Diffie-Hellman parameters into the context
+   * from a string.
+   *
+   * @param dh The string buffer containing the Diffie-Hellman
+   * parameters. The string must use the PEM format.
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_set_tmp_dh.
+   */
+  ASIO_DECL void use_tmp_dh(const std::string& dh);
+
+  /// Use the specified string to obtain the temporary Diffie-Hellman parameters.
+  /**
+   * This function is used to load Diffie-Hellman parameters into the context
+   * from a string.
+   *
+   * @param dh The name string buffer containing the Diffie-Hellman
+   * parameters. The string must use the PEM format.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_set_tmp_dh.
+   */
+  ASIO_DECL asio::error_code use_tmp_dh(
+      const std::string& dh, asio::error_code& ec);
 
   /// Set the password callback.
   /**
