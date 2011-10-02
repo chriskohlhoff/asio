@@ -51,14 +51,21 @@ class service_registry
   : private noncopyable
 {
 public:
-  // Constructor.
-  ASIO_DECL service_registry(asio::io_service& o);
+  // Constructor. Adds the initial service.
+  template <typename Service, typename Arg>
+  service_registry(asio::io_service& o,
+      Service* initial_service, Arg arg);
 
   // Destructor.
   ASIO_DECL ~service_registry();
 
   // Notify all services of a fork event.
   ASIO_DECL void notify_fork(asio::io_service::fork_event fork_ev);
+
+  // Get the first service object cast to the specified type. Called during
+  // io_service construction and so performs no locking or type checking.
+  template <typename Service>
+  Service& first_service();
 
   // Get the service object corresponding to the specified service type. Will
   // create a new service object automatically if no such object already
@@ -122,8 +129,8 @@ private:
       const asio::io_service::service::key& key,
       factory_type factory);
 
-  // Add a service object. Returns false on error, in which case ownership of
-  // the object is retained by the caller.
+  // Add a service object. Throws on error, in which case ownership of the
+  // object is retained by the caller.
   ASIO_DECL void do_add_service(
       const asio::io_service::service::key& key,
       asio::io_service::service* new_service);

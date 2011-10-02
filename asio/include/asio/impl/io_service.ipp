@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include <boost/limits.hpp>
 #include "asio/io_service.hpp"
+#include "asio/detail/scoped_ptr.hpp"
 #include "asio/detail/service_registry.hpp"
 #include "asio/detail/throw_error.hpp"
 
@@ -32,17 +33,18 @@
 namespace asio {
 
 io_service::io_service()
-  : service_registry_(new asio::detail::service_registry(*this)),
-    impl_(service_registry_->use_service<impl_type>())
+  : service_registry_(new asio::detail::service_registry(
+        *this, static_cast<impl_type*>(0),
+        (std::numeric_limits<std::size_t>::max)())),
+    impl_(service_registry_->first_service<impl_type>())
 {
-  impl_.init((std::numeric_limits<std::size_t>::max)());
 }
 
 io_service::io_service(std::size_t concurrency_hint)
-  : service_registry_(new asio::detail::service_registry(*this)),
-    impl_(service_registry_->use_service<impl_type>())
+  : service_registry_(new asio::detail::service_registry(
+        *this, static_cast<impl_type*>(0), concurrency_hint)),
+    impl_(service_registry_->first_service<impl_type>())
 {
-  impl_.init(concurrency_hint);
 }
 
 io_service::~io_service()

@@ -61,7 +61,8 @@ struct win_iocp_io_service::timer_thread_function
   win_iocp_io_service* io_service_;
 };
 
-win_iocp_io_service::win_iocp_io_service(asio::io_service& io_service)
+win_iocp_io_service::win_iocp_io_service(
+    asio::io_service& io_service, size_t concurrency_hint)
   : asio::detail::service_base<win_iocp_io_service>(io_service),
     iocp_(),
     outstanding_work_(0),
@@ -70,10 +71,7 @@ win_iocp_io_service::win_iocp_io_service(asio::io_service& io_service)
     dispatch_required_(0)
 {
   ASIO_HANDLER_TRACKING_INIT;
-}
 
-void win_iocp_io_service::init(size_t concurrency_hint)
-{
   iocp_.handle = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0,
       static_cast<DWORD>((std::min<size_t>)(concurrency_hint, DWORD(~0))));
   if (!iocp_.handle)

@@ -73,10 +73,11 @@ struct task_io_service::thread_info
   thread_info* next;
 };
 
-task_io_service::task_io_service(asio::io_service& io_service)
+task_io_service::task_io_service(
+    asio::io_service& io_service, std::size_t concurrency_hint)
   : asio::detail::service_base<task_io_service>(io_service),
+    one_thread_(concurrency_hint == 1),
     mutex_(),
-    one_thread_(false),
     task_(0),
     task_interrupted_(true),
     outstanding_work_(0),
@@ -85,11 +86,6 @@ task_io_service::task_io_service(asio::io_service& io_service)
     first_idle_thread_(0)
 {
   ASIO_HANDLER_TRACKING_INIT;
-}
-
-void task_io_service::init(std::size_t concurrency_hint)
-{
-  one_thread_ = (concurrency_hint == 1);
 }
 
 void task_io_service::shutdown_service()

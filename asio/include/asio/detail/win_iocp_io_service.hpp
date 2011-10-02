@@ -45,10 +45,11 @@ class win_iocp_io_service
   : public asio::detail::service_base<win_iocp_io_service>
 {
 public:
-  // Constructor.
-  ASIO_DECL win_iocp_io_service(asio::io_service& io_service);
 
-  ASIO_DECL void init(size_t concurrency_hint);
+  // Constructor. Specifies a concurrency hint that is passed through to the
+  // underlying I/O completion port.
+  ASIO_DECL win_iocp_io_service(asio::io_service& io_service,
+      size_t concurrency_hint = 0);
 
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown_service();

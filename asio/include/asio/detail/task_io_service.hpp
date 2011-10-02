@@ -40,11 +40,10 @@ class task_io_service
 public:
   typedef task_io_service_operation operation;
 
-  // Constructor.
-  ASIO_DECL task_io_service(asio::io_service& io_service);
-
-  // How many concurrent threads are likely to run the io_service.
-  ASIO_DECL void init(std::size_t concurrency_hint);
+  // Constructor. Specifies the number of concurrent threads that are likely to
+  // run the io_service. If set to 1 certain optimisation are performed.
+  ASIO_DECL task_io_service(asio::io_service& io_service,
+      std::size_t concurrency_hint = 0);
 
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown_service();
@@ -151,11 +150,11 @@ private:
   struct work_cleanup;
   friend struct work_cleanup;
 
+  // Whether to optimise for single-threaded use cases.
+  const bool one_thread_;
+
   // Mutex to protect access to internal data.
   mutable mutex mutex_;
-
-  // Whether to optimise for single-threaded use cases.
-  bool one_thread_;
 
   // The task to be run by this service.
   reactor* task_;
