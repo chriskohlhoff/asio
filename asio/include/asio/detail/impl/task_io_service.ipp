@@ -192,6 +192,16 @@ std::size_t task_io_service::poll(asio::error_code& ec)
 
   mutex::scoped_lock lock(mutex_);
 
+#if defined(BOOST_HAS_THREADS) && !defined(ASIO_DISABLE_THREADS) 
+  // We want to support nested calls to poll() and poll_one(), so any handlers
+  // that are already on a thread-private queue need to be put on to the main
+  // queue now.
+  if (one_thread_)
+    if (thread_info* outer_thread_info = ctx.next_by_key())
+      if (outer_thread_info->private_op_queue)
+        op_queue_.push(*outer_thread_info->private_op_queue);
+#endif // defined(BOOST_HAS_THREADS) && !defined(ASIO_DISABLE_THREADS)
+
   std::size_t n = 0;
   for (; do_poll_one(lock, private_op_queue, ec); lock.lock())
     if (n != (std::numeric_limits<std::size_t>::max)())
@@ -216,6 +226,16 @@ std::size_t task_io_service::poll_one(asio::error_code& ec)
   thread_call_stack::context ctx(this, this_thread);
 
   mutex::scoped_lock lock(mutex_);
+
+#if defined(BOOST_HAS_THREADS) && !defined(ASIO_DISABLE_THREADS) 
+  // We want to support nested calls to poll() and poll_one(), so any handlers
+  // that are already on a thread-private queue need to be put on to the main
+  // queue now.
+  if (one_thread_)
+    if (thread_info* outer_thread_info = ctx.next_by_key())
+      if (outer_thread_info->private_op_queue)
+        op_queue_.push(*outer_thread_info->private_op_queue);
+#endif // defined(BOOST_HAS_THREADS) && !defined(ASIO_DISABLE_THREADS)
 
   return do_poll_one(lock, private_op_queue, ec);
 }

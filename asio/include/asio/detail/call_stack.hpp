@@ -59,6 +59,19 @@ public:
       call_stack<Key, Value>::top_ = next_;
     }
 
+    // Find the next context with the same key.
+    Value* next_by_key() const
+    {
+      context* elem = next_;
+      while (elem)
+      {
+        if (elem->key_ == key_)
+          return elem->value_;
+        elem = elem->next_;
+      }
+      return 0;
+    }
+
   private:
     friend class call_stack<Key, Value>;
 
