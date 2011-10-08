@@ -54,17 +54,6 @@ boost::tribool request_parser::consume(request& req, char input)
       req.method.push_back(input);
       return boost::indeterminate;
     }
-  case uri_start:
-    if (is_ctl(input))
-    {
-      return false;
-    }
-    else
-    {
-      state_ = uri;
-      req.uri.push_back(input);
-      return boost::indeterminate;
-    }
   case uri:
     if (input == ' ')
     {

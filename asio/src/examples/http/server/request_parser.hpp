@@ -68,7 +68,6 @@ private:
   {
     method_start,
     method,
-    uri_start,
     uri,
     http_version_h,
     http_version_t_1,
