@@ -85,9 +85,13 @@ int main(int argc, char* argv[])
     boost::uint64_t t = high_res_clock();
 
     asio::error_code ec;
-    asio::write(socket, asio::buffer(write_buf), transfer_all(), ec);
+    asio::write(socket,
+        asio::buffer(write_buf),
+        transfer_all(), ec);
 
-    asio::read(socket, asio::buffer(read_buf), transfer_all(), ec);
+    asio::read(socket,
+        asio::buffer(read_buf),
+        transfer_all(), ec);
 
     samples[i] = high_res_clock() - t;
   }

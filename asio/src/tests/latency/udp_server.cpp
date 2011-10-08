@@ -59,9 +59,18 @@ public:
 
   struct ref
   {
-    explicit ref(udp_server* p) : p_(p) {}
-    void operator()(asio::error_code ec, std::size_t n = 0) { (*p_)(ec, n); }
-    private: udp_server* p_;
+    explicit ref(udp_server* p)
+      : p_(p)
+    {
+    }
+
+    void operator()(asio::error_code ec, std::size_t n = 0)
+    {
+      (*p_)(ec, n);
+    }
+
+  private:
+    udp_server* p_;
 
     friend void* asio_handler_allocate(std::size_t n, ref* r)
     {

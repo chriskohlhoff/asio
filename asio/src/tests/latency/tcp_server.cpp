@@ -58,9 +58,18 @@ public:
 
   struct ref
   {
-    explicit ref(tcp_server* p) : p_(p) {}
-    void operator()(asio::error_code ec, std::size_t n = 0) { (*p_)(ec, n); }
-    private: tcp_server* p_;
+    explicit ref(tcp_server* p)
+      : p_(p)
+    {
+    }
+
+    void operator()(asio::error_code ec, std::size_t n = 0)
+    {
+      (*p_)(ec, n);
+    }
+
+  private:
+    tcp_server* p_;
   };
 
 private:
