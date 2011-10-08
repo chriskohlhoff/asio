@@ -403,6 +403,25 @@ sub copy_unit_tests
   }
 }
 
+sub copy_latency_tests
+{
+  my @dirs = (
+      "src/tests/latency");
+
+  our $boost_dir;
+  foreach my $dir (@dirs)
+  {
+    my @files = ( glob("$dir/*.*pp"), glob("$dir/Jamfile*") );
+    foreach my $file (@files)
+    {
+      my $from = $file;
+      my $to = $file;
+      $to =~ s/^src\/tests\/latency\//$boost_dir\/libs\/asio\/test\/latency\//;
+      copy_source_file($from, $to);
+    }
+  }
+}
+
 sub copy_examples
 {
   my @dirs = (
@@ -501,6 +520,7 @@ sub copy_tools
 copy_include_files();
 create_lib_directory();
 copy_unit_tests();
+copy_latency_tests();
 copy_examples();
 copy_doc();
 copy_tools();
