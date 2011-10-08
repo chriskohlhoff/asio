@@ -37,7 +37,7 @@ public:
   {
     ::SSL_library_init();
     ::SSL_load_error_strings();        
-    ::OpenSSL_add_ssl_algorithms();
+    ::OpenSSL_add_all_algorithms();
 
     mutexes_.resize(::CRYPTO_num_locks());
     for (size_t i = 0; i < mutexes_.size(); ++i)
