@@ -213,6 +213,8 @@ std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
  * This function is used to read a certain number of bytes of data from a
  * stream. The call will block until one of the following conditions is true:
  *
+ * @li The supplied buffer is full (that is, it has reached maximum size).
+ *
  * @li An error occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
@@ -239,6 +241,8 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b);
 /**
  * This function is used to read a certain number of bytes of data from a
  * stream. The call will block until one of the following conditions is true:
+ *
+ * @li The supplied buffer is full (that is, it has reached maximum size).
  *
  * @li An error occurred.
  *
@@ -267,6 +271,8 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
 /**
  * This function is used to read a certain number of bytes of data from a
  * stream. The call will block until one of the following conditions is true:
+ *
+ * @li The supplied buffer is full (that is, it has reached maximum size).
  *
  * @li The completion_condition function object returns 0.
  *
@@ -305,6 +311,8 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
 /**
  * This function is used to read a certain number of bytes of data from a
  * stream. The call will block until one of the following conditions is true:
+ *
+ * @li The supplied buffer is full (that is, it has reached maximum size).
  *
  * @li The completion_condition function object returns 0.
  *
@@ -495,6 +503,8 @@ void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  * asynchronous operation will continue until one of the following conditions is
  * true:
  *
+ * @li The supplied buffer is full (that is, it has reached maximum size).
+ *
  * @li An error occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
@@ -544,6 +554,8 @@ void async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
  * data from a stream. The function call always returns immediately. The
  * asynchronous operation will continue until one of the following conditions is
  * true:
+ *
+ * @li The supplied buffer is full (that is, it has reached maximum size).
  *
  * @li The completion_condition function object returns 0.
  *
