@@ -61,13 +61,17 @@ void strand_service::shutdown_service()
 
 void strand_service::construct(strand_service::implementation_type& impl)
 {
+  asio::detail::mutex::scoped_lock lock(mutex_);
+
   std::size_t salt = salt_++;
+#if defined(ASIO_ENABLE_SEQUENTIAL_STRAND_ALLOCATION)
+  std::size_t index = salt;
+#else // defined(ASIO_ENABLE_SEQUENTIAL_STRAND_ALLOCATION)
   std::size_t index = reinterpret_cast<std::size_t>(&impl);
   index += (reinterpret_cast<std::size_t>(&impl) >> 3);
   index ^= salt + 0x9e3779b9 + (index << 6) + (index >> 2);
+#endif // defined(ASIO_ENABLE_SEQUENTIAL_STRAND_ALLOCATION)
   index = index % num_implementations;
-
-  asio::detail::mutex::scoped_lock lock(mutex_);
 
   if (!implementations_[index].get())
     implementations_[index].reset(new strand_impl);
