@@ -104,7 +104,11 @@ private:
   asio::detail::mutex mutex_;
 
   // Number of implementations shared between all strand objects.
+#if defined(ASIO_STRAND_IMPLEMENTATIONS)
+  enum { num_implementations = ASIO_STRAND_IMPLEMENTATIONS };
+#else // defined(ASIO_STRAND_IMPLEMENTATIONS)
   enum { num_implementations = 193 };
+#endif // defined(ASIO_STRAND_IMPLEMENTATIONS)
 
   // Pool of implementations.
   scoped_ptr<strand_impl> implementations_[num_implementations];
