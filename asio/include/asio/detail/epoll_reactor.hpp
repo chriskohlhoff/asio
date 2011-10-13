@@ -204,14 +204,14 @@ private:
   // Mutex to protect access to internal data.
   mutex mutex_;
 
+  // The interrupter is used to break a blocking epoll_wait call.
+  select_interrupter interrupter_;
+
   // The epoll file descriptor.
   int epoll_fd_;
 
   // The timer file descriptor.
   int timer_fd_;
-
-  // The interrupter is used to break a blocking epoll_wait call.
-  select_interrupter interrupter_;
 
   // The timer queues.
   timer_queue_set timer_queues_;

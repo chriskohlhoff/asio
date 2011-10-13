@@ -38,9 +38,9 @@ epoll_reactor::epoll_reactor(asio::io_service& io_service)
   : asio::detail::service_base<epoll_reactor>(io_service),
     io_service_(use_service<io_service_impl>(io_service)),
     mutex_(),
+    interrupter_(),
     epoll_fd_(do_epoll_create()),
     timer_fd_(do_timerfd_create()),
-    interrupter_(),
     shutdown_(false)
 {
   // Add the interrupter's descriptor to epoll.
