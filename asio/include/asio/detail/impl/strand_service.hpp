@@ -28,7 +28,7 @@ namespace detail {
 
 inline strand_service::strand_impl::strand_impl()
   : operation(&strand_service::do_complete),
-    count_(0)
+    locked_(false)
 {
 }
 
@@ -40,7 +40,8 @@ struct strand_service::on_dispatch_exit
   ~on_dispatch_exit()
   {
     impl_->mutex_.lock();
-    bool more_handlers = (--impl_->count_ > 0);
+    impl_->ready_queue_.push(impl_->waiting_queue_);
+    bool more_handlers = impl_->locked_ = !impl_->ready_queue_.empty();
     impl_->mutex_.unlock();
 
     if (more_handlers)

@@ -56,11 +56,20 @@ public:
     // Mutex to protect access to internal data.
     asio::detail::mutex mutex_;
 
-    // The count of handlers in the strand, including the upcall (if any).
-    std::size_t count_;
+    // Indicates whether the strand is currently "locked" by a handler. This
+    // means that there is a handler upcall in progress, or that the strand
+    // itself has been scheduled in order to invoke some pending handlers.
+    bool locked_;
 
-    // The handlers waiting on the strand.
-    op_queue<operation> queue_;
+    // The handlers that are waiting on the strand but should not be run until
+    // after the next time the strand is scheduled. This queue must only be
+    // modified while the mutex is locked.
+    op_queue<operation> waiting_queue_;
+
+    // The handlers that are ready to be run. Logically speaking, these are the
+    // handlers that hold the strand's lock. The ready queue is only modified
+    // from within the strand and so may be accessed without locking the mutex.
+    op_queue<operation> ready_queue_;
   };
 
   typedef strand_impl* implementation_type;
