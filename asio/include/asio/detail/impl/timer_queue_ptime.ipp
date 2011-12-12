@@ -32,7 +32,7 @@ timer_queue<time_traits<boost::posix_time::ptime> >::~timer_queue()
 }
 
 bool timer_queue<time_traits<boost::posix_time::ptime> >::enqueue_timer(
-    const time_type& time, per_timer_data& timer, timer_op* op)
+    const time_type& time, per_timer_data& timer, wait_op* op)
 {
   return impl_.enqueue_timer(time, timer, op);
 }

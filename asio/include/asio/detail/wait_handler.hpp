@@ -19,7 +19,8 @@
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
-#include "asio/detail/timer_op.hpp"
+#include "asio/detail/wait_op.hpp"
+#include "asio/io_service.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -27,13 +28,13 @@ namespace asio {
 namespace detail {
 
 template <typename Handler>
-class wait_handler : public timer_op
+class wait_handler : public wait_op
 {
 public:
   ASIO_DEFINE_HANDLER_PTR(wait_handler);
 
   wait_handler(Handler& h)
-    : timer_op(&wait_handler::do_complete),
+    : wait_op(&wait_handler::do_complete),
       handler_(ASIO_MOVE_CAST(Handler)(h))
   {
   }

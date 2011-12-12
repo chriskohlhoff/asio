@@ -11,6 +11,8 @@
 
 [link asio.overview.windows.random_access_handle Random-Access HANDLEs]
 
+[link asio.overview.windows.object_handle Object HANDLEs]
+
 [section:stream_handle Stream-Oriented HANDLEs]
 
 Asio contains classes to allow asynchronous read and write operations to be
@@ -85,6 +87,45 @@ targeting Windows and only when the I/O completion port backend is used (which
 is the default). A program may test for the macro
 `ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE` to determine whether they are
 supported.
+
+[endsect]
+
+[/-----------------------------------------------------------------------------]
+
+[section:object_handle Object HANDLEs]
+
+Asio provides Windows-specific classes that permit asynchronous wait operations
+to be performed on HANDLEs to kernel objects of the following types:
+
+  * Change notification
+  * Console input
+  * Event
+  * Memory resource notification
+  * Process
+  * Semaphore
+  * Thread
+  * Waitable timer
+
+For example, to perform asynchronous operations on an event, the following
+object may be created:
+
+  HANDLE handle = ::CreateEvent(...);
+  windows::object_handle file(my_io_service, handle);
+
+The `wait()` and `async_wait()` member functions may then be used to wait until
+the kernel object is signalled.
+
+[heading See Also]
+
+[link asio.reference.windows__object_handle windows::object_handle],
+[link asio.reference.windows__basic_object_handle windows::basic_object_handle],
+[link asio.reference.windows__object_handle_service windows::object_handle_service].
+
+[heading Notes]
+
+Windows object `HANDLE`s are only available at compile time when targeting
+Windows. Programs may test for the macro `ASIO_HAS_WINDOWS_OBJECT_HANDLE` to
+determine whether they are supported.
 
 [endsect]
 

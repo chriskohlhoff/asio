@@ -1,6 +1,6 @@
 //
-// detail/timer_op.hpp
-// ~~~~~~~~~~~~~~~~~~~
+// detail/wait_op.hpp
+// ~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2011 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_TIMER_OP_HPP
-#define ASIO_DETAIL_TIMER_OP_HPP
+#ifndef ASIO_DETAIL_WAIT_OP_HPP
+#define ASIO_DETAIL_WAIT_OP_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -23,7 +23,7 @@
 namespace asio {
 namespace detail {
 
-class timer_op
+class wait_op
   : public operation
 {
 public:
@@ -31,7 +31,7 @@ public:
   asio::error_code ec_;
 
 protected:
-  timer_op(func_type func)
+  wait_op(func_type func)
     : operation(func)
   {
   }
@@ -42,4 +42,4 @@ protected:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_TIMER_OP_HPP
+#endif // ASIO_DETAIL_WAIT_OP_HPP

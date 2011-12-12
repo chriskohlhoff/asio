@@ -24,10 +24,10 @@
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
-#include "asio/detail/timer_op.hpp"
 #include "asio/detail/timer_queue.hpp"
 #include "asio/detail/timer_scheduler.hpp"
 #include "asio/detail/wait_handler.hpp"
+#include "asio/detail/wait_op.hpp"
 
 #include "asio/detail/push_options.hpp"
 

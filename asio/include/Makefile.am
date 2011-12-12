@@ -103,6 +103,7 @@ nobase_include_HEADERS = \
 	asio/detail/impl/win_iocp_serial_port_service.ipp \
 	asio/detail/impl/win_iocp_socket_service_base.ipp \
 	asio/detail/impl/win_mutex.ipp \
+	asio/detail/impl/win_object_handle_service.ipp \
 	asio/detail/impl/winsock_init.ipp \
 	asio/detail/impl/win_static_mutex.ipp \
 	asio/detail/impl/win_thread.ipp \
@@ -182,7 +183,6 @@ nobase_include_HEADERS = \
 	asio/detail/task_io_service_operation.hpp \
 	asio/detail/thread.hpp \
 	asio/detail/throw_error.hpp \
-	asio/detail/timer_op.hpp \
 	asio/detail/timer_queue_base.hpp \
 	asio/detail/timer_queue_fwd.hpp \
 	asio/detail/timer_queue.hpp \
@@ -192,6 +192,7 @@ nobase_include_HEADERS = \
 	asio/detail/timer_scheduler.hpp \
 	asio/detail/tss_ptr.hpp \
 	asio/detail/wait_handler.hpp \
+	asio/detail/wait_op.hpp \
 	asio/detail/weak_ptr.hpp \
 	asio/detail/wince_thread.hpp \
 	asio/detail/win_event.hpp \
@@ -215,6 +216,7 @@ nobase_include_HEADERS = \
 	asio/detail/win_iocp_socket_service_base.hpp \
 	asio/detail/win_iocp_socket_service.hpp \
 	asio/detail/win_mutex.hpp \
+	asio/detail/win_object_handle_service.hpp \
 	asio/detail/winsock_init.hpp \
 	asio/detail/win_static_mutex.hpp \
 	asio/detail/win_thread.hpp \
@@ -344,8 +346,11 @@ nobase_include_HEADERS = \
 	asio/waitable_timer_service.hpp \
 	asio/wait_traits.hpp \
 	asio/windows/basic_handle.hpp \
+	asio/windows/basic_object_handle.hpp \
 	asio/windows/basic_random_access_handle.hpp \
 	asio/windows/basic_stream_handle.hpp \
+	asio/windows/object_handle.hpp \
+	asio/windows/object_handle_service.hpp \
 	asio/windows/overlapped_ptr.hpp \
 	asio/windows/random_access_handle.hpp \
 	asio/windows/random_access_handle_service.hpp \

@@ -32,10 +32,10 @@
 #include "asio/detail/reactor_op.hpp"
 #include "asio/detail/select_interrupter.hpp"
 #include "asio/detail/socket_types.hpp"
-#include "asio/detail/timer_op.hpp"
 #include "asio/detail/timer_queue_base.hpp"
 #include "asio/detail/timer_queue_fwd.hpp"
 #include "asio/detail/timer_queue_set.hpp"
+#include "asio/detail/wait_op.hpp"
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 
@@ -148,7 +148,7 @@ public:
   template <typename Time_Traits>
   void schedule_timer(timer_queue<Time_Traits>& queue,
       const typename Time_Traits::time_type& time,
-      typename timer_queue<Time_Traits>::per_timer_data& timer, timer_op* op);
+      typename timer_queue<Time_Traits>::per_timer_data& timer, wait_op* op);
 
   // Cancel the timer operations associated with the given token. Returns the
   // number of operations that have been posted or dispatched.

@@ -26,20 +26,20 @@
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/scoped_ptr.hpp"
 #include "asio/detail/socket_types.hpp"
-#include "asio/detail/timer_op.hpp"
+#include "asio/detail/thread.hpp"
 #include "asio/detail/timer_queue_base.hpp"
 #include "asio/detail/timer_queue_fwd.hpp"
 #include "asio/detail/timer_queue_set.hpp"
+#include "asio/detail/wait_op.hpp"
 #include "asio/detail/win_iocp_io_service_fwd.hpp"
 #include "asio/detail/win_iocp_operation.hpp"
-#include "asio/detail/thread.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
 
-class timer_op;
+class wait_op;
 
 class win_iocp_io_service
   : public asio::detail::service_base<win_iocp_io_service>
@@ -168,7 +168,7 @@ public:
   template <typename Time_Traits>
   void schedule_timer(timer_queue<Time_Traits>& queue,
       const typename Time_Traits::time_type& time,
-      typename timer_queue<Time_Traits>::per_timer_data& timer, timer_op* op);
+      typename timer_queue<Time_Traits>::per_timer_data& timer, wait_op* op);
 
   // Cancel the timer associated with the given token. Returns the number of
   // handlers that have been posted or dispatched.

@@ -19,6 +19,7 @@
 
 #if defined(ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE) \
   || defined(ASIO_HAS_WINDOWS_STREAM_HANDLE) \
+  || defined(ASIO_HAS_WINDOWS_OBJECT_HANDLE) \
   || defined(GENERATING_DOCUMENTATION)
 
 #include "asio/basic_io_object.hpp"
@@ -274,6 +275,7 @@ protected:
 
 #endif // defined(ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE)
        //   || defined(ASIO_HAS_WINDOWS_STREAM_HANDLE)
+       //   || defined(ASIO_HAS_WINDOWS_OBJECT_HANDLE)
        //   || defined(GENERATING_DOCUMENTATION)
 
 #endif // ASIO_WINDOWS_BASIC_HANDLE_HPP

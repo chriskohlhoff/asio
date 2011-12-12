@@ -54,6 +54,7 @@
 #include "asio/detail/impl/win_iocp_socket_service_base.ipp"
 #include "asio/detail/impl/win_event.ipp"
 #include "asio/detail/impl/win_mutex.ipp"
+#include "asio/detail/impl/win_object_handle_service.ipp"
 #include "asio/detail/impl/win_static_mutex.ipp"
 #include "asio/detail/impl/win_thread.ipp"
 #include "asio/detail/impl/win_tss_ptr.ipp"

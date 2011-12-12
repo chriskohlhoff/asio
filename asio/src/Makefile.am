@@ -90,8 +90,11 @@ check_PROGRAMS = \
 	tests/unit/wait_traits \
 	tests/unit/waitable_timer_service \
 	tests/unit/windows/basic_handle \
+	tests/unit/windows/basic_object_handle \
 	tests/unit/windows/basic_random_access_handle \
 	tests/unit/windows/basic_stream_handle \
+	tests/unit/windows/object_handle \
+	tests/unit/windows/object_handle_service \
 	tests/unit/windows/overlapped_ptr \
 	tests/unit/windows/random_access_handle \
 	tests/unit/windows/random_access_handle_service \
@@ -261,8 +264,11 @@ TESTS = \
 	tests/unit/wait_traits \
 	tests/unit/waitable_timer_service \
 	tests/unit/windows/basic_handle \
+	tests/unit/windows/basic_object_handle \
 	tests/unit/windows/basic_random_access_handle \
 	tests/unit/windows/basic_stream_handle \
+	tests/unit/windows/object_handle \
+	tests/unit/windows/object_handle_service \
 	tests/unit/windows/overlapped_ptr \
 	tests/unit/windows/random_access_handle \
 	tests/unit/windows/random_access_handle_service \
@@ -378,8 +384,11 @@ tests_unit_time_traits_SOURCES = tests/unit/time_traits.cpp tests/unit/unit_test
 tests_unit_wait_traits_SOURCES = tests/unit/wait_traits.cpp tests/unit/unit_test.cpp
 tests_unit_waitable_timer_service_SOURCES = tests/unit/waitable_timer_service.cpp tests/unit/unit_test.cpp
 tests_unit_windows_basic_handle_SOURCES = tests/unit/windows/basic_handle.cpp tests/unit/unit_test.cpp
+tests_unit_windows_basic_object_handle_SOURCES = tests/unit/windows/basic_object_handle.cpp tests/unit/unit_test.cpp
 tests_unit_windows_basic_random_access_handle_SOURCES = tests/unit/windows/basic_random_access_handle.cpp tests/unit/unit_test.cpp
 tests_unit_windows_basic_stream_handle_SOURCES = tests/unit/windows/basic_stream_handle.cpp tests/unit/unit_test.cpp
+tests_unit_windows_object_handle_SOURCES = tests/unit/windows/object_handle.cpp tests/unit/unit_test.cpp
+tests_unit_windows_object_handle_service_SOURCES = tests/unit/windows/object_handle_service.cpp tests/unit/unit_test.cpp
 tests_unit_windows_overlapped_ptr_SOURCES = tests/unit/windows/overlapped_ptr.cpp tests/unit/unit_test.cpp
 tests_unit_windows_random_access_handle_SOURCES = tests/unit/windows/random_access_handle.cpp tests/unit/unit_test.cpp
 tests_unit_windows_random_access_handle_service_SOURCES = tests/unit/windows/random_access_handle_service.cpp tests/unit/unit_test.cpp

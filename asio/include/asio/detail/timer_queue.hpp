@@ -23,8 +23,8 @@
 #include <boost/cstdint.hpp>
 #include "asio/detail/date_time_fwd.hpp"
 #include "asio/detail/op_queue.hpp"
-#include "asio/detail/timer_op.hpp"
 #include "asio/detail/timer_queue_base.hpp"
+#include "asio/detail/wait_op.hpp"
 #include "asio/error.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -53,7 +53,7 @@ public:
     friend class timer_queue;
 
     // The operations waiting on the timer.
-    op_queue<timer_op> op_queue_;
+    op_queue<wait_op> op_queue_;
 
     // The index of the timer in the heap.
     std::size_t heap_index_;
@@ -73,7 +73,7 @@ public:
   // Add a new timer to the queue. Returns true if this is the timer that is
   // earliest in the queue, in which case the reactor's event demultiplexing
   // function call may need to be interrupted and restarted.
-  bool enqueue_timer(const time_type& time, per_timer_data& timer, timer_op* op)
+  bool enqueue_timer(const time_type& time, per_timer_data& timer, wait_op* op)
   {
     // Enqueue the timer object.
     if (timer.prev_ == 0 && &timer != timers_)
@@ -175,7 +175,7 @@ public:
     std::size_t num_cancelled = 0;
     if (timer.prev_ != 0 || &timer == timers_)
     {
-      while (timer_op* op = (num_cancelled != max_cancelled)
+      while (wait_op* op = (num_cancelled != max_cancelled)
           ? timer.op_queue_.front() : 0)
       {
         op->ec_ = asio::error::operation_aborted;

@@ -86,7 +86,7 @@ void win_iocp_io_service::remove_timer_queue(
 template <typename Time_Traits>
 void win_iocp_io_service::schedule_timer(timer_queue<Time_Traits>& queue,
     const typename Time_Traits::time_type& time,
-    typename timer_queue<Time_Traits>::per_timer_data& timer, timer_op* op)
+    typename timer_queue<Time_Traits>::per_timer_data& timer, wait_op* op)
 {
   // If the service has been shut down we silently discard the timer.
   if (::InterlockedExchangeAdd(&shutdown_, 0) != 0)

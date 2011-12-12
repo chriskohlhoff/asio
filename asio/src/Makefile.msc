@@ -147,8 +147,11 @@ UNIT_TEST_EXES = \
 	tests\unit\time_traits.exe \
 	tests\unit\waitable_timer_service.exe \
 	tests\unit\windows\basic_handle.exe \
+	tests\unit\windows\basic_object_handle.exe \
 	tests\unit\windows\basic_random_access_handle.exe \
 	tests\unit\windows\basic_stream_handle.exe \
+	tests\unit\windows\object_handle.exe \
+	tests\unit\windows\object_handle_service.exe \
 	tests\unit\windows\overlapped_ptr.exe \
 	tests\unit\windows\random_access_handle.exe \
 	tests\unit\windows\random_access_handle_service.exe \
