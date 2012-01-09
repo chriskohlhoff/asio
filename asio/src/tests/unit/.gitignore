@@ -16,6 +16,7 @@ basic_signal_set
 basic_socket_acceptor
 basic_stream_socket
 basic_streambuf
+basic_waitable_timer
 buffer
 buffered_read_stream
 buffered_stream
@@ -28,6 +29,7 @@ deadline_timer
 deadline_timer_service
 error
 error_handler
+high_resolution_timer
 io_service
 is_read_buffered
 is_write_buffered
@@ -44,10 +46,14 @@ signal_set
 signal_set_service
 socket_acceptor_service
 socket_base
+steady_timer
 strand
 stream_socket_service
 streambuf
+system_timer
 thread
 time_traits
+wait_traits
+waitable_timer_service
 write
 write_at

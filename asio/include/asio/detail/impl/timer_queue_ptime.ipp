@@ -1,6 +1,6 @@
 //
-// detail/impl/timer_queue.ipp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/impl/timer_queue_ptime.ipp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2011 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,18 +8,15 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_IMPL_TIMER_QUEUE_IPP
-#define ASIO_DETAIL_IMPL_TIMER_QUEUE_IPP
+#ifndef ASIO_DETAIL_IMPL_TIMER_QUEUE_PTIME_IPP
+#define ASIO_DETAIL_IMPL_TIMER_QUEUE_PTIME_IPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-
-#if !defined(ASIO_HEADER_ONLY)
-
-#include "asio/detail/timer_queue.hpp"
+#include "asio/detail/timer_queue_ptime.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -80,6 +77,4 @@ std::size_t timer_queue<time_traits<boost::posix_time::ptime> >::cancel_timer(
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // !defined(ASIO_HEADER_ONLY)
-
-#endif // ASIO_DETAIL_IMPL_TIMER_QUEUE_IPP
+#endif // ASIO_DETAIL_IMPL_TIMER_QUEUE_PTIME_IPP

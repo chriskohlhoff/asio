@@ -12,6 +12,7 @@
 #define ASIO_DETAIL_CONFIG_HPP
 
 #include <boost/config.hpp>
+#include <boost/version.hpp>
 
 // Default to a header-only implementation. The user must specifically request
 // separate compilation by defining either ASIO_SEPARATE_COMPILATION or
@@ -153,6 +154,27 @@
 #  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 # endif // defined(__GNUC__)
 #endif // !defined(ASIO_DISABLE_STD_ATOMIC)
+
+// Standard library support for chrono. Some standard libraries (such as the
+// libstdc++ shipped with gcc 4.6) provide monotonic_clock as per early C++0x
+// drafts, rather than the eventually standardised name of steady_clock.
+#if !defined(ASIO_DISABLE_STD_CHRONO)
+# if defined(__GNUC__)
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
+#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#    define ASIO_HAS_STD_CHRONO
+#    define ASIO_HAS_STD_CHRONO_MONOTONIC_CLOCK
+#   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
+# endif // defined(__GNUC__)
+#endif // !defined(ASIO_DISABLE_STD_CHRONO)
+
+// Boost support for chrono.
+#if !defined(ASIO_DISABLE_BOOST_CHRONO)
+# if (BOOST_VERSION >= 104700)
+#  define ASIO_HAS_BOOST_CHRONO
+#   endif // (BOOST_VERSION >= 104700)
+#endif // !defined(ASIO_DISABLE_BOOST_CHRONO)
 
 // Windows: target OS version.
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)

@@ -23,6 +23,7 @@ UNIT_TEST_EXES = \
 	tests/unit/basic_socket_acceptor.exe \
 	tests/unit/basic_stream_socket.exe \
 	tests/unit/basic_streambuf.exe \
+	tests/unit/basic_waitable_timer.exe \
 	tests/unit/buffered_read_stream.exe \
 	tests/unit/buffered_stream.exe \
 	tests/unit/buffered_write_stream.exe \
@@ -33,8 +34,9 @@ UNIT_TEST_EXES = \
 	tests/unit/datagram_socket_service.exe \
 	tests/unit/deadline_timer_service.exe \
 	tests/unit/deadline_timer.exe \
-	tests/unit/io_service.exe \
 	tests/unit/error.exe \
+	tests/unit/high_resolution_timer.exe \
+	tests/unit/io_service.exe \
 	tests/unit/ip/address.exe \
 	tests/unit/ip/address_v4.exe \
 	tests/unit/ip/address_v6.exe \
@@ -66,11 +68,14 @@ UNIT_TEST_EXES = \
 	tests/unit/signal_set_service.exe \
 	tests/unit/socket_acceptor_service.exe \
 	tests/unit/socket_base.exe \
+	tests/unit/steady_timer.exe \
 	tests/unit/strand.exe \
 	tests/unit/stream_socket_service.exe \
 	tests/unit/streambuf.exe \
+	tests/unit/system_timer.exe \
 	tests/unit/thread.exe \
 	tests/unit/time_traits.exe \
+	tests/unit/waitable_timer_service.exe \
 	tests/unit/windows/basic_handle.exe \
 	tests/unit/windows/basic_random_access_handle.exe \
 	tests/unit/windows/basic_stream_handle.exe \

@@ -25,6 +25,8 @@
 
 [link asio.overview.cpp2011.shared_ptr Shared Pointers]
 
+[link asio.overview.cpp2011.chrono Chrono]
+
 [/boostify: non-boost docs start here]
 
 [section:system_error System Errors and Error Codes]
@@ -209,6 +211,29 @@ and later, when the [^-std=c++0x] or [^-std=gnu++0x] compiler options are used,
 as well as for Microsoft Visual C++ 10. It may be disabled by defining
 `ASIO_DISABLE_STD_SHARED_PTR`, or explicitly enabled for other compilers by
 defining `ASIO_HAS_STD_SHARED_PTR`.
+
+[endsect]
+
+[section:chrono Chrono]
+
+Asio provides timers based on the `std::chrono` facilities via the [link
+asio.reference.basic_waitable_timer basic_waitable_timer] class template.
+The typedefs [link asio.reference.system_timer system_timer], [link
+asio.reference.steady_timer steady_timer] and [link
+asio.reference.high_resolution_timer high_resolution_timer] utilise the
+standard clocks `system_clock`, `steady_clock` and `high_resolution_clock`
+respectively.
+
+Support for the `std::chrono` facilities is automatically enabled for [^g++]
+4.6 and later, when the [^-std=c++0x] or [^-std=gnu++0x] compiler options are
+used. (Note that, for [^g++], the draft-standard `monotonic_clock` is used in
+place of `steady_clock`.) Support may be disabled by defining
+`ASIO_DISABLE_STD_CHRONO`, or explicitly enabled for other compilers by
+defining `ASIO_HAS_STD_CHRONO`.
+
+When standard `chrono` is unavailable, Asio will otherwise use the Boost.Chrono
+library. The [link asio.reference.basic_waitable_timer basic_waitable_timer]
+class template may be used with either.
 
 [endsect]
 

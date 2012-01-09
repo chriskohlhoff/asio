@@ -14,6 +14,7 @@ nobase_include_HEADERS = \
 	asio/basic_streambuf_fwd.hpp \
 	asio/basic_streambuf.hpp \
 	asio/basic_stream_socket.hpp \
+	asio/basic_waitable_timer.hpp \
 	asio/buffered_read_stream_fwd.hpp \
 	asio/buffered_read_stream.hpp \
 	asio/buffered_stream_fwd.hpp \
@@ -36,9 +37,11 @@ nobase_include_HEADERS = \
 	asio/detail/buffer_resize_guard.hpp \
 	asio/detail/buffer_sequence_adapter.hpp \
 	asio/detail/call_stack.hpp \
+	asio/detail/chrono_time_traits.hpp \
 	asio/detail/completion_handler.hpp \
 	asio/detail/config.hpp \
 	asio/detail/consuming_buffers.hpp \
+	asio/detail/date_time_fwd.hpp \
 	asio/detail/deadline_timer_service.hpp \
 	asio/detail/dependent_type.hpp \
 	asio/detail/descriptor_ops.hpp \
@@ -91,7 +94,7 @@ nobase_include_HEADERS = \
 	asio/detail/impl/task_io_service.hpp \
 	asio/detail/impl/task_io_service.ipp \
 	asio/detail/impl/throw_error.ipp \
-	asio/detail/impl/timer_queue.ipp \
+	asio/detail/impl/timer_queue_ptime.ipp \
 	asio/detail/impl/timer_queue_set.ipp \
 	asio/detail/impl/win_event.ipp \
 	asio/detail/impl/win_iocp_handle_service.ipp \
@@ -183,6 +186,7 @@ nobase_include_HEADERS = \
 	asio/detail/timer_queue_base.hpp \
 	asio/detail/timer_queue_fwd.hpp \
 	asio/detail/timer_queue.hpp \
+	asio/detail/timer_queue_ptime.hpp \
 	asio/detail/timer_queue_set.hpp \
 	asio/detail/timer_scheduler_fwd.hpp \
 	asio/detail/timer_scheduler.hpp \
@@ -220,6 +224,7 @@ nobase_include_HEADERS = \
 	asio/error.hpp \
 	asio/handler_alloc_hook.hpp \
 	asio/handler_invoke_hook.hpp \
+	asio/high_resolution_timer.hpp \
 	asio.hpp \
 	asio/impl/connect.hpp \
 	asio/impl/error_code.ipp \
@@ -327,13 +332,17 @@ nobase_include_HEADERS = \
 	asio/ssl/stream_service.hpp \
 	asio/ssl/verify_context.hpp \
 	asio/ssl/verify_mode.hpp \
+	asio/steady_timer.hpp \
 	asio/strand.hpp \
 	asio/streambuf.hpp \
 	asio/stream_socket_service.hpp \
 	asio/system_error.hpp \
+	asio/system_timer.hpp \
 	asio/thread.hpp \
 	asio/time_traits.hpp \
 	asio/version.hpp \
+	asio/waitable_timer_service.hpp \
+	asio/wait_traits.hpp \
 	asio/windows/basic_handle.hpp \
 	asio/windows/basic_random_access_handle.hpp \
 	asio/windows/basic_stream_handle.hpp \

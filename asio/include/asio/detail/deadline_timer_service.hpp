@@ -30,10 +30,6 @@
 #include "asio/detail/wait_handler.hpp"
 
 #include "asio/detail/push_options.hpp"
-#include <boost/date_time/posix_time/posix_time_types.hpp>
-#include "asio/detail/pop_options.hpp"
-
-#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -165,12 +161,8 @@ public:
     ec = asio::error_code();
     while (Time_Traits::less_than(now, impl.expiry) && !ec)
     {
-      boost::posix_time::time_duration timeout =
-        Time_Traits::to_posix_duration(Time_Traits::subtract(impl.expiry, now));
-      ::timeval tv;
-      tv.tv_sec = timeout.total_seconds();
-      tv.tv_usec = timeout.total_microseconds() % 1000000;
-      socket_ops::select(0, 0, 0, 0, &tv, ec);
+      this->do_wait(Time_Traits::to_posix_duration(
+            Time_Traits::subtract(impl.expiry, now)), ec);
       now = Time_Traits::now();
     }
   }
@@ -195,6 +187,18 @@ public:
   }
 
 private:
+  // Helper function to wait given a duration type. The duration type should
+  // either be of type boost::posix_time::time_duration, or implement the
+  // required subset of its interface.
+  template <typename Duration>
+  void do_wait(const Duration& timeout, asio::error_code& ec)
+  {
+    ::timeval tv;
+    tv.tv_sec = timeout.total_seconds();
+    tv.tv_usec = timeout.total_microseconds() % 1000000;
+    socket_ops::select(0, 0, 0, 0, &tv, ec);
+  }
+
   // The queue of timers.
   timer_queue<Time_Traits> timer_queue_;
 

@@ -26,6 +26,7 @@ check_PROGRAMS = \
 	tests/unit/basic_socket_acceptor \
 	tests/unit/basic_stream_socket \
 	tests/unit/basic_streambuf \
+	tests/unit/basic_waitable_timer \
 	tests/unit/buffered_read_stream \
 	tests/unit/buffered_stream \
 	tests/unit/buffered_write_stream \
@@ -37,6 +38,7 @@ check_PROGRAMS = \
 	tests/unit/deadline_timer_service \
 	tests/unit/deadline_timer \
 	tests/unit/error \
+	tests/unit/high_resolution_timer \
 	tests/unit/io_service \
 	tests/unit/ip/address \
 	tests/unit/ip/address_v4 \
@@ -78,11 +80,15 @@ check_PROGRAMS = \
 	tests/unit/signal_set_service \
 	tests/unit/socket_acceptor_service \
 	tests/unit/socket_base \
+	tests/unit/steady_timer \
 	tests/unit/strand \
 	tests/unit/stream_socket_service \
 	tests/unit/streambuf \
+	tests/unit/system_timer \
 	tests/unit/thread \
 	tests/unit/time_traits \
+	tests/unit/wait_traits \
+	tests/unit/waitable_timer_service \
 	tests/unit/windows/basic_handle \
 	tests/unit/windows/basic_random_access_handle \
 	tests/unit/windows/basic_stream_handle \
@@ -191,6 +197,7 @@ TESTS = \
 	tests/unit/basic_socket_acceptor \
 	tests/unit/basic_stream_socket \
 	tests/unit/basic_streambuf \
+	tests/unit/basic_waitable_timer \
 	tests/unit/buffered_read_stream \
 	tests/unit/buffered_stream \
 	tests/unit/buffered_write_stream \
@@ -202,6 +209,7 @@ TESTS = \
 	tests/unit/deadline_timer_service \
 	tests/unit/deadline_timer \
 	tests/unit/error \
+	tests/unit/high_resolution_timer \
 	tests/unit/io_service \
 	tests/unit/ip/address \
 	tests/unit/ip/address_v4 \
@@ -243,11 +251,15 @@ TESTS = \
 	tests/unit/signal_set_service \
 	tests/unit/socket_acceptor_service \
 	tests/unit/socket_base \
+	tests/unit/steady_timer \
 	tests/unit/strand \
 	tests/unit/stream_socket_service \
 	tests/unit/streambuf \
+	tests/unit/system_timer \
 	tests/unit/thread \
 	tests/unit/time_traits \
+	tests/unit/wait_traits \
+	tests/unit/waitable_timer_service \
 	tests/unit/windows/basic_handle \
 	tests/unit/windows/basic_random_access_handle \
 	tests/unit/windows/basic_stream_handle \
@@ -302,6 +314,7 @@ tests_unit_basic_signal_set_SOURCES = tests/unit/basic_signal_set.cpp tests/unit
 tests_unit_basic_socket_acceptor_SOURCES = tests/unit/basic_socket_acceptor.cpp tests/unit/unit_test.cpp
 tests_unit_basic_stream_socket_SOURCES = tests/unit/basic_stream_socket.cpp tests/unit/unit_test.cpp
 tests_unit_basic_streambuf_SOURCES = tests/unit/basic_streambuf.cpp tests/unit/unit_test.cpp
+tests_unit_basic_waitable_timer_SOURCES = tests/unit/basic_waitable_timer.cpp tests/unit/unit_test.cpp
 tests_unit_buffer_SOURCES = tests/unit/buffer.cpp tests/unit/unit_test.cpp
 tests_unit_buffers_iterator_SOURCES = tests/unit/buffers_iterator.cpp tests/unit/unit_test.cpp
 tests_unit_buffered_read_stream_SOURCES = tests/unit/buffered_read_stream.cpp tests/unit/unit_test.cpp
@@ -313,6 +326,7 @@ tests_unit_datagram_socket_service_SOURCES = tests/unit/datagram_socket_service.
 tests_unit_deadline_timer_service_SOURCES = tests/unit/deadline_timer_service.cpp tests/unit/unit_test.cpp
 tests_unit_deadline_timer_SOURCES = tests/unit/deadline_timer.cpp tests/unit/unit_test.cpp
 tests_unit_error_SOURCES = tests/unit/error.cpp tests/unit/unit_test.cpp
+tests_unit_high_resolution_timer_SOURCES = tests/unit/high_resolution_timer.cpp tests/unit/unit_test.cpp
 tests_unit_io_service_SOURCES = tests/unit/io_service.cpp tests/unit/unit_test.cpp
 tests_unit_ip_address_SOURCES = tests/unit/ip/address.cpp tests/unit/unit_test.cpp
 tests_unit_ip_address_v4_SOURCES = tests/unit/ip/address_v4.cpp tests/unit/unit_test.cpp
@@ -354,11 +368,15 @@ tests_unit_signal_set_SOURCES = tests/unit/signal_set.cpp tests/unit/unit_test.c
 tests_unit_signal_set_service_SOURCES = tests/unit/signal_set_service.cpp tests/unit/unit_test.cpp
 tests_unit_socket_acceptor_service_SOURCES = tests/unit/socket_acceptor_service.cpp tests/unit/unit_test.cpp
 tests_unit_socket_base_SOURCES = tests/unit/socket_base.cpp tests/unit/unit_test.cpp
+tests_unit_steady_timer_SOURCES = tests/unit/steady_timer.cpp tests/unit/unit_test.cpp
 tests_unit_strand_SOURCES = tests/unit/strand.cpp tests/unit/unit_test.cpp
 tests_unit_stream_socket_service_SOURCES = tests/unit/stream_socket_service.cpp tests/unit/unit_test.cpp
 tests_unit_streambuf_SOURCES = tests/unit/streambuf.cpp tests/unit/unit_test.cpp
+tests_unit_system_timer_SOURCES = tests/unit/system_timer.cpp tests/unit/unit_test.cpp
 tests_unit_thread_SOURCES = tests/unit/thread.cpp tests/unit/unit_test.cpp
 tests_unit_time_traits_SOURCES = tests/unit/time_traits.cpp tests/unit/unit_test.cpp
+tests_unit_wait_traits_SOURCES = tests/unit/wait_traits.cpp tests/unit/unit_test.cpp
+tests_unit_waitable_timer_service_SOURCES = tests/unit/waitable_timer_service.cpp tests/unit/unit_test.cpp
 tests_unit_windows_basic_handle_SOURCES = tests/unit/windows/basic_handle.cpp tests/unit/unit_test.cpp
 tests_unit_windows_basic_random_access_handle_SOURCES = tests/unit/windows/basic_random_access_handle.cpp tests/unit/unit_test.cpp
 tests_unit_windows_basic_stream_handle_SOURCES = tests/unit/windows/basic_stream_handle.cpp tests/unit/unit_test.cpp
