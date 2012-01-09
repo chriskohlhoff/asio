@@ -7,6 +7,65 @@
 
 [section:history Revision History]
 
+[heading Asio 1.6.1]
+
+* Implemented various performance improvements, including:
+
+  * Using thread-local operation queues in single-threaded use cases (i.e. when
+    `concurrency_hint` is 1) to eliminate a lock/unlock pair. 
+
+  * Allowing some `epoll_reactor` speculative operations to be performed
+    without holding the lock. 
+
+  * Improving locality of reference by performing an `epoll_reactor`'s I/O
+    operation immediately before the corresponding handler is called. This also
+    improves scalability across CPUs when multiple threads are running the
+    `io_service`. 
+
+  * Specialising asynchronous read and write operations for buffer sequences
+    that are arrays (`boost::array` or `std::array`) of exactly two buffers.
+
+* Fixed a compile error in the regex overload of `async_read_until`.
+
+* Fixed a Windows-specific compile error by explicitly specifying the
+  `signal()` function from the global namespace.
+
+* Changed the `deadline_timer` implementation so that it does not read the
+  clock unless the timer heap is non-empty.
+
+* Changed the SSL stream's buffers' sizes so that they are large enough to hold
+  a complete TLS record.
+
+* Fixed the behaviour of the synchronous `null_buffers` operations so that they
+  obey the user's non-blocking setting.
+
+* Changed to set the size of the select `fd_set` at runtime when using Windows.
+
+* Disabled an MSVC warning due to const qualifier being applied to function type.
+
+* Fixed a crash that occurs when using the Intel C++ compiler.
+
+* Changed the initialisation of the OpenSSL library so that it supports all
+  available algorithms.
+
+* Fixed the SSL error mapping used when the session is gracefully shut down.
+
+* Added some latency test programs.
+
+* Clarified that a read operation ends when the buffer is full.
+
+* Fixed an exception safety issue in `epoll_reactor` initialisation.
+
+* Made the number of strand implementations configurable by defining
+  `(BOOST_)ASIO_STRAND_IMPLEMENTATIONS` to the desired number.
+
+* Added support for a new `(BOOST_)ASIO_ENABLE_SEQUENTIAL_STRAND_ALLOCATION` flag
+  which switches the allocation of strand implementations to use a round-robin
+  approach rather than hashing.
+
+* Fixed potential strand starvation issue that can occur when `strand.post()`
+  is used.
+
 [heading Asio 1.6.0]
 
 * Improved support for C++0x move construction to further reduce copying of
