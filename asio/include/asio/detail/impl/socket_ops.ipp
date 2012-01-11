@@ -464,6 +464,10 @@ int connect(socket_type s, const socket_addr_type* addr,
         &msghdr::msg_namelen, s, addr, addrlen), ec);
   if (result == 0)
     ec = asio::error_code();
+#if defined(__linux__)
+  else if (ec == asio::error::try_again)
+    ec = asio::error::no_buffer_space;
+#endif // defined(__linux__)
   return result;
 }
 
