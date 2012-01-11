@@ -334,7 +334,8 @@ private:
     std::size_t bytes_avail = asio::buffer_size(buffers);
     std::size_t length = bytes_avail < space_avail ? bytes_avail : space_avail;
     storage_.resize(orig_size + length);
-    return asio::buffer_copy(storage_.data(), buffers, length);
+    return asio::buffer_copy(
+        storage_.data() + orig_size, buffers, length);
   }
 
   /// The next layer.
