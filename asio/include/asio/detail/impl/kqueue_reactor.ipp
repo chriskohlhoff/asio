@@ -28,8 +28,8 @@
 
 #if defined(__NetBSD__)
 # define ASIO_KQUEUE_EV_SET(ev, ident, filt, flags, fflags, data, udata) \
-    EV_SET(ev, ident, filt, flags, fflags, \
-      data, reinterpret_cast<intptr_t>(udata))
+    EV_SET(ev, ident, filt, flags, fflags, data, \
+      reinterpret_cast<intptr_t>(static_cast<void*>(udata)))
 #else
 # define ASIO_KQUEUE_EV_SET(ev, ident, filt, flags, fflags, data, udata) \
     EV_SET(ev, ident, filt, flags, fflags, data, udata)
