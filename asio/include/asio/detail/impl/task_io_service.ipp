@@ -335,7 +335,10 @@ std::size_t task_io_service::do_run_one(mutex::scoped_lock& lock,
         task_interrupted_ = more_handlers;
 
         if (more_handlers && !one_thread_)
-          wake_one_idle_thread_and_unlock(lock);
+        {
+          if (!wake_one_idle_thread_and_unlock(lock))
+            lock.unlock();
+        }
         else
           lock.unlock();
 
