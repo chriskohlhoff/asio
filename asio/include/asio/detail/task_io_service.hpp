@@ -88,7 +88,7 @@ public:
   // Return whether a handler can be dispatched immediately.
   bool can_dispatch()
   {
-    return thread_call_stack::contains(this);
+    return thread_call_stack::contains(this) != 0;
   }
 
   // Request invocation of the given handler.
