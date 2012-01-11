@@ -147,7 +147,7 @@ size_t win_iocp_io_service::run(asio::error_code& ec)
 {
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
-    stop();
+    InterlockedExchange(&stopped_, 1);
     ec = asio::error_code();
     return 0;
   }
@@ -165,7 +165,7 @@ size_t win_iocp_io_service::run_one(asio::error_code& ec)
 {
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
-    stop();
+    InterlockedExchange(&stopped_, 1);
     ec = asio::error_code();
     return 0;
   }
@@ -179,7 +179,7 @@ size_t win_iocp_io_service::poll(asio::error_code& ec)
 {
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
-    stop();
+    InterlockedExchange(&stopped_, 1);
     ec = asio::error_code();
     return 0;
   }
@@ -197,7 +197,7 @@ size_t win_iocp_io_service::poll_one(asio::error_code& ec)
 {
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
-    stop();
+    InterlockedExchange(&stopped_, 1);
     ec = asio::error_code();
     return 0;
   }
