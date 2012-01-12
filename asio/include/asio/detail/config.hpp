@@ -314,7 +314,9 @@
 // Windows: object handles.
 #if !defined(ASIO_DISABLE_WINDOWS_OBJECT_HANDLE)
 # if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-#  define ASIO_HAS_WINDOWS_OBJECT_HANDLE 1
+#  if !defined(UNDER_CE)
+#   define ASIO_HAS_WINDOWS_OBJECT_HANDLE 1
+#  endif // !defined(UNDER_CE)
 # endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 #endif // !defined(ASIO_DISABLE_WINDOWS_OBJECT_HANDLE)
 
