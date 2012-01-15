@@ -60,6 +60,7 @@
 [include requirements/IoControlCommand.qbk]
 [include requirements/IoObjectService.qbk]
 [include requirements/MutableBufferSequence.qbk]
+[include requirements/ObjectHandleService.qbk]
 [include requirements/Protocol.qbk]
 [include requirements/RandomAccessHandleService.qbk]
 [include requirements/RawSocketService.qbk]
@@ -85,7 +86,9 @@
 [include requirements/SyncWriteStream.qbk]
 [include requirements/TimeTraits.qbk]
 [include requirements/TimerService.qbk]
+[include requirements/WaitableTimerService.qbk]
 [include requirements/WaitHandler.qbk]
+[include requirements/WaitTraits.qbk]
 [include requirements/WriteHandler.qbk]
 
 </xsl:text>
