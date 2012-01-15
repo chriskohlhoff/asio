@@ -34,7 +34,7 @@ namespace asio {
 #if defined(GENERATING_DOCUMENTATION)
 /// Typedef for a timer based on the steady clock.
 /**
- * This typedef uses the C++11 @c <chrono> standard library facility, if
+ * This typedef uses the C++11 @c &lt;chrono&gt; standard library facility, if
  * available. Otherwise, it may use the Boost.Chrono library. To explicitly
  * utilise Boost.Chrono, use the basic_waitable_timer template directly:
  * @code

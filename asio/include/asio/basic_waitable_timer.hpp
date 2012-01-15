@@ -40,7 +40,7 @@ namespace asio {
  * Most applications will use the asio::waitable_timer typedef.
  *
  * @note This waitable timer functionality is for use with the C++11 standard
- * library's @c <chrono> facility, or with the Boost.Chrono library.
+ * library's @c &lt;chrono&gt; facility, or with the Boost.Chrono library.
  *
  * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
