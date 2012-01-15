@@ -732,6 +732,15 @@
     <xsl:when test="contains($file, 'include/asio/ssl')">
       <xsl:text>[^asio/ssl.hpp]</xsl:text>
     </xsl:when>
+    <xsl:when test="contains($file, 'include/asio/high_resolution_timer')">
+      <xsl:text>None</xsl:text>
+    </xsl:when>
+    <xsl:when test="contains($file, 'include/asio/steady_timer')">
+      <xsl:text>None</xsl:text>
+    </xsl:when>
+    <xsl:when test="contains($file, 'include/asio/system_timer')">
+      <xsl:text>None</xsl:text>
+    </xsl:when>
     <xsl:otherwise>
       <xsl:text>[^asio.hpp]</xsl:text>
     </xsl:otherwise>
