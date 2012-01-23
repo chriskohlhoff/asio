@@ -7,6 +7,30 @@
 
 [section:history Revision History]
 
+[heading Asio 1.7.0]
+
+* Added a new class template `basic_waitable_timer` based around the C++11 clock
+  type requirements. It may be used with the clocks from the C++11 `<chrono>`
+  library facility or, if those are not available, Boost.Chrono. The typedefs
+  `high_resolution_timer`, `steady_timer` and `system_timer` may be used to
+  create timer objects for the standard clock types.
+
+* Added a new `windows::object_handle` class for performing waits on Windows
+  kernel objects. Thanks go to Boris Schaeling for contributing substantially
+  to the development of this feature.
+
+* On Linux, `connect()` can return EAGAIN in certain circumstances. Remapped
+  this to another error so that it doesn't look like a non-blocking operation.
+
+* Fixed a compile error on NetBSD.
+
+* Fixed deadlock on Mac OS X.
+
+* Fixed a regression in `buffered_write_stream`.
+
+* Fixed a non-paged pool "leak" on Windows when an `io_service` is repeatedly
+  run without anything to do.
+
 [heading Asio 1.6.1]
 
 * Implemented various performance improvements, including:
