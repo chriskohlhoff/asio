@@ -55,8 +55,6 @@ public:
     descriptor_state* next_;
     descriptor_state* prev_;
 
-    bool op_queue_is_empty_[max_ops];
-
     mutex mutex_;
     epoll_reactor* reactor_;
     int descriptor_;
