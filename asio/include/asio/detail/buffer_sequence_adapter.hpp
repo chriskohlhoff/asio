@@ -290,7 +290,8 @@ public:
 
   static Buffer first(const boost::array<Elem, 2>& buffer_sequence)
   {
-    return Buffer(buffer_sequence[0]);
+    return Buffer(asio::buffer_size(buffer_sequence[0]) != 0
+        ? buffer_sequence[0] : buffer_sequence[1]);
   }
 
 private:
@@ -343,7 +344,8 @@ public:
 
   static Buffer first(const std::array<Elem, 2>& buffer_sequence)
   {
-    return Buffer(buffer_sequence[0]);
+    return Buffer(asio::buffer_size(buffer_sequence[0]) != 0
+        ? buffer_sequence[0] : buffer_sequence[1]);
   }
 
 private:
