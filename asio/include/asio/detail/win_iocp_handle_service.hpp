@@ -23,6 +23,7 @@
 #include <boost/cstdint.hpp>
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
+#include "asio/detail/addressof.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/mutex.hpp"
@@ -146,7 +147,7 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_handle_write_op<ConstBufferSequence, Handler> op;
-    typename op::ptr p = { boost::addressof(handler),
+    typename op::ptr p = { asio::detail::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(buffers, handler);
@@ -167,7 +168,7 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_handle_write_op<ConstBufferSequence, Handler> op;
-    typename op::ptr p = { boost::addressof(handler),
+    typename op::ptr p = { asio::detail::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(buffers, handler);
@@ -208,7 +209,7 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_handle_read_op<MutableBufferSequence, Handler> op;
-    typename op::ptr p = { boost::addressof(handler),
+    typename op::ptr p = { asio::detail::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(buffers, handler);
@@ -230,7 +231,7 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_handle_read_op<MutableBufferSequence, Handler> op;
-    typename op::ptr p = { boost::addressof(handler),
+    typename op::ptr p = { asio::detail::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(buffers, handler);

@@ -15,6 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include "asio/detail/addressof.hpp"
 #include "asio/detail/config.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
@@ -44,7 +45,7 @@ public:
   {
     // Take ownership of the handler object.
     completion_handler* h(static_cast<completion_handler*>(base));
-    ptr p = { boost::addressof(h->handler_), h, h };
+    ptr p = { asio::detail::addressof(h->handler_), h, h };
 
     ASIO_HANDLER_COMPLETION((h));
 
@@ -55,7 +56,7 @@ public:
     // to ensure that any owning sub-object remains valid until after we have
     // deallocated the memory here.
     Handler handler(ASIO_MOVE_CAST(Handler)(h->handler_));
-    p.h = boost::addressof(handler);
+    p.h = asio::detail::addressof(handler);
     p.reset();
 
     // Make the upcall if required.

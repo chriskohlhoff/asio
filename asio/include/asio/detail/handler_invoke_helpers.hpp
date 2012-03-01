@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include <boost/detail/workaround.hpp>
-#include <boost/utility/addressof.hpp>
+#include "asio/detail/addressof.hpp"
 #include "asio/handler_invoke_hook.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -36,7 +36,7 @@ inline void invoke(Function& function, Context& context)
   tmp();
 #else
   using asio::asio_handler_invoke;
-  asio_handler_invoke(function, boost::addressof(context));
+  asio_handler_invoke(function, asio::detail::addressof(context));
 #endif
 }
 
@@ -49,7 +49,7 @@ inline void invoke(const Function& function, Context& context)
   tmp();
 #else
   using asio::asio_handler_invoke;
-  asio_handler_invoke(function, boost::addressof(context));
+  asio_handler_invoke(function, asio::detail::addressof(context));
 #endif
 }
 

@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include <boost/detail/workaround.hpp>
-#include <boost/utility/addressof.hpp>
+#include "asio/detail/addressof.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/handler_alloc_hook.hpp"
 
@@ -36,7 +36,7 @@ inline void* allocate(std::size_t s, Handler& h)
   return ::operator new(s);
 #else
   using asio::asio_handler_allocate;
-  return asio_handler_allocate(s, boost::addressof(h));
+  return asio_handler_allocate(s, asio::detail::addressof(h));
 #endif
 }
 
@@ -48,7 +48,7 @@ inline void deallocate(void* p, std::size_t s, Handler& h)
   ::operator delete(p);
 #else
   using asio::asio_handler_deallocate;
-  asio_handler_deallocate(p, s, boost::addressof(h));
+  asio_handler_deallocate(p, s, asio::detail::addressof(h));
 #endif
 }
 

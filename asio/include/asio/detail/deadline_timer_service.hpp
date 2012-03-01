@@ -19,6 +19,7 @@
 #include <cstddef>
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
+#include "asio/detail/addressof.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/noncopyable.hpp"
@@ -173,7 +174,7 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef wait_handler<Handler> op;
-    typename op::ptr p = { boost::addressof(handler),
+    typename op::ptr p = { asio::detail::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);

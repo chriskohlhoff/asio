@@ -19,8 +19,8 @@
 
 #if defined(ASIO_HAS_IOCP)
 
-#include <boost/utility/addressof.hpp>
 #include "asio/io_service.hpp"
+#include "asio/detail/addressof.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/win_iocp_overlapped_op.hpp"
@@ -77,7 +77,7 @@ public:
   void reset(asio::io_service& io_service, Handler handler)
   {
     typedef win_iocp_overlapped_op<Handler> op;
-    typename op::ptr p = { boost::addressof(handler),
+    typename op::ptr p = { asio::detail::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);

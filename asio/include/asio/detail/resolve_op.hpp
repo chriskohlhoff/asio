@@ -16,11 +16,11 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <boost/utility/addressof.hpp>
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
+#include "asio/detail/addressof.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
@@ -65,7 +65,7 @@ public:
   {
     // Take ownership of the operation object.
     resolve_op* o(static_cast<resolve_op*>(base));
-    ptr p = { boost::addressof(o->handler_), o, o };
+    ptr p = { asio::detail::addressof(o->handler_), o, o };
 
     if (owner && owner != &o->io_service_impl_)
     {
@@ -96,7 +96,7 @@ public:
       // after we have deallocated the memory here.
       detail::binder2<Handler, asio::error_code, iterator_type>
         handler(o->handler_, o->ec_, iterator_type());
-      p.h = boost::addressof(handler.handler_);
+      p.h = asio::detail::addressof(handler.handler_);
       if (o->addrinfo_)
       {
         handler.arg2_ = iterator_type::create(o->addrinfo_,
