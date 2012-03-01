@@ -15,7 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/cstdint.hpp>
+#include "asio/detail/cstdint.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -72,32 +72,32 @@ struct chrono_time_traits
     {
     }
 
-    boost::int64_t ticks() const
+    int64_t ticks() const
     {
       return d_.count();
     }
 
-    boost::int64_t total_seconds() const
+    int64_t total_seconds() const
     {
       return duration_cast<1, 1>();
     }
 
-    boost::int64_t total_milliseconds() const
+    int64_t total_milliseconds() const
     {
       return duration_cast<1, 1000>();
     }
 
-    boost::int64_t total_microseconds() const
+    int64_t total_microseconds() const
     {
       return duration_cast<1, 1000000>();
     }
 
   private:
-    template <boost::int64_t Num, boost::int64_t Den>
-    boost::int64_t duration_cast() const
+    template <int64_t Num, int64_t Den>
+    int64_t duration_cast() const
     {
-      const boost::int64_t num = period_type::num * Den;
-      const boost::int64_t den = period_type::den * Num;
+      const int64_t num = period_type::num * Den;
+      const int64_t den = period_type::den * Num;
 
       if (num == 1 && den == 1)
         return ticks();

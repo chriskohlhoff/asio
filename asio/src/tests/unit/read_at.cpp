@@ -68,7 +68,7 @@ public:
   }
 
   template <typename Const_Buffers>
-  bool check_buffers(boost::uint64_t offset,
+  bool check_buffers(asio::uint64_t offset,
       const Const_Buffers& buffers, size_t length)
   {
     if (offset + length > max_length)
@@ -92,7 +92,7 @@ public:
   }
 
   template <typename Mutable_Buffers>
-  size_t read_some_at(boost::uint64_t offset, const Mutable_Buffers& buffers)
+  size_t read_some_at(asio::uint64_t offset, const Mutable_Buffers& buffers)
   {
     return asio::buffer_copy(buffers,
         asio::buffer(data_, length_) + offset,
@@ -100,7 +100,7 @@ public:
   }
 
   template <typename Mutable_Buffers>
-  size_t read_some_at(boost::uint64_t offset,
+  size_t read_some_at(asio::uint64_t offset,
       const Mutable_Buffers& buffers, asio::error_code& ec)
   {
     ec = asio::error_code();
@@ -108,7 +108,7 @@ public:
   }
 
   template <typename Mutable_Buffers, typename Handler>
-  void async_read_some_at(boost::uint64_t offset,
+  void async_read_some_at(asio::uint64_t offset,
       const Mutable_Buffers& buffers, Handler handler)
   {
     size_t bytes_transferred = read_some_at(offset, buffers);

@@ -17,8 +17,8 @@
 
 #include "asio/detail/config.hpp"
 #include <cstddef>
-#include <boost/cstdint.hpp>
 #include "asio/basic_streambuf_fwd.hpp"
+#include "asio/detail/cstdint.hpp"
 #include "asio/error.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -75,7 +75,7 @@ namespace asio {
  */
 template <typename SyncRandomAccessReadDevice, typename MutableBufferSequence>
 std::size_t read_at(SyncRandomAccessReadDevice& d,
-    boost::uint64_t offset, const MutableBufferSequence& buffers);
+    uint64_t offset, const MutableBufferSequence& buffers);
 
 /// Attempt to read a certain amount of data at the specified offset before
 /// returning.
@@ -120,7 +120,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  */
 template <typename SyncRandomAccessReadDevice, typename MutableBufferSequence>
 std::size_t read_at(SyncRandomAccessReadDevice& d,
-    boost::uint64_t offset, const MutableBufferSequence& buffers,
+    uint64_t offset, const MutableBufferSequence& buffers,
     asio::error_code& ec);
 
 /// Attempt to read a certain amount of data at the specified offset before
@@ -176,7 +176,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
 template <typename SyncRandomAccessReadDevice, typename MutableBufferSequence,
     typename CompletionCondition>
 std::size_t read_at(SyncRandomAccessReadDevice& d,
-    boost::uint64_t offset, const MutableBufferSequence& buffers,
+    uint64_t offset, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition);
 
 /// Attempt to read a certain amount of data at the specified offset before
@@ -225,7 +225,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
 template <typename SyncRandomAccessReadDevice, typename MutableBufferSequence,
     typename CompletionCondition>
 std::size_t read_at(SyncRandomAccessReadDevice& d,
-    boost::uint64_t offset, const MutableBufferSequence& buffers,
+    uint64_t offset, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition, asio::error_code& ec);
 
 #if !defined(BOOST_NO_IOSTREAM)
@@ -260,7 +260,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  */
 template <typename SyncRandomAccessReadDevice, typename Allocator>
 std::size_t read_at(SyncRandomAccessReadDevice& d,
-    boost::uint64_t offset, basic_streambuf<Allocator>& b);
+    uint64_t offset, basic_streambuf<Allocator>& b);
 
 /// Attempt to read a certain amount of data at the specified offset before
 /// returning.
@@ -292,7 +292,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  */
 template <typename SyncRandomAccessReadDevice, typename Allocator>
 std::size_t read_at(SyncRandomAccessReadDevice& d,
-    boost::uint64_t offset, basic_streambuf<Allocator>& b,
+    uint64_t offset, basic_streambuf<Allocator>& b,
     asio::error_code& ec);
 
 /// Attempt to read a certain amount of data at the specified offset before
@@ -335,7 +335,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
 template <typename SyncRandomAccessReadDevice, typename Allocator,
     typename CompletionCondition>
 std::size_t read_at(SyncRandomAccessReadDevice& d,
-    boost::uint64_t offset, basic_streambuf<Allocator>& b,
+    uint64_t offset, basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition);
 
 /// Attempt to read a certain amount of data at the specified offset before
@@ -379,7 +379,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
 template <typename SyncRandomAccessReadDevice, typename Allocator,
     typename CompletionCondition>
 std::size_t read_at(SyncRandomAccessReadDevice& d,
-    boost::uint64_t offset, basic_streambuf<Allocator>& b,
+    uint64_t offset, basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition, asio::error_code& ec);
 
 #endif // !defined(BOOST_NO_IOSTREAM)
@@ -454,7 +454,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  */
 template <typename AsyncRandomAccessReadDevice, typename MutableBufferSequence,
     typename ReadHandler>
-void async_read_at(AsyncRandomAccessReadDevice& d, boost::uint64_t offset,
+void async_read_at(AsyncRandomAccessReadDevice& d, uint64_t offset,
     const MutableBufferSequence& buffers,
     ASIO_MOVE_ARG(ReadHandler) handler);
 
@@ -526,7 +526,7 @@ void async_read_at(AsyncRandomAccessReadDevice& d, boost::uint64_t offset,
 template <typename AsyncRandomAccessReadDevice, typename MutableBufferSequence,
     typename CompletionCondition, typename ReadHandler>
 void async_read_at(AsyncRandomAccessReadDevice& d,
-    boost::uint64_t offset, const MutableBufferSequence& buffers,
+    uint64_t offset, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition,
     ASIO_MOVE_ARG(ReadHandler) handler);
 
@@ -579,7 +579,7 @@ void async_read_at(AsyncRandomAccessReadDevice& d,
  */
 template <typename AsyncRandomAccessReadDevice, typename Allocator,
     typename ReadHandler>
-void async_read_at(AsyncRandomAccessReadDevice& d, boost::uint64_t offset,
+void async_read_at(AsyncRandomAccessReadDevice& d, uint64_t offset,
     basic_streambuf<Allocator>& b, ASIO_MOVE_ARG(ReadHandler) handler);
 
 /// Start an asynchronous operation to read a certain amount of data at the
@@ -638,7 +638,7 @@ void async_read_at(AsyncRandomAccessReadDevice& d, boost::uint64_t offset,
 template <typename AsyncRandomAccessReadDevice, typename Allocator,
     typename CompletionCondition, typename ReadHandler>
 void async_read_at(AsyncRandomAccessReadDevice& d,
-    boost::uint64_t offset, basic_streambuf<Allocator>& b,
+    uint64_t offset, basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition,
     ASIO_MOVE_ARG(ReadHandler) handler);
 

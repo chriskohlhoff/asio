@@ -20,11 +20,11 @@
 
 #if defined(ASIO_HAS_IOCP)
 
-#include <boost/cstdint.hpp>
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/detail/addressof.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
+#include "asio/detail/cstdint.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/operation.hpp"
@@ -129,7 +129,7 @@ public:
   // Write the given data at the specified offset. Returns the number of bytes
   // written.
   template <typename ConstBufferSequence>
-  size_t write_some_at(implementation_type& impl, boost::uint64_t offset,
+  size_t write_some_at(implementation_type& impl, uint64_t offset,
       const ConstBufferSequence& buffers, asio::error_code& ec)
   {
     asio::const_buffer buffer =
@@ -163,7 +163,7 @@ public:
   // Start an asynchronous write at a specified offset. The data being written
   // must be valid for the lifetime of the asynchronous operation.
   template <typename ConstBufferSequence, typename Handler>
-  void async_write_some_at(implementation_type& impl, boost::uint64_t offset,
+  void async_write_some_at(implementation_type& impl, uint64_t offset,
       const ConstBufferSequence& buffers, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
@@ -191,7 +191,7 @@ public:
 
   // Read some data at a specified offset. Returns the number of bytes received.
   template <typename MutableBufferSequence>
-  size_t read_some_at(implementation_type& impl, boost::uint64_t offset,
+  size_t read_some_at(implementation_type& impl, uint64_t offset,
       const MutableBufferSequence& buffers, asio::error_code& ec)
   {
     asio::mutable_buffer buffer =
@@ -226,7 +226,7 @@ public:
   // being received must be valid for the lifetime of the asynchronous
   // operation.
   template <typename MutableBufferSequence, typename Handler>
-  void async_read_some_at(implementation_type& impl, boost::uint64_t offset,
+  void async_read_some_at(implementation_type& impl, uint64_t offset,
       const MutableBufferSequence& buffers, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
@@ -248,23 +248,23 @@ private:
   // Prevent the use of the null_buffers type with this service.
   size_t write_some(implementation_type& impl,
       const null_buffers& buffers, asio::error_code& ec);
-  size_t write_some_at(implementation_type& impl, boost::uint64_t offset,
+  size_t write_some_at(implementation_type& impl, uint64_t offset,
       const null_buffers& buffers, asio::error_code& ec);
   template <typename Handler>
   void async_write_some(implementation_type& impl,
       const null_buffers& buffers, Handler handler);
   template <typename Handler>
-  void async_write_some_at(implementation_type& impl, boost::uint64_t offset,
+  void async_write_some_at(implementation_type& impl, uint64_t offset,
       const null_buffers& buffers, Handler handler);
   size_t read_some(implementation_type& impl,
       const null_buffers& buffers, asio::error_code& ec);
-  size_t read_some_at(implementation_type& impl, boost::uint64_t offset,
+  size_t read_some_at(implementation_type& impl, uint64_t offset,
       const null_buffers& buffers, asio::error_code& ec);
   template <typename Handler>
   void async_read_some(implementation_type& impl,
       const null_buffers& buffers, Handler handler);
   template <typename Handler>
-  void async_read_some_at(implementation_type& impl, boost::uint64_t offset,
+  void async_read_some_at(implementation_type& impl, uint64_t offset,
       const null_buffers& buffers, Handler handler);
 
   // Helper class for waiting for synchronous operations to complete.
@@ -272,22 +272,22 @@ private:
 
   // Helper function to perform a synchronous write operation.
   ASIO_DECL size_t do_write(implementation_type& impl,
-      boost::uint64_t offset, const asio::const_buffer& buffer,
+      uint64_t offset, const asio::const_buffer& buffer,
       asio::error_code& ec);
 
   // Helper function to start a write operation.
   ASIO_DECL void start_write_op(implementation_type& impl,
-      boost::uint64_t offset, const asio::const_buffer& buffer,
+      uint64_t offset, const asio::const_buffer& buffer,
       operation* op);
 
   // Helper function to perform a synchronous write operation.
   ASIO_DECL size_t do_read(implementation_type& impl,
-      boost::uint64_t offset, const asio::mutable_buffer& buffer,
+      uint64_t offset, const asio::mutable_buffer& buffer,
       asio::error_code& ec);
 
   // Helper function to start a read operation.
   ASIO_DECL void start_read_op(implementation_type& impl,
-      boost::uint64_t offset, const asio::mutable_buffer& buffer,
+      uint64_t offset, const asio::mutable_buffer& buffer,
       operation* op);
 
   // Update the ID of the thread from which cancellation is safe.

@@ -39,7 +39,7 @@ namespace detail {
 struct handler_tracking::tracking_state
 {
   static_mutex mutex_;
-  boost::uint64_t next_id_;
+  uint64_t next_id_;
   tss_ptr<completion>* current_completion_;
 };
 
@@ -73,7 +73,7 @@ void handler_tracking::creation(handler_tracking::tracked_handler* h,
   boost::posix_time::time_duration now =
     boost::posix_time::microsec_clock::universal_time() - epoch;
 
-  boost::uint64_t current_id = 0;
+  uint64_t current_id = 0;
   if (completion* current_completion = *state->current_completion_)
     current_id = current_completion->id_;
 
@@ -83,8 +83,8 @@ void handler_tracking::creation(handler_tracking::tracked_handler* h,
 #else // defined(BOOST_WINDOWS)
       "@asio|%llu.%06llu|%llu*%llu|%.20s@%p.%.50s\n",
 #endif // defined(BOOST_WINDOWS)
-      static_cast<boost::uint64_t>(now.total_seconds()),
-      static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
+      static_cast<uint64_t>(now.total_seconds()),
+      static_cast<uint64_t>(now.total_microseconds() % 1000000),
       current_id, h->id_, object_type, object, op_name);
 }
 
@@ -110,8 +110,8 @@ handler_tracking::completion::~completion()
 #else // defined(BOOST_WINDOWS)
         "@asio|%llu.%06llu|%c%llu|\n",
 #endif // defined(BOOST_WINDOWS)
-        static_cast<boost::uint64_t>(now.total_seconds()),
-        static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
+        static_cast<uint64_t>(now.total_seconds()),
+        static_cast<uint64_t>(now.total_microseconds() % 1000000),
         invoked_ ? '!' : '~', id_);
   }
 
@@ -130,8 +130,8 @@ void handler_tracking::completion::invocation_begin()
 #else // defined(BOOST_WINDOWS)
       "@asio|%llu.%06llu|>%llu|\n",
 #endif // defined(BOOST_WINDOWS)
-      static_cast<boost::uint64_t>(now.total_seconds()),
-      static_cast<boost::uint64_t>(now.total_microseconds() % 1000000), id_);
+      static_cast<uint64_t>(now.total_seconds()),
+      static_cast<uint64_t>(now.total_microseconds() % 1000000), id_);
 
   invoked_ = true;
 }
@@ -149,8 +149,8 @@ void handler_tracking::completion::invocation_begin(
 #else // defined(BOOST_WINDOWS)
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d\n",
 #endif // defined(BOOST_WINDOWS)
-      static_cast<boost::uint64_t>(now.total_seconds()),
-      static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
+      static_cast<uint64_t>(now.total_seconds()),
+      static_cast<uint64_t>(now.total_microseconds() % 1000000),
       id_, ec.category().name(), ec.value());
 
   invoked_ = true;
@@ -169,10 +169,10 @@ void handler_tracking::completion::invocation_begin(
 #else // defined(BOOST_WINDOWS)
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d,bytes_transferred=%llu\n",
 #endif // defined(BOOST_WINDOWS)
-      static_cast<boost::uint64_t>(now.total_seconds()),
-      static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
+      static_cast<uint64_t>(now.total_seconds()),
+      static_cast<uint64_t>(now.total_microseconds() % 1000000),
       id_, ec.category().name(), ec.value(),
-      static_cast<boost::uint64_t>(bytes_transferred));
+      static_cast<uint64_t>(bytes_transferred));
 
   invoked_ = true;
 }
@@ -190,8 +190,8 @@ void handler_tracking::completion::invocation_begin(
 #else // defined(BOOST_WINDOWS)
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d,signal_number=%d\n",
 #endif // defined(BOOST_WINDOWS)
-      static_cast<boost::uint64_t>(now.total_seconds()),
-      static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
+      static_cast<uint64_t>(now.total_seconds()),
+      static_cast<uint64_t>(now.total_microseconds() % 1000000),
       id_, ec.category().name(), ec.value(), signal_number);
 
   invoked_ = true;
@@ -210,8 +210,8 @@ void handler_tracking::completion::invocation_begin(
 #else // defined(BOOST_WINDOWS)
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d,%.50s\n",
 #endif // defined(BOOST_WINDOWS)
-      static_cast<boost::uint64_t>(now.total_seconds()),
-      static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
+      static_cast<uint64_t>(now.total_seconds()),
+      static_cast<uint64_t>(now.total_microseconds() % 1000000),
       id_, ec.category().name(), ec.value(), arg);
 
   invoked_ = true;
@@ -231,8 +231,8 @@ void handler_tracking::completion::invocation_end()
 #else // defined(BOOST_WINDOWS)
         "@asio|%llu.%06llu|<%llu|\n",
 #endif // defined(BOOST_WINDOWS)
-        static_cast<boost::uint64_t>(now.total_seconds()),
-        static_cast<boost::uint64_t>(now.total_microseconds() % 1000000), id_);
+        static_cast<uint64_t>(now.total_seconds()),
+        static_cast<uint64_t>(now.total_microseconds() % 1000000), id_);
 
     id_ = 0;
   }
@@ -257,8 +257,8 @@ void handler_tracking::operation(const char* object_type,
 #else // defined(BOOST_WINDOWS)
       "@asio|%llu.%06llu|%llu|%.20s@%p.%.50s\n",
 #endif // defined(BOOST_WINDOWS)
-      static_cast<boost::uint64_t>(now.total_seconds()),
-      static_cast<boost::uint64_t>(now.total_microseconds() % 1000000),
+      static_cast<uint64_t>(now.total_seconds()),
+      static_cast<uint64_t>(now.total_microseconds() % 1000000),
       current_id, object_type, object, op_name);
 }
 
