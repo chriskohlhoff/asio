@@ -28,9 +28,9 @@
 #include "asio/detail/signal_op.hpp"
 #include "asio/detail/socket_types.hpp"
 
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 # include "asio/detail/reactor.hpp"
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
 #include "asio/detail/push_options.hpp"
 
@@ -181,7 +181,7 @@ private:
   // The io_service instance used for dispatching handlers.
   io_service_impl& io_service_;
 
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
   // The type used for registering for pipe reactor notifications.
   class pipe_read_op;
 
@@ -190,7 +190,7 @@ private:
 
   // The per-descriptor reactor data used for the pipe.
   reactor::per_descriptor_data reactor_data_;
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
   // A mapping from signal number to the registered signal sets.
   registration* registrations_[max_signal_number];

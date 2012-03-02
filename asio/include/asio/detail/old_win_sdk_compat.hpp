@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 
 // Guess whether we are building against on old Platform SDK.
 #if !defined(IN6ADDR_ANY_INIT)
@@ -209,6 +209,6 @@ struct addrinfo_emulation
 # define IPPROTO_ICMPV6 58
 #endif
 
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 
 #endif // ASIO_DETAIL_OLD_WIN_SDK_COMPAT_HPP

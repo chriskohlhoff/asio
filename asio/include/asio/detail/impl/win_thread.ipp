@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(BOOST_WINDOWS) && !defined(UNDER_CE)
+#if defined(ASIO_WINDOWS) && !defined(UNDER_CE)
 
 #include <process.h>
 #include "asio/detail/throw_error.hpp"
@@ -134,6 +134,6 @@ void __stdcall apc_function(ULONG_PTR) {}
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // defined(BOOST_WINDOWS) && !defined(UNDER_CE)
+#endif // defined(ASIO_WINDOWS) && !defined(UNDER_CE)
 
 #endif // ASIO_DETAIL_IMPL_WIN_THREAD_IPP

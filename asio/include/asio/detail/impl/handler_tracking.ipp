@@ -27,9 +27,9 @@
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include "asio/detail/pop_options.hpp"
 
-#if !defined(BOOST_WINDOWS)
+#if !defined(ASIO_WINDOWS)
 # include <unistd.h>
-#endif // !defined(BOOST_WINDOWS)
+#endif // !defined(ASIO_WINDOWS)
 
 #include "asio/detail/push_options.hpp"
 
@@ -78,11 +78,11 @@ void handler_tracking::creation(handler_tracking::tracked_handler* h,
     current_id = current_completion->id_;
 
   write_line(
-#if defined(BOOST_WINDOWS)
+#if defined(ASIO_WINDOWS)
       "@asio|%I64u.%06I64u|%I64u*%I64u|%.20s@%p.%.50s\n",
-#else // defined(BOOST_WINDOWS)
+#else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|%llu*%llu|%.20s@%p.%.50s\n",
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(ASIO_WINDOWS)
       static_cast<uint64_t>(now.total_seconds()),
       static_cast<uint64_t>(now.total_microseconds() % 1000000),
       current_id, h->id_, object_type, object, op_name);
@@ -105,11 +105,11 @@ handler_tracking::completion::~completion()
       boost::posix_time::microsec_clock::universal_time() - epoch;
 
     write_line(
-#if defined(BOOST_WINDOWS)
+#if defined(ASIO_WINDOWS)
         "@asio|%I64u.%06I64u|%c%I64u|\n",
-#else // defined(BOOST_WINDOWS)
+#else // defined(ASIO_WINDOWS)
         "@asio|%llu.%06llu|%c%llu|\n",
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(ASIO_WINDOWS)
         static_cast<uint64_t>(now.total_seconds()),
         static_cast<uint64_t>(now.total_microseconds() % 1000000),
         invoked_ ? '!' : '~', id_);
@@ -125,11 +125,11 @@ void handler_tracking::completion::invocation_begin()
     boost::posix_time::microsec_clock::universal_time() - epoch;
 
   write_line(
-#if defined(BOOST_WINDOWS)
+#if defined(ASIO_WINDOWS)
       "@asio|%I64u.%06I64u|>%I64u|\n",
-#else // defined(BOOST_WINDOWS)
+#else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|>%llu|\n",
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(ASIO_WINDOWS)
       static_cast<uint64_t>(now.total_seconds()),
       static_cast<uint64_t>(now.total_microseconds() % 1000000), id_);
 
@@ -144,11 +144,11 @@ void handler_tracking::completion::invocation_begin(
     boost::posix_time::microsec_clock::universal_time() - epoch;
 
   write_line(
-#if defined(BOOST_WINDOWS)
+#if defined(ASIO_WINDOWS)
       "@asio|%I64u.%06I64u|>%I64u|ec=%.20s:%d\n",
-#else // defined(BOOST_WINDOWS)
+#else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d\n",
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(ASIO_WINDOWS)
       static_cast<uint64_t>(now.total_seconds()),
       static_cast<uint64_t>(now.total_microseconds() % 1000000),
       id_, ec.category().name(), ec.value());
@@ -164,11 +164,11 @@ void handler_tracking::completion::invocation_begin(
     boost::posix_time::microsec_clock::universal_time() - epoch;
 
   write_line(
-#if defined(BOOST_WINDOWS)
+#if defined(ASIO_WINDOWS)
       "@asio|%I64u.%06I64u|>%I64u|ec=%.20s:%d,bytes_transferred=%I64u\n",
-#else // defined(BOOST_WINDOWS)
+#else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d,bytes_transferred=%llu\n",
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(ASIO_WINDOWS)
       static_cast<uint64_t>(now.total_seconds()),
       static_cast<uint64_t>(now.total_microseconds() % 1000000),
       id_, ec.category().name(), ec.value(),
@@ -185,11 +185,11 @@ void handler_tracking::completion::invocation_begin(
     boost::posix_time::microsec_clock::universal_time() - epoch;
 
   write_line(
-#if defined(BOOST_WINDOWS)
+#if defined(ASIO_WINDOWS)
       "@asio|%I64u.%06I64u|>%I64u|ec=%.20s:%d,signal_number=%d\n",
-#else // defined(BOOST_WINDOWS)
+#else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d,signal_number=%d\n",
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(ASIO_WINDOWS)
       static_cast<uint64_t>(now.total_seconds()),
       static_cast<uint64_t>(now.total_microseconds() % 1000000),
       id_, ec.category().name(), ec.value(), signal_number);
@@ -205,11 +205,11 @@ void handler_tracking::completion::invocation_begin(
     boost::posix_time::microsec_clock::universal_time() - epoch;
 
   write_line(
-#if defined(BOOST_WINDOWS)
+#if defined(ASIO_WINDOWS)
       "@asio|%I64u.%06I64u|>%I64u|ec=%.20s:%d,%.50s\n",
-#else // defined(BOOST_WINDOWS)
+#else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d,%.50s\n",
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(ASIO_WINDOWS)
       static_cast<uint64_t>(now.total_seconds()),
       static_cast<uint64_t>(now.total_microseconds() % 1000000),
       id_, ec.category().name(), ec.value(), arg);
@@ -226,11 +226,11 @@ void handler_tracking::completion::invocation_end()
       boost::posix_time::microsec_clock::universal_time() - epoch;
 
     write_line(
-#if defined(BOOST_WINDOWS)
+#if defined(ASIO_WINDOWS)
         "@asio|%I64u.%06I64u|<%I64u|\n",
-#else // defined(BOOST_WINDOWS)
+#else // defined(ASIO_WINDOWS)
         "@asio|%llu.%06llu|<%llu|\n",
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(ASIO_WINDOWS)
         static_cast<uint64_t>(now.total_seconds()),
         static_cast<uint64_t>(now.total_microseconds() % 1000000), id_);
 
@@ -252,11 +252,11 @@ void handler_tracking::operation(const char* object_type,
     current_id = current_completion->id_;
 
   write_line(
-#if defined(BOOST_WINDOWS)
+#if defined(ASIO_WINDOWS)
       "@asio|%I64u.%06I64u|%I64u|%.20s@%p.%.50s\n",
-#else // defined(BOOST_WINDOWS)
+#else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|%llu|%.20s@%p.%.50s\n",
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(ASIO_WINDOWS)
       static_cast<uint64_t>(now.total_seconds()),
       static_cast<uint64_t>(now.total_microseconds() % 1000000),
       current_id, object_type, object, op_name);
@@ -278,13 +278,13 @@ void handler_tracking::write_line(const char* format, ...)
 
   va_end(args);
 
-#if defined(BOOST_WINDOWS)
+#if defined(ASIO_WINDOWS)
   HANDLE stderr_handle = ::GetStdHandle(STD_ERROR_HANDLE);
   DWORD bytes_written = 0;
   ::WriteFile(stderr_handle, line, length, &bytes_written, 0);
-#else // defined(BOOST_WINDOWS)
+#else // defined(ASIO_WINDOWS)
   ::write(STDERR_FILENO, line, length);
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(ASIO_WINDOWS)
 }
 
 } // namespace detail

@@ -214,8 +214,13 @@
 # endif // defined(__GNUC__)
 #endif // !defined(ASIO_DISABLE_CSTDINT)
 
+// Windows target.
+#if defined(BOOST_WINDOWS)
+# define ASIO_WINDOWS 1
+#endif // defined(BOOST_WINDOWS)
+
 // Windows: target OS version.
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 # if !defined(_WIN32_WINNT) && !defined(_WIN32_WINDOWS)
 #  if defined(_MSC_VER) || defined(__BORLANDC__)
 #   pragma message( \
@@ -253,28 +258,28 @@
 #   error You must add -D__USE_W32_SOCKETS to your compiler options.
 #  endif // !defined(__USE_W32_SOCKETS)
 # endif // defined(__CYGWIN__)
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 
 // Windows: minimise header inclusion.
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 # if !defined(ASIO_NO_WIN32_LEAN_AND_MEAN)
 #  if !defined(WIN32_LEAN_AND_MEAN)
 #   define WIN32_LEAN_AND_MEAN
 #  endif // !defined(WIN32_LEAN_AND_MEAN)
 # endif // !defined(ASIO_NO_WIN32_LEAN_AND_MEAN)
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 
 // Windows: suppress definition of "min" and "max" macros.
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 # if !defined(ASIO_NO_NOMINMAX)
 #  if !defined(NOMINMAX)
 #   define NOMINMAX 1
 #  endif // !defined(NOMINMAX)
 # endif // !defined(ASIO_NO_NOMINMAX)
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 
 // Windows: IO Completion Ports.
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 # if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
 #  if !defined(UNDER_CE)
 #   if !defined(ASIO_DISABLE_IOCP)
@@ -282,7 +287,7 @@
 #   endif // !defined(ASIO_DISABLE_IOCP)
 #  endif // !defined(UNDER_CE)
 # endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 
 // Linux: epoll, eventfd and timerfd.
 #if defined(__linux__)
@@ -326,14 +331,14 @@
 
 // Serial ports.
 #if defined(ASIO_HAS_IOCP) \
-   || !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+   || !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 # if !defined(__SYMBIAN32__)
 #  if !defined(ASIO_DISABLE_SERIAL_PORT)
 #   define ASIO_HAS_SERIAL_PORT 1
 #  endif // !defined(ASIO_DISABLE_SERIAL_PORT)
 # endif // !defined(__SYMBIAN32__)
 #endif // defined(ASIO_HAS_IOCP)
-       //   || !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+       //   || !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
 // Windows: stream handles.
 #if !defined(ASIO_DISABLE_WINDOWS_STREAM_HANDLE)
@@ -351,11 +356,11 @@
 
 // Windows: object handles.
 #if !defined(ASIO_DISABLE_WINDOWS_OBJECT_HANDLE)
-# if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 #  if !defined(UNDER_CE)
 #   define ASIO_HAS_WINDOWS_OBJECT_HANDLE 1
 #  endif // !defined(UNDER_CE)
-# endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 #endif // !defined(ASIO_DISABLE_WINDOWS_OBJECT_HANDLE)
 
 // Windows: OVERLAPPED wrapper.
@@ -367,23 +372,23 @@
 
 // POSIX: stream-oriented file descriptors.
 #if !defined(ASIO_DISABLE_POSIX_STREAM_DESCRIPTOR)
-# if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+# if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 #  define ASIO_HAS_POSIX_STREAM_DESCRIPTOR 1
-# endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+# endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 #endif // !defined(ASIO_DISABLE_POSIX_STREAM_DESCRIPTOR)
 
 // UNIX domain sockets.
 #if !defined(ASIO_DISABLE_LOCAL_SOCKETS)
-# if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+# if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 #  define ASIO_HAS_LOCAL_SOCKETS 1
-# endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+# endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 #endif // !defined(ASIO_DISABLE_LOCAL_SOCKETS)
 
 // Can use sigaction() instead of signal().
 #if !defined(ASIO_DISABLE_SIGACTION)
-# if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+# if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 #  define ASIO_HAS_SIGACTION 1
-# endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+# endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 #endif // !defined(ASIO_DISABLE_SIGACTION)
 
 // Can use signal().

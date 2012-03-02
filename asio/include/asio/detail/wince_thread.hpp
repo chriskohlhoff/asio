@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(ASIO_WINDOWS) && defined(UNDER_CE)
 
 #include <memory>
 #include "asio/detail/noncopyable.hpp"
@@ -111,6 +111,6 @@ inline DWORD WINAPI wince_thread_function(LPVOID arg)
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#endif // defined(ASIO_WINDOWS) && defined(UNDER_CE)
 
 #endif // ASIO_DETAIL_WINCE_THREAD_HPP

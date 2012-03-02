@@ -19,7 +19,7 @@
 
 #if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
 # include "asio/detail/null_thread.hpp"
-#elif defined(BOOST_WINDOWS)
+#elif defined(ASIO_WINDOWS)
 # if defined(UNDER_CE)
 #  include "asio/detail/wince_thread.hpp"
 # else
@@ -36,7 +36,7 @@ namespace detail {
 
 #if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
 typedef null_thread thread;
-#elif defined(BOOST_WINDOWS)
+#elif defined(ASIO_WINDOWS)
 # if defined(UNDER_CE)
 typedef wince_thread thread;
 # else

@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(BOOST_WINDOWS) \
+#if defined(ASIO_WINDOWS) \
   || defined(__CYGWIN__) \
   || defined(__SYMBIAN32__)
 
@@ -164,7 +164,7 @@ bool socket_select_interrupter::reset()
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(ASIO_WINDOWS)
        // || defined(__CYGWIN__)
        // || defined(__SYMBIAN32__)
 

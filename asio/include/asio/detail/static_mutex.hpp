@@ -19,7 +19,7 @@
 
 #if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
 # include "asio/detail/null_static_mutex.hpp"
-#elif defined(BOOST_WINDOWS)
+#elif defined(ASIO_WINDOWS)
 # include "asio/detail/win_static_mutex.hpp"
 #elif defined(BOOST_HAS_PTHREADS)
 # include "asio/detail/posix_static_mutex.hpp"
@@ -33,7 +33,7 @@ namespace detail {
 #if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
 typedef null_static_mutex static_mutex;
 # define ASIO_STATIC_MUTEX_INIT ASIO_NULL_STATIC_MUTEX_INIT
-#elif defined(BOOST_WINDOWS)
+#elif defined(ASIO_WINDOWS)
 typedef win_static_mutex static_mutex;
 # define ASIO_STATIC_MUTEX_INIT ASIO_WIN_STATIC_MUTEX_INIT
 #elif defined(BOOST_HAS_PTHREADS)

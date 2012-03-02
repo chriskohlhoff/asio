@@ -23,7 +23,7 @@
 namespace asio {
 namespace error {
 
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
 namespace detail {
 
@@ -85,7 +85,7 @@ const asio::error_category& get_addrinfo_category()
   return instance;
 }
 
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
 namespace detail {
 

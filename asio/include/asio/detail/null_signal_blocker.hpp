@@ -19,7 +19,7 @@
 
 #if !defined(BOOST_HAS_THREADS) \
   || defined(ASIO_DISABLE_THREADS) \
-  || defined(BOOST_WINDOWS) \
+  || defined(ASIO_WINDOWS) \
   || defined(__CYGWIN__) \
   || defined(__SYMBIAN32__)
 
@@ -62,7 +62,7 @@ public:
 
 #endif // !defined(BOOST_HAS_THREADS)
        // || defined(ASIO_DISABLE_THREADS)
-       // || defined(BOOST_WINDOWS)
+       // || defined(ASIO_WINDOWS)
        // || defined(__CYGWIN__)
        // || defined(__SYMBIAN32__)
 

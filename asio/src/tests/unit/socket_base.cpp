@@ -248,22 +248,22 @@ void test()
   BOOST_CHECK(!ec || not_root);
   BOOST_WARN_MESSAGE(!ec, "Must be root to set debug socket option");
 #else // defined(__linux__)
-# if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+# if defined(ASIO_WINDOWS) && defined(UNDER_CE)
   // Option is not supported under Windows CE.
   BOOST_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
       ec.value() << ", " << ec.message());
-# else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+# else // defined(ASIO_WINDOWS) && defined(UNDER_CE)
   BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
-# endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+# endif // defined(ASIO_WINDOWS) && defined(UNDER_CE)
 #endif // defined(__linux__)
 
   socket_base::debug debug2;
   udp_sock.get_option(debug2, ec);
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(ASIO_WINDOWS) && defined(UNDER_CE)
   // Option is not supported under Windows CE.
   BOOST_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
       ec.value() << ", " << ec.message());
-#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#else // defined(ASIO_WINDOWS) && defined(UNDER_CE)
   BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
 # if defined(__linux__)
   BOOST_CHECK(debug2.value() || not_root);
@@ -274,7 +274,7 @@ void test()
   BOOST_CHECK(static_cast<bool>(debug2));
   BOOST_CHECK(!!debug2);
 # endif // defined(__linux__)
-#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#endif // defined(ASIO_WINDOWS) && defined(UNDER_CE)
 
   socket_base::debug debug3(false);
   BOOST_CHECK(!debug3.value());
@@ -284,22 +284,22 @@ void test()
 #if defined(__linux__)
   BOOST_CHECK(!ec || not_root);
 #else // defined(__linux__)
-# if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+# if defined(ASIO_WINDOWS) && defined(UNDER_CE)
   // Option is not supported under Windows CE.
   BOOST_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
       ec.value() << ", " << ec.message());
-# else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+# else // defined(ASIO_WINDOWS) && defined(UNDER_CE)
   BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
-# endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+# endif // defined(ASIO_WINDOWS) && defined(UNDER_CE)
 #endif // defined(__linux__)
 
   socket_base::debug debug4;
   udp_sock.get_option(debug4, ec);
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(ASIO_WINDOWS) && defined(UNDER_CE)
   // Option is not supported under Windows CE.
   BOOST_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
       ec.value() << ", " << ec.message());
-#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#else // defined(ASIO_WINDOWS) && defined(UNDER_CE)
   BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
 # if defined(__linux__)
   BOOST_CHECK(!debug4.value() || not_root);
@@ -310,7 +310,7 @@ void test()
   BOOST_CHECK(!static_cast<bool>(debug4));
   BOOST_CHECK(!debug4);
 # endif // defined(__linux__)
-#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#endif // defined(ASIO_WINDOWS) && defined(UNDER_CE)
 
   // do_not_route class.
 
@@ -319,52 +319,52 @@ void test()
   BOOST_CHECK(static_cast<bool>(do_not_route1));
   BOOST_CHECK(!!do_not_route1);
   udp_sock.set_option(do_not_route1, ec);
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(ASIO_WINDOWS) && defined(UNDER_CE)
   // Option is not supported under Windows CE.
   BOOST_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
       ec.value() << ", " << ec.message());
-#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#else // defined(ASIO_WINDOWS) && defined(UNDER_CE)
   BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
-#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#endif // defined(ASIO_WINDOWS) && defined(UNDER_CE)
 
   socket_base::do_not_route do_not_route2;
   udp_sock.get_option(do_not_route2, ec);
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(ASIO_WINDOWS) && defined(UNDER_CE)
   // Option is not supported under Windows CE.
   BOOST_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
       ec.value() << ", " << ec.message());
-#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#else // defined(ASIO_WINDOWS) && defined(UNDER_CE)
   BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
   BOOST_CHECK(do_not_route2.value());
   BOOST_CHECK(static_cast<bool>(do_not_route2));
   BOOST_CHECK(!!do_not_route2);
-#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#endif // defined(ASIO_WINDOWS) && defined(UNDER_CE)
 
   socket_base::do_not_route do_not_route3(false);
   BOOST_CHECK(!do_not_route3.value());
   BOOST_CHECK(!static_cast<bool>(do_not_route3));
   BOOST_CHECK(!do_not_route3);
   udp_sock.set_option(do_not_route3, ec);
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(ASIO_WINDOWS) && defined(UNDER_CE)
   // Option is not supported under Windows CE.
   BOOST_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
       ec.value() << ", " << ec.message());
-#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#else // defined(ASIO_WINDOWS) && defined(UNDER_CE)
   BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
-#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#endif // defined(ASIO_WINDOWS) && defined(UNDER_CE)
 
   socket_base::do_not_route do_not_route4;
   udp_sock.get_option(do_not_route4, ec);
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(ASIO_WINDOWS) && defined(UNDER_CE)
   // Option is not supported under Windows CE.
   BOOST_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
       ec.value() << ", " << ec.message());
-#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#else // defined(ASIO_WINDOWS) && defined(UNDER_CE)
   BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
   BOOST_CHECK(!do_not_route4.value());
   BOOST_CHECK(!static_cast<bool>(do_not_route4));
   BOOST_CHECK(!do_not_route4);
-#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#endif // defined(ASIO_WINDOWS) && defined(UNDER_CE)
 
   // keep_alive class.
 
@@ -465,42 +465,42 @@ void test()
   socket_base::receive_buffer_size receive_buffer_size1(4096);
   BOOST_CHECK(receive_buffer_size1.value() == 4096);
   tcp_sock.set_option(receive_buffer_size1, ec);
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(ASIO_WINDOWS) && defined(UNDER_CE)
   // Option is not supported under Windows CE.
   BOOST_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
       ec.value() << ", " << ec.message());
-#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#else // defined(ASIO_WINDOWS) && defined(UNDER_CE)
   BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
-#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#endif // defined(ASIO_WINDOWS) && defined(UNDER_CE)
 
   socket_base::receive_buffer_size receive_buffer_size2;
   tcp_sock.get_option(receive_buffer_size2, ec);
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(ASIO_WINDOWS) && defined(UNDER_CE)
   BOOST_CHECK(!ec); // Not supported under Windows CE but can get value.
-#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#else // defined(ASIO_WINDOWS) && defined(UNDER_CE)
   BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
   BOOST_CHECK(receive_buffer_size2.value() == 4096);
-#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#endif // defined(ASIO_WINDOWS) && defined(UNDER_CE)
 
   socket_base::receive_buffer_size receive_buffer_size3(16384);
   BOOST_CHECK(receive_buffer_size3.value() == 16384);
   tcp_sock.set_option(receive_buffer_size3, ec);
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(ASIO_WINDOWS) && defined(UNDER_CE)
   // Option is not supported under Windows CE.
   BOOST_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
       ec.value() << ", " << ec.message());
-#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#else // defined(ASIO_WINDOWS) && defined(UNDER_CE)
   BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
-#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#endif // defined(ASIO_WINDOWS) && defined(UNDER_CE)
 
   socket_base::receive_buffer_size receive_buffer_size4;
   tcp_sock.get_option(receive_buffer_size4, ec);
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(ASIO_WINDOWS) && defined(UNDER_CE)
   BOOST_CHECK(!ec); // Not supported under Windows CE but can get value.
-#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#else // defined(ASIO_WINDOWS) && defined(UNDER_CE)
   BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
   BOOST_CHECK(receive_buffer_size4.value() == 16384);
-#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#endif // defined(ASIO_WINDOWS) && defined(UNDER_CE)
 
   // receive_low_watermark class.
 

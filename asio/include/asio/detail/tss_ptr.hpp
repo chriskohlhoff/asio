@@ -19,7 +19,7 @@
 
 #if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
 # include "asio/detail/null_tss_ptr.hpp"
-#elif defined(BOOST_WINDOWS)
+#elif defined(ASIO_WINDOWS)
 # include "asio/detail/win_tss_ptr.hpp"
 #elif defined(BOOST_HAS_PTHREADS)
 # include "asio/detail/posix_tss_ptr.hpp"
@@ -36,7 +36,7 @@ template <typename T>
 class tss_ptr
 #if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
   : public null_tss_ptr<T>
-#elif defined(BOOST_WINDOWS)
+#elif defined(ASIO_WINDOWS)
   : public win_tss_ptr<T>
 #elif defined(BOOST_HAS_PTHREADS)
   : public posix_tss_ptr<T>
@@ -47,7 +47,7 @@ public:
   {
 #if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
     null_tss_ptr<T>::operator=(value);
-#elif defined(BOOST_WINDOWS)
+#elif defined(ASIO_WINDOWS)
     win_tss_ptr<T>::operator=(value);
 #elif defined(BOOST_HAS_PTHREADS)
     posix_tss_ptr<T>::operator=(value);

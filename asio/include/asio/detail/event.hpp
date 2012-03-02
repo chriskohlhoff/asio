@@ -19,7 +19,7 @@
 
 #if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
 # include "asio/detail/null_event.hpp"
-#elif defined(BOOST_WINDOWS)
+#elif defined(ASIO_WINDOWS)
 # include "asio/detail/win_event.hpp"
 #elif defined(BOOST_HAS_PTHREADS)
 # include "asio/detail/posix_event.hpp"
@@ -32,7 +32,7 @@ namespace detail {
 
 #if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
 typedef null_event event;
-#elif defined(BOOST_WINDOWS)
+#elif defined(ASIO_WINDOWS)
 typedef win_event event;
 #elif defined(BOOST_HAS_PTHREADS)
 typedef posix_event event;

@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
 #include "asio/detail/addressof.hpp"
 #include "asio/detail/bind_handler.hpp"
@@ -114,6 +114,6 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
 #endif // ASIO_DETAIL_DESCRIPTOR_WRITE_OP_HPP

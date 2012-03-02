@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(BOOST_WINDOWS)
+#if defined(ASIO_WINDOWS)
 
 #include <cstdio>
 #include "asio/detail/throw_error.hpp"
@@ -113,6 +113,6 @@ int win_static_mutex::do_init()
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(ASIO_WINDOWS)
 
 #endif // ASIO_DETAIL_IMPL_WIN_STATIC_MUTEX_IPP

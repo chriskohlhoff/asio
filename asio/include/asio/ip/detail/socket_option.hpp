@@ -254,7 +254,7 @@ template <int IPv4_Level, int IPv4_Name, int IPv6_Level, int IPv6_Name>
 class multicast_hops
 {
 public:
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(ASIO_WINDOWS) && defined(UNDER_CE)
   typedef int ipv4_value_type;
 #else
   typedef unsigned char ipv4_value_type;

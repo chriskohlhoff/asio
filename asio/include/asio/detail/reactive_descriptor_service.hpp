@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
 #include "asio/buffer.hpp"
 #include "asio/io_service.hpp"
@@ -301,6 +301,6 @@ private:
 # include "asio/detail/impl/reactive_descriptor_service.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
 #endif // ASIO_DETAIL_REACTIVE_DESCRIPTOR_SERVICE_HPP

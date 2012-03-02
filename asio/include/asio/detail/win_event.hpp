@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(BOOST_WINDOWS)
+#if defined(ASIO_WINDOWS)
 
 #include <boost/assert.hpp>
 #include "asio/detail/noncopyable.hpp"
@@ -91,6 +91,6 @@ private:
 # include "asio/detail/impl/win_event.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(ASIO_WINDOWS)
 
 #endif // ASIO_DETAIL_WIN_EVENT_HPP

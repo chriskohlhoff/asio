@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(BOOST_WINDOWS) \
+#if defined(ASIO_WINDOWS) \
   || defined(__CYGWIN__) \
   || defined(__SYMBIAN32__)
 
@@ -80,7 +80,7 @@ private:
 # include "asio/detail/impl/socket_select_interrupter.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(ASIO_WINDOWS)
        // || defined(__CYGWIN__)
        // || defined(__SYMBIAN32__)
 

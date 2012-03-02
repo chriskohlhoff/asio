@@ -36,7 +36,7 @@
   && !defined(__INTEL_COMPILER) && !defined(__ICL) \
   && !defined(__ICC) && !defined(__ECC) && !defined(__PATHSCALE__)
 # include "asio/detail/gcc_sync_fenced_block.hpp"
-#elif defined(BOOST_WINDOWS) && !defined(UNDER_CE)
+#elif defined(ASIO_WINDOWS) && !defined(UNDER_CE)
 # include "asio/detail/win_fenced_block.hpp"
 #else
 # include "asio/detail/null_fenced_block.hpp"
@@ -64,7 +64,7 @@ typedef gcc_x86_fenced_block fenced_block;
   && !defined(__INTEL_COMPILER) && !defined(__ICL) \
   && !defined(__ICC) && !defined(__ECC) && !defined(__PATHSCALE__)
 typedef gcc_sync_fenced_block fenced_block;
-#elif defined(BOOST_WINDOWS) && !defined(UNDER_CE)
+#elif defined(ASIO_WINDOWS) && !defined(UNDER_CE)
 typedef win_fenced_block fenced_block;
 #else
 typedef null_fenced_block fenced_block;

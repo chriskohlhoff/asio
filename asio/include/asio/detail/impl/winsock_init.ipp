@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/winsock_init.hpp"
@@ -64,6 +64,6 @@ void winsock_init_base::throw_on_error(data& d)
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 
 #endif // ASIO_DETAIL_IMPL_WINSOCK_INIT_IPP

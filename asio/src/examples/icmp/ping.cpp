@@ -121,7 +121,7 @@ private:
 
   static unsigned short get_identifier()
   {
-#if defined(BOOST_WINDOWS)
+#if defined(ASIO_WINDOWS)
     return static_cast<unsigned short>(::GetCurrentProcessId());
 #else
     return static_cast<unsigned short>(::getpid());
@@ -145,7 +145,7 @@ int main(int argc, char* argv[])
     if (argc != 2)
     {
       std::cerr << "Usage: ping <host>" << std::endl;
-#if !defined(BOOST_WINDOWS)
+#if !defined(ASIO_WINDOWS)
       std::cerr << "(You may need to run this program as root.)" << std::endl;
 #endif
       return 1;

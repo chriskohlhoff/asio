@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/error_code.hpp"
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 # include <winerror.h>
 #else
 # include <cerrno>
@@ -35,7 +35,7 @@
 # define ASIO_GETADDRINFO_ERROR(e) implementation_defined
 /// INTERNAL ONLY.
 # define ASIO_WIN_OR_POSIX(e_win, e_posix) implementation_defined
-#elif defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#elif defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 # define ASIO_NATIVE_ERROR(e) e
 # define ASIO_SOCKET_ERROR(e) WSA ## e
 # define ASIO_NETDB_ERROR(e) WSA ## e
@@ -214,7 +214,7 @@ inline const asio::error_category& get_system_category()
   return asio::system_category();
 }
 
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
 extern ASIO_DECL
 const asio::error_category& get_netdb_category();
@@ -222,7 +222,7 @@ const asio::error_category& get_netdb_category();
 extern ASIO_DECL
 const asio::error_category& get_addrinfo_category();
 
-#else // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#else // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
 inline const asio::error_category& get_netdb_category()
 {
@@ -234,7 +234,7 @@ inline const asio::error_category& get_addrinfo_category()
   return get_system_category();
 }
 
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
 extern ASIO_DECL
 const asio::error_category& get_misc_category();
