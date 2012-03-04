@@ -80,7 +80,7 @@ inline std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
   return bytes_transferred;
 }
 
-#if !defined(BOOST_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM)
 
 template <typename SyncWriteStream, typename Allocator,
     typename CompletionCondition>
@@ -123,7 +123,7 @@ inline std::size_t write(SyncWriteStream& s,
   return bytes_transferred;
 }
 
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_IOSTREAM)
 
 namespace detail
 {
@@ -586,7 +586,7 @@ inline void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
       asio::error_code(), 0, 1);
 }
 
-#if !defined(BOOST_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM)
 
 namespace detail
 {
@@ -698,7 +698,7 @@ inline void async_write(AsyncWriteStream& s,
         b, ASIO_MOVE_CAST(WriteHandler)(handler)));
 }
 
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_IOSTREAM)
 
 } // namespace asio
 

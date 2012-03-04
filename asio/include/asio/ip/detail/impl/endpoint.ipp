@@ -17,9 +17,9 @@
 
 #include "asio/detail/config.hpp"
 #include <cstring>
-#if !defined(BOOST_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM)
 # include <sstream>
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_IOSTREAM)
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
@@ -173,7 +173,7 @@ bool operator<(const endpoint& e1, const endpoint& e2)
   return e1.port() < e2.port();
 }
 
-#if !defined(BOOST_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM)
 std::string endpoint::to_string(asio::error_code& ec) const
 {
   std::string a = address().to_string(ec);
@@ -190,7 +190,7 @@ std::string endpoint::to_string(asio::error_code& ec) const
 
   return tmp_os.str();
 }
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_IOSTREAM)
 
 } // namespace detail
 } // namespace ip

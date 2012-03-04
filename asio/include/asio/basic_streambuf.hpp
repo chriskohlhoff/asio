@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(BOOST_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM)
 
 #include <algorithm>
 #include <cstring>
@@ -363,6 +363,6 @@ inline std::size_t read_size_helper(
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_IOSTREAM)
 
 #endif // ASIO_BASIC_STREAMBUF_HPP

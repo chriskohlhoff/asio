@@ -398,4 +398,11 @@
 # endif // !defined(UNDER_CE)
 #endif // !defined(ASIO_DISABLE_SIGNAL)
 
+// Whether standard iostreams are disabled.
+#if defined(BOOST_NO_IOSTREAM)
+# if !defined(ASIO_NO_IOSTREAM)
+#  define ASIO_NO_IOSTREAM 1
+# endif // !defined(ASIO_NO_IOSTREAM)
+#endif // !defined(BOOST_NO_IOSTREAM)
+
 #endif // ASIO_DETAIL_CONFIG_HPP

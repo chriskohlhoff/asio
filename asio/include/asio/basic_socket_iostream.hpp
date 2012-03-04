@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(BOOST_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM)
 
 #include <boost/utility/base_from_member.hpp>
 #include "asio/basic_socket_streambuf.hpp"
@@ -253,6 +253,6 @@ public:
 # undef ASIO_PRIVATE_CONNECT_DEF
 #endif // !defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
-#endif // defined(BOOST_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_IOSTREAM)
 
 #endif // ASIO_BASIC_SOCKET_IOSTREAM_HPP

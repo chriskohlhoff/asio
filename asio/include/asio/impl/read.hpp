@@ -82,7 +82,7 @@ inline std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
   return bytes_transferred;
 }
 
-#if !defined(BOOST_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM)
 
 template <typename SyncReadStream, typename Allocator,
     typename CompletionCondition>
@@ -137,7 +137,7 @@ inline std::size_t read(SyncReadStream& s,
   return bytes_transferred;
 }
 
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_IOSTREAM)
 
 namespace detail
 {
@@ -527,7 +527,7 @@ inline void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
       asio::error_code(), 0, 1);
 }
 
-#if !defined(BOOST_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM)
 
 namespace detail
 {
@@ -685,7 +685,7 @@ inline void async_read(AsyncReadStream& s,
       asio::error_code(), 0, 1);
 }
 
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_IOSTREAM)
 
 } // namespace asio
 

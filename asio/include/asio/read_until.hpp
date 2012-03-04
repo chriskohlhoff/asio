@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(BOOST_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM)
 
 #include <cstddef>
 #include <boost/type_traits/is_function.hpp>
@@ -899,6 +899,6 @@ void async_read_until(AsyncReadStream& s,
 
 #include "asio/impl/read_until.hpp"
 
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_IOSTREAM)
 
 #endif // ASIO_READ_UNTIL_HPP

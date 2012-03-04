@@ -228,7 +228,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
     uint64_t offset, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition, asio::error_code& ec);
 
-#if !defined(BOOST_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM)
 
 /// Attempt to read a certain amount of data at the specified offset before
 /// returning.
@@ -382,7 +382,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
     uint64_t offset, basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition, asio::error_code& ec);
 
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_IOSTREAM)
 
 /*@}*/
 /**
@@ -530,7 +530,7 @@ void async_read_at(AsyncRandomAccessReadDevice& d,
     CompletionCondition completion_condition,
     ASIO_MOVE_ARG(ReadHandler) handler);
 
-#if !defined(BOOST_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM)
 
 /// Start an asynchronous operation to read a certain amount of data at the
 /// specified offset.
@@ -642,7 +642,7 @@ void async_read_at(AsyncRandomAccessReadDevice& d,
     CompletionCondition completion_condition,
     ASIO_MOVE_ARG(ReadHandler) handler);
 
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_IOSTREAM)
 
 /*@}*/
 
