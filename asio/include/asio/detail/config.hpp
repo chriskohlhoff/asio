@@ -412,4 +412,11 @@
 # endif // !defined(ASIO_NO_EXCEPTIONS)
 #endif // !defined(BOOST_NO_EXCEPTIONS)
 
+// Whether the typeid operator is supported.
+#if defined(BOOST_NO_TYPEID)
+# if !defined(ASIO_NO_TYPEID)
+#  define ASIO_NO_TYPEID 1
+# endif // !defined(ASIO_NO_TYPEID)
+#endif // !defined(BOOST_NO_TYPEID)
+
 #endif // ASIO_DETAIL_CONFIG_HPP
