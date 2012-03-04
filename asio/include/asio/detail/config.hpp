@@ -405,4 +405,11 @@
 # endif // !defined(ASIO_NO_IOSTREAM)
 #endif // !defined(BOOST_NO_IOSTREAM)
 
+// Whether exception handling is disabled.
+#if defined(BOOST_NO_EXCEPTIONS)
+# if !defined(ASIO_NO_EXCEPTIONS)
+#  define ASIO_NO_EXCEPTIONS 1
+# endif // !defined(ASIO_NO_EXCEPTIONS)
+#endif // !defined(BOOST_NO_EXCEPTIONS)
+
 #endif // ASIO_DETAIL_CONFIG_HPP
