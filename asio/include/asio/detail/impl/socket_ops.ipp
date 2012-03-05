@@ -2787,12 +2787,10 @@ inline asio::error_code getnameinfo_emulation(
     }
     else
     {
-#if defined(BOOST_HAS_THREADS) && defined(BOOST_HAS_PTHREADS) \
-      && !defined(ASIO_DISABLE_THREADS)
+#if defined(ASIO_HAS_PTHREADS)
       static ::pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
       ::pthread_mutex_lock(&mutex);
-#endif // defined(BOOST_HAS_THREADS) && defined(BOOST_HAS_PTHREADS)
-       //   && !defined(ASIO_DISABLE_THREADS)
+#endif // defined(ASIO_HAS_PTHREADS)
       servent* sptr = ::getservbyport(port, (flags & NI_DGRAM) ? "udp" : 0);
       if (sptr && sptr->s_name && sptr->s_name[0] != '\0')
       {
@@ -2810,11 +2808,9 @@ inline asio::error_code getnameinfo_emulation(
         sprintf(serv, "%u", ntohs(port));
 #endif
       }
-#if defined(BOOST_HAS_THREADS) && defined(BOOST_HAS_PTHREADS) \
-      && !defined(ASIO_DISABLE_THREADS)
+#if defined(ASIO_HAS_PTHREADS)
       ::pthread_mutex_unlock(&mutex);
-#endif // defined(BOOST_HAS_THREADS) && defined(BOOST_HAS_PTHREADS)
-       //   && !defined(ASIO_DISABLE_THREADS)
+#endif // defined(ASIO_HAS_PTHREADS)
     }
   }
 

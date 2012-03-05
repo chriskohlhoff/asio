@@ -17,11 +17,11 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
+#if !defined(ASIO_HAS_THREADS)
 # include "asio/detail/null_tss_ptr.hpp"
 #elif defined(ASIO_WINDOWS)
 # include "asio/detail/win_tss_ptr.hpp"
-#elif defined(BOOST_HAS_PTHREADS)
+#elif defined(ASIO_HAS_PTHREADS)
 # include "asio/detail/posix_tss_ptr.hpp"
 #else
 # error Only Windows and POSIX are supported!
@@ -34,22 +34,22 @@ namespace detail {
 
 template <typename T>
 class tss_ptr
-#if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
+#if !defined(ASIO_HAS_THREADS)
   : public null_tss_ptr<T>
 #elif defined(ASIO_WINDOWS)
   : public win_tss_ptr<T>
-#elif defined(BOOST_HAS_PTHREADS)
+#elif defined(ASIO_HAS_PTHREADS)
   : public posix_tss_ptr<T>
 #endif
 {
 public:
   void operator=(T* value)
   {
-#if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
+#if !defined(ASIO_HAS_THREADS)
     null_tss_ptr<T>::operator=(value);
 #elif defined(ASIO_WINDOWS)
     win_tss_ptr<T>::operator=(value);
-#elif defined(BOOST_HAS_PTHREADS)
+#elif defined(ASIO_HAS_PTHREADS)
     posix_tss_ptr<T>::operator=(value);
 #endif
   }

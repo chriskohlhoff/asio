@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
+#if !defined(ASIO_HAS_THREADS)
 # include "asio/detail/null_thread.hpp"
 #elif defined(ASIO_WINDOWS)
 # if defined(UNDER_CE)
@@ -25,7 +25,7 @@
 # else
 #  include "asio/detail/win_thread.hpp"
 # endif
-#elif defined(BOOST_HAS_PTHREADS)
+#elif defined(ASIO_HAS_PTHREADS)
 # include "asio/detail/posix_thread.hpp"
 #else
 # error Only Windows and POSIX are supported!
@@ -34,7 +34,7 @@
 namespace asio {
 namespace detail {
 
-#if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
+#if !defined(ASIO_HAS_THREADS)
 typedef null_thread thread;
 #elif defined(ASIO_WINDOWS)
 # if defined(UNDER_CE)
@@ -42,7 +42,7 @@ typedef wince_thread thread;
 # else
 typedef win_thread thread;
 # endif
-#elif defined(BOOST_HAS_PTHREADS)
+#elif defined(ASIO_HAS_PTHREADS)
 typedef posix_thread thread;
 #endif
 

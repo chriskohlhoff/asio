@@ -419,4 +419,22 @@
 # endif // !defined(ASIO_NO_TYPEID)
 #endif // !defined(BOOST_NO_TYPEID)
 
+// Threads.
+#if !defined(ASIO_DISABLE_THREADS)
+# if defined(BOOST_HAS_THREADS)
+#  if !defined(ASIO_HAS_THREADS)
+#   define ASIO_HAS_THREADS 1
+#  endif // !defined(ASIO_HAS_THREADS)
+# endif // defined(BOOST_HAS_THREADS)
+#endif // !defined(ASIO_DISABLE_THREADS)
+
+// POSIX threads.
+#if defined(ASIO_HAS_THREADS)
+# if defined(BOOST_HAS_PTHREADS)
+#  if !defined(ASIO_HAS_PTHREADS)
+#   define ASIO_HAS_PTHREADS 1
+#  endif // !defined(ASIO_HAS_PTHREADS)
+# endif // defined(BOOST_HAS_PTHREADS)
+#endif // defined(ASIO_HAS_PTHREADS)
+
 #endif // ASIO_DETAIL_CONFIG_HPP
