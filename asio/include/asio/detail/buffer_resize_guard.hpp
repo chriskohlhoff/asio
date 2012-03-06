@@ -38,8 +38,7 @@ public:
   // Destructor rolls back the buffer resize unless commit was called.
   ~buffer_resize_guard()
   {
-    if (old_size_
-        != std::numeric_limits<size_t>::max BOOST_PREVENT_MACRO_SUBSTITUTION())
+    if (old_size_ != (std::numeric_limits<size_t>::max)())
     {
       buffer_.resize(old_size_);
     }
@@ -48,8 +47,7 @@ public:
   // Commit the resize transaction.
   void commit()
   {
-    old_size_
-      = std::numeric_limits<size_t>::max BOOST_PREVENT_MACRO_SUBSTITUTION();
+    old_size_ = (std::numeric_limits<size_t>::max)();
   }
 
 private:

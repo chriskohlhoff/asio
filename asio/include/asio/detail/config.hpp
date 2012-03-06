@@ -437,4 +437,7 @@
 # endif // defined(BOOST_HAS_PTHREADS)
 #endif // defined(ASIO_HAS_PTHREADS)
 
+// Helper to prevent macro expansion.
+#define ASIO_PREVENT_MACRO_SUBSTITUTION
+
 #endif // ASIO_DETAIL_CONFIG_HPP

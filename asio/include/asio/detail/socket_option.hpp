@@ -227,7 +227,7 @@ public:
   linger(bool e, int t)
   {
     enabled(e);
-    timeout BOOST_PREVENT_MACRO_SUBSTITUTION(t);
+    timeout ASIO_PREVENT_MACRO_SUBSTITUTION(t);
   }
 
   // Set the value for whether linger is enabled.
@@ -243,7 +243,7 @@ public:
   }
 
   // Set the value for the linger timeout.
-  void timeout BOOST_PREVENT_MACRO_SUBSTITUTION(int value)
+  void timeout ASIO_PREVENT_MACRO_SUBSTITUTION(int value)
   {
 #if defined(WIN32)
     value_.l_linger = static_cast<u_short>(value);
@@ -253,7 +253,7 @@ public:
   }
 
   // Get the value for the linger timeout.
-  int timeout BOOST_PREVENT_MACRO_SUBSTITUTION() const
+  int timeout ASIO_PREVENT_MACRO_SUBSTITUTION() const
   {
     return static_cast<int>(value_.l_linger);
   }
