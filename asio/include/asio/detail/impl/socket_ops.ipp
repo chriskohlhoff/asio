@@ -2003,7 +2003,7 @@ inline asio::error_code translate_netdb_error(int error)
   case NO_DATA:
     return asio::error::no_data;
   default:
-    BOOST_ASSERT(false);
+    ASIO_ASSERT(false);
     return asio::error::invalid_argument;
   }
 }

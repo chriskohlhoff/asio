@@ -121,7 +121,7 @@ void dev_poll_reactor::fork_service(asio::io_service::fork_event fork_ev)
 
     // The ops op_queue will always be empty because the fork_helper's set()
     // member function never returns false.
-    BOOST_ASSERT(ops.empty());
+    ASIO_ASSERT(ops.empty());
   }
 }
 

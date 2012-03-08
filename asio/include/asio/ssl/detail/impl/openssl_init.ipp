@@ -69,7 +69,7 @@ private:
     void* id = instance()->thread_id_;
     if (id == 0)
       instance()->thread_id_ = id = &id; // Ugh.
-    BOOST_ASSERT(sizeof(unsigned long) >= sizeof(void*));
+    ASIO_ASSERT(sizeof(unsigned long) >= sizeof(void*));
     return reinterpret_cast<unsigned long>(id);
 #endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
   }
