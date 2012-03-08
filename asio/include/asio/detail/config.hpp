@@ -440,4 +440,11 @@
 // Helper to prevent macro expansion.
 #define ASIO_PREVENT_MACRO_SUBSTITUTION
 
+// Boost assert macro.
+#if !defined(ASIO_DISABLE_BOOST_ASSERT)
+# if !defined(ASIO_HAS_BOOST_ASSERT)
+#  define ASIO_HAS_BOOST_ASSERT 1
+# endif // !defined(ASIO_HAS_BOOST_ASSERT)
+#endif // !defined(ASIO_DISABLE_BOOST_ASSERT)
+
 #endif // ASIO_DETAIL_CONFIG_HPP

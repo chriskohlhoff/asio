@@ -19,8 +19,8 @@
 
 #if defined(ASIO_HAS_PTHREADS)
 
-#include <boost/assert.hpp>
 #include <pthread.h>
+#include "asio/detail/assert.hpp"
 #include "asio/detail/noncopyable.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -45,7 +45,7 @@ public:
   template <typename Lock>
   void signal(Lock& lock)
   {
-    BOOST_ASSERT(lock.locked());
+    ASIO_ASSERT(lock.locked());
     (void)lock;
     signalled_ = true;
     ::pthread_cond_signal(&cond_); // Ignore EINVAL.
@@ -55,7 +55,7 @@ public:
   template <typename Lock>
   void signal_and_unlock(Lock& lock)
   {
-    BOOST_ASSERT(lock.locked());
+    ASIO_ASSERT(lock.locked());
     signalled_ = true;
     lock.unlock();
     ::pthread_cond_signal(&cond_); // Ignore EINVAL.
@@ -65,7 +65,7 @@ public:
   template <typename Lock>
   void clear(Lock& lock)
   {
-    BOOST_ASSERT(lock.locked());
+    ASIO_ASSERT(lock.locked());
     (void)lock;
     signalled_ = false;
   }
@@ -74,7 +74,7 @@ public:
   template <typename Lock>
   void wait(Lock& lock)
   {
-    BOOST_ASSERT(lock.locked());
+    ASIO_ASSERT(lock.locked());
     while (!signalled_)
       ::pthread_cond_wait(&cond_, &lock.mutex().mutex_); // Ignore EINVAL.
   }

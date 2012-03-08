@@ -19,7 +19,7 @@
 
 #if defined(ASIO_WINDOWS)
 
-#include <boost/assert.hpp>
+#include "asio/detail/assert.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_types.hpp"
 
@@ -45,7 +45,7 @@ public:
   template <typename Lock>
   void signal(Lock& lock)
   {
-    BOOST_ASSERT(lock.locked());
+    ASIO_ASSERT(lock.locked());
     (void)lock;
     ::SetEvent(event_);
   }
@@ -54,7 +54,7 @@ public:
   template <typename Lock>
   void signal_and_unlock(Lock& lock)
   {
-    BOOST_ASSERT(lock.locked());
+    ASIO_ASSERT(lock.locked());
     lock.unlock();
     ::SetEvent(event_);
   }
@@ -63,7 +63,7 @@ public:
   template <typename Lock>
   void clear(Lock& lock)
   {
-    BOOST_ASSERT(lock.locked());
+    ASIO_ASSERT(lock.locked());
     (void)lock;
     ::ResetEvent(event_);
   }
@@ -72,7 +72,7 @@ public:
   template <typename Lock>
   void wait(Lock& lock)
   {
-    BOOST_ASSERT(lock.locked());
+    ASIO_ASSERT(lock.locked());
     lock.unlock();
     ::WaitForSingleObject(event_, INFINITE);
     lock.lock();
