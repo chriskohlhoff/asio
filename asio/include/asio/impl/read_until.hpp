@@ -19,13 +19,13 @@
 #include <string>
 #include <vector>
 #include <utility>
-#include <boost/limits.hpp>
 #include "asio/buffer.hpp"
 #include "asio/buffers_iterator.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
+#include "asio/detail/limits.hpp"
 #include "asio/detail/throw_error.hpp"
 
 #include "asio/detail/push_options.hpp"

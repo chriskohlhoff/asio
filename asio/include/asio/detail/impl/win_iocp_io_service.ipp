@@ -19,11 +19,11 @@
 
 #if defined(ASIO_HAS_IOCP)
 
-#include <boost/limits.hpp>
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
+#include "asio/detail/limits.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/detail/win_iocp_io_service.hpp"
 

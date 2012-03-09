@@ -22,9 +22,9 @@
       && !defined(ASIO_HAS_EPOLL) \
       && !defined(ASIO_HAS_KQUEUE))
 
-#include <boost/limits.hpp>
 #include <cstddef>
 #include "asio/detail/fd_set_adapter.hpp"
+#include "asio/detail/limits.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/reactor_op.hpp"

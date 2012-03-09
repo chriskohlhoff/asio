@@ -22,6 +22,7 @@
 #include "asio/io_service.hpp"
 #include "asio/detail/atomic_count.hpp"
 #include "asio/detail/epoll_reactor_fwd.hpp"
+#include "asio/detail/limits.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/object_pool.hpp"
 #include "asio/detail/op_queue.hpp"

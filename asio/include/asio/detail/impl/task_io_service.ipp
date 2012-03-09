@@ -19,8 +19,8 @@
 
 #if !defined(ASIO_HAS_IOCP)
 
-#include <boost/limits.hpp>
 #include "asio/detail/event.hpp"
+#include "asio/detail/limits.hpp"
 #include "asio/detail/reactor.hpp"
 #include "asio/detail/task_io_service.hpp"
 

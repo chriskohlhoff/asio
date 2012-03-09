@@ -18,8 +18,8 @@
 #include "asio/detail/config.hpp"
 #include <cstddef>
 #include <boost/iterator.hpp>
-#include <boost/limits.hpp>
 #include "asio/buffer.hpp"
+#include "asio/detail/limits.hpp"
 
 #include "asio/detail/push_options.hpp"
 
