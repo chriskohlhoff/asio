@@ -40,7 +40,7 @@
 #endif // defined(__GNUC__)
 
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
-# include <boost/function.hpp>
+# include "asio/detail/function.hpp"
 #endif // ASIO_ENABLE_BUFFER_DEBUGGING
 
 #if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x582)) \
@@ -101,14 +101,14 @@ public:
 
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
   mutable_buffer(void* data, std::size_t size,
-      boost::function<void()> debug_check)
+      asio::detail::function<void()> debug_check)
     : data_(data),
       size_(size),
       debug_check_(debug_check)
   {
   }
 
-  const boost::function<void()>& get_debug_check() const
+  const asio::detail::function<void()>& get_debug_check() const
   {
     return debug_check_;
   }
@@ -124,7 +124,7 @@ private:
   std::size_t size_;
 
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
-  boost::function<void()> debug_check_;
+  asio::detail::function<void()> debug_check_;
 #endif // ASIO_ENABLE_BUFFER_DEBUGGING
 };
 
@@ -231,14 +231,14 @@ public:
 
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
   const_buffer(const void* data, std::size_t size,
-      boost::function<void()> debug_check)
+      asio::detail::function<void()> debug_check)
     : data_(data),
       size_(size),
       debug_check_(debug_check)
   {
   }
 
-  const boost::function<void()>& get_debug_check() const
+  const asio::detail::function<void()>& get_debug_check() const
   {
     return debug_check_;
   }
@@ -254,7 +254,7 @@ private:
   std::size_t size_;
 
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
-  boost::function<void()> debug_check_;
+  asio::detail::function<void()> debug_check_;
 #endif // ASIO_ENABLE_BUFFER_DEBUGGING
 };
 
