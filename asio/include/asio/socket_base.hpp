@@ -66,13 +66,13 @@ public:
   /// Specifies that the data marks the end of a record.
   static const int message_end_of_record = implementation_defined;
 #else
-  BOOST_STATIC_CONSTANT(int,
+  ASIO_STATIC_CONSTANT(int,
       message_peek = asio::detail::message_peek);
-  BOOST_STATIC_CONSTANT(int,
+  ASIO_STATIC_CONSTANT(int,
       message_out_of_band = asio::detail::message_out_of_band);
-  BOOST_STATIC_CONSTANT(int,
+  ASIO_STATIC_CONSTANT(int,
       message_do_not_route = asio::detail::message_do_not_route);
-  BOOST_STATIC_CONSTANT(int,
+  ASIO_STATIC_CONSTANT(int,
       message_end_of_record = asio::detail::message_end_of_record);
 #endif
 
@@ -495,7 +495,7 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
   static const int max_connections = implementation_defined;
 #else
-  BOOST_STATIC_CONSTANT(int, max_connections = SOMAXCONN);
+  ASIO_STATIC_CONSTANT(int, max_connections = SOMAXCONN);
 #endif
 
 protected:

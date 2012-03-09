@@ -440,6 +440,19 @@
 // Helper to prevent macro expansion.
 #define ASIO_PREVENT_MACRO_SUBSTITUTION
 
+// Helper to define in-class constants.
+#if !defined(ASIO_DISABLE_BOOST_STATIC_CONSTANT)
+# if !defined(ASIO_STATIC_CONSTANT)
+#  define ASIO_STATIC_CONSTANT(type, assignment) \
+    BOOST_STATIC_CONSTANT(type, assignment)
+# endif // !defined(ASIO_STATIC_CONSTANT)
+#else // !defined(ASIO_DISABLE_BOOST_STATIC_CONSTANT)
+# if !defined(ASIO_STATIC_CONSTANT)
+#  define ASIO_STATIC_CONSTANT(type, assignment) \
+    static const type assignment
+# endif // !defined(ASIO_STATIC_CONSTANT)
+#endif // !defined(ASIO_DISABLE_BOOST_STATIC_CONSTANT)
+
 // Boost assert macro.
 #if !defined(ASIO_DISABLE_BOOST_ASSERT)
 # if !defined(ASIO_HAS_BOOST_ASSERT)

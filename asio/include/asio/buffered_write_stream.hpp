@@ -59,7 +59,7 @@ public:
   /// The default buffer size.
   static const std::size_t default_buffer_size = implementation_defined;
 #else
-  BOOST_STATIC_CONSTANT(std::size_t, default_buffer_size = 1024);
+  ASIO_STATIC_CONSTANT(std::size_t, default_buffer_size = 1024);
 #endif
 
   /// Construct, passing the specified argument to initialise the next layer.

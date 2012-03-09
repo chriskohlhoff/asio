@@ -88,11 +88,11 @@ public:
   /// Disable TLS v1.
   static const int no_tlsv1 = implementation_defined;
 #else
-  BOOST_STATIC_CONSTANT(int, default_workarounds = SSL_OP_ALL);
-  BOOST_STATIC_CONSTANT(int, single_dh_use = SSL_OP_SINGLE_DH_USE);
-  BOOST_STATIC_CONSTANT(int, no_sslv2 = SSL_OP_NO_SSLv2);
-  BOOST_STATIC_CONSTANT(int, no_sslv3 = SSL_OP_NO_SSLv3);
-  BOOST_STATIC_CONSTANT(int, no_tlsv1 = SSL_OP_NO_TLSv1);
+  ASIO_STATIC_CONSTANT(int, default_workarounds = SSL_OP_ALL);
+  ASIO_STATIC_CONSTANT(int, single_dh_use = SSL_OP_SINGLE_DH_USE);
+  ASIO_STATIC_CONSTANT(int, no_sslv2 = SSL_OP_NO_SSLv2);
+  ASIO_STATIC_CONSTANT(int, no_sslv3 = SSL_OP_NO_SSLv3);
+  ASIO_STATIC_CONSTANT(int, no_tlsv1 = SSL_OP_NO_TLSv1);
 #endif
 
   /// File format types.
@@ -110,11 +110,11 @@ public:
   // New programs should use the equivalents of the same names that are defined
   // in the asio::ssl namespace.
   typedef int verify_mode;
-  BOOST_STATIC_CONSTANT(int, verify_none = SSL_VERIFY_NONE);
-  BOOST_STATIC_CONSTANT(int, verify_peer = SSL_VERIFY_PEER);
-  BOOST_STATIC_CONSTANT(int,
+  ASIO_STATIC_CONSTANT(int, verify_none = SSL_VERIFY_NONE);
+  ASIO_STATIC_CONSTANT(int, verify_peer = SSL_VERIFY_PEER);
+  ASIO_STATIC_CONSTANT(int,
       verify_fail_if_no_peer_cert = SSL_VERIFY_FAIL_IF_NO_PEER_CERT);
-  BOOST_STATIC_CONSTANT(int, verify_client_once = SSL_VERIFY_CLIENT_ONCE);
+  ASIO_STATIC_CONSTANT(int, verify_client_once = SSL_VERIFY_CLIENT_ONCE);
 #endif
 
   /// Purpose of PEM password.
