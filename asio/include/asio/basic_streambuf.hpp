@@ -24,11 +24,11 @@
 #include <stdexcept>
 #include <streambuf>
 #include <vector>
-#include <boost/throw_exception.hpp>
 #include "asio/basic_streambuf_fwd.hpp"
 #include "asio/buffer.hpp"
 #include "asio/detail/limits.hpp"
 #include "asio/detail/noncopyable.hpp"
+#include "asio/detail/throw_exception.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -326,7 +326,7 @@ protected:
       else
       {
         std::length_error ex("asio::streambuf too long");
-        boost::throw_exception(ex);
+        asio::detail::throw_exception(ex);
       }
     }
 

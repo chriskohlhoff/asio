@@ -478,4 +478,11 @@
 # endif // !defined(ASIO_HAS_BOOST_LIMITS)
 #endif // !defined(ASIO_DISABLE_BOOST_LIMITS)
 
+// Boost throw_exception function.
+#if !defined(ASIO_DISABLE_BOOST_THROW_EXCEPTION)
+# if !defined(ASIO_HAS_BOOST_THROW_EXCEPTION)
+#  define ASIO_HAS_BOOST_THROW_EXCEPTION 1
+# endif // !defined(ASIO_HAS_BOOST_THROW_EXCEPTION)
+#endif // !defined(ASIO_DISABLE_BOOST_THROW_EXCEPTION)
+
 #endif // ASIO_DETAIL_CONFIG_HPP

@@ -18,9 +18,8 @@
 #include "asio/detail/config.hpp"
 #include <cstddef>
 #include <stdexcept>
-#include <boost/config.hpp>
-#include <boost/throw_exception.hpp>
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/throw_exception.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -122,7 +121,7 @@ public:
     default:
       {
         std::length_error ex("boolean socket option resize");
-        boost::throw_exception(ex);
+        asio::detail::throw_exception(ex);
       }
     }
   }
@@ -203,7 +202,7 @@ public:
     if (s != sizeof(value_))
     {
       std::length_error ex("integer socket option resize");
-      boost::throw_exception(ex);
+      asio::detail::throw_exception(ex);
     }
   }
 
@@ -300,7 +299,7 @@ public:
     if (s != sizeof(value_))
     {
       std::length_error ex("linger socket option resize");
-      boost::throw_exception(ex);
+      asio::detail::throw_exception(ex);
     }
   }
 

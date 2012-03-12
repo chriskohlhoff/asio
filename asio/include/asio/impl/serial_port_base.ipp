@@ -21,9 +21,9 @@
 #if defined(ASIO_HAS_SERIAL_PORT)
 
 #include <stdexcept>
-#include <boost/throw_exception.hpp>
 #include "asio/error.hpp"
 #include "asio/serial_port_base.hpp"
+#include "asio/detail/throw_exception.hpp"
 
 #if defined(GENERATING_DOCUMENTATION)
 # define ASIO_OPTION_STORAGE implementation_defined
@@ -214,7 +214,7 @@ serial_port_base::flow_control::flow_control(
   if (t != none && t != software && t != hardware)
   {
     std::out_of_range ex("invalid flow_control value");
-    boost::throw_exception(ex);
+    asio::detail::throw_exception(ex);
   }
 }
 
@@ -332,7 +332,7 @@ serial_port_base::parity::parity(serial_port_base::parity::type t)
   if (t != none && t != odd && t != even)
   {
     std::out_of_range ex("invalid parity value");
-    boost::throw_exception(ex);
+    asio::detail::throw_exception(ex);
   }
 }
 
@@ -427,7 +427,7 @@ serial_port_base::stop_bits::stop_bits(
   if (t != one && t != onepointfive && t != two)
   {
     std::out_of_range ex("invalid stop_bits value");
-    boost::throw_exception(ex);
+    asio::detail::throw_exception(ex);
   }
 }
 
@@ -500,7 +500,7 @@ serial_port_base::character_size::character_size(unsigned int t)
   if (t < 5 || t > 8)
   {
     std::out_of_range ex("invalid character_size value");
-    boost::throw_exception(ex);
+    asio::detail::throw_exception(ex);
   }
 }
 

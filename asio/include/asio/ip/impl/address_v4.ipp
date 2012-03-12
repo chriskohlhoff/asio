@@ -18,10 +18,10 @@
 #include "asio/detail/config.hpp"
 #include <climits>
 #include <stdexcept>
-#include <boost/throw_exception.hpp>
 #include "asio/error.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/throw_error.hpp"
+#include "asio/detail/throw_exception.hpp"
 #include "asio/ip/address_v4.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -36,7 +36,7 @@ address_v4::address_v4(const address_v4::bytes_type& bytes)
       || bytes[2] > 0xFF || bytes[3] > 0xFF)
   {
     std::out_of_range ex("address_v4 from bytes_type");
-    boost::throw_exception(ex);
+    asio::detail::throw_exception(ex);
   }
 #endif // UCHAR_MAX > 0xFF
 
@@ -50,7 +50,7 @@ address_v4::address_v4(unsigned long addr)
   if (addr > 0xFFFFFFFF)
   {
     std::out_of_range ex("address_v4 from unsigned long");
-    boost::throw_exception(ex);
+    asio::detail::throw_exception(ex);
   }
 #endif // ULONG_MAX > 0xFFFFFFFF
 
