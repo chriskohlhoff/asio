@@ -502,12 +502,12 @@ int context::password_callback_function(
     std::string passwd = callback->call(static_cast<std::size_t>(size),
         purpose ? context_base::for_writing : context_base::for_reading);
 
-#if BOOST_WORKAROUND(ASIO_MSVC, >= 1400) && !defined(UNDER_CE)
+#if defined(ASIO_HAS_SECURE_RTL)
     strcpy_s(buf, size, passwd.c_str());
-#else
+#else // defined(ASIO_HAS_SECURE_RTL)
     *buf = '\0';
     strncat(buf, passwd.c_str(), size);
-#endif
+#endif // defined(ASIO_HAS_SECURE_RTL)
 
     return strlen(buf);
   }

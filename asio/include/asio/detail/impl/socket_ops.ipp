@@ -2240,12 +2240,12 @@ inline void gai_free(void* p)
 inline void gai_strcpy(char* target, const char* source, std::size_t max_size)
 {
   using namespace std;
-#if BOOST_WORKAROUND(ASIO_MSVC, >= 1400) && !defined(UNDER_CE)
+#if defined(ASIO_HAS_SECURE_RTL)
   strcpy_s(target, max_size, source);
-#else
+#else // defined(ASIO_HAS_SECURE_RTL)
   *target = 0;
   strncat(target, source, max_size);
-#endif
+#endif // defined(ASIO_HAS_SECURE_RTL)
 }
 
 enum { gai_clone_flag = 1 << 30 };
@@ -2779,11 +2779,11 @@ inline asio::error_code getnameinfo_emulation(
       {
         return ec = asio::error::no_buffer_space;
       }
-#if BOOST_WORKAROUND(ASIO_MSVC, >= 1400) && !defined(UNDER_CE)
+#if defined(ASIO_HAS_SECURE_RTL)
       sprintf_s(serv, servlen, "%u", ntohs(port));
-#else
+#else // defined(ASIO_HAS_SECURE_RTL)
       sprintf(serv, "%u", ntohs(port));
-#endif
+#endif // defined(ASIO_HAS_SECURE_RTL)
     }
     else
     {
@@ -2802,11 +2802,11 @@ inline asio::error_code getnameinfo_emulation(
         {
           return ec = asio::error::no_buffer_space;
         }
-#if BOOST_WORKAROUND(ASIO_MSVC, >= 1400) && !defined(UNDER_CE)
+#if defined(ASIO_HAS_SECURE_RTL)
         sprintf_s(serv, servlen, "%u", ntohs(port));
-#else
+#else // defined(ASIO_HAS_SECURE_RTL)
         sprintf(serv, "%u", ntohs(port));
-#endif
+#endif // defined(ASIO_HAS_SECURE_RTL)
       }
 #if defined(ASIO_HAS_PTHREADS)
       ::pthread_mutex_unlock(&mutex);
