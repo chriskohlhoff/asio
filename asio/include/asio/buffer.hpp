@@ -511,12 +511,12 @@ public:
 
   ~buffer_debug_check()
   {
-#if BOOST_WORKAROUND(ASIO_MSVC, == 1400)
+#if defined(ASIO_MSVC) && (ASIO_MSVC == 1400)
     // MSVC 8's string iterator checking may crash in a std::string::iterator
     // object's destructor when the iterator points to an already-destroyed
     // std::string object, unless the iterator is cleared first.
     iter_ = Iterator();
-#endif // BOOST_WORKAROUND(ASIO_MSVC, == 1400)
+#endif // defined(ASIO_MSVC) && (ASIO_MSVC == 1400)
   }
 
   void operator()()
