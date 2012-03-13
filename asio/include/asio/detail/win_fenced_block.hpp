@@ -44,7 +44,7 @@ public:
 #if defined(__BORLANDC__)
     LONG barrier = 0;
     ::InterlockedExchange(&barrier, 1);
-#elif defined(BOOST_MSVC) && ((BOOST_MSVC < 1400) || !defined(MemoryBarrier))
+#elif defined(ASIO_MSVC) && ((ASIO_MSVC < 1400) || !defined(MemoryBarrier))
 # if defined(_M_IX86)
 #  pragma warning(push)
 #  pragma warning(disable:4793)
@@ -63,7 +63,7 @@ public:
 #if defined(__BORLANDC__)
     LONG barrier = 0;
     ::InterlockedExchange(&barrier, 1);
-#elif defined(BOOST_MSVC) && ((BOOST_MSVC < 1400) || !defined(MemoryBarrier))
+#elif defined(ASIO_MSVC) && ((ASIO_MSVC < 1400) || !defined(MemoryBarrier))
 # if defined(_M_IX86)
 #  pragma warning(push)
 #  pragma warning(disable:4793)

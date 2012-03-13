@@ -41,11 +41,11 @@ int win_static_mutex::do_init()
 {
   using namespace std; // For sprintf.
   wchar_t mutex_name[128];
-#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
+#if BOOST_WORKAROUND(ASIO_MSVC, >= 1400) && !defined(UNDER_CE)
   swprintf_s(mutex_name, 128,
-#else // BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
+#else // BOOST_WORKAROUND(ASIO_MSVC, >= 1400) && !defined(UNDER_CE)
   swprintf(mutex_name,
-#endif // BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
+#endif // BOOST_WORKAROUND(ASIO_MSVC, >= 1400) && !defined(UNDER_CE)
       L"asio-58CCDC44-6264-4842-90C2-F3C545CB8AA7-%u-%p",
       static_cast<unsigned int>(::GetCurrentProcessId()), this);
 

@@ -47,6 +47,13 @@
 # define ASIO_DECL
 #endif // !defined(ASIO_DECL)
 
+// Microsoft Visual C++ detection.
+#if defined(BOOST_MSVC)
+# define ASIO_MSVC BOOST_MSVC
+#elif defined(_MSC_VER) && !defined(__MWERKS__) && !defined(__EDG_VERSION__)
+# define ASIO_MSVC _MSC_VER
+#endif // defined(BOOST_MSVC)
+
 // Support move construction and assignment on compilers known to allow it.
 #if !defined(ASIO_DISABLE_MOVE)
 # if defined(__GNUC__)
@@ -78,7 +85,7 @@
 #  else // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 1)) || (__GNUC__ > 4)
 #   define ASIO_MOVE_ARG(type) type
 #  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 1)) || (__GNUC__ > 4)
-# elif defined(BOOST_MSVC)
+# elif defined(ASIO_MSVC)
 #  if (_MSC_VER >= 1400)
 #   define ASIO_MOVE_ARG(type) const type&
 #  else // (_MSC_VER >= 1400)
@@ -135,11 +142,11 @@
 #   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
 # endif // defined(__GNUC__)
-# if defined(BOOST_MSVC)
+# if defined(ASIO_MSVC)
 #  if (_MSC_VER >= 1600)
 #   define ASIO_HAS_STD_ARRAY
 #  endif // (_MSC_VER >= 1600)
-# endif // defined(BOOST_MSVC)
+# endif // defined(ASIO_MSVC)
 #endif // !defined(ASIO_DISABLE_STD_ARRAY)
 
 // Standard library support for shared_ptr and weak_ptr.
@@ -151,11 +158,11 @@
 #   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
 # endif // defined(__GNUC__)
-# if defined(BOOST_MSVC)
+# if defined(ASIO_MSVC)
 #  if (_MSC_VER >= 1600)
 #   define ASIO_HAS_STD_SHARED_PTR
 #  endif // (_MSC_VER >= 1600)
-# endif // defined(BOOST_MSVC)
+# endif // defined(ASIO_MSVC)
 #endif // !defined(ASIO_DISABLE_STD_SHARED_PTR)
 
 // Standard library support for atomic operations.

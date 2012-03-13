@@ -23,13 +23,13 @@
 #include <boost/detail/workaround.hpp>
 #include "asio/detail/array_fwd.hpp"
 
-#if defined(BOOST_MSVC)
+#if defined(ASIO_MSVC)
 # if defined(_HAS_ITERATOR_DEBUGGING) && (_HAS_ITERATOR_DEBUGGING != 0)
 #  if !defined(ASIO_DISABLE_BUFFER_DEBUGGING)
 #   define ASIO_ENABLE_BUFFER_DEBUGGING
 #  endif // !defined(ASIO_DISABLE_BUFFER_DEBUGGING)
 # endif // defined(_HAS_ITERATOR_DEBUGGING)
-#endif // defined(BOOST_MSVC)
+#endif // defined(ASIO_MSVC)
 
 #if defined(__GNUC__)
 # if defined(_GLIBCXX_DEBUG)
@@ -511,12 +511,12 @@ public:
 
   ~buffer_debug_check()
   {
-#if BOOST_WORKAROUND(BOOST_MSVC, == 1400)
+#if BOOST_WORKAROUND(ASIO_MSVC, == 1400)
     // MSVC 8's string iterator checking may crash in a std::string::iterator
     // object's destructor when the iterator points to an already-destroyed
     // std::string object, unless the iterator is cleared first.
     iter_ = Iterator();
-#endif // BOOST_WORKAROUND(BOOST_MSVC, == 1400)
+#endif // BOOST_WORKAROUND(ASIO_MSVC, == 1400)
   }
 
   void operator()()

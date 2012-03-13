@@ -270,11 +270,11 @@ void handler_tracking::write_line(const char* format, ...)
   va_start(args, format);
 
   char line[256] = "";
-#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
+#if BOOST_WORKAROUND(ASIO_MSVC, >= 1400) && !defined(UNDER_CE)
   int length = vsprintf_s(line, sizeof(line), format, args);
-#else // BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
+#else // BOOST_WORKAROUND(ASIO_MSVC, >= 1400) && !defined(UNDER_CE)
   int length = vsprintf(line, format, args);
-#endif // BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
+#endif // BOOST_WORKAROUND(ASIO_MSVC, >= 1400) && !defined(UNDER_CE)
 
   va_end(args);
 
