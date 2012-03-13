@@ -20,9 +20,6 @@
 #if !defined(ASIO_NO_IOSTREAM)
 
 #include <cstddef>
-#include <boost/type_traits/is_function.hpp>
-#include <boost/type_traits/remove_pointer.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <boost/detail/workaround.hpp>
 #include <string>
 #include "asio/basic_streambuf.hpp"
@@ -58,7 +55,8 @@ struct is_match_condition
 #else
   enum
   {
-    value = boost::is_function<typename boost::remove_pointer<T>::type>::value
+    value = asio::detail::is_function<
+        typename asio::detail::remove_pointer<T>::type>::value
       || detail::has_result_type<T>::value
   };
 #endif
@@ -440,7 +438,7 @@ std::size_t read_until(SyncReadStream& s,
 template <typename SyncReadStream, typename Allocator, typename MatchCondition>
 std::size_t read_until(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, MatchCondition match_condition,
-    typename boost::enable_if<is_match_condition<MatchCondition> >::type* = 0);
+    typename enable_if<is_match_condition<MatchCondition> >::type* = 0);
 
 /// Read data into a streambuf until a function object indicates a match.
 /**
@@ -496,7 +494,7 @@ template <typename SyncReadStream, typename Allocator, typename MatchCondition>
 std::size_t read_until(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b,
     MatchCondition match_condition, asio::error_code& ec,
-    typename boost::enable_if<is_match_condition<MatchCondition> >::type* = 0);
+    typename enable_if<is_match_condition<MatchCondition> >::type* = 0);
 
 /*@}*/
 /**
@@ -889,7 +887,7 @@ template <typename AsyncReadStream, typename Allocator,
 void async_read_until(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b,
     MatchCondition match_condition, ASIO_MOVE_ARG(ReadHandler) handler,
-    typename boost::enable_if<is_match_condition<MatchCondition> >::type* = 0);
+    typename enable_if<is_match_condition<MatchCondition> >::type* = 0);
 
 /*@}*/
 

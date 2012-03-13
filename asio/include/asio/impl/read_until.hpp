@@ -259,7 +259,7 @@ template <typename SyncReadStream, typename Allocator, typename MatchCondition>
 std::size_t read_until(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b,
     MatchCondition match_condition, asio::error_code& ec,
-    typename boost::enable_if<is_match_condition<MatchCondition> >::type*)
+    typename enable_if<is_match_condition<MatchCondition> >::type*)
 {
   std::size_t search_position = 0;
   for (;;)
@@ -310,7 +310,7 @@ std::size_t read_until(SyncReadStream& s,
 template <typename SyncReadStream, typename Allocator, typename MatchCondition>
 inline std::size_t read_until(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, MatchCondition match_condition,
-    typename boost::enable_if<is_match_condition<MatchCondition> >::type*)
+    typename enable_if<is_match_condition<MatchCondition> >::type*)
 {
   asio::error_code ec;
   std::size_t bytes_transferred = read_until(s, b, match_condition, ec);
@@ -1066,7 +1066,7 @@ template <typename AsyncReadStream, typename Allocator,
 void async_read_until(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b,
     MatchCondition match_condition, ASIO_MOVE_ARG(ReadHandler) handler,
-    typename boost::enable_if<is_match_condition<MatchCondition> >::type*)
+    typename enable_if<is_match_condition<MatchCondition> >::type*)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a ReadHandler.

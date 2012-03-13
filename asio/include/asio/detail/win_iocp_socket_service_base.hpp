@@ -19,7 +19,6 @@
 
 #if defined(ASIO_HAS_IOCP)
 
-#include <boost/type_traits/is_same.hpp>
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/socket_base.hpp"

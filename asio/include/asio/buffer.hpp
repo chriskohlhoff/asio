@@ -45,7 +45,7 @@
 
 #if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x582)) \
   || BOOST_WORKAROUND(__SUNPRO_CC, BOOST_TESTED_AT(0x590))
-# include <boost/type_traits/is_const.hpp>
+# include "asio/detail/type_traits.hpp"
 #endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x582))
        // || BOOST_WORKAROUND(__SUNPRO_CC, BOOST_TESTED_AT(0x590))
 
@@ -863,7 +863,7 @@ struct buffer_types_base<true>
 
 template <typename PodType>
 struct buffer_types
-  : public buffer_types_base<boost::is_const<PodType>::value>
+  : public buffer_types_base<is_const<PodType>::value>
 {
 };
 

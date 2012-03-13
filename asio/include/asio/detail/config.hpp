@@ -221,6 +221,17 @@
 # endif // defined(__GNUC__)
 #endif // !defined(ASIO_DISABLE_STD_FUNCTION)
 
+// Standard library support for type traits.
+#if !defined(ASIO_DISABLE_STD_TYPE_TRAITS)
+# if defined(__GNUC__)
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#    define ASIO_HAS_STD_TYPE_TRAITS
+#   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+# endif // defined(__GNUC__)
+#endif // !defined(ASIO_DISABLE_STD_TYPE_TRAITS)
+
 // Standard library support for the cstdint header.
 #if !defined(ASIO_DISABLE_CSTDINT)
 # if defined(__GNUC__)

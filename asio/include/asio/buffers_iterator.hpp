@@ -18,10 +18,9 @@
 #include "asio/detail/config.hpp"
 #include <cstddef>
 #include <iterator>
-#include <boost/type_traits/is_convertible.hpp>
-#include <boost/type_traits/add_const.hpp>
 #include "asio/buffer.hpp"
 #include "asio/detail/assert.hpp"
+#include "asio/detail/type_traits.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -39,7 +38,7 @@ namespace detail
     template <typename ByteType>
     struct byte_type
     {
-      typedef typename boost::add_const<ByteType>::type type;
+      typedef typename add_const<ByteType>::type type;
     };
   };
 
@@ -59,8 +58,9 @@ namespace detail
   {
     enum
     {
-      is_mutable = boost::is_convertible<
-        typename BufferSequence::value_type, mutable_buffer>::value
+      is_mutable = is_convertible<
+          typename BufferSequence::value_type,
+          mutable_buffer>::value
     };
     typedef buffers_iterator_types_helper<is_mutable> helper;
     typedef typename helper::buffer_type buffer_type;
