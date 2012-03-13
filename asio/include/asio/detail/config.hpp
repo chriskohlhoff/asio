@@ -512,4 +512,19 @@
 # endif // defined(ASIO_MSVC) && (ASIO_MSVC >= 1400) && !defined(UNDER_CE)
 #endif // !defined(ASIO_DISABLE_SECURE_RTL)
 
+// Handler hooking. Disabled for ancient Borland C++ and gcc compilers.
+#if !defined(ASIO_DISABLE_HANDLER_HOOKS)
+# if defined(__GNUC__)
+#  if (__GNUC__ >= 3)
+#   if !defined(ASIO_HAS_HANDLER_HOOKS)
+#    define ASIO_HAS_HANDLER_HOOKS 1
+#   endif // !defined(ASIO_HAS_HANDLER_HOOKS)
+#  endif // (__GNUC__ >= 3)
+# elif !defined(__BORLANDC__)
+#  if !defined(ASIO_HAS_HANDLER_HOOKS)
+#   define ASIO_HAS_HANDLER_HOOKS 1
+#  endif // !defined(ASIO_HAS_HANDLER_HOOKS)
+# endif // !defined(__BORLANDC__)
+#endif // !defined(ASIO_DISABLE_HANDLER_HOOKS)
+
 #endif // ASIO_DETAIL_CONFIG_HPP

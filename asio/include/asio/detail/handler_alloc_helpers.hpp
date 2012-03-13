@@ -16,7 +16,6 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <boost/detail/workaround.hpp>
 #include "asio/detail/addressof.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/handler_alloc_hook.hpp"
@@ -31,8 +30,7 @@ namespace asio_handler_alloc_helpers {
 template <typename Handler>
 inline void* allocate(std::size_t s, Handler& h)
 {
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564)) \
-  || BOOST_WORKAROUND(__GNUC__, < 3)
+#if !defined(ASIO_HAS_HANDLER_HOOKS)
   return ::operator new(s);
 #else
   using asio::asio_handler_allocate;
@@ -43,8 +41,7 @@ inline void* allocate(std::size_t s, Handler& h)
 template <typename Handler>
 inline void deallocate(void* p, std::size_t s, Handler& h)
 {
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564)) \
-  || BOOST_WORKAROUND(__GNUC__, < 3)
+#if !defined(ASIO_HAS_HANDLER_HOOKS)
   ::operator delete(p);
 #else
   using asio::asio_handler_deallocate;
