@@ -20,7 +20,6 @@
 #if !defined(ASIO_NO_IOSTREAM)
 
 #include <cstddef>
-#include <boost/detail/workaround.hpp>
 #include <string>
 #include "asio/basic_streambuf.hpp"
 #include "asio/detail/regex_fwd.hpp"
