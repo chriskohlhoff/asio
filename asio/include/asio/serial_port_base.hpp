@@ -25,7 +25,6 @@
 # include <termios.h>
 #endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
-#include <boost/detail/workaround.hpp>
 #include "asio/detail/socket_types.hpp"
 #include "asio/error_code.hpp"
 
@@ -149,12 +148,6 @@ protected:
   ~serial_port_base()
   {
   }
-
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
-private:
-  // Workaround to enable the empty base optimisation with Borland C++.
-  char dummy_;
-#endif
 };
 
 } // namespace asio
