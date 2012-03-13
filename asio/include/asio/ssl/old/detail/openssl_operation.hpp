@@ -17,9 +17,9 @@
 
 #include "asio/detail/config.hpp"
 #include <boost/function.hpp>
-#include <boost/assert.hpp>
 #include <boost/bind.hpp>
 #include "asio/buffer.hpp"
+#include "asio/detail/assert.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/placeholders.hpp"
 #include "asio/ssl/detail/openssl_types.hpp"

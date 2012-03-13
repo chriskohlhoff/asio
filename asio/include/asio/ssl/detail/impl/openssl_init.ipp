@@ -18,7 +18,7 @@
 
 #include "asio/detail/config.hpp"
 #include <vector>
-#include <boost/assert.hpp>
+#include "asio/detail/assert.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/tss_ptr.hpp"
 #include "asio/ssl/detail/openssl_init.hpp"

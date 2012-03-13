@@ -19,8 +19,8 @@
 
 #if defined(ASIO_HAS_DEV_POLL)
 
-#include <boost/assert.hpp>
 #include "asio/detail/dev_poll_reactor.hpp"
+#include "asio/detail/assert.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 

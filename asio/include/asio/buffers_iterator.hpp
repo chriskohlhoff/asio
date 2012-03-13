@@ -18,10 +18,10 @@
 #include "asio/detail/config.hpp"
 #include <cstddef>
 #include <iterator>
-#include <boost/assert.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/add_const.hpp>
 #include "asio/buffer.hpp"
+#include "asio/detail/assert.hpp"
 
 #include "asio/detail/push_options.hpp"
 
