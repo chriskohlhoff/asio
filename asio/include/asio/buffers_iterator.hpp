@@ -19,7 +19,6 @@
 #include <cstddef>
 #include <iterator>
 #include <boost/assert.hpp>
-#include <boost/detail/workaround.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/add_const.hpp>
 #include "asio/buffer.hpp"
@@ -126,9 +125,9 @@ public:
 
   /// Construct an iterator representing the beginning of the buffers' data.
   static buffers_iterator begin(const BufferSequence& buffers)
-#if BOOST_WORKAROUND(__GNUC__, == 4) && BOOST_WORKAROUND(__GNUC_MINOR__, == 3)
+#if defined(__GNUC__) && (__GNUC__ == 4) && (__GNUC_MINOR__ == 3)
     __attribute__ ((noinline))
-#endif
+#endif // defined(__GNUC__) && (__GNUC__ == 4) && (__GNUC_MINOR__ == 3)
   {
     buffers_iterator new_iter;
     new_iter.begin_ = buffers.begin();
@@ -146,9 +145,9 @@ public:
 
   /// Construct an iterator representing the end of the buffers' data.
   static buffers_iterator end(const BufferSequence& buffers)
-#if BOOST_WORKAROUND(__GNUC__, == 4) && BOOST_WORKAROUND(__GNUC_MINOR__, == 3)
+#if defined(__GNUC__) && (__GNUC__ == 4) && (__GNUC_MINOR__ == 3)
     __attribute__ ((noinline))
-#endif
+#endif // defined(__GNUC__) && (__GNUC__ == 4) && (__GNUC_MINOR__ == 3)
   {
     buffers_iterator new_iter;
     new_iter.begin_ = buffers.begin();
