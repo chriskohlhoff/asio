@@ -20,6 +20,8 @@
 
 #include "asio/detail/push_options.hpp"
 
+#if defined(ASIO_HAS_BOOST_DATE_TIME)
+
 namespace asio {
 namespace detail {
 
@@ -79,6 +81,8 @@ private:
 
 } // namespace detail
 } // namespace asio
+
+#endif // defined(ASIO_HAS_BOOST_DATE_TIME)
 
 #include "asio/detail/pop_options.hpp"
 

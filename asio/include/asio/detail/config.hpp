@@ -199,6 +199,13 @@
 #   endif // (BOOST_VERSION >= 104700)
 #endif // !defined(ASIO_DISABLE_BOOST_CHRONO)
 
+// Boost support for the DateTime library.
+#if !defined(ASIO_DISABLE_BOOST_DATE_TIME)
+# if !defined(ASIO_HAS_BOOST_DATE_TIME)
+#  define ASIO_HAS_BOOST_DATE_TIME
+# endif // !defined(ASIO_HAS_BOOST_DATE_TIME)
+#endif // !defined(ASIO_DISABLE_BOOST_DATE_TIME)
+
 // Standard library support for addressof.
 #if !defined(ASIO_DISABLE_STD_ADDRESSOF)
 # if defined(__GNUC__)
