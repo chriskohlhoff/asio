@@ -23,9 +23,17 @@
 #include <cstdio>
 #include "asio/detail/handler_tracking.hpp"
 
-#include "asio/detail/push_options.hpp"
-#include <boost/date_time/posix_time/posix_time_types.hpp>
-#include "asio/detail/pop_options.hpp"
+#if defined(ASIO_HAS_BOOST_DATE_TIME)
+# include "asio/time_traits.hpp"
+#else // defined(ASIO_HAS_BOOST_DATE_TIME)
+# if defined(ASIO_HAS_STD_CHRONO)
+#  include <chrono>
+# elif defined(ASIO_HAS_BOOST_CHRONO)
+#  include <boost/chrono/system_clocks.hpp>
+# endif
+# include "asio/detail/chrono_time_traits.hpp"
+# include "asio/wait_traits.hpp"
+#endif // defined(ASIO_HAS_BOOST_DATE_TIME)
 
 #if !defined(ASIO_WINDOWS)
 # include <unistd.h>
@@ -35,6 +43,33 @@
 
 namespace asio {
 namespace detail {
+
+struct handler_tracking_timestamp
+{
+  uint64_t seconds;
+  uint64_t microseconds;
+
+  handler_tracking_timestamp()
+  {
+#if defined(ASIO_HAS_BOOST_DATE_TIME)
+    boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
+    boost::posix_time::time_duration now =
+      boost::posix_time::microsec_clock::universal_time() - epoch;
+#elif defined(ASIO_HAS_STD_CHRONO)
+    typedef chrono_time_traits<std::chrono::system_clock,
+        asio::wait_traits<std::chrono::system_clock> > traits_helper;
+    traits_helper::posix_time_duration now(
+        std::chrono::system_clock::now().time_since_epoch());
+#elif defined(ASIO_HAS_BOOST_CHRONO)
+    typedef chrono_time_traits<boost::chrono::system_clock,
+        asio::wait_traits<boost::chrono::system_clock> > traits_helper;
+    traits_helper::posix_time_duration now(
+        boost::chrono::system_clock::now().time_since_epoch());
+#endif
+    seconds = static_cast<uint64_t>(now.total_seconds());
+    microseconds = static_cast<uint64_t>(now.total_microseconds() % 1000000);
+  }
+};
 
 struct handler_tracking::tracking_state
 {
@@ -69,9 +104,7 @@ void handler_tracking::creation(handler_tracking::tracked_handler* h,
   h->id_ = state->next_id_++;
   lock.unlock();
 
-  boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
-  boost::posix_time::time_duration now =
-    boost::posix_time::microsec_clock::universal_time() - epoch;
+  handler_tracking_timestamp timestamp;
 
   uint64_t current_id = 0;
   if (completion* current_completion = *state->current_completion_)
@@ -83,8 +116,7 @@ void handler_tracking::creation(handler_tracking::tracked_handler* h,
 #else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|%llu*%llu|%.20s@%p.%.50s\n",
 #endif // defined(ASIO_WINDOWS)
-      static_cast<uint64_t>(now.total_seconds()),
-      static_cast<uint64_t>(now.total_microseconds() % 1000000),
+      timestamp.seconds, timestamp.microseconds,
       current_id, h->id_, object_type, object, op_name);
 }
 
@@ -100,9 +132,7 @@ handler_tracking::completion::~completion()
 {
   if (id_)
   {
-    boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
-    boost::posix_time::time_duration now =
-      boost::posix_time::microsec_clock::universal_time() - epoch;
+    handler_tracking_timestamp timestamp;
 
     write_line(
 #if defined(ASIO_WINDOWS)
@@ -110,8 +140,7 @@ handler_tracking::completion::~completion()
 #else // defined(ASIO_WINDOWS)
         "@asio|%llu.%06llu|%c%llu|\n",
 #endif // defined(ASIO_WINDOWS)
-        static_cast<uint64_t>(now.total_seconds()),
-        static_cast<uint64_t>(now.total_microseconds() % 1000000),
+        timestamp.seconds, timestamp.microseconds,
         invoked_ ? '!' : '~', id_);
   }
 
@@ -120,9 +149,7 @@ handler_tracking::completion::~completion()
 
 void handler_tracking::completion::invocation_begin()
 {
-  boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
-  boost::posix_time::time_duration now =
-    boost::posix_time::microsec_clock::universal_time() - epoch;
+  handler_tracking_timestamp timestamp;
 
   write_line(
 #if defined(ASIO_WINDOWS)
@@ -130,8 +157,7 @@ void handler_tracking::completion::invocation_begin()
 #else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|>%llu|\n",
 #endif // defined(ASIO_WINDOWS)
-      static_cast<uint64_t>(now.total_seconds()),
-      static_cast<uint64_t>(now.total_microseconds() % 1000000), id_);
+      timestamp.seconds, timestamp.microseconds);
 
   invoked_ = true;
 }
@@ -139,9 +165,7 @@ void handler_tracking::completion::invocation_begin()
 void handler_tracking::completion::invocation_begin(
     const asio::error_code& ec)
 {
-  boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
-  boost::posix_time::time_duration now =
-    boost::posix_time::microsec_clock::universal_time() - epoch;
+  handler_tracking_timestamp timestamp;
 
   write_line(
 #if defined(ASIO_WINDOWS)
@@ -149,8 +173,7 @@ void handler_tracking::completion::invocation_begin(
 #else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d\n",
 #endif // defined(ASIO_WINDOWS)
-      static_cast<uint64_t>(now.total_seconds()),
-      static_cast<uint64_t>(now.total_microseconds() % 1000000),
+      timestamp.seconds, timestamp.microseconds,
       id_, ec.category().name(), ec.value());
 
   invoked_ = true;
@@ -159,9 +182,7 @@ void handler_tracking::completion::invocation_begin(
 void handler_tracking::completion::invocation_begin(
     const asio::error_code& ec, std::size_t bytes_transferred)
 {
-  boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
-  boost::posix_time::time_duration now =
-    boost::posix_time::microsec_clock::universal_time() - epoch;
+  handler_tracking_timestamp timestamp;
 
   write_line(
 #if defined(ASIO_WINDOWS)
@@ -169,8 +190,7 @@ void handler_tracking::completion::invocation_begin(
 #else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d,bytes_transferred=%llu\n",
 #endif // defined(ASIO_WINDOWS)
-      static_cast<uint64_t>(now.total_seconds()),
-      static_cast<uint64_t>(now.total_microseconds() % 1000000),
+      timestamp.seconds, timestamp.microseconds,
       id_, ec.category().name(), ec.value(),
       static_cast<uint64_t>(bytes_transferred));
 
@@ -180,9 +200,7 @@ void handler_tracking::completion::invocation_begin(
 void handler_tracking::completion::invocation_begin(
     const asio::error_code& ec, int signal_number)
 {
-  boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
-  boost::posix_time::time_duration now =
-    boost::posix_time::microsec_clock::universal_time() - epoch;
+  handler_tracking_timestamp timestamp;
 
   write_line(
 #if defined(ASIO_WINDOWS)
@@ -190,8 +208,7 @@ void handler_tracking::completion::invocation_begin(
 #else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d,signal_number=%d\n",
 #endif // defined(ASIO_WINDOWS)
-      static_cast<uint64_t>(now.total_seconds()),
-      static_cast<uint64_t>(now.total_microseconds() % 1000000),
+      timestamp.seconds, timestamp.microseconds,
       id_, ec.category().name(), ec.value(), signal_number);
 
   invoked_ = true;
@@ -200,9 +217,7 @@ void handler_tracking::completion::invocation_begin(
 void handler_tracking::completion::invocation_begin(
     const asio::error_code& ec, const char* arg)
 {
-  boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
-  boost::posix_time::time_duration now =
-    boost::posix_time::microsec_clock::universal_time() - epoch;
+  handler_tracking_timestamp timestamp;
 
   write_line(
 #if defined(ASIO_WINDOWS)
@@ -210,8 +225,7 @@ void handler_tracking::completion::invocation_begin(
 #else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d,%.50s\n",
 #endif // defined(ASIO_WINDOWS)
-      static_cast<uint64_t>(now.total_seconds()),
-      static_cast<uint64_t>(now.total_microseconds() % 1000000),
+      timestamp.seconds, timestamp.microseconds,
       id_, ec.category().name(), ec.value(), arg);
 
   invoked_ = true;
@@ -221,9 +235,7 @@ void handler_tracking::completion::invocation_end()
 {
   if (id_)
   {
-    boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
-    boost::posix_time::time_duration now =
-      boost::posix_time::microsec_clock::universal_time() - epoch;
+    handler_tracking_timestamp timestamp;
 
     write_line(
 #if defined(ASIO_WINDOWS)
@@ -231,8 +243,7 @@ void handler_tracking::completion::invocation_end()
 #else // defined(ASIO_WINDOWS)
         "@asio|%llu.%06llu|<%llu|\n",
 #endif // defined(ASIO_WINDOWS)
-        static_cast<uint64_t>(now.total_seconds()),
-        static_cast<uint64_t>(now.total_microseconds() % 1000000), id_);
+        timestamp.seconds, timestamp.microseconds);
 
     id_ = 0;
   }
@@ -243,9 +254,7 @@ void handler_tracking::operation(const char* object_type,
 {
   static tracking_state* state = get_state();
 
-  boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
-  boost::posix_time::time_duration now =
-    boost::posix_time::microsec_clock::universal_time() - epoch;
+  handler_tracking_timestamp timestamp;
 
   unsigned long long current_id = 0;
   if (completion* current_completion = *state->current_completion_)
@@ -257,8 +266,7 @@ void handler_tracking::operation(const char* object_type,
 #else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|%llu|%.20s@%p.%.50s\n",
 #endif // defined(ASIO_WINDOWS)
-      static_cast<uint64_t>(now.total_seconds()),
-      static_cast<uint64_t>(now.total_microseconds() % 1000000),
+      timestamp.seconds, timestamp.microseconds,
       current_id, object_type, object, op_name);
 }
 
