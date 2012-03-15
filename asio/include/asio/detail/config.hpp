@@ -545,11 +545,15 @@
 
 // Microsoft Visual C++'s secure C runtime library.
 #if !defined(ASIO_DISABLE_SECURE_RTL)
-# if defined(ASIO_MSVC) && (ASIO_MSVC >= 1400) && !defined(UNDER_CE)
+# if defined(ASIO_MSVC) \
+  && (ASIO_MSVC >= 1400) \
+  && !defined(UNDER_CE)
 #  if !defined(ASIO_HAS_SECURE_RTL)
 #   define ASIO_HAS_SECURE_RTL 1
 #  endif // !defined(ASIO_HAS_SECURE_RTL)
-# endif // defined(ASIO_MSVC) && (ASIO_MSVC >= 1400) && !defined(UNDER_CE)
+# endif // defined(ASIO_MSVC)
+        // && (ASIO_MSVC >= 1400)
+        // && !defined(UNDER_CE)
 #endif // !defined(ASIO_DISABLE_SECURE_RTL)
 
 // Handler hooking. Disabled for ancient Borland C++ and gcc compilers.

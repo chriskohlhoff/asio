@@ -92,7 +92,8 @@ public:
   }
 
   template <typename Mutable_Buffers>
-  size_t read_some_at(asio::uint64_t offset, const Mutable_Buffers& buffers)
+  size_t read_some_at(asio::uint64_t offset,
+      const Mutable_Buffers& buffers)
   {
     return asio::buffer_copy(buffers,
         asio::buffer(data_, length_) + offset,

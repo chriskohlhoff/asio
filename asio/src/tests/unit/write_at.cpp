@@ -84,7 +84,8 @@ public:
   }
 
   template <typename Const_Buffers>
-  size_t write_some_at(asio::uint64_t offset, const Const_Buffers& buffers)
+  size_t write_some_at(asio::uint64_t offset,
+      const Const_Buffers& buffers)
   {
     return asio::buffer_copy(
         asio::buffer(data_, length_) + offset,
