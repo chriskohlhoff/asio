@@ -40,7 +40,7 @@
 #if defined(ASIO_HEADER_ONLY)
 # define ASIO_DECL inline
 #else // defined(ASIO_HEADER_ONLY)
-# if defined(BOOST_HAS_DECLSPEC)
+# if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__CODEGEARC__)
 // We need to import/export our code only if the user has specifically asked
 // for it by defining ASIO_DYN_LINK.
 #  if defined(ASIO_DYN_LINK)
@@ -51,7 +51,7 @@
 #    define ASIO_DECL __declspec(dllimport)
 #   endif // defined(ASIO_SOURCE)
 #  endif // defined(ASIO_DYN_LINK)
-# endif // defined(BOOST_HAS_DECLSPEC)
+# endif // defined(_MSC_VER) || defined(__BORLANDC__) || defined(__CODEGEARC__)
 #endif // defined(ASIO_HEADER_ONLY)
 
 // If ASIO_DECL isn't defined yet define it now.
