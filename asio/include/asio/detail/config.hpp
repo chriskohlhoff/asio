@@ -11,8 +11,20 @@
 #ifndef ASIO_DETAIL_CONFIG_HPP
 #define ASIO_DETAIL_CONFIG_HPP
 
-#include <boost/config.hpp>
-#include <boost/version.hpp>
+#if defined(ASIO_STANDALONE)
+# define ASIO_DISABLE_BOOST_ASSERT
+# define ASIO_DISABLE_BOOST_BIND
+# define ASIO_DISABLE_BOOST_CHRONO
+# define ASIO_DISABLE_BOOST_DATE_TIME
+# define ASIO_DISABLE_BOOST_LIMITS
+# define ASIO_DISABLE_BOOST_REGEX
+# define ASIO_DISABLE_BOOST_STATIC_CONSTANT
+# define ASIO_DISABLE_BOOST_THROW_EXCEPTION
+# define ASIO_DISABLE_BOOST_WORKAROUND
+#else // defined(ASIO_DISABLE_BOOST)
+# include <boost/config.hpp>
+# include <boost/version.hpp>
+#endif // defined(ASIO_DISABLE_BOOST)
 
 // Default to a header-only implementation. The user must specifically request
 // separate compilation by defining either ASIO_SEPARATE_COMPILATION or
@@ -509,6 +521,27 @@
 #  define ASIO_HAS_BOOST_THROW_EXCEPTION 1
 # endif // !defined(ASIO_HAS_BOOST_THROW_EXCEPTION)
 #endif // !defined(ASIO_DISABLE_BOOST_THROW_EXCEPTION)
+
+// Boost regex library.
+#if !defined(ASIO_DISABLE_BOOST_REGEX)
+# if !defined(ASIO_HAS_BOOST_REGEX)
+#  define ASIO_HAS_BOOST_REGEX 1
+# endif // !defined(ASIO_HAS_BOOST_REGEX)
+#endif // !defined(ASIO_DISABLE_BOOST_REGEX)
+
+// Boost bind function.
+#if !defined(ASIO_DISABLE_BOOST_BIND)
+# if !defined(ASIO_HAS_BOOST_BIND)
+#  define ASIO_HAS_BOOST_BIND 1
+# endif // !defined(ASIO_HAS_BOOST_BIND)
+#endif // !defined(ASIO_DISABLE_BOOST_BIND)
+
+// Boost's BOOST_WORKAROUND macro.
+#if !defined(ASIO_DISABLE_BOOST_WORKAROUND)
+# if !defined(ASIO_HAS_BOOST_WORKAROUND)
+#  define ASIO_HAS_BOOST_WORKAROUND 1
+# endif // !defined(ASIO_HAS_BOOST_WORKAROUND)
+#endif // !defined(ASIO_DISABLE_BOOST_WORKAROUND)
 
 // Microsoft Visual C++'s secure C runtime library.
 #if !defined(ASIO_DISABLE_SECURE_RTL)

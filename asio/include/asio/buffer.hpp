@@ -20,7 +20,6 @@
 #include <cstring>
 #include <string>
 #include <vector>
-#include <boost/detail/workaround.hpp>
 #include "asio/detail/array_fwd.hpp"
 
 #if defined(ASIO_MSVC)
@@ -43,11 +42,18 @@
 # include "asio/detail/function.hpp"
 #endif // ASIO_ENABLE_BUFFER_DEBUGGING
 
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x582)) \
-  || BOOST_WORKAROUND(__SUNPRO_CC, BOOST_TESTED_AT(0x590))
+#if defined(ASIO_HAS_BOOST_WORKAROUND)
+# include <boost/detail/workaround.hpp>
+# if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x582)) \
+    || BOOST_WORKAROUND(__SUNPRO_CC, BOOST_TESTED_AT(0x590))
+#  define ASIO_ENABLE_ARRAY_BUFFER_WORKAROUND
+# endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x582))
+        // || BOOST_WORKAROUND(__SUNPRO_CC, BOOST_TESTED_AT(0x590))
+#endif // defined(ASIO_HAS_BOOST_WORKAROUND)
+
+#if defined(ASIO_ENABLE_ARRAY_BUFFER_WORKAROUND)
 # include "asio/detail/type_traits.hpp"
-#endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x582))
-       // || BOOST_WORKAROUND(__SUNPRO_CC, BOOST_TESTED_AT(0x590))
+#endif // defined(ASIO_ENABLE_ARRAY_BUFFER_WORKAROUND)
 
 #include "asio/detail/push_options.hpp"
 
@@ -827,8 +833,7 @@ inline const_buffers_1 buffer(const PodType (&data)[N],
         ? N * sizeof(PodType) : max_size_in_bytes));
 }
 
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x582)) \
-  || BOOST_WORKAROUND(__SUNPRO_CC, BOOST_TESTED_AT(0x590))
+#if defined(ASIO_ENABLE_ARRAY_BUFFER_WORKAROUND)
 
 // Borland C++ and Sun Studio think the overloads:
 //
@@ -895,8 +900,7 @@ buffer(boost::array<PodType, N>& data, std::size_t max_size_in_bytes)
         ? data.size() * sizeof(PodType) : max_size_in_bytes));
 }
 
-#else // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x582))
-      // || BOOST_WORKAROUND(__SUNPRO_CC, BOOST_TESTED_AT(0x590))
+#else // defined(ASIO_ENABLE_ARRAY_BUFFER_WORKAROUND)
 
 /// Create a new modifiable buffer that represents the given POD array.
 /**
@@ -960,8 +964,7 @@ inline const_buffers_1 buffer(boost::array<const PodType, N>& data,
         ? data.size() * sizeof(PodType) : max_size_in_bytes));
 }
 
-#endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x582))
-       // || BOOST_WORKAROUND(__SUNPRO_CC, BOOST_TESTED_AT(0x590))
+#endif // defined(ASIO_ENABLE_ARRAY_BUFFER_WORKAROUND)
 
 /// Create a new non-modifiable buffer that represents the given POD array.
 /**

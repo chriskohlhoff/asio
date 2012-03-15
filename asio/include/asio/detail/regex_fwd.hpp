@@ -15,6 +15,8 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#if defined(ASIO_HAS_BOOST_REGEX)
+
 #include <boost/regex_fwd.hpp>
 #include <boost/regex/v4/match_flags.hpp>
 
@@ -27,5 +29,7 @@ template <class BidiIterator, class Allocator>
 class match_results;
 
 } // namespace boost
+
+#endif // defined(ASIO_HAS_BOOST_REGEX)
 
 #endif // ASIO_DETAIL_REGEX_FWD_HPP

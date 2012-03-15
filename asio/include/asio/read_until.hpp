@@ -54,8 +54,8 @@ struct is_match_condition
 #else
   enum
   {
-    value = asio::detail::is_function<
-        typename asio::detail::remove_pointer<T>::type>::value
+    value = asio::is_function<
+        typename asio::remove_pointer<T>::type>::value
       || detail::has_result_type<T>::value
   };
 #endif
@@ -243,6 +243,9 @@ std::size_t read_until(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, const std::string& delim,
     asio::error_code& ec);
 
+#if defined(ASIO_HAS_BOOST_REGEX) \
+  || defined(GENERATING_DOCUMENTATION)
+
 /// Read data into a streambuf until some part of the data it contains matches
 /// a regular expression.
 /**
@@ -334,6 +337,9 @@ template <typename SyncReadStream, typename Allocator>
 std::size_t read_until(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, const boost::regex& expr,
     asio::error_code& ec);
+
+#endif // defined(ASIO_HAS_BOOST_REGEX)
+       // || defined(GENERATING_DOCUMENTATION)
 
 /// Read data into a streambuf until a function object indicates a match.
 /**
@@ -437,7 +443,7 @@ std::size_t read_until(SyncReadStream& s,
 template <typename SyncReadStream, typename Allocator, typename MatchCondition>
 std::size_t read_until(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, MatchCondition match_condition,
-    typename enable_if<is_match_condition<MatchCondition> >::type* = 0);
+    typename enable_if<is_match_condition<MatchCondition>::value>::type* = 0);
 
 /// Read data into a streambuf until a function object indicates a match.
 /**
@@ -493,7 +499,7 @@ template <typename SyncReadStream, typename Allocator, typename MatchCondition>
 std::size_t read_until(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b,
     MatchCondition match_condition, asio::error_code& ec,
-    typename enable_if<is_match_condition<MatchCondition> >::type* = 0);
+    typename enable_if<is_match_condition<MatchCondition>::value>::type* = 0);
 
 /*@}*/
 /**
@@ -671,6 +677,9 @@ void async_read_until(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, const std::string& delim,
     ASIO_MOVE_ARG(ReadHandler) handler);
 
+#if defined(ASIO_HAS_BOOST_REGEX) \
+  || defined(GENERATING_DOCUMENTATION)
+
 /// Start an asynchronous operation to read data into a streambuf until some
 /// part of its data matches a regular expression.
 /**
@@ -757,6 +766,9 @@ template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
 void async_read_until(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, const boost::regex& expr,
     ASIO_MOVE_ARG(ReadHandler) handler);
+
+#endif // defined(ASIO_HAS_BOOST_REGEX)
+       // || defined(GENERATING_DOCUMENTATION)
 
 /// Start an asynchronous operation to read data into a streambuf until a
 /// function object indicates a match.
@@ -886,7 +898,7 @@ template <typename AsyncReadStream, typename Allocator,
 void async_read_until(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b,
     MatchCondition match_condition, ASIO_MOVE_ARG(ReadHandler) handler,
-    typename enable_if<is_match_condition<MatchCondition> >::type* = 0);
+    typename enable_if<is_match_condition<MatchCondition>::value>::type* = 0);
 
 /*@}*/
 

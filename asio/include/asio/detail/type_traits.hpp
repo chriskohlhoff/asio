@@ -43,7 +43,8 @@ using std::remove_pointer;
 using std::remove_reference;
 #else // defined(ASIO_HAS_STD_TYPE_TRAITS)
 using boost::add_const;
-using boost::enable_if;
+template <bool Condition, typename Type = void>
+struct enable_if : boost::enable_if_c<Condition, Type> {};
 using boost::is_const;
 using boost::is_convertible;
 using boost::is_function;

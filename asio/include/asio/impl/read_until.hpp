@@ -188,6 +188,8 @@ std::size_t read_until(SyncReadStream& s,
   }
 }
 
+#if defined(ASIO_HAS_BOOST_REGEX)
+
 template <typename SyncReadStream, typename Allocator>
 inline std::size_t read_until(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, const boost::regex& expr)
@@ -255,11 +257,13 @@ std::size_t read_until(SyncReadStream& s,
   }
 }
 
+#endif // defined(ASIO_HAS_BOOST_REGEX)
+
 template <typename SyncReadStream, typename Allocator, typename MatchCondition>
 std::size_t read_until(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b,
     MatchCondition match_condition, asio::error_code& ec,
-    typename enable_if<is_match_condition<MatchCondition> >::type*)
+    typename enable_if<is_match_condition<MatchCondition>::value>::type*)
 {
   std::size_t search_position = 0;
   for (;;)
@@ -310,7 +314,7 @@ std::size_t read_until(SyncReadStream& s,
 template <typename SyncReadStream, typename Allocator, typename MatchCondition>
 inline std::size_t read_until(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, MatchCondition match_condition,
-    typename enable_if<is_match_condition<MatchCondition> >::type*)
+    typename enable_if<is_match_condition<MatchCondition>::value>::type*)
 {
   asio::error_code ec;
   std::size_t bytes_transferred = read_until(s, b, match_condition, ec);
@@ -685,6 +689,8 @@ void async_read_until(AsyncReadStream& s,
       asio::error_code(), 0, 1);
 }
 
+#if defined(ASIO_HAS_BOOST_REGEX)
+
 namespace detail
 {
   template <typename AsyncReadStream, typename Allocator,
@@ -881,6 +887,8 @@ void async_read_until(AsyncReadStream& s,
       asio::error_code(), 0, 1);
 }
 
+#endif // defined(ASIO_HAS_BOOST_REGEX)
+
 namespace detail
 {
   template <typename AsyncReadStream, typename Allocator,
@@ -1066,7 +1074,7 @@ template <typename AsyncReadStream, typename Allocator,
 void async_read_until(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b,
     MatchCondition match_condition, ASIO_MOVE_ARG(ReadHandler) handler,
-    typename enable_if<is_match_condition<MatchCondition> >::type*)
+    typename enable_if<is_match_condition<MatchCondition>::value>::type*)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a ReadHandler.
