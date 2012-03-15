@@ -18,7 +18,11 @@
 #include "asio/detail/config.hpp"
 
 #if !defined(ASIO_ENABLE_OLD_SSL)
-# include "asio/deadline_timer.hpp"
+# if defined(ASIO_HAS_BOOST_DATE_TIME)
+#  include "asio/deadline_timer.hpp"
+# else // defined(ASIO_HAS_BOOST_DATE_TIME)
+#  include "asio/steady_timer.hpp"
+# endif // defined(ASIO_HAS_BOOST_DATE_TIME)
 # include "asio/ssl/detail/engine.hpp"
 # include "asio/buffer.hpp"
 #endif // !defined(ASIO_ENABLE_OLD_SSL)
@@ -46,8 +50,8 @@ struct stream_core
       input_buffer_space_(max_tls_record_size),
       input_buffer_(asio::buffer(input_buffer_space_))
   {
-    pending_read_.expires_at(boost::posix_time::neg_infin);
-    pending_write_.expires_at(boost::posix_time::neg_infin);
+    pending_read_.expires_at(neg_infin());
+    pending_write_.expires_at(neg_infin());
   }
 
   ~stream_core()
@@ -57,11 +61,43 @@ struct stream_core
   // The SSL engine.
   engine engine_;
 
+#if defined(ASIO_HAS_BOOST_DATE_TIME)
   // Timer used for storing queued read operations.
   asio::deadline_timer pending_read_;
 
   // Timer used for storing queued write operations.
   asio::deadline_timer pending_write_;
+
+  // Helper function for obtaining a time value that always fires.
+  static asio::deadline_timer::time_type neg_infin()
+  {
+    return boost::posix_time::neg_infin;
+  }
+
+  // Helper function for obtaining a time value that never fires.
+  static asio::deadline_timer::time_type pos_infin()
+  {
+    return boost::posix_time::pos_infin;
+  }
+#else // defined(ASIO_HAS_BOOST_DATE_TIME)
+  // Timer used for storing queued read operations.
+  asio::steady_timer pending_read_;
+
+  // Timer used for storing queued write operations.
+  asio::steady_timer pending_write_;
+
+  // Helper function for obtaining a time value that always fires.
+  static asio::steady_timer::time_point neg_infin()
+  {
+    return asio::steady_timer::time_point::min();
+  }
+
+  // Helper function for obtaining a time value that never fires.
+  static asio::steady_timer::time_point pos_infin()
+  {
+    return asio::steady_timer::time_point::max();
+  }
+#endif // defined(ASIO_HAS_BOOST_DATE_TIME)
 
   // Buffer space used to prepare output intended for the transport.
   std::vector<unsigned char> output_buffer_space_; 
