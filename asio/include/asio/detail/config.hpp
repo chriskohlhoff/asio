@@ -12,19 +12,20 @@
 #define ASIO_DETAIL_CONFIG_HPP
 
 #if defined(ASIO_STANDALONE)
-# define ASIO_DISABLE_BOOST_ASSERT
-# define ASIO_DISABLE_BOOST_BIND
-# define ASIO_DISABLE_BOOST_CHRONO
-# define ASIO_DISABLE_BOOST_DATE_TIME
-# define ASIO_DISABLE_BOOST_LIMITS
-# define ASIO_DISABLE_BOOST_REGEX
-# define ASIO_DISABLE_BOOST_STATIC_CONSTANT
-# define ASIO_DISABLE_BOOST_THROW_EXCEPTION
-# define ASIO_DISABLE_BOOST_WORKAROUND
-#else // defined(ASIO_DISABLE_BOOST)
+# define ASIO_DISABLE_BOOST_ASSERT 1
+# define ASIO_DISABLE_BOOST_BIND 1
+# define ASIO_DISABLE_BOOST_CHRONO 1
+# define ASIO_DISABLE_BOOST_DATE_TIME 1
+# define ASIO_DISABLE_BOOST_LIMITS 1
+# define ASIO_DISABLE_BOOST_REGEX 1
+# define ASIO_DISABLE_BOOST_STATIC_CONSTANT 1
+# define ASIO_DISABLE_BOOST_THROW_EXCEPTION 1
+# define ASIO_DISABLE_BOOST_WORKAROUND 1
+#else // defined(ASIO_STANDALONE)
 # include <boost/config.hpp>
 # include <boost/version.hpp>
-#endif // defined(ASIO_DISABLE_BOOST)
+# define ASIO_HAS_BOOST_CONFIG 1
+#endif // defined(ASIO_STANDALONE)
 
 // Default to a header-only implementation. The user must specifically request
 // separate compilation by defining either ASIO_SEPARATE_COMPILATION or
@@ -32,7 +33,7 @@
 #if !defined(ASIO_HEADER_ONLY)
 # if !defined(ASIO_SEPARATE_COMPILATION)
 #  if !defined(ASIO_DYN_LINK)
-#   define ASIO_HEADER_ONLY
+#   define ASIO_HEADER_ONLY 1
 #  endif // !defined(ASIO_DYN_LINK)
 # endif // !defined(ASIO_SEPARATE_COMPILATION)
 #endif // !defined(ASIO_HEADER_ONLY)
@@ -60,22 +61,26 @@
 #endif // !defined(ASIO_DECL)
 
 // Microsoft Visual C++ detection.
-#if defined(BOOST_MSVC)
-# define ASIO_MSVC BOOST_MSVC
-#elif defined(_MSC_VER) && !defined(__MWERKS__) && !defined(__EDG_VERSION__)
-# define ASIO_MSVC _MSC_VER
-#endif // defined(BOOST_MSVC)
+#if !defined(ASIO_MSVC)
+# if defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_MSVC)
+#  define ASIO_MSVC BOOST_MSVC
+# elif defined(_MSC_VER) && !defined(__MWERKS__) && !defined(__EDG_VERSION__)
+#  define ASIO_MSVC _MSC_VER
+# endif // defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_MSVC)
+#endif // defined(ASIO_MSVC)
 
 // Support move construction and assignment on compilers known to allow it.
-#if !defined(ASIO_DISABLE_MOVE)
-# if defined(__GNUC__)
-#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
-#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
-#    define ASIO_HAS_MOVE
-#   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
-#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
-# endif // defined(__GNUC__)
-#endif // !defined(ASIO_DISABLE_MOVE)
+#if !defined(ASIO_HAS_MOVE)
+# if !defined(ASIO_DISABLE_MOVE)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_MOVE 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+# endif // !defined(ASIO_DISABLE_MOVE)
+#endif // !defined(ASIO_HAS_MOVE)
 
 // If ASIO_MOVE_CAST isn't defined, and move support is available, define
 // ASIO_MOVE_ARG and ASIO_MOVE_CAST to take advantage of rvalue
@@ -110,26 +115,30 @@
 #endif // !defined_ASIO_MOVE_CAST
 
 // Support variadic templates on compilers known to allow it.
-#if !defined(ASIO_DISABLE_VARIADIC_TEMPLATES)
-# if defined(__GNUC__)
-#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
-#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
-#    define ASIO_HAS_VARIADIC_TEMPLATES
-#   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
-#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
-# endif // defined(__GNUC__)
-#endif // !defined(ASIO_DISABLE_VARIADIC_TEMPLATES)
+#if !defined(ASIO_HAS_VARIADIC_TEMPLATES)
+# if !defined(ASIO_DISABLE_VARIADIC_TEMPLATES)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_VARIADIC_TEMPLATES 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+# endif // !defined(ASIO_DISABLE_VARIADIC_TEMPLATES)
+#endif // !defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 // Standard library support for system errors.
-#if !defined(ASIO_DISABLE_STD_SYSTEM_ERROR)
-# if defined(__GNUC__)
-#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
-#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
-#    define ASIO_HAS_STD_SYSTEM_ERROR
-#   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
-#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
-# endif // defined(__GNUC__)
-#endif // !defined(ASIO_DISABLE_STD_SYSTEM_ERROR)
+#if !defined(ASIO_HAS_STD_SYSTEM_ERROR)
+# if !defined(ASIO_DISABLE_STD_SYSTEM_ERROR)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_STD_SYSTEM_ERROR 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+# endif // !defined(ASIO_DISABLE_STD_SYSTEM_ERROR)
+#endif // !defined(ASIO_HAS_STD_SYSTEM_ERROR)
 
 // Compliant C++11 compilers put noexcept specifiers on error_category members.
 #if !defined(ASIO_ERROR_CATEGORY_NOEXCEPT)
@@ -146,126 +155,148 @@
 #endif // !defined(ASIO_ERROR_CATEGORY_NOEXCEPT)
 
 // Standard library support for arrays.
-#if !defined(ASIO_DISABLE_STD_ARRAY)
-# if defined(__GNUC__)
-#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
-#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
-#    define ASIO_HAS_STD_ARRAY
-#   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
-#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
-# endif // defined(__GNUC__)
-# if defined(ASIO_MSVC)
-#  if (_MSC_VER >= 1600)
-#   define ASIO_HAS_STD_ARRAY
-#  endif // (_MSC_VER >= 1600)
-# endif // defined(ASIO_MSVC)
-#endif // !defined(ASIO_DISABLE_STD_ARRAY)
+#if !defined(ASIO_HAS_STD_ARRAY)
+# if !defined(ASIO_DISABLE_STD_ARRAY)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_STD_ARRAY 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1600)
+#    define ASIO_HAS_STD_ARRAY 1
+#   endif // (_MSC_VER >= 1600)
+#  endif // defined(ASIO_MSVC)
+# endif // !defined(ASIO_DISABLE_STD_ARRAY)
+#endif // !defined(ASIO_HAS_STD_ARRAY)
 
 // Standard library support for shared_ptr and weak_ptr.
-#if !defined(ASIO_DISABLE_STD_SHARED_PTR)
-# if defined(__GNUC__)
-#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
-#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
-#    define ASIO_HAS_STD_SHARED_PTR
-#   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
-#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
-# endif // defined(__GNUC__)
-# if defined(ASIO_MSVC)
-#  if (_MSC_VER >= 1600)
-#   define ASIO_HAS_STD_SHARED_PTR
-#  endif // (_MSC_VER >= 1600)
-# endif // defined(ASIO_MSVC)
-#endif // !defined(ASIO_DISABLE_STD_SHARED_PTR)
+#if !defined(ASIO_HAS_STD_SHARED_PTR)
+# if !defined(ASIO_DISABLE_STD_SHARED_PTR)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_STD_SHARED_PTR 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1600)
+#    define ASIO_HAS_STD_SHARED_PTR 1
+#   endif // (_MSC_VER >= 1600)
+#  endif // defined(ASIO_MSVC)
+# endif // !defined(ASIO_DISABLE_STD_SHARED_PTR)
+#endif // !defined(ASIO_HAS_STD_SHARED_PTR)
 
 // Standard library support for atomic operations.
-#if !defined(ASIO_DISABLE_STD_ATOMIC)
-# if defined(__GNUC__)
-#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
-#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
-#    define ASIO_HAS_STD_ATOMIC
-#   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
-#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
-# endif // defined(__GNUC__)
-#endif // !defined(ASIO_DISABLE_STD_ATOMIC)
+#if !defined(ASIO_HAS_STD_ATOMIC)
+# if !defined(ASIO_DISABLE_STD_ATOMIC)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_STD_ATOMIC 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+# endif // !defined(ASIO_DISABLE_STD_ATOMIC)
+#endif // !defined(ASIO_HAS_STD_ATOMIC)
 
 // Standard library support for chrono. Some standard libraries (such as the
 // libstdc++ shipped with gcc 4.6) provide monotonic_clock as per early C++0x
 // drafts, rather than the eventually standardised name of steady_clock.
-#if !defined(ASIO_DISABLE_STD_CHRONO)
-# if defined(__GNUC__)
-#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
-#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
-#    define ASIO_HAS_STD_CHRONO
-#    if ((__GNUC__ == 4) && (__GNUC_MINOR__ == 6))
-#     define ASIO_HAS_STD_CHRONO_MONOTONIC_CLOCK
-#    endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ == 6))
-#   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
-#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
-# endif // defined(__GNUC__)
-#endif // !defined(ASIO_DISABLE_STD_CHRONO)
+#if !defined(ASIO_HAS_STD_CHRONO)
+# if !defined(ASIO_DISABLE_STD_CHRONO)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_STD_CHRONO 1
+#     if ((__GNUC__ == 4) && (__GNUC_MINOR__ == 6))
+#      define ASIO_HAS_STD_CHRONO_MONOTONIC_CLOCK 1
+#     endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ == 6))
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+# endif // !defined(ASIO_DISABLE_STD_CHRONO)
+#endif // !defined(ASIO_HAS_STD_CHRONO)
 
 // Boost support for chrono.
-#if !defined(ASIO_DISABLE_BOOST_CHRONO)
-# if (BOOST_VERSION >= 104700)
-#  define ASIO_HAS_BOOST_CHRONO
-#   endif // (BOOST_VERSION >= 104700)
-#endif // !defined(ASIO_DISABLE_BOOST_CHRONO)
+#if !defined(ASIO_HAS_BOOST_CHRONO)
+# if !defined(ASIO_DISABLE_BOOST_CHRONO)
+#  if (BOOST_VERSION >= 104700)
+#   define ASIO_HAS_BOOST_CHRONO 1
+#  endif // (BOOST_VERSION >= 104700)
+# endif // !defined(ASIO_DISABLE_BOOST_CHRONO)
+#endif // !defined(ASIO_HAS_BOOST_CHRONO)
 
 // Boost support for the DateTime library.
-#if !defined(ASIO_DISABLE_BOOST_DATE_TIME)
-# if !defined(ASIO_HAS_BOOST_DATE_TIME)
-#  define ASIO_HAS_BOOST_DATE_TIME
-# endif // !defined(ASIO_HAS_BOOST_DATE_TIME)
-#endif // !defined(ASIO_DISABLE_BOOST_DATE_TIME)
+#if !defined(ASIO_HAS_BOOST_DATE_TIME)
+# if !defined(ASIO_DISABLE_BOOST_DATE_TIME)
+#  define ASIO_HAS_BOOST_DATE_TIME 1
+# endif // !defined(ASIO_DISABLE_BOOST_DATE_TIME)
+#endif // !defined(ASIO_HAS_BOOST_DATE_TIME)
 
 // Standard library support for addressof.
-#if !defined(ASIO_DISABLE_STD_ADDRESSOF)
-# if defined(__GNUC__)
-#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
-#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
-#    define ASIO_HAS_STD_ADDRESSOF
-#   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
-#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
-# endif // defined(__GNUC__)
-#endif // !defined(ASIO_DISABLE_STD_ADDRESSOF)
+#if !defined(ASIO_HAS_STD_ADDRESSOF)
+# if !defined(ASIO_DISABLE_STD_ADDRESSOF)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_STD_ADDRESSOF 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+# endif // !defined(ASIO_DISABLE_STD_ADDRESSOF)
+#endif // !defined(ASIO_HAS_STD_ADDRESSOF)
 
 // Standard library support for the function class.
-#if !defined(ASIO_DISABLE_STD_FUNCTION)
-# if defined(__GNUC__)
-#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
-#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
-#    define ASIO_HAS_STD_FUNCTION
-#   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
-#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
-# endif // defined(__GNUC__)
-#endif // !defined(ASIO_DISABLE_STD_FUNCTION)
+#if !defined(ASIO_HAS_STD_FUNCTION)
+# if !defined(ASIO_DISABLE_STD_FUNCTION)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_STD_FUNCTION 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+# endif // !defined(ASIO_DISABLE_STD_FUNCTION)
+#endif // !defined(ASIO_HAS_STD_FUNCTION)
 
 // Standard library support for type traits.
-#if !defined(ASIO_DISABLE_STD_TYPE_TRAITS)
-# if defined(__GNUC__)
-#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
-#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
-#    define ASIO_HAS_STD_TYPE_TRAITS
-#   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
-#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
-# endif // defined(__GNUC__)
-#endif // !defined(ASIO_DISABLE_STD_TYPE_TRAITS)
+#if !defined(ASIO_HAS_STD_TYPE_TRAITS)
+# if !defined(ASIO_DISABLE_STD_TYPE_TRAITS)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_STD_TYPE_TRAITS 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+# endif // !defined(ASIO_DISABLE_STD_TYPE_TRAITS)
+#endif // !defined(ASIO_HAS_STD_TYPE_TRAITS)
 
 // Standard library support for the cstdint header.
-#if !defined(ASIO_DISABLE_CSTDINT)
-# if defined(__GNUC__)
-#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
-#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
-#    define ASIO_HAS_CSTDINT
-#   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
-#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
-# endif // defined(__GNUC__)
-#endif // !defined(ASIO_DISABLE_CSTDINT)
+#if !defined(ASIO_HAS_CSTDINT)
+# if !defined(ASIO_DISABLE_CSTDINT)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_CSTDINT 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+# endif // !defined(ASIO_DISABLE_CSTDINT)
+#endif // !defined(ASIO_HAS_CSTDINT)
 
 // Windows target.
-#if defined(BOOST_WINDOWS)
-# define ASIO_WINDOWS 1
-#endif // defined(BOOST_WINDOWS)
+#if !defined(ASIO_WINDOWS)
+# if defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_WINDOWS)
+#  define ASIO_WINDOWS 1
+# elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+#  define ASIO_WINDOWS 1
+# endif // defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_WINDOWS)
+#endif // !defined(ASIO_WINDOWS)
 
 // Windows: target OS version.
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
@@ -327,34 +358,42 @@
 #endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 
 // Windows: IO Completion Ports.
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
-# if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
-#  if !defined(UNDER_CE)
-#   if !defined(ASIO_DISABLE_IOCP)
-#    define ASIO_HAS_IOCP 1
-#   endif // !defined(ASIO_DISABLE_IOCP)
-#  endif // !defined(UNDER_CE)
-# endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
-#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#if !defined(ASIO_HAS_IOCP)
+# if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#  if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
+#   if !defined(UNDER_CE)
+#    if !defined(ASIO_DISABLE_IOCP)
+#     define ASIO_HAS_IOCP 1
+#    endif // !defined(ASIO_DISABLE_IOCP)
+#   endif // !defined(UNDER_CE)
+#  endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
+# endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#endif // !defined(ASIO_HAS_IOCP)
 
 // Linux: epoll, eventfd and timerfd.
 #if defined(__linux__)
 # include <linux/version.h>
-# if !defined(ASIO_DISABLE_EPOLL)
-#  if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,45)
-#   define ASIO_HAS_EPOLL 1
-#  endif // LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,45)
-# endif // !defined(ASIO_DISABLE_EVENTFD)
-# if !defined(ASIO_DISABLE_EVENTFD)
-#  if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
-#   define ASIO_HAS_EVENTFD 1
-#  endif // LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
-# endif // !defined(ASIO_DISABLE_EVENTFD)
-# if defined(ASIO_HAS_EPOLL)
-#  if (__GLIBC__ > 2) || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 8)
-#   define ASIO_HAS_TIMERFD 1
-#  endif // (__GLIBC__ > 2) || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 8)
-# endif // defined(ASIO_HAS_EPOLL)
+# if !defined(ASIO_HAS_EPOLL)
+#  if !defined(ASIO_DISABLE_EPOLL)
+#   if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,45)
+#    define ASIO_HAS_EPOLL 1
+#   endif // LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,45)
+#  endif // !defined(ASIO_DISABLE_EPOLL)
+# endif // !defined(ASIO_HAS_EPOLL)
+# if !defined(ASIO_HAS_EVENTFD)
+#  if !defined(ASIO_DISABLE_EVENTFD)
+#   if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
+#    define ASIO_HAS_EVENTFD 1
+#   endif // LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
+#  endif // !defined(ASIO_DISABLE_EVENTFD)
+# endif // !defined(ASIO_HAS_EVENTFD)
+# if !defined(ASIO_HAS_TIMERFD)
+#  if defined(ASIO_HAS_EPOLL)
+#   if (__GLIBC__ > 2) || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 8)
+#    define ASIO_HAS_TIMERFD 1
+#   endif // (__GLIBC__ > 2) || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 8)
+#  endif // defined(ASIO_HAS_EPOLL)
+# endif // !defined(ASIO_HAS_TIMERFD)
 #endif // defined(__linux__)
 
 // Mac OS X, FreeBSD, NetBSD, OpenBSD: kqueue.
@@ -362,9 +401,11 @@
   || defined(__FreeBSD__) \
   || defined(__NetBSD__) \
   || defined(__OpenBSD__)
-# if !defined(ASIO_DISABLE_KQUEUE)
-#  define ASIO_HAS_KQUEUE 1
-# endif // !defined(ASIO_DISABLE_KQUEUE)
+# if !defined(ASIO_HAS_KQUEUE)
+#  if !defined(ASIO_DISABLE_KQUEUE)
+#   define ASIO_HAS_KQUEUE 1
+#  endif // !defined(ASIO_DISABLE_KQUEUE)
+# endif // !defined(ASIO_HAS_KQUEUE)
 #endif // (defined(__MACH__) && defined(__APPLE__))
        //   || defined(__FreeBSD__)
        //   || defined(__NetBSD__)
@@ -372,203 +413,249 @@
 
 // Solaris: /dev/poll.
 #if defined(__sun)
-# if !defined(ASIO_DISABLE_DEV_POLL)
-#  define ASIO_HAS_DEV_POLL 1
-# endif // !defined(ASIO_DISABLE_DEV_POLL)
+# if !defined(ASIO_HAS_DEV_POLL)
+#  if !defined(ASIO_DISABLE_DEV_POLL)
+#   define ASIO_HAS_DEV_POLL 1
+#  endif // !defined(ASIO_DISABLE_DEV_POLL)
+# endif // !defined(ASIO_HAS_DEV_POLL)
 #endif // defined(__sun)
 
 // Serial ports.
-#if defined(ASIO_HAS_IOCP) \
-   || !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
-# if !defined(__SYMBIAN32__)
-#  if !defined(ASIO_DISABLE_SERIAL_PORT)
-#   define ASIO_HAS_SERIAL_PORT 1
-#  endif // !defined(ASIO_DISABLE_SERIAL_PORT)
-# endif // !defined(__SYMBIAN32__)
-#endif // defined(ASIO_HAS_IOCP)
-       //   || !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_HAS_SERIAL_PORT)
+# if defined(ASIO_HAS_IOCP) \
+    || !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#  if !defined(__SYMBIAN32__)
+#   if !defined(ASIO_DISABLE_SERIAL_PORT)
+#    define ASIO_HAS_SERIAL_PORT 1
+#   endif // !defined(ASIO_DISABLE_SERIAL_PORT)
+#  endif // !defined(__SYMBIAN32__)
+# endif // defined(ASIO_HAS_IOCP)
+        //   || !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(ASIO_HAS_SERIAL_PORT)
 
 // Windows: stream handles.
-#if !defined(ASIO_DISABLE_WINDOWS_STREAM_HANDLE)
-# if defined(ASIO_HAS_IOCP)
-#  define ASIO_HAS_WINDOWS_STREAM_HANDLE 1
-# endif // defined(ASIO_HAS_IOCP)
-#endif // !defined(ASIO_DISABLE_WINDOWS_STREAM_HANDLE)
+#if !defined(ASIO_HAS_WINDOWS_STREAM_HANDLE)
+# if !defined(ASIO_DISABLE_WINDOWS_STREAM_HANDLE)
+#  if defined(ASIO_HAS_IOCP)
+#   define ASIO_HAS_WINDOWS_STREAM_HANDLE 1
+#  endif // defined(ASIO_HAS_IOCP)
+# endif // !defined(ASIO_DISABLE_WINDOWS_STREAM_HANDLE)
+#endif // !defined(ASIO_HAS_WINDOWS_STREAM_HANDLE)
 
 // Windows: random access handles.
-#if !defined(ASIO_DISABLE_WINDOWS_RANDOM_ACCESS_HANDLE)
-# if defined(ASIO_HAS_IOCP)
-#  define ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE 1
-# endif // defined(ASIO_HAS_IOCP)
-#endif // !defined(ASIO_DISABLE_WINDOWS_RANDOM_ACCESS_HANDLE)
+#if !defined(ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE)
+# if !defined(ASIO_DISABLE_WINDOWS_RANDOM_ACCESS_HANDLE)
+#  if defined(ASIO_HAS_IOCP)
+#   define ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE 1
+#  endif // defined(ASIO_HAS_IOCP)
+# endif // !defined(ASIO_DISABLE_WINDOWS_RANDOM_ACCESS_HANDLE)
+#endif // !defined(ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE)
 
 // Windows: object handles.
-#if !defined(ASIO_DISABLE_WINDOWS_OBJECT_HANDLE)
-# if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
-#  if !defined(UNDER_CE)
-#   define ASIO_HAS_WINDOWS_OBJECT_HANDLE 1
-#  endif // !defined(UNDER_CE)
-# endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
-#endif // !defined(ASIO_DISABLE_WINDOWS_OBJECT_HANDLE)
+#if !defined(ASIO_HAS_WINDOWS_OBJECT_HANDLE)
+# if !defined(ASIO_DISABLE_WINDOWS_OBJECT_HANDLE)
+#  if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#   if !defined(UNDER_CE)
+#    define ASIO_HAS_WINDOWS_OBJECT_HANDLE 1
+#   endif // !defined(UNDER_CE)
+#  endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+# endif // !defined(ASIO_DISABLE_WINDOWS_OBJECT_HANDLE)
+#endif // !defined(ASIO_HAS_WINDOWS_OBJECT_HANDLE)
 
 // Windows: OVERLAPPED wrapper.
-#if !defined(ASIO_DISABLE_WINDOWS_OVERLAPPED_PTR)
-# if defined(ASIO_HAS_IOCP)
-#  define ASIO_HAS_WINDOWS_OVERLAPPED_PTR 1
-# endif // defined(ASIO_HAS_IOCP)
-#endif // !defined(ASIO_DISABLE_WINDOWS_OVERLAPPED_PTR)
+#if !defined(ASIO_HAS_WINDOWS_OVERLAPPED_PTR)
+# if !defined(ASIO_DISABLE_WINDOWS_OVERLAPPED_PTR)
+#  if defined(ASIO_HAS_IOCP)
+#   define ASIO_HAS_WINDOWS_OVERLAPPED_PTR 1
+#  endif // defined(ASIO_HAS_IOCP)
+# endif // !defined(ASIO_DISABLE_WINDOWS_OVERLAPPED_PTR)
+#endif // !defined(ASIO_HAS_WINDOWS_OVERLAPPED_PTR)
 
 // POSIX: stream-oriented file descriptors.
-#if !defined(ASIO_DISABLE_POSIX_STREAM_DESCRIPTOR)
-# if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
-#  define ASIO_HAS_POSIX_STREAM_DESCRIPTOR 1
-# endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
-#endif // !defined(ASIO_DISABLE_POSIX_STREAM_DESCRIPTOR)
+#if !defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
+# if !defined(ASIO_DISABLE_POSIX_STREAM_DESCRIPTOR)
+#  if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#   define ASIO_HAS_POSIX_STREAM_DESCRIPTOR 1
+#  endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+# endif // !defined(ASIO_DISABLE_POSIX_STREAM_DESCRIPTOR)
+#endif // !defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
 
 // UNIX domain sockets.
-#if !defined(ASIO_DISABLE_LOCAL_SOCKETS)
-# if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
-#  define ASIO_HAS_LOCAL_SOCKETS 1
-# endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
-#endif // !defined(ASIO_DISABLE_LOCAL_SOCKETS)
+#if !defined(ASIO_HAS_LOCAL_SOCKETS)
+# if !defined(ASIO_DISABLE_LOCAL_SOCKETS)
+#  if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#   define ASIO_HAS_LOCAL_SOCKETS 1
+#  endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+# endif // !defined(ASIO_DISABLE_LOCAL_SOCKETS)
+#endif // !defined(ASIO_HAS_LOCAL_SOCKETS)
 
 // Can use sigaction() instead of signal().
-#if !defined(ASIO_DISABLE_SIGACTION)
-# if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
-#  define ASIO_HAS_SIGACTION 1
-# endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
-#endif // !defined(ASIO_DISABLE_SIGACTION)
+#if !defined(ASIO_HAS_SIGACTION)
+# if !defined(ASIO_DISABLE_SIGACTION)
+#  if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#   define ASIO_HAS_SIGACTION 1
+#  endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+# endif // !defined(ASIO_DISABLE_SIGACTION)
+#endif // !defined(ASIO_HAS_SIGACTION)
 
 // Can use signal().
-#if !defined(ASIO_DISABLE_SIGNAL)
-# if !defined(UNDER_CE)
-#  define ASIO_HAS_SIGNAL 1
-# endif // !defined(UNDER_CE)
-#endif // !defined(ASIO_DISABLE_SIGNAL)
+#if !defined(ASIO_HAS_SIGNAL)
+# if !defined(ASIO_DISABLE_SIGNAL)
+#  if !defined(UNDER_CE)
+#   define ASIO_HAS_SIGNAL 1
+#  endif // !defined(UNDER_CE)
+# endif // !defined(ASIO_DISABLE_SIGNAL)
+#endif // !defined(ASIO_HAS_SIGNAL)
 
 // Whether standard iostreams are disabled.
-#if defined(BOOST_NO_IOSTREAM)
-# if !defined(ASIO_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM)
+# if defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_NO_IOSTREAM)
 #  define ASIO_NO_IOSTREAM 1
-# endif // !defined(ASIO_NO_IOSTREAM)
-#endif // !defined(BOOST_NO_IOSTREAM)
+# endif // !defined(BOOST_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_IOSTREAM)
 
 // Whether exception handling is disabled.
-#if defined(BOOST_NO_EXCEPTIONS)
-# if !defined(ASIO_NO_EXCEPTIONS)
+#if !defined(ASIO_NO_EXCEPTIONS)
+# if defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_NO_EXCEPTIONS)
 #  define ASIO_NO_EXCEPTIONS 1
-# endif // !defined(ASIO_NO_EXCEPTIONS)
-#endif // !defined(BOOST_NO_EXCEPTIONS)
+# endif // !defined(BOOST_NO_EXCEPTIONS)
+#endif // !defined(ASIO_NO_EXCEPTIONS)
 
 // Whether the typeid operator is supported.
-#if defined(BOOST_NO_TYPEID)
-# if !defined(ASIO_NO_TYPEID)
+#if !defined(ASIO_NO_TYPEID)
+# if defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_NO_TYPEID)
 #  define ASIO_NO_TYPEID 1
-# endif // !defined(ASIO_NO_TYPEID)
-#endif // !defined(BOOST_NO_TYPEID)
+# endif // !defined(BOOST_NO_TYPEID)
+#endif // !defined(ASIO_NO_TYPEID)
+
+// On POSIX (and POSIX-like) platforms we need to include unistd.h in order to
+// get access to the various platform feature macros, e.g. to be able to test
+// for threads support.
+#if !defined(ASIO_HAS_UNISTD_H)
+# if !defined(ASIO_HAS_BOOST_CONFIG)
+#  if defined(unix) \
+   || defined(__unix) \
+   || defined(_XOPEN_SOURCE) \
+   || defined(_POSIX_SOURCE) \
+   || (defined(__MACH__) && defined(__APPLE__)) \
+   || defined(__FreeBSD__) \
+   || defined(__NetBSD__) \
+   || defined(__OpenBSD__) \
+   || defined(__linux__)
+#   define ASIO_HAS_UNISTD_H 1
+#  endif
+# endif // !defined(ASIO_HAS_BOOST_CONFIG)
+#endif // !defined(ASIO_HAS_UNISTD_H)
+#if defined(ASIO_HAS_UNISTD_H)
+# include <unistd.h>
+#endif // defined(ASIO_HAS_UNISTD_H)
 
 // Threads.
-#if !defined(ASIO_DISABLE_THREADS)
-# if defined(BOOST_HAS_THREADS)
-#  if !defined(ASIO_HAS_THREADS)
+#if !defined(ASIO_HAS_THREADS)
+# if !defined(ASIO_DISABLE_THREADS)
+#  if defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_HAS_THREADS)
 #   define ASIO_HAS_THREADS 1
-#  endif // !defined(ASIO_HAS_THREADS)
-# endif // defined(BOOST_HAS_THREADS)
-#endif // !defined(ASIO_DISABLE_THREADS)
+#  elif defined(_MSC_VER) && defined(_MT)
+#   define ASIO_HAS_THREADS 1
+#  elif defined(__BORLANDC__) && defined(__MT__)
+#   define ASIO_HAS_THREADS 1
+#  elif defined(_POSIX_THREADS)
+#   define ASIO_HAS_THREADS 1
+#  endif // defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_HAS_THREADS)
+# endif // !defined(ASIO_DISABLE_THREADS)
+#endif // !defined(ASIO_HAS_THREADS)
 
 // POSIX threads.
-#if defined(ASIO_HAS_THREADS)
-# if defined(BOOST_HAS_PTHREADS)
-#  if !defined(ASIO_HAS_PTHREADS)
+#if !defined(ASIO_HAS_PTHREADS)
+# if defined(ASIO_HAS_THREADS)
+#  if defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_HAS_PTHREADS)
 #   define ASIO_HAS_PTHREADS 1
-#  endif // !defined(ASIO_HAS_PTHREADS)
-# endif // defined(BOOST_HAS_PTHREADS)
-#endif // defined(ASIO_HAS_PTHREADS)
+#  elif defined(_POSIX_THREADS)
+#   define ASIO_HAS_PTHREADS 1
+#  endif // defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_HAS_PTHREADS)
+# endif // defined(ASIO_HAS_THREADS)
+#endif // !defined(ASIO_HAS_PTHREADS)
 
 // Helper to prevent macro expansion.
 #define ASIO_PREVENT_MACRO_SUBSTITUTION
 
 // Helper to define in-class constants.
-#if !defined(ASIO_DISABLE_BOOST_STATIC_CONSTANT)
-# if !defined(ASIO_STATIC_CONSTANT)
+#if !defined(ASIO_STATIC_CONSTANT)
+# if !defined(ASIO_DISABLE_BOOST_STATIC_CONSTANT)
 #  define ASIO_STATIC_CONSTANT(type, assignment) \
     BOOST_STATIC_CONSTANT(type, assignment)
-# endif // !defined(ASIO_STATIC_CONSTANT)
-#else // !defined(ASIO_DISABLE_BOOST_STATIC_CONSTANT)
-# if !defined(ASIO_STATIC_CONSTANT)
+# else // !defined(ASIO_DISABLE_BOOST_STATIC_CONSTANT)
 #  define ASIO_STATIC_CONSTANT(type, assignment) \
     static const type assignment
-# endif // !defined(ASIO_STATIC_CONSTANT)
-#endif // !defined(ASIO_DISABLE_BOOST_STATIC_CONSTANT)
+# endif // !defined(ASIO_DISABLE_BOOST_STATIC_CONSTANT)
+#endif // !defined(ASIO_STATIC_CONSTANT)
 
 // Boost assert macro.
-#if !defined(ASIO_DISABLE_BOOST_ASSERT)
-# if !defined(ASIO_HAS_BOOST_ASSERT)
+#if !defined(ASIO_HAS_BOOST_ASSERT)
+# if !defined(ASIO_DISABLE_BOOST_ASSERT)
 #  define ASIO_HAS_BOOST_ASSERT 1
-# endif // !defined(ASIO_HAS_BOOST_ASSERT)
-#endif // !defined(ASIO_DISABLE_BOOST_ASSERT)
+# endif // !defined(ASIO_DISABLE_BOOST_ASSERT)
+#endif // !defined(ASIO_HAS_BOOST_ASSERT)
 
 // Boost limits header.
-#if !defined(ASIO_DISABLE_BOOST_LIMITS)
-# if !defined(ASIO_HAS_BOOST_LIMITS)
+#if !defined(ASIO_HAS_BOOST_LIMITS)
+# if !defined(ASIO_DISABLE_BOOST_LIMITS)
 #  define ASIO_HAS_BOOST_LIMITS 1
-# endif // !defined(ASIO_HAS_BOOST_LIMITS)
-#endif // !defined(ASIO_DISABLE_BOOST_LIMITS)
+# endif // !defined(ASIO_DISABLE_BOOST_LIMITS)
+#endif // !defined(ASIO_HAS_BOOST_LIMITS)
 
 // Boost throw_exception function.
-#if !defined(ASIO_DISABLE_BOOST_THROW_EXCEPTION)
-# if !defined(ASIO_HAS_BOOST_THROW_EXCEPTION)
+#if !defined(ASIO_HAS_BOOST_THROW_EXCEPTION)
+# if !defined(ASIO_DISABLE_BOOST_THROW_EXCEPTION)
 #  define ASIO_HAS_BOOST_THROW_EXCEPTION 1
-# endif // !defined(ASIO_HAS_BOOST_THROW_EXCEPTION)
-#endif // !defined(ASIO_DISABLE_BOOST_THROW_EXCEPTION)
+# endif // !defined(ASIO_DISABLE_BOOST_THROW_EXCEPTION)
+#endif // !defined(ASIO_HAS_BOOST_THROW_EXCEPTION)
 
 // Boost regex library.
-#if !defined(ASIO_DISABLE_BOOST_REGEX)
-# if !defined(ASIO_HAS_BOOST_REGEX)
+#if !defined(ASIO_HAS_BOOST_REGEX)
+# if !defined(ASIO_DISABLE_BOOST_REGEX)
 #  define ASIO_HAS_BOOST_REGEX 1
-# endif // !defined(ASIO_HAS_BOOST_REGEX)
-#endif // !defined(ASIO_DISABLE_BOOST_REGEX)
+# endif // !defined(ASIO_DISABLE_BOOST_REGEX)
+#endif // !defined(ASIO_HAS_BOOST_REGEX)
 
 // Boost bind function.
-#if !defined(ASIO_DISABLE_BOOST_BIND)
-# if !defined(ASIO_HAS_BOOST_BIND)
+#if !defined(ASIO_HAS_BOOST_BIND)
+# if !defined(ASIO_DISABLE_BOOST_BIND)
 #  define ASIO_HAS_BOOST_BIND 1
-# endif // !defined(ASIO_HAS_BOOST_BIND)
-#endif // !defined(ASIO_DISABLE_BOOST_BIND)
+# endif // !defined(ASIO_DISABLE_BOOST_BIND)
+#endif // !defined(ASIO_HAS_BOOST_BIND)
 
 // Boost's BOOST_WORKAROUND macro.
-#if !defined(ASIO_DISABLE_BOOST_WORKAROUND)
-# if !defined(ASIO_HAS_BOOST_WORKAROUND)
+#if !defined(ASIO_HAS_BOOST_WORKAROUND)
+# if !defined(ASIO_DISABLE_BOOST_WORKAROUND)
 #  define ASIO_HAS_BOOST_WORKAROUND 1
-# endif // !defined(ASIO_HAS_BOOST_WORKAROUND)
-#endif // !defined(ASIO_DISABLE_BOOST_WORKAROUND)
+# endif // !defined(ASIO_DISABLE_BOOST_WORKAROUND)
+#endif // !defined(ASIO_HAS_BOOST_WORKAROUND)
 
 // Microsoft Visual C++'s secure C runtime library.
-#if !defined(ASIO_DISABLE_SECURE_RTL)
-# if defined(ASIO_MSVC) \
-  && (ASIO_MSVC >= 1400) \
-  && !defined(UNDER_CE)
-#  if !defined(ASIO_HAS_SECURE_RTL)
+#if !defined(ASIO_HAS_SECURE_RTL)
+# if !defined(ASIO_DISABLE_SECURE_RTL)
+#  if defined(ASIO_MSVC) \
+    && (ASIO_MSVC >= 1400) \
+    && !defined(UNDER_CE)
 #   define ASIO_HAS_SECURE_RTL 1
-#  endif // !defined(ASIO_HAS_SECURE_RTL)
-# endif // defined(ASIO_MSVC)
-        // && (ASIO_MSVC >= 1400)
-        // && !defined(UNDER_CE)
-#endif // !defined(ASIO_DISABLE_SECURE_RTL)
+#  endif // defined(ASIO_MSVC)
+         // && (ASIO_MSVC >= 1400)
+         // && !defined(UNDER_CE)
+# endif // !defined(ASIO_DISABLE_SECURE_RTL)
+#endif // !defined(ASIO_HAS_SECURE_RTL)
 
 // Handler hooking. Disabled for ancient Borland C++ and gcc compilers.
-#if !defined(ASIO_DISABLE_HANDLER_HOOKS)
-# if defined(__GNUC__)
-#  if (__GNUC__ >= 3)
-#   if !defined(ASIO_HAS_HANDLER_HOOKS)
+#if !defined(ASIO_HAS_HANDLER_HOOKS)
+# if !defined(ASIO_DISABLE_HANDLER_HOOKS)
+#  if defined(__GNUC__)
+#   if (__GNUC__ >= 3)
 #    define ASIO_HAS_HANDLER_HOOKS 1
-#   endif // !defined(ASIO_HAS_HANDLER_HOOKS)
-#  endif // (__GNUC__ >= 3)
-# elif !defined(__BORLANDC__)
-#  if !defined(ASIO_HAS_HANDLER_HOOKS)
+#   endif // (__GNUC__ >= 3)
+#  elif !defined(__BORLANDC__)
 #   define ASIO_HAS_HANDLER_HOOKS 1
-#  endif // !defined(ASIO_HAS_HANDLER_HOOKS)
-# endif // !defined(__BORLANDC__)
-#endif // !defined(ASIO_DISABLE_HANDLER_HOOKS)
+#  endif // !defined(__BORLANDC__)
+# endif // !defined(ASIO_DISABLE_HANDLER_HOOKS)
+#endif // !defined(ASIO_HAS_HANDLER_HOOKS)
 
 #endif // ASIO_DETAIL_CONFIG_HPP
