@@ -28,8 +28,10 @@ nobase_include_HEADERS = \
 	asio/datagram_socket_service.hpp \
 	asio/deadline_timer.hpp \
 	asio/deadline_timer_service.hpp \
+	asio/detail/addressof.hpp \
 	asio/detail/array_fwd.hpp \
 	asio/detail/array.hpp \
+	asio/detail/assert.hpp \
 	asio/detail/atomic_count.hpp \
 	asio/detail/base_from_completion_cond.hpp \
 	asio/detail/bind_handler.hpp \
@@ -41,6 +43,7 @@ nobase_include_HEADERS = \
 	asio/detail/completion_handler.hpp \
 	asio/detail/config.hpp \
 	asio/detail/consuming_buffers.hpp \
+	asio/detail/cstdint.hpp \
 	asio/detail/date_time_fwd.hpp \
 	asio/detail/deadline_timer_service.hpp \
 	asio/detail/dependent_type.hpp \
@@ -55,6 +58,7 @@ nobase_include_HEADERS = \
 	asio/detail/event.hpp \
 	asio/detail/fd_set_adapter.hpp \
 	asio/detail/fenced_block.hpp \
+	asio/detail/function.hpp \
 	asio/detail/gcc_arm_fenced_block.hpp \
 	asio/detail/gcc_hppa_fenced_block.hpp \
 	asio/detail/gcc_sync_fenced_block.hpp \
@@ -111,6 +115,7 @@ nobase_include_HEADERS = \
 	asio/detail/io_control.hpp \
 	asio/detail/kqueue_reactor_fwd.hpp \
 	asio/detail/kqueue_reactor.hpp \
+	asio/detail/limits.hpp \
 	asio/detail/local_free_on_block_exit.hpp \
 	asio/detail/macos_fenced_block.hpp \
 	asio/detail/mutex.hpp \
@@ -183,6 +188,7 @@ nobase_include_HEADERS = \
 	asio/detail/task_io_service_operation.hpp \
 	asio/detail/thread.hpp \
 	asio/detail/throw_error.hpp \
+	asio/detail/throw_exception.hpp \
 	asio/detail/timer_queue_base.hpp \
 	asio/detail/timer_queue_fwd.hpp \
 	asio/detail/timer_queue.hpp \
@@ -191,6 +197,7 @@ nobase_include_HEADERS = \
 	asio/detail/timer_scheduler_fwd.hpp \
 	asio/detail/timer_scheduler.hpp \
 	asio/detail/tss_ptr.hpp \
+	asio/detail/type_traits.hpp \
 	asio/detail/wait_handler.hpp \
 	asio/detail/wait_op.hpp \
 	asio/detail/weak_ptr.hpp \
