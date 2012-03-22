@@ -246,7 +246,7 @@ void test()
   // On Linux, only root can set SO_DEBUG.
   bool not_root = (ec == asio::error::access_denied);
   ASIO_CHECK(!ec || not_root);
-  BOOST_WARN_MESSAGE(!ec, "Must be root to set debug socket option");
+  ASIO_WARN_MESSAGE(!ec, "Must be root to set debug socket option");
 #else // defined(__linux__)
 # if defined(ASIO_WINDOWS) && defined(UNDER_CE)
   // Option is not supported under Windows CE.

@@ -48,6 +48,9 @@
 #define ASIO_CHECK_MESSAGE(expr, message) \
   do { if (!(expr)) { std::cout << message << std::endl; assert(expr); } } while (0)
 
+#define ASIO_WARN_MESSAGE(expr, message) \
+  do { if (!(expr)) { std::cout << message << std::endl; } } while (0)
+
 #define ASIO_ERROR(message) assert(0 && message)
 
 #define ASIO_TEST_SUITE(name, tests) \
@@ -71,6 +74,8 @@ using boost::unit_test::test_suite;
 #define ASIO_CHECK(expr) BOOST_CHECK(expr)
 
 #define ASIO_CHECK_MESSAGE(expr, msg) BOOST_CHECK_MESSAGE(expr, msg)
+
+#define ASIO_WARN_MESSAGE(expr, msg) BOOST_WARN_MESSAGE(expr, msg)
 
 #define ASIO_ERROR(expr) BOOST_ERROR(expr)
 
