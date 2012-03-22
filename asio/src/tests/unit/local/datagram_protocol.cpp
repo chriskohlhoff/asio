@@ -16,7 +16,6 @@
 // Test that header file is self-contained.
 #include "asio/local/datagram_protocol.hpp"
 
-#include <boost/bind.hpp>
 #include <cstring>
 #include "asio/io_service.hpp"
 #include "../unit_test.hpp"
@@ -225,9 +224,8 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("local/datagram_protocol");
-  test->add(BOOST_TEST_CASE(&local_datagram_protocol_socket_compile::test));
-  return test;
-}
+ASIO_TEST_SUITE
+(
+  "local/datagram_protocol",
+  ASIO_TEST_CASE(local_datagram_protocol_socket_compile::test)
+)

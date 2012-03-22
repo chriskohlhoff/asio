@@ -16,14 +16,18 @@
 // Test that header file is self-contained.
 #include "asio/buffered_read_stream.hpp"
 
-#include <boost/bind.hpp>
 #include <cstring>
 #include "asio/buffer.hpp"
 #include "asio/io_service.hpp"
 #include "asio/ip/tcp.hpp"
-#include "asio/placeholders.hpp"
 #include "asio/system_error.hpp"
 #include "unit_test.hpp"
+
+#if defined(ASIO_HAS_BOOST_BIND)
+# include <boost/bind.hpp>
+#else // defined(ASIO_HAS_BOOST_BIND)
+# include <functional>
+#endif // defined(ASIO_HAS_BOOST_BIND)
 
 typedef asio::buffered_read_stream<
     asio::ip::tcp::socket> stream_type;
@@ -66,9 +70,9 @@ void test_sync_operations()
         asio::buffer(read_buf + bytes_read));
   }
 
-  BOOST_CHECK(bytes_written == sizeof(write_data));
-  BOOST_CHECK(bytes_read == sizeof(read_data));
-  BOOST_CHECK(memcmp(write_data, read_data, sizeof(write_data)) == 0);
+  ASIO_CHECK(bytes_written == sizeof(write_data));
+  ASIO_CHECK(bytes_read == sizeof(read_data));
+  ASIO_CHECK(memcmp(write_data, read_data, sizeof(write_data)) == 0);
 
   bytes_written = 0;
   while (bytes_written < sizeof(write_data))
@@ -84,31 +88,31 @@ void test_sync_operations()
         asio::buffer(read_buf + bytes_read));
   }
 
-  BOOST_CHECK(bytes_written == sizeof(write_data));
-  BOOST_CHECK(bytes_read == sizeof(read_data));
-  BOOST_CHECK(memcmp(write_data, read_data, sizeof(write_data)) == 0);
+  ASIO_CHECK(bytes_written == sizeof(write_data));
+  ASIO_CHECK(bytes_read == sizeof(read_data));
+  ASIO_CHECK(memcmp(write_data, read_data, sizeof(write_data)) == 0);
 
   server_socket.close();
   asio::error_code error;
   bytes_read = client_socket.read_some(
       asio::buffer(read_buf), error);
 
-  BOOST_CHECK(bytes_read == 0);
-  BOOST_CHECK(error == asio::error::eof);
+  ASIO_CHECK(bytes_read == 0);
+  ASIO_CHECK(error == asio::error::eof);
 
   client_socket.close(error);
 }
 
 void handle_accept(const asio::error_code& e)
 {
-  BOOST_CHECK(!e);
+  ASIO_CHECK(!e);
 }
 
 void handle_write(const asio::error_code& e,
     std::size_t bytes_transferred,
     std::size_t* total_bytes_written)
 {
-  BOOST_CHECK(!e);
+  ASIO_CHECK(!e);
   if (e)
     throw asio::system_error(e); // Terminate test.
   *total_bytes_written += bytes_transferred;
@@ -118,7 +122,7 @@ void handle_read(const asio::error_code& e,
     std::size_t bytes_transferred,
     std::size_t* total_bytes_read)
 {
-  BOOST_CHECK(!e);
+  ASIO_CHECK(!e);
   if (e)
     throw asio::system_error(e); // Terminate test.
   *total_bytes_read += bytes_transferred;
@@ -127,13 +131,21 @@ void handle_read(const asio::error_code& e,
 void handle_read_eof(const asio::error_code& e,
     std::size_t bytes_transferred)
 {
-  BOOST_CHECK(e == asio::error::eof);
-  BOOST_CHECK(bytes_transferred == 0);
+  ASIO_CHECK(e == asio::error::eof);
+  ASIO_CHECK(bytes_transferred == 0);
 }
 
 void test_async_operations()
 {
   using namespace std; // For memcmp.
+
+#if defined(ASIO_HAS_BOOST_BIND)
+  namespace bindns = boost;
+#else // defined(ASIO_HAS_BOOST_BIND)
+  namespace bindns = std;
+  using std::placeholders::_1;
+  using std::placeholders::_2;
+#endif // defined(ASIO_HAS_BOOST_BIND)
 
   asio::io_service io_service;
 
@@ -159,8 +171,7 @@ void test_async_operations()
   {
     client_socket.async_write_some(
         asio::buffer(write_buf + bytes_written),
-        boost::bind(handle_write, asio::placeholders::error,
-          asio::placeholders::bytes_transferred, &bytes_written));
+        bindns::bind(handle_write, _1, _2, &bytes_written));
     io_service.run();
     io_service.reset();
   }
@@ -173,23 +184,21 @@ void test_async_operations()
   {
     server_socket.async_read_some(
         asio::buffer(read_buf + bytes_read),
-        boost::bind(handle_read, asio::placeholders::error,
-          asio::placeholders::bytes_transferred, &bytes_read));
+        bindns::bind(handle_read, _1, _2, &bytes_read));
     io_service.run();
     io_service.reset();
   }
 
-  BOOST_CHECK(bytes_written == sizeof(write_data));
-  BOOST_CHECK(bytes_read == sizeof(read_data));
-  BOOST_CHECK(memcmp(write_data, read_data, sizeof(write_data)) == 0);
+  ASIO_CHECK(bytes_written == sizeof(write_data));
+  ASIO_CHECK(bytes_read == sizeof(read_data));
+  ASIO_CHECK(memcmp(write_data, read_data, sizeof(write_data)) == 0);
 
   bytes_written = 0;
   while (bytes_written < sizeof(write_data))
   {
     server_socket.async_write_some(
         asio::buffer(write_buf + bytes_written),
-        boost::bind(handle_write, asio::placeholders::error,
-          asio::placeholders::bytes_transferred, &bytes_written));
+        bindns::bind(handle_write, _1, _2, &bytes_written));
     io_service.run();
     io_service.reset();
   }
@@ -199,24 +208,22 @@ void test_async_operations()
   {
     client_socket.async_read_some(
         asio::buffer(read_buf + bytes_read),
-        boost::bind(handle_read, asio::placeholders::error,
-          asio::placeholders::bytes_transferred, &bytes_read));
+        bindns::bind(handle_read, _1, _2, &bytes_read));
     io_service.run();
     io_service.reset();
   }
 
-  BOOST_CHECK(bytes_written == sizeof(write_data));
-  BOOST_CHECK(bytes_read == sizeof(read_data));
-  BOOST_CHECK(memcmp(write_data, read_data, sizeof(write_data)) == 0);
+  ASIO_CHECK(bytes_written == sizeof(write_data));
+  ASIO_CHECK(bytes_read == sizeof(read_data));
+  ASIO_CHECK(memcmp(write_data, read_data, sizeof(write_data)) == 0);
 
   server_socket.close();
   client_socket.async_read_some(asio::buffer(read_buf), handle_read_eof);
 }
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("buffered_read_stream");
-  test->add(BOOST_TEST_CASE(&test_sync_operations));
-  test->add(BOOST_TEST_CASE(&test_async_operations));
-  return test;
-}
+ASIO_TEST_SUITE
+(
+  "buffered_read_stream",
+  ASIO_TEST_CASE(test_sync_operations)
+  ASIO_TEST_CASE(test_async_operations)
+)

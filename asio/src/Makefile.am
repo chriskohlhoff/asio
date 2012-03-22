@@ -104,6 +104,12 @@ check_PROGRAMS = \
 	tests/unit/write_at
 
 noinst_PROGRAMS = \
+	examples/iostreams/daytime_client \
+	examples/iostreams/daytime_server
+
+if !STANDALONE
+
+noinst_PROGRAMS += \
 	tests/latency/tcp_client \
 	tests/latency/tcp_server \
 	tests/latency/udp_client \
@@ -128,8 +134,6 @@ noinst_PROGRAMS = \
 	examples/http/server4/http_server \
 	examples/icmp/ping \
 	examples/invocation/prioritised_handlers \
-	examples/iostreams/daytime_client \
-	examples/iostreams/daytime_server \
 	examples/iostreams/http_client \
 	examples/multicast/receiver \
 	examples/multicast/sender \
@@ -172,6 +176,8 @@ noinst_PROGRAMS += \
 	examples/windows/transmit_file
 endif
 
+endif
+
 if HAVE_OPENSSL
 
 check_PROGRAMS += \
@@ -184,9 +190,13 @@ check_PROGRAMS += \
 	tests/unit/ssl/stream_service \
 	tests/unit/ssl/stream
 
+if !STANDALONE
+
 noinst_PROGRAMS += \
 	examples/ssl/client \
 	examples/ssl/server
+
+endif
 
 endif
 

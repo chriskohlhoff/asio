@@ -18,9 +18,8 @@
 
 #include "unit_test.hpp"
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("seq_packet_socket_service");
-  test->add(BOOST_TEST_CASE(&null_test));
-  return test;
-}
+ASIO_TEST_SUITE
+(
+  "seq_packet_socket_service",
+  ASIO_TEST_CASE(null_test)
+)

@@ -22,23 +22,23 @@
 void test_error_code(const asio::error_code& code)
 {
   asio::error_code error(code);
-  BOOST_CHECK(code == error);
+  ASIO_CHECK(code == error);
 
-  BOOST_CHECK(!code || error);
-  BOOST_CHECK(!code || !!error);
+  ASIO_CHECK(!code || error);
+  ASIO_CHECK(!code || !!error);
 
   asio::error_code error2(error);
-  BOOST_CHECK(error == error2);
-  BOOST_CHECK(!(error != error2));
+  ASIO_CHECK(error == error2);
+  ASIO_CHECK(!(error != error2));
 
   asio::error_code error3;
   error3 = error;
-  BOOST_CHECK(error == error3);
-  BOOST_CHECK(!(error != error3));
+  ASIO_CHECK(error == error3);
+  ASIO_CHECK(!(error != error3));
 
   std::ostringstream os;
   os << error;
-  BOOST_CHECK(!os.str().empty());
+  ASIO_CHECK(!os.str().empty());
 }
 
 void error_test()
@@ -82,9 +82,8 @@ void error_test()
   test_error_code(asio::error::would_block);
 }
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("error");
-  test->add(BOOST_TEST_CASE(&error_test));
-  return test;
-}
+ASIO_TEST_SUITE
+(
+  "error",
+  ASIO_TEST_CASE(error_test)
+)

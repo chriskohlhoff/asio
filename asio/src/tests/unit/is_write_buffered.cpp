@@ -16,8 +16,6 @@
 // Test that header file is self-contained.
 #include "asio/is_write_buffered.hpp"
 
-#include <boost/bind.hpp>
-#include <boost/noncopyable.hpp>
 #include "asio/buffered_read_stream.hpp"
 #include "asio/buffered_write_stream.hpp"
 #include "asio/io_service.hpp"
@@ -27,7 +25,6 @@
 using namespace std; // For memcmp, memcpy and memset.
 
 class test_stream
-  : private boost::noncopyable
 {
 public:
   typedef asio::io_service io_service_type;
@@ -95,35 +92,34 @@ private:
 
 void is_write_buffered_test()
 {
-  BOOST_CHECK(!asio::is_write_buffered<
+  ASIO_CHECK(!asio::is_write_buffered<
       asio::ip::tcp::socket>::value);
 
-  BOOST_CHECK(!asio::is_write_buffered<
+  ASIO_CHECK(!asio::is_write_buffered<
       asio::buffered_read_stream<
         asio::ip::tcp::socket> >::value);
 
-  BOOST_CHECK(!!asio::is_write_buffered<
+  ASIO_CHECK(!!asio::is_write_buffered<
       asio::buffered_write_stream<
         asio::ip::tcp::socket> >::value);
 
-  BOOST_CHECK(!!asio::is_write_buffered<
+  ASIO_CHECK(!!asio::is_write_buffered<
       asio::buffered_stream<asio::ip::tcp::socket> >::value);
 
-  BOOST_CHECK(!asio::is_write_buffered<test_stream>::value);
+  ASIO_CHECK(!asio::is_write_buffered<test_stream>::value);
 
-  BOOST_CHECK(!asio::is_write_buffered<
+  ASIO_CHECK(!asio::is_write_buffered<
       asio::buffered_read_stream<test_stream> >::value);
 
-  BOOST_CHECK(!!asio::is_write_buffered<
+  ASIO_CHECK(!!asio::is_write_buffered<
       asio::buffered_write_stream<test_stream> >::value);
 
-  BOOST_CHECK(!!asio::is_write_buffered<
+  ASIO_CHECK(!!asio::is_write_buffered<
       asio::buffered_stream<test_stream> >::value);
 }
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("is_write_buffered");
-  test->add(BOOST_TEST_CASE(&is_write_buffered_test));
-  return test;
-}
+ASIO_TEST_SUITE
+(
+  "is_write_buffered",
+  ASIO_TEST_CASE(is_write_buffered_test)
+)

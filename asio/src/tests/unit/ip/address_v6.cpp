@@ -17,6 +17,7 @@
 #include "asio/ip/address_v6.hpp"
 
 #include "../unit_test.hpp"
+#include <sstream>
 
 //------------------------------------------------------------------------------
 
@@ -157,33 +158,33 @@ void test()
   using asio::ip::address_v6;
 
   address_v6 a1;
-  BOOST_CHECK(a1.is_unspecified());
-  BOOST_CHECK(a1.scope_id() == 0);
+  ASIO_CHECK(a1.is_unspecified());
+  ASIO_CHECK(a1.scope_id() == 0);
 
   address_v6::bytes_type b1 = {{ 1, 2, 3, 4, 5,
     6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }};
   address_v6 a2(b1, 12345);
-  BOOST_CHECK(a2.to_bytes()[0] == 1);
-  BOOST_CHECK(a2.to_bytes()[1] == 2);
-  BOOST_CHECK(a2.to_bytes()[2] == 3);
-  BOOST_CHECK(a2.to_bytes()[3] == 4);
-  BOOST_CHECK(a2.to_bytes()[4] == 5);
-  BOOST_CHECK(a2.to_bytes()[5] == 6);
-  BOOST_CHECK(a2.to_bytes()[6] == 7);
-  BOOST_CHECK(a2.to_bytes()[7] == 8);
-  BOOST_CHECK(a2.to_bytes()[8] == 9);
-  BOOST_CHECK(a2.to_bytes()[9] == 10);
-  BOOST_CHECK(a2.to_bytes()[10] == 11);
-  BOOST_CHECK(a2.to_bytes()[11] == 12);
-  BOOST_CHECK(a2.to_bytes()[12] == 13);
-  BOOST_CHECK(a2.to_bytes()[13] == 14);
-  BOOST_CHECK(a2.to_bytes()[14] == 15);
-  BOOST_CHECK(a2.to_bytes()[15] == 16);
-  BOOST_CHECK(a2.scope_id() == 12345);
+  ASIO_CHECK(a2.to_bytes()[0] == 1);
+  ASIO_CHECK(a2.to_bytes()[1] == 2);
+  ASIO_CHECK(a2.to_bytes()[2] == 3);
+  ASIO_CHECK(a2.to_bytes()[3] == 4);
+  ASIO_CHECK(a2.to_bytes()[4] == 5);
+  ASIO_CHECK(a2.to_bytes()[5] == 6);
+  ASIO_CHECK(a2.to_bytes()[6] == 7);
+  ASIO_CHECK(a2.to_bytes()[7] == 8);
+  ASIO_CHECK(a2.to_bytes()[8] == 9);
+  ASIO_CHECK(a2.to_bytes()[9] == 10);
+  ASIO_CHECK(a2.to_bytes()[10] == 11);
+  ASIO_CHECK(a2.to_bytes()[11] == 12);
+  ASIO_CHECK(a2.to_bytes()[12] == 13);
+  ASIO_CHECK(a2.to_bytes()[13] == 14);
+  ASIO_CHECK(a2.to_bytes()[14] == 15);
+  ASIO_CHECK(a2.to_bytes()[15] == 16);
+  ASIO_CHECK(a2.scope_id() == 12345);
 
   address_v6 a3;
   a3.scope_id(12345);
-  BOOST_CHECK(a3.scope_id() == 12345);
+  ASIO_CHECK(a3.scope_id() == 12345);
 
   address_v6 unspecified_address;
   address_v6::bytes_type loopback_bytes = {{ 0 }};
@@ -213,161 +214,160 @@ void test()
   address_v6::bytes_type mcast_site_local_bytes = {{ 0xFF, 0x05, 1 }};
   address_v6 mcast_site_local_address(mcast_site_local_bytes);
 
-  BOOST_CHECK(!unspecified_address.is_loopback());
-  BOOST_CHECK(loopback_address.is_loopback());
-  BOOST_CHECK(!link_local_address.is_loopback());
-  BOOST_CHECK(!site_local_address.is_loopback());
-  BOOST_CHECK(!v4_mapped_address.is_loopback());
-  BOOST_CHECK(!v4_compat_address.is_loopback());
-  BOOST_CHECK(!mcast_global_address.is_loopback());
-  BOOST_CHECK(!mcast_link_local_address.is_loopback());
-  BOOST_CHECK(!mcast_node_local_address.is_loopback());
-  BOOST_CHECK(!mcast_org_local_address.is_loopback());
-  BOOST_CHECK(!mcast_site_local_address.is_loopback());
+  ASIO_CHECK(!unspecified_address.is_loopback());
+  ASIO_CHECK(loopback_address.is_loopback());
+  ASIO_CHECK(!link_local_address.is_loopback());
+  ASIO_CHECK(!site_local_address.is_loopback());
+  ASIO_CHECK(!v4_mapped_address.is_loopback());
+  ASIO_CHECK(!v4_compat_address.is_loopback());
+  ASIO_CHECK(!mcast_global_address.is_loopback());
+  ASIO_CHECK(!mcast_link_local_address.is_loopback());
+  ASIO_CHECK(!mcast_node_local_address.is_loopback());
+  ASIO_CHECK(!mcast_org_local_address.is_loopback());
+  ASIO_CHECK(!mcast_site_local_address.is_loopback());
 
-  BOOST_CHECK(unspecified_address.is_unspecified());
-  BOOST_CHECK(!loopback_address.is_unspecified());
-  BOOST_CHECK(!link_local_address.is_unspecified());
-  BOOST_CHECK(!site_local_address.is_unspecified());
-  BOOST_CHECK(!v4_mapped_address.is_unspecified());
-  BOOST_CHECK(!v4_compat_address.is_unspecified());
-  BOOST_CHECK(!mcast_global_address.is_unspecified());
-  BOOST_CHECK(!mcast_link_local_address.is_unspecified());
-  BOOST_CHECK(!mcast_node_local_address.is_unspecified());
-  BOOST_CHECK(!mcast_org_local_address.is_unspecified());
-  BOOST_CHECK(!mcast_site_local_address.is_unspecified());
+  ASIO_CHECK(unspecified_address.is_unspecified());
+  ASIO_CHECK(!loopback_address.is_unspecified());
+  ASIO_CHECK(!link_local_address.is_unspecified());
+  ASIO_CHECK(!site_local_address.is_unspecified());
+  ASIO_CHECK(!v4_mapped_address.is_unspecified());
+  ASIO_CHECK(!v4_compat_address.is_unspecified());
+  ASIO_CHECK(!mcast_global_address.is_unspecified());
+  ASIO_CHECK(!mcast_link_local_address.is_unspecified());
+  ASIO_CHECK(!mcast_node_local_address.is_unspecified());
+  ASIO_CHECK(!mcast_org_local_address.is_unspecified());
+  ASIO_CHECK(!mcast_site_local_address.is_unspecified());
 
-  BOOST_CHECK(!unspecified_address.is_link_local());
-  BOOST_CHECK(!loopback_address.is_link_local());
-  BOOST_CHECK(link_local_address.is_link_local());
-  BOOST_CHECK(!site_local_address.is_link_local());
-  BOOST_CHECK(!v4_mapped_address.is_link_local());
-  BOOST_CHECK(!v4_compat_address.is_link_local());
-  BOOST_CHECK(!mcast_global_address.is_link_local());
-  BOOST_CHECK(!mcast_link_local_address.is_link_local());
-  BOOST_CHECK(!mcast_node_local_address.is_link_local());
-  BOOST_CHECK(!mcast_org_local_address.is_link_local());
-  BOOST_CHECK(!mcast_site_local_address.is_link_local());
+  ASIO_CHECK(!unspecified_address.is_link_local());
+  ASIO_CHECK(!loopback_address.is_link_local());
+  ASIO_CHECK(link_local_address.is_link_local());
+  ASIO_CHECK(!site_local_address.is_link_local());
+  ASIO_CHECK(!v4_mapped_address.is_link_local());
+  ASIO_CHECK(!v4_compat_address.is_link_local());
+  ASIO_CHECK(!mcast_global_address.is_link_local());
+  ASIO_CHECK(!mcast_link_local_address.is_link_local());
+  ASIO_CHECK(!mcast_node_local_address.is_link_local());
+  ASIO_CHECK(!mcast_org_local_address.is_link_local());
+  ASIO_CHECK(!mcast_site_local_address.is_link_local());
 
-  BOOST_CHECK(!unspecified_address.is_site_local());
-  BOOST_CHECK(!loopback_address.is_site_local());
-  BOOST_CHECK(!link_local_address.is_site_local());
-  BOOST_CHECK(site_local_address.is_site_local());
-  BOOST_CHECK(!v4_mapped_address.is_site_local());
-  BOOST_CHECK(!v4_compat_address.is_site_local());
-  BOOST_CHECK(!mcast_global_address.is_site_local());
-  BOOST_CHECK(!mcast_link_local_address.is_site_local());
-  BOOST_CHECK(!mcast_node_local_address.is_site_local());
-  BOOST_CHECK(!mcast_org_local_address.is_site_local());
-  BOOST_CHECK(!mcast_site_local_address.is_site_local());
+  ASIO_CHECK(!unspecified_address.is_site_local());
+  ASIO_CHECK(!loopback_address.is_site_local());
+  ASIO_CHECK(!link_local_address.is_site_local());
+  ASIO_CHECK(site_local_address.is_site_local());
+  ASIO_CHECK(!v4_mapped_address.is_site_local());
+  ASIO_CHECK(!v4_compat_address.is_site_local());
+  ASIO_CHECK(!mcast_global_address.is_site_local());
+  ASIO_CHECK(!mcast_link_local_address.is_site_local());
+  ASIO_CHECK(!mcast_node_local_address.is_site_local());
+  ASIO_CHECK(!mcast_org_local_address.is_site_local());
+  ASIO_CHECK(!mcast_site_local_address.is_site_local());
 
-  BOOST_CHECK(!unspecified_address.is_v4_mapped());
-  BOOST_CHECK(!loopback_address.is_v4_mapped());
-  BOOST_CHECK(!link_local_address.is_v4_mapped());
-  BOOST_CHECK(!site_local_address.is_v4_mapped());
-  BOOST_CHECK(v4_mapped_address.is_v4_mapped());
-  BOOST_CHECK(!v4_compat_address.is_v4_mapped());
-  BOOST_CHECK(!mcast_global_address.is_v4_mapped());
-  BOOST_CHECK(!mcast_link_local_address.is_v4_mapped());
-  BOOST_CHECK(!mcast_node_local_address.is_v4_mapped());
-  BOOST_CHECK(!mcast_org_local_address.is_v4_mapped());
-  BOOST_CHECK(!mcast_site_local_address.is_v4_mapped());
+  ASIO_CHECK(!unspecified_address.is_v4_mapped());
+  ASIO_CHECK(!loopback_address.is_v4_mapped());
+  ASIO_CHECK(!link_local_address.is_v4_mapped());
+  ASIO_CHECK(!site_local_address.is_v4_mapped());
+  ASIO_CHECK(v4_mapped_address.is_v4_mapped());
+  ASIO_CHECK(!v4_compat_address.is_v4_mapped());
+  ASIO_CHECK(!mcast_global_address.is_v4_mapped());
+  ASIO_CHECK(!mcast_link_local_address.is_v4_mapped());
+  ASIO_CHECK(!mcast_node_local_address.is_v4_mapped());
+  ASIO_CHECK(!mcast_org_local_address.is_v4_mapped());
+  ASIO_CHECK(!mcast_site_local_address.is_v4_mapped());
 
-  BOOST_CHECK(!unspecified_address.is_v4_compatible());
-  BOOST_CHECK(!loopback_address.is_v4_compatible());
-  BOOST_CHECK(!link_local_address.is_v4_compatible());
-  BOOST_CHECK(!site_local_address.is_v4_compatible());
-  BOOST_CHECK(!v4_mapped_address.is_v4_compatible());
-  BOOST_CHECK(v4_compat_address.is_v4_compatible());
-  BOOST_CHECK(!mcast_global_address.is_v4_compatible());
-  BOOST_CHECK(!mcast_link_local_address.is_v4_compatible());
-  BOOST_CHECK(!mcast_node_local_address.is_v4_compatible());
-  BOOST_CHECK(!mcast_org_local_address.is_v4_compatible());
-  BOOST_CHECK(!mcast_site_local_address.is_v4_compatible());
+  ASIO_CHECK(!unspecified_address.is_v4_compatible());
+  ASIO_CHECK(!loopback_address.is_v4_compatible());
+  ASIO_CHECK(!link_local_address.is_v4_compatible());
+  ASIO_CHECK(!site_local_address.is_v4_compatible());
+  ASIO_CHECK(!v4_mapped_address.is_v4_compatible());
+  ASIO_CHECK(v4_compat_address.is_v4_compatible());
+  ASIO_CHECK(!mcast_global_address.is_v4_compatible());
+  ASIO_CHECK(!mcast_link_local_address.is_v4_compatible());
+  ASIO_CHECK(!mcast_node_local_address.is_v4_compatible());
+  ASIO_CHECK(!mcast_org_local_address.is_v4_compatible());
+  ASIO_CHECK(!mcast_site_local_address.is_v4_compatible());
 
-  BOOST_CHECK(!unspecified_address.is_multicast());
-  BOOST_CHECK(!loopback_address.is_multicast());
-  BOOST_CHECK(!link_local_address.is_multicast());
-  BOOST_CHECK(!site_local_address.is_multicast());
-  BOOST_CHECK(!v4_mapped_address.is_multicast());
-  BOOST_CHECK(!v4_compat_address.is_multicast());
-  BOOST_CHECK(mcast_global_address.is_multicast());
-  BOOST_CHECK(mcast_link_local_address.is_multicast());
-  BOOST_CHECK(mcast_node_local_address.is_multicast());
-  BOOST_CHECK(mcast_org_local_address.is_multicast());
-  BOOST_CHECK(mcast_site_local_address.is_multicast());
+  ASIO_CHECK(!unspecified_address.is_multicast());
+  ASIO_CHECK(!loopback_address.is_multicast());
+  ASIO_CHECK(!link_local_address.is_multicast());
+  ASIO_CHECK(!site_local_address.is_multicast());
+  ASIO_CHECK(!v4_mapped_address.is_multicast());
+  ASIO_CHECK(!v4_compat_address.is_multicast());
+  ASIO_CHECK(mcast_global_address.is_multicast());
+  ASIO_CHECK(mcast_link_local_address.is_multicast());
+  ASIO_CHECK(mcast_node_local_address.is_multicast());
+  ASIO_CHECK(mcast_org_local_address.is_multicast());
+  ASIO_CHECK(mcast_site_local_address.is_multicast());
 
-  BOOST_CHECK(!unspecified_address.is_multicast_global());
-  BOOST_CHECK(!loopback_address.is_multicast_global());
-  BOOST_CHECK(!link_local_address.is_multicast_global());
-  BOOST_CHECK(!site_local_address.is_multicast_global());
-  BOOST_CHECK(!v4_mapped_address.is_multicast_global());
-  BOOST_CHECK(!v4_compat_address.is_multicast_global());
-  BOOST_CHECK(mcast_global_address.is_multicast_global());
-  BOOST_CHECK(!mcast_link_local_address.is_multicast_global());
-  BOOST_CHECK(!mcast_node_local_address.is_multicast_global());
-  BOOST_CHECK(!mcast_org_local_address.is_multicast_global());
-  BOOST_CHECK(!mcast_site_local_address.is_multicast_global());
+  ASIO_CHECK(!unspecified_address.is_multicast_global());
+  ASIO_CHECK(!loopback_address.is_multicast_global());
+  ASIO_CHECK(!link_local_address.is_multicast_global());
+  ASIO_CHECK(!site_local_address.is_multicast_global());
+  ASIO_CHECK(!v4_mapped_address.is_multicast_global());
+  ASIO_CHECK(!v4_compat_address.is_multicast_global());
+  ASIO_CHECK(mcast_global_address.is_multicast_global());
+  ASIO_CHECK(!mcast_link_local_address.is_multicast_global());
+  ASIO_CHECK(!mcast_node_local_address.is_multicast_global());
+  ASIO_CHECK(!mcast_org_local_address.is_multicast_global());
+  ASIO_CHECK(!mcast_site_local_address.is_multicast_global());
 
-  BOOST_CHECK(!unspecified_address.is_multicast_link_local());
-  BOOST_CHECK(!loopback_address.is_multicast_link_local());
-  BOOST_CHECK(!link_local_address.is_multicast_link_local());
-  BOOST_CHECK(!site_local_address.is_multicast_link_local());
-  BOOST_CHECK(!v4_mapped_address.is_multicast_link_local());
-  BOOST_CHECK(!v4_compat_address.is_multicast_link_local());
-  BOOST_CHECK(!mcast_global_address.is_multicast_link_local());
-  BOOST_CHECK(mcast_link_local_address.is_multicast_link_local());
-  BOOST_CHECK(!mcast_node_local_address.is_multicast_link_local());
-  BOOST_CHECK(!mcast_org_local_address.is_multicast_link_local());
-  BOOST_CHECK(!mcast_site_local_address.is_multicast_link_local());
+  ASIO_CHECK(!unspecified_address.is_multicast_link_local());
+  ASIO_CHECK(!loopback_address.is_multicast_link_local());
+  ASIO_CHECK(!link_local_address.is_multicast_link_local());
+  ASIO_CHECK(!site_local_address.is_multicast_link_local());
+  ASIO_CHECK(!v4_mapped_address.is_multicast_link_local());
+  ASIO_CHECK(!v4_compat_address.is_multicast_link_local());
+  ASIO_CHECK(!mcast_global_address.is_multicast_link_local());
+  ASIO_CHECK(mcast_link_local_address.is_multicast_link_local());
+  ASIO_CHECK(!mcast_node_local_address.is_multicast_link_local());
+  ASIO_CHECK(!mcast_org_local_address.is_multicast_link_local());
+  ASIO_CHECK(!mcast_site_local_address.is_multicast_link_local());
 
-  BOOST_CHECK(!unspecified_address.is_multicast_node_local());
-  BOOST_CHECK(!loopback_address.is_multicast_node_local());
-  BOOST_CHECK(!link_local_address.is_multicast_node_local());
-  BOOST_CHECK(!site_local_address.is_multicast_node_local());
-  BOOST_CHECK(!v4_mapped_address.is_multicast_node_local());
-  BOOST_CHECK(!v4_compat_address.is_multicast_node_local());
-  BOOST_CHECK(!mcast_global_address.is_multicast_node_local());
-  BOOST_CHECK(!mcast_link_local_address.is_multicast_node_local());
-  BOOST_CHECK(mcast_node_local_address.is_multicast_node_local());
-  BOOST_CHECK(!mcast_org_local_address.is_multicast_node_local());
-  BOOST_CHECK(!mcast_site_local_address.is_multicast_node_local());
+  ASIO_CHECK(!unspecified_address.is_multicast_node_local());
+  ASIO_CHECK(!loopback_address.is_multicast_node_local());
+  ASIO_CHECK(!link_local_address.is_multicast_node_local());
+  ASIO_CHECK(!site_local_address.is_multicast_node_local());
+  ASIO_CHECK(!v4_mapped_address.is_multicast_node_local());
+  ASIO_CHECK(!v4_compat_address.is_multicast_node_local());
+  ASIO_CHECK(!mcast_global_address.is_multicast_node_local());
+  ASIO_CHECK(!mcast_link_local_address.is_multicast_node_local());
+  ASIO_CHECK(mcast_node_local_address.is_multicast_node_local());
+  ASIO_CHECK(!mcast_org_local_address.is_multicast_node_local());
+  ASIO_CHECK(!mcast_site_local_address.is_multicast_node_local());
 
-  BOOST_CHECK(!unspecified_address.is_multicast_org_local());
-  BOOST_CHECK(!loopback_address.is_multicast_org_local());
-  BOOST_CHECK(!link_local_address.is_multicast_org_local());
-  BOOST_CHECK(!site_local_address.is_multicast_org_local());
-  BOOST_CHECK(!v4_mapped_address.is_multicast_org_local());
-  BOOST_CHECK(!v4_compat_address.is_multicast_org_local());
-  BOOST_CHECK(!mcast_global_address.is_multicast_org_local());
-  BOOST_CHECK(!mcast_link_local_address.is_multicast_org_local());
-  BOOST_CHECK(!mcast_node_local_address.is_multicast_org_local());
-  BOOST_CHECK(mcast_org_local_address.is_multicast_org_local());
-  BOOST_CHECK(!mcast_site_local_address.is_multicast_org_local());
+  ASIO_CHECK(!unspecified_address.is_multicast_org_local());
+  ASIO_CHECK(!loopback_address.is_multicast_org_local());
+  ASIO_CHECK(!link_local_address.is_multicast_org_local());
+  ASIO_CHECK(!site_local_address.is_multicast_org_local());
+  ASIO_CHECK(!v4_mapped_address.is_multicast_org_local());
+  ASIO_CHECK(!v4_compat_address.is_multicast_org_local());
+  ASIO_CHECK(!mcast_global_address.is_multicast_org_local());
+  ASIO_CHECK(!mcast_link_local_address.is_multicast_org_local());
+  ASIO_CHECK(!mcast_node_local_address.is_multicast_org_local());
+  ASIO_CHECK(mcast_org_local_address.is_multicast_org_local());
+  ASIO_CHECK(!mcast_site_local_address.is_multicast_org_local());
 
-  BOOST_CHECK(!unspecified_address.is_multicast_site_local());
-  BOOST_CHECK(!loopback_address.is_multicast_site_local());
-  BOOST_CHECK(!link_local_address.is_multicast_site_local());
-  BOOST_CHECK(!site_local_address.is_multicast_site_local());
-  BOOST_CHECK(!v4_mapped_address.is_multicast_site_local());
-  BOOST_CHECK(!v4_compat_address.is_multicast_site_local());
-  BOOST_CHECK(!mcast_global_address.is_multicast_site_local());
-  BOOST_CHECK(!mcast_link_local_address.is_multicast_site_local());
-  BOOST_CHECK(!mcast_node_local_address.is_multicast_site_local());
-  BOOST_CHECK(!mcast_org_local_address.is_multicast_site_local());
-  BOOST_CHECK(mcast_site_local_address.is_multicast_site_local());
+  ASIO_CHECK(!unspecified_address.is_multicast_site_local());
+  ASIO_CHECK(!loopback_address.is_multicast_site_local());
+  ASIO_CHECK(!link_local_address.is_multicast_site_local());
+  ASIO_CHECK(!site_local_address.is_multicast_site_local());
+  ASIO_CHECK(!v4_mapped_address.is_multicast_site_local());
+  ASIO_CHECK(!v4_compat_address.is_multicast_site_local());
+  ASIO_CHECK(!mcast_global_address.is_multicast_site_local());
+  ASIO_CHECK(!mcast_link_local_address.is_multicast_site_local());
+  ASIO_CHECK(!mcast_node_local_address.is_multicast_site_local());
+  ASIO_CHECK(!mcast_org_local_address.is_multicast_site_local());
+  ASIO_CHECK(mcast_site_local_address.is_multicast_site_local());
 
-  BOOST_CHECK(address_v6::loopback().is_loopback());
+  ASIO_CHECK(address_v6::loopback().is_loopback());
 }
 
 } // namespace ip_address_v6_runtime
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("ip/address_v6");
-  test->add(BOOST_TEST_CASE(&ip_address_v6_compile::test));
-  test->add(BOOST_TEST_CASE(&ip_address_v6_runtime::test));
-  return test;
-}
+ASIO_TEST_SUITE
+(
+  "ip/address_v6",
+  ASIO_TEST_CASE(ip_address_v6_compile::test)
+  ASIO_TEST_CASE(ip_address_v6_runtime::test)
+)

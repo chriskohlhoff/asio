@@ -19,9 +19,8 @@
 #include "asio.hpp"
 #include "../unit_test.hpp"
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("windows/basic_random_access_handle");
-  test->add(BOOST_TEST_CASE(&null_test));
-  return test;
-}
+ASIO_TEST_SUITE
+(
+  "windows/basic_random_access_handle",
+  ASIO_TEST_CASE(null_test)
+)

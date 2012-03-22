@@ -87,38 +87,38 @@ void test()
   {
     ip::v6_only v6_only1;
     acceptor_v6.get_option(v6_only1, ec);
-    BOOST_CHECK(!ec);
+    ASIO_CHECK(!ec);
     bool have_dual_stack = !v6_only1.value();
 
     if (have_dual_stack)
     {
       ip::v6_only v6_only2(false);
-      BOOST_CHECK(!v6_only2.value());
-      BOOST_CHECK(!static_cast<bool>(v6_only2));
-      BOOST_CHECK(!v6_only2);
+      ASIO_CHECK(!v6_only2.value());
+      ASIO_CHECK(!static_cast<bool>(v6_only2));
+      ASIO_CHECK(!v6_only2);
       acceptor_v6.set_option(v6_only2, ec);
-      BOOST_CHECK(!ec);
+      ASIO_CHECK(!ec);
 
       ip::v6_only v6_only3;
       acceptor_v6.get_option(v6_only3, ec);
-      BOOST_CHECK(!ec);
-      BOOST_CHECK(!v6_only3.value());
-      BOOST_CHECK(!static_cast<bool>(v6_only3));
-      BOOST_CHECK(!v6_only3);
+      ASIO_CHECK(!ec);
+      ASIO_CHECK(!v6_only3.value());
+      ASIO_CHECK(!static_cast<bool>(v6_only3));
+      ASIO_CHECK(!v6_only3);
 
       ip::v6_only v6_only4(true);
-      BOOST_CHECK(v6_only4.value());
-      BOOST_CHECK(static_cast<bool>(v6_only4));
-      BOOST_CHECK(!!v6_only4);
+      ASIO_CHECK(v6_only4.value());
+      ASIO_CHECK(static_cast<bool>(v6_only4));
+      ASIO_CHECK(!!v6_only4);
       acceptor_v6.set_option(v6_only4, ec);
-      BOOST_CHECK(!ec);
+      ASIO_CHECK(!ec);
 
       ip::v6_only v6_only5;
       acceptor_v6.get_option(v6_only5, ec);
-      BOOST_CHECK(!ec);
-      BOOST_CHECK(v6_only5.value());
-      BOOST_CHECK(static_cast<bool>(v6_only5));
-      BOOST_CHECK(!!v6_only5);
+      ASIO_CHECK(!ec);
+      ASIO_CHECK(v6_only5.value());
+      ASIO_CHECK(static_cast<bool>(v6_only5));
+      ASIO_CHECK(!!v6_only5);
     }
   }
 }
@@ -127,10 +127,9 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("ip/v6_only");
-  test->add(BOOST_TEST_CASE(&ip_v6_only_compile::test));
-  test->add(BOOST_TEST_CASE(&ip_v6_only_runtime::test));
-  return test;
-}
+ASIO_TEST_SUITE
+(
+  "ip/v6_only",
+  ASIO_TEST_CASE(ip_v6_only_compile::test)
+  ASIO_TEST_CASE(ip_v6_only_runtime::test)
+)

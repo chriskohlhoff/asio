@@ -25,39 +25,38 @@ void streambuf_test()
 
   sb.sputn("abcd", 4);
 
-  BOOST_CHECK(sb.size() == 4);
+  ASIO_CHECK(sb.size() == 4);
 
   for (int i = 0; i < 100; ++i)
   {
     sb.consume(3);
 
-    BOOST_CHECK(sb.size() == 1);
+    ASIO_CHECK(sb.size() == 1);
 
     char buf[1];
     sb.sgetn(buf, 1);
 
-    BOOST_CHECK(sb.size() == 0);
+    ASIO_CHECK(sb.size() == 0);
 
     sb.sputn("ab", 2);
 
-    BOOST_CHECK(sb.size() == 2);
+    ASIO_CHECK(sb.size() == 2);
 
     asio::buffer_copy(sb.prepare(10), asio::buffer("cd", 2));
     sb.commit(2);
 
-    BOOST_CHECK(sb.size() == 4);
+    ASIO_CHECK(sb.size() == 4);
   }
 
-  BOOST_CHECK(sb.size() == 4);
+  ASIO_CHECK(sb.size() == 4);
 
   sb.consume(4);
 
-  BOOST_CHECK(sb.size() == 0);
+  ASIO_CHECK(sb.size() == 0);
 }
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("streambuf");
-  test->add(BOOST_TEST_CASE(&streambuf_test));
-  return test;
-}
+ASIO_TEST_SUITE
+(
+  "streambuf",
+  ASIO_TEST_CASE(streambuf_test)
+)
