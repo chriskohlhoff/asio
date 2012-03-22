@@ -23,6 +23,7 @@
 #include <string>
 #include "asio/basic_streambuf.hpp"
 #include "asio/detail/regex_fwd.hpp"
+#include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
 
 #include "asio/detail/push_options.hpp"
