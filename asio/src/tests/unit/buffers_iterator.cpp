@@ -38,7 +38,7 @@ namespace buffers_iterator_compile {
 
 #if defined(ASIO_HAS_BOOST_ARRAY)
 using boost::array;
-#else // defined(ASIO_HAS_BOOST_ARRAY)
+#elif defined(ASIO_HAS_STD_ARRAY)
 using std::array;
 #endif // defined(ASIO_HAS_BOOST_ARRAY)
 using std::vector;

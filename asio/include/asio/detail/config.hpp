@@ -12,6 +12,7 @@
 #define ASIO_DETAIL_CONFIG_HPP
 
 #if defined(ASIO_STANDALONE)
+# define ASIO_DISABLE_BOOST_ARRAY 1
 # define ASIO_DISABLE_BOOST_ASSERT 1
 # define ASIO_DISABLE_BOOST_BIND 1
 # define ASIO_DISABLE_BOOST_CHRONO 1
@@ -589,6 +590,13 @@
     static const type assignment
 # endif // !defined(ASIO_DISABLE_BOOST_STATIC_CONSTANT)
 #endif // !defined(ASIO_STATIC_CONSTANT)
+
+// Boost array library.
+#if !defined(ASIO_HAS_BOOST_ARRAY)
+# if !defined(ASIO_DISABLE_BOOST_ARRAY)
+#  define ASIO_HAS_BOOST_ARRAY 1
+# endif // !defined(ASIO_DISABLE_BOOST_ARRAY)
+#endif // !defined(ASIO_HAS_BOOST_ARRAY)
 
 // Boost assert macro.
 #if !defined(ASIO_HAS_BOOST_ASSERT)
