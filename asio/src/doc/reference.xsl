@@ -110,7 +110,8 @@
             not(contains(ancestor::*/compoundname, '::detail')) and
             not(contains(ancestor::*/compoundname, '::service::key')) and
             not(contains(ancestor::*/compoundname, '_helper')) and
-            not(contains(name, '_helper'))">
+            not(contains(name, '_helper')) and
+            not(contains(name, 'io_service_impl'))">
           <xsl:call-template name="namespace-memberdef"/>
         </xsl:if>
       </xsl:otherwise>

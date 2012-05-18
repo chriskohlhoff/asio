@@ -1021,6 +1021,9 @@ Start an asynchronous operation to read a certain amount of data from a stream.
 This function is used to asynchronously read a certain number of bytes of data from a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
 
 
+* The supplied buffer is full (that is, it has reached maximum size).
+
+
 * An error occurred.
 
 This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function, and is known as a [*composed operation]. The program must ensure that the stream performs no other read operations (such as async\_read, the stream's async\_read\_some function, or any other composed operations that perform reads) until this operation completes.
@@ -1090,6 +1093,9 @@ Start an asynchronous operation to read a certain amount of data from a stream.
 
 
 This function is used to asynchronously read a certain number of bytes of data from a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
+
+
+* The supplied buffer is full (that is, it has reached maximum size).
 
 
 * The completion\_condition function object returns 0.
@@ -54497,6 +54503,22 @@ Base class for all [link asio.reference.io_service `io_service`] services.
   
 ]
 
+[heading Private Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.io_service__service.fork_service [*fork_service]]]
+    [Handle notification of a fork-related event to perform any necessary housekeeping. ]
+  ]
+  
+  [
+    [[link asio.reference.io_service__service.shutdown_service [*shutdown_service]]]
+    [Destroy all user-defined handler objects owned by the service. ]
+  ]
+  
+]
+
 [heading Requirements]
 
 [*Header: ][^asio/io_service.hpp]
@@ -54552,6 +54574,37 @@ Destructor.
 
 
   virtual ~service();
+
+
+
+[endsect]
+
+
+
+[section:fork_service io_service::service::fork_service]
+
+[indexterm2 fork_service..io_service::service] 
+Handle notification of a fork-related event to perform any necessary housekeeping. 
+
+
+  virtual void fork_service(
+      asio::io_service::fork_event event);
+
+
+This function is not a pure virtual so that services only have to implement it if necessary. The default implementation does nothing. 
+
+
+[endsect]
+
+
+
+[section:shutdown_service io_service::service::shutdown_service]
+
+[indexterm2 shutdown_service..io_service::service] 
+Destroy all user-defined handler objects owned by the service. 
+
+
+  void shutdown_service();
 
 
 
@@ -74871,6 +74924,9 @@ Attempt to read a certain amount of data from a stream before returning.
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
 
 
+* The supplied buffer is full (that is, it has reached maximum size).
+
+
 * An error occurred.
 
 This operation is implemented in terms of zero or more calls to the stream's read\_some function.
@@ -74939,6 +74995,9 @@ Attempt to read a certain amount of data from a stream before returning.
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
 
 
+* The supplied buffer is full (that is, it has reached maximum size).
+
+
 * An error occurred.
 
 This operation is implemented in terms of zero or more calls to the stream's read\_some function.
@@ -74998,6 +75057,9 @@ Attempt to read a certain amount of data from a stream before returning.
 
 
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
+
+
+* The supplied buffer is full (that is, it has reached maximum size).
 
 
 * The completion\_condition function object returns 0.
@@ -75068,6 +75130,9 @@ Attempt to read a certain amount of data from a stream before returning.
 
 
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
+
+
+* The supplied buffer is full (that is, it has reached maximum size).
 
 
 * The completion\_condition function object returns 0.
