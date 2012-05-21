@@ -1586,8 +1586,8 @@
 /doc/asio/reference/datagram_socket_service/endpoint_type.html
 /doc/asio/reference/datagram_socket_service/get_io_service.html
 /doc/asio/reference/datagram_socket_service/get_option.html
-/doc/asio/reference/datagram_socket_service.html
 /doc/asio/reference/DatagramSocketService.html
+/doc/asio/reference/datagram_socket_service.html
 /doc/asio/reference/datagram_socket_service/id.html
 /doc/asio/reference/datagram_socket_service/implementation_type.html
 /doc/asio/reference/datagram_socket_service/io_control.html
@@ -1735,10 +1735,12 @@
 /doc/asio/reference/io_service/run/overload1.html
 /doc/asio/reference/io_service/run/overload2.html
 /doc/asio/reference/io_service__service/
+/doc/asio/reference/io_service__service/fork_service.html
 /doc/asio/reference/io_service__service/get_io_service.html
 /doc/asio/reference/io_service__service.html
 /doc/asio/reference/io_service__service/_service.html
 /doc/asio/reference/io_service__service/service.html
+/doc/asio/reference/io_service__service/shutdown_service.html
 /doc/asio/reference/io_service/stop.html
 /doc/asio/reference/io_service/stopped.html
 /doc/asio/reference/io_service__strand/
@@ -1959,8 +1961,8 @@
 /doc/asio/reference/ip__basic_resolver_iterator/create/overload1.html
 /doc/asio/reference/ip__basic_resolver_iterator/create/overload2.html
 /doc/asio/reference/ip__basic_resolver_iterator/difference_type.html
-/doc/asio/reference/ip__basic_resolver_iterator.html
 /doc/asio/reference/ip__basic_resolver/iterator.html
+/doc/asio/reference/ip__basic_resolver_iterator.html
 /doc/asio/reference/ip__basic_resolver_iterator/iterator_category.html
 /doc/asio/reference/ip__basic_resolver_iterator/operator_arrow_.html
 /doc/asio/reference/ip__basic_resolver_iterator/operator_eq__eq_.html
@@ -1987,8 +1989,8 @@
 /doc/asio/reference/ip__basic_resolver_query/flags.html
 /doc/asio/reference/ip__basic_resolver_query/hints.html
 /doc/asio/reference/ip__basic_resolver_query/host_name.html
-/doc/asio/reference/ip__basic_resolver_query.html
 /doc/asio/reference/ip__basic_resolver/query.html
+/doc/asio/reference/ip__basic_resolver_query.html
 /doc/asio/reference/ip__basic_resolver_query/numeric_host.html
 /doc/asio/reference/ip__basic_resolver_query/numeric_service.html
 /doc/asio/reference/ip__basic_resolver_query/passive.html
@@ -2370,8 +2372,8 @@
 /doc/asio/reference/raw_socket_service/endpoint_type.html
 /doc/asio/reference/raw_socket_service/get_io_service.html
 /doc/asio/reference/raw_socket_service/get_option.html
-/doc/asio/reference/raw_socket_service.html
 /doc/asio/reference/RawSocketService.html
+/doc/asio/reference/raw_socket_service.html
 /doc/asio/reference/raw_socket_service/id.html
 /doc/asio/reference/raw_socket_service/implementation_type.html
 /doc/asio/reference/raw_socket_service/io_control.html
@@ -2450,8 +2452,8 @@
 /doc/asio/reference/seq_packet_socket_service/endpoint_type.html
 /doc/asio/reference/seq_packet_socket_service/get_io_service.html
 /doc/asio/reference/seq_packet_socket_service/get_option.html
-/doc/asio/reference/seq_packet_socket_service.html
 /doc/asio/reference/SeqPacketSocketService.html
+/doc/asio/reference/seq_packet_socket_service.html
 /doc/asio/reference/seq_packet_socket_service/id.html
 /doc/asio/reference/seq_packet_socket_service/implementation_type.html
 /doc/asio/reference/seq_packet_socket_service/io_control.html
@@ -2526,8 +2528,8 @@
 /doc/asio/reference/serial_port_service/destroy.html
 /doc/asio/reference/serial_port_service/get_io_service.html
 /doc/asio/reference/serial_port_service/get_option.html
-/doc/asio/reference/serial_port_service.html
 /doc/asio/reference/SerialPortService.html
+/doc/asio/reference/serial_port_service.html
 /doc/asio/reference/serial_port_service/id.html
 /doc/asio/reference/serial_port_service/implementation_type.html
 /doc/asio/reference/serial_port_service/is_open.html
@@ -2560,8 +2562,8 @@
 /doc/asio/reference/signal_set_service/construct.html
 /doc/asio/reference/signal_set_service/destroy.html
 /doc/asio/reference/signal_set_service/get_io_service.html
-/doc/asio/reference/signal_set_service.html
 /doc/asio/reference/SignalSetService.html
+/doc/asio/reference/signal_set_service.html
 /doc/asio/reference/signal_set_service/id.html
 /doc/asio/reference/signal_set_service/implementation_type.html
 /doc/asio/reference/signal_set_service/remove.html
@@ -2578,8 +2580,8 @@
 /doc/asio/reference/socket_acceptor_service/endpoint_type.html
 /doc/asio/reference/socket_acceptor_service/get_io_service.html
 /doc/asio/reference/socket_acceptor_service/get_option.html
-/doc/asio/reference/socket_acceptor_service.html
 /doc/asio/reference/SocketAcceptorService.html
+/doc/asio/reference/socket_acceptor_service.html
 /doc/asio/reference/socket_acceptor_service/id.html
 /doc/asio/reference/socket_acceptor_service/implementation_type.html
 /doc/asio/reference/socket_acceptor_service/io_control.html
@@ -2800,8 +2802,8 @@
 /doc/asio/reference/stream_socket_service/endpoint_type.html
 /doc/asio/reference/stream_socket_service/get_io_service.html
 /doc/asio/reference/stream_socket_service/get_option.html
-/doc/asio/reference/stream_socket_service.html
 /doc/asio/reference/StreamSocketService.html
+/doc/asio/reference/stream_socket_service.html
 /doc/asio/reference/stream_socket_service/id.html
 /doc/asio/reference/stream_socket_service/implementation_type.html
 /doc/asio/reference/stream_socket_service/io_control.html
@@ -3204,6 +3206,7 @@
 /include/asio/detail/config.hpp
 /include/asio/detail/consuming_buffers.hpp
 /include/asio/detail/deadline_timer_service.hpp
+/include/asio/detail/dependent_type.hpp
 /include/asio/detail/descriptor_ops.hpp
 /include/asio/detail/descriptor_read_op.hpp
 /include/asio/detail/descriptor_write_op.hpp
@@ -3716,6 +3719,7 @@
 /src/Makefile.msc
 /src/tests/
 /src/tests/latency/
+/src/tests/latency/allocator.hpp
 /src/tests/latency/coroutine.hpp
 /src/tests/latency/high_res_clock.hpp
 /src/tests/latency/tcp_client.cpp

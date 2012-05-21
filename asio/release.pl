@@ -348,8 +348,8 @@ sub make_boost_asio_packages
 
 sub create_manifests
 {
-  system("tar tfz $asio_name.tar.gz | sed -e 's/^[^\\/]*//' | sort > asio.manifest");
-  system("tar tfz $boost_asio_name.tar.gz | sed -e 's/^[^\\/]*//' | sort > boost_asio.manifest");
+  system("tar tfz $asio_name.tar.gz | sed -e 's/^[^\\/]*//' | sort -df > asio.manifest");
+  system("tar tfz $boost_asio_name.tar.gz | sed -e 's/^[^\\/]*//' | sort -df > boost_asio.manifest");
 }
 
 (scalar(@ARGV) == 1) or print_usage_and_exit();

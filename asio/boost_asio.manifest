@@ -42,6 +42,7 @@
 /boost/asio/detail/config.hpp
 /boost/asio/detail/consuming_buffers.hpp
 /boost/asio/detail/deadline_timer_service.hpp
+/boost/asio/detail/dependent_type.hpp
 /boost/asio/detail/descriptor_ops.hpp
 /boost/asio/detail/descriptor_read_op.hpp
 /boost/asio/detail/descriptor_write_op.hpp
@@ -2096,8 +2097,8 @@
 /doc/html/boost_asio/reference/datagram_socket_service/endpoint_type.html
 /doc/html/boost_asio/reference/datagram_socket_service/get_io_service.html
 /doc/html/boost_asio/reference/datagram_socket_service/get_option.html
-/doc/html/boost_asio/reference/datagram_socket_service.html
 /doc/html/boost_asio/reference/DatagramSocketService.html
+/doc/html/boost_asio/reference/datagram_socket_service.html
 /doc/html/boost_asio/reference/datagram_socket_service/id.html
 /doc/html/boost_asio/reference/datagram_socket_service/implementation_type.html
 /doc/html/boost_asio/reference/datagram_socket_service/io_control.html
@@ -2447,8 +2448,8 @@
 /doc/html/boost_asio/reference/ip__basic_resolver_iterator/create/overload1.html
 /doc/html/boost_asio/reference/ip__basic_resolver_iterator/create/overload2.html
 /doc/html/boost_asio/reference/ip__basic_resolver_iterator/difference_type.html
-/doc/html/boost_asio/reference/ip__basic_resolver_iterator.html
 /doc/html/boost_asio/reference/ip__basic_resolver/iterator.html
+/doc/html/boost_asio/reference/ip__basic_resolver_iterator.html
 /doc/html/boost_asio/reference/ip__basic_resolver_iterator/iterator_category.html
 /doc/html/boost_asio/reference/ip__basic_resolver_iterator/operator_arrow_.html
 /doc/html/boost_asio/reference/ip__basic_resolver_iterator/operator_eq__eq_.html
@@ -2475,8 +2476,8 @@
 /doc/html/boost_asio/reference/ip__basic_resolver_query/flags.html
 /doc/html/boost_asio/reference/ip__basic_resolver_query/hints.html
 /doc/html/boost_asio/reference/ip__basic_resolver_query/host_name.html
-/doc/html/boost_asio/reference/ip__basic_resolver_query.html
 /doc/html/boost_asio/reference/ip__basic_resolver/query.html
+/doc/html/boost_asio/reference/ip__basic_resolver_query.html
 /doc/html/boost_asio/reference/ip__basic_resolver_query/numeric_host.html
 /doc/html/boost_asio/reference/ip__basic_resolver_query/numeric_service.html
 /doc/html/boost_asio/reference/ip__basic_resolver_query/passive.html
@@ -2872,8 +2873,8 @@
 /doc/html/boost_asio/reference/raw_socket_service/endpoint_type.html
 /doc/html/boost_asio/reference/raw_socket_service/get_io_service.html
 /doc/html/boost_asio/reference/raw_socket_service/get_option.html
-/doc/html/boost_asio/reference/raw_socket_service.html
 /doc/html/boost_asio/reference/RawSocketService.html
+/doc/html/boost_asio/reference/raw_socket_service.html
 /doc/html/boost_asio/reference/raw_socket_service/id.html
 /doc/html/boost_asio/reference/raw_socket_service/implementation_type.html
 /doc/html/boost_asio/reference/raw_socket_service/io_control.html
@@ -2952,8 +2953,8 @@
 /doc/html/boost_asio/reference/seq_packet_socket_service/endpoint_type.html
 /doc/html/boost_asio/reference/seq_packet_socket_service/get_io_service.html
 /doc/html/boost_asio/reference/seq_packet_socket_service/get_option.html
-/doc/html/boost_asio/reference/seq_packet_socket_service.html
 /doc/html/boost_asio/reference/SeqPacketSocketService.html
+/doc/html/boost_asio/reference/seq_packet_socket_service.html
 /doc/html/boost_asio/reference/seq_packet_socket_service/id.html
 /doc/html/boost_asio/reference/seq_packet_socket_service/implementation_type.html
 /doc/html/boost_asio/reference/seq_packet_socket_service/io_control.html
@@ -3028,8 +3029,8 @@
 /doc/html/boost_asio/reference/serial_port_service/destroy.html
 /doc/html/boost_asio/reference/serial_port_service/get_io_service.html
 /doc/html/boost_asio/reference/serial_port_service/get_option.html
-/doc/html/boost_asio/reference/serial_port_service.html
 /doc/html/boost_asio/reference/SerialPortService.html
+/doc/html/boost_asio/reference/serial_port_service.html
 /doc/html/boost_asio/reference/serial_port_service/id.html
 /doc/html/boost_asio/reference/serial_port_service/implementation_type.html
 /doc/html/boost_asio/reference/serial_port_service/is_open.html
@@ -3062,8 +3063,8 @@
 /doc/html/boost_asio/reference/signal_set_service/construct.html
 /doc/html/boost_asio/reference/signal_set_service/destroy.html
 /doc/html/boost_asio/reference/signal_set_service/get_io_service.html
-/doc/html/boost_asio/reference/signal_set_service.html
 /doc/html/boost_asio/reference/SignalSetService.html
+/doc/html/boost_asio/reference/signal_set_service.html
 /doc/html/boost_asio/reference/signal_set_service/id.html
 /doc/html/boost_asio/reference/signal_set_service/implementation_type.html
 /doc/html/boost_asio/reference/signal_set_service/remove.html
@@ -3080,8 +3081,8 @@
 /doc/html/boost_asio/reference/socket_acceptor_service/endpoint_type.html
 /doc/html/boost_asio/reference/socket_acceptor_service/get_io_service.html
 /doc/html/boost_asio/reference/socket_acceptor_service/get_option.html
-/doc/html/boost_asio/reference/socket_acceptor_service.html
 /doc/html/boost_asio/reference/SocketAcceptorService.html
+/doc/html/boost_asio/reference/socket_acceptor_service.html
 /doc/html/boost_asio/reference/socket_acceptor_service/id.html
 /doc/html/boost_asio/reference/socket_acceptor_service/implementation_type.html
 /doc/html/boost_asio/reference/socket_acceptor_service/io_control.html
@@ -3302,8 +3303,8 @@
 /doc/html/boost_asio/reference/stream_socket_service/endpoint_type.html
 /doc/html/boost_asio/reference/stream_socket_service/get_io_service.html
 /doc/html/boost_asio/reference/stream_socket_service/get_option.html
-/doc/html/boost_asio/reference/stream_socket_service.html
 /doc/html/boost_asio/reference/StreamSocketService.html
+/doc/html/boost_asio/reference/stream_socket_service.html
 /doc/html/boost_asio/reference/stream_socket_service/id.html
 /doc/html/boost_asio/reference/stream_socket_service/implementation_type.html
 /doc/html/boost_asio/reference/stream_socket_service/io_control.html
@@ -4009,6 +4010,17 @@
 /libs/asio/test/is_write_buffered.cpp
 /libs/asio/test/Jamfile
 /libs/asio/test/Jamfile.v2
+/libs/asio/test/latency/
+/libs/asio/test/latency/allocator.hpp
+/libs/asio/test/latency/coroutine.hpp
+/libs/asio/test/latency/high_res_clock.hpp
+/libs/asio/test/latency/Jamfile.v2
+/libs/asio/test/latency/tcp_client.cpp
+/libs/asio/test/latency/tcp_server.cpp
+/libs/asio/test/latency/udp_client.cpp
+/libs/asio/test/latency/udp_server.cpp
+/libs/asio/test/latency/unyield.hpp
+/libs/asio/test/latency/yield.hpp
 /libs/asio/test/local/
 /libs/asio/test/local/basic_endpoint.cpp
 /libs/asio/test/local/connect_pair.cpp
