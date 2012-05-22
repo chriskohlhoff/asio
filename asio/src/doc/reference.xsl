@@ -1417,6 +1417,9 @@
         <xsl:when test="declname = 'ByteType'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'Clock'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'CompletionCondition'">
           <xsl:value-of select="declname"/>
         </xsl:when>
