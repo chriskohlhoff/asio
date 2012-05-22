@@ -97,14 +97,14 @@ supported.
 Asio provides Windows-specific classes that permit asynchronous wait operations
 to be performed on HANDLEs to kernel objects of the following types:
 
-  * Change notification
-  * Console input
-  * Event
-  * Memory resource notification
-  * Process
-  * Semaphore
-  * Thread
-  * Waitable timer
+* Change notification
+* Console input
+* Event
+* Memory resource notification
+* Process
+* Semaphore
+* Thread
+* Waitable timer
 
 For example, to perform asynchronous operations on an event, the following
 object may be created:
