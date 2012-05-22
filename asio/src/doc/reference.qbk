@@ -33,6 +33,7 @@
 [include requirements/IoControlCommand.qbk]
 [include requirements/IoObjectService.qbk]
 [include requirements/MutableBufferSequence.qbk]
+[include requirements/ObjectHandleService.qbk]
 [include requirements/Protocol.qbk]
 [include requirements/RandomAccessHandleService.qbk]
 [include requirements/RawSocketService.qbk]
@@ -58,7 +59,9 @@
 [include requirements/SyncWriteStream.qbk]
 [include requirements/TimeTraits.qbk]
 [include requirements/TimerService.qbk]
+[include requirements/WaitableTimerService.qbk]
 [include requirements/WaitHandler.qbk]
+[include requirements/WaitTraits.qbk]
 [include requirements/WriteHandler.qbk]
 
 
@@ -42945,6 +42948,1299 @@ Behaves according to the specification of `std::streambuf::underflow()`.
 
 [endsect]
 
+[section:basic_waitable_timer basic_waitable_timer]
+
+
+Provides waitable timer functionality. 
+
+
+  template<
+      typename ``[link asio.reference.Clock Clock]``,
+      typename ``[link asio.reference.WaitTraits WaitTraits]`` = asio::wait_traits<Clock>,
+      typename ``[link asio.reference.WaitableTimerService WaitableTimerService]`` = waitable_timer_service<Clock, WaitTraits>>
+  class basic_waitable_timer :
+    public basic_io_object< WaitableTimerService >
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.clock_type [*clock_type]]]
+    [The clock type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.duration [*duration]]]
+    [The duration type of the clock. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.time_point [*time_point]]]
+    [The time point type of the clock. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.traits_type [*traits_type]]]
+    [The wait traits type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_waitable_timer.async_wait [*async_wait]]]
+    [Start an asynchronous wait on the timer. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.basic_waitable_timer [*basic_waitable_timer]]]
+    [Constructor. 
+
+     Constructor to set a particular expiry time as an absolute time. 
+
+     Constructor to set a particular expiry time relative to now. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.cancel [*cancel]]]
+    [Cancel any asynchronous operations that are waiting on the timer. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.cancel_one [*cancel_one]]]
+    [Cancels one asynchronous operation that is waiting on the timer. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.expires_at [*expires_at]]]
+    [Get the timer's expiry time as an absolute time. 
+
+     Set the timer's expiry time as an absolute time. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.expires_from_now [*expires_from_now]]]
+    [Get the timer's expiry time relative to now. 
+
+     Set the timer's expiry time relative to now. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.wait [*wait]]]
+    [Perform a blocking wait on the timer. ]
+  ]
+  
+]
+
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_waitable_timer.get_implementation [*get_implementation]]]
+    [Get the underlying implementation of the I/O object. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.get_service [*get_service]]]
+    [Get the service associated with the I/O object. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_waitable_timer.implementation [*implementation]]]
+    [(Deprecated: Use get_implementation().) The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_waitable_timer.service [*service]]]
+    [(Deprecated: Use get_service().) The service associated with the I/O object. ]
+  ]
+
+]
+
+The [link asio.reference.basic_waitable_timer `basic_waitable_timer`] class template provides the ability to perform a blocking or asynchronous wait for a timer to expire.
+
+A waitable timer is always in one of two states: "expired" or "not expired". If the `wait()` or `async_wait()` function is called on an expired timer, the wait operation will complete immediately.
+
+Most applications will use the asio::waitable\_timer typedef.
+
+
+[heading Remarks]
+      
+This waitable timer functionality is for use with the C++11 standard library's `<chrono>` facility, or with the Boost.Chrono library.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:] Safe.
+
+[*Shared] [*objects:] Unsafe.
+
+
+[heading Examples]
+  
+Performing a blocking wait: 
+
+   // Construct a timer without setting an expiry time.
+   asio::waitable_timer timer(io_service);
+
+   // Set an expiry time relative to now.
+   timer.expires_from_now(boost::posix_time::seconds(5));
+
+   // Wait for the timer to expire.
+   timer.wait();
+
+
+
+
+
+Performing an asynchronous wait: 
+
+   void handler(const asio::error_code& error)
+   {
+     if (!error)
+     {
+       // Timer expired.
+     }
+   }
+
+   ...
+
+   // Construct a timer with an absolute expiry time.
+   asio::waitable_timer timer(io_service,
+       boost::posix_time::time_from_string("2005-12-07 23:59:59.000"));
+
+   // Start an asynchronous wait.
+   timer.async_wait(handler);
+
+
+
+
+
+[heading Changing an active waitable_timer's expiry time]
+  
+
+
+Changing the expiry time of a timer while there are pending asynchronous waits causes those wait operations to be cancelled. To ensure that the action associated with the timer is performed only once, use something like this: used:
+
+
+
+   void on_some_event()
+   {
+     if (my_timer.expires_from_now(seconds(5)) > 0)
+     {
+       // We managed to cancel the timer. Start new asynchronous wait.
+       my_timer.async_wait(on_timeout);
+     }
+     else
+     {
+       // Too late, timer has already expired!
+     }
+   }
+
+   void on_timeout(const asio::error_code& e)
+   {
+     if (e != asio::error::operation_aborted)
+     {
+       // Timer was not cancelled, take necessary action.
+     }
+   }
+
+
+
+
+
+* The `asio::basic_waitable_timer::expires_from_now()` function cancels any pending asynchronous waits, and returns the number of asynchronous waits that were cancelled. If it returns 0 then you were too late and the wait handler has already been executed, or will soon be executed. If it returns 1 then the wait handler was successfully cancelled.
+
+
+* If a wait handler is cancelled, the [link asio.reference.error_code `error_code`] passed to it contains the value `asio::error::operation_aborted`. 
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_waitable_timer.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[section:async_wait basic_waitable_timer::async_wait]
+
+[indexterm2 async_wait..basic_waitable_timer] 
+Start an asynchronous wait on the timer. 
+
+
+  template<
+      typename ``[link asio.reference.WaitHandler WaitHandler]``>
+  void async_wait(
+      WaitHandler handler);
+
+
+This function may be used to initiate an asynchronous wait against the timer. It always returns immediately.
+
+For each call to `async_wait()`, the supplied handler will be called exactly once. The handler will be called when:
+
+
+* The timer has expired.
+
+
+* The timer was cancelled, in which case the handler is passed the error code `asio::error::operation_aborted`.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[handler][The handler to be called when the timer expires. Copies will be made of the handler as required. The function signature of the handler must be: 
+``
+   void handler(
+     const asio::error_code& error // Result of operation.
+   ); 
+``
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using `asio::io_service::post()`. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[section:basic_waitable_timer basic_waitable_timer::basic_waitable_timer]
+
+[indexterm2 basic_waitable_timer..basic_waitable_timer] 
+Constructor. 
+
+
+  explicit ``[link asio.reference.basic_waitable_timer.basic_waitable_timer.overload1 basic_waitable_timer]``(
+      asio::io_service & io_service);
+  ``  [''''&raquo;''' [link asio.reference.basic_waitable_timer.basic_waitable_timer.overload1 more...]]``
+
+
+Constructor to set a particular expiry time as an absolute time. 
+
+
+  ``[link asio.reference.basic_waitable_timer.basic_waitable_timer.overload2 basic_waitable_timer]``(
+      asio::io_service & io_service,
+      const time_point & expiry_time);
+  ``  [''''&raquo;''' [link asio.reference.basic_waitable_timer.basic_waitable_timer.overload2 more...]]``
+
+
+Constructor to set a particular expiry time relative to now. 
+
+
+  ``[link asio.reference.basic_waitable_timer.basic_waitable_timer.overload3 basic_waitable_timer]``(
+      asio::io_service & io_service,
+      const duration & expiry_time);
+  ``  [''''&raquo;''' [link asio.reference.basic_waitable_timer.basic_waitable_timer.overload3 more...]]``
+
+
+[section:overload1 basic_waitable_timer::basic_waitable_timer (1 of 3 overloads)]
+
+
+Constructor. 
+
+
+  basic_waitable_timer(
+      asio::io_service & io_service);
+
+
+This constructor creates a timer without setting an expiry time. The `expires_at()` or `expires_from_now()` functions must be called to set an expiry time before the timer can be waited on.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The [link asio.reference.io_service `io_service`] object that the timer will use to dispatch handlers for any asynchronous operations performed on the timer. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_waitable_timer::basic_waitable_timer (2 of 3 overloads)]
+
+
+Constructor to set a particular expiry time as an absolute time. 
+
+
+  basic_waitable_timer(
+      asio::io_service & io_service,
+      const time_point & expiry_time);
+
+
+This constructor creates a timer and sets the expiry time.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The [link asio.reference.io_service `io_service`] object that the timer will use to dispatch handlers for any asynchronous operations performed on the timer.]]
+
+[[expiry_time][The expiry time to be used for the timer, expressed as an absolute time. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 basic_waitable_timer::basic_waitable_timer (3 of 3 overloads)]
+
+
+Constructor to set a particular expiry time relative to now. 
+
+
+  basic_waitable_timer(
+      asio::io_service & io_service,
+      const duration & expiry_time);
+
+
+This constructor creates a timer and sets the expiry time.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The [link asio.reference.io_service `io_service`] object that the timer will use to dispatch handlers for any asynchronous operations performed on the timer.]]
+
+[[expiry_time][The expiry time to be used for the timer, relative to now. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:cancel basic_waitable_timer::cancel]
+
+[indexterm2 cancel..basic_waitable_timer] 
+Cancel any asynchronous operations that are waiting on the timer. 
+
+
+  std::size_t ``[link asio.reference.basic_waitable_timer.cancel.overload1 cancel]``();
+  ``  [''''&raquo;''' [link asio.reference.basic_waitable_timer.cancel.overload1 more...]]``
+
+  std::size_t ``[link asio.reference.basic_waitable_timer.cancel.overload2 cancel]``(
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.basic_waitable_timer.cancel.overload2 more...]]``
+
+
+[section:overload1 basic_waitable_timer::cancel (1 of 2 overloads)]
+
+
+Cancel any asynchronous operations that are waiting on the timer. 
+
+
+  std::size_t cancel();
+
+
+This function forces the completion of any pending asynchronous wait operations against the timer. The handler for each cancelled operation will be invoked with the `asio::error::operation_aborted` error code.
+
+Cancelling the timer does not change the expiry time.
+
+
+[heading Return Value]
+      
+The number of asynchronous operations that were cancelled.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+If the timer has already expired when `cancel()` is called, then the handlers for asynchronous wait operations will:
+
+
+* have already been invoked; or
+
+
+* have been queued for invocation in the near future.
+
+These handlers can no longer be cancelled, and therefore are passed an error code that indicates the successful completion of the wait operation. 
+
+
+[endsect]
+
+
+
+[section:overload2 basic_waitable_timer::cancel (2 of 2 overloads)]
+
+
+Cancel any asynchronous operations that are waiting on the timer. 
+
+
+  std::size_t cancel(
+      asio::error_code & ec);
+
+
+This function forces the completion of any pending asynchronous wait operations against the timer. The handler for each cancelled operation will be invoked with the `asio::error::operation_aborted` error code.
+
+Cancelling the timer does not change the expiry time.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of asynchronous operations that were cancelled.
+
+
+[heading Remarks]
+      
+If the timer has already expired when `cancel()` is called, then the handlers for asynchronous wait operations will:
+
+
+* have already been invoked; or
+
+
+* have been queued for invocation in the near future.
+
+These handlers can no longer be cancelled, and therefore are passed an error code that indicates the successful completion of the wait operation. 
+
+
+[endsect]
+
+
+[endsect]
+
+[section:cancel_one basic_waitable_timer::cancel_one]
+
+[indexterm2 cancel_one..basic_waitable_timer] 
+Cancels one asynchronous operation that is waiting on the timer. 
+
+
+  std::size_t ``[link asio.reference.basic_waitable_timer.cancel_one.overload1 cancel_one]``();
+  ``  [''''&raquo;''' [link asio.reference.basic_waitable_timer.cancel_one.overload1 more...]]``
+
+  std::size_t ``[link asio.reference.basic_waitable_timer.cancel_one.overload2 cancel_one]``(
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.basic_waitable_timer.cancel_one.overload2 more...]]``
+
+
+[section:overload1 basic_waitable_timer::cancel_one (1 of 2 overloads)]
+
+
+Cancels one asynchronous operation that is waiting on the timer. 
+
+
+  std::size_t cancel_one();
+
+
+This function forces the completion of one pending asynchronous wait operation against the timer. Handlers are cancelled in FIFO order. The handler for the cancelled operation will be invoked with the `asio::error::operation_aborted` error code.
+
+Cancelling the timer does not change the expiry time.
+
+
+[heading Return Value]
+      
+The number of asynchronous operations that were cancelled. That is, either 0 or 1.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+If the timer has already expired when `cancel_one()` is called, then the handlers for asynchronous wait operations will:
+
+
+* have already been invoked; or
+
+
+* have been queued for invocation in the near future.
+
+These handlers can no longer be cancelled, and therefore are passed an error code that indicates the successful completion of the wait operation. 
+
+
+[endsect]
+
+
+
+[section:overload2 basic_waitable_timer::cancel_one (2 of 2 overloads)]
+
+
+Cancels one asynchronous operation that is waiting on the timer. 
+
+
+  std::size_t cancel_one(
+      asio::error_code & ec);
+
+
+This function forces the completion of one pending asynchronous wait operation against the timer. Handlers are cancelled in FIFO order. The handler for the cancelled operation will be invoked with the `asio::error::operation_aborted` error code.
+
+Cancelling the timer does not change the expiry time.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of asynchronous operations that were cancelled. That is, either 0 or 1.
+
+
+[heading Remarks]
+      
+If the timer has already expired when `cancel_one()` is called, then the handlers for asynchronous wait operations will:
+
+
+* have already been invoked; or
+
+
+* have been queued for invocation in the near future.
+
+These handlers can no longer be cancelled, and therefore are passed an error code that indicates the successful completion of the wait operation. 
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:clock_type basic_waitable_timer::clock_type]
+
+[indexterm2 clock_type..basic_waitable_timer] 
+The clock type. 
+
+
+  typedef Clock clock_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_waitable_timer.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:duration basic_waitable_timer::duration]
+
+[indexterm2 duration..basic_waitable_timer] 
+The duration type of the clock. 
+
+
+  typedef clock_type::duration duration;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_waitable_timer.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[section:expires_at basic_waitable_timer::expires_at]
+
+[indexterm2 expires_at..basic_waitable_timer] 
+Get the timer's expiry time as an absolute time. 
+
+
+  time_point ``[link asio.reference.basic_waitable_timer.expires_at.overload1 expires_at]``() const;
+  ``  [''''&raquo;''' [link asio.reference.basic_waitable_timer.expires_at.overload1 more...]]``
+
+
+Set the timer's expiry time as an absolute time. 
+
+
+  std::size_t ``[link asio.reference.basic_waitable_timer.expires_at.overload2 expires_at]``(
+      const time_point & expiry_time);
+  ``  [''''&raquo;''' [link asio.reference.basic_waitable_timer.expires_at.overload2 more...]]``
+
+  std::size_t ``[link asio.reference.basic_waitable_timer.expires_at.overload3 expires_at]``(
+      const time_point & expiry_time,
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.basic_waitable_timer.expires_at.overload3 more...]]``
+
+
+[section:overload1 basic_waitable_timer::expires_at (1 of 3 overloads)]
+
+
+Get the timer's expiry time as an absolute time. 
+
+
+  time_point expires_at() const;
+
+
+This function may be used to obtain the timer's current expiry time. Whether the timer has expired or not does not affect this value. 
+
+
+[endsect]
+
+
+
+[section:overload2 basic_waitable_timer::expires_at (2 of 3 overloads)]
+
+
+Set the timer's expiry time as an absolute time. 
+
+
+  std::size_t expires_at(
+      const time_point & expiry_time);
+
+
+This function sets the expiry time. Any pending asynchronous wait operations will be cancelled. The handler for each cancelled operation will be invoked with the `asio::error::operation_aborted` error code.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[expiry_time][The expiry time to be used for the timer.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of asynchronous operations that were cancelled.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+If the timer has already expired when `expires_at()` is called, then the handlers for asynchronous wait operations will:
+
+
+* have already been invoked; or
+
+
+* have been queued for invocation in the near future.
+
+These handlers can no longer be cancelled, and therefore are passed an error code that indicates the successful completion of the wait operation. 
+
+
+[endsect]
+
+
+
+[section:overload3 basic_waitable_timer::expires_at (3 of 3 overloads)]
+
+
+Set the timer's expiry time as an absolute time. 
+
+
+  std::size_t expires_at(
+      const time_point & expiry_time,
+      asio::error_code & ec);
+
+
+This function sets the expiry time. Any pending asynchronous wait operations will be cancelled. The handler for each cancelled operation will be invoked with the `asio::error::operation_aborted` error code.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[expiry_time][The expiry time to be used for the timer.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of asynchronous operations that were cancelled.
+
+
+[heading Remarks]
+      
+If the timer has already expired when `expires_at()` is called, then the handlers for asynchronous wait operations will:
+
+
+* have already been invoked; or
+
+
+* have been queued for invocation in the near future.
+
+These handlers can no longer be cancelled, and therefore are passed an error code that indicates the successful completion of the wait operation. 
+
+
+[endsect]
+
+
+[endsect]
+
+[section:expires_from_now basic_waitable_timer::expires_from_now]
+
+[indexterm2 expires_from_now..basic_waitable_timer] 
+Get the timer's expiry time relative to now. 
+
+
+  duration ``[link asio.reference.basic_waitable_timer.expires_from_now.overload1 expires_from_now]``() const;
+  ``  [''''&raquo;''' [link asio.reference.basic_waitable_timer.expires_from_now.overload1 more...]]``
+
+
+Set the timer's expiry time relative to now. 
+
+
+  std::size_t ``[link asio.reference.basic_waitable_timer.expires_from_now.overload2 expires_from_now]``(
+      const duration & expiry_time);
+  ``  [''''&raquo;''' [link asio.reference.basic_waitable_timer.expires_from_now.overload2 more...]]``
+
+  std::size_t ``[link asio.reference.basic_waitable_timer.expires_from_now.overload3 expires_from_now]``(
+      const duration & expiry_time,
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.basic_waitable_timer.expires_from_now.overload3 more...]]``
+
+
+[section:overload1 basic_waitable_timer::expires_from_now (1 of 3 overloads)]
+
+
+Get the timer's expiry time relative to now. 
+
+
+  duration expires_from_now() const;
+
+
+This function may be used to obtain the timer's current expiry time. Whether the timer has expired or not does not affect this value. 
+
+
+[endsect]
+
+
+
+[section:overload2 basic_waitable_timer::expires_from_now (2 of 3 overloads)]
+
+
+Set the timer's expiry time relative to now. 
+
+
+  std::size_t expires_from_now(
+      const duration & expiry_time);
+
+
+This function sets the expiry time. Any pending asynchronous wait operations will be cancelled. The handler for each cancelled operation will be invoked with the `asio::error::operation_aborted` error code.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[expiry_time][The expiry time to be used for the timer.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of asynchronous operations that were cancelled.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+If the timer has already expired when `expires_from_now()` is called, then the handlers for asynchronous wait operations will:
+
+
+* have already been invoked; or
+
+
+* have been queued for invocation in the near future.
+
+These handlers can no longer be cancelled, and therefore are passed an error code that indicates the successful completion of the wait operation. 
+
+
+[endsect]
+
+
+
+[section:overload3 basic_waitable_timer::expires_from_now (3 of 3 overloads)]
+
+
+Set the timer's expiry time relative to now. 
+
+
+  std::size_t expires_from_now(
+      const duration & expiry_time,
+      asio::error_code & ec);
+
+
+This function sets the expiry time. Any pending asynchronous wait operations will be cancelled. The handler for each cancelled operation will be invoked with the `asio::error::operation_aborted` error code.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[expiry_time][The expiry time to be used for the timer.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of asynchronous operations that were cancelled.
+
+
+[heading Remarks]
+      
+If the timer has already expired when `expires_from_now()` is called, then the handlers for asynchronous wait operations will:
+
+
+* have already been invoked; or
+
+
+* have been queued for invocation in the near future.
+
+These handlers can no longer be cancelled, and therefore are passed an error code that indicates the successful completion of the wait operation. 
+
+
+[endsect]
+
+
+[endsect]
+
+[section:get_implementation basic_waitable_timer::get_implementation]
+
+[indexterm2 get_implementation..basic_waitable_timer] 
+Get the underlying implementation of the I/O object. 
+
+
+  implementation_type & ``[link asio.reference.basic_waitable_timer.get_implementation.overload1 get_implementation]``();
+  ``  [''''&raquo;''' [link asio.reference.basic_waitable_timer.get_implementation.overload1 more...]]``
+
+  const implementation_type & ``[link asio.reference.basic_waitable_timer.get_implementation.overload2 get_implementation]``() const;
+  ``  [''''&raquo;''' [link asio.reference.basic_waitable_timer.get_implementation.overload2 more...]]``
+
+
+[section:overload1 basic_waitable_timer::get_implementation (1 of 2 overloads)]
+
+
+['Inherited from basic_io_object.]
+
+
+Get the underlying implementation of the I/O object. 
+
+
+  implementation_type & get_implementation();
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_waitable_timer::get_implementation (2 of 2 overloads)]
+
+
+['Inherited from basic_io_object.]
+
+
+Get the underlying implementation of the I/O object. 
+
+
+  const implementation_type & get_implementation() const;
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:get_io_service basic_waitable_timer::get_io_service]
+
+
+['Inherited from basic_io_object.]
+
+[indexterm2 get_io_service..basic_waitable_timer] 
+Get the [link asio.reference.io_service `io_service`] associated with the object. 
+
+
+  asio::io_service & get_io_service();
+
+
+This function may be used to obtain the [link asio.reference.io_service `io_service`] object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the [link asio.reference.io_service `io_service`] object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+
+[endsect]
+
+
+[section:get_service basic_waitable_timer::get_service]
+
+[indexterm2 get_service..basic_waitable_timer] 
+Get the service associated with the I/O object. 
+
+
+  service_type & ``[link asio.reference.basic_waitable_timer.get_service.overload1 get_service]``();
+  ``  [''''&raquo;''' [link asio.reference.basic_waitable_timer.get_service.overload1 more...]]``
+
+  const service_type & ``[link asio.reference.basic_waitable_timer.get_service.overload2 get_service]``() const;
+  ``  [''''&raquo;''' [link asio.reference.basic_waitable_timer.get_service.overload2 more...]]``
+
+
+[section:overload1 basic_waitable_timer::get_service (1 of 2 overloads)]
+
+
+['Inherited from basic_io_object.]
+
+
+Get the service associated with the I/O object. 
+
+
+  service_type & get_service();
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_waitable_timer::get_service (2 of 2 overloads)]
+
+
+['Inherited from basic_io_object.]
+
+
+Get the service associated with the I/O object. 
+
+
+  const service_type & get_service() const;
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:implementation basic_waitable_timer::implementation]
+
+
+['Inherited from basic_io_object.]
+
+[indexterm2 implementation..basic_waitable_timer] 
+(Deprecated: Use `get_implementation()`.) The underlying implementation of the I/O object. 
+
+
+  implementation_type implementation;
+
+
+
+[endsect]
+
+
+
+[section:implementation_type basic_waitable_timer::implementation_type]
+
+
+['Inherited from basic_io_object.]
+
+[indexterm2 implementation_type..basic_waitable_timer] 
+The underlying implementation type of I/O object. 
+
+
+  typedef service_type::implementation_type implementation_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_waitable_timer.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:service basic_waitable_timer::service]
+
+
+['Inherited from basic_io_object.]
+
+[indexterm2 service..basic_waitable_timer] 
+(Deprecated: Use `get_service()`.) The service associated with the I/O object. 
+
+
+  service_type & service;
+
+
+
+[heading Remarks]
+      
+Available only for services that do not support movability. 
+
+
+
+
+[endsect]
+
+
+
+[section:service_type basic_waitable_timer::service_type]
+
+
+['Inherited from basic_io_object.]
+
+[indexterm2 service_type..basic_waitable_timer] 
+The type of the service that will be used to provide I/O operations. 
+
+
+  typedef WaitableTimerService service_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_waitable_timer.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:time_point basic_waitable_timer::time_point]
+
+[indexterm2 time_point..basic_waitable_timer] 
+The time point type of the clock. 
+
+
+  typedef clock_type::time_point time_point;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_waitable_timer.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:traits_type basic_waitable_timer::traits_type]
+
+[indexterm2 traits_type..basic_waitable_timer] 
+The wait traits type. 
+
+
+  typedef WaitTraits traits_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/basic_waitable_timer.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[section:wait basic_waitable_timer::wait]
+
+[indexterm2 wait..basic_waitable_timer] 
+Perform a blocking wait on the timer. 
+
+
+  void ``[link asio.reference.basic_waitable_timer.wait.overload1 wait]``();
+  ``  [''''&raquo;''' [link asio.reference.basic_waitable_timer.wait.overload1 more...]]``
+
+  void ``[link asio.reference.basic_waitable_timer.wait.overload2 wait]``(
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.basic_waitable_timer.wait.overload2 more...]]``
+
+
+[section:overload1 basic_waitable_timer::wait (1 of 2 overloads)]
+
+
+Perform a blocking wait on the timer. 
+
+
+  void wait();
+
+
+This function is used to wait for the timer to expire. This function blocks and does not return until the timer has expired.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_waitable_timer::wait (2 of 2 overloads)]
+
+
+Perform a blocking wait on the timer. 
+
+
+  void wait(
+      asio::error_code & ec);
+
+
+This function is used to wait for the timer to expire. This function blocks and does not return until the timer has expired.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[endsect]
+
 [section:buffer buffer]
 
 [indexterm1 buffer] 
@@ -53224,6 +54520,267 @@ A boolean indicating whether the [link asio.reference.io_service `io_service`] c
 [*Header: ][^asio/io_service.hpp]
 
 [*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:high_resolution_timer high_resolution_timer]
+
+[indexterm1 high_resolution_timer] 
+Typedef for a timer based on the high resolution clock. 
+
+
+  typedef basic_waitable_timer< chrono::high_resolution_clock > high_resolution_timer;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.clock_type [*clock_type]]]
+    [The clock type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.duration [*duration]]]
+    [The duration type of the clock. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.time_point [*time_point]]]
+    [The time point type of the clock. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.traits_type [*traits_type]]]
+    [The wait traits type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_waitable_timer.async_wait [*async_wait]]]
+    [Start an asynchronous wait on the timer. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.basic_waitable_timer [*basic_waitable_timer]]]
+    [Constructor. 
+
+     Constructor to set a particular expiry time as an absolute time. 
+
+     Constructor to set a particular expiry time relative to now. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.cancel [*cancel]]]
+    [Cancel any asynchronous operations that are waiting on the timer. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.cancel_one [*cancel_one]]]
+    [Cancels one asynchronous operation that is waiting on the timer. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.expires_at [*expires_at]]]
+    [Get the timer's expiry time as an absolute time. 
+
+     Set the timer's expiry time as an absolute time. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.expires_from_now [*expires_from_now]]]
+    [Get the timer's expiry time relative to now. 
+
+     Set the timer's expiry time relative to now. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.wait [*wait]]]
+    [Perform a blocking wait on the timer. ]
+  ]
+  
+]
+
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_waitable_timer.get_implementation [*get_implementation]]]
+    [Get the underlying implementation of the I/O object. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.get_service [*get_service]]]
+    [Get the service associated with the I/O object. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_waitable_timer.implementation [*implementation]]]
+    [(Deprecated: Use get_implementation().) The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_waitable_timer.service [*service]]]
+    [(Deprecated: Use get_service().) The service associated with the I/O object. ]
+  ]
+
+]
+
+The [link asio.reference.basic_waitable_timer `basic_waitable_timer`] class template provides the ability to perform a blocking or asynchronous wait for a timer to expire.
+
+A waitable timer is always in one of two states: "expired" or "not expired". If the `wait()` or `async_wait()` function is called on an expired timer, the wait operation will complete immediately.
+
+Most applications will use the asio::waitable\_timer typedef.
+
+
+[heading Remarks]
+      
+This waitable timer functionality is for use with the C++11 standard library's `<chrono>` facility, or with the Boost.Chrono library.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:] Safe.
+
+[*Shared] [*objects:] Unsafe.
+
+
+[heading Examples]
+  
+Performing a blocking wait: 
+
+   // Construct a timer without setting an expiry time.
+   asio::waitable_timer timer(io_service);
+
+   // Set an expiry time relative to now.
+   timer.expires_from_now(boost::posix_time::seconds(5));
+
+   // Wait for the timer to expire.
+   timer.wait();
+
+
+
+
+
+Performing an asynchronous wait: 
+
+   void handler(const asio::error_code& error)
+   {
+     if (!error)
+     {
+       // Timer expired.
+     }
+   }
+
+   ...
+
+   // Construct a timer with an absolute expiry time.
+   asio::waitable_timer timer(io_service,
+       boost::posix_time::time_from_string("2005-12-07 23:59:59.000"));
+
+   // Start an asynchronous wait.
+   timer.async_wait(handler);
+
+
+
+
+
+[heading Changing an active waitable_timer's expiry time]
+  
+
+
+Changing the expiry time of a timer while there are pending asynchronous waits causes those wait operations to be cancelled. To ensure that the action associated with the timer is performed only once, use something like this: used:
+
+
+
+   void on_some_event()
+   {
+     if (my_timer.expires_from_now(seconds(5)) > 0)
+     {
+       // We managed to cancel the timer. Start new asynchronous wait.
+       my_timer.async_wait(on_timeout);
+     }
+     else
+     {
+       // Too late, timer has already expired!
+     }
+   }
+
+   void on_timeout(const asio::error_code& e)
+   {
+     if (e != asio::error::operation_aborted)
+     {
+       // Timer was not cancelled, take necessary action.
+     }
+   }
+
+
+
+
+
+* The `asio::basic_waitable_timer::expires_from_now()` function cancels any pending asynchronous waits, and returns the number of asynchronous waits that were cancelled. If it returns 0 then you were too late and the wait handler has already been executed, or will soon be executed. If it returns 1 then the wait handler was successfully cancelled.
+
+
+* If a wait handler is cancelled, the [link asio.reference.error_code `error_code`] passed to it contains the value `asio::error::operation_aborted`. 
+
+
+
+
+This typedef uses the C++11 `<chrono>` standard library facility, if available. Otherwise, it may use the Boost.Chrono library. To explicitly utilise Boost.Chrono, use the [link asio.reference.basic_waitable_timer `basic_waitable_timer`] template directly: 
+
+   typedef basic_waitable_timer<boost::chrono::high_resolution_clock> timer;
+
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/high_resolution_timer.hpp]
+
+[*Convenience header: ]None
 
 
 [endsect]
@@ -85364,6 +86921,267 @@ Verify the peer.
 
 
 
+[section:steady_timer steady_timer]
+
+[indexterm1 steady_timer] 
+Typedef for a timer based on the steady clock. 
+
+
+  typedef basic_waitable_timer< chrono::steady_clock > steady_timer;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.clock_type [*clock_type]]]
+    [The clock type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.duration [*duration]]]
+    [The duration type of the clock. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.time_point [*time_point]]]
+    [The time point type of the clock. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.traits_type [*traits_type]]]
+    [The wait traits type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_waitable_timer.async_wait [*async_wait]]]
+    [Start an asynchronous wait on the timer. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.basic_waitable_timer [*basic_waitable_timer]]]
+    [Constructor. 
+
+     Constructor to set a particular expiry time as an absolute time. 
+
+     Constructor to set a particular expiry time relative to now. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.cancel [*cancel]]]
+    [Cancel any asynchronous operations that are waiting on the timer. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.cancel_one [*cancel_one]]]
+    [Cancels one asynchronous operation that is waiting on the timer. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.expires_at [*expires_at]]]
+    [Get the timer's expiry time as an absolute time. 
+
+     Set the timer's expiry time as an absolute time. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.expires_from_now [*expires_from_now]]]
+    [Get the timer's expiry time relative to now. 
+
+     Set the timer's expiry time relative to now. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.wait [*wait]]]
+    [Perform a blocking wait on the timer. ]
+  ]
+  
+]
+
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_waitable_timer.get_implementation [*get_implementation]]]
+    [Get the underlying implementation of the I/O object. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.get_service [*get_service]]]
+    [Get the service associated with the I/O object. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_waitable_timer.implementation [*implementation]]]
+    [(Deprecated: Use get_implementation().) The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_waitable_timer.service [*service]]]
+    [(Deprecated: Use get_service().) The service associated with the I/O object. ]
+  ]
+
+]
+
+The [link asio.reference.basic_waitable_timer `basic_waitable_timer`] class template provides the ability to perform a blocking or asynchronous wait for a timer to expire.
+
+A waitable timer is always in one of two states: "expired" or "not expired". If the `wait()` or `async_wait()` function is called on an expired timer, the wait operation will complete immediately.
+
+Most applications will use the asio::waitable\_timer typedef.
+
+
+[heading Remarks]
+      
+This waitable timer functionality is for use with the C++11 standard library's `<chrono>` facility, or with the Boost.Chrono library.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:] Safe.
+
+[*Shared] [*objects:] Unsafe.
+
+
+[heading Examples]
+  
+Performing a blocking wait: 
+
+   // Construct a timer without setting an expiry time.
+   asio::waitable_timer timer(io_service);
+
+   // Set an expiry time relative to now.
+   timer.expires_from_now(boost::posix_time::seconds(5));
+
+   // Wait for the timer to expire.
+   timer.wait();
+
+
+
+
+
+Performing an asynchronous wait: 
+
+   void handler(const asio::error_code& error)
+   {
+     if (!error)
+     {
+       // Timer expired.
+     }
+   }
+
+   ...
+
+   // Construct a timer with an absolute expiry time.
+   asio::waitable_timer timer(io_service,
+       boost::posix_time::time_from_string("2005-12-07 23:59:59.000"));
+
+   // Start an asynchronous wait.
+   timer.async_wait(handler);
+
+
+
+
+
+[heading Changing an active waitable_timer's expiry time]
+  
+
+
+Changing the expiry time of a timer while there are pending asynchronous waits causes those wait operations to be cancelled. To ensure that the action associated with the timer is performed only once, use something like this: used:
+
+
+
+   void on_some_event()
+   {
+     if (my_timer.expires_from_now(seconds(5)) > 0)
+     {
+       // We managed to cancel the timer. Start new asynchronous wait.
+       my_timer.async_wait(on_timeout);
+     }
+     else
+     {
+       // Too late, timer has already expired!
+     }
+   }
+
+   void on_timeout(const asio::error_code& e)
+   {
+     if (e != asio::error::operation_aborted)
+     {
+       // Timer was not cancelled, take necessary action.
+     }
+   }
+
+
+
+
+
+* The `asio::basic_waitable_timer::expires_from_now()` function cancels any pending asynchronous waits, and returns the number of asynchronous waits that were cancelled. If it returns 0 then you were too late and the wait handler has already been executed, or will soon be executed. If it returns 1 then the wait handler was successfully cancelled.
+
+
+* If a wait handler is cancelled, the [link asio.reference.error_code `error_code`] passed to it contains the value `asio::error::operation_aborted`. 
+
+
+
+
+This typedef uses the C++11 `<chrono>` standard library facility, if available. Otherwise, it may use the Boost.Chrono library. To explicitly utilise Boost.Chrono, use the [link asio.reference.basic_waitable_timer `basic_waitable_timer`] template directly: 
+
+   typedef basic_waitable_timer<boost::chrono::steady_clock> timer;
+
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/steady_timer.hpp]
+
+[*Convenience header: ]None
+
+
+[endsect]
+
+
+
 [section:strand strand]
 
 [indexterm1 strand] 
@@ -86783,6 +88601,267 @@ Destructor.
 
 [endsect]
 
+
+[section:system_timer system_timer]
+
+[indexterm1 system_timer] 
+Typedef for a timer based on the system clock. 
+
+
+  typedef basic_waitable_timer< chrono::system_clock > system_timer;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.clock_type [*clock_type]]]
+    [The clock type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.duration [*duration]]]
+    [The duration type of the clock. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.time_point [*time_point]]]
+    [The time point type of the clock. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_waitable_timer.traits_type [*traits_type]]]
+    [The wait traits type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_waitable_timer.async_wait [*async_wait]]]
+    [Start an asynchronous wait on the timer. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.basic_waitable_timer [*basic_waitable_timer]]]
+    [Constructor. 
+
+     Constructor to set a particular expiry time as an absolute time. 
+
+     Constructor to set a particular expiry time relative to now. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.cancel [*cancel]]]
+    [Cancel any asynchronous operations that are waiting on the timer. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.cancel_one [*cancel_one]]]
+    [Cancels one asynchronous operation that is waiting on the timer. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.expires_at [*expires_at]]]
+    [Get the timer's expiry time as an absolute time. 
+
+     Set the timer's expiry time as an absolute time. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.expires_from_now [*expires_from_now]]]
+    [Get the timer's expiry time relative to now. 
+
+     Set the timer's expiry time relative to now. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.wait [*wait]]]
+    [Perform a blocking wait on the timer. ]
+  ]
+  
+]
+
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_waitable_timer.get_implementation [*get_implementation]]]
+    [Get the underlying implementation of the I/O object. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_waitable_timer.get_service [*get_service]]]
+    [Get the service associated with the I/O object. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.basic_waitable_timer.implementation [*implementation]]]
+    [(Deprecated: Use get_implementation().) The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.basic_waitable_timer.service [*service]]]
+    [(Deprecated: Use get_service().) The service associated with the I/O object. ]
+  ]
+
+]
+
+The [link asio.reference.basic_waitable_timer `basic_waitable_timer`] class template provides the ability to perform a blocking or asynchronous wait for a timer to expire.
+
+A waitable timer is always in one of two states: "expired" or "not expired". If the `wait()` or `async_wait()` function is called on an expired timer, the wait operation will complete immediately.
+
+Most applications will use the asio::waitable\_timer typedef.
+
+
+[heading Remarks]
+      
+This waitable timer functionality is for use with the C++11 standard library's `<chrono>` facility, or with the Boost.Chrono library.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:] Safe.
+
+[*Shared] [*objects:] Unsafe.
+
+
+[heading Examples]
+  
+Performing a blocking wait: 
+
+   // Construct a timer without setting an expiry time.
+   asio::waitable_timer timer(io_service);
+
+   // Set an expiry time relative to now.
+   timer.expires_from_now(boost::posix_time::seconds(5));
+
+   // Wait for the timer to expire.
+   timer.wait();
+
+
+
+
+
+Performing an asynchronous wait: 
+
+   void handler(const asio::error_code& error)
+   {
+     if (!error)
+     {
+       // Timer expired.
+     }
+   }
+
+   ...
+
+   // Construct a timer with an absolute expiry time.
+   asio::waitable_timer timer(io_service,
+       boost::posix_time::time_from_string("2005-12-07 23:59:59.000"));
+
+   // Start an asynchronous wait.
+   timer.async_wait(handler);
+
+
+
+
+
+[heading Changing an active waitable_timer's expiry time]
+  
+
+
+Changing the expiry time of a timer while there are pending asynchronous waits causes those wait operations to be cancelled. To ensure that the action associated with the timer is performed only once, use something like this: used:
+
+
+
+   void on_some_event()
+   {
+     if (my_timer.expires_from_now(seconds(5)) > 0)
+     {
+       // We managed to cancel the timer. Start new asynchronous wait.
+       my_timer.async_wait(on_timeout);
+     }
+     else
+     {
+       // Too late, timer has already expired!
+     }
+   }
+
+   void on_timeout(const asio::error_code& e)
+   {
+     if (e != asio::error::operation_aborted)
+     {
+       // Timer was not cancelled, take necessary action.
+     }
+   }
+
+
+
+
+
+* The `asio::basic_waitable_timer::expires_from_now()` function cancels any pending asynchronous waits, and returns the number of asynchronous waits that were cancelled. If it returns 0 then you were too late and the wait handler has already been executed, or will soon be executed. If it returns 1 then the wait handler was successfully cancelled.
+
+
+* If a wait handler is cancelled, the [link asio.reference.error_code `error_code`] passed to it contains the value `asio::error::operation_aborted`. 
+
+
+
+
+This typedef uses the C++11 `<chrono>` standard library facility, if available. Otherwise, it may use the Boost.Chrono library. To explicitly utilise Boost.Chrono, use the [link asio.reference.basic_waitable_timer `basic_waitable_timer`] template directly: 
+
+   typedef basic_waitable_timer<boost::chrono::system_clock> timer;
+
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/system_timer.hpp]
+
+[*Convenience header: ]None
+
+
+[endsect]
+
+
 [section:thread thread]
 
 
@@ -87286,6 +89365,544 @@ The service interface implementing the specified service type. Ownership of the 
 
 [endsect]
 
+
+[section:wait_traits wait_traits]
+
+
+Wait traits suitable for use with the [link asio.reference.basic_waitable_timer `basic_waitable_timer`] class template. 
+
+
+  template<
+      typename ``[link asio.reference.Clock Clock]``>
+  struct wait_traits
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.wait_traits.to_wait_duration [*to_wait_duration]]]
+    [Convert a clock duration into a duration used for waiting. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+[*Header: ][^asio/wait_traits.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[section:to_wait_duration wait_traits::to_wait_duration]
+
+[indexterm2 to_wait_duration..wait_traits] 
+Convert a clock duration into a duration used for waiting. 
+
+
+  static Clock::duration to_wait_duration(
+      const typename Clock::duration & d);
+
+
+
+[heading Return Value]
+      
+`d`. 
+
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:waitable_timer_service waitable_timer_service]
+
+
+Default service implementation for a timer. 
+
+
+  template<
+      typename ``[link asio.reference.Clock Clock]``,
+      typename ``[link asio.reference.WaitTraits WaitTraits]`` = asio::wait_traits<Clock>>
+  class waitable_timer_service :
+    public io_service::service
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.waitable_timer_service.clock_type [*clock_type]]]
+    [The clock type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.waitable_timer_service.duration [*duration]]]
+    [The duration type of the clock. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.waitable_timer_service.implementation_type [*implementation_type]]]
+    [The implementation type of the waitable timer. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.waitable_timer_service.time_point [*time_point]]]
+    [The time point type of the clock. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.waitable_timer_service.traits_type [*traits_type]]]
+    [The wait traits type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.waitable_timer_service.async_wait [*async_wait]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.waitable_timer_service.cancel [*cancel]]]
+    [Cancel any asynchronous wait operations associated with the timer. ]
+  ]
+  
+  [
+    [[link asio.reference.waitable_timer_service.cancel_one [*cancel_one]]]
+    [Cancels one asynchronous wait operation associated with the timer. ]
+  ]
+  
+  [
+    [[link asio.reference.waitable_timer_service.construct [*construct]]]
+    [Construct a new timer implementation. ]
+  ]
+  
+  [
+    [[link asio.reference.waitable_timer_service.destroy [*destroy]]]
+    [Destroy a timer implementation. ]
+  ]
+  
+  [
+    [[link asio.reference.waitable_timer_service.expires_at [*expires_at]]]
+    [Get the expiry time for the timer as an absolute time. 
+
+     Set the expiry time for the timer as an absolute time. ]
+  ]
+  
+  [
+    [[link asio.reference.waitable_timer_service.expires_from_now [*expires_from_now]]]
+    [Get the expiry time for the timer relative to now. 
+
+     Set the expiry time for the timer relative to now. ]
+  ]
+  
+  [
+    [[link asio.reference.waitable_timer_service.get_io_service [*get_io_service]]]
+    [Get the io_service object that owns the service. ]
+  ]
+  
+  [
+    [[link asio.reference.waitable_timer_service.wait [*wait]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.waitable_timer_service.waitable_timer_service [*waitable_timer_service]]]
+    [Construct a new timer service for the specified io_service. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.waitable_timer_service.id [*id]]]
+    [The unique service identifier. ]
+  ]
+
+]
+
+[heading Requirements]
+
+[*Header: ][^asio/waitable_timer_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[section:async_wait waitable_timer_service::async_wait]
+
+[indexterm2 async_wait..waitable_timer_service] 
+
+  template<
+      typename ``[link asio.reference.WaitHandler WaitHandler]``>
+  void async_wait(
+      implementation_type & impl,
+      WaitHandler handler);
+
+
+
+[endsect]
+
+
+
+[section:cancel waitable_timer_service::cancel]
+
+[indexterm2 cancel..waitable_timer_service] 
+Cancel any asynchronous wait operations associated with the timer. 
+
+
+  std::size_t cancel(
+      implementation_type & impl,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:cancel_one waitable_timer_service::cancel_one]
+
+[indexterm2 cancel_one..waitable_timer_service] 
+Cancels one asynchronous wait operation associated with the timer. 
+
+
+  std::size_t cancel_one(
+      implementation_type & impl,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:clock_type waitable_timer_service::clock_type]
+
+[indexterm2 clock_type..waitable_timer_service] 
+The clock type. 
+
+
+  typedef Clock clock_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/waitable_timer_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:construct waitable_timer_service::construct]
+
+[indexterm2 construct..waitable_timer_service] 
+Construct a new timer implementation. 
+
+
+  void construct(
+      implementation_type & impl);
+
+
+
+[endsect]
+
+
+
+[section:destroy waitable_timer_service::destroy]
+
+[indexterm2 destroy..waitable_timer_service] 
+Destroy a timer implementation. 
+
+
+  void destroy(
+      implementation_type & impl);
+
+
+
+[endsect]
+
+
+
+[section:duration waitable_timer_service::duration]
+
+[indexterm2 duration..waitable_timer_service] 
+The duration type of the clock. 
+
+
+  typedef clock_type::duration duration;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/waitable_timer_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[section:expires_at waitable_timer_service::expires_at]
+
+[indexterm2 expires_at..waitable_timer_service] 
+Get the expiry time for the timer as an absolute time. 
+
+
+  time_point ``[link asio.reference.waitable_timer_service.expires_at.overload1 expires_at]``(
+      const implementation_type & impl) const;
+  ``  [''''&raquo;''' [link asio.reference.waitable_timer_service.expires_at.overload1 more...]]``
+
+
+Set the expiry time for the timer as an absolute time. 
+
+
+  std::size_t ``[link asio.reference.waitable_timer_service.expires_at.overload2 expires_at]``(
+      implementation_type & impl,
+      const time_point & expiry_time,
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.waitable_timer_service.expires_at.overload2 more...]]``
+
+
+[section:overload1 waitable_timer_service::expires_at (1 of 2 overloads)]
+
+
+Get the expiry time for the timer as an absolute time. 
+
+
+  time_point expires_at(
+      const implementation_type & impl) const;
+
+
+
+[endsect]
+
+
+
+[section:overload2 waitable_timer_service::expires_at (2 of 2 overloads)]
+
+
+Set the expiry time for the timer as an absolute time. 
+
+
+  std::size_t expires_at(
+      implementation_type & impl,
+      const time_point & expiry_time,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:expires_from_now waitable_timer_service::expires_from_now]
+
+[indexterm2 expires_from_now..waitable_timer_service] 
+Get the expiry time for the timer relative to now. 
+
+
+  duration ``[link asio.reference.waitable_timer_service.expires_from_now.overload1 expires_from_now]``(
+      const implementation_type & impl) const;
+  ``  [''''&raquo;''' [link asio.reference.waitable_timer_service.expires_from_now.overload1 more...]]``
+
+
+Set the expiry time for the timer relative to now. 
+
+
+  std::size_t ``[link asio.reference.waitable_timer_service.expires_from_now.overload2 expires_from_now]``(
+      implementation_type & impl,
+      const duration & expiry_time,
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.waitable_timer_service.expires_from_now.overload2 more...]]``
+
+
+[section:overload1 waitable_timer_service::expires_from_now (1 of 2 overloads)]
+
+
+Get the expiry time for the timer relative to now. 
+
+
+  duration expires_from_now(
+      const implementation_type & impl) const;
+
+
+
+[endsect]
+
+
+
+[section:overload2 waitable_timer_service::expires_from_now (2 of 2 overloads)]
+
+
+Set the expiry time for the timer relative to now. 
+
+
+  std::size_t expires_from_now(
+      implementation_type & impl,
+      const duration & expiry_time,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:get_io_service waitable_timer_service::get_io_service]
+
+
+['Inherited from io_service.]
+
+[indexterm2 get_io_service..waitable_timer_service] 
+Get the [link asio.reference.io_service `io_service`] object that owns the service. 
+
+
+  asio::io_service & get_io_service();
+
+
+
+[endsect]
+
+
+
+[section:id waitable_timer_service::id]
+
+[indexterm2 id..waitable_timer_service] 
+The unique service identifier. 
+
+
+  static asio::io_service::id id;
+
+
+
+[endsect]
+
+
+
+[section:implementation_type waitable_timer_service::implementation_type]
+
+[indexterm2 implementation_type..waitable_timer_service] 
+The implementation type of the waitable timer. 
+
+
+  typedef implementation_defined implementation_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/waitable_timer_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:time_point waitable_timer_service::time_point]
+
+[indexterm2 time_point..waitable_timer_service] 
+The time point type of the clock. 
+
+
+  typedef clock_type::time_point time_point;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/waitable_timer_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:traits_type waitable_timer_service::traits_type]
+
+[indexterm2 traits_type..waitable_timer_service] 
+The wait traits type. 
+
+
+  typedef WaitTraits traits_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/waitable_timer_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:wait waitable_timer_service::wait]
+
+[indexterm2 wait..waitable_timer_service] 
+
+  void wait(
+      implementation_type & impl,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:waitable_timer_service waitable_timer_service::waitable_timer_service]
+
+[indexterm2 waitable_timer_service..waitable_timer_service] 
+Construct a new timer service for the specified [link asio.reference.io_service `io_service`]. 
+
+
+  waitable_timer_service(
+      asio::io_service & io_service);
+
+
+
+[endsect]
+
+
+
+[endsect]
 
 [section:windows__basic_handle windows::basic_handle]
 
@@ -88364,6 +90981,1226 @@ Protected destructor to prevent deletion through this type.
 
 [endsect]
 
+
+
+[endsect]
+
+[section:windows__basic_object_handle windows::basic_object_handle]
+
+
+Provides object-oriented handle functionality. 
+
+
+  template<
+      typename ``[link asio.reference.ObjectHandleService ObjectHandleService]`` = object_handle_service>
+  class basic_object_handle :
+    public windows::basic_handle< ObjectHandleService >
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.windows__basic_object_handle.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_object_handle.lowest_layer_type [*lowest_layer_type]]]
+    [A basic_handle is always the lowest layer. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_object_handle.native_handle_type [*native_handle_type]]]
+    [The native representation of a handle. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_object_handle.native_type [*native_type]]]
+    [(Deprecated: Use native_handle_type.) The native representation of a handle. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_object_handle.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_object_handle.assign [*assign]]]
+    [Assign an existing native handle to the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.async_wait [*async_wait]]]
+    [Start an asynchronous wait on the object handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.basic_object_handle [*basic_object_handle]]]
+    [Construct a basic_object_handle without opening it. 
+
+     Construct a basic_object_handle on an existing native handle. 
+
+     Move-construct a basic_object_handle from another. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.close [*close]]]
+    [Close the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.is_open [*is_open]]]
+    [Determine whether the handle is open. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.lowest_layer [*lowest_layer]]]
+    [Get a reference to the lowest layer. 
+
+     Get a const reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.native [*native]]]
+    [(Deprecated: Use native_handle().) Get the native handle representation. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.native_handle [*native_handle]]]
+    [Get the native handle representation. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.operator_eq_ [*operator=]]]
+    [Move-assign a basic_object_handle from another. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.wait [*wait]]]
+    [Perform a blocking wait on the object handle. ]
+  ]
+  
+]
+
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_object_handle.get_implementation [*get_implementation]]]
+    [Get the underlying implementation of the I/O object. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.get_service [*get_service]]]
+    [Get the service associated with the I/O object. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_object_handle.implementation [*implementation]]]
+    [(Deprecated: Use get_implementation().) The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.windows__basic_object_handle.service [*service]]]
+    [(Deprecated: Use get_service().) The service associated with the I/O object. ]
+  ]
+
+]
+
+The [link asio.reference.windows__basic_object_handle `windows::basic_object_handle`] class template provides asynchronous and blocking object-oriented handle functionality.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:] Safe.
+
+[*Shared] [*objects:] Unsafe. 
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/basic_object_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+[section:assign windows::basic_object_handle::assign]
+
+[indexterm2 assign..windows::basic_object_handle] 
+Assign an existing native handle to the handle. 
+
+
+  void ``[link asio.reference.windows__basic_object_handle.assign.overload1 assign]``(
+      const native_handle_type & handle);
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_object_handle.assign.overload1 more...]]``
+
+  asio::error_code ``[link asio.reference.windows__basic_object_handle.assign.overload2 assign]``(
+      const native_handle_type & handle,
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_object_handle.assign.overload2 more...]]``
+
+
+[section:overload1 windows::basic_object_handle::assign (1 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+
+Assign an existing native handle to the handle. 
+
+
+  void assign(
+      const native_handle_type & handle);
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_object_handle::assign (2 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+
+Assign an existing native handle to the handle. 
+
+
+  asio::error_code assign(
+      const native_handle_type & handle,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:async_wait windows::basic_object_handle::async_wait]
+
+[indexterm2 async_wait..windows::basic_object_handle] 
+Start an asynchronous wait on the object handle. 
+
+
+  template<
+      typename ``[link asio.reference.WaitHandler WaitHandler]``>
+  void async_wait(
+      WaitHandler handler);
+
+
+This function is be used to initiate an asynchronous wait against the object handle. It always returns immediately.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[handler][The handler to be called when the object handle is set to the signalled state. Copies will be made of the handler as required. The function signature of the handler must be: 
+``
+   void handler(
+     const asio::error_code& error // Result of operation.
+   ); 
+``
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using `asio::io_service::post()`. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[section:basic_object_handle windows::basic_object_handle::basic_object_handle]
+
+[indexterm2 basic_object_handle..windows::basic_object_handle] 
+Construct a [link asio.reference.windows__basic_object_handle `windows::basic_object_handle`] without opening it. 
+
+
+  explicit ``[link asio.reference.windows__basic_object_handle.basic_object_handle.overload1 basic_object_handle]``(
+      asio::io_service & io_service);
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_object_handle.basic_object_handle.overload1 more...]]``
+
+
+Construct a [link asio.reference.windows__basic_object_handle `windows::basic_object_handle`] on an existing native handle. 
+
+
+  ``[link asio.reference.windows__basic_object_handle.basic_object_handle.overload2 basic_object_handle]``(
+      asio::io_service & io_service,
+      const native_handle_type & native_handle);
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_object_handle.basic_object_handle.overload2 more...]]``
+
+
+Move-construct a [link asio.reference.windows__basic_object_handle `windows::basic_object_handle`] from another. 
+
+
+  ``[link asio.reference.windows__basic_object_handle.basic_object_handle.overload3 basic_object_handle]``(
+      basic_object_handle && other);
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_object_handle.basic_object_handle.overload3 more...]]``
+
+
+[section:overload1 windows::basic_object_handle::basic_object_handle (1 of 3 overloads)]
+
+
+Construct a [link asio.reference.windows__basic_object_handle `windows::basic_object_handle`] without opening it. 
+
+
+  basic_object_handle(
+      asio::io_service & io_service);
+
+
+This constructor creates an object handle without opening it.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The [link asio.reference.io_service `io_service`] object that the object handle will use to dispatch handlers for any asynchronous operations performed on the handle. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_object_handle::basic_object_handle (2 of 3 overloads)]
+
+
+Construct a [link asio.reference.windows__basic_object_handle `windows::basic_object_handle`] on an existing native handle. 
+
+
+  basic_object_handle(
+      asio::io_service & io_service,
+      const native_handle_type & native_handle);
+
+
+This constructor creates an object handle object to hold an existing native handle.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The [link asio.reference.io_service `io_service`] object that the object handle will use to dispatch handlers for any asynchronous operations performed on the handle.]]
+
+[[native_handle][The new underlying handle implementation.]]
+
+]
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 windows::basic_object_handle::basic_object_handle (3 of 3 overloads)]
+
+
+Move-construct a [link asio.reference.windows__basic_object_handle `windows::basic_object_handle`] from another. 
+
+
+  basic_object_handle(
+      basic_object_handle && other);
+
+
+This constructor moves an object handle from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.windows__basic_object_handle `windows::basic_object_handle`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_object_handle(io_service&) constructor`. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:cancel windows::basic_object_handle::cancel]
+
+[indexterm2 cancel..windows::basic_object_handle] 
+Cancel all asynchronous operations associated with the handle. 
+
+
+  void ``[link asio.reference.windows__basic_object_handle.cancel.overload1 cancel]``();
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_object_handle.cancel.overload1 more...]]``
+
+  asio::error_code ``[link asio.reference.windows__basic_object_handle.cancel.overload2 cancel]``(
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_object_handle.cancel.overload2 more...]]``
+
+
+[section:overload1 windows::basic_object_handle::cancel (1 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+
+Cancel all asynchronous operations associated with the handle. 
+
+
+  void cancel();
+
+
+This function causes all outstanding asynchronous read or write operations to finish immediately, and the handlers for cancelled operations will be passed the `asio::error::operation_aborted` error.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_object_handle::cancel (2 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+
+Cancel all asynchronous operations associated with the handle. 
+
+
+  asio::error_code cancel(
+      asio::error_code & ec);
+
+
+This function causes all outstanding asynchronous read or write operations to finish immediately, and the handlers for cancelled operations will be passed the `asio::error::operation_aborted` error.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:close windows::basic_object_handle::close]
+
+[indexterm2 close..windows::basic_object_handle] 
+Close the handle. 
+
+
+  void ``[link asio.reference.windows__basic_object_handle.close.overload1 close]``();
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_object_handle.close.overload1 more...]]``
+
+  asio::error_code ``[link asio.reference.windows__basic_object_handle.close.overload2 close]``(
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_object_handle.close.overload2 more...]]``
+
+
+[section:overload1 windows::basic_object_handle::close (1 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+
+Close the handle. 
+
+
+  void close();
+
+
+This function is used to close the handle. Any asynchronous read or write operations will be cancelled immediately, and will complete with the `asio::error::operation_aborted` error.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_object_handle::close (2 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+
+Close the handle. 
+
+
+  asio::error_code close(
+      asio::error_code & ec);
+
+
+This function is used to close the handle. Any asynchronous read or write operations will be cancelled immediately, and will complete with the `asio::error::operation_aborted` error.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:get_implementation windows::basic_object_handle::get_implementation]
+
+[indexterm2 get_implementation..windows::basic_object_handle] 
+Get the underlying implementation of the I/O object. 
+
+
+  implementation_type & ``[link asio.reference.windows__basic_object_handle.get_implementation.overload1 get_implementation]``();
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_object_handle.get_implementation.overload1 more...]]``
+
+  const implementation_type & ``[link asio.reference.windows__basic_object_handle.get_implementation.overload2 get_implementation]``() const;
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_object_handle.get_implementation.overload2 more...]]``
+
+
+[section:overload1 windows::basic_object_handle::get_implementation (1 of 2 overloads)]
+
+
+['Inherited from basic_io_object.]
+
+
+Get the underlying implementation of the I/O object. 
+
+
+  implementation_type & get_implementation();
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_object_handle::get_implementation (2 of 2 overloads)]
+
+
+['Inherited from basic_io_object.]
+
+
+Get the underlying implementation of the I/O object. 
+
+
+  const implementation_type & get_implementation() const;
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:get_io_service windows::basic_object_handle::get_io_service]
+
+
+['Inherited from basic_io_object.]
+
+[indexterm2 get_io_service..windows::basic_object_handle] 
+Get the [link asio.reference.io_service `io_service`] associated with the object. 
+
+
+  asio::io_service & get_io_service();
+
+
+This function may be used to obtain the [link asio.reference.io_service `io_service`] object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the [link asio.reference.io_service `io_service`] object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+
+[endsect]
+
+
+[section:get_service windows::basic_object_handle::get_service]
+
+[indexterm2 get_service..windows::basic_object_handle] 
+Get the service associated with the I/O object. 
+
+
+  service_type & ``[link asio.reference.windows__basic_object_handle.get_service.overload1 get_service]``();
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_object_handle.get_service.overload1 more...]]``
+
+  const service_type & ``[link asio.reference.windows__basic_object_handle.get_service.overload2 get_service]``() const;
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_object_handle.get_service.overload2 more...]]``
+
+
+[section:overload1 windows::basic_object_handle::get_service (1 of 2 overloads)]
+
+
+['Inherited from basic_io_object.]
+
+
+Get the service associated with the I/O object. 
+
+
+  service_type & get_service();
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_object_handle::get_service (2 of 2 overloads)]
+
+
+['Inherited from basic_io_object.]
+
+
+Get the service associated with the I/O object. 
+
+
+  const service_type & get_service() const;
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:implementation windows::basic_object_handle::implementation]
+
+
+['Inherited from basic_io_object.]
+
+[indexterm2 implementation..windows::basic_object_handle] 
+(Deprecated: Use `get_implementation()`.) The underlying implementation of the I/O object. 
+
+
+  implementation_type implementation;
+
+
+
+[endsect]
+
+
+
+[section:implementation_type windows::basic_object_handle::implementation_type]
+
+
+['Inherited from basic_io_object.]
+
+[indexterm2 implementation_type..windows::basic_object_handle] 
+The underlying implementation type of I/O object. 
+
+
+  typedef service_type::implementation_type implementation_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/basic_object_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:is_open windows::basic_object_handle::is_open]
+
+
+['Inherited from windows::basic_handle.]
+
+[indexterm2 is_open..windows::basic_object_handle] 
+Determine whether the handle is open. 
+
+
+  bool is_open() const;
+
+
+
+[endsect]
+
+
+[section:lowest_layer windows::basic_object_handle::lowest_layer]
+
+[indexterm2 lowest_layer..windows::basic_object_handle] 
+Get a reference to the lowest layer. 
+
+
+  lowest_layer_type & ``[link asio.reference.windows__basic_object_handle.lowest_layer.overload1 lowest_layer]``();
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_object_handle.lowest_layer.overload1 more...]]``
+
+
+Get a const reference to the lowest layer. 
+
+
+  const lowest_layer_type & ``[link asio.reference.windows__basic_object_handle.lowest_layer.overload2 lowest_layer]``() const;
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_object_handle.lowest_layer.overload2 more...]]``
+
+
+[section:overload1 windows::basic_object_handle::lowest_layer (1 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+
+Get a reference to the lowest layer. 
+
+
+  lowest_layer_type & lowest_layer();
+
+
+This function returns a reference to the lowest layer in a stack of layers. Since a [link asio.reference.windows__basic_handle `windows::basic_handle`] cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_object_handle::lowest_layer (2 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+
+Get a const reference to the lowest layer. 
+
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a [link asio.reference.windows__basic_handle `windows::basic_handle`] cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:lowest_layer_type windows::basic_object_handle::lowest_layer_type]
+
+
+['Inherited from windows::basic_handle.]
+
+[indexterm2 lowest_layer_type..windows::basic_object_handle] 
+A [link asio.reference.windows__basic_handle `windows::basic_handle`] is always the lowest layer. 
+
+
+  typedef basic_handle< ObjectHandleService > lowest_layer_type;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.windows__basic_handle.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_handle.lowest_layer_type [*lowest_layer_type]]]
+    [A basic_handle is always the lowest layer. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_handle.native_handle_type [*native_handle_type]]]
+    [The native representation of a handle. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_handle.native_type [*native_type]]]
+    [(Deprecated: Use native_handle_type.) The native representation of a handle. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_handle.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_handle.assign [*assign]]]
+    [Assign an existing native handle to the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.basic_handle [*basic_handle]]]
+    [Construct a basic_handle without opening it. 
+
+     Construct a basic_handle on an existing native handle. 
+
+     Move-construct a basic_handle from another. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.close [*close]]]
+    [Close the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.is_open [*is_open]]]
+    [Determine whether the handle is open. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.lowest_layer [*lowest_layer]]]
+    [Get a reference to the lowest layer. 
+
+     Get a const reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.native [*native]]]
+    [(Deprecated: Use native_handle().) Get the native handle representation. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.native_handle [*native_handle]]]
+    [Get the native handle representation. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.operator_eq_ [*operator=]]]
+    [Move-assign a basic_handle from another. ]
+  ]
+  
+]
+
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_handle.get_implementation [*get_implementation]]]
+    [Get the underlying implementation of the I/O object. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle.get_service [*get_service]]]
+    [Get the service associated with the I/O object. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_handle._basic_handle [*~basic_handle]]]
+    [Protected destructor to prevent deletion through this type. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_handle.implementation [*implementation]]]
+    [(Deprecated: Use get_implementation().) The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.windows__basic_handle.service [*service]]]
+    [(Deprecated: Use get_service().) The service associated with the I/O object. ]
+  ]
+
+]
+
+The [link asio.reference.windows__basic_handle `windows::basic_handle`] class template provides the ability to wrap a Windows handle.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:] Safe.
+
+[*Shared] [*objects:] Unsafe. 
+
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/basic_object_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:native windows::basic_object_handle::native]
+
+
+['Inherited from windows::basic_handle.]
+
+[indexterm2 native..windows::basic_object_handle] 
+(Deprecated: Use `native_handle()`.) Get the native handle representation. 
+
+
+  native_type native();
+
+
+This function may be used to obtain the underlying representation of the handle. This is intended to allow access to native handle functionality that is not otherwise provided. 
+
+
+[endsect]
+
+
+
+[section:native_handle windows::basic_object_handle::native_handle]
+
+
+['Inherited from windows::basic_handle.]
+
+[indexterm2 native_handle..windows::basic_object_handle] 
+Get the native handle representation. 
+
+
+  native_handle_type native_handle();
+
+
+This function may be used to obtain the underlying representation of the handle. This is intended to allow access to native handle functionality that is not otherwise provided. 
+
+
+[endsect]
+
+
+
+[section:native_handle_type windows::basic_object_handle::native_handle_type]
+
+[indexterm2 native_handle_type..windows::basic_object_handle] 
+The native representation of a handle. 
+
+
+  typedef ObjectHandleService::native_handle_type native_handle_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/basic_object_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:native_type windows::basic_object_handle::native_type]
+
+
+['Inherited from windows::basic_handle.]
+
+[indexterm2 native_type..windows::basic_object_handle] 
+(Deprecated: Use native\_handle\_type.) The native representation of a handle. 
+
+
+  typedef ObjectHandleService::native_handle_type native_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/basic_object_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_eq_ windows::basic_object_handle::operator=]
+
+[indexterm2 operator=..windows::basic_object_handle] 
+Move-assign a [link asio.reference.windows__basic_object_handle `windows::basic_object_handle`] from another. 
+
+
+  basic_object_handle & operator=(
+      basic_object_handle && other);
+
+
+This assignment operator moves an object handle from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.windows__basic_object_handle `windows::basic_object_handle`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_object_handle(io_service&) constructor`. 
+
+
+
+
+[endsect]
+
+
+
+[section:service windows::basic_object_handle::service]
+
+
+['Inherited from basic_io_object.]
+
+[indexterm2 service..windows::basic_object_handle] 
+(Deprecated: Use `get_service()`.) The service associated with the I/O object. 
+
+
+  service_type & service;
+
+
+
+[heading Remarks]
+      
+Available only for services that do not support movability. 
+
+
+
+
+[endsect]
+
+
+
+[section:service_type windows::basic_object_handle::service_type]
+
+
+['Inherited from basic_io_object.]
+
+[indexterm2 service_type..windows::basic_object_handle] 
+The type of the service that will be used to provide I/O operations. 
+
+
+  typedef ObjectHandleService service_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/basic_object_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[section:wait windows::basic_object_handle::wait]
+
+[indexterm2 wait..windows::basic_object_handle] 
+Perform a blocking wait on the object handle. 
+
+
+  void ``[link asio.reference.windows__basic_object_handle.wait.overload1 wait]``();
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_object_handle.wait.overload1 more...]]``
+
+  void ``[link asio.reference.windows__basic_object_handle.wait.overload2 wait]``(
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_object_handle.wait.overload2 more...]]``
+
+
+[section:overload1 windows::basic_object_handle::wait (1 of 2 overloads)]
+
+
+Perform a blocking wait on the object handle. 
+
+
+  void wait();
+
+
+This function is used to wait for the object handle to be set to the signalled state. This function blocks and does not return until the object handle has been set to the signalled state.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_object_handle::wait (2 of 2 overloads)]
+
+
+Perform a blocking wait on the object handle. 
+
+
+  void wait(
+      asio::error_code & ec);
+
+
+This function is used to wait for the object handle to be set to the signalled state. This function blocks and does not return until the object handle has been set to the signalled state.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [endsect]
@@ -91355,6 +95192,566 @@ The write\_some operation may not transmit all of the data to the peer. Consider
 
 
 [endsect]
+
+
+[endsect]
+
+
+[section:windows__object_handle windows::object_handle]
+
+[indexterm1 windows::object_handle] 
+Typedef for the typical usage of an object handle. 
+
+
+  typedef basic_object_handle object_handle;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.windows__basic_object_handle.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_object_handle.lowest_layer_type [*lowest_layer_type]]]
+    [A basic_handle is always the lowest layer. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_object_handle.native_handle_type [*native_handle_type]]]
+    [The native representation of a handle. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_object_handle.native_type [*native_type]]]
+    [(Deprecated: Use native_handle_type.) The native representation of a handle. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__basic_object_handle.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_object_handle.assign [*assign]]]
+    [Assign an existing native handle to the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.async_wait [*async_wait]]]
+    [Start an asynchronous wait on the object handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.basic_object_handle [*basic_object_handle]]]
+    [Construct a basic_object_handle without opening it. 
+
+     Construct a basic_object_handle on an existing native handle. 
+
+     Move-construct a basic_object_handle from another. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.close [*close]]]
+    [Close the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.is_open [*is_open]]]
+    [Determine whether the handle is open. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.lowest_layer [*lowest_layer]]]
+    [Get a reference to the lowest layer. 
+
+     Get a const reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.native [*native]]]
+    [(Deprecated: Use native_handle().) Get the native handle representation. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.native_handle [*native_handle]]]
+    [Get the native handle representation. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.operator_eq_ [*operator=]]]
+    [Move-assign a basic_object_handle from another. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.wait [*wait]]]
+    [Perform a blocking wait on the object handle. ]
+  ]
+  
+]
+
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_object_handle.get_implementation [*get_implementation]]]
+    [Get the underlying implementation of the I/O object. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__basic_object_handle.get_service [*get_service]]]
+    [Get the service associated with the I/O object. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__basic_object_handle.implementation [*implementation]]]
+    [(Deprecated: Use get_implementation().) The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link asio.reference.windows__basic_object_handle.service [*service]]]
+    [(Deprecated: Use get_service().) The service associated with the I/O object. ]
+  ]
+
+]
+
+The [link asio.reference.windows__basic_object_handle `windows::basic_object_handle`] class template provides asynchronous and blocking object-oriented handle functionality.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:] Safe.
+
+[*Shared] [*objects:] Unsafe. 
+
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/object_handle.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[section:windows__object_handle_service windows::object_handle_service]
+
+
+Default service implementation for an object handle. 
+
+
+  class object_handle_service :
+    public io_service::service
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.windows__object_handle_service.implementation_type [*implementation_type]]]
+    [The type of an object handle implementation. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.windows__object_handle_service.native_handle_type [*native_handle_type]]]
+    [The native handle type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__object_handle_service.assign [*assign]]]
+    [Assign an existing native handle to an object handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__object_handle_service.async_wait [*async_wait]]]
+    [Start an asynchronous wait. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__object_handle_service.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the handle. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__object_handle_service.close [*close]]]
+    [Close an object handle implementation. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__object_handle_service.construct [*construct]]]
+    [Construct a new object handle implementation. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__object_handle_service.destroy [*destroy]]]
+    [Destroy an object handle implementation. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__object_handle_service.get_io_service [*get_io_service]]]
+    [Get the io_service object that owns the service. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__object_handle_service.is_open [*is_open]]]
+    [Determine whether the handle is open. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__object_handle_service.move_assign [*move_assign]]]
+    [Move-assign from another object handle implementation. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__object_handle_service.move_construct [*move_construct]]]
+    [Move-construct a new object handle implementation. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__object_handle_service.native_handle [*native_handle]]]
+    [Get the native handle implementation. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__object_handle_service.object_handle_service [*object_handle_service]]]
+    [Construct a new object handle service for the specified io_service. ]
+  ]
+  
+  [
+    [[link asio.reference.windows__object_handle_service.wait [*wait]]]
+    []
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.windows__object_handle_service.id [*id]]]
+    [The unique service identifier. ]
+  ]
+
+]
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/object_handle_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[section:assign windows::object_handle_service::assign]
+
+[indexterm2 assign..windows::object_handle_service] 
+Assign an existing native handle to an object handle. 
+
+
+  asio::error_code assign(
+      implementation_type & impl,
+      const native_handle_type & handle,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:async_wait windows::object_handle_service::async_wait]
+
+[indexterm2 async_wait..windows::object_handle_service] 
+Start an asynchronous wait. 
+
+
+  template<
+      typename ``[link asio.reference.WaitHandler WaitHandler]``>
+  void async_wait(
+      implementation_type & impl,
+      WaitHandler handler);
+
+
+
+[endsect]
+
+
+
+[section:cancel windows::object_handle_service::cancel]
+
+[indexterm2 cancel..windows::object_handle_service] 
+Cancel all asynchronous operations associated with the handle. 
+
+
+  asio::error_code cancel(
+      implementation_type & impl,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:close windows::object_handle_service::close]
+
+[indexterm2 close..windows::object_handle_service] 
+Close an object handle implementation. 
+
+
+  asio::error_code close(
+      implementation_type & impl,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:construct windows::object_handle_service::construct]
+
+[indexterm2 construct..windows::object_handle_service] 
+Construct a new object handle implementation. 
+
+
+  void construct(
+      implementation_type & impl);
+
+
+
+[endsect]
+
+
+
+[section:destroy windows::object_handle_service::destroy]
+
+[indexterm2 destroy..windows::object_handle_service] 
+Destroy an object handle implementation. 
+
+
+  void destroy(
+      implementation_type & impl);
+
+
+
+[endsect]
+
+
+
+[section:get_io_service windows::object_handle_service::get_io_service]
+
+
+['Inherited from io_service.]
+
+[indexterm2 get_io_service..windows::object_handle_service] 
+Get the [link asio.reference.io_service `io_service`] object that owns the service. 
+
+
+  asio::io_service & get_io_service();
+
+
+
+[endsect]
+
+
+
+[section:id windows::object_handle_service::id]
+
+[indexterm2 id..windows::object_handle_service] 
+The unique service identifier. 
+
+
+  static asio::io_service::id id;
+
+
+
+[endsect]
+
+
+
+[section:implementation_type windows::object_handle_service::implementation_type]
+
+[indexterm2 implementation_type..windows::object_handle_service] 
+The type of an object handle implementation. 
+
+
+  typedef implementation_defined implementation_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/object_handle_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:is_open windows::object_handle_service::is_open]
+
+[indexterm2 is_open..windows::object_handle_service] 
+Determine whether the handle is open. 
+
+
+  bool is_open(
+      const implementation_type & impl) const;
+
+
+
+[endsect]
+
+
+
+[section:move_assign windows::object_handle_service::move_assign]
+
+[indexterm2 move_assign..windows::object_handle_service] 
+Move-assign from another object handle implementation. 
+
+
+  void move_assign(
+      implementation_type & impl,
+      object_handle_service & other_service,
+      implementation_type & other_impl);
+
+
+
+[endsect]
+
+
+
+[section:move_construct windows::object_handle_service::move_construct]
+
+[indexterm2 move_construct..windows::object_handle_service] 
+Move-construct a new object handle implementation. 
+
+
+  void move_construct(
+      implementation_type & impl,
+      implementation_type & other_impl);
+
+
+
+[endsect]
+
+
+
+[section:native_handle windows::object_handle_service::native_handle]
+
+[indexterm2 native_handle..windows::object_handle_service] 
+Get the native handle implementation. 
+
+
+  native_handle_type native_handle(
+      implementation_type & impl);
+
+
+
+[endsect]
+
+
+
+[section:native_handle_type windows::object_handle_service::native_handle_type]
+
+[indexterm2 native_handle_type..windows::object_handle_service] 
+The native handle type. 
+
+
+  typedef implementation_defined native_handle_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/windows/object_handle_service.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:object_handle_service windows::object_handle_service::object_handle_service]
+
+[indexterm2 object_handle_service..windows::object_handle_service] 
+Construct a new object handle service for the specified [link asio.reference.io_service `io_service`]. 
+
+
+  object_handle_service(
+      asio::io_service & io_service);
+
+
+
+[endsect]
+
+
+
+[section:wait windows::object_handle_service::wait]
+
+[indexterm2 wait..windows::object_handle_service] 
+
+  void wait(
+      implementation_type & impl,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
 
 
 [endsect]
