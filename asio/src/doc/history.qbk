@@ -7,7 +7,7 @@
 
 [section:history Revision History]
 
-[heading Asio 1.7.0]
+[heading Asio 1.8.0]
 
 * Added a new class template `basic_waitable_timer` based around the C++11 clock
   type requirements. It may be used with the clocks from the C++11 `<chrono>`
@@ -30,6 +30,13 @@
 
 * Fixed a non-paged pool "leak" on Windows when an `io_service` is repeatedly
   run without anything to do.
+
+* Reverted earlier change to allow some speculative operations to be performed
+  without holding the lock, as it introduced a race condition in some
+  multithreaded scenarios.
+
+* Fixed a bug where the second buffer in an array of two buffers may be ignored
+  if the first buffer is empty.
 
 [heading Asio 1.6.1]
 
