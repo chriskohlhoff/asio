@@ -42955,7 +42955,7 @@ Provides waitable timer functionality.
 
 
   template<
-      typename ``[link asio.reference.Clock Clock]``,
+      typename Clock,
       typename ``[link asio.reference.WaitTraits WaitTraits]`` = asio::wait_traits<Clock>,
       typename ``[link asio.reference.WaitableTimerService WaitableTimerService]`` = waitable_timer_service<Clock, WaitTraits>>
   class basic_waitable_timer :
@@ -89373,7 +89373,7 @@ Wait traits suitable for use with the [link asio.reference.basic_waitable_timer 
 
 
   template<
-      typename ``[link asio.reference.Clock Clock]``>
+      typename Clock>
   struct wait_traits
 
 
@@ -89426,7 +89426,7 @@ Default service implementation for a timer.
 
 
   template<
-      typename ``[link asio.reference.Clock Clock]``,
+      typename Clock,
       typename ``[link asio.reference.WaitTraits WaitTraits]`` = asio::wait_traits<Clock>>
   class waitable_timer_service :
     public io_service::service
