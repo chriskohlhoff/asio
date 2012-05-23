@@ -221,16 +221,15 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
 
   if (descriptor_data->op_queue_[op_type].empty())
   {
-    if (allow_speculative)
+    if (allow_speculative
+        && (op_type != read_op
+          || descriptor_data->op_queue_[except_op].empty()))
     {
-      if (op_type != read_op || descriptor_data->op_queue_[except_op].empty())
+      if (op->perform())
       {
-        if (op->perform())
-        {
-          descriptor_lock.unlock();
-          io_service_.post_immediate_completion(op);
-          return;
-        }
+        descriptor_lock.unlock();
+        io_service_.post_immediate_completion(op);
+        return;
       }
     }
     else
