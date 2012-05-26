@@ -7,6 +7,22 @@
 
 [section:history Revision History]
 
+[heading Asio 1.8.1]
+
+* Changed the `epoll_reactor` backend to do lazy registration for `EPOLLOUT`
+  events.
+
+* Fixed the `epoll_reactor` handling of out-of-band data, which was broken by
+  an incomplete fix in the last release.
+
+* Changed Asio's SSL wrapper to respect OpenSSL's `OPENSSL_NO_ENGINE` feature
+  test `#define`.
+
+* Fixed `windows::object_handle` so that it works with Windows compilers that
+  support C++11 move semantics (such as [^g++]).
+
+* Improved the performance of strand rescheduling.
+
 [heading Asio 1.8.0]
 
 * Added a new class template `basic_waitable_timer` based around the C++11 clock
