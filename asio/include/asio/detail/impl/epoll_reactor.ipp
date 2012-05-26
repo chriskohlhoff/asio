@@ -126,7 +126,7 @@ void epoll_reactor::fork_service(asio::io_service::fork_event fork_ev)
     for (descriptor_state* state = registered_descriptors_.first();
         state != 0; state = state->next_)
     {
-      ev.events = EPOLLIN | EPOLLERR | EPOLLHUP | EPOLLOUT | EPOLLPRI | EPOLLET;
+      ev.events = state->registered_events_;
       ev.data.ptr = state;
       int result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, state->descriptor_, &ev);
       if (result != 0)
@@ -158,7 +158,8 @@ int epoll_reactor::register_descriptor(socket_type descriptor,
   }
 
   epoll_event ev = { 0, { 0 } };
-  ev.events = EPOLLIN | EPOLLERR | EPOLLHUP | EPOLLOUT | EPOLLPRI | EPOLLET;
+  ev.events = EPOLLIN | EPOLLERR | EPOLLHUP | EPOLLPRI | EPOLLET;
+  descriptor_data->registered_events_ = ev.events;
   ev.data.ptr = descriptor_data;
   int result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
   if (result != 0)
@@ -183,7 +184,8 @@ int epoll_reactor::register_internal_descriptor(
   }
 
   epoll_event ev = { 0, { 0 } };
-  ev.events = EPOLLIN | EPOLLERR | EPOLLHUP | EPOLLOUT | EPOLLPRI | EPOLLET;
+  ev.events = EPOLLIN | EPOLLERR | EPOLLHUP | EPOLLPRI | EPOLLET;
+  descriptor_data->registered_events_ = ev.events;
   ev.data.ptr = descriptor_data;
   int result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
   if (result != 0)
@@ -231,12 +233,37 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
         io_service_.post_immediate_completion(op);
         return;
       }
+
+      if (op_type == write_op)
+      {
+        if ((descriptor_data->registered_events_ & EPOLLOUT) == 0)
+        {
+          epoll_event ev = { 0, { 0 } };
+          ev.events = descriptor_data->registered_events_ | EPOLLOUT;
+          ev.data.ptr = descriptor_data;
+          if (epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev) == 0)
+          {
+            descriptor_data->registered_events_ |= ev.events;
+          }
+          else
+          {
+            op->ec_ = asio::error_code(errno,
+                asio::error::get_system_category());
+            io_service_.post_immediate_completion(op);
+            return;
+          }
+        }
+      }
     }
     else
     {
+      if (op_type == write_op)
+      {
+        descriptor_data->registered_events_ |= EPOLLOUT;
+      }
+
       epoll_event ev = { 0, { 0 } };
-      ev.events = EPOLLIN | EPOLLERR | EPOLLHUP
-        | EPOLLOUT | EPOLLPRI | EPOLLET;
+      ev.events = descriptor_data->registered_events_;
       ev.data.ptr = descriptor_data;
       epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
     }
