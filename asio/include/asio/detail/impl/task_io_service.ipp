@@ -368,14 +368,13 @@ std::size_t task_io_service::do_run_one(mutex::scoped_lock& lock,
         else
           lock.unlock();
 
-        op_queue<operation> completed_ops;
-        task_cleanup on_exit = { this, &lock, &completed_ops };
+        task_cleanup on_exit = { this, &lock, &private_op_queue };
         (void)on_exit;
 
         // Run the task. May throw an exception. Only block if the operation
         // queue is empty and we're not polling, otherwise we want to return
         // as soon as possible.
-        task_->run(!more_handlers, completed_ops);
+        task_->run(!more_handlers, private_op_queue);
       }
       else
       {
@@ -422,14 +421,13 @@ std::size_t task_io_service::do_poll_one(mutex::scoped_lock& lock,
     lock.unlock();
 
     {
-      op_queue<operation> completed_ops;
-      task_cleanup c = { this, &lock, &completed_ops };
+      task_cleanup c = { this, &lock, &private_op_queue };
       (void)c;
 
       // Run the task. May throw an exception. Only block if the operation
       // queue is empty and we're not polling, otherwise we want to return
       // as soon as possible.
-      task_->run(false, completed_ops);
+      task_->run(false, private_op_queue);
     }
 
     o = op_queue_.front();
