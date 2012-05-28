@@ -23,6 +23,8 @@
 
 * Improved the performance of strand rescheduling.
 
+* Added support for [^g++] 4.7 when compiling in C++11 mode.
+
 [heading Asio 1.8.0]
 
 * Added a new class template `basic_waitable_timer` based around the C++11 clock

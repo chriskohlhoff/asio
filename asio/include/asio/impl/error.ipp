@@ -30,7 +30,7 @@ namespace detail {
 class netdb_category : public asio::error_category
 {
 public:
-  const char* name() const
+  const char* name() const ASIO_ERROR_CATEGORY_NOEXCEPT
   {
     return "asio.netdb";
   }
@@ -62,7 +62,7 @@ namespace detail {
 class addrinfo_category : public asio::error_category
 {
 public:
-  const char* name() const
+  const char* name() const ASIO_ERROR_CATEGORY_NOEXCEPT
   {
     return "asio.addrinfo";
   }
@@ -92,7 +92,7 @@ namespace detail {
 class misc_category : public asio::error_category
 {
 public:
-  const char* name() const
+  const char* name() const ASIO_ERROR_CATEGORY_NOEXCEPT
   {
     return "asio.misc";
   }

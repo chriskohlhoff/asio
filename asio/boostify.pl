@@ -121,6 +121,10 @@ sub copy_source_file
     {
       $line =~ s/asio_detail_posix_thread_function/boost_asio_detail_posix_thread_function/g;
     }
+    if ($line =~ /const ASIO_ERROR_CATEGORY_NOEXCEPT$/)
+    {
+      $line =~ s/ ASIO_ERROR_CATEGORY_NOEXCEPT$//;
+    }
     if ($line =~ /ASIO_/ && !($line =~ /BOOST_ASIO_/))
     {
       $line =~ s/ASIO_/BOOST_ASIO_/g;

@@ -112,6 +112,20 @@
 # endif // defined(__GNUC__)
 #endif // !defined(ASIO_DISABLE_STD_SYSTEM_ERROR)
 
+// Compliant C++11 compilers put noexcept specifiers on error_category members.
+#if !defined(ASIO_ERROR_CATEGORY_NOEXCEPT)
+# if defined(__GNUC__)
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
+#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_ERROR_CATEGORY_NOEXCEPT noexcept(true)
+#   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
+# endif // defined(__GNUC__)
+# if !defined(ASIO_ERROR_CATEGORY_NOEXCEPT)
+#  define ASIO_ERROR_CATEGORY_NOEXCEPT
+# endif // !defined(ASIO_ERROR_CATEGORY_NOEXCEPT)
+#endif // !defined(ASIO_ERROR_CATEGORY_NOEXCEPT)
+
 // Standard library support for arrays.
 #if !defined(ASIO_DISABLE_STD_ARRAY)
 # if defined(__GNUC__)
@@ -163,7 +177,9 @@
 #  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
 #   if defined(__GXX_EXPERIMENTAL_CXX0X__)
 #    define ASIO_HAS_STD_CHRONO
-#    define ASIO_HAS_STD_CHRONO_MONOTONIC_CLOCK
+#    if ((__GNUC__ == 4) && (__GNUC_MINOR__ == 6))
+#     define ASIO_HAS_STD_CHRONO_MONOTONIC_CLOCK
+#    endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ == 6))
 #   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
 # endif // defined(__GNUC__)

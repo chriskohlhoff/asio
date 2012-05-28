@@ -34,7 +34,7 @@ namespace detail {
 class system_category : public error_category
 {
 public:
-  const char* name() const
+  const char* name() const ASIO_ERROR_CATEGORY_NOEXCEPT
   {
     return "asio.system";
   }
