@@ -25,6 +25,9 @@
 
 * Added support for [^g++] 4.7 when compiling in C++11 mode.
 
+* Fixed a problem where `signal_set` handlers were not being delivered when
+  the `io_service` was constructed with a `concurrency_hint` of 1.
+
 [heading Asio 1.8.0]
 
 * Added a new class template `basic_waitable_timer` based around the C++11 clock
