@@ -336,6 +336,34 @@ asio::error_code win_iocp_socket_service_base::do_assign(
   return ec;
 }
 
+socket_type win_iocp_socket_service_base::release(
+    win_iocp_socket_service_base::base_implementation_type& impl,
+    asio::error_code& ec)
+{
+  if (is_open(impl))
+  {
+    // Check if the reactor was created, in which case we need to close the
+    // socket on the reactor as well to cancel any operations that might be
+    // running there.
+    reactor* r = static_cast<reactor*>(
+          interlocked_compare_exchange_pointer(
+            reinterpret_cast<void**>(&reactor_), 0, 0));
+    if (r)
+      r->deregister_descriptor(impl.socket_, impl.reactor_data_, true);
+  }
+
+  socket_type result = impl.socket_;
+
+  impl.socket_ = invalid_socket;
+  impl.state_ = 0;
+  impl.cancel_token_.reset();
+#if defined(ASIO_ENABLE_CANCELIO)
+  impl.safe_cancellation_thread_id_ = 0;
+#endif // defined(ASIO_ENABLE_CANCELIO)
+
+  return result;
+}
+
 asio::error_code win_iocp_socket_service_base::do_copy_assign(
     win_iocp_socket_service_base::base_implementation_type& impl,
     int type, socket_type native_socket, asio::error_code& ec)

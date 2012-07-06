@@ -278,6 +278,27 @@ void reactive_socket_service_base::start_connect_op(
   reactor_.post_immediate_completion(op);
 }
 
+reactive_socket_service_base::native_handle_type
+  reactive_socket_service_base::release(
+    reactive_socket_service_base::base_implementation_type& impl,
+    asio::error_code& ec)
+{
+  if (!is_open(impl))
+  {
+    ec = asio::error::bad_descriptor;
+    return 0;
+  }
+
+  reactor_.deregister_descriptor(impl.socket_, impl.reactor_data_,
+      (impl.state_ & socket_ops::possible_dup) == 0);
+
+  reactive_socket_service_base::native_handle_type result = impl.socket_;
+
+  construct(impl);
+
+  return result;
+}
+
 } // namespace detail
 } // namespace asio
 

@@ -34,6 +34,7 @@
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/descriptor_ops.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -168,6 +169,10 @@ public:
     socket_ops::shutdown(impl.socket_, what, ec);
     return ec;
   }
+
+  // Release the native socket.
+  ASIO_DECL native_handle_type release(
+      base_implementation_type& impl, asio::error_code& ec);
 
   // Send the given data to the peer.
   template <typename ConstBufferSequence>
