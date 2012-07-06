@@ -118,6 +118,16 @@ public:
     return ec;
   }
 
+  // Copy a native socket and assign to a socket implementation.
+  asio::error_code copy_assign(implementation_type& impl,
+      const protocol_type& protocol, const native_handle_type& native_socket,
+      asio::error_code& ec)
+  {
+    if (!do_copy_assign(impl, protocol.type(), native_socket, ec))
+      impl.protocol_ = protocol;
+    return ec;
+  }
+
   // Get the native socket representation.
   native_handle_type native_handle(implementation_type& impl)
   {

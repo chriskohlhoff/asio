@@ -133,6 +133,14 @@ public:
     return service_impl_.assign(impl, protocol, native_acceptor, ec);
   }
 
+  /// Copy an existing native acceptor to a socket acceptor.
+  asio::error_code copy_assign(implementation_type& impl,
+      const protocol_type& protocol, const native_handle_type& native_acceptor,
+      asio::error_code& ec)
+  {
+    return service_impl_.copy_assign(impl, protocol, native_acceptor, ec);
+  }
+
   /// Determine whether the acceptor is open.
   bool is_open(const implementation_type& impl) const
   {

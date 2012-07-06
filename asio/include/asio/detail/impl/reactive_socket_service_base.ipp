@@ -197,6 +197,31 @@ asio::error_code reactive_socket_service_base::do_assign(
   return ec;
 }
 
+asio::error_code reactive_socket_service_base::do_copy_assign(
+    reactive_socket_service_base::base_implementation_type& impl, int type,
+    const reactive_socket_service_base::native_handle_type& native_socket,
+    asio::error_code& ec)
+{
+  reactive_socket_service_base::native_handle_type
+      native_socket_copy = descriptor_ops::dup(native_socket, ec);
+  if (ec)
+  {
+    return ec;
+  }
+
+  do_assign(impl, type, native_socket_copy, ec);
+  if (ec)
+  {
+    asio::error_code ignored_ec;
+    socket_ops::close(native_socket_copy, impl.state_, true, ignored_ec);
+
+    return ec;
+  }
+
+  ec = asio::error_code();
+  return ec;
+}
+
 void reactive_socket_service_base::start_op(
     reactive_socket_service_base::base_implementation_type& impl,
     int op_type, reactor_op* op, bool is_non_blocking, bool noop)

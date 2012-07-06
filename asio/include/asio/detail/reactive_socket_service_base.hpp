@@ -397,6 +397,10 @@ protected:
       base_implementation_type& impl, int type,
       const native_handle_type& native_socket, asio::error_code& ec);
 
+  ASIO_DECL asio::error_code do_copy_assign(
+      base_implementation_type& impl, int type,
+      const native_handle_type& native_socket, asio::error_code& ec);
+
   // Start the asynchronous read or write operation.
   ASIO_DECL void start_op(base_implementation_type& impl, int op_type,
       reactor_op* op, bool is_non_blocking, bool noop);

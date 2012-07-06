@@ -414,6 +414,11 @@ protected:
       base_implementation_type& impl, int type,
       socket_type native_socket, asio::error_code& ec);
 
+  // Duplicate a native socket to a socket implementation.
+  ASIO_DECL asio::error_code do_copy_assign(
+      base_implementation_type& impl, int type,
+      socket_type native_socket, asio::error_code& ec);
+
   // Helper function to start an asynchronous send operation.
   ASIO_DECL void start_send_op(base_implementation_type& impl,
       WSABUF* buffers, std::size_t buffer_count,

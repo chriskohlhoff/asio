@@ -432,6 +432,15 @@ int poll_write(int d, state_type state, asio::error_code& ec)
   return result;
 }
 
+int dup(int d, asio::error_code& ec)
+{
+  errno = 0;
+  int result = error_wrapper(::dup(d), ec);
+  if (result >= 0)
+    ec = asio::error_code();
+  return result;
+}
+
 } // namespace descriptor_ops
 } // namespace detail
 } // namespace asio

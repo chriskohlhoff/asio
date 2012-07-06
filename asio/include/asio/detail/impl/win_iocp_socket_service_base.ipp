@@ -336,6 +336,14 @@ asio::error_code win_iocp_socket_service_base::do_assign(
   return ec;
 }
 
+asio::error_code win_iocp_socket_service_base::do_copy_assign(
+    win_iocp_socket_service_base::base_implementation_type& impl,
+    int type, socket_type native_socket, asio::error_code& ec)
+{
+// TODO Should call ::DuplicateHandle in somewhere, afterwards call do_assign
+  do_assign(impl, type, native_socket, ec);
+}
+
 void win_iocp_socket_service_base::start_send_op(
     win_iocp_socket_service_base::base_implementation_type& impl,
     WSABUF* buffers, std::size_t buffer_count,
