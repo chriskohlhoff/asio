@@ -18,7 +18,10 @@
 #include "asio/detail/config.hpp"
 
 #if !defined(ASIO_ENABLE_OLD_SSL)
+# include "asio/detail/throw_error.hpp"
+# include "asio/error.hpp"
 # include "asio/ssl/detail/engine.hpp"
+# include "asio/ssl/error.hpp"
 # include "asio/ssl/verify_context.hpp"
 #endif // !defined(ASIO_ENABLE_OLD_SSL)
 
@@ -33,6 +36,13 @@ namespace detail {
 engine::engine(SSL_CTX* context)
   : ssl_(::SSL_new(context))
 {
+  if (!ssl_)
+  {
+    asio::error_code ec(::ERR_get_error(),
+        asio::error::get_ssl_category());
+    asio::detail::throw_error(ec, "engine");
+  }
+
   accept_mutex().init();
 
   ::SSL_set_mode(ssl_, SSL_MODE_ENABLE_PARTIAL_WRITE);
