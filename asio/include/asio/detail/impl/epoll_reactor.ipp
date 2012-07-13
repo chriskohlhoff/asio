@@ -465,7 +465,7 @@ int epoll_reactor::do_epoll_create()
   errno = EINVAL;
 #endif // defined(EPOLL_CLOEXEC)
 
-  if (fd == -1 && errno == EINVAL)
+  if (fd == -1 && (errno == EINVAL || errno == ENOSYS))
   {
     fd = epoll_create(epoll_size);
     if (fd != -1)
