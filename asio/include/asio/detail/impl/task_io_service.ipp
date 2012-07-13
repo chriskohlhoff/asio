@@ -336,6 +336,21 @@ void task_io_service::post_private_deferred_completion(
   wake_one_thread_and_unlock(lock);
 }
 
+void task_io_service::post_non_private_immediate_completion(
+    task_io_service::operation* op)
+{
+  work_started();
+  post_non_private_deferred_completion(op);
+}
+
+void task_io_service::post_non_private_deferred_completion(
+    task_io_service::operation* op)
+{
+  mutex::scoped_lock lock(mutex_);
+  op_queue_.push(op);
+  wake_one_thread_and_unlock(lock);
+}
+
 void task_io_service::abandon_operations(
     op_queue<task_io_service::operation>& ops)
 {
