@@ -141,13 +141,11 @@ private:
 
   // Run at most one operation. May block.
   ASIO_DECL std::size_t do_run_one(mutex::scoped_lock& lock,
-      thread_info& this_thread, op_queue<operation>& private_op_queue,
-      const asio::error_code& ec);
+      thread_info& this_thread, const asio::error_code& ec);
 
   // Poll for at most one operation.
   ASIO_DECL std::size_t do_poll_one(mutex::scoped_lock& lock,
-      op_queue<operation>& private_op_queue,
-      const asio::error_code& ec);
+      thread_info& this_thread, const asio::error_code& ec);
 
   // Stop the task and all idle threads.
   ASIO_DECL void stop_all_threads(mutex::scoped_lock& lock);
