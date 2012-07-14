@@ -83,9 +83,6 @@ public:
   // Construct a new strand implementation.
   ASIO_DECL void construct(implementation_type& impl);
 
-  // Destroy a strand implementation.
-  void destroy(implementation_type& impl);
-
   // Request the io_service to invoke the given handler.
   template <typename Handler>
   void dispatch(implementation_type& impl, Handler handler);
