@@ -371,4 +371,15 @@
 # endif // !defined(UNDER_CE)
 #endif // !defined(ASIO_DISABLE_SIGNAL)
 
+// Support for the __thread keyword extension.
+#if !defined(ASIO_DISABLE_THREAD_KEYWORD_EXTENSION)
+# if defined(__linux__)
+#  if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+#   if ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 3)
+#    define ASIO_HAS_THREAD_KEYWORD_EXTENSION 1
+#   endif // ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 3)
+#  endif // defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+# endif // defined(__linux__)
+#endif // !defined(ASIO_DISABLE_THREAD_KEYWORD_EXTENSION)
+
 #endif // ASIO_DETAIL_CONFIG_HPP

@@ -109,6 +109,7 @@ nobase_include_HEADERS = \
 	asio/detail/impl/win_thread.ipp \
 	asio/detail/impl/win_tss_ptr.ipp \
 	asio/detail/io_control.hpp \
+	asio/detail/keyword_tss_ptr.hpp \
 	asio/detail/kqueue_reactor_fwd.hpp \
 	asio/detail/kqueue_reactor.hpp \
 	asio/detail/local_free_on_block_exit.hpp \
