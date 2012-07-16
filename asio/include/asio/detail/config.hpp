@@ -378,9 +378,9 @@
 #   if ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 3)
 #    if !defined(__INTEL_COMPILER) && !defined(__ICL)
 #     define ASIO_HAS_THREAD_KEYWORD_EXTENSION 1
-#    elif defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1200)
+#    elif defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1100)
 #     define ASIO_HAS_THREAD_KEYWORD_EXTENSION 1
-#    endif // defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1200)
+#    endif // defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1100)
 #   endif // ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 3)
 #  endif // defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 # endif // defined(__linux__)
