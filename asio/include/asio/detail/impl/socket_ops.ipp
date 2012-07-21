@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include <boost/assert.hpp>
 #include <boost/detail/workaround.hpp>
+#include <cctype>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
