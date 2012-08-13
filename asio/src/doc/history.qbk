@@ -7,6 +7,31 @@
 
 [section:history Revision History]
 
+[heading Asio 1.8.2]
+
+* Fixed an incompatibility between `ip::tcp::iostream` and C++11.
+
+* Decorated GCC attribute names with underscores to prevent interaction
+  with user-defined macros.
+
+* Added missing `#include <cctype>`, needed for some versions of MinGW.
+
+* Changed to use [^gcc]'s atomic builtins on ARM CPUs, when available.
+
+* Changed strand destruction to be a no-op, to allow strand objects to be
+  destroyed after their associated `io_service` has been destroyed.
+
+* Added support for some newer versions of glibc which provide the
+  `epoll_create1()` function but always fail with ENOSYS.
+
+* Changed the SSL implementation to throw an exception if SSL engine
+  initialisation fails.
+
+* Fixed another regression in `buffered_write_stream`.
+
+* Implemented various minor performance improvements, primarily targeted at
+  Linux x86 and x86-64 platforms.
+
 [heading Asio 1.8.1]
 
 * Changed the `epoll_reactor` backend to do lazy registration for `EPOLLOUT`
