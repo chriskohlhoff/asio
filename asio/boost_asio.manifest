@@ -112,6 +112,7 @@
 /boost/asio/detail/impl/win_thread.ipp
 /boost/asio/detail/impl/win_tss_ptr.ipp
 /boost/asio/detail/io_control.hpp
+/boost/asio/detail/keyword_tss_ptr.hpp
 /boost/asio/detail/kqueue_reactor_fwd.hpp
 /boost/asio/detail/kqueue_reactor.hpp
 /boost/asio/detail/local_free_on_block_exit.hpp

@@ -3425,6 +3425,7 @@
 /include/asio/detail/impl/win_thread.ipp
 /include/asio/detail/impl/win_tss_ptr.ipp
 /include/asio/detail/io_control.hpp
+/include/asio/detail/keyword_tss_ptr.hpp
 /include/asio/detail/kqueue_reactor_fwd.hpp
 /include/asio/detail/kqueue_reactor.hpp
 /include/asio/detail/local_free_on_block_exit.hpp
@@ -4002,3 +4003,4 @@
 /src/tests/unit/write.cpp
 /src/tools/
 /src/tools/handlerviz.pl
+/test-driver

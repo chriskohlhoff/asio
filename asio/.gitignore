@@ -11,6 +11,7 @@ configure
 depcomp
 install-sh
 missing
+test-driver
 /doc
 /lib
 /boostified
