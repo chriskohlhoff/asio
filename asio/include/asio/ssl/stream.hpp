@@ -369,6 +369,43 @@ public:
         ASIO_MOVE_CAST(HandshakeHandler)(handler));
   }
 
+  /// Start an asynchronous SSL handshake re-using buffered transmission data.
+  /**
+   * This function is used to asynchronously perform an SSL handshake on the
+   * stream feeding first from an existing buffer of data before reading from
+   * the stream. This function call always returns immediately.
+   *
+   * @param type The type of handshaking to be performed, i.e. as a client or as
+   * a server.
+   *
+   * @param buffer The buffered data to re-use.
+   *
+   * @param handler The handler to be called when the handshake operation
+   * completes. Copies will be made of the handler as required. The equivalent
+   * function signature of the handler must be:
+   * @code void handler(
+   *   const asio::error_code& error // Result of operation.
+   * ); @endcode
+   */
+  template <typename ConstBufferSequence, typename HandshakeHandler>
+  void async_handshake(handshake_type type,
+      const ConstBufferSequence& buffers,
+      ASIO_MOVE_ARG(HandshakeHandler) handler)
+  {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a HandshakeHandler.
+    ASIO_HANDSHAKE_HANDLER_CHECK(HandshakeHandler, handler) type_check;
+
+    for (ConstBufferSequence::const_iterator itr = buffers.begin();
+        itr != buffers.end(); ++itr)
+    {
+      core_.inputs_.push_back(*itr);
+    }
+
+    detail::async_io(next_layer_, core_, detail::handshake_op(type),
+        ASIO_MOVE_CAST(HandshakeHandler)(handler));
+  }
+
   /// Shut down SSL on the stream.
   /**
    * This function is used to shut down SSL on the stream. The function call

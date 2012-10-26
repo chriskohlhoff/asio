@@ -278,6 +278,13 @@ public:
     return service_impl_.shutdown(impl, what, ec);
   }
 
+  /// Release the native socket.
+  native_handle_type release(implementation_type& impl,
+      asio::error_code& ec)
+  {
+    return service_impl_.release(impl, ec);
+  }
+
   /// Send the given data to the peer.
   template <typename ConstBufferSequence>
   std::size_t send(implementation_type& impl,

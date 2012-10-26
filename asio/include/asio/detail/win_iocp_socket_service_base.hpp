@@ -187,6 +187,10 @@ public:
     return ec;
   }
 
+  // Release the native socket.
+  ASIO_DECL socket_type release(
+      base_implementation_type& impl, asio::error_code& ec);
+
   // Send the given data to the peer. Returns the number of bytes sent.
   template <typename ConstBufferSequence>
   size_t send(base_implementation_type& impl,
@@ -411,6 +415,11 @@ protected:
 
   // Assign a native socket to a socket implementation.
   ASIO_DECL asio::error_code do_assign(
+      base_implementation_type& impl, int type,
+      socket_type native_socket, asio::error_code& ec);
+
+  // Duplicate a native socket to a socket implementation.
+  ASIO_DECL asio::error_code do_copy_assign(
       base_implementation_type& impl, int type,
       socket_type native_socket, asio::error_code& ec);
 

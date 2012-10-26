@@ -136,11 +136,13 @@ public:
         {
         case engine::want_input_and_retry:
 
-          // If the input buffer already has data in it we can pass it to the
-          // engine and then retry the operation immediately.
-          if (asio::buffer_size(core_.input_) != 0)
+          // If the input buffers already have data in them we can pass it to the
+          // engine and then retry the operation immediateliy.
+          if (!core_.inputs_.empty())
           {
-            core_.input_ = core_.engine_.put_input(core_.input_);
+            core_.inputs_.front() = core_.engine_.put_input(core_.inputs_.front());
+            if (asio::buffer_size(core_.inputs_.front()) == 0)
+              core_.inputs_.pop_front();
             continue;
           }
 
@@ -228,9 +230,12 @@ public:
         case engine::want_input_and_retry:
 
           // Add received data to the engine's input.
-          core_.input_ = asio::buffer(
-              core_.input_buffer_, bytes_transferred);
-          core_.input_ = core_.engine_.put_input(core_.input_);
+          core_.inputs_.push_back(asio::buffer(
+              core_.input_buffer_, bytes_transferred));
+          core_.inputs_.front() = core_.engine_.put_input(
+              core_.inputs_.front());
+          if (asio::buffer_size(core_.inputs_.front()) == 0)
+            core_.inputs_.pop_front();
 
           // Release any waiting read operations.
           core_.pending_read_.expires_at(boost::posix_time::neg_infin);

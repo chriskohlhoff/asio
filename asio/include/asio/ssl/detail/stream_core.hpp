@@ -75,8 +75,8 @@ struct stream_core
   // A buffer that may be used to read input intended for the engine.
   const asio::mutable_buffers_1 input_buffer_;
 
-  // The buffer pointing to the engine's unconsumed input.
-  asio::const_buffer input_;
+  // The list of buffers pointing to the engine's unconsumed input.
+  std::list<asio::const_buffer> inputs_;
 };
 
 #endif // !defined(ASIO_ENABLE_OLD_SSL)

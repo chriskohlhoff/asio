@@ -287,6 +287,13 @@ public:
     return service_impl_.send(impl, buffers, flags, ec);
   }
 
+  /// Release the native socket.
+  native_handle_type release(implementation_type& impl,
+      asio::error_code& ec)
+  {
+    return service_impl_.release(impl, ec);
+  }
+
   /// Start an asynchronous send.
   template <typename ConstBufferSequence, typename WriteHandler>
   void async_send(implementation_type& impl, const ConstBufferSequence& buffers,

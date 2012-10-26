@@ -296,6 +296,44 @@ public:
         protocol, native_acceptor, ec);
   }
 
+  /// Copies an existing native acceptor to the acceptor.
+  /*
+   * This function opens the acceptor to duplicate and hold an existing
+   * native acceptor.
+   *
+   * @param protocol An object specifying which protocol is to be used.
+   *
+   * @param native_acceptor A native acceptor.
+   *
+   * @throws asio::system_error Thrown on failure.
+   */
+  void copy_assign(const protocol_type& protocol,
+      const native_handle_type& native_acceptor)
+  {
+    asio::error_code ec;
+    this->get_service().copy_assign(this->get_implementation(),
+        protocol, native_acceptor, ec);
+    asio::detail::throw_error(ec, "copy_assign");
+  }
+
+  /// Copies an existing native acceptor to the acceptor.
+  /*
+   * This function opens the acceptor to duplicate and hold an existing
+   * native acceptor.
+   *
+   * @param protocol An object specifying which protocol is to be used.
+   *
+   * @param native_acceptor A native acceptor.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   */
+  asio::error_code copy_assign(const protocol_type& protocol,
+      const native_handle_type& native_acceptor, asio::error_code& ec)
+  {
+    return this->get_service().copy_assign(this->get_implementation(),
+        protocol, native_acceptor, ec);
+  }
+
   /// Determine whether the acceptor is open.
   bool is_open() const
   {

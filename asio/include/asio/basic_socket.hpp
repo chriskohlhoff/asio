@@ -1448,6 +1448,30 @@ public:
     return this->get_service().shutdown(this->get_implementation(), what, ec);
   }
 
+  /// Release the native socket.
+  /**
+   * This function is used to release the existing native socket.
+   *
+   * @throws asio::system_error Thrown on failure.
+   */
+  native_handle_type release()
+  {
+    asio::error_code ec;
+    this->get_service().release(this->get_implementation(), ec);
+    asio::detail::throw_error(ec, "release");
+  }
+
+  /// Release the native socket.
+  /**
+   * This function is used to release the existing native socket.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   */
+  native_handle_type release(asio::error_code& ec)
+  {
+    return this->get_service().release(this->get_implementation(), ec);
+  }
+
 protected:
   /// Protected destructor to prevent deletion through this type.
   ~basic_socket()
