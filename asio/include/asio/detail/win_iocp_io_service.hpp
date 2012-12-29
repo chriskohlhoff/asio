@@ -236,6 +236,11 @@ private:
   // Flag to indicate whether the event loop has been stopped.
   mutable long stopped_;
 
+  // Flag to indicate whether there is an in-flight stop event. Every event
+  // posted using PostQueuedCompletionStatus consumes non-paged pool, so to
+  // avoid exhausting this resouce we limit the number of outstanding events.
+  long stop_event_posted_;
+
   // Flag to indicate whether the service has been shut down.
   long shutdown_;
 
