@@ -6,3 +6,5 @@ Makefile.in
 *.obj
 *.lib
 *.pdb
+*.log
+*.trs
