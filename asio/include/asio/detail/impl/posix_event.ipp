@@ -21,6 +21,7 @@
 
 #include "asio/detail/posix_event.hpp"
 #include "asio/detail/throw_error.hpp"
+#include "asio/error.hpp"
 
 #include "asio/detail/push_options.hpp"
 
