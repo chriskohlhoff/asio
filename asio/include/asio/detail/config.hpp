@@ -114,7 +114,9 @@
 
 // Compliant C++11 compilers put noexcept specifiers on error_category members.
 #if !defined(ASIO_ERROR_CATEGORY_NOEXCEPT)
-# if defined(__GNUC__)
+# if (BOOST_VERSION >= 105300)
+#  define ASIO_ERROR_CATEGORY_NOEXCEPT BOOST_NOEXCEPT
+# elif defined(__GNUC__)
 #  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
 #   if defined(__GXX_EXPERIMENTAL_CXX0X__)
 #     define ASIO_ERROR_CATEGORY_NOEXCEPT noexcept(true)
