@@ -87,9 +87,9 @@ ASIO_DECL bool non_blocking_write(int d,
 ASIO_DECL int ioctl(int d, state_type& state, long cmd,
     ioctl_arg_type* arg, asio::error_code& ec);
 
-ASIO_DECL int fcntl(int d, long cmd, asio::error_code& ec);
+ASIO_DECL int fcntl(int d, int cmd, asio::error_code& ec);
 
-ASIO_DECL int fcntl(int d, long cmd,
+ASIO_DECL int fcntl(int d, int cmd,
     long arg, asio::error_code& ec);
 
 ASIO_DECL int poll_read(int d,

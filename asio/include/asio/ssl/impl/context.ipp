@@ -90,7 +90,8 @@ context::context(context::method m)
 
   if (handle_ == 0)
   {
-    asio::error_code ec(::ERR_get_error(),
+    asio::error_code ec(
+        static_cast<int>(::ERR_get_error()),
         asio::error::get_ssl_category());
     asio::detail::throw_error(ec, "context");
   }
@@ -200,7 +201,8 @@ asio::error_code context::load_verify_file(
 {
   if (::SSL_CTX_load_verify_locations(handle_, filename.c_str(), 0) != 1)
   {
-    ec = asio::error_code(::ERR_get_error(),
+    ec = asio::error_code(
+        static_cast<int>(::ERR_get_error()),
         asio::error::get_ssl_category());
     return ec;
   }
@@ -221,7 +223,8 @@ asio::error_code context::set_default_verify_paths(
 {
   if (::SSL_CTX_set_default_verify_paths(handle_) != 1)
   {
-    ec = asio::error_code(::ERR_get_error(),
+    ec = asio::error_code(
+        static_cast<int>(::ERR_get_error()),
         asio::error::get_ssl_category());
     return ec;
   }
@@ -242,7 +245,8 @@ asio::error_code context::add_verify_path(
 {
   if (::SSL_CTX_load_verify_locations(handle_, 0, path.c_str()) != 1)
   {
-    ec = asio::error_code(::ERR_get_error(),
+    ec = asio::error_code(
+        static_cast<int>(::ERR_get_error()),
         asio::error::get_ssl_category());
     return ec;
   }
@@ -281,7 +285,8 @@ asio::error_code context::use_certificate_file(
 
   if (::SSL_CTX_use_certificate_file(handle_, filename.c_str(), file_type) != 1)
   {
-    ec = asio::error_code(::ERR_get_error(),
+    ec = asio::error_code(
+        static_cast<int>(::ERR_get_error()),
         asio::error::get_ssl_category());
     return ec;
   }
@@ -302,7 +307,8 @@ asio::error_code context::use_certificate_chain_file(
 {
   if (::SSL_CTX_use_certificate_chain_file(handle_, filename.c_str()) != 1)
   {
-    ec = asio::error_code(::ERR_get_error(),
+    ec = asio::error_code(
+        static_cast<int>(::ERR_get_error()),
         asio::error::get_ssl_category());
     return ec;
   }
@@ -341,7 +347,8 @@ asio::error_code context::use_private_key_file(
 
   if (::SSL_CTX_use_PrivateKey_file(handle_, filename.c_str(), file_type) != 1)
   {
-    ec = asio::error_code(::ERR_get_error(),
+    ec = asio::error_code(
+        static_cast<int>(::ERR_get_error()),
         asio::error::get_ssl_category());
     return ec;
   }
@@ -381,7 +388,8 @@ asio::error_code context::use_rsa_private_key_file(
   if (::SSL_CTX_use_RSAPrivateKey_file(
         handle_, filename.c_str(), file_type) != 1)
   {
-    ec = asio::error_code(::ERR_get_error(),
+    ec = asio::error_code(
+        static_cast<int>(::ERR_get_error()),
         asio::error::get_ssl_category());
     return ec;
   }
@@ -416,11 +424,12 @@ asio::error_code context::use_tmp_dh_file(
   }
 
   ::BIO_free(bio);
-  int result = ::SSL_CTX_set_tmp_dh(handle_, dh);
+  long result = ::SSL_CTX_set_tmp_dh(handle_, dh);
   ::DH_free(dh);
   if (result != 1)
   {
-    ec = asio::error_code(::ERR_get_error(),
+    ec = asio::error_code(
+        static_cast<int>(::ERR_get_error()),
         asio::error::get_ssl_category());
     return ec;
   }
@@ -509,7 +518,7 @@ int context::password_callback_function(
     strncat(buf, passwd.c_str(), size);
 #endif
 
-    return strlen(buf);
+    return static_cast<int>(strlen(buf));
   }
 
   return 0;

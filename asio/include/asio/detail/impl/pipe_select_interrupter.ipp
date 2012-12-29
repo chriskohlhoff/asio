@@ -27,6 +27,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include "asio/detail/pipe_select_interrupter.hpp"
+#include "asio/detail/socket_types.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 
@@ -89,7 +90,7 @@ void pipe_select_interrupter::recreate()
 void pipe_select_interrupter::interrupt()
 {
   char byte = 0;
-  int result = ::write(write_descriptor_, &byte, 1);
+  signed_size_type result = ::write(write_descriptor_, &byte, 1);
   (void)result;
 }
 
@@ -98,7 +99,7 @@ bool pipe_select_interrupter::reset()
   for (;;)
   {
     char data[1024];
-    int bytes_read = ::read(read_descriptor_, data, sizeof(data));
+    signed_size_type bytes_read = ::read(read_descriptor_, data, sizeof(data));
     if (bytes_read < 0 && errno == EINTR)
       continue;
     bool was_interrupted = (bytes_read > 0);

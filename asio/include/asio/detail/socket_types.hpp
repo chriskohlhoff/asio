@@ -106,6 +106,7 @@ typedef addrinfo addrinfo_type;
 typedef unsigned long ioctl_arg_type;
 typedef u_long u_long_type;
 typedef u_short u_short_type;
+typedef int signed_size_type;
 const int shutdown_receive = SD_RECEIVE;
 const int shutdown_send = SD_SEND;
 const int shutdown_both = SD_BOTH;
@@ -150,6 +151,11 @@ typedef addrinfo addrinfo_type;
 typedef int ioctl_arg_type;
 typedef uint32_t u_long_type;
 typedef uint16_t u_short_type;
+#if defined(ASIO_HAS_SSIZE_T)
+typedef ssize_t signed_size_type;
+#else // defined(ASIO_HAS_SSIZE_T)
+typedef int signed_size_type;
+#endif // defined(ASIO_HAS_SSIZE_T)
 const int shutdown_receive = SHUT_RD;
 const int shutdown_send = SHUT_WR;
 const int shutdown_both = SHUT_RDWR;

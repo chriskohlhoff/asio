@@ -386,4 +386,13 @@
 # endif // defined(__linux__)
 #endif // !defined(ASIO_DISABLE_THREAD_KEYWORD_EXTENSION)
 
+// Support for POSIX ssize_t typedef.
+#if !defined(ASIO_DISABLE_SSIZE_T)
+# if defined(__linux__) \
+   || (defined(__MACH__) && defined(__APPLE__))
+#  define ASIO_HAS_SSIZE_T 1
+# endif // defined(__linux__)
+        //   || (defined(__MACH__) && defined(__APPLE__))
+#endif // !defined(ASIO_DISABLE_SSIZE_T)
+
 #endif // ASIO_DETAIL_CONFIG_HPP

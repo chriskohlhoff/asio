@@ -128,8 +128,8 @@ ASIO_DECL void init_buf(buf& b, void* data, size_t size);
 
 ASIO_DECL void init_buf(buf& b, const void* data, size_t size);
 
-ASIO_DECL int recv(socket_type s, buf* bufs, size_t count, int flags,
-    asio::error_code& ec);
+ASIO_DECL signed_size_type recv(socket_type s, buf* bufs,
+    size_t count, int flags, asio::error_code& ec);
 
 ASIO_DECL size_t sync_recv(socket_type s, state_type state, buf* bufs,
     size_t count, int flags, bool all_empty, asio::error_code& ec);
@@ -148,9 +148,9 @@ ASIO_DECL bool non_blocking_recv(socket_type s,
 
 #endif // defined(ASIO_HAS_IOCP)
 
-ASIO_DECL int recvfrom(socket_type s, buf* bufs, size_t count, int flags,
-    socket_addr_type* addr, std::size_t* addrlen,
-    asio::error_code& ec);
+ASIO_DECL signed_size_type recvfrom(socket_type s, buf* bufs,
+    size_t count, int flags, socket_addr_type* addr,
+    std::size_t* addrlen, asio::error_code& ec);
 
 ASIO_DECL size_t sync_recvfrom(socket_type s, state_type state,
     buf* bufs, size_t count, int flags, socket_addr_type* addr,
@@ -171,8 +171,9 @@ ASIO_DECL bool non_blocking_recvfrom(socket_type s,
 
 #endif // defined(ASIO_HAS_IOCP)
 
-ASIO_DECL int recvmsg(socket_type s, buf* bufs, size_t count,
-    int in_flags, int& out_flags, asio::error_code& ec);
+ASIO_DECL signed_size_type recvmsg(socket_type s, buf* bufs,
+    size_t count, int in_flags, int& out_flags,
+    asio::error_code& ec);
 
 ASIO_DECL size_t sync_recvmsg(socket_type s, state_type state,
     buf* bufs, size_t count, int in_flags, int& out_flags,
@@ -192,7 +193,7 @@ ASIO_DECL bool non_blocking_recvmsg(socket_type s,
 
 #endif // defined(ASIO_HAS_IOCP)
 
-ASIO_DECL int send(socket_type s, const buf* bufs,
+ASIO_DECL signed_size_type send(socket_type s, const buf* bufs,
     size_t count, int flags, asio::error_code& ec);
 
 ASIO_DECL size_t sync_send(socket_type s, state_type state,
@@ -213,9 +214,9 @@ ASIO_DECL bool non_blocking_send(socket_type s,
 
 #endif // defined(ASIO_HAS_IOCP)
 
-ASIO_DECL int sendto(socket_type s, const buf* bufs, size_t count,
-    int flags, const socket_addr_type* addr, std::size_t addrlen,
-    asio::error_code& ec);
+ASIO_DECL signed_size_type sendto(socket_type s, const buf* bufs,
+    size_t count, int flags, const socket_addr_type* addr,
+    std::size_t addrlen, asio::error_code& ec);
 
 ASIO_DECL size_t sync_sendto(socket_type s, state_type state,
     const buf* bufs, size_t count, int flags, const socket_addr_type* addr,

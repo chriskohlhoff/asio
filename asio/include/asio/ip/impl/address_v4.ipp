@@ -54,7 +54,8 @@ address_v4::address_v4(unsigned long addr)
   }
 #endif // ULONG_MAX > 0xFFFFFFFF
 
-  addr_.s_addr = asio::detail::socket_ops::host_to_network_long(addr);
+  addr_.s_addr = asio::detail::socket_ops::host_to_network_long(
+      static_cast<asio::detail::u_long_type>(addr));
 }
 
 address_v4::bytes_type address_v4::to_bytes() const
