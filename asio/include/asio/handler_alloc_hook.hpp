@@ -31,10 +31,8 @@ namespace asio {
  * Implement asio_handler_allocate and asio_handler_deallocate for your own
  * handlers to provide custom allocation for these temporary objects.
  *
- * This default implementation is simply:
- * @code
- * return ::operator new(size);
- * @endcode
+ * The default implementation of these allocation hooks uses <tt>::operator
+ * new</tt> and <tt>::operator delete</tt>.
  *
  * @note All temporary objects associated with a handler will be deallocated
  * before the upcall to the handler is performed. This allows the same memory to
@@ -56,31 +54,28 @@ namespace asio {
  * }
  * @endcode
  */
-inline void* asio_handler_allocate(std::size_t size, ...)
-{
-  return ::operator new(size);
-}
+ASIO_DECL void* asio_handler_allocate(
+    std::size_t size, ...);
 
 /// Default deallocation function for handlers.
 /**
  * Implement asio_handler_allocate and asio_handler_deallocate for your own
  * handlers to provide custom allocation for the associated temporary objects.
  *
- * This default implementation is simply:
- * @code
- * ::operator delete(pointer);
- * @endcode
+ * The default implementation of these allocation hooks uses <tt>::operator
+ * new</tt> and <tt>::operator delete</tt>.
  *
  * @sa asio_handler_allocate.
  */
-inline void asio_handler_deallocate(void* pointer, std::size_t size, ...)
-{
-  (void)(size);
-  ::operator delete(pointer);
-}
+ASIO_DECL void asio_handler_deallocate(
+    void* pointer, std::size_t size, ...);
 
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/impl/handler_alloc_hook.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_HANDLER_ALLOC_HOOK_HPP

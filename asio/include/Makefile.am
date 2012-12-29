@@ -182,7 +182,9 @@ nobase_include_HEADERS = \
 	asio/detail/task_io_service_fwd.hpp \
 	asio/detail/task_io_service.hpp \
 	asio/detail/task_io_service_operation.hpp \
+	asio/detail/task_io_service_thread_info.hpp \
 	asio/detail/thread.hpp \
+	asio/detail/thread_info_base.hpp \
 	asio/detail/throw_error.hpp \
 	asio/detail/timer_queue_base.hpp \
 	asio/detail/timer_queue_fwd.hpp \
@@ -216,6 +218,7 @@ nobase_include_HEADERS = \
 	asio/detail/win_iocp_socket_send_op.hpp \
 	asio/detail/win_iocp_socket_service_base.hpp \
 	asio/detail/win_iocp_socket_service.hpp \
+	asio/detail/win_iocp_thread_info.hpp \
 	asio/detail/win_mutex.hpp \
 	asio/detail/win_object_handle_service.hpp \
 	asio/detail/winsock_init.hpp \
@@ -232,6 +235,7 @@ nobase_include_HEADERS = \
 	asio/impl/connect.hpp \
 	asio/impl/error_code.ipp \
 	asio/impl/error.ipp \
+	asio/impl/handler_alloc_hook.ipp \
 	asio/impl/io_service.hpp \
 	asio/impl/io_service.ipp \
 	asio/impl/read_at.hpp \

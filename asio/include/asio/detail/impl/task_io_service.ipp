@@ -23,19 +23,12 @@
 #include "asio/detail/event.hpp"
 #include "asio/detail/reactor.hpp"
 #include "asio/detail/task_io_service.hpp"
+#include "asio/detail/task_io_service_thread_info.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
-
-struct task_io_service::thread_info
-{
-  event* wakeup_event;
-  op_queue<operation> private_op_queue;
-  long private_outstanding_work;
-  thread_info* next;
-};
 
 struct task_io_service::task_cleanup
 {

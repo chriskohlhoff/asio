@@ -153,7 +153,8 @@ size_t win_iocp_io_service::run(asio::error_code& ec)
     return 0;
   }
 
-  call_stack<win_iocp_io_service>::context ctx(this);
+  win_iocp_thread_info this_thread;
+  thread_call_stack::context ctx(this, this_thread);
 
   size_t n = 0;
   while (do_one(true, ec))
@@ -171,7 +172,8 @@ size_t win_iocp_io_service::run_one(asio::error_code& ec)
     return 0;
   }
 
-  call_stack<win_iocp_io_service>::context ctx(this);
+  win_iocp_thread_info this_thread;
+  thread_call_stack::context ctx(this, this_thread);
 
   return do_one(true, ec);
 }
@@ -185,7 +187,8 @@ size_t win_iocp_io_service::poll(asio::error_code& ec)
     return 0;
   }
 
-  call_stack<win_iocp_io_service>::context ctx(this);
+  win_iocp_thread_info this_thread;
+  thread_call_stack::context ctx(this, this_thread);
 
   size_t n = 0;
   while (do_one(false, ec))
@@ -203,7 +206,8 @@ size_t win_iocp_io_service::poll_one(asio::error_code& ec)
     return 0;
   }
 
-  call_stack<win_iocp_io_service>::context ctx(this);
+  win_iocp_thread_info this_thread;
+  thread_call_stack::context ctx(this, this_thread);
 
   return do_one(false, ec);
 }

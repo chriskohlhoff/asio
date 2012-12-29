@@ -33,6 +33,7 @@
 #include "asio/detail/wait_op.hpp"
 #include "asio/detail/win_iocp_io_service_fwd.hpp"
 #include "asio/detail/win_iocp_operation.hpp"
+#include "asio/detail/win_iocp_thread_info.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -106,7 +107,7 @@ public:
   // Return whether a handler can be dispatched immediately.
   bool can_dispatch()
   {
-    return call_stack<win_iocp_io_service>::contains(this) != 0;
+    return thread_call_stack::contains(this) != 0;
   }
 
   // Request invocation of the given handler.
@@ -289,6 +290,10 @@ private:
 
   // The operations that are ready to dispatch.
   op_queue<win_iocp_operation> completed_ops_;
+
+  // Per-thread call stack to track the state of each thread in the io_service.
+  typedef call_stack<win_iocp_io_service,
+      win_iocp_thread_info> thread_call_stack;
 };
 
 } // namespace detail
