@@ -33,7 +33,7 @@ namespace detail {
 
 struct stream_core
 {
-  // According to the OpenSSL documentation, this is the buffer size that is is
+  // According to the OpenSSL documentation, this is the buffer size that is
   // sufficient to hold the largest possible TLS record.
   enum { max_tls_record_size = 17 * 1024 };
 

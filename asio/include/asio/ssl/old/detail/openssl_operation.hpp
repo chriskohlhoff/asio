@@ -153,7 +153,7 @@ public:
                 // For connect/accept/shutdown, the operation
                 // is done, when return code is 1
                 // for write, it is done, when is retcode > 0
-                // for read, is is done when retcode > 0
+                // for read, it is done when retcode > 0
 
     int error_code =  !is_operation_done ?
           ::SSL_get_error( session_, rc ) :

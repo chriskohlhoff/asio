@@ -445,7 +445,7 @@ protected:
       bool peer_is_open, socket_holder& new_socket, int family, int type,
       int protocol, void* output_buffer, DWORD address_length, operation* op);
 
-  // Start an asynchronous read or write operation using the the reactor.
+  // Start an asynchronous read or write operation using the reactor.
   ASIO_DECL void start_reactor_op(base_implementation_type& impl,
       int op_type, reactor_op* op);
 
