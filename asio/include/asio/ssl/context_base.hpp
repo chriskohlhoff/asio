@@ -70,29 +70,29 @@ public:
   };
 
   /// Bitmask type for SSL options.
-  typedef int options;
+  typedef long options;
 
 #if defined(GENERATING_DOCUMENTATION)
   /// Implement various bug workarounds.
-  static const int default_workarounds = implementation_defined;
+  static const long default_workarounds = implementation_defined;
 
   /// Always create a new key when using tmp_dh parameters.
-  static const int single_dh_use = implementation_defined;
+  static const long single_dh_use = implementation_defined;
 
   /// Disable SSL v2.
-  static const int no_sslv2 = implementation_defined;
+  static const long no_sslv2 = implementation_defined;
 
   /// Disable SSL v3.
-  static const int no_sslv3 = implementation_defined;
+  static const long no_sslv3 = implementation_defined;
 
   /// Disable TLS v1.
-  static const int no_tlsv1 = implementation_defined;
+  static const long no_tlsv1 = implementation_defined;
 #else
-  BOOST_STATIC_CONSTANT(int, default_workarounds = SSL_OP_ALL);
-  BOOST_STATIC_CONSTANT(int, single_dh_use = SSL_OP_SINGLE_DH_USE);
-  BOOST_STATIC_CONSTANT(int, no_sslv2 = SSL_OP_NO_SSLv2);
-  BOOST_STATIC_CONSTANT(int, no_sslv3 = SSL_OP_NO_SSLv3);
-  BOOST_STATIC_CONSTANT(int, no_tlsv1 = SSL_OP_NO_TLSv1);
+  BOOST_STATIC_CONSTANT(long, default_workarounds = SSL_OP_ALL);
+  BOOST_STATIC_CONSTANT(long, single_dh_use = SSL_OP_SINGLE_DH_USE);
+  BOOST_STATIC_CONSTANT(long, no_sslv2 = SSL_OP_NO_SSLv2);
+  BOOST_STATIC_CONSTANT(long, no_sslv3 = SSL_OP_NO_SSLv3);
+  BOOST_STATIC_CONSTANT(long, no_tlsv1 = SSL_OP_NO_TLSv1);
 #endif
 
   /// File format types.
