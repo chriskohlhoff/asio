@@ -21,6 +21,7 @@
 #else
 # include <cerrno>
 # include <cstring>
+# include <string>
 #endif
 #include "asio/detail/local_free_on_block_exit.hpp"
 #include "asio/detail/socket_types.hpp"
