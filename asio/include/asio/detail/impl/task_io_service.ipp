@@ -256,10 +256,11 @@ void task_io_service::reset()
   stopped_ = false;
 }
 
-void task_io_service::post_immediate_completion(task_io_service::operation* op)
+void task_io_service::post_immediate_completion(
+    task_io_service::operation* op, bool is_continuation)
 {
 #if defined(BOOST_HAS_THREADS) && !defined(ASIO_DISABLE_THREADS)
-  if (one_thread_)
+  if (one_thread_ || is_continuation)
   {
     if (thread_info* this_thread = thread_call_stack::contains(this))
     {
@@ -316,39 +317,10 @@ void task_io_service::post_deferred_completions(
   }
 }
 
-void task_io_service::post_private_immediate_completion(
+void task_io_service::do_dispatch(
     task_io_service::operation* op)
 {
   work_started();
-  post_private_deferred_completion(op);
-}
-
-void task_io_service::post_private_deferred_completion(
-    task_io_service::operation* op)
-{
-#if defined(BOOST_HAS_THREADS) && !defined(ASIO_DISABLE_THREADS)
-  if (thread_info* this_thread = thread_call_stack::contains(this))
-  {
-    this_thread->private_op_queue.push(op);
-    return;
-  }
-#endif // defined(BOOST_HAS_THREADS) && !defined(ASIO_DISABLE_THREADS)
-
-  mutex::scoped_lock lock(mutex_);
-  op_queue_.push(op);
-  wake_one_thread_and_unlock(lock);
-}
-
-void task_io_service::post_non_private_immediate_completion(
-    task_io_service::operation* op)
-{
-  work_started();
-  post_non_private_deferred_completion(op);
-}
-
-void task_io_service::post_non_private_deferred_completion(
-    task_io_service::operation* op)
-{
   mutex::scoped_lock lock(mutex_);
   op_queue_.push(op);
   wake_one_thread_and_unlock(lock);

@@ -216,6 +216,9 @@ public:
       const endpoint_type& destination, socket_base::message_flags flags,
       Handler& handler)
   {
+    bool is_continuation =
+      asio_handler_cont_helpers::is_continuation(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_sendto_op<ConstBufferSequence,
         endpoint_type, Handler> op;
@@ -226,7 +229,7 @@ public:
 
     ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_send_to"));
 
-    start_op(impl, reactor::write_op, p.p, true, false);
+    start_op(impl, reactor::write_op, p.p, is_continuation, true, false);
     p.v = p.p = 0;
   }
 
@@ -235,6 +238,9 @@ public:
   void async_send_to(implementation_type& impl, const null_buffers&,
       const endpoint_type&, socket_base::message_flags, Handler& handler)
   {
+    bool is_continuation =
+      asio_handler_cont_helpers::is_continuation(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler> op;
     typename op::ptr p = { boost::addressof(handler),
@@ -245,7 +251,7 @@ public:
     ASIO_HANDLER_CREATION((p.p, "socket",
           &impl, "async_send_to(null_buffers)"));
 
-    start_op(impl, reactor::write_op, p.p, false, false);
+    start_op(impl, reactor::write_op, p.p, is_continuation, false, false);
     p.v = p.p = 0;
   }
 
@@ -293,6 +299,9 @@ public:
       const MutableBufferSequence& buffers, endpoint_type& sender_endpoint,
       socket_base::message_flags flags, Handler& handler)
   {
+    bool is_continuation =
+      asio_handler_cont_helpers::is_continuation(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_recvfrom_op<MutableBufferSequence,
         endpoint_type, Handler> op;
@@ -309,7 +318,7 @@ public:
     start_op(impl,
         (flags & socket_base::message_out_of_band)
           ? reactor::except_op : reactor::read_op,
-        p.p, true, false);
+        p.p, is_continuation, true, false);
     p.v = p.p = 0;
   }
 
@@ -319,6 +328,9 @@ public:
       const null_buffers&, endpoint_type& sender_endpoint,
       socket_base::message_flags flags, Handler& handler)
   {
+    bool is_continuation =
+      asio_handler_cont_helpers::is_continuation(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler> op;
     typename op::ptr p = { boost::addressof(handler),
@@ -335,7 +347,7 @@ public:
     start_op(impl,
         (flags & socket_base::message_out_of_band)
           ? reactor::except_op : reactor::read_op,
-        p.p, false, false);
+        p.p, is_continuation, false, false);
     p.v = p.p = 0;
   }
 
@@ -374,6 +386,9 @@ public:
   void async_accept(implementation_type& impl, Socket& peer,
       endpoint_type* peer_endpoint, Handler& handler)
   {
+    bool is_continuation =
+      asio_handler_cont_helpers::is_continuation(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_accept_op<Socket, Protocol, Handler> op;
     typename op::ptr p = { boost::addressof(handler),
@@ -384,7 +399,7 @@ public:
 
     ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_accept"));
 
-    start_accept_op(impl, p.p, peer.is_open());
+    start_accept_op(impl, p.p, is_continuation, peer.is_open());
     p.v = p.p = 0;
   }
 
@@ -402,6 +417,9 @@ public:
   void async_connect(implementation_type& impl,
       const endpoint_type& peer_endpoint, Handler& handler)
   {
+    bool is_continuation =
+      asio_handler_cont_helpers::is_continuation(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_connect_op<Handler> op;
     typename op::ptr p = { boost::addressof(handler),
@@ -411,7 +429,8 @@ public:
 
     ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_connect"));
 
-    start_connect_op(impl, p.p, peer_endpoint.data(), peer_endpoint.size());
+    start_connect_op(impl, p.p, is_continuation,
+        peer_endpoint.data(), peer_endpoint.size());
     p.v = p.p = 0;
   }
 };

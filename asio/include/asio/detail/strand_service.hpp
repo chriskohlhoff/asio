@@ -91,13 +91,18 @@ public:
   template <typename Handler>
   void post(implementation_type& impl, Handler& handler);
 
+  // Determine whether the strand is running in the current thread.
+  ASIO_DECL bool running_in_this_thread(
+      const implementation_type& impl) const;
+
 private:
   // Helper function to dispatch a handler. Returns true if the handler should
   // be dispatched immediately.
   ASIO_DECL bool do_dispatch(implementation_type& impl, operation* op);
 
   // Helper fiunction to post a handler.
-  ASIO_DECL void do_post(implementation_type& impl, operation* op);
+  ASIO_DECL void do_post(implementation_type& impl,
+      operation* op, bool is_continuation);
 
   ASIO_DECL static void do_complete(io_service_impl* owner,
       operation* base, const asio::error_code& ec,

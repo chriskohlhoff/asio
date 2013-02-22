@@ -45,6 +45,7 @@
 #include "asio/error.hpp"
 #include "asio/error_code.hpp"
 #include "asio/handler_alloc_hook.hpp"
+#include "asio/handler_continuation_hook.hpp"
 #include "asio/handler_invoke_hook.hpp"
 #include "asio/handler_type.hpp"
 #include "asio/io_service.hpp"

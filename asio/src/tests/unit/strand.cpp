@@ -32,6 +32,8 @@ void increment(int* count)
 
 void increment_without_lock(strand* s, int* count)
 {
+  BOOST_CHECK(!s->running_in_this_thread());
+
   int original_count = *count;
 
   s->dispatch(boost::bind(increment, count));
@@ -43,6 +45,8 @@ void increment_without_lock(strand* s, int* count)
 
 void increment_with_lock(strand* s, int* count)
 {
+  BOOST_CHECK(s->running_in_this_thread());
+
   int original_count = *count;
 
   s->dispatch(boost::bind(increment, count));

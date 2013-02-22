@@ -187,6 +187,9 @@ public:
   void async_write_some(implementation_type& impl,
       const ConstBufferSequence& buffers, Handler& handler)
   {
+    bool is_continuation =
+      asio_handler_cont_helpers::is_continuation(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef descriptor_write_op<ConstBufferSequence, Handler> op;
     typename op::ptr p = { boost::addressof(handler),
@@ -196,7 +199,7 @@ public:
 
     ASIO_HANDLER_CREATION((p.p, "descriptor", &impl, "async_write_some"));
 
-    start_op(impl, reactor::write_op, p.p, true,
+    start_op(impl, reactor::write_op, p.p, is_continuation, true,
         buffer_sequence_adapter<asio::const_buffer,
           ConstBufferSequence>::all_empty(buffers));
     p.v = p.p = 0;
@@ -207,6 +210,9 @@ public:
   void async_write_some(implementation_type& impl,
       const null_buffers&, Handler& handler)
   {
+    bool is_continuation =
+      asio_handler_cont_helpers::is_continuation(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler> op;
     typename op::ptr p = { boost::addressof(handler),
@@ -217,7 +223,7 @@ public:
     ASIO_HANDLER_CREATION((p.p, "descriptor",
           &impl, "async_write_some(null_buffers)"));
 
-    start_op(impl, reactor::write_op, p.p, false, false);
+    start_op(impl, reactor::write_op, p.p, is_continuation, false, false);
     p.v = p.p = 0;
   }
 
@@ -249,6 +255,9 @@ public:
   void async_read_some(implementation_type& impl,
       const MutableBufferSequence& buffers, Handler& handler)
   {
+    bool is_continuation =
+      asio_handler_cont_helpers::is_continuation(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef descriptor_read_op<MutableBufferSequence, Handler> op;
     typename op::ptr p = { boost::addressof(handler),
@@ -258,7 +267,7 @@ public:
 
     ASIO_HANDLER_CREATION((p.p, "descriptor", &impl, "async_read_some"));
 
-    start_op(impl, reactor::read_op, p.p, true,
+    start_op(impl, reactor::read_op, p.p, is_continuation, true,
         buffer_sequence_adapter<asio::mutable_buffer,
           MutableBufferSequence>::all_empty(buffers));
     p.v = p.p = 0;
@@ -269,6 +278,9 @@ public:
   void async_read_some(implementation_type& impl,
       const null_buffers&, Handler& handler)
   {
+    bool is_continuation =
+      asio_handler_cont_helpers::is_continuation(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler> op;
     typename op::ptr p = { boost::addressof(handler),
@@ -279,14 +291,14 @@ public:
     ASIO_HANDLER_CREATION((p.p, "descriptor",
           &impl, "async_read_some(null_buffers)"));
 
-    start_op(impl, reactor::read_op, p.p, false, false);
+    start_op(impl, reactor::read_op, p.p, is_continuation, false, false);
     p.v = p.p = 0;
   }
 
 private:
   // Start the asynchronous operation.
   ASIO_DECL void start_op(implementation_type& impl, int op_type,
-      reactor_op* op, bool is_non_blocking, bool noop);
+      reactor_op* op, bool is_continuation, bool is_non_blocking, bool noop);
 
   // The selector that performs event demultiplexing for the service.
   reactor& reactor_;

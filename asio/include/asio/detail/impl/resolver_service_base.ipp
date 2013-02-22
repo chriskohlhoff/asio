@@ -109,7 +109,7 @@ void resolver_service_base::start_resolve_op(operation* op)
 {
   start_work_thread();
   io_service_impl_.work_started();
-  work_io_service_impl_.post_immediate_completion(op);
+  work_io_service_impl_.post_immediate_completion(op, false);
 }
 
 void resolver_service_base::start_work_thread()

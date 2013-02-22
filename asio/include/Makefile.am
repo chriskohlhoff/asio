@@ -61,6 +61,7 @@ nobase_include_HEADERS = \
 	asio/detail/gcc_sync_fenced_block.hpp \
 	asio/detail/gcc_x86_fenced_block.hpp \
 	asio/detail/handler_alloc_helpers.hpp \
+	asio/detail/handler_cont_helpers.hpp \
 	asio/detail/handler_invoke_helpers.hpp \
 	asio/detail/handler_tracking.hpp \
 	asio/detail/handler_type_requirements.hpp \
@@ -230,6 +231,7 @@ nobase_include_HEADERS = \
 	asio/error_code.hpp \
 	asio/error.hpp \
 	asio/handler_alloc_hook.hpp \
+	asio/handler_continuation_hook.hpp \
 	asio/handler_invoke_hook.hpp \
 	asio/handler_type.hpp \
 	asio/high_resolution_timer.hpp \

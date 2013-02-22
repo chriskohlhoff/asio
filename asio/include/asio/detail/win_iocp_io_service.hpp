@@ -120,7 +120,7 @@ public:
 
   // Request invocation of the given operation and return immediately. Assumes
   // that work_started() has not yet been called for the operation.
-  void post_immediate_completion(win_iocp_operation* op)
+  void post_immediate_completion(win_iocp_operation* op, bool)
   {
     work_started();
     post_deferred_completion(op);
@@ -140,7 +140,7 @@ public:
   // called for the operation.
   void post_private_immediate_completion(win_iocp_operation* op)
   {
-    post_immediate_completion(op);
+    post_immediate_completion(op, false);
   }
 
   // Request invocation of the given operation using the thread-private queue

@@ -121,13 +121,14 @@ void select_reactor::move_descriptor(socket_type,
 }
 
 void select_reactor::start_op(int op_type, socket_type descriptor,
-    select_reactor::per_descriptor_data&, reactor_op* op, bool)
+    select_reactor::per_descriptor_data&, reactor_op* op,
+    bool is_continuation, bool)
 {
   asio::detail::mutex::scoped_lock lock(mutex_);
 
   if (shutdown_)
   {
-    post_immediate_completion(op);
+    post_immediate_completion(op, is_continuation);
     return;
   }
 

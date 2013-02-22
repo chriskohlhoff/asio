@@ -61,7 +61,8 @@ typedef basic_yield_context<unspecified> yield_context;
 #else // defined(GENERATING_DOCUMENTATION)
 typedef basic_yield_context<
   detail::wrapped_handler<
-    io_service::strand, void(*)()> > yield_context;
+    io_service::strand, void(*)(),
+    detail::is_continuation_if_running> > yield_context;
 #endif // defined(GENERATING_DOCUMENTATION)
 
 template <typename Handler, typename Function>

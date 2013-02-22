@@ -162,14 +162,14 @@ void dev_poll_reactor::move_descriptor(socket_type,
 }
 
 void dev_poll_reactor::start_op(int op_type, socket_type descriptor,
-    dev_poll_reactor::per_descriptor_data&,
-    reactor_op* op, bool allow_speculative)
+    dev_poll_reactor::per_descriptor_data&, reactor_op* op,
+    bool is_continuation, bool allow_speculative)
 {
   asio::detail::mutex::scoped_lock lock(mutex_);
 
   if (shutdown_)
   {
-    post_immediate_completion(op);
+    post_immediate_completion(op, is_continuation);
     return;
   }
 
@@ -182,7 +182,7 @@ void dev_poll_reactor::start_op(int op_type, socket_type descriptor,
         if (op->perform())
         {
           lock.unlock();
-          io_service_.post_immediate_completion(op);
+          io_service_.post_immediate_completion(op, is_continuation);
           return;
         }
       }

@@ -214,11 +214,23 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
   unspecified
 #else
-  detail::wrapped_handler<strand, Handler>
+  detail::wrapped_handler<strand, Handler, detail::is_continuation_if_running>
 #endif
   wrap(Handler handler)
   {
-    return detail::wrapped_handler<io_service::strand, Handler>(*this, handler);
+    return detail::wrapped_handler<io_service::strand, Handler,
+        detail::is_continuation_if_running>(*this, handler);
+  }
+
+  /// Determine whether the strand is running in the current thread.
+  /**
+   * @return @c true if the current thread is executing a handler that was
+   * submitted to the strand using post(), dispatch() or wrap(). Otherwise
+   * returns @c false.
+   */
+  bool running_in_this_thread() const
+  {
+    return service_.running_in_this_thread(impl_);
   }
 
 private:

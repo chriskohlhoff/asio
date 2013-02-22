@@ -260,6 +260,50 @@ This default implementation is simply:
 [endsect]
 
 
+
+[section:asio_handler_is_continuation asio_handler_is_continuation]
+
+[indexterm1 asio_handler_is_continuation] 
+Default continuation function for handlers. 
+
+
+  bool asio_handler_is_continuation(
+      ... );
+
+
+Asynchronous operations may represent a continuation of the asynchronous control flow associated with the current handler. The implementation can use this knowledge to optimise scheduling of the handler.
+
+Implement asio\_handler\_is\_continuation for your own handlers to indicate when a handler represents a continuation.
+
+The default implementation of the continuation hook returns `false`.
+
+
+[heading Example]
+  
+
+
+   class my_handler;
+
+   bool asio_handler_is_continuation(my_handler* context)
+   {
+     return true;
+   }
+
+
+
+
+
+
+[heading Requirements]
+
+[*Header: ][^asio/handler_continuation_hook.hpp]
+
+[*Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
 [section:async_connect async_connect]
 
 [indexterm1 async_connect] 
@@ -56689,6 +56733,11 @@ Provides serialised handler execution.
   ]
   
   [
+    [[link asio.reference.io_service__strand.running_in_this_thread [*running_in_this_thread]]]
+    [Determine whether the strand is running in the current thread. ]
+  ]
+  
+  [
     [[link asio.reference.io_service__strand.strand [*strand]]]
     [Constructor. ]
   ]
@@ -56859,6 +56908,27 @@ The strand object guarantees that handlers posted or dispatched through the stra
 ]]
 
 ]
+
+
+
+
+[endsect]
+
+
+
+[section:running_in_this_thread io_service::strand::running_in_this_thread]
+
+[indexterm2 running_in_this_thread..io_service::strand] 
+Determine whether the strand is running in the current thread. 
+
+
+  bool running_in_this_thread() const;
+
+
+
+[heading Return Value]
+      
+`true` if the current thread is executing a handler that was submitted to the strand using `post()`, `dispatch()` or `wrap()`. Otherwise returns `false`. 
 
 
 
@@ -87813,6 +87883,11 @@ Typedef for backwards compatibility.
   [
     [[link asio.reference.io_service__strand.post [*post]]]
     [Request the strand to invoke the given handler and return immediately. ]
+  ]
+  
+  [
+    [[link asio.reference.io_service__strand.running_in_this_thread [*running_in_this_thread]]]
+    [Determine whether the strand is running in the current thread. ]
   ]
   
   [

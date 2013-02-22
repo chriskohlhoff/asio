@@ -278,6 +278,11 @@ sub copy_source_file
       $line =~ s/asio_handler_alloc_helpers/boost_asio_handler_alloc_helpers/g;
       print_line($output, $line, $from, $lineno);
     }
+    elsif ($line =~ /asio_handler_cont_helpers/)
+    {
+      $line =~ s/asio_handler_cont_helpers/boost_asio_handler_cont_helpers/g;
+      print_line($output, $line, $from, $lineno);
+    }
     elsif ($line =~ /asio_handler_invoke_helpers/)
     {
       $line =~ s/asio_handler_invoke_helpers/boost_asio_handler_invoke_helpers/g;

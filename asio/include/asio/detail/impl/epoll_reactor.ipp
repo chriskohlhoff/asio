@@ -203,13 +203,13 @@ void epoll_reactor::move_descriptor(socket_type,
 }
 
 void epoll_reactor::start_op(int op_type, socket_type descriptor,
-    epoll_reactor::per_descriptor_data& descriptor_data,
-    reactor_op* op, bool allow_speculative)
+    epoll_reactor::per_descriptor_data& descriptor_data, reactor_op* op,
+    bool is_continuation, bool allow_speculative)
 {
   if (!descriptor_data)
   {
     op->ec_ = asio::error::bad_descriptor;
-    post_immediate_completion(op);
+    post_immediate_completion(op, is_continuation);
     return;
   }
 
@@ -217,7 +217,7 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
 
   if (descriptor_data->shutdown_)
   {
-    post_immediate_completion(op);
+    post_immediate_completion(op, is_continuation);
     return;
   }
 
@@ -230,7 +230,7 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
       if (op->perform())
       {
         descriptor_lock.unlock();
-        io_service_.post_immediate_completion(op);
+        io_service_.post_immediate_completion(op, is_continuation);
         return;
       }
 
@@ -249,7 +249,7 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
           {
             op->ec_ = asio::error_code(errno,
                 asio::error::get_system_category());
-            io_service_.post_immediate_completion(op);
+            io_service_.post_immediate_completion(op, is_continuation);
             return;
           }
         }

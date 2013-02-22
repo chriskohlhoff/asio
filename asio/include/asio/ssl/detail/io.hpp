@@ -95,6 +95,7 @@ public:
     : next_layer_(next_layer),
       core_(core),
       op_(op),
+      start_(0),
       bytes_transferred_(0),
       handler_(ASIO_MOVE_CAST(Handler)(handler))
   {
@@ -105,6 +106,7 @@ public:
     : next_layer_(other.next_layer_),
       core_(other.core_),
       op_(other.op_),
+      start_(other.start_),
       want_(other.want_),
       ec_(other.ec_),
       bytes_transferred_(other.bytes_transferred_),
@@ -116,6 +118,7 @@ public:
     : next_layer_(other.next_layer_),
       core_(other.core_),
       op_(other.op_),
+      start_(other.start_),
       want_(other.want_),
       ec_(other.ec_),
       bytes_transferred_(other.bytes_transferred_),
@@ -127,7 +130,7 @@ public:
   void operator()(asio::error_code ec,
       std::size_t bytes_transferred = ~std::size_t(0), int start = 0)
   {
-    switch (start)
+    switch (start_ = start)
     {
     case 1: // Called after at least one async operation.
       do
@@ -274,6 +277,7 @@ public:
   Stream& next_layer_;
   stream_core& core_;
   Operation op_;
+  int start_;
   engine::want want_;
   asio::error_code ec_;
   std::size_t bytes_transferred_;
@@ -294,6 +298,14 @@ inline void asio_handler_deallocate(void* pointer, std::size_t size,
 {
   asio_handler_alloc_helpers::deallocate(
       pointer, size, this_handler->handler_);
+}
+
+template <typename Stream, typename Operation, typename Handler>
+inline bool asio_handler_is_continuation(
+    io_op<Stream, Operation, Handler>* this_handler)
+{
+  return this_handler->start_ == 0 ? true
+    : asio_handler_cont_helpers::is_continuation(this_handler->handler_);
 }
 
 template <typename Function, typename Stream,
