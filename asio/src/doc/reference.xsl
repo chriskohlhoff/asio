@@ -42,6 +42,7 @@
 [include requirements/AsyncRandomAccessWriteDevice.qbk]
 [include requirements/AsyncReadStream.qbk]
 [include requirements/AsyncWriteStream.qbk]
+[include requirements/BufferedHandshakeHandler.qbk]
 [include requirements/CompletionHandler.qbk]
 [include requirements/ComposedConnectHandler.qbk]
 [include requirements/ConnectHandler.qbk]

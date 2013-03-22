@@ -317,6 +317,7 @@
           </simplelist>
           <bridgehead renderas="sect3">Type Requirements</bridgehead>
           <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.BufferedHandshakeHandler">BufferedHandshakeHandler</link></member>
             <member><link linkend="asio.reference.HandshakeHandler">HandshakeHandler</link></member>
             <member><link linkend="asio.reference.ShutdownHandler">ShutdownHandler</link></member>
           </simplelist>

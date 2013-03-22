@@ -320,6 +320,7 @@ nobase_include_HEADERS = \
 	asio/ssl/context_base.hpp \
 	asio/ssl/context.hpp \
 	asio/ssl/context_service.hpp \
+	asio/ssl/detail/buffered_handshake_op.hpp \
 	asio/ssl/detail/engine.hpp \
 	asio/ssl/detail/handshake_op.hpp \
 	asio/ssl/detail/impl/engine.ipp \

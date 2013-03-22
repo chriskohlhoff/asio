@@ -26,6 +26,7 @@
 # include "asio/detail/noncopyable.hpp"
 # include "asio/detail/type_traits.hpp"
 # include "asio/ssl/context.hpp"
+# include "asio/ssl/detail/buffered_handshake_op.hpp"
 # include "asio/ssl/detail/handshake_op.hpp"
 # include "asio/ssl/detail/io.hpp"
 # include "asio/ssl/detail/read_op.hpp"
@@ -343,6 +344,47 @@ public:
     return ec;
   }
 
+  /// Perform SSL handshaking.
+  /**
+   * This function is used to perform SSL handshaking on the stream. The
+   * function call will block until handshaking is complete or an error occurs.
+   *
+   * @param type The type of handshaking to be performed, i.e. as a client or as
+   * a server.
+   *
+   * @param buffers The buffered data to be reused for the handshake.
+   *
+   * @throws asio::system_error Thrown on failure.
+   */
+  template <typename ConstBufferSequence>
+  void handshake(handshake_type type, const ConstBufferSequence& buffers)
+  {
+    asio::error_code ec;
+    handshake(type, buffers, ec);
+    asio::detail::throw_error(ec, "handshake");
+  }
+
+  /// Perform SSL handshaking.
+  /**
+   * This function is used to perform SSL handshaking on the stream. The
+   * function call will block until handshaking is complete or an error occurs.
+   *
+   * @param type The type of handshaking to be performed, i.e. as a client or as
+   * a server.
+   *
+   * @param buffers The buffered data to be reused for the handshake.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   */
+  template <typename ConstBufferSequence>
+  asio::error_code handshake(handshake_type type,
+      const ConstBufferSequence& buffers, asio::error_code& ec)
+  {
+    detail::io(next_layer_, core_,
+        detail::buffered_handshake_op<ConstBufferSequence>(type, buffers), ec);
+    return ec;
+  }
+
   /// Start an asynchronous SSL handshake.
   /**
    * This function is used to asynchronously perform an SSL handshake on the
@@ -374,6 +416,49 @@ public:
 
     detail::async_io(next_layer_, core_,
         detail::handshake_op(type), init.handler);
+
+    return init.result.get();
+  }
+
+  /// Start an asynchronous SSL handshake.
+  /**
+   * This function is used to asynchronously perform an SSL handshake on the
+   * stream. This function call always returns immediately.
+   *
+   * @param type The type of handshaking to be performed, i.e. as a client or as
+   * a server.
+   *
+   * @param buffers The buffered data to be reused for the handshake. Although
+   * the buffers object may be copied as necessary, ownership of the underlying
+   * buffers is retained by the caller, which must guarantee that they remain
+   * valid until the handler is called.
+   *
+   * @param handler The handler to be called when the handshake operation
+   * completes. Copies will be made of the handler as required. The equivalent
+   * function signature of the handler must be:
+   * @code void handler(
+   *   const asio::error_code& error, // Result of operation.
+   *   std::size_t bytes_transferred // Amount of buffers used in handshake.
+   * ); @endcode
+   */
+  template <typename ConstBufferSequence, typename BufferedHandshakeHandler>
+  ASIO_INITFN_RESULT_TYPE(BufferedHandshakeHandler,
+      void (asio::error_code, std::size_t))
+  async_handshake(handshake_type type, const ConstBufferSequence& buffers,
+      ASIO_MOVE_ARG(BufferedHandshakeHandler) handler)
+  {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a BufferedHandshakeHandler.
+    ASIO_BUFFERED_HANDSHAKE_HANDLER_CHECK(
+        BufferedHandshakeHandler, handler) type_check;
+
+    asio::detail::async_result_init<BufferedHandshakeHandler,
+      void (asio::error_code, std::size_t)> init(
+        ASIO_MOVE_CAST(BufferedHandshakeHandler)(handler));
+
+    detail::async_io(next_layer_, core_,
+        detail::buffered_handshake_op<ConstBufferSequence>(type, buffers),
+        init.handler);
 
     return init.result.get();
   }
