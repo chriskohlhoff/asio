@@ -65,7 +65,25 @@ public:
     sslv23_client,
 
     /// SSL/TLS server.
-    sslv23_server
+    sslv23_server,
+
+    /// Generic TLS version 1.1.
+    tlsv11,
+
+    /// TLS version 1.1 client.
+    tlsv11_client,
+
+    /// TLS version 1.1 server.
+    tlsv11_server,
+
+    /// Generic TLS version 1.2.
+    tlsv12,
+
+    /// TLS version 1.2 client.
+    tlsv12_client,
+
+    /// TLS version 1.2 server.
+    tlsv12_server
   };
 
   /// Bitmask type for SSL options.
