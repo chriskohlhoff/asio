@@ -105,6 +105,9 @@ void test()
     stream1.set_verify_mode(ssl::verify_none);
     stream1.set_verify_mode(ssl::verify_none, ec);
 
+    stream1.set_verify_depth(1);
+    stream1.set_verify_depth(1, ec);
+
     stream1.set_verify_callback(verify_callback);
     stream1.set_verify_callback(verify_callback, ec);
 #endif // !defined(ASIO_ENABLE_OLD_SSL)

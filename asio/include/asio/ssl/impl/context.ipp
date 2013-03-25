@@ -225,6 +225,22 @@ asio::error_code context::set_verify_mode(
   return ec;
 }
 
+void context::set_verify_depth(int depth)
+{
+  asio::error_code ec;
+  set_verify_depth(depth, ec);
+  asio::detail::throw_error(ec, "set_verify_depth");
+}
+
+asio::error_code context::set_verify_depth(
+    int depth, asio::error_code& ec)
+{
+  ::SSL_CTX_set_verify_depth(handle_, depth);
+
+  ec = asio::error_code();
+  return ec;
+}
+
 void context::load_verify_file(const std::string& filename)
 {
   asio::error_code ec;

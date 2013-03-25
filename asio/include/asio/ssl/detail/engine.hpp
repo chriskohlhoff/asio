@@ -72,6 +72,10 @@ public:
   ASIO_DECL asio::error_code set_verify_mode(
       verify_mode v, asio::error_code& ec);
 
+  // Set the peer verification depth.
+  ASIO_DECL asio::error_code set_verify_depth(
+      int depth, asio::error_code& ec);
+
   // Set a peer certificate verification callback.
   ASIO_DECL asio::error_code set_verify_callback(
       verify_callback_base* callback, asio::error_code& ec);

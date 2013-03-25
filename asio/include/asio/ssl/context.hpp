@@ -166,6 +166,35 @@ public:
   ASIO_DECL asio::error_code set_verify_mode(
       verify_mode v, asio::error_code& ec);
 
+  /// Set the peer verification depth.
+  /**
+   * This function may be used to configure the maximum verification depth
+   * allowed by the context.
+   *
+   * @param depth Maximum depth for the certificate chain verification that
+   * shall be allowed.
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_set_verify_depth.
+   */
+  ASIO_DECL void set_verify_depth(int depth);
+
+  /// Set the peer verification depth.
+  /**
+   * This function may be used to configure the maximum verification depth
+   * allowed by the context.
+   *
+   * @param depth Maximum depth for the certificate chain verification that
+   * shall be allowed.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_set_verify_depth.
+   */
+  ASIO_DECL asio::error_code set_verify_depth(
+      int depth, asio::error_code& ec);
+
   /// Set the callback used to verify peer certificates.
   /**
    * This function is used to specify a callback function that will be called

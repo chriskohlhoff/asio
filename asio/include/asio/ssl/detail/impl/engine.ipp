@@ -83,6 +83,15 @@ asio::error_code engine::set_verify_mode(
   return ec;
 }
 
+asio::error_code engine::set_verify_depth(
+    int depth, asio::error_code& ec)
+{
+  ::SSL_set_verify_depth(ssl_, depth);
+
+  ec = asio::error_code();
+  return ec;
+}
+
 asio::error_code engine::set_verify_callback(
     verify_callback_base* callback, asio::error_code& ec)
 {

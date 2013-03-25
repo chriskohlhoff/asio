@@ -258,6 +258,43 @@ public:
     return core_.engine_.set_verify_mode(v, ec);
   }
 
+  /// Set the peer verification depth.
+  /**
+   * This function may be used to configure the maximum verification depth
+   * allowed by the stream.
+   *
+   * @param depth Maximum depth for the certificate chain verification that
+   * shall be allowed.
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_set_verify_depth.
+   */
+  void set_verify_depth(int depth)
+  {
+    asio::error_code ec;
+    set_verify_depth(depth, ec);
+    asio::detail::throw_error(ec, "set_verify_depth");
+  }
+
+  /// Set the peer verification depth.
+  /**
+   * This function may be used to configure the maximum verification depth
+   * allowed by the stream.
+   *
+   * @param depth Maximum depth for the certificate chain verification that
+   * shall be allowed.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_set_verify_depth.
+   */
+  asio::error_code set_verify_depth(
+      int depth, asio::error_code& ec)
+  {
+    return core_.engine_.set_verify_depth(depth, ec);
+  }
+
   /// Set the callback used to verify peer certificates.
   /**
    * This function is used to specify a callback function that will be called
