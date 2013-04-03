@@ -22,6 +22,7 @@
 # include "asio/ssl/context_service.hpp"
 #else // defined(ASIO_ENABLE_OLD_SSL)
 # include <string>
+# include "asio/buffer.hpp"
 # include "asio/io_service.hpp"
 # include "asio/ssl/context_base.hpp"
 # include "asio/ssl/detail/openssl_types.hpp"
@@ -267,6 +268,35 @@ public:
   ASIO_DECL asio::error_code load_verify_file(
       const std::string& filename, asio::error_code& ec);
 
+  /// Add certification authority for performing verification.
+  /**
+   * This function is used to add one trusted certification authority
+   * from a memory buffer.
+   *
+   * @param ca The buffer containing the certification authority certificate.
+   * The certificate must use the PEM format.
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_get_cert_store and @c X509_STORE_add_cert.
+   */
+  ASIO_DECL void add_certificate_authority(const const_buffer& ca);
+
+  /// Add certification authority for performing verification.
+  /**
+   * This function is used to add one trusted certification authority
+   * from a memory buffer.
+   *
+   * @param ca The buffer containing the certification authority certificate.
+   * The certificate must use the PEM format.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_get_cert_store and @c X509_STORE_add_cert.
+   */
+  ASIO_DECL asio::error_code add_certificate_authority(
+      const const_buffer& ca, asio::error_code& ec);
+
   /// Configures the context to use the default directories for finding
   /// certification authority certificates.
   /**
@@ -327,6 +357,37 @@ public:
   ASIO_DECL asio::error_code add_verify_path(
       const std::string& path, asio::error_code& ec);
 
+  /// Use a certificate from a memory buffer.
+  /**
+   * This function is used to load a certificate into the context from a buffer.
+   *
+   * @param certificate The buffer containing the certificate.
+   *
+   * @param format The certificate format (ASN.1 or PEM).
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_use_certificate or SSL_CTX_use_certificate_ASN1.
+   */
+  ASIO_DECL void use_certificate(
+      const const_buffer& certificate, file_format format);
+
+  /// Use a certificate from a memory buffer.
+  /**
+   * This function is used to load a certificate into the context from a buffer.
+   *
+   * @param certificate The buffer containing the certificate.
+   *
+   * @param format The certificate format (ASN.1 or PEM).
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_use_certificate or SSL_CTX_use_certificate_ASN1.
+   */
+  ASIO_DECL asio::error_code use_certificate(
+      const const_buffer& certificate, file_format format,
+      asio::error_code& ec);
+
   /// Use a certificate from a file.
   /**
    * This function is used to load a certificate into the context from a file.
@@ -358,6 +419,35 @@ public:
       const std::string& filename, file_format format,
       asio::error_code& ec);
 
+  /// Use a certificate chain from a memory buffer.
+  /**
+   * This function is used to load a certificate chain into the context from a
+   * buffer.
+   *
+   * @param chain The buffer containing the certificate chain. The certificate
+   * chain must use the PEM format.
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_use_certificate and SSL_CTX_add_extra_chain_cert.
+   */
+  ASIO_DECL void use_certificate_chain(const const_buffer& chain);
+
+  /// Use a certificate chain from a memory buffer.
+  /**
+   * This function is used to load a certificate chain into the context from a
+   * buffer.
+   *
+   * @param chain The buffer containing the certificate chain. The certificate
+   * chain must use the PEM format.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_use_certificate and SSL_CTX_add_extra_chain_cert.
+   */
+  ASIO_DECL asio::error_code use_certificate_chain(
+      const const_buffer& chain, asio::error_code& ec);
+
   /// Use a certificate chain from a file.
   /**
    * This function is used to load a certificate chain into the context from a
@@ -386,6 +476,37 @@ public:
    */
   ASIO_DECL asio::error_code use_certificate_chain_file(
       const std::string& filename, asio::error_code& ec);
+
+  /// Use a private key from a memory buffer.
+  /**
+   * This function is used to load a private key into the context from a buffer.
+   *
+   * @param private_key The buffer containing the private key.
+   *
+   * @param format The private key format (ASN.1 or PEM).
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_use_PrivateKey or SSL_CTX_use_PrivateKey_ASN1.
+   */
+  ASIO_DECL void use_private_key(
+      const const_buffer& private_key, file_format format);
+
+  /// Use a private key from a memory buffer.
+  /**
+   * This function is used to load a private key into the context from a buffer.
+   *
+   * @param private_key The buffer containing the private key.
+   *
+   * @param format The private key format (ASN.1 or PEM).
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_use_PrivateKey or SSL_CTX_use_PrivateKey_ASN1.
+   */
+  ASIO_DECL asio::error_code use_private_key(
+      const const_buffer& private_key, file_format format,
+      asio::error_code& ec);
 
   /// Use a private key from a file.
   /**
@@ -416,6 +537,39 @@ public:
    */
   ASIO_DECL asio::error_code use_private_key_file(
       const std::string& filename, file_format format,
+      asio::error_code& ec);
+
+  /// Use an RSA private key from a memory buffer.
+  /**
+   * This function is used to load an RSA private key into the context from a
+   * buffer.
+   *
+   * @param private_key The buffer containing the RSA private key.
+   *
+   * @param format The private key format (ASN.1 or PEM).
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_use_RSAPrivateKey or SSL_CTX_use_RSAPrivateKey_ASN1.
+   */
+  ASIO_DECL void use_rsa_private_key(
+      const const_buffer& private_key, file_format format);
+
+  /// Use an RSA private key from a memory buffer.
+  /**
+   * This function is used to load an RSA private key into the context from a
+   * buffer.
+   *
+   * @param private_key The buffer containing the RSA private key.
+   *
+   * @param format The private key format (ASN.1 or PEM).
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_use_RSAPrivateKey or SSL_CTX_use_RSAPrivateKey_ASN1.
+   */
+  ASIO_DECL asio::error_code use_rsa_private_key(
+      const const_buffer& private_key, file_format format,
       asio::error_code& ec);
 
   /// Use an RSA private key from a file.
@@ -450,6 +604,37 @@ public:
   ASIO_DECL asio::error_code use_rsa_private_key_file(
       const std::string& filename, file_format format,
       asio::error_code& ec);
+
+  /// Use the specified memory buffer to obtain the temporary Diffie-Hellman
+  /// parameters.
+  /**
+   * This function is used to load Diffie-Hellman parameters into the context
+   * from a buffer.
+   *
+   * @param dh The memory buffer containing the Diffie-Hellman parameters. The
+   * buffer must use the PEM format.
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_set_tmp_dh.
+   */
+  ASIO_DECL void use_tmp_dh(const const_buffer& dh);
+
+  /// Use the specified memory buffer to obtain the temporary Diffie-Hellman
+  /// parameters.
+  /**
+   * This function is used to load Diffie-Hellman parameters into the context
+   * from a buffer.
+   *
+   * @param dh The memory buffer containing the Diffie-Hellman parameters. The
+   * buffer must use the PEM format.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_set_tmp_dh.
+   */
+  ASIO_DECL asio::error_code use_tmp_dh(
+      const const_buffer& dh, asio::error_code& ec);
 
   /// Use the specified file to obtain the temporary Diffie-Hellman parameters.
   /**
@@ -522,6 +707,12 @@ public:
       asio::error_code& ec);
 
 private:
+  struct bio_cleanup;
+  struct x509_cleanup;
+  struct evp_pkey_cleanup;
+  struct rsa_cleanup;
+  struct dh_cleanup;
+
   // Helper function used to set a peer certificate verification callback.
   ASIO_DECL asio::error_code do_set_verify_callback(
       detail::verify_callback_base* callback, asio::error_code& ec);
@@ -537,6 +728,13 @@ private:
   // Callback used when the SSL implementation wants a password.
   ASIO_DECL static int password_callback_function(
       char* buf, int size, int purpose, void* data);
+
+  // Helper function to set the temporary Diffie-Hellman parameters from a BIO.
+  ASIO_DECL asio::error_code do_use_tmp_dh(
+      BIO* bio, asio::error_code& ec);
+
+  // Helper function to make a BIO from a memory buffer.
+  ASIO_DECL BIO* make_buffer_bio(const const_buffer& b);
 
   // The underlying native implementation.
   native_handle_type handle_;

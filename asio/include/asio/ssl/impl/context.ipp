@@ -33,6 +33,36 @@ namespace ssl {
 
 #if !defined(ASIO_ENABLE_OLD_SSL)
 
+struct context::bio_cleanup
+{
+  BIO* p;
+  ~bio_cleanup() { if (p) ::BIO_free(p); }
+};
+
+struct context::x509_cleanup
+{
+  X509* p;
+  ~x509_cleanup() { if (p) ::X509_free(p); }
+};
+
+struct context::evp_pkey_cleanup
+{
+  EVP_PKEY* p;
+  ~evp_pkey_cleanup() { if (p) ::EVP_PKEY_free(p); }
+};
+
+struct context::rsa_cleanup
+{
+  RSA* p;
+  ~rsa_cleanup() { if (p) ::RSA_free(p); }
+};
+
+struct context::dh_cleanup
+{
+  DH* p;
+  ~dh_cleanup() { if (p) ::DH_free(p); }
+};
+
 context::context(context::method m)
   : handle_(0)
 {
@@ -263,6 +293,41 @@ asio::error_code context::load_verify_file(
   return ec;
 }
 
+void context::add_certificate_authority(const const_buffer& ca)
+{
+  asio::error_code ec;
+  add_certificate_authority(ca, ec);
+  asio::detail::throw_error(ec, "add_certificate_authority");
+}
+
+asio::error_code context::add_certificate_authority(
+    const const_buffer& ca, asio::error_code& ec)
+{
+  ::ERR_clear_error();
+
+  bio_cleanup bio = { make_buffer_bio(ca) };
+  if (bio.p)
+  {
+    x509_cleanup cert = { ::PEM_read_bio_X509(bio.p, 0, 0, 0) };
+    if (cert.p)
+    {
+      if (X509_STORE* store = ::SSL_CTX_get_cert_store(handle_))
+      {
+        if (::X509_STORE_add_cert(store, cert.p) == 1)
+        {
+          ec = asio::error_code();
+          return ec;
+        }
+      }
+    }
+  }
+
+  ec = asio::error_code(
+      static_cast<int>(::ERR_get_error()),
+      asio::error::get_ssl_category());
+  return ec;
+}
+
 void context::set_default_verify_paths()
 {
   asio::error_code ec;
@@ -307,6 +372,57 @@ asio::error_code context::add_verify_path(
   return ec;
 }
 
+void context::use_certificate(
+    const const_buffer& certificate, file_format format)
+{
+  asio::error_code ec;
+  use_certificate(certificate, format, ec);
+  asio::detail::throw_error(ec, "use_certificate");
+}
+
+asio::error_code context::use_certificate(
+    const const_buffer& certificate, file_format format,
+    asio::error_code& ec)
+{
+  ::ERR_clear_error();
+
+  if (format == context_base::asn1)
+  {
+    if (::SSL_CTX_use_certificate_ASN1(handle_, buffer_size(certificate),
+          buffer_cast<const unsigned char*>(certificate)) == 1)
+    {
+      ec = asio::error_code();
+      return ec;
+    }
+  }
+  else if (format == context_base::pem)
+  {
+    bio_cleanup bio = { make_buffer_bio(certificate) };
+    if (bio.p)
+    {
+      x509_cleanup cert = { ::PEM_read_bio_X509(bio.p, 0, 0, 0) };
+      if (cert.p)
+      {
+        if (::SSL_CTX_use_certificate(handle_, cert.p) == 1)
+        {
+          ec = asio::error_code();
+          return ec;
+        }
+      }
+    }
+  }
+  else
+  {
+    ec = asio::error::invalid_argument;
+    return ec;
+  }
+
+  ec = asio::error_code(
+      static_cast<int>(::ERR_get_error()),
+      asio::error::get_ssl_category());
+  return ec;
+}
+
 void context::use_certificate_file(
     const std::string& filename, file_format format)
 {
@@ -347,6 +463,76 @@ asio::error_code context::use_certificate_file(
   return ec;
 }
 
+void context::use_certificate_chain(const const_buffer& chain)
+{
+  asio::error_code ec;
+  use_certificate_chain(chain, ec);
+  asio::detail::throw_error(ec, "use_certificate_chain");
+}
+
+asio::error_code context::use_certificate_chain(
+    const const_buffer& chain, asio::error_code& ec)
+{
+  ::ERR_clear_error();
+
+  bio_cleanup bio = { make_buffer_bio(chain) };
+  if (bio.p)
+  {
+    x509_cleanup cert = {
+      ::PEM_read_bio_X509_AUX(bio.p, 0,
+          handle_->default_passwd_callback,
+          handle_->default_passwd_callback_userdata) };
+    if (!cert.p)
+    {
+      ec = asio::error_code(ERR_R_PEM_LIB,
+          asio::error::get_ssl_category());
+      return ec;
+    }
+
+    int result = ::SSL_CTX_use_certificate(handle_, cert.p);
+    if (result == 0 || ::ERR_peek_error() != 0)
+    {
+      ec = asio::error_code(
+          static_cast<int>(::ERR_get_error()),
+          asio::error::get_ssl_category());
+      return ec;
+    }
+
+    if (handle_->extra_certs)
+    {
+      ::sk_X509_pop_free(handle_->extra_certs, X509_free);
+      handle_->extra_certs = 0;
+    }
+
+    while (X509* cacert = ::PEM_read_bio_X509(bio.p, 0,
+          handle_->default_passwd_callback,
+          handle_->default_passwd_callback_userdata))
+    {
+      if (!::SSL_CTX_add_extra_chain_cert(handle_, cacert))
+      {
+        ec = asio::error_code(
+            static_cast<int>(::ERR_get_error()),
+            asio::error::get_ssl_category());
+        return ec;
+      }
+    }
+  
+    result = ::ERR_peek_last_error();
+    if ((ERR_GET_LIB(result) == ERR_LIB_PEM)
+        && (ERR_GET_REASON(result) == PEM_R_NO_START_LINE))
+    {
+      ::ERR_clear_error();
+      ec = asio::error_code();
+      return ec;
+    }
+  }
+
+  ec = asio::error_code(
+      static_cast<int>(::ERR_get_error()),
+      asio::error::get_ssl_category());
+  return ec;
+}
+
 void context::use_certificate_chain_file(const std::string& filename)
 {
   asio::error_code ec;
@@ -369,12 +555,110 @@ asio::error_code context::use_certificate_chain_file(
   return ec;
 }
 
+void context::use_private_key(
+    const const_buffer& private_key, context::file_format format)
+{
+  asio::error_code ec;
+  use_private_key(private_key, format, ec);
+  asio::detail::throw_error(ec, "use_private_key");
+}
+
+asio::error_code context::use_private_key(
+    const const_buffer& private_key, context::file_format format,
+    asio::error_code& ec)
+{
+  ::ERR_clear_error();
+
+  bio_cleanup bio = { make_buffer_bio(private_key) };
+  if (bio.p)
+  {
+    evp_pkey_cleanup evp_private_key = { 0 };
+    switch (format)
+    {
+    case context_base::asn1:
+      evp_private_key.p = ::d2i_PrivateKey_bio(bio.p, 0);
+      break;
+    case context_base::pem:
+      evp_private_key.p = ::PEM_read_bio_PrivateKey(bio.p, 0, 0, 0);
+      break;
+    default:
+      {
+        ec = asio::error::invalid_argument;
+        return ec;
+      }
+    }
+
+    if (evp_private_key.p)
+    {
+      if (::SSL_CTX_use_PrivateKey(handle_, evp_private_key.p) == 1)
+      {
+        ec = asio::error_code();
+        return ec;
+      }
+    }
+  }
+
+  ec = asio::error_code(
+      static_cast<int>(::ERR_get_error()),
+      asio::error::get_ssl_category());
+  return ec;
+}
+
 void context::use_private_key_file(
     const std::string& filename, context::file_format format)
 {
   asio::error_code ec;
   use_private_key_file(filename, format, ec);
   asio::detail::throw_error(ec, "use_private_key_file");
+}
+
+void context::use_rsa_private_key(
+    const const_buffer& private_key, context::file_format format)
+{
+  asio::error_code ec;
+  use_rsa_private_key(private_key, format, ec);
+  asio::detail::throw_error(ec, "use_rsa_private_key");
+}
+
+asio::error_code context::use_rsa_private_key(
+    const const_buffer& private_key, context::file_format format,
+    asio::error_code& ec)
+{
+  ::ERR_clear_error();
+
+  bio_cleanup bio = { make_buffer_bio(private_key) };
+  if (bio.p)
+  {
+    rsa_cleanup rsa_private_key = { 0 };
+    switch (format)
+    {
+    case context_base::asn1:
+      rsa_private_key.p = ::d2i_RSAPrivateKey_bio(bio.p, 0);
+      break;
+    case context_base::pem:
+      rsa_private_key.p = ::PEM_read_bio_RSAPrivateKey(bio.p, 0, 0, 0);
+      break;
+    default:
+      {
+        ec = asio::error::invalid_argument;
+        return ec;
+      }
+    }
+
+    if (rsa_private_key.p)
+    {
+      if (::SSL_CTX_use_RSAPrivateKey(handle_, rsa_private_key.p) == 1)
+      {
+        ec = asio::error_code();
+        return ec;
+      }
+    }
+  }
+
+  ec = asio::error_code(
+      static_cast<int>(::ERR_get_error()),
+      asio::error::get_ssl_category());
+  return ec;
 }
 
 asio::error_code context::use_private_key_file(
@@ -450,6 +734,28 @@ asio::error_code context::use_rsa_private_key_file(
   return ec;
 }
 
+void context::use_tmp_dh(const const_buffer& dh)
+{
+  asio::error_code ec;
+  use_tmp_dh(dh, ec);
+  asio::detail::throw_error(ec, "use_tmp_dh");
+}
+
+asio::error_code context::use_tmp_dh(
+    const const_buffer& dh, asio::error_code& ec)
+{
+  bio_cleanup bio = { make_buffer_bio(dh) };
+  if (bio.p)
+  {
+    return do_use_tmp_dh(bio.p, ec);
+  }
+
+  ec = asio::error_code(
+      static_cast<int>(::ERR_get_error()),
+      asio::error::get_ssl_category());
+  return ec;
+}
+
 void context::use_tmp_dh_file(const std::string& filename)
 {
   asio::error_code ec;
@@ -460,33 +766,36 @@ void context::use_tmp_dh_file(const std::string& filename)
 asio::error_code context::use_tmp_dh_file(
     const std::string& filename, asio::error_code& ec)
 {
-  ::BIO* bio = ::BIO_new_file(filename.c_str(), "r");
-  if (!bio)
+  bio_cleanup bio = { ::BIO_new_file(filename.c_str(), "r") };
+  if (bio.p)
   {
-    ec = asio::error::invalid_argument;
-    return ec;
+    return do_use_tmp_dh(bio.p, ec);
   }
 
-  ::DH* dh = ::PEM_read_bio_DHparams(bio, 0, 0, 0);
-  if (!dh)
+  ec = asio::error_code(
+      static_cast<int>(::ERR_get_error()),
+      asio::error::get_ssl_category());
+  return ec;
+}
+
+asio::error_code context::do_use_tmp_dh(
+    BIO* bio, asio::error_code& ec)
+{
+  ::ERR_clear_error();
+
+  dh_cleanup dh = { ::PEM_read_bio_DHparams(bio, 0, 0, 0) };
+  if (dh.p)
   {
-    ::BIO_free(bio);
-    ec = asio::error::invalid_argument;
-    return ec;
+    if (::SSL_CTX_set_tmp_dh(handle_, dh.p) == 1)
+    {
+      ec = asio::error_code();
+      return ec;
+    }
   }
 
-  ::BIO_free(bio);
-  long result = ::SSL_CTX_set_tmp_dh(handle_, dh);
-  ::DH_free(dh);
-  if (result != 1)
-  {
-    ec = asio::error_code(
-        static_cast<int>(::ERR_get_error()),
-        asio::error::get_ssl_category());
-    return ec;
-  }
-
-  ec = asio::error_code();
+  ec = asio::error_code(
+      static_cast<int>(::ERR_get_error()),
+      asio::error::get_ssl_category());
   return ec;
 }
 
@@ -574,6 +883,13 @@ int context::password_callback_function(
   }
 
   return 0;
+}
+
+BIO* context::make_buffer_bio(const const_buffer& b)
+{
+  return ::BIO_new_mem_buf(
+      const_cast<void*>(buffer_cast<const void*>(b)),
+      buffer_size(b));
 }
 
 #endif // !defined(ASIO_ENABLE_OLD_SSL)
