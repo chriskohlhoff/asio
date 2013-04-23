@@ -317,8 +317,8 @@ namespace detail
         void (asio::error_code, Iterator))> op(
           sock, begin, end, connect_condition, handler);
 
-    ASIO_INITFN_TOKEN(ComposedConnectHandler,
-        void (asio::error_code, Iterator)) tok(op.handler_);
+    handler_token<ASIO_HANDLER_TYPE(ComposedConnectHandler,
+        void (asio::error_code, Iterator))> tok(op.handler_);
 
     op(asio::error_code(), 1);
 

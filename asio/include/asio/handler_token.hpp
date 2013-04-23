@@ -75,7 +75,4 @@ struct handler_token_pair
   typename asio::handler_token< \
     typename handler_type<h, sig>::type>::type
 
-#define ASIO_INITFN_TOKEN(h, sig) \
-  asio::handler_token<typename handler_type<h, sig>::type>
-
 #endif // ASIO_HANDLER_TOKEN_HPP
