@@ -92,6 +92,7 @@ char (&two_arg_handler_test(Handler, ...))[2];
 
 template <typename T> T& lvref();
 template <typename T> T& lvref(T);
+template <typename T> const T& clvref();
 template <typename T> const T& clvref(T);
 template <typename T> char argbyv(T);
 
@@ -197,7 +198,9 @@ struct handler_type_requirements
   \
   ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
       sizeof(asio::detail::two_arg_handler_test( \
-          handler, \
+          asio::detail::clvref< \
+            ASIO_HANDLER_TYPE(handler_type, \
+              void(asio::error_code, iter_type))>(), \
           static_cast<const asio::error_code*>(0), \
           static_cast<const iter_type*>(0))) == 1, \
       "ComposedConnectHandler type requirements not met") \
@@ -205,9 +208,13 @@ struct handler_type_requirements
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
         asio::detail::argbyv( \
-          asio::detail::clvref(handler))) + \
+          asio::detail::clvref< \
+            ASIO_HANDLER_TYPE(handler_type, \
+              void(asio::error_code, iter_type))>())) + \
       sizeof( \
-        asio::detail::lvref(handler)( \
+        asio::detail::lvref< \
+          ASIO_HANDLER_TYPE(handler_type, \
+            void(asio::error_code, iter_type))>()( \
           asio::detail::lvref<const asio::error_code>(), \
           asio::detail::lvref<const iter_type>()), \
         char(0))>

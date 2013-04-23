@@ -175,15 +175,16 @@ namespace detail
   class connect_op : base_from_connect_condition<ConnectCondition>
   {
   public:
+    template <typename Handler>
     connect_op(basic_socket<Protocol, SocketService>& sock,
         const Iterator& begin, const Iterator& end,
         const ConnectCondition& connect_condition,
-        ComposedConnectHandler& handler)
+        Handler& handler)
       : base_from_connect_condition<ConnectCondition>(connect_condition),
         socket_(sock),
         iter_(begin),
         end_(end),
-        handler_(ASIO_MOVE_CAST(ComposedConnectHandler)(handler))
+        handler_(ASIO_MOVE_CAST(Handler)(handler))
     {
     }
 
@@ -304,22 +305,32 @@ namespace detail
 
   template <typename Protocol, typename SocketService, typename Iterator,
       typename ConnectCondition, typename ComposedConnectHandler>
-  inline connect_op<Protocol, SocketService, Iterator,
-      ConnectCondition, ComposedConnectHandler>
-  make_connect_op(basic_socket<Protocol, SocketService>& sock,
+  inline ASIO_INITFN_RESULT_TYPE(ComposedConnectHandler,
+      void (asio::error_code, Iterator))
+  start_connect_op(basic_socket<Protocol, SocketService>& sock,
       const Iterator& begin, const Iterator& end,
       const ConnectCondition& connect_condition,
-      ComposedConnectHandler handler)
+      ASIO_MOVE_ARG(ComposedConnectHandler) handler)
   {
-    return connect_op<Protocol, SocketService, Iterator,
-      ConnectCondition, ComposedConnectHandler>(
-        sock, begin, end, connect_condition, handler);
+    connect_op<Protocol, SocketService, Iterator, ConnectCondition,
+      ASIO_HANDLER_TYPE(ComposedConnectHandler,
+        void (asio::error_code, Iterator))> op(
+          sock, begin, end, connect_condition, handler);
+
+    ASIO_INITFN_TOKEN(ComposedConnectHandler,
+        void (asio::error_code, Iterator)) tok(op.handler_);
+
+    op(asio::error_code(), 1);
+
+    return tok.get();
   }
 } // namespace detail
 
 template <typename Protocol, typename SocketService,
     typename Iterator, typename ComposedConnectHandler>
-inline void async_connect(basic_socket<Protocol, SocketService>& s,
+inline ASIO_INITFN_RESULT_TYPE(ComposedConnectHandler,
+    void (asio::error_code, Iterator))
+async_connect(basic_socket<Protocol, SocketService>& s,
     Iterator begin, ASIO_MOVE_ARG(ComposedConnectHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
@@ -327,15 +338,16 @@ inline void async_connect(basic_socket<Protocol, SocketService>& s,
   ASIO_COMPOSED_CONNECT_HANDLER_CHECK(
       ComposedConnectHandler, handler, Iterator) type_check;
 
-  detail::make_connect_op(s, begin, Iterator(),
+  return detail::start_connect_op(s, begin, Iterator(),
     detail::default_connect_condition(),
-      ASIO_MOVE_CAST(ComposedConnectHandler)(handler))(
-        asio::error_code(), 1);
+      ASIO_MOVE_CAST(ComposedConnectHandler)(handler));
 }
 
 template <typename Protocol, typename SocketService,
     typename Iterator, typename ComposedConnectHandler>
-inline void async_connect(basic_socket<Protocol, SocketService>& s,
+inline ASIO_INITFN_RESULT_TYPE(ComposedConnectHandler,
+    void (asio::error_code, Iterator))
+async_connect(basic_socket<Protocol, SocketService>& s,
     Iterator begin, Iterator end,
     ASIO_MOVE_ARG(ComposedConnectHandler) handler)
 {
@@ -344,15 +356,16 @@ inline void async_connect(basic_socket<Protocol, SocketService>& s,
   ASIO_COMPOSED_CONNECT_HANDLER_CHECK(
       ComposedConnectHandler, handler, Iterator) type_check;
 
-  detail::make_connect_op(s, begin, end,
+  return detail::start_connect_op(s, begin, end,
     detail::default_connect_condition(),
-      ASIO_MOVE_CAST(ComposedConnectHandler)(handler))(
-        asio::error_code(), 1);
+      ASIO_MOVE_CAST(ComposedConnectHandler)(handler));
 }
 
 template <typename Protocol, typename SocketService, typename Iterator,
     typename ConnectCondition, typename ComposedConnectHandler>
-inline void async_connect(basic_socket<Protocol, SocketService>& s,
+inline ASIO_INITFN_RESULT_TYPE(ComposedConnectHandler,
+    void (asio::error_code, Iterator))
+async_connect(basic_socket<Protocol, SocketService>& s,
     Iterator begin, ConnectCondition connect_condition,
     ASIO_MOVE_ARG(ComposedConnectHandler) handler)
 {
@@ -361,14 +374,15 @@ inline void async_connect(basic_socket<Protocol, SocketService>& s,
   ASIO_COMPOSED_CONNECT_HANDLER_CHECK(
       ComposedConnectHandler, handler, Iterator) type_check;
 
-  detail::make_connect_op(s, begin, Iterator(), connect_condition,
-    ASIO_MOVE_CAST(ComposedConnectHandler)(handler))(
-      asio::error_code(), 1);
+  return detail::start_connect_op(s, begin, Iterator(), connect_condition,
+    ASIO_MOVE_CAST(ComposedConnectHandler)(handler));
 }
 
 template <typename Protocol, typename SocketService, typename Iterator,
     typename ConnectCondition, typename ComposedConnectHandler>
-void async_connect(basic_socket<Protocol, SocketService>& s,
+inline ASIO_INITFN_RESULT_TYPE(ComposedConnectHandler,
+    void (asio::error_code, Iterator))
+async_connect(basic_socket<Protocol, SocketService>& s,
     Iterator begin, Iterator end, ConnectCondition connect_condition,
     ASIO_MOVE_ARG(ComposedConnectHandler) handler)
 {
@@ -377,9 +391,8 @@ void async_connect(basic_socket<Protocol, SocketService>& s,
   ASIO_COMPOSED_CONNECT_HANDLER_CHECK(
       ComposedConnectHandler, handler, Iterator) type_check;
 
-  detail::make_connect_op(s, begin, end, connect_condition,
-    ASIO_MOVE_CAST(ComposedConnectHandler)(handler))(
-      asio::error_code(), 1);
+  return detail::start_connect_op(s, begin, end, connect_condition,
+    ASIO_MOVE_CAST(ComposedConnectHandler)(handler));
 }
 
 } // namespace asio
