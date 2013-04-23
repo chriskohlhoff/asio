@@ -49,14 +49,33 @@ public:
   }
 };
 
+namespace detail {
+
+// Helper template to deduce the true type of a handler, capture a local copy
+// of the handler, and then create a token for the handler.
+template <typename Handler, typename Signature>
+struct handler_token_pair
+{
+  explicit handler_token_pair(ASIO_MOVE_ARG(Handler) orig_handler)
+    : handler(ASIO_MOVE_CAST(Handler)(orig_handler)),
+      token(handler)
+  {
+  }
+
+  typename handler_type<Handler, Signature>::type handler;
+  handler_token<typename handler_type<Handler, Signature>::type> token;
+};
+
+} // namespace detail
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
 #define ASIO_INITFN_RESULT_TYPE(h, sig) \
-  typename handler_token<typename handler_type<h, sig>::type>::type
+  typename asio::handler_token< \
+    typename handler_type<h, sig>::type>::type
 
 #define ASIO_INITFN_TOKEN(h, sig) \
-  handler_token<typename handler_type<h, sig>::type>
+  asio::handler_token<typename handler_type<h, sig>::type>
 
 #endif // ASIO_HANDLER_TOKEN_HPP

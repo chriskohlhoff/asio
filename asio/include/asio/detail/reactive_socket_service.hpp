@@ -400,7 +400,7 @@ public:
   // Start an asynchronous connect.
   template <typename Handler>
   void async_connect(implementation_type& impl,
-      const endpoint_type& peer_endpoint, Handler handler)
+      const endpoint_type& peer_endpoint, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_connect_op<Handler> op;

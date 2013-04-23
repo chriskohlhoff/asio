@@ -20,6 +20,7 @@
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
+#include "asio/handler_token.hpp"
 #include "asio/socket_base.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -697,7 +698,9 @@ public:
    * @endcode
    */
   template <typename ConnectHandler>
-  void async_connect(const endpoint_type& peer_endpoint,
+  ASIO_INITFN_RESULT_TYPE(ConnectHandler,
+      void (asio::error_code))
+  async_connect(const endpoint_type& peer_endpoint,
       ASIO_MOVE_ARG(ConnectHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
@@ -710,14 +713,21 @@ public:
       const protocol_type protocol = peer_endpoint.protocol();
       if (this->get_service().open(this->get_implementation(), protocol, ec))
       {
+        detail::handler_token_pair<
+          ConnectHandler, void (asio::error_code)> tok_pair(
+            ASIO_MOVE_CAST(ConnectHandler)(handler));
+
         this->get_io_service().post(
             asio::detail::bind_handler(
-              ASIO_MOVE_CAST(ConnectHandler)(handler), ec));
-        return;
+              ASIO_MOVE_CAST(ASIO_HANDLER_TYPE(
+                ConnectHandler, void (asio::error_code)))(
+                  tok_pair.handler), ec));
+
+        return tok_pair.token.get();
       }
     }
 
-    this->get_service().async_connect(this->get_implementation(),
+    return this->get_service().async_connect(this->get_implementation(),
         peer_endpoint, ASIO_MOVE_CAST(ConnectHandler)(handler));
   }
 
