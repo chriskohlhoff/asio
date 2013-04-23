@@ -42,7 +42,23 @@ struct handler_type<const Handler, Signature>
   : handler_type<Handler, Signature> {};
 
 template <typename Handler, typename Signature>
+struct handler_type<volatile Handler, Signature>
+  : handler_type<Handler, Signature> {};
+
+template <typename Handler, typename Signature>
+struct handler_type<const volatile Handler, Signature>
+  : handler_type<Handler, Signature> {};
+
+template <typename Handler, typename Signature>
 struct handler_type<const Handler&, Signature>
+  : handler_type<Handler, Signature> {};
+
+template <typename Handler, typename Signature>
+struct handler_type<volatile Handler&, Signature>
+  : handler_type<Handler, Signature> {};
+
+template <typename Handler, typename Signature>
+struct handler_type<const volatile Handler&, Signature>
   : handler_type<Handler, Signature> {};
 
 template <typename Handler, typename Signature>
