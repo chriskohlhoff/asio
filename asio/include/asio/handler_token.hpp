@@ -54,9 +54,9 @@ namespace detail {
 // Helper template to deduce the true type of a handler, capture a local copy
 // of the handler, and then create a token for the handler.
 template <typename Handler, typename Signature>
-struct handler_token_pair
+struct handler_token_init
 {
-  explicit handler_token_pair(ASIO_MOVE_ARG(Handler) orig_handler)
+  explicit handler_token_init(ASIO_MOVE_ARG(Handler) orig_handler)
     : handler(ASIO_MOVE_CAST(Handler)(orig_handler)),
       token(handler)
   {

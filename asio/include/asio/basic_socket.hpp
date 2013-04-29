@@ -713,17 +713,17 @@ public:
       const protocol_type protocol = peer_endpoint.protocol();
       if (this->get_service().open(this->get_implementation(), protocol, ec))
       {
-        detail::handler_token_pair<
-          ConnectHandler, void (asio::error_code)> tok_pair(
+        detail::handler_token_init<
+          ConnectHandler, void (asio::error_code)> init(
             ASIO_MOVE_CAST(ConnectHandler)(handler));
 
         this->get_io_service().post(
             asio::detail::bind_handler(
               ASIO_MOVE_CAST(ASIO_HANDLER_TYPE(
                 ConnectHandler, void (asio::error_code)))(
-                  tok_pair.handler), ec));
+                  init.handler), ec));
 
-        return tok_pair.token.get();
+        return init.token.get();
       }
     }
 

@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include <cstddef>
 #include "asio/detail/deadline_timer_service.hpp"
+#include "asio/handler_token.hpp"
 #include "asio/io_service.hpp"
 #include "asio/time_traits.hpp"
 #include "asio/detail/timer_queue_ptime.hpp"

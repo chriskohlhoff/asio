@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include <cstddef>
 #include "asio/error.hpp"
+#include "asio/handler_token.hpp"
 #include "asio/io_service.hpp"
 
 #if defined(ASIO_HAS_IOCP)
@@ -201,12 +202,19 @@ public:
 
   /// Start an asynchronous connect.
   template <typename ConnectHandler>
-  void async_connect(implementation_type& impl,
+  ASIO_INITFN_RESULT_TYPE(ConnectHandler,
+      void (asio::error_code))
+  async_connect(implementation_type& impl,
       const endpoint_type& peer_endpoint,
       ASIO_MOVE_ARG(ConnectHandler) handler)
   {
-    service_impl_.async_connect(impl, peer_endpoint,
+    detail::handler_token_init<
+      ConnectHandler, void (asio::error_code)> init(
         ASIO_MOVE_CAST(ConnectHandler)(handler));
+
+    service_impl_.async_connect(impl, peer_endpoint, init.handler);
+
+    return init.token.get();
   }
 
   /// Set a socket option.
