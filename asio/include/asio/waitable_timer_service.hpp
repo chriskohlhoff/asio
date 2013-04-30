@@ -19,6 +19,7 @@
 #include <cstddef>
 #include "asio/detail/chrono_time_traits.hpp"
 #include "asio/detail/deadline_timer_service.hpp"
+#include "asio/handler_token.hpp"
 #include "asio/io_service.hpp"
 #include "asio/wait_traits.hpp"
 
@@ -135,10 +136,18 @@ public:
 
   // Start an asynchronous wait on the timer.
   template <typename WaitHandler>
-  void async_wait(implementation_type& impl,
+  ASIO_INITFN_RESULT_TYPE(WaitHandler,
+      void (asio::error_code))
+  async_wait(implementation_type& impl,
       ASIO_MOVE_ARG(WaitHandler) handler)
   {
-    service_impl_.async_wait(impl, ASIO_MOVE_CAST(WaitHandler)(handler));
+    detail::handler_token_init<
+      WaitHandler, void (asio::error_code)> init(
+        ASIO_MOVE_CAST(WaitHandler)(handler));
+
+    service_impl_.async_wait(impl, init.handler);
+
+    return init.token.get();
   }
 
 private:
