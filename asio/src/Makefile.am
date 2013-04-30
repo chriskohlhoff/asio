@@ -49,6 +49,7 @@ check_PROGRAMS = \
 	tests/unit/ip/basic_resolver_iterator \
 	tests/unit/ip/basic_resolver_query \
 	tests/unit/ip/host_name \
+	tests/unit/ip/icmp \
 	tests/unit/ip/multicast \
 	tests/unit/ip/resolver_query_base \
 	tests/unit/ip/resolver_service \
@@ -223,6 +224,7 @@ TESTS = \
 	tests/unit/ip/basic_resolver_iterator \
 	tests/unit/ip/basic_resolver_query \
 	tests/unit/ip/host_name \
+	tests/unit/ip/icmp \
 	tests/unit/ip/multicast \
 	tests/unit/ip/resolver_query_base \
 	tests/unit/ip/resolver_service \
@@ -343,6 +345,7 @@ tests_unit_ip_basic_resolver_entry_SOURCES = tests/unit/ip/basic_resolver_entry.
 tests_unit_ip_basic_resolver_iterator_SOURCES = tests/unit/ip/basic_resolver_iterator.cpp tests/unit/unit_test.cpp
 tests_unit_ip_basic_resolver_query_SOURCES = tests/unit/ip/basic_resolver_query.cpp tests/unit/unit_test.cpp
 tests_unit_ip_host_name_SOURCES = tests/unit/ip/host_name.cpp tests/unit/unit_test.cpp
+tests_unit_ip_icmp_SOURCES = tests/unit/ip/icmp.cpp tests/unit/unit_test.cpp
 tests_unit_ip_multicast_SOURCES = tests/unit/ip/multicast.cpp tests/unit/unit_test.cpp
 tests_unit_ip_resolver_query_base_SOURCES = tests/unit/ip/resolver_query_base.cpp tests/unit/unit_test.cpp
 tests_unit_ip_resolver_service_SOURCES = tests/unit/ip/resolver_service.cpp tests/unit/unit_test.cpp
