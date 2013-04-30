@@ -72,7 +72,7 @@ struct handler_token_init
 #include "asio/detail/pop_options.hpp"
 
 #define ASIO_INITFN_RESULT_TYPE(h, sig) \
-  typename asio::handler_token< \
-    typename handler_type<h, sig>::type>::type
+  typename ::asio::handler_token< \
+    typename ::asio::handler_type<h, sig>::type>::type
 
 #endif // ASIO_HANDLER_TOKEN_HPP

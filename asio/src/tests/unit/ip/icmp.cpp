@@ -404,6 +404,7 @@ void test()
   try
   {
     io_service ios;
+    archetypes::lazy_handler lazy;
     asio::error_code ec;
     ip::icmp::resolver::query q(ip::icmp::v4(), "localhost", "0");
     ip::icmp::endpoint e(ip::address_v4::loopback(), 0);
@@ -434,8 +435,12 @@ void test()
     (void)iter4;
 
     resolver.async_resolve(q, &resolve_handler);
+    int i1 = resolver.async_resolve(q, lazy);
+    (void)i1;
 
     resolver.async_resolve(e, &resolve_handler);
+    int i2 = resolver.async_resolve(e, lazy);
+    (void)i2;
   }
   catch (std::exception&)
   {
