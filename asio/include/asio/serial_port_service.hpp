@@ -25,6 +25,7 @@
 #include "asio/detail/reactive_serial_port_service.hpp"
 #include "asio/detail/win_iocp_serial_port_service.hpp"
 #include "asio/error.hpp"
+#include "asio/handler_token.hpp"
 #include "asio/io_service.hpp"
 #include "asio/serial_port_base.hpp"
 
@@ -191,12 +192,19 @@ public:
 
   /// Start an asynchronous write.
   template <typename ConstBufferSequence, typename WriteHandler>
-  void async_write_some(implementation_type& impl,
+  ASIO_INITFN_RESULT_TYPE(WriteHandler,
+      void (asio::error_code, std::size_t))
+  async_write_some(implementation_type& impl,
       const ConstBufferSequence& buffers,
       ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    service_impl_.async_write_some(impl, buffers,
+    detail::handler_token_init<
+      WriteHandler, void (asio::error_code, std::size_t)> init(
         ASIO_MOVE_CAST(WriteHandler)(handler));
+
+    service_impl_.async_write_some(impl, buffers, init.handler);
+
+    return init.token.get();
   }
 
   /// Read some data from the stream.
@@ -209,12 +217,19 @@ public:
 
   /// Start an asynchronous read.
   template <typename MutableBufferSequence, typename ReadHandler>
-  void async_read_some(implementation_type& impl,
+  ASIO_INITFN_RESULT_TYPE(ReadHandler,
+      void (asio::error_code, std::size_t))
+  async_read_some(implementation_type& impl,
       const MutableBufferSequence& buffers,
       ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    service_impl_.async_read_some(impl, buffers,
+    detail::handler_token_init<
+      ReadHandler, void (asio::error_code, std::size_t)> init(
         ASIO_MOVE_CAST(ReadHandler)(handler));
+
+    service_impl_.async_read_some(impl, buffers, init.handler);
+
+    return init.token.get();
   }
 
 private:
