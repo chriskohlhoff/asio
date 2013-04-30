@@ -297,7 +297,9 @@ struct handler_type_requirements
   \
   ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
       sizeof(asio::detail::two_arg_handler_test( \
-          handler, \
+          asio::detail::clvref< \
+            ASIO_HANDLER_TYPE(handler_type, \
+              void(asio::error_code))>(), \
           static_cast<const asio::error_code*>(0), \
           static_cast<const int*>(0))) == 1, \
       "SignalHandler type requirements not met") \
@@ -305,9 +307,13 @@ struct handler_type_requirements
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
         asio::detail::argbyv( \
-          asio::detail::clvref(handler))) + \
+          asio::detail::clvref< \
+            ASIO_HANDLER_TYPE(handler_type, \
+              void(asio::error_code))>())) + \
       sizeof( \
-        asio::detail::lvref(handler)( \
+        asio::detail::lvref< \
+          ASIO_HANDLER_TYPE(handler_type, \
+            void(asio::error_code))>()( \
           asio::detail::lvref<const asio::error_code>(), \
           asio::detail::lvref<const int>()), \
         char(0))>

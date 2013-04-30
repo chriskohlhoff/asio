@@ -143,7 +143,7 @@ public:
 
   // Start an asynchronous operation to wait for a signal to be delivered.
   template <typename Handler>
-  void async_wait(implementation_type& impl, Handler handler)
+  void async_wait(implementation_type& impl, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef signal_handler<Handler> op;

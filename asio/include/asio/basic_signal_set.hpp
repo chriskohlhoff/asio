@@ -364,13 +364,15 @@ public:
    * asio::io_service::post().
    */
   template <typename SignalHandler>
-  void async_wait(ASIO_MOVE_ARG(SignalHandler) handler)
+  ASIO_INITFN_RESULT_TYPE(SignalHandler,
+      void (asio::error_code, int))
+  async_wait(ASIO_MOVE_ARG(SignalHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a SignalHandler.
     ASIO_SIGNAL_HANDLER_CHECK(SignalHandler, handler) type_check;
 
-    this->service.async_wait(this->implementation,
+    return this->service.async_wait(this->implementation,
         ASIO_MOVE_CAST(SignalHandler)(handler));
   }
 };

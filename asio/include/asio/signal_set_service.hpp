@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/signal_set_service.hpp"
 #include "asio/error.hpp"
+#include "asio/handler_token.hpp"
 #include "asio/io_service.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -95,11 +96,18 @@ public:
 
   // Start an asynchronous operation to wait for a signal to be delivered.
   template <typename SignalHandler>
-  void async_wait(implementation_type& impl,
+  ASIO_INITFN_RESULT_TYPE(SignalHandler,
+      void (asio::error_code, int))
+  async_wait(implementation_type& impl,
       ASIO_MOVE_ARG(SignalHandler) handler)
   {
-    service_impl_.async_wait(impl,
+    detail::handler_token_init<
+      SignalHandler, void (asio::error_code, int)> init(
         ASIO_MOVE_CAST(SignalHandler)(handler));
+
+    service_impl_.async_wait(impl, init.handler);
+
+    return init.token.get();
   }
 
 private:
