@@ -561,6 +561,7 @@ EXTRA_DIST = \
 	tests/latency/allocator.hpp \
 	tests/performance/handler_allocator.hpp \
 	tests/unit/archetypes/gettable_socket_option.hpp \
+	tests/unit/archetypes/handler_token.hpp \
 	tests/unit/archetypes/io_control_command.hpp \
 	tests/unit/archetypes/settable_socket_option.hpp \
 	tools/handlerviz.pl
