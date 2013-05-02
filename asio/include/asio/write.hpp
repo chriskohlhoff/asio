@@ -19,6 +19,7 @@
 #include <cstddef>
 #include "asio/basic_streambuf_fwd.hpp"
 #include "asio/error.hpp"
+#include "asio/handler_token.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -412,7 +413,9 @@ std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b,
  */
 template <typename AsyncWriteStream, typename ConstBufferSequence,
     typename WriteHandler>
-void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
+ASIO_INITFN_RESULT_TYPE(WriteHandler,
+    void (asio::error_code, std::size_t))
+async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     ASIO_MOVE_ARG(WriteHandler) handler);
 
 /// Start an asynchronous operation to write a certain amount of data to a
@@ -484,7 +487,9 @@ void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
  */
 template <typename AsyncWriteStream, typename ConstBufferSequence,
     typename CompletionCondition, typename WriteHandler>
-void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
+ASIO_INITFN_RESULT_TYPE(WriteHandler,
+    void (asio::error_code, std::size_t))
+async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition,
     ASIO_MOVE_ARG(WriteHandler) handler);
 
@@ -532,7 +537,9 @@ void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
  * asio::io_service::post().
  */
 template <typename AsyncWriteStream, typename Allocator, typename WriteHandler>
-void async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
+ASIO_INITFN_RESULT_TYPE(WriteHandler,
+    void (asio::error_code, std::size_t))
+async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
     ASIO_MOVE_ARG(WriteHandler) handler);
 
 /// Start an asynchronous operation to write a certain amount of data to a
@@ -592,7 +599,9 @@ void async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
  */
 template <typename AsyncWriteStream, typename Allocator,
     typename CompletionCondition, typename WriteHandler>
-void async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
+ASIO_INITFN_RESULT_TYPE(WriteHandler,
+    void (asio::error_code, std::size_t))
+async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition,
     ASIO_MOVE_ARG(WriteHandler) handler);
 
