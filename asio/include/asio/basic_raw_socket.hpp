@@ -476,8 +476,8 @@ public:
     // not meet the documented type requirements for a WriteHandler.
     ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-    return this->get_service().async_send_to(this->get_implementation(), buffers,
-        destination, 0, ASIO_MOVE_CAST(WriteHandler)(handler));
+    return this->get_service().async_send_to(this->get_implementation(),
+        buffers, destination, 0, ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Start an asynchronous send.

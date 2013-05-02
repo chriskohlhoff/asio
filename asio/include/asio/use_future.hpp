@@ -81,7 +81,9 @@ public:
   void operator()(const asio::error_code& ec, T t)
   {
     if (ec)
-      promise_->set_exception(std::make_exception_ptr(asio::system_error(ec)));
+      promise_->set_exception(
+          std::make_exception_ptr(
+            asio::system_error(ec)));
     else
       promise_->set_value(t);
   }
@@ -111,7 +113,9 @@ public:
   void operator()(const asio::error_code& ec)
   {
     if (ec)
-      promise_->set_exception(std::make_exception_ptr(asio::system_error(ec)));
+      promise_->set_exception(
+          std::make_exception_ptr(
+            asio::system_error(ec)));
     else
       promise_->set_value();
   }

@@ -374,7 +374,8 @@ void test()
     (void)i14;
     int i15 = socket1.async_receive(null_buffers(), lazy);
     (void)i15;
-    int i16 = socket1.async_receive(buffer(mutable_char_buffer), in_flags, lazy);
+    int i16 = socket1.async_receive(buffer(mutable_char_buffer), in_flags,
+        lazy);
     (void)i16;
     int i17 = socket1.async_receive(mutable_buffers, in_flags, lazy);
     (void)i17;
