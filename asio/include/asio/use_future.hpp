@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include <future>
+#include <memory>
 #include "asio/error_code.hpp"
 #include "asio/handler_token.hpp"
 #include "asio/handler_type.hpp"
@@ -26,9 +27,38 @@
 
 namespace asio {
 
+template <typename Allocator = std::allocator<void> >
+class use_future_t
+{
+public:
+  typedef Allocator allocator_type;
+
+  constexpr use_future_t()
+  {
+  }
+
+  explicit use_future_t(const Allocator& allocator)
+    : allocator_(allocator)
+  {
+  }
+
+  template <typename OtherAllocator>
+  use_future_t<OtherAllocator> operator()(const OtherAllocator& allocator) const
+  {
+    return use_future_t<OtherAllocator>(allocator);
+  }
+
+  allocator_type get_allocator() const
+  {
+    return allocator_;
+  }
+
+private:
+  Allocator allocator_;
+};
+
 // A special value, similar to std::nothrow.
-struct use_future_t { constexpr use_future_t() {} };
-constexpr use_future_t use_future;
+constexpr use_future_t<> use_future;
 
 // Completion handler to adapt a promise as a completion handler.
 template <typename T>
@@ -36,19 +66,20 @@ class promise_handler
 {
 public:
   // Construct from use_future special value.
-  promise_handler(use_future_t)
+  template <typename Allocator>
+  promise_handler(use_future_t<Allocator> uf)
+    : promise_(std::allocate_shared<std::promise<T> >(
+          uf.get_allocator(), std::allocator_arg, uf.get_allocator()))
   {
   }
 
   void operator()(T t)
   {
-    assert(!!promise_);
     promise_->set_value(t);
   }
 
   void operator()(const asio::error_code& ec, T t)
   {
-    assert(!!promise_);
     if (ec)
       promise_->set_exception(std::make_exception_ptr(asio::system_error(ec)));
     else
@@ -65,19 +96,20 @@ class promise_handler<void>
 {
 public:
   // Construct from use_future special value. Used during rebinding.
-  promise_handler(use_future_t)
+  template <typename Allocator>
+  promise_handler(use_future_t<Allocator> uf)
+    : promise_(std::allocate_shared<std::promise<void> >(
+          uf.get_allocator(), std::allocator_arg, uf.get_allocator()))
   {
   }
 
   void operator()()
   {
-    assert(!!promise_);
     promise_->set_value();
   }
 
   void operator()(const asio::error_code& ec)
   {
-    assert(!!promise_);
     if (ec)
       promise_->set_exception(std::make_exception_ptr(asio::system_error(ec)));
     else
@@ -116,7 +148,6 @@ public:
   // obtains the corresponding future.
   explicit handler_token(promise_handler<T>& h)
   {
-    h.promise_ = std::make_shared<std::promise<T> >();
     value_ = h.promise_->get_future();
   }
 
@@ -128,29 +159,31 @@ private:
 };
 
 // Handler type specialisation for use_future.
-template <typename ReturnType>
-struct handler_type<use_future_t, ReturnType()>
+template <typename Allocator, typename ReturnType>
+struct handler_type<use_future_t<Allocator>, ReturnType()>
 {
   typedef promise_handler<void> type;
 };
 
 // Handler type specialisation for use_future.
-template <typename ReturnType, typename Arg1>
-struct handler_type<use_future_t, ReturnType(Arg1)>
+template <typename Allocator, typename ReturnType, typename Arg1>
+struct handler_type<use_future_t<Allocator>, ReturnType(Arg1)>
 {
   typedef promise_handler<Arg1> type;
 };
 
 // Handler type specialisation for use_future.
-template <typename ReturnType>
-struct handler_type<use_future_t, ReturnType(asio::error_code)>
+template <typename Allocator, typename ReturnType>
+struct handler_type<use_future_t<Allocator>,
+    ReturnType(asio::error_code)>
 {
   typedef promise_handler<void> type;
 };
 
 // Handler type specialisation for use_future.
-template <typename ReturnType, typename Arg2>
-struct handler_type<use_future_t, ReturnType(asio::error_code, Arg2)>
+template <typename Allocator, typename ReturnType, typename Arg2>
+struct handler_type<use_future_t<Allocator>,
+    ReturnType(asio::error_code, Arg2)>
 {
   typedef promise_handler<Arg2> type;
 };
