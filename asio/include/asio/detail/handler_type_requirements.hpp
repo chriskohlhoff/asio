@@ -189,7 +189,7 @@ struct handler_type_requirements
     asio_true_handler_type; \
   \
   ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
-      sizeof(asio::detail::two_arg_handler_test( \
+      sizeof(asio::detail::one_arg_handler_test( \
           asio::detail::clvref< \
             asio_true_handler_type>(), \
           static_cast<const asio::error_code*>(0))) == 1, \
@@ -214,7 +214,7 @@ struct handler_type_requirements
     asio_true_handler_type; \
   \
   ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
-      sizeof(asio::detail::two_arg_handler_test( \
+      sizeof(asio::detail::one_arg_handler_test( \
           asio::detail::clvref< \
             asio_true_handler_type>(), \
           static_cast<const asio::error_code*>(0))) == 1, \
@@ -293,7 +293,7 @@ struct handler_type_requirements
     asio_true_handler_type; \
   \
   ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
-      sizeof(asio::detail::two_arg_handler_test( \
+      sizeof(asio::detail::one_arg_handler_test( \
           asio::detail::clvref< \
             asio_true_handler_type>(), \
           static_cast<const asio::error_code*>(0))) == 1, \
@@ -345,7 +345,7 @@ struct handler_type_requirements
     asio_true_handler_type; \
   \
   ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
-      sizeof(asio::detail::two_arg_handler_test( \
+      sizeof(asio::detail::one_arg_handler_test( \
           asio::detail::clvref< \
             asio_true_handler_type>(), \
           static_cast<const asio::error_code*>(0))) == 1, \
@@ -370,7 +370,7 @@ struct handler_type_requirements
     asio_true_handler_type; \
   \
   ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
-      sizeof(asio::detail::two_arg_handler_test( \
+      sizeof(asio::detail::one_arg_handler_test( \
           asio::detail::clvref< \
             asio_true_handler_type>(), \
           static_cast<const asio::error_code*>(0))) == 1, \
