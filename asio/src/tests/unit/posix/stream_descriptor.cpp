@@ -17,7 +17,7 @@
 #include "asio/posix/stream_descriptor.hpp"
 
 #include "asio/io_service.hpp"
-#include "../archetypes/handler_token.hpp"
+#include "../archetypes/async_result.hpp"
 #include "../unit_test.hpp"
 
 //------------------------------------------------------------------------------

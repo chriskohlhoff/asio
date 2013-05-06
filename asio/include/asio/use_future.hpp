@@ -18,8 +18,8 @@
 #include "asio/detail/config.hpp"
 #include <future>
 #include <memory>
+#include "asio/async_result.hpp"
 #include "asio/error_code.hpp"
-#include "asio/handler_token.hpp"
 #include "asio/handler_type.hpp"
 #include "asio/system_error.hpp"
 
@@ -142,15 +142,15 @@ void asio_handler_invoke(Function f, promise_handler<T>* h)
 
 // Handler traits specialisation for promise_handler.
 template <typename T>
-class handler_token<promise_handler<T> >
+class async_result<promise_handler<T> >
 {
 public:
   // The initiating function will return a future.
   typedef std::future<T> type;
 
-  // Token constructor creates a new promise for the async operation, and
-  // obtains the corresponding future.
-  explicit handler_token(promise_handler<T>& h)
+  // Constructor creates a new promise for the async operation, and obtains the
+  // corresponding future.
+  explicit async_result(promise_handler<T>& h)
   {
     value_ = h.promise_->get_future();
   }

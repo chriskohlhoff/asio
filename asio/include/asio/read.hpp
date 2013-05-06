@@ -17,9 +17,9 @@
 
 #include "asio/detail/config.hpp"
 #include <cstddef>
+#include "asio/async_result.hpp"
 #include "asio/basic_streambuf_fwd.hpp"
 #include "asio/error.hpp"
-#include "asio/handler_token.hpp"
 
 #include "asio/detail/push_options.hpp"
 

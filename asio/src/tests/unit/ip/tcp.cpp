@@ -28,7 +28,7 @@
 #include "asio/write.hpp"
 #include "../unit_test.hpp"
 #include "../archetypes/gettable_socket_option.hpp"
-#include "../archetypes/handler_token.hpp"
+#include "../archetypes/async_result.hpp"
 #include "../archetypes/io_control_command.hpp"
 #include "../archetypes/settable_socket_option.hpp"
 

@@ -17,11 +17,11 @@
 
 #include "asio/detail/config.hpp"
 #include <cstddef>
+#include "asio/async_result.hpp"
 #include "asio/basic_socket.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
-#include "asio/handler_token.hpp"
 #include "asio/stream_socket_service.hpp"
 
 #include "asio/detail/push_options.hpp"

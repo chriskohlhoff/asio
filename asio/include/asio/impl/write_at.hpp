@@ -606,7 +606,7 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
   // not meet the documented type requirements for a WriteHandler.
   ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-  detail::handler_token_init<
+  detail::async_result_init<
     WriteHandler, void (asio::error_code, std::size_t)> init(
       ASIO_MOVE_CAST(WriteHandler)(handler));
 
@@ -616,7 +616,7 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
         d, offset, buffers, completion_condition, init.handler)(
           asio::error_code(), 0, 1);
 
-  return init.token.get();
+  return init.result.get();
 }
 
 template <typename AsyncRandomAccessWriteDevice, typename ConstBufferSequence,
@@ -631,7 +631,7 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
   // not meet the documented type requirements for a WriteHandler.
   ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-  detail::handler_token_init<
+  detail::async_result_init<
     WriteHandler, void (asio::error_code, std::size_t)> init(
       ASIO_MOVE_CAST(WriteHandler)(handler));
 
@@ -641,7 +641,7 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
         d, offset, buffers, transfer_all(), init.handler)(
           asio::error_code(), 0, 1);
 
-  return init.token.get();
+  return init.result.get();
 }
 
 #if !defined(BOOST_NO_IOSTREAM)
@@ -740,7 +740,7 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
   // not meet the documented type requirements for a WriteHandler.
   ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-  detail::handler_token_init<
+  detail::async_result_init<
     WriteHandler, void (asio::error_code, std::size_t)> init(
       ASIO_MOVE_CAST(WriteHandler)(handler));
 
@@ -749,7 +749,7 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
       WriteHandler, void (asio::error_code, std::size_t))>(
         b, init.handler));
 
-  return init.token.get();
+  return init.result.get();
 }
 
 template <typename AsyncRandomAccessWriteDevice, typename Allocator,
@@ -764,7 +764,7 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
   // not meet the documented type requirements for a WriteHandler.
   ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-  detail::handler_token_init<
+  detail::async_result_init<
     WriteHandler, void (asio::error_code, std::size_t)> init(
       ASIO_MOVE_CAST(WriteHandler)(handler));
 
@@ -773,7 +773,7 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
       WriteHandler, void (asio::error_code, std::size_t))>(
         b, init.handler));
 
-  return init.token.get();
+  return init.result.get();
 }
 
 #endif // !defined(BOOST_NO_IOSTREAM)

@@ -16,9 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/async_result.hpp"
 #include "asio/detail/signal_set_service.hpp"
 #include "asio/error.hpp"
-#include "asio/handler_token.hpp"
 #include "asio/io_service.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -101,13 +101,13 @@ public:
   async_wait(implementation_type& impl,
       ASIO_MOVE_ARG(SignalHandler) handler)
   {
-    detail::handler_token_init<
+    detail::async_result_init<
       SignalHandler, void (asio::error_code, int)> init(
         ASIO_MOVE_CAST(SignalHandler)(handler));
 
     service_impl_.async_wait(impl, init.handler);
 
-    return init.token.get();
+    return init.result.get();
   }
 
 private:

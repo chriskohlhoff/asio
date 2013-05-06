@@ -25,10 +25,10 @@
 #include <boost/utility/enable_if.hpp>
 #include <boost/detail/workaround.hpp>
 #include <string>
+#include "asio/async_result.hpp"
 #include "asio/basic_streambuf.hpp"
 #include "asio/detail/regex_fwd.hpp"
 #include "asio/error.hpp"
-#include "asio/handler_token.hpp"
 
 #include "asio/detail/push_options.hpp"
 

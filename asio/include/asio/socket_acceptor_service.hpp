@@ -255,13 +255,13 @@ public:
       endpoint_type* peer_endpoint,
       ASIO_MOVE_ARG(AcceptHandler) handler)
   {
-    detail::handler_token_init<
+    detail::async_result_init<
       AcceptHandler, void (asio::error_code)> init(
         ASIO_MOVE_CAST(AcceptHandler)(handler));
 
     service_impl_.async_accept(impl, peer, peer_endpoint, init.handler);
 
-    return init.token.get();
+    return init.result.get();
   }
 
 private:

@@ -21,8 +21,8 @@
   || defined(GENERATING_DOCUMENTATION)
 
 #include <cstddef>
+#include "asio/async_result.hpp"
 #include "asio/error.hpp"
-#include "asio/handler_token.hpp"
 #include "asio/io_service.hpp"
 #include "asio/detail/reactive_descriptor_service.hpp"
 
@@ -204,13 +204,13 @@ public:
       const ConstBufferSequence& buffers,
       ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    asio::detail::handler_token_init<
+    asio::detail::async_result_init<
       WriteHandler, void (asio::error_code, std::size_t)> init(
         ASIO_MOVE_CAST(WriteHandler)(handler));
 
     service_impl_.async_write_some(impl, buffers, init.handler);
 
-    return init.token.get();
+    return init.result.get();
   }
 
   /// Read some data from the stream.
@@ -229,13 +229,13 @@ public:
       const MutableBufferSequence& buffers,
       ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    asio::detail::handler_token_init<
+    asio::detail::async_result_init<
       ReadHandler, void (asio::error_code, std::size_t)> init(
         ASIO_MOVE_CAST(ReadHandler)(handler));
 
     service_impl_.async_read_some(impl, buffers, init.handler);
 
-    return init.token.get();
+    return init.result.get();
   }
 
 private:

@@ -18,7 +18,7 @@
 
 #include "asio.hpp"
 #include "asio/ssl.hpp"
-#include "../archetypes/handler_token.hpp"
+#include "../archetypes/async_result.hpp"
 #include "../unit_test.hpp"
 
 //------------------------------------------------------------------------------

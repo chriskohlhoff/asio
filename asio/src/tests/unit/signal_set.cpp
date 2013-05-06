@@ -16,7 +16,7 @@
 // Test that header file is self-contained.
 #include "asio/signal_set.hpp"
 
-#include "archetypes/handler_token.hpp"
+#include "archetypes/async_result.hpp"
 #include "asio/io_service.hpp"
 #include "unit_test.hpp"
 

@@ -20,10 +20,10 @@
 #if defined(ASIO_ENABLE_OLD_SSL)
 # include "asio/ssl/old/stream.hpp"
 #else // defined(ASIO_ENABLE_OLD_SSL)
+# include "asio/async_result.hpp"
 # include "asio/detail/buffer_sequence_adapter.hpp"
 # include "asio/detail/handler_type_requirements.hpp"
 # include "asio/detail/noncopyable.hpp"
-# include "asio/handler_token.hpp"
 # include "asio/ssl/context.hpp"
 # include "asio/ssl/detail/handshake_op.hpp"
 # include "asio/ssl/detail/io.hpp"
@@ -368,14 +368,14 @@ public:
     // not meet the documented type requirements for a HandshakeHandler.
     ASIO_HANDSHAKE_HANDLER_CHECK(HandshakeHandler, handler) type_check;
 
-    asio::detail::handler_token_init<
+    asio::detail::async_result_init<
       HandshakeHandler, void (asio::error_code)> init(
         ASIO_MOVE_CAST(HandshakeHandler)(handler));
 
     detail::async_io(next_layer_, core_,
         detail::handshake_op(type), init.handler);
 
-    return init.token.get();
+    return init.result.get();
   }
 
   /// Shut down SSL on the stream.
@@ -426,13 +426,13 @@ public:
     // not meet the documented type requirements for a ShutdownHandler.
     ASIO_SHUTDOWN_HANDLER_CHECK(ShutdownHandler, handler) type_check;
 
-    asio::detail::handler_token_init<
+    asio::detail::async_result_init<
       ShutdownHandler, void (asio::error_code)> init(
         ASIO_MOVE_CAST(ShutdownHandler)(handler));
 
     detail::async_io(next_layer_, core_, detail::shutdown_op(), init.handler);
 
-    return init.token.get();
+    return init.result.get();
   }
 
   /// Write some data to the stream.
@@ -516,14 +516,14 @@ public:
     // not meet the documented type requirements for a WriteHandler.
     ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-    asio::detail::handler_token_init<
+    asio::detail::async_result_init<
       WriteHandler, void (asio::error_code, std::size_t)> init(
         ASIO_MOVE_CAST(WriteHandler)(handler));
 
     detail::async_io(next_layer_, core_,
         detail::write_op<ConstBufferSequence>(buffers), init.handler);
 
-    return init.token.get();
+    return init.result.get();
   }
 
   /// Read some data from the stream.
@@ -608,14 +608,14 @@ public:
     // not meet the documented type requirements for a ReadHandler.
     ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-    asio::detail::handler_token_init<
+    asio::detail::async_result_init<
       ReadHandler, void (asio::error_code, std::size_t)> init(
         ASIO_MOVE_CAST(ReadHandler)(handler));
 
     detail::async_io(next_layer_, core_,
         detail::read_op<MutableBufferSequence>(buffers), init.handler);
 
-    return init.token.get();
+    return init.result.get();
   }
 
 private:

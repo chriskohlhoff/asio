@@ -17,9 +17,9 @@
 
 #include "asio/detail/config.hpp"
 #include <cstddef>
+#include "asio/async_result.hpp"
 #include "asio/detail/chrono_time_traits.hpp"
 #include "asio/detail/deadline_timer_service.hpp"
-#include "asio/handler_token.hpp"
 #include "asio/io_service.hpp"
 #include "asio/wait_traits.hpp"
 
@@ -141,13 +141,13 @@ public:
   async_wait(implementation_type& impl,
       ASIO_MOVE_ARG(WaitHandler) handler)
   {
-    detail::handler_token_init<
+    detail::async_result_init<
       WaitHandler, void (asio::error_code)> init(
         ASIO_MOVE_CAST(WaitHandler)(handler));
 
     service_impl_.async_wait(impl, init.handler);
 
-    return init.token.get();
+    return init.result.get();
   }
 
 private:

@@ -483,7 +483,7 @@ async_read_until(AsyncReadStream& s,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::handler_token_init<
+  detail::async_result_init<
     ReadHandler, void (asio::error_code, std::size_t)> init(
       ASIO_MOVE_CAST(ReadHandler)(handler));
 
@@ -493,7 +493,7 @@ async_read_until(AsyncReadStream& s,
         s, b, delim, init.handler)(
           asio::error_code(), 0, 1);
 
-  return init.token.get();
+  return init.result.get();
 }
 
 namespace detail
@@ -672,7 +672,7 @@ async_read_until(AsyncReadStream& s,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::handler_token_init<
+  detail::async_result_init<
     ReadHandler, void (asio::error_code, std::size_t)> init(
       ASIO_MOVE_CAST(ReadHandler)(handler));
 
@@ -682,7 +682,7 @@ async_read_until(AsyncReadStream& s,
         s, b, delim, init.handler)(
           asio::error_code(), 0, 1);
 
-  return init.token.get();
+  return init.result.get();
 }
 
 namespace detail
@@ -867,7 +867,7 @@ async_read_until(AsyncReadStream& s,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::handler_token_init<
+  detail::async_result_init<
     ReadHandler, void (asio::error_code, std::size_t)> init(
       ASIO_MOVE_CAST(ReadHandler)(handler));
 
@@ -877,7 +877,7 @@ async_read_until(AsyncReadStream& s,
         s, b, expr, init.handler)(
           asio::error_code(), 0, 1);
 
-  return init.token.get();
+  return init.result.get();
 }
 
 namespace detail
@@ -1060,7 +1060,7 @@ async_read_until(AsyncReadStream& s,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::handler_token_init<
+  detail::async_result_init<
     ReadHandler, void (asio::error_code, std::size_t)> init(
       ASIO_MOVE_CAST(ReadHandler)(handler));
 
@@ -1070,7 +1070,7 @@ async_read_until(AsyncReadStream& s,
         s, b, match_condition, init.handler)(
           asio::error_code(), 0, 1);
 
-  return init.token.get();
+  return init.result.get();
 }
 
 } // namespace asio

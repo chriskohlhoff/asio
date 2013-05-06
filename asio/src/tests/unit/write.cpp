@@ -24,7 +24,7 @@
 #include <boost/noncopyable.hpp>
 #include <cstring>
 #include <vector>
-#include "archetypes/handler_token.hpp"
+#include "archetypes/async_result.hpp"
 #include "asio/io_service.hpp"
 #include "asio/placeholders.hpp"
 #include "asio/streambuf.hpp"

@@ -1,6 +1,6 @@
 //
-// handler_token.hpp
-// ~~~~~~~~~~~~~~~~~
+// async_result.hpp
+// ~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_HANDLER_TOKEN_HPP
-#define ASIO_HANDLER_TOKEN_HPP
+#ifndef ASIO_ASYNC_RESULT_HPP
+#define ASIO_ASYNC_RESULT_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -27,19 +27,19 @@ namespace asio {
  * This template may be specialised for user-defined handler types.
  */
 template <typename Handler>
-class handler_token
+class async_result
 {
 public:
   /// The return type of the initiating function.
   typedef void type;
 
-  /// Construct a token from a given handler.
+  /// Construct an async result from a given handler.
   /**
-   * When using a specalised handler_token, the constructor has an opportunity
+   * When using a specalised async_result, the constructor has an opportunity
    * to initialise some state associated with the handler, which is then
    * returned from the initiating function.
    */
-  explicit handler_token(Handler&)
+  explicit async_result(Handler&)
   {
   }
 
@@ -52,18 +52,18 @@ public:
 namespace detail {
 
 // Helper template to deduce the true type of a handler, capture a local copy
-// of the handler, and then create a token for the handler.
+// of the handler, and then create an async_result for the handler.
 template <typename Handler, typename Signature>
-struct handler_token_init
+struct async_result_init
 {
-  explicit handler_token_init(ASIO_MOVE_ARG(Handler) orig_handler)
+  explicit async_result_init(ASIO_MOVE_ARG(Handler) orig_handler)
     : handler(ASIO_MOVE_CAST(Handler)(orig_handler)),
-      token(handler)
+      result(handler)
   {
   }
 
   typename handler_type<Handler, Signature>::type handler;
-  handler_token<typename handler_type<Handler, Signature>::type> token;
+  async_result<typename handler_type<Handler, Signature>::type> result;
 };
 
 } // namespace detail
@@ -76,8 +76,8 @@ struct handler_token_init
   void_or_deduced
 #else
 # define ASIO_INITFN_RESULT_TYPE(h, sig) \
-  typename ::asio::handler_token< \
+  typename ::asio::async_result< \
     typename ::asio::handler_type<h, sig>::type>::type
 #endif
 
-#endif // ASIO_HANDLER_TOKEN_HPP
+#endif // ASIO_ASYNC_RESULT_HPP

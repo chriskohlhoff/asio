@@ -498,7 +498,7 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::handler_token_init<
+  detail::async_result_init<
     ReadHandler, void (asio::error_code, std::size_t)> init(
       ASIO_MOVE_CAST(ReadHandler)(handler));
 
@@ -508,7 +508,7 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
         s, buffers, completion_condition, init.handler)(
           asio::error_code(), 0, 1);
 
-  return init.token.get();
+  return init.result.get();
 }
 
 template <typename AsyncReadStream, typename MutableBufferSequence,
@@ -522,7 +522,7 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::handler_token_init<
+  detail::async_result_init<
     ReadHandler, void (asio::error_code, std::size_t)> init(
       ASIO_MOVE_CAST(ReadHandler)(handler));
 
@@ -532,7 +532,7 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
         s, buffers, transfer_all(), init.handler)(
           asio::error_code(), 0, 1);
 
-  return init.token.get();
+  return init.result.get();
 }
 
 #if !defined(BOOST_NO_IOSTREAM)
@@ -664,7 +664,7 @@ async_read(AsyncReadStream& s,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::handler_token_init<
+  detail::async_result_init<
     ReadHandler, void (asio::error_code, std::size_t)> init(
       ASIO_MOVE_CAST(ReadHandler)(handler));
 
@@ -674,7 +674,7 @@ async_read(AsyncReadStream& s,
         s, b, completion_condition, init.handler)(
           asio::error_code(), 0, 1);
 
-  return init.token.get();
+  return init.result.get();
 }
 
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
@@ -688,7 +688,7 @@ async_read(AsyncReadStream& s,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::handler_token_init<
+  detail::async_result_init<
     ReadHandler, void (asio::error_code, std::size_t)> init(
       ASIO_MOVE_CAST(ReadHandler)(handler));
 
@@ -698,7 +698,7 @@ async_read(AsyncReadStream& s,
         s, b, transfer_all(), init.handler)(
           asio::error_code(), 0, 1);
 
-  return init.token.get();
+  return init.result.get();
 }
 
 #endif // !defined(BOOST_NO_IOSTREAM)

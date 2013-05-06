@@ -16,9 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/async_result.hpp"
 #include "asio/error_code.hpp"
 #include "asio/detail/resolver_service.hpp"
-#include "asio/handler_token.hpp"
 #include "asio/io_service.hpp"
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
@@ -109,13 +109,13 @@ public:
   async_resolve(implementation_type& impl, const query_type& query,
       ASIO_MOVE_ARG(ResolveHandler) handler)
   {
-    asio::detail::handler_token_init<
+    asio::detail::async_result_init<
       ResolveHandler, void (asio::error_code)> init(
         ASIO_MOVE_CAST(ResolveHandler)(handler));
 
     service_impl_.async_resolve(impl, query, init.handler);
 
-    return init.token.get();
+    return init.result.get();
   }
 
   /// Resolve an endpoint to a list of entries.
@@ -132,13 +132,13 @@ public:
   async_resolve(implementation_type& impl, const endpoint_type& endpoint,
       ASIO_MOVE_ARG(ResolveHandler) handler)
   {
-    asio::detail::handler_token_init<
+    asio::detail::async_result_init<
       ResolveHandler, void (asio::error_code)> init(
         ASIO_MOVE_CAST(ResolveHandler)(handler));
 
     service_impl_.async_resolve(impl, endpoint, init.handler);
 
-    return init.token.get();
+    return init.result.get();
   }
 
 private:

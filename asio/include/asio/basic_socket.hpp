@@ -16,11 +16,11 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/async_result.hpp"
 #include "asio/basic_io_object.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
-#include "asio/handler_token.hpp"
 #include "asio/socket_base.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -713,7 +713,7 @@ public:
       const protocol_type protocol = peer_endpoint.protocol();
       if (this->get_service().open(this->get_implementation(), protocol, ec))
       {
-        detail::handler_token_init<
+        detail::async_result_init<
           ConnectHandler, void (asio::error_code)> init(
             ASIO_MOVE_CAST(ConnectHandler)(handler));
 
@@ -723,7 +723,7 @@ public:
                 ConnectHandler, void (asio::error_code)))(
                   init.handler), ec));
 
-        return init.token.get();
+        return init.result.get();
       }
     }
 

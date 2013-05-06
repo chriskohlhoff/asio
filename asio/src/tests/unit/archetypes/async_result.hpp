@@ -1,6 +1,6 @@
 //
-// handler_token.hpp
-// ~~~~~~~~~~~~~~~~~
+// async_result.hpp
+// ~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,10 +8,10 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ARCHETYPES_HANDLER_TOKEN_HPP
-#define ARCHETYPES_HANDLER_TOKEN_HPP
+#ifndef ARCHETYPES_ASYNC_RESULT_HPP
+#define ARCHETYPES_ASYNC_RESULT_HPP
 
-#include <asio/handler_token.hpp>
+#include <asio/async_result.hpp>
 #include <asio/handler_type.hpp>
 
 namespace archetypes {
@@ -48,14 +48,14 @@ struct handler_type<archetypes::lazy_handler, Signature>
 };
 
 template <>
-class handler_token<archetypes::concrete_handler>
+class async_result<archetypes::concrete_handler>
 {
 public:
   // The return type of the initiating function.
   typedef int type;
 
-  // Construct a token from a given handler.
-  explicit handler_token(archetypes::concrete_handler&)
+  // Construct an async_result from a given handler.
+  explicit async_result(archetypes::concrete_handler&)
   {
   }
 
@@ -68,4 +68,4 @@ public:
 
 } // namespace asio
 
-#endif // ARCHETYPES_HANDLER_TOKEN_HPP
+#endif // ARCHETYPES_ASYNC_RESULT_HPP
