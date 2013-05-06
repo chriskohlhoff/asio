@@ -245,6 +245,7 @@ nobase_include_HEADERS = \
 	asio/impl/read_until.hpp \
 	asio/impl/serial_port_base.hpp \
 	asio/impl/serial_port_base.ipp \
+	asio/impl/spawn.hpp \
 	asio/impl/src.cpp \
 	asio/impl/src.hpp \
 	asio/impl/write_at.hpp \
@@ -304,6 +305,7 @@ nobase_include_HEADERS = \
 	asio/signal_set_service.hpp \
 	asio/socket_acceptor_service.hpp \
 	asio/socket_base.hpp \
+	asio/spawn.hpp \
 	asio/ssl/basic_context.hpp \
 	asio/ssl/context_base.hpp \
 	asio/ssl/context.hpp \
