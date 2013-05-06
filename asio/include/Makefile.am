@@ -304,6 +304,7 @@ nobase_include_HEADERS = \
 	asio/signal_set_service.hpp \
 	asio/socket_acceptor_service.hpp \
 	asio/socket_base.hpp \
+	asio/spawn.hpp \
 	asio/ssl/basic_context.hpp \
 	asio/ssl/context_base.hpp \
 	asio/ssl/context.hpp \
