@@ -66,6 +66,14 @@ struct async_result_init
   async_result<typename handler_type<Handler, Signature>::type> result;
 };
 
+template <typename Handler, typename Signature>
+struct async_result_type_helper
+{
+  typedef typename async_result<
+      typename handler_type<Handler, Signature>::type
+    >::type type;
+};
+
 } // namespace detail
 } // namespace asio
 
@@ -74,6 +82,9 @@ struct async_result_init
 #if defined(GENERATING_DOCUMENTATION)
 # define ASIO_INITFN_RESULT_TYPE(h, sig) \
   void_or_deduced
+#elif defined(_MSC_VER) && (_MSC_VER < 1500)
+# define ASIO_INITFN_RESULT_TYPE(h, sig) \
+  typename ::asio::detail::async_result_type_helper<h, sig>::type
 #else
 # define ASIO_INITFN_RESULT_TYPE(h, sig) \
   typename ::asio::async_result< \
