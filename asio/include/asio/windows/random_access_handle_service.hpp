@@ -23,6 +23,7 @@
 #include <cstddef>
 #include <boost/config.hpp>
 #include <boost/cstdint.hpp>
+#include "asio/async_result.hpp"
 #include "asio/detail/win_iocp_handle_service.hpp"
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
@@ -158,12 +159,19 @@ public:
 
   /// Start an asynchronous write at the specified offset.
   template <typename ConstBufferSequence, typename WriteHandler>
-  void async_write_some_at(implementation_type& impl,
+  ASIO_INITFN_RESULT_TYPE(WriteHandler,
+      void (asio::error_code, std::size_t))
+  async_write_some_at(implementation_type& impl,
       boost::uint64_t offset, const ConstBufferSequence& buffers,
       ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    service_impl_.async_write_some_at(impl, offset, buffers,
+    asio::detail::async_result_init<
+      WriteHandler, void (asio::error_code, std::size_t)> init(
         ASIO_MOVE_CAST(WriteHandler)(handler));
+
+    service_impl_.async_write_some_at(impl, offset, buffers, init.handler);
+
+    return init.result.get();
   }
 
   /// Read some data from the specified offset.
@@ -176,12 +184,19 @@ public:
 
   /// Start an asynchronous read at the specified offset.
   template <typename MutableBufferSequence, typename ReadHandler>
-  void async_read_some_at(implementation_type& impl,
+  ASIO_INITFN_RESULT_TYPE(ReadHandler,
+      void (asio::error_code, std::size_t))
+  async_read_some_at(implementation_type& impl,
       boost::uint64_t offset, const MutableBufferSequence& buffers,
       ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    service_impl_.async_read_some_at(impl, offset, buffers,
+    asio::detail::async_result_init<
+      ReadHandler, void (asio::error_code, std::size_t)> init(
         ASIO_MOVE_CAST(ReadHandler)(handler));
+
+    service_impl_.async_read_some_at(impl, offset, buffers, init.handler);
+
+    return init.result.get();
   }
 
 private:
