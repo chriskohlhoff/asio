@@ -1,4 +1,4 @@
-AC_INIT(asio, [1.8.2])
+AC_INIT(asio, [20130508])
 AC_CONFIG_SRCDIR(include/asio.hpp)
 AM_MAINTAINER_MODE
 AM_INIT_AUTOMAKE([tar-ustar])
@@ -213,4 +213,6 @@ AM_CONDITIONAL(WINDOWS_TARGET,test x$WINDOWS != xno)
 AC_OUTPUT([
   Makefile
   include/Makefile
-  src/Makefile])
+  src/Makefile
+  src/tests/Makefile
+  src/examples/cpp03/Makefile])
