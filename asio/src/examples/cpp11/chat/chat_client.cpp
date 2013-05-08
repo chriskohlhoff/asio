@@ -140,10 +140,8 @@ int main(int argc, char* argv[])
     asio::io_service io_service;
 
     tcp::resolver resolver(io_service);
-    tcp::resolver::query query(argv[1], argv[2]);
-    tcp::resolver::iterator iterator = resolver.resolve(query);
-
-    chat_client c(io_service, iterator);
+    auto endpoint_iterator = resolver.resolve({ argv[1], argv[2] });
+    chat_client c(io_service, endpoint_iterator);
 
     std::thread t([&io_service](){ io_service.run(); });
 
