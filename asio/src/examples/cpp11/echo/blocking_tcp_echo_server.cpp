@@ -10,17 +10,15 @@
 
 #include <cstdlib>
 #include <iostream>
-#include <boost/bind.hpp>
-#include <boost/smart_ptr.hpp>
+#include <thread>
+#include <utility>
 #include "asio.hpp"
 
 using asio::ip::tcp;
 
 const int max_length = 1024;
 
-typedef boost::shared_ptr<tcp::socket> socket_ptr;
-
-void session(socket_ptr sock)
+void session(tcp::socket sock)
 {
   try
   {
@@ -29,13 +27,13 @@ void session(socket_ptr sock)
       char data[max_length];
 
       asio::error_code error;
-      size_t length = sock->read_some(asio::buffer(data), error);
+      size_t length = sock.read_some(asio::buffer(data), error);
       if (error == asio::error::eof)
         break; // Connection closed cleanly by peer.
       else if (error)
         throw asio::system_error(error); // Some other error.
 
-      asio::write(*sock, asio::buffer(data, length));
+      asio::write(sock, asio::buffer(data, length));
     }
   }
   catch (std::exception& e)
@@ -44,14 +42,14 @@ void session(socket_ptr sock)
   }
 }
 
-void server(asio::io_service& io_service, short port)
+void server(asio::io_service& io_service, unsigned short port)
 {
   tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), port));
   for (;;)
   {
-    socket_ptr sock(new tcp::socket(io_service));
-    a.accept(*sock);
-    asio::thread t(boost::bind(session, sock));
+    tcp::socket sock(io_service);
+    a.accept(sock);
+    std::thread(session, std::move(sock)).detach();
   }
 }
 
@@ -67,8 +65,7 @@ int main(int argc, char* argv[])
 
     asio::io_service io_service;
 
-    using namespace std; // For atoi.
-    server(io_service, atoi(argv[1]));
+    server(io_service, std::atoi(argv[1]));
   }
   catch (std::exception& e)
   {

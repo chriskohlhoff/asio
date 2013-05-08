@@ -16,7 +16,7 @@ using asio::ip::udp;
 
 enum { max_length = 1024 };
 
-void server(asio::io_service& io_service, short port)
+void server(asio::io_service& io_service, unsigned short port)
 {
   udp::socket sock(io_service, udp::endpoint(udp::v4(), port));
   for (;;)

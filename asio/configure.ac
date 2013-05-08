@@ -223,4 +223,7 @@ AM_CONDITIONAL(WINDOWS_TARGET,test x$WINDOWS != xno)
 AC_OUTPUT([
   Makefile
   include/Makefile
-  src/Makefile])
+  src/Makefile
+  src/tests/Makefile
+  src/examples/cpp03/Makefile
+  src/examples/cpp11/Makefile])

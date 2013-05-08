@@ -249,6 +249,11 @@ sub copy_source_file
       print_line($output, "namespace boost {", $from, $lineno);
       print_line($output, "namespace system {", $from, $lineno);
     }
+    elsif ($line =~ /std::error_code/)
+    {
+      $line =~ s/std::error_code/boost::system::error_code/g;
+      print_line($output, $line, $from, $lineno);
+    }
     elsif ($line =~ /} \/\/ namespace std/)
     {
       print_line($output, "} // namespace system", $from, $lineno);
@@ -425,44 +430,51 @@ sub copy_latency_tests
 sub copy_examples
 {
   my @dirs = (
-      "src/examples/allocation",
-      "src/examples/buffers",
-      "src/examples/chat",
-      "src/examples/echo",
-      "src/examples/fork",
-      "src/examples/http/client",
-      "src/examples/http/doc_root",
-      "src/examples/http/server",
-      "src/examples/http/server2",
-      "src/examples/http/server3",
-      "src/examples/http/server4",
-      "src/examples/icmp",
-      "src/examples/invocation",
-      "src/examples/iostreams",
-      "src/examples/local",
-      "src/examples/multicast",
-      "src/examples/nonblocking",
-      "src/examples/porthopper",
-      "src/examples/serialization",
-      "src/examples/services",
-      "src/examples/socks4",
-      "src/examples/ssl",
-      "src/examples/timeouts",
-      "src/examples/timers",
-      "src/examples/tutorial",
-      "src/examples/tutorial/daytime1",
-      "src/examples/tutorial/daytime2",
-      "src/examples/tutorial/daytime3",
-      "src/examples/tutorial/daytime4",
-      "src/examples/tutorial/daytime5",
-      "src/examples/tutorial/daytime6",
-      "src/examples/tutorial/daytime7",
-      "src/examples/tutorial/timer1",
-      "src/examples/tutorial/timer2",
-      "src/examples/tutorial/timer3",
-      "src/examples/tutorial/timer4",
-      "src/examples/tutorial/timer5",
-      "src/examples/windows");
+      "src/examples/cpp03/allocation",
+      "src/examples/cpp03/buffers",
+      "src/examples/cpp03/chat",
+      "src/examples/cpp03/echo",
+      "src/examples/cpp03/fork",
+      "src/examples/cpp03/http/client",
+      "src/examples/cpp03/http/doc_root",
+      "src/examples/cpp03/http/server",
+      "src/examples/cpp03/http/server2",
+      "src/examples/cpp03/http/server3",
+      "src/examples/cpp03/http/server4",
+      "src/examples/cpp03/icmp",
+      "src/examples/cpp03/invocation",
+      "src/examples/cpp03/iostreams",
+      "src/examples/cpp03/local",
+      "src/examples/cpp03/multicast",
+      "src/examples/cpp03/nonblocking",
+      "src/examples/cpp03/porthopper",
+      "src/examples/cpp03/serialization",
+      "src/examples/cpp03/services",
+      "src/examples/cpp03/socks4",
+      "src/examples/cpp03/spawn",
+      "src/examples/cpp03/ssl",
+      "src/examples/cpp03/timeouts",
+      "src/examples/cpp03/timers",
+      "src/examples/cpp03/tutorial",
+      "src/examples/cpp03/tutorial/daytime1",
+      "src/examples/cpp03/tutorial/daytime2",
+      "src/examples/cpp03/tutorial/daytime3",
+      "src/examples/cpp03/tutorial/daytime4",
+      "src/examples/cpp03/tutorial/daytime5",
+      "src/examples/cpp03/tutorial/daytime6",
+      "src/examples/cpp03/tutorial/daytime7",
+      "src/examples/cpp03/tutorial/timer1",
+      "src/examples/cpp03/tutorial/timer2",
+      "src/examples/cpp03/tutorial/timer3",
+      "src/examples/cpp03/tutorial/timer4",
+      "src/examples/cpp03/tutorial/timer5",
+      "src/examples/cpp03/windows",
+      "src/examples/cpp11/allocation",
+      "src/examples/cpp11/buffers",
+      "src/examples/cpp11/chat",
+      "src/examples/cpp11/echo",
+      "src/examples/cpp11/http/server",
+      "src/examples/cpp11/spawn");
 
   our $boost_dir;
   foreach my $dir (@dirs)
