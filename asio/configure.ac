@@ -215,4 +215,5 @@ AC_OUTPUT([
   include/Makefile
   src/Makefile
   src/tests/Makefile
-  src/examples/cpp03/Makefile])
+  src/examples/cpp03/Makefile
+  src/examples/cpp11/Makefile])
