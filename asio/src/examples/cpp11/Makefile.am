@@ -19,7 +19,8 @@ noinst_PROGRAMS = \
 	echo/blocking_tcp_echo_client \
 	echo/blocking_tcp_echo_server \
 	echo/blocking_udp_echo_client \
-	echo/blocking_udp_echo_server
+	echo/blocking_udp_echo_server \
+	http/server/http_server
 
 noinst_HEADERS = \
 	chat/chat_message.hpp
@@ -36,6 +37,26 @@ echo_blocking_tcp_echo_client_SOURCES = echo/blocking_tcp_echo_client.cpp
 echo_blocking_tcp_echo_server_SOURCES = echo/blocking_tcp_echo_server.cpp
 echo_blocking_udp_echo_client_SOURCES = echo/blocking_udp_echo_client.cpp
 echo_blocking_udp_echo_server_SOURCES = echo/blocking_udp_echo_server.cpp
+http_server_http_server_SOURCES = \
+	http/server/connection.cpp \
+	http/server/connection_manager.cpp \
+	http/server/main.cpp \
+	http/server/mime_types.cpp \
+	http/server/reply.cpp \
+	http/server/request_handler.cpp \
+	http/server/request_parser.cpp \
+	http/server/server.cpp
+
+EXTRA_DIST = \
+	http/server/connection.hpp \
+	http/server/connection_manager.hpp \
+	http/server/header.hpp \
+	http/server/mime_types.hpp \
+	http/server/reply.hpp \
+	http/server/request.hpp \
+	http/server/request_handler.hpp \
+	http/server/request_parser.hpp \
+	http/server/server.hpp
 
 MAINTAINERCLEANFILES = \
 	$(srcdir)/Makefile.in
