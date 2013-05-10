@@ -24,17 +24,16 @@ struct mapping
   { "htm", "text/html" },
   { "html", "text/html" },
   { "jpg", "image/jpeg" },
-  { "png", "image/png" },
-  { 0, 0 } // Marks end of list.
+  { "png", "image/png" }
 };
 
 std::string extension_to_type(const std::string& extension)
 {
-  for (mapping* m = mappings; m->extension; ++m)
+  for (mapping m: mappings)
   {
-    if (m->extension == extension)
+    if (m.extension == extension)
     {
-      return m->mime_type;
+      return m.mime_type;
     }
   }
 
