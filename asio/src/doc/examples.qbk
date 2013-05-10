@@ -8,6 +8,20 @@
 [section:examples Examples]
 
 
+* [link asio.examples.cpp03_examples C++03 Examples]: Illustrates the use of
+Asio using only C++03 language and library features. Where necessary, the
+examples make use of selected Boost C++ libraries.
+
+* [link asio.examples.cpp11_examples C++11 Examples]: Contains a limited set of
+the C++03 Asio examples, updated to use only C++11 library and language
+facilities. These examples do not make direct use of Boost C++ libraries. To
+show the changes between C++03 and C++11, these examples include a diff between
+the C++03 and C++11 versions.
+
+
+[section:cpp03_examples C++03 Examples]
+
+
 [heading Allocation]
 
 This example shows how to customise the allocation of memory associated with
@@ -310,6 +324,89 @@ An example showing how to use the Windows-specific function `TransmitFile`
 with Asio.
 
 * [@../src/examples/cpp03/windows/transmit_file.cpp]
+
+
+[endsect]
+
+
+[section:cpp11_examples C++11 Examples]
+
+
+[heading Allocation]
+
+This example shows how to customise the allocation of memory associated with
+asynchronous operations.
+
+* [@../src/examples/cpp11/allocation/server.cpp] ([@examples/diffs/allocation/server.cpp.html diff to C++03])
+
+
+[heading Buffers]
+
+This example demonstrates how to create reference counted buffers that can be
+used with socket read and write operations.
+
+* [@../src/examples/cpp11/buffers/reference_counted.cpp] ([@examples/diffs/buffers/reference_counted.cpp.html diff to C++03])
+
+
+[heading Chat]
+
+This example implements a chat server and client. The programs use a custom
+protocol with a fixed length message header and variable length message body.
+
+* [@../src/examples/cpp11/chat/chat_message.hpp] ([@examples/diffs/chat/chat_message.hpp.html diff to C++03])
+* [@../src/examples/cpp11/chat/chat_client.cpp] ([@examples/diffs/chat/chat_client.cpp.html diff to C++03])
+* [@../src/examples/cpp11/chat/chat_server.cpp] ([@examples/diffs/chat/chat_server.cpp.html diff to C++03])
+
+
+[heading Echo]
+
+A collection of simple clients and servers, showing the use of both synchronous
+and asynchronous operations.
+
+* [@../src/examples/cpp11/echo/async_tcp_echo_server.cpp] ([@examples/diffs/echo/async_tcp_echo_server.cpp.html diff to C++03])
+* [@../src/examples/cpp11/echo/async_udp_echo_server.cpp] ([@examples/diffs/echo/async_udp_echo_server.cpp.html diff to C++03])
+* [@../src/examples/cpp11/echo/blocking_tcp_echo_client.cpp] ([@examples/diffs/echo/blocking_tcp_echo_client.cpp.html diff to C++03])
+* [@../src/examples/cpp11/echo/blocking_tcp_echo_server.cpp] ([@examples/diffs/echo/blocking_tcp_echo_server.cpp.html diff to C++03])
+* [@../src/examples/cpp11/echo/blocking_udp_echo_client.cpp] ([@examples/diffs/echo/blocking_udp_echo_client.cpp.html diff to C++03])
+* [@../src/examples/cpp11/echo/blocking_udp_echo_server.cpp] ([@examples/diffs/echo/blocking_udp_echo_server.cpp.html diff to C++03])
+
+
+[heading HTTP Server]
+
+This example illustrates the use of asio in a simple single-threaded server
+implementation of HTTP 1.0. It demonstrates how to perform a clean shutdown by
+cancelling all outstanding asynchronous operations.
+
+* [@../src/examples/cpp11/http/server/connection.cpp] ([@examples/diffs/http/server/connection.cpp.html diff to C++03])
+* [@../src/examples/cpp11/http/server/connection.hpp] ([@examples/diffs/http/server/connection.hpp.html diff to C++03])
+* [@../src/examples/cpp11/http/server/connection_manager.cpp] ([@examples/diffs/http/server/connection_manager.cpp.html diff to C++03])
+* [@../src/examples/cpp11/http/server/connection_manager.hpp] ([@examples/diffs/http/server/connection_manager.hpp.html diff to C++03])
+* [@../src/examples/cpp11/http/server/header.hpp] ([@examples/diffs/http/server/header.hpp.html diff to C++03])
+* [@../src/examples/cpp11/http/server/main.cpp] ([@examples/diffs/http/server/main.cpp.html diff to C++03])
+* [@../src/examples/cpp11/http/server/mime_types.cpp] ([@examples/diffs/http/server/mime_types.cpp.html diff to C++03])
+* [@../src/examples/cpp11/http/server/mime_types.hpp] ([@examples/diffs/http/server/mime_types.hpp.html diff to C++03])
+* [@../src/examples/cpp11/http/server/reply.cpp] ([@examples/diffs/http/server/reply.cpp.html diff to C++03])
+* [@../src/examples/cpp11/http/server/reply.hpp] ([@examples/diffs/http/server/reply.hpp.html diff to C++03])
+* [@../src/examples/cpp11/http/server/request.hpp] ([@examples/diffs/http/server/request.hpp.html diff to C++03])
+* [@../src/examples/cpp11/http/server/request_handler.cpp] ([@examples/diffs/http/server/request_handler.cpp.html diff to C++03])
+* [@../src/examples/cpp11/http/server/request_handler.hpp] ([@examples/diffs/http/server/request_handler.hpp.html diff to C++03])
+* [@../src/examples/cpp11/http/server/request_parser.cpp] ([@examples/diffs/http/server/request_parser.cpp.html diff to C++03])
+* [@../src/examples/cpp11/http/server/request_parser.hpp] ([@examples/diffs/http/server/request_parser.hpp.html diff to C++03])
+* [@../src/examples/cpp11/http/server/server.cpp] ([@examples/diffs/http/server/server.cpp.html diff to C++03])
+* [@../src/examples/cpp11/http/server/server.hpp] ([@examples/diffs/http/server/server.hpp.html diff to C++03])
+
+
+[heading Spawn]
+
+Example of using the asio::spawn() function, a wrapper around the
+[@www.boost.org/doc/libs/release/libs/coroutine/index.html Boost.Coroutine]
+library, to implement a chain of asynchronous operations using stackful
+coroutines.
+
+* [@../src/examples/cpp11/spawn/echo_server.cpp] ([@examples/diffs/spawn/echo_server.cpp.html diff to C++03])
+
+
+[endsect]
 
 
 [endsect]

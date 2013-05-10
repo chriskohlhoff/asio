@@ -61,7 +61,7 @@ asio.reference.basic_socket.native native()] member function.
 [link asio.reference.local__stream_protocol.endpoint local::stream_protocol::endpoint],
 [link asio.reference.local__stream_protocol.iostream local::stream_protocol::iostream],
 [link asio.reference.local__stream_protocol.socket local::stream_protocol::socket],
-[link asio.examples.unix_domain_sockets UNIX domain sockets examples].
+[link asio.examples.cpp03_examples.unix_domain_sockets UNIX domain sockets examples].
 
 [heading Notes]
 

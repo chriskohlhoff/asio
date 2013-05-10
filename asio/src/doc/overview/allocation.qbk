@@ -52,6 +52,7 @@ threads.
 
 [link asio.reference.asio_handler_allocate asio_handler_allocate],
 [link asio.reference.asio_handler_deallocate asio_handler_deallocate],
-[link asio.examples.allocation custom memory allocation example].
+[link asio.examples.cpp03_examples.allocation custom memory allocation example (C++03)],
+[link asio.examples.cpp11_examples.allocation custom memory allocation example (C++11)].
 
 [endsect]
