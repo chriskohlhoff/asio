@@ -57,7 +57,7 @@ public:
           while (socket_.is_open())
           {
             asio::error_code ignored_ec;
-            timer_.async_wait(yield(ignored_ec));
+            timer_.async_wait(yield[ignored_ec]);
             if (timer_.expires_from_now() <= std::chrono::seconds(0))
               socket_.close();
           }
@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
           {
             asio::error_code ec;
             tcp::socket socket(io_service);
-            acceptor.async_accept(socket, yield(ec));
+            acceptor.async_accept(socket, yield[ec]);
             if (!ec) std::make_shared<session>(std::move(socket))->go();
           }
         });

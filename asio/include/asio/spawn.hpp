@@ -46,7 +46,7 @@ public:
   {
   }
 
-  basic_yield_context operator()(asio::error_code& ec)
+  basic_yield_context operator[](asio::error_code& ec)
   {
     basic_yield_context tmp(*this);
     tmp.ec_ = &ec;
