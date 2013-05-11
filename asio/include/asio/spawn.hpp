@@ -231,14 +231,16 @@ namespace detail {
   struct spawn_data : private noncopyable
   {
     spawn_data(ASIO_MOVE_ARG(Handler) handler,
-        ASIO_MOVE_ARG(Function) function)
+        bool call_handler, ASIO_MOVE_ARG(Function) function)
       : handler_(ASIO_MOVE_CAST(Handler)(handler)),
+        call_handler_(call_handler),
         function_(ASIO_MOVE_CAST(Function)(function))
     {
     }
 
     weak_ptr<boost::coroutines::coroutine<void()> > coro_;
     Handler handler_;
+    bool call_handler_;
     Function function_;
   };
 
@@ -252,6 +254,8 @@ namespace detail {
       const basic_yield_context<Handler> yield(
           data->coro_, ca, data->handler_);
       (data->function_)(yield);
+      if (data->call_handler_)
+        (data->handler_)();
     }
 
     shared_ptr<spawn_data<Handler, Function> > data_;
@@ -286,7 +290,7 @@ void spawn(ASIO_MOVE_ARG(Handler) handler,
   detail::spawn_helper<Handler, Function> helper;
   helper.data_.reset(
       new detail::spawn_data<Handler, Function>(
-        ASIO_MOVE_CAST(Handler)(handler),
+        ASIO_MOVE_CAST(Handler)(handler), true,
         ASIO_MOVE_CAST(Function)(function)));
   helper.attributes_ = attributes;
   asio_handler_invoke_helpers::invoke(helper, helper.data_->handler_);
@@ -299,8 +303,13 @@ void spawn(basic_yield_context<Handler> ctx,
       = boost::coroutines::attributes())
 {
   Handler handler(ctx.handler_); // Explicit copy that might be moved from.
-  asio::spawn(ASIO_MOVE_CAST(Handler)(handler),
-      ASIO_MOVE_CAST(Function)(function), attributes);
+  detail::spawn_helper<Handler, Function> helper;
+  helper.data_.reset(
+      new detail::spawn_data<Handler, Function>(
+        ASIO_MOVE_CAST(Handler)(handler), false,
+        ASIO_MOVE_CAST(Function)(function)));
+  helper.attributes_ = attributes;
+  asio_handler_invoke_helpers::invoke(helper, helper.data_->handler_);
 }
 
 template <typename Function>
