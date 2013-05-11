@@ -153,7 +153,7 @@ public:
    */
   template <typename ResolveHandler>
   ASIO_INITFN_RESULT_TYPE(ResolveHandler,
-      void (asio::error_code))
+      void (asio::error_code, iterator))
   async_resolve(const query& q,
       ASIO_MOVE_ARG(ResolveHandler) handler)
   {
@@ -246,7 +246,7 @@ public:
    */
   template <typename ResolveHandler>
   ASIO_INITFN_RESULT_TYPE(ResolveHandler,
-      void (asio::error_code))
+      void (asio::error_code, iterator))
   async_resolve(const endpoint_type& e,
       ASIO_MOVE_ARG(ResolveHandler) handler)
   {
