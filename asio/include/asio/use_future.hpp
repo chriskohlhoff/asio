@@ -38,7 +38,7 @@ public:
   }
 
   template <typename OtherAllocator>
-  use_future_t<OtherAllocator> operator()(const OtherAllocator& allocator) const
+  use_future_t<OtherAllocator> operator[](const OtherAllocator& allocator) const
   {
     return use_future_t<OtherAllocator>(allocator);
   }
