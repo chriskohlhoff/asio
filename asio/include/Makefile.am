@@ -248,6 +248,7 @@ nobase_include_HEADERS = \
 	asio/impl/spawn.hpp \
 	asio/impl/src.cpp \
 	asio/impl/src.hpp \
+	asio/impl/use_future.hpp \
 	asio/impl/write_at.hpp \
 	asio/impl/write.hpp \
 	asio/io_service.hpp \
