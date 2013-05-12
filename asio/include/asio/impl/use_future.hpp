@@ -109,6 +109,8 @@ namespace detail {
 
 } // namespace detail
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 // Handler traits specialisation for promise_handler.
 template <typename T>
 class async_result<detail::promise_handler<T> >
@@ -160,6 +162,8 @@ struct handler_type<use_future_t<Allocator>,
 {
   typedef detail::promise_handler<Arg2> type;
 };
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 } // namespace asio
 

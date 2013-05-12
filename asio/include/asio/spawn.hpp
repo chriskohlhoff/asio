@@ -47,16 +47,22 @@ public:
     return tmp;
   }
 
-//private:
+#if defined(GENERATING_DOCUMENTATION)
+private:
+#endif // defined(GENERATING_DOCUMENTATION)
   detail::weak_ptr<boost::coroutines::coroutine<void()> > coro_;
   boost::coroutines::coroutine<void()>::caller_type& ca_;
   Handler& handler_;
   asio::error_code* ec_;
 };
 
+#if defined(GENERATING_DOCUMENTATION)
+typedef basic_yield_context<unspecified> yield_context;
+#else // defined(GENERATING_DOCUMENTATION)
 typedef basic_yield_context<
   detail::wrapped_handler<
     io_service::strand, void(*)()> > yield_context;
+#endif // defined(GENERATING_DOCUMENTATION)
 
 template <typename Handler, typename Function>
 void spawn(ASIO_MOVE_ARG(Handler) handler,

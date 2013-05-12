@@ -128,6 +128,8 @@ namespace detail {
 
 } // namespace detail
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 template <typename Handler, typename ReturnType>
 struct handler_type<basic_yield_context<Handler>, ReturnType()>
 {
@@ -309,6 +311,8 @@ void spawn(asio::io_service& io_service,
   asio::spawn(asio::io_service::strand(io_service),
       ASIO_MOVE_CAST(Function)(function), attributes);
 }
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 } // namespace asio
 
