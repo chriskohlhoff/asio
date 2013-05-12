@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/async_result.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/strand_service.hpp"
 #include "asio/detail/wrapped_handler.hpp"
@@ -139,13 +140,20 @@ public:
    * @code void handler(); @endcode
    */
   template <typename CompletionHandler>
-  void dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
+  ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
+  dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a CompletionHandler.
     ASIO_COMPLETION_HANDLER_CHECK(CompletionHandler, handler) type_check;
 
-    service_.dispatch(impl_, ASIO_MOVE_CAST(CompletionHandler)(handler));
+    detail::async_result_init<
+      CompletionHandler, void ()> init(
+        ASIO_MOVE_CAST(CompletionHandler)(handler));
+
+    service_.dispatch(impl_, init.handler);
+
+    return init.result.get();
   }
 
   /// Request the strand to invoke the given handler and return
@@ -165,13 +173,20 @@ public:
    * @code void handler(); @endcode
    */
   template <typename CompletionHandler>
-  void post(ASIO_MOVE_ARG(CompletionHandler) handler)
+  ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
+  post(ASIO_MOVE_ARG(CompletionHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a CompletionHandler.
     ASIO_COMPLETION_HANDLER_CHECK(CompletionHandler, handler) type_check;
 
-    service_.post(impl_, ASIO_MOVE_CAST(CompletionHandler)(handler));
+    detail::async_result_init<
+      CompletionHandler, void ()> init(
+        ASIO_MOVE_CAST(CompletionHandler)(handler));
+
+    service_.post(impl_, init.handler);
+
+    return init.result.get();
   }
 
   /// Create a new handler that automatically dispatches the wrapped handler
