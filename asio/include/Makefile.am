@@ -248,6 +248,7 @@ nobase_include_HEADERS = \
 	asio/impl/spawn.hpp \
 	asio/impl/src.cpp \
 	asio/impl/src.hpp \
+	asio/impl/use_future.hpp \
 	asio/impl/write_at.hpp \
 	asio/impl/write.hpp \
 	asio/io_service.hpp \
@@ -351,6 +352,7 @@ nobase_include_HEADERS = \
 	asio/system_timer.hpp \
 	asio/thread.hpp \
 	asio/time_traits.hpp \
+	asio/use_future.hpp \
 	asio/version.hpp \
 	asio/waitable_timer_service.hpp \
 	asio/wait_traits.hpp \
