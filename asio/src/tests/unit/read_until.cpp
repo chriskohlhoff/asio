@@ -19,6 +19,7 @@
 #include <boost/bind.hpp>
 #include <boost/noncopyable.hpp>
 #include <cstring>
+#include "archetypes/async_result.hpp"
 #include "asio/io_service.hpp"
 #include "asio/placeholders.hpp"
 #include "asio/streambuf.hpp"
@@ -531,6 +532,14 @@ void test_char_async_read_until()
   BOOST_CHECK(called);
   BOOST_CHECK(!ec);
   BOOST_CHECK(length == 25);
+
+  s.reset(read_data, sizeof(read_data));
+  sb2.consume(sb2.size());
+  int i = asio::async_read_until(s, sb2, 'Y',
+      archetypes::lazy_handler());
+  BOOST_CHECK(i == 42);
+  ios.reset();
+  ios.run();
 }
 
 void test_string_async_read_until()
@@ -674,6 +683,14 @@ void test_string_async_read_until()
   BOOST_CHECK(called);
   BOOST_CHECK(!ec);
   BOOST_CHECK(length == 25);
+
+  s.reset(read_data, sizeof(read_data));
+  sb2.consume(sb2.size());
+  int i = asio::async_read_until(s, sb2, "WXY",
+      archetypes::lazy_handler());
+  BOOST_CHECK(i == 42);
+  ios.reset();
+  ios.run();
 }
 
 void test_match_condition_async_read_until()
@@ -817,6 +834,14 @@ void test_match_condition_async_read_until()
   BOOST_CHECK(called);
   BOOST_CHECK(!ec);
   BOOST_CHECK(length == 25);
+
+  s.reset(read_data, sizeof(read_data));
+  sb2.consume(sb2.size());
+  int i = asio::async_read_until(s, sb2, match_char('Y'),
+      archetypes::lazy_handler());
+  BOOST_CHECK(i == 42);
+  ios.reset();
+  ios.run();
 }
 
 test_suite* init_unit_test_suite(int, char*[])

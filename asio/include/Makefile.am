@@ -1,5 +1,6 @@
 # find . -name "*.*pp" | sed -e 's/^\.\///' | sed -e 's/^.*$/  & \\/' | sort
 nobase_include_HEADERS = \
+	asio/async_result.hpp \
 	asio/basic_datagram_socket.hpp \
 	asio/basic_deadline_timer.hpp \
 	asio/basic_io_object.hpp \
@@ -230,6 +231,7 @@ nobase_include_HEADERS = \
 	asio/error.hpp \
 	asio/handler_alloc_hook.hpp \
 	asio/handler_invoke_hook.hpp \
+	asio/handler_type.hpp \
 	asio/high_resolution_timer.hpp \
 	asio.hpp \
 	asio/impl/connect.hpp \

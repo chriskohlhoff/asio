@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include <cstddef>
 #include <boost/cstdint.hpp>
+#include "asio/async_result.hpp"
 #include "asio/basic_streambuf_fwd.hpp"
 #include "asio/error.hpp"
 
@@ -444,7 +445,9 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d, boost::uint64_t offset,
  */
 template <typename AsyncRandomAccessWriteDevice, typename ConstBufferSequence,
     typename WriteHandler>
-void async_write_at(AsyncRandomAccessWriteDevice& d, boost::uint64_t offset,
+ASIO_INITFN_RESULT_TYPE(WriteHandler,
+    void (asio::error_code, std::size_t))
+async_write_at(AsyncRandomAccessWriteDevice& d, boost::uint64_t offset,
     const ConstBufferSequence& buffers,
     ASIO_MOVE_ARG(WriteHandler) handler);
 
@@ -516,7 +519,9 @@ void async_write_at(AsyncRandomAccessWriteDevice& d, boost::uint64_t offset,
  */
 template <typename AsyncRandomAccessWriteDevice, typename ConstBufferSequence,
     typename CompletionCondition, typename WriteHandler>
-void async_write_at(AsyncRandomAccessWriteDevice& d,
+ASIO_INITFN_RESULT_TYPE(WriteHandler,
+    void (asio::error_code, std::size_t))
+async_write_at(AsyncRandomAccessWriteDevice& d,
     boost::uint64_t offset, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition,
     ASIO_MOVE_ARG(WriteHandler) handler);
@@ -565,7 +570,9 @@ void async_write_at(AsyncRandomAccessWriteDevice& d,
  */
 template <typename AsyncRandomAccessWriteDevice, typename Allocator,
     typename WriteHandler>
-void async_write_at(AsyncRandomAccessWriteDevice& d, boost::uint64_t offset,
+ASIO_INITFN_RESULT_TYPE(WriteHandler,
+    void (asio::error_code, std::size_t))
+async_write_at(AsyncRandomAccessWriteDevice& d, boost::uint64_t offset,
     basic_streambuf<Allocator>& b, ASIO_MOVE_ARG(WriteHandler) handler);
 
 /// Start an asynchronous operation to write a certain amount of data at the
@@ -624,7 +631,9 @@ void async_write_at(AsyncRandomAccessWriteDevice& d, boost::uint64_t offset,
  */
 template <typename AsyncRandomAccessWriteDevice, typename Allocator,
     typename CompletionCondition, typename WriteHandler>
-void async_write_at(AsyncRandomAccessWriteDevice& d, boost::uint64_t offset,
+ASIO_INITFN_RESULT_TYPE(WriteHandler,
+    void (asio::error_code, std::size_t))
+async_write_at(AsyncRandomAccessWriteDevice& d, boost::uint64_t offset,
     basic_streambuf<Allocator>& b, CompletionCondition completion_condition,
     ASIO_MOVE_ARG(WriteHandler) handler);
 

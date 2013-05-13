@@ -23,6 +23,7 @@
 #include <boost/bind.hpp>
 #include <boost/noncopyable.hpp>
 #include <cstring>
+#include "archetypes/async_result.hpp"
 #include "asio/io_service.hpp"
 #include "asio/placeholders.hpp"
 #include "asio/streambuf.hpp"
@@ -3496,6 +3497,15 @@ void test_4_arg_mutable_buffers_1_async_read_at()
   ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  int i = asio::async_read_at(s, 1234, buffers,
+      archetypes::lazy_handler());
+  BOOST_CHECK(i == 42);
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(read_data)));
 }
 
 void test_4_arg_boost_array_buffers_async_read_at()
@@ -3587,6 +3597,15 @@ void test_4_arg_boost_array_buffers_async_read_at()
   ios.reset();
   ios.run();
   BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  int i = asio::async_read_at(s, 1234, buffers,
+      archetypes::lazy_handler());
+  BOOST_CHECK(i == 42);
+  ios.reset();
+  ios.run();
   BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(read_data)));
 }
 
@@ -3681,6 +3700,15 @@ void test_4_arg_std_array_buffers_async_read_at()
   ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  int i = asio::async_read_at(s, 1234, buffers,
+      archetypes::lazy_handler());
+  BOOST_CHECK(i == 42);
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(read_data)));
 #endif // defined(ASIO_HAS_STD_ARRAY)
 }
 
@@ -3773,6 +3801,15 @@ void test_4_arg_vector_buffers_async_read_at()
   ios.reset();
   ios.run();
   BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  int i = asio::async_read_at(s, 1234, buffers,
+      archetypes::lazy_handler());
+  BOOST_CHECK(i == 42);
+  ios.reset();
+  ios.run();
   BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(read_data)));
 }
 
@@ -3868,6 +3905,15 @@ void test_4_arg_streambuf_async_read_at()
   ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(sb.size() == sizeof(read_data));
+  BOOST_CHECK(s.check_buffers(1234, sb.data(), sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  sb.consume(sb.size());
+  int i = asio::async_read_at(s, 1234, sb,
+      archetypes::lazy_handler());
+  BOOST_CHECK(i == 42);
+  ios.reset();
+  ios.run();
   BOOST_CHECK(s.check_buffers(1234, sb.data(), sizeof(read_data)));
 }
 
@@ -4658,6 +4704,15 @@ void test_5_arg_mutable_buffers_1_async_read_at()
   ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  int i = asio::async_read_at(s, 1234, buffers,
+      short_transfer, archetypes::lazy_handler());
+  BOOST_CHECK(i == 42);
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(read_data)));
 }
 
 void test_5_arg_boost_array_buffers_async_read_at()
@@ -5447,6 +5502,15 @@ void test_5_arg_boost_array_buffers_async_read_at()
   ios.reset();
   ios.run();
   BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  int i = asio::async_read_at(s, 1234, buffers,
+      short_transfer, archetypes::lazy_handler());
+  BOOST_CHECK(i == 42);
+  ios.reset();
+  ios.run();
   BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(read_data)));
 }
 
@@ -6239,6 +6303,15 @@ void test_5_arg_std_array_buffers_async_read_at()
   ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  int i = asio::async_read_at(s, 1234, buffers,
+      short_transfer, archetypes::lazy_handler());
+  BOOST_CHECK(i == 42);
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(read_data)));
 #endif // defined(ASIO_HAS_STD_ARRAY)
 }
 
@@ -7029,6 +7102,15 @@ void test_5_arg_vector_buffers_async_read_at()
   ios.reset();
   ios.run();
   BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  memset(read_buf, 0, sizeof(read_buf));
+  int i = asio::async_read_at(s, 1234, buffers,
+      short_transfer, archetypes::lazy_handler());
+  BOOST_CHECK(i == 42);
+  ios.reset();
+  ios.run();
   BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(read_data)));
 }
 
@@ -7870,6 +7952,15 @@ void test_5_arg_streambuf_async_read_at()
   ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(sb.size() == sizeof(read_data));
+  BOOST_CHECK(s.check_buffers(1234, sb.data(), sizeof(read_data)));
+
+  s.reset(read_data, sizeof(read_data));
+  sb.consume(sb.size());
+  int i = asio::async_read_at(s, 1234, sb,
+      short_transfer, archetypes::lazy_handler());
+  BOOST_CHECK(i == 42);
+  ios.reset();
+  ios.run();
   BOOST_CHECK(s.check_buffers(1234, sb.data(), sizeof(read_data)));
 }
 

@@ -17,6 +17,7 @@
 #include "asio/deadline_timer.hpp"
 
 #include <boost/bind.hpp>
+#include "archetypes/async_result.hpp"
 #include "asio/io_service.hpp"
 #include "asio/placeholders.hpp"
 #include "asio/thread.hpp"
@@ -322,6 +323,18 @@ void deadline_timer_thread_test()
   BOOST_CHECK(count == 1);
 }
 
+void deadline_timer_async_result_test()
+{
+  asio::io_service ios;
+  asio::deadline_timer t1(ios);
+
+  t1.expires_from_now(boost::posix_time::seconds(1));
+  int i = t1.async_wait(archetypes::lazy_handler());
+  BOOST_CHECK(i == 42);
+
+  ios.run();
+}
+
 test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("deadline_timer");
@@ -329,5 +342,6 @@ test_suite* init_unit_test_suite(int, char*[])
   test->add(BOOST_TEST_CASE(&deadline_timer_cancel_test));
   test->add(BOOST_TEST_CASE(&deadline_timer_custom_allocation_test));
   test->add(BOOST_TEST_CASE(&deadline_timer_thread_test));
+  test->add(BOOST_TEST_CASE(&deadline_timer_async_result_test));
   return test;
 }

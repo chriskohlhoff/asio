@@ -1,6 +1,6 @@
 //
-// udp.cpp
-// ~~~~~~~
+// icmp.cpp
+// ~~~~~~~~
 //
 // Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -14,7 +14,7 @@
 #endif // !defined(BOOST_ALL_NO_LIB)
 
 // Test that header file is self-contained.
-#include "asio/ip/udp.hpp"
+#include "asio/ip/icmp.hpp"
 
 #include <boost/bind.hpp>
 #include <cstring>
@@ -28,12 +28,12 @@
 
 //------------------------------------------------------------------------------
 
-// ip_udp_socket_compile test
+// ip_icmp_socket_compile test
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 // The following test checks that all public member functions on the class
-// ip::udp::socket compile and link correctly. Runtime failures are ignored.
+// ip::icmp::socket compile and link correctly. Runtime failures are ignored.
 
-namespace ip_udp_socket_compile {
+namespace ip_icmp_socket_compile {
 
 void connect_handler(const asio::error_code&)
 {
@@ -70,22 +70,22 @@ void test()
 
     // basic_datagram_socket constructors.
 
-    ip::udp::socket socket1(ios);
-    ip::udp::socket socket2(ios, ip::udp::v4());
-    ip::udp::socket socket3(ios, ip::udp::v6());
-    ip::udp::socket socket4(ios, ip::udp::endpoint(ip::udp::v4(), 0));
-    ip::udp::socket socket5(ios, ip::udp::endpoint(ip::udp::v6(), 0));
+    ip::icmp::socket socket1(ios);
+    ip::icmp::socket socket2(ios, ip::icmp::v4());
+    ip::icmp::socket socket3(ios, ip::icmp::v6());
+    ip::icmp::socket socket4(ios, ip::icmp::endpoint(ip::icmp::v4(), 0));
+    ip::icmp::socket socket5(ios, ip::icmp::endpoint(ip::icmp::v6(), 0));
     int native_socket1 = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    ip::udp::socket socket6(ios, ip::udp::v4(), native_socket1);
+    ip::icmp::socket socket6(ios, ip::icmp::v4(), native_socket1);
 
 #if defined(ASIO_HAS_MOVE)
-    ip::udp::socket socket7(std::move(socket6));
+    ip::icmp::socket socket7(std::move(socket6));
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_datagram_socket operators.
 
 #if defined(ASIO_HAS_MOVE)
-    socket1 = ip::udp::socket(ios);
+    socket1 = ip::icmp::socket(ios);
     socket1 = std::move(socket2);
 #endif // defined(ASIO_HAS_MOVE)
 
@@ -96,23 +96,23 @@ void test()
 
     // basic_socket functions.
 
-    ip::udp::socket::lowest_layer_type& lowest_layer = socket1.lowest_layer();
+    ip::icmp::socket::lowest_layer_type& lowest_layer = socket1.lowest_layer();
     (void)lowest_layer;
 
-    const ip::udp::socket& socket8 = socket1;
-    const ip::udp::socket::lowest_layer_type& lowest_layer2
+    const ip::icmp::socket& socket8 = socket1;
+    const ip::icmp::socket::lowest_layer_type& lowest_layer2
       = socket8.lowest_layer();
     (void)lowest_layer2;
 
-    socket1.open(ip::udp::v4());
-    socket1.open(ip::udp::v6());
-    socket1.open(ip::udp::v4(), ec);
-    socket1.open(ip::udp::v6(), ec);
+    socket1.open(ip::icmp::v4());
+    socket1.open(ip::icmp::v6());
+    socket1.open(ip::icmp::v4(), ec);
+    socket1.open(ip::icmp::v6(), ec);
 
     int native_socket2 = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    socket1.assign(ip::udp::v4(), native_socket2);
+    socket1.assign(ip::icmp::v4(), native_socket2);
     int native_socket3 = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    socket1.assign(ip::udp::v4(), native_socket3, ec);
+    socket1.assign(ip::icmp::v4(), native_socket3, ec);
 
     bool is_open = socket1.is_open();
     (void)is_open;
@@ -120,10 +120,10 @@ void test()
     socket1.close();
     socket1.close(ec);
 
-    ip::udp::socket::native_type native_socket4 = socket1.native();
+    ip::icmp::socket::native_type native_socket4 = socket1.native();
     (void)native_socket4;
 
-    ip::udp::socket::native_handle_type native_socket5
+    ip::icmp::socket::native_handle_type native_socket5
       = socket1.native_handle();
     (void)native_socket5;
 
@@ -140,23 +140,23 @@ void test()
     std::size_t available2 = socket1.available(ec);
     (void)available2;
 
-    socket1.bind(ip::udp::endpoint(ip::udp::v4(), 0));
-    socket1.bind(ip::udp::endpoint(ip::udp::v6(), 0));
-    socket1.bind(ip::udp::endpoint(ip::udp::v4(), 0), ec);
-    socket1.bind(ip::udp::endpoint(ip::udp::v6(), 0), ec);
+    socket1.bind(ip::icmp::endpoint(ip::icmp::v4(), 0));
+    socket1.bind(ip::icmp::endpoint(ip::icmp::v6(), 0));
+    socket1.bind(ip::icmp::endpoint(ip::icmp::v4(), 0), ec);
+    socket1.bind(ip::icmp::endpoint(ip::icmp::v6(), 0), ec);
 
-    socket1.connect(ip::udp::endpoint(ip::udp::v4(), 0));
-    socket1.connect(ip::udp::endpoint(ip::udp::v6(), 0));
-    socket1.connect(ip::udp::endpoint(ip::udp::v4(), 0), ec);
-    socket1.connect(ip::udp::endpoint(ip::udp::v6(), 0), ec);
+    socket1.connect(ip::icmp::endpoint(ip::icmp::v4(), 0));
+    socket1.connect(ip::icmp::endpoint(ip::icmp::v6(), 0));
+    socket1.connect(ip::icmp::endpoint(ip::icmp::v4(), 0), ec);
+    socket1.connect(ip::icmp::endpoint(ip::icmp::v6(), 0), ec);
 
-    socket1.async_connect(ip::udp::endpoint(ip::udp::v4(), 0),
+    socket1.async_connect(ip::icmp::endpoint(ip::icmp::v4(), 0),
         &connect_handler);
-    socket1.async_connect(ip::udp::endpoint(ip::udp::v6(), 0),
+    socket1.async_connect(ip::icmp::endpoint(ip::icmp::v6(), 0),
         &connect_handler);
-    int i1 = socket1.async_connect(ip::udp::endpoint(ip::udp::v4(), 0), lazy);
+    int i1 = socket1.async_connect(ip::icmp::endpoint(ip::icmp::v4(), 0), lazy);
     (void)i1;
-    int i2 = socket1.async_connect(ip::udp::endpoint(ip::udp::v6(), 0), lazy);
+    int i2 = socket1.async_connect(ip::icmp::endpoint(ip::icmp::v6(), 0), lazy);
     (void)i2;
 
     socket1.set_option(settable_socket_option1);
@@ -186,11 +186,11 @@ void test()
     socket1.native_non_blocking(true);
     socket1.native_non_blocking(false, ec);
 
-    ip::udp::endpoint endpoint1 = socket1.local_endpoint();
-    ip::udp::endpoint endpoint2 = socket1.local_endpoint(ec);
+    ip::icmp::endpoint endpoint1 = socket1.local_endpoint();
+    ip::icmp::endpoint endpoint2 = socket1.local_endpoint(ec);
 
-    ip::udp::endpoint endpoint3 = socket1.remote_endpoint();
-    ip::udp::endpoint endpoint4 = socket1.remote_endpoint(ec);
+    ip::icmp::endpoint endpoint3 = socket1.remote_endpoint();
+    ip::icmp::endpoint endpoint4 = socket1.remote_endpoint(ec);
 
     socket1.shutdown(socket_base::shutdown_both);
     socket1.shutdown(socket_base::shutdown_both, ec);
@@ -227,101 +227,101 @@ void test()
     (void)i8;
 
     socket1.send_to(buffer(mutable_char_buffer),
-        ip::udp::endpoint(ip::udp::v4(), 0));
+        ip::icmp::endpoint(ip::icmp::v4(), 0));
     socket1.send_to(buffer(mutable_char_buffer),
-        ip::udp::endpoint(ip::udp::v6(), 0));
+        ip::icmp::endpoint(ip::icmp::v6(), 0));
     socket1.send_to(buffer(const_char_buffer),
-        ip::udp::endpoint(ip::udp::v4(), 0));
+        ip::icmp::endpoint(ip::icmp::v4(), 0));
     socket1.send_to(buffer(const_char_buffer),
-        ip::udp::endpoint(ip::udp::v6(), 0));
+        ip::icmp::endpoint(ip::icmp::v6(), 0));
     socket1.send_to(null_buffers(),
-        ip::udp::endpoint(ip::udp::v4(), 0));
+        ip::icmp::endpoint(ip::icmp::v4(), 0));
     socket1.send_to(null_buffers(),
-        ip::udp::endpoint(ip::udp::v6(), 0));
+        ip::icmp::endpoint(ip::icmp::v6(), 0));
     socket1.send_to(buffer(mutable_char_buffer),
-        ip::udp::endpoint(ip::udp::v4(), 0), in_flags);
+        ip::icmp::endpoint(ip::icmp::v4(), 0), in_flags);
     socket1.send_to(buffer(mutable_char_buffer),
-        ip::udp::endpoint(ip::udp::v6(), 0), in_flags);
+        ip::icmp::endpoint(ip::icmp::v6(), 0), in_flags);
     socket1.send_to(buffer(const_char_buffer),
-        ip::udp::endpoint(ip::udp::v4(), 0), in_flags);
+        ip::icmp::endpoint(ip::icmp::v4(), 0), in_flags);
     socket1.send_to(buffer(const_char_buffer),
-        ip::udp::endpoint(ip::udp::v6(), 0), in_flags);
+        ip::icmp::endpoint(ip::icmp::v6(), 0), in_flags);
     socket1.send_to(null_buffers(),
-        ip::udp::endpoint(ip::udp::v4(), 0), in_flags);
+        ip::icmp::endpoint(ip::icmp::v4(), 0), in_flags);
     socket1.send_to(null_buffers(),
-        ip::udp::endpoint(ip::udp::v6(), 0), in_flags);
+        ip::icmp::endpoint(ip::icmp::v6(), 0), in_flags);
     socket1.send_to(buffer(mutable_char_buffer),
-        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, ec);
+        ip::icmp::endpoint(ip::icmp::v4(), 0), in_flags, ec);
     socket1.send_to(buffer(mutable_char_buffer),
-        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, ec);
+        ip::icmp::endpoint(ip::icmp::v6(), 0), in_flags, ec);
     socket1.send_to(buffer(const_char_buffer),
-        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, ec);
+        ip::icmp::endpoint(ip::icmp::v4(), 0), in_flags, ec);
     socket1.send_to(buffer(const_char_buffer),
-        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, ec);
+        ip::icmp::endpoint(ip::icmp::v6(), 0), in_flags, ec);
     socket1.send_to(null_buffers(),
-        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, ec);
+        ip::icmp::endpoint(ip::icmp::v4(), 0), in_flags, ec);
     socket1.send_to(null_buffers(),
-        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, ec);
+        ip::icmp::endpoint(ip::icmp::v6(), 0), in_flags, ec);
 
     socket1.async_send_to(buffer(mutable_char_buffer),
-        ip::udp::endpoint(ip::udp::v4(), 0), &send_handler);
+        ip::icmp::endpoint(ip::icmp::v4(), 0), &send_handler);
     socket1.async_send_to(buffer(mutable_char_buffer),
-        ip::udp::endpoint(ip::udp::v6(), 0), &send_handler);
+        ip::icmp::endpoint(ip::icmp::v6(), 0), &send_handler);
     socket1.async_send_to(buffer(const_char_buffer),
-        ip::udp::endpoint(ip::udp::v4(), 0), &send_handler);
+        ip::icmp::endpoint(ip::icmp::v4(), 0), &send_handler);
     socket1.async_send_to(buffer(const_char_buffer),
-        ip::udp::endpoint(ip::udp::v6(), 0), &send_handler);
+        ip::icmp::endpoint(ip::icmp::v6(), 0), &send_handler);
     socket1.async_send_to(null_buffers(),
-        ip::udp::endpoint(ip::udp::v4(), 0), &send_handler);
+        ip::icmp::endpoint(ip::icmp::v4(), 0), &send_handler);
     socket1.async_send_to(null_buffers(),
-        ip::udp::endpoint(ip::udp::v6(), 0), &send_handler);
+        ip::icmp::endpoint(ip::icmp::v6(), 0), &send_handler);
     socket1.async_send_to(buffer(mutable_char_buffer),
-        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, &send_handler);
+        ip::icmp::endpoint(ip::icmp::v4(), 0), in_flags, &send_handler);
     socket1.async_send_to(buffer(mutable_char_buffer),
-        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, &send_handler);
+        ip::icmp::endpoint(ip::icmp::v6(), 0), in_flags, &send_handler);
     socket1.async_send_to(buffer(const_char_buffer),
-        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, &send_handler);
+        ip::icmp::endpoint(ip::icmp::v4(), 0), in_flags, &send_handler);
     socket1.async_send_to(buffer(const_char_buffer),
-        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, &send_handler);
+        ip::icmp::endpoint(ip::icmp::v6(), 0), in_flags, &send_handler);
     socket1.async_send_to(null_buffers(),
-        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, &send_handler);
+        ip::icmp::endpoint(ip::icmp::v4(), 0), in_flags, &send_handler);
     socket1.async_send_to(null_buffers(),
-        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, &send_handler);
+        ip::icmp::endpoint(ip::icmp::v6(), 0), in_flags, &send_handler);
     int i9 = socket1.async_send_to(buffer(mutable_char_buffer),
-        ip::udp::endpoint(ip::udp::v4(), 0), lazy);
+        ip::icmp::endpoint(ip::icmp::v4(), 0), lazy);
     (void)i9;
     int i10 = socket1.async_send_to(buffer(mutable_char_buffer),
-        ip::udp::endpoint(ip::udp::v6(), 0), lazy);
+        ip::icmp::endpoint(ip::icmp::v6(), 0), lazy);
     (void)i10;
     int i11 = socket1.async_send_to(buffer(const_char_buffer),
-        ip::udp::endpoint(ip::udp::v4(), 0), lazy);
+        ip::icmp::endpoint(ip::icmp::v4(), 0), lazy);
     (void)i11;
     int i12 = socket1.async_send_to(buffer(const_char_buffer),
-        ip::udp::endpoint(ip::udp::v6(), 0), lazy);
+        ip::icmp::endpoint(ip::icmp::v6(), 0), lazy);
     (void)i12;
     int i13 = socket1.async_send_to(null_buffers(),
-        ip::udp::endpoint(ip::udp::v4(), 0), lazy);
+        ip::icmp::endpoint(ip::icmp::v4(), 0), lazy);
     (void)i13;
     int i14 = socket1.async_send_to(null_buffers(),
-        ip::udp::endpoint(ip::udp::v6(), 0), lazy);
+        ip::icmp::endpoint(ip::icmp::v6(), 0), lazy);
     (void)i14;
     int i15 = socket1.async_send_to(buffer(mutable_char_buffer),
-        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, lazy);
+        ip::icmp::endpoint(ip::icmp::v4(), 0), in_flags, lazy);
     (void)i15;
     int i16 = socket1.async_send_to(buffer(mutable_char_buffer),
-        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, lazy);
+        ip::icmp::endpoint(ip::icmp::v6(), 0), in_flags, lazy);
     (void)i16;
     int i17 = socket1.async_send_to(buffer(const_char_buffer),
-        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, lazy);
+        ip::icmp::endpoint(ip::icmp::v4(), 0), in_flags, lazy);
     (void)i17;
     int i18 = socket1.async_send_to(buffer(const_char_buffer),
-        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, lazy);
+        ip::icmp::endpoint(ip::icmp::v6(), 0), in_flags, lazy);
     (void)i18;
     int i19 = socket1.async_send_to(null_buffers(),
-        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, lazy);
+        ip::icmp::endpoint(ip::icmp::v4(), 0), in_flags, lazy);
     (void)i19;
     int i20 = socket1.async_send_to(null_buffers(),
-        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, lazy);
+        ip::icmp::endpoint(ip::icmp::v6(), 0), in_flags, lazy);
     (void)i20;
 
     socket1.receive(buffer(mutable_char_buffer));
@@ -346,7 +346,7 @@ void test()
     int i24 = socket1.async_receive(null_buffers(), in_flags, lazy);
     (void)i24;
 
-    ip::udp::endpoint endpoint;
+    ip::icmp::endpoint endpoint;
     socket1.receive_from(buffer(mutable_char_buffer), endpoint);
     socket1.receive_from(null_buffers(), endpoint);
     socket1.receive_from(buffer(mutable_char_buffer), endpoint, in_flags);
@@ -380,86 +380,19 @@ void test()
   }
 }
 
-} // namespace ip_udp_socket_compile
+} // namespace ip_icmp_socket_compile
 
 //------------------------------------------------------------------------------
 
-// ip_udp_socket_runtime test
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~
-// The following test checks the runtime operation of the ip::udp::socket class.
-
-namespace ip_udp_socket_runtime {
-
-void handle_send(size_t expected_bytes_sent,
-    const asio::error_code& err, size_t bytes_sent)
-{
-  BOOST_CHECK(!err);
-  BOOST_CHECK(expected_bytes_sent == bytes_sent);
-}
-
-void handle_recv(size_t expected_bytes_recvd,
-    const asio::error_code& err, size_t bytes_recvd)
-{
-  BOOST_CHECK(!err);
-  BOOST_CHECK(expected_bytes_recvd == bytes_recvd);
-}
-
-void test()
-{
-  using namespace std; // For memcmp and memset.
-  using namespace asio;
-  namespace ip = asio::ip;
-
-  io_service ios;
-
-  ip::udp::socket s1(ios, ip::udp::endpoint(ip::udp::v4(), 0));
-  ip::udp::endpoint target_endpoint = s1.local_endpoint();
-  target_endpoint.address(ip::address_v4::loopback());
-
-  ip::udp::socket s2(ios);
-  s2.open(ip::udp::v4());
-  s2.bind(ip::udp::endpoint(ip::udp::v4(), 0));
-  char send_msg[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-  s2.send_to(buffer(send_msg, sizeof(send_msg)), target_endpoint);
-
-  char recv_msg[sizeof(send_msg)];
-  ip::udp::endpoint sender_endpoint;
-  size_t bytes_recvd = s1.receive_from(buffer(recv_msg, sizeof(recv_msg)),
-      sender_endpoint);
-
-  BOOST_CHECK(bytes_recvd == sizeof(send_msg));
-  BOOST_CHECK(memcmp(send_msg, recv_msg, sizeof(send_msg)) == 0);
-
-  memset(recv_msg, 0, sizeof(recv_msg));
-
-  target_endpoint = sender_endpoint;
-  s1.async_send_to(buffer(send_msg, sizeof(send_msg)), target_endpoint,
-      boost::bind(handle_send, sizeof(send_msg),
-        asio::placeholders::error,
-        asio::placeholders::bytes_transferred));
-  s2.async_receive_from(buffer(recv_msg, sizeof(recv_msg)), sender_endpoint,
-      boost::bind(handle_recv, sizeof(recv_msg),
-        asio::placeholders::error,
-        asio::placeholders::bytes_transferred));
-
-  ios.run();
-
-  BOOST_CHECK(memcmp(send_msg, recv_msg, sizeof(send_msg)) == 0);
-}
-
-} // namespace ip_udp_socket_runtime
-
-//------------------------------------------------------------------------------
-
-// ip_udp_resolver_compile test
+// ip_icmp_resolver_compile test
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // The following test checks that all public member functions on the class
-// ip::udp::resolver compile and link correctly. Runtime failures are ignored.
+// ip::icmp::resolver compile and link correctly. Runtime failures are ignored.
 
-namespace ip_udp_resolver_compile {
+namespace ip_icmp_resolver_compile {
 
 void resolve_handler(const asio::error_code&,
-    asio::ip::udp::resolver::iterator)
+    asio::ip::icmp::resolver::iterator)
 {
 }
 
@@ -473,12 +406,12 @@ void test()
     io_service ios;
     archetypes::lazy_handler lazy;
     asio::error_code ec;
-    ip::udp::resolver::query q(ip::udp::v4(), "localhost", "0");
-    ip::udp::endpoint e(ip::address_v4::loopback(), 0);
+    ip::icmp::resolver::query q(ip::icmp::v4(), "localhost", "0");
+    ip::icmp::endpoint e(ip::address_v4::loopback(), 0);
 
     // basic_resolver constructors.
 
-    ip::udp::resolver resolver(ios);
+    ip::icmp::resolver resolver(ios);
 
     // basic_io_object functions.
 
@@ -489,16 +422,16 @@ void test()
 
     resolver.cancel();
 
-    ip::udp::resolver::iterator iter1 = resolver.resolve(q);
+    ip::icmp::resolver::iterator iter1 = resolver.resolve(q);
     (void)iter1;
 
-    ip::udp::resolver::iterator iter2 = resolver.resolve(q, ec);
+    ip::icmp::resolver::iterator iter2 = resolver.resolve(q, ec);
     (void)iter2;
 
-    ip::udp::resolver::iterator iter3 = resolver.resolve(e);
+    ip::icmp::resolver::iterator iter3 = resolver.resolve(e);
     (void)iter3;
 
-    ip::udp::resolver::iterator iter4 = resolver.resolve(e, ec);
+    ip::icmp::resolver::iterator iter4 = resolver.resolve(e, ec);
     (void)iter4;
 
     resolver.async_resolve(q, &resolve_handler);
@@ -514,15 +447,14 @@ void test()
   }
 }
 
-} // namespace ip_udp_resolver_compile
+} // namespace ip_icmp_resolver_compile
 
 //------------------------------------------------------------------------------
 
 test_suite* init_unit_test_suite(int, char*[])
 {
-  test_suite* test = BOOST_TEST_SUITE("ip/udp");
-  test->add(BOOST_TEST_CASE(&ip_udp_socket_compile::test));
-  test->add(BOOST_TEST_CASE(&ip_udp_socket_runtime::test));
-  test->add(BOOST_TEST_CASE(&ip_udp_resolver_compile::test));
+  test_suite* test = BOOST_TEST_SUITE("ip/icmp");
+  test->add(BOOST_TEST_CASE(&ip_icmp_socket_compile::test));
+  test->add(BOOST_TEST_CASE(&ip_icmp_resolver_compile::test));
   return test;
 }

@@ -17,6 +17,7 @@
 #include "asio/posix/stream_descriptor.hpp"
 
 #include "asio/io_service.hpp"
+#include "../archetypes/async_result.hpp"
 #include "../unit_test.hpp"
 
 //------------------------------------------------------------------------------
@@ -49,6 +50,7 @@ void test()
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     posix::descriptor_base::bytes_readable io_control_command;
+    archetypes::lazy_handler lazy;
     asio::error_code ec;
 
     // basic_stream_descriptor constructors.
@@ -136,6 +138,12 @@ void test()
         write_some_handler);
     descriptor1.async_write_some(null_buffers(),
         write_some_handler);
+    int i1 = descriptor1.async_write_some(buffer(mutable_char_buffer), lazy);
+    (void)i1;
+    int i2 = descriptor1.async_write_some(buffer(const_char_buffer), lazy);
+    (void)i2;
+    int i3 = descriptor1.async_write_some(null_buffers(), lazy);
+    (void)i3;
 
     descriptor1.read_some(buffer(mutable_char_buffer));
     descriptor1.read_some(buffer(mutable_char_buffer), ec);
@@ -143,6 +151,10 @@ void test()
 
     descriptor1.async_read_some(buffer(mutable_char_buffer), read_some_handler);
     descriptor1.async_read_some(null_buffers(), read_some_handler);
+    int i4 = descriptor1.async_read_some(buffer(mutable_char_buffer), lazy);
+    (void)i4;
+    int i5 = descriptor1.async_read_some(null_buffers(), lazy);
+    (void)i5;
   }
   catch (std::exception&)
   {

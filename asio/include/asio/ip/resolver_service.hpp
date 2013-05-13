@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/async_result.hpp"
 #include "asio/error_code.hpp"
 #include "asio/detail/resolver_service.hpp"
 #include "asio/io_service.hpp"
@@ -103,11 +104,18 @@ public:
 
   /// Asynchronously resolve a query to a list of entries.
   template <typename ResolveHandler>
-  void async_resolve(implementation_type& impl, const query_type& query,
+  ASIO_INITFN_RESULT_TYPE(ResolveHandler,
+      void (asio::error_code, iterator_type))
+  async_resolve(implementation_type& impl, const query_type& query,
       ASIO_MOVE_ARG(ResolveHandler) handler)
   {
-    service_impl_.async_resolve(impl, query,
+    asio::detail::async_result_init<
+      ResolveHandler, void (asio::error_code, iterator_type)> init(
         ASIO_MOVE_CAST(ResolveHandler)(handler));
+
+    service_impl_.async_resolve(impl, query, init.handler);
+
+    return init.result.get();
   }
 
   /// Resolve an endpoint to a list of entries.
@@ -119,11 +127,18 @@ public:
 
   /// Asynchronously resolve an endpoint to a list of entries.
   template <typename ResolveHandler>
-  void async_resolve(implementation_type& impl, const endpoint_type& endpoint,
+  ASIO_INITFN_RESULT_TYPE(ResolveHandler,
+      void (asio::error_code, iterator_type))
+  async_resolve(implementation_type& impl, const endpoint_type& endpoint,
       ASIO_MOVE_ARG(ResolveHandler) handler)
   {
-    return service_impl_.async_resolve(impl, endpoint,
+    asio::detail::async_result_init<
+      ResolveHandler, void (asio::error_code, iterator_type)> init(
         ASIO_MOVE_CAST(ResolveHandler)(handler));
+
+    service_impl_.async_resolve(impl, endpoint, init.handler);
+
+    return init.result.get();
   }
 
 private:

@@ -536,7 +536,9 @@ namespace detail
 
 template <typename AsyncRandomAccessReadDevice, typename MutableBufferSequence,
     typename CompletionCondition, typename ReadHandler>
-inline void async_read_at(AsyncRandomAccessReadDevice& d,
+inline ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (asio::error_code, std::size_t))
+async_read_at(AsyncRandomAccessReadDevice& d,
     boost::uint64_t offset, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition,
     ASIO_MOVE_ARG(ReadHandler) handler)
@@ -545,15 +547,24 @@ inline void async_read_at(AsyncRandomAccessReadDevice& d,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::make_read_at_op(
-    d, offset, buffers, completion_condition,
-      ASIO_MOVE_CAST(ReadHandler)(handler))(
-        asio::error_code(), 0, 1);
+  detail::async_result_init<
+    ReadHandler, void (asio::error_code, std::size_t)> init(
+      ASIO_MOVE_CAST(ReadHandler)(handler));
+
+  detail::read_at_op<AsyncRandomAccessReadDevice, MutableBufferSequence,
+    CompletionCondition, ASIO_HANDLER_TYPE(ReadHandler,
+      void (asio::error_code, std::size_t))>(
+        d, offset, buffers, completion_condition, init.handler)(
+          asio::error_code(), 0, 1);
+
+  return init.result.get();
 }
 
 template <typename AsyncRandomAccessReadDevice, typename MutableBufferSequence,
     typename ReadHandler>
-inline void async_read_at(AsyncRandomAccessReadDevice& d,
+inline ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (asio::error_code, std::size_t))
+async_read_at(AsyncRandomAccessReadDevice& d,
     boost::uint64_t offset, const MutableBufferSequence& buffers,
     ASIO_MOVE_ARG(ReadHandler) handler)
 {
@@ -561,10 +572,17 @@ inline void async_read_at(AsyncRandomAccessReadDevice& d,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::make_read_at_op(
-    d, offset, buffers, transfer_all(),
-      ASIO_MOVE_CAST(ReadHandler)(handler))(
-        asio::error_code(), 0, 1);
+  detail::async_result_init<
+    ReadHandler, void (asio::error_code, std::size_t)> init(
+      ASIO_MOVE_CAST(ReadHandler)(handler));
+
+  detail::read_at_op<AsyncRandomAccessReadDevice, MutableBufferSequence,
+    detail::transfer_all_t, ASIO_HANDLER_TYPE(ReadHandler,
+      void (asio::error_code, std::size_t))>(
+        d, offset, buffers, transfer_all(), init.handler)(
+          asio::error_code(), 0, 1);
+
+  return init.result.get();
 }
 
 #if !defined(BOOST_NO_IOSTREAM)
@@ -686,24 +704,13 @@ namespace detail
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
-
-  template <typename AsyncRandomAccessReadDevice, typename Allocator,
-      typename CompletionCondition, typename ReadHandler>
-  inline read_at_streambuf_op<AsyncRandomAccessReadDevice,
-      Allocator, CompletionCondition, ReadHandler>
-  make_read_at_streambuf_op(AsyncRandomAccessReadDevice& d,
-      boost::uint64_t offset, asio::basic_streambuf<Allocator>& b,
-      CompletionCondition completion_condition, ReadHandler handler)
-  {
-    return read_at_streambuf_op<AsyncRandomAccessReadDevice,
-      Allocator, CompletionCondition, ReadHandler>(
-        d, offset, b, completion_condition, handler);
-  }
 } // namespace detail
 
 template <typename AsyncRandomAccessReadDevice, typename Allocator,
     typename CompletionCondition, typename ReadHandler>
-inline void async_read_at(AsyncRandomAccessReadDevice& d,
+inline ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (asio::error_code, std::size_t))
+async_read_at(AsyncRandomAccessReadDevice& d,
     boost::uint64_t offset, asio::basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition,
     ASIO_MOVE_ARG(ReadHandler) handler)
@@ -712,15 +719,24 @@ inline void async_read_at(AsyncRandomAccessReadDevice& d,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::make_read_at_streambuf_op(
-    d, offset, b, completion_condition,
-      ASIO_MOVE_CAST(ReadHandler)(handler))(
-        asio::error_code(), 0, 1);
+  detail::async_result_init<
+    ReadHandler, void (asio::error_code, std::size_t)> init(
+      ASIO_MOVE_CAST(ReadHandler)(handler));
+
+  detail::read_at_streambuf_op<AsyncRandomAccessReadDevice, Allocator,
+    CompletionCondition, ASIO_HANDLER_TYPE(ReadHandler,
+      void (asio::error_code, std::size_t))>(
+        d, offset, b, completion_condition, init.handler)(
+          asio::error_code(), 0, 1);
+
+  return init.result.get();
 }
 
 template <typename AsyncRandomAccessReadDevice, typename Allocator,
     typename ReadHandler>
-inline void async_read_at(AsyncRandomAccessReadDevice& d,
+inline ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (asio::error_code, std::size_t))
+async_read_at(AsyncRandomAccessReadDevice& d,
     boost::uint64_t offset, asio::basic_streambuf<Allocator>& b,
     ASIO_MOVE_ARG(ReadHandler) handler)
 {
@@ -728,10 +744,17 @@ inline void async_read_at(AsyncRandomAccessReadDevice& d,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::make_read_at_streambuf_op(
-    d, offset, b, transfer_all(),
-      ASIO_MOVE_CAST(ReadHandler)(handler))(
-        asio::error_code(), 0, 1);
+  detail::async_result_init<
+    ReadHandler, void (asio::error_code, std::size_t)> init(
+      ASIO_MOVE_CAST(ReadHandler)(handler));
+
+  detail::read_at_streambuf_op<AsyncRandomAccessReadDevice, Allocator,
+    detail::transfer_all_t, ASIO_HANDLER_TYPE(ReadHandler,
+      void (asio::error_code, std::size_t))>(
+        d, offset, b, transfer_all(), init.handler)(
+          asio::error_code(), 0, 1);
+
+  return init.result.get();
 }
 
 #endif // !defined(BOOST_NO_IOSTREAM)

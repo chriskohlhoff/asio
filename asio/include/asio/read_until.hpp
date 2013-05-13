@@ -25,6 +25,7 @@
 #include <boost/utility/enable_if.hpp>
 #include <boost/detail/workaround.hpp>
 #include <string>
+#include "asio/async_result.hpp"
 #include "asio/basic_streambuf.hpp"
 #include "asio/detail/regex_fwd.hpp"
 #include "asio/error.hpp"
@@ -587,7 +588,9 @@ std::size_t read_until(SyncReadStream& s,
  * @c async_read_until operation.
  */
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
-void async_read_until(AsyncReadStream& s,
+ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (asio::error_code, std::size_t))
+async_read_until(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b,
     char delim, ASIO_MOVE_ARG(ReadHandler) handler);
 
@@ -670,7 +673,9 @@ void async_read_until(AsyncReadStream& s,
  * @c async_read_until operation.
  */
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
-void async_read_until(AsyncReadStream& s,
+ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (asio::error_code, std::size_t))
+async_read_until(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, const std::string& delim,
     ASIO_MOVE_ARG(ReadHandler) handler);
 
@@ -757,7 +762,9 @@ void async_read_until(AsyncReadStream& s,
  * @c async_read_until operation.
  */
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
-void async_read_until(AsyncReadStream& s,
+ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (asio::error_code, std::size_t))
+async_read_until(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, const boost::regex& expr,
     ASIO_MOVE_ARG(ReadHandler) handler);
 
@@ -886,7 +893,9 @@ void async_read_until(AsyncReadStream& s,
  */
 template <typename AsyncReadStream, typename Allocator,
     typename MatchCondition, typename ReadHandler>
-void async_read_until(AsyncReadStream& s,
+ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (asio::error_code, std::size_t))
+async_read_until(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b,
     MatchCondition match_condition, ASIO_MOVE_ARG(ReadHandler) handler,
     typename boost::enable_if<is_match_condition<MatchCondition> >::type* = 0);

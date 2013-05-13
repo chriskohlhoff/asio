@@ -16,6 +16,7 @@ basic_resolver_entry
 basic_resolver_iterator
 basic_resolver_query
 host_name
+icmp
 multicast
 resolver_query_base
 resolver_service

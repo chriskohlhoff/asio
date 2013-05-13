@@ -498,13 +498,15 @@ public:
    * asio::io_service::post().
    */
   template <typename WaitHandler>
-  void async_wait(ASIO_MOVE_ARG(WaitHandler) handler)
+  ASIO_INITFN_RESULT_TYPE(WaitHandler,
+      void (asio::error_code))
+  async_wait(ASIO_MOVE_ARG(WaitHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a WaitHandler.
     ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
 
-    this->service.async_wait(this->implementation,
+    return this->service.async_wait(this->implementation,
         ASIO_MOVE_CAST(WaitHandler)(handler));
   }
 };

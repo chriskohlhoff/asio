@@ -158,9 +158,12 @@ public:
    * asio::io_service::post().
    */
   template <typename WaitHandler>
-  void async_wait(WaitHandler handler)
+  ASIO_INITFN_RESULT_TYPE(WaitHandler,
+      void (asio::error_code))
+  async_wait(ASIO_MOVE_ARG(WaitHandler) handler)
   {
-    this->get_service().async_wait(this->get_implementation(), handler);
+    return this->get_service().async_wait(this->get_implementation(),
+        ASIO_MOVE_CAST(WaitHandler)(handler));
   }
 };
 

@@ -19,6 +19,7 @@
 #include <cstddef>
 #include <stdexcept>
 #include <typeinfo>
+#include "asio/async_result.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/service_registry_fwd.hpp"
 #include "asio/detail/wrapped_handler.hpp"
@@ -440,7 +441,8 @@ public:
    * throws an exception.
    */
   template <typename CompletionHandler>
-  void dispatch(ASIO_MOVE_ARG(CompletionHandler) handler);
+  ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
+  dispatch(ASIO_MOVE_ARG(CompletionHandler) handler);
 
   /// Request the io_service to invoke the given handler and return immediately.
   /**
@@ -465,7 +467,8 @@ public:
    * throws an exception.
    */
   template <typename CompletionHandler>
-  void post(ASIO_MOVE_ARG(CompletionHandler) handler);
+  ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
+  post(ASIO_MOVE_ARG(CompletionHandler) handler);
 
   /// Create a new handler that automatically dispatches the wrapped handler
   /// on the io_service.

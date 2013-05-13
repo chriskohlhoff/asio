@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/async_result.hpp"
 #include "asio/basic_socket.hpp"
 #include "asio/error.hpp"
 
@@ -515,7 +516,9 @@ Iterator connect(basic_socket<Protocol, SocketService>& s,
  */
 template <typename Protocol, typename SocketService,
     typename Iterator, typename ComposedConnectHandler>
-void async_connect(basic_socket<Protocol, SocketService>& s,
+ASIO_INITFN_RESULT_TYPE(ComposedConnectHandler,
+    void (asio::error_code, Iterator))
+async_connect(basic_socket<Protocol, SocketService>& s,
     Iterator begin, ASIO_MOVE_ARG(ComposedConnectHandler) handler);
 
 /// Asynchronously establishes a socket connection by trying each endpoint in a
@@ -584,7 +587,9 @@ void async_connect(basic_socket<Protocol, SocketService>& s,
  */
 template <typename Protocol, typename SocketService,
     typename Iterator, typename ComposedConnectHandler>
-void async_connect(basic_socket<Protocol, SocketService>& s,
+ASIO_INITFN_RESULT_TYPE(ComposedConnectHandler,
+    void (asio::error_code, Iterator))
+async_connect(basic_socket<Protocol, SocketService>& s,
     Iterator begin, Iterator end,
     ASIO_MOVE_ARG(ComposedConnectHandler) handler);
 
@@ -692,7 +697,9 @@ void async_connect(basic_socket<Protocol, SocketService>& s,
  */
 template <typename Protocol, typename SocketService, typename Iterator,
     typename ConnectCondition, typename ComposedConnectHandler>
-void async_connect(basic_socket<Protocol, SocketService>& s, Iterator begin,
+ASIO_INITFN_RESULT_TYPE(ComposedConnectHandler,
+    void (asio::error_code, Iterator))
+async_connect(basic_socket<Protocol, SocketService>& s, Iterator begin,
     ConnectCondition connect_condition,
     ASIO_MOVE_ARG(ComposedConnectHandler) handler);
 
@@ -799,7 +806,9 @@ void async_connect(basic_socket<Protocol, SocketService>& s, Iterator begin,
  */
 template <typename Protocol, typename SocketService, typename Iterator,
     typename ConnectCondition, typename ComposedConnectHandler>
-void async_connect(basic_socket<Protocol, SocketService>& s,
+ASIO_INITFN_RESULT_TYPE(ComposedConnectHandler,
+    void (asio::error_code, Iterator))
+async_connect(basic_socket<Protocol, SocketService>& s,
     Iterator begin, Iterator end, ConnectCondition connect_condition,
     ASIO_MOVE_ARG(ComposedConnectHandler) handler);
 

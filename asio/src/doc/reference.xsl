@@ -177,17 +177,27 @@
 
 <xsl:template name="cleanup-type">
   <xsl:param name="name"/>
+  <xsl:variable name="type">
+    <xsl:choose>
+      <xsl:when test="contains($name, 'ASIO_DECL ')">
+        <xsl:value-of select="substring-after($name, 'ASIO_DECL ')"/>
+      </xsl:when>
+      <xsl:when test="contains($name, 'ASIO_DECL')">
+        <xsl:value-of select="substring-after($name, 'ASIO_DECL')"/>
+      </xsl:when>
+      <xsl:when test="$name = 'virtual'"></xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$name"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
   <xsl:choose>
-    <xsl:when test="contains($name, 'ASIO_DECL ')">
-      <xsl:value-of select="substring-after($name, 'ASIO_DECL ')"/>
-    </xsl:when>
-    <xsl:when test="contains($name, 'ASIO_DECL')">
-      <xsl:value-of select="substring-after($name, 'ASIO_DECL')"/>
-    </xsl:when>
-    <xsl:when test="$name = 'virtual'"></xsl:when>
+    <xsl:when test="$type='void_or_deduced'">
+      <xsl:text>``[link asio.reference.asynchronous_operations.return_type ['void-or-deduced]]``</xsl:text>
+    </xsl:when>   
     <xsl:otherwise>
-      <xsl:value-of select="$name"/>
-    </xsl:otherwise>
+      <xsl:value-of select="$type"/>
+    </xsl:otherwise>   
   </xsl:choose>
 </xsl:template>
 

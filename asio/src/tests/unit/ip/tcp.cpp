@@ -28,6 +28,7 @@
 #include "asio/write.hpp"
 #include "../unit_test.hpp"
 #include "../archetypes/gettable_socket_option.hpp"
+#include "../archetypes/async_result.hpp"
 #include "../archetypes/io_control_command.hpp"
 #include "../archetypes/settable_socket_option.hpp"
 
@@ -171,6 +172,7 @@ void test()
     archetypes::gettable_socket_option<int> gettable_socket_option2;
     archetypes::gettable_socket_option<double> gettable_socket_option3;
     archetypes::io_control_command io_control_command;
+    archetypes::lazy_handler lazy;
     asio::error_code ec;
 
     // basic_stream_socket constructors.
@@ -259,6 +261,10 @@ void test()
         &connect_handler);
     socket1.async_connect(ip::tcp::endpoint(ip::tcp::v6(), 0),
         &connect_handler);
+    int i1 = socket1.async_connect(ip::tcp::endpoint(ip::tcp::v4(), 0), lazy);
+    (void)i1;
+    int i2 = socket1.async_connect(ip::tcp::endpoint(ip::tcp::v6(), 0), lazy);
+    (void)i2;
 
     socket1.set_option(settable_socket_option1);
     socket1.set_option(settable_socket_option1, ec);
@@ -324,6 +330,26 @@ void test()
     socket1.async_send(mutable_buffers, in_flags, &send_handler);
     socket1.async_send(const_buffers, in_flags, &send_handler);
     socket1.async_send(null_buffers(), in_flags, &send_handler);
+    int i3 = socket1.async_send(buffer(mutable_char_buffer), lazy);
+    (void)i3;
+    int i4 = socket1.async_send(buffer(const_char_buffer), lazy);
+    (void)i4;
+    int i5 = socket1.async_send(mutable_buffers, lazy);
+    (void)i5;
+    int i6 = socket1.async_send(const_buffers, lazy);
+    (void)i6;
+    int i7 = socket1.async_send(null_buffers(), lazy);
+    (void)i7;
+    int i8 = socket1.async_send(buffer(mutable_char_buffer), in_flags, lazy);
+    (void)i8;
+    int i9 = socket1.async_send(buffer(const_char_buffer), in_flags, lazy);
+    (void)i9;
+    int i10 = socket1.async_send(mutable_buffers, in_flags, lazy);
+    (void)i10;
+    int i11 = socket1.async_send(const_buffers, in_flags, lazy);
+    (void)i11;
+    int i12 = socket1.async_send(null_buffers(), in_flags, lazy);
+    (void)i12;
 
     socket1.receive(buffer(mutable_char_buffer));
     socket1.receive(mutable_buffers);
@@ -342,6 +368,19 @@ void test()
         &receive_handler);
     socket1.async_receive(mutable_buffers, in_flags, &receive_handler);
     socket1.async_receive(null_buffers(), in_flags, &receive_handler);
+    int i13 = socket1.async_receive(buffer(mutable_char_buffer), lazy);
+    (void)i13;
+    int i14 = socket1.async_receive(mutable_buffers, lazy);
+    (void)i14;
+    int i15 = socket1.async_receive(null_buffers(), lazy);
+    (void)i15;
+    int i16 = socket1.async_receive(buffer(mutable_char_buffer), in_flags,
+        lazy);
+    (void)i16;
+    int i17 = socket1.async_receive(mutable_buffers, in_flags, lazy);
+    (void)i17;
+    int i18 = socket1.async_receive(null_buffers(), in_flags, lazy);
+    (void)i18;
 
     socket1.write_some(buffer(mutable_char_buffer));
     socket1.write_some(buffer(const_char_buffer));
@@ -359,6 +398,16 @@ void test()
     socket1.async_write_some(mutable_buffers, &write_some_handler);
     socket1.async_write_some(const_buffers, &write_some_handler);
     socket1.async_write_some(null_buffers(), &write_some_handler);
+    int i19 = socket1.async_write_some(buffer(mutable_char_buffer), lazy);
+    (void)i19;
+    int i20 = socket1.async_write_some(buffer(const_char_buffer), lazy);
+    (void)i20;
+    int i21 = socket1.async_write_some(mutable_buffers, lazy);
+    (void)i21;
+    int i22 = socket1.async_write_some(const_buffers, lazy);
+    (void)i22;
+    int i23 = socket1.async_write_some(null_buffers(), lazy);
+    (void)i23;
 
     socket1.read_some(buffer(mutable_char_buffer));
     socket1.read_some(mutable_buffers);
@@ -370,6 +419,12 @@ void test()
     socket1.async_read_some(buffer(mutable_char_buffer), &read_some_handler);
     socket1.async_read_some(mutable_buffers, &read_some_handler);
     socket1.async_read_some(null_buffers(), &read_some_handler);
+    int i24 = socket1.async_read_some(buffer(mutable_char_buffer), lazy);
+    (void)i24;
+    int i25 = socket1.async_read_some(mutable_buffers, lazy);
+    (void)i25;
+    int i26 = socket1.async_read_some(null_buffers(), lazy);
+    (void)i26;
   }
   catch (std::exception&)
   {
@@ -576,6 +631,7 @@ void test()
     archetypes::gettable_socket_option<int> gettable_socket_option2;
     archetypes::gettable_socket_option<double> gettable_socket_option3;
     archetypes::io_control_command io_control_command;
+    archetypes::lazy_handler lazy;
     asio::error_code ec;
 
     // basic_socket_acceptor constructors.
@@ -674,6 +730,10 @@ void test()
 
     acceptor1.async_accept(peer_socket, &accept_handler);
     acceptor1.async_accept(peer_socket, peer_endpoint, &accept_handler);
+    int i1 = acceptor1.async_accept(peer_socket, lazy);
+    (void)i1;
+    int i2 = acceptor1.async_accept(peer_socket, peer_endpoint, lazy);
+    (void)i2;
   }
   catch (std::exception&)
   {
@@ -784,6 +844,7 @@ void test()
   try
   {
     io_service ios;
+    archetypes::lazy_handler lazy;
     asio::error_code ec;
     ip::tcp::resolver::query q(ip::tcp::v4(), "localhost", "0");
     ip::tcp::endpoint e(ip::address_v4::loopback(), 0);
@@ -814,8 +875,12 @@ void test()
     (void)iter4;
 
     resolver.async_resolve(q, &resolve_handler);
+    int i1 = resolver.async_resolve(q, lazy);
+    (void)i1;
 
     resolver.async_resolve(e, &resolve_handler);
+    int i2 = resolver.async_resolve(e, lazy);
+    (void)i2;
   }
   catch (std::exception&)
   {

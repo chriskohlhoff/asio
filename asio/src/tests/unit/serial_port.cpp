@@ -17,6 +17,7 @@
 // Test that header file is self-contained.
 #include "asio/serial_port.hpp"
 
+#include "archetypes/async_result.hpp"
 #include "asio/io_service.hpp"
 #include "unit_test.hpp"
 
@@ -48,6 +49,7 @@ void test()
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     serial_port::baud_rate serial_port_option;
+    archetypes::lazy_handler lazy;
     asio::error_code ec;
 
     // basic_serial_port constructors.
@@ -121,11 +123,17 @@ void test()
 
     port1.async_write_some(buffer(mutable_char_buffer), &write_some_handler);
     port1.async_write_some(buffer(const_char_buffer), &write_some_handler);
+    int i1 = port1.async_write_some(buffer(mutable_char_buffer), lazy);
+    (void)i1;
+    int i2 = port1.async_write_some(buffer(const_char_buffer), lazy);
+    (void)i2;
 
     port1.read_some(buffer(mutable_char_buffer));
     port1.read_some(buffer(mutable_char_buffer), ec);
 
     port1.async_read_some(buffer(mutable_char_buffer), &read_some_handler);
+    int i3 = port1.async_read_some(buffer(mutable_char_buffer), lazy);
+    (void)i3;
   }
   catch (std::exception&)
   {

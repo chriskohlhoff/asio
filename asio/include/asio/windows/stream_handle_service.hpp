@@ -21,6 +21,7 @@
   || defined(GENERATING_DOCUMENTATION)
 
 #include <cstddef>
+#include "asio/async_result.hpp"
 #include "asio/detail/win_iocp_handle_service.hpp"
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
@@ -155,12 +156,19 @@ public:
 
   /// Start an asynchronous write.
   template <typename ConstBufferSequence, typename WriteHandler>
-  void async_write_some(implementation_type& impl,
+  ASIO_INITFN_RESULT_TYPE(WriteHandler,
+      void (asio::error_code, std::size_t))
+  async_write_some(implementation_type& impl,
       const ConstBufferSequence& buffers,
       ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    service_impl_.async_write_some(impl, buffers,
+    asio::detail::async_result_init<
+      WriteHandler, void (asio::error_code, std::size_t)> init(
         ASIO_MOVE_CAST(WriteHandler)(handler));
+
+    service_impl_.async_write_some(impl, buffers, init.handler);
+
+    return init.result.get();
   }
 
   /// Read some data from the stream.
@@ -173,12 +181,19 @@ public:
 
   /// Start an asynchronous read.
   template <typename MutableBufferSequence, typename ReadHandler>
-  void async_read_some(implementation_type& impl,
+  ASIO_INITFN_RESULT_TYPE(ReadHandler,
+      void (asio::error_code, std::size_t))
+  async_read_some(implementation_type& impl,
       const MutableBufferSequence& buffers,
       ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    service_impl_.async_read_some(impl, buffers,
+    asio::detail::async_result_init<
+      ReadHandler, void (asio::error_code, std::size_t)> init(
         ASIO_MOVE_CAST(ReadHandler)(handler));
+
+    service_impl_.async_read_some(impl, buffers, init.handler);
+
+    return init.result.get();
   }
 
 private:

@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/async_result.hpp"
 #include "asio/basic_io_object.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
@@ -697,7 +698,9 @@ public:
    * @endcode
    */
   template <typename ConnectHandler>
-  void async_connect(const endpoint_type& peer_endpoint,
+  ASIO_INITFN_RESULT_TYPE(ConnectHandler,
+      void (asio::error_code))
+  async_connect(const endpoint_type& peer_endpoint,
       ASIO_MOVE_ARG(ConnectHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
@@ -710,14 +713,21 @@ public:
       const protocol_type protocol = peer_endpoint.protocol();
       if (this->get_service().open(this->get_implementation(), protocol, ec))
       {
+        detail::async_result_init<
+          ConnectHandler, void (asio::error_code)> init(
+            ASIO_MOVE_CAST(ConnectHandler)(handler));
+
         this->get_io_service().post(
             asio::detail::bind_handler(
-              ASIO_MOVE_CAST(ConnectHandler)(handler), ec));
-        return;
+              ASIO_MOVE_CAST(ASIO_HANDLER_TYPE(
+                ConnectHandler, void (asio::error_code)))(
+                  init.handler), ec));
+
+        return init.result.get();
       }
     }
 
-    this->get_service().async_connect(this->get_implementation(),
+    return this->get_service().async_connect(this->get_implementation(),
         peer_endpoint, ASIO_MOVE_CAST(ConnectHandler)(handler));
   }
 

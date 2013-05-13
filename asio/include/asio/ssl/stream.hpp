@@ -20,6 +20,7 @@
 #if defined(ASIO_ENABLE_OLD_SSL)
 # include "asio/ssl/old/stream.hpp"
 #else // defined(ASIO_ENABLE_OLD_SSL)
+# include "asio/async_result.hpp"
 # include "asio/detail/buffer_sequence_adapter.hpp"
 # include "asio/detail/handler_type_requirements.hpp"
 # include "asio/detail/noncopyable.hpp"
@@ -358,15 +359,23 @@ public:
    * ); @endcode
    */
   template <typename HandshakeHandler>
-  void async_handshake(handshake_type type,
+  ASIO_INITFN_RESULT_TYPE(HandshakeHandler,
+      void (asio::error_code))
+  async_handshake(handshake_type type,
       ASIO_MOVE_ARG(HandshakeHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a HandshakeHandler.
     ASIO_HANDSHAKE_HANDLER_CHECK(HandshakeHandler, handler) type_check;
 
-    detail::async_io(next_layer_, core_, detail::handshake_op(type),
+    asio::detail::async_result_init<
+      HandshakeHandler, void (asio::error_code)> init(
         ASIO_MOVE_CAST(HandshakeHandler)(handler));
+
+    detail::async_io(next_layer_, core_,
+        detail::handshake_op(type), init.handler);
+
+    return init.result.get();
   }
 
   /// Shut down SSL on the stream.
@@ -409,14 +418,21 @@ public:
    * ); @endcode
    */
   template <typename ShutdownHandler>
-  void async_shutdown(ASIO_MOVE_ARG(ShutdownHandler) handler)
+  ASIO_INITFN_RESULT_TYPE(ShutdownHandler,
+      void (asio::error_code))
+  async_shutdown(ASIO_MOVE_ARG(ShutdownHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ShutdownHandler.
     ASIO_SHUTDOWN_HANDLER_CHECK(ShutdownHandler, handler) type_check;
 
-    detail::async_io(next_layer_, core_, detail::shutdown_op(),
+    asio::detail::async_result_init<
+      ShutdownHandler, void (asio::error_code)> init(
         ASIO_MOVE_CAST(ShutdownHandler)(handler));
+
+    detail::async_io(next_layer_, core_, detail::shutdown_op(), init.handler);
+
+    return init.result.get();
   }
 
   /// Write some data to the stream.
@@ -491,16 +507,23 @@ public:
    * ensure that all data is written before the blocking operation completes.
    */
   template <typename ConstBufferSequence, typename WriteHandler>
-  void async_write_some(const ConstBufferSequence& buffers,
+  ASIO_INITFN_RESULT_TYPE(WriteHandler,
+      void (asio::error_code, std::size_t))
+  async_write_some(const ConstBufferSequence& buffers,
       ASIO_MOVE_ARG(WriteHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a WriteHandler.
     ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-    detail::async_io(next_layer_, core_,
-        detail::write_op<ConstBufferSequence>(buffers),
+    asio::detail::async_result_init<
+      WriteHandler, void (asio::error_code, std::size_t)> init(
         ASIO_MOVE_CAST(WriteHandler)(handler));
+
+    detail::async_io(next_layer_, core_,
+        detail::write_op<ConstBufferSequence>(buffers), init.handler);
+
+    return init.result.get();
   }
 
   /// Read some data from the stream.
@@ -576,16 +599,23 @@ public:
    * operation completes.
    */
   template <typename MutableBufferSequence, typename ReadHandler>
-  void async_read_some(const MutableBufferSequence& buffers,
+  ASIO_INITFN_RESULT_TYPE(ReadHandler,
+      void (asio::error_code, std::size_t))
+  async_read_some(const MutableBufferSequence& buffers,
       ASIO_MOVE_ARG(ReadHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ReadHandler.
     ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-    detail::async_io(next_layer_, core_,
-        detail::read_op<MutableBufferSequence>(buffers),
+    asio::detail::async_result_init<
+      ReadHandler, void (asio::error_code, std::size_t)> init(
         ASIO_MOVE_CAST(ReadHandler)(handler));
+
+    detail::async_io(next_layer_, core_,
+        detail::read_op<MutableBufferSequence>(buffers), init.handler);
+
+    return init.result.get();
   }
 
 private:

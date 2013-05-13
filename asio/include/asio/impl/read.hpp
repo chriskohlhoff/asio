@@ -484,22 +484,13 @@ namespace detail
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
-
-  template <typename AsyncReadStream, typename MutableBufferSequence,
-      typename CompletionCondition, typename ReadHandler>
-  inline read_op<AsyncReadStream, MutableBufferSequence,
-      CompletionCondition, ReadHandler>
-  make_read_op(AsyncReadStream& s, const MutableBufferSequence& buffers,
-      CompletionCondition completion_condition, ReadHandler handler)
-  {
-    return read_op<AsyncReadStream, MutableBufferSequence, CompletionCondition,
-      ReadHandler>(s, buffers, completion_condition, handler);
-  }
 } // namespace detail
 
 template <typename AsyncReadStream, typename MutableBufferSequence,
     typename CompletionCondition, typename ReadHandler>
-inline void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
+inline ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (asio::error_code, std::size_t))
+async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition,
     ASIO_MOVE_ARG(ReadHandler) handler)
 {
@@ -507,24 +498,41 @@ inline void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::make_read_op(
-    s, buffers, completion_condition,
-      ASIO_MOVE_CAST(ReadHandler)(handler))(
-        asio::error_code(), 0, 1);
+  detail::async_result_init<
+    ReadHandler, void (asio::error_code, std::size_t)> init(
+      ASIO_MOVE_CAST(ReadHandler)(handler));
+
+  detail::read_op<AsyncReadStream, MutableBufferSequence,
+    CompletionCondition, ASIO_HANDLER_TYPE(
+      ReadHandler, void (asio::error_code, std::size_t))>(
+        s, buffers, completion_condition, init.handler)(
+          asio::error_code(), 0, 1);
+
+  return init.result.get();
 }
 
 template <typename AsyncReadStream, typename MutableBufferSequence,
     typename ReadHandler>
-inline void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
+inline ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (asio::error_code, std::size_t))
+async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
     ASIO_MOVE_ARG(ReadHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::make_read_op(
-    s, buffers, transfer_all(), ASIO_MOVE_CAST(ReadHandler)(handler))(
-      asio::error_code(), 0, 1);
+  detail::async_result_init<
+    ReadHandler, void (asio::error_code, std::size_t)> init(
+      ASIO_MOVE_CAST(ReadHandler)(handler));
+
+  detail::read_op<AsyncReadStream, MutableBufferSequence,
+    detail::transfer_all_t, ASIO_HANDLER_TYPE(
+      ReadHandler, void (asio::error_code, std::size_t))>(
+        s, buffers, transfer_all(), init.handler)(
+          asio::error_code(), 0, 1);
+
+  return init.result.get();
 }
 
 #if !defined(BOOST_NO_IOSTREAM)
@@ -641,23 +649,13 @@ namespace detail
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
-
-  template <typename AsyncReadStream, typename Allocator,
-      typename CompletionCondition, typename ReadHandler>
-  inline read_streambuf_op<AsyncReadStream, Allocator,
-      CompletionCondition, ReadHandler>
-  make_read_streambuf_op(
-      AsyncReadStream& s, asio::basic_streambuf<Allocator>& b,
-      CompletionCondition completion_condition, ReadHandler handler)
-  {
-    return read_streambuf_op<AsyncReadStream, Allocator, CompletionCondition,
-      ReadHandler>(s, b, completion_condition, handler);
-  }
 } // namespace detail
 
 template <typename AsyncReadStream, typename Allocator,
     typename CompletionCondition, typename ReadHandler>
-inline void async_read(AsyncReadStream& s,
+inline ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (asio::error_code, std::size_t))
+async_read(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition,
     ASIO_MOVE_ARG(ReadHandler) handler)
@@ -666,13 +664,23 @@ inline void async_read(AsyncReadStream& s,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::make_read_streambuf_op(
-    s, b, completion_condition, ASIO_MOVE_CAST(ReadHandler)(handler))(
-      asio::error_code(), 0, 1);
+  detail::async_result_init<
+    ReadHandler, void (asio::error_code, std::size_t)> init(
+      ASIO_MOVE_CAST(ReadHandler)(handler));
+
+  detail::read_streambuf_op<AsyncReadStream, Allocator,
+    CompletionCondition, ASIO_HANDLER_TYPE(
+      ReadHandler, void (asio::error_code, std::size_t))>(
+        s, b, completion_condition, init.handler)(
+          asio::error_code(), 0, 1);
+
+  return init.result.get();
 }
 
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
-inline void async_read(AsyncReadStream& s,
+inline ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (asio::error_code, std::size_t))
+async_read(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b,
     ASIO_MOVE_ARG(ReadHandler) handler)
 {
@@ -680,9 +688,17 @@ inline void async_read(AsyncReadStream& s,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::make_read_streambuf_op(
-    s, b, transfer_all(), ASIO_MOVE_CAST(ReadHandler)(handler))(
-      asio::error_code(), 0, 1);
+  detail::async_result_init<
+    ReadHandler, void (asio::error_code, std::size_t)> init(
+      ASIO_MOVE_CAST(ReadHandler)(handler));
+
+  detail::read_streambuf_op<AsyncReadStream, Allocator,
+    detail::transfer_all_t, ASIO_HANDLER_TYPE(
+      ReadHandler, void (asio::error_code, std::size_t))>(
+        s, b, transfer_all(), init.handler)(
+          asio::error_code(), 0, 1);
+
+  return init.result.get();
 }
 
 #endif // !defined(BOOST_NO_IOSTREAM)

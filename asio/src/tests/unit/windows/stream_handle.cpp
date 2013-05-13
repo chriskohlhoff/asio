@@ -17,6 +17,7 @@
 #include "asio/windows/stream_handle.hpp"
 
 #include "asio/io_service.hpp"
+#include "../archetypes/async_result.hpp"
 #include "../unit_test.hpp"
 
 //------------------------------------------------------------------------------
@@ -48,6 +49,7 @@ void test()
     io_service ios;
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
+    archetypes::lazy_handler lazy;
     asio::error_code ec;
 
     // basic_stream_handle constructors.
@@ -111,11 +113,17 @@ void test()
 
     handle1.async_write_some(buffer(mutable_char_buffer), &write_some_handler);
     handle1.async_write_some(buffer(const_char_buffer), &write_some_handler);
+    int i1 = handle1.async_write_some(buffer(mutable_char_buffer), lazy);
+    (void)i1;
+    int i2 = handle1.async_write_some(buffer(const_char_buffer), lazy);
+    (void)i2;
 
     handle1.read_some(buffer(mutable_char_buffer));
     handle1.read_some(buffer(mutable_char_buffer), ec);
 
     handle1.async_read_some(buffer(mutable_char_buffer), &read_some_handler);
+    int i3 = handle1.async_read_some(buffer(mutable_char_buffer), lazy);
+    (void)i3;
   }
   catch (std::exception&)
   {

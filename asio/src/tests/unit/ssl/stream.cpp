@@ -18,6 +18,7 @@
 
 #include "asio.hpp"
 #include "asio/ssl.hpp"
+#include "../archetypes/async_result.hpp"
 #include "../unit_test.hpp"
 
 //------------------------------------------------------------------------------
@@ -63,6 +64,7 @@ void test()
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     asio::ssl::context context(ios, asio::ssl::context::sslv23);
+    archetypes::lazy_handler lazy;
     asio::error_code ec;
 
     // ssl::stream constructors.
@@ -110,11 +112,17 @@ void test()
 
     stream1.async_handshake(ssl::stream_base::client, handshake_handler);
     stream1.async_handshake(ssl::stream_base::server, handshake_handler);
+    int i1 = stream1.async_handshake(ssl::stream_base::client, lazy);
+    (void)i1;
+    int i2 = stream1.async_handshake(ssl::stream_base::server, lazy);
+    (void)i2;
 
     stream1.shutdown();
     stream1.shutdown(ec);
 
     stream1.async_shutdown(shutdown_handler);
+    int i3 = stream1.async_shutdown(lazy);
+    (void)i3;
 
     stream1.write_some(buffer(mutable_char_buffer));
     stream1.write_some(buffer(const_char_buffer));
@@ -123,11 +131,17 @@ void test()
 
     stream1.async_write_some(buffer(mutable_char_buffer), write_some_handler);
     stream1.async_write_some(buffer(const_char_buffer), write_some_handler);
+    int i4 = stream1.async_write_some(buffer(mutable_char_buffer), lazy);
+    (void)i4;
+    int i5 = stream1.async_write_some(buffer(const_char_buffer), lazy);
+    (void)i5;
 
     stream1.read_some(buffer(mutable_char_buffer));
     stream1.read_some(buffer(mutable_char_buffer), ec);
 
     stream1.async_read_some(buffer(mutable_char_buffer), read_some_handler);
+    int i6 = stream1.async_read_some(buffer(mutable_char_buffer), lazy);
+    (void)i6;
 
 #if defined(ASIO_ENABLE_OLD_SSL)
     stream1.peek(buffer(mutable_char_buffer));

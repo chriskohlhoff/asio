@@ -16,6 +16,7 @@
 // Test that header file is self-contained.
 #include "asio/signal_set.hpp"
 
+#include "archetypes/async_result.hpp"
 #include "asio/io_service.hpp"
 #include "unit_test.hpp"
 
@@ -39,6 +40,7 @@ void test()
   try
   {
     io_service ios;
+    archetypes::lazy_handler lazy;
     asio::error_code ec;
 
     // basic_signal_set constructors.
@@ -68,6 +70,8 @@ void test()
     set1.cancel(ec);
 
     set1.async_wait(&signal_handler);
+    int i = set1.async_wait(lazy);
+    (void)i;
   }
   catch (std::exception&)
   {

@@ -316,7 +316,7 @@ inline void asio_handler_invoke(const Function& function,
 
 template <typename Stream, typename Operation, typename Handler>
 inline void async_io(Stream& next_layer, stream_core& core,
-    const Operation& op, Handler handler)
+    const Operation& op, Handler& handler)
 {
   io_op<Stream, Operation, Handler>(
     next_layer, core, op, handler)(

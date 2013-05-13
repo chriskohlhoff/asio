@@ -173,4 +173,8 @@ to deallocate the storage prior to the invocation of the handler via
 `asio_handler_invoke`. Multiple storage blocks may be allocated for a single
 asynchronous operation.
 
+[section:return_type Return type of an initiating function]
+
+[endsect]
+
 [endsect]

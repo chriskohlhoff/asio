@@ -15,6 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include "asio/async_result.hpp"
 #include "asio/basic_datagram_socket.hpp"
 #include "asio/basic_deadline_timer.hpp"
 #include "asio/basic_io_object.hpp"
@@ -45,6 +46,7 @@
 #include "asio/error_code.hpp"
 #include "asio/handler_alloc_hook.hpp"
 #include "asio/handler_invoke_hook.hpp"
+#include "asio/handler_type.hpp"
 #include "asio/io_service.hpp"
 #include "asio/ip/address.hpp"
 #include "asio/ip/address_v4.hpp"
