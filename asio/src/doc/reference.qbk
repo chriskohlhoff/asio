@@ -135,12 +135,7 @@ Asynchronous operations may need to allocate temporary objects. Since asynchrono
 
 Implement asio\_handler\_allocate and asio\_handler\_deallocate for your own handlers to provide custom allocation for these temporary objects.
 
-This default implementation is simply: 
-
-   return ::operator new(size);
-
-
-
+The default implementation of these allocation hooks uses `operator new` and `operator delete`.
 
 
 [heading Remarks]
@@ -195,12 +190,7 @@ Default deallocation function for handlers.
 
 Implement asio\_handler\_allocate and asio\_handler\_deallocate for your own handlers to provide custom allocation for the associated temporary objects.
 
-This default implementation is simply: 
-
-   ::operator delete(pointer);
-
-
-
+The default implementation of these allocation hooks uses `operator new` and `operator delete`.
 
 
 
@@ -5137,7 +5127,7 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
    ...
    asio::ip::tcp::socket::keep_alive option;
    socket.get_option(option);
-   bool is_set = option.get();
+   bool is_set = option.value();
 
 
 
@@ -5194,7 +5184,7 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
    {
      // An error occurred.
    }
-   bool is_set = option.get();
+   bool is_set = option.value();
 
 
 
@@ -12603,7 +12593,7 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
    ...
    asio::ip::tcp::socket::keep_alive option;
    socket.get_option(option);
-   bool is_set = option.get();
+   bool is_set = option.value();
 
 
 
@@ -12660,7 +12650,7 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
    {
      // An error occurred.
    }
-   bool is_set = option.get();
+   bool is_set = option.value();
 
 
 
@@ -18046,7 +18036,7 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
    ...
    asio::ip::tcp::socket::keep_alive option;
    socket.get_option(option);
-   bool is_set = option.get();
+   bool is_set = option.value();
 
 
 
@@ -18103,7 +18093,7 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
    {
      // An error occurred.
    }
-   bool is_set = option.get();
+   bool is_set = option.value();
 
 
 
@@ -25770,7 +25760,7 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
    ...
    asio::ip::tcp::socket::keep_alive option;
    socket.get_option(option);
-   bool is_set = option.get();
+   bool is_set = option.value();
 
 
 
@@ -25824,7 +25814,7 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
    {
      // An error occurred.
    }
-   bool is_set = option.get();
+   bool is_set = option.value();
 
 
 
@@ -34188,7 +34178,7 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
    ...
    asio::ip::tcp::socket::keep_alive option;
    socket.get_option(option);
-   bool is_set = option.get();
+   bool is_set = option.value();
 
 
 
@@ -34245,7 +34235,7 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
    {
      // An error occurred.
    }
-   bool is_set = option.get();
+   bool is_set = option.value();
 
 
 
@@ -39209,7 +39199,7 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
    ...
    asio::ip::tcp::socket::keep_alive option;
    socket.get_option(option);
-   bool is_set = option.get();
+   bool is_set = option.value();
 
 
 
@@ -39266,7 +39256,7 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
    {
      // An error occurred.
    }
-   bool is_set = option.get();
+   bool is_set = option.value();
 
 
 
@@ -83256,7 +83246,7 @@ Following the move, the following operations only are valid for the moved-from o
 Implement various bug workarounds. 
 
 
-  static const int default_workarounds = implementation_defined;
+  static const long default_workarounds = implementation_defined;
 
 
 
@@ -83566,7 +83556,7 @@ The native handle type of the SSL context.
 Disable SSL v2. 
 
 
-  static const int no_sslv2 = implementation_defined;
+  static const long no_sslv2 = implementation_defined;
 
 
 
@@ -83580,7 +83570,7 @@ Disable SSL v2.
 Disable SSL v3. 
 
 
-  static const int no_sslv3 = implementation_defined;
+  static const long no_sslv3 = implementation_defined;
 
 
 
@@ -83594,7 +83584,7 @@ Disable SSL v3.
 Disable TLS v1. 
 
 
-  static const int no_tlsv1 = implementation_defined;
+  static const long no_tlsv1 = implementation_defined;
 
 
 
@@ -83647,7 +83637,7 @@ Following the move, the following operations only are valid for the moved-from o
 Bitmask type for SSL options. 
 
 
-  typedef int options;
+  typedef long options;
 
 
 
@@ -84218,7 +84208,7 @@ Calls `SSL_CTX_set_verify`.
 Always create a new key when using tmp\_dh parameters. 
 
 
-  static const int single_dh_use = implementation_defined;
+  static const long single_dh_use = implementation_defined;
 
 
 
@@ -84854,7 +84844,7 @@ The [link asio.reference.ssl__context_base `ssl::context_base`] class is used as
 Implement various bug workarounds. 
 
 
-  static const int default_workarounds = implementation_defined;
+  static const long default_workarounds = implementation_defined;
 
 
 
@@ -84992,7 +84982,7 @@ Different methods supported by a context.
 Disable SSL v2. 
 
 
-  static const int no_sslv2 = implementation_defined;
+  static const long no_sslv2 = implementation_defined;
 
 
 
@@ -85006,7 +84996,7 @@ Disable SSL v2.
 Disable SSL v3. 
 
 
-  static const int no_sslv3 = implementation_defined;
+  static const long no_sslv3 = implementation_defined;
 
 
 
@@ -85020,7 +85010,7 @@ Disable SSL v3.
 Disable TLS v1. 
 
 
-  static const int no_tlsv1 = implementation_defined;
+  static const long no_tlsv1 = implementation_defined;
 
 
 
@@ -85034,7 +85024,7 @@ Disable TLS v1.
 Bitmask type for SSL options. 
 
 
-  typedef int options;
+  typedef long options;
 
 
 
@@ -85087,7 +85077,7 @@ Purpose of PEM password.
 Always create a new key when using tmp\_dh parameters. 
 
 
-  static const int single_dh_use = implementation_defined;
+  static const long single_dh_use = implementation_defined;
 
 
 
@@ -92601,7 +92591,7 @@ Construct a [link asio.reference.windows__basic_random_access_handle `windows::b
       asio::io_service & io_service);
 
 
-This constructor creates a random-access handle without opening it. The handle needs to be opened before data can be written to or or read from it.
+This constructor creates a random-access handle without opening it. The handle needs to be opened before data can be written to or read from it.
 
 
 [heading Parameters]
