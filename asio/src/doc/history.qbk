@@ -7,6 +7,28 @@
 
 [section:history Revision History]
 
+[heading Asio 1.8.3]
+
+* Fixed some 64-to-32-bit conversion warnings.
+
+* Fixed various small errors in documentation and comments.
+
+* Fixed an error in the example embedded in `basic_socket::get_option`'s
+  documentation.
+
+* Changed to use `long` rather than `int` for SSL_CTX options, to match OpenSSL.
+
+* Changed to use `_snwprintf` to address a compile error due to the changed
+  `swprintf` signature in recent versions of MinGW.
+
+* Fixed a deadlock that can occur on Windows when shutting down a pool of
+  `io_service` threads due to running out of work.
+
+* Changed UNIX domain socket example to treat errors from `accept` as non-fatal.
+
+* Added a small block recycling optimisation to improve default memory
+  allocation behaviour.
+
 [heading Asio 1.8.2]
 
 * Fixed an incompatibility between `ip::tcp::iostream` and C++11.
