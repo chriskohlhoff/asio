@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(BOOST_WINDOWS)
+#if defined(ASIO_WINDOWS)
 
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -74,6 +74,6 @@ private:
 # include "asio/detail/impl/win_tss_ptr.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(ASIO_WINDOWS)
 
 #endif // ASIO_DETAIL_WIN_TSS_PTR_HPP

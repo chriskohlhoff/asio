@@ -16,7 +16,6 @@
 // Test that header file is self-contained.
 #include "asio/ip/icmp.hpp"
 
-#include <boost/bind.hpp>
 #include <cstring>
 #include "asio/io_service.hpp"
 #include "asio/placeholders.hpp"
@@ -451,10 +450,9 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("ip/icmp");
-  test->add(BOOST_TEST_CASE(&ip_icmp_socket_compile::test));
-  test->add(BOOST_TEST_CASE(&ip_icmp_resolver_compile::test));
-  return test;
-}
+ASIO_TEST_SUITE
+(
+  "ip/icmp",
+  ASIO_TEST_CASE(ip_icmp_socket_compile::test)
+  ASIO_TEST_CASE(ip_icmp_resolver_compile::test)
+)

@@ -16,7 +16,6 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <boost/detail/workaround.hpp>
 #include "asio/detail/socket_types.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -139,12 +138,6 @@ protected:
   ~resolver_query_base()
   {
   }
-
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
-private:
-  // Workaround to enable the empty base optimisation with Borland C++.
-  char dummy_;
-#endif
 };
 
 } // namespace ip

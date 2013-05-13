@@ -20,10 +20,10 @@
 #if defined(ASIO_HAS_IOCP)
 
 #include <cstring>
-#include <boost/utility/addressof.hpp>
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/socket_base.hpp"
+#include "asio/detail/addressof.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/fenced_block.hpp"
@@ -294,7 +294,7 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_socket_send_op<ConstBufferSequence, Handler> op;
-    typename op::ptr p = { boost::addressof(handler),
+    typename op::ptr p = { asio::detail::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.cancel_token_, buffers, handler);
@@ -317,7 +317,7 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_null_buffers_op<Handler> op;
-    typename op::ptr p = { boost::addressof(handler),
+    typename op::ptr p = { asio::detail::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.cancel_token_, handler);
@@ -376,7 +376,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_socket_recvfrom_op<
       MutableBufferSequence, endpoint_type, Handler> op;
-    typename op::ptr p = { boost::addressof(handler),
+    typename op::ptr p = { asio::detail::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(sender_endp, impl.cancel_token_, buffers, handler);
@@ -399,7 +399,7 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_null_buffers_op<Handler> op;
-    typename op::ptr p = { boost::addressof(handler),
+    typename op::ptr p = { asio::detail::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.cancel_token_, handler);
@@ -451,7 +451,7 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_socket_accept_op<Socket, protocol_type, Handler> op;
-    typename op::ptr p = { boost::addressof(handler),
+    typename op::ptr p = { asio::detail::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     bool enable_connection_aborted =
@@ -484,7 +484,7 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_connect_op<Handler> op;
-    typename op::ptr p = { boost::addressof(handler),
+    typename op::ptr p = { asio::detail::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.socket_, handler);

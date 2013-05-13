@@ -17,11 +17,11 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
-#include <boost/utility/addressof.hpp>
 #include "asio/buffer.hpp"
 #include "asio/io_service.hpp"
+#include "asio/detail/addressof.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/descriptor_ops.hpp"
@@ -192,7 +192,7 @@ public:
 
     // Allocate and construct an operation to wrap the handler.
     typedef descriptor_write_op<ConstBufferSequence, Handler> op;
-    typename op::ptr p = { boost::addressof(handler),
+    typename op::ptr p = { asio::detail::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.descriptor_, buffers, handler);
@@ -215,7 +215,7 @@ public:
 
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler> op;
-    typename op::ptr p = { boost::addressof(handler),
+    typename op::ptr p = { asio::detail::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);
@@ -260,7 +260,7 @@ public:
 
     // Allocate and construct an operation to wrap the handler.
     typedef descriptor_read_op<MutableBufferSequence, Handler> op;
-    typename op::ptr p = { boost::addressof(handler),
+    typename op::ptr p = { asio::detail::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.descriptor_, buffers, handler);
@@ -283,7 +283,7 @@ public:
 
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler> op;
-    typename op::ptr p = { boost::addressof(handler),
+    typename op::ptr p = { asio::detail::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);
@@ -313,6 +313,6 @@ private:
 # include "asio/detail/impl/reactive_descriptor_service.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
 #endif // ASIO_DETAIL_REACTIVE_DESCRIPTOR_SERVICE_HPP

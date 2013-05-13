@@ -17,18 +17,18 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(BOOST_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM)
 
 #include <algorithm>
 #include <cstring>
 #include <stdexcept>
 #include <streambuf>
 #include <vector>
-#include <boost/limits.hpp>
-#include <boost/throw_exception.hpp>
 #include "asio/basic_streambuf_fwd.hpp"
 #include "asio/buffer.hpp"
+#include "asio/detail/limits.hpp"
 #include "asio/detail/noncopyable.hpp"
+#include "asio/detail/throw_exception.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -326,7 +326,7 @@ protected:
       else
       {
         std::length_error ex("asio::streambuf too long");
-        boost::throw_exception(ex);
+        asio::detail::throw_exception(ex);
       }
     }
 
@@ -363,6 +363,6 @@ inline std::size_t read_size_helper(
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_IOSTREAM)
 
 #endif // ASIO_BASIC_STREAMBUF_HPP

@@ -15,6 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include "asio/detail/addressof.hpp"
 #include "asio/detail/call_stack.hpp"
 #include "asio/detail/completion_handler.hpp"
 #include "asio/detail/fenced_block.hpp"
@@ -63,7 +64,7 @@ void strand_service::dispatch(strand_service::implementation_type& impl,
 
   // Allocate and construct an operation to wrap the handler.
   typedef completion_handler<Handler> op;
-  typename op::ptr p = { boost::addressof(handler),
+  typename op::ptr p = { asio::detail::addressof(handler),
     asio_handler_alloc_helpers::allocate(
       sizeof(op), handler), 0 };
   p.p = new (p.v) op(handler);
@@ -98,7 +99,7 @@ void strand_service::post(strand_service::implementation_type& impl,
 
   // Allocate and construct an operation to wrap the handler.
   typedef completion_handler<Handler> op;
-  typename op::ptr p = { boost::addressof(handler),
+  typename op::ptr p = { asio::detail::addressof(handler),
     asio_handler_alloc_helpers::allocate(
       sizeof(op), handler), 0 };
   p.p = new (p.v) op(handler);

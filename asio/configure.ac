@@ -14,7 +14,11 @@ AC_DEFINE(_REENTRANT, [1], [Define this])
 AC_ARG_WITH(boost,
   AC_HELP_STRING([--with-boost=DIR],[location of boost distribution]),
 [
-  CPPFLAGS="$CPPFLAGS -I${withval}"
+  if test "${withval}" = no; then
+    STANDALONE="yes"
+  else
+    CPPFLAGS="$CPPFLAGS -I${withval}"
+  fi
 ],
 [
   BOOSTDIR="`pwd`/../boost_1_53_0"
@@ -144,12 +148,14 @@ AC_ARG_ENABLE(separate-compilation,
   SEPARATE_COMPILATION=yes
 ])
 
-AC_CHECK_HEADER([boost/noncopyable.hpp],,
-[
-  echo "Can't find boost headers. Please check the location of the boost"
-  echo "distribution and rerun configure using the --with-boost=DIR option."
-  exit 1
-],[])
+if test "$STANDALONE" != yes; then
+  AC_CHECK_HEADER([boost/noncopyable.hpp],,
+  [
+    echo "Can't find boost headers. Please check the location of the boost"
+    echo "distribution and rerun configure using the --with-boost=DIR option."
+    exit 1
+  ],[])
+fi
 
 AC_ARG_WITH(openssl,
   AC_HELP_STRING([--with-openssl=DIR],[location of openssl]),
@@ -210,11 +216,20 @@ esac
 
 if test "$GXX" = yes; then
   CXXFLAGS="$CXXFLAGS -ftemplate-depth-256"
+  if test "$STANDALONE" = yes; then
+    CPPFLAGS="-std=c++0x $CPPFLAGS"
+  fi
+fi
+
+if test "$STANDALONE" = yes; then
+  CPPFLAGS="$CPPFLAGS -DASIO_STANDALONE"
 fi
 
 if test "$SEPARATE_COMPILATION" = yes; then
   CPPFLAGS="$CPPFLAGS -DASIO_SEPARATE_COMPILATION"
 fi
+
+AM_CONDITIONAL(STANDALONE,test x$STANDALONE = xyes)
 
 AM_CONDITIONAL(SEPARATE_COMPILATION,test x$SEPARATE_COMPILATION = xyes)
 

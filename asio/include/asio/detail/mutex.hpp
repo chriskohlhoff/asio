@@ -17,11 +17,11 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
+#if !defined(ASIO_HAS_THREADS)
 # include "asio/detail/null_mutex.hpp"
-#elif defined(BOOST_WINDOWS)
+#elif defined(ASIO_WINDOWS)
 # include "asio/detail/win_mutex.hpp"
-#elif defined(BOOST_HAS_PTHREADS)
+#elif defined(ASIO_HAS_PTHREADS)
 # include "asio/detail/posix_mutex.hpp"
 #else
 # error Only Windows and POSIX are supported!
@@ -30,11 +30,11 @@
 namespace asio {
 namespace detail {
 
-#if !defined(BOOST_HAS_THREADS) || defined(ASIO_DISABLE_THREADS)
+#if !defined(ASIO_HAS_THREADS)
 typedef null_mutex mutex;
-#elif defined(BOOST_WINDOWS)
+#elif defined(ASIO_WINDOWS)
 typedef win_mutex mutex;
-#elif defined(BOOST_HAS_PTHREADS)
+#elif defined(ASIO_HAS_PTHREADS)
 typedef posix_mutex mutex;
 #endif
 

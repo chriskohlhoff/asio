@@ -21,12 +21,6 @@
 #include "asio/detail/noncopyable.hpp"
 #include "asio/io_service.hpp"
 
-#if defined(BOOST_NO_TYPEID)
-# if !defined(ASIO_NO_TYPEID)
-#  define ASIO_NO_TYPEID
-# endif // !defined(ASIO_NO_TYPEID)
-#endif // defined(BOOST_NO_TYPEID)
-
 #include "asio/detail/push_options.hpp"
 
 namespace asio {

@@ -1197,7 +1197,7 @@ Start an asynchronous operation to read a certain amount of data at the specifie
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.return_type ['void-or-deduced]]`` ``[link asio.reference.async_read_at.overload1 async_read_at]``(
       AsyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const MutableBufferSequence & buffers,
       ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_read_at.overload1 more...]]``
@@ -1209,7 +1209,7 @@ Start an asynchronous operation to read a certain amount of data at the specifie
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.return_type ['void-or-deduced]]`` ``[link asio.reference.async_read_at.overload2 async_read_at]``(
       AsyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const MutableBufferSequence & buffers,
       CompletionCondition completion_condition,
       ReadHandler handler);
@@ -1221,7 +1221,7 @@ Start an asynchronous operation to read a certain amount of data at the specifie
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.return_type ['void-or-deduced]]`` ``[link asio.reference.async_read_at.overload3 async_read_at]``(
       AsyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b,
       ReadHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_read_at.overload3 more...]]``
@@ -1233,7 +1233,7 @@ Start an asynchronous operation to read a certain amount of data at the specifie
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.return_type ['void-or-deduced]]`` ``[link asio.reference.async_read_at.overload4 async_read_at]``(
       AsyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition,
       ReadHandler handler);
@@ -1258,7 +1258,7 @@ Start an asynchronous operation to read a certain amount of data at the specifie
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.return_type ['void-or-deduced]]`` async_read_at(
       AsyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const MutableBufferSequence & buffers,
       ReadHandler handler);
 
@@ -1344,7 +1344,7 @@ Start an asynchronous operation to read a certain amount of data at the specifie
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.return_type ['void-or-deduced]]`` async_read_at(
       AsyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const MutableBufferSequence & buffers,
       CompletionCondition completion_condition,
       ReadHandler handler);
@@ -1430,7 +1430,7 @@ Start an asynchronous operation to read a certain amount of data at the specifie
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.return_type ['void-or-deduced]]`` async_read_at(
       AsyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b,
       ReadHandler handler);
 
@@ -1503,7 +1503,7 @@ Start an asynchronous operation to read a certain amount of data at the specifie
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.return_type ['void-or-deduced]]`` async_read_at(
       AsyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition,
       ReadHandler handler);
@@ -1613,7 +1613,7 @@ Start an asynchronous operation to read data into a streambuf until it contains 
       asio::basic_streambuf< Allocator > & b,
       MatchCondition match_condition,
       ReadHandler handler,
-      typename boost::enable_if< is_match_condition< MatchCondition > >::type *  = 0);
+      typename enable_if< is_match_condition< MatchCondition >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.async_read_until.overload4 more...]]``
 
 [heading Requirements]
@@ -1955,7 +1955,7 @@ Start an asynchronous operation to read data into a streambuf until a function o
       asio::basic_streambuf< Allocator > & b,
       MatchCondition match_condition,
       ReadHandler handler,
-      typename boost::enable_if< is_match_condition< MatchCondition > >::type *  = 0);
+      typename enable_if< is_match_condition< MatchCondition >::value >::type *  = 0);
 
 
 This function is used to asynchronously read data into the specified streambuf until a user-defined match condition function object, when applied to the data contained in the streambuf, indicates a successful match. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -2534,7 +2534,7 @@ Start an asynchronous operation to write a certain amount of data at the specifi
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   ``[link asio.reference.asynchronous_operations.return_type ['void-or-deduced]]`` ``[link asio.reference.async_write_at.overload1 async_write_at]``(
       AsyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const ConstBufferSequence & buffers,
       WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_write_at.overload1 more...]]``
@@ -2546,7 +2546,7 @@ Start an asynchronous operation to write a certain amount of data at the specifi
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   ``[link asio.reference.asynchronous_operations.return_type ['void-or-deduced]]`` ``[link asio.reference.async_write_at.overload2 async_write_at]``(
       AsyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const ConstBufferSequence & buffers,
       CompletionCondition completion_condition,
       WriteHandler handler);
@@ -2558,7 +2558,7 @@ Start an asynchronous operation to write a certain amount of data at the specifi
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   ``[link asio.reference.asynchronous_operations.return_type ['void-or-deduced]]`` ``[link asio.reference.async_write_at.overload3 async_write_at]``(
       AsyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b,
       WriteHandler handler);
   ``  [''''&raquo;''' [link asio.reference.async_write_at.overload3 more...]]``
@@ -2570,7 +2570,7 @@ Start an asynchronous operation to write a certain amount of data at the specifi
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   ``[link asio.reference.asynchronous_operations.return_type ['void-or-deduced]]`` ``[link asio.reference.async_write_at.overload4 async_write_at]``(
       AsyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition,
       WriteHandler handler);
@@ -2595,7 +2595,7 @@ Start an asynchronous operation to write all of the supplied data at the specifi
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   ``[link asio.reference.asynchronous_operations.return_type ['void-or-deduced]]`` async_write_at(
       AsyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const ConstBufferSequence & buffers,
       WriteHandler handler);
 
@@ -2667,7 +2667,7 @@ Start an asynchronous operation to write a certain amount of data at the specifi
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   ``[link asio.reference.asynchronous_operations.return_type ['void-or-deduced]]`` async_write_at(
       AsyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const ConstBufferSequence & buffers,
       CompletionCondition completion_condition,
       WriteHandler handler);
@@ -2754,7 +2754,7 @@ Start an asynchronous operation to write all of the supplied data at the specifi
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   ``[link asio.reference.asynchronous_operations.return_type ['void-or-deduced]]`` async_write_at(
       AsyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b,
       WriteHandler handler);
 
@@ -2816,7 +2816,7 @@ Start an asynchronous operation to write a certain amount of data at the specifi
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   ``[link asio.reference.asynchronous_operations.return_type ['void-or-deduced]]`` async_write_at(
       AsyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition,
       WriteHandler handler);
@@ -48144,7 +48144,7 @@ Get a reference to the next layer.
 The type of the next layer. 
 
 
-  typedef boost::remove_reference< Stream >::type next_layer_type;
+  typedef remove_reference< Stream >::type next_layer_type;
 
 
 
@@ -48900,7 +48900,7 @@ Get a reference to the next layer.
 The type of the next layer. 
 
 
-  typedef boost::remove_reference< Stream >::type next_layer_type;
+  typedef remove_reference< Stream >::type next_layer_type;
 
 
 
@@ -49602,7 +49602,7 @@ Get a reference to the next layer.
 The type of the next layer. 
 
 
-  typedef boost::remove_reference< Stream >::type next_layer_type;
+  typedef remove_reference< Stream >::type next_layer_type;
 
 
 
@@ -77305,7 +77305,7 @@ Attempt to read a certain amount of data at the specified offset before returnin
       typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link asio.reference.read_at.overload1 read_at]``(
       SyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const MutableBufferSequence & buffers);
   ``  [''''&raquo;''' [link asio.reference.read_at.overload1 more...]]``
 
@@ -77314,7 +77314,7 @@ Attempt to read a certain amount of data at the specified offset before returnin
       typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link asio.reference.read_at.overload2 read_at]``(
       SyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const MutableBufferSequence & buffers,
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.read_at.overload2 more...]]``
@@ -77325,7 +77325,7 @@ Attempt to read a certain amount of data at the specified offset before returnin
       typename CompletionCondition>
   std::size_t ``[link asio.reference.read_at.overload3 read_at]``(
       SyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const MutableBufferSequence & buffers,
       CompletionCondition completion_condition);
   ``  [''''&raquo;''' [link asio.reference.read_at.overload3 more...]]``
@@ -77336,7 +77336,7 @@ Attempt to read a certain amount of data at the specified offset before returnin
       typename CompletionCondition>
   std::size_t ``[link asio.reference.read_at.overload4 read_at]``(
       SyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const MutableBufferSequence & buffers,
       CompletionCondition completion_condition,
       asio::error_code & ec);
@@ -77347,7 +77347,7 @@ Attempt to read a certain amount of data at the specified offset before returnin
       typename Allocator>
   std::size_t ``[link asio.reference.read_at.overload5 read_at]``(
       SyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b);
   ``  [''''&raquo;''' [link asio.reference.read_at.overload5 more...]]``
 
@@ -77356,7 +77356,7 @@ Attempt to read a certain amount of data at the specified offset before returnin
       typename Allocator>
   std::size_t ``[link asio.reference.read_at.overload6 read_at]``(
       SyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b,
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.read_at.overload6 more...]]``
@@ -77367,7 +77367,7 @@ Attempt to read a certain amount of data at the specified offset before returnin
       typename CompletionCondition>
   std::size_t ``[link asio.reference.read_at.overload7 read_at]``(
       SyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition);
   ``  [''''&raquo;''' [link asio.reference.read_at.overload7 more...]]``
@@ -77378,7 +77378,7 @@ Attempt to read a certain amount of data at the specified offset before returnin
       typename CompletionCondition>
   std::size_t ``[link asio.reference.read_at.overload8 read_at]``(
       SyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition,
       asio::error_code & ec);
@@ -77402,7 +77402,7 @@ Attempt to read a certain amount of data at the specified offset before returnin
       typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t read_at(
       SyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const MutableBufferSequence & buffers);
 
 
@@ -77485,7 +77485,7 @@ Attempt to read a certain amount of data at the specified offset before returnin
       typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t read_at(
       SyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const MutableBufferSequence & buffers,
       asio::error_code & ec);
 
@@ -77563,7 +77563,7 @@ Attempt to read a certain amount of data at the specified offset before returnin
       typename CompletionCondition>
   std::size_t read_at(
       SyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const MutableBufferSequence & buffers,
       CompletionCondition completion_condition);
 
@@ -77649,7 +77649,7 @@ Attempt to read a certain amount of data at the specified offset before returnin
       typename CompletionCondition>
   std::size_t read_at(
       SyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const MutableBufferSequence & buffers,
       CompletionCondition completion_condition,
       asio::error_code & ec);
@@ -77716,7 +77716,7 @@ Attempt to read a certain amount of data at the specified offset before returnin
       typename Allocator>
   std::size_t read_at(
       SyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b);
 
 
@@ -77786,7 +77786,7 @@ Attempt to read a certain amount of data at the specified offset before returnin
       typename Allocator>
   std::size_t read_at(
       SyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b,
       asio::error_code & ec);
 
@@ -77850,7 +77850,7 @@ Attempt to read a certain amount of data at the specified offset before returnin
       typename CompletionCondition>
   std::size_t read_at(
       SyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition);
 
@@ -77922,7 +77922,7 @@ Attempt to read a certain amount of data at the specified offset before returnin
       typename CompletionCondition>
   std::size_t read_at(
       SyncRandomAccessReadDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition,
       asio::error_code & ec);
@@ -78047,7 +78047,7 @@ Read data into a streambuf until it contains a delimiter, matches a regular expr
       SyncReadStream & s,
       asio::basic_streambuf< Allocator > & b,
       MatchCondition match_condition,
-      typename boost::enable_if< is_match_condition< MatchCondition > >::type *  = 0);
+      typename enable_if< is_match_condition< MatchCondition >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.read_until.overload7 more...]]``
 
   template<
@@ -78059,7 +78059,7 @@ Read data into a streambuf until it contains a delimiter, matches a regular expr
       asio::basic_streambuf< Allocator > & b,
       MatchCondition match_condition,
       asio::error_code & ec,
-      typename boost::enable_if< is_match_condition< MatchCondition > >::type *  = 0);
+      typename enable_if< is_match_condition< MatchCondition >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.read_until.overload8 more...]]``
 
 [heading Requirements]
@@ -78545,7 +78545,7 @@ Read data into a streambuf until a function object indicates a match.
       SyncReadStream & s,
       asio::basic_streambuf< Allocator > & b,
       MatchCondition match_condition,
-      typename boost::enable_if< is_match_condition< MatchCondition > >::type *  = 0);
+      typename enable_if< is_match_condition< MatchCondition >::value >::type *  = 0);
 
 
 This function is used to read data into the specified streambuf until a user-defined match condition function object, when applied to the data contained in the streambuf, indicates a successful match. The call will block until one of the following conditions is true:
@@ -78679,7 +78679,7 @@ Read data into a streambuf until a function object indicates a match.
       asio::basic_streambuf< Allocator > & b,
       MatchCondition match_condition,
       asio::error_code & ec,
-      typename boost::enable_if< is_match_condition< MatchCondition > >::type *  = 0);
+      typename enable_if< is_match_condition< MatchCondition >::value >::type *  = 0);
 
 
 This function is used to read data into the specified streambuf until a user-defined match condition function object, when applied to the data contained in the streambuf, indicates a successful match. The call will block until one of the following conditions is true:
@@ -86658,7 +86658,7 @@ A reference to the next layer in the stack of stream layers. Ownership is not tr
 The type of the next layer. 
 
 
-  typedef boost::remove_reference< Stream >::type next_layer_type;
+  typedef remove_reference< Stream >::type next_layer_type;
 
 
 
@@ -93288,7 +93288,7 @@ Start an asynchronous read at the specified offset.
       typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``,
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.return_type ['void-or-deduced]]`` async_read_some_at(
-      boost::uint64_t offset,
+      uint64_t offset,
       const MutableBufferSequence & buffers,
       ReadHandler handler);
 
@@ -93348,7 +93348,7 @@ Start an asynchronous write at the specified offset.
       typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``,
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   ``[link asio.reference.asynchronous_operations.return_type ['void-or-deduced]]`` async_write_some_at(
-      boost::uint64_t offset,
+      uint64_t offset,
       const ConstBufferSequence & buffers,
       WriteHandler handler);
 
@@ -94235,14 +94235,14 @@ Read some data from the handle at the specified offset.
   template<
       typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link asio.reference.windows__basic_random_access_handle.read_some_at.overload1 read_some_at]``(
-      boost::uint64_t offset,
+      uint64_t offset,
       const MutableBufferSequence & buffers);
   ``  [''''&raquo;''' [link asio.reference.windows__basic_random_access_handle.read_some_at.overload1 more...]]``
 
   template<
       typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link asio.reference.windows__basic_random_access_handle.read_some_at.overload2 read_some_at]``(
-      boost::uint64_t offset,
+      uint64_t offset,
       const MutableBufferSequence & buffers,
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.windows__basic_random_access_handle.read_some_at.overload2 more...]]``
@@ -94257,7 +94257,7 @@ Read some data from the handle at the specified offset.
   template<
       typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t read_some_at(
-      boost::uint64_t offset,
+      uint64_t offset,
       const MutableBufferSequence & buffers);
 
 
@@ -94321,7 +94321,7 @@ Read some data from the handle at the specified offset.
   template<
       typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t read_some_at(
-      boost::uint64_t offset,
+      uint64_t offset,
       const MutableBufferSequence & buffers,
       asio::error_code & ec);
 
@@ -94417,14 +94417,14 @@ Write some data to the handle at the specified offset.
   template<
       typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link asio.reference.windows__basic_random_access_handle.write_some_at.overload1 write_some_at]``(
-      boost::uint64_t offset,
+      uint64_t offset,
       const ConstBufferSequence & buffers);
   ``  [''''&raquo;''' [link asio.reference.windows__basic_random_access_handle.write_some_at.overload1 more...]]``
 
   template<
       typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link asio.reference.windows__basic_random_access_handle.write_some_at.overload2 write_some_at]``(
-      boost::uint64_t offset,
+      uint64_t offset,
       const ConstBufferSequence & buffers,
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.windows__basic_random_access_handle.write_some_at.overload2 more...]]``
@@ -94439,7 +94439,7 @@ Write some data to the handle at the specified offset.
   template<
       typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t write_some_at(
-      boost::uint64_t offset,
+      uint64_t offset,
       const ConstBufferSequence & buffers);
 
 
@@ -94503,7 +94503,7 @@ Write some data to the handle at the specified offset.
   template<
       typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t write_some_at(
-      boost::uint64_t offset,
+      uint64_t offset,
       const ConstBufferSequence & buffers,
       asio::error_code & ec);
 
@@ -97210,7 +97210,7 @@ Start an asynchronous read at the specified offset.
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.return_type ['void-or-deduced]]`` async_read_some_at(
       implementation_type & impl,
-      boost::uint64_t offset,
+      uint64_t offset,
       const MutableBufferSequence & buffers,
       ReadHandler handler);
 
@@ -97231,7 +97231,7 @@ Start an asynchronous write at the specified offset.
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   ``[link asio.reference.asynchronous_operations.return_type ['void-or-deduced]]`` async_write_some_at(
       implementation_type & impl,
-      boost::uint64_t offset,
+      uint64_t offset,
       const ConstBufferSequence & buffers,
       WriteHandler handler);
 
@@ -97500,7 +97500,7 @@ Read some data from the specified offset.
       typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t read_some_at(
       implementation_type & impl,
-      boost::uint64_t offset,
+      uint64_t offset,
       const MutableBufferSequence & buffers,
       asio::error_code & ec);
 
@@ -97520,7 +97520,7 @@ Write the given data at the specified offset.
       typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t write_some_at(
       implementation_type & impl,
-      boost::uint64_t offset,
+      uint64_t offset,
       const ConstBufferSequence & buffers,
       asio::error_code & ec);
 
@@ -98879,7 +98879,7 @@ Write a certain amount of data at a specified offset before returning.
       typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link asio.reference.write_at.overload1 write_at]``(
       SyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const ConstBufferSequence & buffers);
   ``  [''''&raquo;''' [link asio.reference.write_at.overload1 more...]]``
 
@@ -98888,7 +98888,7 @@ Write a certain amount of data at a specified offset before returning.
       typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link asio.reference.write_at.overload2 write_at]``(
       SyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const ConstBufferSequence & buffers,
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.write_at.overload2 more...]]``
@@ -98899,7 +98899,7 @@ Write a certain amount of data at a specified offset before returning.
       typename CompletionCondition>
   std::size_t ``[link asio.reference.write_at.overload3 write_at]``(
       SyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const ConstBufferSequence & buffers,
       CompletionCondition completion_condition);
   ``  [''''&raquo;''' [link asio.reference.write_at.overload3 more...]]``
@@ -98910,7 +98910,7 @@ Write a certain amount of data at a specified offset before returning.
       typename CompletionCondition>
   std::size_t ``[link asio.reference.write_at.overload4 write_at]``(
       SyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const ConstBufferSequence & buffers,
       CompletionCondition completion_condition,
       asio::error_code & ec);
@@ -98921,7 +98921,7 @@ Write a certain amount of data at a specified offset before returning.
       typename Allocator>
   std::size_t ``[link asio.reference.write_at.overload5 write_at]``(
       SyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b);
   ``  [''''&raquo;''' [link asio.reference.write_at.overload5 more...]]``
 
@@ -98930,7 +98930,7 @@ Write a certain amount of data at a specified offset before returning.
       typename Allocator>
   std::size_t ``[link asio.reference.write_at.overload6 write_at]``(
       SyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b,
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.write_at.overload6 more...]]``
@@ -98941,7 +98941,7 @@ Write a certain amount of data at a specified offset before returning.
       typename CompletionCondition>
   std::size_t ``[link asio.reference.write_at.overload7 write_at]``(
       SyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition);
   ``  [''''&raquo;''' [link asio.reference.write_at.overload7 more...]]``
@@ -98952,7 +98952,7 @@ Write a certain amount of data at a specified offset before returning.
       typename CompletionCondition>
   std::size_t ``[link asio.reference.write_at.overload8 write_at]``(
       SyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition,
       asio::error_code & ec);
@@ -98976,7 +98976,7 @@ Write all of the supplied data at the specified offset before returning.
       typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t write_at(
       SyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const ConstBufferSequence & buffers);
 
 
@@ -99059,7 +99059,7 @@ Write all of the supplied data at the specified offset before returning.
       typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t write_at(
       SyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const ConstBufferSequence & buffers,
       asio::error_code & ec);
 
@@ -99137,7 +99137,7 @@ Write a certain amount of data at a specified offset before returning.
       typename CompletionCondition>
   std::size_t write_at(
       SyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const ConstBufferSequence & buffers,
       CompletionCondition completion_condition);
 
@@ -99223,7 +99223,7 @@ Write a certain amount of data at a specified offset before returning.
       typename CompletionCondition>
   std::size_t write_at(
       SyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       const ConstBufferSequence & buffers,
       CompletionCondition completion_condition,
       asio::error_code & ec);
@@ -99290,7 +99290,7 @@ Write all of the supplied data at the specified offset before returning.
       typename Allocator>
   std::size_t write_at(
       SyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b);
 
 
@@ -99363,7 +99363,7 @@ Write all of the supplied data at the specified offset before returning.
       typename Allocator>
   std::size_t write_at(
       SyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b,
       asio::error_code & ec);
 
@@ -99430,7 +99430,7 @@ Write a certain amount of data at a specified offset before returning.
       typename CompletionCondition>
   std::size_t write_at(
       SyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition);
 
@@ -99505,7 +99505,7 @@ Write a certain amount of data at a specified offset before returning.
       typename CompletionCondition>
   std::size_t write_at(
       SyncRandomAccessWriteDevice & d,
-      boost::uint64_t offset,
+      uint64_t offset,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition,
       asio::error_code & ec);

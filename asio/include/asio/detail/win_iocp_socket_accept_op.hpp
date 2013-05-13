@@ -19,7 +19,7 @@
 
 #if defined(ASIO_HAS_IOCP)
 
-#include <boost/utility/addressof.hpp>
+#include "asio/detail/addressof.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/fenced_block.hpp"
@@ -79,7 +79,7 @@ public:
 
     // Take ownership of the operation object.
     win_iocp_socket_accept_op* o(static_cast<win_iocp_socket_accept_op*>(base));
-    ptr p = { boost::addressof(o->handler_), o, o };
+    ptr p = { asio::detail::addressof(o->handler_), o, o };
 
     if (owner)
     {
@@ -130,7 +130,7 @@ public:
     // deallocated the memory here.
     detail::binder1<Handler, asio::error_code>
       handler(o->handler_, ec);
-    p.h = boost::addressof(handler.handler_);
+    p.h = asio::detail::addressof(handler.handler_);
     p.reset();
 
     // Make the upcall if required.

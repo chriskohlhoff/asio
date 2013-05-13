@@ -17,12 +17,39 @@
 #include "asio/io_service.hpp"
 
 #include <sstream>
-#include <boost/bind.hpp>
-#include "asio/deadline_timer.hpp"
 #include "asio/thread.hpp"
 #include "unit_test.hpp"
 
+#if defined(ASIO_HAS_BOOST_DATE_TIME)
+# include "asio/deadline_timer.hpp"
+#else // defined(ASIO_HAS_BOOST_DATE_TIME)
+# include "asio/steady_timer.hpp"
+#endif // defined(ASIO_HAS_BOOST_DATE_TIME)
+
+#if defined(ASIO_HAS_BOOST_BIND)
+# include <boost/bind.hpp>
+#else // defined(ASIO_HAS_BOOST_BIND)
+# include <functional>
+#endif // defined(ASIO_HAS_BOOST_BIND)
+
 using namespace asio;
+
+#if defined(ASIO_HAS_BOOST_BIND)
+namespace bindns = boost;
+#else // defined(ASIO_HAS_BOOST_BIND)
+namespace bindns = std;
+#endif
+
+#if defined(ASIO_HAS_BOOST_DATE_TIME)
+typedef deadline_timer timer;
+namespace chronons = boost::posix_time;
+#elif defined(ASIO_HAS_STD_CHRONO)
+typedef steady_timer timer;
+namespace chronons = std::chrono;
+#elif defined(ASIO_HAS_BOOST_CHRONO)
+typedef steady_timer timer;
+namespace chronons = boost::chrono;
+#endif // defined(ASIO_HAS_BOOST_DATE_TIME)
 
 void increment(int* count)
 {
@@ -36,10 +63,10 @@ void decrement_to_zero(io_service* ios, int* count)
     --(*count);
 
     int before_value = *count;
-    ios->post(boost::bind(decrement_to_zero, ios, count));
+    ios->post(bindns::bind(decrement_to_zero, ios, count));
 
     // Handler execution cannot nest, so count value should remain unchanged.
-    BOOST_CHECK(*count == before_value);
+    ASIO_CHECK(*count == before_value);
   }
 }
 
@@ -49,30 +76,30 @@ void nested_decrement_to_zero(io_service* ios, int* count)
   {
     --(*count);
 
-    ios->dispatch(boost::bind(nested_decrement_to_zero, ios, count));
+    ios->dispatch(bindns::bind(nested_decrement_to_zero, ios, count));
 
     // Handler execution is nested, so count value should now be zero.
-    BOOST_CHECK(*count == 0);
+    ASIO_CHECK(*count == 0);
   }
 }
 
 void sleep_increment(io_service* ios, int* count)
 {
-  deadline_timer t(*ios, boost::posix_time::seconds(2));
+  timer t(*ios, chronons::seconds(2));
   t.wait();
 
   if (++(*count) < 3)
-    ios->post(boost::bind(sleep_increment, ios, count));
+    ios->post(bindns::bind(sleep_increment, ios, count));
 }
 
 void start_sleep_increments(io_service* ios, int* count)
 {
   // Give all threads a chance to start.
-  deadline_timer t(*ios, boost::posix_time::seconds(2));
+  timer t(*ios, chronons::seconds(2));
   t.wait();
 
   // Start the first of three increments.
-  ios->post(boost::bind(sleep_increment, ios, count));
+  ios->post(bindns::bind(sleep_increment, ios, count));
 }
 
 void throw_exception()
@@ -90,150 +117,150 @@ void io_service_test()
   io_service ios;
   int count = 0;
 
-  ios.post(boost::bind(increment, &count));
+  ios.post(bindns::bind(increment, &count));
 
   // No handlers can be called until run() is called.
-  BOOST_CHECK(!ios.stopped());
-  BOOST_CHECK(count == 0);
+  ASIO_CHECK(!ios.stopped());
+  ASIO_CHECK(count == 0);
 
   ios.run();
 
   // The run() call will not return until all work has finished.
-  BOOST_CHECK(ios.stopped());
-  BOOST_CHECK(count == 1);
+  ASIO_CHECK(ios.stopped());
+  ASIO_CHECK(count == 1);
 
   count = 0;
   ios.reset();
-  ios.post(boost::bind(increment, &count));
-  ios.post(boost::bind(increment, &count));
-  ios.post(boost::bind(increment, &count));
-  ios.post(boost::bind(increment, &count));
-  ios.post(boost::bind(increment, &count));
+  ios.post(bindns::bind(increment, &count));
+  ios.post(bindns::bind(increment, &count));
+  ios.post(bindns::bind(increment, &count));
+  ios.post(bindns::bind(increment, &count));
+  ios.post(bindns::bind(increment, &count));
 
   // No handlers can be called until run() is called.
-  BOOST_CHECK(!ios.stopped());
-  BOOST_CHECK(count == 0);
+  ASIO_CHECK(!ios.stopped());
+  ASIO_CHECK(count == 0);
 
   ios.run();
 
   // The run() call will not return until all work has finished.
-  BOOST_CHECK(ios.stopped());
-  BOOST_CHECK(count == 5);
+  ASIO_CHECK(ios.stopped());
+  ASIO_CHECK(count == 5);
 
   count = 0;
   ios.reset();
   io_service::work* w = new io_service::work(ios);
-  ios.post(boost::bind(&io_service::stop, &ios));
-  BOOST_CHECK(!ios.stopped());
+  ios.post(bindns::bind(&io_service::stop, &ios));
+  ASIO_CHECK(!ios.stopped());
   ios.run();
 
   // The only operation executed should have been to stop run().
-  BOOST_CHECK(ios.stopped());
-  BOOST_CHECK(count == 0);
+  ASIO_CHECK(ios.stopped());
+  ASIO_CHECK(count == 0);
 
   ios.reset();
-  ios.post(boost::bind(increment, &count));
+  ios.post(bindns::bind(increment, &count));
   delete w;
 
   // No handlers can be called until run() is called.
-  BOOST_CHECK(!ios.stopped());
-  BOOST_CHECK(count == 0);
+  ASIO_CHECK(!ios.stopped());
+  ASIO_CHECK(count == 0);
 
   ios.run();
 
   // The run() call will not return until all work has finished.
-  BOOST_CHECK(ios.stopped());
-  BOOST_CHECK(count == 1);
+  ASIO_CHECK(ios.stopped());
+  ASIO_CHECK(count == 1);
 
   count = 10;
   ios.reset();
-  ios.post(boost::bind(decrement_to_zero, &ios, &count));
+  ios.post(bindns::bind(decrement_to_zero, &ios, &count));
 
   // No handlers can be called until run() is called.
-  BOOST_CHECK(!ios.stopped());
-  BOOST_CHECK(count == 10);
+  ASIO_CHECK(!ios.stopped());
+  ASIO_CHECK(count == 10);
 
   ios.run();
 
   // The run() call will not return until all work has finished.
-  BOOST_CHECK(ios.stopped());
-  BOOST_CHECK(count == 0);
+  ASIO_CHECK(ios.stopped());
+  ASIO_CHECK(count == 0);
 
   count = 10;
   ios.reset();
-  ios.post(boost::bind(nested_decrement_to_zero, &ios, &count));
+  ios.post(bindns::bind(nested_decrement_to_zero, &ios, &count));
 
   // No handlers can be called until run() is called.
-  BOOST_CHECK(!ios.stopped());
-  BOOST_CHECK(count == 10);
+  ASIO_CHECK(!ios.stopped());
+  ASIO_CHECK(count == 10);
 
   ios.run();
 
   // The run() call will not return until all work has finished.
-  BOOST_CHECK(ios.stopped());
-  BOOST_CHECK(count == 0);
+  ASIO_CHECK(ios.stopped());
+  ASIO_CHECK(count == 0);
 
   count = 10;
   ios.reset();
-  ios.dispatch(boost::bind(nested_decrement_to_zero, &ios, &count));
+  ios.dispatch(bindns::bind(nested_decrement_to_zero, &ios, &count));
 
   // No handlers can be called until run() is called, even though nested
   // delivery was specifically allowed in the previous call.
-  BOOST_CHECK(!ios.stopped());
-  BOOST_CHECK(count == 10);
+  ASIO_CHECK(!ios.stopped());
+  ASIO_CHECK(count == 10);
 
   ios.run();
 
   // The run() call will not return until all work has finished.
-  BOOST_CHECK(ios.stopped());
-  BOOST_CHECK(count == 0);
+  ASIO_CHECK(ios.stopped());
+  ASIO_CHECK(count == 0);
 
   count = 0;
   int count2 = 0;
   ios.reset();
-  BOOST_CHECK(!ios.stopped());
-  ios.post(boost::bind(start_sleep_increments, &ios, &count));
-  ios.post(boost::bind(start_sleep_increments, &ios, &count2));
-  thread thread1(boost::bind(io_service_run, &ios));
-  thread thread2(boost::bind(io_service_run, &ios));
+  ASIO_CHECK(!ios.stopped());
+  ios.post(bindns::bind(start_sleep_increments, &ios, &count));
+  ios.post(bindns::bind(start_sleep_increments, &ios, &count2));
+  thread thread1(bindns::bind(io_service_run, &ios));
+  thread thread2(bindns::bind(io_service_run, &ios));
   thread1.join();
   thread2.join();
 
   // The run() calls will not return until all work has finished.
-  BOOST_CHECK(ios.stopped());
-  BOOST_CHECK(count == 3);
-  BOOST_CHECK(count2 == 3);
+  ASIO_CHECK(ios.stopped());
+  ASIO_CHECK(count == 3);
+  ASIO_CHECK(count2 == 3);
 
   count = 10;
   io_service ios2;
-  ios.dispatch(ios2.wrap(boost::bind(decrement_to_zero, &ios2, &count)));
+  ios.dispatch(ios2.wrap(bindns::bind(decrement_to_zero, &ios2, &count)));
   ios.reset();
-  BOOST_CHECK(!ios.stopped());
+  ASIO_CHECK(!ios.stopped());
   ios.run();
 
   // No decrement_to_zero handlers can be called until run() is called on the
   // second io_service object.
-  BOOST_CHECK(ios.stopped());
-  BOOST_CHECK(count == 10);
+  ASIO_CHECK(ios.stopped());
+  ASIO_CHECK(count == 10);
 
   ios2.run();
 
   // The run() call will not return until all work has finished.
-  BOOST_CHECK(count == 0);
+  ASIO_CHECK(count == 0);
 
   count = 0;
   int exception_count = 0;
   ios.reset();
   ios.post(&throw_exception);
-  ios.post(boost::bind(increment, &count));
-  ios.post(boost::bind(increment, &count));
+  ios.post(bindns::bind(increment, &count));
+  ios.post(bindns::bind(increment, &count));
   ios.post(&throw_exception);
-  ios.post(boost::bind(increment, &count));
+  ios.post(bindns::bind(increment, &count));
 
   // No handlers can be called until run() is called.
-  BOOST_CHECK(!ios.stopped());
-  BOOST_CHECK(count == 0);
-  BOOST_CHECK(exception_count == 0);
+  ASIO_CHECK(!ios.stopped());
+  ASIO_CHECK(count == 0);
+  ASIO_CHECK(exception_count == 0);
 
   for (;;)
   {
@@ -249,9 +276,9 @@ void io_service_test()
   }
 
   // The run() calls will not return until all work has finished.
-  BOOST_CHECK(ios.stopped());
-  BOOST_CHECK(count == 3);
-  BOOST_CHECK(exception_count == 2);
+  ASIO_CHECK(ios.stopped());
+  ASIO_CHECK(count == 3);
+  ASIO_CHECK(exception_count == 2);
 }
 
 class test_service : public asio::io_service::service
@@ -276,13 +303,13 @@ void io_service_service_test()
 
   asio::use_service<test_service>(ios1);
 
-  BOOST_CHECK(asio::has_service<test_service>(ios1));
+  ASIO_CHECK(asio::has_service<test_service>(ios1));
 
   test_service* svc1 = new test_service(ios1);
   try
   {
     asio::add_service(ios1, svc1);
-    BOOST_ERROR("add_service did not throw");
+    ASIO_ERROR("add_service did not throw");
   }
   catch (asio::service_already_exists&)
   {
@@ -294,14 +321,14 @@ void io_service_service_test()
   test_service* svc2 = new test_service(ios2);
   asio::add_service(ios2, svc2);
 
-  BOOST_CHECK(asio::has_service<test_service>(ios2));
-  BOOST_CHECK(&asio::use_service<test_service>(ios2) == svc2);
+  ASIO_CHECK(asio::has_service<test_service>(ios2));
+  ASIO_CHECK(&asio::use_service<test_service>(ios2) == svc2);
 
   test_service* svc3 = new test_service(ios2);
   try
   {
     asio::add_service(ios2, svc3);
-    BOOST_ERROR("add_service did not throw");
+    ASIO_ERROR("add_service did not throw");
   }
   catch (asio::service_already_exists&)
   {
@@ -314,20 +341,19 @@ void io_service_service_test()
   try
   {
     asio::add_service(ios3, svc4);
-    BOOST_ERROR("add_service did not throw");
+    ASIO_ERROR("add_service did not throw");
   }
   catch (asio::invalid_service_owner&)
   {
   }
   delete svc4;
 
-  BOOST_CHECK(!asio::has_service<test_service>(ios3));
+  ASIO_CHECK(!asio::has_service<test_service>(ios3));
 }
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("io_service");
-  test->add(BOOST_TEST_CASE(&io_service_test));
-  test->add(BOOST_TEST_CASE(&io_service_service_test));
-  return test;
-}
+ASIO_TEST_SUITE
+(
+  "io_service",
+  ASIO_TEST_CASE(io_service_test)
+  ASIO_TEST_CASE(io_service_service_test)
+)

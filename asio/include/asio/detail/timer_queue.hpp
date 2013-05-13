@@ -18,10 +18,9 @@
 #include "asio/detail/config.hpp"
 #include <cstddef>
 #include <vector>
-#include <boost/config.hpp>
-#include <boost/limits.hpp>
-#include <boost/cstdint.hpp>
+#include "asio/detail/cstdint.hpp"
 #include "asio/detail/date_time_fwd.hpp"
+#include "asio/detail/limits.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/timer_queue_base.hpp"
 #include "asio/detail/wait_op.hpp"
@@ -287,7 +286,7 @@ private:
   {
     if (d.ticks() <= 0)
       return 0;
-    boost::int64_t msec = d.total_milliseconds();
+    int64_t msec = d.total_milliseconds();
     if (msec == 0)
       return 1;
     if (msec > max_duration)
@@ -301,7 +300,7 @@ private:
   {
     if (d.ticks() <= 0)
       return 0;
-    boost::int64_t usec = d.total_microseconds();
+    int64_t usec = d.total_microseconds();
     if (usec == 0)
       return 1;
     if (usec > max_duration)

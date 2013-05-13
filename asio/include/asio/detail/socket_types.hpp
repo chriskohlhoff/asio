@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 # if defined(_WINSOCKAPI_) && !defined(_WINSOCK2API_)
 #  error WinSock.h has already been included
 # endif // defined(_WINSOCKAPI_) && !defined(_WINSOCK2API_)
@@ -80,7 +80,7 @@
 namespace asio {
 namespace detail {
 
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 typedef SOCKET socket_type;
 const SOCKET invalid_socket = INVALID_SOCKET;
 const int socket_error_retval = SOCKET_ERROR;

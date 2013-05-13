@@ -22,8 +22,8 @@
 
 #include <cstddef>
 #include <boost/config.hpp>
-#include <boost/cstdint.hpp>
 #include "asio/async_result.hpp"
+#include "asio/detail/cstdint.hpp"
 #include "asio/detail/win_iocp_handle_service.hpp"
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
@@ -151,7 +151,7 @@ public:
 
   /// Write the given data at the specified offset.
   template <typename ConstBufferSequence>
-  std::size_t write_some_at(implementation_type& impl, boost::uint64_t offset,
+  std::size_t write_some_at(implementation_type& impl, uint64_t offset,
       const ConstBufferSequence& buffers, asio::error_code& ec)
   {
     return service_impl_.write_some_at(impl, offset, buffers, ec);
@@ -162,7 +162,7 @@ public:
   ASIO_INITFN_RESULT_TYPE(WriteHandler,
       void (asio::error_code, std::size_t))
   async_write_some_at(implementation_type& impl,
-      boost::uint64_t offset, const ConstBufferSequence& buffers,
+      uint64_t offset, const ConstBufferSequence& buffers,
       ASIO_MOVE_ARG(WriteHandler) handler)
   {
     asio::detail::async_result_init<
@@ -176,7 +176,7 @@ public:
 
   /// Read some data from the specified offset.
   template <typename MutableBufferSequence>
-  std::size_t read_some_at(implementation_type& impl, boost::uint64_t offset,
+  std::size_t read_some_at(implementation_type& impl, uint64_t offset,
       const MutableBufferSequence& buffers, asio::error_code& ec)
   {
     return service_impl_.read_some_at(impl, offset, buffers, ec);
@@ -187,7 +187,7 @@ public:
   ASIO_INITFN_RESULT_TYPE(ReadHandler,
       void (asio::error_code, std::size_t))
   async_read_some_at(implementation_type& impl,
-      boost::uint64_t offset, const MutableBufferSequence& buffers,
+      uint64_t offset, const MutableBufferSequence& buffers,
       ASIO_MOVE_ARG(ReadHandler) handler)
   {
     asio::detail::async_result_init<

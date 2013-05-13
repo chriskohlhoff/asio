@@ -82,9 +82,8 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("signal_set");
-  test->add(BOOST_TEST_CASE(&signal_set_compile::test));
-  return test;
-}
+ASIO_TEST_SUITE
+(
+  "signal_set",
+  ASIO_TEST_CASE(signal_set_compile::test)
+)

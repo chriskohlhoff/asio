@@ -21,15 +21,16 @@
 #include <signal.h>
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
+#include "asio/detail/addressof.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/signal_handler.hpp"
 #include "asio/detail/signal_op.hpp"
 #include "asio/detail/socket_types.hpp"
 
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 # include "asio/detail/reactor.hpp"
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
 #include "asio/detail/push_options.hpp"
 
@@ -147,7 +148,7 @@ public:
   {
     // Allocate and construct an operation to wrap the handler.
     typedef signal_handler<Handler> op;
-    typename op::ptr p = { boost::addressof(handler),
+    typename op::ptr p = { asio::detail::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);
@@ -180,7 +181,7 @@ private:
   // The io_service instance used for dispatching handlers.
   io_service_impl& io_service_;
 
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
   // The type used for registering for pipe reactor notifications.
   class pipe_read_op;
 
@@ -189,7 +190,7 @@ private:
 
   // The per-descriptor reactor data used for the pipe.
   reactor::per_descriptor_data reactor_data_;
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
   // A mapping from signal number to the registered signal sets.
   registration* registrations_[max_signal_number];

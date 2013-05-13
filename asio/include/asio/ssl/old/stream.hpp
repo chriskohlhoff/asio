@@ -19,8 +19,8 @@
 #include "asio/detail/config.hpp"
 #include <cstddef>
 #include <boost/noncopyable.hpp>
-#include <boost/type_traits/remove_reference.hpp>
 #include "asio/detail/throw_error.hpp"
+#include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
 #include "asio/ssl/basic_context.hpp"
 #include "asio/ssl/stream_base.hpp"
@@ -59,7 +59,7 @@ class stream
 {
 public:
   /// The type of the next layer.
-  typedef typename boost::remove_reference<Stream>::type next_layer_type;
+  typedef typename remove_reference<Stream>::type next_layer_type;
 
   /// The type of the lowest layer.
   typedef typename next_layer_type::lowest_layer_type lowest_layer_type;

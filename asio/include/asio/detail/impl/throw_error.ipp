@@ -16,8 +16,8 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <boost/throw_exception.hpp>
 #include "asio/detail/throw_error.hpp"
+#include "asio/detail/throw_exception.hpp"
 #include "asio/system_error.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -28,13 +28,13 @@ namespace detail {
 void do_throw_error(const asio::error_code& err)
 {
   asio::system_error e(err);
-  boost::throw_exception(e);
+  asio::detail::throw_exception(e);
 }
 
 void do_throw_error(const asio::error_code& err, const char* location)
 {
   asio::system_error e(err, location);
-  boost::throw_exception(e);
+  asio::detail::throw_exception(e);
 }
 
 } // namespace detail

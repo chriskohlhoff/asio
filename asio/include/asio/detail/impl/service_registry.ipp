@@ -16,9 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <boost/throw_exception.hpp>
 #include <vector>
 #include "asio/detail/service_registry.hpp"
+#include "asio/detail/throw_exception.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -145,7 +145,7 @@ void service_registry::do_add_service(
     asio::io_service::service* new_service)
 {
   if (&owner_ != &new_service->get_io_service())
-    boost::throw_exception(invalid_service_owner());
+    asio::detail::throw_exception(invalid_service_owner());
 
   asio::detail::mutex::scoped_lock lock(mutex_);
 
@@ -154,7 +154,7 @@ void service_registry::do_add_service(
   while (service)
   {
     if (keys_match(service->key_, key))
-      boost::throw_exception(service_already_exists());
+      asio::detail::throw_exception(service_already_exists());
     service = service->next_;
   }
 

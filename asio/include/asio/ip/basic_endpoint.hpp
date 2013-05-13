@@ -19,9 +19,9 @@
 #include "asio/ip/address.hpp"
 #include "asio/ip/detail/endpoint.hpp"
 
-#if !defined(BOOST_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM)
 # include <iosfwd>
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_IOSTREAM)
 
 #include "asio/detail/push_options.hpp"
 
@@ -232,7 +232,7 @@ private:
   asio::ip::detail::endpoint impl_;
 };
 
-#if !defined(BOOST_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM)
 
 /// Output an endpoint as a string.
 /**
@@ -251,7 +251,7 @@ std::basic_ostream<Elem, Traits>& operator<<(
     std::basic_ostream<Elem, Traits>& os,
     const basic_endpoint<InternetProtocol>& endpoint);
 
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_IOSTREAM)
 
 } // namespace ip
 } // namespace asio

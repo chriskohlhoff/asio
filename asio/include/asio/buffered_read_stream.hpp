@@ -17,13 +17,13 @@
 
 #include "asio/detail/config.hpp"
 #include <cstddef>
-#include <boost/type_traits/remove_reference.hpp>
 #include "asio/buffered_read_stream_fwd.hpp"
 #include "asio/buffer.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/buffer_resize_guard.hpp"
 #include "asio/detail/buffered_stream_storage.hpp"
 #include "asio/detail/noncopyable.hpp"
+#include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 
@@ -49,7 +49,7 @@ class buffered_read_stream
 {
 public:
   /// The type of the next layer.
-  typedef typename boost::remove_reference<Stream>::type next_layer_type;
+  typedef typename remove_reference<Stream>::type next_layer_type;
 
   /// The type of the lowest layer.
   typedef typename next_layer_type::lowest_layer_type lowest_layer_type;
@@ -58,7 +58,7 @@ public:
   /// The default buffer size.
   static const std::size_t default_buffer_size = implementation_defined;
 #else
-  BOOST_STATIC_CONSTANT(std::size_t, default_buffer_size = 1024);
+  ASIO_STATIC_CONSTANT(std::size_t, default_buffer_size = 1024);
 #endif
 
   /// Construct, passing the specified argument to initialise the next layer.

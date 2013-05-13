@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/detail/addressof.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
@@ -45,7 +46,7 @@ public:
   {
     // Take ownership of the handler object.
     wait_handler* h(static_cast<wait_handler*>(base));
-    ptr p = { boost::addressof(h->handler_), h, h };
+    ptr p = { asio::detail::addressof(h->handler_), h, h };
 
     ASIO_HANDLER_COMPLETION((h));
 
@@ -57,7 +58,7 @@ public:
     // deallocated the memory here.
     detail::binder1<Handler, asio::error_code>
       handler(h->handler_, h->ec_);
-    p.h = boost::addressof(handler.handler_);
+    p.h = asio::detail::addressof(handler.handler_);
     p.reset();
 
     // Make the upcall if required.

@@ -111,10 +111,10 @@ public:
     return data_.base.sa_family == AF_INET;
   }
 
-#if !defined(BOOST_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM)
   // Convert to a string.
   ASIO_DECL std::string to_string(asio::error_code& ec) const;
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_IOSTREAM)
 
 private:
   // The underlying IP socket address.

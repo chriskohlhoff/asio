@@ -131,23 +131,23 @@ void test()
   sock_v6.bind(ep_v6, ec);
   bool have_v6 = !ec;
 
-  BOOST_CHECK(have_v4 || have_v6);
+  ASIO_CHECK(have_v4 || have_v6);
 
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(ASIO_WINDOWS) && defined(UNDER_CE)
   // Windows CE seems to have problems with some multicast group addresses.
   // The following address works on CE, but as it is not a private multicast
   // address it will not be used on other platforms.
   const ip::address multicast_address_v4 =
     ip::address::from_string("239.0.0.4", ec);
-#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#else // defined(ASIO_WINDOWS) && defined(UNDER_CE)
   const ip::address multicast_address_v4 =
     ip::address::from_string("239.255.0.1", ec);
-#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
-  BOOST_CHECK(!have_v4 || !ec);
+#endif // defined(ASIO_WINDOWS) && defined(UNDER_CE)
+  ASIO_CHECK(!have_v4 || !ec);
 
   const ip::address multicast_address_v6 =
     ip::address::from_string("ff01::1", ec);
-  BOOST_CHECK(!have_v6 || !ec);
+  ASIO_CHECK(!have_v6 || !ec);
 
   // join_group class.
 
@@ -155,14 +155,14 @@ void test()
   {
     ip::multicast::join_group join_group(multicast_address_v4);
     sock_v4.set_option(join_group, ec);
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
   }
 
   if (have_v6)
   {
     ip::multicast::join_group join_group(multicast_address_v6);
     sock_v6.set_option(join_group, ec);
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
   }
 
   // leave_group class.
@@ -171,14 +171,14 @@ void test()
   {
     ip::multicast::leave_group leave_group(multicast_address_v4);
     sock_v4.set_option(leave_group, ec);
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
   }
 
   if (have_v6)
   {
     ip::multicast::leave_group leave_group(multicast_address_v6);
     sock_v6.set_option(leave_group, ec);
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
   }
 
   // outbound_interface class.
@@ -188,7 +188,7 @@ void test()
     ip::multicast::outbound_interface outbound_interface(
         ip::address_v4::loopback());
     sock_v4.set_option(outbound_interface, ec);
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
   }
 
   if (have_v6)
@@ -199,7 +199,7 @@ void test()
     ip::multicast::outbound_interface outbound_interface(1);
 #endif
     sock_v6.set_option(outbound_interface, ec);
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
   }
 
   // hops class.
@@ -207,47 +207,47 @@ void test()
   if (have_v4)
   {
     ip::multicast::hops hops1(1);
-    BOOST_CHECK(hops1.value() == 1);
+    ASIO_CHECK(hops1.value() == 1);
     sock_v4.set_option(hops1, ec);
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
 
     ip::multicast::hops hops2;
     sock_v4.get_option(hops2, ec);
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
-    BOOST_CHECK(hops2.value() == 1);
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    ASIO_CHECK(hops2.value() == 1);
 
     ip::multicast::hops hops3(0);
-    BOOST_CHECK(hops3.value() == 0);
+    ASIO_CHECK(hops3.value() == 0);
     sock_v4.set_option(hops3, ec);
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
 
     ip::multicast::hops hops4;
     sock_v4.get_option(hops4, ec);
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
-    BOOST_CHECK(hops4.value() == 0);
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    ASIO_CHECK(hops4.value() == 0);
   }
 
   if (have_v6)
   {
     ip::multicast::hops hops1(1);
-    BOOST_CHECK(hops1.value() == 1);
+    ASIO_CHECK(hops1.value() == 1);
     sock_v6.set_option(hops1, ec);
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
 
     ip::multicast::hops hops2;
     sock_v6.get_option(hops2, ec);
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
-    BOOST_CHECK(hops2.value() == 1);
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    ASIO_CHECK(hops2.value() == 1);
 
     ip::multicast::hops hops3(0);
-    BOOST_CHECK(hops3.value() == 0);
+    ASIO_CHECK(hops3.value() == 0);
     sock_v6.set_option(hops3, ec);
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
 
     ip::multicast::hops hops4;
     sock_v6.get_option(hops4, ec);
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
-    BOOST_CHECK(hops4.value() == 0);
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    ASIO_CHECK(hops4.value() == 0);
   }
 
   // enable_loopback class.
@@ -255,85 +255,85 @@ void test()
   if (have_v4)
   {
     ip::multicast::enable_loopback enable_loopback1(true);
-    BOOST_CHECK(enable_loopback1.value());
-    BOOST_CHECK(static_cast<bool>(enable_loopback1));
-    BOOST_CHECK(!!enable_loopback1);
+    ASIO_CHECK(enable_loopback1.value());
+    ASIO_CHECK(static_cast<bool>(enable_loopback1));
+    ASIO_CHECK(!!enable_loopback1);
     sock_v4.set_option(enable_loopback1, ec);
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(ASIO_WINDOWS) && defined(UNDER_CE)
     // Option is not supported under Windows CE.
-    BOOST_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
+    ASIO_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
         ec.value() << ", " << ec.message());
-#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
-#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#else // defined(ASIO_WINDOWS) && defined(UNDER_CE)
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+#endif // defined(ASIO_WINDOWS) && defined(UNDER_CE)
 
     ip::multicast::enable_loopback enable_loopback2;
     sock_v4.get_option(enable_loopback2, ec);
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(ASIO_WINDOWS) && defined(UNDER_CE)
     // Not supported under Windows CE but can get value.
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
-#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
-    BOOST_CHECK(enable_loopback2.value());
-    BOOST_CHECK(static_cast<bool>(enable_loopback2));
-    BOOST_CHECK(!!enable_loopback2);
-#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+#else // defined(ASIO_WINDOWS) && defined(UNDER_CE)
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    ASIO_CHECK(enable_loopback2.value());
+    ASIO_CHECK(static_cast<bool>(enable_loopback2));
+    ASIO_CHECK(!!enable_loopback2);
+#endif // defined(ASIO_WINDOWS) && defined(UNDER_CE)
 
     ip::multicast::enable_loopback enable_loopback3(false);
-    BOOST_CHECK(!enable_loopback3.value());
-    BOOST_CHECK(!static_cast<bool>(enable_loopback3));
-    BOOST_CHECK(!enable_loopback3);
+    ASIO_CHECK(!enable_loopback3.value());
+    ASIO_CHECK(!static_cast<bool>(enable_loopback3));
+    ASIO_CHECK(!enable_loopback3);
     sock_v4.set_option(enable_loopback3, ec);
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(ASIO_WINDOWS) && defined(UNDER_CE)
     // Option is not supported under Windows CE.
-    BOOST_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
+    ASIO_CHECK_MESSAGE(ec == asio::error::no_protocol_option,
         ec.value() << ", " << ec.message());
-#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
-#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#else // defined(ASIO_WINDOWS) && defined(UNDER_CE)
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+#endif // defined(ASIO_WINDOWS) && defined(UNDER_CE)
 
     ip::multicast::enable_loopback enable_loopback4;
     sock_v4.get_option(enable_loopback4, ec);
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(ASIO_WINDOWS) && defined(UNDER_CE)
     // Not supported under Windows CE but can get value.
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
-#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
-    BOOST_CHECK(!enable_loopback4.value());
-    BOOST_CHECK(!static_cast<bool>(enable_loopback4));
-    BOOST_CHECK(!enable_loopback4);
-#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+#else // defined(ASIO_WINDOWS) && defined(UNDER_CE)
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    ASIO_CHECK(!enable_loopback4.value());
+    ASIO_CHECK(!static_cast<bool>(enable_loopback4));
+    ASIO_CHECK(!enable_loopback4);
+#endif // defined(ASIO_WINDOWS) && defined(UNDER_CE)
   }
 
   if (have_v6)
   {
     ip::multicast::enable_loopback enable_loopback1(true);
-    BOOST_CHECK(enable_loopback1.value());
-    BOOST_CHECK(static_cast<bool>(enable_loopback1));
-    BOOST_CHECK(!!enable_loopback1);
+    ASIO_CHECK(enable_loopback1.value());
+    ASIO_CHECK(static_cast<bool>(enable_loopback1));
+    ASIO_CHECK(!!enable_loopback1);
     sock_v6.set_option(enable_loopback1, ec);
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
 
     ip::multicast::enable_loopback enable_loopback2;
     sock_v6.get_option(enable_loopback2, ec);
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
-    BOOST_CHECK(enable_loopback2.value());
-    BOOST_CHECK(static_cast<bool>(enable_loopback2));
-    BOOST_CHECK(!!enable_loopback2);
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    ASIO_CHECK(enable_loopback2.value());
+    ASIO_CHECK(static_cast<bool>(enable_loopback2));
+    ASIO_CHECK(!!enable_loopback2);
 
     ip::multicast::enable_loopback enable_loopback3(false);
-    BOOST_CHECK(!enable_loopback3.value());
-    BOOST_CHECK(!static_cast<bool>(enable_loopback3));
-    BOOST_CHECK(!enable_loopback3);
+    ASIO_CHECK(!enable_loopback3.value());
+    ASIO_CHECK(!static_cast<bool>(enable_loopback3));
+    ASIO_CHECK(!enable_loopback3);
     sock_v6.set_option(enable_loopback3, ec);
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
 
     ip::multicast::enable_loopback enable_loopback4;
     sock_v6.get_option(enable_loopback4, ec);
-    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
-    BOOST_CHECK(!enable_loopback4.value());
-    BOOST_CHECK(!static_cast<bool>(enable_loopback4));
-    BOOST_CHECK(!enable_loopback4);
+    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    ASIO_CHECK(!enable_loopback4.value());
+    ASIO_CHECK(!static_cast<bool>(enable_loopback4));
+    ASIO_CHECK(!enable_loopback4);
   }
 }
 
@@ -341,10 +341,9 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("ip/multicast");
-  test->add(BOOST_TEST_CASE(&ip_multicast_compile::test));
-  test->add(BOOST_TEST_CASE(&ip_multicast_runtime::test));
-  return test;
-}
+ASIO_TEST_SUITE
+(
+  "ip/multicast",
+  ASIO_TEST_CASE(ip_multicast_compile::test)
+  ASIO_TEST_CASE(ip_multicast_runtime::test)
+)

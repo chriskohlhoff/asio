@@ -28,7 +28,7 @@ namespace detail {
 class buffer_sequence_adapter_base
 {
 protected:
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
   typedef WSABUF native_buffer_type;
 
   static void init_native_buffer(WSABUF& buf,
@@ -44,7 +44,7 @@ protected:
     buf.buf = const_cast<char*>(asio::buffer_cast<const char*>(buffer));
     buf.len = static_cast<ULONG>(asio::buffer_size(buffer));
   }
-#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
   typedef iovec native_buffer_type;
 
   static void init_iov_base(void*& base, void* addr)
@@ -72,7 +72,7 @@ protected:
           asio::buffer_cast<const void*>(buffer)));
     iov.iov_len = asio::buffer_size(buffer);
   }
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 };
 
 // Helper class to translate buffers into the native buffer representation.

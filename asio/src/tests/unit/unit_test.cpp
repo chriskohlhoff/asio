@@ -9,10 +9,11 @@
 //
 
 #include "unit_test.hpp"
-#include <boost/version.hpp>
 
-#if (BOOST_VERSION < 104800)
-# include <boost/test/included/unit_test_framework.hpp>
-#else
-# include <boost/test/included/unit_test.hpp>
+#if !defined(ASIO_STANDALONE)
+# if (BOOST_VERSION < 104800)
+#  include <boost/test/included/unit_test_framework.hpp>
+# else
+#  include <boost/test/included/unit_test.hpp>
+# endif
 #endif

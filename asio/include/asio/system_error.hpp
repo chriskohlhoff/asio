@@ -83,9 +83,9 @@ public:
   /// Get a string representation of the exception.
   virtual const char* what() const throw ()
   {
-#if !defined(BOOST_NO_EXCEPTIONS)
+#if !defined(ASIO_NO_EXCEPTIONS)
     try
-#endif // !defined(BOOST_NO_EXCEPTIONS)
+#endif // !defined(ASIO_NO_EXCEPTIONS)
     {
       if (!what_.get())
       {
@@ -97,12 +97,12 @@ public:
       }
       return what_->c_str();
     }
-#if !defined(BOOST_NO_EXCEPTIONS)
+#if !defined(ASIO_NO_EXCEPTIONS)
     catch (std::exception&)
     {
       return "system_error";
     }
-#endif // !defined(BOOST_NO_EXCEPTIONS)
+#endif // !defined(ASIO_NO_EXCEPTIONS)
   }
 
   /// Get the error code associated with the exception.

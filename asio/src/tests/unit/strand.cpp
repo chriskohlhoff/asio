@@ -17,13 +17,40 @@
 #include "asio/strand.hpp"
 
 #include <sstream>
-#include <boost/bind.hpp>
-#include "asio/deadline_timer.hpp"
 #include "asio/io_service.hpp"
 #include "asio/thread.hpp"
 #include "unit_test.hpp"
 
+#if defined(ASIO_HAS_BOOST_DATE_TIME)
+# include "asio/deadline_timer.hpp"
+#else // defined(ASIO_HAS_BOOST_DATE_TIME)
+# include "asio/steady_timer.hpp"
+#endif // defined(ASIO_HAS_BOOST_DATE_TIME)
+
+#if defined(ASIO_HAS_BOOST_BIND)
+# include <boost/bind.hpp>
+#else // defined(ASIO_HAS_BOOST_BIND)
+# include <functional>
+#endif // defined(ASIO_HAS_BOOST_BIND)
+
 using namespace asio;
+
+#if defined(ASIO_HAS_BOOST_BIND)
+namespace bindns = boost;
+#else // defined(ASIO_HAS_BOOST_BIND)
+namespace bindns = std;
+#endif
+
+#if defined(ASIO_HAS_BOOST_DATE_TIME)
+typedef deadline_timer timer;
+namespace chronons = boost::posix_time;
+#elif defined(ASIO_HAS_STD_CHRONO)
+typedef steady_timer timer;
+namespace chronons = std::chrono;
+#elif defined(ASIO_HAS_BOOST_CHRONO)
+typedef steady_timer timer;
+namespace chronons = boost::chrono;
+#endif // defined(ASIO_HAS_BOOST_DATE_TIME)
 
 void increment(int* count)
 {
@@ -32,33 +59,33 @@ void increment(int* count)
 
 void increment_without_lock(strand* s, int* count)
 {
-  BOOST_CHECK(!s->running_in_this_thread());
+  ASIO_CHECK(!s->running_in_this_thread());
 
   int original_count = *count;
 
-  s->dispatch(boost::bind(increment, count));
+  s->dispatch(bindns::bind(increment, count));
 
   // No other functions are currently executing through the locking dispatcher,
   // so the previous call to dispatch should have successfully nested.
-  BOOST_CHECK(*count == original_count + 1);
+  ASIO_CHECK(*count == original_count + 1);
 }
 
 void increment_with_lock(strand* s, int* count)
 {
-  BOOST_CHECK(s->running_in_this_thread());
+  ASIO_CHECK(s->running_in_this_thread());
 
   int original_count = *count;
 
-  s->dispatch(boost::bind(increment, count));
+  s->dispatch(bindns::bind(increment, count));
 
   // The current function already holds the strand's lock, so the
   // previous call to dispatch should have successfully nested.
-  BOOST_CHECK(*count == original_count + 1);
+  ASIO_CHECK(*count == original_count + 1);
 }
 
 void sleep_increment(io_service* ios, int* count)
 {
-  deadline_timer t(*ios, boost::posix_time::seconds(2));
+  timer t(*ios, chronons::seconds(2));
   t.wait();
 
   ++(*count);
@@ -67,13 +94,13 @@ void sleep_increment(io_service* ios, int* count)
 void start_sleep_increments(io_service* ios, strand* s, int* count)
 {
   // Give all threads a chance to start.
-  deadline_timer t(*ios, boost::posix_time::seconds(2));
+  timer t(*ios, chronons::seconds(2));
   t.wait();
 
   // Start three increments.
-  s->post(boost::bind(sleep_increment, ios, count));
-  s->post(boost::bind(sleep_increment, ios, count));
-  s->post(boost::bind(sleep_increment, ios, count));
+  s->post(bindns::bind(sleep_increment, ios, count));
+  s->post(bindns::bind(sleep_increment, ios, count));
+  s->post(bindns::bind(sleep_increment, ios, count));
 }
 
 void throw_exception()
@@ -92,63 +119,63 @@ void strand_test()
   strand s(ios);
   int count = 0;
 
-  ios.post(boost::bind(increment_without_lock, &s, &count));
+  ios.post(bindns::bind(increment_without_lock, &s, &count));
 
   // No handlers can be called until run() is called.
-  BOOST_CHECK(count == 0);
+  ASIO_CHECK(count == 0);
 
   ios.run();
 
   // The run() call will not return until all work has finished.
-  BOOST_CHECK(count == 1);
+  ASIO_CHECK(count == 1);
 
   count = 0;
   ios.reset();
-  s.post(boost::bind(increment_with_lock, &s, &count));
+  s.post(bindns::bind(increment_with_lock, &s, &count));
 
   // No handlers can be called until run() is called.
-  BOOST_CHECK(count == 0);
+  ASIO_CHECK(count == 0);
 
   ios.run();
 
   // The run() call will not return until all work has finished.
-  BOOST_CHECK(count == 1);
+  ASIO_CHECK(count == 1);
 
   count = 0;
   ios.reset();
-  ios.post(boost::bind(start_sleep_increments, &ios, &s, &count));
-  thread thread1(boost::bind(io_service_run, &ios));
-  thread thread2(boost::bind(io_service_run, &ios));
+  ios.post(bindns::bind(start_sleep_increments, &ios, &s, &count));
+  thread thread1(bindns::bind(io_service_run, &ios));
+  thread thread2(bindns::bind(io_service_run, &ios));
 
   // Check all events run one after another even though there are two threads.
-  deadline_timer timer1(ios, boost::posix_time::seconds(3));
+  timer timer1(ios, chronons::seconds(3));
   timer1.wait();
-  BOOST_CHECK(count == 0);
-  timer1.expires_at(timer1.expires_at() + boost::posix_time::seconds(2));
+  ASIO_CHECK(count == 0);
+  timer1.expires_at(timer1.expires_at() + chronons::seconds(2));
   timer1.wait();
-  BOOST_CHECK(count == 1);
-  timer1.expires_at(timer1.expires_at() + boost::posix_time::seconds(2));
+  ASIO_CHECK(count == 1);
+  timer1.expires_at(timer1.expires_at() + chronons::seconds(2));
   timer1.wait();
-  BOOST_CHECK(count == 2);
+  ASIO_CHECK(count == 2);
 
   thread1.join();
   thread2.join();
 
   // The run() calls will not return until all work has finished.
-  BOOST_CHECK(count == 3);
+  ASIO_CHECK(count == 3);
 
   count = 0;
   int exception_count = 0;
   ios.reset();
   s.post(throw_exception);
-  s.post(boost::bind(increment, &count));
-  s.post(boost::bind(increment, &count));
+  s.post(bindns::bind(increment, &count));
+  s.post(bindns::bind(increment, &count));
   s.post(throw_exception);
-  s.post(boost::bind(increment, &count));
+  s.post(bindns::bind(increment, &count));
 
   // No handlers can be called until run() is called.
-  BOOST_CHECK(count == 0);
-  BOOST_CHECK(exception_count == 0);
+  ASIO_CHECK(count == 0);
+  ASIO_CHECK(exception_count == 0);
 
   for (;;)
   {
@@ -164,8 +191,8 @@ void strand_test()
   }
 
   // The run() calls will not return until all work has finished.
-  BOOST_CHECK(count == 3);
-  BOOST_CHECK(exception_count == 2);
+  ASIO_CHECK(count == 3);
+  ASIO_CHECK(exception_count == 2);
 
   count = 0;
   ios.reset();
@@ -174,18 +201,17 @@ void strand_test()
   // are abandoned.
   {
     strand s2(ios);
-    s2.post(boost::bind(increment, &count));
-    s2.post(boost::bind(increment, &count));
-    s2.post(boost::bind(increment, &count));
+    s2.post(bindns::bind(increment, &count));
+    s2.post(bindns::bind(increment, &count));
+    s2.post(bindns::bind(increment, &count));
   }
 
   // No handlers can be called until run() is called.
-  BOOST_CHECK(count == 0);
+  ASIO_CHECK(count == 0);
 }
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("strand");
-  test->add(BOOST_TEST_CASE(&strand_test));
-  return test;
-}
+ASIO_TEST_SUITE
+(
+  "strand",
+  ASIO_TEST_CASE(strand_test)
+)

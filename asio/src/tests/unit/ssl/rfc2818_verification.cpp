@@ -18,9 +18,8 @@
 
 #include "../unit_test.hpp"
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("ssl/rfc2818_verification");
-  test->add(BOOST_TEST_CASE(&null_test));
-  return test;
-}
+ASIO_TEST_SUITE
+(
+  "ssl/rfc2818_verification",
+  ASIO_TEST_CASE(null_test)
+)

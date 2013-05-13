@@ -22,9 +22,9 @@
 #else // defined(ASIO_HAS_STD_SYSTEM_ERROR)
 # include <string>
 # include "asio/detail/noncopyable.hpp"
-# if !defined(BOOST_NO_IOSTREAM)
+# if !defined(ASIO_NO_IOSTREAM)
 #  include <iosfwd>
-# endif // !defined(BOOST_NO_IOSTREAM)
+# endif // !defined(ASIO_NO_IOSTREAM)
 #endif // defined(ASIO_HAS_STD_SYSTEM_ERROR)
 
 #include "asio/detail/push_options.hpp"
@@ -162,7 +162,7 @@ private:
   const error_category* category_;
 };
 
-# if !defined(BOOST_NO_IOSTREAM)
+# if !defined(ASIO_NO_IOSTREAM)
 
 /// Output an error code.
 template <typename Elem, typename Traits>
@@ -173,7 +173,7 @@ std::basic_ostream<Elem, Traits>& operator<<(
   return os;
 }
 
-# endif // !defined(BOOST_NO_IOSTREAM)
+# endif // !defined(ASIO_NO_IOSTREAM)
 
 #endif // defined(ASIO_HAS_STD_SYSTEM_ERROR)
 

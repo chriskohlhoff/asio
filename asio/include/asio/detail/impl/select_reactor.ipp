@@ -185,7 +185,7 @@ void select_reactor::run(bool block, op_queue<operation>& ops)
       max_fd = fd_sets_[i].max_descriptor();
   }
 
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
   // Connection operations on Windows use both except and write fd_sets.
   have_work_to_do = have_work_to_do || !op_queue_[connect_op].empty();
   op_queue_[connect_op].get_descriptors(fd_sets_[write_op], ops);
@@ -194,7 +194,7 @@ void select_reactor::run(bool block, op_queue<operation>& ops)
   op_queue_[connect_op].get_descriptors(fd_sets_[except_op], ops);
   if (fd_sets_[except_op].max_descriptor() > max_fd)
     max_fd = fd_sets_[except_op].max_descriptor();
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 
   // We can return immediately if there's no work to do and the reactor is
   // not supposed to block.
@@ -224,13 +224,13 @@ void select_reactor::run(bool block, op_queue<operation>& ops)
   // Dispatch all ready operations.
   if (retval > 0)
   {
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
     // Connection operations on Windows use both except and write fd_sets.
     op_queue_[connect_op].perform_operations_for_descriptors(
         fd_sets_[except_op], ops);
     op_queue_[connect_op].perform_operations_for_descriptors(
         fd_sets_[write_op], ops);
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 
     // Exception operations must be processed first to ensure that any
     // out-of-band data is read before normal data.

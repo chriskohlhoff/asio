@@ -19,9 +19,9 @@
 #include <cstring>
 #include <stdexcept>
 #include <typeinfo>
-#include <boost/throw_exception.hpp>
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/throw_error.hpp"
+#include "asio/detail/throw_exception.hpp"
 #include "asio/error.hpp"
 #include "asio/ip/address_v6.hpp"
 
@@ -46,7 +46,7 @@ address_v6::address_v6(const address_v6::bytes_type& bytes,
     if (bytes[i] > 0xFF)
     {
       std::out_of_range ex("address_v6 from bytes_type");
-      boost::throw_exception(ex);
+      asio::detail::throw_exception(ex);
     }
   }
 #endif // UCHAR_MAX > 0xFF
@@ -150,7 +150,7 @@ address_v4 address_v6::to_v4() const
   if (!is_v4_mapped() && !is_v4_compatible())
   {
     std::bad_cast ex;
-    boost::throw_exception(ex);
+    asio::detail::throw_exception(ex);
   }
 
   address_v4::bytes_type v4_bytes = { { addr_.s6_addr[12],

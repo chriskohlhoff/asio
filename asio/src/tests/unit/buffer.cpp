@@ -16,8 +16,15 @@
 // Test that header file is self-contained.
 #include "asio/buffer.hpp"
 
-#include <boost/array.hpp>
 #include "unit_test.hpp"
+
+#if defined(ASIO_HAS_BOOST_ARRAY)
+# include <boost/array.hpp>
+#endif // defined(ASIO_HAS_BOOST_ARRAY)
+
+#if defined(ASIO_HAS_STD_ARRAY)
+# include <array>
+#endif // defined(ASIO_HAS_STD_ARRAY)
 
 //------------------------------------------------------------------------------
 
@@ -38,9 +45,11 @@ void test()
     const char const_raw_data[1024] = "";
     void* void_ptr_data = raw_data;
     const void* const_void_ptr_data = const_raw_data;
+#if defined(ASIO_HAS_BOOST_ARRAY)
     boost::array<char, 1024> array_data;
     const boost::array<char, 1024>& const_array_data_1 = array_data;
     boost::array<const char, 1024> const_array_data_2 = { { 0 } };
+#endif // defined(ASIO_HAS_BOOST_ARRAY)
 #if defined(ASIO_HAS_STD_ARRAY)
     std::array<char, 1024> std_array_data;
     const std::array<char, 1024>& const_std_array_data_1 = std_array_data;
@@ -133,12 +142,14 @@ void test()
     mb1 = buffer(raw_data, 1024);
     cb1 = buffer(const_raw_data);
     cb1 = buffer(const_raw_data, 1024);
+#if defined(ASIO_HAS_BOOST_ARRAY)
     mb1 = buffer(array_data);
     mb1 = buffer(array_data, 1024);
     cb1 = buffer(const_array_data_1);
     cb1 = buffer(const_array_data_1, 1024);
     cb1 = buffer(const_array_data_2);
     cb1 = buffer(const_array_data_2, 1024);
+#endif // defined(ASIO_HAS_BOOST_ARRAY)
 #if defined(ASIO_HAS_STD_ARRAY)
     mb1 = buffer(std_array_data);
     mb1 = buffer(std_array_data, 1024);
@@ -228,9 +239,8 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("buffer");
-  test->add(BOOST_TEST_CASE(&buffer_compile::test));
-  return test;
-}
+ASIO_TEST_SUITE
+(
+  "buffer",
+  ASIO_TEST_CASE(buffer_compile::test)
+)

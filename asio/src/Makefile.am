@@ -1,4 +1,8 @@
+if STANDALONE
+SUBDIRS = examples/cpp11 tests
+else
 SUBDIRS = examples/cpp03 tests
+endif
 
 DIST_SUBDIRS = examples/cpp03 examples/cpp11 tests
 

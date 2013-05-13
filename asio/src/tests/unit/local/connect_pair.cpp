@@ -70,9 +70,8 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("local/connect_pair");
-  test->add(BOOST_TEST_CASE(&local_connect_pair_compile::test));
-  return test;
-}
+ASIO_TEST_SUITE
+(
+  "local/connect_pair",
+  ASIO_TEST_CASE(local_connect_pair_compile::test)
+)

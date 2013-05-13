@@ -19,11 +19,8 @@
 // Test that header file is self-contained.
 #include "asio/ip/tcp.hpp"
 
-#include <boost/array.hpp>
-#include <boost/bind.hpp>
 #include <cstring>
 #include "asio/io_service.hpp"
-#include "asio/placeholders.hpp"
 #include "asio/read.hpp"
 #include "asio/write.hpp"
 #include "../unit_test.hpp"
@@ -31,6 +28,18 @@
 #include "../archetypes/async_result.hpp"
 #include "../archetypes/io_control_command.hpp"
 #include "../archetypes/settable_socket_option.hpp"
+
+#if defined(ASIO_HAS_BOOST_ARRAY)
+# include <boost/array.hpp>
+#else // defined(ASIO_HAS_BOOST_ARRAY)
+# include <array>
+#endif // defined(ASIO_HAS_BOOST_ARRAY)
+
+#if defined(ASIO_HAS_BOOST_BIND)
+# include <boost/bind.hpp>
+#else // defined(ASIO_HAS_BOOST_BIND)
+# include <functional>
+#endif // defined(ASIO_HAS_BOOST_BIND)
 
 //------------------------------------------------------------------------------
 
@@ -89,32 +98,32 @@ void test()
   // no_delay class.
 
   ip::tcp::no_delay no_delay1(true);
-  BOOST_CHECK(no_delay1.value());
-  BOOST_CHECK(static_cast<bool>(no_delay1));
-  BOOST_CHECK(!!no_delay1);
+  ASIO_CHECK(no_delay1.value());
+  ASIO_CHECK(static_cast<bool>(no_delay1));
+  ASIO_CHECK(!!no_delay1);
   sock.set_option(no_delay1, ec);
-  BOOST_CHECK(!ec);
+  ASIO_CHECK(!ec);
 
   ip::tcp::no_delay no_delay2;
   sock.get_option(no_delay2, ec);
-  BOOST_CHECK(!ec);
-  BOOST_CHECK(no_delay2.value());
-  BOOST_CHECK(static_cast<bool>(no_delay2));
-  BOOST_CHECK(!!no_delay2);
+  ASIO_CHECK(!ec);
+  ASIO_CHECK(no_delay2.value());
+  ASIO_CHECK(static_cast<bool>(no_delay2));
+  ASIO_CHECK(!!no_delay2);
 
   ip::tcp::no_delay no_delay3(false);
-  BOOST_CHECK(!no_delay3.value());
-  BOOST_CHECK(!static_cast<bool>(no_delay3));
-  BOOST_CHECK(!no_delay3);
+  ASIO_CHECK(!no_delay3.value());
+  ASIO_CHECK(!static_cast<bool>(no_delay3));
+  ASIO_CHECK(!no_delay3);
   sock.set_option(no_delay3, ec);
-  BOOST_CHECK(!ec);
+  ASIO_CHECK(!ec);
 
   ip::tcp::no_delay no_delay4;
   sock.get_option(no_delay4, ec);
-  BOOST_CHECK(!ec);
-  BOOST_CHECK(!no_delay4.value());
-  BOOST_CHECK(!static_cast<bool>(no_delay4));
-  BOOST_CHECK(!no_delay4);
+  ASIO_CHECK(!ec);
+  ASIO_CHECK(!no_delay4.value());
+  ASIO_CHECK(!static_cast<bool>(no_delay4));
+  ASIO_CHECK(!no_delay4);
 }
 
 } // namespace ip_tcp_runtime
@@ -150,6 +159,12 @@ void read_some_handler(const asio::error_code&, std::size_t)
 
 void test()
 {
+#if defined(ASIO_HAS_BOOST_ARRAY)
+  using boost::array;
+#else // defined(ASIO_HAS_BOOST_ARRAY)
+  using std::array;
+#endif // defined(ASIO_HAS_BOOST_ARRAY)
+
   using namespace asio;
   namespace ip = asio::ip;
 
@@ -158,10 +173,10 @@ void test()
     io_service ios;
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
-    boost::array<asio::mutable_buffer, 2> mutable_buffers = {{
+    array<asio::mutable_buffer, 2> mutable_buffers = {{
         asio::buffer(mutable_char_buffer, 10),
         asio::buffer(mutable_char_buffer + 10, 10) }};
-    boost::array<asio::const_buffer, 2> const_buffers = {{
+    array<asio::const_buffer, 2> const_buffers = {{
         asio::buffer(const_char_buffer, 10),
         asio::buffer(const_char_buffer + 10, 10) }};
     socket_base::message_flags in_flags = 0;
@@ -448,48 +463,48 @@ void handle_read_noop(const asio::error_code& err,
     size_t bytes_transferred, bool* called)
 {
   *called = true;
-  BOOST_CHECK(!err);
-  BOOST_CHECK(bytes_transferred == 0);
+  ASIO_CHECK(!err);
+  ASIO_CHECK(bytes_transferred == 0);
 }
 
 void handle_write_noop(const asio::error_code& err,
     size_t bytes_transferred, bool* called)
 {
   *called = true;
-  BOOST_CHECK(!err);
-  BOOST_CHECK(bytes_transferred == 0);
+  ASIO_CHECK(!err);
+  ASIO_CHECK(bytes_transferred == 0);
 }
 
 void handle_read(const asio::error_code& err,
     size_t bytes_transferred, bool* called)
 {
   *called = true;
-  BOOST_CHECK(!err);
-  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  ASIO_CHECK(!err);
+  ASIO_CHECK(bytes_transferred == sizeof(write_data));
 }
 
 void handle_write(const asio::error_code& err,
     size_t bytes_transferred, bool* called)
 {
   *called = true;
-  BOOST_CHECK(!err);
-  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  ASIO_CHECK(!err);
+  ASIO_CHECK(bytes_transferred == sizeof(write_data));
 }
 
 void handle_read_cancel(const asio::error_code& err,
     size_t bytes_transferred, bool* called)
 {
   *called = true;
-  BOOST_CHECK(err == asio::error::operation_aborted);
-  BOOST_CHECK(bytes_transferred == 0);
+  ASIO_CHECK(err == asio::error::operation_aborted);
+  ASIO_CHECK(bytes_transferred == 0);
 }
 
 void handle_read_eof(const asio::error_code& err,
     size_t bytes_transferred, bool* called)
 {
   *called = true;
-  BOOST_CHECK(err == asio::error::eof);
-  BOOST_CHECK(bytes_transferred == 0);
+  ASIO_CHECK(err == asio::error::eof);
+  ASIO_CHECK(bytes_transferred == 0);
 }
 
 void test()
@@ -497,6 +512,14 @@ void test()
   using namespace std; // For memcmp.
   using namespace asio;
   namespace ip = asio::ip;
+
+#if defined(ASIO_HAS_BOOST_BIND)
+  namespace bindns = boost;
+#else // defined(ASIO_HAS_BOOST_BIND)
+  namespace bindns = std;
+  using std::placeholders::_1;
+  using std::placeholders::_2;
+#endif // defined(ASIO_HAS_BOOST_BIND)
 
   io_service ios;
 
@@ -515,27 +538,23 @@ void test()
   bool read_noop_completed = false;
   client_side_socket.async_read_some(
       asio::mutable_buffers_1(0, 0),
-      boost::bind(handle_read_noop,
-        asio::placeholders::error,
-        asio::placeholders::bytes_transferred,
-        &read_noop_completed));
+      bindns::bind(handle_read_noop,
+        _1, _2, &read_noop_completed));
 
   ios.run();
-  BOOST_CHECK(read_noop_completed);
+  ASIO_CHECK(read_noop_completed);
 
   // No-op write.
 
   bool write_noop_completed = false;
   client_side_socket.async_write_some(
       asio::const_buffers_1(0, 0),
-      boost::bind(handle_write_noop,
-        asio::placeholders::error,
-        asio::placeholders::bytes_transferred,
-        &write_noop_completed));
+      bindns::bind(handle_write_noop,
+        _1, _2, &write_noop_completed));
 
   ios.reset();
   ios.run();
-  BOOST_CHECK(write_noop_completed);
+  ASIO_CHECK(write_noop_completed);
 
   // Read and write to transfer data.
 
@@ -543,60 +562,52 @@ void test()
   bool read_completed = false;
   asio::async_read(client_side_socket,
       asio::buffer(read_buffer),
-      boost::bind(handle_read,
-        asio::placeholders::error,
-        asio::placeholders::bytes_transferred,
-        &read_completed));
+      bindns::bind(handle_read,
+        _1, _2, &read_completed));
 
   bool write_completed = false;
   asio::async_write(server_side_socket,
       asio::buffer(write_data),
-      boost::bind(handle_write,
-        asio::placeholders::error,
-        asio::placeholders::bytes_transferred,
-        &write_completed));
+      bindns::bind(handle_write,
+        _1, _2, &write_completed));
 
   ios.reset();
   ios.run();
-  BOOST_CHECK(read_completed);
-  BOOST_CHECK(write_completed);
-  BOOST_CHECK(memcmp(read_buffer, write_data, sizeof(write_data)) == 0);
+  ASIO_CHECK(read_completed);
+  ASIO_CHECK(write_completed);
+  ASIO_CHECK(memcmp(read_buffer, write_data, sizeof(write_data)) == 0);
 
   // Cancelled read.
 
   bool read_cancel_completed = false;
   asio::async_read(server_side_socket,
       asio::buffer(read_buffer),
-      boost::bind(handle_read_cancel,
-        asio::placeholders::error,
-        asio::placeholders::bytes_transferred,
-        &read_cancel_completed));
+      bindns::bind(handle_read_cancel,
+        _1, _2, &read_cancel_completed));
 
   ios.reset();
   ios.poll();
-  BOOST_CHECK(!read_cancel_completed);
+  ASIO_CHECK(!read_cancel_completed);
 
   server_side_socket.cancel();
 
   ios.reset();
   ios.run();
-  BOOST_CHECK(read_cancel_completed);
+  ASIO_CHECK(read_cancel_completed);
 
   // A read when the peer closes socket should fail with eof.
 
   bool read_eof_completed = false;
   asio::async_read(client_side_socket,
       asio::buffer(read_buffer),
-      boost::bind(handle_read_eof,
-        asio::placeholders::error,
-        asio::placeholders::bytes_transferred,
-        &read_eof_completed));
+      bindns::bind(handle_read_eof,
+        _1, _2, &read_eof_completed));
 
   server_side_socket.close();
 
   ios.reset();
   ios.run();
-  BOOST_CHECK(read_eof_completed);
+  ASIO_CHECK(read_eof_completed);
 }
 
 } // namespace ip_tcp_socket_runtime
@@ -753,12 +764,12 @@ namespace ip_tcp_acceptor_runtime {
 
 void handle_accept(const asio::error_code& err)
 {
-  BOOST_CHECK(!err);
+  ASIO_CHECK(!err);
 }
 
 void handle_connect(const asio::error_code& err)
 {
-  BOOST_CHECK(!err);
+  ASIO_CHECK(!err);
 }
 
 void test()
@@ -790,11 +801,12 @@ void test()
 
   ip::tcp::endpoint client_side_local_endpoint
     = client_side_socket.local_endpoint();
-  BOOST_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
+  ASIO_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
 
   ip::tcp::endpoint server_side_remote_endpoint
     = server_side_socket.remote_endpoint();
-  BOOST_CHECK(server_side_remote_endpoint.port() == client_endpoint.port());
+  ASIO_CHECK(server_side_remote_endpoint.port()
+      == client_endpoint.port());
 
   client_side_socket.close();
   server_side_socket.close();
@@ -814,10 +826,11 @@ void test()
   ios.run();
 
   client_side_local_endpoint = client_side_socket.local_endpoint();
-  BOOST_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
+  ASIO_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
 
   server_side_remote_endpoint = server_side_socket.remote_endpoint();
-  BOOST_CHECK(server_side_remote_endpoint.port() == client_endpoint.port());
+  ASIO_CHECK(server_side_remote_endpoint.port()
+      == client_endpoint.port());
 }
 
 } // namespace ip_tcp_acceptor_runtime
@@ -891,15 +904,14 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("ip/tcp");
-  test->add(BOOST_TEST_CASE(&ip_tcp_compile::test));
-  test->add(BOOST_TEST_CASE(&ip_tcp_runtime::test));
-  test->add(BOOST_TEST_CASE(&ip_tcp_socket_compile::test));
-  test->add(BOOST_TEST_CASE(&ip_tcp_socket_runtime::test));
-  test->add(BOOST_TEST_CASE(&ip_tcp_acceptor_compile::test));
-  test->add(BOOST_TEST_CASE(&ip_tcp_acceptor_runtime::test));
-  test->add(BOOST_TEST_CASE(&ip_tcp_resolver_compile::test));
-  return test;
-}
+ASIO_TEST_SUITE
+(
+  "ip/tcp",
+  ASIO_TEST_CASE(ip_tcp_compile::test)
+  ASIO_TEST_CASE(ip_tcp_runtime::test)
+  ASIO_TEST_CASE(ip_tcp_socket_compile::test)
+  ASIO_TEST_CASE(ip_tcp_socket_runtime::test)
+  ASIO_TEST_CASE(ip_tcp_acceptor_compile::test)
+  ASIO_TEST_CASE(ip_tcp_acceptor_runtime::test)
+  ASIO_TEST_CASE(ip_tcp_resolver_compile::test)
+)

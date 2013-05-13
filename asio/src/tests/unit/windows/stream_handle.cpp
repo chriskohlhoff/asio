@@ -134,9 +134,9 @@ void test()
 } // namespace windows_stream_handle_compile
 
 //------------------------------------------------------------------------------
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("windows/stream_handle");
-  test->add(BOOST_TEST_CASE(&windows_stream_handle_compile::test));
-  return test;
-}
+
+ASIO_TEST_SUITE
+(
+  "windows/stream_handle",
+  ASIO_TEST_CASE(windows_stream_handle_compile::test)
+)

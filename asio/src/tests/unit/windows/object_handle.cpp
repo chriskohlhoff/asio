@@ -113,9 +113,9 @@ void test()
 } // namespace windows_object_handle_compile
 
 //------------------------------------------------------------------------------
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("windows/object_handle");
-  test->add(BOOST_TEST_CASE(&windows_object_handle_compile::test));
-  return test;
-}
+
+ASIO_TEST_SUITE
+(
+  "windows/object_handle",
+  ASIO_TEST_CASE(windows_object_handle_compile::test)
+)

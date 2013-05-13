@@ -16,8 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <boost/detail/workaround.hpp>
-#include <boost/utility/addressof.hpp>
+#include "asio/detail/addressof.hpp"
 #include "asio/handler_invoke_hook.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -30,26 +29,24 @@ namespace asio_handler_invoke_helpers {
 template <typename Function, typename Context>
 inline void invoke(Function& function, Context& context)
 {
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564)) \
-  || BOOST_WORKAROUND(__GNUC__, < 3)
+#if !defined(ASIO_HAS_HANDLER_HOOKS)
   Function tmp(function);
   tmp();
 #else
   using asio::asio_handler_invoke;
-  asio_handler_invoke(function, boost::addressof(context));
+  asio_handler_invoke(function, asio::detail::addressof(context));
 #endif
 }
 
 template <typename Function, typename Context>
 inline void invoke(const Function& function, Context& context)
 {
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564)) \
-  || BOOST_WORKAROUND(__GNUC__, < 3)
+#if !defined(ASIO_HAS_HANDLER_HOOKS)
   Function tmp(function);
   tmp();
 #else
   using asio::asio_handler_invoke;
-  asio_handler_invoke(function, boost::addressof(context));
+  asio_handler_invoke(function, asio::detail::addressof(context));
 #endif
 }
 

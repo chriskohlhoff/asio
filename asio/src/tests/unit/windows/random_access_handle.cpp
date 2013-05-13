@@ -141,9 +141,9 @@ void test()
 } // namespace windows_random_access_handle_compile
 
 //------------------------------------------------------------------------------
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("windows/random_access_handle");
-  test->add(BOOST_TEST_CASE(&windows_random_access_handle_compile::test));
-  return test;
-}
+
+ASIO_TEST_SUITE
+(
+  "windows/random_access_handle",
+  ASIO_TEST_CASE(windows_random_access_handle_compile::test)
+)

@@ -37,13 +37,13 @@
 #   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 # endif // defined(__GNUC__)
-# if defined(BOOST_MSVC)
+# if defined(ASIO_MSVC)
 #  if (_MSC_VER >= 1600)
 #   define ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS_ASSERT 1
 #  endif // (_MSC_VER >= 1600)
-# endif // defined(BOOST_MSVC)
+# endif // defined(ASIO_MSVC)
 # if defined(__clang__)
-#  if __has_feature(cxx_static_assert)
+#  if __has_feature(__cxx_static_assert__)
 #   define ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS_ASSERT 1
 #  endif // __has_feature(cxx_static_assert)
 # endif // defined(__clang__)

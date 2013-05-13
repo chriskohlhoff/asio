@@ -19,12 +19,12 @@
 
 #if defined(ASIO_HAS_DEV_POLL)
 
-#include <boost/limits.hpp>
 #include <cstddef>
 #include <vector>
 #include <sys/devpoll.h>
 #include "asio/detail/dev_poll_reactor_fwd.hpp"
 #include "asio/detail/hash_map.hpp"
+#include "asio/detail/limits.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/reactor_op.hpp"

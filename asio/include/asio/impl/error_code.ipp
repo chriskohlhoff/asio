@@ -16,11 +16,12 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 # include <winerror.h>
 #else
 # include <cerrno>
 # include <cstring>
+# include <string>
 #endif
 #include "asio/detail/local_free_on_block_exit.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -41,7 +42,7 @@ public:
 
   std::string message(int value) const
   {
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
     char* msg = 0;
     DWORD length = ::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER
         | FORMAT_MESSAGE_FROM_SYSTEM
@@ -56,7 +57,7 @@ public:
       return msg;
     else
       return "asio.system error";
-#else // defined(BOOST_WINDOWS)
+#else // defined(ASIO_WINDOWS)
 #if !defined(__sun)
     if (value == ECANCELED)
       return "Operation aborted.";
@@ -76,7 +77,7 @@ public:
     char buf[256] = "";
     return strerror_r(value, buf, sizeof(buf));
 #endif
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(ASIO_WINDOWS)
   }
 };
 

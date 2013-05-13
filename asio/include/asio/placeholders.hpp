@@ -16,8 +16,10 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <boost/bind/arg.hpp>
-#include <boost/detail/workaround.hpp>
+
+#if defined(ASIO_HAS_BOOST_BIND)
+# include <boost/bind/arg.hpp>
+#endif // defined(ASIO_HAS_BOOST_BIND)
 
 #include "asio/detail/push_options.hpp"
 
@@ -46,7 +48,8 @@ unspecified iterator;
 /// asio::signal_set::async_wait.
 unspecified signal_number;
 
-#elif defined(__BORLANDC__) || defined(__GNUC__)
+#elif defined(ASIO_HAS_BOOST_BIND)
+# if defined(__BORLANDC__) || defined(__GNUC__)
 
 inline boost::arg<1> error()
 {
@@ -68,7 +71,7 @@ inline boost::arg<2> signal_number()
   return boost::arg<2>();
 }
 
-#else
+# else
 
 namespace detail
 {
@@ -83,7 +86,7 @@ namespace detail
   };
 }
 
-#if BOOST_WORKAROUND(BOOST_MSVC, < 1400)
+#  if defined(ASIO_MSVC) && (ASIO_MSVC < 1400)
 
 static boost::arg<1>& error
   = asio::placeholders::detail::placeholder<1>::get();
@@ -94,7 +97,7 @@ static boost::arg<2>& iterator
 static boost::arg<2>& signal_number
   = asio::placeholders::detail::placeholder<2>::get();
 
-#else
+#  else
 
 namespace
 {
@@ -108,8 +111,8 @@ namespace
     = asio::placeholders::detail::placeholder<2>::get();
 } // namespace
 
-#endif
-
+#  endif
+# endif
 #endif
 
 } // namespace placeholders

@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(BOOST_WINDOWS)
+#if !defined(ASIO_WINDOWS)
 #if !defined(__CYGWIN__)
 #if !defined(__SYMBIAN32__)
 #if !defined(ASIO_HAS_EVENTFD)
@@ -82,6 +82,6 @@ private:
 #endif // !defined(ASIO_HAS_EVENTFD)
 #endif // !defined(__SYMBIAN32__)
 #endif // !defined(__CYGWIN__)
-#endif // !defined(BOOST_WINDOWS)
+#endif // !defined(ASIO_WINDOWS)
 
 #endif // ASIO_DETAIL_PIPE_SELECT_INTERRUPTER_HPP

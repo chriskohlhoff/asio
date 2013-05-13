@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(BOOST_WINDOWS) && !defined(UNDER_CE)
+#if defined(ASIO_WINDOWS) && !defined(UNDER_CE)
 
 #include "asio/detail/socket_types.hpp"
 
@@ -44,7 +44,8 @@ public:
 #if defined(__BORLANDC__)
     LONG barrier = 0;
     ::InterlockedExchange(&barrier, 1);
-#elif defined(BOOST_MSVC) && ((BOOST_MSVC < 1400) || !defined(MemoryBarrier))
+#elif defined(ASIO_MSVC) \
+  && ((ASIO_MSVC < 1400) || !defined(MemoryBarrier))
 # if defined(_M_IX86)
 #  pragma warning(push)
 #  pragma warning(disable:4793)
@@ -63,7 +64,8 @@ public:
 #if defined(__BORLANDC__)
     LONG barrier = 0;
     ::InterlockedExchange(&barrier, 1);
-#elif defined(BOOST_MSVC) && ((BOOST_MSVC < 1400) || !defined(MemoryBarrier))
+#elif defined(ASIO_MSVC) \
+  && ((ASIO_MSVC < 1400) || !defined(MemoryBarrier))
 # if defined(_M_IX86)
 #  pragma warning(push)
 #  pragma warning(disable:4793)
@@ -82,6 +84,6 @@ public:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // defined(BOOST_WINDOWS) && !defined(UNDER_CE)
+#endif // defined(ASIO_WINDOWS) && !defined(UNDER_CE)
 
 #endif // ASIO_DETAIL_WIN_FENCED_BLOCK_HPP

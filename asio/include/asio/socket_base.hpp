@@ -16,7 +16,6 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <boost/detail/workaround.hpp>
 #include "asio/detail/io_control.hpp"
 #include "asio/detail/socket_option.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -66,13 +65,13 @@ public:
   /// Specifies that the data marks the end of a record.
   static const int message_end_of_record = implementation_defined;
 #else
-  BOOST_STATIC_CONSTANT(int,
+  ASIO_STATIC_CONSTANT(int,
       message_peek = asio::detail::message_peek);
-  BOOST_STATIC_CONSTANT(int,
+  ASIO_STATIC_CONSTANT(int,
       message_out_of_band = asio::detail::message_out_of_band);
-  BOOST_STATIC_CONSTANT(int,
+  ASIO_STATIC_CONSTANT(int,
       message_do_not_route = asio::detail::message_do_not_route);
-  BOOST_STATIC_CONSTANT(int,
+  ASIO_STATIC_CONSTANT(int,
       message_end_of_record = asio::detail::message_end_of_record);
 #endif
 
@@ -495,7 +494,7 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
   static const int max_connections = implementation_defined;
 #else
-  BOOST_STATIC_CONSTANT(int, max_connections = SOMAXCONN);
+  ASIO_STATIC_CONSTANT(int, max_connections = SOMAXCONN);
 #endif
 
 protected:
@@ -503,12 +502,6 @@ protected:
   ~socket_base()
   {
   }
-
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
-private:
-  // Workaround to enable the empty base optimisation with Borland C++.
-  char dummy_;
-#endif
 };
 
 } // namespace asio

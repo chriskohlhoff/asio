@@ -22,9 +22,9 @@
 #include "asio/detail/winsock_init.hpp"
 #include "asio/error_code.hpp"
 
-#if !defined(BOOST_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM)
 # include <iosfwd>
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_IOSTREAM)
 
 #include "asio/detail/push_options.hpp"
 
@@ -208,7 +208,7 @@ private:
   asio::detail::in4_addr_type addr_;
 };
 
-#if !defined(BOOST_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM)
 
 /// Output an address as a string.
 /**
@@ -226,7 +226,7 @@ template <typename Elem, typename Traits>
 std::basic_ostream<Elem, Traits>& operator<<(
     std::basic_ostream<Elem, Traits>& os, const address_v4& addr);
 
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_IOSTREAM)
 
 } // namespace ip
 } // namespace asio

@@ -16,6 +16,10 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if defined(ASIO_HAS_BOOST_DATE_TIME) \
+  || defined(GENERATING_DOCUMENTATION)
+
 #include <cstddef>
 #include "asio/async_result.hpp"
 #include "asio/detail/deadline_timer_service.hpp"
@@ -160,5 +164,8 @@ private:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(ASIO_HAS_BOOST_DATE_TIME)
+       // || defined(GENERATING_DOCUMENTATION)
 
 #endif // ASIO_DEADLINE_TIMER_SERVICE_HPP

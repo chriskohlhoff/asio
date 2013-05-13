@@ -23,9 +23,9 @@
 #include "asio/error_code.hpp"
 #include "asio/ip/address_v4.hpp"
 
-#if !defined(BOOST_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM)
 # include <iosfwd>
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_IOSTREAM)
 
 #include "asio/detail/push_options.hpp"
 
@@ -213,7 +213,7 @@ private:
   unsigned long scope_id_;
 };
 
-#if !defined(BOOST_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM)
 
 /// Output an address as a string.
 /**
@@ -231,7 +231,7 @@ template <typename Elem, typename Traits>
 std::basic_ostream<Elem, Traits>& operator<<(
     std::basic_ostream<Elem, Traits>& os, const address_v6& addr);
 
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_IOSTREAM)
 
 } // namespace ip
 } // namespace asio

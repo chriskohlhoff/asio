@@ -17,9 +17,9 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
-#include <boost/utility/addressof.hpp>
+#include "asio/detail/addressof.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/descriptor_ops.hpp"
@@ -80,7 +80,7 @@ public:
   {
     // Take ownership of the handler object.
     descriptor_write_op* o(static_cast<descriptor_write_op*>(base));
-    ptr p = { boost::addressof(o->handler_), o, o };
+    ptr p = { asio::detail::addressof(o->handler_), o, o };
 
     ASIO_HANDLER_COMPLETION((o));
 
@@ -92,7 +92,7 @@ public:
     // deallocated the memory here.
     detail::binder2<Handler, asio::error_code, std::size_t>
       handler(o->handler_, o->ec_, o->bytes_transferred_);
-    p.h = boost::addressof(handler.handler_);
+    p.h = asio::detail::addressof(handler.handler_);
     p.reset();
 
     // Make the upcall if required.
@@ -114,6 +114,6 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
 #endif // ASIO_DETAIL_DESCRIPTOR_WRITE_OP_HPP

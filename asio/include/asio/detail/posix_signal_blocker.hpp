@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
+#if defined(ASIO_HAS_PTHREADS)
 
 #include <csignal>
 #include <pthread.h>
@@ -80,6 +80,6 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // defined(BOOST_HAS_PTHREADS) && !defined(ASIO_DISABLE_THREADS)
+#endif // defined(ASIO_HAS_PTHREADS)
 
 #endif // ASIO_DETAIL_POSIX_SIGNAL_BLOCKER_HPP

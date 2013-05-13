@@ -151,10 +151,10 @@ public:
           // cannot allow more than one read operation at a time on the
           // underlying transport. The pending_read_ timer's expiry is set to
           // pos_infin if a read is in progress, and neg_infin otherwise.
-          if (core_.pending_read_.expires_at() == boost::posix_time::neg_infin)
+          if (core_.pending_read_.expires_at() == core_.neg_infin())
           {
             // Prevent other read operations from being started.
-            core_.pending_read_.expires_at(boost::posix_time::pos_infin);
+            core_.pending_read_.expires_at(core_.pos_infin());
 
             // Start reading some data from the underlying transport.
             next_layer_.async_read_some(
@@ -178,10 +178,10 @@ public:
           // cannot allow more than one write operation at a time on the
           // underlying transport. The pending_write_ timer's expiry is set to
           // pos_infin if a write is in progress, and neg_infin otherwise.
-          if (core_.pending_write_.expires_at() == boost::posix_time::neg_infin)
+          if (core_.pending_write_.expires_at() == core_.neg_infin())
           {
             // Prevent other write operations from being started.
-            core_.pending_write_.expires_at(boost::posix_time::pos_infin);
+            core_.pending_write_.expires_at(core_.pos_infin());
 
             // Start writing all the data to the underlying transport.
             asio::async_write(next_layer_,
@@ -236,7 +236,7 @@ public:
           core_.input_ = core_.engine_.put_input(core_.input_);
 
           // Release any waiting read operations.
-          core_.pending_read_.expires_at(boost::posix_time::neg_infin);
+          core_.pending_read_.expires_at(core_.neg_infin());
 
           // Try the operation again.
           continue;
@@ -244,7 +244,7 @@ public:
         case engine::want_output_and_retry:
 
           // Release any waiting write operations.
-          core_.pending_write_.expires_at(boost::posix_time::neg_infin);
+          core_.pending_write_.expires_at(core_.neg_infin());
 
           // Try the operation again.
           continue;
@@ -252,7 +252,7 @@ public:
         case engine::want_output:
 
           // Release any waiting write operations.
-          core_.pending_write_.expires_at(boost::posix_time::neg_infin);
+          core_.pending_write_.expires_at(core_.neg_infin());
 
           // Fall through to call handler.
 

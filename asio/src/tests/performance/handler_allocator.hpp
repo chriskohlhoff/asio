@@ -13,6 +13,7 @@
 
 #include "asio.hpp"
 #include <boost/aligned_storage.hpp>
+#include <boost/noncopyable.hpp>
 
 // Class to manage the memory to be used for handler-based custom allocation.
 // It contains a single block of memory which may be returned for allocation

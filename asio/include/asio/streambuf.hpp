@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(BOOST_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM)
 
 #include "asio/basic_streambuf.hpp"
 
@@ -28,6 +28,6 @@ typedef basic_streambuf<> streambuf;
 
 } // namespace asio
 
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_IOSTREAM)
 
 #endif // ASIO_STREAMBUF_HPP

@@ -16,12 +16,15 @@
 // Test that header file is self-contained.
 #include "asio/deadline_timer.hpp"
 
+#include "unit_test.hpp"
+
+#if defined(ASIO_HAS_BOOST_DATE_TIME)
+
 #include <boost/bind.hpp>
 #include "archetypes/async_result.hpp"
 #include "asio/io_service.hpp"
 #include "asio/placeholders.hpp"
 #include "asio/thread.hpp"
-#include "unit_test.hpp"
 
 using namespace boost::posix_time;
 
@@ -42,7 +45,7 @@ void decrement_to_zero(asio::deadline_timer* t, int* count)
     t->async_wait(boost::bind(decrement_to_zero, t, count));
 
     // Completion cannot nest, so count value should remain unchanged.
-    BOOST_CHECK(*count == before_value);
+    ASIO_CHECK(*count == before_value);
   }
 }
 
@@ -56,13 +59,13 @@ void increment_if_not_cancelled(int* count,
 void cancel_timer(asio::deadline_timer* t)
 {
   std::size_t num_cancelled = t->cancel();
-  BOOST_CHECK(num_cancelled == 1);
+  ASIO_CHECK(num_cancelled == 1);
 }
 
 void cancel_one_timer(asio::deadline_timer* t)
 {
   std::size_t num_cancelled = t->cancel_one();
-  BOOST_CHECK(num_cancelled == 1);
+  ASIO_CHECK(num_cancelled == 1);
 }
 
 ptime now()
@@ -87,7 +90,7 @@ void deadline_timer_test()
   // The timer must block until after its expiry time.
   ptime end = now();
   ptime expected_end = start + seconds(1);
-  BOOST_CHECK(expected_end < end || expected_end == end);
+  ASIO_CHECK(expected_end < end || expected_end == end);
 
   start = now();
 
@@ -97,7 +100,7 @@ void deadline_timer_test()
   // The timer must block until after its expiry time.
   end = now();
   expected_end = start + seconds(1) + microseconds(500000);
-  BOOST_CHECK(expected_end < end || expected_end == end);
+  ASIO_CHECK(expected_end < end || expected_end == end);
 
   t2.expires_at(t2.expires_at() + seconds(1));
   t2.wait();
@@ -105,7 +108,7 @@ void deadline_timer_test()
   // The timer must block until after its expiry time.
   end = now();
   expected_end += seconds(1);
-  BOOST_CHECK(expected_end < end || expected_end == end);
+  ASIO_CHECK(expected_end < end || expected_end == end);
 
   start = now();
 
@@ -115,7 +118,7 @@ void deadline_timer_test()
   // The timer must block until after its expiry time.
   end = now();
   expected_end = start + seconds(1) + microseconds(200000);
-  BOOST_CHECK(expected_end < end || expected_end == end);
+  ASIO_CHECK(expected_end < end || expected_end == end);
 
   start = now();
 
@@ -123,16 +126,16 @@ void deadline_timer_test()
   t3.async_wait(boost::bind(increment, &count));
 
   // No completions can be delivered until run() is called.
-  BOOST_CHECK(count == 0);
+  ASIO_CHECK(count == 0);
 
   ios.run();
 
   // The run() call will not return until all operations have finished, and
   // this should not be until after the timer's expiry time.
-  BOOST_CHECK(count == 1);
+  ASIO_CHECK(count == 1);
   end = now();
   expected_end = start + seconds(1);
-  BOOST_CHECK(expected_end < end || expected_end == end);
+  ASIO_CHECK(expected_end < end || expected_end == end);
 
   count = 3;
   start = now();
@@ -141,17 +144,17 @@ void deadline_timer_test()
   t4.async_wait(boost::bind(decrement_to_zero, &t4, &count));
 
   // No completions can be delivered until run() is called.
-  BOOST_CHECK(count == 3);
+  ASIO_CHECK(count == 3);
 
   ios.reset();
   ios.run();
 
   // The run() call will not return until all operations have finished, and
   // this should not be until after the timer's final expiry time.
-  BOOST_CHECK(count == 0);
+  ASIO_CHECK(count == 0);
   end = now();
   expected_end = start + seconds(3);
-  BOOST_CHECK(expected_end < end || expected_end == end);
+  ASIO_CHECK(expected_end < end || expected_end == end);
 
   count = 0;
   start = now();
@@ -163,7 +166,7 @@ void deadline_timer_test()
   t6.async_wait(boost::bind(cancel_timer, &t5));
 
   // No completions can be delivered until run() is called.
-  BOOST_CHECK(count == 0);
+  ASIO_CHECK(count == 0);
 
   ios.reset();
   ios.run();
@@ -171,10 +174,10 @@ void deadline_timer_test()
   // The timer should have been cancelled, so count should not have changed.
   // The total run time should not have been much more than 1 second (and
   // certainly far less than 10 seconds).
-  BOOST_CHECK(count == 0);
+  ASIO_CHECK(count == 0);
   end = now();
   expected_end = start + seconds(2);
-  BOOST_CHECK(end < expected_end);
+  ASIO_CHECK(end < expected_end);
 
   // Wait on the timer again without cancelling it. This time the asynchronous
   // wait should run to completion and increment the counter.
@@ -186,10 +189,10 @@ void deadline_timer_test()
 
   // The timer should not have been cancelled, so count should have changed.
   // The total time since the timer was created should be more than 10 seconds.
-  BOOST_CHECK(count == 1);
+  ASIO_CHECK(count == 1);
   end = now();
   expected_end = start + seconds(10);
-  BOOST_CHECK(expected_end < end || expected_end == end);
+  ASIO_CHECK(expected_end < end || expected_end == end);
 
   count = 0;
   start = now();
@@ -211,10 +214,10 @@ void deadline_timer_test()
   // One of the waits should not have been cancelled, so count should have
   // changed. The total time since the timer was created should be more than 3
   // seconds.
-  BOOST_CHECK(count == 1);
+  ASIO_CHECK(count == 1);
   end = now();
   expected_end = start + seconds(3);
-  BOOST_CHECK(expected_end < end || expected_end == end);
+  ASIO_CHECK(expected_end < end || expected_end == end);
 }
 
 void timer_handler(const asio::error_code&)
@@ -235,10 +238,10 @@ void deadline_timer_cancel_test()
   for (int i = 10; i < 20; ++i)
     timers[i].t.async_wait(&timer_handler);
 
-  BOOST_CHECK(timers[2].t.cancel() == 1);
-  BOOST_CHECK(timers[41].t.cancel() == 1);
+  ASIO_CHECK(timers[2].t.cancel() == 1);
+  ASIO_CHECK(timers[41].t.cancel() == 1);
   for (int i = 10; i < 20; ++i)
-    BOOST_CHECK(timers[i].t.cancel() == 1);
+    ASIO_CHECK(timers[i].t.cancel() == 1);
 }
 
 struct custom_allocation_timer_handler
@@ -290,7 +293,7 @@ void deadline_timer_custom_allocation_test()
 
   io_service.run();
 
-  BOOST_CHECK(allocation_count == 0);
+  ASIO_CHECK(allocation_count == 0);
 }
 
 void io_service_run(asio::io_service* ios)
@@ -320,7 +323,7 @@ void deadline_timer_thread_test()
   ios.stop();
   th.join();
 
-  BOOST_CHECK(count == 1);
+  ASIO_CHECK(count == 1);
 }
 
 void deadline_timer_async_result_test()
@@ -335,13 +338,19 @@ void deadline_timer_async_result_test()
   ios.run();
 }
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("deadline_timer");
-  test->add(BOOST_TEST_CASE(&deadline_timer_test));
-  test->add(BOOST_TEST_CASE(&deadline_timer_cancel_test));
-  test->add(BOOST_TEST_CASE(&deadline_timer_custom_allocation_test));
-  test->add(BOOST_TEST_CASE(&deadline_timer_thread_test));
-  test->add(BOOST_TEST_CASE(&deadline_timer_async_result_test));
-  return test;
-}
+ASIO_TEST_SUITE
+(
+  "deadline_timer",
+  ASIO_TEST_CASE(deadline_timer_test)
+  ASIO_TEST_CASE(deadline_timer_cancel_test)
+  ASIO_TEST_CASE(deadline_timer_custom_allocation_test)
+  ASIO_TEST_CASE(deadline_timer_thread_test)
+  ASIO_TEST_CASE(deadline_timer_async_result_test)
+)
+#else // defined(ASIO_HAS_BOOST_DATE_TIME)
+ASIO_TEST_SUITE
+(
+  "deadline_timer",
+  ASIO_TEST_CASE(null_test)
+)
+#endif // defined(ASIO_HAS_BOOST_DATE_TIME)

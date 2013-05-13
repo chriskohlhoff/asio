@@ -19,7 +19,7 @@
 #include "asio/detail/config.hpp"
 
 #if defined(ASIO_HAS_SERIAL_PORT)
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
 #include <string>
 #include "asio/error.hpp"
@@ -228,7 +228,7 @@ private:
 # include "asio/detail/impl/reactive_serial_port_service.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 #endif // defined(ASIO_HAS_SERIAL_PORT)
 
 #endif // ASIO_DETAIL_REACTIVE_SERIAL_PORT_SERVICE_HPP

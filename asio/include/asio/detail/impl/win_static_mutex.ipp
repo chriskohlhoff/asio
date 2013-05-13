@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(BOOST_WINDOWS)
+#if defined(ASIO_WINDOWS)
 
 #include <cstdio>
 #include "asio/detail/throw_error.hpp"
@@ -41,11 +41,11 @@ int win_static_mutex::do_init()
 {
   using namespace std; // For sprintf.
   wchar_t mutex_name[128];
-#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
+#if defined(ASIO_HAS_SECURE_RTL)
   swprintf_s(
-#else // BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
+#else // defined(ASIO_HAS_SECURE_RTL)
   _snwprintf(
-#endif // BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
+#endif // defined(ASIO_HAS_SECURE_RTL)
       mutex_name, 128, L"asio-58CCDC44-6264-4842-90C2-F3C545CB8AA7-%u-%p",
       static_cast<unsigned int>(::GetCurrentProcessId()), this);
 
@@ -113,6 +113,6 @@ int win_static_mutex::do_init()
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(ASIO_WINDOWS)
 
 #endif // ASIO_DETAIL_IMPL_WIN_STATIC_MUTEX_IPP
