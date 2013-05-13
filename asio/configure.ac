@@ -1,4 +1,4 @@
-AC_INIT(asio, [1.8.2])
+AC_INIT(asio, [1.8.3])
 AC_CONFIG_SRCDIR(include/asio.hpp)
 AM_MAINTAINER_MODE
 AM_INIT_AUTOMAKE([tar-ustar])

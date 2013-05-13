@@ -185,7 +185,9 @@
 /boost/asio/detail/task_io_service_fwd.hpp
 /boost/asio/detail/task_io_service.hpp
 /boost/asio/detail/task_io_service_operation.hpp
+/boost/asio/detail/task_io_service_thread_info.hpp
 /boost/asio/detail/thread.hpp
+/boost/asio/detail/thread_info_base.hpp
 /boost/asio/detail/throw_error.hpp
 /boost/asio/detail/timer_queue_base.hpp
 /boost/asio/detail/timer_queue_fwd.hpp
@@ -219,6 +221,7 @@
 /boost/asio/detail/win_iocp_socket_send_op.hpp
 /boost/asio/detail/win_iocp_socket_service_base.hpp
 /boost/asio/detail/win_iocp_socket_service.hpp
+/boost/asio/detail/win_iocp_thread_info.hpp
 /boost/asio/detail/win_mutex.hpp
 /boost/asio/detail/win_object_handle_service.hpp
 /boost/asio/detail/winsock_init.hpp
@@ -234,6 +237,7 @@
 /boost/asio/impl/
 /boost/asio/impl/connect.hpp
 /boost/asio/impl/error.ipp
+/boost/asio/impl/handler_alloc_hook.ipp
 /boost/asio/impl/io_service.hpp
 /boost/asio/impl/io_service.ipp
 /boost/asio/impl/read_at.hpp

@@ -3498,7 +3498,9 @@
 /include/asio/detail/task_io_service_fwd.hpp
 /include/asio/detail/task_io_service.hpp
 /include/asio/detail/task_io_service_operation.hpp
+/include/asio/detail/task_io_service_thread_info.hpp
 /include/asio/detail/thread.hpp
+/include/asio/detail/thread_info_base.hpp
 /include/asio/detail/throw_error.hpp
 /include/asio/detail/timer_queue_base.hpp
 /include/asio/detail/timer_queue_fwd.hpp
@@ -3532,6 +3534,7 @@
 /include/asio/detail/win_iocp_socket_send_op.hpp
 /include/asio/detail/win_iocp_socket_service_base.hpp
 /include/asio/detail/win_iocp_socket_service.hpp
+/include/asio/detail/win_iocp_thread_info.hpp
 /include/asio/detail/win_mutex.hpp
 /include/asio/detail/win_object_handle_service.hpp
 /include/asio/detail/winsock_init.hpp
@@ -3549,6 +3552,7 @@
 /include/asio/impl/connect.hpp
 /include/asio/impl/error_code.ipp
 /include/asio/impl/error.ipp
+/include/asio/impl/handler_alloc_hook.ipp
 /include/asio/impl/io_service.hpp
 /include/asio/impl/io_service.ipp
 /include/asio/impl/read_at.hpp
