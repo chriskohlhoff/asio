@@ -27,6 +27,7 @@ check_PROGRAMS = \
 	unit/buffers_iterator \
 	unit/completion_condition \
 	unit/connect \
+	unit/coroutine \
 	unit/datagram_socket_service \
 	unit/deadline_timer_service \
 	unit/deadline_timer \
@@ -254,6 +255,7 @@ unit_buffered_stream_SOURCES = unit/buffered_stream.cpp unit/unit_test.cpp
 unit_buffered_write_stream_SOURCES = unit/buffered_write_stream.cpp unit/unit_test.cpp
 unit_completion_condition_SOURCES = unit/completion_condition.cpp unit/unit_test.cpp
 unit_connect_SOURCES = unit/connect.cpp unit/unit_test.cpp
+unit_coroutine_SOURCES = unit/coroutine.cpp unit/unit_test.cpp
 unit_datagram_socket_service_SOURCES = unit/datagram_socket_service.cpp unit/unit_test.cpp
 unit_deadline_timer_service_SOURCES = unit/deadline_timer_service.cpp unit/unit_test.cpp
 unit_deadline_timer_SOURCES = unit/deadline_timer.cpp unit/unit_test.cpp

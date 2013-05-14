@@ -17,7 +17,8 @@
 namespace http {
 namespace server4 {
 
-#include "yield.hpp" // Enable the pseudo-keywords reenter, yield and fork.
+// Enable the pseudo-keywords reenter, yield and fork.
+#include <asio/yield.hpp>
 
 std::string request_parser::content_length_name_ = "Content-Length";
 
@@ -175,7 +176,8 @@ boost::tribool request_parser::consume(request& req, char c)
   return true;
 }
 
-#include "unyield.hpp" // Disable the pseudo-keywords reenter, yield and fork.
+// Disable the pseudo-keywords reenter, yield and fork.
+#include <asio/unyield.hpp>
 
 bool request_parser::is_char(int c)
 {

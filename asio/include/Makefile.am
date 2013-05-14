@@ -26,6 +26,7 @@ nobase_include_HEADERS = \
 	asio/buffers_iterator.hpp \
 	asio/completion_condition.hpp \
 	asio/connect.hpp \
+	asio/coroutine.hpp \
 	asio/datagram_socket_service.hpp \
 	asio/deadline_timer.hpp \
 	asio/deadline_timer_service.hpp \
@@ -362,6 +363,7 @@ nobase_include_HEADERS = \
 	asio/system_timer.hpp \
 	asio/thread.hpp \
 	asio/time_traits.hpp \
+	asio/unyield.hpp \
 	asio/use_future.hpp \
 	asio/version.hpp \
 	asio/waitable_timer_service.hpp \
@@ -378,7 +380,8 @@ nobase_include_HEADERS = \
 	asio/windows/stream_handle.hpp \
 	asio/windows/stream_handle_service.hpp \
 	asio/write_at.hpp \
-	asio/write.hpp
+	asio/write.hpp \
+	asio/yield.hpp
 
 MAINTAINERCLEANFILES = \
 	$(srcdir)/Makefile.in

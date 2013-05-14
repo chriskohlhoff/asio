@@ -424,7 +424,10 @@
 </xsl:template>
 
 
-<xsl:template match="emphasis" mode="markup">[*<xsl:value-of select="."/>]</xsl:template>
+<xsl:template match="bold" mode="markup">[*<xsl:apply-templates mode="markup"/>]</xsl:template>
+
+
+<xsl:template match="emphasis" mode="markup">['<xsl:apply-templates mode="markup"/>]</xsl:template>
 
 
 <xsl:template match="parameterlist" mode="markup">

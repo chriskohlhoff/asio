@@ -210,7 +210,6 @@ EXTRA_DIST = \
 	http/server3/request_handler.hpp \
 	http/server3/request_parser.hpp \
 	http/server3/server.hpp \
-	http/server4/coroutine.hpp \
 	http/server4/file_handler.hpp \
 	http/server4/header.hpp \
 	http/server4/mime_types.hpp \
@@ -218,8 +217,6 @@ EXTRA_DIST = \
 	http/server4/request.hpp \
 	http/server4/request_parser.hpp \
 	http/server4/server.hpp \
-	http/server4/unyield.hpp \
-	http/server4/yield.hpp \
 	icmp/icmp_header.hpp \
 	icmp/ipv4_header.hpp \
 	porthopper/protocol.hpp \

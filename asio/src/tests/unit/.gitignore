@@ -24,6 +24,7 @@ buffered_write_stream
 buffers_iterator
 completion_condition
 connect
+coroutine
 datagram_socket_service
 deadline_timer
 deadline_timer_service

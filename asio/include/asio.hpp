@@ -39,6 +39,7 @@
 #include "asio/buffers_iterator.hpp"
 #include "asio/completion_condition.hpp"
 #include "asio/connect.hpp"
+#include "asio/coroutine.hpp"
 #include "asio/datagram_socket_service.hpp"
 #include "asio/deadline_timer_service.hpp"
 #include "asio/deadline_timer.hpp"

@@ -16,7 +16,6 @@
 #include <boost/array.hpp>
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
-#include "coroutine.hpp"
 #include "request_parser.hpp"
 
 namespace http {
@@ -26,7 +25,7 @@ struct request;
 struct reply;
 
 /// The top-level coroutine of the HTTP server.
-class server : coroutine
+class server : asio::coroutine
 {
 public:
   /// Construct the server to listen on the specified TCP address and port, and

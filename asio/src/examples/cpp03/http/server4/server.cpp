@@ -25,7 +25,8 @@ server::server(asio::io_service& io_service,
   acceptor_.reset(new tcp::acceptor(io_service, *resolver.resolve(query)));
 }
 
-#include "yield.hpp" // Enable the pseudo-keywords reenter, yield and fork.
+// Enable the pseudo-keywords reenter, yield and fork.
+#include <asio/yield.hpp>
 
 void server::operator()(asio::error_code ec, std::size_t length)
 {
@@ -113,7 +114,8 @@ void server::operator()(asio::error_code ec, std::size_t length)
   // will be destroyed automatically after this function call returns.
 }
 
-#include "unyield.hpp" // Disable the pseudo-keywords reenter, yield and fork.
+// Disable the pseudo-keywords reenter, yield and fork.
+#include <asio/unyield.hpp>
 
 } // namespace server4
 } // namespace http
