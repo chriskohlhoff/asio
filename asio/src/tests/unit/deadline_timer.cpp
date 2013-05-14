@@ -333,7 +333,7 @@ void deadline_timer_async_result_test()
 
   t1.expires_from_now(boost::posix_time::seconds(1));
   int i = t1.async_wait(archetypes::lazy_handler());
-  BOOST_CHECK(i == 42);
+  ASIO_CHECK(i == 42);
 
   ios.run();
 }
