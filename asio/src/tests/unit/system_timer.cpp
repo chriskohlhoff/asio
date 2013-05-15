@@ -300,7 +300,7 @@ void system_timer_custom_allocation_test()
 
   for (int i = 50; i < 100; ++i)
   {
-    timers[i].t.expires_at(asio::system_timer::time_point());
+    timers[i].t.expires_at(asio::system_timer::time_point::min());
     timers[i].t.async_wait(custom_allocation_timer_handler(&allocation_count));
   }
 

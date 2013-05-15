@@ -47,13 +47,63 @@ struct chrono_time_traits
   // Add a duration to a time.
   static time_type add(const time_type& t, const duration_type& d)
   {
+    const time_type epoch;
+    if (t >= epoch)
+    {
+      if ((time_type::max)() - t < d)
+        return (time_type::max)();
+    }
+    else // t < epoch
+    {
+      if (-(t - (time_type::min)()) > d)
+        return (time_type::min)();
+    }
+
     return t + d;
   }
 
   // Subtract one time from another.
   static duration_type subtract(const time_type& t1, const time_type& t2)
   {
-    return t1 - t2;
+    const time_type epoch;
+    if (t1 >= epoch)
+    {
+      if (t2 >= epoch)
+      {
+        return t1 - t2;
+      }
+      else if (t2 == (time_type::min)())
+      {
+        return (duration_type::max)();
+      }
+      else if ((time_type::max)() - t1 < epoch - t2)
+      {
+        return (duration_type::max)();
+      }
+      else
+      {
+        return t1 - t2;
+      }
+    }
+    else // t1 < epoch
+    {
+      if (t2 < epoch)
+      {
+        return t1 - t2;
+      }
+      else if (t1 == (time_type::min)())
+      {
+        return (duration_type::min)();
+      }
+      else if ((time_type::max)() - t2 < epoch - t1)
+      {
+        return (duration_type::min)();
+      }
+      else
+      {
+        return -(t2 - t1);
+      }
+    }
   }
 
   // Test whether one time is less than another.
