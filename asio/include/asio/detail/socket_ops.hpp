@@ -105,8 +105,9 @@ ASIO_DECL int connect(socket_type s, const socket_addr_type* addr,
 ASIO_DECL void sync_connect(socket_type s, const socket_addr_type* addr,
     std::size_t addrlen, asio::error_code& ec);
 
-ASIO_DECL bool non_blocking_connect(
-    socket_type s, asio::error_code& ec);
+ASIO_DECL bool non_blocking_connect(socket_type s,
+    const socket_addr_type* addr, std::size_t addrlen,
+    asio::error_code& ec);
 
 ASIO_DECL int socketpair(int af, int type, int protocol,
     socket_type sv[2], asio::error_code& ec);

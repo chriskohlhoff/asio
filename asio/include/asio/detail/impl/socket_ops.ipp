@@ -507,8 +507,19 @@ void sync_connect(socket_type s, const socket_addr_type* addr,
       asio::error::get_system_category());
 }
 
-bool non_blocking_connect(socket_type s, asio::error_code& ec)
+bool non_blocking_connect(socket_type s,
+    const socket_addr_type* addr, std::size_t addrlen,
+    asio::error_code& ec)
 {
+  // Check if the connect operation has finished. This is required since we may
+  // get spurious readiness notifications from the reactor.
+  socket_ops::connect(s, addr, addrlen, ec);
+  if (ec == asio::error::already_started)
+  {
+    // The asynchronous connect operation is still in progress.
+    return false;
+  }
+
   // Get the error code from the connect operation.
   int connect_error = 0;
   size_t connect_error_len = sizeof(connect_error);
