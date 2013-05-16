@@ -423,7 +423,10 @@ std::size_t task_io_service::do_poll_one(mutex::scoped_lock& lock,
 
     o = op_queue_.front();
     if (o == &task_operation_)
+    {
+      wake_one_idle_thread_and_unlock(lock);
       return 0;
+    }
   }
 
   if (o == 0)
