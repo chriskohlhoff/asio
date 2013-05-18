@@ -95,7 +95,8 @@ asio.reference.async_read_until async_read_until()] free functions.
 [link asio.reference.posix__stream_descriptor posix::stream_descriptor],
 [link asio.reference.posix__basic_stream_descriptor posix::basic_stream_descriptor],
 [link asio.reference.posix__stream_descriptor_service posix::stream_descriptor_service],
-[link asio.examples.chat Chat example].
+[link asio.examples.cpp03_examples.chat Chat example (C++03)],
+[link asio.examples.cpp11_examples.chat Chat example (C++11)].
 
 [heading Notes]
 
@@ -138,7 +139,7 @@ as required.
 [link asio.reference.io_service.notify_fork io_service::notify_fork()],
 [link asio.reference.io_service.fork_event io_service::fork_event],
 [link asio.reference.io_service__service.fork_service io_service::service::fork_service()],
-[link asio.examples.fork Fork examples].
+[link asio.examples.cpp03_examples.fork Fork examples].
 
 [endsect]
 

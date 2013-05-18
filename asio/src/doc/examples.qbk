@@ -14,9 +14,11 @@ examples make use of selected Boost C++ libraries.
 
 * [link asio.examples.cpp11_examples C++11 Examples]: Contains a limited set of
 the C++03 Asio examples, updated to use only C++11 library and language
-facilities. These examples do not make direct use of Boost C++ libraries. To
-show the changes between C++03 and C++11, these examples include a diff between
-the C++03 and C++11 versions.
+facilities. These examples do not make direct use of Boost C++ libraries.
+[/boostify: non-boost docs start here]
+To show the changes between C++03 and C++11, these examples include a diff
+between the C++03 and C++11 versions.
+[/boostify: non-boost docs end here]
 
 
 [section:cpp03_examples C++03 Examples]
@@ -164,7 +166,6 @@ An HTTP server using a single io_service and a thread pool calling `io_service::
 
 A single-threaded HTTP server implemented using stackless coroutines.
 
-* [@../src/examples/cpp03/http/server4/coroutine.hpp]
 * [@../src/examples/cpp03/http/server4/file_handler.cpp]
 * [@../src/examples/cpp03/http/server4/file_handler.hpp]
 * [@../src/examples/cpp03/http/server4/header.hpp]
@@ -178,8 +179,6 @@ A single-threaded HTTP server implemented using stackless coroutines.
 * [@../src/examples/cpp03/http/server4/request_parser.hpp]
 * [@../src/examples/cpp03/http/server4/server.cpp]
 * [@../src/examples/cpp03/http/server4/server.hpp]
-* [@../src/examples/cpp03/http/server4/unyield.hpp]
-* [@../src/examples/cpp03/http/server4/yield.hpp]
 
 
 [heading ICMP]
@@ -369,6 +368,14 @@ and asynchronous operations.
 * [@../src/examples/cpp11/echo/blocking_tcp_echo_server.cpp] ([@examples/diffs/echo/blocking_tcp_echo_server.cpp.html diff to C++03])
 * [@../src/examples/cpp11/echo/blocking_udp_echo_client.cpp] ([@examples/diffs/echo/blocking_udp_echo_client.cpp.html diff to C++03])
 * [@../src/examples/cpp11/echo/blocking_udp_echo_server.cpp] ([@examples/diffs/echo/blocking_udp_echo_server.cpp.html diff to C++03])
+
+
+[heading Futures]
+
+This example demonstrates how to use std::future in conjunction with
+Asio's asynchronous operations.
+
+* [@../src/examples/cpp11/futures/daytime_client.cpp]
 
 
 [heading HTTP Server]

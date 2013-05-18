@@ -21,6 +21,7 @@
 [template mdash[] '''&mdash; ''']
 [template indexterm1[term1] '''<indexterm><primary>'''[term1]'''</primary></indexterm>''']
 [template indexterm2[term1 term2] '''<indexterm><primary>'''[term1]'''</primary><secondary>'''[term2]'''</secondary></indexterm>''']
+[template ticket[number]'''<ulink url="https://svn.boost.org/trac/boost/ticket/'''[number]'''">'''#[number]'''</ulink>''']
 [def __POSIX__ /POSIX/]
 [def __Windows__ /Windows/]
 [def __accept__ [@http://www.opengroup.org/onlinepubs/000095399/functions/accept.html `accept()`]]
