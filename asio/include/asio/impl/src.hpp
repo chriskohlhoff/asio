@@ -60,6 +60,7 @@
 #include "asio/detail/impl/win_thread.ipp"
 #include "asio/detail/impl/win_tss_ptr.ipp"
 #include "asio/detail/impl/winsock_init.ipp"
+#include "asio/generic/detail/impl/endpoint.ipp"
 #include "asio/ip/impl/address.ipp"
 #include "asio/ip/impl/address_v4.ipp"
 #include "asio/ip/impl/address_v6.ipp"

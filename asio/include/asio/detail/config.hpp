@@ -106,6 +106,7 @@
 #if defined(ASIO_HAS_MOVE) && !defined(ASIO_MOVE_CAST)
 # define ASIO_MOVE_ARG(type) type&&
 # define ASIO_MOVE_CAST(type) static_cast<type&&>
+# define ASIO_MOVE_CAST2(type1, type2) static_cast<type1, type2&&>
 #endif // defined(ASIO_HAS_MOVE) && !defined(ASIO_MOVE_CAST)
 
 // If ASIO_MOVE_CAST still isn't defined, default to a C++03-compatible
@@ -130,7 +131,8 @@
 #  define ASIO_MOVE_ARG(type) type
 # endif
 # define ASIO_MOVE_CAST(type) static_cast<const type&>
-#endif // !defined_ASIO_MOVE_CAST
+# define ASIO_MOVE_CAST2(type1, type2) static_cast<const type1, type2&>
+#endif // !defined(ASIO_MOVE_CAST)
 
 // Support variadic templates on compilers known to allow it.
 #if !defined(ASIO_HAS_VARIADIC_TEMPLATES)

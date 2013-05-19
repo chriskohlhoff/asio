@@ -332,6 +332,9 @@ sub copy_include_files
       "include/asio",
       "include/asio/detail",
       "include/asio/detail/impl",
+      "include/asio/generic",
+      "include/asio/generic/detail",
+      "include/asio/generic/detail/impl",
       "include/asio/impl",
       "include/asio/ip",
       "include/asio/ip/impl",
@@ -389,6 +392,7 @@ sub copy_unit_tests
   my @dirs = (
       "src/tests/unit",
       "src/tests/unit/archetypes",
+      "src/tests/unit/generic",
       "src/tests/unit/ip",
       "src/tests/unit/local",
       "src/tests/unit/posix",

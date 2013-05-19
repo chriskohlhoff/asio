@@ -238,6 +238,13 @@ nobase_include_HEADERS = \
 	asio/detail/wrapped_handler.hpp \
 	asio/error_code.hpp \
 	asio/error.hpp \
+	asio/generic/basic_endpoint.hpp \
+	asio/generic/datagram_protocol.hpp \
+	asio/generic/detail/endpoint.hpp \
+	asio/generic/detail/impl/endpoint.ipp \
+	asio/generic/raw_protocol.hpp \
+	asio/generic/seq_packet_protocol.hpp \
+	asio/generic/stream_protocol.hpp \
 	asio/handler_alloc_hook.hpp \
 	asio/handler_continuation_hook.hpp \
 	asio/handler_invoke_hook.hpp \

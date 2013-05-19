@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include <cstddef>
 #include "asio/async_result.hpp"
+#include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 
@@ -110,6 +111,19 @@ public:
       implementation_type& other_impl)
   {
     service_impl_.move_assign(impl, other_service.service_impl_, other_impl);
+  }
+
+  /// Move-construct a new datagram socket implementation from another protocol
+  /// type.
+  template <typename Protocol1>
+  void converting_move_construct(implementation_type& impl,
+      typename datagram_socket_service<
+        Protocol1>::implementation_type& other_impl,
+      typename enable_if<is_convertible<
+        Protocol1, Protocol>::value>::type* = 0)
+  {
+    service_impl_.template converting_move_construct<Protocol1>(
+        impl, other_impl);
   }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 

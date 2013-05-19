@@ -98,6 +98,18 @@ public:
     other_impl.protocol_ = endpoint_type().protocol();
   }
 
+  // Move-construct a new socket implementation from another protocol type.
+  template <typename Protocol1>
+  void converting_move_construct(implementation_type& impl,
+      typename reactive_socket_service<
+        Protocol1>::implementation_type& other_impl)
+  {
+    this->base_move_construct(impl, other_impl);
+
+    impl.protocol_ = protocol_type(other_impl.protocol_);
+    other_impl.protocol_ = typename Protocol1::endpoint().protocol();
+  }
+
   // Open a new socket implementation.
   asio::error_code open(implementation_type& impl,
       const protocol_type& protocol, asio::error_code& ec)

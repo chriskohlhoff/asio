@@ -20,6 +20,7 @@
 #include "asio/basic_io_object.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
+#include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
 #include "asio/socket_base.hpp"
 
@@ -171,6 +172,51 @@ public:
   {
     basic_io_object<SocketService>::operator=(
         ASIO_MOVE_CAST(basic_socket)(other));
+    return *this;
+  }
+
+  // All sockets have access to each other's implementations.
+  template <typename Protocol1, typename SocketService1>
+  friend class basic_socket;
+
+  /// Move-construct a basic_socket from a socket of another protocol type.
+  /**
+   * This constructor moves a socket from one object to another.
+   *
+   * @param other The other basic_socket object from which the move will
+   * occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_socket(io_service&) constructor.
+   */
+  template <typename Protocol1, typename SocketService1>
+  basic_socket(basic_socket<Protocol1, SocketService1>&& other,
+      typename enable_if<is_convertible<Protocol1, Protocol>::value>::type* = 0)
+    : basic_io_object<SocketService>(other.get_io_service())
+  {
+    this->get_service().template converting_move_construct<Protocol1>(
+        this->get_implementation(), other.get_implementation());
+  }
+
+  /// Move-assign a basic_socket from a socket of another protocol type.
+  /**
+   * This assignment operator moves a socket from one object to another.
+   *
+   * @param other The other basic_socket object from which the move will
+   * occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_socket(io_service&) constructor.
+   */
+  template <typename Protocol1, typename SocketService1>
+  typename enable_if<is_convertible<Protocol1, Protocol>::value,
+      basic_socket>::type& operator=(
+        basic_socket<Protocol1, SocketService1>&& other)
+  {
+    basic_socket tmp(ASIO_MOVE_CAST2(basic_socket<
+            Protocol1, SocketService1>)(other));
+    basic_io_object<SocketService>::operator=(
+        ASIO_MOVE_CAST(basic_socket)(tmp));
     return *this;
   }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)

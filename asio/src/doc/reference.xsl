@@ -1443,6 +1443,9 @@
         <xsl:when test="declname = 'Context_Service'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'DatagramSocketService1'">
+          <xsl:value-of select="concat('``[link asio.reference.DatagramSocketService ', declname, ']``')"/>
+        </xsl:when>
         <xsl:when test="declname = 'Elem'">
           <xsl:value-of select="declname"/>
         </xsl:when>
@@ -1470,11 +1473,23 @@
         <xsl:when test="declname = 'PointerToPodType'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'Protocol1'">
+          <xsl:value-of select="concat('``[link asio.reference.Protocol ', declname, ']``')"/>
+        </xsl:when>
+        <xsl:when test="declname = 'RawSocketService1'">
+          <xsl:value-of select="concat('``[link asio.reference.RawSocketService ', declname, ']``')"/>
+        </xsl:when>
+        <xsl:when test="declname = 'SeqPacketSocketService1'">
+          <xsl:value-of select="concat('``[link asio.reference.SeqPacketSocketService ', declname, ']``')"/>
+        </xsl:when>
         <xsl:when test="declname = 'SocketService1' or declname = 'SocketService2'">
           <xsl:value-of select="concat('``[link asio.reference.SocketService ', declname, ']``')"/>
         </xsl:when>
         <xsl:when test="declname = 'Stream'">
           <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'StreamSocketService1'">
+          <xsl:value-of select="concat('``[link asio.reference.StreamSocketService ', declname, ']``')"/>
         </xsl:when>
         <xsl:when test="declname = 'T'">
           <xsl:value-of select="declname"/>

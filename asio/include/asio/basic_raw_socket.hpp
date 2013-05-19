@@ -20,6 +20,7 @@
 #include "asio/basic_socket.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
+#include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
 #include "asio/raw_socket_service.hpp"
 
@@ -162,6 +163,46 @@ public:
   {
     basic_socket<Protocol, RawSocketService>::operator=(
         ASIO_MOVE_CAST(basic_raw_socket)(other));
+    return *this;
+  }
+
+  /// Move-construct a basic_raw_socket from a socket of another protocol type.
+  /**
+   * This constructor moves a raw socket from one object to another.
+   *
+   * @param other The other basic_raw_socket object from which the move will
+   * occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_raw_socket(io_service&) constructor.
+   */
+  template <typename Protocol1, typename RawSocketService1>
+  basic_raw_socket(basic_raw_socket<Protocol1, RawSocketService1>&& other,
+      typename enable_if<is_convertible<Protocol1, Protocol>::value>::type* = 0)
+    : basic_socket<Protocol, RawSocketService>(
+        ASIO_MOVE_CAST2(basic_raw_socket<
+          Protocol1, RawSocketService1>)(other))
+  {
+  }
+
+  /// Move-assign a basic_raw_socket from a socket of another protocol type.
+  /**
+   * This assignment operator moves a raw socket from one object to another.
+   *
+   * @param other The other basic_raw_socket object from which the move
+   * will occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_raw_socket(io_service&) constructor.
+   */
+  template <typename Protocol1, typename RawSocketService1>
+  typename enable_if<is_convertible<Protocol1, Protocol>::value,
+      basic_raw_socket>::type& operator=(
+        basic_raw_socket<Protocol1, RawSocketService1>&& other)
+  {
+    basic_socket<Protocol, RawSocketService>::operator=(
+        ASIO_MOVE_CAST2(basic_raw_socket<
+          Protocol1, RawSocketService1>)(other));
     return *this;
   }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)

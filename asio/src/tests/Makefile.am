@@ -32,6 +32,11 @@ check_PROGRAMS = \
 	unit/deadline_timer_service \
 	unit/deadline_timer \
 	unit/error \
+	unit/generic/basic_endpoint \
+	unit/generic/datagram_protocol \
+	unit/generic/raw_protocol \
+	unit/generic/seq_packet_protocol \
+	unit/generic/stream_protocol \
 	unit/high_resolution_timer \
 	unit/io_service \
 	unit/ip/address \
@@ -260,6 +265,11 @@ unit_datagram_socket_service_SOURCES = unit/datagram_socket_service.cpp unit/uni
 unit_deadline_timer_service_SOURCES = unit/deadline_timer_service.cpp unit/unit_test.cpp
 unit_deadline_timer_SOURCES = unit/deadline_timer.cpp unit/unit_test.cpp
 unit_error_SOURCES = unit/error.cpp unit/unit_test.cpp
+unit_generic_basic_endpoint_SOURCES = unit/generic/basic_endpoint.cpp unit/unit_test.cpp
+unit_generic_datagram_protocol_SOURCES = unit/generic/datagram_protocol.cpp unit/unit_test.cpp
+unit_generic_raw_protocol_SOURCES = unit/generic/raw_protocol.cpp unit/unit_test.cpp
+unit_generic_seq_packet_protocol_SOURCES = unit/generic/seq_packet_protocol.cpp unit/unit_test.cpp
+unit_generic_stream_protocol_SOURCES = unit/generic/stream_protocol.cpp unit/unit_test.cpp
 unit_high_resolution_timer_SOURCES = unit/high_resolution_timer.cpp unit/unit_test.cpp
 unit_io_service_SOURCES = unit/io_service.cpp unit/unit_test.cpp
 unit_ip_address_SOURCES = unit/ip/address.cpp unit/unit_test.cpp

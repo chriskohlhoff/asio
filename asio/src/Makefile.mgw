@@ -36,6 +36,11 @@ UNIT_TEST_EXES = \
 	tests/unit/deadline_timer_service.exe \
 	tests/unit/deadline_timer.exe \
 	tests/unit/error.exe \
+	tests/unit/generic/basic_endpoint.exe \
+	tests/unit/generic/datagram_protocol.exe \
+	tests/unit/generic/raw_protocol.exe \
+	tests/unit/generic/seq_packet_protocol.exe \
+	tests/unit/generic/stream_protocol.exe \
 	tests/unit/high_resolution_timer.exe \
 	tests/unit/io_service.exe \
 	tests/unit/ip/address.exe \

@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/basic_socket.hpp"
+#include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 
@@ -109,6 +110,19 @@ public:
       implementation_type& other_impl)
   {
     service_impl_.move_assign(impl, other_service.service_impl_, other_impl);
+  }
+
+  /// Move-construct a new socket acceptor implementation from another protocol
+  /// type.
+  template <typename Protocol1>
+  void converting_move_construct(implementation_type& impl,
+      typename socket_acceptor_service<
+        Protocol1>::implementation_type& other_impl,
+      typename enable_if<is_convertible<
+        Protocol1, Protocol>::value>::type* = 0)
+  {
+    service_impl_.template converting_move_construct<Protocol1>(
+        impl, other_impl);
   }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
@@ -238,22 +252,24 @@ public:
   }
 
   /// Accept a new connection.
-  template <typename SocketService>
+  template <typename Protocol1, typename SocketService>
   asio::error_code accept(implementation_type& impl,
-      basic_socket<protocol_type, SocketService>& peer,
-      endpoint_type* peer_endpoint, asio::error_code& ec)
+      basic_socket<Protocol1, SocketService>& peer,
+      endpoint_type* peer_endpoint, asio::error_code& ec,
+      typename enable_if<is_convertible<Protocol, Protocol1>::value>::type* = 0)
   {
     return service_impl_.accept(impl, peer, peer_endpoint, ec);
   }
 
   /// Start an asynchronous accept.
-  template <typename SocketService, typename AcceptHandler>
+  template <typename Protocol1, typename SocketService, typename AcceptHandler>
   ASIO_INITFN_RESULT_TYPE(AcceptHandler,
       void (asio::error_code))
   async_accept(implementation_type& impl,
-      basic_socket<protocol_type, SocketService>& peer,
+      basic_socket<Protocol1, SocketService>& peer,
       endpoint_type* peer_endpoint,
-      ASIO_MOVE_ARG(AcceptHandler) handler)
+      ASIO_MOVE_ARG(AcceptHandler) handler,
+      typename enable_if<is_convertible<Protocol, Protocol1>::value>::type* = 0)
   {
     detail::async_result_init<
       AcceptHandler, void (asio::error_code)> init(

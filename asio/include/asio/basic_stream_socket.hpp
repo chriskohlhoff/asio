@@ -166,6 +166,48 @@ public:
         ASIO_MOVE_CAST(basic_stream_socket)(other));
     return *this;
   }
+
+  /// Move-construct a basic_stream_socket from a socket of another protocol
+  /// type.
+  /**
+   * This constructor moves a stream socket from one object to another.
+   *
+   * @param other The other basic_stream_socket object from which the move
+   * will occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_stream_socket(io_service&) constructor.
+   */
+  template <typename Protocol1, typename StreamSocketService1>
+  basic_stream_socket(
+      basic_stream_socket<Protocol1, StreamSocketService1>&& other,
+      typename enable_if<is_convertible<Protocol1, Protocol>::value>::type* = 0)
+    : basic_socket<Protocol, StreamSocketService>(
+        ASIO_MOVE_CAST2(basic_stream_socket<
+          Protocol1, StreamSocketService1>)(other))
+  {
+  }
+
+  /// Move-assign a basic_stream_socket from a socket of another protocol type.
+  /**
+   * This assignment operator moves a stream socket from one object to another.
+   *
+   * @param other The other basic_stream_socket object from which the move
+   * will occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_stream_socket(io_service&) constructor.
+   */
+  template <typename Protocol1, typename StreamSocketService1>
+  typename enable_if<is_convertible<Protocol1, Protocol>::value,
+      basic_stream_socket>::type& operator=(
+        basic_stream_socket<Protocol1, StreamSocketService1>&& other)
+  {
+    basic_socket<Protocol, StreamSocketService>::operator=(
+        ASIO_MOVE_CAST2(basic_stream_socket<
+          Protocol1, StreamSocketService1>)(other));
+    return *this;
+  }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Send some data on the socket.

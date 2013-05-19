@@ -21,6 +21,7 @@
 #include "asio/datagram_socket_service.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
+#include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -163,6 +164,50 @@ public:
   {
     basic_socket<Protocol, DatagramSocketService>::operator=(
         ASIO_MOVE_CAST(basic_datagram_socket)(other));
+    return *this;
+  }
+
+  /// Move-construct a basic_datagram_socket from a socket of another protocol
+  /// type.
+  /**
+   * This constructor moves a datagram socket from one object to another.
+   *
+   * @param other The other basic_datagram_socket object from which the move
+   * will occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_datagram_socket(io_service&) constructor.
+   */
+  template <typename Protocol1, typename DatagramSocketService1>
+  basic_datagram_socket(
+      basic_datagram_socket<Protocol1, DatagramSocketService1>&& other,
+      typename enable_if<is_convertible<Protocol1, Protocol>::value>::type* = 0)
+    : basic_socket<Protocol, DatagramSocketService>(
+        ASIO_MOVE_CAST2(basic_datagram_socket<
+          Protocol1, DatagramSocketService1>)(other))
+  {
+  }
+
+  /// Move-assign a basic_datagram_socket from a socket of another protocol
+  /// type.
+  /**
+   * This assignment operator moves a datagram socket from one object to
+   * another.
+   *
+   * @param other The other basic_datagram_socket object from which the move
+   * will occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_datagram_socket(io_service&) constructor.
+   */
+  template <typename Protocol1, typename DatagramSocketService1>
+  typename enable_if<is_convertible<Protocol1, Protocol>::value,
+      basic_datagram_socket>::type& operator=(
+        basic_datagram_socket<Protocol1, DatagramSocketService1>&& other)
+  {
+    basic_socket<Protocol, DatagramSocketService>::operator=(
+        ASIO_MOVE_CAST2(basic_datagram_socket<
+          Protocol1, DatagramSocketService1>)(other));
     return *this;
   }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
