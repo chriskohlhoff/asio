@@ -364,8 +364,9 @@ public:
    * @par Example
    * @code
    * asio::ip::tcp::acceptor acceptor(io_service);
-   * acceptor.open(asio::ip::tcp::v4());
-   * acceptor.bind(asio::ip::tcp::endpoint(12345));
+   * asio::ip::tcp::endpoint endpoint(asio::ip::tcp::v4(), 12345);
+   * acceptor.open(endpoint.protocol());
+   * acceptor.bind(endpoint);
    * @endcode
    */
   void bind(const endpoint_type& endpoint)
@@ -388,9 +389,10 @@ public:
    * @par Example
    * @code
    * asio::ip::tcp::acceptor acceptor(io_service);
-   * acceptor.open(asio::ip::tcp::v4());
+   * asio::ip::tcp::endpoint endpoint(asio::ip::tcp::v4(), 12345);
+   * acceptor.open(endpoint.protocol());
    * asio::error_code ec;
-   * acceptor.bind(asio::ip::tcp::endpoint(12345), ec);
+   * acceptor.bind(endpoint, ec);
    * if (ec)
    * {
    *   // An error occurred.
