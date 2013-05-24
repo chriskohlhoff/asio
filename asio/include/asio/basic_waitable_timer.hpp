@@ -37,7 +37,8 @@ namespace asio {
  * If the wait() or async_wait() function is called on an expired timer, the
  * wait operation will complete immediately.
  *
- * Most applications will use the asio::waitable_timer typedef.
+ * Most applications will use one of the asio::steady_timer,
+ * asio::system_timer or asio::high_resolution_timer typedefs.
  *
  * @note This waitable timer functionality is for use with the C++11 standard
  * library's @c &lt;chrono&gt; facility, or with the Boost.Chrono library.
@@ -47,20 +48,20 @@ namespace asio {
  * @e Shared @e objects: Unsafe.
  *
  * @par Examples
- * Performing a blocking wait:
+ * Performing a blocking wait (C++11):
  * @code
  * // Construct a timer without setting an expiry time.
- * asio::waitable_timer timer(io_service);
+ * asio::steady_timer timer(io_service);
  *
  * // Set an expiry time relative to now.
- * timer.expires_from_now(boost::posix_time::seconds(5));
+ * timer.expires_from_now(std::chrono::seconds(5));
  *
  * // Wait for the timer to expire.
  * timer.wait();
  * @endcode
  *
  * @par 
- * Performing an asynchronous wait:
+ * Performing an asynchronous wait (C++11):
  * @code
  * void handler(const asio::error_code& error)
  * {
@@ -73,14 +74,14 @@ namespace asio {
  * ...
  *
  * // Construct a timer with an absolute expiry time.
- * asio::waitable_timer timer(io_service,
- *     boost::posix_time::time_from_string("2005-12-07 23:59:59.000"));
+ * asio::steady_timer timer(io_service,
+ *     std::chrono::steady_clock::now() + std::chrono::seconds(60));
  *
  * // Start an asynchronous wait.
  * timer.async_wait(handler);
  * @endcode
  *
- * @par Changing an active waitable_timer's expiry time
+ * @par Changing an active waitable timer's expiry time
  *
  * Changing the expiry time of a timer while there are pending asynchronous
  * waits causes those wait operations to be cancelled. To ensure that the action
