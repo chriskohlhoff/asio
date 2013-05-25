@@ -235,8 +235,7 @@ void win_iocp_io_service::post_deferred_completion(win_iocp_operation* op)
   op->ready_ = 1;
 
   // Enqueue the operation on the I/O completion port.
-  if (!::PostQueuedCompletionStatus(iocp_.handle,
-        0, overlapped_contains_result, op))
+  if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, op))
   {
     // Out of resources. Put on completed queue instead.
     mutex::scoped_lock lock(dispatch_mutex_);
@@ -256,8 +255,7 @@ void win_iocp_io_service::post_deferred_completions(
     op->ready_ = 1;
 
     // Enqueue the operation on the I/O completion port.
-    if (!::PostQueuedCompletionStatus(iocp_.handle,
-          0, overlapped_contains_result, op))
+    if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, op))
     {
       // Out of resources. Put on completed queue instead.
       mutex::scoped_lock lock(dispatch_mutex_);
@@ -284,8 +282,7 @@ void win_iocp_io_service::on_pending(win_iocp_operation* op)
   if (::InterlockedCompareExchange(&op->ready_, 1, 0) == 1)
   {
     // Enqueue the operation on the I/O completion port.
-    if (!::PostQueuedCompletionStatus(iocp_.handle,
-          0, overlapped_contains_result, op))
+    if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, op))
     {
       // Out of resources. Put on completed queue instead.
       mutex::scoped_lock lock(dispatch_mutex_);
