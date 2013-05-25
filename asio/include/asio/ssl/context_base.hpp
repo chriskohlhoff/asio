@@ -104,12 +104,20 @@ public:
 
   /// Disable TLS v1.
   static const long no_tlsv1 = implementation_defined;
+
+  /// Disable compression. Compression is disabled by default.
+  static const long no_compression = implementation_defined;
 #else
   ASIO_STATIC_CONSTANT(long, default_workarounds = SSL_OP_ALL);
   ASIO_STATIC_CONSTANT(long, single_dh_use = SSL_OP_SINGLE_DH_USE);
   ASIO_STATIC_CONSTANT(long, no_sslv2 = SSL_OP_NO_SSLv2);
   ASIO_STATIC_CONSTANT(long, no_sslv3 = SSL_OP_NO_SSLv3);
   ASIO_STATIC_CONSTANT(long, no_tlsv1 = SSL_OP_NO_TLSv1);
+# if defined(SSL_OP_NO_COMPRESSION)
+  ASIO_STATIC_CONSTANT(long, no_compression = SSL_OP_NO_COMPRESSION);
+# else // defined(SSL_OP_NO_COMPRESSION)
+  ASIO_STATIC_CONSTANT(long, no_compression = 0x20000L);
+# endif // defined(SSL_OP_NO_COMPRESSION)
 #endif
 
   /// File format types.

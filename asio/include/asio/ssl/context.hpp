@@ -109,6 +109,35 @@ public:
    */
   ASIO_DECL impl_type impl();
 
+  /// Clear options on the context.
+  /**
+   * This function may be used to configure the SSL options used by the context.
+   *
+   * @param o A bitmask of options. The available option values are defined in
+   * the context_base class. The specified options, if currently enabled on the
+   * context, are cleared.
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_clear_options.
+   */
+  ASIO_DECL void clear_options(options o);
+
+  /// Clear options on the context.
+  /**
+   * This function may be used to configure the SSL options used by the context.
+   *
+   * @param o A bitmask of options. The available option values are defined in
+   * the context_base class. The specified options, if currently enabled on the
+   * context, are cleared.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_clear_options.
+   */
+  ASIO_DECL asio::error_code clear_options(options o,
+      asio::error_code& ec);
+
   /// Set options on the context.
   /**
    * This function may be used to configure the SSL options used by the context.
