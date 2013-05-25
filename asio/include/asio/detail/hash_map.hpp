@@ -180,6 +180,7 @@ public:
   void erase(iterator it)
   {
     ASIO_ASSERT(it != values_.end());
+    ASIO_ASSERT(num_buckets_ != 0);
 
     size_t bucket = calculate_hash_value(it->first) % num_buckets_;
     bool is_first = (it == buckets_[bucket].first);
@@ -243,6 +244,7 @@ private:
     if (num_buckets == num_buckets_)
       return;
     num_buckets_ = num_buckets;
+    ASIO_ASSERT(num_buckets_ != 0);
 
     iterator end_iter = values_.end();
 
