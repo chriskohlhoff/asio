@@ -220,7 +220,7 @@ sub copy_source_file
         print_line($output, $1 . "<boost/system/system_error.hpp>", $from, $lineno);
       }
     }
-    elsif ($line =~ /(^.*# *include )[<"](asio\/.*)[>"](.*)$/)
+    elsif ($line =~ /(^.*# *include )[<"](asio\/[^>"]*)[>"](.*)$/)
     {
       print_line($output, $1 . "<boost/" . $2 . ">" . $3, $from, $lineno);
     }
