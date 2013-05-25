@@ -606,8 +606,9 @@ epoll_reactor::descriptor_state::descriptor_state()
 
 operation* epoll_reactor::descriptor_state::perform_io(uint32_t events)
 {
+  mutex_.lock();
   perform_io_cleanup_on_block_exit io_cleanup(reactor_);
-  mutex::scoped_lock descriptor_lock(mutex_);
+  mutex::scoped_lock descriptor_lock(mutex_, mutex::scoped_lock::adopt_lock);
 
   // Exception operations must be processed first to ensure that any
   // out-of-band data is read before normal data.

@@ -28,8 +28,18 @@ class scoped_lock
   : private noncopyable
 {
 public:
+  // Tag type used to distinguish constructors.
+  enum adopt_lock_t { adopt_lock };
+
+  // Constructor adopts a lock that is already held.
+  scoped_lock(Mutex& m, adopt_lock_t)
+    : mutex_(m),
+      locked_(true)
+  {
+  }
+
   // Constructor acquires the lock.
-  scoped_lock(Mutex& m)
+  explicit scoped_lock(Mutex& m)
     : mutex_(m)
   {
     mutex_.lock();
