@@ -161,14 +161,22 @@ void signal_set_service::fork_service(
   switch (fork_ev)
   {
   case asio::io_service::fork_prepare:
-    reactor_.deregister_internal_descriptor(
-        state->read_descriptor_, reactor_data_);
-    state->fork_prepared_ = true;
+    {
+      int read_descriptor = state->read_descriptor_;
+      state->fork_prepared_ = true;
+      lock.unlock();
+      reactor_.deregister_internal_descriptor(read_descriptor, reactor_data_);
+    }
     break;
   case asio::io_service::fork_parent:
-    state->fork_prepared_ = false;
-    reactor_.register_internal_descriptor(reactor::read_op,
-        state->read_descriptor_, reactor_data_, new pipe_read_op);
+    if (state->fork_prepared_)
+    {
+      int read_descriptor = state->read_descriptor_;
+      state->fork_prepared_ = false;
+      lock.unlock();
+      reactor_.register_internal_descriptor(reactor::read_op,
+          read_descriptor, reactor_data_, new pipe_read_op);
+    }
     break;
   case asio::io_service::fork_child:
     if (state->fork_prepared_)
@@ -176,10 +184,12 @@ void signal_set_service::fork_service(
       asio::detail::signal_blocker blocker;
       close_descriptors();
       open_descriptors();
+      int read_descriptor = state->read_descriptor_;
       state->fork_prepared_ = false;
+      lock.unlock();
+      reactor_.register_internal_descriptor(reactor::read_op,
+          read_descriptor, reactor_data_, new pipe_read_op);
     }
-    reactor_.register_internal_descriptor(reactor::read_op,
-        state->read_descriptor_, reactor_data_, new pipe_read_op);
     break;
   default:
     break;
@@ -480,8 +490,10 @@ void signal_set_service::add_service(signal_set_service* service)
 
 #if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
   // Register for pipe readiness notifications.
+  int read_descriptor = state->read_descriptor_;
+  lock.unlock();
   service->reactor_.register_internal_descriptor(reactor::read_op,
-      state->read_descriptor_, service->reactor_data_, new pipe_read_op);
+      read_descriptor, service->reactor_data_, new pipe_read_op);
 #endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 }
 
@@ -494,8 +506,11 @@ void signal_set_service::remove_service(signal_set_service* service)
   {
 #if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
     // Disable the pipe readiness notifications.
+    int read_descriptor = state->read_descriptor_;
+    lock.unlock();
     service->reactor_.deregister_descriptor(
-        state->read_descriptor_, service->reactor_data_, false);
+        read_descriptor, service->reactor_data_, false);
+    lock.lock();
 #endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
     // Remove service from linked list of all services.
