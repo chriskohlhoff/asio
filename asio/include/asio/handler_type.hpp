@@ -37,6 +37,8 @@ struct handler_type
   typedef Handler type;
 };
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 template <typename Handler, typename Signature>
 struct handler_type<const Handler, Signature>
   : handler_type<Handler, Signature> {};
@@ -97,6 +99,8 @@ template <typename ReturnType, typename Arg1, typename Arg2, typename Arg3,
     typename Arg4, typename Arg5, typename Signature>
 struct handler_type<ReturnType(Arg1, Arg2, Arg3, Arg4, Arg5), Signature>
   : handler_type<ReturnType(*)(Arg1, Arg2, Arg3, Arg4, Arg5), Signature> {};
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 } // namespace asio
 

@@ -173,8 +173,45 @@ to deallocate the storage prior to the invocation of the handler via
 `asio_handler_invoke`. Multiple storage blocks may be allocated for a single
 asynchronous operation.
 
-[section:return_type Return type of an initiating function]
+[heading Return type of an initiating function]
 
-[endsect]
+By default, initiating functions return `void`. This is always the case when
+the handler is a function pointer, C++11 lambda, or a function object produced
+by `boost::bind` or `std::bind`.
+
+For other types, the return type may be customised via a two-step process:
+
+# A specialisation of the [link asio.reference.handler_type `handler_type`]
+template, which is used to determine the true handler type based on the
+asynchronous operation's handler's signature.
+
+# A specialisation of the [link asio.reference.async_result `async_result`]
+template, which is used both to determine the return type and to extract the
+return value from the handler.
+
+These two templates have been specialised to provide support for [link
+asio.overview.core.spawn stackful coroutines] and the C++11 `std::future`
+class.
+
+As an example, consider what happens when enabling `std::future` support by
+using the `asio::use_future` special value, as in:
+
+  std::future<std::size_t> length =
+    my_socket.async_read_some(my_buffer, asio::use_future);
+
+When a handler signature has the form:
+
+  void handler(error_code ec, result_type result);
+
+the initiating function returns a `std::future` templated on `result_type`. In
+the above `async_read_some` example, this is `std::size_t`. If the asynchronous
+operation fails, the `error_code` is converted into a `system_error` exception
+and passed back to the caller through the future.
+
+Where a handler signature has the form:
+
+  void handler(error_code ec);
+
+the initiating function instead returns `std::future<void>`.
 
 [endsect]

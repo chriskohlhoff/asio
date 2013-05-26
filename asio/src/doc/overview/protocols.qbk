@@ -138,12 +138,6 @@ asio.reference.basic_raw_socket.async_receive_from async_receive_from()],
 asio.reference.basic_raw_socket.async_send_to async_send_to()] member
 functions.
 
-[heading Other Protocols]
-
-Support for other socket protocols (such as Bluetooth or IRCOMM sockets) can be
-added by implementing the [link asio.reference.Protocol Protocol] type
-requirements.
-
 [heading See Also]
 
 [link asio.reference.ip__tcp ip::tcp],
