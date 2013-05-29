@@ -47,7 +47,10 @@ namespace multicast {
 typedef implementation_defined join_group;
 #else
 typedef asio::ip::detail::socket_option::multicast_request<
-  IPPROTO_IP, IP_ADD_MEMBERSHIP, IPPROTO_IPV6, IPV6_JOIN_GROUP> join_group;
+  ASIO_OS_DEF(IPPROTO_IP),
+  ASIO_OS_DEF(IP_ADD_MEMBERSHIP),
+  ASIO_OS_DEF(IPPROTO_IPV6),
+  ASIO_OS_DEF(IPV6_JOIN_GROUP)> join_group;
 #endif
 
 /// Socket option to leave a multicast group on a specified interface.
@@ -72,7 +75,10 @@ typedef asio::ip::detail::socket_option::multicast_request<
 typedef implementation_defined leave_group;
 #else
 typedef asio::ip::detail::socket_option::multicast_request<
-  IPPROTO_IP, IP_DROP_MEMBERSHIP, IPPROTO_IPV6, IPV6_LEAVE_GROUP> leave_group;
+  ASIO_OS_DEF(IPPROTO_IP),
+  ASIO_OS_DEF(IP_DROP_MEMBERSHIP),
+  ASIO_OS_DEF(IPPROTO_IPV6),
+  ASIO_OS_DEF(IPV6_LEAVE_GROUP)> leave_group;
 #endif
 
 /// Socket option for local interface to use for outgoing multicast packets.
@@ -97,8 +103,10 @@ typedef asio::ip::detail::socket_option::multicast_request<
 typedef implementation_defined outbound_interface;
 #else
 typedef asio::ip::detail::socket_option::network_interface<
-  IPPROTO_IP, IP_MULTICAST_IF, IPPROTO_IPV6, IPV6_MULTICAST_IF>
-  outbound_interface;
+  ASIO_OS_DEF(IPPROTO_IP),
+  ASIO_OS_DEF(IP_MULTICAST_IF),
+  ASIO_OS_DEF(IPPROTO_IPV6),
+  ASIO_OS_DEF(IPV6_MULTICAST_IF)> outbound_interface;
 #endif
 
 /// Socket option for time-to-live associated with outgoing multicast packets.
@@ -131,7 +139,10 @@ typedef asio::ip::detail::socket_option::network_interface<
 typedef implementation_defined hops;
 #else
 typedef asio::ip::detail::socket_option::multicast_hops<
-  IPPROTO_IP, IP_MULTICAST_TTL, IPPROTO_IPV6, IPV6_MULTICAST_HOPS> hops;
+  ASIO_OS_DEF(IPPROTO_IP),
+  ASIO_OS_DEF(IP_MULTICAST_TTL),
+  ASIO_OS_DEF(IPPROTO_IPV6),
+  ASIO_OS_DEF(IPV6_MULTICAST_HOPS)> hops;
 #endif
 
 /// Socket option determining whether outgoing multicast packets will be
@@ -165,8 +176,10 @@ typedef asio::ip::detail::socket_option::multicast_hops<
 typedef implementation_defined enable_loopback;
 #else
 typedef asio::ip::detail::socket_option::multicast_enable_loopback<
-  IPPROTO_IP, IP_MULTICAST_LOOP, IPPROTO_IPV6, IPV6_MULTICAST_LOOP>
-  enable_loopback;
+  ASIO_OS_DEF(IPPROTO_IP),
+  ASIO_OS_DEF(IP_MULTICAST_LOOP),
+  ASIO_OS_DEF(IPPROTO_IPV6),
+  ASIO_OS_DEF(IPV6_MULTICAST_LOOP)> enable_loopback;
 #endif
 
 } // namespace multicast

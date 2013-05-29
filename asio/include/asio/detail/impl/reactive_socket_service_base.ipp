@@ -17,7 +17,8 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(ASIO_HAS_IOCP)
+#if !defined(ASIO_HAS_IOCP) \
+  && !defined(ASIO_WINDOWS_RUNTIME)
 
 #include "asio/detail/reactive_socket_service_base.hpp"
 
@@ -261,5 +262,6 @@ void reactive_socket_service_base::start_connect_op(
 #include "asio/detail/pop_options.hpp"
 
 #endif // !defined(ASIO_HAS_IOCP)
+       //   && !defined(ASIO_WINDOWS_RUNTIME)
 
 #endif // ASIO_DETAIL_IMPL_REACTIVE_SOCKET_SERVICE_BASE_IPP

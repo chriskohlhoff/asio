@@ -17,7 +17,8 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(ASIO_HAS_IOCP)
+#if !defined(ASIO_HAS_IOCP) \
+  && !defined(ASIO_WINDOWS_RUNTIME)
 
 #include "asio/buffer.hpp"
 #include "asio/error.hpp"
@@ -444,5 +445,6 @@ protected:
 #endif // defined(ASIO_HEADER_ONLY)
 
 #endif // !defined(ASIO_HAS_IOCP)
+       //   && !defined(ASIO_WINDOWS_RUNTIME)
 
 #endif // ASIO_DETAIL_REACTIVE_SOCKET_SERVICE_BASE_HPP

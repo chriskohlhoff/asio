@@ -69,6 +69,7 @@ nobase_include_HEADERS = \
 	asio/detail/handler_tracking.hpp \
 	asio/detail/handler_type_requirements.hpp \
 	asio/detail/hash_map.hpp \
+	asio/detail/impl/buffer_sequence_adapter.ipp \
 	asio/detail/impl/descriptor_ops.ipp \
 	asio/detail/impl/dev_poll_reactor.hpp \
 	asio/detail/impl/dev_poll_reactor.ipp \
@@ -109,6 +110,9 @@ nobase_include_HEADERS = \
 	asio/detail/impl/win_iocp_socket_service_base.ipp \
 	asio/detail/impl/win_mutex.ipp \
 	asio/detail/impl/win_object_handle_service.ipp \
+	asio/detail/impl/winrt_ssocket_service_base.ipp \
+	asio/detail/impl/winrt_timer_scheduler.hpp \
+	asio/detail/impl/winrt_timer_scheduler.ipp \
 	asio/detail/impl/winsock_init.ipp \
 	asio/detail/impl/win_static_mutex.ipp \
 	asio/detail/impl/win_thread.ipp \
@@ -124,7 +128,9 @@ nobase_include_HEADERS = \
 	asio/detail/null_event.hpp \
 	asio/detail/null_fenced_block.hpp \
 	asio/detail/null_mutex.hpp \
+	asio/detail/null_reactor.hpp \
 	asio/detail/null_signal_blocker.hpp \
+	asio/detail/null_socket_service.hpp \
 	asio/detail/null_static_mutex.hpp \
 	asio/detail/null_thread.hpp \
 	asio/detail/null_tss_ptr.hpp \
@@ -181,6 +187,10 @@ nobase_include_HEADERS = \
 	asio/detail/socket_types.hpp \
 	asio/detail/solaris_fenced_block.hpp \
 	asio/detail/static_mutex.hpp \
+	asio/detail/std_event.hpp \
+	asio/detail/std_mutex.hpp \
+	asio/detail/std_static_mutex.hpp \
+	asio/detail/std_thread.hpp \
 	asio/detail/strand_service.hpp \
 	asio/detail/task_io_service.hpp \
 	asio/detail/task_io_service_operation.hpp \
@@ -224,6 +234,17 @@ nobase_include_HEADERS = \
 	asio/detail/win_iocp_thread_info.hpp \
 	asio/detail/win_mutex.hpp \
 	asio/detail/win_object_handle_service.hpp \
+	asio/detail/winrt_async_manager.hpp \
+	asio/detail/winrt_async_op.hpp \
+	asio/detail/winrt_resolve_op.hpp \
+	asio/detail/winrt_resolver_service.hpp \
+	asio/detail/winrt_socket_connect_op.hpp \
+	asio/detail/winrt_socket_recv_op.hpp \
+	asio/detail/winrt_socket_send_op.hpp \
+	asio/detail/winrt_ssocket_service_base.hpp \
+	asio/detail/winrt_ssocket_service.hpp \
+	asio/detail/winrt_timer_scheduler.hpp \
+	asio/detail/winrt_utils.hpp \
 	asio/detail/winsock_init.hpp \
 	asio/detail/win_static_mutex.hpp \
 	asio/detail/win_thread.hpp \

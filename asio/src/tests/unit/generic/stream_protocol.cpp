@@ -21,6 +21,10 @@
 #include "asio/ip/tcp.hpp"
 #include "../unit_test.hpp"
 
+#if defined(__cplusplus_cli) || defined(__cplusplus_winrt)
+# define generic cpp_generic
+#endif
+
 //------------------------------------------------------------------------------
 
 // generic_stream_protocol_socket_compile test
@@ -57,6 +61,10 @@ void test()
   namespace generic = asio::generic;
   typedef generic::stream_protocol sp;
 
+  const int af_inet = ASIO_OS_DEF(AF_INET);
+  const int ipproto_tcp = ASIO_OS_DEF(IPPROTO_TCP);
+  const int sock_stream = ASIO_OS_DEF(SOCK_STREAM);
+
   try
   {
     io_service ios;
@@ -70,10 +78,14 @@ void test()
     // basic_stream_socket constructors.
 
     sp::socket socket1(ios);
-    sp::socket socket2(ios, sp(AF_INET, IPPROTO_TCP));
+    sp::socket socket2(ios, sp(af_inet, ipproto_tcp));
     sp::socket socket3(ios, sp::endpoint());
-    int native_socket1 = ::socket(AF_INET, SOCK_STREAM, 0);
-    sp::socket socket4(ios, sp(AF_INET, IPPROTO_TCP), native_socket1);
+#if defined(ASIO_WINDOWS_RUNTIME)
+    Windows::Networking::Sockets::StreamSocket^ native_socket1 = nullptr;
+#else // defined(ASIO_WINDOWS_RUNTIME)
+    int native_socket1 = ::socket(af_inet, sock_stream, 0);
+#endif // defined(ASIO_WINDOWS_RUNTIME)
+    sp::socket socket4(ios, sp(af_inet, ipproto_tcp), native_socket1);
 
 #if defined(ASIO_HAS_MOVE)
     sp::socket socket5(std::move(socket4));
@@ -98,13 +110,21 @@ void test()
     sp::socket::lowest_layer_type& lowest_layer = socket1.lowest_layer();
     (void)lowest_layer;
 
-    socket1.open(sp(AF_INET, IPPROTO_TCP));
-    socket1.open(sp(AF_INET, IPPROTO_TCP), ec);
+    socket1.open(sp(af_inet, ipproto_tcp));
+    socket1.open(sp(af_inet, ipproto_tcp), ec);
 
-    int native_socket2 = ::socket(AF_INET, SOCK_STREAM, 0);
-    socket1.assign(sp(AF_INET, IPPROTO_TCP), native_socket2);
-    int native_socket3 = ::socket(AF_INET, SOCK_STREAM, 0);
-    socket1.assign(sp(AF_INET, IPPROTO_TCP), native_socket3, ec);
+#if defined(ASIO_WINDOWS_RUNTIME)
+    Windows::Networking::Sockets::StreamSocket^ native_socket2 = nullptr;
+#else // defined(ASIO_WINDOWS_RUNTIME)
+    int native_socket2 = ::socket(af_inet, sock_stream, 0);
+#endif // defined(ASIO_WINDOWS_RUNTIME)
+    socket1.assign(sp(af_inet, ipproto_tcp), native_socket2);
+#if defined(ASIO_WINDOWS_RUNTIME)
+    Windows::Networking::Sockets::StreamSocket^ native_socket3 = nullptr;
+#else // defined(ASIO_WINDOWS_RUNTIME)
+    int native_socket3 = ::socket(af_inet, sock_stream, 0);
+#endif // defined(ASIO_WINDOWS_RUNTIME)
+    socket1.assign(sp(af_inet, ipproto_tcp), native_socket3, ec);
 
     bool is_open = socket1.is_open();
     (void)is_open;

@@ -18,7 +18,9 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/timer_scheduler_fwd.hpp"
 
-#if defined(ASIO_HAS_IOCP)
+#if defined(ASIO_WINDOWS_RUNTIME)
+# include "asio/detail/winrt_timer_scheduler.hpp"
+#elif defined(ASIO_HAS_IOCP)
 # include "asio/detail/win_iocp_io_service.hpp"
 #elif defined(ASIO_HAS_EPOLL)
 # include "asio/detail/epoll_reactor.hpp"

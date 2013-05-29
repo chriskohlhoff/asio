@@ -79,8 +79,10 @@ void test()
     ip::udp::socket socket3(ios, ip::udp::v6());
     ip::udp::socket socket4(ios, ip::udp::endpoint(ip::udp::v4(), 0));
     ip::udp::socket socket5(ios, ip::udp::endpoint(ip::udp::v6(), 0));
+#if !defined(ASIO_WINDOWS_RUNTIME)
     int native_socket1 = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     ip::udp::socket socket6(ios, ip::udp::v4(), native_socket1);
+#endif // !defined(ASIO_WINDOWS_RUNTIME)
 
 #if defined(ASIO_HAS_MOVE)
     ip::udp::socket socket7(std::move(socket6));
@@ -113,10 +115,12 @@ void test()
     socket1.open(ip::udp::v4(), ec);
     socket1.open(ip::udp::v6(), ec);
 
+#if !defined(ASIO_WINDOWS_RUNTIME)
     int native_socket2 = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     socket1.assign(ip::udp::v4(), native_socket2);
     int native_socket3 = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     socket1.assign(ip::udp::v4(), native_socket3, ec);
+#endif // !defined(ASIO_WINDOWS_RUNTIME)
 
     bool is_open = socket1.is_open();
     (void)is_open;

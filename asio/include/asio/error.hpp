@@ -17,7 +17,9 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/error_code.hpp"
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) \
+  || defined(__CYGWIN__) \
+  || defined(ASIO_WINDOWS_RUNTIME)
 # include <winerror.h>
 #else
 # include <cerrno>
@@ -35,6 +37,12 @@
 # define ASIO_GETADDRINFO_ERROR(e) implementation_defined
 /// INTERNAL ONLY.
 # define ASIO_WIN_OR_POSIX(e_win, e_posix) implementation_defined
+#elif defined(ASIO_WINDOWS_RUNTIME)
+# define ASIO_NATIVE_ERROR(e) __HRESULT_FROM_WIN32(e)
+# define ASIO_SOCKET_ERROR(e) __HRESULT_FROM_WIN32(WSA ## e)
+# define ASIO_NETDB_ERROR(e) __HRESULT_FROM_WIN32(WSA ## e)
+# define ASIO_GETADDRINFO_ERROR(e) __HRESULT_FROM_WIN32(WSA ## e)
+# define ASIO_WIN_OR_POSIX(e_win, e_posix) e_win
 #elif defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 # define ASIO_NATIVE_ERROR(e) e
 # define ASIO_SOCKET_ERROR(e) WSA ## e

@@ -103,7 +103,9 @@
 # pragma warning (disable:4180)
 # pragma warning (disable:4244)
 # pragma warning (disable:4355)
+# pragma warning (disable:4510)
 # pragma warning (disable:4512)
+# pragma warning (disable:4610)
 # pragma warning (disable:4675)
 # if defined(_M_IX86) && defined(_Wp64)
 // The /Wp64 option is broken. If you want to check 64 bit portability, use a

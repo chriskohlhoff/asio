@@ -34,25 +34,25 @@ namespace detail {
 endpoint::endpoint()
   : data_()
 {
-  data_.v4.sin_family = AF_INET;
+  data_.v4.sin_family = ASIO_OS_DEF(AF_INET);
   data_.v4.sin_port = 0;
-  data_.v4.sin_addr.s_addr = INADDR_ANY;
+  data_.v4.sin_addr.s_addr = ASIO_OS_DEF(INADDR_ANY);
 }
 
 endpoint::endpoint(int family, unsigned short port_num)
   : data_()
 {
   using namespace std; // For memcpy.
-  if (family == PF_INET)
+  if (family == ASIO_OS_DEF(AF_INET))
   {
-    data_.v4.sin_family = AF_INET;
+    data_.v4.sin_family = ASIO_OS_DEF(AF_INET);
     data_.v4.sin_port =
       asio::detail::socket_ops::host_to_network_short(port_num);
-    data_.v4.sin_addr.s_addr = INADDR_ANY;
+    data_.v4.sin_addr.s_addr = ASIO_OS_DEF(INADDR_ANY);
   }
   else
   {
-    data_.v6.sin6_family = AF_INET6;
+    data_.v6.sin6_family = ASIO_OS_DEF(AF_INET6);
     data_.v6.sin6_port =
       asio::detail::socket_ops::host_to_network_short(port_num);
     data_.v6.sin6_flowinfo = 0;
@@ -75,7 +75,7 @@ endpoint::endpoint(const asio::ip::address& addr,
   using namespace std; // For memcpy.
   if (addr.is_v4())
   {
-    data_.v4.sin_family = AF_INET;
+    data_.v4.sin_family = ASIO_OS_DEF(AF_INET);
     data_.v4.sin_port =
       asio::detail::socket_ops::host_to_network_short(port_num);
     data_.v4.sin_addr.s_addr =
@@ -85,7 +85,7 @@ endpoint::endpoint(const asio::ip::address& addr,
   }
   else
   {
-    data_.v6.sin6_family = AF_INET6;
+    data_.v6.sin6_family = ASIO_OS_DEF(AF_INET6);
     data_.v6.sin6_port =
       asio::detail::socket_ops::host_to_network_short(port_num);
     data_.v6.sin6_flowinfo = 0;

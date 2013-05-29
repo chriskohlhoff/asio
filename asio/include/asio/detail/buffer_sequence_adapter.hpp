@@ -28,7 +28,23 @@ namespace detail {
 class buffer_sequence_adapter_base
 {
 protected:
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS_RUNTIME)
+  // The maximum number of buffers to support in a single operation.
+  enum { max_buffers = 1 };
+
+  typedef Windows::Storage::Streams::IBuffer^ native_buffer_type;
+
+  ASIO_DECL static void init_native_buffer(
+      native_buffer_type& buf,
+      const asio::mutable_buffer& buffer);
+
+  ASIO_DECL static void init_native_buffer(
+      native_buffer_type& buf,
+      const asio::const_buffer& buffer);
+#elif defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+  // The maximum number of buffers to support in a single operation.
+  enum { max_buffers = 64 < max_iov_len ? 64 : max_iov_len };
+
   typedef WSABUF native_buffer_type;
 
   static void init_native_buffer(WSABUF& buf,
@@ -45,6 +61,9 @@ protected:
     buf.len = static_cast<ULONG>(asio::buffer_size(buffer));
   }
 #else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+  // The maximum number of buffers to support in a single operation.
+  enum { max_buffers = 64 < max_iov_len ? 64 : max_iov_len };
+
   typedef iovec native_buffer_type;
 
   static void init_iov_base(void*& base, void* addr)
@@ -145,9 +164,6 @@ public:
   }
 
 private:
-  // The maximum number of buffers to support in a single operation.
-  enum { max_buffers = 64 < max_iov_len ? 64 : max_iov_len };
-
   native_buffer_type buffers_[max_buffers];
   std::size_t count_;
   std::size_t total_buffer_size_;
@@ -359,5 +375,9 @@ private:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/detail/impl/buffer_sequence_adapter.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_DETAIL_BUFFER_SEQUENCE_ADAPTER_HPP

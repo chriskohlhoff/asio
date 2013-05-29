@@ -48,25 +48,25 @@ public:
   /// Construct to represent the IPv4 UDP protocol.
   static udp v4()
   {
-    return udp(PF_INET);
+    return udp(ASIO_OS_DEF(AF_INET));
   }
 
   /// Construct to represent the IPv6 UDP protocol.
   static udp v6()
   {
-    return udp(PF_INET6);
+    return udp(ASIO_OS_DEF(AF_INET6));
   }
 
   /// Obtain an identifier for the type of the protocol.
   int type() const
   {
-    return SOCK_DGRAM;
+    return ASIO_OS_DEF(SOCK_DGRAM);
   }
 
   /// Obtain an identifier for the protocol.
   int protocol() const
   {
-    return IPPROTO_UDP;
+    return ASIO_OS_DEF(IPPROTO_UDP);
   }
 
   /// Obtain an identifier for the protocol family.

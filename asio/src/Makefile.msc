@@ -5,7 +5,7 @@ BOOSTDIR = ../../boost_1_34_1
 COMMON_CXXFLAGS = -nologo -EHac -GR -I. -I../include
 
 !ifdef WARNINGS
-WARNINGS_CXXFLAGS = -W4 -wd4512
+WARNINGS_CXXFLAGS = -W4 -wd4512 -wd4447
 !endif
 
 !ifdef STATICRTL
@@ -40,9 +40,15 @@ DEFINES = \
 	-D_WIN32_WINNT=$(_WIN32_WINNT) \
 	-DBOOST_ALL_NO_LIB
 !else
+! ifdef WINRT
+DEFINES = \
+	-ZW -FI SDKDDKVer.h -FI winapifamily.h -DWINAPI_FAMILY=WINAPI_PARTITION_APP \
+	-DBOOST_ALL_NO_LIB
+! else
 DEFINES = \
 	-D_WIN32_WINNT=$(_WIN32_WINNT) \
 	-DBOOST_ALL_NO_LIB
+! endif
 !endif
 
 !ifdef SEPARATE_COMPILATION

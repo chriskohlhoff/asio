@@ -22,7 +22,9 @@
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 
-#if defined(ASIO_HAS_IOCP)
+#if defined(ASIO_WINDOWS_RUNTIME)
+# include "asio/detail/null_socket_service.hpp"
+#elif defined(ASIO_HAS_IOCP)
 # include "asio/detail/win_iocp_socket_service.hpp"
 #else
 # include "asio/detail/reactive_socket_service.hpp"
@@ -55,7 +57,9 @@ public:
 
 private:
   // The type of the platform-specific implementation.
-#if defined(ASIO_HAS_IOCP)
+#if defined(ASIO_WINDOWS_RUNTIME)
+  typedef detail::null_socket_service<Protocol> service_impl_type;
+#elif defined(ASIO_HAS_IOCP)
   typedef detail::win_iocp_socket_service<Protocol> service_impl_type;
 #else
   typedef detail::reactive_socket_service<Protocol> service_impl_type;
@@ -137,7 +141,7 @@ public:
   asio::error_code open(implementation_type& impl,
       const protocol_type& protocol, asio::error_code& ec)
   {
-    if (protocol.type() == SOCK_DGRAM)
+    if (protocol.type() == ASIO_OS_DEF(SOCK_DGRAM))
       service_impl_.open(impl, protocol, ec);
     else
       ec = asio::error::invalid_argument;

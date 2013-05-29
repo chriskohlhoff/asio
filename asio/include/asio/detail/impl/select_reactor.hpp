@@ -20,7 +20,8 @@
 #if defined(ASIO_HAS_IOCP) \
   || (!defined(ASIO_HAS_DEV_POLL) \
       && !defined(ASIO_HAS_EPOLL) \
-      && !defined(ASIO_HAS_KQUEUE))
+      && !defined(ASIO_HAS_KQUEUE) \
+      && !defined(ASIO_WINDOWS_RUNTIME))
 
 #include "asio/detail/push_options.hpp"
 
@@ -80,6 +81,7 @@ std::size_t select_reactor::cancel_timer(timer_queue<Time_Traits>& queue,
 #endif // defined(ASIO_HAS_IOCP)
        //   || (!defined(ASIO_HAS_DEV_POLL)
        //       && !defined(ASIO_HAS_EPOLL)
-       //       && !defined(ASIO_HAS_KQUEUE))
+       //       && !defined(ASIO_HAS_KQUEUE)
+       //       && !defined(ASIO_WINDOWS_RUNTIME))
 
 #endif // ASIO_DETAIL_IMPL_SELECT_REACTOR_HPP

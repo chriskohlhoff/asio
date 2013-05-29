@@ -382,13 +382,66 @@
 # endif // !defined(ASIO_DISABLE_CSTDINT)
 #endif // !defined(ASIO_HAS_CSTDINT)
 
-// Windows target.
+// Standard library support for the thread class.
+#if !defined(ASIO_HAS_STD_THREAD)
+# if !defined(ASIO_DISABLE_STD_THREAD)
+#  if defined(ASIO_HAS_CLANG_LIBCXX)
+#   define ASIO_HAS_STD_THREAD 1
+#  endif // defined(ASIO_HAS_CLANG_LIBCXX)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_STD_THREAD 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1700)
+#    define ASIO_HAS_STD_THREAD 1
+#   endif // (_MSC_VER >= 1700)
+#  endif // defined(ASIO_MSVC)
+# endif // !defined(ASIO_DISABLE_STD_THREAD)
+#endif // !defined(ASIO_HAS_STD_THREAD)
+
+// Standard library support for the mutex and condition variable classes.
+#if !defined(ASIO_HAS_STD_MUTEX_AND_CONDVAR)
+# if !defined(ASIO_DISABLE_STD_MUTEX_AND_CONDVAR)
+#  if defined(ASIO_HAS_CLANG_LIBCXX)
+#   define ASIO_HAS_STD_MUTEX_AND_CONDVAR 1
+#  endif // defined(ASIO_HAS_CLANG_LIBCXX)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_STD_MUTEX_AND_CONDVAR 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1700)
+#    define ASIO_HAS_STD_MUTEX_AND_CONDVAR 1
+#   endif // (_MSC_VER >= 1700)
+#  endif // defined(ASIO_MSVC)
+# endif // !defined(ASIO_DISABLE_STD_MUTEX_AND_CONDVAR)
+#endif // !defined(ASIO_HAS_STD_MUTEX_AND_CONDVAR)
+
+// WinRT target.
+#if !defined(ASIO_WINDOWS_RUNTIME)
+# if defined(WINAPI_FAMILY)
+#  if ((WINAPI_FAMILY & WINAPI_PARTITION_APP) != 0)
+#   define ASIO_WINDOWS_RUNTIME 1
+#  endif // ((WINAPI_FAMILY & WINAPI_PARTITION_APP) != 0)
+# endif // defined(WINAPI_FAMILY)
+#endif // !defined(ASIO_WINDOWS_RUNTIME)
+
+// Windows target. Excludes WinRT.
 #if !defined(ASIO_WINDOWS)
-# if defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_WINDOWS)
-#  define ASIO_WINDOWS 1
-# elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-#  define ASIO_WINDOWS 1
-# endif // defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_WINDOWS)
+# if !defined(ASIO_WINDOWS_RUNTIME)
+#  if defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_WINDOWS)
+#   define ASIO_WINDOWS 1
+#  elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+#   define ASIO_WINDOWS 1
+#  endif // defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_WINDOWS)
+# endif // !defined(ASIO_WINDOWS_RUNTIME)
 #endif // !defined(ASIO_WINDOWS)
 
 // Windows: target OS version.
@@ -516,14 +569,18 @@
 // Serial ports.
 #if !defined(ASIO_HAS_SERIAL_PORT)
 # if defined(ASIO_HAS_IOCP) \
-    || !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+  || !defined(ASIO_WINDOWS) \
+  && !defined(ASIO_WINDOWS_RUNTIME) \
+  && !defined(__CYGWIN__)
 #  if !defined(__SYMBIAN32__)
 #   if !defined(ASIO_DISABLE_SERIAL_PORT)
 #    define ASIO_HAS_SERIAL_PORT 1
 #   endif // !defined(ASIO_DISABLE_SERIAL_PORT)
 #  endif // !defined(__SYMBIAN32__)
 # endif // defined(ASIO_HAS_IOCP)
-        //   || !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+        //   || !defined(ASIO_WINDOWS)
+        //   && !defined(ASIO_WINDOWS_RUNTIME)
+        //   && !defined(__CYGWIN__)
 #endif // !defined(ASIO_HAS_SERIAL_PORT)
 
 // Windows: stream handles.
@@ -567,27 +624,39 @@
 // POSIX: stream-oriented file descriptors.
 #if !defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
 # if !defined(ASIO_DISABLE_POSIX_STREAM_DESCRIPTOR)
-#  if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#  if !defined(ASIO_WINDOWS) \
+  && !defined(ASIO_WINDOWS_RUNTIME) \
+  && !defined(__CYGWIN__)
 #   define ASIO_HAS_POSIX_STREAM_DESCRIPTOR 1
-#  endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#  endif // !defined(ASIO_WINDOWS)
+         //   && !defined(ASIO_WINDOWS_RUNTIME)
+         //   && !defined(__CYGWIN__)
 # endif // !defined(ASIO_DISABLE_POSIX_STREAM_DESCRIPTOR)
 #endif // !defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
 
 // UNIX domain sockets.
 #if !defined(ASIO_HAS_LOCAL_SOCKETS)
 # if !defined(ASIO_DISABLE_LOCAL_SOCKETS)
-#  if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#  if !defined(ASIO_WINDOWS) \
+  && !defined(ASIO_WINDOWS_RUNTIME) \
+  && !defined(__CYGWIN__)
 #   define ASIO_HAS_LOCAL_SOCKETS 1
-#  endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#  endif // !defined(ASIO_WINDOWS)
+         //   && !defined(ASIO_WINDOWS_RUNTIME)
+         //   && !defined(__CYGWIN__)
 # endif // !defined(ASIO_DISABLE_LOCAL_SOCKETS)
 #endif // !defined(ASIO_HAS_LOCAL_SOCKETS)
 
 // Can use sigaction() instead of signal().
 #if !defined(ASIO_HAS_SIGACTION)
 # if !defined(ASIO_DISABLE_SIGACTION)
-#  if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#  if !defined(ASIO_WINDOWS) \
+  && !defined(ASIO_WINDOWS_RUNTIME) \
+  && !defined(__CYGWIN__)
 #   define ASIO_HAS_SIGACTION 1
-#  endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#  endif // !defined(ASIO_WINDOWS)
+         //   && !defined(ASIO_WINDOWS_RUNTIME)
+         //   && !defined(__CYGWIN__)
 # endif // !defined(ASIO_DISABLE_SIGACTION)
 #endif // !defined(ASIO_HAS_SIGACTION)
 
@@ -765,13 +834,23 @@
 #   if ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 3)
 #    if !defined(__INTEL_COMPILER) && !defined(__ICL)
 #     define ASIO_HAS_THREAD_KEYWORD_EXTENSION 1
+#     define ASIO_THREAD_KEYWORD __thread
 #    elif defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1100)
 #     define ASIO_HAS_THREAD_KEYWORD_EXTENSION 1
 #    endif // defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1100)
 #   endif // ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 3)
 #  endif // defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 # endif // defined(__linux__)
+# if defined(ASIO_MSVC) && defined(WINAPI_FAMILY)
+#  if (_MSC_VER >= 1700)
+#   define ASIO_HAS_THREAD_KEYWORD_EXTENSION 1
+#   define ASIO_THREAD_KEYWORD __declspec(thread)
+#  endif // (_MSC_VER >= 1700)
+# endif // defined(ASIO_MSVC) && defined(WINAPI_FAMILY)
 #endif // !defined(ASIO_DISABLE_THREAD_KEYWORD_EXTENSION)
+#if !defined(ASIO_THREAD_KEYWORD)
+# define ASIO_THREAD_KEYWORD __thread
+#endif // !defined(ASIO_THREAD_KEYWORD)
 
 // Support for POSIX ssize_t typedef.
 #if !defined(ASIO_DISABLE_SSIZE_T)

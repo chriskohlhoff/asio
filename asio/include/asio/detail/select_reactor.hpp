@@ -20,7 +20,8 @@
 #if defined(ASIO_HAS_IOCP) \
   || (!defined(ASIO_HAS_DEV_POLL) \
       && !defined(ASIO_HAS_EPOLL) \
-      && !defined(ASIO_HAS_KQUEUE))
+      && !defined(ASIO_HAS_KQUEUE) \
+	  && !defined(ASIO_WINDOWS_RUNTIME))
 
 #include <cstddef>
 #include "asio/detail/fd_set_adapter.hpp"
@@ -212,6 +213,7 @@ private:
 #endif // defined(ASIO_HAS_IOCP)
        //   || (!defined(ASIO_HAS_DEV_POLL)
        //       && !defined(ASIO_HAS_EPOLL)
-       //       && !defined(ASIO_HAS_KQUEUE))
+       //       && !defined(ASIO_HAS_KQUEUE)
+       //       && !defined(ASIO_WINDOWS_RUNTIME))
 
 #endif // ASIO_DETAIL_SELECT_REACTOR_HPP

@@ -43,9 +43,9 @@ public:
     /// Shutdown both send and receive on the socket.
     shutdown_both = implementation_defined
 #else
-    shutdown_receive = asio::detail::shutdown_receive,
-    shutdown_send = asio::detail::shutdown_send,
-    shutdown_both = asio::detail::shutdown_both
+    shutdown_receive = ASIO_OS_DEF(SHUT_RD),
+    shutdown_send = ASIO_OS_DEF(SHUT_WR),
+    shutdown_both = ASIO_OS_DEF(SHUT_RDWR)
 #endif
   };
 
@@ -66,13 +66,13 @@ public:
   static const int message_end_of_record = implementation_defined;
 #else
   ASIO_STATIC_CONSTANT(int,
-      message_peek = asio::detail::message_peek);
+      message_peek = ASIO_OS_DEF(MSG_PEEK));
   ASIO_STATIC_CONSTANT(int,
-      message_out_of_band = asio::detail::message_out_of_band);
+      message_out_of_band = ASIO_OS_DEF(MSG_OOB));
   ASIO_STATIC_CONSTANT(int,
-      message_do_not_route = asio::detail::message_do_not_route);
+      message_do_not_route = ASIO_OS_DEF(MSG_DONTROUTE));
   ASIO_STATIC_CONSTANT(int,
-      message_end_of_record = asio::detail::message_end_of_record);
+      message_end_of_record = ASIO_OS_DEF(MSG_EOR));
 #endif
 
   /// Socket option to permit sending of broadcast messages.
@@ -105,7 +105,8 @@ public:
   typedef implementation_defined broadcast;
 #else
   typedef asio::detail::socket_option::boolean<
-    SOL_SOCKET, SO_BROADCAST> broadcast;
+    ASIO_OS_DEF(SOL_SOCKET), ASIO_OS_DEF(SO_BROADCAST)>
+      broadcast;
 #endif
 
   /// Socket option to enable socket-level debugging.
@@ -138,7 +139,7 @@ public:
   typedef implementation_defined debug;
 #else
   typedef asio::detail::socket_option::boolean<
-    SOL_SOCKET, SO_DEBUG> debug;
+    ASIO_OS_DEF(SOL_SOCKET), ASIO_OS_DEF(SO_DEBUG)> debug;
 #endif
 
   /// Socket option to prevent routing, use local interfaces only.
@@ -171,7 +172,8 @@ public:
   typedef implementation_defined do_not_route;
 #else
   typedef asio::detail::socket_option::boolean<
-    SOL_SOCKET, SO_DONTROUTE> do_not_route;
+    ASIO_OS_DEF(SOL_SOCKET), ASIO_OS_DEF(SO_DONTROUTE)>
+      do_not_route;
 #endif
 
   /// Socket option to send keep-alives.
@@ -204,7 +206,7 @@ public:
   typedef implementation_defined keep_alive;
 #else
   typedef asio::detail::socket_option::boolean<
-    SOL_SOCKET, SO_KEEPALIVE> keep_alive;
+    ASIO_OS_DEF(SOL_SOCKET), ASIO_OS_DEF(SO_KEEPALIVE)> keep_alive;
 #endif
 
   /// Socket option for the send buffer size of a socket.
@@ -237,7 +239,8 @@ public:
   typedef implementation_defined send_buffer_size;
 #else
   typedef asio::detail::socket_option::integer<
-    SOL_SOCKET, SO_SNDBUF> send_buffer_size;
+    ASIO_OS_DEF(SOL_SOCKET), ASIO_OS_DEF(SO_SNDBUF)>
+      send_buffer_size;
 #endif
 
   /// Socket option for the send low watermark.
@@ -270,7 +273,8 @@ public:
   typedef implementation_defined send_low_watermark;
 #else
   typedef asio::detail::socket_option::integer<
-    SOL_SOCKET, SO_SNDLOWAT> send_low_watermark;
+    ASIO_OS_DEF(SOL_SOCKET), ASIO_OS_DEF(SO_SNDLOWAT)>
+      send_low_watermark;
 #endif
 
   /// Socket option for the receive buffer size of a socket.
@@ -303,7 +307,8 @@ public:
   typedef implementation_defined receive_buffer_size;
 #else
   typedef asio::detail::socket_option::integer<
-    SOL_SOCKET, SO_RCVBUF> receive_buffer_size;
+    ASIO_OS_DEF(SOL_SOCKET), ASIO_OS_DEF(SO_RCVBUF)>
+      receive_buffer_size;
 #endif
 
   /// Socket option for the receive low watermark.
@@ -336,7 +341,8 @@ public:
   typedef implementation_defined receive_low_watermark;
 #else
   typedef asio::detail::socket_option::integer<
-    SOL_SOCKET, SO_RCVLOWAT> receive_low_watermark;
+    ASIO_OS_DEF(SOL_SOCKET), ASIO_OS_DEF(SO_RCVLOWAT)>
+      receive_low_watermark;
 #endif
 
   /// Socket option to allow the socket to be bound to an address that is
@@ -370,7 +376,8 @@ public:
   typedef implementation_defined reuse_address;
 #else
   typedef asio::detail::socket_option::boolean<
-    SOL_SOCKET, SO_REUSEADDR> reuse_address;
+    ASIO_OS_DEF(SOL_SOCKET), ASIO_OS_DEF(SO_REUSEADDR)>
+      reuse_address;
 #endif
 
   /// Socket option to specify whether the socket lingers on close if unsent
@@ -405,7 +412,8 @@ public:
   typedef implementation_defined linger;
 #else
   typedef asio::detail::socket_option::linger<
-    SOL_SOCKET, SO_LINGER> linger;
+    ASIO_OS_DEF(SOL_SOCKET), ASIO_OS_DEF(SO_LINGER)>
+      linger;
 #endif
 
   /// Socket option to report aborted connections on accept.
@@ -494,7 +502,8 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
   static const int max_connections = implementation_defined;
 #else
-  ASIO_STATIC_CONSTANT(int, max_connections = SOMAXCONN);
+  ASIO_STATIC_CONSTANT(int, max_connections
+      = ASIO_OS_DEF(SOMAXCONN));
 #endif
 
 protected:

@@ -17,6 +17,8 @@
 
 #include "asio/detail/config.hpp"
 
+#if !defined(ASIO_WINDOWS_RUNTIME)
+
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__) || defined(__SYMBIAN32__)
 # include "asio/detail/socket_select_interrupter.hpp"
 #elif defined(ASIO_HAS_EVENTFD)
@@ -38,5 +40,7 @@ typedef pipe_select_interrupter select_interrupter;
 
 } // namespace detail
 } // namespace asio
+
+#endif // !defined(ASIO_WINDOWS_RUNTIME)
 
 #endif // ASIO_DETAIL_SELECT_INTERRUPTER_HPP

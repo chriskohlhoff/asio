@@ -18,6 +18,8 @@
 #include "asio/detail/config.hpp"
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 # include <winerror.h>
+#elif defined(ASIO_WINDOWS_RUNTIME)
+# include <windows.h>
 #else
 # include <cerrno>
 # include <cstring>
@@ -57,6 +59,30 @@ public:
       return msg;
     else
       return "asio.system error";
+#elif defined(ASIO_WINDOWS_RUNTIME)
+    std::string msg(128, char());
+    for (;;)
+    {
+      DWORD length = ::FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM
+          | FORMAT_MESSAGE_IGNORE_INSERTS, 0, value,
+          MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), &msg[0], msg.size(), 0);
+      if (length == 0 && ::GetLastError() == ERROR_INSUFFICIENT_BUFFER)
+      {
+        msg.resize(msg.size() + msg.size() / 2);
+        continue;
+      }
+      if (length && msg[length - 1] == '\n')
+        --length;
+      if (length && msg[length - 1] == '\r')
+        --length;
+      if (length)
+      {
+        msg.resize(length);
+        return msg;
+      }
+      else
+        return "asio.system error";
+    }
 #else // defined(ASIO_WINDOWS)
 #if !defined(__sun)
     if (value == ECANCELED)

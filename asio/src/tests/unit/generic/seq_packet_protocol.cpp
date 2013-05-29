@@ -20,6 +20,10 @@
 #include "asio/io_service.hpp"
 #include "../unit_test.hpp"
 
+#if defined(__cplusplus_cli) || defined(__cplusplus_winrt)
+# define generic cpp_generic
+#endif
+
 //------------------------------------------------------------------------------
 
 // generic_seq_packet_protocol_socket_compile test
@@ -48,6 +52,9 @@ void test()
   namespace generic = asio::generic;
   typedef generic::seq_packet_protocol spp;
 
+  const int af_inet = ASIO_OS_DEF(AF_INET);
+  const int sock_seqpacket = ASIO_OS_DEF(SOCK_SEQPACKET);
+
   try
   {
     io_service ios;
@@ -62,10 +69,12 @@ void test()
     // basic_seq_packet_socket constructors.
 
     spp::socket socket1(ios);
-    spp::socket socket2(ios, spp(AF_INET, 0));
+    spp::socket socket2(ios, spp(af_inet, 0));
     spp::socket socket3(ios, spp::endpoint());
-    int native_socket1 = ::socket(AF_INET, SOCK_SEQPACKET, 0);
-    spp::socket socket4(ios, spp(AF_INET, 0), native_socket1);
+#if !defined(ASIO_WINDOWS_RUNTIME)
+    int native_socket1 = ::socket(af_inet, sock_seqpacket, 0);
+    spp::socket socket4(ios, spp(af_inet, 0), native_socket1);
+#endif // !defined(ASIO_WINDOWS_RUNTIME)
 
 #if defined(ASIO_HAS_MOVE)
     spp::socket socket5(std::move(socket4));
@@ -88,13 +97,15 @@ void test()
     spp::socket::lowest_layer_type& lowest_layer = socket1.lowest_layer();
     (void)lowest_layer;
 
-    socket1.open(spp(AF_INET, 0));
-    socket1.open(spp(AF_INET, 0), ec);
+    socket1.open(spp(af_inet, 0));
+    socket1.open(spp(af_inet, 0), ec);
 
-    int native_socket2 = ::socket(AF_INET, SOCK_SEQPACKET, 0);
-    socket1.assign(spp(AF_INET, 0), native_socket2);
-    int native_socket3 = ::socket(AF_INET, SOCK_SEQPACKET, 0);
-    socket1.assign(spp(AF_INET, 0), native_socket3, ec);
+#if !defined(ASIO_WINDOWS_RUNTIME)
+    int native_socket2 = ::socket(af_inet, sock_seqpacket, 0);
+    socket1.assign(spp(af_inet, 0), native_socket2);
+    int native_socket3 = ::socket(af_inet, sock_seqpacket, 0);
+    socket1.assign(spp(af_inet, 0), native_socket3, ec);
+#endif // !defined(ASIO_WINDOWS_RUNTIME)
 
     bool is_open = socket1.is_open();
     (void)is_open;

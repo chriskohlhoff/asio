@@ -20,7 +20,9 @@
 #include "asio/detail/descriptor_ops.hpp"
 #include "asio/error.hpp"
 
-#if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_WINDOWS) \
+  && !defined(ASIO_WINDOWS_RUNTIME) \
+  && !defined(__CYGWIN__)
 
 #include "asio/detail/push_options.hpp"
 
@@ -442,6 +444,8 @@ int poll_write(int d, state_type state, asio::error_code& ec)
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(ASIO_WINDOWS)
+       //   && !defined(ASIO_WINDOWS_RUNTIME)
+       //   && !defined(__CYGWIN__)
 
 #endif // ASIO_DETAIL_IMPL_DESCRIPTOR_OPS_IPP

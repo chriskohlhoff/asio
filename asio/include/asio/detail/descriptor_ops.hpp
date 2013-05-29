@@ -17,7 +17,9 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_WINDOWS) \
+  && !defined(ASIO_WINDOWS_RUNTIME) \
+  && !defined(__CYGWIN__)
 
 #include <cstddef>
 #include "asio/error_code.hpp"
@@ -108,6 +110,8 @@ ASIO_DECL int poll_write(int d,
 # include "asio/detail/impl/descriptor_ops.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
-#endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(ASIO_WINDOWS)
+       //   && !defined(ASIO_WINDOWS_RUNTIME)
+       //   && !defined(__CYGWIN__)
 
 #endif // ASIO_DETAIL_DESCRIPTOR_OPS_HPP

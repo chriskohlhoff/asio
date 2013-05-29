@@ -17,6 +17,8 @@
 
 #include "asio/detail/config.hpp"
 
+#if !defined(ASIO_WINDOWS_RUNTIME)
+
 #if defined(ASIO_WINDOWS) \
   || defined(__CYGWIN__) \
   || defined(__SYMBIAN32__)
@@ -167,5 +169,7 @@ bool socket_select_interrupter::reset()
 #endif // defined(ASIO_WINDOWS)
        // || defined(__CYGWIN__)
        // || defined(__SYMBIAN32__)
+
+#endif // !defined(ASIO_WINDOWS_RUNTIME)
 
 #endif // ASIO_DETAIL_IMPL_SOCKET_SELECT_INTERRUPTER_IPP

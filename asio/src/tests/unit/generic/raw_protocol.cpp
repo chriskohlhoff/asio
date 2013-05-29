@@ -21,6 +21,10 @@
 #include "asio/ip/icmp.hpp"
 #include "../unit_test.hpp"
 
+#if defined(__cplusplus_cli) || defined(__cplusplus_winrt)
+# define generic cpp_generic
+#endif
+
 //------------------------------------------------------------------------------
 
 // generic_raw_protocol_socket_compile test
@@ -49,6 +53,10 @@ void test()
   namespace generic = asio::generic;
   typedef generic::raw_protocol rp;
 
+  const int af_inet = ASIO_OS_DEF(AF_INET);
+  const int ipproto_icmp = ASIO_OS_DEF(IPPROTO_ICMP);
+  const int sock_raw = ASIO_OS_DEF(SOCK_RAW);
+
   try
   {
     io_service ios;
@@ -62,10 +70,12 @@ void test()
     // basic_raw_socket constructors.
 
     rp::socket socket1(ios);
-    rp::socket socket2(ios, rp(AF_INET, IPPROTO_ICMP));
+    rp::socket socket2(ios, rp(af_inet, ipproto_icmp));
     rp::socket socket3(ios, rp::endpoint());
-    int native_socket1 = ::socket(AF_INET, SOCK_DGRAM, 0);
-    rp::socket socket4(ios, rp(AF_INET, IPPROTO_ICMP), native_socket1);
+#if !defined(ASIO_WINDOWS_RUNTIME)
+    int native_socket1 = ::socket(af_inet, sock_raw, 0);
+    rp::socket socket4(ios, rp(af_inet, ipproto_icmp), native_socket1);
+#endif // !defined(ASIO_WINDOWS_RUNTIME)
 
 #if defined(ASIO_HAS_MOVE)
     rp::socket socket5(std::move(socket4));
@@ -90,13 +100,15 @@ void test()
     rp::socket::lowest_layer_type& lowest_layer = socket1.lowest_layer();
     (void)lowest_layer;
 
-    socket1.open(rp(AF_INET, IPPROTO_ICMP));
-    socket1.open(rp(AF_INET, IPPROTO_ICMP), ec);
+    socket1.open(rp(af_inet, ipproto_icmp));
+    socket1.open(rp(af_inet, ipproto_icmp), ec);
 
-    int native_socket2 = ::socket(AF_INET, SOCK_DGRAM, 0);
-    socket1.assign(rp(AF_INET, IPPROTO_ICMP), native_socket2);
-    int native_socket3 = ::socket(AF_INET, SOCK_DGRAM, 0);
-    socket1.assign(rp(AF_INET, IPPROTO_ICMP), native_socket3, ec);
+#if !defined(ASIO_WINDOWS_RUNTIME)
+    int native_socket2 = ::socket(af_inet, sock_raw, 0);
+    socket1.assign(rp(af_inet, ipproto_icmp), native_socket2);
+    int native_socket3 = ::socket(af_inet, sock_raw, 0);
+    socket1.assign(rp(af_inet, ipproto_icmp), native_socket3, ec);
+#endif // !defined(ASIO_WINDOWS_RUNTIME)
 
     bool is_open = socket1.is_open();
     (void)is_open;

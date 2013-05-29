@@ -62,6 +62,8 @@ struct noop_deleter { void operator()(void*) {} };
 typedef shared_ptr<void> shared_cancel_token_type;
 typedef weak_ptr<void> weak_cancel_token_type;
 
+#if !defined(ASIO_WINDOWS_RUNTIME)
+
 ASIO_DECL socket_type accept(socket_type s, socket_addr_type* addr,
     std::size_t* addrlen, asio::error_code& ec);
 
@@ -262,6 +264,8 @@ ASIO_DECL int poll_write(socket_type s,
 
 ASIO_DECL int poll_connect(socket_type s, asio::error_code& ec);
 
+#endif // !defined(ASIO_WINDOWS_RUNTIME)
+
 ASIO_DECL const char* inet_ntop(int af, const void* src, char* dest,
     size_t length, unsigned long scope_id, asio::error_code& ec);
 
@@ -270,6 +274,8 @@ ASIO_DECL int inet_pton(int af, const char* src, void* dest,
 
 ASIO_DECL int gethostname(char* name,
     int namelen, asio::error_code& ec);
+
+#if !defined(ASIO_WINDOWS_RUNTIME)
 
 ASIO_DECL asio::error_code getaddrinfo(const char* host,
     const char* service, const addrinfo_type& hints,
@@ -297,6 +303,8 @@ ASIO_DECL asio::error_code background_getnameinfo(
     const socket_addr_type* addr, std::size_t addrlen,
     char* host, std::size_t hostlen, char* serv,
     std::size_t servlen, int sock_type, asio::error_code& ec);
+
+#endif // !defined(ASIO_WINDOWS_RUNTIME)
 
 ASIO_DECL u_long_type network_to_host_long(u_long_type value);
 

@@ -21,6 +21,10 @@
 #include "asio/ip/udp.hpp"
 #include "../unit_test.hpp"
 
+#if defined(__cplusplus_cli) || defined(__cplusplus_winrt)
+# define generic cpp_generic
+#endif
+
 //------------------------------------------------------------------------------
 
 // generic_datagram_protocol_socket_compile test
@@ -49,6 +53,10 @@ void test()
   namespace generic = asio::generic;
   typedef generic::datagram_protocol dp;
 
+  const int af_inet = ASIO_OS_DEF(AF_INET);
+  const int ipproto_udp = ASIO_OS_DEF(IPPROTO_UDP);
+  const int sock_dgram = ASIO_OS_DEF(SOCK_DGRAM);
+
   try
   {
     io_service ios;
@@ -62,10 +70,12 @@ void test()
     // basic_datagram_socket constructors.
 
     dp::socket socket1(ios);
-    dp::socket socket2(ios, dp(AF_INET, IPPROTO_UDP));
+    dp::socket socket2(ios, dp(af_inet, ipproto_udp));
     dp::socket socket3(ios, dp::endpoint());
-    int native_socket1 = ::socket(AF_INET, SOCK_DGRAM, 0);
-    dp::socket socket4(ios, dp(AF_INET, IPPROTO_UDP), native_socket1);
+#if !defined(ASIO_WINDOWS_RUNTIME)
+    int native_socket1 = ::socket(af_inet, sock_dgram, 0);
+    dp::socket socket4(ios, dp(af_inet, ipproto_udp), native_socket1);
+#endif // !defined(ASIO_WINDOWS_RUNTIME)
 
 #if defined(ASIO_HAS_MOVE)
     dp::socket socket5(std::move(socket4));
@@ -90,13 +100,15 @@ void test()
     dp::socket::lowest_layer_type& lowest_layer = socket1.lowest_layer();
     (void)lowest_layer;
 
-    socket1.open(dp(AF_INET, IPPROTO_UDP));
-    socket1.open(dp(AF_INET, IPPROTO_UDP), ec);
+    socket1.open(dp(af_inet, ipproto_udp));
+    socket1.open(dp(af_inet, ipproto_udp), ec);
 
-    int native_socket2 = ::socket(AF_INET, SOCK_DGRAM, 0);
-    socket1.assign(dp(AF_INET, IPPROTO_UDP), native_socket2);
-    int native_socket3 = ::socket(AF_INET, SOCK_DGRAM, 0);
-    socket1.assign(dp(AF_INET, IPPROTO_UDP), native_socket3, ec);
+#if !defined(ASIO_WINDOWS_RUNTIME)
+    int native_socket2 = ::socket(af_inet, sock_dgram, 0);
+    socket1.assign(dp(af_inet, ipproto_udp), native_socket2);
+    int native_socket3 = ::socket(af_inet, sock_dgram, 0);
+    socket1.assign(dp(af_inet, ipproto_udp), native_socket3, ec);
+#endif // !defined(ASIO_WINDOWS_RUNTIME)
 
     bool is_open = socket1.is_open();
     (void)is_open;

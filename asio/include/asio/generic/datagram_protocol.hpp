@@ -75,7 +75,7 @@ public:
   /// Obtain an identifier for the type of the protocol.
   int type() const
   {
-    return SOCK_DGRAM;
+    return ASIO_OS_DEF(SOCK_DGRAM);
   }
 
   /// Obtain an identifier for the protocol.

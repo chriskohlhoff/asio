@@ -19,6 +19,7 @@
 
 #if !defined(ASIO_HAS_THREADS) \
   || defined(ASIO_WINDOWS) \
+  || defined(ASIO_WINDOWS_RUNTIME) \
   || defined(__CYGWIN__) \
   || defined(__SYMBIAN32__)
 
@@ -61,6 +62,7 @@ public:
 
 #endif // !defined(ASIO_HAS_THREADS)
        // || defined(ASIO_WINDOWS)
+       // || defined(ASIO_WINDOWS_RUNTIME)
        // || defined(__CYGWIN__)
        // || defined(__SYMBIAN32__)
 

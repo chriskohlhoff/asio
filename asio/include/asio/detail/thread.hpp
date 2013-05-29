@@ -27,8 +27,10 @@
 # endif
 #elif defined(ASIO_HAS_PTHREADS)
 # include "asio/detail/posix_thread.hpp"
+#elif defined(ASIO_HAS_STD_THREAD)
+# include "asio/detail/std_thread.hpp"
 #else
-# error Only Windows and POSIX are supported!
+# error Only Windows, POSIX and std::thread are supported!
 #endif
 
 namespace asio {
@@ -44,6 +46,8 @@ typedef win_thread thread;
 # endif
 #elif defined(ASIO_HAS_PTHREADS)
 typedef posix_thread thread;
+#elif defined(ASIO_HAS_STD_THREAD)
+typedef std_thread thread;
 #endif
 
 } // namespace detail

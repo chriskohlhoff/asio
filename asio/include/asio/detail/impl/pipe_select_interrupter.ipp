@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
+#if !defined(ASIO_WINDOWS_RUNTIME)
 #if !defined(ASIO_WINDOWS)
 #if !defined(__CYGWIN__)
 #if !defined(__SYMBIAN32__)
@@ -118,5 +119,6 @@ bool pipe_select_interrupter::reset()
 #endif // !defined(__SYMBIAN32__)
 #endif // !defined(__CYGWIN__)
 #endif // !defined(ASIO_WINDOWS)
+#endif // !defined(ASIO_WINDOWS_RUNTIME)
 
 #endif // ASIO_DETAIL_IMPL_PIPE_SELECT_INTERRUPTER_IPP

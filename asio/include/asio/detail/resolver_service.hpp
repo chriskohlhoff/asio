@@ -16,6 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if !defined(ASIO_WINDOWS_RUNTIME)
+
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
 #include "asio/detail/addressof.hpp"
@@ -120,5 +123,7 @@ public:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#endif // !defined(ASIO_WINDOWS_RUNTIME)
 
 #endif // ASIO_DETAIL_RESOLVER_SERVICE_HPP

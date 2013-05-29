@@ -17,7 +17,9 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_WINDOWS) \
+  && !defined(__CYGWIN__) \
+  && !defined(ASIO_WINDOWS_RUNTIME)
 
 #include <cstring>
 #include "asio/detail/noncopyable.hpp"
@@ -82,6 +84,8 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(ASIO_WINDOWS)
+       // && !defined(__CYGWIN__)
+       // && !defined(ASIO_WINDOWS_RUNTIME)
 
 #endif // ASIO_DETAIL_POSIX_FD_SET_ADAPTER_HPP

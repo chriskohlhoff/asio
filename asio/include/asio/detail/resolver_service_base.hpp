@@ -64,6 +64,7 @@ protected:
   // Helper function to start an asynchronous resolve operation.
   ASIO_DECL void start_resolve_op(operation* op);
 
+#if !defined(ASIO_WINDOWS_RUNTIME)
   // Helper class to perform exception-safe cleanup of addrinfo objects.
   class auto_addrinfo
     : private asio::detail::noncopyable
@@ -88,6 +89,7 @@ protected:
   private:
     asio::detail::addrinfo_type* ai_;
   };
+#endif // !defined(ASIO_WINDOWS_RUNTIME)
 
   // Helper class to run the work io_service in a thread.
   class work_io_service_runner;

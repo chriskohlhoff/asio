@@ -23,8 +23,10 @@
 # include "asio/detail/win_mutex.hpp"
 #elif defined(ASIO_HAS_PTHREADS)
 # include "asio/detail/posix_mutex.hpp"
+#elif defined(ASIO_HAS_STD_MUTEX_AND_CONDVAR)
+# include "asio/detail/std_mutex.hpp"
 #else
-# error Only Windows and POSIX are supported!
+# error Only Windows, POSIX and std::mutex are supported!
 #endif
 
 namespace asio {
@@ -36,6 +38,8 @@ typedef null_mutex mutex;
 typedef win_mutex mutex;
 #elif defined(ASIO_HAS_PTHREADS)
 typedef posix_mutex mutex;
+#elif defined(ASIO_HAS_STD_MUTEX_AND_CONDVAR)
+typedef std_mutex mutex;
 #endif
 
 } // namespace detail

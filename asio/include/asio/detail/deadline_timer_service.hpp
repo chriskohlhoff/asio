@@ -30,6 +30,11 @@
 #include "asio/detail/wait_handler.hpp"
 #include "asio/detail/wait_op.hpp"
 
+#if defined(ASIO_WINDOWS_RUNTIME)
+# include <chrono>
+# include <thread>
+#endif // defined(ASIO_WINDOWS_RUNTIME)
+
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
@@ -194,10 +199,17 @@ private:
   template <typename Duration>
   void do_wait(const Duration& timeout, asio::error_code& ec)
   {
+#if defined(ASIO_WINDOWS_RUNTIME)
+    std::this_thread::sleep_for(
+        std::chrono::seconds(timeout.total_seconds())
+        + std::chrono::microseconds(timeout.total_microseconds()));
+    ec = asio::error_code();
+#else // defined(ASIO_WINDOWS_RUNTIME)
     ::timeval tv;
     tv.tv_sec = timeout.total_seconds();
     tv.tv_usec = timeout.total_microseconds() % 1000000;
     socket_ops::select(0, 0, 0, 0, &tv, ec);
+#endif // defined(ASIO_WINDOWS_RUNTIME)
   }
 
   // The queue of timers.

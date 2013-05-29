@@ -74,7 +74,7 @@ public:
   /// Obtain an identifier for the type of the protocol.
   int type() const
   {
-    return SOCK_SEQPACKET;
+    return ASIO_OS_DEF(SOCK_SEQPACKET);
   }
 
   /// Obtain an identifier for the protocol.

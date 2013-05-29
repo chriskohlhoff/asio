@@ -87,7 +87,8 @@ std::string address_v4::to_string(asio::error_code& ec) const
 {
   char addr_str[asio::detail::max_addr_v4_str_len];
   const char* addr =
-    asio::detail::socket_ops::inet_ntop(AF_INET, &addr_, addr_str,
+    asio::detail::socket_ops::inet_ntop(
+        ASIO_OS_DEF(AF_INET), &addr_, addr_str,
         asio::detail::max_addr_v4_str_len, 0, ec);
   if (addr == 0)
     return std::string();
@@ -107,7 +108,7 @@ address_v4 address_v4::from_string(
 {
   address_v4 tmp;
   if (asio::detail::socket_ops::inet_pton(
-        AF_INET, str, &tmp.addr_, 0, ec) <= 0)
+        ASIO_OS_DEF(AF_INET), str, &tmp.addr_, 0, ec) <= 0)
     return address_v4();
   return tmp;
 }

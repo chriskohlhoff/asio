@@ -20,7 +20,8 @@
 #if defined(ASIO_HAS_IOCP) \
   || (!defined(ASIO_HAS_DEV_POLL) \
       && !defined(ASIO_HAS_EPOLL) \
-      && !defined(ASIO_HAS_KQUEUE))
+      && !defined(ASIO_HAS_KQUEUE) \
+      && !defined(ASIO_WINDOWS_RUNTIME))
 
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/fd_set_adapter.hpp"
@@ -309,5 +310,6 @@ void select_reactor::cancel_ops_unlocked(socket_type descriptor,
        //   || (!defined(ASIO_HAS_DEV_POLL)
        //       && !defined(ASIO_HAS_EPOLL)
        //       && !defined(ASIO_HAS_KQUEUE))
+       //       && !defined(ASIO_WINDOWS_RUNTIME))
 
 #endif // ASIO_DETAIL_IMPL_SELECT_REACTOR_IPP

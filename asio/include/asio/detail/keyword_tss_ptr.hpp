@@ -54,11 +54,11 @@ public:
   }
 
 private:
-  static __thread T* value_;
+  static ASIO_THREAD_KEYWORD T* value_;
 };
 
 template <typename T>
-__thread T* keyword_tss_ptr<T>::value_;
+ASIO_THREAD_KEYWORD T* keyword_tss_ptr<T>::value_;
 
 } // namespace detail
 } // namespace asio

@@ -18,10 +18,15 @@
 #include "asio/detail/config.hpp"
 #include "asio/async_result.hpp"
 #include "asio/error_code.hpp"
-#include "asio/detail/resolver_service.hpp"
 #include "asio/io_service.hpp"
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
+
+#if defined(ASIO_WINDOWS_RUNTIME)
+# include "asio/detail/winrt_resolver_service.hpp"
+#else
+# include "asio/detail/resolver_service.hpp"
+#endif
 
 #include "asio/detail/push_options.hpp"
 
@@ -58,8 +63,13 @@ public:
 
 private:
   // The type of the platform-specific implementation.
+#if defined(ASIO_WINDOWS_RUNTIME)
+  typedef asio::detail::winrt_resolver_service<InternetProtocol>
+    service_impl_type;
+#else
   typedef asio::detail::resolver_service<InternetProtocol>
     service_impl_type;
+#endif
 
 public:
   /// The type of a resolver implementation.

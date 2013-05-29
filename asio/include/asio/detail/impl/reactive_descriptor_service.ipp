@@ -17,7 +17,9 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_WINDOWS) \
+  && !defined(ASIO_WINDOWS_RUNTIME) \
+  && !defined(__CYGWIN__)
 
 #include "asio/error.hpp"
 #include "asio/detail/reactive_descriptor_service.hpp"
@@ -199,6 +201,8 @@ void reactive_descriptor_service::start_op(
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(ASIO_WINDOWS)
+       //   && !defined(ASIO_WINDOWS_RUNTIME)
+       //   && !defined(__CYGWIN__)
 
 #endif // ASIO_DETAIL_IMPL_REACTIVE_DESCRIPTOR_SERVICE_IPP
