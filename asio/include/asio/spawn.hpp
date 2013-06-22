@@ -48,6 +48,36 @@ template <typename Handler>
 class basic_yield_context
 {
 public:
+  /// The coroutine callee type, used by the implementation.
+  /**
+   * When using Boost.Coroutine v1, this type is:
+   * @code typename coroutine<void()> @endcode
+   * When using Boost.Coroutine v2 (unidirectional coroutines), this type is:
+   * @code push_coroutine<void> @endcode
+   */
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined callee_type;
+#elif defined(BOOST_COROUTINES_UNIDRECT) || defined(BOOST_COROUTINES_V2)
+  typedef boost::coroutines::push_coroutine<void> callee_type;
+#else
+  typedef boost::coroutines::coroutine<void()> callee_type;
+#endif
+  
+  /// The coroutine caller type, used by the implementation.
+  /**
+   * When using Boost.Coroutine v1, this type is:
+   * @code typename coroutine<void()>::caller_type @endcode
+   * When using Boost.Coroutine v2 (unidirectional coroutines), this type is:
+   * @code pull_coroutine<void> @endcode
+   */
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined caller_type;
+#elif defined(BOOST_COROUTINES_UNIDRECT) || defined(BOOST_COROUTINES_V2)
+  typedef boost::coroutines::pull_coroutine<void> caller_type;
+#else
+  typedef boost::coroutines::coroutine<void()>::caller_type caller_type;
+#endif
+
   /// Construct a yield context to represent the specified coroutine.
   /**
    * Most applications do not need to use this constructor. Instead, the
@@ -55,8 +85,8 @@ public:
    * function.
    */
   basic_yield_context(
-      const detail::weak_ptr<boost::coroutines::coroutine<void()> >& coro,
-      boost::coroutines::coroutine<void()>::caller_type& ca, Handler& handler)
+      const detail::weak_ptr<callee_type>& coro,
+      caller_type& ca, Handler& handler)
     : coro_(coro),
       ca_(ca),
       handler_(handler),
@@ -83,7 +113,7 @@ public:
    *   ...
    * } @endcode
    */
-  basic_yield_context operator[](asio::error_code& ec)
+  basic_yield_context operator[](asio::error_code& ec) const
   {
     basic_yield_context tmp(*this);
     tmp.ec_ = &ec;
@@ -93,8 +123,8 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
 private:
 #endif // defined(GENERATING_DOCUMENTATION)
-  detail::weak_ptr<boost::coroutines::coroutine<void()> > coro_;
-  boost::coroutines::coroutine<void()>::caller_type& ca_;
+  detail::weak_ptr<callee_type> coro_;
+  caller_type& ca_;
   Handler& handler_;
   asio::error_code* ec_;
 };

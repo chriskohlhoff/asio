@@ -57,8 +57,8 @@ namespace detail {
     }
 
   //private:
-    detail::shared_ptr<boost::coroutines::coroutine<void()> > coro_;
-    boost::coroutines::coroutine<void()>::caller_type& ca_;
+    shared_ptr<typename basic_yield_context<Handler>::callee_type> coro_;
+    typename basic_yield_context<Handler>::caller_type& ca_;
     Handler& handler_;
     asio::error_code* ec_;
     T* value_;
@@ -89,8 +89,8 @@ namespace detail {
     }
 
   //private:
-    detail::shared_ptr<boost::coroutines::coroutine<void()> > coro_;
-    boost::coroutines::coroutine<void()>::caller_type& ca_;
+    shared_ptr<typename basic_yield_context<Handler>::callee_type> coro_;
+    typename basic_yield_context<Handler>::caller_type& ca_;
     Handler& handler_;
     asio::error_code* ec_;
   };
@@ -185,7 +185,7 @@ public:
   }
 
 private:
-  boost::coroutines::coroutine<void()>::caller_type& ca_;
+  typename basic_yield_context<Handler>::caller_type& ca_;
   asio::error_code* out_ec_;
   asio::error_code ec_;
   type value_;
@@ -211,7 +211,7 @@ public:
   }
 
 private:
-  boost::coroutines::coroutine<void()>::caller_type& ca_;
+  typename basic_yield_context<Handler>::caller_type& ca_;
   asio::error_code* out_ec_;
   asio::error_code ec_;
 };
@@ -229,7 +229,7 @@ namespace detail {
     {
     }
 
-    weak_ptr<boost::coroutines::coroutine<void()> > coro_;
+    weak_ptr<typename basic_yield_context<Handler>::callee_type> coro_;
     Handler handler_;
     bool call_handler_;
     Function function_;
@@ -238,7 +238,7 @@ namespace detail {
   template <typename Handler, typename Function>
   struct coro_entry_point
   {
-    void operator()(boost::coroutines::coroutine<void()>::caller_type& ca)
+    void operator()(typename basic_yield_context<Handler>::caller_type& ca)
     {
       shared_ptr<spawn_data<Handler, Function> > data(data_);
       ca(); // Yield until coroutine pointer has been initialised.
@@ -257,9 +257,9 @@ namespace detail {
   {
     void operator()()
     {
+      typedef typename basic_yield_context<Handler>::callee_type callee_type;
       coro_entry_point<Handler, Function> entry_point = { data_ };
-      shared_ptr<boost::coroutines::coroutine<void()> > coro(
-          new boost::coroutines::coroutine<void()>(entry_point, attributes_));
+      shared_ptr<callee_type> coro(new callee_type(entry_point, attributes_));
       data_->coro_ = coro;
       (*coro)();
     }
