@@ -69,7 +69,10 @@ bool rfc2818_verification::operator()(
         const char* pattern = reinterpret_cast<const char*>(domain->data);
         std::size_t pattern_length = domain->length;
         if (match_pattern(pattern, pattern_length, host_.c_str()))
+        {
+          GENERAL_NAMES_free(gens);
           return true;
+        }
       }
     }
     else if (gen->type == GEN_IPADD && is_address)
@@ -81,17 +84,24 @@ bool rfc2818_verification::operator()(
         {
           ip::address_v4::bytes_type bytes = address.to_v4().to_bytes();
           if (memcmp(bytes.data(), ip_address->data, 4) == 0)
+          {
+            GENERAL_NAMES_free(gens);
             return true;
+          }
         }
         else if (address.is_v6() && ip_address->length == 16)
         {
           ip::address_v6::bytes_type bytes = address.to_v6().to_bytes();
           if (memcmp(bytes.data(), ip_address->data, 16) == 0)
+          {
+            GENERAL_NAMES_free(gens);
             return true;
+          }
         }
       }
     }
   }
+  GENERAL_NAMES_free(gens);
 
   // No match in the alternate names, so try the common names. We should only
   // use the "most specific" common name, which is the last one in the list.
