@@ -38,7 +38,11 @@ protected:
   ASIO_DECL static void startup(data& d,
       unsigned char major, unsigned char minor);
 
+  ASIO_DECL static void manual_startup(data& d);
+
   ASIO_DECL static void cleanup(data& d);
+
+  ASIO_DECL static void manual_cleanup(data& d);
 
   ASIO_DECL static void throw_on_error(data& d);
 };
@@ -65,7 +69,41 @@ public:
     cleanup(data_);
   }
 
+  // This class may be used to indicate that user code will manage Winsock
+  // initialisation and cleanup. This may be required in the case of a DLL, for
+  // example, where it is not safe to initialise Winsock from global object
+  // constructors.
+  //
+  // To prevent asio from initialising Winsock, the object must be constructed
+  // before any Asio's own global objects. With MSVC, this may be accomplished
+  // by adding the following code to the DLL:
+  //
+  //   #pragma warning(push)
+  //   #pragma warning(disable:4073)
+  //   #pragma init_seg(lib)
+  //   asio::detail::winsock_init<>::manual manual_winsock_init;
+  //   #pragma warning(pop)
+  class manual
+  {
+  public:
+    manual()
+    {
+      manual_startup(data_);
+    }
+
+    manual(const manual&)
+    {
+      manual_startup(data_);
+    }
+
+    ~manual()
+    {
+      manual_cleanup(data_);
+    }
+  };
+
 private:
+  friend class manual;
   static data data_;
 };
 

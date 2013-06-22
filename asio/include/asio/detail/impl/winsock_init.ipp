@@ -40,12 +40,25 @@ void winsock_init_base::startup(data& d,
   }
 }
 
+void winsock_init_base::manual_startup(data& d)
+{
+  if (::InterlockedIncrement(&d.init_count_) == 1)
+  {
+    ::InterlockedExchange(&d.result_, 0);
+  }
+}
+
 void winsock_init_base::cleanup(data& d)
 {
   if (::InterlockedDecrement(&d.init_count_) == 0)
   {
     ::WSACleanup();
   }
+}
+
+void winsock_init_base::manual_cleanup(data& d)
+{
+  ::InterlockedDecrement(&d.init_count_);
 }
 
 void winsock_init_base::throw_on_error(data& d)
