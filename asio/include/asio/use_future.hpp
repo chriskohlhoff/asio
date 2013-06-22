@@ -41,6 +41,8 @@ template <typename Allocator = std::allocator<void> >
 class use_future_t
 {
 public:
+  /// The allocator type. The allocator is used when constructing the
+  /// @c std::promise object for a given asynchronous operation.
   typedef Allocator allocator_type;
 
   /// Construct using default-constructed allocator.
