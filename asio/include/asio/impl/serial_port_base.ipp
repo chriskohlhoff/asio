@@ -110,7 +110,6 @@ asio::error_code serial_port_base::baud_rate::store(
   case 4000000: baud = B4000000; break;
 # endif
   default:
-    baud = B0;
     ec = asio::error::invalid_argument;
     return ec;
   }
