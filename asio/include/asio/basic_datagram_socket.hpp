@@ -877,7 +877,7 @@ public:
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
    * @code socket.async_receive_from(
-   *     asio::buffer(data, size), 0, sender_endpoint, handler); @endcode
+   *     asio::buffer(data, size), sender_endpoint, handler); @endcode
    * See the @ref buffer documentation for information on receiving into
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
