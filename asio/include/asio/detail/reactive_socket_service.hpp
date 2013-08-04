@@ -433,11 +433,11 @@ public:
       asio_handler_cont_helpers::is_continuation(handler);
 
     // Allocate and construct an operation to wrap the handler.
-    typedef reactive_socket_connect_op<Protocol, Handler> op;
+    typedef reactive_socket_connect_op<Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
-    p.p = new (p.v) op(impl.socket_, peer_endpoint, handler);
+    p.p = new (p.v) op(impl.socket_, handler);
 
     ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_connect"));
 
