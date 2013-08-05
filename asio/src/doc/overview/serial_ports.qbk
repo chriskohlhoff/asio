@@ -42,6 +42,6 @@ port's baud rate, flow control type, parity, stop bits and character size.
 Serial ports are available on all POSIX platforms. For Windows, serial ports
 are only available at compile time when the I/O completion port backend is used
 (which is the default). A program may test for the macro
-`ASIO_HAS_SERIAL_PORTS` to determine whether they are supported.
+`ASIO_HAS_SERIAL_PORT` to determine whether they are supported.
 
 [endsect]
