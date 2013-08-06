@@ -157,7 +157,7 @@ void handler_tracking::completion::invocation_begin()
 #else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|>%llu|\n",
 #endif // defined(ASIO_WINDOWS)
-      timestamp.seconds, timestamp.microseconds);
+      timestamp.seconds, timestamp.microseconds, id_);
 
   invoked_ = true;
 }
@@ -243,7 +243,7 @@ void handler_tracking::completion::invocation_end()
 #else // defined(ASIO_WINDOWS)
         "@asio|%llu.%06llu|<%llu|\n",
 #endif // defined(ASIO_WINDOWS)
-        timestamp.seconds, timestamp.microseconds);
+        timestamp.seconds, timestamp.microseconds, id_);
 
     id_ = 0;
   }
