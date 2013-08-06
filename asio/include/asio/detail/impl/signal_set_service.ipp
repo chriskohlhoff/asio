@@ -588,6 +588,7 @@ void signal_set_service::start_wait_op(
     if (reg->undelivered_ > 0)
     {
       --reg->undelivered_;
+      op->signal_number_ = reg->signal_number_;
       io_service_.post_deferred_completion(op);
       return;
     }
