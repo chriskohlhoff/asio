@@ -48,7 +48,7 @@ A client that connects to this server might look like:
 Transmission of file descriptors or credentials across UNIX domain sockets is
 not directly supported within Asio, but may be achieved by accessing the
 socket's underlying descriptor using the [link
-asio.reference.basic_socket.native native()] member function.
+asio.reference.basic_socket.native_handle native_handle()] member function.
 
 [heading See Also]
 
