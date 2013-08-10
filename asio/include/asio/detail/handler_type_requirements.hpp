@@ -53,6 +53,16 @@
 # include "asio/handler_type.hpp"
 #endif // defined(ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS)
 
+// Newer gcc needs special treatment to suppress unused typedef warnings.
+#if defined(__GNUC__)
+# if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 8)) || (__GNUC__ > 4)
+#  define ASIO_UNUSED_TYPEDEF __attribute__((__unused__))
+# endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 8)) || (__GNUC__ > 4)
+#endif // defined(__GNUC__)
+#if !defined(ASIO_UNUSED_TYPEDEF)
+# define ASIO_UNUSED_TYPEDEF
+#endif // !defined(ASIO_UNUSED_TYPEDEF)
+
 namespace asio {
 namespace detail {
 
@@ -130,7 +140,7 @@ struct handler_type_requirements
       sizeof( \
         asio::detail::lvref< \
           asio_true_handler_type>()(), \
-        char(0))>
+        char(0))> ASIO_UNUSED_TYPEDEF
 
 #define ASIO_READ_HANDLER_CHECK( \
     handler_type, handler) \
@@ -157,7 +167,7 @@ struct handler_type_requirements
           asio_true_handler_type>()( \
             asio::detail::lvref<const asio::error_code>(), \
             asio::detail::lvref<const std::size_t>()), \
-        char(0))>
+        char(0))> ASIO_UNUSED_TYPEDEF
 
 
 #define ASIO_WRITE_HANDLER_CHECK( \
@@ -185,7 +195,7 @@ struct handler_type_requirements
           asio_true_handler_type>()( \
             asio::detail::lvref<const asio::error_code>(), \
             asio::detail::lvref<const std::size_t>()), \
-        char(0))>
+        char(0))> ASIO_UNUSED_TYPEDEF
 
 #define ASIO_ACCEPT_HANDLER_CHECK( \
     handler_type, handler) \
@@ -210,7 +220,7 @@ struct handler_type_requirements
         asio::detail::lvref< \
           asio_true_handler_type>()( \
             asio::detail::lvref<const asio::error_code>()), \
-        char(0))>
+        char(0))> ASIO_UNUSED_TYPEDEF
 
 #define ASIO_CONNECT_HANDLER_CHECK( \
     handler_type, handler) \
@@ -235,7 +245,7 @@ struct handler_type_requirements
         asio::detail::lvref< \
           asio_true_handler_type>()( \
             asio::detail::lvref<const asio::error_code>()), \
-        char(0))>
+        char(0))> ASIO_UNUSED_TYPEDEF
 
 #define ASIO_COMPOSED_CONNECT_HANDLER_CHECK( \
     handler_type, handler, iter_type) \
@@ -262,7 +272,7 @@ struct handler_type_requirements
           asio_true_handler_type>()( \
             asio::detail::lvref<const asio::error_code>(), \
             asio::detail::lvref<const iter_type>()), \
-        char(0))>
+        char(0))> ASIO_UNUSED_TYPEDEF
 
 #define ASIO_RESOLVE_HANDLER_CHECK( \
     handler_type, handler, iter_type) \
@@ -289,7 +299,7 @@ struct handler_type_requirements
           asio_true_handler_type>()( \
             asio::detail::lvref<const asio::error_code>(), \
             asio::detail::lvref<const iter_type>()), \
-        char(0))>
+        char(0))> ASIO_UNUSED_TYPEDEF
 
 #define ASIO_WAIT_HANDLER_CHECK( \
     handler_type, handler) \
@@ -314,7 +324,7 @@ struct handler_type_requirements
         asio::detail::lvref< \
           asio_true_handler_type>()( \
             asio::detail::lvref<const asio::error_code>()), \
-        char(0))>
+        char(0))> ASIO_UNUSED_TYPEDEF
 
 #define ASIO_SIGNAL_HANDLER_CHECK( \
     handler_type, handler) \
@@ -341,7 +351,7 @@ struct handler_type_requirements
           asio_true_handler_type>()( \
             asio::detail::lvref<const asio::error_code>(), \
             asio::detail::lvref<const int>()), \
-        char(0))>
+        char(0))> ASIO_UNUSED_TYPEDEF
 
 #define ASIO_HANDSHAKE_HANDLER_CHECK( \
     handler_type, handler) \
@@ -366,7 +376,7 @@ struct handler_type_requirements
         asio::detail::lvref< \
           asio_true_handler_type>()( \
             asio::detail::lvref<const asio::error_code>()), \
-        char(0))>
+        char(0))> ASIO_UNUSED_TYPEDEF
 
 #define ASIO_BUFFERED_HANDSHAKE_HANDLER_CHECK( \
     handler_type, handler) \
@@ -393,7 +403,7 @@ struct handler_type_requirements
           asio_true_handler_type>()( \
           asio::detail::lvref<const asio::error_code>(), \
           asio::detail::lvref<const std::size_t>()), \
-        char(0))>
+        char(0))> ASIO_UNUSED_TYPEDEF
 
 #define ASIO_SHUTDOWN_HANDLER_CHECK( \
     handler_type, handler) \
@@ -418,57 +428,57 @@ struct handler_type_requirements
         asio::detail::lvref< \
           asio_true_handler_type>()( \
             asio::detail::lvref<const asio::error_code>()), \
-        char(0))>
+        char(0))> ASIO_UNUSED_TYPEDEF
 
 #else // !defined(ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS)
 
 #define ASIO_COMPLETION_HANDLER_CHECK( \
     handler_type, handler) \
-  typedef int
+  typedef int ASIO_UNUSED_TYPEDEF
 
 #define ASIO_READ_HANDLER_CHECK( \
     handler_type, handler) \
-  typedef int
+  typedef int ASIO_UNUSED_TYPEDEF
 
 #define ASIO_WRITE_HANDLER_CHECK( \
     handler_type, handler) \
-  typedef int
+  typedef int ASIO_UNUSED_TYPEDEF
 
 #define ASIO_ACCEPT_HANDLER_CHECK( \
     handler_type, handler) \
-  typedef int
+  typedef int ASIO_UNUSED_TYPEDEF
 
 #define ASIO_CONNECT_HANDLER_CHECK( \
     handler_type, handler) \
-  typedef int
+  typedef int ASIO_UNUSED_TYPEDEF
 
 #define ASIO_COMPOSED_CONNECT_HANDLER_CHECK( \
     handler_type, handler, iter_type) \
-  typedef int
+  typedef int ASIO_UNUSED_TYPEDEF
 
 #define ASIO_RESOLVE_HANDLER_CHECK( \
     handler_type, handler, iter_type) \
-  typedef int
+  typedef int ASIO_UNUSED_TYPEDEF
 
 #define ASIO_WAIT_HANDLER_CHECK( \
     handler_type, handler) \
-  typedef int
+  typedef int ASIO_UNUSED_TYPEDEF
 
 #define ASIO_SIGNAL_HANDLER_CHECK( \
     handler_type, handler) \
-  typedef int
+  typedef int ASIO_UNUSED_TYPEDEF
 
 #define ASIO_HANDSHAKE_HANDLER_CHECK( \
     handler_type, handler) \
-  typedef int
+  typedef int ASIO_UNUSED_TYPEDEF
 
 #define ASIO_BUFFERED_HANDSHAKE_HANDLER_CHECK( \
     handler_type, handler) \
-  typedef int
+  typedef int ASIO_UNUSED_TYPEDEF
 
 #define ASIO_SHUTDOWN_HANDLER_CHECK( \
     handler_type, handler) \
-  typedef int
+  typedef int ASIO_UNUSED_TYPEDEF
 
 #endif // !defined(ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS)
 
