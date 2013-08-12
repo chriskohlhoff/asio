@@ -206,19 +206,25 @@ The default implementation of these allocation hooks uses `operator new` and `op
 [endsect]
 
 
-
 [section:asio_handler_invoke asio_handler_invoke]
 
 [indexterm1 asio_handler_invoke] 
 Default invoke function for handlers. 
 
+      
+  template<
+      typename Function>
+  void ``[link asio.reference.asio_handler_invoke.overload1 asio_handler_invoke]``(
+      Function & function,
+      ... );
+  ``  [''''&raquo;''' [link asio.reference.asio_handler_invoke.overload1 more...]]``
 
   template<
       typename Function>
-  void asio_handler_invoke(
-      Function function,
+  void ``[link asio.reference.asio_handler_invoke.overload2 asio_handler_invoke]``(
+      const Function & function,
       ... );
-
+  ``  [''''&raquo;''' [link asio.reference.asio_handler_invoke.overload2 more...]]``
 
 Completion handlers for asynchronous operations are invoked by the [link asio.reference.io_service `io_service`] associated with the corresponding object (e.g. a socket or deadline\_timer). Certain guarantees are made on when the handler may be invoked, in particular that a handler can only be invoked from a thread that is currently calling `run()` on the corresponding [link asio.reference.io_service `io_service`] object. Handlers may subsequently be invoked through other objects (such as [link asio.reference.io_service__strand `io_service::strand`] objects) that provide additional guarantees.
 
@@ -226,12 +232,12 @@ When asynchronous operations are composed from other asynchronous operations, al
 
 Implement asio\_handler\_invoke for your own handlers to specify a custom invocation strategy.
 
-This default implementation is simply: 
+This default implementation invokes the function object like so: 
 
-   function();
+   function(); 
 
 
-
+If necessary, the default implementation makes a copy of the function object so that the non-const operator() can be used.
 
 
 [heading Example]
@@ -258,8 +264,42 @@ This default implementation is simply:
 ['Convenience header: ][^asio.hpp]
 
 
+[section:overload1 asio_handler_invoke (1 of 2 overloads)]
+
+
+Default handler invocation hook used for non-const function objects. 
+
+
+  template<
+      typename Function>
+  void asio_handler_invoke(
+      Function & function,
+      ... );
+
+
+
 [endsect]
 
+
+
+[section:overload2 asio_handler_invoke (2 of 2 overloads)]
+
+
+Default handler invocation hook used for const function objects. 
+
+
+  template<
+      typename Function>
+  void asio_handler_invoke(
+      const Function & function,
+      ... );
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:asio_handler_is_continuation asio_handler_is_continuation]
