@@ -2649,7 +2649,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * An error occurred.
 
-This operation is implemented in terms of zero or more calls to the device's async\_write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's async\_write\_some\_at function, and is known as a ['composed operation]. The program must ensure that the device performs no ['overlapping] write operations (such as async\_write\_at, the device's async\_write\_some\_at function, or any other composed operations that perform writes) until this operation completes. Operations are overlapping if the regions defined by their offsets, and the numbers of bytes to write, intersect.
 
 
 [heading Parameters]
@@ -2722,7 +2722,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * The completion\_condition function object returns 0.
 
-This operation is implemented in terms of zero or more calls to the device's async\_write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's async\_write\_some\_at function, and is known as a ['composed operation]. The program must ensure that the device performs no ['overlapping] write operations (such as async\_write\_at, the device's async\_write\_some\_at function, or any other composed operations that perform writes) until this operation completes. Operations are overlapping if the regions defined by their offsets, and the numbers of bytes to write, intersect.
 
 
 [heading Parameters]
@@ -2808,7 +2808,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * An error occurred.
 
-This operation is implemented in terms of zero or more calls to the device's async\_write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's async\_write\_some\_at function, and is known as a ['composed operation]. The program must ensure that the device performs no ['overlapping] write operations (such as async\_write\_at, the device's async\_write\_some\_at function, or any other composed operations that perform writes) until this operation completes. Operations are overlapping if the regions defined by their offsets, and the numbers of bytes to write, intersect.
 
 
 [heading Parameters]
@@ -2871,7 +2871,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * The completion\_condition function object returns 0.
 
-This operation is implemented in terms of zero or more calls to the device's async\_write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's async\_write\_some\_at function, and is known as a ['composed operation]. The program must ensure that the device performs no ['overlapping] write operations (such as async\_write\_at, the device's async\_write\_some\_at function, or any other composed operations that perform writes) until this operation completes. Operations are overlapping if the regions defined by their offsets, and the numbers of bytes to write, intersect.
 
 
 [heading Parameters]
