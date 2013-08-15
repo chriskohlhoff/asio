@@ -41,7 +41,7 @@ namespace asio {
  * @e Shared @e objects: Unsafe.
  *
  * @par Concepts:
- * AsyncReadStream, AsyncWriteStream, Stream, Sync_Read_Stream, SyncWriteStream.
+ * AsyncReadStream, AsyncWriteStream, Stream, SyncReadStream, SyncWriteStream.
  */
 template <typename Stream>
 class buffered_read_stream
