@@ -18,12 +18,13 @@
 #include "asio/error_code.hpp"
 #include "asio/detail/handler_tracking.hpp"
 #include "asio/detail/op_queue.hpp"
-#include "asio/detail/task_io_service_fwd.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
+
+class task_io_service;
 
 // Base class for all operations. A function pointer is used instead of virtual
 // functions to avoid the associated overhead.

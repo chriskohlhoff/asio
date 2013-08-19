@@ -26,13 +26,14 @@
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/reactor_fwd.hpp"
-#include "asio/detail/task_io_service_fwd.hpp"
 #include "asio/detail/task_io_service_operation.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
+
+struct task_io_service_thread_info;
 
 class task_io_service
   : public asio::detail::service_base<task_io_service>

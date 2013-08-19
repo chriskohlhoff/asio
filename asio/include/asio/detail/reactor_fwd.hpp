@@ -17,31 +17,19 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_HAS_IOCP)
-# include "asio/detail/select_reactor_fwd.hpp"
-#elif defined(ASIO_HAS_EPOLL)
-# include "asio/detail/epoll_reactor_fwd.hpp"
-#elif defined(ASIO_HAS_KQUEUE)
-# include "asio/detail/kqueue_reactor_fwd.hpp"
-#elif defined(ASIO_HAS_DEV_POLL)
-# include "asio/detail/dev_poll_reactor_fwd.hpp"
-#else
-# include "asio/detail/select_reactor_fwd.hpp"
-#endif
-
 namespace asio {
 namespace detail {
 
 #if defined(ASIO_HAS_IOCP)
-typedef select_reactor reactor;
+typedef class select_reactor reactor;
 #elif defined(ASIO_HAS_EPOLL)
-typedef epoll_reactor reactor;
+typedef class epoll_reactor reactor;
 #elif defined(ASIO_HAS_KQUEUE)
-typedef kqueue_reactor reactor;
+typedef class kqueue_reactor reactor;
 #elif defined(ASIO_HAS_DEV_POLL)
-typedef dev_poll_reactor reactor;
+typedef class dev_poll_reactor reactor;
 #else
-typedef select_reactor reactor;
+typedef class select_reactor reactor;
 #endif
 
 } // namespace detail

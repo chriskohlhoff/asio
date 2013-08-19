@@ -22,13 +22,14 @@
 #include "asio/detail/handler_tracking.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/socket_types.hpp"
-#include "asio/detail/win_iocp_io_service_fwd.hpp"
 #include "asio/error_code.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
+
+class win_iocp_io_service;
 
 // Base class for all operations. A function pointer is used instead of virtual
 // functions to avoid the associated overhead.

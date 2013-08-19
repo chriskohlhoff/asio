@@ -28,10 +28,8 @@
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/thread.hpp"
 #include "asio/detail/timer_queue_base.hpp"
-#include "asio/detail/timer_queue_fwd.hpp"
 #include "asio/detail/timer_queue_set.hpp"
 #include "asio/detail/wait_op.hpp"
-#include "asio/detail/win_iocp_io_service_fwd.hpp"
 #include "asio/detail/win_iocp_operation.hpp"
 #include "asio/detail/win_iocp_thread_info.hpp"
 

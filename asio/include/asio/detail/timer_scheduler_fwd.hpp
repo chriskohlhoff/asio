@@ -17,31 +17,19 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_HAS_IOCP)
-# include "asio/detail/win_iocp_io_service_fwd.hpp"
-#elif defined(ASIO_HAS_EPOLL)
-# include "asio/detail/epoll_reactor_fwd.hpp"
-#elif defined(ASIO_HAS_KQUEUE)
-# include "asio/detail/kqueue_reactor_fwd.hpp"
-#elif defined(ASIO_HAS_DEV_POLL)
-# include "asio/detail/dev_poll_reactor_fwd.hpp"
-#else
-# include "asio/detail/select_reactor_fwd.hpp"
-#endif
-
 namespace asio {
 namespace detail {
 
 #if defined(ASIO_HAS_IOCP)
-typedef win_iocp_io_service timer_scheduler;
+typedef class win_iocp_io_service timer_scheduler;
 #elif defined(ASIO_HAS_EPOLL)
-typedef epoll_reactor timer_scheduler;
+typedef class epoll_reactor timer_scheduler;
 #elif defined(ASIO_HAS_KQUEUE)
-typedef kqueue_reactor timer_scheduler;
+typedef class kqueue_reactor timer_scheduler;
 #elif defined(ASIO_HAS_DEV_POLL)
-typedef dev_poll_reactor timer_scheduler;
+typedef class dev_poll_reactor timer_scheduler;
 #else
-typedef select_reactor timer_scheduler;
+typedef class select_reactor timer_scheduler;
 #endif
 
 } // namespace detail

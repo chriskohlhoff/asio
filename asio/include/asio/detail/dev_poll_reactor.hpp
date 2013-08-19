@@ -22,7 +22,6 @@
 #include <cstddef>
 #include <vector>
 #include <sys/devpoll.h>
-#include "asio/detail/dev_poll_reactor_fwd.hpp"
 #include "asio/detail/hash_map.hpp"
 #include "asio/detail/limits.hpp"
 #include "asio/detail/mutex.hpp"
@@ -32,7 +31,6 @@
 #include "asio/detail/select_interrupter.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/timer_queue_base.hpp"
-#include "asio/detail/timer_queue_fwd.hpp"
 #include "asio/detail/timer_queue_set.hpp"
 #include "asio/detail/wait_op.hpp"
 #include "asio/io_service.hpp"

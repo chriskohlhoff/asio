@@ -52,9 +52,7 @@ nobase_include_HEADERS = \
 	asio/detail/descriptor_ops.hpp \
 	asio/detail/descriptor_read_op.hpp \
 	asio/detail/descriptor_write_op.hpp \
-	asio/detail/dev_poll_reactor_fwd.hpp \
 	asio/detail/dev_poll_reactor.hpp \
-	asio/detail/epoll_reactor_fwd.hpp \
 	asio/detail/epoll_reactor.hpp \
 	asio/detail/eventfd_select_interrupter.hpp \
 	asio/detail/event.hpp \
@@ -117,7 +115,6 @@ nobase_include_HEADERS = \
 	asio/detail/impl/win_tss_ptr.ipp \
 	asio/detail/io_control.hpp \
 	asio/detail/keyword_tss_ptr.hpp \
-	asio/detail/kqueue_reactor_fwd.hpp \
 	asio/detail/kqueue_reactor.hpp \
 	asio/detail/limits.hpp \
 	asio/detail/local_free_on_block_exit.hpp \
@@ -169,9 +166,7 @@ nobase_include_HEADERS = \
 	asio/detail/scoped_lock.hpp \
 	asio/detail/scoped_ptr.hpp \
 	asio/detail/select_interrupter.hpp \
-	asio/detail/select_reactor_fwd.hpp \
 	asio/detail/select_reactor.hpp \
-	asio/detail/service_registry_fwd.hpp \
 	asio/detail/service_registry.hpp \
 	asio/detail/shared_ptr.hpp \
 	asio/detail/signal_blocker.hpp \
@@ -187,7 +182,6 @@ nobase_include_HEADERS = \
 	asio/detail/solaris_fenced_block.hpp \
 	asio/detail/static_mutex.hpp \
 	asio/detail/strand_service.hpp \
-	asio/detail/task_io_service_fwd.hpp \
 	asio/detail/task_io_service.hpp \
 	asio/detail/task_io_service_operation.hpp \
 	asio/detail/task_io_service_thread_info.hpp \
@@ -196,7 +190,6 @@ nobase_include_HEADERS = \
 	asio/detail/throw_error.hpp \
 	asio/detail/throw_exception.hpp \
 	asio/detail/timer_queue_base.hpp \
-	asio/detail/timer_queue_fwd.hpp \
 	asio/detail/timer_queue.hpp \
 	asio/detail/timer_queue_ptime.hpp \
 	asio/detail/timer_queue_set.hpp \
@@ -215,7 +208,6 @@ nobase_include_HEADERS = \
 	asio/detail/win_iocp_handle_read_op.hpp \
 	asio/detail/win_iocp_handle_service.hpp \
 	asio/detail/win_iocp_handle_write_op.hpp \
-	asio/detail/win_iocp_io_service_fwd.hpp \
 	asio/detail/win_iocp_io_service.hpp \
 	asio/detail/win_iocp_null_buffers_op.hpp \
 	asio/detail/win_iocp_operation.hpp \
