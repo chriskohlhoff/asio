@@ -45112,6 +45112,26 @@ Context object the represents the currently executing coroutine.
   class basic_yield_context
 
 
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.basic_yield_context.callee_type [*callee_type]]]
+    [The coroutine callee type, used by the implementation. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_yield_context.caller_type [*caller_type]]]
+    [The coroutine caller type, used by the implementation. ]
+  
+  ]
+
+]
+
 [heading Member Functions]
 [table
   [[Name][Description]]
@@ -45159,12 +45179,78 @@ Construct a yield context to represent the specified coroutine.
 
 
   basic_yield_context(
-      const detail::weak_ptr< boost::coroutines::coroutine< void()> > & coro,
-      boost::coroutines::coroutine< void()>::caller_type & ca,
+      const detail::weak_ptr< callee_type > & coro,
+      caller_type & ca,
       Handler & handler);
 
 
 Most applications do not need to use this constructor. Instead, the `spawn()` function passes a yield context as an argument to the coroutine function. 
+
+
+[endsect]
+
+
+
+[section:callee_type basic_yield_context::callee_type]
+
+[indexterm2 callee_type..basic_yield_context] 
+The coroutine callee type, used by the implementation. 
+
+
+  typedef implementation_defined callee_type;
+
+
+
+When using Boost.Coroutine v1, this type is: 
+
+   typename coroutine<void()> 
+
+
+When using Boost.Coroutine v2 (unidirectional coroutines), this type is: 
+
+   push_coroutine<void> 
+
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/spawn.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:caller_type basic_yield_context::caller_type]
+
+[indexterm2 caller_type..basic_yield_context] 
+The coroutine caller type, used by the implementation. 
+
+
+  typedef implementation_defined caller_type;
+
+
+
+When using Boost.Coroutine v1, this type is: 
+
+   typename coroutine<void()>::caller_type 
+
+
+When using Boost.Coroutine v2 (unidirectional coroutines), this type is: 
+
+   pull_coroutine<void> 
+
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/spawn.hpp]
+
+['Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -45178,7 +45264,7 @@ Return a yield context that sets the specified [link asio.reference.error_code `
 
 
   basic_yield_context operator[](
-      asio::error_code & ec);
+      asio::error_code & ec) const;
 
 
 By default, when a yield context is used with an asynchronous operation, a non-success [link asio.reference.error_code `error_code`] is converted to [link asio.reference.system_error `system_error`] and thrown. This operator may be used to specify an [link asio.reference.error_code `error_code`] object that should instead be set with the asynchronous operation's result. For example:
@@ -96407,7 +96493,7 @@ Class used to specify that an asynchronous operation should return a future.
   [
 
     [[link asio.reference.use_future_t.allocator_type [*allocator_type]]]
-    []
+    [The allocator type. The allocator is used when constructing the std::promise object for a given asynchronous operation. ]
   
   ]
 
@@ -96458,6 +96544,8 @@ The initiating function (async\_read\_some in the above example) returns a futur
 [section:allocator_type use_future_t::allocator_type]
 
 [indexterm2 allocator_type..use_future_t] 
+The allocator type. The allocator is used when constructing the `std::promise` object for a given asynchronous operation. 
+
 
   typedef Allocator allocator_type;
 
@@ -105966,6 +106054,26 @@ Context object the represents the currently executing coroutine.
 
   typedef basic_yield_context< unspecified > yield_context;
 
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.basic_yield_context.callee_type [*callee_type]]]
+    [The coroutine callee type, used by the implementation. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_yield_context.caller_type [*caller_type]]]
+    [The coroutine caller type, used by the implementation. ]
+  
+  ]
+
+]
 
 [heading Member Functions]
 [table
