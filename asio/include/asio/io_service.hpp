@@ -43,6 +43,7 @@ template <typename Service> bool has_service(io_service& ios);
 namespace detail {
 #if defined(ASIO_HAS_IOCP)
   typedef class win_iocp_io_service io_service_impl;
+  class win_iocp_overlapped_ptr;
 #else
   typedef class task_io_service io_service_impl;
 #endif
