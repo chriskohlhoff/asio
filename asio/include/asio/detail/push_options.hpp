@@ -124,4 +124,13 @@
 #  error Multithreaded RTL must be selected.
 # endif // !defined(_MT)
 
+# if defined(__cplusplus_cli) || defined(__cplusplus_winrt)
+#  if !defined(ASIO_DISABLE_CLR_WORKAROUND)
+#   if !defined(generic)
+#    define generic cpp_generic
+#    define ASIO_CLR_WORKAROUND
+#   endif
+#  endif
+# endif
+
 #endif

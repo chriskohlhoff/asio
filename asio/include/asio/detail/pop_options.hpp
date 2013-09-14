@@ -95,4 +95,11 @@
 # pragma warning (pop)
 # pragma pack (pop)
 
+# if defined(__cplusplus_cli) || defined(__cplusplus_winrt)
+#  if defined(ASIO_CLR_WORKAROUND)
+#   undef generic
+#   undef ASIO_CLR_WORKAROUND
+#  endif
+# endif
+
 #endif
