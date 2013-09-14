@@ -7,6 +7,119 @@
 
 [section:history Revision History]
 
+[heading Asio 1.10.0]
+
+* Added new traits classes, `handler_type` and `async_result`, that allow the
+  customisation of the return type of an initiating function.
+
+* Added the `asio::spawn()` function, a high-level wrapper for running
+  stackful coroutines, based on the Boost.Coroutine library. The `spawn()`
+  function enables programs to implement asynchronous logic in a synchronous
+  manner. For example: `size_t n = my_socket.async_read_some(my_buffer, yield);`.
+  For further information, see [link asio.overview.core.spawn Stackful
+  Coroutines].
+
+* Added the `asio::use_future` special value, which provides first-class
+  support for returning a C++11 `std::future` from an asynchronous
+  operation's initiating function. For example:
+  `future<size_t> = my_socket.async_read_some(my_buffer, asio::use_future);`.
+  For further information, see [link asio.overview.cpp2011.futures C++
+  2011 Support - Futures].
+
+* Promoted the stackless coroutine class and macros to be part of Asio's
+  documented interface, rather than part of the HTTP server 4 example.
+  For further information, see [link asio.overview.core.coroutine
+  Stackless Coroutines].
+
+* Added a new handler hook called `asio_handler_is_continuation`.
+  Asynchronous operations may represent a continuation of the asynchronous
+  control flow associated with the current executing handler. The
+  `asio_handler_is_continuation` hook can be customised to return `true` if
+  this is the case, and Asio's implementation can use this knowledge to
+  optimise scheduling of the new handler. To cover common cases, Asio
+  customises the hook for strands, `spawn()` and composed asynchronous
+  operations.
+
+* Added four new generic protocol classes, `generic::datagram_protocol`,
+  `generic::raw_protocol`, `generic::seq_packet_protocol` and
+  `generic::stream_protocol`, which implement the `Protocol` type
+  requirements, but allow the user to specify the address family (e.g.
+  `AF_INET`) and protocol type (e.g. `IPPROTO_TCP`) at runtime.
+  For further information, see [link
+  asio.overview.networking.other_protocols Support for Other Protocols].
+
+* Added C++11 move constructors that allow the conversion of a socket (or
+  acceptor) into a more generic type. For example, an `ip::tcp::socket` can
+  be converted into a `generic::stream_protocol::socket` via move
+  construction.
+  For further information, see [link
+  asio.overview.networking.other_protocols Support for Other Protocols].
+
+* Extended the `basic_socket_acceptor<>`'s `accept()` and `async_accept()`
+  functions to allow a new connection to be accepted directly into a socket
+  of a more generic type. For example, an `ip::tcp::acceptor` can be used to
+  accept into a `generic::stream_protocol::socket` object.
+  For further information, see [link
+  asio.overview.networking.other_protocols Support for Other Protocols].
+
+* Moved existing examples into a C++03-specific directory, and added a new
+  directory for C++11-specific examples. A limited subset of the C++03
+  examples have been converted to their C++11 equivalents.
+
+* Various SSL enhancements. Thanks go to Nick Jones, on whose work these changes
+  are based.
+
+  * Added support for SSL handshakes with re-use of data already read from
+    the wire. New overloads of the `ssl::stream<>` class's `handshake()` and
+    `async_handshake()` functions have been added. These accept a
+    `ConstBufferSequence` to be used as initial input to the ssl engine for
+    the handshake procedure.
+
+  * Added support for creation of TLSv1.1 and TLSv1.2 `ssl::context` objects.
+
+  * Added a `set_verify_depth()` function to the `ssl::context` and
+    `ssl::stream<>` classes.
+
+  * Added the ability to load SSL certificate and key data from memory
+    buffers. New functions, `add_certificate_authority()`,
+    `use_certificate()`, `use_certificate_chain()`, `use_private_key()`,
+    `use_rsa_private_key()` and `use_tmp_dh()`, have been added to the
+    `ssl::context` class.
+
+  * Changed `ssl::context` to automatically disable SSL compression by
+    default. To enable, use the new `ssl::context::clear_options()` function,
+    as in `my_context.clear_options(ssl::context::no_compression)`.
+
+* Fixed a potential deadlock in `signal_set` implementation.
+
+* Fixed an error in acceptor example in documentation.
+
+* Fixed copy-paste errors in waitable timer documentation.
+
+* Added assertions to satisfy some code analysis tools.
+
+* Fixed a malformed `#warning` directive.
+
+* Fixed a potential data race in the Linux `epoll` implementation.
+
+* Fixed a Windows-specific bug, where certain operations might generate an
+  `error_code` with an invalid (i.e. `NULL`) `error_category`.
+
+* Fixed `basic_waitable_timer`'s underlying implementation so that it can
+  handle any `time_point` value without overflowing the intermediate duration
+  objects.
+
+* Fixed a problem with lost thread wakeups that can occur when making
+  concurrent calls to `run()` and `poll()` on the same `io_service` object.
+
+* Fixed implementation of asynchronous connect operation so that it can cope
+  with spurious readiness notifications from the reactor.
+
+* Fixed a memory leak in the `ssl::rfc2818_verification` class.
+
+* Added a mechanism for disabling automatic Winsock initialisation. See the
+  header file [^asio/detail/winsock_init.hpp] for details.
+
 [heading Asio 1.8.3]
 
 * Fixed some 64-to-32-bit conversion warnings.
