@@ -2,7 +2,7 @@
 BOOSTDIR = ../../boost_1_34_1
 !endif
 
-COMMON_CXXFLAGS = -nologo -EHac -GR -I. -I../include -I$(BOOSTDIR)
+COMMON_CXXFLAGS = -nologo -EHac -GR -I. -I../include
 
 !ifdef WARNINGS
 WARNINGS_CXXFLAGS = -W4 -wd4512
@@ -52,13 +52,20 @@ SEPARATE_COMPILATION_CXXFLAGS = \
 	-DASIO_ENABLE_CANCELIO
 !endif
 
+!ifdef STANDALONE
+STANDALONE_CXXFLAGS = -DASIO_STANDALONE
+!else
+STANDALONE_CXXFLAGS = -I$(BOOSTDIR)
+!endif
+
 CXXFLAGS = \
 	$(COMMON_CXXFLAGS) \
 	$(WARNINGS_CXXFLAGS) \
 	$(DEBUG_CXXFLAGS) \
 	$(UNICODE_CXXFLAGS) \
 	$(TRACKING_CXXFLAGS) \
-	$(SEPARATE_COMPILATION_CXXFLAGS)
+	$(SEPARATE_COMPILATION_CXXFLAGS) \
+	$(STANDALONE_CXXFLAGS)
 
 !ifndef SSLDIR
 SSLDIR = ../../openssl-0.9.8g
@@ -167,7 +174,7 @@ UNIT_TEST_EXES = \
 	tests\unit\write.exe \
 	tests\unit\write_at.exe
 
-EXAMPLE_EXES = \
+CPP03_EXAMPLE_EXES = \
 	examples\cpp03\allocation\server.exe \
 	examples\cpp03\buffers\reference_counted.exe \
 	examples\cpp03\chat\chat_client.exe \
@@ -237,11 +244,16 @@ asio.lib: asio.cpp
 	lib -name:asio.lib asio.obj
 !endif
 
+!ifdef STANDALONE
+all: \
+	$(UNIT_TEST_EXES)
+!else
 all: \
 	$(LATENCY_TEST_EXES) \
 	$(PERFORMANCE_TEST_EXES) \
 	$(UNIT_TEST_EXES) \
-	$(EXAMPLE_EXES)
+	$(CPP03_EXAMPLE_EXES)
+!endif
 
 ssl: \
 	$(SSL_UNIT_TEST_EXES) \

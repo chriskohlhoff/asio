@@ -49,7 +49,7 @@ void test()
     io_service ios;
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
-    boost::uint64_t offset = 0;
+    asio::uint64_t offset = 0;
     archetypes::lazy_handler lazy;
     asio::error_code ec;
 

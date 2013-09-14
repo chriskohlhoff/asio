@@ -165,6 +165,11 @@
 #    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
 #  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1700)
+#    define ASIO_HAS_STD_SYSTEM_ERROR 1
+#   endif // (_MSC_VER >= 1700)
+#  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_STD_SYSTEM_ERROR)
 #endif // !defined(ASIO_HAS_STD_SYSTEM_ERROR)
 
@@ -243,6 +248,11 @@
 #    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 #  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1700)
+#    define ASIO_HAS_STD_ATOMIC 1
+#   endif // (_MSC_VER >= 1700)
+#  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_STD_ATOMIC)
 #endif // !defined(ASIO_HAS_STD_ATOMIC)
 
@@ -264,6 +274,11 @@
 #    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
 #  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1700)
+#    define ASIO_HAS_STD_CHRONO 1
+#   endif // (_MSC_VER >= 1700)
+#  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_STD_CHRONO)
 #endif // !defined(ASIO_HAS_STD_CHRONO)
 
@@ -296,6 +311,11 @@
 #    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 #  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1700)
+#    define ASIO_HAS_STD_ADDRESSOF 1
+#   endif // (_MSC_VER >= 1700)
+#  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_STD_ADDRESSOF)
 #endif // !defined(ASIO_HAS_STD_ADDRESSOF)
 
@@ -312,6 +332,11 @@
 #    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 #  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1700)
+#    define ASIO_HAS_STD_FUNCTION 1
+#   endif // (_MSC_VER >= 1700)
+#  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_STD_FUNCTION)
 #endif // !defined(ASIO_HAS_STD_FUNCTION)
 
@@ -328,6 +353,11 @@
 #    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 #  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1700)
+#    define ASIO_HAS_STD_TYPE_TRAITS 1
+#   endif // (_MSC_VER >= 1700)
+#  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_STD_TYPE_TRAITS)
 #endif // !defined(ASIO_HAS_STD_TYPE_TRAITS)
 
@@ -344,6 +374,11 @@
 #    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 #  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1700)
+#    define ASIO_HAS_CSTDINT 1
+#   endif // (_MSC_VER >= 1700)
+#  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_CSTDINT)
 #endif // !defined(ASIO_HAS_CSTDINT)
 
