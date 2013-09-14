@@ -74,7 +74,8 @@ win_iocp_io_service::win_iocp_io_service(
   ASIO_HANDLER_TRACKING_INIT;
 
   iocp_.handle = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0,
-      static_cast<DWORD>((std::min<size_t>)(concurrency_hint, DWORD(~0))));
+      static_cast<DWORD>(concurrency_hint < DWORD(~0)
+        ? concurrency_hint : DWORD(~0)));
   if (!iocp_.handle)
   {
     DWORD last_error = ::GetLastError();
