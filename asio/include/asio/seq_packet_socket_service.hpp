@@ -313,13 +313,20 @@ public:
 
   /// Start an asynchronous send.
   template <typename ConstBufferSequence, typename WriteHandler>
-  void async_send(implementation_type& impl,
+  ASIO_INITFN_RESULT_TYPE(WriteHandler,
+      void (asio::error_code, std::size_t))
+  async_send(implementation_type& impl,
       const ConstBufferSequence& buffers,
       socket_base::message_flags flags,
       ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    service_impl_.async_send(impl, buffers, flags,
+    detail::async_result_init<
+      WriteHandler, void (asio::error_code, std::size_t)> init(
         ASIO_MOVE_CAST(WriteHandler)(handler));
+
+    service_impl_.async_send(impl, buffers, flags, init.handler);
+
+    return init.result.get();
   }
 
   /// Receive some data from the peer.
@@ -334,13 +341,21 @@ public:
 
   /// Start an asynchronous receive.
   template <typename MutableBufferSequence, typename ReadHandler>
-  void async_receive(implementation_type& impl,
+  ASIO_INITFN_RESULT_TYPE(ReadHandler,
+      void (asio::error_code, std::size_t))
+  async_receive(implementation_type& impl,
       const MutableBufferSequence& buffers, socket_base::message_flags in_flags,
       socket_base::message_flags& out_flags,
       ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    service_impl_.async_receive_with_flags(impl, buffers, in_flags,
-        out_flags, ASIO_MOVE_CAST(ReadHandler)(handler));
+    detail::async_result_init<
+      ReadHandler, void (asio::error_code, std::size_t)> init(
+        ASIO_MOVE_CAST(ReadHandler)(handler));
+
+    service_impl_.async_receive_with_flags(impl,
+        buffers, in_flags, out_flags, init.handler);
+
+    return init.result.get();
   }
 
 private:
