@@ -197,7 +197,7 @@ public:
   template <typename ConstBufferSequence, typename Handler>
   void async_send(base_implementation_type& impl,
       const ConstBufferSequence& buffers,
-      socket_base::message_flags flags, Handler handler)
+      socket_base::message_flags flags, Handler& handler)
   {
     bool is_continuation =
       asio_handler_cont_helpers::is_continuation(handler);
@@ -221,7 +221,7 @@ public:
   // Start an asynchronous wait until data can be sent without blocking.
   template <typename Handler>
   void async_send(base_implementation_type& impl, const null_buffers&,
-      socket_base::message_flags, Handler handler)
+      socket_base::message_flags, Handler& handler)
   {
     bool is_continuation =
       asio_handler_cont_helpers::is_continuation(handler);
@@ -268,7 +268,7 @@ public:
   template <typename MutableBufferSequence, typename Handler>
   void async_receive(base_implementation_type& impl,
       const MutableBufferSequence& buffers,
-      socket_base::message_flags flags, Handler handler)
+      socket_base::message_flags flags, Handler& handler)
   {
     bool is_continuation =
       asio_handler_cont_helpers::is_continuation(handler);
@@ -296,7 +296,7 @@ public:
   // Wait until data can be received without blocking.
   template <typename Handler>
   void async_receive(base_implementation_type& impl, const null_buffers&,
-      socket_base::message_flags flags, Handler handler)
+      socket_base::message_flags flags, Handler& handler)
   {
     bool is_continuation =
       asio_handler_cont_helpers::is_continuation(handler);
@@ -353,7 +353,7 @@ public:
   template <typename MutableBufferSequence, typename Handler>
   void async_receive_with_flags(base_implementation_type& impl,
       const MutableBufferSequence& buffers, socket_base::message_flags in_flags,
-      socket_base::message_flags& out_flags, Handler handler)
+      socket_base::message_flags& out_flags, Handler& handler)
   {
     bool is_continuation =
       asio_handler_cont_helpers::is_continuation(handler);
@@ -380,7 +380,7 @@ public:
   template <typename Handler>
   void async_receive_with_flags(base_implementation_type& impl,
       const null_buffers&, socket_base::message_flags in_flags,
-      socket_base::message_flags& out_flags, Handler handler)
+      socket_base::message_flags& out_flags, Handler& handler)
   {
     bool is_continuation =
       asio_handler_cont_helpers::is_continuation(handler);
