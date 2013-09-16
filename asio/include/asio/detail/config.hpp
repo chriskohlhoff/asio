@@ -157,6 +157,31 @@
 # endif // !defined(ASIO_DISABLE_VARIADIC_TEMPLATES)
 #endif // !defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
+// Support constexpr on compilers known to allow it.
+#if !defined(ASIO_HAS_CONSTEXPR)
+# if !defined(ASIO_DISABLE_CONSTEXPR)
+#  if defined(__clang__)
+#   if __has_feature(__cxx_constexpr__)
+#    define ASIO_HAS_CONSTEXPR 1
+#   endif // __has_feature(__cxx_constexr__)
+#  endif // defined(__clang__)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_CONSTEXPR 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+# endif // !defined(ASIO_DISABLE_CONSTEXPR)
+#endif // !defined(ASIO_HAS_CONSTEXPR)
+#if !defined(ASIO_CONSTEXPR)
+# if defined(ASIO_HAS_CONSTEXPR)
+#  define ASIO_CONSTEXPR constexpr
+# else // defined(ASIO_HAS_CONSTEXPR)
+#  define ASIO_CONSTEXPR
+# endif // defined(ASIO_HAS_CONSTEXPR)
+#endif // !defined(ASIO_CONSTEXPR)
+
 // Standard library support for system errors.
 #if !defined(ASIO_HAS_STD_SYSTEM_ERROR)
 # if !defined(ASIO_DISABLE_STD_SYSTEM_ERROR)
