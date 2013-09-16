@@ -89,7 +89,8 @@ void test()
 
 #if defined(ASIO_HAS_MOVE)
     sp::socket socket5(std::move(socket4));
-    sp::socket socket6(asio::ip::tcp::socket(ios));
+    asio::ip::tcp::socket tcp_socket(ios);
+    sp::socket socket6(std::move(tcp_socket));
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_stream_socket operators.

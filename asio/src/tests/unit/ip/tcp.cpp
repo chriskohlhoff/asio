@@ -203,7 +203,7 @@ void test()
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
 #if defined(ASIO_HAS_MOVE)
-    ip::tcp::socket socket7(std::move(socket6));
+    ip::tcp::socket socket7(std::move(socket5));
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_stream_socket operators.
@@ -662,7 +662,7 @@ void test()
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
 #if defined(ASIO_HAS_MOVE)
-    ip::tcp::acceptor acceptor7(std::move(acceptor6));
+    ip::tcp::acceptor acceptor7(std::move(acceptor5));
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_socket_acceptor operators.

@@ -79,7 +79,8 @@ void test()
 
 #if defined(ASIO_HAS_MOVE)
     dp::socket socket5(std::move(socket4));
-    dp::socket socket6(asio::ip::udp::socket(ios));
+    asio::ip::udp::socket udp_socket(ios);
+    dp::socket socket6(std::move(udp_socket));
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_datagram_socket operators.

@@ -165,6 +165,24 @@ public:
     other_impl.remote_endpoint_ = endpoint_type();
   }
 
+  // Move-construct a new socket implementation from another protocol type.
+  template <typename Protocol1>
+  void converting_move_construct(implementation_type& impl,
+      typename win_iocp_socket_service<
+        Protocol1>::implementation_type& other_impl)
+  {
+    this->base_move_construct(impl, other_impl);
+
+    impl.protocol_ = protocol_type(other_impl.protocol_);
+    other_impl.protocol_ = typename Protocol1::endpoint().protocol();
+
+    impl.have_remote_endpoint_ = other_impl.have_remote_endpoint_;
+    other_impl.have_remote_endpoint_ = false;
+
+    impl.remote_endpoint_ = other_impl.remote_endpoint_;
+    other_impl.remote_endpoint_ = typename Protocol1::endpoint();
+  }
+
   // Open a new socket implementation.
   asio::error_code open(implementation_type& impl,
       const protocol_type& protocol, asio::error_code& ec)
