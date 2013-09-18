@@ -310,6 +310,13 @@ sub copy_source_file
         last if $line =~ /boostify: non-boost docs end here/;
       }
     }
+    elsif ($line =~ /boostify: non-boost code starts here/)
+    { 
+      while ($line = <$input>)
+      {
+        last if $line =~ /boostify: non-boost code ends here/;
+      }
+    }
     elsif ($line =~ /^$/ && $needs_doc_link)
     {
       $needs_doc_link = 0;
