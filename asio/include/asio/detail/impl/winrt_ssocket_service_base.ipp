@@ -542,7 +542,13 @@ std::size_t winrt_ssocket_service_base::do_receive(
           bufs.buffers()[0], bufs.buffers()[0]->Capacity,
           Windows::Storage::Streams::InputStreamOptions::Partial), ec);
 
-    return bufs.buffers()[0]->Length;
+    std::size_t bytes_transferred = bufs.buffers()[0]->Length;
+    if (bytes_transferred == 0 && !ec)
+    {
+      ec = asio::error::eof;
+    }
+
+    return bytes_transferred;
   }
   catch (Platform::Exception^ e)
   {
