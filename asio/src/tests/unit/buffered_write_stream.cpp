@@ -17,11 +17,18 @@
 #include "asio/buffered_write_stream.hpp"
 
 #include <cstring>
+#include "archetypes/async_result.hpp"
 #include "asio/buffer.hpp"
 #include "asio/io_service.hpp"
 #include "asio/ip/tcp.hpp"
 #include "asio/system_error.hpp"
 #include "unit_test.hpp"
+
+#if defined(ASIO_HAS_BOOST_ARRAY)
+# include <boost/array.hpp>
+#else // defined(ASIO_HAS_BOOST_ARRAY)
+# include <array>
+#endif // defined(ASIO_HAS_BOOST_ARRAY)
 
 #if defined(ASIO_HAS_BOOST_BIND)
 # include <boost/bind.hpp>
@@ -31,6 +38,107 @@
 
 typedef asio::buffered_write_stream<
     asio::ip::tcp::socket> stream_type;
+
+void write_some_handler(const asio::error_code&, std::size_t)
+{
+}
+
+void flush_handler(const asio::error_code&, std::size_t)
+{
+}
+
+void read_some_handler(const asio::error_code&, std::size_t)
+{
+}
+
+void test_compile()
+{
+#if defined(ASIO_HAS_BOOST_ARRAY)
+  using boost::array;
+#else // defined(ASIO_HAS_BOOST_ARRAY)
+  using std::array;
+#endif // defined(ASIO_HAS_BOOST_ARRAY)
+
+  using namespace asio;
+
+  try
+  {
+    io_service ios;
+    char mutable_char_buffer[128] = "";
+    const char const_char_buffer[128] = "";
+    array<asio::mutable_buffer, 2> mutable_buffers = {{
+        asio::buffer(mutable_char_buffer, 10),
+        asio::buffer(mutable_char_buffer + 10, 10) }};
+    array<asio::const_buffer, 2> const_buffers = {{
+        asio::buffer(const_char_buffer, 10),
+        asio::buffer(const_char_buffer + 10, 10) }};
+    archetypes::lazy_handler lazy;
+    asio::error_code ec;
+
+    stream_type stream1(ios);
+    stream_type stream2(ios, 1024);
+
+    io_service& ios_ref = stream1.get_io_service();
+    (void)ios_ref;
+
+    stream_type::lowest_layer_type& lowest_layer = stream1.lowest_layer();
+    (void)lowest_layer;
+
+    stream1.write_some(buffer(mutable_char_buffer));
+    stream1.write_some(buffer(const_char_buffer));
+    stream1.write_some(mutable_buffers);
+    stream1.write_some(const_buffers);
+    stream1.write_some(null_buffers());
+    stream1.write_some(buffer(mutable_char_buffer), ec);
+    stream1.write_some(buffer(const_char_buffer), ec);
+    stream1.write_some(mutable_buffers, ec);
+    stream1.write_some(const_buffers, ec);
+    stream1.write_some(null_buffers(), ec);
+
+    stream1.async_write_some(buffer(mutable_char_buffer), &write_some_handler);
+    stream1.async_write_some(buffer(const_char_buffer), &write_some_handler);
+    stream1.async_write_some(mutable_buffers, &write_some_handler);
+    stream1.async_write_some(const_buffers, &write_some_handler);
+    stream1.async_write_some(null_buffers(), &write_some_handler);
+    int i1 = stream1.async_write_some(buffer(mutable_char_buffer), lazy);
+    (void)i1;
+    int i2 = stream1.async_write_some(buffer(const_char_buffer), lazy);
+    (void)i2;
+    int i3 = stream1.async_write_some(mutable_buffers, lazy);
+    (void)i3;
+    int i4 = stream1.async_write_some(const_buffers, lazy);
+    (void)i4;
+    int i5 = stream1.async_write_some(null_buffers(), lazy);
+    (void)i5;
+
+    stream1.flush();
+    stream1.flush(ec);
+
+    stream1.async_flush(&flush_handler);
+    int i6 = stream1.async_flush(lazy);
+    (void)i6;
+
+    stream1.read_some(buffer(mutable_char_buffer));
+    stream1.read_some(mutable_buffers);
+    stream1.read_some(null_buffers());
+    stream1.read_some(buffer(mutable_char_buffer), ec);
+    stream1.read_some(mutable_buffers, ec);
+    stream1.read_some(null_buffers(), ec);
+
+    stream1.async_read_some(buffer(mutable_char_buffer), &read_some_handler);
+    stream1.async_read_some(mutable_buffers, &read_some_handler);
+    stream1.async_read_some(null_buffers(), &read_some_handler);
+    int i7 = stream1.async_read_some(buffer(mutable_char_buffer), lazy);
+    (void)i7;
+    int i8 = stream1.async_read_some(mutable_buffers, lazy);
+    (void)i8;
+    int i9 = stream1.async_read_some(null_buffers(), lazy);
+    (void)i9;
+  }
+  catch (std::exception&)
+  {
+  }
+}
 
 void test_sync_operations()
 {
@@ -239,6 +347,7 @@ void test_async_operations()
 ASIO_TEST_SUITE
 (
   "buffered_write_stream",
+  ASIO_TEST_CASE(test_compile)
   ASIO_TEST_CASE(test_sync_operations)
   ASIO_TEST_CASE(test_async_operations)
 )

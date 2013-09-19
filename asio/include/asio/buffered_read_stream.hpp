@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include <cstddef>
+#include "asio/async_result.hpp"
 #include "asio/buffered_read_stream_fwd.hpp"
 #include "asio/buffer.hpp"
 #include "asio/detail/bind_handler.hpp"
@@ -133,199 +134,65 @@ public:
   /// Start an asynchronous write. The data being written must be valid for the
   /// lifetime of the asynchronous operation.
   template <typename ConstBufferSequence, typename WriteHandler>
-  void async_write_some(const ConstBufferSequence& buffers,
-      WriteHandler handler)
+  ASIO_INITFN_RESULT_TYPE(WriteHandler,
+      void (asio::error_code, std::size_t))
+  async_write_some(const ConstBufferSequence& buffers,
+      ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    next_layer_.async_write_some(buffers, handler);
+    detail::async_result_init<
+      WriteHandler, void (asio::error_code, std::size_t)> init(
+        ASIO_MOVE_CAST(WriteHandler)(handler));
+
+    next_layer_.async_write_some(buffers,
+        ASIO_MOVE_CAST(ASIO_HANDLER_TYPE(WriteHandler,
+            void (asio::error_code, std::size_t)))(init.handler));
+
+    return init.result.get();
   }
 
   /// Fill the buffer with some data. Returns the number of bytes placed in the
   /// buffer as a result of the operation. Throws an exception on failure.
-  std::size_t fill()
-  {
-    detail::buffer_resize_guard<detail::buffered_stream_storage>
-      resize_guard(storage_);
-    std::size_t previous_size = storage_.size();
-    storage_.resize(storage_.capacity());
-    storage_.resize(previous_size + next_layer_.read_some(buffer(
-            storage_.data() + previous_size,
-            storage_.size() - previous_size)));
-    resize_guard.commit();
-    return storage_.size() - previous_size;
-  }
+  std::size_t fill();
 
   /// Fill the buffer with some data. Returns the number of bytes placed in the
   /// buffer as a result of the operation, or 0 if an error occurred.
-  std::size_t fill(asio::error_code& ec)
-  {
-    detail::buffer_resize_guard<detail::buffered_stream_storage>
-      resize_guard(storage_);
-    std::size_t previous_size = storage_.size();
-    storage_.resize(storage_.capacity());
-    storage_.resize(previous_size + next_layer_.read_some(buffer(
-            storage_.data() + previous_size,
-            storage_.size() - previous_size),
-          ec));
-    resize_guard.commit();
-    return storage_.size() - previous_size;
-  }
-
-  template <typename ReadHandler>
-  class fill_handler
-  {
-  public:
-    fill_handler(asio::io_service& io_service,
-        detail::buffered_stream_storage& storage,
-        std::size_t previous_size, ReadHandler handler)
-      : io_service_(io_service),
-        storage_(storage),
-        previous_size_(previous_size),
-        handler_(handler)
-    {
-    }
-
-    void operator()(const asio::error_code& ec,
-        std::size_t bytes_transferred)
-    {
-      storage_.resize(previous_size_ + bytes_transferred);
-      io_service_.dispatch(detail::bind_handler(
-            handler_, ec, bytes_transferred));
-    }
-
-  private:
-    asio::io_service& io_service_;
-    detail::buffered_stream_storage& storage_;
-    std::size_t previous_size_;
-    ReadHandler handler_;
-  };
+  std::size_t fill(asio::error_code& ec);
 
   /// Start an asynchronous fill.
   template <typename ReadHandler>
-  void async_fill(ReadHandler handler)
-  {
-    std::size_t previous_size = storage_.size();
-    storage_.resize(storage_.capacity());
-    next_layer_.async_read_some(
-        buffer(
-          storage_.data() + previous_size,
-          storage_.size() - previous_size),
-        fill_handler<ReadHandler>(get_io_service(),
-          storage_, previous_size, handler));
-  }
+  ASIO_INITFN_RESULT_TYPE(ReadHandler,
+      void (asio::error_code, std::size_t))
+  async_fill(ASIO_MOVE_ARG(ReadHandler) handler);
 
   /// Read some data from the stream. Returns the number of bytes read. Throws
   /// an exception on failure.
   template <typename MutableBufferSequence>
-  std::size_t read_some(const MutableBufferSequence& buffers)
-  {
-    if (asio::buffer_size(buffers) == 0)
-      return 0;
-
-    if (storage_.empty())
-      fill();
-
-    return copy(buffers);
-  }
+  std::size_t read_some(const MutableBufferSequence& buffers);
 
   /// Read some data from the stream. Returns the number of bytes read or 0 if
   /// an error occurred.
   template <typename MutableBufferSequence>
   std::size_t read_some(const MutableBufferSequence& buffers,
-      asio::error_code& ec)
-  {
-    ec = asio::error_code();
-
-    if (asio::buffer_size(buffers) == 0)
-      return 0;
-
-    if (storage_.empty() && !fill(ec))
-      return 0;
-
-    return copy(buffers);
-  }
-
-  template <typename MutableBufferSequence, typename ReadHandler>
-  class read_some_handler
-  {
-  public:
-    read_some_handler(asio::io_service& io_service,
-        detail::buffered_stream_storage& storage,
-        const MutableBufferSequence& buffers, ReadHandler handler)
-      : io_service_(io_service),
-        storage_(storage),
-        buffers_(buffers),
-        handler_(handler)
-    {
-    }
-
-    void operator()(const asio::error_code& ec, std::size_t)
-    {
-      if (ec || storage_.empty())
-      {
-        std::size_t length = 0;
-        io_service_.dispatch(detail::bind_handler(handler_, ec, length));
-      }
-      else
-      {
-        std::size_t bytes_copied = asio::buffer_copy(
-            buffers_, storage_.data(), storage_.size());
-        storage_.consume(bytes_copied);
-        io_service_.dispatch(detail::bind_handler(handler_, ec, bytes_copied));
-      }
-    }
-
-  private:
-    asio::io_service& io_service_;
-    detail::buffered_stream_storage& storage_;
-    MutableBufferSequence buffers_;
-    ReadHandler handler_;
-  };
+      asio::error_code& ec);
 
   /// Start an asynchronous read. The buffer into which the data will be read
   /// must be valid for the lifetime of the asynchronous operation.
   template <typename MutableBufferSequence, typename ReadHandler>
-  void async_read_some(const MutableBufferSequence& buffers,
-      ReadHandler handler)
-  {
-    if (asio::buffer_size(buffers) == 0)
-    {
-      get_io_service().post(detail::bind_handler(
-            handler, asio::error_code(), 0));
-    }
-    else if (storage_.empty())
-    {
-      async_fill(read_some_handler<MutableBufferSequence, ReadHandler>(
-            get_io_service(), storage_, buffers, handler));
-    }
-    else
-    {
-      std::size_t length = copy(buffers);
-      get_io_service().post(detail::bind_handler(
-            handler, asio::error_code(), length));
-    }
-  }
+  ASIO_INITFN_RESULT_TYPE(ReadHandler,
+      void (asio::error_code, std::size_t))
+  async_read_some(const MutableBufferSequence& buffers,
+      ASIO_MOVE_ARG(ReadHandler) handler);
 
   /// Peek at the incoming data on the stream. Returns the number of bytes read.
   /// Throws an exception on failure.
   template <typename MutableBufferSequence>
-  std::size_t peek(const MutableBufferSequence& buffers)
-  {
-    if (storage_.empty())
-      fill();
-    return peek_copy(buffers);
-  }
+  std::size_t peek(const MutableBufferSequence& buffers);
 
   /// Peek at the incoming data on the stream. Returns the number of bytes read,
   /// or 0 if an error occurred.
   template <typename MutableBufferSequence>
   std::size_t peek(const MutableBufferSequence& buffers,
-      asio::error_code& ec)
-  {
-    ec = asio::error_code();
-    if (storage_.empty() && !fill(ec))
-      return 0;
-    return peek_copy(buffers);
-  }
+      asio::error_code& ec);
 
   /// Determine the amount of data that may be read without blocking.
   std::size_t in_avail()
@@ -371,5 +238,7 @@ private:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#include "asio/impl/buffered_read_stream.hpp"
 
 #endif // ASIO_BUFFERED_READ_STREAM_HPP
