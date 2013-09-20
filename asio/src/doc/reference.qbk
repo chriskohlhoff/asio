@@ -48683,7 +48683,7 @@ Start an asynchronous fill.
 
   template<
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
-  void async_fill(
+  ``[link asio.reference.asynchronous_operations.return_type_of_an_initiating_function ['void-or-deduced]]`` async_fill(
       ReadHandler handler);
 
 
@@ -48701,7 +48701,7 @@ Start an asynchronous read. The buffer into which the data will be read must be 
   template<
       typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``,
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
-  void async_read_some(
+  ``[link asio.reference.asynchronous_operations.return_type_of_an_initiating_function ['void-or-deduced]]`` async_read_some(
       const MutableBufferSequence & buffers,
       ReadHandler handler);
 
@@ -48720,7 +48720,7 @@ Start an asynchronous write. The data being written must be valid for the lifeti
   template<
       typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``,
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
-  void async_write_some(
+  ``[link asio.reference.asynchronous_operations.return_type_of_an_initiating_function ['void-or-deduced]]`` async_write_some(
       const ConstBufferSequence & buffers,
       WriteHandler handler);
 
@@ -49386,7 +49386,7 @@ Start an asynchronous fill.
 
   template<
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
-  void async_fill(
+  ``[link asio.reference.asynchronous_operations.return_type_of_an_initiating_function ['void-or-deduced]]`` async_fill(
       ReadHandler handler);
 
 
@@ -49403,7 +49403,7 @@ Start an asynchronous flush.
 
   template<
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
-  void async_flush(
+  ``[link asio.reference.asynchronous_operations.return_type_of_an_initiating_function ['void-or-deduced]]`` async_flush(
       WriteHandler handler);
 
 
@@ -49421,7 +49421,7 @@ Start an asynchronous read. The buffer into which the data will be read must be 
   template<
       typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``,
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
-  void async_read_some(
+  ``[link asio.reference.asynchronous_operations.return_type_of_an_initiating_function ['void-or-deduced]]`` async_read_some(
       const MutableBufferSequence & buffers,
       ReadHandler handler);
 
@@ -49440,7 +49440,7 @@ Start an asynchronous write. The data being written must be valid for the lifeti
   template<
       typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``,
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
-  void async_write_some(
+  ``[link asio.reference.asynchronous_operations.return_type_of_an_initiating_function ['void-or-deduced]]`` async_write_some(
       const ConstBufferSequence & buffers,
       WriteHandler handler);
 
@@ -50141,7 +50141,7 @@ Start an asynchronous flush.
 
   template<
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
-  void async_flush(
+  ``[link asio.reference.asynchronous_operations.return_type_of_an_initiating_function ['void-or-deduced]]`` async_flush(
       WriteHandler handler);
 
 
@@ -50159,7 +50159,7 @@ Start an asynchronous read. The buffer into which the data will be read must be 
   template<
       typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``,
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
-  void async_read_some(
+  ``[link asio.reference.asynchronous_operations.return_type_of_an_initiating_function ['void-or-deduced]]`` async_read_some(
       const MutableBufferSequence & buffers,
       ReadHandler handler);
 
@@ -50178,7 +50178,7 @@ Start an asynchronous write. The data being written must be valid for the lifeti
   template<
       typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``,
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
-  void async_write_some(
+  ``[link asio.reference.asynchronous_operations.return_type_of_an_initiating_function ['void-or-deduced]]`` async_write_some(
       const ConstBufferSequence & buffers,
       WriteHandler handler);
 
@@ -65911,7 +65911,9 @@ The iterator type.
     [[link asio.reference.ip__basic_resolver_iterator.create [*create]]]
     [Create an iterator from an addrinfo list returned by getaddrinfo. 
 
-     Create an iterator from an endpoint, host name and service name. ]
+     Create an iterator from an endpoint, host name and service name. 
+
+     Create an iterator from a sequence of endpoints, host and service name. ]
   ]
   
   [
@@ -66686,7 +66688,9 @@ An iterator over the entries produced by a resolver.
     [[link asio.reference.ip__basic_resolver_iterator.create [*create]]]
     [Create an iterator from an addrinfo list returned by getaddrinfo. 
 
-     Create an iterator from an endpoint, host name and service name. ]
+     Create an iterator from an endpoint, host name and service name. 
+
+     Create an iterator from a sequence of endpoints, host and service name. ]
   ]
   
   [
@@ -66785,7 +66789,20 @@ Create an iterator from an endpoint, host name and service name.
   ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver_iterator.create.overload2 more...]]``
 
 
-[section:overload1 ip::basic_resolver_iterator::create (1 of 2 overloads)]
+Create an iterator from a sequence of endpoints, host and service name. 
+
+
+  template<
+      typename ``[link asio.reference.EndpointIterator EndpointIterator]``>
+  static basic_resolver_iterator ``[link asio.reference.ip__basic_resolver_iterator.create.overload3 create]``(
+      EndpointIterator begin,
+      EndpointIterator end,
+      const std::string & host_name,
+      const std::string & service_name);
+  ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver_iterator.create.overload3 more...]]``
+
+
+[section:overload1 ip::basic_resolver_iterator::create (1 of 3 overloads)]
 
 
 Create an iterator from an addrinfo list returned by getaddrinfo. 
@@ -66802,7 +66819,7 @@ Create an iterator from an addrinfo list returned by getaddrinfo.
 
 
 
-[section:overload2 ip::basic_resolver_iterator::create (2 of 2 overloads)]
+[section:overload2 ip::basic_resolver_iterator::create (2 of 3 overloads)]
 
 
 Create an iterator from an endpoint, host name and service name. 
@@ -66810,6 +66827,26 @@ Create an iterator from an endpoint, host name and service name.
 
   static basic_resolver_iterator create(
       const typename InternetProtocol::endpoint & endpoint,
+      const std::string & host_name,
+      const std::string & service_name);
+
+
+
+[endsect]
+
+
+
+[section:overload3 ip::basic_resolver_iterator::create (3 of 3 overloads)]
+
+
+Create an iterator from a sequence of endpoints, host and service name. 
+
+
+  template<
+      typename ``[link asio.reference.EndpointIterator EndpointIterator]``>
+  static basic_resolver_iterator create(
+      EndpointIterator begin,
+      EndpointIterator end,
       const std::string & host_name,
       const std::string & service_name);
 
@@ -69530,7 +69567,9 @@ The iterator type.
     [[link asio.reference.ip__basic_resolver_iterator.create [*create]]]
     [Create an iterator from an addrinfo list returned by getaddrinfo. 
 
-     Create an iterator from an endpoint, host name and service name. ]
+     Create an iterator from an endpoint, host name and service name. 
+
+     Create an iterator from a sequence of endpoints, host and service name. ]
   ]
   
   [
@@ -84069,7 +84108,7 @@ Start an asynchronous receive.
   template<
       typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``,
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
-  void async_receive(
+  ``[link asio.reference.asynchronous_operations.return_type_of_an_initiating_function ['void-or-deduced]]`` async_receive(
       implementation_type & impl,
       const MutableBufferSequence & buffers,
       socket_base::message_flags in_flags,
@@ -84091,7 +84130,7 @@ Start an asynchronous send.
   template<
       typename ``[link asio.reference.ConstBufferSequence ConstBufferSequence]``,
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
-  void async_send(
+  ``[link asio.reference.asynchronous_operations.return_type_of_an_initiating_function ['void-or-deduced]]`` async_send(
       implementation_type & impl,
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags,
