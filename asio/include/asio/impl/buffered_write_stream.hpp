@@ -148,7 +148,8 @@ buffered_write_stream<Stream>::async_flush(
 
 template <typename Stream>
 template <typename ConstBufferSequence>
-std::size_t buffered_write_stream<Stream>::write_some(const ConstBufferSequence& buffers)
+std::size_t buffered_write_stream<Stream>::write_some(
+    const ConstBufferSequence& buffers)
 {
   if (asio::buffer_size(buffers) == 0)
     return 0;
@@ -161,8 +162,8 @@ std::size_t buffered_write_stream<Stream>::write_some(const ConstBufferSequence&
 
 template <typename Stream>
 template <typename ConstBufferSequence>
-std::size_t buffered_write_stream<Stream>::write_some(const ConstBufferSequence& buffers,
-    asio::error_code& ec)
+std::size_t buffered_write_stream<Stream>::write_some(
+    const ConstBufferSequence& buffers, asio::error_code& ec)
 {
   ec = asio::error_code();
 
@@ -284,7 +285,8 @@ template <typename Stream>
 template <typename ConstBufferSequence, typename WriteHandler>
 ASIO_INITFN_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
-buffered_write_stream<Stream>::async_write_some(const ConstBufferSequence& buffers,
+buffered_write_stream<Stream>::async_write_some(
+    const ConstBufferSequence& buffers,
     ASIO_MOVE_ARG(WriteHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
@@ -317,7 +319,8 @@ buffered_write_stream<Stream>::async_write_some(const ConstBufferSequence& buffe
 
 template <typename Stream>
 template <typename ConstBufferSequence>
-std::size_t buffered_write_stream<Stream>::copy(const ConstBufferSequence& buffers)
+std::size_t buffered_write_stream<Stream>::copy(
+    const ConstBufferSequence& buffers)
 {
   std::size_t orig_size = storage_.size();
   std::size_t space_avail = storage_.capacity() - orig_size;
