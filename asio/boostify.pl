@@ -100,6 +100,9 @@ sub copy_source_file
   my $is_xsl = 0;
   $is_xsl = 1 if ($from =~ /.xsl$/);
 
+  my $is_test = 0;
+  $is_test = 1 if ($from =~ /tests\/unit/);
+
   # Open the files.
   open(my $input, "<$from") or die("Can't open $from for reading");
   open(my $output, ">$to") or die("Can't open $to for writing");
@@ -180,7 +183,7 @@ sub copy_source_file
       print_line($output, $1 . "<boost/" . $2 . ">", $from, $lineno);
       if ($uses_asio_thread)
       {
-        print_line($output, $1 . "<boost/thread/thread.hpp>", $from, $lineno);
+        print_line($output, $1 . "<boost/thread/thread.hpp>", $from, $lineno) if (!$is_test);
         $uses_asio_thread = 0;
       }
     }
@@ -188,14 +191,21 @@ sub copy_source_file
     {
       if (!$includes_asio && $uses_asio_thread)
       {
-        print_line($output, $1 . "<boost/thread/thread.hpp>", $from, $lineno);
+        print_line($output, $1 . "<boost/thread/thread.hpp>", $from, $lineno) if (!$is_test);
         $uses_asio_thread = 0;
       }
       print_line($output, $line, $from, $lineno);
     }
-    elsif ($line =~ /# *include [<"]asio\/thread\.hpp[>"]/)
+    elsif ($line =~ /^(# *include )[<"]asio\/thread\.hpp[>"]/)
     {
-      # Line is removed.
+      if ($is_test)
+      {
+        print_line($output, $1 . "<boost/asio/detail/thread.hpp>", $from, $lineno);
+      }
+      else
+      {
+        # Line is removed.
+      }
     }
     elsif ($line =~ /(# *include )[<"]asio\/error_code\.hpp[>"]/)
     {
@@ -234,7 +244,14 @@ sub copy_source_file
     }
     elsif ($line =~ /asio::thread/)
     {
-      $line =~ s/asio::thread/boost::thread/g;
+      if ($is_test)
+      {
+        $line =~ s/asio::thread/asio::detail::thread/g;
+      }
+      else
+      {
+        $line =~ s/asio::thread/boost::thread/g;
+      }
       if (!($line =~ /boost::asio::/))
       {
         $line =~ s/asio::/boost::asio::/g;
@@ -243,11 +260,14 @@ sub copy_source_file
     }
     elsif ($line =~ /^( *)thread( .*)$/ && !$is_qbk)
     {
-      if (!($line =~ /boost::asio::/))
+      if ($is_test)
       {
-        $line =~ s/asio::/boost::asio::/g;
+        print_line($output, $1 . "boost::asio::detail::thread" . $2, $from, $lineno);
       }
-      print_line($output, $1 . "boost::thread" . $2, $from, $lineno);
+      else
+      {
+        print_line($output, $1 . "boost::thread" . $2, $from, $lineno);
+      }
     }
     elsif ($line =~ /namespace std {/)
     {
