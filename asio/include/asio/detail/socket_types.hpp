@@ -248,10 +248,26 @@ typedef int signed_size_type;
 # define ASIO_OS_DEF_AI_CANONNAME AI_CANONNAME
 # define ASIO_OS_DEF_AI_PASSIVE AI_PASSIVE
 # define ASIO_OS_DEF_AI_NUMERICHOST AI_NUMERICHOST
-# define ASIO_OS_DEF_AI_NUMERICSERV AI_NUMERICSERV
-# define ASIO_OS_DEF_AI_V4MAPPED AI_V4MAPPED
-# define ASIO_OS_DEF_AI_ALL AI_ALL
-# define ASIO_OS_DEF_AI_ADDRCONFIG AI_ADDRCONFIG
+# if defined(AI_NUMERICSERV)
+#  define ASIO_OS_DEF_AI_NUMERICSERV AI_NUMERICSERV
+# else
+#  define ASIO_OS_DEF_AI_NUMERICSERV 0
+# endif
+# if defined(AI_V4MAPPED)
+#  define ASIO_OS_DEF_AI_V4MAPPED AI_V4MAPPED
+# else
+#  define ASIO_OS_DEF_AI_V4MAPPED 0
+# endif
+# if defined(AI_ALL)
+#  define ASIO_OS_DEF_AI_ALL AI_ALL
+# else
+#  define ASIO_OS_DEF_AI_ALL 0
+# endif
+# if defined(AI_ADDRCONFIG)
+#  define ASIO_OS_DEF_AI_ADDRCONFIG AI_ADDRCONFIG
+# else
+#  define ASIO_OS_DEF_AI_ADDRCONFIG 0
+# endif
 # if defined (_WIN32_WINNT)
 const int max_iov_len = 64;
 # else
