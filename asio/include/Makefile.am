@@ -265,6 +265,8 @@ nobase_include_HEADERS = \
 	asio/handler_type.hpp \
 	asio/high_resolution_timer.hpp \
 	asio.hpp \
+	asio/impl/buffered_read_stream.hpp \
+	asio/impl/buffered_write_stream.hpp \
 	asio/impl/connect.hpp \
 	asio/impl/error_code.ipp \
 	asio/impl/error.ipp \
