@@ -226,7 +226,7 @@ Scatter-Gather:
 * For sockets, at most 16 buffers may be transferred in a single operation.
 
 
-[heading Windows NT, 2000, XP, 2003 and Vista]
+[heading Windows NT, 2000, XP, 2003, Vista, 7 and 8]
 
 Demultiplexing mechanism:
 
@@ -258,6 +258,48 @@ Scatter-Gather:
 
 * For stream-oriented handles, only one buffer may be transferred in a single
 operation.
+
+[heading Windows Runtime]
+
+Asio provides limited support for the Windows Runtime. It requires that the
+language extensions be enabled. Due to the restricted facilities exposed by the
+Windows Runtime API, the support comes with the following caveats:
+
+* The core facilities such as the `io_service`, `strand`, buffers, composed
+  operations, timers, etc., should all work as normal.
+
+* For sockets, only client-side TCP is supported.
+
+* Explicit binding of a client-side TCP socket is not supported.
+
+* The `cancel()` function is not supported for sockets. Asynchronous
+  operations may only be cancelled by closing the socket.
+
+* Operations that use `null_buffers` are not supported.
+
+* Only `tcp::no_delay` and `socket_base::keep_alive` options are supported.
+
+* Resolvers do not support service names, only numbers. I.e. you must
+  use "80" rather than "http".
+
+* Most resolver query flags have no effect.
+
+Demultiplexing mechanism:
+
+* Uses the `Windows::Networking::Sockets::StreamSocket` class to implement
+  asynchronous TCP socket operations.
+
+Threads:
+
+* Event completions are delivered to the Windows thread pool and posted to the
+  `io_service` for the handler to be executed.
+
+* An additional thread per `io_service` is used to trigger timers. This thread
+  is created on construction of the first timer objects.
+
+Scatter-Gather:
+
+* For sockets, at most one buffer may be transferred in a single operation.
 
 
 [endsect]
