@@ -1446,6 +1446,9 @@
         <xsl:when test="declname = 'DatagramSocketService1'">
           <xsl:value-of select="concat('``[link asio.reference.DatagramSocketService ', declname, ']``')"/>
         </xsl:when>
+        <xsl:when test="declname = 'EndpointIterator'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'Elem'">
           <xsl:value-of select="declname"/>
         </xsl:when>
