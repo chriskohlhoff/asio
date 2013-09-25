@@ -9,12 +9,9 @@
 
 [heading Asio 1.10.1]
 
-* Implemented a limited port to Windows Runtime.
-
-  This change adds limited support for using Asio with the Windows
-  Runtime. It requires that the language extensions be enabled. Due to the
-  restricted facilities exposed by the Windows Runtime API, the port comes
-  with the following caveats:
+* Implemented a limited port to Windows Runtime. This support requires that the
+  language extensions be enabled. Due to the restricted facilities exposed by
+  the Windows Runtime API, the port also comes with the following caveats:
 
   * The core facilities such as the `io_service`, `strand`, buffers, composed
     operations, timers, etc., should all work as normal.
@@ -36,15 +33,11 @@
   * Most resolver query flags have no effect.
 
 * Extended the ability to use Asio without Boost to include Microsoft Visual
-  Studio 2012.
-    
-  When using a C++11 compiler, most of Asio may now be used without a
-  dependency on Boost header files or libraries. To use Asio in this way,
-  define `ASIO_STANDALONE` on your compiler command line or as part of the
-  project options.
-    
-  The standalone configuration has been tested for the following platforms and
-  compilers:
+  Studio 2012. When using a C++11 compiler, most of Asio may now be used
+  without a dependency on Boost header files or libraries. To use Asio in this
+  way, define `ASIO_STANDALONE` on your compiler command line or as part of the
+  project options. This standalone configuration has been tested for the
+  following platforms and compilers:
 
   * Microsoft Visual Studio 2012
 
@@ -162,14 +155,11 @@
   examples have been converted to their C++11 equivalents.
 
 * Add the ability to use Asio without Boost, for a limited set of platforms.
-    
   When using a C++11 compiler, most of Asio may now be used without a
   dependency on Boost header files or libraries. To use Asio in this way,
   define `ASIO_STANDALONE` on your compiler command line or as part of the
-  project options.
-    
-  The standalone configuration has currently been tested for the following
-  platforms and compilers:
+  project options. This standalone configuration has currently been tested for
+  the following platforms and compilers:
 
   * Linux with g++ 4.7 (requires [^-std=c++11])
     
