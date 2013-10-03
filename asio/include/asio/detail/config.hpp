@@ -456,11 +456,12 @@
 
 // WinRT target.
 #if !defined(ASIO_WINDOWS_RUNTIME)
-# if defined(WINAPI_FAMILY)
-#  if ((WINAPI_FAMILY & WINAPI_PARTITION_APP) != 0)
+# if defined(__cplusplus_winrt)
+#  include <winapifamily.h>
+#  if WINAPI_FAMILY_ONE_PARTITION(WINAPI_FAMILY, WINAPI_PARTITION_APP)
 #   define ASIO_WINDOWS_RUNTIME 1
-#  endif // ((WINAPI_FAMILY & WINAPI_PARTITION_APP) != 0)
-# endif // defined(WINAPI_FAMILY)
+#  endif // WINAPI_FAMILY_ONE_PARTITION(WINAPI_FAMILY, WINAPI_PARTITION_APP)
+# endif // defined(__cplusplus_winrt)
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
 // Windows target. Excludes WinRT.
@@ -871,12 +872,12 @@
 #   endif // ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 3)
 #  endif // defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 # endif // defined(__linux__)
-# if defined(ASIO_MSVC) && defined(WINAPI_FAMILY)
+# if defined(ASIO_MSVC) && defined(ASIO_WINDOWS_RUNTIME)
 #  if (_MSC_VER >= 1700)
 #   define ASIO_HAS_THREAD_KEYWORD_EXTENSION 1
 #   define ASIO_THREAD_KEYWORD __declspec(thread)
 #  endif // (_MSC_VER >= 1700)
-# endif // defined(ASIO_MSVC) && defined(WINAPI_FAMILY)
+# endif // defined(ASIO_MSVC) && defined(ASIO_WINDOWS_RUNTIME)
 #endif // !defined(ASIO_DISABLE_THREAD_KEYWORD_EXTENSION)
 #if !defined(ASIO_THREAD_KEYWORD)
 # define ASIO_THREAD_KEYWORD __thread
