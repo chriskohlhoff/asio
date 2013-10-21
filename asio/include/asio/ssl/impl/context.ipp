@@ -235,19 +235,27 @@ void context::clear_options(context::options o)
 asio::error_code context::clear_options(
     context::options o, asio::error_code& ec)
 {
-#if !defined(SSL_OP_NO_COMPRESSION)
+#if (OPENSSL_VERSION_NUMBER >= 0x009080DFL) \
+  && (OPENSSL_VERSION_NUMBER != 0x00909000L)
+# if !defined(SSL_OP_NO_COMPRESSION)
   if ((o & context::no_compression) != 0)
   {
-#if (OPENSSL_VERSION_NUMBER >= 0x00908000L)
+# if (OPENSSL_VERSION_NUMBER >= 0x00908000L)
     handle_->comp_methods = SSL_COMP_get_compression_methods();
-#endif // (OPENSSL_VERSION_NUMBER >= 0x00908000L)
+# endif // (OPENSSL_VERSION_NUMBER >= 0x00908000L)
     o ^= context::no_compression;
   }
-#endif // !defined(SSL_OP_NO_COMPRESSION)
+# endif // !defined(SSL_OP_NO_COMPRESSION)
 
   ::SSL_CTX_clear_options(handle_, o);
 
   ec = asio::error_code();
+#else // (OPENSSL_VERSION_NUMBER >= 0x009080DFL)
+      //   && (OPENSSL_VERSION_NUMBER != 0x00909000L)
+  (void)o;
+  ec = asio::error::operation_not_supported;
+#endif // (OPENSSL_VERSION_NUMBER >= 0x009080DFL)
+       //   && (OPENSSL_VERSION_NUMBER != 0x00909000L)
   return ec;
 }
 
