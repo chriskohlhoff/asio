@@ -61800,6 +61800,11 @@ Note that in the following case:
 the completion of the first async operation will perform `s.dispatch(a)`, and the second will perform `s.dispatch(b)`, but the order in which those are performed is unspecified. That is, you cannot state whether one happens-before the other. Therefore none of the above conditions are met and no ordering guarantee is made.
 
 
+[heading Remarks]
+      
+The implementation makes no guarantee that handlers posted or dispatched through different `strand` objects will be invoked concurrently.
+
+
 [heading Thread Safety]
   
 ['Distinct] ['objects:] Safe.
@@ -66793,7 +66798,7 @@ Create an iterator from a sequence of endpoints, host and service name.
 
 
   template<
-      typename ``[link asio.reference.EndpointIterator EndpointIterator]``>
+      typename EndpointIterator>
   static basic_resolver_iterator ``[link asio.reference.ip__basic_resolver_iterator.create.overload3 create]``(
       EndpointIterator begin,
       EndpointIterator end,
@@ -66843,7 +66848,7 @@ Create an iterator from a sequence of endpoints, host and service name.
 
 
   template<
-      typename ``[link asio.reference.EndpointIterator EndpointIterator]``>
+      typename EndpointIterator>
   static basic_resolver_iterator create(
       EndpointIterator begin,
       EndpointIterator end,
@@ -94454,6 +94459,11 @@ Note that in the following case:
 
 
 the completion of the first async operation will perform `s.dispatch(a)`, and the second will perform `s.dispatch(b)`, but the order in which those are performed is unspecified. That is, you cannot state whether one happens-before the other. Therefore none of the above conditions are met and no ordering guarantee is made.
+
+
+[heading Remarks]
+      
+The implementation makes no guarantee that handlers posted or dispatched through different `strand` objects will be invoked concurrently.
 
 
 [heading Thread Safety]
