@@ -20,6 +20,7 @@ noinst_PROGRAMS = \
 	echo/blocking_tcp_echo_server \
 	echo/blocking_udp_echo_client \
 	echo/blocking_udp_echo_server \
+	go/echo_server \
 	http/client/async_client \
 	http/client/sync_client \
 	http/server/http_server \
@@ -97,6 +98,7 @@ echo_blocking_tcp_echo_client_SOURCES = echo/blocking_tcp_echo_client.cpp
 echo_blocking_tcp_echo_server_SOURCES = echo/blocking_tcp_echo_server.cpp
 echo_blocking_udp_echo_client_SOURCES = echo/blocking_udp_echo_client.cpp
 echo_blocking_udp_echo_server_SOURCES = echo/blocking_udp_echo_server.cpp
+go_echo_server_SOURCES = go/echo_server.cpp
 http_client_async_client_SOURCES = http/client/async_client.cpp
 http_client_sync_client_SOURCES = http/client/sync_client.cpp
 http_server_http_server_SOURCES = \
