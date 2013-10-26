@@ -19,3 +19,11 @@
 #ifdef fork
 # undef fork
 #endif
+
+#ifdef let
+# undef let
+#endif
+
+#ifdef await
+# undef await
+#endif

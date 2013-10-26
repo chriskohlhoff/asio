@@ -21,3 +21,11 @@
 #ifndef fork
 # define fork ASIO_CORO_FORK
 #endif
+
+#ifndef let
+# define let ASIO_CORO_LET
+#endif
+
+#ifndef await
+# define await ASIO_CORO_AWAIT
+#endif

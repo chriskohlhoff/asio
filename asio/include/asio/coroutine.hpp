@@ -11,6 +11,9 @@
 #ifndef ASIO_COROUTINE_HPP
 #define ASIO_COROUTINE_HPP
 
+#include <asio/error_code.hpp>
+#include <asio/system_error.hpp>
+
 namespace asio {
 namespace detail {
 
@@ -237,6 +240,8 @@ class coroutine_ref;
  * @li @c ASIO_CORO_REENTER instead of @c reenter
  * @li @c ASIO_CORO_YIELD instead of @c yield
  * @li @c ASIO_CORO_FORK instead of @c fork
+ * @li @c ASIO_CORO_LET instead of @c let
+ * @li @c ASIO_CORO_AWAIT instead of @c await
  */
 class coroutine
 {
@@ -253,25 +258,78 @@ public:
   /// Returns true if the coroutine has reached its terminal state.
   bool is_complete() const { return value_ == -1; }
 
+  /// Used by the @c reenter pseudo-keyword to obtain the coroutine state.
+  friend int& coroutine_state(coroutine& c) { return c.value_; }
+
+  /// Used by the @c reenter pseudo-keyword to obtain the coroutine state.
+  friend int& coroutine_state(coroutine* c) { return c->value_; }
+
+  /// Used by the @c reenter pseudo-keyword to obtain the error code resulting
+  /// from the previous operation. If set, an exception will be thrown
+  /// immediately following the resumption point.
+  friend const asio::error_code* coroutine_error(coroutine&) { return 0; }
+
+  /// Used by the @c reenter pseudo-keyword to obtain the error code resulting
+  /// from the previous operation. If set, an exception will be thrown
+  /// immediately following the resumption point.
+  friend const asio::error_code* coroutine_error(coroutine*) { return 0; }
+
+  /// Called by the @c let and @c await pseudo-keywords to obtain the pointer
+  /// used to refer to any variables that should be set from the result of an
+  /// asynchronous operation.
+  friend void** coroutine_async_result(coroutine&) { return 0; }
+
+  /// Called by the @c let and @c await pseudo-keywords to obtain the pointer
+  /// used to refer to any variables that should be set from the result of an
+  /// asynchronous operation.
+  friend void** coroutine_async_result(coroutine*) { return 0; }
+
 private:
-  friend class detail::coroutine_ref;
   int value_;
 };
 
-
 namespace detail {
+
+template <typename T> class coroutine_async_result {};
 
 class coroutine_ref
 {
 public:
-  coroutine_ref(coroutine& c) : value_(c.value_), modified_(false) {}
-  coroutine_ref(coroutine* c) : value_(c->value_), modified_(false) {}
+  // Construct a coroutine reference for use in the pseudo-keywords.
+  coroutine_ref(int& value, const asio::error_code* ec, void** result)
+    : value_(value), ec_(ec), async_result_(result), modified_(false) {}
+
+  // Destructor sets coroutine to the completed state unless explicitly set.
   ~coroutine_ref() { if (!modified_) value_ = -1; }
+
+  // Obtain the coroutine state.
   operator int() const { return value_; }
+
+  // Set the coroutine state.
   int& operator=(int v) { modified_ = true; return value_ = v; }
+
+  // Operator used to associate a variable to store the async result.
+  template <typename T>
+  coroutine_async_result<T> operator&(T& t)
+  {
+    *async_result_ = &t;
+    return coroutine_async_result<T>();
+  }
+
+  // This overload is used when the result is ignored. 
+  template <typename T> void operator&(coroutine_async_result<T>) {}
+
+  // Throw an exception if the coroutine has an associated error.
+  void throw_on_error() const
+  {
+    if (ec_ && *ec_) throw asio::system_error(*ec_);
+  }
+
 private:
   void operator=(const coroutine_ref&);
   int& value_;
+  const asio::error_code* ec_;
+  void** async_result_;
   bool modified_;
 };
 
@@ -279,7 +337,9 @@ private:
 } // namespace asio
 
 #define ASIO_CORO_REENTER(c) \
-  switch (::asio::detail::coroutine_ref _coro_value = c) \
+  switch (::asio::detail::coroutine_ref _coro_value = \
+      ::asio::detail::coroutine_ref(coroutine_state(c), \
+        coroutine_error(c), coroutine_async_result(c))) \
     case -1: if (_coro_value) \
     { \
       goto terminate_coroutine; \
@@ -296,6 +356,7 @@ private:
     if (_coro_value == 0) \
     { \
       case (n): ; \
+      _coro_value.throw_on_error(); \
       break; \
     } \
     else \
@@ -324,5 +385,9 @@ private:
 # define ASIO_CORO_YIELD ASIO_CORO_YIELD_IMPL(__LINE__)
 # define ASIO_CORO_FORK ASIO_CORO_FORK_IMPL(__LINE__)
 #endif // defined(_MSC_VER)
+
+#define ASIO_CORO_LET _coro_value&
+
+#define ASIO_CORO_AWAIT ASIO_CORO_YIELD ASIO_CORO_LET
 
 #endif // ASIO_COROUTINE_HPP
