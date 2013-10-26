@@ -130,7 +130,7 @@ private:
 };
 
 #if defined(GENERATING_DOCUMENTATION)
-/// Context object the represents the currently executing coroutine.
+/// Context object that represents the currently executing coroutine.
 typedef basic_yield_context<unspecified> yield_context;
 #else // defined(GENERATING_DOCUMENTATION)
 typedef basic_yield_context<
@@ -217,7 +217,7 @@ void spawn(basic_yield_context<Handler> ctx,
     const boost::coroutines::attributes& attributes
       = boost::coroutines::attributes());
 
-/// Start a new stackful coroutine that executes in the contex of a strand.
+/// Start a new stackful coroutine that executes in the context of a strand.
 /**
  * This function is used to launch a new coroutine.
  *

@@ -88739,7 +88739,7 @@ This function is used to launch a new coroutine.
 [section:overload3 spawn (3 of 4 overloads)]
 
 
-Start a new stackful coroutine that executes in the contex of a strand. 
+Start a new stackful coroutine that executes in the context of a strand. 
 
 
   template<
@@ -106138,7 +106138,7 @@ The number of bytes written. If an error occurs, returns the total number of byt
 [section:yield_context yield_context]
 
 [indexterm1 yield_context] 
-Context object the represents the currently executing coroutine. 
+Context object that represents the currently executing coroutine. 
 
 
   typedef basic_yield_context< unspecified > yield_context;
