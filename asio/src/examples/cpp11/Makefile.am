@@ -21,6 +21,7 @@ noinst_PROGRAMS = \
 	echo/blocking_udp_echo_client \
 	echo/blocking_udp_echo_server \
 	futures/daytime_client \
+	go/echo_server \
 	http/server/http_server
 
 noinst_HEADERS = \
@@ -39,6 +40,7 @@ echo_blocking_tcp_echo_server_SOURCES = echo/blocking_tcp_echo_server.cpp
 echo_blocking_udp_echo_client_SOURCES = echo/blocking_udp_echo_client.cpp
 echo_blocking_udp_echo_server_SOURCES = echo/blocking_udp_echo_server.cpp
 futures_daytime_client_SOURCES = futures/daytime_client.cpp
+go_echo_server_SOURCES = go/echo_server.cpp
 http_server_http_server_SOURCES = \
 	http/server/connection.cpp \
 	http/server/connection_manager.cpp \

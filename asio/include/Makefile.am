@@ -259,6 +259,7 @@ nobase_include_HEADERS = \
 	asio/generic/raw_protocol.hpp \
 	asio/generic/seq_packet_protocol.hpp \
 	asio/generic/stream_protocol.hpp \
+	asio/go.hpp \
 	asio/handler_alloc_hook.hpp \
 	asio/handler_continuation_hook.hpp \
 	asio/handler_invoke_hook.hpp \
@@ -270,6 +271,7 @@ nobase_include_HEADERS = \
 	asio/impl/connect.hpp \
 	asio/impl/error_code.ipp \
 	asio/impl/error.ipp \
+	asio/impl/go.hpp \
 	asio/impl/handler_alloc_hook.ipp \
 	asio/impl/io_service.hpp \
 	asio/impl/io_service.ipp \
