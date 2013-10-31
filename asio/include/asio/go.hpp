@@ -172,8 +172,8 @@ private:
   detail::shared_ptr<detail::stackless_impl_base<Handler> > stackless_impl_;
   Handler& handler_;
   coroutine* coroutine_;
-  const asio::error_code* throw_ec_;
-  void** async_result_;
+  const asio::error_code* const throw_ec_;
+  void** const async_result_;
   asio::error_code* ec_;
 };
 

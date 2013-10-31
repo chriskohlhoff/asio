@@ -328,8 +328,8 @@ public:
 private:
   void operator=(const coroutine_ref&);
   int& value_;
-  const asio::error_code* ec_;
-  void** async_result_;
+  const asio::error_code* const ec_;
+  void** const async_result_;
   bool modified_;
 };
 
