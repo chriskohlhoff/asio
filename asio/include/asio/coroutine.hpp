@@ -247,44 +247,75 @@ class coroutine
 {
 public:
   /// Constructs a coroutine in its initial state.
-  coroutine() : value_(0) {}
+  coroutine()
+    : value_(0)
+  {
+  }
 
   /// Returns true if the coroutine is the child of a fork.
-  bool is_child() const { return value_ < 0; }
+  bool is_child() const
+  {
+    return value_ < 0;
+  }
 
   /// Returns true if the coroutine is the parent of a fork.
-  bool is_parent() const { return !is_child(); }
+  bool is_parent() const
+  {
+    return !is_child();
+  }
 
   /// Returns true if the coroutine has reached its terminal state.
-  bool is_complete() const { return value_ == -1; }
+  bool is_complete() const
+  {
+    return value_ == -1;
+  }
 
-  /// Used by the @c reenter pseudo-keyword to obtain the coroutine state.
-  friend int& coroutine_state(coroutine& c) { return c.value_; }
+  /// Used by the @c reenter pseudo-keyword to obtain the true coroutine object.
+  friend coroutine& get_coroutine(coroutine& c)
+  {
+    return c;
+  }
 
-  /// Used by the @c reenter pseudo-keyword to obtain the coroutine state.
-  friend int& coroutine_state(coroutine* c) { return c->value_; }
+  /// Used by the @c reenter pseudo-keyword to obtain the true coroutine object.
+  friend coroutine& get_coroutine(coroutine* c)
+  {
+    return *c;
+  }
 
   /// Used by the @c reenter pseudo-keyword to obtain the error code resulting
   /// from the previous operation. If set, an exception will be thrown
   /// immediately following the resumption point.
-  friend const asio::error_code* coroutine_error(coroutine&) { return 0; }
+  friend const asio::error_code* get_coroutine_error(coroutine&)
+  {
+    return 0;
+  }
 
   /// Used by the @c reenter pseudo-keyword to obtain the error code resulting
   /// from the previous operation. If set, an exception will be thrown
   /// immediately following the resumption point.
-  friend const asio::error_code* coroutine_error(coroutine*) { return 0; }
+  friend const asio::error_code* get_coroutine_error(coroutine*)
+  {
+    return 0;
+  }
 
   /// Called by the @c let and @c await pseudo-keywords to obtain the pointer
   /// used to refer to any variables that should be set from the result of an
   /// asynchronous operation.
-  friend void** coroutine_async_result(coroutine&) { return 0; }
+  friend void** get_coroutine_async_result(coroutine&)
+  {
+    return 0;
+  }
 
   /// Called by the @c let and @c await pseudo-keywords to obtain the pointer
   /// used to refer to any variables that should be set from the result of an
   /// asynchronous operation.
-  friend void** coroutine_async_result(coroutine*) { return 0; }
+  friend void** get_coroutine_async_result(coroutine*)
+  {
+    return 0;
+  }
 
 private:
+  friend class detail::coroutine_ref;
   int value_;
 };
 
@@ -296,17 +327,33 @@ class coroutine_ref
 {
 public:
   // Construct a coroutine reference for use in the pseudo-keywords.
-  coroutine_ref(int& value, const asio::error_code* ec, void** result)
-    : value_(value), ec_(ec), async_result_(result), modified_(false) {}
+  coroutine_ref(coroutine& c, const asio::error_code* ec, void** result)
+    : value_(c.value_),
+      modified_(false),
+      ec_(ec),
+      async_result_(result)
+  {
+  }
 
   // Destructor sets coroutine to the completed state unless explicitly set.
-  ~coroutine_ref() { if (!modified_) value_ = -1; }
+  ~coroutine_ref()
+  {
+    if (!modified_)
+      value_ = -1;
+  }
 
   // Obtain the coroutine state.
-  operator int() const { return value_; }
+  operator int() const
+  {
+    return value_;
+  }
 
   // Set the coroutine state.
-  int& operator=(int v) { modified_ = true; return value_ = v; }
+  int& operator=(int v)
+  {
+    modified_ = true;
+    return value_ = v;
+  }
 
   // Operator used to associate a variable to store the async result.
   template <typename T>
@@ -317,20 +364,23 @@ public:
   }
 
   // This overload is used when the result is ignored. 
-  template <typename T> void operator&(coroutine_async_result<T>) {}
+  template <typename T> void operator&(coroutine_async_result<T>)
+  {
+  }
 
   // Throw an exception if the coroutine has an associated error.
   void throw_on_error() const
   {
-    if (ec_ && *ec_) throw asio::system_error(*ec_);
+    if (ec_ && *ec_)
+      throw asio::system_error(*ec_);
   }
 
 private:
   void operator=(const coroutine_ref&);
   int& value_;
+  bool modified_;
   const asio::error_code* const ec_;
   void** const async_result_;
-  bool modified_;
 };
 
 } // namespace detail
@@ -338,8 +388,8 @@ private:
 
 #define ASIO_CORO_REENTER(c) \
   switch (::asio::detail::coroutine_ref _coro_value = \
-      ::asio::detail::coroutine_ref(coroutine_state(c), \
-        coroutine_error(c), coroutine_async_result(c))) \
+      ::asio::detail::coroutine_ref(get_coroutine(c), \
+        get_coroutine_error(c), get_coroutine_async_result(c))) \
     case -1: if (_coro_value) \
     { \
       goto terminate_coroutine; \

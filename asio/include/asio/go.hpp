@@ -121,21 +121,21 @@ public:
   }
 
   /// Used by the @c reenter pseudo-keyword to obtain the coroutine state.
-  friend int& coroutine_state(basic_stackless_context& c)
+  friend coroutine& get_coroutine(basic_stackless_context& c)
   {
-    return coroutine_state(c.coroutine_);
+    return *c.coroutine_;
   }
 
   /// Used by the @c reenter pseudo-keyword to obtain the coroutine state.
-  friend int& coroutine_state(basic_stackless_context* c)
+  friend coroutine& get_coroutine(basic_stackless_context* c)
   {
-    return coroutine_state(c->coroutine_);
+    return *c->coroutine_;
   }
 
   /// Used by the @c reenter pseudo-keyword to obtain the error code resulting
   /// from the previous operation. If set, an exception will be thrown
   /// immediately following the resumption point.
-  friend const asio::error_code* coroutine_error(
+  friend const asio::error_code* get_coroutine_error(
       basic_stackless_context& c)
   {
     return c.throw_ec_;
@@ -144,7 +144,7 @@ public:
   /// Used by the @c reenter pseudo-keyword to obtain the error code resulting
   /// from the previous operation. If set, an exception will be thrown
   /// immediately following the resumption point.
-  friend const asio::error_code* coroutine_error(
+  friend const asio::error_code* get_coroutine_error(
       basic_stackless_context* c)
   {
     return c->throw_ec_;
@@ -153,7 +153,7 @@ public:
   /// Called by the @c let and @c await pseudo-keywords to obtain the pointer
   /// used to refer to any variables that should be set from the result of an
   /// asynchronous operation.
-  friend void** coroutine_async_result(basic_stackless_context& c)
+  friend void** get_coroutine_async_result(basic_stackless_context& c)
   {
     return c.async_result_;
   }
@@ -161,7 +161,7 @@ public:
   /// Called by the @c let and @c await pseudo-keywords to obtain the pointer
   /// used to refer to any variables that should be set from the result of an
   /// asynchronous operation.
-  friend void** coroutine_async_result(basic_stackless_context* c)
+  friend void** get_coroutine_async_result(basic_stackless_context* c)
   {
     return c->async_result_;
   }
