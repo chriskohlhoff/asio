@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/async_result.hpp"
+#include "asio/detail/atomic_count.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
@@ -31,31 +32,76 @@ namespace detail {
   template <typename Handler>
   class stackless_impl_base
   {
-  public:
+  protected:
     template <typename Handler1>
     explicit stackless_impl_base(ASIO_MOVE_ARG(Handler1) handler,
-        void (*resume_fn)(const basic_stackless_context<Handler>&))
+        void (*resume_fn)(const basic_stackless_context<Handler>&),
+        void (*destroy_fn)(stackless_impl_base*))
       : handler_(ASIO_MOVE_CAST(Handler1)(handler)),
-        async_result_(0),
-        resume_(resume_fn)
+        ref_count_(1),
+        result_ec_(&throw_ec_),
+        result_value_(0),
+        resume_(resume_fn),
+        destroy_(destroy_fn)
     {
     }
 
-    static void resume(const shared_ptr<stackless_impl_base>& impl)
-    {
-      impl->async_result_ = 0;
-      const basic_stackless_context<Handler> ctx(impl, impl->handler_,
-          &impl->coroutine_, &impl->throw_ec_, &impl->async_result_);
-      impl->resume_(ctx);
-    }
+  public:
+    static stackless_impl_base* add_ref(stackless_impl_base* impl);
+    static stackless_impl_base* move_ref(stackless_impl_base*& impl);
+    static void release_ref(stackless_impl_base* impl);
+    static void resume(stackless_impl_base*& impl);
 
   //private:
     Handler handler_;
+    asio::detail::atomic_count ref_count_;
     asio::coroutine coroutine_;
     asio::error_code throw_ec_;
-    void* async_result_;
+    asio::error_code* result_ec_;
+    void* result_value_;
     void (*resume_)(const basic_stackless_context<Handler>&);
+    void (*destroy_)(stackless_impl_base*);
   };
+
+  template <typename Handler>
+  stackless_impl_base<Handler>* stackless_impl_base<Handler>::add_ref(
+      stackless_impl_base<Handler>* impl)
+  {
+    if (impl)
+      ++impl->ref_count_;
+    return impl;
+  }
+
+  template <typename Handler>
+  inline stackless_impl_base<Handler>* stackless_impl_base<Handler>::move_ref(
+      stackless_impl_base<Handler>*& impl)
+  {
+    stackless_impl_base* tmp = impl;
+    impl = 0;
+    return tmp;
+  }
+
+  template <typename Handler>
+  void stackless_impl_base<Handler>::release_ref(
+      stackless_impl_base<Handler>* impl)
+  {
+    if (impl)
+    {
+      if (--impl->ref_count_ == 0)
+        impl->destroy_(impl);
+    }
+  }
+
+  template <typename Handler>
+  void stackless_impl_base<Handler>::resume(
+      stackless_impl_base<Handler>*& impl)
+  {
+    impl->result_value_ = 0;
+    const basic_stackless_context<Handler> ctx = { &impl, &impl->throw_ec_ };
+    impl->resume_(ctx);
+    if (impl && impl->coroutine_.is_complete())
+      impl->handler_();
+  }
 
   template <typename Handler, typename Function>
   class stackless_impl :
@@ -67,7 +113,8 @@ namespace detail {
         ASIO_MOVE_ARG(Function1) function)
       : stackless_impl_base<Handler>(
           ASIO_MOVE_CAST(Handler1)(handler),
-          &stackless_impl::do_resume),
+          &stackless_impl::do_resume,
+          &stackless_impl::do_destroy),
         function_(ASIO_MOVE_CAST(Function1)(function))
     {
     }
@@ -75,8 +122,13 @@ namespace detail {
   private:
     static void do_resume(const basic_stackless_context<Handler>& ctx)
     {
-      stackless_impl_base<Handler>* base = ctx.stackless_impl_.get();
+      stackless_impl_base<Handler>* base = *ctx.impl_;
       static_cast<stackless_impl*>(base)->function_(ctx);
+    }
+
+    static void do_destroy(stackless_impl_base<Handler>* impl)
+    {
+      delete static_cast<stackless_impl*>(impl);
     }
 
     Function function_;
@@ -86,62 +138,90 @@ namespace detail {
   class stackless_handler
   {
   public:
-    stackless_handler(basic_stackless_context<Handler> ctx)
-      : stackless_impl_(ctx.stackless_impl_),
-        handler_(ctx.handler_),
-        ec_(ctx.ec_),
-        value_(*ctx.async_result_)
+    stackless_handler(const basic_stackless_context<Handler>& ctx)
+      : impl_(stackless_impl_base<Handler>::move_ref(*ctx.impl_))
     {
+      impl_->result_ec_ = ctx.ec_;
+    }
+
+    stackless_handler(const stackless_handler& other)
+      : impl_(stackless_impl_base<Handler>::add_ref(other.impl_))
+    {
+    }
+
+#if defined(ASIO_HAS_MOVE)
+    stackless_handler(stackless_handler&& other)
+      : impl_(stackless_impl_base<Handler>::move_ref(other.impl_))
+    {
+    }
+#endif // defined(ASIO_HAS_MOVE)
+
+    ~stackless_handler()
+    {
+      stackless_impl_base<Handler>::release_ref(impl_);
     }
 
     void operator()(T value)
     {
-      *ec_ = asio::error_code();
-      if (value_) *static_cast<T*>(value_) = value;
-      stackless_impl_base<Handler>::resume(stackless_impl_);
+      *impl_->result_ec_ = asio::error_code();
+      if (impl_->result_value_)
+        *static_cast<T*>(impl_->result_value_) = value;
+      stackless_impl_base<Handler>::resume(impl_);
     }
 
     void operator()(asio::error_code ec, T value)
     {
-      *ec_ = ec;
-      if (value_) *static_cast<T*>(value_) = value;
-      stackless_impl_base<Handler>::resume(stackless_impl_);
+      *impl_->result_ec_ = ec;
+      if (impl_->result_value_)
+        *static_cast<T*>(impl_->result_value_) = value;
+      stackless_impl_base<Handler>::resume(impl_);
     }
 
   //private:
-    shared_ptr<stackless_impl_base<Handler> > stackless_impl_;
-    Handler& handler_;
-    asio::error_code* ec_;
-    void* value_;
+    stackless_impl_base<Handler>* impl_;
   };
 
   template <typename Handler>
   class stackless_handler<Handler, void>
   {
   public:
-    stackless_handler(basic_stackless_context<Handler> ctx)
-      : stackless_impl_(ctx.stackless_impl_),
-        handler_(ctx.handler_),
-        ec_(ctx.ec_)
+    stackless_handler(const basic_stackless_context<Handler>& ctx)
+      : impl_(stackless_impl_base<Handler>::move_ref(*ctx.impl_))
     {
+      impl_->result_ec_ = ctx.ec_;
+    }
+
+    stackless_handler(const stackless_handler& other)
+      : impl_(stackless_impl_base<Handler>::add_ref(other.impl_))
+    {
+    }
+
+#if defined(ASIO_HAS_MOVE)
+    stackless_handler(stackless_handler&& other)
+      : impl_(stackless_impl_base<Handler>::move_ref(other.impl_))
+    {
+    }
+#endif // defined(ASIO_HAS_MOVE)
+
+    ~stackless_handler()
+    {
+      stackless_impl_base<Handler>::release_ref(impl_);
     }
 
     void operator()()
     {
-      *ec_ = asio::error_code();
-      stackless_impl_base<Handler>::resume(stackless_impl_);
+      *impl_->result_ec_ = asio::error_code();
+      stackless_impl_base<Handler>::resume(impl_);
     }
 
     void operator()(asio::error_code ec)
     {
-      *ec_ = ec;
-      stackless_impl_base<Handler>::resume(stackless_impl_);
+      *impl_->result_ec_ = ec;
+      stackless_impl_base<Handler>::resume(impl_);
     }
 
   //private:
-    shared_ptr<stackless_impl_base<Handler> > stackless_impl_;
-    Handler& handler_;
-    asio::error_code* ec_;
+    stackless_impl_base<Handler>* impl_;
   };
 
   template <typename Handler, typename T>
@@ -149,7 +229,7 @@ namespace detail {
       stackless_handler<Handler, T>* this_handler)
   {
     return asio_handler_alloc_helpers::allocate(
-        size, this_handler->handler_);
+        size, this_handler->impl_->handler_);
   }
 
   template <typename Handler, typename T>
@@ -157,7 +237,7 @@ namespace detail {
       stackless_handler<Handler, T>* this_handler)
   {
     asio_handler_alloc_helpers::deallocate(
-        pointer, size, this_handler->handler_);
+        pointer, size, this_handler->impl_->handler_);
   }
 
   template <typename Handler, typename T>
@@ -172,7 +252,7 @@ namespace detail {
       stackless_handler<Handler, T>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
-        function, this_handler->handler_);
+        function, this_handler->impl_->handler_);
   }
 
   template <typename Function, typename Handler, typename T>
@@ -180,24 +260,44 @@ namespace detail {
       stackless_handler<Handler, T>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
-        function, this_handler->handler_);
+        function, this_handler->impl_->handler_);
   }
 
-  template <typename Handler>
-  struct resume_helper
+  template <typename Handler, typename Function>
+  struct go_helper
   {
-    explicit resume_helper(
-        shared_ptr<stackless_impl_base<Handler> > stackless_impl)
-      : stackless_impl_(stackless_impl)
+    template <typename Handler1, typename Function1>
+    go_helper(ASIO_MOVE_ARG(Handler1) handler,
+        ASIO_MOVE_ARG(Function1) function)
+      : impl_(new stackless_impl<Handler, Function>(
+            ASIO_MOVE_CAST(Handler1)(handler),
+            ASIO_MOVE_CAST(Function1)(function)))
     {
+    }
+
+    go_helper(const go_helper& other)
+      : impl_(stackless_impl_base<Handler>::add_ref(other.impl_))
+    {
+    }
+
+#if defined(ASIO_HAS_MOVE)
+    go_helper(go_helper&& other)
+      : impl_(stackless_impl_base<Handler>::move_ref(other.impl_))
+    {
+    }
+#endif // defined(ASIO_HAS_MOVE)
+
+    ~go_helper()
+    {
+      stackless_impl_base<Handler>::release_ref(impl_);
     }
 
     void operator()()
     {
-      stackless_impl_base<Handler>::resume(stackless_impl_);
+      stackless_impl_base<Handler>::resume(impl_);
     }
 
-    shared_ptr<stackless_impl_base<Handler> > stackless_impl_;
+    stackless_impl_base<Handler>* impl_;
   };
 
   inline void default_go_handler() {}
@@ -248,26 +348,65 @@ public:
   }
 };
 
+template <typename Handler>
+inline coroutine& get_coroutine(
+    basic_stackless_context<Handler>& c)
+{
+  return (*c.impl_)->coroutine_;
+}
+
+template <typename Handler>
+inline coroutine& get_coroutine(
+    basic_stackless_context<Handler>* c)
+{
+  return (*c->impl_)->coroutine_;
+}
+
+template <typename Handler>
+inline const asio::error_code* get_coroutine_error(
+    basic_stackless_context<Handler>& c)
+{
+  return &(*c.impl_)->throw_ec_;
+}
+
+template <typename Handler>
+inline const asio::error_code* get_coroutine_error(
+    basic_stackless_context<Handler>* c)
+{
+  return &(*c->impl_)->throw_ec_;
+}
+
+template <typename Handler>
+inline void** get_coroutine_async_result(
+    basic_stackless_context<Handler>& c)
+{
+  return &(*c.impl_)->result_value_;
+}
+
+template <typename Handler>
+inline void** get_coroutine_async_result(
+    basic_stackless_context<Handler>* c)
+{
+  return &(*c->impl_)->result_value_;
+}
+
 template <typename Handler, typename Function>
 void go(ASIO_MOVE_ARG(Handler) handler,
     ASIO_MOVE_ARG(Function) function)
 {
-  typedef typename remove_const<
-    typename remove_reference<Handler>::type>::type
-      handler_type;
+  typedef typename handler_type<Handler, void()>::type
+      real_handler_type;
 
   typedef typename remove_const<
     typename remove_reference<Function>::type>::type
       function_type;
 
-  detail::resume_helper<handler_type> helper(
-      detail::shared_ptr<detail::stackless_impl_base<handler_type> >(
-        new detail::stackless_impl<handler_type, function_type>(
-          ASIO_MOVE_CAST(Handler)(handler),
-          ASIO_MOVE_CAST(Function)(function))));
+  detail::go_helper<real_handler_type, function_type> helper(
+      ASIO_MOVE_CAST(Handler)(handler),
+      ASIO_MOVE_CAST(Function)(function));
 
   asio_handler_invoke_helpers::invoke(
-      helper, helper.stackless_impl_->handler_);
+      helper, helper.impl_->handler_);
 }
 
 template <typename Handler, typename Function>

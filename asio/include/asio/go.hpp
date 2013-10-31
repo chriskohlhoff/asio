@@ -17,7 +17,6 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/coroutine.hpp"
-#include "asio/detail/shared_ptr.hpp"
 #include "asio/detail/wrapped_handler.hpp"
 #include "asio/io_service.hpp"
 #include "asio/strand.hpp"
@@ -25,8 +24,11 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+namespace detail {
+  
+template <typename Handler> class stackless_impl_base;
 
-namespace detail { template <typename Handler> class stackless_impl_base; }
+} // namespace detail
 
 /// Context object the represents the currently executing coroutine.
 /**
@@ -53,26 +55,6 @@ template <typename Handler>
 class basic_stackless_context
 {
 public:
-  /// Construct a coroutine context to represent the specified coroutine.
-  /**
-   * Most applications do not need to use this constructor. Instead, the go()
-   * function passes a coroutine context as an argument to the coroutine
-   * function.
-   */
-  basic_stackless_context(
-      const detail::shared_ptr<
-        detail::stackless_impl_base<Handler> >& stackless_impl,
-      Handler& handler, coroutine* coro,
-      asio::error_code* throw_ec, void** result)
-    : stackless_impl_(stackless_impl),
-      handler_(handler),
-      coroutine_(coro),
-      throw_ec_(throw_ec),
-      async_result_(result),
-      ec_(throw_ec)
-  {
-  }
-
   /// Return a coroutine context that sets the specified error_code.
   /**
    * By default, when a coroutine context is used with an asynchronous operation, a
@@ -102,78 +84,10 @@ public:
     return tmp;
   }
 
-  /// Returns true if the coroutine is the child of a fork.
-  bool is_child() const
-  {
-    return coroutine_->is_child();
-  }
-
-  /// Returns true if the coroutine is the parent of a fork.
-  bool is_parent() const
-  {
-    return !is_child();
-  }
-
-  /// Returns true if the coroutine has reached its terminal state.
-  bool is_complete() const
-  {
-    return coroutine_->is_complete();
-  }
-
-  /// Used by the @c reenter pseudo-keyword to obtain the coroutine state.
-  friend coroutine& get_coroutine(basic_stackless_context& c)
-  {
-    return *c.coroutine_;
-  }
-
-  /// Used by the @c reenter pseudo-keyword to obtain the coroutine state.
-  friend coroutine& get_coroutine(basic_stackless_context* c)
-  {
-    return *c->coroutine_;
-  }
-
-  /// Used by the @c reenter pseudo-keyword to obtain the error code resulting
-  /// from the previous operation. If set, an exception will be thrown
-  /// immediately following the resumption point.
-  friend const asio::error_code* get_coroutine_error(
-      basic_stackless_context& c)
-  {
-    return c.throw_ec_;
-  }
-
-  /// Used by the @c reenter pseudo-keyword to obtain the error code resulting
-  /// from the previous operation. If set, an exception will be thrown
-  /// immediately following the resumption point.
-  friend const asio::error_code* get_coroutine_error(
-      basic_stackless_context* c)
-  {
-    return c->throw_ec_;
-  }
-
-  /// Called by the @c let and @c await pseudo-keywords to obtain the pointer
-  /// used to refer to any variables that should be set from the result of an
-  /// asynchronous operation.
-  friend void** get_coroutine_async_result(basic_stackless_context& c)
-  {
-    return c.async_result_;
-  }
-
-  /// Called by the @c let and @c await pseudo-keywords to obtain the pointer
-  /// used to refer to any variables that should be set from the result of an
-  /// asynchronous operation.
-  friend void** get_coroutine_async_result(basic_stackless_context* c)
-  {
-    return c->async_result_;
-  }
-
 #if defined(GENERATING_DOCUMENTATION)
 private:
 #endif // defined(GENERATING_DOCUMENTATION)
-  detail::shared_ptr<detail::stackless_impl_base<Handler> > stackless_impl_;
-  Handler& handler_;
-  coroutine* coroutine_;
-  const asio::error_code* const throw_ec_;
-  void** const async_result_;
+  detail::stackless_impl_base<Handler>** impl_;
   asio::error_code* ec_;
 };
 
