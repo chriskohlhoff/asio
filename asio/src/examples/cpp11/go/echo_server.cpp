@@ -35,7 +35,7 @@ public:
     auto self(shared_from_this());
 
     std::size_t n = 0;
-    char data[128] = "";
+    std::array<char, 128> data;
 
     asio::go(strand_,
         [this, self, n, data](asio::stackless_context ctx) mutable
