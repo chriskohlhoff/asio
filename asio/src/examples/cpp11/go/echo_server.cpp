@@ -33,8 +33,12 @@ public:
   void go()
   {
     auto self(shared_from_this());
+
+    std::size_t n = 0;
+    char data[128] = "";
+
     asio::go(strand_,
-        [this, self](asio::stackless_context ctx)
+        [this, self, n, data](asio::stackless_context ctx) mutable
         {
           try
           {
@@ -43,8 +47,8 @@ public:
               for (;;)
               {
                 timer_.expires_from_now(std::chrono::seconds(10));
-                await n_ = socket_.async_read_some(asio::buffer(data_), ctx);
-                yield asio::async_write(socket_, asio::buffer(data_, n_), ctx);
+                await n = socket_.async_read_some(asio::buffer(data), ctx);
+                yield asio::async_write(socket_, asio::buffer(data, n), ctx);
               }
             }
           }
@@ -55,14 +59,16 @@ public:
           }
         });
 
+    asio::error_code ignored_ec;
+
     asio::go(strand_,
-        [this, self](asio::stackless_context ctx)
+        [this, self, ignored_ec](asio::stackless_context ctx) mutable
         {
           reenter (ctx)
           {
             while (socket_.is_open())
             {
-              yield timer_.async_wait(ctx[ignored_ec_]);
+              yield timer_.async_wait(ctx[ignored_ec]);
               if (timer_.expires_from_now() <= std::chrono::seconds(0))
                 socket_.close();
             }
@@ -74,9 +80,6 @@ private:
   tcp::socket socket_;
   asio::steady_timer timer_;
   asio::io_service::strand strand_;
-  char data_[128];
-  std::size_t n_;
-  asio::error_code ignored_ec_;
 };
 
 int main(int argc, char* argv[])
