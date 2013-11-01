@@ -8,6 +8,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#include <array>
 #include <asio/go.hpp>
 #include <asio/io_service.hpp>
 #include <asio/ip/tcp.hpp>
