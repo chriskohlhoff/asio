@@ -319,9 +319,11 @@ private:
   int value_;
 };
 
-namespace detail {
+/// Used to as a return value to tag functions that will generate an @c await
+/// result for a coroutine.
+template <typename T> class awaitable {};
 
-template <typename T> class coroutine_async_result {};
+namespace detail {
 
 class coroutine_ref
 {
@@ -357,14 +359,14 @@ public:
 
   // Operator used to associate a variable to store the async result.
   template <typename T>
-  coroutine_async_result<T> operator&(T& t)
+  awaitable<T> operator&(T& t)
   {
     *async_result_ = &t;
-    return coroutine_async_result<T>();
+    return awaitable<T>();
   }
 
   // This overload is used when the result is ignored. 
-  template <typename T> void operator&(coroutine_async_result<T>)
+  template <typename T> void operator&(awaitable<T>)
   {
   }
 

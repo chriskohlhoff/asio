@@ -336,7 +336,7 @@ template <typename Handler, typename T>
 class async_result<detail::stackless_handler<Handler, T> >
 {
 public:
-  typedef detail::coroutine_async_result<T> type;
+  typedef awaitable<T> type;
 
   explicit async_result(detail::stackless_handler<Handler, T>&)
   {
