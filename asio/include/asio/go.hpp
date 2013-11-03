@@ -17,16 +17,33 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/coroutine.hpp"
+#include "asio/detail/variadic_templates.hpp"
 #include "asio/detail/wrapped_handler.hpp"
 #include "asio/io_service.hpp"
 #include "asio/strand.hpp"
+
+#if !defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
+# include "asio/detail/variadic_templates.hpp"
+
+// A macro that should expand to:
+//   template <typename T1, ..., typename Tn>
+//   void complete(const T1& x1, ..., const Tn& xn);
+// This macro should only persist within this file.
+
+# define ASIO_PRIVATE_COMPLETE_DECL(n) \
+  template <ASIO_VARIADIC_TPARAMS(n)> \
+  void complete(ASIO_VARIADIC_CONSTREF_PARAMS(n)); \
+  /**/
+
+#endif // !defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
   
-template <typename Handler> class stackless_impl_base;
+template <typename Handler, typename Signature> class stackless_impl_base;
 
 } // namespace detail
 
@@ -47,11 +64,11 @@ template <typename Handler> class stackless_impl_base;
  *   }
  * } @endcode
  *
- * The initiating function (async_read_some in the above example) suspends the
- * current coroutine. The coroutine is resumed when the asynchronous operation
- * completes.
+ * The initiating function (@c async_read_some in the above example) suspends
+ * the current coroutine. The coroutine is resumed when the asynchronous
+ * operation completes.
  */
-template <typename Handler>
+template <typename Handler, typename Signature = void ()>
 class basic_stackless_context
 {
 public:
@@ -84,10 +101,31 @@ public:
     return tmp;
   }
 
+  /// Invoke the completion handler with the specified arguments.
+  /**
+   * This function is used to invoke the coroutine's associated completion
+   * handler. It should be called at most once, immediately prior to the
+   * termination of the coroutine. Additional calls will be ignored.
+   *
+   * For completion handlers with the signature <tt>void()</tt>, and if @c
+   * complete() is not explicitly called, the completion handler will be
+   * automatically invoked after coroutine termination.
+   */
+#if defined(GENERATING_DOCUMENTATION) \
+  || defined(ASIO_HAS_VARIADIC_TEMPLATES)
+  template <typename... T>
+  void complete(T&&... args);
+#else // defined(GENERATING_DOCUMENTATION)
+      //   || defined(ASIO_HAS_VARIADIC_TEMPLATES)
+  void complete();
+  ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_COMPLETE_DECL)
+#endif // defined(GENERATING_DOCUMENTATION)
+       //   || defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
 #if defined(GENERATING_DOCUMENTATION)
 private:
 #endif // defined(GENERATING_DOCUMENTATION)
-  detail::stackless_impl_base<Handler>** impl_;
+  detail::stackless_impl_base<Handler, Signature>** impl_;
   asio::error_code* ec_;
 };
 
@@ -97,7 +135,7 @@ typedef basic_stackless_context<unspecified> stackless_context;
 #else // defined(GENERATING_DOCUMENTATION)
 typedef basic_stackless_context<
   detail::wrapped_handler<
-    io_service::strand, void(*)(),
+    io_service::strand, void (*)(),
     detail::is_continuation_if_running> > stackless_context;
 #endif // defined(GENERATING_DOCUMENTATION)
 
@@ -143,21 +181,40 @@ typedef basic_stackless_context<
  */
 /*@{*/
 
-/// Start a new stackless coroutine, calling the specified handler when it
-/// completes.
+/// Start a new stackless coroutine with an associated completion handler.
 /**
  * This function is used to launch a new coroutine.
  *
- * @param handler A handler to be called when the coroutine exits. More
+ * @param handler The handler associated with the coroutine. The handler may be
+ * explicitly called via the context's @c complete() function, but will be
+ * invoked automatically after coroutine termination if not called first. More
  * importantly, the handler provides an execution context (via the the handler
  * invocation hook) for the coroutine. The handler must have the signature:
  * @code void handler(); @endcode
  *
  * @param function The coroutine function. The function must have the signature:
- * @code void function(basic_stackless_context<Handler> yield); @endcode
+ * @code void function(basic_stackless_context<Handler> c); @endcode
  */
 template <typename Handler, typename Function>
-void go(ASIO_MOVE_ARG(Handler) handler,
+ASIO_INITFN_RESULT_TYPE(Handler, void ())
+go(ASIO_MOVE_ARG(Handler) handler,
+    ASIO_MOVE_ARG(Function) function);
+
+/// Start a new stackless coroutine with an associated completion handler.
+/**
+ * This function is used to launch a new coroutine.
+ *
+ * @param handler The handler associated with the coroutine. The handler may be
+ * explicitly called via the context's @c complete() function. Furthermore, the
+ * handler provides an execution context (via the the handler invocation hook)
+ * for the coroutine.
+ *
+ * @param function The coroutine function. The function must have the signature:
+ * @code void function(basic_stackless_context<Handler, Signature> c); @endcode
+ */
+template <typename Signature, typename Handler, typename Function>
+ASIO_INITFN_RESULT_TYPE(Handler, Signature)
+go(ASIO_MOVE_ARG(Handler) handler,
     ASIO_MOVE_ARG(Function) function);
 
 /// Start a new stackless coroutine, inheriting the execution context of another.
@@ -211,6 +268,10 @@ void go(asio::io_service& io_service,
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#if !defined(ASIO_HAS_VARIADIC_TEMPLATES)
+# undef ASIO_PRIVATE_COMPLETE_DECL
+#endif // !defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 #include "asio/impl/go.hpp"
 
