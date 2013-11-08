@@ -18,7 +18,6 @@
 #include "asio/detail/config.hpp"
 #include "asio/coroutine.hpp"
 #include "asio/detail/variadic_templates.hpp"
-#include "asio/detail/wrapped_handler.hpp"
 #include "asio/io_service.hpp"
 #include "asio/strand.hpp"
 
@@ -49,12 +48,12 @@ template <typename Handler, typename Signature> class stackless_impl_base;
 
 /// Context object the represents the currently executing coroutine.
 /**
- * The basic_stackless_context class is used to represent the currently
- * executing stackless coroutine. A basic_stackless_context may be passed as a
- * handler to an asynchronous operation. For example:
+ * The stackless_context class is used to represent the currently executing
+ * stackless coroutine. A stackless_context may be passed as a handler to an
+ * asynchronous operation. For example:
  *
  * @code template <typename Handler>
- * void my_coroutine(basic_stackless_context<Handler> ctx)
+ * void my_coroutine(stackless_context<Handler> ctx)
  * {
  *   reenter (ctx)
  *   {
@@ -68,8 +67,8 @@ template <typename Handler, typename Signature> class stackless_impl_base;
  * the current coroutine. The coroutine is resumed when the asynchronous
  * operation completes.
  */
-template <typename Handler, typename Signature = void ()>
-class basic_stackless_context
+template <typename Handler = void, typename Signature = void ()>
+class stackless_context
 {
 public:
   /// Return a coroutine context that sets the specified error_code.
@@ -80,7 +79,7 @@ public:
    * set with the asynchronous operation's result. For example:
    *
    * @code template <typename Handler>
-   * void my_coroutine(basic_stackless_context<Handler> ctx)
+   * void my_coroutine(stackless_context<Handler> ctx)
    * {
    *   reenter (ctx)
    *   {
@@ -94,9 +93,9 @@ public:
    *   }
    * } @endcode
    */
-  basic_stackless_context operator[](asio::error_code& ec) const
+  stackless_context operator[](asio::error_code& ec) const
   {
-    basic_stackless_context tmp(*this);
+    stackless_context tmp(*this);
     tmp.ec_ = &ec;
     return tmp;
   }
@@ -106,10 +105,6 @@ public:
    * This function is used to invoke the coroutine's associated completion
    * handler. It should be called at most once, immediately prior to the
    * termination of the coroutine. Additional calls will be ignored.
-   *
-   * For completion handlers with the signature <tt>void()</tt>, and if @c
-   * complete() is not explicitly called, the completion handler will be
-   * automatically invoked after coroutine termination.
    */
 #if defined(GENERATING_DOCUMENTATION) \
   || defined(ASIO_HAS_VARIADIC_TEMPLATES)
@@ -128,16 +123,6 @@ private:
   detail::stackless_impl_base<Handler, Signature>** impl_;
   asio::error_code* ec_;
 };
-
-#if defined(GENERATING_DOCUMENTATION)
-/// Context object that represents the currently executing coroutine.
-typedef basic_stackless_context<unspecified> stackless_context;
-#else // defined(GENERATING_DOCUMENTATION)
-typedef basic_stackless_context<
-  detail::wrapped_handler<
-    io_service::strand, void (*)(),
-    detail::is_continuation_if_running> > stackless_context;
-#endif // defined(GENERATING_DOCUMENTATION)
 
 /**
  * @defgroup go asio::go
@@ -181,19 +166,28 @@ typedef basic_stackless_context<
  */
 /*@{*/
 
+/// Start a new stackless coroutine.
+/**
+ * This function is used to launch a new coroutine.
+ *
+ * @param function The coroutine function. The function must have the signature:
+ * @code void function(stackless_context<void> c); @endcode
+ */
+template <typename Function>
+void go(ASIO_MOVE_ARG(Function) function);
+
 /// Start a new stackless coroutine with an associated completion handler.
 /**
  * This function is used to launch a new coroutine.
  *
  * @param handler The handler associated with the coroutine. The handler may be
- * explicitly called via the context's @c complete() function, but will be
- * invoked automatically after coroutine termination if not called first. More
+ * explicitly called via the context's @c complete() function. More
  * importantly, the handler provides an execution context (via the the handler
  * invocation hook) for the coroutine. The handler must have the signature:
  * @code void handler(); @endcode
  *
  * @param function The coroutine function. The function must have the signature:
- * @code void function(basic_stackless_context<Handler> c); @endcode
+ * @code void function(stackless_context<Handler> c); @endcode
  */
 template <typename Handler, typename Function>
 ASIO_INITFN_RESULT_TYPE(Handler, void ())
@@ -210,7 +204,7 @@ go(ASIO_MOVE_ARG(Handler) handler,
  * for the coroutine.
  *
  * @param function The coroutine function. The function must have the signature:
- * @code void function(basic_stackless_context<Handler, Signature> c); @endcode
+ * @code void function(stackless_context<Handler, Signature> c); @endcode
  */
 template <typename Signature, typename Handler, typename Function>
 ASIO_INITFN_RESULT_TYPE(Handler, Signature)
@@ -228,10 +222,10 @@ go(ASIO_MOVE_ARG(Handler) handler,
  * same strand.
  *
  * @param function The coroutine function. The function must have the signature:
- * @code void function(basic_stackless_context<Handler> yield); @endcode
+ * @code void function(stackless_context<Handler> yield); @endcode
  */
 template <typename Handler, typename Function>
-void go(basic_stackless_context<Handler> ctx,
+void go(stackless_context<Handler> ctx,
     ASIO_MOVE_ARG(Function) function);
 
 /// Start a new stackless coroutine that executes in the context of a strand.
@@ -243,7 +237,7 @@ void go(basic_stackless_context<Handler> ctx,
  * execute simultaneously.
  *
  * @param function The coroutine function. The function must have the signature:
- * @code void function(stackless_context yield); @endcode
+ * @code void function(stackless_context<io_service::strand> yield); @endcode
  */
 template <typename Function>
 void go(asio::io_service::strand strand,
@@ -253,11 +247,10 @@ void go(asio::io_service::strand strand,
 /**
  * This function is used to launch a new coroutine.
  *
- * @param io_service Identifies the io_service that will run the coroutine. The
- * new coroutine is implicitly given its own strand within this io_service.
+ * @param io_service Identifies the io_service that will run the coroutine.
  *
  * @param function The coroutine function. The function must have the signature:
- * @code void function(stackless_context yield); @endcode
+ * @code void function(stackless_context<io_service> yield); @endcode
  */
 template <typename Function>
 void go(asio::io_service& io_service,

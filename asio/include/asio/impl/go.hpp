@@ -22,6 +22,7 @@
 #include "asio/detail/handler_cont_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/type_traits.hpp"
+#include "asio/detail/wrapped_handler.hpp"
 #include "asio/handler_type.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -30,12 +31,37 @@ namespace asio {
 namespace detail {
 
   template <typename Handler, typename Signature>
+  struct stackless_handler_type
+  {
+    typedef typename handler_type<Handler, Signature>::type type;
+  };
+
+  template <>
+  struct stackless_handler_type<void, void()>
+  {
+    typedef void (*type)();
+  };
+
+  template <>
+  struct stackless_handler_type<asio::io_service, void()>
+  {
+    typedef wrapped_handler<asio::io_service&, void(*)()> type;
+  };
+
+  template <>
+  struct stackless_handler_type<asio::io_service::strand, void()>
+  {
+    typedef wrapped_handler<asio::io_service::strand,
+        void(*)(), is_continuation_if_running> type;
+  };
+
+  template <typename Handler, typename Signature>
   class stackless_impl_base
   {
   protected:
     template <typename Handler1>
     explicit stackless_impl_base(ASIO_MOVE_ARG(Handler1) handler,
-        void (*resume_fn)(const basic_stackless_context<Handler, Signature>&),
+        void (*resume_fn)(const stackless_context<Handler, Signature>&),
         void (*destroy_fn)(stackless_impl_base*))
       : handler_(ASIO_MOVE_CAST(Handler1)(handler)),
         ref_count_(1),
@@ -54,13 +80,13 @@ namespace detail {
     static void resume(stackless_impl_base*& impl);
 
   //private:
-    typename handler_type<Handler, Signature>::type handler_;
+    typename stackless_handler_type<Handler, Signature>::type handler_;
     asio::detail::atomic_count ref_count_;
     asio::coroutine coroutine_;
     asio::error_code throw_ec_;
     asio::error_code* result_ec_;
     void* result_value_;
-    void (*resume_)(const basic_stackless_context<Handler, Signature>&);
+    void (*resume_)(const stackless_context<Handler, Signature>&);
     void (*destroy_)(stackless_impl_base*);
     bool completed_;
   };
@@ -96,34 +122,13 @@ namespace detail {
     }
   }
 
-  template <typename Signature>
-  struct call_completed_handler
-  {
-    template <typename Handler>
-    static void call(Handler&) {}
-  };
-
-  template <>
-  struct call_completed_handler<void ()>
-  {
-    template <typename Handler>
-    static void call(Handler& h) { h(); }
-  };
-
   template <typename Handler, typename Signature>
   void stackless_impl_base<Handler, Signature>::resume(
       stackless_impl_base<Handler, Signature>*& impl)
   {
     impl->result_value_ = 0;
-    basic_stackless_context<Handler, Signature> ctx
-      = { &impl, &impl->throw_ec_ };
+    stackless_context<Handler, Signature> ctx = { &impl, &impl->throw_ec_ };
     impl->resume_(ctx);
-
-    if (impl && impl->coroutine_.is_complete() && !impl->completed_)
-    {
-      impl->completed_ = true;
-      call_completed_handler<Signature>::call(impl->handler_);
-    }
   }
 
   template <typename Handler, typename Signature, typename Function>
@@ -143,8 +148,7 @@ namespace detail {
     }
 
   private:
-    static void do_resume(
-        const basic_stackless_context<Handler, Signature>& ctx)
+    static void do_resume(const stackless_context<Handler, Signature>& ctx)
     {
       stackless_impl_base<Handler, Signature>* base = *ctx.impl_;
       static_cast<stackless_impl*>(base)->function_(ctx);
@@ -162,7 +166,7 @@ namespace detail {
   class stackless_handler
   {
   public:
-    stackless_handler(const basic_stackless_context<Handler, Signature>& ctx)
+    stackless_handler(const stackless_context<Handler, Signature>& ctx)
       : impl_(stackless_impl_base<Handler, Signature>::move_ref(*ctx.impl_))
     {
       impl_->result_ec_ = ctx.ec_;
@@ -212,7 +216,7 @@ namespace detail {
   class stackless_handler<Handler, Signature, void>
   {
   public:
-    stackless_handler(const basic_stackless_context<Handler, Signature>& ctx)
+    stackless_handler(const stackless_context<Handler, Signature>& ctx)
       : impl_(stackless_impl_base<Handler, Signature>::move_ref(*ctx.impl_))
     {
       impl_->result_ec_ = ctx.ec_;
@@ -340,21 +344,20 @@ namespace detail {
 #if !defined(GENERATING_DOCUMENTATION)
 
 template <typename Handler, typename Signature, typename ReturnType>
-struct handler_type<basic_stackless_context<Handler, Signature>, ReturnType()>
+struct handler_type<stackless_context<Handler, Signature>, ReturnType()>
 {
   typedef detail::stackless_handler<Handler, Signature, void> type;
 };
 
 template <typename Handler, typename Signature,
     typename ReturnType, typename Arg1>
-struct handler_type<basic_stackless_context<Handler, Signature>,
-    ReturnType(Arg1)>
+struct handler_type<stackless_context<Handler, Signature>, ReturnType(Arg1)>
 {
   typedef detail::stackless_handler<Handler, Signature, Arg1> type;
 };
 
 template <typename Handler, typename Signature, typename ReturnType>
-struct handler_type<basic_stackless_context<Handler, Signature>,
+struct handler_type<stackless_context<Handler, Signature>,
     ReturnType(asio::error_code)>
 {
   typedef detail::stackless_handler<Handler, Signature, void> type;
@@ -362,7 +365,7 @@ struct handler_type<basic_stackless_context<Handler, Signature>,
 
 template <typename Handler, typename Signature,
     typename ReturnType, typename Arg2>
-struct handler_type<basic_stackless_context<Handler, Signature>,
+struct handler_type<stackless_context<Handler, Signature>,
     ReturnType(asio::error_code, Arg2)>
 {
   typedef detail::stackless_handler<Handler, Signature, Arg2> type;
@@ -385,43 +388,41 @@ public:
 };
 
 template <typename Handler, typename Signature>
-inline coroutine& get_coroutine(
-    basic_stackless_context<Handler, Signature>& c)
+inline coroutine& get_coroutine(stackless_context<Handler, Signature>& c)
 {
   return (*c.impl_)->coroutine_;
 }
 
 template <typename Handler, typename Signature>
-inline coroutine& get_coroutine(
-    basic_stackless_context<Handler, Signature>* c)
+inline coroutine& get_coroutine(stackless_context<Handler, Signature>* c)
 {
   return (*c->impl_)->coroutine_;
 }
 
 template <typename Handler, typename Signature>
 inline const asio::error_code* get_coroutine_error(
-    basic_stackless_context<Handler, Signature>& c)
+    stackless_context<Handler, Signature>& c)
 {
   return &(*c.impl_)->throw_ec_;
 }
 
 template <typename Handler, typename Signature>
 inline const asio::error_code* get_coroutine_error(
-    basic_stackless_context<Handler, Signature>* c)
+    stackless_context<Handler, Signature>* c)
 {
   return &(*c->impl_)->throw_ec_;
 }
 
 template <typename Handler, typename Signature>
 inline void** get_coroutine_async_result(
-    basic_stackless_context<Handler, Signature>& c)
+    stackless_context<Handler, Signature>& c)
 {
   return &(*c.impl_)->result_value_;
 }
 
 template <typename Handler, typename Signature>
 inline void** get_coroutine_async_result(
-    basic_stackless_context<Handler, Signature>* c)
+    stackless_context<Handler, Signature>* c)
 {
   return &(*c->impl_)->result_value_;
 }
@@ -430,7 +431,7 @@ inline void** get_coroutine_async_result(
 
 template <typename Handler, typename Signature>
 template <typename... T>
-void basic_stackless_context<Handler, Signature>::complete(T&&... args)
+void stackless_context<Handler, Signature>::complete(T&&... args)
 {
   if (!(*impl_)->completed_)
   {
@@ -442,7 +443,7 @@ void basic_stackless_context<Handler, Signature>::complete(T&&... args)
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 template <typename Handler, typename Signature>
-void basic_stackless_context<Handler, Signature>::complete()
+void stackless_context<Handler, Signature>::complete()
 {
   if (!(*impl_)->completed_)
   {
@@ -454,7 +455,7 @@ void basic_stackless_context<Handler, Signature>::complete()
 // A macro that should expand to:
 //   template <typename Handler, typename Signature>
 //   template <typename T1, ..., typename Tn>
-//   void basic_stackless_context<Handler, Signature>::complete(
+//   void stackless_context<Handler, Signature>::complete(
 //       const T1& x1, ..., const Tn& xn)
 //   {
 //     if (!(*impl_)->completed_)
@@ -468,7 +469,7 @@ void basic_stackless_context<Handler, Signature>::complete()
 # define ASIO_PRIVATE_COMPLETE_DEF(n) \
   template <typename Handler, typename Signature> \
   template <ASIO_VARIADIC_TPARAMS(n)> \
-  void basic_stackless_context<Handler, Signature>::complete( \
+  void stackless_context<Handler, Signature>::complete( \
       ASIO_VARIADIC_CONSTREF_PARAMS(n)) \
   { \
     if (!(*impl_)->completed_) \
@@ -484,6 +485,18 @@ ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_COMPLETE_DEF)
 # undef ASIO_PRIVATE_COMPLETE_DEF
 
 #endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <typename Function>
+void go(ASIO_MOVE_ARG(Function) function)
+{
+  typedef typename remove_const<
+    typename remove_reference<Function>::type>::type
+      function_type;
+
+  detail::go_helper<void, void(), function_type>(
+      &detail::default_go_handler,
+      ASIO_MOVE_CAST(Function)(function))();
+}
 
 template <typename Handler, typename Function>
 ASIO_INITFN_RESULT_TYPE(Handler, void ())
@@ -542,7 +555,7 @@ go(ASIO_MOVE_ARG(Handler) handler,
 }
 
 template <typename Handler, typename Function>
-void go(basic_stackless_context<Handler> ctx,
+void go(stackless_context<Handler> ctx,
     ASIO_MOVE_ARG(Function) function)
 {
   Handler handler(ctx.handler_);
@@ -554,16 +567,26 @@ template <typename Function>
 void go(asio::io_service::strand strand,
     ASIO_MOVE_ARG(Function) function)
 {
-  asio::go(strand.wrap(&detail::default_go_handler),
-      ASIO_MOVE_CAST(Function)(function));
+  typedef typename remove_const<
+    typename remove_reference<Function>::type>::type
+      function_type;
+
+  detail::go_helper<asio::io_service::strand, void(), function_type>(
+      strand.wrap(&detail::default_go_handler),
+      ASIO_MOVE_CAST(Function)(function))();
 }
 
 template <typename Function>
 void go(asio::io_service& io_service,
     ASIO_MOVE_ARG(Function) function)
 {
-  asio::go(asio::io_service::strand(io_service),
-      ASIO_MOVE_CAST(Function)(function));
+  typedef typename remove_const<
+    typename remove_reference<Function>::type>::type
+      function_type;
+
+  detail::go_helper<asio::io_service, void(), function_type>(
+      io_service.wrap(&detail::default_go_handler),
+      ASIO_MOVE_CAST(Function)(function))();
 }
 
 #endif // !defined(GENERATING_DOCUMENTATION)

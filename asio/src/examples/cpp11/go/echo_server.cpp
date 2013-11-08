@@ -26,8 +26,7 @@ class session : public std::enable_shared_from_this<session>
 public:
   explicit session(tcp::socket socket)
     : socket_(std::move(socket)),
-      timer_(socket_.get_io_service()),
-      strand_(socket_.get_io_service())
+      timer_(socket_.get_io_service())
   {
   }
 
@@ -38,8 +37,9 @@ public:
     std::size_t n = 0;
     std::array<char, 128> data;
 
-    asio::go(strand_,
-        [this, self, n, data](asio::stackless_context ctx) mutable
+    asio::go(
+        [this, self, n, data]
+        (asio::stackless_context<void> ctx) mutable
         {
           try
           {
@@ -62,8 +62,9 @@ public:
 
     asio::error_code ignored_ec;
 
-    asio::go(strand_,
-        [this, self, ignored_ec](asio::stackless_context ctx) mutable
+    asio::go(
+        [this, self, ignored_ec]
+        (asio::stackless_context<void> ctx) mutable
         {
           reenter (ctx)
           {
@@ -80,7 +81,6 @@ public:
 private:
   tcp::socket socket_;
   asio::steady_timer timer_;
-  asio::io_service::strand strand_;
 };
 
 int main(int argc, char* argv[])
@@ -99,8 +99,8 @@ int main(int argc, char* argv[])
     tcp::socket socket(io_service);
     asio::error_code ec;
 
-    asio::go(io_service,
-        [&](asio::stackless_context ctx)
+    asio::go(
+        [&](asio::stackless_context<void> ctx)
         {
           reenter (ctx)
           {
