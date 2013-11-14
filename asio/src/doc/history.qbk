@@ -93,6 +93,9 @@
 
 * Eliminated some unnecessary handler copies.
 
+* Fixed support for older versions of OpenSSL that do not provide the
+  `SSL_CTX_clear_options` function.
+
 * Fixed various minor and cosmetic issues in code and documentation.
 
 [heading Asio 1.10.0]
