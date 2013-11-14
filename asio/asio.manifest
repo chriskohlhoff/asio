@@ -70,7 +70,10 @@
 /doc/asio/reference/add_service.html
 /doc/asio/reference/asio_handler_allocate.html
 /doc/asio/reference/asio_handler_deallocate.html
+/doc/asio/reference/asio_handler_invoke/
 /doc/asio/reference/asio_handler_invoke.html
+/doc/asio/reference/asio_handler_invoke/overload1.html
+/doc/asio/reference/asio_handler_invoke/overload2.html
 /doc/asio/reference/asio_handler_is_continuation.html
 /doc/asio/reference/async_connect/
 /doc/asio/reference/async_connect.html
@@ -2143,6 +2146,7 @@
 /doc/asio/reference/ip__basic_resolver_iterator/create.html
 /doc/asio/reference/ip__basic_resolver_iterator/create/overload1.html
 /doc/asio/reference/ip__basic_resolver_iterator/create/overload2.html
+/doc/asio/reference/ip__basic_resolver_iterator/create/overload3.html
 /doc/asio/reference/ip__basic_resolver_iterator/difference_type.html
 /doc/asio/reference/ip__basic_resolver_iterator.html
 /doc/asio/reference/ip__basic_resolver/iterator.html
@@ -3604,9 +3608,7 @@
 /include/asio/detail/descriptor_ops.hpp
 /include/asio/detail/descriptor_read_op.hpp
 /include/asio/detail/descriptor_write_op.hpp
-/include/asio/detail/dev_poll_reactor_fwd.hpp
 /include/asio/detail/dev_poll_reactor.hpp
-/include/asio/detail/epoll_reactor_fwd.hpp
 /include/asio/detail/epoll_reactor.hpp
 /include/asio/detail/eventfd_select_interrupter.hpp
 /include/asio/detail/event.hpp
@@ -3624,6 +3626,7 @@
 /include/asio/detail/handler_type_requirements.hpp
 /include/asio/detail/hash_map.hpp
 /include/asio/detail/impl/
+/include/asio/detail/impl/buffer_sequence_adapter.ipp
 /include/asio/detail/impl/descriptor_ops.ipp
 /include/asio/detail/impl/dev_poll_reactor.hpp
 /include/asio/detail/impl/dev_poll_reactor.ipp
@@ -3664,13 +3667,15 @@
 /include/asio/detail/impl/win_iocp_socket_service_base.ipp
 /include/asio/detail/impl/win_mutex.ipp
 /include/asio/detail/impl/win_object_handle_service.ipp
+/include/asio/detail/impl/winrt_ssocket_service_base.ipp
+/include/asio/detail/impl/winrt_timer_scheduler.hpp
+/include/asio/detail/impl/winrt_timer_scheduler.ipp
 /include/asio/detail/impl/winsock_init.ipp
 /include/asio/detail/impl/win_static_mutex.ipp
 /include/asio/detail/impl/win_thread.ipp
 /include/asio/detail/impl/win_tss_ptr.ipp
 /include/asio/detail/io_control.hpp
 /include/asio/detail/keyword_tss_ptr.hpp
-/include/asio/detail/kqueue_reactor_fwd.hpp
 /include/asio/detail/kqueue_reactor.hpp
 /include/asio/detail/limits.hpp
 /include/asio/detail/local_free_on_block_exit.hpp
@@ -3680,7 +3685,9 @@
 /include/asio/detail/null_event.hpp
 /include/asio/detail/null_fenced_block.hpp
 /include/asio/detail/null_mutex.hpp
+/include/asio/detail/null_reactor.hpp
 /include/asio/detail/null_signal_blocker.hpp
+/include/asio/detail/null_socket_service.hpp
 /include/asio/detail/null_static_mutex.hpp
 /include/asio/detail/null_thread.hpp
 /include/asio/detail/null_tss_ptr.hpp
@@ -3722,9 +3729,7 @@
 /include/asio/detail/scoped_lock.hpp
 /include/asio/detail/scoped_ptr.hpp
 /include/asio/detail/select_interrupter.hpp
-/include/asio/detail/select_reactor_fwd.hpp
 /include/asio/detail/select_reactor.hpp
-/include/asio/detail/service_registry_fwd.hpp
 /include/asio/detail/service_registry.hpp
 /include/asio/detail/shared_ptr.hpp
 /include/asio/detail/signal_blocker.hpp
@@ -3739,8 +3744,11 @@
 /include/asio/detail/socket_types.hpp
 /include/asio/detail/solaris_fenced_block.hpp
 /include/asio/detail/static_mutex.hpp
+/include/asio/detail/std_event.hpp
+/include/asio/detail/std_mutex.hpp
+/include/asio/detail/std_static_mutex.hpp
+/include/asio/detail/std_thread.hpp
 /include/asio/detail/strand_service.hpp
-/include/asio/detail/task_io_service_fwd.hpp
 /include/asio/detail/task_io_service.hpp
 /include/asio/detail/task_io_service_operation.hpp
 /include/asio/detail/task_io_service_thread_info.hpp
@@ -3749,7 +3757,6 @@
 /include/asio/detail/throw_error.hpp
 /include/asio/detail/throw_exception.hpp
 /include/asio/detail/timer_queue_base.hpp
-/include/asio/detail/timer_queue_fwd.hpp
 /include/asio/detail/timer_queue.hpp
 /include/asio/detail/timer_queue_ptime.hpp
 /include/asio/detail/timer_queue_set.hpp
@@ -3757,6 +3764,7 @@
 /include/asio/detail/timer_scheduler.hpp
 /include/asio/detail/tss_ptr.hpp
 /include/asio/detail/type_traits.hpp
+/include/asio/detail/variadic_templates.hpp
 /include/asio/detail/wait_handler.hpp
 /include/asio/detail/wait_op.hpp
 /include/asio/detail/weak_ptr.hpp
@@ -3767,7 +3775,6 @@
 /include/asio/detail/win_iocp_handle_read_op.hpp
 /include/asio/detail/win_iocp_handle_service.hpp
 /include/asio/detail/win_iocp_handle_write_op.hpp
-/include/asio/detail/win_iocp_io_service_fwd.hpp
 /include/asio/detail/win_iocp_io_service.hpp
 /include/asio/detail/win_iocp_null_buffers_op.hpp
 /include/asio/detail/win_iocp_operation.hpp
@@ -3784,6 +3791,17 @@
 /include/asio/detail/win_iocp_thread_info.hpp
 /include/asio/detail/win_mutex.hpp
 /include/asio/detail/win_object_handle_service.hpp
+/include/asio/detail/winrt_async_manager.hpp
+/include/asio/detail/winrt_async_op.hpp
+/include/asio/detail/winrt_resolve_op.hpp
+/include/asio/detail/winrt_resolver_service.hpp
+/include/asio/detail/winrt_socket_connect_op.hpp
+/include/asio/detail/winrt_socket_recv_op.hpp
+/include/asio/detail/winrt_socket_send_op.hpp
+/include/asio/detail/winrt_ssocket_service_base.hpp
+/include/asio/detail/winrt_ssocket_service.hpp
+/include/asio/detail/winrt_timer_scheduler.hpp
+/include/asio/detail/winrt_utils.hpp
 /include/asio/detail/winsock_init.hpp
 /include/asio/detail/win_static_mutex.hpp
 /include/asio/detail/win_thread.hpp
@@ -3808,6 +3826,8 @@
 /include/asio/high_resolution_timer.hpp
 /include/asio.hpp
 /include/asio/impl/
+/include/asio/impl/buffered_read_stream.hpp
+/include/asio/impl/buffered_write_stream.hpp
 /include/asio/impl/connect.hpp
 /include/asio/impl/error_code.ipp
 /include/asio/impl/error.ipp

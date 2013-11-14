@@ -54,9 +54,7 @@
 /boost/asio/detail/descriptor_ops.hpp
 /boost/asio/detail/descriptor_read_op.hpp
 /boost/asio/detail/descriptor_write_op.hpp
-/boost/asio/detail/dev_poll_reactor_fwd.hpp
 /boost/asio/detail/dev_poll_reactor.hpp
-/boost/asio/detail/epoll_reactor_fwd.hpp
 /boost/asio/detail/epoll_reactor.hpp
 /boost/asio/detail/eventfd_select_interrupter.hpp
 /boost/asio/detail/event.hpp
@@ -74,6 +72,7 @@
 /boost/asio/detail/handler_type_requirements.hpp
 /boost/asio/detail/hash_map.hpp
 /boost/asio/detail/impl/
+/boost/asio/detail/impl/buffer_sequence_adapter.ipp
 /boost/asio/detail/impl/descriptor_ops.ipp
 /boost/asio/detail/impl/dev_poll_reactor.hpp
 /boost/asio/detail/impl/dev_poll_reactor.ipp
@@ -114,13 +113,15 @@
 /boost/asio/detail/impl/win_iocp_socket_service_base.ipp
 /boost/asio/detail/impl/win_mutex.ipp
 /boost/asio/detail/impl/win_object_handle_service.ipp
+/boost/asio/detail/impl/winrt_ssocket_service_base.ipp
+/boost/asio/detail/impl/winrt_timer_scheduler.hpp
+/boost/asio/detail/impl/winrt_timer_scheduler.ipp
 /boost/asio/detail/impl/winsock_init.ipp
 /boost/asio/detail/impl/win_static_mutex.ipp
 /boost/asio/detail/impl/win_thread.ipp
 /boost/asio/detail/impl/win_tss_ptr.ipp
 /boost/asio/detail/io_control.hpp
 /boost/asio/detail/keyword_tss_ptr.hpp
-/boost/asio/detail/kqueue_reactor_fwd.hpp
 /boost/asio/detail/kqueue_reactor.hpp
 /boost/asio/detail/limits.hpp
 /boost/asio/detail/local_free_on_block_exit.hpp
@@ -130,7 +131,9 @@
 /boost/asio/detail/null_event.hpp
 /boost/asio/detail/null_fenced_block.hpp
 /boost/asio/detail/null_mutex.hpp
+/boost/asio/detail/null_reactor.hpp
 /boost/asio/detail/null_signal_blocker.hpp
+/boost/asio/detail/null_socket_service.hpp
 /boost/asio/detail/null_static_mutex.hpp
 /boost/asio/detail/null_thread.hpp
 /boost/asio/detail/null_tss_ptr.hpp
@@ -172,9 +175,7 @@
 /boost/asio/detail/scoped_lock.hpp
 /boost/asio/detail/scoped_ptr.hpp
 /boost/asio/detail/select_interrupter.hpp
-/boost/asio/detail/select_reactor_fwd.hpp
 /boost/asio/detail/select_reactor.hpp
-/boost/asio/detail/service_registry_fwd.hpp
 /boost/asio/detail/service_registry.hpp
 /boost/asio/detail/shared_ptr.hpp
 /boost/asio/detail/signal_blocker.hpp
@@ -189,8 +190,11 @@
 /boost/asio/detail/socket_types.hpp
 /boost/asio/detail/solaris_fenced_block.hpp
 /boost/asio/detail/static_mutex.hpp
+/boost/asio/detail/std_event.hpp
+/boost/asio/detail/std_mutex.hpp
+/boost/asio/detail/std_static_mutex.hpp
+/boost/asio/detail/std_thread.hpp
 /boost/asio/detail/strand_service.hpp
-/boost/asio/detail/task_io_service_fwd.hpp
 /boost/asio/detail/task_io_service.hpp
 /boost/asio/detail/task_io_service_operation.hpp
 /boost/asio/detail/task_io_service_thread_info.hpp
@@ -199,7 +203,6 @@
 /boost/asio/detail/throw_error.hpp
 /boost/asio/detail/throw_exception.hpp
 /boost/asio/detail/timer_queue_base.hpp
-/boost/asio/detail/timer_queue_fwd.hpp
 /boost/asio/detail/timer_queue.hpp
 /boost/asio/detail/timer_queue_ptime.hpp
 /boost/asio/detail/timer_queue_set.hpp
@@ -207,6 +210,7 @@
 /boost/asio/detail/timer_scheduler.hpp
 /boost/asio/detail/tss_ptr.hpp
 /boost/asio/detail/type_traits.hpp
+/boost/asio/detail/variadic_templates.hpp
 /boost/asio/detail/wait_handler.hpp
 /boost/asio/detail/wait_op.hpp
 /boost/asio/detail/weak_ptr.hpp
@@ -217,7 +221,6 @@
 /boost/asio/detail/win_iocp_handle_read_op.hpp
 /boost/asio/detail/win_iocp_handle_service.hpp
 /boost/asio/detail/win_iocp_handle_write_op.hpp
-/boost/asio/detail/win_iocp_io_service_fwd.hpp
 /boost/asio/detail/win_iocp_io_service.hpp
 /boost/asio/detail/win_iocp_null_buffers_op.hpp
 /boost/asio/detail/win_iocp_operation.hpp
@@ -234,6 +237,17 @@
 /boost/asio/detail/win_iocp_thread_info.hpp
 /boost/asio/detail/win_mutex.hpp
 /boost/asio/detail/win_object_handle_service.hpp
+/boost/asio/detail/winrt_async_manager.hpp
+/boost/asio/detail/winrt_async_op.hpp
+/boost/asio/detail/winrt_resolve_op.hpp
+/boost/asio/detail/winrt_resolver_service.hpp
+/boost/asio/detail/winrt_socket_connect_op.hpp
+/boost/asio/detail/winrt_socket_recv_op.hpp
+/boost/asio/detail/winrt_socket_send_op.hpp
+/boost/asio/detail/winrt_ssocket_service_base.hpp
+/boost/asio/detail/winrt_ssocket_service.hpp
+/boost/asio/detail/winrt_timer_scheduler.hpp
+/boost/asio/detail/winrt_utils.hpp
 /boost/asio/detail/winsock_init.hpp
 /boost/asio/detail/win_static_mutex.hpp
 /boost/asio/detail/win_thread.hpp
@@ -257,6 +271,8 @@
 /boost/asio/high_resolution_timer.hpp
 /boost/asio.hpp
 /boost/asio/impl/
+/boost/asio/impl/buffered_read_stream.hpp
+/boost/asio/impl/buffered_write_stream.hpp
 /boost/asio/impl/connect.hpp
 /boost/asio/impl/error.ipp
 /boost/asio/impl/handler_alloc_hook.ipp
@@ -569,6 +585,8 @@
 /doc/html/boost_asio/example/cpp03/windows/
 /doc/html/boost_asio/example/cpp03/windows/transmit_file.cpp
 /doc/html/boost_asio/example/cpp11/
+/doc/html/boost_asio/example/cpp11/allocation/
+/doc/html/boost_asio/example/cpp11/allocation/server.cpp
 /doc/html/boost_asio/example/cpp11/buffers/
 /doc/html/boost_asio/example/cpp11/buffers/reference_counted.cpp
 /doc/html/boost_asio/example/cpp11/chat/
@@ -666,7 +684,10 @@
 /doc/html/boost_asio/reference/add_service.html
 /doc/html/boost_asio/reference/asio_handler_allocate.html
 /doc/html/boost_asio/reference/asio_handler_deallocate.html
+/doc/html/boost_asio/reference/asio_handler_invoke/
 /doc/html/boost_asio/reference/asio_handler_invoke.html
+/doc/html/boost_asio/reference/asio_handler_invoke/overload1.html
+/doc/html/boost_asio/reference/asio_handler_invoke/overload2.html
 /doc/html/boost_asio/reference/asio_handler_is_continuation.html
 /doc/html/boost_asio/reference/async_connect/
 /doc/html/boost_asio/reference/async_connect.html
@@ -2715,6 +2736,7 @@
 /doc/html/boost_asio/reference/ip__basic_resolver_iterator/create.html
 /doc/html/boost_asio/reference/ip__basic_resolver_iterator/create/overload1.html
 /doc/html/boost_asio/reference/ip__basic_resolver_iterator/create/overload2.html
+/doc/html/boost_asio/reference/ip__basic_resolver_iterator/create/overload3.html
 /doc/html/boost_asio/reference/ip__basic_resolver_iterator/difference_type.html
 /doc/html/boost_asio/reference/ip__basic_resolver_iterator.html
 /doc/html/boost_asio/reference/ip__basic_resolver/iterator.html
