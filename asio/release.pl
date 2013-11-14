@@ -15,8 +15,14 @@ our $boost_asio_name;
 
 sub print_usage_and_exit
 {
-  print("Usage: ./release.pl <version>\n");
-  print("  Example: ./release.pl 1.2.0\n");
+  print("usage: ./release.pl <version>\n");
+  print("   or: ./release.pl --package-asio\n");
+  print("\n");
+  print("examples:\n");
+  print("  create new version and build packages for asio and boost.asio:\n");
+  print("    ./release.pl 1.2.0\n");
+  print("  create packages for asio only:\n");
+  print("    ./release.pl --package-asio\n");
   exit(1);
 }
 
@@ -42,6 +48,22 @@ sub determine_version($)
   else
   {
     print_usage_and_exit();
+  }
+}
+
+sub determine_version_from_configure()
+{
+  my $from = "configure.ac";
+  open(my $input, "<$from") or die("Can't open $from for reading");
+  while (my $line = <$input>)
+  {
+    chomp($line);
+    if ($line =~ /^AC_INIT\(asio.*\[(.*)\]\)$/)
+    {
+      our $asio_name = "asio-$1";
+      our $boost_asio_name = "boost_asio_$1";
+      last;
+    }
   }
 }
 
@@ -202,9 +224,11 @@ sub build_example_diffs
 
 sub make_asio_packages
 {
+  our $asio_name;
   system("./autogen.sh");
   system("./configure");
   system("make dist");
+  system("tar tfz $asio_name.tar.gz | sed -e 's/^[^\\/]*//' | sort -df > asio.manifest");
 }
 
 sub build_boost_asio_doc
@@ -361,29 +385,48 @@ sub create_boost_asio_content
 
 sub make_boost_asio_packages
 {
+  our $boost_asio_name;
   system("tar --format=ustar -chf - $boost_asio_name | gzip -c >$boost_asio_name.tar.gz");
   system("tar --format=ustar -chf - $boost_asio_name | bzip2 -9 -c >$boost_asio_name.tar.bz2");
   system("rm -f $boost_asio_name.zip");
   system("zip -rq $boost_asio_name.zip $boost_asio_name");
   system("rm -rf $boost_asio_name");
-}
-
-sub create_manifests
-{
-  system("tar tfz $asio_name.tar.gz | sed -e 's/^[^\\/]*//' | sort -df > asio.manifest");
   system("tar tfz $boost_asio_name.tar.gz | sed -e 's/^[^\\/]*//' | sort -df > boost_asio.manifest");
 }
 
 (scalar(@ARGV) == 1) or print_usage_and_exit();
-determine_version($ARGV[0]);
-update_configure_ac();
-update_readme();
-update_asio_version_hpp();
-update_boost_asio_version_hpp();
-build_asio_doc();
-build_example_diffs();
-make_asio_packages();
-build_boost_asio_doc();
-create_boost_asio_content();
-make_boost_asio_packages();
-create_manifests();
+my $new_version = 1;
+my $package_asio = 1;
+my $package_boost = 1;
+if ($ARGV[0] eq "--package-asio")
+{
+  $new_version = 0;
+  $package_boost = 0;
+}
+
+if ($new_version)
+{
+  determine_version($ARGV[0]);
+  update_configure_ac();
+  update_readme();
+  update_asio_version_hpp();
+  update_boost_asio_version_hpp();
+}
+else
+{
+  determine_version_from_configure();
+}
+
+if ($package_asio)
+{
+  build_asio_doc();
+  build_example_diffs();
+  make_asio_packages();
+}
+
+if ($package_boost)
+{
+  build_boost_asio_doc();
+  create_boost_asio_content();
+  make_boost_asio_packages();
+}
