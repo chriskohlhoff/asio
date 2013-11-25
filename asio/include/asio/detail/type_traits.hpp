@@ -19,7 +19,7 @@
 
 #if defined(ASIO_HAS_STD_TYPE_TRAITS)
 # include <type_traits>
-#else // defined(ASIO_HAS_TYPE_TRAITS)
+#else // defined(ASIO_HAS_STD_TYPE_TRAITS)
 # include <boost/type_traits/add_const.hpp>
 # include <boost/type_traits/is_const.hpp>
 # include <boost/type_traits/is_convertible.hpp>
@@ -29,7 +29,7 @@
 # include <boost/type_traits/remove_pointer.hpp>
 # include <boost/type_traits/remove_reference.hpp>
 # include <boost/utility/enable_if.hpp>
-#endif // defined(ASIO_HAS_TYPE_TRAITS)
+#endif // defined(ASIO_HAS_STD_TYPE_TRAITS)
 
 namespace asio {
 
