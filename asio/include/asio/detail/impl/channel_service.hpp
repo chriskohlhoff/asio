@@ -88,6 +88,77 @@ T channel_service::get(implementation_type<T>& impl,
   }
 }
 
+template <typename T>
+void channel_service::start_put_op(implementation_type<T>& impl,
+    channel_op<T>* putter, bool is_continuation)
+{
+  if (!impl.open_)
+  {
+    putter->ec_ = asio::error::broken_pipe;
+    io_service_.post_immediate_completion(putter, is_continuation);
+  }
+  else if (channel_op<T>* getter =
+      static_cast<channel_op<T>*>(impl.getters_.front()))
+  {
+    getter->set_value(ASIO_MOVE_CAST(T)(putter->get_value()));
+    impl.getters_.pop();
+    io_service_.post_deferred_completion(getter);
+    io_service_.post_immediate_completion(putter, is_continuation);
+  }
+  else
+  {
+    if (impl.buffer_.size() < impl.max_buffer_size_)
+    {
+      impl.buffer_.resize(impl.buffer_.size() + 1);
+      impl.buffer_.back() = ASIO_MOVE_CAST(T)(putter->get_value());
+      io_service_.post_immediate_completion(putter, is_continuation);
+    }
+    else
+    {
+      impl.putters_.push(putter);
+      io_service_.work_started();
+    }
+  }
+}
+
+template <typename T>
+void channel_service::start_get_op(implementation_type<T>& impl,
+    channel_op<T>* getter, bool is_continuation)
+{
+  if (!impl.buffer_.empty())
+  {
+    getter->set_value(ASIO_MOVE_CAST(T)(impl.buffer_.front()));
+    impl.buffer_.pop_front();
+    if (channel_op<T>* putter =
+        static_cast<channel_op<T>*>(impl.putters_.front()))
+    {
+      impl.buffer_.resize(impl.buffer_.size() + 1);
+      impl.buffer_.back() = ASIO_MOVE_CAST(T)(putter->get_value());
+      impl.putters_.pop();
+      io_service_.post_deferred_completion(putter);
+    }
+    io_service_.post_immediate_completion(getter, is_continuation);
+  }
+  else if (channel_op<T>* putter =
+      static_cast<channel_op<T>*>(impl.putters_.front()))
+  {
+    getter->set_value(ASIO_MOVE_CAST(T)(putter->get_value()));
+    impl.putters_.pop();
+    io_service_.post_deferred_completion(putter);
+    io_service_.post_immediate_completion(getter, is_continuation);
+  }
+  else if (impl.open_)
+  {
+    impl.getters_.push(getter);
+    io_service_.work_started();
+  }
+  else
+  {
+    getter->ec_ = asio::error::broken_pipe;
+    io_service_.post_immediate_completion(getter, is_continuation);
+  }
+}
+
 } // namespace detail
 } // namespace asio
 
