@@ -24,6 +24,7 @@ nobase_include_HEADERS = \
 	asio/buffered_write_stream.hpp \
 	asio/buffer.hpp \
 	asio/buffers_iterator.hpp \
+	asio/channel.hpp \
 	asio/completion_condition.hpp \
 	asio/connect.hpp \
 	asio/coroutine.hpp \
@@ -41,6 +42,10 @@ nobase_include_HEADERS = \
 	asio/detail/buffer_resize_guard.hpp \
 	asio/detail/buffer_sequence_adapter.hpp \
 	asio/detail/call_stack.hpp \
+	asio/detail/channel_get_op.hpp \
+	asio/detail/channel_op.hpp \
+	asio/detail/channel_put_op.hpp \
+	asio/detail/channel_service.hpp \
 	asio/detail/chrono_time_traits.hpp \
 	asio/detail/completion_handler.hpp \
 	asio/detail/config.hpp \
@@ -70,6 +75,8 @@ nobase_include_HEADERS = \
 	asio/detail/handler_type_requirements.hpp \
 	asio/detail/hash_map.hpp \
 	asio/detail/impl/buffer_sequence_adapter.ipp \
+	asio/detail/impl/channel_service.hpp \
+	asio/detail/impl/channel_service.ipp \
 	asio/detail/impl/descriptor_ops.ipp \
 	asio/detail/impl/dev_poll_reactor.hpp \
 	asio/detail/impl/dev_poll_reactor.ipp \

@@ -25,6 +25,7 @@
 #include "asio/impl/io_service.ipp"
 #include "asio/impl/serial_port_base.ipp"
 #include "asio/detail/impl/buffer_sequence_adapter.ipp"
+#include "asio/detail/impl/channel_service.ipp"
 #include "asio/detail/impl/descriptor_ops.ipp"
 #include "asio/detail/impl/dev_poll_reactor.ipp"
 #include "asio/detail/impl/epoll_reactor.ipp"
