@@ -65,21 +65,53 @@ void channel_service::destroy(
     channel_service::base_implementation_type& impl)
 {
   close(impl);
+
+  // Remove implementation from linked list of all implementations.
+  asio::detail::mutex::scoped_lock lock(mutex_);
+  if (impl_list_ == &impl)
+    impl_list_ = impl.next_;
+  if (impl.prev_)
+    impl.prev_->next_ = impl.next_;
+  if (impl.next_)
+    impl.next_->prev_= impl.prev_;
+  impl.next_ = 0;
+  impl.prev_ = 0;
 }
 
 void channel_service::close(channel_service::base_implementation_type& impl)
 {
   impl.open_ = false;
-  detail::op_queue<detail::operation> ops; // TODO broken_pipe
-  ops.push(impl.getters_);
+  op_queue<operation> ops;
+  while (channel_op_base* op = impl.getters_.front())
+  {
+    impl.getters_.pop();
+    op->on_close();
+    ops.push(op);
+  }
+  while (channel_op_base* op = impl.putters_.front())
+  {
+    impl.putters_.pop();
+    op->on_close();
+    ops.push(op);
+  }
   io_service_.post_deferred_completions(ops);
 }
 
 void channel_service::cancel(channel_service::base_implementation_type& impl)
 {
-  detail::op_queue<detail::operation> ops; // TODO operation_aborted
-  ops.push(impl.putters_);
-  ops.push(impl.getters_);
+  op_queue<operation> ops;
+  while (channel_op_base* op = impl.getters_.front())
+  {
+    impl.getters_.pop();
+    op->on_close();
+    ops.push(op);
+  }
+  while (channel_op_base* op = impl.putters_.front())
+  {
+    impl.putters_.pop();
+    op->on_cancel();
+    ops.push(op);
+  }
   io_service_.post_deferred_completions(ops);
 }
 

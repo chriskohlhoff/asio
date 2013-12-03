@@ -41,7 +41,7 @@ public:
   }
 
   static void do_complete(io_service_impl* owner, operation* base,
-      const asio::error_code& /*ec*/,
+      const asio::error_code& ec,
       std::size_t /*bytes_transferred*/)
   {
     // Take ownership of the handler object.
@@ -57,7 +57,11 @@ public:
     // to ensure that any owning sub-object remains valid until after we have
     // deallocated the memory here.
     detail::binder1<Handler, asio::error_code>
-      handler(h->handler_, h->ec_);
+      handler(h->handler_, ec);
+    if (h->result_ == channel_op_base::operation_aborted)
+      handler.arg1_ = asio::error::operation_aborted;
+    else if (h->result_ == channel_op_base::broken_pipe)
+      handler.arg1_ = asio::error::broken_pipe;
     p.h = asio::detail::addressof(handler.handler_);
     p.reset();
 

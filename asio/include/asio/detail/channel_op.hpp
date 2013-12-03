@@ -24,14 +24,51 @@
 namespace asio {
 namespace detail {
 
-template <typename T>
-class channel_op
+class channel_op_base
   : public operation
 {
 public:
-  // The error code to be passed to the completion handler.
-  asio::error_code ec_;
+  // Mark the operation as successful.
+  void on_cancel()
+  {
+    result_ = operation_aborted;
+  }
 
+  // Mark the operation as broken.
+  void on_close()
+  {
+    result_ = broken_pipe;
+  }
+
+  // Determine whether the operation contains a value.
+  bool has_value() const
+  {
+    return has_value_;
+  }
+
+protected:
+  channel_op_base(func_type func)
+    : operation(func),
+      has_value_(false),
+      result_(success)
+  {
+  }
+
+  // Whether the operation has an associated value.
+  bool has_value_;
+
+  // The result of the operation.
+  unsigned char result_;
+  enum { success = 0 };
+  enum { operation_aborted = 1 };
+  enum { broken_pipe = 2 };
+};
+
+template <typename T>
+class channel_op
+  : public channel_op_base
+{
+public:
   // Retrieve the value.
   T& get_value()
   {
@@ -42,7 +79,7 @@ public:
   void set_default_value()
   {
     new (&value_) T;
-    initialised_ = true;
+    has_value_ = true;
   }
 
   // Construct the value.
@@ -50,51 +87,38 @@ public:
   void set_value(ASIO_MOVE_ARG(T0) value)
   {
     new (&value_) T(ASIO_MOVE_CAST(T0)(value));
-    initialised_ = true;
-  }
-
-  // Determine whether the operation contains a value.
-  bool has_value() const
-  {
-    return initialised_;
+    has_value_ = true;
   }
 
 protected:
   channel_op(func_type func)
-    : operation(func),
-      initialised_(false)
+    : channel_op_base(func)
   {
   }
 
   template <typename T0>
   channel_op(ASIO_MOVE_ARG(T0) value, func_type func)
-    : operation(func)
+    : channel_op_base(func)
   {
     this->set_value(ASIO_MOVE_CAST(T0)(value));
   }
 
   ~channel_op()
   {
-    if (initialised_)
+    if (has_value_)
       get_value().~T();
   }
 
 private:
   // The value to be passed through the channel.
   typename aligned_storage<sizeof(T)>::type value_;
-
-  // Whether the value has been initialised.
-  bool initialised_;
 };
 
 template <>
 class channel_op<void>
-  : public operation
+  : public channel_op_base
 {
 public:
-  // The error code to be passed to the completion handler.
-  asio::error_code ec_;
-
   // Retrieve the value.
   void get_value()
   {
@@ -103,31 +127,20 @@ public:
   // Default-construct the value.
   void set_default_value()
   {
-    initialised_ = true;
+    has_value_ = true;
   }
 
   // Construct the value.
   void set_value()
   {
-    initialised_ = true;
-  }
-
-  // Determine whether the operation contains a value.
-  bool has_value() const
-  {
-    return initialised_;
+    has_value_ = true;
   }
 
 protected:
   channel_op(func_type func)
-    : operation(func),
-      initialised_(false)
+    : channel_op_base(func)
   {
   }
-
-private:
-  // Whether the value has been initialised.
-  bool initialised_;
 };
 
 } // namespace detail

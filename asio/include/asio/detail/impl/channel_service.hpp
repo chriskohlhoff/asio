@@ -94,7 +94,7 @@ void channel_service::start_put_op(implementation_type<T>& impl,
 {
   if (!impl.open_)
   {
-    putter->ec_ = asio::error::broken_pipe;
+    putter->on_close();
     io_service_.post_immediate_completion(putter, is_continuation);
   }
   else if (channel_op<T>* getter =
@@ -154,7 +154,7 @@ void channel_service::start_get_op(implementation_type<T>& impl,
   }
   else
   {
-    getter->ec_ = asio::error::broken_pipe;
+    getter->on_close();
     io_service_.post_immediate_completion(getter, is_continuation);
   }
 }

@@ -57,8 +57,8 @@ public:
     std::size_t max_buffer_size_;
 
     // The operations that are waiting on the channel.
-    op_queue<operation> putters_;
-    op_queue<operation> getters_;
+    op_queue<channel_op_base> putters_;
+    op_queue<channel_op_base> getters_;
 
     // Pointers to adjacent channel implementations in linked list.
     base_implementation_type* next_;
