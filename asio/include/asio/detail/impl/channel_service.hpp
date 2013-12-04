@@ -20,6 +20,27 @@
 namespace asio {
 namespace detail {
 
+inline bool channel_service::is_open(const base_implementation_type& impl) const
+{
+  return impl.open_;
+}
+
+inline void channel_service::open(base_implementation_type& impl)
+{
+  impl.open_ = true;
+}
+
+template <typename T>
+inline bool channel_service::ready(const implementation_type<T>& impl) const
+{
+  return (!impl.buffer_.empty() || !impl.putters_.empty());
+}
+
+inline bool channel_service::ready(const implementation_type<void>& impl) const
+{
+  return (impl.buffered_ > 0 || !impl.putters_.empty());
+}
+
 template <typename T, typename T0>
 void channel_service::put(implementation_type<T>& impl,
     ASIO_MOVE_ARG(T0) value, asio::error_code& ec)
@@ -59,8 +80,7 @@ T channel_service::get(implementation_type<T>& impl,
     if (channel_op<T>* putter =
         static_cast<channel_op<T>*>(impl.putters_.front()))
     {
-      impl.buffer_.resize(impl.buffer_.size() + 1);
-      impl.buffer_.back() = ASIO_MOVE_CAST(T)(putter->get_value());
+      impl.buffer_.push_back(ASIO_MOVE_CAST(T)(putter->get_value()));
       impl.putters_.pop();
       io_service_.post_deferred_completion(putter);
     }
@@ -109,8 +129,7 @@ void channel_service::start_put_op(implementation_type<T>& impl,
   {
     if (impl.buffer_.size() < impl.max_buffer_size_)
     {
-      impl.buffer_.resize(impl.buffer_.size() + 1);
-      impl.buffer_.back() = ASIO_MOVE_CAST(T)(putter->get_value());
+      impl.buffer_.push_back(ASIO_MOVE_CAST(T)(putter->get_value()));
       io_service_.post_immediate_completion(putter, is_continuation);
     }
     else
@@ -132,8 +151,7 @@ void channel_service::start_get_op(implementation_type<T>& impl,
     if (channel_op<T>* putter =
         static_cast<channel_op<T>*>(impl.putters_.front()))
     {
-      impl.buffer_.resize(impl.buffer_.size() + 1);
-      impl.buffer_.back() = ASIO_MOVE_CAST(T)(putter->get_value());
+      impl.buffer_.push_back(ASIO_MOVE_CAST(T)(putter->get_value()));
       impl.putters_.pop();
       io_service_.post_deferred_completion(putter);
     }

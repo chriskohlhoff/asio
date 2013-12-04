@@ -32,6 +32,12 @@ class channel_put_op : public channel_op<T>
 public:
   ASIO_DEFINE_HANDLER_PTR(channel_put_op);
 
+  explicit channel_put_op(Handler& h)
+    : channel_op<T>(&channel_put_op::do_complete),
+      handler_(ASIO_MOVE_CAST(Handler)(h))
+  {
+  }
+
   template <typename T0>
   channel_put_op(ASIO_MOVE_ARG(T0) value, Handler& h)
     : channel_op<T>(ASIO_MOVE_CAST(T0)(value),

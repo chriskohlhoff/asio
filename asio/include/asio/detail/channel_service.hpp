@@ -53,6 +53,8 @@ public:
     // Whether the channel is currently open.
     bool open_;
 
+    // 
+
     // The maximum number of elements that may be buffered in the channel.
     std::size_t max_buffer_size_;
 
@@ -67,18 +69,7 @@ public:
 
   // The implementation for a specific value type.
   template <typename T>
-  struct implementation_type : base_implementation_type
-  {
-    // Buffered values.
-    std::deque<T> buffer_;
-  };
-
-  // The implementation for a void value type.
-  struct void_implementation_type : base_implementation_type
-  {
-    // Number of buffered "values".
-    std::size_t buffered_;
-  };
+  struct implementation_type;
 
   // Constructor.
   ASIO_DECL channel_service(
@@ -95,16 +86,10 @@ public:
   ASIO_DECL void destroy(base_implementation_type& impl);
 
   // Determine whether the channel is open.
-  bool is_open(const base_implementation_type& impl) const
-  {
-    return impl.open_;
-  }
+  bool is_open(const base_implementation_type& impl) const;
 
   // Open the channel.
-  void open(base_implementation_type& impl)
-  {
-    impl.open_ = true;
-  }
+  void open(base_implementation_type& impl);
 
   // Close the channel.
   ASIO_DECL void close(base_implementation_type& impl);
@@ -114,21 +99,18 @@ public:
 
   // Determine whether a value can be read from the channel without blocking.
   template <typename T>
-  bool ready(const implementation_type<T>& impl) const
-  {
-    return (!impl.buffer_.empty() || !impl.putters_.empty());
-  }
+  bool ready(const implementation_type<T>& impl) const;
 
   // Determine whether a value can be read from the channel without blocking.
-  bool ready(const void_implementation_type& impl) const
-  {
-    return (impl.buffered_ > 0 || !impl.putters_.empty());
-  }
+  bool ready(const implementation_type<void>& impl) const;
 
   // Synchronously place a new value into the channel.
   template <typename T, typename T0>
   void put(implementation_type<T>& impl,
       ASIO_MOVE_ARG(T0) value, asio::error_code& ec);
+
+  // Synchronously place a new void "value" into the channel.
+  void put(implementation_type<void>& impl, asio::error_code& ec);
 
   // Asynchronously place a new value into the channel.
   template <typename T, typename T0, typename Handler>
@@ -151,9 +133,32 @@ public:
     p.v = p.p = 0;
   }
 
+  // Asynchronously place a new value into the channel.
+  template <typename T, typename Handler>
+  void async_put(implementation_type<T>& impl, Handler& handler)
+  {
+    bool is_continuation =
+      asio_handler_cont_helpers::is_continuation(handler);
+
+    // Allocate and construct an operation to wrap the handler.
+    typedef channel_put_op<T, Handler> op;
+    typename op::ptr p = { asio::detail::addressof(handler),
+      asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(handler);
+
+    ASIO_HANDLER_CREATION((p.p, "channel", this, "async_put"));
+
+    start_put_op(impl, p.p, is_continuation);
+    p.v = p.p = 0;
+  }
+
   // Synchronously remove a value from the channel.
   template <typename T>
   T get(implementation_type<T>& impl, asio::error_code& ec);
+
+  // Synchronously remove a void "value" from the channel.
+  void get(implementation_type<void>& impl, asio::error_code& ec);
 
   // Asynchronously remove a value from the channel.
   template <typename T, typename Handler>
@@ -181,10 +186,18 @@ private:
   void start_put_op(implementation_type<T>& impl,
       channel_op<T>* putter, bool is_continuation);
 
+  // Helper function to start an asynchronous put operation.
+  void start_put_op(implementation_type<void>& impl,
+      channel_op<void>* putter, bool is_continuation);
+
   // Helper function to start an asynchronous get operation.
   template <typename T>
   void start_get_op(implementation_type<T>& impl,
       channel_op<T>* getter, bool is_continuation);
+
+  // Helper function to start an asynchronous get operation.
+  void start_get_op(implementation_type<void>& impl,
+      channel_op<void>* getter, bool is_continuation);
 
   // The io_service implementation used for delivering completions.
   io_service_impl& io_service_;
@@ -194,6 +207,24 @@ private:
 
   // The head of a linked list of all implementations.
   base_implementation_type* impl_list_;
+};
+
+// The implementation for a specific value type.
+template <typename T>
+struct channel_service::implementation_type : base_implementation_type
+{
+  // Buffered values.
+  std::deque<T> buffer_;
+};
+
+// The implementation for a void value type.
+template <>
+struct channel_service::implementation_type<void> : base_implementation_type
+{
+  implementation_type() : buffered_(0) {}
+
+  // Number of buffered "values".
+  std::size_t buffered_;
 };
 
 } // namespace detail

@@ -88,12 +88,6 @@ void channel_service::close(channel_service::base_implementation_type& impl)
     op->on_close();
     ops.push(op);
   }
-  while (channel_op_base* op = impl.putters_.front())
-  {
-    impl.putters_.pop();
-    op->on_close();
-    ops.push(op);
-  }
   io_service_.post_deferred_completions(ops);
 }
 
@@ -113,6 +107,135 @@ void channel_service::cancel(channel_service::base_implementation_type& impl)
     ops.push(op);
   }
   io_service_.post_deferred_completions(ops);
+}
+
+void channel_service::put(implementation_type<void>& impl,
+    asio::error_code& ec)
+{
+  if (!impl.open_)
+  {
+    ec = asio::error::broken_pipe;
+  }
+  else if (channel_op<void>* getter =
+      static_cast<channel_op<void>*>(impl.getters_.front()))
+  {
+    getter->set_value();
+    impl.getters_.pop();
+    io_service_.post_deferred_completion(getter);
+    ec = asio::error_code();
+  }
+  else if (impl.buffered_ < impl.max_buffer_size_)
+  {
+    ++impl.buffered_;
+    ec = asio::error_code();
+  }
+  else
+  {
+    ec = asio::error::would_block;
+  }
+}
+
+void channel_service::get(implementation_type<void>& impl,
+    asio::error_code& ec)
+{
+  if (impl.buffered_ > 0)
+  {
+    if (channel_op<void>* putter =
+        static_cast<channel_op<void>*>(impl.putters_.front()))
+    {
+      impl.putters_.pop();
+      io_service_.post_deferred_completion(putter);
+    }
+    else
+    {
+      --impl.buffered_;
+    }
+    ec = asio::error_code();
+  }
+  else if (channel_op<void>* putter =
+      static_cast<channel_op<void>*>(impl.putters_.front()))
+  {
+    impl.putters_.pop();
+    io_service_.post_deferred_completion(putter);
+    ec = asio::error_code();
+  }
+  else if (impl.open_)
+  {
+    ec = asio::error::would_block;
+  }
+  else
+  {
+    ec = asio::error::broken_pipe;
+  }
+}
+
+void channel_service::start_put_op(implementation_type<void>& impl,
+    channel_op<void>* putter, bool is_continuation)
+{
+  if (!impl.open_)
+  {
+    putter->on_close();
+    io_service_.post_immediate_completion(putter, is_continuation);
+  }
+  else if (channel_op<void>* getter =
+      static_cast<channel_op<void>*>(impl.getters_.front()))
+  {
+    getter->set_value();
+    impl.getters_.pop();
+    io_service_.post_deferred_completion(getter);
+    io_service_.post_immediate_completion(putter, is_continuation);
+  }
+  else
+  {
+    if (impl.buffered_ < impl.max_buffer_size_)
+    {
+      ++impl.buffered_;
+      io_service_.post_immediate_completion(putter, is_continuation);
+    }
+    else
+    {
+      impl.putters_.push(putter);
+      io_service_.work_started();
+    }
+  }
+}
+
+void channel_service::start_get_op(implementation_type<void>& impl,
+    channel_op<void>* getter, bool is_continuation)
+{
+  if (impl.buffered_ > 0)
+  {
+    getter->set_value();
+    if (channel_op<void>* putter =
+        static_cast<channel_op<void>*>(impl.putters_.front()))
+    {
+      impl.putters_.pop();
+      io_service_.post_deferred_completion(putter);
+    }
+    else
+    {
+      --impl.buffered_;
+    }
+    io_service_.post_immediate_completion(getter, is_continuation);
+  }
+  else if (channel_op<void>* putter =
+      static_cast<channel_op<void>*>(impl.putters_.front()))
+  {
+    getter->set_value();
+    impl.putters_.pop();
+    io_service_.post_deferred_completion(putter);
+    io_service_.post_immediate_completion(getter, is_continuation);
+  }
+  else if (impl.open_)
+  {
+    impl.getters_.push(getter);
+    io_service_.work_started();
+  }
+  else
+  {
+    getter->on_close();
+    io_service_.post_immediate_completion(getter, is_continuation);
+  }
 }
 
 } // namespace detail
