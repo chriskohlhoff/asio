@@ -38,29 +38,40 @@ class channel_service
   : public asio::detail::service_base<channel_service>
 {
 public:
+  // Possible states for a channel.
+  enum state
+  {
+    get_block_put_block,
+    get_block_put_buffer, 
+    get_block_put_waiter,
+    get_buffer_put_buffer,
+    get_buffer_put_block,
+    get_buffer_put_closed,
+    get_waiter_put_block,
+    get_waiter_put_closed,
+    closed
+  };
+
   // The base implementation type of all channels.
   struct base_implementation_type
   {
     // Default constructor.
     base_implementation_type()
-      : open_(true),
+      : state_(get_block_put_block),
         max_buffer_size_(0),
         next_(0),
         prev_(0)
     {
     }
 
-    // Whether the channel is currently open.
-    bool open_;
-
-    // 
+    // The current state of the channel.
+    state state_;
 
     // The maximum number of elements that may be buffered in the channel.
     std::size_t max_buffer_size_;
 
     // The operations that are waiting on the channel.
-    op_queue<channel_op_base> putters_;
-    op_queue<channel_op_base> getters_;
+    op_queue<channel_op_base> waiters_;
 
     // Pointers to adjacent channel implementations in linked list.
     base_implementation_type* next_;
@@ -232,7 +243,7 @@ struct channel_service::implementation_type<void> : base_implementation_type
 
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/detail/impl/channel_service.hpp"
+//#include "asio/detail/impl/channel_service.hpp"
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/channel_service.ipp"
 #endif // defined(ASIO_HEADER_ONLY)

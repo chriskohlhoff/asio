@@ -39,8 +39,7 @@ void channel_service::shutdown_service()
   base_implementation_type* impl = impl_list_;
   while (impl)
   {
-    ops.push(impl->putters_);
-    ops.push(impl->getters_);
+    ops.push(impl->waiters_);
     impl = impl->next_;
   }
   io_service_.abandon_operations(ops);
@@ -51,6 +50,7 @@ void channel_service::construct(
     std::size_t max_buffer_size)
 {
   impl.max_buffer_size_ = max_buffer_size;
+  impl.state_ = max_buffer_size ? get_block_put_buffer : get_block_put_block;
 
   // Insert implementation into linked list of all implementations.
   asio::detail::mutex::scoped_lock lock(mutex_);
@@ -64,7 +64,7 @@ void channel_service::construct(
 void channel_service::destroy(
     channel_service::base_implementation_type& impl)
 {
-  close(impl);
+  cancel(impl);
 
   // Remove implementation from linked list of all implementations.
   asio::detail::mutex::scoped_lock lock(mutex_);
@@ -80,29 +80,26 @@ void channel_service::destroy(
 
 void channel_service::close(channel_service::base_implementation_type& impl)
 {
-  impl.open_ = false;
-  op_queue<operation> ops;
-  while (channel_op_base* op = impl.getters_.front())
-  {
-    impl.getters_.pop();
-    op->on_close();
-    ops.push(op);
+#if 0
+    impl.state_ = base_implementation_type::get_waiter_
+    op_queue<operation> ops;
+    while (channel_op_base* op = impl.waiters_.front())
+    {
+      impl.waiters_.pop();
+      op->on_close();
+      ops.push(op);
+    }
+    io_service_.post_deferred_completions(ops);
   }
-  io_service_.post_deferred_completions(ops);
+#endif
 }
 
 void channel_service::cancel(channel_service::base_implementation_type& impl)
 {
   op_queue<operation> ops;
-  while (channel_op_base* op = impl.getters_.front())
+  while (channel_op_base* op = impl.waiters_.front())
   {
-    impl.getters_.pop();
-    op->on_close();
-    ops.push(op);
-  }
-  while (channel_op_base* op = impl.putters_.front())
-  {
-    impl.putters_.pop();
+    impl.waiters_.pop();
     op->on_cancel();
     ops.push(op);
   }
@@ -112,6 +109,7 @@ void channel_service::cancel(channel_service::base_implementation_type& impl)
 void channel_service::put(implementation_type<void>& impl,
     asio::error_code& ec)
 {
+#if 0
   if (!impl.open_)
   {
     ec = asio::error::broken_pipe;
@@ -133,11 +131,50 @@ void channel_service::put(implementation_type<void>& impl,
   {
     ec = asio::error::would_block;
   }
+#endif
+  switch (impl.state_)
+  {
+  case get_block_put_block:
+  case get_buffer_put_block:
+  case get_waiter_put_block:
+    {
+      ec = asio::error::would_block;
+      break;
+    }
+  case get_block_put_buffer:
+  case get_buffer_put_buffer:
+    {
+      if (++impl.buffered_ == impl.max_buffer_size_)
+        impl.state_ = get_buffer_put_block;
+      else
+        impl.state_ = get_buffer_put_buffer;
+      ec = asio::error_code();
+      break;
+    }
+  case get_block_put_waiter:
+    {
+      channel_op_base* getter = impl.waiters_.front();
+      static_cast<channel_op<void>*>(getter)->set_value();
+      impl.waiters_.pop();
+      io_service_.post_deferred_completion(getter);
+      ec = asio::error_code();
+      break;
+    }
+  case get_buffer_put_closed:
+  case get_waiter_put_closed:
+  case closed:
+  default:
+    {
+      ec = asio::error::broken_pipe;
+      break;
+    }
+  }
 }
 
 void channel_service::get(implementation_type<void>& impl,
     asio::error_code& ec)
 {
+#if 0
   if (impl.buffered_ > 0)
   {
     if (channel_op<void>* putter =
@@ -167,11 +204,77 @@ void channel_service::get(implementation_type<void>& impl,
   {
     ec = asio::error::broken_pipe;
   }
+#endif
+  switch (impl.state_)
+  {
+  case get_block_put_block:
+  case get_block_put_buffer:
+  case get_block_put_waiter:
+    {
+      ec = asio::error::would_block;
+      break;
+    }
+  case get_buffer_put_buffer:
+    {
+      if (--impl.buffered_ == 0)
+        impl.state_ = get_block_put_buffer;
+      ec = asio::error_code();
+    }
+  case get_buffer_put_block:
+    {
+      if (channel_op_base* putter = impl.waiters_.front())
+      {
+        impl.waiters_.pop();
+        io_service_.post_deferred_completion(putter);
+      }
+      else if (--impl.buffered_ == 0)
+        impl.state_ = get_block_put_buffer;
+      else
+        impl.state_ = get_buffer_put_buffer;
+      break;
+    }
+  case get_buffer_put_closed:
+    {
+      if (channel_op_base* putter = impl.waiters_.front())
+      {
+        impl.waiters_.pop();
+        io_service_.post_deferred_completion(putter);
+      }
+      else if (--impl.buffered_ == 0)
+        impl.state_ = closed;
+      break;
+    }
+  case get_waiter_put_block:
+    {
+      channel_op_base* putter = impl.waiters_.front();
+      impl.waiters_.pop();
+      if (impl.waiters_.front() == 0)
+        impl.state_ = get_block_put_block;
+      io_service_.post_deferred_completion(putter);
+      break;
+    }
+  case get_waiter_put_closed:
+    {
+      channel_op_base* putter = impl.waiters_.front();
+      impl.waiters_.pop();
+      if (impl.waiters_.front() == 0)
+        impl.state_ = closed;
+      io_service_.post_deferred_completion(putter);
+      break;
+    }
+  case closed:
+  default:
+    {
+      ec = asio::error::broken_pipe;
+      break;
+    }
+  }
 }
 
 void channel_service::start_put_op(implementation_type<void>& impl,
     channel_op<void>* putter, bool is_continuation)
 {
+#if 0
   if (!impl.open_)
   {
     putter->on_close();
@@ -198,11 +301,60 @@ void channel_service::start_put_op(implementation_type<void>& impl,
       io_service_.work_started();
     }
   }
+#endif
+#if 0
+  switch (impl.state_)
+  {
+  case get_buffer_put_block:
+    {
+      impl.waiters_.push(putter);
+      io_service_.work_started();
+      impl.state_ = get_buffer_put_block;
+      break;
+    }
+  case get_block_put_block:
+  case get_waiter_put_block:
+    {
+      impl.waiters_.push(putter);
+      io_service_.work_started();
+      impl.state_ = get_waiter_put_block;
+      break;
+    }
+  case get_block_put_buffer:
+  case get_buffer_put_buffer:
+    {
+      if (++impl.buffered_ == impl.max_buffer_size_)
+        impl.state_ = get_buffer_put_block;
+      else
+        impl.state_ = get_buffer_put_buffer;
+      ec = asio::error_code();
+      break;
+    }
+  case get_block_put_waiter:
+    {
+      channel_op_base* getter = impl.waiters_.front();
+      static_cast<channel_op<void>*>(getter)->set_value();
+      impl.waiters_.pop();
+      io_service_.post_deferred_completion(getter);
+      ec = asio::error_code();
+      break;
+    }
+  case get_buffer_put_closed:
+  case get_waiter_put_closed:
+  case closed:
+  default:
+    {
+      ec = asio::error::broken_pipe;
+      break;
+    }
+  }
+#endif
 }
 
 void channel_service::start_get_op(implementation_type<void>& impl,
     channel_op<void>* getter, bool is_continuation)
 {
+#if 0
   if (impl.buffered_ > 0)
   {
     getter->set_value();
@@ -236,6 +388,7 @@ void channel_service::start_get_op(implementation_type<void>& impl,
     getter->on_close();
     io_service_.post_immediate_completion(getter, is_continuation);
   }
+#endif
 }
 
 } // namespace detail
