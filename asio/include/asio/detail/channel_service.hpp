@@ -38,18 +38,13 @@ class channel_service
   : public asio::detail::service_base<channel_service>
 {
 public:
-  // Possible states for a channel.
+  // Possible states for a channel end.
   enum state
   {
-    get_block_put_block,
-    get_block_put_buffer, 
-    get_block_put_waiter,
-    get_buffer_put_buffer,
-    get_buffer_put_block,
-    get_buffer_put_closed,
-    get_waiter_put_block,
-    get_waiter_put_closed,
-    closed
+    buffer = 0,
+    waiter = 1,
+    block = 2,
+    closed = 3
   };
 
   // The base implementation type of all channels.
@@ -57,7 +52,8 @@ public:
   {
     // Default constructor.
     base_implementation_type()
-      : state_(get_block_put_block),
+      : get_state_(block),
+        put_state_(block),
         max_buffer_size_(0),
         next_(0),
         prev_(0)
@@ -65,7 +61,8 @@ public:
     }
 
     // The current state of the channel.
-    state state_;
+    state get_state_ : 16;
+    state put_state_ : 16;
 
     // The maximum number of elements that may be buffered in the channel.
     std::size_t max_buffer_size_;
@@ -112,16 +109,10 @@ public:
   template <typename T>
   bool ready(const implementation_type<T>& impl) const;
 
-  // Determine whether a value can be read from the channel without blocking.
-  bool ready(const implementation_type<void>& impl) const;
-
   // Synchronously place a new value into the channel.
   template <typename T, typename T0>
   void put(implementation_type<T>& impl,
       ASIO_MOVE_ARG(T0) value, asio::error_code& ec);
-
-  // Synchronously place a new void "value" into the channel.
-  void put(implementation_type<void>& impl, asio::error_code& ec);
 
   // Asynchronously place a new value into the channel.
   template <typename T, typename T0, typename Handler>
@@ -144,32 +135,10 @@ public:
     p.v = p.p = 0;
   }
 
-  // Asynchronously place a new value into the channel.
-  template <typename T, typename Handler>
-  void async_put(implementation_type<T>& impl, Handler& handler)
-  {
-    bool is_continuation =
-      asio_handler_cont_helpers::is_continuation(handler);
-
-    // Allocate and construct an operation to wrap the handler.
-    typedef channel_put_op<T, Handler> op;
-    typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
-    p.p = new (p.v) op(handler);
-
-    ASIO_HANDLER_CREATION((p.p, "channel", this, "async_put"));
-
-    start_put_op(impl, p.p, is_continuation);
-    p.v = p.p = 0;
-  }
-
   // Synchronously remove a value from the channel.
   template <typename T>
-  T get(implementation_type<T>& impl, asio::error_code& ec);
-
-  // Synchronously remove a void "value" from the channel.
-  void get(implementation_type<void>& impl, asio::error_code& ec);
+  typename implementation_type<T>::value_type get(
+      implementation_type<T>& impl, asio::error_code& ec);
 
   // Asynchronously remove a value from the channel.
   template <typename T, typename Handler>
@@ -197,18 +166,10 @@ private:
   void start_put_op(implementation_type<T>& impl,
       channel_op<T>* putter, bool is_continuation);
 
-  // Helper function to start an asynchronous put operation.
-  void start_put_op(implementation_type<void>& impl,
-      channel_op<void>* putter, bool is_continuation);
-
   // Helper function to start an asynchronous get operation.
   template <typename T>
   void start_get_op(implementation_type<T>& impl,
       channel_op<T>* getter, bool is_continuation);
-
-  // Helper function to start an asynchronous get operation.
-  void start_get_op(implementation_type<void>& impl,
-      channel_op<void>* getter, bool is_continuation);
 
   // The io_service implementation used for delivering completions.
   io_service_impl& io_service_;
@@ -224,6 +185,35 @@ private:
 template <typename T>
 struct channel_service::implementation_type : base_implementation_type
 {
+  // Type of element stored in buffer.
+  typedef T value_type;
+
+  // Get number of buffered elements.
+  std::size_t buffer_size() const
+  {
+    return buffer_.size();
+  }
+
+  // Push a new value to the back of the buffer.
+  template <typename T0>
+  void buffer_push(ASIO_MOVE_ARG(T0) value)
+  {
+    buffer_.push_back(ASIO_MOVE_CAST(T0)(value));
+  }
+
+  // Get the element at the front of the buffer.
+  T buffer_front()
+  {
+    return ASIO_MOVE_CAST(T)(buffer_.front());
+  }
+
+  // Pop a value from the front of the buffer.
+  void buffer_pop()
+  {
+    buffer_.pop_front();
+  }
+
+private:
   // Buffered values.
   std::deque<T> buffer_;
 };
@@ -232,8 +222,40 @@ struct channel_service::implementation_type : base_implementation_type
 template <>
 struct channel_service::implementation_type<void> : base_implementation_type
 {
-  implementation_type() : buffered_(0) {}
+  // Use int as value type since we can't pass void values around.
+  typedef int value_type;
 
+  // Construct with empty buffer.
+  implementation_type()
+    : buffered_(0)
+  {
+  }
+
+  // Get number of buffered elements.
+  std::size_t buffer_size() const
+  {
+    return buffered_;
+  }
+
+  // Push a new value to the back of the buffer.
+  void buffer_push(int)
+  {
+    ++buffered_;
+  }
+
+  // Get the element at the front of the buffer.
+  int buffer_front()
+  {
+    return 0;
+  }
+
+  // Pop a value from the front of the buffer.
+  void buffer_pop()
+  {
+    --buffered_;
+  }
+
+private:
   // Number of buffered "values".
   std::size_t buffered_;
 };
@@ -243,7 +265,7 @@ struct channel_service::implementation_type<void> : base_implementation_type
 
 #include "asio/detail/pop_options.hpp"
 
-//#include "asio/detail/impl/channel_service.hpp"
+#include "asio/detail/impl/channel_service.hpp"
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/channel_service.ipp"
 #endif // defined(ASIO_HEADER_ONLY)

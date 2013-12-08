@@ -174,13 +174,13 @@ public:
   void put()
   {
     asio::error_code ec;
-    service_.put(impl_, ec);
+    service_.put(impl_, 0, ec);
     asio::detail::throw_error(ec, "put");
   }
 
   void put(asio::error_code& ec)
   {
-    service_.put(impl_, ec);
+    service_.put(impl_, 0, ec);
   }
 
   template <typename PutHandler>
@@ -192,7 +192,7 @@ public:
       PutHandler, void (asio::error_code)> init(
         ASIO_MOVE_CAST(PutHandler)(handler));
 
-    service_.async_put(impl_, init.handler);
+    service_.async_put(impl_, 0, init.handler);
 
     return init.result.get();
   }

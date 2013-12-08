@@ -70,16 +70,13 @@ class channel_op
 {
 public:
   // Retrieve the value.
-  T& get_value()
+  T get_value()
   {
-    return *static_cast<T*>(static_cast<void*>(&value_));
-  }
+    if (!has_value_)
+      new T();
 
-  // Default-construct the value.
-  void set_default_value()
-  {
-    new (&value_) T;
-    has_value_ = true;
+    return ASIO_MOVE_CAST(T)(*static_cast<T*>(
+          static_cast<void*>(&value_)));
   }
 
   // Construct the value.
@@ -120,23 +117,22 @@ class channel_op<void>
 {
 public:
   // Retrieve the value.
-  void get_value()
+  int get_value()
   {
-  }
-
-  // Default-construct the value.
-  void set_default_value()
-  {
-    has_value_ = true;
+    return 0;
   }
 
   // Construct the value.
-  void set_value()
+  void set_value(int)
   {
-    has_value_ = true;
   }
 
 protected:
+  channel_op(int, func_type func)
+    : channel_op_base(func)
+  {
+  }
+
   channel_op(func_type func)
     : channel_op_base(func)
   {

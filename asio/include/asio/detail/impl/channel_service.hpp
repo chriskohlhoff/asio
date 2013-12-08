@@ -22,89 +22,114 @@ namespace detail {
 
 inline bool channel_service::is_open(const base_implementation_type& impl) const
 {
-  return impl.open_;
+  return impl.put_state_ != closed;
 }
 
 inline void channel_service::open(base_implementation_type& impl)
 {
-  impl.open_ = true;
+  if (impl.get_state_ == closed)
+    impl.get_state_ = block;
+  if (impl.put_state_ == closed)
+    impl.put_state_ = impl.max_buffer_size_ ? buffer : block;
 }
 
 template <typename T>
 inline bool channel_service::ready(const implementation_type<T>& impl) const
 {
-  return (!impl.buffer_.empty() || !impl.putters_.empty());
-}
-
-inline bool channel_service::ready(const implementation_type<void>& impl) const
-{
-  return (impl.buffered_ > 0 || !impl.putters_.empty());
+  return impl.get_state_ != block;
 }
 
 template <typename T, typename T0>
 void channel_service::put(implementation_type<T>& impl,
     ASIO_MOVE_ARG(T0) value, asio::error_code& ec)
 {
-  if (!impl.open_)
+  switch (impl.put_state_)
   {
-    ec = asio::error::broken_pipe;
-  }
-  else if (channel_op<T>* getter =
-      static_cast<channel_op<T>*>(impl.getters_.front()))
-  {
-    getter->set_value(ASIO_MOVE_CAST(T0)(value));
-    impl.getters_.pop();
-    io_service_.post_deferred_completion(getter);
-    ec = asio::error_code();
-  }
-  else if (impl.buffer_.size() < impl.max_buffer_size_)
-  {
-    impl.buffer_.resize(impl.buffer_.size() + 1);
-    impl.buffer_.back() = ASIO_MOVE_CAST(T0)(value);
-    ec = asio::error_code();
-  }
-  else
-  {
-    ec = asio::error::would_block;
+  case block:
+    {
+      ec = asio::error::would_block;
+      break;
+    }
+  case buffer:
+    {
+      impl.buffer_push(ASIO_MOVE_CAST(T0)(value));
+      impl.get_state_ = buffer;
+      if (impl.buffer_size() == impl.max_buffer_size_)
+        impl.put_state_ = block;
+      ec = asio::error_code();
+      break;
+    }
+  case waiter:
+    {
+      channel_op<T>* getter =
+        static_cast<channel_op<T>*>(impl.waiters_.front());
+      getter->set_value(ASIO_MOVE_CAST(T0)(value));
+      impl.waiters_.pop();
+      if (impl.waiters_.empty())
+        impl.put_state_ = block;
+      io_service_.post_deferred_completion(getter);
+      ec = asio::error_code();
+      break;
+    }
+  case closed:
+  default:
+    {
+      ec = asio::error::broken_pipe;
+      break;
+    }
   }
 }
 
 template <typename T>
-T channel_service::get(implementation_type<T>& impl,
+typename channel_service::implementation_type<T>::value_type
+channel_service::get(
+    channel_service::implementation_type<T>& impl,
     asio::error_code& ec)
 {
-  if (!impl.buffer_.empty())
+  switch (impl.get_state_)
   {
-    T tmp(ASIO_MOVE_CAST(T)(impl.buffer_.front()));
-    impl.buffer_.pop_front();
-    if (channel_op<T>* putter =
-        static_cast<channel_op<T>*>(impl.putters_.front()))
+  case block:
     {
-      impl.buffer_.push_back(ASIO_MOVE_CAST(T)(putter->get_value()));
-      impl.putters_.pop();
-      io_service_.post_deferred_completion(putter);
+      ec = asio::error::would_block;
+      return typename implementation_type<T>::value_type();
     }
-    ec = asio::error_code();
-    return ASIO_MOVE_CAST(T)(tmp);
-  }
-  else if (channel_op<T>* putter =
-      static_cast<channel_op<T>*>(impl.putters_.front()))
-  {
-    T tmp(ASIO_MOVE_CAST(T)(putter->get_value()));
-    impl.putters_.pop();
-    io_service_.post_deferred_completion(putter);
-    ec = asio::error_code();
-    return ASIO_MOVE_CAST(T)(tmp);
-  }
-  else if (impl.open_)
-  {
-    ec = asio::error::would_block;
-    return T();
-  }
-  else
-  {
-    ec = asio::error::broken_pipe;
-    return T();
+  case buffer:
+    {
+      typename implementation_type<T>::value_type tmp(impl.buffer_front());
+      impl.buffer_pop();
+      if (channel_op<T>* putter =
+          static_cast<channel_op<T>*>(impl.waiters_.front()))
+      {
+        impl.buffer_push(putter->get_value());
+        impl.waiters_.pop();
+        io_service_.post_deferred_completion(putter);
+      }
+      else
+      {
+        if (impl.buffer_size() == 0)
+          impl.get_state_ = (impl.put_state_ == closed) ? closed : block;
+        impl.put_state_ = (impl.put_state_ == closed) ? closed : buffer;
+      }
+      ec = asio::error_code();
+      return tmp;
+    }
+  case waiter:
+    {
+      channel_op<T>* putter =
+        static_cast<channel_op<T>*>(impl.waiters_.front());
+      typename implementation_type<T>::value_type tmp(putter->get_value());
+      impl.waiters_.pop();
+      if (impl.waiters_.front() == 0)
+        impl.get_state_ = (impl.put_state_ == closed) ? closed : block;
+      io_service_.post_deferred_completion(putter);
+      return tmp;
+    }
+  case closed:
+  default:
+    {
+      ec = asio::error::broken_pipe;
+      return typename implementation_type<T>::value_type();
+    }
   }
 }
 
@@ -112,30 +137,43 @@ template <typename T>
 void channel_service::start_put_op(implementation_type<T>& impl,
     channel_op<T>* putter, bool is_continuation)
 {
-  if (!impl.open_)
+  switch (impl.put_state_)
   {
-    putter->on_close();
-    io_service_.post_immediate_completion(putter, is_continuation);
-  }
-  else if (channel_op<T>* getter =
-      static_cast<channel_op<T>*>(impl.getters_.front()))
-  {
-    getter->set_value(ASIO_MOVE_CAST(T)(putter->get_value()));
-    impl.getters_.pop();
-    io_service_.post_deferred_completion(getter);
-    io_service_.post_immediate_completion(putter, is_continuation);
-  }
-  else
-  {
-    if (impl.buffer_.size() < impl.max_buffer_size_)
+  case block:
     {
-      impl.buffer_.push_back(ASIO_MOVE_CAST(T)(putter->get_value()));
-      io_service_.post_immediate_completion(putter, is_continuation);
-    }
-    else
-    {
-      impl.putters_.push(putter);
+      impl.waiters_.push(putter);
       io_service_.work_started();
+      if (impl.get_state_ == block)
+        impl.get_state_ = waiter;
+      break;
+    }
+  case buffer:
+    {
+      impl.buffer_push(putter->get_value());
+      impl.get_state_ = buffer;
+      if (impl.buffer_size() == impl.max_buffer_size_)
+        impl.put_state_ = block;
+      io_service_.post_immediate_completion(putter, is_continuation);
+      break;
+    }
+  case waiter:
+    {
+      channel_op<T>* getter =
+        static_cast<channel_op<T>*>(impl.waiters_.front());
+      getter->set_value(putter->get_value());
+      impl.waiters_.pop();
+      if (impl.waiters_.empty())
+        impl.put_state_ = block;
+      io_service_.post_deferred_completion(getter);
+      io_service_.post_immediate_completion(putter, is_continuation);
+      break;
+    }
+  case closed:
+  default:
+    {
+      putter->on_close();
+      io_service_.post_immediate_completion(putter, is_continuation);
+      break;
     }
   }
 }
@@ -144,36 +182,55 @@ template <typename T>
 void channel_service::start_get_op(implementation_type<T>& impl,
     channel_op<T>* getter, bool is_continuation)
 {
-  if (!impl.buffer_.empty())
+  switch (impl.get_state_)
   {
-    getter->set_value(ASIO_MOVE_CAST(T)(impl.buffer_.front()));
-    impl.buffer_.pop_front();
-    if (channel_op<T>* putter =
-        static_cast<channel_op<T>*>(impl.putters_.front()))
+  case block:
     {
-      impl.buffer_.push_back(ASIO_MOVE_CAST(T)(putter->get_value()));
-      impl.putters_.pop();
-      io_service_.post_deferred_completion(putter);
+      impl.waiters_.push(getter);
+      io_service_.work_started();
+      if (impl.put_state_ == block)
+        impl.put_state_ = waiter;
+      break;
     }
-    io_service_.post_immediate_completion(getter, is_continuation);
-  }
-  else if (channel_op<T>* putter =
-      static_cast<channel_op<T>*>(impl.putters_.front()))
-  {
-    getter->set_value(ASIO_MOVE_CAST(T)(putter->get_value()));
-    impl.putters_.pop();
-    io_service_.post_deferred_completion(putter);
-    io_service_.post_immediate_completion(getter, is_continuation);
-  }
-  else if (impl.open_)
-  {
-    impl.getters_.push(getter);
-    io_service_.work_started();
-  }
-  else
-  {
-    getter->on_close();
-    io_service_.post_immediate_completion(getter, is_continuation);
+  case buffer:
+    {
+      getter->set_value(impl.buffer_front());
+      impl.buffer_pop();
+      if (channel_op<T>* putter =
+          static_cast<channel_op<T>*>(impl.waiters_.front()))
+      {
+        impl.buffer_push(putter->get_value());
+        impl.waiters_.pop();
+        io_service_.post_deferred_completion(putter);
+      }
+      else
+      {
+        if (impl.buffer_size() == 0)
+          impl.get_state_ = (impl.put_state_ == closed) ? closed : block;
+        impl.put_state_ = (impl.put_state_ == closed) ? closed : buffer;
+      }
+      io_service_.post_immediate_completion(getter, is_continuation);
+      break;
+    }
+  case waiter:
+    {
+      channel_op<T>* putter =
+        static_cast<channel_op<T>*>(impl.waiters_.front());
+      getter->set_value(putter->get_value());
+      impl.waiters_.pop();
+      if (impl.waiters_.front() == 0)
+        impl.get_state_ = (impl.put_state_ == closed) ? closed : block;
+      io_service_.post_deferred_completion(putter);
+      io_service_.post_immediate_completion(getter, is_continuation);
+      break;
+    }
+  case closed:
+  default:
+    {
+      getter->on_close();
+      io_service_.post_immediate_completion(getter, is_continuation);
+      break;
+    }
   }
 }
 
