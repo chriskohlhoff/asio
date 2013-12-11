@@ -96,8 +96,9 @@ public:
   // Determine whether the channel is open.
   bool is_open(const base_implementation_type& impl) const;
 
-  // Open the channel.
-  void open(base_implementation_type& impl);
+  // Reset the channel to its initial state.
+  template <typename T>
+  void reset(implementation_type<T>& impl);
 
   // Close the channel.
   ASIO_DECL void close(base_implementation_type& impl);
@@ -213,6 +214,12 @@ struct channel_service::implementation_type : base_implementation_type
     buffer_.pop_front();
   }
 
+  // Clear all buffered values.
+  void buffer_clear()
+  {
+    buffer_.clear();
+  }
+
 private:
   // Buffered values.
   std::deque<T> buffer_;
@@ -253,6 +260,12 @@ struct channel_service::implementation_type<void> : base_implementation_type
   void buffer_pop()
   {
     --buffered_;
+  }
+
+  // Clear all values from the buffer.
+  void buffer_clear()
+  {
+    buffered_ = 0;
   }
 
 private:

@@ -114,6 +114,11 @@ void channel_service::cancel(channel_service::base_implementation_type& impl)
     ops.push(op);
   }
   io_service_.post_deferred_completions(ops);
+
+  if (impl.get_state_ == waiter)
+    impl.get_state_ = block;
+  if (impl.put_state_ == waiter)
+    impl.put_state_ = block;
 }
 
 } // namespace detail

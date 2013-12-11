@@ -47,9 +47,9 @@ public:
     return service_.is_open(impl_);
   }
 
-  void open()
+  void reset()
   {
-    service_.open(impl_);
+    service_.reset(impl_);
   }
 
   void close()
@@ -151,9 +151,9 @@ public:
     return service_.is_open(impl_);
   }
 
-  void open()
+  void reset()
   {
-    service_.open(impl_);
+    service_.reset(impl_);
   }
 
   void close()
