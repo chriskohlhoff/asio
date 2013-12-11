@@ -25,6 +25,7 @@ check_PROGRAMS = \
 	unit/buffered_write_stream \
 	unit/buffer \
 	unit/buffers_iterator \
+	unit/channel \
 	unit/completion_condition \
 	unit/connect \
 	unit/coroutine \
@@ -141,6 +142,7 @@ TESTS = \
 	unit/buffered_write_stream \
 	unit/buffer \
 	unit/buffers_iterator \
+	unit/channel \
 	unit/completion_condition \
 	unit/connect \
 	unit/datagram_socket_service \
@@ -258,6 +260,7 @@ unit_buffers_iterator_SOURCES = unit/buffers_iterator.cpp unit/unit_test.cpp
 unit_buffered_read_stream_SOURCES = unit/buffered_read_stream.cpp unit/unit_test.cpp
 unit_buffered_stream_SOURCES = unit/buffered_stream.cpp unit/unit_test.cpp
 unit_buffered_write_stream_SOURCES = unit/buffered_write_stream.cpp unit/unit_test.cpp
+unit_channel_SOURCES = unit/channel.cpp unit/unit_test.cpp
 unit_completion_condition_SOURCES = unit/completion_condition.cpp unit/unit_test.cpp
 unit_connect_SOURCES = unit/connect.cpp unit/unit_test.cpp
 unit_coroutine_SOURCES = unit/coroutine.cpp unit/unit_test.cpp
