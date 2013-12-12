@@ -73,7 +73,7 @@ public:
   T get_value()
   {
     if (!has_value_)
-      new T();
+      return T();
 
     return ASIO_MOVE_CAST(T)(*static_cast<T*>(
           static_cast<void*>(&value_)));
