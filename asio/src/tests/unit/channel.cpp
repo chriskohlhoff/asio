@@ -349,6 +349,197 @@ void int_buffer0_sync_async_test()
   ASIO_CHECK(!ch.ready());
 }
 
+void int_buffer0_async_async_test()
+{
+  asio::io_service io_service;
+  asio::channel<int> ch(io_service, 0);
+  asio::error_code put_ec_1, put_ec_2, get_ec_1, get_ec_2;
+  int value_1 = 0, value_2 = 0;
+
+  ASIO_CHECK(ch.is_open());
+  ASIO_CHECK(!ch.ready());
+
+  // put 1 / get 1
+
+  put_ec_1 = asio::error::would_block;
+  value_1 = 0;
+  ch.async_put(1, bindns::bind(&put_handler, _1, &put_ec_1));
+  ASIO_CHECK(put_ec_1 == asio::error::would_block);
+  ASIO_CHECK(ch.ready());
+
+  get_ec_1 = asio::error::would_block;
+  value_1 = 0;
+  ch.async_get(bindns::bind(&get_handler, _1, _2, &get_ec_1, &value_1));
+  ASIO_CHECK(get_ec_1 == asio::error::would_block);
+  ASIO_CHECK(!ch.ready());
+
+  io_service.reset();
+  io_service.run();
+  ASIO_CHECK(!put_ec_1);
+  ASIO_CHECK(!get_ec_1);
+  ASIO_CHECK(value_1 == 1);
+
+  // get 1 / put 1
+
+  get_ec_1 = asio::error::would_block;
+  value_1 = 0;
+  ch.async_get(bindns::bind(&get_handler, _1, _2, &get_ec_1, &value_1));
+  ASIO_CHECK(get_ec_1 == asio::error::would_block);
+  ASIO_CHECK(!ch.ready());
+
+  put_ec_1 = asio::error::would_block;
+  value_1 = 0;
+  ch.async_put(1, bindns::bind(&put_handler, _1, &put_ec_1));
+  ASIO_CHECK(put_ec_1 == asio::error::would_block);
+  ASIO_CHECK(!ch.ready());
+
+  io_service.reset();
+  io_service.run();
+  ASIO_CHECK(!get_ec_1);
+  ASIO_CHECK(value_1 == 1);
+  ASIO_CHECK(!put_ec_1);
+
+  // put 2 / get 2
+
+  put_ec_1 = asio::error::would_block;
+  value_1 = 0;
+  ch.async_put(1, bindns::bind(&put_handler, _1, &put_ec_1));
+  ASIO_CHECK(put_ec_1 == asio::error::would_block);
+  ASIO_CHECK(ch.ready());
+
+  put_ec_2 = asio::error::would_block;
+  value_2 = 0;
+  ch.async_put(2, bindns::bind(&put_handler, _1, &put_ec_2));
+  ASIO_CHECK(put_ec_2 == asio::error::would_block);
+  ASIO_CHECK(ch.ready());
+
+  get_ec_1 = asio::error::would_block;
+  value_1 = 0;
+  ch.async_get(bindns::bind(&get_handler, _1, _2, &get_ec_1, &value_1));
+  ASIO_CHECK(get_ec_1 == asio::error::would_block);
+  ASIO_CHECK(ch.ready());
+
+  get_ec_2 = asio::error::would_block;
+  value_2 = 0;
+  ch.async_get(bindns::bind(&get_handler, _1, _2, &get_ec_2, &value_2));
+  ASIO_CHECK(get_ec_2 == asio::error::would_block);
+  ASIO_CHECK(!ch.ready());
+
+  io_service.reset();
+  io_service.run();
+  ASIO_CHECK(!put_ec_1);
+  ASIO_CHECK(!put_ec_2);
+  ASIO_CHECK(!get_ec_1);
+  ASIO_CHECK(value_1 == 1);
+  ASIO_CHECK(!get_ec_2);
+  ASIO_CHECK(value_2 == 2);
+
+  // get 2 / put 2
+
+  get_ec_1 = asio::error::would_block;
+  value_1 = 0;
+  ch.async_get(bindns::bind(&get_handler, _1, _2, &get_ec_1, &value_1));
+  ASIO_CHECK(get_ec_1 == asio::error::would_block);
+  ASIO_CHECK(!ch.ready());
+
+  get_ec_2 = asio::error::would_block;
+  value_2 = 0;
+  ch.async_get(bindns::bind(&get_handler, _1, _2, &get_ec_2, &value_2));
+  ASIO_CHECK(get_ec_2 == asio::error::would_block);
+  ASIO_CHECK(!ch.ready());
+
+  put_ec_1 = asio::error::would_block;
+  value_1 = 0;
+  ch.async_put(1, bindns::bind(&put_handler, _1, &put_ec_1));
+  ASIO_CHECK(put_ec_1 == asio::error::would_block);
+  ASIO_CHECK(!ch.ready());
+
+  put_ec_2 = asio::error::would_block;
+  value_2 = 0;
+  ch.async_put(2, bindns::bind(&put_handler, _1, &put_ec_2));
+  ASIO_CHECK(put_ec_2 == asio::error::would_block);
+  ASIO_CHECK(!ch.ready());
+
+  io_service.reset();
+  io_service.run();
+  ASIO_CHECK(!get_ec_1);
+  ASIO_CHECK(value_1 == 1);
+  ASIO_CHECK(!get_ec_2);
+  ASIO_CHECK(value_2 == 2);
+  ASIO_CHECK(!put_ec_1);
+  ASIO_CHECK(!put_ec_2);
+
+  // put 1 / get 2 / put 1
+
+  put_ec_1 = asio::error::would_block;
+  value_1 = 0;
+  ch.async_put(1, bindns::bind(&put_handler, _1, &put_ec_1));
+  ASIO_CHECK(put_ec_1 == asio::error::would_block);
+  ASIO_CHECK(ch.ready());
+
+  get_ec_1 = asio::error::would_block;
+  value_1 = 0;
+  ch.async_get(bindns::bind(&get_handler, _1, _2, &get_ec_1, &value_1));
+  ASIO_CHECK(get_ec_1 == asio::error::would_block);
+  ASIO_CHECK(!ch.ready());
+
+  get_ec_2 = asio::error::would_block;
+  value_2 = 0;
+  ch.async_get(bindns::bind(&get_handler, _1, _2, &get_ec_2, &value_2));
+  ASIO_CHECK(get_ec_2 == asio::error::would_block);
+  ASIO_CHECK(!ch.ready());
+
+  put_ec_2 = asio::error::would_block;
+  value_2 = 0;
+  ch.async_put(2, bindns::bind(&put_handler, _1, &put_ec_2));
+  ASIO_CHECK(put_ec_2 == asio::error::would_block);
+  ASIO_CHECK(!ch.ready());
+
+  io_service.reset();
+  io_service.run();
+  ASIO_CHECK(!put_ec_1);
+  ASIO_CHECK(!get_ec_1);
+  ASIO_CHECK(value_1 == 1);
+  ASIO_CHECK(!get_ec_2);
+  ASIO_CHECK(value_2 == 2);
+  ASIO_CHECK(!put_ec_2);
+
+  // get 1 / put 2 / get 1
+
+  get_ec_1 = asio::error::would_block;
+  value_1 = 0;
+  ch.async_get(bindns::bind(&get_handler, _1, _2, &get_ec_1, &value_1));
+  ASIO_CHECK(get_ec_1 == asio::error::would_block);
+  ASIO_CHECK(!ch.ready());
+
+  put_ec_1 = asio::error::would_block;
+  value_1 = 0;
+  ch.async_put(1, bindns::bind(&put_handler, _1, &put_ec_1));
+  ASIO_CHECK(put_ec_1 == asio::error::would_block);
+  ASIO_CHECK(!ch.ready());
+
+  put_ec_2 = asio::error::would_block;
+  value_2 = 0;
+  ch.async_put(2, bindns::bind(&put_handler, _1, &put_ec_2));
+  ASIO_CHECK(put_ec_2 == asio::error::would_block);
+  ASIO_CHECK(ch.ready());
+
+  get_ec_2 = asio::error::would_block;
+  value_2 = 0;
+  ch.async_get(bindns::bind(&get_handler, _1, _2, &get_ec_2, &value_2));
+  ASIO_CHECK(get_ec_2 == asio::error::would_block);
+  ASIO_CHECK(!ch.ready());
+
+  io_service.reset();
+  io_service.run();
+  ASIO_CHECK(!get_ec_1);
+  ASIO_CHECK(value_1 == 1);
+  ASIO_CHECK(!put_ec_1);
+  ASIO_CHECK(!put_ec_2);
+  ASIO_CHECK(!get_ec_2);
+  ASIO_CHECK(value_2 == 2);
+}
+
 //------------------------------------------------------------------------------
 // channel of void, 0-sized buffer
 
@@ -402,5 +593,6 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(channel_test::int_buffer0_sync_sync_test)
   ASIO_TEST_CASE(channel_test::int_buffer0_async_sync_test)
   ASIO_TEST_CASE(channel_test::int_buffer0_sync_async_test)
+  ASIO_TEST_CASE(channel_test::int_buffer0_async_async_test)
   ASIO_TEST_CASE(channel_test::void_buffer0_sync_sync_test)
 )
