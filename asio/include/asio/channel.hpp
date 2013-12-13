@@ -42,6 +42,11 @@ public:
     service_.destroy(impl_);
   }
 
+  std::size_t capacity() const
+  {
+    return service_.capacity(impl_);
+  }
+
   bool is_open() const
   {
     return service_.is_open(impl_);
@@ -144,6 +149,11 @@ public:
   ~channel()
   {
     service_.destroy(impl_);
+  }
+
+  std::size_t capacity() const
+  {
+    return service_.capacity(impl_);
   }
 
   bool is_open() const

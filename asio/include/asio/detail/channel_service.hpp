@@ -93,6 +93,9 @@ public:
   // Destroy a channel implementation.
   ASIO_DECL void destroy(base_implementation_type& impl);
 
+  // Get the capacity of the channel.
+  std::size_t capacity(const base_implementation_type& impl) const;
+
   // Determine whether the channel is open.
   bool is_open(const base_implementation_type& impl) const;
 

@@ -20,6 +20,12 @@
 namespace asio {
 namespace detail {
 
+std::size_t channel_service::capacity(
+    const base_implementation_type& impl) const
+{
+  return impl.max_buffer_size_;
+}
+
 inline bool channel_service::is_open(const base_implementation_type& impl) const
 {
   return impl.put_state_ != closed;
