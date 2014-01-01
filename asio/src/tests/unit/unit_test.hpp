@@ -66,9 +66,17 @@
   test(); \
   std::cout << #test << " passed" << std::endl;
 
+#define ASIO_PARAM_TEST_CASE(test, params_begin, params_end) \
+  for (auto i = params_begin; i != params_end; ++i) \
+  { \
+    test(*i); \
+    std::cout << #test << "(" << *i << ") passed" << std::endl; \
+  }
+
 #else // defined(ASIO_STANDALONE)
 
 #include <boost/test/unit_test.hpp>
+#include <boost/test/parameterized_test.hpp>
 using boost::unit_test::test_suite;
 
 #define ASIO_CHECK(expr) BOOST_CHECK(expr)
@@ -89,6 +97,9 @@ using boost::unit_test::test_suite;
 
 #define ASIO_TEST_CASE(test) \
   t->add(BOOST_TEST_CASE(&test));
+
+#define ASIO_PARAM_TEST_CASE(test, params_begin, params_end) \
+  t->add(BOOST_PARAM_TEST_CASE(&test, (params_begin), (params_end)));
 
 #endif // defined(ASIO_STANDALONE)
 

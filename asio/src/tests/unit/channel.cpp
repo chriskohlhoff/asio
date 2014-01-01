@@ -18,6 +18,7 @@
 
 #include "asio/io_service.hpp"
 #include "unit_test.hpp"
+#include <list>
 
 #if defined(ASIO_HAS_BOOST_BIND)
 # include <boost/bind.hpp>
@@ -48,54 +49,328 @@ void get_handler(asio::error_code ec, int value,
   *out_value = value;
 }
 
-//------------------------------------------------------------------------------
-// channel of int, 0-sized buffer
-
-void int_buffer0_sync_sync_test()
+void sync_put_sync_get_test(const std::size_t capacity)
 {
   asio::io_service io_service;
-  asio::channel<int> ch(io_service, 0);
+  asio::channel<int> ch(io_service, capacity);
   asio::error_code ec;
 
   ASIO_CHECK(ch.is_open());
-  ASIO_CHECK(!ch.ready());
 
-  ch.put(1, ec);
-  ASIO_CHECK(ec == asio::error::would_block);
-  ASIO_CHECK(!ch.ready());
+  // put / get
 
-  int value = ch.get(ec);
-  ASIO_CHECK(ec == asio::error::would_block);
-  ASIO_CHECK(value == 0);
-  ASIO_CHECK(!ch.ready());
+  for (std::size_t max_puts = 0; max_puts < capacity * 2 + 1; ++max_puts)
+  {
+    const std::size_t buffered_puts = (std::min)(max_puts, capacity);
 
-  ch.close();
-  ASIO_CHECK(!ch.is_open());
-  ASIO_CHECK(ch.ready());
+    for (std::size_t partial_puts = 0;
+        partial_puts < buffered_puts; ++partial_puts)
+    {
+      for (std::size_t partial_gets = 0;
+          partial_gets + 1 < partial_puts; ++partial_gets)
+      {
+        std::size_t puts = 0;
+        std::size_t gets = 0;
 
-  ch.put(1, ec);
-  ASIO_CHECK(ec == asio::error::broken_pipe);
-  ASIO_CHECK(ch.ready());
+        ASIO_CHECK(!ch.ready());
 
-  value = ch.get(ec);
-  ASIO_CHECK(ec == asio::error::broken_pipe);
-  ASIO_CHECK(value == 0);
-  ASIO_CHECK(ch.ready());
+        for (; puts < partial_puts; ++puts)
+        {
+          ch.put(static_cast<int>(puts), ec);
+          ASIO_CHECK(!ec);
+          ASIO_CHECK(ch.ready());
+        }
 
-  ch.reset();
-  ASIO_CHECK(ch.is_open());
-  ASIO_CHECK(!ch.ready());
+        for (; gets < partial_gets; ++gets)
+        {
+          ASIO_CHECK(ch.ready());
+          int value = ch.get(ec);
+          ASIO_CHECK(!ec);
+          ASIO_CHECK(value == static_cast<int>(gets));
+        }
 
-  ch.put(1, ec);
-  ASIO_CHECK(ec == asio::error::would_block);
-  ASIO_CHECK(!ch.ready());
+        for (; puts < buffered_puts + partial_gets; ++puts)
+        {
+          ch.put(static_cast<int>(puts), ec);
+          ASIO_CHECK(!ec);
+          ASIO_CHECK(ch.ready());
+        }
 
-  value = ch.get(ec);
-  ASIO_CHECK(ec == asio::error::would_block);
-  ASIO_CHECK(value == 0);
-  ASIO_CHECK(!ch.ready());
+        for (; puts < max_puts + partial_gets; ++puts)
+        {
+          ch.put(static_cast<int>(puts), ec);
+          ASIO_CHECK(ec == asio::error::would_block);
+          if (capacity > 0)
+            ASIO_CHECK(ch.ready());
+          else
+            ASIO_CHECK(!ch.ready());
+        }
+
+        for (; gets < buffered_puts + partial_gets; ++gets)
+        {
+          ASIO_CHECK(ch.ready());
+          int value = ch.get(ec);
+          ASIO_CHECK(!ec);
+          ASIO_CHECK(value == static_cast<int>(gets));
+        }
+
+        for (; gets < max_puts + partial_gets + 1; ++gets)
+        {
+          ASIO_CHECK(!ch.ready());
+          int value = ch.get(ec);
+          ASIO_CHECK(ec == asio::error::would_block);
+          ASIO_CHECK(value == 0);
+        }
+      }
+    }
+  }
+
+  // put / close / put / get
+
+  for (std::size_t max_puts = 0;
+      max_puts < capacity * 2 + 1; ++max_puts)
+  {
+    const std::size_t buffered_puts = (std::min)(max_puts, capacity);
+    std::size_t puts = 0;
+    std::size_t gets = 0;
+
+    ASIO_CHECK(!ch.ready());
+
+    for (; puts < buffered_puts; ++puts)
+    {
+      ch.put(static_cast<int>(puts), ec);
+      ASIO_CHECK(!ec);
+      ASIO_CHECK(ch.ready());
+    }
+
+    for (; puts < max_puts; ++puts)
+    {
+      ch.put(static_cast<int>(puts), ec);
+      ASIO_CHECK(ec == asio::error::would_block);
+      if (capacity > 0)
+        ASIO_CHECK(ch.ready());
+      else
+        ASIO_CHECK(!ch.ready());
+    }
+
+    ch.close();
+    ASIO_CHECK(!ch.is_open());
+    ASIO_CHECK(ch.ready());
+
+    ch.put(1, ec);
+    ASIO_CHECK(ec == asio::error::broken_pipe);
+    ASIO_CHECK(ch.ready());
+
+    for (; gets < buffered_puts; ++gets)
+    {
+      ASIO_CHECK(ch.ready());
+      int value = ch.get(ec);
+      ASIO_CHECK(!ec);
+      ASIO_CHECK(value == static_cast<int>(gets));
+    }
+
+    for (; gets < max_puts + 1; ++gets)
+    {
+      ASIO_CHECK(ch.ready());
+      int value = ch.get(ec);
+      ASIO_CHECK(ec == asio::error::broken_pipe);
+      if (ec != asio::error::broken_pipe)
+      ASIO_CHECK(value == 0);
+    }
+
+    ch.reset();
+    ASIO_CHECK(ch.is_open());
+    ASIO_CHECK(!ch.ready());
+  }
 }
 
+void async_put_sync_get_test(const std::size_t capacity)
+{
+  asio::io_service io_service;
+  asio::channel<int> ch(io_service, capacity);
+  asio::error_code ec;
+
+  ASIO_CHECK(ch.is_open());
+
+  // put / get
+
+  for (std::size_t max_puts = 0; max_puts < capacity * 2 + 1; ++max_puts)
+  {
+    const std::size_t buffered_puts = (std::min)(max_puts, capacity);
+
+    for (std::size_t partial_puts = 0;
+        partial_puts < buffered_puts; ++partial_puts)
+    {
+      for (std::size_t partial_gets = 0;
+          partial_gets + 1 < partial_puts; ++partial_gets)
+      {
+        std::size_t puts = 0;
+        std::size_t gets = 0;
+        std::list<asio::error_code> put_ecs;
+
+        ASIO_CHECK(!ch.ready());
+
+        for (; puts < partial_puts; ++puts)
+        {
+          put_ecs.push_back(asio::error::would_block);
+          ch.async_put(static_cast<int>(puts),
+              bindns::bind(&put_handler, _1, &put_ecs.back()));
+          ASIO_CHECK(put_ecs.back() == asio::error::would_block);
+          ASIO_CHECK(ch.ready());
+        }
+
+        io_service.reset();
+        io_service.run();
+        while (!put_ecs.empty())
+        {
+          ASIO_CHECK(!put_ecs.front());
+          put_ecs.pop_front();
+        }
+
+        for (; gets < partial_gets; ++gets)
+        {
+          ASIO_CHECK(ch.ready());
+          int value = ch.get(ec);
+          ASIO_CHECK(!ec);
+          ASIO_CHECK(value == static_cast<int>(gets));
+        }
+
+        for (; puts < buffered_puts + partial_gets; ++puts)
+        {
+          put_ecs.push_back(asio::error::would_block);
+          ch.async_put(static_cast<int>(puts),
+              bindns::bind(&put_handler, _1, &put_ecs.back()));
+          ASIO_CHECK(put_ecs.back() == asio::error::would_block);
+          ASIO_CHECK(ch.ready());
+        }
+
+        io_service.reset();
+        io_service.run();
+        while (!put_ecs.empty())
+        {
+          ASIO_CHECK(!put_ecs.front());
+          put_ecs.pop_front();
+        }
+
+        for (; puts < max_puts + partial_gets; ++puts)
+        {
+          put_ecs.push_back(asio::error::would_block);
+          ch.async_put(static_cast<int>(puts),
+              bindns::bind(&put_handler, _1, &put_ecs.back()));
+          ASIO_CHECK(put_ecs.back() == asio::error::would_block);
+          ASIO_CHECK(ch.ready());
+        }
+
+        for (; gets < max_puts + partial_gets; ++gets)
+        {
+          ASIO_CHECK(ch.ready());
+          int value = ch.get(ec);
+          ASIO_CHECK(!ec);
+          ASIO_CHECK(value == static_cast<int>(gets));
+        }
+
+        for (; gets < max_puts + partial_gets + 1; ++gets)
+        {
+          ASIO_CHECK(!ch.ready());
+          int value = ch.get(ec);
+          ASIO_CHECK(ec == asio::error::would_block);
+          ASIO_CHECK(value == 0);
+        }
+
+        io_service.reset();
+        io_service.run();
+        while (!put_ecs.empty())
+        {
+          ASIO_CHECK(!put_ecs.front());
+          put_ecs.pop_front();
+        }
+      }
+    }
+  }
+
+  // put / close / put / get
+
+  for (std::size_t max_puts = 0;
+      max_puts < capacity * 2 + 1; ++max_puts)
+  {
+    const std::size_t buffered_puts = (std::min)(max_puts, capacity);
+    std::size_t puts = 0;
+    std::size_t gets = 0;
+    std::list<asio::error_code> put_ecs;
+
+    ASIO_CHECK(!ch.ready());
+
+    for (; puts < buffered_puts; ++puts)
+    {
+      put_ecs.push_back(asio::error::would_block);
+      ch.async_put(static_cast<int>(puts),
+          bindns::bind(&put_handler, _1, &put_ecs.back()));
+      ASIO_CHECK(put_ecs.back() == asio::error::would_block);
+      ASIO_CHECK(ch.ready());
+    }
+
+    io_service.reset();
+    io_service.run();
+    while (!put_ecs.empty())
+    {
+      ASIO_CHECK(!put_ecs.front());
+      put_ecs.pop_front();
+    }
+
+    for (; puts < max_puts; ++puts)
+    {
+      put_ecs.push_back(asio::error::would_block);
+      ch.async_put(static_cast<int>(puts),
+          bindns::bind(&put_handler, _1, &put_ecs.back()));
+      ASIO_CHECK(put_ecs.back() == asio::error::would_block);
+      ASIO_CHECK(ch.ready());
+    }
+
+    ch.close();
+    ASIO_CHECK(!ch.is_open());
+    ASIO_CHECK(ch.ready());
+
+    put_ecs.push_back(asio::error::would_block);
+    ch.async_put(static_cast<int>(puts),
+        bindns::bind(&put_handler, _1, &put_ecs.back()));
+    ASIO_CHECK(put_ecs.back() == asio::error::would_block);
+    ASIO_CHECK(ch.ready());
+
+    for (; gets < max_puts; ++gets)
+    {
+      ASIO_CHECK(ch.ready());
+      int value = ch.get(ec);
+      ASIO_CHECK(!ec);
+      ASIO_CHECK(value == static_cast<int>(gets));
+    }
+
+    for (; gets < max_puts + 1; ++gets)
+    {
+      ASIO_CHECK(ch.ready());
+      int value = ch.get(ec);
+      ASIO_CHECK(ec == asio::error::broken_pipe);
+      if (ec != asio::error::broken_pipe)
+      ASIO_CHECK(value == 0);
+    }
+
+    io_service.reset();
+    io_service.run();
+    while (!put_ecs.empty())
+    {
+      if (put_ecs.size() > 1)
+        ASIO_CHECK(!put_ecs.front());
+      else
+        ASIO_CHECK(put_ecs.front() == asio::error::broken_pipe);
+      put_ecs.pop_front();
+    }
+
+    ch.reset();
+    ASIO_CHECK(ch.is_open());
+    ASIO_CHECK(!ch.ready());
+  }
+}
+
+#if 0
 void int_buffer0_async_sync_test()
 {
   asio::io_service io_service;
@@ -584,15 +859,17 @@ void void_buffer0_sync_sync_test()
   ASIO_CHECK(ec == asio::error::would_block);
   ASIO_CHECK(!ch.ready());
 }
+#endif
 
 } // namespace channel_test
+
+std::size_t sizes[] = { 0, 1, 2, 3, 4 };
 
 ASIO_TEST_SUITE
 (
   "channel",
-  ASIO_TEST_CASE(channel_test::int_buffer0_sync_sync_test)
-  ASIO_TEST_CASE(channel_test::int_buffer0_async_sync_test)
-  ASIO_TEST_CASE(channel_test::int_buffer0_sync_async_test)
-  ASIO_TEST_CASE(channel_test::int_buffer0_async_async_test)
-  ASIO_TEST_CASE(channel_test::void_buffer0_sync_sync_test)
+  ASIO_PARAM_TEST_CASE(
+    channel_test::sync_put_sync_get_test, sizes, sizes + 5)
+  ASIO_PARAM_TEST_CASE(
+    channel_test::async_put_sync_get_test, sizes, sizes + 5)
 )
