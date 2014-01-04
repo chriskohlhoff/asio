@@ -3782,6 +3782,7 @@
 /include/asio/detail/win_iocp_overlapped_ptr.hpp
 /include/asio/detail/win_iocp_serial_port_service.hpp
 /include/asio/detail/win_iocp_socket_accept_op.hpp
+/include/asio/detail/win_iocp_socket_connect_op.hpp
 /include/asio/detail/win_iocp_socket_recvfrom_op.hpp
 /include/asio/detail/win_iocp_socket_recvmsg_op.hpp
 /include/asio/detail/win_iocp_socket_recv_op.hpp

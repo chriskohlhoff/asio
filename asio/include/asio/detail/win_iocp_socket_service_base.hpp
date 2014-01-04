@@ -3,6 +3,7 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2014 Vemund Handeland (vehandel at online dot no)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -451,6 +452,13 @@ protected:
   // Start the asynchronous connect operation using the reactor.
   ASIO_DECL void start_connect_op(base_implementation_type& impl,
       reactor_op* op, const socket_addr_type* addr, std::size_t addrlen);
+
+#if defined(_WIN32_WINNT) && _WIN32_WINNT >= 0x0501
+  // Helper function to start an asynchronous connect operation.
+  ASIO_DECL void start_connect_op(base_implementation_type& impl,
+      operation* op, const socket_addr_type* addr, int addrlen,
+      LPFN_CONNECTEX connectex_func);
+#endif //  defined(_WIN32_WINNT) && _WIN32_WINNT >= 0x0501
 
   // Helper function to close a socket when the associated object is being
   // destroyed.

@@ -3,6 +3,7 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2014 Vemund Handeland (vehandel at online dot no)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -541,6 +542,28 @@ void win_iocp_socket_service_base::start_reactor_op(
 
   iocp_service_.post_immediate_completion(op, false);
 }
+
+#if defined(_WIN32_WINNT) && _WIN32_WINNT >= 0x0501
+
+void win_iocp_socket_service_base::start_connect_op(
+    win_iocp_socket_service_base::base_implementation_type& impl,
+    operation* op, const socket_addr_type* addr, int addrlen, LPFN_CONNECTEX connectex_func)
+{
+  iocp_service_.work_started();
+
+  BOOL result = connectex_func(impl.socket_,
+    addr, addrlen,
+    0, 0, 0,
+    op);
+
+  DWORD last_error = ::WSAGetLastError();
+  if (!result && last_error != WSA_IO_PENDING)
+    iocp_service_.on_completion(op, last_error);
+  else
+    iocp_service_.on_pending(op);
+}
+
+#endif // defined(_WIN32_WINNT) && _WIN32_WINNT >= 0x0501
 
 void win_iocp_socket_service_base::start_connect_op(
     win_iocp_socket_service_base::base_implementation_type& impl,

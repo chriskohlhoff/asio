@@ -225,6 +225,7 @@ nobase_include_HEADERS = \
 	asio/detail/win_iocp_overlapped_ptr.hpp \
 	asio/detail/win_iocp_serial_port_service.hpp \
 	asio/detail/win_iocp_socket_accept_op.hpp \
+	asio/detail/win_iocp_socket_connect_op.hpp \
 	asio/detail/win_iocp_socket_recvfrom_op.hpp \
 	asio/detail/win_iocp_socket_recvmsg_op.hpp \
 	asio/detail/win_iocp_socket_recv_op.hpp \
