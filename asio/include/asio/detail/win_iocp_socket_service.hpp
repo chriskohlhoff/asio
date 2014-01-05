@@ -45,6 +45,7 @@
 #include "asio/detail/win_iocp_socket_recvfrom_op.hpp"
 #include "asio/detail/win_iocp_socket_send_op.hpp"
 #include "asio/detail/win_iocp_socket_service_base.hpp"
+#include "asio/detail/winsock_extension_functions_init.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -510,17 +511,9 @@ public:
     LPFN_CONNECTEX connectex_func = 0;
     if ( connection_oriented )
     {
-      // try to get the ConnectEx function pointer
-      GUID connectex_guid = WSAID_CONNECTEX;
-      DWORD dummy_bytes_returned;
-      if ( ::WSAIoctl( impl.socket_, SIO_GET_EXTENSION_FUNCTION_POINTER,
-        &connectex_guid, sizeof( connectex_guid),
-        &connectex_func, sizeof( connectex_func ),
-        &dummy_bytes_returned, 0, 0) != 0 )
-      {
-        // just make sure the function ptr is null
-        connectex_func = 0;
-      }
+      // Try to get the ConnectEx function pointer.
+      // A valid socket is required by the implementation, and we just use the socket provided in the implementation_type argument.
+      connectex_func = get_connectex(impl.socket_);
     }
 
     if ( !connection_oriented || connectex_func == 0 )
@@ -547,9 +540,9 @@ public:
     else
     {
       // ConnectEx requires a bound socket
+      // Try to bind the socket. It will fail with WSAEINVAL if (and only if) the socket is already bound.
       asio::error_code ec;
-      // try to bind the socket. It will fail with WSAEINVAL if (and only if) the socket is already bound.
-      bind(impl, (endpoint_type(peer_endpoint.protocol(),0)), ec);
+      bind(impl, endpoint_type(peer_endpoint.protocol(),0), ec);
       if ( ec && ec != asio::error::invalid_argument)
       {
         io_service_.post(

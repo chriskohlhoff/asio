@@ -62,6 +62,7 @@
 #include "asio/detail/impl/win_tss_ptr.ipp"
 #include "asio/detail/impl/winrt_ssocket_service_base.ipp"
 #include "asio/detail/impl/winrt_timer_scheduler.ipp"
+#include "asio/detail/impl/winsock_extension_functions_init.ipp"
 #include "asio/detail/impl/winsock_init.ipp"
 #include "asio/generic/detail/impl/endpoint.ipp"
 #include "asio/ip/impl/address.ipp"

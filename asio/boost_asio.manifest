@@ -116,6 +116,7 @@
 /boost/asio/detail/impl/winrt_ssocket_service_base.ipp
 /boost/asio/detail/impl/winrt_timer_scheduler.hpp
 /boost/asio/detail/impl/winrt_timer_scheduler.ipp
+/boost/asio/detail/impl/winsock_extension_functions_init.ipp
 /boost/asio/detail/impl/winsock_init.ipp
 /boost/asio/detail/impl/win_static_mutex.ipp
 /boost/asio/detail/impl/win_thread.ipp
@@ -249,6 +250,7 @@
 /boost/asio/detail/winrt_ssocket_service.hpp
 /boost/asio/detail/winrt_timer_scheduler.hpp
 /boost/asio/detail/winrt_utils.hpp
+/boost/asio/detail/winsock_extension_functions_init.hpp
 /boost/asio/detail/winsock_init.hpp
 /boost/asio/detail/win_static_mutex.hpp
 /boost/asio/detail/win_thread.hpp
