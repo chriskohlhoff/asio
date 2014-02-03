@@ -3,6 +3,7 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2014 Vemund Handeland (vehandel at online dot no)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -40,9 +41,11 @@
 #include "asio/detail/win_iocp_io_service.hpp"
 #include "asio/detail/win_iocp_null_buffers_op.hpp"
 #include "asio/detail/win_iocp_socket_accept_op.hpp"
+#include "asio/detail/win_iocp_socket_connect_op.hpp"
 #include "asio/detail/win_iocp_socket_recvfrom_op.hpp"
 #include "asio/detail/win_iocp_socket_send_op.hpp"
 #include "asio/detail/win_iocp_socket_service_base.hpp"
+#include "asio/detail/winsock_extension_functions_init.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -500,18 +503,71 @@ public:
   void async_connect(implementation_type& impl,
       const endpoint_type& peer_endpoint, Handler& handler)
   {
-    // Allocate and construct an operation to wrap the handler.
-    typedef reactive_socket_connect_op<Handler> op;
-    typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
-    p.p = new (p.v) op(impl.socket_, handler);
+#if defined(_WIN32_WINNT) && _WIN32_WINNT >= 0x0501
+    // test for known connection-oriented sockets
+    bool connection_oriented = impl.protocol_.type() == ASIO_OS_DEF(SOCK_STREAM)
+        || impl.protocol_.type() == ASIO_OS_DEF(SOCK_SEQPACKET);
 
-    ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_connect"));
+    LPFN_CONNECTEX connectex_func = 0;
+    if ( connection_oriented )
+    {
+      // Try to get the ConnectEx function pointer.
+      // A valid socket is required by the implementation, and we just use the socket provided in the implementation_type argument.
+      connectex_func = get_connectex(impl.socket_);
+    }
 
-    start_connect_op(impl, p.p, peer_endpoint.data(),
-        static_cast<int>(peer_endpoint.size()));
-    p.v = p.p = 0;
+    if ( !connection_oriented || connectex_func == 0 )
+    {
+      // fallback to using the reactor
+
+#endif // defined(_WIN32_WINNT) && _WIN32_WINNT >= 0x0501
+
+      // Allocate and construct an operation to wrap the handler.
+      typedef reactive_socket_connect_op<Handler> op;
+      typename op::ptr p = { asio::detail::addressof(handler),
+        asio_handler_alloc_helpers::allocate(
+          sizeof(op), handler), 0 };
+      p.p = new (p.v) op(impl.socket_, handler);
+
+      ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_connect"));
+
+      start_connect_op(impl, p.p, peer_endpoint.data(),
+          static_cast<int>(peer_endpoint.size()));
+      p.v = p.p = 0;
+
+#if defined(_WIN32_WINNT) && _WIN32_WINNT >= 0x0501
+    }
+    else
+    {
+      // ConnectEx requires a bound socket
+      // Try to bind the socket. It will fail with WSAEINVAL if (and only if) the socket is already bound.
+      asio::error_code ec;
+      bind(impl, endpoint_type(peer_endpoint.protocol(),0), ec);
+      if ( ec && ec != asio::error::invalid_argument)
+      {
+        io_service_.post(
+          asio::detail::bind_handler(
+            ASIO_MOVE_CAST(ASIO_HANDLER_TYPE(
+              Handler, void (asio::error_code)))(
+              handler), ec));
+
+        return;
+      }
+      // Allocate and construct an operation to wrap the handler.
+      typedef win_iocp_socket_connect_op<Handler> op;
+      typename op::ptr p = { asio::detail::addressof(handler),
+        asio_handler_alloc_helpers::allocate(
+          sizeof(op), handler), 0 };
+      p.p = new (p.v) op(impl.socket_, handler);
+
+      ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_connect"));
+
+      start_connect_op(impl, p.p, peer_endpoint.data(),
+        static_cast<int>(peer_endpoint.size()),
+        connectex_func);
+      p.v = p.p = 0;
+    }
+#endif // defined(_WIN32_WINNT) && _WIN32_WINNT >= 0x0501
   }
 };
 

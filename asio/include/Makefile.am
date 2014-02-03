@@ -113,6 +113,7 @@ nobase_include_HEADERS = \
 	asio/detail/impl/winrt_ssocket_service_base.ipp \
 	asio/detail/impl/winrt_timer_scheduler.hpp \
 	asio/detail/impl/winrt_timer_scheduler.ipp \
+	asio/detail/impl/winsock_extension_functions_init.ipp \
 	asio/detail/impl/winsock_init.ipp \
 	asio/detail/impl/win_static_mutex.ipp \
 	asio/detail/impl/win_thread.ipp \
@@ -225,6 +226,7 @@ nobase_include_HEADERS = \
 	asio/detail/win_iocp_overlapped_ptr.hpp \
 	asio/detail/win_iocp_serial_port_service.hpp \
 	asio/detail/win_iocp_socket_accept_op.hpp \
+	asio/detail/win_iocp_socket_connect_op.hpp \
 	asio/detail/win_iocp_socket_recvfrom_op.hpp \
 	asio/detail/win_iocp_socket_recvmsg_op.hpp \
 	asio/detail/win_iocp_socket_recv_op.hpp \
@@ -245,6 +247,7 @@ nobase_include_HEADERS = \
 	asio/detail/winrt_ssocket_service.hpp \
 	asio/detail/winrt_timer_scheduler.hpp \
 	asio/detail/winrt_utils.hpp \
+	asio/detail/winsock_extension_functions_init.hpp \
 	asio/detail/winsock_init.hpp \
 	asio/detail/win_static_mutex.hpp \
 	asio/detail/win_thread.hpp \

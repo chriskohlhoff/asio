@@ -3670,6 +3670,7 @@
 /include/asio/detail/impl/winrt_ssocket_service_base.ipp
 /include/asio/detail/impl/winrt_timer_scheduler.hpp
 /include/asio/detail/impl/winrt_timer_scheduler.ipp
+/include/asio/detail/impl/winsock_extension_functions_init.ipp
 /include/asio/detail/impl/winsock_init.ipp
 /include/asio/detail/impl/win_static_mutex.ipp
 /include/asio/detail/impl/win_thread.ipp
@@ -3782,6 +3783,7 @@
 /include/asio/detail/win_iocp_overlapped_ptr.hpp
 /include/asio/detail/win_iocp_serial_port_service.hpp
 /include/asio/detail/win_iocp_socket_accept_op.hpp
+/include/asio/detail/win_iocp_socket_connect_op.hpp
 /include/asio/detail/win_iocp_socket_recvfrom_op.hpp
 /include/asio/detail/win_iocp_socket_recvmsg_op.hpp
 /include/asio/detail/win_iocp_socket_recv_op.hpp
@@ -3802,6 +3804,7 @@
 /include/asio/detail/winrt_ssocket_service.hpp
 /include/asio/detail/winrt_timer_scheduler.hpp
 /include/asio/detail/winrt_utils.hpp
+/include/asio/detail/winsock_extension_functions_init.hpp
 /include/asio/detail/winsock_init.hpp
 /include/asio/detail/win_static_mutex.hpp
 /include/asio/detail/win_thread.hpp
