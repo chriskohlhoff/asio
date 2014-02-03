@@ -558,7 +558,7 @@ public:
       typename op::ptr p = { asio::detail::addressof(handler),
         asio_handler_alloc_helpers::allocate(
           sizeof(op), handler), 0 };
-      p.p = new (p.v) op(*this, impl.socket_, handler);
+      p.p = new (p.v) op(impl.socket_, handler);
 
       ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_connect"));
 

@@ -28,7 +28,6 @@
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/operation.hpp"
 #include "asio/detail/socket_ops.hpp"
-#include "asio/detail/win_iocp_socket_service_base.hpp"
 #include "asio/error.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -42,10 +41,8 @@ class win_iocp_socket_connect_op : public operation
 public:
   ASIO_DEFINE_HANDLER_PTR(win_iocp_socket_connect_op);
 
-  win_iocp_socket_connect_op(win_iocp_socket_service_base& socket_service,
-      socket_type socket, Handler& handler)
+  win_iocp_socket_connect_op(socket_type socket, Handler& handler)
     : operation(&win_iocp_socket_connect_op::do_complete),
-      socket_service_(socket_service),
       socket_(socket),
       handler_(ASIO_MOVE_CAST(Handler)(handler))
   {
@@ -99,7 +96,6 @@ public:
   }
 
 private:
-  win_iocp_socket_service_base& socket_service_;
   socket_type socket_;
   Handler handler_;
 };
