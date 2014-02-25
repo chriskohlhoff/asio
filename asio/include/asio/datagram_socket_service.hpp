@@ -23,7 +23,7 @@
 #include "asio/io_service.hpp"
 
 #if defined(ASIO_WINDOWS_RUNTIME)
-# include "asio/detail/null_socket_service.hpp"
+# include "asio/detail/winrt_dsocket_service.hpp"
 #elif defined(ASIO_HAS_IOCP)
 # include "asio/detail/win_iocp_socket_service.hpp"
 #else
@@ -58,7 +58,7 @@ public:
 private:
   // The type of the platform-specific implementation.
 #if defined(ASIO_WINDOWS_RUNTIME)
-  typedef detail::null_socket_service<Protocol> service_impl_type;
+  typedef detail::winrt_dsocket_service<Protocol> service_impl_type;
 #elif defined(ASIO_HAS_IOCP)
   typedef detail::win_iocp_socket_service<Protocol> service_impl_type;
 #else
