@@ -180,7 +180,7 @@ void kqueue_reactor::move_descriptor(socket_type,
   source_descriptor_data = 0;
 }
 
-void kqueue_reactor::start_op(int op_type, socket_type /*descriptor*/,
+void kqueue_reactor::start_op(int op_type, socket_type descriptor,
     kqueue_reactor::per_descriptor_data& descriptor_data, reactor_op* op,
     bool is_continuation, bool allow_speculative)
 {
@@ -202,17 +202,25 @@ void kqueue_reactor::start_op(int op_type, socket_type /*descriptor*/,
   bool first = descriptor_data->op_queue_[op_type].empty();
   if (first)
   {
-    if (allow_speculative)
+    if (allow_speculative
+        && (op_type != read_op
+          || descriptor_data->op_queue_[except_op].empty()))
     {
-      if (op_type != read_op || descriptor_data->op_queue_[except_op].empty())
+      if (op->perform())
       {
-        if (op->perform())
-        {
-          descriptor_lock.unlock();
-          io_service_.post_immediate_completion(op, is_continuation);
-          return;
-        }
+        descriptor_lock.unlock();
+        io_service_.post_immediate_completion(op, is_continuation);
+        return;
       }
+    }
+    else
+    {
+      struct kevent events[2];
+      ASIO_KQUEUE_EV_SET(&events[0], descriptor, EVFILT_READ,
+          EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
+      ASIO_KQUEUE_EV_SET(&events[1], descriptor, EVFILT_WRITE,
+          EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
+      ::kevent(kqueue_fd_, events, 2, 0, 0, 0);
     }
   }
 
