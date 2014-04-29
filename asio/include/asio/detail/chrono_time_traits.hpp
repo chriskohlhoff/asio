@@ -22,6 +22,13 @@
 namespace asio {
 namespace detail {
 
+// Helper template to compute the greatest common divisor.
+template <int64_t v1, int64_t v2>
+struct gcd { enum { value = gcd<v2, v1 % v2>::value }; };
+
+template <int64_t v1>
+struct gcd<v1, 0> { enum { value = v1 }; };
+
 // Adapts std::chrono clocks for use with a deadline timer.
 template <typename Clock, typename WaitTraits>
 struct chrono_time_traits
@@ -146,8 +153,14 @@ struct chrono_time_traits
     template <int64_t Num, int64_t Den>
     int64_t duration_cast() const
     {
-      const int64_t num = period_type::num * Den;
-      const int64_t den = period_type::den * Num;
+      const int64_t num1 = period_type::num / gcd<period_type::num, Num>::value;
+      const int64_t num2 = Num / gcd<period_type::num, Num>::value;
+
+      const int64_t den1 = period_type::den / gcd<period_type::den, Den>::value;
+      const int64_t den2 = Den / gcd<period_type::den, Den>::value;
+
+      const int64_t num = num1 * den2;
+      const int64_t den = num2 * den1;
 
       if (num == 1 && den == 1)
         return ticks();
