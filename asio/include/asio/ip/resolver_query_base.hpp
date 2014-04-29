@@ -93,7 +93,7 @@ public:
 
   friend flags operator~(flags x)
   {
-    return static_cast<flags>(static_cast<unsigned int>(~x));
+    return static_cast<flags>(~static_cast<unsigned int>(x));
   }
 
   friend flags& operator&=(flags& x, flags y)
