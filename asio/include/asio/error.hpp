@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/error_code.hpp"
+#include "asio/system_error.hpp"
 #if defined(ASIO_WINDOWS) \
   || defined(__CYGWIN__) \
   || defined(ASIO_WINDOWS_RUNTIME)
