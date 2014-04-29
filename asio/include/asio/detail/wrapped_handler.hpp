@@ -264,7 +264,7 @@ inline bool asio_handler_is_continuation(
     rewrapped_handler<Dispatcher, Context>* this_handler)
 {
   return asio_handler_cont_helpers::is_continuation(
-      this_handler->handler_);
+      this_handler->context_);
 }
 
 template <typename Function, typename Handler, typename Context>
