@@ -16,7 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <boost/coroutine/coroutine.hpp>
+#include <boost/coroutine/all.hpp>
 #include "asio/detail/weak_ptr.hpp"
 #include "asio/detail/wrapped_handler.hpp"
 #include "asio/io_service.hpp"
@@ -57,7 +57,7 @@ public:
    */
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined callee_type;
-#elif defined(BOOST_COROUTINES_UNIDRECT) || defined(BOOST_COROUTINES_V2)
+#elif defined(BOOST_COROUTINES_UNIDIRECT) || defined(BOOST_COROUTINES_V2)
   typedef boost::coroutines::push_coroutine<void> callee_type;
 #else
   typedef boost::coroutines::coroutine<void()> callee_type;
@@ -72,7 +72,7 @@ public:
    */
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined caller_type;
-#elif defined(BOOST_COROUTINES_UNIDRECT) || defined(BOOST_COROUTINES_V2)
+#elif defined(BOOST_COROUTINES_UNIDIRECT) || defined(BOOST_COROUTINES_V2)
   typedef boost::coroutines::pull_coroutine<void> caller_type;
 #else
   typedef boost::coroutines::coroutine<void()>::caller_type caller_type;
