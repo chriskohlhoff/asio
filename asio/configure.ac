@@ -18,16 +18,19 @@ AC_ARG_WITH(boost,
     STANDALONE="yes"
   else
     CPPFLAGS="$CPPFLAGS -I${withval}"
+    LIBS="$LIBS -L${withval}/stage/lib"
   fi
 ],
 [
   BOOSTDIR="`pwd`/../boost_1_55_0"
   if test -d "${BOOSTDIR}"; then
     CPPFLAGS="$CPPFLAGS -I${BOOSTDIR}"
+    LIBS="$LIBS -L${BOOSTDIR}/stage/lib"
   else
     BOOSTDIR="`pwd`/../boost_1_54_0"
     if test -d "${BOOSTDIR}"; then
       CPPFLAGS="$CPPFLAGS -I${BOOSTDIR}"
+      LIBS="$LIBS -L${BOOSTDIR}/stage/lib"
     else
       BOOSTDIR="`pwd`/../boost_1_53_0"
       if test -d "${BOOSTDIR}"; then
@@ -158,6 +161,12 @@ AC_ARG_ENABLE(separate-compilation,
   SEPARATE_COMPILATION=yes
 ])
 
+AC_ARG_ENABLE(boost-coroutine,
+[  --enable-boost-coroutine  use Boost.Coroutine to implement stackful coroutines],
+[
+  HAVE_BOOST_COROUTINE=yes
+])
+
 if test "$STANDALONE" != yes; then
   AC_CHECK_HEADER([boost/noncopyable.hpp],,
   [
@@ -242,6 +251,8 @@ fi
 AM_CONDITIONAL(STANDALONE,test x$STANDALONE = xyes)
 
 AM_CONDITIONAL(SEPARATE_COMPILATION,test x$SEPARATE_COMPILATION = xyes)
+
+AM_CONDITIONAL(HAVE_BOOST_COROUTINE,test x$HAVE_BOOST_COROUTINE = xyes)
 
 AM_CONDITIONAL(WINDOWS_TARGET,test x$WINDOWS != xno)
 

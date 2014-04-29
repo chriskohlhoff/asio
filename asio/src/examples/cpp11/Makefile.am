@@ -23,6 +23,11 @@ noinst_PROGRAMS = \
 	futures/daytime_client \
 	http/server/http_server
 
+if HAVE_BOOST_COROUTINE
+noinst_PROGRAMS += \
+  spawn/echo_server
+endif
+
 noinst_HEADERS = \
 	chat/chat_message.hpp
 
@@ -48,6 +53,11 @@ http_server_http_server_SOURCES = \
 	http/server/request_handler.cpp \
 	http/server/request_parser.cpp \
 	http/server/server.cpp
+
+if HAVE_BOOST_COROUTINE
+spawn_echo_server_SOURCES = spawn/echo_server.cpp
+spawn_echo_server_LDADD = $(LDADD) -lboost_coroutine -lboost_context -lboost_system
+endif
 
 EXTRA_DIST = \
 	http/server/connection.hpp \
