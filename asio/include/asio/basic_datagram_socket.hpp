@@ -299,9 +299,8 @@ public:
 
   /// Start an asynchronous send on a connected socket.
   /**
-   * This function is used to send data on the datagram socket. The function
-   * call will block until the data has been sent successfully or an error
-   * occurs.
+   * This function is used to asynchronously send data on the datagram socket.
+   * The function call always returns immediately.
    *
    * @param buffers One or more data buffers to be sent on the socket. Although
    * the buffers object may be copied as necessary, ownership of the underlying
