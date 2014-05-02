@@ -23,6 +23,7 @@
 
 #include <cstring>
 #include "asio/detail/noncopyable.hpp"
+#include "asio/detail/reactor_op_queue.hpp"
 #include "asio/detail/socket_types.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -59,6 +60,20 @@ public:
     return false;
   }
 
+  void set(reactor_op_queue<socket_type>& operations, op_queue<operation>& ops)
+  {
+    reactor_op_queue<socket_type>::iterator i = operations.begin();
+    while (i != operations.end())
+    {
+      reactor_op_queue<socket_type>::iterator op_iter = i++;
+      if (!set(op_iter->first))
+      {
+        asio::error_code ec(error::fd_set_failure);
+        operations.cancel_operations(op_iter, ops, ec);
+      }
+    }
+  }
+
   bool is_set(socket_type descriptor) const
   {
     return FD_ISSET(descriptor, &fd_set_) != 0;
@@ -72,6 +87,18 @@ public:
   socket_type max_descriptor() const
   {
     return max_descriptor_;
+  }
+
+  void perform(reactor_op_queue<socket_type>& operations,
+      op_queue<operation>& ops) const
+  {
+    reactor_op_queue<socket_type>::iterator i = operations.begin();
+    while (i != operations.end())
+    {
+      reactor_op_queue<socket_type>::iterator op_iter = i++;
+      if (is_set(op_iter->first))
+        operations.perform_operations(op_iter, ops);
+    }
   }
 
 private:
