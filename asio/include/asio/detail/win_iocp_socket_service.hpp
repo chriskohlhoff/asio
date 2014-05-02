@@ -31,7 +31,6 @@
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/operation.hpp"
-#include "asio/detail/reactive_socket_connect_op.hpp"
 #include "asio/detail/reactor.hpp"
 #include "asio/detail/reactor_op.hpp"
 #include "asio/detail/socket_holder.hpp"
@@ -40,6 +39,7 @@
 #include "asio/detail/win_iocp_io_service.hpp"
 #include "asio/detail/win_iocp_null_buffers_op.hpp"
 #include "asio/detail/win_iocp_socket_accept_op.hpp"
+#include "asio/detail/win_iocp_socket_connect_op.hpp"
 #include "asio/detail/win_iocp_socket_recvfrom_op.hpp"
 #include "asio/detail/win_iocp_socket_send_op.hpp"
 #include "asio/detail/win_iocp_socket_service_base.hpp"
@@ -501,7 +501,7 @@ public:
       const endpoint_type& peer_endpoint, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef reactive_socket_connect_op<Handler> op;
+    typedef win_iocp_socket_connect_op<Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
       asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
@@ -509,8 +509,8 @@ public:
 
     ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_connect"));
 
-    start_connect_op(impl, p.p, peer_endpoint.data(),
-        static_cast<int>(peer_endpoint.size()));
+    start_connect_op(impl, impl.protocol_.family(), impl.protocol_.type(),
+        peer_endpoint.data(), static_cast<int>(peer_endpoint.size()), p.p);
     p.v = p.p = 0;
   }
 };

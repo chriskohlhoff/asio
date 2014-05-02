@@ -520,6 +520,22 @@ void sync_connect(socket_type s, const socket_addr_type* addr,
       asio::error::get_system_category());
 }
 
+#if defined(ASIO_HAS_IOCP)
+
+void complete_iocp_connect(socket_type s, asio::error_code& ec)
+{
+  if (!ec)
+  {
+    // Need to set the SO_UPDATE_CONNECT_CONTEXT option so that getsockname
+    // and getpeername will work on the connected socket.
+    socket_ops::state_type state = 0;
+    socket_ops::setsockopt(s, state, SOL_SOCKET,
+        SO_UPDATE_CONNECT_CONTEXT, 0, 0, ec);
+  }
+}
+
+#endif // defined(ASIO_HAS_IOCP)
+
 bool non_blocking_connect(socket_type s, asio::error_code& ec)
 {
   // Check if the connect operation has finished. This is required since we may

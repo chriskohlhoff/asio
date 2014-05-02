@@ -37,6 +37,7 @@
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/win_iocp_io_service.hpp"
 #include "asio/detail/win_iocp_null_buffers_op.hpp"
+#include "asio/detail/win_iocp_socket_connect_op.hpp"
 #include "asio/detail/win_iocp_socket_send_op.hpp"
 #include "asio/detail/win_iocp_socket_recv_op.hpp"
 #include "asio/detail/win_iocp_socket_recvmsg_op.hpp"
@@ -450,7 +451,8 @@ protected:
 
   // Start the asynchronous connect operation using the reactor.
   ASIO_DECL void start_connect_op(base_implementation_type& impl,
-      reactor_op* op, const socket_addr_type* addr, std::size_t addrlen);
+      int family, int type, const socket_addr_type* remote_addr,
+      std::size_t remote_addrlen, win_iocp_socket_connect_op_base* op);
 
   // Helper function to close a socket when the associated object is being
   // destroyed.
@@ -464,6 +466,16 @@ protected:
   // new one is obtained from the io_service and a pointer to it is cached in
   // this service.
   ASIO_DECL reactor& get_reactor();
+
+  // The type of a ConnectEx function pointer, as old SDKs may not provide it.
+  typedef BOOL (PASCAL *connect_ex_fn)(SOCKET,
+      const socket_addr_type*, int, void*, DWORD, DWORD*, OVERLAPPED*);
+
+  // Helper function to get the ConnectEx pointer. If no ConnectEx pointer has
+  // been obtained yet, one is obtained using WSAIoctl and the pointer is
+  // cached. Returns a null pointer if ConnectEx is not available.
+  ASIO_DECL connect_ex_fn get_connect_ex(
+      base_implementation_type& impl, int type);
 
   // Helper function to emulate InterlockedCompareExchangePointer functionality
   // for:
@@ -487,6 +499,9 @@ protected:
   // The reactor used for performing connect operations. This object is created
   // only if needed.
   reactor* reactor_;
+
+  // Pointer to ConnectEx implementation.
+  void* connect_ex_;
 
   // Mutex to protect access to the linked list of implementations. 
   asio::detail::mutex mutex_;
