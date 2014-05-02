@@ -45,7 +45,8 @@ public:
       // As documented in GetQueuedCompletionStatus, setting the low order
       // bit of this event prevents our synchronous writes from being treated
       // as completion port events.
-      *reinterpret_cast<DWORD_PTR*>(&hEvent) |= 1;
+      DWORD_PTR tmp = reinterpret_cast<DWORD_PTR>(hEvent);
+      hEvent = reinterpret_cast<HANDLE>(tmp | 1);
     }
     else
     {
