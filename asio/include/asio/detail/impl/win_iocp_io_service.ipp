@@ -69,6 +69,7 @@ win_iocp_io_service::win_iocp_io_service(
     stopped_(0),
     stop_event_posted_(0),
     shutdown_(0),
+    gqcs_timeout_(get_gqcs_timeout()),
     dispatch_required_(0)
 {
   ASIO_HANDLER_TRACKING_INIT;
@@ -116,7 +117,7 @@ void win_iocp_io_service::shutdown_service()
       dword_ptr_t completion_key = 0;
       LPOVERLAPPED overlapped = 0;
       ::GetQueuedCompletionStatus(iocp_.handle, &bytes_transferred,
-          &completion_key, &overlapped, gqcs_timeout);
+          &completion_key, &overlapped, gqcs_timeout_);
       if (overlapped)
       {
         ::InterlockedDecrement(&outstanding_work_);
@@ -362,7 +363,7 @@ size_t win_iocp_io_service::do_one(bool block, asio::error_code& ec)
     LPOVERLAPPED overlapped = 0;
     ::SetLastError(0);
     BOOL ok = ::GetQueuedCompletionStatus(iocp_.handle, &bytes_transferred,
-        &completion_key, &overlapped, block ? gqcs_timeout : 0);
+        &completion_key, &overlapped, block ? gqcs_timeout_ : 0);
     DWORD last_error = ::GetLastError();
 
     if (overlapped)
@@ -451,6 +452,16 @@ size_t win_iocp_io_service::do_one(bool block, asio::error_code& ec)
       }
     }
   }
+}
+
+DWORD win_iocp_io_service::get_gqcs_timeout()
+{
+  OSVERSIONINFO version_info;
+  version_info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+  if (::GetVersionEx(&version_info))
+    if (version_info.dwMajorVersion >= 6)
+      return INFINITE;
+  return default_gqcs_timeout;
 }
 
 void win_iocp_io_service::do_add_timer_queue(timer_queue_base& queue)

@@ -206,6 +206,9 @@ private:
   // either 0 or 1).
   ASIO_DECL size_t do_one(bool block, asio::error_code& ec);
 
+  // Helper to calculate the GetQueuedCompletionStatus timeout.
+  ASIO_DECL static DWORD get_gqcs_timeout();
+
   // Helper function to add a new timer queue.
   ASIO_DECL void do_add_timer_queue(timer_queue_base& queue);
 
@@ -245,11 +248,11 @@ private:
 
   enum
   {
-    // Timeout to use with GetQueuedCompletionStatus. Some versions of windows
-    // have a "bug" where a call to GetQueuedCompletionStatus can appear stuck
-    // even though there are events waiting on the queue. Using a timeout helps
-    // to work around the issue.
-    gqcs_timeout = 500,
+    // Timeout to use with GetQueuedCompletionStatus on older versions of
+    // Windows. Some versions of windows have a "bug" where a call to
+    // GetQueuedCompletionStatus can appear stuck even though there are events
+    // waiting on the queue. Using a timeout helps to work around the issue.
+    default_gqcs_timeout = 500,
 
     // Maximum waitable timer timeout, in milliseconds.
     max_timeout_msec = 5 * 60 * 1000,
@@ -266,6 +269,9 @@ private:
     // the OVERLAPPED structure.
     overlapped_contains_result = 2
   };
+
+  // Timeout to use with GetQueuedCompletionStatus.
+  const DWORD gqcs_timeout_;
 
   // Function object for processing timeouts in a background thread.
   struct timer_thread_function;
