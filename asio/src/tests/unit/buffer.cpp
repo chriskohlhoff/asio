@@ -242,5 +242,5 @@ void test()
 ASIO_TEST_SUITE
 (
   "buffer",
-  ASIO_TEST_CASE(buffer_compile::test)
+  ASIO_COMPILE_TEST_CASE(buffer_compile::test)
 )
