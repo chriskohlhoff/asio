@@ -43594,14 +43594,9 @@ Appends `n` characters from the start of the output sequence to the input sequen
 Requires a preceding call `prepare(x)` where `x >= n`, and no intervening operations that modify the input or output sequence.
 
 
-[heading Exceptions]
-    
-
-[variablelist
-  
-[[std::length_error][If `n` is greater than the size of the output sequence. ]]
-
-]
+[heading Remarks]
+      
+If `n` is greater than the size of the output sequence, the entire output sequence is moved to the input sequence and no error is issued. 
 
 
 
@@ -43644,14 +43639,9 @@ Remove characters from the input sequence.
 Removes `n` characters from the beginning of the input sequence.
 
 
-[heading Exceptions]
-    
-
-[variablelist
-  
-[[std::length_error][If `n > size()`. ]]
-
-]
+[heading Remarks]
+      
+If `n` is greater than the size of the input sequence, the entire input sequence is consumed and no error is issued. 
 
 
 
@@ -45611,6 +45601,8 @@ In particular, when used with the [link asio.reference.buffer_size `buffer_size`
 
 
 
+Note that [link asio.reference.buffer_copy `buffer_copy`]  is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions.
+
 
 [heading Buffer Invalidation]
   
@@ -46907,7 +46899,9 @@ Both forms return the number of bytes actually copied. The number of bytes copie
 
 * `If` specified, `max_bytes_to_copy`.
 
-This prevents buffer overflow, regardless of the buffer sizes used in the copy operation. 
+This prevents buffer overflow, regardless of the buffer sizes used in the copy operation.
+
+Note that [link asio.reference.buffer_copy `buffer_copy`]  is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 [heading Requirements]
 
@@ -46955,7 +46949,7 @@ The number of bytes copied is the lesser of:
 
 * `buffer_size(source)` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -47001,7 +46995,7 @@ The number of bytes copied is the lesser of:
 
 * `buffer_size(source)` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -47047,7 +47041,7 @@ The number of bytes copied is the lesser of:
 
 * `buffer_size(source)` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -47093,7 +47087,7 @@ The number of bytes copied is the lesser of:
 
 * `buffer_size(source)` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -47141,7 +47135,7 @@ The number of bytes copied is the lesser of:
 
 * `buffer_size(source)` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -47187,7 +47181,7 @@ The number of bytes copied is the lesser of:
 
 * `buffer_size(source)` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -47233,7 +47227,7 @@ The number of bytes copied is the lesser of:
 
 * `buffer_size(source)` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -47279,7 +47273,7 @@ The number of bytes copied is the lesser of:
 
 * `buffer_size(source)` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -47325,7 +47319,7 @@ The number of bytes copied is the lesser of:
 
 * `buffer_size(source)` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -47373,7 +47367,7 @@ The number of bytes copied is the lesser of:
 
 * `buffer_size(source)` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -47421,7 +47415,7 @@ The number of bytes copied is the lesser of:
 
 * `buffer_size(source)` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -47469,7 +47463,7 @@ The number of bytes copied is the lesser of:
 
 * `buffer_size(source)` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -47517,7 +47511,7 @@ The number of bytes copied is the lesser of:
 
 * `buffer_size(source)` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -47565,7 +47559,7 @@ The number of bytes copied is the lesser of:
 
 * `buffer_size(source)` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -47614,7 +47608,7 @@ The number of bytes copied is the lesser of:
 
 * `buffer_size(source)` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -47666,7 +47660,7 @@ The number of bytes copied is the lesser of:
 
 * `max_bytes_to_copy` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -47718,7 +47712,7 @@ The number of bytes copied is the lesser of:
 
 * `max_bytes_to_copy` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -47770,7 +47764,7 @@ The number of bytes copied is the lesser of:
 
 * `max_bytes_to_copy` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -47822,7 +47816,7 @@ The number of bytes copied is the lesser of:
 
 * `max_bytes_to_copy` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -47876,7 +47870,7 @@ The number of bytes copied is the lesser of:
 
 * `max_bytes_to_copy` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -47928,7 +47922,7 @@ The number of bytes copied is the lesser of:
 
 * `max_bytes_to_copy` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -47980,7 +47974,7 @@ The number of bytes copied is the lesser of:
 
 * `max_bytes_to_copy` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -48032,7 +48026,7 @@ The number of bytes copied is the lesser of:
 
 * `max_bytes_to_copy` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -48084,7 +48078,7 @@ The number of bytes copied is the lesser of:
 
 * `max_bytes_to_copy` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -48138,7 +48132,7 @@ The number of bytes copied is the lesser of:
 
 * `max_bytes_to_copy` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -48192,7 +48186,7 @@ The number of bytes copied is the lesser of:
 
 * `max_bytes_to_copy` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -48246,7 +48240,7 @@ The number of bytes copied is the lesser of:
 
 * `max_bytes_to_copy` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -48300,7 +48294,7 @@ The number of bytes copied is the lesser of:
 
 * `max_bytes_to_copy` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -48354,7 +48348,7 @@ The number of bytes copied is the lesser of:
 
 * `max_bytes_to_copy` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
@@ -48409,7 +48403,7 @@ The number of bytes copied is the lesser of:
 
 * `max_bytes_to_copy` 
 
-
+This function is implemented in terms of `memcpy`, and consequently it cannot be used to copy between overlapping memory regions. 
 
 
 [endsect]
