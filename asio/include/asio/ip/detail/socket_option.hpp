@@ -401,7 +401,7 @@ public:
       asio::ip::address_v6 ipv6_address = multicast_address.to_v6();
       asio::ip::address_v6::bytes_type bytes = ipv6_address.to_bytes();
       memcpy(ipv6_value_.ipv6mr_multiaddr.s6_addr, bytes.data(), 16);
-      ipv6_value_.ipv6mr_interface = 0;
+      ipv6_value_.ipv6mr_interface = ipv6_address.scope_id();
     }
     else
     {
@@ -439,7 +439,10 @@ public:
     asio::ip::address_v6::bytes_type bytes =
       multicast_address.to_bytes();
     memcpy(ipv6_value_.ipv6mr_multiaddr.s6_addr, bytes.data(), 16);
-    ipv6_value_.ipv6mr_interface = network_interface;
+    if (network_interface)
+      ipv6_value_.ipv6mr_interface = network_interface;
+    else
+      ipv6_value_.ipv6mr_interface = multicast_address.scope_id();
   }
 
   // Get the level of the socket option.
