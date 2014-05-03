@@ -81,7 +81,7 @@ public:
   {
     using namespace std; // For sprintf and memcpy.
     char header[header_length + 1] = "";
-    sprintf(header, "%4d", body_length_);
+    sprintf(header, "%4d", static_cast<int>(body_length_));
     memcpy(data_, header, header_length);
   }
 
