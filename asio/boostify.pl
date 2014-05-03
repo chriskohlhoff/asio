@@ -397,7 +397,7 @@ sub copy_include_files
       {
         my $from = $file;
         my $to = $file;
-        $to =~ s/^include\//$boost_dir\/boost\//;
+        $to =~ s/^include\//$boost_dir\/libs\/asio\/include\/boost\//;
         copy_source_file($from, $to);
       }
     }
