@@ -145,8 +145,13 @@ void test()
 #endif // defined(ASIO_WINDOWS) && defined(UNDER_CE)
   ASIO_CHECK(!have_v4 || !ec);
 
+#if defined(__APPLE__)
+  const ip::address multicast_address_v6 =
+    ip::address::from_string("ff02::1%lo0", ec);
+#else // defined(__APPLE__)
   const ip::address multicast_address_v6 =
     ip::address::from_string("ff01::1", ec);
+#endif // defined(__APPLE__)
   ASIO_CHECK(!have_v6 || !ec);
 
   // join_group class.
