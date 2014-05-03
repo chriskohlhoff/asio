@@ -29,16 +29,32 @@ namespace asio {
 namespace detail {
 
 win_event::win_event()
-  : event_(::CreateEvent(0, true, false, 0)),
-    state_(0)
+  : state_(0)
 {
-  if (!event_)
+  events_[0] = ::CreateEvent(0, true, false, 0);
+  if (!events_[0])
   {
     DWORD last_error = ::GetLastError();
     asio::error_code ec(last_error,
         asio::error::get_system_category());
     asio::detail::throw_error(ec, "event");
   }
+
+  events_[1] = ::CreateEvent(0, false, false, 0);
+  if (!events_[1])
+  {
+    DWORD last_error = ::GetLastError();
+    ::CloseHandle(events_[0]);
+    asio::error_code ec(last_error,
+        asio::error::get_system_category());
+    asio::detail::throw_error(ec, "event");
+  }
+}
+
+win_event::~win_event()
+{
+  ::CloseHandle(events_[0]);
+  ::CloseHandle(events_[1]);
 }
 
 } // namespace detail

@@ -36,10 +36,7 @@ public:
   ASIO_DECL win_event();
 
   // Destructor.
-  ~win_event()
-  {
-    ::CloseHandle(event_);
-  }
+  ASIO_DECL ~win_event();
 
   // Signal all waiters.
   template <typename Lock>
@@ -48,7 +45,7 @@ public:
     ASIO_ASSERT(lock.locked());
     (void)lock;
     state_ |= 1;
-    ::SetEvent(event_);
+    ::SetEvent(events_[0]);
   }
 
   // Unlock the mutex and signal one waiter.
@@ -60,7 +57,7 @@ public:
     bool have_waiters = (state_ > 1);
     lock.unlock();
     if (have_waiters)
-      ::SetEvent(event_);
+      ::SetEvent(events_[1]);
   }
 
   // If there's a waiter, unlock the mutex and signal it.
@@ -72,7 +69,7 @@ public:
     if (state_ > 1)
     {
       lock.unlock();
-      ::SetEvent(event_);
+      ::SetEvent(events_[1]);
       return true;
     }
     return false;
@@ -84,7 +81,7 @@ public:
   {
     ASIO_ASSERT(lock.locked());
     (void)lock;
-    ::ResetEvent(event_);
+    ::ResetEvent(events_[0]);
     state_ &= ~std::size_t(1);
   }
 
@@ -97,14 +94,14 @@ public:
     {
       state_ += 2;
       lock.unlock();
-      ::WaitForSingleObject(event_, INFINITE);
+      ::WaitForMultipleObjects(2, events_, false, INFINITE);
       lock.lock();
       state_ -= 2;
     }
   }
 
 private:
-  HANDLE event_;
+  HANDLE events_[2];
   std::size_t state_;
 };
 
