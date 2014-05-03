@@ -41,22 +41,41 @@ public:
     ::CloseHandle(event_);
   }
 
-  // Signal the event.
+  // Signal all waiters.
   template <typename Lock>
-  void signal(Lock& lock)
+  void signal_all(Lock& lock)
   {
     ASIO_ASSERT(lock.locked());
     (void)lock;
+    state_ |= 1;
     ::SetEvent(event_);
   }
 
-  // Signal the event and unlock the mutex.
+  // Unlock the mutex and signal one waiter.
   template <typename Lock>
-  void signal_and_unlock(Lock& lock)
+  void unlock_and_signal_one(Lock& lock)
   {
     ASIO_ASSERT(lock.locked());
+    state_ |= 1;
+    bool have_waiters = (state_ > 1);
     lock.unlock();
-    ::SetEvent(event_);
+    if (have_waiters)
+      ::SetEvent(event_);
+  }
+
+  // If there's a waiter, unlock the mutex and signal it.
+  template <typename Lock>
+  bool maybe_unlock_and_signal_one(Lock& lock)
+  {
+    ASIO_ASSERT(lock.locked());
+    state_ |= 1;
+    if (state_ > 1)
+    {
+      lock.unlock();
+      ::SetEvent(event_);
+      return true;
+    }
+    return false;
   }
 
   // Reset the event.
@@ -66,6 +85,7 @@ public:
     ASIO_ASSERT(lock.locked());
     (void)lock;
     ::ResetEvent(event_);
+    state_ &= ~std::size_t(1);
   }
 
   // Wait for the event to become signalled.
@@ -73,13 +93,19 @@ public:
   void wait(Lock& lock)
   {
     ASIO_ASSERT(lock.locked());
-    lock.unlock();
-    ::WaitForSingleObject(event_, INFINITE);
-    lock.lock();
+    while ((state_ & 1) == 0)
+    {
+      state_ += 2;
+      lock.unlock();
+      ::WaitForSingleObject(event_, INFINITE);
+      lock.lock();
+      state_ -= 2;
+    }
   }
 
 private:
   HANDLE event_;
+  std::size_t state_;
 };
 
 } // namespace detail

@@ -40,16 +40,23 @@ public:
   {
   }
 
-  // Signal the event.
+  // Signal all waiters.
   template <typename Lock>
-  void signal(Lock&)
+  void signal_all(Lock&)
   {
   }
 
-  // Signal the event and unlock the mutex.
+  // Unlock the mutex and signal one waiter.
   template <typename Lock>
-  void signal_and_unlock(Lock&)
+  void unlock_and_signal_one(Lock&)
   {
+  }
+
+  // If there's a waiter, unlock the mutex and signal it.
+  template <typename Lock>
+  bool maybe_unlock_and_signal_one(Lock&)
+  {
+    return false;
   }
 
   // Reset the event.

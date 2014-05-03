@@ -29,10 +29,8 @@ class task_io_service_operation;
 
 struct task_io_service_thread_info : public thread_info_base
 {
-  event* wakeup_event;
   op_queue<task_io_service_operation> private_op_queue;
   long private_outstanding_work;
-  task_io_service_thread_info* next;
 };
 
 } // namespace detail

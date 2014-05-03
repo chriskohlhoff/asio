@@ -94,8 +94,7 @@ task_io_service::task_io_service(
     task_interrupted_(true),
     outstanding_work_(0),
     stopped_(false),
-    shutdown_(false),
-    first_idle_thread_(0)
+    shutdown_(false)
 {
   ASIO_HANDLER_TRACKING_INIT;
 }
@@ -140,10 +139,7 @@ std::size_t task_io_service::run(asio::error_code& ec)
   }
 
   thread_info this_thread;
-  event wakeup_event;
-  this_thread.wakeup_event = &wakeup_event;
   this_thread.private_outstanding_work = 0;
-  this_thread.next = 0;
   thread_call_stack::context ctx(this, this_thread);
 
   mutex::scoped_lock lock(mutex_);
@@ -165,10 +161,7 @@ std::size_t task_io_service::run_one(asio::error_code& ec)
   }
 
   thread_info this_thread;
-  event wakeup_event;
-  this_thread.wakeup_event = &wakeup_event;
   this_thread.private_outstanding_work = 0;
-  this_thread.next = 0;
   thread_call_stack::context ctx(this, this_thread);
 
   mutex::scoped_lock lock(mutex_);
@@ -186,9 +179,7 @@ std::size_t task_io_service::poll(asio::error_code& ec)
   }
 
   thread_info this_thread;
-  this_thread.wakeup_event = 0;
   this_thread.private_outstanding_work = 0;
-  this_thread.next = 0;
   thread_call_stack::context ctx(this, this_thread);
 
   mutex::scoped_lock lock(mutex_);
@@ -219,9 +210,7 @@ std::size_t task_io_service::poll_one(asio::error_code& ec)
   }
 
   thread_info this_thread;
-  this_thread.wakeup_event = 0;
   this_thread.private_outstanding_work = 0;
-  this_thread.next = 0;
   thread_call_stack::context ctx(this, this_thread);
 
   mutex::scoped_lock lock(mutex_);
@@ -353,10 +342,7 @@ std::size_t task_io_service::do_run_one(mutex::scoped_lock& lock,
         task_interrupted_ = more_handlers;
 
         if (more_handlers && !one_thread_)
-        {
-          if (!wake_one_idle_thread_and_unlock(lock))
-            lock.unlock();
-        }
+          wakeup_event_.unlock_and_signal_one(lock);
         else
           lock.unlock();
 
@@ -389,11 +375,8 @@ std::size_t task_io_service::do_run_one(mutex::scoped_lock& lock,
     }
     else
     {
-      // Nothing to run right now, so just wait for work to do.
-      this_thread.next = first_idle_thread_;
-      first_idle_thread_ = &this_thread;
-      this_thread.wakeup_event->clear(lock);
-      this_thread.wakeup_event->wait(lock);
+      wakeup_event_.clear(lock);
+      wakeup_event_.wait(lock);
     }
   }
 
@@ -426,7 +409,7 @@ std::size_t task_io_service::do_poll_one(mutex::scoped_lock& lock,
     o = op_queue_.front();
     if (o == &task_operation_)
     {
-      wake_one_idle_thread_and_unlock(lock);
+      wakeup_event_.maybe_unlock_and_signal_one(lock);
       return 0;
     }
   }
@@ -458,14 +441,7 @@ void task_io_service::stop_all_threads(
     mutex::scoped_lock& lock)
 {
   stopped_ = true;
-
-  while (first_idle_thread_)
-  {
-    thread_info* idle_thread = first_idle_thread_;
-    first_idle_thread_ = idle_thread->next;
-    idle_thread->next = 0;
-    idle_thread->wakeup_event->signal(lock);
-  }
+  wakeup_event_.signal_all(lock);
 
   if (!task_interrupted_ && task_)
   {
@@ -474,24 +450,10 @@ void task_io_service::stop_all_threads(
   }
 }
 
-bool task_io_service::wake_one_idle_thread_and_unlock(
-    mutex::scoped_lock& lock)
-{
-  if (first_idle_thread_)
-  {
-    thread_info* idle_thread = first_idle_thread_;
-    first_idle_thread_ = idle_thread->next;
-    idle_thread->next = 0;
-    idle_thread->wakeup_event->signal_and_unlock(lock);
-    return true;
-  }
-  return false;
-}
-
 void task_io_service::wake_one_thread_and_unlock(
     mutex::scoped_lock& lock)
 {
-  if (!wake_one_idle_thread_and_unlock(lock))
+  if (!wakeup_event_.maybe_unlock_and_signal_one(lock))
   {
     if (!task_interrupted_ && task_)
     {

@@ -29,7 +29,8 @@ namespace asio {
 namespace detail {
 
 win_event::win_event()
-  : event_(::CreateEvent(0, true, false, 0))
+  : event_(::CreateEvent(0, true, false, 0)),
+    state_(0)
 {
   if (!event_)
   {

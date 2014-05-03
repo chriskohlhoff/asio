@@ -41,24 +41,41 @@ public:
     ::pthread_cond_destroy(&cond_);
   }
 
-  // Signal the event.
+  // Signal all waiters.
   template <typename Lock>
-  void signal(Lock& lock)
+  void signal_all(Lock& lock)
   {
     ASIO_ASSERT(lock.locked());
     (void)lock;
-    signalled_ = true;
-    ::pthread_cond_signal(&cond_); // Ignore EINVAL.
+    state_ |= 1;
+    ::pthread_cond_broadcast(&cond_); // Ignore EINVAL.
   }
 
-  // Signal the event and unlock the mutex.
+  // Unlock the mutex and signal one waiter.
   template <typename Lock>
-  void signal_and_unlock(Lock& lock)
+  void unlock_and_signal_one(Lock& lock)
   {
     ASIO_ASSERT(lock.locked());
-    signalled_ = true;
+    state_ |= 1;
+    bool have_waiters = (state_ > 1);
     lock.unlock();
-    ::pthread_cond_signal(&cond_); // Ignore EINVAL.
+    if (have_waiters)
+      ::pthread_cond_signal(&cond_); // Ignore EINVAL.
+  }
+
+  // If there's a waiter, unlock the mutex and signal it.
+  template <typename Lock>
+  bool maybe_unlock_and_signal_one(Lock& lock)
+  {
+    ASIO_ASSERT(lock.locked());
+    state_ |= 1;
+    if (state_ > 1)
+    {
+      lock.unlock();
+      ::pthread_cond_signal(&cond_); // Ignore EINVAL.
+      return true;
+    }
+    return false;
   }
 
   // Reset the event.
@@ -67,7 +84,7 @@ public:
   {
     ASIO_ASSERT(lock.locked());
     (void)lock;
-    signalled_ = false;
+    state_ &= ~std::size_t(1);
   }
 
   // Wait for the event to become signalled.
@@ -75,13 +92,17 @@ public:
   void wait(Lock& lock)
   {
     ASIO_ASSERT(lock.locked());
-    while (!signalled_)
+    while ((state_ & 1) == 0)
+    {
+      state_ += 2;
       ::pthread_cond_wait(&cond_, &lock.mutex().mutex_); // Ignore EINVAL.
+      state_ -= 2;
+    }
   }
 
 private:
   ::pthread_cond_t cond_;
-  bool signalled_;
+  std::size_t state_;
 };
 
 } // namespace detail

@@ -35,7 +35,7 @@ class std_event
 public:
   // Constructor.
   std_event()
-    : signalled_(false)
+    : state_(0)
   {
   }
 
@@ -44,24 +44,41 @@ public:
   {
   }
 
-  // Signal the event.
+  // Signal all waiters.
   template <typename Lock>
-  void signal(Lock& lock)
+  void signal_all(Lock& lock)
   {
     ASIO_ASSERT(lock.locked());
     (void)lock;
-    signalled_ = true;
-    cond_.notify_one();
+    state_ |= 1;
+    cond_.notify_all();
   }
 
-  // Signal the event and unlock the mutex.
+  // Unlock the mutex and signal one waiter.
   template <typename Lock>
-  void signal_and_unlock(Lock& lock)
+  void unlock_and_signal_one(Lock& lock)
   {
     ASIO_ASSERT(lock.locked());
-    signalled_ = true;
+    state_ |= 1;
+    bool have_waiters = (state_ > 1);
     lock.unlock();
-    cond_.notify_one();
+    if (have_waiters)
+      cond_.notify_one();
+  }
+
+  // If there's a waiter, unlock the mutex and signal it.
+  template <typename Lock>
+  bool maybe_unlock_and_signal_one(Lock& lock)
+  {
+    ASIO_ASSERT(lock.locked());
+    state_ |= 1;
+    if (state_ > 1)
+    {
+      lock.unlock();
+      cond_.notify_one();
+      return true;
+    }
+    return false;
   }
 
   // Reset the event.
@@ -70,7 +87,7 @@ public:
   {
     ASIO_ASSERT(lock.locked());
     (void)lock;
-    signalled_ = false;
+    state_ &= ~std::size_t(1);
   }
 
   // Wait for the event to become signalled.
@@ -79,8 +96,11 @@ public:
   {
     ASIO_ASSERT(lock.locked());
     unique_lock_adapter u_lock(lock);
-    while (!signalled_)
+    while ((state_ & 1) == 0)
+    {
+      waiter w(state_);
       cond_.wait(u_lock.unique_lock_);
+    }
   }
 
   // Timed wait for the event to become signalled.
@@ -89,9 +109,12 @@ public:
   {
     ASIO_ASSERT(lock.locked());
     unique_lock_adapter u_lock(lock);
-    if (!signalled_)
+    if ((state_ & 1) == 0)
+    {
+      waiter w(state_);
       cond_.wait_for(u_lock.unique_lock_, std::chrono::microseconds(usec));
-    return signalled_;
+    }
+    return (state_ & 1) != 0;
   }
 
 private:
@@ -113,8 +136,27 @@ private:
     std::unique_lock<std::mutex> unique_lock_;
   };
 
+  // Helper to increment and decrement the state to track outstanding waiters.
+  class waiter
+  {
+  public:
+    explicit waiter(std::size_t& state)
+      : state_(state)
+    {
+      state_ += 2;
+    }
+
+    ~waiter()
+    {
+      state_ -= 2;
+    }
+
+  private:
+    std::size_t& state_;
+  };
+
   std::condition_variable cond_;
-  bool signalled_;
+  std::size_t state_;
 };
 
 } // namespace detail
