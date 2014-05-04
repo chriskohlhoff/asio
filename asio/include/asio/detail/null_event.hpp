@@ -40,6 +40,12 @@ public:
   {
   }
 
+  // Signal the event. (Retained for backward compatibility.)
+  template <typename Lock>
+  void signal(Lock&)
+  {
+  }
+
   // Signal all waiters.
   template <typename Lock>
   void signal_all(Lock&)
