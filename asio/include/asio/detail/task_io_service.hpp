@@ -23,6 +23,7 @@
 #include "asio/io_service.hpp"
 #include "asio/detail/atomic_count.hpp"
 #include "asio/detail/call_stack.hpp"
+#include "asio/detail/event.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/reactor_fwd.hpp"
