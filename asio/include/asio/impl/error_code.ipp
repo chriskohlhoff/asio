@@ -60,24 +60,30 @@ public:
     else
       return "asio.system error";
 #elif defined(ASIO_WINDOWS_RUNTIME)
-    std::string msg(128, char());
+    std::wstring wmsg(128, wchar_t());
     for (;;)
     {
-      DWORD length = ::FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM
+      DWORD wlength = ::FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM
           | FORMAT_MESSAGE_IGNORE_INSERTS, 0, value,
-          MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), &msg[0], msg.size(), 0);
-      if (length == 0 && ::GetLastError() == ERROR_INSUFFICIENT_BUFFER)
+          MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), &wmsg[0], wmsg.size(), 0);
+      if (wlength == 0 && ::GetLastError() == ERROR_INSUFFICIENT_BUFFER)
       {
-        msg.resize(msg.size() + msg.size() / 2);
+        wmsg.resize(wmsg.size() + wmsg.size() / 2);
         continue;
       }
-      if (length && msg[length - 1] == '\n')
-        --length;
-      if (length && msg[length - 1] == '\r')
-        --length;
-      if (length)
+      if (wlength && wmsg[wlength - 1] == '\n')
+        --wlength;
+      if (wlength && wmsg[wlength - 1] == '\r')
+        --wlength;
+      if (wlength)
       {
-        msg.resize(length);
+        std::string msg(wlength * 2, char());
+        int length = ::WideCharToMultiByte(CP_ACP, 0,
+            wmsg.c_str(), static_cast<int>(wlength),
+            &msg[0], static_cast<int>(wlength * 2), 0, 0);
+        if (length <= 0)
+          return "asio.system error";
+        msg.resize(static_cast<std::size_t>(length));
         return msg;
       }
       else
