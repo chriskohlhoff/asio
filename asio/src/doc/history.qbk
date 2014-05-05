@@ -7,6 +7,58 @@
 
 [section:history Revision History]
 
+[heading Asio 1.10.2]
+
+* Fixed `asio::spawn()` to work correctly with new Boost.Coroutine interface.
+
+* Ensured that incomplete `asio::spawn()` coroutines are correctly unwound when
+  cleaned up by the `io_service` destructor.
+
+* Fixed delegation of continuation hook for handlers produced by
+  `io_service::wrap()` and `strand::wrap()`.
+
+* Changed the Windows I/O completion port backend to use `ConnectEx`, if
+  available, for connection-oriented IP sockets.
+
+* Changed the `io_service` backend for non-Windows (and non-IOCP Windows)
+  platforms to use a single condition variable per `io_service` instance.
+  This addresses a potential race condition when `run_one()` is used from
+  multiple threads.
+
+* Prevented integer overflow when computing timeouts based on some
+  `boost::chrono` and `std::chrono` clocks.
+
+* Made further changes to `EV_CLEAR` handling in the kqueue backend, to address
+  other cases where the `close()` system call may hang on Mac OS X.
+
+* Fixed infinite recursion in implementation of
+  `resolver_query_base::flags::operator~`.
+
+* Made the `select` reactor more efficient on Windows for large numbers of
+  sockets.
+
+* Fixed a Windows-specific type-aliasing issue reported by [^gcc].
+
+* Prevented execution of compile-time-only buffer test to avoid triggering an
+  address sanitiser warning.
+
+* Disabled the `GetQueuedCompletionStatus` timeout workaround on recent
+  versions of Windows.
+
+* Changed implementation for Windows Runtime to use `FormatMessageW` rather
+  than `FormatMessageA`, as the Windows store does not permit the latter.
+
+* Added support for string-based scope IDs when using link-local multicast
+  addresses.
+
+* Changed IPv6 multicast group join to use the address's scope ID as the
+  interface, if an interface is not explicitly specified.
+
+* Fixed multicast test failure on Mac OS X and the BSDs by using a link-local
+  multicast address.
+
+* Various minor documentation improvements.
+
 [heading Asio 1.10.1]
 
 * Implemented a limited port to Windows Runtime. This support requires that the
